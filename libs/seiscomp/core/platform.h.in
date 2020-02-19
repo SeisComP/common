@@ -1,0 +1,11 @@
+#ifndef SEISCOMP_CORE_PLATFORM_H__
+#define SEISCOMP_CORE_PLATFORM_H__
+
+#cmakedefine MACOSX
+#cmakedefine LINUX
+
+#ifdef MACOSX
+   #include <seiscomp/core/platform/osx.h>
+#endif
+
+#endif

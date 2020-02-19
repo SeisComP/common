@@ -1,0 +1,328 @@
+/***************************************************************************
+ * Copyright (C) 2018 gempa GmbH                                           *
+ * All rights reserved.                                                    *
+ * Contact: gempa GmbH (seiscomp-dev@gempa.de)                             *
+ *                                                                         *
+ * Author: Jan Becker                                                      *
+ * Email: jabe@gempa.de                                                    *
+ *                                                                         *
+ * GNU Affero General Public License Usage                                 *
+ * This file may be used under the terms of the GNU Affero                 *
+ * Public License version 3.0 as published by the Free Software Foundation *
+ * and appearing in the file LICENSE included in the packaging of this     *
+ * file. Please review the following information to ensure the GNU Affero  *
+ * Public License version 3.0 requirements will be met:                    *
+ * https://www.gnu.org/licenses/agpl-3.0.html.                             *
+ *                                                                         *
+ * Other Usage                                                             *
+ * Alternatively, this file may be used in accordance with the terms and   *
+ * conditions contained in a signed written agreement between you and      *
+ * gempa GmbH.                                                             *
+ ***************************************************************************/
+
+// Styles and themes are imported from the documentation sass directory
+
+@import "theme.scss";
+@import "font-roboto.scss";
+
+
+$pageMaxWidth  : 70em;
+$lineHeight    : 1.6em;
+
+
+html {
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	background: $alternateBackground;
+}
+
+body {
+	padding: 0;
+	margin: 0;
+	min-height: 100%;
+	background: initial;
+	font-family: $fontRegularFamily;
+	font-weight: $fontRegularWeight;
+	font-size: $fontSize;
+	display: flex;
+	flex-direction: column;
+
+	> header {
+		background-color: $invertedBackground2;
+		background-image: linear-gradient(to bottom, $invertedBackground, $invertedBackground2);
+		overflow: hidden;
+		color: $invertedForeground;
+
+		&.hero {
+			section {
+				margin-top: 2*$contentSpacing;
+				margin-bottom: 2*$contentSpacing;
+			}
+
+			.title {
+				font-size: 2.5em;
+				font-weight: 500;
+			}
+
+			.subtitle {
+				font-size: 1em;
+				font-weight: normal;
+				opacity: 0.7;
+			}
+		}
+	}
+}
+
+header {
+	overflow: hidden;
+}
+
+section, .container {
+	max-width: 100%;
+	width: $pageMaxWidth;
+	margin: $contentMargin/2 auto;
+	flex: 1;
+	position: relative;
+	overflow: hidden;
+
+	> article, > header {
+		border-top: 1px solid #e5e6e9;
+		border-right: 1px solid #dfe0e4;
+		border-bottom: 1px solid #d0d1d5;
+		border-left: 1px solid #dfe0e4;
+		border-radius: 0.25rem;
+		margin: $contentSpacing 0;
+	}
+
+	> article {
+		background-color: $primaryBackground;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		> header {
+			background-color: $secondaryBackground;
+		}
+	}
+
+	> header {
+		background-color: $secondaryBackground;
+		padding: $contentSpacing;
+	}
+}
+
+footer {
+	background: darken($secondaryBackground, 10);
+	color: darken($secondaryForeground, 20);
+	text-align: center;
+	font-size: 0.8rem;
+
+	.content {
+		margin: 0;
+	}
+
+	.copyright {
+		display: inline;
+	}
+}
+
+header > summary {
+	font-size: 1em;
+	text-align: right;
+	display: block;
+}
+
+
+summary#authors > a:before {
+	content: "\2709";
+	font-size: 1.2em;
+}
+
+summary#authors > a:hover {
+	text-decoration: none;
+}
+
+h1,h2 {
+	font-weight: normal;
+}
+
+// From https://www.w3.org/TR/CSS21/sample.html
+h1 { font-size: 2em; margin: .67em 0 }
+h2 { font-size: 1.5em; margin: .75em 0 }
+h3 { font-size: 1.17em; margin: .83em 0 }
+h4 { margin: 1.12em 0 }
+h5 { font-size: .83em; margin: 1.5em 0 }
+h6 { font-size: .75em; margin: 1.67em 0 }
+
+p, li {
+	line-height: $lineHeight;
+}
+
+hr {
+	border: 0;
+	border-top: 1px solid rgba(0,0,0,0.2);
+}
+
+a {
+	color: #7DA19F;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #2F4447;
+	text-decoration: underline;
+}
+
+table {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	border-collapse: collapse;
+}
+
+thead {
+	background-color: #607D82;
+	color: white;
+}
+
+tbody > tr:nth-child(odd) {
+	background-color: #f6f7f8;
+}
+
+td {
+	padding: 0.25em;
+}
+
+pre {
+	line-height: 1.4em;
+	background-color: #f6f7f8;
+	padding: 1em;
+	border-left: 5px solid #F5D995;
+	border-top-left-radius: 0.4rem;
+	border-bottom-left-radius: 0.4rem;
+}
+
+div.img a {
+	margin: auto;
+	width: 50%;
+	display: block;
+}
+
+div.img img {
+	width: 100%;
+	box-shadow: 2px 2px 4px #bbb;
+}
+
+// ----------------------------------------------------------------------------
+// Admonition
+// ----------------------------------------------------------------------------
+div.message {
+	border: 1px solid transparent;
+	border-radius: 0.25rem;
+	background: lightgray;
+	padding: 0 $contentSpacing/2;
+	margin: $contentSpacing 0;
+
+	> * {
+		margin: $contentSpacing/2 0;
+
+		line-height: 1.2em !important;
+		&:first-child {
+			margin-top: $contentSpacing/2;
+		}
+
+		&:last-child {
+			margin-bottom: $contentSpacing/2;
+		}
+	}
+
+	// Change links
+	a {
+		color: inherit;
+		text-decoration: underline;
+	}
+
+	> .title {
+		font-weight: bold;
+	}
+
+	&.attention, &.warning {
+		background: $warningBackground;
+		color: $warningForeground;
+		border-color: $warningBorder;
+	}
+
+	&.caution, &.danger, &.error {
+		background: $errorBackground;
+		color: $errorForeground;
+		border-color: $errorBorder;
+	}
+
+	&.hint, &.important, &.note, &.tip, &.todo {
+		background: $infoBackground;
+		color: $infoForeground;
+		border-color: $infoBorder;
+	}
+}
+
+
+// ----------------------------------------------------------------------------
+// Monospace elements
+// ----------------------------------------------------------------------------
+code, pre {
+	font-family: $fontMonoFamily;
+	font-size: $fontMonoSize;
+	font-weight: $fontMonoWeight;
+}
+
+code {
+	line-height: 1.4em;
+	letter-spacing: 0.01em;
+	background: #f9f2f4;
+	color: #c7254e;
+	padding: 0 0.25em;
+	border-radius: 0.25em;
+}
+
+blockquote {
+	font-style: normal;
+	margin-left: 0;
+	padding-left: 0.75em;
+	color: mix($primaryForeground, $infoBackground, 50);
+	border-left: 0.25em solid mix($primaryForeground, $infoBackground, 50);
+}
+
+
+p.important {
+	border-radius: 0.25rem;
+	border-top: 1px solid #e6d5ac;
+	border-left: 1px solid #e6d5ac;
+	border-right: 1px solid #d9c084;
+	border-bottom: 1px solid #d9c084;
+	padding: 1em;
+	background-color: #f5e3b8;
+}
+
+.content {
+	margin: $contentMargin;
+	position: relative;
+
+	&:after {
+		display: block;
+		visibility: hidden;
+		font-size: 0;
+		height: 0;
+		clear: both;
+		content: ' ';
+	}
+}
+
+.logo {
+	background-repeat: no-repeat;
+	background-position: right center;
+	height: 1.4em;
+	float: right;
+	width: 5em;
+}

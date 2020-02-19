@@ -1,9 +1,0 @@
-SET(
-    DBPLUGIN_SOURCES
-	dbplugin.cpp
-)
-
-INCLUDE_DIRECTORIES(.)
-
-SC_ADD_PLUGIN_LIBRARY(DBPLUGIN dbplugin "")
-SC_LINK_LIBRARIES_INTERNAL(dbplugin client)

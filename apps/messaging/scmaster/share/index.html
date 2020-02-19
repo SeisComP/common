@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>SeisComP</title>
+		<link rel="stylesheet" href="style.css" type="text/css">
+	</head>
+	<body>
+		<header class="hero">
+			<section>
+				<div class="logo" style="background-image:url('gempa.svg')"></div>
+				<div class="title">SeisComP</div>
+				<div class="subtitle">Messaging</div>
+			</section>
+		</header>
+		<section>
+			<article>
+				<header>
+					<div class="content">
+						<h1>Default Page</h1>
+					</div>
+				</header>
+				<div class="content">
+					<h2>It works!</h2>
+					<p>
+					This is the default page. If you see it in your browser then it most
+					likely means that you have installed SeisComP successfully and that
+					scmaster is running. Congratulations!
+					</p>
+					<p>
+					This default page is located in your installation directory at
+					<code>share/scmaster/http/index.html</code>. You are supposed to replace
+					that page with a version that represents your organization or that
+					describes the purpose of this installation.
+					</p>
+					<p>
+					Replacing this page will not affect the functionality of the
+					messaging system at all. Don't worry if you break things in your
+					http root directory. And you don't need to restart scmaster
+					if you have changed any files. Just reload the browser.
+					</p>
+					<h2>Replacing this page</h2>
+					<div class="important message">
+						<div class="content">
+						Do not modify the default file as it will be overwritten when you
+						update your installation!
+						</div>
+					</div>
+					<p>
+					To avoid losing your changes after an update, create a new directory
+					where you would like to save all of your files to be served.
+					Re-configure scmaster to use that directory as http root directory.
+					</p>
+					<ol>
+						<li>Create new local http directory</li>
+						<li>Set <code>http.filebase = /path/to/http/root</code> in <code>scmaster.cfg</code>
+					</ol>
+					<p>
+					You can place any files you want into the http root path. scmaster
+					will serve them happily. Add html files, stylesheets, images
+					and any other kind of assets your page requires.
+					</p>
+				</div>
+			</article>
+		</section>
+		<footer>
+			<p>
+			Copyright &copy; <a href="https://www.gempa.de">gempa GmbH</a>
+			</p>
+		</footer>
+	</body>
+</html>

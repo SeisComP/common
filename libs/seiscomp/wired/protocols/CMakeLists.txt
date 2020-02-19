@@ -1,0 +1,4 @@
+SET(PROTOCOLS_HEADERS http.h websocket.h)
+SET(PROTOCOLS_SOURCES http.cpp websocket.cpp)
+
+SC_SETUP_LIB_SUBDIR(PROTOCOLS)

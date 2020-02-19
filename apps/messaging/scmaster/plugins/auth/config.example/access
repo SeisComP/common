@@ -1,0 +1,6 @@
+# All accounts are read-only by default.
+*:r
+
+# The processing and gui clients get write access as well.
+processing:rw
+gui:rw

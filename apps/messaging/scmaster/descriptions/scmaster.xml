@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<module name="scmaster" category="Messaging">
+		<configuration>
+			<parameter name="defaultGroups" type="list:string" default="AMPLITUDE, PICK, LOCATION, MAGNITUDE, FOCMECH, EVENT, QC, PUBLICATION, GUI, INVENTORY, CONFIG, LOGGING, SERVICE_REQUEST, SERVICE_PROVIDE, STATUS_GROUP">
+				<description>
+				The default set of message groups for each queue. Only used
+				if a queues group list is unset (note: empty is not unset).
+				</description>
+			</parameter>
+			<parameter name="queues" type="list:string" default="production, testing, devel">
+				<description>
+				The enabled messaging queues. The profile names are the final
+				queue names.
+				</description>
+			</parameter>
+			<group name="interface">
+				<parameter name="bind" type="ipbind" default="0.0.0.0:18180">
+					<description>
+
+					</description>
+				</parameter>
+				<parameter name="acl" type="list:ipmask" default="">
+					<description>
+					The IP access control list for clients which are allowed
+					to connect to the interface.
+					</description>
+				</parameter>
+				<parameter name="socketPortReuse" type="boolean" default="true">
+					<description>
+					SO_REUSEADDR socket option for the TCP listening socket.
+					</description>
+				</parameter>
+				<group name="ssl">
+					<parameter name="bind" type="ipbind" default="0.0.0.0:-1">
+						<description>
+
+						</description>
+					</parameter>
+					<parameter name="acl" type="list:ipmask" default="">
+						<description>
+						The IP access control list for clients which are allowed
+						to connect to the interface.
+						</description>
+					</parameter>
+					<parameter name="socketPortReuse" type="boolean" default="true">
+						<description>
+						SO_REUSEADDR socket option for the TCP listening socket.
+						</description>
+					</parameter>
+					<parameter name="key" type="path" default="">
+						<description>
+
+						</description>
+					</parameter>
+					<parameter name="certificate" type="path" default="">
+						<description>
+
+						</description>
+					</parameter>
+				</group>
+			</group>
+			<group name="queues">
+				<description>
+				Set the parameters for each messaging queue. The queues are used
+				when listed in the :confval:`queues` parameter. Several queues
+				can be used in parallel. For queues with without databases leave
+				the processor parameters empty.
+				</description>
+				<struct type="Queue">
+					<parameter name="groups" type="list:string">
+						<description>
+						Define the list of message groups added to the queue. If unset
+						then the defaultGroups will be used. A queue will always
+						add the default group &quot;STATUS_GROUP&quot;.
+						</description>
+					</parameter>
+					<parameter name="acl" type="list:ipmask" default="0.0.0.0/0">
+						<description>
+						The IP access control list for clients which are allowed
+						to join the queue.
+						</description>
+					</parameter>
+					<parameter name="maximumPayloadSize" type="int" unit="B" default="1048576">
+						<description>
+						The maximum size in bytes of a message to be accepted.
+						Clients which send larger messages will be disconnected.
+						The default is 1MB.
+						</description>
+					</parameter>
+					<parameter name="plugins" type="list:string">
+						<description>
+						List of plugins required by this queue. This is just a
+						convenience parameter to improve configurations
+						readability. The plugins can also be added to the
+						global list of module plugins.
+
+						Example: dbstore
+						</description>
+					</parameter>
+
+					<group name="processors">
+						<parameter name="messages" type="string">
+							<description>
+								Interface name. For now, use &quot;dbstore&quot; to
+								use a database.
+
+								Use empty for testing or playbacks without a database.
+							</description>
+						</parameter>
+						<group name="messages">
+							<group name="dbstore">
+								<description>
+								Define the database connection parameters.
+								</description>
+								<parameter name="driver" type="string">
+									<description>
+									Selected the database driver to use. Database drivers are
+									available through plugins. The default plugin is dbmysql
+									which supports the MYSQL database server. It is activated
+									with the core.plugins parameter.
+									</description>
+								</parameter>
+								<parameter name="read" type="string">
+									<description>
+									Sets the database read connection which is reported to clients
+									that connect to this server. If a remote setup should be
+									implemented, ensure that the hostname is reachable from
+									the remote computer.
+									</description>
+								</parameter>
+								<parameter name="write" type="string">
+									<description>
+									Sets the database write connection which is private to
+									scmaster. A separate write connection enables different
+									permissions on the database level for scmaster and
+									clients.
+									</description>
+								</parameter>
+								<parameter name="strictVersionCheck" type="boolean" default="true">
+									<description>
+									If enabled, the plugin will check the database schema version and refuse to start
+									if the version doesn't match the latest version. If disabled and the an object
+									needs to be stored which is incompatible with the database schema this object is
+									lost. Leave this option enabled unless you know exactly what are you doing and what
+									the consequences are.
+									</description>
+								</parameter>
+							</group>
+						</group>
+					</group>
+				</struct>
+			</group>
+			<group name="http">
+				<parameter name="filebase" type="path" default="@DATADIR@/scmaster/http/">
+					<description>
+					The directory served by the http server at staticPath.
+					</description>
+				</parameter>
+				<parameter name="staticPath" type="string" default="/">
+					<description>
+					The URL path at which html files and assets are available.
+					All files under filebase will be served at this URL path.
+					</description>
+				</parameter>
+				<parameter name="brokerPath" type="string" default="/">
+					<description>
+					The URL path at which the broker websocket is available.
+					</description>
+				</parameter>
+			</group>
+		</configuration>
+		<setup>
+			<group name="database">
+				<input name="enable" type="boolean" default="true">
+					<text>Enable database storage</text>
+					<description>
+						Enables/disables the database. If the database is not enabled the processed
+						data is not stored persistently. Leave this option enabled unless you know
+						what you are doing.
+					</description>
+					<option value="false"/>
+					<option value="true">
+						<input name="backend" type="string" default="mysql">
+							<text>Database backend</text>
+							<description>
+							SeisComP supports different database backends. Select
+							the one you want to use. Different backends require
+							different additional packages to be installed on your
+							host system.
+							</description>
+							<option value="mysql">
+								<description>MySQL server.</description>
+								<input name="create" type="boolean" default="true">
+									<text>Create database</text>
+									<description>
+									If you already have a database and want to reuse it, you can skip this step.
+									If you want to let setup create the database for you, check this option.
+									</description>
+									<option value="true">
+										<input name="rootpw" type="string" echo="password">
+											<text>MYSQL root password</text>
+											<description>
+											To create the database root access to the database is required. Please
+											enter the root password to the database server you are going to use.
+											The server hostname will be entered in the next steps.
+											</description>
+										</input>
+										<input name="drop" type="boolean" default="false">
+											<text>Drop existing database</text>
+											<description>
+											When a database with the same name exists already, should it be destroyed
+											and recreated? If you say no here, an error will be raised if the database
+											to be created already exists.
+											</description>
+										</input>
+									</option>
+									<option value="false"/>
+								</input>
+							</option>
+							<option value="postgresql">
+								<description>
+								Postgresql server. There is currently no support in setup to create the
+								database for you. You have to setup the database and user accounts on
+								your own. The database schema is installed under share/db/postgresql.sql.
+								Note that the database encoding should be UTF8 and that you need
+								to set the encoding to 'escape' for PostgreSQL &gt;= 9,
+								e.g. &quot;ALTER DATABASE seiscomp SET bytea_output TO 'escape';&quot;
+								</description>
+							</option>
+						</input>
+						<input name="db" type="string" default="seiscomp">
+							<text>Database name</text>
+							<description>
+							Database name to use. If you want to avoid conflicts with
+							existing databases or if you have multiple installations
+							change the default name. If you are unsure, keep the default.
+							</description>
+						</input>
+						<input name="rwhost" type="string" default="localhost">
+							<text>Database hostname</text>
+							<description>
+							The hostname of the computer running the database server.
+							In most cases it is this computer (localhost). This hostname is
+							private and not published to any client connection to this
+							computer.
+							</description>
+						</input>
+						<input name="rwuser" type="string" default="sysop">
+							<text>Database read-write user</text>
+							<description>
+							The database username for read-write access to the database.
+							This account will not be visible to clients connecting to your
+							system unless read-only and read-write accounts are not separated.
+							</description>
+						</input>
+						<input name="rwpwd" type="string" default="sysop">
+							<text>Database read-write password</text>
+							<description>
+							The database user password for read-write access to the database.
+							This account will not be visible to clients connecting to your
+							system unless read-only and read-write accounts are not separated.
+							</description>
+						</input>
+						<input name="rohost" type="string" default="localhost">
+							<text>Database public hostname</text>
+							<description>
+							The hostname of the computer running the database server.
+							In most cases it is this computer (localhost). This hostname is
+							sent to all connected clients who in turn will try to resolve it.
+							If all modules run locally you can leave the defaults.
+							</description>
+						</input>
+						<input name="rouser" type="string" default="sysop">
+							<text>Database read-only user</text>
+							<description>
+							The database user that will have read-only access to the database.
+							This account will be visible to all clients connecting to your
+							system.
+							</description>
+						</input>
+						<input name="ropwd" type="string" default="sysop">
+							<text>Database read-only password</text>
+							<description>
+							The database user password for read-only access to the database.
+							This password will be visible to all clients connecting to your
+							system.
+							</description>
+						</input>
+					</option>
+				</input>
+			</group>
+		</setup>
+	</module>
+</seiscomp>

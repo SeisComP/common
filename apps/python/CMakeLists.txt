@@ -1,0 +1,12 @@
+SC_ADD_PYTHON_PROG(bindings2cfg)
+
+SET(PYTHON_PACKAGE_PATH ${SC3_PACKAGE_PYTHON_LIB_DIR}/seiscomp)
+
+INSTALL(FILES
+	# Python file to be installed
+	bindings2cfg-lib.py
+	DESTINATION ${PYTHON_PACKAGE_PATH}
+	RENAME bindings2cfg.py)
+
+FILE(GLOB descs "${CMAKE_CURRENT_SOURCE_DIR}/descriptions/*.xml")
+INSTALL(FILES ${descs} DESTINATION ${SC3_PACKAGE_APP_DESC_DIR})

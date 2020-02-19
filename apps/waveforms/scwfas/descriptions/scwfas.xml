@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<module name="scwfas" category="Acquisition">
+		<description>Waveform archive server</description>
+		<command-line>
+			<group name="Generic">
+				<optionReference>generic#help</optionReference>
+				<optionReference>generic#version</optionReference>
+				<optionReference>generic#config-file</optionReference>
+				<optionReference>generic#plugins</optionReference>
+				<optionReference>generic#daemon</optionReference>
+			</group>
+
+			<group name="Verbosity">
+				<optionReference>verbosity#verbosity</optionReference>
+				<optionReference>verbosity#v</optionReference>
+				<optionReference>verbosity#quiet</optionReference>
+				<optionReference>verbosity#print-component</optionReference>
+				<optionReference>verbosity#print-context</optionReference>
+				<optionReference>verbosity#component</optionReference>
+				<optionReference>verbosity#syslog</optionReference>
+				<optionReference>verbosity#lockfile</optionReference>
+				<optionReference>verbosity#console</optionReference>
+				<optionReference>verbosity#debug</optionReference>
+				<optionReference>verbosity#trace</optionReference>
+				<optionReference>verbosity#log-file</optionReference>
+			</group>
+
+			<group name="Server">
+				<option long-flag="arclink-port" argument="int" param-ref="arclink.port"/>
+			</group>
+		</command-line>
+
+		<configuration>
+			<parameter name="handlerSDS" type="string" default="">
+				<description>
+				Defines an alternative SDS archive handler. This is the name
+				of an RecordStream interface that can be loaded via a plugin.
+				If not given an internal implementation will be used.
+				</description>
+			</parameter>
+			<parameter name="filebase" type="string" default="@ROOTDIR@/var/lib/archive">
+				<description>
+				Defines the filebase of the SDS archive. If an alternative
+				archive handler is defined this value serves as input to
+				setSource().
+				</description>
+			</parameter>
+			<group name="arclink">
+				<parameter name="port" type="int" default="-1">
+					<description>
+					Defines the server port for Arclink connections. By default
+					the Arclink standard port 18001 will be used.
+					</description>
+				</parameter>
+			</group>
+			<group name="fdsnws">
+				<parameter name="port" type="int" default="8080">
+					<description>
+					Defines the server port for FDSNWS connections. By default
+					port 8080 will be used.
+					</description>
+				</parameter>
+				<parameter name="baseURL" type="string" default="http://localhost:8080/fdsnws">
+					<description>
+					Defines the base URL of the FDSN webservice that is
+					given in the WADL document.
+					</description>
+				</parameter>
+				<parameter name="maxTimeWindow" type="int" unit="s" default="0">
+					<description>
+					Defines the aggregated maximum time window (seconds)
+					for all requested streams. A value of 0 will deactive
+					any restriction.
+					</description>
+				</parameter>
+			</group>
+		</configuration>
+	</module>
+</seiscomp>

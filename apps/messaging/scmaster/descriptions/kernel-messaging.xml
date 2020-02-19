@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<plugin name="messaging">
+		<extends>kernel</extends>
+		<description>
+		SeisComP messaging component that enables communication of modules over the network.
+		</description>
+		<configuration>
+			<group name="messaging">
+				<parameter name="enable" type="boolean" default="true">
+					<description>
+						Enables/disables local messaging (scmaster).
+						The messaging component is an integral component
+						of all modules (except e.g. acquisition modules).
+						If you are not sure what to do, enable it.
+					</description>
+				</parameter>
+				<parameter name="bind" type="string" default="">
+					<description>
+						Defines the messaging unencrypted bind address. If
+						left empty then the configuration file (see scmaster)
+						will be used instead. Use this to override the
+						unencrypted bind address. The format is
+						&quot;[ip:]port&quot;.
+					</description>
+				</parameter>
+			</group>
+		</configuration>
+	</plugin>
+</seiscomp>

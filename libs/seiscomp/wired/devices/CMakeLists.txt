@@ -1,0 +1,4 @@
+SET(DEVICES_HEADERS fd.h socket.h)
+SET(DEVICES_SOURCES fd.cpp socket.cpp)
+
+SC_SETUP_LIB_SUBDIR(DEVICES)

@@ -1,0 +1,52 @@
+/***************************************************************************
+ * Copyright (C) gempa GmbH                                                *
+ * All rights reserved.                                                    *
+ * Contact: gempa GmbH (seiscomp-dev@gempa.de)                             *
+ *                                                                         *
+ * GNU Affero General Public License Usage                                 *
+ * This file may be used under the terms of the GNU Affero                 *
+ * Public License version 3.0 as published by the Free Software Foundation *
+ * and appearing in the file LICENSE included in the packaging of this     *
+ * file. Please review the following information to ensure the GNU Affero  *
+ * Public License version 3.0 requirements will be met:                    *
+ * https://www.gnu.org/licenses/agpl-3.0.html.                             *
+ *                                                                         *
+ * Other Usage                                                             *
+ * Alternatively, this file may be used in accordance with the terms and   *
+ * conditions contained in a signed written agreement between you and      *
+ * gempa GmbH.                                                             *
+ ***************************************************************************/
+
+
+
+#ifndef SEISCOMP_GUI_ORIGINTIME_H__
+#define SEISCOMP_GUI_ORIGINTIME_H__
+
+
+#include <QtGui>
+#include <seiscomp/gui/datamodel/ui_origintime.h>
+#include <seiscomp/core/datetime.h>
+#include <seiscomp/gui/qt4.h>
+
+
+namespace Seiscomp {
+namespace Gui {
+
+
+class SC_GUI_API OriginTimeDialog : public QDialog {
+	public:
+		OriginTimeDialog(double lon, double lat,
+		                 Seiscomp::Core::Time time,
+		                 QWidget * parent = 0, Qt::WindowFlags f = 0);
+
+		Seiscomp::Core::Time time() const;
+
+	private:
+		Ui::OriginTimeDialog _ui;
+};
+
+
+}
+}
+
+#endif
