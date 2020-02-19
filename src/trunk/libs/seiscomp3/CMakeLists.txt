@@ -198,3 +198,8 @@ IF(WIN32)
 ENDIF(WIN32)
 
 ADD_DEPENDENCIES(seiscomp3_core build_and_git_infos)
+
+# Add test directory
+IF (SC_GLOBAL_UNITTESTS)
+	SUBDIRS(unittest test)
+ENDIF (SC_GLOBAL_UNITTESTS)
