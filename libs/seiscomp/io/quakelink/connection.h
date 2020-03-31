@@ -66,6 +66,29 @@ enum Options {
 	opAll               = 0xFFFF
 };
 
+// API and format version type
+typedef unsigned int Version;
+
+// Maps a version of a specific RequestFormat to a minimum required API version
+typedef std::vector<Version> APIList;
+
+// Maps a RequestFormat to the list of required API versions
+typedef std::map<RequestFormat, APIList> FormatAPIMap;
+
+class RequestFormatVersion {
+	public:
+		RequestFormatVersion(RequestFormat format, Version version=1)
+		    : _format(format), _version(version < 1 ? 1 : version) {}
+		operator RequestFormat() const { return _format; }
+		RequestFormat format() const { return _format; }
+		Version version() const { return _version; }
+
+	private:
+		RequestFormat _format;
+		Version       _version;
+};
+
+
 /**
  * @brief The Response class
  */
@@ -116,6 +139,7 @@ typedef std::vector<Response*> ResponsesPtr;
 
 DEFINE_SMARTPOINTER(Connection);
 class Connection : public Core::BaseObject {
+
 	public:
 		/** Default constructor */
 		Connection();
@@ -142,6 +166,17 @@ class Connection : public Core::BaseObject {
 		void disconnect();
 
 		/**
+		 * @brief Executes the hello command which retrieves the server ID and
+		 * API version.
+		 * @param id Server identifier including build version, e.g.
+		 * QuakeLink (gempa GmbH) v2020.083#da048827b
+		 * @return The API version reported by the server or 0 in case of an
+		 * error
+		 * @since API version 13.0.0
+		 */
+		Version hello(std::string &id);
+
+		/**
 		 * @brief Sets connection options
 		 * @param options Bit mask of all options to enable
 		 * @return True if the options could be set
@@ -153,9 +188,13 @@ class Connection : public Core::BaseObject {
 		 * restricted to 'summary'.
 		 * @param resp Response object to store the result
 		 * @param eventID Event ID to retrieve all updates from
+		 * @param formatVersion Response format and version. Note currently only
+		 * the rfSummary format is supported but in different versions.
+		 * since API 13.0.0
 		 * @return True if the updates of an event could be fetched
 		 */
-		bool getUpdates(Response &resp, const std::string &eventID);
+		bool getUpdates(Response &resp, const std::string &eventID,
+		                const RequestFormatVersion &formatVersion = rfSummary);
 
 		/**
 		 * @brief Gets one particular event revision
@@ -163,11 +202,12 @@ class Connection : public Core::BaseObject {
 		 * @param eventID Event ID to retrive the particular revision from
 		 * @param revision Event revision, use a negative number to query the
 		 * latest revision
-		 * @param format Response format
+		 * @param formatVersion Response format and version
 		 * @return True if the event revision could be fetched
 		 */
 		bool get(Response &response, const std::string &eventID,
-		         int revision = -1, RequestFormat format = rfSummary);
+		         int revision = -1,
+		         const RequestFormatVersion &formatVersion = rfSummary);
 
 		/**
 		 * @brief Selects archived events. Returns when all matching events have
@@ -175,7 +215,8 @@ class Connection : public Core::BaseObject {
 		 * @param responses List of Response objects to store the results
 		 * @param from Begin of time window
 		 * @param to End of time window
-		 * @param format Response format
+		 * @param formatVersion Response format
+		 * will request the default version.
 		 * @param where SQL like filter clause, of form
 		 *   clause    := condition[ AND|OR [(]clause[)]]
 		 *   condition := MAG|DEPTH|LAT|LON|PHASES op {float} |
@@ -187,7 +228,7 @@ class Connection : public Core::BaseObject {
 		bool selectArchived(Responses &responses,
 		                    const Core::Time &from = Core::Time(),
 		                    const Core::Time &to = Core::Time(),
-		                    RequestFormat format = rfSummary,
+		                    const RequestFormatVersion &formatVersion = rfSummary,
 		                    const std::string &where = "");
 
 		/**
@@ -198,7 +239,7 @@ class Connection : public Core::BaseObject {
 		 * @param archived If enabled also archived events are returned
 		 * @param from Begin of time window
 		 * @param to End of time window
-		 * @param format Response format
+		 * @param formatVersion Response format
 		 * @param where SQL like filter clause, of form
 		 *   clause    := condition[ AND|OR [(]clause[)]]
 		 *   condition := MAG|DEPTH|LAT|LON|PHASES op {float} |
@@ -217,7 +258,7 @@ class Connection : public Core::BaseObject {
 		bool select(bool archived = false,
 		            const Core::Time &from = Core::Time(),
 		            const Core::Time &to = Core::Time(),
-		            RequestFormat format = rfSummary,
+		            const RequestFormatVersion &formatVersion = rfSummary,
 		            const std::string &where = "",
 		            int updatedBufferSize = 1000);
 
@@ -228,8 +269,54 @@ class Connection : public Core::BaseObject {
 		 */
 		bool abort();
 
+		/**
+		 * @brief serverID
+		 * @return The server ID or an empty string if no connection could be
+		 * established.
+		 * @since API version 13.0.0
+		 */
+		const std::string& serverID();
+
+		/**
+		 * @brief serverAPI
+		 * @return The server API version or 0 if no connection could be
+		 * established
+		 * @since API version 13.0.0
+		 */
+		unsigned int serverAPI();
+
+		/**
+		 * @brief initialized
+		 * @return True if this instance was sucessfully initialized via the
+		 * init() call
+		 */
 		inline bool initialized() { return _sock; }
+
+		/**
+		 * @brief interrupted
+		 * @return True if underlying socket of this instance was interrupted
+		 */
 		inline bool interrupted() { return _sock && _sock->isInterrupted(); }
+
+		/**
+		 * @brief isSupported
+		 * @param formatVersion The format version to check
+		 * @param log If enabled negative answers will be logged
+		 * @return True if the format version combination is supported by the
+		 * current server connection
+		 * @since API version 13.0.0
+		 */
+		bool isSupported(const RequestFormatVersion &formatVersion,
+		                 bool log=false);
+
+		/**
+		 * @brief maximumSupportedVersion
+		 * @param format The request format
+		 * @return Maximum format version supported by the current server
+		 * connection. Returns 0 if no connection could be established.
+		 * @since API version 13.0.0
+		 */
+		Version maximumSupportedVersion(RequestFormat format);
 
 	protected:
 		/**
@@ -257,6 +344,8 @@ class Connection : public Core::BaseObject {
 		bool assertResponseCode(const std::string &expected);
 		bool assertLineBreak();
 		bool readPayload(std::string &data, uint count);
+		bool checkFormatVersion(std::string &error,
+		                        const RequestFormatVersion &formatVerion);
 
 	protected:
 		std::string             _logPrefix;
@@ -267,8 +356,11 @@ class Connection : public Core::BaseObject {
 		Socket                 *_sock;
 
 		int                     _options;
+		std::string             _serverID;
+		unsigned int            _serverAPI;
 
 };
+
 
 } // ns QuakeLink
 } // ns IO
