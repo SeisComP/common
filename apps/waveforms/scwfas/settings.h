@@ -52,7 +52,8 @@ struct Settings : System::Application::AbstractSettings {
 			& cfg(port, "port")
 			& cli(port,
 			      "Server", "arclink-port",
-			      "Port to listen to for data requests with Arclink protocol");
+			      "Port to listen to for data requests with Arclink protocol",
+			      true);
 		}
 	} arclink;
 
@@ -70,9 +71,14 @@ struct Settings : System::Application::AbstractSettings {
 		void accept(System::Application::SettingsLinker &linker) {
 			linker
 			& cfg(port, "port")
-			      & cli(port,
-			      "Server", "fdsnws-port",
-			      "Port to listen to for data requests with FDSNWS protocol");
+			& cli(port, "Server", "fdsnws-port",
+			      "Port to listen to for data requests with FDSNWS protocol",
+			      true)
+			& cfg(baseUrl, "baseUrl")
+			& cli(baseUrl, "Server", "fdsnws-baseurl",
+			      "The base URL for the FDSNWS service",
+			      true)
+			& cfg(maxTimeWindow, "maxTimeWindow");
 		}
 	} fdsnws;
 
