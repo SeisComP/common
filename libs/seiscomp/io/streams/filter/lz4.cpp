@@ -24,6 +24,7 @@
 #include "lz4/xxhash.c"
 
 #include <seiscomp/io/streams/filter/lz4.h>
+#include <stdexcept>
 
 
 namespace ext {
