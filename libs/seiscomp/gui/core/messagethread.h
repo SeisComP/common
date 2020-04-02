@@ -22,8 +22,10 @@
 #ifndef SEISCOMP_GUI_MESSAGETHREAD_H__
 #define SEISCOMP_GUI_MESSAGETHREAD_H__
 
+#ifndef Q_MOC_RUN
 #include <seiscomp/gui/qt4.h>
 #include <seiscomp/messaging/connection.h>
+#endif
 
 #include <QtGui>
 
