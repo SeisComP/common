@@ -229,7 +229,8 @@ SC_SYSTEM_CORE_API bool wildicmp(const std::string &wild, const std::string &str
 // -------------------------------------------------------------------------
 
 /**
- * @brief Tokenizes an input string.
+ * @brief Tokenizes an input string. Empty tokens will be skipped and not
+ *        returned (also referred to as compression).
  * @param str The input string. The address is modified that it will point to
  *            the next token.
  * @param delim A string of characters of allowed delimiters
@@ -238,9 +239,19 @@ SC_SYSTEM_CORE_API bool wildicmp(const std::string &wild, const std::string &str
  * @param len_tok The length of the returned token.
  * @return The address to the token found or NULL.
  */
-const char *tokenize(const char *&str, const char *delim,
-                     int &len_source, int &len_tok);
+template <typename T>
+T *tokenize(T *&str, const char *delim, int &len_source, int &len_tok);
 
+/**
+ * @brief Works like tokenize but does not compress empty tokens.
+ * @param str The input string. The address is modified that it will point to
+ *            the next token.
+ * @param delim A string of characters of allowed delimiters
+ * @param len_source The source length. This parameter will be modified
+ *                   to match the remaining length of the string.
+ * @param len_tok The length of the returned token.
+ * @return The address to the token found or NULL.
+ */
 template <typename T>
 T *tokenize2(T *&str, const char *delim, int &len_source, int &len_tok);
 

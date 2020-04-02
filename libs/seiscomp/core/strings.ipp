@@ -208,27 +208,27 @@ inline void toHex(std::string &target, T source) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-inline const char *tokenize(const char *&str, const char *delim,
-                            int &len_source, int &len_tok) {
+template <typename T>
+inline T *tokenize(T *&str, const char *delim, int &len_source, int &len_tok) {
 	len_tok = 0;
 	for ( ; len_source; --len_source, ++str ) {
 		// Hit first non delimiter?
-		if ( strchr(delim, *str) == NULL ) {
-			const char *tok = str;
+		if ( strchr(delim, *str) == nullptr ) {
+			T *tok = str;
 
 			++str; --len_source;
 			len_tok = 1;
 
 			// Hit first delimiter?
 			for ( ; len_source; --len_source, ++str, ++len_tok ) {
-				if ( strchr(delim, *str) != NULL )
+				if ( strchr(delim, *str) != nullptr )
 					break;
 			}
 			return tok;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -240,12 +240,12 @@ template <typename T>
 inline T *tokenize2(T *&str, const char *delim, int &len_source, int &len_tok) {
 	len_tok = 0;
 
-	if ( !len_source ) return NULL;
+	if ( !len_source ) return nullptr;
 
 	T *tok = str;
 	for ( ; len_source; --len_source, ++str, ++len_tok ) {
 		// Hit delimiter?
-		if ( strchr(delim, *str) != NULL ) {
+		if ( strchr(delim, *str) != nullptr ) {
 			// Move over delim
 			++str;
 			--len_source;
