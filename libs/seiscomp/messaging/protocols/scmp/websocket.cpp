@@ -792,7 +792,7 @@ Result WebsocketConnection::sendMessage(const std::string &targetGroup,
 		BufferPtr websocketFrame = new Buffer;
 
 		string blob;
-		if ( !encode(blob, msg, *contentEncoding, *contentType, -1) || blob.empty() )
+		if ( !encode(blob, msg, *contentEncoding, *contentType, schemaVersion().packed) || blob.empty() )
 			return EncodingError;
 
 		{

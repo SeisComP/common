@@ -1079,7 +1079,9 @@ void VBinaryArchive::writeHeader() {
 		_version = _forceWriteVersion;
 
 	writeBytes(MAGIC, strlen(MAGIC));
-	write((int)version().packed);
+
+	uint32_t versionTag = _version.majorTag() << 0x10 | _version.minorTag();
+	write((int)versionTag);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1114,7 +1116,9 @@ bool VBinaryArchive::readHeader() {
 
 	int v;
 	read(v);
-	setVersion(Core::Version(v));
+
+	uint32_t versionTag = uint32_t(v);
+	setVersion(Core::Version(versionTag >> 0x10, versionTag & 0xffff));
 
 	if ( v <= 0 || versionMajor() < 0 || versionMinor() < 0 ) {
 		_error = "invalid version";
