@@ -1512,6 +1512,7 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 		if ( p->subject == _registeredClientName ) {
 			// Register the subscribed group
 			_subscriptions.insert(p->target);
+			SEISCOMP_DEBUG("Subscribed to group %s", p->target.c_str());
 		}
 
 		if ( inboxPkt )
@@ -1540,8 +1541,10 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 			// Deregister the subscribed group
 			set<string>::iterator it;
 			it = _subscriptions.find(p->target);
-			if ( it != _subscriptions.end() )
+			if ( it != _subscriptions.end() ) {
 				_subscriptions.erase(it);
+				SEISCOMP_DEBUG("Left group %s", p->target.c_str());
+			}
 			else {
 				SEISCOMP_WARNING("[websocket] Received leave message for group %s which we did not subscribe",
 				                 p->target.c_str());
