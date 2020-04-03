@@ -66,6 +66,12 @@ enum Options {
 	opAll               = 0xFFFF
 };
 
+enum OrderBy {
+	obUndefined         = -1,
+	obOTimeAsc          = 0,
+	obOTimeDesc         = 1
+};
+
 // API and format version type
 typedef unsigned int Version;
 
@@ -168,13 +174,15 @@ class Connection : public Core::BaseObject {
 		/**
 		 * @brief Executes the hello command which retrieves the server ID and
 		 * API version.
-		 * @param id Server identifier including build version, e.g.
-		 * QuakeLink (gempa GmbH) v2020.083#da048827b
-		 * @return The API version reported by the server or 0 in case of an
-		 * error
-		 * @since API version 13.0.0
+		 * @param id Variable to store the server identifier including build
+		 * version, e.g. QuakeLink (gempa GmbH) v2020.083#da048827b
+		 * @param api Variable to store the server API version
+		 * @return True on success. Note: The first QuakeLink server versions
+		 * did not report a API version. If such a server is encountered the
+		 * version is set to 0.
+		 * @since SeisComP ABI version 13.0.0
 		 */
-		Version hello(std::string &id);
+		bool hello(std::string &id, Version &api);
 
 		/**
 		 * @brief Sets connection options
@@ -223,13 +231,27 @@ class Connection : public Core::BaseObject {
 		 *                UPDATED|OTIME op time |
 		 *                MAG|DEPTH|LAT|LON|PHASES|OTIME|UPDATED IS [NOT] NULL
 		 *   op        := =|>|>=|<|<=|eq|gt|ge|lt|ge
+		 * @param orderBy sort order of the results,
+		 * Note: Requires server API >= 1,
+		 * Since: SeisComP ABI version 13.0.0
+		 * @param limit maximum number of results to return, a value of 0 will
+		 * disable any limit,
+		 * Note: Requires server API >= 1,
+		 * Since: SeisComP ABI version 13.0.0
+		 * @param offset of the requested result set, a value of 0 will return
+		 * the first item
+		 * Note: Requires server API >= 1,
+		 * Since: SeisComP ABI version 13.0.0
 		 * @return True if the query could be executed
 		 */
 		bool selectArchived(Responses &responses,
 		                    const Core::Time &from = Core::Time(),
 		                    const Core::Time &to = Core::Time(),
 		                    const RequestFormatVersion &formatVersion = rfSummary,
-		                    const std::string &where = "");
+		                    const std::string &where = "",
+		                    OrderBy orderBy = obUndefined,
+		                    unsigned long limit = 0,
+		                    unsigned long offset = 0);
 
 		/**
 		 * @brief Selects updated and (optional) archived events. This call
@@ -252,6 +274,17 @@ class Connection : public Core::BaseObject {
 		 * events may be mixed. If set to an insufficient positive value updated
 		 * events may be lost if a buffer overflow occurs while archived events
 		 * are still processed.
+		 * @param orderBy sort order of the results,
+		 * Note: Requires server API >= 1,
+		 * Since: SeisComP ABI version 13.0.0
+		 * @param limit maximum number of results to return, a value of 0 will
+		 * disable any limit,
+		 * Note: Requires server API >= 1,
+		 * Since: SeisComP ABI version 13.0.0
+		 * @param offset of the requested result set, a value of 0 will return
+		 * the first item
+		 * Note: Requires server API >= 1,
+		 * Since: SeisComP ABI version 13.0.0
 		 * @return True if the query could be executed and then was gracefully
 		 * aborted.
 		 */
@@ -260,7 +293,10 @@ class Connection : public Core::BaseObject {
 		            const Core::Time &to = Core::Time(),
 		            const RequestFormatVersion &formatVersion = rfSummary,
 		            const std::string &where = "",
-		            int updatedBufferSize = 1000);
+		            int updatedBufferSize = 1000,
+		            OrderBy orderBy = obUndefined,
+		            unsigned long limit = 0,
+		            unsigned long offset = 0);
 
 		/**
 		 * @brief Gracefully aborts data transmission by sending an abort
@@ -273,17 +309,17 @@ class Connection : public Core::BaseObject {
 		 * @brief serverID
 		 * @return The server ID or an empty string if no connection could be
 		 * established.
-		 * @since API version 13.0.0
+		 * @since SeisComP ABI version 13.0.0
 		 */
 		const std::string& serverID();
 
 		/**
 		 * @brief serverAPI
-		 * @return The server API version or 0 if no connection could be
-		 * established
-		 * @since API version 13.0.0
+		 * @return The server API version or 0 if the version could not be
+		 * obtained
+		 * @since SeisComP ABI version 13.0.0
 		 */
-		unsigned int serverAPI();
+		Version serverAPI();
 
 		/**
 		 * @brief initialized
@@ -304,7 +340,7 @@ class Connection : public Core::BaseObject {
 		 * @param log If enabled negative answers will be logged
 		 * @return True if the format version combination is supported by the
 		 * current server connection
-		 * @since API version 13.0.0
+		 * @since SeisComP ABI version 13.0.0
 		 */
 		bool isSupported(const RequestFormatVersion &formatVersion,
 		                 bool log=false);
@@ -314,7 +350,7 @@ class Connection : public Core::BaseObject {
 		 * @param format The request format
 		 * @return Maximum format version supported by the current server
 		 * connection. Returns 0 if no connection could be established.
-		 * @since API version 13.0.0
+		 * @since SeisComP ABI version 13.0.0
 		 */
 		Version maximumSupportedVersion(RequestFormat format);
 
@@ -357,7 +393,7 @@ class Connection : public Core::BaseObject {
 
 		int                     _options;
 		std::string             _serverID;
-		unsigned int            _serverAPI;
+		Version                 _serverAPI;
 
 };
 

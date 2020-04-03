@@ -63,6 +63,29 @@ string requestFormat(RequestFormatVersion formatVersion) {
 	return ss.str();
 }
 
+inline
+bool orderByLimitOffset(stringstream &req, Version api, OrderBy orderBy,
+                        unsigned long limit, unsigned long offset) {
+	if ( (orderBy || limit || offset) && !api ) {
+		SEISCOMP_WARNING("Order by, limit and offset filter not supported by "
+		                 "server API 0");
+		return false;
+	}
+
+	if ( orderBy == obOTimeAsc )
+		req << " ORDER BY OTIME ASC";
+	else if ( orderBy == obOTimeDesc )
+		req << " ORDER BY OTIME DESC";
+
+	if ( limit ) {
+		req << " LIMIT " << limit;
+		if ( offset )
+			req << " OFFSET " << offset;
+	}
+
+	return true;
+}
+
 bool readHeaderValue(string &value, const string &line, const string &key) {
 	if ( !startsWith(line, key) ) return false;
 	value = line.substr(key.length());
@@ -187,12 +210,12 @@ void Connection::disconnect() {
 	_serverAPI = 0;
 }
 
-Version Connection::hello(std::string &id) {
+bool Connection::hello(std::string &id, Version &api) {
 	id.clear();
-	Version api = 0;
+	api = 0;
 
 	if ( !connect() || !sendRequest("HELLO") )
-		return api;
+		return false;
 
 	// read header lines
 	string line, tmpID, tmpAPI;
@@ -211,19 +234,18 @@ Version Connection::hello(std::string &id) {
 	if ( !welcome || !assertLineBreak() ) {
 		logAndDisconnect("HELLO: Server did not respond with 'WELCOME' "
 		                 "followed by new line in first 20 lines of response");
-		return api;
+		return false;
 	}
 
-	if ( tmpAPI.size() < 5 )
-		api = 1;
-	else if ( !Core::fromString(api, tmpAPI.substr(4)) ) {
+	if ( !tmpAPI.empty() &&
+	     !Core::fromString(api, Core::trim(tmpAPI).substr(4)) ) {
 		logAndDisconnect("HELLO: Server responded with non numeric API "
 		                 "version string");
-		return api;
+		return false;
 	}
 
 	id = tmpID;
-	return api;
+	return true;
 }
 
 bool Connection::setOptions(int options) {
@@ -302,19 +324,25 @@ bool Connection::get(Response &response, const std::string &eventId,
 bool Connection::selectArchived(Responses &responses, const Core::Time &from,
                                 const Core::Time &to,
                                 const RequestFormatVersion &formatVersion,
-                                const std::string &where) {
+                                const std::string &where, OrderBy orderBy,
+                                unsigned long limit, unsigned long offset) {
 	responses.clear();
 	if ( !connect() || !isSupported(formatVersion, true) )
 		return false;
 
 	// send request
-	string req = "SELECT ARCHIVED EVENTS";
-	if ( from ) req += " FROM " + from.toString(RequestTimeFormat);
-	if ( to ) req += " TO " + to.toString(RequestTimeFormat);
-	req += requestFormat(formatVersion);
-	if ( where.size() > 0 ) req += " WHERE " + where;
+	stringstream req;
+	req << "SELECT ARCHIVED EVENTS";
+	if ( from )
+		req << " FROM " << from.toString(RequestTimeFormat);
+	if ( to )
+		req << " TO " + to.toString(RequestTimeFormat);
+	req << requestFormat(formatVersion);
+	if ( where.size() > 0 )
+		req << " WHERE " + where;
 
-	if ( !sendRequest(req) )
+	if ( !orderByLimitOffset(req, _serverAPI, orderBy, limit, offset) ||
+	     !sendRequest(req.str()) )
 		return false;
 
 	// read responses
@@ -352,18 +380,26 @@ bool Connection::selectArchived(Responses &responses, const Core::Time &from,
 bool Connection::select(bool archived, const Core::Time &from,
                         const Core::Time &to,
                         const RequestFormatVersion &formatVersion,
-                        const std::string &where, int updatedBufferSize) {
+                        const std::string &where, int updatedBufferSize,
+                        OrderBy orderBy, unsigned long limit,
+                        unsigned long offset) {
+
 	if ( !connect() || !isSupported(formatVersion, true) )
 		return false;
 
 	// send request
-	string req = archived ? "SELECT EVENTS" : "SELECT UPDATED EVENTS";
-	if ( from ) req += " FROM " + from.toString(RequestTimeFormat);
-	if ( to ) req += " TO " + to.toString(RequestTimeFormat);
-	req += requestFormat(formatVersion);
-	if ( where.size() > 0 ) req += " WHERE " + where;
+	stringstream req;
+	req << (archived ? "SELECT EVENTS" : "SELECT UPDATED EVENTS");
+	if ( from )
+		req << " FROM " << from.toString(RequestTimeFormat);
+	if ( to )
+		req << " TO " << to.toString(RequestTimeFormat);
+	req << requestFormat(formatVersion);
+	if ( where.size() > 0 )
+		req << " WHERE " << where;
 
-	if ( !sendRequest(req) )
+	if ( !orderByLimitOffset(req, _serverAPI, orderBy, limit, offset) ||
+	     !sendRequest(req.str()) )
 		return false;
 
 	// cache of updates received during selection of archived events
@@ -452,7 +488,7 @@ Version Connection::serverAPI() {
 
 bool Connection::isSupported(const RequestFormatVersion &formatVersion,
                              bool log) {
-	if ( !connect() || _serverAPI == 0 )
+	if ( !connect() )
 		return false;
 
 	const Version &version = formatVersion.version();
@@ -461,7 +497,7 @@ bool Connection::isSupported(const RequestFormatVersion &formatVersion,
 
 	const FormatAPIMap::const_iterator it = APIMap.find(formatVersion);
 	if ( it != APIMap.end() && version - 2 < it->second.size() &&
-	       it->second[version - 2] <= _serverAPI )
+	     it->second[version - 2] <= _serverAPI )
 		return true;
 
 	if ( log ) {
@@ -473,7 +509,7 @@ bool Connection::isSupported(const RequestFormatVersion &formatVersion,
 Version Connection::maximumSupportedVersion(RequestFormat format) {
 	const FormatAPIMap::const_iterator map_it = APIMap.find(format);
 
-	if ( map_it == APIMap.end() || !connect() || _serverAPI == 0 )
+	if ( map_it == APIMap.end() || !connect() )
 		return 0;
 
 	Version maxVersion = 1;
@@ -507,8 +543,7 @@ bool Connection::connect() {
 		return false;
 	}
 
-	_serverAPI = hello(_serverID);
-	if ( _serverAPI == 0 )
+	if ( !hello(_serverID, _serverAPI) )
 		return false;
 
 	if ( _user.empty() ) {
