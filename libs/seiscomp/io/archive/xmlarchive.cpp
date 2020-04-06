@@ -85,7 +85,7 @@ bool isValidTag(xmlNodePtr node, const xmlChar* name, const char* targetClass) {
 	if ( node->type != XML_ELEMENT_NODE )
 		return false;
 
-	xmlChar* prop = xmlGetProp(node, (const xmlChar*)"role");	
+	xmlChar* prop = xmlGetProp(node, (const xmlChar*)"role");
 	bool isValid = !xmlStrcmp(prop, (const xmlChar*)name) || (prop == NULL && *name == '\0');
 	// if the role attribute is not the correct one but
 	// a role attribute has been defined and set to another value
@@ -381,7 +381,15 @@ bool XMLArchive::create(bool writeVersion, bool headerNode) {
 	else
 		setVersion(Core::Version(0,0));
 
-	_namespace.second = SEISCOMP_DATAMODEL_XMLNS_ROOT + version().toString();
+
+	std::stringstream versionString;
+	versionString << SEISCOMP_DATAMODEL_XMLNS_ROOT
+	              << int(version().majorTag()) << "."
+	              << int(version().minorTag());
+	int patchTag = int(version().patchTag());
+	if ( patchTag > 0 )
+		versionString << "." << patchTag;
+	_namespace.second = versionString.str();
 
 	xmlDocPtr doc = xmlNewDoc(NULL);
 	void* rootNode = NULL;
