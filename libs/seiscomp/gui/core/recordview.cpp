@@ -2784,10 +2784,15 @@ void RecordView::dragEnterEvent(QDragEnterEvent *event) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::dropEvent(QDropEvent *event) {
 	if ( event->mimeData()->hasFormat("text/plain") ) {
-		if ( setFilterByName(event->mimeData()->text()) ) {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+		QString strFilter = event->mimeData()->text();
+#else
+		QString strFilter = event->mimeData()->data("text/plain");
+#endif
+		if ( setFilterByName(strFilter) ) {
 			enableFilter(true);
 			event->acceptProposedAction();
-			emit filterChanged(event->mimeData()->text());
+			emit filterChanged(strFilter);
 		}
 	}
 }

@@ -462,17 +462,24 @@ class TraceList : public RecordView {
 
 		void dropEvent(QDropEvent *event) {
 			if ( event->mimeData()->hasFormat("text/plain") ) {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+				QString strFilter = event->mimeData()->text();
+#else
+				QString strFilter = event->mimeData()->data("text/plain");
+#endif
 				Math::Filtering::InPlaceFilter<float> *f =
-					Math::Filtering::InPlaceFilter<float>::Create(event->mimeData()->text().toStdString());
+					Math::Filtering::InPlaceFilter<float>::Create(strFilter.toStdString());
 
 				if ( !f ) {
-					QMessageBox::critical(this, "Create filter",
-					QString("Invalid filter: %1").arg(event->mimeData()->text()));
+					QMessageBox::critical(
+						this, "Create filter",
+						QString("Invalid filter: %1").arg(strFilter)
+					);
 					return;
 				}
 
 				delete f;
-				emit filterChanged(event->mimeData()->text());
+				emit filterChanged(strFilter);
 			}
 		}
 };
@@ -8787,7 +8794,7 @@ void PickerView::changeFilter(int index, bool force) {
 
 	RecordWidget::Filter *newFilter = RecordWidget::Filter::Create(filter.toStdString());
 
-	if ( newFilter == NULL ) {
+	if ( !newFilter ) {
 		QMessageBox::critical(this, "Invalid filter",
 		                      QString("Unable to create filter: %1\nFilter: %2").arg(name).arg(filter));
 
