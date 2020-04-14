@@ -703,8 +703,14 @@ Result WebsocketConnection::sendData(const string &targetGroup,
 	if ( targetGroup.empty() )
 		return MissingGroup;
 
-	if ( _groups.find(targetGroup) == _groups.end() )
-		return GroupDoesNotExist;
+	{
+		boost::mutex::scoped_lock l(_readMutex);
+		if ( _registeredClientName.empty() )
+			return NotConnected;
+
+		if ( _groups.find(targetGroup) == _groups.end() )
+			return GroupDoesNotExist;
+	}
 
 	{
 		boost::mutex::scoped_lock l(_writeMutex);
@@ -771,14 +777,20 @@ Result WebsocketConnection::sendMessage(const std::string &targetGroup,
 	if ( targetGroup.empty() )
 		return MissingGroup;
 
-	if ( _groups.find(targetGroup) == _groups.end() )
-		return GroupDoesNotExist;
-
 	if ( !contentType )
 		return ContentTypeRequired;
 
 	if ( !contentEncoding )
 		return ContentEncodingRequired;
+
+	{
+		boost::mutex::scoped_lock l(_readMutex);
+		if ( _registeredClientName.empty() )
+			return NotConnected;
+
+		if ( _groups.find(targetGroup) == _groups.end() )
+			return GroupDoesNotExist;
+	}
 
 	{
 		boost::mutex::scoped_lock l(_writeMutex);
