@@ -48,8 +48,8 @@ Timer::Timer() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::setInterval(uint32_t seconds, uint32_t nanoseconds) {
-	struct itimerspec newValue;
-	struct timespec ts;
+	itimerspec newValue;
+	timespec ts;
 
 	if ( _fd < 0 ) {
 		_fd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK);
