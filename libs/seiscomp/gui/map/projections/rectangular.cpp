@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 
-#include <seiscomp/gui/map/rectangularprojection.h>
+#include <seiscomp/gui/map/projections/rectangular.h>
 #include <seiscomp/gui/map/texturecache.ipp>
 
 #include <seiscomp/math/geo.h>

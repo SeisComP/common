@@ -9,7 +9,6 @@ SET(GUI_MAP_SOURCES
 	mapwidget.cpp
 	texturecache.cpp
 	projection.cpp
-	rectangularprojection.cpp
 )
 
 SET(GUI_MAP_HEADERS
@@ -20,7 +19,6 @@ SET(GUI_MAP_HEADERS
 	texturecache.h
 	texturecache.ipp
 	projection.h
-	rectangularprojection.h
 )
 
 SET(GUI_MAP_MOC_HEADERS
@@ -35,5 +33,6 @@ SET(GUI_MAP_RESOURCES
 	mapicons.qrc
 )
 
+SC_ADD_GUI_SUBDIR_SOURCES(GUI_MAP projections)
 SC_ADD_GUI_SUBDIR_SOURCES(GUI_MAP layers)
 SC_SETUP_GUI_LIB_SUBDIR(GUI_MAP)

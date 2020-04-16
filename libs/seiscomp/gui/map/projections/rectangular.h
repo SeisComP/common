@@ -18,9 +18,8 @@
  ***************************************************************************/
 
 
-
-#ifndef SEISCOMP_GUI_MAP_RECTANGULAR_PROJECTION_H__
-#define SEISCOMP_GUI_MAP_RECTANGULAR_PROJECTION_H__
+#ifndef SEISCOMP_GUI_MAP_PROJECTIONS_RECTANGULAR_H__
+#define SEISCOMP_GUI_MAP_PROJECTIONS_RECTANGULAR_H__
 
 
 #include <QImage>

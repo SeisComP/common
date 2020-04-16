@@ -1,0 +1,11 @@
+SET(GUI_MAP_PROJECTIONS_SOURCES
+	mercator.cpp
+	rectangular.cpp
+)
+
+SET(GUI_MAP_LAYER_HEADERS
+	mercator.h
+	rectangular.h
+)
+
+SC_SETUP_GUI_LIB_SUBDIR(GUI_MAP_PROJECTIONS)
