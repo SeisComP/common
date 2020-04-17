@@ -130,8 +130,9 @@ class SC_BROKER_API Client {
 		 *
 		 * @param sender The sender of the message
 		 * @param msg The message
+		 * @return Number of bytes sent
 		 */
-		virtual void publish(Client *sender, Message *msg) = 0;
+		virtual size_t publish(Client *sender, Message *msg) = 0;
 
 		/**
 		 * @brief Notifies a client that a new member entered a group the client

@@ -276,7 +276,7 @@ bool WebsocketSession::handleWSUpgrade(HttpRequest &req) {
 
 	if ( req.secWebsocketVersion != 13 ) {
 		SEISCOMP_ERROR("Invalid websocket version: %d", req.secWebsocketVersion);
-		sendStatus(HTTP_400);
+		sendStatus(HTTP_400, "Invalid websocket version");
 		return true;
 	}
 
@@ -293,7 +293,7 @@ bool WebsocketSession::handleWSUpgrade(HttpRequest &req) {
 		return true;
 	}
 
-	sendStatus(HTTP_400);
+	sendStatus(HTTP_404);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1063,17 +1063,17 @@ Socket::IPAddress WebsocketSession::IPAddress() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void WebsocketSession::publish(Broker::Client *sender, Broker::Message *msg) {
+size_t WebsocketSession::publish(Broker::Client *sender, Broker::Message *msg) {
 	if (_request.state == HttpRequest::FINISHED )
-		return;
+		return 0;
 
 	if ( discardSelf() && msg->selfDiscard && this == sender )
-		return;
+		return 0;
 
 	if ( msg->sequenceNumber != INVALID_SEQUENCE_NUMBER ) {
 		if ( _continueWithSeqNo ) {
 			++_messageBacklog;
-			return;
+			return 0;
 		}
 		else if ( inAvail() ) {
 			// Remember that there are new messages queued for us. We don't
@@ -1081,11 +1081,11 @@ void WebsocketSession::publish(Broker::Client *sender, Broker::Message *msg) {
 			// bytes
 			_continueWithSeqNo = msg->sequenceNumber;
 			++_messageBacklog;
-			return;
+			return 0;
 		}
 	}
 
-	sendMessage(msg);
+	return sendMessage(msg);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1208,8 +1208,8 @@ void WebsocketSession::dispose() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void WebsocketSession::sendMessage(Broker::Message *msg) {
-	if ( !_upgradedToWebsocket ) return;
+size_t WebsocketSession::sendMessage(Broker::Message *msg) {
+	if ( !_upgradedToWebsocket ) return 0;
 
 	if ( !msg->encodingWebSocket ) {
 		// Create new buffer. Other session will reuse it and send
@@ -1250,6 +1250,7 @@ void WebsocketSession::sendMessage(Broker::Message *msg) {
 			   << msg->payload;
 		}
 		else {
+			frameType = Websocket::Frame::TextFrame;
 			osstream os(msg->encodingWebSocket->data);
 			os << SCMP_PROTO_REPLY_STATE "\n"
 			   << SCMP_PROTO_REPLY_STATE_HEADER_DESTINATION ":" << msg->target << "\n"
@@ -1282,6 +1283,8 @@ void WebsocketSession::sendMessage(Broker::Message *msg) {
 	SEISCOMP_DEBUG("- message from %s/%s to %s",
 	               _queue->name().c_str(), msg->target.c_str(), name().c_str());
 	*/
+
+	return frameLength;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

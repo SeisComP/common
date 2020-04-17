@@ -26,7 +26,7 @@
 @import "font-roboto.scss";
 
 
-$pageMaxWidth  : 70em;
+$pageMaxWidth  : 70rem;
 $lineHeight    : 1.6em;
 
 
@@ -114,10 +114,9 @@ section, .container {
 }
 
 footer {
-	background: darken($secondaryBackground, 10);
-	color: darken($secondaryForeground, 20);
 	text-align: center;
 	font-size: 0.8rem;
+	margin-top: $contentSpacing;
 
 	.content {
 		margin: 0;
@@ -319,10 +318,25 @@ p.important {
 	}
 }
 
-.logo {
-	background-repeat: no-repeat;
-	background-position: right center;
-	height: 1.4em;
-	float: right;
-	width: 5em;
+.brand {
+	position: absolute;
+	height: 4rem;
+	left: 0;
+	opacity: 0.8;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.stretch {
+	flex: 1 1 auto;
+}
+
+.fade-in {
+	transition: opacity 0.2s;
+
+	&:hover {
+		opacity: 1;
+	}
 }

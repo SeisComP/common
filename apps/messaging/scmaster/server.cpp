@@ -220,6 +220,8 @@ void Server::createStatisticsSnapshot() {
 	stats->timestamp = Core::Time::GMT();
 	stats->queues.resize(numberOfQueues());
 
+	lockStatistics();
+
 	_cummulatedStats.queues.resize(numberOfQueues());
 
 	size_t idx;
@@ -256,6 +258,17 @@ void Server::createStatisticsSnapshot() {
 	json << NAMED_OBJECT("stats", *stats);
 	json.close();
 	*/
+
+	unlockStatistics();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ServerStatistics &Server::cummulatedStatistics() {
+	return _cummulatedStats;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -277,6 +290,8 @@ bool Server::init() {
 
 		item.thread = new thread(bind(&QueueWorker::run, item.worker));
 	}
+
+	createStatisticsSnapshot();
 
 	return true;
 }

@@ -21,6 +21,7 @@
  ***************************************************************************/
 
 
+#include <seiscomp/io/archive/jsonarchive.h>
 #include <seiscomp/wired/buffers/file.h>
 
 #include "http.h"
@@ -59,21 +60,61 @@ bool HttpSession::handleGETRequest(Wired::HttpRequest &req) {
 		return true;
 	}
 
-	string localPath = req.path.substr(global.http.staticPath.size());
+	if ( !global.http.staticPath.empty() ) {
+		req.path.erase(0, global.http.staticPath.size());
+	}
+
+	Wired::URLInsituPath path(req.path);
+	const char *filename = path.part_start;
+
+	if ( path.next() ) {
+		if ( path == "api" ) {
+			if ( path.next() ) {
+				if ( path == "stats.json" ) {
+					Wired::BufferPtr response = new Wired::Buffer;
+					_server->lockStatistics();
+					{
+						boost::iostreams::stream<Core::ContainerSink<string>> os(response->data);
+						IO::JSONArchive json;
+						json.create(&os);
+						json << NAMED_OBJECT("stats", _server->cummulatedStatistics());
+						json.close();
+					}
+					_server->unlockStatistics();
+					sendResponse(response.get(), Wired::HTTP_200, "application/json");
+					return true;
+				}
+			}
+
+			sendResponse(Wired::HTTP_404);
+			return true;
+		}
+	}
 
 	// Not more than 1kb as buffer
 	Wired::FileBufferPtr file = new Wired::FileBuffer(1024);
-	string fn = global.http.filebase + localPath;
+	string fn = global.http.filebase + filename;
+	if ( fn.empty() ) {
+		sendResponse(Wired::HTTP_404);
+		return true;
+	}
 
-	if ( fn[fn.length()-1] == '/' )
+	const char *mimeType = nullptr;
+
+	if ( fn[fn.size()-1] == '/' ) {
 		fn += "index.html";
-
-	std::cerr << fn << std::endl;
+		mimeType = Wired::FileBuffer::mimeType(Wired::FileBuffer::HTML);
+	}
+	else {
+		size_t pdot = fn.rfind('.');
+		if ( pdot != string::npos )
+			mimeType = Wired::FileBuffer::mimeType(&fn[pdot+1]);
+	}
 
 	if ( !file->open(fn, "r") )
 		sendStatus(Wired::HTTP_404);
 	else
-		sendResponse(file.get(), Wired::HTTP_200, NULL);
+		sendResponse(file.get(), Wired::HTTP_200, mimeType);
 
 	return true;
 }

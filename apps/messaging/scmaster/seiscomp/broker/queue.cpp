@@ -814,6 +814,7 @@ void Queue::timeout() {
 				item->getInfo(now, os);
 		}
 
+		double lengthPayload = sohMessage.payload.size();
 
 		auto git = _groups.find(sohMessage.target);
 		if ( git != _groups.end() ) {
@@ -823,14 +824,16 @@ void Queue::timeout() {
 
 			Group::Members::iterator mit;
 			for ( mit = group->_members.begin(); mit != group->_members.end(); ++mit ) {
-				(*mit)->publish(NULL, &sohMessage);
+				double lengthMessage = (*mit)->publish(NULL, &sohMessage);
 				// Each message sent to a member of a particular group is tagged
 				// as sent.
 				++git->second->_txMessages.sent;
-				git->second->_txBytes.sent += sohMessage.payload.size();
+				git->second->_txPayload.sent += lengthPayload;
+				git->second->_txBytes.sent += lengthMessage;
 
 				++_txMessages.sent;
-				_txPayload.sent += sohMessage.payload.size();
+				_txPayload.sent += lengthPayload;
+				_txBytes.sent += lengthMessage;
 			}
 		}
 	}

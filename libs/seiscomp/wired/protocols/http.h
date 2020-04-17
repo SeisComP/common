@@ -480,7 +480,9 @@ inline int URLPath::remainderLength() const {
 }
 
 inline URLInsituPath::URLInsituPath(std::string &s)
-: _source(&s[0])
+: part_start(&s[0])
+, part_len(0)
+, _source(part_start)
 , _source_len(s.size())
 {
 	while ( _source_len && (*_source == '/') ) {
@@ -490,7 +492,9 @@ inline URLInsituPath::URLInsituPath(std::string &s)
 }
 
 inline URLInsituPath::URLInsituPath(char *src, int l)
-: _source(src)
+: part_start(src)
+, part_len(0)
+, _source(part_start)
 , _source_len(l)
 {
 	while ( _source_len && (*_source == '/') ) {

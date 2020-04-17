@@ -87,7 +87,7 @@ class WebsocketSession : public HttpSession, Broker::Client {
 	protected:
 		virtual Wired::Socket::IPAddress IPAddress() const override;
 
-		virtual void publish(Broker::Client *sender, Broker::Message *msg) override;
+		virtual size_t publish(Broker::Client *sender, Broker::Message *msg) override;
 		virtual void enter(const Broker::Group *group, const Broker::Client *newMember,
 		                   Broker::Message *msg) override;
 		virtual void leave(const Broker::Group *, const Broker::Client *newMember,
@@ -102,7 +102,7 @@ class WebsocketSession : public HttpSession, Broker::Client {
 	//  Private interface
 	// ----------------------------------------------------------------------
 	private:
-		void sendMessage(Broker::Message *msg);
+		size_t sendMessage(Broker::Message *msg);
 
 
 	// ----------------------------------------------------------------------

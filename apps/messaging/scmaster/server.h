@@ -115,6 +115,10 @@ class Server : public Wired::Server {
 		size_t numberOfQueues() const;
 
 		void createStatisticsSnapshot();
+		ServerStatistics &cummulatedStatistics();
+
+		void lockStatistics() { _statsMutex.lock(); }
+		void unlockStatistics() { _statsMutex.unlock(); }
 
 
 	// ----------------------------------------------------------------------
@@ -143,6 +147,7 @@ class Server : public Wired::Server {
 		Queues                               _queues;
 		circular_buffer<ServerStatisticsPtr> _serverStats;
 		ServerStatistics                     _cummulatedStats;
+		std::mutex                           _statsMutex;
 };
 
 
