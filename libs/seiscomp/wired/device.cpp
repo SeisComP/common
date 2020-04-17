@@ -118,8 +118,8 @@ Device::Device() : _fd(-1) {
 #ifdef SEISCOMP_WIRED_KQUEUE
 	_activeMode = Idle;
 #endif
-	_group = NULL;
-	_qPrev = _qNext = NULL;
+	_group = nullptr;
+	_qPrev = _qNext = nullptr;
 	_timeout = -1;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -132,8 +132,8 @@ Device::Device(int fd) : _fd(fd) {
 	++_deviceCount;
 	_selectMode = Idle;
 #if defined(SEISCOMP_WIRED_EPOLL) || defined(SEISCOMP_WIRED_KQUEUE)
-	_group = NULL;
-	_qPrev = _qNext = NULL;
+	_group = nullptr;
+	_qPrev = _qNext = nullptr;
 	_timeout = -1;
 #endif
 }
@@ -239,7 +239,7 @@ int Device::fd() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DeviceGroup::DeviceGroup() {
 	_interrupt_read_fd = _interrupt_write_fd = -1;
-	_queue = NULL;
+	_queue = nullptr;
 	_isInSelect = false;
 #ifdef SEISCOMP_WIRED_SELECT
 	FD_ZERO(&_read_set);
@@ -411,7 +411,7 @@ bool DeviceGroup::setup() {
 
 		struct epoll_event ev;
 		ev.events = _defaultOps | EPOLLIN;
-		ev.data.ptr = NULL;
+		ev.data.ptr = nullptr;
 		if ( epoll_ctl(_epoll_fd, EPOLL_CTL_ADD, _interrupt_read_fd, &ev) == -1 ) {
 			SEISCOMP_ERROR("epoll_add1(%d, %d): %d: %s", _epoll_fd, _interrupt_read_fd, errno, strerror(errno));
 			return false;
@@ -421,7 +421,7 @@ bool DeviceGroup::setup() {
 
 		struct kevent ev;
 		EV_SET(&ev, _interrupt_read_fd, EVFILT_READ, EV_RECEIPT | EV_ADD | _defaultOps, 0, 0, 0);
-		if ( kevent(_kqueue_fd, &ev, 1, NULL, 0, NULL) == -1 ) {
+		if ( kevent(_kqueue_fd, &ev, 1, nullptr, 0, nullptr) == -1 ) {
 			SEISCOMP_ERROR("kqueue add: %d: %s", errno, strerror(errno));
 			return false;
 		}
@@ -438,33 +438,33 @@ bool DeviceGroup::setup() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DeviceGroup::append(Device *s) {
+bool DeviceGroup::append(Device *dev) {
 #ifdef SEISCOMP_WIRED_SELECT
 	if ( s->_groupIterator != Device::Iterator() ) {
 		SEISCOMP_WARNING("Device is already part of a group");
 		return false;
 	}
 #else
-	if ( s->_group != NULL ) {
+	if ( dev->_group ) {
 		SEISCOMP_WARNING("Device is already part of a group");
 		return false;
 	}
 #endif
 
-	if ( !s->isValid() ) return false;
+	if ( !dev->isValid() ) return false;
 #ifdef SEISCOMP_WIRED_EPOLL
 
 	if ( _epoll_fd <= 0 && !setup() ) return false;
 
-	if ( s->_timeout >= 0 ) applyTimeout(s);
+	if ( dev->_timeout >= 0 ) applyTimeout(dev);
 
 	struct epoll_event ev;
 	ev.events = _defaultOps;
-	ev.data.ptr = s;
+	ev.data.ptr = dev;
 	//SEISCOMP_DEBUG("[reactor] appending device");
 
-	if ( epoll_ctl(_epoll_fd, EPOLL_CTL_ADD, s->fd(), &ev) == -1 ) {
-		SEISCOMP_ERROR("epoll_add2(%d, %d): %d: %s", _epoll_fd, s->fd(), errno, strerror(errno));
+	if ( epoll_ctl(_epoll_fd, EPOLL_CTL_ADD, dev->fd(), &ev) == -1 ) {
+		SEISCOMP_ERROR("epoll_add2(%d, %d): %d: %s", _epoll_fd, dev->fd(), errno, strerror(errno));
 		return false;
 	}
 
@@ -491,8 +491,8 @@ bool DeviceGroup::append(Device *s) {
 	s->_groupIterator = _devices.insert(_devices.end(), s);
 #endif
 
-	s->_group = this;
-	updateState(s);
+	dev->_group = this;
+	updateState(dev);
 
 	return true;
 }
@@ -548,7 +548,7 @@ bool DeviceGroup::remove(Device *s) {
 	}
 #endif
 
-	s->_group = NULL;
+	s->_group = nullptr;
 	clearState(s);
 #ifdef SEISCOMP_WIRED_SELECT
 	if ( _selectIterator == s->_groupIterator )
@@ -573,7 +573,7 @@ bool DeviceGroup::remove(Device *s) {
 		// Remove read and write events
 		EV_SET(&ev[0], s->fd(), EVFILT_READ, EV_DELETE, 0, 0, s);
 		EV_SET(&ev[1], s->fd(), EVFILT_WRITE, EV_DELETE, 0, 0, s);
-		if ( kevent(_kqueue_fd, ev, 2, NULL, 0, NULL) == -1 )
+		if ( kevent(_kqueue_fd, ev, 2, nullptr, 0, nullptr) == -1 )
 			SEISCOMP_WARNING("kqueue del(%d): %d: %s",
 			                 s->fd(), errno, strerror(errno));
 	}
@@ -582,7 +582,7 @@ bool DeviceGroup::remove(Device *s) {
 	// Remove from queue
 	//cout << "Remove device " << s << " completely" << endl;
 	if ( _nextQueue == s ) _nextQueue = _nextQueue->_qNext;
-	if ( s->_qPrev != NULL || s->_qNext != NULL || s == _queue )
+	if ( s->_qPrev || s->_qNext || s == _queue )
 		removeFromQueue(s);
 
 #ifdef SEISCOMP_WIRED_SELECT
@@ -683,14 +683,14 @@ Device *DeviceGroup::wait() {
 	if ( _epoll_fd <= 0 ) {
 		// This error should only occur if no device has been added so far
 		//SEISCOMP_ERROR("[reactor] no epoll handle");
-		return NULL;
+		return nullptr;
 	}
 #endif
 #ifdef SEISCOMP_WIRED_KQUEUE
 	if ( _kqueue_fd <= 0 ) {
 		// This error should only occur if no device has been added so far
 		//SEISCOMP_ERROR("[reactor] no kqueue handle");
-		return NULL;
+		return nullptr;
 	}
 #endif
 
@@ -698,18 +698,18 @@ Device *DeviceGroup::wait() {
 	//SEISCOMP_DEBUG("[reactor] epoll_wait");
 #ifdef SEISCOMP_WIRED_KQUEUE
 	struct timespec ts_timeout;
-	struct timespec *ts_timeout_used = NULL;
+	struct timespec *ts_timeout_used = nullptr;
 #endif
 #ifdef SEISCOMP_WIRED_SELECT
 	struct timeval tv_timeout;
-	struct timeval *tv_timeout_used = NULL;
+	struct timeval *tv_timeout_used = nullptr;
 #endif
 	int timeout = -1;
 	struct timeval tv_start;
 
 	// Compute current timeout
 	if ( _queue ) {
-		gettimeofday(&tv_start, NULL);
+		gettimeofday(&tv_start, nullptr);
 		timeout = _queue->_ticker;
 #ifdef SEISCOMP_WIRED_KQUEUE
 		// Convert scalar milliseconds to timespec structure
@@ -730,16 +730,16 @@ Device *DeviceGroup::wait() {
 	int nfds = epoll_wait(_epoll_fd, _epoll_events, SEISCOMP_WIRED_EPOLL_EVENT_BUFFER, timeout);
 #endif
 #ifdef SEISCOMP_WIRED_KQUEUE
-	int nfds = kevent(_kqueue_fd, NULL, 0, _kqueue_events, SEISCOMP_WIRED_KQUEUE_EVENT_BUFFER, ts_timeout_used);
+	int nfds = kevent(_kqueue_fd, nullptr, 0, _kqueue_events, SEISCOMP_WIRED_KQUEUE_EVENT_BUFFER, ts_timeout_used);
 #endif
 #ifdef SEISCOMP_WIRED_SELECT
-	int nfds = ::select(FD_SETSIZE, &_read_active_set, &_write_active_set, NULL, tv_timeout_used);
+	int nfds = ::select(FD_SETSIZE, &_read_active_set, &_write_active_set, nullptr, tv_timeout_used);
 #endif
 	//SEISCOMP_DEBUG("[reactor] epoll_wait::finished");
 	_isInSelect = false;
 	if ( (nfds == -1) && (errno != EINTR) ) {
 		//SEISCOMP_ERROR("[reactor] wait: %d: %s", errno, strerror(errno));
-		return NULL;
+		return nullptr;
 	}
 	// timeout?
 	else if ( nfds == 0 && timeout >= 0 ) {
@@ -748,7 +748,7 @@ Device *DeviceGroup::wait() {
 	}
 	else if ( _queue ) {
 		struct timeval tv_end;
-		gettimeofday(&tv_end, NULL);
+		gettimeofday(&tv_end, nullptr);
 		int ms = tv_sub_ms(&tv_end, &tv_start);
 		_lastCallDuration = ms;
 		//SEISCOMP_DEBUG("[reactor] last call took %d ms", _lastCallDuration);
@@ -876,7 +876,7 @@ Device *DeviceGroup::next() {
 	#ifdef SEISCOMP_WIRED_KQUEUE
 		Device *device = reinterpret_cast<Device *>(_kqueue_events[_selectIndex].udata);
 	#endif
-		if ( device == NULL ) {
+		if ( !device ) {
 			//SEISCOMP_DEBUG("[reactor] got trigger from interrupt");
 			// Here the interrupt fd has been triggered
 			if ( _interrupt_write_fd == _interrupt_read_fd ) {
@@ -947,7 +947,7 @@ Device *DeviceGroup::next() {
 	_selectIndex = _selectSize = -1;
 #endif
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -966,7 +966,7 @@ void DeviceGroup::removeFromQueue(Device *d) {
 	if ( d->_qNext )
 		d->_qNext->_qPrev = d->_qPrev;
 
-	d->_qPrev = d->_qNext = NULL;
+	d->_qPrev = d->_qNext = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1009,8 +1009,7 @@ void DeviceGroup::applyTimeout(Device *d) {
 	//cout << "Find new position for " << d << "  " << d->_ticker << "  " << d->_qPrev << "  " << d->_qNext << endl;
 
 	// Device already queued?
-	if ( _queue != NULL &&
-	     (d->_qNext != NULL || d->_qPrev != NULL || _queue == d) ) {
+	if ( _queue && (d->_qNext || d->_qPrev || _queue == d) ) {
 		//cout << " - already queued" << endl;
 
 		if ( d->_timeout >= 0 ) {
@@ -1066,15 +1065,15 @@ void DeviceGroup::applyTimeout(Device *d) {
 		//cout << " - add to queue" << endl;
 
 		// Add it to the queue and find the correct position
-		if ( _queue == NULL ) {
+		if ( !_queue ) {
 			_queue = d;
-			d->_qPrev = d->_qNext = NULL;
+			d->_qPrev = d->_qNext = nullptr;
 		}
 		else {
 			Device *pos = _queue;
-			Device *last = NULL;
+			Device *last = nullptr;
 
-			while ( pos != NULL ) {
+			while ( pos ) {
 				if ( pos->_ticker > d->_ticker ) {
 					// Found position
 					d->_qNext = pos;
@@ -1106,12 +1105,12 @@ void DeviceGroup::applyTimeout(Device *d) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DeviceGroup::updateState(Device *s) {
+void DeviceGroup::updateState(Device *dev) {
 #ifdef SEISCOMP_WIRED_EPOLL
 	struct epoll_event ev;
 	if ( _epoll_fd <= 0 ) return;
 	ev.events = _defaultOps;
-	ev.data.ptr = s;
+	ev.data.ptr = dev;
 
 #endif
 #ifdef SEISCOMP_WIRED_KQUEUE
@@ -1120,9 +1119,9 @@ void DeviceGroup::updateState(Device *s) {
 	int kevent_cnt = 0;
 
 #endif
-	if ( !s->isValid() ) return;
+	if ( !dev->isValid() ) return;
 
-	int sm = s->selectMode();
+	int sm = dev->selectMode();
 
 	if ( sm & Device::Read ) {
 		//SEISCOMP_DEBUG("fd %d: set read", s->_fd);
@@ -1190,8 +1189,8 @@ void DeviceGroup::updateState(Device *s) {
 
 	if ( sm & Device::Closed ) {
 #ifdef SEISCOMP_WIRED_EPOLL
-		if ( epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, s->fd(), &ev) == -1 )
-			SEISCOMP_ERROR("epoll_del(%d): %d: %s", s->fd(), errno, strerror(errno));
+		if ( epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, dev->fd(), &ev) == -1 )
+			SEISCOMP_ERROR("epoll_del(%d): %d: %s", dev->fd(), errno, strerror(errno));
 #endif
 #ifdef SEISCOMP_WIRED_KQUEUE
 		kevent_cnt = 0;
@@ -1206,20 +1205,20 @@ void DeviceGroup::updateState(Device *s) {
 			++kevent_cnt;
 			//SEISCOMP_DEBUG("[reactor] kqueue disable event READ for device %d", s->_fd);
 		}
-		if ( kevent_cnt && kevent(_kqueue_fd, ev, kevent_cnt, NULL, 0, NULL) == -1 )
+		if ( kevent_cnt && kevent(_kqueue_fd, ev, kevent_cnt, nullptr, 0, nullptr) == -1 )
 			SEISCOMP_ERROR("kqueue del(%d): %d: %s", s->fd(), errno, strerror(errno));
 #endif
 		// Remove device from queue
-		if ( _nextQueue == s ) _nextQueue = _nextQueue->_qNext;
-		if ( s->_qPrev != NULL || s->_qNext != NULL || s == _queue )
-			removeFromQueue(s);
+		if ( _nextQueue == dev ) _nextQueue = _nextQueue->_qNext;
+		if ( dev->_qPrev || dev->_qNext || dev == _queue )
+			removeFromQueue(dev);
 	}
 #ifdef SEISCOMP_WIRED_EPOLL
-	else if ( epoll_ctl(_epoll_fd, EPOLL_CTL_MOD, s->fd(), &ev) == -1 )
-		SEISCOMP_ERROR("epoll_mod(%d): %d: %s", s->fd(), errno, strerror(errno));
+	else if ( epoll_ctl(_epoll_fd, EPOLL_CTL_MOD, dev->fd(), &ev) == -1 )
+		SEISCOMP_ERROR("epoll_mod(%d): %d: %s", dev->fd(), errno, strerror(errno));
 #endif
 #ifdef SEISCOMP_WIRED_KQUEUE
-	else if ( kevent_cnt && kevent(_kqueue_fd, ev, kevent_cnt, NULL, 0, NULL) == -1 )
+	else if ( kevent_cnt && kevent(_kqueue_fd, ev, kevent_cnt, nullptr, 0, nullptr) == -1 )
 		SEISCOMP_ERROR("kqueue mod(%d): %d: %s", s->fd(), errno, strerror(errno));
 
 	// Remember the last mode

@@ -50,12 +50,12 @@ Reactor::Reactor() {
 bool Reactor::addSession(Session *session) {
 	lock_guard<mutex> l(_mutex);
 
-	if ( session == NULL || session->device() == NULL ) {
+	if ( !session || !session->device() ) {
 		SEISCOMP_WARNING("[reactor] invalid session for reactor");
 		return false;
 	}
 
-	if ( session->_parent != NULL ) {
+	if ( session->_parent ) {
 		SEISCOMP_WARNING("[reactor] session is already part of a reactor");
 		return false;
 	}
@@ -66,7 +66,7 @@ bool Reactor::addSession(Session *session) {
 
 	if ( !_devices.append(session->device()) ) {
 		SEISCOMP_ERROR("[reactor] failed to add socket to group");
-		session->_parent = NULL;
+		session->_parent = nullptr;
 		return false;
 	}
 
@@ -98,7 +98,7 @@ bool Reactor::addSessionDeferred(Session *session) {
 bool Reactor::removeSession(Session *session) {
 	lock_guard<mutex> l(_mutex);
 
-	if ( session == NULL ) return false;
+	if ( !session ) return false;
 	if ( session->_parent != this ) {
 		SEISCOMP_WARNING("[reactor] session is not part of this reactor");
 		return false;
@@ -114,7 +114,7 @@ bool Reactor::removeSession(Session *session) {
 	*/
 	SEISCOMP_INFO("[reactor] removed session %lx", (long int)session);
 	sessionRemoved(session);
-	session->_parent = NULL;
+	session->_parent = nullptr;
 	_sessions.erase(session);
 
 	SEISCOMP_DEBUG("[reactor] active sessions/sockets: %ld/%d",
@@ -270,7 +270,7 @@ void Reactor::shutdown() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Reactor::release(SessionPtr &ptr) {
 	lock_guard<mutex> l(_mutex);
-	ptr = NULL;
+	ptr = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
