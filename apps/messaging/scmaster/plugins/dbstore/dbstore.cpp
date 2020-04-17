@@ -86,7 +86,7 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 			}
 
 			_operational = true;
-			bool res = connect();
+			bool res = connect(0);
 
 			_stopWatch.restart();
 			_statistics = Statistics();
@@ -224,19 +224,19 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 
 
 	private:
-		bool connect() {
+		bool connect(int retries = 10) {
 			int counter = 0;
 			while ( _operational && !_db->connect(_settings.write.c_str()) ) {
 				if ( !counter )
 					SEISCOMP_ERROR("Database check... connection refused, retry");
 
-				++counter;
-				Core::sleep(1);
-
-				if ( counter > 10 ) {
+				if ( counter >= retries ) {
 					SEISCOMP_ERROR("Database check... connection not available, abort");
 					return false;
 				}
+
+				++counter;
+				Core::sleep(1);
 			}
 
 			SEISCOMP_INFO("Database connection established");
