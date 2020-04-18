@@ -199,7 +199,7 @@ namespace Protocol {
  *
  * ```
  * RECV
- * S: [client name of sender]
+ * C: [client name of sender]
  * D: [name of group or the client]
  * T: [MIME type]
  * E: [transfer encoding]
@@ -213,7 +213,7 @@ namespace Protocol {
  * header is set to inform the client about the format.
  */
 #define SCMP_PROTO_REPLY_SEND         "RECV"
-#define SCMP_PROTO_REPLY_SEND_HEADER_SENDER           "S"
+#define SCMP_PROTO_REPLY_SEND_HEADER_SENDER           "C"
 #define SCMP_PROTO_REPLY_SEND_HEADER_SEQ_NUMBER       "N"
 #define SCMP_PROTO_REPLY_SEND_HEADER_DESTINATION      SCMP_PROTO_CMD_SEND_HEADER_DESTINATION
 #define SCMP_PROTO_REPLY_SEND_HEADER_CONTENT_LENGTH   SCMP_PROTO_CMD_SEND_HEADER_CONTENT_LENGTH
@@ -262,17 +262,16 @@ namespace Protocol {
  *
  * ```
  * ENTER
- * Group: [name of group]
- * Member: [name of client]
- * Content-Type: text/plain
+ * D: [name of group]
+ * C: [name of client]
  *
  * clientA, clientB, ...
  * }^@
  * ```
  */
 #define SCMP_PROTO_REPLY_ENTER        "ENTER"
-#define SCMP_PROTO_REPLY_ENTER_HEADER_GROUP           "Group"
-#define SCMP_PROTO_REPLY_ENTER_HEADER_MEMBER          "Member"
+#define SCMP_PROTO_REPLY_ENTER_HEADER_GROUP           "D"
+#define SCMP_PROTO_REPLY_ENTER_HEADER_MEMBER          "C"
 
 /**
  * A member leaves a group. This message will sent from the server to all clients
@@ -280,8 +279,8 @@ namespace Protocol {
  *
  * ```
  * LEAVE
- * Group: [name of group]
- * Member: [name of client]
+ * D: [name of group]
+ * C: [name of client]
  *
  * ^@
  * ```
