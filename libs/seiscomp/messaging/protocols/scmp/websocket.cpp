@@ -419,8 +419,7 @@ Result WebsocketConnection::connect(const char *address,
 	{
 		osstream os(msg.data);
 		os << SCMP_PROTO_CMD_CONNECT "\n"
-		      SCMP_PROTO_CMD_CONNECT_HEADER_ACK_WINDOW ": 1.0\n"
-		      "Ack-Window: " << _ackWindow << "\n";
+		      SCMP_PROTO_CMD_CONNECT_HEADER_ACK_WINDOW ": " << _ackWindow << "\n";
 
 		if ( _state.sequenceNumber )
 			os << SCMP_PROTO_CMD_CONNECT_HEADER_SEQ_NUMBER ": " << *_state.sequenceNumber << "\n";
@@ -1507,12 +1506,24 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 			p = inboxPkt;
 		}
 
+		bool hasClient = false, hasGroup = false;
+
 		while ( headers.next() ) {
 			if ( !headers.name_len ) break;
-			if ( headers.nameEquals(SCMP_PROTO_REPLY_ENTER_HEADER_GROUP) )
+			if ( headers.nameEquals(SCMP_PROTO_REPLY_ENTER_HEADER_GROUP) ) {
 				p->target.assign(headers.val_start, headers.val_len);
-			else if ( headers.nameEquals(SCMP_PROTO_REPLY_ENTER_HEADER_MEMBER) )
+				hasGroup = true;
+			}
+			else if ( headers.nameEquals(SCMP_PROTO_REPLY_ENTER_HEADER_MEMBER) ) {
 				p->subject.assign(headers.val_start, headers.val_len);
+				hasClient = true;
+			}
+		}
+
+		if ( !hasClient || !hasGroup ) {
+			SEISCOMP_ERROR("Expected client and group tags in " SCMP_PROTO_REPLY_ENTER " message");
+			if ( r ) *r = NetworkProtocolError;
+			return false;
 		}
 
 		int headerLength = headers.getptr() - frame.data.data();
@@ -1539,12 +1550,24 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 			p = inboxPkt;
 		}
 
+		bool hasClient = false, hasGroup = false;
+
 		while ( headers.next() ) {
 			if ( !headers.name_len ) break;
-			if ( headers.nameEquals(SCMP_PROTO_REPLY_LEAVE_HEADER_GROUP) )
+			if ( headers.nameEquals(SCMP_PROTO_REPLY_LEAVE_HEADER_GROUP) ) {
 				p->target.assign(headers.val_start, headers.val_len);
-			else if ( headers.nameEquals(SCMP_PROTO_REPLY_LEAVE_HEADER_MEMBER) )
+				hasGroup = true;
+			}
+			else if ( headers.nameEquals(SCMP_PROTO_REPLY_LEAVE_HEADER_MEMBER) ) {
 				p->subject.assign(headers.val_start, headers.val_len);
+				hasClient = true;
+			}
+		}
+
+		if ( !hasClient || !hasGroup ) {
+			SEISCOMP_ERROR("Expected client and group tags in " SCMP_PROTO_REPLY_ENTER " message");
+			if ( r ) *r = NetworkProtocolError;
+			return false;
 		}
 
 		p->type = Packet::Leave;
