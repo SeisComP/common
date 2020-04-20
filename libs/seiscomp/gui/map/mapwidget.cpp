@@ -475,15 +475,19 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 		return;
 	}
 
-	if ( action->text() == cmStrScreenshot )
+	QString actionText = action->text();
+	if ( actionText[0] == '&' )
+		actionText.remove(0, 1);
+
+	if ( actionText == cmStrScreenshot )
 		saveScreenshot();
 	else if ( _contextProjectionMenu && action->parent() == _contextProjectionMenu )
-		_canvas.setProjectionByName(action->text().toStdString().c_str());
+		_canvas.setProjectionByName(actionText.toStdString().c_str());
 	else if ( _contextFilterMenu && action->parent() == _contextFilterMenu ) {
-		_filterMap = action->text() == cmStrBilinear;
+		_filterMap = actionText == cmStrBilinear;
 		_canvas.setBilinearFilter(_filterMap);
 	}
-	else if ( action->text() == cmStrMeasureClipboard ) {
+	else if ( actionText == cmStrMeasureClipboard ) {
 		QString text = _measureText;
 		text.append("\n\nlat lon");
 		for ( int i = 0; i < _measurePoints.size(); ++i ) {
@@ -492,7 +496,7 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 		}
 		QApplication::clipboard()->setText(text);
 	}
-	else if ( action->text() == cmStrMeasureSaveBNA ) {
+	else if ( actionText == cmStrMeasureSaveBNA ) {
 		if ( !_measureBNADialog ) {
 			_measureBNADialog = new SaveBNADialog(this);
 		}
