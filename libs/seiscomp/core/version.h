@@ -68,6 +68,8 @@ namespace Core {
    - Removed Seiscomp::Client::Application::handleEndSync
    - Removed Seiscomp::Client::Application::handleSync
    - Renamed Seiscomp::Client::Connection::send to Seiscomp::Client::Connection::sendMessage
+   - Added Gui::Map::MercatorProjection
+   - Renamed include directories from seiscomp3/ to seiscomp/
 
  "13.0.0"   0x0D0000
    - Added virtual Seiscomp::IO::Database::escape
