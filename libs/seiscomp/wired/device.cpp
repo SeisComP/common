@@ -26,6 +26,9 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #ifndef WIN32
+	#if !defined(MACOSX) && !defined(BSD)
+	#include <sys/timerfd.h>
+	#endif
 #include <netdb.h>
 #include <unistd.h>
 
@@ -238,6 +241,8 @@ int Device::fd() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DeviceGroup::DeviceGroup() {
 	_interrupt_read_fd = _interrupt_write_fd = -1;
+	_timerFd = -1;
+	_timerSingleShot = false;
 	_queue = nullptr;
 	_isInSelect = false;
 #ifdef SEISCOMP_WIRED_SELECT
@@ -273,6 +278,10 @@ DeviceGroup::~DeviceGroup() {
 		_epoll_fd = -1;
 	}
 
+	if ( _timerFd > 0 ) {
+		::close(_timerFd);
+		_timerFd = -1;
+	}
 #endif
 #ifdef SEISCOMP_WIRED_KQUEUE
 	if ( _kqueue_fd > 0 ) {
@@ -474,7 +483,7 @@ bool DeviceGroup::append(Device *dev) {
 
 	if ( _kqueue_fd <= 0 && !setup() ) return false;
 
-	if ( s->_timeout >= 0 ) applyTimeout(s);
+	if ( dev->_timeout >= 0 ) applyTimeout(dev);
 
 	//SEISCOMP_DEBUG("Adding device to group");
 	++_count;
@@ -574,12 +583,22 @@ bool DeviceGroup::remove(Device *s) {
 #ifdef SEISCOMP_WIRED_KQUEUE
 	if ( _kqueue_fd > 0 && s->isValid() ) {
 		struct kevent ev[2];
+		int event_count = 0;
 		// Remove read and write events
-		EV_SET(&ev[0], s->fd(), EVFILT_READ, EV_DELETE, 0, 0, s);
-		EV_SET(&ev[1], s->fd(), EVFILT_WRITE, EV_DELETE, 0, 0, s);
-		if ( kevent(_kqueue_fd, ev, 2, nullptr, 0, nullptr) == -1 )
-			SEISCOMP_WARNING("kqueue del(%d): %d: %s",
-			                 s->fd(), errno, strerror(errno));
+		if ( s->_activeMode & Device::Read ) {
+			EV_SET(&ev[event_count], s->fd(), EVFILT_READ, EV_DELETE, 0, 0, s);
+			++event_count;
+			s->_activeMode &= ~Device::Read;
+		}
+
+		if ( s->_activeMode & Device::Write ) {
+			EV_SET(&ev[event_count], s->fd(), EVFILT_WRITE, EV_DELETE, 0, 0, s);
+			++event_count;
+			s->_activeMode &= ~Device::Write;
+		}
+
+		if ( event_count && (kevent(_kqueue_fd, ev, event_count, nullptr, 0, nullptr) == -1) )
+			SEISCOMP_WARNING("kqueue del(%d): %d: %s", s->fd(), errno, strerror(errno));
 	}
 
 #endif
@@ -614,18 +633,22 @@ void DeviceGroup::clear() {
 #if defined(SEISCOMP_WIRED_EPOLL) || defined(SEISCOMP_WIRED_KQUEUE)
 	_count = 0;
 	_selectIndex = _selectSize = 0;
-  #ifdef SEISCOMP_WIRED_EPOLL
+	#ifdef SEISCOMP_WIRED_EPOLL
 	if ( _epoll_fd > 0 ) {
 		::close(_epoll_fd);
 		_epoll_fd = -1;
 	}
-  #endif
-  #ifdef SEISCOMP_WIRED_KQUEUE
+	if ( _timerFd > 0 ) {
+		::close(_timerFd);
+		_timerFd = -1;
+	}
+	#endif
+	#ifdef SEISCOMP_WIRED_KQUEUE
 	if ( _kqueue_fd > 0 ) {
 		::close(_kqueue_fd);
 		_kqueue_fd = -1;
 	}
-  #endif
+	#endif
 	if ( _interrupt_write_fd != -1 && _interrupt_write_fd != _interrupt_read_fd )
 		::close(_interrupt_write_fd);
 	if ( _interrupt_read_fd != -1 )
@@ -633,6 +656,146 @@ void DeviceGroup::clear() {
 
 	_interrupt_read_fd = _interrupt_write_fd = -1;
 #endif
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool DeviceGroup::setTimer(uint32_t seconds, uint32_t milliseconds, TimeoutFunc func) {
+	if ( !func ) {
+		SEISCOMP_ERROR("Failed to create timer: function required");
+		return false;
+	}
+
+	_fnTimeout = func;
+	_timerSeconds = seconds;
+	_timerMilliseconds = milliseconds;
+	_timerSingleShot = false;
+
+#ifdef SEISCOMP_WIRED_EPOLL
+	if ( _epoll_fd <= 0 && !setup() ) return false;
+
+	if ( _timerFd <= 0 ) {
+		_timerFd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK);
+		if ( _timerFd <= 0 ) {
+			SEISCOMP_ERROR("Failed to create timer: %d: %s", errno, strerror(errno));
+			return false;
+		}
+
+		// Add timer to epoll
+		struct epoll_event ev;
+		ev.events = _defaultOps | EPOLLIN;
+		ev.data.ptr = &_timerFd;
+
+		if ( epoll_ctl(_epoll_fd, EPOLL_CTL_ADD, _timerFd, &ev) == -1 ) {
+			SEISCOMP_ERROR("epoll_add_timer(%d, %d): %d: %s",
+			               _epoll_fd, _timerFd, errno, strerror(errno));
+			::close(_timerFd);
+			_timerFd = -1;
+			return false;
+		}
+	}
+
+	if ( _timerFd > 0 ) {
+		itimerspec newValue;
+		timespec ts;
+		ts.tv_sec = _timerSeconds;
+		ts.tv_nsec = _timerMilliseconds * 1000000;
+
+		newValue.it_value = ts;
+		if ( !_timerSingleShot )
+			newValue.it_interval = ts;
+		else {
+			newValue.it_interval.tv_sec = 0;
+			newValue.it_interval.tv_nsec = 0;
+		}
+
+		if ( timerfd_settime(_timerFd, 0, &newValue, nullptr) < 0 ) {
+			SEISCOMP_ERROR("Failed to setup timer: %d: %s", errno, strerror(errno));
+			clearTimer();
+			return false;
+		}
+
+		return true;
+	}
+#endif
+#ifdef SEISCOMP_WIRED_KQUEUE
+	if ( _kqueue_fd <= 0 && !setup() ) return false;
+
+	struct kevent ev;
+	int flags = EV_CLEAR;
+
+	if ( _timerFd <= 0 ) {
+		flags |= EV_ADD;
+		_timerFd = 1;
+	}
+
+	if ( _timerSingleShot )
+		flags |= EV_ONESHOT;
+
+	EV_SET(&ev, _timerFd, EVFILT_TIMER, flags, 0, _timerSeconds * 1000 + _timerMilliseconds, &_timerFd);
+
+	if ( kevent(_kqueue_fd, &ev, 1, nullptr, 0, nullptr) == -1 ) {
+		SEISCOMP_ERROR("Failed to setup timer: %d: %s", errno, strerror(errno));
+		clearTimer();
+		return false;
+	}
+
+	return true;
+#endif
+
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool DeviceGroup::clearTimer() {
+	if ( _timerFd > 0 ) {
+		// Remove from event queue
+#ifdef SEISCOMP_WIRED_EPOLL
+		for ( int i = _selectIndex; i < _selectSize; ++i ) {
+			// Is this device still queued in the epoll event list?
+			if ( _epoll_events[i].data.ptr == &_timerFd ) {
+				// Remove it
+				--_selectSize;
+				if ( i < _selectSize )
+					memcpy(_epoll_events+i, _epoll_events+i+1, sizeof(struct epoll_event)*(_selectSize-i));
+			}
+		}
+#endif
+#ifdef SEISCOMP_WIRED_KQUEUE
+		for ( int i = _selectIndex; i < _selectSize; ++i ) {
+			// Is this device still queued in the epoll event list?
+			if ( _kqueue_events[i].udata == &_timerFd ) {
+				// Remove it
+				--_selectSize;
+				if ( i < _selectSize )
+					memcpy(_kqueue_events+i, _kqueue_events+i+1, sizeof(struct kevent)*(_selectSize-i));
+			}
+		}
+#endif
+
+#ifdef SEISCOMP_WIRED_EPOLL
+		struct epoll_event ev;
+		if ( epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, _timerFd, &ev) == -1 )
+			SEISCOMP_WARNING("epoll_del(%d): %d: %s",
+			                 _timerFd, errno, strerror(errno));
+		::close(_timerFd);
+#endif
+#ifdef SEISCOMP_WIRED_KQUEUE
+		struct kevent ev;
+		EV_SET(&ev, _timerFd, EVFILT_TIMER, EV_DELETE, 0, 0, nullptr);
+#endif
+		_timerFd = -1;
+		return true;
+	}
+
+	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -912,6 +1075,19 @@ Device *DeviceGroup::next() {
 			continue;
 		}
 		else {
+			if ( (void*)device == &_timerFd ) {
+				++_selectIndex;
+	#ifdef SEISCOMP_WIRED_EPOLL
+				uint64_t value;
+				if ( ::read(_timerFd, &value, sizeof(value)) == sizeof(value) )
+					_fnTimeout();
+	#endif
+	#ifdef SEISCOMP_WIRED_KQUEUE
+				_fnTimeout();
+	#endif
+				continue;
+			}
+
 			// Reset ticker and sort item into the correct position
 			if ( device->_timeout >= 0 ) applyTimeout(device);
 		}
@@ -1128,57 +1304,57 @@ void DeviceGroup::updateState(Device *dev) {
 #endif
 #ifdef SEISCOMP_WIRED_KQUEUE
 		// Only if read was not added previously, add it
-		if ( !(s->_activeMode & Device::Read) ) {
-			EV_SET(&ev[kevent_cnt], s->fd(), EVFILT_READ, _defaultOps | EV_ADD, 0, 0, s);
+		if ( !(dev->_activeMode & Device::Read) ) {
+			EV_SET(&ev[kevent_cnt], dev->fd(), EVFILT_READ, _defaultOps | EV_ADD, 0, 0, dev);
 			++kevent_cnt;
-			//SEISCOMP_DEBUG("[reactor] kqueue enable event READ for device %d", s->_fd);
+			//SEISCOMP_DEBUG("[reactor] kqueue enable event READ for device %d", dev->_fd);
 		}
 #endif
 	}
 	else {
 #ifdef SEISCOMP_WIRED_KQUEUE
 		// Only if read was added previously, delete it
-		if ( s->_activeMode & Device::Read ) {
-			EV_SET(&ev[kevent_cnt], s->fd(), EVFILT_READ, _defaultOps | EV_DELETE, 0, 0, s);
+		if ( dev->_activeMode & Device::Read ) {
+			EV_SET(&ev[kevent_cnt], dev->fd(), EVFILT_READ, _defaultOps | EV_DELETE, 0, 0, dev);
 			++kevent_cnt;
-			//SEISCOMP_DEBUG("[reactor] kqueue disable event READ for device %d", s->_fd);
+			//SEISCOMP_DEBUG("[reactor] kqueue disable event READ for device %d", dev->_fd);
 		}
 #endif
-		//SEISCOMP_DEBUG("fd %d: clear read", s->_fd);
+		//SEISCOMP_DEBUG("fd %d: clear read", dev->_fd);
 #ifdef SEISCOMP_WIRED_SELECT
-		FD_CLR(s->_fd, &_read_set);
+		FD_CLR(dev->_fd, &_read_set);
 #endif
 	}
 
 	if ( sm & Device::Write ) {
-		//SEISCOMP_DEBUG("fd %d: set write", s->_fd);
+		//SEISCOMP_DEBUG("fd %d: set write", dev->_fd);
 #ifdef SEISCOMP_WIRED_SELECT
-		FD_SET(s->_fd, &_write_set);
+		FD_SET(dev->_fd, &_write_set);
 #endif
 #ifdef SEISCOMP_WIRED_EPOLL
 		ev.events |= EPOLLOUT;
 #endif
 #ifdef SEISCOMP_WIRED_KQUEUE
 		// Only if read was not added previously, add it
-		if ( !(s->_activeMode & Device::Write) ) {
-			EV_SET(&ev[kevent_cnt], s->fd(), EVFILT_WRITE, _defaultOps | EV_ADD, 0, 0, s);
+		if ( !(dev->_activeMode & Device::Write) ) {
+			EV_SET(&ev[kevent_cnt], dev->fd(), EVFILT_WRITE, _defaultOps | EV_ADD, 0, 0, dev);
 			++kevent_cnt;
-			//SEISCOMP_DEBUG("[reactor] kqueue enable event WRITE for device %d", s->_fd);
+			//SEISCOMP_DEBUG("[reactor] kqueue enable event WRITE for device %d", dev->_fd);
 		}
 #endif
 	}
 	else {
 #ifdef SEISCOMP_WIRED_KQUEUE
 		// Only if write was added previously, delete it
-		if ( s->_activeMode & Device::Write ) {
-			EV_SET(&ev[kevent_cnt], s->fd(), EVFILT_WRITE, _defaultOps | EV_ADD, 0, 0, s);
+		if ( dev->_activeMode & Device::Write ) {
+			EV_SET(&ev[kevent_cnt], dev->fd(), EVFILT_WRITE, _defaultOps | EV_DELETE, 0, 0, dev);
 			++kevent_cnt;
-			//SEISCOMP_DEBUG("[reactor] kqueue disable event WRITE for device %d", s->_fd);
+			//SEISCOMP_DEBUG("[reactor] kqueue disable event WRITE for device %d", dev->_fd);
 		}
 #endif
-		//SEISCOMP_DEBUG("fd %d: clear write", s->_fd);
+		//SEISCOMP_DEBUG("fd %d: clear write", dev->_fd);
 #ifdef SEISCOMP_WIRED_SELECT
-		FD_CLR(s->_fd, &_write_set);
+		FD_CLR(dev->_fd, &_write_set);
 #endif
 	}
 
@@ -1190,18 +1366,18 @@ void DeviceGroup::updateState(Device *dev) {
 #ifdef SEISCOMP_WIRED_KQUEUE
 		kevent_cnt = 0;
 		//SEISCOMP_DEBUG("[reactor] kqueue delete READ/WRITE events for device %d", s->_fd);
-		if ( s->_activeMode & Device::Read ) {
-			EV_SET(&ev[kevent_cnt], s->fd(), EVFILT_READ, _defaultOps | EV_DELETE, 0, 0, s);
+		if ( dev->_activeMode & Device::Read ) {
+			EV_SET(&ev[kevent_cnt], dev->fd(), EVFILT_READ, _defaultOps | EV_DELETE, 0, 0, dev);
 			++kevent_cnt;
 			//SEISCOMP_DEBUG("[reactor] kqueue disable event READ for device %d", s->_fd);
 		}
-		if ( s->_activeMode & Device::Write ) {
-			EV_SET(&ev[kevent_cnt], s->fd(), EVFILT_WRITE, _defaultOps | EV_DELETE, 0, 0, s);
+		if ( dev->_activeMode & Device::Write ) {
+			EV_SET(&ev[kevent_cnt], dev->fd(), EVFILT_WRITE, _defaultOps | EV_DELETE, 0, 0, dev);
 			++kevent_cnt;
 			//SEISCOMP_DEBUG("[reactor] kqueue disable event READ for device %d", s->_fd);
 		}
 		if ( kevent_cnt && kevent(_kqueue_fd, ev, kevent_cnt, nullptr, 0, nullptr) == -1 )
-			SEISCOMP_ERROR("kqueue del(%d): %d: %s", s->fd(), errno, strerror(errno));
+			SEISCOMP_ERROR("kqueue del(%d): %d: %s", dev->fd(), errno, strerror(errno));
 #endif
 		// Remove device from queue
 		if ( _nextQueue == dev ) _nextQueue = _nextQueue->_qNext;
@@ -1214,10 +1390,10 @@ void DeviceGroup::updateState(Device *dev) {
 #endif
 #ifdef SEISCOMP_WIRED_KQUEUE
 	else if ( kevent_cnt && kevent(_kqueue_fd, ev, kevent_cnt, nullptr, 0, nullptr) == -1 )
-		SEISCOMP_ERROR("kqueue mod(%d): %d: %s", s->fd(), errno, strerror(errno));
+		SEISCOMP_ERROR("kqueue mod(%d): %d: %s", dev->fd(), errno, strerror(errno));
 
 	// Remember the last mode
-	s->_activeMode = s->_selectMode;
+	dev->_activeMode = dev->_selectMode;
 #endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

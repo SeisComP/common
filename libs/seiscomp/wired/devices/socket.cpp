@@ -27,6 +27,10 @@
 #include <arpa/inet.h>
 #ifndef WIN32
 #include <sys/socket.h>
+#ifdef BSD
+#include <netinet/in.h>
+#include <netinet/ip.h>
+#endif
 #include <netdb.h>
 #include <unistd.h>
 #include <netinet/tcp.h>

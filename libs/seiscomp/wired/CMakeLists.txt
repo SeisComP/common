@@ -15,27 +15,28 @@ ENDIF(HAVE_EVENTFD)
 
 SET (
 	WIRE_SOURCES
+		buffer.cpp
+		clientsession.cpp
+		device.cpp
+		endpoint.cpp
+		ipacl.cpp
+		mime.cpp
 		reactor.cpp
 		server.cpp
 		session.cpp
-		endpoint.cpp
-		clientsession.cpp
-		ipacl.cpp
-		device.cpp
-		buffer.cpp
-		mime.cpp
 )
 
 SET(
 	WIRE_HEADERS
+		buffer.h
+		clientsession.h
+		device.h
+		endpoint.h
+		ipacl.h
+		mime.h
 		reactor.h
 		server.h
 		session.h
-		endpoint.h
-		clientsession.h
-		ipacl.h
-		device.h
-		mime.h
 )
 
 SC_ADD_SUBDIR_SOURCES(WIRE buffers)
