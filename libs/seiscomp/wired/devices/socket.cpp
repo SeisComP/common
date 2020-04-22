@@ -62,7 +62,7 @@ pthread_mutex_t *ssl_mutex_buffer = nullptr;
 
 
 unsigned long SSL_thread_id_function(void) {
-	return static_cast<unsigned long>(pthread_self());
+	return reinterpret_cast<unsigned long>(pthread_self());
 }
 
 
