@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT Wired
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/strings.h>
+#include <seiscomp/wired/device.h>
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -35,8 +36,6 @@
 #else
 #include <io.h>
 #endif
-
-#include <seiscomp/wired/device.h>
 
 #ifdef SEISCOMP_WIRED_EPOLL
 #include <linux/version.h>
