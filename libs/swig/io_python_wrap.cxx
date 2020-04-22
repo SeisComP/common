@@ -17906,50 +17906,6 @@ fail:
 SWIGINTERN PyObject *_wrap_XMLArchive_read__SWIG_14(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::IO::XMLArchive *arg1 = (Seiscomp::IO::XMLArchive *) 0 ;
-  time_t *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  
-  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__XMLArchive, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XMLArchive_read" "', argument " "1"" of type '" "Seiscomp::IO::XMLArchive *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::IO::XMLArchive * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_time_t,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XMLArchive_read" "', argument " "2"" of type '" "time_t &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XMLArchive_read" "', argument " "2"" of type '" "time_t &""'"); 
-  }
-  arg2 = reinterpret_cast< time_t * >(argp2);
-  {
-    try {
-      (arg1)->read(*arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XMLArchive_read__SWIG_15(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  Seiscomp::IO::XMLArchive *arg1 = (Seiscomp::IO::XMLArchive *) 0 ;
   Seiscomp::Core::Time *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
@@ -18202,24 +18158,10 @@ SWIGINTERN PyObject *_wrap_XMLArchive_read(PyObject *self, PyObject *args) {
     _v = SWIG_CheckState(res);
     if (_v) {
       void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_time_t, SWIG_POINTER_NO_NULL);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        return _wrap_XMLArchive_read__SWIG_14(self, argc, argv);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__IO__XMLArchive, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL);
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_XMLArchive_read__SWIG_15(self, argc, argv);
+        return _wrap_XMLArchive_read__SWIG_14(self, argc, argv);
       }
     }
   }
@@ -18241,7 +18183,6 @@ fail:
     "    Seiscomp::IO::XMLArchive::read(bool &)\n"
     "    Seiscomp::IO::XMLArchive::read(std::vector< std::complex< double >,std::allocator< std::complex< double > > > &)\n"
     "    Seiscomp::IO::XMLArchive::read(std::string &)\n"
-    "    Seiscomp::IO::XMLArchive::read(time_t &)\n"
     "    Seiscomp::IO::XMLArchive::read(Seiscomp::Core::Time &)\n");
   return 0;
 }
@@ -20315,50 +20256,6 @@ fail:
 SWIGINTERN PyObject *_wrap_BinaryArchive_read__SWIG_14(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::IO::BinaryArchive *arg1 = (Seiscomp::IO::BinaryArchive *) 0 ;
-  time_t *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  
-  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__BinaryArchive, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BinaryArchive_read" "', argument " "1"" of type '" "Seiscomp::IO::BinaryArchive *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::IO::BinaryArchive * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_time_t,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "BinaryArchive_read" "', argument " "2"" of type '" "time_t &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "BinaryArchive_read" "', argument " "2"" of type '" "time_t &""'"); 
-  }
-  arg2 = reinterpret_cast< time_t * >(argp2);
-  {
-    try {
-      (arg1)->read(*arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_BinaryArchive_read__SWIG_15(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  Seiscomp::IO::BinaryArchive *arg1 = (Seiscomp::IO::BinaryArchive *) 0 ;
   Seiscomp::Core::Time *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
@@ -20611,24 +20508,10 @@ SWIGINTERN PyObject *_wrap_BinaryArchive_read(PyObject *self, PyObject *args) {
     _v = SWIG_CheckState(res);
     if (_v) {
       void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_time_t, SWIG_POINTER_NO_NULL);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        return _wrap_BinaryArchive_read__SWIG_14(self, argc, argv);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__IO__BinaryArchive, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL);
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_BinaryArchive_read__SWIG_15(self, argc, argv);
+        return _wrap_BinaryArchive_read__SWIG_14(self, argc, argv);
       }
     }
   }
@@ -20650,7 +20533,6 @@ fail:
     "    Seiscomp::IO::BinaryArchive::read(bool &)\n"
     "    Seiscomp::IO::BinaryArchive::read(std::vector< std::complex< double >,std::allocator< std::complex< double > > > &)\n"
     "    Seiscomp::IO::BinaryArchive::read(std::string &)\n"
-    "    Seiscomp::IO::BinaryArchive::read(time_t &)\n"
     "    Seiscomp::IO::BinaryArchive::read(Seiscomp::Core::Time &)\n");
   return 0;
 }
@@ -35172,7 +35054,6 @@ static PyMethodDef SwigMethods[] = {
 		"XMLArchive_read(XMLArchive self, bool & value)\n"
 		"XMLArchive_read(XMLArchive self, vectorc value)\n"
 		"XMLArchive_read(XMLArchive self, string value)\n"
-		"XMLArchive_read(XMLArchive self, time_t & value)\n"
 		"XMLArchive_read(XMLArchive self, Time value)\n"
 		""},
 	 { "XMLArchive_write", _wrap_XMLArchive_write, METH_VARARGS, "\n"
@@ -35224,7 +35105,6 @@ static PyMethodDef SwigMethods[] = {
 		"BinaryArchive_read(BinaryArchive self, bool & value)\n"
 		"BinaryArchive_read(BinaryArchive self, vectorc value)\n"
 		"BinaryArchive_read(BinaryArchive self, string value)\n"
-		"BinaryArchive_read(BinaryArchive self, time_t & value)\n"
 		"BinaryArchive_read(BinaryArchive self, Time value)\n"
 		""},
 	 { "BinaryArchive_write", _wrap_BinaryArchive_write, METH_VARARGS, "\n"

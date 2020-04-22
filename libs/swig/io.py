@@ -1232,7 +1232,6 @@ class XMLArchive(seiscomp.core.GenericArchive):
         read(XMLArchive self, bool & value)
         read(XMLArchive self, vectorc value)
         read(XMLArchive self, string value)
-        read(XMLArchive self, time_t & value)
         read(XMLArchive self, Time value)
         """
         return _io.XMLArchive_read(self, *args)
@@ -1309,7 +1308,6 @@ class BinaryArchive(seiscomp.core.GenericArchive):
         read(BinaryArchive self, bool & value)
         read(BinaryArchive self, vectorc value)
         read(BinaryArchive self, string value)
-        read(BinaryArchive self, time_t & value)
         read(BinaryArchive self, Time value)
         """
         return _io.BinaryArchive_read(self, *args)
