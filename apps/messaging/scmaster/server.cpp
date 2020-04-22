@@ -29,7 +29,6 @@
 #include <iostream>
 #include <functional>
 
-#include "timer.h"
 #include "server.h"
 #include "protocols/websocket.h"
 
@@ -96,13 +95,7 @@ void QueueWorker::idle() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QueueWorker::run() {
-	Wired::TimerSessionPtr timer = new Wired::TimerSession(bind(&Queue::timeout, _queue));
-	if ( !timer->setInterval(1,0) ) {
-		SEISCOMP_ERROR("[worker@%s] Failed to initialize timer", _queue->name().c_str());
-		return false;
-	}
-
-	if ( !addSession(timer.get()) ) {
+	if ( !setTimer(1, 0, bind(&Queue::timeout, _queue)) ) {
 		SEISCOMP_ERROR("[worker@%s] Failed to add timer", _queue->name().c_str());
 		return false;
 	}

@@ -27,12 +27,10 @@
 #include <seiscomp/system/pluginregistry.h>
 #include <seiscomp/system/application.h>
 #include <seiscomp/wired/devices/socket.h>
-#include <seiscomp/utils/timer.h>
 #include <seiscomp/broker/messageprocessor.h>
 
 #include "server.h"
 #include "settings.h"
-#include "timer.h"
 
 
 using namespace std;
@@ -204,15 +202,7 @@ bool Master::run() {
 	}
 
 	// Create statistics timer
-	Wired::TimerSession *timer = new Wired::TimerSession(boost::bind(&Master::handleWiredTimeout, this));
-	if ( !timer->setInterval(10,0) ) {
-		delete timer;
-		SEISCOMP_ERROR("Failed to initialize timer");
-		return false;
-	}
-
-	if ( !_server->addSession(timer) ) {
-		delete timer;
+	if ( !_server->setTimer(10, 0, std::bind(&Master::handleWiredTimeout, this)) ) {
 		SEISCOMP_ERROR("Failed to add timer");
 		return false;
 	}

@@ -12,7 +12,6 @@ SET(WIRED_APP_SOURCES
 	main.cpp
 	server.cpp
 	settings.cpp
-	timer.cpp
 )
 
 SC_ADD_EXECUTABLE(WIRED_APP ${WIRED_APP_TARGET})

@@ -92,6 +92,9 @@ class SC_SYSTEM_CORE_API Reactor : public Seiscomp::Core::BaseObject {
 		//! Returns the number of sessions in this reactor
 		size_t count() const;
 
+		bool setTimer(uint32_t seconds, uint32_t milliseconds, DeviceGroup::TimeoutFunc func);
+		bool clearTimer();
+
 		//! Sets up the device polling infrastructure and returns a success
 		//! flag.
 		bool setup();
