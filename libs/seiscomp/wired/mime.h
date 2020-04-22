@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_WIRED_MIME_H__
-#define SEISCOMP_WIRED_MIME_H__
+#ifndef SEISCOMP_WIRED_MIME_H
+#define SEISCOMP_WIRED_MIME_H
 
 
 #include <list>
@@ -39,9 +39,9 @@ class Multipart {
 			: name(NULL), name_len(0), value(NULL), value_len(0) {}
 
 			const char  *name;
-			int          name_len;
+			size_t       name_len;
 			const char  *value;
-			int          value_len;
+			size_t       value_len;
 		};
 
 		typedef std::list<CustomHeader> CustomHeaders;
@@ -51,12 +51,12 @@ class Multipart {
 		                             std::string &boundary);
 
 		Multipart(const std::string &boundary, const std::string &s);
-		Multipart(const std::string &boundary, const char *src, int l);
+		Multipart(const std::string &boundary, const char *src, size_t l);
 
 		bool next();
 
 		bool typeEquals(const char *s) const;
-		bool typeStartsWith(const char *s, int len) const;
+		bool typeStartsWith(const char *s, size_t len) const;
 
 		bool operator==(const std::string &type) const {
 			return typeEquals(type.c_str());
@@ -66,26 +66,26 @@ class Multipart {
 
 
 	protected:
-		void init(const std::string &boundary, const char *src, int l);
-		int findString(const char *needle, int len, int haystack_len = -1);
+		void init(const std::string &boundary, const char *src, size_t l);
+		size_t findString(const char *needle, size_t len, size_t haystack_len = std::string::npos);
 
 
 	public:
 		const char    *type;
-		int            type_len;
+		size_t         type_len;
 		const char    *disposition;
-		int            disposition_len;
+		size_t         disposition_len;
 		const char    *transfer_enc;
-		int            transfer_enc_len;
+		size_t         transfer_enc_len;
 		const char    *body;
-		int            body_len;
+		size_t         body_len;
 
 
 	protected:
 		std::string    _boundary;
 		const char    *_source;
-		int            _source_len;
-		int            _part;
+		size_t         _source_len;
+		size_t         _part;
 
 		CustomHeaders  _customHeaders;
 };

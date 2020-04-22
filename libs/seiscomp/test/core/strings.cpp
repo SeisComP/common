@@ -23,6 +23,8 @@
 #include <stdexcept>
 #include <stdio.h>
 #include <vector>
+#include <limits>
+#include <cstdint>
 
 #include <seiscomp/unittest/unittests.h>
 
@@ -81,12 +83,199 @@ struct TestCase {
 typedef vector<TestCase> TestData;
 
 
+BOOST_AUTO_TEST_CASE(numberConversions) {
+	{
+		int8_t value;
+		BOOST_REQUIRE(fromString(value, "10") && value == 10);
+		BOOST_REQUIRE(fromString(value, "-10") && value == -10);
+		BOOST_REQUIRE(fromString(value, "127") && value == 127);
+		BOOST_REQUIRE(fromString(value, "-128") && value == -128);
+		BOOST_REQUIRE(!fromString(value, "129"));
+		BOOST_REQUIRE(!fromString(value, "-129"));
+		BOOST_REQUIRE(!fromString(value, "abc"));
+	}
+
+	{
+		uint8_t value;
+		BOOST_REQUIRE(fromString(value, "10") && value == 10);
+		BOOST_REQUIRE(!fromString(value, "-10"));
+		BOOST_REQUIRE(fromString(value, "255") && value == 255);
+		BOOST_REQUIRE(fromString(value, "0") && value == 0);
+		BOOST_REQUIRE(!fromString(value, "256"));
+		BOOST_REQUIRE(!fromString(value, "abc"));
+	}
+
+	{
+		int16_t value;
+		BOOST_REQUIRE(fromString(value, "10") && value == 10);
+		BOOST_REQUIRE(fromString(value, "-10") && value == -10);
+		BOOST_REQUIRE(fromString(value, "32767") && value == 32767);
+		BOOST_REQUIRE(fromString(value, "-32768") && value == -32768);
+		BOOST_REQUIRE(!fromString(value, "32768"));
+		BOOST_REQUIRE(!fromString(value, "-32769"));
+		BOOST_REQUIRE(!fromString(value, "abc"));
+	}
+
+	{
+		uint16_t value;
+		BOOST_REQUIRE(fromString(value, "10") && value == 10);
+		BOOST_REQUIRE(!fromString(value, "-10"));
+		BOOST_REQUIRE(fromString(value, "65535") && value == 65535);
+		BOOST_REQUIRE(fromString(value, "0") && value == 0);
+		BOOST_REQUIRE(!fromString(value, "65536"));
+		BOOST_REQUIRE(!fromString(value, "abc"));
+	}
+
+	{
+		int32_t value;
+		BOOST_REQUIRE(fromString(value, "10") && value == 10);
+		BOOST_REQUIRE(fromString(value, "-10") && value == -10);
+		BOOST_REQUIRE(fromString(value, "2147483647") && value == 2147483647);
+		BOOST_REQUIRE(fromString(value, "-2147483648") && value == -2147483648);
+		BOOST_REQUIRE(!fromString(value, "2147483649"));
+		BOOST_REQUIRE(!fromString(value, "-2147483649"));
+		BOOST_REQUIRE(!fromString(value, "abc"));
+	}
+
+	{
+		uint32_t value;
+		BOOST_REQUIRE(fromString(value, "10") && value == 10);
+		BOOST_REQUIRE(!fromString(value, "-10"));
+		BOOST_REQUIRE(fromString(value, "4294967295") && value == 4294967295);
+		BOOST_REQUIRE(fromString(value, "0") && value == 0);
+		BOOST_REQUIRE(!fromString(value, "4294967296"));
+		BOOST_REQUIRE(!fromString(value, "abc"));
+	}
+
+	{
+		int64_t value;
+		BOOST_REQUIRE(fromString(value, "10") && value == 10);
+		BOOST_REQUIRE(fromString(value, "-10") && value == -10);
+		BOOST_REQUIRE(fromString(value, toString(std::numeric_limits<int64_t>::max())) && value == std::numeric_limits<long>::max());
+		BOOST_REQUIRE(fromString(value, toString(std::numeric_limits<int64_t>::min())) && value == std::numeric_limits<long>::min());
+		BOOST_REQUIRE(!fromString(value, "abc"));
+	}
+
+	{
+		// Only signed 64bit values are supported for string conversions. So
+		// unsigned 64bit integers must produce ERANGE when reading values
+		// larger than 2**63.
+		uint64_t value;
+		BOOST_REQUIRE(fromString(value, "10") && value == 10);
+		BOOST_REQUIRE(!fromString(value, "-10"));
+		BOOST_REQUIRE(!fromString(value, toString(std::numeric_limits<uint64_t>::max())));
+		BOOST_REQUIRE(fromString(value, toString(std::numeric_limits<uint64_t>::max()/2)) && value == std::numeric_limits<unsigned long int>::max()/2);
+		BOOST_REQUIRE(fromString(value, toString(std::numeric_limits<uint64_t>::min())) && value == std::numeric_limits<unsigned long int>::min());
+		BOOST_REQUIRE(!fromString(value, "abc"));
+	}
+
+	{
+		float value;
+		BOOST_REQUIRE(fromString(value, "1.0") && fabs(value - 1.0f) < 0.000001f);
+		BOOST_REQUIRE(fromString(value, "-1.0") && fabs(value + 1.0f) < 0.000001f);
+		BOOST_REQUIRE(!fromString(value, "abc"));
+	}
+
+	{
+		double value;
+		BOOST_REQUIRE(fromString(value, "1.0") && fabs(value - 1.0) < 0.000001);
+		BOOST_REQUIRE(fromString(value, "-1.0") && fabs(value + 1.0) < 0.000001);
+		BOOST_REQUIRE(!fromString(value, "abc"));
+	}
+}
+
+
+BOOST_AUTO_TEST_CASE(incompleteNumberConversions) {
+	int32_t value;
+	BOOST_REQUIRE(!fromString(value, "10 asd"));
+	BOOST_REQUIRE(!fromString(value, "10 20"));
+	BOOST_REQUIRE(!fromString(value, "1.23"));
+}
+
+
+BOOST_AUTO_TEST_CASE(tokenize1) {
+	const char *text = "Hello, World!";
+	size_t len = strlen(text), tok_len;
+
+	const char *tok = tokenize(text, ",", len, tok_len);
+	BOOST_CHECK_EQUAL(string(tok, tok_len), "Hello");
+
+	tok = tokenize(text, ",", len, tok_len);
+	BOOST_CHECK_EQUAL(string(tok,tok_len)," World!");
+
+	text = "This is a book";
+	len = strlen(text);
+	int tok_count = 0;
+	while ( (tok = tokenize(text, ",", len, tok_len)) != NULL ) {
+		if ( tok_count == 3 ) {
+			BOOST_CHECK_EQUAL(string(tok, tok_len), "book");
+		}
+		++tok_count;
+	}
+
+	text = "";
+	len = strlen(text);
+	tok = tokenize(text, ";", len,tok_len);
+	BOOST_CHECK_EQUAL(string(tok,tok_len), "");
+
+	// Test that separators collapse
+	text ="A B ; C; D  ;E  ;  F";
+	len = strlen(text);
+	tok = tokenize(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !strncmp(tok, "A", tok_len));
+	tok = tokenize(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !strncmp(tok, "B", tok_len));
+	tok = tokenize(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !strncmp(tok, "C", tok_len));
+	tok = tokenize(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !strncmp(tok, "D", tok_len));
+	tok = tokenize(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !strncmp(tok, "E", tok_len));
+	tok = tokenize(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !strncmp(tok, "F", tok_len));
+
+	// Test that separators do not collapse
+	text ="A B ; C; D  ;E  ;  F";
+	len = strlen(text);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !strncmp(tok, "A", tok_len) && tok_len == 1);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !strncmp(tok, "B", tok_len) && tok_len == 1);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !tok_len);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !tok_len);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !strncmp(tok, "C", tok_len) && tok_len == 1);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !tok_len);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !strncmp(tok, "D", tok_len) && tok_len == 1);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !tok_len);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !tok_len);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !strncmp(tok, "E", tok_len) && tok_len == 1);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !tok_len);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !tok_len);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !tok_len);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !tok_len);
+	tok = tokenize2(text, " ;", len, tok_len);
+	BOOST_REQUIRE(tok && !strncmp(tok, "F", tok_len) && tok_len == 1);
+}
+
+
 BOOST_AUTO_TEST_CASE(stringify1) {
-	for ( int i = 1; i <= 100; ++i ) {
+	for ( size_t i = 1; i <= 100; ++i ) {
 		string tmp;
 		tmp.resize(i);
 		for ( size_t j = 0; j < tmp.size(); ++j )
-			tmp[j] = random() * 25 / RAND_MAX + 'A';
+			tmp[j] = static_cast<char>(random() * 25 / RAND_MAX + 'A');
 		string out = stringify("%s", tmp.c_str());
 		BOOST_CHECK_EQUAL(tmp, out);
 	}

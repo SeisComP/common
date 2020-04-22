@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_WIRED_PROTOCOLS_WEBSOCKET_H__
-#define SEISCOMP_WIRED_PROTOCOLS_WEBSOCKET_H__
+#ifndef SEISCOMP_WIRED_PROTOCOLS_WEBSOCKET_H
+#define SEISCOMP_WIRED_PROTOCOLS_WEBSOCKET_H
 
 
 #include <string>
@@ -102,7 +102,7 @@ class Frame : public Seiscomp::Core::BaseObject {
 
 		//! Returns the number of bytes read from the input buffer
 		//! If an protocol error occured, -1 is returned.
-		int feed(const char *data, int len);
+		ssize_t feed(const char *data, size_t len);
 
 		bool isFinished() { return _isFinished; }
 
@@ -111,7 +111,7 @@ class Frame : public Seiscomp::Core::BaseObject {
 
 	private:
 		typedef bool (Frame::*ItemCallback)();
-		bool next(int nBytes, void *dst, ItemCallback cb);
+		bool next(size_t nBytes, void *dst, ItemCallback cb);
 
 		bool readControl();
 		bool readPayload1();
@@ -125,8 +125,8 @@ class Frame : public Seiscomp::Core::BaseObject {
 
 
 	private:
-		int           _bytesToRead;
-		char         *_buffer;
+		size_t        _bytesToRead;
+		uint8_t      *_buffer;
 		ItemCallback  _func;
 		bool          _isFinished;
 		uint8_t       _control;

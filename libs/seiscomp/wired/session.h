@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_WIRED_SESSION_H__
-#define SEISCOMP_WIRED_SESSION_H__
+#ifndef SEISCOMP_WIRED_SESSION_H
+#define SEISCOMP_WIRED_SESSION_H
 
 
 #include <seiscomp/wired/devices/socket.h>

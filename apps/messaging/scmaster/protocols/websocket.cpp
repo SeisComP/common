@@ -137,24 +137,24 @@ struct FrameHeaderValue {
 struct FrameHeaders {
 	typedef char CH;
 
-	FrameHeaders(CH *src, int l)
+	FrameHeaders(CH *src, size_t l)
 	: _source(src), _source_len(l)
 	, _numberOfHeaders(0) {}
 
 	bool next() {
-		int len;
-		CH *data = (CH*)tokenize2(_source, "\n", _source_len, len);
+		size_t len;
+		CH *data = const_cast<CH*>(tokenize2(_source, "\n", _source_len, len));
 
 		if ( data ) {
-			trim(data,len);
+			trim(data, len);
 
 			name_start = data;
 
 			CH *sep = strnchr(data, len, ':');
 			if ( sep ) {
-				name_len = sep-data;
-				val_start = sep+1;
-				val_len = len-(sep-data)-1;
+				name_len = static_cast<size_t>(sep - data);
+				val_start = sep + 1;
+				val_len = len - name_len - 1;
 				trimBack(name_start, name_len);
 				trimFront(val_start, val_len);
 			}
@@ -196,14 +196,14 @@ struct FrameHeaders {
 		return _source;
 	}
 
-	CH  *_source;
-	int  _source_len;
-	int  _numberOfHeaders;
+	CH     *_source;
+	size_t  _source_len;
+	size_t  _numberOfHeaders;
 
-	CH  *name_start;
-	int  name_len;
-	CH  *val_start;
-	int  val_len;
+	CH     *name_start;
+	size_t  name_len;
+	CH     *val_start;
+	size_t  val_len;
 };
 
 
@@ -243,8 +243,8 @@ void WebsocketSession::update() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void WebsocketSession::handleHeader(const char *name, int nlen,
-                                    const char *value, int vlen) {
+void WebsocketSession::handleHeader(const char * /*name*/, size_t /*nlen*/,
+                                    const char * /*value*/, size_t /*vlen*/) {
 	// Possibly later checking for custom headers such as username and
 	// others. This can also be passed via GET parameters. Simply too
 	// many options ...
@@ -390,7 +390,7 @@ void WebsocketSession::replyWithError(const char *msg, int len) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WebsocketSession::replyWithError(const std::string &msg) {
-	replyWithError(msg.data(), msg.size());
+	replyWithError(msg.data(), static_cast<int>(msg.size()));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -439,7 +439,7 @@ void WebsocketSession::handleWebsocketFrame(Websocket::Frame &frame) {
 				return;
 			}
 
-			handleFrame(&frame.data[0], (int)frame.data.size());
+			handleFrame(&frame.data[0], static_cast<int>(frame.data.size()));
 			break;
 		}
 
@@ -454,9 +454,9 @@ void WebsocketSession::handleWebsocketFrame(Websocket::Frame &frame) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void WebsocketSession::handleFrame(char *data, int len) {
+void WebsocketSession::handleFrame(char *data, int data_len) {
 	char *content = data;
-	int content_len = (int)len;
+	size_t content_len = static_cast<size_t>(data_len);
 	trimFront(content, content_len);
 
 	// Tell the session to give control to others to not starve
@@ -488,24 +488,27 @@ void WebsocketSession::handleFrame(char *data, int len) {
 		return;
 	}
 
-	char *eol = strnchr(content+1, len-1, '\n');
+	char *eol = strnchr(content + 1, content_len - 1, '\n');
 	if ( !eol ) {
 		replyWithError(str(ERR_INVALID_FRAME));
 		return;
 	}
 
-	if ( !strncmp(content, SCMP_PROTO_CMD_CONNECT, eol-content) )
-		commandCONNECT(eol+1, content+len-eol-1);
-	else if ( !strncmp(content, SCMP_PROTO_CMD_DISCONNECT, eol-content) )
-		commandDISCONNECT(eol+1, content+len-eol-1);
-	else if ( !strncmp(content, SCMP_PROTO_CMD_SUBSCRIBE, eol-content) )
-		commandSUBSCRIBE(eol+1, content+len-eol-1);
-	else if ( !strncmp(content, SCMP_PROTO_CMD_UNSUBSCRIBE, eol-content) )
-		commandUNSUBSCRIBE(eol+1, content+len-eol-1);
-	else if ( !strncmp(content, SCMP_PROTO_CMD_SEND, eol-content) )
-		commandSEND(eol+1, content+len-eol-1);
-	else if ( !strncmp(content, SCMP_PROTO_CMD_STATE, eol-content) )
-		commandSTATE(eol+1, content+len-eol-1, true);
+	size_t line_length = static_cast<size_t>(eol - content);
+	int block_length = static_cast<int>(content_len - line_length - 1);
+
+	if ( !strncmp(content, SCMP_PROTO_CMD_CONNECT, line_length) )
+		commandCONNECT(eol + 1, block_length);
+	else if ( !strncmp(content, SCMP_PROTO_CMD_DISCONNECT, line_length) )
+		commandDISCONNECT(eol + 1, block_length);
+	else if ( !strncmp(content, SCMP_PROTO_CMD_SUBSCRIBE, line_length) )
+		commandSUBSCRIBE(eol + 1, block_length);
+	else if ( !strncmp(content, SCMP_PROTO_CMD_UNSUBSCRIBE, line_length) )
+		commandUNSUBSCRIBE(eol + 1, block_length);
+	else if ( !strncmp(content, SCMP_PROTO_CMD_SEND, line_length) )
+		commandSEND(eol + 1, block_length);
+	else if ( !strncmp(content, SCMP_PROTO_CMD_STATE, line_length) )
+		commandSTATE(eol + 1, block_length, true);
 	else {
 		replyWithError(str(ERR_INVALID_COMMAND));
 		return;
@@ -523,7 +526,7 @@ void WebsocketSession::commandCONNECT(char *frame, int len) {
 	Broker::Queue *queue = nullptr;
 	OPT(Broker::SequenceNumber) seqNo;
 	const char *groupList = nullptr;
-	int groupListLen = 0;
+	size_t groupListLen = 0;
 	Broker::SequenceNumber ackWindow = 20;
 	Broker::Queue::KeyValues outParams;
 
@@ -536,7 +539,7 @@ void WebsocketSession::commandCONNECT(char *frame, int len) {
 		}
 	}
 
-	FrameHeaders headers(frame, len);
+	FrameHeaders headers(frame, static_cast<size_t>(len));
 	while ( headers.next() ) {
 		if ( !headers.name_len ) break;
 		if ( !headers.val_len ) {
@@ -585,13 +588,13 @@ void WebsocketSession::commandCONNECT(char *frame, int len) {
 		}
 		else if ( headers.nameEquals(SCMP_PROTO_CMD_CONNECT_HEADER_ACK_WINDOW) ) {
 			char *end;
-			((char*)headers.val_start)[headers.val_len] = '\0';
-			ackWindow = strtol(headers.val_start, &end, 10);
+			headers.val_start[headers.val_len] = '\0';
+			ackWindow = static_cast<Broker::SequenceNumber>(strtol(headers.val_start, &end, 10));
 		}
 		else if ( headers.nameEquals(SCMP_PROTO_CMD_CONNECT_HEADER_SEQ_NUMBER) ) {
 			char *end;
-			((char*)headers.val_start)[headers.val_len] = '\0';
-			seqNo = strtol(headers.val_start, &end, 10);
+			headers.val_start[headers.val_len] = '\0';
+			seqNo = static_cast<Broker::SequenceNumber>(strtol(headers.val_start, &end, 10));
 		}
 		else if ( headers.nameEquals(SCMP_PROTO_CMD_CONNECT_HEADER_SUBSCRIPTIONS) ) {
 			// Handle subscription requests
@@ -664,7 +667,7 @@ void WebsocketSession::commandCONNECT(char *frame, int len) {
 
 	if ( _queue ) {
 		if ( groupList ) {
-			int group_len;
+			size_t group_len;
 			const char *group;
 			while ( (group = tokenize2(groupList, ",", groupListLen, group_len)) ) {
 				trim(group, group_len);
@@ -696,9 +699,9 @@ void WebsocketSession::commandDISCONNECT(char *frame, int len) {
 		return;
 	}
 
-	FrameHeaders headers(frame, len);
+	FrameHeaders headers(frame, static_cast<size_t>(len));
 	const char *receipt = nullptr;
-	int receipt_len = 0;
+	size_t receipt_len = 0;
 
 	while ( headers.next() ) {
 		if ( !headers.name_len ) break;
@@ -755,9 +758,9 @@ void WebsocketSession::commandSUBSCRIBE(char *frame, int len) {
 		return;
 	}
 
-	FrameHeaders headers(frame, len);
+	FrameHeaders headers(frame, static_cast<size_t>(len));
 	const char *groupList = nullptr;
-	int groupListLen = 0;
+	size_t groupListLen = 0;
 
 	while ( headers.next() ) {
 		if ( !headers.name_len ) break;
@@ -783,7 +786,7 @@ void WebsocketSession::commandSUBSCRIBE(char *frame, int len) {
 		return;
 	}
 
-	int group_len;
+	size_t group_len;
 	const char *group;
 	while ( (group = tokenize2(groupList, ",", groupListLen, group_len)) ) {
 		trim(group, group_len);
@@ -808,9 +811,9 @@ void WebsocketSession::commandUNSUBSCRIBE(char *frame, int len) {
 		return;
 	}
 
-	FrameHeaders headers(frame, len);
+	FrameHeaders headers(frame, static_cast<size_t>(len));
 	const char *groupList = nullptr;
-	int groupListLen = 0;
+	size_t groupListLen = 0;
 
 	while ( headers.next() ) {
 		if ( !headers.name_len ) break;
@@ -836,7 +839,7 @@ void WebsocketSession::commandUNSUBSCRIBE(char *frame, int len) {
 		return;
 	}
 
-	int group_len;
+	size_t group_len;
 	const char *group;
 	while ( (group = tokenize2(groupList, ",", groupListLen, group_len)) ) {
 		trim(group, group_len);
@@ -862,7 +865,7 @@ void WebsocketSession::commandSEND(char *frame, int len) {
 	}
 
 	Broker::Message *msg = nullptr;
-	FrameHeaders headers(frame, len);
+	FrameHeaders headers(frame, static_cast<size_t>(len));
 	int contentLength = -1;
 
 	while ( headers.next() ) {
@@ -888,8 +891,8 @@ void WebsocketSession::commandSEND(char *frame, int len) {
 		// Content length
 		else if ( headers.nameEquals(SCMP_PROTO_CMD_SEND_HEADER_CONTENT_LENGTH) ) {
 			char *end;
-			((char*)headers.val_start)[headers.val_len] = '\0';
-			contentLength = strtol(headers.val_start, &end, 10);
+			headers.val_start[headers.val_len] = '\0';
+			contentLength = static_cast<int>(strtol(headers.val_start, &end, 10));
 		}
 		// Content encoding
 		else if ( headers.nameEquals(SCMP_PROTO_CMD_SEND_HEADER_ENCODING) ) {
@@ -942,11 +945,11 @@ void WebsocketSession::commandSEND(char *frame, int len) {
 	if ( msg->type == Broker::Message::Type::Unspecified )
 		msg->type = Broker::Message::Type::Regular;
 
-	int headerLength = headers.getptr() - frame;
-	int payloadLength = len - headerLength;
+	size_t headerLength = static_cast<size_t>(headers.getptr() - frame);
+	size_t payloadLength = static_cast<size_t>(len) - headerLength;
 	if ( contentLength < 0 )
-		contentLength = payloadLength;
-	else if ( contentLength != payloadLength ) {
+		contentLength = static_cast<int>(payloadLength);
+	else if ( contentLength != static_cast<int>(payloadLength) ) {
 		replyWithError(str(ERR_LENGTH_MISMATCH));
 		delete msg;
 		return;
@@ -973,14 +976,14 @@ void WebsocketSession::commandSEND(char *frame, int len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void WebsocketSession::commandSTATE(char *frame, int len, bool service) {
+void WebsocketSession::commandSTATE(char *frame, int len, bool) {
 	if ( !_queue ) {
 		replyWithError(str(ERR_NOT_CONNECTED));
 		return;
 	}
 
 	Broker::Message *msg = nullptr;
-	FrameHeaders headers(frame, len);
+	FrameHeaders headers(frame, static_cast<size_t>(len));
 	int contentLength = -1;
 
 	while ( headers.next() ) {
@@ -1006,8 +1009,8 @@ void WebsocketSession::commandSTATE(char *frame, int len, bool service) {
 		// Content length
 		else if ( headers.nameEquals(SCMP_PROTO_CMD_STATE_HEADER_CONTENT_LENGTH) ) {
 			char *end;
-			((char*)headers.val_start)[headers.val_len] = '\0';
-			contentLength = strtol(headers.val_start, &end, 10);
+			headers.val_start[headers.val_len] = '\0';
+			contentLength = static_cast<int>(strtol(headers.val_start, &end, 10));
 		}
 	}
 
@@ -1024,11 +1027,11 @@ void WebsocketSession::commandSTATE(char *frame, int len, bool service) {
 
 	msg->type = Broker::Message::Type::Status;
 
-	int headerLength = headers.getptr() - frame;
-	int payloadLength = len - headerLength;
+	size_t headerLength = static_cast<size_t>(headers.getptr() - frame);
+	size_t payloadLength = static_cast<size_t>(len) - headerLength;
 	if ( contentLength < 0 )
-		contentLength = payloadLength;
-	else if ( contentLength != payloadLength ) {
+		contentLength = static_cast<int>(payloadLength);
+	else if ( contentLength != static_cast<int>(payloadLength) ) {
 		replyWithError(str(ERR_LENGTH_MISMATCH));
 		delete msg;
 		return;

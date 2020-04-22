@@ -21,8 +21,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_BROKER_PROTOCOL_HTTP_H__
-#define SEISCOMP_BROKER_PROTOCOL_HTTP_H__
+#ifndef SEISCOMP_BROKER_PROTOCOL_HTTP_H
+#define SEISCOMP_BROKER_PROTOCOL_HTTP_H
 
 
 #include <seiscomp/wired/protocols/http.h>
@@ -43,7 +43,7 @@ class HttpSession : public Wired::HttpSession {
 		HttpSession(Wired::Socket *sock, Broker::Server *server);
 
 	public:
-		bool handleGETRequest(Wired::HttpRequest &req);
+		bool handleGETRequest(Wired::HttpRequest &req) override;
 
 	protected:
 		Broker::Server *_server;

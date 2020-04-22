@@ -62,16 +62,17 @@ struct HttpResponse {
 	typedef std::vector<Header> Headers;
 
 	int         statusCode;
+	int         contentLength;
+
 	std::string statusMessage;
 	std::string statusLine;
-	bool        statusLineComplete;
 	Headers     headers;
 	std::string body;
-	int         contentLength;
+	std::string currentHeaderLine;
+
+	bool        statusLineComplete;
 	bool        headersComplete;
 	bool        isFinished;
-
-	std::string currentHeaderLine;
 
 	HttpResponse() {
 		reset();
@@ -131,15 +132,15 @@ struct HttpResponse {
 
 							// Parse header
 							const char *lineStart = currentHeaderLine.data();
-							int lineLen = (int)currentHeaderLine.size();
-							int key_len;
+							size_t lineLen = currentHeaderLine.size();
+							size_t key_len;
 							const char *key = Core::tokenize(lineStart, ":", lineLen, key_len);
 							if ( !key ) {
 								SEISCOMP_ERROR("Invalid header");
 								return -1;
 							}
 
-							int val_len = 0;
+							size_t val_len = 0;
 							const char *val = Core::tokenize(lineStart, ":", lineLen, val_len);
 							if ( !val ) {
 								SEISCOMP_ERROR("Invalid header");
@@ -333,7 +334,7 @@ Result WebsocketConnection::connect(const char *address,
 				return InvalidURLParameters;
 			}
 
-			setAckWindow(ackWindow);
+			setAckWindow(static_cast<uint32_t>(ackWindow));
 			SEISCOMP_DEBUG("Set acknowledge window to %d", ackWindow);
 		}
 	}

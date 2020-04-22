@@ -352,7 +352,7 @@ GenericRecord *RecordSequence::contiguousRecord(const Core::TimeWindow *tw, bool
 			ar = tmpData.get();
 		}
 
-		if ( !lastRec ) {
+		if ( !rawRecord ) {
 			// Remember frequency of first record
 			samplingFrequency = rec->samplingFrequency();
 			rawRecord = new GenericRecord(rec->networkCode(),

@@ -130,10 +130,12 @@ PREPAREENUM(Result,
 	)
 );
 
-struct Result : ENUMWRAPPERCLASS(Result) {
-	Result(Type value = (Type)0) : ENUMWRAPPERCLASS(Result)(value) {}
-	Type code() const { return _value; }
-	operator bool() const { return _value == OK; }
+class Result : public ENUMWRAPPERCLASS(Result) {
+	public:
+		Result(Type value = Type(0)) : ENUMWRAPPERCLASS(Result)(value) {}
+		Type code() const { return _value; }
+		operator bool() const { return _value == OK; }
+
 	// Disable implicit casts to the enumeration and therefore to
 	// a bool value. A special bool operator is used that maps true to
 	// OK.

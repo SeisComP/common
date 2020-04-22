@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_WIRED_PROTOCOLS_HTTP_H__
-#define SEISCOMP_WIRED_PROTOCOLS_HTTP_H__
+#ifndef SEISCOMP_WIRED_PROTOCOLS_HTTP_H
+#define SEISCOMP_WIRED_PROTOCOLS_HTTP_H
 
 
 #include <seiscomp/core/enumeration.h>
@@ -210,7 +210,7 @@ struct URLOptionValue {
 struct URLOptions {
 	URLOptions(const std::string &s) : _source(s.data()), _source_len(s.size()) {}
 
-	URLOptions(const char *src, int l) : _source(src), _source_len(l) {}
+	URLOptions(const char *src, size_t l) : _source(src), _source_len(l) {}
 
 	bool next();
 
@@ -226,19 +226,19 @@ struct URLOptions {
 	}
 
 	const char  *_source;
-	int          _source_len;
+	size_t       _source_len;
 
 	const char  *name_start;
-	int          name_len;
+	size_t       name_len;
 	const char  *val_start;
-	int          val_len;
+	size_t       val_len;
 };
 
 
 struct URLInsituOptions {
 	URLInsituOptions(std::string &s) : _source(&s[0]), _source_len(s.size()) {}
 
-	URLInsituOptions(char *src, int l) : _source(src), _source_len(l) {}
+	URLInsituOptions(char *src, size_t l) : _source(src), _source_len(l) {}
 
 	bool next();
 
@@ -254,19 +254,19 @@ struct URLInsituOptions {
 	}
 
 	const char  *_source;
-	int          _source_len;
+	size_t       _source_len;
 
 	char        *name;
-	int          name_len;
+	size_t       name_len;
 	char        *val;
-	int          val_len;
+	size_t       val_len;
 };
 
 
 class URLPath {
 	public:
 		URLPath(const std::string &s);
-		URLPath(const char *src, int l);
+		URLPath(const char *src, size_t l);
 
 
 	public:
@@ -274,7 +274,7 @@ class URLPath {
 		bool next();
 		bool partEquals(const char *s) const;
 		const char *remainder() const;
-		int remainderLength() const;
+		size_t remainderLength() const;
 
 		// Checks a sub path for equality
 		bool operator==(const char *s) const { return partEquals(s); }
@@ -283,18 +283,18 @@ class URLPath {
 
 	public:
 		const char  *part_start;
-		int          part_len;
+		size_t       part_len;
 
 	private:
 		const char  *_source;
-		int          _source_len;
+		size_t       _source_len;
 	};
 
 
 class URLInsituPath {
 	public:
 		URLInsituPath(std::string &s);
-		URLInsituPath(char *src, int l);
+		URLInsituPath(char *src, size_t l);
 
 
 	public:
@@ -303,7 +303,7 @@ class URLInsituPath {
 		bool partEquals(const char *s) const;
 		char *savePart();
 		char *remainder() const;
-		int remainderLength() const;
+		size_t remainderLength() const;
 
 		// Checks a sub path for equality
 		bool operator==(const char *s) const { return partEquals(s); }
@@ -312,11 +312,11 @@ class URLInsituPath {
 
 	public:
 		char        *part_start;
-		int          part_len;
+		size_t       part_len;
 
 	private:
 		char        *_source;
-		int          _source_len;
+		size_t       _source_len;
 };
 
 
@@ -331,7 +331,7 @@ class SC_SYSTEM_CORE_API HttpSession : public ClientSession {
 
 	public:
 		HttpSession(Device *sock, const char *protocol,
-		            const char *server = NULL);
+		            const char *server = nullptr);
 		~HttpSession();
 
 
@@ -340,21 +340,25 @@ class SC_SYSTEM_CORE_API HttpSession : public ClientSession {
 		void sendResponse(const std::string &,
 		                  HttpStatus status,
 		                  const char *contentType,
-		                  const char *cookie = NULL);
-		void sendResponse(const char *, int len,
+		                  const char *cookie = nullptr);
+		void sendResponse(const char *, size_t len,
 		                  HttpStatus status,
 		                  const char *contentType,
-		                  const char *cookie = NULL);
+		                  const char *cookie = nullptr);
 
-		//! additionalHeader must contain a trailing newline (\r\n) for
-		//! each line.
+		/*
+		 * additionalHeader must contain a trailing newline (\r\n) for
+		 * each line.
+		 */
 		void sendResponse(Buffer*,
 		                  HttpStatus status,
 		                  const char *contentType,
-		                  const char *cookie = NULL,
-		                  const char *additionalHeader = NULL);
+		                  const char *cookie = nullptr,
+		                  const char *additionalHeader = nullptr);
 		void sendStatus(HttpStatus status, const std::string &content = EmptyString,
 		                const char *contentType = "text/plain");
+
+		void close() override;
 
 		void redirect(const char *path);
 
@@ -363,10 +367,9 @@ class SC_SYSTEM_CORE_API HttpSession : public ClientSession {
 		//! reset is used if a waiting connection is reused and receives
 		//! a new request.
 		virtual bool reset();
-		virtual void close();
 
-		virtual void handleHeader(const char *name, int nlen,
-		                          const char *value, int vlen);
+		virtual void handleHeader(const char *name, size_t nlen,
+		                          const char *value, size_t vlen);
 		virtual bool handleRequest(HttpRequest &req);
 
 		virtual bool handleGETRequest(HttpRequest &req);
@@ -401,13 +404,13 @@ class SC_SYSTEM_CORE_API HttpSession : public ClientSession {
 
 	protected:
 		//! Handles a socket read for Websockets
-		virtual void handleReceive(const char *data, int len);
-		virtual void handleInbox(const char *data, int len);
-		virtual bool validatePostDataSize(int postDataSize);
-		virtual void handlePostData(const char *data, int len);
-		virtual void handleInboxError(Error error);
-		virtual void outboxFlushed();
-		//! The default implementation does nothing
+		void handleReceive(const char *data, size_t len) override;
+		void handleInbox(const char *data, size_t len) override;
+		void handleInboxError(Error error) override;
+		void handlePostData(const char *data, size_t len) override;
+		void outboxFlushed() override;
+
+		virtual bool validatePostDataSize(size_t postDataSize);
 		virtual void requestFinished();
 
 
@@ -416,7 +419,7 @@ class SC_SYSTEM_CORE_API HttpSession : public ClientSession {
 		const char         *_protocol;
 		const char         *_server;
 		bool                _requestStarted;
-		int                 _dataSize;
+		size_t              _dataSize;
 		bool                _dataStarted;
 		bool                _acceptGzip;
 		bool                _upgradedToWebsocket;
@@ -437,7 +440,7 @@ inline URLPath::URLPath(const std::string &s)
 	}
 }
 
-inline URLPath::URLPath(const char *src, int l)
+inline URLPath::URLPath(const char *src, size_t l)
 : _source(src)
 , _source_len(l)
 {
@@ -448,11 +451,11 @@ inline URLPath::URLPath(const char *src, int l)
 }
 
 inline bool URLPath::next() {
-	int len;
+	size_t len;
 	const char *data = Core::tokenize(_source, "/", _source_len, len);
 
-	if ( data != NULL ) {
-		Core::trim(data,len);
+	if ( data != nullptr ) {
+		Core::trim(data, len);
 
 		part_start = data;
 		part_len = len;
@@ -460,14 +463,14 @@ inline bool URLPath::next() {
 		return true;
 	}
 
-	part_start = NULL;
+	part_start = nullptr;
 	part_len = 0;
 
 	return false;
 }
 
 inline bool URLPath::partEquals(const char *s) const {
-	if ( (int)strlen(s) != part_len ) return false;
+	if ( strlen(s) != part_len ) return false;
 	return !strncmp(s, part_start, part_len);
 }
 
@@ -475,7 +478,7 @@ inline const char *URLPath::remainder() const {
 	return _source;
 }
 
-inline int URLPath::remainderLength() const {
+inline size_t URLPath::remainderLength() const {
 	return _source_len;
 }
 
@@ -491,7 +494,7 @@ inline URLInsituPath::URLInsituPath(std::string &s)
 	}
 }
 
-inline URLInsituPath::URLInsituPath(char *src, int l)
+inline URLInsituPath::URLInsituPath(char *src, size_t l)
 : part_start(src)
 , part_len(0)
 , _source(part_start)
@@ -504,10 +507,10 @@ inline URLInsituPath::URLInsituPath(char *src, int l)
 }
 
 inline bool URLInsituPath::next() {
-	int len;
+	size_t len;
 	char *data = Core::tokenize2(_source, "/", _source_len, len);
 
-	if ( data != NULL ) {
+	if ( data != nullptr ) {
 		Core::trim(data,len);
 
 		part_start = data;
@@ -516,14 +519,14 @@ inline bool URLInsituPath::next() {
 		return true;
 	}
 
-	part_start = NULL;
+	part_start = nullptr;
 	part_len = 0;
 
 	return false;
 }
 
 inline bool URLInsituPath::partEquals(const char *s) const {
-	if ( (int)strlen(s) != part_len ) return false;
+	if ( strlen(s) != part_len ) return false;
 	return !strncmp(s, part_start, part_len);
 }
 
@@ -536,7 +539,7 @@ inline char *URLInsituPath::remainder() const {
 	return _source;
 }
 
-inline int URLInsituPath::remainderLength() const {
+inline size_t URLInsituPath::remainderLength() const {
 	return _source_len;
 }
 

@@ -184,15 +184,16 @@ void ArclinkSession::update() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ArclinkSession::handleInbox(const char *src_data, int data_len) {
+void ArclinkSession::handleInbox(const char *src_data, int src_len) {
+	size_t data_len = static_cast<size_t>(src_len);
 	if ( data_len == 0 )
 		return;
 
 	SEISCOMP_DEBUG("$ %s", src_data);
 
-	int len;
+	size_t len;
 	const char *data;
-	if ( (data = tokenize(src_data, " ", data_len, len)) == NULL ) {
+	if ( !(data = tokenize(src_data, " ", data_len, len)) ) {
 		sendError("empty line");
 		return;
 	}
@@ -201,7 +202,7 @@ void ArclinkSession::handleInbox(const char *src_data, int data_len) {
 		case Unspecific:
 			if ( len == 5 && strncasecmp(data, "hello", len) == 0 ) {
 				sendResponse("scwfas v" SCWFAS_VERSION_NAME "\r\n");
-				sendResponse(global.dcid.c_str(), global.dcid.size());
+				sendResponse(global.dcid.c_str(), static_cast<int>(global.dcid.size()));
 				sendResponse("\r\n");
 			}
 			else if ( len == 3 && strncasecmp(data, "bye", len) == 0 )
@@ -223,7 +224,7 @@ void ArclinkSession::handleInbox(const char *src_data, int data_len) {
 
 				if ( (data = tokenize(src_data, " ", data_len, len)) != NULL ) {
 					// Parse for "format=MSEED"
-					int tlen; const char *tdata;
+					size_t tlen; const char *tdata;
 					if ( (tdata = tokenize(data, "=", len, tlen)) == NULL ) {
 						sendError("invalid argument to REQUEST WAVEFORM");
 						return;
@@ -399,6 +400,9 @@ void ArclinkSession::handleInbox(const char *src_data, int data_len) {
 					return;
 				}
 			}
+			break;
+
+		case Downloading:
 			break;
 
 		default:

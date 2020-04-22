@@ -46,10 +46,10 @@ namespace MIME {
 bool Multipart::ParseContentType(const string &contentType, string &subtype,
                                  string &boundary) {
 	const char *data = contentType.data();
-	int len = contentType.size();
+	size_t len = contentType.size();
 
 	const char *tok = NULL;
-	int len_tok = 0;
+	size_t len_tok = 0;
 
 	subtype.clear();
 	boundary.clear();
@@ -83,7 +83,8 @@ bool Multipart::ParseContentType(const string &contentType, string &subtype,
 			if ( tok[0] == '"' ) {
 				if ( len_tok < 3 || tok[len_tok-1] != '"')
 					return false;
-				++tok, len_tok -= 2;
+				++tok;
+				len_tok -= 2;
 			}
 
 			boundary.assign(tok, len_tok);
@@ -109,7 +110,7 @@ Multipart::Multipart(const std::string &boundary, const std::string &s) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Multipart::Multipart(const std::string &boundary, const char *src, int l) {
+Multipart::Multipart(const std::string &boundary, const char *src, size_t l) {
 	init(boundary, src, l);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -125,31 +126,31 @@ bool Multipart::next() {
 
 	if ( _source == NULL ) return false;
 
-	int pos = 0, tmpPos = 0;
+	size_t pos = 0, tmpPos = 0;
 
 	// first part: find boundary preamble, ignore data before
 	if ( _part == 0 ) {
 		// CRLF may be ommitted in first boundary if preamble is empty
-		if ( _source_len >= (int)_boundary.size() - 2 &&
+		if ( _source_len +2 >= _boundary.size() &&
 		     !strncmp(_source, &_boundary[2], _boundary.size() - 2) ) {
 			advance(_source, _source_len, _boundary.size() - 2);
 			SEISCOMP_DEBUG("initial boundary found at position 0");
 		}
 		else {
 			pos = findString(_boundary.data(), _boundary.size());
-			if ( pos < 0 ) {
+			if ( pos == string::npos ) {
 				SEISCOMP_ERROR("no multipart boundary found");
 				_source = NULL;
 				return false;
 			}
 			advance(_source, _source_len, pos + _boundary.size());
-			SEISCOMP_DEBUG("initial boundary found at position %i", pos + 2);
+			SEISCOMP_DEBUG("initial boundary found at position %zu", pos + 2);
 		}
 	}
 
 	// check if this is the last part
 	if ( _source_len >= 2 && !strncmp(_source, "--", 2) ) {
-		SEISCOMP_DEBUG("closing boundary found after part %i", _part);
+		SEISCOMP_DEBUG("closing boundary found after part %zu", _part);
 		_source = NULL;
 		return false;
 	}
@@ -158,19 +159,19 @@ bool Multipart::next() {
 
 	// read CRLF from prevous boundary
 	if ( _source_len < 2 || strncmp(_source, CRLF, 2) ) {
-		SEISCOMP_ERROR("missing CRLF before part %i", _part);
+		SEISCOMP_ERROR("missing CRLF before part %zu", _part);
 		_source = NULL;
 		return false;
 	}
 	advance(_source, _source_len, 2);
 
-	SEISCOMP_DEBUG("reading part %i", _part);
+	SEISCOMP_DEBUG("reading part %zu", _part);
 
 	// read header until empty line is found
-	int line = 1;
+	size_t line = 1;
 	while ( (pos = findString(CRLF, 2)) != 0 ) {
-		if ( pos < 0 ) {
-			SEISCOMP_ERROR("invalid header in part %i, line %i, could not "
+		if ( pos == string::npos ) {
+			SEISCOMP_ERROR("invalid header in part %zu, line %zu, could not "
 			               "find CRLF", _part, line);
 			_source = NULL;
 			return false;
@@ -195,7 +196,7 @@ bool Multipart::next() {
 			trim(transfer_enc, transfer_enc_len);
 		}
 		// custom header fields
-		else if ( (tmpPos = findString(":", 1, pos-1)) > 0 ) {
+		else if ( (tmpPos = findString(":", 1, pos-1)) != string::npos ) {
 			_customHeaders.resize(_customHeaders.size() + 1);
 			CustomHeader &h = _customHeaders.back();
 			h.name = _source;
@@ -212,8 +213,8 @@ bool Multipart::next() {
 
 	// find boundary
 	pos = findString(_boundary.data(), _boundary.size());
-	if ( pos < 0 ) {
-		SEISCOMP_ERROR("invalid body in part %i, could not find boundary", _part);
+	if ( pos == string::npos ) {
+		SEISCOMP_ERROR("invalid body in part %zu, could not find boundary", _part);
 		_source = NULL;
 		return false;
 	}
@@ -239,7 +240,7 @@ bool Multipart::typeEquals(const char *s) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Multipart::typeStartsWith(const char *s, int len) const {
+bool Multipart::typeStartsWith(const char *s, size_t len) const {
 	return len <= type_len && !strncmp(s, type, len);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -248,7 +249,7 @@ bool Multipart::typeStartsWith(const char *s, int len) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Multipart::init(const std::string &boundary, const char *src, int l) {
+void Multipart::init(const std::string &boundary, const char *src, size_t l) {
 	_boundary = CRLF "--" + boundary;
 	_source = src;
 	_source_len = l;
@@ -263,14 +264,16 @@ void Multipart::init(const std::string &boundary, const char *src, int l) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int Multipart::findString(const char *needle, int len, int haystack_len) {
-	if ( needle == NULL || len <= 0 )
-		return -1;
-	if ( haystack_len < 0 || haystack_len > _source_len )
+size_t Multipart::findString(const char *needle, size_t len, size_t haystack_len) {
+	if ( !needle || !len )
+		return string::npos;
+
+	if ( haystack_len == string::npos
+	  || haystack_len > _source_len )
 		haystack_len = _source_len;
 
 	const char *haystack = _source;
-	for ( int iH = 0, iN = 0; iH < haystack_len; ++iH, ++haystack ) {
+	for ( size_t iH = 0, iN = 0; iH < haystack_len; ++iH, ++haystack ) {
 		if ( *haystack == *needle ) {
 			if ( ++iN == len)
 				return iH - iN + 1;
@@ -283,7 +286,7 @@ int Multipart::findString(const char *needle, int len, int haystack_len) {
 			--iH;
 		}
 	}
-	return -1;
+	return string::npos;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

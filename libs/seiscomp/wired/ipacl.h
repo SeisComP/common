@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_WIRED_IPACL_H__
-#define SEISCOMP_WIRED_IPACL_H__
+#ifndef SEISCOMP_WIRED_IPACL_H
+#define SEISCOMP_WIRED_IPACL_H
 
 
 #include <vector>

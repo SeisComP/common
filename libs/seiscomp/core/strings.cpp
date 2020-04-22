@@ -32,6 +32,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <cerrno>
 
 
@@ -88,20 +89,24 @@ std::string toString(const Enumeration& value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <>
-SC_SYSTEM_CORE_API bool fromString(char& value, const std::string& str) {
-	char* endptr = NULL;
+SC_SYSTEM_CORE_API bool fromString(char &value, const std::string &str) {
+	char* endptr = nullptr;
 	errno = 0;
-	long int retval = strtol(str.c_str(), &endptr, 10);
+	long retval = strtol(str.c_str(), &endptr, 10);
+
 	if ( errno != 0 )
 		return false;
-	if ( endptr ) {
-		if ( str.c_str() + str.size() != endptr )
-			return false;
-		else if ( retval == 0 && str.c_str() == endptr )
-			return false;
+
+	if ( endptr && (&str[0] + str.size() != endptr) )
+		return false;
+
+	if ( retval < std::numeric_limits<char>::min()
+	  || retval > std::numeric_limits<char>::max() ) {
+		errno = ERANGE;
+		return false;
 	}
 
-	value = (char)retval;
+	value = static_cast<char>(retval);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -111,21 +116,24 @@ SC_SYSTEM_CORE_API bool fromString(char& value, const std::string& str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <>
-SC_SYSTEM_CORE_API bool fromString(unsigned char& value, const std::string& str) {
-	char* endptr = NULL;
+SC_SYSTEM_CORE_API bool fromString(int8_t &value, const std::string &str) {
+	char* endptr = nullptr;
 	errno = 0;
-	long int retval = strtol(str.c_str(), &endptr, 10);
+	long retval = strtol(str.c_str(), &endptr, 10);
+
 	if ( errno != 0 )
 		return false;
-	if ( endptr ) {
 
-		if ( str.c_str() + str.size() != endptr )
-			return false;
-		else if ( retval == 0 && str.c_str() == endptr )
-			return false;
+	if ( endptr && (&str[0] + str.size() != endptr) )
+		return false;
+
+	if ( retval < std::numeric_limits<int8_t>::min()
+	  || retval > std::numeric_limits<int8_t>::max() ) {
+		errno = ERANGE;
+		return false;
 	}
 
-	value = (unsigned char)retval;
+	value = static_cast<int8_t>(retval);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -135,21 +143,24 @@ SC_SYSTEM_CORE_API bool fromString(unsigned char& value, const std::string& str)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <>
-SC_SYSTEM_CORE_API bool fromString(int& value, const std::string& str) {
-	char* endptr = NULL;
+SC_SYSTEM_CORE_API bool fromString(uint8_t &value, const std::string &str) {
+	char* endptr = nullptr;
 	errno = 0;
-	long int retval = strtol(str.c_str(), &endptr, 10);
+	long retval = strtol(str.c_str(), &endptr, 10);
 
 	if ( errno != 0 )
 		return false;
-	if ( endptr ) {
-		if ( str.c_str() + str.size() != endptr )
-			return false;
-		else if ( retval == 0 && str.c_str() == endptr )
-			return false;
+
+	if ( endptr && (&str[0] + str.size() != endptr) )
+		return false;
+
+	if ( retval < std::numeric_limits<uint8_t>::min()
+	  || retval > std::numeric_limits<uint8_t>::max() ) {
+		errno = ERANGE;
+		return false;
 	}
 
-	value = (int)retval;
+	value = static_cast<uint8_t>(retval);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -159,20 +170,24 @@ SC_SYSTEM_CORE_API bool fromString(int& value, const std::string& str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <>
-SC_SYSTEM_CORE_API bool fromString(unsigned int& value, const std::string& str) {
-	char* endptr = NULL;
+SC_SYSTEM_CORE_API bool fromString(int16_t &value, const std::string &str) {
+	char* endptr = nullptr;
 	errno = 0;
-	long int retval = strtol(str.c_str(), &endptr, 10);
+	long retval = strtol(str.c_str(), &endptr, 10);
+
 	if ( errno != 0 )
 		return false;
-	if ( endptr ) {
-		if ( str.c_str() + str.size() != endptr )
-			return false;
-		else if ( retval == 0 && str.c_str() == endptr )
-			return false;
+
+	if ( endptr && (&str[0] + str.size() != endptr) )
+		return false;
+
+	if ( retval < std::numeric_limits<int16_t>::min()
+	  || retval > std::numeric_limits<int16_t>::max() ) {
+		errno = ERANGE;
+		return false;
 	}
 
-	value = (unsigned int)retval;
+	value = static_cast<int16_t>(retval);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -182,20 +197,24 @@ SC_SYSTEM_CORE_API bool fromString(unsigned int& value, const std::string& str) 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <>
-SC_SYSTEM_CORE_API bool fromString(long& value, const std::string& str) {
-	char* endptr = NULL;
+SC_SYSTEM_CORE_API bool fromString(uint16_t &value, const std::string &str) {
+	char* endptr = nullptr;
 	errno = 0;
-	long int retval = strtol(str.c_str(), &endptr, 10);
+	long retval = strtol(str.c_str(), &endptr, 10);
+
 	if ( errno != 0 )
 		return false;
-	if ( endptr ) {
-		if ( str.c_str() + str.size() != endptr )
-			return false;
-		else if ( retval == 0 && str.c_str() == endptr )
-			return false;
+
+	if ( endptr && (&str[0] + str.size() != endptr) )
+		return false;
+
+	if ( retval < std::numeric_limits<uint16_t>::min()
+	  || retval > std::numeric_limits<uint16_t>::max() ) {
+		errno = ERANGE;
+		return false;
 	}
 
-	value = (long)retval;
+	value = static_cast<uint16_t>(retval);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -205,20 +224,24 @@ SC_SYSTEM_CORE_API bool fromString(long& value, const std::string& str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <>
-SC_SYSTEM_CORE_API bool fromString(unsigned long int& value, const std::string& str) {
-	char* endptr = NULL;
+SC_SYSTEM_CORE_API bool fromString(int32_t &value, const std::string& str) {
+	char* endptr = nullptr;
 	errno = 0;
-	long int retval = strtol(str.c_str(), &endptr, 10);
+	long long retval = strtoll(str.c_str(), &endptr, 10);
+
 	if ( errno != 0 )
 		return false;
-	if ( endptr ) {
-		if ( str.c_str() + str.size() != endptr )
-			return false;
-		else if ( retval == 0 && str.c_str() == endptr )
-			return false;
+
+	if ( endptr && (&str[0] + str.size() != endptr) )
+		return false;
+
+	if ( retval < std::numeric_limits<int32_t>::min()
+	  || retval > std::numeric_limits<int32_t>::max() ) {
+		errno = ERANGE;
+		return false;
 	}
 
-	value = (unsigned long)retval;
+	value = static_cast<int32_t>(retval);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -228,20 +251,24 @@ SC_SYSTEM_CORE_API bool fromString(unsigned long int& value, const std::string& 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <>
-SC_SYSTEM_CORE_API bool fromString(long long int& value, const std::string& str) {
-	char* endptr = NULL;
+SC_SYSTEM_CORE_API bool fromString(uint32_t &value, const std::string &str) {
+	char* endptr = nullptr;
 	errno = 0;
-	long long int retval = strtoll(str.c_str(), &endptr, 10);
+	long long retval = strtoll(str.c_str(), &endptr, 10);
+
 	if ( errno != 0 )
 		return false;
-	if ( endptr ) {
-		if ( str.c_str() + str.size() != endptr )
-			return false;
-		else if ( retval == 0 && str.c_str() == endptr )
-			return false;
+
+	if ( endptr && (&str[0] + str.size() != endptr) )
+		return false;
+
+	if ( retval < std::numeric_limits<uint32_t>::min()
+	  || retval > std::numeric_limits<uint32_t>::max() ) {
+		errno = ERANGE;
+		return false;
 	}
 
-	value = retval;
+	value = static_cast<uint32_t>(retval);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -251,20 +278,18 @@ SC_SYSTEM_CORE_API bool fromString(long long int& value, const std::string& str)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <>
-SC_SYSTEM_CORE_API bool fromString(unsigned long long int& value, const std::string& str) {
-	char* endptr = NULL;
+SC_SYSTEM_CORE_API bool fromString(int64_t &value, const std::string &str) {
+	char* endptr = nullptr;
 	errno = 0;
-	long long int retval = strtoll(str.c_str(), &endptr, 10);
+	long long retval = strtoll(str.c_str(), &endptr, 10);
+
 	if ( errno != 0 )
 		return false;
-	if ( endptr ) {
-		if ( str.c_str() + str.size() != endptr )
-			return false;
-		else if ( retval == 0 && str.c_str() == endptr )
-			return false;
-	}
 
-	value = (unsigned long long)retval;
+	if ( endptr && (&str[0] + str.size() != endptr) )
+		return false;
+
+	value = static_cast<int64_t>(retval);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -274,20 +299,50 @@ SC_SYSTEM_CORE_API bool fromString(unsigned long long int& value, const std::str
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <>
-SC_SYSTEM_CORE_API bool fromString(float& value, const std::string& str) {
-	char* endptr = NULL;
+SC_SYSTEM_CORE_API bool fromString(uint64_t &value, const std::string& str) {
+	char* endptr = nullptr;
+	errno = 0;
+	long long retval = strtoll(str.c_str(), &endptr, 10);
+
+	if ( errno != 0 )
+		return false;
+
+	if ( endptr && (&str[0] + str.size() != endptr) )
+		return false;
+
+	if ( retval < 0 ) {
+		errno = ERANGE;
+		return false;
+	}
+
+	value = static_cast<uint64_t>(retval);
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <>
+SC_SYSTEM_CORE_API bool fromString(float &value, const std::string &str) {
+	char* endptr = nullptr;
 	errno = 0;
 	double retval = strtod(str.c_str(), &endptr);
+
 	if ( errno != 0 )
 		return false;
-	if ( endptr ) {
-		if ( str.c_str() + str.size() != endptr )
-			return false;
-		else if ( retval == 0 && str.c_str() == endptr )
-			return false;
+
+	if ( endptr && (&str[0] + str.size() != endptr) )
+		return false;
+
+	if ( retval < -static_cast<double>(std::numeric_limits<float>::max())
+	  || retval > static_cast<double>(std::numeric_limits<float>::max()) ) {
+		errno = ERANGE;
+		return false;
 	}
 
-	value = (float)retval;
+	value = static_cast<float>(retval);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -297,18 +352,16 @@ SC_SYSTEM_CORE_API bool fromString(float& value, const std::string& str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <>
-SC_SYSTEM_CORE_API bool fromString(double& value, const std::string& str) {
-	char* endptr = NULL;
+SC_SYSTEM_CORE_API bool fromString(double &value, const std::string &str) {
+	char* endptr = nullptr;
 	errno = 0;
 	value = strtod(str.c_str(), &endptr);
+
 	if ( errno != 0 )
 		return false;
-	if ( endptr ) {
-		if ( str.c_str() + str.size() != endptr )
-			return false;
-		else if ( value == 0 && str.c_str() == endptr )
-			return false;
-	}
+
+	if ( endptr && (&str[0] + str.size() != endptr) )
+		return false;
 
 	return true;
 }
@@ -319,8 +372,8 @@ SC_SYSTEM_CORE_API bool fromString(double& value, const std::string& str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <>
-SC_SYSTEM_CORE_API bool fromString(bool& value, const std::string& str) {
-	char* endptr = NULL;
+SC_SYSTEM_CORE_API bool fromString(bool &value, const std::string &str) {
+	char* endptr = nullptr;
 	errno = 0;
 
 	if ( compareNoCase(str, "true") == 0 ) {
@@ -334,16 +387,14 @@ SC_SYSTEM_CORE_API bool fromString(bool& value, const std::string& str) {
 	}
 
 	long int retval = strtol(str.c_str(), &endptr, 10);
+
 	if ( errno != 0 )
 		return false;
-	if ( endptr ) {
-		if ( str.c_str() + str.size() != endptr )
-			return false;
-		else if ( retval == 0 && str.c_str() == endptr )
-			return false;
-	}
 
-	value = (bool)retval;
+	if ( endptr && (&str[0] + str.size() != endptr) )
+		return false;
+
+	value = retval ? true : false;
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -385,39 +436,52 @@ bool fromString(std::string& value, const std::string& str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string stringify(const char* fmt, ...) {
+std::string stringify(const char *fmt, ...) {
 	// A static buffer that hopefully covers 99% of all use cases
 	char staticBuffer[64];
 
 	// The dynamic buffer that will be used if the static buffer is
 	// not large enough
-	char* dynamicBuffer = NULL;
+	char *dynamicBuffer = nullptr;
 
 	// The buffer actually written to
 	char *buffer = staticBuffer;
-	int size = sizeof(staticBuffer);
-	int nsize;
+	size_t size = sizeof(staticBuffer);
+	size_t nsize;
 	va_list params;
 	int maxIterations = 10;
 
 	va_start(params, fmt);
-	nsize = vsnprintf(buffer, size, fmt, params);
+	int r = vsnprintf(buffer, size, fmt, params);
+	if ( r < 0 ) {
+		va_end(params);
+		SEISCOMP_ERROR("Stringify error: %d: aborting", r);
+		return std::string();
+	}
+
+	nsize = size_t(r);
 
 	while ( nsize >= size ) { //fail -> create dynamic buffer with more space
-		if ( dynamicBuffer != NULL )
+		if ( dynamicBuffer )
 			delete [] dynamicBuffer;
 
 		dynamicBuffer = new char[nsize + 1]; //+1 for /0
-		size = nsize+1;
+		size = nsize + 1;
 		buffer = dynamicBuffer;
 
 		va_end(params);
 		va_start(params, fmt);
-		nsize = vsnprintf(buffer, size, fmt, params);
+
+		r = vsnprintf(buffer, size, fmt, params);
+		if ( r < 0 ) {
+			SEISCOMP_ERROR("Stringify error: %d: aborting", r);
+			*buffer = '\0';
+			break;
+		}
 
 		--maxIterations;
 		if ( !maxIterations ) {
-			SEISCOMP_ERROR("Stringify failed after 10 iterations: buffer still not large enough: %d < %d: aborting",
+			SEISCOMP_ERROR("Stringify failed after 10 iterations: buffer still not large enough: %zu < %zu: aborting",
 			               size, nsize);
 			*buffer = '\0';
 			break;
@@ -708,8 +772,8 @@ bool isEmpty(const char* str) {
 int compareNoCase(const std::string& a, const std::string& b) {
 	std::string::const_iterator it_a = a.begin(), it_b = b.begin();
 	while ( it_a != a.end() && it_b != b.end() ) {
-		char upper_a = toupper(*it_a);
-		char upper_b = toupper(*it_b);
+		char upper_a = static_cast<char>(toupper(*it_a));
+		char upper_b = static_cast<char>(toupper(*it_b));
 		if ( upper_a < upper_b )
 			return -1;
 		else if ( upper_a > upper_b )
@@ -782,7 +846,7 @@ loopStart:
 				break;
 			case '*':
 				star = true;
-				str = s, pat = p;
+				str = s; pat = p;
 				do { ++pat; } while (*pat == '*');
 				if ( !*pat ) return true;
 				goto loopStart;
@@ -828,7 +892,7 @@ loopStart:
 				break;
 			case '*':
 				star = true;
-				str = s, pat = p;
+				str = s; pat = p;
 				do { ++pat; } while (*pat == '*');
 				if ( !*pat ) return true;
 				goto loopStart;

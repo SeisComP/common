@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_WIRE_SOCKET_H__
-#define SEISCOMP_WIRE_SOCKET_H__
+#ifndef SEISCOMP_WIRE_SOCKET_H
+#define SEISCOMP_WIRE_SOCKET_H
 
 #include <seiscomp/wired/device.h>
 
@@ -162,16 +162,16 @@ class SC_SYSTEM_CORE_API Socket : public Device {
 		static const char *toString(Status);
 
 		void shutdown();
-		virtual void close();
+		virtual void close() override;
 
 		const std::string &hostname() const;
 		port_t port() const;
 		IPAddress address() const;
 
-		int send(const char *data);
+		ssize_t send(const char *data);
 
-		virtual int write(const char *data, int len) override;
-		virtual int read(char *data, int len) override;
+		virtual ssize_t write(const char *data, size_t len) override;
+		virtual ssize_t read(char *data, size_t len) override;
 
 		//! Sets the socket timeout. This utilizes setsockopt which does not
 		//! work in non blocking sockets.
@@ -255,21 +255,21 @@ class SSLSocket : public Socket {
 		~SSLSocket();
 
 	public:
-		virtual Status bind(IPAddress ip, port_t port);
-		virtual Status bindV6(IPAddress ip, port_t port);
+		Status bind(IPAddress ip, port_t port) override;
+		Status bindV6(IPAddress ip, port_t port) override;
 
-		virtual void close();
+		void close() override;
 
-		Socket *accept();
+		Socket *accept() override;
 
-		virtual int write(const char *data, int len) override;
-		virtual int read(char *data, int len) override;
+		ssize_t write(const char *data, size_t len) override;
+		ssize_t read(char *data, size_t len) override;
 
-		Status connect(const std::string &hostname, port_t port);
-		Status connectV6(const std::string &hostname, port_t port);
+		Status connect(const std::string &hostname, port_t port) override;
+		Status connectV6(const std::string &hostname, port_t port) override;
 
-		virtual const unsigned char *sessionID() const override;
-		virtual unsigned int sessionIDLength() const override;
+		const unsigned char *sessionID() const override;
+		unsigned int sessionIDLength() const override;
 
 		SSL_CTX *sslContext() const;
 		SSL *ssl() const;
@@ -277,7 +277,6 @@ class SSLSocket : public Socket {
 		X509 *peerCertificate();
 
 		static SSL_CTX *createServerContext(const char *pemCert, const char *pemKey);
-
 
 	private:
 		void cleanUp();

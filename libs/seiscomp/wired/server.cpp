@@ -152,8 +152,8 @@ bool Server::addSession(Session *session) {
 
 	_sessions.push_back(session);
 	session->_parent = this;
-	SEISCOMP_DEBUG("[server] active sessions/sockets: %ld/%d",
-	               (unsigned long)_sessions.size(), _devices.count());
+	SEISCOMP_DEBUG("[server] active sessions/sockets: %zu/%zu",
+	               _sessions.size(), _devices.count());
 	sessionAdded(session);
 	return true;
 }
@@ -311,8 +311,8 @@ bool Server::removeSession(Session *session) {
 	session->_parent = NULL;
 	_sessions.erase(session);
 
-	SEISCOMP_DEBUG("[server] active sessions/sockets: %ld/%d",
-	               (unsigned long)_sessions.size(), _devices.count());
+	SEISCOMP_DEBUG("[server] active sessions/sockets: %zu/%zu",
+	               _sessions.size(), _devices.count());
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

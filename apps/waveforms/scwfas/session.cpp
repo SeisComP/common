@@ -44,10 +44,10 @@ namespace Wfas {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool parseTime(Core::Time &time, const char *data, int len) {
+bool parseTime(Core::Time &time, const char *data, size_t len) {
 	const char *tok;
-	int tok_len;
-	int tok_count = 0;
+	size_t tok_len;
+	size_t tok_count = 0;
 
 	int toks[6];
 
@@ -68,7 +68,7 @@ bool parseTime(Core::Time &time, const char *data, int len) {
 			if ( !isdigit(*tok) )
 				return false;
 
-			toks[tok_count] += (*tok - '0')*base;
+			toks[tok_count] += (*tok - '0') * base;
 			--tok;
 			base *= 10;
 		}
@@ -94,7 +94,7 @@ bool validate(const string &code) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ClientSession::ClientSession(Wired::Socket *s, int maxLen)
+ClientSession::ClientSession(Wired::Socket *s, size_t maxLen)
 : Wired::ClientSession(s, maxLen) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

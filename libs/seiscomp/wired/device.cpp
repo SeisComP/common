@@ -80,10 +80,10 @@ bool lessThan(const struct timeval *tv1, const struct timeval *tv2) {
 
 // Returns milliseconds
 int tv_sub_ms(const struct timeval *tv1, const struct timeval *tv2) {
-	int msdiff = (tv1->tv_sec - tv2->tv_sec) * 1000;
-	int udiff = (tv1->tv_usec - tv2->tv_usec) / 1000;
+	int64_t msdiff = static_cast<int64_t>((tv1->tv_sec - tv2->tv_sec) * 1000);
+	int64_t udiff = static_cast<int64_t>((tv1->tv_usec - tv2->tv_usec) / 1000);
 	if ( udiff < 0 ) msdiff -= udiff;
-	return msdiff;
+	return static_cast<int>(msdiff);
 }
 
 /*
@@ -255,8 +255,8 @@ DeviceGroup::DeviceGroup() {
 	_defaultOps = DEFAULT_KQUEUE_OP;
 #endif
 #if defined(SEISCOMP_WIRED_EPOLL) || defined(SEISCOMP_WIRED_KQUEUE)
-	_selectIndex = -1;
-	_selectSize = -1;
+	_selectIndex = 0;
+	_selectSize = 0;
 	_count = 0;
 	_triggerMode = EdgeTriggered;
 #endif
@@ -518,13 +518,18 @@ bool DeviceGroup::remove(Device *s) {
 	--_count;
 
 	// Remove from event queue
-	for ( int i = _selectIndex; i < _selectSize; ++i ) {
+	for ( size_t i = _selectIndex; i < _selectSize; ++i ) {
 		// Is this device still queued in the epoll event list?
 		if ( _epoll_events[i].data.ptr == s ) {
 			// Remove it
 			--_selectSize;
-			if ( i < _selectSize )
-				memcpy(_epoll_events+i, _epoll_events+i+1, sizeof(struct epoll_event)*(_selectSize-i));
+			if ( i < _selectSize ) {
+				memcpy(
+					_epoll_events + i,
+					_epoll_events + i + 1,
+					sizeof(struct epoll_event) * (_selectSize - i)
+				);
+			}
 		}
 	}
 #endif
@@ -537,7 +542,7 @@ bool DeviceGroup::remove(Device *s) {
 	--_count;
 
 	// Remove from event queue
-	for ( int i = _selectIndex; i < _selectSize; ++i ) {
+	for ( size_t i = _selectIndex; i < _selectSize; ++i ) {
 		// Is this device still queued in the epoll event list?
 		if ( _kqueue_events[i].udata == s ) {
 			// Remove it
@@ -609,7 +614,7 @@ void DeviceGroup::clear() {
 #endif
 #if defined(SEISCOMP_WIRED_EPOLL) || defined(SEISCOMP_WIRED_KQUEUE)
 	_count = 0;
-	_selectIndex = _selectSize = -1;
+	_selectIndex = _selectSize = 0;
   #ifdef SEISCOMP_WIRED_EPOLL
 	if ( _epoll_fd > 0 ) {
 		::close(_epoll_fd);
@@ -640,10 +645,12 @@ void DeviceGroup::interrupt() {
 	if ( _interrupt_write_fd > 0 ) {
 		uint64_t signum(1L);
 		ssize_t written = ::write(_interrupt_write_fd, &signum, sizeof(signum));
-		if ( written < (int)sizeof(signum) ) {
-			SEISCOMP_ERROR("[reactor] interrupt failed, wrote %d/%d: %d: %s",
-			               (int)written, (int)sizeof(signum),
-			               errno, strerror(errno));
+		if ( static_cast<size_t>(written) < sizeof(signum) ) {
+			SEISCOMP_ERROR(
+				"[reactor] interrupt failed, wrote %zi/%zi: %d: %s",
+				written, size_t(sizeof(signum)),
+				errno, strerror(errno)
+			);
 		}
 	}
 }
@@ -653,7 +660,7 @@ void DeviceGroup::interrupt() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DeviceGroup::count() const {
+size_t DeviceGroup::count() const {
 #ifdef SEISCOMP_WIRED_SELECT
 	return _devices.size();
 #endif
@@ -676,7 +683,7 @@ Device *DeviceGroup::wait() {
 	_write_active_set = _write_set;
 #endif
 #if defined(SEISCOMP_WIRED_EPOLL) || defined(SEISCOMP_WIRED_KQUEUE)
-	_selectIndex = _selectSize = -1;
+	_selectIndex = _selectSize = 0;
 
 #endif
 #ifdef SEISCOMP_WIRED_EPOLL
@@ -758,7 +765,7 @@ Device *DeviceGroup::wait() {
 
 #if defined(SEISCOMP_WIRED_EPOLL) || defined(SEISCOMP_WIRED_KQUEUE)
 	_selectIndex = 0;
-	_selectSize = nfds;
+	_selectSize = nfds > 0 ? static_cast<size_t>(nfds) : 0;
 
 #endif
 
@@ -791,7 +798,7 @@ Device *DeviceGroup::next() {
 		_nextQueue->_ticker -= _lastCallDuration;
 		//SEISCOMP_DEBUG("[reactor] remaining ticker: %d ms", _nextQueue->_ticker);
 		if ( _nextQueue->_ticker <= 0 ) {
-			SEISCOMP_DEBUG("[reactor] device %lx timed out", (long int)_nextQueue);
+			SEISCOMP_DEBUG("[reactor] device %p timed out", _nextQueue);
 			Device *dev = _nextQueue;
 			_nextQueue = _nextQueue->_qNext;
 
@@ -803,7 +810,7 @@ Device *DeviceGroup::next() {
 			     FD_ISSET(dev->_fd, &_write_active_set) )
 				hasTrigger = true;
 #else
-			for ( int i = 0; i < _selectSize; ++ i ) {
+			for ( size_t i = 0; i < _selectSize; ++ i ) {
 #ifdef SEISCOMP_WIRED_EPOLL
 				if ( _epoll_events[_selectIndex].data.ptr == dev ) {
 #endif
@@ -884,7 +891,7 @@ Device *DeviceGroup::next() {
 					// Only perform one read. The kernel maintains an atomic counter.
 					uint64_t signum(0);
 					errno = 0;
-					int bytes_read = ::read(_interrupt_read_fd, &signum, sizeof(signum));
+					ssize_t bytes_read = ::read(_interrupt_read_fd, &signum, sizeof(signum));
 					if ( bytes_read < 0 && errno == EINTR ) continue;
 					break;
 				}
@@ -893,7 +900,7 @@ Device *DeviceGroup::next() {
 				for (;;) {
 					// Clear all data from the pipe.
 					char data[16];
-					int bytes_read = ::read(_interrupt_read_fd, data, sizeof(data));
+					ssize_t bytes_read = ::read(_interrupt_read_fd, data, sizeof(data));
 					if ( bytes_read < 0 && errno == EINTR ) continue;
 					while ( bytes_read == sizeof(data) )
 						bytes_read = ::read(_interrupt_read_fd, data, sizeof(data));
@@ -926,8 +933,8 @@ Device *DeviceGroup::next() {
 		if ( !_readyForRead &&
 	#ifdef SEISCOMP_WIRED_EPOLL
 		     (_epoll_events[_selectIndex].events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)) ) {
-			SEISCOMP_DEBUG("[reactor] close erroneous device %lX (%d/%d) with fd %d: events = %d",
-			               (long int)device, _selectIndex, _selectSize, device->fd(),
+			SEISCOMP_DEBUG("[reactor] close erroneous device %p (%zu/%zu) with fd %d: events = %d",
+			               device, _selectIndex, _selectSize, device->fd(),
 			               _epoll_events[_selectIndex].events);
 	#endif
 	#ifdef SEISCOMP_WIRED_KQUEUE
@@ -944,7 +951,7 @@ Device *DeviceGroup::next() {
 		return device;
 	}
 
-	_selectIndex = _selectSize = -1;
+	_selectIndex = _selectSize = 0;
 #endif
 
 	return nullptr;
@@ -982,17 +989,6 @@ void DeviceGroup::clearState(Device *s) {
 	//SEISCOMP_DEBUG("fd %d: clear write", s->_fd);
 	FD_CLR(s->_fd, &_read_set);
 	FD_CLR(s->_fd, &_write_set);
-#endif
-#ifdef SEISCOMP_WIRED_EPOLL
-	/* NOT necessary, because of a clear follows a EPOLL_CTL_DEL or
-	   a close on epollfd.
-	struct epoll_event ev;
-	if ( _epoll_fd <= 0 ) return;
-	ev.events = _defaultOps;
-	ev.data.ptr = s;
-	if ( epoll_ctl(_epoll_fd, EPOLL_CTL_MOD, s->fd(), &ev) == -1 )
-		SEISCOMP_ERROR("epoll_clr(%d): %d: %s", s->fd(), errno, strerror(errno));
-	*/
 #endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -18,7 +18,10 @@
  ***************************************************************************/
 
 
+#include <seiscomp/core/enumeration.h>
+
 #include <sstream>
+#include <complex>
 
 
 namespace Seiscomp {
@@ -145,7 +148,7 @@ template <typename T>
 inline bool fromString(std::vector<T>& vec, const std::string& str) {
 	std::vector<std::string> tokens;
 	split(tokens, str.c_str(), " ");
-	for ( int i = 0; i < (int)tokens.size(); ++i ) {
+	for ( size_t i = 0; i < tokens.size(); ++i ) {
 		T v;
 		if ( !fromString(v, tokens[i]) )
 			return false;
@@ -164,7 +167,7 @@ template <typename T>
 inline bool fromString(std::vector<std::complex<T> >& vec, const std::string& str) {
 	std::vector<std::string> tokens;
 	split(tokens, str.c_str(), " ");
-	for ( int i = 0; i < (int)tokens.size(); ++i ) {
+	for ( size_t i = 0; i < tokens.size(); ++i ) {
 		std::complex<T> v;
 		int count = 1;
 
@@ -209,7 +212,7 @@ inline void toHex(std::string &target, T source) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-inline T *tokenize(T *&str, const char *delim, int &len_source, int &len_tok) {
+inline T *tokenize(T *&str, const char *delim, size_t &len_source, size_t &len_tok) {
 	len_tok = 0;
 	for ( ; len_source; --len_source, ++str ) {
 		// Hit first non delimiter?
@@ -237,7 +240,7 @@ inline T *tokenize(T *&str, const char *delim, int &len_source, int &len_tok) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-inline T *tokenize2(T *&str, const char *delim, int &len_source, int &len_tok) {
+inline T *tokenize2(T *&str, const char *delim, size_t &len_source, size_t &len_tok) {
 	len_tok = 0;
 
 	if ( !len_source ) return nullptr;
@@ -261,9 +264,7 @@ inline T *tokenize2(T *&str, const char *delim, int &len_source, int &len_tok) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-inline char *trimFront(char *&data, int &len) {
-	if ( len < 0 )
-		len = 0;
+inline char *trimFront(char *&data, size_t &len) {
 	while ( len ) {
 		if ( *data != ' ' ) break;
 		else {
@@ -279,9 +280,7 @@ inline char *trimFront(char *&data, int &len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-inline const char *trimFront(const char *&data, int &len) {
-	if ( len < 0 )
-		len = 0;
+inline const char *trimFront(const char *&data, size_t &len) {
 	while ( len ) {
 		if ( *data != ' ' ) break;
 		else {
@@ -297,9 +296,7 @@ inline const char *trimFront(const char *&data, int &len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-inline char *trimBack(char *&data, int &len) {
-	if ( len < 0 )
-		len = 0;
+inline char *trimBack(char *&data, size_t &len) {
 	while ( len ) {
 		if ( data[len-1] != ' ' ) break;
 		else
@@ -313,9 +310,7 @@ inline char *trimBack(char *&data, int &len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-inline const char *trimBack(const char *&data, int &len) {
-	if ( len < 0 )
-		len = 0;
+inline const char *trimBack(const char *&data, size_t &len) {
 	while ( len ) {
 		if ( data[len-1] != ' ' ) break;
 		else
@@ -329,7 +324,7 @@ inline const char *trimBack(const char *&data, int &len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-inline char *trim(char *&data, int &len) {
+inline char *trim(char *&data, size_t &len) {
 	trimFront(data, len);
 	trimBack(data, len);
 	return data;
@@ -340,7 +335,7 @@ inline char *trim(char *&data, int &len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-inline const char *trim(const char *&data, int &len) {
+inline const char *trim(const char *&data, size_t &len) {
 	trimFront(data, len);
 	trimBack(data, len);
 	return data;
@@ -351,7 +346,7 @@ inline const char *trim(const char *&data, int &len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-inline const char *advance(const char *&data, int &len, int offset) {
+inline const char *advance(const char *&data, size_t &len, size_t offset) {
 	data += offset;
 	len -= offset;
 	return data;

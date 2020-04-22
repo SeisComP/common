@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_SYSTEM_APPLICATION_H__
-#define SEISCOMP_SYSTEM_APPLICATION_H__
+#ifndef SEISCOMP_SYSTEM_APPLICATION_H
+#define SEISCOMP_SYSTEM_APPLICATION_H
 
 #include <boost/shared_ptr.hpp>
 
@@ -462,7 +462,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 
 		/**
 		 * @brief Convenience method that calls configGetString and resolves
-		 *        variables such as @DATADIR@ and @ROOTDIR@ and produces a
+		 *        variables such as \@DATADIR\@ and \@ROOTDIR\@ and produces a
 		 *        canonicalized absolute pathname.
 		 * @param query The query
 		 * @return The path
@@ -601,6 +601,8 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 				template <typename T, typename V>
 				void visitSingle(V &visitor, OptionBinding<T> &visitedItem) {
 					switch ( _stage ) {
+						case None:
+							break;
 						case BindCli:
 							if ( visitedItem.cliAbsoluteSymbol ) {
 								if ( visitedItem.cliGroup )
@@ -620,6 +622,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 							if ( !CfgLinkHelper<T, IsNativelySupported<T>::value>::process(*this, visitedItem, visitor.configPrefix) )
 								visitor.setError("Invalid configuration value for " + visitor.configPrefix + visitedItem.configFileRelativeSymbol);
 							break;
+						case PutCfg:
 							break;
 						case Print:
 							if ( visitedItem.configFileRelativeSymbol )
@@ -634,8 +637,6 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 							PrintHelper<T, IsNativelySupported<T>::value>::process(*_external.os, visitedItem.value);
 							*_external.os << std::endl;
 							break;
-						default:
-							break;
 					}
 				}
 
@@ -643,6 +644,8 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 				template <typename T, typename V>
 				void visitSingle(V &visitor, OptionBinding< std::vector<T> > &visitedItem) {
 					switch ( _stage ) {
+						case None:
+							break;
 						case BindCli:
 							if ( visitedItem.cliAbsoluteSymbol ) {
 								if ( visitedItem.cliGroup )
@@ -662,6 +665,8 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 							if ( !CfgLinkHelper<std::vector<T>, IsNativelySupported<T>::value>::process(*this, visitedItem, visitor.configPrefix) )
 								visitor.setError("Invalid configuration value for " + visitor.configPrefix + visitedItem.configFileRelativeSymbol);
 							break;
+						case PutCfg:
+							break;
 						case Print:
 							if ( visitedItem.configFileRelativeSymbol )
 								*_external.os << visitor.configPrefix << visitedItem.configFileRelativeSymbol;
@@ -675,8 +680,6 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 							PrintHelper<std::vector<T>, IsNativelySupported<T>::value>::process(*_external.os, visitedItem.value);
 							*_external.os << std::endl;
 							break;
-						default:
-							break;
 					}
 				}
 
@@ -684,6 +687,8 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 				template <typename T, typename V>
 				void visitMultiple(V &visitor, OptionBinding< std::vector<T> > &visitedItem) {
 					switch ( _stage ) {
+						case None:
+							break;
 						case BindCli:
 						case GetCli:
 							visitor.push(visitedItem);
@@ -718,6 +723,8 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 							}
 							catch ( ... ) {}
 							break;
+						case PutCfg:
+							break;
 						case Print:
 							if ( visitedItem.configFileRelativeSymbol ) {
 								*_external.os << visitor.configPrefix << visitedItem.configFileRelativeSymbol;
@@ -737,8 +744,6 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 									_key = oldKey;
 								}
 							}
-							break;
-						default:
 							break;
 					}
 				}
@@ -834,7 +839,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 							bool hasOption = false;
 							const char *s = strchr(visitedItem.cliAbsoluteSymbol, ',');
 							if ( s ) {
-								int len = s - visitedItem.cliAbsoluteSymbol;
+								size_t len = s - visitedItem.cliAbsoluteSymbol;
 								s = visitedItem.cliAbsoluteSymbol;
 								Core::trim(s, len);
 								hasOption = proc._external.constCli->hasOption(std::string(s, len));
@@ -860,7 +865,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 						if ( visitedItem.cliAbsoluteSymbol && visitedItem.isSwitch() ) {
 							const char *s = strchr(visitedItem.cliAbsoluteSymbol, ',');
 							if ( s ) {
-								int len = s - visitedItem.cliAbsoluteSymbol;
+								size_t len = static_cast<size_t>(s - visitedItem.cliAbsoluteSymbol);
 								s = visitedItem.cliAbsoluteSymbol;
 								Core::trim(s, len);
 								visitedItem.value = proc._external.constCli->hasOption(std::string(s, len));
@@ -876,7 +881,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 				template <typename T>
 				struct CliGetHelper<std::vector<T>,1> {
 					template <typename P>
-					static bool process(P &, OptionBinding< std::vector<T> > &visitedItem) {
+					static bool process(P &, OptionBinding< std::vector<T> > &) {
 						return true;
 					}
 				};
@@ -1025,6 +1030,9 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 
 
 		class AbstractSettings {
+			public:
+				virtual ~AbstractSettings() {}
+
 			public:
 				virtual void accept(SettingsLinker &linker) = 0;
 
@@ -1263,28 +1271,8 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 				}
 			} logging;
 
-			virtual void accept(SettingsLinker &linker) {
-				linker
-				& cfg(crashHandler, "scripts.crashHandler")
-				& cfg(logging, "logging")
-
-				& cliAsPath(
-					alternativeConfigFile,
-					"Generic", "config-file",
-					"Use alternative configuration file"
-				)
-				& cli(
-					plugins,
-					"Generic", "plugins",
-					"Load given plugins"
-				)
-				& cli(
-					lockfile,
-					"Verbose", "lockfile,l",
-					"Path to lock file"
-				);
-			}
-		}                              _baseSettings;
+			virtual void accept(SettingsLinker &linker);
+		} _baseSettings;
 };
 
 

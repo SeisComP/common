@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CLIENT_SCMP_CONNECTION_H__
-#define SEISCOMP_CLIENT_SCMP_CONNECTION_H__
+#ifndef SEISCOMP_CLIENT_SCMP_CONNECTION_H
+#define SEISCOMP_CLIENT_SCMP_CONNECTION_H
 
 
 #include <seiscomp/messaging/packet.h>
@@ -161,7 +161,7 @@ struct FrameHeaderValue {
 
 
 struct FrameHeaders {
-	FrameHeaders(const char *src, int l)
+	FrameHeaders(const char *src, size_t l)
 	: _source(src), _source_len(l)
 	, _numberOfHeaders(0) {}
 
@@ -192,13 +192,13 @@ struct FrameHeaders {
 	}
 
 	const char  *_source;
-	int          _source_len;
-	int          _numberOfHeaders;
+	size_t       _source_len;
+	size_t       _numberOfHeaders;
 
 	const char  *name_start;
-	int          name_len;
+	size_t       name_len;
 	const char  *val_start;
-	int          val_len;
+	size_t       val_len;
 };
 
 

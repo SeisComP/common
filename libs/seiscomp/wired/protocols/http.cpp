@@ -79,23 +79,23 @@ void padzero2(string &out, int value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool URLOptions::next() {
-	int len;
+	size_t len;
 	const char *data = tokenize(_source, "&", _source_len, len);
 
-	if ( data != NULL ) {
-		trim(data,len);
+	if ( data ) {
+		trim(data, len);
 
 		name_start = data;
 
 		const char *sep = strnchr(data, len, '=');
-		if ( sep != NULL ) {
-			name_len = sep-data;
-			val_start = sep+1;
-			val_len = len-(sep-data)-1;
+		if ( sep ) {
+			name_len = static_cast<size_t>(sep - data);
+			val_start = sep + 1;
+			val_len = len - name_len - 1;
 		}
 		else {
 			name_len = len;
-			val_start = NULL;
+			val_start = nullptr;
 			val_len = 0;
 		}
 
@@ -129,27 +129,27 @@ bool URLOptions::valueEquals(const char *s) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool URLInsituOptions::next() {
-	int len;
+	size_t len;
 	const char *data = tokenize(_source, "&", _source_len, len);
 
-	if ( data != NULL ) {
+	if ( data ) {
 		trim(data,len);
 
-		name = (char*)data;
+		name = const_cast<char*>(data);
 
 		const char *sep = strnchr(data, len, '=');
-		if ( sep != NULL ) {
-			name_len = sep-data;
+		if ( sep ) {
+			name_len = static_cast<size_t>(sep - data);
 			name[name_len] = '\0';
 
-			val = (char*)(sep+1);
-			val_len = len-(sep-data)-1;
+			val = const_cast<char*>(sep + 1);
+			val_len = len - name_len - 1;
 			val[val_len] = '\0';
 		}
 		else {
 			name_len = len;
 			name[name_len] = '\0';
-			val = NULL;
+			val = nullptr;
 			val_len = 0;
 		}
 
@@ -247,7 +247,7 @@ string HttpSession::urlencode(const char *s, int len) {
 		else {
 			escaped += '%';
 			char buf[3];
-			sprintf(buf, "%.2X", (unsigned char)s[i]);
+			sprintf(buf, "%.2hhX", uint8_t(s[i]));
 			escaped += buf;
 		}
 	}
@@ -274,10 +274,10 @@ string HttpSession::urldecode(const string &s) {
 			if ( i < s.length() ) lo = s[i];
 			else break;
 
-			hi = (hi >= 'A'?((hi & 0xDF)-'A')+10 : (hi - '0'));
-			lo = (lo >= 'A'?((lo & 0xDF)-'A')+10 : (lo - '0'));
+			hi = char(hi >= 'A' ? ((hi & 0xDF) - 'A') + 10 : (hi - '0'));
+			lo = char(lo >= 'A' ? ((lo & 0xDF) - 'A') + 10 : (lo - '0'));
 
-			decoded += ((hi << 4) + lo);
+			decoded += char((hi << 4) + lo);
 		}
 		else
 			decoded += s[i];
@@ -305,10 +305,10 @@ string HttpSession::urldecode(const char *s, int len) {
 			if ( i < len ) lo = s[i];
 			else break;
 
-			hi = (hi >= 'A'?((hi & 0xDF)-'A')+10 : (hi - '0'));
-			lo = (lo >= 'A'?((lo & 0xDF)-'A')+10 : (lo - '0'));
+			hi = char(hi >= 'A' ? ((hi & 0xDF) - 'A') + 10 : (hi - '0'));
+			lo = char(lo >= 'A' ? ((lo & 0xDF) - 'A') + 10 : (lo - '0'));
 
-			decoded += ((hi << 4) + lo);
+			decoded += char((hi << 4) + lo);
 		}
 		else
 			decoded += s[i];
@@ -339,10 +339,10 @@ int HttpSession::urldecode(char *s, int len) {
 			if ( i < len ) lo = s[i];
 			else break;
 
-			hi = (hi >= 'A'?((hi & 0xDF)-'A')+10 : (hi - '0'));
-			lo = (lo >= 'A'?((lo & 0xDF)-'A')+10 : (lo - '0'));
+			hi = char(hi >= 'A' ? ((hi & 0xDF) - 'A') + 10 : (hi - '0'));
+			lo = char(lo >= 'A' ? ((lo & 0xDF) - 'A') + 10 : (lo - '0'));
 
-			s[out_idx++] = ((hi << 4) + lo);
+			s[out_idx++] = char((hi << 4) + lo);
 		}
 		else
 			s[out_idx++] = s[i];
@@ -387,7 +387,7 @@ void HttpSession::sendResponse(HttpStatus status) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void HttpSession::sendResponse(const char *content, int len,
+void HttpSession::sendResponse(const char *content, size_t len,
                                HttpStatus status,
                                const char *contentType,
                                const char *cookie) {
@@ -446,8 +446,7 @@ void HttpSession::sendResponse(const std::string &content,
                                HttpStatus status,
                                const char *contentType,
                                const char *cookie) {
-	sendResponse(&content[0], (int)content.size(), status,
-	             contentType, cookie);
+	sendResponse(&content[0], content.size(), status, contentType, cookie);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -527,7 +526,6 @@ void HttpSession::sendResponse(Buffer* buf, HttpStatus status,
 		buf->header += additionalHeader;
 
 	switch ( buf->encoding ) {
-		default:
 		case Buffer::Identity:
 			break;
 		case Buffer::Compress:
@@ -555,7 +553,7 @@ void HttpSession::sendResponse(Buffer* buf, HttpStatus status,
 	// updateBuffer handle the header
 	if ( buf->length() == string::npos && !buf->data.empty() ) {
 		char tmp[10]; tmp[0] = '\0';
-		sprintf(tmp, "%X\r\n", (int)buf->data.size());
+		sprintf(tmp, "%zX\r\n", buf->data.size());
 		buf->header += tmp;
 	}
 
@@ -572,7 +570,7 @@ bool HttpSession::reset() {
 	_request = HttpRequest();
 	_request.state = HttpRequest::ENABLED;
 	_dataStarted = false;
-	_dataSize = -1;
+	_dataSize = 0;
 	_upgradedToWebsocket = false;
 
 	if ( _websocketFrame ) _websocketFrame->reset();
@@ -600,17 +598,17 @@ void HttpSession::close() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void HttpSession::handleReceive(const char *data, int len) {
+void HttpSession::handleReceive(const char *data, size_t len) {
 	if ( _upgradedToWebsocket ) {
 		while ( len > 0 && !_websocketFrame->isFinished() ) {
-			int read = _websocketFrame->feed(data, len);
+			ssize_t read = _websocketFrame->feed(data, len);
 			if ( read <= 0 ) {
 				SEISCOMP_ERROR("[websocket] websocket protocol error, closing connection");
 				close();
 				return;
 			}
 
-			data += read; len -= read;
+			data += read; len -= static_cast<size_t>(read);
 
 			if ( _websocketFrame->isFinished() ) {
 				handleWebsocketFrame(*_websocketFrame);
@@ -627,15 +625,16 @@ void HttpSession::handleReceive(const char *data, int len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void HttpSession::handleInbox(const char *src_data, int data_len) {
+void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 	const char *data;
-	int len;
+	size_t len;
+	size_t data_len = static_cast<size_t>(src_len);
 
 	if ( _request.state == HttpRequest::WAITING ) {
 		SEISCOMP_WARNING("[http] session %p still set on WAITING but received new request\n"
 		                 "       old request: %s %s\n"
 		                 "       new request: %s",
-		                 (void*)this,
+		                 reinterpret_cast<void*>(this),
 		                 _request.type.toString(),
 		                 _request.path.c_str(), src_data);
 		if ( !reset() ) {
@@ -651,7 +650,7 @@ void HttpSession::handleInbox(const char *src_data, int data_len) {
 		// Not necessary in HTTP 1.1
 		_request.addKeepAliveHeader = false;
 		_request.upgrade = false;
-		_dataSize = -1;
+		_dataSize = 0;
 
 		SEISCOMP_DEBUG("[http] %s", src_data);
 		data = tokenize(src_data, " ", data_len, len);
@@ -679,9 +678,9 @@ void HttpSession::handleInbox(const char *src_data, int data_len) {
 		data = tokenize(src_data, " ", data_len, len);
 
 		const char *opt_sep = strnchr(data, len, '?');
-		if ( opt_sep != NULL ) {
-			_request.path.assign(data, opt_sep-data);
-			_request.options.assign(opt_sep+1, data+len);
+		if ( opt_sep ) {
+			_request.path.assign(data, static_cast<size_t>(opt_sep - data));
+			_request.options.assign(opt_sep + 1, data + len);
 		}
 		else {
 			_request.path.assign(data, len);
@@ -737,14 +736,14 @@ void HttpSession::handleInbox(const char *src_data, int data_len) {
 				case HttpRequest::HEAD:
 				case HttpRequest::DELETE:
 				case HttpRequest::TRACE:
-					SEISCOMP_DEBUG("[%lx] %s %s", (long int)this, _request.type.toString(), _request.path.c_str());
+					SEISCOMP_DEBUG("[%p] %s %s", this, _request.type.toString(), _request.path.c_str());
 					handleRequest(_request);
 					_requestStarted = false;
 					break;
 				case HttpRequest::POST:
 				case HttpRequest::PUT:
-					SEISCOMP_DEBUG("[%lx] %s %s", (long int)this, _request.type.toString(), _request.path.c_str());
-					SEISCOMP_DEBUG("Reading %s (%d bytes)", _request.type.toString(), _dataSize);
+					SEISCOMP_DEBUG("[%p] %s %s", this, _request.type.toString(), _request.path.c_str());
+					SEISCOMP_DEBUG("Reading %s (%zu bytes)", _request.type.toString(), _dataSize);
 					if ( _dataSize <= 0 ) {
 						SEISCOMP_ERROR("HTTP: %s content is empty", _request.type.toString());
 						close();
@@ -756,7 +755,8 @@ void HttpSession::handleInbox(const char *src_data, int data_len) {
 					setPostDataSize(_dataSize);
 					break;
 				default:
-					SEISCOMP_WARNING("[%lx] Unknown request type %s", (long int)this, _request.type.toString());
+					SEISCOMP_WARNING("[%p] Unknown request type %s",
+					                 this, _request.type.toString());
 					close();
 					break;
 			}
@@ -914,9 +914,9 @@ void HttpSession::handleInbox(const char *src_data, int data_len) {
 					_request.secWebsocketVersion = -1;
 			}
 			else {
-				const char *value = src_data+1;
-				int vlen = data_len-1;
-				trimFront(value,vlen);
+				const char *value = src_data + 1;
+				size_t vlen = data_len - 1;
+				trimFront(value, vlen);
 				handleHeader(data, len, value, vlen);
 			}
 		}
@@ -928,7 +928,7 @@ void HttpSession::handleInbox(const char *src_data, int data_len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool HttpSession::validatePostDataSize(int postDataSize) {
+bool HttpSession::validatePostDataSize(size_t) {
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -937,17 +937,17 @@ bool HttpSession::validatePostDataSize(int postDataSize) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void HttpSession::handlePostData(const char *data, int len) {
-	int bytes = std::min(_dataSize, len);
+void HttpSession::handlePostData(const char *data, size_t len) {
+	size_t bytes = std::min(_dataSize, len);
 	_request.data.append(data, bytes);
 	_dataSize -= bytes;
 
-	if ( _dataSize <= 0 ) {
+	if ( _dataSize == 0 ) {
 		_requestStarted = false;
 		_dataStarted = false;
 		handleRequest(_request);
 		_request.data.clear();
-		_dataSize = -1;
+		_dataSize = 0;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -958,8 +958,8 @@ void HttpSession::handlePostData(const char *data, int len) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void HttpSession::handleInboxError(Error error) {
 	if ( error == TooManyCharactersPerLine ) {
-		SEISCOMP_ERROR("too many characters (>= %d) on request\n%.*s",
-		               (int)_inbox.size(), (int)_inbox.size(), &_inbox[0]);
+		SEISCOMP_ERROR("too many characters (>= %zu) on request\n%.*s",
+		               _inbox.size(), int(_inbox.size()), &_inbox[0]);
 		sendStatus(HTTP_413);
 	}
 	else {
@@ -976,7 +976,8 @@ void HttpSession::handleInboxError(Error error) {
 void HttpSession::outboxFlushed() {
 	if ( _request.state == HttpRequest::FINISHED ) {
 		_request.tx = _bytesSent;
-		SEISCOMP_DEBUG("[http] request %s in session %lx finished", _request.path.c_str(), (long int)this);
+		SEISCOMP_DEBUG("[http] request %s in session %p finished",
+		               _request.path.c_str(), this);
 
 		requestFinished();
 
@@ -1005,7 +1006,7 @@ void HttpSession::requestFinished() {}
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void HttpSession::handleHeader(const char *, int, const char *, int) {
+void HttpSession::handleHeader(const char *, size_t, const char *, size_t) {
 	// Do nothing, all standard headers are already handled in handleInbox
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1060,7 +1061,7 @@ bool HttpSession::handleRequest(HttpRequest &req) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool HttpSession::handleGETRequest(HttpRequest &req) {
+bool HttpSession::handleGETRequest(HttpRequest &) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1069,7 +1070,7 @@ bool HttpSession::handleGETRequest(HttpRequest &req) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool HttpSession::handlePOSTRequest(HttpRequest &req) {
+bool HttpSession::handlePOSTRequest(HttpRequest &) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1103,7 +1104,7 @@ bool HttpSession::handleOPTIONSRequest(HttpRequest &req) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool HttpSession::handleHEADRequest(HttpRequest &req) {
+bool HttpSession::handleHEADRequest(HttpRequest &) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1112,7 +1113,7 @@ bool HttpSession::handleHEADRequest(HttpRequest &req) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool HttpSession::handlePUTRequest(HttpRequest &req) {
+bool HttpSession::handlePUTRequest(HttpRequest &) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1121,7 +1122,7 @@ bool HttpSession::handlePUTRequest(HttpRequest &req) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool HttpSession::handleDELETERequest(HttpRequest &req) {
+bool HttpSession::handleDELETERequest(HttpRequest &) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1130,7 +1131,7 @@ bool HttpSession::handleDELETERequest(HttpRequest &req) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool HttpSession::handleTRACERequest(HttpRequest &req) {
+bool HttpSession::handleTRACERequest(HttpRequest &) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1159,7 +1160,8 @@ void HttpSession::upgradeToWebsocket(HttpRequest &req, const char *protocol,
 	// Concatenate the input key and the "magic string"
 	string key = req.secWebsocketKey + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 	char sha1[SHA_DIGEST_LENGTH]; // == 20
-	SHA1((const unsigned char*)key.data(), key.size(), (unsigned char*)sha1);
+	SHA1(reinterpret_cast<const unsigned char*>(key.data()),
+	     key.size(), reinterpret_cast<unsigned char*>(sha1));
 	key.clear();
 	Seiscomp::Util::encodeBase64(key, sha1, SHA_DIGEST_LENGTH);
 	send(key.data(), key.size());
@@ -1179,7 +1181,7 @@ void HttpSession::upgradeToWebsocket(HttpRequest &req, const char *protocol,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void HttpSession::handleWebsocketFrame(Websocket::Frame &frame) {
+void HttpSession::handleWebsocketFrame(Websocket::Frame &) {
 	// Do nothing
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1246,7 +1248,7 @@ void HttpSession::sendStatus(HttpStatus status, const string &content,
 	send("\r\n\r\n", 4);
 
 	if ( content.size() )
-		send(content.data(), (int)content.size());
+		send(content.data(), content.size());
 
 	flush();
 }

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_WIRED_DEVICE_H__
-#define SEISCOMP_WIRED_DEVICE_H__
+#ifndef SEISCOMP_WIRED_DEVICE_H
+#define SEISCOMP_WIRED_DEVICE_H
 
 #include <seiscomp/core/platform/platform.h>
 #include <seiscomp/core/interruptible.h>
@@ -148,8 +148,8 @@ class SC_SYSTEM_CORE_API Device : public Core::BaseObject {
 		int selectMode() const { return _selectMode; }
 
 		virtual void close() = 0;
-		virtual int write(const char *data, int len) = 0;
-		virtual int read(char *data, int len) = 0;
+		virtual ssize_t write(const char *data, size_t len) = 0;
+		virtual ssize_t read(char *data, size_t len) = 0;
 
 		int fd() const;
 
@@ -241,7 +241,7 @@ class SC_SYSTEM_CORE_API DeviceGroup : public Core::BaseObject {
 		//! from a different thread. Additional synchin' is required then.
 		bool remove(Device *);
 
-		int count() const;
+		size_t count() const;
 
 		void clear();
 
@@ -303,8 +303,8 @@ class SC_SYSTEM_CORE_API DeviceGroup : public Core::BaseObject {
 		fd_set               _write_active_set;
 #endif
 #if defined(SEISCOMP_WIRED_EPOLL) || defined(SEISCOMP_WIRED_KQUEUE)
-		int                  _defaultOps;
-		int                  _count;
+		unsigned int         _defaultOps;
+		size_t               _count;
 #ifdef SEISCOMP_WIRED_EPOLL
 #define SEISCOMP_WIRED_EPOLL_EVENT_BUFFER 10
 		int                  _epoll_fd;
@@ -315,8 +315,8 @@ class SC_SYSTEM_CORE_API DeviceGroup : public Core::BaseObject {
 		int                  _kqueue_fd;
 		struct kevent        _kqueue_events[SEISCOMP_WIRED_KQUEUE_EVENT_BUFFER];
 #endif
-		int                  _selectIndex;
-		int                  _selectSize;
+		size_t               _selectIndex;
+		size_t               _selectSize;
 #endif
 		int                  _lastCallDuration;
 		Device              *_queue;

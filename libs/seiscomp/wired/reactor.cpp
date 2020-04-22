@@ -71,8 +71,8 @@ bool Reactor::addSession(Session *session) {
 	}
 
 	_sessions.push_back(session);
-	SEISCOMP_DEBUG("[reactor] active sessions/sockets: %ld/%d",
-	               (unsigned long)_sessions.size(), _devices.count());
+	SEISCOMP_DEBUG("[reactor] active sessions/sockets: %zu/%zu",
+	               _sessions.size(), _devices.count());
 
 	sessionAdded(session);
 
@@ -112,13 +112,13 @@ bool Reactor::removeSession(Session *session) {
 	              session->socket()->ip().octetts.C, session->socket()->ip().octetts.D,
 	              session->socket()->port(), session->socket()->hostname().c_str());
 	*/
-	SEISCOMP_INFO("[reactor] removed session %lx", (long int)session);
+	SEISCOMP_INFO("[reactor] removed session %p", session);
 	sessionRemoved(session);
 	session->_parent = nullptr;
 	_sessions.erase(session);
 
-	SEISCOMP_DEBUG("[reactor] active sessions/sockets: %ld/%d",
-	               (unsigned long)_sessions.size(), _devices.count());
+	SEISCOMP_DEBUG("[reactor] active sessions/sockets: %zu/%zu",
+	               _sessions.size(), _devices.count());
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -131,7 +131,7 @@ void Reactor::moveTo(Reactor *target, Session *session) {
 	// Save the session because we remove it
 	SessionPtr tmp(session);
 
-	SEISCOMP_DEBUG("[reactor] move 0x%lx to 0x%lx", (long int)session, (long int)target);
+	SEISCOMP_DEBUG("[reactor] move 0x%p to 0x%p", session, target);
 
 	removeSession(session);
 	target->addSessionDeferred(session);
@@ -217,8 +217,8 @@ bool Reactor::run() {
 	}
 
 	SEISCOMP_DEBUG("[reactor] stopping");
-	SEISCOMP_INFO("[reactor] remaining sessions/sockets: %d/%d",
-	              (int)_sessions.size(), _devices.count());
+	SEISCOMP_INFO("[reactor] remaining sessions/sockets: %zu/%zu",
+	              _sessions.size(), _devices.count());
 
 	lock_guard<mutex> l(_mutex);
 	clear();
@@ -351,30 +351,30 @@ const DeviceGroup *Reactor::devices() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Reactor::sessionAdded(Session *session) {}
+void Reactor::sessionAdded(Session *) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Reactor::sessionRemoved(Session *session) {}
+void Reactor::sessionRemoved(Session *) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Reactor::sessionTagged(Session *session) {}
+void Reactor::sessionTagged(Session *) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Reactor::getBuffer(char *&buf, int &len) {
+void Reactor::getBuffer(char *&buf, size_t &len) {
 	buf = &_buffer[0];
-	len = (int)_buffer.size();
+	len = _buffer.size();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

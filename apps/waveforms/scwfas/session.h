@@ -94,15 +94,16 @@ class FDSNWSListener : public Wired::AccessControlledEndpoint {
 
 
 DEFINE_SMARTPOINTER(Chunk);
-struct Chunk : Core::BaseObject {
-	std::string header;
-	std::string data;
+class Chunk : public Core::BaseObject {
+	public:
+		std::string header;
+		std::string data;
 };
 
 
 class ClientSession : public Wired::ClientSession {
 	public:
-		ClientSession(Wired::Socket *s, int maxLen);
+		ClientSession(Wired::Socket *s, size_t maxLen);
 
 
 	protected:
@@ -130,7 +131,7 @@ class ClientSession : public Wired::ClientSession {
 
 
 // Util functions
-bool parseTime(Core::Time &time, const char *data, int len);
+bool parseTime(Core::Time &time, const char *data, size_t len);
 bool validate(const std::string &code);
 
 

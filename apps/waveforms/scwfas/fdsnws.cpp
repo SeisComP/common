@@ -582,20 +582,20 @@ bool FDSNWSSession::handlePOSTRequest(Wired::HttpRequest &req) {
 		return true;
 	}
 
-	const char *tok, *src = req.data.c_str();
-	int len_tok, len_src = (int)req.data.size();
+	char *tok, *src = &req.data[0];
+	size_t len_tok, len_src = req.data.size();
 
 	double timeWindow = 0;
 	bool noData404 = false;
 	vector<RequestItem> requestItems;
-	while ( (tok = tokenize(src, "\n", len_src, len_tok)) != NULL ) {
+	while ( (tok = tokenize(src, "\n", len_src, len_tok)) ) {
 		trim(tok, len_tok);
-		const char *sep = strnchr(tok, len_tok, '=');
+		char *sep = strnchr(tok, len_tok, '=');
 		// Currently we ignore parameters
-		if ( sep != NULL ) {
-			*(char*)sep = '\0';
-			const char* val = sep + 1;
-			int val_len = len_tok - (val - tok);
+		if ( sep ) {
+			*sep = '\0';
+			char* val = sep + 1;
+			size_t val_len = len_tok - static_cast<size_t>(val - tok);
 			if ( !strcmp(tok, "minimumlength") ) {
 				//
 			}
@@ -615,12 +615,12 @@ bool FDSNWSSession::handlePOSTRequest(Wired::HttpRequest &req) {
 			continue;
 		}
 
-		char *col = (char*)tok;
-		int len_col = len_tok;
-		int num_col = 0;
+		char *col;
+		size_t len_col = len_tok;
+		size_t num_col = 0;
 
 		RequestItem item;
-		while ( (col = (char*)tokenize(tok, " ", len_tok, len_col)) != NULL ) {
+		while ( (col = tokenize(tok, " ", len_tok, len_col)) ) {
 			switch ( num_col ) {
 				case 0:
 					item.net.assign(col, len_col);
@@ -667,7 +667,7 @@ bool FDSNWSSession::handlePOSTRequest(Wired::HttpRequest &req) {
 		}
 
 		if ( global.fdsnws.maxTimeWindow > 0 ) {
-			timeWindow += (double)(item.endTime - item.startTime);
+			timeWindow += static_cast<double>(item.endTime - item.startTime);
 			if ( timeWindow > global.fdsnws.maxTimeWindow ) {
 				sendError(req.path, req.options, Wired::HTTP_400,
 				          string("Maximum allowed request time window of " +

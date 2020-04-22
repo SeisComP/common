@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_WIRED_SERVER_H__
-#define SEISCOMP_WIRED_SERVER_H__
+#ifndef SEISCOMP_WIRED_SERVER_H
+#define SEISCOMP_WIRED_SERVER_H
 
 
 #include <seiscomp/wired/reactor.h>

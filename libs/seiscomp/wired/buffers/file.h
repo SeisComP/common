@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_WIRED_BUFFERS_FILE_H__
-#define SEISCOMP_WIRED_BUFFERS_FILE_H__
+#ifndef SEISCOMP_WIRED_BUFFERS_FILE_H
+#define SEISCOMP_WIRED_BUFFERS_FILE_H
 
 
 #include <seiscomp/wired/buffer.h>
@@ -38,35 +38,38 @@ DEFINE_SMARTPOINTER(FileBuffer);
  *        directories, no pipes and so on.
  *        Technically, S_ISREG(stat(fn).st_mode) must evaluate to true.
  */
-struct SC_SYSTEM_CORE_API FileBuffer : Buffer {
-	FileBuffer(int max_size = 0x7fffffff);
-	~FileBuffer();
+class SC_SYSTEM_CORE_API FileBuffer : public Buffer {
+	public:
+		FileBuffer(int max_size = 0x7fffffff);
+		~FileBuffer();
 
-	bool open(const std::string &fn, const char *mode = "rb");
-	bool open(const char *fn, const char *mode = "rb");
+	public:
+		bool open(const std::string &fn, const char *mode = "rb");
+		bool open(const char *fn, const char *mode = "rb");
 
-	bool updateBuffer();
-	size_t length() const;
+		bool updateBuffer() override;
+		size_t length() const override;
 
-	enum Type {
-		HTML,
-		CSS,
-		JS,
-		JSON,
-		PNG,
-		JPG,
-		SVG,
-		XML,
-		WOFF,
-		TTF,
-		TypeQuantity
-	};
+	public:
+		enum Type {
+			HTML,
+			CSS,
+			JS,
+			JSON,
+			PNG,
+			JPG,
+			SVG,
+			XML,
+			WOFF,
+			TTF,
+			TypeQuantity
+		};
 
-	static const char *mimeType(Type);
-	static const char *mimeType(const char *filenameExtension);
+		static const char *mimeType(Type);
+		static const char *mimeType(const char *filenameExtension);
 
-	FILE  *fp;
-	long fplen;
+		FILE  *fp;
+		long fplen;
 };
 
 

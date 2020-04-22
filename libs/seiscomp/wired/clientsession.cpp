@@ -52,7 +52,7 @@ ClientSession::ClientSession(Device *dev, size_t maxCharactersPerLine)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ClientSession::setPostDataSize(int len) {
+void ClientSession::setPostDataSize(size_t len) {
 	_postDataSize = len;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -61,7 +61,7 @@ void ClientSession::setPostDataSize(int len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int ClientSession::postDataSize() const {
+size_t ClientSession::postDataSize() const {
 	return _postDataSize;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -93,8 +93,7 @@ void ClientSession::flushOutbox() {
 	}
 
 	// Try to empty the outbox
-	int written = _device->write((const char*)&_outbox[0], _outbox.size());
-	//cerr.write(_outbox.data(), _outbox.size());
+	ssize_t written = _device->write(&_outbox[0], _outbox.size());
 	// Error on socket?
 	if ( written < 0 ) {
 		if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
@@ -108,7 +107,7 @@ void ClientSession::flushOutbox() {
 	else if ( written == 0 ) {
 	}
 	else {
-		_bytesSent += written;
+		_bytesSent += static_cast<Device::count_t>(written);
 		_outbox.erase(_outbox.begin(), _outbox.begin() + written);
 	}
 
@@ -129,12 +128,14 @@ void ClientSession::flush() {
 	}
 
 	while ( _currentBuffer ) {
-		int remaining = _currentBuffer->header.size()-_currentBufferHeaderOffset;
-		int written;
+		size_t remaining = _currentBuffer->header.size() - _currentBufferHeaderOffset;
+		ssize_t written;
 
 		if ( remaining > 0 ) {
-			written = _device->write(&_currentBuffer->header[_currentBufferHeaderOffset],
-			                         remaining);
+			written = _device->write(
+				&_currentBuffer->header[_currentBufferHeaderOffset],
+				static_cast<size_t>(remaining)
+			);
 			// Error on socket?
 			if ( written < 0 ) {
 				if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
@@ -148,8 +149,11 @@ void ClientSession::flush() {
 			else if ( written == 0 ) {
 			}
 			else {
-				_currentBufferHeaderOffset += written;
-				written <= (int)_bufferBytesPending?_bufferBytesPending -= written:_bufferBytesPending = 0;
+				_currentBufferHeaderOffset += static_cast<size_t>(written);
+				if ( static_cast<size_t>(written) <= _bufferBytesPending )
+					_bufferBytesPending -= static_cast<size_t>(written);
+				else
+					_bufferBytesPending = 0;
 				//SEISCOMP_DEBUG("Bytes pending: %d, written: %d", (int)_bytesPending, written);
 			}
 		}
@@ -157,8 +161,7 @@ void ClientSession::flush() {
 		// header not yet completely sent
 		if ( _currentBufferHeaderOffset < _currentBuffer->header.size() ) return;
 
-
-		remaining = _currentBuffer->data.size()-_currentBufferDataOffset;
+		remaining = _currentBuffer->data.size() - _currentBufferDataOffset;
 		if ( remaining > 0 ) {
 			written = _device->write(&_currentBuffer->data[_currentBufferDataOffset],
 			                         remaining);
@@ -176,15 +179,18 @@ void ClientSession::flush() {
 			else if ( written == 0 ) {
 			}
 			else {
-				_bytesSent += written;
-				_currentBufferDataOffset += written;
-				written <= (int)_bufferBytesPending?_bufferBytesPending -= written:_bufferBytesPending = 0;
+				_bytesSent += static_cast<size_t>(written);
+				_currentBufferDataOffset += static_cast<size_t>(written);
+				if ( static_cast<size_t>(written) <= _bufferBytesPending )
+					_bufferBytesPending -= static_cast<size_t>(written);
+				else
+					_bufferBytesPending = 0;
 				//SEISCOMP_DEBUG("Bytes pending: %d, written: %d", (int)_bytesPending, written);
 			}
 		}
 
 		// Finished current?
-		if ( (_currentBufferDataOffset == _currentBuffer->data.size()) ) {
+		if ( _currentBufferDataOffset == _currentBuffer->data.size() ) {
 			_currentBufferHeaderOffset = 0;
 			_currentBufferDataOffset = 0;
 
@@ -260,7 +266,7 @@ void ClientSession::update() {
 
 	if ( valid() /*&& readable*/ ) {
 		char *buf;
-		int len;
+		size_t len;
 
 		_parent->getBuffer(buf, len);
 
@@ -268,16 +274,16 @@ void ClientSession::update() {
 
 		// Only read if requested by the device
 		while ( (_device->mode() & Device::Read) && (len > 0) ) {
-			len = _device->read(buf, len);
+			ssize_t read = _device->read(buf, len);
 
 			// Check if the conncection was unexpectely closed by peer
-			if ( len == 0 ) {
+			if ( !read ) {
 //				SEISCOMP_DEBUG("fd %d closed by peer, errno = %s",
 //				               device()->fd(), strerror(errno));
 				close();
 				return;
 			}
-			else if ( len < 0 ) {
+			else if ( read < 0 ) {
 				if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
 					SEISCOMP_DEBUG("Read error (%d): %s", errno, strerror(errno));
 					close();
@@ -289,6 +295,7 @@ void ClientSession::update() {
 				break;
 			}
 
+			len = static_cast<size_t>(read);
 			handleReceive(buf, len);
 
 			if ( valid() && (_flags & KeepReading) )
@@ -329,10 +336,10 @@ void ClientSession::finishReading() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ClientSession::handleReceive(const char *buf, int len) {
+void ClientSession::handleReceive(const char *buf, size_t len) {
 	if ( _postDataSize > 0 ) {
 		if ( len > 0 ) {
-			int read = std::min(_postDataSize, len);
+			size_t read = std::min(_postDataSize, len);
 			handlePostData(buf, read);
 			_postDataSize -= read;
 			buf += read;
@@ -364,7 +371,7 @@ void ClientSession::handleReceive(const char *buf, int len) {
 			if ( _postDataSize > 0 ) {
 				++buf; --len;
 				if ( len > 0 ) {
-					int read = std::min(_postDataSize, len);
+					size_t read = std::min(_postDataSize, len);
 					handlePostData(buf, read);
 					_postDataSize -= read;
 					// buf and len are increased again in the for loop so
@@ -382,7 +389,7 @@ void ClientSession::handleReceive(const char *buf, int len) {
 		else {
 			// If one line of data exceeds the maximum number of allowed
 			// characters terminate the connection
-			if ( _inboxPos >= (int)_inbox.size() ) {
+			if ( _inboxPos >= _inbox.size() ) {
 				handleInboxError(TooManyCharactersPerLine);
 				break;
 			}
@@ -410,7 +417,7 @@ void ClientSession::handleInboxError(Error err) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ClientSession::handlePostData(const char *data, int len) {}
+void ClientSession::handlePostData(const char *, size_t) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -428,7 +435,7 @@ void ClientSession::setError(const char* msg) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ClientSession::handleInbox(const char *data, int len) {
+void ClientSession::handleInbox(const char *data, size_t len) {
 	if ( len == 0 )
 		return;
 	else if ( len == 5 && strncasecmp(data, "hello", len) == 0 )
@@ -445,7 +452,7 @@ void ClientSession::handleInbox(const char *data, int len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ClientSession::send(const char *data, int len) {
+void ClientSession::send(const char *data, size_t len) {
 	// TODO: write as much as possible to the device and remember the
 	//       blocking state
 

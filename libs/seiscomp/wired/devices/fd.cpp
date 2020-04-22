@@ -70,7 +70,7 @@ void FileDescriptor::close() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int FileDescriptor::write(const char *data, int len) {
+ssize_t FileDescriptor::write(const char *data, size_t len) {
 	return ::write(_fd, data, len);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -79,7 +79,7 @@ int FileDescriptor::write(const char *data, int len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int FileDescriptor::read(char *data, int len) {
+ssize_t FileDescriptor::read(char *data, size_t len) {
 	return ::read(_fd, data, len);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CLIENT_SCMP_WEBSOCKET_CONNECTION_H__
-#define SEISCOMP_CLIENT_SCMP_WEBSOCKET_CONNECTION_H__
+#ifndef SEISCOMP_CLIENT_SCMP_WEBSOCKET_CONNECTION_H
+#define SEISCOMP_CLIENT_SCMP_WEBSOCKET_CONNECTION_H
 
 
 #include <seiscomp/messaging/protocols/scmp/socket.h>
@@ -72,7 +72,7 @@ class WebsocketConnection : public Socket {
 
 		virtual bool isConnected() override;
 
-		virtual Result setTimeout(int milliseconds);
+		virtual Result setTimeout(int milliseconds) override;
 
 
 	// ----------------------------------------------------------------------

@@ -54,15 +54,15 @@ namespace Wired {
 namespace {
 
 
-pthread_mutex_t *ssl_mutex_buffer = NULL;
+pthread_mutex_t *ssl_mutex_buffer = nullptr;
 
 
 unsigned long SSL_thread_id_function(void) {
-	return ((unsigned long)pthread_self());
+	return static_cast<unsigned long>(pthread_self());
 }
 
 
-void SSL_locking_function(int mode, int id, const char *file, int line) {
+void SSL_locking_function(int mode, int id, const char *, int) {
 	if ( mode & CRYPTO_LOCK )
 		pthread_mutex_lock(&ssl_mutex_buffer[id]);
 	else
@@ -71,11 +71,16 @@ void SSL_locking_function(int mode, int id, const char *file, int line) {
 
 
 void SSL_static_init() {
-	if ( ssl_mutex_buffer == NULL )
-		ssl_mutex_buffer = (pthread_mutex_t*)malloc(CRYPTO_num_locks()*sizeof(pthread_mutex_t));
+	if ( ssl_mutex_buffer == nullptr ) {
+		ssl_mutex_buffer = static_cast<pthread_mutex_t*>(
+			malloc(
+				static_cast<size_t>(CRYPTO_num_locks()) * sizeof(pthread_mutex_t)
+			)
+		);
+	}
 
 	for ( int i = 0; i < CRYPTO_num_locks(); ++i )
-		pthread_mutex_init(&ssl_mutex_buffer[i], NULL);
+		pthread_mutex_init(&ssl_mutex_buffer[i], nullptr);
 
 	CRYPTO_set_id_callback(SSL_thread_id_function);
 	CRYPTO_set_locking_callback(SSL_locking_function);
@@ -83,17 +88,17 @@ void SSL_static_init() {
 
 
 void SSL_static_cleanup() {
-	CRYPTO_set_id_callback(NULL);
-	CRYPTO_set_locking_callback(NULL);
+	CRYPTO_set_id_callback(nullptr);
+	CRYPTO_set_locking_callback(nullptr);
 
-	if ( ssl_mutex_buffer == NULL )
+	if ( ssl_mutex_buffer == nullptr )
 		return;
 
 	for ( int i = 0; i < CRYPTO_num_locks(); ++i )
 		pthread_mutex_destroy(&ssl_mutex_buffer[i]);
 
 	free(ssl_mutex_buffer);
-	ssl_mutex_buffer = NULL;
+	ssl_mutex_buffer = nullptr;
 }
 
 
@@ -164,10 +169,10 @@ int Socket::_socketCount = -1;
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const char *getSSLSystemError() {
-	int err = ERR_get_error();
+	unsigned long err = ERR_get_error();
 	if ( err != 0 )
 		return ERR_reason_error_string(err);
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -245,10 +250,10 @@ int Socket::IPAddress::toString(char *str, bool anonymize) const {
 		for ( int i = IPAddress::BYTES-3; i < IPAddress::BYTES; ++i )
 			addr.s6_addr[i] = bytes[IPAddress::BYTES-1-i];
 
-		if ( inet_ntop(AF_INET6, &addr, str, MAX_IP_STRING_LEN) == NULL )
+		if ( inet_ntop(AF_INET6, &addr, str, MAX_IP_STRING_LEN) == nullptr )
 			return -1;
 
-		return strlen(str);
+		return static_cast<int>(strlen(str));
 		/*
 		return snprintf(str, 46, "%04x:%04x::",
 		               (dwords[3] >> 16) & 0xffff, dwords[3] & 0xff00);
@@ -261,10 +266,10 @@ int Socket::IPAddress::toString(char *str, bool anonymize) const {
 		for ( int i = 0; i < IPAddress::BYTES; ++i )
 			addr.s6_addr[i] = bytes[IPAddress::BYTES-1-i];
 
-		if ( inet_ntop(AF_INET6, &addr, str, MAX_IP_STRING_LEN) == NULL )
+		if ( inet_ntop(AF_INET6, &addr, str, MAX_IP_STRING_LEN) == nullptr )
 			return -1;
 
-		return strlen(str);
+		return static_cast<int>(strlen(str));
 		/*
 		return snprintf(str, 46, "%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x",
 		               (dwords[3] >> 16) & 0xffff, dwords[3] & 0xffff,
@@ -357,7 +362,6 @@ const char *Socket::toString(Status stat) {
 	switch ( stat ) {
 		case Success:
 			return "success";
-		default:
 		case Error:
 			return "error";
 		case AllocationError:
@@ -386,6 +390,8 @@ const char *Socket::toString(Status stat) {
 			return "invalid address";
 		case InvalidHostname:
 			return "invalid hostname";
+		case NotSupported:
+			return "not supported";
 	}
 
 	return "";
@@ -443,7 +449,7 @@ Socket::Status Socket::applySocketTimeout(int secs, int usecs) {
 	if ( _fd != -1 ) {
 		struct timeval timeout;
 		void *opt;
-		int optlen;
+		socklen_t optlen;
 
 		if ( secs >= 0 ) {
 			timeout.tv_sec = secs;
@@ -452,7 +458,7 @@ Socket::Status Socket::applySocketTimeout(int secs, int usecs) {
 			optlen = sizeof(timeout);
 		}
 		else {
-			opt = NULL;
+			opt = nullptr;
 			optlen = 0;
 		}
 
@@ -556,7 +562,7 @@ Socket::Status Socket::connect(const std::string &hostname, port_t port) {
 	}
 
 	struct sockaddr addr;
-	size_t addrlen;
+	socklen_t addrlen;
 
 	struct addrinfo *res;
 	struct addrinfo hints;
@@ -585,7 +591,7 @@ Socket::Status Socket::connect(const std::string &hostname, port_t port) {
 
 	if ( _flags & NoDelay ) {
 		int flag = 1;
-		setsockopt(_fd, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));
+		setsockopt(_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(int));
 	}
 
 	setNonBlocking(_flags & NonBlocking ? true : false);
@@ -598,7 +604,7 @@ Socket::Status Socket::connect(const std::string &hostname, port_t port) {
 	}
 
 #ifndef WIN32
-	if ( ::connect(_fd, (struct sockaddr *)&addr, addrlen) == -1 ) {
+	if ( ::connect(_fd, static_cast<const struct sockaddr *>(&addr), addrlen) == -1 ) {
 		if ( errno != EINPROGRESS ) {
 			SEISCOMP_DEBUG("Socket::connect(%s:%d): %s",
 			               hostname.c_str(), port, strerror(errno));
@@ -633,7 +639,7 @@ Socket::Status Socket::connectV6(const std::string &hostname, port_t port) {
 	}
 
 	struct sockaddr addr;
-	size_t addrlen;
+	socklen_t addrlen;
 
 	struct addrinfo *res;
 	struct addrinfo hints;
@@ -668,7 +674,7 @@ Socket::Status Socket::connectV6(const std::string &hostname, port_t port) {
 	}
 
 #ifndef WIN32
-	if ( ::connect(_fd, (struct sockaddr *)&addr, addrlen) == -1 ) {
+	if ( ::connect(_fd, static_cast<const struct sockaddr *>(&addr), addrlen) == -1 ) {
 		if ( errno != EINPROGRESS ) {
 			SEISCOMP_DEBUG("Socket::connect(%s:%d): %s",
 			               hostname.c_str(), port, strerror(errno));
@@ -731,14 +737,14 @@ Socket::Status Socket::bind(IPAddress ip, port_t port) {
 	addr.sin_addr.s_addr = htonl(ip.dwords[0]);
 
 	// BindError
-	if ( ::bind(_fd, (const sockaddr*)&addr, sizeof(addr)) == -1 ) {
+	if ( ::bind(_fd, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr)) == -1 ) {
 		SEISCOMP_DEBUG("Bind: %s", strerror(errno));
 		close();
 		return BindError;
 	}
 
 	socklen_t size = sizeof(addr);
-	if ( getsockname(_fd, (sockaddr*)&addr, &size) != 0 ) {
+	if ( getsockname(_fd, reinterpret_cast<sockaddr*>(&addr), &size) != 0 ) {
 		SEISCOMP_DEBUG("getsockname: %s", strerror(errno));
 		close();
 		return BindError;
@@ -791,14 +797,14 @@ Socket::Status Socket::bindV6(IPAddress ip, port_t port) {
 		addr.sin6_addr.s6_addr[i] = ip.bytes[IPAddress::BYTES-1-i];
 
 	// BindError
-	if ( ::bind(_fd, (const sockaddr*)&addr, sizeof(addr)) == -1 ) {
+	if ( ::bind(_fd, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr)) == -1 ) {
 		SEISCOMP_DEBUG("Bind: %s", strerror(errno));
 		close();
 		return BindError;
 	}
 
 	socklen_t size = sizeof(addr);
-	if ( getsockname(_fd, (sockaddr*)&addr, &size) != 0 ) {
+	if ( getsockname(_fd, reinterpret_cast<sockaddr*>(&addr), &size) != 0 ) {
 		SEISCOMP_DEBUG("getsockname: %s", strerror(errno));
 		close();
 		return BindError;
@@ -830,19 +836,19 @@ Socket::Status Socket::listen(int backlog) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Socket *Socket::accept() {
-	if ( !isValid() ) return NULL;
+	if ( !isValid() ) return nullptr;
 
 	struct sockaddr_in addr;
 	socklen_t addr_len = sizeof(addr);
 
-	int client_fd = ::accept(_fd, (struct sockaddr*)&addr, &addr_len);
+	int client_fd = ::accept(_fd, reinterpret_cast<struct sockaddr*>(&addr), &addr_len);
 	// AcceptError
 	if( client_fd < 0 ) {
 		if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
 			SEISCOMP_DEBUG("Accept: %s", strerror(errno));
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	Socket *sock = new Socket;
@@ -850,7 +856,7 @@ Socket *Socket::accept() {
 
 	char buf[512];
 	if ( (_flags & ResolveName) &&
-	     getnameinfo((struct sockaddr*)&addr, sizeof(addr), buf, 512, NULL, 0, 0) == 0 )
+	     getnameinfo(reinterpret_cast<struct sockaddr*>(&addr), sizeof(addr), buf, 512, nullptr, 0, 0) == 0 )
 		sock->_hostname = buf;
 
 	sock->_addr.set(ntohl(addr.sin_addr.s_addr));
@@ -858,7 +864,7 @@ Socket *Socket::accept() {
 
 	if ( _flags & NoDelay ) {
 		int flag = 1;
-		setsockopt(sock->_fd, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));
+		setsockopt(sock->_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(int));
 	}
 
 	return sock;
@@ -896,7 +902,7 @@ Socket::port_t Socket::port() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int Socket::send(const char *data) {
+ssize_t Socket::send(const char *data) {
 	return write(data, strlen(data));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -905,14 +911,14 @@ int Socket::send(const char *data) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int Socket::write(const char *data, int len) {
+ssize_t Socket::write(const char *data, size_t len) {
 #if !defined(MACOSX) && !defined(WIN32)
-	int sent = (int)::send(_fd, data, len, MSG_NOSIGNAL);
+	ssize_t sent = ::send(_fd, data, len, MSG_NOSIGNAL);
 #else
-	int sent = (int)::send(_fd, data, len, 0);
+	ssize_t sent = ::send(_fd, data, len, 0);
 #endif
 	if ( sent > 0 ) {
-		_bytesSent += sent;
+		_bytesSent += static_cast<count_t>(sent);
 	}
 	return sent;
 }
@@ -922,9 +928,9 @@ int Socket::write(const char *data, int len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int Socket::read(char *data, int len) {
-	int recvd = (int)::recv(_fd, data, len, 0);
-	if ( recvd > 0 ) _bytesReceived += recvd;
+ssize_t Socket::read(char *data, size_t len) {
+	ssize_t recvd = ::recv(_fd, data, len, 0);
+	if ( recvd > 0 ) _bytesReceived += static_cast<count_t>(recvd);
 	return recvd;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -934,7 +940,7 @@ int Socket::read(char *data, int len) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const unsigned char *Socket::sessionID() const {
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -951,14 +957,14 @@ unsigned int Socket::sessionIDLength() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SSLSocket::SSLSocket() : _ssl(NULL), _ctx(NULL) {}
+SSLSocket::SSLSocket() : _ssl(nullptr), _ctx(nullptr) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SSLSocket::SSLSocket(SSL_CTX *ctx) : _ssl(NULL), _ctx(ctx) {}
+SSLSocket::SSLSocket(SSL_CTX *ctx) : _ssl(nullptr), _ctx(ctx) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -1002,7 +1008,7 @@ SSL_CTX *SSLSocket::createServerContext(const char *pemCert, const char *pemKey)
 		SEISCOMP_ERROR("Loading server certificate failed: %s", pemCert);
 		ERR_print_errors_fp(stderr);
 		SSL_CTX_free(ctx);
-		return NULL;
+		return nullptr;
 	}
 
 	// Set the private key to be used
@@ -1011,7 +1017,7 @@ SSL_CTX *SSLSocket::createServerContext(const char *pemCert, const char *pemKey)
 		SEISCOMP_ERROR("Loading private key failed: %s", pemKey);
 		ERR_print_errors_fp(stderr);
 		SSL_CTX_free(ctx);
-		return NULL;
+		return nullptr;
 	}
 
 	// Verify that the private key matches the server certificate
@@ -1019,7 +1025,7 @@ SSL_CTX *SSLSocket::createServerContext(const char *pemCert, const char *pemKey)
 	if ( !SSL_CTX_check_private_key(ctx)) {
 		SEISCOMP_ERROR("Private key check failed");
 		SSL_CTX_free(ctx);
-		return NULL;
+		return nullptr;
 	}
 
 	return ctx;
@@ -1031,7 +1037,7 @@ SSL_CTX *SSLSocket::createServerContext(const char *pemCert, const char *pemKey)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Socket::Status SSLSocket::bind(IPAddress ip, port_t port) {
-	if ( _ctx == NULL ) {
+	if ( _ctx == nullptr ) {
 		SEISCOMP_DEBUG("Bind: no SSL context");
 		return BindError;
 	}
@@ -1045,7 +1051,7 @@ Socket::Status SSLSocket::bind(IPAddress ip, port_t port) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Socket::Status SSLSocket::bindV6(IPAddress ip, port_t port) {
-	if ( _ctx == NULL ) {
+	if ( _ctx == nullptr ) {
 		SEISCOMP_DEBUG("Bind: no SSL context");
 		return BindError;
 	}
@@ -1059,26 +1065,26 @@ Socket::Status SSLSocket::bindV6(IPAddress ip, port_t port) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Socket* SSLSocket::accept() {
-	if ( !isValid() ) return NULL;
+	if ( !isValid() ) return nullptr;
 
 	struct sockaddr_in addr;
 	socklen_t addr_len = sizeof(addr);
 
-	int client_fd = ::accept(_fd, (struct sockaddr*)&addr, &addr_len);
+	int client_fd = ::accept(_fd, reinterpret_cast<struct sockaddr*>(&addr), &addr_len);
 	// AcceptError
 	if( client_fd < 0 ) {
 		if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
 			SEISCOMP_DEBUG("Accept: %s", strerror(errno));
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	SSL *ssl = SSL_new(_ctx);
-	if ( ssl == NULL ) {
+	if ( ssl == nullptr ) {
 		SEISCOMP_ERROR("Failed to create SSL channel from context");
 		::close(client_fd);
-		return NULL;
+		return nullptr;
 	}
 
 	SSL_set_fd(ssl, client_fd);
@@ -1091,12 +1097,12 @@ Socket* SSLSocket::accept() {
 
 	if ( _flags & NoDelay ) {
 		int flag = 1;
-		setsockopt(sock->_fd, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));
+		setsockopt(sock->_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(int));
 	}
 
 	char buf[512];
 	if ( (_flags & ResolveName) &&
-	     getnameinfo((struct sockaddr*)&addr, sizeof(addr), buf, 512, NULL, 0, 0) == 0 )
+	     getnameinfo(reinterpret_cast<struct sockaddr*>(&addr), sizeof(addr), buf, 512, nullptr, 0, 0) == 0 )
 		sock->_hostname = buf;
 
 	sock->_addr.set(ntohl(addr.sin_addr.s_addr));
@@ -1114,7 +1120,7 @@ Socket* SSLSocket::accept() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int SSLSocket::write(const char *data, int len) {
+ssize_t SSLSocket::write(const char *data, size_t len) {
 	if ( _flags & InAccept ) {
 		int ret = SSL_accept(_ssl);
 		if ( ret <= 0 ) {
@@ -1137,10 +1143,10 @@ int SSLSocket::write(const char *data, int len) {
 		_flags &= ~InAccept;
 	}
 
-	int ret = SSL_write(_ssl, data, len);
+	int ret = SSL_write(_ssl, data, static_cast<int>(len));
 	if ( ret > 0 ) {
-		_bytesSent += ret;
-		return ret;
+		_bytesSent += static_cast<count_t>(ret);
+		return static_cast<ssize_t>(ret);
 	}
 
 	int err = SSL_get_error(_ssl, ret);
@@ -1164,7 +1170,7 @@ int SSLSocket::write(const char *data, int len) {
 			break;
 	}
 
-	return ret;
+	return static_cast<ssize_t>(ret);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1172,7 +1178,7 @@ int SSLSocket::write(const char *data, int len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int SSLSocket::read(char *data, int len) {
+ssize_t SSLSocket::read(char *data, size_t len) {
 	if ( _flags & InAccept ) {
 		int ret = SSL_accept(_ssl);
 		if ( ret <= 0 ) {
@@ -1195,9 +1201,9 @@ int SSLSocket::read(char *data, int len) {
 		_flags &= ~InAccept;
 	}
 
-	int ret = SSL_read(_ssl, data, len);
+	int ret = SSL_read(_ssl, data, static_cast<int>(len));
 	if ( ret > 0 ) {
-		_bytesReceived += ret;
+		_bytesReceived += static_cast<count_t>(ret);
 		return ret;
 	}
 
@@ -1222,7 +1228,7 @@ int SSLSocket::read(char *data, int len) {
 			break;
 	}
 
-	return ret;
+	return static_cast<ssize_t>(ret);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1234,7 +1240,7 @@ Socket::Status SSLSocket::connect(const std::string &hostname, port_t port) {
 	cleanUp();
 
 	_ctx = SSL_CTX_new(SSLv23_client_method());
-	if ( _ctx == NULL ) {
+	if ( _ctx == nullptr ) {
 		SEISCOMP_DEBUG("Invalid SSL context");
 		return ConnectError;
 	}
@@ -1246,7 +1252,7 @@ Socket::Status SSLSocket::connect(const std::string &hostname, port_t port) {
 		return s;
 
 	_ssl = SSL_new(_ctx);
-	if ( _ssl == NULL ) {
+	if ( _ssl == nullptr ) {
 		SEISCOMP_DEBUG("Failed to create SSL context");
 		return ConnectError;
 	}
@@ -1274,7 +1280,7 @@ Socket::Status SSLSocket::connectV6(const std::string &hostname, port_t port) {
 	cleanUp();
 
 	_ctx = SSL_CTX_new(SSLv23_client_method());
-	if ( _ctx == NULL ) {
+	if ( _ctx == nullptr ) {
 		SEISCOMP_DEBUG("Invalid SSL context");
 		return ConnectError;
 	}
@@ -1284,7 +1290,7 @@ Socket::Status SSLSocket::connectV6(const std::string &hostname, port_t port) {
 		return s;
 
 	_ssl = SSL_new(_ctx);
-	if ( _ssl == NULL ) {
+	if ( _ssl == nullptr ) {
 		SEISCOMP_DEBUG("Failed to create SSL context");
 		return ConnectError;
 	}
@@ -1319,9 +1325,9 @@ void SSLSocket::close() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const unsigned char *SSLSocket::sessionID() const {
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-	return _ssl?_ssl->session->session_id:NULL;
+	return _ssl?_ssl->session->session_id:nullptr;
 #else
-	return _ssl?SSL_SESSION_get0_id_context(SSL_get0_session(_ssl), NULL):NULL;
+	return _ssl?SSL_SESSION_get0_id_context(SSL_get0_session(_ssl), nullptr):nullptr;
 #endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1347,7 +1353,7 @@ unsigned int SSLSocket::sessionIDLength() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 X509 *SSLSocket::peerCertificate() {
-	if ( _ssl == NULL ) return NULL;
+	if ( _ssl == nullptr ) return nullptr;
 	return SSL_get_peer_certificate(_ssl);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1359,12 +1365,12 @@ X509 *SSLSocket::peerCertificate() {
 void SSLSocket::cleanUp() {
 	if ( _ssl ) {
 		SSL_free(_ssl);
-		_ssl = NULL;
+		_ssl = nullptr;
 	}
 
 	if ( _ctx ) {
 		SSL_CTX_free(_ctx);
-		_ctx = NULL;
+		_ctx = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

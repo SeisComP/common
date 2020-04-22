@@ -297,7 +297,7 @@ T NumericArray<T>::rms(T offset) const {
 			r += (*f)*(*f);
 	}
 
-	return static_cast<T>(sqrt(r/n));
+	return static_cast<T>(n ? sqrt(r/n) : 0);
 }
 
 template<typename T>

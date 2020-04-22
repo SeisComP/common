@@ -21,8 +21,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_BROKER_PROTOCOL_WEBSOCKET_H__
-#define SEISCOMP_BROKER_PROTOCOL_WEBSOCKET_H__
+#ifndef SEISCOMP_BROKER_PROTOCOL_WEBSOCKET_H
+#define SEISCOMP_BROKER_PROTOCOL_WEBSOCKET_H
 
 
 #include <seiscomp/broker/client.h>
@@ -53,23 +53,24 @@ class WebsocketSession : public HttpSession, Broker::Client {
 	//  Public HTTPSession interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual void update();
+		void update() override;
 
-		virtual void handleHeader(const char *name, int nlen,
-		                          const char *value, int vlen);
+		void handleHeader(const char *name, size_t nlen,
+		                  const char *value, size_t vlen) override;
 
-		virtual bool handleGETRequest(Wired::HttpRequest &req);
-		virtual bool handleWSUpgrade(Wired::HttpRequest &req);
+		bool handleGETRequest(Wired::HttpRequest &req) override;
 
-		virtual void close();
-		virtual void buffersFlushed();
-		virtual void outboxFlushed();
+		void close() override;
+		void buffersFlushed() override;
+		void outboxFlushed() override;
 
 		void replyWithError(const char *msg, int len);
 		void replyWithError(const std::string &msg);
 
-		void handleWebsocketFrame(Wired::Websocket::Frame &frame);
+		void handleWebsocketFrame(Wired::Websocket::Frame &frame) override;
 		void handleFrame(char *data, int len);
+
+		virtual bool handleWSUpgrade(Wired::HttpRequest &req);
 
 		void commandCONNECT(char *frame, int len);
 		void commandDISCONNECT(char *frame, int len);
@@ -85,17 +86,17 @@ class WebsocketSession : public HttpSession, Broker::Client {
 	//  Subscriber interface
 	// ----------------------------------------------------------------------
 	protected:
-		virtual Wired::Socket::IPAddress IPAddress() const override;
+		Wired::Socket::IPAddress IPAddress() const override;
 
-		virtual size_t publish(Broker::Client *sender, Broker::Message *msg) override;
-		virtual void enter(const Broker::Group *group, const Broker::Client *newMember,
-		                   Broker::Message *msg) override;
-		virtual void leave(const Broker::Group *, const Broker::Client *newMember,
-		                   Broker::Message *msg) override;
-		virtual void disconnected(const Broker::Client *newMember,
-		                          Broker::Message *msg) override;
-		virtual void ack() override;
-		virtual void dispose() override;
+		size_t publish(Broker::Client *sender, Broker::Message *msg) override;
+		void enter(const Broker::Group *group, const Broker::Client *newMember,
+		           Broker::Message *msg) override;
+		void leave(const Broker::Group *, const Broker::Client *newMember,
+		           Broker::Message *msg) override;
+		void disconnected(const Broker::Client *newMember,
+		                  Broker::Message *msg) override;
+		void ack() override;
+		void dispose() override;
 
 
 	// ----------------------------------------------------------------------

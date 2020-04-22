@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_WIRED_REACTOR_H__
-#define SEISCOMP_WIRED_REACTOR_H__
+#ifndef SEISCOMP_WIRED_REACTOR_H
+#define SEISCOMP_WIRED_REACTOR_H
 
 
 #include <seiscomp/wired/devices/socket.h>
@@ -143,7 +143,7 @@ class SC_SYSTEM_CORE_API Reactor : public Seiscomp::Core::BaseObject {
 		 * @param buf Address that is populated with the buffer address
 		 * @param len Length will hold the length of the buffer
 		 */
-		void getBuffer(char *&buf, int &len);
+		void getBuffer(char *&buf, size_t &len);
 
 
 	// ----------------------------------------------------------------------

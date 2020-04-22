@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_WIRED_CLIENTSESSION_H__
-#define SEISCOMP_WIRED_CLIENTSESSION_H__
+#ifndef SEISCOMP_WIRED_CLIENTSESSION_H
+#define SEISCOMP_WIRED_CLIENTSESSION_H
 
 
 #include <seiscomp/wired/session.h>
@@ -49,17 +49,17 @@ class SC_SYSTEM_CORE_API ClientSession : public Session {
 
 		//! Update the session state including flushing and
 		//! reading available data.
-		virtual void update();
+		void update() override;
 
 		//! Queue data in the outbox
-		void send(const char *data, int len);
+		void send(const char *data, size_t len);
 		void send(const char *data);
 
 		//! Queues a buffer and returns whether the queue was empty
 		bool send(Buffer *);
 
 		//! Sets keepReading to false
-		virtual void close();
+		void close() override;
 
 		bool valid() const;
 		bool erroneous() const;
@@ -73,8 +73,8 @@ class SC_SYSTEM_CORE_API ClientSession : public Session {
 
 		//! Sets the post data size that is read by handleReceived and
 		//! passed to handlePostData
-		void setPostDataSize(int len);
-		int postDataSize() const;
+		void setPostDataSize(size_t len);
+		size_t postDataSize() const;
 
 		void setMIMEUnfoldingEnabled(bool);
 
@@ -92,14 +92,14 @@ class SC_SYSTEM_CORE_API ClientSession : public Session {
 
 		//! Handles a socket read into _buffer. The default implementation
 		//! extracts lines and calls handleInbox/handleData.
-		virtual void handleReceive(const char *data, int len);
+		virtual void handleReceive(const char *data, size_t len);
 
 		//! Handles a line
-		virtual void handleInbox(const char *data, int len);
+		virtual void handleInbox(const char *data, size_t len);
 
 		//! Handles posted data that has been requested if setPOSTDataSize
 		//! is called with len > 0.
-		virtual void handlePostData(const char *data, int len);
+		virtual void handlePostData(const char *data, size_t len);
 
 		virtual void handleInboxError(Error error);
 
@@ -123,10 +123,10 @@ class SC_SYSTEM_CORE_API ClientSession : public Session {
 		};
 
 		std::vector<char> _inbox;
-		int               _inboxPos;
+		size_t            _inboxPos;
 		std::vector<char> _outbox;
 		uint16_t          _flags;
-		int               _postDataSize;
+		size_t            _postDataSize;
 		Device::count_t   _bytesSent;
 
 

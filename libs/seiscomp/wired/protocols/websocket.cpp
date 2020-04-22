@@ -46,9 +46,9 @@ Frame::Frame() : _maxPayloadSize(0) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-inline bool Frame::next(int nBytes, void *dst, ItemCallback cb) {
+inline bool Frame::next(size_t nBytes, void *dst, ItemCallback cb) {
 	_bytesToRead = nBytes;
-	_buffer = (char*)dst;
+	_buffer = reinterpret_cast<uint8_t*>(dst);
 	_func = cb;
 	//SEISCOMP_DEBUG("next %d", nBytes);
 	return true;
@@ -81,12 +81,12 @@ void Frame::setMaxPayloadSize(uint64_t size) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int Frame::feed(const char *data, int len) {
+ssize_t Frame::feed(const char *data, size_t len) {
 	const char *src = data;
 
 	//SEISCOMP_DEBUG("handle %d", len);
 	while ( (len > 0) && (_bytesToRead > 0) ) {
-		int toCopy = std::min(_bytesToRead, len);
+		size_t toCopy = std::min(_bytesToRead, len);
 		memcpy(_buffer, data, toCopy);
 		data += toCopy;
 		_buffer += toCopy;
@@ -149,7 +149,7 @@ bool Frame::readControl() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Frame::readPayload1() {
 	isMasked = payloadLength & 0x80;
-	payloadLength &= ~0x80;
+	payloadLength &= uint64_t(~0x80);
 
 	if ( payloadLength <= 125 ) {
 		if ( isMasked )
@@ -209,15 +209,15 @@ bool Frame::readMask() {
 bool Frame::dataComplete() {
 	if ( isMasked ) {
 		// Unmask data
-		int l = data.size() >> 2;
-		uint32_t *b = (uint32_t *)data.data();
-		for ( int i = 0; i < l; ++i, ++b )
+		size_t l = data.size() >> 2;
+		uint32_t *b = reinterpret_cast<uint32_t*>(const_cast<char*>(data.data()));
+		for ( size_t i = 0; i < l; ++i, ++b )
 			*b ^= mask;
 
 		l = data.size() & 0x03;
-		uint8_t *bb = (uint8_t*)b;
-		uint8_t *mb = (uint8_t*)&mask;
-		for ( int i = 0; i < l; ++i )
+		uint8_t *bb = reinterpret_cast<uint8_t*>(b);
+		uint8_t *mb = reinterpret_cast<uint8_t*>(&mask);
+		for ( size_t i = 0; i < l; ++i )
 			bb[i] ^= mb[i];
 	}
 
@@ -241,7 +241,7 @@ bool Frame::readStatus() {
 		}
 
 		data.resize(payloadLength);
-		return next((int)payloadLength, (void*)data.data(), &Frame::dataComplete);
+		return next(payloadLength, const_cast<char*>(data.data()), &Frame::dataComplete);
 	}
 	else
 		_isFinished = true;
@@ -259,7 +259,7 @@ bool Frame::readData() {
 		// this is optional
 		if ( payloadLength >= 2 ) {
 			payloadLength -= 2;
-			return next(2, (void*)&status, &Frame::readStatus);
+			return next(2, &status, &Frame::readStatus);
 		}
 	}
 
@@ -271,7 +271,7 @@ bool Frame::readData() {
 		}
 
 		data.resize(payloadLength);
-		return next((int)payloadLength, (void*)data.data(), &Frame::dataComplete);
+		return next(payloadLength, const_cast<char*>(data.data()), &Frame::dataComplete);
 	}
 	else
 		_isFinished = true;
@@ -299,26 +299,26 @@ void Frame::finalizeBuffer(Buffer *buf, Type type, Status statusCode) {
 		plc = 126;
 		Core::Endianess::ByteSwapper<Core::Endianess::Current::LittleEndian,2>::Take(&pl, 1);
 		buf->header.resize(4+headerOffset);
-		memcpy((char*)buf->header.data()+2, &pl, 2);
+		memcpy(const_cast<char*>(buf->header.data()) + 2, &pl, 2);
 	}
 	else if ( pl > 65535 ) {
 		plc = 127;
 		Core::Endianess::ByteSwapper<Core::Endianess::Current::LittleEndian,8>::Take(&pl, 1);
 		buf->header.resize(10+headerOffset);
-		memcpy((char*)buf->header.data()+2, &pl, 8);
+		memcpy(const_cast<char*>(buf->header.data()) + 2, &pl, 8);
 	}
 	else {
-		plc = (uint8_t)pl;
-		buf->header.resize(2+headerOffset);
+		plc = uint8_t(pl);
+		buf->header.resize(2 + headerOffset);
 	}
 
-	memcpy((char*)buf->header.data(), &control, 1);
-	memcpy((char*)buf->header.data()+1, &plc, 1);
+	memcpy(const_cast<char*>(buf->header.data()), &control, 1);
+	memcpy(const_cast<char*>(buf->header.data() + 1), &plc, 1);
 
 	if ( statusCode != NoStatus ) {
 		uint16_t sc = statusCode;
 		Core::Endianess::ByteSwapper<Core::Endianess::Current::LittleEndian,2>::Take(&sc, 1);
-		memcpy((char*)buf->header.data()+buf->header.size()-2, &sc, 2);
+		memcpy(const_cast<char*>(buf->header.data()) + buf->header.size() - 2, &sc, 2);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -75,7 +75,7 @@ class FlagCounter: public boost::program_options::untyped_value {
 		void xparse(boost::any&, const vector<string>&) const;
 
 	private:
-		unsigned int* _count;
+		unsigned int *_count;
 };
 
 FlagCounter::FlagCounter(unsigned int* count)
@@ -351,6 +351,33 @@ namespace System {
 Application *Application::_instance = NULL;
 bool Application::_handleTermination = true;
 bool Application::_handleCrash = false;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::BaseSettings::accept(SettingsLinker &linker) {
+	linker
+	& cfg(crashHandler, "scripts.crashHandler")
+	& cfg(logging, "logging")
+
+	& cliAsPath(
+		alternativeConfigFile,
+		"Generic", "config-file",
+		"Use alternative configuration file"
+	)
+	& cli(
+		plugins,
+		"Generic", "plugins",
+		"Load given plugins"
+	)
+	& cli(
+		lockfile,
+		"Verbose", "lockfile,l",
+		"Path to lock file"
+	);
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -1523,11 +1550,11 @@ bool Application::initLogging() {
 						default:
 						case 4:
 							_logger->subscribe(Logging::getComponentChannel((*it).c_str(), "debug"));
-						case 3:
+						[[clang::fallthrough]]; case 3:
 							_logger->subscribe(Logging::getComponentChannel((*it).c_str(), "info"));
-						case 2:
+						[[clang::fallthrough]]; case 2:
 							_logger->subscribe(Logging::getComponentChannel((*it).c_str(), "warning"));
-						case 1:
+						[[clang::fallthrough]]; case 1:
 							_logger->subscribe(Logging::getComponentChannel((*it).c_str(), "error"));
 					}
 				}
@@ -1538,11 +1565,11 @@ bool Application::initLogging() {
 					default:
 					case 4:
 						_logger->subscribe(Logging::getGlobalChannel("debug"));
-					case 3:
+					[[clang::fallthrough]]; case 3:
 						_logger->subscribe(Logging::getGlobalChannel("info"));
-					case 2:
+					[[clang::fallthrough]]; case 2:
 						_logger->subscribe(Logging::getGlobalChannel("warning"));
-					case 1:
+					[[clang::fallthrough]]; case 1:
 						_logger->subscribe(Logging::getGlobalChannel("error"));
 				}
 			}
@@ -1700,9 +1727,9 @@ int Application::acquireLockfile(const std::string &lockfile) {
 	char buf[30];
 	memset(buf, 0, sizeof(buf));
 	snprintf(buf, sizeof(buf), "%d", getpid());
-	ssize_t pid_len = strlen(buf);
+	size_t pid_len = strlen(buf);
 
-	if ( write(fd, buf, pid_len) != pid_len ) {
+	if ( static_cast<size_t>(write(fd, buf, pid_len)) != pid_len ) {
 		SEISCOMP_ERROR("could not write pid file at %s: %s\n", lockfile.c_str(), strerror(errno));
 		return -1;
 	}
@@ -1764,7 +1791,7 @@ void Application::quit() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::handleInterrupt(int s) {
+void Application::handleInterrupt(int) {
 	this->exit(_returnCode);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1796,7 +1823,7 @@ int getConfig(const Application *app, const std::string &symbol, bool) {
 
 template <>
 unsigned int getConfig(const Application *app, const std::string &symbol, bool) {
-	return (unsigned int)app->configGetInt(symbol);
+	return static_cast<unsigned int>(app->configGetInt(symbol));
 }
 
 template <>

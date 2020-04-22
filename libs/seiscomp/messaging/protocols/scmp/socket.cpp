@@ -40,19 +40,19 @@ namespace SCMP {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FrameHeaders::next() {
-	int len;
+	size_t len;
 	const char *data = Core::tokenize2(_source, "\n", _source_len, len);
 
-	if ( data != NULL ) {
+	if ( data ) {
 		Core::trim(data,len);
 
 		name_start = data;
 
 		const char *sep = Core::strnchr(data, len, ':');
-		if ( sep != NULL ) {
-			name_len = sep-data;
-			val_start = sep+1;
-			val_len = len-(sep-data)-1;
+		if ( sep ) {
+			name_len = static_cast<size_t>(sep - data);
+			val_start = sep + 1;
+			val_len = len - name_len - 1;
 			Core::trimBack(name_start, name_len);
 			Core::trimFront(val_start, val_len);
 		}
@@ -152,7 +152,7 @@ bool Socket::wait(boost::mutex *m, boost::mutex *waitLock) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Socket::handleInterrupt(int num) {
+void Socket::handleInterrupt(int) {
 	_select.interrupt();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_STRINGS_H__
-#define SEISCOMP_CORE_STRINGS_H__
+#ifndef SEISCOMP_CORE_STRINGS_H
+#define SEISCOMP_CORE_STRINGS_H
 
 
 #include <seiscomp/core/optional.h>
@@ -28,7 +28,6 @@
 
 #include <boost/iostreams/stream.hpp>
 #include <string>
-#include <ctime>
 #include <vector>
 #include <complex>
 
@@ -240,7 +239,7 @@ SC_SYSTEM_CORE_API bool wildicmp(const std::string &wild, const std::string &str
  * @return The address to the token found or NULL.
  */
 template <typename T>
-T *tokenize(T *&str, const char *delim, int &len_source, int &len_tok);
+T *tokenize(T *&str, const char *delim, size_t &len_source, size_t &len_tok);
 
 /**
  * @brief Works like tokenize but does not compress empty tokens.
@@ -253,7 +252,7 @@ T *tokenize(T *&str, const char *delim, int &len_source, int &len_tok);
  * @return The address to the token found or NULL.
  */
 template <typename T>
-T *tokenize2(T *&str, const char *delim, int &len_source, int &len_tok);
+T *tokenize2(T *&str, const char *delim, size_t &len_source, size_t &len_tok);
 
 /**
  * @brief Splits a string into several tokens separated by one of the specified
@@ -326,8 +325,8 @@ SC_SYSTEM_CORE_API bool isEmpty(const char*);
  *            if the trimmed string.
  * @return The pointer to the first non-whitespace character.
  */
-char *trimFront(char *&data, int &len);
-const char *trimFront(const char *&data, int &len);
+char *trimFront(char *&data, size_t &len);
+const char *trimFront(const char *&data, size_t &len);
 
 /**
  * @brief Removes whitespaces from the back of a string.
@@ -336,8 +335,8 @@ const char *trimFront(const char *&data, int &len);
  *            if the trimmed string.
  * @return The input pointer.
  */
-char *trimBack(char *&data, int &len);
-const char *trimBack(const char *&data, int &len);
+char *trimBack(char *&data, size_t &len);
+const char *trimBack(const char *&data, size_t &len);
 
 /**
  * @brief Strips whitespaces from the front and the back of the string.
@@ -347,8 +346,8 @@ const char *trimBack(const char *&data, int &len);
  *            if the trimmed string.
  * @return The pointer to the first non-whitespace character.
  */
-char *trim(char *&data, int &len);
-const char *trim(const char *&data, int &len);
+char *trim(char *&data, size_t &len);
+const char *trim(const char *&data, size_t &len);
 
 char *strnchr(char *p, size_t n, char c);
 const char *strnchr(const char *p, size_t n, char c);
@@ -360,7 +359,7 @@ const char *strnchr(const char *p, size_t n, char c);
  * @param offset The number of characters to advance the data pointer.
  * @return The pointer to the advanced string.
  */
-const char *advance(const char *&data, int &len, int offset);
+const char *advance(const char *&data, size_t &len, size_t offset);
 
 
 /**

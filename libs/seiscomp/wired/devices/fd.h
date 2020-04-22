@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_WIRED_FD_H__
-#define SEISCOMP_WIRED_FD_H__
+#ifndef SEISCOMP_WIRED_FD_H
+#define SEISCOMP_WIRED_FD_H
 
 
 #include <seiscomp/wired/device.h>
@@ -39,9 +39,9 @@ class FileDescriptor : public Device {
 		~FileDescriptor();
 
 	public:
-		void close();
-		int write(const char *data, int len);
-		int read(char *data, int len);
+		void close() override;
+		ssize_t write(const char *data, size_t len) override;
+		ssize_t read(char *data, size_t len) override;
 };
 
 
