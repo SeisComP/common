@@ -18,25 +18,26 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_ENUMERATION_H__
-#define SEISCOMP_CORE_ENUMERATION_H__
+#ifndef SEISCOMP_CORE_ENUMERATION_H
+#define SEISCOMP_CORE_ENUMERATION_H
+
 
 #include <seiscomp/core/io.h>
+
 
 namespace Seiscomp {
 namespace Core {
 
 
-
 class SC_SYSTEM_CORE_API Enumeration {
 	public:
-		virtual ~Enumeration() {}
+		virtual ~Enumeration();
 
 		/**
 		 * Converts an enumeration to its string representation
 		 * @return The enumeration value string
 		 */
-		virtual const char* toString() const = 0;
+		virtual const char *toString() const = 0;
 
 		/**
 		 * Converts a string to an enumeration value.
@@ -44,7 +45,7 @@ class SC_SYSTEM_CORE_API Enumeration {
 		 *            case sensitive.
 		 * @return The result of the conversion
 		 */
-		virtual bool fromString(const std::string& str) = 0;
+		virtual bool fromString(const std::string &str) = 0;
 
 		/**
 		 * Converts an enumeration value to an integer
@@ -121,9 +122,9 @@ class Enum : public Enumeration {
 	public:
 		typedef ENUMTYPE Type;
 		typedef NAMES NameDispatcher;
-		static const ENUMTYPE First = (ENUMTYPE)0;
-		static const ENUMTYPE End = (ENUMTYPE)(END - 1);
-		static const ENUMTYPE Quantity = (ENUMTYPE)(END - 0);
+		static const ENUMTYPE First = ENUMTYPE(0);
+		static const ENUMTYPE End = ENUMTYPE(END - 1);
+		static const ENUMTYPE Quantity = ENUMTYPE(END - 0);
 
 
 	// ------------------------------------------------------------------
@@ -131,7 +132,7 @@ class Enum : public Enumeration {
 	// ------------------------------------------------------------------
 	public:
 		//! C'tor
-		Enum(ENUMTYPE value = (ENUMTYPE)0);
+		Enum(ENUMTYPE value = ENUMTYPE(0));
 
 
 	// ------------------------------------------------------------------
@@ -148,18 +149,18 @@ class Enum : public Enumeration {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive &ar);
 
 
 	// ------------------------------------------------------------------
 	//  Conversion
 	// ------------------------------------------------------------------
 	public:
-		const char* toString() const;
-		bool fromString(const std::string& str);
+		const char *toString() const override;
+		bool fromString(const std::string &str) override;
 
-		int toInt() const;
-		bool fromInt(int value);
+		int toInt() const override;
+		bool fromInt(int value) override;
 
 
 	// ------------------------------------------------------------------

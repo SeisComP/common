@@ -3,6 +3,7 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/platform.h.in
                @ONLY)
 
 SET(CORE_SOURCES
+	enumeration.cpp
 	rtti.cpp
 	metaobject.cpp
 	datetime.cpp
