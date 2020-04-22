@@ -77,8 +77,7 @@ std::string toString(const ::boost::optional<T> &v);
 /**
  * Converts a string into a value. Conversions are supported
  * for following types:
- *   char
- *   int, long
+ *   int/uint with 8,16,32 and 64 bit
  *   float, double
  *   std::vector of all above types
  * IMPORTANT: integer types are converted in base 10!
@@ -91,6 +90,18 @@ bool fromString(T &value, const std::string &str);
 
 template <typename T>
 bool fromString(std::complex<T> &value, const std::string &str);
+
+SC_SYSTEM_CORE_API bool fromString(int8_t &value, const std::string &str);
+SC_SYSTEM_CORE_API bool fromString(uint8_t &value, const std::string &str);
+SC_SYSTEM_CORE_API bool fromString(int16_t &value, const std::string &str);
+SC_SYSTEM_CORE_API bool fromString(uint16_t &value, const std::string &str);
+SC_SYSTEM_CORE_API bool fromString(int32_t &value, const std::string &str);
+SC_SYSTEM_CORE_API bool fromString(uint32_t &value, const std::string &str);
+SC_SYSTEM_CORE_API bool fromString(int64_t &value, const std::string &str);
+SC_SYSTEM_CORE_API bool fromString(uint64_t &value, const std::string &str);
+SC_SYSTEM_CORE_API bool fromString(float &value, const std::string &str);
+SC_SYSTEM_CORE_API bool fromString(double &value, const std::string &str);
+SC_SYSTEM_CORE_API bool fromString(bool &value, const std::string &str);
 
 SC_SYSTEM_CORE_API bool fromString(Time &value, const std::string &str);
 SC_SYSTEM_CORE_API bool fromString(Enumeration &value, const std::string &str);

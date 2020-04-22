@@ -48,10 +48,7 @@
 #include <signal.h>
 #include <fcntl.h>
 
-#ifdef __SUNPRO_CC
 #include <sys/stat.h>
-#endif
-
 #include <boost/bind.hpp>
 
 #ifdef WIN32
@@ -1550,11 +1547,14 @@ bool Application::initLogging() {
 						default:
 						case 4:
 							_logger->subscribe(Logging::getComponentChannel((*it).c_str(), "debug"));
-						[[clang::fallthrough]]; case 3:
+							[[clang::fallthrough]];
+						case 3:
 							_logger->subscribe(Logging::getComponentChannel((*it).c_str(), "info"));
-						[[clang::fallthrough]]; case 2:
+							[[clang::fallthrough]];
+						case 2:
 							_logger->subscribe(Logging::getComponentChannel((*it).c_str(), "warning"));
-						[[clang::fallthrough]]; case 1:
+							[[clang::fallthrough]];
+						case 1:
 							_logger->subscribe(Logging::getComponentChannel((*it).c_str(), "error"));
 					}
 				}

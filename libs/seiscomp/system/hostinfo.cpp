@@ -447,6 +447,7 @@ int64_t HostInfo::totalMemory() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int HostInfo::getCurrentMemoryUsage() const {
+	int usedMemory = 0;
 #ifdef LINUX
 	std::string line = getLineFromFile("/proc/self/status", "VmRSS");
 	if ( line.empty() ) return -1;
@@ -460,12 +461,11 @@ int HostInfo::getCurrentMemoryUsage() const {
 	if ( Core::split(tokens, line.c_str(), "kB") != 2 )
 		return 0;
 
-	int usedMemory = 0;
 	Core::trim(tokens[0]);
 	Core::fromString(usedMemory, tokens[0]);
 #endif
 
-#ifdef MACOSX
+#if defined(MACOSX) or defined(BSD)
 	FILE *pipe;
 	char cmd[256];
 	pid_t PID = getpid();

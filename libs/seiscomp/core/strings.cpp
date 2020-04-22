@@ -115,8 +115,7 @@ SC_SYSTEM_CORE_API bool fromString(char &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <>
-SC_SYSTEM_CORE_API bool fromString(int8_t &value, const std::string &str) {
+bool fromString(int8_t &value, const std::string &str) {
 	char* endptr = nullptr;
 	errno = 0;
 	long retval = strtol(str.c_str(), &endptr, 10);
@@ -142,8 +141,7 @@ SC_SYSTEM_CORE_API bool fromString(int8_t &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <>
-SC_SYSTEM_CORE_API bool fromString(uint8_t &value, const std::string &str) {
+bool fromString(uint8_t &value, const std::string &str) {
 	char* endptr = nullptr;
 	errno = 0;
 	long retval = strtol(str.c_str(), &endptr, 10);
@@ -169,8 +167,7 @@ SC_SYSTEM_CORE_API bool fromString(uint8_t &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <>
-SC_SYSTEM_CORE_API bool fromString(int16_t &value, const std::string &str) {
+bool fromString(int16_t &value, const std::string &str) {
 	char* endptr = nullptr;
 	errno = 0;
 	long retval = strtol(str.c_str(), &endptr, 10);
@@ -196,8 +193,7 @@ SC_SYSTEM_CORE_API bool fromString(int16_t &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <>
-SC_SYSTEM_CORE_API bool fromString(uint16_t &value, const std::string &str) {
+bool fromString(uint16_t &value, const std::string &str) {
 	char* endptr = nullptr;
 	errno = 0;
 	long retval = strtol(str.c_str(), &endptr, 10);
@@ -223,8 +219,7 @@ SC_SYSTEM_CORE_API bool fromString(uint16_t &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <>
-SC_SYSTEM_CORE_API bool fromString(int32_t &value, const std::string& str) {
+bool fromString(int32_t &value, const std::string& str) {
 	char* endptr = nullptr;
 	errno = 0;
 	long long retval = strtoll(str.c_str(), &endptr, 10);
@@ -250,8 +245,7 @@ SC_SYSTEM_CORE_API bool fromString(int32_t &value, const std::string& str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <>
-SC_SYSTEM_CORE_API bool fromString(uint32_t &value, const std::string &str) {
+bool fromString(uint32_t &value, const std::string &str) {
 	char* endptr = nullptr;
 	errno = 0;
 	long long retval = strtoll(str.c_str(), &endptr, 10);
@@ -277,8 +271,7 @@ SC_SYSTEM_CORE_API bool fromString(uint32_t &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <>
-SC_SYSTEM_CORE_API bool fromString(int64_t &value, const std::string &str) {
+bool fromString(int64_t &value, const std::string &str) {
 	char* endptr = nullptr;
 	errno = 0;
 	long long retval = strtoll(str.c_str(), &endptr, 10);
@@ -298,8 +291,7 @@ SC_SYSTEM_CORE_API bool fromString(int64_t &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <>
-SC_SYSTEM_CORE_API bool fromString(uint64_t &value, const std::string& str) {
+bool fromString(uint64_t &value, const std::string& str) {
 	char* endptr = nullptr;
 	errno = 0;
 	long long retval = strtoll(str.c_str(), &endptr, 10);
@@ -324,8 +316,7 @@ SC_SYSTEM_CORE_API bool fromString(uint64_t &value, const std::string& str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <>
-SC_SYSTEM_CORE_API bool fromString(float &value, const std::string &str) {
+bool fromString(float &value, const std::string &str) {
 	char* endptr = nullptr;
 	errno = 0;
 	double retval = strtod(str.c_str(), &endptr);
@@ -351,8 +342,7 @@ SC_SYSTEM_CORE_API bool fromString(float &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <>
-SC_SYSTEM_CORE_API bool fromString(double &value, const std::string &str) {
+bool fromString(double &value, const std::string &str) {
 	char* endptr = nullptr;
 	errno = 0;
 	value = strtod(str.c_str(), &endptr);
@@ -371,8 +361,7 @@ SC_SYSTEM_CORE_API bool fromString(double &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <>
-SC_SYSTEM_CORE_API bool fromString(bool &value, const std::string &str) {
+bool fromString(bool &value, const std::string &str) {
 	char* endptr = nullptr;
 	errno = 0;
 
@@ -403,7 +392,7 @@ SC_SYSTEM_CORE_API bool fromString(bool &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool fromString(Time& value, const std::string& str) {
+bool fromString(Time &value, const std::string &str) {
 	if ( !value.fromString(str.c_str(), timeFormatPrecise) ) {
 		if ( !value.fromString(str.c_str(), timeFormat2) )
 			return false;
@@ -417,7 +406,7 @@ bool fromString(Time& value, const std::string& str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool fromString(Enumeration& value, const std::string& str) {
+bool fromString(Enumeration &value, const std::string &str) {
 	return value.fromString(str);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -426,7 +415,7 @@ bool fromString(Enumeration& value, const std::string& str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool fromString(std::string& value, const std::string& str) {
+bool fromString(std::string &value, const std::string &str) {
 	value.assign(str);
 	return true;
 }
@@ -502,8 +491,8 @@ std::string stringify(const char *fmt, ...) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int split(std::vector<std::string>& tokens, const char* source,
-          const char* delimiter, bool compressOn) {
+int split(std::vector<std::string> &tokens, const char *source,
+          const char *delimiter, bool compressOn) {
 	boost::split(tokens, source, boost::is_any_of(delimiter),
 	             ((compressOn) ? boost::token_compress_on : boost::token_compress_off));
 	return static_cast<int>(tokens.size());

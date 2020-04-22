@@ -758,7 +758,7 @@ bool DeviceGroup::clearTimer() {
 	if ( _timerFd > 0 ) {
 		// Remove from event queue
 #ifdef SEISCOMP_WIRED_EPOLL
-		for ( int i = _selectIndex; i < _selectSize; ++i ) {
+		for ( size_t i = _selectIndex; i < _selectSize; ++i ) {
 			// Is this device still queued in the epoll event list?
 			if ( _epoll_events[i].data.ptr == &_timerFd ) {
 				// Remove it

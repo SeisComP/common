@@ -21,8 +21,8 @@
  ***************************************************************************/
 
 
-#ifndef GEMPA_BROKER_HASHSET_H__
-#define GEMPA_BROKER_HASHSET_H__
+#ifndef GEMPA_BROKER_HASHSET_H
+#define GEMPA_BROKER_HASHSET_H
 
 
 #include <stdint.h>
@@ -498,11 +498,11 @@ class KHashSetPtrBase<T, 4> {
 
 
 	public:
-		KHashSetPtrBase<T,4>() {
+		KHashSetPtrBase<T, 4>() {
 			_h = kh_init(int);
 		}
 
-		~KHashSetPtrBase<T,4>() {
+		~KHashSetPtrBase<T, 4>() {
 			kh_destroy(int, _h);
 		}
 
@@ -529,12 +529,12 @@ class KHashSetPtrBase<T, 4> {
 
 		int insert(T v) {
 			int ret;
-			kh_put(int, _h, (uint32_t)v, &ret);
+			kh_put(int, _h, (uintptr_t)v, &ret);
 			return ret;
 		}
 
 		iterator find(const void *v) const {
-			return iterator(_h, kh_get(int, _h, (uint32_t)v));
+			return iterator(_h, kh_get(int, _h, (uintptr_t)v));
 		}
 
 		void erase(iterator it) {
@@ -542,7 +542,7 @@ class KHashSetPtrBase<T, 4> {
 		}
 
 		bool contains(const void *v) const {
-			return kh_get(int, _h, (uint32_t)v) != kh_end(_h);
+			return kh_get(int, _h, (uintptr_t)v) != kh_end(_h);
 		}
 
 
@@ -593,11 +593,11 @@ class KHashSetPtrBase<T, 8> {
 
 
 	public:
-		KHashSetPtrBase<T,8>() {
+		KHashSetPtrBase<T, 8>() {
 			_h = kh_init(int64);
 		}
 
-		~KHashSetPtrBase<T,8>() {
+		~KHashSetPtrBase<T, 8>() {
 			kh_destroy(int64, _h);
 		}
 
@@ -624,12 +624,12 @@ class KHashSetPtrBase<T, 8> {
 
 		int insert(T v) {
 			int ret;
-			kh_put(int64, _h, (uint64_t)v, &ret);
+			kh_put(int64, _h, (uintptr_t)v, &ret);
 			return ret;
 		}
 
 		iterator find(const void *v) const {
-			return iterator(_h, kh_get(int64, _h, (uint64_t)v));
+			return iterator(_h, kh_get(int64, _h, (uintptr_t)v));
 		}
 
 		void erase(iterator it) {
@@ -637,7 +637,7 @@ class KHashSetPtrBase<T, 8> {
 		}
 
 		bool contains(const void *v) const {
-			return kh_get(int64, _h, (uint64_t)v) != kh_end(_h);
+			return kh_get(int64, _h, (uintptr_t)v) != kh_end(_h);
 		}
 
 
@@ -648,7 +648,7 @@ class KHashSetPtrBase<T, 8> {
 
 struct Arch {
 	enum {
-		PtrSize = sizeof(void*)
+		PtrSize = sizeof(intptr_t)
 	};
 };
 

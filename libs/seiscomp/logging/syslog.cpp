@@ -52,7 +52,7 @@ SyslogOutput::~SyslogOutput() {
 }
 
 bool SyslogOutput::open(const char* ident, const char *facility) {
-	CODE *names = facilitynames;
+	const CODE *names = facilitynames;
 	_facility = SYSLOG_FACILITY;
 
 	if ( facility != NULL ) {
