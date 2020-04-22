@@ -1120,16 +1120,6 @@ void DatabaseArchive::read(std::string &value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DatabaseArchive::read(time_t &value) {
-	Time t = _db->stringToTime(cfield());
-	value = t.seconds();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DatabaseArchive::read(Time &value) {
 	value = _db->stringToTime(cfield());
 	if ( hint() & SPLIT_TIME ) {

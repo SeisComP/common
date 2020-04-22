@@ -536,21 +536,6 @@ void BinaryArchive::read(std::string& value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BinaryArchive::read(time_t& value) {
-	dateint tmpValue;
-	int size = _buf?_buf->sgetn((char*)&tmpValue, sizeof(tmpValue)):0;
-	if ( size != sizeof(tmpValue) ) {
-		SEISCOMP_ERROR("read(time): expected %d bytes from stream, got %d", (int)sizeof(tmpValue), size);
-		setValidity(false);
-	}
-	value = tmpValue;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BinaryArchive::read(Seiscomp::Core::Time& value) {
 	dateint tmpSeconds, tmpUSeconds;
 	int size = _buf?_buf->sgetn((char*)&tmpSeconds, sizeof(tmpSeconds)):0;

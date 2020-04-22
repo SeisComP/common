@@ -252,7 +252,6 @@ class Archive {
 		virtual void read(std::string& value) = 0;
 
 		//! Reads a time
-		virtual void read(time_t& value) = 0;
 		virtual void read(Time& value) = 0;
 
 		template <typename T>

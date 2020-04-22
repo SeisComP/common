@@ -141,7 +141,6 @@ class SC_SYSTEM_CORE_API XMLArchive : public Seiscomp::Core::Archive {
 		virtual void read(std::string& value);
 
 		//! Reads a time
-		virtual void read(time_t& value);
 		virtual void read(Seiscomp::Core::Time& value);
 
 

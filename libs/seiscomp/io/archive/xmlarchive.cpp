@@ -512,11 +512,6 @@ int writeBufferCallback(void* context, const char* buffer, int len) {
 }
 
 
-void XMLArchive::read(time_t& value) {
-	setValidity(Seiscomp::Core::fromString(value, _property));
-}
-
-
 void XMLArchive::read(Seiscomp::Core::Time& value) {
 	setValidity(Seiscomp::Core::fromString(value, _property));
 }

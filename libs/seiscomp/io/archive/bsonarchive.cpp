@@ -443,25 +443,6 @@ void BSONArchive::setJSON(bool enable) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BSONArchive::read(time_t& value) {
-	switch ( bson_iter_type (&_impl->iter) ) {
-		case BSON_TYPE_DATE_TIME:
-			value = bson_iter_time_t(&_impl->iter);
-			setValidity(true);
-			break;
-
-		default:
-			SEISCOMP_ERROR("Invalid time_t value");
-			setValidity(false);
-			break;
-	}
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BSONArchive::read(Seiscomp::Core::Time& value) {
 	switch ( bson_iter_type (&_impl->iter) ) {
 		case BSON_TYPE_NULL:

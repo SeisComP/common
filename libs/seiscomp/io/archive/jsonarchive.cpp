@@ -863,21 +863,6 @@ void JSONArchive::read(std::string &value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void JSONArchive::read(time_t &value) {
-	if ( !_objectLocation->IsNumber() ) {
-		SEISCOMP_ERROR("number expected");
-		setValidity(false);
-		return;
-	}
-
-	value = (time_t)(_objectLocation->GetDouble() * 0.001);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void JSONArchive::read(Core::Time &value) {
 	if ( !_objectLocation->IsString() ) {
 		if ( _objectLocation->IsNull() )
