@@ -1,3 +1,6 @@
+#!/usr/bin/env seiscomp-python
+# -*- coding: utf-8 -*-
+
 ############################################################################
 # Copyright (C) gempa GmbH                                                 #
 # All rights reserved.                                                     #
@@ -16,9 +19,6 @@
 # conditions contained in a signed written agreement between you and       #
 # gempa GmbH.                                                              #
 ############################################################################
-
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import seiscomp.bindings2cfg
 import sys
