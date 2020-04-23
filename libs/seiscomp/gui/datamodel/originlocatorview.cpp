@@ -1361,7 +1361,7 @@ typedef std::map<PickPhase, PickWithFlags> PickedPhases;
 }
 
 
-ArrivalDelegate::ArrivalDelegate(QWidget *parent = NULL)
+ArrivalDelegate::ArrivalDelegate(QWidget *parent)
 : QStyledItemDelegate(parent)
 , _margin(2), _spacing(4), _statusRectWidth(6), _labelWidth(0) {
 	_flags[0] = Seismology::LocatorInterface::F_TIME;
