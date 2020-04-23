@@ -18,21 +18,23 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_UTILS_TIMER_H__
-#define SEISCOMP_UTILS_TIMER_H__
+#ifndef SEISCOMP_UTILS_TIMER_H
+#define SEISCOMP_UTILS_TIMER_H
+
 
 #include <seiscomp/core/datetime.h>
+#include <seiscomp/core/platform/platform.h>
 #include <seiscomp/core.h>
 
 #include <boost/function.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
 
-#ifdef WIN32
-#include <list>
-#else
+#if defined(SC_HAS_TIMER_CREATE)
 #include <signal.h>
 #include <time.h>
+#else
+#include <list>
 #endif
 
 
@@ -139,19 +141,21 @@ class SC_SYSTEM_CORE_API Timer {
 
 
 	private:
-#ifdef WIN32
+#if defined(SC_HAS_TIMER_CREATE)
+		bool destroy();
+
+		static void handleTimeout(sigval_t self);
+#else
 		bool deactivate(bool remove);
 
 		static void Loop();
 		static bool Update();
-#else
-		bool destroy();
-
-		static void handleTimeout(sigval_t self);
 #endif
 
 	private:
-#ifdef WIN32
+#if defined(SC_HAS_TIMER_CREATE)
+		timer_t          _timerID;
+#else
 		typedef std::list<Timer*> TimerList;
 		static TimerList _timers;
 		static boost::thread *_thread;
@@ -159,14 +163,12 @@ class SC_SYSTEM_CORE_API Timer {
 
 		bool             _isActive;
 		unsigned int     _value;
-#else
-		timer_t          _timerID;
 #endif
 
 		Callback         _callback;
 		boost::try_mutex _callbackMutex;
 		unsigned int     _timeout;
-#ifndef WIN32
+#if defined(SC_HAS_TIMER_CREATE)
 		unsigned int     _timeoutNs;
 #endif
 		bool             _singleShot;

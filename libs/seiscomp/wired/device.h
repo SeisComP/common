@@ -24,10 +24,12 @@
 #include <seiscomp/core/platform/platform.h>
 #include <seiscomp/core/interruptible.h>
 
-#if defined(MACOSX) or defined(BSD)
-#define SEISCOMP_WIRED_KQUEUE
+#if defined(SC_HAS_EPOLL)
+	#define SEISCOMP_WIRED_EPOLL
+#elif defined(SC_HAS_KQUEUE)
+	#define SEISCOMP_WIRED_KQUEUE
 #else
-#define SEISCOMP_WIRED_EPOLL
+	#error "Require either epoll or kqueue support"
 #endif
 
 #ifdef SEISCOMP_WIRED_SELECT

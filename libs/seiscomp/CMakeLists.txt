@@ -24,6 +24,58 @@ ADD_CUSTOM_TARGET(
 
 
 # ------------------------------------------------------------------------------
+# SYSTEM CHECK
+# ------------------------------------------------------------------------------
+
+INCLUDE(CheckFunctionExists)
+INCLUDE(CheckIncludeFile)
+
+# eventfd check
+CHECK_INCLUDE_FILE(sys/eventfd.h HAS_SYS_EVENTFD_H)
+
+IF(HAS_SYS_EVENTFD_H)
+	MESSAGE(STATUS "Found sys/eventfd.h")
+	CHECK_FUNCTION_EXISTS(eventfd SC_HAS_EVENTFD)
+	IF(SC_HAS_EVENTFD)
+		MESSAGE(STATUS "Found function eventfd")
+	ENDIF()
+ENDIF()
+
+# epoll
+CHECK_INCLUDE_FILE(sys/epoll.h HAS_SYS_EPOLL_H)
+
+IF(HAS_SYS_EPOLL_H)
+	MESSAGE(STATUS "Found sys/epoll.h")
+	CHECK_FUNCTION_EXISTS(epoll_ctl SC_HAS_EPOLL)
+	IF(SC_HAS_EPOLL)
+		MESSAGE(STATUS "Found function epoll_ctl")
+	ENDIF()
+ELSE()
+	CHECK_INCLUDE_FILE(sys/event.h HAS_SYS_EVENT_H)
+	IF(HAS_SYS_EVENT_H)
+		CHECK_FUNCTION_EXISTS(kqueue SC_HAS_KQUEUE)
+		IF(SC_HAS_KQUEUE)
+			MESSAGE(STATUS "Found function kqueue")
+		ENDIF()
+	ELSE()
+		MESSAGE(FATAL_ERROR "Require support for either epoll or kqueue")
+	ENDIF()
+ENDIF()
+
+# timer
+IF(LINUX)
+	SET(SC_HAS_TIMER_CREATE 1)
+ELSE()
+	SET(SC_HAS_TIMER_CREATE 0)
+ENDIF()
+
+
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/core/platform.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/core/platform/platform.h
+               @ONLY)
+
+
+# ------------------------------------------------------------------------------
 # LIBRARY VERSION
 # ------------------------------------------------------------------------------
 
@@ -99,7 +151,7 @@ MACRO(HEX2DEC VAR VAL)
 				MATH(EXPR CURINDEX "${CURINDEX}+1")
 			ENDWHILE()
 		ELSE()
-			MESSAGE(FATAL "Not a hexadecimal number")
+			MESSAGE(FATAL_ERROR "Not a hexadecimal number")
 		ENDIF()
 	ENDIF()
 ENDMACRO(HEX2DEC)

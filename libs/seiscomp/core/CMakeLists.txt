@@ -1,7 +1,3 @@
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/platform.h.in
-               ${CMAKE_CURRENT_BINARY_DIR}/platform/platform.h
-               @ONLY)
-
 SET(CORE_SOURCES
 	enumeration.cpp
 	rtti.cpp

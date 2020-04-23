@@ -1,8 +1,12 @@
-#ifndef SEISCOMP_CORE_PLATFORM_H__
-#define SEISCOMP_CORE_PLATFORM_H__
+#ifndef SEISCOMP_CORE_PLATFORM_H
+#define SEISCOMP_CORE_PLATFORM_H
 
 #cmakedefine MACOSX
 #cmakedefine LINUX
+#cmakedefine SC_HAS_TIMER_CREATE
+#cmakedefine SC_HAS_EVENTFD
+#cmakedefine SC_HAS_EPOLL
+#cmakedefine SC_HAS_KQUEUE
 
 #ifdef MACOSX
    #include <seiscomp/core/platform/osx.h>

@@ -25,22 +25,19 @@
 
 #include <fcntl.h>
 #include <sys/types.h>
-#ifndef WIN32
-	#if !defined(MACOSX) && !defined(BSD)
-	#include <sys/timerfd.h>
-	#endif
 #include <netdb.h>
 #include <unistd.h>
 
-#if HAVE_SYS_EVENTFD_H
+#if defined(SC_HAS_EVENTFD)
 #include <sys/eventfd.h>
 #endif
 
-#else
+#if defined(WIN32)
 #include <io.h>
 #endif
 
-#ifdef SEISCOMP_WIRED_EPOLL
+#if defined(SEISCOMP_WIRED_EPOLL)
+#include <sys/timerfd.h>
 #include <linux/version.h>
 #endif
 
@@ -391,7 +388,7 @@ bool DeviceGroup::setup() {
 			return false;
 		}
 #endif
-#ifdef HAVE_EVENTFD
+#ifdef SC_HAS_EVENTFD
 		_interrupt_read_fd = _interrupt_write_fd = eventfd(0,0);
 		if ( _interrupt_read_fd == -1 ) {
 			SEISCOMP_ERROR("event_fd: %d: %s", errno, strerror(errno));
@@ -1075,7 +1072,7 @@ Device *DeviceGroup::next() {
 			continue;
 		}
 		else {
-			if ( (void*)device == &_timerFd ) {
+			if ( reinterpret_cast<void*>(device) == reinterpret_cast<void*>(&_timerFd) ) {
 				++_selectIndex;
 	#ifdef SEISCOMP_WIRED_EPOLL
 				uint64_t value;

@@ -98,7 +98,7 @@ Seiscomp::Core::TimeSpan StopWatch::elapsed() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#ifdef WIN32
+#if !defined(SC_HAS_TIMER_CREATE)
 Timer::TimerList Timer::_timers;
 boost::thread *Timer::_thread = NULL;
 boost::mutex Timer::_mutex;
@@ -111,7 +111,7 @@ boost::mutex Timer::_mutex;
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Timer::Timer(unsigned int timeout) {
 	_singleShot = false;
-#ifndef WIN32
+#if defined(SC_HAS_TIMER_CREATE)
 	_timerID = 0;
 #else
 	_isActive = false;
@@ -125,7 +125,7 @@ Timer::Timer(unsigned int timeout) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Timer::~Timer() {
-#ifdef WIN32
+#if !defined(SC_HAS_TIMER_CREATE)
 	if ( _isActive )
 		deactivate(true);
 #else
@@ -140,13 +140,13 @@ Timer::~Timer() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Timer::setTimeout(unsigned int timeout) {
 	_timeout = timeout;
-#ifdef WIN32
+#if !defined(SC_HAS_TIMER_CREATE)
 	if ( !_timeout && _isActive )
 #else
 	_timeoutNs = 0;
 	if ( !_timeout && !_timeoutNs && _timerID )
-		stop();
 #endif
+		stop();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -155,7 +155,7 @@ void Timer::setTimeout(unsigned int timeout) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::setTimeout2(unsigned int seconds, unsigned int nanoseconds) {
-#ifdef WIN32
+#if !defined(SC_HAS_TIMER_CREATE)
 	if ( nanoseconds )
 		return false;
 
@@ -196,14 +196,14 @@ void Timer::setSingleShot(bool s) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::start() {
-#ifdef WIN32
+#if !defined(SC_HAS_TIMER_CREATE)
 	if ( !_timeout )
 #else
 	if ( !_timeout && !_timeoutNs )
 #endif
 		return false;
 
-#ifdef WIN32
+#if !defined(SC_HAS_TIMER_CREATE)
 	boost::mutex::scoped_lock lk(_mutex);
 
 	if ( _isActive )
@@ -269,7 +269,7 @@ bool Timer::start() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::stop() {
-#ifdef WIN32
+#if !defined(SC_HAS_TIMER_CREATE)
 	return deactivate(false);
 #else
 	return destroy();
@@ -282,7 +282,7 @@ bool Timer::stop() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::disable() {
-#ifdef WIN32
+#if !defined(SC_HAS_TIMER_CREATE)
 	if ( _isActive )
 		return deactivate(true);
 	return false;
@@ -296,7 +296,7 @@ bool Timer::disable() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#ifdef WIN32
+#if !defined(SC_HAS_TIMER_CREATE)
 bool Timer::deactivate(bool remove) {
 	assert(_isActive == true);
 
@@ -339,7 +339,7 @@ bool Timer::destroy() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::isActive() const {
-#ifdef WIN32
+#if !defined(SC_HAS_TIMER_CREATE)
 	return _isActive;
 #else
 	return _timerID > 0;
@@ -351,7 +351,7 @@ bool Timer::isActive() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#ifdef WIN32
+#if !defined(SC_HAS_TIMER_CREATE)
 void Timer::Loop() {
 	do {
 		Core::sleep(1);
