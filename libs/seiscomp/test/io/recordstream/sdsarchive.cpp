@@ -31,6 +31,7 @@ using namespace std;
 using namespace Seiscomp;
 using namespace Seiscomp::Core;
 using namespace Seiscomp::IO;
+using namespace Seiscomp::RecordStream;
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -39,7 +40,7 @@ using namespace Seiscomp::IO;
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 BOOST_AUTO_TEST_CASE(READ_FR_SALF) {
 	Logging::enableConsoleLogging(Logging::getAll());
-	RecordStream::SDSArchive sds("archive");
+	SDSArchive sds("archive");
 	Time startTime(2018,06,30,16,18,38,943300);
 	Time endTime(2018,06,30,16,21,58,943300);
 	sds.addStream("FR", "SALF", "00", "HHN", startTime, endTime);
@@ -64,7 +65,7 @@ BOOST_AUTO_TEST_CASE(READ_FR_SALF) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 BOOST_AUTO_TEST_CASE(READ_FR_SALF_MULTIPLE) {
-	RecordStream::SDSArchive sds(
+	SDSArchive sds(
 		"archive-day2/BHE,"
 		"archive-day1/BHE,"
 		"archive-day1/BHN,"
