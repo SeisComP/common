@@ -20,7 +20,7 @@
 
 #include <seiscomp/client/application.h>
 #include <seiscomp/gui/map/projections/mercator.h>
-#include <seiscomp3/gui/map/texturecache.ipp>
+#include <seiscomp/gui/map/texturecache.ipp>
 
 #include <math.h>
 #include <iostream>
