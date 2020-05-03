@@ -75,7 +75,7 @@ class ArclinkListener : public Wired::AccessControlledEndpoint {
 		                Wired::Socket *socket = NULL);
 
 	protected:
-		Wired::Session *createSession(Wired::Socket *socket);
+		Wired::Session *createSession(Wired::Socket *socket) override;
 
 	private:
 		Requests _requests;
@@ -89,7 +89,7 @@ class FDSNWSListener : public Wired::AccessControlledEndpoint {
 		               Wired::Socket *socket = NULL);
 
 	protected:
-		Wired::Session *createSession(Wired::Socket *socket);
+		Wired::Session *createSession(Wired::Socket *socket) override;
 };
 
 
@@ -107,7 +107,7 @@ class ClientSession : public Wired::ClientSession {
 
 
 	protected:
-		virtual size_t inAvail() const;
+		virtual size_t inAvail() const override;
 
 
 	protected:

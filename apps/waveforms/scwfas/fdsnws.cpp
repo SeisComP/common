@@ -233,8 +233,8 @@ class FDSNWSSession : public Wired::HttpSession {
 
 
 	public:
-		virtual bool handleGETRequest(Wired::HttpRequest &req);
-		virtual bool handlePOSTRequest(Wired::HttpRequest &req);
+		virtual bool handleGETRequest(Wired::HttpRequest &req) override;
+		virtual bool handlePOSTRequest(Wired::HttpRequest &req) override;
 
 
 	private:

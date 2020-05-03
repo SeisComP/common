@@ -52,13 +52,13 @@ class ArclinkSession : public ClientSession {
 		ArclinkSession(Requests *requests, Wired::Socket *sock);
 		~ArclinkSession();
 
-		virtual void update();
-		virtual void flush();
-		virtual size_t inAvail() const;
+		virtual void update() override;
+		virtual void flush() override;
+		virtual size_t inAvail() const override;
 
 
 	protected:
-		virtual void handleInbox(const char *data, int len);
+		virtual void handleInbox(const char *data, size_t len) override;
 
 
 	private:
@@ -184,8 +184,7 @@ void ArclinkSession::update() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ArclinkSession::handleInbox(const char *src_data, int src_len) {
-	size_t data_len = static_cast<size_t>(src_len);
+void ArclinkSession::handleInbox(const char *src_data, size_t data_len) {
 	if ( data_len == 0 )
 		return;
 
