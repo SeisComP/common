@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_CREATIONINFO_H__
-#define SEISCOMP_DATAMODEL_CREATIONINFO_H__
+#ifndef SEISCOMP_DATAMODEL_CREATIONINFO_H
+#define SEISCOMP_DATAMODEL_CREATIONINFO_H
 
 
 #include <string>
@@ -41,7 +41,7 @@ DEFINE_SMARTPOINTER(CreationInfo);
  * \brief version, and creation time) of a resource.
  */
 class SC_SYSTEM_CORE_API CreationInfo : public Core::BaseObject {
-	DECLARE_SC_CLASS(CreationInfo);
+	DECLARE_SC_CLASS(CreationInfo)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

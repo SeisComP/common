@@ -16,66 +16,70 @@
  * conditions contained in a signed written agreement between you and      *
  * gempa GmbH.                                                             *
  ***************************************************************************/
-#include<vector>
 
-class Measurement
-{
-  public:
-	Measurement(int nsamp);
-	virtual ~Measurement() {}
 
-	// offset of the data samples
-	// must be measured prior to the measurement
-	void set_offset(double x) { offset = x; }
+#include <vector>
 
-	// Feed n broadband ground velocity values v.
-	// feed() calls update() automatically!
-	virtual void feed(int n, const double *v) = 0;
 
-	double progress() const { return nsamp>0 ? double(processed)/nsamp : 0; }
+class Measurement {
+	public:
+		Measurement(std::size_t nsamp);
+		virtual ~Measurement();
 
-  protected:
-	// an offset to be subtracted before the actual measurement
-	double offset;
+	public:
+		// offset of the data samples
+		// must be measured prior to the measurement
+		void setOffset(double x) { offset = x; }
 
-	// number of samples anticipated to contribute to measurement
-	unsigned int nsamp;
+		// Feed n broadband ground velocity values v.
+		// feed() calls update() automatically!
+		virtual void feed(std::size_t n, const double *v) = 0;
 
-	// number of samples already processed
-	unsigned int processed;
+		double progress() const { return nsamp>0 ? double(processed)/nsamp : 0; }
+
+	protected:
+		// an offset to be subtracted before the actual measurement
+		double offset;
+
+		// number of samples anticipated to contribute to measurement
+		std::size_t nsamp;
+
+		// number of samples already processed
+		std::size_t processed;
 };
 
 
-class Measurement_mBc : public Measurement
-{
-  public:
-	Measurement_mBc(int nsamp, double q=0.6);
+class Measurement_mBc : public Measurement {
+	public:
+		Measurement_mBc(std::size_t nsamp, double q=0.6);
 
-	void feed(int n, const double *v);
+	public:
+		void feed(std::size_t n, const double *v) override;
 
-  public:
-	// Accessors to subevents. mBc specific and meant for debugging, e.g.
-	// for plotting the individual subevents contributing to the sum.
-	//
-	// "Subevents" are individual extrema that contribute to the sum.
-	int    subevent_count() const;
-	int    subevent_index(int i) const;
-	double subevent_value(int i) const;
+	public:
+		// Accessors to subevents. mBc specific and meant for debugging, e.g.
+		// for plotting the individual subevents contributing to the sum.
+		//
+		// "Subevents" are individual extrema that contribute to the sum.
+		std::size_t subeventCount() const;
+		std::size_t subeventIndex(std::size_t i) const;
+		double subeventValue(std::size_t i) const;
 
-  public:
-	double vcum; // cumulative velocity
-	double vmax; // zero-to-peak maximum velocity
-	int    icum; // index at which vcum was observed ( = index of last subevent)
-	int    imax; // index at which vmax was observed
+	public:
+		double      vcum; // cumulative velocity
+		double      vmax; // zero-to-peak maximum velocity
+		std::size_t icum; // index at which vcum was observed ( = index of last subevent)
+		std::size_t imax; // index at which vmax was observed
 
-  private:
-	// Cutoff threshold, normally fixed to 0.6, don't change!
-	// See also Bormann & Saul (2009)
-	double q;
+	private:
+		// Cutoff threshold, normally fixed to 0.6, don't change!
+		// See also Bormann & Saul (2009)
+		double _q;
 
-	std::vector<int>    subevent_indices;
-	std::vector<double> subevent_values;
+		std::vector<std::size_t> _subeventIndices;
+		std::vector<double>      _subeventValues;
 
-	int previous, ipeak;
-	double vpeak;
+		int _previous;
+		std::size_t _ipeak;
+		double _vpeak;
 };

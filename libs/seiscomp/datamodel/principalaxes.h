@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_PRINCIPALAXES_H__
-#define SEISCOMP_DATAMODEL_PRINCIPALAXES_H__
+#ifndef SEISCOMP_DATAMODEL_PRINCIPALAXES_H
+#define SEISCOMP_DATAMODEL_PRINCIPALAXES_H
 
 
 #include <seiscomp/datamodel/axis.h>
@@ -41,7 +41,7 @@ DEFINE_SMARTPOINTER(PrincipalAxes);
  * \brief while nAxis is optional.
  */
 class SC_SYSTEM_CORE_API PrincipalAxes : public Core::BaseObject {
-	DECLARE_SC_CLASS(PrincipalAxes);
+	DECLARE_SC_CLASS(PrincipalAxes)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

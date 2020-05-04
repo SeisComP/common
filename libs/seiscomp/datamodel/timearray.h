@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_TIMEARRAY_H__
-#define SEISCOMP_DATAMODEL_TIMEARRAY_H__
+#ifndef SEISCOMP_DATAMODEL_TIMEARRAY_H
+#define SEISCOMP_DATAMODEL_TIMEARRAY_H
 
 
 #include <vector>
@@ -37,7 +37,7 @@ DEFINE_SMARTPOINTER(TimeArray);
 
 
 class SC_SYSTEM_CORE_API TimeArray : public Core::BaseObject {
-	DECLARE_SC_CLASS(TimeArray);
+	DECLARE_SC_CLASS(TimeArray)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

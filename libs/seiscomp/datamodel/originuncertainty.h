@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_ORIGINUNCERTAINTY_H__
-#define SEISCOMP_DATAMODEL_ORIGINUNCERTAINTY_H__
+#ifndef SEISCOMP_DATAMODEL_ORIGINUNCERTAINTY_H
+#define SEISCOMP_DATAMODEL_ORIGINUNCERTAINTY_H
 
 
 #include <seiscomp/datamodel/types.h>
@@ -48,7 +48,7 @@ DEFINE_SMARTPOINTER(OriginUncertainty);
  * \brief specified in the attribute preferredDescription.
  */
 class SC_SYSTEM_CORE_API OriginUncertainty : public Core::BaseObject {
-	DECLARE_SC_CLASS(OriginUncertainty);
+	DECLARE_SC_CLASS(OriginUncertainty)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

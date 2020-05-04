@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_QUALITYCONTROL_H__
-#define SEISCOMP_DATAMODEL_QUALITYCONTROL_H__
+#ifndef SEISCOMP_DATAMODEL_QUALITYCONTROL_H
+#define SEISCOMP_DATAMODEL_QUALITYCONTROL_H
 
 
 #include <vector>
@@ -42,7 +42,7 @@ DEFINE_SMARTPOINTER(Outage);
 
 
 class SC_SYSTEM_CORE_API QualityControl : public PublicObject {
-	DECLARE_SC_CLASS(QualityControl);
+	DECLARE_SC_CLASS(QualityControl)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 
@@ -136,18 +136,18 @@ class SC_SYSTEM_CORE_API QualityControl : public PublicObject {
 		QCLog* findQCLog(const std::string& publicID) const;
 
 		//! Implement Object interface
-		bool assign(Object* other);
-		bool attachTo(PublicObject* parent);
-		bool detachFrom(PublicObject* parent);
-		bool detach();
+		bool assign(Object *other) override;
+		bool attachTo(PublicObject *parent) override;
+		bool detachFrom(PublicObject *parent) override;
+		bool detach() override;
 
 		//! Creates a clone
-		Object* clone() const;
+		Object *clone() const override;
 
 		//! Implement PublicObject interface
-		bool updateChild(Object* child);
+		bool updateChild(Object *child) override;
 
-		void accept(Visitor*);
+		void accept(Visitor *visitor) override;
 
 
 	// ------------------------------------------------------------------

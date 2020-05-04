@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_AUXSTREAM_H__
-#define SEISCOMP_DATAMODEL_AUXSTREAM_H__
+#ifndef SEISCOMP_DATAMODEL_AUXSTREAM_H
+#define SEISCOMP_DATAMODEL_AUXSTREAM_H
 
 
 #include <string>
@@ -73,7 +73,7 @@ class SC_SYSTEM_CORE_API AuxStreamIndex {
  * \brief frequency response
  */
 class SC_SYSTEM_CORE_API AuxStream : public Object {
-	DECLARE_SC_CLASS(AuxStream);
+	DECLARE_SC_CLASS(AuxStream)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 
@@ -170,15 +170,15 @@ class SC_SYSTEM_CORE_API AuxStream : public Object {
 		SensorLocation* sensorLocation() const;
 
 		//! Implement Object interface
-		bool assign(Object* other);
-		bool attachTo(PublicObject* parent);
-		bool detachFrom(PublicObject* parent);
-		bool detach();
+		bool assign(Object *other) override;
+		bool attachTo(PublicObject *parent) override;
+		bool detachFrom(PublicObject *parent) override;
+		bool detach() override;
 
 		//! Creates a clone
-		Object* clone() const;
+		Object *clone() const override;
 
-		void accept(Visitor*);
+		void accept(Visitor *visitor) override;
 
 
 	// ------------------------------------------------------------------

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_REALQUANTITY_H__
-#define SEISCOMP_DATAMODEL_REALQUANTITY_H__
+#ifndef SEISCOMP_DATAMODEL_REALQUANTITY_H
+#define SEISCOMP_DATAMODEL_REALQUANTITY_H
 
 
 #include <seiscomp/datamodel/realpdf1d.h>
@@ -55,7 +55,7 @@ DEFINE_SMARTPOINTER(RealQuantity);
  * \brief from the main value.
  */
 class SC_SYSTEM_CORE_API RealQuantity : public Core::BaseObject {
-	DECLARE_SC_CLASS(RealQuantity);
+	DECLARE_SC_CLASS(RealQuantity)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

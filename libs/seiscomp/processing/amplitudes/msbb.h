@@ -18,20 +18,19 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MSBB_H
+#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MSBB_H
 
-#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MSBB_H__
-#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MSBB_H__
 
 #include <seiscomp/processing/amplitudeprocessor.h>
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_msbb : public AmplitudeProcessor {
-	DECLARE_SC_CLASS(AmplitudeProcessor_msbb);
+	DECLARE_SC_CLASS(AmplitudeProcessor_msbb)
 
 	public:
 		AmplitudeProcessor_msbb();
@@ -44,15 +43,14 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_msbb : public AmplitudeProcessor {
 		                      double offset,
 		                      AmplitudeIndex *dt,
 		                      AmplitudeValue *amplitude,
-		                      double *period, double *snr);
+		                      double *period, double *snr) override;
 
-		double timeWindowLength(double distance) const;
+		double timeWindowLength(double distance) const override;
 };
 
 
 
 }
-
 }
 
 

@@ -27,7 +27,6 @@
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 // #define M_CAPITAL_B_DEFAULT_WINDOW_LENGTH 60 // Same as for mB since it is only a default
@@ -58,16 +57,16 @@ AmplitudeProcessor_mBc::AmplitudeProcessor_mBc(const Core::Time& trigger)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor_mBc::computeAmplitude(const DoubleArray &data,
-                                              size_t i1, size_t i2,
+                                              size_t, size_t,
                                               size_t si1, size_t si2,
                                               double offset, AmplitudeIndex *dt,
                                               AmplitudeValue *amplitude,
                                               double *period, double *snr) {
 	// see also amplitudeprocessor_m_B.cpp
-	int n = si2-si1;
+	size_t n = si2 - si1;
 	const double *v = data.typedData() + si1;
 	Measurement_mBc measurement(n);
-	measurement.set_offset(offset);
+	measurement.setOffset(offset);
 	measurement.feed(n, v);
 
 	double pmax = -1;
@@ -106,5 +105,4 @@ bool AmplitudeProcessor_mBc::computeAmplitude(const DoubleArray &data,
 
 
 }
-
 }

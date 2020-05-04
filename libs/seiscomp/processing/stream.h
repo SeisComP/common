@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_STREAM_H__
-#define SEISCOMP_PROCESSING_STREAM_H__
+#ifndef SEISCOMP_PROCESSING_STREAM_H
+#define SEISCOMP_PROCESSING_STREAM_H
 
 
 #include <seiscomp/core/baseobject.h>

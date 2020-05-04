@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MS20_H
+#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MS20_H
 
-#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MS20_H__
-#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MS20_H__
 
 #include <seiscomp/processing/amplitudeprocessor.h>
 
@@ -30,14 +30,14 @@ namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_ms20 : public AmplitudeProcessor {
-	DECLARE_SC_CLASS(AmplitudeProcessor_ms20);
+	DECLARE_SC_CLASS(AmplitudeProcessor_ms20)
 
 	public:
 		AmplitudeProcessor_ms20();
 		AmplitudeProcessor_ms20(const Seiscomp::Core::Time& trigger, double duration = 60.);
 
 	public:
-		void initFilter(double fsamp);
+		void initFilter(double fsamp) override;
 
 	protected:
 		bool computeAmplitude(const DoubleArray &data,
@@ -46,9 +46,9 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_ms20 : public AmplitudeProcessor {
 		                      double offset,
 		                      AmplitudeIndex *dt,
 		                      AmplitudeValue *amplitude,
-		                      double *period, double *snr);
+		                      double *period, double *snr) override;
 
-		double timeWindowLength(double distance) const;
+		double timeWindowLength(double distance) const override;
 };
 
 

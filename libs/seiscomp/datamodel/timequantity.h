@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_TIMEQUANTITY_H__
-#define SEISCOMP_DATAMODEL_TIMEQUANTITY_H__
+#ifndef SEISCOMP_DATAMODEL_TIMEQUANTITY_H
+#define SEISCOMP_DATAMODEL_TIMEQUANTITY_H
 
 
 #include <seiscomp/core/datetime.h>
@@ -44,7 +44,7 @@ DEFINE_SMARTPOINTER(TimeQuantity);
  * \brief time has to be specified in UTC.
  */
 class SC_SYSTEM_CORE_API TimeQuantity : public Core::BaseObject {
-	DECLARE_SC_CLASS(TimeQuantity);
+	DECLARE_SC_CLASS(TimeQuantity)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

@@ -18,15 +18,14 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_M_B_H
+#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_M_B_H
 
-#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_M_B_H__
-#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_M_B_H__
 
 #include <seiscomp//processing/magnitudeprocessor.h>
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
@@ -42,14 +41,13 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_Mwp : public MagnitudeProcessor {
 		                        const DataModel::Origin *hypocenter,
 		                        const DataModel::SensorLocation *receiver,
 		                        const DataModel::Amplitude *,
-		                        double &value);
+		                        double &value) override;
 
-		Status estimateMw(double magnitude, double &estimation, double &stdError);
+		Status estimateMw(double magnitude, double &estimation, double &stdError) override;
 };
 
 
 }
-
 }
 
 

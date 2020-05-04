@@ -18,19 +18,19 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_mBc_H
+#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_mBc_H
 
-#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_mBc_H__
-#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_mBc_H__
 
 #include <seiscomp/processing/amplitudes/m_B.h>
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
+
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mBc : public AmplitudeProcessor_mB {
-	DECLARE_SC_CLASS(AmplitudeProcessor_mBc);
+	DECLARE_SC_CLASS(AmplitudeProcessor_mBc)
 
 	public:
 		AmplitudeProcessor_mBc();
@@ -43,12 +43,11 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mBc : public AmplitudeProcessor_mB
 		                      double offset,
 		                      AmplitudeIndex *dt,
 		                      AmplitudeValue *amplitude,
-		                      double *period, double *snr);
+		                      double *period, double *snr) override;
 };
 
 
 }
-
 }
 
 

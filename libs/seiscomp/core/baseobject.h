@@ -98,71 +98,66 @@ DEFINE_SMARTPOINTER(BaseObject);
 typedef Generic::ClassFactoryInterface<BaseObject> ClassFactory;
 
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-/** \brief BaseObject has to be used for all classes that want to use
-    \brief the provided serialization mechanism and reference counting.
-
-    \author Jan Becker (jan.becker@gfz-potsdam.de)
-
-	To derive from BaseObject the following basic steps are necessary:
-
-    <b>1. Create a class that derives from BaseObject</b>
-
-    \code
-    class MyClass : public BaseObject
-    \endcode 
-
-    <b>2. Add the DECLARE_SC_CLASS macro to add the RTTI interface among other things</b>
-    \code
-    class MyClass : public BaseObject {
-    	DECLARE_SC_CLASS(MyClass);
-
-    	public:
-    		MyClass();
-    };
-    \endcode
-
-	Implement the class RTTI data in the .cpp file
-	\code
-	// First parameter is the classname, second parameter is the name inside RTTI
-	IMPLEMENT_SC_CLASS(MyClass, "MyClass");	
-	\endcode
-
-	If the class is abstract (it has some pure virtual methods) another macro must be
-	used:
-	\code
-	// First parameter is the classname, second parameter is the name inside RTTI
-	IMPLEMENT_SC_ABSTRACR_CLASS(MyClass, "MyClass");
-	\endcode
-
-    <b>3. If you want your class to be serialized add the appropriate
-       declaration</b>
-	\code
-	class MyClass : public BaseObject {
-		DECLARE_SC_CLASS(MyClass);
-
-		// Add serialization interface
-		DECLARE_SERIALIZATION;
-
-		public:
-			MyClass();
-
-		private:
-			int _myMember;
-	};
-	\endcode
-
-	The serialization method has to be implemented the following way:
-	\code
-	void MyClass::serialize(Archive& ar) {
-		// the archive will bind the name 'var1' to the member variable
-		// _myMember
-		ar & NAMED_OBJECT("var1", _myMember);
-	}
-	\endcode
-  */
+/**
+ * \brief BaseObject has to be used for all classes that want to use
+ *        the provided serialization mechanism and reference counting.
+ *
+ * To derive from BaseObject the following basic steps are necessary:
+ * 1. Create a class that derives from BaseObject
+ * \code
+ * class MyClass : public BaseObject
+ * \endcode
+ *
+ * 2. Add the DECLARE_SC_CLASS macro to add the RTTI interface among other things
+ * \code
+ * class MyClass : public BaseObject {
+ *     DECLARE_SC_CLASS(MyClass);
+ *     public:
+ *         MyClass();
+ *     };
+ * \endcode
+ *
+ * Implement the class RTTI data in the .cpp file
+ * \code
+ * // First parameter is the classname, second parameter is the name inside RTTI
+ * IMPLEMENT_SC_CLASS(MyClass, "MyClass");
+ * \endcode
+ *
+ * If the class is abstract (it has some pure virtual methods) another macro
+ * must be used:
+ * \code
+ * // First parameter is the classname, second parameter is the name inside RTTI
+ * IMPLEMENT_SC_ABSTRACR_CLASS(MyClass, "MyClass");
+ * \endcode
+ *
+ * 3. If you want your class to be serialized add the appropriate declaration
+ * \code
+ * class MyClass : public BaseObject {
+ * DECLARE_SC_CLASS(MyClass);
+ *
+ * // Add serialization interface
+ * DECLARE_SERIALIZATION;
+ *
+ * public:
+ *     MyClass();
+ *
+ * private:
+ *     int _myMember;
+ * };
+ * \endcode
+ *
+ * The serialization method has to be implemented the following way:
+ * \code
+ * void MyClass::serialize(Archive& ar) {
+ *     // the archive will bind the name 'var1' to the member variable
+ *     // _myMember
+ *     ar & NAMED_OBJECT("var1", _myMember);
+ * }
+ * \endcode
+ */
 class SC_SYSTEM_CORE_API BaseObject {
-	DECLARE_SC_CLASS(BaseObject)
+	DECLARE_BASE_RTTI;
+	DECLARE_CASTS(BaseObject)
 	DECLARE_ROOT_SERIALIZATION(BaseObject)
 	DECLARE_METAOBJECT_INTERFACE;
 

@@ -113,8 +113,8 @@ bool measure_period(int n, const double *f, int i0, double offset,
 
 
 namespace Seiscomp {
-
 namespace Processing {
+
 
 IMPLEMENT_SC_CLASS_DERIVED(AmplitudeProcessor_mb, AmplitudeProcessor, "AmplitudeProcessor_mb");
 REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_mb, "mb");
@@ -165,7 +165,7 @@ void AmplitudeProcessor_mb::initFilter(double fsamp) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor_mb::computeAmplitude(
 	const DoubleArray &data,
-	size_t i1, size_t i2,
+	size_t, size_t,
 	size_t si1, size_t si2,
 	double offset,
 	AmplitudeIndex *dt,
@@ -249,5 +249,4 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
-
 }

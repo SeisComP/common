@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_SOURCETIMEFUNCTION_H__
-#define SEISCOMP_DATAMODEL_SOURCETIMEFUNCTION_H__
+#ifndef SEISCOMP_DATAMODEL_SOURCETIMEFUNCTION_H
+#define SEISCOMP_DATAMODEL_SOURCETIMEFUNCTION_H
 
 
 #include <seiscomp/datamodel/types.h>
@@ -39,7 +39,7 @@ DEFINE_SMARTPOINTER(SourceTimeFunction);
  * \brief Source time function used in moment-tensor inversion.
  */
 class SC_SYSTEM_CORE_API SourceTimeFunction : public Core::BaseObject {
-	DECLARE_SC_CLASS(SourceTimeFunction);
+	DECLARE_SC_CLASS(SourceTimeFunction)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

@@ -81,7 +81,7 @@ Picker::~Picker() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Picker::computeTimeWindow() {
-	if ( !(bool)_trigger ) {
+	if ( !bool(_trigger) ) {
 		setTimeWindow(Core::TimeWindow());
 		return;
 	}
@@ -179,7 +179,7 @@ void Picker::process(const Record *record, const DoubleArray &) {
 	int i2 = int(dt2*_stream.fsamp);
 
 	// Calculate the initial trigger time
-	int triggerIdx = relTriggerTime*_stream.fsamp;
+	int triggerIdx = int(relTriggerTime * _stream.fsamp);
 	int lowerUncertainty = -1;
 	int upperUncertainty = -1;
 	OPT(Polarity) polarity;
@@ -195,7 +195,7 @@ void Picker::process(const Record *record, const DoubleArray &) {
 
 	// Debug: print the time difference between the pick and the initial trigger
 	SEISCOMP_DEBUG("Picker::process repick result: dt=%.3f  snr=%.2f",
-	               (double)(pickTime - _trigger), snr);
+	               double(pickTime - _trigger), snr);
 
 	if ( snr >= _config.snrMin ) {
 		setStatus(Finished, 100.);
@@ -203,10 +203,10 @@ void Picker::process(const Record *record, const DoubleArray &) {
 		res.record = record;
 		res.snr = snr;
 		res.time = pickTime;
-		res.timeLowerUncertainty = (double)lowerUncertainty / _stream.fsamp;
-		res.timeUpperUncertainty = (double)upperUncertainty / _stream.fsamp;
-		res.timeWindowBegin = (double)(timeWindow().startTime() - pickTime);
-		res.timeWindowEnd = (double)(timeWindow().endTime() - pickTime);
+		res.timeLowerUncertainty = double(lowerUncertainty) / _stream.fsamp;
+		res.timeUpperUncertainty = double(upperUncertainty) / _stream.fsamp;
+		res.timeWindowBegin = double(timeWindow().startTime() - pickTime);
+		res.timeWindowEnd = double(timeWindow().endTime() - pickTime);
 		res.polarity = polarity;
 		emitPick(res);
 	}

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_MAGNITUDE_H__
-#define SEISCOMP_DATAMODEL_MAGNITUDE_H__
+#ifndef SEISCOMP_DATAMODEL_MAGNITUDE_H
+#define SEISCOMP_DATAMODEL_MAGNITUDE_H
 
 
 #include <seiscomp/datamodel/creationinfo.h>
@@ -56,7 +56,7 @@ class Origin;
  * \brief the given event.
  */
 class SC_SYSTEM_CORE_API Magnitude : public PublicObject {
-	DECLARE_SC_CLASS(Magnitude);
+	DECLARE_SC_CLASS(Magnitude)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 
@@ -216,18 +216,18 @@ class SC_SYSTEM_CORE_API Magnitude : public PublicObject {
 		Origin* origin() const;
 
 		//! Implement Object interface
-		bool assign(Object* other);
-		bool attachTo(PublicObject* parent);
-		bool detachFrom(PublicObject* parent);
-		bool detach();
+		bool assign(Object *other) override;
+		bool attachTo(PublicObject *parent) override;
+		bool detachFrom(PublicObject *parent) override;
+		bool detach() override;
 
 		//! Creates a clone
-		Object* clone() const;
+		Object *clone() const override;
 
 		//! Implement PublicObject interface
-		bool updateChild(Object* child);
+		bool updateChild(Object *child) override;
 
-		void accept(Visitor*);
+		void accept(Visitor *visitor) override;
 
 
 	// ------------------------------------------------------------------

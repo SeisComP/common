@@ -18,37 +18,36 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_ML_H
+#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_ML_H
 
-#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_ML_H__
-#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_ML_H__
 
 #include <seiscomp/processing/amplitudeprocessor.h>
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API AbstractAmplitudeProcessor_ML : public AmplitudeProcessor {
-	DECLARE_SC_CLASS(AbstractAmplitudeProcessor_ML);
+	DECLARE_SC_CLASS(AbstractAmplitudeProcessor_ML)
 
 	public:
-		AbstractAmplitudeProcessor_ML(const std::string& type);
-		AbstractAmplitudeProcessor_ML(const Core::Time &trigger, const std::string& type);
+		AbstractAmplitudeProcessor_ML(const std::string &type);
+		AbstractAmplitudeProcessor_ML(const Core::Time &trigger, const std::string &type);
 
 	public:
-		virtual void initFilter(double fsamp);
+		virtual void initFilter(double fsamp) override;
 
-		virtual int capabilities() const;
-		virtual IDList capabilityParameters(Capability cap) const;
-		virtual bool setParameter(Capability cap, const std::string &value);
+		virtual int capabilities() const override;
+		virtual IDList capabilityParameters(Capability cap) const override;
+		virtual bool setParameter(Capability cap, const std::string &value) override;
 
-		virtual bool setup(const Settings &settings);
+		virtual bool setup(const Settings &settings) override;
 
 
 	protected:
-		bool deconvolveData(Response *resp, DoubleArray &data, int numberOfIntegrations);
+		bool deconvolveData(Response *resp, DoubleArray &data, int numberOfIntegrations) override;
 
 		/**
 		 * Computes the zero-to-peak amplitude on the simulated Wood-Anderson
@@ -59,9 +58,9 @@ class SC_SYSTEM_CLIENT_API AbstractAmplitudeProcessor_ML : public AmplitudeProce
 		                      size_t si1, size_t si2,
 		                      double offset,
 		                      AmplitudeIndex *dt, AmplitudeValue *amplitude,
-		                      double *period, double *snr);
+		                      double *period, double *snr) override;
 
-		double timeWindowLength(double distance) const;
+		double timeWindowLength(double distance) const override;
 
 	private:
 		enum AmplitudeMeasureType {
@@ -75,7 +74,6 @@ class SC_SYSTEM_CLIENT_API AbstractAmplitudeProcessor_ML : public AmplitudeProce
 
 
 }
-
 }
 
 

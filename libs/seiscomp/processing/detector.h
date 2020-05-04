@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_DETECTOR_H__
-#define SEISCOMP_PROCESSING_DETECTOR_H__
+#ifndef SEISCOMP_PROCESSING_DETECTOR_H
+#define SEISCOMP_PROCESSING_DETECTOR_H
+
 
 #include <seiscomp/processing/waveformprocessor.h>
 #include <boost/function.hpp>
@@ -27,14 +28,13 @@
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
 DEFINE_SMARTPOINTER(Detector);
 
 class SC_SYSTEM_CLIENT_API Detector : public WaveformProcessor {
-	DECLARE_SC_CLASS(Detector);
+	DECLARE_SC_CLASS(Detector)
 
 	public:
 		typedef boost::function<void (const Detector*, const Record*, const Core::Time&)> PublishFunc;
@@ -53,7 +53,7 @@ class SC_SYSTEM_CLIENT_API Detector : public WaveformProcessor {
 
 		virtual const std::string &methodID() const = 0;
 
-		virtual void reset();
+		virtual void reset() override;
 
 	protected:
 		virtual bool emitPick(const Record* rec, const Core::Time& t);
@@ -70,23 +70,23 @@ class SC_SYSTEM_CLIENT_API Detector : public WaveformProcessor {
 DEFINE_SMARTPOINTER(SimpleDetector);
 
 class SC_SYSTEM_CLIENT_API SimpleDetector : public Detector {
-	DECLARE_SC_CLASS(SimpleDetector);
+	DECLARE_SC_CLASS(SimpleDetector)
 
 	public:
 		SimpleDetector(double deadTime = 0.0);
 		SimpleDetector(double on, double off, double deadTime);
 
 	public:
-		void setDeadTime(double deadTime) { _initTime = deadTime; };
+		void setDeadTime(double deadTime) { _initTime = deadTime; }
 		void setThresholds(double on, double off);
 
 		//! Reimplemented method to analyse the filtered datastream.
 		//! It just checks whether a sample in filteredData exceeds the
 		//! 'on' threshold and calls validateOn or goes below the 'off'
 		//! threshold and calls validateOff.
-		void process(const Record *record, const DoubleArray &filteredData);
+		void process(const Record *record, const DoubleArray &filteredData) override;
 
-		void reset();
+		void reset() override;
 
 	protected:
 		bool isOn() const { return _triggered; }
@@ -112,7 +112,7 @@ class SC_SYSTEM_CLIENT_API SimpleDetector : public Detector {
 		//! processing of the current record will be finished immediatly.
 		virtual bool validateOff(const Record *record, size_t i, const DoubleArray &filteredData);
 
-		virtual const std::string &methodID() const;
+		virtual const std::string &methodID() const override;
 
 
 	private:
@@ -124,7 +124,6 @@ class SC_SYSTEM_CLIENT_API SimpleDetector : public Detector {
 
 
 }
-
 }
 
 

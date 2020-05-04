@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_PROCESSING_SECONDARYPICKER_H__
-#define SEISCOMP_PROCESSING_SECONDARYPICKER_H__
+#ifndef SEISCOMP_PROCESSING_SECONDARYPICKER_H
+#define SEISCOMP_PROCESSING_SECONDARYPICKER_H
 
 
 #include <seiscomp/core/interfacefactory.h>
@@ -30,7 +30,6 @@
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
@@ -38,7 +37,7 @@ DEFINE_SMARTPOINTER(SecondaryPicker);
 
 
 class SC_SYSTEM_CLIENT_API SecondaryPicker : public TimeWindowProcessor {
-	DECLARE_SC_CLASS(SecondaryPicker);
+	DECLARE_SC_CLASS(SecondaryPicker)
 
 	// ----------------------------------------------------------------------
 	//  Public types
@@ -117,9 +116,9 @@ class SC_SYSTEM_CLIENT_API SecondaryPicker : public TimeWindowProcessor {
 
 		//! This method has to be called when all configuration
 		//! settings has been set to calculate the timewindow.
-		void computeTimeWindow();
+		void computeTimeWindow() override;
 
-		void reset();
+		void reset() override;
 
 
 	// ----------------------------------------------------------------------
@@ -147,7 +146,7 @@ class SC_SYSTEM_CLIENT_API SecondaryPicker : public TimeWindowProcessor {
 		//! handle them.
 		bool handleGap(Filter *filter, const Core::TimeSpan& span,
 		               double lastSample, double nextSample,
-		               size_t missingSamples);
+		               size_t missingSamples) override;
 
 
 		//! This method is called when a pick has to be published
@@ -177,12 +176,14 @@ DEFINE_INTERFACE_FACTORY(SecondaryPicker);
 
 
 }
-
 }
 
 
-#define REGISTER_SECONDARYPICKPROCESSOR(Class, Service) \
+#define REGISTER_SECONDARYPICKPROCESSOR_VAR(Class, Service) \
 Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::Processing::SecondaryPicker, Class> __##Class##InterfaceFactory__(Service)
+
+#define REGISTER_SECONDARYPICKPROCESSOR(Class, Service) \
+static REGISTER_SECONDARYPICKPROCESSOR_VAR(Class, Service)
 
 
 #endif

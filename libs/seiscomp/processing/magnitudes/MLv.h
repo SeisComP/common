@@ -18,16 +18,15 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MLV_H
+#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MLV_H
 
-#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MLV_H__
-#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MLV_H__
 
 #include <vector>
 #include <seiscomp/processing/magnitudeprocessor.h>
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
@@ -39,7 +38,7 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_MLv : public MagnitudeProcessor {
 
 
 	public:
-		bool setup(const Settings &settings);
+		bool setup(const Settings &settings) override;
 
 		Status computeMagnitude(double amplitude,
 		                        const std::string &unit,
@@ -48,7 +47,7 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_MLv : public MagnitudeProcessor {
 		                        const DataModel::Origin *hypocenter,
 		                        const DataModel::SensorLocation *receiver,
 		                        const DataModel::Amplitude *,
-		                        double &value);
+		                        double &value) override;
 
 
 	private:
@@ -62,7 +61,6 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_MLv : public MagnitudeProcessor {
 
 
 }
-
 }
 
 

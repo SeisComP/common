@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_PICKER_H
+#define SEISCOMP_PROCESSING_PICKER_H
 
-#ifndef SEISCOMP_PROCESSING_PICKER_H__
-#define SEISCOMP_PROCESSING_PICKER_H__
 
 #include <seiscomp/core/interfacefactory.h>
 #include <seiscomp/processing/timewindowprocessor.h>
@@ -29,7 +29,6 @@
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
@@ -37,7 +36,7 @@ DEFINE_SMARTPOINTER(Picker);
 
 
 class SC_SYSTEM_CLIENT_API Picker : public TimeWindowProcessor {
-	DECLARE_SC_CLASS(Picker);
+	DECLARE_SC_CLASS(Picker)
 
 	// ----------------------------------------------------------------------
 	//  Public types
@@ -112,9 +111,9 @@ class SC_SYSTEM_CLIENT_API Picker : public TimeWindowProcessor {
 
 		//! This method has to be called when all configuration
 		//! settings has been set to calculate the timewindow
-		void computeTimeWindow();
+		void computeTimeWindow() override;
 
-		void reset();
+		void reset() override;
 
 
 	// ----------------------------------------------------------------------
@@ -146,10 +145,10 @@ class SC_SYSTEM_CLIENT_API Picker : public TimeWindowProcessor {
 		                           int &upperUncertainty, double &snr,
 		                           OPT(Polarity) &polarity) = 0;
 
-		void process(const Record *record, const DoubleArray &filteredData);
+		void process(const Record *record, const DoubleArray &filteredData) override;
 		bool handleGap(Filter *filter, const Core::TimeSpan& span,
 		               double lastSample, double nextSample,
-		               size_t missingSamples);
+		               size_t missingSamples) override;
 
 		//! This method is called when a pick has to be published
 		void emitPick(const Result &result);
@@ -181,12 +180,14 @@ DEFINE_INTERFACE_FACTORY(Picker);
 
 
 }
-
 }
 
 
-#define REGISTER_POSTPICKPROCESSOR(Class, Service) \
+#define REGISTER_POSTPICKPROCESSOR_VAR(Class, Service) \
 Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::Processing::Picker, Class> __##Class##InterfaceFactory__(Service)
+
+#define REGISTER_POSTPICKPROCESSOR(Class, Service) \
+static REGISTER_POSTPICKPROCESSOR_VAR(Class, Service)
 
 
 #endif

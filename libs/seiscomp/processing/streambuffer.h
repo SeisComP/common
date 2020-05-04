@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_STREAMBUFFER_H__
-#define SEISCOMP_PROCESSING_STREAMBUFFER_H__
+#ifndef SEISCOMP_PROCESSING_STREAMBUFFER_H
+#define SEISCOMP_PROCESSING_STREAMBUFFER_H
+
 
 #include<string>
 #include<list>
@@ -29,10 +30,7 @@
 
 
 namespace Seiscomp {
-
 namespace Processing {
-
-
 
 
 class SC_SYSTEM_CLIENT_API StreamBuffer {
@@ -45,16 +43,15 @@ class SC_SYSTEM_CLIENT_API StreamBuffer {
 			           const std::string& sta,
 			           const std::string& loc,
 			           const std::string& cha)
-				: networkCode(net), stationCode(sta),
-				  locationCode(loc), channelCode(cha) {}
+			: networkCode(net), stationCode(sta)
+			, locationCode(loc), channelCode(cha) {}
 		
 			WaveformID(const Record *rec)
-				: networkCode(rec->networkCode()), stationCode(rec->stationCode()),
-				  locationCode(rec->locationCode()), channelCode(rec->channelCode()) {}
+			: networkCode(rec->networkCode()), stationCode(rec->stationCode())
+			, locationCode(rec->locationCode()), channelCode(rec->channelCode()) {}
 
 
 			bool operator<(const WaveformID& other) const {
-
 				if ( networkCode < other.networkCode ) return true;
 				if ( networkCode > other.networkCode ) return false;
 		
@@ -131,8 +128,9 @@ class SC_SYSTEM_CLIENT_API StreamBuffer {
 		bool _newStreamAdded;
 };
 
-}
 
 }
+}
+
 
 #endif

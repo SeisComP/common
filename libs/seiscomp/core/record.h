@@ -232,8 +232,11 @@ class SC_SYSTEM_CORE_API Record : public Seiscomp::Core::BaseObject {
 
 DEFINE_INTERFACE_FACTORY(Record);
 
-#define REGISTER_RECORD(Class, Service) \
+#define REGISTER_RECORD_VAR(Class, Service) \
 Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::Record, Class> __##Class##InterfaceFactory__(Service)
+
+#define REGISTER_RECORD(Class, Service) \
+static REGISTER_RECORD_VAR(Class, Service)
 
 
 inline Record::Authentication Record::authentication() const {

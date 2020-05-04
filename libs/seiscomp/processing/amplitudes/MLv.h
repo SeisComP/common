@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MLv_H
+#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MLv_H
 
-#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MLv_H__
-#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MLv_H__
 
 #include <seiscomp/processing/amplitudes/ML.h>
 
@@ -30,7 +30,7 @@ namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLv : public AbstractAmplitudeProcessor_ML {
-	DECLARE_SC_CLASS(AmplitudeProcessor_MLv);
+	DECLARE_SC_CLASS(AmplitudeProcessor_MLv)
 
 	public:
 		AmplitudeProcessor_MLv();
@@ -42,7 +42,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLv : public AbstractAmplitudeProc
 		                      size_t si1, size_t si2,
 		                      double offset,
 		                      AmplitudeIndex *dt, AmplitudeValue *amplitude,
-		                      double *period, double *snr);
+		                      double *period, double *snr) override;
 };
 
 

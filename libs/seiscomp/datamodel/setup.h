@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_SETUP_H__
-#define SEISCOMP_DATAMODEL_SETUP_H__
+#ifndef SEISCOMP_DATAMODEL_SETUP_H
+#define SEISCOMP_DATAMODEL_SETUP_H
 
 
 #include <string>
@@ -66,7 +66,7 @@ class SC_SYSTEM_CORE_API SetupIndex {
 
 
 class SC_SYSTEM_CORE_API Setup : public Object {
-	DECLARE_SC_CLASS(Setup);
+	DECLARE_SC_CLASS(Setup)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 
@@ -131,15 +131,15 @@ class SC_SYSTEM_CORE_API Setup : public Object {
 		ConfigStation* configStation() const;
 
 		//! Implement Object interface
-		bool assign(Object* other);
-		bool attachTo(PublicObject* parent);
-		bool detachFrom(PublicObject* parent);
-		bool detach();
+		bool assign(Object *other) override;
+		bool attachTo(PublicObject *parent) override;
+		bool detachFrom(PublicObject *parent) override;
+		bool detach() override;
 
 		//! Creates a clone
-		Object* clone() const;
+		Object *clone() const override;
 
-		void accept(Visitor*);
+		void accept(Visitor *visitor) override;
 
 
 	// ------------------------------------------------------------------

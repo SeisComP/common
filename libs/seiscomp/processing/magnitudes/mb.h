@@ -18,20 +18,19 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MB_H
+#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MB_H
 
-#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MB_H__
-#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MB_H__
 
 #include <seiscomp/processing/magnitudeprocessor.h>
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mb : public MagnitudeProcessor {
-	DECLARE_SC_CLASS(MagnitudeProcessor_mb);
+	DECLARE_SC_CLASS(MagnitudeProcessor_mb)
 
 	public:
 		MagnitudeProcessor_mb();
@@ -42,12 +41,11 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mb : public MagnitudeProcessor {
 		                        const DataModel::Origin *hypocenter,
 		                        const DataModel::SensorLocation *receiver,
 		                        const DataModel::Amplitude *,
-		                        double &value);
+		                        double &value) override;
 };
 
 
 }
-
 }
 
 

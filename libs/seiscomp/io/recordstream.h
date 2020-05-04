@@ -256,8 +256,11 @@ class SC_SYSTEM_CORE_API RecordStream : public Core::InterruptibleObject {
 DEFINE_INTERFACE_FACTORY(RecordStream);
 
 
-#define REGISTER_RECORDSTREAM(Class, Service) \
+#define REGISTER_RECORDSTREAM_VAR(Class, Service) \
 Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::IO::RecordStream, Class> __##Class##InterfaceFactory__(Service)
+
+#define REGISTER_RECORDSTREAM(Class, Service) \
+static REGISTER_RECORDSTREAM_VAR(Class, Service)
 
 
 inline void RecordStream::setupRecord(Record *rec) {

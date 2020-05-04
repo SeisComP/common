@@ -18,9 +18,8 @@
  ***************************************************************************/
 
 
-
-#ifndef SEISCOMP_PROCESSING_ARAICPICKER_H__
-#define SEISCOMP_PROCESSING_ARAICPICKER_H__
+#ifndef SEISCOMP_PROCESSING_ARAICPICKER_H
+#define SEISCOMP_PROCESSING_ARAICPICKER_H
 
 
 #include <seiscomp/processing/picker.h>
@@ -47,10 +46,10 @@ class SC_SYSTEM_CLIENT_API ARAICPicker : public Picker {
 	//  Public Interface
 	// ----------------------------------------------------------------------
 	public:
-		bool setup(const Settings &settings);
+		bool setup(const Settings &settings) override;
 
-		const std::string &methodID() const;
-		const std::string &filterID() const;
+		const std::string &methodID() const override;
+		const std::string &filterID() const override;
 
 
 	// ----------------------------------------------------------------------
@@ -61,7 +60,7 @@ class SC_SYSTEM_CLIENT_API ARAICPicker : public Picker {
 		                   int signalStartIdx, int signalEndIdx,
 		                   int &triggerIdx, int &lowerUncertainty,
 		                   int &upperUncertainty, double &snr,
-		                   OPT(Polarity) &polarity);
+		                   OPT(Polarity) &polarity) override;
 
 	// ----------------------------------------------------------------------
 	//  Private Interface

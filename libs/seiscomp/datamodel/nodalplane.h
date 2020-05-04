@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_NODALPLANE_H__
-#define SEISCOMP_DATAMODEL_NODALPLANE_H__
+#ifndef SEISCOMP_DATAMODEL_NODALPLANE_H
+#define SEISCOMP_DATAMODEL_NODALPLANE_H
 
 
 #include <seiscomp/datamodel/realquantity.h>
@@ -42,7 +42,7 @@ DEFINE_SMARTPOINTER(NodalPlane);
  * \brief (1980).
  */
 class SC_SYSTEM_CORE_API NodalPlane : public Core::BaseObject {
-	DECLARE_SC_CLASS(NodalPlane);
+	DECLARE_SC_CLASS(NodalPlane)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

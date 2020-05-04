@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_AXIS_H__
-#define SEISCOMP_DATAMODEL_AXIS_H__
+#ifndef SEISCOMP_DATAMODEL_AXIS_H
+#define SEISCOMP_DATAMODEL_AXIS_H
 
 
 #include <seiscomp/datamodel/realquantity.h>
@@ -43,7 +43,7 @@ DEFINE_SMARTPOINTER(Axis);
  * \brief eigenvalue length.
  */
 class SC_SYSTEM_CORE_API Axis : public Core::BaseObject {
-	DECLARE_SC_CLASS(Axis);
+	DECLARE_SC_CLASS(Axis)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

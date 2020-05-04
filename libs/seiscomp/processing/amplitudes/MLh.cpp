@@ -372,7 +372,7 @@ void AmplitudeProcessor_ML2h::reset() {
 }
 
 
-void AmplitudeProcessor_ML2h::close() {
+void AmplitudeProcessor_ML2h::close() const {
 	// TODO: Check for best available amplitude here
 }
 

@@ -307,8 +307,14 @@ typedef std::shared_ptr<MetaObject> MetaObjectHandle;
 		\
 		virtual const Seiscomp::Core::MetaObject *meta() const
 
+#define DECLARE_METAOBJECT_DERIVED_INTERFACE \
+	public: \
+		static const Seiscomp::Core::MetaObject *Meta(); \
+		\
+		virtual const Seiscomp::Core::MetaObject *meta() const override
+
 #define DECLARE_METAOBJECT \
-	DECLARE_METAOBJECT_INTERFACE; \
+	DECLARE_METAOBJECT_DERIVED_INTERFACE; \
 	protected: \
 		class MetaObject  : public Seiscomp::Core::MetaObject { \
 			public: \
@@ -316,7 +322,7 @@ typedef std::shared_ptr<MetaObject> MetaObjectHandle;
 		}
 
 #define DECLARE_METAOBJECT_DERIVED \
-	DECLARE_METAOBJECT_INTERFACE; \
+	DECLARE_METAOBJECT_DERIVED_INTERFACE; \
 	protected: \
 		class MetaObject  : public Seiscomp::Core::MetaObject { \
 			public: \

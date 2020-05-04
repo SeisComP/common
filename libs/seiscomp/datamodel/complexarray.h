@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_COMPLEXARRAY_H__
-#define SEISCOMP_DATAMODEL_COMPLEXARRAY_H__
+#ifndef SEISCOMP_DATAMODEL_COMPLEXARRAY_H
+#define SEISCOMP_DATAMODEL_COMPLEXARRAY_H
 
 
 #include <vector>
@@ -37,7 +37,7 @@ DEFINE_SMARTPOINTER(ComplexArray);
 
 
 class SC_SYSTEM_CORE_API ComplexArray : public Core::BaseObject {
-	DECLARE_SC_CLASS(ComplexArray);
+	DECLARE_SC_CLASS(ComplexArray)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

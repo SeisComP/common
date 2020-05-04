@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_STREAMPROCESSOR_APPLICATION_H__
-#define SEISCOMP_PROCESSING_STREAMPROCESSOR_APPLICATION_H__
+#ifndef SEISCOMP_PROCESSING_STREAMPROCESSOR_APPLICATION_H
+#define SEISCOMP_PROCESSING_STREAMPROCESSOR_APPLICATION_H
 
 
 #include <seiscomp/client/streamapplication.h>
@@ -30,7 +30,6 @@
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
@@ -87,19 +86,19 @@ class SC_SYSTEM_CLIENT_API Application : public Client::StreamApplication {
 	//  Protected methods
 	// ----------------------------------------------------------------------
 	protected:
-		void addObject(const std::string& parentID, DataModel::Object* o);
-		void removeObject(const std::string& parentID, DataModel::Object* o);
-		void updateObject(const std::string& parentID, DataModel::Object* o);
+		void addObject(const std::string& parentID, DataModel::Object* o) override;
+		void removeObject(const std::string& parentID, DataModel::Object* o) override;
+		void updateObject(const std::string& parentID, DataModel::Object* o) override;
 
-		void handleRecord(Record *rec);
+		void handleRecord(Record *rec) override;
 
 		void enableStation(const std::string& code, bool enabled);
 		void enableStream(const std::string& code, bool enabled);
 
-		virtual void handleNewStream(const Record *rec) {}
-		virtual void processorFinished(const Record *rec, WaveformProcessor *wp) {}
+		virtual void handleNewStream(const Record *) {}
+		virtual void processorFinished(const Record *, WaveformProcessor *) {}
 
-		void done();
+		void done() override;
 
 
 	// ----------------------------------------------------------------------
@@ -149,7 +148,6 @@ class SC_SYSTEM_CLIENT_API Application : public Client::StreamApplication {
 
 
 }
-
 }
 
 #endif

@@ -18,9 +18,8 @@
  ***************************************************************************/
 
 
-
-#ifndef SEISCOMP_PROCESSING_WAVEFORMPIPE_H__
-#define SEISCOMP_PROCESSING_WAVEFORMPIPE_H__
+#ifndef SEISCOMP_PROCESSING_WAVEFORMPIPE_H
+#define SEISCOMP_PROCESSING_WAVEFORMPIPE_H
 
 
 #include <seiscomp/core/baseobject.h>

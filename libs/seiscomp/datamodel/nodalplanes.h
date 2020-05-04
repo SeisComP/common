@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_NODALPLANES_H__
-#define SEISCOMP_DATAMODEL_NODALPLANES_H__
+#ifndef SEISCOMP_DATAMODEL_NODALPLANES_H
+#define SEISCOMP_DATAMODEL_NODALPLANES_H
 
 
 #include <seiscomp/datamodel/nodalplane.h>
@@ -41,7 +41,7 @@ DEFINE_SMARTPOINTER(NodalPlanes);
  * \brief can be used to define which plane is the preferred one.
  */
 class SC_SYSTEM_CORE_API NodalPlanes : public Core::BaseObject {
-	DECLARE_SC_CLASS(NodalPlanes);
+	DECLARE_SC_CLASS(NodalPlanes)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

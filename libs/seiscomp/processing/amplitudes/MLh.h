@@ -18,15 +18,14 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MLH_H
+#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MLH_H
 
-#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MLH_H__
-#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MLH_H__
 
 #include <seiscomp/processing/amplitudes/ML.h>
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
@@ -45,43 +44,43 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLh : public AbstractAmplitudeProc
 //! This class does not handle waveforms itself. It directs them to the
 //! corresponding amplitude processors instead.
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_ML2h : public AmplitudeProcessor {
-	DECLARE_SC_CLASS(AmplitudeProcessor_ML2h);
+	DECLARE_SC_CLASS(AmplitudeProcessor_ML2h)
 
 	public:
 		AmplitudeProcessor_ML2h();
 		AmplitudeProcessor_ML2h(const Core::Time &trigger);
 
 	public:
-		int capabilities() const;
-		IDList capabilityParameters(Capability cap) const;
-		bool setParameter(Capability cap, const std::string &value);
+		int capabilities() const override;
+		IDList capabilityParameters(Capability cap) const override;
+		bool setParameter(Capability cap, const std::string &value) override;
 
-		bool setup(const Settings &settings);
+		bool setup(const Settings &settings) override;
 
-		void setTrigger(const Core::Time& trigger);
+		void setTrigger(const Core::Time& trigger) override;
 
-		void computeTimeWindow();
+		void computeTimeWindow() override;
 
-		void reset();
-		void close();
+		void reset() override;
+		void close() const override;
 
-		bool feed(const Record *record);
+		bool feed(const Record *record) override;
 
 		bool computeAmplitude(const DoubleArray &data,
 		                      size_t i1, size_t i2,
 		                      size_t si1, size_t si2,
 		                      double offset,
 		                      AmplitudeIndex *dt, AmplitudeValue *amplitude,
-		                      double *period, double *snr);
+		                      double *period, double *snr) override;
 
-		const AmplitudeProcessor *componentProcessor(Component comp) const;
-		const DoubleArray *processedData(Component comp) const;
+		const AmplitudeProcessor *componentProcessor(Component comp) const override;
+		const DoubleArray *processedData(Component comp) const override;
 
-		void reprocess(OPT(double) searchBegin, OPT(double) searchEnd);
+		void reprocess(OPT(double) searchBegin, OPT(double) searchEnd) override;
 
 
 	protected:
-		double timeWindowLength(double distance) const;
+		double timeWindowLength(double distance) const override;
 
 
 	private:
@@ -109,7 +108,6 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_ML2h : public AmplitudeProcessor {
 
 
 }
-
 }
 
 

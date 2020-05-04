@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_SENSOR_H__
-#define SEISCOMP_PROCESSING_SENSOR_H__
+#ifndef SEISCOMP_PROCESSING_SENSOR_H
+#define SEISCOMP_PROCESSING_SENSOR_H
 
 
 #include <seiscomp/core/baseobject.h>

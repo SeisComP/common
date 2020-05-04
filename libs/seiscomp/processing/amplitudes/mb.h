@@ -31,14 +31,14 @@ namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mb : public AmplitudeProcessor {
-	DECLARE_SC_CLASS(AmplitudeProcessor_mb);
+	DECLARE_SC_CLASS(AmplitudeProcessor_mb)
 
 	public:
 		AmplitudeProcessor_mb();
 		AmplitudeProcessor_mb(const Seiscomp::Core::Time& trigger);
 
 	public:
-		void initFilter(double fsamp);
+		void initFilter(double fsamp) override;
 
 	protected:
 		bool computeAmplitude(const DoubleArray &data,
@@ -47,7 +47,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mb : public AmplitudeProcessor {
 		                      double offset,
 		                      AmplitudeIndex *dt,
 		                      AmplitudeValue *amplitude,
-		                      double *period, double *snr);
+		                      double *period, double *snr) override;
 };
 
 

@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_H
+#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_H
 
-#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_H__
-#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_H__
 
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core/interfacefactory.h>
@@ -30,7 +30,6 @@
 
 
 namespace Seiscomp {
-
 namespace DataModel {
 
 class Amplitude;
@@ -46,7 +45,7 @@ namespace Processing {
 DEFINE_SMARTPOINTER(MagnitudeProcessor);
 
 class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
-	DECLARE_SC_CLASS(MagnitudeProcessor);
+	DECLARE_SC_CLASS(MagnitudeProcessor)
 
 	// ----------------------------------------------------------------------
 	//  Public types
@@ -139,12 +138,12 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 		 */
 		virtual std::string amplitudeType() const;
 
-		virtual bool setup(const Settings &settings);
+		virtual bool setup(const Settings &settings) override;
 
 		/**
 		 * @brief Computes the magnitude from an amplitude. The method signature
 		 *        has changed with API version >= 11. Prior to that version,
-		 *        @hypocenter, @receiver and @amplitude were not present.
+		 *        hypocenter, receiver and amplitude were not present.
 		 * @param amplitudeValue The amplitude value without unit. The unit is
 		                         implicitly defined by the requested amplitude
 		 *                       type.
@@ -243,12 +242,14 @@ DEFINE_INTERFACE_FACTORY(MagnitudeProcessor);
 
 
 }
-
 }
 
 
-#define REGISTER_MAGNITUDEPROCESSOR(Class, Service) \
+#define REGISTER_MAGNITUDEPROCESSOR_VAR(Class, Service) \
 Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::Processing::MagnitudeProcessor, Class> __##Class##InterfaceFactory__(Service)
+
+#define REGISTER_MAGNITUDEPROCESSOR(Class, Service) \
+static REGISTER_MAGNITUDEPROCESSOR_VAR(Class, Service)
 
 
 #endif

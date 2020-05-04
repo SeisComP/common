@@ -18,31 +18,29 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_M_B_C_H
+#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_M_B_C_H
 
-#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_M_B_C_H__
-#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_M_B_C_H__
 
 #include <seiscomp//processing/magnitudes/m_B.h>
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mBc : public MagnitudeProcessor_mB {
-	DECLARE_SC_CLASS(MagnitudeProcessor_mBc);
+	DECLARE_SC_CLASS(MagnitudeProcessor_mBc)
 
 	public:
 		MagnitudeProcessor_mBc();
 
 		Status estimateMw(double magnitude, double &Mw_estimate,
-		                  double &Mw_stdError);
+		                  double &Mw_stdError) override;
 };
 
 
 }
-
 }
 
 

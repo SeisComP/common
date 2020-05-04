@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_WAVEFORMSTREAMID_H__
-#define SEISCOMP_DATAMODEL_WAVEFORMSTREAMID_H__
+#ifndef SEISCOMP_DATAMODEL_WAVEFORMSTREAMID_H
+#define SEISCOMP_DATAMODEL_WAVEFORMSTREAMID_H
 
 
 #include <string>
@@ -57,7 +57,7 @@ DEFINE_SMARTPOINTER(WaveformStreamID);
  * \brief identifier components are supported.
  */
 class SC_SYSTEM_CORE_API WaveformStreamID : public Core::BaseObject {
-	DECLARE_SC_CLASS(WaveformStreamID);
+	DECLARE_SC_CLASS(WaveformStreamID)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

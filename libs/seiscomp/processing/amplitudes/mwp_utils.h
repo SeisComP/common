@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 
-#ifndef __SEISMOLOGY_MWP_H__
-#define __SEISMOLOGY_MWP_H__
+#ifndef SEISMOLOGY_MWP_H
+#define SEISMOLOGY_MWP_H
+
 
 /*
  * i0 is the index at which the onset is expected.
@@ -33,5 +34,6 @@ double Mwp_amplitude(int n, double *f, int i0, int *pos);
 
 void   Mwp_demean(int n, double *f, int i0);
 void   Mwp_taper(int n, double *f, int i0);
+
 
 #endif

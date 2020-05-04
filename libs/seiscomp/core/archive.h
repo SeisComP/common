@@ -49,7 +49,7 @@
 
 #define DECLARE_SERIALIZATION \
 	public: \
-		virtual void serialize(Archive& ar)
+		virtual void serialize(Archive& ar) override
 
 
 namespace Seiscomp {

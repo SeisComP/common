@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_REALARRAY_H__
-#define SEISCOMP_DATAMODEL_REALARRAY_H__
+#ifndef SEISCOMP_DATAMODEL_REALARRAY_H
+#define SEISCOMP_DATAMODEL_REALARRAY_H
 
 
 #include <vector>
@@ -36,7 +36,7 @@ DEFINE_SMARTPOINTER(RealArray);
 
 
 class SC_SYSTEM_CORE_API RealArray : public Core::BaseObject {
-	DECLARE_SC_CLASS(RealArray);
+	DECLARE_SC_CLASS(RealArray)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

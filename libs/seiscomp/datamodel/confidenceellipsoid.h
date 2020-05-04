@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_CONFIDENCEELLIPSOID_H__
-#define SEISCOMP_DATAMODEL_CONFIDENCEELLIPSOID_H__
+#ifndef SEISCOMP_DATAMODEL_CONFIDENCEELLIPSOID_H
+#define SEISCOMP_DATAMODEL_CONFIDENCEELLIPSOID_H
 
 
 #include <seiscomp/core/baseobject.h>
@@ -89,7 +89,7 @@ DEFINE_SMARTPOINTER(ConfidenceEllipsoid);
  * \brief heading (yaw, psi), majorAxisRotation: bank (roll, theta)
  */
 class SC_SYSTEM_CORE_API ConfidenceEllipsoid : public Core::BaseObject {
-	DECLARE_SC_CLASS(ConfidenceEllipsoid);
+	DECLARE_SC_CLASS(ConfidenceEllipsoid)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

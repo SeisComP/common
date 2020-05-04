@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_PICKER_S_L2_H__
-#define SEISCOMP_PROCESSING_PICKER_S_L2_H__
+#ifndef SEISCOMP_PROCESSING_PICKER_S_L2_H
+#define SEISCOMP_PROCESSING_PICKER_S_L2_H
 
 
 #include <seiscomp/processing/secondarypicker.h>
@@ -69,11 +69,11 @@ class SC_SYSTEM_CLIENT_API SL2Picker : public SecondaryPicker {
 	//  Public Interface
 	// ----------------------------------------------------------------------
 	public:
-		bool setup(const Settings &settings);
+		bool setup(const Settings &settings) override;
 		void setSaveIntermediate(bool);
 
-		const std::string &methodID() const;
-		const std::string &filterID() const;
+		const std::string &methodID() const override;
+		const std::string &filterID() const override;
 
 		bool setL2Config(const L2Config &l2config);
 
@@ -89,8 +89,8 @@ class SC_SYSTEM_CLIENT_API SL2Picker : public SecondaryPicker {
 
 	protected:
 		bool applyConfig();
-		void fill(size_t n, double *samples);
-		void process(const Record *rec, const DoubleArray &filteredData);
+		void fill(size_t n, double *samples) override;
+		void process(const Record *rec, const DoubleArray &filteredData) override;
 
 	private:
 		bool        _initialized;
@@ -105,5 +105,6 @@ class SC_SYSTEM_CLIENT_API SL2Picker : public SecondaryPicker {
 
 }
 }
+
 
 #endif

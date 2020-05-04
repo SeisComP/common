@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_REALPDF1D_H__
-#define SEISCOMP_DATAMODEL_REALPDF1D_H__
+#ifndef SEISCOMP_DATAMODEL_REALPDF1D_H
+#define SEISCOMP_DATAMODEL_REALPDF1D_H
 
 
 #include <seiscomp/datamodel/realarray.h>
@@ -61,7 +61,7 @@ DEFINE_SMARTPOINTER(RealPDF1D);
  * \brief bin).
  */
 class SC_SYSTEM_CORE_API RealPDF1D : public Core::BaseObject {
-	DECLARE_SC_CLASS(RealPDF1D);
+	DECLARE_SC_CLASS(RealPDF1D)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

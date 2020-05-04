@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_DATALOGGERCALIBRATION_H__
-#define SEISCOMP_DATAMODEL_DATALOGGERCALIBRATION_H__
+#ifndef SEISCOMP_DATAMODEL_DATALOGGERCALIBRATION_H
+#define SEISCOMP_DATAMODEL_DATALOGGERCALIBRATION_H
 
 
 #include <seiscomp/datamodel/blob.h>
@@ -75,7 +75,7 @@ class SC_SYSTEM_CORE_API DataloggerCalibrationIndex {
  * \brief This type describes a datalogger calibration
  */
 class SC_SYSTEM_CORE_API DataloggerCalibration : public Object {
-	DECLARE_SC_CLASS(DataloggerCalibration);
+	DECLARE_SC_CLASS(DataloggerCalibration)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 
@@ -160,15 +160,15 @@ class SC_SYSTEM_CORE_API DataloggerCalibration : public Object {
 		Datalogger* datalogger() const;
 
 		//! Implement Object interface
-		bool assign(Object* other);
-		bool attachTo(PublicObject* parent);
-		bool detachFrom(PublicObject* parent);
-		bool detach();
+		bool assign(Object *other) override;
+		bool attachTo(PublicObject *parent) override;
+		bool detachFrom(PublicObject *parent) override;
+		bool detach() override;
 
 		//! Creates a clone
-		Object* clone() const;
+		Object *clone() const override;
 
-		void accept(Visitor*);
+		void accept(Visitor *visitor) override;
 
 
 	// ------------------------------------------------------------------

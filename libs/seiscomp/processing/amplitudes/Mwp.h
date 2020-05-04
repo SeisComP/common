@@ -18,39 +18,38 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_Mwp_H
+#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_Mwp_H
 
-#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_Mwp_H__
-#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_Mwp_H__
 
 #include <seiscomp/processing/amplitudeprocessor.h>
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_Mwp : public AmplitudeProcessor {
-	DECLARE_SC_CLASS(AmplitudeProcessor_Mwp);
+	DECLARE_SC_CLASS(AmplitudeProcessor_Mwp)
 
 	public:
 		AmplitudeProcessor_Mwp();
 		AmplitudeProcessor_Mwp(const Seiscomp::Core::Time& trigger);
 
 	public:
-		void setHint(ProcessingHint hint, double value);
+		void setHint(ProcessingHint hint, double value) override;
 
-		const DoubleArray *processedData(Component comp) const;
+		const DoubleArray *processedData(Component comp) const override;
 
 	protected:
-		double timeWindowLength(double distance) const;
+		double timeWindowLength(double distance) const override;
 		bool computeAmplitude(const DoubleArray &data,
 		                      size_t i1, size_t i2,
 		                      size_t si1, size_t si2,
 		                      double offset,
 		                      AmplitudeIndex *dt,
 		                      AmplitudeValue *amplitude,
-		                      double *period, double *snr);
+		                      double *period, double *snr) override;
 
 	private:
 		void init();
@@ -61,9 +60,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_Mwp : public AmplitudeProcessor {
 };
 
 
-
 }
-
 }
 
 

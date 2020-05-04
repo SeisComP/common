@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_ARCLINKREQUEST_H__
-#define SEISCOMP_DATAMODEL_ARCLINKREQUEST_H__
+#ifndef SEISCOMP_DATAMODEL_ARCLINKREQUEST_H
+#define SEISCOMP_DATAMODEL_ARCLINKREQUEST_H
 
 
 #include <vector>
@@ -78,7 +78,7 @@ class SC_SYSTEM_CORE_API ArclinkRequestIndex {
 
 
 class SC_SYSTEM_CORE_API ArclinkRequest : public PublicObject {
-	DECLARE_SC_CLASS(ArclinkRequest);
+	DECLARE_SC_CLASS(ArclinkRequest)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 
@@ -237,18 +237,18 @@ class SC_SYSTEM_CORE_API ArclinkRequest : public PublicObject {
 		ArclinkLog* arclinkLog() const;
 
 		//! Implement Object interface
-		bool assign(Object* other);
-		bool attachTo(PublicObject* parent);
-		bool detachFrom(PublicObject* parent);
-		bool detach();
+		bool assign(Object *other) override;
+		bool attachTo(PublicObject *parent) override;
+		bool detachFrom(PublicObject *parent) override;
+		bool detach() override;
 
 		//! Creates a clone
-		Object* clone() const;
+		Object *clone() const override;
 
 		//! Implement PublicObject interface
-		bool updateChild(Object* child);
+		bool updateChild(Object *child) override;
 
-		void accept(Visitor*);
+		void accept(Visitor *visitor) override;
 
 
 	// ------------------------------------------------------------------

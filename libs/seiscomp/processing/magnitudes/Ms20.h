@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MS20_H
+#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MS20_H
 
-#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MS20_H__
-#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MS20_H__
 
 #include <seiscomp/processing/magnitudeprocessor.h>
 
@@ -35,7 +35,7 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_ms20 : public MagnitudeProcessor {
 	public:
 		MagnitudeProcessor_ms20();
 
-		bool setup(const Settings &settings);
+		bool setup(const Settings &settings) override;
 
 		Status computeMagnitude(double amplitude, const std::string &unit,
 		                        double period, double snr,
@@ -43,7 +43,7 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_ms20 : public MagnitudeProcessor {
 		                        const DataModel::Origin *hypocenter,
 		                        const DataModel::SensorLocation *receiver,
 		                        const DataModel::Amplitude *,
-		                        double &value);
+		                        double &value) override;
 
 	private:
 		double                  lowPer;

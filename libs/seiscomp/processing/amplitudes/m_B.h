@@ -31,21 +31,21 @@ namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mB : public AmplitudeProcessor {
-	DECLARE_SC_CLASS(AmplitudeProcessor_mB);
+	DECLARE_SC_CLASS(AmplitudeProcessor_mB)
 
 	public:
 		AmplitudeProcessor_mB();
 		AmplitudeProcessor_mB(const Core::Time& trigger);
 
 	protected:
-		double timeWindowLength(double distance) const;
+		double timeWindowLength(double distance) const override;
 		bool computeAmplitude(const DoubleArray &data,
 		                      size_t i1, size_t i2,
 		                      size_t si1, size_t si2,
 		                      double offset,
 		                      AmplitudeIndex *dt,
 		                      AmplitudeValue *amplitude,
-		                      double *period, double *snr);
+		                      double *period, double *snr) override;
 };
 
 

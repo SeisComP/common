@@ -18,15 +18,14 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MJMA_H
+#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MJMA_H
 
-#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MJMA_H__
-#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MJMA_H__
 
 #include <seiscomp/processing/amplitudeprocessor.h>
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
@@ -36,10 +35,10 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_Mjma : public AmplitudeProcessor {
 		AmplitudeProcessor_Mjma(const Core::Time& trigger);
 
 	public:
-		virtual void initFilter(double fsamp);
+		virtual void initFilter(double fsamp) override;
 
 	protected:
-		bool deconvolveData(Response *resp, DoubleArray &data, int numberOfIntegrations);
+		bool deconvolveData(Response *resp, DoubleArray &data, int numberOfIntegrations) override;
 
 		bool computeAmplitude(const DoubleArray &data,
 		                      size_t i1, size_t i2,
@@ -47,14 +46,13 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_Mjma : public AmplitudeProcessor {
 		                      double offset,
 		                      AmplitudeIndex *dt,
 		                      AmplitudeValue *amplitude,
-		                      double *period, double *snr);
+		                      double *period, double *snr) override;
 
-		double timeWindowLength(double distance) const;
+		double timeWindowLength(double distance) const override;
 };
 
 
 }
-
 }
 
 

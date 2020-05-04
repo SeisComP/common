@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_TENSOR_H__
-#define SEISCOMP_DATAMODEL_TENSOR_H__
+#ifndef SEISCOMP_DATAMODEL_TENSOR_H
+#define SEISCOMP_DATAMODEL_TENSOR_H
 
 
 #include <seiscomp/datamodel/realquantity.h>
@@ -46,7 +46,7 @@ DEFINE_SMARTPOINTER(Tensor);
  * \brief systems.
  */
 class SC_SYSTEM_CORE_API Tensor : public Core::BaseObject {
-	DECLARE_SC_CLASS(Tensor);
+	DECLARE_SC_CLASS(Tensor)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

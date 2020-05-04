@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_EVENTPARAMETERS_H__
-#define SEISCOMP_DATAMODEL_EVENTPARAMETERS_H__
+#ifndef SEISCOMP_DATAMODEL_EVENTPARAMETERS_H
+#define SEISCOMP_DATAMODEL_EVENTPARAMETERS_H
 
 
 #include <vector>
@@ -47,7 +47,7 @@ DEFINE_SMARTPOINTER(Event);
  * \brief FocalMechanism, Reading, Amplitude, and Pick.
  */
 class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
-	DECLARE_SC_CLASS(EventParameters);
+	DECLARE_SC_CLASS(EventParameters)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 
@@ -153,18 +153,18 @@ class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
 		Event* findEvent(const std::string& publicID) const;
 
 		//! Implement Object interface
-		bool assign(Object* other);
-		bool attachTo(PublicObject* parent);
-		bool detachFrom(PublicObject* parent);
-		bool detach();
+		bool assign(Object *other) override;
+		bool attachTo(PublicObject *parent) override;
+		bool detachFrom(PublicObject *parent) override;
+		bool detach() override;
 
 		//! Creates a clone
-		Object* clone() const;
+		Object *clone() const override;
 
 		//! Implement PublicObject interface
-		bool updateChild(Object* child);
+		bool updateChild(Object *child) override;
 
-		void accept(Visitor*);
+		void accept(Visitor *visitor) override;
 
 
 	// ------------------------------------------------------------------

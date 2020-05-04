@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_TIMEPDF1D_H__
-#define SEISCOMP_DATAMODEL_TIMEPDF1D_H__
+#ifndef SEISCOMP_DATAMODEL_TIMEPDF1D_H
+#define SEISCOMP_DATAMODEL_TIMEPDF1D_H
 
 
 #include <seiscomp/datamodel/realarray.h>
@@ -62,7 +62,7 @@ DEFINE_SMARTPOINTER(TimePDF1D);
  * \brief bin).
  */
 class SC_SYSTEM_CORE_API TimePDF1D : public Core::BaseObject {
-	DECLARE_SC_CLASS(TimePDF1D);
+	DECLARE_SC_CLASS(TimePDF1D)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_DATAUSED_H__
-#define SEISCOMP_DATAMODEL_DATAUSED_H__
+#ifndef SEISCOMP_DATAMODEL_DATAUSED_H
+#define SEISCOMP_DATAMODEL_DATAUSED_H
 
 
 #include <seiscomp/datamodel/types.h>
@@ -42,7 +42,7 @@ class MomentTensor;
  * \brief moment-tensor inversion.
  */
 class SC_SYSTEM_CORE_API DataUsed : public Object {
-	DECLARE_SC_CLASS(DataUsed);
+	DECLARE_SC_CLASS(DataUsed)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 
@@ -104,15 +104,15 @@ class SC_SYSTEM_CORE_API DataUsed : public Object {
 		MomentTensor* momentTensor() const;
 
 		//! Implement Object interface
-		bool assign(Object* other);
-		bool attachTo(PublicObject* parent);
-		bool detachFrom(PublicObject* parent);
-		bool detach();
+		bool assign(Object *other) override;
+		bool attachTo(PublicObject *parent) override;
+		bool detachFrom(PublicObject *parent) override;
+		bool detach() override;
 
 		//! Creates a clone
-		Object* clone() const;
+		Object *clone() const override;
 
-		void accept(Visitor*);
+		void accept(Visitor *visitor) override;
 
 
 	// ------------------------------------------------------------------

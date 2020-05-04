@@ -18,15 +18,14 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MJMA_H
+#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MJMA_H
 
-#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MJMA_H__
-#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MJMA_H__
 
 #include <seiscomp/processing/magnitudeprocessor.h>
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
@@ -40,12 +39,11 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_Mjma : public MagnitudeProcessor {
 		                        const DataModel::Origin *hypocenter,
 		                        const DataModel::SensorLocation *receiver,
 		                        const DataModel::Amplitude *,
-		                        double &value);
+		                        double &value) override;
 };
 
 
 }
-
 }
 
 

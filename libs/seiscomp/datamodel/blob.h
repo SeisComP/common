@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_BLOB_H__
-#define SEISCOMP_DATAMODEL_BLOB_H__
+#ifndef SEISCOMP_DATAMODEL_BLOB_H
+#define SEISCOMP_DATAMODEL_BLOB_H
 
 
 #include <string>
@@ -36,7 +36,7 @@ DEFINE_SMARTPOINTER(Blob);
 
 
 class SC_SYSTEM_CORE_API Blob : public Core::BaseObject {
-	DECLARE_SC_CLASS(Blob);
+	DECLARE_SC_CLASS(Blob)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

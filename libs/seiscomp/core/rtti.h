@@ -18,11 +18,13 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_RTTI_H__
-#define SEISCOMP_CORE_RTTI_H__
+#ifndef SEISCOMP_CORE_RTTI_H
+#define SEISCOMP_CORE_RTTI_H
+
 
 #include <seiscomp/core.h>
 #include <string>
+
 
 namespace Seiscomp {
 namespace Core {
@@ -109,13 +111,22 @@ class SC_SYSTEM_CORE_API RTTI {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#define DECLARE_RTTI \
+#define DECLARE_BASE_RTTI \
 	public: \
 		static const char* ClassName(); \
 		static const Seiscomp::Core::RTTI& TypeInfo(); \
 		\
 		virtual const char* className() const; \
 		virtual const Seiscomp::Core::RTTI& typeInfo() const
+
+
+#define DECLARE_RTTI \
+	public: \
+		static const char* ClassName(); \
+		static const Seiscomp::Core::RTTI& TypeInfo(); \
+		\
+		virtual const char* className() const override; \
+		virtual const Seiscomp::Core::RTTI& typeInfo() const override
 
 
 #define IMPLEMENT_ROOT_RTTI(CLASS, CLASSNAME) \
@@ -182,7 +193,6 @@ class SC_SYSTEM_CORE_API RTTI {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
 }
 }
 

@@ -18,22 +18,22 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_TIMEWINDOWPROCESSOR__
-#define SEISCOMP_PROCESSING_TIMEWINDOWPROCESSOR__
+#ifndef SEISCOMP_PROCESSING_TIMEWINDOWPROCESSOR
+#define SEISCOMP_PROCESSING_TIMEWINDOWPROCESSOR
+
 
 #include <seiscomp/core/recordsequence.h>
 #include <seiscomp/processing/waveformprocessor.h>
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
 DEFINE_SMARTPOINTER(TimeWindowProcessor);
 
 class SC_SYSTEM_CLIENT_API TimeWindowProcessor : public WaveformProcessor {
-	DECLARE_SC_CLASS(TimeWindowProcessor);
+	DECLARE_SC_CLASS(TimeWindowProcessor)
 
 	// ----------------------------------------------------------------------
 	//  X'truction
@@ -50,7 +50,7 @@ class SC_SYSTEM_CLIENT_API TimeWindowProcessor : public WaveformProcessor {
 	//  Public Interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual void reset();
+		virtual void reset() override;
 
 		//! Sets the time window for the data to be fed
 		void setTimeWindow(const Core::TimeWindow &tw);
@@ -78,8 +78,8 @@ class SC_SYSTEM_CLIENT_API TimeWindowProcessor : public WaveformProcessor {
 	//  Protected Interface
 	// ----------------------------------------------------------------------
 	protected:
-		virtual void fill(size_t n, double *samples);
-		virtual bool store(const Record *rec);
+		virtual void fill(size_t n, double *samples) override;
+		virtual bool store(const Record *rec) override;
 
 
 	// ----------------------------------------------------------------------
@@ -96,7 +96,7 @@ class SC_SYSTEM_CLIENT_API TimeWindowProcessor : public WaveformProcessor {
 
 
 }
-
 }
+
 
 #endif

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_PROCESSOR_H__
-#define SEISCOMP_PROCESSING_PROCESSOR_H__
+#ifndef SEISCOMP_PROCESSING_PROCESSOR_H
+#define SEISCOMP_PROCESSING_PROCESSOR_H
 
 
 #include <seiscomp/config/exceptions.h>
@@ -84,7 +84,7 @@ DEFINE_SMARTPOINTER(Processor);
 
 
 class SC_SYSTEM_CLIENT_API Processor : public Core::BaseObject {
-	DECLARE_SC_CLASS(Processor);
+	DECLARE_SC_CLASS(Processor)
 
 	// ----------------------------------------------------------------------
 	//  X'truction
@@ -109,7 +109,6 @@ class SC_SYSTEM_CLIENT_API Processor : public Core::BaseObject {
 
 
 }
-
 }
 
 

@@ -40,7 +40,7 @@ DEFINE_SMARTPOINTER(WaveformProcessor);
 
 
 class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
-	DECLARE_SC_CLASS(WaveformProcessor);
+	DECLARE_SC_CLASS(WaveformProcessor)
 
 	// ----------------------------------------------------------------------
 	//  Public types
@@ -226,7 +226,7 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 
 		//! Sets up the waveform processor. By default it reads whether
 		//! to check for data saturation or not
-		virtual bool setup(const Settings &settings);
+		virtual bool setup(const Settings &settings) override;
 
 		//! Initialize the filter for the given sampling frequency
 		virtual void initFilter(double fsamp);

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_PHASE_H__
-#define SEISCOMP_DATAMODEL_PHASE_H__
+#ifndef SEISCOMP_DATAMODEL_PHASE_H
+#define SEISCOMP_DATAMODEL_PHASE_H
 
 
 #include <string>
@@ -40,7 +40,7 @@ DEFINE_SMARTPOINTER(Phase);
  * \brief contains the phase code only.
  */
 class SC_SYSTEM_CORE_API Phase : public Core::BaseObject {
-	DECLARE_SC_CLASS(Phase);
+	DECLARE_SC_CLASS(Phase)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

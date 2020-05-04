@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_ARCLINKREQUESTSUMMARY_H__
-#define SEISCOMP_DATAMODEL_ARCLINKREQUESTSUMMARY_H__
+#ifndef SEISCOMP_DATAMODEL_ARCLINKREQUESTSUMMARY_H
+#define SEISCOMP_DATAMODEL_ARCLINKREQUESTSUMMARY_H
 
 
 #include <seiscomp/core/baseobject.h>
@@ -35,7 +35,7 @@ DEFINE_SMARTPOINTER(ArclinkRequestSummary);
 
 
 class SC_SYSTEM_CORE_API ArclinkRequestSummary : public Core::BaseObject {
-	DECLARE_SC_CLASS(ArclinkRequestSummary);
+	DECLARE_SC_CLASS(ArclinkRequestSummary)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_TIMEWINDOW_H__
-#define SEISCOMP_DATAMODEL_TIMEWINDOW_H__
+#ifndef SEISCOMP_DATAMODEL_TIMEWINDOW_H
+#define SEISCOMP_DATAMODEL_TIMEWINDOW_H
 
 
 #include <seiscomp/core/datetime.h>
@@ -42,7 +42,7 @@ DEFINE_SMARTPOINTER(TimeWindow);
  * \brief after may coincide with the central point.
  */
 class SC_SYSTEM_CORE_API TimeWindow : public Core::BaseObject {
-	DECLARE_SC_CLASS(TimeWindow);
+	DECLARE_SC_CLASS(TimeWindow)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

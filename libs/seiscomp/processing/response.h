@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_RESPONSE_H__
-#define SEISCOMP_PROCESSING_RESPONSE_H__
+#ifndef SEISCOMP_PROCESSING_RESPONSE_H
+#define SEISCOMP_PROCESSING_RESPONSE_H
 
 
 #include <seiscomp/core/baseobject.h>
@@ -38,7 +38,7 @@ namespace Processing  {
 DEFINE_SMARTPOINTER(Response);
 
 class SC_SYSTEM_CLIENT_API Response : public Core::BaseObject {
-	DECLARE_CASTS(Response);
+	DECLARE_CASTS(Response)
 
 
 	// ----------------------------------------------------------------------
@@ -91,7 +91,7 @@ class SC_SYSTEM_CLIENT_API Response : public Core::BaseObject {
 DEFINE_SMARTPOINTER(ResponsePAZ);
 
 class SC_SYSTEM_CLIENT_API ResponsePAZ : public Response {
-	DECLARE_CASTS(ResponsePAZ);
+	DECLARE_CASTS(ResponsePAZ)
 
 
 	// ----------------------------------------------------------------------
@@ -137,7 +137,7 @@ class SC_SYSTEM_CLIENT_API ResponsePAZ : public Response {
 	// ----------------------------------------------------------------------
 	public:
 		Math::Restitution::FFT::TransferFunction *
-			getTransferFunction(int numberOfIntegrations = 0);
+			getTransferFunction(int numberOfIntegrations = 0) override;
 
 
 	// ----------------------------------------------------------------------
@@ -155,7 +155,7 @@ class SC_SYSTEM_CLIENT_API ResponsePAZ : public Response {
 DEFINE_SMARTPOINTER(ResponseFAP);
 
 class SC_SYSTEM_CLIENT_API ResponseFAP : public Response {
-	DECLARE_CASTS(ResponseFAP);
+	DECLARE_CASTS(ResponseFAP)
 
 
 	// ----------------------------------------------------------------------
@@ -183,7 +183,7 @@ class SC_SYSTEM_CLIENT_API ResponseFAP : public Response {
 	// ----------------------------------------------------------------------
 	public:
 		Math::Restitution::FFT::TransferFunction *
-			getTransferFunction(int numberOfIntegrations = 0);
+			getTransferFunction(int numberOfIntegrations = 0) override;
 
 
 	// ----------------------------------------------------------------------

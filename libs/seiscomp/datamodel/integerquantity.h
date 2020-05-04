@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_INTEGERQUANTITY_H__
-#define SEISCOMP_DATAMODEL_INTEGERQUANTITY_H__
+#ifndef SEISCOMP_DATAMODEL_INTEGERQUANTITY_H
+#define SEISCOMP_DATAMODEL_INTEGERQUANTITY_H
 
 
 #include <seiscomp/core/baseobject.h>
@@ -54,7 +54,7 @@ DEFINE_SMARTPOINTER(IntegerQuantity);
  * \brief from the main value.
  */
 class SC_SYSTEM_CORE_API IntegerQuantity : public Core::BaseObject {
-	DECLARE_SC_CLASS(IntegerQuantity);
+	DECLARE_SC_CLASS(IntegerQuantity)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

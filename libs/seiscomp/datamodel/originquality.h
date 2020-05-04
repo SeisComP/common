@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_ORIGINQUALITY_H__
-#define SEISCOMP_DATAMODEL_ORIGINQUALITY_H__
+#ifndef SEISCOMP_DATAMODEL_ORIGINQUALITY_H
+#define SEISCOMP_DATAMODEL_ORIGINQUALITY_H
 
 
 #include <string>
@@ -42,7 +42,7 @@ DEFINE_SMARTPOINTER(OriginQuality);
  * \brief the type OriginQuality.
  */
 class SC_SYSTEM_CORE_API OriginQuality : public Core::BaseObject {
-	DECLARE_SC_CLASS(OriginQuality);
+	DECLARE_SC_CLASS(OriginQuality)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 

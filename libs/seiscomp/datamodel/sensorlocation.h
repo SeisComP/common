@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_SENSORLOCATION_H__
-#define SEISCOMP_DATAMODEL_SENSORLOCATION_H__
+#ifndef SEISCOMP_DATAMODEL_SENSORLOCATION_H
+#define SEISCOMP_DATAMODEL_SENSORLOCATION_H
 
 
 #include <vector>
@@ -80,7 +80,7 @@ class SC_SYSTEM_CORE_API SensorLocationIndex {
  * \brief This type describes a sensor location
  */
 class SC_SYSTEM_CORE_API SensorLocation : public PublicObject {
-	DECLARE_SC_CLASS(SensorLocation);
+	DECLARE_SC_CLASS(SensorLocation)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 
@@ -235,18 +235,18 @@ class SC_SYSTEM_CORE_API SensorLocation : public PublicObject {
 		Station* station() const;
 
 		//! Implement Object interface
-		bool assign(Object* other);
-		bool attachTo(PublicObject* parent);
-		bool detachFrom(PublicObject* parent);
-		bool detach();
+		bool assign(Object *other) override;
+		bool attachTo(PublicObject *parent) override;
+		bool detachFrom(PublicObject *parent) override;
+		bool detach() override;
 
 		//! Creates a clone
-		Object* clone() const;
+		Object *clone() const override;
 
 		//! Implement PublicObject interface
-		bool updateChild(Object* child);
+		bool updateChild(Object *child) override;
 
-		void accept(Visitor*);
+		void accept(Visitor *visitor) override;
 
 
 	// ------------------------------------------------------------------

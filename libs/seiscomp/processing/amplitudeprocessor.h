@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_H
+#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_H
 
-#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_H__
-#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_H__
 
 #include <seiscomp/core/interfacefactory.h>
 #include <seiscomp/processing/timewindowprocessor.h>
@@ -32,14 +32,13 @@
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 
 DEFINE_SMARTPOINTER(AmplitudeProcessor);
 
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
-	DECLARE_SC_CLASS(AmplitudeProcessor);
+	DECLARE_SC_CLASS(AmplitudeProcessor)
 
 	// ----------------------------------------------------------------------
 	//  Public types
@@ -247,15 +246,15 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 
 		//! Resets the amplitude processor and deletes all data
 		//! and noise amplitudes
-		virtual void reset();
+		virtual void reset() override;
 
 		//! This method has to be called when all configuration
 		//! settings have been set to calculate the timewindow
-		virtual void computeTimeWindow();
+		virtual void computeTimeWindow() override;
 
 		//! Sets up the amplitude processor. By default it reads whether
 		//! to use response information or not.
-		virtual bool setup(const Settings &settings);
+		virtual bool setup(const Settings &settings) override;
 
 		//! Sets the trigger used to compute the timewindow to calculate
 		//! the amplitude
@@ -290,7 +289,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		//! Returns the unit of amplitude to be calculated
 		const std::string& unit() const;
 
-		void setHint(ProcessingHint hint, double value);
+		void setHint(ProcessingHint hint, double value) override;
 
 		//! Dumps the record data into an ascii file
 		void writeData() const;
@@ -307,7 +306,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 
 		virtual bool handleGap(Filter *filter, const Core::TimeSpan&,
 		                       double lastSample, double nextSample,
-		                       size_t missingSamples);
+		                       size_t missingSamples) override;
 
 		//! Method to prepare the available data just before the noise
 		//! and amplitude calculation takes place. This method can be
@@ -373,7 +372,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 
 	private:
 		void init();
-		void process(const Record *record, const DoubleArray &filteredData);
+		void process(const Record *record, const DoubleArray &filteredData) override;
 
 
 	// ----------------------------------------------------------------------
@@ -421,13 +420,16 @@ inline const DataModel::Pick *AmplitudeProcessor::pick() const {
 
 DEFINE_INTERFACE_FACTORY(AmplitudeProcessor);
 
-}
 
 }
+}
 
+
+#define REGISTER_AMPLITUDEPROCESSOR_VAR(Class, Service) \
+Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::Processing::AmplitudeProcessor, Class> __##Class##InterfaceFactory__(Service)
 
 #define REGISTER_AMPLITUDEPROCESSOR(Class, Service) \
-Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::Processing::AmplitudeProcessor, Class> __##Class##InterfaceFactory__(Service)
+static REGISTER_AMPLITUDEPROCESSOR_VAR(Class, Service)
 
 
 #endif
