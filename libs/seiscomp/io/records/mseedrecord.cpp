@@ -43,23 +43,6 @@ void _Record_Handler(char *record, int reclen, void *packed) {
 }
 
 
-struct MSEEDLogger {
-	MSEEDLogger() {
-		ms_loginit(MSEEDLogger::print, "[libmseed] ", MSEEDLogger::diag, "[libmseed] ERR: ");
-	}
-
-	static void print(char *msg) {
-		//SEISCOMP_DEBUG("%s", msg);
-	}
-	static void diag(char *msg) {
-		//SEISCOMP_DEBUG("%s", msg);
-	}
-};
-
-
-static MSEEDLogger __logger__;
-
-
 IMPLEMENT_SC_CLASS_DERIVED(MSeedRecord, Record, "MSeedRecord");
 REGISTER_RECORD(MSeedRecord, "mseed");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -70,7 +53,6 @@ REGISTER_RECORD(MSeedRecord, "mseed");
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MSeedRecord::MSeedRecord(Array::DataType dt, Hint h)
 : Record(dt, h)
-, _raw(CharArray())
 , _data(0)
 , _seqno(0)
 , _rectype('D')
@@ -94,8 +76,9 @@ MSeedRecord::MSeedRecord(Array::DataType dt, Hint h)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MSeedRecord::MSeedRecord(MSRecord *rec, Array::DataType dt, Hint h)
 : Record(dt, h, rec->network, rec->station, rec->location, rec->channel,
-         Seiscomp::Core::Time((hptime_t)rec->starttime/HPTMODULUS,(hptime_t)rec->starttime%HPTMODULUS),
-         rec->samplecnt, rec->samprate, rec->Blkt1001 ? rec->Blkt1001->timing_qual : -1)
+         Seiscomp::Core::Time(hptime_t(rec->starttime / HPTMODULUS),
+                              hptime_t(rec->starttime % HPTMODULUS)),
+         int(rec->samplecnt), rec->samprate, rec->Blkt1001 ? rec->Blkt1001->timing_qual : -1)
 , _data(0)
 , _seqno(rec->sequence_number)
 , _rectype(rec->dataquality)
@@ -143,7 +126,7 @@ MSeedRecord::MSeedRecord(MSRecord *rec, Array::DataType dt, Hint h)
 	if (rec->fsdh->start_time.sec > 59)
 		_leap = rec->fsdh->start_time.sec-59;
 	hptime_t hptime = msr_endtime(rec);
-	_etime = Seiscomp::Core::Time((hptime_t)hptime/HPTMODULUS,(hptime_t)hptime%HPTMODULUS);
+	_etime = Seiscomp::Core::Time(hptime_t(hptime / HPTMODULUS), hptime_t(hptime % HPTMODULUS));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -274,7 +257,7 @@ void MSeedRecord::setChannelCode(std::string cha) {
 void MSeedRecord::setStartTime(const Core::Time& time) {
 	if ( _hint == SAVE_RAW ) {
 		struct fsdh_s *header = reinterpret_cast<struct fsdh_s *>(_raw.typedData());
-		hptime_t hptime = (hptime_t)time.seconds() * HPTMODULUS + (hptime_t)time.microseconds();
+		hptime_t hptime = hptime_t(time.seconds() * HPTMODULUS) + hptime_t(time.microseconds());
 		ms_hptime2btime(hptime, &header->start_time);
 		MS_SWAPBTIME(&header->start_time);
 	}
@@ -386,7 +369,7 @@ void MSeedRecord::setSampleRateMultiplier(int srmult) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-unsigned short MSeedRecord::byteOrder() const {
+int8_t MSeedRecord::byteOrder() const {
 	return _byteorder;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -395,7 +378,7 @@ unsigned short MSeedRecord::byteOrder() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-unsigned short MSeedRecord::encoding() const {
+int8_t MSeedRecord::encoding() const {
 	return _encoding;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -468,9 +451,8 @@ const Array* MSeedRecord::raw() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const Array* MSeedRecord::data() const {
-	if (_raw.data() && (!_data || _datatype != _data->dataType())) {
-		_setDataAttributes(_reclen,(char *)_raw.data());
-	}
+	if ( _raw.data() && (!_data || _datatype != _data->dataType()) )
+		_setDataAttributes(_reclen, const_cast<char*>(_raw.typedData()));
 
 	return _data.get();
 }
@@ -481,31 +463,33 @@ const Array* MSeedRecord::data() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::_setDataAttributes(int reclen, char *data) const {
-	MSRecord *pmsr = NULL;
+	MSRecord *pmsr = nullptr;
 
-	if (data) {
-		if (msr_unpack(data,reclen,&pmsr,1,0) == MS_NOERROR) {
-			if (pmsr->numsamples == _nsamp) {
-				switch (pmsr->sampletype) {
-				case 'i':
-					_data = ArrayFactory::Create(_datatype,Array::INT,_nsamp,pmsr->datasamples);
-					break;
-				case 'f':
-					_data = ArrayFactory::Create(_datatype,Array::FLOAT,_nsamp,pmsr->datasamples);
-					break;
-				case 'd':
-					_data = ArrayFactory::Create(_datatype,Array::DOUBLE,_nsamp,pmsr->datasamples);
-					break;
-				case 'a':
-					_data = ArrayFactory::Create(_datatype,Array::CHAR,_nsamp,pmsr->datasamples);
-					break;
-				}
-			} else {
+	if ( data ) {
+		if ( msr_unpack(data,reclen,&pmsr,1,0) == MS_NOERROR ) {
+			if ( pmsr->numsamples == _nsamp ) {
+				switch ( pmsr->sampletype ) {
+					case 'i':
+						_data = ArrayFactory::Create(_datatype,Array::INT,_nsamp,pmsr->datasamples);
+						break;
+					case 'f':
+						_data = ArrayFactory::Create(_datatype,Array::FLOAT,_nsamp,pmsr->datasamples);
+						break;
+					case 'd':
+						_data = ArrayFactory::Create(_datatype,Array::DOUBLE,_nsamp,pmsr->datasamples);
+						break;
+					case 'a':
+						_data = ArrayFactory::Create(_datatype,Array::CHAR,_nsamp,pmsr->datasamples);
+						break;
+					}
+			}
+			else {
 				msr_free(&pmsr);
 				throw LibmseedException("The number of the unpacked data samples differs from the sample number in fixed data header");
 			}
 			msr_free(&pmsr);
-		} else
+		}
+		else
 			throw LibmseedException("Unpacking of Mini SEED record failed");
 	}
 }
@@ -554,13 +538,13 @@ void MSeedRecord::setOutputRecordLength(int reclen) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool _isHeader(const char *header) {
-	return (std::isdigit((unsigned char) *(header))
-	     && std::isdigit((unsigned char) *(header+1))
-	     && std::isdigit((unsigned char) *(header+2))
-	     && std::isdigit((unsigned char) *(header+3))
-	     && std::isdigit((unsigned char) *(header+4))
-	     && std::isdigit((unsigned char) *(header+5))
-	     && std::isalpha((unsigned char) *(header+6))
+	return (std::isdigit(*(header+0))
+	     && std::isdigit(*(header+1))
+	     && std::isdigit(*(header+2))
+	     && std::isdigit(*(header+3))
+	     && std::isdigit(*(header+4))
+	     && std::isdigit(*(header+5))
+	     && std::isalpha(*(header+6))
 	     && (*(header+7) == ' ' || *(header+7) == '\0'));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -603,7 +587,7 @@ void MSeedRecord::read(std::istream &is) {
 
 	if ( reclen >= LEN ) {
 		if ( reclen <= (1 << 20) ) {
-			std::vector<char> rawrec(reclen);
+			std::vector<char> rawrec((size_t(reclen)));
 			memmove(&rawrec[0],header,LEN);
 			is.read(&rawrec[LEN],reclen-LEN);
 			if ( is.good() ) {
@@ -666,83 +650,83 @@ void MSeedRecord::write(std::ostream& out) {
 	memset(&blkt1001, 0, sizeof (struct blkt_1001_s));
 
 	if ( _timequal >= 0 )
-		blkt1001.timing_qual = _timequal <= 100 ? _timequal : 100;
+		blkt1001.timing_qual = _timequal <= 100 ? uint8_t(_timequal) : 100;
 
-	if ( !msr_addblockette(pmsr, (char *)&blkt1001, sizeof(struct blkt_1001_s), 1001, 0) ) {
+	if ( !msr_addblockette(pmsr, reinterpret_cast<char *>(&blkt1001), sizeof(struct blkt_1001_s), 1001, 0) ) {
 		throw LibmseedException("Error adding 1001 blockette");
 	}
 
-	if (_encodingFlag) {
-		switch (_encoding) {
-		case DE_ASCII: {
-			pmsr->encoding = DE_ASCII;
-			pmsr->sampletype = 'a';
-			data = ArrayFactory::Create(Array::CHAR,_data.get());
-			pmsr->datasamples = (char *)data->data();
-			break;
-		}
-		case DE_FLOAT32: {
-			pmsr->encoding = DE_FLOAT32;
-			pmsr->sampletype = 'f';
-			data = ArrayFactory::Create(Array::FLOAT,_data.get());
-			pmsr->datasamples = (float *)data->data();
-			break;
-		}
-		case DE_FLOAT64: {
-			pmsr->encoding = DE_FLOAT64;
-			pmsr->sampletype = 'd';
-			data = ArrayFactory::Create(Array::DOUBLE,_data.get());
-			pmsr->datasamples = (double *)data->data();
-			break;
-		}
-		case DE_INT16:
-		case DE_INT32:
-		case DE_STEIM1:
-		case DE_STEIM2: {
-			pmsr->encoding = _encoding;
-			pmsr->sampletype = 'i';
-			data = ArrayFactory::Create(Array::INT,_data.get());
-			pmsr->datasamples = (int *)data->data();
-			break;
-		}
-		default: {
-			SEISCOMP_WARNING("Unknown encoding type found %s(%c)! Switch to Integer-Steim2 encoding", ms_encodingstr(_encoding), _encoding);
-			pmsr->encoding = DE_STEIM2;
-			pmsr->sampletype = 'i';
-			data = ArrayFactory::Create(Array::INT,_data.get());
-			pmsr->datasamples = (int *)data->data();
-		}
+	if ( _encodingFlag ) {
+		switch ( _encoding ) {
+			case DE_ASCII: {
+				pmsr->encoding = DE_ASCII;
+				pmsr->sampletype = 'a';
+				data = ArrayFactory::Create(Array::CHAR, _data.get());
+				pmsr->datasamples = const_cast<void*>(data->data());
+				break;
+			}
+			case DE_FLOAT32: {
+				pmsr->encoding = DE_FLOAT32;
+				pmsr->sampletype = 'f';
+				data = ArrayFactory::Create(Array::FLOAT, _data.get());
+				pmsr->datasamples = const_cast<void*>(data->data());
+				break;
+			}
+			case DE_FLOAT64: {
+				pmsr->encoding = DE_FLOAT64;
+				pmsr->sampletype = 'd';
+				data = ArrayFactory::Create(Array::DOUBLE, _data.get());
+				pmsr->datasamples = const_cast<void*>(data->data());
+				break;
+			}
+			case DE_INT16:
+			case DE_INT32:
+			case DE_STEIM1:
+			case DE_STEIM2: {
+				pmsr->encoding = _encoding;
+				pmsr->sampletype = 'i';
+				data = ArrayFactory::Create(Array::INT, _data.get());
+				pmsr->datasamples = const_cast<void*>(data->data());
+				break;
+			}
+			default: {
+				SEISCOMP_WARNING("Unknown encoding type found %s(%c)! Switch to Integer-Steim2 encoding", ms_encodingstr(_encoding), _encoding);
+				pmsr->encoding = DE_STEIM2;
+				pmsr->sampletype = 'i';
+				data = ArrayFactory::Create(Array::INT, _data.get());
+				pmsr->datasamples = const_cast<void*>(data->data());
+			}
 		}
 	}
 	else {
-		switch (_data->dataType()) {
-		case Array::CHAR:
-			pmsr->encoding = DE_ASCII;
-			pmsr->sampletype = 'a';
-			pmsr->datasamples = (char *)_data->data();
-			break;
-		case Array::INT:
-			pmsr->encoding = DE_STEIM2;
-			pmsr->sampletype = 'i';
-			pmsr->datasamples = (int *)_data->data();
-			break;
-		case Array::FLOAT:
-			pmsr->encoding = DE_FLOAT32;
-			pmsr->sampletype = 'f';
-			pmsr->datasamples = (float *)_data->data();
-			break;
-		case Array::DOUBLE:
-			pmsr->encoding = DE_FLOAT64;
-			pmsr->sampletype = 'd';
-			pmsr->datasamples = (double *)_data->data();
-			break;
-		default: {
-			SEISCOMP_WARNING("Unknown data type %c! Switch to Integer-Steim2 encoding", _data->dataType());
-			pmsr->encoding = DE_STEIM2;
-			pmsr->sampletype = 'i';
-			data = ArrayFactory::Create(Array::INT,_data.get());
-			pmsr->datasamples = (int *)data->data();
-		}
+		switch ( _data->dataType() ) {
+			case Array::CHAR:
+				pmsr->encoding = DE_ASCII;
+				pmsr->sampletype = 'a';
+				pmsr->datasamples = const_cast<void*>(_data->data());
+				break;
+			case Array::INT:
+				pmsr->encoding = DE_STEIM2;
+				pmsr->sampletype = 'i';
+				pmsr->datasamples = const_cast<void*>(_data->data());
+				break;
+			case Array::FLOAT:
+				pmsr->encoding = DE_FLOAT32;
+				pmsr->sampletype = 'f';
+				pmsr->datasamples = const_cast<void*>(_data->data());
+				break;
+			case Array::DOUBLE:
+				pmsr->encoding = DE_FLOAT64;
+				pmsr->sampletype = 'd';
+				pmsr->datasamples = const_cast<void*>(_data->data());
+				break;
+			default: {
+				SEISCOMP_WARNING("Unknown data type %c! Switch to Integer-Steim2 encoding", _data->dataType());
+				pmsr->encoding = DE_STEIM2;
+				pmsr->sampletype = 'i';
+				data = ArrayFactory::Create(Array::INT,_data.get());
+				pmsr->datasamples = const_cast<void*>(data->data());
+			}
 		}
 	}
 
