@@ -31,6 +31,7 @@
 #include <seiscomp/logging/syslog.h>
 #endif
 
+#include <seiscomp/utils/certstore.h>
 #include <seiscomp/utils/files.h>
 #include <seiscomp/utils/replace.h>
 
@@ -354,11 +355,20 @@ bool Application::_handleCrash = false;
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Application::BaseSettings::BaseSettings()
+: enableDaemon(true)
+, certificateStoreDirectory("@ROOTDIR@/var/lib/certs")
+{}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::BaseSettings::accept(SettingsLinker &linker) {
 	linker
 	& cfg(crashHandler, "scripts.crashHandler")
 	& cfg(logging, "logging")
-
 	& cliAsPath(
 		alternativeConfigFile,
 		"Generic", "config-file",
@@ -373,7 +383,8 @@ void Application::BaseSettings::accept(SettingsLinker &linker) {
 		lockfile,
 		"Verbose", "lockfile,l",
 		"Path to lock file"
-	);
+	)
+	& cfg(certificateStoreDirectory, "certStore");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -398,7 +409,7 @@ Application::Application(int argc, char** argv) {
 	_logger = NULL;
 
 	_argc = argc;
-	_argv = new char*[argc];
+	_argv = new char*[size_t(argc)];
 
 	_arguments.clear();
 	for ( int i = 0; i < argc; ++i ) {
@@ -1305,6 +1316,14 @@ bool Application::init() {
 		}
 	}
 
+	if ( !_baseSettings.certificateStoreDirectory.empty() ) {
+		string absolutePath = Environment::Instance()->absolutePath(_baseSettings.certificateStoreDirectory);
+		if ( Util::pathExists(absolutePath) ) {
+			if ( !Util::CertificateStore::global().init(absolutePath) )
+				return false;
+		}
+	}
+
 	if ( _exitRequested )
 		return false;
 
@@ -1547,13 +1566,10 @@ bool Application::initLogging() {
 						default:
 						case 4:
 							_logger->subscribe(Logging::getComponentChannel((*it).c_str(), "debug"));
-							[[clang::fallthrough]];
 						case 3:
 							_logger->subscribe(Logging::getComponentChannel((*it).c_str(), "info"));
-							[[clang::fallthrough]];
 						case 2:
 							_logger->subscribe(Logging::getComponentChannel((*it).c_str(), "warning"));
-							[[clang::fallthrough]];
 						case 1:
 							_logger->subscribe(Logging::getComponentChannel((*it).c_str(), "error"));
 					}
@@ -1565,11 +1581,11 @@ bool Application::initLogging() {
 					default:
 					case 4:
 						_logger->subscribe(Logging::getGlobalChannel("debug"));
-					[[clang::fallthrough]]; case 3:
+					case 3:
 						_logger->subscribe(Logging::getGlobalChannel("info"));
-					[[clang::fallthrough]]; case 2:
+					case 2:
 						_logger->subscribe(Logging::getGlobalChannel("warning"));
-					[[clang::fallthrough]]; case 1:
+					case 1:
 						_logger->subscribe(Logging::getGlobalChannel("error"));
 				}
 			}

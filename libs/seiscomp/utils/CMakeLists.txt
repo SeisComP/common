@@ -1,4 +1,5 @@
 SET(UTILS_SOURCES
+	certstore.cpp
 	timer.cpp
 	base64.cpp
 	datetime.cpp
@@ -15,7 +16,8 @@ SET(UTILS_SOURCES
 
 SET(UTILS_HEADERS
 	base64.h
-	base64.ipp 
+	base64.ipp
+	certstore.h
 	timer.h
 	datetime.h
 	replace.h

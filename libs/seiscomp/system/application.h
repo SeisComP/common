@@ -1132,15 +1132,14 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 
 
 		struct BaseSettings : AbstractSettings {
-			BaseSettings()
-			: enableDaemon(true)
-			{}
+			BaseSettings();
 
 			std::string alternativeConfigFile;
 			bool        enableDaemon;
 			std::string crashHandler;
 			std::string lockfile;
 			std::string plugins;
+			std::string certificateStoreDirectory;
 
 			struct Logging {
 				Logging()

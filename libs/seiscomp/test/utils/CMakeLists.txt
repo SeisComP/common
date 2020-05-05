@@ -1,4 +1,5 @@
 SET(TESTS
+	certificate_store.cpp
 	units.cpp
 	utils_misc.cpp
 	url.cpp
