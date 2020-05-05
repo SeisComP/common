@@ -146,6 +146,7 @@ struct Converter<T, 1> {
 
 template <typename T>
 inline bool convertFromString(T &value, const std::string &str) {
+	if ( str.empty() ) return false;
 	return Converter<T, std::is_unsigned<T>::value>::convert(value, str);
 }
 
