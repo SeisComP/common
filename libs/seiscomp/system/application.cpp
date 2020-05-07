@@ -1214,13 +1214,13 @@ bool Application::init() {
 
 	if ( commandline().hasOption("help") ) {
 		printUsage();
-		exit(-1);
+		exit(0);
 		return false;
 	}
 
 	if ( commandline().hasOption("version") ) {
 		printVersion();
-		exit(-1);
+		exit(0);
 		return false;
 	}
 
@@ -1245,13 +1245,13 @@ bool Application::init() {
 	if ( !_settingsLinker ) {
 		std::cerr << _settingsLinker.lastError() << std::endl;
 		cerr << "Try --help for help" << endl;
-		exit(-1);
+		exit(1);
 		return false;
 	}
 
 	if ( !validateParameters() ) {
 		cerr << "Try --help for help" << endl;
-		exit(-1);
+		exit(2);
 		return false;
 	}
 
@@ -1269,13 +1269,13 @@ bool Application::init() {
 
 	if ( commandline().hasOption("print-config-vars") ) {
 		printConfigVariables();
-		exit(-1);
+		exit(0);
 		return false;
 	}
 
 	if ( commandline().hasOption("validate-schema-params") ) {
 		validateSchemaParameters();
-		exit(-1);
+		exit(0);
 		return false;
 	}
 
@@ -1285,19 +1285,19 @@ bool Application::init() {
 		for ( std::list<AbstractSettings*>::iterator it = _settings.begin();
 		      it != _settings.end(); ++it )
 			(*it)->accept(_settingsLinker);
-		this->exit(-1);
+		exit(0);
 		return false;
 	}
 
 	if ( !handlePreFork() ) {
-		exit(-1);
+		exit(3);
 		return false;
 	}
 
 	if ( commandline().hasOption("daemon") ) {
 		if ( !forkProcess() ) {
 			cerr << "FATAL: Process forking failed" << endl;
-			exit(-1);
+			exit(4);
 			return false;
 		}
 	}
@@ -1306,12 +1306,12 @@ bool Application::init() {
 		int r = acquireLockfile(_baseSettings.lockfile);
 		if ( r < 0 ) {
 			// Error should have been reported by acquireLockfile()
-			exit(-1);
+			exit(5);
 			return false;
 		}
 		else if ( r == 0 ) {
 			SEISCOMP_ERROR("Already running");
-			exit(-1);
+			exit(6);
 			return false;
 		}
 	}
