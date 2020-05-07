@@ -245,7 +245,7 @@ Queue::Result Queue::push(Client *sender, Message *msg, int packetSize) {
 	  || _messageProcessors.empty() ) {
 		// 1. Transient messages are published without processing, they bypass
 		//    the queue and all sequence numbers.
-		// 2. If not processors are configured then no processing must be
+		// 2. If no processors are configured then processing must not be
 		//    scheduled.
 		publish(sender, msg);
 	}
