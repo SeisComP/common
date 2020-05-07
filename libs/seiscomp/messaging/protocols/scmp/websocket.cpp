@@ -267,8 +267,6 @@ Result WebsocketConnection::connect(const char *address,
 	boost::mutex::scoped_lock lread(_readMutex);
 	boost::mutex::scoped_lock lwrite(_writeMutex);
 
-	SEISCOMP_INFO("scmp://%s", address);
-
 	_state = State();
 	_select.clear();
 	_groups.clear();
