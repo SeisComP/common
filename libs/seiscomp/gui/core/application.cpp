@@ -206,11 +206,6 @@ class SplashScreen : public QSplashScreen {
 		SplashScreen(const QPixmap & pixmap = QPixmap(), Qt::WindowFlags f = 0)
 		: QSplashScreen(pixmap, f), updated(false) {}
 
-		void update() {
-			QSplashScreen::update();
-			updated = false;
-		}
-
 		void setMessage(const QString &str) {
 			message = str;
 			update();
@@ -992,6 +987,7 @@ bool Application::validateParameters() {
 		if ( _mainWidget )
 			_splash->finish(_mainWidget);
 
+		static_cast<SplashScreen*>(_splash)->updated = false;
 		_splash->show();
 		while ( !static_cast<SplashScreen*>(_splash)->updated )
 			_app->processEvents();
@@ -1261,6 +1257,7 @@ void Application::done() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::showMessage(const char* msg) {
 	if ( _splash ) {
+		static_cast<SplashScreen*>(_splash)->updated = false;
 		static_cast<SplashScreen*>(_splash)->setMessage(msg);
 		while ( !static_cast<SplashScreen*>(_splash)->updated )
 			_app->processEvents();
