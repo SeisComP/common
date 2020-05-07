@@ -55,7 +55,7 @@ void Endpoint::update() {
 		if ( incoming ) {
 			incoming->setNonBlocking(true);
 			Session *session = accept(incoming);
-			if ( session == NULL ) {
+			if ( !session ) {
 				incoming->close();
 				delete incoming;
 			}

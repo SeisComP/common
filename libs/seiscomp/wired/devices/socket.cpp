@@ -106,6 +106,13 @@ void SSL_static_cleanup() {
 }
 
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+void SSL_CTX_up_ref(SSL_CTX *ctx) {
+	CRYPTO_add(&ctx->references, 1, CRYPTO_LOCK_SSL_CTX);
+}
+
+
+#endif
 struct SSLInitializer {
 	SSLInitializer() {
 		SSL_library_init();
@@ -968,7 +975,10 @@ SSLSocket::SSLSocket() : _ssl(nullptr), _ctx(nullptr) {}
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SSLSocket::SSLSocket(SSL_CTX *ctx) : _ssl(nullptr), _ctx(ctx) {}
+SSLSocket::SSLSocket(SSL_CTX *ctx, bool shared)
+: _ssl(nullptr), _ctx(ctx) {
+	if ( _ctx && shared ) SSL_CTX_up_ref(_ctx);
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -978,6 +988,53 @@ SSLSocket::SSLSocket(SSL_CTX *ctx) : _ssl(nullptr), _ctx(ctx) {}
 SSLSocket::~SSLSocket() {
 	close();
 	cleanUp();
+	if ( _ctx ) SSL_CTX_free(_ctx);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SSL_CTX *SSLSocket::createClientContext(const char *pemCert, const char *pemKey) {
+	// Initialize ciphers and digests
+	SSL_library_init();
+	// Load human readable error reporting
+	SSL_load_error_strings();
+	ERR_load_crypto_strings();
+	ERR_load_SSL_strings();
+	// Load available cipher and digest algorithms
+	OpenSSL_add_all_algorithms();
+
+	SSL_CTX *ctx(SSL_CTX_new(SSLv23_client_method()));
+
+	// Set the server certificate to be used
+	SEISCOMP_DEBUG("Loading client certificate %s", pemCert);
+	if ( !SSL_CTX_use_certificate_file(ctx, pemCert, SSL_FILETYPE_PEM) ) {
+		SEISCOMP_ERROR("Loading client certificate failed: %s", pemCert);
+		ERR_print_errors_fp(stderr);
+		SSL_CTX_free(ctx);
+		return nullptr;
+	}
+
+	// Set the private key to be used
+	SEISCOMP_DEBUG("Loading private key %s", pemKey);
+	if ( SSL_CTX_use_PrivateKey_file(ctx, pemKey, SSL_FILETYPE_PEM) <= 0 ) {
+		SEISCOMP_ERROR("Loading private key failed: %s", pemKey);
+		ERR_print_errors_fp(stderr);
+		SSL_CTX_free(ctx);
+		return nullptr;
+	}
+
+	// Verify that the private key matches the server certificate
+	SEISCOMP_DEBUG("Verifying keys...");
+	if ( !SSL_CTX_check_private_key(ctx)) {
+		SEISCOMP_ERROR("Private key check failed");
+		SSL_CTX_free(ctx);
+		return nullptr;
+	}
+
+	return ctx;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1243,8 +1300,8 @@ ssize_t SSLSocket::read(char *data, size_t len) {
 Socket::Status SSLSocket::connect(const std::string &hostname, port_t port) {
 	cleanUp();
 
-	_ctx = SSL_CTX_new(SSLv23_client_method());
-	if ( _ctx == nullptr ) {
+	if ( !_ctx ) _ctx = SSL_CTX_new(SSLv23_client_method());
+	if ( !_ctx ) {
 		SEISCOMP_DEBUG("Invalid SSL context");
 		return ConnectError;
 	}
@@ -1283,8 +1340,8 @@ Socket::Status SSLSocket::connect(const std::string &hostname, port_t port) {
 Socket::Status SSLSocket::connectV6(const std::string &hostname, port_t port) {
 	cleanUp();
 
-	_ctx = SSL_CTX_new(SSLv23_client_method());
-	if ( _ctx == nullptr ) {
+	if ( !_ctx ) _ctx = SSL_CTX_new(SSLv23_client_method());
+	if ( !_ctx ) {
 		SEISCOMP_DEBUG("Invalid SSL context");
 		return ConnectError;
 	}
@@ -1370,11 +1427,6 @@ void SSLSocket::cleanUp() {
 	if ( _ssl ) {
 		SSL_free(_ssl);
 		_ssl = nullptr;
-	}
-
-	if ( _ctx ) {
-		SSL_CTX_free(_ctx);
-		_ctx = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

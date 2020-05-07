@@ -251,7 +251,17 @@ DEFINE_SMARTPOINTER(SSLSocket);
 class SSLSocket : public Socket {
 	public:
 		SSLSocket();
-		SSLSocket(SSL_CTX *ctx);
+		/**
+		 * @brief Creates an SSL socket with an SSL context. The socket will
+		 *        then re-use this context and not create a default one.
+		 * @param ctx The SSL context pointer.
+		 * @param shared If true then the reference count of the SSL context
+		 *               will be increased. That might be important if the
+		 *               same context is shared between many SSL sockets.
+		 *               The caller must then call SSL_CTX_free on the passed
+		 *               context to release the refence count again.
+		 */
+		SSLSocket(SSL_CTX *ctx, bool shared = false);
 		~SSLSocket();
 
 	public:
@@ -276,6 +286,7 @@ class SSLSocket : public Socket {
 
 		X509 *peerCertificate();
 
+		static SSL_CTX *createClientContext(const char *pemCert, const char *pemKey);
 		static SSL_CTX *createServerContext(const char *pemCert, const char *pemKey);
 
 	private:
