@@ -8,7 +8,7 @@
 				if a queues group list is unset (note: empty is not unset).
 				</description>
 			</parameter>
-			<parameter name="queues" type="list:string" default="production, testing, devel">
+			<parameter name="queues" type="list:string" default="production, playback">
 				<description>
 				The enabled messaging queues. The profile names are the final
 				queue names.

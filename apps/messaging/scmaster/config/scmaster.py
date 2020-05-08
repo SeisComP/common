@@ -2,17 +2,25 @@ from __future__ import print_function
 
 import os
 import sys
-import time
 import subprocess
-import seiscomp.kernel, seiscomp.config
-import seiscomp.system
+from seiscomp import config, kernel, system
+
+#------------------------------------------------------------------------------
+# Python version depended string conversion
+if sys.version_info[0] < 3:
+    py3bstr = str
+    py3ustr = str
+
+else:
+    py3bstr = lambda s: s.encode('utf-8')
+    py3ustr = lambda s: s.decode('utf-8', 'replace')
 
 
 def check_output(cmd):
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, shell=True)
     out = proc.communicate()
-    return [out[0], out[1], proc.returncode]
+    return [py3ustr(out[0]), py3ustr(out[1]), proc.returncode]
 
 
 def createMYSQLDB(db, rwuser, rwpwd, rouser, ropwd, rwhost, rootpwd, drop, schemapath):
@@ -92,8 +100,8 @@ def addEntry(cfg, param, item):
     # Adds an item to a parameter list
     try:
         items = cfg.getStrings(param)
-    except:
-        items = seiscomp.config.VectorStr()
+    except ValueError:
+        items = config.VectorStr()
 
     if not item in items:
         items.push_back(item)
@@ -109,15 +117,15 @@ def removeEntry(cfg, param, item):
                 items.erase(items.begin() + i)
                 cfg.setStrings(param, items)
                 break
-    except:
+    except ValueError:
         # No parameter set, nothing to do
         pass
 
 
 # The kernel module which starts scmaster if enabled
-class Module(seiscomp.kernel.CoreModule):
+class Module(kernel.CoreModule):
     def __init__(self, env):
-        seiscomp.kernel.CoreModule.__init__(
+        kernel.CoreModule.__init__(
             self, env, env.moduleName(__file__))
         # High priority
         self.order = -1
@@ -128,69 +136,70 @@ class Module(seiscomp.kernel.CoreModule):
 
         try:
             self.messaging = self.env.getBool("messaging.enable")
-        except:
+        except ValueError:
             pass
         try:
             self.messagingBind = self.env.getString("messaging.bind")
-        except:
+        except ValueError:
             pass
 
     # Add master port
     def _get_start_params(self):
         if self.messagingBind:
-            return seiscomp.kernel.Module._get_start_params(self) + " --bind %s" % self.messagingBind
-        else:
-            return seiscomp.kernel.Module._get_start_params(self)
+            return kernel.Module._get_start_params(self) + \
+                   " --bind %s" % self.messagingBind
+
+        return kernel.Module._get_start_params(self)
 
     def start(self):
         if not self.messaging:
             print("[kernel] %s is disabled by config" % self.name)
             return 0
 
-        appConfig = seiscomp.system.Environment.Instance().appConfigFileName(self.name)
-        localConfig = seiscomp.system.Environment.Instance().configFileName(self.name)
+        appConfig = system.Environment.Instance().appConfigFileName(self.name)
+        localConfig = system.Environment.Instance().configFileName(self.name)
         lockFile = os.path.join(self.env.SEISCOMP_ROOT, self.env.lockFile(self.name))
         try:
             needRestart = False
             started = os.path.getmtime(lockFile)
             try:
                 needRestart = started < os.path.getmtime(appConfig)
-            except:
+            except Exception:
                 pass
             try:
                 needRestart = started < os.path.getmtime(localConfig)
-            except:
+            except Exception:
                 pass
 
             if needRestart:
                 self.stop()
-        except:
+        except Exception:
             pass
 
-        seiscomp.kernel.CoreModule.start(self)
+        return kernel.CoreModule.start(self)
 
     def check(self):
         if not self.messaging:
             print("[kernel] %s is disabled by config" % self.name)
             return 0
 
-        return seiscomp.kernel.CoreModule.check(self)
+        return kernel.CoreModule.check(self)
 
     def status(self, shouldRun):
         if not self.messaging:
             shouldRun = False
-        return seiscomp.kernel.CoreModule.status(self, shouldRun)
+        return kernel.CoreModule.status(self, shouldRun)
 
     def setup(self, setup_config):
         cfgfile = os.path.join(self.env.SEISCOMP_ROOT,
                                "etc", self.name + ".cfg")
         schemapath = os.path.join(self.env.SEISCOMP_ROOT, "share", "db")
 
-        cfg = seiscomp.config.Config()
+        cfg = config.Config()
         cfg.readConfig(cfgfile)
         try:
             dbenable = setup_config.getBool(self.name + ".database.enable")
-        except:
+        except ValueError:
             sys.stderr.write("  - database.enable not set, ignoring setup\n")
             return 0
 
@@ -207,7 +216,7 @@ class Module(seiscomp.kernel.CoreModule):
             try:
                 dbBackend = setup_config.getString(
                     self.name + ".database.enable.backend")
-            except:
+            except ValueError:
                 sys.stderr.write(
                     "  - database backend not set, ignoring setup\n")
                 return 1
@@ -217,14 +226,14 @@ class Module(seiscomp.kernel.CoreModule):
 
             try:
                 db = setup_config.getString(self.name + ".database.enable.db")
-            except:
+            except ValueError:
                 sys.stderr.write("  - database name not set, ignoring setup\n")
                 return 1
 
             try:
                 rwhost = setup_config.getString(
                     self.name + ".database.enable.rwhost")
-            except:
+            except ValueError:
                 sys.stderr.write(
                     "  - database host (rw) not set, ignoring setup\n")
                 return 1
@@ -232,7 +241,7 @@ class Module(seiscomp.kernel.CoreModule):
             try:
                 rwuser = setup_config.getString(
                     self.name + ".database.enable.rwuser")
-            except:
+            except ValueError:
                 sys.stderr.write(
                     "  - database user (rw) not set, ignoring setup\n")
                 return 1
@@ -240,7 +249,7 @@ class Module(seiscomp.kernel.CoreModule):
             try:
                 rwpwd = setup_config.getString(
                     self.name + ".database.enable.rwpwd")
-            except:
+            except ValueError:
                 sys.stderr.write(
                     "  - database password (rw) not set, ignoring setup\n")
                 return 1
@@ -248,7 +257,7 @@ class Module(seiscomp.kernel.CoreModule):
             try:
                 rohost = setup_config.getString(
                     self.name + ".database.enable.rohost")
-            except:
+            except ValueError:
                 sys.stderr.write(
                     "  - database host (ro) not set, ignoring setup\n")
                 return 1
@@ -256,7 +265,7 @@ class Module(seiscomp.kernel.CoreModule):
             try:
                 rouser = setup_config.getString(
                     self.name + ".database.enable.rouser")
-            except:
+            except ValueError:
                 sys.stderr.write(
                     "  - database user (ro) not set, ignoring setup\n")
                 return 1
@@ -264,7 +273,7 @@ class Module(seiscomp.kernel.CoreModule):
             try:
                 ropwd = setup_config.getString(
                     self.name + ".database.enable.ropwd")
-            except:
+            except ValueError:
                 sys.stderr.write(
                     "  - database password (ro) not set, ignoring setup\n")
                 return 1
@@ -273,24 +282,24 @@ class Module(seiscomp.kernel.CoreModule):
                 try:
                     create = setup_config.getBool(
                         self.name + ".database.enable.backend.create")
-                except:
+                except ValueError:
                     create = False
                 try:
                     drop = setup_config.getBool(
                         self.name + ".database.enable.backend.create.drop")
-                except:
+                except ValueError:
                     drop = False
                 try:
                     rootpwd = setup_config.getString(
                         self.name + ".database.enable.backend.create.rootpw")
-                except:
+                except ValueError:
                     rootpwd = ""
 
                 if create:
-                    if not createMYSQLDB(db, rwuser, rwpwd, rouser, ropwd, rwhost, rootpwd, drop, schemapath):
+                    if not createMYSQLDB(db, rwuser, rwpwd, rouser, ropwd,
+                                         rwhost, rootpwd, drop, schemapath):
                         sys.stdout.write("  - Failed to setup database\n")
                         return 1
-                    #sys.stderr.write("Sorry, creation of the database is currently not supported\n")
 
             addEntry(cfg, "queues.production.plugins", "dbstore")
             addEntry(cfg, "queues.production.processors.messages", "dbstore")
@@ -308,7 +317,7 @@ class Module(seiscomp.kernel.CoreModule):
         # that all connected local clients can handle the database backend
         if dbBackend:
             cfgfile = os.path.join(self.env.SEISCOMP_ROOT, "etc", "global.cfg")
-            cfg = seiscomp.config.Config()
+            cfg = config.Config()
             cfg.readConfig(cfgfile)
             cfg.setString("core.plugins", "db" + dbBackend)
             cfg.writeConfig()
@@ -318,39 +327,58 @@ class Module(seiscomp.kernel.CoreModule):
     def updateConfig(self):
         cfgfile = os.path.join(self.env.SEISCOMP_ROOT,
                                "etc", self.name + ".cfg")
-        schemapath = os.path.join(self.env.SEISCOMP_ROOT, "share", "db")
 
-        cfg = seiscomp.config.Config()
+        cfg = config.Config()
         cfg.readConfig(cfgfile)
-        try:
-            dbenable = "dbplugin" in cfg.getStrings("plugins")
-        except:
-            return 0
-
-        if not dbenable:
-            return 0
 
         try:
-            backend = cfg.getString("plugins.dbPlugin.dbDriver")
-        except:
-            print >> sys.stderr, "WARNING: DB plugin activated but no backend configured"
-            return 0
+            queues = cfg.getStrings("queues")
+        except ValueError:
+            queues = []
 
-        if backend != "mysql" and backend != "postgresql":
-            print >> sys.stderr, "WARNING: Only MySQL and PostgreSQL migrations are supported right now. Please check and "\
-                                 "upgrade the database schema version yourselves."
-            return 0
+        # iterate through all queues and check DB schema version if message
+        # processor dbstore is present
+        for queue in queues:
+            try:
+                msgProcs = cfg.getStrings("queues.{}.processors.messages" \
+                                          .format(queue))
+                if "dbstore" in msgProcs and not self.checkDBStore(cfg, queue):
+                    return 1
+            except ValueError:
+                pass
+
+        return 0
+
+    def checkDBStore(self, cfg, queue):
+        prefix = "queues.{}.processors.messages.dbstore".format(queue)
+
+        print("INFO: checking DB schema version of queue: {}".format(queue),
+              file=sys.stderr)
+
+        try:
+            backend = cfg.getString("{}.driver".format(prefix))
+        except ValueError:
+            print("WARNING: dbstore message processor activated but no " \
+                  "backend configured", file=sys.stderr)
+            return True
+
+        if backend not in ("mysql", "postgresql"):
+            print("WARNING: Only MySQL and PostgreSQL migrations are " \
+                  "supported right now. Please check and upgrade the " \
+                  "database schema version yourselves.", file=sys.stderr)
+            return True
 
         sys.stderr.write("  * check database write access ... ")
         sys.stderr.flush()
 
         # 1. Parse connection
         try:
-            params = cfg.getString("plugins.dbPlugin.writeConnection")
-        except:
-            print >> sys.stderr, "failed"
-            print >> sys.stderr, "WARNING: DB plugin activated but not writeConnection configured"
-            return 0
+            params = cfg.getString("{}.write".format(prefix))
+        except ValueError:
+            print("failed", file=sys.stderr)
+            print("WARNING: dbstore message processor activated but no " \
+                  "write connection configured", file=sys.stderr)
+            return True
 
         user = 'sysop'
         pwd = 'sysop'
@@ -369,9 +397,10 @@ class Module(seiscomp.kernel.CoreModule):
                 user = tmp[0]
                 pwd = tmp[1]
             else:
-                print >> sys.stderr, "failed"
-                print >> sys.stderr, "WARNING: Invalid scmaster.cfg:plugins.dbPlugin.writeConnection, cannot check schema version"
-                return 0
+                print("failed", file=sys.stderr)
+                print("WARNING: Invalid scmaster.cfg:{}.write, cannot check " \
+                      "schema version".format(prefix), file=sys.stderr)
+                return True
 
         tmp = params.split('/')
         if len(tmp) > 1:
@@ -383,7 +412,6 @@ class Module(seiscomp.kernel.CoreModule):
         db = db.split('?')[0]
 
         # 2. Try to login
-
         if backend == "mysql":
             cmd = "mysql -u \"%s\" -h \"%s\" -D\"%s\" --skip-column-names" % (
                 user, host, db)
@@ -398,34 +426,36 @@ class Module(seiscomp.kernel.CoreModule):
 
         out = check_output(cmd)
         if out[2] != 0:
-            print >> sys.stderr, "failed"
-            print >> sys.stderr, "WARNING: mysql returned with error:"
-            print >> sys.stderr, out[1].strip()
-            return 0
+            print("failed", file=sys.stderr)
+            print("WARNING: mysql returned with error:", file=sys.stderr)
+            print(out[1].strip(), file=sys.stderr)
+            return True
 
-        print >> sys.stderr, "OK"
+        print("OK", file=sys.stderr)
 
         version = out[0].strip()
-        print >> sys.stderr, "  * database schema version is %s" % version
+        print("  * database schema version is %s" % version, file=sys.stderr)
 
         try:
             vmaj, vmin = [int(t) for t in version.split('.')]
-        except:
-            print >> sys.stderr, "WARNING: wrong version format: expected MAJOR.MINOR"
-            return 0
+        except ValueError:
+            print("WARNING: wrong version format: expected MAJOR.MINOR",
+                  file=sys.stderr)
+            return True
 
         strictVersionCheck = True
         try:
-            strictVersionCheck = cfg.getBool(
-                "plugins.dbPlugin.strictVersionCheck")
-        except:
+            strictVersionCheck = cfg.getBool("{}.strictVersionCheck" \
+                                             .format(prefix))
+        except ValueError:
             pass
 
         if not strictVersionCheck:
-            print >> sys.stderr, "  * database version check is disabled"
-            return 0
+            print("  * database version check is disabled", file=sys.stderr)
+            return True
 
-        migrations = os.path.join(schemapath, "migrations", backend)
+        migrations = os.path.join(self.env.SEISCOMP_ROOT, "share", "db",
+                                  "migrations", backend)
         migration_paths = {}
 
         vcurrmaj = 0
@@ -438,17 +468,17 @@ class Module(seiscomp.kernel.CoreModule):
                     continue
                 try:
                     vfrom, vto = name.split('_to_')
-                except:
+                except ValueError:
                     continue
 
                 try:
                     vfrommaj, vfrommin = [int(t) for t in vfrom.split('_')]
-                except:
+                except ValueError:
                     continue
 
                 try:
                     vtomaj, vtomin = [int(t) for t in vto.split('_')]
-                except:
+                except ValueError:
                     continue
 
                 migration_paths[(vfrommaj, vfrommin)] = (vtomaj, vtomin)
@@ -457,23 +487,24 @@ class Module(seiscomp.kernel.CoreModule):
                     vcurrmaj = vtomaj
                     vcurrmin = vtomin
 
-        print >> sys.stderr, "  * last migration version is %d.%d" % (
-            vcurrmaj, vcurrmin)
+        print("  * last migration version is %d.%d" % (vcurrmaj, vcurrmin),
+              file=sys.stderr)
 
         if vcurrmaj == vmaj and vcurrmin == vmin:
-            print >> sys.stderr, "  * schema up-to-date"
-            return 0
+            print("  * schema up-to-date", file=sys.stderr)
+            return True
 
-        if not migration_paths.has_key((vmaj, vmin)):
-            print >> sys.stderr, "  * no migrations found"
-            return 0
+        if (vmaj, vmin) not in migration_paths:
+            print("  * no migrations found", file=sys.stderr)
+            return True
 
-        print >> sys.stderr, "  * migration to the current version is required. apply the following"
-        print >> sys.stderr, "    scripts in exactly the given order:"
-        while migration_paths.has_key((vmaj, vmin)):
+        print("  * migration to the current version is required. apply the " \
+              "following", file=sys.stderr)
+        print("    scripts in exactly the given order:", file=sys.stderr)
+        while (vmaj, vmin) in migration_paths:
             (vtomaj, vtomin) = migration_paths[(vmaj, vmin)]
-            print >> sys.stderr, "    * %s" % os.path.join(
-                migrations, "%d_%d_to_%d_%d.sql" % (vmaj, vmin, vtomaj, vtomin))
+            fname = "%d_%d_to_%d_%d.sql" % (vmaj, vmin, vtomaj, vtomin)
+            print("    * %s" % os.path.join(migrations, fname), file=sys.stderr)
             (vmaj, vmin) = (vtomaj, vtomin)
 
-        return 1
+        return False
