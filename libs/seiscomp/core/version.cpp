@@ -56,7 +56,7 @@ FrameworkVersion CurrentVersion;
 FrameworkVersion::FrameworkVersion()
 : _version(SEISCOMP_VERSION)
 , _api(SC_API_VERSION)
-, _release(SEISCOMP_RELEASE_NAME) {}
+, _release(SEISCOMP_RELEASE_BRANCH) {}
 
 
 std::string FrameworkVersion::toString() const {
