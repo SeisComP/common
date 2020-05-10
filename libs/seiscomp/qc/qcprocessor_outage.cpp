@@ -61,7 +61,7 @@ bool QcProcessorOutage::setState(const Record *record, const DoubleArray &data) 
 				return true;
 			}
 		}
-		catch (Core::ValueException) {}
+		catch (Core::ValueException &) {}
 	}
 
 	return false;
