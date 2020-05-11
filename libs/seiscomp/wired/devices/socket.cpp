@@ -950,24 +950,6 @@ ssize_t Socket::read(char *data, size_t len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const unsigned char *Socket::sessionID() const {
-	return nullptr;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-unsigned int Socket::sessionIDLength() const {
-	return 0;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SSLSocket::SSLSocket() : _ssl(nullptr), _ctx(nullptr) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1377,45 +1359,6 @@ Socket::Status SSLSocket::connectV6(const std::string &hostname, port_t port) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SSLSocket::close() {
 	Socket::close();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const unsigned char *SSLSocket::sessionID() const {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-	return _ssl?_ssl->session->session_id:nullptr;
-#else
-	return _ssl?SSL_SESSION_get0_id_context(SSL_get0_session(_ssl), nullptr):nullptr;
-#endif
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-unsigned int SSLSocket::sessionIDLength() const {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-	return _ssl?_ssl->session->session_id_length:0;
-#else
-	unsigned int len;
-	if ( !_ssl ) return 0;
-	SSL_SESSION_get0_id_context(SSL_get0_session(_ssl), &len);
-	return len;
-#endif
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-X509 *SSLSocket::peerCertificate() {
-	if ( _ssl == nullptr ) return nullptr;
-	return SSL_get_peer_certificate(_ssl);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

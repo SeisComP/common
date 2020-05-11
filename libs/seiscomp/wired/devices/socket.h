@@ -204,11 +204,6 @@ class SC_SYSTEM_CORE_API Socket : public Device {
 		Status listen(int backlog = 10);
 		virtual Socket *accept();
 
-		//! Returns the underlying session id between client and server.
-		//! Currently this is only maintained by a SSL connection.
-		virtual const unsigned char *sessionID() const;
-		virtual unsigned int sessionIDLength() const;
-
 		count_t rx() const { return _bytesReceived; }
 		count_t tx() const { return _bytesSent; }
 
@@ -278,13 +273,8 @@ class SSLSocket : public Socket {
 		Status connect(const std::string &hostname, port_t port) override;
 		Status connectV6(const std::string &hostname, port_t port) override;
 
-		const unsigned char *sessionID() const override;
-		unsigned int sessionIDLength() const override;
-
 		SSL_CTX *sslContext() const;
 		SSL *ssl() const;
-
-		X509 *peerCertificate();
 
 		static SSL_CTX *createClientContext(const char *pemCert, const char *pemKey);
 		static SSL_CTX *createServerContext(const char *pemCert, const char *pemKey);
