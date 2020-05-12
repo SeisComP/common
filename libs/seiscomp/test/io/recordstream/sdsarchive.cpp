@@ -138,3 +138,52 @@ BOOST_AUTO_TEST_CASE(READ_GAPPY_ARCHIVE) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(READ_GAPPY_ARCHIVE_EMPTY) {
+	SDSArchive sds("gappy-archive");
+
+	// The gap is between 01:20:00 and 03:00:00
+	Time startTime(2020,5,1,2,0,0,0);
+	Time endTime(2020,5,1,2,30,0,0);
+	sds.addStream("II", "AAK", "10", "BHZ", startTime, endTime);
+
+	RingBuffer buffer(0);
+	RecordPtr rec;
+
+	while ( (rec = sds.next()) )
+		buffer.push_back(rec);
+
+	RecordPtr crec = buffer.contiguousRecord<double>();
+	BOOST_REQUIRE(!crec);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(READ_GAPPY_ARCHIVE_EMPTY2) {
+	SDSArchive sds("gappy-archive");
+
+	// The gap is between 01:20:00 and 03:00:00
+	Time startTime(2017,8,8,4,32,53,2800);
+	Time endTime(2017,8,8,4,39,53,2800);
+	sds.addStream("IV", "MSAG", "", "HNZ", startTime, endTime);
+
+	RingBuffer buffer(0);
+	RecordPtr rec;
+
+	while ( (rec = sds.next()) )
+		buffer.push_back(rec);
+
+	RecordPtr crec = buffer.contiguousRecord<double>();
+	BOOST_CHECK(!crec);
+	if ( crec ) {
+		SEISCOMP_DEBUG("%s ~ %s", crec->startTime().iso().c_str(), crec->endTime().iso().c_str());
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
