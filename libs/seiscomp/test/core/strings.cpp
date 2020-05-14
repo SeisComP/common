@@ -174,6 +174,22 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		BOOST_CHECK(fromString(value, "1.0") && fabs(value - 1.0f) < 0.000001f);
 		BOOST_CHECK(fromString(value, "-1.0") && fabs(value + 1.0f) < 0.000001f);
 		BOOST_CHECK(!fromString(value, "abc"));
+		BOOST_CHECK(!fromString(value, "1.0e-40"));
+		BOOST_CHECK(errno == ERANGE);
+		BOOST_CHECK(!fromString(value, "-1.0e-40"));
+		BOOST_CHECK(errno == ERANGE);
+		BOOST_CHECK(!fromString(value, "1.0e+40"));
+		BOOST_CHECK(errno == ERANGE);
+		BOOST_CHECK(!fromString(value, "-1.0e+40"));
+		BOOST_CHECK(errno == ERANGE);
+		BOOST_CHECK(fromString(value, "1.0E-37"));
+		BOOST_CHECK(fromString(value, "1.0e+37"));
+		BOOST_CHECK(fromString(value, "-1.0E-37"));
+		BOOST_CHECK(fromString(value, "-1.0e+37"));
+		BOOST_CHECK(fromString(value, "inf"));
+		BOOST_CHECK(value == std::numeric_limits<float>::infinity());
+		BOOST_CHECK(fromString(value, "-inf"));
+		BOOST_CHECK(value == -std::numeric_limits<float>::infinity());
 	}
 
 	{
@@ -181,6 +197,10 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		BOOST_CHECK(fromString(value, "1.0") && fabs(value - 1.0) < 0.000001);
 		BOOST_CHECK(fromString(value, "-1.0") && fabs(value + 1.0) < 0.000001);
 		BOOST_CHECK(!fromString(value, "abc"));
+		BOOST_CHECK(fromString(value, "inf"));
+		BOOST_CHECK(value == std::numeric_limits<double>::infinity());
+		BOOST_CHECK(fromString(value, "-inf"));
+		BOOST_CHECK(value == -std::numeric_limits<double>::infinity());
 	}
 }
 

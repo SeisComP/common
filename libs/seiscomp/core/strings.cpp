@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <cerrno>
+#include <cmath>
 #include <type_traits>
 
 
@@ -214,10 +215,13 @@ bool fromString(float &value, const std::string &str) {
 	if ( endptr && (&str[0] + str.size() != endptr) )
 		return false;
 
-	if ( retval < -static_cast<double>(std::numeric_limits<float>::max())
-	  || retval > static_cast<double>(std::numeric_limits<float>::max()) ) {
-		errno = ERANGE;
-		return false;
+	if ( std::isnormal(retval) ) {
+		double aretval = std::fabs(retval);
+		if ( aretval < static_cast<double>(std::numeric_limits<float>::min())
+		  || aretval > static_cast<double>(std::numeric_limits<float>::max()) ) {
+			errno = ERANGE;
+			return false;
+		}
 	}
 
 	value = static_cast<float>(retval);
