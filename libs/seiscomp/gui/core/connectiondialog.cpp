@@ -271,7 +271,7 @@ int ConnectionDialog::exec() {
 bool ConnectionDialog::connectToMessaging() {
 	if ( !_messagingEnabled || !_connection ) return false;
 
-	SEISCOMP_DEBUG("Settings up connection state in settings dialog");
+	SEISCOMP_DEBUG("Setting up connection state in settings dialog");
 
 	QString user = _ui.editUser->text();
 	QString host = _ui.editServer->text();

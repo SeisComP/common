@@ -1227,7 +1227,8 @@ void Application::handleInterrupt(int signal) throw() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::run() {
-	startMessageThread();
+	if ( _connection && _connection->isConnected() )
+		startMessageThread();
 	connect(_app, SIGNAL(lastWindowClosed()), this, SLOT(closedLastWindow()));
 	connect(&_timerSOH, SIGNAL(timeout()), this, SLOT(timerSOH()));
 	_lastSOH = Core::Time::LocalTime();
