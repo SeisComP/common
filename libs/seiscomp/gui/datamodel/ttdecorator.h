@@ -27,7 +27,7 @@
 #include <seiscomp/seismology/ttt.h>
 #include <seiscomp/datamodel/timequantity.h>
 #include <seiscomp/gui/map/mapwidget.h>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 namespace Seiscomp {
 namespace Gui {

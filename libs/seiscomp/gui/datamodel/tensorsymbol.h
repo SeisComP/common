@@ -24,7 +24,7 @@
 
 #include <seiscomp/gui/core/tensorrenderer.h>
 #include <seiscomp/gui/map/mapsymbol.h>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 
 namespace Seiscomp {

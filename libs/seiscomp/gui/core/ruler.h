@@ -22,7 +22,7 @@
 #ifndef _RULER_H_
 #define _RULER_H_
 
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 #include <QFrame>
 

@@ -23,7 +23,7 @@
 #define SEISCOMP_GUI_UTIL_H__
 
 
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core/defs.h>
 #include <QWidget>

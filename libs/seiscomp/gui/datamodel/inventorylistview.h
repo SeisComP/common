@@ -28,7 +28,7 @@
 #ifndef Q_MOC_RUN
 #include <seiscomp/datamodel/object.h>
 #endif
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 
 namespace Seiscomp {

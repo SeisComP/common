@@ -23,7 +23,7 @@
 #define SEISCOMP_GUI_CONNECTIONDIALOG_H__
 
 #include <seiscomp/gui/core/ui_connectiondialog.h>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 #ifndef Q_MOC_RUN
 #include <seiscomp/io/database.h>
 #include <seiscomp/messaging/connection.h>

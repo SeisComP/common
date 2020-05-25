@@ -25,7 +25,7 @@
 #include <QObject>
 #include <QPoint>
 
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 #include <seiscomp/gui/plot/axis.h>
 
 

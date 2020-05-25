@@ -30,7 +30,7 @@
 
 #include <seiscomp/datamodel/station.h>
 #include <seiscomp/gui/map/mapsymbol.h>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 #include <seiscomp/math/coord.h>
 
 

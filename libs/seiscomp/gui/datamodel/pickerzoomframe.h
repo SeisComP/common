@@ -23,7 +23,7 @@
 #define SEISCOMP_GUI_PICKERZOOMFRAME_H__
 
 #include <QFrame>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 namespace Seiscomp {
 namespace Gui {

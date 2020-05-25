@@ -25,7 +25,7 @@
 #include <seiscomp/core/interfacefactory.h>
 #include <seiscomp/geo/boundingbox.h>
 #include <seiscomp/gui/map/texturecache.h>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 #include <QPainterPath>
 #include <QImage>

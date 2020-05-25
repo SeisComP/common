@@ -30,7 +30,7 @@
 #include <QPoint>
 #include <QPainter>
 
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 #include <seiscomp/gui/map/mapsymbol.h>
 #ifndef Q_MOC_RUN
 #include <seiscomp/datamodel/origin.h>

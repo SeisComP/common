@@ -26,7 +26,7 @@
 #include <QtGui>
 #include <seiscomp/gui/datamodel/ui_origintime.h>
 #include <seiscomp/core/datetime.h>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 
 namespace Seiscomp {

@@ -22,7 +22,7 @@
 #define SEISCOMP_GUI_OPTIONALDOUBLESPINBOX_H__
 
 
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 #include <QDoubleSpinBox>
 
 

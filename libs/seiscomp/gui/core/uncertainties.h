@@ -24,7 +24,7 @@
 #include <QDialog>
 
 #include <seiscomp/gui/core/ui_uncertainties.h>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 
 namespace Seiscomp {

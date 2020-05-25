@@ -28,7 +28,7 @@
 #include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/processing/amplitudeprocessor.h>
 #endif
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 #include <QDialog>
 #include <map>

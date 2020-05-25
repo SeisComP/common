@@ -27,7 +27,7 @@
 #include <seiscomp/core/interfacefactory.h>
 #endif
 
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 #include <seiscomp/gui/map/legend.h>
 #include <seiscomp/gui/map/mapsymbol.h>
 

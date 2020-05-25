@@ -28,7 +28,7 @@
 #include <QBrush>
 #include <QPoint>
 #include <QFont>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 #include <seiscomp/gui/core/gradient.h>
 #include <seiscomp/gui/core/recordwidget.h>
 

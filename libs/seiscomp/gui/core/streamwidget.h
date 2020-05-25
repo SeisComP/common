@@ -36,7 +36,7 @@
 #include <seiscomp/gui/core/recordstreamthread.h>
 #include <seiscomp/gui/core/recordwidget.h>
 #include <seiscomp/gui/core/timescale.h>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 #endif
 
 

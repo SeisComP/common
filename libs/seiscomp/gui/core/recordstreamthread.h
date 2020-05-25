@@ -29,7 +29,7 @@
 #include <seiscomp/core/record.h>
 #include <seiscomp/io/recordinput.h>
 #endif
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 
 namespace Seiscomp {

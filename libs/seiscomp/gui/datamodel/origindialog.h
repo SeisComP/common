@@ -29,7 +29,7 @@
 
 #include <seiscomp/gui/datamodel/ui_origindialog.h>
 #include <seiscomp/core/datetime.h>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 namespace Seiscomp {
 namespace Gui {

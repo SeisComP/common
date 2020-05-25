@@ -24,7 +24,7 @@
 
 #include <seiscomp/gui/core/connectiondialog.h>
 #include <seiscomp/gui/core/utils.h>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 #ifndef Q_MOC_RUN
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core/timewindow.h>

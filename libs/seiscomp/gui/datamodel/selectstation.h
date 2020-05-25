@@ -28,7 +28,7 @@
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/station.h>
 #endif
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 #include <seiscomp/gui/datamodel/ui_selectstation.h>
 

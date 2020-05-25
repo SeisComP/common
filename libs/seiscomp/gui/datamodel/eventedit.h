@@ -34,7 +34,7 @@
 #include <seiscomp/datamodel/journalentry.h>
 #include <seiscomp/datamodel/databasequery.h>
 #endif
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 #include <seiscomp/gui/datamodel/originsymbol.h>
 #include <seiscomp/gui/datamodel/tensorsymbol.h>
 #include <seiscomp/gui/map/mapwidget.h>

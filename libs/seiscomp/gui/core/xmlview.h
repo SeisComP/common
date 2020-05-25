@@ -24,7 +24,7 @@
 #include <QtGui>
 
 #include <seiscomp/gui/core/ui_xmlview.h>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 
 namespace Seiscomp {

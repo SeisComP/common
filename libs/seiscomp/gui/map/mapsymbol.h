@@ -28,7 +28,7 @@
 #include <seiscomp/core/baseobject.h>
 #endif
 #include <seiscomp/gui/map/decorator.h>
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 class QPainter;
 

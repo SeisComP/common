@@ -32,7 +32,7 @@
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core/datetime.h>
 #endif
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 
 namespace Seiscomp {

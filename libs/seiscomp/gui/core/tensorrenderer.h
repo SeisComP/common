@@ -29,7 +29,7 @@
 #include <seiscomp/math/matrix3.h>
 #include <seiscomp/math/tensor.h>
 #endif
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 
 namespace Seiscomp {

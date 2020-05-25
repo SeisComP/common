@@ -33,7 +33,7 @@
 #include <seiscomp/core/typedarray.h>
 #include <seiscomp/core/recordsequence.h>
 #endif
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 
 namespace Seiscomp {

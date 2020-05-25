@@ -22,7 +22,7 @@
 #ifndef SEISCOMP_GUI_CORE_GRADIENT_H__
 #define SEISCOMP_GUI_CORE_GRADIENT_H__
 
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 
 #include <QColor>
 #include <QMap>

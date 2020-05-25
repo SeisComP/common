@@ -21,7 +21,7 @@
 #define SEISCOMP_GUI_MAP_LAYERS_GRIDLAYER_H__
 
 
-#include <seiscomp/gui/qt4.h>
+#include <seiscomp/gui/qt.h>
 #include <seiscomp/gui/map/layer.h>
 #include <seiscomp/math/coord.h>
 
