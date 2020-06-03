@@ -23,7 +23,7 @@ seismogram as the maximum absolute trace amplitude of a surface wave at periods 
 T: period of the surface wave in seconds.
 
 The term *Ms_20* is chosen in accordance with the IASPEI standard as of 2013.
-Alternatively, the term :math:`M_s (BB)` may be used.
+Alternatively, the term *Ms(20)* may be used.
 
 * Amplitude unit in SeisComP3: **nanometer** (nm)
 * Time window: 0 s - distance (km) / 3.5 km/s + 30 s
