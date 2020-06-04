@@ -139,6 +139,7 @@ LocSAT::LocSAT() {
 		_allowedParameters.push_back("VERBOSE");
 		_allowedParameters.push_back("MAX_ITERATIONS");
 		_allowedParameters.push_back("NUM_DEG_FREEDOM");
+		_allowedParameters.push_back("CONF_LEVEL");
 		_allowedParameters.push_back("DEFAULT_TIME_ERROR");
 		_allowedParameters.push_back("USE_PICK_UNCERTAINTY");
 	}
@@ -197,7 +198,21 @@ bool LocSAT::init(const Config::Config &config) {
 		_defaultPickUncertainty = config.getDouble("LOCSAT.defaultTimeError");
 	}
 	catch ( ... ) {}
-	
+
+	try {
+		_locator_params->num_dof = config.getInt("LOCSAT.degreesOfFreedom");
+	}
+	catch ( ... ) {}
+
+	try {
+		_locator_params->conf_level = config.getDouble("LOCSAT.confLevel");
+		if ( _locator_params->conf_level < 0.5 || _locator_params->conf_level > 1 ) {
+			SEISCOMP_ERROR("LOCSAT.confLevel: must be >= 0.5 and <= 1");
+			return false;
+		}
+	}
+	catch ( ... ) {}
+
 	if ( _enableDebugOutput )
 		SEISCOMP_INFO("LOCSAT: enabled locator-specific debug output");
 
@@ -225,6 +240,8 @@ std::string LocSAT::parameter(const std::string &name) const {
 		return getLocatorParams(LP_MAX_ITERATIONS);
 	else if ( name == "NUM_DEG_FREEDOM" )
 		return getLocatorParams(LP_NUM_DEG_FREEDOM);
+	else if ( name == "CONF_LEVEL" )
+		return getLocatorParams(LP_CONF_LEVEL);
 	else if ( name == "DEFAULT_TIME_ERROR" )
 		return getLocatorParams(LP_DEFAULT_TIME_ERROR);
 	else if ( name == "USE_PICK_UNCERTAINTY" )
@@ -246,6 +263,8 @@ bool LocSAT::setParameter(const std::string &name,
 		setLocatorParams(LP_MAX_ITERATIONS, value.c_str());
 	else if ( name == "NUM_DEG_FREEDOM" )
 		setLocatorParams(LP_NUM_DEG_FREEDOM, value.c_str());
+	else if ( name == "CONF_LEVEL" )
+		setLocatorParams(LP_CONF_LEVEL, value.c_str());
 	else if ( name == "DEFAULT_TIME_ERROR" )
 		setLocatorParams(LP_DEFAULT_TIME_ERROR, value.c_str());
 	else if ( name == "USE_PICK_UNCERTAINTY" )
@@ -1322,6 +1341,10 @@ std::string LocSAT::getLocatorParams(int param) const {
 			sprintf(value, "%d", _locator_params->num_dof);
 			break;
 
+		case LP_CONF_LEVEL:
+			sprintf(value, "%5.3f", _locator_params->conf_level);
+			break;
+
 		case LP_MIN_ARRIVAL_WEIGHT:
 			sprintf(value, "%7.2f", _minArrivalWeight);
 			break;
@@ -1388,6 +1411,10 @@ void LocSAT::setLocatorParams(int param, const char* value){
 
 		case LP_NUM_DEG_FREEDOM:
 			_locator_params->num_dof = atoi(value);
+			break;
+
+		case LP_CONF_LEVEL:
+			_locator_params->conf_level = atof(value);
 			break;
 
 		case LP_MIN_ARRIVAL_WEIGHT:
