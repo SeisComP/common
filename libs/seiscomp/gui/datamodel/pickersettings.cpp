@@ -516,8 +516,8 @@ PickerView::Config PickerSettings::pickerConfig() const {
 	_pickerConfig.removeAutomaticPicks = _ui.cbRemoveAllAutomaticPicks->isChecked();
 
 	_pickerConfig.usePerStreamTimeWindows = _ui.cbUsePerStreamTimeWindow->isChecked();
-	_pickerConfig.preOffset = Core::TimeSpan(QTime().secsTo(_ui.preTimeEdit->time()));
-	_pickerConfig.postOffset = Core::TimeSpan(QTime().secsTo(_ui.postTimeEdit->time()));
+	_pickerConfig.preOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.preTimeEdit->time()));
+	_pickerConfig.postOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.postTimeEdit->time()));
 	_pickerConfig.minimumTimeWindow = Core::TimeSpan(QTime().secsTo(_ui.minimumLengthTimeEdit->time()));
 
 	_pickerConfig.alignmentPosition = _ui.slWaveformAlignment->value()*0.01;
