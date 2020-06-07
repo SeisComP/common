@@ -355,19 +355,19 @@ void PickerSettings::adjustLength(int value) {
 
 
 void PickerSettings::adjustPreSlider(const QTime &t) {
-	int value = QTime().secsTo(t) / 60;
+	int value = QTime(0, 0, 0, 0).secsTo(t) / 60;
 	_ui.slPreOffset->setValue(value);
 }
 
 
 void PickerSettings::adjustPostSlider(const QTime &t) {
-	int value = QTime().secsTo(t) / 60;
+	int value = QTime(0, 0, 0, 0).secsTo(t) / 60;
 	_ui.slPostOffset->setValue(value);
 }
 
 
 void PickerSettings::adjustLengthSlider(const QTime &t) {
-	int value = QTime().secsTo(t) / 60;
+	int value = QTime(0, 0, 0, 0).secsTo(t) / 60;
 	_ui.slMinimumLength->setValue(value);
 }
 
@@ -383,13 +383,13 @@ void PickerSettings::adjustAmplitudePostTime(int value) {
 
 
 void PickerSettings::adjustAmplitudePreSlider(const QTime &t) {
-	int value = QTime().secsTo(t) / 60;
+	int value = QTime(0, 0, 0, 0).secsTo(t) / 60;
 	_ui.slAmplitudePreOffset->setValue(value);
 }
 
 
 void PickerSettings::adjustAmplitudePostSlider(const QTime &t) {
-	int value = QTime().secsTo(t) / 60;
+	int value = QTime(0, 0, 0, 0).secsTo(t) / 60;
 	_ui.slAmplitudePostOffset->setValue(value);
 }
 
@@ -518,7 +518,7 @@ PickerView::Config PickerSettings::pickerConfig() const {
 	_pickerConfig.usePerStreamTimeWindows = _ui.cbUsePerStreamTimeWindow->isChecked();
 	_pickerConfig.preOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.preTimeEdit->time()));
 	_pickerConfig.postOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.postTimeEdit->time()));
-	_pickerConfig.minimumTimeWindow = Core::TimeSpan(QTime().secsTo(_ui.minimumLengthTimeEdit->time()));
+	_pickerConfig.minimumTimeWindow = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.minimumLengthTimeEdit->time()));
 
 	_pickerConfig.alignmentPosition = _ui.slWaveformAlignment->value()*0.01;
 	if ( _pickerConfig.alignmentPosition < 0 )
@@ -553,8 +553,8 @@ PickerView::Config PickerSettings::pickerConfig() const {
 
 AmplitudeView::Config PickerSettings::amplitudeConfig() const {
 	_amplitudeConfig.recordURL = _ui.editRecordSource->text();
-	_amplitudeConfig.preOffset = Core::TimeSpan(QTime().secsTo(_ui.preAmplitudeTimeEdit->time()));
-	_amplitudeConfig.postOffset = Core::TimeSpan(QTime().secsTo(_ui.postAmplitudeTimeEdit->time()));
+	_amplitudeConfig.preOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.preAmplitudeTimeEdit->time()));
+	_amplitudeConfig.postOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.postAmplitudeTimeEdit->time()));
 	_amplitudeConfig.defaultAddStationsDistance = _ui.spinAddStationsDistance->value();
 	_amplitudeConfig.hideStationsWithoutData = _ui.cbHideStationsWithoutData->isChecked();
 	_amplitudeConfig.loadStrongMotionData = _ui.cbStrongMotion->isChecked();
