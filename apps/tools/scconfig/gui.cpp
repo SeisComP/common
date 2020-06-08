@@ -24,6 +24,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QFile>
+#include <QImage>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -33,6 +34,8 @@
 #include <QVBoxLayout>
 #include <QWhatsThis>
 #include <QWidget>
+
+#include <QtSvg/QSvgRenderer>
 
 #include <iostream>
 #include <list>
@@ -1319,6 +1322,13 @@ Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 	_configurationStage = stage;
 
 	_proxy = NULL;
+
+	//QPixmap icon(":/res/icons/icon.svg");
+	QSvgRenderer svg(QString(":/res/icons/icon.svg"), this);
+	QImage img(64, 64, QImage::Format_ARGB32);
+	QPainter paint(&img);
+	svg.render(&paint);
+	setWindowIcon(QIcon(QPixmap::fromImage(img)));
 
 	menuBar()->setAutoFillBackground(true);
 	QMenu *fileMenu = menuBar()->addMenu("&File");

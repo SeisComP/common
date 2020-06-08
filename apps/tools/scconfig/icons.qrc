@@ -30,5 +30,6 @@
         <file>icons/warning_small.png</file>
         <file>icons/error_small.png</file>
         <file>icons/update-config.png</file>
+        <file>icons/icon.svg</file>
     </qresource>
 </RCC>
