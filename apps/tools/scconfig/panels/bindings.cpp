@@ -1410,7 +1410,7 @@ void BindingsPanel::modulesViewContextMenu(const QPoint &p) {
 
 void BindingsPanel::modulesFolderViewContextMenu(const QPoint &p) {
 	QModelIndex idx = _modulesFolderView->rootIndex();
-	QModelIndex hoveredIdx = _modulesFolderView->indexAt(p);
+	//QModelIndex hoveredIdx = _modulesFolderView->indexAt(p);
 
 	if ( !idx.isValid() ) return;
 
