@@ -13,23 +13,23 @@ IF (MSEED_FOUND)
 ENDIF (MSEED_FOUND)
 
 IF (SC_GLOBAL_PYTHON_WRAPPER_NUMPY)
-	MESSAGE(STATUS "Adding support for Python NumPy")
-	ADD_DEFINITIONS(-DHAVE_NUMPY)
-	INCLUDE_DIRECTORIES(${PYTHON_NUMPY_INCLUDE_DIR})
+        MESSAGE(STATUS "Adding support for Python NumPy")
+        ADD_DEFINITIONS(-DHAVE_NUMPY)
+        INCLUDE_DIRECTORIES(${PYTHON_NUMPY_INCLUDE_DIR})
 ENDIF (SC_GLOBAL_PYTHON_WRAPPER_NUMPY)
 
 SET(
-	WRAPPER_MODULES
-		core
-		logging
-		system
-		io
-		utils
-		datamodel
-		math
-		seismology
-		client
-		geo
+        WRAPPER_MODULES
+                core
+                logging
+                system
+                io
+                utils
+                datamodel
+                math
+                seismology
+                client
+                geo
 )
 
 
@@ -44,6 +44,8 @@ SET(WRAPPER_MODULE_utils_EXTRA_SC_LIBS core)
 SET(WRAPPER_MODULE_seismology_EXTRA_SC_LIBS core)
 SET(WRAPPER_MODULE_geo_EXTRA_SC_LIBS core)
 
+SET(build_lib_python_seiscomp_dir ${CMAKE_BINARY_DIR}/lib/python/seiscomp)
+FILE(MAKE_DIRECTORY ${build_lib_python_seiscomp_dir})
 
 FOREACH (wrapper_module ${WRAPPER_MODULES})
         SET(
@@ -56,6 +58,16 @@ FOREACH (wrapper_module ${WRAPPER_MODULES})
         TARGET_LINK_LIBRARIES(_${wrapper_module} ${PYTHON_LIBRARIES})
         TARGET_LINK_LIBRARIES(_${wrapper_module} ${WRAPPER_MODULE_${wrapper_module}_EXTRA_LIBS})
         SC_LINK_LIBRARIES_INTERNAL(_${wrapper_module} ${WRAPPER_MODULE_${wrapper_module}_EXTRA_SC_LIBS})
+
+        ADD_CUSTOM_TARGET(link_build_lib_python_seiscomp_${wrapper_module} ALL
+                COMMAND ${CMAKE_COMMAND} -E create_symlink
+                        ${CMAKE_CURRENT_SOURCE_DIR}/${wrapper_module}.py
+                        ${build_lib_python_seiscomp_dir}/${wrapper_module}.py
+                COMMAND ${CMAKE_COMMAND} -E create_symlink
+                        ${CMAKE_BINARY_DIR}/lib/_${wrapper_module}.so
+                        ${build_lib_python_seiscomp_dir}/_${wrapper_module}.so
+        )
+
 ENDFOREACH (wrapper_module)
 
 SC_SWIG_GET_MODULE_PATH(_module_path)
