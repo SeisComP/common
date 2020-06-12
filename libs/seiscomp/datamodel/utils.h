@@ -293,7 +293,7 @@ findSetup(const ConfigStation *configStation, const std::string &setupName,
 /**
  * Creates a deep copy of an object including all child objects.
  */
-SC_SYSTEM_CORE_API Object *copy(Object* obj);
+SC_SYSTEM_CORE_API Object *copy(const Object* obj);
 
 
 ///////////////////////////////////////////////////////////////////////////////

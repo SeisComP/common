@@ -463,9 +463,9 @@ Setup *findSetup(const ConfigStation *cs, const std::string &setupName,
 
 
 
-Object *copy(Object* obj) {
+Object *copy(const Object *obj) {
 	CloneVisitor cv;
-	obj->accept(&cv);
+	const_cast<Object*>(obj)->accept(&cv);
 	return cv.result();
 }
 
