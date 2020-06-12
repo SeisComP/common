@@ -1516,11 +1516,14 @@ void MagnitudeView::recalculateMagnitude() {
 	_netMag->setMagnitude(DataModel::RealQuantity(netmag, stdev, Core::None, Core::None, Core::None));
 	_netMag->setEvaluationStatus(EvaluationStatus(CONFIRMED));
 
+	_ui.cbEvalStatus->blockSignals(true);
 	_ui.cbEvalStatus->setCurrentIndex(_netMag->evaluationStatus().toInt()+1);
+	_ui.cbEvalStatus->blockSignals(false);
 
 	int idx = findType(_tabMagnitudes, _netMag->type().c_str());
 	_tabMagnitudes->setTabTextColor(idx, QColor());
 	_tabMagnitudes->setTabIcon(idx, QIcon());
+
 
 	// Update corresponding Mw estimation
 	Processing::MagnitudeProcessorPtr proc = Processing::MagnitudeProcessorFactory::Create(_netMag->type().c_str());
