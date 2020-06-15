@@ -22,6 +22,7 @@
 #define SEISCOMP_COMPONENT LocSAT
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/strings.h>
+#include <seiscomp3/core/system.h>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/seismology/locsat.h>
 #include <seiscomp/seismology/ttt.h>
@@ -1245,7 +1246,15 @@ void LocSAT::setProfile(const std::string &prefix) {
 
 	_stationCorrection.clear();
 	_tablePrefix = prefix;
-	strcpy(_locator_params->prefix, (Environment::Instance()->shareDir() + "/locsat/tables/" + _tablePrefix).c_str());
+	const char *tablePath = getenv("SEISCOMP_LOCSAT_TABLE_DIR");
+	if ( tablePath ) {
+		SC_FS_DECLARE_PATH(path, tablePath);
+		path /= _tablePrefix;
+		strcpy(_locator_params->prefix, path.string().c_str());
+	}
+	else {
+		strcpy(_locator_params->prefix, (Environment::Instance()->shareDir() + "/locsat/tables/" + _tablePrefix).c_str());
+	}
 
 	std::ifstream ifs;
 	ifs.open((Environment::Instance()->shareDir() + "/locsat/tables/" + _tablePrefix + ".stacor").c_str());
