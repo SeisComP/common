@@ -66,7 +66,7 @@ bool MagnitudeProcessor_ML::setup(const Settings &settings) {
 	}
 	catch ( ... ) {
 		// This is the default
-		logA0 = "0 -1.3;60 -2.8;400 -4.5;1000 -5.85";
+		logA0 = "0 -1.3;60 -2.8;100 -3.0,400 -4.5;1000 -5.85";
 	}
 
 	logA0_dist.clear(); logA0_val.clear();
