@@ -28,6 +28,7 @@
 #include <seiscomp/gui/core/inspector.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/io/database.h>
+#include <seiscomp/math/filter.h>
 #include <seiscomp/messaging/connection.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/databasequery.h>
@@ -38,8 +39,10 @@
 #include <seiscomp/gui/core/osx.h>
 #endif
 
+#include <QImage>
 #include <QMenuBar>
 #include <QStatusBar>
+#include <QtSvg/QSvgRenderer>
 
 using namespace Seiscomp;
 using namespace Seiscomp::Communication;
@@ -132,7 +135,13 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 
 	setAcceptDrops(true);
 
-	setWindowIcon(QIcon(QPixmap(":/images/images/seiscomp-logo.png")));
+	QSvgRenderer svg(QString(":/images/images/seiscomp-logo.svg"));
+	long dim = Math::Filtering::next_power_of_2(fontMetrics().height() * 2);
+	if ( dim < 64 ) dim = 64;
+	QImage img(dim, dim, QImage::Format_ARGB32);
+	QPainter paint(&img);
+	svg.render(&paint);
+	setWindowIcon(QIcon(QPixmap::fromImage(img)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
