@@ -17,6 +17,7 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+#define SEISCOMP_COMPONENT TestGeoRegions
 #define SEISCOMP_TEST_MODULE TestGeoRegions
 
 
@@ -28,8 +29,10 @@
 #include <seiscomp/unittest/unittests.h>
 
 #include <seiscomp/core/strings.h>
+#include <seiscomp/logging/log.h>
 #include <seiscomp/geo/featureset.h>
 #include <seiscomp/seismology/regions.h>
+#include <seiscomp/seismology/regions/polygon.h>
 
 #include <boost/system/error_code.hpp>
 
@@ -46,6 +49,7 @@ struct RegionTest {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(poly1) {
+	Logging::enableConsoleLogging(Logging::getAll());
 	GeoFeature testPoly1("test1", NULL, 0);
 	testPoly1.addVertex(-20,-20);
 	testPoly1.addVertex(20,-20);
@@ -206,8 +210,8 @@ BOOST_AUTO_TEST_CASE(poly7) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(fepRegions) {
-	Regions regions;
-	regions.polyRegions().read("./data/fep");
+	PolyRegions regions;
+	regions.read("./data/fep");
 
 	ifstream ifs;
 	ifs.open("./data/region-test.csv");
@@ -220,7 +224,9 @@ BOOST_AUTO_TEST_CASE(fepRegions) {
 		getline(ifs, tr.name);
 		Core::trim(tr.name);
 		if ( tr.name.empty() ) continue;
-		string name = regions.getRegionName(tr.lat, tr.lon);
+		string name = regions.findRegionName(tr.lat, tr.lon);
+		if ( name.empty() )
+			name = Regions::getRegionName(tr.lat, tr.lon);
 		BOOST_CHECK_EQUAL(name, tr.name);
 	}
 }
