@@ -3797,7 +3797,7 @@ SWIG_AsVal_std_complex_Sl_float_Sg_ (PyObject *o, std::complex<float> *val)
 
 
 SWIGINTERNINLINE PyObject*
-SWIG_From_std_complex_Sl_float_Sg_  (/*@SWIG:/usr/local/share/swig/4.0.1/typemaps/swigmacros.swg,104,%ifcplusplus@*/
+SWIG_From_std_complex_Sl_float_Sg_  (/*@SWIG:/usr/share/swig4.0/typemaps/swigmacros.swg,104,%ifcplusplus@*/
 
 const std::complex<float>&
 
@@ -3828,7 +3828,7 @@ SWIG_AsVal_std_complex_Sl_double_Sg_  (PyObject *o, std::complex<double>* val)
 
 
 SWIGINTERNINLINE PyObject*
-SWIG_From_std_complex_Sl_double_Sg_  (/*@SWIG:/usr/local/share/swig/4.0.1/typemaps/swigmacros.swg,104,%ifcplusplus@*/
+SWIG_From_std_complex_Sl_double_Sg_  (/*@SWIG:/usr/share/swig4.0/typemaps/swigmacros.swg,104,%ifcplusplus@*/
 
 const std::complex<double>&
 

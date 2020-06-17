@@ -1499,11 +1499,11 @@ class MSeedRecord(seiscomp.core.Record):
         return _io.MSeedRecord_setSampleRateMultiplier(self, srmult)
 
     def byteOrder(self):
-        r"""byteOrder(MSeedRecord self) -> unsigned short"""
+        r"""byteOrder(MSeedRecord self) -> int8_t"""
         return _io.MSeedRecord_byteOrder(self)
 
     def encoding(self):
-        r"""encoding(MSeedRecord self) -> unsigned short"""
+        r"""encoding(MSeedRecord self) -> int8_t"""
         return _io.MSeedRecord_encoding(self)
 
     def sampleRateNumerator(self):

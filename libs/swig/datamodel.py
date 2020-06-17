@@ -3138,9 +3138,9 @@ class Comment(Object):
         r"""clone(Comment self) -> Object"""
         return _datamodel.Comment_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(Comment self, Visitor arg2)"""
-        return _datamodel.Comment_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Comment self, Visitor visitor)"""
+        return _datamodel.Comment_accept(self, visitor)
 
 # Register Comment in _datamodel:
 _datamodel.Comment_swigregister(Comment)
@@ -5690,9 +5690,9 @@ class JournalEntry(Object):
         r"""clone(JournalEntry self) -> Object"""
         return _datamodel.JournalEntry_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(JournalEntry self, Visitor arg2)"""
-        return _datamodel.JournalEntry_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(JournalEntry self, Visitor visitor)"""
+        return _datamodel.JournalEntry_accept(self, visitor)
 
 # Register JournalEntry in _datamodel:
 _datamodel.JournalEntry_swigregister(JournalEntry)
@@ -5844,9 +5844,9 @@ class Journaling(PublicObject):
         r"""updateChild(Journaling self, Object child) -> bool"""
         return _datamodel.Journaling_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Journaling self, Visitor arg2)"""
-        return _datamodel.Journaling_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Journaling self, Visitor visitor)"""
+        return _datamodel.Journaling_accept(self, visitor)
 
 # Register Journaling in _datamodel:
 _datamodel.Journaling_swigregister(Journaling)
@@ -6051,9 +6051,9 @@ class ArclinkUser(PublicObject):
         r"""updateChild(ArclinkUser self, Object child) -> bool"""
         return _datamodel.ArclinkUser_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(ArclinkUser self, Visitor arg2)"""
-        return _datamodel.ArclinkUser_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(ArclinkUser self, Visitor visitor)"""
+        return _datamodel.ArclinkUser_accept(self, visitor)
 
 # Register ArclinkUser in _datamodel:
 _datamodel.ArclinkUser_swigregister(ArclinkUser)
@@ -6269,9 +6269,9 @@ class ArclinkStatusLine(Object):
         r"""clone(ArclinkStatusLine self) -> Object"""
         return _datamodel.ArclinkStatusLine_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(ArclinkStatusLine self, Visitor arg2)"""
-        return _datamodel.ArclinkStatusLine_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(ArclinkStatusLine self, Visitor visitor)"""
+        return _datamodel.ArclinkStatusLine_accept(self, visitor)
 
 # Register ArclinkStatusLine in _datamodel:
 _datamodel.ArclinkStatusLine_swigregister(ArclinkStatusLine)
@@ -6506,9 +6506,9 @@ class ArclinkRequestLine(Object):
         r"""clone(ArclinkRequestLine self) -> Object"""
         return _datamodel.ArclinkRequestLine_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(ArclinkRequestLine self, Visitor arg2)"""
-        return _datamodel.ArclinkRequestLine_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(ArclinkRequestLine self, Visitor visitor)"""
+        return _datamodel.ArclinkRequestLine_accept(self, visitor)
 
 # Register ArclinkRequestLine in _datamodel:
 _datamodel.ArclinkRequestLine_swigregister(ArclinkRequestLine)
@@ -6839,9 +6839,9 @@ class ArclinkRequest(PublicObject):
         r"""updateChild(ArclinkRequest self, Object child) -> bool"""
         return _datamodel.ArclinkRequest_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(ArclinkRequest self, Visitor arg2)"""
-        return _datamodel.ArclinkRequest_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(ArclinkRequest self, Visitor visitor)"""
+        return _datamodel.ArclinkRequest_accept(self, visitor)
 
 # Register ArclinkRequest in _datamodel:
 _datamodel.ArclinkRequest_swigregister(ArclinkRequest)
@@ -7038,9 +7038,9 @@ class ArclinkLog(PublicObject):
         r"""updateChild(ArclinkLog self, Object child) -> bool"""
         return _datamodel.ArclinkLog_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(ArclinkLog self, Visitor arg2)"""
-        return _datamodel.ArclinkLog_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(ArclinkLog self, Visitor visitor)"""
+        return _datamodel.ArclinkLog_accept(self, visitor)
 
 # Register ArclinkLog in _datamodel:
 _datamodel.ArclinkLog_swigregister(ArclinkLog)
@@ -7272,9 +7272,9 @@ class QCLog(PublicObject):
         r"""updateChild(QCLog self, Object child) -> bool"""
         return _datamodel.QCLog_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(QCLog self, Visitor arg2)"""
-        return _datamodel.QCLog_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(QCLog self, Visitor visitor)"""
+        return _datamodel.QCLog_accept(self, visitor)
 
 # Register QCLog in _datamodel:
 _datamodel.QCLog_swigregister(QCLog)
@@ -7542,9 +7542,9 @@ class WaveformQuality(Object):
         r"""clone(WaveformQuality self) -> Object"""
         return _datamodel.WaveformQuality_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(WaveformQuality self, Visitor arg2)"""
-        return _datamodel.WaveformQuality_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(WaveformQuality self, Visitor visitor)"""
+        return _datamodel.WaveformQuality_accept(self, visitor)
 
 # Register WaveformQuality in _datamodel:
 _datamodel.WaveformQuality_swigregister(WaveformQuality)
@@ -7751,9 +7751,9 @@ class Outage(Object):
         r"""clone(Outage self) -> Object"""
         return _datamodel.Outage_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(Outage self, Visitor arg2)"""
-        return _datamodel.Outage_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Outage self, Visitor visitor)"""
+        return _datamodel.Outage_accept(self, visitor)
 
 # Register Outage in _datamodel:
 _datamodel.Outage_swigregister(Outage)
@@ -7955,9 +7955,9 @@ class QualityControl(PublicObject):
         r"""updateChild(QualityControl self, Object child) -> bool"""
         return _datamodel.QualityControl_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(QualityControl self, Visitor arg2)"""
-        return _datamodel.QualityControl_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(QualityControl self, Visitor visitor)"""
+        return _datamodel.QualityControl_accept(self, visitor)
 
 # Register QualityControl in _datamodel:
 _datamodel.QualityControl_swigregister(QualityControl)
@@ -8129,9 +8129,9 @@ class StationReference(Object):
         r"""clone(StationReference self) -> Object"""
         return _datamodel.StationReference_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(StationReference self, Visitor arg2)"""
-        return _datamodel.StationReference_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(StationReference self, Visitor visitor)"""
+        return _datamodel.StationReference_accept(self, visitor)
 
 # Register StationReference in _datamodel:
 _datamodel.StationReference_swigregister(StationReference)
@@ -8401,9 +8401,9 @@ class StationGroup(PublicObject):
         r"""updateChild(StationGroup self, Object child) -> bool"""
         return _datamodel.StationGroup_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(StationGroup self, Visitor arg2)"""
-        return _datamodel.StationGroup_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(StationGroup self, Visitor visitor)"""
+        return _datamodel.StationGroup_accept(self, visitor)
 
 # Register StationGroup in _datamodel:
 _datamodel.StationGroup_swigregister(StationGroup)
@@ -8638,9 +8638,9 @@ class AuxSource(Object):
         r"""clone(AuxSource self) -> Object"""
         return _datamodel.AuxSource_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(AuxSource self, Visitor arg2)"""
-        return _datamodel.AuxSource_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(AuxSource self, Visitor visitor)"""
+        return _datamodel.AuxSource_accept(self, visitor)
 
 # Register AuxSource in _datamodel:
 _datamodel.AuxSource_swigregister(AuxSource)
@@ -8889,9 +8889,9 @@ class AuxDevice(PublicObject):
         r"""updateChild(AuxDevice self, Object child) -> bool"""
         return _datamodel.AuxDevice_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(AuxDevice self, Visitor arg2)"""
-        return _datamodel.AuxDevice_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(AuxDevice self, Visitor visitor)"""
+        return _datamodel.AuxDevice_accept(self, visitor)
 
 # Register AuxDevice in _datamodel:
 _datamodel.AuxDevice_swigregister(AuxDevice)
@@ -9126,9 +9126,9 @@ class SensorCalibration(Object):
         r"""clone(SensorCalibration self) -> Object"""
         return _datamodel.SensorCalibration_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(SensorCalibration self, Visitor arg2)"""
-        return _datamodel.SensorCalibration_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(SensorCalibration self, Visitor visitor)"""
+        return _datamodel.SensorCalibration_accept(self, visitor)
 
 # Register SensorCalibration in _datamodel:
 _datamodel.SensorCalibration_swigregister(SensorCalibration)
@@ -9417,9 +9417,9 @@ class Sensor(PublicObject):
         r"""updateChild(Sensor self, Object child) -> bool"""
         return _datamodel.Sensor_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Sensor self, Visitor arg2)"""
-        return _datamodel.Sensor_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Sensor self, Visitor visitor)"""
+        return _datamodel.Sensor_accept(self, visitor)
 
 # Register Sensor in _datamodel:
 _datamodel.Sensor_swigregister(Sensor)
@@ -9731,9 +9731,9 @@ class ResponsePAZ(PublicObject):
         r"""updateChild(ResponsePAZ self, Object child) -> bool"""
         return _datamodel.ResponsePAZ_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(ResponsePAZ self, Visitor arg2)"""
-        return _datamodel.ResponsePAZ_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(ResponsePAZ self, Visitor visitor)"""
+        return _datamodel.ResponsePAZ_accept(self, visitor)
 
 # Register ResponsePAZ in _datamodel:
 _datamodel.ResponsePAZ_swigregister(ResponsePAZ)
@@ -10018,9 +10018,9 @@ class ResponsePolynomial(PublicObject):
         r"""updateChild(ResponsePolynomial self, Object child) -> bool"""
         return _datamodel.ResponsePolynomial_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(ResponsePolynomial self, Visitor arg2)"""
-        return _datamodel.ResponsePolynomial_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(ResponsePolynomial self, Visitor visitor)"""
+        return _datamodel.ResponsePolynomial_accept(self, visitor)
 
 # Register ResponsePolynomial in _datamodel:
 _datamodel.ResponsePolynomial_swigregister(ResponsePolynomial)
@@ -10265,9 +10265,9 @@ class ResponseFAP(PublicObject):
         r"""updateChild(ResponseFAP self, Object child) -> bool"""
         return _datamodel.ResponseFAP_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(ResponseFAP self, Visitor arg2)"""
-        return _datamodel.ResponseFAP_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(ResponseFAP self, Visitor visitor)"""
+        return _datamodel.ResponseFAP_accept(self, visitor)
 
 # Register ResponseFAP in _datamodel:
 _datamodel.ResponseFAP_swigregister(ResponseFAP)
@@ -10544,9 +10544,9 @@ class ResponseFIR(PublicObject):
         r"""updateChild(ResponseFIR self, Object child) -> bool"""
         return _datamodel.ResponseFIR_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(ResponseFIR self, Visitor arg2)"""
-        return _datamodel.ResponseFIR_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(ResponseFIR self, Visitor visitor)"""
+        return _datamodel.ResponseFIR_accept(self, visitor)
 
 # Register ResponseFIR in _datamodel:
 _datamodel.ResponseFIR_swigregister(ResponseFIR)
@@ -10842,9 +10842,9 @@ class ResponseIIR(PublicObject):
         r"""updateChild(ResponseIIR self, Object child) -> bool"""
         return _datamodel.ResponseIIR_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(ResponseIIR self, Visitor arg2)"""
-        return _datamodel.ResponseIIR_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(ResponseIIR self, Visitor visitor)"""
+        return _datamodel.ResponseIIR_accept(self, visitor)
 
 # Register ResponseIIR in _datamodel:
 _datamodel.ResponseIIR_swigregister(ResponseIIR)
@@ -11079,9 +11079,9 @@ class DataloggerCalibration(Object):
         r"""clone(DataloggerCalibration self) -> Object"""
         return _datamodel.DataloggerCalibration_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(DataloggerCalibration self, Visitor arg2)"""
-        return _datamodel.DataloggerCalibration_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(DataloggerCalibration self, Visitor visitor)"""
+        return _datamodel.DataloggerCalibration_accept(self, visitor)
 
 # Register DataloggerCalibration in _datamodel:
 _datamodel.DataloggerCalibration_swigregister(DataloggerCalibration)
@@ -11283,9 +11283,9 @@ class Decimation(Object):
         r"""clone(Decimation self) -> Object"""
         return _datamodel.Decimation_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(Decimation self, Visitor arg2)"""
-        return _datamodel.Decimation_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Decimation self, Visitor visitor)"""
+        return _datamodel.Decimation_accept(self, visitor)
 
 # Register Decimation in _datamodel:
 _datamodel.Decimation_swigregister(Decimation)
@@ -11614,9 +11614,9 @@ class Datalogger(PublicObject):
         r"""updateChild(Datalogger self, Object child) -> bool"""
         return _datamodel.Datalogger_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Datalogger self, Visitor arg2)"""
-        return _datamodel.Datalogger_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Datalogger self, Visitor visitor)"""
+        return _datamodel.Datalogger_accept(self, visitor)
 
 # Register Datalogger in _datamodel:
 _datamodel.Datalogger_swigregister(Datalogger)
@@ -11871,9 +11871,9 @@ class AuxStream(Object):
         r"""clone(AuxStream self) -> Object"""
         return _datamodel.AuxStream_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(AuxStream self, Visitor arg2)"""
-        return _datamodel.AuxStream_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(AuxStream self, Visitor visitor)"""
+        return _datamodel.AuxStream_accept(self, visitor)
 
 # Register AuxStream in _datamodel:
 _datamodel.AuxStream_swigregister(AuxStream)
@@ -12256,9 +12256,9 @@ class Stream(PublicObject):
         r"""updateChild(Stream self, Object child) -> bool"""
         return _datamodel.Stream_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Stream self, Visitor arg2)"""
-        return _datamodel.Stream_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Stream self, Visitor visitor)"""
+        return _datamodel.Stream_accept(self, visitor)
 
 # Register Stream in _datamodel:
 _datamodel.Stream_swigregister(Stream)
@@ -12572,9 +12572,9 @@ class SensorLocation(PublicObject):
         r"""updateChild(SensorLocation self, Object child) -> bool"""
         return _datamodel.SensorLocation_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(SensorLocation self, Visitor arg2)"""
-        return _datamodel.SensorLocation_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(SensorLocation self, Visitor visitor)"""
+        return _datamodel.SensorLocation_accept(self, visitor)
 
 # Register SensorLocation in _datamodel:
 _datamodel.SensorLocation_swigregister(SensorLocation)
@@ -12951,9 +12951,9 @@ class Station(PublicObject):
         r"""updateChild(Station self, Object child) -> bool"""
         return _datamodel.Station_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Station self, Visitor arg2)"""
-        return _datamodel.Station_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Station self, Visitor visitor)"""
+        return _datamodel.Station_accept(self, visitor)
 
 # Register Station in _datamodel:
 _datamodel.Station_swigregister(Station)
@@ -13298,9 +13298,9 @@ class Network(PublicObject):
         r"""updateChild(Network self, Object child) -> bool"""
         return _datamodel.Network_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Network self, Visitor arg2)"""
-        return _datamodel.Network_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Network self, Visitor visitor)"""
+        return _datamodel.Network_accept(self, visitor)
 
 # Register Network in _datamodel:
 _datamodel.Network_swigregister(Network)
@@ -13689,9 +13689,9 @@ class Inventory(PublicObject):
         r"""updateChild(Inventory self, Object child) -> bool"""
         return _datamodel.Inventory_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Inventory self, Visitor arg2)"""
-        return _datamodel.Inventory_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Inventory self, Visitor visitor)"""
+        return _datamodel.Inventory_accept(self, visitor)
 
 # Register Inventory in _datamodel:
 _datamodel.Inventory_swigregister(Inventory)
@@ -13902,9 +13902,9 @@ class DataSegment(Object):
         r"""clone(DataSegment self) -> Object"""
         return _datamodel.DataSegment_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(DataSegment self, Visitor arg2)"""
-        return _datamodel.DataSegment_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(DataSegment self, Visitor visitor)"""
+        return _datamodel.DataSegment_accept(self, visitor)
 
 # Register DataSegment in _datamodel:
 _datamodel.DataSegment_swigregister(DataSegment)
@@ -14116,9 +14116,9 @@ class DataAttributeExtent(Object):
         r"""clone(DataAttributeExtent self) -> Object"""
         return _datamodel.DataAttributeExtent_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(DataAttributeExtent self, Visitor arg2)"""
-        return _datamodel.DataAttributeExtent_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(DataAttributeExtent self, Visitor visitor)"""
+        return _datamodel.DataAttributeExtent_accept(self, visitor)
 
 # Register DataAttributeExtent in _datamodel:
 _datamodel.DataAttributeExtent_swigregister(DataAttributeExtent)
@@ -14399,9 +14399,9 @@ class DataExtent(PublicObject):
         r"""updateChild(DataExtent self, Object child) -> bool"""
         return _datamodel.DataExtent_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(DataExtent self, Visitor arg2)"""
-        return _datamodel.DataExtent_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(DataExtent self, Visitor visitor)"""
+        return _datamodel.DataExtent_accept(self, visitor)
 
 # Register DataExtent in _datamodel:
 _datamodel.DataExtent_swigregister(DataExtent)
@@ -14570,9 +14570,9 @@ class DataAvailability(PublicObject):
         r"""updateChild(DataAvailability self, Object child) -> bool"""
         return _datamodel.DataAvailability_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(DataAvailability self, Visitor arg2)"""
-        return _datamodel.DataAvailability_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(DataAvailability self, Visitor visitor)"""
+        return _datamodel.DataAvailability_accept(self, visitor)
 
 # Register DataAvailability in _datamodel:
 _datamodel.DataAvailability_swigregister(DataAvailability)
@@ -14753,9 +14753,9 @@ class EventDescription(Object):
         r"""clone(EventDescription self) -> Object"""
         return _datamodel.EventDescription_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(EventDescription self, Visitor arg2)"""
-        return _datamodel.EventDescription_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(EventDescription self, Visitor visitor)"""
+        return _datamodel.EventDescription_accept(self, visitor)
 
 # Register EventDescription in _datamodel:
 _datamodel.EventDescription_swigregister(EventDescription)
@@ -14915,9 +14915,9 @@ class DataUsed(Object):
         r"""clone(DataUsed self) -> Object"""
         return _datamodel.DataUsed_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(DataUsed self, Visitor arg2)"""
-        return _datamodel.DataUsed_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(DataUsed self, Visitor visitor)"""
+        return _datamodel.DataUsed_accept(self, visitor)
 
 # Register DataUsed in _datamodel:
 _datamodel.DataUsed_swigregister(DataUsed)
@@ -15111,9 +15111,9 @@ class CompositeTime(Object):
         r"""clone(CompositeTime self) -> Object"""
         return _datamodel.CompositeTime_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(CompositeTime self, Visitor arg2)"""
-        return _datamodel.CompositeTime_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(CompositeTime self, Visitor visitor)"""
+        return _datamodel.CompositeTime_accept(self, visitor)
 
 # Register CompositeTime in _datamodel:
 _datamodel.CompositeTime_swigregister(CompositeTime)
@@ -15285,9 +15285,9 @@ class PickReference(Object):
         r"""clone(PickReference self) -> Object"""
         return _datamodel.PickReference_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(PickReference self, Visitor arg2)"""
-        return _datamodel.PickReference_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(PickReference self, Visitor visitor)"""
+        return _datamodel.PickReference_accept(self, visitor)
 
 # Register PickReference in _datamodel:
 _datamodel.PickReference_swigregister(PickReference)
@@ -15459,9 +15459,9 @@ class AmplitudeReference(Object):
         r"""clone(AmplitudeReference self) -> Object"""
         return _datamodel.AmplitudeReference_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(AmplitudeReference self, Visitor arg2)"""
-        return _datamodel.AmplitudeReference_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(AmplitudeReference self, Visitor visitor)"""
+        return _datamodel.AmplitudeReference_accept(self, visitor)
 
 # Register AmplitudeReference in _datamodel:
 _datamodel.AmplitudeReference_swigregister(AmplitudeReference)
@@ -15656,9 +15656,9 @@ class Reading(PublicObject):
         r"""updateChild(Reading self, Object child) -> bool"""
         return _datamodel.Reading_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Reading self, Visitor arg2)"""
-        return _datamodel.Reading_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Reading self, Visitor visitor)"""
+        return _datamodel.Reading_accept(self, visitor)
 
 # Register Reading in _datamodel:
 _datamodel.Reading_swigregister(Reading)
@@ -15902,9 +15902,9 @@ class MomentTensorComponentContribution(Object):
         r"""clone(MomentTensorComponentContribution self) -> Object"""
         return _datamodel.MomentTensorComponentContribution_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(MomentTensorComponentContribution self, Visitor arg2)"""
-        return _datamodel.MomentTensorComponentContribution_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(MomentTensorComponentContribution self, Visitor visitor)"""
+        return _datamodel.MomentTensorComponentContribution_accept(self, visitor)
 
 # Register MomentTensorComponentContribution in _datamodel:
 _datamodel.MomentTensorComponentContribution_swigregister(MomentTensorComponentContribution)
@@ -16110,9 +16110,9 @@ class MomentTensorStationContribution(PublicObject):
         r"""updateChild(MomentTensorStationContribution self, Object child) -> bool"""
         return _datamodel.MomentTensorStationContribution_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(MomentTensorStationContribution self, Visitor arg2)"""
-        return _datamodel.MomentTensorStationContribution_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(MomentTensorStationContribution self, Visitor visitor)"""
+        return _datamodel.MomentTensorStationContribution_accept(self, visitor)
 
 # Register MomentTensorStationContribution in _datamodel:
 _datamodel.MomentTensorStationContribution_swigregister(MomentTensorStationContribution)
@@ -16328,9 +16328,9 @@ class MomentTensorPhaseSetting(Object):
         r"""clone(MomentTensorPhaseSetting self) -> Object"""
         return _datamodel.MomentTensorPhaseSetting_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(MomentTensorPhaseSetting self, Visitor arg2)"""
-        return _datamodel.MomentTensorPhaseSetting_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(MomentTensorPhaseSetting self, Visitor visitor)"""
+        return _datamodel.MomentTensorPhaseSetting_accept(self, visitor)
 
 # Register MomentTensorPhaseSetting in _datamodel:
 _datamodel.MomentTensorPhaseSetting_swigregister(MomentTensorPhaseSetting)
@@ -16717,9 +16717,9 @@ class MomentTensor(PublicObject):
         r"""updateChild(MomentTensor self, Object child) -> bool"""
         return _datamodel.MomentTensor_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(MomentTensor self, Visitor arg2)"""
-        return _datamodel.MomentTensor_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(MomentTensor self, Visitor visitor)"""
+        return _datamodel.MomentTensor_accept(self, visitor)
 
 # Register MomentTensor in _datamodel:
 _datamodel.MomentTensor_swigregister(MomentTensor)
@@ -17020,9 +17020,9 @@ class FocalMechanism(PublicObject):
         r"""updateChild(FocalMechanism self, Object child) -> bool"""
         return _datamodel.FocalMechanism_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(FocalMechanism self, Visitor arg2)"""
-        return _datamodel.FocalMechanism_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(FocalMechanism self, Visitor visitor)"""
+        return _datamodel.FocalMechanism_accept(self, visitor)
 
 # Register FocalMechanism in _datamodel:
 _datamodel.FocalMechanism_swigregister(FocalMechanism)
@@ -17334,9 +17334,9 @@ class Amplitude(PublicObject):
         r"""updateChild(Amplitude self, Object child) -> bool"""
         return _datamodel.Amplitude_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Amplitude self, Visitor arg2)"""
-        return _datamodel.Amplitude_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Amplitude self, Visitor visitor)"""
+        return _datamodel.Amplitude_accept(self, visitor)
 
 # Register Amplitude in _datamodel:
 _datamodel.Amplitude_swigregister(Amplitude)
@@ -17535,9 +17535,9 @@ class StationMagnitudeContribution(Object):
         r"""clone(StationMagnitudeContribution self) -> Object"""
         return _datamodel.StationMagnitudeContribution_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(StationMagnitudeContribution self, Visitor arg2)"""
-        return _datamodel.StationMagnitudeContribution_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(StationMagnitudeContribution self, Visitor visitor)"""
+        return _datamodel.StationMagnitudeContribution_accept(self, visitor)
 
 # Register StationMagnitudeContribution in _datamodel:
 _datamodel.StationMagnitudeContribution_swigregister(StationMagnitudeContribution)
@@ -17802,9 +17802,9 @@ class Magnitude(PublicObject):
         r"""updateChild(Magnitude self, Object child) -> bool"""
         return _datamodel.Magnitude_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Magnitude self, Visitor arg2)"""
-        return _datamodel.Magnitude_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Magnitude self, Visitor visitor)"""
+        return _datamodel.Magnitude_accept(self, visitor)
 
 # Register Magnitude in _datamodel:
 _datamodel.Magnitude_swigregister(Magnitude)
@@ -18059,9 +18059,9 @@ class StationMagnitude(PublicObject):
         r"""updateChild(StationMagnitude self, Object child) -> bool"""
         return _datamodel.StationMagnitude_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(StationMagnitude self, Visitor arg2)"""
-        return _datamodel.StationMagnitude_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(StationMagnitude self, Visitor visitor)"""
+        return _datamodel.StationMagnitude_accept(self, visitor)
 
 # Register StationMagnitude in _datamodel:
 _datamodel.StationMagnitude_swigregister(StationMagnitude)
@@ -18365,9 +18365,9 @@ class Pick(PublicObject):
         r"""updateChild(Pick self, Object child) -> bool"""
         return _datamodel.Pick_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Pick self, Visitor arg2)"""
-        return _datamodel.Pick_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Pick self, Visitor visitor)"""
+        return _datamodel.Pick_accept(self, visitor)
 
 # Register Pick in _datamodel:
 _datamodel.Pick_swigregister(Pick)
@@ -18550,9 +18550,9 @@ class OriginReference(Object):
         r"""clone(OriginReference self) -> Object"""
         return _datamodel.OriginReference_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(OriginReference self, Visitor arg2)"""
-        return _datamodel.OriginReference_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(OriginReference self, Visitor visitor)"""
+        return _datamodel.OriginReference_accept(self, visitor)
 
 # Register OriginReference in _datamodel:
 _datamodel.OriginReference_swigregister(OriginReference)
@@ -18724,9 +18724,9 @@ class FocalMechanismReference(Object):
         r"""clone(FocalMechanismReference self) -> Object"""
         return _datamodel.FocalMechanismReference_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(FocalMechanismReference self, Visitor arg2)"""
-        return _datamodel.FocalMechanismReference_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(FocalMechanismReference self, Visitor visitor)"""
+        return _datamodel.FocalMechanismReference_accept(self, visitor)
 
 # Register FocalMechanismReference in _datamodel:
 _datamodel.FocalMechanismReference_swigregister(FocalMechanismReference)
@@ -19012,9 +19012,9 @@ class Event(PublicObject):
         r"""updateChild(Event self, Object child) -> bool"""
         return _datamodel.Event_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Event self, Visitor arg2)"""
-        return _datamodel.Event_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Event self, Visitor visitor)"""
+        return _datamodel.Event_accept(self, visitor)
 
 # Register Event in _datamodel:
 _datamodel.Event_swigregister(Event)
@@ -19322,9 +19322,9 @@ class Arrival(Object):
         r"""clone(Arrival self) -> Object"""
         return _datamodel.Arrival_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(Arrival self, Visitor arg2)"""
-        return _datamodel.Arrival_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Arrival self, Visitor visitor)"""
+        return _datamodel.Arrival_accept(self, visitor)
 
 # Register Arrival in _datamodel:
 _datamodel.Arrival_swigregister(Arrival)
@@ -19722,9 +19722,9 @@ class Origin(PublicObject):
         r"""updateChild(Origin self, Object child) -> bool"""
         return _datamodel.Origin_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Origin self, Visitor arg2)"""
-        return _datamodel.Origin_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Origin self, Visitor visitor)"""
+        return _datamodel.Origin_accept(self, visitor)
 
 # Register Origin in _datamodel:
 _datamodel.Origin_swigregister(Origin)
@@ -19981,9 +19981,9 @@ class EventParameters(PublicObject):
         r"""updateChild(EventParameters self, Object child) -> bool"""
         return _datamodel.EventParameters_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(EventParameters self, Visitor arg2)"""
-        return _datamodel.EventParameters_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(EventParameters self, Visitor visitor)"""
+        return _datamodel.EventParameters_accept(self, visitor)
 
 # Register EventParameters in _datamodel:
 _datamodel.EventParameters_swigregister(EventParameters)
@@ -20170,9 +20170,9 @@ class Parameter(PublicObject):
         r"""updateChild(Parameter self, Object child) -> bool"""
         return _datamodel.Parameter_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Parameter self, Visitor arg2)"""
-        return _datamodel.Parameter_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Parameter self, Visitor visitor)"""
+        return _datamodel.Parameter_accept(self, visitor)
 
 # Register Parameter in _datamodel:
 _datamodel.Parameter_swigregister(Parameter)
@@ -20400,9 +20400,9 @@ class ParameterSet(PublicObject):
         r"""updateChild(ParameterSet self, Object child) -> bool"""
         return _datamodel.ParameterSet_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(ParameterSet self, Visitor arg2)"""
-        return _datamodel.ParameterSet_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(ParameterSet self, Visitor visitor)"""
+        return _datamodel.ParameterSet_accept(self, visitor)
 
 # Register ParameterSet in _datamodel:
 _datamodel.ParameterSet_swigregister(ParameterSet)
@@ -20600,9 +20600,9 @@ class Setup(Object):
         r"""clone(Setup self) -> Object"""
         return _datamodel.Setup_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(Setup self, Visitor arg2)"""
-        return _datamodel.Setup_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Setup self, Visitor visitor)"""
+        return _datamodel.Setup_accept(self, visitor)
 
 # Register Setup in _datamodel:
 _datamodel.Setup_swigregister(Setup)
@@ -20844,9 +20844,9 @@ class ConfigStation(PublicObject):
         r"""updateChild(ConfigStation self, Object child) -> bool"""
         return _datamodel.ConfigStation_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(ConfigStation self, Visitor arg2)"""
-        return _datamodel.ConfigStation_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(ConfigStation self, Visitor visitor)"""
+        return _datamodel.ConfigStation_accept(self, visitor)
 
 # Register ConfigStation in _datamodel:
 _datamodel.ConfigStation_swigregister(ConfigStation)
@@ -21056,9 +21056,9 @@ class ConfigModule(PublicObject):
         r"""updateChild(ConfigModule self, Object child) -> bool"""
         return _datamodel.ConfigModule_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(ConfigModule self, Visitor arg2)"""
-        return _datamodel.ConfigModule_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(ConfigModule self, Visitor visitor)"""
+        return _datamodel.ConfigModule_accept(self, visitor)
 
 # Register ConfigModule in _datamodel:
 _datamodel.ConfigModule_swigregister(ConfigModule)
@@ -21243,9 +21243,9 @@ class Config(PublicObject):
         r"""updateChild(Config self, Object child) -> bool"""
         return _datamodel.Config_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Config self, Visitor arg2)"""
-        return _datamodel.Config_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Config self, Visitor visitor)"""
+        return _datamodel.Config_accept(self, visitor)
 
 # Register Config in _datamodel:
 _datamodel.Config_swigregister(Config)
@@ -21441,9 +21441,9 @@ class RouteArclink(Object):
         r"""clone(RouteArclink self) -> Object"""
         return _datamodel.RouteArclink_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(RouteArclink self, Visitor arg2)"""
-        return _datamodel.RouteArclink_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(RouteArclink self, Visitor visitor)"""
+        return _datamodel.RouteArclink_accept(self, visitor)
 
 # Register RouteArclink in _datamodel:
 _datamodel.RouteArclink_swigregister(RouteArclink)
@@ -21622,9 +21622,9 @@ class RouteSeedlink(Object):
         r"""clone(RouteSeedlink self) -> Object"""
         return _datamodel.RouteSeedlink_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(RouteSeedlink self, Visitor arg2)"""
-        return _datamodel.RouteSeedlink_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(RouteSeedlink self, Visitor visitor)"""
+        return _datamodel.RouteSeedlink_accept(self, visitor)
 
 # Register RouteSeedlink in _datamodel:
 _datamodel.RouteSeedlink_swigregister(RouteSeedlink)
@@ -21889,9 +21889,9 @@ class Route(PublicObject):
         r"""updateChild(Route self, Object child) -> bool"""
         return _datamodel.Route_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Route self, Visitor arg2)"""
-        return _datamodel.Route_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Route self, Visitor visitor)"""
+        return _datamodel.Route_accept(self, visitor)
 
 # Register Route in _datamodel:
 _datamodel.Route_swigregister(Route)
@@ -22126,9 +22126,9 @@ class Access(Object):
         r"""clone(Access self) -> Object"""
         return _datamodel.Access_clone(self)
 
-    def accept(self, arg2):
-        r"""accept(Access self, Visitor arg2)"""
-        return _datamodel.Access_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Access self, Visitor visitor)"""
+        return _datamodel.Access_accept(self, visitor)
 
 # Register Access in _datamodel:
 _datamodel.Access_swigregister(Access)
@@ -22310,9 +22310,9 @@ class Routing(PublicObject):
         r"""updateChild(Routing self, Object child) -> bool"""
         return _datamodel.Routing_updateChild(self, child)
 
-    def accept(self, arg2):
-        r"""accept(Routing self, Visitor arg2)"""
-        return _datamodel.Routing_accept(self, arg2)
+    def accept(self, visitor):
+        r"""accept(Routing self, Visitor visitor)"""
+        return _datamodel.Routing_accept(self, visitor)
 
 # Register Routing in _datamodel:
 _datamodel.Routing_swigregister(Routing)
