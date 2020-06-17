@@ -434,56 +434,27 @@ BOOST_AUTO_TEST_CASE(localTime) {
 	local.setUSecs(0);
 	check1 = local.iso();
 	check2 = localtest.iso();
-	equal = boost::equals(check1,check2);
-	BOOST_CHECK_EQUAL(equal, true);
+	BOOST_CHECK_EQUAL(check1, check2);
 
 	local.set(1970,3,14,5,30,3,39);
 	check1 = "1970-03-14T05:30:03.000039Z";
 	check2 = local.toString("%FT%T.%fZ");
-	equal = boost::iequals(check1,check2);
-	BOOST_CHECK_EQUAL(equal, true);
-
-	sc::Time timeGMT = local.toGMT();
-	check1 = "1970-03-14T04:30:03.000039Z";
-	check2 = timeGMT.toString("%FT%T.%fZ");
-	equal = boost::iequals(check1, check2);
-	BOOST_CHECK_EQUAL(equal, true);
-
-	local = timeGMT.toLocalTime();
-	check1 = "1970-03-14T05:30:03.000039Z";
-	check2 = local.iso();
-	equal = boost::iequals(check1,check2);
-	BOOST_CHECK_EQUAL(equal, true);
+	BOOST_CHECK_EQUAL(check1, check2);
 
 	local.set(1981,9,14,5,30,3,39);
 	check1 = "1981-09-14T05:30:03.000039Z";
 	check2 = local.toString("%FT%T.%fZ");
-	equal = boost::iequals(check1,check2);
-	BOOST_CHECK_EQUAL(equal, true);
-	check1 = "1981-09-14T03:30:03.000039Z";
-	check2 = local.toGMT().iso();
-	equal = boost::iequals(check1,check2);
-	BOOST_CHECK_EQUAL(equal, true);
+	BOOST_CHECK_EQUAL(check1, check2);
 
 	local.set(2014,3,14,5,30,3,39);
 	check1 = "2014-03-14T05:30:03.000039Z";
 	check2 = local.toString("%FT%T.%fZ");
-	equal = boost::iequals(check1,check2);
-	BOOST_CHECK_EQUAL(equal, true);
-	check1 = local.toGMT().iso();
-	check2 = "2014-03-14T04:30:03.000039Z";
-	equal = boost::iequals(check1,check2);
-	BOOST_CHECK_EQUAL(equal, true);
+	BOOST_CHECK_EQUAL(check1, check2);
 
 	local.set(2000,8,14,5,30,3,39);
 	check1 = local.toString("%FT%T.%fZ");
 	check2 = "2000-08-14T05:30:03.000039Z";
-	equal = boost::iequals(check1,check2);
-	BOOST_CHECK_EQUAL(equal, true);
-	check1 = "2000-08-14T03:30:03.000039Z";
-	check2 = local.toGMT().iso();
-	equal = boost::iequals(check1,check2);
-	BOOST_CHECK_EQUAL(equal,true);
+	BOOST_CHECK_EQUAL(check1, check2);
 
 	// before 1970
 	sc::Time before1970;
@@ -495,33 +466,12 @@ BOOST_AUTO_TEST_CASE(localTime) {
 	time2.setUSecs(0);
 	check1 = time1.toString("%FT%T.%fZ");
 	check2 = time2.toString("%FT%T.%fZ");
-	equal = boost::iequals(check1,check2);
-	BOOST_CHECK_EQUAL(equal, true);
+	BOOST_CHECK_EQUAL(check1, check2);
 
 	before1970.set(1914,9,4,7,8,66,11);
 	check1 = "1914-09-04T07:09:06.000011Z";
 	check2 = before1970.toString("%FT%T.%fZ");
-	equal = boost::iequals(check1,check2);
-	BOOST_CHECK_EQUAL(equal,true);
-	check1 = before1970.toGMT().iso();
-	check2 = "1914-09-04T06:09:06.000011Z";
-	equal = boost::iequals(check1,check2);
-	BOOST_CHECK_EQUAL(equal, true);
-
-	BOOST_CHECK_CLOSE(double(before1970.GMT()),
-	                  double(sc::Time::LocalTime() - sc::Time::LocalTime().localTimeZoneOffset()), 0.2);
-	t = before1970.toGMT();
-	check1 = before1970.toString("%FT%T.%fZ");
-	check2 = "1914-09-04T07:09:06.000011Z";
-	equal = boost::iequals(check1,check2);
-	BOOST_CHECK_EQUAL(equal, true);
-	check1 = t.toString("%FT%T.%fZ");
-	check2 = "1914-09-04T06:09:06.000011Z";
-	equal = boost::iequals(check2, check1);
-	BOOST_CHECK_EQUAL(equal,true);
-	BOOST_CHECK_CLOSE(double(before1970.gmt()), double(t.gmt()),0.1);
-	BOOST_CHECK_CLOSE(double(before1970.localtime()), double(t),0.1);
-
+	BOOST_CHECK_EQUAL(check1, check2);
 
 	sc::Time lastYear(2016,8,26,15,44,9,644);
 	t = lastYear.toGMT();
