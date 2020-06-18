@@ -27,9 +27,8 @@
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <QDirModel>
+#include <QFileSystemModel>
 #include <QFileDialog>
-#include <QFileSystemWatcher>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QMessageBox>
@@ -543,7 +542,7 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	_folderTree->addAction(inspectFileAction);
 	_folderTree->addAction(deleteFileAction);
 
-	_folderModel = new QDirModel(this);
+	_folderModel = new QFileSystemModel(this);
 	_folderModel->setReadOnly(false);
 	_folderModel->setFilter(QDir::Files);
 
@@ -561,17 +560,6 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	a = folderViewTools->addAction("Details");
 	a->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(switchToDetailedView()));
-
-	a = folderViewTools->addAction("Refresh");
-#if QT_VERSION >= 0x040400
-	a->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
-#endif
-	connect(a, SIGNAL(triggered(bool)), this, SLOT(refresh()));
-
-	QFileSystemWatcher *monitor = new QFileSystemWatcher(this);
-	monitor->addPath(inventoryDir);
-	connect(monitor, SIGNAL(directoryChanged(QString)), this, SLOT(refresh()));
-	connect(monitor, SIGNAL(fileChanged(QString)), this, SLOT(refresh()));
 
 	folderViewTools->addSeparator();
 
@@ -598,6 +586,9 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	l->addWidget(folderViewTools);
 	l->addWidget(_folderView);
 	l->addWidget(_folderTree);
+
+	std::cerr << inventoryDir.toStdString() << std::endl;
+	_folderModel->setRootPath(inventoryDir);
 
 	_folderView->setModel(_folderModel);
 	_folderTree->setModel(_folderModel);
@@ -668,14 +659,6 @@ void InventoryPanel::switchToListView() {
 void InventoryPanel::switchToDetailedView() {
 	_folderView->hide();
 	_folderTree->show();
-}
-
-
-void InventoryPanel::refresh() {
-	Seiscomp::Environment *env = Seiscomp::Environment::Instance();
-	QString rootDir = QDir::toNativeSeparators((env->installDir() + "/etc/inventory").c_str());
-	QModelIndex root = _folderModel->index(rootDir, 0);
-	_folderModel->refresh(root);
 }
 
 
@@ -790,7 +773,6 @@ void InventoryPanel::import() {
 	}
 
 	runSCProc("import_inv", QStringList() << format << source);
-	refresh();
 }
 
 

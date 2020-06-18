@@ -30,7 +30,7 @@
 
 class QListView;
 class QTreeView;
-class QDirModel;
+class QFileSystemModel;
 class QSortFilterProxyModel;
 class QLineEdit;
 class QPushButton;
@@ -107,7 +107,6 @@ class InventoryPanel : public ConfiguratorPanel {
 		void switchToIconView();
 		void switchToListView();
 		void switchToDetailedView();
-		void refresh();
 		void deleteFiles();
 		void inspectFile();
 
@@ -121,7 +120,7 @@ class InventoryPanel : public ConfiguratorPanel {
 	private:
 		QListView             *_folderView;
 		QTreeView             *_folderTree;
-		QDirModel             *_folderModel;
+		QFileSystemModel      *_folderModel;
 		QItemSelectionModel   *_selectionModel;
 };
 
