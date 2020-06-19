@@ -3816,8 +3816,8 @@ namespace swig {
 #include "seiscomp/datamodel/routing_package.h"
 
 #include "seiscomp/seismology/regions.h"
-#include "seiscomp/seismology/locsat.h"
 #include "seiscomp/seismology/ttt.h"
+#include "seiscomp/seismology/locator/locsat.h"
 
 
 #include <string>
@@ -11458,1742 +11458,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new_LocSATErrorEllipsoid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *result = 0 ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "new_LocSATErrorEllipsoid", 0, 0, 0)) SWIG_fail;
-  {
-    try {
-      result = (Seiscomp::LocSATErrorEllipsoid *)new Seiscomp::LocSATErrorEllipsoid();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sxx_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sxx_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sxx_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sxx_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->sxx = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sxx_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sxx_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->sxx);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_syy_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_syy_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_syy_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_syy_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->syy = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_syy_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_syy_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->syy);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_szz_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_szz_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_szz_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_szz_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->szz = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_szz_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_szz_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->szz);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stt_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_stt_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stt_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_stt_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->stt = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stt_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stt_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->stt);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sxy_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sxy_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sxy_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sxy_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->sxy = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sxy_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sxy_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->sxy);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sxz_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sxz_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sxz_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sxz_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->sxz = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sxz_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sxz_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->sxz);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_syz_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_syz_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_syz_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_syz_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->syz = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_syz_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_syz_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->syz);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stx_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_stx_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stx_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_stx_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->stx = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stx_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stx_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->stx);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sty_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sty_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sty_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sty_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->sty = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sty_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sty_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->sty);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stz_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_stz_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stz_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_stz_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->stz = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stz_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stz_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->stz);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sdobs_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sdobs_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sdobs_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sdobs_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->sdobs = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sdobs_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sdobs_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->sdobs);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_smajax_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_smajax_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_smajax_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_smajax_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->smajax = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_smajax_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_smajax_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->smajax);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sminax_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sminax_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sminax_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sminax_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->sminax = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sminax_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sminax_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->sminax);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_strike_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_strike_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_strike_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_strike_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->strike = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_strike_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_strike_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->strike);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sdepth_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sdepth_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sdepth_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sdepth_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->sdepth = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sdepth_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sdepth_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->sdepth);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stime_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_stime_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stime_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_stime_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->stime = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stime_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stime_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->stime);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_conf_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  float arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  float val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_conf_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_conf_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_conf_set" "', argument " "2"" of type '" "float""'");
-  } 
-  arg2 = static_cast< float >(val2);
-  if (arg1) (arg1)->conf = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_conf_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  float result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_conf_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  result = (float) ((arg1)->conf);
-  resultobj = SWIG_From_float(static_cast< float >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_delete_LocSATErrorEllipsoid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_LocSATErrorEllipsoid" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
-  {
-    try {
-      delete arg1;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *LocSATErrorEllipsoid_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *obj;
-  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, SWIG_NewClientData(obj));
-  return SWIG_Py_Void();
-}
-
-SWIGINTERN PyObject *LocSATErrorEllipsoid_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  return SWIG_Python_InitShadowInstance(args);
-}
-
-SWIGINTERN PyObject *_wrap_new_LocSAT(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *result = 0 ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "new_LocSAT", 0, 0, 0)) SWIG_fail;
-  {
-    try {
-      result = (Seiscomp::LocSAT *)new Seiscomp::LocSAT();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__LocSAT, SWIG_POINTER_NEW |  0 );
-  if (result) result->incrementReferenceCount();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_delete_LocSAT(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_LocSAT" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
-  {
-    try {
-      if (arg1) arg1->decrementReferenceCount();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_init(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
-  Seiscomp::Config::Config *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
-  bool result;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSAT_init", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_init" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Config__Config,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_init" "', argument " "2"" of type '" "Seiscomp::Config::Config const &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_init" "', argument " "2"" of type '" "Seiscomp::Config::Config const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Config::Config * >(argp2);
-  {
-    try {
-      result = (bool)(arg1)->init((Seiscomp::Config::Config const &)*arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_parameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  Seiscomp::Seismology::LocatorInterface::IDList result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_parameters" "', argument " "1"" of type '" "Seiscomp::LocSAT const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
-  {
-    try {
-      result = ((Seiscomp::LocSAT const *)arg1)->parameters();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_parameter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
-  std::string *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  PyObject *swig_obj[2] ;
-  std::string result;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSAT_parameter", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_parameter" "', argument " "1"" of type '" "Seiscomp::LocSAT const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_parameter" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_parameter" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  {
-    try {
-      result = ((Seiscomp::LocSAT const *)arg1)->parameter((std::string const &)*arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_setParameter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
-  std::string *arg2 = 0 ;
-  std::string *arg3 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  int res3 = SWIG_OLDOBJ ;
-  PyObject *swig_obj[3] ;
-  bool result;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSAT_setParameter", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_setParameter" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_setParameter" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_setParameter" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  {
-    std::string *ptr = (std::string *)0;
-    res3 = SWIG_AsPtr_std_string(swig_obj[2], &ptr);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "LocSAT_setParameter" "', argument " "3"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_setParameter" "', argument " "3"" of type '" "std::string const &""'"); 
-    }
-    arg3 = ptr;
-  }
-  {
-    try {
-      result = (bool)(arg1)->setParameter((std::string const &)*arg2,(std::string const &)*arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  if (SWIG_IsNewObj(res3)) delete arg3;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  if (SWIG_IsNewObj(res3)) delete arg3;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_profiles(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  Seiscomp::Seismology::LocatorInterface::IDList result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_profiles" "', argument " "1"" of type '" "Seiscomp::LocSAT const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
-  {
-    try {
-      result = ((Seiscomp::LocSAT const *)arg1)->profiles();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_setProfile(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
-  std::string *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSAT_setProfile", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_setProfile" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_setProfile" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_setProfile" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  {
-    try {
-      (arg1)->setProfile((std::string const &)*arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_setDefaultProfile(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  std::string *arg1 = 0 ;
-  int res1 = SWIG_OLDOBJ ;
-  PyObject *swig_obj[1] ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  {
-    std::string *ptr = (std::string *)0;
-    res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_setDefaultProfile" "', argument " "1"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_setDefaultProfile" "', argument " "1"" of type '" "std::string const &""'"); 
-    }
-    arg1 = ptr;
-  }
-  {
-    try {
-      Seiscomp::LocSAT::setDefaultProfile((std::string const &)*arg1);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res1)) delete arg1;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res1)) delete arg1;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_currentDefaultProfile(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  std::string result;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSAT_currentDefaultProfile", 0, 0, 0)) SWIG_fail;
-  {
-    try {
-      result = Seiscomp::LocSAT::currentDefaultProfile();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_setNewOriginID(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
-  std::string *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSAT_setNewOriginID", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_setNewOriginID" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
-  {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_setNewOriginID" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_setNewOriginID" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
-  }
-  {
-    try {
-      (arg1)->setNewOriginID((std::string const &)*arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_capabilities(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  int result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_capabilities" "', argument " "1"" of type '" "Seiscomp::LocSAT const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
-  {
-    try {
-      result = (int)((Seiscomp::LocSAT const *)arg1)->capabilities();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_locate__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
-  Seiscomp::Seismology::LocatorInterface::PickList *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  Seiscomp::DataModel::Origin *result = 0 ;
-  
-  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_locate" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_Seiscomp__Seismology__LocatorInterface__PickItem_std__allocatorT_Seiscomp__Seismology__LocatorInterface__PickItem_t_t,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_locate" "', argument " "2"" of type '" "Seiscomp::Seismology::LocatorInterface::PickList &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_locate" "', argument " "2"" of type '" "Seiscomp::Seismology::LocatorInterface::PickList &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Seismology::LocatorInterface::PickList * >(argp2);
-  {
-    try {
-      result = (Seiscomp::DataModel::Origin *)(arg1)->locate(*arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__DataModel__Origin, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_locate__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
-  Seiscomp::Seismology::LocatorInterface::PickList *arg2 = 0 ;
-  double arg3 ;
-  double arg4 ;
-  double arg5 ;
-  Seiscomp::Core::Time *arg6 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  double val4 ;
-  int ecode4 = 0 ;
-  double val5 ;
-  int ecode5 = 0 ;
-  void *argp6 = 0 ;
-  int res6 = 0 ;
-  Seiscomp::DataModel::Origin *result = 0 ;
-  
-  if ((nobjs < 6) || (nobjs > 6)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_locate" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_Seiscomp__Seismology__LocatorInterface__PickItem_std__allocatorT_Seiscomp__Seismology__LocatorInterface__PickItem_t_t,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_locate" "', argument " "2"" of type '" "Seiscomp::Seismology::LocatorInterface::PickList &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_locate" "', argument " "2"" of type '" "Seiscomp::Seismology::LocatorInterface::PickList &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Seismology::LocatorInterface::PickList * >(argp2);
-  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "LocSAT_locate" "', argument " "3"" of type '" "double""'");
-  } 
-  arg3 = static_cast< double >(val3);
-  ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "LocSAT_locate" "', argument " "4"" of type '" "double""'");
-  } 
-  arg4 = static_cast< double >(val4);
-  ecode5 = SWIG_AsVal_double(swig_obj[4], &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "LocSAT_locate" "', argument " "5"" of type '" "double""'");
-  } 
-  arg5 = static_cast< double >(val5);
-  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res6)) {
-    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "LocSAT_locate" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  if (!argp6) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_locate" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg6 = reinterpret_cast< Seiscomp::Core::Time * >(argp6);
-  {
-    try {
-      result = (Seiscomp::DataModel::Origin *)(arg1)->locate(*arg2,arg3,arg4,arg5,(Seiscomp::Core::Time const &)*arg6);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__DataModel__Origin, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_locate(PyObject *self, PyObject *args) {
-  Py_ssize_t argc;
-  PyObject *argv[7] = {
-    0
-  };
-  
-  if (!(argc = SWIG_Python_UnpackTuple(args, "LocSAT_locate", 0, 6, argv))) SWIG_fail;
-  --argc;
-  if (argc == 2) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__LocSAT, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_Seiscomp__Seismology__LocatorInterface__PickItem_std__allocatorT_Seiscomp__Seismology__LocatorInterface__PickItem_t_t, SWIG_POINTER_NO_NULL);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        return _wrap_LocSAT_locate__SWIG_0(self, argc, argv);
-      }
-    }
-  }
-  if (argc == 6) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__LocSAT, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_Seiscomp__Seismology__LocatorInterface__PickItem_std__allocatorT_Seiscomp__Seismology__LocatorInterface__PickItem_t_t, SWIG_POINTER_NO_NULL);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          {
-            int res = SWIG_AsVal_double(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            {
-              int res = SWIG_AsVal_double(argv[4], NULL);
-              _v = SWIG_CheckState(res);
-            }
-            if (_v) {
-              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
-              _v = SWIG_CheckState(res);
-              if (_v) {
-                return _wrap_LocSAT_locate__SWIG_1(self, argc, argv);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'LocSAT_locate'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::LocSAT::locate(Seiscomp::Seismology::LocatorInterface::PickList &)\n"
-    "    Seiscomp::LocSAT::locate(Seiscomp::Seismology::LocatorInterface::PickList &,double,double,double,Seiscomp::Core::Time const &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_relocate(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
-  Seiscomp::DataModel::Origin *arg2 = (Seiscomp::DataModel::Origin *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
-  Seiscomp::DataModel::Origin *result = 0 ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "LocSAT_relocate", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_relocate" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__DataModel__Origin, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_relocate" "', argument " "2"" of type '" "Seiscomp::DataModel::Origin const *""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::DataModel::Origin * >(argp2);
-  {
-    try {
-      result = (Seiscomp::DataModel::Origin *)(arg1)->relocate((Seiscomp::DataModel::Origin const *)arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__DataModel__Origin, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LocSAT_errorEllipsoid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  Seiscomp::LocSATErrorEllipsoid *result = 0 ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_errorEllipsoid" "', argument " "1"" of type '" "Seiscomp::LocSAT const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
-  {
-    try {
-      result = (Seiscomp::LocSATErrorEllipsoid *) &((Seiscomp::LocSAT const *)arg1)->errorEllipsoid();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *LocSAT_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *obj;
-  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__LocSAT, SWIG_NewClientData(obj));
-  return SWIG_Py_Void();
-}
-
-SWIGINTERN PyObject *LocSAT_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  return SWIG_Python_InitShadowInstance(args);
-}
-
 SWIGINTERN PyObject *_wrap_new_FileNotFoundError(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::string *arg1 = 0 ;
@@ -17282,6 +15546,1742 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_new_LocSATErrorEllipsoid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *result = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "new_LocSATErrorEllipsoid", 0, 0, 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::LocSATErrorEllipsoid *)new Seiscomp::LocSATErrorEllipsoid();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sxx_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sxx_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sxx_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sxx_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->sxx = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sxx_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sxx_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->sxx);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_syy_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_syy_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_syy_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_syy_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->syy = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_syy_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_syy_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->syy);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_szz_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_szz_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_szz_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_szz_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->szz = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_szz_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_szz_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->szz);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stt_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_stt_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stt_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_stt_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->stt = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stt_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stt_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->stt);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sxy_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sxy_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sxy_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sxy_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->sxy = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sxy_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sxy_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->sxy);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sxz_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sxz_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sxz_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sxz_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->sxz = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sxz_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sxz_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->sxz);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_syz_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_syz_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_syz_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_syz_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->syz = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_syz_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_syz_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->syz);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stx_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_stx_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stx_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_stx_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->stx = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stx_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stx_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->stx);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sty_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sty_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sty_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sty_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->sty = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sty_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sty_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->sty);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stz_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_stz_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stz_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_stz_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->stz = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stz_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stz_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->stz);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sdobs_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sdobs_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sdobs_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sdobs_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->sdobs = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sdobs_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sdobs_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->sdobs);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_smajax_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_smajax_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_smajax_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_smajax_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->smajax = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_smajax_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_smajax_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->smajax);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sminax_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sminax_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sminax_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sminax_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->sminax = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sminax_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sminax_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->sminax);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_strike_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_strike_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_strike_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_strike_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->strike = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_strike_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_strike_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->strike);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sdepth_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_sdepth_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sdepth_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_sdepth_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->sdepth = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_sdepth_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_sdepth_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->sdepth);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stime_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_stime_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stime_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_stime_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->stime = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_stime_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_stime_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->stime);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_conf_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  float arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSATErrorEllipsoid_conf_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_conf_set" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LocSATErrorEllipsoid_conf_set" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = static_cast< float >(val2);
+  if (arg1) (arg1)->conf = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSATErrorEllipsoid_conf_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  float result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSATErrorEllipsoid_conf_get" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  result = (float) ((arg1)->conf);
+  resultobj = SWIG_From_float(static_cast< float >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_LocSATErrorEllipsoid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSATErrorEllipsoid *arg1 = (Seiscomp::LocSATErrorEllipsoid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_LocSATErrorEllipsoid" "', argument " "1"" of type '" "Seiscomp::LocSATErrorEllipsoid *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSATErrorEllipsoid * >(argp1);
+  {
+    try {
+      delete arg1;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *LocSATErrorEllipsoid_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *LocSATErrorEllipsoid_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new_LocSAT(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *result = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "new_LocSAT", 0, 0, 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::LocSAT *)new Seiscomp::LocSAT();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__LocSAT, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_LocSAT(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_LocSAT" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_init(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
+  Seiscomp::Config::Config *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  bool result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSAT_init", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_init" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Config__Config,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_init" "', argument " "2"" of type '" "Seiscomp::Config::Config const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_init" "', argument " "2"" of type '" "Seiscomp::Config::Config const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Config::Config * >(argp2);
+  {
+    try {
+      result = (bool)(arg1)->init((Seiscomp::Config::Config const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_parameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Seismology::LocatorInterface::IDList result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_parameters" "', argument " "1"" of type '" "Seiscomp::LocSAT const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
+  {
+    try {
+      result = ((Seiscomp::LocSAT const *)arg1)->parameters();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_parameter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  std::string result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSAT_parameter", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_parameter" "', argument " "1"" of type '" "Seiscomp::LocSAT const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_parameter" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_parameter" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = ((Seiscomp::LocSAT const *)arg1)->parameter((std::string const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_setParameter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
+  std::string *arg2 = 0 ;
+  std::string *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  int res3 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[3] ;
+  bool result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSAT_setParameter", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_setParameter" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_setParameter" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_setParameter" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    std::string *ptr = (std::string *)0;
+    res3 = SWIG_AsPtr_std_string(swig_obj[2], &ptr);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "LocSAT_setParameter" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_setParameter" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    arg3 = ptr;
+  }
+  {
+    try {
+      result = (bool)(arg1)->setParameter((std::string const &)*arg2,(std::string const &)*arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_profiles(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Seismology::LocatorInterface::IDList result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_profiles" "', argument " "1"" of type '" "Seiscomp::LocSAT const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
+  {
+    try {
+      result = ((Seiscomp::LocSAT const *)arg1)->profiles();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_setProfile(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSAT_setProfile", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_setProfile" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_setProfile" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_setProfile" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      (arg1)->setProfile((std::string const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_setDefaultProfile(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::string *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  {
+    std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_setDefaultProfile" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_setDefaultProfile" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  {
+    try {
+      Seiscomp::LocSAT::setDefaultProfile((std::string const &)*arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_currentDefaultProfile(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::string result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSAT_currentDefaultProfile", 0, 0, 0)) SWIG_fail;
+  {
+    try {
+      result = Seiscomp::LocSAT::currentDefaultProfile();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_setNewOriginID(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSAT_setNewOriginID", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_setNewOriginID" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_setNewOriginID" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_setNewOriginID" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      (arg1)->setNewOriginID((std::string const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_capabilities(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  int result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_capabilities" "', argument " "1"" of type '" "Seiscomp::LocSAT const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
+  {
+    try {
+      result = (int)((Seiscomp::LocSAT const *)arg1)->capabilities();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_locate__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
+  Seiscomp::Seismology::LocatorInterface::PickList *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  Seiscomp::DataModel::Origin *result = 0 ;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_locate" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_Seiscomp__Seismology__LocatorInterface__PickItem_std__allocatorT_Seiscomp__Seismology__LocatorInterface__PickItem_t_t,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_locate" "', argument " "2"" of type '" "Seiscomp::Seismology::LocatorInterface::PickList &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_locate" "', argument " "2"" of type '" "Seiscomp::Seismology::LocatorInterface::PickList &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Seismology::LocatorInterface::PickList * >(argp2);
+  {
+    try {
+      result = (Seiscomp::DataModel::Origin *)(arg1)->locate(*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__DataModel__Origin, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_locate__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
+  Seiscomp::Seismology::LocatorInterface::PickList *arg2 = 0 ;
+  double arg3 ;
+  double arg4 ;
+  double arg5 ;
+  Seiscomp::Core::Time *arg6 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  double val4 ;
+  int ecode4 = 0 ;
+  double val5 ;
+  int ecode5 = 0 ;
+  void *argp6 = 0 ;
+  int res6 = 0 ;
+  Seiscomp::DataModel::Origin *result = 0 ;
+  
+  if ((nobjs < 6) || (nobjs > 6)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_locate" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_Seiscomp__Seismology__LocatorInterface__PickItem_std__allocatorT_Seiscomp__Seismology__LocatorInterface__PickItem_t_t,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_locate" "', argument " "2"" of type '" "Seiscomp::Seismology::LocatorInterface::PickList &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_locate" "', argument " "2"" of type '" "Seiscomp::Seismology::LocatorInterface::PickList &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Seismology::LocatorInterface::PickList * >(argp2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "LocSAT_locate" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "LocSAT_locate" "', argument " "4"" of type '" "double""'");
+  } 
+  arg4 = static_cast< double >(val4);
+  ecode5 = SWIG_AsVal_double(swig_obj[4], &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "LocSAT_locate" "', argument " "5"" of type '" "double""'");
+  } 
+  arg5 = static_cast< double >(val5);
+  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
+  if (!SWIG_IsOK(res6)) {
+    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "LocSAT_locate" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  if (!argp6) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LocSAT_locate" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  arg6 = reinterpret_cast< Seiscomp::Core::Time * >(argp6);
+  {
+    try {
+      result = (Seiscomp::DataModel::Origin *)(arg1)->locate(*arg2,arg3,arg4,arg5,(Seiscomp::Core::Time const &)*arg6);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__DataModel__Origin, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_locate(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[7] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "LocSAT_locate", 0, 6, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__LocSAT, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_Seiscomp__Seismology__LocatorInterface__PickItem_std__allocatorT_Seiscomp__Seismology__LocatorInterface__PickItem_t_t, SWIG_POINTER_NO_NULL);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_LocSAT_locate__SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 6) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__LocSAT, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_Seiscomp__Seismology__LocatorInterface__PickItem_std__allocatorT_Seiscomp__Seismology__LocatorInterface__PickItem_t_t, SWIG_POINTER_NO_NULL);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_double(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            {
+              int res = SWIG_AsVal_double(argv[4], NULL);
+              _v = SWIG_CheckState(res);
+            }
+            if (_v) {
+              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
+              _v = SWIG_CheckState(res);
+              if (_v) {
+                return _wrap_LocSAT_locate__SWIG_1(self, argc, argv);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'LocSAT_locate'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::LocSAT::locate(Seiscomp::Seismology::LocatorInterface::PickList &)\n"
+    "    Seiscomp::LocSAT::locate(Seiscomp::Seismology::LocatorInterface::PickList &,double,double,double,Seiscomp::Core::Time const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_relocate(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
+  Seiscomp::DataModel::Origin *arg2 = (Seiscomp::DataModel::Origin *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  Seiscomp::DataModel::Origin *result = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "LocSAT_relocate", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_relocate" "', argument " "1"" of type '" "Seiscomp::LocSAT *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__DataModel__Origin, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LocSAT_relocate" "', argument " "2"" of type '" "Seiscomp::DataModel::Origin const *""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::DataModel::Origin * >(argp2);
+  {
+    try {
+      result = (Seiscomp::DataModel::Origin *)(arg1)->relocate((Seiscomp::DataModel::Origin const *)arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__DataModel__Origin, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_LocSAT_errorEllipsoid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::LocSAT *arg1 = (Seiscomp::LocSAT *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::LocSATErrorEllipsoid *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__LocSAT, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LocSAT_errorEllipsoid" "', argument " "1"" of type '" "Seiscomp::LocSAT const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::LocSAT * >(argp1);
+  {
+    try {
+      result = (Seiscomp::LocSATErrorEllipsoid *) &((Seiscomp::LocSAT const *)arg1)->errorEllipsoid();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__LocSATErrorEllipsoid, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *LocSAT_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__LocSAT, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *LocSAT_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
 static PyMethodDef SwigMethods[] = {
 	 { "SWIG_PyInstanceMethod_New", SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { "delete_SwigPyIterator", _wrap_delete_SwigPyIterator, METH_O, NULL},
@@ -17428,64 +17428,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "StationNotFoundException_swiginit", StationNotFoundException_swiginit, METH_VARARGS, NULL},
 	 { "arrivalToFlags", _wrap_arrivalToFlags, METH_O, "arrivalToFlags(Arrival arrival) -> int"},
 	 { "flagsToArrival", _wrap_flagsToArrival, METH_VARARGS, "flagsToArrival(Arrival arrival, int flags)"},
-	 { "new_LocSATErrorEllipsoid", _wrap_new_LocSATErrorEllipsoid, METH_NOARGS, "new_LocSATErrorEllipsoid() -> LocSATErrorEllipsoid"},
-	 { "LocSATErrorEllipsoid_sxx_set", _wrap_LocSATErrorEllipsoid_sxx_set, METH_VARARGS, "LocSATErrorEllipsoid_sxx_set(LocSATErrorEllipsoid self, float sxx)"},
-	 { "LocSATErrorEllipsoid_sxx_get", _wrap_LocSATErrorEllipsoid_sxx_get, METH_O, "LocSATErrorEllipsoid_sxx_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_syy_set", _wrap_LocSATErrorEllipsoid_syy_set, METH_VARARGS, "LocSATErrorEllipsoid_syy_set(LocSATErrorEllipsoid self, float syy)"},
-	 { "LocSATErrorEllipsoid_syy_get", _wrap_LocSATErrorEllipsoid_syy_get, METH_O, "LocSATErrorEllipsoid_syy_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_szz_set", _wrap_LocSATErrorEllipsoid_szz_set, METH_VARARGS, "LocSATErrorEllipsoid_szz_set(LocSATErrorEllipsoid self, float szz)"},
-	 { "LocSATErrorEllipsoid_szz_get", _wrap_LocSATErrorEllipsoid_szz_get, METH_O, "LocSATErrorEllipsoid_szz_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_stt_set", _wrap_LocSATErrorEllipsoid_stt_set, METH_VARARGS, "LocSATErrorEllipsoid_stt_set(LocSATErrorEllipsoid self, float stt)"},
-	 { "LocSATErrorEllipsoid_stt_get", _wrap_LocSATErrorEllipsoid_stt_get, METH_O, "LocSATErrorEllipsoid_stt_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_sxy_set", _wrap_LocSATErrorEllipsoid_sxy_set, METH_VARARGS, "LocSATErrorEllipsoid_sxy_set(LocSATErrorEllipsoid self, float sxy)"},
-	 { "LocSATErrorEllipsoid_sxy_get", _wrap_LocSATErrorEllipsoid_sxy_get, METH_O, "LocSATErrorEllipsoid_sxy_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_sxz_set", _wrap_LocSATErrorEllipsoid_sxz_set, METH_VARARGS, "LocSATErrorEllipsoid_sxz_set(LocSATErrorEllipsoid self, float sxz)"},
-	 { "LocSATErrorEllipsoid_sxz_get", _wrap_LocSATErrorEllipsoid_sxz_get, METH_O, "LocSATErrorEllipsoid_sxz_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_syz_set", _wrap_LocSATErrorEllipsoid_syz_set, METH_VARARGS, "LocSATErrorEllipsoid_syz_set(LocSATErrorEllipsoid self, float syz)"},
-	 { "LocSATErrorEllipsoid_syz_get", _wrap_LocSATErrorEllipsoid_syz_get, METH_O, "LocSATErrorEllipsoid_syz_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_stx_set", _wrap_LocSATErrorEllipsoid_stx_set, METH_VARARGS, "LocSATErrorEllipsoid_stx_set(LocSATErrorEllipsoid self, float stx)"},
-	 { "LocSATErrorEllipsoid_stx_get", _wrap_LocSATErrorEllipsoid_stx_get, METH_O, "LocSATErrorEllipsoid_stx_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_sty_set", _wrap_LocSATErrorEllipsoid_sty_set, METH_VARARGS, "LocSATErrorEllipsoid_sty_set(LocSATErrorEllipsoid self, float sty)"},
-	 { "LocSATErrorEllipsoid_sty_get", _wrap_LocSATErrorEllipsoid_sty_get, METH_O, "LocSATErrorEllipsoid_sty_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_stz_set", _wrap_LocSATErrorEllipsoid_stz_set, METH_VARARGS, "LocSATErrorEllipsoid_stz_set(LocSATErrorEllipsoid self, float stz)"},
-	 { "LocSATErrorEllipsoid_stz_get", _wrap_LocSATErrorEllipsoid_stz_get, METH_O, "LocSATErrorEllipsoid_stz_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_sdobs_set", _wrap_LocSATErrorEllipsoid_sdobs_set, METH_VARARGS, "LocSATErrorEllipsoid_sdobs_set(LocSATErrorEllipsoid self, float sdobs)"},
-	 { "LocSATErrorEllipsoid_sdobs_get", _wrap_LocSATErrorEllipsoid_sdobs_get, METH_O, "LocSATErrorEllipsoid_sdobs_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_smajax_set", _wrap_LocSATErrorEllipsoid_smajax_set, METH_VARARGS, "LocSATErrorEllipsoid_smajax_set(LocSATErrorEllipsoid self, float smajax)"},
-	 { "LocSATErrorEllipsoid_smajax_get", _wrap_LocSATErrorEllipsoid_smajax_get, METH_O, "LocSATErrorEllipsoid_smajax_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_sminax_set", _wrap_LocSATErrorEllipsoid_sminax_set, METH_VARARGS, "LocSATErrorEllipsoid_sminax_set(LocSATErrorEllipsoid self, float sminax)"},
-	 { "LocSATErrorEllipsoid_sminax_get", _wrap_LocSATErrorEllipsoid_sminax_get, METH_O, "LocSATErrorEllipsoid_sminax_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_strike_set", _wrap_LocSATErrorEllipsoid_strike_set, METH_VARARGS, "LocSATErrorEllipsoid_strike_set(LocSATErrorEllipsoid self, float strike)"},
-	 { "LocSATErrorEllipsoid_strike_get", _wrap_LocSATErrorEllipsoid_strike_get, METH_O, "LocSATErrorEllipsoid_strike_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_sdepth_set", _wrap_LocSATErrorEllipsoid_sdepth_set, METH_VARARGS, "LocSATErrorEllipsoid_sdepth_set(LocSATErrorEllipsoid self, float sdepth)"},
-	 { "LocSATErrorEllipsoid_sdepth_get", _wrap_LocSATErrorEllipsoid_sdepth_get, METH_O, "LocSATErrorEllipsoid_sdepth_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_stime_set", _wrap_LocSATErrorEllipsoid_stime_set, METH_VARARGS, "LocSATErrorEllipsoid_stime_set(LocSATErrorEllipsoid self, float stime)"},
-	 { "LocSATErrorEllipsoid_stime_get", _wrap_LocSATErrorEllipsoid_stime_get, METH_O, "LocSATErrorEllipsoid_stime_get(LocSATErrorEllipsoid self) -> float"},
-	 { "LocSATErrorEllipsoid_conf_set", _wrap_LocSATErrorEllipsoid_conf_set, METH_VARARGS, "LocSATErrorEllipsoid_conf_set(LocSATErrorEllipsoid self, float conf)"},
-	 { "LocSATErrorEllipsoid_conf_get", _wrap_LocSATErrorEllipsoid_conf_get, METH_O, "LocSATErrorEllipsoid_conf_get(LocSATErrorEllipsoid self) -> float"},
-	 { "delete_LocSATErrorEllipsoid", _wrap_delete_LocSATErrorEllipsoid, METH_O, "delete_LocSATErrorEllipsoid(LocSATErrorEllipsoid self)"},
-	 { "LocSATErrorEllipsoid_swigregister", LocSATErrorEllipsoid_swigregister, METH_O, NULL},
-	 { "LocSATErrorEllipsoid_swiginit", LocSATErrorEllipsoid_swiginit, METH_VARARGS, NULL},
-	 { "new_LocSAT", _wrap_new_LocSAT, METH_NOARGS, "new_LocSAT() -> LocSAT"},
-	 { "delete_LocSAT", _wrap_delete_LocSAT, METH_O, "delete_LocSAT(LocSAT self)"},
-	 { "LocSAT_init", _wrap_LocSAT_init, METH_VARARGS, "LocSAT_init(LocSAT self, Config config) -> bool"},
-	 { "LocSAT_parameters", _wrap_LocSAT_parameters, METH_O, "LocSAT_parameters(LocSAT self) -> VectorStr"},
-	 { "LocSAT_parameter", _wrap_LocSAT_parameter, METH_VARARGS, "LocSAT_parameter(LocSAT self, std::string const & name) -> std::string"},
-	 { "LocSAT_setParameter", _wrap_LocSAT_setParameter, METH_VARARGS, "LocSAT_setParameter(LocSAT self, std::string const & name, std::string const & value) -> bool"},
-	 { "LocSAT_profiles", _wrap_LocSAT_profiles, METH_O, "LocSAT_profiles(LocSAT self) -> VectorStr"},
-	 { "LocSAT_setProfile", _wrap_LocSAT_setProfile, METH_VARARGS, "LocSAT_setProfile(LocSAT self, std::string const & name)"},
-	 { "LocSAT_setDefaultProfile", _wrap_LocSAT_setDefaultProfile, METH_O, "LocSAT_setDefaultProfile(std::string const & name)"},
-	 { "LocSAT_currentDefaultProfile", _wrap_LocSAT_currentDefaultProfile, METH_NOARGS, "LocSAT_currentDefaultProfile() -> std::string"},
-	 { "LocSAT_setNewOriginID", _wrap_LocSAT_setNewOriginID, METH_VARARGS, "LocSAT_setNewOriginID(LocSAT self, std::string const & newOriginID)"},
-	 { "LocSAT_capabilities", _wrap_LocSAT_capabilities, METH_O, "LocSAT_capabilities(LocSAT self) -> int"},
-	 { "LocSAT_locate", _wrap_LocSAT_locate, METH_VARARGS, "\n"
-		"LocSAT_locate(LocSAT self, Seiscomp::Seismology::LocatorInterface::PickList & pickList) -> Origin\n"
-		"LocSAT_locate(LocSAT self, Seiscomp::Seismology::LocatorInterface::PickList & pickList, double initLat, double initLon, double initDepth, Time initTime) -> Origin\n"
-		""},
-	 { "LocSAT_relocate", _wrap_LocSAT_relocate, METH_VARARGS, "LocSAT_relocate(LocSAT self, Origin origin) -> Origin"},
-	 { "LocSAT_errorEllipsoid", _wrap_LocSAT_errorEllipsoid, METH_O, "LocSAT_errorEllipsoid(LocSAT self) -> LocSATErrorEllipsoid"},
-	 { "LocSAT_swigregister", LocSAT_swigregister, METH_O, NULL},
-	 { "LocSAT_swiginit", LocSAT_swiginit, METH_VARARGS, NULL},
 	 { "new_FileNotFoundError", _wrap_new_FileNotFoundError, METH_O, "new_FileNotFoundError(std::string const & filename) -> FileNotFoundError"},
 	 { "delete_FileNotFoundError", _wrap_delete_FileNotFoundError, METH_O, "delete_FileNotFoundError(FileNotFoundError self)"},
 	 { "FileNotFoundError_swigregister", FileNotFoundError_swigregister, METH_O, NULL},
@@ -17553,6 +17495,64 @@ static PyMethodDef SwigMethods[] = {
 	 { "ellipcorr", _wrap_ellipcorr, METH_VARARGS, "ellipcorr(std::string const & phase, double lat1, double lon1, double lat2, double lon2, double depth, double & corr) -> bool"},
 	 { "getPhase", _wrap_getPhase, METH_VARARGS, "getPhase(TravelTimeList arg1, std::string const & phaseCode) -> TravelTime"},
 	 { "firstArrivalP", _wrap_firstArrivalP, METH_O, "firstArrivalP(TravelTimeList arg1) -> TravelTime"},
+	 { "new_LocSATErrorEllipsoid", _wrap_new_LocSATErrorEllipsoid, METH_NOARGS, "new_LocSATErrorEllipsoid() -> LocSATErrorEllipsoid"},
+	 { "LocSATErrorEllipsoid_sxx_set", _wrap_LocSATErrorEllipsoid_sxx_set, METH_VARARGS, "LocSATErrorEllipsoid_sxx_set(LocSATErrorEllipsoid self, float sxx)"},
+	 { "LocSATErrorEllipsoid_sxx_get", _wrap_LocSATErrorEllipsoid_sxx_get, METH_O, "LocSATErrorEllipsoid_sxx_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_syy_set", _wrap_LocSATErrorEllipsoid_syy_set, METH_VARARGS, "LocSATErrorEllipsoid_syy_set(LocSATErrorEllipsoid self, float syy)"},
+	 { "LocSATErrorEllipsoid_syy_get", _wrap_LocSATErrorEllipsoid_syy_get, METH_O, "LocSATErrorEllipsoid_syy_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_szz_set", _wrap_LocSATErrorEllipsoid_szz_set, METH_VARARGS, "LocSATErrorEllipsoid_szz_set(LocSATErrorEllipsoid self, float szz)"},
+	 { "LocSATErrorEllipsoid_szz_get", _wrap_LocSATErrorEllipsoid_szz_get, METH_O, "LocSATErrorEllipsoid_szz_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_stt_set", _wrap_LocSATErrorEllipsoid_stt_set, METH_VARARGS, "LocSATErrorEllipsoid_stt_set(LocSATErrorEllipsoid self, float stt)"},
+	 { "LocSATErrorEllipsoid_stt_get", _wrap_LocSATErrorEllipsoid_stt_get, METH_O, "LocSATErrorEllipsoid_stt_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_sxy_set", _wrap_LocSATErrorEllipsoid_sxy_set, METH_VARARGS, "LocSATErrorEllipsoid_sxy_set(LocSATErrorEllipsoid self, float sxy)"},
+	 { "LocSATErrorEllipsoid_sxy_get", _wrap_LocSATErrorEllipsoid_sxy_get, METH_O, "LocSATErrorEllipsoid_sxy_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_sxz_set", _wrap_LocSATErrorEllipsoid_sxz_set, METH_VARARGS, "LocSATErrorEllipsoid_sxz_set(LocSATErrorEllipsoid self, float sxz)"},
+	 { "LocSATErrorEllipsoid_sxz_get", _wrap_LocSATErrorEllipsoid_sxz_get, METH_O, "LocSATErrorEllipsoid_sxz_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_syz_set", _wrap_LocSATErrorEllipsoid_syz_set, METH_VARARGS, "LocSATErrorEllipsoid_syz_set(LocSATErrorEllipsoid self, float syz)"},
+	 { "LocSATErrorEllipsoid_syz_get", _wrap_LocSATErrorEllipsoid_syz_get, METH_O, "LocSATErrorEllipsoid_syz_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_stx_set", _wrap_LocSATErrorEllipsoid_stx_set, METH_VARARGS, "LocSATErrorEllipsoid_stx_set(LocSATErrorEllipsoid self, float stx)"},
+	 { "LocSATErrorEllipsoid_stx_get", _wrap_LocSATErrorEllipsoid_stx_get, METH_O, "LocSATErrorEllipsoid_stx_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_sty_set", _wrap_LocSATErrorEllipsoid_sty_set, METH_VARARGS, "LocSATErrorEllipsoid_sty_set(LocSATErrorEllipsoid self, float sty)"},
+	 { "LocSATErrorEllipsoid_sty_get", _wrap_LocSATErrorEllipsoid_sty_get, METH_O, "LocSATErrorEllipsoid_sty_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_stz_set", _wrap_LocSATErrorEllipsoid_stz_set, METH_VARARGS, "LocSATErrorEllipsoid_stz_set(LocSATErrorEllipsoid self, float stz)"},
+	 { "LocSATErrorEllipsoid_stz_get", _wrap_LocSATErrorEllipsoid_stz_get, METH_O, "LocSATErrorEllipsoid_stz_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_sdobs_set", _wrap_LocSATErrorEllipsoid_sdobs_set, METH_VARARGS, "LocSATErrorEllipsoid_sdobs_set(LocSATErrorEllipsoid self, float sdobs)"},
+	 { "LocSATErrorEllipsoid_sdobs_get", _wrap_LocSATErrorEllipsoid_sdobs_get, METH_O, "LocSATErrorEllipsoid_sdobs_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_smajax_set", _wrap_LocSATErrorEllipsoid_smajax_set, METH_VARARGS, "LocSATErrorEllipsoid_smajax_set(LocSATErrorEllipsoid self, float smajax)"},
+	 { "LocSATErrorEllipsoid_smajax_get", _wrap_LocSATErrorEllipsoid_smajax_get, METH_O, "LocSATErrorEllipsoid_smajax_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_sminax_set", _wrap_LocSATErrorEllipsoid_sminax_set, METH_VARARGS, "LocSATErrorEllipsoid_sminax_set(LocSATErrorEllipsoid self, float sminax)"},
+	 { "LocSATErrorEllipsoid_sminax_get", _wrap_LocSATErrorEllipsoid_sminax_get, METH_O, "LocSATErrorEllipsoid_sminax_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_strike_set", _wrap_LocSATErrorEllipsoid_strike_set, METH_VARARGS, "LocSATErrorEllipsoid_strike_set(LocSATErrorEllipsoid self, float strike)"},
+	 { "LocSATErrorEllipsoid_strike_get", _wrap_LocSATErrorEllipsoid_strike_get, METH_O, "LocSATErrorEllipsoid_strike_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_sdepth_set", _wrap_LocSATErrorEllipsoid_sdepth_set, METH_VARARGS, "LocSATErrorEllipsoid_sdepth_set(LocSATErrorEllipsoid self, float sdepth)"},
+	 { "LocSATErrorEllipsoid_sdepth_get", _wrap_LocSATErrorEllipsoid_sdepth_get, METH_O, "LocSATErrorEllipsoid_sdepth_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_stime_set", _wrap_LocSATErrorEllipsoid_stime_set, METH_VARARGS, "LocSATErrorEllipsoid_stime_set(LocSATErrorEllipsoid self, float stime)"},
+	 { "LocSATErrorEllipsoid_stime_get", _wrap_LocSATErrorEllipsoid_stime_get, METH_O, "LocSATErrorEllipsoid_stime_get(LocSATErrorEllipsoid self) -> float"},
+	 { "LocSATErrorEllipsoid_conf_set", _wrap_LocSATErrorEllipsoid_conf_set, METH_VARARGS, "LocSATErrorEllipsoid_conf_set(LocSATErrorEllipsoid self, float conf)"},
+	 { "LocSATErrorEllipsoid_conf_get", _wrap_LocSATErrorEllipsoid_conf_get, METH_O, "LocSATErrorEllipsoid_conf_get(LocSATErrorEllipsoid self) -> float"},
+	 { "delete_LocSATErrorEllipsoid", _wrap_delete_LocSATErrorEllipsoid, METH_O, "delete_LocSATErrorEllipsoid(LocSATErrorEllipsoid self)"},
+	 { "LocSATErrorEllipsoid_swigregister", LocSATErrorEllipsoid_swigregister, METH_O, NULL},
+	 { "LocSATErrorEllipsoid_swiginit", LocSATErrorEllipsoid_swiginit, METH_VARARGS, NULL},
+	 { "new_LocSAT", _wrap_new_LocSAT, METH_NOARGS, "new_LocSAT() -> LocSAT"},
+	 { "delete_LocSAT", _wrap_delete_LocSAT, METH_O, "delete_LocSAT(LocSAT self)"},
+	 { "LocSAT_init", _wrap_LocSAT_init, METH_VARARGS, "LocSAT_init(LocSAT self, Config config) -> bool"},
+	 { "LocSAT_parameters", _wrap_LocSAT_parameters, METH_O, "LocSAT_parameters(LocSAT self) -> VectorStr"},
+	 { "LocSAT_parameter", _wrap_LocSAT_parameter, METH_VARARGS, "LocSAT_parameter(LocSAT self, std::string const & name) -> std::string"},
+	 { "LocSAT_setParameter", _wrap_LocSAT_setParameter, METH_VARARGS, "LocSAT_setParameter(LocSAT self, std::string const & name, std::string const & value) -> bool"},
+	 { "LocSAT_profiles", _wrap_LocSAT_profiles, METH_O, "LocSAT_profiles(LocSAT self) -> VectorStr"},
+	 { "LocSAT_setProfile", _wrap_LocSAT_setProfile, METH_VARARGS, "LocSAT_setProfile(LocSAT self, std::string const & name)"},
+	 { "LocSAT_setDefaultProfile", _wrap_LocSAT_setDefaultProfile, METH_O, "LocSAT_setDefaultProfile(std::string const & name)"},
+	 { "LocSAT_currentDefaultProfile", _wrap_LocSAT_currentDefaultProfile, METH_NOARGS, "LocSAT_currentDefaultProfile() -> std::string"},
+	 { "LocSAT_setNewOriginID", _wrap_LocSAT_setNewOriginID, METH_VARARGS, "LocSAT_setNewOriginID(LocSAT self, std::string const & newOriginID)"},
+	 { "LocSAT_capabilities", _wrap_LocSAT_capabilities, METH_O, "LocSAT_capabilities(LocSAT self) -> int"},
+	 { "LocSAT_locate", _wrap_LocSAT_locate, METH_VARARGS, "\n"
+		"LocSAT_locate(LocSAT self, Seiscomp::Seismology::LocatorInterface::PickList & pickList) -> Origin\n"
+		"LocSAT_locate(LocSAT self, Seiscomp::Seismology::LocatorInterface::PickList & pickList, double initLat, double initLon, double initDepth, Time initTime) -> Origin\n"
+		""},
+	 { "LocSAT_relocate", _wrap_LocSAT_relocate, METH_VARARGS, "LocSAT_relocate(LocSAT self, Origin origin) -> Origin"},
+	 { "LocSAT_errorEllipsoid", _wrap_LocSAT_errorEllipsoid, METH_O, "LocSAT_errorEllipsoid(LocSAT self) -> LocSATErrorEllipsoid"},
+	 { "LocSAT_swigregister", LocSAT_swigregister, METH_O, NULL},
+	 { "LocSAT_swiginit", LocSAT_swiginit, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
@@ -17563,11 +17563,11 @@ static PyMethodDef SwigMethods_proxydocs[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static void *_p_Seiscomp__TravelTimeTableTo_p_Seiscomp__TravelTimeTableInterface(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::TravelTimeTableInterface *)  ((Seiscomp::TravelTimeTable *) x));
-}
 static void *_p_Seiscomp__LocSATTo_p_Seiscomp__Seismology__LocatorInterface(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Seismology::LocatorInterface *)  ((Seiscomp::LocSAT *) x));
+}
+static void *_p_Seiscomp__TravelTimeTableTo_p_Seiscomp__TravelTimeTableInterface(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::TravelTimeTableInterface *)  ((Seiscomp::TravelTimeTable *) x));
 }
 static void *_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *) ((Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) x));
