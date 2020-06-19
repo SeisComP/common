@@ -1,5 +1,5 @@
-#ifndef __@LIBRARY@_CONFIG_H__
-#define __@LIBRARY@_CONFIG_H__
+#ifndef @LIBRARY@_CONFIG_H
+#define @LIBRARY@_CONFIG_H
 
 @CMAKEDEFINE@ HAVE_LOCSAT
 

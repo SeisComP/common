@@ -18,15 +18,14 @@
  ***************************************************************************/
 
 
-
 #define SEISCOMP_COMPONENT LocSAT
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/strings.h>
-#include <seiscomp3/core/system.h>
-#include <seiscomp/system/environment.h>
-#include <seiscomp/seismology/locsat.h>
-#include <seiscomp/seismology/ttt.h>
+#include <seiscomp/core/system.h>
 #include <seiscomp/math/geo.h>
+#include <seiscomp/system/environment.h>
+#include <seiscomp/seismology/ttt.h>
+#include <seiscomp/seismology/locator/locsat.h>
 
 #include "locsat_internal.h"
 
@@ -38,8 +37,8 @@
 #include <sstream>
 
 // IGN additions for OriginUncertainty computation
-#include "eigv.h"
-#include "chi2.h"
+#include "../eigv.h"
+#include "../chi2.h"
 #define rad2deg 57.29577951308232
 
 //#define LOCSAT_TESTING

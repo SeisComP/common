@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 
-
 #ifndef __SEISCOMP_INTERNAL_SEISMOLOGY_LOCSAT_H__
 #define __SEISCOMP_INTERNAL_SEISMOLOGY_LOCSAT_H__
 

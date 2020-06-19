@@ -1,0 +1,4 @@
+SET(LOCATOR_HEADERS locsat.h)
+SET(LOCATOR_SOURCES locsat.cpp locsat_internal.cpp)
+
+SC_SETUP_LIB_SUBDIR(LOCATOR)

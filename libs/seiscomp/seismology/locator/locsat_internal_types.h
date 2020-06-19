@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_SEISMOLOGY_LOCSAT_TYPES_H
+#define SEISCOMP_SEISMOLOGY_LOCSAT_TYPES_H
 
-#ifndef __SEISCOMP_SEISMOLOGY_LOCSAT_TYPES_H__
-#define __SEISCOMP_SEISMOLOGY_LOCSAT_TYPES_H__
 
 //#include "params.h"
 #define MAXSTA 	 9999	/* Max. number of stations allowed		      */
