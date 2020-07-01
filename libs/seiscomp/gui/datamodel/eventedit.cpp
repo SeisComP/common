@@ -62,6 +62,7 @@ MAKEENUM(
 		OL_LAT,
 		OL_LON,
 		OL_DEPTH,
+		OL_DEPTH_TYPE,
 		OL_RMS,
 		OL_STAT,
 		OL_AGENCY,
@@ -75,6 +76,7 @@ MAKEENUM(
 		"Lat.",
 		"Lon.",
 		"Depth",
+		"DType",
 		"RMS",
 		"Stat",
 		"Agency",
@@ -94,6 +96,7 @@ int OriginColAligns[OriginListColumns::Quantity] = {
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
+	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignLeft | Qt::AlignVCenter
 };
 
@@ -104,6 +107,7 @@ bool OriginColBold[OriginListColumns::Quantity] = {
 	true,
 	true,
 	true,
+	false,
 	true,
 	true,
 	false,
@@ -1859,6 +1863,13 @@ void EventEdit::updateOriginRow(int row, Origin *org) {
 	catch ( ... ) {
 		item->setText(_originColumnMap[OL_DEPTH], "-");
 		item->setData(_originColumnMap[OL_DEPTH], Qt::UserRole, QVariant());
+	}
+
+	try {
+		item->setText(_originColumnMap[OL_DEPTH_TYPE], org->depthType().toString());
+	}
+	catch ( ... ) {
+		item->setText(_originColumnMap[OL_DEPTH_TYPE], "-");
 	}
 
 	char stat = objectStatusToChar(org);
