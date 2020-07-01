@@ -491,7 +491,7 @@ void AmplitudeProcessor_ML2h::newAmplitude(const AmplitudeProcessor *proc,
 		};
 
 		newRes.period = -1;
-		newRes.snr = -1;
+		newRes.snr = std::min(_results[0]->snr, _results[1]->snr);
 		emitAmplitude(newRes);
 	}
 }
