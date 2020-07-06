@@ -55,6 +55,9 @@ using namespace std;
 using namespace Seiscomp::DataModel;
 
 
+#define BLUR_SPLASH_TEXT 0
+
+
 namespace {
 
 
@@ -156,6 +159,7 @@ void blurImage(QImage &img, int radius) {
 void drawText(QPainter &p, const QPoint &hotspot, int align, const QString &s) {
 	QRect r(hotspot, hotspot);
 
+#if BLUR_SPLASH_TEXT
 	QRect tr = p.fontMetrics().boundingRect(s);
 	int radius = 2;
 	QImage blur(tr.width()+radius*2+2, tr.height()+radius*2+2, QImage::Format_ARGB32);
@@ -173,30 +177,43 @@ void drawText(QPainter &p, const QPoint &hotspot, int align, const QString &s) {
 	            align, s);
 	pi.end();
 	blurImage(blur, radius);
+#endif
 
-	if ( align & Qt::AlignLeft ) r.setRight(p.window().right());
+	if ( align & Qt::AlignLeft )
+		r.setRight(p.window().right());
 	else if ( align & Qt::AlignRight ) {
 		r.setLeft(p.window().left());
+#if BLUR_SPLASH_TEXT
 		blurpos.setX(blurpos.x()-tr.width());
+#endif
 	}
 	else if ( align & Qt::AlignHCenter ) {
 		r.setLeft(hotspot.x()-p.window().width());
 		r.setRight(hotspot.x()+p.window().width());
+#if BLUR_SPLASH_TEXT
 		blurpos.setX(blurpos.x()-tr.width()/2);
+#endif
 	}
 
-	if ( align & Qt::AlignTop ) r.setBottom(p.window().bottom());
+	if ( align & Qt::AlignTop )
+		r.setBottom(p.window().bottom());
 	else if ( align & Qt::AlignBottom ) {
 		r.setTop(p.window().top());
+#if BLUR_SPLASH_TEXT
 		blurpos.setY(blurpos.y()-tr.height());
+#endif
 	}
 	else if ( align & Qt::AlignVCenter ) {
 		r.setTop(hotspot.y()-p.window().height());
 		r.setBottom(hotspot.y()+p.window().height());
+#if BLUR_SPLASH_TEXT
 		blurpos.setY(blurpos.y()-tr.height()/2);
+#endif
 	}
 
+#if BLUR_SPLASH_TEXT
 	p.drawImage(blurpos+QPoint(radius, radius),blur);
+#endif
 	p.drawText(r, align, s);
 }
 
