@@ -1220,7 +1220,23 @@ bool Application::handleInitializationError(int stage) {
 		cdlg()->connectToDatabase();
 
 		_settingsOpened = true;
-		showSettings();
+
+		if ( isMessagingEnabled() || isDatabaseEnabled() ) {
+			if ( _thread ) _thread->setReconnectOnErrorEnabled(false);
+
+			int res = cdlg()->exec();
+			if ( res != QDialog::Accepted ) {
+				Client::Application::quit();
+				return false;
+			}
+
+			if ( _thread ) _thread->setReconnectOnErrorEnabled(true);
+		}
+
+		if ( cdlg()->hasDatabaseChanged() )
+			emit changedDatabase();
+
+
 		setDatabase(database());
 	}
 
