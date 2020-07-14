@@ -1236,7 +1236,6 @@ bool Application::handleInitializationError(int stage) {
 		if ( cdlg()->hasDatabaseChanged() )
 			emit changedDatabase();
 
-
 		setDatabase(database());
 	}
 
