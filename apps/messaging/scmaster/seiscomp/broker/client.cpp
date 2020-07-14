@@ -39,7 +39,7 @@ namespace Broker {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Client::Client()
-: _queue(NULL)
+: _queue(nullptr)
 , _wantsMembershipInformation(false)
 , _discardSelf(false)
 , _sequenceNumber(0)
@@ -54,7 +54,7 @@ Client::Client()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Client::~Client() {
-	if ( _queue !=NULL )
+	if ( _queue )
 		_queue->disconnect(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
