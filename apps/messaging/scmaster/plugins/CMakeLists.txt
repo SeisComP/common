@@ -1,1 +1,1 @@
-SUBDIRS(dbstore)
+SUBDIRS(dbstore dbg-delay)
