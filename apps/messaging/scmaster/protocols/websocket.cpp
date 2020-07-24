@@ -101,13 +101,17 @@ string ErrorStrings[ERR_QUANTITY + Seiscomp::Messaging::Broker::Queue::Result::Q
 	"407 Clientname exceeds 128 characters",
 	"408 Inactivity",
 	/* Start of queue error strings */
-	"200 QUEUE_OK", // This should never happen
+	"200 QUEUE_OK",
 	"500 Internal queue error",
 	"408 Client name not unique",
 	"409 Client not accepted",
-	"410 Group name not unique",
+	"410 Group already subscribed",
 	"411 Group does not exist",
-	"412 Message not accepted",
+	"412 Already subscribed to group",
+	"413 Not subscribed to group",
+	"414 Message not accepted",
+	"415 Message could not be decoded",
+	"500 Message could not be encoded",
 	"500 Not enough client heap"
 };
 
