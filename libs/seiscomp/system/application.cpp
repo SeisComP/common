@@ -1085,6 +1085,9 @@ int Application::exec() {
 	_exitRequested = false;
 	_returnCode = 1;
 
+	// Query current locale
+	string current_locale = setlocale(LC_ALL, nullptr);
+
 	if ( init() ) {
 		_returnCode = 0;
 
@@ -1097,6 +1100,9 @@ int Application::exec() {
 	done();
 
 	if ( !_baseSettings.logging.toStdout ) SEISCOMP_NOTICE("Shutdown");
+
+	// Restore locale
+	setlocale(LC_ALL, current_locale.c_str());
 
 	return _returnCode;
 }
