@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GEO_GEOCOORDINATE_H__
-#define SEISCOMP_GEO_GEOCOORDINATE_H__
+#ifndef SEISCOMP_GEO_GEOCOORDINATE_H
+#define SEISCOMP_GEO_GEOCOORDINATE_H
 
 
 #include <seiscomp/math/geo.h>
@@ -60,6 +60,15 @@ class SC_SYSTEM_CORE_API GeoCoordinate {
 		ValueType lat;
 		ValueType lon;
 };
+
+
+//! Added with API 14.1
+bool contains(const GeoCoordinate &v, const GeoCoordinate *polygon, size_t sides);
+//! Added with API 14.1
+bool contains(const GeoCoordinate &v, const GeoCoordinate *polygon, size_t sides, double &area);
+
+//! Added with API 14.1
+double area(const GeoCoordinate *polygon, size_t sides);
 
 
 // For backwards compatibility, define Vertex as GeoCoordinate

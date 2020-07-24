@@ -104,11 +104,8 @@ class SC_SYSTEM_CORE_API GeoFeature : public Core::BaseObject {
 
 		double area() const;
 
-		static double area(const GeoCoordinate *polygon, size_t sides);
-
-	private:
-		static bool contains(const GeoCoordinate& v, const GeoCoordinate *polygon, size_t sides);
-		static bool contains(const GeoCoordinate& v, const GeoCoordinate *polygon, size_t sides, double &area);
+		//! Deprecated, use Seiscomp::Geo::area instead
+		static double area(const GeoCoordinate *polygon, size_t sides) __attribute__((deprecated));
 
 	private:
 		typedef std::vector<GeoCoordinate> GeoCoordinates;

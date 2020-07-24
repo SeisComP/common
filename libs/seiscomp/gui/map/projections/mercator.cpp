@@ -33,11 +33,19 @@
 namespace Seiscomp {
 namespace Gui {
 namespace Map {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 REGISTER_PROJECTION_INTERFACE(MercatorProjection, "Mercator");
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
 
@@ -346,8 +354,12 @@ void drawHighQualityImage(MercatorProjectionProxy *proj, QImage &buffer, const Q
 
 
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MercatorProjection::MercatorProjection()
 : RectangularProjection() {
 	_pixelPerDegreeFact = 180.0f;
@@ -356,13 +368,21 @@ MercatorProjection::MercatorProjection()
 		catch ( ... ) { _discreteSteps = false; }
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MercatorProjection::isRectangular() const {
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename PROC>
 void MercatorProjection::render(QImage &img, TextureCache *cache) {
 	//_screenRadius = std::min(_halfWidth/2, _halfHeight);
@@ -591,16 +611,24 @@ void MercatorProjection::render(QImage &img, TextureCache *cache) {
 
 */
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MercatorProjection::render(QImage& img, bool highQuality, TextureCache *cache) {
 	if ( highQuality )
 		render<BilinearFilter>(img, cache);
 	else
 		render<NearestFilter>(img, cache);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 inline void MercatorProjection::projectUnwrapped(QPoint &screenCoords, const QPointF &geoCoords) const {
 	qreal x = geoCoords.x() * ooLon;
 
@@ -628,8 +656,12 @@ inline void MercatorProjection::projectUnwrapped(QPoint &screenCoords, const QPo
 	screenCoords.setX(_halfWidth + x);
 	screenCoords.setY(_halfHeight - y);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MercatorProjection::project(QPoint &screenCoords, const QPointF &geoCoords) const {
 	qreal x = geoCoords.x() * ooLon;
 
@@ -665,8 +697,12 @@ bool MercatorProjection::project(QPoint &screenCoords, const QPointF &geoCoords)
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MercatorProjection::unproject(QPointF &geoCoords, const QPoint &screenCoords) const {
 	qreal x = screenCoords.x() - _halfWidth;
 	qreal y = _halfHeight - screenCoords.y();
@@ -690,8 +726,12 @@ bool MercatorProjection::unproject(QPointF &geoCoords, const QPoint &screenCoord
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MercatorProjection::centerOn(const QPointF &geoCoords) {
 	qreal x = geoCoords.x() * ooLon;
 	qreal y = geoCoords.y() * ooLat;
@@ -705,8 +745,12 @@ void MercatorProjection::centerOn(const QPointF &geoCoords) {
 	_center = QPointF(x,y);
 	_visibleCenter = _center;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPointF MercatorProjection::gridDistance() const {
 	qreal dist = std::min(double((_width / 4) / pixelPerDegree()), 180.0);
 	if ( dist < 0.01 )
@@ -722,8 +766,12 @@ QPointF MercatorProjection::gridDistance() const {
 
 	return QPointF(dist, dist);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MercatorProjection::drawImage(QImage &buffer, const QRectF &geoReference,
                                    const QImage &image, bool highQuality,
                                    CompositionMode cm) {
@@ -777,8 +825,12 @@ void MercatorProjection::drawImage(QImage &buffer, const QRectF &geoReference,
 			break;
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
 
@@ -937,22 +989,31 @@ struct Renderer {
 		//std::cerr << p.x() << "  " << p.y() << std::endl;
 		if ( firstPoint ) {
 			pp.moveTo(p);
+			firstP = p;
 			firstPoint = false;
 		}
-		else
+		else {
+			lastP = p;
 			pp.lineTo(p);
+		}
 	}
 
 	inline void finalize(const QRect &) {}
 
+	QPoint firstP;
+	QPoint lastP;
 	QPainterPath &pp;
 	bool firstPoint;
 };
 
 
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MercatorProjection::project(QPainterPath &screenPath, size_t n,
                                  const Geo::GeoCoordinate *poly, bool closed,
                                  uint minPixelDist, ClipHint clipHint) const {
@@ -964,11 +1025,22 @@ bool MercatorProjection::project(QPainterPath &screenPath, size_t n,
 	QPointF v(poly[0].lon, poly[0].lat);
 	QPoint p;
 
+	bool spansNorthPole = false;
+	bool spansSouthPole = false;
+
+	if ( closed ) {
+		spansNorthPole = Geo::contains(Geo::GeoCoordinate(+90, 0), poly, n);
+		spansSouthPole = Geo::contains(Geo::GeoCoordinate(-90, 0), poly, n);
+	}
+
+	bool spansAnyPole = spansNorthPole || spansSouthPole;
+
 	if ( clipHint == DoClip ) {
 		bool reuseScreenPath = false;
 		project(p, v);
 
-		{
+		if ( spansAnyPole && closed ) {
+			// Spanning a pole does not need special attention to duplication.
 			/* Compose clippers */
 			Renderer renderer(screenPath);
 
@@ -984,9 +1056,10 @@ bool MercatorProjection::project(QPainterPath &screenPath, size_t n,
 			BorderClipper<North, EastClipper> clipNorth(clipEast);
 
 			clipNorth.feed(p, _clipRect);
-			qreal xOfs = 0;
-			int px = p.x();
+			int px = p.x(), py = p.y();
+			int spanY = spansNorthPole ? _clipRect.top() : _clipRect.bottom();
 
+			std::cerr << "DRAW" << std::endl;
 			for ( size_t i = 1; i < n; ++i ) {
 				Math::Geo::CoordF::ValueType lonDiff = poly[i].lon - v.x();
 				if ( lonDiff > 180 ) lonDiff -= 360;
@@ -996,123 +1069,184 @@ bool MercatorProjection::project(QPainterPath &screenPath, size_t n,
 				  && std::abs(poly[i].lat - v.y()) <= minDist )
 					continue;
 
-				v.setX(v.x()+lonDiff); v.setY(poly[i].lat);
+				v.setX(poly[i].lon); v.setY(poly[i].lat);
+				project(p, v);
 
-				qreal x = lonDiff * ooLon;
-
-				qreal lat = poly[i].lat;
-				if ( lat > 90.0 ) {
-					lat = 180.0 - lat;
-					x += 1.0;
-					if ( x > 1.0 ) x -= 2.0;
+				if ( (((p.x() - px) < 0) != (lonDiff < 0)) && (p.x() != px) ) {
+					int wrappedX, unwrappedX;
+					if ( p.x() < px ) {
+						wrappedX = p.x() + _halfMapWidth;
+						unwrappedX = px - _halfMapWidth;
+					}
+					else {
+						wrappedX = p.x() - _halfMapWidth;
+						unwrappedX = px + _halfMapWidth;
+					}
+					clipNorth.feed(QPoint(wrappedX, p.y()), _clipRect);
+					clipNorth.feed(QPoint(wrappedX, spanY), _clipRect);
+					clipNorth.feed(QPoint(unwrappedX, spanY), _clipRect);
+					clipNorth.feed(QPoint(unwrappedX, py), _clipRect);
 				}
-				else if ( lat < -90.0 ) {
-					lat = -180.0 - lat;
-					x += 1.0;
-					if ( x > 1.0 ) x -= 2.0;
-				}
-
-				qreal sy = sin(deg2rad(lat));
-				if ( sy > 1.0 ) sy = 1.0;
-				else if ( sy < -1.0 ) sy = -1.0;
-
-				qreal y = fabs(sy) < 1.0?atanh(sy) * ooPi:sy;
-				xOfs += x * _scale;
-
-				p.setX(px + xOfs);
-				p.setY(_halfHeight - (y - _centerY) * _scale);
-
 				clipNorth.feed(p, _clipRect);
+				px = p.x(); py = p.y();
 			}
 
-			if ( closed )
-				clipNorth.finalize(_clipRect);
+			clipNorth.finalize(_clipRect);
 
-			if ( clipEast.impl.maxValue > 0 && clipEast.impl.maxValue >= _halfMapWidth )
-				duplicationDirection = 1;
-			else if ( clipWest.impl.minValue < 0 && clipWest.impl.minValue <= (_width-_halfMapWidth) )
-				duplicationDirection = -1;
-
-			if ( !screenPath.isEmpty() ) {
-				if ( closed ) screenPath.closeSubpath();
-			}
-			else if ( duplicationDirection )
-				reuseScreenPath = true;
-			else
+			if ( screenPath.isEmpty() )
 				return false;
+
+			screenPath.closeSubpath();
 		}
+		else {
+			{
+				/* Compose clippers */
+				Renderer renderer(screenPath);
 
-		if ( duplicationDirection ) {
-			QPainterPath wrappedPath;
-			Renderer renderer(reuseScreenPath ? screenPath : wrappedPath);
+				typedef BorderClipper<West, Renderer> WestClipper;
+				WestClipper clipWest(renderer);
 
-			int offsetX = -duplicationDirection*_halfMapWidth;
+				typedef BorderClipper<South, WestClipper> SouthClipper;
+				SouthClipper clipSouth(clipWest);
 
-			typedef BorderClipper<West, Renderer> WestClipper;
-			WestClipper clipWest(renderer);
+				typedef BorderClipper<East, SouthClipper> EastClipper;
+				EastClipper clipEast(clipSouth);
 
-			typedef BorderClipper<South, WestClipper> SouthClipper;
-			SouthClipper clipSouth(clipWest);
-
-			typedef BorderClipper<East, SouthClipper> EastClipper;
-			EastClipper clipEast(clipSouth);
-
-			BorderClipper<North, EastClipper> clipNorth(clipEast);
-
-			v = QPointF(poly[0].lon, poly[0].lat);
-
-			project(p, v);
-			p.rx() += offsetX;
-			clipNorth.feed(p, _clipRect);
-
-			qreal xOfs = 0;
-			int px = p.x();
-
-			for ( size_t i = 1; i < n; ++i ) {
-				Math::Geo::CoordF::ValueType lonDiff = poly[i].lon - v.x();
-				if ( lonDiff > 180 ) lonDiff -= 360;
-				else if ( lonDiff < -180 ) lonDiff += 360;
-
-				if ( std::abs(lonDiff) <= minDist
-				  && std::abs(poly[i].lat - v.y()) <= minDist )
-					continue;
-
-				v.setX(v.x()+lonDiff); v.setY(poly[i].lat);
-
-				qreal x = lonDiff * ooLon;
-
-				qreal lat = poly[i].lat;
-				if ( lat > 90.0 ) {
-					lat = 180.0 - lat;
-					x += 1.0;
-					if ( x > 1.0 ) x -= 2.0;
-				}
-				else if ( lat < -90.0 ) {
-					lat = -180.0 - lat;
-					x += 1.0;
-					if ( x > 1.0 ) x -= 2.0;
-				}
-
-				qreal sy = sin(deg2rad(lat));
-				if ( sy > 1.0 ) sy = 1.0;
-				else if ( sy < -1.0 ) sy = -1.0;
-
-				qreal y = fabs(sy) < 1.0?atanh(sy) * ooPi:sy;
-				xOfs += x * _scale;
-
-				p.setX(px + xOfs);
-				p.setY(_halfHeight - (y - _centerY) * _scale);
+				BorderClipper<North, EastClipper> clipNorth(clipEast);
 
 				clipNorth.feed(p, _clipRect);
+				qreal xOfs = 0;
+				int px = p.x();
+
+				for ( size_t i = 1; i < n; ++i ) {
+					Math::Geo::CoordF::ValueType lonDiff = poly[i].lon - v.x();
+					if ( lonDiff > 180 ) lonDiff -= 360;
+					else if ( lonDiff < -180 ) lonDiff += 360;
+
+					if ( std::abs(lonDiff) <= minDist
+					  && std::abs(poly[i].lat - v.y()) <= minDist )
+						continue;
+
+					v.setX(v.x()+lonDiff); v.setY(poly[i].lat);
+
+					qreal x = lonDiff * ooLon;
+
+					qreal lat = poly[i].lat;
+					if ( lat > 90.0 ) {
+						lat = 180.0 - lat;
+						x += 1.0;
+						if ( x > 1.0 ) x -= 2.0;
+					}
+					else if ( lat < -90.0 ) {
+						lat = -180.0 - lat;
+						x += 1.0;
+						if ( x > 1.0 ) x -= 2.0;
+					}
+
+					qreal sy = sin(deg2rad(lat));
+					if ( sy > 1.0 ) sy = 1.0;
+					else if ( sy < -1.0 ) sy = -1.0;
+
+					qreal y = fabs(sy) < 1.0?atanh(sy) * ooPi:sy;
+					xOfs += x * _scale;
+
+					p.setX(px + xOfs);
+					p.setY(_halfHeight - (y - _centerY) * _scale);
+
+					clipNorth.feed(p, _clipRect);
+				}
+
+				if ( closed ) {
+					clipNorth.finalize(_clipRect);
+				}
+
+				if ( clipEast.impl.maxValue > 0 && clipEast.impl.maxValue >= _halfMapWidth )
+					duplicationDirection = 1;
+				else if ( clipWest.impl.minValue < 0 && clipWest.impl.minValue <= (_width-_halfMapWidth) )
+					duplicationDirection = -1;
+
+				if ( !screenPath.isEmpty() ) {
+					if ( closed ) screenPath.closeSubpath();
+				}
+				else if ( duplicationDirection )
+					reuseScreenPath = true;
+				else
+					return false;
 			}
 
-			if ( closed )
-				clipNorth.finalize(_clipRect);
+			if ( duplicationDirection ) {
+				QPainterPath wrappedPath;
+				Renderer renderer(reuseScreenPath ? screenPath : wrappedPath);
 
-			if ( !renderer.pp.isEmpty() ) {
-				if ( closed ) renderer.pp.closeSubpath();
-				if ( !reuseScreenPath )
-					screenPath.addPath(renderer.pp);
+				int offsetX = -duplicationDirection*_halfMapWidth;
+
+				typedef BorderClipper<West, Renderer> WestClipper;
+				WestClipper clipWest(renderer);
+
+				typedef BorderClipper<South, WestClipper> SouthClipper;
+				SouthClipper clipSouth(clipWest);
+
+				typedef BorderClipper<East, SouthClipper> EastClipper;
+				EastClipper clipEast(clipSouth);
+
+				BorderClipper<North, EastClipper> clipNorth(clipEast);
+
+				v = QPointF(poly[0].lon, poly[0].lat);
+
+				project(p, v);
+				p.rx() += offsetX;
+				clipNorth.feed(p, _clipRect);
+
+				qreal xOfs = 0;
+				int px = p.x();
+
+				for ( size_t i = 1; i < n; ++i ) {
+					Math::Geo::CoordF::ValueType lonDiff = poly[i].lon - v.x();
+					if ( lonDiff > 180 ) lonDiff -= 360;
+					else if ( lonDiff < -180 ) lonDiff += 360;
+
+					if ( std::abs(lonDiff) <= minDist
+					  && std::abs(poly[i].lat - v.y()) <= minDist )
+						continue;
+
+					v.setX(v.x()+lonDiff); v.setY(poly[i].lat);
+
+					qreal x = lonDiff * ooLon;
+
+					qreal lat = poly[i].lat;
+					if ( lat > 90.0 ) {
+						lat = 180.0 - lat;
+						x += 1.0;
+						if ( x > 1.0 ) x -= 2.0;
+					}
+					else if ( lat < -90.0 ) {
+						lat = -180.0 - lat;
+						x += 1.0;
+						if ( x > 1.0 ) x -= 2.0;
+					}
+
+					qreal sy = sin(deg2rad(lat));
+					if ( sy > 1.0 ) sy = 1.0;
+					else if ( sy < -1.0 ) sy = -1.0;
+
+					qreal y = fabs(sy) < 1.0?atanh(sy) * ooPi:sy;
+					xOfs += x * _scale;
+
+					p.setX(px + xOfs);
+					p.setY(_halfHeight - (y - _centerY) * _scale);
+
+					clipNorth.feed(p, _clipRect);
+				}
+
+				if ( closed ) {
+					clipNorth.finalize(_clipRect);
+				}
+
+				if ( !renderer.pp.isEmpty() ) {
+					if ( closed ) renderer.pp.closeSubpath();
+					if ( !reuseScreenPath )
+						screenPath.addPath(renderer.pp);
+				}
 			}
 		}
 
@@ -1174,8 +1308,12 @@ bool MercatorProjection::project(QPainterPath &screenPath, size_t n,
 		return true;
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
 }
