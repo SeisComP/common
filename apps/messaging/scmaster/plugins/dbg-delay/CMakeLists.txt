@@ -1,0 +1,3 @@
+SET(MASTER_DBSTORE_SOURCES dbg-delay.cpp)
+SC_ADD_PLUGIN_LIBRARY(MASTER_DBSTORE dbg-delay scmaster)
+SC_LINK_LIBRARIES_INTERNAL(dbg-delay broker)
