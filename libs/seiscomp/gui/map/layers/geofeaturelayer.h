@@ -28,6 +28,9 @@
 #endif
 
 
+#include <QPixmap>
+
+
 namespace Seiscomp {
 namespace Gui {
 namespace Map {
@@ -118,6 +121,8 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 			bool                       filled;
 			int                        symbolSize;
 			SymbolShape                symbolShape;
+			QPixmap                    symbolIcon;
+			QPoint                     symbolIconHotspot;
 
 			LayerProperties(const std::string &name)
 			: parent(NULL), name(name), orientation(Qt::Vertical)
