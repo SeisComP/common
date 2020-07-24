@@ -1000,38 +1000,76 @@ bool RectangularProjection::project(QPainterPath &screenPath, size_t n,
 	QPointF v(poly[0].lon, poly[0].lat);
 	QPoint p;
 
-	projectUnwrapped(p, v);
-	if ( p.x() >= _width )
-		duplicationDirection = -1;
-	else if ( p.x() < 0 )
-		duplicationDirection = 1;
+	bool spansNorthPole = false;
+	bool spansSouthPole = false;
 
-	screenPath.moveTo(p);
+	if ( closed ) {
+		spansNorthPole = Geo::contains(Geo::GeoCoordinate(+90, 0), poly, n);
+		spansSouthPole = Geo::contains(Geo::GeoCoordinate(-90, 0), poly, n);
+	}
 
-	if ( minDist == 0 ) {
+	bool spansAnyPole = spansNorthPole || spansSouthPole;
+
+	if ( spansAnyPole && closed ) {
+		project(p, v);
+		screenPath.moveTo(p);
+		int px = p.x();
+		int py = p.y();
+		int spanY = spansNorthPole ? -10 : _height + 10;
+
 		for ( size_t i = 1; i < n; ++i ) {
 			Math::Geo::CoordF::ValueType lonDiff = poly[i].lon - v.x();
 			if ( lonDiff > 180 ) lonDiff -= 360;
 			else if ( lonDiff < -180 ) lonDiff += 360;
 
-			v.setX(v.x()+lonDiff); v.setY(poly[i].lat);
-			projectUnwrapped(p, v);
-			if ( p.x() >= _width )
-				duplicationDirection = -1;
-			else if ( p.x() < 0 )
-				duplicationDirection = 1;
+			if ( std::abs(lonDiff) <= minDist
+			  && std::abs(poly[i].lat - v.y()) <= minDist )
+				continue;
+
+			v.setX(poly[i].lon); v.setY(poly[i].lat);
+
+			project(p, v);
+			if ( (((p.x() - px) < 0) != (lonDiff < 0)) && (p.x() != px) ) {
+				int wrappedX, unwrappedX;
+				if ( p.x() < px ) {
+					wrappedX = p.x() + _mapWidth;
+					unwrappedX = px - _mapWidth;
+				}
+				else {
+					wrappedX = p.x() - _mapWidth;
+					unwrappedX = px + _mapWidth;
+				}
+				screenPath.lineTo(wrappedX, p.y());
+				screenPath.lineTo(wrappedX, spanY);
+				screenPath.lineTo(unwrappedX, spanY);
+				screenPath.lineTo(unwrappedX, py);
+			}
 
 			screenPath.lineTo(p);
+
+			px = p.x();	py = p.y();
 		}
+
+		if ( screenPath.isEmpty() )
+			return false;
+
+		screenPath.closeSubpath();
 	}
 	else {
-		for ( size_t i = 1; i < n; ++i ) {
-			Math::Geo::CoordF::ValueType lonDiff = poly[i].lon - v.x();
-			if ( lonDiff > 180 ) lonDiff -= 360;
-			else if ( lonDiff < -180 ) lonDiff += 360;
+		projectUnwrapped(p, v);
+		if ( p.x() >= _width )
+			duplicationDirection = -1;
+		else if ( p.x() < 0 )
+			duplicationDirection = 1;
 
-			if ( std::abs(lonDiff) > minDist ||
-			     std::abs(poly[i].lat - v.y()) > minDist ) {
+		screenPath.moveTo(p);
+
+		if ( minDist == 0 ) {
+			for ( size_t i = 1; i < n; ++i ) {
+				Math::Geo::CoordF::ValueType lonDiff = poly[i].lon - v.x();
+				if ( lonDiff > 180 ) lonDiff -= 360;
+				else if ( lonDiff < -180 ) lonDiff += 360;
+
 				v.setX(v.x()+lonDiff); v.setY(poly[i].lat);
 				projectUnwrapped(p, v);
 				if ( p.x() >= _width )
@@ -1042,13 +1080,32 @@ bool RectangularProjection::project(QPainterPath &screenPath, size_t n,
 				screenPath.lineTo(p);
 			}
 		}
+		else {
+			for ( size_t i = 1; i < n; ++i ) {
+				Math::Geo::CoordF::ValueType lonDiff = poly[i].lon - v.x();
+				if ( lonDiff > 180 ) lonDiff -= 360;
+				else if ( lonDiff < -180 ) lonDiff += 360;
+
+				if ( std::abs(lonDiff) > minDist ||
+					 std::abs(poly[i].lat - v.y()) > minDist ) {
+					v.setX(v.x()+lonDiff); v.setY(poly[i].lat);
+					projectUnwrapped(p, v);
+					if ( p.x() >= _width )
+						duplicationDirection = -1;
+					else if ( p.x() < 0 )
+						duplicationDirection = 1;
+
+					screenPath.lineTo(p);
+				}
+			}
+		}
+
+		if ( closed )
+			screenPath.closeSubpath();
+
+		if ( duplicationDirection )
+			screenPath.addPath(screenPath.translated(_mapWidth*duplicationDirection, 0));
 	}
-
-	if ( closed )
-		screenPath.closeSubpath();
-
-	if ( duplicationDirection )
-		screenPath.addPath(screenPath.translated(_mapWidth*duplicationDirection, 0));
 
 	return !screenPath.isEmpty();
 }

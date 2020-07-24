@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SC_CORE_VERSION_H__
-#define SC_CORE_VERSION_H__
+#ifndef SC_CORE_VERSION_H
+#define SC_CORE_VERSION_H
 
 
 #include <string>
@@ -31,12 +31,12 @@ namespace Seiscomp {
 namespace Core {
 
 
-/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(14, 0, 0)) */
+/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(14, 1, 0)) */
 #define SC_API_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 
 /* SC_API_VERSION is (major << 16) + (minor << 8) + patch. */
-#define SC_API_VERSION 0x0E0000
+#define SC_API_VERSION 0x0E0100
 
 #define SC_API_VERSION_MAJOR(v) (v >> 16)
 #define SC_API_VERSION_MINOR(v) ((v >> 8) & 0xff)
@@ -46,6 +46,11 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
+ "14.1.0"   0x0E0000
+   - Declared Geo::GeoFeature::area as deprecated
+   - Added function Geo::area which replaces Geo::GeoFeature::area
+   - Added functions Geo::contains
+
  "14.0.0"   0x0E0000
    - Added length based string functions to Seiscomp::Core:
      - tokenize
