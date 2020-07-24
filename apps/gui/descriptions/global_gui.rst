@@ -198,7 +198,7 @@ Available configuration parameters are:
 
    Default is ``topleft``.
 
-.. confval:: cfgLegendOrientation
+.. confval:: orientation
 
    The orientation of the legend, either *vertical* or *horizontal*.
 
