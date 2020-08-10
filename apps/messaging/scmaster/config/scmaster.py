@@ -432,7 +432,7 @@ class Module(kernel.CoreModule):
             cmd = "mysql -u \"%s\" -h \"%s\" -D\"%s\" --skip-column-names" % (
                 user, host, db)
             if pwd:
-                cmd += " -p\"%s\"" % pwd
+                cmd += " -p\"%s\"" % pwd.replace('$', '\\$')
             cmd += " -e \"SELECT value from Meta where name='Schema-Version'\""
         else:
             if pwd:
