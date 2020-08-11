@@ -2035,7 +2035,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 				else {
 					v = COL_MTYPE;
 					std::cerr << "WARNING: eventlist.visibleColumns: name 'TP' "
-					             "has changed to 'MTYPE', please update your configuration" << std::endl;
+					             "has changed to 'MType', please update your configuration" << std::endl;
 				}
 			}
 
