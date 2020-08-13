@@ -4049,7 +4049,7 @@ void EventListView::updateOrigin(Seiscomp::DataModel::Origin* origin) {
 
 	bool wasEnabled = Notifier::IsEnabled();
 
-	if ( !_updateLocalEPInstance || origin->parent()->parent() == NULL ) {
+	if ( !_updateLocalEPInstance || origin->parent() == NULL ) {
 		Notifier::Disable();
 		ep->add(origin);
 		Notifier::Enable();
