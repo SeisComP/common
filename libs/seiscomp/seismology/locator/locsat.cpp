@@ -37,8 +37,8 @@
 #include <sstream>
 
 // IGN additions for OriginUncertainty computation
-#include "../eigv.h"
-#include "../chi2.h"
+#include "eigv.h"
+#include "chi2.h"
 #define rad2deg 57.29577951308232
 
 //#define LOCSAT_TESTING
