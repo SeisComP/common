@@ -65,6 +65,7 @@ MAKEENUM(
 		OL_DEPTH_TYPE,
 		OL_RMS,
 		OL_STAT,
+		OL_METHOD,
 		OL_AGENCY,
 		OL_AUTHOR,
 		OL_REGION
@@ -79,6 +80,7 @@ MAKEENUM(
 		"DType",
 		"RMS",
 		"Stat",
+		"Method",
 		"Agency",
 		"Author",
 		"Region"
@@ -1813,7 +1815,8 @@ void EventEdit::insertOriginRow(Origin *org) {
 	symbol->setLongitude(org->longitude());
 	try {
 		symbol->setDepth(org->depth());
-	} catch ( Core::ValueException& ) {}
+	}
+	catch ( Core::ValueException & ) {}
 
 
 	if ( org->magnitudeCount() > 0 )
@@ -1914,6 +1917,7 @@ void EventEdit::updateOriginRow(int row, Origin *org) {
 		item->setText(_originColumnMap[OL_CREATED], "");
 	}
 
+	item->setText(_originColumnMap[OL_METHOD], org->methodID().c_str());
 	item->setText(_originColumnMap[OL_AGENCY], objectAgencyID(org).c_str());
 	item->setText(_originColumnMap[OL_AUTHOR], objectAuthor(org).c_str());
 	item->setText(_originColumnMap[OL_REGION], Regions::getRegionName(org->latitude(),org->longitude()).c_str());
@@ -2597,12 +2601,15 @@ void EventEdit::updateOrigin() {
 	Map::SymbolLayer::iterator end = _originMap->canvas().symbolCollection()->end();
 	Map::SymbolLayer::iterator it = begin;
 
-	for ( ; it != end; ++it )
+	for ( ; it != end; ++it ) {
+		static_cast<OriginSymbol*>(*it)->setFillColor(QColor());
 		static_cast<OriginSymbol*>(*it)->setFilled(false);
+	}
 
 	for ( it = begin; it != end; ++it ) {
 		if ( (*it)->id() == _currentOrigin->publicID() ) {
 			static_cast<OriginSymbol*>(*it)->setFilled(true);
+			static_cast<OriginSymbol*>(*it)->setFillColor(Qt::black);
 			_originMap->canvas().symbolCollection()->setTop(*it);
 			break;
 		}
