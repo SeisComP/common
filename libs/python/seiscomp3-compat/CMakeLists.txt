@@ -11,5 +11,5 @@ INSTALL(FILES
 	Math.py
 	Seismology.py
 	System.py
-	Util.py
+	Utils.py
 	DESTINATION ${PYTHON_PACKAGE_PATH})
