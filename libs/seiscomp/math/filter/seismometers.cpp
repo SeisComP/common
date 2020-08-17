@@ -114,8 +114,7 @@ GroundMotion double2gm(double v, bool &error)
 
 template <typename T>
 Math::Filtering::IIR::Biquad<T>
-pole2biquad(const SeismometerResponse::Pole &p, double fsamp, int nz0=0, double gain=1)
-{
+pole2biquad(const SeismometerResponse::Pole &p, double fsamp, int nz0=0, double gain=1) {
 	// p is an analog pole
 	// nz0 is the number of zeros at 0+0j in the s-plane
 	// e.g. n=2 turns a 2nd-order lowpass into a highpass
@@ -205,8 +204,8 @@ Math::Filtering::IIR::BiquadCascade<T>
 pz2biquads(
 	const vector<SeismometerResponse::Pole> &p,
 	const vector<SeismometerResponse::Zero> &z,
-	double fsamp, double norm )
-{
+	double fsamp, double norm
+) {
 // XXX This currently works for forward-computing the instrument responses
 // XXX that consist of only zeros at (0,0) and arbitrary poles. 
 

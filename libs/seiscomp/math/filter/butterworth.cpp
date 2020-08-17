@@ -24,15 +24,15 @@
 
 #include <seiscomp/math/filter/butterworth.h>
 
+
 namespace Seiscomp {
 namespace Math {
 namespace Filtering {
 namespace IIR {
 
+
 typedef std::complex<double> Complex;
 
-// load the template class definitions
-#include<seiscomp/math/filter/butterworth.ipp>
 
 INSTANTIATE_INPLACE_FILTER(ButterworthLowpass,     SC_SYSTEM_CORE_API);
 INSTANTIATE_INPLACE_FILTER(ButterworthHighpass,    SC_SYSTEM_CORE_API);
@@ -45,11 +45,20 @@ REGISTER_INPLACE_FILTER(ButterworthHighpass,    "BW_HP");
 REGISTER_INPLACE_FILTER(ButterworthBandpass,    "BW_BP");
 REGISTER_INPLACE_FILTER(ButterworthBandstop,    "BW_BS");
 REGISTER_INPLACE_FILTER(ButterworthHighLowpass, "BW_HLP");
-REGISTER_INPLACE_FILTER2(ButterworthHighLowpass, Proxy, "BW");
+REGISTER_INPLACE_FILTER2(ButterworthBandpass, Proxy, "BW");
 
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-static std::vector<Complex> makepoles(int order) {
+#define BUTTERWORTH_HIGHPASS    0
+#define BUTTERWORTH_LOWPASS     1
+#define BUTTERWORTH_BANDPASS    2
+#define BUTTERWORTH_BANDSTOP    3
+#define BUTTERWORTH_HIGHLOWPASS 4 // combination of BUTTERWORTH_LOWPASS and BUTTERWORTH_HIGHPASS
+
+
+namespace {
+
+
+std::vector<Complex> makepoles(int order) {
 	// Create a set of basic poles for a given filter order. For each
 	// conjugate pole pair only one pole is included
 
@@ -74,19 +83,16 @@ static std::vector<Complex> makepoles(int order) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-static std::vector<_Biquad> poles2bp(const std::vector<Complex> poles, double fmin, double fmax) {
+Biquads poles2bp(const std::vector<Complex> &poles, double fmin, double fmax) {
 	// convert basic set of poles to an analog bandpass
 
 	double a = 2*M_PI * 2*M_PI * fmin*fmax;
 	double b = 2*M_PI * (fmax-fmin);
 
-	std::vector<_Biquad> biquads;
+	Biquads biquads;
 
-	for (std::vector<Complex>::const_iterator
-	     it = poles.begin(); it != poles.end(); ++it) {
-
-		const Complex &pole = *it;
-		double a0=0, a1=b, a2=0, b0, b1, b2;
+	for ( const Complex &pole : poles ) {
+		double a0(0.0), a1(b), a2(0.0), b0, b1, b2;
 
 		if ( pole != Complex(-1) ) {
 			Complex pb = pole*b;
@@ -102,7 +108,7 @@ static std::vector<_Biquad> poles2bp(const std::vector<Complex> poles, double fm
 			b1 = -2*p1.real();
 			b2 = 1;
 
-			biquads.push_back( _Biquad(a0,a1,a2,b0,b1,b2) );
+			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
 
 			// a0 = 0;
 			// a1 = b;
@@ -112,7 +118,7 @@ static std::vector<_Biquad> poles2bp(const std::vector<Complex> poles, double fm
 			b1 = -2*p2.real();
 			b2 = 1;
 
-			biquads.push_back( _Biquad(a0,a1,a2,b0,b1,b2) );
+			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
 		}
 		else {
 			// pole at -1+0j
@@ -125,7 +131,7 @@ static std::vector<_Biquad> poles2bp(const std::vector<Complex> poles, double fm
 			b1 = b;
 			b2 = 1;
 
-			biquads.push_back( _Biquad(a0,a1,a2,b0,b1,b2) );
+			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
 		}
 	}
 
@@ -137,20 +143,16 @@ static std::vector<_Biquad> poles2bp(const std::vector<Complex> poles, double fm
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-static std::vector<_Biquad> poles2bs(const std::vector<Complex> poles, double fmin, double fmax) {
+Biquads poles2bs(const std::vector<Complex> &poles, double fmin, double fmax) {
 	// convert basic set of poles to an analog bandstop
 
 	double a = 2*M_PI * 2*M_PI * fmin*fmax;
 	double b = 2*M_PI * (fmax-fmin);
 
-	std::vector<_Biquad> biquads;
+	Biquads biquads;
 
-//	for ( size_t i = 0; i < poles.size(); ++i ) {
-	for (std::vector<Complex>::const_iterator
-	     it = poles.begin(); it != poles.end(); ++it) {
-
-		const Complex &pole = *it;
-		double a0=a, a1=0, a2=1, b0, b1, b2;
+	for ( const Complex &pole : poles ) {
+		double a0(a), a1(0.0), a2(1.0), b0, b1, b2;
 
 		if ( pole != Complex(-1) ) {
 			Complex bp = b / pole;
@@ -166,7 +168,7 @@ static std::vector<_Biquad> poles2bs(const std::vector<Complex> poles, double fm
 			b1 = -2 * p1.real();
 			b2 =  1;
 
-			biquads.push_back( _Biquad(a0,a1,a2,b0,b1,b2) );
+			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
 
 			// a0 = a;
 			// a1 = 0;
@@ -176,7 +178,7 @@ static std::vector<_Biquad> poles2bs(const std::vector<Complex> poles, double fm
 			b1 = -2 * p2.real();
 			b2 = 1;
 
-			biquads.push_back( _Biquad(a0,a1,a2,b0,b1,b2) );
+			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
 		}
 		else {
 			// pole at -1+0j
@@ -184,10 +186,12 @@ static std::vector<_Biquad> poles2bs(const std::vector<Complex> poles, double fm
 			// a0 = a;
 			// a1 = 0;
 			// a2 = 1;
+
 			b0 = a;
 			b1 = b;
 			b2 = 1;
-			biquads.push_back( _Biquad(a0,a1,a2,b0,b1,b2) );
+
+			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
 		}
 	}
 
@@ -199,19 +203,16 @@ static std::vector<_Biquad> poles2bs(const std::vector<Complex> poles, double fm
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-static std::vector<_Biquad> poles2lp(const std::vector<Complex> poles, double fmax) {
+Biquads poles2lp(const std::vector<Complex> &poles, double fmax) {
 	// convert basic set of poles to an analog lowpass
 
 	double s = 1/(2*M_PI*fmax);
 
-	std::vector<_Biquad> biquads;
+	Biquads biquads;
 
 //	for ( size_t i = 0; i < poles.size(); ++i ) {
-	for (std::vector<Complex>::const_iterator
-	     it = poles.begin(); it != poles.end(); ++it) {
-
-		const Complex &pole = *it;
-		double a0=1, a1=0, a2=0, b0, b1, b2;
+	for ( const Complex &pole : poles ) {
+		double a0(1.0), a1(0.0), a2(0.0), b0, b1, b2;
 
 		if ( pole != Complex(-1) ) {
 			// a0 = 1;
@@ -225,7 +226,7 @@ static std::vector<_Biquad> poles2lp(const std::vector<Complex> poles, double fm
 			b1 *= s;
 			b2 *= s*s;
 
-			biquads.push_back( _Biquad(a0,a1,a2,b0,b1,b2) );
+			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
 		}
 		else {
 			// pole at -1+0j
@@ -238,7 +239,7 @@ static std::vector<_Biquad> poles2lp(const std::vector<Complex> poles, double fm
 			b1 =  s;
 			b2 =  0;
 
-			biquads.push_back( _Biquad(a0,a1,a2,b0,b1,b2) );
+			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
 		}
 	}
 
@@ -250,18 +251,14 @@ static std::vector<_Biquad> poles2lp(const std::vector<Complex> poles, double fm
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-static std::vector<_Biquad> poles2hp(const std::vector<Complex> poles, double fmin) {
+Biquads poles2hp(const std::vector<Complex> &poles, double fmin) {
 	// convert basic set of poles to an analog highpass
 
 	double s = 1/(2*M_PI*fmin);
 
-	std::vector<_Biquad> biquads;
+	Biquads biquads;
 
-//	for ( size_t i = 0; i < poles.size(); ++i ) {
-	for (std::vector<Complex>::const_iterator
-	     it = poles.begin(); it != poles.end(); ++it) {
-
-		const Complex &pole = *it;
+	for ( const Complex &pole : poles ) {
 		double a0, a1, a2, b0, b1, b2;
 
 		if ( pole != Complex(-1) ) {
@@ -273,7 +270,7 @@ static std::vector<_Biquad> poles2hp(const std::vector<Complex> poles, double fm
 			b1 = -2*s * pole.real();
 			b2 =  s*s * (pole * conj(pole)).real();
 
-			biquads.push_back( _Biquad(a0,a1,a2,b0,b1,b2) );
+			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
 		}
 		else {
 			// pole at -1+0j
@@ -286,7 +283,7 @@ static std::vector<_Biquad> poles2hp(const std::vector<Complex> poles, double fm
 			b1 =  s;
 			b2 =  0;
 
-			biquads.push_back( _Biquad(a0,a1,a2,b0,b1,b2) );
+			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
 		}
 	}
 
@@ -298,7 +295,7 @@ static std::vector<_Biquad> poles2hp(const std::vector<Complex> poles, double fm
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-static void analog2digital(_Biquad &biquad) {
+void analog2digital(BiquadCoefficients &biquad) {
 	// convert a biquad from analog to digital
 
 	double c0 = biquad.b0, c1 = biquad.b1, c2 = biquad.b2;
@@ -322,11 +319,13 @@ static void analog2digital(_Biquad &biquad) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-static void analog2digital(std::vector<_Biquad>  &biquads) {
+void analog2digital(Biquads &biquads) {
 	// convert filter from analog to digital
+	for ( BiquadCoefficients &biq : biquads )
+		analog2digital(biq);
+}
 
-	for (std::vector<_Biquad>::iterator biq = biquads.begin(); biq != biquads.end(); ++biq)
-		analog2digital(*biq);
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -334,17 +333,22 @@ static void analog2digital(std::vector<_Biquad>  &biquads) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::vector<_Biquad> init_bw_biquads(size_t order, double fmin, double fmax, double fsamp, int type) {
+void init_bw_biquads_inplace(Biquads &biquads, size_t order, double fmin, double fmax, double fsamp, int type) {
 	// This is the main Butterworth filter initialization routine.
 	// For the self-explaining set of input parameters a vector of biquads is returned.
+
+	if ( type == BUTTERWORTH_HIGHLOWPASS ) {
+		// This is a bandpass obtained by combining lowpass and highpass
+		init_bw_biquads_inplace(biquads, order, fmin, 0, fsamp, BUTTERWORTH_HIGHPASS);
+		init_bw_biquads_inplace(biquads, order, 0, fmax, fsamp, BUTTERWORTH_LOWPASS);
+		return;
+	}
 
 	if ( order > 20 )
 		throw std::runtime_error("Filter order exceeded maximum of 20");
 
 	if ( fsamp <= 0 )
 		throw std::runtime_error("Sample rate must be greater than zero");
-
-	std::vector<_Biquad> biquads;
 
 	double fnyquist = 0.5*fsamp;
 
@@ -408,31 +412,32 @@ std::vector<_Biquad> init_bw_biquads(size_t order, double fmin, double fmax, dou
 			analog2digital(biquads);
 			break;
 
-		case BUTTERWORTH_HIGHLOWPASS: {
-			// This is a bandpass obtained by combining lowpass and highpass
-			std::vector< _Biquad > b1, b2;
-			b1 = init_bw_biquads(order, fmin, 0, fsamp, BUTTERWORTH_HIGHPASS);
-			b2 = init_bw_biquads(order, 0, fmax, fsamp, BUTTERWORTH_LOWPASS);
-
-			std::vector< _Biquad >::const_iterator biq;
-			for (biq = b1.begin(); biq != b1.end(); biq++)
-				biquads.push_back(*biq);
-			for (biq = b2.begin(); biq != b2.end(); biq++)
-				biquads.push_back(*biq);
-			}
-			break;
-
 		default:
 			throw std::runtime_error("Invalid filter type");
 	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Biquads init_bw_biquads(size_t order, double fmin, double fmax, double fsamp, int type) {
+	Biquads biquads;
+	init_bw_biquads_inplace(biquads, order, fmin, fmax, fsamp, type);
 	return biquads;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
-}	// namespace Seiscomp::Math::Filtering::IIR
-}	// namespace Seiscomp::Math::Filtering
-}	// namespace Seiscomp::Math
-}	// namespace Seiscomp
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// load the template class definitions
+#include<seiscomp/math/filter/butterworth.ipp>
+
+
+} // namespace Seiscomp::Math::Filtering::IIR
+} // namespace Seiscomp::Math::Filtering
+} // namespace Seiscomp::Math
+} // namespace Seiscomp

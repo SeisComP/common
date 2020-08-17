@@ -109,24 +109,23 @@ namespace Filtering {
 namespace IIR {
 
 template <typename T>
-class Filter : public SeismometerResponse::PolesAndZeros , public Math::Filtering::InPlaceFilter<T> {
+class Filter : public SeismometerResponse::PolesAndZeros,
+               public Math::Filtering::InPlaceFilter<T> {
 	public:
 		Filter();
 
 		Filter(const SeismometerResponse::Poles &poles,
 		       const SeismometerResponse::Zeros &zeros, double norm);
 
-//		Filter(const Poles &poles, const Zeros &zeros,
-//		       double norm, double fsamp);
-
 		Filter(const Filter &other);
 
-		void setSamplingFrequency(double fsamp);
-		int setParameters(int n, const double *params);
+	public:
+		virtual void setSamplingFrequency(double fsamp) override;
+		virtual int setParameters(int n, const double *params) override;
 
-		void apply(int n, T *inout);
+		virtual void apply(int n, T *inout) override;
 	
-		Math::Filtering::InPlaceFilter<T>* clone() const;
+		virtual Math::Filtering::InPlaceFilter<T>* clone() const override;
 
 	private:
 		Math::Filtering::IIR::BiquadCascade<T> _cascade;
