@@ -1883,55 +1883,37 @@ class InitialTaperFilterD(InPlaceFilterD):
 # Register InitialTaperFilterD in _math:
 _math.InitialTaperFilterD_swigregister(InitialTaperFilterD)
 
-class _Biquad(object):
-    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::_Biquad class."""
+class BiquadCoefficients(object):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::BiquadCoefficients class."""
 
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
     def __init__(self, *args):
         r"""
-        __init__(_Biquad self, double _a0=1, double _a1=0, double _a2=0, double _b0=1, double _b1=0, double _b2=0) -> _Biquad
-        __init__(_Biquad self, _Biquad other) -> _Biquad
+        __init__(BiquadCoefficients self, double a0=0, double a1=0, double a2=0, double b0=1, double b1=0, double b2=0) -> BiquadCoefficients
+        __init__(BiquadCoefficients self, BiquadCoefficients bq) -> BiquadCoefficients
         """
-        _math._Biquad_swiginit(self, _math.new__Biquad(*args))
+        _math.BiquadCoefficients_swiginit(self, _math.new_BiquadCoefficients(*args))
 
-    def set(self, _a0, _a1, _a2, _b0, _b1, _b2):
-        r"""set(_Biquad self, double _a0, double _a1, double _a2, double _b0, double _b1, double _b2)"""
-        return _math._Biquad_set(self, _a0, _a1, _a2, _b0, _b1, _b2)
+    def set(self, a0, a1, a2, b0, b1, b2):
+        r"""set(BiquadCoefficients self, double a0, double a1, double a2, double b0, double b1, double b2)"""
+        return _math.BiquadCoefficients_set(self, a0, a1, a2, b0, b1, b2)
+    a0 = property(_math.BiquadCoefficients_a0_get, _math.BiquadCoefficients_a0_set, doc=r"""a0 : double""")
+    a1 = property(_math.BiquadCoefficients_a1_get, _math.BiquadCoefficients_a1_set, doc=r"""a1 : double""")
+    a2 = property(_math.BiquadCoefficients_a2_get, _math.BiquadCoefficients_a2_set, doc=r"""a2 : double""")
+    b0 = property(_math.BiquadCoefficients_b0_get, _math.BiquadCoefficients_b0_set, doc=r"""b0 : double""")
+    b1 = property(_math.BiquadCoefficients_b1_get, _math.BiquadCoefficients_b1_set, doc=r"""b1 : double""")
+    b2 = property(_math.BiquadCoefficients_b2_get, _math.BiquadCoefficients_b2_set, doc=r"""b2 : double""")
+    __swig_destroy__ = _math.delete_BiquadCoefficients
 
-    def delay(self, nsamp, delay_val):
-        r"""delay(_Biquad self, int nsamp, double * delay_val) -> int"""
-        return _math._Biquad_delay(self, nsamp, delay_val)
+# Register BiquadCoefficients in _math:
+_math.BiquadCoefficients_swigregister(BiquadCoefficients)
 
-    def delay2(self, nsamp, delay_val):
-        r"""delay2(_Biquad self, int nsamp, double * delay_val) -> int"""
-        return _math._Biquad_delay2(self, nsamp, delay_val)
 
-    def delay_one(self, freq, delay):
-        r"""delay_one(_Biquad self, double freq, double * delay) -> int"""
-        return _math._Biquad_delay_one(self, freq, delay)
-
-    def reset(self):
-        r"""reset(_Biquad self)"""
-        return _math._Biquad_reset(self)
-
-    def _print(self):
-        r"""_print(_Biquad self) -> std::string"""
-        return _math._Biquad__print(self)
-    a0 = property(_math._Biquad_a0_get, _math._Biquad_a0_set, doc=r"""a0 : double""")
-    a1 = property(_math._Biquad_a1_get, _math._Biquad_a1_set, doc=r"""a1 : double""")
-    a2 = property(_math._Biquad_a2_get, _math._Biquad_a2_set, doc=r"""a2 : double""")
-    b0 = property(_math._Biquad_b0_get, _math._Biquad_b0_set, doc=r"""b0 : double""")
-    b1 = property(_math._Biquad_b1_get, _math._Biquad_b1_set, doc=r"""b1 : double""")
-    b2 = property(_math._Biquad_b2_get, _math._Biquad_b2_set, doc=r"""b2 : double""")
-    v1 = property(_math._Biquad_v1_get, _math._Biquad_v1_set, doc=r"""v1 : double""")
-    v2 = property(_math._Biquad_v2_get, _math._Biquad_v2_set, doc=r"""v2 : double""")
-    __swig_destroy__ = _math.delete__Biquad
-
-# Register _Biquad in _math:
-_math._Biquad_swigregister(_Biquad)
-
+def __lshift__(os, biq):
+    r"""__lshift__(std::ostream & os, BiquadCoefficients biq) -> std::ostream &"""
+    return _math.__lshift__(os, biq)
 class BiquadCascadeF(InPlaceFilterF):
     r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::BiquadCascade< float > class."""
 
@@ -1944,11 +1926,22 @@ class BiquadCascadeF(InPlaceFilterF):
         __init__(BiquadCascadeF self, BiquadCascadeF other) -> BiquadCascadeF
         """
         _math.BiquadCascadeF_swiginit(self, _math.new_BiquadCascadeF(*args))
-    __swig_destroy__ = _math.delete_BiquadCascadeF
 
     def size(self):
         r"""size(BiquadCascadeF self) -> int"""
         return _math.BiquadCascadeF_size(self)
+
+    def reset(self):
+        r"""reset(BiquadCascadeF self)"""
+        return _math.BiquadCascadeF_reset(self)
+
+    def append(self, biq):
+        r"""append(BiquadCascadeF self, Seiscomp::Math::Filtering::IIR::Biquad< float > const & biq)"""
+        return _math.BiquadCascadeF_append(self, biq)
+
+    def set(self, biquads):
+        r"""set(BiquadCascadeF self, Seiscomp::Math::Filtering::IIR::Biquads const & biquads)"""
+        return _math.BiquadCascadeF_set(self, biquads)
 
     def apply(self, n, inout):
         r"""apply(BiquadCascadeF self, int n, float * inout)"""
@@ -1958,18 +1951,6 @@ class BiquadCascadeF(InPlaceFilterF):
         r"""clone(BiquadCascadeF self) -> InPlaceFilterF"""
         return _math.BiquadCascadeF_clone(self)
 
-    def filter(self, f):
-        r"""filter(BiquadCascadeF self, vectorf f) -> vectorf"""
-        return _math.BiquadCascadeF_filter(self, f)
-
-    def reset(self):
-        r"""reset(BiquadCascadeF self)"""
-        return _math.BiquadCascadeF_reset(self)
-
-    def _print(self):
-        r"""_print(BiquadCascadeF self) -> std::string"""
-        return _math.BiquadCascadeF__print(self)
-
     def setSamplingFrequency(self, arg2):
         r"""setSamplingFrequency(BiquadCascadeF self, double arg2)"""
         return _math.BiquadCascadeF_setSamplingFrequency(self, arg2)
@@ -1977,10 +1958,7 @@ class BiquadCascadeF(InPlaceFilterF):
     def setParameters(self, n, params):
         r"""setParameters(BiquadCascadeF self, int n, double const * params) -> int"""
         return _math.BiquadCascadeF_setParameters(self, n, params)
-
-    def append(self, biq):
-        r"""append(BiquadCascadeF self, Seiscomp::Math::Filtering::IIR::Biquad< float > const & biq)"""
-        return _math.BiquadCascadeF_append(self, biq)
+    __swig_destroy__ = _math.delete_BiquadCascadeF
 
 # Register BiquadCascadeF in _math:
 _math.BiquadCascadeF_swigregister(BiquadCascadeF)
@@ -1997,11 +1975,22 @@ class BiquadCascadeD(InPlaceFilterD):
         __init__(BiquadCascadeD self, BiquadCascadeD other) -> BiquadCascadeD
         """
         _math.BiquadCascadeD_swiginit(self, _math.new_BiquadCascadeD(*args))
-    __swig_destroy__ = _math.delete_BiquadCascadeD
 
     def size(self):
         r"""size(BiquadCascadeD self) -> int"""
         return _math.BiquadCascadeD_size(self)
+
+    def reset(self):
+        r"""reset(BiquadCascadeD self)"""
+        return _math.BiquadCascadeD_reset(self)
+
+    def append(self, biq):
+        r"""append(BiquadCascadeD self, Seiscomp::Math::Filtering::IIR::Biquad< double > const & biq)"""
+        return _math.BiquadCascadeD_append(self, biq)
+
+    def set(self, biquads):
+        r"""set(BiquadCascadeD self, Seiscomp::Math::Filtering::IIR::Biquads const & biquads)"""
+        return _math.BiquadCascadeD_set(self, biquads)
 
     def apply(self, n, inout):
         r"""apply(BiquadCascadeD self, int n, double * inout)"""
@@ -2011,18 +2000,6 @@ class BiquadCascadeD(InPlaceFilterD):
         r"""clone(BiquadCascadeD self) -> InPlaceFilterD"""
         return _math.BiquadCascadeD_clone(self)
 
-    def filter(self, f):
-        r"""filter(BiquadCascadeD self, vectord f) -> vectord"""
-        return _math.BiquadCascadeD_filter(self, f)
-
-    def reset(self):
-        r"""reset(BiquadCascadeD self)"""
-        return _math.BiquadCascadeD_reset(self)
-
-    def _print(self):
-        r"""_print(BiquadCascadeD self) -> std::string"""
-        return _math.BiquadCascadeD__print(self)
-
     def setSamplingFrequency(self, arg2):
         r"""setSamplingFrequency(BiquadCascadeD self, double arg2)"""
         return _math.BiquadCascadeD_setSamplingFrequency(self, arg2)
@@ -2030,10 +2007,7 @@ class BiquadCascadeD(InPlaceFilterD):
     def setParameters(self, n, params):
         r"""setParameters(BiquadCascadeD self, int n, double const * params) -> int"""
         return _math.BiquadCascadeD_setParameters(self, n, params)
-
-    def append(self, biq):
-        r"""append(BiquadCascadeD self, Seiscomp::Math::Filtering::IIR::Biquad< double > const & biq)"""
-        return _math.BiquadCascadeD_append(self, biq)
+    __swig_destroy__ = _math.delete_BiquadCascadeD
 
 # Register BiquadCascadeD in _math:
 _math.BiquadCascadeD_swigregister(BiquadCascadeD)
@@ -2044,9 +2018,9 @@ class ButterworthLowpassF(BiquadCascadeF):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self, order=3, fc=0.7, fsamp=0):
-        r"""__init__(ButterworthLowpassF self, int order=3, double fc=0.7, double fsamp=0) -> ButterworthLowpassF"""
-        _math.ButterworthLowpassF_swiginit(self, _math.new_ButterworthLowpassF(order, fc, fsamp))
+    def __init__(self, order=3, fmax=0.7, fsamp=0):
+        r"""__init__(ButterworthLowpassF self, int order=3, double fmax=0.7, double fsamp=0) -> ButterworthLowpassF"""
+        _math.ButterworthLowpassF_swiginit(self, _math.new_ButterworthLowpassF(order, fmax, fsamp))
 
     def setSamplingFrequency(self, fsamp):
         r"""setSamplingFrequency(ButterworthLowpassF self, double fsamp)"""
@@ -2070,9 +2044,9 @@ class ButterworthLowpassD(BiquadCascadeD):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self, order=3, fc=0.7, fsamp=0):
-        r"""__init__(ButterworthLowpassD self, int order=3, double fc=0.7, double fsamp=0) -> ButterworthLowpassD"""
-        _math.ButterworthLowpassD_swiginit(self, _math.new_ButterworthLowpassD(order, fc, fsamp))
+    def __init__(self, order=3, fmax=0.7, fsamp=0):
+        r"""__init__(ButterworthLowpassD self, int order=3, double fmax=0.7, double fsamp=0) -> ButterworthLowpassD"""
+        _math.ButterworthLowpassD_swiginit(self, _math.new_ButterworthLowpassD(order, fmax, fsamp))
 
     def setSamplingFrequency(self, fsamp):
         r"""setSamplingFrequency(ButterworthLowpassD self, double fsamp)"""
@@ -2096,9 +2070,9 @@ class ButterworthHighpassF(BiquadCascadeF):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self, order=3, fc=2.0, fsamp=0):
-        r"""__init__(ButterworthHighpassF self, int order=3, double fc=2.0, double fsamp=0) -> ButterworthHighpassF"""
-        _math.ButterworthHighpassF_swiginit(self, _math.new_ButterworthHighpassF(order, fc, fsamp))
+    def __init__(self, order=3, fmin=2.0, fsamp=0):
+        r"""__init__(ButterworthHighpassF self, int order=3, double fmin=2.0, double fsamp=0) -> ButterworthHighpassF"""
+        _math.ButterworthHighpassF_swiginit(self, _math.new_ButterworthHighpassF(order, fmin, fsamp))
 
     def setSamplingFrequency(self, fsamp):
         r"""setSamplingFrequency(ButterworthHighpassF self, double fsamp)"""
@@ -2122,9 +2096,9 @@ class ButterworthHighpassD(BiquadCascadeD):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self, order=3, fc=2.0, fsamp=0):
-        r"""__init__(ButterworthHighpassD self, int order=3, double fc=2.0, double fsamp=0) -> ButterworthHighpassD"""
-        _math.ButterworthHighpassD_swiginit(self, _math.new_ButterworthHighpassD(order, fc, fsamp))
+    def __init__(self, order=3, fmin=2.0, fsamp=0):
+        r"""__init__(ButterworthHighpassD self, int order=3, double fmin=2.0, double fsamp=0) -> ButterworthHighpassD"""
+        _math.ButterworthHighpassD_swiginit(self, _math.new_ButterworthHighpassD(order, fmin, fsamp))
 
     def setSamplingFrequency(self, fsamp):
         r"""setSamplingFrequency(ButterworthHighpassD self, double fsamp)"""
@@ -2148,9 +2122,9 @@ class ButterworthBandpassF(BiquadCascadeF):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self, order=3, fmin=0.7, fmax=2.0, fsamp=0, init=False):
-        r"""__init__(ButterworthBandpassF self, int order=3, double fmin=0.7, double fmax=2.0, double fsamp=0, bool init=False) -> ButterworthBandpassF"""
-        _math.ButterworthBandpassF_swiginit(self, _math.new_ButterworthBandpassF(order, fmin, fmax, fsamp, init))
+    def __init__(self, order=3, fmin=0.7, fmax=2.0, fsamp=0):
+        r"""__init__(ButterworthBandpassF self, int order=3, double fmin=0.7, double fmax=2.0, double fsamp=0) -> ButterworthBandpassF"""
+        _math.ButterworthBandpassF_swiginit(self, _math.new_ButterworthBandpassF(order, fmin, fmax, fsamp))
 
     def setSamplingFrequency(self, fsamp):
         r"""setSamplingFrequency(ButterworthBandpassF self, double fsamp)"""
@@ -2163,18 +2137,6 @@ class ButterworthBandpassF(BiquadCascadeF):
     def clone(self):
         r"""clone(ButterworthBandpassF self) -> InPlaceFilterF"""
         return _math.ButterworthBandpassF_clone(self)
-
-    def apply(self, n, inout):
-        r"""apply(ButterworthBandpassF self, int n, float * inout)"""
-        return _math.ButterworthBandpassF_apply(self, n, inout)
-
-    def reset(self):
-        r"""reset(ButterworthBandpassF self)"""
-        return _math.ButterworthBandpassF_reset(self)
-
-    def handleGap(self, n=0):
-        r"""handleGap(ButterworthBandpassF self, int n=0)"""
-        return _math.ButterworthBandpassF_handleGap(self, n)
     __swig_destroy__ = _math.delete_ButterworthBandpassF
 
 # Register ButterworthBandpassF in _math:
@@ -2186,9 +2148,9 @@ class ButterworthBandpassD(BiquadCascadeD):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self, order=3, fmin=0.7, fmax=2.0, fsamp=0, init=False):
-        r"""__init__(ButterworthBandpassD self, int order=3, double fmin=0.7, double fmax=2.0, double fsamp=0, bool init=False) -> ButterworthBandpassD"""
-        _math.ButterworthBandpassD_swiginit(self, _math.new_ButterworthBandpassD(order, fmin, fmax, fsamp, init))
+    def __init__(self, order=3, fmin=0.7, fmax=2.0, fsamp=0):
+        r"""__init__(ButterworthBandpassD self, int order=3, double fmin=0.7, double fmax=2.0, double fsamp=0) -> ButterworthBandpassD"""
+        _math.ButterworthBandpassD_swiginit(self, _math.new_ButterworthBandpassD(order, fmin, fmax, fsamp))
 
     def setSamplingFrequency(self, fsamp):
         r"""setSamplingFrequency(ButterworthBandpassD self, double fsamp)"""
@@ -2201,18 +2163,6 @@ class ButterworthBandpassD(BiquadCascadeD):
     def clone(self):
         r"""clone(ButterworthBandpassD self) -> InPlaceFilterD"""
         return _math.ButterworthBandpassD_clone(self)
-
-    def apply(self, n, inout):
-        r"""apply(ButterworthBandpassD self, int n, double * inout)"""
-        return _math.ButterworthBandpassD_apply(self, n, inout)
-
-    def reset(self):
-        r"""reset(ButterworthBandpassD self)"""
-        return _math.ButterworthBandpassD_reset(self)
-
-    def handleGap(self, n=0):
-        r"""handleGap(ButterworthBandpassD self, int n=0)"""
-        return _math.ButterworthBandpassD_handleGap(self, n)
     __swig_destroy__ = _math.delete_ButterworthBandpassD
 
 # Register ButterworthBandpassD in _math:
