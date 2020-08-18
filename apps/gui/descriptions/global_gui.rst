@@ -1,8 +1,11 @@
-All SeisComP graphical user interfaces are based on a common libraries.
+All |scname| graphical user interfaces are based on a common libraries.
 This chapter describes what configuration and styling options are available for
 all GUI applications. The GUI specific configuration options are additional to
 the standard application options. Setup the e.g. messaging connection and database
 is equal to the CLI (command line interface) applications.
+
+
+.. _sec-gui_styles:
 
 Styling
 =======
@@ -13,16 +16,25 @@ Qt4 library the tool "qtconfig-qt4" can used to adjust the widget theme and the
 colors. If KDE is used as desktop system the same style is used since KDE
 bases on Qt as well.
 
-The style options supported by SC3 (and not covered by the general Qt setup)
+The style options supported by |scname| (and not covered by the general Qt setup)
 have to be given in the applications (or global) configuration file. The
-parameters are prefixed with *scheme.*.
+parameters are configured with the *scheme.* parameters.
+In case of :ref:`map layers defined by BNA files <sec-gui_layers>` the parameters
+may also be defined by :file:`map.cfg` in the directory of the BNA file.
+
+
+.. _sec-gui_syntax:
 
 Configuration syntax
 ====================
 
 Beside the usual integer, float, boolean and string parameters GUI applications
-support also color, color gradient, pen, brush and font parameters. The syntax
-is explained below:
+support also :ref:`color <sec-gui_color>`, :ref:`color gradient <sec-gui_colorgradient>`,
+:ref:`pen <sec-gui_pen>`, :ref:`brush <sec-gui_brush>`, :ref:`font <sec-gui_font>`
+and :ref:`symbol <sec-gui_symbol>` parameters. The syntax is explained below:
+
+
+.. _sec-gui_color:
 
 Colors
 ------
@@ -35,6 +47,9 @@ Colors are specified either in a hexadecimal notation or in a rgb(a) notation.
 When using the rgb(a) notation it should be quoted. Otherwise the configuration
 parser would tokenize the value into 3 or 4 strings due to the comma.
 
+
+.. _sec-gui_colorgradient:
+
 Color gradients
 ---------------
 
@@ -44,6 +59,9 @@ Color gradients
 
 This defines a gradient from red through green to blue for the nodes 1, 2 and 3.
 Values out of range are clipped to the lower or upper bound.
+
+
+.. _sec-gui_font:
 
 Fonts
 -----
@@ -80,11 +98,13 @@ An example to configure the SC3 base font:
    scheme.fonts.base.size = 10
 
 
+.. _sec-gui_pen:
+
 Pens
 ----
 
 Pens are used in the vector layer configuration. Pens have three attributes:
-color, style and width. Color follows the described color definition, width
+color, style and width. Color follows the described :ref:`color definition <sec-gui_color>`, width
 is a double and the styles are:
 
 +------------------------------------+---------------------------------------+------------------------------------------+
@@ -109,12 +129,14 @@ Example:
    pen.style = dotline
 
 
+.. _sec-gui_brush:
+
 Brushes
 -------
 
 Brushes are also used in the vector layer configuration. Brushes are used to
 fill a polygon. They have two attributes: color and style. Color follows the
-described color definition and styles are:
+described :ref:`color definition <sec-gui_color>` and styles are:
 
 .. figure:: media/gui/brush-patterns.png
 
@@ -127,12 +149,80 @@ Example:
    brush.style = solid
 
 
+.. _sec-gui_symbol:
+
+Symbols
+-------
+
+Symbols configured by the :confval:`symbol.*` parameters can be plotted on coordinate
+points defined by :ref:`BNA files <sec-gui_layers>` or by :confval:`symbol.icon.hotspot.x`
+and :confval:`symbol.icon.hotspot.y`. The symbols can be shapes (:confval:`symbol.shape`)
+or icons from a file (:confval:`symbol.icon`).
+
+
+.. _sec-gui_legend:
+
+Legends
+-------
+
+Legends are plotted on maps describing :ref:`map vector layers <sec-gui_layers>`.
+Styles are:
+
+.. csv-table::
+   :header: "Name", "Description", "Example"
+   :widths: 1, 3, 3
+
+   ":confval:`title`", "Title", "title = Faults"
+   ":confval:`orientation`", "Orientation: vertical, horizontal", "orientation =  vertical"
+   ":confval:`legendArea`", "Position: topleft, topright, bottomleft, bottomright", "legendArea = topleft"
+
+
+.. _sec-gui_layers:
+
 Map vector layers
 =================
 
-SeisComP supports drawing of arbitrary polygons/polylines. Currently the FEP
-(:file:`share/fep` or :file:`~/.seiscomp/fep`) and BNA (:file:`share/bna` or
-:file:`~/.seiscomp/bna`) data sets are loaded and may be visualized. While the
+|scname| supports arbitrary polygons/polylines for drawing on maps or for using
+by other :term:`modules <plugin>` and :term:`plugins <plugin>`. The polygons and
+polylines can be customized by the :ref:`available attributes <sec-gui_syntax>`.
+Currently supported data types are:
+
+* FEP (Flinn-Engdahl polygons):
+
+  * used for visualization of events regions and for setting the region name of the
+    event by :ref:`scevent`.
+  * stored in directories: :file:`$SEISCOMP_ROOT/share/fep` or :file:`~/.seiscomp/fep`
+  * file name extension: *.fep*
+  * file format: ::
+
+       longitude1 latitude1
+       longitude2 latitude2
+       longitude3 latitude3
+       ...
+       99.0 99.0 length
+       L name
+
+    where the coordinates, *length* and *name* are to be replaced by actual values.
+
+* BNA polygons:
+
+  * used for visualization, e.g. faults or districts on maps or by other modules and plugins, e.g. the :ref:`region check <scevent_regioncheck>`
+    plugin for :ref:`scevent`.
+  * stored in directories or sub-directories of: :file:`$SEISCOMP_ROOT/share/bna` or :file:`~/.seiscomp/bna`
+  * file name extension: *.bna*
+  * file format: ::
+
+       "name 1","rank 1",type/length
+       longitude1,latitude1
+       longitude2,latitude2
+       longitude3,latitude3
+       ...
+
+    where the coordinates, *name* and *type/length* are to be replaced by actual values.
+    For polylines (open polygons) set type/length to the negative number of points defining
+    the line, e.g. -10. Positive numbers, e.g. 10, define closed polygons.
+
+FEP and BNA data sets are loaded and may be visualized. While the
 FEP layer is configured through the layer 'fep', the layer (resp. category) of
 the BNA data is derived from the directory structure of the BNA folder.
 
@@ -144,7 +234,7 @@ the categories coastline, coastline.europe and coastline.europe.germany which
 all may be configured individually. Every undefined property is inherited from
 the parent category.
 
-Each data set directory and subdirectory is scanned for an optional
+Each data set directory and sub-directory is scanned for an optional
 :file:`map.cfg` configuration file defining default drawing options. Available
 configuration parameters are described further below. This allows easy
 distribution of data sets and drawing properties without the need to change
@@ -154,7 +244,15 @@ The default drawing options may be overridden in the global or application
 configuration file using the format *prefix.category.param*. If global layer
 properties are configured then just *prefix.param*. The prefix for layer
 configuration is *map.layers*. Due to its recursive structure the configuration
-options are not available through scconfig.
+options are not available through :ref:`scconfig`.
+
+The map layers can be explained on the maps by :ref:`configurable legends <sec-gui_legend>`.
+
+.. figure:: media/gui/map-layers.png
+   :align: center
+   :width: 10cm
+
+   Map with layers defined by BNA polygons and legends.
 
 Available configuration parameters are:
 
