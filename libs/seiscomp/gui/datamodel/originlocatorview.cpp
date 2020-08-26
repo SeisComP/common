@@ -3258,9 +3258,11 @@ void OriginLocatorView::runScript(const QString &script, const QString &name) {
 	if ( _baseEvent ) {
 		cmd += QString(" %1").arg(_baseEvent->publicID().c_str());
 	}
+	SEISCOMP_DEBUG("Executing script %s", cmd.toStdString().c_str());
 
 	// start as background process w/o any communication channel
 	if ( !QProcess::startDetached(cmd) ) {
+		SEISCOMP_ERROR("Failed executing script %s", cmd.toStdString().c_str());
 		QMessageBox::warning(this, name, tr("Can't execute script"));
 	}
 }
