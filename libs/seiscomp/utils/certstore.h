@@ -103,10 +103,11 @@ class SC_SYSTEM_CORE_API CertificateContext : public Core::BaseObject {
 	protected:
 		typedef std::map<std::string, X509*> Certs;
 		typedef std::map<std::string, X509_CRL*> CRLs;
+
 		// Cache
 		mutable X509            *_cert;
-		mutable ASN1_TIME       *_begin;
-		mutable ASN1_TIME       *_end;
+		mutable const ASN1_TIME *_begin;
+		mutable const ASN1_TIME *_end;
 
 		// Certificates and revocation list
 		Certs                    _certs;

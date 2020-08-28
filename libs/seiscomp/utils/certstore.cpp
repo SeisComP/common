@@ -72,7 +72,7 @@ CertificateStore CertificateStore::_global;
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 CertificateContext::CertificateContext()
-: _cert(0) {}
+: _cert(0), _begin(0), _end(0) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -97,7 +97,7 @@ CertificateContext::~CertificateContext() {
 const X509 *CertificateContext::findCertificate(const Core::Time &referenceTime) const {
 	SEISCOMP_DEBUG("Certificate lookup");
 
-	long seconds = referenceTime.seconds();
+	time_t seconds = referenceTime;
 	if ( _cert ) {
 		// Check the last cached certificate
 		if ( (!_begin || X509_cmp_time(_begin, &seconds) == -1)
@@ -118,12 +118,12 @@ const X509 *CertificateContext::findCertificate(const Core::Time &referenceTime)
 		}
 
 		// The value returned is an internal pointer which MUST NOT be freed up after the call
-		ASN1_INTEGER *serial = X509_get_serialNumber(x509);
+		const ASN1_INTEGER *serial = X509_get0_serialNumber(x509);
 		long serialNumber = ASN1_INTEGER_get(serial);
 
 		SEISCOMP_DEBUG("    Cert(Serial: %ld): Checking certificate",
 		               serialNumber);
-		ASN1_TIME *begin = X509_get_notBefore(x509);
+		const ASN1_TIME *begin = X509_get0_notBefore(x509);
 		if ( begin ) {
 			int res = X509_cmp_time(begin, &seconds);
 			if ( res == 0 ) {
@@ -140,7 +140,7 @@ const X509 *CertificateContext::findCertificate(const Core::Time &referenceTime)
 			}
 		}
 
-		ASN1_TIME *end = X509_get_notAfter(x509);
+		const ASN1_TIME *end = X509_get0_notAfter(x509);
 		if ( end ) {
 			int res = X509_cmp_time(end, &seconds);
 			if ( res == 0 ) {
@@ -184,17 +184,20 @@ const X509 *CertificateContext::findCertificate(const char *digest, size_t nDige
 
 	if ( _cert ) {
 		// Check the last cached certificate
-		EVP_PKEY *key = X509_get_pubkey(_cert);
-		EC_KEY *pubkey = EVP_PKEY_get1_EC_KEY(key);
+		EVP_PKEY *pkey = X509_get0_pubkey(_cert);
+		if ( pkey ) {
+			EC_KEY *ec_key = EVP_PKEY_get0_EC_KEY(pkey);
+			if ( ec_key ) {
+				verification_status = ECDSA_do_verify(
+					reinterpret_cast<const unsigned char*>(digest), nDigest,
+					signature, ec_key
+				);
 
-		verification_status = ECDSA_do_verify(
-			reinterpret_cast<const unsigned char*>(digest), nDigest,
-			signature, pubkey
-		);
-
-		if ( verification_status == 1 ) {
-			SEISCOMP_DEBUG("  Reusing cached certifcate");
-			return _cert;
+				if ( verification_status == 1 ) {
+					SEISCOMP_DEBUG("  Reusing cached certifcate");
+					return _cert;
+				}
+			}
 		}
 	}
 
@@ -211,22 +214,26 @@ const X509 *CertificateContext::findCertificate(const char *digest, size_t nDige
 		}
 
 		// The value returned is an internal pointer which MUST NOT be freed up after the call
-		ASN1_INTEGER *serial = X509_get_serialNumber(x509);
+		const ASN1_INTEGER *serial = X509_get0_serialNumber(x509);
 		long serialNumber = ASN1_INTEGER_get(serial);
 
 		SEISCOMP_DEBUG("    Cert(Serial: %ld): Checking certificate",
 		               serialNumber);
 
-		EVP_PKEY *key = X509_get_pubkey(x509);
-		EC_KEY *pubkey = EVP_PKEY_get1_EC_KEY(key);
-		if ( !pubkey ) {
+		EVP_PKEY *pkey = X509_get0_pubkey(x509);
+		if ( !pkey ) {
+			SEISCOMP_DEBUG("      No public key");
+			continue;
+		}
+		EC_KEY *ec_key = EVP_PKEY_get0_EC_KEY(pkey);
+		if ( !ec_key ) {
 			SEISCOMP_DEBUG("      No public EC key");
 			continue;
 		}
 
 		verification_status = ECDSA_do_verify(
 			reinterpret_cast<const unsigned char*>(digest), nDigest,
-			signature, pubkey
+			signature, ec_key
 		);
 
 		if ( verification_status != 1 ) {
@@ -244,8 +251,8 @@ const X509 *CertificateContext::findCertificate(const char *digest, size_t nDige
 		return 0;
 
 	_cert = cert;
-	_begin = X509_get_notBefore(_cert);
-	_end = X509_get_notAfter(_cert);
+	_begin = X509_get0_notBefore(_cert);
+	_end = X509_get0_notAfter(_cert);
 
 	return _cert;
 }
@@ -377,7 +384,10 @@ bool CertificateStore::loadCerts(CertificateContext::Certs &certs, const string 
 					return false;
 				}
 
-				certs.insert(make_pair(filename, cert));
+				if ( !certs.insert(make_pair(filename, cert)).second ) {
+					// unlikely: same file name already exists in store
+					X509_free(cert);
+				}
 			}
 		}
 	}
@@ -428,7 +438,10 @@ bool CertificateStore::loadCRLs(CertificateContext::CRLs &crls,
 					return false;
 				}
 
-				crls.insert(make_pair(filename, crl));
+				if ( !crls.insert(make_pair(filename, crl)).second ) {
+					// unlikely: same file name already exists in store
+					X509_CRL_free(crl);
+				}
 			}
 		}
 	}
