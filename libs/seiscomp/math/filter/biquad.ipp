@@ -21,10 +21,10 @@
 // This file is included by "biquad.cpp"
 
 template<typename TYPE>
-Biquad<TYPE>::Biquad(double a0, double a1, double a2,
-                     double b0, double b1, double b2)
+Biquad<TYPE>::Biquad(double b0, double b1, double b2,
+                     double a0, double a1, double a2)
 : InPlaceFilter<TYPE>()
-, coefficients(a0, a1, a2, b0, b1, b2) {
+, coefficients(b0, b1, b2, a0, a1, a2) {
 	v1 = v2 = 0.;
 }
 
@@ -44,11 +44,14 @@ Biquad<TYPE>::Biquad(const Biquad<TYPE> &other)
 
 template<typename TYPE>
 void Biquad<TYPE>::apply(int n, TYPE *inout) {
+	// This is the direct form 2 implementation according to
+	// https://en.wikipedia.org/wiki/Digital_biquad_filter#Direct_form_2
 	TYPE *ff = inout;
 	for ( int i = 0; i < n;  ++i ) {
-		// This assumes that b0 == 1
-		double v0 = ff[i]  - coefficients.b1*v1 - coefficients.b2*v2;
-		ff[i]     = TYPE(coefficients.a0*v0 + coefficients.a1*v1 + coefficients.a2*v2);
+
+		// a0 is assumed to be 1
+		double v0 = ff[i] - coefficients.a1*v1 - coefficients.a2*v2;
+		ff[i]     = TYPE(coefficients.b0*v0 + coefficients.b1*v1 + coefficients.b2*v2);
 		v2 = v1; v1 = v0;
 	}
 }
