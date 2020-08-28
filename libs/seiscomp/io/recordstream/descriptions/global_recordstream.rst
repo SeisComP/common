@@ -1,4 +1,4 @@
-SeisComP applications access waveform data through the RecordStream interface.
+|scname| applications access waveform data through the RecordStream interface.
 The following tables lists available implementations:
 
 .. csv-table::
@@ -8,7 +8,7 @@ The following tables lists available implementations:
    ":ref:`rs-arclink`", "``arclink``", "Connects to an ArcLink server"
    ":ref:`rs-fdsnws`", "``fdsnws``", "Connects to :ref:`FDSN Web service <fdsnws>`"
    ":ref:`rs-file`", "``file``", "Reads records from file"
-   ":ref:`rs-sdsarchive`", "``sdsarchive``", "Reads records from SeisComP archive (SDS)"
+   ":ref:`rs-sdsarchive`", "``sdsarchive``", "Reads records from |scname| archive (:term:`SDS`)"
    ":ref:`rs-odcarchive`", "``odcarchive``", "Reads records from Orpheus Data Center archive (`ODC`_)"
    ":ref:`rs-memory`", "``memory``", "Reads records from memory"
    ":ref:`rs-combined`", "``combined``", "Combines archive and real-time stream"
@@ -122,7 +122,7 @@ URI: *service://source*
 SDSArchive
 ----------
 
-This RecordStream reads data from one or more SeisComP (SDS) archives using the
+This RecordStream reads data from one or more |scname| (:term:`SDS`) archives using the
 :ref:`rs-file` RecordStream. The source is interpreted as a directory path list
 separated using commas.
 
@@ -136,8 +136,8 @@ URI: *service://source*
 - ``sdsarchive:///SDSA,/SDSB,/SDSC``
 
 Different SDS are not merged, but are read sequentially depending on data existence.
-If a requested file is missing in the current SDS it is searched on the next archive
-in the list. On success it will deliver all the rest of files for the current channel
+If a requested file is missing in the current SDS, it is searched for in the archive
+next in the list. On success it will deliver all the rest of files for the current channel
 from this SDS archive. On failure the next SDS archive is searched.
 
 This process is repeated for each requested channel individually. It always starts to
