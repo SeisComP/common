@@ -35,17 +35,28 @@ namespace Filtering {
 namespace IIR {
 
 
+/**
+ * Coefficients of a Biquad.
+ *
+ * Note the order of the coefficients passed to the constructor and the
+ * setter: the numerator coefficients (the b's) followed by the denominator
+ * coefficients (the a's).
+ *
+ * Also note that the coeffients are normalized and a0 is *always* assumed
+ * to be 1. This is not checked.
+ */
 struct BiquadCoefficients {
-	BiquadCoefficients(double a0 = 0, double a1 = 0, double a2 = 0,
-	                   double b0 = 1, double b1 = 0, double b2 = 0);
+
+	BiquadCoefficients(double b0 = 0, double b1 = 0, double b2 = 0,
+	                   double a0 = 1, double a1 = 0, double a2 = 0);
 	BiquadCoefficients(BiquadCoefficients const &bq);
 
-	void set(double a0, double a1, double a2,
-	         double b0, double b1, double b2);
+	void set(double b0, double b1, double b2,
+	         double a0, double a1, double a2);
 
 	// filter coefficients
-	double a0, a1, a2;
-	double b0, b1, b2;
+	double b0, b1, b2; // numerator coefficients
+	double a0, a1, a2; // denominator coefficients (a0==1)
 };
 
 
@@ -65,8 +76,8 @@ class Biquad : public InPlaceFilter<TYPE> {
 	//  X'truction
 	// ------------------------------------------------------------------
 	public:
-		Biquad(double a0 = 0, double a1 = 0, double a2 = 0,
-		             double b0 = 1, double b1 = 0, double b2 = 0);
+		Biquad(double b0 = 0, double b1 = 0, double b2 = 0,
+		       double a0 = 1, double a1 = 0, double a2 = 0);
 		Biquad(const BiquadCoefficients &bq);
 		Biquad(const Biquad &bq);
 

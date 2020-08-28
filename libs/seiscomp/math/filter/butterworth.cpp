@@ -78,7 +78,7 @@ Biquads poles2bp(const std::vector<Complex> &poles, double fmin, double fmax) {
 	Biquads biquads;
 
 	for ( const Complex &pole : poles ) {
-		double a0(0.0), a1(b), a2(0.0), b0, b1, b2;
+		double b0(0.0), b1(b), b2(0.0), a0, a1, a2;
 
 		if ( pole != Complex(-1) ) {
 			Complex pb = pole*b;
@@ -86,38 +86,38 @@ Biquads poles2bp(const std::vector<Complex> &poles, double fmin, double fmax) {
 			Complex p1 = 0.5 * (pb + tmp);
 			Complex p2 = 0.5 * (pb - tmp);
 
-			// a0 = 0;
-			// a1 = b;
-			// a2 = 0;
+			// b0 = 0;
+			// b1 = b;
+			// b2 = 0;
 
-			b0 = (p1*conj(p1)).real();
-			b1 = -2*p1.real();
-			b2 = 1;
+			a0 = (p1*conj(p1)).real();
+			a1 = -2*p1.real();
+			a2 = 1;
 
-			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
+			biquads.push_back(BiquadCoefficients(b0,b1,b2,a0,a1,a2));
 
-			// a0 = 0;
-			// a1 = b;
-			// a2 = 0;
+			// b0 = 0;
+			// b1 = b;
+			// b2 = 0;
 
-			b0 = (p2*conj(p2)).real();
-			b1 = -2*p2.real();
-			b2 = 1;
+			a0 = (p2*conj(p2)).real();
+			a1 = -2*p2.real();
+			a2 = 1;
 
-			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
+			biquads.push_back(BiquadCoefficients(b0,b1,b2,a0,a1,a2));
 		}
 		else {
 			// pole at -1+0j
 
-			// a0 = 0;
-			// a1 = b;
-			// a2 = 0;
+			// b0 = 0;
+			// b1 = b;
+			// b2 = 0;
 
-			b0 = a;
-			b1 = b;
-			b2 = 1;
+			a0 = a;
+			a1 = b;
+			a2 = 1;
 
-			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
+			biquads.push_back(BiquadCoefficients(b0,b1,b2,a0,a1,a2));
 		}
 	}
 
@@ -138,7 +138,7 @@ Biquads poles2bs(const std::vector<Complex> &poles, double fmin, double fmax) {
 	Biquads biquads;
 
 	for ( const Complex &pole : poles ) {
-		double a0(a), a1(0.0), a2(1.0), b0, b1, b2;
+		double b0(a), b1(0.0), b2(1.0), a0, a1, a2;
 
 		if ( pole != Complex(-1) ) {
 			Complex bp = b / pole;
@@ -146,38 +146,38 @@ Biquads poles2bs(const std::vector<Complex> &poles, double fmin, double fmax) {
 			Complex p1 = 0.5 * (bp + tmp);
 			Complex p2 = 0.5 * (bp - tmp);
 
-			// a0 = a;
-			// a1 = 0;
-			// a2 = 1;
+			// b0 = a;
+			// b1 = 0;
+			// b2 = 1;
 
-			b0 = (p1 * conj(p1)).real();
-			b1 = -2 * p1.real();
-			b2 =  1;
+			a0 = (p1 * conj(p1)).real();
+			a1 = -2 * p1.real();
+			a2 =  1;
 
-			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
+			biquads.push_back(BiquadCoefficients(b0,b1,b2,a0,a1,a2));
 
-			// a0 = a;
-			// a1 = 0;
-			// a2 = 1;
+			// b0 = a;
+			// b1 = 0;
+			// b2 = 1;
 
-			b0 = (p2 * conj(p2)).real();
-			b1 = -2 * p2.real();
-			b2 = 1;
+			a0 = (p2 * conj(p2)).real();
+			a1 = -2 * p2.real();
+			a2 = 1;
 
-			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
+			biquads.push_back(BiquadCoefficients(b0,b1,b2,a0,a1,a2));
 		}
 		else {
 			// pole at -1+0j
 
-			// a0 = a;
-			// a1 = 0;
-			// a2 = 1;
+			// b0 = a;
+			// b1 = 0;
+			// b2 = 1;
 
-			b0 = a;
-			b1 = b;
-			b2 = 1;
+			a0 = a;
+			a1 = b;
+			a2 = 1;
 
-			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
+			biquads.push_back(BiquadCoefficients(b0,b1,b2,a0,a1,a2));
 		}
 	}
 
@@ -198,34 +198,34 @@ Biquads poles2lp(const std::vector<Complex> &poles, double fmax) {
 
 //	for ( size_t i = 0; i < poles.size(); ++i ) {
 	for ( const Complex &pole : poles ) {
-		double a0(1.0), a1(0.0), a2(0.0), b0, b1, b2;
+		double b0(1.0), b1(0.0), b2(0.0), a0, a1, a2;
 
 		if ( pole != Complex(-1) ) {
-			// a0 = 1;
-			// a1 = 0;
-			// a2 = 0;
+			// b0 = 1;
+			// b1 = 0;
+			// b2 = 0;
 
-			b0 = (pole * conj(pole)).real();
-			b1 = -2 * pole.real();
-			b2 =  1;
+			a0 = (pole * conj(pole)).real();
+			a1 = -2 * pole.real();
+			a2 =  1;
 
-			b1 *= s;
-			b2 *= s*s;
+			a1 *= s;
+			a2 *= s*s;
 
-			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
+			biquads.push_back(BiquadCoefficients(b0,b1,b2,a0,a1,a2));
 		}
 		else {
 			// pole at -1+0j
 
-			// a0 = 1;
-			// a1 = 0;
-			// a2 = 0;
+			// b0 = 1;
+			// b1 = 0;
+			// b2 = 0;
 
-			b0 =  1;
-			b1 =  s;
-			b2 =  0;
+			a0 =  1;
+			a1 =  s;
+			a2 =  0;
 
-			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
+			biquads.push_back(BiquadCoefficients(b0,b1,b2,a0,a1,a2));
 		}
 	}
 
@@ -245,31 +245,31 @@ Biquads poles2hp(const std::vector<Complex> &poles, double fmin) {
 	Biquads biquads;
 
 	for ( const Complex &pole : poles ) {
-		double a0, a1, a2, b0, b1, b2;
+		double b0, b1, b2, a0, a1, a2;
 
 		if ( pole != Complex(-1) ) {
-			a0 =  0;
-			a1 =  0;
-			a2 =  s*s;
+			b0 =  0;
+			b1 =  0;
+			b2 =  s*s;
 
-			b0 =  1;
-			b1 = -2*s * pole.real();
-			b2 =  s*s * (pole * conj(pole)).real();
+			a0 =  1;
+			a1 = -2*s * pole.real();
+			a2 =  s*s * (pole * conj(pole)).real();
 
-			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
+			biquads.push_back(BiquadCoefficients(b0,b1,b2,a0,a1,a2));
 		}
 		else {
 			// pole at -1+0j
 
-			a0 =  0;
-			a1 =  s;
-			a2 =  0;
-
-			b0 =  1;
+			b0 =  0;
 			b1 =  s;
 			b2 =  0;
 
-			biquads.push_back(BiquadCoefficients(a0,a1,a2,b0,b1,b2));
+			a0 =  1;
+			a1 =  s;
+			a2 =  0;
+
+			biquads.push_back(BiquadCoefficients(b0,b1,b2,a0,a1,a2));
 		}
 	}
 
@@ -284,20 +284,20 @@ Biquads poles2hp(const std::vector<Complex> &poles, double fmin) {
 void analog2digital(BiquadCoefficients &biquad) {
 	// convert a biquad from analog to digital
 
-	double c0 = biquad.b0, c1 = biquad.b1, c2 = biquad.b2;
+	double c0 = biquad.a0, c1 = biquad.a1, c2 = biquad.a2;
 	double scale = 1./(c0+c1+c2);
 
-	biquad.b0 = 1;
-	biquad.b1 = scale * (2 * (c0 - c2));
-	biquad.b2 = scale * (c2 - c1 + c0);
-
-	c0 = biquad.a0;
-	c1 = biquad.a1;
-	c2 = biquad.a2;
-
-	biquad.a0 = scale * (c0 + c1 + c2);
+	biquad.a0 = 1;
 	biquad.a1 = scale * (2 * (c0 - c2));
 	biquad.a2 = scale * (c2 - c1 + c0);
+
+	c0 = biquad.b0;
+	c1 = biquad.b1;
+	c2 = biquad.b2;
+
+	biquad.b0 = scale * (c0 + c1 + c2);
+	biquad.b1 = scale * (2 * (c0 - c2));
+	biquad.b2 = scale * (c2 - c1 + c0);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -352,7 +352,7 @@ void init_bw_biquads_inplace(Biquads &biquads, size_t order, double fmin, double
 			if ( fmax <= 0.0 )
 				throw std::runtime_error("High frequency cutoff must be greater than zero");
 
-			if ( fmin >= fnyquist )
+			if ( fmax >= fnyquist )
 				throw std::runtime_error("High frequency cutoff must be lower than Nyquist frequency");
 
 			break;
@@ -362,7 +362,7 @@ void init_bw_biquads_inplace(Biquads &biquads, size_t order, double fmin, double
 				throw std::runtime_error("Low frequency cutoff must be greater than zero");
 
 			if ( fmin >= fnyquist )
-				throw std::runtime_error("High frequency cutoff must be lower than Nyquist frequency");
+				throw std::runtime_error("Low frequency cutoff must be lower than Nyquist frequency");
 
 			break;
 	}

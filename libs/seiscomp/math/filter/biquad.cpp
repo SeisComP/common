@@ -36,31 +36,30 @@ namespace IIR {
 #include<seiscomp/math/filter/biquad.ipp>
 
 
-BiquadCoefficients::BiquadCoefficients(double a0, double a1, double a2,
-                                       double b0, double b1, double b2) {
-	set(a0, a1, a2, b0, b1, b2);
+BiquadCoefficients::BiquadCoefficients(double b0, double b1, double b2,
+                                       double a0, double a1, double a2) {
+	set(b0, b1, b2, a0, a1, a2);
 }
 
 
 BiquadCoefficients::BiquadCoefficients(BiquadCoefficients const &bq)
-: a0(bq.a0), a1(bq.a1), a2(bq.a2)
-, b0(bq.b0), b1(bq.b1), b2(bq.b2) {}
+	: b0(bq.b0), b1(bq.b1), b2(bq.b2), a0(bq.a0), a1(bq.a1), a2(bq.a2) {}
 
 
-void BiquadCoefficients::set(double a0, double a1, double a2,
-                             double b0, double b1, double b2) {
-	this->a0 = a0;
-	this->a1 = a1;
-	this->a2 = a2;
+void BiquadCoefficients::set(double b0, double b1, double b2,
+                             double a0, double a1, double a2) {
 	this->b0 = b0;
 	this->b1 = b1;
 	this->b2 = b2;
+	this->a0 = a0;
+	this->a1 = a1;
+	this->a2 = a2;
 }
 
 
 std::ostream &operator<<(std::ostream &os, const BiquadCoefficients &biq) {
-	os << "a: " << biq.a0 << ", " << biq.a1 << ", " << biq.a2 << std::endl
-	   << "b: " << biq.b0 << ", " << biq.b1 << ", " << biq.b2 << std::endl;
+	os << "b: " << biq.b0 << ", " << biq.b1 << ", " << biq.b2 << std::endl
+	   << "a: " << biq.a0 << ", " << biq.a1 << ", " << biq.a2 << std::endl;
 	return os;
 }
 
