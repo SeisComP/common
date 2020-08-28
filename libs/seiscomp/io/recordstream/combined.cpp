@@ -281,6 +281,7 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 
 				double number;
 				double multiplicator = 1.0;
+				bool unitFound = true;
 
 				char last = *value.rbegin();
 				switch ( last ) {
@@ -294,6 +295,7 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 					case 'h':
 						// hours
 						multiplicator = 3600;
+						break;
 					case 'd':
 						// days
 						multiplicator = 86400;
@@ -303,10 +305,11 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 						multiplicator = 86400*7;
 						break;
 					default:
+						unitFound = false;
 						break;
 				}
 
-				if ( multiplicator > 1.0 )
+				if ( unitFound )
 					value.resize(value.size()-1);
 
 				if ( !Core::fromString(number, value) ) {
