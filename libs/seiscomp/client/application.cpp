@@ -1444,7 +1444,13 @@ bool Application::initMessaging() {
 				break;
 		}
 
-		SEISCOMP_ERROR("Connection error: %s", _connection->lastErrorMessage().c_str());
+		if ( status == GroupDoesNotExist ) {
+			SEISCOMP_ERROR("Connection error: primary messaging group '%s' does not exist",
+			               _messagingPrimaryGroup.c_str());
+		}
+		else {
+			SEISCOMP_ERROR("Connection error: %s", _connection->lastErrorMessage().c_str());
+		}
 
 		_connection = nullptr;
 		if ( status != NetworkError )
@@ -1468,7 +1474,8 @@ bool Application::initMessaging() {
 	// Register monitor logging callback
 	_connection->setInfoCallback(bind(&Application::monitorLog, this, placeholders::_1, placeholders::_2));
 
-	if ( !_baseSettings.logging.toStdout ) SEISCOMP_NOTICE("Connection to %s established", _messagingURL.c_str());
+	if ( !_baseSettings.logging.toStdout )
+		SEISCOMP_NOTICE("Connection to %s established", _messagingURL.c_str());
 
 	Version localSchemaVersion = Version(DataModel::Version::Major, DataModel::Version::Minor);
 	if ( _connection->schemaVersion() > localSchemaVersion ) {

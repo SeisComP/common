@@ -255,6 +255,14 @@ Result Connection::reconnect() {
 		_clientName.c_str()
 	);
 
+	if ( _lastError ) {
+		if ( !_primaryGroup.empty()
+		  && _protocol->groups().find(_primaryGroup) == _protocol->groups().end() ) {
+			_protocol->disconnect();
+			_lastError = GroupDoesNotExist;
+		}
+	}
+
 	return _lastError;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
