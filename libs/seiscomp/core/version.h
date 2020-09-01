@@ -50,6 +50,8 @@ namespace Core {
    - Declared Geo::GeoFeature::area as deprecated
    - Added function Geo::area which replaces Geo::GeoFeature::area
    - Added functions Geo::contains
+   - Added Seiscomp::Math::Filtering::IIR::ButterworthBandstop
+   - Added another Seiscomp::Math::Filtering::cosRamp function
 
  "14.0.0"   0x0E0000
    - Added length based string functions to Seiscomp::Core:
