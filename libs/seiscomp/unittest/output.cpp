@@ -20,6 +20,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <seiscomp/unittest/output.h>
+#include <iomanip>
 #include <iostream>
 
 
@@ -65,8 +66,8 @@ void OutputObserver::test_start(counter_t) {
 
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-void OutputObserver::test_unit_start( boost::unit_test::test_unit const& unit ) {
-	if( countTests == 0 ) {
+void OutputObserver::test_unit_start(boost::unit_test::test_unit const &unit) {
+	if ( countTests == 0 ) {
 		std::cerr << unit.p_type_name << ": " << unit.p_name << std::endl;
 		++countTests;
 	}
@@ -82,20 +83,12 @@ void OutputObserver::test_unit_start( boost::unit_test::test_unit const& unit ) 
 
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-void OutputObserver::test_unit_finish( boost::unit_test::test_unit const&, unsigned long /* elapsed */ ) {
-	if( countTrue >= 10 && caseNumber != countTests ) {
-		std::cerr <<"\t (Checks succeeded: " << countTrue << "  - failed: "
-		  << countFalse << ")" << std::endl;
-		caseNumber = countTests;
-	}
-	if( countTrue < 10 && caseNumber != countTests ){
-		std::cerr <<"\t (Checks succeeded: " << countTrue << "   - failed: "
-		 << countFalse << ")" << std::endl;
-		caseNumber = countTests;
-	}
-	if( countTrue > 99 && caseNumber != countTests ){
-		std::cerr <<"\t (Checks succeeded: " << countTrue << " - failed: "
-		      << countFalse << ")" << std::endl;
+void OutputObserver::test_unit_finish(boost::unit_test::test_unit const&,
+                                      unsigned long /* elapsed */) {
+	if ( caseNumber != countTests ) {
+		std::cerr << "\t (Checks succeeded: " << std::setw(3) << countTrue
+		          << " - failed: " << std::setw(3) << countFalse << ")"
+		          << std::endl;
 		caseNumber = countTests;
 	}
 }
@@ -105,11 +98,19 @@ void OutputObserver::test_unit_finish( boost::unit_test::test_unit const&, unsig
 
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-void OutputObserver::assertion_result( bool passed ) {
-	if( passed == true ) {
+#if BOOST_VERSION >= 105900
+void OutputObserver::assertion_result(boost::unit_test::assertion_result result) {
+	if ( result == AR_TRIGGERED )
+		return;
+	bool passed = result == AR_PASSED;
+#else
+void OutputObserver::assertion_result(bool passed) {
+#endif
+
+	if ( passed ) {
 		++countTrue;
 		++countTotal;
-		if( temp < countTests ) {
+		if ( temp < countTests ) {
 			countTrue = 1;
 			countFalse = 0;
 			temp = countTests;
@@ -118,7 +119,7 @@ void OutputObserver::assertion_result( bool passed ) {
 	else {
 		++countFalse;
 		++countTotal;
-		if( temp < countTests ) {
+		if ( temp < countTests ) {
 			countFalse = 1;
 			countTrue = 0;
 			temp = countTests;
@@ -140,7 +141,7 @@ void OutputObserver::test_finish() {
 
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-void OutputObserver::test_unit_skipped( boost::unit_test::test_unit const& ) {
+void OutputObserver::test_unit_skipped(boost::unit_test::test_unit const&) {
 }
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -148,7 +149,7 @@ void OutputObserver::test_unit_skipped( boost::unit_test::test_unit const& ) {
 
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-void OutputObserver::test_unit_aborted( boost::unit_test::test_unit const& ) {
+void OutputObserver::test_unit_aborted(boost::unit_test::test_unit const&) {
 }
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -156,7 +157,7 @@ void OutputObserver::test_unit_aborted( boost::unit_test::test_unit const& ) {
 
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-void OutputObserver::exception_caught( boost::execution_exception const& ) {
+void OutputObserver::exception_caught(boost::execution_exception const&) {
 }
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -185,7 +186,7 @@ Output::Output() {
 	framework::register_observer(observer);
 
 	Visitor visitor;
-	traverse_test_tree(framework::master_test_suite( ), visitor);
+	traverse_test_tree(framework::master_test_suite(), visitor);
 }
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

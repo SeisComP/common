@@ -23,12 +23,12 @@
 
 
 #include <boost/algorithm/string.hpp>
-#if BOOST_VERSION <= 106000
-#include <boost/test/test_observer.hpp>
-#else
+#if BOOST_VERSION >= 105900
 #include <boost/test/tree/observer.hpp>
 #include <boost/test/tree/visitor.hpp>
 #include <boost/test/tree/traverse.hpp>
+#else
+#include <boost/test/test_observer.hpp>
 #endif
 
 
@@ -52,22 +52,28 @@ class OutputObserver : public boost::unit_test::test_observer {
 	// Public Interface
 	// ---------------------------------------------------------------------------
 	public:
-		virtual void test_start(boost::unit_test::counter_t);
-		virtual void test_aborted();
+		virtual void test_start(boost::unit_test::counter_t) override;
+		virtual void test_aborted() override;
 
-		virtual void test_unit_start( boost::unit_test::test_unit const& unit );
+		virtual void test_unit_start(boost::unit_test::test_unit const &unit) override;
 
-		virtual void test_unit_finish( boost::unit_test::test_unit const&, unsigned long /* elapsed */ );
+		virtual void test_unit_finish(boost::unit_test::test_unit const &,
+		                              unsigned long /* elapsed */ ) override;
 
-		virtual void test_unit_skipped( boost::unit_test::test_unit const& );
-		virtual void test_unit_aborted( boost::unit_test::test_unit const& );
+		virtual void test_unit_skipped(boost::unit_test::test_unit const&) override;
+		virtual void test_unit_aborted(boost::unit_test::test_unit const&) override;
 
-		virtual void assertion_result( bool passed );
-		virtual void test_finish();
+#if BOOST_VERSION >= 105900
+		virtual void assertion_result(boost::unit_test::assertion_result result) override;
+#else
+		virtual void assertion_result(bool passed) override;
+#endif
 
-		virtual void exception_caught( boost::execution_exception const& );
+		virtual void test_finish() override;
 
-		virtual int priority();
+		virtual void exception_caught(boost::execution_exception const&) override;
+
+		virtual int priority() override;
 
 
 	// ---------------------------------------------------------------------------
@@ -87,9 +93,13 @@ class OutputObserver : public boost::unit_test::test_observer {
 struct Visitor : boost::unit_test::test_tree_visitor {
 	static size_t level;
 
-	bool test_suite_start( boost::unit_test::test_suite const& suite ) {return true;}
+	bool test_suite_start(boost::unit_test::test_suite const &suite) override {
+		return true;
+	}
 
-	void test_suite_finish( boost::unit_test::test_suite const& suite ) {level--;}
+	void test_suite_finish(boost::unit_test::test_suite const &suite) override {
+		level--;
+	}
 };
 
 
