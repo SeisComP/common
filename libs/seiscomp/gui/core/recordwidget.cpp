@@ -4927,6 +4927,7 @@ void RecordWidget::drawRecordBorders(QPainter &painter, RecordSequence *seq) {
 
 		QPen pen;
 		QBrush brush;
+
 		if ( rec->authentication() == Record::SIGNATURE_VALIDATED ) {
 			pen = SCScheme.colors.records.borders.signatureValid.pen;
 			brush = SCScheme.colors.records.borders.signatureValid.brush;
