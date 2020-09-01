@@ -258,6 +258,9 @@ bool fromString(bool &value, const std::string &str) {
 	char* endptr = nullptr;
 	errno = 0;
 
+	if ( str.empty() )
+		return false;
+
 	if ( compareNoCase(str, "true") == 0 ) {
 		value = true;
 		return true;
