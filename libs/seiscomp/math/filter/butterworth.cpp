@@ -319,6 +319,8 @@ void analog2digital(Biquads &biquads) {
 void init_bw_biquads_inplace(Biquads &biquads, size_t order, double fmin, double fmax, double fsamp, int type) {
 	// This is the main Butterworth filter initialization routine.
 	// For the self-explaining set of input parameters a vector of biquads is returned.
+	//
+	// Note that the biquads object is not clear()ed. Biquads are just added to the end.
 
 	if ( type == BUTTERWORTH_HIGHLOWPASS ) {
 		// This is a bandpass obtained by combining lowpass and highpass
@@ -373,31 +375,37 @@ void init_bw_biquads_inplace(Biquads &biquads, size_t order, double fmin, double
 	double warped_fmin = tan(M_PI*fmin/fsamp) / (2*M_PI);
 	double warped_fmax = tan(M_PI*fmax/fsamp) / (2*M_PI);
 
+	Biquads _biquads;
+
 	// cascade generation
 	switch ( type ) {
 		case BUTTERWORTH_BANDPASS:
-			biquads = poles2bp(p, warped_fmin, warped_fmax);
-			analog2digital(biquads);
+			_biquads = poles2bp(p, warped_fmin, warped_fmax);
+			analog2digital(_biquads);
 			break;
 
 		case BUTTERWORTH_BANDSTOP:
-			biquads = poles2bs(p, warped_fmin, warped_fmax);
-			analog2digital(biquads);
+			_biquads = poles2bs(p, warped_fmin, warped_fmax);
+			analog2digital(_biquads);
 			break;
 
 		case BUTTERWORTH_LOWPASS:
-			biquads = poles2lp(p, warped_fmax);
-			analog2digital(biquads);
+			_biquads = poles2lp(p, warped_fmax);
+			analog2digital(_biquads);
 			break;
 
 		case BUTTERWORTH_HIGHPASS:
-			biquads = poles2hp(p, warped_fmin);
-			analog2digital(biquads);
+			_biquads = poles2hp(p, warped_fmin);
+			analog2digital(_biquads);
 			break;
 
 		default:
 			throw std::runtime_error("Invalid filter type");
 	}
+
+	for (BiquadCoefficients &b : _biquads)
+		biquads.push_back(b);
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
