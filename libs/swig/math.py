@@ -2168,6 +2168,110 @@ class ButterworthBandpassD(BiquadCascadeD):
 # Register ButterworthBandpassD in _math:
 _math.ButterworthBandpassD_swigregister(ButterworthBandpassD)
 
+class ButterworthHighLowpassF(BiquadCascadeF):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::ButterworthHighLowpass< float > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, order=3, fmin=0.7, fmax=2.0, fsamp=0):
+        r"""__init__(ButterworthHighLowpassF self, int order=3, double fmin=0.7, double fmax=2.0, double fsamp=0) -> ButterworthHighLowpassF"""
+        _math.ButterworthHighLowpassF_swiginit(self, _math.new_ButterworthHighLowpassF(order, fmin, fmax, fsamp))
+
+    def setSamplingFrequency(self, fsamp):
+        r"""setSamplingFrequency(ButterworthHighLowpassF self, double fsamp)"""
+        return _math.ButterworthHighLowpassF_setSamplingFrequency(self, fsamp)
+
+    def setParameters(self, n, params):
+        r"""setParameters(ButterworthHighLowpassF self, int n, double const * params) -> int"""
+        return _math.ButterworthHighLowpassF_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(ButterworthHighLowpassF self) -> InPlaceFilterF"""
+        return _math.ButterworthHighLowpassF_clone(self)
+    __swig_destroy__ = _math.delete_ButterworthHighLowpassF
+
+# Register ButterworthHighLowpassF in _math:
+_math.ButterworthHighLowpassF_swigregister(ButterworthHighLowpassF)
+
+class ButterworthHighLowpassD(BiquadCascadeD):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::ButterworthHighLowpass< double > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, order=3, fmin=0.7, fmax=2.0, fsamp=0):
+        r"""__init__(ButterworthHighLowpassD self, int order=3, double fmin=0.7, double fmax=2.0, double fsamp=0) -> ButterworthHighLowpassD"""
+        _math.ButterworthHighLowpassD_swiginit(self, _math.new_ButterworthHighLowpassD(order, fmin, fmax, fsamp))
+
+    def setSamplingFrequency(self, fsamp):
+        r"""setSamplingFrequency(ButterworthHighLowpassD self, double fsamp)"""
+        return _math.ButterworthHighLowpassD_setSamplingFrequency(self, fsamp)
+
+    def setParameters(self, n, params):
+        r"""setParameters(ButterworthHighLowpassD self, int n, double const * params) -> int"""
+        return _math.ButterworthHighLowpassD_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(ButterworthHighLowpassD self) -> InPlaceFilterD"""
+        return _math.ButterworthHighLowpassD_clone(self)
+    __swig_destroy__ = _math.delete_ButterworthHighLowpassD
+
+# Register ButterworthHighLowpassD in _math:
+_math.ButterworthHighLowpassD_swigregister(ButterworthHighLowpassD)
+
+class ButterworthBandstopF(BiquadCascadeF):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::ButterworthBandstop< float > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, order=3, fmin=0.7, fmax=2.0, fsamp=0):
+        r"""__init__(ButterworthBandstopF self, int order=3, double fmin=0.7, double fmax=2.0, double fsamp=0) -> ButterworthBandstopF"""
+        _math.ButterworthBandstopF_swiginit(self, _math.new_ButterworthBandstopF(order, fmin, fmax, fsamp))
+
+    def setSamplingFrequency(self, fsamp):
+        r"""setSamplingFrequency(ButterworthBandstopF self, double fsamp)"""
+        return _math.ButterworthBandstopF_setSamplingFrequency(self, fsamp)
+
+    def setParameters(self, n, params):
+        r"""setParameters(ButterworthBandstopF self, int n, double const * params) -> int"""
+        return _math.ButterworthBandstopF_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(ButterworthBandstopF self) -> InPlaceFilterF"""
+        return _math.ButterworthBandstopF_clone(self)
+    __swig_destroy__ = _math.delete_ButterworthBandstopF
+
+# Register ButterworthBandstopF in _math:
+_math.ButterworthBandstopF_swigregister(ButterworthBandstopF)
+
+class ButterworthBandstopD(BiquadCascadeD):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::ButterworthBandstop< double > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, order=3, fmin=0.7, fmax=2.0, fsamp=0):
+        r"""__init__(ButterworthBandstopD self, int order=3, double fmin=0.7, double fmax=2.0, double fsamp=0) -> ButterworthBandstopD"""
+        _math.ButterworthBandstopD_swiginit(self, _math.new_ButterworthBandstopD(order, fmin, fmax, fsamp))
+
+    def setSamplingFrequency(self, fsamp):
+        r"""setSamplingFrequency(ButterworthBandstopD self, double fsamp)"""
+        return _math.ButterworthBandstopD_setSamplingFrequency(self, fsamp)
+
+    def setParameters(self, n, params):
+        r"""setParameters(ButterworthBandstopD self, int n, double const * params) -> int"""
+        return _math.ButterworthBandstopD_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(ButterworthBandstopD self) -> InPlaceFilterD"""
+        return _math.ButterworthBandstopD_clone(self)
+    __swig_destroy__ = _math.delete_ButterworthBandstopD
+
+# Register ButterworthBandstopD in _math:
+_math.ButterworthBandstopD_swigregister(ButterworthBandstopD)
+
 class ChainFilterF(InPlaceFilterF):
     r"""Proxy of C++ Seiscomp::Math::Filtering::ChainFilter< float > class."""
 
