@@ -25,7 +25,7 @@ Configuration in |scname| modules
 =================================
 
 Use "LOCSAT" as a value for the locator type or interface when configurable, e.g. by
-:ref:`screloc` or :ref:`solv`.
+:ref:`screloc` or :ref:`scolv`.
 
 
 Station corrections

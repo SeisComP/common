@@ -13,13 +13,13 @@ Objectives of this locator are:
 * Inversion of arrival times of phase picks for source time fixing hypocenter location.
 * Compatibility of the method of fixed-hypocentre origin time determination with
   the practise of the Comprehensive Test Ban Treaty Organization (CTBTO).
-* Adoptation of a procedure which is compatible with the other locators supported by |scname|.
-* Adoptation of a procedure which can reproduce results of legacy locators currently
+* Adaptation of a procedure which is compatible with the other locators supported by |scname|.
+* Adaptation of a procedure which can reproduce results of legacy locators currently
   in use, such as GENLOC [#Pavl]_ and GRL, a
   grid-based locator developed at the Canadian Hazards Information Service (CHIS).
 
 The implementation of this locator by :term:`gempa` was initiated and has received
-initial funding by National Ressources Canada (NRCAN) [#NRCAN]_.
+initial funding by National Resources Canada (NRCAN) [#NRCAN]_.
 
 
 Methodology
