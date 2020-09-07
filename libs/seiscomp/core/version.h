@@ -54,6 +54,7 @@ namespace Core {
    - Added functions Seiscomp::Geo::contains
    - Added Seiscomp::Math::Filtering::IIR::ButterworthBandstop
    - Added another Seiscomp::Math::Filtering::cosRamp function
+   - Added Seiscomp::Gui::AdvancedOriginSymbol
 
  "14.0.0"   0x0E0000
    - Added length based string functions to Seiscomp::Core:
