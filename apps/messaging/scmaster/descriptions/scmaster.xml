@@ -72,7 +72,8 @@
 						<description>
 						Define the list of message groups added to the queue. If unset
 						then the defaultGroups will be used. A queue will always
-						add the default group &quot;STATUS_GROUP&quot;.
+						add the default group &quot;STATUS_GROUP&quot;. This
+						parameter overrides defaultGroups.
 						</description>
 					</parameter>
 					<parameter name="acl" type="list:ipmask" default="0.0.0.0/0">
