@@ -5912,6 +5912,7 @@ void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
 		origin->setLongitude(dialog.longitude());
 		origin->setLatitude(dialog.latitude());
 		origin->setDepth(RealQuantity(dialog.depth()));
+		origin->setDepthType(OriginDepthType(OPERATOR_ASSIGNED));
 		origin->setTime(Core::Time(dialog.getTime_t()));
 		origin->setEvaluationMode(EvaluationMode(MANUAL));
 
@@ -6317,6 +6318,7 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 		derived->setLatitude(dialog.latitude());
 		derived->setLongitude(dialog.longitude());
 		derived->setDepth(RealQuantity(dialog.depth()));
+		derived->setDepthType(OriginDepthType(OPERATOR_ASSIGNED));
 		derived->quality().setUsedPhaseCount(dialog.phaseCount());
 
 		// moment magnitude
