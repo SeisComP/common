@@ -78,6 +78,7 @@ EC_KEY *set_private_key_from_PEM(const string &pemkey) {
 	}
 
 	EC_KEY_set_asn1_flag(eckey, OPENSSL_EC_NAMED_CURVE);
+	EVP_PKEY_free(pkey);
 
 	return eckey;
 }
@@ -198,6 +199,8 @@ BOOST_AUTO_TEST_CASE(get_certificate_by_signature) {
 	cert = ctx->findCertificate((const char*)digest, digest_len, signature);
 	ECDSA_SIG_free(signature);
 	BOOST_REQUIRE(cert);
+
+	EC_KEY_free(privateECKey);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
