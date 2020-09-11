@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<plugin name="ExternalLocator">
+		<extends>global</extends>
+		<description>
+		Locator which forwards the processing to external scripts
+		</description>
+		<configuration>
+			<group name="ExternalLocator">
+				<description>
+					Locator parameters: ExternalLocator
+				</description>
+				<parameter name="profiles" type="list:string">
+					<description>
+					A list of profiles defined as tuples of name
+					and path to a script separated by colon.
+					</description>
+				</parameter>
+			</group>
+		</configuration>
+	</plugin>
+</seiscomp>
