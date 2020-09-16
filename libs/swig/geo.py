@@ -214,6 +214,17 @@ def GeoCoordinate_distanceLon(lon0, lon1):
     r"""GeoCoordinate_distanceLon(Seiscomp::Geo::GeoCoordinate::ValueType lon0, Seiscomp::Geo::GeoCoordinate::ValueType lon1) -> Seiscomp::Geo::GeoCoordinate::ValueType"""
     return _geo.GeoCoordinate_distanceLon(lon0, lon1)
 
+
+def contains(*args):
+    r"""
+    contains(GeoCoordinate v, GeoCoordinate polygon, size_t sides) -> bool
+    contains(GeoCoordinate v, GeoCoordinate polygon, size_t sides, double & area) -> bool
+    """
+    return _geo.contains(*args)
+
+def area(polygon, sides):
+    r"""area(GeoCoordinate polygon, size_t sides) -> double"""
+    return _geo.area(polygon, sides)
 class formatted_lat(object):
     r"""Proxy of C++ Seiscomp::Geo::formatted_lat class."""
 
