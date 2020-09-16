@@ -17,6 +17,7 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+#include<iostream>
 #include <seiscomp/core/exceptions.h>
 #include <seiscomp/math/filter/stalta.h>
 
@@ -135,11 +136,11 @@ REGISTER_INPLACE_FILTER(STALTA, "STALTA");
 template<typename TYPE>
 STALTA2<TYPE>::STALTA2(double lenSTA, double lenLTA,
 		       double eventOn, double eventOff, double fsamp)
-	: _lenSTA(lenSTA), _lenLTA(lenLTA), _initSampleCount(0), _sampleCount(0)
+	: _lenSTA(lenSTA), _lenLTA(lenLTA), _sampleCount(0)
 {
 	_eventOn = eventOn;
 	_eventOff = eventOff;
-	_bleed = 1.;
+	_updateLTA = 1.;
 	checkParameters(_lenSTA, _lenLTA);
 	setSamplingFrequency(fsamp);
 }
@@ -152,10 +153,10 @@ STALTA2<TYPE>::setSamplingFrequency(double fsamp)
 	if (fsamp <= 0.)
 		throw Core::ValueException("Sampling frequency must be positive");
 	_fsamp  = fsamp;
-	_numSTA = int(_lenSTA*fsamp+0.5);
-	_numLTA = int(_lenLTA*fsamp+0.5);
-	_initSampleCount = _numLTA/2;
+	_numSTA = int(_lenSTA*_fsamp+0.5);
+	_numLTA = int(_lenLTA*_fsamp+0.5);
 	reset();
+std::cerr << "setSamplingFrequency fsamp=" << _fsamp << std::endl;
 }
 
 
@@ -181,7 +182,7 @@ STALTA2<TYPE>::reset()
 {
 	_sampleCount = 0;
 	_STA = _LTA = 1.;
-	_bleed = 1.;
+	_updateLTA = 1.;
 }
 
 
@@ -192,6 +193,7 @@ STALTA2<TYPE>::apply(int ndata, TYPE *data)
 	double normLTA = 1./_numLTA;
 	double normSTA = 1./_numSTA;
 
+std::cerr << "apply fsamp=" << _fsamp << std::endl;
 	for (int i=0; i<ndata; i++, _sampleCount++) {
 
 		double current = FABS(data[i]);
@@ -212,17 +214,17 @@ STALTA2<TYPE>::apply(int ndata, TYPE *data)
 			// _LTA += (current - _LTA)*normLTA;
 			// But this is a little smoother and
 			// with a slightly delayed LTA:
-			_LTA += (_STA - _LTA)*normLTA*_bleed;
+			_LTA += (_STA - _LTA)*normLTA*_updateLTA;
 		}
 
 		// During the initial _numSTA samples, _STA and _LTA
 		// are identical, so we skip the division here.
 		data[i] = (TYPE) (_sampleCount < _numSTA ? 1 : _STA/_LTA);
 
-		if ( (_bleed > 0.) && (data[i] > _eventOn) )
-			_bleed = 0.;
-		else if ( (_bleed < 1.) && (data[i] < _eventOff) )
-			_bleed = 1.;
+		if ( (_updateLTA > 0.) && (data[i] > _eventOn) )
+			_updateLTA = 0.;
+		else if ( (_updateLTA < 1.) && (data[i] < _eventOff) )
+			_updateLTA = 1.;
 	}
 }
 
@@ -283,7 +285,7 @@ void
 STALTA_Classic<TYPE>::reset()
 {
 	_sampleCount = 0;
-	_STA = _LTA = 1.;
+	_STA = _LTA = 0.;
 	_sta_buffer.clear();
 	_lta_buffer.clear();
 	_sta_buffer.reserve(_numSTA);

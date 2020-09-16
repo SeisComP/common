@@ -105,9 +105,6 @@ class STALTA2 : public InPlaceFilter<TYPE> {
 		// length of STA and LTA windows in samples
 		int _numSTA, _numLTA;
 
-		// number of samples for init/reset
-		int _initSampleCount;
-
 		// number of samples processed since init/reset
 		int _sampleCount;
 
@@ -120,7 +117,11 @@ class STALTA2 : public InPlaceFilter<TYPE> {
 		// thresholds to declare an event on and off
 		double _eventOn, _eventOff;
 
-		double _bleed;
+		// This value controls how much the LTA will be updated during
+		// an event. Current values are only 0 and 1. With 0 meaning
+		// completely frozen LTA during the event, 1 meaning the LTA
+		// is fully updated.
+		double _updateLTA;
 };
 
 
