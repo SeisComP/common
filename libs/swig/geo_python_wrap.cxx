@@ -2742,82 +2742,88 @@ SWIGINTERN PyObject *SWIG_PyStaticMethod_New(PyObject *SWIGUNUSEDPARM(self), PyO
 #define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t swig_types[79]
 #define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t swig_types[80]
 #define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t swig_types[81]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t swig_types[82]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t swig_types[83]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t swig_types[84]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t swig_types[85]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t swig_types[86]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t swig_types[87]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_double_t swig_types[88]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_float_t swig_types[89]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t swig_types[90]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t swig_types[91]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_double_t swig_types[92]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_float_t swig_types[93]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_double_t swig_types[94]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_float_t swig_types[95]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__CityT_double_t swig_types[96]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__CityT_float_t swig_types[97]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__CoordT_double_t swig_types[98]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__CoordT_float_t swig_types[99]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__NamedCoordT_double_t swig_types[100]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__NamedCoordT_float_t swig_types[101]
-#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__PolesAndZeros swig_types[102]
-#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__ResponseList swig_types[103]
-#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__TransferFunction swig_types[104]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_char_t swig_types[105]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_double_t swig_types[106]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_float_t swig_types[107]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_int_t swig_types[108]
-#define SWIGTYPE_p_Seiscomp__Record swig_types[109]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t swig_types[110]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_char_t swig_types[111]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_double_t swig_types[112]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_float_t swig_types[113]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_int_t swig_types[114]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_double_t_t swig_types[115]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_float_t_t swig_types[116]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__string_t swig_types[117]
-#define SWIGTYPE_p_Type swig_types[118]
-#define SWIGTYPE_p_ValueType swig_types[119]
-#define SWIGTYPE_p_allocator_type swig_types[120]
-#define SWIGTYPE_p_boost__any swig_types[121]
-#define SWIGTYPE_p_char swig_types[122]
-#define SWIGTYPE_p_const_iterator swig_types[123]
-#define SWIGTYPE_p_difference_type swig_types[124]
-#define SWIGTYPE_p_float swig_types[125]
-#define SWIGTYPE_p_int swig_types[126]
-#define SWIGTYPE_p_iterator swig_types[127]
-#define SWIGTYPE_p_long_long swig_types[128]
-#define SWIGTYPE_p_p_PyObject swig_types[129]
-#define SWIGTYPE_p_short swig_types[130]
-#define SWIGTYPE_p_signed_char swig_types[131]
-#define SWIGTYPE_p_size_type swig_types[132]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__Category_p_t swig_types[133]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t swig_types[134]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t swig_types[135]
-#define SWIGTYPE_p_std__allocatorT_size_t_t swig_types[136]
-#define SWIGTYPE_p_std__complexT_double_t swig_types[137]
-#define SWIGTYPE_p_std__invalid_argument swig_types[138]
-#define SWIGTYPE_p_std__mapT_std__string_std__string_std__lessT_std__string_t_std__allocatorT_std__pairT_std__string_const_std__string_t_t_t swig_types[139]
-#define SWIGTYPE_p_std__ostream swig_types[140]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[141]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[142]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__Category_p_std__allocatorT_Seiscomp__Geo__Category_p_t_t swig_types[143]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoCoordinate_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t_t swig_types[144]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoFeature_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t_t swig_types[145]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[146]
-#define SWIGTYPE_p_std__vectorT_size_t_std__allocatorT_size_t_t_t swig_types[147]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t swig_types[148]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[149]
-#define SWIGTYPE_p_unsigned_char swig_types[150]
-#define SWIGTYPE_p_unsigned_int swig_types[151]
-#define SWIGTYPE_p_unsigned_long_long swig_types[152]
-#define SWIGTYPE_p_unsigned_short swig_types[153]
-#define SWIGTYPE_p_value_type swig_types[154]
-#define SWIGTYPE_p_void swig_types[155]
-static swig_type_info *swig_types[157];
-static swig_module_info swig_module = {swig_types, 156, 0, 0, 0, 0};
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t swig_types[82]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t swig_types[83]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t swig_types[84]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t swig_types[85]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t swig_types[86]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t swig_types[87]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t swig_types[88]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t swig_types[89]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t swig_types[90]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t swig_types[91]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_double_t swig_types[92]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_float_t swig_types[93]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t swig_types[94]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t swig_types[95]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_double_t swig_types[96]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_float_t swig_types[97]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_double_t swig_types[98]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_float_t swig_types[99]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__CityT_double_t swig_types[100]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__CityT_float_t swig_types[101]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__CoordT_double_t swig_types[102]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__CoordT_float_t swig_types[103]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__NamedCoordT_double_t swig_types[104]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__NamedCoordT_float_t swig_types[105]
+#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__PolesAndZeros swig_types[106]
+#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__ResponseList swig_types[107]
+#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__TransferFunction swig_types[108]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_char_t swig_types[109]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_double_t swig_types[110]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_float_t swig_types[111]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_int_t swig_types[112]
+#define SWIGTYPE_p_Seiscomp__Record swig_types[113]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t swig_types[114]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_char_t swig_types[115]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_double_t swig_types[116]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_float_t swig_types[117]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_int_t swig_types[118]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_double_t_t swig_types[119]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_float_t_t swig_types[120]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__string_t swig_types[121]
+#define SWIGTYPE_p_Type swig_types[122]
+#define SWIGTYPE_p_ValueType swig_types[123]
+#define SWIGTYPE_p_allocator_type swig_types[124]
+#define SWIGTYPE_p_boost__any swig_types[125]
+#define SWIGTYPE_p_char swig_types[126]
+#define SWIGTYPE_p_const_iterator swig_types[127]
+#define SWIGTYPE_p_difference_type swig_types[128]
+#define SWIGTYPE_p_double swig_types[129]
+#define SWIGTYPE_p_float swig_types[130]
+#define SWIGTYPE_p_int swig_types[131]
+#define SWIGTYPE_p_iterator swig_types[132]
+#define SWIGTYPE_p_long_long swig_types[133]
+#define SWIGTYPE_p_p_PyObject swig_types[134]
+#define SWIGTYPE_p_short swig_types[135]
+#define SWIGTYPE_p_signed_char swig_types[136]
+#define SWIGTYPE_p_size_type swig_types[137]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__Category_p_t swig_types[138]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t swig_types[139]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t swig_types[140]
+#define SWIGTYPE_p_std__allocatorT_size_t_t swig_types[141]
+#define SWIGTYPE_p_std__complexT_double_t swig_types[142]
+#define SWIGTYPE_p_std__invalid_argument swig_types[143]
+#define SWIGTYPE_p_std__mapT_std__string_std__string_std__lessT_std__string_t_std__allocatorT_std__pairT_std__string_const_std__string_t_t_t swig_types[144]
+#define SWIGTYPE_p_std__ostream swig_types[145]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[146]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[147]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__Category_p_std__allocatorT_Seiscomp__Geo__Category_p_t_t swig_types[148]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoCoordinate_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t_t swig_types[149]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoFeature_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t_t swig_types[150]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[151]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[152]
+#define SWIGTYPE_p_std__vectorT_size_t_std__allocatorT_size_t_t_t swig_types[153]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t swig_types[154]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[155]
+#define SWIGTYPE_p_unsigned_char swig_types[156]
+#define SWIGTYPE_p_unsigned_int swig_types[157]
+#define SWIGTYPE_p_unsigned_long_long swig_types[158]
+#define SWIGTYPE_p_unsigned_short swig_types[159]
+#define SWIGTYPE_p_value_type swig_types[160]
+#define SWIGTYPE_p_void swig_types[161]
+static swig_type_info *swig_types[163];
+static swig_module_info swig_module = {swig_types, 162, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -6985,6 +6991,227 @@ SWIGINTERN PyObject *GeoCoordinate_swigregister(PyObject *SWIGUNUSEDPARM(self), 
 SWIGINTERN PyObject *GeoCoordinate_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   return SWIG_Python_InitShadowInstance(args);
 }
+
+SWIGINTERN PyObject *_wrap_contains__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::GeoCoordinate *arg1 = 0 ;
+  Seiscomp::Geo::GeoCoordinate *arg2 = (Seiscomp::Geo::GeoCoordinate *) 0 ;
+  size_t arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  size_t val3 ;
+  int ecode3 = 0 ;
+  bool result;
+  
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Geo__GeoCoordinate,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "contains" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "contains" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::GeoCoordinate * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Geo__GeoCoordinate, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "contains" "', argument " "2"" of type '" "Seiscomp::Geo::GeoCoordinate const *""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Geo::GeoCoordinate * >(argp2);
+  ecode3 = SWIG_AsVal_size_t(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "contains" "', argument " "3"" of type '" "size_t""'");
+  } 
+  arg3 = static_cast< size_t >(val3);
+  {
+    try {
+      result = (bool)Seiscomp::Geo::contains((Seiscomp::Geo::GeoCoordinate const &)*arg1,(Seiscomp::Geo::GeoCoordinate const *)arg2,arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_contains__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::GeoCoordinate *arg1 = 0 ;
+  Seiscomp::Geo::GeoCoordinate *arg2 = (Seiscomp::Geo::GeoCoordinate *) 0 ;
+  size_t arg3 ;
+  double *arg4 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  size_t val3 ;
+  int ecode3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  bool result;
+  
+  if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Geo__GeoCoordinate,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "contains" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "contains" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::GeoCoordinate * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Geo__GeoCoordinate, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "contains" "', argument " "2"" of type '" "Seiscomp::Geo::GeoCoordinate const *""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Geo::GeoCoordinate * >(argp2);
+  ecode3 = SWIG_AsVal_size_t(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "contains" "', argument " "3"" of type '" "size_t""'");
+  } 
+  arg3 = static_cast< size_t >(val3);
+  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4, SWIGTYPE_p_double,  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "contains" "', argument " "4"" of type '" "double &""'"); 
+  }
+  if (!argp4) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "contains" "', argument " "4"" of type '" "double &""'"); 
+  }
+  arg4 = reinterpret_cast< double * >(argp4);
+  {
+    try {
+      result = (bool)Seiscomp::Geo::contains((Seiscomp::Geo::GeoCoordinate const &)*arg1,(Seiscomp::Geo::GeoCoordinate const *)arg2,arg3,*arg4);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_contains(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[5] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "contains", 0, 4, argv))) SWIG_fail;
+  --argc;
+  if (argc == 3) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Geo__GeoCoordinate, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__Geo__GeoCoordinate, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        {
+          int res = SWIG_AsVal_size_t(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_contains__SWIG_0(self, argc, argv);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Geo__GeoCoordinate, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__Geo__GeoCoordinate, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        {
+          int res = SWIG_AsVal_size_t(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          void *vptr = 0;
+          int res = SWIG_ConvertPtr(argv[3], &vptr, SWIGTYPE_p_double, SWIG_POINTER_NO_NULL);
+          _v = SWIG_CheckState(res);
+          if (_v) {
+            return _wrap_contains__SWIG_1(self, argc, argv);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'contains'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Geo::contains(Seiscomp::Geo::GeoCoordinate const &,Seiscomp::Geo::GeoCoordinate const *,size_t)\n"
+    "    Seiscomp::Geo::contains(Seiscomp::Geo::GeoCoordinate const &,Seiscomp::Geo::GeoCoordinate const *,size_t,double &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_area(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::GeoCoordinate *arg1 = (Seiscomp::Geo::GeoCoordinate *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  double result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "area", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__GeoCoordinate, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "area" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::GeoCoordinate * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "area" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  {
+    try {
+      result = (double)Seiscomp::Geo::area((Seiscomp::Geo::GeoCoordinate const *)arg1,arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
 
 SWIGINTERN PyObject *_wrap_new_formatted_lat(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
@@ -20866,6 +21093,11 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_GeoCoordinate", _wrap_delete_GeoCoordinate, METH_O, "delete_GeoCoordinate(GeoCoordinate self)"},
 	 { "GeoCoordinate_swigregister", GeoCoordinate_swigregister, METH_O, NULL},
 	 { "GeoCoordinate_swiginit", GeoCoordinate_swiginit, METH_VARARGS, NULL},
+	 { "contains", _wrap_contains, METH_VARARGS, "\n"
+		"contains(GeoCoordinate v, GeoCoordinate polygon, size_t sides) -> bool\n"
+		"contains(GeoCoordinate v, GeoCoordinate polygon, size_t sides, double & area) -> bool\n"
+		""},
+	 { "area", _wrap_area, METH_VARARGS, "area(GeoCoordinate polygon, size_t sides) -> double"},
 	 { "new_formatted_lat", _wrap_new_formatted_lat, METH_O, "new_formatted_lat(double lat) -> formatted_lat"},
 	 { "formatted_lat_v_set", _wrap_formatted_lat_v_set, METH_VARARGS, "formatted_lat_v_set(formatted_lat self, double v)"},
 	 { "formatted_lat_v_get", _wrap_formatted_lat_v_get, METH_O, "formatted_lat_v_get(formatted_lat self) -> double"},
@@ -21276,11 +21508,23 @@ static void *_p_Seiscomp__NumericArrayT_char_tTo_p_Seiscomp__Core__BaseObject(vo
 static void *_p_Seiscomp__TypedArrayT_char_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Array *) ((Seiscomp::TypedArray< char > *) x));
 }
+static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *)(Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) ((Seiscomp::Math::Filtering::IIR::ButterworthBandstop< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *)(Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) ((Seiscomp::Math::Filtering::IIR::ButterworthBandstop< double > *) x));
+}
 static void *_p_Seiscomp__NumericArrayT_int_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Array *)(Seiscomp::TypedArray< int > *) ((Seiscomp::NumericArray< int > *) x));
 }
 static void *_p_Seiscomp__TypedArrayT_int_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Array *) ((Seiscomp::TypedArray< int > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *)(Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) ((Seiscomp::Math::Filtering::IIR::ButterworthHighLowpass< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *)(Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) ((Seiscomp::Math::Filtering::IIR::ButterworthHighLowpass< double > *) x));
 }
 static void *_p_Seiscomp__Math__Filtering__STALTAT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *) ((Seiscomp::Math::Filtering::STALTA< double > *) x));
@@ -21443,28 +21687,32 @@ static swig_type_info _swigt__p_Seiscomp__Core__Message = {"_p_Seiscomp__Core__M
 static swig_type_info _swigt__p_Seiscomp__Core__DataMessage = {"_p_Seiscomp__Core__DataMessage", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t = {"_p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__InitialTaperT_double_t = {"_p_Seiscomp__Math__Filtering__InitialTaperT_double_t", 0, 0, 0, 0, 0};
-static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t = {"_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t = {"_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t = {"_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t = {"_p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t = {"_p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t = {"_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t = {"_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t", 0, 0, 0, 0, 0};
-static swig_type_info _swigt__p_Seiscomp__Math__Filtering__AverageT_double_t = {"_p_Seiscomp__Math__Filtering__AverageT_double_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__STALTAT_double_t = {"_p_Seiscomp__Math__Filtering__STALTAT_double_t", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__AverageT_double_t = {"_p_Seiscomp__Math__Filtering__AverageT_double_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__TypedArrayT_double_t = {"_p_Seiscomp__TypedArrayT_double_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Restitution__FFT__ResponseList = {"_p_Seiscomp__Math__Restitution__FFT__ResponseList", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t = {"_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t = {"_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t = {"_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t = {"_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__TypedArrayT_int_t = {"_p_Seiscomp__TypedArrayT_int_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Array = {"_p_Seiscomp__Array", 0, 0, 0, 0, 0};
-static swig_type_info _swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t = {"_p_Seiscomp__Math__Filtering__RunningMeanT_double_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__ChainFilterT_double_t = {"_p_Seiscomp__Math__Filtering__ChainFilterT_double_t", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t = {"_p_Seiscomp__Math__Filtering__RunningMeanT_double_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Restitution__FFT__PolesAndZeros = {"_p_Seiscomp__Math__Restitution__FFT__PolesAndZeros", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t = {"_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__BitSet = {"_p_Seiscomp__BitSet", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__InterruptibleObject = {"_p_Seiscomp__Core__InterruptibleObject", 0, 0, 0, 0, 0};
-static swig_type_info _swigt__p_Seiscomp__Math__Filtering__AverageT_float_t = {"_p_Seiscomp__Math__Filtering__AverageT_float_t", 0, 0, 0, 0, 0};
-static swig_type_info _swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t = {"_p_Seiscomp__Math__Filtering__STALTAT_float_t", 0, 0, 0, 0, 0};
-static swig_type_info _swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t = {"_p_Seiscomp__Math__Filtering__RunningMeanT_float_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t = {"_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t = {"_p_Seiscomp__Math__Filtering__RunningMeanT_float_t", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t = {"_p_Seiscomp__Math__Filtering__STALTAT_float_t", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__AverageT_float_t = {"_p_Seiscomp__Math__Filtering__AverageT_float_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__TypedArrayT_float_t = {"_p_Seiscomp__TypedArrayT_float_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__ChainFilterT_float_t = {"_p_Seiscomp__Math__Filtering__ChainFilterT_float_t", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t = {"_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t", 0, 0, 0, 0, 0};
@@ -21545,6 +21793,7 @@ static swig_type_info _swigt__p_boost__any = {"_p_boost__any", "Seiscomp::Core::
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_const_iterator = {"_p_const_iterator", "const_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_difference_type = {"_p_difference_type", "difference_type *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_double = {"_p_double", "double *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_float = {"_p_float", "Seiscomp::Geo::GeoCoordinate::ValueType *|float *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int = {"_p_int", "intptr_t *|int *|int_least32_t *|int_fast32_t *|int32_t *|int_fast16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_iterator = {"_p_iterator", "iterator *", 0, 0, (void*)0, 0};
@@ -21566,6 +21815,7 @@ static swig_type_info _swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t 
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Geo__Category_p_std__allocatorT_Seiscomp__Geo__Category_p_t_t = {"_p_std__vectorT_Seiscomp__Geo__Category_p_std__allocatorT_Seiscomp__Geo__Category_p_t_t", "std::vector< Seiscomp::Geo::Category * > *|std::vector< Seiscomp::Geo::Category *,std::allocator< Seiscomp::Geo::Category * > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Geo__GeoCoordinate_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t_t = {"_p_std__vectorT_Seiscomp__Geo__GeoCoordinate_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t_t", "std::vector< Seiscomp::Geo::GeoCoordinate > *|std::vector< Seiscomp::Geo::GeoCoordinate,std::allocator< Seiscomp::Geo::GeoCoordinate > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Geo__GeoFeature_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t_t = {"_p_std__vectorT_Seiscomp__Geo__GeoFeature_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t_t", "std::vector< Seiscomp::Geo::GeoFeature *,std::allocator< Seiscomp::Geo::GeoFeature * > > *|std::vector< Seiscomp::Geo::GeoFeature * > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t = {"_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t", "std::vector< Seiscomp::Math::Filtering::IIR::BiquadCoefficients,std::allocator< Seiscomp::Math::Filtering::IIR::BiquadCoefficients > > *|Seiscomp::Math::Filtering::IIR::Biquads *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t = {"_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t", "std::vector< Seiscomp::Math::SeismometerResponse::FAP,std::allocator< Seiscomp::Math::SeismometerResponse::FAP > > *|Seiscomp::Math::SeismometerResponse::FAPs *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_size_t_std__allocatorT_size_t_t_t = {"_p_std__vectorT_size_t_std__allocatorT_size_t_t_t", "std::vector< size_t,std::allocator< size_t > > *|std::vector< size_t > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t = {"_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t", "std::vector< std::complex< double >,std::allocator< std::complex< double > > > *|Seiscomp::Math::SeismometerResponse::Poles *|Seiscomp::Math::Restitution::Poles *|Seiscomp::Math::SeismometerResponse::Zeros *|Seiscomp::Math::Restitution::Zeros *", 0, 0, (void*)0, 0};
@@ -21660,6 +21910,10 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t,
   &_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t,
   &_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t,
+  &_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t,
+  &_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t,
+  &_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t,
+  &_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t,
   &_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t,
   &_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t,
   &_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t,
@@ -21703,6 +21957,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_char,
   &_swigt__p_const_iterator,
   &_swigt__p_difference_type,
+  &_swigt__p_double,
   &_swigt__p_float,
   &_swigt__p_int,
   &_swigt__p_iterator,
@@ -21724,6 +21979,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__vectorT_Seiscomp__Geo__Category_p_std__allocatorT_Seiscomp__Geo__Category_p_t_t,
   &_swigt__p_std__vectorT_Seiscomp__Geo__GeoCoordinate_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t_t,
   &_swigt__p_std__vectorT_Seiscomp__Geo__GeoFeature_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t_t,
+  &_swigt__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t,
   &_swigt__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t,
   &_swigt__p_std__vectorT_size_t_std__allocatorT_size_t_t_t,
   &_swigt__p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t,
@@ -21758,28 +22014,32 @@ static swig_cast_info _swigc__p_Seiscomp__Core__Message[] = {{&_swigt__p_Seiscom
 static swig_cast_info _swigc__p_Seiscomp__Core__DataMessage[] = {{&_swigt__p_Seiscomp__Core__DataMessage, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t[] = {{&_swigt__p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__InitialTaperT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_double_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__AverageT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__AverageT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__STALTAT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__STALTAT_double_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__AverageT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__AverageT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__TypedArrayT_double_t[] = {{&_swigt__p_Seiscomp__TypedArrayT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Restitution__FFT__ResponseList[] = {{&_swigt__p_Seiscomp__Math__Restitution__FFT__ResponseList, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__TypedArrayT_int_t[] = {{&_swigt__p_Seiscomp__TypedArrayT_int_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Array[] = {{&_swigt__p_Seiscomp__Array, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__RunningMeanT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__ChainFilterT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_double_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__RunningMeanT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Restitution__FFT__PolesAndZeros[] = {{&_swigt__p_Seiscomp__Math__Restitution__FFT__PolesAndZeros, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__BitSet[] = {{&_swigt__p_Seiscomp__BitSet, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__InterruptibleObject[] = {{&_swigt__p_Seiscomp__Core__InterruptibleObject, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__AverageT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__AverageT_float_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__STALTAT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__RunningMeanT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__RunningMeanT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__STALTAT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__AverageT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__AverageT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__TypedArrayT_float_t[] = {{&_swigt__p_Seiscomp__TypedArrayT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__ChainFilterT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t[] = {{&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -21788,7 +22048,7 @@ static swig_cast_info _swigc__p_Seiscomp__Core__GreensFunction[] = {{&_swigt__p_
 static swig_cast_info _swigc__p_Seiscomp__Record[] = {{&_swigt__p_Seiscomp__Record, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__GenericRecord[] = {{&_swigt__p_Seiscomp__GenericRecord, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Restitution__FFT__TransferFunction[] = {{&_swigt__p_Seiscomp__Math__Restitution__FFT__TransferFunction, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__BaseObject[] = {  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_float_t, _p_Seiscomp__Math__Filtering__InitialTaperT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Geo__GeoFeature, _p_Seiscomp__Geo__GeoFeatureTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_char_t, _p_Seiscomp__NumericArrayT_char_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_char_t, _p_Seiscomp__TypedArrayT_char_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t, _p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__Message, _p_Seiscomp__Core__MessageTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__DataMessage, _p_Seiscomp__Core__DataMessageTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t, _p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_double_t, _p_Seiscomp__Math__Filtering__InitialTaperT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_double_t, _p_Seiscomp__Math__Filtering__AverageT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_double_t, _p_Seiscomp__Math__Filtering__STALTAT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CityT_double_t, _p_Seiscomp__Math__Geo__CityT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__NamedCoordT_double_t, _p_Seiscomp__Math__Geo__NamedCoordT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CoordT_double_t, _p_Seiscomp__Math__Geo__CoordT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_double_t, _p_Seiscomp__NumericArrayT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_double_t, _p_Seiscomp__TypedArrayT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__ResponseList, _p_Seiscomp__Math__Restitution__FFT__ResponseListTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_int_t, _p_Seiscomp__TypedArrayT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_int_t, _p_Seiscomp__NumericArrayT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Array, _p_Seiscomp__ArrayTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_double_t, _p_Seiscomp__Math__Filtering__ChainFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_double_t_t, _p_Seiscomp__TypedArrayT_std__complexT_double_t_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__PolesAndZeros, _p_Seiscomp__Math__Restitution__FFT__PolesAndZerosTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, _p_Seiscomp__Math__Filtering__InPlaceFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Geo__GeoFeatureSet, _p_Seiscomp__Geo__GeoFeatureSetTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__BaseObject, 0, 0, 0},  {&_swigt__p_Seiscomp__BitSet, _p_Seiscomp__BitSetTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__InterruptibleObject, _p_Seiscomp__Core__InterruptibleObjectTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_float_t_t, _p_Seiscomp__TypedArrayT_std__complexT_float_t_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_float_t, _p_Seiscomp__Math__Filtering__AverageT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t, _p_Seiscomp__Math__Filtering__STALTAT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CityT_float_t, _p_Seiscomp__Math__Geo__CityT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__NamedCoordT_float_t, _p_Seiscomp__Math__Geo__NamedCoordT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CoordT_float_t, _p_Seiscomp__Math__Geo__CoordT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_float_t, _p_Seiscomp__NumericArrayT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_float_t, _p_Seiscomp__TypedArrayT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_float_t, _p_Seiscomp__Math__Filtering__ChainFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, _p_Seiscomp__Math__Filtering__InPlaceFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__GreensFunction, _p_Seiscomp__Core__GreensFunctionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Record, _p_Seiscomp__RecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__string_t, _p_Seiscomp__TypedArrayT_std__string_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__GenericRecord, _p_Seiscomp__GenericRecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__TransferFunction, _p_Seiscomp__Math__Restitution__FFT__TransferFunctionTo_p_Seiscomp__Core__BaseObject, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__BaseObject[] = {  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_float_t, _p_Seiscomp__Math__Filtering__InitialTaperT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Geo__GeoFeature, _p_Seiscomp__Geo__GeoFeatureTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_char_t, _p_Seiscomp__NumericArrayT_char_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_char_t, _p_Seiscomp__TypedArrayT_char_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t, _p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__Message, _p_Seiscomp__Core__MessageTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__DataMessage, _p_Seiscomp__Core__DataMessageTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t, _p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_double_t, _p_Seiscomp__Math__Filtering__InitialTaperT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_double_t, _p_Seiscomp__Math__Filtering__STALTAT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_double_t, _p_Seiscomp__Math__Filtering__AverageT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CityT_double_t, _p_Seiscomp__Math__Geo__CityT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__NamedCoordT_double_t, _p_Seiscomp__Math__Geo__NamedCoordT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CoordT_double_t, _p_Seiscomp__Math__Geo__CoordT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_double_t, _p_Seiscomp__NumericArrayT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_double_t, _p_Seiscomp__TypedArrayT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__ResponseList, _p_Seiscomp__Math__Restitution__FFT__ResponseListTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_int_t, _p_Seiscomp__TypedArrayT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_int_t, _p_Seiscomp__NumericArrayT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Array, _p_Seiscomp__ArrayTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_double_t, _p_Seiscomp__Math__Filtering__ChainFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_double_t_t, _p_Seiscomp__TypedArrayT_std__complexT_double_t_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__PolesAndZeros, _p_Seiscomp__Math__Restitution__FFT__PolesAndZerosTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, _p_Seiscomp__Math__Filtering__InPlaceFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Geo__GeoFeatureSet, _p_Seiscomp__Geo__GeoFeatureSetTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__BaseObject, 0, 0, 0},  {&_swigt__p_Seiscomp__BitSet, _p_Seiscomp__BitSetTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__InterruptibleObject, _p_Seiscomp__Core__InterruptibleObjectTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_float_t_t, _p_Seiscomp__TypedArrayT_std__complexT_float_t_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t, _p_Seiscomp__Math__Filtering__STALTAT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_float_t, _p_Seiscomp__Math__Filtering__AverageT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CityT_float_t, _p_Seiscomp__Math__Geo__CityT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__NamedCoordT_float_t, _p_Seiscomp__Math__Geo__NamedCoordT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CoordT_float_t, _p_Seiscomp__Math__Geo__CoordT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_float_t, _p_Seiscomp__NumericArrayT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_float_t, _p_Seiscomp__TypedArrayT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_float_t, _p_Seiscomp__Math__Filtering__ChainFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, _p_Seiscomp__Math__Filtering__InPlaceFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__GreensFunction, _p_Seiscomp__Core__GreensFunctionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Record, _p_Seiscomp__RecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__string_t, _p_Seiscomp__TypedArrayT_std__string_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__GenericRecord, _p_Seiscomp__GenericRecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__TransferFunction, _p_Seiscomp__Math__Restitution__FFT__TransferFunctionTo_p_Seiscomp__Core__BaseObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t[] = {  {&_swigt__p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t[] = {  {&_swigt__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
@@ -21861,6 +22121,7 @@ static swig_cast_info _swigc__p_boost__any[] = {  {&_swigt__p_boost__any, 0, 0, 
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_const_iterator[] = {  {&_swigt__p_const_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_difference_type[] = {  {&_swigt__p_difference_type, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_float[] = {  {&_swigt__p_float, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_iterator[] = {  {&_swigt__p_iterator, 0, 0, 0},{0, 0, 0, 0}};
@@ -21882,6 +22143,7 @@ static swig_cast_info _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t[
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Geo__Category_p_std__allocatorT_Seiscomp__Geo__Category_p_t_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Geo__Category_p_std__allocatorT_Seiscomp__Geo__Category_p_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Geo__GeoCoordinate_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Geo__GeoCoordinate_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Geo__GeoFeature_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Geo__GeoFeature_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_size_t_std__allocatorT_size_t_t_t[] = {  {&_swigt__p_std__vectorT_size_t_std__allocatorT_size_t_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t[] = {  {&_swigt__p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -21976,6 +22238,10 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t,
   _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t,
   _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t,
+  _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t,
+  _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t,
+  _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t,
+  _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t,
   _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t,
   _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t,
   _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t,
@@ -22019,6 +22285,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_char,
   _swigc__p_const_iterator,
   _swigc__p_difference_type,
+  _swigc__p_double,
   _swigc__p_float,
   _swigc__p_int,
   _swigc__p_iterator,
@@ -22040,6 +22307,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__vectorT_Seiscomp__Geo__Category_p_std__allocatorT_Seiscomp__Geo__Category_p_t_t,
   _swigc__p_std__vectorT_Seiscomp__Geo__GeoCoordinate_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t_t,
   _swigc__p_std__vectorT_Seiscomp__Geo__GeoFeature_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t_t,
+  _swigc__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t,
   _swigc__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t,
   _swigc__p_std__vectorT_size_t_std__allocatorT_size_t_t_t,
   _swigc__p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t,

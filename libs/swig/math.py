@@ -1891,20 +1891,20 @@ class BiquadCoefficients(object):
 
     def __init__(self, *args):
         r"""
-        __init__(BiquadCoefficients self, double a0=0, double a1=0, double a2=0, double b0=1, double b1=0, double b2=0) -> BiquadCoefficients
+        __init__(BiquadCoefficients self, double b0=0, double b1=0, double b2=0, double a0=1, double a1=0, double a2=0) -> BiquadCoefficients
         __init__(BiquadCoefficients self, BiquadCoefficients bq) -> BiquadCoefficients
         """
         _math.BiquadCoefficients_swiginit(self, _math.new_BiquadCoefficients(*args))
 
-    def set(self, a0, a1, a2, b0, b1, b2):
-        r"""set(BiquadCoefficients self, double a0, double a1, double a2, double b0, double b1, double b2)"""
-        return _math.BiquadCoefficients_set(self, a0, a1, a2, b0, b1, b2)
-    a0 = property(_math.BiquadCoefficients_a0_get, _math.BiquadCoefficients_a0_set, doc=r"""a0 : double""")
-    a1 = property(_math.BiquadCoefficients_a1_get, _math.BiquadCoefficients_a1_set, doc=r"""a1 : double""")
-    a2 = property(_math.BiquadCoefficients_a2_get, _math.BiquadCoefficients_a2_set, doc=r"""a2 : double""")
+    def set(self, b0, b1, b2, a0, a1, a2):
+        r"""set(BiquadCoefficients self, double b0, double b1, double b2, double a0, double a1, double a2)"""
+        return _math.BiquadCoefficients_set(self, b0, b1, b2, a0, a1, a2)
     b0 = property(_math.BiquadCoefficients_b0_get, _math.BiquadCoefficients_b0_set, doc=r"""b0 : double""")
     b1 = property(_math.BiquadCoefficients_b1_get, _math.BiquadCoefficients_b1_set, doc=r"""b1 : double""")
     b2 = property(_math.BiquadCoefficients_b2_get, _math.BiquadCoefficients_b2_set, doc=r"""b2 : double""")
+    a0 = property(_math.BiquadCoefficients_a0_get, _math.BiquadCoefficients_a0_set, doc=r"""a0 : double""")
+    a1 = property(_math.BiquadCoefficients_a1_get, _math.BiquadCoefficients_a1_set, doc=r"""a1 : double""")
+    a2 = property(_math.BiquadCoefficients_a2_get, _math.BiquadCoefficients_a2_set, doc=r"""a2 : double""")
     __swig_destroy__ = _math.delete_BiquadCoefficients
 
 # Register BiquadCoefficients in _math:

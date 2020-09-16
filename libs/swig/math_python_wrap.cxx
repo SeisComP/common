@@ -31515,162 +31515,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_BiquadCoefficients_a0_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::IIR::BiquadCoefficients *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCoefficients *) 0 ;
-  double arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "BiquadCoefficients_a0_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCoefficients, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCoefficients_a0_set" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCoefficients *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCoefficients * >(argp1);
-  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "BiquadCoefficients_a0_set" "', argument " "2"" of type '" "double""'");
-  } 
-  arg2 = static_cast< double >(val2);
-  if (arg1) (arg1)->a0 = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_BiquadCoefficients_a0_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::IIR::BiquadCoefficients *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCoefficients *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  double result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCoefficients, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCoefficients_a0_get" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCoefficients *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCoefficients * >(argp1);
-  result = (double) ((arg1)->a0);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_BiquadCoefficients_a1_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::IIR::BiquadCoefficients *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCoefficients *) 0 ;
-  double arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "BiquadCoefficients_a1_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCoefficients, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCoefficients_a1_set" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCoefficients *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCoefficients * >(argp1);
-  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "BiquadCoefficients_a1_set" "', argument " "2"" of type '" "double""'");
-  } 
-  arg2 = static_cast< double >(val2);
-  if (arg1) (arg1)->a1 = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_BiquadCoefficients_a1_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::IIR::BiquadCoefficients *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCoefficients *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  double result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCoefficients, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCoefficients_a1_get" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCoefficients *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCoefficients * >(argp1);
-  result = (double) ((arg1)->a1);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_BiquadCoefficients_a2_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::IIR::BiquadCoefficients *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCoefficients *) 0 ;
-  double arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  double val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "BiquadCoefficients_a2_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCoefficients, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCoefficients_a2_set" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCoefficients *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCoefficients * >(argp1);
-  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "BiquadCoefficients_a2_set" "', argument " "2"" of type '" "double""'");
-  } 
-  arg2 = static_cast< double >(val2);
-  if (arg1) (arg1)->a2 = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_BiquadCoefficients_a2_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::IIR::BiquadCoefficients *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCoefficients *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  double result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCoefficients, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCoefficients_a2_get" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCoefficients *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCoefficients * >(argp1);
-  result = (double) ((arg1)->a2);
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_BiquadCoefficients_b0_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::IIR::BiquadCoefficients *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCoefficients *) 0 ;
@@ -31820,6 +31664,162 @@ SWIGINTERN PyObject *_wrap_BiquadCoefficients_b2_get(PyObject *SWIGUNUSEDPARM(se
   }
   arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCoefficients * >(argp1);
   result = (double) ((arg1)->b2);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_BiquadCoefficients_a0_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::BiquadCoefficients *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCoefficients *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "BiquadCoefficients_a0_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCoefficients, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCoefficients_a0_set" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCoefficients *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCoefficients * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "BiquadCoefficients_a0_set" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  if (arg1) (arg1)->a0 = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_BiquadCoefficients_a0_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::BiquadCoefficients *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCoefficients *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  double result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCoefficients, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCoefficients_a0_get" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCoefficients *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCoefficients * >(argp1);
+  result = (double) ((arg1)->a0);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_BiquadCoefficients_a1_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::BiquadCoefficients *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCoefficients *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "BiquadCoefficients_a1_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCoefficients, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCoefficients_a1_set" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCoefficients *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCoefficients * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "BiquadCoefficients_a1_set" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  if (arg1) (arg1)->a1 = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_BiquadCoefficients_a1_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::BiquadCoefficients *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCoefficients *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  double result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCoefficients, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCoefficients_a1_get" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCoefficients *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCoefficients * >(argp1);
+  result = (double) ((arg1)->a1);
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_BiquadCoefficients_a2_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::BiquadCoefficients *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCoefficients *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "BiquadCoefficients_a2_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCoefficients, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCoefficients_a2_set" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCoefficients *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCoefficients * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "BiquadCoefficients_a2_set" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  if (arg1) (arg1)->a2 = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_BiquadCoefficients_a2_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::BiquadCoefficients *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCoefficients *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  double result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCoefficients, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCoefficients_a2_get" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCoefficients *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCoefficients * >(argp1);
+  result = (double) ((arg1)->a2);
   resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
@@ -46573,22 +46573,22 @@ static PyMethodDef SwigMethods[] = {
 	 { "InitialTaperFilterD_swigregister", InitialTaperFilterD_swigregister, METH_O, NULL},
 	 { "InitialTaperFilterD_swiginit", InitialTaperFilterD_swiginit, METH_VARARGS, NULL},
 	 { "new_BiquadCoefficients", _wrap_new_BiquadCoefficients, METH_VARARGS, "\n"
-		"BiquadCoefficients(double a0=0, double a1=0, double a2=0, double b0=1, double b1=0, double b2=0)\n"
+		"BiquadCoefficients(double b0=0, double b1=0, double b2=0, double a0=1, double a1=0, double a2=0)\n"
 		"new_BiquadCoefficients(BiquadCoefficients bq) -> BiquadCoefficients\n"
 		""},
-	 { "BiquadCoefficients_set", _wrap_BiquadCoefficients_set, METH_VARARGS, "BiquadCoefficients_set(BiquadCoefficients self, double a0, double a1, double a2, double b0, double b1, double b2)"},
-	 { "BiquadCoefficients_a0_set", _wrap_BiquadCoefficients_a0_set, METH_VARARGS, "BiquadCoefficients_a0_set(BiquadCoefficients self, double a0)"},
-	 { "BiquadCoefficients_a0_get", _wrap_BiquadCoefficients_a0_get, METH_O, "BiquadCoefficients_a0_get(BiquadCoefficients self) -> double"},
-	 { "BiquadCoefficients_a1_set", _wrap_BiquadCoefficients_a1_set, METH_VARARGS, "BiquadCoefficients_a1_set(BiquadCoefficients self, double a1)"},
-	 { "BiquadCoefficients_a1_get", _wrap_BiquadCoefficients_a1_get, METH_O, "BiquadCoefficients_a1_get(BiquadCoefficients self) -> double"},
-	 { "BiquadCoefficients_a2_set", _wrap_BiquadCoefficients_a2_set, METH_VARARGS, "BiquadCoefficients_a2_set(BiquadCoefficients self, double a2)"},
-	 { "BiquadCoefficients_a2_get", _wrap_BiquadCoefficients_a2_get, METH_O, "BiquadCoefficients_a2_get(BiquadCoefficients self) -> double"},
+	 { "BiquadCoefficients_set", _wrap_BiquadCoefficients_set, METH_VARARGS, "BiquadCoefficients_set(BiquadCoefficients self, double b0, double b1, double b2, double a0, double a1, double a2)"},
 	 { "BiquadCoefficients_b0_set", _wrap_BiquadCoefficients_b0_set, METH_VARARGS, "BiquadCoefficients_b0_set(BiquadCoefficients self, double b0)"},
 	 { "BiquadCoefficients_b0_get", _wrap_BiquadCoefficients_b0_get, METH_O, "BiquadCoefficients_b0_get(BiquadCoefficients self) -> double"},
 	 { "BiquadCoefficients_b1_set", _wrap_BiquadCoefficients_b1_set, METH_VARARGS, "BiquadCoefficients_b1_set(BiquadCoefficients self, double b1)"},
 	 { "BiquadCoefficients_b1_get", _wrap_BiquadCoefficients_b1_get, METH_O, "BiquadCoefficients_b1_get(BiquadCoefficients self) -> double"},
 	 { "BiquadCoefficients_b2_set", _wrap_BiquadCoefficients_b2_set, METH_VARARGS, "BiquadCoefficients_b2_set(BiquadCoefficients self, double b2)"},
 	 { "BiquadCoefficients_b2_get", _wrap_BiquadCoefficients_b2_get, METH_O, "BiquadCoefficients_b2_get(BiquadCoefficients self) -> double"},
+	 { "BiquadCoefficients_a0_set", _wrap_BiquadCoefficients_a0_set, METH_VARARGS, "BiquadCoefficients_a0_set(BiquadCoefficients self, double a0)"},
+	 { "BiquadCoefficients_a0_get", _wrap_BiquadCoefficients_a0_get, METH_O, "BiquadCoefficients_a0_get(BiquadCoefficients self) -> double"},
+	 { "BiquadCoefficients_a1_set", _wrap_BiquadCoefficients_a1_set, METH_VARARGS, "BiquadCoefficients_a1_set(BiquadCoefficients self, double a1)"},
+	 { "BiquadCoefficients_a1_get", _wrap_BiquadCoefficients_a1_get, METH_O, "BiquadCoefficients_a1_get(BiquadCoefficients self) -> double"},
+	 { "BiquadCoefficients_a2_set", _wrap_BiquadCoefficients_a2_set, METH_VARARGS, "BiquadCoefficients_a2_set(BiquadCoefficients self, double a2)"},
+	 { "BiquadCoefficients_a2_get", _wrap_BiquadCoefficients_a2_get, METH_O, "BiquadCoefficients_a2_get(BiquadCoefficients self) -> double"},
 	 { "delete_BiquadCoefficients", _wrap_delete_BiquadCoefficients, METH_O, "delete_BiquadCoefficients(BiquadCoefficients self)"},
 	 { "BiquadCoefficients_swigregister", BiquadCoefficients_swigregister, METH_O, NULL},
 	 { "BiquadCoefficients_swiginit", BiquadCoefficients_swiginit, METH_VARARGS, NULL},
