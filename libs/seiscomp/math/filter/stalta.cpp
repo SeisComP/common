@@ -28,12 +28,12 @@ namespace Filtering {
 
 static void checkParameters(double lenSTA, double lenLTA)
 {
-	if (lenSTA > lenLTA)
-		throw Core::ValueException("STA length must not exceed LTA length");
 	if (lenSTA <= 0.)
 		throw Core::ValueException("STA length must be positive");
 	if (lenLTA <= 0.)
 		throw Core::ValueException("LTA length must be positive");
+	if (lenSTA > lenLTA)
+		throw Core::ValueException("STA length must not exceed LTA length");
 }
 
 
