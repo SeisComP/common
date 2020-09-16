@@ -97,6 +97,8 @@ namespace std {
 %template(CityListF) std::vector<Seiscomp::Math::Geo::CityF>;
 %template(CityListD) std::vector<Seiscomp::Math::Geo::CityD>;
 
+%ignore Seiscomp::Math::Filtering::InPlaceFilter::apply(int, float*);
+%ignore Seiscomp::Math::Filtering::InPlaceFilter::apply(int, double*);
 %include "seiscomp/math/filter.h"
 
 %template(InPlaceFilterF) Seiscomp::Math::Filtering::InPlaceFilter<float>;
@@ -111,6 +113,12 @@ namespace std {
 
 %template(STALTAFilterF) Seiscomp::Math::Filtering::STALTA<float>;
 %template(STALTAFilterD) Seiscomp::Math::Filtering::STALTA<double>;
+%template(STALTA2FilterF) Seiscomp::Math::Filtering::STALTA2<float>;
+%template(STALTA2FilterD) Seiscomp::Math::Filtering::STALTA2<double>;
+%template(STALTAClassicFilterF) Seiscomp::Math::Filtering::STALTA_Classic<float>;
+%template(STALTAClassicFilterD) Seiscomp::Math::Filtering::STALTA_Classic<double>;
+
+
 
 %include "seiscomp/math/filter/rmhp.h"
 

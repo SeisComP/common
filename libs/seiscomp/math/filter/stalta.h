@@ -21,95 +21,158 @@
 #ifndef SEISCOMP_PICKER_STALTA_H__
 #define SEISCOMP_PICKER_STALTA_H__
 
-#include<vector>
-#include<seiscomp/math/filter.h>
+#include <vector>
+#include <seiscomp/math/filter.h>
 
 namespace Seiscomp {
 namespace Math {
 namespace Filtering {
 
 
+// Recursive STA/LTA filter
+//
+// Very simple and doesn't need a lot of memory for buffering.
+
 template<typename TYPE>
 class STALTA : public InPlaceFilter<TYPE> {
 
-  public:
-	STALTA(double lenSTA=2, double lenLTA=50, double fsamp=1.);
+	public:
+		STALTA(double lenSTA=2, double lenLTA=50, double fsamp=1.);
 
-	void setSaveIntermediate(bool);
+		// Apply the picker in place to the (previously filtered) data.
+		void apply(int ndata, TYPE *data) override;
 
-	// Apply the picker in place to the (previously filtered) data.
-	void apply(int ndata, TYPE *data);
+		void reset();
 
-	void reset();
+		// Set the sampling frequency in Hz. Allows delayed
+		// initialization when the data arrive.
+		void setSamplingFrequency(double fsamp) override;
 
-	bool changed() { return true; }
+		int setParameters(int n, const double *params);
 
-	void setSamplingFrequency(double fsamp);
-	int setParameters(int n, const double *params);
+		InPlaceFilter<TYPE>* clone() const override;
 
-	InPlaceFilter<TYPE>* clone() const;
+	protected:
+		// length of STA and LTA windows in seconds
+		double _lenSTA, _lenLTA;
 
-	const std::vector<TYPE>& getSTA()    const { return _staVector; };
-	const std::vector<TYPE>& getLTA()    const { return _ltaVector; };
+		// length of STA and LTA windows in samples
+		int _numSTA, _numLTA;
 
-  protected:
-	bool _saveIntermediate;
+		// number of samples processed since init/reset
+		int _sampleCount;
 
-  protected:
-	// config
-	int     _numSTA, _numLTA,
-		_sampleCount, _initLength; // number of samples for init/reset
-	double  _lenSTA, _lenLTA, _fsamp;
+		// The *current* and continuously updated STA and LTA values
+		double _STA, _LTA; // must be double
 
-	// state
-	double _sta, _lta; // must be double
-
-  protected:
-	std::vector<TYPE> _staVector, _ltaVector;
+		// sampling frequency in Hz
+		double _fsamp;
 };
 
+
+
+
+// Another recursive STA/LTA filter
+//
+// In this version the LTA is not updated during an event,
+// making it more sensitive to secondary signals.
 
 template<typename TYPE>
 class STALTA2 : public InPlaceFilter<TYPE> {
 
-  public:
-	STALTA2(double lenSTA=2, double lenLTA=50, double eventON=3.,
-	        double eventOFF=1., double fsamp=1.);
+	public:
+		STALTA2(double lenSTA=2, double lenLTA=50,
+			double eventON=3., double eventOFF=1.,
+			double fsamp=1.);
 
-	void setSaveIntermediate(bool);
+		// Apply the picker in place to the (previously filtered) data.
+		void apply(int ndata, TYPE *data) override;
 
-	// Apply the picker in place to the (previously filtered) data.
-	void apply(int ndata, TYPE *data);
+		void reset();
 
-	void reset();
+		// Set the sampling frequency in Hz. Allows delayed
+		// initialization when the data arrive.
+		void setSamplingFrequency(double fsamp) override;
 
-	bool changed() { return true; }
+		int setParameters(int n, const double *params);
 
-	void setSamplingFrequency(double fsamp);
-	int setParameters(int n, const double *params);
+		InPlaceFilter<TYPE>* clone() const override;
 
-	InPlaceFilter<TYPE>* clone() const;
+	protected:
+		// length of STA and LTA windows in seconds
+		double _lenSTA, _lenLTA;
 
-	const std::vector<TYPE>& getSTA()    const { return _staVector; };
-	const std::vector<TYPE>& getLTA()    const { return _ltaVector; };
+		// length of STA and LTA windows in samples
+		int _numSTA, _numLTA;
 
-  protected:
-	bool _saveIntermediate;
+		// number of samples for init/reset
+		int _initSampleCount;
 
-  protected:
-	// config
-	int     _numSTA, _numLTA,
-	        _sampleCount, _initLength; // number of samples for init/reset
-	double  _lenSTA, _lenLTA, _fsamp;
-	double  _eventOn, _eventOff;
-	double  _bleed;
+		// number of samples processed since init/reset
+		int _sampleCount;
 
-	// state
-	double _sta, _lta; // must be double
+		// The *current* and continuously updated STA and LTA values
+		double _STA, _LTA; // must be double
 
-  protected:
-	std::vector<TYPE> _staVector, _ltaVector;
+		// sampling frequency in Hz
+		double _fsamp;
+
+		// thresholds to declare an event on and off
+		double _eventOn, _eventOff;
+
+		double _bleed;
 };
+
+
+// Classical, non-recursive STA/LTA filter
+//
+// As simple as it can get, but also needs a lot more memory.
+
+template<typename TYPE>
+class STALTA_Classic : public InPlaceFilter<TYPE> {
+	public:
+		STALTA_Classic(
+			double lenSTA =  2.,
+			double lenLTA = 50.,
+			double fsamp  =  1.);
+
+		// Apply the picker in place to the (previously filtered) data.
+		void apply(int ndata, TYPE *data) override;
+
+		void reset();
+
+		// Set the sampling frequency in Hz. Allows delayed
+		// initialization when the data arrive.
+		void setSamplingFrequency(double fsamp) override;
+
+		int setParameters(int n, const double *params);
+
+		InPlaceFilter<TYPE>* clone() const override;
+
+	protected:
+		// length of STA and LTA windows in seconds
+		double _lenSTA, _lenLTA;
+
+		// length of STA and LTA windows in samples
+		int _numSTA, _numLTA;
+
+		// number of samples processed since init/reset
+		int _sampleCount;
+
+		// The *current* and continuously updated STA and LTA values
+		double _STA, _LTA; // must be double
+
+		// For this non-recursive filter we need to save all samples
+		// that contribute to the STA and LTA. Note that the space
+		// requirement is not optimized because the STA buffer is
+		// redundant. This is for simplicity and because the STA
+		// buffer length is small compared to the LTA buffer length.
+		std::vector<double> _sta_buffer, _lta_buffer;
+
+		// sampling frequency in Hz
+		double _fsamp;
+};
+
 
 
 } // namespace Seiscomp::Math::Filter
