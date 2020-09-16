@@ -97,6 +97,8 @@ namespace std {
 %template(CityListF) std::vector<Seiscomp::Math::Geo::CityF>;
 %template(CityListD) std::vector<Seiscomp::Math::Geo::CityD>;
 
+%newobject Seiscomp::Math::Filtering::InPlaceFilter<float>::Create;
+%newobject Seiscomp::Math::Filtering::InPlaceFilter<double>::Create;
 %ignore Seiscomp::Math::Filtering::InPlaceFilter::apply(int, float*);
 %ignore Seiscomp::Math::Filtering::InPlaceFilter::apply(int, double*);
 %include "seiscomp/math/filter.h"
@@ -155,19 +157,17 @@ namespace std {
 %template(ButterworthBandstopF) Seiscomp::Math::Filtering::IIR::ButterworthBandstop<float>;
 %template(ButterworthBandstopD) Seiscomp::Math::Filtering::IIR::ButterworthBandstop<double>;
 
+
+%newobject Seiscomp::Math::Filtering::ChainFilter<float>::take;
+%newobject Seiscomp::Math::Filtering::ChainFilter<double>::take;
+
 %include "seiscomp/math/filter/chainfilter.h"
 
 %apply SWIGTYPE *DISOWN { Seiscomp::Math::Filtering::InPlaceFilter<float> *filter };
 %apply SWIGTYPE *DISOWN { Seiscomp::Math::Filtering::InPlaceFilter<double> *filter };
 
-%newobject Seiscomp::Math::Filtering::ChainFilter<float>::take;
-%newobject Seiscomp::Math::Filtering::ChainFilter<double>::take;
-
 %template(ChainFilterF) Seiscomp::Math::Filtering::ChainFilter<float>;
 %template(ChainFilterD) Seiscomp::Math::Filtering::ChainFilter<double>;
-
-%newobject Seiscomp::Math::Filtering::InplaceFilter<float>::Create;
-%newobject Seiscomp::Math::Filtering::InplaceFilter<double>::Create;
 
 %include "seiscomp/math/filter/seismometers.h"
 
