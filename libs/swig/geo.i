@@ -50,6 +50,9 @@
 %}
 
 
+// Make Swig parse GCC attributes happily
+#define __attribute__(x)
+
 %include "stl.i"
 %include "std_vector.i"
 %import "math.i"
