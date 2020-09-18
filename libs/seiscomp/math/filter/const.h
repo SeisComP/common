@@ -35,7 +35,7 @@ class ConstFilter : public InPlaceFilter<T> {
 	public:
 		ConstFilter(T c = 1);
 
-    public:
+	public:
 		void setSamplingFrequency(double fsamp);
 		int setParameters(int n, const double *params);
 
