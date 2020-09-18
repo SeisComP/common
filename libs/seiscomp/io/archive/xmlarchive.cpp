@@ -65,7 +65,7 @@ int streamBufReadCallback(void* context, char* buffer, int len) {
 		*buffer++ = (char)buf->sbumpc();
 		ch = buf->sgetc();
 		++count;
-  	}
+	}
 
 	return count;
 }
