@@ -47,9 +47,11 @@ namespace Core {
  API Changelog
  ******************************************************************************
  "14.1.0"   0x0E0000
-   - Declared Geo::GeoFeature::area as deprecated
-   - Added function Geo::area which replaces Geo::GeoFeature::area
-   - Added functions Geo::contains
+   - Added Seiscomp::Wired::Session::handleTimeout
+   - Declared Seiscomp::Geo::GeoFeature::area as deprecated
+   - Added function Seiscomp::Geo::area which replaces
+     Seiscomp::Geo::GeoFeature::area
+   - Added functions Seiscomp::Geo::contains
    - Added Seiscomp::Math::Filtering::IIR::ButterworthBandstop
    - Added another Seiscomp::Math::Filtering::cosRamp function
 
