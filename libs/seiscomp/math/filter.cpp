@@ -159,18 +159,25 @@ struct Generator {
 			}
 		}
 
-		int result = f->setParameters(parameters.size(), &parameters[0]);
-		if ( result != (int)parameters.size() ) {
-			parameters.clear();
+		try {
+			int result = f->setParameters(parameters.size(), &parameters[0]);
+			if ( result != (int)parameters.size() ) {
+				parameters.clear();
+				delete f;
+
+				stringstream ss;
+				if ( result >= 0 )
+					ss << "filter '" << filterType << "' takes " << result << " parameters";
+				else
+					ss << "wrong parameter at position " << (-result) << " for filter '" << filterType << "'";
+
+				parser.error_message = ss.str();
+				return NULL;
+			}
+		}
+		catch ( std::exception &e ) {
+			parser.error_message = e.what();
 			delete f;
-
-			stringstream ss;
-			if ( result >= 0 )
-				ss << "filter '" << filterType << "' takes " << result << " parameters";
-			else
-				ss << "wrong parameter at position " << (-result) << " for filter '" << filterType << "'";
-
-			parser.error_message = ss.str();
 			return NULL;
 		}
 
