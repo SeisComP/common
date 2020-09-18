@@ -201,7 +201,7 @@ bool Reactor::run() {
 				removeSession(session);
 			}
 			else {
-				if ( _devices.timedOut() ) {
+				if ( _devices.timedOut() && !session->handleTimeout() ) {
 					SEISCOMP_DEBUG("[reactor] socket timed out, remove session");
 					session->close();
 					removeSession(session);

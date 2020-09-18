@@ -63,6 +63,13 @@ class SC_SYSTEM_CORE_API Session : public Core::BaseObject,
 		//! Close the session and terminate the connection.
 		virtual void close();
 
+		/**
+		 * @brief Called if the underlying device times out.
+		 * The default implementation return false.
+		 * @return Whether to close the connection (false) or to keep it (true).
+		 */
+		virtual bool handleTimeout();
+
 		void setTag(bool t) { _tagged = t; }
 		bool isTagged() const { return _tagged; }
 
