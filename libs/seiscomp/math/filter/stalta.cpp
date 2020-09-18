@@ -17,7 +17,6 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#include<iostream>
 #include <seiscomp/core/exceptions.h>
 #include <seiscomp/math/filter/stalta.h>
 
@@ -156,7 +155,6 @@ STALTA2<TYPE>::setSamplingFrequency(double fsamp)
 	_numSTA = int(_lenSTA*_fsamp+0.5);
 	_numLTA = int(_lenLTA*_fsamp+0.5);
 	reset();
-std::cerr << "setSamplingFrequency fsamp=" << _fsamp << std::endl;
 }
 
 
@@ -193,7 +191,6 @@ STALTA2<TYPE>::apply(int ndata, TYPE *data)
 	double normLTA = 1./_numLTA;
 	double normSTA = 1./_numSTA;
 
-std::cerr << "apply fsamp=" << _fsamp << std::endl;
 	for (int i=0; i<ndata; i++, _sampleCount++) {
 
 		double current = FABS(data[i]);
