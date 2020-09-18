@@ -116,9 +116,12 @@ Record *RecordIIRFilter<T>::feed(const Record *rec) {
 	GenericRecord *out = new GenericRecord(*rec);
 	out->setData(tdata);
 
-	apply(out);
-
-	return out;
+	if ( apply(out) )
+		return out;
+	else {
+		delete out;
+		return nullptr;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -157,10 +160,17 @@ bool RecordIIRFilter<T>::apply(GenericRecord *rec) {
 
 	if ( !_lastEndTime.valid() ) {
 		// First call after construction or reset: initialize
-		_lastEndTime = rec->endTime();
 		_samplingFrequency = rec->samplingFrequency();
-		_filter->setSamplingFrequency(_samplingFrequency);
-		_filter->setStreamID(rec->networkCode(), rec->stationCode(), rec->locationCode(), rec->channelCode());
+		try {
+			_filter->setSamplingFrequency(_samplingFrequency);
+			_filter->setStreamID(rec->networkCode(), rec->stationCode(), rec->locationCode(), rec->channelCode());
+		}
+		catch ( std::exception &e ) {
+			SEISCOMP_WARNING("[%s] apply %f sps: %s",
+			                 rec->streamID().c_str(), _samplingFrequency,
+			                 e.what());
+			return false;
+		}
 	}
 
 	TypedArray<T> *data = (TypedArray<T>*)rec->data();
