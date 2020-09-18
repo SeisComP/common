@@ -46,7 +46,7 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
- "14.1.0"   0x0E0000
+ "14.1.0"   0x0E0100
    - Added Seiscomp::Wired::Session::handleTimeout
    - Declared Seiscomp::Geo::GeoFeature::area as deprecated
    - Added function Seiscomp::Geo::area which replaces
