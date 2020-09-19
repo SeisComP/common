@@ -169,10 +169,21 @@ namespace std {
 %template(ChainFilterF) Seiscomp::Math::Filtering::ChainFilter<float>;
 %template(ChainFilterD) Seiscomp::Math::Filtering::ChainFilter<double>;
 
+%ignore Seiscomp::Math::Filtering::IIR::Filter<float>::apply(int, float*);
+%ignore Seiscomp::Math::Filtering::IIR::Filter<double>::apply(int, double*);
+
 %include "seiscomp/math/filter/seismometers.h"
 
+%template(SeismometerFilterF) Seiscomp::Math::Filtering::IIR::Filter<float>;
+%template(SeismometerFilterD) Seiscomp::Math::Filtering::IIR::Filter<double>;
 %template(WWSSN_SPF) Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter<float>;
 %template(WWSSN_SPD) Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter<double>;
+%template(WWSSN_LPF) Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter<float>;
+%template(WWSSN_LPD) Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter<double>;
+%template(WoodAndersonFilterF) Seiscomp::Math::Filtering::IIR::WoodAndersonFilter<float>;
+%template(WoodAndersonFilterD) Seiscomp::Math::Filtering::IIR::WoodAndersonFilter<double>;
+%template(GenericSeismometerFilterF) Seiscomp::Math::Filtering::IIR::GenericSeismometer<float>;
+%template(GenericSeismometerFilterD) Seiscomp::Math::Filtering::IIR::GenericSeismometer<double>;
 
 %include "seiscomp/math/geo.h"
 
