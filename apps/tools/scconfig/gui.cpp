@@ -1549,7 +1549,7 @@ void Configurator::showEvent(QShowEvent *event) {
 		f.close();
 
 		if ( QMessageBox::question(this, tr("First start"),
-		                           tr("This seems to be the first start of the SC3 configurator.\n"
+		                           tr("This seems to be the first start of the SeisComP configurator.\n"
 		                              "Do you want to run the initial setup?\n"
 		                              "Hint: You can say no here and start the wizard at any "
 		                              "time with Ctrl+N."),
