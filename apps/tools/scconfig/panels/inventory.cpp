@@ -412,7 +412,7 @@ ImportDialog::ImportDialog(const QStringList &formats, QWidget *parent) : QDialo
 
 	setWhatsThis(tr(
 		"Import inventory data involves converting the imported format "
-		"to the native format SeisComP can handle (SC3 inventory XML). "
+		"to the native format SeisComP can handle (SeisComP inventory XML). "
 		"Furthermore synchronization is required for populating the "
 		"database with the imported inventory data. The last step is to "
 		"create binding for new stations."
