@@ -1431,7 +1431,6 @@ class InPlaceFilterF(seiscomp.core.BaseObject):
 
     def apply(self, *args):
         r"""
-        apply(InPlaceFilterF self, int n, float * inout)
         apply(InPlaceFilterF self, vectorf f)
         apply(InPlaceFilterF self, FloatArrayT arr)
         """
@@ -1485,7 +1484,6 @@ class InPlaceFilterD(seiscomp.core.BaseObject):
 
     def apply(self, *args):
         r"""
-        apply(InPlaceFilterD self, int n, double * inout)
         apply(InPlaceFilterD self, vectord f)
         apply(InPlaceFilterD self, DoubleArrayT arr)
         """
@@ -1533,10 +1531,6 @@ class AverageFilterF(InPlaceFilterF):
         r"""setParameters(AverageFilterF self, int n, double const * params) -> int"""
         return _math.AverageFilterF_setParameters(self, n, params)
 
-    def apply(self, n, inout):
-        r"""apply(AverageFilterF self, int n, float * inout)"""
-        return _math.AverageFilterF_apply(self, n, inout)
-
     def clone(self):
         r"""clone(AverageFilterF self) -> InPlaceFilterF"""
         return _math.AverageFilterF_clone(self)
@@ -1571,10 +1565,6 @@ class AverageFilterD(InPlaceFilterD):
         r"""setParameters(AverageFilterD self, int n, double const * params) -> int"""
         return _math.AverageFilterD_setParameters(self, n, params)
 
-    def apply(self, n, inout):
-        r"""apply(AverageFilterD self, int n, double * inout)"""
-        return _math.AverageFilterD_apply(self, n, inout)
-
     def clone(self):
         r"""clone(AverageFilterD self) -> InPlaceFilterD"""
         return _math.AverageFilterD_clone(self)
@@ -1597,21 +1587,9 @@ class STALTAFilterF(InPlaceFilterF):
         r"""__init__(STALTAFilterF self, double lenSTA=2, double lenLTA=50, double fsamp=1.) -> STALTAFilterF"""
         _math.STALTAFilterF_swiginit(self, _math.new_STALTAFilterF(lenSTA, lenLTA, fsamp))
 
-    def setSaveIntermediate(self, arg2):
-        r"""setSaveIntermediate(STALTAFilterF self, bool arg2)"""
-        return _math.STALTAFilterF_setSaveIntermediate(self, arg2)
-
-    def apply(self, ndata, data):
-        r"""apply(STALTAFilterF self, int ndata, float * data)"""
-        return _math.STALTAFilterF_apply(self, ndata, data)
-
     def reset(self):
         r"""reset(STALTAFilterF self)"""
         return _math.STALTAFilterF_reset(self)
-
-    def changed(self):
-        r"""changed(STALTAFilterF self) -> bool"""
-        return _math.STALTAFilterF_changed(self)
 
     def setSamplingFrequency(self, fsamp):
         r"""setSamplingFrequency(STALTAFilterF self, double fsamp)"""
@@ -1624,14 +1602,6 @@ class STALTAFilterF(InPlaceFilterF):
     def clone(self):
         r"""clone(STALTAFilterF self) -> InPlaceFilterF"""
         return _math.STALTAFilterF_clone(self)
-
-    def getSTA(self):
-        r"""getSTA(STALTAFilterF self) -> vectorf"""
-        return _math.STALTAFilterF_getSTA(self)
-
-    def getLTA(self):
-        r"""getLTA(STALTAFilterF self) -> vectorf"""
-        return _math.STALTAFilterF_getLTA(self)
     __swig_destroy__ = _math.delete_STALTAFilterF
 
 # Register STALTAFilterF in _math:
@@ -1647,21 +1617,9 @@ class STALTAFilterD(InPlaceFilterD):
         r"""__init__(STALTAFilterD self, double lenSTA=2, double lenLTA=50, double fsamp=1.) -> STALTAFilterD"""
         _math.STALTAFilterD_swiginit(self, _math.new_STALTAFilterD(lenSTA, lenLTA, fsamp))
 
-    def setSaveIntermediate(self, arg2):
-        r"""setSaveIntermediate(STALTAFilterD self, bool arg2)"""
-        return _math.STALTAFilterD_setSaveIntermediate(self, arg2)
-
-    def apply(self, ndata, data):
-        r"""apply(STALTAFilterD self, int ndata, double * data)"""
-        return _math.STALTAFilterD_apply(self, ndata, data)
-
     def reset(self):
         r"""reset(STALTAFilterD self)"""
         return _math.STALTAFilterD_reset(self)
-
-    def changed(self):
-        r"""changed(STALTAFilterD self) -> bool"""
-        return _math.STALTAFilterD_changed(self)
 
     def setSamplingFrequency(self, fsamp):
         r"""setSamplingFrequency(STALTAFilterD self, double fsamp)"""
@@ -1674,18 +1632,130 @@ class STALTAFilterD(InPlaceFilterD):
     def clone(self):
         r"""clone(STALTAFilterD self) -> InPlaceFilterD"""
         return _math.STALTAFilterD_clone(self)
-
-    def getSTA(self):
-        r"""getSTA(STALTAFilterD self) -> vectord"""
-        return _math.STALTAFilterD_getSTA(self)
-
-    def getLTA(self):
-        r"""getLTA(STALTAFilterD self) -> vectord"""
-        return _math.STALTAFilterD_getLTA(self)
     __swig_destroy__ = _math.delete_STALTAFilterD
 
 # Register STALTAFilterD in _math:
 _math.STALTAFilterD_swigregister(STALTAFilterD)
+
+class STALTA2FilterF(InPlaceFilterF):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::STALTA2< float > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, lenSTA=2, lenLTA=50, eventON=3., eventOFF=1., fsamp=1.):
+        r"""__init__(STALTA2FilterF self, double lenSTA=2, double lenLTA=50, double eventON=3., double eventOFF=1., double fsamp=1.) -> STALTA2FilterF"""
+        _math.STALTA2FilterF_swiginit(self, _math.new_STALTA2FilterF(lenSTA, lenLTA, eventON, eventOFF, fsamp))
+
+    def reset(self):
+        r"""reset(STALTA2FilterF self)"""
+        return _math.STALTA2FilterF_reset(self)
+
+    def setSamplingFrequency(self, fsamp):
+        r"""setSamplingFrequency(STALTA2FilterF self, double fsamp)"""
+        return _math.STALTA2FilterF_setSamplingFrequency(self, fsamp)
+
+    def setParameters(self, n, params):
+        r"""setParameters(STALTA2FilterF self, int n, double const * params) -> int"""
+        return _math.STALTA2FilterF_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(STALTA2FilterF self) -> InPlaceFilterF"""
+        return _math.STALTA2FilterF_clone(self)
+    __swig_destroy__ = _math.delete_STALTA2FilterF
+
+# Register STALTA2FilterF in _math:
+_math.STALTA2FilterF_swigregister(STALTA2FilterF)
+
+class STALTA2FilterD(InPlaceFilterD):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::STALTA2< double > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, lenSTA=2, lenLTA=50, eventON=3., eventOFF=1., fsamp=1.):
+        r"""__init__(STALTA2FilterD self, double lenSTA=2, double lenLTA=50, double eventON=3., double eventOFF=1., double fsamp=1.) -> STALTA2FilterD"""
+        _math.STALTA2FilterD_swiginit(self, _math.new_STALTA2FilterD(lenSTA, lenLTA, eventON, eventOFF, fsamp))
+
+    def reset(self):
+        r"""reset(STALTA2FilterD self)"""
+        return _math.STALTA2FilterD_reset(self)
+
+    def setSamplingFrequency(self, fsamp):
+        r"""setSamplingFrequency(STALTA2FilterD self, double fsamp)"""
+        return _math.STALTA2FilterD_setSamplingFrequency(self, fsamp)
+
+    def setParameters(self, n, params):
+        r"""setParameters(STALTA2FilterD self, int n, double const * params) -> int"""
+        return _math.STALTA2FilterD_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(STALTA2FilterD self) -> InPlaceFilterD"""
+        return _math.STALTA2FilterD_clone(self)
+    __swig_destroy__ = _math.delete_STALTA2FilterD
+
+# Register STALTA2FilterD in _math:
+_math.STALTA2FilterD_swigregister(STALTA2FilterD)
+
+class STALTAClassicFilterF(InPlaceFilterF):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::STALTA_Classic< float > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, lenSTA=2., lenLTA=50., fsamp=1.):
+        r"""__init__(STALTAClassicFilterF self, double lenSTA=2., double lenLTA=50., double fsamp=1.) -> STALTAClassicFilterF"""
+        _math.STALTAClassicFilterF_swiginit(self, _math.new_STALTAClassicFilterF(lenSTA, lenLTA, fsamp))
+
+    def reset(self):
+        r"""reset(STALTAClassicFilterF self)"""
+        return _math.STALTAClassicFilterF_reset(self)
+
+    def setSamplingFrequency(self, fsamp):
+        r"""setSamplingFrequency(STALTAClassicFilterF self, double fsamp)"""
+        return _math.STALTAClassicFilterF_setSamplingFrequency(self, fsamp)
+
+    def setParameters(self, n, params):
+        r"""setParameters(STALTAClassicFilterF self, int n, double const * params) -> int"""
+        return _math.STALTAClassicFilterF_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(STALTAClassicFilterF self) -> InPlaceFilterF"""
+        return _math.STALTAClassicFilterF_clone(self)
+    __swig_destroy__ = _math.delete_STALTAClassicFilterF
+
+# Register STALTAClassicFilterF in _math:
+_math.STALTAClassicFilterF_swigregister(STALTAClassicFilterF)
+
+class STALTAClassicFilterD(InPlaceFilterD):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::STALTA_Classic< double > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, lenSTA=2., lenLTA=50., fsamp=1.):
+        r"""__init__(STALTAClassicFilterD self, double lenSTA=2., double lenLTA=50., double fsamp=1.) -> STALTAClassicFilterD"""
+        _math.STALTAClassicFilterD_swiginit(self, _math.new_STALTAClassicFilterD(lenSTA, lenLTA, fsamp))
+
+    def reset(self):
+        r"""reset(STALTAClassicFilterD self)"""
+        return _math.STALTAClassicFilterD_reset(self)
+
+    def setSamplingFrequency(self, fsamp):
+        r"""setSamplingFrequency(STALTAClassicFilterD self, double fsamp)"""
+        return _math.STALTAClassicFilterD_setSamplingFrequency(self, fsamp)
+
+    def setParameters(self, n, params):
+        r"""setParameters(STALTAClassicFilterD self, int n, double const * params) -> int"""
+        return _math.STALTAClassicFilterD_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(STALTAClassicFilterD self) -> InPlaceFilterD"""
+        return _math.STALTAClassicFilterD_clone(self)
+    __swig_destroy__ = _math.delete_STALTAClassicFilterD
+
+# Register STALTAClassicFilterD in _math:
+_math.STALTAClassicFilterD_swigregister(STALTAClassicFilterD)
 
 class RunningMeanFilterF(InPlaceFilterF):
     r"""Proxy of C++ Seiscomp::Math::Filtering::RunningMean< float > class."""
@@ -1701,10 +1771,6 @@ class RunningMeanFilterF(InPlaceFilterF):
     def setLength(self, windowLength):
         r"""setLength(RunningMeanFilterF self, double windowLength)"""
         return _math.RunningMeanFilterF_setLength(self, windowLength)
-
-    def apply(self, n, inout):
-        r"""apply(RunningMeanFilterF self, int n, float * inout)"""
-        return _math.RunningMeanFilterF_apply(self, n, inout)
 
     def clone(self):
         r"""clone(RunningMeanFilterF self) -> InPlaceFilterF"""
@@ -1740,10 +1806,6 @@ class RunningMeanFilterD(InPlaceFilterD):
         r"""setLength(RunningMeanFilterD self, double windowLength)"""
         return _math.RunningMeanFilterD_setLength(self, windowLength)
 
-    def apply(self, n, inout):
-        r"""apply(RunningMeanFilterD self, int n, double * inout)"""
-        return _math.RunningMeanFilterD_apply(self, n, inout)
-
     def clone(self):
         r"""clone(RunningMeanFilterD self) -> InPlaceFilterD"""
         return _math.RunningMeanFilterD_clone(self)
@@ -1774,10 +1836,6 @@ class RunningMeanHighPassFilterF(RunningMeanFilterF):
         _math.RunningMeanHighPassFilterF_swiginit(self, _math.new_RunningMeanHighPassFilterF(windowLength, fsamp))
     __swig_destroy__ = _math.delete_RunningMeanHighPassFilterF
 
-    def apply(self, n, inout):
-        r"""apply(RunningMeanHighPassFilterF self, int n, float * inout)"""
-        return _math.RunningMeanHighPassFilterF_apply(self, n, inout)
-
     def clone(self):
         r"""clone(RunningMeanHighPassFilterF self) -> InPlaceFilterF"""
         return _math.RunningMeanHighPassFilterF_clone(self)
@@ -1795,10 +1853,6 @@ class RunningMeanHighPassFilterD(RunningMeanFilterD):
         r"""__init__(RunningMeanHighPassFilterD self, double windowLength=0, double fsamp=0.0) -> RunningMeanHighPassFilterD"""
         _math.RunningMeanHighPassFilterD_swiginit(self, _math.new_RunningMeanHighPassFilterD(windowLength, fsamp))
     __swig_destroy__ = _math.delete_RunningMeanHighPassFilterD
-
-    def apply(self, n, inout):
-        r"""apply(RunningMeanHighPassFilterD self, int n, double * inout)"""
-        return _math.RunningMeanHighPassFilterD_apply(self, n, inout)
 
     def clone(self):
         r"""clone(RunningMeanHighPassFilterD self) -> InPlaceFilterD"""
@@ -1821,10 +1875,6 @@ class InitialTaperFilterF(InPlaceFilterF):
     def setLength(self, taperLength, offset=0):
         r"""setLength(InitialTaperFilterF self, double taperLength, float offset=0)"""
         return _math.InitialTaperFilterF_setLength(self, taperLength, offset)
-
-    def apply(self, n, inout):
-        r"""apply(InitialTaperFilterF self, int n, float * inout)"""
-        return _math.InitialTaperFilterF_apply(self, n, inout)
 
     def clone(self):
         r"""clone(InitialTaperFilterF self) -> InPlaceFilterF"""
@@ -1859,10 +1909,6 @@ class InitialTaperFilterD(InPlaceFilterD):
     def setLength(self, taperLength, offset=0):
         r"""setLength(InitialTaperFilterD self, double taperLength, double offset=0)"""
         return _math.InitialTaperFilterD_setLength(self, taperLength, offset)
-
-    def apply(self, n, inout):
-        r"""apply(InitialTaperFilterD self, int n, double * inout)"""
-        return _math.InitialTaperFilterD_apply(self, n, inout)
 
     def clone(self):
         r"""clone(InitialTaperFilterD self) -> InPlaceFilterD"""
@@ -1943,10 +1989,6 @@ class BiquadCascadeF(InPlaceFilterF):
         r"""set(BiquadCascadeF self, Seiscomp::Math::Filtering::IIR::Biquads const & biquads)"""
         return _math.BiquadCascadeF_set(self, biquads)
 
-    def apply(self, n, inout):
-        r"""apply(BiquadCascadeF self, int n, float * inout)"""
-        return _math.BiquadCascadeF_apply(self, n, inout)
-
     def clone(self):
         r"""clone(BiquadCascadeF self) -> InPlaceFilterF"""
         return _math.BiquadCascadeF_clone(self)
@@ -1991,10 +2033,6 @@ class BiquadCascadeD(InPlaceFilterD):
     def set(self, biquads):
         r"""set(BiquadCascadeD self, Seiscomp::Math::Filtering::IIR::Biquads const & biquads)"""
         return _math.BiquadCascadeD_set(self, biquads)
-
-    def apply(self, n, inout):
-        r"""apply(BiquadCascadeD self, int n, double * inout)"""
-        return _math.BiquadCascadeD_apply(self, n, inout)
 
     def clone(self):
         r"""clone(BiquadCascadeD self) -> InPlaceFilterD"""
@@ -2303,10 +2341,6 @@ class ChainFilterF(InPlaceFilterF):
         r"""filterCount(ChainFilterF self) -> size_t"""
         return _math.ChainFilterF_filterCount(self)
 
-    def apply(self, n, inout):
-        r"""apply(ChainFilterF self, int n, float * inout)"""
-        return _math.ChainFilterF_apply(self, n, inout)
-
     def setStartTime(self, time):
         r"""setStartTime(ChainFilterF self, Time time)"""
         return _math.ChainFilterF_setStartTime(self, time)
@@ -2360,10 +2394,6 @@ class ChainFilterD(InPlaceFilterD):
     def filterCount(self):
         r"""filterCount(ChainFilterD self) -> size_t"""
         return _math.ChainFilterD_filterCount(self)
-
-    def apply(self, n, inout):
-        r"""apply(ChainFilterD self, int n, double * inout)"""
-        return _math.ChainFilterD_apply(self, n, inout)
 
     def setStartTime(self, time):
         r"""setStartTime(ChainFilterD self, Time time)"""
@@ -2467,7 +2497,67 @@ class Seismometer5sec(PolesAndZeros):
 # Register Seismometer5sec in _math:
 _math.Seismometer5sec_swigregister(Seismometer5sec)
 
-class WWSSN_SPF(object):
+class SeismometerFilterF(PolesAndZeros, InPlaceFilterF):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::Filter< float > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(SeismometerFilterF self) -> SeismometerFilterF
+        __init__(SeismometerFilterF self, vectorc poles, vectorc zeros, double norm) -> SeismometerFilterF
+        __init__(SeismometerFilterF self, SeismometerFilterF other) -> SeismometerFilterF
+        """
+        _math.SeismometerFilterF_swiginit(self, _math.new_SeismometerFilterF(*args))
+
+    def setSamplingFrequency(self, fsamp):
+        r"""setSamplingFrequency(SeismometerFilterF self, double fsamp)"""
+        return _math.SeismometerFilterF_setSamplingFrequency(self, fsamp)
+
+    def setParameters(self, n, params):
+        r"""setParameters(SeismometerFilterF self, int n, double const * params) -> int"""
+        return _math.SeismometerFilterF_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(SeismometerFilterF self) -> InPlaceFilterF"""
+        return _math.SeismometerFilterF_clone(self)
+    __swig_destroy__ = _math.delete_SeismometerFilterF
+
+# Register SeismometerFilterF in _math:
+_math.SeismometerFilterF_swigregister(SeismometerFilterF)
+
+class SeismometerFilterD(PolesAndZeros, InPlaceFilterD):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::Filter< double > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(SeismometerFilterD self) -> SeismometerFilterD
+        __init__(SeismometerFilterD self, vectorc poles, vectorc zeros, double norm) -> SeismometerFilterD
+        __init__(SeismometerFilterD self, SeismometerFilterD other) -> SeismometerFilterD
+        """
+        _math.SeismometerFilterD_swiginit(self, _math.new_SeismometerFilterD(*args))
+
+    def setSamplingFrequency(self, fsamp):
+        r"""setSamplingFrequency(SeismometerFilterD self, double fsamp)"""
+        return _math.SeismometerFilterD_setSamplingFrequency(self, fsamp)
+
+    def setParameters(self, n, params):
+        r"""setParameters(SeismometerFilterD self, int n, double const * params) -> int"""
+        return _math.SeismometerFilterD_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(SeismometerFilterD self) -> InPlaceFilterD"""
+        return _math.SeismometerFilterD_clone(self)
+    __swig_destroy__ = _math.delete_SeismometerFilterD
+
+# Register SeismometerFilterD in _math:
+_math.SeismometerFilterD_swigregister(SeismometerFilterD)
+
+class WWSSN_SPF(SeismometerFilterF):
     r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< float > class."""
 
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
@@ -2496,7 +2586,7 @@ class WWSSN_SPF(object):
 # Register WWSSN_SPF in _math:
 _math.WWSSN_SPF_swigregister(WWSSN_SPF)
 
-class WWSSN_SPD(object):
+class WWSSN_SPD(SeismometerFilterD):
     r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< double > class."""
 
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
@@ -2524,6 +2614,180 @@ class WWSSN_SPD(object):
 
 # Register WWSSN_SPD in _math:
 _math.WWSSN_SPD_swigregister(WWSSN_SPD)
+
+class WWSSN_LPF(SeismometerFilterF):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(WWSSN_LPF self, Seiscomp::Math::GroundMotion input=Velocity) -> WWSSN_LPF
+        __init__(WWSSN_LPF self, WWSSN_LPF other) -> WWSSN_LPF
+        """
+        _math.WWSSN_LPF_swiginit(self, _math.new_WWSSN_LPF(*args))
+
+    def setParameters(self, n, params):
+        r"""setParameters(WWSSN_LPF self, int n, double const * params) -> int"""
+        return _math.WWSSN_LPF_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(WWSSN_LPF self) -> InPlaceFilterF"""
+        return _math.WWSSN_LPF_clone(self)
+
+    def setInput(self, input):
+        r"""setInput(WWSSN_LPF self, Seiscomp::Math::GroundMotion input)"""
+        return _math.WWSSN_LPF_setInput(self, input)
+    __swig_destroy__ = _math.delete_WWSSN_LPF
+
+# Register WWSSN_LPF in _math:
+_math.WWSSN_LPF_swigregister(WWSSN_LPF)
+
+class WWSSN_LPD(SeismometerFilterD):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(WWSSN_LPD self, Seiscomp::Math::GroundMotion input=Velocity) -> WWSSN_LPD
+        __init__(WWSSN_LPD self, WWSSN_LPD other) -> WWSSN_LPD
+        """
+        _math.WWSSN_LPD_swiginit(self, _math.new_WWSSN_LPD(*args))
+
+    def setParameters(self, n, params):
+        r"""setParameters(WWSSN_LPD self, int n, double const * params) -> int"""
+        return _math.WWSSN_LPD_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(WWSSN_LPD self) -> InPlaceFilterD"""
+        return _math.WWSSN_LPD_clone(self)
+
+    def setInput(self, input):
+        r"""setInput(WWSSN_LPD self, Seiscomp::Math::GroundMotion input)"""
+        return _math.WWSSN_LPD_setInput(self, input)
+    __swig_destroy__ = _math.delete_WWSSN_LPD
+
+# Register WWSSN_LPD in _math:
+_math.WWSSN_LPD_swigregister(WWSSN_LPD)
+
+class WoodAndersonFilterF(SeismometerFilterF):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(WoodAndersonFilterF self, Seiscomp::Math::GroundMotion input=Velocity, Seiscomp::Math::SeismometerResponse::WoodAnderson::Config config=Seiscomp::Math::SeismometerResponse::WoodAnderson::Config()) -> WoodAndersonFilterF
+        __init__(WoodAndersonFilterF self, WoodAndersonFilterF other) -> WoodAndersonFilterF
+        """
+        _math.WoodAndersonFilterF_swiginit(self, _math.new_WoodAndersonFilterF(*args))
+
+    def setParameters(self, n, params):
+        r"""setParameters(WoodAndersonFilterF self, int n, double const * params) -> int"""
+        return _math.WoodAndersonFilterF_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(WoodAndersonFilterF self) -> InPlaceFilterF"""
+        return _math.WoodAndersonFilterF_clone(self)
+
+    def setInput(self, *args):
+        r"""setInput(WoodAndersonFilterF self, Seiscomp::Math::GroundMotion input, Seiscomp::Math::SeismometerResponse::WoodAnderson::Config config=Seiscomp::Math::SeismometerResponse::WoodAnderson::Config())"""
+        return _math.WoodAndersonFilterF_setInput(self, *args)
+    __swig_destroy__ = _math.delete_WoodAndersonFilterF
+
+# Register WoodAndersonFilterF in _math:
+_math.WoodAndersonFilterF_swigregister(WoodAndersonFilterF)
+
+class WoodAndersonFilterD(SeismometerFilterD):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(WoodAndersonFilterD self, Seiscomp::Math::GroundMotion input=Velocity, Seiscomp::Math::SeismometerResponse::WoodAnderson::Config config=Seiscomp::Math::SeismometerResponse::WoodAnderson::Config()) -> WoodAndersonFilterD
+        __init__(WoodAndersonFilterD self, WoodAndersonFilterD other) -> WoodAndersonFilterD
+        """
+        _math.WoodAndersonFilterD_swiginit(self, _math.new_WoodAndersonFilterD(*args))
+
+    def setParameters(self, n, params):
+        r"""setParameters(WoodAndersonFilterD self, int n, double const * params) -> int"""
+        return _math.WoodAndersonFilterD_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(WoodAndersonFilterD self) -> InPlaceFilterD"""
+        return _math.WoodAndersonFilterD_clone(self)
+
+    def setInput(self, *args):
+        r"""setInput(WoodAndersonFilterD self, Seiscomp::Math::GroundMotion input, Seiscomp::Math::SeismometerResponse::WoodAnderson::Config config=Seiscomp::Math::SeismometerResponse::WoodAnderson::Config())"""
+        return _math.WoodAndersonFilterD_setInput(self, *args)
+    __swig_destroy__ = _math.delete_WoodAndersonFilterD
+
+# Register WoodAndersonFilterD in _math:
+_math.WoodAndersonFilterD_swigregister(WoodAndersonFilterD)
+
+class GenericSeismometerFilterF(SeismometerFilterF):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(GenericSeismometerFilterF self, double cornerPeriod=1., Seiscomp::Math::GroundMotion input=Velocity) -> GenericSeismometerFilterF
+        __init__(GenericSeismometerFilterF self, GenericSeismometerFilterF other) -> GenericSeismometerFilterF
+        """
+        _math.GenericSeismometerFilterF_swiginit(self, _math.new_GenericSeismometerFilterF(*args))
+
+    def setParameters(self, n, params):
+        r"""setParameters(GenericSeismometerFilterF self, int n, double const * params) -> int"""
+        return _math.GenericSeismometerFilterF_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(GenericSeismometerFilterF self) -> InPlaceFilterF"""
+        return _math.GenericSeismometerFilterF_clone(self)
+
+    def setInput(self, input):
+        r"""setInput(GenericSeismometerFilterF self, Seiscomp::Math::GroundMotion input)"""
+        return _math.GenericSeismometerFilterF_setInput(self, input)
+    __swig_destroy__ = _math.delete_GenericSeismometerFilterF
+
+# Register GenericSeismometerFilterF in _math:
+_math.GenericSeismometerFilterF_swigregister(GenericSeismometerFilterF)
+
+class GenericSeismometerFilterD(SeismometerFilterD):
+    r"""Proxy of C++ Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(GenericSeismometerFilterD self, double cornerPeriod=1., Seiscomp::Math::GroundMotion input=Velocity) -> GenericSeismometerFilterD
+        __init__(GenericSeismometerFilterD self, GenericSeismometerFilterD other) -> GenericSeismometerFilterD
+        """
+        _math.GenericSeismometerFilterD_swiginit(self, _math.new_GenericSeismometerFilterD(*args))
+
+    def setParameters(self, n, params):
+        r"""setParameters(GenericSeismometerFilterD self, int n, double const * params) -> int"""
+        return _math.GenericSeismometerFilterD_setParameters(self, n, params)
+
+    def clone(self):
+        r"""clone(GenericSeismometerFilterD self) -> InPlaceFilterD"""
+        return _math.GenericSeismometerFilterD_clone(self)
+
+    def setInput(self, input):
+        r"""setInput(GenericSeismometerFilterD self, Seiscomp::Math::GroundMotion input)"""
+        return _math.GenericSeismometerFilterD_setInput(self, input)
+    __swig_destroy__ = _math.delete_GenericSeismometerFilterD
+
+# Register GenericSeismometerFilterD in _math:
+_math.GenericSeismometerFilterD_swigregister(GenericSeismometerFilterD)
 
 
 def delazi(lat1, lon1, lat2, lon2):

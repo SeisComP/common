@@ -2753,93 +2753,104 @@ SWIGINTERN PyObject *SWIG_PyStaticMethod_New(PyObject *SWIGUNUSEDPARM(self), PyO
 #define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t swig_types[90]
 #define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t swig_types[91]
 #define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t swig_types[92]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t swig_types[93]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t swig_types[94]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t swig_types[95]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t swig_types[96]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_double_t swig_types[97]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_float_t swig_types[98]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t swig_types[99]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t swig_types[100]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_double_t swig_types[101]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_float_t swig_types[102]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_double_t swig_types[103]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_float_t swig_types[104]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__CityT_double_t swig_types[105]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__CityT_float_t swig_types[106]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__CoordT_double_t swig_types[107]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__CoordT_float_t swig_types[108]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__NamedCoordT_double_t swig_types[109]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__NamedCoordT_float_t swig_types[110]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__PositionInterpolator swig_types[111]
-#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__PolesAndZeros swig_types[112]
-#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__ResponseList swig_types[113]
-#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__TransferFunction swig_types[114]
-#define SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__FAP swig_types[115]
-#define SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros swig_types[116]
-#define SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__Seismometer5sec swig_types[117]
-#define SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__WoodAnderson swig_types[118]
-#define SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__WoodAnderson__Config swig_types[119]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_char_t swig_types[120]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_double_t swig_types[121]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_float_t swig_types[122]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_int_t swig_types[123]
-#define SWIGTYPE_p_Seiscomp__Record swig_types[124]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t swig_types[125]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_char_t swig_types[126]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_double_t swig_types[127]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_float_t swig_types[128]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_int_t swig_types[129]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_double_t_t swig_types[130]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_float_t_t swig_types[131]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__string_t swig_types[132]
-#define SWIGTYPE_p_Type swig_types[133]
-#define SWIGTYPE_p_ValueType swig_types[134]
-#define SWIGTYPE_p_allocator_type swig_types[135]
-#define SWIGTYPE_p_boost__any swig_types[136]
-#define SWIGTYPE_p_char swig_types[137]
-#define SWIGTYPE_p_const_iterator swig_types[138]
-#define SWIGTYPE_p_difference_type swig_types[139]
-#define SWIGTYPE_p_double swig_types[140]
-#define SWIGTYPE_p_float swig_types[141]
-#define SWIGTYPE_p_int swig_types[142]
-#define SWIGTYPE_p_iterator swig_types[143]
-#define SWIGTYPE_p_long_long swig_types[144]
-#define SWIGTYPE_p_p_PyObject swig_types[145]
-#define SWIGTYPE_p_short swig_types[146]
-#define SWIGTYPE_p_signed_char swig_types[147]
-#define SWIGTYPE_p_size_type swig_types[148]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__CityT_double_t_t swig_types[149]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__CityT_float_t_t swig_types[150]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__NamedCoordT_double_t_t swig_types[151]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__NamedCoordT_float_t_t swig_types[152]
-#define SWIGTYPE_p_std__allocatorT_double_t swig_types[153]
-#define SWIGTYPE_p_std__allocatorT_float_t swig_types[154]
-#define SWIGTYPE_p_std__allocatorT_std__complexT_double_t_t swig_types[155]
-#define SWIGTYPE_p_std__complexT_double_t swig_types[156]
-#define SWIGTYPE_p_std__exception swig_types[157]
-#define SWIGTYPE_p_std__invalid_argument swig_types[158]
-#define SWIGTYPE_p_std__ostream swig_types[159]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[160]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[161]
-#define SWIGTYPE_p_std__string swig_types[162]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[163]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityT_double_t_std__allocatorT_Seiscomp__Math__Geo__CityT_double_t_t_t swig_types[164]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityT_float_t_std__allocatorT_Seiscomp__Math__Geo__CityT_float_t_t_t swig_types[165]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordT_double_t_std__allocatorT_Seiscomp__Math__Geo__NamedCoordT_double_t_t_t swig_types[166]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordT_float_t_std__allocatorT_Seiscomp__Math__Geo__NamedCoordT_float_t_t_t swig_types[167]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[168]
-#define SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t swig_types[169]
-#define SWIGTYPE_p_std__vectorT_float_std__allocatorT_float_t_t swig_types[170]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t swig_types[171]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[172]
-#define SWIGTYPE_p_unsigned_char swig_types[173]
-#define SWIGTYPE_p_unsigned_int swig_types[174]
-#define SWIGTYPE_p_unsigned_long_long swig_types[175]
-#define SWIGTYPE_p_unsigned_short swig_types[176]
-#define SWIGTYPE_p_value_type swig_types[177]
-static swig_type_info *swig_types[179];
-static swig_module_info swig_module = {swig_types, 178, 0, 0, 0, 0};
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t swig_types[93]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t swig_types[94]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t swig_types[95]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t swig_types[96]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t swig_types[97]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t swig_types[98]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t swig_types[99]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t swig_types[100]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t swig_types[101]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t swig_types[102]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t swig_types[103]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t swig_types[104]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_double_t swig_types[105]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_float_t swig_types[106]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t swig_types[107]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t swig_types[108]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_double_t swig_types[109]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_float_t swig_types[110]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t swig_types[111]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t swig_types[112]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_double_t swig_types[113]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_float_t swig_types[114]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t swig_types[115]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t swig_types[116]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__CityT_double_t swig_types[117]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__CityT_float_t swig_types[118]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__CoordT_double_t swig_types[119]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__CoordT_float_t swig_types[120]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__NamedCoordT_double_t swig_types[121]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__NamedCoordT_float_t swig_types[122]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__PositionInterpolator swig_types[123]
+#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__PolesAndZeros swig_types[124]
+#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__ResponseList swig_types[125]
+#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__TransferFunction swig_types[126]
+#define SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__FAP swig_types[127]
+#define SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros swig_types[128]
+#define SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__Seismometer5sec swig_types[129]
+#define SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__WoodAnderson swig_types[130]
+#define SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__WoodAnderson__Config swig_types[131]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_char_t swig_types[132]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_double_t swig_types[133]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_float_t swig_types[134]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_int_t swig_types[135]
+#define SWIGTYPE_p_Seiscomp__Record swig_types[136]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t swig_types[137]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_char_t swig_types[138]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_double_t swig_types[139]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_float_t swig_types[140]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_int_t swig_types[141]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_double_t_t swig_types[142]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_float_t_t swig_types[143]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__string_t swig_types[144]
+#define SWIGTYPE_p_Type swig_types[145]
+#define SWIGTYPE_p_ValueType swig_types[146]
+#define SWIGTYPE_p_allocator_type swig_types[147]
+#define SWIGTYPE_p_boost__any swig_types[148]
+#define SWIGTYPE_p_char swig_types[149]
+#define SWIGTYPE_p_const_iterator swig_types[150]
+#define SWIGTYPE_p_difference_type swig_types[151]
+#define SWIGTYPE_p_double swig_types[152]
+#define SWIGTYPE_p_int swig_types[153]
+#define SWIGTYPE_p_iterator swig_types[154]
+#define SWIGTYPE_p_long_long swig_types[155]
+#define SWIGTYPE_p_p_PyObject swig_types[156]
+#define SWIGTYPE_p_short swig_types[157]
+#define SWIGTYPE_p_signed_char swig_types[158]
+#define SWIGTYPE_p_size_type swig_types[159]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__CityT_double_t_t swig_types[160]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__CityT_float_t_t swig_types[161]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__NamedCoordT_double_t_t swig_types[162]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__NamedCoordT_float_t_t swig_types[163]
+#define SWIGTYPE_p_std__allocatorT_double_t swig_types[164]
+#define SWIGTYPE_p_std__allocatorT_float_t swig_types[165]
+#define SWIGTYPE_p_std__allocatorT_std__complexT_double_t_t swig_types[166]
+#define SWIGTYPE_p_std__complexT_double_t swig_types[167]
+#define SWIGTYPE_p_std__exception swig_types[168]
+#define SWIGTYPE_p_std__invalid_argument swig_types[169]
+#define SWIGTYPE_p_std__ostream swig_types[170]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[171]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[172]
+#define SWIGTYPE_p_std__string swig_types[173]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[174]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityT_double_t_std__allocatorT_Seiscomp__Math__Geo__CityT_double_t_t_t swig_types[175]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityT_float_t_std__allocatorT_Seiscomp__Math__Geo__CityT_float_t_t_t swig_types[176]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordT_double_t_std__allocatorT_Seiscomp__Math__Geo__NamedCoordT_double_t_t_t swig_types[177]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordT_float_t_std__allocatorT_Seiscomp__Math__Geo__NamedCoordT_float_t_t_t swig_types[178]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[179]
+#define SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t swig_types[180]
+#define SWIGTYPE_p_std__vectorT_float_std__allocatorT_float_t_t swig_types[181]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t swig_types[182]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[183]
+#define SWIGTYPE_p_unsigned_char swig_types[184]
+#define SWIGTYPE_p_unsigned_int swig_types[185]
+#define SWIGTYPE_p_unsigned_long_long swig_types[186]
+#define SWIGTYPE_p_unsigned_short swig_types[187]
+#define SWIGTYPE_p_value_type swig_types[188]
+static swig_type_info *swig_types[190];
+static swig_module_info swig_module = {swig_types, 189, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -5697,20 +5708,6 @@ SWIGINTERNINLINE PyObject*
   SWIG_From_int  (int value)
 {
   return PyInt_FromLong((long) value);
-}
-
-
-SWIGINTERN int
-SWIG_AsVal_bool (PyObject *obj, bool *val)
-{
-  int r;
-  if (!PyBool_Check(obj))
-    return SWIG_ERROR;
-  r = PyObject_IsTrue(obj);
-  if (r == -1)
-    return SWIG_ERROR;
-  if (val) *val = r ? true : false;
-  return SWIG_OK;
 }
 
 
@@ -24677,55 +24674,6 @@ fail:
 SWIGINTERN PyObject *_wrap_InPlaceFilterF_apply__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::InPlaceFilter< float > *arg1 = (Seiscomp::Math::Filtering::InPlaceFilter< float > *) 0 ;
-  int arg2 ;
-  float *arg3 = (float *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  
-  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "InPlaceFilterF_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::InPlaceFilter< float > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::InPlaceFilter< float > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "InPlaceFilterF_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_float, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "InPlaceFilterF_apply" "', argument " "3"" of type '" "float *""'"); 
-  }
-  arg3 = reinterpret_cast< float * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_InPlaceFilterF_apply__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::InPlaceFilter< float > *arg1 = (Seiscomp::Math::Filtering::InPlaceFilter< float > *) 0 ;
   std::vector< float,std::allocator< float > > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
@@ -24767,7 +24715,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_InPlaceFilterF_apply__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_InPlaceFilterF_apply__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::InPlaceFilter< float > *arg1 = (Seiscomp::Math::Filtering::InPlaceFilter< float > *) 0 ;
   Seiscomp::TypedArray< float > *arg2 = 0 ;
@@ -24813,11 +24761,11 @@ fail:
 
 SWIGINTERN PyObject *_wrap_InPlaceFilterF_apply(PyObject *self, PyObject *args) {
   Py_ssize_t argc;
-  PyObject *argv[4] = {
+  PyObject *argv[3] = {
     0
   };
   
-  if (!(argc = SWIG_Python_UnpackTuple(args, "InPlaceFilterF_apply", 0, 3, argv))) SWIG_fail;
+  if (!(argc = SWIG_Python_UnpackTuple(args, "InPlaceFilterF_apply", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
     int _v;
@@ -24829,7 +24777,7 @@ SWIGINTERN PyObject *_wrap_InPlaceFilterF_apply(PyObject *self, PyObject *args) 
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_float_std__allocatorT_float_t_t, SWIG_POINTER_NO_NULL);
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_InPlaceFilterF_apply__SWIG_1(self, argc, argv);
+        return _wrap_InPlaceFilterF_apply__SWIG_0(self, argc, argv);
       }
     }
   }
@@ -24843,27 +24791,7 @@ SWIGINTERN PyObject *_wrap_InPlaceFilterF_apply(PyObject *self, PyObject *args) 
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__TypedArrayT_float_t, SWIG_POINTER_NO_NULL);
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_InPlaceFilterF_apply__SWIG_2(self, argc, argv);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        int res = SWIG_AsVal_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_float, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          return _wrap_InPlaceFilterF_apply__SWIG_0(self, argc, argv);
-        }
+        return _wrap_InPlaceFilterF_apply__SWIG_1(self, argc, argv);
       }
     }
   }
@@ -24871,7 +24799,6 @@ SWIGINTERN PyObject *_wrap_InPlaceFilterF_apply(PyObject *self, PyObject *args) 
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'InPlaceFilterF_apply'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::Math::Filtering::InPlaceFilter< float >::apply(int,float *)\n"
     "    Seiscomp::Math::Filtering::InPlaceFilter< float >::apply(std::vector< float,std::allocator< float > > &)\n"
     "    Seiscomp::Math::Filtering::InPlaceFilter< float >::apply(Seiscomp::TypedArray< float > &)\n");
   return 0;
@@ -25071,8 +24998,9 @@ SWIGINTERN PyObject *_wrap_InPlaceFilterF_Create__SWIG_0(PyObject *SWIGUNUSEDPAR
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0 |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, SWIG_POINTER_OWN |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1;
+  if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
   if (SWIG_IsNewObj(res1)) delete arg1;
@@ -25112,8 +25040,9 @@ SWIGINTERN PyObject *_wrap_InPlaceFilterF_Create__SWIG_1(PyObject *SWIGUNUSEDPAR
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0 |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, SWIG_POINTER_OWN |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1;
+  if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
   if (SWIG_IsNewObj(res1)) delete arg1;
@@ -25436,55 +25365,6 @@ fail:
 SWIGINTERN PyObject *_wrap_InPlaceFilterD_apply__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::InPlaceFilter< double > *arg1 = (Seiscomp::Math::Filtering::InPlaceFilter< double > *) 0 ;
-  int arg2 ;
-  double *arg3 = (double *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  
-  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "InPlaceFilterD_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::InPlaceFilter< double > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::InPlaceFilter< double > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "InPlaceFilterD_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "InPlaceFilterD_apply" "', argument " "3"" of type '" "double *""'"); 
-  }
-  arg3 = reinterpret_cast< double * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_InPlaceFilterD_apply__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::InPlaceFilter< double > *arg1 = (Seiscomp::Math::Filtering::InPlaceFilter< double > *) 0 ;
   std::vector< double,std::allocator< double > > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
@@ -25526,7 +25406,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_InPlaceFilterD_apply__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_InPlaceFilterD_apply__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::InPlaceFilter< double > *arg1 = (Seiscomp::Math::Filtering::InPlaceFilter< double > *) 0 ;
   Seiscomp::TypedArray< double > *arg2 = 0 ;
@@ -25572,11 +25452,11 @@ fail:
 
 SWIGINTERN PyObject *_wrap_InPlaceFilterD_apply(PyObject *self, PyObject *args) {
   Py_ssize_t argc;
-  PyObject *argv[4] = {
+  PyObject *argv[3] = {
     0
   };
   
-  if (!(argc = SWIG_Python_UnpackTuple(args, "InPlaceFilterD_apply", 0, 3, argv))) SWIG_fail;
+  if (!(argc = SWIG_Python_UnpackTuple(args, "InPlaceFilterD_apply", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 2) {
     int _v;
@@ -25588,7 +25468,7 @@ SWIGINTERN PyObject *_wrap_InPlaceFilterD_apply(PyObject *self, PyObject *args) 
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, SWIG_POINTER_NO_NULL);
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_InPlaceFilterD_apply__SWIG_1(self, argc, argv);
+        return _wrap_InPlaceFilterD_apply__SWIG_0(self, argc, argv);
       }
     }
   }
@@ -25602,27 +25482,7 @@ SWIGINTERN PyObject *_wrap_InPlaceFilterD_apply(PyObject *self, PyObject *args) 
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__TypedArrayT_double_t, SWIG_POINTER_NO_NULL);
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_InPlaceFilterD_apply__SWIG_2(self, argc, argv);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        int res = SWIG_AsVal_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_double, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          return _wrap_InPlaceFilterD_apply__SWIG_0(self, argc, argv);
-        }
+        return _wrap_InPlaceFilterD_apply__SWIG_1(self, argc, argv);
       }
     }
   }
@@ -25630,7 +25490,6 @@ SWIGINTERN PyObject *_wrap_InPlaceFilterD_apply(PyObject *self, PyObject *args) 
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'InPlaceFilterD_apply'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::Math::Filtering::InPlaceFilter< double >::apply(int,double *)\n"
     "    Seiscomp::Math::Filtering::InPlaceFilter< double >::apply(std::vector< double,std::allocator< double > > &)\n"
     "    Seiscomp::Math::Filtering::InPlaceFilter< double >::apply(Seiscomp::TypedArray< double > &)\n");
   return 0;
@@ -25830,8 +25689,9 @@ SWIGINTERN PyObject *_wrap_InPlaceFilterD_Create__SWIG_0(PyObject *SWIGUNUSEDPAR
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0 |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, SWIG_POINTER_OWN |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1;
+  if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
   if (SWIG_IsNewObj(res1)) delete arg1;
@@ -25871,8 +25731,9 @@ SWIGINTERN PyObject *_wrap_InPlaceFilterD_Create__SWIG_1(PyObject *SWIGUNUSEDPAR
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0 |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, SWIG_POINTER_OWN |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1;
+  if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
   if (SWIG_IsNewObj(res1)) delete arg1;
@@ -26207,56 +26068,6 @@ SWIGINTERN PyObject *_wrap_AverageFilterF_setParameters(PyObject *SWIGUNUSEDPARM
     }
   }
   resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_AverageFilterF_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::Average< float > *arg1 = (Seiscomp::Math::Filtering::Average< float > *) 0 ;
-  int arg2 ;
-  float *arg3 = (float *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "AverageFilterF_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__AverageT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "AverageFilterF_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::Average< float > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::Average< float > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "AverageFilterF_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_float, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "AverageFilterF_apply" "', argument " "3"" of type '" "float *""'"); 
-  }
-  arg3 = reinterpret_cast< float * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
@@ -26669,56 +26480,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_AverageFilterD_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::Average< double > *arg1 = (Seiscomp::Math::Filtering::Average< double > *) 0 ;
-  int arg2 ;
-  double *arg3 = (double *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "AverageFilterD_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__AverageT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "AverageFilterD_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::Average< double > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::Average< double > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "AverageFilterD_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "AverageFilterD_apply" "', argument " "3"" of type '" "double *""'"); 
-  }
-  arg3 = reinterpret_cast< double * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_AverageFilterD_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::Average< double > *arg1 = (Seiscomp::Math::Filtering::Average< double > *) 0 ;
@@ -27064,98 +26825,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_STALTAFilterF_setSaveIntermediate(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::STALTA< float > *arg1 = (Seiscomp::Math::Filtering::STALTA< float > *) 0 ;
-  bool arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  bool val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "STALTAFilterF_setSaveIntermediate", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAFilterF_setSaveIntermediate" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA< float > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA< float > * >(argp1);
-  ecode2 = SWIG_AsVal_bool(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "STALTAFilterF_setSaveIntermediate" "', argument " "2"" of type '" "bool""'");
-  } 
-  arg2 = static_cast< bool >(val2);
-  {
-    try {
-      (arg1)->setSaveIntermediate(arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_STALTAFilterF_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::STALTA< float > *arg1 = (Seiscomp::Math::Filtering::STALTA< float > *) 0 ;
-  int arg2 ;
-  float *arg3 = (float *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "STALTAFilterF_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAFilterF_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA< float > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA< float > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "STALTAFilterF_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_float, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "STALTAFilterF_apply" "', argument " "3"" of type '" "float *""'"); 
-  }
-  arg3 = reinterpret_cast< float * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_STALTAFilterF_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::STALTA< float > *arg1 = (Seiscomp::Math::Filtering::STALTA< float > *) 0 ;
@@ -27185,42 +26854,6 @@ SWIGINTERN PyObject *_wrap_STALTAFilterF_reset(PyObject *SWIGUNUSEDPARM(self), P
     }
   }
   resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_STALTAFilterF_changed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::STALTA< float > *arg1 = (Seiscomp::Math::Filtering::STALTA< float > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  bool result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAFilterF_changed" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA< float > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA< float > * >(argp1);
-  {
-    try {
-      result = (bool)(arg1)->changed();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
   return resultobj;
 fail:
   return NULL;
@@ -27351,78 +26984,6 @@ SWIGINTERN PyObject *_wrap_STALTAFilterF_clone(PyObject *SWIGUNUSEDPARM(self), P
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, SWIG_POINTER_OWN |  0 );
   if (result) result->incrementReferenceCount();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_STALTAFilterF_getSTA(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::STALTA< float > *arg1 = (Seiscomp::Math::Filtering::STALTA< float > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  std::vector< float,std::allocator< float > > *result = 0 ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAFilterF_getSTA" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA< float > const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA< float > * >(argp1);
-  {
-    try {
-      result = (std::vector< float,std::allocator< float > > *) &((Seiscomp::Math::Filtering::STALTA< float > const *)arg1)->getSTA();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = swig::from(static_cast< std::vector< float,std::allocator< float > > >(*result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_STALTAFilterF_getLTA(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::STALTA< float > *arg1 = (Seiscomp::Math::Filtering::STALTA< float > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  std::vector< float,std::allocator< float > > *result = 0 ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAFilterF_getLTA" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA< float > const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA< float > * >(argp1);
-  {
-    try {
-      result = (std::vector< float,std::allocator< float > > *) &((Seiscomp::Math::Filtering::STALTA< float > const *)arg1)->getLTA();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = swig::from(static_cast< std::vector< float,std::allocator< float > > >(*result));
   return resultobj;
 fail:
   return NULL;
@@ -27702,98 +27263,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_STALTAFilterD_setSaveIntermediate(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::STALTA< double > *arg1 = (Seiscomp::Math::Filtering::STALTA< double > *) 0 ;
-  bool arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  bool val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "STALTAFilterD_setSaveIntermediate", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAFilterD_setSaveIntermediate" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA< double > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA< double > * >(argp1);
-  ecode2 = SWIG_AsVal_bool(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "STALTAFilterD_setSaveIntermediate" "', argument " "2"" of type '" "bool""'");
-  } 
-  arg2 = static_cast< bool >(val2);
-  {
-    try {
-      (arg1)->setSaveIntermediate(arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_STALTAFilterD_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::STALTA< double > *arg1 = (Seiscomp::Math::Filtering::STALTA< double > *) 0 ;
-  int arg2 ;
-  double *arg3 = (double *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "STALTAFilterD_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAFilterD_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA< double > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA< double > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "STALTAFilterD_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "STALTAFilterD_apply" "', argument " "3"" of type '" "double *""'"); 
-  }
-  arg3 = reinterpret_cast< double * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_STALTAFilterD_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::STALTA< double > *arg1 = (Seiscomp::Math::Filtering::STALTA< double > *) 0 ;
@@ -27823,42 +27292,6 @@ SWIGINTERN PyObject *_wrap_STALTAFilterD_reset(PyObject *SWIGUNUSEDPARM(self), P
     }
   }
   resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_STALTAFilterD_changed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::STALTA< double > *arg1 = (Seiscomp::Math::Filtering::STALTA< double > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  bool result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAFilterD_changed" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA< double > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA< double > * >(argp1);
-  {
-    try {
-      result = (bool)(arg1)->changed();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
   return resultobj;
 fail:
   return NULL;
@@ -27995,78 +27428,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_STALTAFilterD_getSTA(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::STALTA< double > *arg1 = (Seiscomp::Math::Filtering::STALTA< double > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  std::vector< double,std::allocator< double > > *result = 0 ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAFilterD_getSTA" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA< double > const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA< double > * >(argp1);
-  {
-    try {
-      result = (std::vector< double,std::allocator< double > > *) &((Seiscomp::Math::Filtering::STALTA< double > const *)arg1)->getSTA();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(*result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_STALTAFilterD_getLTA(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::STALTA< double > *arg1 = (Seiscomp::Math::Filtering::STALTA< double > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  std::vector< double,std::allocator< double > > *result = 0 ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAFilterD_getLTA" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA< double > const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA< double > * >(argp1);
-  {
-    try {
-      result = (std::vector< double,std::allocator< double > > *) &((Seiscomp::Math::Filtering::STALTA< double > const *)arg1)->getLTA();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(*result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_delete_STALTAFilterD(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::STALTA< double > *arg1 = (Seiscomp::Math::Filtering::STALTA< double > *) 0 ;
@@ -28110,6 +27471,2138 @@ SWIGINTERN PyObject *STALTAFilterD_swigregister(PyObject *SWIGUNUSEDPARM(self), 
 }
 
 SWIGINTERN PyObject *STALTAFilterD_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterF__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double arg3 ;
+  double arg4 ;
+  double arg5 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  double val4 ;
+  int ecode4 = 0 ;
+  double val5 ;
+  int ecode5 = 0 ;
+  Seiscomp::Math::Filtering::STALTA2< float > *result = 0 ;
+  
+  if ((nobjs < 5) || (nobjs > 5)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTA2FilterF" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_STALTA2FilterF" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_STALTA2FilterF" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "new_STALTA2FilterF" "', argument " "4"" of type '" "double""'");
+  } 
+  arg4 = static_cast< double >(val4);
+  ecode5 = SWIG_AsVal_double(swig_obj[4], &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "new_STALTA2FilterF" "', argument " "5"" of type '" "double""'");
+  } 
+  arg5 = static_cast< double >(val5);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA2< float > *)new Seiscomp::Math::Filtering::STALTA2< float >(arg1,arg2,arg3,arg4,arg5);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterF__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double arg3 ;
+  double arg4 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  double val4 ;
+  int ecode4 = 0 ;
+  Seiscomp::Math::Filtering::STALTA2< float > *result = 0 ;
+  
+  if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTA2FilterF" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_STALTA2FilterF" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_STALTA2FilterF" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "new_STALTA2FilterF" "', argument " "4"" of type '" "double""'");
+  } 
+  arg4 = static_cast< double >(val4);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA2< float > *)new Seiscomp::Math::Filtering::STALTA2< float >(arg1,arg2,arg3,arg4);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterF__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double arg3 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  Seiscomp::Math::Filtering::STALTA2< float > *result = 0 ;
+  
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTA2FilterF" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_STALTA2FilterF" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_STALTA2FilterF" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA2< float > *)new Seiscomp::Math::Filtering::STALTA2< float >(arg1,arg2,arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterF__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Math::Filtering::STALTA2< float > *result = 0 ;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTA2FilterF" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_STALTA2FilterF" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA2< float > *)new Seiscomp::Math::Filtering::STALTA2< float >(arg1,arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterF__SWIG_4(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  Seiscomp::Math::Filtering::STALTA2< float > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTA2FilterF" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA2< float > *)new Seiscomp::Math::Filtering::STALTA2< float >(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterF__SWIG_5(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA2< float > *result = 0 ;
+  
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA2< float > *)new Seiscomp::Math::Filtering::STALTA2< float >();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterF(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[6] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_STALTA2FilterF", 0, 5, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_STALTA2FilterF__SWIG_5(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_STALTA2FilterF__SWIG_4(self, argc, argv);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_new_STALTA2FilterF__SWIG_3(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_new_STALTA2FilterF__SWIG_2(self, argc, argv);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_double(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_new_STALTA2FilterF__SWIG_1(self, argc, argv);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_double(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            {
+              int res = SWIG_AsVal_double(argv[4], NULL);
+              _v = SWIG_CheckState(res);
+            }
+            if (_v) {
+              return _wrap_new_STALTA2FilterF__SWIG_0(self, argc, argv);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_STALTA2FilterF'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::STALTA2< float >::STALTA2(double,double,double,double,double)\n"
+    "    Seiscomp::Math::Filtering::STALTA2< float >::STALTA2(double,double,double,double)\n"
+    "    Seiscomp::Math::Filtering::STALTA2< float >::STALTA2(double,double,double)\n"
+    "    Seiscomp::Math::Filtering::STALTA2< float >::STALTA2(double,double)\n"
+    "    Seiscomp::Math::Filtering::STALTA2< float >::STALTA2(double)\n"
+    "    Seiscomp::Math::Filtering::STALTA2< float >::STALTA2()\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTA2FilterF_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA2< float > *arg1 = (Seiscomp::Math::Filtering::STALTA2< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTA2FilterF_reset" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA2< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA2< float > * >(argp1);
+  {
+    try {
+      (arg1)->reset();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTA2FilterF_setSamplingFrequency(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA2< float > *arg1 = (Seiscomp::Math::Filtering::STALTA2< float > *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "STALTA2FilterF_setSamplingFrequency", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTA2FilterF_setSamplingFrequency" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA2< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA2< float > * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "STALTA2FilterF_setSamplingFrequency" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      (arg1)->setSamplingFrequency(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTA2FilterF_setParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA2< float > *arg1 = (Seiscomp::Math::Filtering::STALTA2< float > *) 0 ;
+  int arg2 ;
+  double *arg3 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject *swig_obj[3] ;
+  int result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "STALTA2FilterF_setParameters", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTA2FilterF_setParameters" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA2< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA2< float > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "STALTA2FilterF_setParameters" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "STALTA2FilterF_setParameters" "', argument " "3"" of type '" "double const *""'"); 
+  }
+  arg3 = reinterpret_cast< double * >(argp3);
+  {
+    try {
+      result = (int)(arg1)->setParameters(arg2,(double const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTA2FilterF_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA2< float > *arg1 = (Seiscomp::Math::Filtering::STALTA2< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Math::Filtering::InPlaceFilter< float > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTA2FilterF_clone" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA2< float > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA2< float > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::InPlaceFilter< float > *)((Seiscomp::Math::Filtering::STALTA2< float > const *)arg1)->clone();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_STALTA2FilterF(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA2< float > *arg1 = (Seiscomp::Math::Filtering::STALTA2< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_STALTA2FilterF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA2< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA2< float > * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *STALTA2FilterF_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *STALTA2FilterF_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterD__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double arg3 ;
+  double arg4 ;
+  double arg5 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  double val4 ;
+  int ecode4 = 0 ;
+  double val5 ;
+  int ecode5 = 0 ;
+  Seiscomp::Math::Filtering::STALTA2< double > *result = 0 ;
+  
+  if ((nobjs < 5) || (nobjs > 5)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTA2FilterD" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_STALTA2FilterD" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_STALTA2FilterD" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "new_STALTA2FilterD" "', argument " "4"" of type '" "double""'");
+  } 
+  arg4 = static_cast< double >(val4);
+  ecode5 = SWIG_AsVal_double(swig_obj[4], &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "new_STALTA2FilterD" "', argument " "5"" of type '" "double""'");
+  } 
+  arg5 = static_cast< double >(val5);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA2< double > *)new Seiscomp::Math::Filtering::STALTA2< double >(arg1,arg2,arg3,arg4,arg5);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterD__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double arg3 ;
+  double arg4 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  double val4 ;
+  int ecode4 = 0 ;
+  Seiscomp::Math::Filtering::STALTA2< double > *result = 0 ;
+  
+  if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTA2FilterD" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_STALTA2FilterD" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_STALTA2FilterD" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "new_STALTA2FilterD" "', argument " "4"" of type '" "double""'");
+  } 
+  arg4 = static_cast< double >(val4);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA2< double > *)new Seiscomp::Math::Filtering::STALTA2< double >(arg1,arg2,arg3,arg4);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterD__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double arg3 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  Seiscomp::Math::Filtering::STALTA2< double > *result = 0 ;
+  
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTA2FilterD" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_STALTA2FilterD" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_STALTA2FilterD" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA2< double > *)new Seiscomp::Math::Filtering::STALTA2< double >(arg1,arg2,arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterD__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Math::Filtering::STALTA2< double > *result = 0 ;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTA2FilterD" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_STALTA2FilterD" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA2< double > *)new Seiscomp::Math::Filtering::STALTA2< double >(arg1,arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterD__SWIG_4(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  Seiscomp::Math::Filtering::STALTA2< double > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTA2FilterD" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA2< double > *)new Seiscomp::Math::Filtering::STALTA2< double >(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterD__SWIG_5(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA2< double > *result = 0 ;
+  
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA2< double > *)new Seiscomp::Math::Filtering::STALTA2< double >();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTA2FilterD(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[6] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_STALTA2FilterD", 0, 5, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_STALTA2FilterD__SWIG_5(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_STALTA2FilterD__SWIG_4(self, argc, argv);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_new_STALTA2FilterD__SWIG_3(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_new_STALTA2FilterD__SWIG_2(self, argc, argv);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_double(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_new_STALTA2FilterD__SWIG_1(self, argc, argv);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_double(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            {
+              int res = SWIG_AsVal_double(argv[4], NULL);
+              _v = SWIG_CheckState(res);
+            }
+            if (_v) {
+              return _wrap_new_STALTA2FilterD__SWIG_0(self, argc, argv);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_STALTA2FilterD'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::STALTA2< double >::STALTA2(double,double,double,double,double)\n"
+    "    Seiscomp::Math::Filtering::STALTA2< double >::STALTA2(double,double,double,double)\n"
+    "    Seiscomp::Math::Filtering::STALTA2< double >::STALTA2(double,double,double)\n"
+    "    Seiscomp::Math::Filtering::STALTA2< double >::STALTA2(double,double)\n"
+    "    Seiscomp::Math::Filtering::STALTA2< double >::STALTA2(double)\n"
+    "    Seiscomp::Math::Filtering::STALTA2< double >::STALTA2()\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTA2FilterD_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA2< double > *arg1 = (Seiscomp::Math::Filtering::STALTA2< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTA2FilterD_reset" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA2< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA2< double > * >(argp1);
+  {
+    try {
+      (arg1)->reset();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTA2FilterD_setSamplingFrequency(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA2< double > *arg1 = (Seiscomp::Math::Filtering::STALTA2< double > *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "STALTA2FilterD_setSamplingFrequency", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTA2FilterD_setSamplingFrequency" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA2< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA2< double > * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "STALTA2FilterD_setSamplingFrequency" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      (arg1)->setSamplingFrequency(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTA2FilterD_setParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA2< double > *arg1 = (Seiscomp::Math::Filtering::STALTA2< double > *) 0 ;
+  int arg2 ;
+  double *arg3 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject *swig_obj[3] ;
+  int result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "STALTA2FilterD_setParameters", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTA2FilterD_setParameters" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA2< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA2< double > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "STALTA2FilterD_setParameters" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "STALTA2FilterD_setParameters" "', argument " "3"" of type '" "double const *""'"); 
+  }
+  arg3 = reinterpret_cast< double * >(argp3);
+  {
+    try {
+      result = (int)(arg1)->setParameters(arg2,(double const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTA2FilterD_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA2< double > *arg1 = (Seiscomp::Math::Filtering::STALTA2< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Math::Filtering::InPlaceFilter< double > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTA2FilterD_clone" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA2< double > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA2< double > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::InPlaceFilter< double > *)((Seiscomp::Math::Filtering::STALTA2< double > const *)arg1)->clone();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_STALTA2FilterD(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA2< double > *arg1 = (Seiscomp::Math::Filtering::STALTA2< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_STALTA2FilterD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA2< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA2< double > * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *STALTA2FilterD_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *STALTA2FilterD_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new_STALTAClassicFilterF__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double arg3 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  Seiscomp::Math::Filtering::STALTA_Classic< float > *result = 0 ;
+  
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTAClassicFilterF" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_STALTAClassicFilterF" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_STALTAClassicFilterF" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA_Classic< float > *)new Seiscomp::Math::Filtering::STALTA_Classic< float >(arg1,arg2,arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTAClassicFilterF__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Math::Filtering::STALTA_Classic< float > *result = 0 ;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTAClassicFilterF" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_STALTAClassicFilterF" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA_Classic< float > *)new Seiscomp::Math::Filtering::STALTA_Classic< float >(arg1,arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTAClassicFilterF__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  Seiscomp::Math::Filtering::STALTA_Classic< float > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTAClassicFilterF" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA_Classic< float > *)new Seiscomp::Math::Filtering::STALTA_Classic< float >(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTAClassicFilterF__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA_Classic< float > *result = 0 ;
+  
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA_Classic< float > *)new Seiscomp::Math::Filtering::STALTA_Classic< float >();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTAClassicFilterF(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[4] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_STALTAClassicFilterF", 0, 3, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_STALTAClassicFilterF__SWIG_3(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_STALTAClassicFilterF__SWIG_2(self, argc, argv);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_new_STALTAClassicFilterF__SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_new_STALTAClassicFilterF__SWIG_0(self, argc, argv);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_STALTAClassicFilterF'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::STALTA_Classic< float >::STALTA_Classic(double,double,double)\n"
+    "    Seiscomp::Math::Filtering::STALTA_Classic< float >::STALTA_Classic(double,double)\n"
+    "    Seiscomp::Math::Filtering::STALTA_Classic< float >::STALTA_Classic(double)\n"
+    "    Seiscomp::Math::Filtering::STALTA_Classic< float >::STALTA_Classic()\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTAClassicFilterF_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA_Classic< float > *arg1 = (Seiscomp::Math::Filtering::STALTA_Classic< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAClassicFilterF_reset" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA_Classic< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA_Classic< float > * >(argp1);
+  {
+    try {
+      (arg1)->reset();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTAClassicFilterF_setSamplingFrequency(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA_Classic< float > *arg1 = (Seiscomp::Math::Filtering::STALTA_Classic< float > *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "STALTAClassicFilterF_setSamplingFrequency", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAClassicFilterF_setSamplingFrequency" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA_Classic< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA_Classic< float > * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "STALTAClassicFilterF_setSamplingFrequency" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      (arg1)->setSamplingFrequency(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTAClassicFilterF_setParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA_Classic< float > *arg1 = (Seiscomp::Math::Filtering::STALTA_Classic< float > *) 0 ;
+  int arg2 ;
+  double *arg3 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject *swig_obj[3] ;
+  int result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "STALTAClassicFilterF_setParameters", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAClassicFilterF_setParameters" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA_Classic< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA_Classic< float > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "STALTAClassicFilterF_setParameters" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "STALTAClassicFilterF_setParameters" "', argument " "3"" of type '" "double const *""'"); 
+  }
+  arg3 = reinterpret_cast< double * >(argp3);
+  {
+    try {
+      result = (int)(arg1)->setParameters(arg2,(double const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTAClassicFilterF_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA_Classic< float > *arg1 = (Seiscomp::Math::Filtering::STALTA_Classic< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Math::Filtering::InPlaceFilter< float > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAClassicFilterF_clone" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA_Classic< float > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA_Classic< float > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::InPlaceFilter< float > *)((Seiscomp::Math::Filtering::STALTA_Classic< float > const *)arg1)->clone();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_STALTAClassicFilterF(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA_Classic< float > *arg1 = (Seiscomp::Math::Filtering::STALTA_Classic< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_STALTAClassicFilterF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA_Classic< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA_Classic< float > * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *STALTAClassicFilterF_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *STALTAClassicFilterF_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new_STALTAClassicFilterD__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double arg3 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  Seiscomp::Math::Filtering::STALTA_Classic< double > *result = 0 ;
+  
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTAClassicFilterD" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_STALTAClassicFilterD" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_STALTAClassicFilterD" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA_Classic< double > *)new Seiscomp::Math::Filtering::STALTA_Classic< double >(arg1,arg2,arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTAClassicFilterD__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Math::Filtering::STALTA_Classic< double > *result = 0 ;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTAClassicFilterD" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_STALTAClassicFilterD" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA_Classic< double > *)new Seiscomp::Math::Filtering::STALTA_Classic< double >(arg1,arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTAClassicFilterD__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  Seiscomp::Math::Filtering::STALTA_Classic< double > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_STALTAClassicFilterD" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA_Classic< double > *)new Seiscomp::Math::Filtering::STALTA_Classic< double >(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTAClassicFilterD__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA_Classic< double > *result = 0 ;
+  
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::STALTA_Classic< double > *)new Seiscomp::Math::Filtering::STALTA_Classic< double >();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_STALTAClassicFilterD(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[4] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_STALTAClassicFilterD", 0, 3, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_STALTAClassicFilterD__SWIG_3(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_STALTAClassicFilterD__SWIG_2(self, argc, argv);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_new_STALTAClassicFilterD__SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_new_STALTAClassicFilterD__SWIG_0(self, argc, argv);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_STALTAClassicFilterD'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::STALTA_Classic< double >::STALTA_Classic(double,double,double)\n"
+    "    Seiscomp::Math::Filtering::STALTA_Classic< double >::STALTA_Classic(double,double)\n"
+    "    Seiscomp::Math::Filtering::STALTA_Classic< double >::STALTA_Classic(double)\n"
+    "    Seiscomp::Math::Filtering::STALTA_Classic< double >::STALTA_Classic()\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTAClassicFilterD_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA_Classic< double > *arg1 = (Seiscomp::Math::Filtering::STALTA_Classic< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAClassicFilterD_reset" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA_Classic< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA_Classic< double > * >(argp1);
+  {
+    try {
+      (arg1)->reset();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTAClassicFilterD_setSamplingFrequency(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA_Classic< double > *arg1 = (Seiscomp::Math::Filtering::STALTA_Classic< double > *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "STALTAClassicFilterD_setSamplingFrequency", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAClassicFilterD_setSamplingFrequency" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA_Classic< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA_Classic< double > * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "STALTAClassicFilterD_setSamplingFrequency" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      (arg1)->setSamplingFrequency(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTAClassicFilterD_setParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA_Classic< double > *arg1 = (Seiscomp::Math::Filtering::STALTA_Classic< double > *) 0 ;
+  int arg2 ;
+  double *arg3 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject *swig_obj[3] ;
+  int result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "STALTAClassicFilterD_setParameters", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAClassicFilterD_setParameters" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA_Classic< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA_Classic< double > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "STALTAClassicFilterD_setParameters" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "STALTAClassicFilterD_setParameters" "', argument " "3"" of type '" "double const *""'"); 
+  }
+  arg3 = reinterpret_cast< double * >(argp3);
+  {
+    try {
+      result = (int)(arg1)->setParameters(arg2,(double const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_STALTAClassicFilterD_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA_Classic< double > *arg1 = (Seiscomp::Math::Filtering::STALTA_Classic< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Math::Filtering::InPlaceFilter< double > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "STALTAClassicFilterD_clone" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA_Classic< double > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA_Classic< double > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::InPlaceFilter< double > *)((Seiscomp::Math::Filtering::STALTA_Classic< double > const *)arg1)->clone();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_STALTAClassicFilterD(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::STALTA_Classic< double > *arg1 = (Seiscomp::Math::Filtering::STALTA_Classic< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_STALTAClassicFilterD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::STALTA_Classic< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::STALTA_Classic< double > * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *STALTAClassicFilterD_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *STALTAClassicFilterD_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   return SWIG_Python_InitShadowInstance(args);
 }
 
@@ -28325,56 +29818,6 @@ SWIGINTERN PyObject *_wrap_RunningMeanFilterF_setLength(PyObject *SWIGUNUSEDPARM
   {
     try {
       (arg1)->setLength(arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_RunningMeanFilterF_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::RunningMean< float > *arg1 = (Seiscomp::Math::Filtering::RunningMean< float > *) 0 ;
-  int arg2 ;
-  float *arg3 = (float *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "RunningMeanFilterF_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunningMeanFilterF_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::RunningMean< float > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::RunningMean< float > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RunningMeanFilterF_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_float, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "RunningMeanFilterF_apply" "', argument " "3"" of type '" "float *""'"); 
-  }
-  arg3 = reinterpret_cast< float * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -28799,56 +30242,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_RunningMeanFilterD_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::RunningMean< double > *arg1 = (Seiscomp::Math::Filtering::RunningMean< double > *) 0 ;
-  int arg2 ;
-  double *arg3 = (double *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "RunningMeanFilterD_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunningMeanFilterD_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::RunningMean< double > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::RunningMean< double > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RunningMeanFilterD_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "RunningMeanFilterD_apply" "', argument " "3"" of type '" "double *""'"); 
-  }
-  arg3 = reinterpret_cast< double * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_RunningMeanFilterD_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::RunningMean< double > *arg1 = (Seiscomp::Math::Filtering::RunningMean< double > *) 0 ;
@@ -29213,56 +30606,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_RunningMeanHighPassFilterF_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::RunningMeanHighPass< float > *arg1 = (Seiscomp::Math::Filtering::RunningMeanHighPass< float > *) 0 ;
-  int arg2 ;
-  float *arg3 = (float *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "RunningMeanHighPassFilterF_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunningMeanHighPassFilterF_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::RunningMeanHighPass< float > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::RunningMeanHighPass< float > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RunningMeanHighPassFilterF_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_float, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "RunningMeanHighPassFilterF_apply" "', argument " "3"" of type '" "float *""'"); 
-  }
-  arg3 = reinterpret_cast< float * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_RunningMeanHighPassFilterF_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::RunningMeanHighPass< float > *arg1 = (Seiscomp::Math::Filtering::RunningMeanHighPass< float > *) 0 ;
@@ -29481,56 +30824,6 @@ SWIGINTERN PyObject *_wrap_delete_RunningMeanHighPassFilterD(PyObject *SWIGUNUSE
   {
     try {
       if (arg1) arg1->decrementReferenceCount();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_RunningMeanHighPassFilterD_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::RunningMeanHighPass< double > *arg1 = (Seiscomp::Math::Filtering::RunningMeanHighPass< double > *) 0 ;
-  int arg2 ;
-  double *arg3 = (double *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "RunningMeanHighPassFilterD_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunningMeanHighPassFilterD_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::RunningMeanHighPass< double > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::RunningMeanHighPass< double > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "RunningMeanHighPassFilterD_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "RunningMeanHighPassFilterD_apply" "', argument " "3"" of type '" "double *""'"); 
-  }
-  arg3 = reinterpret_cast< double * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30000,56 +31293,6 @@ fail:
     "    Seiscomp::Math::Filtering::InitialTaper< float >::setLength(double,float)\n"
     "    Seiscomp::Math::Filtering::InitialTaper< float >::setLength(double)\n");
   return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_InitialTaperFilterF_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::InitialTaper< float > *arg1 = (Seiscomp::Math::Filtering::InitialTaper< float > *) 0 ;
-  int arg2 ;
-  float *arg3 = (float *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "InitialTaperFilterF_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "InitialTaperFilterF_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::InitialTaper< float > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::InitialTaper< float > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "InitialTaperFilterF_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_float, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "InitialTaperFilterF_apply" "', argument " "3"" of type '" "float *""'"); 
-  }
-  arg3 = reinterpret_cast< float * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
 }
 
 
@@ -30632,56 +31875,6 @@ fail:
     "    Seiscomp::Math::Filtering::InitialTaper< double >::setLength(double,double)\n"
     "    Seiscomp::Math::Filtering::InitialTaper< double >::setLength(double)\n");
   return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_InitialTaperFilterD_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::InitialTaper< double > *arg1 = (Seiscomp::Math::Filtering::InitialTaper< double > *) 0 ;
-  int arg2 ;
-  double *arg3 = (double *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "InitialTaperFilterD_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "InitialTaperFilterD_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::InitialTaper< double > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::InitialTaper< double > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "InitialTaperFilterD_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "InitialTaperFilterD_apply" "', argument " "3"" of type '" "double *""'"); 
-  }
-  arg3 = reinterpret_cast< double * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
 }
 
 
@@ -32179,56 +33372,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_BiquadCascadeF_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) 0 ;
-  int arg2 ;
-  float *arg3 = (float *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "BiquadCascadeF_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCascadeF_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCascade< float > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "BiquadCascadeF_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_float, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "BiquadCascadeF_apply" "', argument " "3"" of type '" "float *""'"); 
-  }
-  arg3 = reinterpret_cast< float * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_BiquadCascadeF_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) 0 ;
@@ -32642,56 +33785,6 @@ SWIGINTERN PyObject *_wrap_BiquadCascadeD_set(PyObject *SWIGUNUSEDPARM(self), Py
   {
     try {
       (arg1)->set((Seiscomp::Math::Filtering::IIR::Biquads const &)*arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_BiquadCascadeD_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *arg1 = (Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) 0 ;
-  int arg2 ;
-  double *arg3 = (double *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "BiquadCascadeD_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BiquadCascadeD_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::BiquadCascade< double > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "BiquadCascadeD_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "BiquadCascadeD_apply" "', argument " "3"" of type '" "double *""'"); 
-  }
-  arg3 = reinterpret_cast< double * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -37711,56 +38804,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_ChainFilterF_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::ChainFilter< float > *arg1 = (Seiscomp::Math::Filtering::ChainFilter< float > *) 0 ;
-  int arg2 ;
-  float *arg3 = (float *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "ChainFilterF_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__ChainFilterT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ChainFilterF_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::ChainFilter< float > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::ChainFilter< float > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ChainFilterF_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_float, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ChainFilterF_apply" "', argument " "3"" of type '" "float *""'"); 
-  }
-  arg3 = reinterpret_cast< float * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_ChainFilterF_setStartTime(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::ChainFilter< float > *arg1 = (Seiscomp::Math::Filtering::ChainFilter< float > *) 0 ;
@@ -38302,56 +39345,6 @@ SWIGINTERN PyObject *_wrap_ChainFilterD_filterCount(PyObject *SWIGUNUSEDPARM(sel
     }
   }
   resultobj = SWIG_From_size_t(static_cast< size_t >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_ChainFilterD_apply(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::ChainFilter< double > *arg1 = (Seiscomp::Math::Filtering::ChainFilter< double > *) 0 ;
-  int arg2 ;
-  double *arg3 = (double *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "ChainFilterD_apply", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__ChainFilterT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ChainFilterD_apply" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::ChainFilter< double > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::ChainFilter< double > * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ChainFilterD_apply" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ChainFilterD_apply" "', argument " "3"" of type '" "double *""'"); 
-  }
-  arg3 = reinterpret_cast< double * >(argp3);
-  {
-    try {
-      (arg1)->apply(arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
@@ -39630,6 +40623,698 @@ SWIGINTERN PyObject *Seismometer5sec_swiginit(PyObject *SWIGUNUSEDPARM(self), Py
   return SWIG_Python_InitShadowInstance(args);
 }
 
+SWIGINTERN PyObject *_wrap_new_SeismometerFilterF__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::Filter< float > *result = 0 ;
+  
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::Filter< float > *)new Seiscomp::Math::Filtering::IIR::Filter< float >();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_SeismometerFilterF__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::SeismometerResponse::Poles *arg1 = 0 ;
+  Seiscomp::Math::SeismometerResponse::Zeros *arg2 = 0 ;
+  double arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  Seiscomp::Math::Filtering::IIR::Filter< float > *result = 0 ;
+  
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_SeismometerFilterF" "', argument " "1"" of type '" "Seiscomp::Math::SeismometerResponse::Poles const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_SeismometerFilterF" "', argument " "1"" of type '" "Seiscomp::Math::SeismometerResponse::Poles const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::SeismometerResponse::Poles * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_SeismometerFilterF" "', argument " "2"" of type '" "Seiscomp::Math::SeismometerResponse::Zeros const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_SeismometerFilterF" "', argument " "2"" of type '" "Seiscomp::Math::SeismometerResponse::Zeros const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Math::SeismometerResponse::Zeros * >(argp2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_SeismometerFilterF" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::Filter< float > *)new Seiscomp::Math::Filtering::IIR::Filter< float >((Seiscomp::Math::SeismometerResponse::Poles const &)*arg1,(Seiscomp::Math::SeismometerResponse::Zeros const &)*arg2,arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_SeismometerFilterF__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::Filter< float > *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::Filter< float > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_SeismometerFilterF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::Filter< float > const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_SeismometerFilterF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::Filter< float > const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::Filter< float > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::Filter< float > *)new Seiscomp::Math::Filtering::IIR::Filter< float >((Seiscomp::Math::Filtering::IIR::Filter< float > const &)*arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_SeismometerFilterF(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[4] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_SeismometerFilterF", 0, 3, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_SeismometerFilterF__SWIG_0(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_SeismometerFilterF__SWIG_2(self, argc, argv);
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t, SWIG_POINTER_NO_NULL | 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_new_SeismometerFilterF__SWIG_1(self, argc, argv);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_SeismometerFilterF'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::IIR::Filter< float >::Filter()\n"
+    "    Seiscomp::Math::Filtering::IIR::Filter< float >::Filter(Seiscomp::Math::SeismometerResponse::Poles const &,Seiscomp::Math::SeismometerResponse::Zeros const &,double)\n"
+    "    Seiscomp::Math::Filtering::IIR::Filter< float >::Filter(Seiscomp::Math::Filtering::IIR::Filter< float > const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_SeismometerFilterF_setSamplingFrequency(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::Filter< float > *arg1 = (Seiscomp::Math::Filtering::IIR::Filter< float > *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "SeismometerFilterF_setSamplingFrequency", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SeismometerFilterF_setSamplingFrequency" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::Filter< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::Filter< float > * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SeismometerFilterF_setSamplingFrequency" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      (arg1)->setSamplingFrequency(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SeismometerFilterF_setParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::Filter< float > *arg1 = (Seiscomp::Math::Filtering::IIR::Filter< float > *) 0 ;
+  int arg2 ;
+  double *arg3 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject *swig_obj[3] ;
+  int result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "SeismometerFilterF_setParameters", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SeismometerFilterF_setParameters" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::Filter< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::Filter< float > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SeismometerFilterF_setParameters" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "SeismometerFilterF_setParameters" "', argument " "3"" of type '" "double const *""'"); 
+  }
+  arg3 = reinterpret_cast< double * >(argp3);
+  {
+    try {
+      result = (int)(arg1)->setParameters(arg2,(double const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SeismometerFilterF_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::Filter< float > *arg1 = (Seiscomp::Math::Filtering::IIR::Filter< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Math::Filtering::InPlaceFilter< float > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SeismometerFilterF_clone" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::Filter< float > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::Filter< float > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::InPlaceFilter< float > *)((Seiscomp::Math::Filtering::IIR::Filter< float > const *)arg1)->clone();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_SeismometerFilterF(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::Filter< float > *arg1 = (Seiscomp::Math::Filtering::IIR::Filter< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_SeismometerFilterF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::Filter< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::Filter< float > * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *SeismometerFilterF_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *SeismometerFilterF_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new_SeismometerFilterD__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::Filter< double > *result = 0 ;
+  
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::Filter< double > *)new Seiscomp::Math::Filtering::IIR::Filter< double >();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_SeismometerFilterD__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::SeismometerResponse::Poles *arg1 = 0 ;
+  Seiscomp::Math::SeismometerResponse::Zeros *arg2 = 0 ;
+  double arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  Seiscomp::Math::Filtering::IIR::Filter< double > *result = 0 ;
+  
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_SeismometerFilterD" "', argument " "1"" of type '" "Seiscomp::Math::SeismometerResponse::Poles const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_SeismometerFilterD" "', argument " "1"" of type '" "Seiscomp::Math::SeismometerResponse::Poles const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::SeismometerResponse::Poles * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_SeismometerFilterD" "', argument " "2"" of type '" "Seiscomp::Math::SeismometerResponse::Zeros const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_SeismometerFilterD" "', argument " "2"" of type '" "Seiscomp::Math::SeismometerResponse::Zeros const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Math::SeismometerResponse::Zeros * >(argp2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_SeismometerFilterD" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::Filter< double > *)new Seiscomp::Math::Filtering::IIR::Filter< double >((Seiscomp::Math::SeismometerResponse::Poles const &)*arg1,(Seiscomp::Math::SeismometerResponse::Zeros const &)*arg2,arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_SeismometerFilterD__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::Filter< double > *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::Filter< double > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_SeismometerFilterD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::Filter< double > const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_SeismometerFilterD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::Filter< double > const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::Filter< double > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::Filter< double > *)new Seiscomp::Math::Filtering::IIR::Filter< double >((Seiscomp::Math::Filtering::IIR::Filter< double > const &)*arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_SeismometerFilterD(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[4] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_SeismometerFilterD", 0, 3, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_SeismometerFilterD__SWIG_0(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_SeismometerFilterD__SWIG_2(self, argc, argv);
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t, SWIG_POINTER_NO_NULL | 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_new_SeismometerFilterD__SWIG_1(self, argc, argv);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_SeismometerFilterD'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::IIR::Filter< double >::Filter()\n"
+    "    Seiscomp::Math::Filtering::IIR::Filter< double >::Filter(Seiscomp::Math::SeismometerResponse::Poles const &,Seiscomp::Math::SeismometerResponse::Zeros const &,double)\n"
+    "    Seiscomp::Math::Filtering::IIR::Filter< double >::Filter(Seiscomp::Math::Filtering::IIR::Filter< double > const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_SeismometerFilterD_setSamplingFrequency(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::Filter< double > *arg1 = (Seiscomp::Math::Filtering::IIR::Filter< double > *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "SeismometerFilterD_setSamplingFrequency", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SeismometerFilterD_setSamplingFrequency" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::Filter< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::Filter< double > * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SeismometerFilterD_setSamplingFrequency" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      (arg1)->setSamplingFrequency(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SeismometerFilterD_setParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::Filter< double > *arg1 = (Seiscomp::Math::Filtering::IIR::Filter< double > *) 0 ;
+  int arg2 ;
+  double *arg3 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject *swig_obj[3] ;
+  int result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "SeismometerFilterD_setParameters", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SeismometerFilterD_setParameters" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::Filter< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::Filter< double > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SeismometerFilterD_setParameters" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "SeismometerFilterD_setParameters" "', argument " "3"" of type '" "double const *""'"); 
+  }
+  arg3 = reinterpret_cast< double * >(argp3);
+  {
+    try {
+      result = (int)(arg1)->setParameters(arg2,(double const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SeismometerFilterD_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::Filter< double > *arg1 = (Seiscomp::Math::Filtering::IIR::Filter< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Math::Filtering::InPlaceFilter< double > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SeismometerFilterD_clone" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::Filter< double > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::Filter< double > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::InPlaceFilter< double > *)((Seiscomp::Math::Filtering::IIR::Filter< double > const *)arg1)->clone();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_SeismometerFilterD(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::Filter< double > *arg1 = (Seiscomp::Math::Filtering::IIR::Filter< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_SeismometerFilterD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::Filter< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::Filter< double > * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *SeismometerFilterD_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *SeismometerFilterD_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
 SWIGINTERN PyObject *_wrap_new_WWSSN_SPF__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Math::GroundMotion arg1 ;
@@ -39658,6 +41343,7 @@ SWIGINTERN PyObject *_wrap_new_WWSSN_SPF__SWIG_0(PyObject *SWIGUNUSEDPARM(self),
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
   return NULL;
@@ -39684,6 +41370,7 @@ SWIGINTERN PyObject *_wrap_new_WWSSN_SPF__SWIG_1(PyObject *SWIGUNUSEDPARM(self),
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
   return NULL;
@@ -39721,6 +41408,7 @@ SWIGINTERN PyObject *_wrap_new_WWSSN_SPF__SWIG_2(PyObject *SWIGUNUSEDPARM(self),
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
   return NULL;
@@ -39913,7 +41601,7 @@ SWIGINTERN PyObject *_wrap_delete_WWSSN_SPF(PyObject *SWIGUNUSEDPARM(self), PyOb
   arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< float > * >(argp1);
   {
     try {
-      delete arg1;
+      if (arg1) arg1->decrementReferenceCount();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -39971,6 +41659,7 @@ SWIGINTERN PyObject *_wrap_new_WWSSN_SPD__SWIG_0(PyObject *SWIGUNUSEDPARM(self),
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
   return NULL;
@@ -39997,6 +41686,7 @@ SWIGINTERN PyObject *_wrap_new_WWSSN_SPD__SWIG_1(PyObject *SWIGUNUSEDPARM(self),
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
   return NULL;
@@ -40034,6 +41724,7 @@ SWIGINTERN PyObject *_wrap_new_WWSSN_SPD__SWIG_2(PyObject *SWIGUNUSEDPARM(self),
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
   return NULL;
@@ -40226,7 +41917,7 @@ SWIGINTERN PyObject *_wrap_delete_WWSSN_SPD(PyObject *SWIGUNUSEDPARM(self), PyOb
   arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< double > * >(argp1);
   {
     try {
-      delete arg1;
+      if (arg1) arg1->decrementReferenceCount();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -40253,6 +41944,2370 @@ SWIGINTERN PyObject *WWSSN_SPD_swigregister(PyObject *SWIGUNUSEDPARM(self), PyOb
 }
 
 SWIGINTERN PyObject *WWSSN_SPD_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new_WWSSN_LPF__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::GroundMotion arg1 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_WWSSN_LPF" "', argument " "1"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg1 = static_cast< Seiscomp::Math::GroundMotion >(val1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *)new Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float >(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WWSSN_LPF__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *result = 0 ;
+  
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *)new Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float >();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WWSSN_LPF__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_WWSSN_LPF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_WWSSN_LPF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *)new Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float >((Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > const &)*arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WWSSN_LPF(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[2] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_WWSSN_LPF", 0, 1, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_WWSSN_LPF__SWIG_1(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_WWSSN_LPF__SWIG_2(self, argc, argv);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_int(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_WWSSN_LPF__SWIG_0(self, argc, argv);
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_WWSSN_LPF'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float >::WWSSN_LP_Filter(Seiscomp::Math::GroundMotion)\n"
+    "    Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float >::WWSSN_LP_Filter()\n"
+    "    Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float >::WWSSN_LP_Filter(Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_WWSSN_LPF_setParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *arg1 = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *) 0 ;
+  int arg2 ;
+  double *arg3 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject *swig_obj[3] ;
+  int result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "WWSSN_LPF_setParameters", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WWSSN_LPF_setParameters" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "WWSSN_LPF_setParameters" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "WWSSN_LPF_setParameters" "', argument " "3"" of type '" "double const *""'"); 
+  }
+  arg3 = reinterpret_cast< double * >(argp3);
+  {
+    try {
+      result = (int)(arg1)->setParameters(arg2,(double const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WWSSN_LPF_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *arg1 = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Math::Filtering::InPlaceFilter< float > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WWSSN_LPF_clone" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::InPlaceFilter< float > *)((Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > const *)arg1)->clone();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WWSSN_LPF_setInput(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *arg1 = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *) 0 ;
+  Seiscomp::Math::GroundMotion arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "WWSSN_LPF_setInput", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WWSSN_LPF_setInput" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "WWSSN_LPF_setInput" "', argument " "2"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg2 = static_cast< Seiscomp::Math::GroundMotion >(val2);
+  {
+    try {
+      (arg1)->setInput(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_WWSSN_LPF(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *arg1 = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_WWSSN_LPF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *WWSSN_LPF_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *WWSSN_LPF_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new_WWSSN_LPD__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::GroundMotion arg1 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_WWSSN_LPD" "', argument " "1"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg1 = static_cast< Seiscomp::Math::GroundMotion >(val1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *)new Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double >(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WWSSN_LPD__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *result = 0 ;
+  
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *)new Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double >();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WWSSN_LPD__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_WWSSN_LPD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_WWSSN_LPD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *)new Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double >((Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > const &)*arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WWSSN_LPD(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[2] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_WWSSN_LPD", 0, 1, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_WWSSN_LPD__SWIG_1(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_WWSSN_LPD__SWIG_2(self, argc, argv);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_int(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_WWSSN_LPD__SWIG_0(self, argc, argv);
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_WWSSN_LPD'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double >::WWSSN_LP_Filter(Seiscomp::Math::GroundMotion)\n"
+    "    Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double >::WWSSN_LP_Filter()\n"
+    "    Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double >::WWSSN_LP_Filter(Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_WWSSN_LPD_setParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *arg1 = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *) 0 ;
+  int arg2 ;
+  double *arg3 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject *swig_obj[3] ;
+  int result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "WWSSN_LPD_setParameters", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WWSSN_LPD_setParameters" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "WWSSN_LPD_setParameters" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "WWSSN_LPD_setParameters" "', argument " "3"" of type '" "double const *""'"); 
+  }
+  arg3 = reinterpret_cast< double * >(argp3);
+  {
+    try {
+      result = (int)(arg1)->setParameters(arg2,(double const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WWSSN_LPD_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *arg1 = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Math::Filtering::InPlaceFilter< double > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WWSSN_LPD_clone" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::InPlaceFilter< double > *)((Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > const *)arg1)->clone();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WWSSN_LPD_setInput(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *arg1 = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *) 0 ;
+  Seiscomp::Math::GroundMotion arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "WWSSN_LPD_setInput", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WWSSN_LPD_setInput" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "WWSSN_LPD_setInput" "', argument " "2"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg2 = static_cast< Seiscomp::Math::GroundMotion >(val2);
+  {
+    try {
+      (arg1)->setInput(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_WWSSN_LPD(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *arg1 = (Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_WWSSN_LPD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *WWSSN_LPD_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *WWSSN_LPD_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new_WoodAndersonFilterF__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::GroundMotion arg1 ;
+  Seiscomp::Math::SeismometerResponse::WoodAnderson::Config arg2 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *result = 0 ;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_WoodAndersonFilterF" "', argument " "1"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg1 = static_cast< Seiscomp::Math::GroundMotion >(val1);
+  {
+    res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__WoodAnderson__Config,  0  | 0);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_WoodAndersonFilterF" "', argument " "2"" of type '" "Seiscomp::Math::SeismometerResponse::WoodAnderson::Config""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_WoodAndersonFilterF" "', argument " "2"" of type '" "Seiscomp::Math::SeismometerResponse::WoodAnderson::Config""'");
+    } else {
+      Seiscomp::Math::SeismometerResponse::WoodAnderson::Config * temp = reinterpret_cast< Seiscomp::Math::SeismometerResponse::WoodAnderson::Config * >(argp2);
+      arg2 = *temp;
+      if (SWIG_IsNewObj(res2)) delete temp;
+    }
+  }
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *)new Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float >(arg1,arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WoodAndersonFilterF__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::GroundMotion arg1 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_WoodAndersonFilterF" "', argument " "1"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg1 = static_cast< Seiscomp::Math::GroundMotion >(val1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *)new Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float >(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WoodAndersonFilterF__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *result = 0 ;
+  
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *)new Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float >();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WoodAndersonFilterF__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_WoodAndersonFilterF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_WoodAndersonFilterF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *)new Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float >((Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > const &)*arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WoodAndersonFilterF(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_WoodAndersonFilterF", 0, 2, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_WoodAndersonFilterF__SWIG_2(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_WoodAndersonFilterF__SWIG_3(self, argc, argv);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_int(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_WoodAndersonFilterF__SWIG_1(self, argc, argv);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_int(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__WoodAnderson__Config, SWIG_POINTER_NO_NULL | 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_new_WoodAndersonFilterF__SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_WoodAndersonFilterF'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float >::WoodAndersonFilter(Seiscomp::Math::GroundMotion,Seiscomp::Math::SeismometerResponse::WoodAnderson::Config)\n"
+    "    Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float >::WoodAndersonFilter(Seiscomp::Math::GroundMotion)\n"
+    "    Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float >::WoodAndersonFilter()\n"
+    "    Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float >::WoodAndersonFilter(Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_WoodAndersonFilterF_setParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *arg1 = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *) 0 ;
+  int arg2 ;
+  double *arg3 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject *swig_obj[3] ;
+  int result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "WoodAndersonFilterF_setParameters", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WoodAndersonFilterF_setParameters" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "WoodAndersonFilterF_setParameters" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "WoodAndersonFilterF_setParameters" "', argument " "3"" of type '" "double const *""'"); 
+  }
+  arg3 = reinterpret_cast< double * >(argp3);
+  {
+    try {
+      result = (int)(arg1)->setParameters(arg2,(double const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WoodAndersonFilterF_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *arg1 = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Math::Filtering::InPlaceFilter< float > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WoodAndersonFilterF_clone" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::InPlaceFilter< float > *)((Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > const *)arg1)->clone();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WoodAndersonFilterF_setInput__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *arg1 = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *) 0 ;
+  Seiscomp::Math::GroundMotion arg2 ;
+  Seiscomp::Math::SeismometerResponse::WoodAnderson::Config arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 ;
+  int res3 = 0 ;
+  
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WoodAndersonFilterF_setInput" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "WoodAndersonFilterF_setInput" "', argument " "2"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg2 = static_cast< Seiscomp::Math::GroundMotion >(val2);
+  {
+    res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__WoodAnderson__Config,  0  | 0);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "WoodAndersonFilterF_setInput" "', argument " "3"" of type '" "Seiscomp::Math::SeismometerResponse::WoodAnderson::Config""'"); 
+    }  
+    if (!argp3) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "WoodAndersonFilterF_setInput" "', argument " "3"" of type '" "Seiscomp::Math::SeismometerResponse::WoodAnderson::Config""'");
+    } else {
+      Seiscomp::Math::SeismometerResponse::WoodAnderson::Config * temp = reinterpret_cast< Seiscomp::Math::SeismometerResponse::WoodAnderson::Config * >(argp3);
+      arg3 = *temp;
+      if (SWIG_IsNewObj(res3)) delete temp;
+    }
+  }
+  {
+    try {
+      (arg1)->setInput(arg2,arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WoodAndersonFilterF_setInput__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *arg1 = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *) 0 ;
+  Seiscomp::Math::GroundMotion arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WoodAndersonFilterF_setInput" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "WoodAndersonFilterF_setInput" "', argument " "2"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg2 = static_cast< Seiscomp::Math::GroundMotion >(val2);
+  {
+    try {
+      (arg1)->setInput(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WoodAndersonFilterF_setInput(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[4] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "WoodAndersonFilterF_setInput", 0, 3, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_WoodAndersonFilterF_setInput__SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__WoodAnderson__Config, SWIG_POINTER_NO_NULL | 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_WoodAndersonFilterF_setInput__SWIG_0(self, argc, argv);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'WoodAndersonFilterF_setInput'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float >::setInput(Seiscomp::Math::GroundMotion,Seiscomp::Math::SeismometerResponse::WoodAnderson::Config)\n"
+    "    Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float >::setInput(Seiscomp::Math::GroundMotion)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_WoodAndersonFilterF(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *arg1 = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_WoodAndersonFilterF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *WoodAndersonFilterF_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *WoodAndersonFilterF_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new_WoodAndersonFilterD__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::GroundMotion arg1 ;
+  Seiscomp::Math::SeismometerResponse::WoodAnderson::Config arg2 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *result = 0 ;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_WoodAndersonFilterD" "', argument " "1"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg1 = static_cast< Seiscomp::Math::GroundMotion >(val1);
+  {
+    res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__WoodAnderson__Config,  0  | 0);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_WoodAndersonFilterD" "', argument " "2"" of type '" "Seiscomp::Math::SeismometerResponse::WoodAnderson::Config""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_WoodAndersonFilterD" "', argument " "2"" of type '" "Seiscomp::Math::SeismometerResponse::WoodAnderson::Config""'");
+    } else {
+      Seiscomp::Math::SeismometerResponse::WoodAnderson::Config * temp = reinterpret_cast< Seiscomp::Math::SeismometerResponse::WoodAnderson::Config * >(argp2);
+      arg2 = *temp;
+      if (SWIG_IsNewObj(res2)) delete temp;
+    }
+  }
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *)new Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double >(arg1,arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WoodAndersonFilterD__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::GroundMotion arg1 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_WoodAndersonFilterD" "', argument " "1"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg1 = static_cast< Seiscomp::Math::GroundMotion >(val1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *)new Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double >(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WoodAndersonFilterD__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *result = 0 ;
+  
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *)new Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double >();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WoodAndersonFilterD__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_WoodAndersonFilterD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_WoodAndersonFilterD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *)new Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double >((Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > const &)*arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_WoodAndersonFilterD(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_WoodAndersonFilterD", 0, 2, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_WoodAndersonFilterD__SWIG_2(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_WoodAndersonFilterD__SWIG_3(self, argc, argv);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_int(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_WoodAndersonFilterD__SWIG_1(self, argc, argv);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_int(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__WoodAnderson__Config, SWIG_POINTER_NO_NULL | 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_new_WoodAndersonFilterD__SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_WoodAndersonFilterD'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double >::WoodAndersonFilter(Seiscomp::Math::GroundMotion,Seiscomp::Math::SeismometerResponse::WoodAnderson::Config)\n"
+    "    Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double >::WoodAndersonFilter(Seiscomp::Math::GroundMotion)\n"
+    "    Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double >::WoodAndersonFilter()\n"
+    "    Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double >::WoodAndersonFilter(Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_WoodAndersonFilterD_setParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *arg1 = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *) 0 ;
+  int arg2 ;
+  double *arg3 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject *swig_obj[3] ;
+  int result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "WoodAndersonFilterD_setParameters", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WoodAndersonFilterD_setParameters" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "WoodAndersonFilterD_setParameters" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "WoodAndersonFilterD_setParameters" "', argument " "3"" of type '" "double const *""'"); 
+  }
+  arg3 = reinterpret_cast< double * >(argp3);
+  {
+    try {
+      result = (int)(arg1)->setParameters(arg2,(double const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WoodAndersonFilterD_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *arg1 = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Math::Filtering::InPlaceFilter< double > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WoodAndersonFilterD_clone" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::InPlaceFilter< double > *)((Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > const *)arg1)->clone();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WoodAndersonFilterD_setInput__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *arg1 = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *) 0 ;
+  Seiscomp::Math::GroundMotion arg2 ;
+  Seiscomp::Math::SeismometerResponse::WoodAnderson::Config arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 ;
+  int res3 = 0 ;
+  
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WoodAndersonFilterD_setInput" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "WoodAndersonFilterD_setInput" "', argument " "2"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg2 = static_cast< Seiscomp::Math::GroundMotion >(val2);
+  {
+    res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__WoodAnderson__Config,  0  | 0);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "WoodAndersonFilterD_setInput" "', argument " "3"" of type '" "Seiscomp::Math::SeismometerResponse::WoodAnderson::Config""'"); 
+    }  
+    if (!argp3) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "WoodAndersonFilterD_setInput" "', argument " "3"" of type '" "Seiscomp::Math::SeismometerResponse::WoodAnderson::Config""'");
+    } else {
+      Seiscomp::Math::SeismometerResponse::WoodAnderson::Config * temp = reinterpret_cast< Seiscomp::Math::SeismometerResponse::WoodAnderson::Config * >(argp3);
+      arg3 = *temp;
+      if (SWIG_IsNewObj(res3)) delete temp;
+    }
+  }
+  {
+    try {
+      (arg1)->setInput(arg2,arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WoodAndersonFilterD_setInput__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *arg1 = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *) 0 ;
+  Seiscomp::Math::GroundMotion arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "WoodAndersonFilterD_setInput" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "WoodAndersonFilterD_setInput" "', argument " "2"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg2 = static_cast< Seiscomp::Math::GroundMotion >(val2);
+  {
+    try {
+      (arg1)->setInput(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_WoodAndersonFilterD_setInput(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[4] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "WoodAndersonFilterD_setInput", 0, 3, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_WoodAndersonFilterD_setInput__SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_Seiscomp__Math__SeismometerResponse__WoodAnderson__Config, SWIG_POINTER_NO_NULL | 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_WoodAndersonFilterD_setInput__SWIG_0(self, argc, argv);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'WoodAndersonFilterD_setInput'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double >::setInput(Seiscomp::Math::GroundMotion,Seiscomp::Math::SeismometerResponse::WoodAnderson::Config)\n"
+    "    Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double >::setInput(Seiscomp::Math::GroundMotion)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_WoodAndersonFilterD(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *arg1 = (Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_WoodAndersonFilterD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *WoodAndersonFilterD_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *WoodAndersonFilterD_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new_GenericSeismometerFilterF__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  Seiscomp::Math::GroundMotion arg2 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *result = 0 ;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_GenericSeismometerFilterF" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_GenericSeismometerFilterF" "', argument " "2"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg2 = static_cast< Seiscomp::Math::GroundMotion >(val2);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *)new Seiscomp::Math::Filtering::IIR::GenericSeismometer< float >(arg1,arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_GenericSeismometerFilterF__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_GenericSeismometerFilterF" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *)new Seiscomp::Math::Filtering::IIR::GenericSeismometer< float >(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_GenericSeismometerFilterF__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *result = 0 ;
+  
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *)new Seiscomp::Math::Filtering::IIR::GenericSeismometer< float >();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_GenericSeismometerFilterF__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_GenericSeismometerFilterF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_GenericSeismometerFilterF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *)new Seiscomp::Math::Filtering::IIR::GenericSeismometer< float >((Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > const &)*arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_GenericSeismometerFilterF(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_GenericSeismometerFilterF", 0, 2, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_GenericSeismometerFilterF__SWIG_2(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_GenericSeismometerFilterF__SWIG_3(self, argc, argv);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_GenericSeismometerFilterF__SWIG_1(self, argc, argv);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_new_GenericSeismometerFilterF__SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_GenericSeismometerFilterF'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::IIR::GenericSeismometer< float >::GenericSeismometer(double,Seiscomp::Math::GroundMotion)\n"
+    "    Seiscomp::Math::Filtering::IIR::GenericSeismometer< float >::GenericSeismometer(double)\n"
+    "    Seiscomp::Math::Filtering::IIR::GenericSeismometer< float >::GenericSeismometer()\n"
+    "    Seiscomp::Math::Filtering::IIR::GenericSeismometer< float >::GenericSeismometer(Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_GenericSeismometerFilterF_setParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *arg1 = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *) 0 ;
+  int arg2 ;
+  double *arg3 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject *swig_obj[3] ;
+  int result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "GenericSeismometerFilterF_setParameters", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GenericSeismometerFilterF_setParameters" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "GenericSeismometerFilterF_setParameters" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "GenericSeismometerFilterF_setParameters" "', argument " "3"" of type '" "double const *""'"); 
+  }
+  arg3 = reinterpret_cast< double * >(argp3);
+  {
+    try {
+      result = (int)(arg1)->setParameters(arg2,(double const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_GenericSeismometerFilterF_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *arg1 = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Math::Filtering::InPlaceFilter< float > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GenericSeismometerFilterF_clone" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::InPlaceFilter< float > *)((Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > const *)arg1)->clone();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_GenericSeismometerFilterF_setInput(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *arg1 = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *) 0 ;
+  Seiscomp::Math::GroundMotion arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "GenericSeismometerFilterF_setInput", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GenericSeismometerFilterF_setInput" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "GenericSeismometerFilterF_setInput" "', argument " "2"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg2 = static_cast< Seiscomp::Math::GroundMotion >(val2);
+  {
+    try {
+      (arg1)->setInput(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_GenericSeismometerFilterF(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *arg1 = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_GenericSeismometerFilterF" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *GenericSeismometerFilterF_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *GenericSeismometerFilterF_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
+SWIGINTERN PyObject *_wrap_new_GenericSeismometerFilterD__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  Seiscomp::Math::GroundMotion arg2 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *result = 0 ;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_GenericSeismometerFilterD" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_GenericSeismometerFilterD" "', argument " "2"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg2 = static_cast< Seiscomp::Math::GroundMotion >(val2);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *)new Seiscomp::Math::Filtering::IIR::GenericSeismometer< double >(arg1,arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_GenericSeismometerFilterD__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_GenericSeismometerFilterD" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *)new Seiscomp::Math::Filtering::IIR::GenericSeismometer< double >(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_GenericSeismometerFilterD__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *result = 0 ;
+  
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *)new Seiscomp::Math::Filtering::IIR::GenericSeismometer< double >();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_GenericSeismometerFilterD__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_GenericSeismometerFilterD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_GenericSeismometerFilterD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *)new Seiscomp::Math::Filtering::IIR::GenericSeismometer< double >((Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > const &)*arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_GenericSeismometerFilterD(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_GenericSeismometerFilterD", 0, 2, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_GenericSeismometerFilterD__SWIG_2(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_GenericSeismometerFilterD__SWIG_3(self, argc, argv);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_GenericSeismometerFilterD__SWIG_1(self, argc, argv);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_new_GenericSeismometerFilterD__SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_GenericSeismometerFilterD'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Math::Filtering::IIR::GenericSeismometer< double >::GenericSeismometer(double,Seiscomp::Math::GroundMotion)\n"
+    "    Seiscomp::Math::Filtering::IIR::GenericSeismometer< double >::GenericSeismometer(double)\n"
+    "    Seiscomp::Math::Filtering::IIR::GenericSeismometer< double >::GenericSeismometer()\n"
+    "    Seiscomp::Math::Filtering::IIR::GenericSeismometer< double >::GenericSeismometer(Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_GenericSeismometerFilterD_setParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *arg1 = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *) 0 ;
+  int arg2 ;
+  double *arg3 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject *swig_obj[3] ;
+  int result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "GenericSeismometerFilterD_setParameters", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GenericSeismometerFilterD_setParameters" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "GenericSeismometerFilterD_setParameters" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "GenericSeismometerFilterD_setParameters" "', argument " "3"" of type '" "double const *""'"); 
+  }
+  arg3 = reinterpret_cast< double * >(argp3);
+  {
+    try {
+      result = (int)(arg1)->setParameters(arg2,(double const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_GenericSeismometerFilterD_clone(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *arg1 = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Math::Filtering::InPlaceFilter< double > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GenericSeismometerFilterD_clone" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Math::Filtering::InPlaceFilter< double > *)((Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > const *)arg1)->clone();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_GenericSeismometerFilterD_setInput(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *arg1 = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *) 0 ;
+  Seiscomp::Math::GroundMotion arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "GenericSeismometerFilterD_setInput", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GenericSeismometerFilterD_setInput" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "GenericSeismometerFilterD_setInput" "', argument " "2"" of type '" "Seiscomp::Math::GroundMotion""'");
+  } 
+  arg2 = static_cast< Seiscomp::Math::GroundMotion >(val2);
+  {
+    try {
+      (arg1)->setInput(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_GenericSeismometerFilterD(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *arg1 = (Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_GenericSeismometerFilterD" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *GenericSeismometerFilterD_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *GenericSeismometerFilterD_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   return SWIG_Python_InitShadowInstance(args);
 }
 
@@ -46452,7 +50507,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "InPlaceFilterF_setSamplingFrequency", _wrap_InPlaceFilterF_setSamplingFrequency, METH_VARARGS, "InPlaceFilterF_setSamplingFrequency(InPlaceFilterF self, double fsamp)"},
 	 { "InPlaceFilterF_setParameters", _wrap_InPlaceFilterF_setParameters, METH_VARARGS, "InPlaceFilterF_setParameters(InPlaceFilterF self, int n, double const * params) -> int"},
 	 { "InPlaceFilterF_apply", _wrap_InPlaceFilterF_apply, METH_VARARGS, "\n"
-		"InPlaceFilterF_apply(InPlaceFilterF self, int n, float * inout)\n"
 		"InPlaceFilterF_apply(InPlaceFilterF self, vectorf f)\n"
 		"InPlaceFilterF_apply(InPlaceFilterF self, FloatArrayT arr)\n"
 		""},
@@ -46466,7 +50520,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "InPlaceFilterD_setSamplingFrequency", _wrap_InPlaceFilterD_setSamplingFrequency, METH_VARARGS, "InPlaceFilterD_setSamplingFrequency(InPlaceFilterD self, double fsamp)"},
 	 { "InPlaceFilterD_setParameters", _wrap_InPlaceFilterD_setParameters, METH_VARARGS, "InPlaceFilterD_setParameters(InPlaceFilterD self, int n, double const * params) -> int"},
 	 { "InPlaceFilterD_apply", _wrap_InPlaceFilterD_apply, METH_VARARGS, "\n"
-		"InPlaceFilterD_apply(InPlaceFilterD self, int n, double * inout)\n"
 		"InPlaceFilterD_apply(InPlaceFilterD self, vectord f)\n"
 		"InPlaceFilterD_apply(InPlaceFilterD self, DoubleArrayT arr)\n"
 		""},
@@ -46478,7 +50531,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "AverageFilterF_setLength", _wrap_AverageFilterF_setLength, METH_VARARGS, "AverageFilterF_setLength(AverageFilterF self, double timeSpan)"},
 	 { "AverageFilterF_setSamplingFrequency", _wrap_AverageFilterF_setSamplingFrequency, METH_VARARGS, "AverageFilterF_setSamplingFrequency(AverageFilterF self, double fsamp)"},
 	 { "AverageFilterF_setParameters", _wrap_AverageFilterF_setParameters, METH_VARARGS, "AverageFilterF_setParameters(AverageFilterF self, int n, double const * params) -> int"},
-	 { "AverageFilterF_apply", _wrap_AverageFilterF_apply, METH_VARARGS, "AverageFilterF_apply(AverageFilterF self, int n, float * inout)"},
 	 { "AverageFilterF_clone", _wrap_AverageFilterF_clone, METH_O, "AverageFilterF_clone(AverageFilterF self) -> InPlaceFilterF"},
 	 { "AverageFilterF_reset", _wrap_AverageFilterF_reset, METH_O, "AverageFilterF_reset(AverageFilterF self)"},
 	 { "delete_AverageFilterF", _wrap_delete_AverageFilterF, METH_O, "delete_AverageFilterF(AverageFilterF self)"},
@@ -46488,42 +50540,62 @@ static PyMethodDef SwigMethods[] = {
 	 { "AverageFilterD_setLength", _wrap_AverageFilterD_setLength, METH_VARARGS, "AverageFilterD_setLength(AverageFilterD self, double timeSpan)"},
 	 { "AverageFilterD_setSamplingFrequency", _wrap_AverageFilterD_setSamplingFrequency, METH_VARARGS, "AverageFilterD_setSamplingFrequency(AverageFilterD self, double fsamp)"},
 	 { "AverageFilterD_setParameters", _wrap_AverageFilterD_setParameters, METH_VARARGS, "AverageFilterD_setParameters(AverageFilterD self, int n, double const * params) -> int"},
-	 { "AverageFilterD_apply", _wrap_AverageFilterD_apply, METH_VARARGS, "AverageFilterD_apply(AverageFilterD self, int n, double * inout)"},
 	 { "AverageFilterD_clone", _wrap_AverageFilterD_clone, METH_O, "AverageFilterD_clone(AverageFilterD self) -> InPlaceFilterD"},
 	 { "AverageFilterD_reset", _wrap_AverageFilterD_reset, METH_O, "AverageFilterD_reset(AverageFilterD self)"},
 	 { "delete_AverageFilterD", _wrap_delete_AverageFilterD, METH_O, "delete_AverageFilterD(AverageFilterD self)"},
 	 { "AverageFilterD_swigregister", AverageFilterD_swigregister, METH_O, NULL},
 	 { "AverageFilterD_swiginit", AverageFilterD_swiginit, METH_VARARGS, NULL},
 	 { "new_STALTAFilterF", _wrap_new_STALTAFilterF, METH_VARARGS, "STALTAFilterF(double lenSTA=2, double lenLTA=50, double fsamp=1.)"},
-	 { "STALTAFilterF_setSaveIntermediate", _wrap_STALTAFilterF_setSaveIntermediate, METH_VARARGS, "STALTAFilterF_setSaveIntermediate(STALTAFilterF self, bool arg2)"},
-	 { "STALTAFilterF_apply", _wrap_STALTAFilterF_apply, METH_VARARGS, "STALTAFilterF_apply(STALTAFilterF self, int ndata, float * data)"},
 	 { "STALTAFilterF_reset", _wrap_STALTAFilterF_reset, METH_O, "STALTAFilterF_reset(STALTAFilterF self)"},
-	 { "STALTAFilterF_changed", _wrap_STALTAFilterF_changed, METH_O, "STALTAFilterF_changed(STALTAFilterF self) -> bool"},
 	 { "STALTAFilterF_setSamplingFrequency", _wrap_STALTAFilterF_setSamplingFrequency, METH_VARARGS, "STALTAFilterF_setSamplingFrequency(STALTAFilterF self, double fsamp)"},
 	 { "STALTAFilterF_setParameters", _wrap_STALTAFilterF_setParameters, METH_VARARGS, "STALTAFilterF_setParameters(STALTAFilterF self, int n, double const * params) -> int"},
 	 { "STALTAFilterF_clone", _wrap_STALTAFilterF_clone, METH_O, "STALTAFilterF_clone(STALTAFilterF self) -> InPlaceFilterF"},
-	 { "STALTAFilterF_getSTA", _wrap_STALTAFilterF_getSTA, METH_O, "STALTAFilterF_getSTA(STALTAFilterF self) -> vectorf"},
-	 { "STALTAFilterF_getLTA", _wrap_STALTAFilterF_getLTA, METH_O, "STALTAFilterF_getLTA(STALTAFilterF self) -> vectorf"},
 	 { "delete_STALTAFilterF", _wrap_delete_STALTAFilterF, METH_O, "delete_STALTAFilterF(STALTAFilterF self)"},
 	 { "STALTAFilterF_swigregister", STALTAFilterF_swigregister, METH_O, NULL},
 	 { "STALTAFilterF_swiginit", STALTAFilterF_swiginit, METH_VARARGS, NULL},
 	 { "new_STALTAFilterD", _wrap_new_STALTAFilterD, METH_VARARGS, "STALTAFilterD(double lenSTA=2, double lenLTA=50, double fsamp=1.)"},
-	 { "STALTAFilterD_setSaveIntermediate", _wrap_STALTAFilterD_setSaveIntermediate, METH_VARARGS, "STALTAFilterD_setSaveIntermediate(STALTAFilterD self, bool arg2)"},
-	 { "STALTAFilterD_apply", _wrap_STALTAFilterD_apply, METH_VARARGS, "STALTAFilterD_apply(STALTAFilterD self, int ndata, double * data)"},
 	 { "STALTAFilterD_reset", _wrap_STALTAFilterD_reset, METH_O, "STALTAFilterD_reset(STALTAFilterD self)"},
-	 { "STALTAFilterD_changed", _wrap_STALTAFilterD_changed, METH_O, "STALTAFilterD_changed(STALTAFilterD self) -> bool"},
 	 { "STALTAFilterD_setSamplingFrequency", _wrap_STALTAFilterD_setSamplingFrequency, METH_VARARGS, "STALTAFilterD_setSamplingFrequency(STALTAFilterD self, double fsamp)"},
 	 { "STALTAFilterD_setParameters", _wrap_STALTAFilterD_setParameters, METH_VARARGS, "STALTAFilterD_setParameters(STALTAFilterD self, int n, double const * params) -> int"},
 	 { "STALTAFilterD_clone", _wrap_STALTAFilterD_clone, METH_O, "STALTAFilterD_clone(STALTAFilterD self) -> InPlaceFilterD"},
-	 { "STALTAFilterD_getSTA", _wrap_STALTAFilterD_getSTA, METH_O, "STALTAFilterD_getSTA(STALTAFilterD self) -> vectord"},
-	 { "STALTAFilterD_getLTA", _wrap_STALTAFilterD_getLTA, METH_O, "STALTAFilterD_getLTA(STALTAFilterD self) -> vectord"},
 	 { "delete_STALTAFilterD", _wrap_delete_STALTAFilterD, METH_O, "delete_STALTAFilterD(STALTAFilterD self)"},
 	 { "STALTAFilterD_swigregister", STALTAFilterD_swigregister, METH_O, NULL},
 	 { "STALTAFilterD_swiginit", STALTAFilterD_swiginit, METH_VARARGS, NULL},
+	 { "new_STALTA2FilterF", _wrap_new_STALTA2FilterF, METH_VARARGS, "STALTA2FilterF(double lenSTA=2, double lenLTA=50, double eventON=3., double eventOFF=1., double fsamp=1.)"},
+	 { "STALTA2FilterF_reset", _wrap_STALTA2FilterF_reset, METH_O, "STALTA2FilterF_reset(STALTA2FilterF self)"},
+	 { "STALTA2FilterF_setSamplingFrequency", _wrap_STALTA2FilterF_setSamplingFrequency, METH_VARARGS, "STALTA2FilterF_setSamplingFrequency(STALTA2FilterF self, double fsamp)"},
+	 { "STALTA2FilterF_setParameters", _wrap_STALTA2FilterF_setParameters, METH_VARARGS, "STALTA2FilterF_setParameters(STALTA2FilterF self, int n, double const * params) -> int"},
+	 { "STALTA2FilterF_clone", _wrap_STALTA2FilterF_clone, METH_O, "STALTA2FilterF_clone(STALTA2FilterF self) -> InPlaceFilterF"},
+	 { "delete_STALTA2FilterF", _wrap_delete_STALTA2FilterF, METH_O, "delete_STALTA2FilterF(STALTA2FilterF self)"},
+	 { "STALTA2FilterF_swigregister", STALTA2FilterF_swigregister, METH_O, NULL},
+	 { "STALTA2FilterF_swiginit", STALTA2FilterF_swiginit, METH_VARARGS, NULL},
+	 { "new_STALTA2FilterD", _wrap_new_STALTA2FilterD, METH_VARARGS, "STALTA2FilterD(double lenSTA=2, double lenLTA=50, double eventON=3., double eventOFF=1., double fsamp=1.)"},
+	 { "STALTA2FilterD_reset", _wrap_STALTA2FilterD_reset, METH_O, "STALTA2FilterD_reset(STALTA2FilterD self)"},
+	 { "STALTA2FilterD_setSamplingFrequency", _wrap_STALTA2FilterD_setSamplingFrequency, METH_VARARGS, "STALTA2FilterD_setSamplingFrequency(STALTA2FilterD self, double fsamp)"},
+	 { "STALTA2FilterD_setParameters", _wrap_STALTA2FilterD_setParameters, METH_VARARGS, "STALTA2FilterD_setParameters(STALTA2FilterD self, int n, double const * params) -> int"},
+	 { "STALTA2FilterD_clone", _wrap_STALTA2FilterD_clone, METH_O, "STALTA2FilterD_clone(STALTA2FilterD self) -> InPlaceFilterD"},
+	 { "delete_STALTA2FilterD", _wrap_delete_STALTA2FilterD, METH_O, "delete_STALTA2FilterD(STALTA2FilterD self)"},
+	 { "STALTA2FilterD_swigregister", STALTA2FilterD_swigregister, METH_O, NULL},
+	 { "STALTA2FilterD_swiginit", STALTA2FilterD_swiginit, METH_VARARGS, NULL},
+	 { "new_STALTAClassicFilterF", _wrap_new_STALTAClassicFilterF, METH_VARARGS, "STALTAClassicFilterF(double lenSTA=2., double lenLTA=50., double fsamp=1.)"},
+	 { "STALTAClassicFilterF_reset", _wrap_STALTAClassicFilterF_reset, METH_O, "STALTAClassicFilterF_reset(STALTAClassicFilterF self)"},
+	 { "STALTAClassicFilterF_setSamplingFrequency", _wrap_STALTAClassicFilterF_setSamplingFrequency, METH_VARARGS, "STALTAClassicFilterF_setSamplingFrequency(STALTAClassicFilterF self, double fsamp)"},
+	 { "STALTAClassicFilterF_setParameters", _wrap_STALTAClassicFilterF_setParameters, METH_VARARGS, "STALTAClassicFilterF_setParameters(STALTAClassicFilterF self, int n, double const * params) -> int"},
+	 { "STALTAClassicFilterF_clone", _wrap_STALTAClassicFilterF_clone, METH_O, "STALTAClassicFilterF_clone(STALTAClassicFilterF self) -> InPlaceFilterF"},
+	 { "delete_STALTAClassicFilterF", _wrap_delete_STALTAClassicFilterF, METH_O, "delete_STALTAClassicFilterF(STALTAClassicFilterF self)"},
+	 { "STALTAClassicFilterF_swigregister", STALTAClassicFilterF_swigregister, METH_O, NULL},
+	 { "STALTAClassicFilterF_swiginit", STALTAClassicFilterF_swiginit, METH_VARARGS, NULL},
+	 { "new_STALTAClassicFilterD", _wrap_new_STALTAClassicFilterD, METH_VARARGS, "STALTAClassicFilterD(double lenSTA=2., double lenLTA=50., double fsamp=1.)"},
+	 { "STALTAClassicFilterD_reset", _wrap_STALTAClassicFilterD_reset, METH_O, "STALTAClassicFilterD_reset(STALTAClassicFilterD self)"},
+	 { "STALTAClassicFilterD_setSamplingFrequency", _wrap_STALTAClassicFilterD_setSamplingFrequency, METH_VARARGS, "STALTAClassicFilterD_setSamplingFrequency(STALTAClassicFilterD self, double fsamp)"},
+	 { "STALTAClassicFilterD_setParameters", _wrap_STALTAClassicFilterD_setParameters, METH_VARARGS, "STALTAClassicFilterD_setParameters(STALTAClassicFilterD self, int n, double const * params) -> int"},
+	 { "STALTAClassicFilterD_clone", _wrap_STALTAClassicFilterD_clone, METH_O, "STALTAClassicFilterD_clone(STALTAClassicFilterD self) -> InPlaceFilterD"},
+	 { "delete_STALTAClassicFilterD", _wrap_delete_STALTAClassicFilterD, METH_O, "delete_STALTAClassicFilterD(STALTAClassicFilterD self)"},
+	 { "STALTAClassicFilterD_swigregister", STALTAClassicFilterD_swigregister, METH_O, NULL},
+	 { "STALTAClassicFilterD_swiginit", STALTAClassicFilterD_swiginit, METH_VARARGS, NULL},
 	 { "new_RunningMeanFilterF", _wrap_new_RunningMeanFilterF, METH_VARARGS, "RunningMeanFilterF(double windowLength=0, double fsamp=0.0)"},
 	 { "delete_RunningMeanFilterF", _wrap_delete_RunningMeanFilterF, METH_O, "delete_RunningMeanFilterF(RunningMeanFilterF self)"},
 	 { "RunningMeanFilterF_setLength", _wrap_RunningMeanFilterF_setLength, METH_VARARGS, "RunningMeanFilterF_setLength(RunningMeanFilterF self, double windowLength)"},
-	 { "RunningMeanFilterF_apply", _wrap_RunningMeanFilterF_apply, METH_VARARGS, "RunningMeanFilterF_apply(RunningMeanFilterF self, int n, float * inout)"},
 	 { "RunningMeanFilterF_clone", _wrap_RunningMeanFilterF_clone, METH_O, "RunningMeanFilterF_clone(RunningMeanFilterF self) -> InPlaceFilterF"},
 	 { "RunningMeanFilterF_reset", _wrap_RunningMeanFilterF_reset, METH_O, "RunningMeanFilterF_reset(RunningMeanFilterF self)"},
 	 { "RunningMeanFilterF_setSamplingFrequency", _wrap_RunningMeanFilterF_setSamplingFrequency, METH_VARARGS, "RunningMeanFilterF_setSamplingFrequency(RunningMeanFilterF self, double fsamp)"},
@@ -46533,7 +50605,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "new_RunningMeanFilterD", _wrap_new_RunningMeanFilterD, METH_VARARGS, "RunningMeanFilterD(double windowLength=0, double fsamp=0.0)"},
 	 { "delete_RunningMeanFilterD", _wrap_delete_RunningMeanFilterD, METH_O, "delete_RunningMeanFilterD(RunningMeanFilterD self)"},
 	 { "RunningMeanFilterD_setLength", _wrap_RunningMeanFilterD_setLength, METH_VARARGS, "RunningMeanFilterD_setLength(RunningMeanFilterD self, double windowLength)"},
-	 { "RunningMeanFilterD_apply", _wrap_RunningMeanFilterD_apply, METH_VARARGS, "RunningMeanFilterD_apply(RunningMeanFilterD self, int n, double * inout)"},
 	 { "RunningMeanFilterD_clone", _wrap_RunningMeanFilterD_clone, METH_O, "RunningMeanFilterD_clone(RunningMeanFilterD self) -> InPlaceFilterD"},
 	 { "RunningMeanFilterD_reset", _wrap_RunningMeanFilterD_reset, METH_O, "RunningMeanFilterD_reset(RunningMeanFilterD self)"},
 	 { "RunningMeanFilterD_setSamplingFrequency", _wrap_RunningMeanFilterD_setSamplingFrequency, METH_VARARGS, "RunningMeanFilterD_setSamplingFrequency(RunningMeanFilterD self, double fsamp)"},
@@ -46542,20 +50613,17 @@ static PyMethodDef SwigMethods[] = {
 	 { "RunningMeanFilterD_swiginit", RunningMeanFilterD_swiginit, METH_VARARGS, NULL},
 	 { "new_RunningMeanHighPassFilterF", _wrap_new_RunningMeanHighPassFilterF, METH_VARARGS, "RunningMeanHighPassFilterF(double windowLength=0, double fsamp=0.0)"},
 	 { "delete_RunningMeanHighPassFilterF", _wrap_delete_RunningMeanHighPassFilterF, METH_O, "delete_RunningMeanHighPassFilterF(RunningMeanHighPassFilterF self)"},
-	 { "RunningMeanHighPassFilterF_apply", _wrap_RunningMeanHighPassFilterF_apply, METH_VARARGS, "RunningMeanHighPassFilterF_apply(RunningMeanHighPassFilterF self, int n, float * inout)"},
 	 { "RunningMeanHighPassFilterF_clone", _wrap_RunningMeanHighPassFilterF_clone, METH_O, "RunningMeanHighPassFilterF_clone(RunningMeanHighPassFilterF self) -> InPlaceFilterF"},
 	 { "RunningMeanHighPassFilterF_swigregister", RunningMeanHighPassFilterF_swigregister, METH_O, NULL},
 	 { "RunningMeanHighPassFilterF_swiginit", RunningMeanHighPassFilterF_swiginit, METH_VARARGS, NULL},
 	 { "new_RunningMeanHighPassFilterD", _wrap_new_RunningMeanHighPassFilterD, METH_VARARGS, "RunningMeanHighPassFilterD(double windowLength=0, double fsamp=0.0)"},
 	 { "delete_RunningMeanHighPassFilterD", _wrap_delete_RunningMeanHighPassFilterD, METH_O, "delete_RunningMeanHighPassFilterD(RunningMeanHighPassFilterD self)"},
-	 { "RunningMeanHighPassFilterD_apply", _wrap_RunningMeanHighPassFilterD_apply, METH_VARARGS, "RunningMeanHighPassFilterD_apply(RunningMeanHighPassFilterD self, int n, double * inout)"},
 	 { "RunningMeanHighPassFilterD_clone", _wrap_RunningMeanHighPassFilterD_clone, METH_O, "RunningMeanHighPassFilterD_clone(RunningMeanHighPassFilterD self) -> InPlaceFilterD"},
 	 { "RunningMeanHighPassFilterD_swigregister", RunningMeanHighPassFilterD_swigregister, METH_O, NULL},
 	 { "RunningMeanHighPassFilterD_swiginit", RunningMeanHighPassFilterD_swiginit, METH_VARARGS, NULL},
 	 { "new_InitialTaperFilterF", _wrap_new_InitialTaperFilterF, METH_VARARGS, "InitialTaperFilterF(double taperLength=0, float offset=0, double fsamp=0)"},
 	 { "delete_InitialTaperFilterF", _wrap_delete_InitialTaperFilterF, METH_O, "delete_InitialTaperFilterF(InitialTaperFilterF self)"},
 	 { "InitialTaperFilterF_setLength", _wrap_InitialTaperFilterF_setLength, METH_VARARGS, "InitialTaperFilterF_setLength(InitialTaperFilterF self, double taperLength, float offset=0)"},
-	 { "InitialTaperFilterF_apply", _wrap_InitialTaperFilterF_apply, METH_VARARGS, "InitialTaperFilterF_apply(InitialTaperFilterF self, int n, float * inout)"},
 	 { "InitialTaperFilterF_clone", _wrap_InitialTaperFilterF_clone, METH_O, "InitialTaperFilterF_clone(InitialTaperFilterF self) -> InPlaceFilterF"},
 	 { "InitialTaperFilterF_reset", _wrap_InitialTaperFilterF_reset, METH_O, "InitialTaperFilterF_reset(InitialTaperFilterF self)"},
 	 { "InitialTaperFilterF_setSamplingFrequency", _wrap_InitialTaperFilterF_setSamplingFrequency, METH_VARARGS, "InitialTaperFilterF_setSamplingFrequency(InitialTaperFilterF self, double fsamp)"},
@@ -46565,7 +50633,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "new_InitialTaperFilterD", _wrap_new_InitialTaperFilterD, METH_VARARGS, "InitialTaperFilterD(double taperLength=0, double offset=0, double fsamp=0)"},
 	 { "delete_InitialTaperFilterD", _wrap_delete_InitialTaperFilterD, METH_O, "delete_InitialTaperFilterD(InitialTaperFilterD self)"},
 	 { "InitialTaperFilterD_setLength", _wrap_InitialTaperFilterD_setLength, METH_VARARGS, "InitialTaperFilterD_setLength(InitialTaperFilterD self, double taperLength, double offset=0)"},
-	 { "InitialTaperFilterD_apply", _wrap_InitialTaperFilterD_apply, METH_VARARGS, "InitialTaperFilterD_apply(InitialTaperFilterD self, int n, double * inout)"},
 	 { "InitialTaperFilterD_clone", _wrap_InitialTaperFilterD_clone, METH_O, "InitialTaperFilterD_clone(InitialTaperFilterD self) -> InPlaceFilterD"},
 	 { "InitialTaperFilterD_reset", _wrap_InitialTaperFilterD_reset, METH_O, "InitialTaperFilterD_reset(InitialTaperFilterD self)"},
 	 { "InitialTaperFilterD_setSamplingFrequency", _wrap_InitialTaperFilterD_setSamplingFrequency, METH_VARARGS, "InitialTaperFilterD_setSamplingFrequency(InitialTaperFilterD self, double fsamp)"},
@@ -46601,7 +50668,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "BiquadCascadeF_reset", _wrap_BiquadCascadeF_reset, METH_O, "BiquadCascadeF_reset(BiquadCascadeF self)"},
 	 { "BiquadCascadeF_append", _wrap_BiquadCascadeF_append, METH_VARARGS, "BiquadCascadeF_append(BiquadCascadeF self, Seiscomp::Math::Filtering::IIR::Biquad< float > const & biq)"},
 	 { "BiquadCascadeF_set", _wrap_BiquadCascadeF_set, METH_VARARGS, "BiquadCascadeF_set(BiquadCascadeF self, Seiscomp::Math::Filtering::IIR::Biquads const & biquads)"},
-	 { "BiquadCascadeF_apply", _wrap_BiquadCascadeF_apply, METH_VARARGS, "BiquadCascadeF_apply(BiquadCascadeF self, int n, float * inout)"},
 	 { "BiquadCascadeF_clone", _wrap_BiquadCascadeF_clone, METH_O, "BiquadCascadeF_clone(BiquadCascadeF self) -> InPlaceFilterF"},
 	 { "BiquadCascadeF_setSamplingFrequency", _wrap_BiquadCascadeF_setSamplingFrequency, METH_VARARGS, "BiquadCascadeF_setSamplingFrequency(BiquadCascadeF self, double arg2)"},
 	 { "BiquadCascadeF_setParameters", _wrap_BiquadCascadeF_setParameters, METH_VARARGS, "BiquadCascadeF_setParameters(BiquadCascadeF self, int n, double const * params) -> int"},
@@ -46616,7 +50682,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "BiquadCascadeD_reset", _wrap_BiquadCascadeD_reset, METH_O, "BiquadCascadeD_reset(BiquadCascadeD self)"},
 	 { "BiquadCascadeD_append", _wrap_BiquadCascadeD_append, METH_VARARGS, "BiquadCascadeD_append(BiquadCascadeD self, Seiscomp::Math::Filtering::IIR::Biquad< double > const & biq)"},
 	 { "BiquadCascadeD_set", _wrap_BiquadCascadeD_set, METH_VARARGS, "BiquadCascadeD_set(BiquadCascadeD self, Seiscomp::Math::Filtering::IIR::Biquads const & biquads)"},
-	 { "BiquadCascadeD_apply", _wrap_BiquadCascadeD_apply, METH_VARARGS, "BiquadCascadeD_apply(BiquadCascadeD self, int n, double * inout)"},
 	 { "BiquadCascadeD_clone", _wrap_BiquadCascadeD_clone, METH_O, "BiquadCascadeD_clone(BiquadCascadeD self) -> InPlaceFilterD"},
 	 { "BiquadCascadeD_setSamplingFrequency", _wrap_BiquadCascadeD_setSamplingFrequency, METH_VARARGS, "BiquadCascadeD_setSamplingFrequency(BiquadCascadeD self, double arg2)"},
 	 { "BiquadCascadeD_setParameters", _wrap_BiquadCascadeD_setParameters, METH_VARARGS, "BiquadCascadeD_setParameters(BiquadCascadeD self, int n, double const * params) -> int"},
@@ -46700,7 +50765,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "ChainFilterF_take", _wrap_ChainFilterF_take, METH_VARARGS, "ChainFilterF_take(ChainFilterF self, size_t pos) -> InPlaceFilterF"},
 	 { "ChainFilterF_indexOf", _wrap_ChainFilterF_indexOf, METH_VARARGS, "ChainFilterF_indexOf(ChainFilterF self, InPlaceFilterF filter) -> size_t"},
 	 { "ChainFilterF_filterCount", _wrap_ChainFilterF_filterCount, METH_O, "ChainFilterF_filterCount(ChainFilterF self) -> size_t"},
-	 { "ChainFilterF_apply", _wrap_ChainFilterF_apply, METH_VARARGS, "ChainFilterF_apply(ChainFilterF self, int n, float * inout)"},
 	 { "ChainFilterF_setStartTime", _wrap_ChainFilterF_setStartTime, METH_VARARGS, "ChainFilterF_setStartTime(ChainFilterF self, Time time)"},
 	 { "ChainFilterF_setStreamID", _wrap_ChainFilterF_setStreamID, METH_VARARGS, "ChainFilterF_setStreamID(ChainFilterF self, std::string const & net, std::string const & sta, std::string const & loc, std::string const & cha)"},
 	 { "ChainFilterF_setSamplingFrequency", _wrap_ChainFilterF_setSamplingFrequency, METH_VARARGS, "ChainFilterF_setSamplingFrequency(ChainFilterF self, double fsamp)"},
@@ -46715,7 +50779,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "ChainFilterD_take", _wrap_ChainFilterD_take, METH_VARARGS, "ChainFilterD_take(ChainFilterD self, size_t pos) -> InPlaceFilterD"},
 	 { "ChainFilterD_indexOf", _wrap_ChainFilterD_indexOf, METH_VARARGS, "ChainFilterD_indexOf(ChainFilterD self, InPlaceFilterD filter) -> size_t"},
 	 { "ChainFilterD_filterCount", _wrap_ChainFilterD_filterCount, METH_O, "ChainFilterD_filterCount(ChainFilterD self) -> size_t"},
-	 { "ChainFilterD_apply", _wrap_ChainFilterD_apply, METH_VARARGS, "ChainFilterD_apply(ChainFilterD self, int n, double * inout)"},
 	 { "ChainFilterD_setStartTime", _wrap_ChainFilterD_setStartTime, METH_VARARGS, "ChainFilterD_setStartTime(ChainFilterD self, Time time)"},
 	 { "ChainFilterD_setStreamID", _wrap_ChainFilterD_setStreamID, METH_VARARGS, "ChainFilterD_setStreamID(ChainFilterD self, std::string const & net, std::string const & sta, std::string const & loc, std::string const & cha)"},
 	 { "ChainFilterD_setSamplingFrequency", _wrap_ChainFilterD_setSamplingFrequency, METH_VARARGS, "ChainFilterD_setSamplingFrequency(ChainFilterD self, double fsamp)"},
@@ -46759,6 +50822,28 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_Seismometer5sec", _wrap_delete_Seismometer5sec, METH_O, "delete_Seismometer5sec(Seismometer5sec self)"},
 	 { "Seismometer5sec_swigregister", Seismometer5sec_swigregister, METH_O, NULL},
 	 { "Seismometer5sec_swiginit", Seismometer5sec_swiginit, METH_VARARGS, NULL},
+	 { "new_SeismometerFilterF", _wrap_new_SeismometerFilterF, METH_VARARGS, "\n"
+		"SeismometerFilterF()\n"
+		"SeismometerFilterF(vectorc poles, vectorc zeros, double norm)\n"
+		"new_SeismometerFilterF(SeismometerFilterF other) -> SeismometerFilterF\n"
+		""},
+	 { "SeismometerFilterF_setSamplingFrequency", _wrap_SeismometerFilterF_setSamplingFrequency, METH_VARARGS, "SeismometerFilterF_setSamplingFrequency(SeismometerFilterF self, double fsamp)"},
+	 { "SeismometerFilterF_setParameters", _wrap_SeismometerFilterF_setParameters, METH_VARARGS, "SeismometerFilterF_setParameters(SeismometerFilterF self, int n, double const * params) -> int"},
+	 { "SeismometerFilterF_clone", _wrap_SeismometerFilterF_clone, METH_O, "SeismometerFilterF_clone(SeismometerFilterF self) -> InPlaceFilterF"},
+	 { "delete_SeismometerFilterF", _wrap_delete_SeismometerFilterF, METH_O, "delete_SeismometerFilterF(SeismometerFilterF self)"},
+	 { "SeismometerFilterF_swigregister", SeismometerFilterF_swigregister, METH_O, NULL},
+	 { "SeismometerFilterF_swiginit", SeismometerFilterF_swiginit, METH_VARARGS, NULL},
+	 { "new_SeismometerFilterD", _wrap_new_SeismometerFilterD, METH_VARARGS, "\n"
+		"SeismometerFilterD()\n"
+		"SeismometerFilterD(vectorc poles, vectorc zeros, double norm)\n"
+		"new_SeismometerFilterD(SeismometerFilterD other) -> SeismometerFilterD\n"
+		""},
+	 { "SeismometerFilterD_setSamplingFrequency", _wrap_SeismometerFilterD_setSamplingFrequency, METH_VARARGS, "SeismometerFilterD_setSamplingFrequency(SeismometerFilterD self, double fsamp)"},
+	 { "SeismometerFilterD_setParameters", _wrap_SeismometerFilterD_setParameters, METH_VARARGS, "SeismometerFilterD_setParameters(SeismometerFilterD self, int n, double const * params) -> int"},
+	 { "SeismometerFilterD_clone", _wrap_SeismometerFilterD_clone, METH_O, "SeismometerFilterD_clone(SeismometerFilterD self) -> InPlaceFilterD"},
+	 { "delete_SeismometerFilterD", _wrap_delete_SeismometerFilterD, METH_O, "delete_SeismometerFilterD(SeismometerFilterD self)"},
+	 { "SeismometerFilterD_swigregister", SeismometerFilterD_swigregister, METH_O, NULL},
+	 { "SeismometerFilterD_swiginit", SeismometerFilterD_swiginit, METH_VARARGS, NULL},
 	 { "new_WWSSN_SPF", _wrap_new_WWSSN_SPF, METH_VARARGS, "\n"
 		"WWSSN_SPF(Seiscomp::Math::GroundMotion input=Velocity)\n"
 		"new_WWSSN_SPF(WWSSN_SPF other) -> WWSSN_SPF\n"
@@ -46779,6 +50864,66 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_WWSSN_SPD", _wrap_delete_WWSSN_SPD, METH_O, "delete_WWSSN_SPD(WWSSN_SPD self)"},
 	 { "WWSSN_SPD_swigregister", WWSSN_SPD_swigregister, METH_O, NULL},
 	 { "WWSSN_SPD_swiginit", WWSSN_SPD_swiginit, METH_VARARGS, NULL},
+	 { "new_WWSSN_LPF", _wrap_new_WWSSN_LPF, METH_VARARGS, "\n"
+		"WWSSN_LPF(Seiscomp::Math::GroundMotion input=Velocity)\n"
+		"new_WWSSN_LPF(WWSSN_LPF other) -> WWSSN_LPF\n"
+		""},
+	 { "WWSSN_LPF_setParameters", _wrap_WWSSN_LPF_setParameters, METH_VARARGS, "WWSSN_LPF_setParameters(WWSSN_LPF self, int n, double const * params) -> int"},
+	 { "WWSSN_LPF_clone", _wrap_WWSSN_LPF_clone, METH_O, "WWSSN_LPF_clone(WWSSN_LPF self) -> InPlaceFilterF"},
+	 { "WWSSN_LPF_setInput", _wrap_WWSSN_LPF_setInput, METH_VARARGS, "WWSSN_LPF_setInput(WWSSN_LPF self, Seiscomp::Math::GroundMotion input)"},
+	 { "delete_WWSSN_LPF", _wrap_delete_WWSSN_LPF, METH_O, "delete_WWSSN_LPF(WWSSN_LPF self)"},
+	 { "WWSSN_LPF_swigregister", WWSSN_LPF_swigregister, METH_O, NULL},
+	 { "WWSSN_LPF_swiginit", WWSSN_LPF_swiginit, METH_VARARGS, NULL},
+	 { "new_WWSSN_LPD", _wrap_new_WWSSN_LPD, METH_VARARGS, "\n"
+		"WWSSN_LPD(Seiscomp::Math::GroundMotion input=Velocity)\n"
+		"new_WWSSN_LPD(WWSSN_LPD other) -> WWSSN_LPD\n"
+		""},
+	 { "WWSSN_LPD_setParameters", _wrap_WWSSN_LPD_setParameters, METH_VARARGS, "WWSSN_LPD_setParameters(WWSSN_LPD self, int n, double const * params) -> int"},
+	 { "WWSSN_LPD_clone", _wrap_WWSSN_LPD_clone, METH_O, "WWSSN_LPD_clone(WWSSN_LPD self) -> InPlaceFilterD"},
+	 { "WWSSN_LPD_setInput", _wrap_WWSSN_LPD_setInput, METH_VARARGS, "WWSSN_LPD_setInput(WWSSN_LPD self, Seiscomp::Math::GroundMotion input)"},
+	 { "delete_WWSSN_LPD", _wrap_delete_WWSSN_LPD, METH_O, "delete_WWSSN_LPD(WWSSN_LPD self)"},
+	 { "WWSSN_LPD_swigregister", WWSSN_LPD_swigregister, METH_O, NULL},
+	 { "WWSSN_LPD_swiginit", WWSSN_LPD_swiginit, METH_VARARGS, NULL},
+	 { "new_WoodAndersonFilterF", _wrap_new_WoodAndersonFilterF, METH_VARARGS, "\n"
+		"WoodAndersonFilterF(Seiscomp::Math::GroundMotion input=Velocity, Seiscomp::Math::SeismometerResponse::WoodAnderson::Config config=Seiscomp::Math::SeismometerResponse::WoodAnderson::Config())\n"
+		"new_WoodAndersonFilterF(WoodAndersonFilterF other) -> WoodAndersonFilterF\n"
+		""},
+	 { "WoodAndersonFilterF_setParameters", _wrap_WoodAndersonFilterF_setParameters, METH_VARARGS, "WoodAndersonFilterF_setParameters(WoodAndersonFilterF self, int n, double const * params) -> int"},
+	 { "WoodAndersonFilterF_clone", _wrap_WoodAndersonFilterF_clone, METH_O, "WoodAndersonFilterF_clone(WoodAndersonFilterF self) -> InPlaceFilterF"},
+	 { "WoodAndersonFilterF_setInput", _wrap_WoodAndersonFilterF_setInput, METH_VARARGS, "WoodAndersonFilterF_setInput(WoodAndersonFilterF self, Seiscomp::Math::GroundMotion input, Seiscomp::Math::SeismometerResponse::WoodAnderson::Config config=Seiscomp::Math::SeismometerResponse::WoodAnderson::Config())"},
+	 { "delete_WoodAndersonFilterF", _wrap_delete_WoodAndersonFilterF, METH_O, "delete_WoodAndersonFilterF(WoodAndersonFilterF self)"},
+	 { "WoodAndersonFilterF_swigregister", WoodAndersonFilterF_swigregister, METH_O, NULL},
+	 { "WoodAndersonFilterF_swiginit", WoodAndersonFilterF_swiginit, METH_VARARGS, NULL},
+	 { "new_WoodAndersonFilterD", _wrap_new_WoodAndersonFilterD, METH_VARARGS, "\n"
+		"WoodAndersonFilterD(Seiscomp::Math::GroundMotion input=Velocity, Seiscomp::Math::SeismometerResponse::WoodAnderson::Config config=Seiscomp::Math::SeismometerResponse::WoodAnderson::Config())\n"
+		"new_WoodAndersonFilterD(WoodAndersonFilterD other) -> WoodAndersonFilterD\n"
+		""},
+	 { "WoodAndersonFilterD_setParameters", _wrap_WoodAndersonFilterD_setParameters, METH_VARARGS, "WoodAndersonFilterD_setParameters(WoodAndersonFilterD self, int n, double const * params) -> int"},
+	 { "WoodAndersonFilterD_clone", _wrap_WoodAndersonFilterD_clone, METH_O, "WoodAndersonFilterD_clone(WoodAndersonFilterD self) -> InPlaceFilterD"},
+	 { "WoodAndersonFilterD_setInput", _wrap_WoodAndersonFilterD_setInput, METH_VARARGS, "WoodAndersonFilterD_setInput(WoodAndersonFilterD self, Seiscomp::Math::GroundMotion input, Seiscomp::Math::SeismometerResponse::WoodAnderson::Config config=Seiscomp::Math::SeismometerResponse::WoodAnderson::Config())"},
+	 { "delete_WoodAndersonFilterD", _wrap_delete_WoodAndersonFilterD, METH_O, "delete_WoodAndersonFilterD(WoodAndersonFilterD self)"},
+	 { "WoodAndersonFilterD_swigregister", WoodAndersonFilterD_swigregister, METH_O, NULL},
+	 { "WoodAndersonFilterD_swiginit", WoodAndersonFilterD_swiginit, METH_VARARGS, NULL},
+	 { "new_GenericSeismometerFilterF", _wrap_new_GenericSeismometerFilterF, METH_VARARGS, "\n"
+		"GenericSeismometerFilterF(double cornerPeriod=1., Seiscomp::Math::GroundMotion input=Velocity)\n"
+		"new_GenericSeismometerFilterF(GenericSeismometerFilterF other) -> GenericSeismometerFilterF\n"
+		""},
+	 { "GenericSeismometerFilterF_setParameters", _wrap_GenericSeismometerFilterF_setParameters, METH_VARARGS, "GenericSeismometerFilterF_setParameters(GenericSeismometerFilterF self, int n, double const * params) -> int"},
+	 { "GenericSeismometerFilterF_clone", _wrap_GenericSeismometerFilterF_clone, METH_O, "GenericSeismometerFilterF_clone(GenericSeismometerFilterF self) -> InPlaceFilterF"},
+	 { "GenericSeismometerFilterF_setInput", _wrap_GenericSeismometerFilterF_setInput, METH_VARARGS, "GenericSeismometerFilterF_setInput(GenericSeismometerFilterF self, Seiscomp::Math::GroundMotion input)"},
+	 { "delete_GenericSeismometerFilterF", _wrap_delete_GenericSeismometerFilterF, METH_O, "delete_GenericSeismometerFilterF(GenericSeismometerFilterF self)"},
+	 { "GenericSeismometerFilterF_swigregister", GenericSeismometerFilterF_swigregister, METH_O, NULL},
+	 { "GenericSeismometerFilterF_swiginit", GenericSeismometerFilterF_swiginit, METH_VARARGS, NULL},
+	 { "new_GenericSeismometerFilterD", _wrap_new_GenericSeismometerFilterD, METH_VARARGS, "\n"
+		"GenericSeismometerFilterD(double cornerPeriod=1., Seiscomp::Math::GroundMotion input=Velocity)\n"
+		"new_GenericSeismometerFilterD(GenericSeismometerFilterD other) -> GenericSeismometerFilterD\n"
+		""},
+	 { "GenericSeismometerFilterD_setParameters", _wrap_GenericSeismometerFilterD_setParameters, METH_VARARGS, "GenericSeismometerFilterD_setParameters(GenericSeismometerFilterD self, int n, double const * params) -> int"},
+	 { "GenericSeismometerFilterD_clone", _wrap_GenericSeismometerFilterD_clone, METH_O, "GenericSeismometerFilterD_clone(GenericSeismometerFilterD self) -> InPlaceFilterD"},
+	 { "GenericSeismometerFilterD_setInput", _wrap_GenericSeismometerFilterD_setInput, METH_VARARGS, "GenericSeismometerFilterD_setInput(GenericSeismometerFilterD self, Seiscomp::Math::GroundMotion input)"},
+	 { "delete_GenericSeismometerFilterD", _wrap_delete_GenericSeismometerFilterD, METH_O, "delete_GenericSeismometerFilterD(GenericSeismometerFilterD self)"},
+	 { "GenericSeismometerFilterD_swigregister", GenericSeismometerFilterD_swigregister, METH_O, NULL},
+	 { "GenericSeismometerFilterD_swiginit", GenericSeismometerFilterD_swiginit, METH_VARARGS, NULL},
 	 { "delazi", _wrap_delazi, METH_VARARGS, "delazi(double lat1, double lon1, double lat2, double lon2)"},
 	 { "delazi_wgs84", _wrap_delazi_wgs84, METH_VARARGS, "delazi_wgs84(double lat1, double lon1, double lat2, double lon2)"},
 	 { "delandaz2coord", _wrap_delandaz2coord, METH_VARARGS, "delandaz2coord(double dist, double azi, double lat0, double lon0)"},
@@ -46947,6 +51092,18 @@ static void *_p_Seiscomp__Math__Geo__NamedCoordT_double_tTo_p_Seiscomp__Math__Ge
 static void *_p_Seiscomp__Math__Geo__CityT_double_tTo_p_Seiscomp__Math__Geo__CoordT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Math::Geo::Coord< double > *) (Seiscomp::Math::Geo::NamedCoord< double > *) ((Seiscomp::Math::Geo::City< double > *) x));
 }
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::IIR::Filter< double > *)  ((Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::IIR::Filter< double > *)  ((Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::IIR::Filter< double > *)  ((Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::IIR::Filter< double > *)  ((Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *) x));
+}
 static void *_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_tTo_p_Seiscomp__Math__Filtering__RunningMeanT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Math::Filtering::RunningMean< double > *)  ((Seiscomp::Math::Filtering::RunningMeanHighPass< double > *) x));
 }
@@ -46980,11 +51137,26 @@ static void *_p_Seiscomp__Math__Geo__CityT_float_tTo_p_Seiscomp__Math__Geo__Coor
 static void *_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_tTo_p_Seiscomp__Math__Filtering__RunningMeanT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Math::Filtering::RunningMean< float > *)  ((Seiscomp::Math::Filtering::RunningMeanHighPass< float > *) x));
 }
+static void *_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::IIR::Filter< float > *)  ((Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::IIR::Filter< float > *)  ((Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::IIR::Filter< float > *)  ((Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::IIR::Filter< float > *)  ((Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *) x));
+}
 static void *_p_Seiscomp__Core__MessageTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *)  ((Seiscomp::Core::Message *) x));
 }
 static void *_p_Seiscomp__Core__DataMessageTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Core::Message *)(Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *) ((Seiscomp::Core::DataMessage *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *) ((Seiscomp::Math::Filtering::STALTA_Classic< double > *) x));
 }
 static void *_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *) ((Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) x));
@@ -47037,6 +51209,9 @@ static void *_p_Seiscomp__NumericArrayT_double_tTo_p_Seiscomp__Core__BaseObject(
 static void *_p_Seiscomp__TypedArrayT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Array *) ((Seiscomp::TypedArray< double > *) x));
 }
+static void *_p_Seiscomp__Math__Filtering__STALTA2T_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *) ((Seiscomp::Math::Filtering::STALTA2< double > *) x));
+}
 static void *_p_Seiscomp__Math__Filtering__RunningMeanT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *) ((Seiscomp::Math::Filtering::RunningMean< double > *) x));
 }
@@ -47051,6 +51226,9 @@ static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_tTo_p
 }
 static void *_p_Seiscomp__Math__Filtering__ChainFilterT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *) ((Seiscomp::Math::Filtering::ChainFilter< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__FilterT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *) ((Seiscomp::Math::Filtering::IIR::Filter< double > *) x));
 }
 static void *_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *)(Seiscomp::Math::Filtering::RunningMean< float > *) ((Seiscomp::Math::Filtering::RunningMeanHighPass< float > *) x));
@@ -47079,8 +51257,8 @@ static void *_p_Seiscomp__TypedArrayT_std__complexT_float_t_tTo_p_Seiscomp__Core
 static void *_p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Array *) ((Seiscomp::TypedArray< Seiscomp::Core::Time > *) x));
 }
-static void *_p_Seiscomp__Math__Filtering__RunningMeanT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *) ((Seiscomp::Math::Filtering::RunningMean< float > *) x));
+static void *_p_Seiscomp__Math__Filtering__STALTA2T_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *) ((Seiscomp::Math::Filtering::STALTA2< float > *) x));
 }
 static void *_p_Seiscomp__Math__Filtering__STALTAT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *) ((Seiscomp::Math::Filtering::STALTA< float > *) x));
@@ -47106,11 +51284,20 @@ static void *_p_Seiscomp__NumericArrayT_float_tTo_p_Seiscomp__Core__BaseObject(v
 static void *_p_Seiscomp__TypedArrayT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Array *) ((Seiscomp::TypedArray< float > *) x));
 }
+static void *_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *) ((Seiscomp::Math::Filtering::STALTA_Classic< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__RunningMeanT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *) ((Seiscomp::Math::Filtering::RunningMean< float > *) x));
+}
 static void *_p_Seiscomp__Math__Filtering__InitialTaperT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *) ((Seiscomp::Math::Filtering::InitialTaper< float > *) x));
 }
 static void *_p_Seiscomp__Math__Filtering__ChainFilterT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *) ((Seiscomp::Math::Filtering::ChainFilter< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__FilterT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *) ((Seiscomp::Math::Filtering::IIR::Filter< float > *) x));
 }
 static void *_p_Seiscomp__RecordTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *)  ((Seiscomp::Record *) x));
@@ -47139,56 +51326,131 @@ static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_tTo_p
 static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *)(Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) ((Seiscomp::Math::Filtering::IIR::ButterworthBandpass< double > *) x));
 }
+static void *_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *)(Seiscomp::Math::Filtering::IIR::Filter< float > *) ((Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *)(Seiscomp::Math::Filtering::IIR::Filter< double > *) ((Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *) x));
+}
 static void *_p_Seiscomp__Core__GreensFunctionTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *)  ((Seiscomp::Core::GreensFunction *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *)(Seiscomp::Math::Filtering::IIR::Filter< double > *) ((Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *)(Seiscomp::Math::Filtering::IIR::Filter< double > *) ((Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *) x));
 }
 static void *_p_Seiscomp__Math__Restitution__FFT__TransferFunctionTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *)  ((Seiscomp::Math::Restitution::FFT::TransferFunction *) x));
 }
+static void *_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *)(Seiscomp::Math::Filtering::IIR::Filter< float > *) ((Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< double > *)(Seiscomp::Math::Filtering::IIR::Filter< double > *) ((Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *) x));
+}
 static void *_p_Seiscomp__GenericRecordTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Record *) ((Seiscomp::GenericRecord *) x));
 }
-static void *_p_Seiscomp__Math__Filtering__AverageT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::Average< float > *) x));
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *)(Seiscomp::Math::Filtering::IIR::Filter< float > *) ((Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< float > *) x));
 }
-static void *_p_Seiscomp__Math__Filtering__STALTAT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::STALTA< float > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__RunningMeanT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::RunningMean< float > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__InitialTaperT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::InitialTaper< float > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) ((Seiscomp::Math::Filtering::IIR::ButterworthLowpass< float > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) ((Seiscomp::Math::Filtering::IIR::ButterworthHighpass< float > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__ChainFilterT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::ChainFilter< float > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) ((Seiscomp::Math::Filtering::IIR::ButterworthBandpass< float > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) ((Seiscomp::Math::Filtering::IIR::ButterworthHighLowpass< float > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) ((Seiscomp::Math::Filtering::IIR::ButterworthBandstop< float > *) x));
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_tTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *)(Seiscomp::Math::Filtering::IIR::Filter< float > *) ((Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *) x));
 }
 static void *_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::RunningMean< float > *) ((Seiscomp::Math::Filtering::RunningMeanHighPass< float > *) x));
 }
+static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) ((Seiscomp::Math::Filtering::IIR::ButterworthBandpass< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__ChainFilterT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::ChainFilter< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__InitialTaperT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::InitialTaper< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__RunningMeanT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::RunningMean< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::STALTA_Classic< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__STALTA2T_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::STALTA2< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__STALTAT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::STALTA< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__AverageT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::Average< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__FilterT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::IIR::Filter< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) ((Seiscomp::Math::Filtering::IIR::ButterworthBandstop< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) ((Seiscomp::Math::Filtering::IIR::ButterworthHighpass< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) ((Seiscomp::Math::Filtering::IIR::ButterworthHighLowpass< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *)  ((Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::Filter< float > *) ((Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< float > *) ((Seiscomp::Math::Filtering::IIR::ButterworthLowpass< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::Filter< float > *) ((Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::Filter< float > *) ((Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< float > *) (Seiscomp::Math::Filtering::IIR::Filter< float > *) ((Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::SeismometerResponse::PolesAndZeros *) (Seiscomp::Math::Filtering::IIR::Filter< double > *) ((Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::SeismometerResponse::PolesAndZeros *) (Seiscomp::Math::Filtering::IIR::Filter< double > *) ((Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::SeismometerResponse::PolesAndZeros *) (Seiscomp::Math::Filtering::IIR::Filter< float > *) ((Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::SeismometerResponse::PolesAndZeros *) (Seiscomp::Math::Filtering::IIR::Filter< double > *) ((Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *) x));
+}
 static void *_p_Seiscomp__Math__SeismometerResponse__WoodAndersonTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Math::SeismometerResponse::PolesAndZeros *)  ((Seiscomp::Math::SeismometerResponse::WoodAnderson *) x));
 }
+static void *_p_Seiscomp__Math__Filtering__IIR__FilterT_float_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::SeismometerResponse::PolesAndZeros *)  ((Seiscomp::Math::Filtering::IIR::Filter< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::SeismometerResponse::PolesAndZeros *) (Seiscomp::Math::Filtering::IIR::Filter< float > *) ((Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::SeismometerResponse::PolesAndZeros *) (Seiscomp::Math::Filtering::IIR::Filter< double > *) ((Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *) x));
+}
 static void *_p_Seiscomp__Math__SeismometerResponse__Seismometer5secTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Math::SeismometerResponse::PolesAndZeros *)  ((Seiscomp::Math::SeismometerResponse::Seismometer5sec *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::SeismometerResponse::PolesAndZeros *) (Seiscomp::Math::Filtering::IIR::Filter< float > *) ((Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::SeismometerResponse::PolesAndZeros *) (Seiscomp::Math::Filtering::IIR::Filter< float > *) ((Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__FilterT_double_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::SeismometerResponse::PolesAndZeros *)  ((Seiscomp::Math::Filtering::IIR::Filter< double > *) x));
 }
 static void *_p_Seiscomp__Core__ValueErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((std::exception *)  ((Seiscomp::Core::ValueError *) x));
@@ -47232,41 +51494,62 @@ static void *_p_Seiscomp__Core__DuplicateClassnameTo_p_std__exception(void *x, i
 static void *_p_Seiscomp__Math__Filtering__AlignmentErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((std::exception *)  ((Seiscomp::Math::Filtering::AlignmentError *) x));
 }
-static void *_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::RunningMean< double > *) ((Seiscomp::Math::Filtering::RunningMeanHighPass< double > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) ((Seiscomp::Math::Filtering::IIR::ButterworthLowpass< double > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) ((Seiscomp::Math::Filtering::IIR::ButterworthHighpass< double > *) x));
-}
 static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) ((Seiscomp::Math::Filtering::IIR::ButterworthBandpass< double > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__AverageT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::Average< double > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__STALTAT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::STALTA< double > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__RunningMeanT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::RunningMean< double > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__InitialTaperT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::InitialTaper< double > *) x));
-}
-static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) ((Seiscomp::Math::Filtering::IIR::ButterworthHighLowpass< double > *) x));
 }
 static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) ((Seiscomp::Math::Filtering::IIR::ButterworthBandstop< double > *) x));
 }
+static void *_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::RunningMean< double > *) ((Seiscomp::Math::Filtering::RunningMeanHighPass< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::STALTA_Classic< double > *) x));
+}
 static void *_p_Seiscomp__Math__Filtering__ChainFilterT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::ChainFilter< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__InitialTaperT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::InitialTaper< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__RunningMeanT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::RunningMean< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__STALTA2T_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::STALTA2< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__STALTAT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::STALTA< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__AverageT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::Average< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__FilterT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *)  ((Seiscomp::Math::Filtering::IIR::Filter< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) ((Seiscomp::Math::Filtering::IIR::ButterworthHighpass< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) ((Seiscomp::Math::Filtering::IIR::ButterworthHighLowpass< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::IIR::Filter< double > *) ((Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::IIR::Filter< double > *) ((Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::IIR::Filter< double > *) ((Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::IIR::BiquadCascade< double > *) ((Seiscomp::Math::Filtering::IIR::ButterworthLowpass< double > *) x));
+}
+static void *_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Math::Filtering::InPlaceFilter< double > *) (Seiscomp::Math::Filtering::IIR::Filter< double > *) ((Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *) x));
 }
 static swig_type_info _swigt__p_Archive = {"_p_Archive", "Archive *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_AttachementList = {"_p_AttachementList", "AttachementList *", 0, 0, (void*)0, 0};
@@ -47351,8 +51634,16 @@ static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighp
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t = {"_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t", "Seiscomp::Math::Filtering::IIR::ButterworthHighpass< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t = {"_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t", "Seiscomp::Math::Filtering::IIR::ButterworthLowpass< double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t = {"_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t", "Seiscomp::Math::Filtering::IIR::ButterworthLowpass< float > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_double_t = {"_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t", "Seiscomp::Math::Filtering::IIR::Filter< double > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_float_t = {"_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t", "Seiscomp::Math::Filtering::IIR::Filter< float > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t = {"_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t", "Seiscomp::Math::Filtering::IIR::GenericSeismometer< double > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t = {"_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t", "Seiscomp::Math::Filtering::IIR::GenericSeismometer< float > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t = {"_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t", "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< double > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t = {"_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t", "Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t = {"_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t", "Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t = {"_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t", "Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter< float > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t = {"_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t", "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< double > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t = {"_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t", "Seiscomp::Math::Filtering::IIR::WoodAndersonFilter< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t = {"_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t", "Seiscomp::Math::Filtering::InPlaceFilter< double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t = {"_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t", "Seiscomp::Math::Filtering::InPlaceFilter< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__InitialTaperT_double_t = {"_p_Seiscomp__Math__Filtering__InitialTaperT_double_t", "Seiscomp::Math::Filtering::InitialTaper< double > *", 0, 0, (void*)0, 0};
@@ -47361,8 +51652,12 @@ static swig_type_info _swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t = {"_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t", "Seiscomp::Math::Filtering::RunningMeanHighPass< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t = {"_p_Seiscomp__Math__Filtering__RunningMeanT_double_t", "Seiscomp::Math::Filtering::RunningMean< double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t = {"_p_Seiscomp__Math__Filtering__RunningMeanT_float_t", "Seiscomp::Math::Filtering::RunningMean< float > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__STALTA2T_double_t = {"_p_Seiscomp__Math__Filtering__STALTA2T_double_t", "Seiscomp::Math::Filtering::STALTA2< double > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__STALTA2T_float_t = {"_p_Seiscomp__Math__Filtering__STALTA2T_float_t", "Seiscomp::Math::Filtering::STALTA2< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__STALTAT_double_t = {"_p_Seiscomp__Math__Filtering__STALTAT_double_t", "Seiscomp::Math::Filtering::STALTA< double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t = {"_p_Seiscomp__Math__Filtering__STALTAT_float_t", "Seiscomp::Math::Filtering::STALTA< float > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t = {"_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t", "Seiscomp::Math::Filtering::STALTA_Classic< double > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t = {"_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t", "Seiscomp::Math::Filtering::STALTA_Classic< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Geo__CityT_double_t = {"_p_Seiscomp__Math__Geo__CityT_double_t", "std::vector< Seiscomp::Math::Geo::City< double > >::value_type *|Seiscomp::Math::Geo::City< double > *|Seiscomp::Math::Geo::CityD *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Geo__CityT_float_t = {"_p_Seiscomp__Math__Geo__CityT_float_t", "Seiscomp::Math::Geo::City< float > *|Seiscomp::Math::Geo::CityF *|std::vector< Seiscomp::Math::Geo::City< float > >::value_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Geo__CoordT_double_t = {"_p_Seiscomp__Math__Geo__CoordT_double_t", "Seiscomp::Math::Geo::CoordD *|Seiscomp::Math::Geo::Coord< double > *", 0, 0, (void*)0, 0};
@@ -47396,7 +51691,6 @@ static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_const_iterator = {"_p_const_iterator", "const_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_difference_type = {"_p_difference_type", "difference_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_double = {"_p_double", "double *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_float = {"_p_float", "float *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int = {"_p_int", "intptr_t *|int *|int_least32_t *|int_fast32_t *|int32_t *|int_fast16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_iterator = {"_p_iterator", "iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_long_long = {"_p_long_long", "int_least64_t *|int_fast64_t *|int64_t *|long long *|intmax_t *", 0, 0, (void*)0, 0};
@@ -47541,8 +51835,16 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t,
   &_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t,
   &_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t,
+  &_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_double_t,
+  &_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_float_t,
+  &_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t,
+  &_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t,
+  &_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t,
+  &_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t,
   &_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t,
   &_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t,
+  &_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t,
+  &_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t,
   &_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t,
   &_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t,
   &_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_double_t,
@@ -47551,8 +51853,12 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t,
   &_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t,
   &_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t,
+  &_swigt__p_Seiscomp__Math__Filtering__STALTA2T_double_t,
+  &_swigt__p_Seiscomp__Math__Filtering__STALTA2T_float_t,
   &_swigt__p_Seiscomp__Math__Filtering__STALTAT_double_t,
   &_swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t,
+  &_swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t,
+  &_swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t,
   &_swigt__p_Seiscomp__Math__Geo__CityT_double_t,
   &_swigt__p_Seiscomp__Math__Geo__CityT_float_t,
   &_swigt__p_Seiscomp__Math__Geo__CoordT_double_t,
@@ -47589,7 +51895,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_const_iterator,
   &_swigt__p_difference_type,
   &_swigt__p_double,
-  &_swigt__p_float,
   &_swigt__p_int,
   &_swigt__p_iterator,
   &_swigt__p_long_long,
@@ -47652,7 +51957,7 @@ static swig_cast_info _swigc__p_Seiscomp__Core__InterruptibleObject[] = {{&_swig
 static swig_cast_info _swigc__p_Seiscomp__Core__GreensFunction[] = {{&_swigt__p_Seiscomp__Core__GreensFunction, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Record[] = {{&_swigt__p_Seiscomp__Record, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__GenericRecord[] = {{&_swigt__p_Seiscomp__GenericRecord, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__BaseObject[] = {  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_float_t, _p_Seiscomp__Math__Filtering__InitialTaperT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_char_t, _p_Seiscomp__NumericArrayT_char_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_char_t, _p_Seiscomp__TypedArrayT_char_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t, _p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__Message, _p_Seiscomp__Core__MessageTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__DataMessage, _p_Seiscomp__Core__DataMessageTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t, _p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_double_t, _p_Seiscomp__Math__Filtering__InitialTaperT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_double_t, _p_Seiscomp__Math__Filtering__AverageT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_double_t, _p_Seiscomp__Math__Filtering__STALTAT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CityT_double_t, _p_Seiscomp__Math__Geo__CityT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__NamedCoordT_double_t, _p_Seiscomp__Math__Geo__NamedCoordT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CoordT_double_t, _p_Seiscomp__Math__Geo__CoordT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_double_t, _p_Seiscomp__NumericArrayT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_double_t, _p_Seiscomp__TypedArrayT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__ResponseList, _p_Seiscomp__Math__Restitution__FFT__ResponseListTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_int_t, _p_Seiscomp__TypedArrayT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_int_t, _p_Seiscomp__NumericArrayT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Array, _p_Seiscomp__ArrayTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_double_t, _p_Seiscomp__Math__Filtering__ChainFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_double_t_t, _p_Seiscomp__TypedArrayT_std__complexT_double_t_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__PolesAndZeros, _p_Seiscomp__Math__Restitution__FFT__PolesAndZerosTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, _p_Seiscomp__Math__Filtering__InPlaceFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__BaseObject, 0, 0, 0},  {&_swigt__p_Seiscomp__BitSet, _p_Seiscomp__BitSetTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__InterruptibleObject, _p_Seiscomp__Core__InterruptibleObjectTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_float_t_t, _p_Seiscomp__TypedArrayT_std__complexT_float_t_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t, _p_Seiscomp__Math__Filtering__STALTAT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_float_t, _p_Seiscomp__Math__Filtering__AverageT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CityT_float_t, _p_Seiscomp__Math__Geo__CityT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__NamedCoordT_float_t, _p_Seiscomp__Math__Geo__NamedCoordT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CoordT_float_t, _p_Seiscomp__Math__Geo__CoordT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_float_t, _p_Seiscomp__NumericArrayT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_float_t, _p_Seiscomp__TypedArrayT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_float_t, _p_Seiscomp__Math__Filtering__ChainFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, _p_Seiscomp__Math__Filtering__InPlaceFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__GreensFunction, _p_Seiscomp__Core__GreensFunctionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Record, _p_Seiscomp__RecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__string_t, _p_Seiscomp__TypedArrayT_std__string_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__GenericRecord, _p_Seiscomp__GenericRecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__TransferFunction, _p_Seiscomp__Math__Restitution__FFT__TransferFunctionTo_p_Seiscomp__Core__BaseObject, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__BaseObject[] = {  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_float_t, _p_Seiscomp__Math__Filtering__InitialTaperT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_char_t, _p_Seiscomp__NumericArrayT_char_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_char_t, _p_Seiscomp__TypedArrayT_char_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t, _p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__Message, _p_Seiscomp__Core__MessageTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__DataMessage, _p_Seiscomp__Core__DataMessageTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t, _p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, _p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, _p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_double_t, _p_Seiscomp__Math__Filtering__InitialTaperT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__ResponseList, _p_Seiscomp__Math__Restitution__FFT__ResponseListTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_double_t, _p_Seiscomp__Math__Filtering__STALTAT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_double_t, _p_Seiscomp__Math__Filtering__AverageT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CityT_double_t, _p_Seiscomp__Math__Geo__CityT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__NamedCoordT_double_t, _p_Seiscomp__Math__Geo__NamedCoordT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CoordT_double_t, _p_Seiscomp__Math__Geo__CoordT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_double_t, _p_Seiscomp__NumericArrayT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_double_t, _p_Seiscomp__TypedArrayT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA2T_double_t, _p_Seiscomp__Math__Filtering__STALTA2T_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_int_t, _p_Seiscomp__NumericArrayT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_int_t, _p_Seiscomp__TypedArrayT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Array, _p_Seiscomp__ArrayTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__FilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_double_t, _p_Seiscomp__Math__Filtering__ChainFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_double_t_t, _p_Seiscomp__TypedArrayT_std__complexT_double_t_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__PolesAndZeros, _p_Seiscomp__Math__Restitution__FFT__PolesAndZerosTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, _p_Seiscomp__Math__Filtering__InPlaceFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__BaseObject, 0, 0, 0},  {&_swigt__p_Seiscomp__BitSet, _p_Seiscomp__BitSetTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__InterruptibleObject, _p_Seiscomp__Core__InterruptibleObjectTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_float_t_t, _p_Seiscomp__TypedArrayT_std__complexT_float_t_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA2T_float_t, _p_Seiscomp__Math__Filtering__STALTA2T_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t, _p_Seiscomp__Math__Filtering__STALTAT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_float_t, _p_Seiscomp__Math__Filtering__AverageT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CityT_float_t, _p_Seiscomp__Math__Geo__CityT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__NamedCoordT_float_t, _p_Seiscomp__Math__Geo__NamedCoordT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CoordT_float_t, _p_Seiscomp__Math__Geo__CoordT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_float_t, _p_Seiscomp__NumericArrayT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_float_t, _p_Seiscomp__TypedArrayT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_float_t, _p_Seiscomp__Math__Filtering__ChainFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__FilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, _p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, _p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, _p_Seiscomp__Math__Filtering__InPlaceFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__GreensFunction, _p_Seiscomp__Core__GreensFunctionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Record, _p_Seiscomp__RecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__string_t, _p_Seiscomp__TypedArrayT_std__string_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__GenericRecord, _p_Seiscomp__GenericRecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__TransferFunction, _p_Seiscomp__Math__Restitution__FFT__TransferFunctionTo_p_Seiscomp__Core__BaseObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t[] = {  {&_swigt__p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t[] = {  {&_swigt__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
@@ -47711,18 +52016,30 @@ static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthHighp
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__FilterT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, _p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, 0, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__FilterT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, _p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_tTo_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_double_t, _p_Seiscomp__Math__Filtering__AverageT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_double_t, _p_Seiscomp__Math__Filtering__STALTAT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_double_t, _p_Seiscomp__Math__Filtering__InitialTaperT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_double_t, _p_Seiscomp__Math__Filtering__ChainFilterT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_float_t, _p_Seiscomp__Math__Filtering__AverageT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t, _p_Seiscomp__Math__Filtering__STALTAT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_float_t, _p_Seiscomp__Math__Filtering__InitialTaperT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_float_t, _p_Seiscomp__Math__Filtering__ChainFilterT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_double_t, _p_Seiscomp__Math__Filtering__InitialTaperT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, _p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA2T_double_t, _p_Seiscomp__Math__Filtering__STALTA2T_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_double_t, _p_Seiscomp__Math__Filtering__STALTAT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_double_t, _p_Seiscomp__Math__Filtering__AverageT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, _p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__FilterT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_double_t, _p_Seiscomp__Math__Filtering__ChainFilterT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, _p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, _p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_float_t, _p_Seiscomp__Math__Filtering__InitialTaperT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__FilterT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_float_t, _p_Seiscomp__Math__Filtering__AverageT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t, _p_Seiscomp__Math__Filtering__STALTAT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA2T_float_t, _p_Seiscomp__Math__Filtering__STALTA2T_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_float_t, _p_Seiscomp__Math__Filtering__ChainFilterT_float_tTo_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__InitialTaperT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__InitialTaperT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__RunningMeanT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t, 0, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_tTo_p_Seiscomp__Math__Filtering__RunningMeanT_double_t, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__RunningMeanT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_tTo_p_Seiscomp__Math__Filtering__RunningMeanT_float_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__STALTA2T_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__STALTA2T_double_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__STALTA2T_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__STALTA2T_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__STALTAT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__STALTAT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Geo__CityT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Geo__CityT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Geo__CityT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Geo__CityT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Geo__CoordT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Geo__CoordT_double_t, 0, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__NamedCoordT_double_t, _p_Seiscomp__Math__Geo__NamedCoordT_double_tTo_p_Seiscomp__Math__Geo__CoordT_double_t, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CityT_double_t, _p_Seiscomp__Math__Geo__CityT_double_tTo_p_Seiscomp__Math__Geo__CoordT_double_t, 0, 0},{0, 0, 0, 0}};
@@ -47734,7 +52051,7 @@ static swig_cast_info _swigc__p_Seiscomp__Math__Restitution__FFT__PolesAndZeros[
 static swig_cast_info _swigc__p_Seiscomp__Math__Restitution__FFT__ResponseList[] = {  {&_swigt__p_Seiscomp__Math__Restitution__FFT__ResponseList, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Restitution__FFT__TransferFunction[] = {  {&_swigt__p_Seiscomp__Math__Restitution__FFT__TransferFunction, 0, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__ResponseList, _p_Seiscomp__Math__Restitution__FFT__ResponseListTo_p_Seiscomp__Math__Restitution__FFT__TransferFunction, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__PolesAndZeros, _p_Seiscomp__Math__Restitution__FFT__PolesAndZerosTo_p_Seiscomp__Math__Restitution__FFT__TransferFunction, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__SeismometerResponse__FAP[] = {  {&_swigt__p_Seiscomp__Math__SeismometerResponse__FAP, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Math__SeismometerResponse__PolesAndZeros[] = {  {&_swigt__p_Seiscomp__Math__SeismometerResponse__Seismometer5sec, _p_Seiscomp__Math__SeismometerResponse__Seismometer5secTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},  {&_swigt__p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0, 0},  {&_swigt__p_Seiscomp__Math__SeismometerResponse__WoodAnderson, _p_Seiscomp__Math__SeismometerResponse__WoodAndersonTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Math__SeismometerResponse__PolesAndZeros[] = {  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, _p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, _p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},  {&_swigt__p_Seiscomp__Math__SeismometerResponse__Seismometer5sec, _p_Seiscomp__Math__SeismometerResponse__Seismometer5secTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__FilterT_double_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},  {&_swigt__p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0, 0},  {&_swigt__p_Seiscomp__Math__SeismometerResponse__WoodAnderson, _p_Seiscomp__Math__SeismometerResponse__WoodAndersonTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__FilterT_float_tTo_p_Seiscomp__Math__SeismometerResponse__PolesAndZeros, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__SeismometerResponse__Seismometer5sec[] = {  {&_swigt__p_Seiscomp__Math__SeismometerResponse__Seismometer5sec, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__SeismometerResponse__WoodAnderson[] = {  {&_swigt__p_Seiscomp__Math__SeismometerResponse__WoodAnderson, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__SeismometerResponse__WoodAnderson__Config[] = {  {&_swigt__p_Seiscomp__Math__SeismometerResponse__WoodAnderson__Config, 0, 0, 0},{0, 0, 0, 0}};
@@ -47756,7 +52073,6 @@ static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0,
 static swig_cast_info _swigc__p_const_iterator[] = {  {&_swigt__p_const_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_difference_type[] = {  {&_swigt__p_difference_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_float[] = {  {&_swigt__p_float, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_iterator[] = {  {&_swigt__p_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_long_long[] = {  {&_swigt__p_long_long, 0, 0, 0},{0, 0, 0, 0}};
@@ -47901,8 +52217,16 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t,
   _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t,
   _swigc__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t,
+  _swigc__p_Seiscomp__Math__Filtering__IIR__FilterT_double_t,
+  _swigc__p_Seiscomp__Math__Filtering__IIR__FilterT_float_t,
+  _swigc__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t,
+  _swigc__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t,
+  _swigc__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t,
+  _swigc__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t,
   _swigc__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t,
   _swigc__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t,
+  _swigc__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t,
+  _swigc__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t,
   _swigc__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t,
   _swigc__p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t,
   _swigc__p_Seiscomp__Math__Filtering__InitialTaperT_double_t,
@@ -47911,8 +52235,12 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t,
   _swigc__p_Seiscomp__Math__Filtering__RunningMeanT_double_t,
   _swigc__p_Seiscomp__Math__Filtering__RunningMeanT_float_t,
+  _swigc__p_Seiscomp__Math__Filtering__STALTA2T_double_t,
+  _swigc__p_Seiscomp__Math__Filtering__STALTA2T_float_t,
   _swigc__p_Seiscomp__Math__Filtering__STALTAT_double_t,
   _swigc__p_Seiscomp__Math__Filtering__STALTAT_float_t,
+  _swigc__p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t,
+  _swigc__p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t,
   _swigc__p_Seiscomp__Math__Geo__CityT_double_t,
   _swigc__p_Seiscomp__Math__Geo__CityT_float_t,
   _swigc__p_Seiscomp__Math__Geo__CoordT_double_t,
@@ -47949,7 +52277,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_const_iterator,
   _swigc__p_difference_type,
   _swigc__p_double,
-  _swigc__p_float,
   _swigc__p_int,
   _swigc__p_iterator,
   _swigc__p_long_long,
