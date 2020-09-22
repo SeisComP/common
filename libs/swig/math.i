@@ -97,6 +97,10 @@ namespace std {
 %template(CityListF) std::vector<Seiscomp::Math::Geo::CityF>;
 %template(CityListD) std::vector<Seiscomp::Math::Geo::CityD>;
 
+%newobject Seiscomp::Math::Filtering::InPlaceFilter<float>::Create;
+%newobject Seiscomp::Math::Filtering::InPlaceFilter<double>::Create;
+%ignore Seiscomp::Math::Filtering::InPlaceFilter::apply(int, float*);
+%ignore Seiscomp::Math::Filtering::InPlaceFilter::apply(int, double*);
 %include "seiscomp/math/filter.h"
 
 %template(InPlaceFilterF) Seiscomp::Math::Filtering::InPlaceFilter<float>;
@@ -111,6 +115,12 @@ namespace std {
 
 %template(STALTAFilterF) Seiscomp::Math::Filtering::STALTA<float>;
 %template(STALTAFilterD) Seiscomp::Math::Filtering::STALTA<double>;
+%template(STALTA2FilterF) Seiscomp::Math::Filtering::STALTA2<float>;
+%template(STALTA2FilterD) Seiscomp::Math::Filtering::STALTA2<double>;
+%template(STALTAClassicFilterF) Seiscomp::Math::Filtering::STALTA_Classic<float>;
+%template(STALTAClassicFilterD) Seiscomp::Math::Filtering::STALTA_Classic<double>;
+
+
 
 %include "seiscomp/math/filter/rmhp.h"
 
@@ -147,24 +157,33 @@ namespace std {
 %template(ButterworthBandstopF) Seiscomp::Math::Filtering::IIR::ButterworthBandstop<float>;
 %template(ButterworthBandstopD) Seiscomp::Math::Filtering::IIR::ButterworthBandstop<double>;
 
+
+%newobject Seiscomp::Math::Filtering::ChainFilter<float>::take;
+%newobject Seiscomp::Math::Filtering::ChainFilter<double>::take;
+
 %include "seiscomp/math/filter/chainfilter.h"
 
 %apply SWIGTYPE *DISOWN { Seiscomp::Math::Filtering::InPlaceFilter<float> *filter };
 %apply SWIGTYPE *DISOWN { Seiscomp::Math::Filtering::InPlaceFilter<double> *filter };
 
-%newobject Seiscomp::Math::Filtering::ChainFilter<float>::take;
-%newobject Seiscomp::Math::Filtering::ChainFilter<double>::take;
-
 %template(ChainFilterF) Seiscomp::Math::Filtering::ChainFilter<float>;
 %template(ChainFilterD) Seiscomp::Math::Filtering::ChainFilter<double>;
 
-%newobject Seiscomp::Math::Filtering::InplaceFilter<float>::Create;
-%newobject Seiscomp::Math::Filtering::InplaceFilter<double>::Create;
+%ignore Seiscomp::Math::Filtering::IIR::Filter<float>::apply(int, float*);
+%ignore Seiscomp::Math::Filtering::IIR::Filter<double>::apply(int, double*);
 
 %include "seiscomp/math/filter/seismometers.h"
 
+%template(SeismometerFilterF) Seiscomp::Math::Filtering::IIR::Filter<float>;
+%template(SeismometerFilterD) Seiscomp::Math::Filtering::IIR::Filter<double>;
 %template(WWSSN_SPF) Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter<float>;
 %template(WWSSN_SPD) Seiscomp::Math::Filtering::IIR::WWSSN_SP_Filter<double>;
+%template(WWSSN_LPF) Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter<float>;
+%template(WWSSN_LPD) Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter<double>;
+%template(WoodAndersonFilterF) Seiscomp::Math::Filtering::IIR::WoodAndersonFilter<float>;
+%template(WoodAndersonFilterD) Seiscomp::Math::Filtering::IIR::WoodAndersonFilter<double>;
+%template(GenericSeismometerFilterF) Seiscomp::Math::Filtering::IIR::GenericSeismometer<float>;
+%template(GenericSeismometerFilterD) Seiscomp::Math::Filtering::IIR::GenericSeismometer<double>;
 
 %include "seiscomp/math/geo.h"
 
