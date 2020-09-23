@@ -33,12 +33,12 @@ IMPLEMENT_SC_CLASS_DERIVED(DataSegment, Object, "DataSegment");
 
 
 DataSegment::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, NULL, &DataSegment::setStart, &DataSegment::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, false, false, NULL, &DataSegment::setEnd, &DataSegment::end));
-	addProperty(Core::simpleProperty("updated", "datetime", false, false, false, false, false, false, NULL, &DataSegment::setUpdated, &DataSegment::updated));
-	addProperty(Core::simpleProperty("sampleRate", "double", false, false, false, false, false, false, NULL, &DataSegment::setSampleRate, &DataSegment::sampleRate));
-	addProperty(Core::simpleProperty("quality", "string", false, false, false, false, false, false, NULL, &DataSegment::setQuality, &DataSegment::quality));
-	addProperty(Core::simpleProperty("outOfOrder", "boolean", false, false, false, false, false, false, NULL, &DataSegment::setOutOfOrder, &DataSegment::outOfOrder));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &DataSegment::setStart, &DataSegment::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, false, false, nullptr, &DataSegment::setEnd, &DataSegment::end));
+	addProperty(Core::simpleProperty("updated", "datetime", false, false, false, false, false, false, nullptr, &DataSegment::setUpdated, &DataSegment::updated));
+	addProperty(Core::simpleProperty("sampleRate", "double", false, false, false, false, false, false, nullptr, &DataSegment::setSampleRate, &DataSegment::sampleRate));
+	addProperty(Core::simpleProperty("quality", "string", false, false, false, false, false, false, nullptr, &DataSegment::setQuality, &DataSegment::quality));
+	addProperty(Core::simpleProperty("outOfOrder", "boolean", false, false, false, false, false, false, nullptr, &DataSegment::setOutOfOrder, &DataSegment::outOfOrder));
 }
 
 
@@ -267,7 +267,7 @@ const DataSegmentIndex& DataSegment::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataSegment::equalIndex(const DataSegment* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -302,7 +302,7 @@ DataSegment& DataSegment::operator=(const DataSegment& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataSegment::assign(Object* other) {
 	DataSegment* otherDataSegment = DataSegment::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherDataSegment;
@@ -316,11 +316,11 @@ bool DataSegment::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataSegment::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	DataExtent* dataExtent = DataExtent::Cast(parent);
-	if ( dataExtent != NULL )
+	if ( dataExtent != nullptr )
 		return dataExtent->add(this);
 
 	SEISCOMP_ERROR("DataSegment::attachTo(%s) -> wrong class type", parent->className());
@@ -333,11 +333,11 @@ bool DataSegment::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataSegment::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	DataExtent* dataExtent = DataExtent::Cast(object);
-	if ( dataExtent != NULL ) {
+	if ( dataExtent != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -345,7 +345,7 @@ bool DataSegment::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			DataSegment* child = dataExtent->dataSegment(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return dataExtent->remove(child);
 			else {
 				SEISCOMP_DEBUG("DataSegment::detachFrom(DataExtent): dataSegment has not been found");
@@ -364,7 +364,7 @@ bool DataSegment::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataSegment::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

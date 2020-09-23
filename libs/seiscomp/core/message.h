@@ -42,7 +42,7 @@ DEFINE_SMARTPOINTER(Message);
  * implementation class derived from MessageType::Impl
  * The iterator protocol looks like this:
  * \code
- * for ( Iterator it = msg->iter(); *it != NULL; ++it ) {
+ * for ( Iterator it = msg->iter(); *it != nullptr; ++it ) {
  *   BaseObject* o = *it;
  *   // do something with o
  * }

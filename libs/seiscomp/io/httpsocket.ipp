@@ -65,7 +65,7 @@ std::streamsize HttpSource<SocketType>::read(char* buf, std::streamsize size) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename SocketType>
 HttpSocket<SocketType>::HttpSocket(): _chunkMode(false), _remainingBytes(0),
-	_decomp(NULL)
+	_decomp(nullptr)
 {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -106,9 +106,9 @@ void HttpSocket<SocketType>::open(const std::string& serverHost,
 template <typename SocketType>
 void HttpSocket<SocketType>::httpReadResponse()
 {
-	if ( _decomp != NULL ) {
+	if ( _decomp != nullptr ) {
 		delete _decomp;
-		_decomp = NULL;
+		_decomp = nullptr;
 	}
 
 	std::string line = this->readline();
@@ -292,7 +292,7 @@ std::string HttpSocket<SocketType>::httpReadRaw(int size)
 template <typename SocketType>
 std::string HttpSocket<SocketType>::httpReadSome(int size)
 {
-	if ( _decomp != NULL ) {
+	if ( _decomp != nullptr ) {
 		HttpSource<SocketType> src(this);
 		std::vector<char> tmp(size);
 		std::streamsize bytesRead = _decomp->read(src, &tmp[0], size);

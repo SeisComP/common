@@ -309,8 +309,8 @@ struct QtVisitor {
 
 
 BOOST_AUTO_TEST_CASE(quadtree) {
-	GeoFeature f1(string("f1"), NULL, 1);
-	GeoFeature f2(string("f2"), NULL, 1);
+	GeoFeature f1(string("f1"), nullptr, 1);
+	GeoFeature f2(string("f2"), nullptr, 1);
 
 	f1.addVertex(GeoCoordinate(0,0));
 	f1.addVertex(GeoCoordinate(0,10));

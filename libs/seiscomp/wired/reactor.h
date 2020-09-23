@@ -119,7 +119,7 @@ class SC_SYSTEM_CORE_API Reactor : public Seiscomp::Core::BaseObject {
 		virtual void clear();
 
 		//! Synchronizes a release of a session smart pointer in
-		//! a threaded environment and sets the passed ptr to NULL.
+		//! a threaded environment and sets the passed ptr to nullptr.
 		void release(SessionPtr &ptr);
 
 		//! Interrupts the reactors wait causing to idle method to be called

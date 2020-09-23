@@ -104,9 +104,9 @@ class SC_SYSTEM_CORE_API InPlaceFilter : public Core::BaseObject {
 		//! Creates a new filter by name. The user is responsible to
 		//! release the memory
 		//! pointed to by the return value.
-		//! \return The corresponding filter or NULL
+		//! \return The corresponding filter or nullptr
 		static InPlaceFilter<TYPE> *Create(const std::string &strFilter,
-		                                   std::string *strError = NULL);
+		                                   std::string *strError = nullptr);
 };
 
 

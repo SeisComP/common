@@ -119,7 +119,7 @@ class SC_GUI_API RecordView : public QWidget {
 
 		//! Adds a new item to the view.
 		//! If there already has been added an item
-		//! for streamID, NULL is returned.
+		//! for streamID, nullptr is returned.
 		RecordViewItem* addItem(const DataModel::WaveformStreamID&,
 		                        const QString& stationCode,
 		                        int slotCount = 0);
@@ -134,7 +134,7 @@ class SC_GUI_API RecordView : public QWidget {
 		bool removeItem(RecordViewItem*);
 
 		//! Removes and returns the item from the given row in the recordview;
-		//! otherwise returns NULL.
+		//! otherwise returns nullptr.
 		RecordViewItem* takeItem(int row);
 
 		//! Removes the item from the view and returns true or false

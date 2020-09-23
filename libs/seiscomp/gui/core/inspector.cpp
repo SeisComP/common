@@ -63,12 +63,12 @@ std::string propToString(const MetaProperty *prop, BaseObject *obj) {
 
 
 Inspector::Inspector(QWidget * parent, Qt::WindowFlags f)
-: QWidget(parent, f), _object(NULL), _currentSelection(NULL) {
+: QWidget(parent, f), _object(nullptr), _currentSelection(nullptr) {
 	_ui.setupUi(this);
 
 	_ui.treeWidget->setHeaderLabels(QStringList() << "Object" << "Type");
 
-	setObject(NULL);
+	setObject(nullptr);
 
 	_ui.tableWidget->horizontalHeader()->setStretchLastSection(true);
 	_ui.tableWidget->setSelectionMode(QAbstractItemView::NoSelection);
@@ -85,7 +85,7 @@ Inspector::~Inspector() {}
 
 void Inspector::setObject(BaseObject *obj) {
 	_object = obj;
-	_currentSelection = NULL;
+	_currentSelection = nullptr;
 
 	_ui.treeWidget->clear();
 	_ui.tableWidget->clear();
@@ -95,7 +95,7 @@ void Inspector::setObject(BaseObject *obj) {
 	_ui.tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("Type"));
 	_ui.tableWidget->setHorizontalHeaderItem(2, new QTableWidgetItem("Value"));
 
-	if ( _object == NULL ) return;
+	if ( _object == nullptr ) return;
 
 	TreeItem *item = new TreeItem(_ui.treeWidget, _object);
 	item->setText(0, _object->className());
@@ -109,7 +109,7 @@ void Inspector::setObject(BaseObject *obj) {
 
 
 void Inspector::selectObject(Core::BaseObject *obj) {
-	if ( obj == NULL ) return;
+	if ( obj == nullptr ) return;
 
 	for ( int i = 0; i < _ui.treeWidget->topLevelItemCount(); ++i ) {
 		TreeItem *item = static_cast<TreeItem*>(_ui.treeWidget->topLevelItem(i));
@@ -141,7 +141,7 @@ void Inspector::addObject(QTreeWidgetItem *p) {
 	BaseObject *obj = parent->object();
 
 	const MetaObject *meta = obj->meta();
-	if ( meta == NULL ) return;
+	if ( meta == nullptr ) return;
 
 	PublicObject *po = PublicObject::Cast(obj);
 	if ( po )
@@ -175,7 +175,7 @@ void Inspector::addObject(QTreeWidgetItem *p) {
 				addObject(item);
 			}
 			catch ( ... ) {
-				TreeItem *item = new TreeItem(parent, NULL);
+				TreeItem *item = new TreeItem(parent, nullptr);
 
 				item->setText(0, prop->name().c_str());
 				item->setText(1, prop->type().c_str());
@@ -188,7 +188,7 @@ void Inspector::addObject(QTreeWidgetItem *p) {
 			int cnt = prop->arrayElementCount(obj);
 
 			if ( cnt > 0 ) {
-				TreeItem *item = new TreeItem(parent, NULL);
+				TreeItem *item = new TreeItem(parent, nullptr);
 
 				item->setText(0, (prop->name() + "s").c_str());
 				item->setText(1, ("array<" + prop->type() + ">").c_str());
@@ -219,13 +219,13 @@ void Inspector::selectionChanged() {
 		_ui.tableWidget->removeRow(0);
 
 	TreeItem *item = static_cast<TreeItem*>(_ui.treeWidget->currentItem());
-	if ( item == NULL ) return;
+	if ( item == nullptr ) return;
 
 	_currentSelection = item->object();
-	if ( _currentSelection == NULL ) return;
+	if ( _currentSelection == nullptr ) return;
 
 	const MetaObject *meta = _currentSelection->meta();
-	if ( meta == NULL ) return;
+	if ( meta == nullptr ) return;
 
 	PublicObject *po = PublicObject::Cast(_currentSelection);
 	if ( po )
@@ -247,14 +247,14 @@ void Inspector::addProperty(const std::string &name, const std::string &type,
                             bool isOptional, bool isReference) {
 	QTableWidgetItem *item0 = new QTableWidgetItem(name.c_str());
 	QTableWidgetItem *item1 = new QTableWidgetItem(type.c_str());
-	QTableWidgetItem *item2 = NULL;
-	QLabel           *link  = NULL;
+	QTableWidgetItem *item2 = nullptr;
+	QLabel           *link  = nullptr;
 
 	if ( isReference && !value.empty() ) {
 		link = new QLabel;
 		link->setText(QString("<a href=\"%1\">%2</a>").arg(value.c_str()).arg(value.c_str()));
 		link->setMargin(4);
-		if ( PublicObject::Find(value) == NULL ) {
+		if ( PublicObject::Find(value) == nullptr ) {
 			link->setEnabled(false);
 			link->setToolTip(QString("The link is inactive because %1 is not available.").arg(value.c_str()));
 		}
@@ -270,31 +270,31 @@ void Inspector::addProperty(const std::string &name, const std::string &type,
 	if ( isIndex ) {
 		QFont f = item0->font(); f.setBold(true); item0->setFont(f);
 		f = item1->font(); f.setBold(true); item1->setFont(f);
-		if ( item2 != NULL ) {
+		if ( item2 != nullptr ) {
 			f = item2->font(); f.setBold(true); item2->setFont(f);
 		}
-		if ( link != NULL ) {
+		if ( link != nullptr ) {
 			f = link->font(); f.setBold(true); link->setFont(f);
 		}
 	}
 	else if ( isOptional && value.empty() ) {
 		item0->setForeground(Qt::gray);
 		item1->setForeground(Qt::gray);
-		if ( item2 != NULL )
+		if ( item2 != nullptr )
 			item2->setForeground(Qt::gray);
 	}
 
 	item0->setFlags(item0->flags() & ~Qt::ItemIsEditable);
 	item1->setFlags(item1->flags() & ~Qt::ItemIsEditable);
-	if ( item2 != NULL )
+	if ( item2 != nullptr )
 		item2->setFlags(item2->flags() & ~Qt::ItemIsEditable);
 
 	int row = _ui.tableWidget->rowCount();
 	_ui.tableWidget->insertRow(row);
 	_ui.tableWidget->setItem(row, 0, item0);
 	_ui.tableWidget->setItem(row, 1, item1);
-	if ( item2 != NULL ) _ui.tableWidget->setItem(row, 2, item2);
-	if ( link != NULL ) _ui.tableWidget->setCellWidget(row, 2, link);
+	if ( item2 != nullptr ) _ui.tableWidget->setItem(row, 2, item2);
+	if ( link != nullptr ) _ui.tableWidget->setCellWidget(row, 2, link);
 }
 
 
@@ -312,7 +312,7 @@ void Inspector::linkClicked(QString id) {
 	if ( po == _object ) return;
 
 	_history.push(State(_object, _currentSelection));
-	BaseObject *obj = _currentSelection != NULL?_currentSelection:_object;
+	BaseObject *obj = _currentSelection != nullptr?_currentSelection:_object;
 	PublicObject *posrc = PublicObject::Cast(obj);
 	if ( posrc )
 		_ui.buttonBack->setToolTip(QString("Object %1 of type %2 (Back)").arg(posrc->publicID().c_str()).arg(obj->className()));

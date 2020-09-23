@@ -76,7 +76,7 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 		RecordCPtr rec = (*it);
 		int imin = 0, imax = 0;
 		int ns = rec->sampleCount();
-		if ( ns == 0 || rec->data() == NULL ) continue;
+		if ( ns == 0 || rec->data() == nullptr ) continue;
 
 		FloatArray *arr = (FloatArray*)(rec->data());
 
@@ -325,7 +325,7 @@ namespace Gui {
 RecordMarker::RecordMarker(RecordWidget *parent,
                            const Seiscomp::Core::Time& pos,
                            Qt::Alignment alignment)
-: _parent(NULL), _time(pos), _correctedTime(pos), _visible(true),
+: _parent(nullptr), _time(pos), _correctedTime(pos), _visible(true),
   _moveable(false), _moveCopy(false), _enabled(true), _id(-1), _alignment(alignment) {
 	if ( parent )
 		parent->addMarker(this);
@@ -341,7 +341,7 @@ RecordMarker::RecordMarker(RecordWidget *parent,
                            const Seiscomp::Core::Time& pos,
                            const QString& text,
                            Qt::Alignment alignment)
-: _parent(NULL), _time(pos), _correctedTime(pos), _text(text), _visible(true),
+: _parent(nullptr), _time(pos), _correctedTime(pos), _text(text), _visible(true),
   _moveable(false), _moveCopy(false), _enabled(true), _id(-1), _alignment(alignment) {
 	if ( parent )
 		parent->addMarker(this);
@@ -353,7 +353,7 @@ RecordMarker::RecordMarker(RecordWidget *parent,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordMarker::RecordMarker(RecordWidget *parent, const RecordMarker& m)
- : _parent(NULL),
+ : _parent(nullptr),
    _color(m._color),
    _modifierColor(m._modifierColor),
    _time(m._time),
@@ -709,7 +709,7 @@ void RecordMarker::update() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordMarker *RecordMarker::copy() {
-	return new RecordMarker(NULL, *this);
+	return new RecordMarker(nullptr, *this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -759,11 +759,11 @@ static int StreamCount = 0;
 static int RecordWidgetCount = 0;
 
 RecordWidget::Stream::Stream(bool owner) {
-	records[0] = records[1] = NULL;
+	records[0] = records[1] = nullptr;
 	traces[0].dirty = traces[1].dirty = false;
 	traces[0].timingQuality = traces[1].timingQuality = -1;
 	traces[0].timingQualityCount = traces[1].timingQualityCount = 0;
-	filter = NULL;
+	filter = nullptr;
 	pen = QPen(SCScheme.colors.records.foreground, SCScheme.records.lineWidth);
 	antialiasing = SCScheme.records.antiAliasing;
 	stepFunction = false;
@@ -810,15 +810,15 @@ void RecordWidget::Stream::setDirty() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::Stream::free() {
-	if ( records[0] != NULL && ownRawRecords ) delete records[0];
-	if ( records[1] != NULL && ownFilteredRecords ) delete records[1];
-	if ( filter != NULL ) delete filter;
+	if ( records[0] != nullptr && ownRawRecords ) delete records[0];
+	if ( records[1] != nullptr && ownFilteredRecords ) delete records[1];
+	if ( filter != nullptr ) delete filter;
 
-	records[0] = records[1] = NULL;
-	filter = NULL;
+	records[0] = records[1] = nullptr;
+	filter = nullptr;
 
-	traces[0].poly = NULL;
-	traces[1].poly = NULL;
+	traces[0].poly = nullptr;
+	traces[1].poly = nullptr;
 
 	traces[0].timingQuality = -1;
 	traces[0].timingQualityCount = 0;
@@ -861,10 +861,10 @@ void RecordWidget::init() {
 	setBackgroundRole(QPalette::Base);
 
 	_valuePrecision = SCScheme.precision.traceValues;
-	_decorator = NULL;
-	_shadowWidget = NULL;
+	_decorator = nullptr;
+	_shadowWidget = nullptr;
 	_shadowWidgetFlags = Raw;
-	_markerSourceWidget = NULL;
+	_markerSourceWidget = nullptr;
 	_filtering = false;
 	_drawMode = Single;
 	_recordBorderDrawMode = SCScheme.records.recordBorders.drawMode;
@@ -900,7 +900,7 @@ void RecordWidget::init() {
 	_gridVScale = 0;
 
 	_tracePaintOffset = 0;
-	_scrollBar = NULL;
+	_scrollBar = nullptr;
 
 	// pick/arrival times
 	_alignment = Core::Time(0.);
@@ -912,8 +912,8 @@ void RecordWidget::init() {
 	_autoMaxScale = false;
 	_useGlobalOffset = false;
 
-	_activeMarker = NULL;
-	_hoveredMarker = NULL;
+	_activeMarker = nullptr;
+	_hoveredMarker = nullptr;
 
 	_enabled = isEnabled();
 	setDrawAxis(false);
@@ -931,7 +931,7 @@ RecordWidget::~RecordWidget() {
 	clearRecords();
 
 	for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
-		if ( *it == NULL ) continue;
+		if ( *it == nullptr ) continue;
 		delete *it;
 	}
 
@@ -952,7 +952,7 @@ RecordWidget::~RecordWidget() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::clearRecords() {
 	for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
-		if ( *it == NULL ) continue;
+		if ( *it == nullptr ) continue;
 		(*it)->free();
 	}
 
@@ -978,7 +978,7 @@ void RecordWidget::setEnabled(bool enabled) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordWidget::Stream *RecordWidget::getStream(int idx) {
-	if ( idx < 0 ) return NULL;
+	if ( idx < 0 ) return nullptr;
 	if ( idx < _streams.size() ) return _streams[idx];
 
 	setSlotCount(idx+1);
@@ -994,9 +994,9 @@ RecordWidget::Stream *RecordWidget::getStream(int idx) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const RecordWidget::Stream *RecordWidget::getStream(int idx) const {
-	if ( idx < 0 ) return NULL;
+	if ( idx < 0 ) return nullptr;
 	if ( idx < _streams.size() ) return _streams[idx];
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1033,7 +1033,7 @@ bool RecordWidget::setRecords(int slot, RecordSequence *s, bool owner) {
 	if ( _shadowWidget ) _shadowWidget->setRecords(slot, s, false);
 
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	// If the same sequence is set again, make sure that it will
 	// not be destroyed by free()
@@ -1045,7 +1045,7 @@ bool RecordWidget::setRecords(int slot, RecordSequence *s, bool owner) {
 	if ( stream->filter && !(_shadowWidgetFlags & Filtered) )
 		newFilter = stream->filter->clone();
 	else
-		newFilter = NULL;
+		newFilter = nullptr;
 
 	// Delete old record sequence
 	stream->free();
@@ -1081,7 +1081,7 @@ bool RecordWidget::setFilteredRecords(int slot, RecordSequence *s, bool owner) {
 	}
 
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	if ( stream->ownFilteredRecords && stream->records[Stream::Filtered] )
 		delete stream->records[Stream::Filtered];
@@ -1109,7 +1109,7 @@ void RecordWidget::changedRecords(int slot, RecordSequence*) {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 	if ( _shadowWidgetFlags & Filtered ) return true;
 
 	if ( stream->filter )
@@ -1125,7 +1125,7 @@ bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 
 	if ( stream->records[Stream::Filtered] && stream->ownFilteredRecords ) {
 		delete stream->records[Stream::Filtered];
-		stream->records[Stream::Filtered] = NULL;
+		stream->records[Stream::Filtered] = nullptr;
 	}
 
 	if ( stream->records[Stream::Raw] && !stream->records[Stream::Raw]->empty() ) {
@@ -1167,7 +1167,7 @@ bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordScale(int slot, double scale) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	stream->scale = scale;
 
@@ -1183,7 +1183,7 @@ bool RecordWidget::setRecordScale(int slot, double scale) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::isRecordVisible(int slot) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	return stream->visible;
 }
@@ -1194,7 +1194,7 @@ bool RecordWidget::isRecordVisible(int slot) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordVisible(int slot, bool visible) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	stream->visible = visible;
 
@@ -1212,7 +1212,7 @@ bool RecordWidget::setRecordVisible(int slot, bool visible) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordID(int slot, const QString &id) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	stream->id = id;
 
@@ -1229,7 +1229,7 @@ bool RecordWidget::setRecordID(int slot, const QString &id) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordLabel(int slot, const QString &label) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	stream->axisLabel = label;
 
@@ -1255,7 +1255,7 @@ bool RecordWidget::setRecordColor(int slot, QColor c) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordPen(int slot, const QPen &pen) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	stream->pen = pen;
 	stream->setDirty();
@@ -1274,7 +1274,7 @@ bool RecordWidget::setRecordPen(int slot, const QPen &pen) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordAntialiasing(int slot, bool antialiasing) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	stream->antialiasing = antialiasing;
 	update();
@@ -1292,7 +1292,7 @@ bool RecordWidget::setRecordAntialiasing(int slot, bool antialiasing) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordOptimization(int slot, bool enable) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	if ( stream->optimize == enable ) return true;
 
@@ -1313,7 +1313,7 @@ bool RecordWidget::setRecordOptimization(int slot, bool enable) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordStepFunction(int slot, bool enable) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	if ( stream->stepFunction == enable ) return true;
 
@@ -1334,7 +1334,7 @@ bool RecordWidget::setRecordStepFunction(int slot, bool enable) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordBackgroundColor(int slot, QColor c) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	stream->customBackgroundColor = c;
 	stream->hasCustomBackgroundColor = true;
@@ -1353,7 +1353,7 @@ bool RecordWidget::setRecordBackgroundColor(int slot, QColor c) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::removeRecordBackgroundColor(int slot) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	stream->hasCustomBackgroundColor = false;
 	update();
@@ -1371,7 +1371,7 @@ bool RecordWidget::removeRecordBackgroundColor(int slot) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordUserData(int slot, QVariant data) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	stream->userData = data;
 
@@ -1385,7 +1385,7 @@ bool RecordWidget::setRecordUserData(int slot, QVariant data) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QString RecordWidget::recordID(int slot) const {
 	const Stream *stream = getStream(slot);
-	if ( stream == NULL ) return QString();
+	if ( stream == nullptr ) return QString();
 	return stream->id;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1396,7 +1396,7 @@ QString RecordWidget::recordID(int slot) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QString RecordWidget::recordLabel(int slot) const {
 	const Stream *stream = getStream(slot);
-	if ( stream == NULL ) return QString();
+	if ( stream == nullptr ) return QString();
 	return stream->axisLabel;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1407,7 +1407,7 @@ QString RecordWidget::recordLabel(int slot) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::recordStepFunction(int slot) const {
 	const Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 	return stream->stepFunction;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1418,7 +1418,7 @@ bool RecordWidget::recordStepFunction(int slot) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QColor RecordWidget::recordColor(int slot) const {
 	const Stream *stream = getStream(slot);
-	if ( stream == NULL ) return QColor();
+	if ( stream == nullptr ) return QColor();
 	return stream->pen.color();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1429,7 +1429,7 @@ QColor RecordWidget::recordColor(int slot) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPen RecordWidget::recordPen(int slot) const {
 	const Stream *stream = getStream(slot);
-	if ( stream == NULL ) return QPen();
+	if ( stream == nullptr ) return QPen();
 	return stream->pen;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1439,8 +1439,8 @@ QPen RecordWidget::recordPen(int slot) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordWidget::Trace *RecordWidget::traceInfo(int slot, bool filtered) {
-	if ( (slot < 0) || (slot >= _streams.size()) ) return NULL;
-	if ( _streams[slot] == NULL ) return NULL;
+	if ( (slot < 0) || (slot >= _streams.size()) ) return nullptr;
+	if ( _streams[slot] == nullptr ) return nullptr;
 	return &_streams[slot]->traces[filtered?Stream::Filtered:Stream::Raw];
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1451,7 +1451,7 @@ RecordWidget::Trace *RecordWidget::traceInfo(int slot, bool filtered) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const RecordWidget::Trace *RecordWidget::traceInfo(int slot, bool filtered) const {
 	const Stream *stream = getStream(slot);
-	if ( stream == NULL ) return NULL;
+	if ( stream == nullptr ) return nullptr;
 	return &stream->traces[filtered?Stream::Filtered:Stream::Raw];
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1462,7 +1462,7 @@ const RecordWidget::Trace *RecordWidget::traceInfo(int slot, bool filtered) cons
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const double *RecordWidget::recordScale(int slot) const {
 	const Stream *stream = getStream(slot);
-	if ( stream == NULL ) return NULL;
+	if ( stream == nullptr ) return nullptr;
 	return &stream->scale;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1473,7 +1473,7 @@ const double *RecordWidget::recordScale(int slot) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QVariant RecordWidget::recordUserData(int slot) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return QVariant();
+	if ( stream == nullptr ) return QVariant();
 	return stream->userData;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1483,15 +1483,15 @@ QVariant RecordWidget::recordUserData(int slot) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordSequence *RecordWidget::createRecords(int slot, bool owner) {
-	if ( _streams.empty() ) return NULL;
+	if ( _streams.empty() ) return nullptr;
 
 	for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
 		Stream *s = *it;
-		if ( s->records[Stream::Raw] != NULL ) {
+		if ( s->records[Stream::Raw] != nullptr ) {
 			Stream *ns = getStream(slot);
-			if ( ns == NULL ) return NULL;
+			if ( ns == nullptr ) return nullptr;
 
-			if ( ns->records[Stream::Raw] ) return NULL;
+			if ( ns->records[Stream::Raw] ) return nullptr;
 
 			ns->free();
 
@@ -1511,7 +1511,7 @@ RecordSequence *RecordWidget::createRecords(int slot, bool owner) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1520,7 +1520,7 @@ RecordSequence *RecordWidget::createRecords(int slot, bool owner) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const RecordWidget::Filter *RecordWidget::recordFilter(int slot) const {
-	if ( slot < 0 || slot >= _streams.size() ) return NULL;
+	if ( slot < 0 || slot >= _streams.size() ) return nullptr;
 	return _streams[slot]->filter;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1753,7 +1753,7 @@ void RecordWidget::setShadowWidget(RecordWidget *shadow, bool copyMarker, int fl
 	if ( _shadowWidget ) _shadowWidget->_shadowWidgetFlags = 0;
 
 	_shadowWidget = shadow;
-	if ( _shadowWidget == NULL ) return;
+	if ( _shadowWidget == nullptr ) return;
 
 	//_shadowWidget->clearRecords();
 	if ( copyMarker )
@@ -1793,7 +1793,7 @@ void RecordWidget::setShadowWidget(RecordWidget *shadow, bool copyMarker, int fl
 			_shadowWidget->addMarker(m->copy());
 	}
 
-	_shadowWidget->_hoveredMarker = NULL;
+	_shadowWidget->_hoveredMarker = nullptr;
 	_shadowWidget->setCurrentRecords(_currentSlot);
 	_shadowWidget->_streamID = _streamID;
 }
@@ -1831,7 +1831,7 @@ void RecordWidget::setDecorator(RecordWidgetDecorator *decorator) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordSequence *RecordWidget::records() const {
-	return _streams.empty()?NULL:_streams[0]->records[Stream::Raw];
+	return _streams.empty()?nullptr:_streams[0]->records[Stream::Raw];
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1840,7 +1840,7 @@ RecordSequence *RecordWidget::records() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordSequence *RecordWidget::records(int slot) const {
-	if ( slot < 0 || slot >= _streams.size() ) return NULL;
+	if ( slot < 0 || slot >= _streams.size() ) return nullptr;
 	return _streams[slot]->records[Stream::Raw];
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1850,7 +1850,7 @@ RecordSequence *RecordWidget::records(int slot) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordSequence *RecordWidget::filteredRecords(int slot) const {
-	if ( slot < 0 || slot >= _streams.size() ) return NULL;
+	if ( slot < 0 || slot >= _streams.size() ) return nullptr;
 	return _streams[slot]->records[Stream::Filtered];
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1860,10 +1860,10 @@ RecordSequence *RecordWidget::filteredRecords(int slot) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordSequence* RecordWidget::takeRecords(int slot) {
-	if ( slot < 0 || slot >= _streams.size() ) return NULL;
+	if ( slot < 0 || slot >= _streams.size() ) return nullptr;
 
 	RecordSequence *seq = _streams[slot]->records[Stream::Raw];
-	_streams[slot]->records[Stream::Raw] = NULL;
+	_streams[slot]->records[Stream::Raw] = nullptr;
 	delete _streams[slot];
 	_streams.remove(slot);
 
@@ -2152,7 +2152,7 @@ void RecordWidget::drawRecords(Stream *s, int slot) {
 	else {
 		trace->fyMin = -1;
 		trace->fyMax = 1;
-		trace->poly = NULL;
+		trace->poly = nullptr;
 	}
 
 	trace = &s->traces[Stream::Filtered];
@@ -2200,7 +2200,7 @@ void RecordWidget::drawRecords(Stream *s, int slot) {
 	else {
 		trace->fyMin = -1;
 		trace->fyMax = 1;
-		trace->poly = NULL;
+		trace->poly = nullptr;
 	}
 
 	if ( _amplScale > 1 ) {
@@ -2258,11 +2258,11 @@ void RecordWidget::createPolyline(int slot, AbstractRecordPolylinePtr &polyline,
 #ifdef RENDER_VISIBLE
 			pl->create(seq, leftTime(), rightTime(), pixelPerSecond,
 			           amplMin, amplMax, amplOffset,
-			           height, NULL, NULL, optimization);
+			           height, nullptr, nullptr, optimization);
 #else
 			pl->create(seq, pixelPerSecond,
 			           amplMin, amplMax, amplOffset,
-			           height, NULL, NULL, optimization);
+			           height, nullptr, nullptr, optimization);
 #endif
 			polyline = pl;
 		}
@@ -2271,11 +2271,11 @@ void RecordWidget::createPolyline(int slot, AbstractRecordPolylinePtr &polyline,
 #ifdef RENDER_VISIBLE
 			pl->create(seq, leftTime(), rightTime(), pixelPerSecond,
 			           amplMin, amplMax, amplOffset,
-			           height, NULL, NULL, optimization);
+			           height, nullptr, nullptr, optimization);
 #else
 			pl->create(seq, pixelPerSecond,
 			           amplMin, amplMax, amplOffset,
-			           height, NULL, NULL, optimization);
+			           height, nullptr, nullptr, optimization);
 #endif
 			polyline = pl;
 		}
@@ -2290,19 +2290,19 @@ void RecordWidget::createPolyline(int slot, AbstractRecordPolylinePtr &polyline,
 const double *RecordWidget::value(int slot, const Seiscomp::Core::Time& t) const {
 	static double value;
 
-	if ( slot < 0 || slot >= _streams.size() ) return NULL;
+	if ( slot < 0 || slot >= _streams.size() ) return nullptr;
 
 	Stream *s = _streams[slot];
 
 	RecordSequence *rs = s->filtering?s->records[Stream::Filtered]:s->records[Stream::Raw];
 	if ( !rs )
-		return NULL;
+		return nullptr;
 
 	for ( RecordSequence::const_iterator it = rs->begin();
 	      it != rs->end(); ++it ) {
 		const Seiscomp::Record *rec = (*it).get();
 		if ( t >= rec->startTime() && t <= rec->endTime() ) {
-			if ( rec->data() == NULL ) return NULL;
+			if ( rec->data() == nullptr ) return nullptr;
 
 			int pos = int(double(t - rec->startTime()) * rec->samplingFrequency());
 			FloatArrayPtr tmp;
@@ -2312,10 +2312,10 @@ const double *RecordWidget::value(int slot, const Seiscomp::Core::Time& t) const
 				ar = tmp.get();
 			}
 
-			if ( !ar ) return NULL;
+			if ( !ar ) return nullptr;
 
 			if ( ar->size() <= (int)pos )
-				return NULL;
+				return nullptr;
 
 			value = (*ar)[pos];
 			if ( _showScaledValues )
@@ -2325,7 +2325,7 @@ const double *RecordWidget::value(int slot, const Seiscomp::Core::Time& t) const
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2343,14 +2343,14 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 		case SameOffset:
 		case Stacked:
 		{
-			Stream *stream = NULL;
+			Stream *stream = nullptr;
 
 			if ( (_currentSlot >= _streams.size() || _currentSlot < 0) || !_streams[_currentSlot]->visible )
-				stream = NULL;
+				stream = nullptr;
 			else
 				stream = _streams[_currentSlot];
 
-			if ( stream != NULL ) {
+			if ( stream != nullptr ) {
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
 				double axisLower = stream->traces[frontIndex].fyMin,
 				       axisUpper = stream->traces[frontIndex].fyMax;
@@ -2406,7 +2406,7 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 		case InRows:
 			for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
 				Stream *stream = *it;
-				if ( stream == NULL ) continue;
+				if ( stream == nullptr ) continue;
 				if ( stream->height == 0 ) continue;
 
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
@@ -2486,7 +2486,7 @@ void RecordWidget::showScaledValues(bool enable) {
 
 	for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
 		Stream *s = *it;
-		if ( s == NULL ) continue;
+		if ( s == nullptr ) continue;
 		s->axisDirty = true;
 	}
 
@@ -2502,7 +2502,7 @@ void RecordWidget::setDirty() {
 	_drawRecords = true;
 	for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
 		Stream *s = *it;
-		if ( s == NULL ) continue;
+		if ( s == nullptr ) continue;
 		s->setDirty();
 	}
 }
@@ -2616,16 +2616,16 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 		default:
 		case Single:
 		{
-			Stream *stream = NULL;
+			Stream *stream = nullptr;
 
 			if ( (_currentSlot >= _streams.size() || _currentSlot < 0) || !_streams[_currentSlot]->visible )
-				stream = NULL;
+				stream = nullptr;
 			else
 				stream = _streams[_currentSlot];
 
 			for ( int i = 0; i < _streams.size(); ++i ) {
 				Stream *str = _streams[i];
-				if ( str == NULL ) continue;
+				if ( str == nullptr ) continue;
 
 				if ( str == stream ) {
 					str->posY = 0;
@@ -2637,7 +2637,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				}
 			}
 
-			if ( stream != NULL ) {
+			if ( stream != nullptr ) {
 				if ( stream->hasCustomBackgroundColor )
 					painter.fillRect(0, stream->posY, _canvasRect.width(), stream->height, blend(bg, stream->customBackgroundColor));
 
@@ -2743,8 +2743,8 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 			// Second pass draws all records
 			slot = 0;
 			for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it, ++slot ) {
-				Stream *stream = (*it)->visible?*it:NULL;
-				if ( stream == NULL ) continue;
+				Stream *stream = (*it)->visible?*it:nullptr;
+				if ( stream == nullptr ) continue;
 
 				stream->traces[0].dyMin = minAmpl[0];
 				stream->traces[0].dyMax = maxAmpl[0];
@@ -2812,8 +2812,8 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 			// Second pass draws all records
 			slot = 0;
 			for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it, ++slot ) {
-				Stream *stream = (*it)->visible?*it:NULL;
-				if ( stream == NULL ) continue;
+				Stream *stream = (*it)->visible?*it:nullptr;
+				if ( stream == nullptr ) continue;
 
 				for ( int i = 0; i < 2; ++i ) {
 					int j = i ^ (stream->filtering?1:0);
@@ -2842,7 +2842,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 		case Single:
 		{
 			Stream *stream = (_currentSlot >= 0 && _currentSlot < _streams.size() && _streams[_currentSlot]->visible) ?
-			                 _streams[_currentSlot] : NULL;
+			                 _streams[_currentSlot] : nullptr;
 
 			if ( stream ) {
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
@@ -2882,8 +2882,8 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 		case InRows:
 			for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
-				Stream *stream = (*it)->visible?*it:NULL;
-				if ( stream == NULL ) continue;
+				Stream *stream = (*it)->visible?*it:nullptr;
+				if ( stream == nullptr ) continue;
 
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
 				if ( stream->traces[frontIndex].validTrace() ) {
@@ -3033,7 +3033,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 		case Single:
 		{
 			Stream *stream = (_currentSlot >= 0 && _currentSlot < _streams.size() && _streams[_currentSlot]->visible) ?
-			                 _streams[_currentSlot] : NULL;
+			                 _streams[_currentSlot] : nullptr;
 			if ( stream ) {
 				double offset[2] = {0,0};
 				int x_tmin[2];
@@ -3094,8 +3094,8 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 		case InRows:
 			for ( int i = 0; i < _streams.size(); ++i ) {
-				Stream *stream = _streams[i]->visible?_streams[i]:NULL;
-				if ( stream == NULL ) continue;
+				Stream *stream = _streams[i]->visible?_streams[i]:nullptr;
+				if ( stream == nullptr ) continue;
 
 				double offset[2] = {0,0};
 				int x_tmin[2];
@@ -3169,8 +3169,8 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 			// Draw offset
 			if ( _drawOffset ) {
 				for ( int i = 0; i < _streams.size(); ++i ) {
-					Stream *stream = _streams[i]->visible?_streams[i]:NULL;
-					if ( stream == NULL ) continue;
+					Stream *stream = _streams[i]->visible?_streams[i]:nullptr;
+					if ( stream == nullptr ) continue;
 
 					int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
 					if ( stream->traces[frontIndex].validTrace() ) {
@@ -3186,8 +3186,8 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 			// Draw backtraces
 			if ( _showAllRecords ) {
 				for ( int i = 0; i < _streams.size(); ++i ) {
-					Stream *stream = _streams[i]->visible?_streams[i]:NULL;
-					if ( stream == NULL ) continue;
+					Stream *stream = _streams[i]->visible?_streams[i]:nullptr;
+					if ( stream == nullptr ) continue;
 
 					double offset[2] = {0,0};
 					int x_tmin[2];
@@ -3220,8 +3220,8 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 			// Draw records
 			for ( int i = 0; i < _streams.size(); ++i ) {
-				Stream *stream = _streams[i]->visible?_streams[i]:NULL;
-				if ( stream == NULL ) continue;
+				Stream *stream = _streams[i]->visible?_streams[i]:nullptr;
+				if ( stream == nullptr ) continue;
 
 				double offset[2] = {0,0};
 				int x_tmin[2];
@@ -3368,7 +3368,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 		case Single:
 		{
 			Stream *stream = (_currentSlot >= 0 && _currentSlot < _streams.size() && _streams[_currentSlot]->visible) ?
-			                 _streams[_currentSlot] : NULL;
+			                 _streams[_currentSlot] : nullptr;
 
 			if ( stream ) {
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
@@ -3435,8 +3435,8 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 		case InRows:
 			for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
-				Stream *stream = (*it)->visible?*it:NULL;
-				if ( stream == NULL ) continue;
+				Stream *stream = (*it)->visible?*it:nullptr;
+				if ( stream == nullptr ) continue;
 
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
 				if ( stream->traces[frontIndex].validTrace() ) {
@@ -3497,10 +3497,10 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				float offset = 0;
 				int cnt = 0;
 
-				Stream *stream = NULL;
+				Stream *stream = nullptr;
 				for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
-					Stream* tmpStream = (*it)->visible?*it:NULL;
-					if ( tmpStream == NULL ) continue;
+					Stream* tmpStream = (*it)->visible?*it:nullptr;
+					if ( tmpStream == nullptr ) continue;
 
 					int frontIndex = tmpStream->filtering?Stream::Filtered:Stream::Raw;
 					if ( !tmpStream->traces[frontIndex].validTrace() ) continue;
@@ -3750,7 +3750,7 @@ void RecordWidget::mouseMoveEvent(QMouseEvent *event) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::enterEvent(QEvent *) {
-	_hoveredMarker = NULL;
+	_hoveredMarker = nullptr;
 	emit mouseOver(true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3760,7 +3760,7 @@ void RecordWidget::enterEvent(QEvent *) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::leaveEvent(QEvent *) {
-	_hoveredMarker = NULL;
+	_hoveredMarker = nullptr;
 	emit mouseOver(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3887,7 +3887,7 @@ void RecordWidget::enableFiltering(bool enable) {
 			Stream* stream = *it;
 			if ( stream->filtering != enable )
 				stream->filtering = enable;
-			stream->traces[_filtering?Stream::Raw:Stream::Filtered].poly = NULL;
+			stream->traces[_filtering?Stream::Raw:Stream::Filtered].poly = nullptr;
 		}
 	}
 
@@ -3916,11 +3916,11 @@ void RecordWidget::enableGlobalOffset(bool enable) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::enableRecordFiltering(int slot, bool enable) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return;
+	if ( stream == nullptr ) return;
 	if ( stream->filtering == enable ) return;
 
 	stream->filtering = enable;
-	stream->traces[enable?Stream::Raw:Stream::Filtered].poly = NULL;
+	stream->traces[enable?Stream::Raw:Stream::Filtered].poly = nullptr;
 
 	setDirty();
 	update();
@@ -3933,7 +3933,7 @@ void RecordWidget::enableRecordFiltering(int slot, bool enable) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::isRecordFilteringEnabled(int slot) {
 	Stream *stream = getStream(slot);
-	if ( stream == NULL ) return false;
+	if ( stream == nullptr ) return false;
 
 	return stream->filtering;
 }
@@ -4058,11 +4058,11 @@ bool RecordWidget::createFilter() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::createFilter(int slot) {
 	Stream* s = getStream(slot);
-	if ( s == NULL ) return false;
+	if ( s == nullptr ) return false;
 	if ( _shadowWidgetFlags & Filtered ) return true;
 
 	if (!s->filter) {
-		setRecordFilter(slot, NULL);
+		setRecordFilter(slot, nullptr);
 		return true;
 	}
 
@@ -4135,7 +4135,7 @@ void RecordWidget::filterRecords(Stream *s) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record* RecordWidget::filteredRecord(Math::Filtering::InPlaceFilter<float> *filter,
                                      const Record* rec, const Record* lastRec) const {
-	if ( rec->data() == NULL ) return NULL;
+	if ( rec->data() == nullptr ) return nullptr;
 
 	FloatArrayPtr arr = (FloatArray*)rec->data()->copy(Array::FLOAT);
 
@@ -4178,7 +4178,7 @@ Record* RecordWidget::filteredRecord(Math::Filtering::InPlaceFilter<float> *filt
 	catch (...) {
 		SEISCOMP_ERROR("Filtered record has invalid endtime -> skipping");
 		delete crec;
-		return NULL;
+		return nullptr;
 	}
 
 	crec->setData(arr.get());
@@ -4305,12 +4305,12 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 
 	_drawRecords = true;
 
-	if ( !(_shadowWidgetFlags & Filtered) && (s->filtering || s->filter != NULL) ) {
+	if ( !(_shadowWidgetFlags & Filtered) && (s->filtering || s->filter != nullptr) ) {
 		newlyCreated = createFilter(slot);
 
 		if ( _shadowWidget  ) {
 			if ( (_shadowWidget->_shadowWidgetFlags & Filtered) &&
-			      _shadowWidget->_streams[slot]->records[Stream::Filtered]== NULL) {
+			      _shadowWidget->_streams[slot]->records[Stream::Filtered]== nullptr) {
 				_shadowWidget->setFilteredRecords(slot, s->records[Stream::Filtered], false);
 			}
 			_shadowWidget->fed(slot, rec);
@@ -4319,7 +4319,7 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 	else {
 		if ( _shadowWidget  ) {
 			if ( (_shadowWidget->_shadowWidgetFlags & Filtered) &&
-			      _shadowWidget->_streams[slot]->records[Stream::Filtered]== NULL) {
+			      _shadowWidget->_streams[slot]->records[Stream::Filtered]== nullptr) {
 				_shadowWidget->setFilteredRecords(slot, s->records[Stream::Filtered], false);
 			}
 			_shadowWidget->fed(slot, rec);
@@ -4348,7 +4348,7 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 bool RecordWidget::addMarker(RecordMarker* marker) {
 	if ( _markerSourceWidget ) return _markerSourceWidget->addMarker(marker);
 
-	if ( marker == NULL ) return false;
+	if ( marker == nullptr ) return false;
 
 	if ( marker->parent() != this ) {
 		if ( marker->parent() )
@@ -4370,7 +4370,7 @@ bool RecordWidget::addMarker(RecordMarker* marker) {
 bool RecordWidget::insertMarker(int pos, RecordMarker* marker) {
 	if ( _markerSourceWidget ) return _markerSourceWidget->insertMarker(pos, marker);
 
-	if ( marker == NULL ) return false;
+	if ( marker == nullptr ) return false;
 
 	if ( marker->parent() != this ) {
 		if ( marker->parent() )
@@ -4406,16 +4406,16 @@ RecordMarker *RecordWidget::takeMarker(int pos) {
 	if ( pos >= 0 ) {
 		RecordMarker *m = _marker[pos];
 		if ( m == _activeMarker ) {
-			setCurrentMarker(NULL);
+			setCurrentMarker(nullptr);
 		}
 		if ( m == _hoveredMarker )
-			_hoveredMarker = NULL;
-		m->setParent(NULL);
+			_hoveredMarker = nullptr;
+		m->setParent(nullptr);
 		_marker.remove(pos);
 		return m;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4488,7 +4488,7 @@ RecordMarker* RecordWidget::marker(const QString& txt, bool movableOnly) const {
 			return _marker[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4502,7 +4502,7 @@ RecordMarker* RecordWidget::enabledMarker(const QString& txt) const {
 		if ( _marker[i]->matches(txt) && _marker[i]->isEnabled() )
 			return _marker[i];
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4511,7 +4511,7 @@ RecordMarker* RecordWidget::enabledMarker(const QString& txt) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::clearMarker() {
-	_hoveredMarker = NULL;
+	_hoveredMarker = nullptr;
 
 	if ( _markerSourceWidget ) {
 		_markerSourceWidget->clearMarker();
@@ -4587,7 +4587,7 @@ RecordMarker* RecordWidget::markerAt(int x, int y, bool movableOnly, int maxDist
 	int minDist = maxDist;
 	int h = height();
 
-	RecordMarker *m = NULL;
+	RecordMarker *m = nullptr;
 	for ( int i = markerCount()-1; i >= 0; --i ) {
 		RecordMarker *cm = marker(i);
 		if ( movableOnly && !cm->isMovable() )
@@ -4638,7 +4638,7 @@ RecordMarker* RecordWidget::lastMarker(const Seiscomp::Core::Time& t) {
 	if ( minI != -1 )
 		return marker(minI);
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4662,7 +4662,7 @@ RecordMarker* RecordWidget::nextMarker(const Seiscomp::Core::Time& t) {
 	if ( minI != -1 )
 		return marker(minI);
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4683,12 +4683,12 @@ RecordMarker* RecordWidget::nearestMarker(const Seiscomp::Core::Time& t,
 	}
 
 	if ( maxDist >= 0 && minT*_pixelPerSecond > maxDist )
-		return NULL;
+		return nullptr;
 
 	if ( minI != -1 )
 		return marker(minI);
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4785,7 +4785,7 @@ const Seiscomp::Core::Time& RecordWidget::cursorPos() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const double *RecordWidget::value(const Seiscomp::Core::Time& t) const {
-	return _drawMode == Single ? value(_currentSlot, t) : NULL;
+	return _drawMode == Single ? value(_currentSlot, t) : nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

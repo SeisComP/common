@@ -32,9 +32,9 @@ IMPLEMENT_SC_CLASS(TimeWindow, "TimeWindow");
 
 
 TimeWindow::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("reference", "datetime", false, false, false, false, false, false, NULL, &TimeWindow::setReference, &TimeWindow::reference));
-	addProperty(Core::simpleProperty("begin", "float", false, false, false, false, false, false, NULL, &TimeWindow::setBegin, &TimeWindow::begin));
-	addProperty(Core::simpleProperty("end", "float", false, false, false, false, false, false, NULL, &TimeWindow::setEnd, &TimeWindow::end));
+	addProperty(Core::simpleProperty("reference", "datetime", false, false, false, false, false, false, nullptr, &TimeWindow::setReference, &TimeWindow::reference));
+	addProperty(Core::simpleProperty("begin", "float", false, false, false, false, false, false, nullptr, &TimeWindow::setBegin, &TimeWindow::begin));
+	addProperty(Core::simpleProperty("end", "float", false, false, false, false, false, false, nullptr, &TimeWindow::setEnd, &TimeWindow::end));
 }
 
 

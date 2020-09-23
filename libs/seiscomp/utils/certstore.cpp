@@ -372,13 +372,13 @@ bool CertificateStore::loadCerts(CertificateContext::Certs &certs, const string 
 					continue;
 				}
 
-				X509 *cert = NULL;
+				X509 *cert = nullptr;
 
 				BIO *bio_cert = BIO_new_file(absFilename.c_str(), "rb");
-				PEM_read_bio_X509(bio_cert, &cert, NULL, NULL);
+				PEM_read_bio_X509(bio_cert, &cert, nullptr, nullptr);
 				BIO_free(bio_cert);
 
-				if ( cert == NULL ) {
+				if ( cert == nullptr ) {
 					SEISCOMP_ERROR("%s: Failed to load X509 cert from file %s",
 					               hash.c_str(), absFilename.c_str());
 					return false;
@@ -426,13 +426,13 @@ bool CertificateStore::loadCRLs(CertificateContext::CRLs &crls,
 					continue;
 				}
 
-				X509_CRL *crl = NULL;
+				X509_CRL *crl = nullptr;
 
 				BIO *bio_cert = BIO_new_file(absFilename.c_str(), "rb");
-				PEM_read_bio_X509_CRL(bio_cert, &crl, NULL, NULL);
+				PEM_read_bio_X509_CRL(bio_cert, &crl, nullptr, nullptr);
 				BIO_free(bio_cert);
 
-				if ( crl == NULL ) {
+				if ( crl == nullptr ) {
 					SEISCOMP_ERROR("%s: Failed to load CRL from file %s",
 					               hash.c_str(), absFilename.c_str());
 					return false;

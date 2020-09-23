@@ -56,13 +56,13 @@ class SC_GUI_API Plot : public QObject {
 	public:
 		/**
 		 * @brief Adds a graph to the plot. The graph is managed by the plot.
-		 * @param keyAxis The axis to use for keys. If NULL is passed then
+		 * @param keyAxis The axis to use for keys. If nullptr is passed then
 		 *                the default xAxis is being used.
-		 * @param valueAxis The axis to use for values. If NULL is passed then
+		 * @param valueAxis The axis to use for values. If nullptr is passed then
 		 *                  the default yAxis is being used.
-		 * @return The graph pointer or NULL in case of error.
+		 * @return The graph pointer or nullptr in case of error.
 		 */
-		Graph *addGraph(Axis *keyAxis = NULL, Axis *valueAxis = NULL);
+		Graph *addGraph(Axis *keyAxis = nullptr, Axis *valueAxis = nullptr);
 
 		/**
 		 * @brief Adds a graph instance to the plot. This function was added

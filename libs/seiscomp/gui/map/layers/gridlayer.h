@@ -36,7 +36,7 @@ class Canvas;
 
 class SC_GUI_API GridLayer : public Layer {
 	public:
-		GridLayer(QObject* = NULL);
+		GridLayer(QObject* = nullptr);
 		virtual ~GridLayer();
 
 		virtual void draw(const Canvas*, QPainter&);

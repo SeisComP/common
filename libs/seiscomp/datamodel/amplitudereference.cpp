@@ -33,7 +33,7 @@ IMPLEMENT_SC_CLASS_DERIVED(AmplitudeReference, Object, "AmplitudeReference");
 
 
 AmplitudeReference::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("amplitudeID", "string", false, false, true, true, false, false, NULL, &AmplitudeReference::setAmplitudeID, &AmplitudeReference::amplitudeID));
+	addProperty(Core::simpleProperty("amplitudeID", "string", false, false, true, true, false, false, nullptr, &AmplitudeReference::setAmplitudeID, &AmplitudeReference::amplitudeID));
 }
 
 
@@ -176,7 +176,7 @@ const AmplitudeReferenceIndex& AmplitudeReference::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeReference::equalIndex(const AmplitudeReference* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -206,7 +206,7 @@ AmplitudeReference& AmplitudeReference::operator=(const AmplitudeReference& othe
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeReference::assign(Object* other) {
 	AmplitudeReference* otherAmplitudeReference = AmplitudeReference::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherAmplitudeReference;
@@ -220,11 +220,11 @@ bool AmplitudeReference::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeReference::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Reading* reading = Reading::Cast(parent);
-	if ( reading != NULL )
+	if ( reading != nullptr )
 		return reading->add(this);
 
 	SEISCOMP_ERROR("AmplitudeReference::attachTo(%s) -> wrong class type", parent->className());
@@ -237,11 +237,11 @@ bool AmplitudeReference::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeReference::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Reading* reading = Reading::Cast(object);
-	if ( reading != NULL ) {
+	if ( reading != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -249,7 +249,7 @@ bool AmplitudeReference::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			AmplitudeReference* child = reading->amplitudeReference(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return reading->remove(child);
 			else {
 				SEISCOMP_DEBUG("AmplitudeReference::detachFrom(Reading): amplitudeReference has not been found");
@@ -268,7 +268,7 @@ bool AmplitudeReference::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeReference::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

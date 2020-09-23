@@ -395,7 +395,7 @@ void HMBConnection<SocketType>::bsonGetBlob(const bson_t *bson, const char *key,
 				break;
 
 			case BSON_TYPE_BINARY:
-				bson_iter_binary(&iter, NULL, &value_len, &value);
+				bson_iter_binary(&iter, nullptr, &value_len, &value);
 				break;
 
 			default:
@@ -659,7 +659,7 @@ Record *HMBConnection<SocketType>::next() {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

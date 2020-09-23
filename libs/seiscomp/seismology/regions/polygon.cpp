@@ -119,7 +119,7 @@ bool PolyRegions::readFepBoundaries(const std::string& filename) {
 
 	std::string line;
 	bool newPolygon = true;
-	GeoFeature *pr = NULL;
+	GeoFeature *pr = nullptr;
 	OPT(GeoCoordinate) last;
 
 	while ( std::getline(infile, line) ) {
@@ -177,7 +177,7 @@ GeoFeature *PolyRegions::region(int i) const{
 	if( _regions.size() > 0 )
 		return _regions[i];
 	else
-		return NULL;
+		return nullptr;
 }
 
 
@@ -214,7 +214,7 @@ GeoFeature *PolyRegions::findRegion(double lat, double lon) const {
 			return region(i);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

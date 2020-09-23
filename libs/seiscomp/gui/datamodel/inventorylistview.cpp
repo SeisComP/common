@@ -287,13 +287,13 @@ QTreeWidgetItem* InventoryListView::create(DataModel::Object* o) {
 	if ( st )
 		return create(st);
 
-	return NULL;
+	return nullptr;
 }
 
 
 bool InventoryListView::visit(DataModel::PublicObject* po) {
 	QTreeWidgetItem* item = insert(po);
-	if ( item == NULL ) return false;
+	if ( item == nullptr ) return false;
 
 	_itemStack.push(item);
 	return true;
@@ -330,7 +330,7 @@ void InventoryListView::onItemChanged(QTreeWidgetItem *item, int column) {
 	if ( column == 0 ) {
 		blockSignals(true);
 
-		_highestChangedItem = NULL;
+		_highestChangedItem = nullptr;
 
 		updateParentSelection(item);
 
@@ -373,7 +373,7 @@ void InventoryListView::updateChildSelection(QTreeWidgetItem *item) {
 
 void InventoryListView::updateParentSelection(QTreeWidgetItem *it) {
 	QTreeWidgetItem* parent = it->parent();
-	if ( parent == NULL ) return;
+	if ( parent == nullptr ) return;
 
 	//std::cout << "ItemValue: " << parent->data(0, Qt::UserRole).toString().toStdString() << std::endl;
 

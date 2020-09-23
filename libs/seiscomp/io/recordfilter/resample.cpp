@@ -146,7 +146,7 @@ GenericRecord *createRecord(const Record *rec) {
 
 
 GenericRecord *convert(const Record *rec) {
-	if ( rec->data() == NULL ) return NULL;
+	if ( rec->data() == nullptr ) return nullptr;
 
 	GenericRecord *out;
 
@@ -158,7 +158,7 @@ GenericRecord *convert(const Record *rec) {
 			out = createRecord(rec);
 			break;
 		default:
-			return NULL;
+			return nullptr;
 	}
 
 	ArrayPtr data = rec->data()->clone();
@@ -238,7 +238,7 @@ RecordResamplerBase::~RecordResamplerBase() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record *RecordResamplerBase::flush() {
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -258,7 +258,7 @@ void RecordResamplerBase::reset() {
 template <typename T>
 RecordResampler<T>::RecordResampler(double targetFrequency, double fp,
                         double fs, double coeffScale, int lanzcosWidth)
-: _downsampler(NULL), _upsampler(NULL) {
+: _downsampler(nullptr), _upsampler(nullptr) {
 	_fp = fp;
 	_fs = fs;
 	_coeffScale = coeffScale;
@@ -297,7 +297,7 @@ void RecordResampler<T>::init(DownsampleStage *stage, const Record *rec, int ups
 	if ( !stage->passThrough )
 		initCoefficients(stage);
 	else
-		stage->coefficients = NULL;
+		stage->coefficients = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -328,7 +328,7 @@ void RecordResampler<T>::init(UpsampleStage *stage, const Record *rec, int N) {
 template <typename T>
 GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record *rec) {
 	if ( !stage->valid )
-		return NULL;
+		return nullptr;
 
 	Core::Time endTime;
 	try {
@@ -337,7 +337,7 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 	catch ( ... ) {
 		SEISCOMP_WARNING("[dec] %s: invalid end time -> ignoring",
 		                 rec->streamID().c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	if ( stage->lastEndTime.valid() ) {
@@ -345,7 +345,7 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 		if ( fabs(diff) > stage->dt*0.5 ) {
 			if ( diff < 0 )
 				// Ignore overlap
-				return NULL;
+				return nullptr;
 
 			SEISCOMP_DEBUG("[dec] %s: gap of %f secs -> reset processing",
 			               rec->streamID().c_str(), diff);
@@ -357,12 +357,12 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 
 	ArrayPtr tmp_ar;
 	const TypedArray<T> *ar = TypedArray<T>::ConstCast(rec->data());
-	if ( ar == NULL ) {
+	if ( ar == nullptr ) {
 		tmp_ar = rec->data()->copy(dataType<T>());
 		ar = TypedArray<T>::ConstCast(tmp_ar);
-		if ( ar == NULL ) {
+		if ( ar == nullptr ) {
 			SEISCOMP_ERROR("[dec] internal error: wrong converted type received");
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -392,7 +392,7 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 				data_len = 0;
 			}
 
-			if ( !data_len ) return NULL;
+			if ( !data_len ) return nullptr;
 		}
 
 		size_t toCopy = std::min(stage->missingSamples, data_len);
@@ -403,7 +403,7 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 		stage->missingSamples -= toCopy;
 
 		// Still samples missing and no more data available, return
-		if ( stage->missingSamples > 0 ) return NULL;
+		if ( stage->missingSamples > 0 ) return nullptr;
 
 		// Resampling can start now
 		stage->samplesToSkip = 0;
@@ -411,7 +411,7 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 	else
 		stage->startTime = rec->startTime() + Core::TimeSpan((int(stage->samplesToSkip)-stage->N2-1)*stage->dt+5E-7);
 
-	if ( !data_len ) return NULL;
+	if ( !data_len ) return nullptr;
 
 	// Ring buffer is filled at this point.
 	typename Core::SmartPointer< TypedArray<T> >::Impl resampled_data;
@@ -491,7 +491,7 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 		return tmp;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -508,7 +508,7 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 	catch ( ... ) {
 		SEISCOMP_WARNING("[ups] %s: invalid end time -> ignoring",
 		                 rec->streamID().c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	if ( stage->lastEndTime.valid() ) {
@@ -524,17 +524,17 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 
 	ArrayPtr tmp_ar;
 	const TypedArray<T> *ar = TypedArray<T>::ConstCast(rec->data());
-	if ( ar == NULL ) {
+	if ( ar == nullptr ) {
 		tmp_ar = rec->data()->copy(dataType<T>());
 		ar = TypedArray<T>::ConstCast(tmp_ar);
-		if ( ar == NULL ) {
+		if ( ar == nullptr ) {
 			SEISCOMP_ERROR("[dec] internal error: wrong conversion type received");
-			return NULL;
+			return nullptr;
 		}
 	}
 
 	size_t data_len = (size_t)ar->size();
-	if ( data_len == 0 ) return NULL;
+	if ( data_len == 0 ) return nullptr;
 
 	const T *data = ar->typedData();
 	T *buffer = &stage->buffer[0];
@@ -556,7 +556,7 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 		stage->startTime -= Core::TimeSpan(toCopy * stage->dt);
 
 		// Still samples missing and no more data available, return
-		if ( stage->missingSamples > 0 ) return NULL;
+		if ( stage->missingSamples > 0 ) return nullptr;
 	}
 	else
 		startTime = stage->startTime + Core::TimeSpan(stage->dt * stage->N2);
@@ -564,7 +564,7 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 	// Ring buffer is filled at this point.
 	typename Core::SmartPointer< TypedArray<T> >::Impl resampled_data;
 
-	if ( !data_len ) return NULL;
+	if ( !data_len ) return nullptr;
 
 	stage->startTime += endTime - rec->startTime();
 
@@ -645,7 +645,7 @@ Record *RecordResampler<T>::feed(const Record *record) {
 		if ( !getFraction(num, den, _targetRate/rate) ) {
 			SEISCOMP_WARNING("[resample] incompatible sampling frequency %f -> %f",
 			                 rate, _targetRate);
-			return NULL;
+			return nullptr;
 		}
 
 		_currentRate = rate;
@@ -663,7 +663,7 @@ Record *RecordResampler<T>::feed(const Record *record) {
 		}
 		else if ( _upsampler ) {
 			delete _upsampler;
-			_upsampler = NULL;
+			_upsampler = nullptr;
 		}
 
 		// We need to downsample the data
@@ -678,7 +678,7 @@ Record *RecordResampler<T>::feed(const Record *record) {
 				// Clear all subsequent stages
 				if ( _downsampler->nextStage ) {
 					delete _downsampler->nextStage;
-					_downsampler->nextStage = NULL;
+					_downsampler->nextStage = nullptr;
 				}
 			}
 
@@ -686,7 +686,7 @@ Record *RecordResampler<T>::feed(const Record *record) {
 		}
 		else if ( _downsampler ) {
 			delete _downsampler;
-			_downsampler = NULL;
+			_downsampler = nullptr;
 		}
 	}
 
@@ -720,7 +720,7 @@ Record *RecordResampler<T>::feed(const Record *record) {
 		*/
 	}
 	else
-		tmp = NULL;
+		tmp = nullptr;
 
 	return tmp;
 }
@@ -740,7 +740,7 @@ void RecordResampler<T>::initCoefficients(DownsampleStage *stage) {
 	if ( it != _coefficients.end() )
 		stage->coefficients = it->second;
 	else {
-		stage->coefficients = NULL;
+		stage->coefficients = nullptr;
 
 		if ( stage->N > _maxN ) {
 			for ( int i = _maxN; i > 1; --i ) {
@@ -788,7 +788,7 @@ void RecordResampler<T>::initCoefficients(DownsampleStage *stage) {
 				stage->coefficients = it->second;
 		}
 
-		if ( stage->coefficients == NULL ) {
+		if ( stage->coefficients == nullptr ) {
 			// Create and cache coefficients for N
 			int Ncoeff = stage->N*_coeffScale*2+1;
 
@@ -830,14 +830,14 @@ template <typename T>
 void RecordResampler<T>::reset() {
 	RecordResamplerBase::reset();
 
-	if ( _downsampler != NULL ) {
+	if ( _downsampler != nullptr ) {
 		delete _downsampler;
-		_downsampler = NULL;
+		_downsampler = nullptr;
 	}
 
-	if ( _upsampler != NULL ) {
+	if ( _upsampler != nullptr ) {
 		delete _upsampler;
-		_upsampler = NULL;
+		_upsampler = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

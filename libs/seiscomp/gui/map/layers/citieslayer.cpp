@@ -38,7 +38,7 @@ namespace Map {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CitiesLayer::CitiesLayer(QObject* parent) : Layer(parent), _selectedCity(NULL) {
+CitiesLayer::CitiesLayer(QObject* parent) : Layer(parent), _selectedCity(nullptr) {
 	setName("cities");
 	_topPopulatedPlaces = -1;
 
@@ -84,10 +84,10 @@ void CitiesLayer::init(const Config::Config &cfg) {
 void CitiesLayer::draw(const Seiscomp::Gui::Map::Canvas* canvas,
                        QPainter& painter) {
 	if ( !isVisible() ) return;
-	if ( canvas == NULL ) return;
+	if ( canvas == nullptr ) return;
 
 	Seiscomp::Gui::Map::Projection* projection = canvas->projection();
-	if ( projection == NULL ) return;
+	if ( projection == nullptr ) return;
 
 	painter.save();
 

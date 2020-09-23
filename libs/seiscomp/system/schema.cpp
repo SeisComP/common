@@ -313,11 +313,11 @@ void SchemaBinding::serialize(Archive& ar) {
 SchemaModule *SchemaDefinitions::createAlias(const char *existingModule, const char *newModule) {
 	// Does the source module exist?
 	SchemaModule *mod = module(existingModule);
-	if ( mod == NULL ) return NULL;
+	if ( mod == nullptr ) return nullptr;
 
 	// Is the new module name still unused?
 	SchemaModulePtr newMod = module(newModule);
-	if ( newMod != NULL ) return NULL;
+	if ( newMod != nullptr ) return nullptr;
 
 	// Copy the existing module
 	newMod = new SchemaModule(*mod);
@@ -325,7 +325,7 @@ SchemaModule *SchemaDefinitions::createAlias(const char *existingModule, const c
 	newMod->name = newModule;
 
 	// And add it
-	if ( !add(newMod.get()) ) return NULL;
+	if ( !add(newMod.get()) ) return nullptr;
 
 	// Now copy the bindings, plugins
 	PluginList  plugins  = pluginsForModule(existingModule);
@@ -356,7 +356,7 @@ bool SchemaDefinitions::removeAlias(const char *existingModule) {
 		if ( _modules[i]->name != existingModule ) continue;
 
 		// This is not an alias
-		if ( _modules[i]->aliasedModule == NULL )
+		if ( _modules[i]->aliasedModule == nullptr )
 			break;
 
 		_modules.erase(_modules.begin() + i);
@@ -384,7 +384,7 @@ SchemaModule *SchemaDefinitions::module(const char *name) {
 			return _modules[i].get();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -419,7 +419,7 @@ SchemaPlugin *SchemaDefinitions::plugin(const char *name) {
 			return _plugins[i].get();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -455,7 +455,7 @@ SchemaBinding *SchemaDefinitions::binding(const char *name) {
 			return _bindings[i].get();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

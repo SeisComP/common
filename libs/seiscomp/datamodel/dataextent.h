@@ -23,8 +23,8 @@
 
 
 #include <vector>
-#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/core/datetime.h>
+#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/datamodel/datasegment.h>
 #include <seiscomp/datamodel/dataattributeextent.h>
 #include <seiscomp/datamodel/notifier.h>

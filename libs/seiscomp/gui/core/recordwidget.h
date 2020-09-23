@@ -262,7 +262,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 				dyMin = dyMax = dOffset  = absMax = 0;
 				pyMin = pyMax = 0;
 				visible = false;
-				poly = NULL;
+				poly = nullptr;
 			}
 
 			bool validTrace() {
@@ -726,7 +726,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 		void filterRecords(Stream *s);
 		bool setFilteredRecords(int slot, RecordSequence* seq, bool owner);
 		Record* filteredRecord(Filter *filter,
-		                       const Record*, const Record* = NULL) const;
+		                       const Record*, const Record* = nullptr) const;
 
 		void prepareRecords(Stream *s);
 		void drawRecords(Stream *s, int slot);

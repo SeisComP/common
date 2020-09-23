@@ -156,7 +156,7 @@ class SC_GUI_API TextureCache : public Core::BaseObject {
 		Alg::MapTreeNode *
 		getNode(Alg::MapTreeNode *node, const TextureID &id) const;
 
-		void checkResources(Texture *tex = NULL);
+		void checkResources(Texture *tex = nullptr);
 
 		static void remove(const QString &name);
 

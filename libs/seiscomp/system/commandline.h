@@ -98,7 +98,7 @@ class SC_SYSTEM_CORE_API CommandLine {
 		typedef boost::program_options::variables_map variables_map;
 
 		options_description* findGroup(const char* group,
-		                               const char* option = NULL) const;
+		                               const char* option = nullptr) const;
 
 
 	// ----------------------------------------------------------------------

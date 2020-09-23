@@ -33,7 +33,7 @@ IMPLEMENT_SC_CLASS_DERIVED(PickReference, Object, "PickReference");
 
 
 PickReference::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("pickID", "string", false, false, true, true, false, false, NULL, &PickReference::setPickID, &PickReference::pickID));
+	addProperty(Core::simpleProperty("pickID", "string", false, false, true, true, false, false, nullptr, &PickReference::setPickID, &PickReference::pickID));
 }
 
 
@@ -176,7 +176,7 @@ const PickReferenceIndex& PickReference::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PickReference::equalIndex(const PickReference* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -206,7 +206,7 @@ PickReference& PickReference::operator=(const PickReference& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PickReference::assign(Object* other) {
 	PickReference* otherPickReference = PickReference::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherPickReference;
@@ -220,11 +220,11 @@ bool PickReference::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PickReference::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Reading* reading = Reading::Cast(parent);
-	if ( reading != NULL )
+	if ( reading != nullptr )
 		return reading->add(this);
 
 	SEISCOMP_ERROR("PickReference::attachTo(%s) -> wrong class type", parent->className());
@@ -237,11 +237,11 @@ bool PickReference::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PickReference::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Reading* reading = Reading::Cast(object);
-	if ( reading != NULL ) {
+	if ( reading != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -249,7 +249,7 @@ bool PickReference::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			PickReference* child = reading->pickReference(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return reading->remove(child);
 			else {
 				SEISCOMP_DEBUG("PickReference::detachFrom(Reading): pickReference has not been found");
@@ -268,7 +268,7 @@ bool PickReference::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PickReference::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

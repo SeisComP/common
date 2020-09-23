@@ -53,7 +53,7 @@ class SC_SYSTEM_CORE_API RecordIIRFilter : public RecordFilterInterface {
 	public:
 		//! Constructs a record filter with an optional inplace filter.
 		//! The passed instance is managed by the record filter.
-		RecordIIRFilter(Seiscomp::Math::Filtering::InPlaceFilter<T> *filter = NULL);
+		RecordIIRFilter(Seiscomp::Math::Filtering::InPlaceFilter<T> *filter = nullptr);
 		~RecordIIRFilter();
 
 
@@ -77,7 +77,7 @@ class SC_SYSTEM_CORE_API RecordIIRFilter : public RecordFilterInterface {
 		bool apply(GenericRecord *rec);
 
 		//! The bool operator returns if an IIR filter is set or not
-		operator bool() const { return _filter != NULL; }
+		operator bool() const { return _filter != nullptr; }
 
 
 	// ------------------------------------------------------------------

@@ -125,7 +125,7 @@ class SC_SYSTEM_CORE_API GeoFeatureSet : public Core::BaseObject {
 		 * (if available) by the name of the parent category.
 		 */
 		Category* addNewCategory(const std::string name,
-		                         const Category* parent = NULL);
+		                         const Category* parent = nullptr);
 
 
 	private:

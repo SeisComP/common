@@ -34,9 +34,9 @@ IMPLEMENT_SC_CLASS_DERIVED(ConfigModule, PublicObject, "ConfigModule");
 
 
 ConfigModule::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("name", "string", false, false, false, false, false, false, NULL, &ConfigModule::setName, &ConfigModule::name));
-	addProperty(Core::simpleProperty("parameterSetID", "string", false, false, false, true, false, false, NULL, &ConfigModule::setParameterSetID, &ConfigModule::parameterSetID));
-	addProperty(Core::simpleProperty("enabled", "boolean", false, false, false, false, false, false, NULL, &ConfigModule::setEnabled, &ConfigModule::enabled));
+	addProperty(Core::simpleProperty("name", "string", false, false, false, false, false, false, nullptr, &ConfigModule::setName, &ConfigModule::name));
+	addProperty(Core::simpleProperty("parameterSetID", "string", false, false, false, true, false, false, nullptr, &ConfigModule::setParameterSetID, &ConfigModule::parameterSetID));
+	addProperty(Core::simpleProperty("enabled", "boolean", false, false, false, false, false, false, nullptr, &ConfigModule::setEnabled, &ConfigModule::enabled));
 	addProperty(arrayObjectProperty("station", "ConfigStation", &ConfigModule::configStationCount, &ConfigModule::configStation, static_cast<bool (ConfigModule::*)(ConfigStation*)>(&ConfigModule::add), &ConfigModule::removeConfigStation, static_cast<bool (ConfigModule::*)(ConfigStation*)>(&ConfigModule::remove)));
 }
 
@@ -76,7 +76,7 @@ ConfigModule::ConfigModule(const std::string& publicID)
 ConfigModule::~ConfigModule() {
 	std::for_each(_configStations.begin(), _configStations.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&ConfigStation::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&ConfigStationPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -96,12 +96,12 @@ ConfigModule* ConfigModule::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConfigModule* ConfigModule::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new ConfigModule(publicID);
@@ -229,7 +229,7 @@ ConfigModule& ConfigModule::operator=(const ConfigModule& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigModule::assign(Object* other) {
 	ConfigModule* otherConfigModule = ConfigModule::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherConfigModule;
@@ -243,11 +243,11 @@ bool ConfigModule::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigModule::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Config* config = Config::Cast(parent);
-	if ( config != NULL )
+	if ( config != nullptr )
 		return config->add(this);
 
 	SEISCOMP_ERROR("ConfigModule::attachTo(%s) -> wrong class type", parent->className());
@@ -260,11 +260,11 @@ bool ConfigModule::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigModule::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Config* config = Config::Cast(object);
-	if ( config != NULL ) {
+	if ( config != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -272,7 +272,7 @@ bool ConfigModule::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			ConfigModule* child = config->findConfigModule(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return config->remove(child);
 			else {
 				SEISCOMP_DEBUG("ConfigModule::detachFrom(Config): configModule has not been found");
@@ -291,7 +291,7 @@ bool ConfigModule::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigModule::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -315,7 +315,7 @@ Object* ConfigModule::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigModule::updateChild(Object* child) {
 	ConfigStation* configStationChild = ConfigStation::Cast(child);
-	if ( configStationChild != NULL ) {
+	if ( configStationChild != nullptr ) {
 		ConfigStation* configStationElement
 			= ConfigStation::Cast(PublicObject::Find(configStationChild->publicID()));
 		if ( configStationElement && configStationElement->parent() == this ) {
@@ -376,7 +376,7 @@ ConfigStation* ConfigModule::configStation(const ConfigStationIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -389,7 +389,7 @@ ConfigStation* ConfigModule::findConfigStation(const std::string& publicID) cons
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -398,11 +398,11 @@ ConfigStation* ConfigModule::findConfigStation(const std::string& publicID) cons
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigModule::add(ConfigStation* configStation) {
-	if ( configStation == NULL )
+	if ( configStation == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( configStation->parent() != NULL ) {
+	if ( configStation->parent() != nullptr ) {
 		SEISCOMP_ERROR("ConfigModule::add(ConfigStation*) -> element has already a parent");
 		return false;
 	}
@@ -444,7 +444,7 @@ bool ConfigModule::add(ConfigStation* configStation) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigModule::remove(ConfigStation* configStation) {
-	if ( configStation == NULL )
+	if ( configStation == nullptr )
 		return false;
 
 	if ( configStation->parent() != this ) {
@@ -465,7 +465,7 @@ bool ConfigModule::remove(ConfigStation* configStation) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_configStations.erase(it);
@@ -489,7 +489,7 @@ bool ConfigModule::removeConfigStation(size_t i) {
 		_configStations[i]->accept(&nc);
 	}
 
-	_configStations[i]->setParent(NULL);
+	_configStations[i]->setParent(nullptr);
 	childRemoved(_configStations[i].get());
 
 	_configStations.erase(_configStations.begin() + i);
@@ -504,7 +504,7 @@ bool ConfigModule::removeConfigStation(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigModule::removeConfigStation(const ConfigStationIndex& i) {
 	ConfigStation* object = configStation(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -105,7 +105,7 @@ namespace IO {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-BinaryArchive::BinaryArchive() : _buf(NULL), _deleteOnClose(false) {
+BinaryArchive::BinaryArchive() : _buf(nullptr), _deleteOnClose(false) {
 	_sequenceSize = -1;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -144,7 +144,7 @@ bool BinaryArchive::open(const char* file) {
 	}
 	else {
 		std::filebuf* fb = new std::filebuf;
-		if ( fb->open(file, std::ios::in | std::ios::binary) == NULL ) {
+		if ( fb->open(file, std::ios::in | std::ios::binary) == nullptr ) {
 			delete fb;
 			return false;
 		}
@@ -153,7 +153,7 @@ bool BinaryArchive::open(const char* file) {
 		_deleteOnClose = true;
 	}
 
-	return Seiscomp::Core::Archive::open(NULL);
+	return Seiscomp::Core::Archive::open(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -166,7 +166,7 @@ bool BinaryArchive::open(std::streambuf* buf) {
 	_buf = buf;
 	_deleteOnClose = false;
 
-	return Seiscomp::Core::Archive::open(NULL);
+	return Seiscomp::Core::Archive::open(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -184,7 +184,7 @@ bool BinaryArchive::create(const char* file) {
 	else {
 		std::filebuf* fb = new std::filebuf;
 
-		if ( fb->open(file, std::ios::out | std::ios::binary) == NULL ) {
+		if ( fb->open(file, std::ios::out | std::ios::binary) == nullptr ) {
 			delete fb;
 			return false;
 		}
@@ -193,7 +193,7 @@ bool BinaryArchive::create(const char* file) {
 		_deleteOnClose = true;
 	}
 
-	return Seiscomp::Core::Archive::create(NULL);
+	return Seiscomp::Core::Archive::create(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -207,7 +207,7 @@ bool BinaryArchive::create(std::streambuf* buf) {
 	_buf = buf;
 	_deleteOnClose = false;
 
-	return Seiscomp::Core::Archive::create(NULL);
+	return Seiscomp::Core::Archive::create(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -222,7 +222,7 @@ void BinaryArchive::close() {
 	_classes.clear();
 	_sequenceSize = -1;
 
-	_buf = NULL;
+	_buf = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

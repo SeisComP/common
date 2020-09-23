@@ -150,7 +150,7 @@ bool Memory::setRecordType(const char *type) {
 	if ( !_factory ) {
 		SEISCOMP_ERROR("Unknown record type '%s'", type);
 	}
-	return _factory != NULL;
+	return _factory != nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -161,8 +161,8 @@ bool Memory::setRecordType(const char *type) {
 Seiscomp::Record *Memory::next() {
 	while ( true ) {
 		Record *rec = _factory->create();
-		if ( rec == NULL )
-			return NULL;
+		if ( rec == nullptr )
+			return nullptr;
 
 		setupRecord(rec);
 
@@ -171,7 +171,7 @@ Seiscomp::Record *Memory::next() {
 		}
 		catch ( Core::EndOfStreamException & ) {
 			delete rec;
-			return NULL;
+			return nullptr;
 		}
 		catch ( std::exception &e ) {
 			SEISCOMP_ERROR("read exception: %s", e.what());
@@ -181,5 +181,5 @@ Seiscomp::Record *Memory::next() {
 		return rec;
 	}
 
-	return NULL;
+	return nullptr;
 }

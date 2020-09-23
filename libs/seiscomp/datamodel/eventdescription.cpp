@@ -38,7 +38,7 @@ static Seiscomp::Core::MetaEnumImpl<EventDescriptionType> metaEventDescriptionTy
 
 
 EventDescription::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("text", "string", false, false, false, false, false, false, NULL, &EventDescription::setText, &EventDescription::text));
+	addProperty(Core::simpleProperty("text", "string", false, false, false, false, false, false, nullptr, &EventDescription::setText, &EventDescription::text));
 	addProperty(enumProperty("type", "EventDescriptionType", true, false, &metaEventDescriptionType, &EventDescription::setType, &EventDescription::type));
 }
 
@@ -211,7 +211,7 @@ const EventDescriptionIndex& EventDescription::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventDescription::equalIndex(const EventDescription* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -242,7 +242,7 @@ EventDescription& EventDescription::operator=(const EventDescription& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventDescription::assign(Object* other) {
 	EventDescription* otherEventDescription = EventDescription::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherEventDescription;
@@ -256,11 +256,11 @@ bool EventDescription::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventDescription::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Event* event = Event::Cast(parent);
-	if ( event != NULL )
+	if ( event != nullptr )
 		return event->add(this);
 
 	SEISCOMP_ERROR("EventDescription::attachTo(%s) -> wrong class type", parent->className());
@@ -273,11 +273,11 @@ bool EventDescription::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventDescription::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Event* event = Event::Cast(object);
-	if ( event != NULL ) {
+	if ( event != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -285,7 +285,7 @@ bool EventDescription::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			EventDescription* child = event->eventDescription(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return event->remove(child);
 			else {
 				SEISCOMP_DEBUG("EventDescription::detachFrom(Event): eventDescription has not been found");
@@ -304,7 +304,7 @@ bool EventDescription::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventDescription::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

@@ -85,14 +85,14 @@ class SC_SYSTEM_CORE_API RecordSequence : public std::deque<RecordCPtr> {
 		//! float, double and int. If interpolation is enabled gaps will be linearly
 		//! interpolated between the last and the next sample.
 		template <typename T>
-		GenericRecord *contiguousRecord(const Seiscomp::Core::TimeWindow *tw = NULL,
+		GenericRecord *contiguousRecord(const Seiscomp::Core::TimeWindow *tw = nullptr,
 		                                bool interpolate = false) const;
 
 		//! DECPRECATED: For backward compatibility, does exactly the same as
 		//!              contiguousRecord. Please use contiguousRecord in your
 		//!              code. This method will be removed in future releases.
 		template <typename T>
-		GenericRecord *continuousRecord(const Seiscomp::Core::TimeWindow *tw = NULL,
+		GenericRecord *continuousRecord(const Seiscomp::Core::TimeWindow *tw = nullptr,
 		                                bool interpolate = false) const;
 
 
@@ -102,7 +102,7 @@ class SC_SYSTEM_CORE_API RecordSequence : public std::deque<RecordCPtr> {
 		//! The amplitude range in a given time window.
 		//! Returns (0,0) if the sequence is empty or no records fall inside
 		//! the given optional time window.
-		Range amplitudeRange(const Seiscomp::Core::TimeWindow *tw = NULL) const;
+		Range amplitudeRange(const Seiscomp::Core::TimeWindow *tw = nullptr) const;
 
 		//! returns the continuous time windows available
 		//! This is usually one time window but may be split into

@@ -161,7 +161,7 @@ class StringBuf : public std::streambuf {
 		}
 
 		std::streambuf *setbuf(char *s, std::streamsize n) {
-			setp(NULL, NULL);
+			setp(nullptr, nullptr);
 			setg(s, s, s + n);
 			return this;
 		}
@@ -438,7 +438,7 @@ BOOST_AUTO_TEST_CASE(xmlEqualString) {
 	check = "LOCSAT";
 	BOOST_CHECK_EQUAL(getString, check);
 
-	ep = NULL;
+	ep = nullptr;
 
 	/*********** testXML2 **********/
 	const char* XML2 = getContent(2);

@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_CONFIGSTATION_H
 
 
-#include <seiscomp/datamodel/creationinfo.h>
 #include <vector>
+#include <seiscomp/datamodel/creationinfo.h>
 #include <string>
 #include <seiscomp/datamodel/setup.h>
 #include <seiscomp/datamodel/notifier.h>

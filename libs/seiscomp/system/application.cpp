@@ -130,7 +130,7 @@ int runGDB() {
 		         tmp, getpid());
 		cmd[sizeof(cmd)-1]=0;
 
-		fflush(NULL);
+		fflush(nullptr);
 		fp = popen(cmd, "r");
 		if( !fp )
 			return -1;
@@ -166,7 +166,7 @@ void crashHandler() {
 	if ( crash_handler.empty() ) return;
 
 	FILE *fp;/* = fopen(crash_handler, "rb");
-	if ( fp == NULL ) {
+	if ( fp == nullptr ) {
 		SEISCOMP_ERROR("crash handler executable '%s' not found", crash_handler);
 		return;
 	}
@@ -244,12 +244,12 @@ void registerSignalHandler(bool term, bool crash) {
 		sa.sa_handler = signalHandler;
 		sa.sa_flags = 0;
 		sigemptyset(&sa.sa_mask);
-		sigaction(SIGSEGV, &sa, NULL);
-		sigaction(SIGABRT, &sa, NULL);
+		sigaction(SIGSEGV, &sa, nullptr);
+		sigaction(SIGABRT, &sa, nullptr);
 
 		sa.sa_handler = SIG_IGN;
-		sigaction(SIGHUP, &sa, NULL);
-		sigaction(SIGPIPE, &sa, NULL);
+		sigaction(SIGHUP, &sa, nullptr);
+		sigaction(SIGPIPE, &sa, nullptr);
 #else
 		signal(SIGSEGV, signalHandler);
 		signal(SIGABRT, signalHandler);
@@ -268,12 +268,12 @@ void registerSignalHandler(bool term, bool crash) {
 		sa.sa_handler = signalHandler;
 		sa.sa_flags = 0;
 		sigemptyset(&sa.sa_mask);
-		sigaction(SIGTERM, &sa, NULL);
-		sigaction(SIGINT, &sa, NULL);
+		sigaction(SIGTERM, &sa, nullptr);
+		sigaction(SIGINT, &sa, nullptr);
 
 		sa.sa_handler = SIG_IGN;
-		sigaction(SIGHUP, &sa, NULL);
-		sigaction(SIGPIPE, &sa, NULL);
+		sigaction(SIGHUP, &sa, nullptr);
+		sigaction(SIGPIPE, &sa, nullptr);
 #else
 		signal(SIGTERM, signalHandler);
 		signal(SIGINT, signalHandler);
@@ -286,7 +286,7 @@ void registerSignalHandler(bool term, bool crash) {
 
 
 struct ParamRef {
-	ParamRef() : param(NULL) {}
+	ParamRef() : param(nullptr) {}
 	ParamRef(System::SchemaParameter *param, const string &reference)
 	  : param(param), reference(reference) {}
 	System::SchemaParameter* param;
@@ -296,7 +296,7 @@ struct ParamRef {
 typedef map<string, ParamRef> ParamMap;
 void mapSchemaParameters(ParamMap &map, System::SchemaParameters *params,
                          const string &reference, const string &path = "") {
-	if ( params == NULL )
+	if ( params == nullptr )
 		return;
 
 	string p = path.empty() ? "" : path + ".";
@@ -346,7 +346,7 @@ namespace Seiscomp {
 namespace System {
 
 
-Application *Application::_instance = NULL;
+Application *Application::_instance = nullptr;
 bool Application::_handleTermination = true;
 bool Application::_handleCrash = false;
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -395,7 +395,7 @@ void Application::BaseSettings::accept(SettingsLinker &linker) {
 Application::Application(int argc, char** argv) {
 	_version = CurrentVersion.toString();
 
-	if ( _instance != this && _instance != NULL ) {
+	if ( _instance != this && _instance != nullptr ) {
 		SEISCOMP_WARNING("Another application object exists already. "
 		                 "This usage is not intended. "
 		                 "The Application::Instance() method will return "
@@ -406,7 +406,7 @@ Application::Application(int argc, char** argv) {
 
 	_commandline = boost::shared_ptr<System::CommandLine>(new System::CommandLine);
 
-	_logger = NULL;
+	_logger = nullptr;
 
 	_argc = argc;
 	_argv = new char*[size_t(argc)];
@@ -460,7 +460,7 @@ Application::~Application() {
 	closeLogging();
 
 	if ( _instance == this )
-		_instance = NULL;
+		_instance = nullptr;
 
 	for ( int i = 0; i < _argc; ++i )
 		delete[] _argv[i];
@@ -503,7 +503,7 @@ extern SC_SYSTEM_CORE_API const char* compiler_version();
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::printVersion() {
 	const char *appVersion = version();
-	if ( appVersion == NULL ) {
+	if ( appVersion == nullptr ) {
 		cout << name() << endl;
 		cout << "Framework: " << frameworkVersion() << endl;
 	}
@@ -582,7 +582,7 @@ bool Application::validateSchemaParameters() {
 	      mn_it != moduleNames.end(); ++mn_it ) {
 		System::SchemaModule *module = defs.module(*mn_it);
 		cerr << "Schema module '" << *mn_it << "' ";
-		if ( module == NULL ) {
+		if ( module == nullptr ) {
 			cerr << "not found" << endl;
 		}
 		else {
@@ -814,7 +814,7 @@ void Application::printUsage() const {
 void Application::closeLogging() {
 	if ( _logger ) {
 		delete _logger;
-		_logger = NULL;
+		_logger = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1401,7 +1401,7 @@ void Application::initCommandLine() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const char *Application::version() {
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1512,7 +1512,7 @@ bool Application::initLogging() {
 #ifndef WIN32
 		if ( _baseSettings.logging.syslog ) {
 			Logging::SyslogOutput* syslogOutput = new Logging::SyslogOutput();
-			const char *facility = NULL;
+			const char *facility = nullptr;
 			string tmp_facility;
 
 			try {
@@ -1530,7 +1530,7 @@ bool Application::initLogging() {
 			else {
 				std::cerr << "failed to open syslog: " << _name << std::endl;
 				delete syslogOutput;
-				syslogOutput = NULL;
+				syslogOutput = nullptr;
 				return false;
 			}
 		}
@@ -1554,7 +1554,7 @@ bool Application::initLogging() {
 			else {
 				std::cerr << "failed to open logfile: " << logFile << std::endl;
 				delete logger;
-				logger = NULL;
+				logger = nullptr;
 			}
 		}
 		else
@@ -1679,7 +1679,7 @@ bool Application::forkProcess() {
 	sa.sa_handler = SIG_IGN;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
-	if ( sigaction(SIGHUP, &sa, NULL) < 0 ) {
+	if ( sigaction(SIGHUP, &sa, nullptr) < 0 ) {
 		SEISCOMP_ERROR("can't ignore SIGHUP: %s", strerror(errno));
 		return false;
 	}

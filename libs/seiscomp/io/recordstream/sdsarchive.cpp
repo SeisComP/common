@@ -112,17 +112,17 @@ Time getStartTime(const string &file) {
 
 	return startTime;
 #else
-	MSRecord *prec = NULL;
-	MSFileParam *pfp = NULL;
+	MSRecord *prec = nullptr;
+	MSFileParam *pfp = nullptr;
 
-	int retcode = ms_readmsr_r(&pfp,&prec,const_cast<char*>(file.c_str()),0,NULL,NULL,1,0,0);
+	int retcode = ms_readmsr_r(&pfp,&prec,const_cast<char*>(file.c_str()),0,nullptr,nullptr,1,0,0);
 	if ( retcode == MS_NOERROR ) {
 		Time start((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
-		ms_readmsr_r(&pfp,&prec,NULL,-1,NULL,NULL,0,0,0);
+		ms_readmsr_r(&pfp,&prec,nullptr,-1,nullptr,nullptr,0,0,0);
 		return start;
 	}
 
-	ms_readmsr_r(&pfp,&prec,NULL,-1,NULL,NULL,0,0,0);
+	ms_readmsr_r(&pfp,&prec,nullptr,-1,nullptr,nullptr,0,0,0);
 	return Time();
 #endif
 }
@@ -356,7 +356,7 @@ void SDSArchive::close() {
 	_streamSet.clear();
 	_orderedRequests.clear();
 	_stime = _etime = Time();
-	_curidx = NULL;
+	_curidx = nullptr;
 	_closeRequested = true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -614,8 +614,8 @@ void SDSArchive::resolveRequest() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SDSArchive::setStart(const string &fname, bool bsearch) {
-	MSRecord *prec = NULL;
-	MSFileParam *pfp = NULL;
+	MSRecord *prec = nullptr;
+	MSFileParam *pfp = nullptr;
 	double samprate = 0.0;
 	Time physFirstStartTime, physFirstEndTime;
 	Time recstime, recetime;
@@ -633,7 +633,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 
 	if ( bsearch ) {
 		//! binary search
-		retcode = ms_readmsr_r(&pfp, &prec, const_cast<char *>(fname.c_str()), 0, NULL, NULL, 1, 0, 0);
+		retcode = ms_readmsr_r(&pfp, &prec, const_cast<char *>(fname.c_str()), 0, nullptr, nullptr, 1, 0, 0);
 		if ( retcode == MS_NOERROR ) {
 			samprate = prec->samprate;
 			physFirstStartTime = Time((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
@@ -659,7 +659,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 				half = start + (end - start)/2;
 				fpos = -half*reclen;
 				//lmp_fseeko(pfp->fp, half*reclen, 0);
-				if ( (retcode = ms_readmsr_r(&pfp, &prec, const_cast<char *>(fname.c_str()), 0, &fpos, NULL, 1, 0, 0)) == MS_NOERROR ) {
+				if ( (retcode = ms_readmsr_r(&pfp, &prec, const_cast<char *>(fname.c_str()), 0, &fpos, nullptr, 1, 0, 0)) == MS_NOERROR ) {
 					samprate = prec->samprate;
 					recstime = Time((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
 					if ( samprate > 0. )
@@ -698,7 +698,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 		}
 	}
 	else {
-		while ( (retcode = ms_readmsr_r(&pfp,&prec,const_cast<char *>(fname.c_str()),0,NULL,NULL,1,0,0)) == MS_NOERROR ) {
+		while ( (retcode = ms_readmsr_r(&pfp,&prec,const_cast<char *>(fname.c_str()),0,nullptr,nullptr,1,0,0)) == MS_NOERROR ) {
 			samprate = prec->samprate;
 			recstime = Time((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
 
@@ -727,7 +727,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 	}
 
 	/* Cleanup memory and close file */
-	ms_readmsr_r(&pfp, &prec, NULL, -1, NULL, NULL, 0, 0, 0);
+	ms_readmsr_r(&pfp, &prec, nullptr, -1, nullptr, nullptr, 0, 0, 0);
 
 	_file.seekg(offset, ios::beg);
 	if ( offset == size )
@@ -848,7 +848,7 @@ Seiscomp::Record *SDSArchive::next() {
 	}
 
 	SEISCOMP_DEBUG("[sds] end of data");
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

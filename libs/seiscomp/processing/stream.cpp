@@ -55,7 +55,7 @@ void Stream::init(const DataModel::Stream *stream) {
 	gainUnit = std::string();
 	setCode(stream->code());
 	epoch = Core::TimeWindow();
-	_sensor = NULL;
+	_sensor = nullptr;
 
 	epoch.setStartTime(stream->start());
 	try { epoch.setEndTime(stream->end()); }
@@ -247,7 +247,7 @@ void Stream::init(const std::string &networkCode,
 	gain = 0.0;
 	setCode(channelCode);
 	epoch = Core::TimeWindow();
-	_sensor = NULL;
+	_sensor = nullptr;
 
 	Client::Inventory *inv = Client::Inventory::Instance();
 	if ( !inv ) return;

@@ -34,7 +34,7 @@ namespace Alg {
 
 
 MapTreeNode::MapTreeNode()
- : _parent(NULL) {
+ : _parent(nullptr) {
 
 	_level = -1;
 	_row = -1;
@@ -44,7 +44,7 @@ MapTreeNode::MapTreeNode()
 
 MapTreeNode::~MapTreeNode() {
 	for ( int i = 0; i < 4; ++i )
-		setChildren(i, NULL);
+		setChildren(i, nullptr);
 }
 
 
@@ -55,7 +55,7 @@ void MapTreeNode::setChildren(int index, MapTreeNode* node) {
 
 
 void MapTreeNode::resetChildren(int index) {
-	_child[index].node = NULL;
+	_child[index].node = nullptr;
 	_child[index].initialized = false;
 }
 
@@ -95,7 +95,7 @@ int MapTreeNode::childrenCount() const {
 	int count = 0;
 
 	for ( int i = 0; i < 4; ++i )
-		if ( _child[i].node != NULL )
+		if ( _child[i].node != nullptr )
 			count += _child[i].node->childrenCount() + 1;
 
 	return count;
@@ -107,7 +107,7 @@ int MapTreeNode::depth() const {
 	int depth = 0;
 
 	for ( int i = 0; i < 4; ++i )
-		if ( _child[i].node != NULL )
+		if ( _child[i].node != nullptr )
 			depth = std::max(depth, _child[i].node->depth()+1);
 
 	return depth;
@@ -140,7 +140,7 @@ MapTreeNode* MapTreeNode::Create(MapTree* root, MapTreeNode *parent,
 		return node;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

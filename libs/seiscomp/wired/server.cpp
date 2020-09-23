@@ -134,13 +134,13 @@ void Server::clear() {
 bool Server::addSession(Session *session) {
 	lock_guard<mutex> l(_mutex);
 
-	if ( session == NULL || session->device() == NULL ) {
+	if ( session == nullptr || session->device() == nullptr ) {
 		SEISCOMP_WARNING("[server] invalid session for server");
 		return false;
 	}
 
 	//cout << session->_parent << endl;
-	if ( session->_parent != NULL ) {
+	if ( session->_parent != nullptr ) {
 		SEISCOMP_WARNING("[server] session is already part of a server");
 		return false;
 	}
@@ -165,8 +165,8 @@ bool Server::addSession(Session *session) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Server::addEndpoint(Socket::IPAddress ip, Socket::port_t port,
                          bool useSSL, Endpoint *endpoint) {
-	if ( endpoint == NULL ) return false;
-	if ( endpoint->_parent != NULL ) {
+	if ( endpoint == nullptr ) return false;
+	if ( endpoint->_parent != nullptr ) {
 		SEISCOMP_WARNING("Acceptor is already part of a server");
 		return false;
 	}
@@ -210,14 +210,14 @@ bool Server::addEndpoint(Socket::IPAddress ip, Socket::port_t port,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Server::addEndpoint(Socket::IPAddress ip, Socket::port_t port, Endpoint *endpoint) {
-	if ( endpoint == NULL ) return false;
-	if ( endpoint->_parent != NULL ) {
+	if ( endpoint == nullptr ) return false;
+	if ( endpoint->_parent != nullptr ) {
 		SEISCOMP_WARNING("Acceptor is already part of a server");
 		return false;
 	}
 
 	Socket *socket = Socket::Cast(endpoint->device());
-	if ( socket == NULL ) {
+	if ( socket == nullptr ) {
 		SEISCOMP_ERROR("Endpoint does not have a socket attached to it");
 		return false;
 	}
@@ -249,8 +249,8 @@ bool Server::addEndpoint(Socket::IPAddress ip, Socket::port_t port, Endpoint *en
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Server::addEndpointV6(Socket::IPAddress ip, Socket::port_t port,
                            bool useSSL, Endpoint *endpoint) {
-	if ( endpoint == NULL ) return false;
-	if ( endpoint->_parent != NULL ) {
+	if ( endpoint == nullptr ) return false;
+	if ( endpoint->_parent != nullptr ) {
 		SEISCOMP_WARNING("Acceptor is already part of a server");
 		return false;
 	}
@@ -308,7 +308,7 @@ bool Server::removeSession(Session *session) {
 
 //	SEISCOMP_INFO("[server] removed client %ld", (long int)session);
 	sessionRemoved(session);
-	session->_parent = NULL;
+	session->_parent = nullptr;
 	_sessions.erase(session);
 
 	SEISCOMP_DEBUG("[server] active sessions/sockets: %zu/%zu",
@@ -332,7 +332,7 @@ bool Server::removeEndpoint(Endpoint *endpoint) {
 	              endpoint->socket()->hostname().c_str());
 
 	endpointRemoved(endpoint);
-	endpoint->_parent = NULL;
+	endpoint->_parent = nullptr;
 	_endpoints.erase(endpoint);
 	return true;
 }
@@ -355,7 +355,7 @@ bool Server::clearEndpoints() {
 		              buf, endpoint->socket()->port(), endpoint->socket()->hostname().c_str());
 
 		endpointRemoved(endpoint);
-		endpoint->_parent = NULL;
+		endpoint->_parent = nullptr;
 	}
 
 	_endpoints.clear();

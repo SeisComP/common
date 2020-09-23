@@ -169,7 +169,7 @@ void SLStreamIdx::setTimestamp(Time &rectime) const {
 SLConnection::StreamBuffer::StreamBuffer() {}
 
 streambuf *SLConnection::StreamBuffer::setbuf(char *s, streamsize n) {
-	setp(NULL, NULL);
+	setp(nullptr, nullptr);
 	setg(s, s, s + n);
 	return this;
 }
@@ -417,7 +417,7 @@ void updateStreams(std::set<SLStreamIdx> &streams, MSRecord *prec) {
 Record *SLConnection::next() {
 	if (_readingData && !_sock.isOpen()) {
 		SEISCOMP_DEBUG("Socket is closed -> set stream's eofbit");
-		return NULL;
+		return nullptr;
 	}
 
 	// _sock.startTimer();
@@ -484,7 +484,7 @@ Record *SLConnection::next() {
 				continue;
 			}
 
-			MSRecord *prec = NULL;
+			MSRecord *prec = nullptr;
 
 			if (msr_unpack(data+HEADSIZE,RECSIZE,&prec,0,0) == MS_NOERROR) {
 				int samprate_fact = prec->fsdh->samprate_fact;
@@ -542,7 +542,7 @@ Record *SLConnection::next() {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

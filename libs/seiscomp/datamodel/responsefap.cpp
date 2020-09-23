@@ -33,10 +33,10 @@ IMPLEMENT_SC_CLASS_DERIVED(ResponseFAP, PublicObject, "ResponseFAP");
 
 
 ResponseFAP::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, NULL, &ResponseFAP::setName, &ResponseFAP::name));
-	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, NULL, &ResponseFAP::setGain, &ResponseFAP::gain));
-	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, NULL, &ResponseFAP::setGainFrequency, &ResponseFAP::gainFrequency));
-	addProperty(Core::simpleProperty("numberOfTuples", "int", false, false, false, false, true, false, NULL, &ResponseFAP::setNumberOfTuples, &ResponseFAP::numberOfTuples));
+	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &ResponseFAP::setName, &ResponseFAP::name));
+	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, nullptr, &ResponseFAP::setGain, &ResponseFAP::gain));
+	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, nullptr, &ResponseFAP::setGainFrequency, &ResponseFAP::gainFrequency));
+	addProperty(Core::simpleProperty("numberOfTuples", "int", false, false, false, false, true, false, nullptr, &ResponseFAP::setNumberOfTuples, &ResponseFAP::numberOfTuples));
 	addProperty(objectProperty<RealArray>("tuples", "RealArray", false, false, true, &ResponseFAP::setTuples, &ResponseFAP::tuples));
 	addProperty(objectProperty<Blob>("remark", "Blob", false, false, true, &ResponseFAP::setRemark, &ResponseFAP::remark));
 }
@@ -135,12 +135,12 @@ ResponseFAP* ResponseFAP::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ResponseFAP* ResponseFAP::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new ResponseFAP(publicID);
@@ -343,7 +343,7 @@ const ResponseFAPIndex& ResponseFAP::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseFAP::equalIndex(const ResponseFAP* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -379,7 +379,7 @@ ResponseFAP& ResponseFAP::operator=(const ResponseFAP& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseFAP::assign(Object* other) {
 	ResponseFAP* otherResponseFAP = ResponseFAP::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherResponseFAP;
@@ -393,11 +393,11 @@ bool ResponseFAP::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseFAP::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(parent);
-	if ( inventory != NULL )
+	if ( inventory != nullptr )
 		return inventory->add(this);
 
 	SEISCOMP_ERROR("ResponseFAP::attachTo(%s) -> wrong class type", parent->className());
@@ -410,11 +410,11 @@ bool ResponseFAP::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseFAP::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(object);
-	if ( inventory != NULL ) {
+	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -422,7 +422,7 @@ bool ResponseFAP::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			ResponseFAP* child = inventory->findResponseFAP(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
 				SEISCOMP_DEBUG("ResponseFAP::detachFrom(Inventory): responseFAP has not been found");
@@ -441,7 +441,7 @@ bool ResponseFAP::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseFAP::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

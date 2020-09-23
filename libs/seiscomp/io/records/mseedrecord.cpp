@@ -128,7 +128,7 @@ MSeedRecord::MSeedRecord(MSRecord *rec, Array::DataType dt, Hint h)
 			} catch (LibmseedException &e) {
 				_nsamp = 0;
 				_fsamp = 0;
-				_data = NULL;
+				_data = nullptr;
 				SEISCOMP_ERROR("LibmseedException in MSeedRecord constructor %s", e.what());
 			}
 	_srnum = 0;
@@ -181,7 +181,7 @@ MSeedRecord::MSeedRecord(const MSeedRecord &msrec)
 {
 	_reclen = msrec._reclen;
 	_raw = msrec._raw;
-	_data = msrec._data?msrec._data->clone():NULL;
+	_data = msrec._data?msrec._data->clone():nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -205,7 +205,7 @@ MSeedRecord::MSeedRecord(const Record &rec, int reclen)
 , _encodingFlag(false)
 {
 	_reclen = reclen;
-	_data = rec.data()?rec.data()->clone():NULL;
+	_data = rec.data()?rec.data()->clone():nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -304,7 +304,7 @@ MSeedRecord& MSeedRecord::operator=(const MSeedRecord &msrec) {
 	if ( &msrec != this ) {
 		Record::operator=(msrec);
 		_raw = msrec._raw;
-		_data = msrec._data?msrec._data->clone():NULL;
+		_data = msrec._data?msrec._data->clone():nullptr;
 		_seqno = msrec.sequenceNumber();
 		_rectype = msrec.dataQuality();
 		_srfact = msrec.sampleRateFactor();
@@ -493,7 +493,7 @@ const Array* MSeedRecord::data() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::_setDataAttributes(int reclen, char *data) const {
-	MSRecord *pmsr = NULL;
+	MSRecord *pmsr = nullptr;
 
 	if ( !data ) return;
 
@@ -557,7 +557,7 @@ void MSeedRecord::_setDataAttributes(int reclen, char *data) const {
 						EVP_MD_CTX_destroy(mdctx);
 
 						const unsigned char *pp = reinterpret_cast<const unsigned char *>(opaq) + opaq->data_offset - 4;
-						ECDSA_SIG *signature = d2i_ECDSA_SIG(NULL, &pp, lenSignature);
+						ECDSA_SIG *signature = d2i_ECDSA_SIG(nullptr, &pp, lenSignature);
 						if ( !signature ) {
 							SEISCOMP_ERROR("MSEED: Failed to extract signature from opaque headers");
 							continue;
@@ -681,7 +681,7 @@ bool _isHeader(const char *header) {
 void MSeedRecord::read(std::istream &is) {
 #define HEADER_BLOCK_LEN 64
 	int reclen = -1;
-	MSRecord *prec = NULL;
+	MSRecord *prec = nullptr;
 	const int LEN = 128;
 	char header[LEN];
 
@@ -753,7 +753,7 @@ void MSeedRecord::write(std::ostream& out) {
 	}
 
 	MSRecord *pmsr;
-	pmsr = msr_init(NULL);
+	pmsr = msr_init(nullptr);
 	if (!pmsr)
 		throw Core::StreamException("msr_init failed");
 

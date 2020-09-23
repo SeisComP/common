@@ -34,9 +34,9 @@ IMPLEMENT_SC_CLASS_DERIVED(ConfigStation, PublicObject, "ConfigStation");
 
 
 ConfigStation::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("networkCode", "string", false, false, true, false, false, false, NULL, &ConfigStation::setNetworkCode, &ConfigStation::networkCode));
-	addProperty(Core::simpleProperty("stationCode", "string", false, false, true, false, false, false, NULL, &ConfigStation::setStationCode, &ConfigStation::stationCode));
-	addProperty(Core::simpleProperty("enabled", "boolean", false, false, false, false, false, false, NULL, &ConfigStation::setEnabled, &ConfigStation::enabled));
+	addProperty(Core::simpleProperty("networkCode", "string", false, false, true, false, false, false, nullptr, &ConfigStation::setNetworkCode, &ConfigStation::networkCode));
+	addProperty(Core::simpleProperty("stationCode", "string", false, false, true, false, false, false, nullptr, &ConfigStation::setStationCode, &ConfigStation::stationCode));
+	addProperty(Core::simpleProperty("enabled", "boolean", false, false, false, false, false, false, nullptr, &ConfigStation::setEnabled, &ConfigStation::enabled));
 	addProperty(objectProperty<CreationInfo>("creationInfo", "CreationInfo", false, false, true, &ConfigStation::setCreationInfo, &ConfigStation::creationInfo));
 	addProperty(arrayClassProperty<Setup>("setup", "Setup", &ConfigStation::setupCount, &ConfigStation::setup, static_cast<bool (ConfigStation::*)(Setup*)>(&ConfigStation::add), &ConfigStation::removeSetup, static_cast<bool (ConfigStation::*)(Setup*)>(&ConfigStation::remove)));
 }
@@ -125,7 +125,7 @@ ConfigStation::ConfigStation(const std::string& publicID)
 ConfigStation::~ConfigStation() {
 	std::for_each(_setups.begin(), _setups.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Setup::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&SetupPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -145,12 +145,12 @@ ConfigStation* ConfigStation::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConfigStation* ConfigStation::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new ConfigStation(publicID);
@@ -295,7 +295,7 @@ const ConfigStationIndex& ConfigStation::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigStation::equalIndex(const ConfigStation* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -328,7 +328,7 @@ ConfigStation& ConfigStation::operator=(const ConfigStation& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigStation::assign(Object* other) {
 	ConfigStation* otherConfigStation = ConfigStation::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherConfigStation;
@@ -342,11 +342,11 @@ bool ConfigStation::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigStation::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	ConfigModule* configModule = ConfigModule::Cast(parent);
-	if ( configModule != NULL )
+	if ( configModule != nullptr )
 		return configModule->add(this);
 
 	SEISCOMP_ERROR("ConfigStation::attachTo(%s) -> wrong class type", parent->className());
@@ -359,11 +359,11 @@ bool ConfigStation::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigStation::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	ConfigModule* configModule = ConfigModule::Cast(object);
-	if ( configModule != NULL ) {
+	if ( configModule != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -371,7 +371,7 @@ bool ConfigStation::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			ConfigStation* child = configModule->findConfigStation(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return configModule->remove(child);
 			else {
 				SEISCOMP_DEBUG("ConfigStation::detachFrom(ConfigModule): configStation has not been found");
@@ -390,7 +390,7 @@ bool ConfigStation::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigStation::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -414,9 +414,9 @@ Object* ConfigStation::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigStation::updateChild(Object* child) {
 	Setup* setupChild = Setup::Cast(child);
-	if ( setupChild != NULL ) {
+	if ( setupChild != nullptr ) {
 		Setup* setupElement = setup(setupChild->index());
-		if ( setupElement != NULL ) {
+		if ( setupElement != nullptr ) {
 			*setupElement = *setupChild;
 			setupElement->update();
 			return true;
@@ -474,7 +474,7 @@ Setup* ConfigStation::setup(const SetupIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -483,11 +483,11 @@ Setup* ConfigStation::setup(const SetupIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigStation::add(Setup* setup) {
-	if ( setup == NULL )
+	if ( setup == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( setup->parent() != NULL ) {
+	if ( setup->parent() != nullptr ) {
 		SEISCOMP_ERROR("ConfigStation::add(Setup*) -> element has already a parent");
 		return false;
 	}
@@ -522,7 +522,7 @@ bool ConfigStation::add(Setup* setup) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigStation::remove(Setup* setup) {
-	if ( setup == NULL )
+	if ( setup == nullptr )
 		return false;
 
 	if ( setup->parent() != this ) {
@@ -543,7 +543,7 @@ bool ConfigStation::remove(Setup* setup) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_setups.erase(it);
@@ -567,7 +567,7 @@ bool ConfigStation::removeSetup(size_t i) {
 		_setups[i]->accept(&nc);
 	}
 
-	_setups[i]->setParent(NULL);
+	_setups[i]->setParent(nullptr);
 	childRemoved(_setups[i].get());
 
 	_setups.erase(_setups.begin() + i);
@@ -582,7 +582,7 @@ bool ConfigStation::removeSetup(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigStation::removeSetup(const SetupIndex& i) {
 	Setup* object = setup(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

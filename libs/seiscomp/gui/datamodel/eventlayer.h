@@ -40,7 +40,7 @@ class SC_GUI_API EventLayer : public Map::Layer {
 	// ----------------------------------------------------------------------
 	public:
 		//! C'tor
-		EventLayer(QObject* parent = NULL);
+		EventLayer(QObject* parent = nullptr);
 
 		//! D'tor
 		~EventLayer();
@@ -98,7 +98,7 @@ class EventLegend : public Map::Legend {
 	// ----------------------------------------------------------------------
 	public:
 		//! C'tor
-		EventLegend(QObject* parent = NULL);
+		EventLegend(QObject* parent = nullptr);
 
 		//! D'tor
 		~EventLegend();

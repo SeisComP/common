@@ -555,7 +555,7 @@ Core::GreensFunction *Instaseis::get() {
 			if ( response.compare(0, 9, "HTTP/1.1 ") ) {
 				SEISCOMP_ERROR("Expected HTTP/1.1 response, got: %s", response.c_str());
 				_socket.close();
-				return NULL;
+				return nullptr;
 			}
 
 			response.erase(response.begin(), response.begin() + 9);
@@ -563,7 +563,7 @@ Core::GreensFunction *Instaseis::get() {
 			if ( response.compare(0, 3, "200") ) {
 				SEISCOMP_ERROR("Expected status 200, got: %s", response.substr(0,3).c_str());
 				_socket.close();
-				return NULL;
+				return nullptr;
 			}
 
 			int contentLength = -1;
@@ -579,7 +579,7 @@ Core::GreensFunction *Instaseis::get() {
 					if ( pos == string::npos ) {
 						SEISCOMP_ERROR("Invalid response header: %s", response.c_str());
 						_socket.close();
-						return NULL;
+						return nullptr;
 					}
 
 					if ( !response.compare(0, pos, "Content-Length") ) {
@@ -588,7 +588,7 @@ Core::GreensFunction *Instaseis::get() {
 						if ( !Core::fromString(contentLength, response) ) {
 							SEISCOMP_ERROR("Invalid Content-Length header, expected numeric value, got: %s", response.c_str());
 							_socket.close();
-							return NULL;
+							return nullptr;
 						}
 					}
 				}
@@ -597,7 +597,7 @@ Core::GreensFunction *Instaseis::get() {
 			if ( contentLength <= 0 ) {
 				SEISCOMP_ERROR("No content, Content-Length = %d", contentLength);
 				_socket.close();
-				return NULL;
+				return nullptr;
 			}
 
 			//SEISCOMP_DEBUG("Content-Length = %d", contentLength);
@@ -623,7 +623,7 @@ Core::GreensFunction *Instaseis::get() {
 						ArrayPtr recdata = rec.data()->copy(Array::FLOAT);
 						if ( recdata ) {
 							FloatArrayPtr array = (FloatArray*)gf->data(comp);
-							if ( array == NULL ) {
+							if ( array == nullptr ) {
 								array = new FloatArray;
 								gf->setData(comp, array.get());
 							}
@@ -647,7 +647,7 @@ Core::GreensFunction *Instaseis::get() {
 			// Convert from m to cm
 			for ( int i = 0; i < Core::GreensFunctionComponent::Quantity; ++i ) {
 				FloatArray *data = (FloatArray*)gf->data(i);
-				if ( data != NULL ) {
+				if ( data != nullptr ) {
 					// Convert to dyn-cm
 					*data *= 1E15;
 				}
@@ -664,11 +664,11 @@ Core::GreensFunction *Instaseis::get() {
 		catch ( std::exception &e ) {
 			SEISCOMP_ERROR("%s", e.what());
 			_socket.close();
-			return NULL;
+			return nullptr;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -49,7 +49,7 @@ class SC_GUI_API ExtTensorSymbol  : public TensorSymbol {
 	public:
 		ExtTensorSymbol(const Math::Tensor2Sd &t,
 		                const DataModel::FocalMechanism *fm,
-		                Map::Decorator* decorator = NULL);
+		                Map::Decorator* decorator = nullptr);
 		~ExtTensorSymbol() {};
 
 	public:
@@ -135,7 +135,7 @@ class SC_GUI_API EventEdit : public QWidget, public DataModel::Observer {
 
 	public:
 		EventEdit(DataModel::DatabaseQuery* reader,
-		          Map::ImageTree *mapTreeOrigin = NULL,
+		          Map::ImageTree *mapTreeOrigin = nullptr,
 		          QWidget *parent = 0);
 		~EventEdit();
 
@@ -148,9 +148,9 @@ class SC_GUI_API EventEdit : public QWidget, public DataModel::Observer {
 
 
 	signals:
-		void originSelected(Seiscomp::DataModel::Origin*, Seiscomp::DataModel::Event* = NULL);
+		void originSelected(Seiscomp::DataModel::Origin*, Seiscomp::DataModel::Event* = nullptr);
 		void originMergeRequested(QList<Seiscomp::DataModel::Origin*>);
-		void fmSelected(Seiscomp::DataModel::FocalMechanism*, Seiscomp::DataModel::Event* = NULL);
+		void fmSelected(Seiscomp::DataModel::FocalMechanism*, Seiscomp::DataModel::Event* = nullptr);
 
 
 	public slots:

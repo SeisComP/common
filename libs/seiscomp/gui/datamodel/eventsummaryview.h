@@ -179,7 +179,7 @@ class SC_GUI_API EventSummaryView : public QWidget
 		void addObject(const QString &parentID, Seiscomp::DataModel::Object *obj);
 		void updateObject(const QString &parentID, Seiscomp::DataModel::Object *obj);
 		void removeObject(const QString &parentID, Seiscomp::DataModel::Object *obj);
-		void showEvent(Seiscomp::DataModel::Event* event, Seiscomp::DataModel::Origin* org = NULL);
+		void showEvent(Seiscomp::DataModel::Event* event, Seiscomp::DataModel::Origin* org = nullptr);
 		//! Shows an origin that maybe does not belong to an event yet
 		void showOrigin(Seiscomp::DataModel::Origin* origin);
 		void updateTimeAgoLabel();
@@ -219,7 +219,7 @@ class SC_GUI_API EventSummaryView : public QWidget
 		void runScript(const QString&, const QString& name, bool oldStyle,
 		               bool exportMap);
 
-		void processEventMsg(DataModel::Event* event, DataModel::Origin* org = NULL);
+		void processEventMsg(DataModel::Event* event, DataModel::Origin* org = nullptr);
 
 		bool setOriginParameter(std::string OriginID);
 		void setPrefMagnitudeParameter(std::string MaginitudeID);

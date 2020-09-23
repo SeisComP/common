@@ -164,10 +164,10 @@ BOOST_AUTO_TEST_CASE(construction) {
 	BOOST_CHECK_EQUAL(pointerNegative.seconds(), -123);
 	BOOST_CHECK_EQUAL(pointerNegative.microseconds(), -123456);
 
-	timeval *nullPointer = NULL;
+	timeval *nullPointer = nullptr;
 	sc::TimeSpan pointerNull(nullPointer);
 	BOOST_CHECK_EQUAL(pointerNull.seconds(), 0);
-	BOOST_WARN_MESSAGE(pointerNull.microseconds(), "pointer is a NULL pointer");
+	BOOST_WARN_MESSAGE(pointerNull.microseconds(), "pointer is a nullptr pointer");
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

@@ -74,7 +74,7 @@ class SC_GUI_API Layer : public QObject, public Seiscomp::Core::BaseObject {
 		typedef QList<Legend*> Legends;
 
 	public:
-		Layer(QObject* parent = NULL);
+		Layer(QObject* parent = nullptr);
 		virtual ~Layer();
 
 	public:
@@ -93,7 +93,7 @@ class SC_GUI_API Layer : public QObject, public Seiscomp::Core::BaseObject {
 		virtual void draw(const Canvas*, QPainter&) {}
 
 		virtual Layer &operator =(const Layer &other);
-		virtual Layer *clone() const { return NULL; }
+		virtual Layer *clone() const { return nullptr; }
 
 	signals:
 		/// This signal is emitted when a legend was added to layer

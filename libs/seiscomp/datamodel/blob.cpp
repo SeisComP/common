@@ -32,7 +32,7 @@ IMPLEMENT_SC_CLASS(Blob, "Blob");
 
 
 Blob::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("content", "string", false, false, false, false, false, false, NULL, &Blob::setContent, &Blob::content));
+	addProperty(Core::simpleProperty("content", "string", false, false, false, false, false, false, nullptr, &Blob::setContent, &Blob::content));
 }
 
 

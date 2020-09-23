@@ -55,7 +55,7 @@ DatabaseRequestMessage::DatabaseRequestMessage(const char *service)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseProvideMessage::DatabaseProvideMessage()
-: ServiceProvideMessage(NULL, NULL) {}
+: ServiceProvideMessage(nullptr, nullptr) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

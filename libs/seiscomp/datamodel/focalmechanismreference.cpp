@@ -33,7 +33,7 @@ IMPLEMENT_SC_CLASS_DERIVED(FocalMechanismReference, Object, "FocalMechanismRefer
 
 
 FocalMechanismReference::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("focalMechanismID", "string", false, false, true, true, false, false, NULL, &FocalMechanismReference::setFocalMechanismID, &FocalMechanismReference::focalMechanismID));
+	addProperty(Core::simpleProperty("focalMechanismID", "string", false, false, true, true, false, false, nullptr, &FocalMechanismReference::setFocalMechanismID, &FocalMechanismReference::focalMechanismID));
 }
 
 
@@ -176,7 +176,7 @@ const FocalMechanismReferenceIndex& FocalMechanismReference::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FocalMechanismReference::equalIndex(const FocalMechanismReference* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -206,7 +206,7 @@ FocalMechanismReference& FocalMechanismReference::operator=(const FocalMechanism
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FocalMechanismReference::assign(Object* other) {
 	FocalMechanismReference* otherFocalMechanismReference = FocalMechanismReference::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherFocalMechanismReference;
@@ -220,11 +220,11 @@ bool FocalMechanismReference::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FocalMechanismReference::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Event* event = Event::Cast(parent);
-	if ( event != NULL )
+	if ( event != nullptr )
 		return event->add(this);
 
 	SEISCOMP_ERROR("FocalMechanismReference::attachTo(%s) -> wrong class type", parent->className());
@@ -237,11 +237,11 @@ bool FocalMechanismReference::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FocalMechanismReference::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Event* event = Event::Cast(object);
-	if ( event != NULL ) {
+	if ( event != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -249,7 +249,7 @@ bool FocalMechanismReference::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			FocalMechanismReference* child = event->focalMechanismReference(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return event->remove(child);
 			else {
 				SEISCOMP_DEBUG("FocalMechanismReference::detachFrom(Event): focalMechanismReference has not been found");
@@ -268,7 +268,7 @@ bool FocalMechanismReference::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FocalMechanismReference::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

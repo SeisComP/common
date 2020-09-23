@@ -78,7 +78,7 @@ class SC_GUI_API ThreeComponentTrace : public QObject {
 		void showProcessedData(bool);
 		void setRecordWidget(RecordWidget *);
 		void setFilter(RecordWidget::Filter *, const std::string &filterID);
-		bool transform(int comp = -1, Record *rec = NULL);
+		bool transform(int comp = -1, Record *rec = nullptr);
 
 		bool setProcessedData(int comp,
 		                      const std::string &networkCode,
@@ -231,7 +231,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		~AmplitudeView();
 
 	public:
-		bool setConfig(const Config &c, QString *error = NULL);
+		bool setConfig(const Config &c, QString *error = nullptr);
 
 		void setDatabase(Seiscomp::DataModel::DatabaseQuery*);
 
@@ -413,7 +413,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 
 		void acquireStreams();
 
-		bool applyFilter(RecordViewItem *item = NULL);
+		bool applyFilter(RecordViewItem *item = nullptr);
 
 
 		//! Makes sure that the time range [tmin, tmax] is visible.
@@ -434,7 +434,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		bool setArrivalState(Seiscomp::Gui::RecordWidget* w, int arrivalId, bool state);
 		void resetAmplitude(RecordViewItem *item, const QString &text, bool enable);
 
-		void fetchManualAmplitudes(std::vector<RecordMarker*>* marker = NULL) const;
+		void fetchManualAmplitudes(std::vector<RecordMarker*>* marker = nullptr) const;
 
 		void showComponent(char componentCode);
 		void fetchComponent(char componentCode);

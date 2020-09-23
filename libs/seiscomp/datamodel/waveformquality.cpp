@@ -34,16 +34,16 @@ IMPLEMENT_SC_CLASS_DERIVED(WaveformQuality, Object, "WaveformQuality");
 
 WaveformQuality::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", true, false, false, &WaveformQuality::setWaveformID, &WaveformQuality::waveformID));
-	addProperty(Core::simpleProperty("creatorID", "string", false, false, false, false, false, false, NULL, &WaveformQuality::setCreatorID, &WaveformQuality::creatorID));
-	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, false, false, NULL, &WaveformQuality::setCreated, &WaveformQuality::created));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, NULL, &WaveformQuality::setStart, &WaveformQuality::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, NULL, &WaveformQuality::setEnd, &WaveformQuality::end));
-	addProperty(Core::simpleProperty("type", "string", false, false, true, false, false, false, NULL, &WaveformQuality::setType, &WaveformQuality::type));
-	addProperty(Core::simpleProperty("parameter", "string", false, false, true, false, false, false, NULL, &WaveformQuality::setParameter, &WaveformQuality::parameter));
-	addProperty(Core::simpleProperty("value", "float", false, false, false, false, false, false, NULL, &WaveformQuality::setValue, &WaveformQuality::value));
-	addProperty(Core::simpleProperty("lowerUncertainty", "float", false, false, false, false, true, false, NULL, &WaveformQuality::setLowerUncertainty, &WaveformQuality::lowerUncertainty));
-	addProperty(Core::simpleProperty("upperUncertainty", "float", false, false, false, false, true, false, NULL, &WaveformQuality::setUpperUncertainty, &WaveformQuality::upperUncertainty));
-	addProperty(Core::simpleProperty("windowLength", "float", false, false, false, false, true, false, NULL, &WaveformQuality::setWindowLength, &WaveformQuality::windowLength));
+	addProperty(Core::simpleProperty("creatorID", "string", false, false, false, false, false, false, nullptr, &WaveformQuality::setCreatorID, &WaveformQuality::creatorID));
+	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, false, false, nullptr, &WaveformQuality::setCreated, &WaveformQuality::created));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &WaveformQuality::setStart, &WaveformQuality::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &WaveformQuality::setEnd, &WaveformQuality::end));
+	addProperty(Core::simpleProperty("type", "string", false, false, true, false, false, false, nullptr, &WaveformQuality::setType, &WaveformQuality::type));
+	addProperty(Core::simpleProperty("parameter", "string", false, false, true, false, false, false, nullptr, &WaveformQuality::setParameter, &WaveformQuality::parameter));
+	addProperty(Core::simpleProperty("value", "float", false, false, false, false, false, false, nullptr, &WaveformQuality::setValue, &WaveformQuality::value));
+	addProperty(Core::simpleProperty("lowerUncertainty", "float", false, false, false, false, true, false, nullptr, &WaveformQuality::setLowerUncertainty, &WaveformQuality::lowerUncertainty));
+	addProperty(Core::simpleProperty("upperUncertainty", "float", false, false, false, false, true, false, nullptr, &WaveformQuality::setUpperUncertainty, &WaveformQuality::upperUncertainty));
+	addProperty(Core::simpleProperty("windowLength", "float", false, false, false, false, true, false, nullptr, &WaveformQuality::setWindowLength, &WaveformQuality::windowLength));
 }
 
 
@@ -393,7 +393,7 @@ const WaveformQualityIndex& WaveformQuality::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool WaveformQuality::equalIndex(const WaveformQuality* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -430,7 +430,7 @@ WaveformQuality& WaveformQuality::operator=(const WaveformQuality& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool WaveformQuality::assign(Object* other) {
 	WaveformQuality* otherWaveformQuality = WaveformQuality::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherWaveformQuality;
@@ -444,11 +444,11 @@ bool WaveformQuality::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool WaveformQuality::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	QualityControl* qualityControl = QualityControl::Cast(parent);
-	if ( qualityControl != NULL )
+	if ( qualityControl != nullptr )
 		return qualityControl->add(this);
 
 	SEISCOMP_ERROR("WaveformQuality::attachTo(%s) -> wrong class type", parent->className());
@@ -461,11 +461,11 @@ bool WaveformQuality::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool WaveformQuality::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	QualityControl* qualityControl = QualityControl::Cast(object);
-	if ( qualityControl != NULL ) {
+	if ( qualityControl != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -473,7 +473,7 @@ bool WaveformQuality::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			WaveformQuality* child = qualityControl->waveformQuality(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return qualityControl->remove(child);
 			else {
 				SEISCOMP_DEBUG("WaveformQuality::detachFrom(QualityControl): waveformQuality has not been found");
@@ -492,7 +492,7 @@ bool WaveformQuality::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool WaveformQuality::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

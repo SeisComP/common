@@ -40,11 +40,11 @@ static Seiscomp::Core::MetaEnumImpl<EvaluationStatus> metaEvaluationStatus;
 
 Magnitude::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<RealQuantity>("magnitude", "RealQuantity", false, false, false, &Magnitude::setMagnitude, &Magnitude::magnitude));
-	addProperty(Core::simpleProperty("type", "string", false, false, false, false, false, false, NULL, &Magnitude::setType, &Magnitude::type));
-	addProperty(Core::simpleProperty("originID", "string", false, false, false, true, false, false, NULL, &Magnitude::setOriginID, &Magnitude::originID));
-	addProperty(Core::simpleProperty("methodID", "string", false, false, false, false, false, false, NULL, &Magnitude::setMethodID, &Magnitude::methodID));
-	addProperty(Core::simpleProperty("stationCount", "int", false, false, false, false, true, false, NULL, &Magnitude::setStationCount, &Magnitude::stationCount));
-	addProperty(Core::simpleProperty("azimuthalGap", "float", false, false, false, false, true, false, NULL, &Magnitude::setAzimuthalGap, &Magnitude::azimuthalGap));
+	addProperty(Core::simpleProperty("type", "string", false, false, false, false, false, false, nullptr, &Magnitude::setType, &Magnitude::type));
+	addProperty(Core::simpleProperty("originID", "string", false, false, false, true, false, false, nullptr, &Magnitude::setOriginID, &Magnitude::originID));
+	addProperty(Core::simpleProperty("methodID", "string", false, false, false, false, false, false, nullptr, &Magnitude::setMethodID, &Magnitude::methodID));
+	addProperty(Core::simpleProperty("stationCount", "int", false, false, false, false, true, false, nullptr, &Magnitude::setStationCount, &Magnitude::stationCount));
+	addProperty(Core::simpleProperty("azimuthalGap", "float", false, false, false, false, true, false, nullptr, &Magnitude::setAzimuthalGap, &Magnitude::azimuthalGap));
 	addProperty(enumProperty("evaluationStatus", "EvaluationStatus", false, true, &metaEvaluationStatus, &Magnitude::setEvaluationStatus, &Magnitude::evaluationStatus));
 	addProperty(objectProperty<CreationInfo>("creationInfo", "CreationInfo", false, false, true, &Magnitude::setCreationInfo, &Magnitude::creationInfo));
 	addProperty(arrayClassProperty<Comment>("comment", "Comment", &Magnitude::commentCount, &Magnitude::comment, static_cast<bool (Magnitude::*)(Comment*)>(&Magnitude::add), &Magnitude::removeComment, static_cast<bool (Magnitude::*)(Comment*)>(&Magnitude::remove)));
@@ -85,11 +85,11 @@ Magnitude::Magnitude(const std::string& publicID)
 Magnitude::~Magnitude() {
 	std::for_each(_comments.begin(), _comments.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&CommentPtr::get)));
 	std::for_each(_stationMagnitudeContributions.begin(), _stationMagnitudeContributions.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&StationMagnitudeContribution::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&StationMagnitudeContributionPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -109,12 +109,12 @@ Magnitude* Magnitude::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Magnitude* Magnitude::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new Magnitude(publicID);
@@ -370,7 +370,7 @@ Magnitude& Magnitude::operator=(const Magnitude& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Magnitude::assign(Object* other) {
 	Magnitude* otherMagnitude = Magnitude::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherMagnitude;
@@ -384,11 +384,11 @@ bool Magnitude::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Magnitude::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Origin* origin = Origin::Cast(parent);
-	if ( origin != NULL )
+	if ( origin != nullptr )
 		return origin->add(this);
 
 	SEISCOMP_ERROR("Magnitude::attachTo(%s) -> wrong class type", parent->className());
@@ -401,11 +401,11 @@ bool Magnitude::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Magnitude::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Origin* origin = Origin::Cast(object);
-	if ( origin != NULL ) {
+	if ( origin != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -413,7 +413,7 @@ bool Magnitude::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			Magnitude* child = origin->findMagnitude(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return origin->remove(child);
 			else {
 				SEISCOMP_DEBUG("Magnitude::detachFrom(Origin): magnitude has not been found");
@@ -432,7 +432,7 @@ bool Magnitude::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Magnitude::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -456,9 +456,9 @@ Object* Magnitude::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Magnitude::updateChild(Object* child) {
 	Comment* commentChild = Comment::Cast(child);
-	if ( commentChild != NULL ) {
+	if ( commentChild != nullptr ) {
 		Comment* commentElement = comment(commentChild->index());
-		if ( commentElement != NULL ) {
+		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
 			return true;
@@ -467,9 +467,9 @@ bool Magnitude::updateChild(Object* child) {
 	}
 
 	StationMagnitudeContribution* stationMagnitudeContributionChild = StationMagnitudeContribution::Cast(child);
-	if ( stationMagnitudeContributionChild != NULL ) {
+	if ( stationMagnitudeContributionChild != nullptr ) {
 		StationMagnitudeContribution* stationMagnitudeContributionElement = stationMagnitudeContribution(stationMagnitudeContributionChild->index());
-		if ( stationMagnitudeContributionElement != NULL ) {
+		if ( stationMagnitudeContributionElement != nullptr ) {
 			*stationMagnitudeContributionElement = *stationMagnitudeContributionChild;
 			stationMagnitudeContributionElement->update();
 			return true;
@@ -529,7 +529,7 @@ Comment* Magnitude::comment(const CommentIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -538,11 +538,11 @@ Comment* Magnitude::comment(const CommentIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Magnitude::add(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( comment->parent() != NULL ) {
+	if ( comment->parent() != nullptr ) {
 		SEISCOMP_ERROR("Magnitude::add(Comment*) -> element has already a parent");
 		return false;
 	}
@@ -577,7 +577,7 @@ bool Magnitude::add(Comment* comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Magnitude::remove(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -598,7 +598,7 @@ bool Magnitude::remove(Comment* comment) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_comments.erase(it);
@@ -622,7 +622,7 @@ bool Magnitude::removeComment(size_t i) {
 		_comments[i]->accept(&nc);
 	}
 
-	_comments[i]->setParent(NULL);
+	_comments[i]->setParent(nullptr);
 	childRemoved(_comments[i].get());
 
 	_comments.erase(_comments.begin() + i);
@@ -637,7 +637,7 @@ bool Magnitude::removeComment(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Magnitude::removeComment(const CommentIndex& i) {
 	Comment* object = comment(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -669,7 +669,7 @@ StationMagnitudeContribution* Magnitude::stationMagnitudeContribution(const Stat
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -678,11 +678,11 @@ StationMagnitudeContribution* Magnitude::stationMagnitudeContribution(const Stat
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Magnitude::add(StationMagnitudeContribution* stationMagnitudeContribution) {
-	if ( stationMagnitudeContribution == NULL )
+	if ( stationMagnitudeContribution == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( stationMagnitudeContribution->parent() != NULL ) {
+	if ( stationMagnitudeContribution->parent() != nullptr ) {
 		SEISCOMP_ERROR("Magnitude::add(StationMagnitudeContribution*) -> element has already a parent");
 		return false;
 	}
@@ -717,7 +717,7 @@ bool Magnitude::add(StationMagnitudeContribution* stationMagnitudeContribution) 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Magnitude::remove(StationMagnitudeContribution* stationMagnitudeContribution) {
-	if ( stationMagnitudeContribution == NULL )
+	if ( stationMagnitudeContribution == nullptr )
 		return false;
 
 	if ( stationMagnitudeContribution->parent() != this ) {
@@ -738,7 +738,7 @@ bool Magnitude::remove(StationMagnitudeContribution* stationMagnitudeContributio
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_stationMagnitudeContributions.erase(it);
@@ -762,7 +762,7 @@ bool Magnitude::removeStationMagnitudeContribution(size_t i) {
 		_stationMagnitudeContributions[i]->accept(&nc);
 	}
 
-	_stationMagnitudeContributions[i]->setParent(NULL);
+	_stationMagnitudeContributions[i]->setParent(nullptr);
 	childRemoved(_stationMagnitudeContributions[i].get());
 
 	_stationMagnitudeContributions.erase(_stationMagnitudeContributions.begin() + i);
@@ -777,7 +777,7 @@ bool Magnitude::removeStationMagnitudeContribution(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Magnitude::removeStationMagnitudeContribution(const StationMagnitudeContributionIndex& i) {
 	StationMagnitudeContribution* object = stationMagnitudeContribution(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

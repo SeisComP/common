@@ -35,9 +35,9 @@ IMPLEMENT_SC_CLASS_DERIVED(ParameterSet, PublicObject, "ParameterSet");
 
 
 ParameterSet::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("baseID", "string", false, false, false, true, false, false, NULL, &ParameterSet::setBaseID, &ParameterSet::baseID));
-	addProperty(Core::simpleProperty("moduleID", "string", false, false, false, true, false, false, NULL, &ParameterSet::setModuleID, &ParameterSet::moduleID));
-	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, true, false, NULL, &ParameterSet::setCreated, &ParameterSet::created));
+	addProperty(Core::simpleProperty("baseID", "string", false, false, false, true, false, false, nullptr, &ParameterSet::setBaseID, &ParameterSet::baseID));
+	addProperty(Core::simpleProperty("moduleID", "string", false, false, false, true, false, false, nullptr, &ParameterSet::setModuleID, &ParameterSet::moduleID));
+	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, true, false, nullptr, &ParameterSet::setCreated, &ParameterSet::created));
 	addProperty(arrayObjectProperty("parameter", "Parameter", &ParameterSet::parameterCount, &ParameterSet::parameter, static_cast<bool (ParameterSet::*)(Parameter*)>(&ParameterSet::add), &ParameterSet::removeParameter, static_cast<bool (ParameterSet::*)(Parameter*)>(&ParameterSet::remove)));
 	addProperty(arrayClassProperty<Comment>("comment", "Comment", &ParameterSet::commentCount, &ParameterSet::comment, static_cast<bool (ParameterSet::*)(Comment*)>(&ParameterSet::add), &ParameterSet::removeComment, static_cast<bool (ParameterSet::*)(Comment*)>(&ParameterSet::remove)));
 }
@@ -76,11 +76,11 @@ ParameterSet::ParameterSet(const std::string& publicID)
 ParameterSet::~ParameterSet() {
 	std::for_each(_parameters.begin(), _parameters.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Parameter::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&ParameterPtr::get)));
 	std::for_each(_comments.begin(), _comments.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&CommentPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -100,12 +100,12 @@ ParameterSet* ParameterSet::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ParameterSet* ParameterSet::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new ParameterSet(publicID);
@@ -235,7 +235,7 @@ ParameterSet& ParameterSet::operator=(const ParameterSet& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ParameterSet::assign(Object* other) {
 	ParameterSet* otherParameterSet = ParameterSet::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherParameterSet;
@@ -249,11 +249,11 @@ bool ParameterSet::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ParameterSet::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Config* config = Config::Cast(parent);
-	if ( config != NULL )
+	if ( config != nullptr )
 		return config->add(this);
 
 	SEISCOMP_ERROR("ParameterSet::attachTo(%s) -> wrong class type", parent->className());
@@ -266,11 +266,11 @@ bool ParameterSet::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ParameterSet::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Config* config = Config::Cast(object);
-	if ( config != NULL ) {
+	if ( config != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -278,7 +278,7 @@ bool ParameterSet::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			ParameterSet* child = config->findParameterSet(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return config->remove(child);
 			else {
 				SEISCOMP_DEBUG("ParameterSet::detachFrom(Config): parameterSet has not been found");
@@ -297,7 +297,7 @@ bool ParameterSet::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ParameterSet::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -321,7 +321,7 @@ Object* ParameterSet::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ParameterSet::updateChild(Object* child) {
 	Parameter* parameterChild = Parameter::Cast(child);
-	if ( parameterChild != NULL ) {
+	if ( parameterChild != nullptr ) {
 		Parameter* parameterElement
 			= Parameter::Cast(PublicObject::Find(parameterChild->publicID()));
 		if ( parameterElement && parameterElement->parent() == this ) {
@@ -333,9 +333,9 @@ bool ParameterSet::updateChild(Object* child) {
 	}
 
 	Comment* commentChild = Comment::Cast(child);
-	if ( commentChild != NULL ) {
+	if ( commentChild != nullptr ) {
 		Comment* commentElement = comment(commentChild->index());
-		if ( commentElement != NULL ) {
+		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
 			return true;
@@ -395,7 +395,7 @@ Parameter* ParameterSet::findParameter(const std::string& publicID) const {
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -404,11 +404,11 @@ Parameter* ParameterSet::findParameter(const std::string& publicID) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ParameterSet::add(Parameter* parameter) {
-	if ( parameter == NULL )
+	if ( parameter == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( parameter->parent() != NULL ) {
+	if ( parameter->parent() != nullptr ) {
 		SEISCOMP_ERROR("ParameterSet::add(Parameter*) -> element has already a parent");
 		return false;
 	}
@@ -450,7 +450,7 @@ bool ParameterSet::add(Parameter* parameter) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ParameterSet::remove(Parameter* parameter) {
-	if ( parameter == NULL )
+	if ( parameter == nullptr )
 		return false;
 
 	if ( parameter->parent() != this ) {
@@ -471,7 +471,7 @@ bool ParameterSet::remove(Parameter* parameter) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_parameters.erase(it);
@@ -495,7 +495,7 @@ bool ParameterSet::removeParameter(size_t i) {
 		_parameters[i]->accept(&nc);
 	}
 
-	_parameters[i]->setParent(NULL);
+	_parameters[i]->setParent(nullptr);
 	childRemoved(_parameters[i].get());
 
 	_parameters.erase(_parameters.begin() + i);
@@ -531,7 +531,7 @@ Comment* ParameterSet::comment(const CommentIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -540,11 +540,11 @@ Comment* ParameterSet::comment(const CommentIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ParameterSet::add(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( comment->parent() != NULL ) {
+	if ( comment->parent() != nullptr ) {
 		SEISCOMP_ERROR("ParameterSet::add(Comment*) -> element has already a parent");
 		return false;
 	}
@@ -579,7 +579,7 @@ bool ParameterSet::add(Comment* comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ParameterSet::remove(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -600,7 +600,7 @@ bool ParameterSet::remove(Comment* comment) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_comments.erase(it);
@@ -624,7 +624,7 @@ bool ParameterSet::removeComment(size_t i) {
 		_comments[i]->accept(&nc);
 	}
 
-	_comments[i]->setParent(NULL);
+	_comments[i]->setParent(nullptr);
 	childRemoved(_comments[i].get());
 
 	_comments.erase(_comments.begin() + i);
@@ -639,7 +639,7 @@ bool ParameterSet::removeComment(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ParameterSet::removeComment(const CommentIndex& i) {
 	Comment* object = comment(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

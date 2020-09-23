@@ -62,7 +62,7 @@ Journaling::Journaling(const Journaling& other)
 Journaling::~Journaling() {
 	std::for_each(_journalEntrys.begin(), _journalEntrys.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&JournalEntry::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&JournalEntryPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -110,7 +110,7 @@ Journaling& Journaling::operator=(const Journaling& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Journaling::assign(Object* other) {
 	Journaling* otherJournaling = Journaling::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherJournaling;
@@ -207,7 +207,7 @@ JournalEntry* Journaling::findJournalEntry(JournalEntry* journalEntry) const {
 			return (*it).get();
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -216,11 +216,11 @@ JournalEntry* Journaling::findJournalEntry(JournalEntry* journalEntry) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Journaling::add(JournalEntry* journalEntry) {
-	if ( journalEntry == NULL )
+	if ( journalEntry == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( journalEntry->parent() != NULL ) {
+	if ( journalEntry->parent() != nullptr ) {
 		SEISCOMP_ERROR("Journaling::add(JournalEntry*) -> element has already a parent");
 		return false;
 	}
@@ -247,7 +247,7 @@ bool Journaling::add(JournalEntry* journalEntry) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Journaling::remove(JournalEntry* journalEntry) {
-	if ( journalEntry == NULL )
+	if ( journalEntry == nullptr )
 		return false;
 
 	if ( journalEntry->parent() != this ) {
@@ -268,7 +268,7 @@ bool Journaling::remove(JournalEntry* journalEntry) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_journalEntrys.erase(it);
@@ -292,7 +292,7 @@ bool Journaling::removeJournalEntry(size_t i) {
 		_journalEntrys[i]->accept(&nc);
 	}
 
-	_journalEntrys[i]->setParent(NULL);
+	_journalEntrys[i]->setParent(nullptr);
 	childRemoved(_journalEntrys[i].get());
 
 	_journalEntrys.erase(_journalEntrys.begin() + i);

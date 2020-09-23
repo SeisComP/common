@@ -38,20 +38,20 @@ namespace {
 
 class NamespaceCollector : public OutputHandler {
 	public:
-		void handle(Core::BaseObject *obj, const char *defaultTag, const char *ns, NodeHandler *handler = NULL) {
+		void handle(Core::BaseObject *obj, const char *defaultTag, const char *ns, NodeHandler *handler = nullptr) {
 			TypeMap::Tag defTag(
 					defaultTag?defaultTag:"",
 					ns?ns:""
 			);
 
 			const TypeMap::Tag *tag =
-				(defaultTag != NULL && *defaultTag != '\0')
+				(defaultTag != nullptr && *defaultTag != '\0')
 					?
 				&defTag
 					:
 				typemap->getTag(obj->className());
 
-			if ( handler == NULL )
+			if ( handler == nullptr )
 				handler = typemap->getHandler(obj->className());
 
 			if ( handler )
@@ -85,7 +85,7 @@ class NamespaceCollector : public OutputHandler {
 static const char *xmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
 Exporter::Exporter() : _ostr(std::cout.rdbuf()) {
-	_typemap = NULL;
+	_typemap = nullptr;
 }
 
 TypeMap* Exporter::typeMap() {
@@ -105,7 +105,7 @@ void Exporter::setRootName(std::string h) {
 void Exporter::collectNamespaces(Core::BaseObject *obj) {
 	NamespaceCollector nsc;
 	nsc.typemap = _typemap;
-	nsc.handle(obj, "", "", NULL);
+	nsc.handle(obj, "", "", nullptr);
 
 	for ( std::set<std::string>::iterator it = nsc.namespaces.begin();
 	      it != nsc.namespaces.end(); ++it ) {
@@ -122,8 +122,8 @@ void Exporter::collectNamespaces(Core::BaseObject *obj) {
 
 
 bool Exporter::put(std::streambuf* buf, Core::BaseObject *obj) {
-	if ( buf == NULL ) return false;
-	if ( obj == NULL ) return false;
+	if ( buf == nullptr ) return false;
+	if ( obj == nullptr ) return false;
 
 	_lastTagState = 0;
 	_tagOpen = false;
@@ -138,7 +138,7 @@ bool Exporter::put(std::streambuf* buf, Core::BaseObject *obj) {
 
 	collectNamespaces(obj);
 
-	handle(obj, "", "", NULL);
+	handle(obj, "", "", nullptr);
 
 	if ( !_headerNode.empty() )
 		_ostr << std::endl << "</" << _headerNode << ">";
@@ -149,7 +149,7 @@ bool Exporter::put(std::streambuf* buf, Core::BaseObject *obj) {
 
 
 bool Exporter::put(std::streambuf* buf, const ExportObjectList &objects) {
-	if ( buf == NULL ) return false;
+	if ( buf == nullptr ) return false;
 
 	_ostr.rdbuf(buf);
 
@@ -165,7 +165,7 @@ bool Exporter::put(std::streambuf* buf, const ExportObjectList &objects) {
 		_tagOpen = false;
 		_firstElement = true;
 		_indent = 0;
-		handle(*it, "", "", NULL);
+		handle(*it, "", "", nullptr);
 	}
 
 	if ( !_headerNode.empty() )
@@ -183,13 +183,13 @@ void Exporter::handle(Core::BaseObject *obj, const char *defaultTag, const char 
 	);
 
 	const TypeMap::Tag *tag =
-		(defaultTag != NULL && *defaultTag != '\0')
+		(defaultTag != nullptr && *defaultTag != '\0')
 			?
 		&defTag
 			:
 		_typemap->getTag(obj->className());
 
-	if ( handler == NULL )
+	if ( handler == nullptr )
 		handler = _typemap->getHandler(obj->className());
 
 	if ( handler )
@@ -210,7 +210,7 @@ bool Exporter::openElement(const char *name, const char *ns) {
 
 	_ostr << "<";
 
-	if ( ns != NULL && *ns != '\0' ) {
+	if ( ns != nullptr && *ns != '\0' ) {
 		NamespaceMap::iterator it = _namespaces.find(ns);
 		if ( it != _namespaces.end() ) {
 			// Reuse namespace prefix
@@ -246,7 +246,7 @@ bool Exporter::openElement(const char *name, const char *ns) {
 void Exporter::addAttribute(const char *name, const char *ns, const char *value) {
 	_ostr << " ";
 
-	if ( ns != NULL && *ns != '\0' ) {
+	if ( ns != nullptr && *ns != '\0' ) {
 		NamespaceMap::iterator it = _namespaces.find(ns);
 		if ( it != _namespaces.end() )
 			// Reuse namespace prefix
@@ -277,7 +277,7 @@ void Exporter::closeElement(const char *name, const char *ns) {
 	}
 	else {
 		_ostr << "</";
-		if ( ns != NULL && *ns != '\0' ) {
+		if ( ns != nullptr && *ns != '\0' ) {
 			NamespaceMap::iterator it = _namespaces.find(ns);
 			if ( it != _namespaces.end() ) {
 				// Reuse namespace prefix

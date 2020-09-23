@@ -45,7 +45,7 @@ ImporterTrunk::ImporterTrunk() {}
 Core::BaseObject *ImporterTrunk::get(std::streambuf* buf) {
 	IO::XMLArchive ar;
 	ar.open(buf);
-	Core::BaseObject *obj = NULL;
+	Core::BaseObject *obj = nullptr;
 	ar >> obj;
 	return obj;
 }

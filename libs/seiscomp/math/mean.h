@@ -44,9 +44,9 @@ SC_SYSTEM_CORE_API double fractile(const DoubleArray &, double x);
 SC_SYSTEM_CORE_API double fractile(const std::vector<double> &, double x);
 SC_SYSTEM_CORE_API double fractile(int n, const double *, double x);
 
-SC_SYSTEM_CORE_API bool computeTrimmedMean(int n, const double *f, double percent, double &value, double &stdev, double *weights = NULL);
-SC_SYSTEM_CORE_API bool computeTrimmedMean(int n, const double *f, double &value, double &stdev, double *weights = NULL);
-SC_SYSTEM_CORE_API bool computeTrimmedMean(const std::vector<double> &v, double percent, double &value, double &stdev, std::vector<double> *weights = NULL);
+SC_SYSTEM_CORE_API bool computeTrimmedMean(int n, const double *f, double percent, double &value, double &stdev, double *weights = nullptr);
+SC_SYSTEM_CORE_API bool computeTrimmedMean(int n, const double *f, double &value, double &stdev, double *weights = nullptr);
+SC_SYSTEM_CORE_API bool computeTrimmedMean(const std::vector<double> &v, double percent, double &value, double &stdev, std::vector<double> *weights = nullptr);
 
 SC_SYSTEM_CORE_API bool computeMean(const std::vector<double> &v, double &value, double &stdev);
 

@@ -83,7 +83,7 @@ bool ChainFilter<TYPE>::remove(size_t pos) {
 template<typename TYPE>
 InPlaceFilter<TYPE>* ChainFilter<TYPE>::take(size_t pos) {
 	if ( pos >= _filters.size() )
-		return NULL;
+		return nullptr;
 
 	InPlaceFilter<TYPE> *f = _filters[pos];
 	_filters.erase(_filters.begin() + pos);

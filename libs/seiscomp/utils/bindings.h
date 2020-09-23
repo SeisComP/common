@@ -189,7 +189,7 @@ class SC_SYSTEM_CORE_API Bindings : public Core::BaseObject {
 		 * @brief Returns the associated parameter list for a station.
 		 * @param networkCode The stations network code
 		 * @param stationCode The station code
-		 * @return A pointer to the parameter list if available, NULL otherwise.
+		 * @return A pointer to the parameter list if available, nullptr otherwise.
 		 */
 		const KeyValues *getKeys(const std::string &networkCode,
 		                         const std::string &stationCode) const;
@@ -197,7 +197,7 @@ class SC_SYSTEM_CORE_API Bindings : public Core::BaseObject {
 		/**
 		 * @brief Convenience function for getKeys(netCode, staCode)
 		 * @param station The station object
-		 * @return A pointer to the parameter list if available, NULL otherwise.
+		 * @return A pointer to the parameter list if available, nullptr otherwise.
 		 */
 		const KeyValues *getKeys(const DataModel::Station *station) const;
 

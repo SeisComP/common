@@ -153,7 +153,7 @@ Seiscomp::Record* RecordIterator::current() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordInput::RecordInput(RecordStream *in, Array::DataType dt, Record::Hint h)
 : _in(in) {
-	if ( _in != NULL ) {
+	if ( _in != nullptr ) {
 		_in->setDataType(dt);
 		_in->setDataHint(h);
 	}

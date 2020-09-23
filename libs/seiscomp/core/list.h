@@ -42,12 +42,12 @@ struct IntrusiveListItem<T*,N> {
 
 	IntrusiveListItem<Element,N>() {
 		for ( int i = 0; i < N; ++i )
-			_ili_prev[i] = _ili_next[i] = NULL;
+			_ili_prev[i] = _ili_next[i] = nullptr;
 	}
 
 	// The second parameter is just a helper to derive the correct
 	// function.
-	void reset(int i, const Element &) { _ili_prev[i] = _ili_next[i] = NULL; }
+	void reset(int i, const Element &) { _ili_prev[i] = _ili_next[i] = nullptr; }
 	void store(int i, Element &o) {}
 
 	Element _ili_prev[N];
@@ -66,12 +66,12 @@ struct IntrusiveListItem<boost::intrusive_ptr<T>,N> {
 
 	IntrusiveListItem<Element,N>() {
 		for ( int i = 0; i < N; ++i )
-			_ili_prev[i] = _ili_next[i] = NULL;
+			_ili_prev[i] = _ili_next[i] = nullptr;
 	}
 
 	// The second parameter is just a helper to derive the correct
 	// function.
-	void reset(int i, const Element &) { _ili_self[i] = _ili_prev[i] = _ili_next[i] = NULL; }
+	void reset(int i, const Element &) { _ili_self[i] = _ili_prev[i] = _ili_next[i] = nullptr; }
 	void store(int i, Element &o) { _ili_self[i] = o; }
 
 	Element _ili_self[N];
@@ -95,7 +95,7 @@ class IntrusiveList : IntrusiveListBase<T> {
 
 	public:
 		struct iterator {
-			iterator(int slot_idx = 0, T o = NULL) : idx(slot_idx), item(o) {}
+			iterator(int slot_idx = 0, T o = nullptr) : idx(slot_idx), item(o) {}
 
 			int idx;
 			T item;
@@ -119,7 +119,7 @@ class IntrusiveList : IntrusiveListBase<T> {
 		};
 
 		struct const_iterator {
-			const_iterator(int slot_idx = 0, T o = NULL) : idx(slot_idx), item(o) {}
+			const_iterator(int slot_idx = 0, T o = nullptr) : idx(slot_idx), item(o) {}
 
 			int idx;
 			T item;
@@ -142,7 +142,7 @@ class IntrusiveList : IntrusiveListBase<T> {
 			}
 		};
 
-		explicit IntrusiveList(int slotidx = 0) : _front(NULL), _back(NULL), _index(slotidx), _size(0) {}
+		explicit IntrusiveList(int slotidx = 0) : _front(nullptr), _back(nullptr), _index(slotidx), _size(0) {}
 		virtual ~IntrusiveList() { clear(); }
 
 		void setSlot(int slotidx) { _index = slotidx; }
@@ -157,7 +157,7 @@ class IntrusiveList : IntrusiveListBase<T> {
 		const_iterator end() const { return const_iterator(_index); }
 
 		iterator find(PointerType o) const {
-			if ( o->_ili_prev[_index] != NULL || o->_ili_next[_index] != NULL ||
+			if ( o->_ili_prev[_index] != nullptr || o->_ili_next[_index] != nullptr ||
 			     o == _front )
 				return iterator(_index,o);
 
@@ -182,7 +182,7 @@ class IntrusiveList : IntrusiveListBase<T> {
 				curr->reset(_index, curr);
 			}
 
-			_front = _back = NULL;
+			_front = _back = nullptr;
 			_size = 0;
 		}
 

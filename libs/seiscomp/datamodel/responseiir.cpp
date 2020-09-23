@@ -33,15 +33,15 @@ IMPLEMENT_SC_CLASS_DERIVED(ResponseIIR, PublicObject, "ResponseIIR");
 
 
 ResponseIIR::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, NULL, &ResponseIIR::setName, &ResponseIIR::name));
-	addProperty(Core::simpleProperty("type", "string", false, false, false, false, false, false, NULL, &ResponseIIR::setType, &ResponseIIR::type));
-	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, NULL, &ResponseIIR::setGain, &ResponseIIR::gain));
-	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, NULL, &ResponseIIR::setGainFrequency, &ResponseIIR::gainFrequency));
-	addProperty(Core::simpleProperty("decimationFactor", "int", false, false, false, false, true, false, NULL, &ResponseIIR::setDecimationFactor, &ResponseIIR::decimationFactor));
-	addProperty(Core::simpleProperty("delay", "float", false, false, false, false, true, false, NULL, &ResponseIIR::setDelay, &ResponseIIR::delay));
-	addProperty(Core::simpleProperty("correction", "float", false, false, false, false, true, false, NULL, &ResponseIIR::setCorrection, &ResponseIIR::correction));
-	addProperty(Core::simpleProperty("numberOfNumerators", "int", false, false, false, false, true, false, NULL, &ResponseIIR::setNumberOfNumerators, &ResponseIIR::numberOfNumerators));
-	addProperty(Core::simpleProperty("numberOfDenominators", "int", false, false, false, false, true, false, NULL, &ResponseIIR::setNumberOfDenominators, &ResponseIIR::numberOfDenominators));
+	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &ResponseIIR::setName, &ResponseIIR::name));
+	addProperty(Core::simpleProperty("type", "string", false, false, false, false, false, false, nullptr, &ResponseIIR::setType, &ResponseIIR::type));
+	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, nullptr, &ResponseIIR::setGain, &ResponseIIR::gain));
+	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, nullptr, &ResponseIIR::setGainFrequency, &ResponseIIR::gainFrequency));
+	addProperty(Core::simpleProperty("decimationFactor", "int", false, false, false, false, true, false, nullptr, &ResponseIIR::setDecimationFactor, &ResponseIIR::decimationFactor));
+	addProperty(Core::simpleProperty("delay", "float", false, false, false, false, true, false, nullptr, &ResponseIIR::setDelay, &ResponseIIR::delay));
+	addProperty(Core::simpleProperty("correction", "float", false, false, false, false, true, false, nullptr, &ResponseIIR::setCorrection, &ResponseIIR::correction));
+	addProperty(Core::simpleProperty("numberOfNumerators", "int", false, false, false, false, true, false, nullptr, &ResponseIIR::setNumberOfNumerators, &ResponseIIR::numberOfNumerators));
+	addProperty(Core::simpleProperty("numberOfDenominators", "int", false, false, false, false, true, false, nullptr, &ResponseIIR::setNumberOfDenominators, &ResponseIIR::numberOfDenominators));
 	addProperty(objectProperty<RealArray>("numerators", "RealArray", false, false, true, &ResponseIIR::setNumerators, &ResponseIIR::numerators));
 	addProperty(objectProperty<RealArray>("denominators", "RealArray", false, false, true, &ResponseIIR::setDenominators, &ResponseIIR::denominators));
 	addProperty(objectProperty<Blob>("remark", "Blob", false, false, true, &ResponseIIR::setRemark, &ResponseIIR::remark));
@@ -141,12 +141,12 @@ ResponseIIR* ResponseIIR::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ResponseIIR* ResponseIIR::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new ResponseIIR(publicID);
@@ -484,7 +484,7 @@ const ResponseIIRIndex& ResponseIIR::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseIIR::equalIndex(const ResponseIIR* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -526,7 +526,7 @@ ResponseIIR& ResponseIIR::operator=(const ResponseIIR& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseIIR::assign(Object* other) {
 	ResponseIIR* otherResponseIIR = ResponseIIR::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherResponseIIR;
@@ -540,11 +540,11 @@ bool ResponseIIR::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseIIR::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(parent);
-	if ( inventory != NULL )
+	if ( inventory != nullptr )
 		return inventory->add(this);
 
 	SEISCOMP_ERROR("ResponseIIR::attachTo(%s) -> wrong class type", parent->className());
@@ -557,11 +557,11 @@ bool ResponseIIR::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseIIR::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(object);
-	if ( inventory != NULL ) {
+	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -569,7 +569,7 @@ bool ResponseIIR::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			ResponseIIR* child = inventory->findResponseIIR(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
 				SEISCOMP_DEBUG("ResponseIIR::detachFrom(Inventory): responseIIR has not been found");
@@ -588,7 +588,7 @@ bool ResponseIIR::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseIIR::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

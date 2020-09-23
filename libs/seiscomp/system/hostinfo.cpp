@@ -156,7 +156,7 @@ struct HostInfoImpl {
 #endif
 		char tmpHostname[HOST_NAME_MAX];
 		if ( gethostname(tmpHostname, HOST_NAME_MAX) != 0 ) {
-			const char* name = NULL;
+			const char* name = nullptr;
 			name = getenv("HOSTNAME");
 			hostname = name ? name : "";
 		}
@@ -174,7 +174,7 @@ struct HostInfoImpl {
 		else {
 			char *tmp;
 			tmp = getenv("USER");
-			if ( tmp == NULL )
+			if ( tmp == nullptr )
 				login = "";
 			else
 				login = tmp;
@@ -216,7 +216,7 @@ struct HostInfoImpl {
 
 #if defined(_MSC_VER)
 		char path[MAX_PATH];
-		GetModuleFileName(NULL, path, MAX_PATH);
+		GetModuleFileName(nullptr, path, MAX_PATH);
 		char *prog = strrchr(path, '\\');
 		if ( !prog )
 			prog = path;
@@ -257,7 +257,7 @@ struct HostInfoImpl {
 
 		mib[0] = CTL_HW;
 		mib[1] = HW_PHYSMEM;
-		sysctl(mib, 2, &totalMemory, &size, NULL, 0);
+		sysctl(mib, 2, &totalMemory, &size, nullptr, 0);
 		totalMemory /= 1024;
 #endif
 
@@ -335,7 +335,7 @@ class HostInfo::Impl {
 
 			hProcess = OpenProcess(PROCESS_QUERY_INFORMATION,
 			                       FALSE, _pid);
-			if ( hProcess != NULL ) {
+			if ( hProcess != nullptr ) {
 				FILETIME creationtime, exittime, kerneltime, usertime;
 				if ( GetProcessTimes(hProcess, &creationtime, &exittime, &kerneltime, &usertime) ) {
 					ULARGE_INTEGER current;
@@ -380,7 +380,7 @@ class HostInfo::Impl {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 HostInfo::HostInfo()
-: _impl(NULL) {}
+: _impl(nullptr) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -500,7 +500,7 @@ int HostInfo::getCurrentMemoryUsage() const {
 	hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
 	                       PROCESS_VM_READ,
 	                       FALSE, _pid);
-	if ( hProcess != NULL ) {
+	if ( hProcess != nullptr ) {
 		if ( GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc)) )
 			// map to kbyte
 			usedMemory = pmc.WorkingSetSize / 1024;

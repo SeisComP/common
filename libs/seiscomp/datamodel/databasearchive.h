@@ -45,7 +45,7 @@ DEFINE_SMARTPOINTER(DatabaseArchive);
  * The iterator does not destroy or end a started query in its
  * destructor. The query will be finished after iterating over all
  * objects. To stop an iteration you have to call close() explicitly
- * unless you receive a NULL object at the end of iteration.
+ * unless you receive a nullptr object at the end of iteration.
  */
 class SC_SYSTEM_CORE_API DatabaseIterator : public Seiscomp::Core::BaseObject {
 	// ----------------------------------------------------------------------
@@ -293,7 +293,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		/**
 		 * Returns an iterator over all objects of a given type for a parent
 		 * object.
-		 * @param parent The parent object. When NULL, an iterator for all
+		 * @param parent The parent object. When nullptr, an iterator for all
 		 *               objects with type 'classType' is returned.
 		 * @param classType The type of the objects to iterate over.
 		 * @param ignorePublicObject If true then the PublicObject table will
@@ -321,7 +321,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		/**
 		 * Returns the number of objects of a given type for a parent
 		 * object.
-		 * @param parent The parent object. When NULL, an iterator for all
+		 * @param parent The parent object. When nullptr, an iterator for all
 		 *               objects with type 'classType' is returned.
 		 * @param classType The type of the objects to iterate over.
 		 * @return The object count
@@ -380,7 +380,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 *                       written
 		 */
 		bool addTree(Object *object, const std::string &parentID = "",
-		             int *objectsHandled = NULL);
+		             int *objectsHandled = nullptr);
 
 		/**
 		 * Removes an object tree from the database.
@@ -391,7 +391,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 *                       written
 		 */
 		bool removeTree(Object *object, const std::string &parentID = "",
-		                int *objectsHandled = NULL);
+		                int *objectsHandled = nullptr);
 
 		//! Returns an iterator for objects of a given type.
 		DatabaseIterator getObjectIterator(const std::string &query,

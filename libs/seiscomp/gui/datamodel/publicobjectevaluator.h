@@ -80,7 +80,7 @@ class PublicObjectEvaluator : public QThread {
 
 		int pendingJobs() const;
 
-		//! Removes all pending jobs of owner. If owner is set to NULL
+		//! Removes all pending jobs of owner. If owner is set to nullptr
 		//! all jobs are removed
 		void clear(void *owner);
 
@@ -109,7 +109,7 @@ class PublicObjectEvaluator : public QThread {
 
 	private:
 		// A script which is an owner. If two or more objects
-		// added the same script then owner is set to NULL.
+		// added the same script then owner is set to nullptr.
 		typedef QHash<QString,void*> Scripts;
 		struct Job {
 			Job(const QString &id, const Core::RTTI &ct)

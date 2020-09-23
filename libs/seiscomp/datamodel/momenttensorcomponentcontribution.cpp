@@ -33,14 +33,14 @@ IMPLEMENT_SC_CLASS_DERIVED(MomentTensorComponentContribution, Object, "MomentTen
 
 
 MomentTensorComponentContribution::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("phaseCode", "string", false, false, true, false, false, false, NULL, &MomentTensorComponentContribution::setPhaseCode, &MomentTensorComponentContribution::phaseCode));
-	addProperty(Core::simpleProperty("component", "int", false, false, true, false, false, false, NULL, &MomentTensorComponentContribution::setComponent, &MomentTensorComponentContribution::component));
-	addProperty(Core::simpleProperty("active", "boolean", false, false, false, false, false, false, NULL, &MomentTensorComponentContribution::setActive, &MomentTensorComponentContribution::active));
-	addProperty(Core::simpleProperty("weight", "float", false, false, false, false, false, false, NULL, &MomentTensorComponentContribution::setWeight, &MomentTensorComponentContribution::weight));
-	addProperty(Core::simpleProperty("timeShift", "float", false, false, false, false, false, false, NULL, &MomentTensorComponentContribution::setTimeShift, &MomentTensorComponentContribution::timeShift));
-	addProperty(Core::simpleProperty("dataTimeWindow", "float", true, false, false, false, false, false, NULL, &MomentTensorComponentContribution::setDataTimeWindow, (const std::vector< double >& (MomentTensorComponentContribution::*)() const)&MomentTensorComponentContribution::dataTimeWindow));
-	addProperty(Core::simpleProperty("misfit", "float", false, false, false, false, true, false, NULL, &MomentTensorComponentContribution::setMisfit, &MomentTensorComponentContribution::misfit));
-	addProperty(Core::simpleProperty("snr", "float", false, false, false, false, true, false, NULL, &MomentTensorComponentContribution::setSnr, &MomentTensorComponentContribution::snr));
+	addProperty(Core::simpleProperty("phaseCode", "string", false, false, true, false, false, false, nullptr, &MomentTensorComponentContribution::setPhaseCode, &MomentTensorComponentContribution::phaseCode));
+	addProperty(Core::simpleProperty("component", "int", false, false, true, false, false, false, nullptr, &MomentTensorComponentContribution::setComponent, &MomentTensorComponentContribution::component));
+	addProperty(Core::simpleProperty("active", "boolean", false, false, false, false, false, false, nullptr, &MomentTensorComponentContribution::setActive, &MomentTensorComponentContribution::active));
+	addProperty(Core::simpleProperty("weight", "float", false, false, false, false, false, false, nullptr, &MomentTensorComponentContribution::setWeight, &MomentTensorComponentContribution::weight));
+	addProperty(Core::simpleProperty("timeShift", "float", false, false, false, false, false, false, nullptr, &MomentTensorComponentContribution::setTimeShift, &MomentTensorComponentContribution::timeShift));
+	addProperty(Core::simpleProperty("dataTimeWindow", "float", true, false, false, false, false, false, nullptr, &MomentTensorComponentContribution::setDataTimeWindow, (const std::vector< double >& (MomentTensorComponentContribution::*)() const)&MomentTensorComponentContribution::dataTimeWindow));
+	addProperty(Core::simpleProperty("misfit", "float", false, false, false, false, true, false, nullptr, &MomentTensorComponentContribution::setMisfit, &MomentTensorComponentContribution::misfit));
+	addProperty(Core::simpleProperty("snr", "float", false, false, false, false, true, false, nullptr, &MomentTensorComponentContribution::setSnr, &MomentTensorComponentContribution::snr));
 }
 
 
@@ -359,7 +359,7 @@ const MomentTensorComponentContributionIndex& MomentTensorComponentContribution:
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorComponentContribution::equalIndex(const MomentTensorComponentContribution* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -395,7 +395,7 @@ MomentTensorComponentContribution& MomentTensorComponentContribution::operator=(
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorComponentContribution::assign(Object* other) {
 	MomentTensorComponentContribution* otherMomentTensorComponentContribution = MomentTensorComponentContribution::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherMomentTensorComponentContribution;
@@ -409,11 +409,11 @@ bool MomentTensorComponentContribution::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorComponentContribution::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	MomentTensorStationContribution* momentTensorStationContribution = MomentTensorStationContribution::Cast(parent);
-	if ( momentTensorStationContribution != NULL )
+	if ( momentTensorStationContribution != nullptr )
 		return momentTensorStationContribution->add(this);
 
 	SEISCOMP_ERROR("MomentTensorComponentContribution::attachTo(%s) -> wrong class type", parent->className());
@@ -426,11 +426,11 @@ bool MomentTensorComponentContribution::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorComponentContribution::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	MomentTensorStationContribution* momentTensorStationContribution = MomentTensorStationContribution::Cast(object);
-	if ( momentTensorStationContribution != NULL ) {
+	if ( momentTensorStationContribution != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -438,7 +438,7 @@ bool MomentTensorComponentContribution::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			MomentTensorComponentContribution* child = momentTensorStationContribution->momentTensorComponentContribution(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return momentTensorStationContribution->remove(child);
 			else {
 				SEISCOMP_DEBUG("MomentTensorComponentContribution::detachFrom(MomentTensorStationContribution): momentTensorComponentContribution has not been found");
@@ -457,7 +457,7 @@ bool MomentTensorComponentContribution::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorComponentContribution::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

@@ -373,7 +373,7 @@ void FDSNWSConnectionBase::handshake() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record *FDSNWSConnectionBase::next() {
 	if ( _readingData && !_sock->isOpen() )
-		return NULL;
+		return nullptr;
 
 	_sock->startTimer();
 
@@ -385,14 +385,14 @@ Record *FDSNWSConnectionBase::next() {
 		catch ( const GeneralException &e ) {
 			SEISCOMP_ERROR("fdsnws: %s", e.what());
 			_sock->close();
-			return NULL;
+			return nullptr;
 		}
 
 		_readingData = true;
 		if ( !_chunkMode && _remainingBytes <= 0 ) {
 			SEISCOMP_DEBUG("Content length is 0, nothing to read");
 			_sock->close();
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -446,7 +446,7 @@ Record *FDSNWSConnectionBase::next() {
 		_sock->close();
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -35,7 +35,7 @@ class Projection;
 
 class SC_GUI_API CitiesLayer : public Layer {
 	public:
-		CitiesLayer(QObject* = NULL);
+		CitiesLayer(QObject* = nullptr);
 		virtual ~CitiesLayer();
 
 		virtual void init(const Config::Config&);

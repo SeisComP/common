@@ -399,7 +399,7 @@ const NamedCoordD* nearestHotspot(double lat, double lon, double maxDist,
                                   double *dist, double *azi) {
 	double minDist = 180.0;
 	double minAzi;
-	const NamedCoordD* minCoord = NULL;
+	const NamedCoordD* minCoord = nullptr;
 
 	for ( int i = 0; i < nCoords; ++i, ++coordArray ) {
 		const NamedCoordD& coord = *coordArray;
@@ -419,14 +419,14 @@ const NamedCoordD* nearestHotspot(double lat, double lon, double maxDist,
 		return minCoord;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
 const NamedCoordD* nearestHotspot(double lat, double lon, double maxDist,
                                   const std::vector<NamedCoordD>& cities,
                                   double *dist, double *azi) {
-	if ( cities.empty() ) return NULL;
+	if ( cities.empty() ) return nullptr;
 	return nearestHotspot(lat, lon, maxDist, cities.size(),
 	                      &cities[0], dist, azi);
 }
@@ -438,7 +438,7 @@ const CityD* nearestCity(double lat, double lon,
                          double *dist, double *azi) {
 	double minDist = 180.0;
 	double minAzi;
-	const CityD* minCity = NULL;
+	const CityD* minCity = nullptr;
 
 	for ( int i = 0; i < nCities; ++i, ++cityArray ) {
 		const CityD &city = *cityArray;
@@ -460,14 +460,14 @@ const CityD* nearestCity(double lat, double lon,
 		return minCity;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 const CityD* nearestCity(double lat, double lon,
                          double maxDist, double minPopulation,
                          const std::vector<CityD>& cities,
                          double *dist, double *azi) {
-	if ( cities.empty() ) return NULL;
+	if ( cities.empty() ) return nullptr;
 	return nearestCity(lat, lon, maxDist, minPopulation,
 	                   (int)cities.size(), &cities[0], dist, azi);
 }
@@ -475,16 +475,16 @@ const CityD* nearestCity(double lat, double lon,
 /**
  * Returns a pointer to the largest city within a distanz of 'maxDist' from a
  * given Point('lat', 'lon'). Fills the precise distanz too and azimuth too.
- * If the given set of cities is empty returns NULL.
+ * If the given set of cities is empty returns nullptr.
  */
 const CityD* largestCity(double lat, double lon, double maxDist,
                          const std::vector<CityD>& cities,
                          double *dist, double *azi) {
-	if( cities.empty() ) return NULL;
+	if( cities.empty() ) return nullptr;
 
 	double cdist = 0.0, cazi = 0.0;
 	int population = 0;
-	const CityD *largest = NULL;
+	const CityD *largest = nullptr;
 	size_t nCities = cities.size();
 	for( size_t i = 0; i < nCities ; ++i ) {
 		const CityD *city = &cities[i];

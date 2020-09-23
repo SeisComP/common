@@ -33,12 +33,12 @@ IMPLEMENT_SC_CLASS_DERIVED(DataAttributeExtent, Object, "DataAttributeExtent");
 
 
 DataAttributeExtent::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("start", "datetime", false, false, false, false, false, false, NULL, &DataAttributeExtent::setStart, &DataAttributeExtent::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, false, false, NULL, &DataAttributeExtent::setEnd, &DataAttributeExtent::end));
-	addProperty(Core::simpleProperty("sampleRate", "double", false, false, true, false, false, false, NULL, &DataAttributeExtent::setSampleRate, &DataAttributeExtent::sampleRate));
-	addProperty(Core::simpleProperty("quality", "string", false, false, true, false, false, false, NULL, &DataAttributeExtent::setQuality, &DataAttributeExtent::quality));
-	addProperty(Core::simpleProperty("updated", "datetime", false, false, false, false, false, false, NULL, &DataAttributeExtent::setUpdated, &DataAttributeExtent::updated));
-	addProperty(Core::simpleProperty("segmentCount", "int", false, false, false, false, false, false, NULL, &DataAttributeExtent::setSegmentCount, &DataAttributeExtent::segmentCount));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, false, false, false, false, nullptr, &DataAttributeExtent::setStart, &DataAttributeExtent::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, false, false, nullptr, &DataAttributeExtent::setEnd, &DataAttributeExtent::end));
+	addProperty(Core::simpleProperty("sampleRate", "double", false, false, true, false, false, false, nullptr, &DataAttributeExtent::setSampleRate, &DataAttributeExtent::sampleRate));
+	addProperty(Core::simpleProperty("quality", "string", false, false, true, false, false, false, nullptr, &DataAttributeExtent::setQuality, &DataAttributeExtent::quality));
+	addProperty(Core::simpleProperty("updated", "datetime", false, false, false, false, false, false, nullptr, &DataAttributeExtent::setUpdated, &DataAttributeExtent::updated));
+	addProperty(Core::simpleProperty("segmentCount", "int", false, false, false, false, false, false, nullptr, &DataAttributeExtent::setSegmentCount, &DataAttributeExtent::segmentCount));
 }
 
 
@@ -270,7 +270,7 @@ const DataAttributeExtentIndex& DataAttributeExtent::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataAttributeExtent::equalIndex(const DataAttributeExtent* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -304,7 +304,7 @@ DataAttributeExtent& DataAttributeExtent::operator=(const DataAttributeExtent& o
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataAttributeExtent::assign(Object* other) {
 	DataAttributeExtent* otherDataAttributeExtent = DataAttributeExtent::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherDataAttributeExtent;
@@ -318,11 +318,11 @@ bool DataAttributeExtent::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataAttributeExtent::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	DataExtent* dataExtent = DataExtent::Cast(parent);
-	if ( dataExtent != NULL )
+	if ( dataExtent != nullptr )
 		return dataExtent->add(this);
 
 	SEISCOMP_ERROR("DataAttributeExtent::attachTo(%s) -> wrong class type", parent->className());
@@ -335,11 +335,11 @@ bool DataAttributeExtent::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataAttributeExtent::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	DataExtent* dataExtent = DataExtent::Cast(object);
-	if ( dataExtent != NULL ) {
+	if ( dataExtent != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -347,7 +347,7 @@ bool DataAttributeExtent::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			DataAttributeExtent* child = dataExtent->dataAttributeExtent(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return dataExtent->remove(child);
 			else {
 				SEISCOMP_DEBUG("DataAttributeExtent::detachFrom(DataExtent): dataAttributeExtent has not been found");
@@ -366,7 +366,7 @@ bool DataAttributeExtent::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataAttributeExtent::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

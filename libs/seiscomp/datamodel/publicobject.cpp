@@ -240,7 +240,7 @@ bool PublicObject::validId() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PublicObject* PublicObject::Find(const std::string& publicID) {
 	PublicObjectMap::iterator it = _publicObjects.find(publicID);
-	if ( it == _publicObjects.end() ) return NULL;
+	if ( it == _publicObjects.end() ) return nullptr;
 	return (*it).second;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -295,7 +295,7 @@ void PublicObject::SetIdPattern(const std::string& pattern) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PublicObject* PublicObject::GenerateId(PublicObject* object) {
-	if ( object == NULL ) return NULL;
+	if ( object == nullptr ) return nullptr;
 	object->deregisterMe();
 	object->generateId(_idPattern);
 	object->registerMe();
@@ -309,7 +309,7 @@ PublicObject* PublicObject::GenerateId(PublicObject* object) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PublicObject* PublicObject::GenerateId(PublicObject* object,
                                        const std::string &pattern) {
-	if ( object == NULL ) return NULL;
+	if ( object == nullptr ) return nullptr;
 	object->deregisterMe();
 	object->generateId(pattern);
 	object->registerMe();
@@ -322,7 +322,7 @@ PublicObject* PublicObject::GenerateId(PublicObject* object,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PublicObject::SetRegistrationEnabled(bool enable) {
-	if ( _registerObjects.get() == NULL )
+	if ( _registerObjects.get() == nullptr )
 		// Store a new thread specific pointer value with 'enable'
 		_registerObjects.reset(new bool(enable));
 	else
@@ -335,7 +335,7 @@ void PublicObject::SetRegistrationEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PublicObject::IsRegistrationEnabled() {
-	if ( _registerObjects.get() == NULL ) {
+	if ( _registerObjects.get() == nullptr ) {
 		// Store a new thread specific pointer value with default: true
 		bool *value = new bool(true);
 		_registerObjects.reset(value);

@@ -34,21 +34,21 @@ IMPLEMENT_SC_CLASS_DERIVED(Station, PublicObject, "Station");
 
 
 Station::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, NULL, &Station::setCode, &Station::code));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, NULL, &Station::setStart, &Station::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, NULL, &Station::setEnd, &Station::end));
-	addProperty(Core::simpleProperty("description", "string", false, false, false, false, false, false, NULL, &Station::setDescription, &Station::description));
-	addProperty(Core::simpleProperty("latitude", "float", false, false, false, false, true, false, NULL, &Station::setLatitude, &Station::latitude));
-	addProperty(Core::simpleProperty("longitude", "float", false, false, false, false, true, false, NULL, &Station::setLongitude, &Station::longitude));
-	addProperty(Core::simpleProperty("elevation", "float", false, false, false, false, true, false, NULL, &Station::setElevation, &Station::elevation));
-	addProperty(Core::simpleProperty("place", "string", false, false, false, false, false, false, NULL, &Station::setPlace, &Station::place));
-	addProperty(Core::simpleProperty("country", "string", false, false, false, false, false, false, NULL, &Station::setCountry, &Station::country));
-	addProperty(Core::simpleProperty("affiliation", "string", false, false, false, false, false, false, NULL, &Station::setAffiliation, &Station::affiliation));
-	addProperty(Core::simpleProperty("type", "string", false, false, false, false, false, false, NULL, &Station::setType, &Station::type));
-	addProperty(Core::simpleProperty("archive", "string", false, false, false, false, false, false, NULL, &Station::setArchive, &Station::archive));
-	addProperty(Core::simpleProperty("archiveNetworkCode", "string", false, false, false, false, false, false, NULL, &Station::setArchiveNetworkCode, &Station::archiveNetworkCode));
-	addProperty(Core::simpleProperty("restricted", "boolean", false, false, false, false, true, false, NULL, &Station::setRestricted, &Station::restricted));
-	addProperty(Core::simpleProperty("shared", "boolean", false, false, false, false, true, false, NULL, &Station::setShared, &Station::shared));
+	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, nullptr, &Station::setCode, &Station::code));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &Station::setStart, &Station::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &Station::setEnd, &Station::end));
+	addProperty(Core::simpleProperty("description", "string", false, false, false, false, false, false, nullptr, &Station::setDescription, &Station::description));
+	addProperty(Core::simpleProperty("latitude", "float", false, false, false, false, true, false, nullptr, &Station::setLatitude, &Station::latitude));
+	addProperty(Core::simpleProperty("longitude", "float", false, false, false, false, true, false, nullptr, &Station::setLongitude, &Station::longitude));
+	addProperty(Core::simpleProperty("elevation", "float", false, false, false, false, true, false, nullptr, &Station::setElevation, &Station::elevation));
+	addProperty(Core::simpleProperty("place", "string", false, false, false, false, false, false, nullptr, &Station::setPlace, &Station::place));
+	addProperty(Core::simpleProperty("country", "string", false, false, false, false, false, false, nullptr, &Station::setCountry, &Station::country));
+	addProperty(Core::simpleProperty("affiliation", "string", false, false, false, false, false, false, nullptr, &Station::setAffiliation, &Station::affiliation));
+	addProperty(Core::simpleProperty("type", "string", false, false, false, false, false, false, nullptr, &Station::setType, &Station::type));
+	addProperty(Core::simpleProperty("archive", "string", false, false, false, false, false, false, nullptr, &Station::setArchive, &Station::archive));
+	addProperty(Core::simpleProperty("archiveNetworkCode", "string", false, false, false, false, false, false, nullptr, &Station::setArchiveNetworkCode, &Station::archiveNetworkCode));
+	addProperty(Core::simpleProperty("restricted", "boolean", false, false, false, false, true, false, nullptr, &Station::setRestricted, &Station::restricted));
+	addProperty(Core::simpleProperty("shared", "boolean", false, false, false, false, true, false, nullptr, &Station::setShared, &Station::shared));
 	addProperty(objectProperty<Blob>("remark", "Blob", false, false, true, &Station::setRemark, &Station::remark));
 	addProperty(arrayClassProperty<Comment>("comment", "Comment", &Station::commentCount, &Station::comment, static_cast<bool (Station::*)(Comment*)>(&Station::add), &Station::removeComment, static_cast<bool (Station::*)(Comment*)>(&Station::remove)));
 	addProperty(arrayObjectProperty("sensorLocation", "SensorLocation", &Station::sensorLocationCount, &Station::sensorLocation, static_cast<bool (Station::*)(SensorLocation*)>(&Station::add), &Station::removeSensorLocation, static_cast<bool (Station::*)(SensorLocation*)>(&Station::remove)));
@@ -136,11 +136,11 @@ Station::Station(const std::string& publicID)
 Station::~Station() {
 	std::for_each(_comments.begin(), _comments.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&CommentPtr::get)));
 	std::for_each(_sensorLocations.begin(), _sensorLocations.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&SensorLocation::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&SensorLocationPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -160,12 +160,12 @@ Station* Station::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Station* Station::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new Station(publicID);
@@ -550,7 +550,7 @@ const StationIndex& Station::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::equalIndex(const Station* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -595,7 +595,7 @@ Station& Station::operator=(const Station& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::assign(Object* other) {
 	Station* otherStation = Station::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherStation;
@@ -609,11 +609,11 @@ bool Station::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Network* network = Network::Cast(parent);
-	if ( network != NULL )
+	if ( network != nullptr )
 		return network->add(this);
 
 	SEISCOMP_ERROR("Station::attachTo(%s) -> wrong class type", parent->className());
@@ -626,11 +626,11 @@ bool Station::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Network* network = Network::Cast(object);
-	if ( network != NULL ) {
+	if ( network != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -638,7 +638,7 @@ bool Station::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			Station* child = network->findStation(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return network->remove(child);
 			else {
 				SEISCOMP_DEBUG("Station::detachFrom(Network): station has not been found");
@@ -657,7 +657,7 @@ bool Station::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -681,9 +681,9 @@ Object* Station::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::updateChild(Object* child) {
 	Comment* commentChild = Comment::Cast(child);
-	if ( commentChild != NULL ) {
+	if ( commentChild != nullptr ) {
 		Comment* commentElement = comment(commentChild->index());
-		if ( commentElement != NULL ) {
+		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
 			return true;
@@ -692,7 +692,7 @@ bool Station::updateChild(Object* child) {
 	}
 
 	SensorLocation* sensorLocationChild = SensorLocation::Cast(child);
-	if ( sensorLocationChild != NULL ) {
+	if ( sensorLocationChild != nullptr ) {
 		SensorLocation* sensorLocationElement
 			= SensorLocation::Cast(PublicObject::Find(sensorLocationChild->publicID()));
 		if ( sensorLocationElement && sensorLocationElement->parent() == this ) {
@@ -755,7 +755,7 @@ Comment* Station::comment(const CommentIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -764,11 +764,11 @@ Comment* Station::comment(const CommentIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::add(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( comment->parent() != NULL ) {
+	if ( comment->parent() != nullptr ) {
 		SEISCOMP_ERROR("Station::add(Comment*) -> element has already a parent");
 		return false;
 	}
@@ -803,7 +803,7 @@ bool Station::add(Comment* comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::remove(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -824,7 +824,7 @@ bool Station::remove(Comment* comment) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_comments.erase(it);
@@ -848,7 +848,7 @@ bool Station::removeComment(size_t i) {
 		_comments[i]->accept(&nc);
 	}
 
-	_comments[i]->setParent(NULL);
+	_comments[i]->setParent(nullptr);
 	childRemoved(_comments[i].get());
 
 	_comments.erase(_comments.begin() + i);
@@ -863,7 +863,7 @@ bool Station::removeComment(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::removeComment(const CommentIndex& i) {
 	Comment* object = comment(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -895,7 +895,7 @@ SensorLocation* Station::sensorLocation(const SensorLocationIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -908,7 +908,7 @@ SensorLocation* Station::findSensorLocation(const std::string& publicID) const {
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -917,11 +917,11 @@ SensorLocation* Station::findSensorLocation(const std::string& publicID) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::add(SensorLocation* sensorLocation) {
-	if ( sensorLocation == NULL )
+	if ( sensorLocation == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( sensorLocation->parent() != NULL ) {
+	if ( sensorLocation->parent() != nullptr ) {
 		SEISCOMP_ERROR("Station::add(SensorLocation*) -> element has already a parent");
 		return false;
 	}
@@ -963,7 +963,7 @@ bool Station::add(SensorLocation* sensorLocation) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::remove(SensorLocation* sensorLocation) {
-	if ( sensorLocation == NULL )
+	if ( sensorLocation == nullptr )
 		return false;
 
 	if ( sensorLocation->parent() != this ) {
@@ -984,7 +984,7 @@ bool Station::remove(SensorLocation* sensorLocation) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_sensorLocations.erase(it);
@@ -1008,7 +1008,7 @@ bool Station::removeSensorLocation(size_t i) {
 		_sensorLocations[i]->accept(&nc);
 	}
 
-	_sensorLocations[i]->setParent(NULL);
+	_sensorLocations[i]->setParent(nullptr);
 	childRemoved(_sensorLocations[i].get());
 
 	_sensorLocations.erase(_sensorLocations.begin() + i);
@@ -1023,7 +1023,7 @@ bool Station::removeSensorLocation(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::removeSensorLocation(const SensorLocationIndex& i) {
 	SensorLocation* object = sensorLocation(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

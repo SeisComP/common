@@ -56,11 +56,11 @@ class BaseObjectProperty : public Core::MetaProperty {
 					v = boost::any_cast<U*>(value);
 				}
 
-				if ( v == NULL )
+				if ( v == nullptr )
 					throw Core::GeneralException("object must not be NULL");
 
 				U *uv = U::Cast(v);
-				if ( uv == NULL )
+				if ( uv == nullptr )
 					throw Core::GeneralException("object has wrong type");
 
 				(target->*_setter)(uv);
@@ -88,7 +88,7 @@ Core::MetaPropertyHandle objectProperty2(
 	R1 (C::*setter)(T1*), T2* (C::*getter)() const) {
 	return Core::createProperty<BaseObjectProperty>(
 			name, type, false, true, isIndex, false,
-			isOptional, false, NULL, setter, getter);
+			isOptional, false, nullptr, setter, getter);
 }
 
 
@@ -99,7 +99,7 @@ IMPLEMENT_SC_CLASS(Notifier, "notifier");
 
 
 Notifier::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("parentID", "string", false, false, false, false, true, false, NULL, &Notifier::setParentID, &Notifier::parentID));
+	addProperty(Core::simpleProperty("parentID", "string", false, false, false, false, true, false, nullptr, &Notifier::setParentID, &Notifier::parentID));
 	addProperty(enumProperty("operation", "Operation", false, false, &MetaOperation, &Notifier::setOperation, &Notifier::operation));
 	addProperty(objectProperty2("object", "Object", false, false, &Notifier::setObject, &Notifier::object));
 }
@@ -114,7 +114,7 @@ bool Notifier::_checkOnCreate = true;
 
 
 Notifier::Notifier()
- : _operation(OP_UNDEFINED), _object(NULL) {
+ : _operation(OP_UNDEFINED), _object(nullptr) {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -144,16 +144,16 @@ Notifier::~Notifier() {
 Notifier* Notifier::Create(const std::string& parentId,
                            Operation op,
 	                       Object* object) {
-	if ( !IsEnabled() ) return NULL;
+	if ( !IsEnabled() ) return nullptr;
 
 	if ( parentId.empty() ) {
 		SEISCOMP_ERROR("cannot create a notifier without a publicId");
-		return NULL;
+		return nullptr;
 	}
 
-	if ( object == NULL ) {
+	if ( object == nullptr ) {
 		SEISCOMP_ERROR("cannot create a notifier without an object");
-		return NULL;
+		return nullptr;
 	}
 
 	NotifierPtr notifier = new Notifier(parentId, op, object);
@@ -172,14 +172,14 @@ Notifier* Notifier::Create(const std::string& parentId,
 				               notifier->parentID().c_str(),
 				               notifier->operation().toString(),
 				               notifier->object()->className());
-				return NULL;
+				return nullptr;
 			}
 			// If the notifier neutralize each other, remove the stored
 			// and discard the current one
 			else if ( res == CR_OPPOSITE ) {
 				SEISCOMP_DEBUG("opposite notifier found => removing the stored one");
 				_notifiers.erase(it);
-				return NULL;
+				return nullptr;
 			}
 		}
 	}
@@ -196,10 +196,10 @@ Notifier* Notifier::Create(const std::string& parentId,
 Notifier* Notifier::Create(PublicObject* parent,
                            Operation op,
                            Object* object) {
-	if ( parent == NULL ) {
+	if ( parent == nullptr ) {
 		SEISCOMP_ERROR("cannot create notifier (%s: %s) without parent object",
-		               op.toString(), object?object->className():"[NULL]");
-		return NULL;
+		               op.toString(), object?object->className():"[nullptr]");
+		return nullptr;
 	}
 	return Create(parent->publicID(), op, object);
 }
@@ -211,7 +211,7 @@ Notifier* Notifier::Create(PublicObject* parent,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 NotifierMessage* Notifier::GetMessage(bool allNotifier) {
 	if ( _notifiers.empty() )
-		return NULL;
+		return nullptr;
 
 	NotifierMessage* msg = new NotifierMessage;
 	PoolIterator it = _notifiers.begin();
@@ -271,7 +271,7 @@ void Notifier::Enable() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Notifier::SetEnabled(bool e) {
-	if ( _lock.get() == NULL )
+	if ( _lock.get() == nullptr )
 		// Store a new thread specific pointer value with 'enable'
 		_lock.reset(new bool(!e));
 	else
@@ -284,7 +284,7 @@ void Notifier::SetEnabled(bool e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Notifier::IsEnabled() {
-	if ( _lock.get() == NULL ) {
+	if ( _lock.get() == nullptr ) {
 		// Store a new thread specific pointer value with default: true
 		bool *value = new bool(true);
 		_lock.reset(value);
@@ -317,16 +317,16 @@ bool Notifier::IsCheckEnabled() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Notifier::apply() const {
-	if ( _object == NULL ) {
+	if ( _object == nullptr ) {
 		SEISCOMP_ERROR("cannot apply notifier without an object");
 		return false;
 	}
 
 	PublicObject* publicObject = PublicObject::Find(_parentID);
-	if ( publicObject == NULL ) {
+	if ( publicObject == nullptr ) {
 		if ( _operation == OP_UPDATE ) {
 			PublicObject *po = PublicObject::Cast(_object);
-			if ( po != NULL ) {
+			if ( po != nullptr ) {
 				publicObject = PublicObject::Find(po->publicID());
 				if ( publicObject && publicObject != po ) {
 					bool saveState = IsEnabled();
@@ -434,7 +434,7 @@ Object* Notifier::object() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Notifier::CompareResult Notifier::cmp(const Notifier* n) const {
-	if ( n == NULL ) return CR_DIFFERENT;
+	if ( n == nullptr ) return CR_DIFFERENT;
 	return cmp(*n);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -458,7 +458,7 @@ Notifier::CompareResult Notifier::cmp(const Notifier& n) const {
 	Object *obj2 = n.object();
 
 	// At least one notifier does not refer to an object
-	if ( obj1 == NULL || obj2 == NULL )
+	if ( obj1 == nullptr || obj2 == nullptr )
 		return CR_DIFFERENT;
 
 	if ( obj1 != obj2 ) {
@@ -505,7 +505,7 @@ NotifierCreator::NotifierCreator(Operation op)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool NotifierCreator::visit(PublicObject* publicObject) {
-	return Notifier::Create(publicObject->parent(), _operation, publicObject) != NULL;
+	return Notifier::Create(publicObject->parent(), _operation, publicObject) != nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

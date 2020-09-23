@@ -280,12 +280,12 @@ class OriginTreeWidget : public QTreeWidget {
 			QList<DataModel::Origin*> origins;
 			DataModel::Origin *org;
 
-			if ( parent != NULL )
+			if ( parent != nullptr )
 				org = DataModel::Origin::Find(parent->data(0,Qt::UserRole).toString().toStdString());
 			else
 				org = DataModel::Origin::Find(topLevelItem(index)->data(0,Qt::UserRole).toString().toStdString());
 
-			if ( org != NULL ) origins.append(org);
+			if ( org != nullptr ) origins.append(org);
 
 			while ( !stream.atEnd() ) {
 				int row, col;
@@ -294,7 +294,7 @@ class OriginTreeWidget : public QTreeWidget {
 				if ( col == 0 ) {
 					QString originID = roleDataMap[Qt::UserRole].toString();
 					org = DataModel::Origin::Find(originID.toStdString());
-					if ( org == NULL )
+					if ( org == nullptr )
 						cerr << "Origin with id '" << qPrintable(originID) << "' not found" << endl;
 					else if ( !origins.contains(org) )
 						origins.append(org);
@@ -508,7 +508,7 @@ void FMMap::draw(QPainter& p) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FMMap::init() {
-	_originSymbol = NULL;
+	_originSymbol = nullptr;
 	QSettings settings;
 	settings.beginGroup("FocalMechanismMap");
 	_drawAgency = settings.value("tensorDrawAgency", false).toBool();
@@ -524,15 +524,15 @@ void FMMap::init() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FMMap::addFM(const DataModel::FocalMechanism *fm) {
-	Origin *o = NULL;
-	MomentTensor *mt = NULL;
+	Origin *o = nullptr;
+	MomentTensor *mt = nullptr;
 	if ( fm->momentTensorCount() > 0 ) {
 		mt = fm->momentTensor(0);
 		o = Origin::Find(mt->derivedOriginID());
 	}
 	if ( !o )
 		o = Origin::Find(fm->triggeringOriginID());
-	const NodalPlane *np = NULL;
+	const NodalPlane *np = nullptr;
 	try { np = &(fm->nodalPlanes().nodalPlane1()); }
 	catch ( Core::ValueException& ) {}
 
@@ -624,7 +624,7 @@ void FMMap::addFM(const DataModel::FocalMechanism *fm) {
 void FMMap::clear() {
 	canvas().symbolCollection()->clear();
 	_fmBoundings = QRectF();
-	_originSymbol = NULL;
+	_originSymbol = nullptr;
 	_fmSymbols.clear();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -660,11 +660,11 @@ void FMMap::setEvent(const DataModel::Event *event) {
 	Map::SymbolLayer *col = canvas().symbolCollection();
 	if ( _originSymbol ) {
 		col->remove(_originSymbol);
-		_originSymbol = NULL;
+		_originSymbol = nullptr;
 	}
 
 	QPointF epicenter;
-	Origin *o = NULL;
+	Origin *o = nullptr;
 	if ( event ) o = Origin::Find(event->preferredOriginID());
 	if ( o ) {
 		_originSymbol = new OriginSymbol;
@@ -722,7 +722,7 @@ void FMMap::contextMenuEvent(QContextMenuEvent *e) {
 	updateContextMenu(&menu);
 
 	QAction *action = menu.exec(e->globalPos());
-	if ( action == NULL ) return;
+	if ( action == nullptr ) return;
 
 	bool fmSymbolChanged = true;
 	if ( action == actionDrawAgency )
@@ -779,7 +779,7 @@ void FMMap::contextMenuEvent(QContextMenuEvent *e) {
 EventEdit::EventEdit(DatabaseQuery* reader,
                      Map::ImageTree *mapTree,
                      QWidget *parent) {
-	_fmActivityMovie = NULL;
+	_fmActivityMovie = nullptr;
 	_reader = reader;
 	_mapTreeOrigin = mapTree;
 	_mapTreeFM = mapTree;
@@ -1593,11 +1593,11 @@ void EventEdit::updatePreferredFMIndex() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::setFMActivity(bool e) {
-	if ( e && _fmActivityMovie != NULL ) return;
-	if ( !e && _fmActivityMovie == NULL ) return;
+	if ( e && _fmActivityMovie != nullptr ) return;
+	if ( !e && _fmActivityMovie == nullptr ) return;
 
 	if ( e ) {
-		if ( _fmActivityMovie != NULL ) delete _fmActivityMovie;
+		if ( _fmActivityMovie != nullptr ) delete _fmActivityMovie;
 
 		_fmActivityMovie = new QMovie(this);
 		_fmActivityMovie->setFileName(":/icons/icons/mt.mng");
@@ -1608,10 +1608,10 @@ void EventEdit::setFMActivity(bool e) {
 	}
 	else {
 		_fmActivity->hide();
-		_fmActivity->setMovie(NULL);
+		_fmActivity->setMovie(nullptr);
 
-		if ( _fmActivityMovie != NULL ) delete _fmActivityMovie;
-		_fmActivityMovie = NULL;
+		if ( _fmActivityMovie != nullptr ) delete _fmActivityMovie;
+		_fmActivityMovie = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1634,10 +1634,10 @@ void EventEdit::setEvent(Event *event, Origin *origin) {
 		clearOrigins();
 		clearFMs();
 
-		_currentOrigin = NULL;
-		_currentFM = NULL;
+		_currentOrigin = nullptr;
+		_currentFM = nullptr;
 
-		if ( _currentEvent == NULL ) {
+		if ( _currentEvent == nullptr ) {
 			resetContent();
 			return;
 		}
@@ -1647,13 +1647,13 @@ void EventEdit::setEvent(Event *event, Origin *origin) {
 		if ( _currentEvent->originReferenceCount() == 0 && _reader ) {
 			_reader->loadOriginReferences(_currentEvent.get());
 			clearOrigins();
-			_currentOrigin = NULL;
+			_currentOrigin = nullptr;
 		}
 
 		if ( _currentEvent->focalMechanismReferenceCount() == 0 && _reader ) {
 			_reader->loadFocalMechanismReferences(_currentEvent.get());
 			clearFMs();
-			_currentFM = NULL;
+			_currentFM = nullptr;
 		}
 
 		for ( size_t i = 0; i < _currentEvent->originReferenceCount(); ++i ) {
@@ -1699,9 +1699,9 @@ void EventEdit::setEvent(Event *event, Origin *origin) {
 		updateContent();
 	}
 
-	if ( _currentEvent == NULL ) return;
+	if ( _currentEvent == nullptr ) return;
 
-	if ( origin == NULL )
+	if ( origin == nullptr )
 		origin = Origin::Find(_currentEvent->preferredOriginID());
 
 	// Preselect the requested origin
@@ -1739,7 +1739,7 @@ void EventEdit::setEvent(Event *event, Origin *origin) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::updateOrigin(Origin *org) {
-	if ( org == NULL ) return;
+	if ( org == nullptr ) return;
 
 	if ( _currentOrigin && _currentOrigin->publicID() == org->publicID() )
 		updateOrigin();
@@ -1759,7 +1759,7 @@ void EventEdit::updateOrigin(Origin *org) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::updateFM(FocalMechanism *fm) {
-	if ( fm == NULL ) return;
+	if ( fm == nullptr ) return;
 
 	if ( _currentFM && _currentFM->publicID() == fm->publicID() )
 		updateFM();
@@ -2086,7 +2086,7 @@ void EventEdit::updateFMRow(int row, FocalMechanism *fm) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::updateContent() {
-	if ( _currentEvent == NULL ) {
+	if ( _currentEvent == nullptr ) {
 		resetContent();
 		return;
 	}
@@ -2149,13 +2149,13 @@ void EventEdit::resetContent() {
 	_originBoundings = QRectF();
 	_originMap->canvas().symbolCollection()->clear();
 	_fmMap->clear();
-	_fmMap->setEvent(NULL);
+	_fmMap->setEvent(nullptr);
 	_originTree->clear();
 	_ui.fmTree->clear();
 	_ui.listJournal->clear();
 	_ui.fmTriggerButton->setEnabled(false);
 
-	_fmActivity->setMovie(NULL);
+	_fmActivity->setMovie(nullptr);
 	_fmActivity->hide();
 
 	setEnabled(false);
@@ -2201,7 +2201,7 @@ void EventEdit::resetOrigin() {
 	Map::SymbolLayer::iterator end = _originMap->canvas().symbolCollection()->end();
 	Map::SymbolLayer::iterator it = begin;
 
-	_originMap->canvas().symbolCollection()->setTop(NULL);
+	_originMap->canvas().symbolCollection()->setTop(nullptr);
 	for ( ; it != end; ++it )
 		static_cast<OriginSymbol*>(*it)->setFilled(false);
 
@@ -2224,7 +2224,7 @@ void EventEdit::resetMagnitude() {
 	_ui.buttonFixMagnitudeType->setEnabled(false);
 	_ui.buttonReleaseMagnitudeType->setEnabled(false);
 
-	_currentMagnitude = NULL;
+	_currentMagnitude = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2263,7 +2263,7 @@ void EventEdit::resetFM() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::resetMT(bool resetCurrent) {
 	if ( resetCurrent ) {
-		_currentMT = NULL;
+		_currentMT = nullptr;
 		_ui.mtOriginInfo->setEnabled(false);
 		_ui.mtMagInfo->setEnabled(false);
 	}
@@ -2805,11 +2805,11 @@ void EventEdit::updateJournal() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::sortOriginItems(int column) {
 	QHeaderView* header =  _originTree->header();
-	if ( header == NULL ) return;
+	if ( header == nullptr ) return;
 
 	Qt::SortOrder order = header->sortIndicatorOrder();
 
-	QTreeWidgetItem *prefItem = NULL;
+	QTreeWidgetItem *prefItem = nullptr;
 	if ( _preferredOriginIdx != -1 )
 		prefItem = _originTree->topLevelItem(_preferredOriginIdx);
 
@@ -2855,11 +2855,11 @@ void EventEdit::sortOriginItems(int column) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::sortFMItems(int column) {
 	QHeaderView* header =  _ui.fmTree->header();
-	if ( header == NULL ) return;
+	if ( header == nullptr ) return;
 
 	Qt::SortOrder order = header->sortIndicatorOrder();
 
-	QTreeWidgetItem *prefItem = NULL;
+	QTreeWidgetItem *prefItem = nullptr;
 	if ( _preferredFMIdx != -1 )
 		prefItem = _ui.fmTree->topLevelItem(_preferredFMIdx);
 
@@ -2921,11 +2921,11 @@ void EventEdit::fmSelected(QTreeWidgetItem *, int) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::sortMagnitudeItems(int c) {
 	QHeaderView* header =  _ui.treeMagnitudes->header();
-	if ( header == NULL ) return;
+	if ( header == nullptr ) return;
 
 	Qt::SortOrder order = header->sortIndicatorOrder();
 
-	QTreeWidgetItem *prefItem = NULL;
+	QTreeWidgetItem *prefItem = nullptr;
 	if ( _preferredMagnitudeIdx != -1 )
 		prefItem = _ui.treeMagnitudes->topLevelItem(_preferredMagnitudeIdx);
 
@@ -2973,7 +2973,7 @@ void EventEdit::currentTypeCertaintyChanged(int row) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::currentOriginChanged(QTreeWidgetItem* item, QTreeWidgetItem*) {
-	if ( item == NULL ) {
+	if ( item == nullptr ) {
 		resetOrigin();
 		return;
 	}
@@ -3018,7 +3018,7 @@ void EventEdit::currentOriginChanged(QTreeWidgetItem* item, QTreeWidgetItem*) {
 
 	sortMagnitudeItems(_ui.treeMagnitudes->sortColumn());
 
-	_ui.treeMagnitudes->setCurrentItem(_preferredMagnitudeIdx == -1?NULL:_ui.treeMagnitudes->topLevelItem(_preferredMagnitudeIdx));
+	_ui.treeMagnitudes->setCurrentItem(_preferredMagnitudeIdx == -1?nullptr:_ui.treeMagnitudes->topLevelItem(_preferredMagnitudeIdx));
 
 	_ui.buttonFixOrigin->setEnabled(true);
 	_ui.comboFixOrigin->setEnabled(true);
@@ -3035,7 +3035,7 @@ void EventEdit::currentOriginChanged(QTreeWidgetItem* item, QTreeWidgetItem*) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::currentFMChanged(QTreeWidgetItem* item, QTreeWidgetItem*) {
-	if ( item == NULL ) {
+	if ( item == nullptr ) {
 		resetFM();
 		return;
 	}
@@ -3070,7 +3070,7 @@ void EventEdit::currentFMChanged(QTreeWidgetItem* item, QTreeWidgetItem*) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::currentMagnitudeChanged(QTreeWidgetItem *item, QTreeWidgetItem*) {
-	if ( item == NULL ) {
+	if ( item == nullptr ) {
 		resetMagnitude();
 		return;
 	}
@@ -3101,7 +3101,7 @@ void EventEdit::originTreeCustomContextMenu(const QPoint &pos) {
 	QModelIndexList selection = _originTree->selectionModel()->selectedRows();
 	QMenu menu;
 
-	QAction *actionMerge = NULL;
+	QAction *actionMerge = nullptr;
 	if ( selection.count() >= 2 ) {
 		actionMerge = menu.addAction("Merge selected origins");
 		menu.addSeparator();
@@ -3117,7 +3117,7 @@ void EventEdit::originTreeCustomContextMenu(const QPoint &pos) {
 			if ( idx.column() != 0 ) continue;
 			QString originID = idx.data(Qt::UserRole).toString();
 			org = DataModel::Origin::Find(originID.toStdString());
-			if ( org == NULL )
+			if ( org == nullptr )
 				cerr << "Origin with id '" << qPrintable(originID) << "' not found" << endl;
 			else if ( !origins.contains(org) )
 				origins.append(org);

@@ -57,7 +57,7 @@ class StationsModel : public QAbstractTableModel {
 		              bool ignoreDisabledStations,
 		              QObject *parent = 0) : QAbstractTableModel(parent) {
 			DataModel::Inventory* inv = Client::Inventory::Instance()->inventory();
-			if ( inv != NULL ) {
+			if ( inv != nullptr ) {
 				for ( size_t i = 0; i < inv->networkCount(); ++i ) {
 					DataModel::Network* n = inv->network(i);
 		
@@ -194,7 +194,7 @@ class StationsSortFilterProxyModel : public QSortFilterProxyModel {
 SelectStation::SelectStation(Core::Time time, bool ignoreDisabledStations,
                              QWidget* parent, Qt::WindowFlags f)
  : QDialog(parent, f) {
-	init(time, ignoreDisabledStations, NULL);
+	init(time, ignoreDisabledStations, nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

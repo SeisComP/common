@@ -175,11 +175,11 @@ class BaseObjectPropertyBase<A, T, U, F1, F2, 0> : public Core::MetaClassPropert
 				}
 			}
 
-			if ( v == NULL )
-				throw Core::GeneralException("value must not be NULL");
+			if ( v == nullptr )
+				throw Core::GeneralException("value must not be nullptr");
 
 			const U *uv = U::ConstCast(v);
-			if ( uv == NULL )
+			if ( uv == nullptr )
 				throw Core::GeneralException("value has wrong classtype");
 
 			(target->*_setter)(*uv);
@@ -230,11 +230,11 @@ class BaseObjectPropertyBase<A, T, U, F1, F2, 1> : public Core::MetaClassPropert
 					}
 				}
 
-				if ( v == NULL )
-					throw Core::GeneralException("value must not be NULL");
+				if ( v == nullptr )
+					throw Core::GeneralException("value must not be nullptr");
 
 				const typename U::value_type *uv = U::value_type::ConstCast(v);
-				if ( uv == NULL )
+				if ( uv == nullptr )
 					throw Core::GeneralException("value has wrong classtype");
 
 				(target->*_setter)(*uv);
@@ -428,7 +428,7 @@ Core::MetaPropertyHandle objectProperty(
 	>::type T;
 
 	Core::MetaPropertyHandle h = Core::MetaPropertyHandle(new ObjectProperty<A, C, T, R1 (C::*)(T1), T2 (C::*)()>(setter, getter));
-	h->setInfo(name, type, false, true, isIndex, isReference, isOptional, false, NULL);
+	h->setInfo(name, type, false, true, isIndex, isReference, isOptional, false, nullptr);
 	return h;
 }
 
@@ -444,7 +444,7 @@ Core::MetaPropertyHandle createArrayProperty(const std::string& name, const std:
                                              bool (C::*ptrRemove)(T *)) {
 	Core::MetaPropertyHandle h = Core::MetaPropertyHandle(
 		new P<C, T, size_t (C::*)() const, T* (C::*)(size_t i) const, bool (C::*)(T *), bool (C::*)(size_t i), bool (C::*)(T *)>(counter, getter ,adder, indexRemove, ptrRemove));
-	h->setInfo(name, type, true, true, false, false, false, false, NULL);
+	h->setInfo(name, type, true, true, false, false, false, false, nullptr);
 	return h;
 }
 
@@ -460,7 +460,7 @@ Core::MetaPropertyHandle createArrayClassProperty(const std::string& name,
                                                   bool (C::*ptrRemove)(T *)) {
 	Core::MetaPropertyHandle h = Core::MetaPropertyHandle(
 		new P<A, C, T, size_t (C::*)() const, T* (C::*)(size_t i) const, bool (C::*)(T *), bool (C::*)(size_t i), bool (C::*)(T *)>(counter, getter ,adder, indexRemove, ptrRemove));
-	h->setInfo(name, type, true, true, false, false, false, false, NULL);
+	h->setInfo(name, type, true, true, false, false, false, false, nullptr);
 	return h;
 }
 

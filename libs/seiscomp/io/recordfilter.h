@@ -45,13 +45,13 @@ class SC_SYSTEM_CORE_API RecordFilterInterface : public Seiscomp::Core::BaseObje
 	public:
 		//! Can return a copy of the filtered record. Some filters might
 		//! collect more data until a record is output so a return of
-		//! NULL is *not* an error. Call flush() if no more records are
+		//! nullptr is *not* an error. Call flush() if no more records are
 		//! expected to be fed.
 		//! @return A copy of a filtered record
 		virtual Record *feed(const Record *rec) = 0;
 
 		//! Requests to flush pending data. Flush should be called until
-		//! NULL is returned to flush all pending records.
+		//! nullptr is returned to flush all pending records.
 		//! @return A copy of the flushed record
 		virtual Record *flush() = 0;
 

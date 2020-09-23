@@ -835,9 +835,9 @@ void AmplitudeProcessor::setHint(ProcessingHint hint, double value) {
 const AmplitudeProcessor *
 AmplitudeProcessor::componentProcessor(Component comp) const {
 	if ( comp < VerticalComponent || comp > SecondHorizontalComponent )
-		return NULL;
+		return nullptr;
 
-	if ( comp != (Component)_usedComponent ) return NULL;
+	if ( comp != (Component)_usedComponent ) return nullptr;
 
 	return this;
 }
@@ -849,9 +849,9 @@ AmplitudeProcessor::componentProcessor(Component comp) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const DoubleArray *AmplitudeProcessor::processedData(Component comp) const {
 	if ( comp < VerticalComponent || comp > SecondHorizontalComponent )
-		return NULL;
+		return nullptr;
 
-	if ( comp != (Component)_usedComponent ) return NULL;
+	if ( comp != (Component)_usedComponent ) return nullptr;
 
 	return &continuousData();
 }
@@ -865,7 +865,7 @@ void AmplitudeProcessor::writeData() const {
 	if ( !_stream.lastRecord ) return;
 
 	const DoubleArray *data = processedData((Component)_usedComponent);
-	if ( data == NULL ) return;
+	if ( data == nullptr ) return;
 
  	std::ofstream of((_stream.lastRecord->streamID() + "-" + type() + ".data").c_str());
 

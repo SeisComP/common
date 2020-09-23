@@ -145,17 +145,17 @@ struct Generator {
 	}
 
 	value_type create(const string &filterType) const {
-		value_type f = NULL;
+		value_type f = nullptr;
 		typename ParserT::parameter_list &parameters = parser.parameters;
 
 		if ( filterType == "self" )
 			f = new Math::Filtering::SelfFilter<component_type>();
 		else {
 			f = Math::Filtering::InPlaceFilterFactory<component_type>::Create(filterType.c_str());
-			if ( f == NULL ) {
+			if ( f == nullptr ) {
 				parameters.clear();
 				parser.error_message = "unknown filter '" + filterType + "'";
-				return NULL;
+				return nullptr;
 			}
 		}
 
@@ -172,13 +172,13 @@ struct Generator {
 					ss << "wrong parameter at position " << (-result) << " for filter '" << filterType << "'";
 
 				parser.error_message = ss.str();
-				return NULL;
+				return nullptr;
 			}
 		}
 		catch ( std::exception &e ) {
 			parser.error_message = e.what();
 			delete f;
-			return NULL;
+			return nullptr;
 		}
 
 		parameters.clear();
@@ -212,7 +212,7 @@ struct Parser : bs::grammar< Parser<T> >
 	// of variables, it keeps track of a reference to a common table.
 	Parser(value_type &res, parameter_list &params, tmp_list &t, string &err)
 	 : result(res), parameters(params), tmp(t), error_message(err), generator(*this) {
-		result = NULL;
+		result = nullptr;
 		parameters.clear();
 	}
 

@@ -130,7 +130,7 @@ class SC_SYSTEM_CORE_API PublicObject : public Object {
 		/**
 		 * Returns the object with the given 'publicID'.
 		 * The returned object must not be deleted.
-		 * If no object can be found with the given Id, NULL is
+		 * If no object can be found with the given Id, nullptr is
 		 * returned.
 		 */
 		static PublicObject* Find(const std::string& publicID);

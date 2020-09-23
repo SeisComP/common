@@ -100,7 +100,7 @@ class SC_SYSTEM_CORE_API MetaProperty {
 		             bool  isReference,
 		             bool  isOptional,
 		             bool  isEnum,
-		             const MetaEnum *enumeration = NULL);
+		             const MetaEnum *enumeration = nullptr);
 
 		virtual ~MetaProperty();
 
@@ -116,7 +116,7 @@ class SC_SYSTEM_CORE_API MetaProperty {
 		             bool  isReference,
 		             bool  isOptional,
 		             bool  isEnum,
-		             const MetaEnum *enumeration = NULL);
+		             const MetaEnum *enumeration = nullptr);
 
 
 	// ------------------------------------------------------------------
@@ -149,7 +149,7 @@ class SC_SYSTEM_CORE_API MetaProperty {
 		//! true, -1 otherwise
 		virtual size_t arrayElementCount(const BaseObject *object) const;
 
-		//! Returns the object at position i, NULL otherwise
+		//! Returns the object at position i, nullptr otherwise
 		virtual BaseObject *arrayObject(BaseObject *object, int i) const;
 
 		//! Adds a child to an object.
@@ -244,7 +244,7 @@ class SC_SYSTEM_CORE_API MetaObject {
 	// ----------------------------------------------------------------------
 	public:
 		//! Constructor
-		MetaObject(const RTTI *rtti, const MetaObject *base = NULL);
+		MetaObject(const RTTI *rtti, const MetaObject *base = nullptr);
 		~MetaObject();
 
 
@@ -277,7 +277,7 @@ class SC_SYSTEM_CORE_API MetaObject {
 		bool addProperty(const std::string &name, const std::string &type,
 		                 bool  isArray, bool  isClass, bool  isIndex,
 		                 bool isReference, bool  isOptional, bool isEnum,
-		                 const MetaEnum *enumeration = NULL);
+		                 const MetaEnum *enumeration = nullptr);
 
 		bool addProperty(MetaPropertyHandle);
 
@@ -326,16 +326,16 @@ typedef std::shared_ptr<MetaObject> MetaObjectHandle;
 	protected: \
 		class MetaObject  : public Seiscomp::Core::MetaObject { \
 			public: \
-				MetaObject(const Seiscomp::Core::RTTI* rtti, const Seiscomp::Core::MetaObject *base = NULL); \
+				MetaObject(const Seiscomp::Core::RTTI* rtti, const Seiscomp::Core::MetaObject *base = nullptr); \
 		}
 
 #define IMPLEMENT_METAOBJECT_EMPTY_METHODS(CLASS) \
 	const Seiscomp::Core::MetaObject *CLASS::Meta() { \
-		return NULL; \
+		return nullptr; \
 	} \
 	\
 	const Seiscomp::Core::MetaObject *CLASS::meta() const { \
-		return NULL; \
+		return nullptr; \
 	}
 
 #define IMPLEMENT_METAOBJECT_METHODS(CLASS) \

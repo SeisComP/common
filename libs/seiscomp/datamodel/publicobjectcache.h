@@ -143,7 +143,7 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 		 * into the cache.
 		 * @param publicID The publicID of the PublicObject to be
 		 *                 retrieved
-		 * @return The PublicObject pointer or NULL
+		 * @return The PublicObject pointer or nullptr
 		 */
 		PublicObject *find(const Core::RTTI& classType,
 		                   const std::string& publicID);
@@ -168,7 +168,7 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 		Core::Time oldest() const;
 
 		//! Returns whether the cache is empty or not
-		bool empty() const { return _front == NULL; }
+		bool empty() const { return _front == nullptr; }
 
 		//! Returns the number of cached elements
 		size_t size() const { return _size; }

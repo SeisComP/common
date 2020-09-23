@@ -233,7 +233,7 @@ struct NotifierHandler : public IO::XML::TypedClassHandler<Notifier> {
 			Object *dmo = Object::Cast(*it);
 			if ( dmo ) {
 				static_cast<Notifier*>(obj)->setObject(dmo);
-				*it = NULL;
+				*it = nullptr;
 				return true;
 			}
 		}
@@ -260,7 +260,7 @@ struct NotifierMessageHandler : public IO::XML::ClassHandler {
 			Notifier *notifier = Notifier::Cast(*it);
 			if ( notifier ) {
 				if ( static_cast<NotifierMessage*>(obj)->attach(notifier) )
-					*it = NULL;
+					*it = nullptr;
 			}
 		}
 
@@ -273,7 +273,7 @@ struct NotifierMessageHandler : public IO::XML::ClassHandler {
 		NotifierMessage *nm = static_cast<NotifierMessage*>(obj);
 
 		for ( NotifierMessage::iterator it = nm->begin(); it != nm->end(); ++it )
-			output->handle(it->get(), NULL, NULL);
+			output->handle(it->get(), nullptr, nullptr);
 
 		output->closeElement(tag, ns);
 
@@ -298,7 +298,7 @@ struct DataMessageHandler : public IO::XML::ClassHandler {
 	bool finalize(Core::BaseObject *obj, IO::XML::ChildList *cl) {
 		for ( IO::XML::ChildList::iterator it = cl->begin(); it != cl->end(); ++it ) {
 			if ( static_cast<Core::DataMessage*>(obj)->attach(*it) )
-				*it = NULL;
+				*it = nullptr;
 		}
 
 		return true;
@@ -310,7 +310,7 @@ struct DataMessageHandler : public IO::XML::ClassHandler {
 		Core::DataMessage *nm = static_cast<Core::DataMessage*>(obj);
 
 		for ( Core::DataMessage::iterator it = nm->begin(); it != nm->end(); ++it )
-			output->handle(it->get(), NULL, NULL);
+			output->handle(it->get(), nullptr, nullptr);
 
 		output->closeElement(tag, ns);
 
@@ -462,7 +462,7 @@ class PickAzimuthHandler : public IO::XML::MemberHandler {
 			Pick *pick = static_cast<Pick*>(parent);
 			RealQuantity *value = static_cast<RealQuantity*>(member);
 
-			if ( value == NULL )
+			if ( value == nullptr )
 				pick->setBackazimuth(Core::None);
 
 			return true;

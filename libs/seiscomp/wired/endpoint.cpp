@@ -85,7 +85,7 @@ void Endpoint::update() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Session *Endpoint::accept(Socket *socket) {
-	if ( !checkSocket(socket) ) return NULL;
+	if ( !checkSocket(socket) ) return nullptr;
 	return createSession(socket);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

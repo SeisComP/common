@@ -50,14 +50,14 @@ CommandLine::CommandLine() {}
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 CommandLine::options_description*
 CommandLine::findGroup(const char* group, const char* option) const {
-	if ( group == NULL ) return NULL;
+	if ( group == nullptr ) return nullptr;
 
 	program_options_map::const_iterator it = _groupsMap.find(group);
 	if ( it == _groupsMap.end() ) {
 		if ( option )
 			SEISCOMP_WARNING("Commandline group '%s' not found -> parameter '%s' ignored",
 			                 group, option);
-		return NULL;
+		return nullptr;
 	}
 
 	return (*it).second.get();

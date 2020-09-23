@@ -33,10 +33,10 @@ IMPLEMENT_SC_CLASS_DERIVED(RouteArclink, Object, "RouteArclink");
 
 
 RouteArclink::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("address", "string", false, false, true, false, false, false, NULL, &RouteArclink::setAddress, &RouteArclink::address));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, NULL, &RouteArclink::setStart, &RouteArclink::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, NULL, &RouteArclink::setEnd, &RouteArclink::end));
-	addProperty(Core::simpleProperty("priority", "int", false, false, false, false, true, false, NULL, &RouteArclink::setPriority, &RouteArclink::priority));
+	addProperty(Core::simpleProperty("address", "string", false, false, true, false, false, false, nullptr, &RouteArclink::setAddress, &RouteArclink::address));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &RouteArclink::setStart, &RouteArclink::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &RouteArclink::setEnd, &RouteArclink::end));
+	addProperty(Core::simpleProperty("priority", "int", false, false, false, false, true, false, nullptr, &RouteArclink::setPriority, &RouteArclink::priority));
 }
 
 
@@ -233,7 +233,7 @@ const RouteArclinkIndex& RouteArclink::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RouteArclink::equalIndex(const RouteArclink* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -265,7 +265,7 @@ RouteArclink& RouteArclink::operator=(const RouteArclink& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RouteArclink::assign(Object* other) {
 	RouteArclink* otherRouteArclink = RouteArclink::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherRouteArclink;
@@ -279,11 +279,11 @@ bool RouteArclink::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RouteArclink::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Route* route = Route::Cast(parent);
-	if ( route != NULL )
+	if ( route != nullptr )
 		return route->add(this);
 
 	SEISCOMP_ERROR("RouteArclink::attachTo(%s) -> wrong class type", parent->className());
@@ -296,11 +296,11 @@ bool RouteArclink::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RouteArclink::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Route* route = Route::Cast(object);
-	if ( route != NULL ) {
+	if ( route != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -308,7 +308,7 @@ bool RouteArclink::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			RouteArclink* child = route->routeArclink(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return route->remove(child);
 			else {
 				SEISCOMP_DEBUG("RouteArclink::detachFrom(Route): routeArclink has not been found");
@@ -327,7 +327,7 @@ bool RouteArclink::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RouteArclink::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

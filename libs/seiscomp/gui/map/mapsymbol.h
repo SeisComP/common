@@ -59,9 +59,9 @@ class SC_GUI_API Symbol {
 	// ----------------------------------------------------------------------
 	protected:
 		//! C'tor
-		Symbol(Decorator* decorator = NULL);
-		Symbol(double lat, double lon, Decorator* decorator = NULL);
-		Symbol(const QPointF &latlon, Decorator* decorator = NULL);
+		Symbol(Decorator* decorator = nullptr);
+		Symbol(double lat, double lon, Decorator* decorator = nullptr);
+		Symbol(const QPointF &latlon, Decorator* decorator = nullptr);
 
 	public:
 		virtual ~Symbol();

@@ -72,11 +72,11 @@ Reading::Reading(const std::string& publicID)
 Reading::~Reading() {
 	std::for_each(_pickReferences.begin(), _pickReferences.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&PickReference::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&PickReferencePtr::get)));
 	std::for_each(_amplitudeReferences.begin(), _amplitudeReferences.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&AmplitudeReference::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&AmplitudeReferencePtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -96,12 +96,12 @@ Reading* Reading::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Reading* Reading::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new Reading(publicID);
@@ -169,7 +169,7 @@ Reading& Reading::operator=(const Reading& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::assign(Object* other) {
 	Reading* otherReading = Reading::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherReading;
@@ -183,11 +183,11 @@ bool Reading::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	EventParameters* eventParameters = EventParameters::Cast(parent);
-	if ( eventParameters != NULL )
+	if ( eventParameters != nullptr )
 		return eventParameters->add(this);
 
 	SEISCOMP_ERROR("Reading::attachTo(%s) -> wrong class type", parent->className());
@@ -200,11 +200,11 @@ bool Reading::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	EventParameters* eventParameters = EventParameters::Cast(object);
-	if ( eventParameters != NULL ) {
+	if ( eventParameters != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -212,7 +212,7 @@ bool Reading::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			Reading* child = eventParameters->findReading(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return eventParameters->remove(child);
 			else {
 				SEISCOMP_DEBUG("Reading::detachFrom(EventParameters): reading has not been found");
@@ -231,7 +231,7 @@ bool Reading::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -255,9 +255,9 @@ Object* Reading::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::updateChild(Object* child) {
 	PickReference* pickReferenceChild = PickReference::Cast(child);
-	if ( pickReferenceChild != NULL ) {
+	if ( pickReferenceChild != nullptr ) {
 		PickReference* pickReferenceElement = pickReference(pickReferenceChild->index());
-		if ( pickReferenceElement != NULL ) {
+		if ( pickReferenceElement != nullptr ) {
 			*pickReferenceElement = *pickReferenceChild;
 			pickReferenceElement->update();
 			return true;
@@ -266,9 +266,9 @@ bool Reading::updateChild(Object* child) {
 	}
 
 	AmplitudeReference* amplitudeReferenceChild = AmplitudeReference::Cast(child);
-	if ( amplitudeReferenceChild != NULL ) {
+	if ( amplitudeReferenceChild != nullptr ) {
 		AmplitudeReference* amplitudeReferenceElement = amplitudeReference(amplitudeReferenceChild->index());
-		if ( amplitudeReferenceElement != NULL ) {
+		if ( amplitudeReferenceElement != nullptr ) {
 			*amplitudeReferenceElement = *amplitudeReferenceChild;
 			amplitudeReferenceElement->update();
 			return true;
@@ -328,7 +328,7 @@ PickReference* Reading::pickReference(const PickReferenceIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -337,11 +337,11 @@ PickReference* Reading::pickReference(const PickReferenceIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::add(PickReference* pickReference) {
-	if ( pickReference == NULL )
+	if ( pickReference == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( pickReference->parent() != NULL ) {
+	if ( pickReference->parent() != nullptr ) {
 		SEISCOMP_ERROR("Reading::add(PickReference*) -> element has already a parent");
 		return false;
 	}
@@ -376,7 +376,7 @@ bool Reading::add(PickReference* pickReference) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::remove(PickReference* pickReference) {
-	if ( pickReference == NULL )
+	if ( pickReference == nullptr )
 		return false;
 
 	if ( pickReference->parent() != this ) {
@@ -397,7 +397,7 @@ bool Reading::remove(PickReference* pickReference) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_pickReferences.erase(it);
@@ -421,7 +421,7 @@ bool Reading::removePickReference(size_t i) {
 		_pickReferences[i]->accept(&nc);
 	}
 
-	_pickReferences[i]->setParent(NULL);
+	_pickReferences[i]->setParent(nullptr);
 	childRemoved(_pickReferences[i].get());
 
 	_pickReferences.erase(_pickReferences.begin() + i);
@@ -436,7 +436,7 @@ bool Reading::removePickReference(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::removePickReference(const PickReferenceIndex& i) {
 	PickReference* object = pickReference(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -468,7 +468,7 @@ AmplitudeReference* Reading::amplitudeReference(const AmplitudeReferenceIndex& i
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -477,11 +477,11 @@ AmplitudeReference* Reading::amplitudeReference(const AmplitudeReferenceIndex& i
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::add(AmplitudeReference* amplitudeReference) {
-	if ( amplitudeReference == NULL )
+	if ( amplitudeReference == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( amplitudeReference->parent() != NULL ) {
+	if ( amplitudeReference->parent() != nullptr ) {
 		SEISCOMP_ERROR("Reading::add(AmplitudeReference*) -> element has already a parent");
 		return false;
 	}
@@ -516,7 +516,7 @@ bool Reading::add(AmplitudeReference* amplitudeReference) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::remove(AmplitudeReference* amplitudeReference) {
-	if ( amplitudeReference == NULL )
+	if ( amplitudeReference == nullptr )
 		return false;
 
 	if ( amplitudeReference->parent() != this ) {
@@ -537,7 +537,7 @@ bool Reading::remove(AmplitudeReference* amplitudeReference) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_amplitudeReferences.erase(it);
@@ -561,7 +561,7 @@ bool Reading::removeAmplitudeReference(size_t i) {
 		_amplitudeReferences[i]->accept(&nc);
 	}
 
-	_amplitudeReferences[i]->setParent(NULL);
+	_amplitudeReferences[i]->setParent(nullptr);
 	childRemoved(_amplitudeReferences[i].get());
 
 	_amplitudeReferences.erase(_amplitudeReferences.begin() + i);
@@ -576,7 +576,7 @@ bool Reading::removeAmplitudeReference(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::removeAmplitudeReference(const AmplitudeReferenceIndex& i) {
 	AmplitudeReference* object = amplitudeReference(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

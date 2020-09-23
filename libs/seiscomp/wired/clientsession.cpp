@@ -140,7 +140,7 @@ void ClientSession::flush() {
 			if ( written < 0 ) {
 				if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
 					// Close the session
-					_currentBuffer = NULL;
+					_currentBuffer = nullptr;
 					close();
 					break;
 				}
@@ -169,7 +169,7 @@ void ClientSession::flush() {
 			// Error on socket?
 			if ( written < 0 ) {
 				if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
-					_currentBuffer = NULL;
+					_currentBuffer = nullptr;
 					// Close the session
 					close();
 					break;
@@ -196,7 +196,7 @@ void ClientSession::flush() {
 
 			if ( !_currentBuffer->updateBuffer() ) {
 				bufferSent(_currentBuffer.get());
-				_currentBuffer = NULL;
+				_currentBuffer = nullptr;
 				_currentBufferHeaderOffset = 0;
 
 				if ( !_bufferQueue.empty() ) {
@@ -490,7 +490,7 @@ bool ClientSession::send(Buffer *buf) {
 	else
 		_bufferBytesPending += buf->data.size();
 
-	if ( _currentBuffer == NULL ) {
+	if ( _currentBuffer == nullptr ) {
 		_currentBuffer = buf;
 		_currentBufferHeaderOffset = 0;
 		_currentBufferDataOffset = 0;

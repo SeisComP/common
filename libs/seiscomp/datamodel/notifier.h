@@ -122,7 +122,7 @@ class SC_SYSTEM_CORE_API Notifier : public Seiscomp::Core::BaseObject {
 		 *                    including one notifier
 		 * @return The message object, if there is one. If each
 		 *         notifier is send by its own message one should
-		 *         call this method until it returns NULL.
+		 *         call this method until it returns nullptr.
 		 */
 		static NotifierMessage* GetMessage(bool allNotifier = true);
 
@@ -263,7 +263,7 @@ class NotifierStoreAppender : public Visitor {
 	// ----------------------------------------------------------------------
 	public:
 		bool visit(PublicObject *po) {
-			if ( po->parent() == NULL ) {
+			if ( po->parent() == nullptr ) {
 				if ( _parentID.empty() )
 					return false;
 				_store->push_back(new Notifier(_parentID, _operation, po));
@@ -274,7 +274,7 @@ class NotifierStoreAppender : public Visitor {
 		}
 
 		void visit(Object *o) {
-			if ( o->parent() == NULL ) {
+			if ( o->parent() == nullptr ) {
 				if ( _parentID.empty() )
 					return;
 				_store->push_back(new Notifier(_parentID, _operation, o));

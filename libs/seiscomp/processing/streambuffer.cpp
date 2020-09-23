@@ -99,7 +99,7 @@ RecordSequence* StreamBuffer::sequence(const WaveformID& wid) const {
 	SequenceMap::const_iterator it = _sequences.find(wid);
 	if ( it != _sequences.end() )
 		return it->second;
-	return NULL;
+	return nullptr;
 }
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -109,14 +109,14 @@ RecordSequence* StreamBuffer::sequence(const WaveformID& wid) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordSequence* StreamBuffer::feed(const Record *rec) {
-	if ( rec == NULL ) return NULL;
+	if ( rec == nullptr ) return nullptr;
 
 	_newStreamAdded = false;
 
 	WaveformID wid(rec);
 	RecordSequence *seq = sequence(wid);
 
-	if ( seq == NULL ) {
+	if ( seq == nullptr ) {
 		switch ( _mode ) {
 			case TIME_WINDOW:
 				seq = new TimeWindowBuffer(Core::TimeWindow(_timeStart, _timeStart + _timeSpan));
@@ -133,7 +133,7 @@ RecordSequence* StreamBuffer::feed(const Record *rec) {
 	if ( seq->feed(rec) )
 		return seq;
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

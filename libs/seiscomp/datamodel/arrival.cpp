@@ -33,21 +33,21 @@ IMPLEMENT_SC_CLASS_DERIVED(Arrival, Object, "Arrival");
 
 
 Arrival::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("pickID", "string", false, false, true, true, false, false, NULL, &Arrival::setPickID, &Arrival::pickID));
+	addProperty(Core::simpleProperty("pickID", "string", false, false, true, true, false, false, nullptr, &Arrival::setPickID, &Arrival::pickID));
 	addProperty(objectProperty<Phase>("phase", "Phase", false, false, false, &Arrival::setPhase, &Arrival::phase));
-	addProperty(Core::simpleProperty("timeCorrection", "float", false, false, false, false, true, false, NULL, &Arrival::setTimeCorrection, &Arrival::timeCorrection));
-	addProperty(Core::simpleProperty("azimuth", "float", false, false, false, false, true, false, NULL, &Arrival::setAzimuth, &Arrival::azimuth));
-	addProperty(Core::simpleProperty("distance", "float", false, false, false, false, true, false, NULL, &Arrival::setDistance, &Arrival::distance));
-	addProperty(Core::simpleProperty("takeOffAngle", "float", false, false, false, false, true, false, NULL, &Arrival::setTakeOffAngle, &Arrival::takeOffAngle));
-	addProperty(Core::simpleProperty("timeResidual", "float", false, false, false, false, true, false, NULL, &Arrival::setTimeResidual, &Arrival::timeResidual));
-	addProperty(Core::simpleProperty("horizontalSlownessResidual", "float", false, false, false, false, true, false, NULL, &Arrival::setHorizontalSlownessResidual, &Arrival::horizontalSlownessResidual));
-	addProperty(Core::simpleProperty("backazimuthResidual", "float", false, false, false, false, true, false, NULL, &Arrival::setBackazimuthResidual, &Arrival::backazimuthResidual));
-	addProperty(Core::simpleProperty("timeUsed", "boolean", false, false, false, false, true, false, NULL, &Arrival::setTimeUsed, &Arrival::timeUsed));
-	addProperty(Core::simpleProperty("horizontalSlownessUsed", "boolean", false, false, false, false, true, false, NULL, &Arrival::setHorizontalSlownessUsed, &Arrival::horizontalSlownessUsed));
-	addProperty(Core::simpleProperty("backazimuthUsed", "boolean", false, false, false, false, true, false, NULL, &Arrival::setBackazimuthUsed, &Arrival::backazimuthUsed));
-	addProperty(Core::simpleProperty("weight", "float", false, false, false, false, true, false, NULL, &Arrival::setWeight, &Arrival::weight));
-	addProperty(Core::simpleProperty("earthModelID", "string", false, false, false, false, false, false, NULL, &Arrival::setEarthModelID, &Arrival::earthModelID));
-	addProperty(Core::simpleProperty("preliminary", "boolean", false, false, false, false, true, false, NULL, &Arrival::setPreliminary, &Arrival::preliminary));
+	addProperty(Core::simpleProperty("timeCorrection", "float", false, false, false, false, true, false, nullptr, &Arrival::setTimeCorrection, &Arrival::timeCorrection));
+	addProperty(Core::simpleProperty("azimuth", "float", false, false, false, false, true, false, nullptr, &Arrival::setAzimuth, &Arrival::azimuth));
+	addProperty(Core::simpleProperty("distance", "float", false, false, false, false, true, false, nullptr, &Arrival::setDistance, &Arrival::distance));
+	addProperty(Core::simpleProperty("takeOffAngle", "float", false, false, false, false, true, false, nullptr, &Arrival::setTakeOffAngle, &Arrival::takeOffAngle));
+	addProperty(Core::simpleProperty("timeResidual", "float", false, false, false, false, true, false, nullptr, &Arrival::setTimeResidual, &Arrival::timeResidual));
+	addProperty(Core::simpleProperty("horizontalSlownessResidual", "float", false, false, false, false, true, false, nullptr, &Arrival::setHorizontalSlownessResidual, &Arrival::horizontalSlownessResidual));
+	addProperty(Core::simpleProperty("backazimuthResidual", "float", false, false, false, false, true, false, nullptr, &Arrival::setBackazimuthResidual, &Arrival::backazimuthResidual));
+	addProperty(Core::simpleProperty("timeUsed", "boolean", false, false, false, false, true, false, nullptr, &Arrival::setTimeUsed, &Arrival::timeUsed));
+	addProperty(Core::simpleProperty("horizontalSlownessUsed", "boolean", false, false, false, false, true, false, nullptr, &Arrival::setHorizontalSlownessUsed, &Arrival::horizontalSlownessUsed));
+	addProperty(Core::simpleProperty("backazimuthUsed", "boolean", false, false, false, false, true, false, nullptr, &Arrival::setBackazimuthUsed, &Arrival::backazimuthUsed));
+	addProperty(Core::simpleProperty("weight", "float", false, false, false, false, true, false, nullptr, &Arrival::setWeight, &Arrival::weight));
+	addProperty(Core::simpleProperty("earthModelID", "string", false, false, false, false, false, false, nullptr, &Arrival::setEarthModelID, &Arrival::earthModelID));
+	addProperty(Core::simpleProperty("preliminary", "boolean", false, false, false, false, true, false, nullptr, &Arrival::setPreliminary, &Arrival::preliminary));
 	addProperty(objectProperty<CreationInfo>("creationInfo", "CreationInfo", false, false, true, &Arrival::setCreationInfo, &Arrival::creationInfo));
 }
 
@@ -512,7 +512,7 @@ const ArrivalIndex& Arrival::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Arrival::equalIndex(const Arrival* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -557,7 +557,7 @@ Arrival& Arrival::operator=(const Arrival& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Arrival::assign(Object* other) {
 	Arrival* otherArrival = Arrival::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherArrival;
@@ -571,11 +571,11 @@ bool Arrival::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Arrival::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Origin* origin = Origin::Cast(parent);
-	if ( origin != NULL )
+	if ( origin != nullptr )
 		return origin->add(this);
 
 	SEISCOMP_ERROR("Arrival::attachTo(%s) -> wrong class type", parent->className());
@@ -588,11 +588,11 @@ bool Arrival::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Arrival::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Origin* origin = Origin::Cast(object);
-	if ( origin != NULL ) {
+	if ( origin != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -600,7 +600,7 @@ bool Arrival::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			Arrival* child = origin->arrival(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return origin->remove(child);
 			else {
 				SEISCOMP_DEBUG("Arrival::detachFrom(Origin): arrival has not been found");
@@ -619,7 +619,7 @@ bool Arrival::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Arrival::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

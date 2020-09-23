@@ -48,7 +48,7 @@ bool byLatitude(const Symbol *s1, const Symbol *s2) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SymbolLayer::SymbolLayer(QObject *parent)
 : Layer(parent)
-, _topSymbol(NULL)
+, _topSymbol(nullptr)
 {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -80,9 +80,9 @@ SymbolLayer::const_iterator SymbolLayer::remove(Symbol *symbol) {
 	for ( Symbols::iterator it = _symbols.begin();
 	      it != _symbols.end(); ++it ) {
 		if ( *it == symbol ) {
-			// Set pointer to top symbol NULL
+			// Set pointer to top symbol nullptr
 			if ( top() == symbol )
-				setTop(NULL);
+				setTop(nullptr);
 
 			delete *it;
 			setDirty();
@@ -123,7 +123,7 @@ void SymbolLayer::clear() {
 		delete s;
 	_symbols.clear();
 	setDirty();
-	setTop(NULL);
+	setTop(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

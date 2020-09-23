@@ -70,7 +70,7 @@ class SC_SYSTEM_CORE_API RTTI {
 	// ----------------------------------------------------------------------
 	public:
 		//! Constructor
-		RTTI(const char* classname, const RTTI* parent = NULL);
+		RTTI(const char* classname, const RTTI* parent = nullptr);
 
 
 	// ----------------------------------------------------------------------

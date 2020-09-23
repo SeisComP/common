@@ -58,10 +58,10 @@ namespace Gui {
 OriginLocatorMap::OriginLocatorMap(const MapsDesc &maps,
                                    QWidget *parent, Qt::WindowFlags f)
 : MapWidget(maps, parent, f)
-, _origin(NULL), _drawStations(false)
+, _origin(nullptr), _drawStations(false)
 , _drawStationsLines(true), _interactive(true)
 {
-	_originSymbol = NULL;
+	_originSymbol = nullptr;
 	_lastSymbolSize = 0;
 	_waveformPropagation = false;
 	_enabledCreateOrigin = false;
@@ -76,11 +76,11 @@ OriginLocatorMap::OriginLocatorMap(const MapsDesc &maps,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 OriginLocatorMap::OriginLocatorMap(Map::ImageTree* mapTree,
                                    QWidget *parent, Qt::WindowFlags f)
-: MapWidget(mapTree, parent, f), _origin(NULL)
+: MapWidget(mapTree, parent, f), _origin(nullptr)
 , _drawStations(false), _drawStationsLines(true)
 , _interactive(true)
 {
-	_originSymbol = NULL;
+	_originSymbol = nullptr;
 	_lastSymbolSize = 0;
 	_waveformPropagation = false;
 	_enabledCreateOrigin = false;
@@ -189,7 +189,7 @@ void OriginLocatorMap::drawCustomLayer(QPainter *painter) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorMap::contextMenuEvent(QContextMenuEvent *e) {
 	QMenu menu(this);
-	QAction *actionArtificialOrigin = NULL;
+	QAction *actionArtificialOrigin = nullptr;
 
 	if ( _enabledCreateOrigin ) {
 		actionArtificialOrigin = menu.addAction("Create artificial origin");
@@ -199,7 +199,7 @@ void OriginLocatorMap::contextMenuEvent(QContextMenuEvent *e) {
 	updateContextMenu(&menu);
 
 	QAction *action = menu.exec(e->globalPos());
-	if ( action == NULL ) return;
+	if ( action == nullptr ) return;
 
 	if ( action == actionArtificialOrigin ) {
 		QPointF epicenter;
@@ -337,7 +337,7 @@ void OriginLocatorMap::setStationsInteractive(bool e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 	_origin = o;
-	_originSymbol = NULL;
+	_originSymbol = nullptr;
 	canvas().symbolCollection()->clear();
 	_arrivals.clear();
 	_stations.clear();

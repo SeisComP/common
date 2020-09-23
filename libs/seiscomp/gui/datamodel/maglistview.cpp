@@ -246,7 +246,7 @@ MagListView::MagListView(Seiscomp::DataModel::DatabaseQuery* reader, bool withOr
 
 	_ui.treeWidget->setHeaderLabels(QStringList() << "PublicID" << "Desc/Time" << "Mag" << "MagType" << "MagStaCount" << "DefPhaseCount");
 	_ui.treeWidget->setAlternatingRowColors(true);
-	_ui.btnDbRead->setEnabled(_reader != NULL);
+	_ui.btnDbRead->setEnabled(_reader != nullptr);
 
 	initTree();
 
@@ -290,9 +290,9 @@ MagListView::~MagListView() {
 void MagListView::initTree() {
 	_ui.treeWidget->clear();
 	if ( _withOrigins )
-		_unassociatedEventItem = addEvent(NULL);
+		_unassociatedEventItem = addEvent(nullptr);
 	else
-		_unassociatedEventItem = NULL;
+		_unassociatedEventItem = nullptr;
 }
 
 
@@ -302,7 +302,7 @@ void MagListView::clear() {
 
 
 void MagListView::readFromDatabase() {
-	if ( _reader == NULL ) return;
+	if ( _reader == nullptr ) return;
 
 	// prevent updates from messaging during database read
 	_readLock = true;
@@ -327,7 +327,7 @@ void MagListView::readFromDatabase() {
 
 	DatabaseIterator it = _reader->getObjects(&ep, Event::TypeInfo());
 	progress.setLabelText(tr("Reading events..."));
-	while ( (event = static_cast<Event*>(*it)) != NULL ) {
+	while ( (event = static_cast<Event*>(*it)) != nullptr ) {
 		if ( progress.wasCanceled() )
 			break;
 		ep.add(event.get());
@@ -354,7 +354,7 @@ void MagListView::readFromDatabase() {
 
 
 // void MagListView::readFromDatabase() {
-// 	if ( _reader == NULL ) return;
+// 	if ( _reader == nullptr ) return;
 // 
 // 	initTree();
 // SEISCOMP_WARNING("readFromDB");
@@ -454,7 +454,7 @@ void MagListView::readFromDatabase() {
 // 	
 // 		QTreeWidgetItem* eventItem = addEvent(event);
 // 
-// 		OriginTreeItem* preferredOriginItem = NULL;
+// 		OriginTreeItem* preferredOriginItem = nullptr;
 // 
 // 		for ( size_t j = 0; j < event->originReferenceCount(); ++j ){
 // 			OriginReference* ref = event->originReference(j);
@@ -562,13 +562,13 @@ void MagListView::expandOriginItem(QTreeWidgetItem* originItem, int col){
 
 // add event to list
 QTreeWidgetItem* MagListView::addEvent(Seiscomp::DataModel::Event* event) {
-	if ( event != NULL ) {
+	if ( event != nullptr ) {
 		//! HACK display 'other' fake events in different style ---------
 		std::string et;
 		try{et = event->type().toString();}
 		catch(...){}
 		if (et == "other" && !_showAll){
-			return NULL;
+			return nullptr;
 		}
 		//! HACK ---------------------------------------------------------
 	}
@@ -622,7 +622,7 @@ void MagListView::messageAvailable(Seiscomp::Core::Message* msg) {
 
 	CommandMessage* cmsg = CommandMessage::Cast(msg);
 
-	if ( cmsg != NULL ) {
+	if ( cmsg != nullptr ) {
 		if ( cmsg->command() == CM_SHOW_MAGNITUDE ) {
 			
 			std::cerr << " ~~~ ---GUImsg---> " << cmsg->parameter() << std::endl;
@@ -642,8 +642,8 @@ void MagListView::messageAvailable(Seiscomp::Core::Message* msg) {
 	
 				_reader->load(nm);
 
-				Event* e = NULL;
-				Origin* o = NULL;
+				Event* e = nullptr;
+				Origin* o = nullptr;
 				
 				// try to find parent objects: netMag->origin->event
 				try{
@@ -671,12 +671,12 @@ void MagListView::messageAvailable(Seiscomp::Core::Message* msg) {
 				}
 
 				//readPicks(o);
-				//emit originSelected(o, NULL);
+				//emit originSelected(o, nullptr);
 				QTreeWidgetItem* item;
 				if(o)
 					item = addNetMag(nm, false, findOrigin(o->publicID()));
 				else
-					item = addNetMag(nm, false, NULL);
+					item = addNetMag(nm, false, nullptr);
 
 				itemSelected(item, 0);
 			}
@@ -695,7 +695,7 @@ void MagListView::notifierAvailable(Seiscomp::DataModel::Notifier* n) {
 	
 	if ( _withOrigins ) {
 		Origin* o = Origin::Cast(n->object());
-		if ( o != NULL ) {
+		if ( o != nullptr ) {
 			switch ( n->operation() ) {
 				case OP_ADD:
 					{
@@ -722,7 +722,7 @@ void MagListView::notifierAvailable(Seiscomp::DataModel::Notifier* n) {
 	}
 
 	Event* e = Event::Cast(n->object());
-	if ( e != NULL ) {
+	if ( e != nullptr ) {
 		switch ( n->operation() ) {
 			case OP_ADD:
 				addEvent(e);
@@ -750,7 +750,7 @@ void MagListView::notifierAvailable(Seiscomp::DataModel::Notifier* n) {
 	}
 
 	OriginReference* ref = OriginReference::Cast(n->object());
-	if ( ref != NULL ) {
+	if ( ref != nullptr ) {
 		switch ( n->operation() ) {
 			case OP_ADD:
 				{
@@ -784,7 +784,7 @@ QTreeWidgetItem* MagListView::findEvent(const std::string& publicID) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // return Item, if origin found in list
@@ -799,7 +799,7 @@ QTreeWidgetItem* MagListView::findOrigin(const std::string& publicID) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // return Item, if netMag found in list
@@ -817,7 +817,7 @@ QTreeWidgetItem* MagListView::findNetMag(const std::string& publicID) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -844,7 +844,7 @@ void MagListView::readPicks(Origin* o) {
 		progress.setWindowTitle(tr("Please wait..."));
 		progress.setRange(0, o->arrivalCount());
 		progress.setLabelText(tr("Loading picks..."));
-		progress.setCancelButton(NULL);
+		progress.setCancelButton(nullptr);
 
 		for ( size_t i = 0; i < o->arrivalCount(); ++i ) {
 
@@ -875,8 +875,8 @@ void MagListView::itemSelected(QTreeWidgetItem* item, int) {
 	// emit selected Magnitude plus parent Origin and parent Event
 	Magnitude* nm = Magnitude::Cast(schemeItem->object());
 	if (nm) {
-		Origin* origin = NULL;
-		Event* event = NULL;
+		Origin* origin = nullptr;
+		Event* event = nullptr;
 
 		SchemeTreeItem* parentItem = (SchemeTreeItem*)schemeItem->parent();
 		if (parentItem) 
@@ -884,7 +884,7 @@ void MagListView::itemSelected(QTreeWidgetItem* item, int) {
 
 		if (origin) {
 			readPicks(origin);
-			event = NULL;
+			event = nullptr;
 			SchemeTreeItem* parentParentItem = (SchemeTreeItem*)parentItem->parent();
 			if ( parentParentItem ) 
 				event = Event::Cast(parentParentItem->object());	
@@ -899,7 +899,7 @@ void MagListView::itemSelected(QTreeWidgetItem* item, int) {
 	// emit selected Origin plus parent Event
 	Origin* o = Origin::Cast(schemeItem->object());
 	if ( o ) {
-		Event* event = NULL;
+		Event* event = nullptr;
 		SchemeTreeItem* parentItem = (SchemeTreeItem*)schemeItem->parent();
 
 		if ( parentItem ) 

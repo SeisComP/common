@@ -34,12 +34,12 @@ IMPLEMENT_SC_CLASS_DERIVED(SensorLocation, PublicObject, "SensorLocation");
 
 
 SensorLocation::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, NULL, &SensorLocation::setCode, &SensorLocation::code));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, NULL, &SensorLocation::setStart, &SensorLocation::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, NULL, &SensorLocation::setEnd, &SensorLocation::end));
-	addProperty(Core::simpleProperty("latitude", "float", false, false, false, false, true, false, NULL, &SensorLocation::setLatitude, &SensorLocation::latitude));
-	addProperty(Core::simpleProperty("longitude", "float", false, false, false, false, true, false, NULL, &SensorLocation::setLongitude, &SensorLocation::longitude));
-	addProperty(Core::simpleProperty("elevation", "float", false, false, false, false, true, false, NULL, &SensorLocation::setElevation, &SensorLocation::elevation));
+	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, nullptr, &SensorLocation::setCode, &SensorLocation::code));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &SensorLocation::setStart, &SensorLocation::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &SensorLocation::setEnd, &SensorLocation::end));
+	addProperty(Core::simpleProperty("latitude", "float", false, false, false, false, true, false, nullptr, &SensorLocation::setLatitude, &SensorLocation::latitude));
+	addProperty(Core::simpleProperty("longitude", "float", false, false, false, false, true, false, nullptr, &SensorLocation::setLongitude, &SensorLocation::longitude));
+	addProperty(Core::simpleProperty("elevation", "float", false, false, false, false, true, false, nullptr, &SensorLocation::setElevation, &SensorLocation::elevation));
 	addProperty(arrayClassProperty<Comment>("comment", "Comment", &SensorLocation::commentCount, &SensorLocation::comment, static_cast<bool (SensorLocation::*)(Comment*)>(&SensorLocation::add), &SensorLocation::removeComment, static_cast<bool (SensorLocation::*)(Comment*)>(&SensorLocation::remove)));
 	addProperty(arrayClassProperty<AuxStream>("auxStream", "AuxStream", &SensorLocation::auxStreamCount, &SensorLocation::auxStream, static_cast<bool (SensorLocation::*)(AuxStream*)>(&SensorLocation::add), &SensorLocation::removeAuxStream, static_cast<bool (SensorLocation::*)(AuxStream*)>(&SensorLocation::remove)));
 	addProperty(arrayObjectProperty("stream", "Stream", &SensorLocation::streamCount, &SensorLocation::stream, static_cast<bool (SensorLocation::*)(Stream*)>(&SensorLocation::add), &SensorLocation::removeStream, static_cast<bool (SensorLocation::*)(Stream*)>(&SensorLocation::remove)));
@@ -127,15 +127,15 @@ SensorLocation::SensorLocation(const std::string& publicID)
 SensorLocation::~SensorLocation() {
 	std::for_each(_comments.begin(), _comments.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&CommentPtr::get)));
 	std::for_each(_auxStreams.begin(), _auxStreams.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&AuxStream::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&AuxStreamPtr::get)));
 	std::for_each(_streams.begin(), _streams.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Stream::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&StreamPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -155,12 +155,12 @@ SensorLocation* SensorLocation::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SensorLocation* SensorLocation::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new SensorLocation(publicID);
@@ -338,7 +338,7 @@ const SensorLocationIndex& SensorLocation::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::equalIndex(const SensorLocation* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -373,7 +373,7 @@ SensorLocation& SensorLocation::operator=(const SensorLocation& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::assign(Object* other) {
 	SensorLocation* otherSensorLocation = SensorLocation::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherSensorLocation;
@@ -387,11 +387,11 @@ bool SensorLocation::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Station* station = Station::Cast(parent);
-	if ( station != NULL )
+	if ( station != nullptr )
 		return station->add(this);
 
 	SEISCOMP_ERROR("SensorLocation::attachTo(%s) -> wrong class type", parent->className());
@@ -404,11 +404,11 @@ bool SensorLocation::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Station* station = Station::Cast(object);
-	if ( station != NULL ) {
+	if ( station != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -416,7 +416,7 @@ bool SensorLocation::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			SensorLocation* child = station->findSensorLocation(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return station->remove(child);
 			else {
 				SEISCOMP_DEBUG("SensorLocation::detachFrom(Station): sensorLocation has not been found");
@@ -435,7 +435,7 @@ bool SensorLocation::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -459,9 +459,9 @@ Object* SensorLocation::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::updateChild(Object* child) {
 	Comment* commentChild = Comment::Cast(child);
-	if ( commentChild != NULL ) {
+	if ( commentChild != nullptr ) {
 		Comment* commentElement = comment(commentChild->index());
-		if ( commentElement != NULL ) {
+		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
 			return true;
@@ -470,9 +470,9 @@ bool SensorLocation::updateChild(Object* child) {
 	}
 
 	AuxStream* auxStreamChild = AuxStream::Cast(child);
-	if ( auxStreamChild != NULL ) {
+	if ( auxStreamChild != nullptr ) {
 		AuxStream* auxStreamElement = auxStream(auxStreamChild->index());
-		if ( auxStreamElement != NULL ) {
+		if ( auxStreamElement != nullptr ) {
 			*auxStreamElement = *auxStreamChild;
 			auxStreamElement->update();
 			return true;
@@ -481,7 +481,7 @@ bool SensorLocation::updateChild(Object* child) {
 	}
 
 	Stream* streamChild = Stream::Cast(child);
-	if ( streamChild != NULL ) {
+	if ( streamChild != nullptr ) {
 		Stream* streamElement
 			= Stream::Cast(PublicObject::Find(streamChild->publicID()));
 		if ( streamElement && streamElement->parent() == this ) {
@@ -546,7 +546,7 @@ Comment* SensorLocation::comment(const CommentIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -555,11 +555,11 @@ Comment* SensorLocation::comment(const CommentIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::add(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( comment->parent() != NULL ) {
+	if ( comment->parent() != nullptr ) {
 		SEISCOMP_ERROR("SensorLocation::add(Comment*) -> element has already a parent");
 		return false;
 	}
@@ -594,7 +594,7 @@ bool SensorLocation::add(Comment* comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::remove(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -615,7 +615,7 @@ bool SensorLocation::remove(Comment* comment) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_comments.erase(it);
@@ -639,7 +639,7 @@ bool SensorLocation::removeComment(size_t i) {
 		_comments[i]->accept(&nc);
 	}
 
-	_comments[i]->setParent(NULL);
+	_comments[i]->setParent(nullptr);
 	childRemoved(_comments[i].get());
 
 	_comments.erase(_comments.begin() + i);
@@ -654,7 +654,7 @@ bool SensorLocation::removeComment(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::removeComment(const CommentIndex& i) {
 	Comment* object = comment(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -686,7 +686,7 @@ AuxStream* SensorLocation::auxStream(const AuxStreamIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -695,11 +695,11 @@ AuxStream* SensorLocation::auxStream(const AuxStreamIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::add(AuxStream* auxStream) {
-	if ( auxStream == NULL )
+	if ( auxStream == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( auxStream->parent() != NULL ) {
+	if ( auxStream->parent() != nullptr ) {
 		SEISCOMP_ERROR("SensorLocation::add(AuxStream*) -> element has already a parent");
 		return false;
 	}
@@ -734,7 +734,7 @@ bool SensorLocation::add(AuxStream* auxStream) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::remove(AuxStream* auxStream) {
-	if ( auxStream == NULL )
+	if ( auxStream == nullptr )
 		return false;
 
 	if ( auxStream->parent() != this ) {
@@ -755,7 +755,7 @@ bool SensorLocation::remove(AuxStream* auxStream) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_auxStreams.erase(it);
@@ -779,7 +779,7 @@ bool SensorLocation::removeAuxStream(size_t i) {
 		_auxStreams[i]->accept(&nc);
 	}
 
-	_auxStreams[i]->setParent(NULL);
+	_auxStreams[i]->setParent(nullptr);
 	childRemoved(_auxStreams[i].get());
 
 	_auxStreams.erase(_auxStreams.begin() + i);
@@ -794,7 +794,7 @@ bool SensorLocation::removeAuxStream(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::removeAuxStream(const AuxStreamIndex& i) {
 	AuxStream* object = auxStream(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -826,7 +826,7 @@ Stream* SensorLocation::stream(const StreamIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -839,7 +839,7 @@ Stream* SensorLocation::findStream(const std::string& publicID) const {
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -848,11 +848,11 @@ Stream* SensorLocation::findStream(const std::string& publicID) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::add(Stream* stream) {
-	if ( stream == NULL )
+	if ( stream == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( stream->parent() != NULL ) {
+	if ( stream->parent() != nullptr ) {
 		SEISCOMP_ERROR("SensorLocation::add(Stream*) -> element has already a parent");
 		return false;
 	}
@@ -894,7 +894,7 @@ bool SensorLocation::add(Stream* stream) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::remove(Stream* stream) {
-	if ( stream == NULL )
+	if ( stream == nullptr )
 		return false;
 
 	if ( stream->parent() != this ) {
@@ -915,7 +915,7 @@ bool SensorLocation::remove(Stream* stream) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_streams.erase(it);
@@ -939,7 +939,7 @@ bool SensorLocation::removeStream(size_t i) {
 		_streams[i]->accept(&nc);
 	}
 
-	_streams[i]->setParent(NULL);
+	_streams[i]->setParent(nullptr);
 	childRemoved(_streams[i].get());
 
 	_streams.erase(_streams.begin() + i);
@@ -954,7 +954,7 @@ bool SensorLocation::removeStream(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::removeStream(const StreamIndex& i) {
 	Stream* object = stream(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

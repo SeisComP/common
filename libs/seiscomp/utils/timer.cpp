@@ -100,7 +100,7 @@ Seiscomp::Core::TimeSpan StopWatch::elapsed() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #if !defined(SC_HAS_TIMER_CREATE)
 Timer::TimerList Timer::_timers;
-boost::thread *Timer::_thread = NULL;
+boost::thread *Timer::_thread = nullptr;
 boost::mutex Timer::_mutex;
 #endif
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -252,7 +252,7 @@ bool Timer::start() {
 	its.it_interval.tv_sec = _singleShot ? 0 : _timeout;
 	its.it_interval.tv_nsec = _singleShot ? 0 : _timeoutNs;
 
-	if ( timer_settime(_timerID, 0, &its, NULL) ) {
+	if ( timer_settime(_timerID, 0, &its, nullptr) ) {
 		SEISCOMP_ERROR("Failed to set timer: %d: %s", errno, strerror(errno));
 		timer_delete(_timerID);
 		_timerID = 0;
@@ -362,7 +362,7 @@ void Timer::Loop() {
 
 	if ( _thread ) {
 		delete _thread;
-		_thread = NULL;
+		_thread = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

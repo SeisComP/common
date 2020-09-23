@@ -103,7 +103,7 @@ Expression* LeParser<Expression>::parse()
 				{
 					_error = true;
 					_errorStr = "Could not create Expression: " + *_it;
-					return NULL;
+					return nullptr;
 				}
 
 				_stack.push(tmp);
@@ -132,7 +132,7 @@ Expression* LeParser<Expression>::parse()
 		ss << "ERROR, stack size is: " << _stack.size() << std::endl;
 		_errorStr = ss.str();
 		_error = true;
-		return NULL;
+		return nullptr;
 	}
 	return _stack.top();
 }

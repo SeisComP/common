@@ -33,12 +33,12 @@ IMPLEMENT_SC_CLASS_DERIVED(DataloggerCalibration, Object, "DataloggerCalibration
 
 
 DataloggerCalibration::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("serialNumber", "string", false, false, true, false, false, false, NULL, &DataloggerCalibration::setSerialNumber, &DataloggerCalibration::serialNumber));
-	addProperty(Core::simpleProperty("channel", "int", false, false, true, false, false, false, NULL, &DataloggerCalibration::setChannel, &DataloggerCalibration::channel));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, NULL, &DataloggerCalibration::setStart, &DataloggerCalibration::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, NULL, &DataloggerCalibration::setEnd, &DataloggerCalibration::end));
-	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, NULL, &DataloggerCalibration::setGain, &DataloggerCalibration::gain));
-	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, NULL, &DataloggerCalibration::setGainFrequency, &DataloggerCalibration::gainFrequency));
+	addProperty(Core::simpleProperty("serialNumber", "string", false, false, true, false, false, false, nullptr, &DataloggerCalibration::setSerialNumber, &DataloggerCalibration::serialNumber));
+	addProperty(Core::simpleProperty("channel", "int", false, false, true, false, false, false, nullptr, &DataloggerCalibration::setChannel, &DataloggerCalibration::channel));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &DataloggerCalibration::setStart, &DataloggerCalibration::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &DataloggerCalibration::setEnd, &DataloggerCalibration::end));
+	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, nullptr, &DataloggerCalibration::setGain, &DataloggerCalibration::gain));
+	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, nullptr, &DataloggerCalibration::setGainFrequency, &DataloggerCalibration::gainFrequency));
 	addProperty(objectProperty<Blob>("remark", "Blob", false, false, true, &DataloggerCalibration::setRemark, &DataloggerCalibration::remark));
 }
 
@@ -312,7 +312,7 @@ const DataloggerCalibrationIndex& DataloggerCalibration::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataloggerCalibration::equalIndex(const DataloggerCalibration* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -346,7 +346,7 @@ DataloggerCalibration& DataloggerCalibration::operator=(const DataloggerCalibrat
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataloggerCalibration::assign(Object* other) {
 	DataloggerCalibration* otherDataloggerCalibration = DataloggerCalibration::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherDataloggerCalibration;
@@ -360,11 +360,11 @@ bool DataloggerCalibration::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataloggerCalibration::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Datalogger* datalogger = Datalogger::Cast(parent);
-	if ( datalogger != NULL )
+	if ( datalogger != nullptr )
 		return datalogger->add(this);
 
 	SEISCOMP_ERROR("DataloggerCalibration::attachTo(%s) -> wrong class type", parent->className());
@@ -377,11 +377,11 @@ bool DataloggerCalibration::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataloggerCalibration::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Datalogger* datalogger = Datalogger::Cast(object);
-	if ( datalogger != NULL ) {
+	if ( datalogger != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -389,7 +389,7 @@ bool DataloggerCalibration::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			DataloggerCalibration* child = datalogger->dataloggerCalibration(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return datalogger->remove(child);
 			else {
 				SEISCOMP_DEBUG("DataloggerCalibration::detachFrom(Datalogger): dataloggerCalibration has not been found");
@@ -408,7 +408,7 @@ bool DataloggerCalibration::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataloggerCalibration::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

@@ -105,7 +105,7 @@ const UnitConversion *UnitConverter::get(const std::string &fromUnit) {
 
 	ConversionMap::const_iterator it = _conversionMap.find(fromUnit);
 	if ( it == _conversionMap.end() )
-		return NULL;
+		return nullptr;
 
 	return &it->second;
 }

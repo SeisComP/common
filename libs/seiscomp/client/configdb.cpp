@@ -28,7 +28,7 @@
 namespace Seiscomp {
 namespace Client {
 
-ConfigDB *ConfigDB::_instance = NULL;
+ConfigDB *ConfigDB::_instance = nullptr;
 
 
 ConfigDB::ConfigDB() {
@@ -37,7 +37,7 @@ ConfigDB::ConfigDB() {
 
 
 ConfigDB* ConfigDB::Instance() {
-	if ( _instance == NULL )
+	if ( !_instance )
 		_instance = new ConfigDB();
 
 	return _instance;
@@ -135,7 +135,7 @@ void ConfigDB::load(Seiscomp::DataModel::DatabaseReader* reader,
 	const OPT(std::string)& setupName,
 	const std::set<std::string>& parameterNames) {
 
-	if ( reader == NULL ) return;
+	if ( !reader ) return;
 
 	Seiscomp::DataModel::DatabaseIterator it;
 

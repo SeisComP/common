@@ -39,18 +39,18 @@ static Seiscomp::Core::MetaEnumImpl<EvaluationMode> metaEvaluationMode;
 
 
 Amplitude::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("type", "string", false, false, false, false, false, false, NULL, &Amplitude::setType, &Amplitude::type));
+	addProperty(Core::simpleProperty("type", "string", false, false, false, false, false, false, nullptr, &Amplitude::setType, &Amplitude::type));
 	addProperty(objectProperty<RealQuantity>("amplitude", "RealQuantity", false, false, true, &Amplitude::setAmplitude, &Amplitude::amplitude));
 	addProperty(objectProperty<TimeWindow>("timeWindow", "TimeWindow", false, false, true, &Amplitude::setTimeWindow, &Amplitude::timeWindow));
 	addProperty(objectProperty<RealQuantity>("period", "RealQuantity", false, false, true, &Amplitude::setPeriod, &Amplitude::period));
-	addProperty(Core::simpleProperty("snr", "float", false, false, false, false, true, false, NULL, &Amplitude::setSnr, &Amplitude::snr));
-	addProperty(Core::simpleProperty("unit", "string", false, false, false, false, false, false, NULL, &Amplitude::setUnit, &Amplitude::unit));
-	addProperty(Core::simpleProperty("pickID", "string", false, false, false, true, false, false, NULL, &Amplitude::setPickID, &Amplitude::pickID));
+	addProperty(Core::simpleProperty("snr", "float", false, false, false, false, true, false, nullptr, &Amplitude::setSnr, &Amplitude::snr));
+	addProperty(Core::simpleProperty("unit", "string", false, false, false, false, false, false, nullptr, &Amplitude::setUnit, &Amplitude::unit));
+	addProperty(Core::simpleProperty("pickID", "string", false, false, false, true, false, false, nullptr, &Amplitude::setPickID, &Amplitude::pickID));
 	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", false, false, true, &Amplitude::setWaveformID, &Amplitude::waveformID));
-	addProperty(Core::simpleProperty("filterID", "string", false, false, false, false, false, false, NULL, &Amplitude::setFilterID, &Amplitude::filterID));
-	addProperty(Core::simpleProperty("methodID", "string", false, false, false, false, false, false, NULL, &Amplitude::setMethodID, &Amplitude::methodID));
+	addProperty(Core::simpleProperty("filterID", "string", false, false, false, false, false, false, nullptr, &Amplitude::setFilterID, &Amplitude::filterID));
+	addProperty(Core::simpleProperty("methodID", "string", false, false, false, false, false, false, nullptr, &Amplitude::setMethodID, &Amplitude::methodID));
 	addProperty(objectProperty<TimeQuantity>("scalingTime", "TimeQuantity", false, false, true, &Amplitude::setScalingTime, &Amplitude::scalingTime));
-	addProperty(Core::simpleProperty("magnitudeHint", "string", false, false, false, false, false, false, NULL, &Amplitude::setMagnitudeHint, &Amplitude::magnitudeHint));
+	addProperty(Core::simpleProperty("magnitudeHint", "string", false, false, false, false, false, false, nullptr, &Amplitude::setMagnitudeHint, &Amplitude::magnitudeHint));
 	addProperty(enumProperty("evaluationMode", "EvaluationMode", false, true, &metaEvaluationMode, &Amplitude::setEvaluationMode, &Amplitude::evaluationMode));
 	addProperty(objectProperty<CreationInfo>("creationInfo", "CreationInfo", false, false, true, &Amplitude::setCreationInfo, &Amplitude::creationInfo));
 	addProperty(arrayClassProperty<Comment>("comment", "Comment", &Amplitude::commentCount, &Amplitude::comment, static_cast<bool (Amplitude::*)(Comment*)>(&Amplitude::add), &Amplitude::removeComment, static_cast<bool (Amplitude::*)(Comment*)>(&Amplitude::remove)));
@@ -90,7 +90,7 @@ Amplitude::Amplitude(const std::string& publicID)
 Amplitude::~Amplitude() {
 	std::for_each(_comments.begin(), _comments.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&CommentPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -110,12 +110,12 @@ Amplitude* Amplitude::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Amplitude* Amplitude::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new Amplitude(publicID);
@@ -545,7 +545,7 @@ Amplitude& Amplitude::operator=(const Amplitude& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Amplitude::assign(Object* other) {
 	Amplitude* otherAmplitude = Amplitude::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherAmplitude;
@@ -559,11 +559,11 @@ bool Amplitude::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Amplitude::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	EventParameters* eventParameters = EventParameters::Cast(parent);
-	if ( eventParameters != NULL )
+	if ( eventParameters != nullptr )
 		return eventParameters->add(this);
 
 	SEISCOMP_ERROR("Amplitude::attachTo(%s) -> wrong class type", parent->className());
@@ -576,11 +576,11 @@ bool Amplitude::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Amplitude::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	EventParameters* eventParameters = EventParameters::Cast(object);
-	if ( eventParameters != NULL ) {
+	if ( eventParameters != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -588,7 +588,7 @@ bool Amplitude::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			Amplitude* child = eventParameters->findAmplitude(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return eventParameters->remove(child);
 			else {
 				SEISCOMP_DEBUG("Amplitude::detachFrom(EventParameters): amplitude has not been found");
@@ -607,7 +607,7 @@ bool Amplitude::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Amplitude::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -631,9 +631,9 @@ Object* Amplitude::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Amplitude::updateChild(Object* child) {
 	Comment* commentChild = Comment::Cast(child);
-	if ( commentChild != NULL ) {
+	if ( commentChild != nullptr ) {
 		Comment* commentElement = comment(commentChild->index());
-		if ( commentElement != NULL ) {
+		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
 			return true;
@@ -691,7 +691,7 @@ Comment* Amplitude::comment(const CommentIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -700,11 +700,11 @@ Comment* Amplitude::comment(const CommentIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Amplitude::add(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( comment->parent() != NULL ) {
+	if ( comment->parent() != nullptr ) {
 		SEISCOMP_ERROR("Amplitude::add(Comment*) -> element has already a parent");
 		return false;
 	}
@@ -739,7 +739,7 @@ bool Amplitude::add(Comment* comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Amplitude::remove(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -760,7 +760,7 @@ bool Amplitude::remove(Comment* comment) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_comments.erase(it);
@@ -784,7 +784,7 @@ bool Amplitude::removeComment(size_t i) {
 		_comments[i]->accept(&nc);
 	}
 
-	_comments[i]->setParent(NULL);
+	_comments[i]->setParent(nullptr);
 	childRemoved(_comments[i].get());
 
 	_comments.erase(_comments.begin() + i);
@@ -799,7 +799,7 @@ bool Amplitude::removeComment(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Amplitude::removeComment(const CommentIndex& i) {
 	Comment* object = comment(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

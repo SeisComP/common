@@ -148,7 +148,7 @@ ObjectMonitor::add(const std::string &name, const std::string &channel) {
 	const_iterator it;
 	for ( it = _tests.begin(); it != _tests.end(); ++it )
 		if ( it->channel == channel && it->name == name )
-			return NULL;
+			return nullptr;
 
 	Test test;
 	test.name = name;

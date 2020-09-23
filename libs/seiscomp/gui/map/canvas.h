@@ -236,7 +236,7 @@ class SC_GUI_API Canvas : public QObject {
 
 		//! Returns the i-th layer if the index is valid
 		Layer* layer(int i) const {
-			if ( i < 0 || i >= _layers.count() ) return NULL;
+			if ( i < 0 || i >= _layers.count() ) return nullptr;
 
 			return _layers[i];
 		}

@@ -64,11 +64,11 @@ Config::Config(const Config& other)
 Config::~Config() {
 	std::for_each(_parameterSets.begin(), _parameterSets.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&ParameterSet::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&ParameterSetPtr::get)));
 	std::for_each(_configModules.begin(), _configModules.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&ConfigModule::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&ConfigModulePtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -116,7 +116,7 @@ Config& Config::operator=(const Config& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Config::assign(Object* other) {
 	Config* otherConfig = Config::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherConfig;
@@ -169,7 +169,7 @@ Object* Config::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Config::updateChild(Object* child) {
 	ParameterSet* parameterSetChild = ParameterSet::Cast(child);
-	if ( parameterSetChild != NULL ) {
+	if ( parameterSetChild != nullptr ) {
 		ParameterSet* parameterSetElement
 			= ParameterSet::Cast(PublicObject::Find(parameterSetChild->publicID()));
 		if ( parameterSetElement && parameterSetElement->parent() == this ) {
@@ -181,7 +181,7 @@ bool Config::updateChild(Object* child) {
 	}
 
 	ConfigModule* configModuleChild = ConfigModule::Cast(child);
-	if ( configModuleChild != NULL ) {
+	if ( configModuleChild != nullptr ) {
 		ConfigModule* configModuleElement
 			= ConfigModule::Cast(PublicObject::Find(configModuleChild->publicID()));
 		if ( configModuleElement && configModuleElement->parent() == this ) {
@@ -235,7 +235,7 @@ ParameterSet* Config::findParameterSet(const std::string& publicID) const {
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -244,11 +244,11 @@ ParameterSet* Config::findParameterSet(const std::string& publicID) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Config::add(ParameterSet* parameterSet) {
-	if ( parameterSet == NULL )
+	if ( parameterSet == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( parameterSet->parent() != NULL ) {
+	if ( parameterSet->parent() != nullptr ) {
 		SEISCOMP_ERROR("Config::add(ParameterSet*) -> element has already a parent");
 		return false;
 	}
@@ -290,7 +290,7 @@ bool Config::add(ParameterSet* parameterSet) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Config::remove(ParameterSet* parameterSet) {
-	if ( parameterSet == NULL )
+	if ( parameterSet == nullptr )
 		return false;
 
 	if ( parameterSet->parent() != this ) {
@@ -311,7 +311,7 @@ bool Config::remove(ParameterSet* parameterSet) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_parameterSets.erase(it);
@@ -335,7 +335,7 @@ bool Config::removeParameterSet(size_t i) {
 		_parameterSets[i]->accept(&nc);
 	}
 
-	_parameterSets[i]->setParent(NULL);
+	_parameterSets[i]->setParent(nullptr);
 	childRemoved(_parameterSets[i].get());
 
 	_parameterSets.erase(_parameterSets.begin() + i);
@@ -371,7 +371,7 @@ ConfigModule* Config::findConfigModule(const std::string& publicID) const {
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -380,11 +380,11 @@ ConfigModule* Config::findConfigModule(const std::string& publicID) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Config::add(ConfigModule* configModule) {
-	if ( configModule == NULL )
+	if ( configModule == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( configModule->parent() != NULL ) {
+	if ( configModule->parent() != nullptr ) {
 		SEISCOMP_ERROR("Config::add(ConfigModule*) -> element has already a parent");
 		return false;
 	}
@@ -426,7 +426,7 @@ bool Config::add(ConfigModule* configModule) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Config::remove(ConfigModule* configModule) {
-	if ( configModule == NULL )
+	if ( configModule == nullptr )
 		return false;
 
 	if ( configModule->parent() != this ) {
@@ -447,7 +447,7 @@ bool Config::remove(ConfigModule* configModule) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_configModules.erase(it);
@@ -471,7 +471,7 @@ bool Config::removeConfigModule(size_t i) {
 		_configModules[i]->accept(&nc);
 	}
 
-	_configModules[i]->setParent(NULL);
+	_configModules[i]->setParent(nullptr);
 	childRemoved(_configModules[i].get());
 
 	_configModules.erase(_configModules.begin() + i);

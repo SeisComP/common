@@ -204,7 +204,7 @@ int Canvas::LegendArea::findNext(bool forward) const {
 
 			Legend *legend = at(index).legend;
 			if ( legend->isEnabled() &&
-				(legend->layer() == NULL || legend->layer()->isVisible()) )
+				(legend->layer() == nullptr || legend->layer()->isVisible()) )
 				return index;
 		}
 	}
@@ -212,7 +212,7 @@ int Canvas::LegendArea::findNext(bool forward) const {
 		for ( int i = 0; i < numberOfLegends; ++i ) {
 			Legend *legend = at(i).legend;
 			if ( legend->isEnabled() &&
-				(legend->layer() == NULL || legend->layer()->isVisible()) )
+				(legend->layer() == nullptr || legend->layer()->isVisible()) )
 				return i;
 		}
 	}
@@ -229,12 +229,12 @@ Canvas::Canvas(const MapsDesc &meta)
 : _backgroundColor(Qt::lightGray)
 , _dirtyRasterLayer(true)
 , _dirtyVectorLayers(true)
-, _hoverLayer(NULL)
+, _hoverLayer(nullptr)
 , _margin(10)
 , _isDrawLegendsEnabled(true) {
 	_maptree = new ImageTree(meta);
 	if ( !_maptree->valid() )
-		_maptree = NULL;
+		_maptree = nullptr;
 
 	init();
 }
@@ -248,13 +248,13 @@ Canvas::Canvas(ImageTree *mapTree)
 : _backgroundColor(Qt::lightGray)
 , _dirtyRasterLayer(true)
 , _dirtyVectorLayers(true)
-, _hoverLayer(NULL)
+, _hoverLayer(nullptr)
 , _margin(10)
 , _isDrawLegendsEnabled(true) {
 	_maptree = mapTree;
 
 	if ( _maptree && !_maptree->valid() )
-		_maptree = NULL;
+		_maptree = nullptr;
 
 	init();
 }
@@ -277,7 +277,7 @@ Canvas::~Canvas() {
 
 	// Remove this from Layers parent
 	for ( Layers::const_iterator it = _layers.begin(); it != _layers.end(); ++it )
-		(*it)->_canvas = NULL;
+		(*it)->_canvas = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -296,10 +296,10 @@ void Canvas::setBackgroundColor(QColor c) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Canvas::setProjectionByName(const char *name) {
 	Projection *newProjection = Map::ProjectionFactory::Create(name);
-	if ( newProjection == NULL )
+	if ( newProjection == nullptr )
 		return false;
 
-	if ( _projection ) { delete _projection; _projection = NULL; }
+	if ( _projection ) { delete _projection; _projection = nullptr; }
 	_projectionName = name;
 	_projection = newProjection;
 	_projection->setView(_center, _zoomLevel);
@@ -378,7 +378,7 @@ void Canvas::setLegendMargin(int margin) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Canvas::init() {
 	_font = SCScheme.fonts.base;
-	_projection = NULL;
+	_projection = nullptr;
 
 	_polygonRoughness = SCScheme.map.polygonRoughness;
 	_filterMap = SCScheme.map.bilinearFilter;
@@ -471,7 +471,7 @@ void Canvas::init() {
 			Layers orderedLayers;
 			for ( size_t i = 0; i < layerOrder.size(); ++i ) {
 				Layer *layer = layerNameMap.value(layerOrder[i]);
-				if ( layer == NULL )
+				if ( layer == nullptr )
 					SEISCOMP_WARNING("Layer '%s' in layer list not found", layerOrder[i].c_str());
 				else
 					orderedLayers.append(layer);
@@ -1019,7 +1019,7 @@ void Canvas::drawImageLayer(QPainter &painter) {
 		_projection->setBackgroundColor(_backgroundColor);
 		mapRenderMutex.lock();
 		_projection->draw(_buffer, _filterMap && !_previewMode,
-		                  _maptree?_maptree->getCache():NULL);
+		                  _maptree?_maptree->getCache():nullptr);
 		mapRenderMutex.unlock();
 		_gridLayer.setGridDistance(_projection->gridDistance());
 
@@ -1134,7 +1134,7 @@ void Canvas::drawLegends(QPainter& painter) {
 			}
 			else {
 				legend = area[area.currentIndex].legend;
-				if ( !legend->isEnabled() || ((legend->layer() != NULL) && !legend->layer()->isVisible()) ) {
+				if ( !legend->isEnabled() || ((legend->layer() != nullptr) && !legend->layer()->isVisible()) ) {
 					if ( legend->isVisible() ) legend->setVisible(false);
 					area.currentIndex = area.findNext();
 					if ( area.currentIndex == -1 ) continue;
@@ -1454,7 +1454,7 @@ void Canvas::onLegendRemoved(Legend *legend) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Canvas::setupLayer(Layer *layer) {
 	// Take ownership of the layer if it does not have a parent yet
-	if ( layer->parent() == NULL )
+	if ( layer->parent() == nullptr )
 		layer->setParent(this);
 
 	layer->_canvas = this;
@@ -1480,7 +1480,7 @@ void Canvas::setupLayer(Layer *layer) {
 	        this, SLOT(updateLayer(const Layer::UpdateHints&)));
 
 	foreach ( Legend *legend, layer->legends() ) {
-		if ( legend != NULL ) {
+		if ( legend != nullptr ) {
 			onLegendAdded(legend);
 		}
 	}
@@ -1492,7 +1492,7 @@ void Canvas::setupLayer(Layer *layer) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Canvas::prependLayer(Layer* layer) {
-	if ( layer->canvas() != NULL ) {
+	if ( layer->canvas() != nullptr ) {
 		qWarning("Layer is already part of another canvas");
 		return false;
 	}
@@ -1508,7 +1508,7 @@ bool Canvas::prependLayer(Layer* layer) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Canvas::addLayer(Layer* layer) {
-	if ( layer->canvas() != NULL ) {
+	if ( layer->canvas() != nullptr ) {
 		qWarning("Layer is already part of another canvas");
 		return false;
 	}
@@ -1524,7 +1524,7 @@ bool Canvas::addLayer(Layer* layer) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Canvas::insertLayerBefore(const Layer *referenceLayer, Layer *layer) {
-	if ( layer->canvas() != NULL ) {
+	if ( layer->canvas() != nullptr ) {
 		qWarning("Layer is already part of another canvas");
 		return false;
 	}
@@ -1547,7 +1547,7 @@ void Canvas::removeLayer(Layer* layer) {
 	disconnect(layer, SIGNAL(updateRequested()));
 
 	if ( layer == _hoverLayer )
-		_hoverLayer = NULL;
+		_hoverLayer = nullptr;
 
 	LegendAreas::iterator it = _legendAreas.begin();
 	while ( it != _legendAreas.end() ) {
@@ -1571,7 +1571,7 @@ void Canvas::removeLayer(Layer* layer) {
 		}
 	}
 
-	layer->_canvas = NULL;
+	layer->_canvas = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1641,7 +1641,7 @@ bool Canvas::filterMouseMoveEvent(QMouseEvent* e) {
 		return false;
 
 	Layers::iterator it = _layers.end();
-	Layer *hoverLayer = NULL;
+	Layer *hoverLayer = nullptr;
 
 	while ( it != _layers.begin() ) {
 		--it;
@@ -1777,7 +1777,7 @@ QMenu* Canvas::menu(QMenu *parent) const {
 			if ( subMenu ) {
 				if ( subMenu->isEmpty() ) {
 					delete subMenu;
-					subMenu = NULL;
+					subMenu = nullptr;
 				}
 				else {
 					// Add "Hide layer" option as first option
@@ -1804,7 +1804,7 @@ QMenu* Canvas::menu(QMenu *parent) const {
 
 	if ( menu->isEmpty() ) {
 		delete menu;
-		menu = NULL;
+		menu = nullptr;
 	}
 	else
 		parent->addMenu(menu);
@@ -1821,7 +1821,7 @@ QMenu* Canvas::menu(QMenu *parent) const {
 		connect(action, SIGNAL(triggered()), this, SLOT(showLegends()));
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

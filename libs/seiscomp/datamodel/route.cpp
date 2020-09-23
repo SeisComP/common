@@ -34,10 +34,10 @@ IMPLEMENT_SC_CLASS_DERIVED(Route, PublicObject, "Route");
 
 
 Route::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("networkCode", "string", false, false, true, false, false, false, NULL, &Route::setNetworkCode, &Route::networkCode));
-	addProperty(Core::simpleProperty("stationCode", "string", false, false, true, false, false, false, NULL, &Route::setStationCode, &Route::stationCode));
-	addProperty(Core::simpleProperty("locationCode", "string", false, false, true, false, false, false, NULL, &Route::setLocationCode, &Route::locationCode));
-	addProperty(Core::simpleProperty("streamCode", "string", false, false, true, false, false, false, NULL, &Route::setStreamCode, &Route::streamCode));
+	addProperty(Core::simpleProperty("networkCode", "string", false, false, true, false, false, false, nullptr, &Route::setNetworkCode, &Route::networkCode));
+	addProperty(Core::simpleProperty("stationCode", "string", false, false, true, false, false, false, nullptr, &Route::setStationCode, &Route::stationCode));
+	addProperty(Core::simpleProperty("locationCode", "string", false, false, true, false, false, false, nullptr, &Route::setLocationCode, &Route::locationCode));
+	addProperty(Core::simpleProperty("streamCode", "string", false, false, true, false, false, false, nullptr, &Route::setStreamCode, &Route::streamCode));
 	addProperty(arrayClassProperty<RouteArclink>("arclink", "RouteArclink", &Route::routeArclinkCount, &Route::routeArclink, static_cast<bool (Route::*)(RouteArclink*)>(&Route::add), &Route::removeRouteArclink, static_cast<bool (Route::*)(RouteArclink*)>(&Route::remove)));
 	addProperty(arrayClassProperty<RouteSeedlink>("seedlink", "RouteSeedlink", &Route::routeSeedlinkCount, &Route::routeSeedlink, static_cast<bool (Route::*)(RouteSeedlink*)>(&Route::add), &Route::removeRouteSeedlink, static_cast<bool (Route::*)(RouteSeedlink*)>(&Route::remove)));
 }
@@ -132,11 +132,11 @@ Route::Route(const std::string& publicID)
 Route::~Route() {
 	std::for_each(_routeArclinks.begin(), _routeArclinks.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&RouteArclink::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&RouteArclinkPtr::get)));
 	std::for_each(_routeSeedlinks.begin(), _routeSeedlinks.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&RouteSeedlink::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&RouteSeedlinkPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -156,12 +156,12 @@ Route* Route::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Route* Route::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new Route(publicID);
@@ -291,7 +291,7 @@ const RouteIndex& Route::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::equalIndex(const Route* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -322,7 +322,7 @@ Route& Route::operator=(const Route& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::assign(Object* other) {
 	Route* otherRoute = Route::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherRoute;
@@ -336,11 +336,11 @@ bool Route::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Routing* routing = Routing::Cast(parent);
-	if ( routing != NULL )
+	if ( routing != nullptr )
 		return routing->add(this);
 
 	SEISCOMP_ERROR("Route::attachTo(%s) -> wrong class type", parent->className());
@@ -353,11 +353,11 @@ bool Route::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Routing* routing = Routing::Cast(object);
-	if ( routing != NULL ) {
+	if ( routing != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -365,7 +365,7 @@ bool Route::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			Route* child = routing->findRoute(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return routing->remove(child);
 			else {
 				SEISCOMP_DEBUG("Route::detachFrom(Routing): route has not been found");
@@ -384,7 +384,7 @@ bool Route::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -408,9 +408,9 @@ Object* Route::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::updateChild(Object* child) {
 	RouteArclink* routeArclinkChild = RouteArclink::Cast(child);
-	if ( routeArclinkChild != NULL ) {
+	if ( routeArclinkChild != nullptr ) {
 		RouteArclink* routeArclinkElement = routeArclink(routeArclinkChild->index());
-		if ( routeArclinkElement != NULL ) {
+		if ( routeArclinkElement != nullptr ) {
 			*routeArclinkElement = *routeArclinkChild;
 			routeArclinkElement->update();
 			return true;
@@ -419,9 +419,9 @@ bool Route::updateChild(Object* child) {
 	}
 
 	RouteSeedlink* routeSeedlinkChild = RouteSeedlink::Cast(child);
-	if ( routeSeedlinkChild != NULL ) {
+	if ( routeSeedlinkChild != nullptr ) {
 		RouteSeedlink* routeSeedlinkElement = routeSeedlink(routeSeedlinkChild->index());
-		if ( routeSeedlinkElement != NULL ) {
+		if ( routeSeedlinkElement != nullptr ) {
 			*routeSeedlinkElement = *routeSeedlinkChild;
 			routeSeedlinkElement->update();
 			return true;
@@ -481,7 +481,7 @@ RouteArclink* Route::routeArclink(const RouteArclinkIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -490,11 +490,11 @@ RouteArclink* Route::routeArclink(const RouteArclinkIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::add(RouteArclink* routeArclink) {
-	if ( routeArclink == NULL )
+	if ( routeArclink == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( routeArclink->parent() != NULL ) {
+	if ( routeArclink->parent() != nullptr ) {
 		SEISCOMP_ERROR("Route::add(RouteArclink*) -> element has already a parent");
 		return false;
 	}
@@ -529,7 +529,7 @@ bool Route::add(RouteArclink* routeArclink) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::remove(RouteArclink* routeArclink) {
-	if ( routeArclink == NULL )
+	if ( routeArclink == nullptr )
 		return false;
 
 	if ( routeArclink->parent() != this ) {
@@ -550,7 +550,7 @@ bool Route::remove(RouteArclink* routeArclink) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_routeArclinks.erase(it);
@@ -574,7 +574,7 @@ bool Route::removeRouteArclink(size_t i) {
 		_routeArclinks[i]->accept(&nc);
 	}
 
-	_routeArclinks[i]->setParent(NULL);
+	_routeArclinks[i]->setParent(nullptr);
 	childRemoved(_routeArclinks[i].get());
 
 	_routeArclinks.erase(_routeArclinks.begin() + i);
@@ -589,7 +589,7 @@ bool Route::removeRouteArclink(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::removeRouteArclink(const RouteArclinkIndex& i) {
 	RouteArclink* object = routeArclink(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -621,7 +621,7 @@ RouteSeedlink* Route::routeSeedlink(const RouteSeedlinkIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -630,11 +630,11 @@ RouteSeedlink* Route::routeSeedlink(const RouteSeedlinkIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::add(RouteSeedlink* routeSeedlink) {
-	if ( routeSeedlink == NULL )
+	if ( routeSeedlink == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( routeSeedlink->parent() != NULL ) {
+	if ( routeSeedlink->parent() != nullptr ) {
 		SEISCOMP_ERROR("Route::add(RouteSeedlink*) -> element has already a parent");
 		return false;
 	}
@@ -669,7 +669,7 @@ bool Route::add(RouteSeedlink* routeSeedlink) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::remove(RouteSeedlink* routeSeedlink) {
-	if ( routeSeedlink == NULL )
+	if ( routeSeedlink == nullptr )
 		return false;
 
 	if ( routeSeedlink->parent() != this ) {
@@ -690,7 +690,7 @@ bool Route::remove(RouteSeedlink* routeSeedlink) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_routeSeedlinks.erase(it);
@@ -714,7 +714,7 @@ bool Route::removeRouteSeedlink(size_t i) {
 		_routeSeedlinks[i]->accept(&nc);
 	}
 
-	_routeSeedlinks[i]->setParent(NULL);
+	_routeSeedlinks[i]->setParent(nullptr);
 	childRemoved(_routeSeedlinks[i].get());
 
 	_routeSeedlinks.erase(_routeSeedlinks.begin() + i);
@@ -729,7 +729,7 @@ bool Route::removeRouteSeedlink(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::removeRouteSeedlink(const RouteSeedlinkIndex& i) {
 	RouteSeedlink* object = routeSeedlink(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

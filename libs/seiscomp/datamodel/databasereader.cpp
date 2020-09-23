@@ -60,8 +60,8 @@ DatabaseReader::~DatabaseReader() {
 PublicObject* DatabaseReader::loadObject(const Seiscomp::Core::RTTI& classType,
                                          const std::string& publicID) {
 	PublicObject* publicObject = getObject(classType, publicID);
-	if ( publicObject == NULL )
-		return NULL;
+	if ( publicObject == nullptr )
+		return nullptr;
 
 	Pick* pick = Pick::Cast(publicObject);
 	if ( pick ) {
@@ -222,7 +222,7 @@ PublicObject* DatabaseReader::loadObject(const Seiscomp::Core::RTTI& classType,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventParameters* DatabaseReader::loadEventParameters() {
-	if ( !validInterface() ) return NULL;
+	if ( !validInterface() ) return nullptr;
 
 	EventParameters *eventParameters = new EventParameters;
 
@@ -292,7 +292,7 @@ int DatabaseReader::load(EventParameters* eventParameters) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadPicks(EventParameters* eventParameters) {
-	if ( !validInterface() || eventParameters == NULL ) return 0;
+	if ( !validInterface() || eventParameters == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -301,7 +301,7 @@ int DatabaseReader::loadPicks(EventParameters* eventParameters) {
 	size_t count = 0;
 	it = getObjects(eventParameters, Pick::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			eventParameters->add(Pick::Cast(*it));
 			++count;
 		}
@@ -322,7 +322,7 @@ int DatabaseReader::loadPicks(EventParameters* eventParameters) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadAmplitudes(EventParameters* eventParameters) {
-	if ( !validInterface() || eventParameters == NULL ) return 0;
+	if ( !validInterface() || eventParameters == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -331,7 +331,7 @@ int DatabaseReader::loadAmplitudes(EventParameters* eventParameters) {
 	size_t count = 0;
 	it = getObjects(eventParameters, Amplitude::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			eventParameters->add(Amplitude::Cast(*it));
 			++count;
 		}
@@ -352,7 +352,7 @@ int DatabaseReader::loadAmplitudes(EventParameters* eventParameters) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadReadings(EventParameters* eventParameters) {
-	if ( !validInterface() || eventParameters == NULL ) return 0;
+	if ( !validInterface() || eventParameters == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -361,7 +361,7 @@ int DatabaseReader::loadReadings(EventParameters* eventParameters) {
 	size_t count = 0;
 	it = getObjects(eventParameters, Reading::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			eventParameters->add(Reading::Cast(*it));
 			++count;
 		}
@@ -382,7 +382,7 @@ int DatabaseReader::loadReadings(EventParameters* eventParameters) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadOrigins(EventParameters* eventParameters) {
-	if ( !validInterface() || eventParameters == NULL ) return 0;
+	if ( !validInterface() || eventParameters == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -391,7 +391,7 @@ int DatabaseReader::loadOrigins(EventParameters* eventParameters) {
 	size_t count = 0;
 	it = getObjects(eventParameters, Origin::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			eventParameters->add(Origin::Cast(*it));
 			++count;
 		}
@@ -412,7 +412,7 @@ int DatabaseReader::loadOrigins(EventParameters* eventParameters) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadFocalMechanisms(EventParameters* eventParameters) {
-	if ( !validInterface() || eventParameters == NULL ) return 0;
+	if ( !validInterface() || eventParameters == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -421,7 +421,7 @@ int DatabaseReader::loadFocalMechanisms(EventParameters* eventParameters) {
 	size_t count = 0;
 	it = getObjects(eventParameters, FocalMechanism::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			eventParameters->add(FocalMechanism::Cast(*it));
 			++count;
 		}
@@ -442,7 +442,7 @@ int DatabaseReader::loadFocalMechanisms(EventParameters* eventParameters) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadEvents(EventParameters* eventParameters) {
-	if ( !validInterface() || eventParameters == NULL ) return 0;
+	if ( !validInterface() || eventParameters == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -451,7 +451,7 @@ int DatabaseReader::loadEvents(EventParameters* eventParameters) {
 	size_t count = 0;
 	it = getObjects(eventParameters, Event::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			eventParameters->add(Event::Cast(*it));
 			++count;
 		}
@@ -485,7 +485,7 @@ int DatabaseReader::load(Pick* pick) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(Pick* pick) {
-	if ( !validInterface() || pick == NULL ) return 0;
+	if ( !validInterface() || pick == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -494,7 +494,7 @@ int DatabaseReader::loadComments(Pick* pick) {
 	size_t count = 0;
 	it = getObjects(pick, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			pick->add(Comment::Cast(*it));
 			++count;
 		}
@@ -528,7 +528,7 @@ int DatabaseReader::load(Amplitude* amplitude) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(Amplitude* amplitude) {
-	if ( !validInterface() || amplitude == NULL ) return 0;
+	if ( !validInterface() || amplitude == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -537,7 +537,7 @@ int DatabaseReader::loadComments(Amplitude* amplitude) {
 	size_t count = 0;
 	it = getObjects(amplitude, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			amplitude->add(Comment::Cast(*it));
 			++count;
 		}
@@ -573,7 +573,7 @@ int DatabaseReader::load(Reading* reading) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadPickReferences(Reading* reading) {
-	if ( !validInterface() || reading == NULL ) return 0;
+	if ( !validInterface() || reading == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -582,7 +582,7 @@ int DatabaseReader::loadPickReferences(Reading* reading) {
 	size_t count = 0;
 	it = getObjects(reading, PickReference::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			reading->add(PickReference::Cast(*it));
 			++count;
 		}
@@ -603,7 +603,7 @@ int DatabaseReader::loadPickReferences(Reading* reading) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadAmplitudeReferences(Reading* reading) {
-	if ( !validInterface() || reading == NULL ) return 0;
+	if ( !validInterface() || reading == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -612,7 +612,7 @@ int DatabaseReader::loadAmplitudeReferences(Reading* reading) {
 	size_t count = 0;
 	it = getObjects(reading, AmplitudeReference::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			reading->add(AmplitudeReference::Cast(*it));
 			++count;
 		}
@@ -664,7 +664,7 @@ int DatabaseReader::load(Origin* origin) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(Origin* origin) {
-	if ( !validInterface() || origin == NULL ) return 0;
+	if ( !validInterface() || origin == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -673,7 +673,7 @@ int DatabaseReader::loadComments(Origin* origin) {
 	size_t count = 0;
 	it = getObjects(origin, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			origin->add(Comment::Cast(*it));
 			++count;
 		}
@@ -694,7 +694,7 @@ int DatabaseReader::loadComments(Origin* origin) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadCompositeTimes(Origin* origin) {
-	if ( !validInterface() || origin == NULL ) return 0;
+	if ( !validInterface() || origin == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -703,7 +703,7 @@ int DatabaseReader::loadCompositeTimes(Origin* origin) {
 	size_t count = 0;
 	it = getObjects(origin, CompositeTime::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			origin->add(CompositeTime::Cast(*it));
 			++count;
 		}
@@ -724,7 +724,7 @@ int DatabaseReader::loadCompositeTimes(Origin* origin) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadArrivals(Origin* origin) {
-	if ( !validInterface() || origin == NULL ) return 0;
+	if ( !validInterface() || origin == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -733,7 +733,7 @@ int DatabaseReader::loadArrivals(Origin* origin) {
 	size_t count = 0;
 	it = getObjects(origin, Arrival::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			origin->add(Arrival::Cast(*it));
 			++count;
 		}
@@ -754,7 +754,7 @@ int DatabaseReader::loadArrivals(Origin* origin) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadStationMagnitudes(Origin* origin) {
-	if ( !validInterface() || origin == NULL ) return 0;
+	if ( !validInterface() || origin == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -763,7 +763,7 @@ int DatabaseReader::loadStationMagnitudes(Origin* origin) {
 	size_t count = 0;
 	it = getObjects(origin, StationMagnitude::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			origin->add(StationMagnitude::Cast(*it));
 			++count;
 		}
@@ -784,7 +784,7 @@ int DatabaseReader::loadStationMagnitudes(Origin* origin) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadMagnitudes(Origin* origin) {
-	if ( !validInterface() || origin == NULL ) return 0;
+	if ( !validInterface() || origin == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -793,7 +793,7 @@ int DatabaseReader::loadMagnitudes(Origin* origin) {
 	size_t count = 0;
 	it = getObjects(origin, Magnitude::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			origin->add(Magnitude::Cast(*it));
 			++count;
 		}
@@ -827,7 +827,7 @@ int DatabaseReader::load(StationMagnitude* stationMagnitude) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(StationMagnitude* stationMagnitude) {
-	if ( !validInterface() || stationMagnitude == NULL ) return 0;
+	if ( !validInterface() || stationMagnitude == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -836,7 +836,7 @@ int DatabaseReader::loadComments(StationMagnitude* stationMagnitude) {
 	size_t count = 0;
 	it = getObjects(stationMagnitude, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			stationMagnitude->add(Comment::Cast(*it));
 			++count;
 		}
@@ -872,7 +872,7 @@ int DatabaseReader::load(Magnitude* magnitude) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(Magnitude* magnitude) {
-	if ( !validInterface() || magnitude == NULL ) return 0;
+	if ( !validInterface() || magnitude == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -881,7 +881,7 @@ int DatabaseReader::loadComments(Magnitude* magnitude) {
 	size_t count = 0;
 	it = getObjects(magnitude, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			magnitude->add(Comment::Cast(*it));
 			++count;
 		}
@@ -902,7 +902,7 @@ int DatabaseReader::loadComments(Magnitude* magnitude) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadStationMagnitudeContributions(Magnitude* magnitude) {
-	if ( !validInterface() || magnitude == NULL ) return 0;
+	if ( !validInterface() || magnitude == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -911,7 +911,7 @@ int DatabaseReader::loadStationMagnitudeContributions(Magnitude* magnitude) {
 	size_t count = 0;
 	it = getObjects(magnitude, StationMagnitudeContribution::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			magnitude->add(StationMagnitudeContribution::Cast(*it));
 			++count;
 		}
@@ -952,7 +952,7 @@ int DatabaseReader::load(FocalMechanism* focalMechanism) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(FocalMechanism* focalMechanism) {
-	if ( !validInterface() || focalMechanism == NULL ) return 0;
+	if ( !validInterface() || focalMechanism == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -961,7 +961,7 @@ int DatabaseReader::loadComments(FocalMechanism* focalMechanism) {
 	size_t count = 0;
 	it = getObjects(focalMechanism, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			focalMechanism->add(Comment::Cast(*it));
 			++count;
 		}
@@ -982,7 +982,7 @@ int DatabaseReader::loadComments(FocalMechanism* focalMechanism) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadMomentTensors(FocalMechanism* focalMechanism) {
-	if ( !validInterface() || focalMechanism == NULL ) return 0;
+	if ( !validInterface() || focalMechanism == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -991,7 +991,7 @@ int DatabaseReader::loadMomentTensors(FocalMechanism* focalMechanism) {
 	size_t count = 0;
 	it = getObjects(focalMechanism, MomentTensor::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			focalMechanism->add(MomentTensor::Cast(*it));
 			++count;
 		}
@@ -1036,7 +1036,7 @@ int DatabaseReader::load(MomentTensor* momentTensor) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(MomentTensor* momentTensor) {
-	if ( !validInterface() || momentTensor == NULL ) return 0;
+	if ( !validInterface() || momentTensor == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1045,7 +1045,7 @@ int DatabaseReader::loadComments(MomentTensor* momentTensor) {
 	size_t count = 0;
 	it = getObjects(momentTensor, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			momentTensor->add(Comment::Cast(*it));
 			++count;
 		}
@@ -1066,7 +1066,7 @@ int DatabaseReader::loadComments(MomentTensor* momentTensor) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadDataUseds(MomentTensor* momentTensor) {
-	if ( !validInterface() || momentTensor == NULL ) return 0;
+	if ( !validInterface() || momentTensor == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1075,7 +1075,7 @@ int DatabaseReader::loadDataUseds(MomentTensor* momentTensor) {
 	size_t count = 0;
 	it = getObjects(momentTensor, DataUsed::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			momentTensor->add(DataUsed::Cast(*it));
 			++count;
 		}
@@ -1096,7 +1096,7 @@ int DatabaseReader::loadDataUseds(MomentTensor* momentTensor) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadMomentTensorPhaseSettings(MomentTensor* momentTensor) {
-	if ( !validInterface() || momentTensor == NULL ) return 0;
+	if ( !validInterface() || momentTensor == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1105,7 +1105,7 @@ int DatabaseReader::loadMomentTensorPhaseSettings(MomentTensor* momentTensor) {
 	size_t count = 0;
 	it = getObjects(momentTensor, MomentTensorPhaseSetting::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			momentTensor->add(MomentTensorPhaseSetting::Cast(*it));
 			++count;
 		}
@@ -1126,7 +1126,7 @@ int DatabaseReader::loadMomentTensorPhaseSettings(MomentTensor* momentTensor) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadMomentTensorStationContributions(MomentTensor* momentTensor) {
-	if ( !validInterface() || momentTensor == NULL ) return 0;
+	if ( !validInterface() || momentTensor == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1135,7 +1135,7 @@ int DatabaseReader::loadMomentTensorStationContributions(MomentTensor* momentTen
 	size_t count = 0;
 	it = getObjects(momentTensor, MomentTensorStationContribution::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			momentTensor->add(MomentTensorStationContribution::Cast(*it));
 			++count;
 		}
@@ -1169,7 +1169,7 @@ int DatabaseReader::load(MomentTensorStationContribution* momentTensorStationCon
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadMomentTensorComponentContributions(MomentTensorStationContribution* momentTensorStationContribution) {
-	if ( !validInterface() || momentTensorStationContribution == NULL ) return 0;
+	if ( !validInterface() || momentTensorStationContribution == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1178,7 +1178,7 @@ int DatabaseReader::loadMomentTensorComponentContributions(MomentTensorStationCo
 	size_t count = 0;
 	it = getObjects(momentTensorStationContribution, MomentTensorComponentContribution::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			momentTensorStationContribution->add(MomentTensorComponentContribution::Cast(*it));
 			++count;
 		}
@@ -1218,7 +1218,7 @@ int DatabaseReader::load(Event* event) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadEventDescriptions(Event* event) {
-	if ( !validInterface() || event == NULL ) return 0;
+	if ( !validInterface() || event == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1227,7 +1227,7 @@ int DatabaseReader::loadEventDescriptions(Event* event) {
 	size_t count = 0;
 	it = getObjects(event, EventDescription::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			event->add(EventDescription::Cast(*it));
 			++count;
 		}
@@ -1248,7 +1248,7 @@ int DatabaseReader::loadEventDescriptions(Event* event) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(Event* event) {
-	if ( !validInterface() || event == NULL ) return 0;
+	if ( !validInterface() || event == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1257,7 +1257,7 @@ int DatabaseReader::loadComments(Event* event) {
 	size_t count = 0;
 	it = getObjects(event, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			event->add(Comment::Cast(*it));
 			++count;
 		}
@@ -1278,7 +1278,7 @@ int DatabaseReader::loadComments(Event* event) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadOriginReferences(Event* event) {
-	if ( !validInterface() || event == NULL ) return 0;
+	if ( !validInterface() || event == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1287,7 +1287,7 @@ int DatabaseReader::loadOriginReferences(Event* event) {
 	size_t count = 0;
 	it = getObjects(event, OriginReference::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			event->add(OriginReference::Cast(*it));
 			++count;
 		}
@@ -1308,7 +1308,7 @@ int DatabaseReader::loadOriginReferences(Event* event) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadFocalMechanismReferences(Event* event) {
-	if ( !validInterface() || event == NULL ) return 0;
+	if ( !validInterface() || event == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1317,7 +1317,7 @@ int DatabaseReader::loadFocalMechanismReferences(Event* event) {
 	size_t count = 0;
 	it = getObjects(event, FocalMechanismReference::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			event->add(FocalMechanismReference::Cast(*it));
 			++count;
 		}
@@ -1338,7 +1338,7 @@ int DatabaseReader::loadFocalMechanismReferences(Event* event) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Config* DatabaseReader::loadConfig() {
-	if ( !validInterface() ) return NULL;
+	if ( !validInterface() ) return nullptr;
 
 	Config *config = new Config;
 
@@ -1380,7 +1380,7 @@ int DatabaseReader::load(Config* config) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadParameterSets(Config* config) {
-	if ( !validInterface() || config == NULL ) return 0;
+	if ( !validInterface() || config == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1389,7 +1389,7 @@ int DatabaseReader::loadParameterSets(Config* config) {
 	size_t count = 0;
 	it = getObjects(config, ParameterSet::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			config->add(ParameterSet::Cast(*it));
 			++count;
 		}
@@ -1410,7 +1410,7 @@ int DatabaseReader::loadParameterSets(Config* config) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadConfigModules(Config* config) {
-	if ( !validInterface() || config == NULL ) return 0;
+	if ( !validInterface() || config == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1419,7 +1419,7 @@ int DatabaseReader::loadConfigModules(Config* config) {
 	size_t count = 0;
 	it = getObjects(config, ConfigModule::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			config->add(ConfigModule::Cast(*it));
 			++count;
 		}
@@ -1460,7 +1460,7 @@ int DatabaseReader::load(ParameterSet* parameterSet) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadParameters(ParameterSet* parameterSet) {
-	if ( !validInterface() || parameterSet == NULL ) return 0;
+	if ( !validInterface() || parameterSet == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1469,7 +1469,7 @@ int DatabaseReader::loadParameters(ParameterSet* parameterSet) {
 	size_t count = 0;
 	it = getObjects(parameterSet, Parameter::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			parameterSet->add(Parameter::Cast(*it));
 			++count;
 		}
@@ -1490,7 +1490,7 @@ int DatabaseReader::loadParameters(ParameterSet* parameterSet) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(ParameterSet* parameterSet) {
-	if ( !validInterface() || parameterSet == NULL ) return 0;
+	if ( !validInterface() || parameterSet == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1499,7 +1499,7 @@ int DatabaseReader::loadComments(ParameterSet* parameterSet) {
 	size_t count = 0;
 	it = getObjects(parameterSet, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			parameterSet->add(Comment::Cast(*it));
 			++count;
 		}
@@ -1533,7 +1533,7 @@ int DatabaseReader::load(Parameter* parameter) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(Parameter* parameter) {
-	if ( !validInterface() || parameter == NULL ) return 0;
+	if ( !validInterface() || parameter == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1542,7 +1542,7 @@ int DatabaseReader::loadComments(Parameter* parameter) {
 	size_t count = 0;
 	it = getObjects(parameter, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			parameter->add(Comment::Cast(*it));
 			++count;
 		}
@@ -1581,7 +1581,7 @@ int DatabaseReader::load(ConfigModule* configModule) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadConfigStations(ConfigModule* configModule) {
-	if ( !validInterface() || configModule == NULL ) return 0;
+	if ( !validInterface() || configModule == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1590,7 +1590,7 @@ int DatabaseReader::loadConfigStations(ConfigModule* configModule) {
 	size_t count = 0;
 	it = getObjects(configModule, ConfigStation::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			configModule->add(ConfigStation::Cast(*it));
 			++count;
 		}
@@ -1624,7 +1624,7 @@ int DatabaseReader::load(ConfigStation* configStation) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadSetups(ConfigStation* configStation) {
-	if ( !validInterface() || configStation == NULL ) return 0;
+	if ( !validInterface() || configStation == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1633,7 +1633,7 @@ int DatabaseReader::loadSetups(ConfigStation* configStation) {
 	size_t count = 0;
 	it = getObjects(configStation, Setup::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			configStation->add(Setup::Cast(*it));
 			++count;
 		}
@@ -1654,7 +1654,7 @@ int DatabaseReader::loadSetups(ConfigStation* configStation) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QualityControl* DatabaseReader::loadQualityControl() {
-	if ( !validInterface() ) return NULL;
+	if ( !validInterface() ) return nullptr;
 
 	QualityControl *qualityControl = new QualityControl;
 
@@ -1688,7 +1688,7 @@ int DatabaseReader::load(QualityControl* qualityControl) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadQCLogs(QualityControl* qualityControl) {
-	if ( !validInterface() || qualityControl == NULL ) return 0;
+	if ( !validInterface() || qualityControl == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1697,7 +1697,7 @@ int DatabaseReader::loadQCLogs(QualityControl* qualityControl) {
 	size_t count = 0;
 	it = getObjects(qualityControl, QCLog::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			qualityControl->add(QCLog::Cast(*it));
 			++count;
 		}
@@ -1718,7 +1718,7 @@ int DatabaseReader::loadQCLogs(QualityControl* qualityControl) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadWaveformQualitys(QualityControl* qualityControl) {
-	if ( !validInterface() || qualityControl == NULL ) return 0;
+	if ( !validInterface() || qualityControl == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1727,7 +1727,7 @@ int DatabaseReader::loadWaveformQualitys(QualityControl* qualityControl) {
 	size_t count = 0;
 	it = getObjects(qualityControl, WaveformQuality::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			qualityControl->add(WaveformQuality::Cast(*it));
 			++count;
 		}
@@ -1748,7 +1748,7 @@ int DatabaseReader::loadWaveformQualitys(QualityControl* qualityControl) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadOutages(QualityControl* qualityControl) {
-	if ( !validInterface() || qualityControl == NULL ) return 0;
+	if ( !validInterface() || qualityControl == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1757,7 +1757,7 @@ int DatabaseReader::loadOutages(QualityControl* qualityControl) {
 	size_t count = 0;
 	it = getObjects(qualityControl, Outage::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			qualityControl->add(Outage::Cast(*it));
 			++count;
 		}
@@ -1778,7 +1778,7 @@ int DatabaseReader::loadOutages(QualityControl* qualityControl) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Inventory* DatabaseReader::loadInventory() {
-	if ( !validInterface() ) return NULL;
+	if ( !validInterface() ) return nullptr;
 
 	Inventory *inventory = new Inventory;
 
@@ -1853,7 +1853,7 @@ int DatabaseReader::load(Inventory* inventory) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadStationGroups(Inventory* inventory) {
-	if ( !validInterface() || inventory == NULL ) return 0;
+	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1862,7 +1862,7 @@ int DatabaseReader::loadStationGroups(Inventory* inventory) {
 	size_t count = 0;
 	it = getObjects(inventory, StationGroup::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			inventory->add(StationGroup::Cast(*it));
 			++count;
 		}
@@ -1883,7 +1883,7 @@ int DatabaseReader::loadStationGroups(Inventory* inventory) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadAuxDevices(Inventory* inventory) {
-	if ( !validInterface() || inventory == NULL ) return 0;
+	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1892,7 +1892,7 @@ int DatabaseReader::loadAuxDevices(Inventory* inventory) {
 	size_t count = 0;
 	it = getObjects(inventory, AuxDevice::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			inventory->add(AuxDevice::Cast(*it));
 			++count;
 		}
@@ -1913,7 +1913,7 @@ int DatabaseReader::loadAuxDevices(Inventory* inventory) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadSensors(Inventory* inventory) {
-	if ( !validInterface() || inventory == NULL ) return 0;
+	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1922,7 +1922,7 @@ int DatabaseReader::loadSensors(Inventory* inventory) {
 	size_t count = 0;
 	it = getObjects(inventory, Sensor::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			inventory->add(Sensor::Cast(*it));
 			++count;
 		}
@@ -1943,7 +1943,7 @@ int DatabaseReader::loadSensors(Inventory* inventory) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadDataloggers(Inventory* inventory) {
-	if ( !validInterface() || inventory == NULL ) return 0;
+	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1952,7 +1952,7 @@ int DatabaseReader::loadDataloggers(Inventory* inventory) {
 	size_t count = 0;
 	it = getObjects(inventory, Datalogger::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			inventory->add(Datalogger::Cast(*it));
 			++count;
 		}
@@ -1973,7 +1973,7 @@ int DatabaseReader::loadDataloggers(Inventory* inventory) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadResponsePAZs(Inventory* inventory) {
-	if ( !validInterface() || inventory == NULL ) return 0;
+	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -1982,7 +1982,7 @@ int DatabaseReader::loadResponsePAZs(Inventory* inventory) {
 	size_t count = 0;
 	it = getObjects(inventory, ResponsePAZ::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			inventory->add(ResponsePAZ::Cast(*it));
 			++count;
 		}
@@ -2003,7 +2003,7 @@ int DatabaseReader::loadResponsePAZs(Inventory* inventory) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadResponseFIRs(Inventory* inventory) {
-	if ( !validInterface() || inventory == NULL ) return 0;
+	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2012,7 +2012,7 @@ int DatabaseReader::loadResponseFIRs(Inventory* inventory) {
 	size_t count = 0;
 	it = getObjects(inventory, ResponseFIR::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			inventory->add(ResponseFIR::Cast(*it));
 			++count;
 		}
@@ -2033,7 +2033,7 @@ int DatabaseReader::loadResponseFIRs(Inventory* inventory) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadResponseIIRs(Inventory* inventory) {
-	if ( !validInterface() || inventory == NULL ) return 0;
+	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2042,7 +2042,7 @@ int DatabaseReader::loadResponseIIRs(Inventory* inventory) {
 	size_t count = 0;
 	it = getObjects(inventory, ResponseIIR::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			inventory->add(ResponseIIR::Cast(*it));
 			++count;
 		}
@@ -2063,7 +2063,7 @@ int DatabaseReader::loadResponseIIRs(Inventory* inventory) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadResponsePolynomials(Inventory* inventory) {
-	if ( !validInterface() || inventory == NULL ) return 0;
+	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2072,7 +2072,7 @@ int DatabaseReader::loadResponsePolynomials(Inventory* inventory) {
 	size_t count = 0;
 	it = getObjects(inventory, ResponsePolynomial::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			inventory->add(ResponsePolynomial::Cast(*it));
 			++count;
 		}
@@ -2093,7 +2093,7 @@ int DatabaseReader::loadResponsePolynomials(Inventory* inventory) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadResponseFAPs(Inventory* inventory) {
-	if ( !validInterface() || inventory == NULL ) return 0;
+	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2102,7 +2102,7 @@ int DatabaseReader::loadResponseFAPs(Inventory* inventory) {
 	size_t count = 0;
 	it = getObjects(inventory, ResponseFAP::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			inventory->add(ResponseFAP::Cast(*it));
 			++count;
 		}
@@ -2123,7 +2123,7 @@ int DatabaseReader::loadResponseFAPs(Inventory* inventory) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadNetworks(Inventory* inventory) {
-	if ( !validInterface() || inventory == NULL ) return 0;
+	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2132,7 +2132,7 @@ int DatabaseReader::loadNetworks(Inventory* inventory) {
 	size_t count = 0;
 	it = getObjects(inventory, Network::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			inventory->add(Network::Cast(*it));
 			++count;
 		}
@@ -2166,7 +2166,7 @@ int DatabaseReader::load(StationGroup* stationGroup) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadStationReferences(StationGroup* stationGroup) {
-	if ( !validInterface() || stationGroup == NULL ) return 0;
+	if ( !validInterface() || stationGroup == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2175,7 +2175,7 @@ int DatabaseReader::loadStationReferences(StationGroup* stationGroup) {
 	size_t count = 0;
 	it = getObjects(stationGroup, StationReference::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			stationGroup->add(StationReference::Cast(*it));
 			++count;
 		}
@@ -2209,7 +2209,7 @@ int DatabaseReader::load(AuxDevice* auxDevice) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadAuxSources(AuxDevice* auxDevice) {
-	if ( !validInterface() || auxDevice == NULL ) return 0;
+	if ( !validInterface() || auxDevice == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2218,7 +2218,7 @@ int DatabaseReader::loadAuxSources(AuxDevice* auxDevice) {
 	size_t count = 0;
 	it = getObjects(auxDevice, AuxSource::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			auxDevice->add(AuxSource::Cast(*it));
 			++count;
 		}
@@ -2252,7 +2252,7 @@ int DatabaseReader::load(Sensor* sensor) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadSensorCalibrations(Sensor* sensor) {
-	if ( !validInterface() || sensor == NULL ) return 0;
+	if ( !validInterface() || sensor == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2261,7 +2261,7 @@ int DatabaseReader::loadSensorCalibrations(Sensor* sensor) {
 	size_t count = 0;
 	it = getObjects(sensor, SensorCalibration::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			sensor->add(SensorCalibration::Cast(*it));
 			++count;
 		}
@@ -2297,7 +2297,7 @@ int DatabaseReader::load(Datalogger* datalogger) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadDataloggerCalibrations(Datalogger* datalogger) {
-	if ( !validInterface() || datalogger == NULL ) return 0;
+	if ( !validInterface() || datalogger == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2306,7 +2306,7 @@ int DatabaseReader::loadDataloggerCalibrations(Datalogger* datalogger) {
 	size_t count = 0;
 	it = getObjects(datalogger, DataloggerCalibration::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			datalogger->add(DataloggerCalibration::Cast(*it));
 			++count;
 		}
@@ -2327,7 +2327,7 @@ int DatabaseReader::loadDataloggerCalibrations(Datalogger* datalogger) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadDecimations(Datalogger* datalogger) {
-	if ( !validInterface() || datalogger == NULL ) return 0;
+	if ( !validInterface() || datalogger == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2336,7 +2336,7 @@ int DatabaseReader::loadDecimations(Datalogger* datalogger) {
 	size_t count = 0;
 	it = getObjects(datalogger, Decimation::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			datalogger->add(Decimation::Cast(*it));
 			++count;
 		}
@@ -2378,7 +2378,7 @@ int DatabaseReader::load(Network* network) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(Network* network) {
-	if ( !validInterface() || network == NULL ) return 0;
+	if ( !validInterface() || network == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2387,7 +2387,7 @@ int DatabaseReader::loadComments(Network* network) {
 	size_t count = 0;
 	it = getObjects(network, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			network->add(Comment::Cast(*it));
 			++count;
 		}
@@ -2408,7 +2408,7 @@ int DatabaseReader::loadComments(Network* network) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadStations(Network* network) {
-	if ( !validInterface() || network == NULL ) return 0;
+	if ( !validInterface() || network == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2417,7 +2417,7 @@ int DatabaseReader::loadStations(Network* network) {
 	size_t count = 0;
 	it = getObjects(network, Station::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			network->add(Station::Cast(*it));
 			++count;
 		}
@@ -2459,7 +2459,7 @@ int DatabaseReader::load(Station* station) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(Station* station) {
-	if ( !validInterface() || station == NULL ) return 0;
+	if ( !validInterface() || station == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2468,7 +2468,7 @@ int DatabaseReader::loadComments(Station* station) {
 	size_t count = 0;
 	it = getObjects(station, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			station->add(Comment::Cast(*it));
 			++count;
 		}
@@ -2489,7 +2489,7 @@ int DatabaseReader::loadComments(Station* station) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadSensorLocations(Station* station) {
-	if ( !validInterface() || station == NULL ) return 0;
+	if ( !validInterface() || station == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2498,7 +2498,7 @@ int DatabaseReader::loadSensorLocations(Station* station) {
 	size_t count = 0;
 	it = getObjects(station, SensorLocation::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			station->add(SensorLocation::Cast(*it));
 			++count;
 		}
@@ -2542,7 +2542,7 @@ int DatabaseReader::load(SensorLocation* sensorLocation) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(SensorLocation* sensorLocation) {
-	if ( !validInterface() || sensorLocation == NULL ) return 0;
+	if ( !validInterface() || sensorLocation == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2551,7 +2551,7 @@ int DatabaseReader::loadComments(SensorLocation* sensorLocation) {
 	size_t count = 0;
 	it = getObjects(sensorLocation, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			sensorLocation->add(Comment::Cast(*it));
 			++count;
 		}
@@ -2572,7 +2572,7 @@ int DatabaseReader::loadComments(SensorLocation* sensorLocation) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadAuxStreams(SensorLocation* sensorLocation) {
-	if ( !validInterface() || sensorLocation == NULL ) return 0;
+	if ( !validInterface() || sensorLocation == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2581,7 +2581,7 @@ int DatabaseReader::loadAuxStreams(SensorLocation* sensorLocation) {
 	size_t count = 0;
 	it = getObjects(sensorLocation, AuxStream::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			sensorLocation->add(AuxStream::Cast(*it));
 			++count;
 		}
@@ -2602,7 +2602,7 @@ int DatabaseReader::loadAuxStreams(SensorLocation* sensorLocation) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadStreams(SensorLocation* sensorLocation) {
-	if ( !validInterface() || sensorLocation == NULL ) return 0;
+	if ( !validInterface() || sensorLocation == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2611,7 +2611,7 @@ int DatabaseReader::loadStreams(SensorLocation* sensorLocation) {
 	size_t count = 0;
 	it = getObjects(sensorLocation, Stream::TypeInfo(), isLowerVersion<0,10>());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			sensorLocation->add(Stream::Cast(*it));
 			++count;
 		}
@@ -2646,7 +2646,7 @@ int DatabaseReader::load(Stream* stream) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadComments(Stream* stream) {
-	if ( !validInterface() || stream == NULL ) return 0;
+	if ( !validInterface() || stream == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2655,7 +2655,7 @@ int DatabaseReader::loadComments(Stream* stream) {
 	size_t count = 0;
 	it = getObjects(stream, Comment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			stream->add(Comment::Cast(*it));
 			++count;
 		}
@@ -2676,7 +2676,7 @@ int DatabaseReader::loadComments(Stream* stream) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Routing* DatabaseReader::loadRouting() {
-	if ( !validInterface() ) return NULL;
+	if ( !validInterface() ) return nullptr;
 
 	Routing *routing = new Routing;
 
@@ -2713,7 +2713,7 @@ int DatabaseReader::load(Routing* routing) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadRoutes(Routing* routing) {
-	if ( !validInterface() || routing == NULL ) return 0;
+	if ( !validInterface() || routing == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2722,7 +2722,7 @@ int DatabaseReader::loadRoutes(Routing* routing) {
 	size_t count = 0;
 	it = getObjects(routing, Route::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			routing->add(Route::Cast(*it));
 			++count;
 		}
@@ -2743,7 +2743,7 @@ int DatabaseReader::loadRoutes(Routing* routing) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadAccesss(Routing* routing) {
-	if ( !validInterface() || routing == NULL ) return 0;
+	if ( !validInterface() || routing == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2752,7 +2752,7 @@ int DatabaseReader::loadAccesss(Routing* routing) {
 	size_t count = 0;
 	it = getObjects(routing, Access::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			routing->add(Access::Cast(*it));
 			++count;
 		}
@@ -2788,7 +2788,7 @@ int DatabaseReader::load(Route* route) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadRouteArclinks(Route* route) {
-	if ( !validInterface() || route == NULL ) return 0;
+	if ( !validInterface() || route == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2797,7 +2797,7 @@ int DatabaseReader::loadRouteArclinks(Route* route) {
 	size_t count = 0;
 	it = getObjects(route, RouteArclink::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			route->add(RouteArclink::Cast(*it));
 			++count;
 		}
@@ -2818,7 +2818,7 @@ int DatabaseReader::loadRouteArclinks(Route* route) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadRouteSeedlinks(Route* route) {
-	if ( !validInterface() || route == NULL ) return 0;
+	if ( !validInterface() || route == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2827,7 +2827,7 @@ int DatabaseReader::loadRouteSeedlinks(Route* route) {
 	size_t count = 0;
 	it = getObjects(route, RouteSeedlink::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			route->add(RouteSeedlink::Cast(*it));
 			++count;
 		}
@@ -2848,7 +2848,7 @@ int DatabaseReader::loadRouteSeedlinks(Route* route) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Journaling* DatabaseReader::loadJournaling() {
-	if ( !validInterface() ) return NULL;
+	if ( !validInterface() ) return nullptr;
 
 	Journaling *journaling = new Journaling;
 
@@ -2878,7 +2878,7 @@ int DatabaseReader::load(Journaling* journaling) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadJournalEntrys(Journaling* journaling) {
-	if ( !validInterface() || journaling == NULL ) return 0;
+	if ( !validInterface() || journaling == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2887,7 +2887,7 @@ int DatabaseReader::loadJournalEntrys(Journaling* journaling) {
 	size_t count = 0;
 	it = getObjects(journaling, JournalEntry::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			journaling->add(JournalEntry::Cast(*it));
 			++count;
 		}
@@ -2908,7 +2908,7 @@ int DatabaseReader::loadJournalEntrys(Journaling* journaling) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ArclinkLog* DatabaseReader::loadArclinkLog() {
-	if ( !validInterface() ) return NULL;
+	if ( !validInterface() ) return nullptr;
 
 	ArclinkLog *arclinkLog = new ArclinkLog;
 
@@ -2945,7 +2945,7 @@ int DatabaseReader::load(ArclinkLog* arclinkLog) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadArclinkRequests(ArclinkLog* arclinkLog) {
-	if ( !validInterface() || arclinkLog == NULL ) return 0;
+	if ( !validInterface() || arclinkLog == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2954,7 +2954,7 @@ int DatabaseReader::loadArclinkRequests(ArclinkLog* arclinkLog) {
 	size_t count = 0;
 	it = getObjects(arclinkLog, ArclinkRequest::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			arclinkLog->add(ArclinkRequest::Cast(*it));
 			++count;
 		}
@@ -2975,7 +2975,7 @@ int DatabaseReader::loadArclinkRequests(ArclinkLog* arclinkLog) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadArclinkUsers(ArclinkLog* arclinkLog) {
-	if ( !validInterface() || arclinkLog == NULL ) return 0;
+	if ( !validInterface() || arclinkLog == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -2984,7 +2984,7 @@ int DatabaseReader::loadArclinkUsers(ArclinkLog* arclinkLog) {
 	size_t count = 0;
 	it = getObjects(arclinkLog, ArclinkUser::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			arclinkLog->add(ArclinkUser::Cast(*it));
 			++count;
 		}
@@ -3020,7 +3020,7 @@ int DatabaseReader::load(ArclinkRequest* arclinkRequest) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadArclinkStatusLines(ArclinkRequest* arclinkRequest) {
-	if ( !validInterface() || arclinkRequest == NULL ) return 0;
+	if ( !validInterface() || arclinkRequest == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -3029,7 +3029,7 @@ int DatabaseReader::loadArclinkStatusLines(ArclinkRequest* arclinkRequest) {
 	size_t count = 0;
 	it = getObjects(arclinkRequest, ArclinkStatusLine::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			arclinkRequest->add(ArclinkStatusLine::Cast(*it));
 			++count;
 		}
@@ -3050,7 +3050,7 @@ int DatabaseReader::loadArclinkStatusLines(ArclinkRequest* arclinkRequest) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadArclinkRequestLines(ArclinkRequest* arclinkRequest) {
-	if ( !validInterface() || arclinkRequest == NULL ) return 0;
+	if ( !validInterface() || arclinkRequest == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -3059,7 +3059,7 @@ int DatabaseReader::loadArclinkRequestLines(ArclinkRequest* arclinkRequest) {
 	size_t count = 0;
 	it = getObjects(arclinkRequest, ArclinkRequestLine::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			arclinkRequest->add(ArclinkRequestLine::Cast(*it));
 			++count;
 		}
@@ -3080,7 +3080,7 @@ int DatabaseReader::loadArclinkRequestLines(ArclinkRequest* arclinkRequest) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DataAvailability* DatabaseReader::loadDataAvailability() {
-	if ( !validInterface() ) return NULL;
+	if ( !validInterface() ) return nullptr;
 
 	DataAvailability *dataAvailability = new DataAvailability;
 
@@ -3115,7 +3115,7 @@ int DatabaseReader::load(DataAvailability* dataAvailability) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadDataExtents(DataAvailability* dataAvailability) {
-	if ( !validInterface() || dataAvailability == NULL ) return 0;
+	if ( !validInterface() || dataAvailability == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -3124,7 +3124,7 @@ int DatabaseReader::loadDataExtents(DataAvailability* dataAvailability) {
 	size_t count = 0;
 	it = getObjects(dataAvailability, DataExtent::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			dataAvailability->add(DataExtent::Cast(*it));
 			++count;
 		}
@@ -3160,7 +3160,7 @@ int DatabaseReader::load(DataExtent* dataExtent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadDataSegments(DataExtent* dataExtent) {
-	if ( !validInterface() || dataExtent == NULL ) return 0;
+	if ( !validInterface() || dataExtent == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -3169,7 +3169,7 @@ int DatabaseReader::loadDataSegments(DataExtent* dataExtent) {
 	size_t count = 0;
 	it = getObjects(dataExtent, DataSegment::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			dataExtent->add(DataSegment::Cast(*it));
 			++count;
 		}
@@ -3190,7 +3190,7 @@ int DatabaseReader::loadDataSegments(DataExtent* dataExtent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseReader::loadDataAttributeExtents(DataExtent* dataExtent) {
-	if ( !validInterface() || dataExtent == NULL ) return 0;
+	if ( !validInterface() || dataExtent == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
 	Notifier::Disable();
@@ -3199,7 +3199,7 @@ int DatabaseReader::loadDataAttributeExtents(DataExtent* dataExtent) {
 	size_t count = 0;
 	it = getObjects(dataExtent, DataAttributeExtent::TypeInfo());
 	while ( *it ) {
-		if ( (*it)->parent() == NULL ) {
+		if ( (*it)->parent() == nullptr ) {
 			dataExtent->add(DataAttributeExtent::Cast(*it));
 			++count;
 		}

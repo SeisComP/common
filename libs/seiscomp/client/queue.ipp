@@ -48,7 +48,7 @@ struct QueueHelper<T,1> {
 		}
 	}
 
-	static T defaultValue() { return NULL; }
+	static T defaultValue() { return nullptr; }
 };
 
 }

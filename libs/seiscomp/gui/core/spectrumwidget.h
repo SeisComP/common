@@ -59,7 +59,7 @@ class SC_GUI_API SpectrumWidget : public QWidget {
 		 * @param spec The spectrum values from 0Hz to [fNyquist]Hz
 		 */
 		void setSpectrum(double freqNyquist, const Math::ComplexArray &spec,
-		                 Processing::Response *resp = NULL,
+		                 Processing::Response *resp = nullptr,
 		                 QString exportBasename = QString());
 
 		//! Access the x-axis

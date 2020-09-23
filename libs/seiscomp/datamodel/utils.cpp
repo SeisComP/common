@@ -54,7 +54,7 @@ class CloneVisitor : public Visitor {
 		// Reset should be called before the object is used
 		// a second time.
 		void reset() {
-			_clone = NULL;
+			_clone = nullptr;
 			_parents.clear();
 		}
 
@@ -83,12 +83,12 @@ class CloneVisitor : public Visitor {
 			if ( !_parents.empty() ) {
 				if ( !o->attachTo(_parents.front()) ) {
 					delete o;
-					o = NULL;
+					o = nullptr;
 					return false;
 				}
 			}
 
-			if ( _clone == NULL ) _clone = o;
+			if ( _clone == nullptr ) _clone = o;
 			return true;
 		}
 
@@ -101,9 +101,9 @@ class CloneVisitor : public Visitor {
 
 
 ThreeComponents::ThreeComponents() {
-	comps[0] = NULL;
-	comps[1] = NULL;
-	comps[2] = NULL;
+	comps[0] = nullptr;
+	comps[1] = nullptr;
+	comps[2] = nullptr;
 }
 
 
@@ -126,8 +126,8 @@ Station* getStation(const Inventory *inventory,
                     const std::string &stationCode,
                     const Core::Time &time,
                     InventoryError *error) {
-	if ( inventory == NULL )
-		return NULL;
+	if ( inventory == nullptr )
+		return nullptr;
 
 	InventoryError err;
 	ERR(NETWORK_CODE_NOT_FOUND);
@@ -167,7 +167,7 @@ Station* getStation(const Inventory *inventory,
 
 	if ( error ) *error = err;
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -178,8 +178,8 @@ SensorLocation* getSensorLocation(const Inventory *inventory,
                                   const Core::Time &time, InventoryError *error) {
 	/*
 	DataModel::Station *sta = getStation(inventory, networkCode, stationCode, time);
-	if ( sta == NULL )
-		return NULL;
+	if ( sta == nullptr )
+		return nullptr;
 
 	for ( size_t i = 0; i < sta->sensorLocationCount(); ++i ) {
 		DataModel::SensorLocation* loc = sta->sensorLocation(i);
@@ -195,11 +195,11 @@ SensorLocation* getSensorLocation(const Inventory *inventory,
 		return loc;
 	}
 
-	return NULL;
+	return nullptr;
 	*/
 
-	if ( inventory == NULL )
-		return NULL;
+	if ( inventory == nullptr )
+		return nullptr;
 
 	InventoryError err;
 	ERR(NETWORK_CODE_NOT_FOUND);
@@ -236,7 +236,7 @@ SensorLocation* getSensorLocation(const Inventory *inventory,
 
 	if ( error ) *error = err;
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -249,7 +249,7 @@ Stream* getStream(const Inventory *inventory,
 	InventoryError err;
 	DataModel::SensorLocation *loc = getSensorLocation(inventory, networkCode, stationCode,
 	                                                   locationCode, time, &err);
-	if ( loc != NULL ) {
+	if ( loc != nullptr ) {
 		ERR(STREAM_CODE_NOT_FOUND);
 		for ( size_t i = 0; i < loc->streamCount(); ++i ) {
 			DataModel::Stream *stream = loc->stream(i);
@@ -270,12 +270,12 @@ Stream* getStream(const Inventory *inventory,
 
 	if ( error ) *error = err;
 
-	return NULL;
+	return nullptr;
 }
 
 
 Station* getStation(const Inventory *inventory, const Pick *pick) {
-	if ( pick == NULL ) return NULL;
+	if ( pick == nullptr ) return nullptr;
 
 	return getStation(inventory, pick->waveformID().networkCode(),
 	                  pick->waveformID().stationCode(),
@@ -285,7 +285,7 @@ Station* getStation(const Inventory *inventory, const Pick *pick) {
 
 SensorLocation* getSensorLocation(const Inventory *inventory,
                                   const Pick *pick) {
-	if ( pick == NULL ) return NULL;
+	if ( pick == nullptr ) return nullptr;
 
 	return getSensorLocation(inventory, pick->waveformID().networkCode(),
 	                         pick->waveformID().stationCode(), pick->waveformID().locationCode(),
@@ -295,7 +295,7 @@ SensorLocation* getSensorLocation(const Inventory *inventory,
 
 Stream* getStream(const Inventory *inventory,
                   const Pick *pick) {
-	if ( pick == NULL ) return NULL;
+	if ( pick == nullptr ) return nullptr;
 
 	return getStream(inventory, pick->waveformID().networkCode(),
 	                 pick->waveformID().stationCode(), pick->waveformID().locationCode(),
@@ -306,7 +306,7 @@ Stream* getStream(const Inventory *inventory,
 Stream *getVerticalComponent(const SensorLocation *loc, const char *streamCode, const Core::Time &time) {
 	int len = strlen(streamCode);
 
-	Stream *best = NULL;
+	Stream *best = nullptr;
 	float maxCorr = -100;
 
 	for ( size_t i = 0; i < loc->streamCount(); ++i ) {
@@ -440,7 +440,7 @@ bool getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const c
 
 Setup *findSetup(const ConfigStation *cs, const std::string &setupName,
                  bool allowGlobal) {
-	DataModel::Setup *configSetup = NULL;
+	DataModel::Setup *configSetup = nullptr;
 
 	// Find setup with setupName or "default" as fallback
 	for ( size_t i = 0; i < cs->setupCount(); ++i ) {
@@ -580,7 +580,7 @@ std::string DiffMerge::LogNode::compare(T a, T b, bool quotes) {
 
 
 void DiffMerge::LogNode::reset () {
-	_parent = NULL;
+	_parent = nullptr;
 	_title.clear();
 	_level = 0;
 }
@@ -649,7 +649,7 @@ void DiffMerge::LogNode::show(std::ostream &os, int padding, int indent,
 // DiffMerge
 ///////////////////////////////////////////////////////////////////////////////
 DiffMerge::DiffMerge() {
-	_currentNode = NULL;
+	_currentNode = nullptr;
 	_logLevel = -1;
 }
 
@@ -661,7 +661,7 @@ void DiffMerge::setLoggingLevel(int level) {
 
 void  DiffMerge::showLog(std::ostream &os, int padding, int indent,
                          bool ignoreFirstPad) {
-	if ( _currentNode != NULL )
+	if ( _currentNode != nullptr )
 		_currentNode->show(os, padding, indent, ignoreFirstPad);
 }
 
@@ -671,7 +671,7 @@ bool DiffMerge::compareNonArrayProperty(const Core::BaseObject *o1,
 	if ( o1 == o2 ) return true;
 
 	// Different types are not comparable
-	if ( (o1->meta() == NULL) || (o1->meta() != o2->meta()) ) return false;
+	if ( (o1->meta() == nullptr) || (o1->meta() != o2->meta()) ) return false;
 
 	for ( size_t i = 0; i < o1->meta()->propertyCount(); ++i ) {
 		const Core::MetaProperty* prop = o1->meta()->property(i);
@@ -767,7 +767,7 @@ bool DiffMerge::compareNonArrayProperty(const Core::MetaProperty *prop,
  */
 bool DiffMerge::equalsIndex(Object *o1, Object *o2) {
 	LogNodePtr nodeCopy = _currentNode;
-	_currentNode = NULL;
+	_currentNode = nullptr;
 	
 	// compare className
 	if ( o1->className() != o2->className() ){
@@ -801,7 +801,7 @@ bool DiffMerge::equalsIndex(Object *o1, Object *o2) {
 
 	if ( !hasIndex ) {
 		PublicObject *po1 = PublicObject::Cast(o1);
-		if ( po1 != NULL ) {
+		if ( po1 != nullptr ) {
 			if ( po1->publicID() != PublicObject::Cast(o2)->publicID() ) {
 				_currentNode = nodeCopy;
 				return false;
@@ -819,13 +819,13 @@ bool DiffMerge::equalsIndex(Object *o1, Object *o2) {
  * their indexes, @see equalsIndex
  * @param tree object tree to scan
  * @param node item to search for
- * @return pointer to the item within the object tree or NULL if the node was
+ * @return pointer to the item within the object tree or nullptr if the node was
  * not found
  */
 Object* DiffMerge::find(Object* tree, Object* node) {
 	if ( equalsIndex(tree, node) ) return tree;
 	
-	Object* result = NULL;
+	Object* result = nullptr;
 
 	// recursive scan of all class properties
 	for ( size_t i = 0; i < tree->meta()->propertyCount(); ++i ) {
@@ -840,7 +840,7 @@ Object* DiffMerge::find(Object* tree, Object* node) {
 				if ( ! bo->typeInfo().isTypeOf(Object::TypeInfo()) )
 					break;
 				result = find(static_cast<Object*>(bo), node);
-				if ( result != NULL ) return result;
+				if ( result != nullptr ) return result;
 			}
 		}
 		else {
@@ -848,10 +848,10 @@ Object* DiffMerge::find(Object* tree, Object* node) {
 			if ( value.empty() ) continue;
 			Object* child = boost::any_cast<Object*>(value);
 			result = find(child, node);
-			if ( result != NULL ) return result;
+			if ( result != nullptr ) return result;
 		}
 	}	
-	return NULL;
+	return nullptr;
 }
 
 
@@ -889,7 +889,7 @@ void DiffMerge::diffRecursive(Object* o1, Object* o2, const std::string& o1Paren
 
 	// No element on the right -> REMOVE
 	if ( !o2 ) {
-		if ( _currentNode != NULL ) _currentNode->add("Removing", o1);
+		if ( _currentNode != nullptr ) _currentNode->add("Removing", o1);
 		AppendNotifier(diffList, OP_REMOVE, o1, o1ParentID);
 		return;
 	}
@@ -998,7 +998,7 @@ bool DiffMerge::diff(Object* o1, Object* o2, std::vector<NotifierPtr>& diffList)
 
 	// Find a common node
 	Object* fO1 = find(o1, o2);
-	Object* fO2 = !fO1 ? find(o2, o1) : NULL;
+	Object* fO2 = !fO1 ? find(o2, o1) : nullptr;
 	
 	// No common node, bye
 	if ( !fO1 && !fO2 ) return false;
@@ -1007,7 +1007,7 @@ bool DiffMerge::diff(Object* o1, Object* o2, std::vector<NotifierPtr>& diffList)
 	o2 = fO2 ? fO2 : o2;
 	std::string parentID = o1->parent() ? getPublicID(o1->parent()) : "";
 	
-	LogNodePtr newNode = NULL;
+	LogNodePtr newNode = nullptr;
 
 	if ( _logLevel >= 0 )
 		newNode = new LogNode(o1, _logLevel);
@@ -1028,7 +1028,7 @@ bool DiffMerge::diff(Object* o1, Object* o2, std::vector<NotifierPtr>& diffList)
 NotifierMessage *DiffMerge::diff2Message(Object *o1, Object *o2) {
 	std::vector<NotifierPtr> diffList;
 	if ( !diff(o1, o2, diffList) )
-		return NULL;
+		return nullptr;
 
 	NotifierMessage *msg = new NotifierMessage;
 	std::vector<NotifierPtr>::iterator it;
@@ -1046,10 +1046,10 @@ NotifierMessage *DiffMerge::diff2Message(Object *o1, Object *o2) {
 class SC_SYSTEM_CORE_API PublicIDCollector : protected Visitor {
 	public:
 		void collect(Object *o, std::vector<std::string> *ids) {
-			if ( o == NULL || ids == NULL ) return;
+			if ( o == nullptr || ids == nullptr ) return;
 			_publicIDs = ids;
 			o->accept(this);
-			_publicIDs = NULL;
+			_publicIDs = nullptr;
 		}
 
 	private:
@@ -1080,9 +1080,9 @@ class SC_SYSTEM_CORE_API ReferenceValidator : public Visitor {
 		 *         idVector was found, else false
 		 */
 		bool validate(Object *o, const std::vector<std::string> *idVector) {
-			if ( o == NULL || idVector == NULL ) return false;
+			if ( o == nullptr || idVector == nullptr ) return false;
 			_validates = idVector;
-			_mappings = NULL;
+			_mappings = nullptr;
 			_valid = true;
 			o->accept(this);
 			return _valid;
@@ -1094,8 +1094,8 @@ class SC_SYSTEM_CORE_API ReferenceValidator : public Visitor {
 		 * @param idMap Mapping of deprecated to current publicIDs
 		 */
 		size_t repair(Object *o, const std::map<std::string, std::string> *idMap) {
-			if ( o == NULL || idMap == NULL ) return 0;
-			_validates = NULL;
+			if ( o == nullptr || idMap == nullptr ) return 0;
+			_validates = nullptr;
 			_mappings = idMap;
 			_mapCount = 0;
 			o->accept(this);
@@ -1233,7 +1233,7 @@ class DeepCloner : protected Visitor {
 		}
 
 	private:
-		void reset() { _clone = NULL; _parents.clear(); }
+		void reset() { _clone = nullptr; _parents.clear(); }
 
 		bool visit(PublicObject *po) {
 			PublicObjectPtr clone = PublicObject::Cast(po->clone());
@@ -1261,7 +1261,7 @@ class DeepCloner : protected Visitor {
 				PublicObject::SetRegistrationEnabled(wasEnabled);
 			}
 
-			if ( _clone == NULL ) _clone = o;
+			if ( _clone == nullptr ) _clone = o;
 		}
 
 	private:
@@ -1276,12 +1276,12 @@ class DeepCloner : protected Visitor {
  * @param o2 object to merge into o1
  * @param idMap map that keeps track of any publicID attribute changes applied
  * during the merge
- * @throw ValueException if one of the object pointer is NULL
+ * @throw ValueException if one of the object pointer is nullptr
  * @throw TypeException if both objects are not of same type
  */
 void DiffMerge::mergeRecursive(Object* o1, Object* o2, std::map<std::string, std::string> &idMap) {
 	if ( !o1 || !o2 )
-		throw Core::ValueException("Invalid object pointer (NULL)");
+		throw Core::ValueException("Invalid object pointer (nullptr)");
 	if ( o1->typeInfo() != o2->typeInfo() )
 		throw Core::TypeException("Type mismatch");
 
@@ -1369,7 +1369,7 @@ void DiffMerge::mergeRecursive(Object* o1, Object* o2, std::map<std::string, std
  */
 bool DiffMerge::merge(Object* tree, Object* node, std::map<std::string, std::string>& idMap) {
 	if ( !tree || !node ) {
-		SEISCOMP_WARNING("Invalid merge objects (NULL)");
+		SEISCOMP_WARNING("Invalid merge objects (nullptr)");
 		return false;
 	}
 
@@ -1397,7 +1397,7 @@ bool DiffMerge::merge(Object* tree, Object* node, std::map<std::string, std::str
  * @return true if all objects could be merged successfully, else false.
  */
 bool DiffMerge::merge(Object* mergeResult, const std::vector<Object*>& objects) {
-	if ( mergeResult == NULL ) return false;
+	if ( mergeResult == nullptr ) return false;
 
 	// Track publicID changes
 	std::map<std::string, std::string> idMap;

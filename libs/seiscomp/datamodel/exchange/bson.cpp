@@ -45,7 +45,7 @@ ImporterBSON::ImporterBSON() {}
 Core::BaseObject *ImporterBSON::get(std::streambuf* buf) {
 	IO::BSONArchive ar;
 	ar.open(buf);
-	Core::BaseObject *obj = NULL;
+	Core::BaseObject *obj = nullptr;
 	ar >> obj;
 	return obj;
 }

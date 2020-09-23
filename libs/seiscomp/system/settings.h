@@ -573,7 +573,7 @@ class ConfigOptionLinker {
 struct ConfigSettingsLinker : Generic::SettingsVisitor<ConfigOptionBinding, ConfigOptionLinker> {
 	template <typename T>
 	static ConfigOptionBinding<T> key(T &boundValue) {
-		return ConfigOptionBinding<T>(boundValue, ConfigOptionBinding<T>::IsKey, NULL);
+		return ConfigOptionBinding<T>(boundValue, ConfigOptionBinding<T>::IsKey, nullptr);
 	}
 
 	template <typename T>

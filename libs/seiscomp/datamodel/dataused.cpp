@@ -39,9 +39,9 @@ static Seiscomp::Core::MetaEnumImpl<DataUsedWaveType> metaDataUsedWaveType;
 
 DataUsed::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(enumProperty("waveType", "DataUsedWaveType", false, false, &metaDataUsedWaveType, &DataUsed::setWaveType, &DataUsed::waveType));
-	addProperty(Core::simpleProperty("stationCount", "int", false, false, false, false, false, false, NULL, &DataUsed::setStationCount, &DataUsed::stationCount));
-	addProperty(Core::simpleProperty("componentCount", "int", false, false, false, false, false, false, NULL, &DataUsed::setComponentCount, &DataUsed::componentCount));
-	addProperty(Core::simpleProperty("shortestPeriod", "float", false, false, false, false, true, false, NULL, &DataUsed::setShortestPeriod, &DataUsed::shortestPeriod));
+	addProperty(Core::simpleProperty("stationCount", "int", false, false, false, false, false, false, nullptr, &DataUsed::setStationCount, &DataUsed::stationCount));
+	addProperty(Core::simpleProperty("componentCount", "int", false, false, false, false, false, false, nullptr, &DataUsed::setComponentCount, &DataUsed::componentCount));
+	addProperty(Core::simpleProperty("shortestPeriod", "float", false, false, false, false, true, false, nullptr, &DataUsed::setShortestPeriod, &DataUsed::shortestPeriod));
 }
 
 
@@ -209,7 +209,7 @@ DataUsed& DataUsed::operator=(const DataUsed& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataUsed::assign(Object* other) {
 	DataUsed* otherDataUsed = DataUsed::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherDataUsed;
@@ -223,11 +223,11 @@ bool DataUsed::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataUsed::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	MomentTensor* momentTensor = MomentTensor::Cast(parent);
-	if ( momentTensor != NULL )
+	if ( momentTensor != nullptr )
 		return momentTensor->add(this);
 
 	SEISCOMP_ERROR("DataUsed::attachTo(%s) -> wrong class type", parent->className());
@@ -240,11 +240,11 @@ bool DataUsed::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataUsed::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	MomentTensor* momentTensor = MomentTensor::Cast(object);
-	if ( momentTensor != NULL ) {
+	if ( momentTensor != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -252,7 +252,7 @@ bool DataUsed::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			DataUsed* child = momentTensor->findDataUsed(this);
-			if ( child != NULL )
+			if ( child != nullptr )
 				return momentTensor->remove(child);
 			else {
 				SEISCOMP_DEBUG("DataUsed::detachFrom(MomentTensor): dataUsed has not been found");
@@ -271,7 +271,7 @@ bool DataUsed::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataUsed::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

@@ -55,7 +55,7 @@ DatabaseInterface::~DatabaseInterface() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseInterface* DatabaseInterface::Create(const char* service) {
-	if ( service == NULL ) return NULL;
+	if ( service == nullptr ) return nullptr;
 
 	return DatabaseInterfaceFactory::Create(service);
 }
@@ -84,7 +84,7 @@ DatabaseInterface* DatabaseInterface::Open(const char* uri) {
 	DatabaseInterface* db = Create(service.c_str());
 	if ( !db ) {
 		SEISCOMP_ERROR("Database driver '%s' is not supported", service.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	if ( !db->connect(source.c_str()) ) {
@@ -92,7 +92,7 @@ DatabaseInterface* DatabaseInterface::Open(const char* uri) {
 		               service.c_str(), db->_user.c_str(),
 		               db->_host.c_str(), db->_database.c_str());
 		delete db;
-		return NULL;
+		return nullptr;
 	}
 
 	return db;
@@ -225,7 +225,7 @@ std::string DatabaseInterface::timeToString(const Seiscomp::Core::Time& t) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Seiscomp::Core::Time DatabaseInterface::stringToTime(const char* str) {
 	Seiscomp::Core::Time t;
-	if ( str == NULL ) return t;
+	if ( str == nullptr ) return t;
 	t.fromString(str, "%F %T");
 	return t;
 }

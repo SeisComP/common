@@ -40,7 +40,7 @@ DEFINE_SMARTPOINTER(RecordStream);
  *
  * \code{.cpp}
  * RecordStreamPtr rs = RecordStream::Open(URL);
- * if ( rs != NULL ) {
+ * if ( rs != nullptr ) {
  *   rs->addStream("XY", "ABCD", "", "BHZ");
  *   RecordPtr rec;
  *   while ( (rec = rs->next()) ) {
@@ -196,7 +196,7 @@ class SC_SYSTEM_CORE_API RecordStream : public Core::InterruptibleObject {
 		/**
 		 * @brief Returns the next record from the source.
 		 * @return The ownership of the returned instance goes to the
-		 *         caller. Iteration stops of NULL is returned.
+		 *         caller. Iteration stops of nullptr is returned.
 		 */
 		virtual Record *next() = 0;
 
@@ -221,7 +221,7 @@ class SC_SYSTEM_CORE_API RecordStream : public Core::InterruptibleObject {
 		//!           e.g. file:///data/record.mseed#mseed. Service defaults
 		//!           'file' and the default type is 'mseed'.
 		 * @return A pointer to the recordstream object. If the recordstream
-		 *         does not support the requested type, NULL will be returned.
+		 *         does not support the requested type, nullptr will be returned.
 		 *
 		 *         \note
 		 *         The returned pointer has to be deleted by the caller!

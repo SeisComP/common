@@ -98,7 +98,7 @@ void RecordStream::setDataHint(Record::Hint hint) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordStream *RecordStream::Create(const char *service) {
-	if ( service == NULL ) return NULL;
+	if ( service == nullptr ) return nullptr;
 	return RecordStreamFactory::Create(service);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -138,23 +138,23 @@ RecordStream* RecordStream::Open(const char *url) {
 	stream = Create(service.c_str());
 
 	if ( !stream )
-		return NULL;
+		return nullptr;
 
 	try {
 		if ( !stream->setSource(source.c_str()) ) {
 			delete stream;
-			return NULL;
+			return nullptr;
 		}
 	}
 	catch ( RecordStreamException &e ) {
 		SEISCOMP_ERROR("stream exception: %s", e.what());
 		delete stream;
-		return NULL;
+		return nullptr;
 	}
 
 	if ( !type.empty() && !stream->setRecordType(type.c_str()) ) {
 		delete stream;
-		stream = NULL;
+		stream = nullptr;
 	}
 
 	return stream;

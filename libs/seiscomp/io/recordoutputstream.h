@@ -58,7 +58,7 @@ class SC_SYSTEM_CORE_API RecordOutputStream : public Seiscomp::Core::Interruptib
 		//! Returns a record stream for the given service that creates
 		//! records of type recordType
 		//! @return A pointer to the recordstream object. If the recordstream
-		//!         does not support the requested type, NULL will be returned
+		//!         does not support the requested type, nullptr will be returned
 		//!         NOTE: The returned pointer has to be deleted by the
 		//!               caller!
 		static RecordOutputStream* Create(const char* service, const char* recordType);
@@ -68,7 +68,7 @@ class SC_SYSTEM_CORE_API RecordOutputStream : public Seiscomp::Core::Interruptib
 		//!            e.g. file:///data/record.mseed#mseed. service defaults to
 		//!            'file' and the default type is 'mseed'
 		//! @return A pointer to the recordstream object. If the recordstream
-		//!         does not support the requested type, NULL will be returned
+		//!         does not support the requested type, nullptr will be returned
 		//!         NOTE: The returned pointer has to be deleted by the
 		//!               caller!
 		static RecordOutputStream* Open(const char* url);

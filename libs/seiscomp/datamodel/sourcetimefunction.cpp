@@ -38,9 +38,9 @@ static Seiscomp::Core::MetaEnumImpl<SourceTimeFunctionType> metaSourceTimeFuncti
 
 SourceTimeFunction::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(enumProperty("type", "SourceTimeFunctionType", false, false, &metaSourceTimeFunctionType, &SourceTimeFunction::setType, &SourceTimeFunction::type));
-	addProperty(Core::simpleProperty("duration", "float", false, false, false, false, false, false, NULL, &SourceTimeFunction::setDuration, &SourceTimeFunction::duration));
-	addProperty(Core::simpleProperty("riseTime", "float", false, false, false, false, true, false, NULL, &SourceTimeFunction::setRiseTime, &SourceTimeFunction::riseTime));
-	addProperty(Core::simpleProperty("decayTime", "float", false, false, false, false, true, false, NULL, &SourceTimeFunction::setDecayTime, &SourceTimeFunction::decayTime));
+	addProperty(Core::simpleProperty("duration", "float", false, false, false, false, false, false, nullptr, &SourceTimeFunction::setDuration, &SourceTimeFunction::duration));
+	addProperty(Core::simpleProperty("riseTime", "float", false, false, false, false, true, false, nullptr, &SourceTimeFunction::setRiseTime, &SourceTimeFunction::riseTime));
+	addProperty(Core::simpleProperty("decayTime", "float", false, false, false, false, true, false, nullptr, &SourceTimeFunction::setDecayTime, &SourceTimeFunction::decayTime));
 }
 
 

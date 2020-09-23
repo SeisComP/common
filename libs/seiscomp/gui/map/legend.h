@@ -49,15 +49,15 @@ class SC_GUI_API Legend : public QObject {
 	Q_OBJECT
 
 	public:
-		Legend(QObject *parent = NULL);
-		Legend(const QString&, QObject *parent = NULL);
+		Legend(QObject *parent = nullptr);
+		Legend(const QString&, QObject *parent = nullptr);
 		virtual ~Legend() {}
 
 		Legend &operator =(const Legend &other);
 
 		virtual void bringToFront();
 
-		virtual Legend* clone() const { return NULL; }
+		virtual Legend* clone() const { return nullptr; }
 
 		virtual void draw(const QRect&, QPainter&) = 0;
 

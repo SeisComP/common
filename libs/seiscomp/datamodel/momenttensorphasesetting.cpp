@@ -33,11 +33,11 @@ IMPLEMENT_SC_CLASS_DERIVED(MomentTensorPhaseSetting, Object, "MomentTensorPhaseS
 
 
 MomentTensorPhaseSetting::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, NULL, &MomentTensorPhaseSetting::setCode, &MomentTensorPhaseSetting::code));
-	addProperty(Core::simpleProperty("lowerPeriod", "float", false, false, false, false, false, false, NULL, &MomentTensorPhaseSetting::setLowerPeriod, &MomentTensorPhaseSetting::lowerPeriod));
-	addProperty(Core::simpleProperty("upperPeriod", "float", false, false, false, false, false, false, NULL, &MomentTensorPhaseSetting::setUpperPeriod, &MomentTensorPhaseSetting::upperPeriod));
-	addProperty(Core::simpleProperty("minimumSNR", "float", false, false, false, false, true, false, NULL, &MomentTensorPhaseSetting::setMinimumSNR, &MomentTensorPhaseSetting::minimumSNR));
-	addProperty(Core::simpleProperty("maximumTimeShift", "float", false, false, false, false, true, false, NULL, &MomentTensorPhaseSetting::setMaximumTimeShift, &MomentTensorPhaseSetting::maximumTimeShift));
+	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, nullptr, &MomentTensorPhaseSetting::setCode, &MomentTensorPhaseSetting::code));
+	addProperty(Core::simpleProperty("lowerPeriod", "float", false, false, false, false, false, false, nullptr, &MomentTensorPhaseSetting::setLowerPeriod, &MomentTensorPhaseSetting::lowerPeriod));
+	addProperty(Core::simpleProperty("upperPeriod", "float", false, false, false, false, false, false, nullptr, &MomentTensorPhaseSetting::setUpperPeriod, &MomentTensorPhaseSetting::upperPeriod));
+	addProperty(Core::simpleProperty("minimumSNR", "float", false, false, false, false, true, false, nullptr, &MomentTensorPhaseSetting::setMinimumSNR, &MomentTensorPhaseSetting::minimumSNR));
+	addProperty(Core::simpleProperty("maximumTimeShift", "float", false, false, false, false, true, false, nullptr, &MomentTensorPhaseSetting::setMaximumTimeShift, &MomentTensorPhaseSetting::maximumTimeShift));
 }
 
 
@@ -279,7 +279,7 @@ const MomentTensorPhaseSettingIndex& MomentTensorPhaseSetting::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorPhaseSetting::equalIndex(const MomentTensorPhaseSetting* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -313,7 +313,7 @@ MomentTensorPhaseSetting& MomentTensorPhaseSetting::operator=(const MomentTensor
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorPhaseSetting::assign(Object* other) {
 	MomentTensorPhaseSetting* otherMomentTensorPhaseSetting = MomentTensorPhaseSetting::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherMomentTensorPhaseSetting;
@@ -327,11 +327,11 @@ bool MomentTensorPhaseSetting::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorPhaseSetting::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	MomentTensor* momentTensor = MomentTensor::Cast(parent);
-	if ( momentTensor != NULL )
+	if ( momentTensor != nullptr )
 		return momentTensor->add(this);
 
 	SEISCOMP_ERROR("MomentTensorPhaseSetting::attachTo(%s) -> wrong class type", parent->className());
@@ -344,11 +344,11 @@ bool MomentTensorPhaseSetting::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorPhaseSetting::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	MomentTensor* momentTensor = MomentTensor::Cast(object);
-	if ( momentTensor != NULL ) {
+	if ( momentTensor != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -356,7 +356,7 @@ bool MomentTensorPhaseSetting::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			MomentTensorPhaseSetting* child = momentTensor->momentTensorPhaseSetting(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return momentTensor->remove(child);
 			else {
 				SEISCOMP_DEBUG("MomentTensorPhaseSetting::detachFrom(MomentTensor): momentTensorPhaseSetting has not been found");
@@ -375,7 +375,7 @@ bool MomentTensorPhaseSetting::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorPhaseSetting::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

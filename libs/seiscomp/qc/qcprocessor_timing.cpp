@@ -37,7 +37,7 @@ QcProcessorTiming::QcProcessorTiming() : QcProcessor() {}
 bool QcProcessorTiming::setState(const Record *record, const DoubleArray &data) {
 	const IO::MSeedRecord *mrec = IO::MSeedRecord::ConstCast(record);
 
-	if ( mrec != NULL ) {
+	if ( mrec != nullptr ) {
 		if ((double)mrec->timingQuality() != -1) {
 			_qcp->parameter = (double)mrec->timingQuality();
 			return true;

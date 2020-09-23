@@ -232,7 +232,7 @@ void QuadTree::Node::visit(const GeoBoundingBox &bb, const VisitFunc &func,
 const GeoFeature *QuadTree::Node::findFirst(const GeoCoordinate &gc) {
 	const GeoFeature *f;
 
-	if ( !bbox.contains(gc) ) return NULL;
+	if ( !bbox.contains(gc) ) return nullptr;
 
 	for ( size_t i = 0; i < features.size(); ++i ) {
 		f = features[i];
@@ -244,12 +244,12 @@ const GeoFeature *QuadTree::Node::findFirst(const GeoCoordinate &gc) {
 	for ( size_t i = 0; i < 4; ++i ) {
 		if ( children[i] ) {
 			f = children[i]->findFirst(gc);
-			if ( f != NULL )
+			if ( f != nullptr )
 				return f;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -260,12 +260,12 @@ const GeoFeature *QuadTree::Node::findFirst(const GeoCoordinate &gc) {
 const GeoFeature *QuadTree::Node::findLast(const GeoCoordinate &gc) {
 	const GeoFeature *f;
 
-	if ( !bbox.contains(gc) ) return NULL;
+	if ( !bbox.contains(gc) ) return nullptr;
 
 	for ( size_t i = 4; i > 0; --i ) {
 		if ( children[i-1] ) {
 			f = children[i-1]->findLast(gc);
-			if ( f != NULL )
+			if ( f != nullptr )
 				return f;
 		}
 	}
@@ -277,7 +277,7 @@ const GeoFeature *QuadTree::Node::findLast(const GeoCoordinate &gc) {
 			return f;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

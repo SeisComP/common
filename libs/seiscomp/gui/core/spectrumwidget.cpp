@@ -368,7 +368,7 @@ void SpectrumWidget::exportSpectra() {
 	    << "# complex value (real, imag) at that frequency of the raw spectrum." << endl
 	    << "# The amplitude and phase can be found in column four and five." << endl;
 
-	Math::Restitution::FFT::TransferFunctionPtr tf = _resp ? _resp->getTransferFunction() : NULL;
+	Math::Restitution::FFT::TransferFunctionPtr tf = _resp ? _resp->getTransferFunction() : nullptr;
 	if ( (_spec.size() > 1) && tf ) {
 		ofs
 		<< "# The sixth and seventh column represent the complex value of the response" << endl

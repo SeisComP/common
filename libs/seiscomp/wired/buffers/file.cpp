@@ -49,7 +49,7 @@ const char *MimeTypes[FileBuffer::TypeQuantity] = {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FileBuffer::FileBuffer(int max_size)
-: Buffer(max_size), fp(NULL), fplen(0) {}
+: Buffer(max_size), fp(nullptr), fplen(0) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -75,7 +75,7 @@ bool FileBuffer::open(const std::string &fn, const char *mode) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FileBuffer::open(const char *fn, const char *mode) {
-	if ( fp != NULL ) return false;
+	if ( fp != nullptr ) return false;
 
 	struct stat fstat;
 
@@ -88,7 +88,7 @@ bool FileBuffer::open(const char *fn, const char *mode) {
 	lastModified = fstat.st_mtime;
 
 	fp = fopen(fn, mode);
-	if ( fp == NULL ) return false;
+	if ( fp == nullptr ) return false;
 
 	fseek(fp, 0L, SEEK_END);
 	fplen = ftell(fp);
@@ -96,7 +96,7 @@ bool FileBuffer::open(const char *fn, const char *mode) {
 
 	if ( fplen == -1L ) {
 		fclose(fp);
-		fp = NULL;
+		fp = nullptr;
 		fplen = 0;
 		return false;
 	}
@@ -162,7 +162,7 @@ const char *FileBuffer::mimeType(const char *filenameExtension) {
 		return MimeTypes[WOFF];
 	else if ( !strcasecmp(filenameExtension, "ttf") )
 		return MimeTypes[TTF];
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

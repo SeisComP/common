@@ -39,11 +39,11 @@ LocSAT::LocSAT() {
 
 	_dt = (struct date_time*)malloc(sizeof(struct date_time));
 
-	_sites = NULL;
-	_arrival = NULL;
-	_assoc = NULL;
-	_newnet = NULL;
-	_locator_errors = NULL;
+	_sites = nullptr;
+	_arrival = nullptr;
+	_assoc = nullptr;
+	_newnet = nullptr;
+	_locator_errors = nullptr;
 
 	reset();
 	setOriginErr();
@@ -71,16 +71,16 @@ void LocSAT::reset() {
 	_siteCount = 0;
 	_num_sta = 0;
 
-	if (_arrival) { free(_arrival); _arrival = NULL; }
+	if (_arrival) { free(_arrival); _arrival = nullptr; }
 	_arrivalCount = 0;
 	_num_obs = 0;
 
-	if (_assoc) { free(_assoc); _assoc = NULL; }
+	if (_assoc) { free(_assoc); _assoc = nullptr; }
 	_assocCount = 0;
 
-	if (_locator_errors) { free(_locator_errors); _locator_errors = NULL; }
+	if (_locator_errors) { free(_locator_errors); _locator_errors = nullptr; }
 
-	_newnet = (char *)NULL;
+	_newnet = (char *)nullptr;
 }
 
 
@@ -101,7 +101,7 @@ Loc* LocSAT::doLocation() {
 	if( (_num_sta > 9999) || (_num_obs > 9999) )
 		throw LocatorException("error: Too many picks/stations [9999] - Please raise limits within pre-f2c locsat code!");
 
-	int ierr = locate_event(NULL, _sites, _num_sta, _arrival, _assoc,
+	int ierr = locate_event(nullptr, _sites, _num_sta, _arrival, _assoc,
 	                        _origin, _origerr, _locator_params,
 	                        _locator_errors, _num_obs);
 

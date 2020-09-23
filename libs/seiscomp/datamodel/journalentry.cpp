@@ -33,11 +33,11 @@ IMPLEMENT_SC_CLASS_DERIVED(JournalEntry, Object, "JournalEntry");
 
 
 JournalEntry::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, true, false, NULL, &JournalEntry::setCreated, &JournalEntry::created));
-	addProperty(Core::simpleProperty("objectID", "string", false, false, false, true, false, false, NULL, &JournalEntry::setObjectID, &JournalEntry::objectID));
-	addProperty(Core::simpleProperty("sender", "string", false, false, false, false, false, false, NULL, &JournalEntry::setSender, &JournalEntry::sender));
-	addProperty(Core::simpleProperty("action", "string", false, false, false, false, false, false, NULL, &JournalEntry::setAction, &JournalEntry::action));
-	addProperty(Core::simpleProperty("parameters", "string", false, false, false, false, false, false, NULL, &JournalEntry::setParameters, &JournalEntry::parameters));
+	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, true, false, nullptr, &JournalEntry::setCreated, &JournalEntry::created));
+	addProperty(Core::simpleProperty("objectID", "string", false, false, false, true, false, false, nullptr, &JournalEntry::setObjectID, &JournalEntry::objectID));
+	addProperty(Core::simpleProperty("sender", "string", false, false, false, false, false, false, nullptr, &JournalEntry::setSender, &JournalEntry::sender));
+	addProperty(Core::simpleProperty("action", "string", false, false, false, false, false, false, nullptr, &JournalEntry::setAction, &JournalEntry::action));
+	addProperty(Core::simpleProperty("parameters", "string", false, false, false, false, false, false, nullptr, &JournalEntry::setParameters, &JournalEntry::parameters));
 }
 
 
@@ -224,7 +224,7 @@ JournalEntry& JournalEntry::operator=(const JournalEntry& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool JournalEntry::assign(Object* other) {
 	JournalEntry* otherJournalEntry = JournalEntry::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherJournalEntry;
@@ -238,11 +238,11 @@ bool JournalEntry::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool JournalEntry::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Journaling* journaling = Journaling::Cast(parent);
-	if ( journaling != NULL )
+	if ( journaling != nullptr )
 		return journaling->add(this);
 
 	SEISCOMP_ERROR("JournalEntry::attachTo(%s) -> wrong class type", parent->className());
@@ -255,11 +255,11 @@ bool JournalEntry::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool JournalEntry::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Journaling* journaling = Journaling::Cast(object);
-	if ( journaling != NULL ) {
+	if ( journaling != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -267,7 +267,7 @@ bool JournalEntry::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			JournalEntry* child = journaling->findJournalEntry(this);
-			if ( child != NULL )
+			if ( child != nullptr )
 				return journaling->remove(child);
 			else {
 				SEISCOMP_DEBUG("JournalEntry::detachFrom(Journaling): journalEntry has not been found");
@@ -286,7 +286,7 @@ bool JournalEntry::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool JournalEntry::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

@@ -68,7 +68,7 @@ namespace Gui {
 RecordLabel::RecordLabel(QWidget *parent, const char *)
 	: QWidget(parent)
 {
-	_parent = NULL;
+	_parent = nullptr;
 	_enabled = true;
 	_interactive = true;
 }
@@ -340,8 +340,8 @@ void StandardRecordLabel::paintEvent(QPaintEvent *e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordViewItem::RecordViewItem(RecordView *parent, bool withFrame, int frameMargin,
                                int hSpacing)
- : QWidget(), _parent(parent), _widget(NULL), _label(NULL) {
-	_seqTemplate = NULL;
+ : QWidget(), _parent(parent), _widget(nullptr), _label(nullptr) {
+	_seqTemplate = nullptr;
 	_requestedComponent = _currentComponent = '?';
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	setupUi(withFrame, frameMargin, hSpacing);
@@ -355,9 +355,9 @@ RecordViewItem::RecordViewItem(RecordView *parent, bool withFrame, int frameMarg
 RecordViewItem::RecordViewItem(RecordView *parent, RecordWidget *widget,
                                RecordSequence* records,
                                bool withFrame, int frameMargin, int hSpacing)
- : QWidget(), _parent(parent), _widget(NULL), _label(NULL), _row(-1)
+ : QWidget(), _parent(parent), _widget(nullptr), _label(nullptr), _row(-1)
 {
-	_seqTemplate = NULL;
+	_seqTemplate = nullptr;
 	_forceInvisibility = false;
 	_visible = isVisible();
 	_requestedComponent = _currentComponent = '?';
@@ -375,7 +375,7 @@ RecordViewItem::RecordViewItem(RecordView *parent, RecordWidget *widget,
 RecordViewItem::~RecordViewItem() {
 	clearRecords();
 
-	if ( _seqTemplate != NULL )
+	if ( _seqTemplate != nullptr )
 		delete _seqTemplate;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -407,19 +407,19 @@ bool RecordViewItem::feed(const Seiscomp::Record *rec) {
 	int id = createComponentToSlotMapping(comp);
 	RecordSequence* seq = _widget->records(id);
 
-	if ( seq == NULL ) {
+	if ( seq == nullptr ) {
 		seq = _seqTemplate;
-		if ( seq != NULL ) {
+		if ( seq != nullptr ) {
 			_widget->setRecords(id, seq, true);
 			_widget->setRecordFilter(id, recordView()->filter());
-			_seqTemplate = NULL;
+			_seqTemplate = nullptr;
 		}
 		else
 			seq = _widget->createRecords(id);
 	}
 
 	// No target record sequence found, this should never happen
-	if ( seq == NULL ) return false;
+	if ( seq == nullptr ) return false;
 
 	bool firstRecord = seq->empty();
 
@@ -515,7 +515,7 @@ const QVariant& RecordViewItem::data() const {
 void RecordViewItem::setRecords(RecordSequence* records) {
 	clearRecords();
 
-	if ( records == NULL ) return;
+	if ( records == nullptr ) return;
 
 	if ( records->empty() ) {
 		// Clear old instance
@@ -541,7 +541,7 @@ void RecordViewItem::setRecords(RecordSequence* records) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordSequence* RecordViewItem::records(char componentCode) const {
-	if ( _seqTemplate != NULL ) return _seqTemplate;
+	if ( _seqTemplate != nullptr ) return _seqTemplate;
 	if ( componentCode == '?' ) return _widget->records();
 	return _widget->records(mapComponentToSlot(componentCode));
 }
@@ -552,7 +552,7 @@ RecordSequence* RecordViewItem::records(char componentCode) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordSequence* RecordViewItem::filteredRecords(char componentCode) const {
-	if ( _seqTemplate != NULL ) return _seqTemplate;
+	if ( _seqTemplate != nullptr ) return _seqTemplate;
 	if ( componentCode == '?' ) return _widget->records();
 	return _widget->filteredRecords(mapComponentToSlot(componentCode));
 }
@@ -563,18 +563,18 @@ RecordSequence* RecordViewItem::filteredRecords(char componentCode) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordViewItem::setBuffer(RecordSequence *seq) {
-	if ( seq == NULL ) return;
+	if ( seq == nullptr ) return;
 
-	if ( _seqTemplate != NULL ) {
+	if ( _seqTemplate != nullptr ) {
 		delete _seqTemplate;
-		_seqTemplate = NULL;
+		_seqTemplate = nullptr;
 	}
 
 	bool seqUsed = false;
 
 	for ( int i = 0; i < _widget->slotCount(); ++i ) {
 		const RecordSequence *old = _widget->records(i);
-		if ( old == NULL ) continue;
+		if ( old == nullptr ) continue;
 
 		RecordSequence *tgt = seqUsed?seq->clone():seq;
 
@@ -637,7 +637,7 @@ bool RecordViewItem::showRecords(char componentCode) {
 		_currentComponent = _requestedComponent;
 	}
 
-	//if ( seq == NULL ) return false;
+	//if ( seq == nullptr ) return false;
 
 	emit componentChanged(this, _currentComponent);
 
@@ -659,7 +659,7 @@ char RecordViewItem::currentComponent() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordViewItem::setLabel(RecordLabel* label) {
-	if ( label->_parent != NULL && label->_parent != this ) {
+	if ( label->_parent != nullptr && label->_parent != this ) {
 		SEISCOMP_ERROR("Cannot insert a label that is already part of "
 		               "another RecordViewItem");
 		return;

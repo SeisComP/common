@@ -34,10 +34,10 @@ IMPLEMENT_SC_CLASS_DERIVED(Outage, Object, "Outage");
 
 Outage::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", true, false, false, &Outage::setWaveformID, &Outage::waveformID));
-	addProperty(Core::simpleProperty("creatorID", "string", false, false, false, false, false, false, NULL, &Outage::setCreatorID, &Outage::creatorID));
-	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, false, false, NULL, &Outage::setCreated, &Outage::created));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, NULL, &Outage::setStart, &Outage::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, NULL, &Outage::setEnd, &Outage::end));
+	addProperty(Core::simpleProperty("creatorID", "string", false, false, false, false, false, false, nullptr, &Outage::setCreatorID, &Outage::creatorID));
+	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, false, false, nullptr, &Outage::setCreated, &Outage::created));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &Outage::setStart, &Outage::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &Outage::setEnd, &Outage::end));
 }
 
 
@@ -260,7 +260,7 @@ const OutageIndex& Outage::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Outage::equalIndex(const Outage* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -293,7 +293,7 @@ Outage& Outage::operator=(const Outage& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Outage::assign(Object* other) {
 	Outage* otherOutage = Outage::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherOutage;
@@ -307,11 +307,11 @@ bool Outage::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Outage::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	QualityControl* qualityControl = QualityControl::Cast(parent);
-	if ( qualityControl != NULL )
+	if ( qualityControl != nullptr )
 		return qualityControl->add(this);
 
 	SEISCOMP_ERROR("Outage::attachTo(%s) -> wrong class type", parent->className());
@@ -324,11 +324,11 @@ bool Outage::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Outage::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	QualityControl* qualityControl = QualityControl::Cast(object);
-	if ( qualityControl != NULL ) {
+	if ( qualityControl != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -336,7 +336,7 @@ bool Outage::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			Outage* child = qualityControl->outage(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return qualityControl->remove(child);
 			else {
 				SEISCOMP_DEBUG("Outage::detachFrom(QualityControl): outage has not been found");
@@ -355,7 +355,7 @@ bool Outage::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Outage::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

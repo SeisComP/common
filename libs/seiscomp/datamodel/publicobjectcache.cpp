@@ -36,7 +36,7 @@ namespace DataModel {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PublicObjectCache::const_iterator::const_iterator() : _item(NULL) {}
+PublicObjectCache::const_iterator::const_iterator() : _item(nullptr) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -129,8 +129,8 @@ PublicObjectCache::const_iterator::operator++(int) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PublicObjectCache::PublicObjectCache() : _archive(NULL), _size(0),
-    _front(NULL), _back(NULL) {}
+PublicObjectCache::PublicObjectCache() : _archive(nullptr), _size(0),
+    _front(nullptr), _back(nullptr) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -138,7 +138,7 @@ PublicObjectCache::PublicObjectCache() : _archive(NULL), _size(0),
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PublicObjectCache::PublicObjectCache(DatabaseArchive* ar)
- : _archive(ar), _size(0), _front(NULL), _back(NULL) {}
+ : _archive(ar), _size(0), _front(nullptr), _back(nullptr) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -251,7 +251,7 @@ void PublicObjectCache::clear() {
 		delete item;
 	}
 
-	_front = _back = NULL;
+	_front = _back = nullptr;
 	_size = 0;
 	_lookup.clear();
 }
@@ -265,9 +265,9 @@ PublicObject *PublicObjectCache::find(const Seiscomp::Core::RTTI &classType,
                                       const std::string &publicID) {
 	_cached = true;
 	PublicObject *po = PublicObject::Find(publicID);
-	if ( po == NULL ) {
+	if ( po == nullptr ) {
 		_cached = false;
-		po = _archive?_archive->getObject(classType, publicID):NULL;
+		po = _archive?_archive->getObject(classType, publicID):nullptr;
 	}
 
 	if ( po ) feed(po);
@@ -305,7 +305,7 @@ Core::Time PublicObjectCache::oldest() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PublicObjectCache::push(PublicObject* obj) {
 	std::pair<CacheLookup::iterator, bool>
-		itp = _lookup.insert(CacheLookup::value_type(obj->publicID(), NULL));
+		itp = _lookup.insert(CacheLookup::value_type(obj->publicID(), nullptr));
 
 	CacheItem *item;
 
@@ -319,12 +319,12 @@ void PublicObjectCache::push(PublicObject* obj) {
 		}
 
 		// Release item
-		if ( item->prev != NULL )
+		if ( item->prev != nullptr )
 			item->prev->next = item->next;
 		else
 			_front = item->next;
 
-		if ( item->next != NULL )
+		if ( item->next != nullptr )
 			item->next->prev = item->prev;
 		else
 			_back = item->prev;
@@ -344,7 +344,7 @@ void PublicObjectCache::push(PublicObject* obj) {
 
 	// Append item
 	item->prev = _back;
-	item->next = NULL;
+	item->next = nullptr;
 
 	// Update links
 	if ( item->prev )
@@ -397,7 +397,7 @@ PublicObjectCache::const_iterator PublicObjectCache::begin() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PublicObjectCache::const_iterator PublicObjectCache::end() const {
-	return const_iterator(NULL);
+	return const_iterator(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

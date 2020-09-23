@@ -35,7 +35,7 @@ namespace Wired {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Session::Session(Device *dev)
-: _parent(NULL), _tagged(false) {
+: _parent(nullptr), _tagged(false) {
 	setDevice(dev);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

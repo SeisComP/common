@@ -34,7 +34,7 @@ IMPLEMENT_SC_ABSTRACT_CLASS(Message, "Message");
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MessageIterator::MessageIterator() : _impl(NULL) {}
+MessageIterator::MessageIterator() : _impl(nullptr) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -45,7 +45,7 @@ MessageIterator::MessageIterator(const MessageIterator& iter) {
 	if ( iter._impl )
 		_impl = iter._impl->clone();
 	else
-		_impl = NULL;
+		_impl = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -100,7 +100,7 @@ MessageIterator& MessageIterator::operator++(int) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MessageIterator& MessageIterator::operator=(const MessageIterator& it) {
-	if ( _impl ) { delete _impl; _impl = NULL; }
+	if ( _impl ) { delete _impl; _impl = nullptr; }
 	if ( it._impl ) _impl = it._impl->clone();
 	return *this;
 }
@@ -111,7 +111,7 @@ MessageIterator& MessageIterator::operator=(const MessageIterator& it) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Seiscomp::Core::BaseObject* MessageIterator::get() const {
-	return _impl?_impl->get():NULL;
+	return _impl?_impl->get():nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -152,7 +152,7 @@ MessageIterator Message::iter() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MessageIterator::Impl* Message::iterImpl() const {
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

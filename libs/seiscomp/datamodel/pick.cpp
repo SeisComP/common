@@ -44,11 +44,11 @@ static Seiscomp::Core::MetaEnumImpl<EvaluationStatus> metaEvaluationStatus;
 Pick::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<TimeQuantity>("time", "TimeQuantity", false, false, false, &Pick::setTime, &Pick::time));
 	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", false, false, false, &Pick::setWaveformID, &Pick::waveformID));
-	addProperty(Core::simpleProperty("filterID", "string", false, false, false, false, false, false, NULL, &Pick::setFilterID, &Pick::filterID));
-	addProperty(Core::simpleProperty("methodID", "string", false, false, false, false, false, false, NULL, &Pick::setMethodID, &Pick::methodID));
+	addProperty(Core::simpleProperty("filterID", "string", false, false, false, false, false, false, nullptr, &Pick::setFilterID, &Pick::filterID));
+	addProperty(Core::simpleProperty("methodID", "string", false, false, false, false, false, false, nullptr, &Pick::setMethodID, &Pick::methodID));
 	addProperty(objectProperty<RealQuantity>("horizontalSlowness", "RealQuantity", false, false, true, &Pick::setHorizontalSlowness, &Pick::horizontalSlowness));
 	addProperty(objectProperty<RealQuantity>("backazimuth", "RealQuantity", false, false, true, &Pick::setBackazimuth, &Pick::backazimuth));
-	addProperty(Core::simpleProperty("slownessMethodID", "string", false, false, false, false, false, false, NULL, &Pick::setSlownessMethodID, &Pick::slownessMethodID));
+	addProperty(Core::simpleProperty("slownessMethodID", "string", false, false, false, false, false, false, nullptr, &Pick::setSlownessMethodID, &Pick::slownessMethodID));
 	addProperty(enumProperty("onset", "PickOnset", false, true, &metaPickOnset, &Pick::setOnset, &Pick::onset));
 	addProperty(objectProperty<Phase>("phaseHint", "Phase", false, false, true, &Pick::setPhaseHint, &Pick::phaseHint));
 	addProperty(enumProperty("polarity", "PickPolarity", false, true, &metaPickPolarity, &Pick::setPolarity, &Pick::polarity));
@@ -92,7 +92,7 @@ Pick::Pick(const std::string& publicID)
 Pick::~Pick() {
 	std::for_each(_comments.begin(), _comments.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&CommentPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -112,12 +112,12 @@ Pick* Pick::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Pick* Pick::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new Pick(publicID);
@@ -523,7 +523,7 @@ Pick& Pick::operator=(const Pick& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Pick::assign(Object* other) {
 	Pick* otherPick = Pick::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherPick;
@@ -537,11 +537,11 @@ bool Pick::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Pick::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	EventParameters* eventParameters = EventParameters::Cast(parent);
-	if ( eventParameters != NULL )
+	if ( eventParameters != nullptr )
 		return eventParameters->add(this);
 
 	SEISCOMP_ERROR("Pick::attachTo(%s) -> wrong class type", parent->className());
@@ -554,11 +554,11 @@ bool Pick::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Pick::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	EventParameters* eventParameters = EventParameters::Cast(object);
-	if ( eventParameters != NULL ) {
+	if ( eventParameters != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -566,7 +566,7 @@ bool Pick::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			Pick* child = eventParameters->findPick(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return eventParameters->remove(child);
 			else {
 				SEISCOMP_DEBUG("Pick::detachFrom(EventParameters): pick has not been found");
@@ -585,7 +585,7 @@ bool Pick::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Pick::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -609,9 +609,9 @@ Object* Pick::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Pick::updateChild(Object* child) {
 	Comment* commentChild = Comment::Cast(child);
-	if ( commentChild != NULL ) {
+	if ( commentChild != nullptr ) {
 		Comment* commentElement = comment(commentChild->index());
-		if ( commentElement != NULL ) {
+		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
 			return true;
@@ -669,7 +669,7 @@ Comment* Pick::comment(const CommentIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -678,11 +678,11 @@ Comment* Pick::comment(const CommentIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Pick::add(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( comment->parent() != NULL ) {
+	if ( comment->parent() != nullptr ) {
 		SEISCOMP_ERROR("Pick::add(Comment*) -> element has already a parent");
 		return false;
 	}
@@ -717,7 +717,7 @@ bool Pick::add(Comment* comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Pick::remove(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -738,7 +738,7 @@ bool Pick::remove(Comment* comment) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_comments.erase(it);
@@ -762,7 +762,7 @@ bool Pick::removeComment(size_t i) {
 		_comments[i]->accept(&nc);
 	}
 
-	_comments[i]->setParent(NULL);
+	_comments[i]->setParent(nullptr);
 	childRemoved(_comments[i].get());
 
 	_comments.erase(_comments.begin() + i);
@@ -777,7 +777,7 @@ bool Pick::removeComment(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Pick::removeComment(const CommentIndex& i) {
 	Comment* object = comment(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

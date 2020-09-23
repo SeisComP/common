@@ -45,7 +45,7 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 
 
 	public:
-		GeoFeatureLayer(QObject *parent = NULL);
+		GeoFeatureLayer(QObject *parent = nullptr);
 		virtual ~GeoFeatureLayer();
 
 
@@ -53,7 +53,7 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 		/**
 		 * @brief Returns a feature under the given coordinate.
 		 * @param coord The coordinate.
-		 * @return A pointer to the feature instance or NULL. Do not delete
+		 * @return A pointer to the feature instance or nullptr. Do not delete
 		 *         the feature, its ownership is still at the global
 		 *         GeoFeatureSet.
 		 */
@@ -125,7 +125,7 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 			QPoint                     symbolIconHotspot;
 
 			LayerProperties(const std::string &name)
-			: parent(NULL), name(name), orientation(Qt::Vertical)
+			: parent(nullptr), name(name), orientation(Qt::Vertical)
 			, legendArea(Qt::AlignTop | Qt::AlignLeft)
 			, compositionMode(QPainter::CompositionMode_SourceOver)
 			, index(0), visible(true), drawName(false)

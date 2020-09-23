@@ -81,7 +81,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
   unsigned __int64 tmpres = 0;
   static int tzflag;
 
-  if (NULL != tv)
+  if (nullptr != tv)
   {
     GetSystemTimeAsFileTime(&ft);
 
@@ -96,7 +96,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
     tv->tv_usec = (long)(tmpres % 1000000UL);
   }
 
-  if (NULL != tz)
+  if (nullptr != tz)
   {
     if (!tzflag)
     {
@@ -198,7 +198,7 @@ TimeSpan::TimeSpan() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TimeSpan::TimeSpan(struct timeval* t) {
-	if ( t != NULL ) {
+	if ( t != nullptr ) {
 		_timeval.tv_sec = t->tv_sec;
 		_timeval.tv_usec = t->tv_usec;
 	}
@@ -820,7 +820,7 @@ TimeSpan Time::localTimeZoneOffset() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Time& Time::localtime() {
-	gettimeofday(&_timeval, NULL);
+	gettimeofday(&_timeval, nullptr);
 	time_t secs = (time_t)_timeval.tv_sec;
 	struct tm _tm;
 	_timeval.tv_sec = (long)timegm(::localtime_r(&secs, &_tm));
@@ -834,7 +834,7 @@ Time& Time::localtime() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Time& Time::gmt() {
-	gettimeofday(&_timeval, NULL);
+	gettimeofday(&_timeval, nullptr);
 	time_t secs = (time_t)_timeval.tv_sec;
 	struct tm _tm;
 	_timeval.tv_sec = (long)mktime(::localtime_r(&secs, &_tm));
@@ -902,7 +902,7 @@ std::string Time::toString(const char* fmt) const {
 	const char *f = fmt, *last = fmt;
 	char *tgt = predata;
 
-	while ( (f = strchr(f, '%')) != NULL ) {
+	while ( (f = strchr(f, '%')) != nullptr ) {
 		int specSize = 3;
 
 		char spec = *(f+1);
@@ -994,11 +994,11 @@ bool Time::fromString(const char* str, const char* fmt) {
 	long usec = 0;
 
 	const char* microSeconds = strstr(fmt, "%f");
-	if ( microSeconds != NULL ) {
+	if ( microSeconds != nullptr ) {
 		const char* start = str;
 		if ( microSeconds != fmt ) {
 			start = strrchr(str, *(microSeconds-1));
-			if ( start == NULL )
+			if ( start == nullptr )
 				return false;
 			++start;
 		}
@@ -1064,7 +1064,7 @@ bool Time::fromString(const char* str, const char* fmt) {
 #ifdef NO_COMPACT_DATE
 	char tmpFmtDate[BUFFER_SIZE];
 	const char* compactDate = strstr(fmt, "%F");
-	if ( compactDate != NULL ) {
+	if ( compactDate != nullptr ) {
 		char *dst = tmpFmtDate;
 		while ( fmt != compactDate ) { *dst++ = *fmt++; }
 		strcpy(dst, "%Y-%m-%d");
@@ -1078,7 +1078,7 @@ bool Time::fromString(const char* str, const char* fmt) {
 
 	time_t tmp_t = 0;
 	gmtime_r(&tmp_t, &t);
-	if ( strptime(str, fmt, &t) == NULL ) {
+	if ( strptime(str, fmt, &t) == nullptr ) {
 		*this = (time_t)0;
 		return false;
 	}

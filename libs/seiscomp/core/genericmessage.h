@@ -66,7 +66,7 @@ class GenericMessage : public ::Seiscomp::Core::Message {
 		 * Attaches an object to the message
 		 * @param  attachment A pointer to the object
 		 * @retval true The operation was successfull and the object has been attached properly
-		 * @retval false The object is NULL or the object has been attached already
+		 * @retval false The object is nullptr or the object has been attached already
 		 */
 		bool attach(AttachementType* attachment);
 		bool attach(typename Seiscomp::Core::SmartPointer<AttachementType>::Impl& attachment);

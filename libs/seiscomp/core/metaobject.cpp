@@ -241,7 +241,7 @@ size_t MetaProperty::arrayElementCount(const BaseObject *object) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 BaseObject *MetaProperty::arrayObject(BaseObject *object, int i) const {
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -370,7 +370,7 @@ size_t MetaObject::propertyCount() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const MetaProperty *MetaObject::property(size_t index) const {
-	if ( index >= propertyCount() ) return NULL;
+	if ( index >= propertyCount() ) return nullptr;
 	return _properties[index].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -386,7 +386,7 @@ const MetaProperty *MetaObject::property(const std::string &name) const {
 			return _properties[i].get();
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -430,7 +430,7 @@ bool MetaObject::addProperty(const std::string& name,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MetaObject::addProperty(MetaPropertyHandle property) {
-	if ( property.get() == NULL ) return false;
+	if ( property.get() == nullptr ) return false;
 
 	_properties.push_back(property);
 	return true;

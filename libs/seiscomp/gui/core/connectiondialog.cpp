@@ -56,12 +56,12 @@ ConnectionDialog::ConnectionDialog(ConnectionPtr* con, DatabaseInterfacePtr* db,
 		delete services;
 	}
 
-	if ( _connection == NULL ) {
+	if ( _connection == nullptr ) {
 		_ui.groupMessaging->setEnabled(false);
 		_ui.groupSubscriptions->setEnabled(false);
 	}
 
-	if ( _db == NULL ) _ui.groupDatabase->setEnabled(false);
+	if ( _db == nullptr ) _ui.groupDatabase->setEnabled(false);
 
 	connect(_ui.btnConnect, SIGNAL(clicked(bool)), this, SLOT(onConnect()));
 	connect(_ui.btnDbSwitchToReported, SIGNAL(clicked(bool)), this, SLOT(onSwitchToReported()));
@@ -248,7 +248,7 @@ void ConnectionDialog::onSwitchToReported() {
 	// Disconnect from database
 	if ( *_db && (*_db)->isConnected() ) {
 		(*_db)->disconnect();
-		(*_db) = NULL;
+		(*_db) = nullptr;
 		_ui.btnDbConnect->setText("Connect");
 		_ui.comboDbType->setEnabled(true);
 		_ui.editDbConnection->setEnabled(true);
@@ -344,7 +344,7 @@ bool ConnectionDialog::connectToDatabase() {
 			*_db = tmp.database();
 		}
 		else
-			*_db = NULL;
+			*_db = nullptr;
 
 		_changedDatabase = true;
 		emit databaseChanged();
@@ -364,7 +364,7 @@ bool ConnectionDialog::connectToDatabase() {
 void ConnectionDialog::onDatabaseConnect() {
 	if ( *_db && (*_db)->isConnected() ) {
 		(*_db)->disconnect();
-		(*_db) = NULL;
+		(*_db) = nullptr;
 		_ui.btnDbConnect->setText("Connect");
 		_ui.comboDbType->setEnabled(true);
 		_ui.editDbConnection->setEnabled(true);

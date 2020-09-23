@@ -106,7 +106,7 @@ class SC_GUI_API EventSummary : public QWidget {
 		void updateOrigin(Seiscomp::DataModel::Origin* origin);
 
 		void setEvent(Seiscomp::DataModel::Event *event,
-		              Seiscomp::DataModel::Origin* org = NULL,
+		              Seiscomp::DataModel::Origin* org = nullptr,
 		              bool fixed = false);
 
 		void showOrigin(Seiscomp::DataModel::Origin*);

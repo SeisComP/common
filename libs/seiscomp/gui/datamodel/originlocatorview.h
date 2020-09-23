@@ -71,7 +71,7 @@ class SC_GUI_API ArrivalModel : public QAbstractTableModel {
 		};
 
 	public:
-		ArrivalModel(DataModel::Origin* origin = NULL, QObject *parent = 0);
+		ArrivalModel(DataModel::Origin* origin = nullptr, QObject *parent = 0);
 
 		void setDisabledForeground(QColor c) { _disabledForeground = c; }
 

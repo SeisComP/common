@@ -34,7 +34,7 @@ IMPLEMENT_SC_CLASS(NodalPlanes, "NodalPlanes");
 NodalPlanes::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<NodalPlane>("nodalPlane1", "NodalPlane", false, false, true, &NodalPlanes::setNodalPlane1, &NodalPlanes::nodalPlane1));
 	addProperty(objectProperty<NodalPlane>("nodalPlane2", "NodalPlane", false, false, true, &NodalPlanes::setNodalPlane2, &NodalPlanes::nodalPlane2));
-	addProperty(Core::simpleProperty("preferredPlane", "int", false, false, false, false, true, false, NULL, &NodalPlanes::setPreferredPlane, &NodalPlanes::preferredPlane));
+	addProperty(Core::simpleProperty("preferredPlane", "int", false, false, false, false, true, false, nullptr, &NodalPlanes::setPreferredPlane, &NodalPlanes::preferredPlane));
 }
 
 

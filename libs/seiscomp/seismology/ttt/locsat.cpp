@@ -125,7 +125,7 @@ bool Locsat::initTables() {
 	char **phases = phase_types();
 
 	_Pindex = -1;
-	if ( phases != NULL ) {
+	if ( phases != nullptr ) {
 		for ( int i = 0; i < nphases; ++i ) {
 			if ( !strcmp(phases[i], "P") ) {
 				_Pindex = i;
@@ -205,7 +205,7 @@ TravelTime Locsat::compute(const char *phase, double delta, double depth) {
 TravelTimeList *Locsat::compute(double lat1, double lon1, double dep1,
                                 double lat2, double lon2, double alt2,
                                 int ellc) {
-	if ( !initTables() ) return NULL;
+	if ( !initTables() ) return nullptr;
 
 	double delta, azi1, azi2;
 

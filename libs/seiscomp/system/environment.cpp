@@ -94,7 +94,7 @@ bool Environment::init() {
 	}
 #else
 	char homeDir[MAX_PATH];
-	if ( SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, SHGFP_TYPE_CURRENT, homeDir) != S_OK ) {
+	if ( SHGetFolderPath(nullptr, CSIDL_LOCAL_APPDATA, nullptr, SHGFP_TYPE_CURRENT, homeDir) != S_OK ) {
 		SEISCOMP_WARNING("Could not get local application data path!");
 		_homeDir = ".";
 	}
@@ -112,7 +112,7 @@ bool Environment::init() {
 	_appConfigDir = _installDir + "/etc";
 
 	const char* localConfigDir = getenv("SEISCOMP_LOCAL_CONFIG");
-	if ( localConfigDir == NULL ) {
+	if ( localConfigDir == nullptr ) {
 #ifndef WIN32
 		_localConfigDir  = _homeDir + "/.seiscomp";
 #else
@@ -324,7 +324,7 @@ struct PathResolver : public Util::VariableResolver {
 				return false;
 #else
 			char homeDir[MAX_PATH];
-			if ( SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, SHGFP_TYPE_CURRENT, homeDir) != S_OK )
+			if ( SHGetFolderPath(nullptr, CSIDL_LOCAL_APPDATA, nullptr, SHGFP_TYPE_CURRENT, homeDir) != S_OK )
 				return false;
 #endif
 			else

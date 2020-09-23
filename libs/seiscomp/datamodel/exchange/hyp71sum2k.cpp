@@ -55,14 +55,14 @@ ExporterHYP71SUM2K::ExporterHYP71SUM2K() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ExporterHYP71SUM2K::put(std::streambuf* buf, BaseObject* obj) {
-	if ( buf == NULL ) return false;
-	if ( obj == NULL ) return false;
+	if ( buf == nullptr ) return false;
+	if ( obj == nullptr ) return false;
 	EventParameters* ep = EventParameters::Cast(obj);
-	if ( ep == NULL ) return false;
+	if ( ep == nullptr ) return false;
 
 	std::ostream os(buf);
-	Origin *o = NULL;
-	Magnitude *m = NULL;
+	Origin *o = nullptr;
+	Magnitude *m = nullptr;
 
 	// prettyPrint flag enables header output
 	if ( _prettyPrint )

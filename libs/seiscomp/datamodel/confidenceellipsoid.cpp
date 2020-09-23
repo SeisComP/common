@@ -32,12 +32,12 @@ IMPLEMENT_SC_CLASS(ConfidenceEllipsoid, "ConfidenceEllipsoid");
 
 
 ConfidenceEllipsoid::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("semiMajorAxisLength", "float", false, false, false, false, false, false, NULL, &ConfidenceEllipsoid::setSemiMajorAxisLength, &ConfidenceEllipsoid::semiMajorAxisLength));
-	addProperty(Core::simpleProperty("semiMinorAxisLength", "float", false, false, false, false, false, false, NULL, &ConfidenceEllipsoid::setSemiMinorAxisLength, &ConfidenceEllipsoid::semiMinorAxisLength));
-	addProperty(Core::simpleProperty("semiIntermediateAxisLength", "float", false, false, false, false, false, false, NULL, &ConfidenceEllipsoid::setSemiIntermediateAxisLength, &ConfidenceEllipsoid::semiIntermediateAxisLength));
-	addProperty(Core::simpleProperty("majorAxisPlunge", "float", false, false, false, false, false, false, NULL, &ConfidenceEllipsoid::setMajorAxisPlunge, &ConfidenceEllipsoid::majorAxisPlunge));
-	addProperty(Core::simpleProperty("majorAxisAzimuth", "float", false, false, false, false, false, false, NULL, &ConfidenceEllipsoid::setMajorAxisAzimuth, &ConfidenceEllipsoid::majorAxisAzimuth));
-	addProperty(Core::simpleProperty("majorAxisRotation", "float", false, false, false, false, false, false, NULL, &ConfidenceEllipsoid::setMajorAxisRotation, &ConfidenceEllipsoid::majorAxisRotation));
+	addProperty(Core::simpleProperty("semiMajorAxisLength", "float", false, false, false, false, false, false, nullptr, &ConfidenceEllipsoid::setSemiMajorAxisLength, &ConfidenceEllipsoid::semiMajorAxisLength));
+	addProperty(Core::simpleProperty("semiMinorAxisLength", "float", false, false, false, false, false, false, nullptr, &ConfidenceEllipsoid::setSemiMinorAxisLength, &ConfidenceEllipsoid::semiMinorAxisLength));
+	addProperty(Core::simpleProperty("semiIntermediateAxisLength", "float", false, false, false, false, false, false, nullptr, &ConfidenceEllipsoid::setSemiIntermediateAxisLength, &ConfidenceEllipsoid::semiIntermediateAxisLength));
+	addProperty(Core::simpleProperty("majorAxisPlunge", "float", false, false, false, false, false, false, nullptr, &ConfidenceEllipsoid::setMajorAxisPlunge, &ConfidenceEllipsoid::majorAxisPlunge));
+	addProperty(Core::simpleProperty("majorAxisAzimuth", "float", false, false, false, false, false, false, nullptr, &ConfidenceEllipsoid::setMajorAxisAzimuth, &ConfidenceEllipsoid::majorAxisAzimuth));
+	addProperty(Core::simpleProperty("majorAxisRotation", "float", false, false, false, false, false, false, nullptr, &ConfidenceEllipsoid::setMajorAxisRotation, &ConfidenceEllipsoid::majorAxisRotation));
 }
 
 

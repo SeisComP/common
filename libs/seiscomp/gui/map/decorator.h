@@ -50,7 +50,7 @@ class SC_GUI_API Decorator {
 		// X'struction
 		// ------------------------------------------------------------------
 	public:
-		Decorator(Decorator* decorator = NULL)
+		Decorator(Decorator* decorator = nullptr)
 		 : _decorator(decorator),
 		   _visible(true) {
 		}

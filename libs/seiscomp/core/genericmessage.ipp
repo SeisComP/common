@@ -34,7 +34,7 @@ class MessageIteratorImplT : public MessageIterator::Impl {
 		}
 
 		Seiscomp::Core::BaseObject* get() const {
-			return _it == _end?NULL:(*_it).get();
+			return _it == _end?nullptr:(*_it).get();
 		}
 
 		void next() {

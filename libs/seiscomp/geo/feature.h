@@ -43,7 +43,7 @@ struct SC_SYSTEM_CORE_API Category {
 	std::string dataDir;
 
 	Category(unsigned int id, std::string name = "",
-	         const Category* parent = NULL) :
+	         const Category* parent = nullptr) :
 	    id(id), name(name), parent(parent) {}
 };
 
@@ -52,7 +52,7 @@ class SC_SYSTEM_CORE_API GeoFeature : public Core::BaseObject {
 	public:
 		typedef std::map<std::string, std::string> Attributes;
 
-		GeoFeature(const Category* category = NULL, unsigned int rank = 1);
+		GeoFeature(const Category* category = nullptr, unsigned int rank = 1);
 		GeoFeature(const std::string& name, const Category* category,
 		           unsigned int rank);
 		GeoFeature(const std::string& name, const Category* category,

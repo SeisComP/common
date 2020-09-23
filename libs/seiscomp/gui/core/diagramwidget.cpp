@@ -178,10 +178,10 @@ void DiagramWidget::setType(Type t) {
 			adjustZoom = &DiagramWidget::adjustZoomSpherical;
 			break;
 		default:
-			project = NULL;
-			unProject = NULL;
-			contains = NULL;
-			adjustZoom = NULL;
+			project = nullptr;
+			unProject = nullptr;
+			contains = nullptr;
+			adjustZoom = nullptr;
 			break;
 	}
 

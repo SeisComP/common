@@ -229,7 +229,7 @@ class Connection : public Core::BaseObject {
 		 *   clause    := condition[ AND|OR [(]clause[)]]
 		 *   condition := MAG|DEPTH|LAT|LON|PHASES op {float} |
 		 *                UPDATED|OTIME op time |
-		 *                MAG|DEPTH|LAT|LON|PHASES|OTIME|UPDATED IS [NOT] NULL
+		 *                MAG|DEPTH|LAT|LON|PHASES|OTIME|UPDATED IS [NOT] nullptr
 		 *   op        := =|>|>=|<|<=|eq|gt|ge|lt|ge
 		 * @param orderBy sort order of the results,
 		 * Note: Requires server API >= 1,
@@ -266,7 +266,7 @@ class Connection : public Core::BaseObject {
 		 *   clause    := condition[ AND|OR [(]clause[)]]
 		 *   condition := MAG|DEPTH|LAT|LON|PHASES op {float} |
 		 *                UPDATED|OTIME op time |
-		 *                MAG|DEPTH|LAT|LON|PHASES|OTIME|UPDATED IS [NOT] NULL
+		 *                MAG|DEPTH|LAT|LON|PHASES|OTIME|UPDATED IS [NOT] nullptr
 		 *   op        := =|>|>=|<|<=|eq|gt|ge|lt|ge
 		 * @param updatedBufferSize Size of the buffer to store updated events
 		 * until all archived events have been processed. If set to a negative

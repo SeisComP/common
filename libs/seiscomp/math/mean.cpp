@@ -200,7 +200,7 @@ computeTrimmedMean(const std::vector<double> &v, double percent,
 		return computeTrimmedMean(v.size(), &v[0], percent, value, stdev, &(*weights)[0]);
 	}
 
-	return computeTrimmedMean(v.size(), &v[0], percent, value, stdev, NULL);
+	return computeTrimmedMean(v.size(), &v[0], percent, value, stdev, nullptr);
 }
 
 bool

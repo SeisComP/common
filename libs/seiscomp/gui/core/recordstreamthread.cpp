@@ -85,7 +85,7 @@ bool RecordStreamThread::connect()
 
 	_recordStream = IO::RecordStream::Open(_recordStreamURL.c_str());
 
-	if (_recordStream == NULL)
+	if (_recordStream == nullptr)
 	{
 		SEISCOMP_ERROR("[rthread %d] could not create stream from URL %s", ID(), _recordStreamURL.c_str());
 		return false;
@@ -100,7 +100,7 @@ bool RecordStreamThread::connect()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordStreamThread::setStartTime(const Seiscomp::Core::Time& t) {
-	if ( _recordStream == NULL ) return;
+	if ( _recordStream == nullptr ) return;
 	_recordStream->setStartTime(t);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -110,7 +110,7 @@ void RecordStreamThread::setStartTime(const Seiscomp::Core::Time& t) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordStreamThread::setEndTime(const Seiscomp::Core::Time& t) {
-	if ( _recordStream == NULL ) return;
+	if ( _recordStream == nullptr ) return;
 	_recordStream->setEndTime(t);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -120,7 +120,7 @@ void RecordStreamThread::setEndTime(const Seiscomp::Core::Time& t) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordStreamThread::setTimeWindow(const Seiscomp::Core::TimeWindow& tw) {
-	if ( _recordStream == NULL ) return;
+	if ( _recordStream == nullptr ) return;
 
 	if ( tw.startTime() )
 		_recordStream->setStartTime(tw.startTime());
@@ -140,7 +140,7 @@ void RecordStreamThread::setTimeWindow(const Seiscomp::Core::TimeWindow& tw) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStreamThread::setTimeout(int seconds) {
-	if ( _recordStream == NULL ) return false;
+	if ( _recordStream == nullptr ) return false;
 	return _recordStream->setTimeout(seconds);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -150,7 +150,7 @@ bool RecordStreamThread::setTimeout(int seconds) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStreamThread::addStation(const std::string& network, const std::string& station) {
-	if ( _recordStream == NULL ) return false;
+	if ( _recordStream == nullptr ) return false;
 
 	SEISCOMP_DEBUG("[rthread %d] adding stream %s.%s.??.???", ID(), network.c_str(), station.c_str());
 	return _recordStream->addStream(network, station, "??", "???");
@@ -163,7 +163,7 @@ bool RecordStreamThread::addStation(const std::string& network, const std::strin
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStreamThread::addStream(const std::string& network, const std::string& station,
                                    const std::string& location, const std::string& channel) {
-	if ( _recordStream == NULL ) return false;
+	if ( _recordStream == nullptr ) return false;
 
 	SEISCOMP_DEBUG("[rthread %d] adding stream %s.%s.%s.%s", ID(), network.c_str(), station.c_str(), location.c_str(), channel.c_str());
 	return _recordStream->addStream(network, station, location, channel);
@@ -177,7 +177,7 @@ bool RecordStreamThread::addStream(const std::string& network, const std::string
 bool RecordStreamThread::addStream(const std::string& network, const std::string& station,
                                    const std::string& location, const std::string& channel,
                                    const Seiscomp::Core::Time &stime, const Seiscomp::Core::Time &etime) {
-	if ( _recordStream == NULL ) return false;
+	if ( _recordStream == nullptr ) return false;
 
 	SEISCOMP_DEBUG("[rthread %d] adding stream %s.%s.%s.%s - %s~%s", ID(),
 	               network.c_str(), station.c_str(), location.c_str(), channel.c_str(),
@@ -207,7 +207,7 @@ bool RecordStreamThread::addStream(const std::string& network, const std::string
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordStreamThread::run()
 {
-	if ( _recordStream == NULL ) {
+	if ( _recordStream == nullptr ) {
 		SEISCOMP_DEBUG("[rthread %d] no stream source set, running aborted", ID());
 		return;
 	}

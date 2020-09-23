@@ -161,10 +161,10 @@ Spectralizer::Spectralizer() {
 	_timeStep = 10;
 	_specSamples = -1;
 	_noalign = false;
-	_filter = NULL;
+	_filter = nullptr;
 	// Default taper width is 5%
 	_taperWidth = 0.05;
-	_buffer = NULL;
+	_buffer = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -215,9 +215,9 @@ bool Spectralizer::setOptions(const Options &opts) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Spectralizer::cleanup() {
-	if ( _buffer != NULL ) {
+	if ( _buffer != nullptr ) {
 		delete _buffer;
-		_buffer = NULL;
+		_buffer = nullptr;
 	}
 
 	while ( !_nextSpectra.empty() ) {
@@ -247,7 +247,7 @@ void Spectralizer::init(const Record *rec) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Spectralizer::push(const Record *rec) {
-	if ( _buffer == NULL ) {
+	if ( _buffer == nullptr ) {
 		_buffer = new SpecBuffer;
 		init(rec);
 	}
@@ -271,7 +271,7 @@ bool Spectralizer::push(const Record *rec) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Spectrum *Spectralizer::pop() {
-	if ( _nextSpectra.empty() ) return NULL;
+	if ( _nextSpectra.empty() ) return nullptr;
 
 	Spectrum *front = _nextSpectra.front();
 	_nextSpectra.pop_front();
@@ -291,7 +291,7 @@ Record *Spectralizer::fft(const Record *rec) {
 	catch ( ... ) {
 		SEISCOMP_WARNING("[dec] %s: invalid end time -> ignoring",
 		                 rec->streamID().c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	if ( _buffer->lastEndTime.valid() ) {
@@ -307,12 +307,12 @@ Record *Spectralizer::fft(const Record *rec) {
 
 	ArrayPtr tmp_ar;
 	const DoubleArray *ar = DoubleArray::ConstCast(rec->data());
-	if ( ar == NULL ) {
+	if ( ar == nullptr ) {
 		tmp_ar = rec->data()->copy(Array::DOUBLE);
 		ar = DoubleArray::ConstCast(tmp_ar);
-		if ( ar == NULL ) {
+		if ( ar == nullptr ) {
 			SEISCOMP_ERROR("[spec] internal error: doubles expected");
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -346,7 +346,7 @@ Record *Spectralizer::fft(const Record *rec) {
 		}
 
 		// Still samples missing and no more data available, return
-		if ( _buffer->missingSamples > 0 ) return NULL;
+		if ( _buffer->missingSamples > 0 ) return nullptr;
 	}
 
 	do {
@@ -418,7 +418,7 @@ Record *Spectralizer::fft(const Record *rec) {
 	}
 	while ( data_len > 0 );
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
