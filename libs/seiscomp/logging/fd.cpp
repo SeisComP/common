@@ -70,7 +70,7 @@ void FdOutput::log(const char* channelName,
 
 	currentTime = _useUTC ? *gmtime(&time) : *localtime(&time);
 
-	const char *color = NULL;
+	const char *color = nullptr;
 
 	if ( _colorize ) {
 		sprintf(timeStamp, "%s%02i:%02i:%02i%s ",

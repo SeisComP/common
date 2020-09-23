@@ -88,9 +88,9 @@ void Register(PublishLoc *loc, Channel *channel, const char *format, ... ) {
 
 PublishLoc::~PublishLoc() {
 	disable();
-	if ( pub != NULL ) {
+	if ( pub ) {
 		delete pub;
-		pub = NULL;
+		pub = nullptr;
 	}
 }
 
