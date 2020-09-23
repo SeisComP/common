@@ -33,7 +33,7 @@ Graph::Graph(Axis *keyAxis, Axis *valueAxis, QObject *parent)
 : QObject(parent)
 , _keyAxis(keyAxis)
 , _valueAxis(valueAxis)
-, _data(NULL)
+, _data(nullptr)
 {
 	_visible = true;
 	_pen.setColor(Qt::black);
@@ -52,7 +52,7 @@ Graph::Graph(const QString &name, Axis *keyAxis, Axis *valueAxis, QObject *paren
 , _name(name)
 , _keyAxis(keyAxis)
 , _valueAxis(valueAxis)
-, _data(NULL)
+, _data(nullptr)
 {
 	_visible = true;
 	_pen.setColor(Qt::black);
@@ -196,7 +196,7 @@ QRectF Graph::getBounds() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Graph::unproject(QPolygonF &poly) const {
-	if ( _data == NULL || _keyAxis == NULL || _valueAxis == NULL )
+	if ( _data == nullptr || _keyAxis == nullptr || _valueAxis == nullptr )
 		return;
 
 	_data->unproject(poly, _keyAxis, _valueAxis);

@@ -322,7 +322,7 @@ CompositeTime& CompositeTime::operator=(const CompositeTime& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool CompositeTime::assign(Object* other) {
 	CompositeTime* otherCompositeTime = CompositeTime::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherCompositeTime;
@@ -336,11 +336,11 @@ bool CompositeTime::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool CompositeTime::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Origin* origin = Origin::Cast(parent);
-	if ( origin != NULL )
+	if ( origin != nullptr )
 		return origin->add(this);
 
 	SEISCOMP_ERROR("CompositeTime::attachTo(%s) -> wrong class type", parent->className());
@@ -353,11 +353,11 @@ bool CompositeTime::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool CompositeTime::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Origin* origin = Origin::Cast(object);
-	if ( origin != NULL ) {
+	if ( origin != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -365,7 +365,7 @@ bool CompositeTime::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			CompositeTime* child = origin->findCompositeTime(this);
-			if ( child != NULL )
+			if ( child != nullptr )
 				return origin->remove(child);
 			else {
 				SEISCOMP_DEBUG("CompositeTime::detachFrom(Origin): compositeTime has not been found");
@@ -384,7 +384,7 @@ bool CompositeTime::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool CompositeTime::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

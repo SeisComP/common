@@ -61,7 +61,7 @@ DataAvailability::DataAvailability(const DataAvailability& other)
 DataAvailability::~DataAvailability() {
 	std::for_each(_dataExtents.begin(), _dataExtents.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&DataExtent::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&DataExtentPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -109,7 +109,7 @@ DataAvailability& DataAvailability::operator=(const DataAvailability& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataAvailability::assign(Object* other) {
 	DataAvailability* otherDataAvailability = DataAvailability::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherDataAvailability;
@@ -162,7 +162,7 @@ Object* DataAvailability::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataAvailability::updateChild(Object* child) {
 	DataExtent* dataExtentChild = DataExtent::Cast(child);
-	if ( dataExtentChild != NULL ) {
+	if ( dataExtentChild != nullptr ) {
 		DataExtent* dataExtentElement
 			= DataExtent::Cast(PublicObject::Find(dataExtentChild->publicID()));
 		if ( dataExtentElement && dataExtentElement->parent() == this ) {
@@ -214,7 +214,7 @@ DataExtent* DataAvailability::dataExtent(const DataExtentIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -227,7 +227,7 @@ DataExtent* DataAvailability::findDataExtent(const std::string& publicID) const 
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -236,11 +236,11 @@ DataExtent* DataAvailability::findDataExtent(const std::string& publicID) const 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataAvailability::add(DataExtent* dataExtent) {
-	if ( dataExtent == NULL )
+	if ( dataExtent == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( dataExtent->parent() != NULL ) {
+	if ( dataExtent->parent() != nullptr ) {
 		SEISCOMP_ERROR("DataAvailability::add(DataExtent*) -> element has already a parent");
 		return false;
 	}
@@ -282,7 +282,7 @@ bool DataAvailability::add(DataExtent* dataExtent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataAvailability::remove(DataExtent* dataExtent) {
-	if ( dataExtent == NULL )
+	if ( dataExtent == nullptr )
 		return false;
 
 	if ( dataExtent->parent() != this ) {
@@ -303,7 +303,7 @@ bool DataAvailability::remove(DataExtent* dataExtent) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_dataExtents.erase(it);
@@ -327,7 +327,7 @@ bool DataAvailability::removeDataExtent(size_t i) {
 		_dataExtents[i]->accept(&nc);
 	}
 
-	_dataExtents[i]->setParent(NULL);
+	_dataExtents[i]->setParent(nullptr);
 	childRemoved(_dataExtents[i].get());
 
 	_dataExtents.erase(_dataExtents.begin() + i);
@@ -342,7 +342,7 @@ bool DataAvailability::removeDataExtent(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataAvailability::removeDataExtent(const DataExtentIndex& i) {
 	DataExtent* object = dataExtent(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

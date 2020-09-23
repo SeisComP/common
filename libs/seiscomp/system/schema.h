@@ -289,7 +289,7 @@ class SC_SYSTEM_CORE_API SchemaModule : public Core::BaseObject {
 	//  X'truction
 	// ------------------------------------------------------------------
 	public:
-		SchemaModule() : aliasedModule(NULL) {}
+		SchemaModule() : aliasedModule(nullptr) {}
 
 		bool isStandalone() const {
 			return standalone && *standalone;

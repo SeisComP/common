@@ -171,7 +171,7 @@ double GreensFunction::timeOffset() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 double GreensFunction::length(GreensFunctionComponent c) const {
-	if ( _components[c] == NULL || _samplingFrequency <= 0 ) return 0;
+	if ( _components[c] == nullptr || _samplingFrequency <= 0 ) return 0;
 
 	return (double)_components[c]->size() / _samplingFrequency;
 }

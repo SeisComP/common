@@ -88,12 +88,12 @@ CalculateAmplitudes::CalculateAmplitudes(Origin *origin,
 	_ui.table->horizontalHeader()->setStretchLastSection(true);
 
 	_origin = origin;
-	_thread = NULL;
-	_query = NULL;
+	_thread = nullptr;
+	_query = nullptr;
 	_recomputeAmplitudes = false;
 	_computeSilently = false;
 
-	_externalAmplitudeCache = NULL;
+	_externalAmplitudeCache = nullptr;
 
 	connect(_ui.comboFilterState, SIGNAL(currentIndexChanged(int)),
 	        this, SLOT(filterStateChanged(int)));
@@ -184,7 +184,7 @@ void CalculateAmplitudes::closeAcquisition() {
 	if ( _thread ) {
 		_thread->stop(true);
 		delete _thread;
-		_thread = NULL;
+		_thread = nullptr;
 	}
 }
 
@@ -295,7 +295,7 @@ bool CalculateAmplitudes::process() {
 		}
 
 		double dist = -1;
-		DataModel::SensorLocation *loc = NULL;
+		DataModel::SensorLocation *loc = nullptr;
 		loc = Client::Inventory::Instance()->getSensorLocation(pick);
 	
 		try {
@@ -305,7 +305,7 @@ bool CalculateAmplitudes::process() {
 			try {
 				double azi1, azi2;
 
-				if ( loc != NULL )
+				if ( loc != nullptr )
 					Math::Geo::delazi_wgs84(loc->latitude(), loc->longitude(),
 					                        _origin->latitude(), _origin->longitude(),
 					                        &dist, &azi1, &azi2);
@@ -501,7 +501,7 @@ void CalculateAmplitudes::addProcessor(
 	const DataModel::SensorLocation *loc,
 	double dist) {
 
-	AmplitudeProcessorPtr proc = NULL;
+	AmplitudeProcessorPtr proc = nullptr;
 
 	int row;
 
@@ -514,13 +514,13 @@ void CalculateAmplitudes::addProcessor(
 
 	proc->setTrigger(pick->time().value());
 
-	Util::KeyValues *keys = NULL;
+	Util::KeyValues *keys = nullptr;
 	std::string stationID = pick->waveformID().networkCode() + "." +
 	                        pick->waveformID().stationCode();
 	ParameterMap::iterator it = _parameters.find(stationID);
 	if ( it != _parameters.end() )
 		keys = it->second.get();
-	else if ( SCApp->configModule() != NULL ) {
+	else if ( SCApp->configModule() != nullptr ) {
 		for ( size_t i = 0; i < SCApp->configModule()->configStationCount(); ++i ) {
 			ConfigStation *station = SCApp->configModule()->configStation(i);
 
@@ -670,7 +670,7 @@ void CalculateAmplitudes::addProcessor(Processing::AmplitudeProcessor *proc,
 
 	WaveformStreamID cwid = pick->waveformID();
 
-	if ( tc.comps[ThreeComponents::Component(c)] == NULL )
+	if ( tc.comps[ThreeComponents::Component(c)] == nullptr )
 		component = '\0';
 	else {
 		cwid.setChannelCode(tc.comps[ThreeComponents::Component(c)]->code());
@@ -862,7 +862,7 @@ void CalculateAmplitudes::emitAmplitude(const AmplitudeProcessor *proc,
 
 void CalculateAmplitudes::setValue(int row, double value) {
 	QTableWidgetItem *itemValue = _ui.table->item(row, 2);
-	if ( itemValue == NULL ) {
+	if ( itemValue == nullptr ) {
 		itemValue = new QTableWidgetItem;
 		itemValue->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		itemValue->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -945,7 +945,7 @@ void CalculateAmplitudes::finishedAcquisition() {
 	//_ui.btnOK->setEnabled(true);
 	bool hasErrors = false;
 	for ( int i = 0; i < _ui.table->rowCount(); ++i ) {
-		if ( _ui.table->cellWidget(i, 3) != NULL ||
+		if ( _ui.table->cellWidget(i, 3) != nullptr ||
 		     _ui.table->item(i, 3)->data(Qt::UserRole) == 1 )
 			hasErrors = true;
 	}
@@ -957,7 +957,7 @@ void CalculateAmplitudes::finishedAcquisition() {
 
 void CalculateAmplitudes::setError(int row, QString text) {
 	// Remove progress bar if set
-	_ui.table->setCellWidget(row, 3, NULL);
+	_ui.table->setCellWidget(row, 3, nullptr);
 
 	QTableWidgetItem *itemState = new QTableWidgetItem(text);
 	itemState->setData(Qt::TextColorRole, QVariant::fromValue(QColor(Qt::red)));
@@ -970,7 +970,7 @@ void CalculateAmplitudes::setError(int row, QString text) {
 
 
 void CalculateAmplitudes::setMessage(int row, QString text) {
-	_ui.table->setCellWidget(row, 3, NULL);
+	_ui.table->setCellWidget(row, 3, nullptr);
 
 	QTableWidgetItem *itemState = new QTableWidgetItem(text);
 	itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -984,7 +984,7 @@ void CalculateAmplitudes::setMessage(int row, QString text) {
 
 void CalculateAmplitudes::setProgress(int row, int progress) {
 	QProgressBar *progressBar = static_cast<QProgressBar*>(_ui.table->cellWidget(row, 3));
-	_ui.table->setItem(row, 3, NULL);
+	_ui.table->setItem(row, 3, nullptr);
 	if ( !progressBar ) {
 		progressBar = new QProgressBar(_ui.table);
 		progressBar->setRange(0, 100);
@@ -1030,7 +1030,7 @@ void CalculateAmplitudes::filterView(int startRow, int cnt) {
 		if ( showSuccess ) {
 			QProgressBar *progressBar = static_cast<QProgressBar*>(_ui.table->cellWidget(i, 3));
 			QTableWidgetItem *item = _ui.table->item(i, 3);
-			if ( progressBar != NULL && progressBar->value() < 100 )
+			if ( progressBar != nullptr && progressBar->value() < 100 )
 				hide = true;
 			else if ( item && item->data(Qt::UserRole) == 1 )
 				hide = true;
@@ -1038,7 +1038,7 @@ void CalculateAmplitudes::filterView(int startRow, int cnt) {
 
 		if ( showErrors ) {
 			QTableWidgetItem *item = _ui.table->item(i, 3);
-			if ( _ui.table->cellWidget(i, 3) != NULL ||
+			if ( _ui.table->cellWidget(i, 3) != nullptr ||
 				 (item && item->data(Qt::UserRole) != 1) )
 				hide = true;
 		}
@@ -1046,7 +1046,7 @@ void CalculateAmplitudes::filterView(int startRow, int cnt) {
 		if ( showProgress ) {
 			QProgressBar *progressBar = static_cast<QProgressBar*>(_ui.table->cellWidget(i, 3));
 			QTableWidgetItem *item = _ui.table->item(i, 3);
-			if ( progressBar == NULL || progressBar->value() == 100 )
+			if ( progressBar == nullptr || progressBar->value() == 100 )
 				hide = true;
 			else if ( item && item->data(Qt::UserRole) == 1 )
 				hide = true;

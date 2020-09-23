@@ -315,7 +315,7 @@ void Resample::cleanup() {
 	for ( ; it != _queue.end(); ++it )
 		delete *it;
 
-	_source = NULL;
+	_source = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -335,11 +335,11 @@ void Resample::push(Record *rec) {
 	}
 	*/
 
-	if ( out != NULL ) {
+	if ( out != nullptr ) {
 		if ( _debug ) out->setLocationCode("RS");
 		_queue.push_back(out);
 	}
-	else if ( out_rec != NULL )
+	else if ( out_rec != nullptr )
 		delete out_rec;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -351,7 +351,7 @@ void Resample::push(Record *rec) {
 Record *Resample::next() {
 	if ( !_source ) {
 		SEISCOMP_ERROR("[resample] no source defined");
-		return NULL;
+		return nullptr;
 	}
 
 	while ( true ) {
@@ -374,7 +374,7 @@ Record *Resample::next() {
 			break;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

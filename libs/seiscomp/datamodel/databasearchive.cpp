@@ -169,10 +169,10 @@ DatabaseIterator::DatabaseIterator(DatabaseArchive *database, const RTTI *rtti)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator::DatabaseIterator()
-: _rtti(NULL)
-, _reader(NULL)
+: _rtti(nullptr)
+, _reader(nullptr)
 , _count(0)
-, _object(NULL)
+, _object(nullptr)
 , _oid(IO::DatabaseInterface::INVALID_OID)
 , _parent_oid(IO::DatabaseInterface::INVALID_OID)
 , _cached(false) {}
@@ -208,7 +208,7 @@ DatabaseIterator::~DatabaseIterator() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Object *DatabaseIterator::fetch() const {
-	if ( _rtti == NULL || _reader == NULL ) return NULL;
+	if ( _rtti == nullptr || _reader == nullptr ) return nullptr;
 
 	_cached = false;
 
@@ -226,20 +226,20 @@ Object *DatabaseIterator::fetch() const {
 		_lastModified = Core::None;
 
 	BaseObject *bobj = ClassFactory::Create(_rtti->className());
-	if ( bobj == NULL ) {
+	if ( bobj == nullptr ) {
 		SEISCOMP_ERROR("DatabaseIterator: object of type '%s' could not be created",
 		               _rtti->className());
 		_reader->_db->endQuery();
-		return NULL;
+		return nullptr;
 	}
 
 	Object* obj = Object::Cast(bobj);
-	if ( obj == NULL ) {
+	if ( obj == nullptr ) {
 		delete bobj;
 		SEISCOMP_ERROR("DatabaseIterator: object of type '%s' could not be created",
 		               _rtti->className());
 		_reader->_db->endQuery();
-		return NULL;
+		return nullptr;
 	}
 
 	if ( _lastModified )
@@ -251,7 +251,7 @@ Object *DatabaseIterator::fetch() const {
 		SEISCOMP_WARNING("DatabaseIterator: error while reading object of type '%s': ignoring it",
 		                 _rtti->className());
 		delete obj;
-		obj = NULL;
+		obj = nullptr;
 	}
 
 	return obj;
@@ -279,7 +279,7 @@ DatabaseIterator& DatabaseIterator::operator=(const DatabaseIterator &it) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DatabaseIterator::valid() const {
-	return _reader != NULL;
+	return _reader != nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -316,7 +316,7 @@ size_t DatabaseIterator::fieldCount() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const char *DatabaseIterator::field(size_t index) const {
-	return _reader?(const char*)_reader->_db->getRowField(index):NULL;
+	return _reader?(const char*)_reader->_db->getRowField(index):nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -362,11 +362,11 @@ DatabaseIterator& DatabaseIterator::operator++(int) {
 void DatabaseIterator::close() {
 	if ( _reader ) {
 		_reader->_db->endQuery();
-		_reader = NULL;
-		_rtti = NULL;
+		_reader = nullptr;
+		_rtti = nullptr;
 	}
 
-	_object = NULL;
+	_object = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -405,7 +405,7 @@ bool DatabaseObjectWriter::operator()(Object *object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DatabaseObjectWriter::operator()(Object *object, const std::string &parentID) {
-	if ( _archive.driver() == NULL )
+	if ( _archive.driver() == nullptr )
 		return false;
 
 	_parentID = parentID;
@@ -505,7 +505,7 @@ void DatabaseArchive::setDriver(Seiscomp::IO::DatabaseInterface *db) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseArchive::DatabaseArchive(Seiscomp::IO::DatabaseInterface *i)
-  : _db(i), _objectAttributes(NULL) {
+  : _db(i), _objectAttributes(nullptr) {
 	setHint(IGNORE_CHILDS);
 	Object::RegisterObserver(this);
 	_allowDbClose = false;
@@ -533,7 +533,7 @@ DatabaseArchive::~DatabaseArchive() {
 bool DatabaseArchive::open(const char *dataSource) {
 	_errorMsg = "";
 
-	if ( _db == NULL ) return false;
+	if ( _db == nullptr ) return false;
 	if ( _db->isConnected() ) return false;
 
 	if ( _db->connect(dataSource) ) {
@@ -560,7 +560,7 @@ bool DatabaseArchive::open(const char *dataSource) {
 bool DatabaseArchive::fetchVersion() {
 	setVersion(Core::Version(0,0));
 
-	if ( _db == NULL ) return false;
+	if ( _db == nullptr ) return false;
 
 	if ( !_db->beginQuery("select value from Meta where name='Schema-Version'") ) {
 		SEISCOMP_WARNING("Unable to read schema version from database, "
@@ -638,9 +638,9 @@ bool DatabaseArchive::create(const char* /*dataSource*/) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DatabaseArchive::close() {
-	if ( _db != NULL && _allowDbClose )
+	if ( _db != nullptr && _allowDbClose )
 		_db->disconnect();
-	_db = NULL;
+	_db = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -665,32 +665,32 @@ Object *DatabaseArchive::queryObject(const Seiscomp::Core::RTTI &classType,
                                      const std::string &query) {
 	if ( !validInterface() ) {
 		SEISCOMP_ERROR("no valid database interface");
-		return NULL;
+		return nullptr;
 	}
 
 	if ( !_db->beginQuery(query.c_str()) ) {
 		SEISCOMP_ERROR("query [%s] failed", query.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	if ( !_db->fetchRow() ) {
 		_db->endQuery();
-		return NULL;
+		return nullptr;
 	}
 
 	BaseObject *bobj = ClassFactory::Create(classType.className());
-	if ( bobj == NULL ) {
+	if ( bobj == nullptr ) {
 		SEISCOMP_ERROR("unable to create class of type '%s'", classType.className());
 		_db->endQuery();
-		return NULL;
+		return nullptr;
 	}
 
 	Object* obj = Object::Cast(bobj);
-	if ( obj == NULL ) {
+	if ( obj == nullptr ) {
 		delete bobj;
 		SEISCOMP_ERROR("unable to create class of type '%s'", classType.className());
 		_db->endQuery();
-		return NULL;
+		return nullptr;
 	}
 
 	serializeObject(obj);
@@ -699,7 +699,7 @@ Object *DatabaseArchive::queryObject(const Seiscomp::Core::RTTI &classType,
 
 	if ( !success() ) {
 		delete obj;
-		obj = NULL;
+		obj = nullptr;
 	}
 
 	return obj;
@@ -713,7 +713,7 @@ Object *DatabaseArchive::queryObject(const Seiscomp::Core::RTTI &classType,
 PublicObject *DatabaseArchive::getObject(const RTTI &classType,
                                          const std::string &publicID) {
 	if ( !classType.isTypeOf(PublicObject::TypeInfo()) )
-		return NULL;
+		return nullptr;
 
 	std::stringstream ss;
 	ss << "select " << PublicObject::ClassName() << "." << _publicIDColumn << "," <<
@@ -727,7 +727,7 @@ PublicObject *DatabaseArchive::getObject(const RTTI &classType,
 	PublicObject *po = PublicObject::Cast(obj);
 	if ( !po ) {
 		delete obj;
-		return NULL;
+		return nullptr;
 	}
 
 	return po;
@@ -1126,7 +1126,7 @@ void DatabaseArchive::read(Time &value) {
 		int microSeconds;
 		_currentAttributeName += MICROSECONDS_POSTFIX;
 		readAttrib();
-		if ( cfield() != NULL ) {
+		if ( cfield() != nullptr ) {
 			if ( fromString(microSeconds, cfield()) )
 				value.setUSecs(microSeconds);
 		}
@@ -1378,7 +1378,7 @@ DatabaseArchive::OID DatabaseArchive::objectId(Object *object, const std::string
 	OID iParentID = 0;
 
 	PublicObject* parentObject = object->parent();
-	if ( parentObject != NULL ) {
+	if ( parentObject != nullptr ) {
 		iParentID = getCachedId(parentObject);
 		if ( iParentID == 0 ) {
 			iParentID = publicObjectId(parentObject->publicID());
@@ -1547,7 +1547,7 @@ bool DatabaseArchive::deleteObject(OID id) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DatabaseArchive::write(Object* object, const std::string &parentId) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	if ( !validInterface() ) {
 		setValidity(false);
@@ -1566,7 +1566,7 @@ bool DatabaseArchive::write(Object* object, const std::string &parentId) {
 
 	OID objectId;
 	PublicObject* publicObject = PublicObject::Cast(object);
-	if ( publicObject != NULL ) {
+	if ( publicObject != nullptr ) {
 		if ( publicObjectId(publicObject->publicID()) > 0 ) {
 			SEISCOMP_ERROR("object with publicID '%s' exists already",
 			               publicObject->publicID().c_str());
@@ -1604,7 +1604,7 @@ bool DatabaseArchive::write(Object* object, const std::string &parentId) {
 	bool success = false;
 
 	PublicObject* parentObject = object->parent();
-	if ( parentObject != NULL ) {
+	if ( parentObject != nullptr ) {
 		OID iParentId = getCachedId(parentObject);
 		if ( iParentId == 0 ) {
 			iParentId = publicObjectId(parentObject->publicID());
@@ -1654,7 +1654,7 @@ bool DatabaseArchive::write(Object* object, const std::string &parentId) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DatabaseArchive::update(Object *object, const std::string &parentID) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	if ( !validInterface() ) {
 		setValidity(false);
@@ -1671,7 +1671,7 @@ bool DatabaseArchive::update(Object *object, const std::string &parentID) {
 
 	PublicObject* publicObject = PublicObject::Cast(object);
 	
-	_ignoreIndexAttributes = (publicObject == NULL);
+	_ignoreIndexAttributes = (publicObject == nullptr);
 
 	resetAttributePrefix();
 
@@ -1679,7 +1679,7 @@ bool DatabaseArchive::update(Object *object, const std::string &parentID) {
 	OID iPublicID = 0;
 
 	PublicObject* parentObject = object->parent();
-	if ( parentObject != NULL ) {
+	if ( parentObject != nullptr ) {
 		iParentID = getCachedId(parentObject);
 		if ( iParentID == 0 ) {
 			iParentID = publicObjectId(parentObject->publicID());
@@ -1786,7 +1786,7 @@ bool DatabaseArchive::update(Object *object, const std::string &parentID) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DatabaseArchive::remove(Object *object, const std::string &parentID) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	if ( !validInterface() ) {
 		setValidity(false);
@@ -1861,7 +1861,7 @@ void DatabaseArchive::readAttrib() const {
 		_fieldSize = _db->getRowFieldSize(_fieldIndex);
 	}
 	else {
-		_field = NULL;
+		_field = nullptr;
 		_fieldSize = 0;
 	}
 }
@@ -1935,7 +1935,7 @@ bool DatabaseArchive::locateObjectByName(const char *name, const char *targetCla
 	readAttrib();
 
 	if ( hint() & DB_TABLE ) {
-		if ( _field == NULL ) {
+		if ( _field == nullptr ) {
 			popAttribPrefix();
 			return false;
 		}
@@ -1945,7 +1945,7 @@ bool DatabaseArchive::locateObjectByName(const char *name, const char *targetCla
 		SEISCOMP_DEBUG("should read child table '%s' with _oid=%" PRIu64, targetClass, childId);
 	}
 	
-	return _field != NULL;
+	return _field != nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2134,7 +2134,7 @@ std::string DatabaseArchive::buildExtendedQuery(const std::string &what,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DatabaseArchive::validInterface() const {
-	return _db != NULL;
+	return _db != nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2194,14 +2194,14 @@ int DatabaseArchive::getCacheSize() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DatabaseArchive::serializeObject(Object *obj) {
-	if ( obj == NULL ) return;
+	if ( obj == nullptr ) return;
 
 	resetAttributePrefix();
 
 	_validObject = true;
 	obj->serialize(*this);
 
-	if ( _db != NULL && isReading() ) {
+	if ( _db != nullptr && isReading() ) {
 		int idId = _db->findColumn("_oid");
 		if ( idId != -1 ) {
 			OID oid;

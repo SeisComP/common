@@ -75,7 +75,7 @@ void AmplitudeProcessor_Mjma::initFilter(double fsamp) {
 		);
 	}
 	else
-		AmplitudeProcessor::setFilter(NULL);
+		AmplitudeProcessor::setFilter(nullptr);
 
 	AmplitudeProcessor::initFilter(fsamp);
 }
@@ -94,7 +94,7 @@ bool AmplitudeProcessor_Mjma::deconvolveData(Response *resp,
 	Math::Restitution::FFT::TransferFunctionPtr tf =
 		resp->getTransferFunction(numberOfIntegrations < 0 ? 0 : numberOfIntegrations);
 
-	if ( tf == NULL )
+	if ( tf == nullptr )
 		return false;
 
 	Math::SeismometerResponse::Seismometer5sec paz(numberOfIntegrations < 0 ? Math::Displacement : Math::Velocity);

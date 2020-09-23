@@ -95,13 +95,13 @@ void Inventory::load(const char *filename) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inventory::load(DataModel::DatabaseReader* reader) {
-	if ( reader == NULL ) return;
+	if ( !reader ) return;
 
 	//_inventory = reader->loadInventory();
 
 	loadStations(reader);
 
-	if ( _inventory == NULL ) return;
+	if ( !_inventory ) return;
 
 	DataModel::DatabaseIterator it;
 
@@ -120,7 +120,7 @@ void Inventory::load(DataModel::DatabaseReader* reader) {
 	it.close();
 
 	// Read station references
-	it = reader->getObjects(NULL, DataModel::StationReference::TypeInfo());
+	it = reader->getObjects(nullptr, DataModel::StationReference::TypeInfo());
 	for ( DataModel::ObjectPtr obj; (obj = *it); ++it ) {
 		DataModel::StationReferencePtr staref = DataModel::StationReference::Cast(obj);
 		if ( staref ) {
@@ -149,7 +149,7 @@ void Inventory::load(DataModel::DatabaseReader* reader) {
 	it.close();
 
 	// Read aux sources
-	it = reader->getObjects(NULL, DataModel::AuxSource::TypeInfo());
+	it = reader->getObjects(nullptr, DataModel::AuxSource::TypeInfo());
 	for ( DataModel::ObjectPtr obj; (obj = *it); ++it ) {
 		DataModel::AuxSourcePtr auxsource = DataModel::AuxSource::Cast(obj);
 		if ( auxsource ) {
@@ -178,7 +178,7 @@ void Inventory::load(DataModel::DatabaseReader* reader) {
 	it.close();
 
 	// Read sensor calibrations
-	it = reader->getObjects(NULL, DataModel::SensorCalibration::TypeInfo());
+	it = reader->getObjects(nullptr, DataModel::SensorCalibration::TypeInfo());
 	for ( DataModel::ObjectPtr obj; (obj = *it); ++it ) {
 		DataModel::SensorCalibrationPtr sencal = DataModel::SensorCalibration::Cast(obj);
 		if ( sencal ) {
@@ -207,7 +207,7 @@ void Inventory::load(DataModel::DatabaseReader* reader) {
 	it.close();
 
 	// Read datalogger calibrations
-	it = reader->getObjects(NULL, DataModel::DataloggerCalibration::TypeInfo());
+	it = reader->getObjects(nullptr, DataModel::DataloggerCalibration::TypeInfo());
 	for ( DataModel::ObjectPtr obj; (obj = *it); ++it ) {
 		DataModel::DataloggerCalibrationPtr dlcal = DataModel::DataloggerCalibration::Cast(obj);
 		if ( dlcal ) {
@@ -222,7 +222,7 @@ void Inventory::load(DataModel::DatabaseReader* reader) {
 	it.close();
 
 	// Read decimations calibrations
-	it = reader->getObjects(NULL, DataModel::Decimation::TypeInfo());
+	it = reader->getObjects(nullptr, DataModel::Decimation::TypeInfo());
 	for ( DataModel::ObjectPtr obj; (obj = *it); ++it ) {
 		DataModel::DecimationPtr deci = DataModel::Decimation::Cast(obj);
 		if ( deci ) {
@@ -292,7 +292,7 @@ void Inventory::load(DataModel::DatabaseReader* reader) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inventory::loadStations(DataModel::DatabaseReader* reader) {
-	if ( reader == NULL ) return;
+	if ( !reader ) return;
 
 	_inventory = new DataModel::Inventory();
 	DataModel::DatabaseIterator it;
@@ -330,7 +330,7 @@ void Inventory::loadStations(DataModel::DatabaseReader* reader) {
 
 	// Read stations
 	std::map<int, DataModel::StationPtr> stations;
-	it = reader->getObjects(NULL, DataModel::Station::TypeInfo());
+	it = reader->getObjects(nullptr, DataModel::Station::TypeInfo());
 	for ( DataModel::ObjectPtr obj; (obj = *it); ++it ) {
 		DataModel::StationPtr station = DataModel::Station::Cast(obj);
 		if ( station ) {
@@ -364,7 +364,7 @@ void Inventory::loadStations(DataModel::DatabaseReader* reader) {
 
 	// Read sensor locations
 	std::map<int, DataModel::SensorLocationPtr> sensorLocations;
-	it = reader->getObjects(NULL, DataModel::SensorLocation::TypeInfo());
+	it = reader->getObjects(nullptr, DataModel::SensorLocation::TypeInfo());
 	for ( DataModel::ObjectPtr obj; (obj = *it); ++it ) {
 		DataModel::SensorLocationPtr sensorLocation = DataModel::SensorLocation::Cast(obj);
 		if ( sensorLocation ) {
@@ -400,7 +400,7 @@ void Inventory::loadStations(DataModel::DatabaseReader* reader) {
 	// Note, prior to version 0.10 the stream type was not a PublicObject and
 	// therefore we must not join with table PublicObject
 	std::map<int, DataModel::StreamPtr> streams;
-	it = reader->getObjects(NULL, DataModel::Stream::TypeInfo(), reader->isLowerVersion<0,10>());
+	it = reader->getObjects(nullptr, DataModel::Stream::TypeInfo(), reader->isLowerVersion<0,10>());
 	for ( DataModel::ObjectPtr obj; (obj = *it); ++it ) {
 		DataModel::StreamPtr stream = DataModel::Stream::Cast(obj);
 		if ( stream ) {
@@ -433,7 +433,7 @@ void Inventory::loadStations(DataModel::DatabaseReader* reader) {
 	}
 
 	// Read auxStreams
-	it = reader->getObjects(NULL, DataModel::AuxStream::TypeInfo());
+	it = reader->getObjects(nullptr, DataModel::AuxStream::TypeInfo());
 	for ( DataModel::ObjectPtr obj; (obj = *it); ++it ) {
 		DataModel::AuxStreamPtr auxStream = DataModel::AuxStream::Cast(obj);
 		if ( auxStream ) {
@@ -464,7 +464,7 @@ int Inventory::filter(const Util::StringFirewall *networkTypeFW,
 		const std::string &net_type = net->type();
 
 		// Type blocked?
-		if ( (networkTypeFW != NULL) && networkTypeFW->isDenied(net_type) ) {
+		if ( networkTypeFW && networkTypeFW->isDenied(net_type) ) {
 			_inventory->removeNetwork(n);
 			filtered += net->stationCount();
 			continue;
@@ -477,7 +477,7 @@ int Inventory::filter(const Util::StringFirewall *networkTypeFW,
 			const std::string &sta_type = sta->type();
 
 			// Type not blocked?
-			if ( (stationTypeFW != NULL) && stationTypeFW->isAllowed(sta_type) ) {
+			if ( stationTypeFW && stationTypeFW->isAllowed(sta_type) ) {
 				++s;
 				continue;
 			}
@@ -509,12 +509,12 @@ void Inventory::setInventory(DataModel::Inventory *inv) {
 StationLocation Inventory::stationLocation(const std::string& networkCode,
                                            const std::string& stationCode,
                                            const Core::Time& time) const {
-	if ( _inventory == NULL )
+	if ( !_inventory )
 		throw Core::ValueException("inventory is empty");
 
 	DataModel::Station* station = getStation(networkCode, stationCode, time);
 	
-	if ( station == NULL )
+	if ( !station )
 		throw Core::ValueException("station [" + networkCode + "." + stationCode + "] not found");
 
 	return StationLocation(station->latitude(),
@@ -561,7 +561,7 @@ Inventory::getThreeComponents(const std::string& networkCode,
                               const std::string& channelCode,
                               const Core::Time &time) const {
 	DataModel::SensorLocation *loc = getSensorLocation(networkCode, stationCode, locationCode, time);
-	if ( loc == NULL )
+	if ( !loc )
 		throw Core::ValueException("sensor location not found");
 
 	DataModel::ThreeComponents tc;
@@ -596,7 +596,7 @@ Inventory::getStream(const std::string &networkCode,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Inventory::getAllStations(StationList& stationList,
                               const Core::Time& t) {
-	if ( _inventory == NULL )
+	if ( !_inventory )
 		return 0;
 
 	std::set<std::string> networkMap;
@@ -670,7 +670,7 @@ DataModel::Stream* Inventory::getStream(const DataModel::Pick *pick) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DataModel::ThreeComponents Inventory::getThreeComponents(const DataModel::Pick *pick) const {
 	DataModel::SensorLocation *loc = getSensorLocation(pick);
-	if ( loc == NULL )
+	if ( !loc )
 		throw Core::ValueException("sensor location not found");
 
 	DataModel::ThreeComponents tc;

@@ -54,7 +54,7 @@ class SC_SYSTEM_CLIENT_API ServiceRequestMessage : public Core::Message {
 		/**
 		 * C'tor
 		 * @param service The requested service name.
-		 *                The name can be set NULL to let the
+		 *                The name can be set nullptr to let the
 		 *                service request handler decide which
 		 *                interface it will return.
 		 */

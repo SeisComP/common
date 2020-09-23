@@ -45,8 +45,8 @@ StreamWidget::StreamWidget(const std::string& recordStreamURL,
                        const double windowLength,
                        QWidget* parent) :
 		QWidget(parent),
-		_timer(NULL),
-		_recordSequence(NULL),
+		_timer(nullptr),
+		_recordSequence(nullptr),
 		_waveformStreamID(waveformStreamID)
 {
 	setWindowTitle("StreamWidget");
@@ -180,8 +180,8 @@ void StreamWidget::stopWaveformDataAcquisition()
 	if (_recordSequence)
 		delete _recordSequence;
 	*/
-	_recordWidget->setRecords(0, NULL);
-	_recordSequence = NULL;
+	_recordWidget->setRecords(0, nullptr);
+	_recordSequence = nullptr;
 
 	if ( _timer )
 		_timer->stop();
@@ -209,7 +209,7 @@ void StreamWidget::updateRecordWidget(Seiscomp::Record* record)
 {
 	Seiscomp::RecordPtr recordPtr(record);
 
-	if (_recordSequence == NULL)
+	if (_recordSequence == nullptr)
 		return;
 
 	if (_recordSequence->feed(recordPtr.get()))
@@ -243,7 +243,7 @@ void StreamWidget::showEvent(QShowEvent*)
 	// a wrong _recordWidget width. The showEvent handler is called after
 	// everything has been resized and layouted and we make sure that the
 	// record scale has the value we want it to be.
-	resizeEvent(NULL);
+	resizeEvent(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

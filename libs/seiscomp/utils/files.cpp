@@ -126,7 +126,7 @@ class StreamBuffer : public std::streambuf {
 		StreamBuffer() : std::streambuf() {}
 
 		std::streambuf *setbuf(char *s, std::streamsize n) {
-			setp(NULL, NULL);
+			setp(nullptr, nullptr);
 			setg(s, s, s + n);
 			return this;
 		}

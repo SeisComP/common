@@ -39,7 +39,7 @@ namespace iostreams {
 lz4_base::lz4_base(size_t inputBufferSize)
 : _inputBufferSize(inputBufferSize)
 , _outputBufferSize(0)
-, _outputBuffer(NULL)
+, _outputBuffer(nullptr)
 , _outputBuffered(0) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -59,7 +59,7 @@ lz4_base::~lz4_base() {
 void lz4_base::cleanup_() {
 	if ( _outputBuffer ) {
 		delete[] _outputBuffer;
-		_outputBuffer = NULL;
+		_outputBuffer = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -70,11 +70,11 @@ void lz4_base::cleanup_() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 lz4_compress_base::lz4_compress_base(size_t inputBufferSize)
 : lz4_base(inputBufferSize)
-, _ctx(NULL) {
+, _ctx(nullptr) {
 	MEM_INIT(&_prefs, 0, sizeof(_prefs));
 	_prefs.compressionLevel = LZ4HC_CLEVEL_DEFAULT;
 	_prefs.autoFlush = 1;
-	_outputBufferSize = std::max(LZ4F_compressFrameBound(inputBufferSize, NULL), size_t(64));
+	_outputBufferSize = std::max(LZ4F_compressFrameBound(inputBufferSize, nullptr), size_t(64));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -130,7 +130,7 @@ bool lz4_compress_base::init() {
 bool lz4_compress_base::compress(const char *s, std::streamsize n) {
 	LZ4F_errorCode_t r;
 
-	r = LZ4F_compressUpdate(_ctx, _outputBuffer, _outputBufferSize, s, n, NULL);
+	r = LZ4F_compressUpdate(_ctx, _outputBuffer, _outputBufferSize, s, n, nullptr);
 	if ( LZ4F_isError(r) ) {
 		return false;
 	}
@@ -157,7 +157,7 @@ void lz4_compress_base::cleanup_() {
 
 	if ( _ctx ) {
 		LZ4F_freeCompressionContext(_ctx);
-		_ctx = NULL;
+		_ctx = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -168,7 +168,7 @@ void lz4_compress_base::cleanup_() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void lz4_compress_base::done() {
 	if ( _ctx ) {
-		_outputBuffered = LZ4F_compressEnd(_ctx, _outputBuffer, _outputBufferSize, NULL);
+		_outputBuffered = LZ4F_compressEnd(_ctx, _outputBuffer, _outputBufferSize, nullptr);
 		if ( LZ4F_isError(_outputBuffered) ) {
 			cleanup_();
 			throw std::runtime_error(LZ4F_getErrorName(_outputBuffered));
@@ -193,8 +193,8 @@ void lz4_compress_base::done() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 lz4_decompress_base::lz4_decompress_base(size_t inputBufferSize)
 : lz4_base(inputBufferSize)
-, _ctx(NULL)
-, _inputBuffer(NULL)
+, _ctx(nullptr)
+, _inputBuffer(nullptr)
 , _inputBufferPos(0)
 , _inputBuffered(0)
 , _outputBufferPos(0) {
@@ -248,7 +248,7 @@ bool lz4_decompress_base::decompress() {
 	size_t usedOutput = _outputBufferSize;
 
 	r = LZ4F_decompress(_ctx, _outputBuffer, &usedOutput,
-	                    _inputBuffer, &usedInput, NULL);
+	                    _inputBuffer, &usedInput, nullptr);
 	if ( LZ4F_isError(r) ) {
 		cleanup_();
 		return false;
@@ -284,12 +284,12 @@ void lz4_decompress_base::cleanup_() {
 
 	if ( _inputBuffer ) {
 		delete[] _inputBuffer;
-		_inputBuffer = NULL;
+		_inputBuffer = nullptr;
 	}
 
 	if ( _ctx ) {
 		LZ4F_freeDecompressionContext(_ctx);
-		_ctx = NULL;
+		_ctx = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

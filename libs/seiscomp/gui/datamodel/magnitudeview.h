@@ -56,9 +56,9 @@ class SC_GUI_API StationMagnitudeModel : public QAbstractTableModel {
 	Q_OBJECT
 
 	public:
-		StationMagnitudeModel(DataModel::Origin *origin = NULL,
-		                      DataModel::Magnitude *netMag = NULL,
-		                      DataModel::PublicObjectCache *cache = NULL,
+		StationMagnitudeModel(DataModel::Origin *origin = nullptr,
+		                      DataModel::Magnitude *netMag = nullptr,
+		                      DataModel::PublicObjectCache *cache = nullptr,
 		                      QObject *parent = 0);
 
 		void setOrigin(DataModel::Origin *origin,
@@ -296,7 +296,7 @@ class SC_GUI_API MagnitudeView : public QWidget {
 		DataModel::Magnitude *
 		computeStationMagnitudes(const std::string &magType,
 		                         QList<DataModel::AmplitudePtr> *amps,
-		                         MagnitudeStats *errors = NULL);
+		                         MagnitudeStats *errors = nullptr);
 
 		void computeMagnitude(DataModel::Magnitude *magnitude, const std::string &aggType);
 		bool editSelectionFilter();

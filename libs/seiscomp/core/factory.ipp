@@ -56,10 +56,10 @@ ClassFactoryInterface<ROOT_TYPE>::~ClassFactoryInterface() {
 template <typename ROOT_TYPE>
 ROOT_TYPE* ClassFactoryInterface<ROOT_TYPE>::Create(const char* className) {
 	ClassFactoryInterface<ROOT_TYPE>* factoryInterface = FindByClassName(className);
-	if ( factoryInterface != NULL )
+	if ( factoryInterface )
 		return factoryInterface->create();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -70,11 +70,11 @@ ROOT_TYPE* ClassFactoryInterface<ROOT_TYPE>::Create(const char* className) {
 template <typename ROOT_TYPE>
 bool ClassFactoryInterface<ROOT_TYPE>::IsTypeOf(const char* baseName, const char* derivedName) {
 	ClassFactoryInterface<ROOT_TYPE>* derivedFactory = FindByClassName(derivedName);
-	if ( derivedFactory == NULL )
+	if ( !derivedFactory )
 		return false;
 
 	ClassFactoryInterface<ROOT_TYPE>* baseFactory = FindByClassName(baseName);
-	if ( baseFactory == NULL )
+	if ( !baseFactory )
 		return false;
 
 	return derivedFactory->typeInfo()->isTypeOf(*baseFactory->typeInfo());
@@ -98,7 +98,7 @@ ROOT_TYPE* ClassFactoryInterface<ROOT_TYPE>::Create(const std::string& className
 template <typename ROOT_TYPE>
 const char* ClassFactoryInterface<ROOT_TYPE>::ClassName(const ROOT_TYPE* object) {
 	ClassNames::iterator it = Names().find(&object->typeInfo());
-	return it == Names().end() ? NULL : (*it).second.c_str();
+	return it == Names().end() ? nullptr : (*it).second.c_str();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -109,7 +109,7 @@ const char* ClassFactoryInterface<ROOT_TYPE>::ClassName(const ROOT_TYPE* object)
 template <typename ROOT_TYPE>
 const char* ClassFactoryInterface<ROOT_TYPE>::ClassName(const RTTI* info) {
 	ClassNames::iterator it = Names().find(info);
-	return it == Names().end() ? NULL : (*it).second.c_str();
+	return it == Names().end() ? nullptr : (*it).second.c_str();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -119,12 +119,12 @@ const char* ClassFactoryInterface<ROOT_TYPE>::ClassName(const RTTI* info) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 ClassFactoryInterface<ROOT_TYPE>* ClassFactoryInterface<ROOT_TYPE>::FindByClassName(const char* className) {
-	if ( className == NULL )
-		return NULL;
+	if ( !className )
+		return nullptr;
 
 	typename ClassPool::iterator it = Classes().find(className);
 	if ( it == Classes().end() )
-		return NULL;
+		return nullptr;
 
 	return (*it).second;
 }
@@ -188,7 +188,7 @@ typename ClassFactoryInterface<ROOT_TYPE>::ClassNames& ClassFactoryInterface<ROO
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 bool ClassFactoryInterface<ROOT_TYPE>::RegisterFactory(ClassFactoryInterface<ROOT_TYPE>* factory, bool reregister) {
-	if ( factory == NULL )
+	if ( !factory )
 		return false;
 
 	if ( !reregister ) {
@@ -211,7 +211,7 @@ bool ClassFactoryInterface<ROOT_TYPE>::RegisterFactory(ClassFactoryInterface<ROO
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 bool ClassFactoryInterface<ROOT_TYPE>::UnregisterFactory(ClassFactoryInterface<ROOT_TYPE>* factory) {
-	if ( factory == NULL )
+	if ( !factory )
 		return false;
 
 	typename ClassPool::iterator it = Classes().find(factory->className());

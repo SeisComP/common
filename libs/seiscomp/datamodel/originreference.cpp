@@ -33,7 +33,7 @@ IMPLEMENT_SC_CLASS_DERIVED(OriginReference, Object, "OriginReference");
 
 
 OriginReference::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("originID", "string", false, false, true, true, false, false, NULL, &OriginReference::setOriginID, &OriginReference::originID));
+	addProperty(Core::simpleProperty("originID", "string", false, false, true, true, false, false, nullptr, &OriginReference::setOriginID, &OriginReference::originID));
 }
 
 
@@ -176,7 +176,7 @@ const OriginReferenceIndex& OriginReference::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginReference::equalIndex(const OriginReference* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -206,7 +206,7 @@ OriginReference& OriginReference::operator=(const OriginReference& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginReference::assign(Object* other) {
 	OriginReference* otherOriginReference = OriginReference::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherOriginReference;
@@ -220,11 +220,11 @@ bool OriginReference::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginReference::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Event* event = Event::Cast(parent);
-	if ( event != NULL )
+	if ( event != nullptr )
 		return event->add(this);
 
 	SEISCOMP_ERROR("OriginReference::attachTo(%s) -> wrong class type", parent->className());
@@ -237,11 +237,11 @@ bool OriginReference::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginReference::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Event* event = Event::Cast(object);
-	if ( event != NULL ) {
+	if ( event != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -249,7 +249,7 @@ bool OriginReference::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			OriginReference* child = event->originReference(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return event->remove(child);
 			else {
 				SEISCOMP_DEBUG("OriginReference::detachFrom(Event): originReference has not been found");
@@ -268,7 +268,7 @@ bool OriginReference::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginReference::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

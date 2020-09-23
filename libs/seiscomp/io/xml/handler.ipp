@@ -26,17 +26,17 @@ void TypedClassHandler<T>::addProperty(const char *t, const char *ns, Type opt, 
 template <typename T>
 void TypedClassHandler<T>::addProperty(const char *t, const char *ns, Type opt, Location l, const char *property) {
 	const Core::MetaObject *obj = T::Meta();
-	if ( obj == NULL )
+	if ( obj == nullptr )
 		throw Core::TypeException(std::string(T::ClassName()) + ": no metaobject");
 
-	const Core::MetaProperty *prop = NULL;
+	const Core::MetaProperty *prop = nullptr;
 
-	while ( obj && prop == NULL ) {
+	while ( obj && prop == nullptr ) {
 		prop = obj->property(property);
 		obj = obj->base();
 	}
 
-	if ( prop == NULL )
+	if ( prop == nullptr )
 		throw Core::TypeException(std::string(T::ClassName()) + ": no metaproperty " + property);
 
 	addProperty(t, ns, opt, l, prop);
@@ -46,17 +46,17 @@ void TypedClassHandler<T>::addProperty(const char *t, const char *ns, Type opt, 
 template <typename T>
 void TypedClassHandler<T>::addChildProperty(const char *t, const char *ns, const char *property) {
 	const Core::MetaObject *obj = T::Meta();
-	if ( obj == NULL )
+	if ( obj == nullptr )
 		throw Core::TypeException(std::string(T::ClassName()) + ": no metaobject");
 
-	const Core::MetaProperty *prop = NULL;
+	const Core::MetaProperty *prop = nullptr;
 
-	while ( obj && prop == NULL ) {
+	while ( obj && prop == nullptr ) {
 		prop = obj->property(property);
 		obj = obj->base();
 	}
 
-	if ( prop == NULL )
+	if ( prop == nullptr )
 		throw Core::TypeException(std::string(T::ClassName()) + ": no metaproperty " + property);
 
 	if ( !prop->isArray() )

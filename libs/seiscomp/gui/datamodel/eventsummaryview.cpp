@@ -152,7 +152,7 @@ MagList::MagList(QWidget* parent)
 
 
 	// set Header Line
-	_header = new MagRow(NULL, false, this);
+	_header = new MagRow(nullptr, false, this);
 	_header->setVisible(false);
 	_mainLayout->addWidget(_header->_type, 0, 0);
 	_mainLayout->addWidget(_header->_magnitude, 0, 1, 1, 2);
@@ -183,7 +183,7 @@ void MagList::clear(){
 
 void MagList::reset() {
 	foreach(MagRow* row, _magRows) {
-		row->setMagnitude(NULL);
+		row->setMagnitude(nullptr);
 		row->setBold(false);
 	}
 }
@@ -191,7 +191,7 @@ void MagList::reset() {
 
 void MagList::addMag(DataModel::Magnitude* netMag, bool bold, bool visible){
 	// create new magnitude display row
-	MagRow *magRow = NULL;
+	MagRow *magRow = nullptr;
 
 	if ( netMag )
 		magRow = row(netMag->type());
@@ -287,7 +287,7 @@ MagRow* MagList::row(const std::string& type) const {
 			return row;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -332,9 +332,9 @@ void MagList::setReferenceMagnitudesColor(QColor c) {
 
 
 MagRow::MagRow(DataModel::Magnitude* netMag, bool bold, QWidget* parent)
- : QWidget(parent), _netMag(netMag), _netMagReference(NULL)
+ : QWidget(parent), _netMag(netMag), _netMagReference(nullptr)
 {
-	_header = _netMag == NULL;
+	_header = _netMag == nullptr;
 	_referenceMagVisible = false;
 	init();
 	setBold(bold);
@@ -342,7 +342,7 @@ MagRow::MagRow(DataModel::Magnitude* netMag, bool bold, QWidget* parent)
 
 
 MagRow::MagRow(const std::string& type, bool bold, QWidget *parent)
- : QWidget(parent), _netMag(NULL), _netMagReference(NULL)
+ : QWidget(parent), _netMag(nullptr), _netMagReference(nullptr)
 {
 	_header = false;
 	_referenceMagVisible = false;
@@ -375,9 +375,9 @@ void MagRow::init() {
 		_qualityReference   = new QLabel();
 	}
 	else {
-		_magnitudeReference = NULL;
-		_stdevReference     = NULL;
-		_qualityReference   = NULL;
+		_magnitudeReference = nullptr;
+		_stdevReference     = nullptr;
+		_qualityReference   = nullptr;
 	}
 
 	_type->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -653,7 +653,7 @@ class ScrollArea : public QScrollArea {
 		}
 
 		QSize sizeHint() const {
-			if ( widget() == NULL )
+			if ( widget() == nullptr )
 				return QScrollArea::sizeHint();
 
 			return QSize(widget()->minimumWidth(), 0);
@@ -1046,7 +1046,7 @@ void EventSummaryView::init() {
 	_magList = new MagList();
 	ui.frameMagnitudes->layout()->addWidget(_magList);
 
-	_currentEvent = DataModel::Event::Create("NULL");
+	_currentEvent = DataModel::Event::Create("nullptr");
 
 //	QFont f(uiHypocenter._lbSystem->font());
 //	f.setBold(true);
@@ -1136,7 +1136,7 @@ Seiscomp::DataModel::Origin* EventSummaryView::currentOrigin() const {
 	if (_currentOrigin)
 		return _currentOrigin.get();
 	else
-		return NULL;
+		return nullptr;
 }
 
 Seiscomp::DataModel::Magnitude* EventSummaryView::currentMagnitude() const {
@@ -1144,7 +1144,7 @@ Seiscomp::DataModel::Magnitude* EventSummaryView::currentMagnitude() const {
 	if (_currentNetMag)
 		return _currentNetMag.get();
 	else
-		return NULL;
+		return nullptr;
 }
 
 
@@ -1298,10 +1298,10 @@ void EventSummaryView::updateObject(const QString& parentID, Seiscomp::DataModel
 
 					// Remove current event and set the last one
 					if ( _currentEvent && event->publicID() == _currentEvent->publicID() ) {
-						_currentEvent = NULL;
+						_currentEvent = nullptr;
 						emit requestNonFakeEvent();
-						if ( _currentEvent == NULL )
-							showEvent(NULL, NULL);
+						if ( _currentEvent == nullptr )
+							showEvent(nullptr, nullptr);
 					}
 
 					emit showInStatusbar(QString("filtered new event (type: '%1'): %2")
@@ -1354,7 +1354,7 @@ void EventSummaryView::updateObject(const QString& parentID, Seiscomp::DataModel
 			// Origin status changed -> lookup a new last automatic origin
 			try {
 				if ( origin->evaluationMode() != AUTOMATIC ) {
-					_lastAutomaticOrigin = NULL;
+					_lastAutomaticOrigin = nullptr;
 					for ( size_t i = 0; i < _currentEvent->originReferenceCount(); ++i ) {
 						OriginReference *ref = _currentEvent->originReference(i);
 						OriginPtr o = Origin::Find(ref->originID());
@@ -1396,10 +1396,10 @@ void EventSummaryView::removeObject(const QString &parentID, Seiscomp::DataModel
 	if ( event ) {
 		// Remove current event and set the last one
 		if ( _currentEvent && event->publicID() == _currentEvent->publicID() ) {
-			_currentEvent = NULL;
+			_currentEvent = nullptr;
 			emit requestNonFakeEvent();
-			if ( _currentEvent == NULL )
-				showEvent(NULL, NULL);
+			if ( _currentEvent == nullptr )
+				showEvent(nullptr, nullptr);
 		}
 
 		emit showInStatusbar(QString("event %1 removed")
@@ -1413,7 +1413,7 @@ void EventSummaryView::showEvent(Seiscomp::DataModel::Event* event, Seiscomp::Da
 	if ( event )
 		emit showInStatusbar(QString("selected event: %1").arg(event->publicID().c_str()), 1000);
 	else
-		_currentEvent = DataModel::Event::Create("NULL");
+		_currentEvent = DataModel::Event::Create("nullptr");
 
 // 	clearLastMagnitudes();
 	_mapTimer->stop();
@@ -1433,11 +1433,11 @@ void EventSummaryView::showOrigin(Seiscomp::DataModel::Origin* origin){
 
 
 void EventSummaryView::processEventMsg(DataModel::Event* event, Seiscomp::DataModel::Origin* org){
-	if ( event == NULL ) {
-		_currentOrigin = NULL;
-		_currentFocalMechanism = NULL;
-		_lastAutomaticOrigin = NULL;
-		_lastAutomaticFocalMechanism = NULL;
+	if ( event == nullptr ) {
+		_currentOrigin = nullptr;
+		_currentFocalMechanism = nullptr;
+		_lastAutomaticOrigin = nullptr;
+		_lastAutomaticFocalMechanism = nullptr;
 		clearOriginParameter();
 		clearMagnitudeParameter();
 		clearMap();
@@ -1475,8 +1475,8 @@ void EventSummaryView::processEventMsg(DataModel::Event* event, Seiscomp::DataMo
 
 	if ( _showLastAutomaticSolution ) {
 		if ( changedEvent ) {
-			_lastAutomaticOrigin = NULL;
-			_lastAutomaticFocalMechanism = NULL;
+			_lastAutomaticOrigin = nullptr;
+			_lastAutomaticFocalMechanism = nullptr;
 			if ( _showLastAutomaticSolution && _reader ) {
 				DatabaseIterator it = _reader->getOriginsDescending(_currentEvent->publicID());
 				for ( ; *it; ++it ) {
@@ -1574,9 +1574,9 @@ bool EventSummaryView::setOriginParameter(std::string OriginID){
 	if (!origin && _reader)
 		origin = Origin::Cast(_reader->getObject(Origin::TypeInfo(), OriginID));
 
-	if ( origin == NULL ){
-		_currentOrigin = NULL;
-		_currentFocalMechanism = NULL;
+	if ( origin == nullptr ){
+		_currentOrigin = nullptr;
+		_currentFocalMechanism = nullptr;
 		SEISCOMP_DEBUG("scesv: setOriginParameter:  origin not found %s ", OriginID.c_str());
 		clearOriginParameter();
 		clearMap();
@@ -1779,7 +1779,7 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 
 
 void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
-	if ( origin == NULL ) {
+	if ( origin == nullptr ) {
 		clearAutomaticOriginParameter();
 		return;
 	}
@@ -1894,7 +1894,7 @@ void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
 
 
 void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
-	OriginPtr derivedOrigin = NULL;
+	OriginPtr derivedOrigin = nullptr;
 
 	try {
 		uiHypocenter.labelMisfit->setText(QString("%1").arg(fm->misfit(), 0, 'f', 2));
@@ -2097,7 +2097,7 @@ void EventSummaryView::clearAutomaticFMParameter() {
 
 
 void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
-	if ( fm == NULL ) {
+	if ( fm == nullptr ) {
 		clearAutomaticFMParameter();
 		return;
 	}
@@ -2110,7 +2110,7 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 	if ( _reader && fm->momentTensorCount() == 0 )
 		_reader->loadMomentTensors(fm);
 
-	OriginPtr derivedOrigin = NULL;
+	OriginPtr derivedOrigin = nullptr;
 
 	try {
 		uiHypocenter.labelMisfitAutomatic->setText(QString("%1").arg(fm->misfit(), 0, 'f', 2));
@@ -2431,7 +2431,7 @@ void EventSummaryView::setPrefMagnitudeParameter(std::string MagnitudeID){
 	if (!Magnitude && _reader)
 		Magnitude = DataModel::Magnitude::Cast(_reader->getObject(DataModel::Magnitude::TypeInfo(), MagnitudeID));
 
-	if (Magnitude == NULL){
+	if (Magnitude == nullptr){
 		clearPrefMagnitudeParameter();
 		emit showInStatusbar(QString("no magnitude %1").arg(MagnitudeID.c_str()), 1000);
 		return;
@@ -2474,7 +2474,7 @@ void EventSummaryView::setMagnitudeParameter(DataModel::Origin* origin){
 
 void EventSummaryView::setAutomaticMagnitudeParameter(DataModel::Origin* origin) {
 	for ( int i = 0; i < _magList->rowCount(); ++i )
-		_magList->rowAt(i)->setReferenceMagnitude(NULL);
+		_magList->rowAt(i)->setReferenceMagnitude(nullptr);
 
 	if ( !origin ) return;
 
@@ -2551,7 +2551,7 @@ void EventSummaryView::clearOriginParameter(){
 	setFMParametersVisible(false);
 
 	if ( _map )
-		_map->canvas().setSelectedCity(NULL);
+		_map->canvas().setSelectedCity(nullptr);
 }
 
 
@@ -2574,7 +2574,7 @@ void EventSummaryView::clearAutomaticOriginParameter() {
 	uiHypocenter._lbOriginStatusAutomatic->setText("");
 	uiHypocenter._lbAgencyAutomatic->setText("");
 
-	setAutomaticMagnitudeParameter(NULL);
+	setAutomaticMagnitudeParameter(nullptr);
 }
 
 
@@ -2822,7 +2822,7 @@ void EventSummaryView::runScript(const QString& script, const QString& name, boo
 
 
 void EventSummaryView::switchToAutomaticPressed() {
-	if ( _currentEvent == NULL ) return;
+	if ( _currentEvent == nullptr ) return;
 
 	JournalEntryPtr entry = new JournalEntry;
 	entry->setObjectID(_currentEvent->publicID());
@@ -2939,10 +2939,10 @@ void EventSummaryView::calcOriginDistances() {
 	try { depth = _currentOrigin->depth(); } catch (...) {}
 
 	Client::Inventory *inv = Client::Inventory::Instance();
-	if ( inv == NULL ) return;
+	if ( inv == nullptr ) return;
 
 	Inventory *inventory = inv->inventory();
-	if ( inventory == NULL ) return;
+	if ( inventory == nullptr ) return;
 
 	TravelTimeTable ttt;
 

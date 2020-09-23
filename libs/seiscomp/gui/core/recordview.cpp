@@ -374,15 +374,15 @@ void RecordView::setupUi() {
 	_labelColumns = 3;
 
 	_selectionMode = NoSelection;
-	_currentItem = NULL;
+	_currentItem = nullptr;
 
-	_filter = NULL;
-	_filterAction = NULL;
+	_filter = nullptr;
+	_filterAction = nullptr;
 	_filtering = false;
-	_absTimeAction = NULL;
+	_absTimeAction = nullptr;
 	_labelWidth = DEFAULT_LABEL_WIDTH;
 
-	setFilter(NULL);
+	setFilter(nullptr);
 	setZoomFactor(2.0f);
 
 	_zoomSpot = QPointF(0.5,0.5);
@@ -491,7 +491,7 @@ void RecordView::setupUi() {
 	_autoScale = false;
 	_autoMaxScale = false;
 
-	_thread = NULL;
+	_thread = nullptr;
 
 	connect(&_recordUpdateTimer, SIGNAL(timeout()),
 	        this, SLOT(updateRecords()));
@@ -595,7 +595,7 @@ void RecordView::setBufferSize(const Seiscomp::Core::TimeSpan& ts) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::applyBufferChange() {
 	foreach (RecordViewItem* item, _rows) {
-		RecordSequence* seq = NULL;
+		RecordSequence* seq = nullptr;
 
 		switch ( _mode ) {
 			case TIME_WINDOW:
@@ -738,7 +738,7 @@ void RecordView::layoutRows() {
 		_scrollArea->widget()->setFixedHeight(newHeight);
 
 	if ( isVisible() && _currentItem && !_currentItem->isVisible() ) {
-		setCurrentItem(NULL);
+		setCurrentItem(nullptr);
 	}
 
 	setUpdatesEnabled(true);
@@ -934,7 +934,7 @@ void RecordView::setAutoMaxScale(bool enable) {
 bool RecordView::feed(const Seiscomp::Record *rec) {
 	RecordCPtr saver(rec);
 
-	if ( rec == NULL )
+	if ( rec == nullptr )
 		return false;
 
 	try {
@@ -1013,7 +1013,7 @@ void RecordView::updateRecords() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordWidget *RecordView::createRecordWidget(const DataModel::WaveformStreamID&) const {
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1022,7 +1022,7 @@ RecordWidget *RecordView::createRecordWidget(const DataModel::WaveformStreamID&)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordLabel *RecordView::createLabel(RecordViewItem*) const {
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1032,9 +1032,9 @@ RecordLabel *RecordView::createLabel(RecordViewItem*) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordViewItem* RecordView::addItem(const DataModel::WaveformStreamID& streamID,
                                     const QString& /*stationCode*/, int slotCount) {
-	if ( item(streamID) != NULL ) return NULL;
+	if ( item(streamID) != nullptr ) return nullptr;
 
-	RecordSequence* seq = NULL;
+	RecordSequence* seq = nullptr;
 
 	switch ( _mode ) {
 		case TIME_WINDOW:
@@ -1045,7 +1045,7 @@ RecordViewItem* RecordView::addItem(const DataModel::WaveformStreamID& streamID,
 			break;
 	}
 
-	if ( !seq ) return NULL;
+	if ( !seq ) return nullptr;
 
 	/*
 	std::cout << "insert row for stream '" << (const char*)streamID.toAscii() << "'"
@@ -1053,20 +1053,20 @@ RecordViewItem* RecordView::addItem(const DataModel::WaveformStreamID& streamID,
 	*/
 
 	RecordWidget *widget = createRecordWidget(streamID);
-	if ( widget == NULL ) widget = new RecordWidget(streamID);
+	if ( widget == nullptr ) widget = new RecordWidget(streamID);
 
 	RecordViewItem *item = new RecordViewItem(this, widget, seq, _frames, _frameMargin, _horizontalSpacing);
 	item->widget()->setSlotCount(slotCount);
 
 	RecordLabel* label = createLabel(item);
-	if ( label == NULL )
+	if ( label == nullptr )
 		label = new StandardRecordLabel(_labelColumns);
 
 	item->setLabel(label);
 
 	if ( !addItem(item) ) {
 		delete item;
-		item = NULL;
+		item = nullptr;
 	}
 
 	return item;
@@ -1206,7 +1206,7 @@ bool RecordView::isEnabled(int row) const {
 RecordViewItem* RecordView::itemAt(int row) const {
 	if ( row >= _rows.count() ) {
 		SEISCOMP_ERROR("Row %d out of range [0..%d]", row, _rows.count()-1);
-		//return NULL;
+		//return nullptr;
 	}
 
 	return _rows[row];
@@ -1219,7 +1219,7 @@ RecordViewItem* RecordView::itemAt(int row) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordView::removeItem(int row) {
 	RecordViewItem* item = takeItem(row);
-	if ( item == NULL ) return false;
+	if ( item == nullptr ) return false;
 
 	delete item;
 	return true;
@@ -1245,7 +1245,7 @@ bool RecordView::takeItem(RecordViewItem* item) {
 	if ( !item || item->recordView() != this ) return false;
 
 	if ( item == _currentItem )
-		setCurrentItem(NULL);
+		setCurrentItem(nullptr);
 
 	if ( item->isSelected() )
 		setItemSelected(item, false);
@@ -1277,8 +1277,8 @@ bool RecordView::takeItem(RecordViewItem* item) {
 		_scrollArea->widget()->setFixedHeight(_scrollArea->widget()->height() - offset);
 
 	item->_row = -1;
-	item->_parent = NULL;
-	item->setParent(NULL);
+	item->_parent = nullptr;
+	item->setParent(nullptr);
 
 	// Disconnect our item
 	item->disconnect(this);
@@ -1366,7 +1366,7 @@ bool RecordView::addItem(RecordViewItem* item) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordView::removeItem(RecordViewItem* item) {
-	if ( item == NULL ) return false;
+	if ( item == nullptr ) return false;
 	return removeItem(item->row());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1376,7 +1376,7 @@ bool RecordView::removeItem(RecordViewItem* item) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::clear() {
-	setCurrentItem(NULL);
+	setCurrentItem(nullptr);
 	clearSelection();
 
 	foreach (RecordViewItem* item, _items)
@@ -1393,7 +1393,7 @@ void RecordView::clear() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::clearRecords() {
 	foreach ( RecordViewItem* item, _items ) {
-		RecordSequence* seq = NULL;
+		RecordSequence* seq = nullptr;
 
 		switch ( _mode ) {
 			case TIME_WINDOW:
@@ -1425,7 +1425,7 @@ RecordViewItem* RecordView::item(const DataModel::WaveformStreamID& streamID) co
 		tmp.setChannelCode(chaCode);
 		it = _items.find(tmp);
 		if ( it == _items.end() )
-			return NULL;
+			return nullptr;
 	}
 	return *it;
 }
@@ -1699,7 +1699,7 @@ void RecordView::selectLastRow() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::ensureVisible(int row) {
 	RecordViewItem* item = itemAt(row);
-	if ( item == NULL ) return;
+	if ( item == nullptr ) return;
 
 	QPoint pos = item->pos();
 	QSize size = item->size();
@@ -2463,7 +2463,7 @@ void RecordView::sortByMarkerTime(const QString& markerText) {
 	foreach (RecordViewItem* item, _items) {
 		RecordWidget* w = item->widget();
 		RecordMarker* m = w->marker(markerText);
-		if ( m == NULL )
+		if ( m == nullptr )
 			distlist.push_back(
 				pair<double, RecordViewItem*>(std::numeric_limits<double>::infinity(), item));
 		else
@@ -2588,7 +2588,7 @@ void RecordView::deselectAllItems() {
 		item->setSelected(false);
 
 	_selectedItems.clear();
-	_currentItem = NULL;
+	_currentItem = nullptr;
 	emit selectionChanged();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2740,7 +2740,7 @@ bool RecordView::event(QEvent* event) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::showEvent(QShowEvent *) {
-	resizeEvent(NULL);
+	resizeEvent(nullptr);
 	layoutRows();
 
 	/*
@@ -3037,7 +3037,7 @@ Core::TimeWindow RecordView::coveredTimeRange() const {
 		int slotCount = trace->widget()->slotCount();
 		for ( int i = 0; i < slotCount; ++i ) {
 			Seiscomp::RecordSequence *seq = trace->widget()->records(i);
-			if ( seq == NULL ) continue;
+			if ( seq == nullptr ) continue;
 			tw = tw | seq->timeWindow();
 		}
 	}
@@ -3055,7 +3055,7 @@ void RecordView::closeThread() {
 	stop();
 	if ( _thread ) {
 		delete _thread;
-		_thread = NULL;
+		_thread = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -34,10 +34,10 @@ IMPLEMENT_SC_CLASS_DERIVED(MomentTensorStationContribution, PublicObject, "Momen
 
 
 MomentTensorStationContribution::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("active", "boolean", false, false, false, false, false, false, NULL, &MomentTensorStationContribution::setActive, &MomentTensorStationContribution::active));
+	addProperty(Core::simpleProperty("active", "boolean", false, false, false, false, false, false, nullptr, &MomentTensorStationContribution::setActive, &MomentTensorStationContribution::active));
 	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", false, false, true, &MomentTensorStationContribution::setWaveformID, &MomentTensorStationContribution::waveformID));
-	addProperty(Core::simpleProperty("weight", "float", false, false, false, false, true, false, NULL, &MomentTensorStationContribution::setWeight, &MomentTensorStationContribution::weight));
-	addProperty(Core::simpleProperty("timeShift", "float", false, false, false, false, true, false, NULL, &MomentTensorStationContribution::setTimeShift, &MomentTensorStationContribution::timeShift));
+	addProperty(Core::simpleProperty("weight", "float", false, false, false, false, true, false, nullptr, &MomentTensorStationContribution::setWeight, &MomentTensorStationContribution::weight));
+	addProperty(Core::simpleProperty("timeShift", "float", false, false, false, false, true, false, nullptr, &MomentTensorStationContribution::setTimeShift, &MomentTensorStationContribution::timeShift));
 	addProperty(arrayClassProperty<MomentTensorComponentContribution>("component", "MomentTensorComponentContribution", &MomentTensorStationContribution::momentTensorComponentContributionCount, &MomentTensorStationContribution::momentTensorComponentContribution, static_cast<bool (MomentTensorStationContribution::*)(MomentTensorComponentContribution*)>(&MomentTensorStationContribution::add), &MomentTensorStationContribution::removeMomentTensorComponentContribution, static_cast<bool (MomentTensorStationContribution::*)(MomentTensorComponentContribution*)>(&MomentTensorStationContribution::remove)));
 }
 
@@ -77,7 +77,7 @@ MomentTensorStationContribution::MomentTensorStationContribution(const std::stri
 MomentTensorStationContribution::~MomentTensorStationContribution() {
 	std::for_each(_momentTensorComponentContributions.begin(), _momentTensorComponentContributions.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&MomentTensorComponentContribution::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&MomentTensorComponentContributionPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -97,12 +97,12 @@ MomentTensorStationContribution* MomentTensorStationContribution::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MomentTensorStationContribution* MomentTensorStationContribution::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new MomentTensorStationContribution(publicID);
@@ -267,7 +267,7 @@ MomentTensorStationContribution& MomentTensorStationContribution::operator=(cons
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorStationContribution::assign(Object* other) {
 	MomentTensorStationContribution* otherMomentTensorStationContribution = MomentTensorStationContribution::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherMomentTensorStationContribution;
@@ -281,11 +281,11 @@ bool MomentTensorStationContribution::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorStationContribution::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	MomentTensor* momentTensor = MomentTensor::Cast(parent);
-	if ( momentTensor != NULL )
+	if ( momentTensor != nullptr )
 		return momentTensor->add(this);
 
 	SEISCOMP_ERROR("MomentTensorStationContribution::attachTo(%s) -> wrong class type", parent->className());
@@ -298,11 +298,11 @@ bool MomentTensorStationContribution::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorStationContribution::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	MomentTensor* momentTensor = MomentTensor::Cast(object);
-	if ( momentTensor != NULL ) {
+	if ( momentTensor != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -310,7 +310,7 @@ bool MomentTensorStationContribution::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			MomentTensorStationContribution* child = momentTensor->findMomentTensorStationContribution(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return momentTensor->remove(child);
 			else {
 				SEISCOMP_DEBUG("MomentTensorStationContribution::detachFrom(MomentTensor): momentTensorStationContribution has not been found");
@@ -329,7 +329,7 @@ bool MomentTensorStationContribution::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorStationContribution::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -353,9 +353,9 @@ Object* MomentTensorStationContribution::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorStationContribution::updateChild(Object* child) {
 	MomentTensorComponentContribution* momentTensorComponentContributionChild = MomentTensorComponentContribution::Cast(child);
-	if ( momentTensorComponentContributionChild != NULL ) {
+	if ( momentTensorComponentContributionChild != nullptr ) {
 		MomentTensorComponentContribution* momentTensorComponentContributionElement = momentTensorComponentContribution(momentTensorComponentContributionChild->index());
-		if ( momentTensorComponentContributionElement != NULL ) {
+		if ( momentTensorComponentContributionElement != nullptr ) {
 			*momentTensorComponentContributionElement = *momentTensorComponentContributionChild;
 			momentTensorComponentContributionElement->update();
 			return true;
@@ -413,7 +413,7 @@ MomentTensorComponentContribution* MomentTensorStationContribution::momentTensor
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -422,11 +422,11 @@ MomentTensorComponentContribution* MomentTensorStationContribution::momentTensor
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorStationContribution::add(MomentTensorComponentContribution* momentTensorComponentContribution) {
-	if ( momentTensorComponentContribution == NULL )
+	if ( momentTensorComponentContribution == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( momentTensorComponentContribution->parent() != NULL ) {
+	if ( momentTensorComponentContribution->parent() != nullptr ) {
 		SEISCOMP_ERROR("MomentTensorStationContribution::add(MomentTensorComponentContribution*) -> element has already a parent");
 		return false;
 	}
@@ -461,7 +461,7 @@ bool MomentTensorStationContribution::add(MomentTensorComponentContribution* mom
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorStationContribution::remove(MomentTensorComponentContribution* momentTensorComponentContribution) {
-	if ( momentTensorComponentContribution == NULL )
+	if ( momentTensorComponentContribution == nullptr )
 		return false;
 
 	if ( momentTensorComponentContribution->parent() != this ) {
@@ -482,7 +482,7 @@ bool MomentTensorStationContribution::remove(MomentTensorComponentContribution* 
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_momentTensorComponentContributions.erase(it);
@@ -506,7 +506,7 @@ bool MomentTensorStationContribution::removeMomentTensorComponentContribution(si
 		_momentTensorComponentContributions[i]->accept(&nc);
 	}
 
-	_momentTensorComponentContributions[i]->setParent(NULL);
+	_momentTensorComponentContributions[i]->setParent(nullptr);
 	childRemoved(_momentTensorComponentContributions[i].get());
 
 	_momentTensorComponentContributions.erase(_momentTensorComponentContributions.begin() + i);
@@ -521,7 +521,7 @@ bool MomentTensorStationContribution::removeMomentTensorComponentContribution(si
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorStationContribution::removeMomentTensorComponentContribution(const MomentTensorComponentContributionIndex& i) {
 	MomentTensorComponentContribution* object = momentTensorComponentContribution(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

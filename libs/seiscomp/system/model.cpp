@@ -117,11 +117,11 @@ class CaseSensitivityCheck : public ModelVisitor {
 class DuplicateNameCheck : public ModelVisitor {
 	public:
 		DuplicateNameCheck()
-		: _currentModule(NULL) {}
+		: _currentModule(nullptr) {}
 
 		bool visit(Module *mod) {
 			_currentModule = mod;
-			_currentSection = NULL;
+			_currentSection = nullptr;
 			_names.clear();
 			return true;
 		}
@@ -409,7 +409,7 @@ bool loadGroup(Container *c, SchemaGroup *group, const std::string &prefix) {
 	std::string namePrefix = prefix + group->name;
 
 	GroupPtr groupParam;
-	Container *container = NULL;
+	Container *container = nullptr;
 
 	// try to find the existing group
 	for ( size_t i = 0; i < c->groups.size(); ++i ) {
@@ -448,7 +448,7 @@ bool loadGroup(Container *c, SchemaGroup *group, const std::string &prefix) {
 
 void updateParameter(Parameter *param, Model::SymbolFileMap &symbols, int stage) {
 	SymbolMapItemPtr item = symbols[param->variableName];
-	if ( item == NULL ) {
+	if ( item == nullptr ) {
 		item = new SymbolMapItem();
 		//item->symbol.name = param->variableName;
 		symbols[param->variableName] = item;
@@ -596,13 +596,13 @@ bool compareName(const BindingPtr &v1, const BindingPtr &v2) {
 
 
 Parameter::Parameter(SchemaParameter *def, const char *n)
-: parent(NULL), super(NULL), definition(def), variableName(n) {
+: parent(nullptr), super(nullptr), definition(def), variableName(n) {
 	symbol.stage = Environment::CS_UNDEFINED;
 }
 
 
 Parameter::Parameter(SchemaParameter *def, const std::string &n)
-: parent(NULL), super(NULL), definition(def), variableName(n) {
+: parent(nullptr), super(nullptr), definition(def), variableName(n) {
 	symbol.stage = Environment::CS_UNDEFINED;
 }
 
@@ -611,7 +611,7 @@ Parameter *Parameter::copy(bool backImport) {
 	Parameter *param = new Parameter(definition, variableName);
 	param->symbol = symbol;
 	if ( backImport ) {
-		param->super = NULL;
+		param->super = nullptr;
 		super = param;
 	}
 	else
@@ -702,7 +702,7 @@ Structure *Container::findStructureType(const std::string &type) const {
 	for ( size_t i = 0; i < structureTypes.size(); ++i )
 		if ( structureTypes[i]->definition->type == type )
 			return structureTypes[i].get();
-	return NULL;
+	return nullptr;
 }
 
 
@@ -721,10 +721,10 @@ bool Container::hasStructure(const string &name) const {
 
 
 Structure *Container::instantiate(const Structure *s, const char *name) {
-	if ( hasStructure(name) ) return NULL;
+	if ( hasStructure(name) ) return nullptr;
 
 	Structure *ns = s->instantiate(name);
-	if ( ns != NULL ) structures.push_back(ns);
+	if ( ns != nullptr ) structures.push_back(ns);
 	return ns;
 }
 
@@ -746,15 +746,15 @@ Parameter *Container::findParameter(const std::string &fullName) const {
 
 	for ( size_t i = 0; i < groups.size(); ++i ) {
 		Parameter *param = groups[i]->findParameter(fullName);
-		if ( param != NULL ) return param;
+		if ( param != nullptr ) return param;
 	}
 
 	for ( size_t i = 0; i < structures.size(); ++i ) {
 		Parameter *param = structures[i]->findParameter(fullName);
-		if ( param != NULL ) return param;
+		if ( param != nullptr ) return param;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -762,16 +762,16 @@ Container *Container::findContainer(const std::string &path) const {
 	for ( size_t i = 0; i < groups.size(); ++i ) {
 		if ( groups[i]->path == path ) return groups[i].get();
 		Container *c = groups[i]->findContainer(path);
-		if ( c != NULL ) return c;
+		if ( c != nullptr ) return c;
 	}
 
 	for ( size_t i = 0; i < structures.size(); ++i ) {
 		if ( structures[i]->path == path ) return structures[i].get();
 		Container *c = structures[i]->findContainer(path);
-		if ( c != NULL ) return c;
+		if ( c != nullptr ) return c;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -794,7 +794,7 @@ void Container::accept(ModelVisitor *visitor) const {
 Structure *Structure::copy(bool backImport) {
 	Structure *struc = new Structure(definition, path, name);
 	if ( backImport ) {
-		struc->super = NULL;
+		struc->super = nullptr;
 		super = struc;
 	}
 	else
@@ -832,7 +832,7 @@ Structure *Structure::clone() const {
 
 
 Structure *Structure::instantiate(const char *n) const {
-	if ( !name.empty() ) return NULL;
+	if ( !name.empty() ) return nullptr;
 	Structure *struc = loadStructure(definition, path, n);
 	updateContainer(struc, Environment::CS_QUANTITY);
 
@@ -851,7 +851,7 @@ void Structure::dump(std::ostream &os) const {
 Group *Group::copy(bool backImport) {
 	Group *group = new Group(definition, path);
 	if ( backImport ) {
-		group->super = NULL;
+		group->super = nullptr;
 		super = group;
 	}
 	else
@@ -955,20 +955,20 @@ void Binding::dump(std::ostream &os) const {
 Container *Binding::findContainer(const std::string &path) const {
 	for ( size_t i = 0; i < sections.size(); ++i ) {
 		Container *c = sections[i]->findContainer(path);
-		if ( c != NULL ) return c;
+		if ( c != nullptr ) return c;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
 Parameter *Binding::findParameter(const std::string &fullName) const {
 	for ( size_t i = 0; i < sections.size(); ++i ) {
 		Parameter *param = sections[i]->findParameter(fullName);
-		if ( param != NULL ) return param;
+		if ( param != nullptr ) return param;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -985,13 +985,13 @@ Binding *BindingCategory::binding(const std::string &name) const {
 		if ( bindingTypes[i]->name == name )
 			return bindingTypes[i].get();
 
-	return NULL;
+	return nullptr;
 }
 
 
 BindingCategory *BindingCategory::clone() const {
 	BindingCategory *cat = new BindingCategory(*this);
-	cat->parent = NULL;
+	cat->parent = nullptr;
 
 	for ( size_t i = 0; i < cat->bindingTypes.size(); ++i ) {
 		cat->bindingTypes[i] = cat->bindingTypes[i]->clone();
@@ -1017,9 +1017,9 @@ Container *BindingCategory::findContainer(const std::string &path) const {
 	BindingInstances::const_iterator it;
 	for ( it = bindings.begin(); it != bindings.end(); ++it ) {
 		Container *c = it->binding->findContainer(path);
-		if ( c != NULL ) return c;
+		if ( c != nullptr ) return c;
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1027,9 +1027,9 @@ Parameter *BindingCategory::findParameter(const std::string &fullName) const {
 	BindingInstances::const_iterator it;
 	for ( it = bindings.begin(); it != bindings.end(); ++it ) {
 		Parameter *p = it->binding->findParameter(fullName);
-		if ( p != NULL ) return p;
+		if ( p != nullptr ) return p;
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1052,7 +1052,7 @@ Binding *BindingCategory::instantiate(const Binding *b, const char *alias) {
 	string tmp = alias;
 	if ( tmp.empty() ) tmp = b->name;
 
-	if ( hasBinding(tmp.c_str()) ) return NULL;
+	if ( hasBinding(tmp.c_str()) ) return nullptr;
 
 	Binding *nb = loadCategoryBinding(b->definition, name + ".", tmp);
 	for ( size_t i = 0; i < nb->sections.size(); ++i )
@@ -1071,7 +1071,7 @@ const char *BindingCategory::alias(const Binding *b) const {
 	for ( size_t i = 0; i < bindings.size(); ++i )
 		if ( bindings[i].binding.get() == b ) return bindings[i].alias.c_str();
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1104,7 +1104,7 @@ bool BindingCategory::removeInstance(const char *alias) {
 ModuleBinding *ModuleBinding::clone() const {
 	ModuleBinding *b = new ModuleBinding(*this);
 
-	b->parent = NULL;
+	b->parent = nullptr;
 	b->configFile = "";
 
 	for ( size_t s = 0; s < b->sections.size(); ++s ) {
@@ -1132,7 +1132,7 @@ BindingCategory *ModuleBinding::category(const std::string &name) const {
 		if ( categories[i]->name == name )
 			return categories[i].get();
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1147,29 +1147,29 @@ void ModuleBinding::dump(std::ostream &os) const {
 //! Returns a container at path @path@.
 Container *ModuleBinding::findContainer(const std::string &path) const {
 	Container *c = Binding::findContainer(path);
-	if ( c != NULL ) return c;
+	if ( c != nullptr ) return c;
 
 	Categories::const_iterator it;
 	for ( it = categories.begin(); it != categories.end(); ++it ) {
 		c = (*it)->findContainer(path);
-		if ( c != NULL ) return c;
+		if ( c != nullptr ) return c;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
 Parameter *ModuleBinding::findParameter(const std::string &fullName) const {
 	Parameter *p = Binding::findParameter(fullName);
-	if ( p != NULL ) return p;
+	if ( p != nullptr ) return p;
 
 	Categories::const_iterator it;
 	for ( it = categories.begin(); it != categories.end(); ++it ) {
 		p = (*it)->findParameter(fullName);
-		if ( p != NULL ) return p;
+		if ( p != nullptr ) return p;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1192,7 +1192,7 @@ bool ModuleBinding::writeConfig(const string &filename, ConfigDelegate *delegate
 
 	for ( size_t s = 0; s < sections.size(); ++s ) {
 		Section *section = sections[s].get();
-		if ( !write(section, NULL, stage, symbols, ofs, filename, true) )
+		if ( !write(section, nullptr, stage, symbols, ofs, filename, true) )
 			return false;
 	}
 
@@ -1223,7 +1223,7 @@ bool ModuleBinding::writeConfig(const string &filename, ConfigDelegate *delegate
 
 			for ( size_t s = 0; s < curr->sections.size(); ++s ) {
 				Section *sec = curr->sections[s].get();
-				if ( !write(sec, NULL, stage, symbols, ofs, filename, true) )
+				if ( !write(sec, nullptr, stage, symbols, ofs, filename, true) )
 					return false;
 			}
 		}
@@ -1246,25 +1246,25 @@ Parameter *Module::findParameter(const std::string &fullName) const {
 
 	for ( size_t i = 0; i < sections.size(); ++i ) {
 		Parameter *param = sections[i]->findParameter(fullName);
-		if ( param != NULL ) return param;
+		if ( param != nullptr ) return param;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
 Container *Module::findContainer(const std::string &path) const {
 	for ( size_t i = 0; i < sections.size(); ++i ) {
 		Container *c = sections[i]->findContainer(path);
-		if ( c != NULL ) return c;
+		if ( c != nullptr ) return c;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
 bool Module::hasConfiguration() const {
-	if ( definition == NULL || !definition->parameters ) return false;
+	if ( definition == nullptr || !definition->parameters ) return false;
 	return definition->parameters->parameterCount() > 0 ||
 	       definition->parameters->groupCount() > 0 ||
 	       definition->parameters->structureCount() > 0 ||
@@ -1295,7 +1295,7 @@ int Module::loadProfiles(const std::string &keyDir, ConfigDelegate *delegate) {
 			continue;
 
 		ModuleBindingPtr profile = createBinding();
-		if ( profile == NULL ) {
+		if ( profile == nullptr ) {
 			cerr << "ERROR: internal error: unable to create binding" << endl;
 			break;
 		}
@@ -1319,7 +1319,7 @@ bool Module::addProfile(ModuleBinding *b) {
 	if ( b->name.empty() ) return false;
 
 	// Does a profile with this name exist already?
-	if ( getProfile(b->name) != NULL )
+	if ( getProfile(b->name) != nullptr )
 		return false;
 
 	b->parent = this;
@@ -1329,7 +1329,7 @@ bool Module::addProfile(ModuleBinding *b) {
 
 
 bool Module::removeProfile(const std::string &profile) {
-	ModuleBinding *b = NULL;
+	ModuleBinding *b = nullptr;
 
 	for ( size_t i = 0; i < profiles.size(); ++i ) {
 		if ( profiles[i]->name == profile ) {
@@ -1339,7 +1339,7 @@ bool Module::removeProfile(const std::string &profile) {
 		}
 	}
 
-	if ( b == NULL ) return false;
+	if ( b == nullptr ) return false;
 
 	syncProfileRemoval(b);
 	return true;
@@ -1347,7 +1347,7 @@ bool Module::removeProfile(const std::string &profile) {
 
 
 bool Module::removeProfile(ModuleBinding *profile) {
-	ModuleBinding *b = NULL;
+	ModuleBinding *b = nullptr;
 
 	for ( size_t i = 0; i < profiles.size(); ++i ) {
 		if ( profiles[i] == profile ) {
@@ -1357,7 +1357,7 @@ bool Module::removeProfile(ModuleBinding *profile) {
 		}
 	}
 
-	if ( b == NULL ) return false;
+	if ( b == nullptr ) return false;
 
 	syncProfileRemoval(b);
 	return true;
@@ -1384,8 +1384,8 @@ ModuleBinding *Module::bind(const StationID &id, const std::string &profile) {
 	else
 		b = getProfile(profile);
 
-	if ( b == NULL ) return NULL;
-	if ( !bind(id, b) ) return NULL;
+	if ( b == nullptr ) return nullptr;
+	if ( !bind(id, b) ) return nullptr;
 	return b;
 }
 
@@ -1407,19 +1407,19 @@ bool Module::removeStation(const StationID &id) {
 
 
 ModuleBinding *Module::createBinding() const {
-	if ( !bindingTemplate ) return NULL;
+	if ( !bindingTemplate ) return nullptr;
 	return bindingTemplate->clone();
 }
 
 
 ModuleBinding *Module::createProfile(const std::string &name) {
-	if ( getProfile(name) != NULL ) return NULL;
+	if ( getProfile(name) != nullptr ) return nullptr;
 
 	ModuleBindingPtr prof = createBinding();
 	prof->name = name;
 	prof->configFile = keyDirectory + "/profile_" + prof->name;
-	if ( !loadBinding(*prof, prof->configFile, true) ) return NULL;
-	if ( !addProfile(prof.get()) ) return NULL;
+	if ( !loadBinding(*prof, prof->configFile, true) ) return nullptr;
+	if ( !addProfile(prof.get()) ) return nullptr;
 	return prof.get();
 }
 
@@ -1429,13 +1429,13 @@ ModuleBinding *Module::getProfile(const std::string &name) const {
 		if ( profiles[i]->name == name )
 			return profiles[i].get();
 
-	return NULL;
+	return nullptr;
 }
 
 
 ModuleBinding *Module::getBinding(const StationID &id) const {
 	BindingMap::const_iterator it = bindings.find(id);
-	if ( it == bindings.end() ) return NULL;
+	if ( it == bindings.end() ) return nullptr;
 	return it->second.get();
 }
 
@@ -1467,7 +1467,7 @@ bool Module::loadBinding(ModuleBinding &binding,
 					break;
 				}
 
-				if ( delegate == NULL || !delegate->handleReadError(filename.c_str()) ) {
+				if ( delegate == nullptr || !delegate->handleReadError(filename.c_str()) ) {
 					if ( !allowConfigFileErrors ) {
 						cerr << "ERROR: read " << filename << " failed" << endl;
 						delete cfg;
@@ -1483,7 +1483,7 @@ bool Module::loadBinding(ModuleBinding &binding,
 		}
 
 		SymbolTable *symtab = cfg->symbolTable();
-		if ( symtab == NULL ) {
+		if ( symtab == nullptr ) {
 			delete cfg;
 			cerr << "ERROR: internal error: symbol table not available" << endl;
 			return false;
@@ -1526,7 +1526,7 @@ bool Module::loadBinding(ModuleBinding &binding,
 			}
 
 			Binding *b = cat->binding(type);
-			if ( b == NULL ) {
+			if ( b == nullptr ) {
 				cerr << "WARNING: binding " << cat->name << "/" << type
 				     << " does not exist: ignored" << endl;
 				continue;
@@ -1555,7 +1555,7 @@ bool Module::loadBinding(ModuleBinding &binding,
 		BindingCategory *cat = binding.categories[i].get();
 		SymbolMapItemPtr item = symbols[cat->name];
 		if ( !item )
-			cat->activeBinding = NULL;
+			cat->activeBinding = nullptr;
 		else
 			cat->activeBinding = cat->binding(item->symbol.content);
 	}
@@ -1575,7 +1575,7 @@ ModuleBinding *Module::readBinding(const StationID &id,
 	}
 
 	ModuleBindingPtr binding = createBinding();
-	if ( binding == NULL ) return NULL;
+	if ( binding == nullptr ) return nullptr;
 
 	binding->name = profile;
 	binding->configFile = keyDirectory + "/";
@@ -1592,18 +1592,18 @@ ModuleBinding *Module::readBinding(const StationID &id,
 	}
 
 	if ( !loadBinding(*binding, binding->configFile, allowConfigFileErrors, delegate) )
-		return NULL;
+		return nullptr;
 
 	if ( !profile.empty() && !addProfile(binding.get()) ) {
 		cerr << "ERROR: adding profile '" << profile << "' to " << definition->name
 		     << " failed" << endl;
-		return NULL;
+		return nullptr;
 	}
 
 	//binding->dump(cout);
 
 	if ( !bind(id, binding.get()) )
-		return NULL;
+		return nullptr;
 
 	return binding.get();
 }
@@ -1728,7 +1728,7 @@ bool Station::compareTag(const std::string &name, const std::string &value) cons
 
 Module *Model::module(const std::string &name) const {
 	ModMap::const_iterator it = modMap.find(name);
-	if ( it == modMap.end() ) return NULL;
+	if ( it == modMap.end() ) return nullptr;
 	return it->second;
 }
 
@@ -1754,7 +1754,7 @@ std::string Model::stationConfigDir(bool, const std::string &name) const {
 	}
 	else {
 		const char* keyDir = getenv("SEISCOMP_KEY_DIR");
-		if ( keyDir != NULL ) {
+		if ( keyDir != nullptr ) {
 			keyBaseDir = keyDir;
 
 			// Remove trailing slashes
@@ -1772,7 +1772,7 @@ std::string Model::stationConfigDir(bool, const std::string &name) const {
 }
 
 
-Model::Model() : schema(NULL) {}
+Model::Model() : schema(nullptr) {}
 
 
 bool Model::create(SchemaDefinitions *schema) {
@@ -1792,7 +1792,7 @@ bool Model::create(SchemaDefinitions *schema) {
 	for ( size_t i = 0; i < schema->moduleCount(); ++i ) {
 		SchemaModule *def = schema->module(i);
 		// We do not backimport aliases
-		if ( def->aliasedModule != NULL ) continue;
+		if ( def->aliasedModule != nullptr ) continue;
 
 		ModMap::iterator mit = modMap.find(def->name);
 		if ( mit == modMap.end() ) continue;
@@ -1833,7 +1833,7 @@ bool Model::create(SchemaDefinitions *schema) {
 
 
 bool Model::recreate() {
-	if ( schema == NULL )
+	if ( schema == nullptr )
 		return false;
 
 	return create(schema);
@@ -1841,7 +1841,7 @@ bool Model::recreate() {
 
 
 Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
-	if ( def == NULL ) return NULL;
+	if ( def == nullptr ) return nullptr;
 
 	// Loaded already?
 	ModMap::iterator mit = modMap.find(def->name);
@@ -1865,15 +1865,15 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 	set<string>::iterator it;
 	for ( it = imports.begin(); it != imports.end(); ++it ) {
 		SchemaModule *baseDef = schema->module(*it);
-		if ( baseDef == NULL ) {
+		if ( baseDef == nullptr ) {
 			// TODO: set error message
-			return NULL;
+			return nullptr;
 		}
 
 		Module *base = create(schema, baseDef);
-		if ( base == NULL ) {
+		if ( base == nullptr ) {
 			// TODO: set error message
-			return NULL;
+			return nullptr;
 		}
 
 		for ( size_t i = 0; i < base->sections.size(); ++i ) {
@@ -1939,7 +1939,7 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 		                   "currently assigned global binding values but the "
 		                   "values given in this binding.";
 
-		if ( mod->bindingTemplate == NULL ) {
+		if ( mod->bindingTemplate == nullptr ) {
 			mod->bindingTemplate = new ModuleBinding(def->name);
 			mod->bindingTemplate->parent = mod.get();
 		}
@@ -1968,21 +1968,21 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 		}
 	}
 
-	Section *bindingSection = NULL;
+	Section *bindingSection = nullptr;
 
 	for ( size_t i = 0; i < schemaBindings.size(); ++i ) {
 		SchemaBinding *sb = schemaBindings[i];
-		if ( mod->bindingTemplate == NULL ) {
+		if ( mod->bindingTemplate == nullptr ) {
 			mod->bindingTemplate = new ModuleBinding(def->name);
 			mod->bindingTemplate->parent = mod.get();
 		}
 
-		if ( bindingSection == NULL ) {
+		if ( bindingSection == nullptr ) {
 			bindingSection = new Section(def->name);
 			mod->bindingTemplate->sections.push_back(bindingSection);
 		}
 
-		Section *sec = NULL;
+		Section *sec = nullptr;
 		string prefix;
 
 		if ( sb->category.empty() ) {
@@ -1993,13 +1993,13 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 		}
 		else if ( !sb->name.empty() ) {
 			BindingCategoryPtr cat = mod->bindingTemplate->category(sb->category);
-			if ( cat == NULL ) {
+			if ( cat == nullptr ) {
 				cat = new BindingCategory(sb->category.c_str());
 				mod->bindingTemplate->add(cat.get());
 			}
 
 			BindingPtr b = cat->binding(sb->name);
-			if ( b != NULL ) {
+			if ( b != nullptr ) {
 				cerr << "ERROR: " << def->name << "/" << sb->category << ": "
 				        "duplicate name '" << sb->name << "'" << endl;
 				continue;
@@ -2099,7 +2099,7 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 					break;
 				}
 
-				if ( delegate == NULL || !delegate->handleReadError(uri.c_str()) )
+				if ( delegate == nullptr || !delegate->handleReadError(uri.c_str()) )
 					break;
 
 				delete cfg;
@@ -2109,7 +2109,7 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 			symbols[uri].lastModified = lastModified;
 
 			SymbolTable *symtab = cfg->symbolTable();
-			if ( symtab == NULL ) {
+			if ( symtab == nullptr ) {
 				delete cfg;
 				continue;
 			}
@@ -2153,8 +2153,8 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 			for ( it = fileMap->begin(); it != fileMap->end(); ++it ) {
 				if ( it->second->known ) continue;
 				ParameterPtr param = unknowns[it->first];
-				if ( param == NULL ) {
-					param = new Parameter(NULL, it->first);
+				if ( param == nullptr ) {
+					param = new Parameter(nullptr, it->first);
 					unknowns[it->first] = param;
 					mod->unknowns.push_back(param);
 				}
@@ -2175,7 +2175,7 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 		for ( size_t p = 0; p < mod->unknowns.size(); ++ p ) {
 			ParameterPtr param = mod->unknowns[p];
 			for ( int stage = Environment::CS_FIRST; stage <= Environment::CS_LAST; ++stage ) {
-				if ( param->symbols[stage] == NULL ) continue;
+				if ( param->symbols[stage] == nullptr ) continue;
 				CaseSensitivityCheck check(delegate, mod, stage, &param->symbols[stage]->symbol);
 				mod->accept(&check);
 			}
@@ -2233,7 +2233,7 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 
 		for ( size_t i = 0; i < station->config.size(); ++i ) {
 			Module *mod = module(station->config[i].moduleName);
-			if ( mod == NULL ) {
+			if ( mod == nullptr ) {
 				cerr << "ERROR: module '" << station->config[i].moduleName
 				     << "' is not registered" << endl;
 				continue;
@@ -2298,7 +2298,7 @@ bool Model::writeConfig(bool multilineLists, int stage, ConfigDelegate *delegate
 
 		for ( it = mod->bindings.begin(); it != mod->bindings.end(); ++it ) {
 			pair<Stations::iterator, bool> sp;
-			sp = stations.insert(Stations::value_type(it->first, NULL));
+			sp = stations.insert(Stations::value_type(it->first, nullptr));
 			if ( sp.second )
 				sp.first->second = new Station;
 
@@ -2458,7 +2458,7 @@ bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
 		processedSymbols.insert(param->variableName);
 
 		if ( !param->symbols[stage] ) {
-			if ( sym != NULL ) {
+			if ( sym != nullptr ) {
 				if ( changes.empty() ) cerr << "[" << filename << "]" << endl;
 				cerr << "- " << sym->name << "  '" << sym->content << "'" << endl;
 				changes.push_back(ConfigDelegate::Change(ConfigDelegate::Removed, sym->name, sym->content, ""));
@@ -2467,7 +2467,7 @@ bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
 		}
 
 		if ( param->symbols[stage]->symbol.stage == Environment::CS_UNDEFINED ) {
-			if ( sym != NULL ) {
+			if ( sym != nullptr ) {
 				if ( changes.empty() ) cerr << "[" << filename << "]" << endl;
 				cerr << "- " << sym->name << "  '" << sym->content << "'" << endl;
 				changes.push_back(ConfigDelegate::Change(ConfigDelegate::Removed, sym->name, sym->content, ""));
@@ -2475,11 +2475,11 @@ bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
 			continue;
 		}
 
-		if ( (sym != NULL) && (sym->content == param->symbols[stage]->symbol.content) )
+		if ( (sym != nullptr) && (sym->content == param->symbols[stage]->symbol.content) )
 			continue;
 
 		if ( changes.empty() ) cerr << "[" << filename << "]" << endl;
-		if ( sym == NULL ) {
+		if ( sym == nullptr ) {
 			cerr << "+ " << param->variableName << "  '" << param->symbols[stage]->symbol.content << "'" << endl;
 			changes.push_back(ConfigDelegate::Change(ConfigDelegate::Added, param->variableName, "", param->symbols[stage]->symbol.content));
 		}
@@ -2510,7 +2510,7 @@ bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
 				cerr << " U " << (*cit)->name << endl;
 
 			// Need to append this to the unknowns
-			ParameterPtr newParam = new Parameter(NULL, (*cit)->name);
+			ParameterPtr newParam = new Parameter(nullptr, (*cit)->name);
 			newParam->symbols[stage] = new SymbolMapItem(**cit);
 			if ( it != symbols.end() )
 				it->second[newParam->variableName] = newParam->symbols[stage];
@@ -2552,7 +2552,7 @@ bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
 
 	for ( size_t p = 0; p < mod->unknowns.size(); ++ p ) {
 		Parameter *param = mod->unknowns[p].get();
-		if ( !write(param, NULL, stage, processedSymbols, ofs, filename, true, multilineLists) ) {
+		if ( !write(param, nullptr, stage, processedSymbols, ofs, filename, true, multilineLists) ) {
 			if ( delegate )
 				delegate->hasWriteError(filename.c_str());
 			return false;

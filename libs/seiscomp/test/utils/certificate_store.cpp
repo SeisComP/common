@@ -63,9 +63,9 @@ EC_KEY *set_private_key_from_PEM(const string &pemkey) {
 	EVP_PKEY *pkey = EVP_PKEY_new();
 	BIO *bio = BIO_new_mem_buf(const_cast<char*>(pemkey.c_str()), pemkey.size());
 
-	if ( !PEM_read_bio_PrivateKey(bio, &pkey, NULL, NULL) ) {
+	if ( !PEM_read_bio_PrivateKey(bio, &pkey, nullptr, nullptr) ) {
 		EVP_PKEY_free(pkey);
-		return NULL;
+		return nullptr;
 	}
 
 	BIO_free(bio);
@@ -74,7 +74,7 @@ EC_KEY *set_private_key_from_PEM(const string &pemkey) {
 
 	if ( !eckey ) {
 		EVP_PKEY_free(pkey);
-		return NULL;
+		return nullptr;
 	}
 
 	EC_KEY_set_asn1_flag(eckey, OPENSSL_EC_NAMED_CURVE);

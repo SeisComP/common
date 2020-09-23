@@ -41,7 +41,7 @@ class SC_SYSTEM_CORE_API RecordDemuxFilter : public RecordFilterInterface {
 		//! Constructs a record demuxer with an optional record filter
 		//! applied to each channel.
 		//! Note: the ownership goes to the record demuxer
-		RecordDemuxFilter(RecordFilterInterface *recordFilter = NULL);
+		RecordDemuxFilter(RecordFilterInterface *recordFilter = nullptr);
 		virtual ~RecordDemuxFilter();
 
 

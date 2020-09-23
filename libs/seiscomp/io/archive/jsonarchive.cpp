@@ -152,14 +152,14 @@ JSONArchive::JSONArchive()
 , _deleteStreamOnClose(false)
 , _rootObject(true)
 , _indent(0)
-, _buf(NULL) {
+, _buf(nullptr) {
 	_sequenceSize = -1;
 	_isSequence = false;
 	_attribIndex = 0;
-	_os = NULL;
-	_document = NULL;
-	_objectLocation = NULL;
-	_current = NULL;
+	_os = nullptr;
+	_document = nullptr;
+	_objectLocation = nullptr;
+	_current = nullptr;
 	_formattedOutput = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -175,14 +175,14 @@ JSONArchive::JSONArchive(std::streambuf* buf, bool isReading,
 , _deleteStreamOnClose(false)
 , _rootObject(true)
 , _indent(0)
-, _buf(NULL) {
+, _buf(nullptr) {
 	_sequenceSize = -1;
 	_isSequence = false;
 	_attribIndex = 0;
-	_os = NULL;
-	_document = NULL;
-	_objectLocation = NULL;
-	_current = NULL;
+	_os = nullptr;
+	_document = nullptr;
+	_objectLocation = nullptr;
+	_current = nullptr;
 	_formattedOutput = false;
 
 	if ( isReading )
@@ -216,7 +216,7 @@ bool JSONArchive::open(const char* file) {
 	}
 	else {
 		std::filebuf *fb = new std::filebuf;
-		if ( fb->open(file, std::ios::in | std::ios::binary) == NULL ) {
+		if ( fb->open(file, std::ios::in | std::ios::binary) == nullptr ) {
 			delete fb;
 			return false;
 		}
@@ -237,7 +237,7 @@ bool JSONArchive::open(const char* file) {
 	_current = _document;
 	parseVersion();
 
-	return Core::Archive::open(NULL);
+	return Core::Archive::open(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -264,7 +264,7 @@ bool JSONArchive::open(std::streambuf *buf) {
 	_current = _document;
 	parseVersion();
 
-	return Core::Archive::open(NULL);
+	return Core::Archive::open(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -278,7 +278,7 @@ bool JSONArchive::from(const Value *v) {
 	_current = v;
 	parseVersion();
 
-	return Core::Archive::open(NULL);
+	return Core::Archive::open(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -298,7 +298,7 @@ bool JSONArchive::from(const char *str) {
 	_current = _document;
 	parseVersion();
 
-	return Core::Archive::open(NULL);
+	return Core::Archive::open(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -321,7 +321,7 @@ bool JSONArchive::from(char *str, bool insitu) {
 	_current = _document;
 	parseVersion();
 
-	return Core::Archive::open(NULL);
+	return Core::Archive::open(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -378,7 +378,7 @@ bool JSONArchive::create(const char* file, bool writeVersion) {
 	else {
 		std::filebuf* fb = new std::filebuf;
 
-		if ( fb->open(file, std::ios::out | std::ios::binary) == NULL ) {
+		if ( fb->open(file, std::ios::out | std::ios::binary) == nullptr ) {
 			delete fb;
 			return false;
 		}
@@ -443,7 +443,7 @@ void JSONArchive::close() {
 	_isSequence = false;
 	_attribIndex = 0;
 
-	if ( _buf != NULL && !_isReading && _rootObject ) {
+	if ( _buf != nullptr && !_isReading && _rootObject ) {
 		if ( _formattedOutput )
 			_buf->sputn("\n",1);
 		_buf->sputn("}",1);
@@ -457,16 +457,16 @@ void JSONArchive::close() {
 	if ( _deleteBufOnClose && _buf )
 		delete _buf;
 
-	_buf = NULL;
-	_os = NULL;
+	_buf = nullptr;
+	_os = nullptr;
 
 	if ( _document ) {
 		delete _document;
-		_document = NULL;
+		_document = nullptr;
 	}
 
-	_objectLocation = NULL;
-	_current = NULL;
+	_objectLocation = nullptr;
+	_current = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -475,7 +475,7 @@ void JSONArchive::close() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void JSONArchive::createDocument(bool writeVersion) {
-	Core::Archive::create(NULL);
+	Core::Archive::create(nullptr);
 
 	if ( writeVersion ) {
 		if ( _forceWriteVersion >= 0 )
@@ -1173,23 +1173,23 @@ bool JSONArchive::locateObjectByName(const char* name,
                                      const char* targetClass,
                                      bool nullable) {
 	if ( isReading() ) {
-		if ( _current == NULL )
+		if ( _current == nullptr )
 			return false;
 
-		if ( targetClass != NULL ) {
+		if ( targetClass != nullptr ) {
 			if ( (hint() & STATIC_TYPE) == 0 ) {
 				_objectLocation = findTag(_current, _currentIndex, name, targetClass);
-				return _objectLocation != NULL;
+				return _objectLocation != nullptr;
 			}
 			else {
-				_objectLocation = findTag(_current, _currentIndex, name, NULL);
-				return _objectLocation != NULL;
+				_objectLocation = findTag(_current, _currentIndex, name, nullptr);
+				return _objectLocation != nullptr;
 			}
 		}
 		else {
 			if ( name && *name ) {
 				_objectLocation = findAttrib(_current, name);
-				return _objectLocation != NULL;
+				return _objectLocation != nullptr;
 			}
 			else {
 				RAPIDJSON_ASSERT(false);
@@ -1228,22 +1228,22 @@ bool JSONArchive::locateObjectByName(const char* name,
 bool JSONArchive::locateNextObjectByName(const char* name,
                                          const char* targetClass) {
 	if ( isReading() ) {
-		if ( _current == NULL ) return false;
+		if ( _current == nullptr ) return false;
 
-		if ( targetClass != NULL ) {
+		if ( targetClass != nullptr ) {
 			if ( (hint() & STATIC_TYPE) == 0 ) {
 				_objectLocation = findNextTag(_currentArray, _currentIndex, name, targetClass);
-				return _objectLocation != NULL;
+				return _objectLocation != nullptr;
 			}
 			else {
-				_objectLocation = findNextTag(_currentArray, _currentIndex, name, NULL);
-				return _objectLocation != NULL;
+				_objectLocation = findNextTag(_currentArray, _currentIndex, name, nullptr);
+				return _objectLocation != nullptr;
 			}
 		}
 		else {
 			if ( name && *name ) {
 				_objectLocation = findAttrib(_current, name);
-				return _objectLocation != NULL;
+				return _objectLocation != nullptr;
 			}
 			else {
 				RAPIDJSON_ASSERT(false);
@@ -1276,7 +1276,7 @@ void JSONArchive::locateNullObjectByName(const char* name,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string JSONArchive::determineClassName() {
-	if ( _current == NULL || _objectLocation == NULL )
+	if ( _current == nullptr || _objectLocation == nullptr )
 		return "";
 
 	if ( !_current->IsObject() )
@@ -1476,7 +1476,7 @@ void JSONArchive::serialize(SerializeDispatcher &disp) {
 const JSONArchive::Value *JSONArchive::findAttrib(const Value *node, const char* name) {
 	// find the child node with name = param name
 	if ( !node->IsObject() )
-		return NULL;
+		return nullptr;
 
 	for ( Value::ConstMemberIterator itr = node->MemberBegin(); itr != node->MemberEnd(); ++itr ) {
 		// Tag matches requested name?
@@ -1484,7 +1484,7 @@ const JSONArchive::Value *JSONArchive::findAttrib(const Value *node, const char*
 			return &itr->value;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1497,7 +1497,7 @@ JSONArchive::findTag(const Value *node, Size &index,
                      const char* name, const char* targetClass) {
 	// find the child node with name = param name
 	if ( !node->IsObject() )
-		return NULL;
+		return nullptr;
 
 	for ( ConstItr itr = node->MemberBegin(); itr != node->MemberEnd(); ++itr ) {
 		if ( !itr->value.IsObject() && !itr->value.IsArray() ) continue;
@@ -1513,7 +1513,7 @@ JSONArchive::findTag(const Value *node, Size &index,
 			index = 0;
 
 			if ( _currentArray->Size() <= index )
-				return NULL;
+				return nullptr;
 
 			return &(*_currentArray)[index];
 		}
@@ -1523,7 +1523,7 @@ JSONArchive::findTag(const Value *node, Size &index,
 		return &itr->value;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1534,10 +1534,10 @@ JSONArchive::findTag(const Value *node, Size &index,
 const JSONArchive::Value *
 JSONArchive::findNextTag(const Value *node, Size &index,
                          const char* name, const char* targetClass) {
-	if ( _currentIndex < 0 ) return NULL;
+	if ( _currentIndex < 0 ) return nullptr;
 	++_currentIndex;
 	if ( _currentIndex >= node->Size() )
-		return NULL;
+		return nullptr;
 
 	return &(*node)[_currentIndex];
 }

@@ -45,7 +45,7 @@ class WebsocketConnection : public Socket {
 	// ----------------------------------------------------------------------
 	public:
 		virtual Result connect(const char *address, unsigned int timeoutMs,
-		                       const char *clientName = NULL) override;
+		                       const char *clientName = nullptr) override;
 
 		virtual Result subscribe(const std::string &group) override;
 		virtual Result unsubscribe(const std::string &group) override;
@@ -66,7 +66,7 @@ class WebsocketConnection : public Socket {
 		virtual Result syncOutbox() override;
 
 		virtual Result recv(Packet &p) override;
-		virtual Packet *recv(Result *result = NULL) override;
+		virtual Packet *recv(Result *result = nullptr) override;
 
 		virtual Result disconnect() override;
 
@@ -85,15 +85,15 @@ class WebsocketConnection : public Socket {
 		Result flushBacklog();
 
 		Result readFrame(WSFrame &frame, boost::mutex *mutex, bool forceBlock = false);
-		bool handleFrame(WSFrame &frame, Packet *p, Result *result = NULL);
+		bool handleFrame(WSFrame &frame, Packet *p, Result *result = nullptr);
 
 		Result send(Wired::Buffer *msg, WSFrame::Type type, bool isRegular);
 		Result sendSocket(const char *data, int len);
 
 		void updateReceiveBuffer();
-		void closeSocket(const char *errorMessage = NULL,
+		void closeSocket(const char *errorMessage = nullptr,
 		                 int errorMessageLen = -1);
-		void closeSocketWithoutLock(const char *errorMessage = NULL,
+		void closeSocketWithoutLock(const char *errorMessage = nullptr,
 		                            int errorMessageLen = -1);
 
 		// This requires the read mutex to be locked

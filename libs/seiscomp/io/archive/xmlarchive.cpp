@@ -57,7 +57,7 @@ void xmlStructuredErrorHandler(void * userData, xmlErrorPtr error) {
 
 int streamBufReadCallback(void* context, char* buffer, int len) {
 	std::streambuf* buf = static_cast<std::streambuf*>(context);
-	if ( buf == NULL ) return -1;
+	if ( buf == nullptr ) return -1;
 
 	int count = 0;
 	int ch = buf->sgetc();
@@ -72,7 +72,7 @@ int streamBufReadCallback(void* context, char* buffer, int len) {
 
 int streamBufWriteCallback(void* context, const char* buffer, int len) {
 	std::streambuf* buf = static_cast<std::streambuf*>(context);
-	if ( buf == NULL ) return -1;
+	if ( buf == nullptr ) return -1;
 	return buf->sputn(buffer, len);
 }
 
@@ -86,12 +86,12 @@ bool isValidTag(xmlNodePtr node, const xmlChar* name, const char* targetClass) {
 		return false;
 
 	xmlChar* prop = xmlGetProp(node, (const xmlChar*)"role");
-	bool isValid = !xmlStrcmp(prop, (const xmlChar*)name) || (prop == NULL && *name == '\0');
+	bool isValid = !xmlStrcmp(prop, (const xmlChar*)name) || (prop == nullptr && *name == '\0');
 	// if the role attribute is not the correct one but
 	// a role attribute has been defined and set to another value
 	// this child element has to be ignored
 	if ( !isValid ) {
-		if ( prop != NULL && *prop != '\0' ) {
+		if ( prop != nullptr && *prop != '\0' ) {
 			xmlFree(prop);
 			return false;
 		}
@@ -125,7 +125,7 @@ bool isValidTag(xmlNodePtr node, const xmlChar* name, const char* targetClass) {
 xmlNodePtr findTag(xmlDocPtr doc, xmlNodePtr node, const char* name, const char* targetClass) {
 	// find the child node with name = param name
 	xmlNodePtr child = node->children;
-	while ( child != NULL ) {
+	while ( child != nullptr ) {
 #ifndef CLASSNAME_AS_TAGNAME
 		if ( !xmlStrcmp(child->name, (const xmlChar*)name) )
 #else
@@ -136,13 +136,13 @@ xmlNodePtr findTag(xmlDocPtr doc, xmlNodePtr node, const char* name, const char*
 		child = child->next;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
 xmlNodePtr findNextTag(xmlDocPtr doc, xmlNodePtr node, const char* name, const char* targetClass) {
 	xmlNodePtr sibling = node->next;
-	while ( sibling != NULL ) {
+	while ( sibling != nullptr ) {
 #ifndef CLASSNAME_AS_TAGNAME
 		if ( !xmlStrcmp(sibling->name, (const xmlChar*)name) )
 #else
@@ -153,27 +153,27 @@ xmlNodePtr findNextTag(xmlDocPtr doc, xmlNodePtr node, const char* name, const c
 		sibling = sibling->next;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
 xmlChar *nodeGetContent(xmlNodePtr node) {
-	for ( xmlNodePtr child = node->xmlChildrenNode; child != NULL; child = child->next )
+	for ( xmlNodePtr child = node->xmlChildrenNode; child != nullptr; child = child->next )
 		if ( child->type == XML_TEXT_NODE || child->type == XML_CDATA_SECTION_NODE )
 			return xmlNodeGetContent(child);
 
-	return NULL;
+	return nullptr;
 }
 
 
 }
 
 XMLArchive::XMLArchive() : Seiscomp::Core::Archive() {
-	_document = NULL;
-	_current = NULL;
-	_objectLocation = NULL;
+	_document = nullptr;
+	_current = nullptr;
+	_objectLocation = nullptr;
 	_deleteOnClose = false;
-	_buf = NULL;
+	_buf = nullptr;
 	_formattedOutput = false;
 	_compression = false;
 	_compressionMethod = ZIP;
@@ -189,11 +189,11 @@ XMLArchive::XMLArchive() : Seiscomp::Core::Archive() {
 
 
 XMLArchive::XMLArchive(std::streambuf* buf, bool isReading, int forceWriteVersion) {
-	_document = NULL;
-	_current = NULL;
-	_objectLocation = NULL;
+	_document = nullptr;
+	_current = nullptr;
+	_objectLocation = nullptr;
 	_deleteOnClose = false;
-	_buf = NULL;
+	_buf = nullptr;
 	_formattedOutput = false;
 	_compression = false;
 	_rootTag = "seiscomp";
@@ -220,7 +220,7 @@ XMLArchive::~XMLArchive() {
 bool XMLArchive::open(std::streambuf* buf) {
 	close();
 
-	if ( buf == NULL ) return false;
+	if ( buf == nullptr ) return false;
 
 	_buf = buf;
 	_deleteOnClose = false;
@@ -238,7 +238,7 @@ bool XMLArchive::open(const char* filename) {
 	}
 	else {
 		std::filebuf* fb = new std::filebuf();
-		if ( fb->open(filename, std::ios::in) == NULL ) {
+		if ( fb->open(filename, std::ios::in) == nullptr ) {
 			delete fb;
 			return false;
 		}
@@ -252,7 +252,7 @@ bool XMLArchive::open(const char* filename) {
 
 
 bool XMLArchive::open() {
-	if ( !Seiscomp::Core::Archive::open(NULL) )
+	if ( !Seiscomp::Core::Archive::open(nullptr) )
 		return false;
 
 	xmlDocPtr doc;
@@ -275,30 +275,30 @@ bool XMLArchive::open() {
 
 		doc = xmlReadIO(streamBufReadCallback,
 		                streamBufCloseCallback,
-		                &filtered_buf, NULL, NULL, 0);
+		                &filtered_buf, nullptr, nullptr, 0);
 	}
 	else
 		doc = xmlReadIO(streamBufReadCallback,
 		                streamBufCloseCallback,
-		                _buf, NULL, NULL, 0);
+		                _buf, nullptr, nullptr, 0);
 
-	if ( doc == NULL )
+	if ( doc == nullptr )
 		return false;
 
 	xmlNodePtr cur = xmlDocGetRootElement(doc);
-	if ( cur == NULL ) {
+	if ( cur == nullptr ) {
 		xmlFreeDoc(doc);
 		return false;
 	}
 
 	xmlNsPtr* xmlNsList = xmlGetNsList(doc, cur);
-	if ( xmlNsList != NULL ) {
+	if ( xmlNsList != nullptr ) {
 		xmlNsPtr* xmlNsRunner = xmlNsList;
-		while ( *xmlNsRunner != NULL ) {
-			if ( (*xmlNsRunner)->prefix != NULL )
+		while ( *xmlNsRunner != nullptr ) {
+			if ( (*xmlNsRunner)->prefix != nullptr )
 				_namespace.first = (const char*)(*xmlNsRunner)->prefix;
 
-			if ( (*xmlNsRunner)->href != NULL )
+			if ( (*xmlNsRunner)->href != nullptr )
 				_namespace.second = (const char*)(*xmlNsRunner)->href;
 
 			break;
@@ -315,9 +315,9 @@ bool XMLArchive::open() {
 	}
 
 	xmlChar* version = xmlGetProp(cur, (const xmlChar*)"version");
-	if ( version != NULL ) {
+	if ( version != nullptr ) {
 		char* seperator = strchr((char*)version, '.');
-		if ( seperator != NULL ) {
+		if ( seperator != nullptr ) {
 			*seperator++ = '\0';
 			setVersion(Core::Version(atoi((char*)version), atoi((char*)seperator)));
 		}
@@ -355,7 +355,7 @@ bool XMLArchive::create(const char* filename, bool writeVersion, bool headerNode
 	}
 	else {
 		std::filebuf* fb = new std::filebuf();
-		if ( fb->open(filename, std::ios::out) == NULL ) {
+		if ( fb->open(filename, std::ios::out) == nullptr ) {
 			delete fb;
 			return false;
 		}
@@ -369,7 +369,7 @@ bool XMLArchive::create(const char* filename, bool writeVersion, bool headerNode
 
 
 bool XMLArchive::create(bool writeVersion, bool headerNode) {
-	if ( !Seiscomp::Core::Archive::create(NULL) )
+	if ( !Seiscomp::Core::Archive::create(nullptr) )
 		return false;
 
 	if ( writeVersion ) {
@@ -391,8 +391,8 @@ bool XMLArchive::create(bool writeVersion, bool headerNode) {
 		versionString << "." << patchTag;
 	_namespace.second = versionString.str();
 
-	xmlDocPtr doc = xmlNewDoc(NULL);
-	void* rootNode = NULL;
+	xmlDocPtr doc = xmlNewDoc(nullptr);
+	void* rootNode = nullptr;
 
 	_document = doc;
 
@@ -407,11 +407,11 @@ bool XMLArchive::create(bool writeVersion, bool headerNode) {
 
 
 void XMLArchive::close() {
-	if ( _document != NULL ) {
+	if ( _document != nullptr ) {
 		if ( !isReading() ) {
 			if ( _buf ) {
 				xmlOutputBufferPtr xmlBuf;
-				xmlBuf = xmlAllocOutputBuffer(NULL);
+				xmlBuf = xmlAllocOutputBuffer(nullptr);
 				if ( xmlBuf ) {
 
 					boost::iostreams::filtering_ostreambuf filtered_buf;
@@ -444,7 +444,7 @@ void XMLArchive::close() {
 		}
 
 		xmlFreeDoc(static_cast<xmlDocPtr>(_document));
-		_document = NULL;
+		_document = nullptr;
 	}
 
 	if ( _deleteOnClose && _buf )
@@ -455,9 +455,9 @@ void XMLArchive::close() {
 	}
 
 	_deleteOnClose = false;
-	_buf = NULL;
+	_buf = nullptr;
 
-	_current = NULL;
+	_current = nullptr;
 	_property = "";
 
 	_namespace.first = "";
@@ -465,7 +465,7 @@ void XMLArchive::close() {
 
 	_forceWriteVersion = -1;
 
-	initGenericErrorDefaultFunc(NULL);
+	initGenericErrorDefaultFunc(nullptr);
 	setVersion(Core::Version(0,0));
 }
 
@@ -669,10 +669,10 @@ void XMLArchive::write(std::string& value) {
 
 
 bool XMLArchive::locateObjectByName(const char* name, const char* targetClass, bool) {
-	if ( _current == NULL && isReading() )
+	if ( _current == nullptr && isReading() )
 		return false;
 
-	if ( targetClass != NULL ) {
+	if ( targetClass != nullptr ) {
 		if ( (hint() & STATIC_TYPE) == 0 ) {
 			if ( isReading() )
 				_objectLocation = findTag(static_cast<xmlDocPtr>(_document),
@@ -682,17 +682,17 @@ bool XMLArchive::locateObjectByName(const char* name, const char* targetClass, b
 			else
 				addChild(name, targetClass);
 
-			return _objectLocation != NULL;
+			return _objectLocation != nullptr;
 		}
 		else {
 			if ( isReading() ) {
 				_objectLocation = findTag(static_cast<xmlDocPtr>(_document),
 				                          static_cast<xmlNodePtr>(_current),
-				                          name, NULL);
-				return _objectLocation != NULL;
+				                          name, nullptr);
+				return _objectLocation != nullptr;
 			}
 			else {
-				_objectLocation = xmlNewTextChild(static_cast<xmlNodePtr>(_current), NULL, (const xmlChar*)name, NULL);
+				_objectLocation = xmlNewTextChild(static_cast<xmlNodePtr>(_current), nullptr, (const xmlChar*)name, nullptr);
 				return true;
 			}
 		}
@@ -704,7 +704,7 @@ bool XMLArchive::locateObjectByName(const char* name, const char* targetClass, b
 			if ( name && *name ) {
 				if ( hint() & XML_ELEMENT ) {
 					xmlNodePtr attrNode = static_cast<xmlNodePtr>(_current)->children;
-					while ( attrNode != NULL ) {
+					while ( attrNode != nullptr ) {
 						if ( attrNode->type == XML_ELEMENT_NODE && !xmlStrcmp(attrNode->name, (const xmlChar*)name) ) {
 							_objectLocation = attrNode;
 							xmlChar* content = nodeGetContent(attrNode);
@@ -734,7 +734,7 @@ bool XMLArchive::locateObjectByName(const char* name, const char* targetClass, b
 				}
 				else {
 					xmlChar* prop = xmlGetProp(static_cast<xmlNodePtr>(_current), (const xmlChar*)name);
-					if ( prop == NULL ) {
+					if ( prop == nullptr ) {
 						_property.clear();
 						return false;
 					}
@@ -766,16 +766,16 @@ bool XMLArchive::locateObjectByName(const char* name, const char* targetClass, b
 
 
 bool XMLArchive::locateNextObjectByName(const char* name, const char* targetClass) {
-	if ( _objectLocation == NULL )
+	if ( _objectLocation == nullptr )
 		return false;
 
-	if ( targetClass != NULL ) {
+	if ( targetClass != nullptr ) {
 		if ( isReading() ) {
 			if ( hint() & STATIC_TYPE )
 				_objectLocation = findNextTag(static_cast<xmlDocPtr>(_document),
 				                              static_cast<xmlNodePtr>(_objectLocation),
 				                              name,
-				                              NULL);
+				                              nullptr);
 			else
 				_objectLocation = findNextTag(static_cast<xmlDocPtr>(_document),
 				                              static_cast<xmlNodePtr>(_objectLocation),
@@ -783,12 +783,12 @@ bool XMLArchive::locateNextObjectByName(const char* name, const char* targetClas
 		}
 		else {
 			if ( hint() & STATIC_TYPE )
-				_objectLocation = xmlNewTextChild(static_cast<xmlNodePtr>(_current), NULL, (const xmlChar*)name, NULL);
+				_objectLocation = xmlNewTextChild(static_cast<xmlNodePtr>(_current), nullptr, (const xmlChar*)name, nullptr);
 			else
 				addChild(name, targetClass);
 		}
 
-		return _objectLocation != NULL;
+		return _objectLocation != nullptr;
 	}
 	else {
 		return false;
@@ -801,14 +801,14 @@ bool XMLArchive::locateNextObjectByName(const char* name, const char* targetClas
 std::string XMLArchive::determineClassName() {
 	// if there is no current node, the classname cannot be retrieved
 	//_objectLocation = getFirstElementNode(static_cast<xmlNodePtr>(_current));
-	if ( _objectLocation == NULL )
+	if ( _objectLocation == nullptr )
 		return "";
 
 	xmlNodePtr locationNode = static_cast<xmlNodePtr>(_objectLocation);
 #ifndef CLASSNAME_AS_TAGNAME
 	xmlChar* classname = xmlGetProp(locationNode, (const xmlChar*)"_classname");
 	std::string strClassname;
-	if ( classname != NULL ) {
+	if ( classname != nullptr ) {
 		strClassname = (const char*)classname;
 		xmlFree(classname);
 	}
@@ -839,9 +839,9 @@ void XMLArchive::writeAttrib(const std::string& value) {
 
 	if ( !_property.empty() && !(hint() & XML_CDATA) ) {
 		if ( hint() & XML_ELEMENT ) {
-			xmlNewTextChild(static_cast<xmlNodePtr>(_current), NULL,
+			xmlNewTextChild(static_cast<xmlNodePtr>(_current), nullptr,
 			                (const xmlChar*)_property.c_str(),
-			                (const xmlChar*)(value.empty()?NULL:value.c_str()));
+			                (const xmlChar*)(value.empty()?nullptr:value.c_str()));
 		}
 		else
 			xmlSetProp(static_cast<xmlNodePtr>(_current), (const xmlChar*)_property.c_str(), (const xmlChar*)value.c_str());
@@ -856,11 +856,11 @@ void XMLArchive::writeAttrib(const std::string& value) {
 void XMLArchive::setValidity(bool v) {
 	if ( !v ) {
 		if ( hint() & XML_ELEMENT ) {
-			if ( _objectLocation != NULL ) {
+			if ( _objectLocation != nullptr ) {
 				xmlNodePtr n = static_cast<xmlNodePtr>(_objectLocation);
 				int lineNo = (int)xmlGetLineNo(n);
 				std::string path;
-				while ( n->parent != NULL ) {
+				while ( n->parent != nullptr ) {
 					path.insert(0, (char*)n->name);
 					path.insert(0, "/");
 					n = n->parent;
@@ -872,11 +872,11 @@ void XMLArchive::setValidity(bool v) {
 				SEISCOMP_ERROR("Invalid element content: %s", _property.c_str());
 		}
 		else if ( hint() & XML_CDATA ) {
-			if ( _current != NULL ) {
+			if ( _current != nullptr ) {
 				xmlNodePtr n = static_cast<xmlNodePtr>(_current);
 				int lineNo = (int)xmlGetLineNo(n);
 				std::string path;
-				while ( n->parent != NULL ) {
+				while ( n->parent != nullptr ) {
 					path.insert(0, (char*)n->name);
 					path.insert(0, "/");
 					n = n->parent;
@@ -888,11 +888,11 @@ void XMLArchive::setValidity(bool v) {
 				SEISCOMP_ERROR("Invalid CDATA content: %s", _property.c_str());
 		}
 		else {
-			if ( _current != NULL ) {
+			if ( _current != nullptr ) {
 				xmlNodePtr n = static_cast<xmlNodePtr>(_current);
 				int lineNo = (int)xmlGetLineNo(n);
 				std::string path;
-				while ( n->parent != NULL ) {
+				while ( n->parent != nullptr ) {
 					path.insert(0, (char*)n->name);
 					path.insert(0, "/");
 					n = n->parent;
@@ -915,10 +915,10 @@ void XMLArchive::setValidity(bool v) {
 
 
 void XMLArchive::addChild(const char* name, const char* type) const {
-	if ( _current == NULL ) {
+	if ( _current == nullptr ) {
 #ifdef CLASSNAME_AS_TAGNAME
 		xmlNodePtr rootNode = (xmlNodePtr)addRootNode(type);
-		if ( name != NULL && *name != '\0' )
+		if ( name != nullptr && *name != '\0' )
 			xmlSetProp(rootNode, (const xmlChar*)"role", (const xmlChar*)name);
 #else
 		xmlNodePtr rootNode = (xmlNodePtr)addRootNode(name);
@@ -927,26 +927,26 @@ void XMLArchive::addChild(const char* name, const char* type) const {
 	}
 	else {
 #ifdef CLASSNAME_AS_TAGNAME
-		_objectLocation = xmlNewTextChild(static_cast<xmlNodePtr>(_current), NULL, (const xmlChar*)type, NULL);
-		if ( name != NULL && *name != '\0' )
+		_objectLocation = xmlNewTextChild(static_cast<xmlNodePtr>(_current), nullptr, (const xmlChar*)type, nullptr);
+		if ( name != nullptr && *name != '\0' )
 			xmlSetProp(static_cast<xmlNodePtr>(_objectLocation), (const xmlChar*)"role", (const xmlChar*)name);
 #else
-		_objectLocation = xmlNewTextChild(static_cast<xmlNodePtr>(_current), NULL, (const xmlChar*)name, NULL);
+		_objectLocation = xmlNewTextChild(static_cast<xmlNodePtr>(_current), nullptr, (const xmlChar*)name, nullptr);
 #endif
 	}
 }
 
 
 void* XMLArchive::addRootNode(const char* name) const {
-	xmlNodePtr rootNode = xmlNewDocRawNode((xmlDocPtr)_document, NULL, (const xmlChar*)name, NULL);
+	xmlNodePtr rootNode = xmlNewDocRawNode((xmlDocPtr)_document, nullptr, (const xmlChar*)name, nullptr);
 
 	if ( versionMajor() || versionMinor() )
 		xmlSetProp(rootNode, (const xmlChar*)"version",
 		                     (const xmlChar*)(Seiscomp::Core::toString(versionMajor()) + "." + Seiscomp::Core::toString(versionMinor())).c_str());
 	
 	if ( !_namespace.first.empty() || !_namespace.second.empty() )
-		xmlNewNs(rootNode, _namespace.second.empty()?NULL:(const xmlChar*)_namespace.second.c_str(),
-		                   _namespace.first.empty()?NULL:(const xmlChar*)_namespace.first.c_str());
+		xmlNewNs(rootNode, _namespace.second.empty()?nullptr:(const xmlChar*)_namespace.second.c_str(),
+		                   _namespace.first.empty()?nullptr:(const xmlChar*)_namespace.first.c_str());
 	
 	xmlDocSetRootElement((xmlDocPtr)_document, rootNode);
 
@@ -968,7 +968,7 @@ void XMLArchive::serialize(RootType* object) {
 
 void XMLArchive::serialize(SerializeDispatcher& disp) {
 	if ( !isReading() && (hint() & XML_ELEMENT) && !_property.empty() ) {
-		_objectLocation = xmlNewTextChild(static_cast<xmlNodePtr>(_current), NULL, (const xmlChar*)_property.c_str(), NULL);
+		_objectLocation = xmlNewTextChild(static_cast<xmlNodePtr>(_current), nullptr, (const xmlChar*)_property.c_str(), nullptr);
 		setHint((hint() & ~XML_ELEMENT) | XML_CDATA);
 	}
 

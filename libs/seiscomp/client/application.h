@@ -113,9 +113,9 @@ struct SC_SYSTEM_CLIENT_API Notification {
 		AcquisitionFinished
 	};
 
-	Notification() : object(NULL), type(Object) {}
+	Notification() : object(nullptr), type(Object) {}
 	Notification(Core::BaseObject * o) : object(o), type(Object) {}
-	Notification(int t) : object(NULL), type(t) {}
+	Notification(int t) : object(nullptr), type(t) {}
 	Notification(int t, Core::BaseObject * o) : object(o), type(t) {}
 
 	Core::BaseObject *object;
@@ -427,7 +427,7 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 
 		/**
 		 * @brief Routes a notifier to either add/update or removeObject.
-		 * @param notifier The notifier pointer which must not be NULL
+		 * @param notifier The notifier pointer which must not be nullptr
 		 */
 		void handleNotifier(DataModel::Notifier *notifier);
 

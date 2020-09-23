@@ -37,14 +37,14 @@ Origin *findOrigin(EventParameters *ep, const std::string& id) {
 	for ( size_t i = 0; i < ep->originCount(); ++i )
 		if ( ep->origin(i)->publicID() == id )
 			return ep->origin(i);
-	return NULL;
+	return nullptr;
 }
 
 Magnitude *findMagnitude(Origin *o, const std::string& id) {
 	for ( size_t i = 0; i < o->magnitudeCount(); ++i )
 		if ( o->magnitude(i)->publicID() == id )
 			return o->magnitude(i);
-	return NULL;
+	return nullptr;
 }
 
 ExporterCSV::ExporterCSV() {
@@ -60,10 +60,10 @@ const std::string& ExporterCSV::getDelimiter() const {
 }
 
 bool ExporterCSV::put(std::streambuf* buf, Core::BaseObject* obj) {
-	if ( buf == NULL ) return false;
-	if ( obj == NULL ) return false;
+	if ( buf == nullptr ) return false;
+	if ( obj == nullptr ) return false;
 	EventParameters* ep = EventParameters::Cast(obj);
-	if ( ep == NULL ) return false;
+	if ( ep == nullptr ) return false;
 
 	std::ostream os(buf);
 

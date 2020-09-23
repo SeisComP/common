@@ -135,11 +135,11 @@ class SC_GUI_API EventListView : public QWidget {
 		void focalMechanismAdded();
 
 		void originSelected(Seiscomp::DataModel::Origin*,
-		                    Seiscomp::DataModel::Event* = NULL);
+		                    Seiscomp::DataModel::Event* = nullptr);
 		void originUpdated(Seiscomp::DataModel::Origin*);
 
 		void focalMechanismSelected(Seiscomp::DataModel::FocalMechanism*,
-		                            Seiscomp::DataModel::Event* = NULL);
+		                            Seiscomp::DataModel::Event* = nullptr);
 		void focalMechanismUpdated(Seiscomp::DataModel::FocalMechanism*);
 
 		void eventSelected(Seiscomp::DataModel::Event*);

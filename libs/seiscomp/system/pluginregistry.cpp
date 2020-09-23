@@ -47,7 +47,7 @@ std::string sysLastError() {
 	int err = ::GetLastError();
 	if ( ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
 	                     FORMAT_MESSAGE_FROM_SYSTEM,
-	                     NULL, err, 0, (LPTSTR)&s, 0, NULL) == 0 ) {
+	                     nullptr, err, 0, (LPTSTR)&s, 0, nullptr) == 0 ) {
 		/* failed */
 		// Unknown error code %08x (%d)
 		msg = "unknown error: " + Seiscomp::Core::toString(err);
@@ -74,7 +74,7 @@ namespace System {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PluginRegistry *PluginRegistry::_instance = NULL;
+PluginRegistry *PluginRegistry::_instance = nullptr;
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -105,7 +105,7 @@ const Core::Plugin* PluginRegistry::iterator::operator*() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Core::Plugin* PluginRegistry::iterator::value_type(const iterator &it) {
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -124,7 +124,7 @@ PluginRegistry::PluginRegistry() {
 
 #ifndef WIN32
 	const char *env = getenv("LD_LIBRARY_PATH");
-	if ( env != NULL ) {
+	if ( env != nullptr ) {
 		std::vector<std::string> paths;
 		Core::split(paths, env, ":");
 		for ( size_t i = 0; i < paths.size(); ++i ) {
@@ -153,7 +153,7 @@ PluginRegistry::~PluginRegistry() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PluginRegistry *PluginRegistry::Instance() {
-	if ( _instance == NULL )
+	if ( _instance == nullptr )
 		_instance = new PluginRegistry();
 
 	return _instance;
@@ -207,8 +207,8 @@ int PluginRegistry::loadPlugins() {
 
 		SEISCOMP_DEBUG("Trying to open plugin at %s", filename.c_str());
 		PluginEntry e = open(filename);
-		if ( e.plugin == NULL ) {
-			if ( e.handle == NULL ) {
+		if ( e.plugin == nullptr ) {
+			if ( e.handle == nullptr ) {
 				SEISCOMP_ERROR("Unable to load plugin %s", it->c_str());
 				return -1;
 			}
@@ -281,7 +281,7 @@ void PluginRegistry::freePlugins() {
 	      ++it ) {
 		SEISCOMP_DEBUG("Unload plugin '%s'", it->plugin->description().description.c_str());
 
-		it->plugin = NULL;
+		it->plugin = nullptr;
 #ifndef WIN32
 		dlclose(it->handle);
 #else
@@ -348,11 +348,11 @@ PluginRegistry::PluginEntry PluginRegistry::open(const std::string &file) const 
 #endif
 	if ( !handle ) {
 		SEISCOMP_ERROR("Loading plugin %s failed: %s", file.c_str(), sysLastError().c_str());
-		return PluginEntry(NULL, NULL, file);
+		return PluginEntry(nullptr, nullptr, file);
 	}
 
 	if ( findLibrary(handle) ) {
-		return PluginEntry(handle, NULL, file);
+		return PluginEntry(handle, nullptr, file);
 	}
 
 #ifndef WIN32
@@ -372,7 +372,7 @@ PluginRegistry::PluginEntry PluginRegistry::open(const std::string &file) const 
 #else
 		FreeLibrary((HMODULE)handle);
 #endif
-		return PluginEntry(NULL, NULL, file);
+		return PluginEntry(nullptr, nullptr, file);
 	}
 
 	Core::Plugin *plugin = func();
@@ -383,7 +383,7 @@ PluginRegistry::PluginEntry PluginRegistry::open(const std::string &file) const 
 #else
 		FreeLibrary((HMODULE)handle);
 #endif
-		return PluginEntry(NULL, NULL, file);
+		return PluginEntry(nullptr, nullptr, file);
 	}
 
 	// Do not warn for different patch versions. They must be binary compatible

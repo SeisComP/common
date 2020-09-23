@@ -443,7 +443,7 @@ void Application::handleRecord(Record *rec) {
 
 	RecordPtr tmp(rec);
 
-	if ( rec->data() == NULL ) return;
+	if ( rec->data() == nullptr ) return;
 
 	if ( !_waveformBuffer.feed(rec) ) return;
 

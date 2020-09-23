@@ -163,7 +163,7 @@ class TileDirectory : public TileStore {
 			QString id = generatePath(level, column, row, _filePattern);
 
 			FILE* fp = fopen(id.toLatin1(), "rb");
-			if ( fp == NULL ) return false;
+			if ( fp == nullptr ) return false;
 			fclose(fp);
 
 			return true;
@@ -178,7 +178,7 @@ class TileDirectory : public TileStore {
 
 
 TileStore::TileStore()
-: _tree(NULL) {
+: _tree(nullptr) {
 
 }
 
@@ -189,13 +189,13 @@ void TileStore::setImageTree(ImageTree *tree) {
 
 
 void TileStore::finishedLoading(QImage &img, Alg::MapTreeNode *node) {
-	if ( _tree != NULL )
+	if ( _tree != nullptr )
 		_tree->finishedLoading(img, node);
 }
 
 
 void TileStore::invalidate(Alg::MapTreeNode *node) {
-	if ( _tree != NULL )
+	if ( _tree != nullptr )
 		_tree->invalidate(node);
 }
 
@@ -211,12 +211,12 @@ ImageTree::ImageTree(const MapsDesc &meta) {
 
 		MapsDesc desc(meta);
 
-		const char *oldLocale = setlocale(LC_ALL, NULL);
+		const char *oldLocale = setlocale(LC_ALL, nullptr);
 
 		if ( !_store->open(desc) ) {
 			SEISCOMP_ERROR("Failed to open tile store at %s",
 			               (const char*)desc.location.toLatin1());
-			_store = NULL;
+			_store = nullptr;
 		}
 		else {
 			_isMercatorProjected = desc.isMercatorProjected;
@@ -233,8 +233,8 @@ ImageTree::ImageTree(const MapsDesc &meta) {
 
 
 ImageTree::~ImageTree() {
-	_cache = NULL;
-	_store = NULL;
+	_cache = nullptr;
+	_store = nullptr;
 }
 
 

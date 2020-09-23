@@ -67,7 +67,7 @@ TimeDomain<TYPE>::TimeDomain()
 template<class TYPE>
 TimeDomain<TYPE>::~TimeDomain()
 {
-	if ( bandpass != NULL ) delete bandpass;
+	if ( bandpass != nullptr ) delete bandpass;
 }
 
 template<class TYPE>

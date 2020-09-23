@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_TIMEQUANTITY_H
 
 
-#include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/timepdf1d.h>
+#include <seiscomp/core/datetime.h>
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core.h>
 #include <seiscomp/core/exceptions.h>

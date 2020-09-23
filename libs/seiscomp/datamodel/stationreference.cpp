@@ -33,7 +33,7 @@ IMPLEMENT_SC_CLASS_DERIVED(StationReference, Object, "StationReference");
 
 
 StationReference::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("stationID", "string", false, false, true, true, false, false, NULL, &StationReference::setStationID, &StationReference::stationID));
+	addProperty(Core::simpleProperty("stationID", "string", false, false, true, true, false, false, nullptr, &StationReference::setStationID, &StationReference::stationID));
 }
 
 
@@ -176,7 +176,7 @@ const StationReferenceIndex& StationReference::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationReference::equalIndex(const StationReference* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -206,7 +206,7 @@ StationReference& StationReference::operator=(const StationReference& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationReference::assign(Object* other) {
 	StationReference* otherStationReference = StationReference::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherStationReference;
@@ -220,11 +220,11 @@ bool StationReference::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationReference::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	StationGroup* stationGroup = StationGroup::Cast(parent);
-	if ( stationGroup != NULL )
+	if ( stationGroup != nullptr )
 		return stationGroup->add(this);
 
 	SEISCOMP_ERROR("StationReference::attachTo(%s) -> wrong class type", parent->className());
@@ -237,11 +237,11 @@ bool StationReference::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationReference::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	StationGroup* stationGroup = StationGroup::Cast(object);
-	if ( stationGroup != NULL ) {
+	if ( stationGroup != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -249,7 +249,7 @@ bool StationReference::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			StationReference* child = stationGroup->stationReference(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return stationGroup->remove(child);
 			else {
 				SEISCOMP_DEBUG("StationReference::detachFrom(StationGroup): stationReference has not been found");
@@ -268,7 +268,7 @@ bool StationReference::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationReference::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

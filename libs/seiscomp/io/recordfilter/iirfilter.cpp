@@ -69,7 +69,7 @@ RecordIIRFilter<T>::RecordIIRFilter(InplaceFilterType *filter)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 RecordIIRFilter<T>::~RecordIIRFilter() {
-	if ( _filter != NULL )
+	if ( _filter != nullptr )
 		delete _filter;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -92,7 +92,7 @@ RecordIIRFilter<T>::operator=(RecordIIRFilter<T>::InplaceFilterType *f) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 void RecordIIRFilter<T>::setIIR(Math::Filtering::InPlaceFilter<T> *f) {
-	if ( _filter != NULL )
+	if ( _filter != nullptr )
 		delete _filter;
 
 	_lastEndTime = Core::Time();
@@ -107,10 +107,10 @@ void RecordIIRFilter<T>::setIIR(Math::Filtering::InPlaceFilter<T> *f) {
 template <typename T>
 Record *RecordIIRFilter<T>::feed(const Record *rec) {
 	const Array *data = rec->data();
-	if ( data == NULL ) return NULL;
+	if ( data == nullptr ) return nullptr;
 
 	TypedArray<T> *tdata = (TypedArray<T>*)data->copy(dataType<T>());
-	if ( tdata == NULL ) return NULL;
+	if ( tdata == nullptr ) return nullptr;
 
 	// Copy the record and assign the data
 	GenericRecord *out = new GenericRecord(*rec);
@@ -132,7 +132,7 @@ Record *RecordIIRFilter<T>::feed(const Record *rec) {
 template <typename T>
 bool RecordIIRFilter<T>::apply(GenericRecord *rec) {
 	// No filter is no error
-	if ( _filter == NULL ) return true;
+	if ( _filter == nullptr ) return true;
 
 	if ( rec->dataType() != dataType<T>() ) {
 		throw Core::TypeConversionException("RecordFilter::IIR: wrong data type");
@@ -187,7 +187,7 @@ bool RecordIIRFilter<T>::apply(GenericRecord *rec) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 Record *RecordIIRFilter<T>::flush() {
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -215,7 +215,7 @@ void RecordIIRFilter<T>::reset() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 RecordFilterInterface* RecordIIRFilter<T>::clone() const {
-	return new RecordIIRFilter<T>(_filter != NULL?_filter->clone():NULL);
+	return new RecordIIRFilter<T>(_filter != nullptr?_filter->clone():nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

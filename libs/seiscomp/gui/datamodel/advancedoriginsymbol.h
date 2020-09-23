@@ -41,13 +41,13 @@ namespace Gui {
 
 class SC_GUI_API AdvancedOriginSymbol : public OriginSymbol {
 	public:
-		AdvancedOriginSymbol(Map::Decorator* decorator = NULL);
+		AdvancedOriginSymbol(Map::Decorator* decorator = nullptr);
 		AdvancedOriginSymbol(double latitude,
 		                     double longitude,
 		                     double depth = 0,
-		                     Map::Decorator* decorator = NULL);
+		                     Map::Decorator* decorator = nullptr);
 		AdvancedOriginSymbol(DataModel::Origin *origin,
-		                     Map::Decorator* decorator = NULL);
+		                     Map::Decorator* decorator = nullptr);
 
 	public:
 		/**

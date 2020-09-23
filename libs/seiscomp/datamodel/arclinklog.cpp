@@ -62,11 +62,11 @@ ArclinkLog::ArclinkLog(const ArclinkLog& other)
 ArclinkLog::~ArclinkLog() {
 	std::for_each(_arclinkRequests.begin(), _arclinkRequests.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&ArclinkRequest::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&ArclinkRequestPtr::get)));
 	std::for_each(_arclinkUsers.begin(), _arclinkUsers.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&ArclinkUser::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&ArclinkUserPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -114,7 +114,7 @@ ArclinkLog& ArclinkLog::operator=(const ArclinkLog& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkLog::assign(Object* other) {
 	ArclinkLog* otherArclinkLog = ArclinkLog::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherArclinkLog;
@@ -167,7 +167,7 @@ Object* ArclinkLog::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkLog::updateChild(Object* child) {
 	ArclinkRequest* arclinkRequestChild = ArclinkRequest::Cast(child);
-	if ( arclinkRequestChild != NULL ) {
+	if ( arclinkRequestChild != nullptr ) {
 		ArclinkRequest* arclinkRequestElement
 			= ArclinkRequest::Cast(PublicObject::Find(arclinkRequestChild->publicID()));
 		if ( arclinkRequestElement && arclinkRequestElement->parent() == this ) {
@@ -179,7 +179,7 @@ bool ArclinkLog::updateChild(Object* child) {
 	}
 
 	ArclinkUser* arclinkUserChild = ArclinkUser::Cast(child);
-	if ( arclinkUserChild != NULL ) {
+	if ( arclinkUserChild != nullptr ) {
 		ArclinkUser* arclinkUserElement
 			= ArclinkUser::Cast(PublicObject::Find(arclinkUserChild->publicID()));
 		if ( arclinkUserElement && arclinkUserElement->parent() == this ) {
@@ -233,7 +233,7 @@ ArclinkRequest* ArclinkLog::arclinkRequest(const ArclinkRequestIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -246,7 +246,7 @@ ArclinkRequest* ArclinkLog::findArclinkRequest(const std::string& publicID) cons
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -255,11 +255,11 @@ ArclinkRequest* ArclinkLog::findArclinkRequest(const std::string& publicID) cons
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkLog::add(ArclinkRequest* arclinkRequest) {
-	if ( arclinkRequest == NULL )
+	if ( arclinkRequest == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( arclinkRequest->parent() != NULL ) {
+	if ( arclinkRequest->parent() != nullptr ) {
 		SEISCOMP_ERROR("ArclinkLog::add(ArclinkRequest*) -> element has already a parent");
 		return false;
 	}
@@ -301,7 +301,7 @@ bool ArclinkLog::add(ArclinkRequest* arclinkRequest) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkLog::remove(ArclinkRequest* arclinkRequest) {
-	if ( arclinkRequest == NULL )
+	if ( arclinkRequest == nullptr )
 		return false;
 
 	if ( arclinkRequest->parent() != this ) {
@@ -322,7 +322,7 @@ bool ArclinkLog::remove(ArclinkRequest* arclinkRequest) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_arclinkRequests.erase(it);
@@ -346,7 +346,7 @@ bool ArclinkLog::removeArclinkRequest(size_t i) {
 		_arclinkRequests[i]->accept(&nc);
 	}
 
-	_arclinkRequests[i]->setParent(NULL);
+	_arclinkRequests[i]->setParent(nullptr);
 	childRemoved(_arclinkRequests[i].get());
 
 	_arclinkRequests.erase(_arclinkRequests.begin() + i);
@@ -361,7 +361,7 @@ bool ArclinkLog::removeArclinkRequest(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkLog::removeArclinkRequest(const ArclinkRequestIndex& i) {
 	ArclinkRequest* object = arclinkRequest(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -393,7 +393,7 @@ ArclinkUser* ArclinkLog::arclinkUser(const ArclinkUserIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -406,7 +406,7 @@ ArclinkUser* ArclinkLog::findArclinkUser(const std::string& publicID) const {
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -415,11 +415,11 @@ ArclinkUser* ArclinkLog::findArclinkUser(const std::string& publicID) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkLog::add(ArclinkUser* arclinkUser) {
-	if ( arclinkUser == NULL )
+	if ( arclinkUser == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( arclinkUser->parent() != NULL ) {
+	if ( arclinkUser->parent() != nullptr ) {
 		SEISCOMP_ERROR("ArclinkLog::add(ArclinkUser*) -> element has already a parent");
 		return false;
 	}
@@ -461,7 +461,7 @@ bool ArclinkLog::add(ArclinkUser* arclinkUser) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkLog::remove(ArclinkUser* arclinkUser) {
-	if ( arclinkUser == NULL )
+	if ( arclinkUser == nullptr )
 		return false;
 
 	if ( arclinkUser->parent() != this ) {
@@ -482,7 +482,7 @@ bool ArclinkLog::remove(ArclinkUser* arclinkUser) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_arclinkUsers.erase(it);
@@ -506,7 +506,7 @@ bool ArclinkLog::removeArclinkUser(size_t i) {
 		_arclinkUsers[i]->accept(&nc);
 	}
 
-	_arclinkUsers[i]->setParent(NULL);
+	_arclinkUsers[i]->setParent(nullptr);
 	childRemoved(_arclinkUsers[i].get());
 
 	_arclinkUsers.erase(_arclinkUsers.begin() + i);
@@ -521,7 +521,7 @@ bool ArclinkLog::removeArclinkUser(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkLog::removeArclinkUser(const ArclinkUserIndex& i) {
 	ArclinkUser* object = arclinkUser(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

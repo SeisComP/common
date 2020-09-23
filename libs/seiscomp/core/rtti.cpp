@@ -52,10 +52,10 @@ bool RTTI::operator!=(const RTTI& other) const {
 
 bool RTTI::before(const RTTI& other) const {
 	const RTTI* parent = other.parent();
-	while ( parent != NULL && parent != this )
+	while ( parent != nullptr && parent != this )
 		parent = parent->parent();
 
-	return parent != NULL;
+	return parent != nullptr;
 }
 
 

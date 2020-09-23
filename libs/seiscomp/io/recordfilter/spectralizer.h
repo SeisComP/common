@@ -129,7 +129,7 @@ class SC_SYSTEM_CORE_API Spectralizer : public Core::BaseObject {
 		//! the caller.
 		bool push(const Record *rec);
 
-		//! Pops an spectrum if available. Returns NULL if more data are
+		//! Pops an spectrum if available. Returns nullptr if more data are
 		//! required.
 		Spectrum *pop();
 
@@ -188,7 +188,7 @@ class SC_SYSTEM_CORE_API Spectralizer : public Core::BaseObject {
 					filter->setSamplingFrequency(sampleRate);
 				}
 				else
-					filter = NULL;
+					filter = nullptr;
 			}
 		};
 

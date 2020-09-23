@@ -54,8 +54,8 @@ GenericRecord::GenericRecord(std::string net, std::string sta,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GenericRecord::GenericRecord(const GenericRecord& rec): Record(rec) {
-	_data = rec._data?rec._data->clone():NULL;
-	_clipMask = rec._clipMask?new BitSet(*rec._clipMask):NULL;
+	_data = rec._data?rec._data->clone():nullptr;
+	_clipMask = rec._clipMask?new BitSet(*rec._clipMask):nullptr;
 	dataUpdated();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -81,7 +81,7 @@ GenericRecord::~GenericRecord() {}
 GenericRecord& GenericRecord::operator=(const GenericRecord& rec) {
 	if (this != &rec) {
 		Record::operator=(rec);
-		_data = rec._data?rec._data->clone():NULL;
+		_data = rec._data?rec._data->clone():nullptr;
 	}
 
 	return *this;
@@ -139,7 +139,7 @@ const BitSet *GenericRecord::clipMask() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GenericRecord::setData(Array* data) {
 	_data = data;
-	_clipMask = NULL;
+	_clipMask = nullptr;
 	dataUpdated();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -150,7 +150,7 @@ void GenericRecord::setData(Array* data) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GenericRecord::setData(int size, const void *data, Array::DataType datatype) {
 	_data = ArrayFactory::Create(_datatype,datatype,size,data);
-	_clipMask = NULL;
+	_clipMask = nullptr;
 	dataUpdated();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

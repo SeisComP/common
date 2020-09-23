@@ -128,13 +128,13 @@ const FormatAPIMap APIMap = createAPIMap();
 const char *SummaryTimeFormat = "%F %T";
 const char *RequestTimeFormat = "%Y,%m,%d,%H,%M,%S,%6f";
 
-Connection::Connection() : _sock(NULL), _options(opIgnore) {}
+Connection::Connection() : _sock(nullptr), _options(opIgnore) {}
 
 Connection::~Connection() {
 	if ( _sock ) {
 		disconnect();
 		delete _sock;
-		_sock = NULL;
+		_sock = nullptr;
 	}
 }
 
@@ -145,7 +145,7 @@ bool Connection::connected() const {
 bool Connection::init(const string &url, int options) {
 	disconnect();
 	delete _sock;
-	_sock = NULL;
+	_sock = nullptr;
 	setOptions(options);
 
 	// parse URL, e.g. qls://user:pass@host:port

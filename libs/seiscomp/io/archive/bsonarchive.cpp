@@ -45,7 +45,7 @@ namespace {
 
 ssize_t streamBufReadCallback(void* context, uint8_t* buffer, size_t len) {
 	std::streambuf* buf = static_cast<std::streambuf*>(context);
-	if ( buf == NULL ) return -1;
+	if ( buf == nullptr ) return -1;
 
 	long count = 0;
 	int ch = buf->sgetc();
@@ -72,12 +72,12 @@ ssize_t streamBufReadCallback2(void* context, void* buffer, size_t len) {
 class BSONArchive::BSONImpl : public Core::BaseObject {
 	public:
 		BSONImpl() {
-			root = NULL;
-			current = NULL;
-			children = NULL;
-			bsonReader = NULL;
-			jsonReader = NULL;
-			links = NULL;
+			root = nullptr;
+			current = nullptr;
+			children = nullptr;
+			bsonReader = nullptr;
+			jsonReader = nullptr;
+			links = nullptr;
 		}
 
 		const bson_t       *root;
@@ -103,7 +103,7 @@ BSONArchive::BSONArchive() : Seiscomp::Core::Archive() {
 	_siblingCount = 0;
 	_startSequence = false;
 	_validObject = false;
-	_buf = NULL;
+	_buf = nullptr;
 	_deleteOnClose = false;
 	_compression = false;
 	_json = false;
@@ -121,7 +121,7 @@ BSONArchive::BSONArchive(std::streambuf* buf, bool isReading, int forceWriteVers
 	_siblingCount = 0;
 	_startSequence = false;
 	_validObject = false;
-	_buf = NULL;
+	_buf = nullptr;
 	_deleteOnClose = false;
 	_compression = false;
 	_json = false;
@@ -152,7 +152,7 @@ BSONArchive::~BSONArchive() {
 bool BSONArchive::open(std::streambuf* buf) {
 	close();
 
-	if ( buf == NULL ) return false;
+	if ( buf == nullptr ) return false;
 
 	_buf = buf;
 	_deleteOnClose = false;
@@ -174,7 +174,7 @@ bool BSONArchive::open(const char* filename) {
 	}
 	else {
 		std::filebuf* fb = new std::filebuf();
-		if ( fb->open(filename, std::ios::in) == NULL ) {
+		if ( fb->open(filename, std::ios::in) == nullptr ) {
 			delete fb;
 			return false;
 		}
@@ -192,7 +192,7 @@ bool BSONArchive::open(const char* filename) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool BSONArchive::open() {
-	if ( !Seiscomp::Core::Archive::open(NULL) )
+	if ( !Seiscomp::Core::Archive::open(nullptr) )
 		return false;
 
 	std::streambuf* buf = _buf;
@@ -208,11 +208,11 @@ bool BSONArchive::open() {
 		_impl->jsonReader = bson_json_reader_new(
 				buf,
 				streamBufReadCallback,
-				NULL,
+				nullptr,
 				false,
 				16384);
 
-		if ( _impl->jsonReader == NULL )
+		if ( _impl->jsonReader == nullptr )
 			return false;
 
 		_impl->root = bson_new();
@@ -225,7 +225,7 @@ bool BSONArchive::open() {
 
 			case 0: // no data was read
 				bson_json_reader_destroy(_impl->jsonReader);
-				_impl->jsonReader = NULL;
+				_impl->jsonReader = nullptr;
 				return false;
 
 			default:
@@ -236,16 +236,16 @@ bool BSONArchive::open() {
 		_impl->bsonReader = bson_reader_new_from_handle(
 				buf,
 				streamBufReadCallback2,
-				NULL);
+				nullptr);
 
-		if ( _impl->bsonReader == NULL )
+		if ( _impl->bsonReader == nullptr )
 			return false;
 
-		_impl->root = bson_reader_read(_impl->bsonReader, NULL);
+		_impl->root = bson_reader_read(_impl->bsonReader, nullptr);
 
-		if ( _impl->root == NULL ) {
+		if ( _impl->root == nullptr ) {
 			bson_reader_destroy(_impl->bsonReader);
-			_impl->bsonReader = NULL;
+			_impl->bsonReader = nullptr;
 			return false;
 		}
 	}
@@ -254,7 +254,7 @@ bool BSONArchive::open() {
 	const char *ver;
 	uint32_t len;
 
-	if ( bson_iter_init_find(&iter, _impl->root, "version") && ((ver = bson_iter_utf8(&iter, &len)) != NULL) ) {
+	if ( bson_iter_init_find(&iter, _impl->root, "version") && ((ver = bson_iter_utf8(&iter, &len)) != nullptr) ) {
 		std::string version(ver, len);
 		size_t pos = version.find(".");
 
@@ -315,7 +315,7 @@ bool BSONArchive::create(const char* filename, bool writeVersion) {
 	}
 	else {
 		std::filebuf* fb = new std::filebuf();
-		if ( fb->open(filename, std::ios::out) == NULL ) {
+		if ( fb->open(filename, std::ios::out) == nullptr ) {
 			delete fb;
 			return false;
 		}
@@ -333,7 +333,7 @@ bool BSONArchive::create(const char* filename, bool writeVersion) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool BSONArchive::create(bool writeVersion) {
-	if ( !Seiscomp::Core::Archive::create(NULL) )
+	if ( !Seiscomp::Core::Archive::create(nullptr) )
 		return false;
 
 	if ( writeVersion ) {
@@ -360,21 +360,21 @@ bool BSONArchive::create(bool writeVersion) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BSONArchive::close() {
 	if ( isReading() ) {
-		if ( _impl->jsonReader != NULL ) {
+		if ( _impl->jsonReader != nullptr ) {
 			bson_destroy((bson_t *)_impl->root);
 			bson_json_reader_destroy(_impl->jsonReader);
-			_impl->root = NULL;
-			_impl->jsonReader = NULL;
+			_impl->root = nullptr;
+			_impl->jsonReader = nullptr;
 		}
-		else if ( _impl->bsonReader != NULL ) {
+		else if ( _impl->bsonReader != nullptr ) {
 			// _root points into reader
 			bson_reader_destroy(_impl->bsonReader);
-			_impl->root = NULL;
-			_impl->bsonReader = NULL;
+			_impl->root = nullptr;
+			_impl->bsonReader = nullptr;
 		}
 	}
 	else {
-		if ( _impl->links != NULL ) {
+		if ( _impl->links != nullptr ) {
 			while ( _impl->links->size() > 0 ) {
 				std::pair<std::string, bson_t*> link = _impl->links->front();
 				_impl->links->pop_front();
@@ -383,7 +383,7 @@ void BSONArchive::close() {
 			}
 
 			delete _impl->links;
-			_impl->links = NULL;
+			_impl->links = nullptr;
 		}
 
 		if ( _buf ) {
@@ -407,9 +407,9 @@ void BSONArchive::close() {
 			}
 		}
 
-		if ( _impl->current != NULL ) {
+		if ( _impl->current != nullptr ) {
 			bson_destroy(_impl->current);
-			_impl->current = NULL;
+			_impl->current = nullptr;
 		}
 	}
 
@@ -417,7 +417,7 @@ void BSONArchive::close() {
 		delete _buf;
 
 	_deleteOnClose = false;
-	_buf = NULL;
+	_buf = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -451,7 +451,7 @@ void BSONArchive::read(Seiscomp::Core::Time& value) {
 			break;
 
 		case BSON_TYPE_UTF8:
-			if ( Core::fromString(value, bson_iter_utf8(&_impl->iter, NULL)) ) {
+			if ( Core::fromString(value, bson_iter_utf8(&_impl->iter, nullptr)) ) {
 				setValidity(true);
 				break;
 			}
@@ -981,9 +981,9 @@ void BSONArchive::write(std::vector<std::complex<double> >& value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool BSONArchive::locateObjectByName(const char* name, const char* targetClass, bool) {
-	_className = (targetClass != NULL) ? targetClass : "";
+	_className = (targetClass != nullptr) ? targetClass : "";
 
-	if ( targetClass != NULL ) {
+	if ( targetClass != nullptr ) {
 		if ( hint() & STATIC_TYPE ) {
 			if ( isReading() ) {
 				_impl->iter = _impl->iterParent;
@@ -1008,7 +1008,7 @@ bool BSONArchive::locateObjectByName(const char* name, const char* targetClass, 
 			}
 			else {
 				_attribName = name;
-				_impl->children = NULL;
+				_impl->children = nullptr;
 				return true;
 			}
 		}
@@ -1038,7 +1038,7 @@ bool BSONArchive::locateObjectByName(const char* name, const char* targetClass, 
 			}
 			else {
 				_attribName = targetClass;
-				_impl->children = NULL;
+				_impl->children = nullptr;
 				return true;
 			}
 		}
@@ -1109,7 +1109,7 @@ std::string BSONArchive::determineClassName() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BSONArchive::setClassName(const char* className) {
-	if ( className != NULL ) {
+	if ( className != nullptr ) {
 		_className = className;
 		_attribName = className;
 	}
@@ -1155,7 +1155,7 @@ void BSONArchive::serialize(RootType* object) {
 	}
 	else {
 		_impl->current = bson_new();
-		_impl->children = NULL;
+		_impl->children = nullptr;
 		_siblingCount = 0;
 		_impl->links = new std::list<std::pair<std::string, bson_t*> >;
 		_startSequence = false;
@@ -1173,7 +1173,7 @@ void BSONArchive::serialize(RootType* object) {
 
 		delete _impl->links;
 
-		if ( children == NULL ) {
+		if ( children == nullptr ) {
 			bson_append_document(current, attribName.c_str(), -1, _impl->current);
 		}
 		else {

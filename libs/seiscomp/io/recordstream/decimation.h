@@ -91,7 +91,7 @@ class SC_SYSTEM_CORE_API Decimation : public Seiscomp::IO::RecordStream {
 		typedef std::vector<double> Coefficients;
 
 		struct ResampleStage {
-			ResampleStage() : nextStage(NULL) {}
+			ResampleStage() : nextStage(nullptr) {}
 			~ResampleStage() { if ( nextStage ) delete nextStage; }
 
 			double targetRate;

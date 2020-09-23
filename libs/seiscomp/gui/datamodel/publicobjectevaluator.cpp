@@ -58,15 +58,15 @@ namespace Seiscomp {
 namespace Gui {
 
 
-PublicObjectEvaluator *PublicObjectEvaluator::_instance = NULL;
+PublicObjectEvaluator *PublicObjectEvaluator::_instance = nullptr;
 
 
-PublicObjectEvaluator::PublicObjectEvaluator() : _reader(NULL) {
+PublicObjectEvaluator::PublicObjectEvaluator() : _reader(nullptr) {
 }
 
 
 PublicObjectEvaluator &PublicObjectEvaluator::Instance() {
-	if ( _instance == NULL ) _instance = new PublicObjectEvaluator;
+	if ( _instance == nullptr ) _instance = new PublicObjectEvaluator;
 	return *_instance;
 }
 
@@ -88,10 +88,10 @@ bool PublicObjectEvaluator::setDatabaseURI(const char *uri) {
 
 bool PublicObjectEvaluator::connect() {
 	_reader.close();
-	_reader.setDriver(NULL);
+	_reader.setDriver(nullptr);
 
 	IO::DatabaseInterfacePtr db = IO::DatabaseInterface::Open(_databaseURI.c_str());
-	if ( db == NULL ) {
+	if ( db == nullptr ) {
 		SEISCOMP_WARNING("[obj eval] setting database %s failed", _databaseURI.c_str());
 		return false;
 	}
@@ -118,7 +118,7 @@ bool PublicObjectEvaluator::append(void *owner, const QString &publicID,
 	else {
 		Scripts::iterator jit = it.value()->scripts.find(script);
 		if ( jit != it.value()->scripts.end() ) {
-			if ( jit.value() != owner ) jit.value() = NULL;
+			if ( jit.value() != owner ) jit.value() = nullptr;
 		}
 		else
 			it.value()->scripts.insert(script, owner);
@@ -150,7 +150,7 @@ bool PublicObjectEvaluator::append(void *owner, const QString &publicID,
 		foreach ( const QString &script, scripts ) {
 			Scripts::iterator jit = it.value()->scripts.find(script);
 			if ( jit != it.value()->scripts.end() ) {
-				if ( jit.value() != owner ) jit.value() = NULL;
+				if ( jit.value() != owner ) jit.value() = nullptr;
 			}
 			else
 				it.value()->scripts.insert(script, owner);
@@ -181,7 +181,7 @@ bool PublicObjectEvaluator::prepend(void *owner, const QString &publicID,
 	else {
 		Scripts::iterator jit = it.value()->scripts.find(script);
 		if ( jit != it.value()->scripts.end() ) {
-			if ( jit.value() != owner ) jit.value() = NULL;
+			if ( jit.value() != owner ) jit.value() = nullptr;
 		}
 		else
 			it.value()->scripts.insert(script, owner);
@@ -220,7 +220,7 @@ bool PublicObjectEvaluator::prepend(void *owner, const QString &publicID,
 		foreach ( const QString &script, scripts ) {
 			Scripts::iterator jit = it.value()->scripts.find(script);
 			if ( jit != it.value()->scripts.end() ) {
-				if ( jit.value() != owner ) jit.value() = NULL;
+				if ( jit.value() != owner ) jit.value() = nullptr;
 			}
 			else
 				it.value()->scripts.insert(script, owner);
@@ -273,7 +273,7 @@ bool PublicObjectEvaluator::erase(void *owner, const QString &publicID, const QS
 	if ( jit == it.value()->scripts.end() ) return false;
 
 	// Owner set and script has different owner?
-	if ( owner != NULL && jit.value() != owner ) return false;
+	if ( owner != nullptr && jit.value() != owner ) return false;
 
 	it.value()->scripts.erase(jit);
 	if ( it.value()->scripts.isEmpty() ) {
@@ -292,7 +292,7 @@ bool PublicObjectEvaluator::erase(void *owner, const QString &publicID) {
 	JobIDMap::iterator it = _jobIDLookup.find(publicID);
 	if ( it == _jobIDLookup.end() ) return false;
 
-	if ( owner != NULL ) {
+	if ( owner != nullptr ) {
 		Scripts::iterator jit;
 		for ( jit = it.value()->scripts.begin(); jit != it.value()->scripts.end(); ) {
 			if ( jit.value() != owner )
@@ -327,7 +327,7 @@ void PublicObjectEvaluator::clear(void *owner) {
 	// Protect the list
 	_mutexJobList.lock();
 
-	if ( owner == NULL ) {
+	if ( owner == nullptr ) {
 		_jobs = JobList();
 		_jobIDLookup = JobIDMap();
 		_mutexJobList.unlock();
@@ -427,7 +427,7 @@ void PublicObjectEvaluator::run() {
 		// Load the entire object including childs from database
 		DataModel::PublicObjectPtr o = _reader.loadObject(job.classType, job.publicID.toStdString());
 		DataModel::PublicObject *po = o.get();
-		if ( po == NULL ) {
+		if ( po == nullptr ) {
 			SEISCOMP_ERROR("[obj eval] %s not found in database",
 			               qPrintable(job.publicID));
 			_mutexJobList.lock();

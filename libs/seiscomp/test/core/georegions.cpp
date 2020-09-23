@@ -50,7 +50,7 @@ struct RegionTest {
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(poly1) {
 	Logging::enableConsoleLogging(Logging::getAll());
-	GeoFeature testPoly1("test1", NULL, 0);
+	GeoFeature testPoly1("test1", nullptr, 0);
 	testPoly1.addVertex(-20,-20);
 	testPoly1.addVertex(20,-20);
 	testPoly1.addVertex(20,20);
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(poly1) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(poly2) {
-	GeoFeature testPoly2("test2", NULL, 0);
+	GeoFeature testPoly2("test2", nullptr, 0);
 
 	testPoly2.addVertex(-20,160);
 	testPoly2.addVertex(20,160);
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(poly2) {
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(poly3) {
 	// Test of "contains" in sub polygons
-	GeoFeature testPoly3("test3", NULL, 0);
+	GeoFeature testPoly3("test3", nullptr, 0);
 	testPoly3.addVertex(2,2);
 	testPoly3.addVertex(1,2);
 	testPoly3.addVertex(1,1);
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(poly3) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(poly4) {
-	GeoFeature testPoly4("test4", NULL, 0);
+	GeoFeature testPoly4("test4", nullptr, 0);
 	testPoly4.addVertex(46.4235710121, 7.35353852642);
 	testPoly4.addVertex(46.3596457104, 7.42766849702);
 	testPoly4.addVertex(46.318197187, 7.40082802204);
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(poly4) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(poly5) {
-	GeoFeature testPoly5("test5", NULL, 0);
+	GeoFeature testPoly5("test5", nullptr, 0);
 	testPoly5.addVertex(46, 7);
 	testPoly5.addVertex(46, 8);
 	testPoly5.addVertex(45, 8);
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(poly5) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(poly6) {
-	GeoFeature testPoly6("test6", NULL, 0);
+	GeoFeature testPoly6("test6", nullptr, 0);
 	testPoly6.addVertex(0, 0);
 	testPoly6.addVertex(-2, 2);
 	testPoly6.addVertex(-4, 2);
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(poly6) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(poly7) {
-	GeoFeature testPoly7("test7", NULL, 0);
+	GeoFeature testPoly7("test7", nullptr, 0);
 	testPoly7.addVertex(-90, -180);
 	testPoly7.addVertex(-90, -60);
 	testPoly7.addVertex(-90, 60);
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(fepRegions) {
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(bnaRegions) {
 	GeoFeatureSet features;
-	features.readBNAFile("./data/bna/brandenburg.bna", NULL);
+	features.readBNAFile("./data/bna/brandenburg.bna", nullptr);
 	BOOST_REQUIRE(!features.features().empty());
 
 	GeoFeature *f = features.features()[0];
@@ -249,29 +249,29 @@ BOOST_AUTO_TEST_CASE(bnaRegions) {
 
 	features.clear();
 
-	BOOST_REQUIRE(features.readBNAFile("./data/bna/bna-with-comments.bna", NULL));
+	BOOST_REQUIRE(features.readBNAFile("./data/bna/bna-with-comments.bna", nullptr));
 
 	features.clear();
-	features.readBNAFile("./data/bna/header-with-attributes.bna", NULL);
+	features.readBNAFile("./data/bna/header-with-attributes.bna", nullptr);
 
 	vector<GeoFeature> expected;
 	GeoFeature::Attributes atts;
 
 	atts["eventType"] = "quarry blast";
 	atts["maxDepth"] = "10";
-	expected.push_back(GeoFeature("name1", NULL, 4, atts));
+	expected.push_back(GeoFeature("name1", nullptr, 4, atts));
 	atts.clear();
 
 	atts["test1"] = "1,2,3";
 	atts["test2"] = "1:2:3";
 	atts["test3"] = "1,2,3";
 	atts["test4"] = "1:2:3";
-	expected.push_back(GeoFeature("name2", NULL, 5, atts));
+	expected.push_back(GeoFeature("name2", nullptr, 5, atts));
 	atts.clear();
 
 	atts["test1"] = "1,2,3";
 	atts["te:st"] = "bar";
-	expected.push_back(GeoFeature("name3", NULL, 1, atts));
+	expected.push_back(GeoFeature("name3", nullptr, 1, atts));
 	atts.clear();
 
 	BOOST_REQUIRE(features.features().size() == expected.size());

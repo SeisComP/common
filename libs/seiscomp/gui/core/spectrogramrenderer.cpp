@@ -182,7 +182,7 @@ bool SpectrogramRenderer::feed(const Record *rec) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SpectrogramRenderer::feedSequence(const RecordSequence *seq) {
-	if ( seq == NULL ) return true;
+	if ( seq == nullptr ) return true;
 
 	RecordSequence::const_iterator it;
 	bool result = false;

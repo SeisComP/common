@@ -37,10 +37,10 @@ QMap<QString, TextureCache::CacheEntry> TextureCache::_images;
 QMutex imageCacheMutex(QMutex::Recursive);
 
 
-TextureCache *getTexelCache = NULL;
+TextureCache *getTexelCache = nullptr;
 
 Texture::Texture() {
-	data = NULL;
+	data = nullptr;
 	w = 0;
 	h = 0;
 	isDummy = false;
@@ -58,8 +58,8 @@ int Texture::numBytes() const {
 
 
 bool Texture::load(TextureCache *cache, Alg::MapTreeNode *node) {
-	data = NULL;
-	if ( node == NULL || !cache->load(image, node) || image.isNull() ) {
+	data = nullptr;
+	if ( node == nullptr || !cache->load(image, node) || image.isNull() ) {
 		image = QImage(1,1, QImage::Format_RGB32);
 		QRgb *bits = (QRgb*)image.bits();
 		*bits = qRgb(224,224,224);
@@ -101,7 +101,7 @@ TextureCache::TextureCache(TileStore *tree, bool mercatorProjected) {
 	_isMercatorProjected = mercatorProjected;
 	_storedBytes = 0;
 	_textureCacheLimit = 128*1024*1024; // 128mb cache limit
-	_lastTile[0] = _lastTile[1] = NULL;
+	_lastTile[0] = _lastTile[1] = nullptr;
 	_currentIndex = 0;
 	_currentTick = 0;
 }
@@ -111,10 +111,10 @@ TextureCache::~TextureCache() {
 	// remove storage textures
 	for ( Storage::iterator it = _storage.begin(); it != _storage.end(); ++it ) {
 		Alg::MapTreeNode *node = it.key();
-		if ( node != NULL )
+		if ( node != nullptr )
 			remove(_mapTree->getID(node));
 		else
-			std::cerr << "Warning: cached texture node is NULL" << std::endl;
+			std::cerr << "Warning: cached texture node is nullptr" << std::endl;
 	}
 }
 
@@ -213,10 +213,10 @@ void TextureCache::checkResources(Texture *tex) {
 		}
 
 		if ( _lastTile[0] == min_tex.get() )
-			_lastTile[0] = NULL;
+			_lastTile[0] = nullptr;
 
 		if ( _lastTile[1] == min_tex.get() )
-			_lastTile[1] = NULL;
+			_lastTile[1] = nullptr;
 	}
 }
 
@@ -278,10 +278,10 @@ void TextureCache::invalidateTexture(Alg::MapTreeNode *node) {
 			}
 
 			if ( _lastTile[0] == tex )
-				_lastTile[0] = NULL;
+				_lastTile[0] = nullptr;
 
 			if ( _lastTile[1] == tex )
-				_lastTile[1] = NULL;
+				_lastTile[1] = nullptr;
 
 			// Update storage size
 			_storedBytes -= tex->numBytes();
@@ -298,7 +298,7 @@ void TextureCache::clear() {
 	_storage.clear();
 	_images.clear();
 	_storedBytes = 0;
-	_lastTile[0] = _lastTile[1] = NULL;
+	_lastTile[0] = _lastTile[1] = nullptr;
 	_currentIndex = 0;
 	_currentTick = 0;
 }
@@ -320,7 +320,7 @@ Alg::MapTreeNode *TextureCache::getNode(Alg::MapTreeNode *node, const TextureID 
 	if ( node->level() == id.level ) {
 		if ( node->row() == id.row && node->column() == id.column )
 			return node;
-		return NULL;
+		return nullptr;
 	}
 
 	int shift = id.level-node->level()-1;
@@ -371,7 +371,7 @@ Texture *TextureCache::get(const TextureID &id) {
 		++_currentTick;
 	}
 
-	Alg::MapTreeNode *node = NULL;
+	Alg::MapTreeNode *node = nullptr;
 	Lookup::iterator lit = _firstLevel.find(id);
 	if ( lit != _firstLevel.end() )
 		tex = *lit;
@@ -398,9 +398,9 @@ Texture *TextureCache::get(const TextureID &id) {
 	// If its a dummy texture then travel up the parent chain to check
 	// for valid textures
 	if ( tex->isDummy ) {
-		if ( node == NULL ) node = getNode(_mapTree, id);
+		if ( node == nullptr ) node = getNode(_mapTree, id);
 
-		while ( (node = node->parent()) != NULL ) {
+		while ( (node = node->parent()) != nullptr ) {
 			it = _storage.find(node);
 			if ( it == _storage.end() )
 				continue;

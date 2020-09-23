@@ -33,8 +33,8 @@ IMPLEMENT_SC_CLASS_DERIVED(RouteSeedlink, Object, "RouteSeedlink");
 
 
 RouteSeedlink::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("address", "string", false, false, true, false, false, false, NULL, &RouteSeedlink::setAddress, &RouteSeedlink::address));
-	addProperty(Core::simpleProperty("priority", "int", false, false, false, false, true, false, NULL, &RouteSeedlink::setPriority, &RouteSeedlink::priority));
+	addProperty(Core::simpleProperty("address", "string", false, false, true, false, false, false, nullptr, &RouteSeedlink::setAddress, &RouteSeedlink::address));
+	addProperty(Core::simpleProperty("priority", "int", false, false, false, false, true, false, nullptr, &RouteSeedlink::setPriority, &RouteSeedlink::priority));
 }
 
 
@@ -188,7 +188,7 @@ const RouteSeedlinkIndex& RouteSeedlink::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RouteSeedlink::equalIndex(const RouteSeedlink* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -219,7 +219,7 @@ RouteSeedlink& RouteSeedlink::operator=(const RouteSeedlink& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RouteSeedlink::assign(Object* other) {
 	RouteSeedlink* otherRouteSeedlink = RouteSeedlink::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherRouteSeedlink;
@@ -233,11 +233,11 @@ bool RouteSeedlink::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RouteSeedlink::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Route* route = Route::Cast(parent);
-	if ( route != NULL )
+	if ( route != nullptr )
 		return route->add(this);
 
 	SEISCOMP_ERROR("RouteSeedlink::attachTo(%s) -> wrong class type", parent->className());
@@ -250,11 +250,11 @@ bool RouteSeedlink::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RouteSeedlink::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Route* route = Route::Cast(object);
-	if ( route != NULL ) {
+	if ( route != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -262,7 +262,7 @@ bool RouteSeedlink::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			RouteSeedlink* child = route->routeSeedlink(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return route->remove(child);
 			else {
 				SEISCOMP_DEBUG("RouteSeedlink::detachFrom(Route): routeSeedlink has not been found");
@@ -281,7 +281,7 @@ bool RouteSeedlink::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RouteSeedlink::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

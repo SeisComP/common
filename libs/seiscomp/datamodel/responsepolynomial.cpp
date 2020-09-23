@@ -33,15 +33,15 @@ IMPLEMENT_SC_CLASS_DERIVED(ResponsePolynomial, PublicObject, "ResponsePolynomial
 
 
 ResponsePolynomial::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, NULL, &ResponsePolynomial::setName, &ResponsePolynomial::name));
-	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, NULL, &ResponsePolynomial::setGain, &ResponsePolynomial::gain));
-	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, NULL, &ResponsePolynomial::setGainFrequency, &ResponsePolynomial::gainFrequency));
-	addProperty(Core::simpleProperty("frequencyUnit", "string", false, false, false, false, false, false, NULL, &ResponsePolynomial::setFrequencyUnit, &ResponsePolynomial::frequencyUnit));
-	addProperty(Core::simpleProperty("approximationType", "string", false, false, false, false, false, false, NULL, &ResponsePolynomial::setApproximationType, &ResponsePolynomial::approximationType));
-	addProperty(Core::simpleProperty("approximationLowerBound", "float", false, false, false, false, true, false, NULL, &ResponsePolynomial::setApproximationLowerBound, &ResponsePolynomial::approximationLowerBound));
-	addProperty(Core::simpleProperty("approximationUpperBound", "float", false, false, false, false, true, false, NULL, &ResponsePolynomial::setApproximationUpperBound, &ResponsePolynomial::approximationUpperBound));
-	addProperty(Core::simpleProperty("approximationError", "float", false, false, false, false, true, false, NULL, &ResponsePolynomial::setApproximationError, &ResponsePolynomial::approximationError));
-	addProperty(Core::simpleProperty("numberOfCoefficients", "int", false, false, false, false, true, false, NULL, &ResponsePolynomial::setNumberOfCoefficients, &ResponsePolynomial::numberOfCoefficients));
+	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &ResponsePolynomial::setName, &ResponsePolynomial::name));
+	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, nullptr, &ResponsePolynomial::setGain, &ResponsePolynomial::gain));
+	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, nullptr, &ResponsePolynomial::setGainFrequency, &ResponsePolynomial::gainFrequency));
+	addProperty(Core::simpleProperty("frequencyUnit", "string", false, false, false, false, false, false, nullptr, &ResponsePolynomial::setFrequencyUnit, &ResponsePolynomial::frequencyUnit));
+	addProperty(Core::simpleProperty("approximationType", "string", false, false, false, false, false, false, nullptr, &ResponsePolynomial::setApproximationType, &ResponsePolynomial::approximationType));
+	addProperty(Core::simpleProperty("approximationLowerBound", "float", false, false, false, false, true, false, nullptr, &ResponsePolynomial::setApproximationLowerBound, &ResponsePolynomial::approximationLowerBound));
+	addProperty(Core::simpleProperty("approximationUpperBound", "float", false, false, false, false, true, false, nullptr, &ResponsePolynomial::setApproximationUpperBound, &ResponsePolynomial::approximationUpperBound));
+	addProperty(Core::simpleProperty("approximationError", "float", false, false, false, false, true, false, nullptr, &ResponsePolynomial::setApproximationError, &ResponsePolynomial::approximationError));
+	addProperty(Core::simpleProperty("numberOfCoefficients", "int", false, false, false, false, true, false, nullptr, &ResponsePolynomial::setNumberOfCoefficients, &ResponsePolynomial::numberOfCoefficients));
 	addProperty(objectProperty<RealArray>("coefficients", "RealArray", false, false, true, &ResponsePolynomial::setCoefficients, &ResponsePolynomial::coefficients));
 	addProperty(objectProperty<Blob>("remark", "Blob", false, false, true, &ResponsePolynomial::setRemark, &ResponsePolynomial::remark));
 }
@@ -140,12 +140,12 @@ ResponsePolynomial* ResponsePolynomial::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ResponsePolynomial* ResponsePolynomial::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new ResponsePolynomial(publicID);
@@ -449,7 +449,7 @@ const ResponsePolynomialIndex& ResponsePolynomial::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponsePolynomial::equalIndex(const ResponsePolynomial* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -490,7 +490,7 @@ ResponsePolynomial& ResponsePolynomial::operator=(const ResponsePolynomial& othe
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponsePolynomial::assign(Object* other) {
 	ResponsePolynomial* otherResponsePolynomial = ResponsePolynomial::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherResponsePolynomial;
@@ -504,11 +504,11 @@ bool ResponsePolynomial::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponsePolynomial::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(parent);
-	if ( inventory != NULL )
+	if ( inventory != nullptr )
 		return inventory->add(this);
 
 	SEISCOMP_ERROR("ResponsePolynomial::attachTo(%s) -> wrong class type", parent->className());
@@ -521,11 +521,11 @@ bool ResponsePolynomial::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponsePolynomial::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(object);
-	if ( inventory != NULL ) {
+	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -533,7 +533,7 @@ bool ResponsePolynomial::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			ResponsePolynomial* child = inventory->findResponsePolynomial(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
 				SEISCOMP_DEBUG("ResponsePolynomial::detachFrom(Inventory): responsePolynomial has not been found");
@@ -552,7 +552,7 @@ bool ResponsePolynomial::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponsePolynomial::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

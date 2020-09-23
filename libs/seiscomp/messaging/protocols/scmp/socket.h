@@ -108,7 +108,7 @@ class Socket : public Protocol {
 		 * @param waitLock An optional waitlock which is acquired before the
 		 *                 actual wait and released afterwards.
 		 */
-		bool wait(boost::mutex *m = NULL, boost::mutex *waitLock = NULL);
+		bool wait(boost::mutex *m = nullptr, boost::mutex *waitLock = nullptr);
 
 		virtual void handleInterrupt(int) override;
 

@@ -270,7 +270,7 @@ class AmplitudeViewMarker : public RecordMarker {
 	private:
 		void init() {
 			_twBegin = _twEnd = 0;
-			_manualAmplitude = NULL;
+			_manualAmplitude = nullptr;
 			setMoveCopy(false);
 			updateVisual();
 		}
@@ -334,7 +334,7 @@ class AmplitudeViewMarker : public RecordMarker {
 			}
 
 			if ( _referencedAmplitude )
-				_manualAmplitude = NULL;
+				_manualAmplitude = nullptr;
 
 			updateVisual();
 		}
@@ -361,7 +361,7 @@ class AmplitudeViewMarker : public RecordMarker {
 
 		void convertToManualAmplitude() {
 			if ( !_referencedAmplitude ) return;
-			_referencedAmplitude = NULL;
+			_referencedAmplitude = nullptr;
 			setMovable(true);
 			setDescription("");
 			updateVisual();
@@ -376,12 +376,12 @@ class AmplitudeViewMarker : public RecordMarker {
 		}
 
 		bool equalsAmplitude(DataModel::Amplitude *amp) const {
-			if ( amp == NULL ) return false;
+			if ( amp == nullptr ) return false;
 
 			// Time + uncertainties do not match: not equal
 			if ( correctedTime() != amp->timeWindow().reference() ) return false;
 
-			if ( _manualAmplitude == NULL ) return false;
+			if ( _manualAmplitude == nullptr ) return false;
 
 			try {
 				if ( _manualAmplitude->amplitude().value() != amp->amplitude().value() ) return false;
@@ -405,7 +405,7 @@ class AmplitudeViewMarker : public RecordMarker {
 			return _type == Reference;
 		}
 
-		RecordMarker *copy() { return new AmplitudeViewMarker(NULL, *this); }
+		RecordMarker *copy() { return new AmplitudeViewMarker(nullptr, *this); }
 
 		void draw(QPainter &painter, RecordWidget *context, int x, int y1, int y2,
 		          QColor color, qreal lineWidth) {
@@ -463,7 +463,7 @@ class AmplitudeViewMarker : public RecordMarker {
 		QString toolTip() const {
 			QString text;
 
-			if ( (_referencedAmplitude == NULL) && !isAmplitude() )
+			if ( (_referencedAmplitude == nullptr) && !isAmplitude() )
 				return text;
 
 			if ( _magnitude )
@@ -657,7 +657,7 @@ SensorLocation *findSensorLocation(Station *station, const std::string &code,
 			return loc;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -689,7 +689,7 @@ Stream* findStream(Station *station, const std::string &code,
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -723,7 +723,7 @@ Stream* findStream(Station *station, const std::string &code, const std::string 
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -762,12 +762,12 @@ Stream* findStream(Station *station, const Seiscomp::Core::Time &time,
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
 Stream* findConfiguredStream(Station *station, const Seiscomp::Core::Time &time) {
-	DataModel::Stream *stream = NULL;
+	DataModel::Stream *stream = nullptr;
 	DataModel::ConfigModule *module = SCApp->configModule();
 	if ( module ) {
 		for ( size_t ci = 0; ci < module->configStationCount(); ++ci ) {
@@ -778,7 +778,7 @@ Stream* findConfiguredStream(Station *station, const Seiscomp::Core::Time &time)
 				for ( size_t si = 0; si < cs->setupCount(); ++si ) {
 					DataModel::Setup* setup = cs->setup(si);
 
-					DataModel::ParameterSet* ps = NULL;
+					DataModel::ParameterSet* ps = nullptr;
 					try {
 						ps = DataModel::ParameterSet::Find(setup->parameterSetID());
 					}
@@ -817,17 +817,17 @@ Stream* findConfiguredStream(Station *station, const Seiscomp::Core::Time &time)
 
 Util::KeyValuesPtr getParams(const string &net, const string &sta) {
 	ConfigModule *module = SCApp->configModule();
-	if ( module == NULL ) return NULL;
+	if ( module == nullptr ) return nullptr;
 
 	for ( size_t ci = 0; ci < module->configStationCount(); ++ci ) {
 		ConfigStation* cs = module->configStation(ci);
 		if ( cs->networkCode() != net || cs->stationCode() != sta ) continue;
 		Setup *setup = findSetup(cs, SCApp->name());
-		if ( setup == NULL ) continue;
+		if ( setup == nullptr ) continue;
 		if ( !setup->enabled() ) continue;
 
 		DataModel::ParameterSet *ps = DataModel::ParameterSet::Find(setup->parameterSetID());
-		if ( ps == NULL ) {
+		if ( ps == nullptr ) {
 			SEISCOMP_WARNING("Cannot find parameter set %s for station %s.%s",
 			                 setup->parameterSetID().data(),
 			                 net.data(), sta.data());
@@ -839,7 +839,7 @@ Util::KeyValuesPtr getParams(const string &net, const string &sta) {
 		return keys;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -851,7 +851,7 @@ Amplitude* findAmplitude(Seiscomp::Gui::RecordWidget* w, const Seiscomp::Core::T
 			return a;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -918,7 +918,7 @@ void selectFirstVisibleItem(RecordView *view) {
 bool calcAmpTime(RecordSequence *seq, const Core::Time &begin, const Core::Time &end,
                  double offset, Processing::AmplitudeProcessor::AmplitudeMeasureType type,
                  double &ampValue, Core::Time &ampTime, double &ampWidth) {
-	if ( seq == NULL ) return false;
+	if ( seq == nullptr ) return false;
 
 	Core::Time minTime, maxTime;
 	OPT(double) minValue;
@@ -1028,16 +1028,16 @@ namespace PrivateAmplitudeView {
 
 
 ThreeComponentTrace::ThreeComponentTrace() {
-	widget = NULL;
+	widget = nullptr;
 	enableTransformation = false;
 	showProcessed = false;
 
 	for ( int i = 0; i < 3; ++i ) {
-		traces[i].raw = NULL;
-		traces[i].transformed = NULL;
-		traces[i].processed = NULL;
-		traces[i].thread = NULL;
-		traces[i].filter = NULL;
+		traces[i].raw = nullptr;
+		traces[i].transformed = nullptr;
+		traces[i].processed = nullptr;
+		traces[i].thread = nullptr;
+		traces[i].filter = nullptr;
 	}
 }
 
@@ -1045,7 +1045,7 @@ ThreeComponentTrace::ThreeComponentTrace() {
 ThreeComponentTrace::~ThreeComponentTrace() {
 	for ( int i = 0; i < 3; ++i ) {
 		if ( traces[i].raw ) delete traces[i].raw;
-		if ( widget ) widget->setRecords(traces[i].recordSlot, NULL);
+		if ( widget ) widget->setRecords(traces[i].recordSlot, nullptr);
 		if ( traces[i].transformed ) delete traces[i].transformed;
 		if ( traces[i].processed ) delete traces[i].processed;
 		if ( traces[i].filter ) delete traces[i].filter;
@@ -1061,14 +1061,14 @@ void ThreeComponentTrace::setFilter(RecordWidget::Filter *f, const std::string &
 
 	for ( int i = 0; i < 3; ++i ) {
 		if ( traces[i].filter ) delete traces[i].filter;
-		traces[i].filter = f?f->clone():NULL;
+		traces[i].filter = f?f->clone():nullptr;
 
 		// Delete transformed traces
 		if ( traces[i].transformed ) {
 			delete traces[i].transformed;
-			traces[i].transformed = NULL;
+			traces[i].transformed = nullptr;
 
-			if ( widget && !showProcessed ) widget->setRecords(traces[i].recordSlot, NULL);
+			if ( widget && !showProcessed ) widget->setRecords(traces[i].recordSlot, nullptr);
 		}
 
 		removeProcessedData(i);
@@ -1081,7 +1081,7 @@ void ThreeComponentTrace::setFilter(RecordWidget::Filter *f, const std::string &
 void ThreeComponentTrace::setRecordWidget(RecordWidget *w) {
 	if ( widget ) {
 		for ( int i = 0; i < 3; ++i )
-			widget->setRecords(traces[i].recordSlot, NULL);
+			widget->setRecords(traces[i].recordSlot, nullptr);
 		widget->disconnect(this);
 	}
 
@@ -1097,7 +1097,7 @@ void ThreeComponentTrace::setRecordWidget(RecordWidget *w) {
 
 void ThreeComponentTrace::widgetDestroyed(QObject *obj) {
 	if ( obj == widget )
-		widget = NULL;
+		widget = nullptr;
 }
 
 
@@ -1108,9 +1108,9 @@ void ThreeComponentTrace::setTransformationEnabled(bool f) {
 		// Delete transformed traces
 		if ( traces[i].transformed ) {
 			delete traces[i].transformed;
-			traces[i].transformed = NULL;
+			traces[i].transformed = nullptr;
 
-			if ( widget && !showProcessed ) widget->setRecords(traces[i].recordSlot, NULL);
+			if ( widget && !showProcessed ) widget->setRecords(traces[i].recordSlot, nullptr);
 		}
 	}
 
@@ -1148,7 +1148,7 @@ bool ThreeComponentTrace::setProcessedData(int comp,
 		return false;
 	}
 
-	if ( traces[comp].processed == NULL )
+	if ( traces[comp].processed == nullptr )
 		traces[comp].processed = new RingBuffer(0);
 	else
 		traces[comp].processed->clear();
@@ -1165,7 +1165,7 @@ bool ThreeComponentTrace::setProcessedData(int comp,
 void ThreeComponentTrace::removeProcessedData(int comp) {
 	if ( traces[comp].processed ) {
 		delete traces[comp].processed;
-		traces[comp].processed = NULL;
+		traces[comp].processed = nullptr;
 	}
 
 	if ( widget && showProcessed )
@@ -1185,7 +1185,7 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 			// Delete current transformed records
 			if ( traces[i].transformed ) {
 				//delete traces[i].transformed;
-				//traces[i].transformed = NULL;
+				//traces[i].transformed = nullptr;
 				Core::Time endTime = traces[i].transformed->back()->endTime();
 				if ( endTime > minStartTime )
 					minStartTime = endTime;
@@ -1320,7 +1320,7 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 
 				for ( RecordSequence::iterator rec_it = it[i]; rec_it != seq_end; ++rec_it ) {
 					const Array *rec_data = (*rec_it)->data();
-					if ( rec_data == NULL ) {
+					if ( rec_data == nullptr ) {
 						SEISCOMP_ERROR("%s: no data for record", (*rec_it)->streamID().c_str());
 						return gotRecords;
 					}
@@ -1332,7 +1332,7 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 
 					const FloatArray *srcData = FloatArray::ConstCast(rec_data);
 					FloatArrayPtr tmp;
-					if ( srcData == NULL ) {
+					if ( srcData == nullptr ) {
 						tmp = (FloatArray*)data->copy(Array::FLOAT);
 						srcData = tmp.get();
 					}
@@ -1377,7 +1377,7 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 				}
 
 				// Create ring buffer without limit if needed
-				if ( traces[i].transformed == NULL ) {
+				if ( traces[i].transformed == nullptr ) {
 					traces[i].transformed = new RingBuffer(0);
 					if ( widget && !showProcessed )
 						widget->setRecords(traces[i].recordSlot, traces[i].transformed, false);
@@ -1416,7 +1416,7 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 	else {
 		// Record passed that needs filtering?
 		if ( rec ) {
-			if ( traces[comp].transformed == NULL ) {
+			if ( traces[comp].transformed == nullptr ) {
 				traces[comp].transformed = new RingBuffer(0);
 				if ( widget && !showProcessed )
 					widget->setRecords(traces[comp].recordSlot, traces[comp].transformed, false);
@@ -1448,10 +1448,10 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 		else {
 			// Just copy the records and filter them if activated
 			for ( int i = 0; i < 3; ++i ) {
-				if ( traces[i].raw == NULL || traces[i].raw->empty() ) continue;
+				if ( traces[i].raw == nullptr || traces[i].raw->empty() ) continue;
 
 				RecordSequence::iterator it;
-				if ( traces[i].transformed == NULL )
+				if ( traces[i].transformed == nullptr )
 					it = traces[i].raw->begin();
 				else {
 					Core::Time endTime = traces[i].transformed->back()->endTime();
@@ -1469,7 +1469,7 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 
 					RecordCPtr s_rec = s_it->get();
 
-					if ( traces[i].transformed == NULL ) {
+					if ( traces[i].transformed == nullptr ) {
 						traces[i].transformed = new RingBuffer(0);
 						if ( widget && !showProcessed )
 							widget->setRecords(traces[i].recordSlot, traces[i].transformed, false);
@@ -1545,9 +1545,9 @@ void ThreeComponentTrace::transformedRecord(int comp, const Record *rec) {
 		if ( label->processor->isFinished() ) {
 			for ( int i = 0; i < 3; ++i ) {
 				const Processing::AmplitudeProcessor *compProc = label->processor->componentProcessor((Processing::WaveformProcessor::Component)i);
-				if ( compProc == NULL ) continue;
+				if ( compProc == nullptr ) continue;
 				const DoubleArray *processedData = compProc->processedData((Processing::WaveformProcessor::Component)i);
-				if ( traces[i].processed == NULL && processedData )
+				if ( traces[i].processed == nullptr && processedData )
 					setProcessedData(
 						i, rec->networkCode(),
 						rec->stationCode(),
@@ -1564,8 +1564,8 @@ void ThreeComponentTrace::transformedRecord(int comp, const Record *rec) {
 
 AmplitudeRecordLabel::AmplitudeRecordLabel(int items, QWidget *parent, const char* name)
 	: StandardRecordLabel(items, parent, name), _isLinkedItem(false), _isExpanded(false) {
-	_btnExpand = NULL;
-	_linkedItem = NULL;
+	_btnExpand = nullptr;
+	_linkedItem = nullptr;
 
 	latitude = 999;
 	longitude = 999;
@@ -1613,16 +1613,16 @@ void AmplitudeRecordLabel::enabledExpandButton(RecordViewItem *controlledItem) {
 void AmplitudeRecordLabel::disableExpandButton() {
 	if ( _btnExpand ) {
 		delete _btnExpand;
-		_btnExpand = NULL;
+		_btnExpand = nullptr;
 	}
 
-	_linkedItem = NULL;
+	_linkedItem = nullptr;
 }
 
 void AmplitudeRecordLabel::unlink() {
 	if ( _linkedItem ) {
 		static_cast<AmplitudeRecordLabel*>(_linkedItem->label())->disableExpandButton();
-		_linkedItem = NULL;
+		_linkedItem = nullptr;
 	}
 }
 
@@ -1794,7 +1794,7 @@ AmplitudeView::AmplitudeView(QWidget *parent, Qt::WindowFlags f)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeView::~AmplitudeView() {
 	for ( int i = 0; i < _recordView->rowCount(); ++i )
-		_recordView->itemAt(i)->widget()->setShadowWidget(NULL, false);
+		_recordView->itemAt(i)->widget()->setShadowWidget(nullptr, false);
 
 	if ( _currentFilter ) delete _currentFilter;
 
@@ -1846,12 +1846,12 @@ void AmplitudeView::init() {
 
 	_settingsRestored = false;
 	_currentSlot = -1;
-	_currentFilter = NULL;
+	_currentFilter = nullptr;
 	_currentFilterStr = "";
 	_autoScaleZoomTrace = true;
 	_showProcessedData = true;
 
-	_reader = NULL;
+	_reader = nullptr;
 
 	_zoom = 1.0;
 	_currentAmplScale = 1.0;
@@ -2395,7 +2395,7 @@ bool AmplitudeView::setConfig(const Config &c, QString *error) {
 			}
 		}
 
-		if ( _recordView->currentItem() == NULL ) reselectCurrentItem = true;
+		if ( _recordView->currentItem() == nullptr ) reselectCurrentItem = true;
 
 		if ( reselectCurrentItem )
 			selectFirstVisibleItem(_recordView);
@@ -2536,7 +2536,7 @@ void AmplitudeView::onSelectedTimeRange(Seiscomp::Core::Time t1, Seiscomp::Core:
 	if ( t1 == t2 ) return;
 
 	if ( _currentSlot < 0 ) return;
-	if ( label->processor == NULL ) return;
+	if ( label->processor == nullptr ) return;
 
 	double smin = t1-label->processor->trigger();
 	double smax = t2-label->processor->trigger();
@@ -2608,7 +2608,7 @@ void AmplitudeView::setPhaseMarker(Seiscomp::Gui::RecordWidget* widget,
 	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
 
 	if ( _currentSlot < 0 ) return;
-	if ( label->processor == NULL ) return;
+	if ( label->processor == nullptr ) return;
 
 	double smin = double(time-label->processor->trigger())-0.5;
 	double smax = smin+1.0;
@@ -2818,7 +2818,7 @@ void AmplitudeView::loadNextStations() {
 		if ( _componentMap[i] >= 0 )
 			fetchComponent(COMPS[i]);
 
-	if ( _recordView->currentItem() == NULL ) {
+	if ( _recordView->currentItem() == nullptr ) {
 		selectFirstVisibleItem(_recordView);
 	}
 	setCursorText(_currentRecord->cursorText());
@@ -2961,7 +2961,7 @@ void AmplitudeView::showFullscreen(bool e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::recalculateAmplitude() {
 	RecordViewItem *item = _recordView->currentItem();
-	if ( item == NULL ) return;
+	if ( item == nullptr ) return;
 
 	AmplitudeRecordLabel *l = static_cast<AmplitudeRecordLabel*>(item->label());
 	if ( !l->processor ) return;
@@ -2986,7 +2986,7 @@ void AmplitudeView::recalculateAmplitude() {
 
 		for ( int i = 0; i < 3; ++i ) {
 			const Processing::AmplitudeProcessor *compProc = l->processor->componentProcessor((Processing::WaveformProcessor::Component)i);
-			if ( compProc == NULL ) continue;
+			if ( compProc == nullptr ) continue;
 
 			const DoubleArray *processedData = compProc->processedData((Processing::WaveformProcessor::Component)i);
 
@@ -3054,7 +3054,7 @@ void AmplitudeView::recalculateAmplitudes() {
 
 			for ( int i = 0; i < 3; ++i ) {
 				const Processing::AmplitudeProcessor *compProc = l->processor->componentProcessor((Processing::WaveformProcessor::Component)i);
-				if ( compProc == NULL ) continue;
+				if ( compProc == nullptr ) continue;
 
 				const DoubleArray *processedData = compProc->processedData((Processing::WaveformProcessor::Component)i);
 
@@ -3190,7 +3190,7 @@ void AmplitudeView::showUsedStations(bool usedOnly) {
 void AmplitudeView::loadNextStations(float distance) {
 	DataModel::Inventory* inv = Client::Inventory::Instance()->inventory();
 
-	if ( inv != NULL ) {
+	if ( inv != nullptr ) {
 
 		for ( size_t i = 0; i < inv->networkCount(); ++i ) {
 			Network* n = inv->network(i);
@@ -3223,7 +3223,7 @@ void AmplitudeView::loadNextStations(float distance) {
 				Stream *stream = findConfiguredStream(s, _origin->time());
 
 				// Try to get a default stream
-				if ( stream == NULL ) {
+				if ( stream == nullptr ) {
 					// Preferred channel code is BH. If not available use either SH or skip.
 					for ( size_t c = 0; c < _broadBandCodes.size(); ++c ) {
 						stream = findStream(s, _broadBandCodes[c], _origin->time());
@@ -3231,7 +3231,7 @@ void AmplitudeView::loadNextStations(float distance) {
 					}
 				}
 
-				if ( stream == NULL )
+				if ( stream == nullptr )
 					stream = findStream(s, _origin->time(), Processing::WaveformProcessor::MeterPerSecond);
 	
 				if ( stream ) {
@@ -3334,13 +3334,13 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 	_comboAmpCombiner->setEnabled(false);
 
 	_origin = origin;
-	_magnitude = NULL;
+	_magnitude = nullptr;
 
 	updateOriginInformation();
 	if ( _comboFilter->currentIndex() == 0 )
 		_comboFilter->setCurrentIndex(1);
 
-	if ( _origin == NULL )
+	if ( _origin == nullptr )
 		return false;
 
 	Processing::MagnitudeProcessorPtr procMag = Processing::MagnitudeProcessorFactory::Create(magType.c_str());
@@ -3528,14 +3528,14 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 		else
 			continue;
 
-		SensorLocation *loc = NULL;
+		SensorLocation *loc = nullptr;
 
 		Station *sta = Client::Inventory::Instance()->getStation(
 		               streamID.networkCode(), streamID.stationCode(), _origin->time());
 
 		if ( sta )
 			loc = findSensorLocation(sta, streamID.locationCode(), _origin->time());
-		if ( loc == NULL ) {
+		if ( loc == nullptr ) {
 			SEISCOMP_ERROR("skipping station %s.%s: sensor location %s not found",
 			               streamID.networkCode().c_str(),
 			               streamID.stationCode().c_str(),
@@ -3561,7 +3561,7 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 			}
 		}
 
-		if ( it->second.amp == NULL ) {
+		if ( it->second.amp == nullptr ) {
 			double delta, az, baz;
 			Geo::delazi(_origin->latitude(), _origin->longitude(),
 			            loc->latitude(), loc->longitude(), &delta, &az, &baz);
@@ -3575,7 +3575,7 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 
 		RecordViewItem *item = addStream(loc, streamID, reference, true);
 		// A new item has been inserted
-		if ( item != NULL ) {
+		if ( item != nullptr ) {
 			addAmplitude(item, it->second.amp.get(), it->second.pick.get(), reference, -1);
 			_stations.insert((streamID.networkCode() + "." + streamID.stationCode()).c_str());
 		}
@@ -3584,7 +3584,7 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 			item = _recordView->item(streamID);
 
 			// If not found ignore this stream, we can't do anything else
-			if ( item == NULL ) continue;
+			if ( item == nullptr ) continue;
 
 			// If the stream is a strong motion stream, we need to unlink
 			// it from its broadband stream (disconnect the "expand button" feature)
@@ -3629,7 +3629,7 @@ void AmplitudeView::updateOriginInformation() {
 			depth = QString("%1").arg((int)_origin->depth());
 		}
 		catch ( Core::ValueException& ) {
-			depth = "NULL";
+			depth = "nullptr";
 		}
 
 		title = QString("ID: %1, Lat/Lon: %2 | %3, Depth: %4 km")
@@ -3702,12 +3702,12 @@ RecordViewItem* AmplitudeView::addStream(const DataModel::SensorLocation *sloc,
 	if ( !showDisabled ) {
 		isEnabled = SCApp->isStationEnabled(streamID.networkCode(), streamID.stationCode());
 		if ( !isEnabled )
-			return NULL;
+			return nullptr;
 	}
 
 	// HACK: Add strong motion
 	WaveformStreamID smStreamID(streamID);
-	SensorLocation *smsloc = NULL;
+	SensorLocation *smsloc = nullptr;
 	bool hasStrongMotion = false;
 
 	if ( _config.loadStrongMotionData ) {
@@ -3719,13 +3719,13 @@ RecordViewItem* AmplitudeView::addStream(const DataModel::SensorLocation *sloc,
 
 		if ( sta ) {
 			// Find the stream with given code priorities
-			Stream *stream = NULL;
+			Stream *stream = nullptr;
 			for ( size_t c = 0; c < _strongMotionCodes.size(); ++c ) {
 				stream = findStream(sta, _strongMotionCodes[c], _origin->time());
 				if ( stream ) break;
 			}
 
-			if ( stream == NULL )
+			if ( stream == nullptr )
 				stream = findStream(sta, _origin->time(), Processing::WaveformProcessor::MeterPerSecondSquared);
 
 			if ( stream ) {
@@ -3742,7 +3742,7 @@ RecordViewItem* AmplitudeView::addStream(const DataModel::SensorLocation *sloc,
 	}
 
 	RecordViewItem *item = addRawStream(sloc, streamID, referenceTime);
-	if ( item == NULL ) return NULL;
+	if ( item == nullptr ) return nullptr;
 
 	item->setValue(ITEM_PRIORITY_INDEX, 0);
 	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
@@ -3794,20 +3794,20 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
                                             const Core::Time &referenceTime) {
 	WaveformStreamID streamID(sid);
 
-	if ( loc == NULL ) return NULL;
+	if ( loc == nullptr ) return nullptr;
 
 	double delta, az, baz;
 	Geo::delazi(_origin->latitude(), _origin->longitude(),
 	            loc->latitude(), loc->longitude(), &delta, &az, &baz);
 
 	// Skip stations out of range
-	//if ( delta < _minDist || delta > _maxDist ) return NULL;
+	//if ( delta < _minDist || delta > _maxDist ) return nullptr;
 
 	Processing::AmplitudeProcessorPtr proc = Processing::AmplitudeProcessorFactory::Create(_amplitudeType.c_str());
-	if ( proc == NULL ) {
+	if ( proc == nullptr ) {
 		cerr << sid.networkCode() << "." << sid.stationCode() << ": unable to create processor "
 		     << _amplitudeType << ": ignoring station" << endl;
-		return NULL;
+		return nullptr;
 	}
 
 	bool allComponents = true;
@@ -3866,14 +3866,14 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 			&SCCoreApp->configuration(), keys.get())) ) {
 		cerr << sid.networkCode() << "." << sid.stationCode() << ": setup processor failed"
 		     << ": ignoring station" << endl;
-		return NULL;
+		return nullptr;
 	}
 
 	Processing::MagnitudeProcessorPtr magProc = Processing::MagnitudeProcessorFactory::Create(_magnitudeType.c_str());
-	if ( magProc == NULL ) {
+	if ( magProc == nullptr ) {
 		cerr << sid.networkCode() << "." << sid.stationCode() << ": unable to create magnitude processor "
 		     << _magnitudeType << ": ignoring station" << endl;
-		return NULL;
+		return nullptr;
 	}
 
 	if ( proc->config().minimumDistance < _minDist ) {
@@ -3912,7 +3912,7 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 	if ( proc->isFinished() ) {
 		cerr << sid.networkCode() << "." << sid.stationCode() << ": setup amplitude processor failed"
 		     << ": " << proc->status().toString() << " (" << proc->statusValue() << "): ignoring station" << endl;
-		return NULL;
+		return nullptr;
 	}
 
 	if ( !magProc->setup(
@@ -3923,11 +3923,11 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 			&SCCoreApp->configuration(), keys.get())) ) {
 		cerr << sid.networkCode() << "." << sid.stationCode() << ": setup magnitude processor failed"
 		     << ": ignoring station" << endl;
-		return NULL;
+		return nullptr;
 	}
 
 	RecordViewItem* item = _recordView->addItem(adjustWaveformStreamID(streamID), sid.stationCode().c_str());
-	if ( item == NULL ) return NULL;
+	if ( item == nullptr ) return nullptr;
 
 	if ( _currentRecord )
 		item->widget()->setCursorText(_currentRecord->cursorText());
@@ -4156,7 +4156,7 @@ void AmplitudeView::updateRecordValue(Seiscomp::Core::Time t) {
 
 	const double *v = _currentRecord->value(t);
 
-	if ( v == NULL )
+	if ( v == nullptr )
 		statusBar()->clearMessage();
 	else
 		statusBar()->showMessage(QString("value = %1").arg(*v, 0, 'f', 2));
@@ -4212,7 +4212,7 @@ void AmplitudeView::updateItemLabel(RecordViewItem* item, char component) {
 		_ui.labelCode->setText(text);
 	}
 
-	updateTraceInfo(item, NULL);
+	updateTraceInfo(item, nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4425,7 +4425,7 @@ void AmplitudeView::selectionHandleMoved(int idx, double v, Qt::KeyboardModifier
 
 	_currentRecord->update();
 
-	if ( _recordView->currentItem() == NULL ) return;
+	if ( _recordView->currentItem() == nullptr ) return;
 
 	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(_recordView->currentItem()->label());
 	if ( label->processor ) {
@@ -4596,8 +4596,8 @@ void AmplitudeView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem)
 		smin = lastItem->widget()->smin();
 		smax = lastItem->widget()->smax();
 		lastItem->widget()->setSelected(0,0);
-		lastItem->widget()->setShadowWidget(NULL, false);
-		lastItem->widget()->setCurrentMarker(NULL);
+		lastItem->widget()->setShadowWidget(nullptr, false);
+		lastItem->widget()->setCurrentMarker(nullptr);
 
 		disconnect(lastItem->label(), SIGNAL(statusChanged(bool)),
 		           this, SLOT(setCurrentRowEnabled(bool)));
@@ -4606,10 +4606,10 @@ void AmplitudeView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem)
 	}
 
 	if ( !item ) {
-		_currentRecord->setDecorator(NULL);
+		_currentRecord->setDecorator(nullptr);
 		_currentRecord->clearRecords();
 		_currentRecord->setEnabled(false);
-		_currentRecord->setMarkerSourceWidget(NULL);
+		_currentRecord->setMarkerSourceWidget(nullptr);
 		_timeScale->setSelectionEnabled(false);
 		return;
 	}
@@ -5375,7 +5375,7 @@ void AmplitudeView::fetchManualAmplitudes(std::vector<RecordMarker*>* markers) c
 
 			// If the marker did not make any changes to the amplitude
 			// attributes, reuse it.
-			if ( a && !marker->equalsAmplitude(a.get()) ) a = NULL;
+			if ( a && !marker->equalsAmplitude(a.get()) ) a = nullptr;
 
 			if ( !a ) {
 				a = marker->manualAmplitude();
@@ -5426,7 +5426,7 @@ void AmplitudeView::commit() {
 		AmplitudeViewMarker *m = static_cast<AmplitudeViewMarker*>(markers[i]);
 		if ( !m->isEnabled() ) continue;
 		AmplitudePtr amp = m->amplitude();
-		if ( amp == NULL ) {
+		if ( amp == nullptr ) {
 			SEISCOMP_ERROR("Amplitude not set in marker");
 			continue;
 		}
@@ -5661,7 +5661,7 @@ void AmplitudeView::acquisitionFinished() {
 				else
 					widget->setRecordBackgroundColor(label->data.traces[i].recordSlot, SCScheme.colors.records.states.notAvailable);
 				// Reset the thread
-				label->data.traces[i].thread = NULL;
+				label->data.traces[i].thread = nullptr;
 			}
 		}
 	}
@@ -5748,7 +5748,7 @@ void AmplitudeView::receivedRecord(Seiscomp::Record *rec) {
 	int i;
 	for ( i = 0; i < 3; ++i ) {
 		if ( label->data.traces[i].channelCode == rec->channelCode() ) {
-			if ( label->data.traces[i].raw == NULL )
+			if ( label->data.traces[i].raw == nullptr )
 				label->data.traces[i].raw = new TimeWindowBuffer(label->timeWindow);
 			break;
 		}
@@ -5785,7 +5785,7 @@ void AmplitudeView::receivedRecord(Seiscomp::Record *rec) {
 
 		// If this item is linked to another item, enable the expand button of
 		// the controller
-		if ( label->isLinkedItem() && label->_linkedItem != NULL )
+		if ( label->isLinkedItem() && label->_linkedItem != nullptr )
 			static_cast<AmplitudeRecordLabel*>(label->_linkedItem->label())->enabledExpandButton(item);
 	}
 	else {
@@ -5826,14 +5826,14 @@ void AmplitudeView::addStations() {
 		// Skip stations out of amplitude processors range
 		if ( delta < _minDist || delta > _maxDist ) continue;
 
-		Stream *stream = NULL;
+		Stream *stream = nullptr;
 		// Preferred channel code is BH. If not available use either SH or skip.
 		for ( size_t c = 0; c < _broadBandCodes.size(); ++c ) {
 			stream = findStream(s, _broadBandCodes[c], _origin->time());
 			if ( stream ) break;
 		}
 
-		if ( stream == NULL )
+		if ( stream == nullptr )
 			stream = findStream(s, _origin->time(), Processing::WaveformProcessor::MeterPerSecond);
 
 		if ( stream ) {
@@ -5862,7 +5862,7 @@ void AmplitudeView::addStations() {
 	alignByState();
 	componentByState();
 
-	if ( _recordView->currentItem() == NULL )
+	if ( _recordView->currentItem() == nullptr )
 		selectFirstVisibleItem(_recordView);
 
 	setCursorText(_currentRecord->cursorText());
@@ -5944,7 +5944,7 @@ void AmplitudeView::nextSearch() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::abortSearchStation() {
-	_recordView->setFocusProxy(NULL);
+	_recordView->setFocusProxy(nullptr);
 	_searchStation->releaseKeyboard();
 
 	_searchStation->setVisible(false);
@@ -6004,7 +6004,7 @@ void AmplitudeView::confirmAmplitude() {
 
 		int row = item->row() + 1;
 
-		item = NULL;
+		item = nullptr;
 
 		for ( int i = 0; i < _recordView->rowCount(); ++i, ++row ) {
 			if ( row >= _recordView->rowCount() ) row -= _recordView->rowCount();
@@ -6110,7 +6110,7 @@ void AmplitudeView::changeFilter(int index) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeView::applyFilter(RecordViewItem *item) {
-	if ( item == NULL ) {
+	if ( item == nullptr ) {
 		for ( int i = 0; i < _recordView->rowCount(); ++i ) {
 			RecordViewItem* rvi = _recordView->itemAt(i);
 			AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(rvi->label());
@@ -6156,7 +6156,7 @@ void AmplitudeView::changeFilter(int index, bool force) {
 
 	if ( name == NO_FILTER_STRING ) {
 		if ( _currentFilter ) delete _currentFilter;
-		_currentFilter = NULL;
+		_currentFilter = nullptr;
 		_currentFilterStr = "";
 
 		if ( !_ui.actionLimitFilterToZoomTrace->isChecked() )
@@ -6169,7 +6169,7 @@ void AmplitudeView::changeFilter(int index, bool force) {
 	}
 	else if ( name == DEFAULT_FILTER_STRING ) {
 		if ( _currentFilter ) delete _currentFilter;
-		_currentFilter = NULL;
+		_currentFilter = nullptr;
 		_currentFilterStr = "";
 
 		_showProcessedData = true;
@@ -6182,7 +6182,7 @@ void AmplitudeView::changeFilter(int index, bool force) {
 	_showProcessedData = true;
 	RecordWidget::Filter *newFilter = RecordWidget::Filter::Create(filter.toStdString());
 
-	if ( newFilter == NULL ) {
+	if ( newFilter == nullptr ) {
 		QMessageBox::critical(this, "Invalid filter",
 		                      QString("Unable to create filter: %1\nFilter: %2").arg(name).arg(filter));
 

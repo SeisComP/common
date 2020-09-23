@@ -46,11 +46,11 @@ class Canvas;
 
 class SC_GUI_API OriginSymbol : public Map::Symbol {
 	public:
-		OriginSymbol(Map::Decorator* decorator = NULL);
+		OriginSymbol(Map::Decorator* decorator = nullptr);
 		OriginSymbol(double latitude,
 		             double longitude,
 		             double depth = 0,
-		             Map::Decorator* decorator = NULL);
+		             Map::Decorator* decorator = nullptr);
 
 	public:
 		void setPreferredMagnitudeValue(double magnitudeValue);

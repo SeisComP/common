@@ -36,7 +36,7 @@ class Multipart {
 	public:
 		struct CustomHeader {
 			CustomHeader()
-			: name(NULL), name_len(0), value(NULL), value_len(0) {}
+			: name(nullptr), name_len(0), value(nullptr), value_len(0) {}
 
 			const char  *name;
 			size_t       name_len;

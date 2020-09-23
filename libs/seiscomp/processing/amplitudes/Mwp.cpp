@@ -218,7 +218,7 @@ void AmplitudeProcessor_Mwp::setHint(ProcessingHint hint, double value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const DoubleArray *AmplitudeProcessor_Mwp::processedData(Component comp) const {
-	if ( comp != (Component)_usedComponent ) return NULL;
+	if ( comp != (Component)_usedComponent ) return nullptr;
 	return &_processedData;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

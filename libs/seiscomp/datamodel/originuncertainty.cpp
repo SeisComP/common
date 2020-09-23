@@ -37,10 +37,10 @@ static Seiscomp::Core::MetaEnumImpl<OriginUncertaintyDescription> metaOriginUnce
 
 
 OriginUncertainty::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("horizontalUncertainty", "float", false, false, false, false, true, false, NULL, &OriginUncertainty::setHorizontalUncertainty, &OriginUncertainty::horizontalUncertainty));
-	addProperty(Core::simpleProperty("minHorizontalUncertainty", "float", false, false, false, false, true, false, NULL, &OriginUncertainty::setMinHorizontalUncertainty, &OriginUncertainty::minHorizontalUncertainty));
-	addProperty(Core::simpleProperty("maxHorizontalUncertainty", "float", false, false, false, false, true, false, NULL, &OriginUncertainty::setMaxHorizontalUncertainty, &OriginUncertainty::maxHorizontalUncertainty));
-	addProperty(Core::simpleProperty("azimuthMaxHorizontalUncertainty", "float", false, false, false, false, true, false, NULL, &OriginUncertainty::setAzimuthMaxHorizontalUncertainty, &OriginUncertainty::azimuthMaxHorizontalUncertainty));
+	addProperty(Core::simpleProperty("horizontalUncertainty", "float", false, false, false, false, true, false, nullptr, &OriginUncertainty::setHorizontalUncertainty, &OriginUncertainty::horizontalUncertainty));
+	addProperty(Core::simpleProperty("minHorizontalUncertainty", "float", false, false, false, false, true, false, nullptr, &OriginUncertainty::setMinHorizontalUncertainty, &OriginUncertainty::minHorizontalUncertainty));
+	addProperty(Core::simpleProperty("maxHorizontalUncertainty", "float", false, false, false, false, true, false, nullptr, &OriginUncertainty::setMaxHorizontalUncertainty, &OriginUncertainty::maxHorizontalUncertainty));
+	addProperty(Core::simpleProperty("azimuthMaxHorizontalUncertainty", "float", false, false, false, false, true, false, nullptr, &OriginUncertainty::setAzimuthMaxHorizontalUncertainty, &OriginUncertainty::azimuthMaxHorizontalUncertainty));
 	addProperty(objectProperty<ConfidenceEllipsoid>("confidenceEllipsoid", "ConfidenceEllipsoid", false, false, true, &OriginUncertainty::setConfidenceEllipsoid, &OriginUncertainty::confidenceEllipsoid));
 	addProperty(enumProperty("preferredDescription", "OriginUncertaintyDescription", false, true, &metaOriginUncertaintyDescription, &OriginUncertainty::setPreferredDescription, &OriginUncertainty::preferredDescription));
 }

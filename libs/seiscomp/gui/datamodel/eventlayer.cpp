@@ -44,7 +44,7 @@ void updateSymbol(Map::Canvas *canvas, OriginSymbol *symbol,
 	catch ( ... ) {}
 
 	DataModel::Magnitude *mag = DataModel::Magnitude::Find(event->preferredMagnitudeID());
-	if ( mag != NULL ) {
+	if ( mag != nullptr ) {
 		try {
 			symbol->setPreferredMagnitudeValue(mag->magnitude());
 		}
@@ -404,7 +404,7 @@ void EventLayer::addEvent(Seiscomp::DataModel::Event *e, bool) {
 	SymbolMap::iterator it = _eventSymbols.find(e->publicID());
 
 	DataModel::Origin *org = DataModel::Origin::Find(e->preferredOriginID());
-	if ( org != NULL ) {
+	if ( org != nullptr ) {
 		OriginSymbol *symbol;
 
 		if ( it == _eventSymbols.end() )
@@ -430,7 +430,7 @@ void EventLayer::updateEvent(Seiscomp::DataModel::Event *e) {
 	if ( it == _eventSymbols.end() ) return;
 
 	DataModel::Origin *org = DataModel::Origin::Find(e->preferredOriginID());
-	if ( org != NULL ) {
+	if ( org != nullptr ) {
 		updateSymbol(canvas(), it.value(), e, org);
 		updateRequested();
 	}

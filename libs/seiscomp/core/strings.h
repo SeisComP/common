@@ -176,7 +176,7 @@ size_t splitExt(std::vector<std::string> &tokens, const char *source,
  */
 SC_SYSTEM_CORE_API
 template <class CONT>
-std::string join(const CONT &tokens, const char *separator = NULL);
+std::string join(const CONT &tokens, const char *separator = nullptr);
 
 SC_SYSTEM_CORE_API
 template <class CONT>
@@ -235,7 +235,7 @@ SC_SYSTEM_CORE_API bool wildicmp(const std::string &wild, const std::string &str
  * @param len_source The source length. This parameter will be modified
  *                   to match the remaining length of the string.
  * @param len_tok The length of the returned token.
- * @return The address to the token found or NULL.
+ * @return The address to the token found or nullptr.
  */
 template <typename T>
 T *tokenize(T *&str, const char *delim, size_t &len_source, size_t &len_tok);
@@ -248,7 +248,7 @@ T *tokenize(T *&str, const char *delim, size_t &len_source, size_t &len_tok);
  * @param len_source The source length. This parameter will be modified
  *                   to match the remaining length of the string.
  * @param len_tok The length of the returned token.
- * @return The address to the token found or NULL.
+ * @return The address to the token found or nullptr.
  */
 template <typename T>
 T *tokenize2(T *&str, const char *delim, size_t &len_source, size_t &len_tok);

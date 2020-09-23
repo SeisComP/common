@@ -61,7 +61,7 @@ std::string getHostname() {
 
 	char hostname[HOST_NAME_MAX];
 	if ( gethostname(hostname, HOST_NAME_MAX) != 0 ) {
-		const char* name = NULL;
+		const char* name = nullptr;
 		name = getenv("HOSTNAME");
 		return (name) ? name : "";
 	}

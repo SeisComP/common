@@ -1095,7 +1095,7 @@ class PlotWidget : public OriginLocatorPlot {
 
 		void handleContextMenuAction(QAction *action) {
 			OriginLocatorPlot::handleContextMenuAction(action);
-			if ( action == NULL ) return;
+			if ( action == nullptr ) return;
 			if ( action->data().toInt() == 1000 ) {
 				_drawStationNames = SNM_OFF;
 				update();
@@ -2459,7 +2459,7 @@ DiagramFilterSettingsDialog::Filter *DiagramFilterSettingsDialog::createFilter()
 			return new AzimuthFilter(_ui.spinAzimuthCenter->value(), _ui.spinAzimuthExtent->value());
 	};
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2483,8 +2483,8 @@ OriginLocatorView::OriginLocatorView::Config::Config() {
 OriginLocatorView::OriginLocatorView(const MapsDesc &maps,
                                      const PickerView::Config &pickerConfig,
                                      QWidget * parent, Qt::WindowFlags f)
- : QWidget(parent, f), _toolMap(NULL), _recordView(NULL), _currentOrigin(NULL),
-   _baseOrigin(NULL), _pickerConfig(pickerConfig) {
+ : QWidget(parent, f), _toolMap(nullptr), _recordView(nullptr), _currentOrigin(nullptr),
+   _baseOrigin(nullptr), _pickerConfig(pickerConfig) {
 
 	_maptree = new Map::ImageTree(maps);
 
@@ -2499,8 +2499,8 @@ OriginLocatorView::OriginLocatorView(const MapsDesc &maps,
 OriginLocatorView::OriginLocatorView(Map::ImageTree* mapTree,
                                      const PickerView::Config &pickerConfig,
                                      QWidget * parent, Qt::WindowFlags f)
-: QWidget(parent, f), _toolMap(NULL), _recordView(NULL), _currentOrigin(NULL),
-   _baseOrigin(NULL), _pickerConfig(pickerConfig) {
+: QWidget(parent, f), _toolMap(nullptr), _recordView(nullptr), _currentOrigin(nullptr),
+   _baseOrigin(nullptr), _pickerConfig(pickerConfig) {
 
 	_maptree = mapTree;
 
@@ -2531,7 +2531,7 @@ void OriginLocatorPlot::commitWithMTTriggered(bool) {}
 void OriginLocatorView::init() {
 	_ui.setupUi(this);
 
-	_blinkWidget = NULL;
+	_blinkWidget = nullptr;
 	_newOriginStatus = CONFIRMED;
 
 	QObject *drawFilter = new ElideFadeDrawer(this);
@@ -2608,9 +2608,9 @@ void OriginLocatorView::init() {
 	_ui.btnMagnitudes->setEnabled(false);
 	_ui.btnMagnitudes->setVisible(false);
 
-	_reader = NULL;
-	_plotFilter = NULL;
-	_plotFilterSettings = NULL;
+	_reader = nullptr;
+	_plotFilter = nullptr;
+	_plotFilterSettings = nullptr;
 
 	_ui.btnCustom0->setVisible(false);
 	_ui.btnCustom1->setVisible(false);
@@ -2624,7 +2624,7 @@ void OriginLocatorView::init() {
 	_ui.editDistanceCutOff->setValidator(new QDoubleValidator(0, 25000.0, 3, _ui.editFixedDepth));
 	_ui.editDistanceCutOff->setText("1000");
 
-	_modelArrivalsProxy = NULL;
+	_modelArrivalsProxy = nullptr;
 	_modelArrivals.setDisabledForeground(palette().color(QPalette::Disabled, QPalette::Text));
 
 	ArrivalDelegate *delegate = new ArrivalDelegate(_ui.tableArrivals);
@@ -3199,7 +3199,7 @@ void OriginLocatorView::configureLocator() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::changePlotFilter() {
-	if ( _plotFilterSettings == NULL )
+	if ( _plotFilterSettings == nullptr )
 		_plotFilterSettings = new DiagramFilterSettingsDialog(this);
 
 	if ( _plotFilterSettings->exec() == QDialog::Rejected ) return;
@@ -3230,7 +3230,7 @@ void OriginLocatorView::setPlotFilter(DiagramFilterSettingsDialog::Filter *f) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::applyPlotFilter() {
-	if ( _plotFilter == NULL ) {
+	if ( _plotFilter == nullptr ) {
 		for ( int i = 0; i < _residuals->count(); ++i )
 			_residuals->showValue(i);
 	}
@@ -3563,7 +3563,7 @@ void OriginLocatorView::changeArrivalEnableState(int id,bool state) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::zoomMap() {
-	if ( _toolMap != NULL ) {
+	if ( _toolMap != nullptr ) {
 		_toolMap->activateWindow();
 		_toolMap->raise();
 		return;
@@ -3589,7 +3589,7 @@ void OriginLocatorView::zoomMap() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::mapKeyPressed(QKeyEvent* e) {
-	if ( _toolMap == NULL ) return;
+	if ( _toolMap == nullptr ) return;
 
 	switch ( e->key() ) {
 		case Qt::Key_Escape:
@@ -3615,13 +3615,13 @@ void OriginLocatorView::mapKeyPressed(QKeyEvent* e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::objectDestroyed(QObject* o) {
 	if ( o == _toolMap ) {
-		_toolMap = NULL;
+		_toolMap = nullptr;
 		//_ui.btnZoom->setEnabled(true);
 	}
 
 	if ( o == _recordView ) {
 		//std::cout << "Number of objects after: " << Core::BaseObject::ObjectCount() << std::endl;
-		_recordView = NULL;
+		_recordView = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3671,7 +3671,7 @@ void OriginLocatorView::readPicks(Origin* o) {
 		bool missing = false;
 		for ( size_t i = 0; i < o->arrivalCount(); ++i ) {
 			std::string pickID = o->arrival(i)->pickID();
-			if ( Pick::Find(pickID) == NULL ) {
+			if ( Pick::Find(pickID) == nullptr ) {
 				missing = true;
 				break;
 			}
@@ -3682,7 +3682,7 @@ void OriginLocatorView::readPicks(Origin* o) {
 			progress.setWindowTitle(tr("Please wait..."));
 			progress.setRange(0, o->arrivalCount());
 			progress.setLabelText(tr("Loading picks..."));
-			progress.setCancelButton(NULL);
+			progress.setCancelButton(nullptr);
 			DatabaseIterator it = _reader->getPicks(o->publicID());
 
 			while ( *it ) {
@@ -3727,7 +3727,7 @@ void OriginLocatorView::updateBlinkState() {
 		_blinkTimer.stop();
 	}
 
-	if ( _blinkWidget == NULL ) return;
+	if ( _blinkWidget == nullptr ) return;
 
 	QPalette pal = _blinkWidget->palette();
 
@@ -3744,7 +3744,7 @@ void OriginLocatorView::updateBlinkState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::startBlinking(QColor c, QWidget *w) {
-	if ( _blinkWidget != NULL && _blinkWidget != w )
+	if ( _blinkWidget != nullptr && _blinkWidget != w )
 		stopBlinking();
 
 	_blinkCounter = 50;
@@ -3762,7 +3762,7 @@ void OriginLocatorView::startBlinking(QColor c, QWidget *w) {
 void OriginLocatorView::stopBlinking() {
 	_blinkCounter = 0;
 	updateBlinkState();
-	_blinkWidget = NULL;
+	_blinkWidget = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3780,7 +3780,7 @@ void OriginLocatorView::setCreatedOrigin(Seiscomp::DataModel::Origin* o) {
 
 	_ui.btnCommit->setEnabled(true);
 	_ui.btnCommit->setText("Commit");
-//	_ui.btnCommit->setMenu(_baseEvent?_commitMenu:NULL);
+//	_ui.btnCommit->setMenu(_baseEvent?_commitMenu:nullptr);
 	_localOrigin = true;
 
 	// Update pick cache
@@ -4061,7 +4061,7 @@ void OriginLocatorView::updateObject(const QString& parentID, Seiscomp::DataMode
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setOrigin(Seiscomp::DataModel::Origin* o) {
-	setOrigin(o, NULL);
+	setOrigin(o, nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4151,8 +4151,8 @@ bool OriginLocatorView::setOrigin(DataModel::Origin* o, DataModel::Event* e,
 	}
 
 	// Reset plot filter if a new event has been loaded
-	if ( (e != NULL) && _baseEvent != e )
-		setPlotFilter(NULL);
+	if ( (e != nullptr) && _baseEvent != e )
+		setPlotFilter(nullptr);
 
 	stopBlinking();
 
@@ -4164,7 +4164,7 @@ bool OriginLocatorView::setOrigin(DataModel::Origin* o, DataModel::Event* e,
 	_redoList.clear();
 
 	_ui.btnCommit->setText(local?"Commit":"Confirm");
-//	_ui.btnCommit->setMenu(_baseEvent?_commitMenu:NULL);
+//	_ui.btnCommit->setMenu(_baseEvent?_commitMenu:nullptr);
 
 	// Disable distance cutoff when a new origin has been
 	// set from external.
@@ -4210,14 +4210,14 @@ void OriginLocatorView::clear() {
 	_associatedPicks.clear();
 	_originPicks.clear();
 	_changedPicks.clear();
-	_baseOrigin = NULL;
-	_baseEvent = NULL;
+	_baseOrigin = nullptr;
+	_baseEvent = nullptr;
 
 	_undoList.clear();
 	_redoList.clear();
 
 	_ui.btnCommit->setText("Confirm");
-	_ui.btnCommit->setMenu(NULL);
+	_ui.btnCommit->setMenu(nullptr);
 
 	emit undoStateChanged(false);
 	emit redoStateChanged(false);
@@ -4227,7 +4227,7 @@ void OriginLocatorView::clear() {
 
 	_blockReadPicks = false;
 	resetCustomLabels();
-	updateOrigin(NULL);
+	updateOrigin(nullptr);
 
 	if ( _recordView )
 		_recordView->close();
@@ -4263,7 +4263,7 @@ void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
 		}
 	}
 
-	_residuals->setEnabled(_currentOrigin != NULL);
+	_residuals->setEnabled(_currentOrigin != nullptr);
 
 	QApplication::restoreOverrideCursor();
 }
@@ -4317,7 +4317,7 @@ void OriginLocatorView::updateContent() {
 	// Reset custom labels and set background
 	resetCustomLabels();
 
-	if ( _currentOrigin == NULL ) {
+	if ( _currentOrigin == nullptr ) {
 		_ui.cbLocator->setEnabled(false);
 		_ui.retranslateUi(this);
 		_ui.btnShowWaveforms->setEnabled(false);
@@ -4325,7 +4325,7 @@ void OriginLocatorView::updateContent() {
 		_ui.cbLocatorProfile->setEnabled(false);
 		_ui.btnCustom0->setEnabled(false);
 		_ui.btnCustom1->setEnabled(false);
-		_map->setOrigin(NULL);
+		_map->setOrigin(nullptr);
 		_residuals->update();
 		return;
 	}
@@ -4336,7 +4336,7 @@ void OriginLocatorView::updateContent() {
 	if ( _ui.cbLocator->count() > 1 )
 		_ui.cbLocator->setEnabled(true);
 
-	_ui.btnLocatorSettings->setEnabled(_locator != NULL);
+	_ui.btnLocatorSettings->setEnabled(_locator != nullptr);
 
 	_ui.btnShowWaveforms->setEnabled(true);
 	_ui.btnRelocate->setEnabled(true);
@@ -5224,7 +5224,7 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 	if ( org->arrivalCount() == 0 ) {
 		for ( size_t i = 0; i < additionalPicks.size(); ++i ) {
 			SensorLocation *sloc = _locator->getSensorLocation(Pick::Find(additionalPicks[i].pick->publicID()));
-			if ( sloc == NULL ) continue;
+			if ( sloc == nullptr ) continue;
 
 			ArrivalPtr arrival = new Arrival();
 			arrival->setPickID(additionalPicks[i].pick->publicID());
@@ -5290,7 +5290,7 @@ void OriginLocatorView::showWaveforms() {
 
 	if ( !_currentOrigin ) return;
 
-	_recordView = new PickerView(NULL, Qt::Window);
+	_recordView = new PickerView(nullptr, Qt::Window);
 	_recordView->setDatabase(_reader);
 
 	try {
@@ -5305,7 +5305,7 @@ void OriginLocatorView::showWaveforms() {
 	if ( !_recordView->setConfig(_pickerConfig, &errorMsg) ) {
 		QMessageBox::information(this, "Picker Error", errorMsg);
 		delete _recordView;
-		_recordView = NULL;
+		_recordView = nullptr;
 		return;
 	}
 
@@ -5322,7 +5322,7 @@ void OriginLocatorView::showWaveforms() {
 		                         QString("Setting recordstream '%1' failed.")
 		                           .arg(_streamURL.c_str()));
 		delete _recordView;
-		_recordView = NULL;
+		_recordView = nullptr;
 		return;
 	}
 	*/
@@ -5346,7 +5346,7 @@ void OriginLocatorView::showWaveforms() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::relocate() {
-	relocate(_currentOrigin.get(), NULL);
+	relocate(_currentOrigin.get(), nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5439,7 +5439,7 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 	if ( additionalPicks ) {
 		for ( size_t i = 0; i < additionalPicks->size(); ++i ) {
 			SensorLocation *sloc = _locator->getSensorLocation(Pick::Find((*additionalPicks)[i].pick->publicID()));
-			if ( sloc == NULL ) continue;
+			if ( sloc == nullptr ) continue;
 
 			ArrivalPtr arrival = new Arrival();
 			arrival->setPickID((*additionalPicks)[i].pick->publicID());
@@ -5614,7 +5614,7 @@ void OriginLocatorView::applyNewOrigin(DataModel::Origin *origin, bool relocated
 	emit newOriginSet(origin, _baseEvent.get(), _localOrigin, relocated);
 
 	_ui.btnCommit->setText("Commit");
-//	_ui.btnCommit->setMenu(_baseEvent?_commitMenu:NULL);
+//	_ui.btnCommit->setMenu(_baseEvent?_commitMenu:nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6179,7 +6179,7 @@ void OriginLocatorView::commit(bool associate) {
 		emit updatedOrigin(_currentOrigin.get());
 	else
 		emit committedOrigin(_currentOrigin.get(),
-		                     associate?_baseEvent.get():NULL,
+		                     associate?_baseEvent.get():nullptr,
 		                     pickCommitList, amplitudeCommitList);
 
 	if ( _baseEvent && _defaultEventType ) {
@@ -6197,7 +6197,7 @@ void OriginLocatorView::commit(bool associate) {
 	_localOrigin = false;
 
 	//_ui.btnCommit->setEnabled(false);
-	//_ui.btnCommit->setMenu(NULL);
+	//_ui.btnCommit->setMenu(nullptr);
 	_ui.btnMagnitudes->setEnabled(false);
 
 	_undoList.clear();
@@ -6368,7 +6368,7 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 
 	if ( fm )
 		emit committedFocalMechanism(fm.get(), _baseEvent.get(),
-		                             derived?derived.get():NULL);
+		                             derived?derived.get():nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6693,7 +6693,7 @@ struct InvertFilter : ArrivalModel::Filter {
 struct AutomaticPickFilter : ArrivalModel::Filter {
 	bool accepts(int, int, DataModel::Arrival *arr) const {
 		Pick *p = Pick::Find(arr->pickID());
-		if ( p == NULL ) return false;
+		if ( p == nullptr ) return false;
 
 		try {
 			return p->evaluationMode() == AUTOMATIC;
@@ -6708,7 +6708,7 @@ struct AutomaticPickFilter : ArrivalModel::Filter {
 struct ManualPickFilter : ArrivalModel::Filter {
 	bool accepts(int, int, DataModel::Arrival *arr) const {
 		Pick *p = Pick::Find(arr->pickID());
-		if ( p == NULL ) return false;
+		if ( p == nullptr ) return false;
 
 		try {
 			return p->evaluationMode() == MANUAL;
@@ -6883,7 +6883,7 @@ void OriginLocatorView::tableArrivalsHeaderContextMenuRequested(const QPoint &po
 	}
 
 	QAction *result = menu.exec(_ui.tableArrivals->horizontalHeader()->mapToGlobal(pos));
-	if ( result == NULL ) return;
+	if ( result == nullptr ) return;
 
 	int section = actions.indexOf(result);
 	if ( section == -1 ) return;
@@ -6900,7 +6900,7 @@ void OriginLocatorView::tableArrivalsHeaderContextMenuRequested(const QPoint &po
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::selectArrivals(const ArrivalModel::Filter *f) {
-	if ( _ui.tableArrivals->selectionModel() == NULL )
+	if ( _ui.tableArrivals->selectionModel() == nullptr )
 		return;
 
 	QItemSelection selection;
@@ -6909,7 +6909,7 @@ void OriginLocatorView::selectArrivals(const ArrivalModel::Filter *f) {
 		Arrival *arr = _currentOrigin->arrival(i);
 		QModelIndex idx = _modelArrivalsProxy->mapFromSource(_modelArrivals.index(i,0));
 
-		if ( f != NULL && !f->accepts(idx.row(), i, arr) ) continue;
+		if ( f != nullptr && !f->accepts(idx.row(), i, arr) ) continue;
 
 		selection.append(QItemSelectionRange(idx));
 	}
@@ -6933,13 +6933,13 @@ void OriginLocatorView::selectArrivals(const ArrivalModel::Filter &f) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::deleteSelectedArrivals() {
-	if ( _ui.tableArrivals->selectionModel() == NULL )
+	if ( _ui.tableArrivals->selectionModel() == nullptr )
 		return;
 
 	QModelIndexList rows = _ui.tableArrivals->selectionModel()->selectedRows();
 	if ( rows.empty() ) return;
 
-	if ( _currentOrigin == NULL ) return;
+	if ( _currentOrigin == nullptr ) return;
 
 	OriginPtr origin = Origin::Create();
 	*origin = *_currentOrigin;
@@ -6980,7 +6980,7 @@ void OriginLocatorView::deleteSelectedArrivals() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::activateSelectedArrivals(Seismology::LocatorInterface::Flags flags,
                                                  bool activate) {
-	if ( _ui.tableArrivals->selectionModel() == NULL )
+	if ( _ui.tableArrivals->selectionModel() == nullptr )
 		return;
 
 	QModelIndexList rows = _ui.tableArrivals->selectionModel()->selectedRows();
@@ -7060,7 +7060,7 @@ void OriginLocatorView::renameArrivals() {
 		return;
 	}
 
-	if ( _currentOrigin == NULL ) return;
+	if ( _currentOrigin == nullptr ) return;
 
 	OriginPtr origin = Origin::Create();
 	*origin = *_currentOrigin;

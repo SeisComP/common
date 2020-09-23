@@ -43,6 +43,9 @@
 
 //#define LOCSAT_TESTING
 
+#define TRUE  1
+#define FALSE 0
+
 using namespace Seiscomp::DataModel;
 using namespace Seiscomp::Seismology;
 
@@ -74,8 +77,8 @@ enum LocSATParams {
 	LP_USE_LOCATION,         /* true    - use current origin data ?       */
 	LP_VERBOSE,              /* true    - verbose output of data ?        */
 	LP_COR_LEVEL,            /* 0       - correction table level          */
-	LP_OUT_FILENAME,         /* NULL    - name of file to print data      */
-	LP_PREFIX,               /* NULL    - dir name & prefix of tt tables  */
+	LP_OUT_FILENAME,         /* nullptr    - name of file to print data      */
+	LP_PREFIX,               /* nullptr    - dir name & prefix of tt tables  */
 	LP_MIN_ARRIVAL_WEIGHT,   /* 0.5     - if arr-weight = less than this, locsat will ignore this arrival */
 	LP_DEFAULT_TIME_ERROR,   /* 1.0     - the default pick uncertainty */
 	LP_USE_PICK_UNCERTAINTY  /* false   - whether to use pick uncertainty or not */
@@ -148,7 +151,7 @@ LocSAT::LocSAT() {
 	_locator_params->outfile_name = new char[1024];
 	_locator_params->prefix = new char[1024];
 
-	_locateEvent = NULL;
+	_locateEvent = nullptr;
 	_profiles.push_back("iasp91");
 	_profiles.push_back("tab");
 	setProfile(_defaultTablePrefix);
@@ -461,7 +464,7 @@ DataModel::Origin* LocSAT::fromPicks(PickList &picks){
 
 	if ( newLoc) free(newLoc);
 	delete _locateEvent;
-	_locateEvent = NULL;
+	_locateEvent = nullptr;
 
 	return origin;
 }
@@ -472,7 +475,7 @@ DataModel::Origin* LocSAT::fromPicks(PickList &picks){
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DataModel::Origin *LocSAT::relocate(const DataModel::Origin *origin) {
-	if ( origin == NULL ) return NULL;
+	if ( origin == nullptr ) return nullptr;
 
 	if ( isInitialLocationIgnored() )
 		setLocatorParams(LP_USE_LOCATION, "n");
@@ -497,8 +500,8 @@ DataModel::Origin *LocSAT::relocate(const DataModel::Origin *origin) {
 
 	if ( !loadArrivals(origin)) {
 		delete _locateEvent;
-		_locateEvent = NULL;
-		return NULL;
+		_locateEvent = nullptr;
+		return nullptr;
 	}
 
 	if ( _usingFixedDepth ) {
@@ -525,7 +528,7 @@ DataModel::Origin *LocSAT::relocate(const DataModel::Origin *origin) {
 				result->arrival(i)->setPickID(origin->arrival(arid)->pickID());
 				DataModel::Pick *p = Pick::Find(result->arrival(i)->pickID());
 
-				if ( p != NULL )
+				if ( p != nullptr )
 					stationsAssociated.insert(p->waveformID().networkCode() + "." + p->waveformID().stationCode());
 
 				try {
@@ -533,7 +536,7 @@ DataModel::Origin *LocSAT::relocate(const DataModel::Origin *origin) {
 				}
 				catch ( ... ) {}
 
-				if ( p != NULL )
+				if ( p != nullptr )
 					stationsUsed.insert(p->waveformID().networkCode() + "." + p->waveformID().stationCode());
 			}
 		}
@@ -552,7 +555,7 @@ DataModel::Origin *LocSAT::relocate(const DataModel::Origin *origin) {
 
 	if ( newLoc) free(newLoc);
 	delete _locateEvent;
-	_locateEvent = NULL;
+	_locateEvent = nullptr;
 
 	return result;
 }
@@ -582,7 +585,7 @@ static bool travelTimeP(double lat, double lon, double depth, double delta, doub
 	Seiscomp::TravelTimeList
 		*ttlist = ttt.compute(lat, lon, depth, lat2, lon2, 0);
 
-	if ( ttlist == NULL || ttlist->empty() )
+	if ( ttlist == nullptr || ttlist->empty() )
 		return false;
 
 	for (Seiscomp::TravelTimeList::iterator
@@ -778,13 +781,13 @@ bool LocSAT::loadArrivals(const DataModel::Origin *origin) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DataModel::Origin* LocSAT::loc2Origin(Internal::Loc* loc){
-	if ( loc == NULL ) return NULL;
+	if ( loc == nullptr ) return nullptr;
 
 	DataModel::Origin *origin = _newOriginID.empty()
 	             ? DataModel::Origin::Create()
 	             : DataModel::Origin::Create(_newOriginID);
 
-	if ( !origin ) return NULL;
+	if ( !origin ) return nullptr;
 
 	DataModel::CreationInfo ci;
 	ci.setCreationTime(Core::Time().gmt());

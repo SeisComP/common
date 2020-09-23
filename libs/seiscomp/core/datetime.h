@@ -106,8 +106,8 @@ class SC_SYSTEM_CORE_API TimeSpan {
 		TimeSpan& setUSecs(long);
 
 		//! Assigns the elapsed time to the passed out parameters
-		void elapsedTime(int* days	, int* hours = NULL,
-		                 int* minutes = NULL, int* seconds = NULL) const;
+		void elapsedTime(int* days	, int* hours = nullptr,
+		                 int* minutes = nullptr, int* seconds = nullptr) const;
 
 	// ----------------------------------------------------------------------
 	//  Implementation
@@ -178,15 +178,15 @@ class SC_SYSTEM_CORE_API Time : public TimeSpan {
 
 		//! Fill the parameters with the currently set time values
 		//! @return The error flag
-		bool get(int *year, int *month = NULL, int *day = NULL,
-		         int *hour = NULL, int *min = NULL, int *sec = NULL,
-		         int *usec = NULL) const;
+		bool get(int *year, int *month = nullptr, int *day = nullptr,
+		         int *hour = nullptr, int *min = nullptr, int *sec = nullptr,
+		         int *usec = nullptr) const;
 
 		//! Fill the parameters with the currently set time values
 		//! @return The error flag
-		bool get2(int *year, int *yday = NULL,
-		          int *hour = NULL, int *min = NULL, int *sec = NULL,
-		          int *usec = NULL) const;
+		bool get2(int *year, int *yday = nullptr,
+		          int *hour = nullptr, int *min = nullptr, int *sec = nullptr,
+		          int *usec = nullptr) const;
 
 		//! Returns the current localtime
 		static Time LocalTime();

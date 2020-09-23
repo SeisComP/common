@@ -41,7 +41,7 @@ REGISTER_RECORDSTREAM(File, "file");
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 File::File()
 : RecordStream()
-, _factory(NULL)
+, _factory(nullptr)
 , _current(&_fstream) {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -51,7 +51,7 @@ File::File()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 File::File(string name)
-: _factory(NULL)
+: _factory(nullptr)
 , _current(&_fstream) {
 	setSource(name);
 }
@@ -62,7 +62,7 @@ File::File(string name)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 File::File(const File &f)
-: _factory(NULL)
+: _factory(nullptr)
 , _current(&_fstream) {
 	setSource(f.name());
 }
@@ -194,7 +194,7 @@ void File::close() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool File::setRecordType(const char *type) {
 	RecordFactory *factory = RecordFactory::Find(type);
-	if ( factory == NULL ) {
+	if ( factory == nullptr ) {
 		SEISCOMP_ERROR("Unknown record type '%s'", type);
 		return false;
 	}
@@ -215,16 +215,16 @@ Record *File::next() {
 		_current = &_fstream;
 		_filter.clear();
 		_closeRequested = false;
-		return NULL;
+		return nullptr;
 	}
 
 	if ( !*_current )
-		return NULL;
+		return nullptr;
 
 	while ( !_closeRequested ) {
 		Record *rec = _factory->create();
-		if ( rec == NULL )
-			return NULL;
+		if ( rec == nullptr )
+			return nullptr;
 
 		setupRecord(rec);
 
@@ -233,12 +233,12 @@ Record *File::next() {
 		}
 		catch ( Core::EndOfStreamException & ) {
 			delete rec;
-			return NULL;
+			return nullptr;
 		}
 		catch ( std::exception &e ) {
 			SEISCOMP_ERROR("file read exception: %s", e.what());
 			delete rec;
-			return NULL;
+			return nullptr;
 		}
 
 		if ( !_filter.empty() ) {
@@ -294,7 +294,7 @@ Record *File::next() {
 		return rec;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

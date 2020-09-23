@@ -530,7 +530,7 @@ void RectangularProjection::render(QImage &img, TextureCache *cache) {
 	int fromX = (int)fx;
 	int toX = (int)tx;
 
-	if ( cache == NULL ) return;
+	if ( cache == nullptr ) return;
 
 	qreal pixelRatio = 2.0*_scale / cache->tileHeight();
 	if ( cache->isMercatorProjected() )

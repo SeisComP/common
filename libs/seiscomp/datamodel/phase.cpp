@@ -32,7 +32,7 @@ IMPLEMENT_SC_CLASS(Phase, "Phase");
 
 
 Phase::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("code", "string", false, false, false, false, false, false, NULL, &Phase::setCode, &Phase::code));
+	addProperty(Core::simpleProperty("code", "string", false, false, false, false, false, false, nullptr, &Phase::setCode, &Phase::code));
 }
 
 

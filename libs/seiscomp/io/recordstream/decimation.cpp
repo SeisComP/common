@@ -66,7 +66,7 @@ Decimation::Decimation() {
 	_fp = 0.7;
 	_fs = 0.9;
 	_coeffScale = 10;
-	_nextRecord = NULL;
+	_nextRecord = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -317,9 +317,9 @@ void Decimation::cleanup() {
 		_coefficients.clear();
 	}
 
-	_source = NULL;
+	_source = nullptr;
 
-	if ( _nextRecord != NULL ) delete _nextRecord;
+	if ( _nextRecord != nullptr ) delete _nextRecord;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -330,7 +330,7 @@ void Decimation::cleanup() {
 Record *Decimation::next() {
 	if ( !_source ) {
 		SEISCOMP_ERROR("[dec] no source defined");
-		return NULL;
+		return nullptr;
 	}
 
 	while ( true ) {
@@ -339,7 +339,7 @@ Record *Decimation::next() {
 			// If new data has been pushed to stream, return
 			if ( push(rec.get()) ) {
 				GenericRecord *rec = _nextRecord;
-				_nextRecord = NULL;
+				_nextRecord = nullptr;
 
 				if ( rec->data()->dataType() != _dataType )
 					rec->setData(rec->data()->copy(_dataType));
@@ -351,7 +351,7 @@ Record *Decimation::next() {
 			break;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -386,14 +386,14 @@ int Decimation::checkSR(Record *rec) const {
 bool Decimation::initCoefficients(ResampleStage *stage) {
 	CoefficientMap::iterator it = _coefficients.find(stage->N);
 	if ( it != _coefficients.end() ) {
-		if ( it->second == NULL )
+		if ( it->second == nullptr )
 			// Invalid coefficients for that stage?
 			return false;
 
 		stage->coefficients = it->second;
 	}
 	else {
-		stage->coefficients = NULL;
+		stage->coefficients = nullptr;
 
 		if ( stage->N > _maxN ) {
 			for ( int i = _maxN; i > 1; --i ) {
@@ -432,7 +432,7 @@ bool Decimation::initCoefficients(ResampleStage *stage) {
 				stage->coefficients = it->second;
 		}
 
-		if ( stage->coefficients == NULL ) {
+		if ( stage->coefficients == nullptr ) {
 			// Create and cache coefficients for N
 			int Ncoeff = stage->N*_coeffScale*2+1;
 
@@ -445,7 +445,7 @@ bool Decimation::initCoefficients(ResampleStage *stage) {
 			if ( remez(&((*coeff)[0]), Ncoeff, 2, bands, desired, weights, BANDPASS) ) {
 				SEISCOMP_WARNING("[dec] failed to build coefficients for N=%d, ignore stream", stage->N);
 				delete coeff;
-				_coefficients[stage->N] = NULL;
+				_coefficients[stage->N] = nullptr;
 				return false;
 			}
 
@@ -481,7 +481,7 @@ void Decimation::init(ResampleStage *stage, Record *rec) {
 	if ( !stage->passThrough )
 		stage->valid = initCoefficients(stage);
 	else
-		stage->coefficients = NULL;
+		stage->coefficients = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -491,9 +491,9 @@ void Decimation::init(ResampleStage *stage, Record *rec) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Decimation::push(Record *rec) {
 	// Delete next record if still active which should never be the case
-	if ( _nextRecord != NULL ) {
+	if ( _nextRecord != nullptr ) {
 		delete _nextRecord;
-		_nextRecord = NULL;
+		_nextRecord = nullptr;
 	}
 
 	string id = rec->streamID();
@@ -516,7 +516,7 @@ bool Decimation::push(Record *rec) {
 			stage->reset();
 			if ( stage->nextStage ) {
 				delete stage->nextStage;
-				stage->nextStage = NULL;
+				stage->nextStage = nullptr;
 			}
 
 			init(stage, rec);
@@ -528,7 +528,7 @@ bool Decimation::push(Record *rec) {
 	else
 		_nextRecord = resample(stage, rec);
 
-	return _nextRecord != NULL;
+	return _nextRecord != nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -537,7 +537,7 @@ bool Decimation::push(Record *rec) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GenericRecord *Decimation::convert(Record *rec) {
-	if ( rec->data() == NULL ) return NULL;
+	if ( rec->data() == nullptr ) return nullptr;
 
 	GenericRecord *out;
 	switch ( rec->dataType() ) {
@@ -548,7 +548,7 @@ GenericRecord *Decimation::convert(Record *rec) {
 			out = createDecimatedRecord(rec);
 			break;
 		default:
-			return NULL;
+			return nullptr;
 	}
 
 	ArrayPtr data = rec->data()->copy(_dataType);
@@ -564,7 +564,7 @@ GenericRecord *Decimation::convert(Record *rec) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 	if ( !stage->valid )
-		return NULL;
+		return nullptr;
 
 	Core::Time endTime;
 	try {
@@ -573,7 +573,7 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 	catch ( ... ) {
 		SEISCOMP_WARNING("[dec] %s: invalid end time -> ignoring",
 		                 rec->streamID().c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	if ( stage->lastEndTime.valid() ) {
@@ -581,7 +581,7 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 		if ( fabs(diff) > stage->dt*0.5 ) {
 			if ( diff < 0 )
 				// Ignore overlap
-				return NULL;
+				return nullptr;
 
 			stage->reset();
 		}
@@ -591,12 +591,12 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 
 	ArrayPtr tmp_ar;
 	const DoubleArray *ar = DoubleArray::ConstCast(rec->data());
-	if ( ar == NULL ) {
+	if ( ar == nullptr ) {
 		tmp_ar = rec->data()->copy(Array::DOUBLE);
 		ar = DoubleArray::ConstCast(tmp_ar);
-		if ( ar == NULL ) {
+		if ( ar == nullptr ) {
 			SEISCOMP_ERROR("[dec] internal error: doubles expected");
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -616,7 +616,7 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 			stage->startTime = rec->startTime();
 
 		// Still samples missing and no more data available, return
-		if ( stage->missingSamples > 0 ) return NULL;
+		if ( stage->missingSamples > 0 ) return nullptr;
 
 		// Resampling can start now
 		stage->samplesToSkip = 0;
@@ -694,7 +694,7 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 		return grec;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

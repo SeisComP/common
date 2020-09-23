@@ -32,7 +32,7 @@ IMPLEMENT_SC_CLASS(ComplexArray, "ComplexArray");
 
 
 ComplexArray::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("content", "complex", true, false, false, false, true, false, NULL, &ComplexArray::setContent, (const std::vector< std::complex<double> >& (ComplexArray::*)() const)&ComplexArray::content));
+	addProperty(Core::simpleProperty("content", "complex", true, false, false, false, true, false, nullptr, &ComplexArray::setContent, (const std::vector< std::complex<double> >& (ComplexArray::*)() const)&ComplexArray::content));
 }
 
 

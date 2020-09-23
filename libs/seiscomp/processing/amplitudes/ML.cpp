@@ -139,7 +139,7 @@ void AbstractAmplitudeProcessor_ML::initFilter(double fsamp) {
 		);
 	}
 	else
-		AmplitudeProcessor::setFilter(NULL);
+		AmplitudeProcessor::setFilter(nullptr);
 
 	AmplitudeProcessor::initFilter(fsamp);
 }
@@ -242,7 +242,7 @@ bool AbstractAmplitudeProcessor_ML::deconvolveData(Response *resp,
 	Math::Restitution::FFT::TransferFunctionPtr tf =
 		resp->getTransferFunction(numberOfIntegrations < 0 ? 0 : numberOfIntegrations);
 
-	if ( tf == NULL )
+	if ( tf == nullptr )
 		return false;
 
 	Math::SeismometerResponse::WoodAnderson paz(numberOfIntegrations < 0 ? Math::Displacement : Math::Velocity,

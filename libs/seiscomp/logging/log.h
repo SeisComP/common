@@ -79,13 +79,13 @@ enum LogLevel {
 #ifdef __FUNCTION__
 #define _scMessageDef(ID, COMPONENT) \
   static Seiscomp::Logging::PublishLoc ID SEISCOMP_SECTION = {& ID ## _enabled, \
-      &Seiscomp::Logging::Register, &Seiscomp::Logging::RegisterVA, 0, STR(COMPONENT), __FILE__, \
-      __FUNCTION__, __LINE__, 0};
+      &Seiscomp::Logging::Register, &Seiscomp::Logging::RegisterVA, nullptr, STR(COMPONENT), __FILE__, \
+      __FUNCTION__, __LINE__, nullptr};
 #else
 #define _scMessageDef(ID, COMPONENT) \
   static Seiscomp::Logging::PublishLoc ID SEISCOMP_SECTION = {& ID ## _enabled, \
-      &Seiscomp::Logging::Register, &Seiscomp::Logging::RegisterVA, 0, STR(COMPONENT), __FILE__, \
-      "[unknown]", __LINE__, 0};
+      &Seiscomp::Logging::Register, &Seiscomp::Logging::RegisterVA, nullptr, STR(COMPONENT), __FILE__, \
+      "[unknown]", __LINE__, nullptr};
 #endif
 
 /*! @def _scMessageCall

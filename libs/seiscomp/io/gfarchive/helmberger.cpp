@@ -467,7 +467,7 @@ Core::GreensFunction* HelmbergerArchive::get() {
 		//SEISCOMP_DEBUG("No greensfunction found");
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -479,12 +479,12 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
                                               const Core::TimeSpan &ts,
                                               double timeOfs) {
 	if ( timeOfs >= (double)ts )
-		return NULL;
+		return nullptr;
 
 	std::ifstream ifs(file.c_str());
 	if ( !ifs.good() ) {
 		//SEISCOMP_DEBUG("%s: not found", file.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	int components = 0;
@@ -492,7 +492,7 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 	if ( components < 8 ) {
 		SEISCOMP_WARNING("%s: invalid number of components: %d, need 8",
 		                 file.c_str(), components);
-		return NULL;
+		return nullptr;
 	}
 
 	std::string format, tmp;
@@ -502,24 +502,24 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 	boost::smatch what;
 	if ( !boost::regex_match(format, what, boost::regex("^\\(([0-9]*)e([0-9]*)\\.([0-9]*)\\)")) ) {
 		SEISCOMP_WARNING("%s: wrong format: %s", file.c_str(), format.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	if ( what.size() != 4 ) {
 		SEISCOMP_WARNING("%s: wrong format: %s", file.c_str(), format.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	int numTokens, tokenSize;
 
 	if ( !Core::fromString(numTokens, what.str(1)) ) {
 		SEISCOMP_WARNING("%s: wrong format: %s", file.c_str(), format.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	if ( !Core::fromString(tokenSize, what.str(2)) ) {
 		SEISCOMP_WARNING("%s: wrong format: %s", file.c_str(), format.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	//std::cout << "number of tokens: " << numTokens << std::endl;
@@ -527,7 +527,7 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 
 	std::getline(ifs, tmp);
 
-	Core::GreensFunction *gf = NULL;
+	Core::GreensFunction *gf = nullptr;
 	int maxSamples = 0;
 
 	Core::GreensFunctionComponent orderedComps[8] = {
@@ -555,7 +555,7 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 		//std::cout << "number of samples: " << numSamples << std::endl;
 		//std::cout << "sampling frequency: " << samplingFrequency << std::endl;
 
-		if ( gf == NULL ) {
+		if ( gf == nullptr ) {
 			gf = new Core::GreensFunction();
 			gf->setSamplingFrequency(samplingFrequency);
 			gf->setTimeOffset(timeOfs);
@@ -568,7 +568,7 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 			SEISCOMP_ERROR("%s: mismatching sampling frequencies between components",
 			               file.c_str());
 			delete gf;
-			return NULL;
+			return nullptr;
 		}
 
 		int completeLines = numSamples / numTokens;
@@ -587,7 +587,7 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 					if ( read <= 0 ) {
 						SEISCOMP_ERROR("%s: read error", file.c_str());
 						delete gf;
-						return NULL;
+						return nullptr;
 					}
 					idx += read;
 				}
@@ -598,7 +598,7 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 				if ( !Core::fromString(value, tmp) ) {
 					SEISCOMP_ERROR("%s: invalid numeric value %s at index %d", file.c_str(), tmp.c_str(), count);
 					delete gf;
-					return NULL;
+					return nullptr;
 				}
 
 				if ( count < arr->size() ) (*arr)[count] = value;
@@ -618,7 +618,7 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 				if ( read <= 0 ) {
 					SEISCOMP_ERROR("%s: read error", file.c_str());
 					delete gf;
-					return NULL;
+					return nullptr;
 				}
 				idx += read;
 			}
@@ -627,7 +627,7 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 			if ( !Core::fromString(value, tmp) ) {
 				SEISCOMP_ERROR("%s: invalid numeric value %s at index %d", file.c_str(), tmp.c_str(), count);
 				delete gf;
-				return NULL;
+				return nullptr;
 			}
 
 			if ( count < arr->size() ) (*arr)[count] = value;

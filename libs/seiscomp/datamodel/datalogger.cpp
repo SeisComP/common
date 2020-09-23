@@ -34,17 +34,17 @@ IMPLEMENT_SC_CLASS_DERIVED(Datalogger, PublicObject, "Datalogger");
 
 
 Datalogger::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, NULL, &Datalogger::setName, &Datalogger::name));
-	addProperty(Core::simpleProperty("description", "string", false, false, false, false, false, false, NULL, &Datalogger::setDescription, &Datalogger::description));
-	addProperty(Core::simpleProperty("digitizerModel", "string", false, false, false, false, false, false, NULL, &Datalogger::setDigitizerModel, &Datalogger::digitizerModel));
-	addProperty(Core::simpleProperty("digitizerManufacturer", "string", false, false, false, false, false, false, NULL, &Datalogger::setDigitizerManufacturer, &Datalogger::digitizerManufacturer));
-	addProperty(Core::simpleProperty("recorderModel", "string", false, false, false, false, false, false, NULL, &Datalogger::setRecorderModel, &Datalogger::recorderModel));
-	addProperty(Core::simpleProperty("recorderManufacturer", "string", false, false, false, false, false, false, NULL, &Datalogger::setRecorderManufacturer, &Datalogger::recorderManufacturer));
-	addProperty(Core::simpleProperty("clockModel", "string", false, false, false, false, false, false, NULL, &Datalogger::setClockModel, &Datalogger::clockModel));
-	addProperty(Core::simpleProperty("clockManufacturer", "string", false, false, false, false, false, false, NULL, &Datalogger::setClockManufacturer, &Datalogger::clockManufacturer));
-	addProperty(Core::simpleProperty("clockType", "string", false, false, false, false, false, false, NULL, &Datalogger::setClockType, &Datalogger::clockType));
-	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, NULL, &Datalogger::setGain, &Datalogger::gain));
-	addProperty(Core::simpleProperty("maxClockDrift", "float", false, false, false, false, true, false, NULL, &Datalogger::setMaxClockDrift, &Datalogger::maxClockDrift));
+	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &Datalogger::setName, &Datalogger::name));
+	addProperty(Core::simpleProperty("description", "string", false, false, false, false, false, false, nullptr, &Datalogger::setDescription, &Datalogger::description));
+	addProperty(Core::simpleProperty("digitizerModel", "string", false, false, false, false, false, false, nullptr, &Datalogger::setDigitizerModel, &Datalogger::digitizerModel));
+	addProperty(Core::simpleProperty("digitizerManufacturer", "string", false, false, false, false, false, false, nullptr, &Datalogger::setDigitizerManufacturer, &Datalogger::digitizerManufacturer));
+	addProperty(Core::simpleProperty("recorderModel", "string", false, false, false, false, false, false, nullptr, &Datalogger::setRecorderModel, &Datalogger::recorderModel));
+	addProperty(Core::simpleProperty("recorderManufacturer", "string", false, false, false, false, false, false, nullptr, &Datalogger::setRecorderManufacturer, &Datalogger::recorderManufacturer));
+	addProperty(Core::simpleProperty("clockModel", "string", false, false, false, false, false, false, nullptr, &Datalogger::setClockModel, &Datalogger::clockModel));
+	addProperty(Core::simpleProperty("clockManufacturer", "string", false, false, false, false, false, false, nullptr, &Datalogger::setClockManufacturer, &Datalogger::clockManufacturer));
+	addProperty(Core::simpleProperty("clockType", "string", false, false, false, false, false, false, nullptr, &Datalogger::setClockType, &Datalogger::clockType));
+	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, nullptr, &Datalogger::setGain, &Datalogger::gain));
+	addProperty(Core::simpleProperty("maxClockDrift", "float", false, false, false, false, true, false, nullptr, &Datalogger::setMaxClockDrift, &Datalogger::maxClockDrift));
 	addProperty(objectProperty<Blob>("remark", "Blob", false, false, true, &Datalogger::setRemark, &Datalogger::remark));
 	addProperty(arrayClassProperty<DataloggerCalibration>("calibration", "DataloggerCalibration", &Datalogger::dataloggerCalibrationCount, &Datalogger::dataloggerCalibration, static_cast<bool (Datalogger::*)(DataloggerCalibration*)>(&Datalogger::add), &Datalogger::removeDataloggerCalibration, static_cast<bool (Datalogger::*)(DataloggerCalibration*)>(&Datalogger::remove)));
 	addProperty(arrayClassProperty<Decimation>("decimation", "Decimation", &Datalogger::decimationCount, &Datalogger::decimation, static_cast<bool (Datalogger::*)(Decimation*)>(&Datalogger::add), &Datalogger::removeDecimation, static_cast<bool (Datalogger::*)(Decimation*)>(&Datalogger::remove)));
@@ -128,11 +128,11 @@ Datalogger::Datalogger(const std::string& publicID)
 Datalogger::~Datalogger() {
 	std::for_each(_dataloggerCalibrations.begin(), _dataloggerCalibrations.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&DataloggerCalibration::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&DataloggerCalibrationPtr::get)));
 	std::for_each(_decimations.begin(), _decimations.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Decimation::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&DecimationPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -152,12 +152,12 @@ Datalogger* Datalogger::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Datalogger* Datalogger::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new Datalogger(publicID);
@@ -459,7 +459,7 @@ const DataloggerIndex& Datalogger::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::equalIndex(const Datalogger* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -501,7 +501,7 @@ Datalogger& Datalogger::operator=(const Datalogger& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::assign(Object* other) {
 	Datalogger* otherDatalogger = Datalogger::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherDatalogger;
@@ -515,11 +515,11 @@ bool Datalogger::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(parent);
-	if ( inventory != NULL )
+	if ( inventory != nullptr )
 		return inventory->add(this);
 
 	SEISCOMP_ERROR("Datalogger::attachTo(%s) -> wrong class type", parent->className());
@@ -532,11 +532,11 @@ bool Datalogger::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(object);
-	if ( inventory != NULL ) {
+	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -544,7 +544,7 @@ bool Datalogger::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			Datalogger* child = inventory->findDatalogger(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
 				SEISCOMP_DEBUG("Datalogger::detachFrom(Inventory): datalogger has not been found");
@@ -563,7 +563,7 @@ bool Datalogger::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -587,9 +587,9 @@ Object* Datalogger::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::updateChild(Object* child) {
 	DataloggerCalibration* dataloggerCalibrationChild = DataloggerCalibration::Cast(child);
-	if ( dataloggerCalibrationChild != NULL ) {
+	if ( dataloggerCalibrationChild != nullptr ) {
 		DataloggerCalibration* dataloggerCalibrationElement = dataloggerCalibration(dataloggerCalibrationChild->index());
-		if ( dataloggerCalibrationElement != NULL ) {
+		if ( dataloggerCalibrationElement != nullptr ) {
 			*dataloggerCalibrationElement = *dataloggerCalibrationChild;
 			dataloggerCalibrationElement->update();
 			return true;
@@ -598,9 +598,9 @@ bool Datalogger::updateChild(Object* child) {
 	}
 
 	Decimation* decimationChild = Decimation::Cast(child);
-	if ( decimationChild != NULL ) {
+	if ( decimationChild != nullptr ) {
 		Decimation* decimationElement = decimation(decimationChild->index());
-		if ( decimationElement != NULL ) {
+		if ( decimationElement != nullptr ) {
 			*decimationElement = *decimationChild;
 			decimationElement->update();
 			return true;
@@ -660,7 +660,7 @@ DataloggerCalibration* Datalogger::dataloggerCalibration(const DataloggerCalibra
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -669,11 +669,11 @@ DataloggerCalibration* Datalogger::dataloggerCalibration(const DataloggerCalibra
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::add(DataloggerCalibration* dataloggerCalibration) {
-	if ( dataloggerCalibration == NULL )
+	if ( dataloggerCalibration == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( dataloggerCalibration->parent() != NULL ) {
+	if ( dataloggerCalibration->parent() != nullptr ) {
 		SEISCOMP_ERROR("Datalogger::add(DataloggerCalibration*) -> element has already a parent");
 		return false;
 	}
@@ -708,7 +708,7 @@ bool Datalogger::add(DataloggerCalibration* dataloggerCalibration) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::remove(DataloggerCalibration* dataloggerCalibration) {
-	if ( dataloggerCalibration == NULL )
+	if ( dataloggerCalibration == nullptr )
 		return false;
 
 	if ( dataloggerCalibration->parent() != this ) {
@@ -729,7 +729,7 @@ bool Datalogger::remove(DataloggerCalibration* dataloggerCalibration) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_dataloggerCalibrations.erase(it);
@@ -753,7 +753,7 @@ bool Datalogger::removeDataloggerCalibration(size_t i) {
 		_dataloggerCalibrations[i]->accept(&nc);
 	}
 
-	_dataloggerCalibrations[i]->setParent(NULL);
+	_dataloggerCalibrations[i]->setParent(nullptr);
 	childRemoved(_dataloggerCalibrations[i].get());
 
 	_dataloggerCalibrations.erase(_dataloggerCalibrations.begin() + i);
@@ -768,7 +768,7 @@ bool Datalogger::removeDataloggerCalibration(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::removeDataloggerCalibration(const DataloggerCalibrationIndex& i) {
 	DataloggerCalibration* object = dataloggerCalibration(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -800,7 +800,7 @@ Decimation* Datalogger::decimation(const DecimationIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -809,11 +809,11 @@ Decimation* Datalogger::decimation(const DecimationIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::add(Decimation* decimation) {
-	if ( decimation == NULL )
+	if ( decimation == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( decimation->parent() != NULL ) {
+	if ( decimation->parent() != nullptr ) {
 		SEISCOMP_ERROR("Datalogger::add(Decimation*) -> element has already a parent");
 		return false;
 	}
@@ -848,7 +848,7 @@ bool Datalogger::add(Decimation* decimation) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::remove(Decimation* decimation) {
-	if ( decimation == NULL )
+	if ( decimation == nullptr )
 		return false;
 
 	if ( decimation->parent() != this ) {
@@ -869,7 +869,7 @@ bool Datalogger::remove(Decimation* decimation) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_decimations.erase(it);
@@ -893,7 +893,7 @@ bool Datalogger::removeDecimation(size_t i) {
 		_decimations[i]->accept(&nc);
 	}
 
-	_decimations[i]->setParent(NULL);
+	_decimations[i]->setParent(nullptr);
 	childRemoved(_decimations[i].get());
 
 	_decimations.erase(_decimations.begin() + i);
@@ -908,7 +908,7 @@ bool Datalogger::removeDecimation(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::removeDecimation(const DecimationIndex& i) {
 	Decimation* object = decimation(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

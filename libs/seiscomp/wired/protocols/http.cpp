@@ -186,9 +186,9 @@ std::string HttpSession::EmptyString;
 
 HttpSession::HttpSession(Device *dev, const char *protocol, const char *server)
 : ClientSession(dev, 500), _protocol(protocol), _server(server),
-  _requestStarted(false), _upgradedToWebsocket(false), _websocketFrame(NULL) {
+  _requestStarted(false), _upgradedToWebsocket(false), _websocketFrame(nullptr) {
 	// Typically a HTTP connection needs to read the request
-	if ( dev != NULL ) dev->setMode(Socket::Read);
+	if ( dev != nullptr ) dev->setMode(Socket::Read);
 	_request.state = HttpRequest::ENABLED;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -575,7 +575,7 @@ bool HttpSession::reset() {
 
 	if ( _websocketFrame ) _websocketFrame->reset();
 
-	if ( _device != NULL ) {
+	if ( _device != nullptr ) {
 		_device->setMode(Device::Read);
 		_device->setTimeout(-1);
 	}
@@ -814,7 +814,7 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 				++src_data;
 				--data_len;
 
-				while ( (data = tokenize(src_data, ",", data_len, len)) != NULL) {
+				while ( (data = tokenize(src_data, ",", data_len, len)) != nullptr) {
 					trimFront(data,len);
 					trimBack(data,len);
 					if ( len == 4 && strncasecmp("gzip", data, len) == 0 ) {
@@ -831,7 +831,7 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 				++src_data;
 				--data_len;
 
-				while ( (data = tokenize(src_data, ",", data_len, len)) != NULL) {
+				while ( (data = tokenize(src_data, ",", data_len, len)) != nullptr) {
 					trimFront(data,len);
 					trimBack(data,len);
 
@@ -1149,7 +1149,7 @@ void HttpSession::upgradeToWebsocket(HttpRequest &req, const char *protocol,
 	     "Upgrade: websocket\r\n"
 	     "Connection: Upgrade\r\n");
 
-	if ( protocol != NULL ) {
+	if ( protocol != nullptr ) {
 		send("Sec-WebSocket-Protocol: ");
 		send(protocol);
 		send("\r\n");
@@ -1195,7 +1195,7 @@ void HttpSession::sendWebsocketResponse(const char *data, int len,
                                         Websocket::Status statusCode,
                                         bool close) {
 	BufferPtr resp = new Buffer;
-	if ( data != NULL )
+	if ( data != nullptr )
 		resp->data.assign(data, data+len);
 	Websocket::Frame::finalizeBuffer(resp.get(), type, statusCode);
 	send(resp.get());
@@ -1232,7 +1232,7 @@ void HttpSession::sendStatus(HttpStatus status, const string &content,
 	else
 		send("\r\nContent-Length: 0");
 
-	if ( contentType != NULL ) {
+	if ( contentType != nullptr ) {
 		send("\r\nContent-Type: ");
 		send(contentType);
 	}

@@ -80,7 +80,7 @@ GFArchive* GFArchive::Open(const char* url) {
 
 	if ( service.empty() ) {
 		SEISCOMP_ERROR("empty gfarchive service passed");
-		return NULL;
+		return nullptr;
 	}
 
 	SEISCOMP_DEBUG("trying to open archive %s://%s%s%s",
@@ -93,14 +93,14 @@ GFArchive* GFArchive::Open(const char* url) {
 	if ( !ar ) {
 		SEISCOMP_DEBUG("gfarchive backend '%s' does not exist",
 		               service.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	if ( !ar->setSource(source.c_str()) ) {
 		SEISCOMP_DEBUG("gfarchive '%s' failed to set source",
 		               source.c_str());
 		delete ar;
-		ar = NULL;
+		ar = nullptr;
 	}
 
 	return ar;

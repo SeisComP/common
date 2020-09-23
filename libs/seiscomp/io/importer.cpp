@@ -77,7 +77,7 @@ Core::BaseObject *Importer::read(std::streambuf* buf) {
 Core::BaseObject *Importer::read(std::string filename) {
 	if ( filename != "-" ) {
 		std::ifstream ifs(filename.c_str(), std::ios_base::in);
-		if ( !ifs.good() ) return NULL;
+		if ( !ifs.good() ) return nullptr;
 
 		return get(ifs.rdbuf());
 	}

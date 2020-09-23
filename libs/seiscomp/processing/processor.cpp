@@ -128,7 +128,7 @@ bool Settings::getBool(const string &parameter) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Settings::getValue(std::string &value, const std::string &parameter) const {
-	if ( localConfiguration != NULL ) {
+	if ( localConfiguration != nullptr ) {
 		if ( localConfiguration->getString(value, string(ROOT_CONFIG_KEY) + module + "." + networkCode + "." + stationCode + "." + parameter) )
 			return true;
 
@@ -151,7 +151,7 @@ bool Settings::getValue(std::string &value, const std::string &parameter) const 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Settings::getValue(int &value, const std::string &parameter) const {
-	if ( localConfiguration != NULL ) {
+	if ( localConfiguration != nullptr ) {
 		if ( localConfiguration->getInt(value, string(ROOT_CONFIG_KEY) + module + "." + networkCode + "." + stationCode + "." + parameter) )
 			return true;
 
@@ -174,7 +174,7 @@ bool Settings::getValue(int &value, const std::string &parameter) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Settings::getValue(double &value, const std::string &parameter) const {
-	if ( localConfiguration != NULL ) {
+	if ( localConfiguration != nullptr ) {
 		if ( localConfiguration->getDouble(value, string(ROOT_CONFIG_KEY) + module + "." + networkCode + "." + stationCode + "." + parameter) )
 			return true;
 
@@ -197,7 +197,7 @@ bool Settings::getValue(double &value, const std::string &parameter) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Settings::getValue(bool &value, const std::string &parameter) const {
-	if ( localConfiguration != NULL ) {
+	if ( localConfiguration != nullptr ) {
 		if ( localConfiguration->getBool(value, string(ROOT_CONFIG_KEY) + module + "." + networkCode + "." + stationCode + "." + parameter) )
 			return true;
 

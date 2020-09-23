@@ -88,7 +88,7 @@ class SC_SYSTEM_CORE_API RecordResampler : public RecordResamplerBase {
 	// ----------------------------------------------------------------------
 	public:
 		//! Feeds a record.
-		//! @return A resampled record. May return NULL if not enough data are
+		//! @return A resampled record. May return nullptr if not enough data are
 		//!         available to flush the record.
 		virtual Record *feed(const Record *record);
 
@@ -137,7 +137,7 @@ class SC_SYSTEM_CORE_API RecordResampler : public RecordResamplerBase {
 		};
 
 		struct DownsampleStage : Stage {
-			DownsampleStage() : nextStage(NULL) {}
+			DownsampleStage() : nextStage(nullptr) {}
 			~DownsampleStage() { if ( nextStage ) delete nextStage; }
 
 			// Flag that indicates that a streams is passed through
@@ -155,7 +155,7 @@ class SC_SYSTEM_CORE_API RecordResampler : public RecordResamplerBase {
 			void reset() {
 				Stage::reset();
 				samplesToSkip = 0;
-				if ( nextStage != NULL ) nextStage->reset();
+				if ( nextStage != nullptr ) nextStage->reset();
 			}
 		};
 

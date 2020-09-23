@@ -72,27 +72,27 @@ EventParameters::EventParameters(const EventParameters& other)
 EventParameters::~EventParameters() {
 	std::for_each(_picks.begin(), _picks.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Pick::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&PickPtr::get)));
 	std::for_each(_amplitudes.begin(), _amplitudes.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Amplitude::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&AmplitudePtr::get)));
 	std::for_each(_readings.begin(), _readings.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Reading::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&ReadingPtr::get)));
 	std::for_each(_origins.begin(), _origins.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Origin::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&OriginPtr::get)));
 	std::for_each(_focalMechanisms.begin(), _focalMechanisms.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&FocalMechanism::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&FocalMechanismPtr::get)));
 	std::for_each(_events.begin(), _events.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Event::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&EventPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -140,7 +140,7 @@ EventParameters& EventParameters::operator=(const EventParameters& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::assign(Object* other) {
 	EventParameters* otherEventParameters = EventParameters::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherEventParameters;
@@ -193,7 +193,7 @@ Object* EventParameters::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::updateChild(Object* child) {
 	Pick* pickChild = Pick::Cast(child);
-	if ( pickChild != NULL ) {
+	if ( pickChild != nullptr ) {
 		Pick* pickElement
 			= Pick::Cast(PublicObject::Find(pickChild->publicID()));
 		if ( pickElement && pickElement->parent() == this ) {
@@ -205,7 +205,7 @@ bool EventParameters::updateChild(Object* child) {
 	}
 
 	Amplitude* amplitudeChild = Amplitude::Cast(child);
-	if ( amplitudeChild != NULL ) {
+	if ( amplitudeChild != nullptr ) {
 		Amplitude* amplitudeElement
 			= Amplitude::Cast(PublicObject::Find(amplitudeChild->publicID()));
 		if ( amplitudeElement && amplitudeElement->parent() == this ) {
@@ -217,7 +217,7 @@ bool EventParameters::updateChild(Object* child) {
 	}
 
 	Reading* readingChild = Reading::Cast(child);
-	if ( readingChild != NULL ) {
+	if ( readingChild != nullptr ) {
 		Reading* readingElement
 			= Reading::Cast(PublicObject::Find(readingChild->publicID()));
 		if ( readingElement && readingElement->parent() == this ) {
@@ -229,7 +229,7 @@ bool EventParameters::updateChild(Object* child) {
 	}
 
 	Origin* originChild = Origin::Cast(child);
-	if ( originChild != NULL ) {
+	if ( originChild != nullptr ) {
 		Origin* originElement
 			= Origin::Cast(PublicObject::Find(originChild->publicID()));
 		if ( originElement && originElement->parent() == this ) {
@@ -241,7 +241,7 @@ bool EventParameters::updateChild(Object* child) {
 	}
 
 	FocalMechanism* focalMechanismChild = FocalMechanism::Cast(child);
-	if ( focalMechanismChild != NULL ) {
+	if ( focalMechanismChild != nullptr ) {
 		FocalMechanism* focalMechanismElement
 			= FocalMechanism::Cast(PublicObject::Find(focalMechanismChild->publicID()));
 		if ( focalMechanismElement && focalMechanismElement->parent() == this ) {
@@ -253,7 +253,7 @@ bool EventParameters::updateChild(Object* child) {
 	}
 
 	Event* eventChild = Event::Cast(child);
-	if ( eventChild != NULL ) {
+	if ( eventChild != nullptr ) {
 		Event* eventElement
 			= Event::Cast(PublicObject::Find(eventChild->publicID()));
 		if ( eventElement && eventElement->parent() == this ) {
@@ -315,7 +315,7 @@ Pick* EventParameters::findPick(const std::string& publicID) const {
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -324,11 +324,11 @@ Pick* EventParameters::findPick(const std::string& publicID) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::add(Pick* pick) {
-	if ( pick == NULL )
+	if ( pick == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( pick->parent() != NULL ) {
+	if ( pick->parent() != nullptr ) {
 		SEISCOMP_ERROR("EventParameters::add(Pick*) -> element has already a parent");
 		return false;
 	}
@@ -370,7 +370,7 @@ bool EventParameters::add(Pick* pick) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::remove(Pick* pick) {
-	if ( pick == NULL )
+	if ( pick == nullptr )
 		return false;
 
 	if ( pick->parent() != this ) {
@@ -391,7 +391,7 @@ bool EventParameters::remove(Pick* pick) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_picks.erase(it);
@@ -415,7 +415,7 @@ bool EventParameters::removePick(size_t i) {
 		_picks[i]->accept(&nc);
 	}
 
-	_picks[i]->setParent(NULL);
+	_picks[i]->setParent(nullptr);
 	childRemoved(_picks[i].get());
 
 	_picks.erase(_picks.begin() + i);
@@ -451,7 +451,7 @@ Amplitude* EventParameters::findAmplitude(const std::string& publicID) const {
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -460,11 +460,11 @@ Amplitude* EventParameters::findAmplitude(const std::string& publicID) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::add(Amplitude* amplitude) {
-	if ( amplitude == NULL )
+	if ( amplitude == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( amplitude->parent() != NULL ) {
+	if ( amplitude->parent() != nullptr ) {
 		SEISCOMP_ERROR("EventParameters::add(Amplitude*) -> element has already a parent");
 		return false;
 	}
@@ -506,7 +506,7 @@ bool EventParameters::add(Amplitude* amplitude) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::remove(Amplitude* amplitude) {
-	if ( amplitude == NULL )
+	if ( amplitude == nullptr )
 		return false;
 
 	if ( amplitude->parent() != this ) {
@@ -527,7 +527,7 @@ bool EventParameters::remove(Amplitude* amplitude) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_amplitudes.erase(it);
@@ -551,7 +551,7 @@ bool EventParameters::removeAmplitude(size_t i) {
 		_amplitudes[i]->accept(&nc);
 	}
 
-	_amplitudes[i]->setParent(NULL);
+	_amplitudes[i]->setParent(nullptr);
 	childRemoved(_amplitudes[i].get());
 
 	_amplitudes.erase(_amplitudes.begin() + i);
@@ -587,7 +587,7 @@ Reading* EventParameters::findReading(const std::string& publicID) const {
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -596,11 +596,11 @@ Reading* EventParameters::findReading(const std::string& publicID) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::add(Reading* reading) {
-	if ( reading == NULL )
+	if ( reading == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( reading->parent() != NULL ) {
+	if ( reading->parent() != nullptr ) {
 		SEISCOMP_ERROR("EventParameters::add(Reading*) -> element has already a parent");
 		return false;
 	}
@@ -642,7 +642,7 @@ bool EventParameters::add(Reading* reading) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::remove(Reading* reading) {
-	if ( reading == NULL )
+	if ( reading == nullptr )
 		return false;
 
 	if ( reading->parent() != this ) {
@@ -663,7 +663,7 @@ bool EventParameters::remove(Reading* reading) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_readings.erase(it);
@@ -687,7 +687,7 @@ bool EventParameters::removeReading(size_t i) {
 		_readings[i]->accept(&nc);
 	}
 
-	_readings[i]->setParent(NULL);
+	_readings[i]->setParent(nullptr);
 	childRemoved(_readings[i].get());
 
 	_readings.erase(_readings.begin() + i);
@@ -723,7 +723,7 @@ Origin* EventParameters::findOrigin(const std::string& publicID) const {
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -732,11 +732,11 @@ Origin* EventParameters::findOrigin(const std::string& publicID) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::add(Origin* origin) {
-	if ( origin == NULL )
+	if ( origin == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( origin->parent() != NULL ) {
+	if ( origin->parent() != nullptr ) {
 		SEISCOMP_ERROR("EventParameters::add(Origin*) -> element has already a parent");
 		return false;
 	}
@@ -778,7 +778,7 @@ bool EventParameters::add(Origin* origin) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::remove(Origin* origin) {
-	if ( origin == NULL )
+	if ( origin == nullptr )
 		return false;
 
 	if ( origin->parent() != this ) {
@@ -799,7 +799,7 @@ bool EventParameters::remove(Origin* origin) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_origins.erase(it);
@@ -823,7 +823,7 @@ bool EventParameters::removeOrigin(size_t i) {
 		_origins[i]->accept(&nc);
 	}
 
-	_origins[i]->setParent(NULL);
+	_origins[i]->setParent(nullptr);
 	childRemoved(_origins[i].get());
 
 	_origins.erase(_origins.begin() + i);
@@ -859,7 +859,7 @@ FocalMechanism* EventParameters::findFocalMechanism(const std::string& publicID)
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -868,11 +868,11 @@ FocalMechanism* EventParameters::findFocalMechanism(const std::string& publicID)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::add(FocalMechanism* focalMechanism) {
-	if ( focalMechanism == NULL )
+	if ( focalMechanism == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( focalMechanism->parent() != NULL ) {
+	if ( focalMechanism->parent() != nullptr ) {
 		SEISCOMP_ERROR("EventParameters::add(FocalMechanism*) -> element has already a parent");
 		return false;
 	}
@@ -914,7 +914,7 @@ bool EventParameters::add(FocalMechanism* focalMechanism) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::remove(FocalMechanism* focalMechanism) {
-	if ( focalMechanism == NULL )
+	if ( focalMechanism == nullptr )
 		return false;
 
 	if ( focalMechanism->parent() != this ) {
@@ -935,7 +935,7 @@ bool EventParameters::remove(FocalMechanism* focalMechanism) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_focalMechanisms.erase(it);
@@ -959,7 +959,7 @@ bool EventParameters::removeFocalMechanism(size_t i) {
 		_focalMechanisms[i]->accept(&nc);
 	}
 
-	_focalMechanisms[i]->setParent(NULL);
+	_focalMechanisms[i]->setParent(nullptr);
 	childRemoved(_focalMechanisms[i].get());
 
 	_focalMechanisms.erase(_focalMechanisms.begin() + i);
@@ -995,7 +995,7 @@ Event* EventParameters::findEvent(const std::string& publicID) const {
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1004,11 +1004,11 @@ Event* EventParameters::findEvent(const std::string& publicID) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::add(Event* event) {
-	if ( event == NULL )
+	if ( event == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( event->parent() != NULL ) {
+	if ( event->parent() != nullptr ) {
 		SEISCOMP_ERROR("EventParameters::add(Event*) -> element has already a parent");
 		return false;
 	}
@@ -1050,7 +1050,7 @@ bool EventParameters::add(Event* event) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::remove(Event* event) {
-	if ( event == NULL )
+	if ( event == nullptr )
 		return false;
 
 	if ( event->parent() != this ) {
@@ -1071,7 +1071,7 @@ bool EventParameters::remove(Event* event) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_events.erase(it);
@@ -1095,7 +1095,7 @@ bool EventParameters::removeEvent(size_t i) {
 		_events[i]->accept(&nc);
 	}
 
-	_events[i]->setParent(NULL);
+	_events[i]->setParent(nullptr);
 	childRemoved(_events[i].get());
 
 	_events.erase(_events.begin() + i);

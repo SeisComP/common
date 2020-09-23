@@ -175,7 +175,7 @@ SaveBNADialog::SaveBNADialog(QWidget *parent, Qt::WindowFlags f)
 
 
 MapWidget::MapWidget(QWidget *parent, Qt::WindowFlags f)
- : QWidget(parent, f), _canvas(NULL) {
+ : QWidget(parent, f), _canvas(nullptr) {
 	init();
 }
 
@@ -234,13 +234,13 @@ void MapWidget::init() {
 	connect(zoomIn, SIGNAL(pressed()), this, SLOT(zoomIn()));
 	connect(zoomOut, SIGNAL(pressed()), this, SLOT(zoomOut()));
 
-	_measureBNADialog = NULL;
+	_measureBNADialog = nullptr;
 	_forceGrayScale = false;
 }
 
 
 void MapWidget::projectionChanged(Seiscomp::Gui::Map::Projection *p) {
-	if ( p == NULL )
+	if ( p == nullptr )
 		setAttribute(Qt::WA_OpaquePaintEvent, false);
 	else
 		setAttribute(Qt::WA_OpaquePaintEvent, p->isRectangular());
@@ -428,8 +428,8 @@ void MapWidget::resizeEvent(QResizeEvent* event) {
 void MapWidget::updateContextMenu(QMenu *menu) {
 	QAction *action;
 
-	_contextProjectionMenu = NULL;
-	_contextFilterMenu = NULL;
+	_contextProjectionMenu = nullptr;
+	_contextFilterMenu = nullptr;
 
 	menu->addAction(cmStrScreenshot);
 
@@ -469,9 +469,9 @@ void MapWidget::updateContextMenu(QMenu *menu) {
 
 
 void MapWidget::executeContextMenuAction(QAction *action) {
-	if ( action == NULL ) {
-		_contextProjectionMenu = NULL;
-		_contextFilterMenu = NULL;
+	if ( action == nullptr ) {
+		_contextProjectionMenu = nullptr;
+		_contextFilterMenu = nullptr;
 		return;
 	}
 
@@ -548,8 +548,8 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 		}
 	}
 
-	_contextProjectionMenu = NULL;
-	_contextFilterMenu = NULL;
+	_contextProjectionMenu = nullptr;
+	_contextFilterMenu = nullptr;
 
 	update();
 }

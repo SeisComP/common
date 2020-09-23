@@ -109,7 +109,7 @@ void readMessages(Messaging::Client::WebsocketConnection *conn) {
 
 	while ( true ) {
 		Messaging::Client::MessagePtr msg = conn->recv();
-		if ( msg == NULL )
+		if ( msg == nullptr )
 			break;
 
 		if ( msg->type == Messaging::Client::Message::Regular ) {

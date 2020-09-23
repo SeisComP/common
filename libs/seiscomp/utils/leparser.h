@@ -85,7 +85,7 @@ class SC_SYSTEM_CORE_API LeExpression {
 template <typename Expression>
 class BinaryOperator : public Expression {
 	public:
-		BinaryOperator() : _lhs(NULL), _rhs(NULL) {}
+		BinaryOperator() : _lhs(nullptr), _rhs(nullptr) {}
 
 		void setOperants(Expression* lhs, Expression* rhs) {
 			_lhs = lhs;
@@ -109,7 +109,7 @@ class BinaryOperator : public Expression {
 template <typename Expression>
 class UnaryOperator : public Expression {
 	public:
-		UnaryOperator() : _rhs(NULL) {}
+		UnaryOperator() : _rhs(nullptr) {}
 
 		void setOperant(Expression* rhs) {
 			_rhs = rhs;

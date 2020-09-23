@@ -34,28 +34,28 @@ IMPLEMENT_SC_CLASS_DERIVED(Stream, PublicObject, "Stream");
 
 
 Stream::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, NULL, &Stream::setCode, &Stream::code));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, NULL, &Stream::setStart, &Stream::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, NULL, &Stream::setEnd, &Stream::end));
-	addProperty(Core::simpleProperty("datalogger", "string", false, false, false, true, false, false, NULL, &Stream::setDatalogger, &Stream::datalogger));
-	addProperty(Core::simpleProperty("dataloggerSerialNumber", "string", false, false, false, false, false, false, NULL, &Stream::setDataloggerSerialNumber, &Stream::dataloggerSerialNumber));
-	addProperty(Core::simpleProperty("dataloggerChannel", "int", false, false, false, false, true, false, NULL, &Stream::setDataloggerChannel, &Stream::dataloggerChannel));
-	addProperty(Core::simpleProperty("sensor", "string", false, false, false, true, false, false, NULL, &Stream::setSensor, &Stream::sensor));
-	addProperty(Core::simpleProperty("sensorSerialNumber", "string", false, false, false, false, false, false, NULL, &Stream::setSensorSerialNumber, &Stream::sensorSerialNumber));
-	addProperty(Core::simpleProperty("sensorChannel", "int", false, false, false, false, true, false, NULL, &Stream::setSensorChannel, &Stream::sensorChannel));
-	addProperty(Core::simpleProperty("clockSerialNumber", "string", false, false, false, false, false, false, NULL, &Stream::setClockSerialNumber, &Stream::clockSerialNumber));
-	addProperty(Core::simpleProperty("sampleRateNumerator", "int", false, false, false, false, true, false, NULL, &Stream::setSampleRateNumerator, &Stream::sampleRateNumerator));
-	addProperty(Core::simpleProperty("sampleRateDenominator", "int", false, false, false, false, true, false, NULL, &Stream::setSampleRateDenominator, &Stream::sampleRateDenominator));
-	addProperty(Core::simpleProperty("depth", "float", false, false, false, false, true, false, NULL, &Stream::setDepth, &Stream::depth));
-	addProperty(Core::simpleProperty("azimuth", "float", false, false, false, false, true, false, NULL, &Stream::setAzimuth, &Stream::azimuth));
-	addProperty(Core::simpleProperty("dip", "float", false, false, false, false, true, false, NULL, &Stream::setDip, &Stream::dip));
-	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, NULL, &Stream::setGain, &Stream::gain));
-	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, NULL, &Stream::setGainFrequency, &Stream::gainFrequency));
-	addProperty(Core::simpleProperty("gainUnit", "string", false, false, false, false, false, false, NULL, &Stream::setGainUnit, &Stream::gainUnit));
-	addProperty(Core::simpleProperty("format", "string", false, false, false, false, false, false, NULL, &Stream::setFormat, &Stream::format));
-	addProperty(Core::simpleProperty("flags", "string", false, false, false, false, false, false, NULL, &Stream::setFlags, &Stream::flags));
-	addProperty(Core::simpleProperty("restricted", "boolean", false, false, false, false, true, false, NULL, &Stream::setRestricted, &Stream::restricted));
-	addProperty(Core::simpleProperty("shared", "boolean", false, false, false, false, true, false, NULL, &Stream::setShared, &Stream::shared));
+	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, nullptr, &Stream::setCode, &Stream::code));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &Stream::setStart, &Stream::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &Stream::setEnd, &Stream::end));
+	addProperty(Core::simpleProperty("datalogger", "string", false, false, false, true, false, false, nullptr, &Stream::setDatalogger, &Stream::datalogger));
+	addProperty(Core::simpleProperty("dataloggerSerialNumber", "string", false, false, false, false, false, false, nullptr, &Stream::setDataloggerSerialNumber, &Stream::dataloggerSerialNumber));
+	addProperty(Core::simpleProperty("dataloggerChannel", "int", false, false, false, false, true, false, nullptr, &Stream::setDataloggerChannel, &Stream::dataloggerChannel));
+	addProperty(Core::simpleProperty("sensor", "string", false, false, false, true, false, false, nullptr, &Stream::setSensor, &Stream::sensor));
+	addProperty(Core::simpleProperty("sensorSerialNumber", "string", false, false, false, false, false, false, nullptr, &Stream::setSensorSerialNumber, &Stream::sensorSerialNumber));
+	addProperty(Core::simpleProperty("sensorChannel", "int", false, false, false, false, true, false, nullptr, &Stream::setSensorChannel, &Stream::sensorChannel));
+	addProperty(Core::simpleProperty("clockSerialNumber", "string", false, false, false, false, false, false, nullptr, &Stream::setClockSerialNumber, &Stream::clockSerialNumber));
+	addProperty(Core::simpleProperty("sampleRateNumerator", "int", false, false, false, false, true, false, nullptr, &Stream::setSampleRateNumerator, &Stream::sampleRateNumerator));
+	addProperty(Core::simpleProperty("sampleRateDenominator", "int", false, false, false, false, true, false, nullptr, &Stream::setSampleRateDenominator, &Stream::sampleRateDenominator));
+	addProperty(Core::simpleProperty("depth", "float", false, false, false, false, true, false, nullptr, &Stream::setDepth, &Stream::depth));
+	addProperty(Core::simpleProperty("azimuth", "float", false, false, false, false, true, false, nullptr, &Stream::setAzimuth, &Stream::azimuth));
+	addProperty(Core::simpleProperty("dip", "float", false, false, false, false, true, false, nullptr, &Stream::setDip, &Stream::dip));
+	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, nullptr, &Stream::setGain, &Stream::gain));
+	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, nullptr, &Stream::setGainFrequency, &Stream::gainFrequency));
+	addProperty(Core::simpleProperty("gainUnit", "string", false, false, false, false, false, false, nullptr, &Stream::setGainUnit, &Stream::gainUnit));
+	addProperty(Core::simpleProperty("format", "string", false, false, false, false, false, false, nullptr, &Stream::setFormat, &Stream::format));
+	addProperty(Core::simpleProperty("flags", "string", false, false, false, false, false, false, nullptr, &Stream::setFlags, &Stream::flags));
+	addProperty(Core::simpleProperty("restricted", "boolean", false, false, false, false, true, false, nullptr, &Stream::setRestricted, &Stream::restricted));
+	addProperty(Core::simpleProperty("shared", "boolean", false, false, false, false, true, false, nullptr, &Stream::setShared, &Stream::shared));
 	addProperty(arrayClassProperty<Comment>("comment", "Comment", &Stream::commentCount, &Stream::comment, static_cast<bool (Stream::*)(Comment*)>(&Stream::add), &Stream::removeComment, static_cast<bool (Stream::*)(Comment*)>(&Stream::remove)));
 }
 
@@ -141,7 +141,7 @@ Stream::Stream(const std::string& publicID)
 Stream::~Stream() {
 	std::for_each(_comments.begin(), _comments.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&CommentPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -161,12 +161,12 @@ Stream* Stream::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Stream* Stream::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new Stream(publicID);
@@ -664,7 +664,7 @@ const StreamIndex& Stream::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Stream::equalIndex(const Stream* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -715,7 +715,7 @@ Stream& Stream::operator=(const Stream& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Stream::assign(Object* other) {
 	Stream* otherStream = Stream::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherStream;
@@ -729,11 +729,11 @@ bool Stream::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Stream::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	SensorLocation* sensorLocation = SensorLocation::Cast(parent);
-	if ( sensorLocation != NULL )
+	if ( sensorLocation != nullptr )
 		return sensorLocation->add(this);
 
 	SEISCOMP_ERROR("Stream::attachTo(%s) -> wrong class type", parent->className());
@@ -746,11 +746,11 @@ bool Stream::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Stream::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	SensorLocation* sensorLocation = SensorLocation::Cast(object);
-	if ( sensorLocation != NULL ) {
+	if ( sensorLocation != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -758,7 +758,7 @@ bool Stream::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			Stream* child = sensorLocation->findStream(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return sensorLocation->remove(child);
 			else {
 				SEISCOMP_DEBUG("Stream::detachFrom(SensorLocation): stream has not been found");
@@ -777,7 +777,7 @@ bool Stream::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Stream::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -801,9 +801,9 @@ Object* Stream::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Stream::updateChild(Object* child) {
 	Comment* commentChild = Comment::Cast(child);
-	if ( commentChild != NULL ) {
+	if ( commentChild != nullptr ) {
 		Comment* commentElement = comment(commentChild->index());
-		if ( commentElement != NULL ) {
+		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
 			return true;
@@ -861,7 +861,7 @@ Comment* Stream::comment(const CommentIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -870,11 +870,11 @@ Comment* Stream::comment(const CommentIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Stream::add(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( comment->parent() != NULL ) {
+	if ( comment->parent() != nullptr ) {
 		SEISCOMP_ERROR("Stream::add(Comment*) -> element has already a parent");
 		return false;
 	}
@@ -909,7 +909,7 @@ bool Stream::add(Comment* comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Stream::remove(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -930,7 +930,7 @@ bool Stream::remove(Comment* comment) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_comments.erase(it);
@@ -954,7 +954,7 @@ bool Stream::removeComment(size_t i) {
 		_comments[i]->accept(&nc);
 	}
 
-	_comments[i]->setParent(NULL);
+	_comments[i]->setParent(nullptr);
 	childRemoved(_comments[i].get());
 
 	_comments.erase(_comments.begin() + i);
@@ -969,7 +969,7 @@ bool Stream::removeComment(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Stream::removeComment(const CommentIndex& i) {
 	Comment* object = comment(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

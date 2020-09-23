@@ -30,7 +30,7 @@ using namespace Seiscomp::Geo;
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeature::GeoFeature(const Category* category, unsigned int rank)
 : _category(category)
-, _userData(NULL)
+, _userData(nullptr)
 , _rank(rank)
 , _closedPolygon(false) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -43,7 +43,7 @@ GeoFeature::GeoFeature(const std::string& name, const Category* category,
                        unsigned int rank)
 : _name(name)
 , _category(category)
-, _userData(NULL)
+, _userData(nullptr)
 , _rank(rank)
 , _closedPolygon(false) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -56,7 +56,7 @@ GeoFeature::GeoFeature(const std::string &name, const Category* category,
                        unsigned int rank, const Attributes &attributes)
 : _name(name)
 , _category(category)
-, _userData(NULL)
+, _userData(nullptr)
 , _rank(rank)
 , _attributes(attributes)
 , _closedPolygon(false) {}

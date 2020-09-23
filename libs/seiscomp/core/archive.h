@@ -136,7 +136,7 @@ class Archive {
 		 * @brief Sets strict reading mode. In strict mode optional attributes
 		 *        must be parsed correctly otherwise the archive is not valid.
 		 *        If strict mode is disabled then invalid optional attributes
-		 *        or objects are set to None or NULL.
+		 *        or objects are set to None or nullptr.
 		 * @param strict Enabled or disabled
 		 */
 		void setStrictMode(bool strict);
@@ -198,7 +198,7 @@ class Archive {
 		//! updated in both cases.
 		bool setProperty(const char *name, const PropertyValue &v);
 
-		//! Returns a property (if set) or NULL pointer given a property
+		//! Returns a property (if set) or nullptr pointer given a property
 		//! name.
 		const PropertyValue *property(const char *name) const;
 
@@ -421,7 +421,7 @@ class Archive {
 
 		template <typename T>
 		struct TypedSerializeDispatcher : SerializeDispatcher {
-			TypedSerializeDispatcher(T* t = NULL) : target(t) {}
+			TypedSerializeDispatcher(T* t = nullptr) : target(t) {}
 			
 			TypedSerializeDispatcher& operator=(T* t) {
 				target = t;
@@ -434,7 +434,7 @@ class Archive {
 				target->serialize(ar);
 			}
 
-			const char* className() { return NULL; }
+			const char* className() { return nullptr; }
 
 			T* target;
 		};
@@ -446,7 +446,7 @@ class Archive {
 		virtual bool locateObjectByName(const char* name, const char* targetClass, bool nullable) = 0;
 		virtual bool locateNextObjectByName(const char* name, const char* targetClass) = 0;
 
-		//! Whenever a NULL object has to be serialized this method will be called.
+		//! Whenever a nullptr object has to be serialized this method will be called.
 		//! It has a default implementation (which does nothing) and does not need
 		//! to be implemented by derived classes. But sometimes this information
 		//! maybe quite useful. This method gets never called while in read mode.
@@ -498,7 +498,7 @@ class Archive {
 		void readPtr(void*, T*& object);
 		
 		//! Helper function to distinguish between pointer and non pointer
-		//! types to avoid NULL pointer serialization.
+		//! types to avoid nullptr pointer serialization.
 		template <typename T>
 		void read(const char* name, T& object, const char* targetClass);
 

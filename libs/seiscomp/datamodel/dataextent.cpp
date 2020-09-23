@@ -35,11 +35,11 @@ IMPLEMENT_SC_CLASS_DERIVED(DataExtent, PublicObject, "DataExtent");
 
 DataExtent::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", true, false, false, &DataExtent::setWaveformID, &DataExtent::waveformID));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, false, false, false, false, NULL, &DataExtent::setStart, &DataExtent::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, false, false, NULL, &DataExtent::setEnd, &DataExtent::end));
-	addProperty(Core::simpleProperty("updated", "datetime", false, false, false, false, false, false, NULL, &DataExtent::setUpdated, &DataExtent::updated));
-	addProperty(Core::simpleProperty("lastScan", "datetime", false, false, false, false, false, false, NULL, &DataExtent::setLastScan, &DataExtent::lastScan));
-	addProperty(Core::simpleProperty("segmentOverflow", "boolean", false, false, false, false, false, false, NULL, &DataExtent::setSegmentOverflow, &DataExtent::segmentOverflow));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, false, false, false, false, nullptr, &DataExtent::setStart, &DataExtent::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, false, false, nullptr, &DataExtent::setEnd, &DataExtent::end));
+	addProperty(Core::simpleProperty("updated", "datetime", false, false, false, false, false, false, nullptr, &DataExtent::setUpdated, &DataExtent::updated));
+	addProperty(Core::simpleProperty("lastScan", "datetime", false, false, false, false, false, false, nullptr, &DataExtent::setLastScan, &DataExtent::lastScan));
+	addProperty(Core::simpleProperty("segmentOverflow", "boolean", false, false, false, false, false, false, nullptr, &DataExtent::setSegmentOverflow, &DataExtent::segmentOverflow));
 	addProperty(arrayClassProperty<DataSegment>("segment", "DataSegment", &DataExtent::dataSegmentCount, &DataExtent::dataSegment, static_cast<bool (DataExtent::*)(DataSegment*)>(&DataExtent::add), &DataExtent::removeDataSegment, static_cast<bool (DataExtent::*)(DataSegment*)>(&DataExtent::remove)));
 	addProperty(arrayClassProperty<DataAttributeExtent>("attributeExtent", "DataAttributeExtent", &DataExtent::dataAttributeExtentCount, &DataExtent::dataAttributeExtent, static_cast<bool (DataExtent::*)(DataAttributeExtent*)>(&DataExtent::add), &DataExtent::removeDataAttributeExtent, static_cast<bool (DataExtent::*)(DataAttributeExtent*)>(&DataExtent::remove)));
 }
@@ -124,11 +124,11 @@ DataExtent::DataExtent(const std::string& publicID)
 DataExtent::~DataExtent() {
 	std::for_each(_dataSegments.begin(), _dataSegments.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&DataSegment::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&DataSegmentPtr::get)));
 	std::for_each(_dataAttributeExtents.begin(), _dataAttributeExtents.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&DataAttributeExtent::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&DataAttributeExtentPtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -148,12 +148,12 @@ DataExtent* DataExtent::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DataExtent* DataExtent::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new DataExtent(publicID);
@@ -333,7 +333,7 @@ const DataExtentIndex& DataExtent::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::equalIndex(const DataExtent* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -369,7 +369,7 @@ DataExtent& DataExtent::operator=(const DataExtent& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::assign(Object* other) {
 	DataExtent* otherDataExtent = DataExtent::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherDataExtent;
@@ -383,11 +383,11 @@ bool DataExtent::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	DataAvailability* dataAvailability = DataAvailability::Cast(parent);
-	if ( dataAvailability != NULL )
+	if ( dataAvailability != nullptr )
 		return dataAvailability->add(this);
 
 	SEISCOMP_ERROR("DataExtent::attachTo(%s) -> wrong class type", parent->className());
@@ -400,11 +400,11 @@ bool DataExtent::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	DataAvailability* dataAvailability = DataAvailability::Cast(object);
-	if ( dataAvailability != NULL ) {
+	if ( dataAvailability != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -412,7 +412,7 @@ bool DataExtent::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			DataExtent* child = dataAvailability->findDataExtent(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return dataAvailability->remove(child);
 			else {
 				SEISCOMP_DEBUG("DataExtent::detachFrom(DataAvailability): dataExtent has not been found");
@@ -431,7 +431,7 @@ bool DataExtent::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -455,9 +455,9 @@ Object* DataExtent::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::updateChild(Object* child) {
 	DataSegment* dataSegmentChild = DataSegment::Cast(child);
-	if ( dataSegmentChild != NULL ) {
+	if ( dataSegmentChild != nullptr ) {
 		DataSegment* dataSegmentElement = dataSegment(dataSegmentChild->index());
-		if ( dataSegmentElement != NULL ) {
+		if ( dataSegmentElement != nullptr ) {
 			*dataSegmentElement = *dataSegmentChild;
 			dataSegmentElement->update();
 			return true;
@@ -466,9 +466,9 @@ bool DataExtent::updateChild(Object* child) {
 	}
 
 	DataAttributeExtent* dataAttributeExtentChild = DataAttributeExtent::Cast(child);
-	if ( dataAttributeExtentChild != NULL ) {
+	if ( dataAttributeExtentChild != nullptr ) {
 		DataAttributeExtent* dataAttributeExtentElement = dataAttributeExtent(dataAttributeExtentChild->index());
-		if ( dataAttributeExtentElement != NULL ) {
+		if ( dataAttributeExtentElement != nullptr ) {
 			*dataAttributeExtentElement = *dataAttributeExtentChild;
 			dataAttributeExtentElement->update();
 			return true;
@@ -528,7 +528,7 @@ DataSegment* DataExtent::dataSegment(const DataSegmentIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -537,11 +537,11 @@ DataSegment* DataExtent::dataSegment(const DataSegmentIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::add(DataSegment* dataSegment) {
-	if ( dataSegment == NULL )
+	if ( dataSegment == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( dataSegment->parent() != NULL ) {
+	if ( dataSegment->parent() != nullptr ) {
 		SEISCOMP_ERROR("DataExtent::add(DataSegment*) -> element has already a parent");
 		return false;
 	}
@@ -576,7 +576,7 @@ bool DataExtent::add(DataSegment* dataSegment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::remove(DataSegment* dataSegment) {
-	if ( dataSegment == NULL )
+	if ( dataSegment == nullptr )
 		return false;
 
 	if ( dataSegment->parent() != this ) {
@@ -597,7 +597,7 @@ bool DataExtent::remove(DataSegment* dataSegment) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_dataSegments.erase(it);
@@ -621,7 +621,7 @@ bool DataExtent::removeDataSegment(size_t i) {
 		_dataSegments[i]->accept(&nc);
 	}
 
-	_dataSegments[i]->setParent(NULL);
+	_dataSegments[i]->setParent(nullptr);
 	childRemoved(_dataSegments[i].get());
 
 	_dataSegments.erase(_dataSegments.begin() + i);
@@ -636,7 +636,7 @@ bool DataExtent::removeDataSegment(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::removeDataSegment(const DataSegmentIndex& i) {
 	DataSegment* object = dataSegment(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -668,7 +668,7 @@ DataAttributeExtent* DataExtent::dataAttributeExtent(const DataAttributeExtentIn
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -677,11 +677,11 @@ DataAttributeExtent* DataExtent::dataAttributeExtent(const DataAttributeExtentIn
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::add(DataAttributeExtent* dataAttributeExtent) {
-	if ( dataAttributeExtent == NULL )
+	if ( dataAttributeExtent == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( dataAttributeExtent->parent() != NULL ) {
+	if ( dataAttributeExtent->parent() != nullptr ) {
 		SEISCOMP_ERROR("DataExtent::add(DataAttributeExtent*) -> element has already a parent");
 		return false;
 	}
@@ -716,7 +716,7 @@ bool DataExtent::add(DataAttributeExtent* dataAttributeExtent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::remove(DataAttributeExtent* dataAttributeExtent) {
-	if ( dataAttributeExtent == NULL )
+	if ( dataAttributeExtent == nullptr )
 		return false;
 
 	if ( dataAttributeExtent->parent() != this ) {
@@ -737,7 +737,7 @@ bool DataExtent::remove(DataAttributeExtent* dataAttributeExtent) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_dataAttributeExtents.erase(it);
@@ -761,7 +761,7 @@ bool DataExtent::removeDataAttributeExtent(size_t i) {
 		_dataAttributeExtents[i]->accept(&nc);
 	}
 
-	_dataAttributeExtents[i]->setParent(NULL);
+	_dataAttributeExtents[i]->setParent(nullptr);
 	childRemoved(_dataAttributeExtents[i].get());
 
 	_dataAttributeExtents.erase(_dataAttributeExtents.begin() + i);
@@ -776,7 +776,7 @@ bool DataExtent::removeDataAttributeExtent(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::removeDataAttributeExtent(const DataAttributeExtentIndex& i) {
 	DataAttributeExtent* object = dataAttributeExtent(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

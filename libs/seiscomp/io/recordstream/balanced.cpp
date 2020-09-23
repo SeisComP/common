@@ -150,7 +150,7 @@ bool BalancedConnection::setSource(const string &source) {
 
 		RecordStreamPtr rs = RecordStream::Create(type1.c_str());
 
-		if ( rs == NULL ) {
+		if ( rs == nullptr ) {
 			SEISCOMP_ERROR("Invalid RecordStream type: %s", type1.c_str());
 			return false;
 		}
@@ -311,7 +311,7 @@ void BalancedConnection::acquiThread(RecordStreamPtr rs) {
 
 	SEISCOMP_DEBUG("Finished acquisition thread");
 
-	_queue.push(NULL);
+	_queue.push(nullptr);
 }
 
 Record *BalancedConnection::next() {
@@ -331,7 +331,7 @@ Record *BalancedConnection::next() {
 	while (_nthreads > 0) {
 		Record *rec = _queue.pop();
 
-		if ( rec == NULL ) {
+		if ( rec == nullptr ) {
 			--_nthreads;
 			continue;
 		}
@@ -341,7 +341,7 @@ Record *BalancedConnection::next() {
 
 	SEISCOMP_DEBUG("All acquisition threads finished -> finish iteration");
 
-	return NULL;
+	return nullptr;
 }
 
 

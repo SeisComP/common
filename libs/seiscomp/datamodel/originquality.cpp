@@ -32,18 +32,18 @@ IMPLEMENT_SC_CLASS(OriginQuality, "OriginQuality");
 
 
 OriginQuality::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("associatedPhaseCount", "int", false, false, false, false, true, false, NULL, &OriginQuality::setAssociatedPhaseCount, &OriginQuality::associatedPhaseCount));
-	addProperty(Core::simpleProperty("usedPhaseCount", "int", false, false, false, false, true, false, NULL, &OriginQuality::setUsedPhaseCount, &OriginQuality::usedPhaseCount));
-	addProperty(Core::simpleProperty("associatedStationCount", "int", false, false, false, false, true, false, NULL, &OriginQuality::setAssociatedStationCount, &OriginQuality::associatedStationCount));
-	addProperty(Core::simpleProperty("usedStationCount", "int", false, false, false, false, true, false, NULL, &OriginQuality::setUsedStationCount, &OriginQuality::usedStationCount));
-	addProperty(Core::simpleProperty("depthPhaseCount", "int", false, false, false, false, true, false, NULL, &OriginQuality::setDepthPhaseCount, &OriginQuality::depthPhaseCount));
-	addProperty(Core::simpleProperty("standardError", "float", false, false, false, false, true, false, NULL, &OriginQuality::setStandardError, &OriginQuality::standardError));
-	addProperty(Core::simpleProperty("azimuthalGap", "float", false, false, false, false, true, false, NULL, &OriginQuality::setAzimuthalGap, &OriginQuality::azimuthalGap));
-	addProperty(Core::simpleProperty("secondaryAzimuthalGap", "float", false, false, false, false, true, false, NULL, &OriginQuality::setSecondaryAzimuthalGap, &OriginQuality::secondaryAzimuthalGap));
-	addProperty(Core::simpleProperty("groundTruthLevel", "string", false, false, false, false, false, false, NULL, &OriginQuality::setGroundTruthLevel, &OriginQuality::groundTruthLevel));
-	addProperty(Core::simpleProperty("maximumDistance", "float", false, false, false, false, true, false, NULL, &OriginQuality::setMaximumDistance, &OriginQuality::maximumDistance));
-	addProperty(Core::simpleProperty("minimumDistance", "float", false, false, false, false, true, false, NULL, &OriginQuality::setMinimumDistance, &OriginQuality::minimumDistance));
-	addProperty(Core::simpleProperty("medianDistance", "float", false, false, false, false, true, false, NULL, &OriginQuality::setMedianDistance, &OriginQuality::medianDistance));
+	addProperty(Core::simpleProperty("associatedPhaseCount", "int", false, false, false, false, true, false, nullptr, &OriginQuality::setAssociatedPhaseCount, &OriginQuality::associatedPhaseCount));
+	addProperty(Core::simpleProperty("usedPhaseCount", "int", false, false, false, false, true, false, nullptr, &OriginQuality::setUsedPhaseCount, &OriginQuality::usedPhaseCount));
+	addProperty(Core::simpleProperty("associatedStationCount", "int", false, false, false, false, true, false, nullptr, &OriginQuality::setAssociatedStationCount, &OriginQuality::associatedStationCount));
+	addProperty(Core::simpleProperty("usedStationCount", "int", false, false, false, false, true, false, nullptr, &OriginQuality::setUsedStationCount, &OriginQuality::usedStationCount));
+	addProperty(Core::simpleProperty("depthPhaseCount", "int", false, false, false, false, true, false, nullptr, &OriginQuality::setDepthPhaseCount, &OriginQuality::depthPhaseCount));
+	addProperty(Core::simpleProperty("standardError", "float", false, false, false, false, true, false, nullptr, &OriginQuality::setStandardError, &OriginQuality::standardError));
+	addProperty(Core::simpleProperty("azimuthalGap", "float", false, false, false, false, true, false, nullptr, &OriginQuality::setAzimuthalGap, &OriginQuality::azimuthalGap));
+	addProperty(Core::simpleProperty("secondaryAzimuthalGap", "float", false, false, false, false, true, false, nullptr, &OriginQuality::setSecondaryAzimuthalGap, &OriginQuality::secondaryAzimuthalGap));
+	addProperty(Core::simpleProperty("groundTruthLevel", "string", false, false, false, false, false, false, nullptr, &OriginQuality::setGroundTruthLevel, &OriginQuality::groundTruthLevel));
+	addProperty(Core::simpleProperty("maximumDistance", "float", false, false, false, false, true, false, nullptr, &OriginQuality::setMaximumDistance, &OriginQuality::maximumDistance));
+	addProperty(Core::simpleProperty("minimumDistance", "float", false, false, false, false, true, false, nullptr, &OriginQuality::setMinimumDistance, &OriginQuality::minimumDistance));
+	addProperty(Core::simpleProperty("medianDistance", "float", false, false, false, false, true, false, nullptr, &OriginQuality::setMedianDistance, &OriginQuality::medianDistance));
 }
 
 

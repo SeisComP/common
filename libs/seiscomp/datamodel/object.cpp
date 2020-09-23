@@ -36,7 +36,7 @@ IMPLEMENT_SC_ABSTRACT_CLASS(Observer, "Observer");
 DECLARE_METAENUM(Operation, MetaOperation);
 
 
-Object::Object() : _parent(NULL) {
+Object::Object() : _parent(nullptr) {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

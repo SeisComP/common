@@ -157,10 +157,10 @@ bool KeyValues::getBool(bool &value, const std::string &name) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void KeyValues::init(DataModel::ParameterSet *ps) {
-	if ( ps == NULL ) return;
+	if ( ps == nullptr ) return;
 
 	DataModel::ParameterSet *base = DataModel::ParameterSet::Find(ps->baseID());
-	if ( base != NULL ) init(base);
+	if ( base != nullptr ) init(base);
 
 	for ( size_t n = 0; n < ps->parameterCount(); ++n) {
 		DataModel::Parameter *par = ps->parameter(n);

@@ -61,7 +61,7 @@ void RecordDemuxFilter::setFilter(RecordFilterInterface *recordFilter) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record *RecordDemuxFilter::feed(const Record *rec) {
 	// We do not do anything if no filter has been provided
-	if ( !_template ) return NULL;
+	if ( !_template ) return nullptr;
 
 	std::pair<FilterMap::iterator,bool> itp;
 	itp = _streams.insert(FilterMap::value_type(rec->streamID(), _template));
@@ -85,11 +85,11 @@ Record *RecordDemuxFilter::feed(const Record *rec) {
 Record *RecordDemuxFilter::flush() {
 	while ( _streams.begin() != _streams.end() ) {
 		Record *rec = _streams.begin()->second->flush();
-		if ( rec != NULL ) return rec;
+		if ( rec != nullptr ) return rec;
 		_streams.erase(_streams.begin());
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -107,7 +107,7 @@ void RecordDemuxFilter::reset() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordFilterInterface *RecordDemuxFilter::clone() const {
-	return new RecordDemuxFilter(_template?_template->clone():NULL);
+	return new RecordDemuxFilter(_template?_template->clone():nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

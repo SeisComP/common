@@ -29,7 +29,7 @@ namespace Gui {
 class XmlHandler : public QXmlDefaultHandler {
 	public:
 		XmlHandler(QTreeWidget* w)
-		 : QXmlDefaultHandler(), _tree(w), _parent(NULL), _currentItem(NULL) {}
+		 : QXmlDefaultHandler(), _tree(w), _parent(nullptr), _currentItem(nullptr) {}
 
 		bool startElement(const QString& /*namespaceURI*/,
 		                  const QString& localName,
@@ -38,7 +38,7 @@ class XmlHandler : public QXmlDefaultHandler {
 
 			_currentItem = new QTreeWidgetItem();
 			_currentItem->setText(0, localName);
-			if ( _parent == NULL )
+			if ( _parent == nullptr )
 				_tree->addTopLevelItem(_currentItem);
 			else
 				_parent->addChild(_currentItem);
@@ -75,10 +75,10 @@ class XmlHandler : public QXmlDefaultHandler {
 		bool endElement(const QString& /*namespaceURI*/,
 		                const QString& /*localName*/,
 		                const QString& /*qName*/) {
-			if ( _parent != NULL )
+			if ( _parent != nullptr )
 				_parent = _parent->parent();
 
-			_currentItem = NULL;
+			_currentItem = nullptr;
 
 			return true;
 		}

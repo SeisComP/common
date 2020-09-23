@@ -162,7 +162,7 @@ bool GFZPicker::setup(const Settings &settings) {
 	if ( !_usedFilter.empty() ) {
 		string error;
 		Filter *f = Filter::Create(_usedFilter, &error);
-		if ( f == NULL ) {
+		if ( f == nullptr ) {
 			SEISCOMP_ERROR("failed to create filter '%s': %s",
 			               _usedFilter.c_str(), error.c_str());
 			return false;

@@ -33,11 +33,11 @@ IMPLEMENT_SC_CLASS_DERIVED(ArclinkStatusLine, Object, "ArclinkStatusLine");
 
 
 ArclinkStatusLine::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("type", "string", false, false, true, false, false, false, NULL, &ArclinkStatusLine::setType, &ArclinkStatusLine::type));
-	addProperty(Core::simpleProperty("status", "string", false, false, true, false, false, false, NULL, &ArclinkStatusLine::setStatus, &ArclinkStatusLine::status));
-	addProperty(Core::simpleProperty("size", "int", false, false, false, false, true, false, NULL, &ArclinkStatusLine::setSize, &ArclinkStatusLine::size));
-	addProperty(Core::simpleProperty("message", "string", false, false, false, false, false, false, NULL, &ArclinkStatusLine::setMessage, &ArclinkStatusLine::message));
-	addProperty(Core::simpleProperty("volumeID", "string", false, false, true, false, false, false, NULL, &ArclinkStatusLine::setVolumeID, &ArclinkStatusLine::volumeID));
+	addProperty(Core::simpleProperty("type", "string", false, false, true, false, false, false, nullptr, &ArclinkStatusLine::setType, &ArclinkStatusLine::type));
+	addProperty(Core::simpleProperty("status", "string", false, false, true, false, false, false, nullptr, &ArclinkStatusLine::setStatus, &ArclinkStatusLine::status));
+	addProperty(Core::simpleProperty("size", "int", false, false, false, false, true, false, nullptr, &ArclinkStatusLine::setSize, &ArclinkStatusLine::size));
+	addProperty(Core::simpleProperty("message", "string", false, false, false, false, false, false, nullptr, &ArclinkStatusLine::setMessage, &ArclinkStatusLine::message));
+	addProperty(Core::simpleProperty("volumeID", "string", false, false, true, false, false, false, nullptr, &ArclinkStatusLine::setVolumeID, &ArclinkStatusLine::volumeID));
 }
 
 
@@ -254,7 +254,7 @@ const ArclinkStatusLineIndex& ArclinkStatusLine::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkStatusLine::equalIndex(const ArclinkStatusLine* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -286,7 +286,7 @@ ArclinkStatusLine& ArclinkStatusLine::operator=(const ArclinkStatusLine& other) 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkStatusLine::assign(Object* other) {
 	ArclinkStatusLine* otherArclinkStatusLine = ArclinkStatusLine::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherArclinkStatusLine;
@@ -300,11 +300,11 @@ bool ArclinkStatusLine::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkStatusLine::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	ArclinkRequest* arclinkRequest = ArclinkRequest::Cast(parent);
-	if ( arclinkRequest != NULL )
+	if ( arclinkRequest != nullptr )
 		return arclinkRequest->add(this);
 
 	SEISCOMP_ERROR("ArclinkStatusLine::attachTo(%s) -> wrong class type", parent->className());
@@ -317,11 +317,11 @@ bool ArclinkStatusLine::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkStatusLine::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	ArclinkRequest* arclinkRequest = ArclinkRequest::Cast(object);
-	if ( arclinkRequest != NULL ) {
+	if ( arclinkRequest != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -329,7 +329,7 @@ bool ArclinkStatusLine::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			ArclinkStatusLine* child = arclinkRequest->arclinkStatusLine(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return arclinkRequest->remove(child);
 			else {
 				SEISCOMP_DEBUG("ArclinkStatusLine::detachFrom(ArclinkRequest): arclinkStatusLine has not been found");
@@ -348,7 +348,7 @@ bool ArclinkStatusLine::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkStatusLine::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

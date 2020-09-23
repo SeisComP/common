@@ -46,7 +46,7 @@ class FilterWrapper {
 		FilterWrapper(Math::Filtering::InPlaceFilter<T> *filter,
 		              const PROC &proc)
 		: _proc(proc), _baseFilter(filter) {
-			for ( int i = 0; i < N; ++i ) _filter[i] = NULL;
+			for ( int i = 0; i < N; ++i ) _filter[i] = nullptr;
 		}
 
 		~FilterWrapper() {
@@ -57,7 +57,7 @@ class FilterWrapper {
 		void operator()(const Record *rec, T *data[N], int n, const Core::Time &stime, double sfreq) const {
 			if ( _baseFilter ) {
 				for ( int i = 0; i < N; ++i ) {
-					if ( _filter[i] == NULL ) {
+					if ( _filter[i] == nullptr ) {
 						_filter[i] = _baseFilter->clone();
 						_filter[i]->setSamplingFrequency(sfreq);
 					}
@@ -173,7 +173,7 @@ SL2Picker::SL2Picker() {
 	_l2Config.minSNR = 15;
 	_l2Config.margin = 5.0;
 	_initialized = false;
-	_compFilter = NULL;
+	_compFilter = nullptr;
 	_saveIntermediate = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -300,27 +300,27 @@ bool SL2Picker::applyConfig() {
 	_state = State();
 	_detectionTrace.clear();
 
-	setOperator(NULL);
+	setOperator(nullptr);
 
 	if ( _compFilter ) {
 		delete _compFilter;
-		_compFilter = NULL;
+		_compFilter = nullptr;
 	}
 
 	if ( !_l2Config.filter.empty() ) {
 		_compFilter = Filter::Create(_l2Config.filter.c_str());
-		if ( _compFilter == NULL ) {
+		if ( _compFilter == nullptr ) {
 			SEISCOMP_WARNING("L2 spicker: wrong component filter definition: %s",
 			                 _l2Config.filter.c_str());
 			return false;
 		}
 	}
 	else
-		_compFilter = NULL;
+		_compFilter = nullptr;
 
 	if ( !_l2Config.detecFilter.empty() ) {
 		Filter *filter = Filter::Create(_l2Config.detecFilter.c_str());
-		if ( filter == NULL ) {
+		if ( filter == nullptr ) {
 			SEISCOMP_WARNING("L2 spicker: wrong filter definition: %s",
 			                 _l2Config.detecFilter.c_str());
 			return false;
@@ -329,7 +329,7 @@ bool SL2Picker::applyConfig() {
 		setFilter(filter);
 	}
 	else
-		setFilter(NULL);
+		setFilter(nullptr);
 
 	// Create a waveform operator that combines all three channels and
 	// computes the l2norm of each 3 component sample
@@ -353,7 +353,7 @@ void SL2Picker::fill(size_t n, double *samples) {
 	// Disable dectection filter since we need the frequency filtered data.
 	// The detection filter is applied during process
 	Filter *tmp = _stream.filter;
-	_stream.filter = NULL;
+	_stream.filter = nullptr;
 	SecondaryPicker::fill(n, samples);
 	// Restore detection filter
 	_stream.filter = tmp;

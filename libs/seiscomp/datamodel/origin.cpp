@@ -50,11 +50,11 @@ Origin::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObj
 	addProperty(objectProperty<RealQuantity>("longitude", "RealQuantity", false, false, false, &Origin::setLongitude, &Origin::longitude));
 	addProperty(objectProperty<RealQuantity>("depth", "RealQuantity", false, false, true, &Origin::setDepth, &Origin::depth));
 	addProperty(enumProperty("depthType", "OriginDepthType", false, true, &metaOriginDepthType, &Origin::setDepthType, &Origin::depthType));
-	addProperty(Core::simpleProperty("timeFixed", "boolean", false, false, false, false, true, false, NULL, &Origin::setTimeFixed, &Origin::timeFixed));
-	addProperty(Core::simpleProperty("epicenterFixed", "boolean", false, false, false, false, true, false, NULL, &Origin::setEpicenterFixed, &Origin::epicenterFixed));
-	addProperty(Core::simpleProperty("referenceSystemID", "string", false, false, false, false, false, false, NULL, &Origin::setReferenceSystemID, &Origin::referenceSystemID));
-	addProperty(Core::simpleProperty("methodID", "string", false, false, false, false, false, false, NULL, &Origin::setMethodID, &Origin::methodID));
-	addProperty(Core::simpleProperty("earthModelID", "string", false, false, false, false, false, false, NULL, &Origin::setEarthModelID, &Origin::earthModelID));
+	addProperty(Core::simpleProperty("timeFixed", "boolean", false, false, false, false, true, false, nullptr, &Origin::setTimeFixed, &Origin::timeFixed));
+	addProperty(Core::simpleProperty("epicenterFixed", "boolean", false, false, false, false, true, false, nullptr, &Origin::setEpicenterFixed, &Origin::epicenterFixed));
+	addProperty(Core::simpleProperty("referenceSystemID", "string", false, false, false, false, false, false, nullptr, &Origin::setReferenceSystemID, &Origin::referenceSystemID));
+	addProperty(Core::simpleProperty("methodID", "string", false, false, false, false, false, false, nullptr, &Origin::setMethodID, &Origin::methodID));
+	addProperty(Core::simpleProperty("earthModelID", "string", false, false, false, false, false, false, nullptr, &Origin::setEarthModelID, &Origin::earthModelID));
 	addProperty(objectProperty<OriginQuality>("quality", "OriginQuality", false, false, true, &Origin::setQuality, &Origin::quality));
 	addProperty(objectProperty<OriginUncertainty>("uncertainty", "OriginUncertainty", false, false, true, &Origin::setUncertainty, &Origin::uncertainty));
 	addProperty(enumProperty("type", "OriginType", false, true, &metaOriginType, &Origin::setType, &Origin::type));
@@ -102,23 +102,23 @@ Origin::Origin(const std::string& publicID)
 Origin::~Origin() {
 	std::for_each(_comments.begin(), _comments.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&CommentPtr::get)));
 	std::for_each(_compositeTimes.begin(), _compositeTimes.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&CompositeTime::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&CompositeTimePtr::get)));
 	std::for_each(_arrivals.begin(), _arrivals.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Arrival::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&ArrivalPtr::get)));
 	std::for_each(_stationMagnitudes.begin(), _stationMagnitudes.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&StationMagnitude::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&StationMagnitudePtr::get)));
 	std::for_each(_magnitudes.begin(), _magnitudes.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&Magnitude::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&MagnitudePtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -138,12 +138,12 @@ Origin* Origin::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Origin* Origin::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new Origin(publicID);
@@ -622,7 +622,7 @@ Origin& Origin::operator=(const Origin& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::assign(Object* other) {
 	Origin* otherOrigin = Origin::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherOrigin;
@@ -636,11 +636,11 @@ bool Origin::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	EventParameters* eventParameters = EventParameters::Cast(parent);
-	if ( eventParameters != NULL )
+	if ( eventParameters != nullptr )
 		return eventParameters->add(this);
 
 	SEISCOMP_ERROR("Origin::attachTo(%s) -> wrong class type", parent->className());
@@ -653,11 +653,11 @@ bool Origin::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	EventParameters* eventParameters = EventParameters::Cast(object);
-	if ( eventParameters != NULL ) {
+	if ( eventParameters != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -665,7 +665,7 @@ bool Origin::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			Origin* child = eventParameters->findOrigin(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return eventParameters->remove(child);
 			else {
 				SEISCOMP_DEBUG("Origin::detachFrom(EventParameters): origin has not been found");
@@ -684,7 +684,7 @@ bool Origin::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -708,9 +708,9 @@ Object* Origin::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::updateChild(Object* child) {
 	Comment* commentChild = Comment::Cast(child);
-	if ( commentChild != NULL ) {
+	if ( commentChild != nullptr ) {
 		Comment* commentElement = comment(commentChild->index());
-		if ( commentElement != NULL ) {
+		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
 			return true;
@@ -721,9 +721,9 @@ bool Origin::updateChild(Object* child) {
 	// Do not know how to fetch child of type CompositeTime without an index
 
 	Arrival* arrivalChild = Arrival::Cast(child);
-	if ( arrivalChild != NULL ) {
+	if ( arrivalChild != nullptr ) {
 		Arrival* arrivalElement = arrival(arrivalChild->index());
-		if ( arrivalElement != NULL ) {
+		if ( arrivalElement != nullptr ) {
 			*arrivalElement = *arrivalChild;
 			arrivalElement->update();
 			return true;
@@ -732,7 +732,7 @@ bool Origin::updateChild(Object* child) {
 	}
 
 	StationMagnitude* stationMagnitudeChild = StationMagnitude::Cast(child);
-	if ( stationMagnitudeChild != NULL ) {
+	if ( stationMagnitudeChild != nullptr ) {
 		StationMagnitude* stationMagnitudeElement
 			= StationMagnitude::Cast(PublicObject::Find(stationMagnitudeChild->publicID()));
 		if ( stationMagnitudeElement && stationMagnitudeElement->parent() == this ) {
@@ -744,7 +744,7 @@ bool Origin::updateChild(Object* child) {
 	}
 
 	Magnitude* magnitudeChild = Magnitude::Cast(child);
-	if ( magnitudeChild != NULL ) {
+	if ( magnitudeChild != nullptr ) {
 		Magnitude* magnitudeElement
 			= Magnitude::Cast(PublicObject::Find(magnitudeChild->publicID()));
 		if ( magnitudeElement && magnitudeElement->parent() == this ) {
@@ -813,7 +813,7 @@ Comment* Origin::comment(const CommentIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -822,11 +822,11 @@ Comment* Origin::comment(const CommentIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::add(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( comment->parent() != NULL ) {
+	if ( comment->parent() != nullptr ) {
 		SEISCOMP_ERROR("Origin::add(Comment*) -> element has already a parent");
 		return false;
 	}
@@ -861,7 +861,7 @@ bool Origin::add(Comment* comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::remove(Comment* comment) {
-	if ( comment == NULL )
+	if ( comment == nullptr )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -882,7 +882,7 @@ bool Origin::remove(Comment* comment) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_comments.erase(it);
@@ -906,7 +906,7 @@ bool Origin::removeComment(size_t i) {
 		_comments[i]->accept(&nc);
 	}
 
-	_comments[i]->setParent(NULL);
+	_comments[i]->setParent(nullptr);
 	childRemoved(_comments[i].get());
 
 	_comments.erase(_comments.begin() + i);
@@ -921,7 +921,7 @@ bool Origin::removeComment(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::removeComment(const CommentIndex& i) {
 	Comment* object = comment(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -955,7 +955,7 @@ CompositeTime* Origin::findCompositeTime(CompositeTime* compositeTime) const {
 			return (*it).get();
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -964,11 +964,11 @@ CompositeTime* Origin::findCompositeTime(CompositeTime* compositeTime) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::add(CompositeTime* compositeTime) {
-	if ( compositeTime == NULL )
+	if ( compositeTime == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( compositeTime->parent() != NULL ) {
+	if ( compositeTime->parent() != nullptr ) {
 		SEISCOMP_ERROR("Origin::add(CompositeTime*) -> element has already a parent");
 		return false;
 	}
@@ -995,7 +995,7 @@ bool Origin::add(CompositeTime* compositeTime) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::remove(CompositeTime* compositeTime) {
-	if ( compositeTime == NULL )
+	if ( compositeTime == nullptr )
 		return false;
 
 	if ( compositeTime->parent() != this ) {
@@ -1016,7 +1016,7 @@ bool Origin::remove(CompositeTime* compositeTime) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_compositeTimes.erase(it);
@@ -1040,7 +1040,7 @@ bool Origin::removeCompositeTime(size_t i) {
 		_compositeTimes[i]->accept(&nc);
 	}
 
-	_compositeTimes[i]->setParent(NULL);
+	_compositeTimes[i]->setParent(nullptr);
 	childRemoved(_compositeTimes[i].get());
 
 	_compositeTimes.erase(_compositeTimes.begin() + i);
@@ -1076,7 +1076,7 @@ Arrival* Origin::arrival(const ArrivalIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1085,11 +1085,11 @@ Arrival* Origin::arrival(const ArrivalIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::add(Arrival* arrival) {
-	if ( arrival == NULL )
+	if ( arrival == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( arrival->parent() != NULL ) {
+	if ( arrival->parent() != nullptr ) {
 		SEISCOMP_ERROR("Origin::add(Arrival*) -> element has already a parent");
 		return false;
 	}
@@ -1124,7 +1124,7 @@ bool Origin::add(Arrival* arrival) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::remove(Arrival* arrival) {
-	if ( arrival == NULL )
+	if ( arrival == nullptr )
 		return false;
 
 	if ( arrival->parent() != this ) {
@@ -1145,7 +1145,7 @@ bool Origin::remove(Arrival* arrival) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_arrivals.erase(it);
@@ -1169,7 +1169,7 @@ bool Origin::removeArrival(size_t i) {
 		_arrivals[i]->accept(&nc);
 	}
 
-	_arrivals[i]->setParent(NULL);
+	_arrivals[i]->setParent(nullptr);
 	childRemoved(_arrivals[i].get());
 
 	_arrivals.erase(_arrivals.begin() + i);
@@ -1184,7 +1184,7 @@ bool Origin::removeArrival(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::removeArrival(const ArrivalIndex& i) {
 	Arrival* object = arrival(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1216,7 +1216,7 @@ StationMagnitude* Origin::findStationMagnitude(const std::string& publicID) cons
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1225,11 +1225,11 @@ StationMagnitude* Origin::findStationMagnitude(const std::string& publicID) cons
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::add(StationMagnitude* stationMagnitude) {
-	if ( stationMagnitude == NULL )
+	if ( stationMagnitude == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( stationMagnitude->parent() != NULL ) {
+	if ( stationMagnitude->parent() != nullptr ) {
 		SEISCOMP_ERROR("Origin::add(StationMagnitude*) -> element has already a parent");
 		return false;
 	}
@@ -1271,7 +1271,7 @@ bool Origin::add(StationMagnitude* stationMagnitude) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::remove(StationMagnitude* stationMagnitude) {
-	if ( stationMagnitude == NULL )
+	if ( stationMagnitude == nullptr )
 		return false;
 
 	if ( stationMagnitude->parent() != this ) {
@@ -1292,7 +1292,7 @@ bool Origin::remove(StationMagnitude* stationMagnitude) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_stationMagnitudes.erase(it);
@@ -1316,7 +1316,7 @@ bool Origin::removeStationMagnitude(size_t i) {
 		_stationMagnitudes[i]->accept(&nc);
 	}
 
-	_stationMagnitudes[i]->setParent(NULL);
+	_stationMagnitudes[i]->setParent(nullptr);
 	childRemoved(_stationMagnitudes[i].get());
 
 	_stationMagnitudes.erase(_stationMagnitudes.begin() + i);
@@ -1352,7 +1352,7 @@ Magnitude* Origin::findMagnitude(const std::string& publicID) const {
 		if ( (*it)->publicID() == publicID )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1361,11 +1361,11 @@ Magnitude* Origin::findMagnitude(const std::string& publicID) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::add(Magnitude* magnitude) {
-	if ( magnitude == NULL )
+	if ( magnitude == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( magnitude->parent() != NULL ) {
+	if ( magnitude->parent() != nullptr ) {
 		SEISCOMP_ERROR("Origin::add(Magnitude*) -> element has already a parent");
 		return false;
 	}
@@ -1407,7 +1407,7 @@ bool Origin::add(Magnitude* magnitude) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::remove(Magnitude* magnitude) {
-	if ( magnitude == NULL )
+	if ( magnitude == nullptr )
 		return false;
 
 	if ( magnitude->parent() != this ) {
@@ -1428,7 +1428,7 @@ bool Origin::remove(Magnitude* magnitude) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_magnitudes.erase(it);
@@ -1452,7 +1452,7 @@ bool Origin::removeMagnitude(size_t i) {
 		_magnitudes[i]->accept(&nc);
 	}
 
-	_magnitudes[i]->setParent(NULL);
+	_magnitudes[i]->setParent(nullptr);
 	childRemoved(_magnitudes[i].get());
 
 	_magnitudes.erase(_magnitudes.begin() + i);

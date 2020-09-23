@@ -34,10 +34,10 @@ IMPLEMENT_SC_CLASS_DERIVED(AuxDevice, PublicObject, "AuxDevice");
 
 
 AuxDevice::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, NULL, &AuxDevice::setName, &AuxDevice::name));
-	addProperty(Core::simpleProperty("description", "string", false, false, false, false, false, false, NULL, &AuxDevice::setDescription, &AuxDevice::description));
-	addProperty(Core::simpleProperty("model", "string", false, false, false, false, false, false, NULL, &AuxDevice::setModel, &AuxDevice::model));
-	addProperty(Core::simpleProperty("manufacturer", "string", false, false, false, false, false, false, NULL, &AuxDevice::setManufacturer, &AuxDevice::manufacturer));
+	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &AuxDevice::setName, &AuxDevice::name));
+	addProperty(Core::simpleProperty("description", "string", false, false, false, false, false, false, nullptr, &AuxDevice::setDescription, &AuxDevice::description));
+	addProperty(Core::simpleProperty("model", "string", false, false, false, false, false, false, nullptr, &AuxDevice::setModel, &AuxDevice::model));
+	addProperty(Core::simpleProperty("manufacturer", "string", false, false, false, false, false, false, nullptr, &AuxDevice::setManufacturer, &AuxDevice::manufacturer));
 	addProperty(objectProperty<Blob>("remark", "Blob", false, false, true, &AuxDevice::setRemark, &AuxDevice::remark));
 	addProperty(arrayClassProperty<AuxSource>("source", "AuxSource", &AuxDevice::auxSourceCount, &AuxDevice::auxSource, static_cast<bool (AuxDevice::*)(AuxSource*)>(&AuxDevice::add), &AuxDevice::removeAuxSource, static_cast<bool (AuxDevice::*)(AuxSource*)>(&AuxDevice::remove)));
 }
@@ -120,7 +120,7 @@ AuxDevice::AuxDevice(const std::string& publicID)
 AuxDevice::~AuxDevice() {
 	std::for_each(_auxSources.begin(), _auxSources.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&AuxSource::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&AuxSourcePtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -140,12 +140,12 @@ AuxDevice* AuxDevice::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AuxDevice* AuxDevice::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new AuxDevice(publicID);
@@ -310,7 +310,7 @@ const AuxDeviceIndex& AuxDevice::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxDevice::equalIndex(const AuxDevice* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -345,7 +345,7 @@ AuxDevice& AuxDevice::operator=(const AuxDevice& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxDevice::assign(Object* other) {
 	AuxDevice* otherAuxDevice = AuxDevice::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherAuxDevice;
@@ -359,11 +359,11 @@ bool AuxDevice::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxDevice::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(parent);
-	if ( inventory != NULL )
+	if ( inventory != nullptr )
 		return inventory->add(this);
 
 	SEISCOMP_ERROR("AuxDevice::attachTo(%s) -> wrong class type", parent->className());
@@ -376,11 +376,11 @@ bool AuxDevice::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxDevice::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(object);
-	if ( inventory != NULL ) {
+	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -388,7 +388,7 @@ bool AuxDevice::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			AuxDevice* child = inventory->findAuxDevice(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
 				SEISCOMP_DEBUG("AuxDevice::detachFrom(Inventory): auxDevice has not been found");
@@ -407,7 +407,7 @@ bool AuxDevice::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxDevice::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -431,9 +431,9 @@ Object* AuxDevice::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxDevice::updateChild(Object* child) {
 	AuxSource* auxSourceChild = AuxSource::Cast(child);
-	if ( auxSourceChild != NULL ) {
+	if ( auxSourceChild != nullptr ) {
 		AuxSource* auxSourceElement = auxSource(auxSourceChild->index());
-		if ( auxSourceElement != NULL ) {
+		if ( auxSourceElement != nullptr ) {
 			*auxSourceElement = *auxSourceChild;
 			auxSourceElement->update();
 			return true;
@@ -491,7 +491,7 @@ AuxSource* AuxDevice::auxSource(const AuxSourceIndex& i) const {
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -500,11 +500,11 @@ AuxSource* AuxDevice::auxSource(const AuxSourceIndex& i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxDevice::add(AuxSource* auxSource) {
-	if ( auxSource == NULL )
+	if ( auxSource == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( auxSource->parent() != NULL ) {
+	if ( auxSource->parent() != nullptr ) {
 		SEISCOMP_ERROR("AuxDevice::add(AuxSource*) -> element has already a parent");
 		return false;
 	}
@@ -539,7 +539,7 @@ bool AuxDevice::add(AuxSource* auxSource) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxDevice::remove(AuxSource* auxSource) {
-	if ( auxSource == NULL )
+	if ( auxSource == nullptr )
 		return false;
 
 	if ( auxSource->parent() != this ) {
@@ -560,7 +560,7 @@ bool AuxDevice::remove(AuxSource* auxSource) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_auxSources.erase(it);
@@ -584,7 +584,7 @@ bool AuxDevice::removeAuxSource(size_t i) {
 		_auxSources[i]->accept(&nc);
 	}
 
-	_auxSources[i]->setParent(NULL);
+	_auxSources[i]->setParent(nullptr);
 	childRemoved(_auxSources[i].get());
 
 	_auxSources.erase(_auxSources.begin() + i);
@@ -599,7 +599,7 @@ bool AuxDevice::removeAuxSource(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxDevice::removeAuxSource(const AuxSourceIndex& i) {
 	AuxSource* object = auxSource(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

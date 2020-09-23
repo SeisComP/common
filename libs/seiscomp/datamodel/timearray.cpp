@@ -32,7 +32,7 @@ IMPLEMENT_SC_CLASS(TimeArray, "TimeArray");
 
 
 TimeArray::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("content", "datetime", true, false, false, false, true, false, NULL, &TimeArray::setContent, (const std::vector< Seiscomp::Core::Time >& (TimeArray::*)() const)&TimeArray::content));
+	addProperty(Core::simpleProperty("content", "datetime", true, false, false, false, true, false, nullptr, &TimeArray::setContent, (const std::vector< Seiscomp::Core::Time >& (TimeArray::*)() const)&TimeArray::content));
 }
 
 

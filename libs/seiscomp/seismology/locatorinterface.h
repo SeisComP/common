@@ -105,7 +105,7 @@ class SC_SYSTEM_CORE_API LocatorInterface : public Core::BaseObject {
 		};
 
 		struct PickItem {
-			PickItem(DataModel::Pick *pick = NULL, int f = F_ALL)
+			PickItem(DataModel::Pick *pick = nullptr, int f = F_ALL)
 			: pick(pick), flags(f) {}
 			PickItem(DataModel::PickPtr pick, int f = F_ALL)
 			: pick(pick), flags(f) {}
@@ -160,7 +160,7 @@ class SC_SYSTEM_CORE_API LocatorInterface : public Core::BaseObject {
 		//! Returns the implementations capabilities
 		virtual int capabilities() const = 0;
 
-		//! the following all return NULL if (re)location failed
+		//! the following all return nullptr if (re)location failed
 		virtual DataModel::Origin *locate(PickList& pickList) = 0;
 		virtual DataModel::Origin *locate(PickList& pickList,
 		                                  double initLat, double initLon, double initDepth,

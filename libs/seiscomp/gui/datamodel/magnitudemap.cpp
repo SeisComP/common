@@ -59,7 +59,7 @@ namespace Gui {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeMap::MagnitudeMap(const MapsDesc &maps,
                            QWidget *parent, Qt::WindowFlags f)
- : MapWidget(maps, parent, f), _origin(NULL),
+ : MapWidget(maps, parent, f), _origin(nullptr),
    _interactive(true), _drawStations(false) {
 	_lastSymbolSize = 0;
 	_stationsMaxDist = -1;
@@ -72,7 +72,7 @@ MagnitudeMap::MagnitudeMap(const MapsDesc &maps,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeMap::MagnitudeMap(Map::ImageTree* mapTree,
                            QWidget *parent, Qt::WindowFlags f)
- : MapWidget(mapTree, parent, f), _origin(NULL),
+ : MapWidget(mapTree, parent, f), _origin(nullptr),
    _interactive(true), _drawStations(false) {
 	_lastSymbolSize = 0;
 	_hoverId = -1;
@@ -405,7 +405,7 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 	_stations.clear();
 	_stationCodes.clear();
 
-	setMagnitude(NULL);
+	setMagnitude(nullptr);
 
 	if ( !_origin ) return;
 

@@ -163,7 +163,7 @@ class AbstractClassFactory : public ClassFactoryInterface<ROOT_TYPE> {
 		AbstractClassFactory(const char*);
 
 	protected:
-		//! Always returns NULL
+		//! Always returns nullptr
 		ROOT_TYPE* create() const;
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

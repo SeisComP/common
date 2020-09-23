@@ -110,11 +110,11 @@ class SC_SYSTEM_CORE_API Container : public Core::BaseObject {
 	//  X'truction
 	// ------------------------------------------------------------------
 	protected:
-		Container(const char *path_, const Container *super_ = NULL)
-		: super(super_), parent(NULL), path(path_) {}
+		Container(const char *path_, const Container *super_ = nullptr)
+		: super(super_), parent(nullptr), path(path_) {}
 
-		Container(const std::string &path_, const Container *super_ = NULL)
-		: super(super_), parent(NULL), path(path_) {}
+		Container(const std::string &path_, const Container *super_ = nullptr)
+		: super(super_), parent(nullptr), path(path_) {}
 
 
 	// ------------------------------------------------------------------
@@ -284,8 +284,8 @@ class SC_SYSTEM_CORE_API Section : public Container {
 	//  X'truction
 	// ------------------------------------------------------------------
 	public:
-		Section(const char *n) : Container(""), parent(NULL), name(n) {}
-		Section(const std::string &n) : Container(""), parent(NULL), name(n) {}
+		Section(const char *n) : Container(""), parent(nullptr), name(n) {}
+		Section(const std::string &n) : Container(""), parent(nullptr), name(n) {}
 
 
 	// ------------------------------------------------------------------
@@ -321,7 +321,7 @@ class SC_SYSTEM_CORE_API Binding : public Core::BaseObject {
 	//  X'truction
 	// ------------------------------------------------------------------
 	public:
-		Binding(const std::string &n) : parent(NULL), definition(NULL), name(n) {}
+		Binding(const std::string &n) : parent(nullptr), definition(nullptr), name(n) {}
 		Binding *clone() const;
 
 		void dump(std::ostream &os) const;
@@ -379,7 +379,7 @@ class SC_SYSTEM_CORE_API BindingCategory : public Core::BaseObject {
 		Binding *instantiate(const Binding *b, const char *alias);
 
 		//! Returns the alias for an instantiated binding.
-		//! Returns NULL if the binding is not instantiated in this
+		//! Returns nullptr if the binding is not instantiated in this
 		//! category.
 		const char *alias(const Binding *b) const;
 
@@ -438,7 +438,7 @@ class SC_SYSTEM_CORE_API ModuleBinding : public Binding {
 		BindingCategory *category(const std::string &name) const;
 
 		bool writeConfig(const std::string &filename,
-		                 ConfigDelegate *delegate = NULL) const;
+		                 ConfigDelegate *delegate = nullptr) const;
 		void dump(std::ostream &os) const;
 
 		//! Returns a container at path @path@.
@@ -511,9 +511,9 @@ class SC_SYSTEM_CORE_API Module : public Core::BaseObject {
 		//! Returns a container at path @path@.
 		Container *findContainer(const std::string &path) const;
 
-		bool supportsBindings() const { return bindingTemplate.get() != NULL; }
+		bool supportsBindings() const { return bindingTemplate.get() != nullptr; }
 
-		int loadProfiles(const std::string &dir, ConfigDelegate *delegate = NULL);
+		int loadProfiles(const std::string &dir, ConfigDelegate *delegate = nullptr);
 
 		//! Adds a profile. Returns false if a profile with the same
 		//! name exists already or the binding belongs to another
@@ -541,7 +541,7 @@ class SC_SYSTEM_CORE_API Module : public Core::BaseObject {
 		bool removeStation(const StationID &);
 
 		//! Creates an empty binding based on the templateBinding.
-		//! Returns NULL if no template binding is available.
+		//! Returns nullptr if no template binding is available.
 		ModuleBinding *createBinding() const;
 
 		//! Creates an empty profile with name.
@@ -555,7 +555,7 @@ class SC_SYSTEM_CORE_API Module : public Core::BaseObject {
 		ModuleBinding *readBinding(const StationID &,
 		                           const std::string &profile = "",
 		                           bool allowConfigFileErrors = false,
-		                           ConfigDelegate *delegate = NULL);
+		                           ConfigDelegate *delegate = nullptr);
 
 		//! Accepts a model visitor and starts to traversing its nodes
 		void accept(ModelVisitor *) const;
@@ -568,7 +568,7 @@ class SC_SYSTEM_CORE_API Module : public Core::BaseObject {
 		void syncProfileRemoval(Binding *);
 		bool loadBinding(ModuleBinding &, const std::string &filename,
 		                 bool allowConfigFileErrors = false,
-		                 ConfigDelegate *delegate = NULL) const;
+		                 ConfigDelegate *delegate = nullptr) const;
 
 
 	// ------------------------------------------------------------------
@@ -608,7 +608,7 @@ class SC_SYSTEM_CORE_API Station : public Core::BaseObject {
 	public:
 		bool readConfig(const char *filename);
 		bool writeConfig(const char *filename,
-		                 ConfigDelegate *delegate = NULL) const;
+		                 ConfigDelegate *delegate = nullptr) const;
 
 		void setConfig(const std::string &module, const std::string &profile);
 
@@ -655,13 +655,13 @@ class SC_SYSTEM_CORE_API Model : public Core::BaseObject {
 		bool recreate();
 
 		bool readConfig(int updateMaxStage = Environment::CS_LAST,
-		                ConfigDelegate *delegate = NULL);
+		                ConfigDelegate *delegate = nullptr);
 		bool writeConfig(bool multilineLists,
 		                 int stage = Environment::CS_CONFIG_APP,
-		                 ConfigDelegate *delegate = NULL);
+		                 ConfigDelegate *delegate = nullptr);
 		bool writeConfig(Module *, const std::string &filename, int stage,
 		                 bool multilineLists,
-		                 ConfigDelegate *delegate = NULL);
+		                 ConfigDelegate *delegate = nullptr);
 
 
 	// ------------------------------------------------------------------

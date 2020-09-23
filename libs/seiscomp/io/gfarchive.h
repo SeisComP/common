@@ -99,7 +99,7 @@ class SC_SYSTEM_CORE_API GFArchive : public Core::BaseObject {
 		                        const Core::TimeSpan &span) = 0;
 
 		//! Retrieves a greensfunction from the archive. The end of
-		//! sequence is marked with a NULL pointer.
+		//! sequence is marked with a nullptr pointer.
 		virtual Core::GreensFunction* get() = 0;
 
 		/**

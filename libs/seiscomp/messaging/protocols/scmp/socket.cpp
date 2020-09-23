@@ -59,7 +59,7 @@ bool FrameHeaders::next() {
 		else {
 			name_len = len;
 			Core::trimBack(name_start, name_len);
-			val_start = NULL;
+			val_start = nullptr;
 			val_len = 0;
 		}
 
@@ -129,7 +129,7 @@ Result Socket::close() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Socket::wait(boost::mutex *m, boost::mutex *waitLock) {
-	Wired::Device *dev = NULL;
+	Wired::Device *dev = nullptr;
 	while ( dev != _socket ) {
 		//std::cerr << "Wait is true" << std::endl;
 		if ( _inWait ) SEISCOMP_WARNING("Sync error");
@@ -141,7 +141,7 @@ bool Socket::wait(boost::mutex *m, boost::mutex *waitLock) {
 		if ( m ) m->lock();
 		_inWait = false;
 		//std::cerr << "Wait is false" << std::endl;
-		if ( dev == NULL ) return false;
+		if ( dev == nullptr ) return false;
 	}
 
 	return true;

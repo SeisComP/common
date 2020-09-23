@@ -32,11 +32,11 @@ IMPLEMENT_SC_CLASS(WaveformStreamID, "WaveformStreamID");
 
 
 WaveformStreamID::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("networkCode", "string", false, false, false, false, false, false, NULL, &WaveformStreamID::setNetworkCode, &WaveformStreamID::networkCode));
-	addProperty(Core::simpleProperty("stationCode", "string", false, false, false, false, false, false, NULL, &WaveformStreamID::setStationCode, &WaveformStreamID::stationCode));
-	addProperty(Core::simpleProperty("locationCode", "string", false, false, false, false, false, false, NULL, &WaveformStreamID::setLocationCode, &WaveformStreamID::locationCode));
-	addProperty(Core::simpleProperty("channelCode", "string", false, false, false, false, false, false, NULL, &WaveformStreamID::setChannelCode, &WaveformStreamID::channelCode));
-	addProperty(Core::simpleProperty("resourceURI", "string", false, false, false, false, false, false, NULL, &WaveformStreamID::setResourceURI, &WaveformStreamID::resourceURI));
+	addProperty(Core::simpleProperty("networkCode", "string", false, false, false, false, false, false, nullptr, &WaveformStreamID::setNetworkCode, &WaveformStreamID::networkCode));
+	addProperty(Core::simpleProperty("stationCode", "string", false, false, false, false, false, false, nullptr, &WaveformStreamID::setStationCode, &WaveformStreamID::stationCode));
+	addProperty(Core::simpleProperty("locationCode", "string", false, false, false, false, false, false, nullptr, &WaveformStreamID::setLocationCode, &WaveformStreamID::locationCode));
+	addProperty(Core::simpleProperty("channelCode", "string", false, false, false, false, false, false, nullptr, &WaveformStreamID::setChannelCode, &WaveformStreamID::channelCode));
+	addProperty(Core::simpleProperty("resourceURI", "string", false, false, false, false, false, false, nullptr, &WaveformStreamID::setResourceURI, &WaveformStreamID::resourceURI));
 }
 
 

@@ -215,7 +215,7 @@ const AmplitudeProcessor *AmplitudeProcessor_ML2h::componentProcessor(Component 
 			break;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 const DoubleArray *AmplitudeProcessor_ML2h::processedData(Component comp) const {
@@ -228,7 +228,7 @@ const DoubleArray *AmplitudeProcessor_ML2h::processedData(Component comp) const 
 			break;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

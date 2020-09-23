@@ -20,7 +20,7 @@
 template <typename T>
 void IntrusiveList<T>::push_back(T o) {
 	o->_ili_prev[_index] = _back;
-	o->_ili_next[_index] = NULL;
+	o->_ili_next[_index] = nullptr;
 
 	// Update links
 	if ( o->_ili_prev[_index] )
@@ -61,7 +61,7 @@ void IntrusiveList<T>::erase(T o) {
 template <typename T>
 typename IntrusiveList<T>::iterator
 IntrusiveList<T>::erase(const iterator &it) {
-	if ( it.item == NULL ) return iterator();
+	if ( it.item == nullptr ) return iterator();
 
 	T n = it.item->_ili_next[_index];
 	erase(it.item);

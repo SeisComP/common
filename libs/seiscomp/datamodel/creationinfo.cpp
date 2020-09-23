@@ -32,13 +32,13 @@ IMPLEMENT_SC_CLASS(CreationInfo, "CreationInfo");
 
 
 CreationInfo::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("agencyID", "string", false, false, false, false, false, false, NULL, &CreationInfo::setAgencyID, &CreationInfo::agencyID));
-	addProperty(Core::simpleProperty("agencyURI", "string", false, false, false, false, false, false, NULL, &CreationInfo::setAgencyURI, &CreationInfo::agencyURI));
-	addProperty(Core::simpleProperty("author", "string", false, false, false, false, false, false, NULL, &CreationInfo::setAuthor, &CreationInfo::author));
-	addProperty(Core::simpleProperty("authorURI", "string", false, false, false, false, false, false, NULL, &CreationInfo::setAuthorURI, &CreationInfo::authorURI));
-	addProperty(Core::simpleProperty("creationTime", "datetime", false, false, false, false, true, false, NULL, &CreationInfo::setCreationTime, &CreationInfo::creationTime));
-	addProperty(Core::simpleProperty("modificationTime", "datetime", false, false, false, false, true, false, NULL, &CreationInfo::setModificationTime, &CreationInfo::modificationTime));
-	addProperty(Core::simpleProperty("version", "string", false, false, false, false, false, false, NULL, &CreationInfo::setVersion, &CreationInfo::version));
+	addProperty(Core::simpleProperty("agencyID", "string", false, false, false, false, false, false, nullptr, &CreationInfo::setAgencyID, &CreationInfo::agencyID));
+	addProperty(Core::simpleProperty("agencyURI", "string", false, false, false, false, false, false, nullptr, &CreationInfo::setAgencyURI, &CreationInfo::agencyURI));
+	addProperty(Core::simpleProperty("author", "string", false, false, false, false, false, false, nullptr, &CreationInfo::setAuthor, &CreationInfo::author));
+	addProperty(Core::simpleProperty("authorURI", "string", false, false, false, false, false, false, nullptr, &CreationInfo::setAuthorURI, &CreationInfo::authorURI));
+	addProperty(Core::simpleProperty("creationTime", "datetime", false, false, false, false, true, false, nullptr, &CreationInfo::setCreationTime, &CreationInfo::creationTime));
+	addProperty(Core::simpleProperty("modificationTime", "datetime", false, false, false, false, true, false, nullptr, &CreationInfo::setModificationTime, &CreationInfo::modificationTime));
+	addProperty(Core::simpleProperty("version", "string", false, false, false, false, false, false, nullptr, &CreationInfo::setVersion, &CreationInfo::version));
 }
 
 

@@ -39,7 +39,7 @@ namespace {
 
 int streamBufReadCallback(void* context, char* buffer, int len) {
 	std::streambuf* buf = static_cast<std::streambuf*>(context);
-	if ( buf == NULL ) return -1;
+	if ( buf == nullptr ) return -1;
 
 	int count = 0;
 	int ch = buf->sgetc();
@@ -65,7 +65,7 @@ NoneHandler Importer::_none;
 
 
 Importer::Importer() {
-	_typemap = NULL;
+	_typemap = nullptr;
 	_strictNamespaceCheck = true;
 }
 
@@ -89,23 +89,23 @@ void Importer::setRootName(std::string h) {
 
 
 Core::BaseObject *Importer::get(std::streambuf* buf) {
-	if ( _typemap == NULL ) return NULL;
-	if ( buf == NULL ) return NULL;
+	if ( _typemap == nullptr ) return nullptr;
+	if ( buf == nullptr ) return nullptr;
 
-	_result = NULL;
+	_result = nullptr;
 
 	xmlDocPtr doc;
 	doc = xmlReadIO(streamBufReadCallback,
 	                streamBufCloseCallback,
-	                buf, NULL, NULL, XML_PARSE_BIG_LINES);
+	                buf, nullptr, nullptr, XML_PARSE_BIG_LINES);
 
-	if ( doc == NULL )
-		return NULL;
+	if ( doc == nullptr )
+		return nullptr;
 
 	xmlNodePtr cur = xmlDocGetRootElement(doc);
-	if ( cur == NULL ) {
+	if ( cur == nullptr ) {
 		xmlFreeDoc(doc);
-		return NULL;
+		return nullptr;
 	}
 
 	_any.mapper = _typemap;
@@ -117,15 +117,15 @@ Core::BaseObject *Importer::get(std::streambuf* buf) {
 		if ( xmlStrcmp(cur->name, (const xmlChar*)_headerNode.c_str()) ) {
 			SEISCOMP_WARNING("Invalid root tag: %s, expected: %s", cur->name, _headerNode.c_str());
 			xmlFreeDoc(doc);
-			return NULL;
+			return nullptr;
 		}
 
 		NodeHandler::strictNsCheck = _strictNamespaceCheck;
-		_hasErrors = traverse(&_any, cur, cur->children, NULL) == false;
+		_hasErrors = traverse(&_any, cur, cur->children, nullptr) == false;
 	}
 	else {
 		NodeHandler::strictNsCheck = _strictNamespaceCheck;
-		_hasErrors = traverse(&_any, NULL, cur, NULL) == false;
+		_hasErrors = traverse(&_any, nullptr, cur, nullptr) == false;
 	}
 
 	NodeHandler::strictNsCheck = saveStrictNsCheck;
@@ -146,10 +146,10 @@ bool Importer::traverse(NodeHandler *handler, void *n, void *c, Core::BaseObject
 
 	bool result = true;
 
-	for ( xmlNodePtr child = childs; child != NULL; child = child->next ) {
+	for ( xmlNodePtr child = childs; child != nullptr; child = child->next ) {
 		if ( child->type != XML_ELEMENT_NODE ) continue;
 
-		handler->propagate(NULL, false, true);
+		handler->propagate(nullptr, false, true);
 
 		try {
 			handler->get(target, child);
@@ -166,7 +166,7 @@ bool Importer::traverse(NodeHandler *handler, void *n, void *c, Core::BaseObject
 		if ( !handler->isOptional )
 			mandatory.erase((const char*)child->name);
 
-		if ( handler->object == NULL && handler->isAnyType ) {
+		if ( handler->object == nullptr && handler->isAnyType ) {
 			if ( _any.get(target, child) ) {
 				handler->object = _any.object;
 				handler->childHandler = _any.childHandler;
@@ -181,14 +181,14 @@ bool Importer::traverse(NodeHandler *handler, void *n, void *c, Core::BaseObject
 		bool optional = handler->isOptional;
 
 		if ( newTarget ) {
-			if ( childHandler == NULL ) {
+			if ( childHandler == nullptr ) {
 				childHandler = _typemap->getHandler(newTarget->className());
-				if ( childHandler == NULL ) {
+				if ( childHandler == nullptr ) {
 					SEISCOMP_WARNING("No class handler for %s", newTarget->className());
 					if ( newInstance )
 						delete newTarget;
-					handler->object = NULL;
-					newTarget = NULL;
+					handler->object = nullptr;
+					newTarget = nullptr;
 					childHandler = &_none;
 				}
 			}
@@ -205,7 +205,7 @@ bool Importer::traverse(NodeHandler *handler, void *n, void *c, Core::BaseObject
 			else {
 				if ( newTarget && newInstance )
 					delete newTarget;
-				newTarget = NULL;
+				newTarget = nullptr;
 				if ( optional )
 					SEISCOMP_INFO("L%ld: Invalid %s element: ignoring",
 					              xmlGetLineNo(child), child->name);
@@ -233,7 +233,7 @@ bool Importer::traverse(NodeHandler *handler, void *n, void *c, Core::BaseObject
 					                 xmlGetLineNo(child),
 					                 node->name, child->name);
 
-				newTarget = NULL;
+				newTarget = nullptr;
 			}
 		}
 
@@ -247,14 +247,14 @@ bool Importer::traverse(NodeHandler *handler, void *n, void *c, Core::BaseObject
 
 	handler->finalize(target, &remaining);
 
-	if ( target != NULL ) {
+	if ( target != nullptr ) {
 		for ( ChildList::iterator it = remaining.begin(); it != remaining.end(); ++it )
-			if ( *it != NULL ) delete *it;
+			if ( *it != nullptr ) delete *it;
 	}
 	else {
 		for ( ChildList::iterator it = remaining.begin(); it != remaining.end(); ++it ) {
-			if ( *it != NULL ) {
-				if ( _result == NULL )
+			if ( *it != nullptr ) {
+				if ( _result == nullptr )
 					_result = *it;
 				else
 					delete *it;

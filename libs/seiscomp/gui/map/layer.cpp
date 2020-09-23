@@ -39,7 +39,7 @@ namespace Map {
 Layer::Layer(QObject* parent)
 : QObject(parent)
 , Core::BaseObject()
-, _canvas(NULL)
+, _canvas(nullptr)
 , _visible(true)
 , _antiAliasing(false)
 , _dirty(true) {
@@ -61,7 +61,7 @@ Layer::~Layer() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QSize Layer::size() const {
-	if ( _canvas != NULL )
+	if ( _canvas != nullptr )
 		return _canvas->size();
 	return QSize();
 }
@@ -324,7 +324,7 @@ void Layer::setDirty() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Legend* Layer::legend(int i) const {
-	if ( i < 0 || i >= _legends.size() ) return NULL;
+	if ( i < 0 || i >= _legends.size() ) return nullptr;
 
 	return _legends[i];
 }
@@ -335,7 +335,7 @@ Legend* Layer::legend(int i) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QMenu* Layer::menu(QMenu*) const {
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -352,7 +352,7 @@ Layer& Layer::operator =(const Layer &other) {
 	_legends.clear();
 	foreach ( Legend* legend, other._legends ) {
 		Legend *tmp = legend->clone();
-		if ( tmp != NULL ) _legends.append(tmp);
+		if ( tmp != nullptr ) _legends.append(tmp);
 	}
 
 	return *this;

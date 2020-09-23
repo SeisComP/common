@@ -36,13 +36,13 @@ using namespace Seiscomp::Client;
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 StreamApplication::StreamApplication(int argc, char **argv)
-	: Client::Application(argc, argv), _recordThread(NULL) {
+	: Client::Application(argc, argv), _recordThread(nullptr) {
 	setRecordStreamEnabled(true);
 	_startAcquisition = true;
 	_closeOnAcquisitionFinished = true;
 	_recordInputHint = Record::DATA_ONLY;
 	_recordDatatype = Array::FLOAT;
-	_logRecords = NULL;
+	_logRecords = nullptr;
 	_receivedRecords = 0;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -131,7 +131,7 @@ void StreamApplication::done() {
 
 	waitForRecordThread();
 
-	_recordStream = NULL;
+	_recordStream = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -227,7 +227,7 @@ void StreamApplication::waitForRecordThread() {
 		SEISCOMP_INFO("Waiting for record thread");
 		_recordThread->join();
 		delete _recordThread;
-		_recordThread = NULL;
+		_recordThread = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -237,7 +237,7 @@ void StreamApplication::waitForRecordThread() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StreamApplication::isRecordThreadActive() const {
-	return _recordThread != NULL;
+	return _recordThread != nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -330,7 +330,7 @@ void StreamApplication::closeStream() {
 	if ( _recordStream )
 		_recordStream->close();
 
-	_recordStream = NULL;
+	_recordStream = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

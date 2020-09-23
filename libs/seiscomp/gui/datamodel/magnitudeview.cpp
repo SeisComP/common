@@ -165,17 +165,17 @@ class StaMagsSortFilterProxyModel : public QSortFilterProxyModel {
 
 Util::KeyValuesPtr getParams(const string &net, const string &sta) {
 	ConfigModule *module = SCApp->configModule();
-	if ( module == NULL ) return NULL;
+	if ( module == nullptr ) return nullptr;
 
 	for ( size_t ci = 0; ci < module->configStationCount(); ++ci ) {
 		ConfigStation* cs = module->configStation(ci);
 		if ( cs->networkCode() != net || cs->stationCode() != sta ) continue;
 		Setup *setup = findSetup(cs, SCApp->name());
-		if ( setup == NULL ) continue;
+		if ( setup == nullptr ) continue;
 		if ( !setup->enabled() ) continue;
 
 		DataModel::ParameterSet *ps = DataModel::ParameterSet::Find(setup->parameterSetID());
-		if ( ps == NULL ) {
+		if ( ps == nullptr ) {
 			SEISCOMP_WARNING("Cannot find parameter set %s for station %s.%s",
 			                 setup->parameterSetID().data(),
 			                 net.data(), sta.data());
@@ -187,7 +187,7 @@ Util::KeyValuesPtr getParams(const string &net, const string &sta) {
 		return keys;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -365,7 +365,7 @@ class ModelRowFilterMultiOperation : public ModelAbstractRowFilter {
 					return false;
 				value = toks[2].trimmed();
 
-				ModelAbstractRowFilter *stage = NULL;
+				ModelAbstractRowFilter *stage = nullptr;
 
 				switch ( c ) {
 					case CHANNEL:
@@ -391,7 +391,7 @@ class ModelRowFilterMultiOperation : public ModelAbstractRowFilter {
 						break;
 				}
 
-				if ( stage != NULL )
+				if ( stage != nullptr )
 					add(stage);
 				else
 					return false;
@@ -544,7 +544,7 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 	StationMagnitude* sm = StationMagnitude::Find(_magnitude->stationMagnitudeContribution(index.row())->stationMagnitudeID());
 
 	if ( role == Qt::DisplayRole ) {
-		if ( sm == NULL )
+		if ( sm == nullptr )
 			return QVariant();
 
 		char buf[10];
@@ -658,7 +658,7 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 		}
 	}
 	else if ( role == Qt::BackgroundRole ) {
-		if ( sm != NULL ) {
+		if ( sm != nullptr ) {
 			try {
 				if ( !sm->passedQC() )
 					return failedQCColor;
@@ -880,12 +880,12 @@ MagnitudeRowFilter::MagnitudeRowFilter(ModelAbstractRowFilter **filter_ptr, QWid
 	else
 		_ui.labelInfo->setText(tr("NOTE: Distance is specified in degree."));
 
-	ModelRowFilter *filter = NULL;
+	ModelRowFilter *filter = nullptr;
 
-	if ( _filter != NULL )
+	if ( _filter != nullptr )
 		filter = reinterpret_cast<ModelRowFilter*>(*_filter);
 
-	if ( filter != NULL ) {
+	if ( filter != nullptr ) {
 		for ( int i = 0; i < filter->count(); ++i ) {
 			ModelAbstractRowFilter *stage = filter->filter(i);
 			Row &row = addRow();
@@ -963,7 +963,7 @@ MagnitudeRowFilter::Row &MagnitudeRowFilter::addRow() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeRowFilter::accept() {
-	if ( _filter != NULL ) {
+	if ( _filter != nullptr ) {
 		ModelRowFilter *filter = new ModelRowFilter();
 
 		foreach ( Row r, _rows ) {
@@ -991,7 +991,7 @@ void MagnitudeRowFilter::accept() {
 					return;
 			}
 
-			ModelAbstractRowFilter *stage = NULL;
+			ModelAbstractRowFilter *stage = nullptr;
 
 			switch ( column ) {
 				case CHANNEL:
@@ -1028,7 +1028,7 @@ void MagnitudeRowFilter::accept() {
 			filter->add(stage);
 		}
 
-		if ( *_filter != NULL )
+		if ( *_filter != nullptr )
 			delete *_filter;
 
 		*_filter = filter;
@@ -1075,7 +1075,7 @@ namespace {
 
 
 ModelAbstractRowFilter *&selectionFilter() {
-	static ModelAbstractRowFilter *selectionFilter = NULL;
+	static ModelAbstractRowFilter *selectionFilter = nullptr;
 	static bool filterReadFromSettings = false;
 
 	if ( !filterReadFromSettings ) {
@@ -1086,10 +1086,10 @@ ModelAbstractRowFilter *&selectionFilter() {
 			ModelRowFilter *filter = new ModelRowFilter;
 			if ( !filter->fromString(f_str) ) {
 				delete filter;
-				QMessageBox::warning(NULL, SCApp->tr("Settings"), SCApp->tr("Could not restore magnitude selection filter"), QMessageBox::Ok);
+				QMessageBox::warning(nullptr, SCApp->tr("Settings"), SCApp->tr("Could not restore magnitude selection filter"), QMessageBox::Ok);
 			}
 			else {
-				if ( selectionFilter != NULL )
+				if ( selectionFilter != nullptr )
 					delete selectionFilter;
 				selectionFilter = filter;
 			}
@@ -1114,11 +1114,11 @@ MagnitudeView::MagnitudeView(const MapsDesc &maps,
                              QWidget * parent, Qt::WindowFlags f)
 : QWidget(parent, f)
 , _reader(reader)
-, _modelStationMagnitudes(NULL, NULL, &_objCache)
-, _origin(NULL)
+, _modelStationMagnitudes(nullptr, nullptr, &_objCache)
+, _origin(nullptr)
 , _objCache(_reader, 500) {
 	_maptree = new Map::ImageTree(maps);
-	_modelStationMagnitudesProxy = NULL;
+	_modelStationMagnitudesProxy = nullptr;
 	init(reader);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1132,11 +1132,11 @@ MagnitudeView::MagnitudeView(Map::ImageTree* mapTree,
                              QWidget * parent, Qt::WindowFlags f)
 : QWidget(parent, f)
 , _reader(reader)
-, _modelStationMagnitudes(NULL, NULL, &_objCache)
-, _origin(NULL)
+, _modelStationMagnitudes(nullptr, nullptr, &_objCache)
+, _origin(nullptr)
 , _objCache(_reader, 500) {
 	_maptree = mapTree;
-	_modelStationMagnitudesProxy = NULL;
+	_modelStationMagnitudesProxy = nullptr;
 	init(reader);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1159,7 +1159,7 @@ void MagnitudeView::closeTab(int idx) {
 	std::string magID = _tabMagnitudes->tabData(idx).value<TabData>().publicID;
 	MagnitudePtr mag = Magnitude::Find(magID);
 
-	if ( mag != NULL ) {
+	if ( mag != nullptr ) {
 		if ( mag->detach() ) {
 			emit magnitudeRemoved(_origin->publicID().c_str(), mag.get());
 			_tabMagnitudes->removeTab(idx);
@@ -1195,7 +1195,7 @@ void MagnitudeView::debugCreateMagRef() {
 void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery* reader) {
 	_ui.setupUi(this);
 
-	_amplitudeView = NULL;
+	_amplitudeView = nullptr;
 	_computeMagnitudesSilently = false;
 	_enableMagnitudeTypeSelection = true;
 
@@ -1362,7 +1362,7 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery* reader) {
 
 	// Gather available magnitudes types
 	_availableMagTypes = Processing::MagnitudeProcessorFactory::Services();
-	if ( _availableMagTypes != NULL ) {
+	if ( _availableMagTypes != nullptr ) {
 		for ( size_t i = 0; i < _magnitudeTypes.size(); ) {
 			if ( std::find(_availableMagTypes->begin(), _availableMagTypes->end(), _magnitudeTypes[i])
 			     == _availableMagTypes->end() ) {
@@ -1385,7 +1385,7 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery* reader) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeView::~MagnitudeView() {
-	if ( _availableMagTypes != NULL )
+	if ( _availableMagTypes != nullptr )
 		delete _availableMagTypes;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1641,14 +1641,14 @@ void MagnitudeView::recalculateMagnitude() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::selectChannels() {
-	if ( selectionFilter() == NULL ) {
+	if ( selectionFilter() == nullptr ) {
 		if ( !editSelectionFilter() )
 			return;
 	}
 
 	ModelAbstractRowFilter *filter = selectionFilter();
 
-	if ( filter == NULL )
+	if ( filter == nullptr )
 		return;
 
 	_ui.tableStationMagnitudes->selectionModel()->clear();
@@ -1720,7 +1720,7 @@ void MagnitudeView::openWaveforms() {
 		}
 	}
 	else {
-		_amplitudeView = new AmplitudeView(NULL, Qt::Window);
+		_amplitudeView = new AmplitudeView(nullptr, Qt::Window);
 		_amplitudeView->setAttribute(Qt::WA_DeleteOnClose);
 		_amplitudeView->setDatabase(_reader);
 
@@ -1740,7 +1740,7 @@ void MagnitudeView::openWaveforms() {
 
 	if ( !_amplitudeView->setOrigin(_origin.get(), _netMag->type()) ) {
 		delete _amplitudeView;
-		_amplitudeView = NULL;
+		_amplitudeView = nullptr;
 		return;
 	}
 
@@ -1755,7 +1755,7 @@ void MagnitudeView::openWaveforms() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::objectDestroyed(QObject *o) {
 	if ( o == _amplitudeView )
-		_amplitudeView = NULL;
+		_amplitudeView = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1777,7 +1777,7 @@ void MagnitudeView::computeMagnitudes() {
 		return;
 	}
 
-	if ( _availableMagTypes == NULL ) {
+	if ( _availableMagTypes == nullptr ) {
 		QMessageBox::critical(this, tr("Compute magnitudes"),
 		                      tr("No magnitude processors available."));
 		return;
@@ -2247,7 +2247,7 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
                                         QList<Seiscomp::DataModel::AmplitudePtr> *amps,
                                         MagnitudeStats *errors) {
 	Processing::MagnitudeProcessorPtr magProc = Processing::MagnitudeProcessorFactory::Create(magType.c_str());
-	if ( !magProc ) return NULL;
+	if ( !magProc ) return nullptr;
 
 	string ampType = magProc->amplitudeType();
 	bool addMag = false;
@@ -2297,7 +2297,7 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 	mag->setEvaluationStatus(Core::None);
 	mag->setOriginID("");
 
-	if ( amps == NULL ) {
+	if ( amps == nullptr ) {
 		// Typedef a pickmap that maps a streamcode to a pick
 		typedef QMap<string, PickCPtr> PickStreamMap;
 
@@ -2435,7 +2435,7 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 				amp->waveformID().networkCode(), amp->waveformID().stationCode(),
 				amp->waveformID().locationCode(), amp->timeWindow().reference());
 
-			if ( loc == NULL ) {
+			if ( loc == nullptr ) {
 				SEISCOMP_ERROR("Failed to get meta data for %s.%s.%s",
 				               amp->waveformID().networkCode().c_str(),
 				               amp->waveformID().stationCode().c_str(),
@@ -2473,13 +2473,13 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 				               (int)stat, stat.toString());
 
 				if ( !magProc->treatAsValidMagnitude() ) {
-					if ( errors != NULL )
+					if ( errors != nullptr )
 						errors->append(MagnitudeStatus(magProc->type(), amp.get(), stat));
 					continue;
 				}
 				else {
 					passedQC = false;
-					if ( errors != NULL )
+					if ( errors != nullptr )
 						errors->append(MagnitudeStatus(magProc->type(), amp.get(), stat, true));
 				}
 			}
@@ -2512,7 +2512,7 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 		if ( mag->stationMagnitudeContributionCount() > 0 )
 			_origin->add(mag.get());
 		else
-			return NULL;
+			return nullptr;
 	}
 
 	return mag.get();
@@ -2767,7 +2767,7 @@ void MagnitudeView::tableStationMagnitudesHeaderContextMenuRequested(const QPoin
 	}
 
 	QAction *result = menu.exec(_ui.tableStationMagnitudes->horizontalHeader()->mapToGlobal(pos));
-	if ( result == NULL ) return;
+	if ( result == nullptr ) return;
 
 	int section = actions.indexOf(result);
 	if ( section == -1 ) return;
@@ -2821,7 +2821,7 @@ void MagnitudeView::dataChanged(const QModelIndex& topLeft, const QModelIndex&){
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::selectPreferredMagnitude(int idx) {
-	Magnitude *mag = NULL;
+	Magnitude *mag = nullptr;
 
 	for ( int i = 0; i < _tabMagnitudes->count(); ++i ) {
 		TabData d = _tabMagnitudes->tabData(i).value<TabData>();
@@ -2931,17 +2931,17 @@ const AmplitudeView::Config &MagnitudeView::amplitudeConfig() const {
 void MagnitudeView::setOrigin(Origin* o, Event *e) {
 	if ( _origin == o ) return;
 
-	bool eventChanged = (_event != e) || ( e == NULL);
+	bool eventChanged = (_event != e) || ( e == nullptr);
 
 	_origin = o;
 	_event = e;
-	_netMag = NULL;
+	_netMag = nullptr;
 	_amplitudes.clear();
 
 	if ( _amplitudeView )
 		_amplitudeView->close();
 
-	if ( _origin == NULL ) {
+	if ( _origin == nullptr ) {
 		_currentMagnitudeTypes = _magnitudeTypes;
 		resetContent();
 		return;
@@ -2987,7 +2987,7 @@ bool MagnitudeView::showMagnitude(const string &id) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::reload() {
 	// otherwise display the first magnitude
-	_netMag = NULL;
+	_netMag = nullptr;
 	for ( size_t i = 0; i < _origin->magnitudeCount(); ++i ) {
 		MagnitudePtr mag = _origin->magnitude(i);
 		_netMag = mag;
@@ -3011,7 +3011,7 @@ void MagnitudeView::addObject(const QString& parentID, Seiscomp::DataModel::Obje
 			return;
 
 		StationMagnitude* staMag = StationMagnitude::Find(magRef->stationMagnitudeID());
-		if ( staMag == NULL ) {
+		if ( staMag == nullptr ) {
 			SEISCOMP_DEBUG("Received stationMagnitudeContribution for magnitude '%s' that has not been found",
 			               magRef->stationMagnitudeID().c_str());
 			return;
@@ -3284,7 +3284,7 @@ void MagnitudeView::resetContent() {
 	_stamagnitudes->clear();
 	_stamagnitudes->update();
 
- 	_modelStationMagnitudes.setOrigin(NULL, NULL);
+ 	_modelStationMagnitudes.setOrigin(nullptr, nullptr);
 
 	QAbstractItemModel* m = _ui.tableStationMagnitudes->model();
 	if ( m ) delete m;
@@ -3294,7 +3294,7 @@ void MagnitudeView::resetContent() {
 	_ui.tableStationMagnitudes->setModel(_modelStationMagnitudesProxy);
 
 	if (_map){
-		_map->setOrigin(NULL);
+		_map->setOrigin(nullptr);
 		_map->canvas().displayRect(QRectF(-180.0,-90.0, 360.0, 180.0));
 	}
 
@@ -3680,7 +3680,7 @@ DataModel::Pick* MagnitudeView::getPick(DataModel::Arrival* arrival){
 		return pick;
 	}
 	else
-		return NULL;
+		return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

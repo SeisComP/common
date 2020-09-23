@@ -53,11 +53,11 @@ BaseObject::BaseObject() : _referenceCount(0) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 	/*
 	const Seiscomp::Core::MetaObject *BaseObject::Meta() {
-		return NULL;
+		return nullptr;
 	}
 
 	const Seiscomp::Core::MetaObject *BaseObject::meta() const {
-		return NULL;
+		return nullptr;
 	}
 	*/
 BaseObject::BaseObject(const BaseObject&) : _referenceCount(0) {
@@ -80,7 +80,7 @@ BaseObject::~BaseObject() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 BaseObject* BaseObject::clone() const {
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

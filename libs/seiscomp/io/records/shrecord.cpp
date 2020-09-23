@@ -68,7 +68,7 @@ SHRecord::SHRecord(string net, string sta, string loc, string cha,
 
 SHRecord::SHRecord(const SHRecord& rec)
 : Record(rec) {
-	_data = rec._data ? rec._data->clone() : NULL;
+	_data = rec._data ? rec._data->clone() : nullptr;
 }
 
 
@@ -76,7 +76,7 @@ SHRecord::SHRecord(const SHRecord& rec)
 
 SHRecord::SHRecord(const Record& rec)
 : Record(rec), _data(0) {
-	_data = rec.data() ? rec.data()->clone() : NULL;
+	_data = rec.data() ? rec.data()->clone() : nullptr;
 }
 
 
@@ -92,9 +92,9 @@ SHRecord& SHRecord::operator=(const SHRecord& rec) {
 
 	if (this != &rec) {
 		if (_data) {
-			_data = NULL;
+			_data = nullptr;
 		}
-		_data = rec._data ? rec._data->clone() : NULL;
+		_data = rec._data ? rec._data->clone() : nullptr;
 // FIXME incomplete
 	}
 
@@ -112,7 +112,7 @@ Array* SHRecord::data() {
 
 
 const Array* SHRecord::raw() const {
-	return NULL;
+	return nullptr;
 }
 
 

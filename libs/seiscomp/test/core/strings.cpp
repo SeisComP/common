@@ -228,7 +228,7 @@ BOOST_AUTO_TEST_CASE(tokenize1) {
 	text = "This is a book";
 	len = strlen(text);
 	int tok_count = 0;
-	while ( (tok = tokenize(text, ",", len, tok_len)) != NULL ) {
+	while ( (tok = tokenize(text, ",", len, tok_len)) != nullptr ) {
 		if ( tok_count == 3 ) {
 			BOOST_CHECK_EQUAL(string(tok, tok_len), "book");
 		}

@@ -411,7 +411,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 
 
 inline AmplitudeProcessor::Environment::Environment()
-: hypocenter(NULL), receiver(NULL), pick(NULL) {}
+: hypocenter(nullptr), receiver(nullptr), pick(nullptr) {}
 
 inline const DataModel::Pick *AmplitudeProcessor::pick() const {
 	return _environment.pick;

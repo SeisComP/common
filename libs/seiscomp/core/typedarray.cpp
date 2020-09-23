@@ -125,17 +125,17 @@ void TypedArray<T>::setData(int size, const T* data) {
 
 template<typename T>
 const void* TypedArray<T>::data() const {
-	return _data.empty()?NULL:&_data[0];
+	return _data.empty()?nullptr:&_data[0];
 }
 
 template<typename T>
 T* TypedArray<T>::typedData() {
-	return _data.empty()?NULL:&_data[0];
+	return _data.empty()?nullptr:&_data[0];
 }
 
 template<typename T>
 const T* TypedArray<T>::typedData() const {
-	return _data.empty()?NULL:&_data[0];
+	return _data.empty()?nullptr:&_data[0];
 }
 
 template<typename T>
@@ -347,8 +347,8 @@ NumericArray<T> &NumericArray<T>::operator/=(T v) {
 
 template<typename T>
 TypedArray<T>* TypedArray<T>::slice(int m, int n) const {
-	if ( m < 0 || n < 0 || m >= n ) return NULL;
-	if ( m >= (int)_data.size() ) return NULL;
+	if ( m < 0 || n < 0 || m >= n ) return nullptr;
+	if ( m >= (int)_data.size() ) return nullptr;
 	if ( n > (int)_data.size() ) n = _data.size();
 	return new TypedArray<T>(n-m, &(_data[m]));
 }
@@ -356,8 +356,8 @@ TypedArray<T>* TypedArray<T>::slice(int m, int n) const {
 
 template<typename T>
 NumericArray<T>* NumericArray<T>::slice(int m, int n) const {
-	if ( m < 0 || n < 0 || m >= n ) return NULL;
-	if ( m >= (int)TypedArray<T>::_data.size() ) return NULL;
+	if ( m < 0 || n < 0 || m >= n ) return nullptr;
+	if ( m >= (int)TypedArray<T>::_data.size() ) return nullptr;
 	if ( n > (int)TypedArray<T>::_data.size() ) n = TypedArray<T>::_data.size();
 	return new NumericArray<T>(n-m, &(TypedArray<T>::_data[m]));
 }

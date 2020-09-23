@@ -159,7 +159,7 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 
 		//! Copies all selected items of specified item view to clipboard as CSV
 		static void copyToClipboard(const QAbstractItemView* view,
-		                            const QHeaderView *header = NULL);
+		                            const QHeaderView *header = nullptr);
 
 		Type type() const;
 

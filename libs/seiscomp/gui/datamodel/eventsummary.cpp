@@ -243,7 +243,7 @@ void EventSummary::init() {
 	_ui.labelOpComment->setVisible(false);
 	_ui.labelOpCommentSeparator->setVisible(false);
 
-	_symbol = NULL;
+	_symbol = nullptr;
 	_map = new EventSummaryMap(this, _maptree.get(), _ui.map);
 	QHBoxLayout* hboxLayout = new QHBoxLayout(_ui.map);
 	hboxLayout->setMargin(0);
@@ -609,7 +609,7 @@ void EventSummary::removeObject(const QString& parentID, Object* obj) {
 		it->second->reset();
 
 		if ( _currentMag && mag->publicID() == _currentMag->publicID() ) {
-			_currentMag = NULL;
+			_currentMag = nullptr;
 			_ui.magnitude->setText("-");
 			if ( _symbol ) {
 				_symbol->setPreferredMagnitudeValue(0);
@@ -628,11 +628,11 @@ void EventSummary::removeObject(const QString& parentID, Object* obj) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventSummary::setEvent(Event *event, Origin *org, bool fixed) {
-	Event *cachedEvent = event?Event::Find(event->publicID()):NULL;
+	Event *cachedEvent = event?Event::Find(event->publicID()):nullptr;
 	if ( cachedEvent ) event = cachedEvent;
 
 	_currentEvent = event;
-	_currentMag = NULL;
+	_currentMag = nullptr;
 	_fixedView = fixed;
 
 	if ( _currentEvent ) {
@@ -646,7 +646,7 @@ void EventSummary::setEvent(Event *event, Origin *org, bool fixed) {
 		}
 	}
 	else
-		_currentFocalMechanism = NULL;
+		_currentFocalMechanism = nullptr;
 
 	if ( org )
 		setOrigin(org);
@@ -669,7 +669,7 @@ void EventSummary::setEvent(Event *event, Origin *org, bool fixed) {
 		}
 	}
 	else
-		_currentMag = NULL;
+		_currentMag = nullptr;
 
 	// Magnitude
 	if ( _currentMag ) {
@@ -710,8 +710,8 @@ void EventSummary::updateMagnitude() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventSummary::showOrigin(Origin *org) {
-	_currentEvent = NULL;
-	_currentFocalMechanism = NULL;
+	_currentEvent = nullptr;
+	_currentFocalMechanism = nullptr;
 	setOrigin(org);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -721,7 +721,7 @@ void EventSummary::showOrigin(Origin *org) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventSummary::setOrigin(Origin* org) {
-	Origin *cachedOrigin = org?Origin::Find(org->publicID()):NULL;
+	Origin *cachedOrigin = org?Origin::Find(org->publicID()):nullptr;
 	if ( cachedOrigin ) org = cachedOrigin;
 
 	_currentOrigin = org;
@@ -927,12 +927,12 @@ void EventSummary::updateAlert() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventSummary::setFocalMechanism(FocalMechanism* fm) {
-	if ( fm == NULL ) return;
+	if ( fm == nullptr ) return;
 
-	MomentTensorPtr mt = fm->momentTensorCount() > 0?fm->momentTensor(0):NULL;
+	MomentTensorPtr mt = fm->momentTensorCount() > 0?fm->momentTensor(0):nullptr;
 	OriginPtr o = Origin::Find(mt?mt->derivedOriginID():fm->triggeringOriginID());
 
-	if ( o == NULL && mt && _reader )
+	if ( o == nullptr && mt && _reader )
 		o = Origin::Cast(_reader->getObject(Origin::TypeInfo(),
 		                                    mt->derivedOriginID()));
 
@@ -985,7 +985,7 @@ void EventSummary::setFocalMechanism(FocalMechanism* fm) {
 		toolTip = "Type: -\n Epicenter -\nDepth: -\n";
 	}
 
-	MagnitudePtr mag = mt?Magnitude::Find(mt->momentMagnitudeID()):NULL;
+	MagnitudePtr mag = mt?Magnitude::Find(mt->momentMagnitudeID()):nullptr;
 	if ( !mag && mt && _reader)
 		mag = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), mt->momentMagnitudeID()));
 
@@ -1153,7 +1153,7 @@ void EventSummary::resetContent() {
 	if ( _map ) {
 		if ( _symbol ) {
 			_map->canvas().symbolCollection()->remove(_symbol);
-			_symbol = NULL;
+			_symbol = nullptr;
 		}
 	}
 

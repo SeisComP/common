@@ -47,7 +47,7 @@ class SC_GUI_API SymbolLayer : public Layer {
 	// ----------------------------------------------------------------------
 	public:
 		//! C'tor
-		SymbolLayer(QObject* parent = NULL);
+		SymbolLayer(QObject* parent = nullptr);
 		//! D'tor
 		~SymbolLayer();
 

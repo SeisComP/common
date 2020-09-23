@@ -43,7 +43,7 @@ class SC_GUI_API StandardLegendItem {
 	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
-		StandardLegendItem(StandardLegend *legend = NULL);
+		StandardLegendItem(StandardLegend *legend = nullptr);
 		StandardLegendItem(const QPen &p, const QString &l);
 		StandardLegendItem(const QPen &p, const QString &l, int s);
 		StandardLegendItem(const QPen &p, const QBrush &b, const QString &l);

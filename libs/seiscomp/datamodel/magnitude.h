@@ -22,11 +22,11 @@
 #define SEISCOMP_DATAMODEL_MAGNITUDE_H
 
 
-#include <seiscomp/datamodel/creationinfo.h>
 #include <vector>
-#include <string>
 #include <seiscomp/datamodel/realquantity.h>
+#include <string>
 #include <seiscomp/datamodel/types.h>
+#include <seiscomp/datamodel/creationinfo.h>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/stationmagnitudecontribution.h>
 #include <seiscomp/datamodel/notifier.h>

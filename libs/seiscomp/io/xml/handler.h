@@ -45,7 +45,7 @@ class SC_SYSTEM_CORE_API OutputHandler {
 	public:
 		virtual ~OutputHandler();
 
-		virtual void handle(Core::BaseObject *, const char *tag, const char *ns, NodeHandler * = NULL) = 0;
+		virtual void handle(Core::BaseObject *, const char *tag, const char *ns, NodeHandler * = nullptr) = 0;
 
 		virtual bool openElement(const char *name, const char *ns) = 0;
 		virtual void addAttribute(const char *name, const char *ns, const char *value) = 0;
@@ -63,10 +63,10 @@ struct SC_SYSTEM_CORE_API NodeHandler {
 
 	virtual bool init(Core::BaseObject *obj, void *n, TagSet &mandatoryTags) { return false; }
 	// When called, object, next and newInstance are preset by the caller
-	// object = NULL
+	// object = nullptr
 	// next = noneReader
 	// newInstance = false
-	// memberHandler = NULL
+	// memberHandler = nullptr
 	virtual std::string value(Core::BaseObject *obj) { return ""; }
 	virtual bool put(Core::BaseObject *obj, const char *tag, const char *ns, OutputHandler *output) = 0;
 
@@ -102,7 +102,7 @@ struct SC_SYSTEM_CORE_API MemberHandler {
 	//! Get a "node" to the member of an object.
 	virtual bool get(Core::BaseObject *object, void *node, NodeHandler *h) = 0;
 
-	//! Finalizes the read member object (can be NULL).
+	//! Finalizes the read member object (can be nullptr).
 	virtual bool finalize(Core::BaseObject *parent, Core::BaseObject *member) { return true; }
 };
 

@@ -32,11 +32,11 @@ IMPLEMENT_SC_CLASS(IntegerQuantity, "IntegerQuantity");
 
 
 IntegerQuantity::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("value", "int", false, false, false, false, false, false, NULL, &IntegerQuantity::setValue, &IntegerQuantity::value));
-	addProperty(Core::simpleProperty("uncertainty", "int", false, false, false, false, true, false, NULL, &IntegerQuantity::setUncertainty, &IntegerQuantity::uncertainty));
-	addProperty(Core::simpleProperty("lowerUncertainty", "int", false, false, false, false, true, false, NULL, &IntegerQuantity::setLowerUncertainty, &IntegerQuantity::lowerUncertainty));
-	addProperty(Core::simpleProperty("upperUncertainty", "int", false, false, false, false, true, false, NULL, &IntegerQuantity::setUpperUncertainty, &IntegerQuantity::upperUncertainty));
-	addProperty(Core::simpleProperty("confidenceLevel", "float", false, false, false, false, true, false, NULL, &IntegerQuantity::setConfidenceLevel, &IntegerQuantity::confidenceLevel));
+	addProperty(Core::simpleProperty("value", "int", false, false, false, false, false, false, nullptr, &IntegerQuantity::setValue, &IntegerQuantity::value));
+	addProperty(Core::simpleProperty("uncertainty", "int", false, false, false, false, true, false, nullptr, &IntegerQuantity::setUncertainty, &IntegerQuantity::uncertainty));
+	addProperty(Core::simpleProperty("lowerUncertainty", "int", false, false, false, false, true, false, nullptr, &IntegerQuantity::setLowerUncertainty, &IntegerQuantity::lowerUncertainty));
+	addProperty(Core::simpleProperty("upperUncertainty", "int", false, false, false, false, true, false, nullptr, &IntegerQuantity::setUpperUncertainty, &IntegerQuantity::upperUncertainty));
+	addProperty(Core::simpleProperty("confidenceLevel", "float", false, false, false, false, true, false, nullptr, &IntegerQuantity::setConfidenceLevel, &IntegerQuantity::confidenceLevel));
 }
 
 

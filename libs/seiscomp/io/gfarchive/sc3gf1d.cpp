@@ -733,7 +733,7 @@ Core::GreensFunction* SC3GF1DArchive::get() {
 		SEISCOMP_DEBUG("No greensfunction found");
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -766,14 +766,14 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 #endif
 	};
 
-	Core::GreensFunction *gf = NULL;
+	Core::GreensFunction *gf = nullptr;
 
 	for ( int i = 0; i < GF_COMPS; ++i ) {
 		std::string filename = file + comps[i].toString();
 		std::ifstream ifs(filename .c_str());
 		if ( !ifs.good() ) {
 			SEISCOMP_DEBUG("%s: not found", filename.c_str());
-			return NULL;
+			return nullptr;
 		}
 
 		IO::SACRecord sac;
@@ -783,14 +783,14 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 		catch ( std::exception &exc ) {
 			SEISCOMP_ERROR("%s: %s", filename.c_str(), exc.what());
 			if ( gf ) delete gf;
-			return NULL;
+			return nullptr;
 		}
 
 		if ( sac.startTime() >= ts ) {
 			SEISCOMP_ERROR("%s: requested timespan not within range (%s < %s",
 			               filename.c_str(), Core::Time(ts).iso().c_str(), sac.startTime().iso().c_str());
 			if ( gf ) delete gf;
-			return NULL;
+			return nullptr;
 		}
 
 		timeOfs = (double)sac.startTime();
@@ -800,14 +800,14 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 			SEISCOMP_ERROR("%s: mismatching start times, last component = %.4f, this = %.4f",
 			               filename.c_str(), gf->timeOffset(), timeOfs);
 			delete gf;
-			return NULL;
+			return nullptr;
 		}
 
 		FloatArray *data = FloatArray::Cast(sac.data());
-		if ( data == NULL ) {
+		if ( data == nullptr ) {
 			SEISCOMP_ERROR("%s: invalid data, expected float array", filename.c_str());
 			if ( gf ) delete gf;
-			return NULL;
+			return nullptr;
 		}
 
 		/*
@@ -816,7 +816,7 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 			SEISCOMP_ERROR("%s: negative sampling frequencies are not allowed",
 			               filename.c_str());
 			if ( gf ) delete gf;
-			return NULL;
+			return nullptr;
 		}
 		*/
 		int sampleOfs = 0;
@@ -825,10 +825,10 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 			SEISCOMP_ERROR("%s: not enough data, time-ofs = %.2f, sr = %.4f, samples = %d",
 			               filename.c_str(), timeOfs, sac.samplingFrequency(), data->size());
 			if ( gf ) delete gf;
-			return NULL;
+			return nullptr;
 		}
 
-		if ( gf == NULL ) {
+		if ( gf == nullptr ) {
 			gf = new Core::GreensFunction();
 			gf->setSamplingFrequency(sac.samplingFrequency());
 			gf->setTimeOffset(timeOfs);
@@ -837,14 +837,14 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 			SEISCOMP_ERROR("%s: mismatching sampling frequencies, last component = %.4f, this = %.4f",
 			               filename.c_str(), gf->samplingFrequency(), sac.samplingFrequency());
 			delete gf;
-			return NULL;
+			return nullptr;
 		}
 
 		int sampleCount = std::min(data->size()-sampleOfs, (int)(cutSeconds * gf->samplingFrequency()));
 		if ( sampleCount <= 0 ) {
 			SEISCOMP_WARNING("%s: skipping empty result", filename.c_str());
 			if ( gf ) delete gf;
-			return NULL;
+			return nullptr;
 		}
 
 		FloatArrayPtr arr = data->slice(sampleOfs, sampleOfs + sampleCount);

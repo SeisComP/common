@@ -116,7 +116,7 @@ void CombinedConnection::init() {
 	_started = false;
 	_nStream = _nArchive = _nRealtime = 0;
 	_realtimeAvailability = DefaultRealtimeAvailability;
-	_realtime = _archive = NULL;
+	_realtime = _archive = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -364,12 +364,12 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 	}
 
 	if ( !_realtime->setSource(source1) ) {
-		_realtime = _archive = NULL;
+		_realtime = _archive = nullptr;
 		return false;
 	}
 
 	if ( !_archive->setSource(source2) ) {
-		_realtime = _archive = NULL;
+		_realtime = _archive = nullptr;
 		return false;
 	}
 
@@ -498,7 +498,7 @@ Record *CombinedConnection::next() {
 
 	if ( _nArchive > 0 ) {
 		Record *rec =  _archive->next();
-		if ( rec != NULL )
+		if ( rec != nullptr )
 			return rec;
 
 		_archive->close();

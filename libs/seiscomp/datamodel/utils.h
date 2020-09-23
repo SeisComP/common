@@ -192,25 +192,25 @@ MAKEENUM(
 
 
 //! Returns the station for a network- and stationcode and
-//! a time. If the station has not been found NULL will be returned.
+//! a time. If the station has not been found nullptr will be returned.
 SC_SYSTEM_CORE_API
 Station* getStation(const Inventory *inventory,
                     const std::string &networkCode,
                     const std::string &stationCode,
-                    const Core::Time &, InventoryError *error = NULL);
+                    const Core::Time &, InventoryError *error = nullptr);
 
 //! Returns the sensorlocation for a network-, station- and locationcode and
-//! a time. If the sensorlocation has not been found NULL will be returned.
+//! a time. If the sensorlocation has not been found nullptr will be returned.
 SC_SYSTEM_CORE_API
 SensorLocation* getSensorLocation(const Inventory *inventory,
                                   const std::string &networkCode,
                                   const std::string &stationCode,
                                   const std::string &locationCode,
                                   const Core::Time &,
-                                  InventoryError *error = NULL);
+                                  InventoryError *error = nullptr);
 
 //! Returns the stream for a network-, station-, location- and channelcode and
-//! a time. If the stream has not been found NULL will be returned.
+//! a time. If the stream has not been found nullptr will be returned.
 SC_SYSTEM_CORE_API
 Stream* getStream(const Inventory *inventory,
                   const std::string &networkCode,
@@ -218,23 +218,23 @@ Stream* getStream(const Inventory *inventory,
                   const std::string &locationCode,
                   const std::string &channelCode,
                   const Core::Time &,
-                  InventoryError *error = NULL);
+                  InventoryError *error = nullptr);
 
 //! Returns the station used for a pick. If the station has not been found
-//! NULL will be returned.
+//! nullptr will be returned.
 SC_SYSTEM_CORE_API
 Station* getStation(const Inventory *inventory, const Pick *pick);
 
 
 //! Returns the sensor location used for a pick. If the sensor location has
-//! not been found NULL will be returned.
+//! not been found nullptr will be returned.
 SC_SYSTEM_CORE_API
 SensorLocation* getSensorLocation(const Inventory *inventory,
                                   const Pick *pick);
 
 
 //! Returns the stream used for a pick. If the stream has
-//! not been found NULL will be returned.
+//! not been found nullptr will be returned.
 Stream* getStream(const Inventory *inventory,
                   const Pick *pick);
 
@@ -272,7 +272,7 @@ getVerticalComponent(const SensorLocation *loc, const char *streamCode, const Co
 //! the lowest dip (largest Z value) as vertical. The remaining two are returned
 //! as 1st horizontal (Y axis or North) and 2nd horizontal (X axis or East)
 //! respectively.
-//! NOTE: Each of the comps entries in res can be NULL.
+//! NOTE: Each of the comps entries in res can be nullptr.
 SC_SYSTEM_CORE_API bool
 getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const char *streamCode, const Core::Time &time);
 
@@ -283,7 +283,7 @@ getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const char *
  * @param setupName The name compared with Setup::name()
  * @param allowGlobal Defines if "global" is allowed as fallback setup
  *                    if setupName has not been found explicitely.
- * @return The setup if available, NULL otherwise
+ * @return The setup if available, nullptr otherwise
  */
 SC_SYSTEM_CORE_API Setup *
 findSetup(const ConfigStation *configStation, const std::string &setupName,
@@ -314,7 +314,7 @@ class SC_SYSTEM_CORE_API DiffMerge {
 		 * their indexes, @see equalsIndex
 		 * @param tree object tree to scan
 		 * @param node item to search for
-		 * @return pointer to the item within the object tree or NULL if the node was
+		 * @return pointer to the item within the object tree or nullptr if the node was
 		 * not found
 		 */
 		Object *find(Object *tree, Object *node);

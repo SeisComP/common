@@ -209,19 +209,19 @@ inline AbstractDataSet *Graph::data() const {
 }
 
 inline int Graph::count() const {
-	return _data != NULL ? _data->count() : 0;
+	return _data != nullptr ? _data->count() : 0;
 }
 
 inline Range Graph::getXRange() const {
-	return _data != NULL ? _data->getXRange() : Range();
+	return _data != nullptr ? _data->getXRange() : Range();
 }
 
 inline Range Graph::getYRange() const {
-	return _data != NULL ? _data->getYRange() : Range();
+	return _data != nullptr ? _data->getYRange() : Range();
 }
 
 inline void Graph::clear() {
-	if ( _data != NULL ) _data->clear();
+	if ( _data != nullptr ) _data->clear();
 }
 
 

@@ -82,7 +82,7 @@ class SC_GUI_API ThreeComponentTrace : public QObject {
 		void setRecordWidget(RecordWidget *);
 		void reset();
 		void setFilter(RecordWidget::Filter *);
-		bool transform(int comp = -1, Seiscomp::Record *rec = NULL);
+		bool transform(int comp = -1, Seiscomp::Record *rec = nullptr);
 
 	private slots:
 		void widgetDestroyed(QObject *obj);
@@ -320,7 +320,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 		~PickerView();
 
 	public:
-		bool setConfig(const Config &c, QString *error = NULL);
+		bool setConfig(const Config &c, QString *error = nullptr);
 
 		void setDatabase(Seiscomp::DataModel::DatabaseQuery*);
 		void activateFilter(int index);
@@ -534,14 +534,14 @@ class SC_GUI_API PickerView : public QMainWindow {
 		                          const std::string& text,
 		                          bool showDisabled,
 		                          bool addTheoreticalArrivals,
-		                          const DataModel::Stream *base = NULL);
+		                          const DataModel::Stream *base = nullptr);
 
 		RecordViewItem* addRawStream(const DataModel::SensorLocation *,
 		                             const DataModel::WaveformStreamID& streamID,
 		                             double distance,
 		                             const std::string& text,
 		                             bool addTheoreticalArrivals,
-		                             const DataModel::Stream *base = NULL);
+		                             const DataModel::Stream *base = nullptr);
 
 		void queueStream(double dist, const DataModel::WaveformStreamID& streamID, char component);
 
@@ -569,7 +569,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 
 		void acquireStreams();
 
-		bool applyFilter(RecordViewItem *item = NULL);
+		bool applyFilter(RecordViewItem *item = nullptr);
 		bool applyRotation(RecordViewItem *item, int type);
 		void updateRecordAxisLabel(RecordViewItem *item);
 
@@ -589,7 +589,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 
 		bool setArrivalState(Seiscomp::Gui::RecordWidget* w, int arrivalId, bool state);
 
-		void fetchManualPicks(std::vector<RecordMarker*>* marker = NULL) const;
+		void fetchManualPicks(std::vector<RecordMarker*>* marker = nullptr) const;
 
 		void showComponent(char componentCode);
 		void fetchComponent(char componentCode);

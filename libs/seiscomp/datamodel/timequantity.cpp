@@ -32,11 +32,11 @@ IMPLEMENT_SC_CLASS(TimeQuantity, "TimeQuantity");
 
 
 TimeQuantity::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("value", "datetime", false, false, false, false, false, false, NULL, &TimeQuantity::setValue, &TimeQuantity::value));
-	addProperty(Core::simpleProperty("uncertainty", "float", false, false, false, false, true, false, NULL, &TimeQuantity::setUncertainty, &TimeQuantity::uncertainty));
-	addProperty(Core::simpleProperty("lowerUncertainty", "float", false, false, false, false, true, false, NULL, &TimeQuantity::setLowerUncertainty, &TimeQuantity::lowerUncertainty));
-	addProperty(Core::simpleProperty("upperUncertainty", "float", false, false, false, false, true, false, NULL, &TimeQuantity::setUpperUncertainty, &TimeQuantity::upperUncertainty));
-	addProperty(Core::simpleProperty("confidenceLevel", "float", false, false, false, false, true, false, NULL, &TimeQuantity::setConfidenceLevel, &TimeQuantity::confidenceLevel));
+	addProperty(Core::simpleProperty("value", "datetime", false, false, false, false, false, false, nullptr, &TimeQuantity::setValue, &TimeQuantity::value));
+	addProperty(Core::simpleProperty("uncertainty", "float", false, false, false, false, true, false, nullptr, &TimeQuantity::setUncertainty, &TimeQuantity::uncertainty));
+	addProperty(Core::simpleProperty("lowerUncertainty", "float", false, false, false, false, true, false, nullptr, &TimeQuantity::setLowerUncertainty, &TimeQuantity::lowerUncertainty));
+	addProperty(Core::simpleProperty("upperUncertainty", "float", false, false, false, false, true, false, nullptr, &TimeQuantity::setUpperUncertainty, &TimeQuantity::upperUncertainty));
+	addProperty(Core::simpleProperty("confidenceLevel", "float", false, false, false, false, true, false, nullptr, &TimeQuantity::setConfidenceLevel, &TimeQuantity::confidenceLevel));
 	addProperty(objectProperty<TimePDF1D>("pdf", "TimePDF1D", false, false, true, &TimeQuantity::setPdf, &TimeQuantity::pdf));
 }
 

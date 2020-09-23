@@ -243,13 +243,13 @@ void Socket::fillbuf() {
 		FD_SET(_pipefd[READ], &read_fds);
 		//SEISCOMP_DEBUG("Going into select with timeout of %d seconds",
 		//               _timeout?(int)tv.tv_sec:0);
-		int r = select(max(_pipefd[READ], _sockfd) + 1, &read_fds, NULL, NULL, _timeout?&tv:NULL);
+		int r = select(max(_pipefd[READ], _sockfd) + 1, &read_fds, nullptr, nullptr, _timeout?&tv:nullptr);
 #else
 		fd_set read_fds;
 		FD_ZERO(&read_fds);
 		FD_SET(_sockfd, &read_fds);
 
-		int r = select(_sockfd + 1, &read_fds, NULL, NULL, _timeout?&tv:NULL);
+		int r = select(_sockfd + 1, &read_fds, nullptr, nullptr, _timeout?&tv:nullptr);
 #endif
 
 		if ( r < 0 ) {
@@ -318,13 +318,13 @@ void Socket::write(const string& s) {
 		FD_SET(_sockfd, &write_fds);
 //		SEISCOMP_DEBUG("Going into select with timeout of %d seconds",
 //		               _timeout?(int)tv.tv_sec:0);
-		int r = select(max(_pipefd[READ], _sockfd) + 1, &read_fds, &write_fds, NULL, _timeout?&tv:NULL);
+		int r = select(max(_pipefd[READ], _sockfd) + 1, &read_fds, &write_fds, nullptr, _timeout?&tv:nullptr);
 #else
 		fd_set write_fds;
 		FD_ZERO(&write_fds);
 		FD_SET(_sockfd, &write_fds);
 
-		int r = select(_sockfd + 1, NULL, &write_fds, NULL, _timeout?&tv:NULL);
+		int r = select(_sockfd + 1, nullptr, &write_fds, nullptr, _timeout?&tv:nullptr);
 #endif
 		if ( r < 0 ) {
 #ifndef WIN32
@@ -553,9 +553,9 @@ int Socket::checkSocket(int secs, int usecs) {
 	fd_set read_fds;
 	FD_ZERO(&read_fds);
 	FD_SET(_pipefd[READ], &read_fds);
-	ret = select(max(_pipefd[READ], _sockfd) + 1, &read_fds, &fds, NULL, &to);
+	ret = select(max(_pipefd[READ], _sockfd) + 1, &read_fds, &fds, nullptr, &to);
 #else
-	ret = select(_sockfd + 1, NULL, &fds, NULL, &to);
+	ret = select(_sockfd + 1, nullptr, &fds, nullptr, &to);
 #endif
 
 	// Socket interrupted?
@@ -595,7 +595,7 @@ int Socket::poll() {
 
 
 
-SSLSocket::SSLSocket() : Socket(), _bio(NULL), _ssl(NULL), _ctx(NULL) {
+SSLSocket::SSLSocket() : Socket(), _bio(nullptr), _ssl(nullptr), _ctx(nullptr) {
 	SSL_library_init();
 	OpenSSL_add_all_algorithms();
 }
@@ -631,12 +631,12 @@ void SSLSocket::open(const std::string &serverLocation) {
 		throw SocketException("invalid port number");
 
 	_ctx = SSL_CTX_new(SSLv23_client_method());
-	if ( _ctx == NULL )
+	if ( _ctx == nullptr )
 		throw SocketException(string("invalid SSL context: ") +
 	                          ERR_error_string(ERR_get_error(), _errBuf));
 
 	_bio = BIO_new_ssl_connect(_ctx);
-	if ( _bio == NULL )
+	if ( _bio == nullptr )
 		throw SocketException(string("invalid bio: ") +
 	                          ERR_error_string(ERR_get_error(), _errBuf));
 
@@ -663,7 +663,7 @@ void SSLSocket::close() {
 	if ( _bio )
 		(void)BIO_reset(_bio);
 
-	_ssl = NULL;
+	_ssl = nullptr;
 }
 
 int SSLSocket::readImpl(char *buf, int count) {
@@ -678,13 +678,13 @@ int SSLSocket::writeImpl(const char *buf, int count) {
 void SSLSocket::cleanUp() {
 	if ( _bio ) {
 		BIO_free_all(_bio);
-		_bio = NULL;
+		_bio = nullptr;
 	}
-	_ssl = NULL;
+	_ssl = nullptr;
 
 	if ( _ctx ) {
 		SSL_CTX_free(_ctx);
-		_ctx = NULL;
+		_ctx = nullptr;
 	}
 }
 

@@ -48,7 +48,7 @@ bool Multipart::ParseContentType(const string &contentType, string &subtype,
 	const char *data = contentType.data();
 	size_t len = contentType.size();
 
-	const char *tok = NULL;
+	const char *tok = nullptr;
 	size_t len_tok = 0;
 
 	subtype.clear();
@@ -69,7 +69,7 @@ bool Multipart::ParseContentType(const string &contentType, string &subtype,
 	}
 
 	// read parameters, stop on first boundary parameter
-	while ( (tok = tokenize(data, ";", len, len_tok)) != NULL ) {
+	while ( (tok = tokenize(data, ";", len, len_tok)) != nullptr ) {
 		trim(tok, len_tok);
 
 		if ( len_tok >= 9 && !strncasecmp(tok, "boundary=", 9) ) {
@@ -120,11 +120,11 @@ Multipart::Multipart(const std::string &boundary, const char *src, size_t l) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Multipart::next() {
-	type = disposition = transfer_enc = body = NULL;
+	type = disposition = transfer_enc = body = nullptr;
 	type_len = disposition_len = transfer_enc_len = body_len = 0;
 	_customHeaders.clear();
 
-	if ( _source == NULL ) return false;
+	if ( _source == nullptr ) return false;
 
 	size_t pos = 0, tmpPos = 0;
 
@@ -140,7 +140,7 @@ bool Multipart::next() {
 			pos = findString(_boundary.data(), _boundary.size());
 			if ( pos == string::npos ) {
 				SEISCOMP_ERROR("no multipart boundary found");
-				_source = NULL;
+				_source = nullptr;
 				return false;
 			}
 			advance(_source, _source_len, pos + _boundary.size());
@@ -151,7 +151,7 @@ bool Multipart::next() {
 	// check if this is the last part
 	if ( _source_len >= 2 && !strncmp(_source, "--", 2) ) {
 		SEISCOMP_DEBUG("closing boundary found after part %zu", _part);
-		_source = NULL;
+		_source = nullptr;
 		return false;
 	}
 
@@ -160,7 +160,7 @@ bool Multipart::next() {
 	// read CRLF from prevous boundary
 	if ( _source_len < 2 || strncmp(_source, CRLF, 2) ) {
 		SEISCOMP_ERROR("missing CRLF before part %zu", _part);
-		_source = NULL;
+		_source = nullptr;
 		return false;
 	}
 	advance(_source, _source_len, 2);
@@ -173,7 +173,7 @@ bool Multipart::next() {
 		if ( pos == string::npos ) {
 			SEISCOMP_ERROR("invalid header in part %zu, line %zu, could not "
 			               "find CRLF", _part, line);
-			_source = NULL;
+			_source = nullptr;
 			return false;
 		}
 
@@ -215,7 +215,7 @@ bool Multipart::next() {
 	pos = findString(_boundary.data(), _boundary.size());
 	if ( pos == string::npos ) {
 		SEISCOMP_ERROR("invalid body in part %zu, could not find boundary", _part);
-		_source = NULL;
+		_source = nullptr;
 		return false;
 	}
 
@@ -254,7 +254,7 @@ void Multipart::init(const std::string &boundary, const char *src, size_t l) {
 	_source = src;
 	_source_len = l;
 
-	type = body = NULL;
+	type = body = nullptr;
 	type_len = body_len = _part = 0;
 	_customHeaders.clear();
 }

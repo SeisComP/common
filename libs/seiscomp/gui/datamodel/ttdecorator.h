@@ -46,7 +46,7 @@ class SC_GUI_API TTDecorator : public Map::Decorator {
 	// X'struction
 	// ------------------------------------------------------------------
 	public:
-		TTDecorator(Map::Decorator *decorator = NULL);
+		TTDecorator(Map::Decorator *decorator = nullptr);
 
 		void setPreferredMagnitudeValue(double val);
 

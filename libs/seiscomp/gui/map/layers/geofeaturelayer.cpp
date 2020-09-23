@@ -357,7 +357,7 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeatureLayer::CategoryNode::CategoryNode(const Geo::Category *c)
-: category(c), properties(NULL) {}
+: category(c), properties(nullptr) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -382,11 +382,11 @@ GeoFeatureLayer::CategoryNode::nodeForCategory(const Geo::Category *cat) {
 
 	for ( size_t i = 0; i < childs.size(); ++i ) {
 		GeoFeatureLayer::CategoryNode *node = childs[i]->nodeForCategory(cat);
-		if ( node != NULL )
+		if ( node != nullptr )
 			return node;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -401,11 +401,11 @@ GeoFeatureLayer::CategoryNode::nodeForProperties(const LayerProperties *props) {
 
 	for ( size_t i = 0; i < childs.size(); ++i ) {
 		GeoFeatureLayer::CategoryNode *node = childs[i]->nodeForProperties(props);
-		if ( node != NULL )
+		if ( node != nullptr )
 			return node;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -416,7 +416,7 @@ GeoFeatureLayer::CategoryNode::nodeForProperties(const LayerProperties *props) {
 GeoFeatureLayer::GeoFeatureLayer(QObject *parent)
 : Layer(parent)
 , _initialized(false)
-, _root(NULL) {
+, _root(nullptr) {
 	setName("features");
 	Geo::GeoFeatureSetSingleton::getInstance().registerObserver(this);
 }
@@ -427,7 +427,7 @@ GeoFeatureLayer::GeoFeatureLayer(QObject *parent)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeatureLayer::~GeoFeatureLayer() {
-	if ( _root != NULL )
+	if ( _root != nullptr )
 		delete _root;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -437,14 +437,14 @@ GeoFeatureLayer::~GeoFeatureLayer() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const Geo::GeoFeature *GeoFeatureLayer::findFeature(const Geo::GeoCoordinate &coord) const {
-	if ( !isVisible() ) return NULL;
+	if ( !isVisible() ) return nullptr;
 
-	if ( canvas() == NULL )
+	if ( canvas() == nullptr )
 		// No canvas, no rank clipping possible
-		return NULL;
+		return nullptr;
 
-	if ( _root == NULL )
-		return NULL;
+	if ( _root == nullptr )
+		return nullptr;
 
 	return findFeature(_root, coord);
 }
@@ -685,9 +685,9 @@ QMenu *GeoFeatureLayer::menu(QMenu *parentMenu) const {
 void GeoFeatureLayer::geoFeatureSetUpdated() {
 	_initialized = false;
 
-	if ( _root != NULL ) {
+	if ( _root != nullptr ) {
 		delete _root;
-		_root = NULL;
+		_root = nullptr;
 	}
 
 	emit updateRequested(RasterLayer);
@@ -750,17 +750,17 @@ void GeoFeatureLayer::reloadFeatures() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeatureLayer::CategoryNode *
 GeoFeatureLayer::createOrGetNodeForCategory(const Geo::Category *cat) {
-	if ( _root == NULL ) {
-		_root = new CategoryNode(NULL);
+	if ( _root == nullptr ) {
+		_root = new CategoryNode(nullptr);
 		_root->properties = new LayerProperties("");
 		_root->properties->read();
 	}
 
-	if ( (cat == NULL) )
+	if ( (cat == nullptr) )
 		return _root;
 
 	CategoryNode *node = _root->nodeForCategory(cat);
-	if ( node != NULL )
+	if ( node != nullptr )
 		return node;
 
 	// Create parent chain
@@ -780,7 +780,7 @@ GeoFeatureLayer::createOrGetNodeForCategory(const Geo::Category *cat) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GeoFeatureLayer::buildLegends(CategoryNode *node) {
-	if ( node == NULL ) return;
+	if ( node == nullptr ) return;
 
 	LayerProperties *prop = node->properties;
 	if ( !prop->title.empty() ) {
@@ -819,7 +819,7 @@ void GeoFeatureLayer::buildLegends(CategoryNode *node) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QMenu *GeoFeatureLayer::buildMenu(CategoryNode *node, QMenu *parentMenu) const {
 	QMenu *menu = new QMenu(parentMenu);
-	if ( node == NULL )
+	if ( node == nullptr )
 		return menu;
 
 	size_t visibleCount = 0;
@@ -959,8 +959,8 @@ void GeoFeatureLayer::initLayerProperites() {
 	const Geo::PolyRegions &fepRegions = Regions::polyRegions();
 	if ( fepRegions.regionCount() > 0 ) {
 		// Add fep properties
-		CategoryNode *fepNode = new CategoryNode(NULL);
-		createOrGetNodeForCategory(NULL)->childs.push_back(fepNode);
+		CategoryNode *fepNode = new CategoryNode(nullptr);
+		createOrGetNodeForCategory(nullptr)->childs.push_back(fepNode);
 		fepNode->properties = new LayerProperties("fep", _root->properties);
 		fepNode->properties->read(fepRegions.dataDir());
 
@@ -969,7 +969,7 @@ void GeoFeatureLayer::initLayerProperites() {
 			fepNode->quadtree.addItem(fepRegions.region(i));
 	}
 
-	if ( _root != NULL ) {
+	if ( _root != nullptr ) {
 		// Build legends
 		buildLegends(_root);
 		orderTree(_root);
@@ -984,16 +984,16 @@ void GeoFeatureLayer::initLayerProperites() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const Geo::GeoFeature *GeoFeatureLayer::findFeature(CategoryNode *node, const Geo::GeoCoordinate &coord) const {
 	if ( !node->properties->visible )
-		return NULL;
+		return nullptr;
 
 	if ( !node->bbox.contains(coord) )
-		return NULL;
+		return nullptr;
 
 	for ( size_t i = node->childs.size(); i > 0; --i ) {
 		CategoryNode *child;
 		child = node->childs[i-1];
 		const Geo::GeoFeature *f = findFeature(child, coord);
-		if ( f != NULL )
+		if ( f != nullptr )
 			return f;
 	}
 
@@ -1035,7 +1035,7 @@ void GeoFeatureLayer::toggleFeatureVisibility(bool checked) {
 	void *propertyPtr = action->data().value<void*>();
 	LayerProperties *prop = reinterpret_cast<LayerProperties*>(propertyPtr);
 
-	if ( prop == NULL )
+	if ( prop == nullptr )
 		return;
 
 	CategoryNode *node = _root->nodeForProperties(prop);

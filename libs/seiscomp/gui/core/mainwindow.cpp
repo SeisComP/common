@@ -60,7 +60,7 @@ namespace Gui {
 MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
  : QMainWindow(parent, flags)
 {
-	_connectionState = NULL;
+	_connectionState = nullptr;
 	_title = SCApp->name().c_str();
 	_showFullscreen = false;
 

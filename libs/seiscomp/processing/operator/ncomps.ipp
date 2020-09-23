@@ -200,7 +200,7 @@ WaveformProcessor::Status NCompsOperator<T,N,PROC,BSIZE>::process(int, const Rec
 
 				const NumericArray<T> *srcData = NumericArray<T>::ConstCast(rec_data);
 				typename Core::SmartPointer< NumericArray<T> >::Impl tmp;
-				if ( srcData == NULL ) {
+				if ( srcData == nullptr ) {
 					tmp = (NumericArray<T>*)rec_data->copy(NumericArray<T>::ArrayType);
 					srcData = tmp.get();
 				}
@@ -228,7 +228,7 @@ WaveformProcessor::Status NCompsOperator<T,N,PROC,BSIZE>::process(int, const Rec
 
 				// Combine the clip masks with OR if available
 				const BitSet *recClipMask = (*rec_it)->clipMask();
-				if ( (recClipMask != NULL) && recClipMask->any() ) {
+				if ( (recClipMask != nullptr) && recClipMask->any() ) {
 					int ofs = data[i]->size();
 					int nBits = data[i]->size() + len;
 					if ( !clipMask )
@@ -259,7 +259,7 @@ WaveformProcessor::Status NCompsOperator<T,N,PROC,BSIZE>::process(int, const Rec
 				clipMask->resize(minLen);
 			// Destroy clip mask if no bit is set
 			if ( !clipMask->any() )
-				clipMask = NULL;
+				clipMask = nullptr;
 		}
 
 		T *data_samples[N];
@@ -310,7 +310,7 @@ WaveformProcessor::Status NCompsOperator<T,N,PROC,BSIZE>::process(int, const Rec
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T, int N, class PROC, int BSIZE>
 WaveformProcessor::Status NCompsOperator<T,N,PROC,BSIZE>::feed(const Record *rec) {
-	if ( rec->data() == NULL ) return WaveformProcessor::WaitingForData;
+	if ( rec->data() == nullptr ) return WaveformProcessor::WaitingForData;
 
 	int i = _proc.compIndex(rec->channelCode());
 	if ( i >= 0 ) {

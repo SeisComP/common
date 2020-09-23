@@ -33,13 +33,13 @@ IMPLEMENT_SC_CLASS_DERIVED(Access, Object, "Access");
 
 
 Access::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("networkCode", "string", false, false, true, false, false, false, NULL, &Access::setNetworkCode, &Access::networkCode));
-	addProperty(Core::simpleProperty("stationCode", "string", false, false, true, false, false, false, NULL, &Access::setStationCode, &Access::stationCode));
-	addProperty(Core::simpleProperty("locationCode", "string", false, false, true, false, false, false, NULL, &Access::setLocationCode, &Access::locationCode));
-	addProperty(Core::simpleProperty("streamCode", "string", false, false, true, false, false, false, NULL, &Access::setStreamCode, &Access::streamCode));
-	addProperty(Core::simpleProperty("user", "string", false, false, true, false, false, false, NULL, &Access::setUser, &Access::user));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, NULL, &Access::setStart, &Access::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, NULL, &Access::setEnd, &Access::end));
+	addProperty(Core::simpleProperty("networkCode", "string", false, false, true, false, false, false, nullptr, &Access::setNetworkCode, &Access::networkCode));
+	addProperty(Core::simpleProperty("stationCode", "string", false, false, true, false, false, false, nullptr, &Access::setStationCode, &Access::stationCode));
+	addProperty(Core::simpleProperty("locationCode", "string", false, false, true, false, false, false, nullptr, &Access::setLocationCode, &Access::locationCode));
+	addProperty(Core::simpleProperty("streamCode", "string", false, false, true, false, false, false, nullptr, &Access::setStreamCode, &Access::streamCode));
+	addProperty(Core::simpleProperty("user", "string", false, false, true, false, false, false, nullptr, &Access::setUser, &Access::user));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &Access::setStart, &Access::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &Access::setEnd, &Access::end));
 }
 
 
@@ -303,7 +303,7 @@ const AccessIndex& Access::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Access::equalIndex(const Access* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -334,7 +334,7 @@ Access& Access::operator=(const Access& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Access::assign(Object* other) {
 	Access* otherAccess = Access::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherAccess;
@@ -348,11 +348,11 @@ bool Access::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Access::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Routing* routing = Routing::Cast(parent);
-	if ( routing != NULL )
+	if ( routing != nullptr )
 		return routing->add(this);
 
 	SEISCOMP_ERROR("Access::attachTo(%s) -> wrong class type", parent->className());
@@ -365,11 +365,11 @@ bool Access::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Access::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Routing* routing = Routing::Cast(object);
-	if ( routing != NULL ) {
+	if ( routing != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -377,7 +377,7 @@ bool Access::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			Access* child = routing->access(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return routing->remove(child);
 			else {
 				SEISCOMP_DEBUG("Access::detachFrom(Routing): access has not been found");
@@ -396,7 +396,7 @@ bool Access::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Access::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

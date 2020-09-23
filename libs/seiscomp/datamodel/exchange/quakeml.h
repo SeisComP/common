@@ -75,10 +75,10 @@ struct Formatter {
 
 template <typename T>
 struct TypedClassHandler : IO::XML::TypedClassHandler<T> {
-	void add(const char *property, const char *name, Formatter *format = NULL,
+	void add(const char *property, const char *name, Formatter *format = nullptr,
 	         IO::XML::ClassHandler::Type t = IO::XML::ClassHandler::Optional,
 	         IO::XML::ClassHandler::Location l = IO::XML::ClassHandler::Element);
-	void add(const char *property, Formatter *format = NULL,
+	void add(const char *property, Formatter *format = nullptr,
 	         IO::XML::ClassHandler::Type t = IO::XML::ClassHandler::Optional,
 	         IO::XML::ClassHandler::Location l = IO::XML::ClassHandler::Element);
 	void addList(const char *properties,

@@ -125,7 +125,7 @@ SACRecord::SACRecord(const SACRecord &other) : Record(other) {
 
 
 SACRecord::SACRecord(const Record &rec) : Record(rec) {
-	_data = NULL;
+	_data = nullptr;
 	const Array *ar = rec.data();
 	if ( ar )
 		_data = ar->clone();
@@ -160,7 +160,7 @@ const Array* SACRecord::data() const {
 
 
 const Array* SACRecord::raw() const {
-	return NULL;
+	return nullptr;
 }
 
 
@@ -184,7 +184,7 @@ SACRecord *SACRecord::copy() const {
 
 
 void SACRecord::saveSpace() const {
-	_data = NULL;
+	_data = nullptr;
 }
 
 
@@ -278,12 +278,12 @@ void SACRecord::read(std::istream &in) {
 
 
 void SACRecord::write(std::ostream &out) {
-	if ( _data == NULL ) return;
+	if ( _data == nullptr ) return;
 
 	FloatArrayPtr ar = FloatArray::Cast(_data);
-	if ( ar == NULL ) {
+	if ( ar == nullptr ) {
 		ar = (FloatArray*)_data->copy(Array::FLOAT);
-		if ( ar == NULL )
+		if ( ar == nullptr )
 			throw Core::TypeException("SAC record float conversion error");
 	}
 

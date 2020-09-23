@@ -23,9 +23,9 @@
 
 
 #include <vector>
+#include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/blob.h>
 #include <string>
-#include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/station.h>
 #include <seiscomp/datamodel/notifier.h>

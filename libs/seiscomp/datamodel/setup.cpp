@@ -33,9 +33,9 @@ IMPLEMENT_SC_CLASS_DERIVED(Setup, Object, "Setup");
 
 
 Setup::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, NULL, &Setup::setName, &Setup::name));
-	addProperty(Core::simpleProperty("parameterSetID", "string", false, false, false, true, false, false, NULL, &Setup::setParameterSetID, &Setup::parameterSetID));
-	addProperty(Core::simpleProperty("enabled", "boolean", false, false, false, false, false, false, NULL, &Setup::setEnabled, &Setup::enabled));
+	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &Setup::setName, &Setup::name));
+	addProperty(Core::simpleProperty("parameterSetID", "string", false, false, false, true, false, false, nullptr, &Setup::setParameterSetID, &Setup::parameterSetID));
+	addProperty(Core::simpleProperty("enabled", "boolean", false, false, false, false, false, false, nullptr, &Setup::setEnabled, &Setup::enabled));
 }
 
 
@@ -207,7 +207,7 @@ const SetupIndex& Setup::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Setup::equalIndex(const Setup* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -239,7 +239,7 @@ Setup& Setup::operator=(const Setup& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Setup::assign(Object* other) {
 	Setup* otherSetup = Setup::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherSetup;
@@ -253,11 +253,11 @@ bool Setup::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Setup::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	ConfigStation* configStation = ConfigStation::Cast(parent);
-	if ( configStation != NULL )
+	if ( configStation != nullptr )
 		return configStation->add(this);
 
 	SEISCOMP_ERROR("Setup::attachTo(%s) -> wrong class type", parent->className());
@@ -270,11 +270,11 @@ bool Setup::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Setup::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	ConfigStation* configStation = ConfigStation::Cast(object);
-	if ( configStation != NULL ) {
+	if ( configStation != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -282,7 +282,7 @@ bool Setup::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			Setup* child = configStation->setup(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return configStation->remove(child);
 			else {
 				SEISCOMP_DEBUG("Setup::detachFrom(ConfigStation): setup has not been found");
@@ -301,7 +301,7 @@ bool Setup::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Setup::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

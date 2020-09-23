@@ -78,10 +78,10 @@ class SC_GUI_API MagListView : public QWidget {
 		void netMagAdded();
 
 		void netMagSelected(Seiscomp::DataModel::Magnitude*,
-		                    Seiscomp::DataModel::Origin* = NULL,
-                            Seiscomp::DataModel::Event* = NULL);
+		                    Seiscomp::DataModel::Origin* = nullptr,
+                            Seiscomp::DataModel::Event* = nullptr);
 		void originSelected(Seiscomp::DataModel::Origin*,
-		                    Seiscomp::DataModel::Event* = NULL);
+		                    Seiscomp::DataModel::Event* = nullptr);
 		void eventSelected(Seiscomp::DataModel::Event*);
 
 		void originUpdated(Seiscomp::DataModel::Origin*);
@@ -107,8 +107,8 @@ class SC_GUI_API MagListView : public QWidget {
 		void initTree();
 
 		QTreeWidgetItem* addEvent(Seiscomp::DataModel::Event*);
-		QTreeWidgetItem* addOrigin(Seiscomp::DataModel::Origin*, bool bold, QTreeWidgetItem* parent = NULL);
-		QTreeWidgetItem* addNetMag(Seiscomp::DataModel::Magnitude*, bool bold, QTreeWidgetItem* parent = NULL);
+		QTreeWidgetItem* addOrigin(Seiscomp::DataModel::Origin*, bool bold, QTreeWidgetItem* parent = nullptr);
+		QTreeWidgetItem* addNetMag(Seiscomp::DataModel::Magnitude*, bool bold, QTreeWidgetItem* parent = nullptr);
 
 		QTreeWidgetItem* findEvent(const std::string&);
 		QTreeWidgetItem* findOrigin(const std::string&);

@@ -33,9 +33,9 @@ IMPLEMENT_SC_CLASS_DERIVED(StationMagnitudeContribution, Object, "StationMagnitu
 
 
 StationMagnitudeContribution::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("stationMagnitudeID", "string", false, false, true, true, false, false, NULL, &StationMagnitudeContribution::setStationMagnitudeID, &StationMagnitudeContribution::stationMagnitudeID));
-	addProperty(Core::simpleProperty("residual", "float", false, false, false, false, true, false, NULL, &StationMagnitudeContribution::setResidual, &StationMagnitudeContribution::residual));
-	addProperty(Core::simpleProperty("weight", "float", false, false, false, false, true, false, NULL, &StationMagnitudeContribution::setWeight, &StationMagnitudeContribution::weight));
+	addProperty(Core::simpleProperty("stationMagnitudeID", "string", false, false, true, true, false, false, nullptr, &StationMagnitudeContribution::setStationMagnitudeID, &StationMagnitudeContribution::stationMagnitudeID));
+	addProperty(Core::simpleProperty("residual", "float", false, false, false, false, true, false, nullptr, &StationMagnitudeContribution::setResidual, &StationMagnitudeContribution::residual));
+	addProperty(Core::simpleProperty("weight", "float", false, false, false, false, true, false, nullptr, &StationMagnitudeContribution::setWeight, &StationMagnitudeContribution::weight));
 }
 
 
@@ -223,7 +223,7 @@ const StationMagnitudeContributionIndex& StationMagnitudeContribution::index() c
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationMagnitudeContribution::equalIndex(const StationMagnitudeContribution* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -255,7 +255,7 @@ StationMagnitudeContribution& StationMagnitudeContribution::operator=(const Stat
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationMagnitudeContribution::assign(Object* other) {
 	StationMagnitudeContribution* otherStationMagnitudeContribution = StationMagnitudeContribution::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherStationMagnitudeContribution;
@@ -269,11 +269,11 @@ bool StationMagnitudeContribution::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationMagnitudeContribution::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Magnitude* magnitude = Magnitude::Cast(parent);
-	if ( magnitude != NULL )
+	if ( magnitude != nullptr )
 		return magnitude->add(this);
 
 	SEISCOMP_ERROR("StationMagnitudeContribution::attachTo(%s) -> wrong class type", parent->className());
@@ -286,11 +286,11 @@ bool StationMagnitudeContribution::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationMagnitudeContribution::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Magnitude* magnitude = Magnitude::Cast(object);
-	if ( magnitude != NULL ) {
+	if ( magnitude != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -298,7 +298,7 @@ bool StationMagnitudeContribution::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			StationMagnitudeContribution* child = magnitude->stationMagnitudeContribution(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return magnitude->remove(child);
 			else {
 				SEISCOMP_DEBUG("StationMagnitudeContribution::detachFrom(Magnitude): stationMagnitudeContribution has not been found");
@@ -317,7 +317,7 @@ bool StationMagnitudeContribution::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationMagnitudeContribution::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

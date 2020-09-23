@@ -32,11 +32,11 @@ IMPLEMENT_SC_CLASS(RealQuantity, "RealQuantity");
 
 
 RealQuantity::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("value", "float", false, false, false, false, false, false, NULL, &RealQuantity::setValue, &RealQuantity::value));
-	addProperty(Core::simpleProperty("uncertainty", "float", false, false, false, false, true, false, NULL, &RealQuantity::setUncertainty, &RealQuantity::uncertainty));
-	addProperty(Core::simpleProperty("lowerUncertainty", "float", false, false, false, false, true, false, NULL, &RealQuantity::setLowerUncertainty, &RealQuantity::lowerUncertainty));
-	addProperty(Core::simpleProperty("upperUncertainty", "float", false, false, false, false, true, false, NULL, &RealQuantity::setUpperUncertainty, &RealQuantity::upperUncertainty));
-	addProperty(Core::simpleProperty("confidenceLevel", "float", false, false, false, false, true, false, NULL, &RealQuantity::setConfidenceLevel, &RealQuantity::confidenceLevel));
+	addProperty(Core::simpleProperty("value", "float", false, false, false, false, false, false, nullptr, &RealQuantity::setValue, &RealQuantity::value));
+	addProperty(Core::simpleProperty("uncertainty", "float", false, false, false, false, true, false, nullptr, &RealQuantity::setUncertainty, &RealQuantity::uncertainty));
+	addProperty(Core::simpleProperty("lowerUncertainty", "float", false, false, false, false, true, false, nullptr, &RealQuantity::setLowerUncertainty, &RealQuantity::lowerUncertainty));
+	addProperty(Core::simpleProperty("upperUncertainty", "float", false, false, false, false, true, false, nullptr, &RealQuantity::setUpperUncertainty, &RealQuantity::upperUncertainty));
+	addProperty(Core::simpleProperty("confidenceLevel", "float", false, false, false, false, true, false, nullptr, &RealQuantity::setConfidenceLevel, &RealQuantity::confidenceLevel));
 	addProperty(objectProperty<RealPDF1D>("pdf", "RealPDF1D", false, false, true, &RealQuantity::setPdf, &RealQuantity::pdf));
 }
 

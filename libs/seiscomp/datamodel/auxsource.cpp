@@ -33,12 +33,12 @@ IMPLEMENT_SC_CLASS_DERIVED(AuxSource, Object, "AuxSource");
 
 
 AuxSource::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, NULL, &AuxSource::setName, &AuxSource::name));
-	addProperty(Core::simpleProperty("description", "string", false, false, false, false, false, false, NULL, &AuxSource::setDescription, &AuxSource::description));
-	addProperty(Core::simpleProperty("unit", "string", false, false, false, false, false, false, NULL, &AuxSource::setUnit, &AuxSource::unit));
-	addProperty(Core::simpleProperty("conversion", "string", false, false, false, false, false, false, NULL, &AuxSource::setConversion, &AuxSource::conversion));
-	addProperty(Core::simpleProperty("sampleRateNumerator", "int", false, false, false, false, true, false, NULL, &AuxSource::setSampleRateNumerator, &AuxSource::sampleRateNumerator));
-	addProperty(Core::simpleProperty("sampleRateDenominator", "int", false, false, false, false, true, false, NULL, &AuxSource::setSampleRateDenominator, &AuxSource::sampleRateDenominator));
+	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &AuxSource::setName, &AuxSource::name));
+	addProperty(Core::simpleProperty("description", "string", false, false, false, false, false, false, nullptr, &AuxSource::setDescription, &AuxSource::description));
+	addProperty(Core::simpleProperty("unit", "string", false, false, false, false, false, false, nullptr, &AuxSource::setUnit, &AuxSource::unit));
+	addProperty(Core::simpleProperty("conversion", "string", false, false, false, false, false, false, nullptr, &AuxSource::setConversion, &AuxSource::conversion));
+	addProperty(Core::simpleProperty("sampleRateNumerator", "int", false, false, false, false, true, false, nullptr, &AuxSource::setSampleRateNumerator, &AuxSource::sampleRateNumerator));
+	addProperty(Core::simpleProperty("sampleRateDenominator", "int", false, false, false, false, true, false, nullptr, &AuxSource::setSampleRateDenominator, &AuxSource::sampleRateDenominator));
 	addProperty(objectProperty<Blob>("remark", "Blob", false, false, true, &AuxSource::setRemark, &AuxSource::remark));
 }
 
@@ -334,7 +334,7 @@ const AuxSourceIndex& AuxSource::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxSource::equalIndex(const AuxSource* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -370,7 +370,7 @@ AuxSource& AuxSource::operator=(const AuxSource& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxSource::assign(Object* other) {
 	AuxSource* otherAuxSource = AuxSource::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherAuxSource;
@@ -384,11 +384,11 @@ bool AuxSource::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxSource::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	AuxDevice* auxDevice = AuxDevice::Cast(parent);
-	if ( auxDevice != NULL )
+	if ( auxDevice != nullptr )
 		return auxDevice->add(this);
 
 	SEISCOMP_ERROR("AuxSource::attachTo(%s) -> wrong class type", parent->className());
@@ -401,11 +401,11 @@ bool AuxSource::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxSource::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	AuxDevice* auxDevice = AuxDevice::Cast(object);
-	if ( auxDevice != NULL ) {
+	if ( auxDevice != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -413,7 +413,7 @@ bool AuxSource::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			AuxSource* child = auxDevice->auxSource(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return auxDevice->remove(child);
 			else {
 				SEISCOMP_DEBUG("AuxSource::detachFrom(AuxDevice): auxSource has not been found");
@@ -432,7 +432,7 @@ bool AuxSource::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxSource::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

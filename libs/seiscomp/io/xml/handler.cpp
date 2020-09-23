@@ -45,14 +45,14 @@ void NodeHandler::propagate(Core::BaseObject *o, bool ni, bool opt) {
 	newInstance = ni;
 	isOptional = opt;
 	isAnyType = false;
-	childHandler = NULL;
-	memberHandler = NULL;
+	childHandler = nullptr;
+	memberHandler = nullptr;
 }
 
 
 std::string NodeHandler::content(void *n) const {
 	xmlNodePtr node = reinterpret_cast<xmlNodePtr>(n);
-	for ( xmlNodePtr child = node->children; child != NULL; child = child->next ) {
+	for ( xmlNodePtr child = node->children; child != nullptr; child = child->next ) {
 		if ( child->type == XML_TEXT_NODE ) {
 			xmlChar* content = xmlNodeGetContent(child);
 			std::string str;
@@ -75,7 +75,7 @@ bool NodeHandler::equalsTag(void *n, const char *tag, const char *ns) const {
 
 	if ( strictNsCheck ) {
 		// No namespace requested
-		if ( ns == NULL || *ns == '\0' ) {
+		if ( ns == nullptr || *ns == '\0' ) {
 			// The node also must not have an associated namespace
 			if ( node->ns && node->ns->href && *node->ns->href != '\0' )
 				return false;
@@ -90,7 +90,7 @@ bool NodeHandler::equalsTag(void *n, const char *tag, const char *ns) const {
 		return true;
 
 	xmlNsPtr nns = node->ns;
-	for ( ; nns != NULL; nns = nns->next ) {
+	for ( ; nns != nullptr; nns = nns->next ) {
 		if ( !strcmp((const char*)nns->href, ns) )
 			return true;
 	}
@@ -159,10 +159,10 @@ bool PropertyHandler::get(Core::BaseObject *object, void *n, NodeHandler *h) {
 	if ( _property->isClass() ) {
 		if ( _property->isOptional() ) {
 			Core::BaseObject *member = _property->createClass();
-			if ( member != NULL ) {
+			if ( member != nullptr ) {
 				if ( !_property->write(object, member) ) {
 					delete member;
-					h->propagate(NULL, false, true);
+					h->propagate(nullptr, false, true);
 					return true;
 				}
 				delete member;
@@ -215,13 +215,13 @@ bool GenericHandler::get(Core::BaseObject *, void *n) {
 	xmlNodePtr node = reinterpret_cast<xmlNodePtr>(n);
 
 	const char *classname = mapper->getClassname((const char*)node->name, node->ns?(const char*)node->ns->href:"", strictNsCheck);
-	if ( classname == NULL ) {
+	if ( classname == nullptr ) {
 		SEISCOMP_DEBUG("No class mapping for %s, ns = '%s'", node->name, node->ns?(const char*)node->ns->href:"");
 		return false;
 	}
 
 	Core::BaseObject *obj = mapper->createClass(classname);
-	if ( obj == NULL ) {
+	if ( obj == nullptr ) {
 		SEISCOMP_WARNING("Unable to create instance of %s", classname);
 		return false;
 	}
@@ -258,7 +258,7 @@ bool ClassHandler::init(Core::BaseObject *obj, void *n, TagSet &mandatory) {
 
 	if ( attributes.empty() ) return true;
 
-	for ( xmlAttrPtr attr = node->properties; attr != NULL; attr = attr->next ) {
+	for ( xmlAttrPtr attr = node->properties; attr != nullptr; attr = attr->next ) {
 		if ( attr->children ) {
 			for ( MemberList::iterator it = attributes.begin();
 			      it != attributes.end(); ++it ) {
@@ -277,13 +277,13 @@ bool ClassHandler::init(Core::BaseObject *obj, void *n, TagSet &mandatory) {
 
 
 bool ClassHandler::get(Core::BaseObject *obj, void *n) {
-	MemberNodeHandler *anyMemberHandler = NULL;
+	MemberNodeHandler *anyMemberHandler = nullptr;
 	bool anyIsOptional = true;
 
 	for ( MemberList::iterator it = elements.begin();
 	      it != elements.end(); ++it ) {
 		if ( it->tag == "" ) {
-			if ( anyMemberHandler == NULL ) {
+			if ( anyMemberHandler == nullptr ) {
 				anyMemberHandler = &*it;
 				anyIsOptional = it->optional;
 			}
@@ -299,7 +299,7 @@ bool ClassHandler::get(Core::BaseObject *obj, void *n) {
 	for ( MemberList::iterator it = childs.begin();
 	      it != childs.end(); ++it ) {
 		if ( it->tag == "" ) {
-			if ( anyMemberHandler == NULL ) {
+			if ( anyMemberHandler == nullptr ) {
 				anyMemberHandler = &*it;
 				anyIsOptional = it->optional;
 			}
@@ -429,11 +429,11 @@ const char *TypeMap::getClassname(const char *tag, const char *ns, bool strictNs
 	if ( it == tags.end() ) {
 		if ( !strictNsCheck ) {
 			RawTagMap::iterator rit = tagsWithoutNs.find(tag);
-			if ( rit == tagsWithoutNs.end() ) return NULL;
-			if ( rit->second.empty() ) return NULL;
+			if ( rit == tagsWithoutNs.end() ) return nullptr;
+			if ( rit->second.empty() ) return nullptr;
 			return rit->second.c_str();
 		}
-		return NULL;
+		return nullptr;
 	}
 	return it->second.c_str();
 }
@@ -441,21 +441,21 @@ const char *TypeMap::getClassname(const char *tag, const char *ns, bool strictNs
 
 const TypeMap::Tag *TypeMap::getTag(const char *classname) {
 	ClassMap::iterator it = classes.find(classname);
-	if ( it == classes.end() ) return NULL;
+	if ( it == classes.end() ) return nullptr;
 	return &it->second;
 }
 
 
 NodeHandler *TypeMap::getHandler(const char *classname) {
 	HandlerMap::iterator it = handlers.find(classname);
-	if ( it == handlers.end() ) return NULL;
+	if ( it == handlers.end() ) return nullptr;
 	return it->second->nodeHandler;
 }
 
 
 Core::BaseObject *TypeMap::createClass(const char *classname) {
 	HandlerMap::iterator it = handlers.find(classname);
-	if ( it == handlers.end() ) return NULL;
+	if ( it == handlers.end() ) return nullptr;
 	return it->second->createClass();
 }
 

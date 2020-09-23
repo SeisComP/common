@@ -48,7 +48,7 @@ DataModel::Origin* relocate(Seismology::LocatorInterface *locator, DataModel::Or
 	if ( !locator )
 		throw Core::GeneralException("No locator type set.");
 
-	DataModel::Origin* newOrg = NULL;
+	DataModel::Origin* newOrg = nullptr;
 	std::string errorMsg;
 
 	try {

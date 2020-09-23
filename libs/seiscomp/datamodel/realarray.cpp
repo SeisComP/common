@@ -32,7 +32,7 @@ IMPLEMENT_SC_CLASS(RealArray, "RealArray");
 
 
 RealArray::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("content", "float", true, false, false, false, true, false, NULL, &RealArray::setContent, (const std::vector< double >& (RealArray::*)() const)&RealArray::content));
+	addProperty(Core::simpleProperty("content", "float", true, false, false, false, true, false, nullptr, &RealArray::setContent, (const std::vector< double >& (RealArray::*)() const)&RealArray::content));
 }
 
 

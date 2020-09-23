@@ -34,11 +34,11 @@ IMPLEMENT_SC_CLASS_DERIVED(QCLog, PublicObject, "QCLog");
 
 QCLog::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", true, false, false, &QCLog::setWaveformID, &QCLog::waveformID));
-	addProperty(Core::simpleProperty("creatorID", "string", false, false, false, false, false, false, NULL, &QCLog::setCreatorID, &QCLog::creatorID));
-	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, false, false, NULL, &QCLog::setCreated, &QCLog::created));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, NULL, &QCLog::setStart, &QCLog::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, false, false, NULL, &QCLog::setEnd, &QCLog::end));
-	addProperty(Core::simpleProperty("message", "string", false, false, false, false, false, false, NULL, &QCLog::setMessage, &QCLog::message));
+	addProperty(Core::simpleProperty("creatorID", "string", false, false, false, false, false, false, nullptr, &QCLog::setCreatorID, &QCLog::creatorID));
+	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, false, false, nullptr, &QCLog::setCreated, &QCLog::created));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &QCLog::setStart, &QCLog::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, false, false, nullptr, &QCLog::setEnd, &QCLog::end));
+	addProperty(Core::simpleProperty("message", "string", false, false, false, false, false, false, nullptr, &QCLog::setMessage, &QCLog::message));
 }
 
 
@@ -139,12 +139,12 @@ QCLog* QCLog::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QCLog* QCLog::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new QCLog(publicID);
@@ -323,7 +323,7 @@ const QCLogIndex& QCLog::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QCLog::equalIndex(const QCLog* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -358,7 +358,7 @@ QCLog& QCLog::operator=(const QCLog& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QCLog::assign(Object* other) {
 	QCLog* otherQCLog = QCLog::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherQCLog;
@@ -372,11 +372,11 @@ bool QCLog::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QCLog::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	QualityControl* qualityControl = QualityControl::Cast(parent);
-	if ( qualityControl != NULL )
+	if ( qualityControl != nullptr )
 		return qualityControl->add(this);
 
 	SEISCOMP_ERROR("QCLog::attachTo(%s) -> wrong class type", parent->className());
@@ -389,11 +389,11 @@ bool QCLog::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QCLog::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	QualityControl* qualityControl = QualityControl::Cast(object);
-	if ( qualityControl != NULL ) {
+	if ( qualityControl != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -401,7 +401,7 @@ bool QCLog::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			QCLog* child = qualityControl->findQCLog(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return qualityControl->remove(child);
 			else {
 				SEISCOMP_DEBUG("QCLog::detachFrom(QualityControl): qCLog has not been found");
@@ -420,7 +420,7 @@ bool QCLog::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QCLog::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

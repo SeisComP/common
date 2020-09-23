@@ -40,13 +40,13 @@ static Seiscomp::Core::MetaEnumImpl<StationGroupType> metaStationGroupType;
 
 StationGroup::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(enumProperty("type", "StationGroupType", false, true, &metaStationGroupType, &StationGroup::setType, &StationGroup::type));
-	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, NULL, &StationGroup::setCode, &StationGroup::code));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, false, false, true, false, NULL, &StationGroup::setStart, &StationGroup::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, NULL, &StationGroup::setEnd, &StationGroup::end));
-	addProperty(Core::simpleProperty("description", "string", false, false, false, false, false, false, NULL, &StationGroup::setDescription, &StationGroup::description));
-	addProperty(Core::simpleProperty("latitude", "float", false, false, false, false, true, false, NULL, &StationGroup::setLatitude, &StationGroup::latitude));
-	addProperty(Core::simpleProperty("longitude", "float", false, false, false, false, true, false, NULL, &StationGroup::setLongitude, &StationGroup::longitude));
-	addProperty(Core::simpleProperty("elevation", "float", false, false, false, false, true, false, NULL, &StationGroup::setElevation, &StationGroup::elevation));
+	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, nullptr, &StationGroup::setCode, &StationGroup::code));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, false, false, true, false, nullptr, &StationGroup::setStart, &StationGroup::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &StationGroup::setEnd, &StationGroup::end));
+	addProperty(Core::simpleProperty("description", "string", false, false, false, false, false, false, nullptr, &StationGroup::setDescription, &StationGroup::description));
+	addProperty(Core::simpleProperty("latitude", "float", false, false, false, false, true, false, nullptr, &StationGroup::setLatitude, &StationGroup::latitude));
+	addProperty(Core::simpleProperty("longitude", "float", false, false, false, false, true, false, nullptr, &StationGroup::setLongitude, &StationGroup::longitude));
+	addProperty(Core::simpleProperty("elevation", "float", false, false, false, false, true, false, nullptr, &StationGroup::setElevation, &StationGroup::elevation));
 	addProperty(arrayClassProperty<StationReference>("stationReference", "StationReference", &StationGroup::stationReferenceCount, &StationGroup::stationReference, static_cast<bool (StationGroup::*)(StationReference*)>(&StationGroup::add), &StationGroup::removeStationReference, static_cast<bool (StationGroup::*)(StationReference*)>(&StationGroup::remove)));
 }
 
@@ -128,7 +128,7 @@ StationGroup::StationGroup(const std::string& publicID)
 StationGroup::~StationGroup() {
 	std::for_each(_stationReferences.begin(), _stationReferences.end(),
 	              std::compose1(std::bind2nd(std::mem_fun(&StationReference::setParent),
-	                                         (PublicObject*)NULL),
+	                                         (PublicObject*)nullptr),
 	                            std::mem_fun_ref(&StationReferencePtr::get)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -148,12 +148,12 @@ StationGroup* StationGroup::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 StationGroup* StationGroup::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new StationGroup(publicID);
@@ -374,7 +374,7 @@ const StationGroupIndex& StationGroup::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationGroup::equalIndex(const StationGroup* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -412,7 +412,7 @@ StationGroup& StationGroup::operator=(const StationGroup& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationGroup::assign(Object* other) {
 	StationGroup* otherStationGroup = StationGroup::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherStationGroup;
@@ -426,11 +426,11 @@ bool StationGroup::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationGroup::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(parent);
-	if ( inventory != NULL )
+	if ( inventory != nullptr )
 		return inventory->add(this);
 
 	SEISCOMP_ERROR("StationGroup::attachTo(%s) -> wrong class type", parent->className());
@@ -443,11 +443,11 @@ bool StationGroup::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationGroup::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(object);
-	if ( inventory != NULL ) {
+	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -455,7 +455,7 @@ bool StationGroup::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			StationGroup* child = inventory->findStationGroup(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
 				SEISCOMP_DEBUG("StationGroup::detachFrom(Inventory): stationGroup has not been found");
@@ -474,7 +474,7 @@ bool StationGroup::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationGroup::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());
@@ -498,9 +498,9 @@ Object* StationGroup::clone() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationGroup::updateChild(Object* child) {
 	StationReference* stationReferenceChild = StationReference::Cast(child);
-	if ( stationReferenceChild != NULL ) {
+	if ( stationReferenceChild != nullptr ) {
 		StationReference* stationReferenceElement = stationReference(stationReferenceChild->index());
-		if ( stationReferenceElement != NULL ) {
+		if ( stationReferenceElement != nullptr ) {
 			*stationReferenceElement = *stationReferenceChild;
 			stationReferenceElement->update();
 			return true;
@@ -558,7 +558,7 @@ StationReference* StationGroup::stationReference(const StationReferenceIndex& i)
 		if ( i == (*it)->index() )
 			return (*it).get();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -567,11 +567,11 @@ StationReference* StationGroup::stationReference(const StationReferenceIndex& i)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationGroup::add(StationReference* stationReference) {
-	if ( stationReference == NULL )
+	if ( stationReference == nullptr )
 		return false;
 
 	// Element has already a parent
-	if ( stationReference->parent() != NULL ) {
+	if ( stationReference->parent() != nullptr ) {
 		SEISCOMP_ERROR("StationGroup::add(StationReference*) -> element has already a parent");
 		return false;
 	}
@@ -606,7 +606,7 @@ bool StationGroup::add(StationReference* stationReference) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationGroup::remove(StationReference* stationReference) {
-	if ( stationReference == NULL )
+	if ( stationReference == nullptr )
 		return false;
 
 	if ( stationReference->parent() != this ) {
@@ -627,7 +627,7 @@ bool StationGroup::remove(StationReference* stationReference) {
 		(*it)->accept(&nc);
 	}
 
-	(*it)->setParent(NULL);
+	(*it)->setParent(nullptr);
 	childRemoved((*it).get());
 
 	_stationReferences.erase(it);
@@ -651,7 +651,7 @@ bool StationGroup::removeStationReference(size_t i) {
 		_stationReferences[i]->accept(&nc);
 	}
 
-	_stationReferences[i]->setParent(NULL);
+	_stationReferences[i]->setParent(nullptr);
 	childRemoved(_stationReferences[i].get());
 
 	_stationReferences.erase(_stationReferences.begin() + i);
@@ -666,7 +666,7 @@ bool StationGroup::removeStationReference(size_t i) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationGroup::removeStationReference(const StationReferenceIndex& i) {
 	StationReference* object = stationReference(i);
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

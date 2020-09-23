@@ -48,7 +48,7 @@ class Diff2 {
 
 				LogNode(const std::string &title = "",
 				        LogLevel level = OPERATIONS,
-				        LogNode *parent = NULL)
+				        LogNode *parent = nullptr)
 				 : _title(title), _level(level), _parent(parent) {}
 
 				inline const std::string& title() const { return _title; }
@@ -99,10 +99,10 @@ class Diff2 {
 
 		void diff(Seiscomp::DataModel::Object *o1, Seiscomp::DataModel::Object *o2,
 		          const std::string &o1ParentID, Notifiers &notifiers,
-		          LogNode *logNode = NULL);
+		          LogNode *logNode = nullptr);
 
 		NotifierMessage *diff2Message(Seiscomp::DataModel::Object *o1, Seiscomp::DataModel::Object *o2,
-		                              const std::string &o1ParentID, LogNode *logNode = NULL);
+		                              const std::string &o1ParentID, LogNode *logNode = nullptr);
 
 	protected:
 		std::string o2t(const Core::BaseObject *o) const;
@@ -118,7 +118,7 @@ class Diff3 : public Diff2 {
 	public:
 		void diff(Seiscomp::DataModel::Object *o1, Seiscomp::DataModel::Object *o2,
 		          const std::string &o1ParentID, Notifiers &notifiers,
-		          LogNode *logNode = NULL);
+		          LogNode *logNode = nullptr);
 
 
 	protected:

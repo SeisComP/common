@@ -33,12 +33,12 @@ IMPLEMENT_SC_CLASS_DERIVED(SensorCalibration, Object, "SensorCalibration");
 
 
 SensorCalibration::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("serialNumber", "string", false, false, true, false, false, false, NULL, &SensorCalibration::setSerialNumber, &SensorCalibration::serialNumber));
-	addProperty(Core::simpleProperty("channel", "int", false, false, true, false, false, false, NULL, &SensorCalibration::setChannel, &SensorCalibration::channel));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, NULL, &SensorCalibration::setStart, &SensorCalibration::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, NULL, &SensorCalibration::setEnd, &SensorCalibration::end));
-	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, NULL, &SensorCalibration::setGain, &SensorCalibration::gain));
-	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, NULL, &SensorCalibration::setGainFrequency, &SensorCalibration::gainFrequency));
+	addProperty(Core::simpleProperty("serialNumber", "string", false, false, true, false, false, false, nullptr, &SensorCalibration::setSerialNumber, &SensorCalibration::serialNumber));
+	addProperty(Core::simpleProperty("channel", "int", false, false, true, false, false, false, nullptr, &SensorCalibration::setChannel, &SensorCalibration::channel));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &SensorCalibration::setStart, &SensorCalibration::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &SensorCalibration::setEnd, &SensorCalibration::end));
+	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, nullptr, &SensorCalibration::setGain, &SensorCalibration::gain));
+	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, nullptr, &SensorCalibration::setGainFrequency, &SensorCalibration::gainFrequency));
 	addProperty(objectProperty<Blob>("remark", "Blob", false, false, true, &SensorCalibration::setRemark, &SensorCalibration::remark));
 }
 
@@ -312,7 +312,7 @@ const SensorCalibrationIndex& SensorCalibration::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorCalibration::equalIndex(const SensorCalibration* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -346,7 +346,7 @@ SensorCalibration& SensorCalibration::operator=(const SensorCalibration& other) 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorCalibration::assign(Object* other) {
 	SensorCalibration* otherSensorCalibration = SensorCalibration::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherSensorCalibration;
@@ -360,11 +360,11 @@ bool SensorCalibration::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorCalibration::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Sensor* sensor = Sensor::Cast(parent);
-	if ( sensor != NULL )
+	if ( sensor != nullptr )
 		return sensor->add(this);
 
 	SEISCOMP_ERROR("SensorCalibration::attachTo(%s) -> wrong class type", parent->className());
@@ -377,11 +377,11 @@ bool SensorCalibration::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorCalibration::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Sensor* sensor = Sensor::Cast(object);
-	if ( sensor != NULL ) {
+	if ( sensor != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -389,7 +389,7 @@ bool SensorCalibration::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			SensorCalibration* child = sensor->sensorCalibration(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return sensor->remove(child);
 			else {
 				SEISCOMP_DEBUG("SensorCalibration::detachFrom(Sensor): sensorCalibration has not been found");
@@ -408,7 +408,7 @@ bool SensorCalibration::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorCalibration::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

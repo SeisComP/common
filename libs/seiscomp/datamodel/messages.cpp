@@ -202,7 +202,7 @@ void ArtificialOriginMessage::setOrigin(DataModel::Origin* origin) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArtificialOriginMessage::empty() const {
-	return _origin == NULL;
+	return _origin == nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -253,7 +253,7 @@ void ArtificialEventParametersMessage::setEventParameters(DataModel::EventParame
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArtificialEventParametersMessage::empty() const {
-	return _eventParameters == NULL;
+	return _eventParameters == nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

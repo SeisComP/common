@@ -270,7 +270,7 @@ inline const typename Archive<ROOT_TYPE>::PropertyValue *
 Archive<ROOT_TYPE>::property(const char *name) const {
 	Properties::const_iterator it = _properties.find(name);
 	if ( it == _properties.end() )
-		return NULL;
+		return nullptr;
 
 	return &it->second;
 }
@@ -293,7 +293,7 @@ inline void Archive<ROOT_TYPE>::clearProperties() {
 template <typename ROOT_TYPE>
 const int *Archive<ROOT_TYPE>::propertyInt(const char *name) const {
 	const PropertyValue *p = property(name);
-	if ( !p ) return NULL;
+	if ( !p ) return nullptr;
 	return boost::get<int>(p);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -305,7 +305,7 @@ const int *Archive<ROOT_TYPE>::propertyInt(const char *name) const {
 template <typename ROOT_TYPE>
 const double *Archive<ROOT_TYPE>::propertyDouble(const char *name) const {
 	const PropertyValue *p = property(name);
-	if ( !p ) return NULL;
+	if ( !p ) return nullptr;
 	return boost::get<double>(p);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -317,7 +317,7 @@ const double *Archive<ROOT_TYPE>::propertyDouble(const char *name) const {
 template <typename ROOT_TYPE>
 const std::string *Archive<ROOT_TYPE>::propertyString(const char *name) const {
 	const PropertyValue *p = property(name);
-	if ( !p ) return NULL;
+	if ( !p ) return nullptr;
 	return boost::get<std::string>(p);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

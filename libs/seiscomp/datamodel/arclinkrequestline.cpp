@@ -33,13 +33,13 @@ IMPLEMENT_SC_CLASS_DERIVED(ArclinkRequestLine, Object, "ArclinkRequestLine");
 
 
 ArclinkRequestLine::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, NULL, &ArclinkRequestLine::setStart, &ArclinkRequestLine::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, true, false, false, false, NULL, &ArclinkRequestLine::setEnd, &ArclinkRequestLine::end));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &ArclinkRequestLine::setStart, &ArclinkRequestLine::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, true, false, false, false, nullptr, &ArclinkRequestLine::setEnd, &ArclinkRequestLine::end));
 	addProperty(objectProperty<WaveformStreamID>("streamID", "WaveformStreamID", true, false, false, &ArclinkRequestLine::setStreamID, &ArclinkRequestLine::streamID));
-	addProperty(Core::simpleProperty("restricted", "boolean", false, false, false, false, true, false, NULL, &ArclinkRequestLine::setRestricted, &ArclinkRequestLine::restricted));
-	addProperty(Core::simpleProperty("shared", "boolean", false, false, false, false, true, false, NULL, &ArclinkRequestLine::setShared, &ArclinkRequestLine::shared));
-	addProperty(Core::simpleProperty("netClass", "string", false, false, false, false, false, false, NULL, &ArclinkRequestLine::setNetClass, &ArclinkRequestLine::netClass));
-	addProperty(Core::simpleProperty("constraints", "string", false, false, false, false, false, false, NULL, &ArclinkRequestLine::setConstraints, &ArclinkRequestLine::constraints));
+	addProperty(Core::simpleProperty("restricted", "boolean", false, false, false, false, true, false, nullptr, &ArclinkRequestLine::setRestricted, &ArclinkRequestLine::restricted));
+	addProperty(Core::simpleProperty("shared", "boolean", false, false, false, false, true, false, nullptr, &ArclinkRequestLine::setShared, &ArclinkRequestLine::shared));
+	addProperty(Core::simpleProperty("netClass", "string", false, false, false, false, false, false, nullptr, &ArclinkRequestLine::setNetClass, &ArclinkRequestLine::netClass));
+	addProperty(Core::simpleProperty("constraints", "string", false, false, false, false, false, false, nullptr, &ArclinkRequestLine::setConstraints, &ArclinkRequestLine::constraints));
 	addProperty(objectProperty<ArclinkStatusLine>("status", "ArclinkStatusLine", false, false, false, &ArclinkRequestLine::setStatus, &ArclinkRequestLine::status));
 }
 
@@ -334,7 +334,7 @@ const ArclinkRequestLineIndex& ArclinkRequestLine::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkRequestLine::equalIndex(const ArclinkRequestLine* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -369,7 +369,7 @@ ArclinkRequestLine& ArclinkRequestLine::operator=(const ArclinkRequestLine& othe
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkRequestLine::assign(Object* other) {
 	ArclinkRequestLine* otherArclinkRequestLine = ArclinkRequestLine::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherArclinkRequestLine;
@@ -383,11 +383,11 @@ bool ArclinkRequestLine::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkRequestLine::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	ArclinkRequest* arclinkRequest = ArclinkRequest::Cast(parent);
-	if ( arclinkRequest != NULL )
+	if ( arclinkRequest != nullptr )
 		return arclinkRequest->add(this);
 
 	SEISCOMP_ERROR("ArclinkRequestLine::attachTo(%s) -> wrong class type", parent->className());
@@ -400,11 +400,11 @@ bool ArclinkRequestLine::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkRequestLine::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	ArclinkRequest* arclinkRequest = ArclinkRequest::Cast(object);
-	if ( arclinkRequest != NULL ) {
+	if ( arclinkRequest != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -412,7 +412,7 @@ bool ArclinkRequestLine::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			ArclinkRequestLine* child = arclinkRequest->arclinkRequestLine(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return arclinkRequest->remove(child);
 			else {
 				SEISCOMP_DEBUG("ArclinkRequestLine::detachFrom(ArclinkRequest): arclinkRequestLine has not been found");
@@ -431,7 +431,7 @@ bool ArclinkRequestLine::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkRequestLine::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

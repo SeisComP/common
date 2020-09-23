@@ -97,7 +97,7 @@ void convertArray(CONTAINER &c, int size, const T *data) {
 }
 
 Array* ArrayFactory::Create(Array::DataType toCreate, Array::DataType caller, int size, const void *data) {
-	Array *ar = NULL;
+	Array *ar = nullptr;
 
 	switch(toCreate) {
 	case Array::CHAR: 

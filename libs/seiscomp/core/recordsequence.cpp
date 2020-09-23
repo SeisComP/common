@@ -165,12 +165,12 @@ RecordSequence::Range RecordSequence::amplitudeRange(const Core::TimeWindow *tw)
 		const Array *data = rec->data();
 
 		// Skip empty records
-		if ( data == NULL ) continue;
+		if ( data == nullptr ) continue;
 		if ( data->size() == 0 ) continue;
 
 		int imin = 0, imax = 0;
 
-		if ( tw != NULL ) { // limit search for min/max to specified time window
+		if ( tw != nullptr ) { // limit search for min/max to specified time window
 			try {
 				const Core::TimeWindow &rtw = rec->timeWindow();
 
@@ -325,7 +325,7 @@ double RecordSequence::availability(const Core::TimeWindow &tw) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 GenericRecord *RecordSequence::contiguousRecord(const Core::TimeWindow *tw, bool interpolate) const {
-	if ( empty() ) return NULL;
+	if ( empty() ) return nullptr;
 
 	RecordCPtr lastRec;
 	T lastSample = 0;
@@ -337,17 +337,17 @@ GenericRecord *RecordSequence::contiguousRecord(const Core::TimeWindow *tw, bool
 	typedef typename Core::SmartPointer<TArray>::Impl TArrayPtr;
 
 	TArrayPtr rawData = new TArray;
-	GenericRecord *rawRecord = NULL;
+	GenericRecord *rawRecord = nullptr;
 
 	for ( it = begin(); it != end(); ++it ) {
 		RecordCPtr rec = *it;
-		if ( rec->data() == NULL ) continue;
-		if ( tw != NULL && !tw->overlaps(rec->timeWindow())) continue;
+		if ( rec->data() == nullptr ) continue;
+		if ( tw != nullptr && !tw->overlaps(rec->timeWindow())) continue;
 
 		const TArray *ar = TArray::ConstCast(rec->data());
 		TArrayPtr tmpData;
 
-		if ( ar == NULL ) {
+		if ( ar == nullptr ) {
 			tmpData = (TArray*)rec->data()->copy(TArray::ArrayType);
 			ar = tmpData.get();
 		}
@@ -406,7 +406,7 @@ GenericRecord *RecordSequence::contiguousRecord(const Core::TimeWindow *tw, bool
 		lastRec = rec;
 	}
 
-	if ( rawRecord != NULL && rawData )
+	if ( rawRecord != nullptr && rawData )
 		rawRecord->setData(rawData.get());
 
 	return rawRecord;
@@ -624,7 +624,7 @@ bool RingBuffer::feed(const Record *rec) {
 RecordSequence *RingBuffer::copy() const {
 	RingBuffer *cp = (RingBuffer*)clone();
 
-	if (!cp) return NULL;
+	if (!cp) return nullptr;
 
 	for (const_iterator it = begin(); it != end(); ++it)
 		cp->push_back((*it)->copy());
@@ -643,7 +643,7 @@ RecordSequence *RingBuffer::clone() const {
 	else
 		return new RingBuffer(_span, _tolerance);
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

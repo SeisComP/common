@@ -386,7 +386,7 @@ bool MercatorProjection::isRectangular() const {
 template <typename PROC>
 void MercatorProjection::render(QImage &img, TextureCache *cache) {
 	//_screenRadius = std::min(_halfWidth/2, _halfHeight);
-	//_screenRadius = cache != NULL?cache->tileWidth()*0.5:256;
+	//_screenRadius = cache != nullptr?cache->tileWidth()*0.5:256;
 	_screenRadius = std::max(_halfWidth, _halfHeight);
 	_windowRect = QRect(0,0,img.width(),img.height());
 	_clipRect = _windowRect.adjusted(-10, -10, 10, 10);
@@ -425,7 +425,7 @@ void MercatorProjection::render(QImage &img, TextureCache *cache) {
 			if ( level > 18 ) level = 18;
 		}
 
-		scale = (1 << int(level-0.7)) * (cache != NULL?cache->tileHeight():256);
+		scale = (1 << int(level-0.7)) * (cache != nullptr?cache->tileHeight():256);
 		if ( scale < 1 ) scale = 1;
 		while ( scale < _halfWidth ) scale *= 2;
 		while ( scale < _halfHeight ) scale *= 2;
@@ -505,7 +505,7 @@ void MercatorProjection::render(QImage &img, TextureCache *cache) {
 	int fromX = (int)fx;
 	int toX = (int)tx;
 
-	if ( cache == NULL ) return;
+	if ( cache == nullptr ) return;
 
 	qreal pixelRatio = _scale / cache->tileHeight();
 	if ( cache->isMercatorProjected() )

@@ -29,7 +29,7 @@ namespace Util {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 double timeOfDay(const Seiscomp::Core::Time& time) {
 	int hh,mm,ss,us;
-	time.get(NULL, NULL, NULL, &hh, &mm, &ss, &us);
+	time.get(nullptr, nullptr, nullptr, &hh, &mm, &ss, &us);
 	return hh*3600.+mm*60.+ss+us*0.000001;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

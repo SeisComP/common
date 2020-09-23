@@ -61,7 +61,7 @@ class SC_SYSTEM_CLIENT_API DatabaseRequestMessage : public ServiceRequestMessage
 		/**
 		 * Constructor
 		 * @param service The requested service name.
-		 *                The name can be set NULL to let the
+		 *                The name can be set nullptr to let the
 		 *                service request handler decide which
 		 *                interface it will return.
 		 */
@@ -79,7 +79,7 @@ DEFINE_SMARTPOINTER(DatabaseProvideMessage);
  * \code
  * DatabaseProvideMessagePtr msg = DatabaseProvideMessage_Cast(con->read());
  * Seiscomp::IO::DatabaseInterfacePtr db = msg->interface();
- * if ( db != NULL ) {
+ * if ( db != nullptr ) {
  *   // do fancy things with the interface
  * }
  * \endcode
@@ -103,7 +103,7 @@ class SC_SYSTEM_CLIENT_API DatabaseProvideMessage : public ServiceProvideMessage
 		/**
 		 * Returns a database interface for the provided service
 		 * which is already connected to the database.
-		 * @return The connected database interface. NULL, if the
+		 * @return The connected database interface. nullptr, if the
 		 *         databaseinterface cannot be created or if the
 		 *         connection fails.
 		 *         NOTE: The caller is reponsible for deleting the

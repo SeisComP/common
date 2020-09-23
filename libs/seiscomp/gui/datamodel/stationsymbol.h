@@ -44,10 +44,10 @@ namespace Gui {
 
 class SC_GUI_API StationSymbol : public Map::Symbol {
 	public:
-		StationSymbol(Map::Decorator* decorator = NULL);
+		StationSymbol(Map::Decorator* decorator = nullptr);
 		StationSymbol(double latitude,
 		              double longitude,
-		              Map::Decorator* decorator = NULL);
+		              Map::Decorator* decorator = nullptr);
 
 		void setColor(const QColor& color);
 		const QColor& color() const;

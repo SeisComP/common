@@ -51,7 +51,7 @@ void RecordPolyline::create(Record const *rec,
                             bool optimization) {
 	clear();
 
-	if ( rec == NULL )
+	if ( rec == nullptr )
 		return;
 
 	// normalize peak-to-peak amplitude to height set using setHeight()
@@ -67,7 +67,7 @@ void RecordPolyline::create(Record const *rec,
 		_baseline = (int)(amplMax*yscl);
 	}
 
-	QPolygon *poly = NULL;
+	QPolygon *poly = nullptr;
 
 	int nsamp = rec->sampleCount();
 
@@ -198,7 +198,7 @@ void RecordPolyline::create(RecordSequence const *records,
                             bool optimization) {
 	clear();
 
-	if ( records == NULL ) return;
+	if ( records == nullptr ) return;
 	if ( records->size() == 0 ) return;
 
 	// normalize peak-to-peak amplitude to height set using setHeight()
@@ -218,7 +218,7 @@ void RecordPolyline::create(RecordSequence const *records,
 	RecordSequence::const_iterator it = records->begin();
 	RecordSequence::const_iterator lastIt = it;
 
-	QPolygon *poly = NULL;
+	QPolygon *poly = nullptr;
 	int timingQualityRecordCount = 0;
 	if ( timingQuality ) *timingQuality = 0;
 
@@ -296,7 +296,7 @@ void RecordPolyline::create(RecordSequence const *records,
 		int x0 = int(pixelPerSecond*startOfs);
 		float dx = pixelPerSecond * dt;
 
-		if ( diff > tolerance || poly == NULL ) {
+		if ( diff > tolerance || poly == nullptr ) {
 			push_back(QPolygon());
 			poly = &back();
 
@@ -454,7 +454,7 @@ void RecordPolyline::createStepFunction(RecordSequence const *records, double pi
                                         int height, float multiplier) {
 	clear();
 
-	if ( records == NULL ) return;
+	if ( records == nullptr ) return;
 	if ( records->size() == 0 ) return;
 
 	// normalize peak-to-peak amplitude to height set using setHeight()
@@ -475,7 +475,7 @@ void RecordPolyline::createStepFunction(RecordSequence const *records, double pi
 
 	Seiscomp::Core::Time refTime = (*it)->startTime();
 
-	QPolygon *poly = NULL;
+	QPolygon *poly = nullptr;
 
 	for(; it != records->end(); ++it) {
 		const Record* rec = it->get();
@@ -484,7 +484,7 @@ void RecordPolyline::createStepFunction(RecordSequence const *records, double pi
 
 		if ( nsamp == 0 ) continue;
 
-		if ( poly == NULL ) {
+		if ( poly == nullptr ) {
 			push_back(QPolygon());
 			poly = &back();
 		}
@@ -524,7 +524,7 @@ void RecordPolyline::createSteps(RecordSequence const *records, double pixelPerS
                                  int height, QVector<QPair<int,int> >* gaps) {
 	clear();
 
-	if ( records == NULL ) return;
+	if ( records == nullptr ) return;
 	if ( records->size() == 0 ) return;
 
 	// normalize peak-to-peak amplitude to height set using setHeight()
@@ -546,7 +546,7 @@ void RecordPolyline::createSteps(RecordSequence const *records, double pixelPerS
 
 	Seiscomp::Core::Time refTime = (*it)->startTime();
 
-	QPolygon *poly = NULL;
+	QPolygon *poly = nullptr;
 
 	for(; it != records->end(); ++it) {
 		const Record* rec = it->get();
@@ -565,7 +565,7 @@ void RecordPolyline::createSteps(RecordSequence const *records, double pixelPerS
 			diff = tolerance*2;
 		}
 
-		if ( diff > tolerance || poly == NULL ) {
+		if ( diff > tolerance || poly == nullptr ) {
 			push_back(QPolygon());
 			poly = &back();
 		}
@@ -614,7 +614,7 @@ void RecordPolyline::createSteps(RecordSequence const *records,
                                  int height, QVector<QPair<int,int> >* gaps) {
 	clear();
 
-	if ( records == NULL ) return;
+	if ( records == nullptr ) return;
 	if ( records->size() == 0 ) return;
 
 	// normalize peak-to-peak amplitude to height set using setHeight()
@@ -636,7 +636,7 @@ void RecordPolyline::createSteps(RecordSequence const *records,
 
 	Seiscomp::Core::Time refTime = start;
 
-	QPolygon *poly = NULL;
+	QPolygon *poly = nullptr;
 
 	for(; it != records->end(); ++it) {
 		const Record* rec = it->get();
@@ -663,7 +663,7 @@ void RecordPolyline::createSteps(RecordSequence const *records,
 			diff = tolerance*2;
 		}
 
-		if ( diff > tolerance || poly == NULL ) {
+		if ( diff > tolerance || poly == nullptr ) {
 			push_back(QPolygon());
 			poly = &back();
 		}
@@ -769,7 +769,7 @@ void RecordPolylineF::create(Record const *rec, double pixelPerSecond,
                              int height, float *timingQuality, bool optimization) {
 	clear();
 
-	if ( rec == NULL )
+	if ( rec == nullptr )
 		return;
 
 	// normalize peak-to-peak amplitude to height set using setHeight()
@@ -785,7 +785,7 @@ void RecordPolylineF::create(Record const *rec, double pixelPerSecond,
 		_baseline = amplMax*yscl+0.5;
 	}
 
-	QPolygonF *poly = NULL;
+	QPolygonF *poly = nullptr;
 
 	int nsamp = rec->sampleCount();
 
@@ -913,7 +913,7 @@ void RecordPolylineF::create(RecordSequence const *records,
                              bool optimization) {
 	clear();
 
-	if ( records == NULL ) return;
+	if ( records == nullptr ) return;
 	if ( records->size() == 0 ) return;
 
 	// normalize peak-to-peak amplitude to height set using setHeight()
@@ -933,7 +933,7 @@ void RecordPolylineF::create(RecordSequence const *records,
 	RecordSequence::const_iterator it = records->begin();
 	RecordSequence::const_iterator lastIt = it;
 
-	QPolygonF *poly = NULL;
+	QPolygonF *poly = nullptr;
 	int timingQualityRecordCount = 0;
 	if ( timingQuality ) *timingQuality = 0;
 
@@ -1011,7 +1011,7 @@ void RecordPolylineF::create(RecordSequence const *records,
 		qreal x0 = pixelPerSecond*startOfs;
 		float dx = pixelPerSecond * dt;
 
-		if ( diff > tolerance || poly == NULL ) {
+		if ( diff > tolerance || poly == nullptr ) {
 			push_back(QPolygonF());
 			poly = &back();
 

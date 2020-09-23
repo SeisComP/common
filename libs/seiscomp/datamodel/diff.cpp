@@ -80,12 +80,12 @@ bool diffProperty(const T &v1, const T &v2, LogNode *node, LogNode *child) {
 
 // forward declaration
 bool compare(const Core::BaseObject *o1, const Core::BaseObject *o2,
-             bool indexOnly = false, LogNode *logNode = NULL);
+             bool indexOnly = false, LogNode *logNode = nullptr);
 
 bool compareNonArrayProperty(const Core::MetaProperty* prop,
                              const Core::BaseObject *o1,
                              const Core::BaseObject *o2,
-                             LogNode *logNode = NULL) {
+                             LogNode *logNode = nullptr) {
 	if ( prop->isArray() )
 		throw Core::TypeException("expected non array property");
 
@@ -318,7 +318,7 @@ void Diff2::diff(Object* o1, Object* o2,
 		for ( size_t i_o1 = 0; i_o1 < prop->arrayElementCount(o1); ++i_o1 ) {
 			Core::BaseObject* bo = const_cast<Core::BaseObject*>(prop->arrayObject(o1, i_o1));
 			Object *o1Child = Object::Cast(bo);
-			Object *o2Child = NULL;
+			Object *o2Child = nullptr;
 			PublicObject *po = PublicObject::Cast(bo);
 			if ( po ) {
 				map<string, PublicObject*>::iterator it = o2POChilds.find(po->publicID());
@@ -344,10 +344,10 @@ void Diff2::diff(Object* o1, Object* o2,
 		// Add all elements of o2 array which have no counterpart in o1
 		for ( map<string, PublicObject*>::iterator it = o2POChilds.begin();
 		      it != o2POChilds.end(); ++it )
-			diff(NULL, it->second, o1PO->publicID(), notifiers, logNode.get());
+			diff(nullptr, it->second, o1PO->publicID(), notifiers, logNode.get());
 		for ( vector<Object*>::iterator it = o2Childs.begin();
 		      it != o2Childs.end(); ++it )
-			diff(NULL, *it, o1PO->publicID(), notifiers, logNode.get());
+			diff(nullptr, *it, o1PO->publicID(), notifiers, logNode.get());
 	}
 
 	if ( parentLogNode && logNode &&
@@ -367,7 +367,7 @@ NotifierMessage *Diff2::diff2Message(Object *o1, Object *o2,
 	log.setLevel(LogNode::DIFFERENCES);
 	diff(o1, o2, o1ParentID, diffList, &log);
 
-	if ( diffList.empty() ) return NULL;
+	if ( diffList.empty() ) return nullptr;
 
 	NotifierMessage *msg = new NotifierMessage;
 	std::vector<NotifierPtr>::iterator it;
@@ -631,7 +631,7 @@ void Diff3::diff(Object *o1, Object *o2,
 		for ( size_t i_o1 = 0; i_o1 < prop->arrayElementCount(o1); ++i_o1 ) {
 			Core::BaseObject* bo = const_cast<Core::BaseObject*>(prop->arrayObject(o1, i_o1));
 			Object *o1Child = Object::Cast(bo);
-			Object *o2Child = NULL;
+			Object *o2Child = nullptr;
 			PublicObject *po = PublicObject::Cast(bo);
 			if ( po ) {
 				map<string, PublicObject*>::iterator it = o2POChilds.find(po->publicID());
@@ -657,10 +657,10 @@ void Diff3::diff(Object *o1, Object *o2,
 		// Add all elements of o2 array which have no counterpart in o1
 		for ( map<string, PublicObject*>::iterator it = o2POChilds.begin();
 		      it != o2POChilds.end(); ++it )
-			diff(NULL, it->second, o1PO->publicID(), notifiers, logNode.get());
+			diff(nullptr, it->second, o1PO->publicID(), notifiers, logNode.get());
 		for ( vector<Object*>::iterator it = o2Childs.begin();
 		      it != o2Childs.end(); ++it )
-			diff(NULL, *it, o1PO->publicID(), notifiers, logNode.get());
+			diff(nullptr, *it, o1PO->publicID(), notifiers, logNode.get());
 	}
 
 	if ( parentLogNode && logNode &&

@@ -44,7 +44,7 @@ ImporterJSON::ImporterJSON() {}
 Core::BaseObject *ImporterJSON::get(std::streambuf* buf) {
 	IO::JSONArchive ar;
 	ar.open(buf);
-	Core::BaseObject *obj = NULL;
+	Core::BaseObject *obj = nullptr;
 	ar >> obj;
 	return obj;
 }

@@ -35,7 +35,7 @@ namespace Gui {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Plot::Plot(QObject *parent) : QObject(parent), _legend(NULL) {
+Plot::Plot(QObject *parent) : QObject(parent), _legend(nullptr) {
 	xAxis = new Axis(this);
 	xAxis->setPosition(Axis::Bottom);
 	xAxis->setGrid(true);
@@ -59,8 +59,8 @@ Plot::Plot(QObject *parent) : QObject(parent), _legend(NULL) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Graph *Plot::addGraph(Axis *keyAxis, Axis *valueAxis) {
-	Graph *graph = new Graph(keyAxis == NULL ? xAxis : keyAxis,
-	                         valueAxis == NULL ? yAxis : valueAxis,
+	Graph *graph = new Graph(keyAxis == nullptr ? xAxis : keyAxis,
+	                         valueAxis == nullptr ? yAxis : valueAxis,
 	                         this);
 	_graphs.append(graph);
 	return graph;
@@ -82,7 +82,7 @@ void Plot::addGraph(Graph *graph) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Axis *Plot::addAxis(Axis::AxisPosition pos) {
-	Axis *axis = NULL;
+	Axis *axis = nullptr;
 
 	switch ( pos ) {
 		case Axis::Bottom:
@@ -119,12 +119,12 @@ Axis *Plot::addAxis(Axis::AxisPosition pos) {
 void Plot::setLegend(AbstractLegend *legend) {
 	if ( _legend == legend ) return;
 
-	if ( _legend != NULL )
+	if ( _legend != nullptr )
 		delete _legend;
 
 	_legend = legend;
 
-	if ( _legend != NULL )
+	if ( _legend != nullptr )
 		_legend->setParent(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -268,7 +268,7 @@ void Plot::draw(QPainter &p, const QRect &rect) {
 		graph->draw(p);
 	}
 
-	if ( (_legend != NULL) && _legend->isVisible() ) {
+	if ( (_legend != nullptr) && _legend->isVisible() ) {
 		p.translate(-_plotRect.left(), -_plotRect.bottom()-1);
 		_legend->draw(p, _plotRect, _graphs);
 	}

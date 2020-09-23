@@ -73,7 +73,7 @@ struct SC_SYSTEM_CORE_API UnitConversion {
  * double convertedValue;
  * // Convert from m/s
  * const UnitConversion *uc = UnitConverter::get('cm/s');
- * if ( uc != NULL )
+ * if ( uc != nullptr )
  *     convertedValue = uc->convert(value);
  * @endcode
  */
@@ -86,7 +86,7 @@ class SC_SYSTEM_CORE_API UnitConverter {
 		 * @brief Returns a conversion object for a particular input unit.
 		 * @param fromUnit The unit to convert from.
 		 * @return A pointer to the conversion object. If no conversion is
-		 *         available then NULL is returned.
+		 *         available then nullptr is returned.
 		 */
 		static const UnitConversion *get(const std::string &fromUnit);
 

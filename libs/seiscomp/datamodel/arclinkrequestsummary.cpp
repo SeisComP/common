@@ -32,9 +32,9 @@ IMPLEMENT_SC_CLASS(ArclinkRequestSummary, "ArclinkRequestSummary");
 
 
 ArclinkRequestSummary::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("okLineCount", "int", false, false, false, false, false, false, NULL, &ArclinkRequestSummary::setOkLineCount, &ArclinkRequestSummary::okLineCount));
-	addProperty(Core::simpleProperty("totalLineCount", "int", false, false, false, false, false, false, NULL, &ArclinkRequestSummary::setTotalLineCount, &ArclinkRequestSummary::totalLineCount));
-	addProperty(Core::simpleProperty("averageTimeWindow", "int", false, false, false, false, false, false, NULL, &ArclinkRequestSummary::setAverageTimeWindow, &ArclinkRequestSummary::averageTimeWindow));
+	addProperty(Core::simpleProperty("okLineCount", "int", false, false, false, false, false, false, nullptr, &ArclinkRequestSummary::setOkLineCount, &ArclinkRequestSummary::okLineCount));
+	addProperty(Core::simpleProperty("totalLineCount", "int", false, false, false, false, false, false, nullptr, &ArclinkRequestSummary::setTotalLineCount, &ArclinkRequestSummary::totalLineCount));
+	addProperty(Core::simpleProperty("averageTimeWindow", "int", false, false, false, false, false, false, nullptr, &ArclinkRequestSummary::setAverageTimeWindow, &ArclinkRequestSummary::averageTimeWindow));
 }
 
 

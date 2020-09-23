@@ -66,7 +66,7 @@ GeoFeatureSetSingleton::GeoFeatureSetSingleton() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-GeoFeatureSetObserver::GeoFeatureSetObserver() : _observedSet(NULL) {}
+GeoFeatureSetObserver::GeoFeatureSetObserver() : _observedSet(nullptr) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -103,7 +103,7 @@ GeoFeatureSet::~GeoFeatureSet() {
 
 	ObserverList::iterator it;
 	for ( it = _observers.begin(); it != _observers.end(); ++it )
-		(*it)->_observedSet = NULL;
+		(*it)->_observedSet = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -133,7 +133,7 @@ bool GeoFeatureSet::unregisterObserver(GeoFeatureSetObserver *observer) {
 	if ( it == _observers.end() )
 		return false;
 
-	observer->_observedSet = NULL;
+	observer->_observedSet = nullptr;
 	_observers.erase(it);
 	return true;
 }
@@ -252,7 +252,7 @@ size_t GeoFeatureSet::readBNADirRecursive(const fs::path &directory,
 Category* GeoFeatureSet::addNewCategory(const string name,
                                         const Category* parent) {
 	Category* category = new Category(_categories.size(),
-		parent == NULL || parent->name == "" ? name :
+		parent == nullptr || parent->name == "" ? name :
 		parent->name + "." + name, parent);
 	category->localName = name;
 	_categories.push_back(category);
@@ -334,10 +334,10 @@ bool GeoFeatureSet::readBNAHeader(string &segment, unsigned int &rank,
 		char delimFound = 0;
 		while ( sourceLen > 0 ) {
 			key = Core::tokenizeUnescape(keyLen, sourceLen, source, delimFound, ":");
-			if ( key == NULL || !sourceLen || !delimFound )
+			if ( key == nullptr || !sourceLen || !delimFound )
 				break;
 			value = Core::tokenizeUnescape(valueLen, sourceLen, source, delimFound, ",");
-			if ( value != NULL )
+			if ( value != nullptr )
 				attributes[string(key, keyLen)] = string(value, valueLen);
 			else
 				attributes[string(key, keyLen)] = "";
@@ -448,10 +448,10 @@ bool GeoFeatureSet::readBNAFile(const string &filename,
 		// read vertices, expected format:
 		//   "lon1,lat1 lon2,lat2 ... lon_i,lat_i\n"
 		//   "lon_i+1,lat_i+1 lon_i+2,lat_i+2 ... \n
-		nptr = NULL;
+		nptr = nullptr;
 		unsigned int pi = 0;
 		while ( true ) {
-			if ( nptr == NULL ) {
+			if ( nptr == nullptr ) {
 				// stop if all points have been read
 				if ( pi == points ) break;
 
@@ -475,7 +475,7 @@ bool GeoFeatureSet::readBNAFile(const string &filename,
 
 			// read next line if end of line is reached
 			if ( *nptr == '\0' ) {
-				nptr = NULL;
+				nptr = nullptr;
 				continue;
 			}
 
@@ -489,10 +489,10 @@ bool GeoFeatureSet::readBNAFile(const string &filename,
 			}
 
 			// read longitude
-			endptr = NULL;
+			endptr = nullptr;
 			errno = 0;
 			v.lon = strtof(nptr, &endptr);
-			if ( errno != 0 || endptr == NULL || endptr == nptr ||
+			if ( errno != 0 || endptr == nullptr || endptr == nptr ||
 			     v.lon < -180 || v.lon > 180) {
 				SEISCOMP_ERROR("invalid longitude in file %s at line %i",
 				               filename.c_str(), lineNum);
@@ -502,7 +502,7 @@ bool GeoFeatureSet::readBNAFile(const string &filename,
 
 			// search for comma
 			nptr = strchr(endptr, ',');
-			if ( nptr == NULL ) {
+			if ( nptr == nullptr ) {
 				SEISCOMP_ERROR("invalid coordinate separator in file %s at line %i",
 				               filename.c_str(), lineNum);
 				fileValid = false;
@@ -510,9 +510,9 @@ bool GeoFeatureSet::readBNAFile(const string &filename,
 			}
 
 			// read latitude
-			endptr = NULL; nptr += 1;
+			endptr = nullptr; nptr += 1;
 			v.lat = strtof(nptr, &endptr);
-			if ( errno != 0 || endptr == NULL || endptr == nptr ||
+			if ( errno != 0 || endptr == nullptr || endptr == nptr ||
 			     v.lat < -90 || v.lat > 90) {
 				SEISCOMP_ERROR("invalid latitude in file %s at line %i",
 				               filename.c_str(), lineNum);
@@ -525,7 +525,7 @@ bool GeoFeatureSet::readBNAFile(const string &filename,
 
 			// Skip comments
 			if ( strncmp(nptr, "--", 2) == 0 )
-				nptr = NULL;
+				nptr = nullptr;
 
 			// increase number of succesfully read points
 			pi += 1;

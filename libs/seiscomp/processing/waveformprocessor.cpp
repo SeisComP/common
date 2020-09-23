@@ -40,7 +40,7 @@ IMPLEMENT_SC_ABSTRACT_CLASS(WaveformProcessor, "WaveformProcessor");
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WaveformProcessor::StreamState::StreamState()
 : lastSample(0), neededSamples(0), receivedSamples(0), initialized(false),
-  fsamp(0.0), filter(NULL) {
+  fsamp(0.0), filter(nullptr) {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -49,7 +49,7 @@ WaveformProcessor::StreamState::StreamState()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WaveformProcessor::StreamState::~StreamState() {
-	if ( filter != NULL ) delete filter;
+	if ( filter != nullptr ) delete filter;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -149,7 +149,7 @@ void WaveformProcessor::reset() {
 
 	if ( _operator ) _operator->reset();
 
-	if ( tmp != NULL ) {
+	if ( tmp != nullptr ) {
 		_stream.filter = tmp->clone();
 		delete tmp;
 	}
@@ -277,7 +277,7 @@ bool WaveformProcessor::feed(const Record *rec) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool WaveformProcessor::store(const Record *record) {
 	if ( _status > InProgress ) return false;
-	if ( record->data() == NULL ) return false;
+	if ( record->data() == nullptr ) return false;
 
 	DoubleArrayPtr arr = (DoubleArray*)record->data()->copy(Array::DOUBLE);
 
@@ -309,7 +309,7 @@ bool WaveformProcessor::store(const Record *record) {
 		_stream.dataTimeWindow.setEndTime(record->endTime());
 	}
 
-	// NOTE: Do not use else here, because lastRecord can be set NULL
+	// NOTE: Do not use else here, because lastRecord can be set nullptr
 	//       when calling reset() in handleGap(...)
 	if ( !_stream.lastRecord ) {
 		initFilter(record->samplingFrequency());
@@ -358,7 +358,7 @@ bool WaveformProcessor::store(const Record *record) {
 int WaveformProcessor::feedSequence(const RecordSequence *sequence) {
 	int count = 0;
 
-	if ( sequence == NULL ) return count;
+	if ( sequence == nullptr ) return count;
 	for ( RecordSequence::const_iterator it = sequence->begin();
 	      it != sequence->end(); ++it )
 		if ( feed(it->get()) ) ++count;

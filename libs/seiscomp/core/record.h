@@ -195,7 +195,7 @@ class SC_SYSTEM_CORE_API Record : public Seiscomp::Core::BaseObject {
 
 		//! Return the clip mask for the data in the record. The clip mask
 		//! holds a bit for each sample and sets that bit to 1 if the sample
-		//! is clipped. The default implementation always returns NULL.
+		//! is clipped. The default implementation always returns nullptr.
 		//! Support has to be provided in derived implementations.
 		virtual const BitSet *clipMask() const;
 

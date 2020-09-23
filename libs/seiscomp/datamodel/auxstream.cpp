@@ -33,16 +33,16 @@ IMPLEMENT_SC_CLASS_DERIVED(AuxStream, Object, "AuxStream");
 
 
 AuxStream::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, NULL, &AuxStream::setCode, &AuxStream::code));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, NULL, &AuxStream::setStart, &AuxStream::start));
-	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, NULL, &AuxStream::setEnd, &AuxStream::end));
-	addProperty(Core::simpleProperty("device", "string", false, false, false, true, false, false, NULL, &AuxStream::setDevice, &AuxStream::device));
-	addProperty(Core::simpleProperty("deviceSerialNumber", "string", false, false, false, false, false, false, NULL, &AuxStream::setDeviceSerialNumber, &AuxStream::deviceSerialNumber));
-	addProperty(Core::simpleProperty("source", "string", false, false, false, false, false, false, NULL, &AuxStream::setSource, &AuxStream::source));
-	addProperty(Core::simpleProperty("format", "string", false, false, false, false, false, false, NULL, &AuxStream::setFormat, &AuxStream::format));
-	addProperty(Core::simpleProperty("flags", "string", false, false, false, false, false, false, NULL, &AuxStream::setFlags, &AuxStream::flags));
-	addProperty(Core::simpleProperty("restricted", "boolean", false, false, false, false, true, false, NULL, &AuxStream::setRestricted, &AuxStream::restricted));
-	addProperty(Core::simpleProperty("shared", "boolean", false, false, false, false, true, false, NULL, &AuxStream::setShared, &AuxStream::shared));
+	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, nullptr, &AuxStream::setCode, &AuxStream::code));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &AuxStream::setStart, &AuxStream::start));
+	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &AuxStream::setEnd, &AuxStream::end));
+	addProperty(Core::simpleProperty("device", "string", false, false, false, true, false, false, nullptr, &AuxStream::setDevice, &AuxStream::device));
+	addProperty(Core::simpleProperty("deviceSerialNumber", "string", false, false, false, false, false, false, nullptr, &AuxStream::setDeviceSerialNumber, &AuxStream::deviceSerialNumber));
+	addProperty(Core::simpleProperty("source", "string", false, false, false, false, false, false, nullptr, &AuxStream::setSource, &AuxStream::source));
+	addProperty(Core::simpleProperty("format", "string", false, false, false, false, false, false, nullptr, &AuxStream::setFormat, &AuxStream::format));
+	addProperty(Core::simpleProperty("flags", "string", false, false, false, false, false, false, nullptr, &AuxStream::setFlags, &AuxStream::flags));
+	addProperty(Core::simpleProperty("restricted", "boolean", false, false, false, false, true, false, nullptr, &AuxStream::setRestricted, &AuxStream::restricted));
+	addProperty(Core::simpleProperty("shared", "boolean", false, false, false, false, true, false, nullptr, &AuxStream::setShared, &AuxStream::shared));
 }
 
 
@@ -355,7 +355,7 @@ const AuxStreamIndex& AuxStream::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxStream::equalIndex(const AuxStream* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -393,7 +393,7 @@ AuxStream& AuxStream::operator=(const AuxStream& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxStream::assign(Object* other) {
 	AuxStream* otherAuxStream = AuxStream::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherAuxStream;
@@ -407,11 +407,11 @@ bool AuxStream::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxStream::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	SensorLocation* sensorLocation = SensorLocation::Cast(parent);
-	if ( sensorLocation != NULL )
+	if ( sensorLocation != nullptr )
 		return sensorLocation->add(this);
 
 	SEISCOMP_ERROR("AuxStream::attachTo(%s) -> wrong class type", parent->className());
@@ -424,11 +424,11 @@ bool AuxStream::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxStream::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	SensorLocation* sensorLocation = SensorLocation::Cast(object);
-	if ( sensorLocation != NULL ) {
+	if ( sensorLocation != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -436,7 +436,7 @@ bool AuxStream::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			AuxStream* child = sensorLocation->auxStream(index());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return sensorLocation->remove(child);
 			else {
 				SEISCOMP_DEBUG("AuxStream::detachFrom(SensorLocation): auxStream has not been found");
@@ -455,7 +455,7 @@ bool AuxStream::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxStream::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

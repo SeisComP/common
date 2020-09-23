@@ -109,7 +109,7 @@ bool Response::deconvolveFFT(DoubleArray &inout, double fsamp,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Math::Restitution::FFT::TransferFunction *
 Response::getTransferFunction(int numberOfIntegrations) {
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -237,7 +237,7 @@ ResponsePAZ::getTransferFunction(int numberOfIntegrations) {
 	}
 	catch ( ... ) {}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -295,7 +295,7 @@ Math::Restitution::FFT::TransferFunction *ResponseFAP::getTransferFunction(int n
 	}
 	catch ( ... ) {}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

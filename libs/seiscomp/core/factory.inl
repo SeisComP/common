@@ -30,7 +30,7 @@ AbstractClassFactory<ROOT_TYPE, TYPE>::AbstractClassFactory(const char*)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE, typename TYPE>
 ROOT_TYPE* AbstractClassFactory<ROOT_TYPE, TYPE>::create() const {
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

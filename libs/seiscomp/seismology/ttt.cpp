@@ -206,7 +206,7 @@ const TravelTime *getPhase(const TravelTimeList *list, const std::string &phase)
 	}
 
 	if ( it == list->end() )
-		return NULL;
+		return nullptr;
 
 	return &(*it);
 }
@@ -235,7 +235,7 @@ const TravelTime* firstArrivalP(const TravelTimeList *ttlist)
 	}
 
 	if ( it == ttlist->end() )
-		return NULL;
+		return nullptr;
 
 	return &(*it);
 }
@@ -255,13 +255,13 @@ TravelTime TravelTimeTableInterface::compute(const char *phase,
                                              double lat2, double lon2, double alt2,
                                              int ellc) {
 	TravelTimeList *ttlist = compute(lat1, lon1, dep1, lat2, lon2, alt2, ellc);
-	if ( ttlist == NULL )
+	if ( ttlist == nullptr )
 		throw NoPhaseError();
 
 	TravelTime ret;
 	const TravelTime *tt = getPhase(ttlist, phase);
 
-	if ( tt == NULL ) {
+	if ( tt == nullptr ) {
 		delete ttlist;
 		throw NoPhaseError();
 	}
@@ -302,7 +302,7 @@ TravelTimeTable::compute(double lat1, double lon1, double dep1,
                          int ellc) {
 	if ( _interface )
 		return _interface->compute(lat1, lon1, dep1, lat2, lon2, alt2, ellc);
-	return NULL;
+	return nullptr;
 }
 
 

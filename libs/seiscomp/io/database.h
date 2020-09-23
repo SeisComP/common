@@ -166,7 +166,7 @@ DEFINE_SMARTPOINTER(DatabaseInterface);
 		    insert into MyTable values(default);
 		    \endcode
 		    if there is just one attribute in MyTable (e.g. an
-		    autoincrement ID). sqlite3 supports only NULL as default
+		    autoincrement ID). sqlite3 supports only nullptr as default
 		    value string. The default implementation returns "default".
 		    @return The default value name
 		  */
@@ -232,7 +232,7 @@ DEFINE_SMARTPOINTER(DatabaseInterface);
 		    fetched row.
 		    @param index The field index (column)
 		    @return The content of the field. If the field
-		            is NULL, NULL will be returned.
+		            is nullptr, nullptr will be returned.
 		  */
 		virtual const void *getRowField(int index) = 0;
 
@@ -240,7 +240,7 @@ DEFINE_SMARTPOINTER(DatabaseInterface);
 		 * Convenience method to return the string of a certain column
 		 * @param index The field index (column)
 		 * @return The content of the field as string. If the field
-		            is NULL, an empty string will be returned
+		            is nullptr, an empty string will be returned
 		 */
 		std::string getRowFieldString(int index);
 

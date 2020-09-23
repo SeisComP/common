@@ -50,7 +50,7 @@ LocatorInterface::~LocatorInterface() {
 
 
 LocatorInterface* LocatorInterface::Create(const char* service) {
-	if ( service == NULL ) return NULL;
+	if ( service == nullptr ) return nullptr;
 	return LocatorInterfaceFactory::Create(service);
 }
 
@@ -119,8 +119,8 @@ void LocatorInterface::releaseDistanceCutOff() {
 
 Pick* LocatorInterface::getPick(Arrival* arrival) const {
 	DataModel::Pick* pick = Pick::Cast(PublicObject::Find(arrival->pickID()));
-	if ( pick == NULL )
-		return NULL;
+	if ( pick == nullptr )
+		return nullptr;
 
 	return pick;
 }

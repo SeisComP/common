@@ -53,10 +53,10 @@ InterfaceFactoryInterface<T>::~InterfaceFactoryInterface() {
 template <typename T>
 T* InterfaceFactoryInterface<T>::Create(const char* serviceName) {
 	InterfaceFactoryInterface* factoryInterface = Find(serviceName);
-	if ( factoryInterface != NULL )
+	if ( factoryInterface != nullptr )
 		return factoryInterface->create();
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -87,7 +87,7 @@ unsigned int InterfaceFactoryInterface<T>::ServiceCount() {
 template <typename T>
 typename InterfaceFactoryInterface<T>::ServiceNames*
 InterfaceFactoryInterface<T>::Services() {
-	if ( ServiceCount() == 0 ) return NULL;
+	if ( ServiceCount() == 0 ) return nullptr;
 
 	ServiceNames* names = new ServiceNames;
 	for ( typename ServicePool::iterator it = Pool().begin(); it != Pool().end(); ++it )
@@ -109,7 +109,7 @@ InterfaceFactoryInterface<T>::Find(const char* serviceName) {
 			return *it;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -129,10 +129,10 @@ const char* InterfaceFactoryInterface<T>::serviceName() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 bool InterfaceFactoryInterface<T>::RegisterFactory(InterfaceFactoryInterface* factory) {
-	if ( factory == NULL )
+	if ( factory == nullptr )
 		return false;
 
-	if ( Find(factory->serviceName()) != NULL )
+	if ( Find(factory->serviceName()) != nullptr )
 		return false;
 
 	Pool().push_back(factory);

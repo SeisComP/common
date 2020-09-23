@@ -34,29 +34,6 @@
 //#include "aesir.h"
 #define AESIR_VERSION		"3.2"	/* string for printing */
 
-#ifdef Bool
-#undef Bool
-#endif
-typedef int	Bool;
-
-#ifndef NULL
-#define NULL	0
-#endif
-
-#ifndef EOF
-#define EOF	-1
-#endif
-
-#ifndef FALSE
-#define FALSE		0
-#define TRUE		1
-#endif
-
-#ifndef False
-#define False		0
-#define True		1
-#endif
-
 #define REG		register
 #define EOS		'\0'		/* end of string */
 #define EOL		'\n'		/* end of line */
@@ -105,7 +82,7 @@ extern void	nap();
 //#include "loc_params.h"
 struct Locator_params {
 	Locator_params() {
-		outfile_name = prefix = NULL;
+		outfile_name = prefix = nullptr;
 	}
 
 	~Locator_params() {
@@ -129,8 +106,8 @@ struct Locator_params {
 	int     use_location;    /* true    - use current origin data ?       */
 	char    verbose;         /* true    - verbose output of data ?        */
 	int     cor_level;       /* 0       - correction table level          */
-	char   *outfile_name;    /* NULL    - name of file to print data      */
-	char   *prefix;          /* NULL    - dir name & prefix of tt tables  */
+	char   *outfile_name;    /* nullptr    - name of file to print data      */
+	char   *prefix;          /* nullptr    - dir name & prefix of tt tables  */
 };
 
 

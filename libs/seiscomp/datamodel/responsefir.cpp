@@ -33,14 +33,14 @@ IMPLEMENT_SC_CLASS_DERIVED(ResponseFIR, PublicObject, "ResponseFIR");
 
 
 ResponseFIR::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, NULL, &ResponseFIR::setName, &ResponseFIR::name));
-	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, NULL, &ResponseFIR::setGain, &ResponseFIR::gain));
-	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, NULL, &ResponseFIR::setGainFrequency, &ResponseFIR::gainFrequency));
-	addProperty(Core::simpleProperty("decimationFactor", "int", false, false, false, false, true, false, NULL, &ResponseFIR::setDecimationFactor, &ResponseFIR::decimationFactor));
-	addProperty(Core::simpleProperty("delay", "float", false, false, false, false, true, false, NULL, &ResponseFIR::setDelay, &ResponseFIR::delay));
-	addProperty(Core::simpleProperty("correction", "float", false, false, false, false, true, false, NULL, &ResponseFIR::setCorrection, &ResponseFIR::correction));
-	addProperty(Core::simpleProperty("numberOfCoefficients", "int", false, false, false, false, true, false, NULL, &ResponseFIR::setNumberOfCoefficients, &ResponseFIR::numberOfCoefficients));
-	addProperty(Core::simpleProperty("symmetry", "string", false, false, false, false, false, false, NULL, &ResponseFIR::setSymmetry, &ResponseFIR::symmetry));
+	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &ResponseFIR::setName, &ResponseFIR::name));
+	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, nullptr, &ResponseFIR::setGain, &ResponseFIR::gain));
+	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, nullptr, &ResponseFIR::setGainFrequency, &ResponseFIR::gainFrequency));
+	addProperty(Core::simpleProperty("decimationFactor", "int", false, false, false, false, true, false, nullptr, &ResponseFIR::setDecimationFactor, &ResponseFIR::decimationFactor));
+	addProperty(Core::simpleProperty("delay", "float", false, false, false, false, true, false, nullptr, &ResponseFIR::setDelay, &ResponseFIR::delay));
+	addProperty(Core::simpleProperty("correction", "float", false, false, false, false, true, false, nullptr, &ResponseFIR::setCorrection, &ResponseFIR::correction));
+	addProperty(Core::simpleProperty("numberOfCoefficients", "int", false, false, false, false, true, false, nullptr, &ResponseFIR::setNumberOfCoefficients, &ResponseFIR::numberOfCoefficients));
+	addProperty(Core::simpleProperty("symmetry", "string", false, false, false, false, false, false, nullptr, &ResponseFIR::setSymmetry, &ResponseFIR::symmetry));
 	addProperty(objectProperty<RealArray>("coefficients", "RealArray", false, false, true, &ResponseFIR::setCoefficients, &ResponseFIR::coefficients));
 	addProperty(objectProperty<Blob>("remark", "Blob", false, false, true, &ResponseFIR::setRemark, &ResponseFIR::remark));
 }
@@ -139,12 +139,12 @@ ResponseFIR* ResponseFIR::Create() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ResponseFIR* ResponseFIR::Create(const std::string& publicID) {
-	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != NULL ) {
+	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
 			publicID.c_str()
 		);
-		return NULL;
+		return nullptr;
 	}
 
 	return new ResponseFIR(publicID);
@@ -429,7 +429,7 @@ const ResponseFIRIndex& ResponseFIR::index() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseFIR::equalIndex(const ResponseFIR* lhs) const {
-	if ( lhs == NULL ) return false;
+	if ( lhs == nullptr ) return false;
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -469,7 +469,7 @@ ResponseFIR& ResponseFIR::operator=(const ResponseFIR& other) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseFIR::assign(Object* other) {
 	ResponseFIR* otherResponseFIR = ResponseFIR::Cast(other);
-	if ( other == NULL )
+	if ( other == nullptr )
 		return false;
 
 	*this = *otherResponseFIR;
@@ -483,11 +483,11 @@ bool ResponseFIR::assign(Object* other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseFIR::attachTo(PublicObject* parent) {
-	if ( parent == NULL ) return false;
+	if ( parent == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(parent);
-	if ( inventory != NULL )
+	if ( inventory != nullptr )
 		return inventory->add(this);
 
 	SEISCOMP_ERROR("ResponseFIR::attachTo(%s) -> wrong class type", parent->className());
@@ -500,11 +500,11 @@ bool ResponseFIR::attachTo(PublicObject* parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseFIR::detachFrom(PublicObject* object) {
-	if ( object == NULL ) return false;
+	if ( object == nullptr ) return false;
 
 	// check all possible parents
 	Inventory* inventory = Inventory::Cast(object);
-	if ( inventory != NULL ) {
+	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
 		if ( object == parent() )
@@ -512,7 +512,7 @@ bool ResponseFIR::detachFrom(PublicObject* object) {
 		// The object has not been added locally so it must be looked up
 		else {
 			ResponseFIR* child = inventory->findResponseFIR(publicID());
-			if ( child != NULL )
+			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
 				SEISCOMP_DEBUG("ResponseFIR::detachFrom(Inventory): responseFIR has not been found");
@@ -531,7 +531,7 @@ bool ResponseFIR::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseFIR::detach() {
-	if ( parent() == NULL )
+	if ( parent() == nullptr )
 		return false;
 
 	return detachFrom(parent());

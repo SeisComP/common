@@ -376,7 +376,7 @@ std::string stringify(const char *fmt, ...) {
 	std::string ret(buffer);
 	va_end(params);
 
-	if ( dynamicBuffer != NULL )
+	if ( dynamicBuffer != nullptr )
 		delete [] dynamicBuffer;
 
 	return ret;
@@ -416,7 +416,7 @@ size_t splitExt(std::vector<std::string> &tokens, const char *source,
 	size_t lenTok;
 	size_t lenSource = strlen(source);
 	char delimFound = 0;
-	const char *tok = NULL;
+	const char *tok = nullptr;
 
 	if ( unescape ) {
 		std::string tmp(source, lenSource);
@@ -424,7 +424,7 @@ size_t splitExt(std::vector<std::string> &tokens, const char *source,
 		while ( lenSource > 0 ) {
 			tok = tokenizeUnescape(lenTok, lenSource, sourceCopy, delimFound,
 			                       delimiter, trim, whitespaces, quotes);
-			if ( tok != NULL ) {
+			if ( tok != nullptr ) {
 				tokens.push_back(std::string(tok, lenTok));
 			}
 			else if ( tokens.empty() || !compressOn ) {
@@ -436,7 +436,7 @@ size_t splitExt(std::vector<std::string> &tokens, const char *source,
 		while ( lenSource > 0 ) {
 			tok = tokenizeExt(lenTok, lenSource, source, delimFound, delimiter,
 			                  trim, whitespaces, quotes);
-			if ( tok != NULL ) {
+			if ( tok != nullptr ) {
 				tokens.push_back(std::string(tok, lenTok));
 			}
 			else if ( tokens.empty() || !compressOn ) {
@@ -462,7 +462,7 @@ const char *tokenizeExt(size_t &lenTok, size_t &lenSource, const char *&source,
 	lenTok = 0;
 	delimFound = 0;
 
-	const char *tok = NULL;
+	const char *tok = nullptr;
 	size_t trailing_spaces = 0;
 	char quote = 0;
 
@@ -487,7 +487,7 @@ const char *tokenizeExt(size_t &lenTok, size_t &lenSource, const char *&source,
 		}
 
 		// check for unprotected delimiter outside of quotes
-		if ( quote == 0 and strchr(delimiter, *source) != NULL ) {
+		if ( quote == 0 and strchr(delimiter, *source) != nullptr ) {
 			delimFound = *source;
 			--lenSource; ++source;
 			lenTok -= trailing_spaces;
@@ -499,13 +499,13 @@ const char *tokenizeExt(size_t &lenTok, size_t &lenSource, const char *&source,
 			quote = 0;
 		}
 		// check for beginning quote
-		else if ( quote == 0 and strchr(quotes, *source) != NULL ) {
+		else if ( quote == 0 and strchr(quotes, *source) != nullptr ) {
 			quote = *source;
 			trailing_spaces = 0;
 		}
 		// trimming outside unprotected characters outside of quotes
 		else if ( trim ) {
-			if ( !quote and strchr(whitespaces, *source) != NULL ) {
+			if ( !quote and strchr(whitespaces, *source) != nullptr ) {
 				// trim leading whitespaces
 				if ( lenTok == 0 )
 					continue;
@@ -541,8 +541,8 @@ const char *tokenizeUnescape(size_t &lenTok, size_t &lenSource, char *&source,
 	lenTok = 0;
 	delimFound = 0;
 
-	const char *tok = NULL;
-	char *tokEnd = NULL;
+	const char *tok = nullptr;
+	char *tokEnd = nullptr;
 	size_t trailing_spaces = 0;
 	char quote = 0;
 
@@ -568,9 +568,9 @@ const char *tokenizeUnescape(size_t &lenTok, size_t &lenSource, char *&source,
 			// delimiter and whitespaces
 			if ( quote == 0 ) {
 				if ( *source != '\\' &&
-				     strchr(quotes, *source) == NULL &&
-				     strchr(delimiter, *source) == NULL &&
-				     strchr(whitespaces, *source) == NULL ) {
+				     strchr(quotes, *source) == nullptr &&
+				     strchr(delimiter, *source) == nullptr &&
+				     strchr(whitespaces, *source) == nullptr ) {
 					++tokEnd; ++lenTok;
 				}
 			}
@@ -589,7 +589,7 @@ const char *tokenizeUnescape(size_t &lenTok, size_t &lenSource, char *&source,
 		}
 
 		// check for unprotected delimiter outside of quotes
-		if ( quote == 0 and strchr(delimiter, *source) != NULL ) {
+		if ( quote == 0 and strchr(delimiter, *source) != nullptr ) {
 			delimFound = *source;
 			--lenSource; ++source;
 			lenTok -= trailing_spaces;
@@ -602,14 +602,14 @@ const char *tokenizeUnescape(size_t &lenTok, size_t &lenSource, char *&source,
 			continue;
 		}
 		// check for beginning quote
-		else if ( quote == 0 and strchr(quotes, *source) != NULL ) {
+		else if ( quote == 0 and strchr(quotes, *source) != nullptr ) {
 			quote = *source;
 			trailing_spaces = 0;
 			continue;
 		}
 		// trim outside unprotected characters outside of quotes
 		else if ( trim ) {
-			if ( !quote and strchr(whitespaces, *source) != NULL ) {
+			if ( !quote and strchr(whitespaces, *source) != nullptr ) {
 				// trim leading whitespaces
 				if ( lenTok == 0 )
 					continue;
@@ -646,7 +646,7 @@ const char *tokenizeUnescape(size_t &lenTok, size_t &lenSource, char *&source,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool isEmpty(const char* str) {
-	return str == NULL || *str == '\0';
+	return str == nullptr || *str == '\0';
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -819,7 +819,7 @@ char *strnchr(char *p, size_t n, char c) {
 		++p;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -834,7 +834,7 @@ const char *strnchr(const char *p, size_t n, char c) {
 		++p;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

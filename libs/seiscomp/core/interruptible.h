@@ -68,13 +68,13 @@ DEFINE_SMARTPOINTER(InterruptibleObject);
  *     sa.sa_handler = signalHandler;
  *     sa.sa_flags = 0;
  *     sigemptyset(&sa.sa_mask);
- *     sigaction(SIGINT, &sa, NULL);
- *     sigaction(SIGTERM, &sa, NULL);
+ *     sigaction(SIGINT, &sa, nullptr);
+ *     sigaction(SIGTERM, &sa, nullptr);
  *
  *     // Optionally, disable SIGHUP, so it is not necessary
  *     // to start the process with nohup.
  *     sa.sa_handler = SIG_IGN;
- *     sigaction(SIGHUP, &sa, NULL);
+ *     sigaction(SIGHUP, &sa, nullptr);
  *
  *     ...
  *

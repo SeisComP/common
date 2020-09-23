@@ -36,7 +36,7 @@ class SC_GUI_API TensorSymbol : public Map::Symbol
 
 	public:
 		TensorSymbol(const Math::Tensor2Sd &t,
-		             Map::Decorator* decorator = NULL);
+		             Map::Decorator* decorator = nullptr);
 		~TensorSymbol();
 
 		void setShadingEnabled(bool);

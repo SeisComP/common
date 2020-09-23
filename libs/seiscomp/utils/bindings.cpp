@@ -57,7 +57,7 @@ bool Bindings::init(const DataModel::ConfigModule *cfg, const std::string &setup
                     bool allowGlobal) {
 	_bindings.clear();
 
-	if ( cfg == NULL )
+	if ( cfg == nullptr )
 		return false;
 
 	for ( size_t i = 0; i < cfg->configStationCount(); ++i ) {
@@ -65,10 +65,10 @@ bool Bindings::init(const DataModel::ConfigModule *cfg, const std::string &setup
 		if ( !cfg->enabled() ) continue;
 
 		DataModel::Setup *setup = DataModel::findSetup(sta_cfg, setupName, allowGlobal);
-		if ( (setup == NULL) || !setup->enabled() ) continue;
+		if ( (setup == nullptr) || !setup->enabled() ) continue;
 
 		DataModel::ParameterSet* ps = DataModel::ParameterSet::Find(setup->parameterSetID());
-		if ( ps == NULL ) {
+		if ( ps == nullptr ) {
 			/*
 			SEISCOMP_WARNING("%s.%s: parameter set '%s' not found",
 			                 sta_cfg->networkCode().c_str(),
@@ -100,11 +100,11 @@ const KeyValues *Bindings::getKeys(const std::string &networkCode,
                                    const std::string &stationCode) const {
 	NetworkMap::const_iterator it = _bindings.find(networkCode);
 	if ( it == _bindings.end() )
-		return NULL;
+		return nullptr;
 
 	StationMap::const_iterator it2 = it->second.find(stationCode);
 	if ( it2 == it->second.end() )
-		return NULL;
+		return nullptr;
 
 	return it2->second.keys.get();
 }
@@ -115,8 +115,8 @@ const KeyValues *Bindings::getKeys(const std::string &networkCode,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const KeyValues *Bindings::getKeys(const DataModel::Station *station) const {
-	if ( station->network() == NULL )
-		return NULL;
+	if ( station->network() == nullptr )
+		return nullptr;
 
 	return getKeys(station->network()->code(), station->code());
 }
@@ -149,8 +149,8 @@ bool Bindings::remove(const std::string &networkCode,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Bindings::remove(const DataModel::Station *station) {
-	if ( station->network() == NULL )
-		return NULL;
+	if ( !station->network() )
+		return false;
 
 	return remove(station->network()->code(), station->code());
 }
@@ -182,7 +182,7 @@ bool Bindings::setData(const std::string &networkCode,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Bindings::setData(const DataModel::Station *station,
                        const Core::MetaValue &value) {
-	if ( station->network() == NULL )
+	if ( station->network() == nullptr )
 		return false;
 
 	return setData(station->network()->code(), station->code(), value);
@@ -212,7 +212,7 @@ const Core::MetaValue &Bindings::data(const std::string &networkCode,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const Core::MetaValue &Bindings::data(const DataModel::Station *station) {
-	if ( station->network() == NULL )
+	if ( station->network() == nullptr )
 		return empty;
 
 	return data(station->network()->code(), station->code());
@@ -226,7 +226,7 @@ const Core::MetaValue &Bindings::data(const DataModel::Station *station) {
 Bindings::const_iterator Bindings::begin() const {
 	const_iterator it;
 	it._networks = &_bindings;
-	it._stations = NULL;
+	it._stations = nullptr;
 	it._nIt = _bindings.begin();
 
 	if ( it._nIt != _bindings.end() ) {

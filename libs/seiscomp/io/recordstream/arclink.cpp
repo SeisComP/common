@@ -274,7 +274,7 @@ void ArclinkConnection::cleanup() {
 
 Record *ArclinkConnection::next() {
 	if ( _readingData && !_sock.isOpen() ) {
-		return NULL;
+		return nullptr;
 	}
 
 	_sock.startTimer();
@@ -286,13 +286,13 @@ Record *ArclinkConnection::next() {
 		}
 		catch ( GeneralException & ) {
 			_sock.close();
-			return NULL;
+			return nullptr;
 		}
 
 		_readingData = true;
 		if ( _remainingBytes <= 0 ) {
 			_sock.close();
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -318,7 +318,7 @@ Record *ArclinkConnection::next() {
 			}
 			catch ( ... ) {
 				delete rec;
-				rec = NULL;
+				rec = nullptr;
 			}
 
 			if ( _dump ) _dump << data;
@@ -346,7 +346,7 @@ Record *ArclinkConnection::next() {
 				_sock.close();
 			}
 
-			if ( rec != NULL )
+			if ( rec != nullptr )
 				return rec;
 		}
 	}
@@ -354,7 +354,7 @@ Record *ArclinkConnection::next() {
 		_sock.close();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
