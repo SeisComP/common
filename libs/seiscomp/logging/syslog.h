@@ -33,12 +33,12 @@ namespace Logging {
 class SC_SYSTEM_CORE_API SyslogOutput : public Output {
 	public:
 		SyslogOutput();
-		SyslogOutput(const char *ident, const char *facility = NULL);
+		SyslogOutput(const char *ident, const char *facility = nullptr);
 		~SyslogOutput();
 
 		int facility() const { return _facility; }
 
-		bool open(const char *ident, const char *facility = NULL);
+		bool open(const char *ident, const char *facility = nullptr);
 		bool isOpen() const;
 		void close();
 

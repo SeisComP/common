@@ -55,10 +55,10 @@ bool SyslogOutput::open(const char* ident, const char *facility) {
 	const CODE *names = facilitynames;
 	_facility = SYSLOG_FACILITY;
 
-	if ( facility != NULL ) {
+	if ( facility ) {
 		_facility = -1;
 
-		for ( ; names->c_name != NULL; ++names ) {
+		for ( ; names->c_name; ++names ) {
 			if ( strcmp(names->c_name, facility) == 0 ) {
 				_facility = names->c_val;
 				break;
