@@ -385,3 +385,10 @@ BOOST_AUTO_TEST_CASE(splitExtUnescape) {
 		                              it->tokens.begin(), it->tokens.end());
 	}
 }
+
+BOOST_AUTO_TEST_CASE(wildcards) {
+	BOOST_CHECK(wildcmp("*", "a"));
+	BOOST_CHECK(wildcmp("*.*", "abc.def"));
+	BOOST_CHECK(!wildcmp("*.*", "abc"));
+	BOOST_CHECK(wildcmp("a.*.*", "abc.def."));
+}
