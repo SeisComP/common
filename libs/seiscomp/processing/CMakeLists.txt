@@ -10,6 +10,7 @@ SET(PROC_SOURCES
 	streambuffer.cpp
 
 	detector.cpp
+	fx.cpp
 	picker.cpp
 	secondarypicker.cpp
 	amplitudeprocessor.cpp
@@ -34,6 +35,7 @@ SET(PROC_HEADERS
 	magnitudeprocessor.h
 )
 
+SC_ADD_SUBDIR_SOURCES(PROC fx)
 SC_ADD_SUBDIR_SOURCES(PROC picker)
 SC_ADD_SUBDIR_SOURCES(PROC secondarypicker)
 SC_ADD_SUBDIR_SOURCES(PROC amplitudes)

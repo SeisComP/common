@@ -1,4 +1,6 @@
 SET(AMPS_SOURCES
+	a5_2.cpp
+	idc_utils.cpp
 	mBc.cpp
 	mBc_measure.cpp
 	mb.cpp
@@ -11,6 +13,7 @@ SET(AMPS_SOURCES
 	Ms20.cpp
 	Mwp.cpp
 	mwp_utils.c
+	sbsnr.cpp
 )
 
 SET(AMPS_HEADERS
