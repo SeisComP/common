@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_MAINWINDOW_H__
-#define SEISCOMP_GUI_MAINWINDOW_H__
+#ifndef SEISCOMP_GUI_MAINWINDOW_H
+#define SEISCOMP_GUI_MAINWINDOW_H
 
 #ifndef Q_MOC_RUN
 #include <seiscomp/core/baseobject.h>

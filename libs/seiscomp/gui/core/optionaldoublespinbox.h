@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_OPTIONALDOUBLESPINBOX_H__
-#define SEISCOMP_GUI_OPTIONALDOUBLESPINBOX_H__
+#ifndef SEISCOMP_GUI_OPTIONALDOUBLESPINBOX_H
+#define SEISCOMP_GUI_OPTIONALDOUBLESPINBOX_H
 
 
 #include <seiscomp/gui/qt.h>

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_APPLICATION_H__
-#define SEISCOMP_GUI_APPLICATION_H__
+#ifndef SEISCOMP_GUI_APPLICATION_H
+#define SEISCOMP_GUI_APPLICATION_H
 
 #include <QApplication>
 #include <QString>

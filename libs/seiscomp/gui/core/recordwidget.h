@@ -19,8 +19,8 @@
 
 
 
-#ifndef _SEISMOGRAMPLOT_H_
-#define _SEISMOGRAMPLOT_H_
+#ifndef SEISCOMP_GUI_RECORDWIDGET_H
+#define SEISCOMP_GUI_RECORDWIDGET_H
 
 #include <QWidget>
 #include <QFrame>

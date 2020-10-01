@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_EVENTSUMMARY_H__
-#define SEISCOMP_GUI_EVENTSUMMARY_H__
+#ifndef SEISCOMP_GUI_EVENTSUMMARY_H
+#define SEISCOMP_GUI_EVENTSUMMARY_H
 
 #include <QWidget>
 #include <string>

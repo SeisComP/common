@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_CORE_STREAMWIDGET_H__
-#define SEISCOMP_GUI_CORE_STREAMWIDGET_H__
+#ifndef SEISCOMP_GUI_CORE_STREAMWIDGET_H
+#define SEISCOMP_GUI_CORE_STREAMWIDGET_H
 
 #include <vector>
 #include <map>

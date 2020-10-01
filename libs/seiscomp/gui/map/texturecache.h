@@ -18,9 +18,8 @@
  ***************************************************************************/
 
 
-
-#ifndef SEISCOMP_GUI_MAP_TEXTURECACHE_H__
-#define SEISCOMP_GUI_MAP_TEXTURECACHE_H__
+#ifndef SEISCOMP_GUI_MAP_TEXTURECACHE_H
+#define SEISCOMP_GUI_MAP_TEXTURECACHE_H
 
 
 #include <QHash>

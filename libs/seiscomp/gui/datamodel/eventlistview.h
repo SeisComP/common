@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_ORIGINLISTVIEW_H__
-#define SEISCOMP_GUI_ORIGINLISTVIEW_H__
+#ifndef SEISCOMP_GUI_ORIGINLISTVIEW_H
+#define SEISCOMP_GUI_ORIGINLISTVIEW_H
 
 #include <seiscomp/gui/core/connectiondialog.h>
 #include <seiscomp/gui/core/utils.h>

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_PLOT_ABSTRACTGRAPH_H__
-#define SEISCOMP_GUI_PLOT_ABSTRACTGRAPH_H__
+#ifndef SEISCOMP_GUI_PLOT_ABSTRACTGRAPH_H
+#define SEISCOMP_GUI_PLOT_ABSTRACTGRAPH_H
 
 
 #include <seiscomp/gui/plot/axis.h>

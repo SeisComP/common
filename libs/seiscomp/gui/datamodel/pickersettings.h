@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_WAVEFORMSETTINGS_H__
-#define SEISCOMP_GUI_WAVEFORMSETTINGS_H__
+#ifndef SEISCOMP_GUI_WAVEFORMSETTINGS_H
+#define SEISCOMP_GUI_WAVEFORMSETTINGS_H
 
 #include <seiscomp/gui/datamodel/ui_pickersettings.h>
 #include <seiscomp/gui/datamodel/pickerview.h>

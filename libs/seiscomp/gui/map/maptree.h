@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_GUI_ALG_MAPTREE_H
+#define SEISCOMP_GUI_ALG_MAPTREE_H
 
-#ifndef SEISCOMP_GUI_ALG_MAPTREE_H__
-#define SEISCOMP_GUI_ALG_MAPTREE_H__
 
 #include <string>
 #include <QString>

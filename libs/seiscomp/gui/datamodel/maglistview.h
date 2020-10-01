@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_MAGLISTVIEW_H__
-#define SEISCOMP_GUI_MAGLISTVIEW_H__
+#ifndef SEISCOMP_GUI_MAGLISTVIEW_H
+#define SEISCOMP_GUI_MAGLISTVIEW_H
 
 #include <QtGui>
 #include <seiscomp/gui/core/connectiondialog.h>

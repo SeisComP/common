@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_MAP_PROJECTIONS_MERCATOR_H__
-#define SEISCOMP_GUI_MAP_PROJECTIONS_MERCATOR_H__
+#ifndef SEISCOMP_GUI_MAP_PROJECTIONS_MERCATOR_H
+#define SEISCOMP_GUI_MAP_PROJECTIONS_MERCATOR_H
 
 
 #include <QImage>

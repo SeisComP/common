@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_GUI_STATIONSYMBOL_H
+#define SEISCOMP_GUI_STATIONSYMBOL_H
 
-#ifndef SEISCOMP_GUI_STATIONSYMBOL_H__
-#define SEISCOMP_GUI_STATIONSYMBOL_H__
 
 #include <iostream>
 #include <string>

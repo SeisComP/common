@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_TTDECORATOR_H__
-#define SEISCOMP_GUI_TTDECORATOR_H__
+#ifndef SEISCOMP_GUI_TTDECORATOR_H
+#define SEISCOMP_GUI_TTDECORATOR_H
+
 
 #include <list>
 

@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_RECORDVIEWITEM_H__
-#define SEISCOMP_GUI_RECORDVIEWITEM_H__
+#ifndef SEISCOMP_GUI_RECORDVIEWITEM_H
+#define SEISCOMP_GUI_RECORDVIEWITEM_H
 
 #ifndef Q_MOC_RUN
 #include <seiscomp/core/recordsequence.h>

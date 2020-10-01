@@ -17,8 +17,9 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEISCOMP_GUI_MAP_LAYERS_GEOFEATURELAYER_H__
-#define SEISCOMP_GUI_MAP_LAYERS_GEOFEATURELAYER_H__
+
+#ifndef SEISCOMP_GUI_MAP_LAYERS_GEOFEATURELAYER_H
+#define SEISCOMP_GUI_MAP_LAYERS_GEOFEATURELAYER_H
 
 
 #include <seiscomp/gui/map/layer.h>

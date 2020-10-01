@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_GUI_PICKERZOOMFRAME_H
+#define SEISCOMP_GUI_PICKERZOOMFRAME_H
 
-#ifndef SEISCOMP_GUI_PICKERZOOMFRAME_H__
-#define SEISCOMP_GUI_PICKERZOOMFRAME_H__
 
 #include <QFrame>
 #include <seiscomp/gui/qt.h>

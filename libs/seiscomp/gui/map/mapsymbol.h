@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_MAPSYMBOL_H__
-#define SEISCOMP_GUI_MAPSYMBOL_H__
+#ifndef SEISCOMP_GUI_MAPSYMBOL_H
+#define SEISCOMP_GUI_MAPSYMBOL_H
+
 
 #include <QPolygon>
 #include <QColor>

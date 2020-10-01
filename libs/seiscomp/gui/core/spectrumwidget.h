@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_CORE_SPECTRUMWIDGET_H__
-#define SEISCOMP_GUI_CORE_SPECTRUMWIDGET_H__
+#ifndef SEISCOMP_GUI_CORE_SPECTRUMWIDGET_H
+#define SEISCOMP_GUI_CORE_SPECTRUMWIDGET_H
 
 
 #include <QWidget>

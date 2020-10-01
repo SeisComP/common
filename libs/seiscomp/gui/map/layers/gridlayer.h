@@ -17,8 +17,9 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEISCOMP_GUI_MAP_LAYERS_GRIDLAYER_H__
-#define SEISCOMP_GUI_MAP_LAYERS_GRIDLAYER_H__
+
+#ifndef SEISCOMP_GUI_MAP_LAYERS_GRIDLAYER_H
+#define SEISCOMP_GUI_MAP_LAYERS_GRIDLAYER_H
 
 
 #include <seiscomp/gui/qt.h>

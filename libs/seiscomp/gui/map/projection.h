@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_MAP_PROJECTION_H__
-#define SEISCOMP_GUI_MAP_PROJECTION_H__
+#ifndef SEISCOMP_GUI_MAP_PROJECTION_H
+#define SEISCOMP_GUI_MAP_PROJECTION_H
 
 
 #include <seiscomp/core/interfacefactory.h>

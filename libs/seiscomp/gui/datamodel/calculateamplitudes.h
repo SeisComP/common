@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_CALCULATEAMPLITUDES_H__
-#define SEISCOMP_GUI_CALCULATEAMPLITUDES_H__
+#ifndef SEISCOMP_GUI_CALCULATEAMPLITUDES_H
+#define SEISCOMP_GUI_CALCULATEAMPLITUDES_H
 
 #include <seiscomp/gui/core/recordstreamthread.h>
 #ifndef Q_MOC_RUN

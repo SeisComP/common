@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_SELECTSTATION_H__
-#define SEISCOMP_SELECTSTATION_H__
+#ifndef SEISCOMP_SELECTSTATION_H
+#define SEISCOMP_SELECTSTATION_H
+
 
 #include <QDialog>
 #include <QAbstractTableModel>

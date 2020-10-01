@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_DECORATOR_H__
-#define SEISCOMP_GUI_DECORATOR_H__
+#ifndef SEISCOMP_GUI_DECORATOR_H
+#define SEISCOMP_GUI_DECORATOR_H
+
 
 #include <memory>
 

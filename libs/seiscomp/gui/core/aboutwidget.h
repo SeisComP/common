@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __ABOUTWIDGET__
-#define __ABOUTWIDGET__
+#ifndef ABOUTWIDGET
+#define ABOUTWIDGET
 
 #include <QWidget>
 #include <QPixmap>

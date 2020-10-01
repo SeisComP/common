@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_GUI_MAGNITUDEMAP_H
+#define SEISCOMP_GUI_MAGNITUDEMAP_H
 
-#ifndef __MAGNITUDEMAP_H__
-#define __MAGNITUDEMAP_H__
 
 #include <QtGui>
 #include <seiscomp/gui/map/mapwidget.h>

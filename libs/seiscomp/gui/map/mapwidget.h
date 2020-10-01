@@ -18,9 +18,8 @@
  ***************************************************************************/
 
 
-
-#ifndef SEISCOMP_GUI_MAPWIDGET_H__
-#define SEISCOMP_GUI_MAPWIDGET_H__
+#ifndef SEISCOMP_GUI_MAPWIDGET_H
+#define SEISCOMP_GUI_MAPWIDGET_H
 
 
 #include <seiscomp/gui/map/canvas.h>

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_PLOT_DATAY_H__
-#define SEISCOMP_GUI_PLOT_DATAY_H__
+#ifndef SEISCOMP_GUI_PLOT_DATAY_H
+#define SEISCOMP_GUI_PLOT_DATAY_H
 
 
 #include <seiscomp/gui/plot/abstractdataset.h>

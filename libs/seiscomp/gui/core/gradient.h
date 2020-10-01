@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_CORE_GRADIENT_H__
-#define SEISCOMP_GUI_CORE_GRADIENT_H__
+#ifndef SEISCOMP_GUI_CORE_GRADIENT_H
+#define SEISCOMP_GUI_CORE_GRADIENT_H
 
 #include <seiscomp/gui/qt.h>
 

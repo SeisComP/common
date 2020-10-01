@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_CONNECTIONDIALOG_H__
-#define SEISCOMP_GUI_CONNECTIONDIALOG_H__
+#ifndef SEISCOMP_GUI_CONNECTIONDIALOG_H
+#define SEISCOMP_GUI_CONNECTIONDIALOG_H
 
 #include <seiscomp/gui/core/ui_connectiondialog.h>
 #include <seiscomp/gui/qt.h>

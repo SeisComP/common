@@ -17,8 +17,8 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEISCOMP_GUI_MAPS_H__
-#define SEISCOMP_GUI_MAPS_H__
+#ifndef SEISCOMP_GUI_MAPS_H
+#define SEISCOMP_GUI_MAPS_H
 
 
 #include <seiscomp/gui/qt.h>
