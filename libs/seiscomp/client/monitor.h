@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_UTILS_MONITOR_H__
-#define SEISCOMP_UTILS_MONITOR_H__
+#ifndef SEISCOMP_UTILS_MONITOR_H
+#define SEISCOMP_UTILS_MONITOR_H
 
 #include <seiscomp/client.h>
 #include <seiscomp/core/datetime.h>

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_MATH_WINDOWS_TRIANGLE_H__
-#define SEISCOMP_MATH_WINDOWS_TRIANGLE_H__
+#ifndef SEISCOMP_MATH_WINDOWS_TRIANGLE_H
+#define SEISCOMP_MATH_WINDOWS_TRIANGLE_H
 
 
 #include "../windowfunc.h"

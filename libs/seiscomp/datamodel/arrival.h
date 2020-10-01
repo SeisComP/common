@@ -23,8 +23,8 @@
 
 
 #include <seiscomp/datamodel/creationinfo.h>
-#include <string>
 #include <seiscomp/datamodel/phase.h>
+#include <string>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
 
@@ -103,7 +103,7 @@ class SC_SYSTEM_CORE_API Arrival : public Object {
 		Arrival(const Arrival& other);
 
 		//! Destructor
-		~Arrival();
+		~Arrival() override;
 	
 
 	// ------------------------------------------------------------------

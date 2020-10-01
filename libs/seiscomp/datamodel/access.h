@@ -95,7 +95,7 @@ class SC_SYSTEM_CORE_API Access : public Object {
 		Access(const Access& other);
 
 		//! Destructor
-		~Access();
+		~Access() override;
 	
 
 	// ------------------------------------------------------------------

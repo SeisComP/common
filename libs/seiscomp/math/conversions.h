@@ -19,8 +19,8 @@
 
 
 
-#ifndef __MATH_MT_CONVERSIONS_H__
-#define __MATH_MT_CONVERSIONS_H__
+#ifndef SEISCOMP_MATH_MT_CONVERSIONS_H
+#define SEISCOMP_MATH_MT_CONVERSIONS_H
 
 
 #include <seiscomp/math/vector3.h>

@@ -22,10 +22,10 @@
 #define SEISCOMP_DATAMODEL_MAGNITUDE_H
 
 
+#include <seiscomp/datamodel/types.h>
+#include <string>
 #include <vector>
 #include <seiscomp/datamodel/realquantity.h>
-#include <string>
-#include <seiscomp/datamodel/types.h>
 #include <seiscomp/datamodel/creationinfo.h>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/stationmagnitudecontribution.h>
@@ -75,7 +75,7 @@ class SC_SYSTEM_CORE_API Magnitude : public PublicObject {
 		Magnitude(const std::string& publicID);
 
 		//! Destructor
-		~Magnitude();
+		~Magnitude() override;
 	
 
 	// ------------------------------------------------------------------

@@ -53,7 +53,7 @@ class SC_SYSTEM_CORE_API JournalEntry : public Object {
 		JournalEntry(const JournalEntry& other);
 
 		//! Destructor
-		~JournalEntry();
+		~JournalEntry() override;
 	
 
 	// ------------------------------------------------------------------

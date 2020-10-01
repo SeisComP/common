@@ -22,11 +22,11 @@
 #define SEISCOMP_DATAMODEL_FOCALMECHANISM_H
 
 
-#include <vector>
-#include <string>
 #include <seiscomp/datamodel/types.h>
-#include <seiscomp/datamodel/principalaxes.h>
 #include <seiscomp/datamodel/nodalplanes.h>
+#include <string>
+#include <seiscomp/datamodel/principalaxes.h>
+#include <vector>
 #include <seiscomp/datamodel/creationinfo.h>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/notifier.h>
@@ -75,7 +75,7 @@ class SC_SYSTEM_CORE_API FocalMechanism : public PublicObject {
 		FocalMechanism(const std::string& publicID);
 
 		//! Destructor
-		~FocalMechanism();
+		~FocalMechanism() override;
 	
 
 	// ------------------------------------------------------------------

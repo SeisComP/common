@@ -19,8 +19,8 @@
 
 
 
-#ifndef __SC_LOGGING_PUBLISHLOC_H__
-#define __SC_LOGGING_PUBLISHLOC_H__
+#ifndef SC_LOGGING_PUBLISHLOC_H
+#define SC_LOGGING_PUBLISHLOC_H
 
 #include <seiscomp/logging/common.h>
 #include <stdarg.h>

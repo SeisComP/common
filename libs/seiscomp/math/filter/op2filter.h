@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_MATH_OP2FILTER__
-#define SEISCOMP_MATH_OP2FILTER__
+#ifndef SEISCOMP_MATH_OP2FILTER
+#define SEISCOMP_MATH_OP2FILTER
 
 
 #include <seiscomp/math/filter.h>

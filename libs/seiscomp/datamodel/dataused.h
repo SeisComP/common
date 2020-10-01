@@ -57,7 +57,7 @@ class SC_SYSTEM_CORE_API DataUsed : public Object {
 		DataUsed(const DataUsed& other);
 
 		//! Destructor
-		~DataUsed();
+		~DataUsed() override;
 	
 
 	// ------------------------------------------------------------------

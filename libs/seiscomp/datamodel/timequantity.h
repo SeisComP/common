@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_TIMEQUANTITY_H
 
 
-#include <seiscomp/datamodel/timepdf1d.h>
 #include <seiscomp/core/datetime.h>
+#include <seiscomp/datamodel/timepdf1d.h>
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core.h>
 #include <seiscomp/core/exceptions.h>
@@ -67,7 +67,7 @@ class SC_SYSTEM_CORE_API TimeQuantity : public Core::BaseObject {
 		             const OPT(TimePDF1D)& pdf = Seiscomp::Core::None);
 
 		//! Destructor
-		~TimeQuantity();
+		~TimeQuantity() override;
 	
 
 	// ------------------------------------------------------------------

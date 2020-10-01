@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDSTREAM_SDSARCHIVE_H__
-#define SEISCOMP_IO_RECORDSTREAM_SDSARCHIVE_H__
+#ifndef SEISCOMP_IO_RECORDSTREAM_SDSARCHIVE_H
+#define SEISCOMP_IO_RECORDSTREAM_SDSARCHIVE_H
 
 
 #include <iostream>

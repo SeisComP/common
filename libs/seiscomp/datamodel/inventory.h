@@ -71,7 +71,7 @@ class SC_SYSTEM_CORE_API Inventory : public PublicObject {
 		Inventory(const Inventory& other);
 
 		//! Destructor
-		~Inventory();
+		~Inventory() override;
 	
 
 	// ------------------------------------------------------------------

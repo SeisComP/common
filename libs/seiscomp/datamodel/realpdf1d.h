@@ -76,7 +76,7 @@ class SC_SYSTEM_CORE_API RealPDF1D : public Core::BaseObject {
 		RealPDF1D(const RealPDF1D& other);
 
 		//! Destructor
-		~RealPDF1D();
+		~RealPDF1D() override;
 	
 
 	// ------------------------------------------------------------------

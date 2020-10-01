@@ -52,7 +52,7 @@ class SC_SYSTEM_CORE_API TimeArray : public Core::BaseObject {
 		TimeArray(const TimeArray& other);
 
 		//! Destructor
-		~TimeArray();
+		~TimeArray() override;
 	
 
 	// ------------------------------------------------------------------

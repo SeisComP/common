@@ -94,7 +94,7 @@ class SC_SYSTEM_CORE_API EventDescription : public Object {
 		                 EventDescriptionType type);
 
 		//! Destructor
-		~EventDescription();
+		~EventDescription() override;
 	
 
 	// ------------------------------------------------------------------

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SC_LOGGING_CHANNEL_H__
-#define __SC_LOGGING_CHANNEL_H__
+#ifndef SC_LOGGING_CHANNEL_H
+#define SC_LOGGING_CHANNEL_H
 
 #include <string>
 #include <map>

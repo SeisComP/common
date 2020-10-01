@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_OPERATOR_TRANSFORMATION_H__
-#define SEISCOMP_PROCESSING_OPERATOR_TRANSFORMATION_H__
+#ifndef SEISCOMP_PROCESSING_OPERATOR_TRANSFORMATION_H
+#define SEISCOMP_PROCESSING_OPERATOR_TRANSFORMATION_H
 
 
 #include <seiscomp/core/datetime.h>

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef _SEISCOMP_FILTERING_TAPER_H_
-#define _SEISCOMP_FILTERING_TAPER_H_
+#ifndef SEISCOMP_FILTERING_TAPER_H
+#define SEISCOMP_FILTERING_TAPER_H
 
 #include<vector>
 

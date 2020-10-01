@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SC_CORE_TIMESPAN_H__
-#define SC_CORE_TIMESPAN_H__
+#ifndef SC_CORE_TIMESPAN_H
+#define SC_CORE_TIMESPAN_H
 
 #include<seiscomp/core.h>
 #include<seiscomp/core/datetime.h>

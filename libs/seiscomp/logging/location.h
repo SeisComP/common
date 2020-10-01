@@ -19,8 +19,8 @@
 
 
 
-#ifndef __SC_LOGGING_LOCATION_H__
-#define __SC_LOGGING_LOCATION_H__
+#ifndef SC_LOGGING_LOCATION_H
+#define SC_LOGGING_LOCATION_H
 
 #include <string>
 

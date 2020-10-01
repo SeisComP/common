@@ -57,7 +57,7 @@ class SC_SYSTEM_CORE_API DataAvailability : public PublicObject {
 		DataAvailability(const DataAvailability& other);
 
 		//! Destructor
-		~DataAvailability();
+		~DataAvailability() override;
 	
 
 	// ------------------------------------------------------------------

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CLIENT_PACKET_H__
-#define SEISCOMP_CLIENT_PACKET_H__
+#ifndef SEISCOMP_CLIENT_PACKET_H
+#define SEISCOMP_CLIENT_PACKET_H
 
 
 #include <seiscomp/core/message.h>

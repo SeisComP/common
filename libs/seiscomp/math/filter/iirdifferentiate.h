@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IIRDIFFERENTIATE_H__
-#define SEISCOMP_IIRDIFFERENTIATE_H__
+#ifndef SEISCOMP_IIRDIFFERENTIATE_H
+#define SEISCOMP_IIRDIFFERENTIATE_H
 
 #include<vector>
 #include <seiscomp/math/filter.h>

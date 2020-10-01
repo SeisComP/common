@@ -53,7 +53,7 @@ class SC_SYSTEM_CORE_API Config : public PublicObject {
 		Config(const Config& other);
 
 		//! Destructor
-		~Config();
+		~Config() override;
 	
 
 	// ------------------------------------------------------------------

@@ -84,7 +84,7 @@ class SC_SYSTEM_CORE_API RouteSeedlink : public Object {
 		RouteSeedlink(const RouteSeedlink& other);
 
 		//! Destructor
-		~RouteSeedlink();
+		~RouteSeedlink() override;
 	
 
 	// ------------------------------------------------------------------

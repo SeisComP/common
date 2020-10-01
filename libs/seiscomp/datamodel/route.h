@@ -101,7 +101,7 @@ class SC_SYSTEM_CORE_API Route : public PublicObject {
 		Route(const std::string& publicID);
 
 		//! Destructor
-		~Route();
+		~Route() override;
 	
 
 	// ------------------------------------------------------------------

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_QUAKELINK_CONNECTION_H__
-#define SEISCOMP_IO_QUAKELINK_CONNECTION_H__
+#ifndef SEISCOMP_IO_QUAKELINK_CONNECTION_H
+#define SEISCOMP_IO_QUAKELINK_CONNECTION_H
 
 
 #include <seiscomp/core/baseobject.h>

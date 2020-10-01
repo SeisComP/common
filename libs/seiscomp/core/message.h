@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_MESSAGE_H__
-#define SEISCOMP_CORE_MESSAGE_H__
+#ifndef SEISCOMP_CORE_MESSAGE_H
+#define SEISCOMP_CORE_MESSAGE_H
 
 #include <seiscomp/core/baseobject.h>
 

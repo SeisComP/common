@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef _SEISCOMP_MATH_FILTER_ABS_H_
-#define _SEISCOMP_MATH_FILTER_ABS_H_
+#ifndef SEISCOMP_MATH_FILTER_ABS_H
+#define SEISCOMP_MATH_FILTER_ABS_H
 
 #include <seiscomp/math/filter.h>
 

@@ -19,8 +19,8 @@
 
 
 
-#ifndef _SEISCOMP_TTT_LIBTAU_H_
-#define _SEISCOMP_TTT_LIBTAU_H_
+#ifndef SEISCOMP_TTT_LIBTAU_H
+#define SEISCOMP_TTT_LIBTAU_H
 
 
 #include <string>

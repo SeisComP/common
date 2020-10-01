@@ -78,7 +78,7 @@ class SC_SYSTEM_CORE_API RealQuantity : public Core::BaseObject {
 		             const OPT(RealPDF1D)& pdf = Seiscomp::Core::None);
 
 		//! Destructor
-		~RealQuantity();
+		~RealQuantity() override;
 	
 
 	// ------------------------------------------------------------------

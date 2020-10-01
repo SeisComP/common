@@ -80,7 +80,7 @@ class SC_SYSTEM_CORE_API WaveformStreamID : public Core::BaseObject {
 		                 const std::string& resourceURI);
 
 		//! Destructor
-		~WaveformStreamID();
+		~WaveformStreamID() override;
 	
 
 	// ------------------------------------------------------------------

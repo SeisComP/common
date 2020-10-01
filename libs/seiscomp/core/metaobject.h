@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_METAOBJECT_H__
-#define SEISCOMP_CORE_METAOBJECT_H__
+#ifndef SEISCOMP_CORE_METAOBJECT_H
+#define SEISCOMP_CORE_METAOBJECT_H
 
 #include <seiscomp/core/rtti.h>
 #include <seiscomp/core/datetime.h>

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_BASEOBJECT_H__
-#define SEISCOMP_CORE_BASEOBJECT_H__
+#ifndef SEISCOMP_CORE_BASEOBJECT_H
+#define SEISCOMP_CORE_BASEOBJECT_H
 
 namespace Seiscomp {
 namespace Core {

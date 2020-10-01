@@ -41,7 +41,7 @@ DEFINE_SMARTPOINTER(FileBuffer);
 class SC_SYSTEM_CORE_API FileBuffer : public Buffer {
 	public:
 		FileBuffer(int max_size = 0x7fffffff);
-		~FileBuffer();
+		~FileBuffer() override;
 
 	public:
 		bool open(const std::string &fn, const char *mode = "rb");

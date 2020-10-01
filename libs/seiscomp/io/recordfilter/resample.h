@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDFILTER_RESAMPLE_H__
-#define SEISCOMP_IO_RECORDFILTER_RESAMPLE_H__
+#ifndef SEISCOMP_IO_RECORDFILTER_RESAMPLE_H
+#define SEISCOMP_IO_RECORDFILTER_RESAMPLE_H
 
 
 #include <seiscomp/io/recordfilter.h>

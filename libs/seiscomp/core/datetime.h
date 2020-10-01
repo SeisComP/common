@@ -17,8 +17,8 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEISCOMP_CORE_DATETIME_H__
-#define SEISCOMP_CORE_DATETIME_H__
+#ifndef SEISCOMP_CORE_DATETIME_H
+#define SEISCOMP_CORE_DATETIME_H
 
 #include <seiscomp/core.h>
 

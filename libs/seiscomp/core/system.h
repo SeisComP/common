@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_SYSTEM_H__
-#define SEISCOMP_CORE_SYSTEM_H__
+#ifndef SEISCOMP_CORE_SYSTEM_H
+#define SEISCOMP_CORE_SYSTEM_H
 
 #include <cstdlib>
 #include <string>

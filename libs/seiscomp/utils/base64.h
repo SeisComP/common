@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_UTILS_BASE64_H__
-#define SEISCOMP_UTILS_BASE64_H__
+#ifndef SEISCOMP_UTILS_BASE64_H
+#define SEISCOMP_UTILS_BASE64_H
 
 #include <seiscomp/core.h>
 #include <string>

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_BITSET_H__
-#define SEISCOMP_CORE_BITSET_H__
+#ifndef SEISCOMP_CORE_BITSET_H
+#define SEISCOMP_CORE_BITSET_H
 
 
 #include <seiscomp/core/baseobject.h>

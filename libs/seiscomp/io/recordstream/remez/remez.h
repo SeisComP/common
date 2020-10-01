@@ -16,8 +16,8 @@
  * conditions contained in a signed written agreement between you and      *
  * gempa GmbH.                                                             *
  ***************************************************************************/
-#ifndef __REMEZ_H__
-#define __REMEZ_H__
+#ifndef REMEZ_H
+#define REMEZ_H
 
 #define BANDPASS       1
 #define DIFFERENTIATOR 2

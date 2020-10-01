@@ -84,7 +84,7 @@ class SC_SYSTEM_CORE_API DataAttributeExtent : public Object {
 		DataAttributeExtent(const DataAttributeExtent& other);
 
 		//! Destructor
-		~DataAttributeExtent();
+		~DataAttributeExtent() override;
 	
 
 	// ------------------------------------------------------------------

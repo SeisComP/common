@@ -332,7 +332,7 @@ class SC_SYSTEM_CORE_API HttpSession : public ClientSession {
 	public:
 		HttpSession(Device *sock, const char *protocol,
 		            const char *server = nullptr);
-		~HttpSession();
+		~HttpSession() override;
 
 
 	public:

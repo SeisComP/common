@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_SEISMOLOGY_REGIONS_H__
-#define SEISCOMP_SEISMOLOGY_REGIONS_H__
+#ifndef SEISCOMP_SEISMOLOGY_REGIONS_H
+#define SEISCOMP_SEISMOLOGY_REGIONS_H
 
 #include <seiscomp/core.h>
 #include <seiscomp/seismology/regions/polygon.h>

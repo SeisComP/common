@@ -84,7 +84,7 @@ class SC_SYSTEM_CORE_API FocalMechanismReference : public Object {
 		FocalMechanismReference(const std::string& focalMechanismID);
 
 		//! Destructor
-		~FocalMechanismReference();
+		~FocalMechanismReference() override;
 	
 
 	// ------------------------------------------------------------------

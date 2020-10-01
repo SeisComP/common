@@ -95,7 +95,7 @@ class SC_SYSTEM_CORE_API StationGroup : public PublicObject {
 		StationGroup(const std::string& publicID);
 
 		//! Destructor
-		~StationGroup();
+		~StationGroup() override;
 	
 
 	// ------------------------------------------------------------------

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CLIENT_CONFIG_H__
-#define SEISCOMP_CLIENT_CONFIG_H__
+#ifndef SEISCOMP_CLIENT_CONFIG_H
+#define SEISCOMP_CLIENT_CONFIG_H
 
 
 #include <seiscomp/datamodel/config.h>

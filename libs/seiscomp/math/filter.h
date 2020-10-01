@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_FILTERING_FILTER_H__
-#define SEISCOMP_FILTERING_FILTER_H__
+#ifndef SEISCOMP_FILTERING_FILTER_H
+#define SEISCOMP_FILTERING_FILTER_H
 
 #include <vector>
 #include <seiscomp/core/baseobject.h>

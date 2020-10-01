@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_SYSTEM_HOSTINFO_H__
-#define SEISCOMP_SYSTEM_HOSTINFO_H__
+#ifndef SEISCOMP_SYSTEM_HOSTINFO_H
+#define SEISCOMP_SYSTEM_HOSTINFO_H
 
 
 #include <seiscomp/core.h>

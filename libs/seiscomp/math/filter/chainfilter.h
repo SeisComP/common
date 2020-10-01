@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_MATH_CHAINFILTER__
-#define SEISCOMP_MATH_CHAINFILTER__
+#ifndef SEISCOMP_MATH_CHAINFILTER
+#define SEISCOMP_MATH_CHAINFILTER
 
 
 #include <seiscomp/math/filter.h>

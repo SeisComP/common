@@ -56,7 +56,7 @@ class SC_SYSTEM_CORE_API PrincipalAxes : public Core::BaseObject {
 		PrincipalAxes(const PrincipalAxes& other);
 
 		//! Destructor
-		~PrincipalAxes();
+		~PrincipalAxes() override;
 	
 
 	// ------------------------------------------------------------------

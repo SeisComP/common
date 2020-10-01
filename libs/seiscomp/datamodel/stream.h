@@ -96,7 +96,7 @@ class SC_SYSTEM_CORE_API Stream : public PublicObject {
 		Stream(const std::string& publicID);
 
 		//! Destructor
-		~Stream();
+		~Stream() override;
 	
 
 	// ------------------------------------------------------------------

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_MATH_GEO_COORD_H__
-#define SEISCOMP_MATH_GEO_COORD_H__
+#ifndef SEISCOMP_MATH_GEO_COORD_H
+#define SEISCOMP_MATH_GEO_COORD_H
 
 #include <seiscomp/core/baseobject.h>
 #include <string>

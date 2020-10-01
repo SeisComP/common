@@ -36,7 +36,7 @@ class FileDescriptor : public Device {
 		FileDescriptor();
 		FileDescriptor(int fd);
 
-		~FileDescriptor();
+		~FileDescriptor() override;
 
 	public:
 		void close() override;

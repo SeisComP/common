@@ -55,7 +55,7 @@ class SC_SYSTEM_CORE_API ArclinkLog : public PublicObject {
 		ArclinkLog(const ArclinkLog& other);
 
 		//! Destructor
-		~ArclinkLog();
+		~ArclinkLog() override;
 	
 
 	// ------------------------------------------------------------------

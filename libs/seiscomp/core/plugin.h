@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_PLUGIN_H__
-#define SEISCOMP_CORE_PLUGIN_H__
+#ifndef SEISCOMP_CORE_PLUGIN_H
+#define SEISCOMP_CORE_PLUGIN_H
 
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core/version.h>

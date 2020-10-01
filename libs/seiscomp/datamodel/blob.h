@@ -51,7 +51,7 @@ class SC_SYSTEM_CORE_API Blob : public Core::BaseObject {
 		Blob(const Blob& other);
 
 		//! Destructor
-		~Blob();
+		~Blob() override;
 	
 
 	// ------------------------------------------------------------------

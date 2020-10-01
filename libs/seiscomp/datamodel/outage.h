@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_OUTAGE_H
 
 
+#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/core/datetime.h>
 #include <string>
-#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
 
@@ -85,7 +85,7 @@ class SC_SYSTEM_CORE_API Outage : public Object {
 		Outage(const Outage& other);
 
 		//! Destructor
-		~Outage();
+		~Outage() override;
 	
 
 	// ------------------------------------------------------------------

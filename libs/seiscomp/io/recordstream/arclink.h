@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDSTREAM_ARCLINK_H__
-#define SEISCOMP_IO_RECORDSTREAM_ARCLINK_H__
+#ifndef SEISCOMP_IO_RECORDSTREAM_ARCLINK_H
+#define SEISCOMP_IO_RECORDSTREAM_ARCLINK_H
 
 #include <string>
 #include <set>

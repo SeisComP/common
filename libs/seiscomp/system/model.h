@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CONFIGURATION_MODEL_H__
-#define SEISCOMP_CONFIGURATION_MODEL_H__
+#ifndef SEISCOMP_CONFIGURATION_MODEL_H
+#define SEISCOMP_CONFIGURATION_MODEL_H
 
 
 #include <seiscomp/core/baseobject.h>

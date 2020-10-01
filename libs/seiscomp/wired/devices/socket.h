@@ -155,7 +155,7 @@ class SC_SYSTEM_CORE_API Socket : public Device {
 	public:
 		Socket();
 		Socket(int fd, const std::string &hostname = "localhost", port_t port = 0);
-		~Socket();
+		~Socket() override;
 
 
 	public:

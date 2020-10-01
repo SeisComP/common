@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_DATALOGGER_H
 
 
-#include <vector>
 #include <seiscomp/datamodel/blob.h>
+#include <vector>
 #include <string>
 #include <seiscomp/datamodel/dataloggercalibration.h>
 #include <seiscomp/datamodel/decimation.h>
@@ -95,7 +95,7 @@ class SC_SYSTEM_CORE_API Datalogger : public PublicObject {
 		Datalogger(const std::string& publicID);
 
 		//! Destructor
-		~Datalogger();
+		~Datalogger() override;
 	
 
 	// ------------------------------------------------------------------

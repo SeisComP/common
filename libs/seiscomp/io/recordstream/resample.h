@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_RECORDSTREAM_RESAMPLE_H__
-#define SEISCOMP_RECORDSTREAM_RESAMPLE_H__
+#ifndef SEISCOMP_RECORDSTREAM_RESAMPLE_H
+#define SEISCOMP_RECORDSTREAM_RESAMPLE_H
 
 #include <sstream>
 #include <map>

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef _SEISCOMP_MATH_FILTER_RCA_H_
-#define _SEISCOMP_MATH_FILTER_RCA_H_
+#ifndef SEISCOMP_MATH_FILTER_RCA_H
+#define SEISCOMP_MATH_FILTER_RCA_H
 
 #include<vector>
 #include<seiscomp/math/filter.h>

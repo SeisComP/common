@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_DEFS_H__
-#define SEISCOMP_CORE_DEFS_H__
+#ifndef SEISCOMP_CORE_DEFS_H
+#define SEISCOMP_CORE_DEFS_H
 
 #include <boost/intrusive_ptr.hpp>
 

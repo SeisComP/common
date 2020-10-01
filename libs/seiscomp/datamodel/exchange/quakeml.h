@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_QML_XML_H__
-#define SEISCOMP_QML_XML_H__
+#ifndef SEISCOMP_QML_XML_H
+#define SEISCOMP_QML_XML_H
 
 #include <string>
 

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SC_CORE_TYPEDARRAY_H__
-#define SC_CORE_TYPEDARRAY_H__
+#ifndef SC_CORE_TYPEDARRAY_H
+#define SC_CORE_TYPEDARRAY_H
 
 #include <vector>
 #include <string>

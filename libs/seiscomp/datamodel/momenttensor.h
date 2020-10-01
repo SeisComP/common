@@ -22,13 +22,13 @@
 #define SEISCOMP_DATAMODEL_MOMENTTENSOR_H
 
 
-#include <seiscomp/datamodel/sourcetimefunction.h>
-#include <vector>
-#include <seiscomp/datamodel/realquantity.h>
-#include <string>
-#include <seiscomp/datamodel/tensor.h>
 #include <seiscomp/datamodel/types.h>
+#include <string>
+#include <seiscomp/datamodel/sourcetimefunction.h>
+#include <seiscomp/datamodel/realquantity.h>
+#include <seiscomp/datamodel/tensor.h>
 #include <seiscomp/datamodel/creationinfo.h>
+#include <vector>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/momenttensorphasesetting.h>
 #include <seiscomp/datamodel/notifier.h>
@@ -74,7 +74,7 @@ class SC_SYSTEM_CORE_API MomentTensor : public PublicObject {
 		MomentTensor(const std::string& publicID);
 
 		//! Destructor
-		~MomentTensor();
+		~MomentTensor() override;
 	
 
 	// ------------------------------------------------------------------

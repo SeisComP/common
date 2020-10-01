@@ -22,11 +22,11 @@
 #define SEISCOMP_DATAMODEL_STATIONMAGNITUDE_H
 
 
+#include <string>
 #include <vector>
 #include <seiscomp/datamodel/realquantity.h>
-#include <string>
-#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/datamodel/creationinfo.h>
+#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>
@@ -67,7 +67,7 @@ class SC_SYSTEM_CORE_API StationMagnitude : public PublicObject {
 		StationMagnitude(const std::string& publicID);
 
 		//! Destructor
-		~StationMagnitude();
+		~StationMagnitude() override;
 	
 
 	// ------------------------------------------------------------------

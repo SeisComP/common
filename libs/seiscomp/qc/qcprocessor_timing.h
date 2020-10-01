@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_QCPROCESSORTIMING_H__
-#define SEISCOMP_PROCESSING_QCPROCESSORTIMING_H__
+#ifndef SEISCOMP_PROCESSING_QCPROCESSORTIMING_H
+#define SEISCOMP_PROCESSING_QCPROCESSORTIMING_H
 
 
 #include <seiscomp/qc/qcprocessor.h>

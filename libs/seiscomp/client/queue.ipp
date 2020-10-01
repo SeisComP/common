@@ -17,8 +17,8 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEISCOMP_CLIENT_QUEUE_IPP__
-#define SEISCOMP_CLIENT_QUEUE_IPP__
+#ifndef SEISCOMP_CLIENT_QUEUE_IPP
+#define SEISCOMP_CLIENT_QUEUE_IPP
 
 
 #include <seiscomp/core/exceptions.h>

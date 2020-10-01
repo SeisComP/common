@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_UTILS_REPLACE_H__
-#define SEISCOMP_UTILS_REPLACE_H__
+#ifndef SEISCOMP_UTILS_REPLACE_H
+#define SEISCOMP_UTILS_REPLACE_H
 
 #include <string>
 #include <seiscomp/core.h>

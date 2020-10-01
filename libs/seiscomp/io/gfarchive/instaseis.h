@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_GFARCHIVE_INSTASEIS_H__
-#define SEISCOMP_IO_GFARCHIVE_INSTASEIS_H__
+#ifndef SEISCOMP_IO_GFARCHIVE_INSTASEIS_H
+#define SEISCOMP_IO_GFARCHIVE_INSTASEIS_H
 
 
 #include <seiscomp/io/gfarchive.h>

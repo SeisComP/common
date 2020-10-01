@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SC_MATH_MEAN_H__
-#define __SC_MATH_MEAN_H__
+#ifndef SEISCOMP_MATH_MEAN_H
+#define SEISCOMP_MATH_MEAN_H
 
 #include<vector>
 #include <seiscomp/core/typedarray.h>

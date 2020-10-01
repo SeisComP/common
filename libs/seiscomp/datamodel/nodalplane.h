@@ -57,7 +57,7 @@ class SC_SYSTEM_CORE_API NodalPlane : public Core::BaseObject {
 		NodalPlane(const NodalPlane& other);
 
 		//! Destructor
-		~NodalPlane();
+		~NodalPlane() override;
 	
 
 	// ------------------------------------------------------------------

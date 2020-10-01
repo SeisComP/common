@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_UTILS_UNITS_H__
-#define SEISCOMP_UTILS_UNITS_H__
+#ifndef SEISCOMP_UTILS_UNITS_H
+#define SEISCOMP_UTILS_UNITS_H
 
 
 #include <seiscomp/core.h>

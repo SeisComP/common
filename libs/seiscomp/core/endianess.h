@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_ENDIANESS_H__
-#define SEISCOMP_CORE_ENDIANESS_H__
+#ifndef SEISCOMP_CORE_ENDIANESS_H
+#define SEISCOMP_CORE_ENDIANESS_H
 
 
 #include <iostream>

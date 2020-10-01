@@ -54,7 +54,7 @@ class SC_SYSTEM_CORE_API SourceTimeFunction : public Core::BaseObject {
 		SourceTimeFunction(const SourceTimeFunction& other);
 
 		//! Destructor
-		~SourceTimeFunction();
+		~SourceTimeFunction() override;
 	
 
 	// ------------------------------------------------------------------

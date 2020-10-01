@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef _SEISCOMP_MATH_FILTER_MINMAX_H_
-#define _SEISCOMP_MATH_FILTER_MINMAX_H_
+#ifndef SEISCOMP_MATH_FILTER_MINMAX_H
+#define SEISCOMP_MATH_FILTER_MINMAX_H
 
 
 #include<vector>

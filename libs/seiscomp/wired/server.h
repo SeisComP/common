@@ -41,7 +41,7 @@ class SC_SYSTEM_CORE_API Server : public Reactor {
 		Server();
 
 		//! D'tor
-		~Server();
+		~Server() override;
 
 
 	// ----------------------------------------------------------------------
@@ -56,14 +56,14 @@ class SC_SYSTEM_CORE_API Server : public Reactor {
 		virtual bool init();
 
 		//! Shutdown the server causing the run loop to terminate.
-		virtual void shutdown();
+		virtual void shutdown() override;
 
 		//! Clean up all sessions and sockets
-		virtual void clear();
+		virtual void clear() override;
 
 		//! Adds a session to a server
-		virtual bool addSession(Session *session);
-		virtual bool removeSession(Session *session);
+		virtual bool addSession(Session *session) override;
+		virtual bool removeSession(Session *session) override;
 
 		/**
 		 * @brief Adds an endpoint session to the server. It will create a

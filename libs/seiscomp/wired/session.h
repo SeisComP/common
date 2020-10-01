@@ -45,13 +45,14 @@ class SC_SYSTEM_CORE_API Session : public Core::BaseObject,
 		//! Protected c'tor
 		Session(Device *dev);
 
+	public:
+		~Session() override;
+
 
 	// ----------------------------------------------------------------------
 	//  Public interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual ~Session();
-
 		void setDevice(Device *dev);
 		Device *device() const;
 

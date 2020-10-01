@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SC_CORE_UNITTESTS_H__
-#define __SC_CORE_UNITTESTS_H__
+#ifndef SEISCOMP_CORE_UNITTESTS_H
+#define SEISCOMP_CORE_UNITTESTS_H
 
 
 #ifdef SEISCOMP_TEST_MODULE

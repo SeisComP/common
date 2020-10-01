@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDFILTER_SPECTRALIZER__
-#define SEISCOMP_IO_RECORDFILTER_SPECTRALIZER__
+#ifndef SEISCOMP_IO_RECORDFILTER_SPECTRALIZER
+#define SEISCOMP_IO_RECORDFILTER_SPECTRALIZER
 
 
 #include <map>

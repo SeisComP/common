@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SC_LOGGING_COMMON_H__
-#define __SC_LOGGING_COMMON_H__
+#ifndef SC_LOGGING_COMMON_H
+#define SC_LOGGING_COMMON_H
 
 
 #include <seiscomp/core.h>

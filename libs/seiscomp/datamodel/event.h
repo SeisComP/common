@@ -85,7 +85,7 @@ class SC_SYSTEM_CORE_API Event : public PublicObject {
 		Event(const std::string& publicID);
 
 		//! Destructor
-		~Event();
+		~Event() override;
 	
 
 	// ------------------------------------------------------------------

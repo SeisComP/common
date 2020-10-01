@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PICKER_STALTA_H__
-#define SEISCOMP_PICKER_STALTA_H__
+#ifndef SEISCOMP_PICKER_STALTA_H
+#define SEISCOMP_PICKER_STALTA_H
 
 #include <vector>
 #include <seiscomp/math/filter.h>

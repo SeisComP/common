@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_UTILS_DATETIME_H__
-#define SEISCOMP_UTILS_DATETIME_H__
+#ifndef SEISCOMP_UTILS_DATETIME_H
+#define SEISCOMP_UTILS_DATETIME_H
 
 
 #include <seiscomp/core/datetime.h>

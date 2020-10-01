@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_UTILS_URL_H__
-#define SEISCOMP_UTILS_URL_H__
+#ifndef SEISCOMP_UTILS_URL_H
+#define SEISCOMP_UTILS_URL_H
 
 
 #include <seiscomp/core.h>

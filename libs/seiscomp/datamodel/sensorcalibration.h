@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_SENSORCALIBRATION_H
 
 
-#include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/blob.h>
+#include <seiscomp/core/datetime.h>
 #include <string>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
@@ -90,7 +90,7 @@ class SC_SYSTEM_CORE_API SensorCalibration : public Object {
 		SensorCalibration(const SensorCalibration& other);
 
 		//! Destructor
-		~SensorCalibration();
+		~SensorCalibration() override;
 	
 
 	// ------------------------------------------------------------------

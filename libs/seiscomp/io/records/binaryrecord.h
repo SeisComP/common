@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SC_IO_BINARYRECORD_H__
-#define __SC_IO_BINARYRECORD_H__
+#ifndef SC_IO_BINARYRECORD_H
+#define SC_IO_BINARYRECORD_H
 
 #include <seiscomp/core/genericrecord.h>
 #include <seiscomp/core.h>

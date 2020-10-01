@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_SERVICES_RECORDSTREAM_RECORDFILE_H__
-#define SEISCOMP_SERVICES_RECORDSTREAM_RECORDFILE_H__
+#ifndef SEISCOMP_SERVICES_RECORDSTREAM_RECORDFILE_H
+#define SEISCOMP_SERVICES_RECORDSTREAM_RECORDFILE_H
 
 #include <string>
 #include <iostream>

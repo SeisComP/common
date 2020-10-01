@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_RECORD_H__
-#define SEISCOMP_CORE_RECORD_H__
+#ifndef SEISCOMP_CORE_RECORD_H
+#define SEISCOMP_CORE_RECORD_H
 
 
 #include <string>

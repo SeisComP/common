@@ -19,8 +19,8 @@
 
 
 
-#ifndef __SC_LOGGING_PUBLISHER_H__
-#define __SC_LOGGING_PUBLISHER_H__
+#ifndef SC_LOGGING_PUBLISHER_H
+#define SC_LOGGING_PUBLISHER_H
 
 #include <seiscomp/logging/common.h>
 #include <seiscomp/logging/node.h>

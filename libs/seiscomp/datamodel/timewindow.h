@@ -63,7 +63,7 @@ class SC_SYSTEM_CORE_API TimeWindow : public Core::BaseObject {
 		           double end);
 
 		//! Destructor
-		~TimeWindow();
+		~TimeWindow() override;
 	
 
 	// ------------------------------------------------------------------

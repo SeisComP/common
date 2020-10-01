@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_GENERICMESSAGE_H__
-#define SEISCOMP_CORE_GENERICMESSAGE_H__
+#ifndef SEISCOMP_CORE_GENERICMESSAGE_H
+#define SEISCOMP_CORE_GENERICMESSAGE_H
 
 #include <seiscomp/core/message.h>
 #include <list>

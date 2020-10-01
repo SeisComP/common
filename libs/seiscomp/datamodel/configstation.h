@@ -92,7 +92,7 @@ class SC_SYSTEM_CORE_API ConfigStation : public PublicObject {
 		ConfigStation(const std::string& publicID);
 
 		//! Destructor
-		~ConfigStation();
+		~ConfigStation() override;
 	
 
 	// ------------------------------------------------------------------

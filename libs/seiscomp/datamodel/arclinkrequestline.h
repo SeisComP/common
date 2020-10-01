@@ -22,10 +22,10 @@
 #define SEISCOMP_DATAMODEL_ARCLINKREQUESTLINE_H
 
 
-#include <seiscomp/core/datetime.h>
-#include <seiscomp/datamodel/arclinkstatusline.h>
-#include <string>
 #include <seiscomp/datamodel/waveformstreamid.h>
+#include <seiscomp/datamodel/arclinkstatusline.h>
+#include <seiscomp/core/datetime.h>
+#include <string>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
 
@@ -88,7 +88,7 @@ class SC_SYSTEM_CORE_API ArclinkRequestLine : public Object {
 		ArclinkRequestLine(const ArclinkRequestLine& other);
 
 		//! Destructor
-		~ArclinkRequestLine();
+		~ArclinkRequestLine() override;
 	
 
 	// ------------------------------------------------------------------

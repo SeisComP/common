@@ -55,7 +55,7 @@ class SC_SYSTEM_CORE_API Routing : public PublicObject {
 		Routing(const Routing& other);
 
 		//! Destructor
-		~Routing();
+		~Routing() override;
 	
 
 	// ------------------------------------------------------------------

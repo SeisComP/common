@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GEO_FEATURESET_H__
-#define SEISCOMP_GEO_FEATURESET_H__
+#ifndef SEISCOMP_GEO_FEATURESET_H
+#define SEISCOMP_GEO_FEATURESET_H
 
 
 #include <seiscomp/core.h>

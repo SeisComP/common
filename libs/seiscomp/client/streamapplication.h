@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CLIENT_STREAM_APPLICATION_H__
-#define SEISCOMP_CLIENT_STREAM_APPLICATION_H__
+#ifndef SEISCOMP_CLIENT_STREAM_APPLICATION_H
+#define SEISCOMP_CLIENT_STREAM_APPLICATION_H
 
 
 #include <seiscomp/client/application.h>

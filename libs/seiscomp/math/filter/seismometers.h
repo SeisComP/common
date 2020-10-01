@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef _SEISCOMP_SEISMOMETERS_H_
-#define _SEISCOMP_SEISMOMETERS_H_
+#ifndef SEISCOMP_SEISMOMETERS_H
+#define SEISCOMP_SEISMOMETERS_H
 
 #include <complex>
 

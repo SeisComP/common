@@ -109,7 +109,7 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 	public:
 		PublicObjectCache();
 		PublicObjectCache(DatabaseArchive* ar);
-		~PublicObjectCache();
+		~PublicObjectCache() override;
 
 	public:
 		void setDatabaseArchive(DatabaseArchive*);
@@ -204,7 +204,7 @@ class SC_SYSTEM_CORE_API PublicObjectRingBuffer : public PublicObjectCache {
 	public:
 		bool setBufferSize(size_t bufferSize);
 
-		bool feed(PublicObject* po);
+		bool feed(PublicObject* po) override;
 
 	private:
 		size_t _bufferSize;
@@ -220,7 +220,7 @@ class SC_SYSTEM_CORE_API PublicObjectTimeSpanBuffer : public PublicObjectCache {
 	public:
 		bool setTimeSpan(const Core::TimeSpan&);
 
-		bool feed(PublicObject* po);
+		bool feed(PublicObject* po) override;
 
 	private:
 		Core::TimeSpan _timeSpan;

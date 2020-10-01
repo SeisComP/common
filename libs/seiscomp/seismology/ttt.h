@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_CORE_SEISMOLOGY_TTT_H__
-#define SEISCOMP_CORE_SEISMOLOGY_TTT_H__
+#ifndef SEISCOMP_CORE_SEISMOLOGY_TTT_H
+#define SEISCOMP_CORE_SEISMOLOGY_TTT_H
 
 
 #include <seiscomp/core/baseobject.h>

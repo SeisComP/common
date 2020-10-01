@@ -57,7 +57,7 @@ class SC_SYSTEM_CORE_API OriginQuality : public Core::BaseObject {
 		OriginQuality(const OriginQuality& other);
 
 		//! Destructor
-		~OriginQuality();
+		~OriginQuality() override;
 	
 
 	// ------------------------------------------------------------------

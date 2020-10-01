@@ -56,7 +56,7 @@ class SC_SYSTEM_CORE_API Observer : public Seiscomp::Core::BaseObject {
 
 	public:
 		//! D'tor
-		~Observer();
+		virtual ~Observer() override;
 
 
 	// ------------------------------------------------------------------
@@ -173,7 +173,7 @@ class SC_SYSTEM_CORE_API Object : public Core::BaseObject {
 
 	public:
 		//! Destructor
-		virtual ~Object();
+		virtual ~Object() override;
 
 
 	// ------------------------------------------------------------------

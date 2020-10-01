@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_QCPROCESSOR_H__
-#define SEISCOMP_PROCESSING_QCPROCESSOR_H__
+#ifndef SEISCOMP_PROCESSING_QCPROCESSOR_H
+#define SEISCOMP_PROCESSING_QCPROCESSOR_H
 
 #include <deque>
 

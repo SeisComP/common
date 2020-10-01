@@ -52,7 +52,7 @@ class SC_SYSTEM_CORE_API Journaling : public PublicObject {
 		Journaling(const Journaling& other);
 
 		//! Destructor
-		~Journaling();
+		~Journaling() override;
 	
 
 	// ------------------------------------------------------------------

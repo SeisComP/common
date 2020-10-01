@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CLIENT_DATABASEMESSAGE_H__
-#define SEISCOMP_CLIENT_DATABASEMESSAGE_H__
+#ifndef SEISCOMP_CLIENT_DATABASEMESSAGE_H
+#define SEISCOMP_CLIENT_DATABASEMESSAGE_H
 
 
 #include <seiscomp/messaging/messages/service.h>

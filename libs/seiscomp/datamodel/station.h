@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_STATION_H
 
 
+#include <seiscomp/datamodel/blob.h>
 #include <vector>
 #include <seiscomp/core/datetime.h>
-#include <seiscomp/datamodel/blob.h>
 #include <string>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/sensorlocation.h>
@@ -98,7 +98,7 @@ class SC_SYSTEM_CORE_API Station : public PublicObject {
 		Station(const std::string& publicID);
 
 		//! Destructor
-		~Station();
+		~Station() override;
 	
 
 	// ------------------------------------------------------------------

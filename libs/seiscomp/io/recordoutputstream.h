@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDOUTPUTSTREAM_H__
-#define SEISCOMP_IO_RECORDOUTPUTSTREAM_H__
+#ifndef SEISCOMP_IO_RECORDOUTPUTSTREAM_H
+#define SEISCOMP_IO_RECORDOUTPUTSTREAM_H
 
 #include <iostream>
 #include <seiscomp/core/interruptible.h>

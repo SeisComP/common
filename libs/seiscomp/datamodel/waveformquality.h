@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_WAVEFORMQUALITY_H
 
 
+#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/core/datetime.h>
 #include <string>
-#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
 
@@ -89,7 +89,7 @@ class SC_SYSTEM_CORE_API WaveformQuality : public Object {
 		WaveformQuality(const WaveformQuality& other);
 
 		//! Destructor
-		~WaveformQuality();
+		~WaveformQuality() override;
 	
 
 	// ------------------------------------------------------------------

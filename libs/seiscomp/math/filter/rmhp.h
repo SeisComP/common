@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef _SEISCOMP_FILTERING_RMHP_H_
-#define _SEISCOMP_FILTERING_RMHP_H_
+#ifndef SEISCOMP_FILTERING_RMHP_H
+#define SEISCOMP_FILTERING_RMHP_H
 
 #include<vector>
 

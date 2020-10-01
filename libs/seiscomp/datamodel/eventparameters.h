@@ -62,7 +62,7 @@ class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
 		EventParameters(const EventParameters& other);
 
 		//! Destructor
-		~EventParameters();
+		~EventParameters() override;
 	
 
 	// ------------------------------------------------------------------
