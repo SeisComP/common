@@ -76,7 +76,7 @@ class SC_SYSTEM_CORE_API IntegerQuantity : public Core::BaseObject {
 		                const OPT(double)& confidenceLevel = Seiscomp::Core::None);
 
 		//! Destructor
-		~IntegerQuantity();
+		~IntegerQuantity() override;
 	
 
 	// ------------------------------------------------------------------

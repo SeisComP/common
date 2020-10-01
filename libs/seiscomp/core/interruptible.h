@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_INTERRUPTIBLE_H__
-#define SEISCOMP_CORE_INTERRUPTIBLE_H__
+#ifndef SEISCOMP_CORE_INTERRUPTIBLE_H
+#define SEISCOMP_CORE_INTERRUPTIBLE_H
 
 
 #include <string>

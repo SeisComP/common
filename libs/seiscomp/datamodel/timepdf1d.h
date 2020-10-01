@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_TIMEPDF1D_H
 
 
-#include <seiscomp/datamodel/timearray.h>
 #include <seiscomp/datamodel/realarray.h>
+#include <seiscomp/datamodel/timearray.h>
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core.h>
 #include <seiscomp/core/exceptions.h>
@@ -77,7 +77,7 @@ class SC_SYSTEM_CORE_API TimePDF1D : public Core::BaseObject {
 		TimePDF1D(const TimePDF1D& other);
 
 		//! Destructor
-		~TimePDF1D();
+		~TimePDF1D() override;
 	
 
 	// ------------------------------------------------------------------

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDSTREAM_SLINK_H__
-#define SEISCOMP_IO_RECORDSTREAM_SLINK_H__
+#ifndef SEISCOMP_IO_RECORDSTREAM_SLINK_H
+#define SEISCOMP_IO_RECORDSTREAM_SLINK_H
 
 #include <string>
 #include <set>

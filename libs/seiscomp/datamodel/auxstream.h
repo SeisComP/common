@@ -88,7 +88,7 @@ class SC_SYSTEM_CORE_API AuxStream : public Object {
 		AuxStream(const AuxStream& other);
 
 		//! Destructor
-		~AuxStream();
+		~AuxStream() override;
 	
 
 	// ------------------------------------------------------------------

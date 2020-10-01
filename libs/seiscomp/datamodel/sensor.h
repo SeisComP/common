@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_SENSOR_H
 
 
-#include <vector>
 #include <seiscomp/datamodel/blob.h>
+#include <vector>
 #include <string>
 #include <seiscomp/datamodel/sensorcalibration.h>
 #include <seiscomp/datamodel/notifier.h>
@@ -93,7 +93,7 @@ class SC_SYSTEM_CORE_API Sensor : public PublicObject {
 		Sensor(const std::string& publicID);
 
 		//! Destructor
-		~Sensor();
+		~Sensor() override;
 	
 
 	// ------------------------------------------------------------------

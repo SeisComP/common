@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_OPTIONAL_H__
-#define SEISCOMP_CORE_OPTIONAL_H__
+#ifndef SEISCOMP_CORE_OPTIONAL_H
+#define SEISCOMP_CORE_OPTIONAL_H
 
 #include <seiscomp/core.h>
 

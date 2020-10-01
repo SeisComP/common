@@ -86,7 +86,7 @@ class SC_SYSTEM_CORE_API Decimation : public Object {
 		Decimation(const Decimation& other);
 
 		//! Destructor
-		~Decimation();
+		~Decimation() override;
 	
 
 	// ------------------------------------------------------------------

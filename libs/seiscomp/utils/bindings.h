@@ -18,6 +18,10 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_UTILS_BINDINGS_H
+#define SEISCOMP_UTILS_BINDINGS_H
+
+
 #include <seiscomp/core/metaobject.h>
 #include <seiscomp/datamodel/station.h>
 #include <seiscomp/datamodel/configmodule.h>
@@ -283,3 +287,6 @@ class SC_SYSTEM_CORE_API Bindings : public Core::BaseObject {
 
 }
 }
+
+
+#endif

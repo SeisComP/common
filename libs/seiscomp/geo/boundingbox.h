@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GEO_BOUNDINGBOX_H__
-#define SEISCOMP_GEO_BOUNDINGBOX_H__
+#ifndef SEISCOMP_GEO_BOUNDINGBOX_H
+#define SEISCOMP_GEO_BOUNDINGBOX_H
 
 
 #include <seiscomp/geo/coordinate.h>

@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_ARCLINKREQUEST_H
 
 
+#include <seiscomp/datamodel/arclinkrequestsummary.h>
 #include <vector>
 #include <seiscomp/core/datetime.h>
-#include <seiscomp/datamodel/arclinkrequestsummary.h>
 #include <string>
 #include <seiscomp/datamodel/arclinkstatusline.h>
 #include <seiscomp/datamodel/arclinkrequestline.h>
@@ -97,7 +97,7 @@ class SC_SYSTEM_CORE_API ArclinkRequest : public PublicObject {
 		ArclinkRequest(const std::string& publicID);
 
 		//! Destructor
-		~ArclinkRequest();
+		~ArclinkRequest() override;
 	
 
 	// ------------------------------------------------------------------

@@ -95,7 +95,7 @@ class SC_SYSTEM_CORE_API AuxSource : public Object {
 		          const OPT(Blob)& remark = Seiscomp::Core::None);
 
 		//! Destructor
-		~AuxSource();
+		~AuxSource() override;
 	
 
 	// ------------------------------------------------------------------

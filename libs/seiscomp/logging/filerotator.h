@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SC_LOGGING_FILEROTATOR_H__
-#define SC_LOGGING_FILEROTATOR_H__
+#ifndef SC_LOGGING_FILEROTATOR_H
+#define SC_LOGGING_FILEROTATOR_H
 
 
 #include <seiscomp/logging/file.h>

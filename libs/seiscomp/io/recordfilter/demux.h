@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDFILTER_DEMUX_H__
-#define SEISCOMP_IO_RECORDFILTER_DEMUX_H__
+#ifndef SEISCOMP_IO_RECORDFILTER_DEMUX_H
+#define SEISCOMP_IO_RECORDFILTER_DEMUX_H
 
 #include <seiscomp/io/recordfilter.h>
 #include <map>

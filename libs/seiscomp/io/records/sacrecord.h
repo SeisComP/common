@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDS_SACRECORD_H__
-#define SEISCOMP_IO_RECORDS_SACRECORD_H__
+#ifndef SEISCOMP_IO_RECORDS_SACRECORD_H
+#define SEISCOMP_IO_RECORDS_SACRECORD_H
 
 
 #include <seiscomp/core/record.h>

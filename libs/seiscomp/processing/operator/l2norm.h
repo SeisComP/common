@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_OPERATOR_L2NORM_H__
-#define SEISCOMP_PROCESSING_OPERATOR_L2NORM_H__
+#ifndef SEISCOMP_PROCESSING_OPERATOR_L2NORM_H
+#define SEISCOMP_PROCESSING_OPERATOR_L2NORM_H
 
 
 namespace Seiscomp {

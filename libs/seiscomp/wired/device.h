@@ -122,7 +122,7 @@ class SC_SYSTEM_CORE_API Device : public Core::BaseObject {
 		Device(int fd);
 
 		//! D'tor
-		virtual ~Device();
+		~Device() override;
 
 
 	// ----------------------------------------------------------------------
@@ -217,8 +217,9 @@ class SC_SYSTEM_CORE_API DeviceGroup : public Core::BaseObject {
 	public:
 		//! C'tor
 		DeviceGroup();
+
 		//! D'tor
-		~DeviceGroup();
+		~DeviceGroup() override;
 
 
 	// ----------------------------------------------------------------------

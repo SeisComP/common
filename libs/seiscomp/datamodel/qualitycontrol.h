@@ -57,7 +57,7 @@ class SC_SYSTEM_CORE_API QualityControl : public PublicObject {
 		QualityControl(const QualityControl& other);
 
 		//! Destructor
-		~QualityControl();
+		~QualityControl() override;
 	
 
 	// ------------------------------------------------------------------

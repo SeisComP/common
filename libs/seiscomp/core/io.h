@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SC_CORE_IO_H__
-#define __SC_CORE_IO_H__
+#ifndef SC_CORE_IO_H
+#define SC_CORE_IO_H
 
 #include <seiscomp/core/baseobject.h>
 

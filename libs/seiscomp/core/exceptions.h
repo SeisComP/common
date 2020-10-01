@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_EXCEPTIONS_H__
-#define SEISCOMP_CORE_EXCEPTIONS_H__
+#ifndef SEISCOMP_CORE_EXCEPTIONS_H
+#define SEISCOMP_CORE_EXCEPTIONS_H
 
 #include <seiscomp/core.h>
 

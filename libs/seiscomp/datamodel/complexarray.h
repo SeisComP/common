@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_COMPLEXARRAY_H
 
 
-#include <vector>
 #include <complex>
+#include <vector>
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core.h>
 #include <seiscomp/core/exceptions.h>
@@ -52,7 +52,7 @@ class SC_SYSTEM_CORE_API ComplexArray : public Core::BaseObject {
 		ComplexArray(const ComplexArray& other);
 
 		//! Destructor
-		~ComplexArray();
+		~ComplexArray() override;
 	
 
 	// ------------------------------------------------------------------

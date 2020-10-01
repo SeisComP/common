@@ -81,7 +81,7 @@ class SC_SYSTEM_CORE_API Setup : public Object {
 		Setup(const Setup& other);
 
 		//! Destructor
-		~Setup();
+		~Setup() override;
 	
 
 	// ------------------------------------------------------------------

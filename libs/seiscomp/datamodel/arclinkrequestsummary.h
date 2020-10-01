@@ -50,7 +50,7 @@ class SC_SYSTEM_CORE_API ArclinkRequestSummary : public Core::BaseObject {
 		ArclinkRequestSummary(const ArclinkRequestSummary& other);
 
 		//! Destructor
-		~ArclinkRequestSummary();
+		~ArclinkRequestSummary() override;
 	
 
 	// ------------------------------------------------------------------

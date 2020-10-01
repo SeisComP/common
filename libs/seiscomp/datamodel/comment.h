@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_COMMENT_H
 
 
-#include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/creationinfo.h>
+#include <seiscomp/core/datetime.h>
 #include <string>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
@@ -100,7 +100,7 @@ class SC_SYSTEM_CORE_API Comment : public Object {
 		Comment(const Comment& other);
 
 		//! Destructor
-		~Comment();
+		~Comment() override;
 	
 
 	// ------------------------------------------------------------------

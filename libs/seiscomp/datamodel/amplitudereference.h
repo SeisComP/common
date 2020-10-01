@@ -84,7 +84,7 @@ class SC_SYSTEM_CORE_API AmplitudeReference : public Object {
 		AmplitudeReference(const std::string& amplitudeID);
 
 		//! Destructor
-		~AmplitudeReference();
+		~AmplitudeReference() override;
 	
 
 	// ------------------------------------------------------------------

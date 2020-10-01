@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CLIENT_PROTOCOL_H__
-#define SEISCOMP_CLIENT_PROTOCOL_H__
+#ifndef SEISCOMP_CLIENT_PROTOCOL_H
+#define SEISCOMP_CLIENT_PROTOCOL_H
 
 
 #include <seiscomp/core/interruptible.h>

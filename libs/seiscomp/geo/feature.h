@@ -17,8 +17,8 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEISCOMP_GEO_FEATURE_H__
-#define SEISCOMP_GEO_FEATURE_H__
+#ifndef SEISCOMP_GEO_FEATURE_H
+#define SEISCOMP_GEO_FEATURE_H
 
 
 #include <seiscomp/core/baseobject.h>

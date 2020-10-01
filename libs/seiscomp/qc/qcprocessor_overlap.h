@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_QCPROCESSOROVERLAP_H__
-#define SEISCOMP_PROCESSING_QCPROCESSOROVERLAP_H__
+#ifndef SEISCOMP_PROCESSING_QCPROCESSOROVERLAP_H
+#define SEISCOMP_PROCESSING_QCPROCESSOROVERLAP_H
 
 
 #include <seiscomp/qc/qcprocessor.h>

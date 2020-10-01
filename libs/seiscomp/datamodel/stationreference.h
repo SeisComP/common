@@ -88,7 +88,7 @@ class SC_SYSTEM_CORE_API StationReference : public Object {
 		StationReference(const std::string& stationID);
 
 		//! Destructor
-		~StationReference();
+		~StationReference() override;
 	
 
 	// ------------------------------------------------------------------

@@ -67,7 +67,7 @@ class SC_SYSTEM_CORE_API Reading : public PublicObject {
 		Reading(const std::string& publicID);
 
 		//! Destructor
-		~Reading();
+		~Reading() override;
 	
 
 	// ------------------------------------------------------------------

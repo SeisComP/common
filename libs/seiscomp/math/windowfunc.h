@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_MATH_WINDOWFUNC_H__
-#define SEISCOMP_MATH_WINDOWFUNC_H__
+#ifndef SEISCOMP_MATH_WINDOWFUNC_H
+#define SEISCOMP_MATH_WINDOWFUNC_H
 
 
 #include <seiscomp/core/baseobject.h>

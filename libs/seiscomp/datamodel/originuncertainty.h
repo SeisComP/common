@@ -63,7 +63,7 @@ class SC_SYSTEM_CORE_API OriginUncertainty : public Core::BaseObject {
 		OriginUncertainty(const OriginUncertainty& other);
 
 		//! Destructor
-		~OriginUncertainty();
+		~OriginUncertainty() override;
 	
 
 	// ------------------------------------------------------------------

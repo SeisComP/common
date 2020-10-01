@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_ARRAYFACTORY_H__
-#define SEISCOMP_CORE_ARRAYFACTORY_H__
+#ifndef SEISCOMP_CORE_ARRAYFACTORY_H
+#define SEISCOMP_CORE_ARRAYFACTORY_H
 
 #include <seiscomp/core/array.h>
 

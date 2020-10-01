@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_SERIALIZATION_H__
-#define SEISCOMP_CORE_SERIALIZATION_H__
+#ifndef SEISCOMP_CORE_SERIALIZATION_H
+#define SEISCOMP_CORE_SERIALIZATION_H
 
 
 #include <functional>

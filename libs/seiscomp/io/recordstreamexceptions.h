@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDSTREAMEXCEPTIONS_H__
-#define SEISCOMP_IO_RECORDSTREAMEXCEPTIONS_H__
+#ifndef SEISCOMP_IO_RECORDSTREAMEXCEPTIONS_H
+#define SEISCOMP_IO_RECORDSTREAMEXCEPTIONS_H
 
 #include <seiscomp/core/exceptions.h>
 #include <seiscomp/core.h>

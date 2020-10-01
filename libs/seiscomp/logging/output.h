@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SC_LOGGING_OUTPUT_H__
-#define __SC_LOGGING_OUTPUT_H__
+#ifndef SC_LOGGING_OUTPUT_H
+#define SC_LOGGING_OUTPUT_H
 
 #include <seiscomp/logging/node.h>
 #include <seiscomp/logging/log.h>

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_STREAMS_FILTER_LZ4_H__
-#define SEISCOMP_IO_STREAMS_FILTER_LZ4_H__
+#ifndef SEISCOMP_IO_STREAMS_FILTER_LZ4_H
+#define SEISCOMP_IO_STREAMS_FILTER_LZ4_H
 
 
 #include <boost/iostreams/categories.hpp>

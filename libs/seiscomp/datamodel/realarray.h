@@ -51,7 +51,7 @@ class SC_SYSTEM_CORE_API RealArray : public Core::BaseObject {
 		RealArray(const RealArray& other);
 
 		//! Destructor
-		~RealArray();
+		~RealArray() override;
 	
 
 	// ------------------------------------------------------------------

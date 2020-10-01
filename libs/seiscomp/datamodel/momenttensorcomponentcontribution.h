@@ -95,7 +95,7 @@ class SC_SYSTEM_CORE_API MomentTensorComponentContribution : public Object {
 		                                  const OPT(double)& snr = Seiscomp::Core::None);
 
 		//! Destructor
-		~MomentTensorComponentContribution();
+		~MomentTensorComponentContribution() override;
 	
 
 	// ------------------------------------------------------------------

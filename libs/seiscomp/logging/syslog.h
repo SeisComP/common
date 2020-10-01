@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SC_LOGGING_SYSLOG_H__
-#define __SC_LOGGING_SYSLOG_H__
+#ifndef SC_LOGGING_SYSLOG_H
+#define SC_LOGGING_SYSLOG_H
 
 #ifndef WIN32
 

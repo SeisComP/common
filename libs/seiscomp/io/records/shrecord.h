@@ -24,8 +24,8 @@
 //! HACK
 
 
-#ifndef SEISCOMP_IO_RECORDS_SHRECORD_H__
-#define SEISCOMP_IO_RECORDS_SHRECORD_H__
+#ifndef SEISCOMP_IO_RECORDS_SHRECORD_H
+#define SEISCOMP_IO_RECORDS_SHRECORD_H
 
 #include <string>
 #include <vector>

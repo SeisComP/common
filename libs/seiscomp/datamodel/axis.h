@@ -58,7 +58,7 @@ class SC_SYSTEM_CORE_API Axis : public Core::BaseObject {
 		Axis(const Axis& other);
 
 		//! Destructor
-		~Axis();
+		~Axis() override;
 	
 
 	// ------------------------------------------------------------------

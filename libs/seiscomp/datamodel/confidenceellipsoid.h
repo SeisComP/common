@@ -104,7 +104,7 @@ class SC_SYSTEM_CORE_API ConfidenceEllipsoid : public Core::BaseObject {
 		ConfidenceEllipsoid(const ConfidenceEllipsoid& other);
 
 		//! Destructor
-		~ConfidenceEllipsoid();
+		~ConfidenceEllipsoid() override;
 	
 
 	// ------------------------------------------------------------------

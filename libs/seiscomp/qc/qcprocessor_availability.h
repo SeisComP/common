@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_QCPROCESSORAVAILABILITY_H__
-#define SEISCOMP_PROCESSING_QCPROCESSORAVAILABILITY_H__
+#ifndef SEISCOMP_PROCESSING_QCPROCESSORAVAILABILITY_H
+#define SEISCOMP_PROCESSING_QCPROCESSORAVAILABILITY_H
 
 
 #include <seiscomp/qc/qcprocessor.h>

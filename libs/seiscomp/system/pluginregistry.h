@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_SYSTEM_PLUGINREGISTRY_H__
-#define SEISCOMP_SYSTEM_PLUGINREGISTRY_H__
+#ifndef SEISCOMP_SYSTEM_PLUGINREGISTRY_H
+#define SEISCOMP_SYSTEM_PLUGINREGISTRY_H
 
 #include <list>
 #include <string>

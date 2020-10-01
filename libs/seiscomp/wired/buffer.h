@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_WIRED_BUFFER_H__
-#define SEISCOMP_WIRED_BUFFER_H__
+#ifndef SEISCOMP_WIRED_BUFFER_H
+#define SEISCOMP_WIRED_BUFFER_H
 
 
 #include <seiscomp/core/baseobject.h>
@@ -41,7 +41,7 @@ struct SC_SYSTEM_CORE_API Buffer : Seiscomp::Core::BaseObject {
 	: encoding(Identity), format(Plain), lock(false),
 	  maxBufferSize(max_size), lastModified(0) {}
 
-	virtual ~Buffer() {}
+	~Buffer() override {}
 
 	enum Encoding {
 		Identity,

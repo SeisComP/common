@@ -84,7 +84,7 @@ class SC_SYSTEM_CORE_API PickReference : public Object {
 		PickReference(const std::string& pickID);
 
 		//! Destructor
-		~PickReference();
+		~PickReference() override;
 	
 
 	// ------------------------------------------------------------------

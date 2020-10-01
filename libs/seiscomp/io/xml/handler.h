@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_XMLHANDLER_H__
-#define SEISCOMP_IO_XMLHANDLER_H__
+#ifndef SEISCOMP_IO_XMLHANDLER_H
+#define SEISCOMP_IO_XMLHANDLER_H
 
 
 #include <seiscomp/io/importer.h>

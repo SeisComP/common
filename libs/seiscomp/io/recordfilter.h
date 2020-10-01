@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDFILTER_H__
-#define SEISCOMP_IO_RECORDFILTER_H__
+#ifndef SEISCOMP_IO_RECORDFILTER_H
+#define SEISCOMP_IO_RECORDFILTER_H
 
 #include <seiscomp/core.h>
 #include <seiscomp/core/genericrecord.h>

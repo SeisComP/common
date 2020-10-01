@@ -60,7 +60,7 @@ class SC_SYSTEM_CORE_API ConfigModule : public PublicObject {
 		ConfigModule(const std::string& publicID);
 
 		//! Destructor
-		~ConfigModule();
+		~ConfigModule() override;
 	
 
 	// ------------------------------------------------------------------

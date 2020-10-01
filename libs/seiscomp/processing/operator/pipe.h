@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_PROCESSING_OPERATOR_PIPE_H__
-#define SEISCOMP_PROCESSING_OPERATOR_PIPE_H__
+#ifndef SEISCOMP_PROCESSING_OPERATOR_PIPE_H
+#define SEISCOMP_PROCESSING_OPERATOR_PIPE_H
 
 
 #include <seiscomp/processing/waveformoperator.h>

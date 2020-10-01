@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_ARCLINK_EXCHANGE_H__
-#define SEISCOMP_DATAMODEL_ARCLINK_EXCHANGE_H__
+#ifndef SEISCOMP_DATAMODEL_ARCLINK_EXCHANGE_H
+#define SEISCOMP_DATAMODEL_ARCLINK_EXCHANGE_H
 
 
 #include <seiscomp/io/xml/importer.h>

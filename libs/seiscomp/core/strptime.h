@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef STRPTIME_H__
-#define STRPTIME_H__
+#ifndef STRPTIME_H
+#define STRPTIME_H
 
 /*
  * Version of "strptime()", for the benefit of OSes that don't have it.

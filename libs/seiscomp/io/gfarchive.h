@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SEISCOMP_IO_GFARCHIVE_H__
-#define __SEISCOMP_IO_GFARCHIVE_H__
+#ifndef __SEISCOMP_IO_GFARCHIVE_H
+#define __SEISCOMP_IO_GFARCHIVE_H
 
 
 #include <seiscomp/core/interfacefactory.h>

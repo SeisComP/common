@@ -56,7 +56,7 @@ class SC_SYSTEM_CORE_API CreationInfo : public Core::BaseObject {
 		CreationInfo(const CreationInfo& other);
 
 		//! Destructor
-		~CreationInfo();
+		~CreationInfo() override;
 	
 
 	// ------------------------------------------------------------------

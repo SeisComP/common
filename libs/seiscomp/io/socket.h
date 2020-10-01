@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_SOCKET_H__
-#define SEISCOMP_IO_SOCKET_H__
+#ifndef SEISCOMP_IO_SOCKET_H
+#define SEISCOMP_IO_SOCKET_H
 
 #include <string>
 #include <set>

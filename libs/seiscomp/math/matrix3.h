@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_MATH_MATRIX3_H__
-#define SEISCOMP_MATH_MATRIX3_H__
+#ifndef SEISCOMP_MATH_MATRIX3_H
+#define SEISCOMP_MATH_MATRIX3_H
 
 
 #include <seiscomp/math/vector3.h>

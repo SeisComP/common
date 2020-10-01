@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_UTILS_KEYVALUES_H__
-#define SEISCOMP_UTILS_KEYVALUES_H__
+#ifndef SEISCOMP_UTILS_KEYVALUES_H
+#define SEISCOMP_UTILS_KEYVALUES_H
 
 
 #include <seiscomp/core/baseobject.h>

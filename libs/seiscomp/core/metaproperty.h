@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_METAPROPERTY_H__
-#define SEISCOMP_CORE_METAPROPERTY_H__
+#ifndef SEISCOMP_CORE_METAPROPERTY_H
+#define SEISCOMP_CORE_METAPROPERTY_H
 
 #include <seiscomp/core/metaobject.h>
 #include <seiscomp/core/strings.h>

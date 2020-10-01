@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDINPUT_H__
-#define SEISCOMP_IO_RECORDINPUT_H__
+#ifndef SEISCOMP_IO_RECORDINPUT_H
+#define SEISCOMP_IO_RECORDINPUT_H
 
 #include <iterator>
 #include <seiscomp/core.h>

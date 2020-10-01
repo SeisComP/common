@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_MATH_TENSOR_H__
-#define SEISCOMP_MATH_TENSOR_H__
+#ifndef SEISCOMP_MATH_TENSOR_H
+#define SEISCOMP_MATH_TENSOR_H
 
 
 #include <seiscomp/math/matrix3.h>

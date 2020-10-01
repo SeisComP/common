@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CLIENT_STATUS_H__
-#define SEISCOMP_CLIENT_STATUS_H__
+#ifndef SEISCOMP_CLIENT_STATUS_H
+#define SEISCOMP_CLIENT_STATUS_H
 
 
 #include <stdint.h>

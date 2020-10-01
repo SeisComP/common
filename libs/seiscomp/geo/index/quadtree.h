@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GEO_INDEX_QUADTREE_H__
-#define SEISCOMP_GEO_INDEX_QUADTREE_H__
+#ifndef SEISCOMP_GEO_INDEX_QUADTREE_H
+#define SEISCOMP_GEO_INDEX_QUADTREE_H
 
 
 #include <seiscomp/geo/featureset.h>

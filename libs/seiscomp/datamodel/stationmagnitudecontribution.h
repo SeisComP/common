@@ -91,7 +91,7 @@ class SC_SYSTEM_CORE_API StationMagnitudeContribution : public Object {
 		                             const OPT(double)& weight = Seiscomp::Core::None);
 
 		//! Destructor
-		~StationMagnitudeContribution();
+		~StationMagnitudeContribution() override;
 	
 
 	// ------------------------------------------------------------------

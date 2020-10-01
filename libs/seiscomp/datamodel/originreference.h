@@ -84,7 +84,7 @@ class SC_SYSTEM_CORE_API OriginReference : public Object {
 		OriginReference(const std::string& originID);
 
 		//! Destructor
-		~OriginReference();
+		~OriginReference() override;
 	
 
 	// ------------------------------------------------------------------

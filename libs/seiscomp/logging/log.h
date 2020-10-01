@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SC_LOGGING_LOGGING_H__
-#define __SC_LOGGING_LOGGING_H__
+#ifndef SC_LOGGING_LOGGING_H
+#define SC_LOGGING_LOGGING_H
 
 #ifndef SEISCOMP_COMPONENT
 #  ifndef WIN32

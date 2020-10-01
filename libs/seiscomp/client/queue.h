@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CLIENT_QUEUE_H__
-#define SEISCOMP_CLIENT_QUEUE_H__
+#ifndef SEISCOMP_CLIENT_QUEUE_H
+#define SEISCOMP_CLIENT_QUEUE_H
 
 
 #include <vector>

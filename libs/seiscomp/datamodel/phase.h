@@ -58,7 +58,7 @@ class SC_SYSTEM_CORE_API Phase : public Core::BaseObject {
 		Phase(const std::string& code);
 
 		//! Destructor
-		~Phase();
+		~Phase() override;
 	
 
 	// ------------------------------------------------------------------

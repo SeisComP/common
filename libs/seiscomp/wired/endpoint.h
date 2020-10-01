@@ -53,7 +53,7 @@ class SC_SYSTEM_CORE_API Endpoint : public Session {
 	//  Connection interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual void update();
+		void update() override;
 
 		Socket *socket() const { return static_cast<Socket*>(_device.get()); }
 		Session *accept(Socket *socket);
@@ -98,7 +98,7 @@ class SC_SYSTEM_CORE_API AccessControlledEndpoint : public Endpoint {
 	//  Protected Endpoint interface
 	// ----------------------------------------------------------------------
 	protected:
-		virtual bool checkSocket(Socket *socket) const;
+		bool checkSocket(Socket *socket) const override;
 
 
 	// ----------------------------------------------------------------------

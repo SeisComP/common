@@ -61,7 +61,7 @@ class SC_SYSTEM_CORE_API Tensor : public Core::BaseObject {
 		Tensor(const Tensor& other);
 
 		//! Destructor
-		~Tensor();
+		~Tensor() override;
 	
 
 	// ------------------------------------------------------------------

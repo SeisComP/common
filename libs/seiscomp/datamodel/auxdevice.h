@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_AUXDEVICE_H
 
 
-#include <vector>
 #include <seiscomp/datamodel/blob.h>
+#include <vector>
 #include <string>
 #include <seiscomp/datamodel/auxsource.h>
 #include <seiscomp/datamodel/notifier.h>
@@ -93,7 +93,7 @@ class SC_SYSTEM_CORE_API AuxDevice : public PublicObject {
 		AuxDevice(const std::string& publicID);
 
 		//! Destructor
-		~AuxDevice();
+		~AuxDevice() override;
 	
 
 	// ------------------------------------------------------------------

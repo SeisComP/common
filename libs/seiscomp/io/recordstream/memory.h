@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_SERVICES_RECORDSTREAM_MEMORY_H__
-#define SEISCOMP_SERVICES_RECORDSTREAM_MEMORY_H__
+#ifndef SEISCOMP_SERVICES_RECORDSTREAM_MEMORY_H
+#define SEISCOMP_SERVICES_RECORDSTREAM_MEMORY_H
 
 #include <iostream>
 #include <sstream>

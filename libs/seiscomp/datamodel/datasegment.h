@@ -82,7 +82,7 @@ class SC_SYSTEM_CORE_API DataSegment : public Object {
 		DataSegment(const DataSegment& other);
 
 		//! Destructor
-		~DataSegment();
+		~DataSegment() override;
 	
 
 	// ------------------------------------------------------------------

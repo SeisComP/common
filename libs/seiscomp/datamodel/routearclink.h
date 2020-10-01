@@ -87,7 +87,7 @@ class SC_SYSTEM_CORE_API RouteArclink : public Object {
 		RouteArclink(const RouteArclink& other);
 
 		//! Destructor
-		~RouteArclink();
+		~RouteArclink() override;
 	
 
 	// ------------------------------------------------------------------

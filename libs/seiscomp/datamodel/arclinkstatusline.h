@@ -85,7 +85,7 @@ class SC_SYSTEM_CORE_API ArclinkStatusLine : public Object {
 		ArclinkStatusLine(const ArclinkStatusLine& other);
 
 		//! Destructor
-		~ArclinkStatusLine();
+		~ArclinkStatusLine() override;
 	
 
 	// ------------------------------------------------------------------

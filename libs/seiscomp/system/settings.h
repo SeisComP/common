@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_SYSTEM_SETTINGS_H__
-#define SEISCOMP_SYSTEM_SETTINGS_H__
+#ifndef SEISCOMP_SYSTEM_SETTINGS_H
+#define SEISCOMP_SYSTEM_SETTINGS_H
 
 
 #include <seiscomp/core/strings.h>

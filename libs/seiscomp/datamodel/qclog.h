@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_QCLOG_H
 
 
+#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/core/datetime.h>
 #include <string>
-#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/datamodel/publicobject.h>
 #include <seiscomp/core/exceptions.h>
 
@@ -89,7 +89,7 @@ class SC_SYSTEM_CORE_API QCLog : public PublicObject {
 		QCLog(const std::string& publicID);
 
 		//! Destructor
-		~QCLog();
+		~QCLog() override;
 	
 
 	// ------------------------------------------------------------------

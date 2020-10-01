@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_IMPORTER_H__
-#define SEISCOMP_IO_IMPORTER_H__
+#ifndef SEISCOMP_IO_IMPORTER_H
+#define SEISCOMP_IO_IMPORTER_H
 
 
 #include <seiscomp/core/baseobject.h>

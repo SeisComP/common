@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SC_LOGGING_INIT_H__
-#define __SC_LOGGING_INIT_H__
+#ifndef SC_LOGGING_INIT_H
+#define SC_LOGGING_INIT_H
 
 
 namespace Seiscomp {

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_RECORDSEQUENCE_H__
-#define SEISCOMP_RECORDSEQUENCE_H__
+#ifndef SEISCOMP_RECORDSEQUENCE_H
+#define SEISCOMP_RECORDSEQUENCE_H
 
 
 #include <seiscomp/core/genericrecord.h>

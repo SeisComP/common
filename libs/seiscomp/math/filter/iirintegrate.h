@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IIRINTEGRATE_H__
-#define SEISCOMP_IIRINTEGRATE_H__
+#ifndef SEISCOMP_IIRINTEGRATE_H
+#define SEISCOMP_IIRINTEGRATE_H
 
 #include<vector>
 #include <seiscomp/math/filter.h>

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SCARCHIVE_BIN_H__
-#define __SCARCHIVE_BIN_H__
+#ifndef SCARCHIVE_BIN_H
+#define SCARCHIVE_BIN_H
 
 #include <seiscomp/core/io.h>
 #include <seiscomp/core.h>

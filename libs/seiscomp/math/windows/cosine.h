@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_MATH_WINDOWS_COSINE_H__
-#define SEISCOMP_MATH_WINDOWS_COSINE_H__
+#ifndef SEISCOMP_MATH_WINDOWS_COSINE_H
+#define SEISCOMP_MATH_WINDOWS_COSINE_H
 
 
 #include "../windowfunc.h"

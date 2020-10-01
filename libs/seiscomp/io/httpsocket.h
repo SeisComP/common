@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_HTTPSOCKET_H__
-#define SEISCOMP_IO_HTTPSOCKET_H__
+#ifndef SEISCOMP_IO_HTTPSOCKET_H
+#define SEISCOMP_IO_HTTPSOCKET_H
 
 
 #include <boost/iostreams/filter/zlib.hpp>

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_SCDM_HYP71SUM2K_EXCHANGE_H__
-#define SEISCOMP_DATAMODEL_SCDM_HYP71SUM2K_EXCHANGE_H__
+#ifndef SEISCOMP_DATAMODEL_SCDM_HYP71SUM2K_EXCHANGE_H
+#define SEISCOMP_DATAMODEL_SCDM_HYP71SUM2K_EXCHANGE_H
 
 
 #include <seiscomp/io/exporter.h>

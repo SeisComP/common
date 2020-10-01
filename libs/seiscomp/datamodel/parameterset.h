@@ -62,7 +62,7 @@ class SC_SYSTEM_CORE_API ParameterSet : public PublicObject {
 		ParameterSet(const std::string& publicID);
 
 		//! Destructor
-		~ParameterSet();
+		~ParameterSet() override;
 	
 
 	// ------------------------------------------------------------------

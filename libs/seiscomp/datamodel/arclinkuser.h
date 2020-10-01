@@ -87,7 +87,7 @@ class SC_SYSTEM_CORE_API ArclinkUser : public PublicObject {
 		ArclinkUser(const std::string& publicID);
 
 		//! Destructor
-		~ArclinkUser();
+		~ArclinkUser() override;
 	
 
 	// ------------------------------------------------------------------

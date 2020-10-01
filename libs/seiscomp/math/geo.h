@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef _SEISCOMP_MATH_GEO_
-#define _SEISCOMP_MATH_GEO_
+#ifndef SEISCOMP_MATH_GEO
+#define SEISCOMP_MATH_GEO
 
 #include <seiscomp/core.h>
 #include <seiscomp/math/coord.h>

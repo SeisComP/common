@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_RESPONSEIIR_H
 
 
-#include <seiscomp/datamodel/realarray.h>
 #include <seiscomp/datamodel/blob.h>
+#include <seiscomp/datamodel/realarray.h>
 #include <string>
 #include <seiscomp/datamodel/publicobject.h>
 #include <seiscomp/core/exceptions.h>
@@ -90,7 +90,7 @@ class SC_SYSTEM_CORE_API ResponseIIR : public PublicObject {
 		ResponseIIR(const std::string& publicID);
 
 		//! Destructor
-		~ResponseIIR();
+		~ResponseIIR() override;
 	
 
 	// ------------------------------------------------------------------

@@ -89,7 +89,7 @@ class SC_SYSTEM_CORE_API MomentTensorPhaseSetting : public Object {
 		                         const OPT(double)& maximumTimeShift = Seiscomp::Core::None);
 
 		//! Destructor
-		~MomentTensorPhaseSetting();
+		~MomentTensorPhaseSetting() override;
 	
 
 	// ------------------------------------------------------------------

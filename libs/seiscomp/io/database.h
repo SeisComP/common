@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_DATABASE_H__
-#define SEISCOMP_IO_DATABASE_H__
+#ifndef SEISCOMP_IO_DATABASE_H
+#define SEISCOMP_IO_DATABASE_H
 
 
 #include <seiscomp/core/baseobject.h>

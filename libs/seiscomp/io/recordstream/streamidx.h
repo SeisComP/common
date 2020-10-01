@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDSTREAM_STREAMIDX_H__
-#define SEISCOMP_IO_RECORDSTREAM_STREAMIDX_H__
+#ifndef SEISCOMP_IO_RECORDSTREAM_STREAMIDX_H
+#define SEISCOMP_IO_RECORDSTREAM_STREAMIDX_H
 
 #include <string>
 #include <seiscomp/core/datetime.h>

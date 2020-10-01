@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_MATH_GEO_POLYGON_H__
-#define SEISCOMP_MATH_GEO_POLYGON_H__
+#ifndef SEISCOMP_MATH_GEO_POLYGON_H
+#define SEISCOMP_MATH_GEO_POLYGON_H
 
 #include <string>
 #include <vector>

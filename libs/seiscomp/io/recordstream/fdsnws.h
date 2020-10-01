@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDSTREAM_WS_H__
-#define SEISCOMP_IO_RECORDSTREAM_WS_H__
+#ifndef SEISCOMP_IO_RECORDSTREAM_WS_H
+#define SEISCOMP_IO_RECORDSTREAM_WS_H
 
 #include <string>
 #include <set>

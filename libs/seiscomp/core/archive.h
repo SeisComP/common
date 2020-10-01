@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_ARCHIVE_H__
-#define SEISCOMP_CORE_ARCHIVE_H__
+#ifndef SEISCOMP_CORE_ARCHIVE_H
+#define SEISCOMP_CORE_ARCHIVE_H
 
 
 #include <string>

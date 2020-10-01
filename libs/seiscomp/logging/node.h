@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SC_LOGGING_NODE_H__
-#define __SC_LOGGING_NODE_H__
+#ifndef SC_LOGGING_NODE_H
+#define SC_LOGGING_NODE_H
 
 #include <list>
 #include <set>

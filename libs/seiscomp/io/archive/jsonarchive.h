@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SCARCHIVE_JSON_H__
-#define __SCARCHIVE_JSON_H__
+#ifndef SCARCHIVE_JSON_H
+#define SCARCHIVE_JSON_H
 
 
 #include <seiscomp/core/io.h>

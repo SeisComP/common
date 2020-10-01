@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_RECORDSTREAM_DECIMATION_H__
-#define SEISCOMP_RECORDSTREAM_DECIMATION_H__
+#ifndef SEISCOMP_RECORDSTREAM_DECIMATION_H
+#define SEISCOMP_RECORDSTREAM_DECIMATION_H
 
 #include <sstream>
 #include <map>

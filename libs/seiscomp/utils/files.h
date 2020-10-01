@@ -17,8 +17,8 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEISCOMP_UTILS_FILES__
-#define SEISCOMP_UTILS_FILES__
+#ifndef SEISCOMP_UTILS_FILES
+#define SEISCOMP_UTILS_FILES
 
 #include <string>
 #include <streambuf>

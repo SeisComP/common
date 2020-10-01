@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef _SEISCOMP_WAVEFORMPROCESSOR_H_
-#define _SEISCOMP_WAVEFORMPROCESSOR_H_
+#ifndef SEISCOMP_PROCESSING_WAVEFORMPROCESSOR_H
+#define SEISCOMP_PROCESSING_WAVEFORMPROCESSOR_H
 
 
 #include <seiscomp/core/record.h>

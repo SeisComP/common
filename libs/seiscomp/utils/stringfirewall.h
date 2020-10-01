@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_UTILS_STRINGFIREWALL_H__
-#define SEISCOMP_UTILS_STRINGFIREWALL_H__
+#ifndef SEISCOMP_UTILS_STRINGFIREWALL_H
+#define SEISCOMP_UTILS_STRINGFIREWALL_H
 
 
 #include <seiscomp/core/baseobject.h>

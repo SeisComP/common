@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_INTERFACEFACTORY_H__
-#define SEISCOMP_CORE_INTERFACEFACTORY_H__
+#ifndef SEISCOMP_CORE_INTERFACEFACTORY_H
+#define SEISCOMP_CORE_INTERFACEFACTORY_H
 
 #include <map>
 #include <vector>

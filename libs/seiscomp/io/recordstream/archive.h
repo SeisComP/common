@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDSTREAM_ARCHIVE_H__
-#define SEISCOMP_IO_RECORDSTREAM_ARCHIVE_H__
+#ifndef SEISCOMP_IO_RECORDSTREAM_ARCHIVE_H
+#define SEISCOMP_IO_RECORDSTREAM_ARCHIVE_H
 
 #include <seiscomp/io/recordstream.h>
 

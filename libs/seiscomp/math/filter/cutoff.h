@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef _SEISCOMP_MATH_FILTER_CUTOFF_H_
-#define _SEISCOMP_MATH_FILTER_CUTOFF_H_
+#ifndef SEISCOMP_MATH_FILTER_CUTOFF_H
+#define SEISCOMP_MATH_FILTER_CUTOFF_H
 
 #include<vector>
 #include<seiscomp/math/filter.h>

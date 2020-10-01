@@ -17,8 +17,8 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef _SEIS_SIGNAL_TDRESTITUTION_H_
-#define _SEIS_SIGNAL_TDRESTITUTION_H_
+#ifndef SEIS_SIGNAL_TDRESTITUTION_H
+#define SEIS_SIGNAL_TDRESTITUTION_H
 
 #include <math.h>
 #include <seiscomp/math/filter.h>

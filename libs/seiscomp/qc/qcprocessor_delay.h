@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_QCPROCESSORDELAY_H__
-#define SEISCOMP_PROCESSING_QCPROCESSORDELAY_H__
+#ifndef SEISCOMP_PROCESSING_QCPROCESSORDELAY_H
+#define SEISCOMP_PROCESSING_QCPROCESSORDELAY_H
 
 
 #include <seiscomp/qc/qcprocessor.h>

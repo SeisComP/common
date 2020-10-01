@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_GENERICRECORD_H__
-#define SEISCOMP_CORE_GENERICRECORD_H__
+#ifndef SEISCOMP_CORE_GENERICRECORD_H
+#define SEISCOMP_CORE_GENERICRECORD_H
 
 #include <string>
 #include <iostream>

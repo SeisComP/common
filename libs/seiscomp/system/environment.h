@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_SEISCOMPINIT_H__
-#define SEISCOMP_SEISCOMPINIT_H__
+#ifndef SEISCOMP_SEISCOMPINIT_H
+#define SEISCOMP_SEISCOMPINIT_H
 
 #include <iostream>
 #include <string>

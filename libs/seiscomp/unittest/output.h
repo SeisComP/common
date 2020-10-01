@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_UNITTEST_OUTPUT_H__
-#define SEISCOMP_UNITTEST_OUTPUT_H__
+#ifndef SEISCOMP_UNITTEST_OUTPUT_H
+#define SEISCOMP_UNITTEST_OUTPUT_H
 
 
 #include <boost/algorithm/string.hpp>

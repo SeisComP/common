@@ -19,8 +19,8 @@
 
 
 
-#ifndef _SEISCOMP_TTT_LOCSAT_H_
-#define _SEISCOMP_TTT_LOCSAT_H_
+#ifndef SEISCOMP_TTT_LOCSAT_H
+#define SEISCOMP_TTT_LOCSAT_H
 
 
 #include <string>

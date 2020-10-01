@@ -99,7 +99,7 @@ class SC_SYSTEM_CORE_API SensorLocation : public PublicObject {
 		SensorLocation(const std::string& publicID);
 
 		//! Destructor
-		~SensorLocation();
+		~SensorLocation() override;
 	
 
 	// ------------------------------------------------------------------

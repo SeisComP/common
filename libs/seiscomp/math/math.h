@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_MATH_MATH_H__
-#define SEISCOMP_MATH_MATH_H__
+#ifndef SEISCOMP_MATH_MATH_H
+#define SEISCOMP_MATH_MATH_H
 
 
 #include <seiscomp/core.h>

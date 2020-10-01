@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_MATH_FFT_H__
-#define SEISCOMP_MATH_FFT_H__
+#ifndef SEISCOMP_MATH_FFT_H
+#define SEISCOMP_MATH_FFT_H
 
 
 #include <complex>

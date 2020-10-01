@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CLIENT_INVENTORY_H__
-#define SEISCOMP_CLIENT_INVENTORY_H__
+#ifndef SEISCOMP_CLIENT_INVENTORY_H
+#define SEISCOMP_CLIENT_INVENTORY_H
 
 
 #include <seiscomp/datamodel/inventory.h>

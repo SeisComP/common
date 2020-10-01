@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef __SEISCOMP_INTERNAL_SEISMOLOGY_LOCSAT_H__
-#define __SEISCOMP_INTERNAL_SEISMOLOGY_LOCSAT_H__
+#ifndef SEISCOMP_INTERNAL_SEISMOLOGY_LOCSAT_H
+#define SEISCOMP_INTERNAL_SEISMOLOGY_LOCSAT_H
 
 
 #include <seiscomp/core/exceptions.h>
