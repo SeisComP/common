@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_MESSAGE_H__
-#define SEISCOMP_GUI_MESSAGE_H__
+#ifndef SEISCOMP_GUI_MESSAGE_H
+#define SEISCOMP_GUI_MESSAGE_H
 
 #ifndef Q_MOC_RUN
 #include <seiscomp/core/message.h>

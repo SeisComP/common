@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_ORIGIN_H__
-#define SEISCOMP_GUI_ORIGIN_H__
+#ifndef SEISCOMP_GUI_ORIGIN_H
+#define SEISCOMP_GUI_ORIGIN_H
 
 
 #include <vector>

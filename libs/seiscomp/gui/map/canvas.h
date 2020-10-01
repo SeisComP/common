@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_MAP_CANVAS_H__
-#define SEISCOMP_GUI_MAP_CANVAS_H__
+#ifndef SEISCOMP_GUI_MAP_CANVAS_H
+#define SEISCOMP_GUI_MAP_CANVAS_H
 
 
 #ifndef Q_MOC_RUN

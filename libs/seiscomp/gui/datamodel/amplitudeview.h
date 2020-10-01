@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_AMPLITUDEVIEW_H__
-#define SEISCOMP_GUI_AMPLITUDEVIEW_H__
+#ifndef SEISCOMP_GUI_AMPLITUDEVIEW_H
+#define SEISCOMP_GUI_AMPLITUDEVIEW_H
 
 #include <seiscomp/gui/datamodel/ui_amplitudeview.h>
 #include <seiscomp/gui/core/recordview.h>

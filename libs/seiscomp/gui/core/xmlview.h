@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_CORE_XMLVIEW_H__
-#define SEISCOMP_GUI_CORE_XMLVIEW_H__
+#ifndef SEISCOMP_GUI_CORE_XMLVIEW_H
+#define SEISCOMP_GUI_CORE_XMLVIEW_H
 
 #include <QtGui>
 

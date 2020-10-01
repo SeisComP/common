@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_GUI_ORIGINLOCATORMAP_H
+#define SEISCOMP_GUI_ORIGINLOCATORMAP_H
 
-#ifndef __ORIGINLOCATORMAP_H__
-#define __ORIGINLOCATORMAP_H__
 
 #include <QtGui>
 #include <seiscomp/gui/map/mapwidget.h>

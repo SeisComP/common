@@ -17,8 +17,10 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEISCOMP_GUI_MAP_LAYERS_CITIESLAYER_H__
-#define SEISCOMP_GUI_MAP_LAYERS_CITIESLAYER_H__
+
+#ifndef SEISCOMP_GUI_MAP_LAYERS_CITIESLAYER_H
+#define SEISCOMP_GUI_MAP_LAYERS_CITIESLAYER_H
+
 
 #include <seiscomp/gui/qt.h>
 #include <seiscomp/gui/map/layer.h>

@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 
-#ifndef __ORIGINDIALOG_H__
-#define __ORIGINDIALOG_H__
+#ifndef SEISCOMP_GUI_ORIGINDIALOG_H
+#define SEISCOMP_GUI_ORIGINDIALOG_H
+
 
 #include <ctime>
 

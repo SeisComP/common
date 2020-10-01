@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_QUESTIONBOX_H__
-#define SEISCOMP_GUI_QUESTIONBOX_H__
+#ifndef SEISCOMP_GUI_QUESTIONBOX_H
+#define SEISCOMP_GUI_QUESTIONBOX_H
 
 
 #include <seiscomp/gui/core/ui_questionbox.h>

@@ -18,9 +18,8 @@
  ***************************************************************************/
 
 
-
-#ifndef SEISCOMP_GUI_DATAMODEL_UTIL_H__
-#define SEISCOMP_GUI_DATAMODEL_UTIL_H__
+#ifndef SEISCOMP_GUI_DATAMODEL_UTIL_H
+#define SEISCOMP_GUI_DATAMODEL_UTIL_H
 
 
 #include <seiscomp/gui/qt.h>

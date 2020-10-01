@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_MAP_LAYERS_SYMBOLLAYER_H__
-#define SEISCOMP_GUI_MAP_LAYERS_SYMBOLLAYER_H__
+#ifndef SEISCOMP_GUI_MAP_LAYERS_SYMBOLLAYER_H
+#define SEISCOMP_GUI_MAP_LAYERS_SYMBOLLAYER_H
 
 
 #include <seiscomp/gui/map/layer.h>

@@ -18,10 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_GUI_MAGNITUDEVIEW_H
+#define SEISCOMP_GUI_MAGNITUDEVIEW_H
 
-
-#ifndef __MAGNITUDEVIEW_H__
-#define __MAGNITUDEVIEW_H__
 
 #include <QtGui>
 #include <seiscomp/gui/datamodel/ui_magnitudeview.h>

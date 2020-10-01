@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_MAP_STANDARDLEGEND_H__
-#define SEISCOMP_GUI_MAP_STANDARDLEGEND_H__
+#ifndef SEISCOMP_GUI_MAP_STANDARDLEGEND_H
+#define SEISCOMP_GUI_MAP_STANDARDLEGEND_H
 
 
 #include <seiscomp/gui/map/legend.h>

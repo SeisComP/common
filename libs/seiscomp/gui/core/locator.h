@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_LOCATOR_H__
-#define SEISCOMP_GUI_LOCATOR_H__
+#ifndef SEISCOMP_GUI_LOCATOR_H
+#define SEISCOMP_GUI_LOCATOR_H
 
 
 #include <seiscomp/gui/qt.h>

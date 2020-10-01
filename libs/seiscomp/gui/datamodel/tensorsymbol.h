@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_FMSYMBOL_H__
-#define SEISCOMP_GUI_FMSYMBOL_H__
+#ifndef SEISCOMP_GUI_FMSYMBOL_H
+#define SEISCOMP_GUI_FMSYMBOL_H
 
 
 #include <seiscomp/gui/core/tensorrenderer.h>

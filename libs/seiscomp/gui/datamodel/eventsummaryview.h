@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_EVENTSUMMARYVIEW_H__
-#define SEISCOMP_GUI_EVENTSUMMARYVIEW_H__
+#ifndef SEISCOMP_GUI_EVENTSUMMARYVIEW_H
+#define SEISCOMP_GUI_EVENTSUMMARYVIEW_H
 
 #include <QtGui>
 #include <seiscomp/gui/datamodel/ui_eventsummaryview.h>

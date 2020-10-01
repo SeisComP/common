@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_LOCATORSETTINGS_H__
-#define SEISCOMP_GUI_LOCATORSETTINGS_H__
+#ifndef SEISCOMP_GUI_LOCATORSETTINGS_H
+#define SEISCOMP_GUI_LOCATORSETTINGS_H
 
 #include <QtGui>
 #include <seiscomp/gui/datamodel/ui_locatorsettings.h>

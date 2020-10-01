@@ -18,9 +18,9 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_GUI_PICKERVIEW_H
+#define SEISCOMP_GUI_PICKERVIEW_H
 
-#ifndef SEISCOMP_GUI_PICKERVIEW_H__
-#define SEISCOMP_GUI_PICKERVIEW_H__
 
 #include <seiscomp/gui/datamodel/ui_pickerview.h>
 #include <seiscomp/gui/core/recordview.h>

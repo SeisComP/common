@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_MAP_IMAGETREE_H__
-#define SEISCOMP_GUI_MAP_IMAGETREE_H__
+#ifndef SEISCOMP_GUI_MAP_IMAGETREE_H
+#define SEISCOMP_GUI_MAP_IMAGETREE_H
 
 
 #ifndef Q_MOC_RUN

@@ -19,8 +19,8 @@
 
 
 
-#ifndef _TIMESCALE_H_
-#define _TIMESCALE_H_
+#ifndef SEISCOMP_GUI_TIMESCALE_H
+#define SEISCOMP_GUI_TIMESCALE_H
 
 #include "ruler.h"
 #include <seiscomp/core/datetime.h>

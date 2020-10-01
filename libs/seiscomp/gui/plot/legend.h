@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_PLOT_LEGEND_H__
-#define SEISCOMP_GUI_PLOT_LEGEND_H__
+#ifndef SEISCOMP_GUI_PLOT_LEGEND_H
+#define SEISCOMP_GUI_PLOT_LEGEND_H
 
 
 #include <seiscomp/gui/plot/abstractlegend.h>

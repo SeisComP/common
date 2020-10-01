@@ -19,8 +19,8 @@
 
 
 
-#ifndef __SC_GUI_INSPECTOR_H__
-#define __SC_GUI_INSPECTOR_H__
+#ifndef SC_GUI_INSPECTOR_H
+#define SC_GUI_INSPECTOR_H
 
 #include <QTreeWidget>
 #include <QTableWidget>

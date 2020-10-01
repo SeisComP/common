@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_MESSAGETHREAD_H__
-#define SEISCOMP_GUI_MESSAGETHREAD_H__
+#ifndef SEISCOMP_GUI_MESSAGETHREAD_H
+#define SEISCOMP_GUI_MESSAGETHREAD_H
 
 #ifndef Q_MOC_RUN
 #include <seiscomp/gui/qt.h>

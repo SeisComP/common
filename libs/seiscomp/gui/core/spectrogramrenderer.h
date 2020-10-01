@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_CORE_SPECTROGRAMRENDERER_H__
-#define SEISCOMP_GUI_CORE_SPECTROGRAMRENDERER_H__
+#ifndef SEISCOMP_GUI_CORE_SPECTROGRAMRENDERER_H
+#define SEISCOMP_GUI_CORE_SPECTROGRAMRENDERER_H
 
 
 #ifndef Q_MOC_RUN

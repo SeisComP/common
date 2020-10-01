@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_INFOTEXT_H__
-#define SEISCOMP_GUI_INFOTEXT_H__
+#ifndef SEISCOMP_GUI_INFOTEXT_H
+#define SEISCOMP_GUI_INFOTEXT_H
 
 #include <seiscomp/gui/core/ui_infotext.h>
 #include <seiscomp/gui/qt.h>

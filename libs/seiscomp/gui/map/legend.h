@@ -17,8 +17,10 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEISCOMP_GUI_MAP_LEGEND_H__
-#define SEISCOMP_GUI_MAP_LEGEND_H__
+
+#ifndef SEISCOMP_GUI_MAP_LEGEND_H
+#define SEISCOMP_GUI_MAP_LEGEND_H
+
 
 #ifndef Q_MOC_RUN
 #include <seiscomp/core/baseobject.h>

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_SLCONNECTION_H__
-#define SEISCOMP_GUI_SLCONNECTION_H__
+#ifndef SEISCOMP_GUI_SLCONNECTION_H
+#define SEISCOMP_GUI_SLCONNECTION_H
 
 #include <string>
 

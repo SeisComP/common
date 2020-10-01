@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_PLOT_ABSTRACTDATASET_H__
-#define SEISCOMP_GUI_PLOT_ABSTRACTDATASET_H__
+#ifndef SEISCOMP_GUI_PLOT_ABSTRACTDATASET_H
+#define SEISCOMP_GUI_PLOT_ABSTRACTDATASET_H
 
 
 #include <seiscomp/gui/plot/range.h>

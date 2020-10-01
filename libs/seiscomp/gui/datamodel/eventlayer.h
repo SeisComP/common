@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_EVENTLAYER_H__
-#define SEISCOMP_GUI_EVENTLAYER_H__
+#ifndef SEISCOMP_GUI_EVENTLAYER_H
+#define SEISCOMP_GUI_EVENTLAYER_H
 
 
 #include <seiscomp/gui/map/layer.h>

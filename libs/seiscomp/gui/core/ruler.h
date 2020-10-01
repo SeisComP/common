@@ -19,8 +19,8 @@
 
 
 
-#ifndef _RULER_H_
-#define _RULER_H_
+#ifndef SEISCOMP_GUI_RULER_H
+#define SEISCOMP_GUI_RULER_H
 
 #include <seiscomp/gui/qt.h>
 

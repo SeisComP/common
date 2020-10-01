@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_EVENTEDIT_H__
-#define SEISCOMP_GUI_EVENTEDIT_H__
+#ifndef SEISCOMP_GUI_EVENTEDIT_H
+#define SEISCOMP_GUI_EVENTEDIT_H
 
 #include <QWidget>
 #include <string>

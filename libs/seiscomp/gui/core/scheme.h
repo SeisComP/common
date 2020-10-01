@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_GUI_SCHEME_H__
-#define SEISCOMP_GUI_SCHEME_H__
+#ifndef SEISCOMP_GUI_SCHEME_H
+#define SEISCOMP_GUI_SCHEME_H
 
 
 #include <QColor>

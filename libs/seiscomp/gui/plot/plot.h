@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_PLOT_PLOT_H__
-#define SEISCOMP_GUI_PLOT_PLOT_H__
+#ifndef SEISCOMP_GUI_PLOT_PLOT_H
+#define SEISCOMP_GUI_PLOT_PLOT_H
 
 
 #include <QObject>
