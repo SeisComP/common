@@ -273,6 +273,8 @@ class SC_GUI_API Scheme {
 		};
 
 		struct RecordBorders {
+			RecordBorders();
+
 			Gui::RecordWidget::RecordBorderDrawMode drawMode;
 		};
 
