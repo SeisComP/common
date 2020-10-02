@@ -425,7 +425,7 @@ Scheme::Marker::Marker() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Scheme::RecordBorders::RecordBorders() {
-	drawMode = Gui::RecordWidget::TopLine;
+	drawMode = Gui::RecordWidget::Box;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
