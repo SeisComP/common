@@ -390,5 +390,5 @@ BOOST_AUTO_TEST_CASE(wildcards) {
 	BOOST_CHECK(wildcmp("*", "a"));
 	BOOST_CHECK(wildcmp("*.*", "abc.def"));
 	BOOST_CHECK(!wildcmp("*.*", "abc"));
-	BOOST_CHECK(wildcmp("a.*.*", "abc.def."));
+	BOOST_CHECK(wildcmp("a.*.*", "a.def."));
 }
