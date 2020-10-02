@@ -118,12 +118,12 @@ const X509 *CertificateContext::findCertificate(const Core::Time &referenceTime)
 		}
 
 		// The value returned is an internal pointer which MUST NOT be freed up after the call
-		const ASN1_INTEGER *serial = X509_get0_serialNumber(x509);
+		const ASN1_INTEGER *serial = X509_get_serialNumber(x509);
 		long serialNumber = ASN1_INTEGER_get(serial);
 
 		SEISCOMP_DEBUG("    Cert(Serial: %ld): Checking certificate",
 		               serialNumber);
-		const ASN1_TIME *begin = X509_get0_notBefore(x509);
+		const ASN1_TIME *begin = X509_get_notBefore(x509);
 		if ( begin ) {
 			int res = X509_cmp_time(begin, &seconds);
 			if ( res == 0 ) {
@@ -140,7 +140,7 @@ const X509 *CertificateContext::findCertificate(const Core::Time &referenceTime)
 			}
 		}
 
-		const ASN1_TIME *end = X509_get0_notAfter(x509);
+		const ASN1_TIME *end = X509_get_notAfter(x509);
 		if ( end ) {
 			int res = X509_cmp_time(end, &seconds);
 			if ( res == 0 ) {
@@ -184,9 +184,9 @@ const X509 *CertificateContext::findCertificate(const char *digest, size_t nDige
 
 	if ( _cert ) {
 		// Check the last cached certificate
-		EVP_PKEY *pkey = X509_get0_pubkey(_cert);
+		EVP_PKEY *pkey = X509_get_pubkey(_cert);
 		if ( pkey ) {
-			EC_KEY *ec_key = EVP_PKEY_get0_EC_KEY(pkey);
+			EC_KEY *ec_key = EVP_PKEY_get1_EC_KEY(pkey);
 			if ( ec_key ) {
 				verification_status = ECDSA_do_verify(
 					reinterpret_cast<const unsigned char*>(digest), nDigest,
@@ -197,6 +197,8 @@ const X509 *CertificateContext::findCertificate(const char *digest, size_t nDige
 					SEISCOMP_DEBUG("  Reusing cached certifcate");
 					return _cert;
 				}
+
+				EC_KEY_free(ec_key);
 			}
 		}
 	}
@@ -214,18 +216,18 @@ const X509 *CertificateContext::findCertificate(const char *digest, size_t nDige
 		}
 
 		// The value returned is an internal pointer which MUST NOT be freed up after the call
-		const ASN1_INTEGER *serial = X509_get0_serialNumber(x509);
+		const ASN1_INTEGER *serial = X509_get_serialNumber(x509);
 		long serialNumber = ASN1_INTEGER_get(serial);
 
 		SEISCOMP_DEBUG("    Cert(Serial: %ld): Checking certificate",
 		               serialNumber);
 
-		EVP_PKEY *pkey = X509_get0_pubkey(x509);
+		EVP_PKEY *pkey = X509_get_pubkey(x509);
 		if ( !pkey ) {
 			SEISCOMP_DEBUG("      No public key");
 			continue;
 		}
-		EC_KEY *ec_key = EVP_PKEY_get0_EC_KEY(pkey);
+		EC_KEY *ec_key = EVP_PKEY_get1_EC_KEY(pkey);
 		if ( !ec_key ) {
 			SEISCOMP_DEBUG("      No public EC key");
 			continue;
@@ -235,6 +237,8 @@ const X509 *CertificateContext::findCertificate(const char *digest, size_t nDige
 			reinterpret_cast<const unsigned char*>(digest), nDigest,
 			signature, ec_key
 		);
+
+		EC_KEY_free(ec_key);
 
 		if ( verification_status != 1 ) {
 			SEISCOMP_DEBUG("      Verification failed");
@@ -251,8 +255,8 @@ const X509 *CertificateContext::findCertificate(const char *digest, size_t nDige
 		return 0;
 
 	_cert = cert;
-	_begin = X509_get0_notBefore(_cert);
-	_end = X509_get0_notAfter(_cert);
+	_begin = X509_get_notBefore(_cert);
+	_end = X509_get_notAfter(_cert);
 
 	return _cert;
 }
