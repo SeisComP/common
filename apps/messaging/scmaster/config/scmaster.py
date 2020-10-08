@@ -341,10 +341,16 @@ class Module(kernel.CoreModule):
         return 0
 
     def updateConfig(self):
-        cfgfile = os.path.join(self.env.SEISCOMP_ROOT,
-                               "etc", self.name + ".cfg")
+        defaultcfgfile = os.path.join(
+            self.env.SEISCOMP_ROOT,
+            "etc", "defaults", self.name + ".cfg")
+
+        cfgfile = os.path.join(
+            self.env.SEISCOMP_ROOT,
+            "etc", self.name + ".cfg")
 
         cfg = config.Config()
+        cfg.readConfig(defaultcfgfile)
         cfg.readConfig(cfgfile)
 
         try:
