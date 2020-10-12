@@ -2087,9 +2087,9 @@ void EventEdit::updateFMRow(int row, FocalMechanism *fm) {
 
 	// DC, ISO, CLVD
 	if ( fm->momentTensorCount() > 0 ) {
-		POPULATE_COLUMN_DOUBLE(FML_DC, fm->momentTensor(0)->doubleCouple(), 2);
-		POPULATE_COLUMN_DOUBLE(FML_CLVD, fm->momentTensor(0)->clvd(), 2);
-		POPULATE_COLUMN_DOUBLE(FML_ISO, fm->momentTensor(0)->iso(), 2);
+		POPULATE_COLUMN_DOUBLE(FML_DC, fm->momentTensor(0)->doubleCouple()*100.0, 0);
+		POPULATE_COLUMN_DOUBLE(FML_CLVD, fm->momentTensor(0)->clvd()*100.0, 0);
+		POPULATE_COLUMN_DOUBLE(FML_ISO, fm->momentTensor(0)->iso()*100.0, 0);
 	}
 	else {
 		item->setText(_fmColumnMap[FML_DC], "-");
