@@ -1032,7 +1032,7 @@
 				</parameter>
 			</group>
 			<group name="picker">
-				<parameter name="filters" type="list:string" default="&quot;BP 0.1 - 1 Hz  3rd order;BW(3,0.1,1)&quot;,&quot;BP 0.1 - 2 Hz  3rd order;BW(3,0.1,2)&quot;,&quot;BP 0.4 - 1 Hz  3rd order;BW(3,0.4,1)&quot;,&quot;@BP 0.7 - 2 Hz  3rd order;BW(3,0.7,2)&quot;&quot;BP 1 - 3 Hz  3rd order;BW(3,1.0,3)&quot;,&quot;BP 2 - 4 Hz  3rd order;BW(3,2.0,4)&quot;,&quot;BP 3 - 6 Hz  3rd order;BW(3,3.0,6)&quot;,&quot;BP 4 - 8 Hz  3rd order;BW(3,4.0,8)&quot;,&quot;BP 1 - 5 Hz  3rd order;BW(3,1.0,5)&quot;,&quot;BP 0.7 - 2 Hz + STA/LTA(1,50);RMHP(10)->ITAPER(30)->BW(3,0.7,2)->STALTA(1,50)&quot;">
+				<parameter name="filters" type="list:string" default="&quot;BP 0.1 - 1 Hz  3rd order;BW(3,0.1,1)&quot;,&quot;BP 0.1 - 2 Hz  3rd order;BW(3,0.1,2)&quot;,&quot;BP 0.4 - 1 Hz  3rd order;BW(3,0.4,1)&quot;,&quot;@BP 0.7 - 2 Hz  3rd order;BW(3,0.7,2)&quot;&quot;BP 1 - 3 Hz  3rd order;BW(3,1.0,3)&quot;,&quot;BP 2 - 4 Hz  3rd order;BW(3,2.0,4)&quot;,&quot;BP 3 - 6 Hz  3rd order;BW(3,3.0,6)&quot;,&quot;BP 4 - 8 Hz  3rd order;BW(3,4.0,8)&quot;,&quot;BP 1 - 5 Hz  3rd order;BW(3,1.0,5)&quot;,&quot;HP 3 Hz  3rd order;BW_HP(3,3)&quot;,&quot;BP 0.7 - 2 Hz + STA/LTA(1,50);RMHP(10)->ITAPER(30)->BW(3,0.7,2)->STALTA(1,50)&quot;">
 					<description>
 					Configures the default filters selectable in manual picker.
 					The entry with a leading &quot;@&quot; is selected as default filter.
@@ -1040,7 +1040,7 @@
 				</parameter>
 			</group>
 			<group name="eventlist">
-				<parameter name="visibleColumns" type="list:string" default="M, TP, Phases, Lat, Lon, Depth, Stat, Agency, Region, ID">
+				<parameter name="visibleColumns" type="list:string" default="M, TP, Phases, RMS, Lat, Lon, Depth, Stat, Agency, Region, ID">
 					<description>
 					Configure the columns of the event list that are visible initially.
 					The first column containing the origin time is always visible and cannot
