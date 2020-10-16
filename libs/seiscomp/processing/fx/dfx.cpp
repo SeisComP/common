@@ -364,7 +364,17 @@ void DFX::extractFX(double *data[3], size_t n) {
 
 		if ( _stream.filter ) {
 			Filter *filter = _stream.filter->clone();
-			filter->setSamplingFrequency(samplingFrequency());
+			try {
+				filter->setSamplingFrequency(samplingFrequency());
+			}
+			catch ( std::exception &e ) {
+				SEISCOMP_WARNING("%s: init FX filter: %s",
+				                 _stream.lastRecord->streamID().c_str(),
+				                 e.what());
+				setStatus(Error, -101);
+				return;
+			}
+
 			filter->apply(int(n), cdata);
 			delete filter;
 		}
