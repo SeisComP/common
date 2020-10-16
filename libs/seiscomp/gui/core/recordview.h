@@ -376,6 +376,15 @@ class SC_GUI_API RecordView : public QWidget {
 		//! by value in column2
 		void sortByValue(int column1, int column2);
 
+		//! Sort the items by the value set in column1 then
+		//! by value in column2 and finally by value in column3
+		void sortByValue(int column1, int column2, int column3);
+
+		//! Sort the items by the value set in column1 then
+		//! by value in column2 then by value in column3 and finally by value
+		//! in column4
+		void sortByValue(int column1, int column2, int column3, int column4);
+
 		//! Sort the items by text of a row and then by the value set in
 		//! a column
 		void sortByTextAndValue(int row, int column);
