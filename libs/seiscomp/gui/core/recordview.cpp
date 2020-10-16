@@ -2403,6 +2403,72 @@ void RecordView::sortByValue(int column1, int column2) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordView::sortByValue(int column1, int column2, int column3) {
+	list<pair<pair<double, pair<double, double> >, RecordViewItem*> > distlist;
+
+	foreach (RecordViewItem* item, _items) {
+		if ( item->columnCount() <= column1
+		  || item->columnCount() <= column2
+		  || item->columnCount() <= column3 )
+			return;
+
+		distlist.push_back(
+			pair<pair<double, pair<double, double> >, RecordViewItem*>(
+				pair<double, pair<double, double> >(
+					item->value(column1),
+					pair<double, double>(
+						item->value(column2),
+						item->value(column3)
+					)
+				),
+				item
+			)
+		);
+	}
+
+	sortRows(distlist);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordView::sortByValue(int column1, int column2, int column3, int column4) {
+	list<pair<pair<double, pair<double, pair<double, double> > >, RecordViewItem*> > distlist;
+
+	foreach (RecordViewItem* item, _items) {
+		if ( item->columnCount() <= column1
+		  || item->columnCount() <= column2
+		  || item->columnCount() <= column3
+		  || item->columnCount() <= column4 )
+			return;
+
+		distlist.push_back(
+			pair<pair<double, pair<double, pair<double, double> > >, RecordViewItem*>(
+				pair<double, pair<double, pair<double, double> > >(
+					item->value(column1),
+					pair<double, pair<double, double> >(
+						item->value(column2),
+						pair<double, double>(
+							item->value(column3),
+							item->value(column4)
+						)
+					)
+				),
+				item
+			)
+		);
+	}
+
+	sortRows(distlist);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::sortByTextAndValue(int item, int column) {
 	list< pair<pair<QString, double>, RecordViewItem*> > distlist;
 
