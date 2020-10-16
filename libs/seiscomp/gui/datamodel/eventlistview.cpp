@@ -222,6 +222,20 @@ DatabaseIterator getEvents(DatabaseArchive *ar, const EventListView::Filter& fil
 
 	oss  << "Origin._oid=POrigin._oid and Event._oid=PEvent._oid";
 
+	if ( !filter.eventID.empty() ) {
+		// Convert to most common SQL LIKE format
+		std::string pattern = filter.eventID;
+		for ( size_t i = 0; i < pattern.size(); ++i ) {
+			if ( pattern[i] == '?' ) pattern[i] = '_';
+			else if ( pattern[i] == '*' ) pattern[i] = '%';
+		}
+
+		std::string escapedPattern;
+		ar->driver()->escape(escapedPattern, pattern);
+
+		oss << " and PEvent." << _T("publicID") << " like '" << escapedPattern << "'";
+	}
+
 	return ar->getObjectIterator(oss.str(), Event::TypeInfo());
 }
 
@@ -1941,6 +1955,7 @@ class EventFilterWidget : public QWidget {
 			_ui.toDepth->setValue(filter.maxDepth ? *filter.maxDepth : _ui.toDepth->minimum());
 			_ui.fromMagnitude->setValue(filter.minMagnitude ? *filter.minMagnitude : _ui.fromMagnitude->minimum());
 			_ui.toMagnitude->setValue(filter.maxMagnitude ? *filter.maxMagnitude : _ui.toMagnitude->minimum());
+			_ui.editEventID->setText(filter.eventID.c_str());
 		}
 
 		/**
@@ -1968,6 +1983,8 @@ class EventFilterWidget : public QWidget {
 				f.minMagnitude = _ui.fromMagnitude->value();
 			if ( _ui.toMagnitude->isValid() )
 				f.maxMagnitude = _ui.toMagnitude->value();
+
+			f.eventID = _ui.editEventID->text().toStdString();
 
 			return f;
 		}
@@ -3098,6 +3115,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 			ev->add(oref.get());
 		}
+
 		it.close();
 
 		currentStep += numberOfEvents*10;

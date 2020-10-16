@@ -83,6 +83,7 @@ class SC_GUI_API EventListView : public QWidget {
 	// ------------------------------------------------------------------
 	public:
 		typedef QMap<QString, DataModel::StationPtr> StationMap;
+
 		struct Filter {
 			Filter(const Seiscomp::Core::TimeWindow& tw = Seiscomp::Core::TimeWindow())
 			   : startTime(tw.startTime()), endTime(tw.endTime()) {}
@@ -92,6 +93,7 @@ class SC_GUI_API EventListView : public QWidget {
 			OPT(float)               minLongitude, maxLongitude;
 			OPT(float)               minDepth, maxDepth;
 			OPT(float)               minMagnitude, maxMagnitude;
+			std::string              eventID;
 		};
 
 
