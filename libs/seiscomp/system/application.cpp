@@ -218,13 +218,6 @@ void signalHandler(int signal) {
 			exit(-1);
 
 		default:
-/*
-#if !defined(WIN32) && !defined(__SUNPRO_CC) && !defined(sun)
-			SEISCOMP_INFO("Receiving signal: %s", sys_siglist[signal]);
-#else
-			SEISCOMP_INFO("Receiving signal: %d", signal);
-#endif
-*/
 			InterruptibleObject::Interrupt(signal);
 	}
 }
