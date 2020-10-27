@@ -1202,7 +1202,7 @@ class EventTreeItem : public SchemeTreeItem {
 		}
 
 		void updateHideState() {
-			if ( _origins != nullptr ) {
+			if ( _origins ) {
 				if ( _showOnlyOnePerAgency ) {
 					QMap<QString, QTreeWidgetItem*> seenAgencies;
 
@@ -1238,7 +1238,7 @@ class EventTreeItem : public SchemeTreeItem {
 				}
 			}
 
-			if ( _focalMechanisms != nullptr ) {
+			if ( _focalMechanisms ) {
 				if ( _showOnlyOnePerAgency ) {
 					QMap<QString, QTreeWidgetItem*> seenAgencies;
 
@@ -1278,7 +1278,7 @@ class EventTreeItem : public SchemeTreeItem {
 		void update(EventListView *view) {
 			Event* ev = event();
 			if ( ev ) {
-				if ( _resort && _origins != nullptr ) {
+				if ( _resort && _origins ) {
 					_hasMultipleAgencies = false;
 
 					// Reset origin process columns
@@ -1342,7 +1342,7 @@ class EventTreeItem : public SchemeTreeItem {
 					}
 				}
 
-				if ( _resort && _focalMechanisms != nullptr ) {
+				if ( _resort && _focalMechanisms ) {
 					// Preferred origin changed => resort origins
 					QList<QTreeWidgetItem*> childs = _focalMechanisms->takeChildren();
 					if ( !childs.empty() ) {
@@ -2866,7 +2866,7 @@ void EventListView::clear() {
 
 void EventListView::selectEventFM(const QString &url) {
 	Event *ev = (Event*)sender()->property("eventPtr").value<void*>();
-	if ( ev != nullptr )
+	if ( ev )
 		eventFMSelected(ev);
 }
 
@@ -3030,7 +3030,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 	_timeAgo = Core::Time::GMT() - filter.startTime;
 	progress.setLabelText(tr("Reading events..."));
 	DatabaseIterator it = getEvents(_reader, filter);
-	while ( (event = static_cast<Event*>(*it)) != nullptr ) {
+	while ( (event = static_cast<Event*>(*it)) ) {
 		if ( progress.wasCanceled() )
 			break;
 
@@ -3052,7 +3052,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 	// Read comments
 	CommentPtr comment;
 	it = getComments4Events( _reader, filter);
-	while ( (comment = Comment::Cast(*it)) != nullptr ) {
+	while ( (comment = Comment::Cast(*it)) ) {
 		if( progress.wasCanceled() )
 			break;
 		EventPtr evt = eventIDs[it.parentOid()];
@@ -3068,7 +3068,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 		OriginReferencePtr oref;
 
-		while ( (oref = static_cast<OriginReference*>(*it)) != nullptr ) {
+		for ( ; (oref = static_cast<OriginReference*>(*it)); ++it ) {
 			if ( progress.wasCanceled() )
 				break;
 
@@ -3078,8 +3078,6 @@ void EventListView::readFromDatabase(const Filter &filter) {
 			EventPtr ev = mit.value();
 
 			ev->add(oref.get());
-
-			++it;
 		}
 		it.close();
 
@@ -3090,7 +3088,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 		OriginPtr origin;
 
-		while ( (origin = static_cast<Origin*>(*it)) != nullptr ) {
+		while ( (origin = static_cast<Origin*>(*it)) ) {
 			if ( progress.wasCanceled() )
 				break;
 
@@ -3105,7 +3103,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 		it = getUnassociatedOrigins(_reader, filter);
 
-		while ( (origin = static_cast<Origin*>(*it)) != nullptr ) {
+		while ( (origin = static_cast<Origin*>(*it)) ) {
 			if ( progress.wasCanceled() )
 				break;
 
@@ -3125,7 +3123,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 		it = getComments4Origins(_reader, filter);
 
-		while ( (comment = Comment::Cast(*it)) != nullptr ) {
+		while ( (comment = Comment::Cast(*it)) ) {
 			if( progress.wasCanceled() )
 				break;
 			OriginPtr org = originIDs[it.parentOid()];
@@ -3142,7 +3140,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 		FocalMechanismReferencePtr fmref;
 
-		while ( (fmref = static_cast<FocalMechanismReference*>(*it)) != nullptr ) {
+		for ( ; (fmref = static_cast<FocalMechanismReference*>(*it)); ++it ) {
 			if ( progress.wasCanceled() )
 				break;
 
@@ -3152,9 +3150,8 @@ void EventListView::readFromDatabase(const Filter &filter) {
 			EventPtr ev = mit.value();
 
 			ev->add(fmref.get());
-
-			++it;
 		}
+
 		it.close();
 
 		currentStep += numberOfEvents*10;
@@ -3164,7 +3161,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 		FocalMechanismPtr fm;
 
-		while ( (fm = static_cast<FocalMechanism*>(*it)) != nullptr ) {
+		while ( (fm = static_cast<FocalMechanism*>(*it)) ) {
 			if ( progress.wasCanceled() )
 				break;
 
@@ -3180,7 +3177,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		MomentTensorPtr mt;
 		std::set<std::string> derivedOriginIDs;
 
-		while ( (mt = static_cast<MomentTensor*>(*it)) != nullptr ) {
+		while ( (mt = static_cast<MomentTensor*>(*it)) ) {
 			if ( progress.wasCanceled() )
 				break;
 
@@ -3210,7 +3207,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 	EventDescriptionPtr description;
 	it = getDescriptions4Events(_reader, filter);
-	while ( (description = EventDescription::Cast(*it)) != nullptr ) {
+	while ( (description = EventDescription::Cast(*it)) ) {
 		if( progress.wasCanceled() )
 			break;
 
@@ -3230,7 +3227,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 	it = _reader->getPreferredMagnitudes(filter.startTime, filter.endTime, "");
 	MagnitudePtr mag;
-	while ( (mag = static_cast<Magnitude*>(*it)) != nullptr ) {
+	while ( (mag = static_cast<Magnitude*>(*it)) ) {
 		prefMags.push_back(mag);
 		progress.setValue(++currentStep);
 		++it;
@@ -3240,7 +3237,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 	if ( !_withOrigins ) {
 		it = _reader->getPreferredOrigins(filter.startTime, filter.endTime, "");
 		OriginPtr org;
-		while ( (org = static_cast<Origin*>(*it)) != nullptr ) {
+		while ( (org = static_cast<Origin*>(*it)) ) {
 			prefOrigins.push_back(org);
 			originIDs[it.oid()] = org;
 			++it;
@@ -3251,7 +3248,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 			it = getComments4PrefOrigins(_reader, filter);
 			CommentPtr comment;
 
-			while ( (comment = Comment::Cast(*it)) != nullptr ) {
+			while ( (comment = Comment::Cast(*it)) ) {
 				if( progress.wasCanceled() )
 					break;
 
@@ -3355,7 +3352,7 @@ void EventListView::removeExpiredEvents() {
 	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
 		EventTreeItem* item = (EventTreeItem*)_treeWidget->topLevelItem(i);
 		Event* event = item->event();
-		if ( event != nullptr ) {
+		if ( event ) {
 			Origin* o = Origin::Find(event->preferredOriginID());
 			bool remove = false;
 			if ( o )
@@ -3473,7 +3470,7 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 
 	updateEventProcessColumns(item, true);
 
-	if ( (event != nullptr) && !item->isHidden() )
+	if ( event && !item->isHidden() )
 		emit eventAddedToList(event, fromNotification);
 
 	return item;
@@ -3642,32 +3639,32 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 
 	if ( _withOrigins ) {
 		Origin* o = Origin::Cast(n->object());
-		if ( o != nullptr ) {
+		if ( o ) {
 			switch ( n->operation() ) {
 				case OP_ADD:
-					{
-						QTreeWidgetItem* item = addOrigin(o, nullptr, false);
-						if ( _autoSelect )
-							//_treeWidget->setItemSelected(item, true);
-							loadItem(item);
-					}
+				{
+					QTreeWidgetItem* item = addOrigin(o, nullptr, false);
+					if ( _autoSelect )
+						//_treeWidget->setItemSelected(item, true);
+						loadItem(item);
 					break;
+				}
 				case OP_UPDATE:
-					{
-						SchemeTreeItem* item = (SchemeTreeItem*)findOrigin(o->publicID());
-						if ( item ) {
-							updateOriginProcessColumns(item, true);
-							item->update(this);
-							emit originUpdated(static_cast<Origin*>(item->object()));
-							EventTreeItem* parent = static_cast<EventTreeItem*>(item->parent()->parent());
-							Event *e = static_cast<Event*>(parent->object());
-							if ( e && e->preferredOriginID() == o->publicID() ) {
-								parent->update(this);
-								emit eventUpdatedInList(e);
-							}
+				{
+					SchemeTreeItem* item = (SchemeTreeItem*)findOrigin(o->publicID());
+					if ( item ) {
+						updateOriginProcessColumns(item, true);
+						item->update(this);
+						emit originUpdated(static_cast<Origin*>(item->object()));
+						EventTreeItem* parent = static_cast<EventTreeItem*>(item->parent()->parent());
+						Event *e = static_cast<Event*>(parent->object());
+						if ( e && e->preferredOriginID() == o->publicID() ) {
+							parent->update(this);
+							emit eventUpdatedInList(e);
 						}
 					}
 					break;
+				}
 				default:
 					break;
 			}
@@ -3679,7 +3676,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 
 	if ( _withFocalMechanisms ) {
 		FocalMechanism *fm = FocalMechanism::Cast(n->object());
-		if ( fm != nullptr ) {
+		if ( fm ) {
 			switch ( n->operation() ) {
 				case OP_ADD:
 					{
@@ -3711,131 +3708,124 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 	}
 
 	Event* e = Event::Cast(n->object());
-	if ( e != nullptr ) {
+	if ( e ) {
 		switch ( n->operation() ) {
 			case OP_ADD:
-				{
-					EventTreeItem* item = (EventTreeItem*)findEvent(e->publicID());
-					if ( !item ) {
-						addEvent(e, true);
-						emit
-						break;
-					}
+			{
+				EventTreeItem* item = (EventTreeItem*)findEvent(e->publicID());
+				if ( !item ) {
+					addEvent(e, true);
 				}
+				break;
+			}
 			case OP_REMOVE:
-				{
-					EventTreeItem* item = (EventTreeItem*)findEvent(e->publicID());
-					if ( item ) {
-						SEISCOMP_DEBUG("Delete event item %s", e->publicID().c_str());
-						delete item;
-						break;
-					}
+			{
+				EventTreeItem* item = (EventTreeItem*)findEvent(e->publicID());
+				if ( item ) {
+					SEISCOMP_DEBUG("Delete event item %s", e->publicID().c_str());
+					delete item;
 				}
+				break;
+			}
 			case OP_UPDATE:
-				{
-					EventTreeItem* item = (EventTreeItem*)findEvent(e->publicID());
-					if ( !item )
-						item = (EventTreeItem*)addEvent(e, true);
-					else
-						updateHideState(item);
+			{
+				EventTreeItem* item = (EventTreeItem*)findEvent(e->publicID());
+				if ( !item )
+					item = (EventTreeItem*)addEvent(e, true);
+				else
+					updateHideState(item);
 
-					if ( item ) {
-						Event* event = static_cast<Event*>(item->object());
+				if ( item ) {
+					Event* event = static_cast<Event*>(item->object());
 
-						OriginTreeItem *originItem = findOrigin(event->preferredOriginID());
-						OriginPtr preferredOrigin;
+					OriginTreeItem *originItem = findOrigin(event->preferredOriginID());
+					OriginPtr preferredOrigin;
 
-						if ( originItem ) {
-							if ( originItem->parent()->parent() != item ) {
-								int index = originItem->parent()->indexOfChild(originItem);
+					if ( originItem ) {
+						if ( originItem->parent()->parent() != item ) {
+							int index = originItem->parent()->indexOfChild(originItem);
+							SEISCOMP_DEBUG("Reparent originItem (update Event), index(%d)", index);
+							if ( index >= 0 ) {
+								QTreeWidgetItem *taken = originItem->parent()->takeChild(index);
+								if ( taken ) {
+									item->addOriginItem(taken);
+									item->resort();
+								}
+							}
+						}
+						else if ( item->child(0) != originItem )
+							item->resort();
+					}
+					else {
+						preferredOrigin = Origin::Find(event->preferredOriginID());
+						if (!preferredOrigin && _reader) {
+							preferredOrigin = Origin::Cast(_reader->getObject(Origin::TypeInfo(), event->preferredOriginID()));
+							if ( preferredOrigin && _withOrigins )
+								addOrigin(preferredOrigin.get(), item, true);
+						}
+					}
+
+					MagnitudePtr nm;
+					if ( !event->preferredMagnitudeID().empty() ) {
+						nm = Magnitude::Find(event->preferredMagnitudeID());
+						if ( !nm && _reader )
+							nm = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
+					}
+
+					updateEventProcessColumns(item, true);
+					item->update(this);
+
+					if ( _withFocalMechanisms ) {
+						FocalMechanismTreeItem *fmItem = findFocalMechanism(event->preferredFocalMechanismID());
+						FocalMechanismPtr preferredFM;
+						OriginPtr derivedOrigin;
+
+						if ( fmItem ) {
+							if ( fmItem->parent()->parent() != item ) {
+								int index = fmItem->parent()->indexOfChild(fmItem);
 								SEISCOMP_DEBUG("Reparent originItem (update Event), index(%d)", index);
 								if ( index >= 0 ) {
-									QTreeWidgetItem *taken = originItem->parent()->takeChild(index);
+									QTreeWidgetItem *taken = fmItem->parent()->takeChild(index);
 									if ( taken ) {
-										item->addOriginItem(taken);
+										item->addFocalMechanismItem(taken);
 										item->resort();
 									}
 								}
 							}
-							else if ( item->child(0) != originItem )
+							else if ( item->child(0) != fmItem )
 								item->resort();
 						}
 						else {
-							preferredOrigin = Origin::Find(event->preferredOriginID());
-							if (!preferredOrigin && _reader) {
-								preferredOrigin = Origin::Cast(_reader->getObject(Origin::TypeInfo(), event->preferredOriginID()));
-								if ( preferredOrigin && _withOrigins )
-									addOrigin(preferredOrigin.get(), item, true);
+							preferredFM = FocalMechanism::Find(event->preferredFocalMechanismID());
+							if ( !preferredFM && _reader )
+								preferredFM = FocalMechanism::Cast(_reader->getObject(FocalMechanism::TypeInfo(), event->preferredFocalMechanismID()));
+
+							if ( preferredFM && _reader ) {
+								if ( preferredFM->momentTensorCount() == 0 )
+									_reader->loadMomentTensors(preferredFM.get());
 							}
+
+							if ( preferredFM && (preferredFM->momentTensorCount() > 0) ) {
+								derivedOrigin = Origin::Find(preferredFM->momentTensor(0)->derivedOriginID());
+								if ( !derivedOrigin && _reader ) {
+									derivedOrigin = Origin::Cast(_reader->getObject(Origin::TypeInfo(), preferredFM->momentTensor(0)->derivedOriginID()));
+									_reader->loadMagnitudes(derivedOrigin.get());
+								}
+							}
+
+							if ( preferredFM )
+								addFocalMechanism(preferredFM.get(), item);
 						}
 
-						MagnitudePtr nm;
-						if ( !event->preferredMagnitudeID().empty() ) {
-							nm = Magnitude::Find(event->preferredMagnitudeID());
-							if ( !nm && _reader )
-								nm = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
-						}
-
-						updateEventProcessColumns(item, true);
 						item->update(this);
-
-						if ( _withFocalMechanisms ) {
-							FocalMechanismTreeItem *fmItem = findFocalMechanism(event->preferredFocalMechanismID());
-							FocalMechanismPtr preferredFM;
-							OriginPtr derivedOrigin;
-
-							if ( fmItem ) {
-								if ( fmItem->parent()->parent() != item ) {
-									int index = fmItem->parent()->indexOfChild(fmItem);
-									SEISCOMP_DEBUG("Reparent originItem (update Event), index(%d)", index);
-									if ( index >= 0 ) {
-										QTreeWidgetItem *taken = fmItem->parent()->takeChild(index);
-										if ( taken ) {
-											item->addFocalMechanismItem(taken);
-											item->resort();
-										}
-									}
-								}
-								else if ( item->child(0) != fmItem )
-									item->resort();
-							}
-							else {
-								preferredFM = FocalMechanism::Find(event->preferredFocalMechanismID());
-								if ( !preferredFM && _reader )
-									preferredFM = FocalMechanism::Cast(_reader->getObject(FocalMechanism::TypeInfo(), event->preferredFocalMechanismID()));
-
-								if ( preferredFM && _reader ) {
-									if ( preferredFM->momentTensorCount() == 0 )
-										_reader->loadMomentTensors(preferredFM.get());
-								}
-
-								if ( preferredFM && (preferredFM->momentTensorCount() > 0) ) {
-									derivedOrigin = Origin::Find(preferredFM->momentTensor(0)->derivedOriginID());
-									if ( !derivedOrigin && _reader ) {
-										derivedOrigin = Origin::Cast(_reader->getObject(Origin::TypeInfo(), preferredFM->momentTensor(0)->derivedOriginID()));
-										_reader->loadMagnitudes(derivedOrigin.get());
-									}
-								}
-
-								if ( preferredFM )
-									addFocalMechanism(preferredFM.get(), item);
-							}
-
-							item->update(this);
-						}
-
-						emit eventUpdatedInList(event);
 					}
+
+					emit eventUpdatedInList(event);
 				}
 				break;
+			}
 			default:
 				break;
-		}
-
-		Comment *c = Comment::Cast(n->object());
-		if ( c != nullptr ) {
-			EventTreeItem* item = (EventTreeItem*)findEvent(n->parentID());
-			if ( item ) item->update(this);
 		}
 
 		_treeWidget->setUpdatesEnabled(true);
@@ -3844,7 +3834,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 
 	if ( _withOrigins ) {
 		OriginReference* ref = OriginReference::Cast(n->object());
-		if ( ref != nullptr ) {
+		if ( ref ) {
 			switch ( n->operation() ) {
 				case OP_ADD:
 				{
@@ -3852,16 +3842,28 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 					if ( eventItem ) {
 						SEISCOMP_INFO("found eventitem with publicID '%s', registered(%d)", eventItem->object()->publicID().c_str(), eventItem->object()->registered());
 						OriginTreeItem* originItem = findOrigin(ref->originID());
-						if ( originItem && originItem->parent()->parent() != eventItem ) {
-							int index = originItem->parent()->indexOfChild(originItem);
-							SEISCOMP_DEBUG("Reparent originItem (add OriginReference), index(%d)", index);
-							if ( index >= 0 ) {
-								QTreeWidgetItem *taken = originItem->parent()->takeChild(index);
-								if ( taken ) {
-									eventItem->addOriginItem(taken);
-									eventItem->resort();
-									eventItem->update(this);
+						if ( originItem ) {
+							if ( originItem->parent()->parent() != eventItem ) {
+								int index = originItem->parent()->indexOfChild(originItem);
+								SEISCOMP_DEBUG("Reparent originItem (add OriginReference), index(%d)", index);
+								if ( index >= 0 ) {
+									QTreeWidgetItem *taken = originItem->parent()->takeChild(index);
+									if ( taken ) {
+										eventItem->addOriginItem(taken);
+										eventItem->resort();
+										eventItem->update(this);
+									}
 								}
+							}
+						}
+						else {
+							Origin *org = Origin::Find(ref->originID());
+							if ( !org ) {
+								org = Origin::Cast(_reader->getObject(Origin::TypeInfo(), ref->originID()));
+							}
+
+							if ( org ) {
+								originItem = addOrigin(org, eventItem, false);
 							}
 						}
 						if ( !_checkEventAgency ) updateHideState(eventItem);
@@ -3907,7 +3909,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 
 	if ( _withFocalMechanisms ) {
 		FocalMechanismReference* fm_ref = FocalMechanismReference::Cast(n->object());
-		if ( fm_ref != nullptr ) {
+		if ( fm_ref ) {
 			switch ( n->operation() ) {
 				case OP_ADD:
 					{
@@ -3985,7 +3987,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 	}
 
 	Magnitude* mag = Magnitude::Cast(n->object());
-	if ( mag != nullptr ) {
+	if ( mag ) {
 		for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
 			EventTreeItem* item = (EventTreeItem*)_treeWidget->topLevelItem(i);
 			if ( item->event() && item->event()->preferredMagnitudeID() == mag->publicID() ) {
@@ -3999,7 +4001,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 	}
 
 	Comment *comment = Comment::Cast(n->object());
-	if ( comment != nullptr ) {
+	if ( comment ) {
 		switch ( n->operation() ) {
 			case OP_ADD:
 			case OP_UPDATE:
@@ -4040,7 +4042,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 	}
 
 	JournalEntry* je = JournalEntry::Cast(n->object());
-	if ( je != nullptr ) {
+	if ( je ) {
 		if ( n->operation() == OP_ADD ) {
 			if ( _commandWaitDialog == nullptr ) {
 				_treeWidget->setUpdatesEnabled(true);
