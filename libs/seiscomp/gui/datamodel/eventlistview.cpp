@@ -1919,9 +1919,13 @@ class EventFilterWidget : public QWidget {
 	public:
 		void setFilter(const EventListView::Filter &filter) {
 			_ui.fromLatitude->setValue(filter.minLatitude ? *filter.minLatitude : _ui.fromLatitude->minimum());
+			_ui.toLatitude->setValue(filter.maxLatitude ? *filter.maxLatitude : _ui.toLatitude->minimum());
 			_ui.fromLongitude->setValue(filter.minLongitude ? *filter.minLongitude : _ui.fromLongitude->minimum());
+			_ui.toLongitude->setValue(filter.maxLongitude ? *filter.maxLongitude : _ui.toLongitude->minimum());
 			_ui.fromDepth->setValue(filter.minDepth ? *filter.minDepth : _ui.fromDepth->minimum());
+			_ui.toDepth->setValue(filter.maxDepth ? *filter.maxDepth : _ui.toDepth->minimum());
 			_ui.fromMagnitude->setValue(filter.minMagnitude ? *filter.minMagnitude : _ui.fromMagnitude->minimum());
+			_ui.toMagnitude->setValue(filter.maxMagnitude ? *filter.maxMagnitude : _ui.toMagnitude->minimum());
 		}
 
 		/**
