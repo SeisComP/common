@@ -2035,6 +2035,7 @@ void EventEdit::updateOriginRow(int row, Origin *org) {
 			if ( c->id() != _commentID ) continue;
 
 			item->setText(_customColumn, c->text().c_str());
+			item->setToolTip(_customColumn, c->text().c_str());
 			QMap<std::string, QColor>::const_iterator it =
 				_customColorMap.find(c->text());
 			if ( it != _customColorMap.end() )
