@@ -176,13 +176,20 @@ class SC_SYSTEM_CORE_API Time : public TimeSpan {
 		          int hour, int min, int sec,
 		          int usec);
 
+		//! Sets the time with yday intepreted as the days since January 1st
+		//! (0-365)
+		Time& set2(int year, int yday,
+		           int hour, int min, int sec,
+		           int usec);
+
 		//! Fill the parameters with the currently set time values
 		//! @return The error flag
 		bool get(int *year, int *month = nullptr, int *day = nullptr,
 		         int *hour = nullptr, int *min = nullptr, int *sec = nullptr,
 		         int *usec = nullptr) const;
 
-		//! Fill the parameters with the currently set time values
+		//! Fill the parameters with the currently set time values with yday
+		//! set to the days since January 1st (0-365)
 		//! @return The error flag
 		bool get2(int *year, int *yday = nullptr,
 		          int *hour = nullptr, int *min = nullptr, int *sec = nullptr,

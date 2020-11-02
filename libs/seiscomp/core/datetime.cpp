@@ -711,6 +711,33 @@ Time& Time::set(int year, int month, int day,
 
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Time& Time::set2(int year, int yday,
+                 int hour, int min, int sec,
+                 int usec) {
+	tm t;
+
+	// Like mktime, timegm will not read tm_yday nor tm_wday when contructing a
+	// time_t object. However, it does normalize other tm values. As a work
+	// arround we convert yday to the yday+1th January. E.g.,
+	// yday 32 = January 33th = February 2nd.
+	t.tm_year = year - 1900;
+	t.tm_mon = 0; // January
+	t.tm_mday = yday + 1;
+	t.tm_hour = hour;
+	t.tm_min = min;
+	t.tm_sec = sec;
+	t.tm_isdst = -1;
+
+	_timeval.tv_sec = (long)timegm(&t);
+	setUSecs(usec);
+
+	return *this;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Time::get(int *year, int *month, int *day,
@@ -745,7 +772,7 @@ bool Time::get2(int *year, int *yday, int *hour, int *min, int *sec,
 	gmtime_r(&time, &t);
 
 	if ( year )  *year = t.tm_year + 1900;
-	if ( yday )   *yday = t.tm_yday;
+	if ( yday )  *yday = t.tm_yday;
 
 	if ( hour )  *hour = t.tm_hour;
 	if ( min )   *min = t.tm_min;

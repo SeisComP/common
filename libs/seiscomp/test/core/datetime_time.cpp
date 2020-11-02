@@ -580,6 +580,33 @@ BOOST_AUTO_TEST_CASE(fromString) {
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(dayOfYear) {
+	Seiscomp::Logging::enableConsoleLogging(Seiscomp::Logging::getAll());
+
+	sc::Time time = sc::Time::FromString("2019-01-01 11:23:42.1234", "%F %T.%f");
+
+	BOOST_CHECK(time.valid());
+
+	int year, yday, hour, min, sec, usec;
+	BOOST_CHECK(time.get2(&year, &yday, &hour, &min, &sec, &usec));
+	BOOST_CHECK_EQUAL(year, 2019);
+	BOOST_CHECK_EQUAL(yday, 0);
+	BOOST_CHECK_EQUAL(hour, 11);
+	BOOST_CHECK_EQUAL(min, 23);
+	BOOST_CHECK_EQUAL(sec, 42);
+	BOOST_CHECK_EQUAL(usec, 123400);
+
+	// Set new time to noon on March 1st 2020. Since 2020 is a leap year it is
+	// the 60th day after January 1st.
+	BOOST_CHECK(time.set2(2020, 31+29, 12, 3, 4, 1));
+	BOOST_CHECK_EQUAL(time.toString("%F %T.%f"), "2020-03-01 12:03:04.000001");
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(toString) {
 	// Buffer overflow test
 	//sc::Time time = sc::Time::GMT();
