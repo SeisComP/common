@@ -48,6 +48,9 @@ SC_SYSTEM_CORE_API bool computeTrimmedMean(int n, const double *f, double percen
 SC_SYSTEM_CORE_API bool computeTrimmedMean(int n, const double *f, double &value, double &stdev, double *weights = nullptr);
 SC_SYSTEM_CORE_API bool computeTrimmedMean(const std::vector<double> &v, double percent, double &value, double &stdev, std::vector<double> *weights = nullptr);
 
+SC_SYSTEM_CORE_API bool computeMedianTrimmedMean(int n, const double *f, double distance, double &value, double &stdev, double *weights = nullptr);
+SC_SYSTEM_CORE_API bool computeMedianTrimmedMean(const std::vector<double> &v, double distance, double &value, double &stdev, std::vector<double> *weights = nullptr);
+
 SC_SYSTEM_CORE_API bool computeMean(const std::vector<double> &v, double &value, double &stdev);
 
 SC_SYSTEM_CORE_API bool average(int n, const double *values, const double *weights, double &value, double &stdev);
