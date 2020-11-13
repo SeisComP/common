@@ -603,7 +603,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="spinBox" >
+            <widget class="QSpinBox" name="spinTrimmedMeanValue" >
              <property name="sizePolicy" >
               <sizepolicy>
                <hsizetype>4</hsizetype>
@@ -620,6 +620,42 @@
              </property>
              <property name="value" >
               <number>25</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="btnTrimmedMedian" >
+             <property name="sizePolicy" >
+              <sizepolicy>
+               <hsizetype>4</hsizetype>
+               <vsizetype>0</vsizetype>
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Median trimmed mean</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="spinTrimmedMedianValue" >
+             <property name="sizePolicy" >
+              <sizepolicy>
+               <hsizetype>4</hsizetype>
+               <vsizetype>0</vsizetype>
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximum" >
+              <double>100</double>
+             </property>
+             <property name="singleStep" >
+              <double>0.1</double>
+             </property>
+             <property name="value" >
+              <double>0.5</double>
              </property>
             </widget>
            </item>
@@ -758,16 +794,32 @@
   <connection>
    <sender>btnTrimmedMean</sender>
    <signal>toggled(bool)</signal>
-   <receiver>spinBox</receiver>
+   <receiver>spinTrimmedMeanValue</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>235</x>
-     <y>824</y>
+     <x>307</x>
+     <y>823</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>298</x>
+     <x>369</x>
      <y>823</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnTrimmedMedian</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>spinTrimmedMedianValue</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>396</x>
+     <y>820</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>520</x>
+     <y>820</y>
     </hint>
    </hints>
   </connection>

@@ -577,7 +577,8 @@ void CalculateAmplitudes::addProcessor(
 			&SCCoreApp->configuration(), keys)) ) {
 		pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(proc.get());
 		for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-			setError(row_it->second, QString("Setup failed"));
+			setError(row_it->second, QString("Setup failed (%1: %2)")
+			         .arg(proc->status().toString()).arg(proc->statusValue()));
 		return;
 	}
 

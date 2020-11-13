@@ -180,7 +180,7 @@ computeTrimmedMean(int n, const double *f, double percent,
 	}
 
 	if ( cumw > 1 )
-	    stdev = sqrt(cumd/(cumw-1));
+		stdev = sqrt(cumd/(cumw-1));
 
 	return true;
 }
@@ -208,6 +208,55 @@ computeMean(const std::vector<double> &v, double &value, double &stdev)
 {
 	return computeTrimmedMean(v.size(), &v[0], 0., value, stdev);
 }
+
+bool
+computeMedianTrimmedMean(int n, const double *f, double distance, double &value, double &stdev, double *weights)
+{
+	double m = median(n, f);
+	double cum = 0;
+	int count = 0;
+
+	for ( int i = 0; i < n; ++i ) {
+		if ( abs(f[i] - m) <= distance ) {
+			cum += f[i];
+			++count;
+			if ( weights )
+				weights[i] = 1;
+		}
+		else if ( weights )
+			weights[i] = 0;
+	}
+
+	value = cum / count;
+
+	cum = 0;
+
+	for ( int i = 0; i < n; ++i ) {
+		if ( abs(f[i] - m) <= distance ) {
+			double dv = f[i] - value;
+			cum += dv * dv;
+		}
+	}
+
+	if ( count > 1 )
+		stdev = sqrt(cum/(count-1));
+	else
+		stdev = 0;
+
+	return true;
+}
+
+bool
+computeMedianTrimmedMean(const std::vector<double> &v, double distance, double &value, double &stdev, std::vector<double> *weights)
+{
+	if ( weights ) {
+		weights->resize(v.size());
+		return computeMedianTrimmedMean(v.size(), &v[0], distance, value, stdev, &(*weights)[0]);
+	}
+
+	return computeMedianTrimmedMean(v.size(), &v[0], distance, value, stdev, nullptr);
+}
+
 
 bool
 average(int n, const double *values, const double *weights, double &value, double &stdev) {
