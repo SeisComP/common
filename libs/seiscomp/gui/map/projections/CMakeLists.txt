@@ -3,7 +3,7 @@ SET(GUI_MAP_PROJECTIONS_SOURCES
 	rectangular.cpp
 )
 
-SET(GUI_MAP_LAYER_HEADERS
+SET(GUI_MAP_PROJECTIONS_HEADERS
 	mercator.h
 	rectangular.h
 )
