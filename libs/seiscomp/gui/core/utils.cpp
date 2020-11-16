@@ -221,7 +221,8 @@ Qt::BrushStyle readBrushStyle(const std::string &query, const std::string &str,
 		if ( ok ) *ok = true;
 	}
 	catch ( const std::out_of_range & ) {
-		SEISCOMP_ERROR("%s: invalid pen style", query.c_str());
+		SEISCOMP_ERROR("invalid brush style in %s: %s",
+		               query.c_str(), str.c_str());
 		if ( ok ) *ok = false;
 	}
 
