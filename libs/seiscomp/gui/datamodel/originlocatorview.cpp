@@ -406,14 +406,38 @@ class OriginCommitOptions : public QDialog {
 			ui.comboEventTypes->addItem("- unset -");
 
 			if ( eventTypesWhitelist.isEmpty() ) {
-				for ( int i = (int)EventType::First; i < (int)EventType::Quantity; ++i ) {
-					if ( (EventType::Type)i == NOT_EXISTING )
-						ui.comboEventTypes->insertItem(1, EventType::NameDispatcher::name(i));
-					else
-						ui.comboEventTypes->addItem(EventType::NameDispatcher::name(i));
+				QStringList types;
+				for ( int i = int(EventType::First); i < int(EventType::Quantity); ++i ) {
+					types << EventType::NameDispatcher::name(i);
 				}
+
+				types.sort();
+				for ( int i = 1; i <= 4; ++i ) {
+					ui.comboEventTypes->addItem(QString());
+				}
+				ui.comboEventTypes->insertSeparator(5);
+				foreach (QString type, types) {
+					if ( type == "earthquake" ) {
+						ui.comboEventTypes->setItemText(1, type);
+					}
+					else if ( type == "not existing" ) {
+						ui.comboEventTypes->setItemText(2, type);
+					}
+					else if ( type == "not locatable" ) {
+						ui.comboEventTypes->setItemText(3, type);
+					}
+					else if ( type == "outside of network interest" ) {
+						ui.comboEventTypes->setItemText(4, type);
+					}
+					else {
+						ui.comboEventTypes->addItem(type);
+					}
+					ui.comboEventTypes->setItemData(ui.comboEventTypes->count()-1, type, Qt::ToolTipRole);
+				}
+
 			}
 			else {
+				QStringList types;
 				bool usedFlags[DataModel::EventType::Quantity];
 				for ( int i = 0; i < DataModel::EventType::Quantity; ++i )
 					usedFlags[i] = false;
@@ -423,28 +447,61 @@ class OriginCommitOptions : public QDialog {
 					ui.comboEventTypes->addItem(eventTypesWhitelist[i].toString());
 					usedFlags[eventTypesWhitelist[i]] = true;
 				}
+				ui.comboEventTypes->insertSeparator(ui.comboEventTypes->count()+1);
 
 				QColor reducedColor;
 				reducedColor = blend(palette().color(QPalette::Text), palette().color(QPalette::Base), 75);
 
 				for ( int i = 0; i < DataModel::EventType::Quantity; ++i ) {
 					if ( usedFlags[i] ) continue;
-					ui.comboEventTypes->addItem(EventType::NameDispatcher::name(i));
-					ui.comboEventTypes->setItemData(ui.comboEventTypes->count()-1, reducedColor, Qt::ForegroundRole);
+					types << EventType::NameDispatcher::name(i);
+				}
+
+				types.sort();
+				foreach (QString type, types) {
+					ui.comboEventTypes->addItem(type);
+					ui.comboEventTypes->setItemData(ui.comboEventTypes->count()-1,
+					                                reducedColor, Qt::ForegroundRole);
 				}
 			}
 
 			EventType defaultType = EARTHQUAKE;
 			ui.comboEventTypes->setCurrentIndex(ui.comboEventTypes->findText(defaultType.toString()));
 
+			// event certainty
 			ui.comboEventTypeCertainty->addItem("- unset -");
-			for ( int i = (int)EventTypeCertainty::First; i < (int)EventTypeCertainty::Quantity; ++i )
+			for ( int i = int(EventTypeCertainty::First); i < int(EventTypeCertainty::Quantity); ++i )
 				ui.comboEventTypeCertainty->addItem(EventTypeCertainty::NameDispatcher::name(i));
 			ui.comboEventTypeCertainty->setCurrentIndex(0);
 
+			// origin status
 			ui.comboOriginStates->addItem("- unset -");
-			for ( int i = (int)EvaluationStatus::First; i < (int)EvaluationStatus::Quantity; ++i )
-				ui.comboOriginStates->addItem(EvaluationStatus::NameDispatcher::name(i));
+			for ( int i = 0; i < 6; ++i ) {
+				ui.comboOriginStates->addItem(QString());
+			}
+			for ( int i = int(EvaluationStatus::First); i < int(EvaluationStatus::Quantity); ++i ) {
+				if ( EvaluationStatus::Type(i) == FINAL ) {
+					ui.comboOriginStates->setItemText(1, EvaluationStatus::NameDispatcher::name(i));
+				}
+				else if ( EvaluationStatus::Type(i) == REVIEWED ) {
+					ui.comboOriginStates->setItemText(2, EvaluationStatus::NameDispatcher::name(i));
+				}
+				else if ( EvaluationStatus::Type(i) == CONFIRMED ) {
+					ui.comboOriginStates->setItemText(3, EvaluationStatus::NameDispatcher::name(i));
+				}
+				else if ( EvaluationStatus::Type(i) == PRELIMINARY ) {
+					ui.comboOriginStates->setItemText(4, EvaluationStatus::NameDispatcher::name(i));
+				}
+				else if ( EvaluationStatus::Type(i) == REPORTED ) {
+					ui.comboOriginStates->setItemText(5, EvaluationStatus::NameDispatcher::name(i));
+				}
+				else if ( EvaluationStatus::Type(i) == REJECTED ) {
+					ui.comboOriginStates->setItemText(6, EvaluationStatus::NameDispatcher::name(i));
+				}
+				else {
+					ui.comboOriginStates->addItem(EvaluationStatus::NameDispatcher::name(i));
+				}
+			}
 
 			ui.comboEQComment->addItem("");
 			ui.comboEQComment->setEditable(true);
