@@ -1046,11 +1046,40 @@ void EventEdit::init() {
 	_ui.comboTypes->addItem("- unset -");
 
 	if ( _eventTypesWhitelist.isEmpty() ) {
-		for ( int i = (int)EventType::First; i < (int)EventType::Quantity; ++i ) {
-			if ( (EventType::Type)i == NOT_EXISTING )
-				_ui.comboTypes->insertItem(1, EventType::NameDispatcher::name(i));
-			else
-				_ui.comboTypes->addItem(EventType::NameDispatcher::name(i));
+		QStringList types;
+		for ( int i = 0; i < 4; ++i ) {
+			_ui.comboTypes->addItem(QString());
+		}
+		for ( int i = int(EventType::First); i < int(EventType::Quantity); ++i ) {
+			if ( EventType::Type(i) == EARTHQUAKE ) {
+				_ui.comboTypes->setItemText(1, EventType::NameDispatcher::name(i));
+				_ui.comboTypes->setItemData(1, EventType::NameDispatcher::name(i),
+				                            Qt::ToolTipRole);
+			}
+			else if ( EventType::Type(i) == NOT_EXISTING ) {
+				_ui.comboTypes->setItemText(2, EventType::NameDispatcher::name(i));
+				_ui.comboTypes->setItemData(_ui.comboTypes->count()-1,
+				                            EventType::NameDispatcher::name(i), Qt::ToolTipRole);
+			}
+			else if ( EventType::Type(i) == NOT_LOCATABLE ) {
+				_ui.comboTypes->setItemText(3, EventType::NameDispatcher::name(i));
+				_ui.comboTypes->setItemData(_ui.comboTypes->count()-1,
+				                            EventType::NameDispatcher::name(i), Qt::ToolTipRole);
+			}
+			else if ( EventType::Type(i) == OUTSIDE_OF_NETWORK_INTEREST ) {
+				_ui.comboTypes->setItemText(4, EventType::NameDispatcher::name(i));
+				_ui.comboTypes->setItemData(_ui.comboTypes->count()-1,
+				                            EventType::NameDispatcher::name(i), Qt::ToolTipRole);
+			}
+			else {
+				types << EventType::NameDispatcher::name(i);
+			}
+		}
+		_ui.comboTypes->insertSeparator(5);
+		types.sort();
+		foreach (QString type, types) {
+			_ui.comboTypes->addItem(type);
+			_ui.comboTypes->setItemData(_ui.comboTypes->count()-1, type, Qt::ToolTipRole);
 		}
 	}
 	else {
@@ -1061,16 +1090,25 @@ void EventEdit::init() {
 		for ( int i = 0; i < _eventTypesWhitelist.count(); ++i ) {
 			if ( usedFlags[_eventTypesWhitelist[i]] ) continue;
 			_ui.comboTypes->addItem(_eventTypesWhitelist[i].toString());
+			_ui.comboTypes->setItemData(_ui.comboTypes->count()-1,
+			                            _eventTypesWhitelist[i].toString(), Qt::ToolTipRole);
 			usedFlags[_eventTypesWhitelist[i]] = true;
 		}
+		_ui.comboTypes->insertSeparator(_eventTypesWhitelist.count()+1);
 
 		QColor reducedColor;
 		reducedColor = blend(palette().color(QPalette::Text), palette().color(QPalette::Base), 50);
 
+		QStringList types;
 		for ( int i = 0; i < DataModel::EventType::Quantity; ++i ) {
 			if ( usedFlags[i] ) continue;
-			_ui.comboTypes->addItem(EventType::NameDispatcher::name(i));
+			types << EventType::NameDispatcher::name(i);
+		}
+		types.sort();
+		foreach (QString type, types) {
+			_ui.comboTypes->addItem(type);
 			_ui.comboTypes->setItemData(_ui.comboTypes->count()-1, reducedColor, Qt::ForegroundRole);
+			_ui.comboTypes->setItemData(_ui.comboTypes->count()-1, type, Qt::ToolTipRole);
 		}
 	}
 
