@@ -27,6 +27,7 @@
 #include <fstream>
 #include <queue>
 #include <list>
+#include <set>
 #include <mutex>
 
 #include <seiscomp/core/version.h>
