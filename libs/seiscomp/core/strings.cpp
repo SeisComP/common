@@ -206,6 +206,10 @@ bool fromString(unsigned long long &value, const std::string& str) {
 template <>
 bool fromString(float &value, const std::string &str) {
 	char* endptr = nullptr;
+
+	if ( str.empty() )
+		return false;
+
 	errno = 0;
 	double retval = strtod(str.c_str(), &endptr);
 
@@ -236,6 +240,10 @@ bool fromString(float &value, const std::string &str) {
 template <>
 bool fromString(double &value, const std::string &str) {
 	char* endptr = nullptr;
+
+	if ( str.empty() )
+		return false;
+
 	errno = 0;
 	value = strtod(str.c_str(), &endptr);
 
