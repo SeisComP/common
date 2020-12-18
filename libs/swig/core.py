@@ -315,6 +315,9 @@ class Time(TimeSpan):
     def set(self, year, month, day, hour, min, sec, usec):
         return _core.Time_set(self, year, month, day, hour, min, sec, usec)
 
+    def set2(self, year, yday, hour, min, sec, usec):
+        return _core.Time_set2(self, year, yday, hour, min, sec, usec)
+
     def get(self):
         return _core.Time_get(self)
 
