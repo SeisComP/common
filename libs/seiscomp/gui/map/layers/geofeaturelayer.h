@@ -29,7 +29,7 @@
 #endif
 
 
-#include <QPixmap>
+#include <QImage>
 
 
 namespace Seiscomp {
@@ -122,7 +122,7 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 			bool                       filled;
 			int                        symbolSize;
 			SymbolShape                symbolShape;
-			QPixmap                    symbolIcon;
+			QImage                     symbolIcon;
 			QPoint                     symbolIconHotspot;
 
 			LayerProperties(const std::string &name)
