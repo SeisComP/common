@@ -449,7 +449,7 @@ class Module(kernel.CoreModule):
         out = check_output(cmd)
         if out[2] != 0:
             print("failed", file=sys.stderr)
-            print("WARNING: mysql returned with error:", file=sys.stderr)
+            print("WARNING: %s returned with error:" % backend, file=sys.stderr)
             print(out[1].strip(), file=sys.stderr)
             return True
 
