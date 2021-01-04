@@ -53,7 +53,11 @@ OutputObserver::~OutputObserver() {}
 
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#if BOOST_VERSION < 107300
 void OutputObserver::test_start(counter_t) {
+#else
+void OutputObserver::test_start(counter_t, test_unit_id) {
+#endif
 	countTests = 0;
 	countTrue = 0;
 	countFalse = 0;
