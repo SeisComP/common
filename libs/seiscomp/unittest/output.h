@@ -52,7 +52,11 @@ class OutputObserver : public boost::unit_test::test_observer {
 	// Public Interface
 	// ---------------------------------------------------------------------------
 	public:
+#if BOOST_VERSION < 107300
 		virtual void test_start(boost::unit_test::counter_t) override;
+#else
+		virtual void test_start(boost::unit_test::counter_t, boost::unit_test::test_unit_id) override;
+#endif
 		virtual void test_aborted() override;
 
 		virtual void test_unit_start(boost::unit_test::test_unit const &unit) override;
