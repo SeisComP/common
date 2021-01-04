@@ -41,7 +41,7 @@
 #include <QHeaderView>
 #include <QMessageBox>
 
-#include <boost/bind.hpp>
+#include <functional>
 
 
 using namespace std;
@@ -541,7 +541,7 @@ void CalculateAmplitudes::addProcessor(
 	}
 
 	proc->setReferencingPickID(pick->publicID());
-	proc->setPublishFunction(boost::bind(&CalculateAmplitudes::emitAmplitude, this, _1, _2));
+	proc->setPublishFunction(bind(&CalculateAmplitudes::emitAmplitude, this, placeholders::_1, placeholders::_2));
 
 	switch ( proc->usedComponent() ) {
 		case AmplitudeProcessor::Vertical:

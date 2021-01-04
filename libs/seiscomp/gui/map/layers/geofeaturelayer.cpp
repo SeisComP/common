@@ -27,6 +27,7 @@
 
 #include <QMenu>
 
+#include <functional>
 #include <iostream>
 
 using namespace std;
@@ -529,7 +530,7 @@ void GeoFeatureLayer::drawFeatures(CategoryNode *node, Canvas *canvas,
 	else
 		painter.setBrush(Qt::NoBrush);
 
-	node->quadtree.query(proj->boundingBox(), boost::bind(&GeoFeatureLayer::drawFeature, this, canvas, &painter, &debugPen, layProp, _1), true);
+	node->quadtree.query(proj->boundingBox(), std::bind(&GeoFeatureLayer::drawFeature, this, canvas, &painter, &debugPen, layProp, std::placeholders::_1), true);
 	/*
 	for ( size_t i = 0; i < node->features.size(); ++i ) {
 		Geo::GeoFeature *f = node->features[i];

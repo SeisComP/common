@@ -23,8 +23,11 @@
 #include <seiscomp/logging/log.h>
 #include <seiscomp/processing/amplitudes/MLh.h>
 
-#include <boost/bind.hpp>
+#include <functional>
 #include <cstdio>
+
+
+using namespace std;
 
 
 namespace Seiscomp {
@@ -53,15 +56,15 @@ AmplitudeProcessor::AmplitudeValue average(
 
 	double l = 0, u = 0;
 
-	l = std::max(l, v.value - v0l);
-	l = std::max(l, v.value - v0u);
-	l = std::max(l, v.value - v1l);
-	l = std::max(l, v.value - v1u);
+	l = max(l, v.value - v0l);
+	l = max(l, v.value - v0u);
+	l = max(l, v.value - v1l);
+	l = max(l, v.value - v1u);
 
-	u = std::max(l, v0l - v.value);
-	u = std::max(l, v0u - v.value);
-	u = std::max(l, v1l - v.value);
-	u = std::max(l, v1u - v.value);
+	u = max(l, v0l - v.value);
+	u = max(l, v0u - v.value);
+	u = max(l, v1l - v.value);
+	u = max(l, v1u - v.value);
 
 	v.lowerUncertainty = l;
 	v.upperUncertainty = u;
@@ -86,15 +89,15 @@ AmplitudeProcessor::AmplitudeTime average(
 	Core::Time minTime = t.reference;
 	Core::Time maxTime = t.reference;
 
-	minTime = std::min(minTime, t0b);
-	minTime = std::min(minTime, t0e);
-	minTime = std::min(minTime, t1b);
-	minTime = std::min(minTime, t1e);
+	minTime = min(minTime, t0b);
+	minTime = min(minTime, t0e);
+	minTime = min(minTime, t1b);
+	minTime = min(minTime, t1e);
 
-	maxTime = std::max(maxTime, t0b);
-	maxTime = std::max(maxTime, t0e);
-	maxTime = std::max(maxTime, t1b);
-	maxTime = std::max(maxTime, t1e);
+	maxTime = max(maxTime, t0b);
+	maxTime = max(maxTime, t0e);
+	maxTime = max(maxTime, t1b);
+	maxTime = max(maxTime, t1e);
 
 	t.begin = (double)(minTime - t.reference);
 	t.end = (double)(maxTime - t.reference);
@@ -124,15 +127,15 @@ AmplitudeProcessor::AmplitudeValue gmean(
 
 	double l = 0, u = 0;
 
-	l = std::max(l, v.value - v0l);
-	l = std::max(l, v.value - v0u);
-	l = std::max(l, v.value - v1l);
-	l = std::max(l, v.value - v1u);
+	l = max(l, v.value - v0l);
+	l = max(l, v.value - v0u);
+	l = max(l, v.value - v1l);
+	l = max(l, v.value - v1u);
 
-	u = std::max(l, v0l - v.value);
-	u = std::max(l, v0u - v.value);
-	u = std::max(l, v1l - v.value);
-	u = std::max(l, v1u - v.value);
+	u = max(l, v0l - v.value);
+	u = max(l, v0u - v.value);
+	u = max(l, v1l - v.value);
+	u = max(l, v1u - v.value);
 
 	v.lowerUncertainty = l;
 	v.upperUncertainty = u;
@@ -168,8 +171,8 @@ AmplitudeProcessor_ML2h::AmplitudeProcessor_ML2h()
 	_ampN.setUsedComponent(FirstHorizontal);
 	_ampE.setUsedComponent(SecondHorizontal);
 
-	_ampE.setPublishFunction(boost::bind(&AmplitudeProcessor_ML2h::newAmplitude, this, _1, _2));
-	_ampN.setPublishFunction(boost::bind(&AmplitudeProcessor_ML2h::newAmplitude, this, _1, _2));
+	_ampE.setPublishFunction(bind(&AmplitudeProcessor_ML2h::newAmplitude, this, placeholders::_1, placeholders::_2));
+	_ampN.setPublishFunction(bind(&AmplitudeProcessor_ML2h::newAmplitude, this, placeholders::_1, placeholders::_2));
 
 	// Propagate configuration to single processors
 	_ampN.setConfig(config());
@@ -193,8 +196,8 @@ AmplitudeProcessor_ML2h::AmplitudeProcessor_ML2h(const Core::Time &trigger)
 	_ampN.setUsedComponent(FirstHorizontal);
 	_ampE.setUsedComponent(SecondHorizontal);
 
-	_ampE.setPublishFunction(boost::bind(&AmplitudeProcessor_ML2h::newAmplitude, this, _1, _2));
-	_ampN.setPublishFunction(boost::bind(&AmplitudeProcessor_ML2h::newAmplitude, this, _1, _2));
+	_ampE.setPublishFunction(bind(&AmplitudeProcessor_ML2h::newAmplitude, this, placeholders::_1, placeholders::_2));
+	_ampN.setPublishFunction(bind(&AmplitudeProcessor_ML2h::newAmplitude, this, placeholders::_1, placeholders::_2));
 
 	// Propagate configuration to single processors
 	_ampN.setConfig(config());
@@ -271,7 +274,7 @@ AmplitudeProcessor_ML2h::capabilityParameters(Capability cap) const {
 }
 
 
-bool AmplitudeProcessor_ML2h::setParameter(Capability cap, const std::string &value) {
+bool AmplitudeProcessor_ML2h::setParameter(Capability cap, const string &value) {
 	if ( cap == Combiner ) {
 		if ( value == "Min" ) {
 			_combiner = TakeMin;
@@ -307,7 +310,7 @@ bool AmplitudeProcessor_ML2h::setup(const Settings &settings) {
 	_combiner = TakeAverage;
 
 	try {
-		std::string s = settings.getString("amplitudes." + _type + ".combiner");
+		string s = settings.getString("amplitudes." + _type + ".combiner");
 		if ( s == "average" )
 			_combiner = TakeAverage;
 		else if ( s == "max" )
@@ -358,7 +361,7 @@ double AmplitudeProcessor_ML2h::timeWindowLength(double distance_deg) const {
 	double endE = _ampE.timeWindowLength(distance_deg);
 	_ampN.setSignalEnd(endN);
 	_ampE.setSignalEnd(endE);
-	return std::max(endN, endE);
+	return max(endN, endE);
 }
 
 
@@ -491,7 +494,7 @@ void AmplitudeProcessor_ML2h::newAmplitude(const AmplitudeProcessor *proc,
 		};
 
 		newRes.period = -1;
-		newRes.snr = std::min(_results[0]->snr, _results[1]->snr);
+		newRes.snr = min(_results[0]->snr, _results[1]->snr);
 		emitAmplitude(newRes);
 	}
 }

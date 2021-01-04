@@ -59,12 +59,12 @@
 #include <QToolButton>
 
 #include <algorithm>
+#include <functional>
 #include <numeric>
 #include <fstream>
 #include <limits>
 #include <set>
 
-#include <boost/bind.hpp>
 
 #ifdef MACOSX
 #include <seiscomp/gui/core/osx.h>
@@ -7234,7 +7234,7 @@ void PickerView::automaticRepick() {
 			}
 
 			picker->setTrigger(cp);
-			picker->setPublishFunction(boost::bind(&PickerView::emitPick, this, _1, _2));
+			picker->setPublishFunction(bind(&PickerView::emitPick, this, placeholders::_1, placeholders::_2));
 			picker->computeTimeWindow();
 
 			SEISCOMP_DEBUG("%s: ns=%f, ss=%f, se=%f", picker->methodID().c_str(),
