@@ -46,12 +46,12 @@
 #include <seiscomp/logging/log.h>
 
 #include <QMessageBox>
+#include <functional>
 #include <numeric>
 #include <fstream>
 #include <limits>
 #include <set>
 
-#include <boost/bind.hpp>
 
 #ifdef MACOSX
 #include <seiscomp/gui/core/osx.h>
@@ -2551,7 +2551,7 @@ void AmplitudeView::onSelectedTimeRange(Seiscomp::Core::Time t1, Seiscomp::Core:
 	if ( _comboAmpCombiner->isEnabled() )
 		label->processor->setParameter(Processing::AmplitudeProcessor::Combiner, _comboAmpCombiner->currentText().toStdString());
 
-	label->processor->setPublishFunction(boost::bind(&AmplitudeView::newAmplitudeAvailable, this, _1, _2));
+	label->processor->setPublishFunction(bind(&AmplitudeView::newAmplitudeAvailable, this, placeholders::_1, placeholders::_2));
 	label->processor->reprocess(smin, smax);
 	label->processor->setPublishFunction(Processing::AmplitudeProcessor::PublishFunc());
 	label->updateProcessingInfo();
@@ -2623,7 +2623,7 @@ void AmplitudeView::setPhaseMarker(Seiscomp::Gui::RecordWidget* widget,
 	if ( _comboAmpCombiner->isEnabled() )
 		label->processor->setParameter(Processing::AmplitudeProcessor::Combiner, _comboAmpCombiner->currentText().toStdString());
 
-	label->processor->setPublishFunction(boost::bind(&AmplitudeView::newAmplitudeAvailable, this, _1, _2));
+	label->processor->setPublishFunction(bind(&AmplitudeView::newAmplitudeAvailable, this, placeholders::_1, placeholders::_2));
 	label->processor->reprocess(smin, smax);
 	label->processor->setPublishFunction(Processing::AmplitudeProcessor::PublishFunc());
 	label->updateProcessingInfo();
@@ -2981,7 +2981,7 @@ void AmplitudeView::recalculateAmplitude() {
 		l->processor->setParameter(Processing::AmplitudeProcessor::Combiner, _comboAmpCombiner->currentText().toStdString());
 
 	if ( l->processor->isFinished() ) {
-		l->processor->setPublishFunction(boost::bind(&AmplitudeView::newAmplitudeAvailable, this, _1, _2));
+		l->processor->setPublishFunction(bind(&AmplitudeView::newAmplitudeAvailable, this, placeholders::_1, placeholders::_2));
 		l->processor->reprocess();
 
 		for ( int i = 0; i < 3; ++i ) {
@@ -3049,7 +3049,7 @@ void AmplitudeView::recalculateAmplitudes() {
 			l->processor->setParameter(Processing::AmplitudeProcessor::Combiner, _comboAmpCombiner->currentText().toStdString());
 
 		if ( l->processor->isFinished() ) {
-			l->processor->setPublishFunction(boost::bind(&AmplitudeView::newAmplitudeAvailable, this, _1, _2));
+			l->processor->setPublishFunction(bind(&AmplitudeView::newAmplitudeAvailable, this, placeholders::_1, placeholders::_2));
 			l->processor->reprocess();
 
 			for ( int i = 0; i < 3; ++i ) {

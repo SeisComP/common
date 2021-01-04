@@ -24,7 +24,7 @@
 #include <seiscomp/processing/waveformoperator.h>
 #include <seiscomp/logging/log.h>
 
-#include <boost/bind.hpp>
+#include <functional>
 
 
 namespace Seiscomp {
@@ -116,7 +116,7 @@ void WaveformProcessor::setOperator(WaveformOperator *op) {
 
 	_operator = op;
 
-	if ( _operator ) _operator->setStoreFunc(boost::bind(&WaveformProcessor::store, this, _1));
+	if ( _operator ) _operator->setStoreFunc(std::bind(&WaveformProcessor::store, this, std::placeholders::_1));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

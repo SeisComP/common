@@ -23,7 +23,8 @@
 #include <seiscomp/utils/timer.h>
 #include <boost/thread.hpp>
 
-#include <errno.h>
+#include <cerrno>
+#include <functional>
 #include <iostream>
 #include <deque>
 
@@ -162,7 +163,7 @@ bool selfTest(int nMessages) {
 	int n = nMessages;
 	bool keepReading = true;
 
-	boost::thread readingThread(boost::bind(readMessages, &conn));
+	boost::thread readingThread(bind(readMessages, &conn));
 	readingThread.yield();
 
 	while ( n && keepReading ) {
@@ -216,7 +217,7 @@ void threadedConnectionTest() {
 
 	boost::thread_group threads;
 	for ( int i = 0; i < N_THREADS; ++i ) {
-		threads.create_thread(boost::bind(connectionPublishTest, N));
+		threads.create_thread(bind(connectionPublishTest, N));
 	}
 
 	threads.join_all();

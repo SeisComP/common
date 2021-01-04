@@ -19,7 +19,7 @@
 
 
 #include <seiscomp/processing/waveformoperator.h>
-#include <boost/bind.hpp>
+#include <functional>
 
 
 namespace Seiscomp {
@@ -54,7 +54,7 @@ void WaveformOperator::setStoreFunc(const StoreFunc &func) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WaveformOperator::connect(WaveformOperator *op1, WaveformOperator *op2) {
-	op1->setStoreFunc(boost::bind(&WaveformOperator::feed, op2, _1));
+	op1->setStoreFunc(std::bind(&WaveformOperator::feed, op2, std::placeholders::_1));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
