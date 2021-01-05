@@ -145,7 +145,14 @@ bool fromString(QColor& value, const std::string& str) {
 
 QColor readColor(const std::string &query, const std::string &str,
                  const QColor &base, bool *ok) {
-	QColor r(base);
+	QColor r;
+	r.setNamedColor(str.c_str());
+	if ( r.isValid() ) {
+		if ( ok ) *ok = true;
+		return r;
+	}
+
+	r = base;
 
 	if ( !fromString(r, str) ) {
 		SEISCOMP_ERROR("%s: %s", query.c_str(), colorConvertError.c_str());
