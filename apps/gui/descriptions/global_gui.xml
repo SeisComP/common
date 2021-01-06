@@ -134,14 +134,21 @@
 			</group>
 			<group name="scheme">
 				<description>
-					This group defines various color and font options for SeisComP
-					graphical user interfaces. There are various conventions
-					to define colors, fonts and gradients. A color is defined in HTML
-					convention. If rgb or rgba is used it must be quoted because the
-					comma is handled as list separator by the configuration. Gradients
-					are configured as lists of tuples where each tuple is colon separated
-					in the form value:color. Color is again a color definition and value is
-					either int or double.
+					This group defines various options for color, pen, brush, font, etc. for SeisComP
+					graphical user interfaces. There are various conventions to
+					define colors, fonts and gradients.
+
+					Colors are defined in HTML
+					convention, e.g. as rgb values, hexadecimal numbers or color
+					keyword names defined by W3C. If rgb or rgba is used, it must
+					be quoted because the comma is handled as list separator by
+					the configuration.
+					Examples: "rgb(255,0,0)", FF00FF40, green.
+
+					Gradients are configured as lists of tuples where each tuple
+					is colon separated in the form value:color. Value is either
+					int or double and color is again a color definition.
+					Example: 0:yellow,10:red
 				</description>
 				<parameter name="showMenu" type="boolean" default="true">
 					<description>Show menu bar.</description>
@@ -234,6 +241,8 @@
 				</group>
 
 				<group name="colors">
+					Colors can be configured as hexadecimal numbers or color keyword names
+					defined by W3C.
 					<parameter name="background" type="color">
 						<description>
 							A general application background color. Can be used to give
@@ -320,6 +329,114 @@
 						<parameter name="alignment" type="color" default="FF0000">
 							<description>The color of the alignment marker in trace views.</description>
 						</parameter>
+						<group name="borders">
+							<description>Properties of record borders</description>
+							<group name="standard">
+								<description>Standard properties</description>
+								<group name="pen">
+									<description>
+										Defines the pen of the border line.
+									</description>
+									<parameter name="color" type="color" default="">
+										<description>The color of the pen.</description>
+									</parameter>
+									<parameter name="style" type="string" default="">
+										<description>
+											The style of the pen. Supported values are:
+											NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+										</description>
+									</parameter>
+									<parameter name="width" type="double" default="">
+										<description>The width of the pen.</description>
+									</parameter>
+								</group>
+								<group name="brush">
+									<description>
+										Defines the brush of the enlcosed area.
+									</description>
+									<parameter name="color" type="color" default="">
+										<description>The color of the pen.</description>
+									</parameter>
+									<parameter name="style" type="string" default="">
+										<description>
+											The style of the pen. Supported values are, e.g.:
+											solid, dense1, dense7, horizontal, vertical,
+											cross, bdiag, fdiag, diagcross.
+										</description>
+									</parameter>
+								</group>
+							</group>
+							<group name="signatureValid">
+								<description>Properties for records with valid signatures</description>
+								<group name="pen">
+									<description>
+										Defines the pen of the border line.
+									</description>
+									<parameter name="color" type="color" default="">
+										<description>The color of the pen.</description>
+									</parameter>
+									<parameter name="style" type="string" default="">
+										<description>
+											The style of the pen. Supported values are:
+											NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+										</description>
+									</parameter>
+									<parameter name="width" type="double" default="">
+										<description>The width of the pen.</description>
+									</parameter>
+								</group>
+								<group name="brush">
+									<description>
+										Defines the brush of the enlcosed area.
+									</description>
+									<parameter name="color" type="color" default="">
+										<description>The color of the pen.</description>
+									</parameter>
+									<parameter name="style" type="string" default="">
+										<description>
+											The style of the pen. Supported values are, e.g.:
+											solid, dense1, dense7, horizontal, vertical,
+											cross, bdiag, fdiag, diagcross.
+										</description>
+									</parameter>
+								</group>
+							</group>
+							<group name="signatureInvalid">
+								<description>Properties for records with invalid signatures</description>
+								<group name="pen">
+									<description>
+										Defines the pen of the border line.
+									</description>
+									<parameter name="color" type="color" default="">
+										<description>The color of the pen.</description>
+									</parameter>
+									<parameter name="style" type="string" default="">
+										<description>
+											The style of the pen. Supported values are:
+											NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+										</description>
+									</parameter>
+									<parameter name="width" type="double" default="">
+										<description>The width of the pen.</description>
+									</parameter>
+								</group>
+								<group name="brush">
+									<description>
+										Defines the brush of the enlcosed area.
+									</description>
+									<parameter name="color" type="color" default="">
+										<description>The color of the pen.</description>
+									</parameter>
+									<parameter name="style" type="string" default="">
+										<description>
+											The style of the pen. Supported values are, e.g.:
+											solid, dense1, dense7, horizontal, vertical,
+											cross, bdiag, fdiag, diagcross.
+										</description>
+									</parameter>
+								</group>
+							</group>
+						</group>
 						<group name="offset">
 							<description>
 								Defines the pen of the record offset line.
@@ -428,7 +545,7 @@
 							The gradient of arrivals residuals. A gradient is defined as
 							a list of tuples separated by colon where the first item is
 							the value and the second is the color. Colors can be given in
-							rgb notation or hex. when rgb is used double quotes are needed to
+							rgb notation or hexadecimal. When rgb is used double quotes are needed to
 							protect the comma inside the rgb definition, e.g.
 							-8:&quot;rgb(0,0,100)&quot;, -4:&quot;rgb(0,0,255)&quot;, -3:&quot;rgb(100,100,255)&quot;, ...
 							</description>
@@ -661,6 +778,16 @@
 						collapse into single lines.
 						</description>
 					</parameter>
+					<group name="borders">
+						<parameter name="drawMode" type="string" default="box">
+							<description>
+							Mode for drawing record borders as box or line on top or
+							bottom.
+
+							Supported values: &quot;topline&quot;,&quot;box&quot;,&quot;bottomline&quot;
+							</description>
+						</parameter>
+					</group>
 				</group>
 
 				<group name="fonts">
