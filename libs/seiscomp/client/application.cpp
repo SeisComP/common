@@ -1227,6 +1227,8 @@ void Application::done() {
 	_query = nullptr;
 	_database = nullptr;
 
+	Inventory::Instance()->setInventory(nullptr);
+
 	SEISCOMP_DEBUG("Leaving ::done");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
