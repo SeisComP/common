@@ -100,7 +100,7 @@ class SC_GUI_API EventListView : public QWidget {
 	// ------------------------------------------------------------------
 	public:
 		EventListView(Seiscomp::DataModel::DatabaseQuery* reader,
-		              bool withOrigins = true, bool withFocalMechanisms = false,
+		              bool withOrigins = true, bool withFocalMechanisms = true,
 		              QWidget * parent = 0, Qt::WindowFlags f = 0);
 		~EventListView();
 

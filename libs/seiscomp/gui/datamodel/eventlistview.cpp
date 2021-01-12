@@ -516,6 +516,23 @@ DatabaseIterator getComments4Origins(DatabaseArchive *ar, const EventListView::F
 }
 
 
+DatabaseIterator getComments4FocalMechanisms(DatabaseArchive *ar, const EventListView::Filter& filter) {
+	if( !ar->driver() )
+		return DatabaseIterator();
+
+	std::ostringstream oss;
+	oss	<< "select Comment.* "
+		<< "from FocalMechanism, "
+		<<      "Comment "
+		<< "where FocalMechanism." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
+		<<       "FocalMechanism." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "' and ";
+
+	oss <<       "Comment._parent_oid = FocalMechanism._oid";
+
+	return ar->getObjectIterator( oss.str(), Comment::TypeInfo() );
+}
+
+
 DatabaseIterator getComments4Events(DatabaseArchive *ar, const EventListView::Filter& filter) {
 	if( !ar->driver() )
 		return DatabaseIterator();
@@ -861,6 +878,7 @@ class OriginTreeItem : public SchemeTreeItem {
 				setText(config.columnMap[COL_DEPTH_TYPE], "-"); // Depth
 			}
 
+			// add publication marker
 			char stat = objectStatusToChar(ori);
 			setText(config.columnMap[COL_TYPE],
 					QString("%1%2")
@@ -1027,8 +1045,13 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 				setText(config.columnMap[COL_REGION], Regions::getRegionName(lat, lon).c_str()); // Region
 			}
 
+			// add publication marker
 			char stat = objectStatusToChar(fm);
-			setText(config.columnMap[COL_TYPE], QString("%1").arg(stat));
+			setText(config.columnMap[COL_TYPE],
+					QString("%1%2")
+					.arg(_published?">":"")
+					.arg(stat)
+					); // Type
 
 			try {
 				switch ( fm->evaluationMode() ) {
@@ -3123,10 +3146,8 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		currentStep += numberOfEvents*10;
 		progress.setValue(currentStep);
 
-		//fetch comments for relevant origins (marker for publishing)
-
+		// fetch comments to be able to later mark published origins
 		it = getComments4Origins(_reader, filter);
-
 		while ( (comment = Comment::Cast(*it)) ) {
 			if( progress.wasCanceled() )
 				break;
@@ -3176,6 +3197,23 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		}
 		it.close();
 
+		// fetch comments to be able to later mark published focal mechanisms
+		for (size_t i=0; i<ep.focalMechanismCount(); i++) {
+			_reader->loadComments(ep.focalMechanism(i));
+		}
+
+		/*
+		it = getComments4FocalMechanisms(_reader, filter);
+		while ( (comment = Comment::Cast(*it)) ) {
+			if( progress.wasCanceled() )
+				break;
+			FocalMechanismPtr fm = fmIDs[it.parentOid()];
+			if ( fm ) fm->add(comment.get());
+			++it;
+		}
+		it.close();
+		*/
+
 		it = getEventMomentTensors(_reader, filter);
 
 		MomentTensorPtr mt;
@@ -3222,6 +3260,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 	it.close();
 
 	QSet<void*> associatedOrigins;
+	QSet<void*> associatedFocalMechanisms;
 
 	progress.setLabelText(tr("Reading magnitudes..."));
 	std::vector<MagnitudePtr> prefMags;
@@ -3272,6 +3311,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		EventTreeItem *eventItem = addEvent(event, false);
 		bool update = false;
 
+		// set publication status for event
 		for ( size_t c = 0; c < event->commentCount(); ++c ) {
 			if ( event->comment(c)->text() == "published" ) {
 				update = true;
@@ -3288,11 +3328,10 @@ void EventListView::readFromDatabase(const Filter &filter) {
 				if ( o ) {
 					update = true;
 					OriginTreeItem *originItem = addOrigin(o, eventItem, prefOrg == o);
+
+					// set publication status for origin
 					for ( size_t c = 0; c < o->commentCount(); ++c ) {
-						// "OriginPublished" shall be superseded by "published"
-					        // but here we accept both
-						if ( o->comment(c)->text() == "OriginPublished" ||
-						     o->comment(c)->text() == "published" ) {
+						if ( o->comment(c)->text() == "published" ) {
 							originItem->setPublishState(true);
 							originItem->update(this);
 							break;
@@ -3310,7 +3349,18 @@ void EventListView::readFromDatabase(const Filter &filter) {
 				FocalMechanism *o = FocalMechanism::Find(ref->focalMechanismID());
 				if ( o ) {
 					update = true;
-					addFocalMechanism(o, eventItem);
+					FocalMechanismTreeItem *focMechItem = addFocalMechanism(o, eventItem);
+
+					// set publication status for focal mechanism
+					for ( size_t c = 0; c < o->commentCount(); ++c ) {
+						if ( o->comment(c)->text() == "published" ) {
+							focMechItem->setPublishState(true);
+							focMechItem->update(this);
+							break;
+						}
+					}
+
+					associatedFocalMechanisms.insert(o);
 				}
 			}
 		}
@@ -3329,6 +3379,15 @@ void EventListView::readFromDatabase(const Filter &filter) {
 			}
 		}
 	}
+	if ( _withFocalMechanisms ) {
+		// Switch loading of all FocalMechanism information on
+		for ( size_t i = 0; i < ep.focalMechanismCount(); ++i ) {
+			if ( !associatedFocalMechanisms.contains(ep.focalMechanism(i)) ) {
+				addFocalMechanism(ep.focalMechanism(i), nullptr);
+			}
+		}
+	}
+
 
 	for (int i = 0; i < _treeWidget->columnCount(); i++)
 		_treeWidget->resizeColumnToContents(i);
@@ -4017,22 +4076,37 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 						updateEventProcessColumns(eventItem, true);
 						eventItem->update(this);
 					}
-					else if ( _withOrigins ) {
-						OriginTreeItem *origItem = findOrigin( n->parentID() );
-						if ( origItem ) {
-							// "OriginPublished" shall be superseded by "published"
-							// but here we accept both
-							if( comment->text() == "OriginPublished" ||
-							    comment->text() == "published")
-								origItem->setPublishState(true);
-							updateOriginProcessColumns(origItem, true);
-							origItem->update(this);
+					else {
+						if ( _withOrigins ) {
+							OriginTreeItem *item = findOrigin( n->parentID() );
+							if ( item ) {
+								if ( comment->text() == "published" )
+									item->setPublishState(true);
+								updateOriginProcessColumns(item, true);
+								item->update(this);
 
-							eventItem = static_cast<EventTreeItem*>(origItem->parent()->parent());
-							Origin *o = static_cast<Origin*>(origItem->object());
-							Event *e = static_cast<Event*>(eventItem->object());
-							if ( e && e->preferredOriginID() == o->publicID() )
-								eventItem->update(this);
+								eventItem = static_cast<EventTreeItem*>(item->parent()->parent());
+								Origin *o = static_cast<Origin*>(item->object());
+								Event *e = static_cast<Event*>(eventItem->object());
+								if ( e && e->preferredOriginID() == o->publicID() )
+									eventItem->update(this);
+							}
+						}
+						if ( _withFocalMechanisms ) {
+							FocalMechanismTreeItem
+								*item = findFocalMechanism( n->parentID() );
+							if ( item ) {
+								if ( comment->text() == "published" )
+									item->setPublishState(true);
+								//updateFocalMechanismProcessColumns(item, true);
+								item->update(this);
+
+								eventItem = static_cast<EventTreeItem*>(item->parent()->parent());
+								FocalMechanism *o = static_cast<FocalMechanism*>(item->object());
+								Event *e = static_cast<Event*>(eventItem->object());
+								if ( e && e->preferredFocalMechanismID() == o->publicID() )
+									eventItem->update(this);
+							}
 						}
 					}
 				}
