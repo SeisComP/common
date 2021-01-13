@@ -880,11 +880,7 @@ class OriginTreeItem : public SchemeTreeItem {
 
 			// add publication marker
 			char stat = objectStatusToChar(ori);
-			setText(config.columnMap[COL_TYPE],
-					QString("%1%2")
-					.arg(_published?">":"")
-					.arg(stat)
-					); // Type
+			setText(config.columnMap[COL_TYPE], QString("%1%2").arg(_published?">":"").arg(stat)); // Type
 
 			try {
 				switch ( ori->evaluationMode() ) {
@@ -1047,11 +1043,7 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 
 			// add publication marker
 			char stat = objectStatusToChar(fm);
-			setText(config.columnMap[COL_TYPE],
-					QString("%1%2")
-					.arg(_published?">":"")
-					.arg(stat)
-					); // Type
+			setText(config.columnMap[COL_TYPE], QString("%1%2").arg(_published?">":"").arg(stat)); // Type
 
 			try {
 				switch ( fm->evaluationMode() ) {
