@@ -18,7 +18,9 @@
  ***************************************************************************/
 
 
-#define SEISCOMP_TEST_MODULE TestUrl
+#define SEISCOMP_TEST_MODULE SeisComP
+
+
 #include <iostream>
 #include <stdexcept>
 #include <stdio.h>
@@ -29,6 +31,9 @@
 
 
 using namespace Seiscomp::Util;
+
+
+BOOST_AUTO_TEST_SUITE(seiscomp_utils_url)
 
 
 BOOST_AUTO_TEST_CASE(urls) {
@@ -122,3 +127,6 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_CHECK_EQUAL(url.queryItemValue("ack-window"), "30");
 	BOOST_CHECK_EQUAL(url.queryItemValue("ssl"), "true");
 }
+
+
+BOOST_AUTO_TEST_SUITE_END()

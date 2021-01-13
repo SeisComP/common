@@ -17,7 +17,8 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#define SEISCOMP_TEST_MODULE test_xml
+
+#define SEISCOMP_TEST_MODULE SeisComP
 
 
 #include <seiscomp/unittest/unittests.h>
@@ -42,7 +43,7 @@ using namespace Seiscomp::DataModel;
 namespace bu = boost::unit_test;
 
 
-
+BOOST_AUTO_TEST_SUITE(seiscomp_core_xml)
 /****************************************************************/
 
 const char *JSON2 =
@@ -471,3 +472,6 @@ BOOST_AUTO_TEST_CASE(xmlEqualString) {
 	check = "from location";
 	BOOST_CHECK_EQUAL(check, getString);
 }
+
+
+BOOST_AUTO_TEST_SUITE_END()

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
+#define SEISCOMP_TEST_MODULE SeisComP
 #define SEISCOMP_COMPONENT TEST_TIME
-#define SEISCOMP_TEST_MODULE test_datetime_time
 
 
 #include <seiscomp/unittest/unittests.h>
@@ -31,6 +31,9 @@
 
 namespace sc = Seiscomp::Core;
 namespace bu = boost::unit_test;
+
+
+BOOST_AUTO_TEST_SUITE(seiscomp_core_time)
 
 
 bool isClose(sc::TimeSpan time, long sec, long micro, int offset = 1) {
@@ -612,3 +615,6 @@ BOOST_AUTO_TEST_CASE(toString) {
 	//sc::Time time = sc::Time::GMT();
 	//time.toString("%F %T.f %F %T %F %T %F %T %F %T.f %F %T %F %T %F %T %F %T %F.f %T.f %F.f %T.f");
 }
+
+
+BOOST_AUTO_TEST_SUITE_END()

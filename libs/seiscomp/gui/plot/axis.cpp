@@ -527,11 +527,17 @@ void Axis::draw(QPainter &painter, const QRect &rect, bool clipText) {
 		if ( labelRect.width() <= _width ) {
 			painter.save();
 
-			_transform.map(_width/2, axisLabelOffset, &x0, &y0);
+			int xc;
+			_transform.map(0, axisLabelOffset, &x0, &y0);
+			_transform.map(_width, axisLabelOffset, &x1, &y0);
+			_transform.map(_width/2, axisLabelOffset, &xc, &y0);
+
+			labelRect.setLeft(0);
+			labelRect.setWidth(_width);
 
 			if ( isHorizontal ) {
 				labelAlign = Qt::AlignHCenter;
-				labelRect.moveLeft(x0-labelRect.width()/2);
+				labelRect.moveLeft(x0);
 
 				if ( _position == Top ) {
 					labelAlign |= Qt::AlignBottom;
@@ -547,7 +553,7 @@ void Axis::draw(QPainter &painter, const QRect &rect, bool clipText) {
 				labelRect.moveLeft(-labelRect.width()/2);
 				labelRect.moveBottom(0);
 
-				painter.translate(x0, y0);
+				painter.translate(xc, y0);
 				painter.rotate(_position == Left ? -90 : 90);
 			}
 

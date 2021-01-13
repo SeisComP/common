@@ -17,7 +17,9 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#define SEISCOMP_TEST_MODULE TestUnits
+
+#define SEISCOMP_TEST_MODULE SeisComP
+
 
 #include <iostream>
 #include <stdexcept>
@@ -51,6 +53,9 @@ using namespace Seiscomp;
 	while (0)
 
 
+BOOST_AUTO_TEST_SUITE(seiscomp_utils_units)
+
+
 BOOST_AUTO_TEST_CASE(units) {
 	EXPECT_SI_UNIT("m*s", "M*S", 1.0);
 	EXPECT_QML_UNIT("m*s", "m*s", 1.0);
@@ -71,3 +76,4 @@ BOOST_AUTO_TEST_CASE(units) {
 }
 
 
+BOOST_AUTO_TEST_SUITE_END()

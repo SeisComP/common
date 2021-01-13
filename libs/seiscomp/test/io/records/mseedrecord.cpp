@@ -17,7 +17,9 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#define SEISCOMP_TEST_MODULE TestMSEEDRecord
+
+#define SEISCOMP_TEST_MODULE SeisComP
+
 
 #include <iostream>
 #include <stdexcept>
@@ -70,7 +72,7 @@ struct TestData {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-BOOST_FIXTURE_TEST_SUITE(test_suite1, TestData)
+BOOST_FIXTURE_TEST_SUITE(seiscomp_io_records_mseed, TestData)
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

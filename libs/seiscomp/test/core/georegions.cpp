@@ -17,8 +17,9 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
 #define SEISCOMP_COMPONENT TestGeoRegions
-#define SEISCOMP_TEST_MODULE TestGeoRegions
+#define SEISCOMP_TEST_MODULE SeisComP
 
 
 #include <iostream>
@@ -46,6 +47,10 @@ struct RegionTest {
 	double lon;
 	string name;
 };
+
+
+BOOST_AUTO_TEST_SUITE(seiscomp_core_georegions)
+
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(poly1) {
@@ -292,3 +297,6 @@ BOOST_AUTO_TEST_CASE(bnaRegions) {
 	}
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+BOOST_AUTO_TEST_SUITE_END()

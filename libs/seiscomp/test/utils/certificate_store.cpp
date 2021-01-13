@@ -11,10 +11,9 @@
  ***************************************************************************/
 
 
-#define SEISCOMP_TEST_MODULE test_certificate_store
+#define SEISCOMP_TEST_MODULE SeisComP
 
 
-#define SEISCOMP_COMPONENT test_certificate_store
 #include <seiscomp/logging/log.h>
 #include <seiscomp/config/config.h>
 #include <seiscomp/utils/certstore.h>
@@ -34,6 +33,9 @@ using namespace std;
 using namespace Seiscomp::Logging;
 using namespace Seiscomp::Util;
 namespace bu = boost::unit_test;
+
+
+BOOST_AUTO_TEST_SUITE(seiscomp_utils_certificatestore)
 
 
 namespace {
@@ -226,3 +228,6 @@ BOOST_AUTO_TEST_CASE(validate_records) {
 	std::cerr << "Read " << numberOfRecords << " records" << std::endl;
 	BOOST_CHECK(numberOfRecords == 10);
 }
+
+
+BOOST_AUTO_TEST_SUITE_END()

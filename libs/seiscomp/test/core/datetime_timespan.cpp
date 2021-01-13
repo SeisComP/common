@@ -18,9 +18,7 @@
  ***************************************************************************/
 
 
-#define SEISCOMP_TEST_MODULE test_datetime_timespan
-
-
+#define SEISCOMP_TEST_MODULE SeisComP
 #include <seiscomp/unittest/unittests.h>
 
 #include <seiscomp/core/datetime.h>
@@ -46,6 +44,10 @@ bool isClose(sc::TimeSpan time, long sec, long micro, int offset = 1) {
 
 	return false;
 }
+
+
+BOOST_AUTO_TEST_SUITE(seiscomp_core_timespan)
+
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -512,3 +514,6 @@ BOOST_AUTO_TEST_CASE(validStrings) {
 
 	BOOST_CHECK_EQUAL(date.valid(), true);
 }
+
+
+BOOST_AUTO_TEST_SUITE_END()

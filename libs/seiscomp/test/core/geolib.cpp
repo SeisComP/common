@@ -17,8 +17,8 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#define SEISCOMP_TEST_MODULE TestSeiscompGeo
 
+#define SEISCOMP_TEST_MODULE SeisComP
 #include <seiscomp/unittest/unittests.h>
 
 #include <seiscomp/geo/coordinate.h>
@@ -30,6 +30,9 @@
 namespace bu = boost::unit_test;
 using namespace std;
 using namespace Seiscomp::Geo;
+
+
+BOOST_AUTO_TEST_SUITE(seiscomp_core_geolib)
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
@@ -337,3 +340,4 @@ BOOST_AUTO_TEST_CASE(quadtree) {
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_SUITE_END()
