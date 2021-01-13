@@ -18,7 +18,8 @@
  ***************************************************************************/
 
 
-#define SEISCOMP_TEST_MODULE TestReferenceCounters
+#define SEISCOMP_TEST_MODULE SeisComP
+
 
 #include <iostream>
 #include <stdexcept>
@@ -79,6 +80,9 @@ class ThreadSafeX {
 };
 
 
+BOOST_AUTO_TEST_SUITE(seiscomp_core_referencecounts)
+
+
 BOOST_AUTO_TEST_CASE(measureperformance) {
 #define LOOPN 100000000
 	double elapsed1, elapsed2, elapsed3;
@@ -126,3 +130,6 @@ BOOST_AUTO_TEST_CASE(measureperformance) {
 	cerr << "thread-safe version: " << elapsed2 << "s" << endl;
 	cerr << "BaseObject version: " << elapsed3 << "s" << endl;
 }
+
+
+BOOST_AUTO_TEST_SUITE_END()

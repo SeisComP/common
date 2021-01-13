@@ -17,8 +17,10 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#define SEISCOMP_TEST_MODULE TestSDSArchive
+
+#define SEISCOMP_TEST_MODULE SeisComP
 #define SEISCOMP_COMPONENT TestSDSArchive
+
 
 #include <seiscomp/unittest/unittests.h>
 
@@ -32,6 +34,9 @@ using namespace Seiscomp;
 using namespace Seiscomp::Core;
 using namespace Seiscomp::IO;
 using namespace Seiscomp::RecordStream;
+
+
+BOOST_AUTO_TEST_SUITE(seiscomp_io_recordstream_sdsarchive)
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -187,3 +192,4 @@ BOOST_AUTO_TEST_CASE(READ_GAPPY_ARCHIVE_EMPTY2) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_SUITE_END()

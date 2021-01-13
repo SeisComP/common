@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 
-#define SEISCOMP_TEST_MODULE TestLZ4
+#define SEISCOMP_TEST_MODULE SeisComP
 #define SEISCOMP_COMPONENT TestLZ4
+
 
 #include <iostream>
 #include <stdexcept>
@@ -61,7 +62,7 @@ bool Init::initialized = false;
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-BOOST_FIXTURE_TEST_SUITE(test_lz4, Init)
+BOOST_FIXTURE_TEST_SUITE(seiscomp_core_io_streams_lz4, Init)
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

@@ -18,9 +18,7 @@
  ***************************************************************************/
 
 
-#define SEISCOMP_TEST_MODULE test_configuration_file
-
-
+#define SEISCOMP_TEST_MODULE SeisComP
 #include <seiscomp/config/config.h>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/datamodel/config.h>
@@ -29,6 +27,9 @@
 
 using namespace Seiscomp::Config;
 namespace bu = boost::unit_test;
+
+
+BOOST_AUTO_TEST_SUITE(seiscomp_core_config)
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -374,3 +375,6 @@ BOOST_AUTO_TEST_CASE(tools) {
 
 }
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+BOOST_AUTO_TEST_SUITE_END()

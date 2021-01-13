@@ -17,7 +17,9 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#define SEISCOMP_TEST_MODULE TestStrings
+
+#define SEISCOMP_TEST_MODULE SeisComP
+
 
 #include <iostream>
 #include <stdexcept>
@@ -81,6 +83,9 @@ struct TestCase {
 };
 
 typedef vector<TestCase> TestData;
+
+
+BOOST_AUTO_TEST_SUITE(seiscomp_core_strings)
 
 
 BOOST_AUTO_TEST_CASE(numberConversions) {
@@ -392,3 +397,6 @@ BOOST_AUTO_TEST_CASE(wildcards) {
 	BOOST_CHECK(!wildcmp("*.*", "abc"));
 	BOOST_CHECK(wildcmp("a.*.*", "a.def."));
 }
+
+
+BOOST_AUTO_TEST_SUITE_END()

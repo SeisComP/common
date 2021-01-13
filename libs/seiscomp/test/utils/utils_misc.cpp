@@ -17,7 +17,9 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#define SEISCOMP_TEST_MODULE TestUtilsMisc
+
+#define SEISCOMP_TEST_MODULE SeisComP
+
 
 #include <iostream>
 #include <stdexcept>
@@ -30,6 +32,9 @@
 
 
 using namespace Seiscomp;
+
+
+BOOST_AUTO_TEST_SUITE(seiscomp_utils_misc)
 
 
 BOOST_AUTO_TEST_CASE(tohex) {
@@ -48,3 +53,4 @@ BOOST_AUTO_TEST_CASE(tohex) {
 }
 
 
+BOOST_AUTO_TEST_SUITE_END()

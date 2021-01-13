@@ -17,7 +17,8 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#define SEISCOMP_TEST_MODULE test_version
+
+#define SEISCOMP_TEST_MODULE SeisComP
 
 
 #include <seiscomp/unittest/unittests.h>
@@ -30,6 +31,9 @@
 using namespace std;
 using namespace Seiscomp::Core;
 namespace bu = boost::unit_test;
+
+
+BOOST_AUTO_TEST_SUITE(seiscomp_core_version)
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
@@ -64,3 +68,6 @@ BOOST_AUTO_TEST_CASE(TestVersion) {
 
 	BOOST_CHECK(v1 < v2);
 }
+
+
+BOOST_AUTO_TEST_SUITE_END()
