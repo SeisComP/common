@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <seiscomp>
 	<module name="scmaster" category="Messaging">
+		<description>The messaging system</description>
 		<configuration>
 			<parameter name="defaultGroups" type="list:string" default="AMPLITUDE, PICK, LOCATION, MAGNITUDE, FOCMECH, EVENT, QC, PUBLICATION, GUI, INVENTORY, CONFIG, LOGGING, SERVICE_REQUEST, SERVICE_PROVIDE, STATUS_GROUP">
 				<description>
@@ -10,14 +11,21 @@
 			</parameter>
 			<parameter name="queues" type="list:string" default="production, playback">
 				<description>
-				The enabled messaging queues. The profile names are the final
-				queue names.
+				Enable messaging queues defined as profile in queues. The profile
+				names are the final queue names.
 				</description>
 			</parameter>
 			<group name="interface">
+				<description>
+					Control the messaging interface. The default protocol is
+					&quot;scmp&quot; but &quot;scmps&quot; (secure protocol) is
+					used when valid SSL certificate and key are configured.
+				</description>
 				<parameter name="bind" type="ipbind" default="0.0.0.0:18180">
 					<description>
-
+						Local bind address and port of the messaging system.
+						0.0.0.0:18180 accepts connections from all clients, 127.0.0.0:18180
+						only from localhost.
 					</description>
 				</parameter>
 				<parameter name="acl" type="list:ipmask" default="">
@@ -32,9 +40,13 @@
 					</description>
 				</parameter>
 				<group name="ssl">
+					<description>
+						SSL encryption is used if key and certificate are configured.
+					</description>
 					<parameter name="bind" type="ipbind" default="0.0.0.0:-1">
 						<description>
-
+							Additional local bind address and port of the messaging system
+							in case SSL encryption is active.
 						</description>
 					</parameter>
 					<parameter name="acl" type="list:ipmask" default="">
