@@ -438,9 +438,8 @@ bool WaveformProcessor::handleGap(Filter *filter, const Core::TimeSpan& span,
 				double value = lastSample + di*delta;
 				fill(1, &value);
 			}
+			return true;
 		}
-
-		return true;
 	}
 
 	return false;
