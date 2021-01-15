@@ -312,6 +312,16 @@ bool WaveformProcessor::store(const Record *record) {
 	// NOTE: Do not use else here, because lastRecord can be set nullptr
 	//       when calling reset() in handleGap(...)
 	if ( !_stream.lastRecord ) {
+
+		const auto minGapThres = 2 * 1.0 / record->samplingFrequency();
+		if ( minGapThres > _gapThreshold ) {
+			SEISCOMP_WARNING("Gap threshold smaller than twice the sampling interval: "
+			                 "%fs < %fs. Resetting gap threshold.",
+			                 static_cast<double>(_gapThreshold), minGapThres);
+
+			_gapThreshold = minGapThres;
+		}
+
 		try {
 			initFilter(record->samplingFrequency());
 		}
