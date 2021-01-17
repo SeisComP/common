@@ -159,11 +159,98 @@
   }
 }
 
+// Allow GIL release for the following function(s)
+%exception Seiscomp::Client::Connection::fetchInbox {
+  Py_BEGIN_ALLOW_THREADS
+  try {
+    $action
+  }
+  catch ( const Swig::DirectorException &e ) {
+    SWIG_fail;
+  }
+  catch ( const Seiscomp::Core::ValueException &e ) {
+    SWIG_exception(SWIG_ValueError, e.what());
+  }
+  catch ( const std::exception &e ) {
+    SWIG_exception(SWIG_RuntimeError, e.what());
+  }
+  catch ( ... ) {
+    SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+  }
+  Py_END_ALLOW_THREADS
+}
+
+%exception Seiscomp::Client::Connection::recv {
+  Py_BEGIN_ALLOW_THREADS
+  try {
+    $action
+  }
+  catch ( const Swig::DirectorException &e ) {
+    SWIG_fail;
+  }
+  catch ( const Seiscomp::Core::ValueException &e ) {
+    SWIG_exception(SWIG_ValueError, e.what());
+  }
+  catch ( const std::exception &e ) {
+    SWIG_exception(SWIG_RuntimeError, e.what());
+  }
+  catch ( ... ) {
+    SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+  }
+  Py_END_ALLOW_THREADS
+}
+
+
+
 enum(Seiscomp::Client::Result);
 %newobject Seiscomp::Client::Protocol::decode;
-%ignore Seiscomp::Client::Protocol::recv(Seiscomp::Client::Result *);
+%ignore Seiscomp::Client::Protocol::recv(Packet &);
+%ignore Seiscomp::Client::Connection::recv(PacketPtr &, Result *);
+%ignore Seiscomp::Client::Connection::recv(PacketPtr &);
+%newobject Seiscomp::Client::Protocol::recv;
 %newobject Seiscomp::Client::Connection::recv;
 %newobject Seiscomp::Client::Protocol::Create;
+
+
+%typemap(in, numinputs=0) Seiscomp::Client::Packet ** (Seiscomp::Client::Packet *tempPacket) {
+  $1 = &tempPacket;
+}
+
+%typemap(in, numinputs=0) Seiscomp::Client::Result * (Seiscomp::Client::Result tempResult) {
+  $1 = &tempResult;
+}
+
+%typemap(argout) Seiscomp::Client::Packet ** {
+  PyObject* temp = NULL;
+  if (!PyList_Check($result)) {
+    temp = $result;
+    $result = PyList_New(1);
+    PyList_SetItem($result, 0, temp);
+  }
+
+  // Create shadow object (do not use SWIG_POINTER_NEW)
+  temp = SWIG_NewPointerObj(SWIG_as_voidptr(*$1),
+           $descriptor(Seiscomp::Client::Packet*),
+           SWIG_POINTER_OWN | 0);
+
+  PyList_Append($result, temp);
+  Py_DECREF(temp);
+}
+
+%typemap(argout) Seiscomp::Client::Result * {
+  PyObject* temp = NULL;
+  if (!PyList_Check($result)) {
+    temp = $result;
+    $result = PyList_New(1);
+    PyList_SetItem($result, 0, temp);
+  }
+
+  temp = PyInt_FromLong(static_cast<long>($1->toInt()));
+
+  PyList_Append($result, temp);
+  Py_DECREF(temp);
+}
+
 
 %include "seiscomp/client.h"
 %include "seiscomp/messaging/packet.h"
