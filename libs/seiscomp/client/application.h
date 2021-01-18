@@ -426,6 +426,16 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		bool reloadBindings();
 
 		/**
+		 * @brief Injects a message from outside. The message will actually
+		 *        take the same path as when it would have been received via
+		 *        the messaging.
+		 * @param msg The message. The ownership if left to the caller.
+		 * @param pkt The optional network packet. The ownership is left to
+		 *            the caller.
+		 */
+		void injectMessage(Core::Message *msg, Packet *pkt = nullptr);
+
+		/**
 		 * @brief Routes a notifier to either add/update or removeObject.
 		 * @param notifier The notifier pointer which must not be nullptr
 		 */

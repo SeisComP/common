@@ -2071,6 +2071,18 @@ void Application::handleNetworkMessage(const Packet *msg) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::injectMessage(Core::Message *msg, Packet *pkt) {
+	if ( pkt )
+		handleNetworkMessage(pkt);
+	if ( msg )
+		handleMessage(msg);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::handleNotifier(DataModel::Notifier* n) {
 	switch ( n->operation() ) {
 		case DataModel::OP_ADD:

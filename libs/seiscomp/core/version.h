@@ -51,6 +51,9 @@ namespace Core {
    - Changed WindowFunc::process(int n, T *inout, double width)
      to WindowFunc::process(int n, T *inout, double left, double right)
 
+ "14.2.0"   0x0E0200
+   - Added Seiscomp::Client::Application::injectMessage
+
  "14.1.0"   0x0E0100
    - Added Seiscomp::Wired::Session::handleTimeout
    - Declared Seiscomp::Geo::GeoFeature::area as deprecated
