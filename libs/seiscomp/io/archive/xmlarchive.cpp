@@ -57,22 +57,28 @@ void xmlStructuredErrorHandler(void * userData, xmlErrorPtr error) {
 
 int streamBufReadCallback(void* context, char* buffer, int len) {
 	std::streambuf* buf = static_cast<std::streambuf*>(context);
-	if ( buf == nullptr ) return -1;
+	if ( !buf ) return -1;
 
-	int count = 0;
-	int ch = buf->sgetc();
-	while ( ch != EOF && len-- && ch != '\0' ) {
-		*buffer++ = (char)buf->sbumpc();
-		ch = buf->sgetc();
-		++count;
+	try {
+		int count = 0;
+		int ch = buf->sgetc();
+		while ( ch != EOF && len-- && ch != '\0' ) {
+			*buffer++ = (char)buf->sbumpc();
+			ch = buf->sgetc();
+			++count;
+		}
+
+		return count;
 	}
-
-	return count;
+	catch ( std::exception &e ) {
+		SEISCOMP_WARNING(e.what());
+		return -1;
+	}
 }
 
 int streamBufWriteCallback(void* context, const char* buffer, int len) {
 	std::streambuf* buf = static_cast<std::streambuf*>(context);
-	if ( buf == nullptr ) return -1;
+	if ( !buf ) return -1;
 	return buf->sputn(buffer, len);
 }
 
@@ -238,8 +244,15 @@ bool XMLArchive::open(const char* filename) {
 	}
 	else {
 		std::filebuf* fb = new std::filebuf();
-		if ( fb->open(filename, std::ios::in) == nullptr ) {
+		try {
+			if ( !fb->open(filename, std::ios::in) ) {
+				delete fb;
+				return false;
+			}
+		}
+		catch ( std::exception &e ) {
 			delete fb;
+			SEISCOMP_WARNING("%s: %s", filename, e.what());
 			return false;
 		}
 	
