@@ -387,11 +387,12 @@ f9.3,                          f8.2,f8.3,i4)", 0 };
 
     /* Function Body */
     if (*ndata < 3) {
-	s_wsfe(&io___1);
-	do_fio(&c__1, " Insufficient data for a solution: # of Data = ", (
-		ftnlen)47);
-	do_fio(&c__1, (char *)&nd, (ftnlen)sizeof(int));
-	e_wsfe();
+// do not output error message which as it is described by error code        
+//	s_wsfe(&io___1);
+//	do_fio(&c__1, " Insufficient data for a solution: # of Data = ", (
+//		ftnlen)47);
+//	do_fio(&c__1, (char *)&nd, (ftnlen)sizeof(int));
+//	e_wsfe();
 	*ierr = 5;
 	return 0;
     }
