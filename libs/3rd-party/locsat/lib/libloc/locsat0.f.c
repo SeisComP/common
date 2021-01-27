@@ -286,7 +286,7 @@ ftnlen outfile_len;
     extern /* Subroutine */ int index_array__();
 
     /* Fortran I/O blocks */
-    static cilist io___1 = { 0, 6, 0, "(/a,i2)", 0 };
+    //static cilist io___1 = { 0, 6, 0, "(/a,i2)", 0 };
     static cilist io___11 = { 0, 6, 0, "(3a)", 0 };
     static cilist io___22 = { 0, 0, 0, "(/a/2a//a,2(i2,a),f5.2,3a,i3,a,i5,//\
 2a/)", 0 };
