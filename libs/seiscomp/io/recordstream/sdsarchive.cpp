@@ -254,7 +254,6 @@ bool SDSArchive::setSource(const string &src) {
 	else
 		Core::split(_arcroots, src.c_str(), ",");
 
-	vector<string>::iterator it;
 	for ( string &root : _arcroots ) {
 		SEISCOMP_DEBUG("+ Archive root: %s", root.c_str());
 	}
