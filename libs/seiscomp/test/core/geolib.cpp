@@ -21,6 +21,7 @@
 #define SEISCOMP_TEST_MODULE SeisComP
 #include <seiscomp/unittest/unittests.h>
 
+#include <seiscomp/math/geo.h>
 #include <seiscomp/geo/coordinate.h>
 #include <seiscomp/geo/boundingbox.h>
 #include <seiscomp/geo/feature.h>
@@ -29,10 +30,22 @@
 
 namespace bu = boost::unit_test;
 using namespace std;
+using namespace Seiscomp::Math::Geo;
 using namespace Seiscomp::Geo;
 
 
 BOOST_AUTO_TEST_SUITE(seiscomp_core_geolib)
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(distanceAndAzimuth) {
+	double dist, az, baz;
+	delazi(0.0, 0.0, 0.0, 0.0, &dist, &az, &baz);
+	BOOST_CHECK_EQUAL(dist, 0.0);
+}
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
