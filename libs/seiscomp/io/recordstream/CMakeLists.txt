@@ -11,6 +11,12 @@ SET(RECORDSTREAM_SOURCES
 	resample.cpp
 	fdsnws.cpp
 	httpmsgbus.cpp
+	caps.cpp
+	caps/packet.cpp
+	caps/anypacket.cpp
+	caps/rawpacket.cpp
+	caps/riff.cpp
+	caps/sessiontable.cpp
 	remez/remez.c
 )
 

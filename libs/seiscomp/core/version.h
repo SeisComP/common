@@ -48,6 +48,7 @@ namespace Core {
  ******************************************************************************
  "14.2.0"   0x0E0200
    - Added Seiscomp::Client::Application::injectMessage
+   - Added RecordStream factory "caps" and "capss"
 
  "14.1.0"   0x0E0100
    - Added Seiscomp::Wired::Session::handleTimeout
