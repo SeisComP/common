@@ -9,7 +9,7 @@ The following tables lists available implementations:
    ":ref:`rs-fdsnws`", "``fdsnws``", "Connects to :ref:`FDSN Web service <fdsnws>`"
    ":ref:`rs-file`", "``file``", "Reads records from file"
    ":ref:`rs-sdsarchive`", "``sdsarchive``", "Reads records from |scname| archive (:term:`SDS`)"
-   ":ref:`rs-odcarchive`", "``odcarchive``", "Reads records from Orpheus Data Center archive (`ODC`_)"
+   ":ref:`rs-caps`", "``caps``, ``capss``", "Connects to a gempa CAPS server"
    ":ref:`rs-memory`", "``memory``", "Reads records from memory"
    ":ref:`rs-combined`", "``combined``", "Combines archive and real-time stream"
    ":ref:`rs-balanced`", "``balanced``", "Distributes requests to multiple proxy streams"
@@ -143,20 +143,37 @@ from this SDS archive. On failure the next SDS archive is searched.
 This process is repeated for each requested channel individually. It always starts to
 search data from the first given SDS to the last one, for each data channel.
 
-.. _rs-odcarchive:
+.. _rs-caps:
 
-ODCArchive
-----------
+CAPS
+----
 
-This RecordStream reads data from an `ODC`_ archive using the :ref:`rs-file`
-RecordStream. The source is interpreted as a directory path.
+This RecordStream reads data from a gempa CAPS server. The source is an URL.
+The default host is set to `localhost`, the default port to `18002` for
+unencrypted connections and `18022` for SSL connections.
+Optional parameters are:
+
+- `arch` - No parameter. Retrieve only archived data. In this mode the connection
+   finished when all available data has been sent. It won't wait for additional
+   real-time data.
+- `ooo` - Allow out-of-order data
+- `timeout` - The socket timeout in seconds
+- `user` - The user name of an authenticated request
+- `pwd` - The password of an authenticated request
+- `request-file` - Use the given file to feed the request
+
+The service can either be `caps` or `capss`. The latter establishes an SSL
+connection.
 
 Example
 ^^^^^^^
 
-URI: *service://source*
+URI: *service://user:password@source?options*
 
-- ``odcarchive:///path/to/record/archive``
+- ``caps://localhost:18002``
+- ``capss://localhost:18022``
+- ``caps://localhost:18002?arch``
+- ``caps://user:mysecret@localhost:18002``
 
 .. _rs-memory:
 
@@ -319,9 +336,3 @@ URI: *service://source?options*
 - ``resample://file?rate=2/-``
 - ``resample://combined/;``
 
-References
-==========
-
-.. target-notes::
-
-.. _`ODC`: https://www.orfeus-eu.org/data/odc/
