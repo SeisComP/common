@@ -128,7 +128,7 @@ AmplitudeProcessor_ms20::AmplitudeProcessor_ms20()
 : AmplitudeProcessor("Ms_20") {
 	setSignalEnd(3600.);
 	setMinSNR(0);
-	setMinDist(2);
+	setMinDist(20);
 	setMaxDist(160);
 	setMaxDepth(100);
 }

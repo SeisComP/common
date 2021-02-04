@@ -23,7 +23,7 @@
 						Upper period limit of the signal for computing Ms_20.
 					</description>
 				</parameter>
-				<parameter name="minimumDistance" type="double" unit="deg" default="2">
+				<parameter name="minimumDistance" type="double" unit="deg" default="20">
 					<description>
 						Minimum epicentral distance for computing Ms_20.
 					</description>

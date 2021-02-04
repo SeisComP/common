@@ -29,7 +29,7 @@ Alternatively, the term *Ms(20)* may be used.
 * Amplitude unit in SeisComP3: **nanometer** (nm)
 * Time window: 0 s - distance (km) / 3.5 km/s + 30 s
 * Period range: 18 s - 22 s, configurable: :confval:`Ms_20.lowerPeriod`, :confval:`Ms_20.upperPeriod`
-* Default distance range: 2 - 160 deg, configurable: :confval:`Ms_20.minimumDistance`, :confval:`Ms_20.maximumDistance`
+* Default distance range: 20 - 160 deg, configurable: :confval:`Ms_20.minimumDistance`, :confval:`Ms_20.maximumDistance`
 * Depth range: <= 100 km, configurable: :confval:`Ms_20.maximumDepth`
 
 
@@ -54,6 +54,6 @@ References
 
 .. [#iaspei2013] IASPEI  magnitude working group (2013).
    SUMMARY OF MAGNITUDE WORKING GROUP RECOMMENDATIONS ON
-   STANDARD PROCEDURES FOR DETERMINING EARTHQUAKE MAGNITUDES FROM DIGITAL DATA, 
+   STANDARD PROCEDURES FOR DETERMINING EARTHQUAKE MAGNITUDES FROM DIGITAL DATA,
    `Link to PDF document
    <http://www.iaspei.org/commissions/commission-on-seismological-observation-and-interpretation/Summary_WG_recommendations_20130327.pdf>`_
