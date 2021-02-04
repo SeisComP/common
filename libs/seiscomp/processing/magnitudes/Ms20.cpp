@@ -24,7 +24,7 @@
 
 #include<iostream>
 
-#define DELTA_MIN 2.
+#define DELTA_MIN 20.
 #define DELTA_MAX 160.
 
 #define DEPTH_MAX 100
@@ -75,7 +75,7 @@ bool MagnitudeProcessor_ms20::MagnitudeProcessor_ms20::setup(const Settings &set
 		minDistanceDeg = settings.getDouble("Ms_20.minimumDistance");
 	}
 	catch ( ... ) {
-		minDistanceDeg = 2.0; // default minimum distance
+		minDistanceDeg = 20.0; // default minimum distance
 	}
 
 	try {
