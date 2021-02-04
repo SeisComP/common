@@ -68,6 +68,7 @@ struct SinkBuf : std::streambuf {
 			--bytes;
 		}
 
+		pbase()[bytes] = '\0';
 		int res = sink->write(pbase(), bytes);
 		// Reset put pointer
 		setp(out, out + N);
@@ -81,7 +82,7 @@ struct SinkBuf : std::streambuf {
 	}
 
 	ExportSink *sink;
-	char        out[N];
+	char        out[N+1];
 };
 
 
