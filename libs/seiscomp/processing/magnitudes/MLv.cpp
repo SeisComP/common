@@ -20,6 +20,7 @@
 
 #include <seiscomp/math/geo.h>
 #include <seiscomp/processing/magnitudes/MLv.h>
+#include <seiscomp/logging/log.h>
 
 
 namespace Seiscomp {
@@ -54,13 +55,18 @@ bool MagnitudeProcessor_MLv::setup(const Settings &settings) {
 	MagnitudeProcessor::setup(settings);
 	std::string logA0;
 
+	// This is the default
+	logA0 = "0 -1.3;60 -2.8;100 -3.0;400 -4.5;1000 -5.85";
+	maxDistanceKm = -1; // distance according to the logA0 range
+
+	try { logA0 = settings.getString("magnitudes.MLv.logA0"); }
+	catch ( ... ) {}
 	try {
 		logA0 = settings.getString("MLv.logA0");
+		SEISCOMP_WARNING("MLv.logA0 has been depreciated");
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.MLv.logA0");
 	}
-	catch ( ... ) {
-		// This is the default
-		logA0 = "0 -1.3;60 -2.8;100 -3.0;400 -4.5;1000 -5.85";
-	}
+	catch ( ... ) {}
 
 	logA0_dist.clear(); logA0_val.clear();
 	std::istringstream iss(logA0);
@@ -73,12 +79,15 @@ bool MagnitudeProcessor_MLv::setup(const Settings &settings) {
 		logA0_val.push_back(val);
 	}
 
+	try { maxDistanceKm = settings.getDouble("magnitudes.MLv.maxDistanceKm"); }
+	catch ( ... ) {}
+
 	try {
 		maxDistanceKm = settings.getDouble("MLv.maxDistanceKm");
+		SEISCOMP_WARNING("MLv.maxDistanceKm has been depreciated");
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.MLv.maxDistanceKm");
 	}
-	catch ( ... ) {
-		maxDistanceKm = -1; // distance according to the logA0 range
-	}
+	catch ( ... ) {}
 
 	return true;
 }

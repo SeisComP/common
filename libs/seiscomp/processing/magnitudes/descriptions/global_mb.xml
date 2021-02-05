@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<plugin name="mb">
+		<extends>global</extends>
+		<description>
+		mb is the teleseismic body wave magnitude
+		</description>
+	</plugin>
+	<binding name="mb" module="global">
+		<configuration>
+			<group name="magnitudes">
+				<group name="mb">
+					<parameter name="minDist" type="double" unit="deg" default="5">
+						<description>
+						Minimum epicentral distance for computing mb. Note: According
+						to the IASPEI recommendations in 2013, the minimum distance
+						should be 20 deg.
+						</description>
+					</parameter>
+					<parameter name="maxDist" type="double" unit="deg" default="105">
+						<description>
+						Maximum epicentral distance for computing mb.
+						</description>
+					</parameter>
+				</group>
+			</group>
+		</configuration>
+	</binding>
+</seiscomp>

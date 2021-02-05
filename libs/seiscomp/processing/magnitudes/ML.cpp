@@ -20,6 +20,7 @@
 
 #include <seiscomp/math/geo.h>
 #include <seiscomp/processing/magnitudes/ML.h>
+#include <seiscomp/logging/log.h>
 
 
 namespace Seiscomp {
@@ -61,13 +62,20 @@ bool MagnitudeProcessor_ML::setup(const Settings &settings) {
 	MagnitudeProcessor::setup(settings);
 	std::string logA0;
 
+	// This is the default
+	logA0 = "0 -1.3;60 -2.8;100 -3.0;400 -4.5;1000 -5.85";
+	maxDistanceKm = -1; // distance according to the logA0 range
+
+	try {
+		logA0 = settings.getString("magnitudes.ML.logA0");
+	}
+	catch ( ... ) {}
 	try {
 		logA0 = settings.getString("ML.logA0");
+		SEISCOMP_WARNING("ML.logA0 has been deprecated");
+		SEISCOMP_WARNING("  + remove the parameter from bindings and use magnitudes.ML.logA0");
 	}
-	catch ( ... ) {
-		// This is the default
-		logA0 = "0 -1.3;60 -2.8;100 -3.0;400 -4.5;1000 -5.85";
-	}
+	catch ( ... ) {}
 
 	logA0_dist.clear(); logA0_val.clear();
 
@@ -83,11 +91,16 @@ bool MagnitudeProcessor_ML::setup(const Settings &settings) {
 	}
 
 	try {
+		maxDistanceKm = settings.getDouble("magnitudes.ML.maxDistanceKm");
+	}
+	catch ( ... ) {	}
+
+	try {
 		maxDistanceKm = settings.getDouble("ML.maxDistanceKm");
+		SEISCOMP_WARNING("ML.maxDistanceKm has been deprecated");
+		SEISCOMP_WARNING("  + remove the parameter from bindings and use magnitudes.ML.maxDistanceKm");
 	}
-	catch ( ... ) {
-		maxDistanceKm = -1; // distance according to the logA0 range
-	}
+	catch ( ... ) {	}
 
 	return true;
 }

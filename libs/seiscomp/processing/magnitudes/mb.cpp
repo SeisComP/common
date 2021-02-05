@@ -22,6 +22,7 @@
 #include <seiscomp/processing/magnitudes/mb.h>
 #include <seiscomp/seismology/magnitudes.h>
 
+#include "iostream"
 
 namespace Seiscomp {
 namespace Processing {
@@ -49,6 +50,29 @@ MagnitudeProcessor_mb::MagnitudeProcessor_mb()
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool MagnitudeProcessor_mb::MagnitudeProcessor_mb::setup(const Settings &settings) {
+	MagnitudeProcessor::setup(settings);
+
+	minDistanceDeg = 5.0; // default minimum distance
+	maxDistanceDeg = 105.0; // default maximum distance
+
+	// distance range in degree
+	try { minDistanceDeg = settings.getDouble("magnitudes.mb.minDist"); }
+	catch ( ... ) {}
+
+	try { maxDistanceDeg = settings.getDouble("magnitudes.mb.maxDist"); }
+	catch ( ... ) {}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor::Status MagnitudeProcessor_mb::computeMagnitude(
 	double amplitude,
@@ -60,6 +84,10 @@ MagnitudeProcessor::Status MagnitudeProcessor_mb::computeMagnitude(
 	double &value) {
 	// Clip depth to 0
 	if ( depth < 0 ) depth = 0;
+
+	if ( delta < minDistanceDeg || delta > maxDistanceDeg )
+		return DistanceOutOfRange;
+
 
 	if ( amplitude <= 0 )
 		return AmplitudeOutOfRange;

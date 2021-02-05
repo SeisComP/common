@@ -36,6 +36,9 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mB : public MagnitudeProcessor {
 		MagnitudeProcessor_mB();
 		MagnitudeProcessor_mB(const std::string& type);
 
+
+		bool setup(const Settings &settings) override;
+
 		Status computeMagnitude(double amplitude, const std::string &unit,
 		                        double period, double snr,
 		                        double delta, double depth,
@@ -46,6 +49,10 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mB : public MagnitudeProcessor {
 
 		Status estimateMw(double magnitude, double &Mw_estimate,
 		                  double &Mw_stdError) override;
+
+	private:
+		double                  minDistanceDeg;
+		double                  maxDistanceDeg;
 };
 
 

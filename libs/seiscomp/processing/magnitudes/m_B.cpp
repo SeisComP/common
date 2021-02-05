@@ -41,13 +41,43 @@ REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_mB, "mB");
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool MagnitudeProcessor_mB::MagnitudeProcessor_mB::setup(const Settings &settings) {
+	MagnitudeProcessor::setup(settings);
+
+	minDistanceDeg = 5.0; // default minimum distance
+	maxDistanceDeg = 105.0; // default maximum distance
+
+	// distance range in degree
+	try { minDistanceDeg = settings.getDouble("magnitudes.mB.minDist"); }
+	catch ( ... ) {}
+
+	try { maxDistanceDeg = settings.getDouble("magnitudes.mB.maxDist"); }
+	catch ( ... ) {}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor_mB::MagnitudeProcessor_mB()
  : MagnitudeProcessor("mB") {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor_mB::MagnitudeProcessor_mB(const std::string& type)
  : MagnitudeProcessor(type) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -59,6 +89,9 @@ MagnitudeProcessor::Status MagnitudeProcessor_mB::computeMagnitude(
         const DataModel::Amplitude *, double &value) {
 	// Clip depth to 0
 	if ( depth < 0 ) depth = 0;
+
+	if ( delta < minDistanceDeg || delta > maxDistanceDeg )
+		return DistanceOutOfRange;
 
 	if ( amplitude <= 0 )
 		return AmplitudeOutOfRange;

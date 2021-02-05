@@ -32,6 +32,8 @@ namespace Processing {
 class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mb : public MagnitudeProcessor {
 	DECLARE_SC_CLASS(MagnitudeProcessor_mb)
 
+	bool setup(const Settings &settings) override;
+
 	public:
 		MagnitudeProcessor_mb();
 
@@ -42,6 +44,10 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mb : public MagnitudeProcessor {
 		                        const DataModel::SensorLocation *receiver,
 		                        const DataModel::Amplitude *,
 		                        double &value) override;
+
+	private:
+		double                  minDistanceDeg;
+		double                  maxDistanceDeg;
 };
 
 
