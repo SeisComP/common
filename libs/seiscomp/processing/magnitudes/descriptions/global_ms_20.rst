@@ -26,11 +26,13 @@ T: period of the surface wave in seconds.
 The term *Ms_20* is chosen in accordance with the IASPEI standard as of 2013 [#iaspei2013]_.
 Alternatively, the term *Ms(20)* may be used.
 
-* Amplitude unit in SeisComP3: **nanometer** (nm)
+* Amplitude unit in |scname|: **nanometer** (nm)
 * Time window: 0 s - distance (km) / 3.5 km/s + 30 s
-* Period range: 18 s - 22 s, configurable: :confval:`Ms_20.lowerPeriod`, :confval:`Ms_20.upperPeriod`
-* Default distance range: 20 - 160 deg, configurable: :confval:`Ms_20.minimumDistance`, :confval:`Ms_20.maximumDistance`
-* Depth range: <= 100 km, configurable: :confval:`Ms_20.maximumDepth`
+* Period range: 18 s - 22 s, configurable: :confval:`magnitudes.Ms_20.lowerPeriod`,
+  :confval:`magnitudes.Ms_20.upperPeriod`
+* Default distance range: 20 - 160 deg, configurable: :confval:`magnitudes.Ms_20.minDist`,
+  :confval:`magnitudes.Ms_20.maxDist`
+* Depth range: <= 100 km, configurable: :confval:`magnitudes.Ms_20.maxDepth`
 
 
 Network magnitude

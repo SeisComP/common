@@ -21,6 +21,7 @@
 
 #include <seiscomp/processing/magnitudes/Ms20.h>
 #include <seiscomp/seismology/magnitudes.h>
+#include <seiscomp/logging/log.h>
 
 #include<iostream>
 
@@ -48,50 +49,74 @@ REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_ms20, "Ms_20");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor_ms20::MagnitudeProcessor_ms20::setup(const Settings &settings) {
 	MagnitudeProcessor::setup(settings);
 
+	// This is the default
+	lowPer = 18;
+	upPer = 22;
+	minDistanceDeg = 20.0; // default minimum distance
+	maxDistanceDeg = 160.0; // default maximum distance
+	maxDepthKm = 100.0; // default maximum depth
+
+	try { lowPer = settings.getDouble("magnitudes.Ms_20.lowerPeriod"); }
+	catch ( ... ) {}
+
+	try { upPer = settings.getDouble("magnitudes.Ms_20.upperPeriod"); }
+	catch ( ... ) {}
+
+	// distance range in degree
+	try { minDistanceDeg = settings.getDouble("magnitudes.Ms_20.minDist"); }
+	catch ( ... ) {}
+
+	try { maxDistanceDeg = settings.getDouble("magnitudes.Ms_20.maxDist"); }
+	catch ( ... ) {}
+
+	// depth range in km
+	try { maxDepthKm = settings.getDouble("magnitudes.Ms_20.maxDepth"); }
+	catch ( ... ) {}
+
+	// depreciated parameters
 	// period range in seconds
 	try {
 		lowPer = settings.getDouble("Ms_20.lowerPeriod");
+		SEISCOMP_WARNING("Ms_20.lowerPeriod has been depreciated");
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.lowerPeriod");
 	}
-	catch ( ... ) {
-		// This is the default
-		lowPer = 18;
-	}
+	catch ( ... ) {}
 
 	try {
 		upPer = settings.getDouble("Ms_20.upperPeriod");
-	}
-	catch ( ... ) {
-		// This is the default
-		upPer = 22;
-	}
-
+		SEISCOMP_WARNING("Ms_20.upperPeriod has been depreciated");
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.upperPeriod");}
+	catch ( ... ) {}
 
 	// distance range in degree
 	try {
 		minDistanceDeg = settings.getDouble("Ms_20.minimumDistance");
+		SEISCOMP_WARNING("Ms_20.minimumDistance has been depreciated");
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.maxDist");
 	}
-	catch ( ... ) {
-		minDistanceDeg = 20.0; // default minimum distance
-	}
+	catch ( ... ) {}
 
 	try {
 		maxDistanceDeg = settings.getDouble("Ms_20.maximumDistance");
+		SEISCOMP_WARNING("Ms_20.maximumDistance has been depreciated");
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.maxDist");
 	}
-	catch ( ... ) {
-		maxDistanceDeg = 160.0; // default maximum distance
-	}
+	catch ( ... ) {}
 
 	// depth range in km
 	try {
 		maxDepthKm = settings.getDouble("Ms_20.maximumDepth");
+		SEISCOMP_WARNING("Ms_20.maximumDepth has been depreciated");
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.maxDist");
 	}
-	catch ( ... ) {
-		maxDepthKm = 100.0; // default maximum depth
-	}
+	catch ( ... ) {}
 
 	return true;
 }
@@ -99,10 +124,13 @@ bool MagnitudeProcessor_ms20::MagnitudeProcessor_ms20::setup(const Settings &set
 
 
 
+
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor_ms20::MagnitudeProcessor_ms20()
  : MagnitudeProcessor("Ms_20") {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 
 
 
@@ -141,6 +169,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_ms20::computeMagnitude(
 	return OK;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 
 
 

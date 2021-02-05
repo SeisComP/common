@@ -626,7 +626,10 @@
 			</parameter>
 			<group name="amplitudes">
 				<description>
-					Defines general parameters for amplitude of a certain type, e.g. time windows to derive magnitudes.
+					Define general parameters for amplitudes of a certain type.
+					Create amplitude type profiles to define the time windows,
+					minimum signal-to-noise ratio, amplitude thresholds and restitution
+					for measuring amplitudes of a certain type.
 				</description>
 				<group name="WoodAnderson">
 					<description>
@@ -875,11 +878,13 @@
 					</group>
 				</struct>
 			</group>
-			<group name="mag">
+			<group name="magnitudes">
 				<description>
-					Defines correction parameters for magnitudes, e.g. station corrections.
+					Define magnitude parameters independent of amplitude-type profiles.
+					For magnitude correction parameters, e.g. network of station corrections,
+					create a magnitude type profile.
 				</description>
-				<struct type="Magnitude type profile">
+				<struct type="Magnitude type profile for corrections">
 					<description>
 					A magnitude profile configures global parameters for a
 					particular magnitude type. The available magnitude types
