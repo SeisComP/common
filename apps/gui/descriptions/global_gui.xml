@@ -1344,6 +1344,29 @@
 					</group>
 				</group>
 			</group>
+			<group name="eventedit">
+				<group name="origin">
+					<parameter name="visibleColumns" type="list:string" default="Phases, Lat, Lon, Depth, DType, RMS, Stat, Method, Agency, Author, Region">
+						<description>
+						Configure the columns of the event edit origin table
+						that are visible initially.
+						Possible values are: Phases, Lat, Lon, Depth, DType, RMS, Stat,
+						Method, Agency, Author, Region
+						</description>
+					</parameter>
+				</group>
+				<group name="fm">
+					<parameter name="visibleColumns" type="list:string" default="Depth, M, Count, Misfit, STDR, Azi. Gap(°), Stat, DC(%), CLVD(%), ISO(%), S1(°), D1(°), R1(°), S2(°), D2(°), R2(°), Agency, Author">
+						<description>
+						Configure the columns of the event edit focal mechanism
+						tab that are visible initially.
+						Possible values are: Depth, M, Count, Misfit, STDR,
+						Azi. Gap(°), Stat, DC(%), CLVD(%), ISO(%), S1(°),
+						D1(°), R1(°), S2(°), D2(°), R2(°), Agency, Author
+						</description>
+					</parameter>
+				</group>
+			</group>
 			<group name="eventsummary">
 				<description>
 				Parameters controlling the event summary view used e.g. in scolv.

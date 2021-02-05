@@ -74,8 +74,8 @@ MAKEENUM(
 		"Created(%1)",
 		"OT(%1)",
 		"Phases",
-		"Lat.",
-		"Lon.",
+		"Lat",
+		"Lon",
 		"Depth",
 		"DType",
 		"RMS",
@@ -186,6 +186,8 @@ MAKEENUM(
 	FMListColumns,
 	EVALUES(
 		FML_CREATED,
+		FML_DEPTH,
+		FML_MAG,
 		FML_COUNT,
 		FML_MISFIT,
 		FML_STDR,
@@ -205,10 +207,12 @@ MAKEENUM(
 	),
 	ENAMES(
 		"Created(%1)",
+		"Depth",
+		"M",
 		"Count",
 		"Misfit",
 		"STDR",
-		"Azi. Gap(%)",
+		"Azi. Gap(°)",
 		"Stat",
 		"DC(%)",
 		"CLVD(%)",
@@ -226,6 +230,8 @@ MAKEENUM(
 
 int FMColAligns[FMListColumns::Quantity] = {
 	Qt::AlignLeft | Qt::AlignVCenter, // CREATED
+	Qt::AlignCenter,                  // DEPTH
+	Qt::AlignCenter,                  // MAG
 	Qt::AlignCenter,                  // COUNT
 	Qt::AlignCenter,                  // MISFIT
 	Qt::AlignCenter,                  // STDR
@@ -246,6 +252,8 @@ int FMColAligns[FMListColumns::Quantity] = {
 
 bool FMColBold[FMListColumns::Quantity] = {
 	false,
+	true,
+	true,
 	true,
 	true,
 	true,
@@ -282,9 +290,17 @@ bool FMColVisible[FMListColumns::Quantity] = {
 	true,
 	true,
 	true,
+	true,
+	true,
 	true
 };
 
+
+#define RESET_COLUMN(ENUM) \
+do {\
+	item->setText(_fmColumnMap[ENUM], "-");\
+	item->setData(_fmColumnMap[ENUM], Qt::UserRole, QVariant());\
+} while (0)
 
 #define POPULATE_COLUMN_INT(ENUM, DATA) \
 do {\
@@ -303,6 +319,18 @@ do {\
 	try {\
 		item->setText(_fmColumnMap[ENUM], QString("%1").arg(DATA, 0, 'f', PREC));\
 		item->setData(_fmColumnMap[ENUM], Qt::UserRole, DATA);\
+	}\
+	catch ( Core::ValueException& ) {\
+		item->setText(_fmColumnMap[ENUM], "-");\
+		item->setData(_fmColumnMap[ENUM], Qt::UserRole, QVariant());\
+	}\
+} while (0)
+
+#define POPULATE_COLUMN(ENUM, TEXT, VALUE) \
+do {\
+	try {\
+		item->setText(_fmColumnMap[ENUM], TEXT);\
+		item->setData(_fmColumnMap[ENUM], Qt::UserRole, VALUE);\
 	}\
 	catch ( Core::ValueException& ) {\
 		item->setText(_fmColumnMap[ENUM], "-");\
@@ -877,7 +905,8 @@ void FMMap::contextMenuEvent(QContextMenuEvent *e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventEdit::EventEdit(DatabaseQuery* reader,
                      Map::ImageTree *mapTree,
-                     QWidget *parent) {
+                     QWidget *parent)
+: QWidget(parent) {
 	_fmActivityMovie = nullptr;
 	_reader = reader;
 	_mapTreeOrigin = mapTree;
@@ -943,6 +972,48 @@ void EventEdit::init() {
 	QObject *drawFilter = new ElideFadeDrawer(this);
 	_ui.labelRegionValue->installEventFilter(drawFilter);
 	_ui.labelMagnitudeMethodValue->installEventFilter(drawFilter);
+
+	try {
+		std::vector<std::string> cols = SCApp->configGetStrings("eventedit.origin.visibleColumns");
+		for ( int i = 0; i < OriginListColumns::Quantity; ++i )
+			OriginColVisible[i] = false;
+
+		for ( size_t i = 0; i < cols.size(); ++i ) {
+			OriginListColumns v;
+			if ( !v.fromString(cols[i]) ) {
+				std::cerr << "ERROR: eventedit.origin.visibleColumns: invalid column name '"
+				          << cols[i] << "' at index " << i << ", ignoring" << std::endl;
+				continue;
+			}
+
+			OriginColVisible[v] = true;
+		}
+
+		// First column is always visible
+		OriginColVisible[OL_CREATED] = true;
+	}
+	catch ( ... ) {}
+
+	try {
+		std::vector<std::string> cols = SCApp->configGetStrings("eventedit.fm.visibleColumns");
+		for ( int i = 0; i < FMListColumns::Quantity; ++i )
+			FMColVisible[i] = false;
+
+		for ( size_t i = 0; i < cols.size(); ++i ) {
+			FMListColumns v;
+			if ( !v.fromString(cols[i]) ) {
+				std::cerr << "ERROR: eventedit.fm.visibleColumns: invalid column name '"
+				          << cols[i] << "' at index " << i << ", ignoring" << std::endl;
+				continue;
+			}
+
+			FMColVisible[v] = true;
+		}
+
+		// First column is always visible
+		FMColVisible[FML_CREATED] = true;
+	}
+	catch ( ... ) {}
 
 	_customColumn = -1;
 	_customDefaultText = "-";
@@ -2162,6 +2233,19 @@ void EventEdit::updateFMRow(int row, FocalMechanism *fm) {
 
 	item->setData(0, Qt::UserRole, QString(fm->publicID().c_str()));
 
+	RESET_COLUMN(FML_DEPTH);
+	RESET_COLUMN(FML_MAG);
+
+	if ( fm->momentTensorCount() > 0 ) {
+		auto mt = fm->momentTensor(0);
+		auto o = Origin::Find(mt->derivedOriginID());
+		if ( o )
+			POPULATE_COLUMN(FML_DEPTH, (depthToString(o->depth(), SCScheme.precision.depth) + " km"), o->depth().value());
+		auto m = Magnitude::Find(mt->momentMagnitudeID());
+		if ( m )
+			POPULATE_COLUMN_DOUBLE(FML_MAG, m->magnitude().value(), SCScheme.precision.magnitude);
+	}
+
 	POPULATE_COLUMN_INT(FML_GAP, int(fm->azimuthalGap()));
 	POPULATE_COLUMN_INT(FML_COUNT, fm->stationPolarityCount());
 
@@ -2249,6 +2333,9 @@ void EventEdit::updateContent() {
 	_originTree->setHeaderLabels(_originTableHeader);
 	//_originTree->header()->setResizeMode(QHeaderView::Stretch);
 
+	for ( int i = 0; i < OriginListColumns::Quantity; ++i )
+		_originTree->header()->setSectionHidden(_originColumnMap[i], !OriginColVisible[i]);
+
 	for ( OriginList::iterator it = _origins.begin(); it != _origins.end(); ++it )
 		insertOriginRow(it->get());
 
@@ -2265,6 +2352,9 @@ void EventEdit::updateContent() {
 	_ui.fmTree->clear();
 	_ui.fmTree->setColumnCount(FMListColumns::Quantity);
 	_ui.fmTree->setHeaderLabels(_fmTableHeader);
+
+	for ( int i = 0; i < FMListColumns::Quantity; ++i )
+		_ui.fmTree->header()->setSectionHidden(_fmColumnMap[i], !FMColVisible[i]);
 
 	for ( FMList::iterator it = _fms.begin(); it != _fms.end(); ++it )
 		insertFMRow(it->get());
@@ -3023,7 +3113,8 @@ void EventEdit::sortFMItems(int column) {
 	LessThan compare;
 
 	if ( column == _fmColumnMap[FML_GAP] ||  column == _fmColumnMap[FML_COUNT] ||
-	     column == _fmColumnMap[FML_MISFIT] || column == _fmColumnMap[FML_STDR] )
+	     column == _fmColumnMap[FML_MISFIT] || column == _fmColumnMap[FML_STDR] ||
+	     column == _fmColumnMap[FML_DEPTH] || column == _fmColumnMap[FML_MAG] )
 		compare = (order == Qt::AscendingOrder ? &itemLessThan : &itemGreaterThan);
 	else
 		compare = (order == Qt::AscendingOrder ? &itemTextLessThan : &itemTextGreaterThan);
