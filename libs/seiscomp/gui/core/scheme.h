@@ -203,20 +203,21 @@ class SC_GUI_API Scheme {
 			};
 
 			public:
-				QColor        background;
-				Splash        splash;
-				Records       records;
-				Picks         picks;
-				Arrivals      arrivals;
-				Magnitudes    magnitudes;
-				Stations      stations;
-				QC            qc;
-				OriginSymbol  originSymbol;
-				OriginStatus  originStatus;
-				GroundMotion  gm;
-				RecordView    recordView;
-				Map           map;
-				Legend        legend;
+				QColor                    background;
+				Splash                    splash;
+				Records                   records;
+				Picks                     picks;
+				Arrivals                  arrivals;
+				Magnitudes                magnitudes;
+				Stations                  stations;
+				QC                        qc;
+				OriginSymbol              originSymbol;
+				OriginStatus              originStatus;
+				GroundMotion              gm;
+				RecordView                recordView;
+				Map                       map;
+				Legend                    legend;
+				QMap<std::string, QColor> agencies;
 		};
 
 		struct Fonts {

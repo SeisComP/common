@@ -20,6 +20,7 @@
 
 
 #include <seiscomp/gui/core/scheme.h>
+#include <seiscomp/gui/core/utils.h>
 #include <seiscomp/gui/core/application.h>
 
 #include <QTabBar>
@@ -644,6 +645,20 @@ void Scheme::fetch() {
 
 	READ_COLOR(colors.originStatus.automatic);
 	READ_COLOR(colors.originStatus.manual);
+
+	try {
+		vector<string> agencyColors = SCApp->configGetStrings("scheme.colors.agencies");
+		for ( size_t i = 0; i < agencyColors.size(); ++i ) {
+			size_t pos = agencyColors[i].rfind(':');
+			if ( pos == std::string::npos ) continue;
+			std::string value = agencyColors[i].substr(0, pos);
+			std::string strColor = agencyColors[i].substr(pos+1);
+			QColor color;
+			if ( fromString(color, strColor) )
+				colors.agencies[value] = color;
+		}
+	}
+	catch ( ... ) {}
 
 	READ_INT(marker.lineWidth);
 	READ_INT(records.lineWidth);

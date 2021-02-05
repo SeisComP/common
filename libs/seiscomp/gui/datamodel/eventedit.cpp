@@ -338,6 +338,22 @@ do {\
 	}\
 } while (0)
 
+#define POPULATE_AGENCY(COL, VALUE) \
+do {\
+	try {\
+		item->setText(COL, VALUE.c_str());\
+		auto it = SCScheme.colors.agencies.find(VALUE);\
+		if ( it != SCScheme.colors.agencies.end() )\
+			item->setData(COL, Qt::TextColorRole, it.value());\
+		else \
+			item->setData(COL, Qt::TextColorRole, QVariant());\
+	}\
+	catch ( Seiscomp::Core::ValueException& ) {\
+		item->setText(COL, QString());\
+		item->setData(COL, Qt::TextColorRole, QVariant());\
+	}\
+} while (0)
+
 
 
 struct ConfigProcessColumn {
@@ -2138,8 +2154,8 @@ void EventEdit::updateOriginRow(int row, Origin *org) {
 		item->setText(_originColumnMap[OL_CREATED], "");
 	}
 
+	POPULATE_AGENCY(_originColumnMap[OL_AGENCY], org->creationInfo().agencyID());
 	item->setText(_originColumnMap[OL_METHOD], org->methodID().c_str());
-	item->setText(_originColumnMap[OL_AGENCY], objectAgencyID(org).c_str());
 	item->setText(_originColumnMap[OL_AUTHOR], objectAuthor(org).c_str());
 	item->setText(_originColumnMap[OL_REGION], Regions::getRegionName(org->latitude(),org->longitude()).c_str());
 
@@ -2303,7 +2319,7 @@ void EventEdit::updateFMRow(int row, FocalMechanism *fm) {
 		item->setText(_fmColumnMap[FML_CREATED], "");
 	}
 
-	item->setText(_fmColumnMap[FML_AGENCY], objectAgencyID(fm).c_str());
+	POPULATE_AGENCY(_fmColumnMap[FML_AGENCY], fm->creationInfo().agencyID());
 	item->setText(_fmColumnMap[FML_AUTHOR], objectAuthor(fm).c_str());
 
 	item->setTextColor(_fmColumnMap[OL_CREATED], palette().color(QPalette::Disabled, QPalette::QPalette::Text));

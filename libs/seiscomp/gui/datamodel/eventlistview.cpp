@@ -142,6 +142,23 @@ bool colVisibility[EventListColumns::Quantity] = {
 };
 
 
+#define POPULATE_AGENCY(VALUE) \
+do {\
+	try {\
+		setText(config.columnMap[COL_AGENCY], VALUE.c_str());\
+		auto it = SCScheme.colors.agencies.find(VALUE);\
+		if ( it != SCScheme.colors.agencies.end() )\
+			setData(config.columnMap[COL_AGENCY], Qt::TextColorRole, it.value());\
+		else \
+			setData(config.columnMap[COL_AGENCY], Qt::TextColorRole, QVariant());\
+	}\
+	catch ( Seiscomp::Core::ValueException& ) {\
+		setText(config.columnMap[COL_AGENCY], QString());\
+		setData(config.columnMap[COL_AGENCY], Qt::TextColorRole, QVariant());\
+	}\
+} while (0)
+
+
 class ByteArrayBuf : public std::streambuf {
 	public:
 		ByteArrayBuf(QByteArray &array) : _array(array) {}
@@ -806,12 +823,11 @@ class OriginTreeItem : public SchemeTreeItem {
 		void update(EventListView*) {
 			Origin* ori = origin();
 			setText(config.columnMap[COL_ID], QString("%1").arg(ori->publicID().c_str()));
+			POPULATE_AGENCY(ori->creationInfo().agencyID());
 			try {
-				setText(config.columnMap[COL_AGENCY], ori->creationInfo().agencyID().c_str());
 				setText(config.columnMap[COL_AUTHOR], ori->creationInfo().author().c_str());
 			}
 			catch ( ... ) {
-				setText(config.columnMap[COL_AGENCY], "");
 				setText(config.columnMap[COL_AUTHOR], "");
 			}
 			setText(config.columnMap[COL_OTIME], timeToString(ori->time().value(), "... %T"));
@@ -957,12 +973,11 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 		void update(EventListView*) {
 			FocalMechanism* fm = focalMechanism();
 			setText(config.columnMap[COL_ID], QString("%1").arg(fm->publicID().c_str()));
+			POPULATE_AGENCY(fm->creationInfo().agencyID());
 			try {
-				setText(config.columnMap[COL_AGENCY], fm->creationInfo().agencyID().c_str());
 				setText(config.columnMap[COL_AUTHOR], fm->creationInfo().author().c_str());
 			}
 			catch ( ... ) {
-				setText(config.columnMap[COL_AGENCY], "");
 				setText(config.columnMap[COL_AUTHOR], "");
 			}
 
@@ -1438,12 +1453,12 @@ class EventTreeItem : public SchemeTreeItem {
 				//! this lines are for displaying defining Phase Count of an origin
 				//
 				if ( origin ) {
+					POPULATE_AGENCY(origin->creationInfo().agencyID());
+
 					try {
-						setText(config.columnMap[COL_AGENCY], origin->creationInfo().agencyID().c_str());
 						setText(config.columnMap[COL_AUTHOR], origin->creationInfo().author().c_str());
 					}
 					catch ( ... ) {
-						setText(config.columnMap[COL_AGENCY], "");
 						setText(config.columnMap[COL_AUTHOR], "");
 					}
 
