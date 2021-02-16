@@ -1487,8 +1487,10 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 						_state.bytesBuffered -= _outbox.front()->data.size();
 						_outbox.pop_front();
 					}
+					/*
 					SEISCOMP_DEBUG("Received ack, %d remaining messages in buffer",
 					               int(_outbox.size()));
+					*/
 				}
 
 				_writeMutex.unlock();
