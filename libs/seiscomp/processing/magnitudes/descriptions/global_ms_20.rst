@@ -46,7 +46,9 @@ removed before the calculation.
 Configuration
 -------------
 
-Adjust the configurable parameters in global bindings in the Ms_20 section.
+Adjust the configurable parameters in global bindings in the Ms_20 section. Add
+Ms_20 to the list of computed amplitudes and magnitudes in the configuration of
+:ref:`scamp` and :ref:`scmag` and in :ref:`scesv` or :ref:`scolv` for visibility.
 
 
 References

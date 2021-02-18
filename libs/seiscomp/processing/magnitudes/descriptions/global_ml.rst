@@ -7,6 +7,7 @@ Within the time window the amplitudes are measured on both horizontal components
 and combined. The methods for measuring and combining amplitudes are configurable
 in the global bindings.
 
+
 Station Magnitude
 -----------------
 
@@ -19,18 +20,20 @@ The individual station ML is calculated using the following formula:
 A is the measured ML Wood-Anderson amplitude in millimeters. The second term
 is the empirical calibration function, which in turn is a function
 of the epicentral distance (see Richter, 1935). This calibration
-function can be configured globally or per station using the config
-variable module.trunk.global.ML.logA0, e.g. ::
+function and distance range can be configured globally or per station using global
+bindings or the global module configuration variable
+module.trunk.global.magnitudes.ML.logA0 in :file:`global.cfg`, e.g. ::
 
-   module.trunk.global.ML.logA0 = "0 -1.3;60 -2.8;100 -3.0;400 -4.5;1000 -5.85"
+   module.trunk.global.magnitudes.ML.logA0 = "0 -1.3;60 -2.8;100 -3.0;400 -4.5;1000 -5.85"
+   module.trunk.global.magnitudes.ML.maxDistanceKm = "-1"
 
-The logA0 configuration string consists of an arbitrary number of
+The *logA0* configuration string consists of an arbitrary number of
 distance-value pairs separated by semicolons. The distance is in km
-and the value corresponds to the log10(A0) term above.
+and the value corresponds to the *log10(A0)* term above.
 
 Within each interval the values are computed by linear
 interpolation. E.g. for the above default specification, at a
-distance of 80 km the log10(A0) value would be
+distance of 80 km the *log10(A0)* value would be
 
 .. math::
 
@@ -52,9 +55,11 @@ epicenter distance.
 
 
 * Amplitude unit in SeisComP: **millimeter** (mm)
-* Time window: 150 s by :ref:`scautopick` or distance dependent
-* Default distance range: 0 - 8 deg
-* Depth range: 0 - 80 km
+* Time window: 150 s by :ref:`scautopick` or distance dependent, configurable
+* Default distance range: 0 - 8 deg,  maximum is configurable: :confval:`magnitudes.ML.maxDistanceKm`,
+  measurements beyond 8 deg will be strictly ignored.
+* Depth range: 0 - 80 km, configurable for amplitude measurements
+
 
 Network magnitude
 -----------------
@@ -62,9 +67,13 @@ Network magnitude
 By default, the mean is calculated from the station magnitudes to form the network
 magnitude.
 
+
 Configuration
 -------------
 
-Set the configuration and calibration parameters in the global bindings. Add ML to the list of
-computed amplitudes and magnitudes in the configuration of :ref:`scamp` and :ref:`scmag`
-and in :ref:`scesv` for visibility.
+Set the configuration and calibration parameters in the global bindings similar to :ref:`global_mlv`.
+Instead configuring lots of global bindings profiles or station bindings one
+line per parameter can be added to the global module configuration (:file:`global.cfg`).
+
+Add ML to the list of computed amplitudes and magnitudes in the configuration of
+:ref:`scamp` and :ref:`scmag` and in :ref:`scesv` or :ref:`scolv` for visibility.
