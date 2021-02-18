@@ -25,7 +25,8 @@ If the epicentral is known, the length of the time window after the P wave onset
 
    t = min(11.5 \Delta, 60)
 
-where :math:`\Delta` is the epicentral distance.
+where :math:`\Delta` is the epicentral distance. The methods for measuring
+amplitudes are configurable in the global bindings.
 
 Station Magnitude
 -----------------
@@ -57,14 +58,16 @@ Network magnitude
 -----------------
 
 By default, the trimmed mean is calculated from the station magnitudes to form
-the :term:`network magnitude`. Outliers below the 12.5% and above the 12.5% percentiles are
-removed before the calculation.
+the :term:`network magnitude`. Outliers beyond the outer 12.5% percentiles are
+removed before forming the mean.
 
 
 Configuration
 -------------
 
-Adjust the configurable parameters in global bindings in the mB section.
+Adjust the configurable parameters in global bindings in the mB section or use :ref:`global.cfg`
+as :ref:`global_mlv`. Add mB to the list of computed amplitudes and magnitudes in the configuration of
+:ref:`scamp` and :ref:`scmag` and in :ref:`scesv` or :ref:`scolv` for visibility.
 
 
 References
