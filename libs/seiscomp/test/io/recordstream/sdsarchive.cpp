@@ -192,4 +192,29 @@ BOOST_AUTO_TEST_CASE(READ_GAPPY_ARCHIVE_EMPTY2) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(READ_GAPPY_ARCHIVE_EMPTY3) {
+	SDSArchive sds("gappy-archive");
+
+	// The gap is between 01:20:00 and 03:00:00
+	Time startTime(2020,1,1,0,0,0,0);
+	Time endTime(2020,12,31,23,59,59,0);
+	sds.addStream("II", "AAK", "10", "BHZ", startTime, endTime);
+
+	RingBuffer buffer(0);
+	RecordPtr rec;
+
+	while ( (rec = sds.next()) )
+		buffer.push_back(rec);
+
+	RecordPtr crec = buffer.contiguousRecord<double>();
+	BOOST_REQUIRE(crec);
+	SEISCOMP_DEBUG("%s ~ %s", crec->startTime().iso().c_str(), crec->endTime().iso().c_str());
+	BOOST_CHECK(crec->startTime() > startTime && crec->endTime() < endTime);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 BOOST_AUTO_TEST_SUITE_END()
