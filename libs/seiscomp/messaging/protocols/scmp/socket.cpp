@@ -131,7 +131,6 @@ Result Socket::close() {
 bool Socket::wait(boost::mutex *m, boost::mutex *waitLock) {
 	Wired::Device *dev = nullptr;
 	while ( dev != _socket ) {
-		//std::cerr << "Wait is true" << std::endl;
 		if ( _inWait ) SEISCOMP_WARNING("Sync error");
 		_inWait = true;
 		if ( m ) m->unlock();
@@ -140,8 +139,8 @@ bool Socket::wait(boost::mutex *m, boost::mutex *waitLock) {
 		if ( waitLock ) waitLock->unlock();
 		if ( m ) m->lock();
 		_inWait = false;
-		//std::cerr << "Wait is false" << std::endl;
-		if ( dev == nullptr ) return false;
+		if ( !dev )
+			return errno == EINTR;
 	}
 
 	return true;
