@@ -1858,8 +1858,15 @@ bool Application::readMessages() {
 		if ( msg ) delete msg;
 
 		if ( !result ) {
-			SEISCOMP_ERROR("Message read error: %d: %s",
-			               result.toInt(), result.toString());
+			if ( result == SystemError ) {
+				SEISCOMP_ERROR("Message read error: %d: %s: %s (%d)",
+				               result.toInt(), result.toString(),
+				               strerror(errno), errno);
+			}
+			else {
+				SEISCOMP_ERROR("Message read error: %d: %s",
+				               result.toInt(), result.toString());
+			}
 		}
 
 		// We should never step into this case
