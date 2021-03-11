@@ -19,6 +19,7 @@ SET(SYSTEM_HEADERS
 	pluginregistry.h
 	schema.h
 	settings.h
+	settings.ipp
 )
 
 SET(SYSTEM_DEFINITIONS -DSEISCOMP_ROOT="${SC3_PACKAGE_INSTALL_PREFIX}")
