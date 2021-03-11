@@ -236,6 +236,9 @@ class SecureWebsocketConnection : public WebsocketConnection {
 }
 
 
+#define SIGNIFICANT_ERRNO (errno != EAGAIN) && (errno != EWOULDBLOCK) && (errno != EINTR)
+
+
 REGISTER_CONNECTION_PROTOCOL(WebsocketConnection, "scmp");
 REGISTER_CONNECTION_PROTOCOL(SecureWebsocketConnection, "scmps");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1220,7 +1223,7 @@ Result WebsocketConnection::readFrame(Wired::Websocket::Frame &frame,
 		_sockMutex.unlock();
 		++_state.systemReadCalls;
 		if ( remainingBytes < 0 ) {
-			if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
+			if ( SIGNIFICANT_ERRNO ) {
 				closeSocket(strerror(errno));
 				return SystemError;
 			}
@@ -1317,7 +1320,7 @@ Result WebsocketConnection::sendSocket(const char *data, int len) {
 		written = _socket->write(data, len);
 		++_state.systemWriteCalls;
 		if ( written < 0 ) {
-			if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
+			if ( SIGNIFICANT_ERRNO ) {
 				// Close the session
 				//SEISCOMP_ERROR("[client] read error: %s", strerror(errno));
 				closeSocketWithoutLock(strerror(errno));
