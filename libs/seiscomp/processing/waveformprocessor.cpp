@@ -343,6 +343,7 @@ bool WaveformProcessor::store(const Record *record) {
 			                            record->locationCode(), record->channelCode());
 		}
 	}
+	_stream.lastSample = (*arr)[arr->size()-1];
 
 	// Fill the values and do the actual filtering
 	fill(arr->size(), arr->typedData());
@@ -362,7 +363,6 @@ bool WaveformProcessor::store(const Record *record) {
 		process(record, *arr);
 
 	_stream.lastRecord = record;
-	_stream.lastSample = (*arr)[arr->size()-1];
 
 	return true;
 }
