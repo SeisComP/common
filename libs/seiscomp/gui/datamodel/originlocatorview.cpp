@@ -6675,10 +6675,6 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 					SCApp->emitNotifier(it->get());
 			}
 		}
-		else {
-			QMessageBox::information(this, tr("Update"),
-			                         tr("Event is already up to date, nothing to do"));
-		}
 	}
 
 	if ( options.returnToEventList )
