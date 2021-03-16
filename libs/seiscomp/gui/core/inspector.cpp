@@ -26,6 +26,8 @@
 
 #include <QHeaderView>
 #include <QLabel>
+#include <iostream>
+
 
 using namespace Seiscomp::Core;
 using namespace Seiscomp::DataModel;
@@ -73,10 +75,14 @@ Inspector::Inspector(QWidget * parent, Qt::WindowFlags f)
 	_ui.tableWidget->horizontalHeader()->setStretchLastSection(true);
 	_ui.tableWidget->setSelectionMode(QAbstractItemView::NoSelection);
 
+	connect(_ui.editFilter, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 	connect(_ui.treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
 	        this, SLOT(selectionChanged()));
 
 	connect(_ui.buttonBack, SIGNAL(clicked()), this, SLOT(back()));
+
+	_filterTimer.setSingleShot(true);
+	connect(&_filterTimer, SIGNAL(timeout()), this, SLOT(applyFilter()));
 }
 
 
@@ -219,13 +225,16 @@ void Inspector::selectionChanged() {
 		_ui.tableWidget->removeRow(0);
 
 	TreeItem *item = static_cast<TreeItem*>(_ui.treeWidget->currentItem());
-	if ( item == nullptr ) return;
+	if ( !item ) {
+		_currentSelection = nullptr;
+		return;
+	}
 
 	_currentSelection = item->object();
-	if ( _currentSelection == nullptr ) return;
+	if ( !_currentSelection ) return;
 
 	const MetaObject *meta = _currentSelection->meta();
-	if ( meta == nullptr ) return;
+	if ( !meta ) return;
 
 	PublicObject *po = PublicObject::Cast(_currentSelection);
 	if ( po )
@@ -239,6 +248,119 @@ void Inspector::selectionChanged() {
 		addProperty(prop->name(), prop->type(), propToString(prop, _currentSelection),
 		            prop->isIndex(), prop->isOptional(), prop->isReference());
 	}
+}
+
+
+void Inspector::filterChanged(QString) {
+	_filterTimer.start(500);
+}
+
+
+void Inspector::applyFilter() {
+	QString filter = _ui.editFilter->text();
+
+	std::string type, attr, value;
+
+	{
+		int p = filter.indexOf('=');
+		if ( p >= 0 ) {
+			type = filter.mid(0, p).trimmed().toStdString();
+			value = filter.mid(p+1).trimmed().toStdString();
+		}
+		else {
+			type = filter.trimmed().toStdString();
+		}
+	}
+
+	{
+		size_t p = type.find('.');
+		if ( p != std::string::npos ) {
+			attr = type.substr(p+1);
+			type = type.substr(0, p);
+		}
+	}
+
+	QTreeWidgetItem *firstMatch = nullptr;
+
+	for ( int i = 0; i < _ui.treeWidget->topLevelItemCount(); ++i ) {
+		QTreeWidgetItem *item = _ui.treeWidget->topLevelItem(0);
+		filterTree(item, type, attr, value, &firstMatch);
+	}
+
+	if ( !_ui.treeWidget->currentItem()
+	   or _ui.treeWidget->currentItem()->isHidden() ) {
+		_ui.treeWidget->setCurrentItem(firstMatch);
+	}
+}
+
+
+bool Inspector::filterTree(QTreeWidgetItem *parent, const std::string &type,
+                           const std::string &attr, const std::string &value,
+                           QTreeWidgetItem **firstMatch,
+                           bool parentMatch) {
+	Core::BaseObject *obj = static_cast<TreeItem*>(parent)->object();
+	int visibleChildCount = 0;
+	bool match = parentMatch;
+
+	if ( obj && !match ) {
+		match = type.empty() || (type == obj->className());
+		if ( match && !attr.empty() ) {
+			match = false;
+
+			const MetaObject *meta = obj->meta();
+			if ( meta ) {
+				PublicObject *po = PublicObject::Cast(obj);
+				if ( po ) {
+					if ( attr == "publicID" && value == po->publicID() ) {
+						match = true;
+					}
+				}
+
+				if ( !match ) {
+					for ( size_t i = 0; i < meta->propertyCount(); ++i ) {
+						const MetaProperty *prop = meta->property(i);
+						if ( prop->name() == attr && Core::wildcmp(value, prop->readString(obj)) ) {
+							match = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if ( match && firstMatch && !*firstMatch ) {
+		*firstMatch = parent;
+	}
+
+	for ( int i = 0; i < parent->childCount(); ++i ) {
+		QTreeWidgetItem *item = parent->child(i);
+		if ( !item ) continue;
+
+		if ( !filterTree(item, type, attr, value, firstMatch, match) ) {
+			// Item still visible?
+			++visibleChildCount;
+		}
+	}
+
+	if ( parentMatch ) {
+		parent->setHidden(false);
+	}
+	else {
+		if ( !obj ) {
+			parent->setHidden(visibleChildCount == 0 && parent->childCount() > 0);
+		}
+		else {
+			if ( match ) {
+				parent->setHidden(false);
+			}
+			else {
+				parent->setHidden(visibleChildCount == 0);
+			}
+		}
+	}
+
+	return parent->isHidden();
 }
 
 

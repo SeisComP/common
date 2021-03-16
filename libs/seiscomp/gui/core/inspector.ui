@@ -42,6 +42,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QLineEdit" name="editFilter">
+     <property name="toolTip" >
+      <string>Define an object filter, e.g. 'Network.code=GE'. Wildcards are allowed to match a value.</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QSplitter" name="splitter" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>

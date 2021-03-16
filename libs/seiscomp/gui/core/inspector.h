@@ -18,12 +18,13 @@
  ***************************************************************************/
 
 
-
 #ifndef SC_GUI_INSPECTOR_H
 #define SC_GUI_INSPECTOR_H
 
+
 #include <QTreeWidget>
 #include <QTableWidget>
+#include <QTimer>
 #include <QStack>
 
 #include <seiscomp/gui/core/ui_inspector.h>
@@ -57,10 +58,16 @@ class SC_GUI_API Inspector : public QWidget {
 		                 const std::string &value, bool isIndex = false,
 		                 bool isOptional = false, bool isReference = false);
 		void selectObject(QTreeWidgetItem *parent, Core::BaseObject *obj);
+		bool filterTree(QTreeWidgetItem *parent, const std::string &type,
+		                const std::string &attr, const std::string &value,
+		                QTreeWidgetItem **firstMatch,
+		                bool parentMatch = false);
 
 
 	private slots:
 		void selectionChanged();
+		void filterChanged(QString);
+		void applyFilter();
 		void linkClicked(QString);
 		void back();
 
@@ -68,14 +75,16 @@ class SC_GUI_API Inspector : public QWidget {
 	private:
 		typedef QPair<Core::BaseObject*, Core::BaseObject*> State;
 
-		Core::BaseObject           *_object;
-		Core::BaseObject           *_currentSelection;
-		Ui::Inspector               _ui;
-		QStack<State>               _history;
+		Core::BaseObject *_object;
+		Core::BaseObject *_currentSelection;
+		Ui::Inspector     _ui;
+		QStack<State>     _history;
+		QTimer            _filterTimer;
 };
 
 
 }
 }
+
 
 #endif
