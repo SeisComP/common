@@ -20,7 +20,7 @@
 					Organization name used mainly by ArcLink and SeedLink.
 				</description>
 			</parameter>
-			<parameter name="author" type="string">
+			<parameter name="author" type="string" default="@appname@@@@hostname@">
 				<description>
 					Defines the author name used to set creationInfo.author in
 					data model objects.
@@ -33,18 +33,25 @@
 			</parameter>
 			<parameter name="cityXML" type="string">
 				<description>
-					Path to the cities.xml file. If undefined the data is read from
-					@CONFIGDIR@/cities.xml@ or @DATADIR@/cities.xml@.
+					Path to the cities.xml file. If undefined, the data is read from
+					&quot;@CONFIGDIR@/cities.xml&quot; or &quot;@DATADIR@/cities.xml&quot;.
+					SeisComP ships with &quot;@DATADIR@/cities.xml&quot;.
 				</description>
 			</parameter>
-			<parameter name="loadCities" type="boolean" default="false">
+			<parameter name="loadCities" type="boolean">
 				<description>
-					Enables loading of cities from file configured by cityXML parameter.
+					Load cities from file configured by the &quot;cityXML&quot;
+					parameter. GUI and map applications enable loading of cities
+					by default considering the parameter &quot;scheme.map.showCities&quot;.
 				</description>
 			</parameter>
-			<parameter name="loadRegions" type="boolean" default="false">
+			<parameter name="loadRegions" type="boolean">
 				<description>
-					Enables loading of custom fep regions from @CONFIGDIR@/fep or @DATADIR@/fep.
+					Load custom FEP (Flinn-Engdahl polygon) regions from
+					&quot;@CONFIGDIR@/fep/&quot; or @DATADIR@/fep/&quot;.
+					GUI and map applications and scevent enable FEP regions by
+					default. Explicitly uncheck the option to disregard by these
+					applications.
 				</description>
 			</parameter>
 			<parameter name="publicIDPattern" type="string">
