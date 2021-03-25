@@ -181,13 +181,13 @@
 					</parameter>
 					<parameter name="vectorLayerAntiAlias" type="boolean" default="false">
 						<description>
-							Should the vector layer in the map use antialiasing?
+							Apply antialiasing to map layers.
 							This improves the visual quality but decreases performance.
 						</description>
 					</parameter>
 					<parameter name="bilinearFilter" type="boolean" default="true">
 						<description>
-							Should the map use a bilinear filter?
+							Apply bilinear filtering to maps.
 							The bilinear filter improves the visual quality but decreases
 							performance slightly. It is only used for static map images.
 							Not while dragging.
@@ -195,12 +195,12 @@
 					</parameter>
 					<parameter name="showGrid" type="boolean" default="true">
 						<description>
-							Should the map display the grid?
+							Display the latitude/longitude grid on maps
 						</description>
 					</parameter>
 					<parameter name="showCities" type="boolean" default="true">
 						<description>
-							Should the map display the cities?
+							Show cities defined in &quot;citiesXML&quot; on maps
 						</description>
 					</parameter>
 					<parameter name="cityPopulationWeight" type="int" default="150">
@@ -212,7 +212,7 @@
 					</parameter>
 					<parameter name="showLayers" type="boolean" default="true">
 						<description>
-							Should the map display the custom layers?
+							Show custom layers on maps
 						</description>
 					</parameter>
 					<parameter name="showLegends" type="boolean" default="false">
