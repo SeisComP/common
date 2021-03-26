@@ -26,6 +26,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QHBoxLayout>
+#include <QKeySequence>
 #include <cmath>
 #include <iostream>
 #include <cstdio>
@@ -101,15 +102,23 @@ DiagramWidget::DiagramWidget(QWidget * parent, Type type, Qt::WindowFlags f)
 	setMouseTracking(true);
 	_disabledColor = Qt::red;
 	_rubberBandOperation = Select;
+	_penErrorBar = QPen(Qt::gray, 0.8);
+	_drawErrorBars = true;
 
 	_zoomAction = new QAction(this);
-	_zoomAction->setText("Zoom into selected values");
+	_zoomAction->setText(tr("Zoom into selected values"));
 	addAction(_zoomAction);
 
 	_resetAction = new QAction(this);
-	_resetAction->setText("Reset zoom");
+	_resetAction->setText(tr("Reset zoom"));
 	addAction(_resetAction);
 
+	_toggleUncertainties = new QAction(this);
+	_toggleUncertainties->setText(tr("Toggle uncertainties"));
+	_toggleUncertainties->setShortcut(QKeySequence(Qt::Key_E));
+	_toggleUncertainties->setCheckable(true);
+	_toggleUncertainties->setChecked(true);
+	addAction(_toggleUncertainties);
 	/*
 	_selectAbscissaInterval = new QAction(this);
 	_selectAbscissaInterval->setText("Select abscissa interval");
@@ -134,6 +143,8 @@ DiagramWidget::DiagramWidget(QWidget * parent, Type type, Qt::WindowFlags f)
 	        this, SLOT(zoomIntoSelectedValues()));
 	connect(_resetAction, SIGNAL(triggered(bool)),
 	        this, SLOT(resetZoom()));
+	connect(_toggleUncertainties, SIGNAL(toggled(bool)),
+	        this, SLOT(setDrawErrorBars(bool)));
 
 	/*
 	connect(_selectAbscissaInterval, SIGNAL(triggered(bool)),
@@ -257,7 +268,7 @@ void DiagramWidget::resizeEvent(QResizeEvent *) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DiagramWidget::paintEvent(QPaintEvent *e) {
+void DiagramWidget::paintEvent(QPaintEvent *) {
 	if ( symbolSize < 0 ) {
 		symbolSize = fontMetrics().height()/2;
 		halfSymbolSize = symbolSize / 2;
@@ -311,6 +322,9 @@ void DiagramWidget::paintEvent(QPaintEvent *e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DiagramWidget::drawValues(QPainter &painter) {
+	qreal capHalfWidth = halfSymbolSize * 0.5;
+	painter.setClipRect(_diagramArea);
+
 	for ( int id = 0; id < _values.size(); ++id ) {
 		const ValueItem &v = _values[id];
 		if ( !_displayRect.contains(v.pt(_xIndex,_yIndex)) )
@@ -324,7 +338,6 @@ void DiagramWidget::drawValues(QPainter &painter) {
 		else
 			c = _disabledColor;
 
-		painter.setPen(QColor(c.red()/2, c.green()/2, c.blue()/2));
 		if ( !v.isEnabled ) {
 			if ( _hideDisabledValues ) continue;
 			painter.setBrush(Qt::NoBrush);
@@ -332,9 +345,85 @@ void DiagramWidget::drawValues(QPainter &painter) {
 		else
 			painter.setBrush(c);
 
-		drawValue(id, painter, (this->*project)(v.pt(_xIndex,_yIndex)),
+		QPointF vp = (this->*project)(v.pt(_xIndex,_yIndex));
+
+		if ( _drawErrorBars ) {
+			if ( v.cols[_xIndex].lowerError > 0 or v.cols[_xIndex].upperError > 0 ) {
+				// Draw X error bars
+				QPointF left, right;
+
+				if ( v.cols[_xIndex].lowerError > 0 ) {
+					left = (this->*project)(
+						QPointF(
+							v.cols[_xIndex].value - v.cols[_xIndex].lowerError,
+							v.cols[_yIndex].value
+						)
+					);
+
+					painter.setPen(v.cols[_xIndex].defaultError ? _penDefaultErrorBar : _penErrorBar);
+					painter.drawLine(left - QPointF(0,capHalfWidth), left + QPointF(0,capHalfWidth));
+				}
+				else
+					left = vp;
+
+				if ( v.cols[_xIndex].upperError > 0 ) {
+					right = (this->*project)(
+						QPointF(
+							v.cols[_xIndex].value + v.cols[_xIndex].upperError,
+							v.cols[_yIndex].value
+						)
+					);
+
+					painter.setPen(v.cols[_xIndex].defaultError ? _penDefaultErrorBar : _penErrorBar);
+					painter.drawLine(right - QPointF(0,capHalfWidth), right + QPointF(0,capHalfWidth));
+				}
+				else
+					right = vp;
+			}
+
+			if ( v.cols[_yIndex].lowerError > 0 or v.cols[_yIndex].upperError > 0 ) {
+				// Draw Y error bars
+				QPointF up, down;
+
+				if ( v.cols[_yIndex].lowerError > 0 ) {
+					down = (this->*project)(
+						QPointF(
+							v.cols[_xIndex].value,
+							v.cols[_yIndex].value - v.cols[_yIndex].lowerError
+						)
+					);
+
+					painter.setPen(v.cols[_yIndex].defaultError ? _penDefaultErrorBar : _penErrorBar);
+					painter.drawLine(down - QPointF(capHalfWidth,0), down + QPointF(capHalfWidth,0));
+				}
+				else
+					down = vp;
+
+				if ( v.cols[_yIndex].upperError > 0 ) {
+					up = (this->*project)(
+						QPointF(
+							v.cols[_xIndex].value,
+							v.cols[_yIndex].value + v.cols[_yIndex].upperError
+						)
+					);
+
+					painter.setPen(v.cols[_yIndex].defaultError ? _penDefaultErrorBar : _penErrorBar);
+					painter.drawLine(up - QPointF(capHalfWidth,0), up + QPointF(capHalfWidth,0));
+				}
+				else
+					up = vp;
+
+				painter.drawLine(down, up);
+			}
+		}
+
+		painter.setPen(QColor(c.red()/2, c.green()/2, c.blue()/2));
+
+		drawValue(id, painter, vp,
 		          v.type, v.valid(_xIndex,_yIndex));
 	}
+
+	painter.setClipping(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -370,7 +459,7 @@ void DiagramWidget::paintRectangular(QPainter &painter) {
 	painter.fillRect(_diagramArea, _background);
 
 	qreal abscissaValue = 0;
-	QPoint abscissa = (this->*project)(QPointF(0,abscissaValue));
+	QPointF abscissa = (this->*project)(QPointF(0,abscissaValue));
 	int abscissaHeight = abscissa.y();
 	if ( (abscissaHeight < _diagramArea.top()) ||
 	     (abscissaHeight > _diagramArea.bottom()) ) {
@@ -475,8 +564,8 @@ void DiagramWidget::paintRectangular(QPainter &painter) {
 	drawValues(painter);
 
 	if ( _rubberBand.isValid() ) {
-		QPoint min = (this->*project)(_rubberBand.bottomLeft());
-		QPoint max = (this->*project)(_rubberBand.topRight());
+		QPointF min = (this->*project)(_rubberBand.bottomLeft());
+		QPointF max = (this->*project)(_rubberBand.topRight());
 
 		if ( _dragZoom ) {
 			painter.setPen(QColor(96,64,32));
@@ -546,16 +635,16 @@ void DiagramWidget::paintSphericalBackground(QPainter &painter) {
 		QColor c = blend(Qt::lightGray, _background, 50);
 		painter.setPen(c);
 		painter.setBrush(c);
-		QPoint tmp = (this->*project)(QPointF(std::min(HIGH_BORDER, double(_displayRect.right())), 0));
-		int w = tmp.y() - center.y();
+		QPointF tmp = (this->*project)(QPointF(std::min(HIGH_BORDER, double(_displayRect.right())), 0));
+		qreal w = tmp.y() - center.y();
 		painter.drawEllipse(center.x()-w, center.y()-w, w*2, w*2);
 	}
 
 	{
 		painter.setPen(_background);
 		painter.setBrush(_background);
-		QPoint tmp = (this->*project)(QPointF(std::min(LOW_BORDER , double(_displayRect.right())), 0));
-		int w = tmp.y() - center.y();
+		QPointF tmp = (this->*project)(QPointF(std::min(LOW_BORDER , double(_displayRect.right())), 0));
+		qreal w = tmp.y() - center.y();
 		painter.drawEllipse(center.x()-w, center.y()-w, w*2, w*2);
 	}
 
@@ -612,8 +701,8 @@ void DiagramWidget::paintSpherical(QPainter &painter) {
 	painter.setRenderHint(QPainter::Antialiasing);
 	{
 
-		QPoint p0 = (this->*project)(_rubberBand.topLeft());
-		QPoint p2 = (this->*project)(_rubberBand.bottomRight());
+		QPointF p0 = (this->*project)(_rubberBand.topLeft());
+		QPointF p2 = (this->*project)(_rubberBand.bottomRight());
 
 		/*
 		std::cout << "RB: " << _rubberBand.left() << ", "
@@ -645,8 +734,8 @@ void DiagramWidget::paintSpherical(QPainter &painter) {
 
 		QPainterPath pp;
 
-		QPoint center = _diagramArea.center();
-		QPoint tmp = (this->*project)(QPointF(_rubberBand.left(), 0));
+		QPointF center = _diagramArea.center();
+		QPointF tmp = (this->*project)(QPointF(_rubberBand.left(), 0));
 		int w = tmp.y() - center.y();
 		float len = _rubberBand.height();
 		if ( len < 0 ) len += 360;
@@ -792,7 +881,7 @@ void DiagramWidget::mouseMoveEvent(QMouseEvent *event) {
 		// accidental de-selection upon clicking and slightly moving
 		// the mouse.
 		QPoint _draggingEnd = event->pos();
-		QRect rect(_draggingStart, _draggingEnd);
+		QRectF rect(_draggingStart, _draggingEnd);
 		// This criterion might be made configurable
 		if (abs(rect.width()) + abs(rect.height()) < 20)
 			return;
@@ -943,11 +1032,13 @@ void DiagramWidget::contextMenuEvent(QContextMenuEvent *event) {
 	contextMenu.addAction(_zoomAction);
 	contextMenu.addAction(_resetAction);
 
-	/*
 	QAction *sep = new QAction(this);
 	sep->setSeparator(true);
 	contextMenu.addAction(sep);
 
+	contextMenu.addAction(_toggleUncertainties);
+
+	/*
 	contextMenu.addAction(_actionActivate);
 	contextMenu.addAction(_actionEnable);
 	*/
@@ -1044,6 +1135,16 @@ void DiagramWidget::setDrawGridLines(bool f) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void DiagramWidget::setDrawErrorBars(bool f) {
+	_drawErrorBars = f;
+	update();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DiagramWidget::clipRectRectangular(QRectF &rect) {
 	rect = rect.normalized() & _displayRect;
 }
@@ -1102,7 +1203,7 @@ void DiagramWidget::diagramAreaUpdated(const QRect &) {}
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DiagramWidget::drawValue(int id, QPainter& painter, const QPoint& p,
+void DiagramWidget::drawValue(int id, QPainter& painter, const QPointF &p,
                               SymbolType type, bool valid) const {
 	static QPolygon triangle = QPolygon() << QPoint(-halfSymbolSize,halfSymbolSize)
 	                                      << QPoint( halfSymbolSize,halfSymbolSize)
@@ -1322,9 +1423,11 @@ void DiagramWidget::drawOrdinate(QPainter& painter, int x, int abscissaHeight, q
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPoint DiagramWidget::projectRectangular(const QPointF& p) const {
-	return QPoint((int)((p.x() - _displayRect.left()) * _diagramArea.width() / _displayRect.width()) + _diagramArea.left(),
-	              (int)((_displayRect.top() - p.y()) * _diagramArea.height() / _displayRect.height()) + _diagramArea.bottom());
+QPointF DiagramWidget::projectRectangular(const QPointF &p) const {
+	return QPointF(
+		((p.x() - _displayRect.left()) * _diagramArea.width() / _displayRect.width()) + _diagramArea.left(),
+		((_displayRect.top() - p.y()) * _diagramArea.height() / _displayRect.height()) + _diagramArea.bottom()
+	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1332,7 +1435,7 @@ QPoint DiagramWidget::projectRectangular(const QPointF& p) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPointF DiagramWidget::unProjectRectangular(const QPoint& p) const {
+QPointF DiagramWidget::unProjectRectangular(const QPointF &p) const {
 	return QPointF((p.x() - _diagramArea.left()) * _displayRect.width() / _diagramArea.width() + _displayRect.left(),
 	               (_diagramArea.bottom() - p.y()) * _displayRect.height() / _diagramArea.height() + _displayRect.top());
 }
@@ -1342,17 +1445,17 @@ QPointF DiagramWidget::unProjectRectangular(const QPoint& p) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPoint DiagramWidget::projectSpherical(const QPointF& p) const {
-	int diameter = std::min(_diagramArea.width(), _diagramArea.height());
-	int radius = diameter / 2;
+QPointF DiagramWidget::projectSpherical(const QPointF &p) const {
+	qreal diameter = std::min(_diagramArea.width(), _diagramArea.height());
+	qreal radius = diameter / 2;
 
-	QPoint center = _diagramArea.center();
+	QPointF center = _diagramArea.center();
 
-	float dist = (p.x() * radius / _displayRect.right());
-	float deg = fmod(double(p.y()), 360.0);
+	qreal dist = (p.x() * radius / _displayRect.right());
+	qreal deg = fmod(qreal(p.y()), 360.0);
 
-	return QPoint(center.x() + (int)(dist*sin(deg2rad(deg))),
-	              center.y() - (int)(dist*cos(deg2rad(deg))));
+	return QPointF(center.x() + (dist*sin(deg2rad(deg))),
+	               center.y() - (dist*cos(deg2rad(deg))));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1360,12 +1463,12 @@ QPoint DiagramWidget::projectSpherical(const QPointF& p) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPointF DiagramWidget::unProjectSpherical(const QPoint& p) const {
-	int diameter = std::min(_diagramArea.width(), _diagramArea.height());
-	int radius = diameter / 2;
+QPointF DiagramWidget::unProjectSpherical(const QPointF &p) const {
+	qreal diameter = std::min(_diagramArea.width(), _diagramArea.height());
+	qreal radius = diameter / 2;
 
-	QPoint center = _diagramArea.center();
-	QPoint delta = p - center;
+	QPointF center = _diagramArea.center();
+	QPointF delta = p - center;
 
 	float dist = (float)sqrt((float)(delta.x()*delta.x() + delta.y()*delta.y()));
 	if ( dist <= 0.001 )
@@ -1435,6 +1538,17 @@ int DiagramWidget::columnCount() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DiagramWidget::setBackgroundColor(const QColor& c) {
 	_background = c;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void DiagramWidget::setErrorBarPens(const QPen &penError,
+                                    const QPen &penDefaultError) {
+	_penErrorBar = penError;
+	_penDefaultErrorBar = penDefaultError;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1641,13 +1755,18 @@ void DiagramWidget::selectValues(const QRectF& targetRect) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DiagramWidget::setValue(int id, int x, qreal v) {
+void DiagramWidget::setValue(int id, int x, qreal v,
+                             qreal lowerError, qreal upperError,
+                             bool defaultError) {
 	if ( id >= _values.count() || id < 0 ) {
 		SEISCOMP_DEBUG("Index %d out of range", id);
 		return;
 	}
 
 	_values[id].cols[x].value = v;
+	_values[id].cols[x].lowerError = lowerError;
+	_values[id].cols[x].upperError = upperError;
+	_values[id].cols[x].defaultError = defaultError;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2013,10 +2132,10 @@ void DiagramWidget::updateSelection() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-inline int dist(const QPoint& p1, const QPoint& p2) {
-	double diff_x = p2.x() - p1.x();
-	double diff_y = p2.y() - p1.y();
-	return (int)sqrt(diff_x*diff_x + diff_y*diff_y);
+inline qreal dist(const QPointF &p1, const QPointF &p2) {
+	qreal diff_x = p2.x() - p1.x();
+	qreal diff_y = p2.y() - p1.y();
+	return qreal(sqrt(diff_x*diff_x + diff_y*diff_y));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

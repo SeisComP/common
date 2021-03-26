@@ -29,6 +29,7 @@
 #include <QDialog>
 #include <QVector>
 #include <QPointF>
+#include <QPen>
 
 #include <seiscomp/gui/core/gradient.h>
 
@@ -119,6 +120,7 @@ class SC_GUI_API DiagramWidget : public QWidget {
 		int columnCount() const;
 
 		void setBackgroundColor(const QColor& c);
+		void setErrorBarPens(const QPen &penError, const QPen &penDefaultError);
 
 		void setMargin(int margin);
 
@@ -163,8 +165,8 @@ class SC_GUI_API DiagramWidget : public QWidget {
 
 		void selectValues(const QRectF& targetRect);
 
-		void setValue(int id, qreal v);
-		void setValue(int id, int x, qreal v);
+		void setValue(int id, int x, qreal v, qreal lowerError = -1, qreal upperError = -1,
+		              bool defaultError = false);
 		void setValue(int id, const QPointF& p);
 		void setValue(int id, int x, int y, const QPointF& p);
 		void setValueColor(int id, const QColor& c);
@@ -187,6 +189,10 @@ class SC_GUI_API DiagramWidget : public QWidget {
 		int hoveredValue() const { return _hoverId; }
 
 
+	public slots:
+		void setDrawErrorBars(bool);
+
+
 	// ------------------------------------------------------------------
 	//  Protected interface
 	// ------------------------------------------------------------------
@@ -196,7 +202,7 @@ class SC_GUI_API DiagramWidget : public QWidget {
 		virtual void diagramAreaUpdated(const QRect &);
 		virtual void paintSphericalBackground(QPainter &);
 		virtual void drawValues(QPainter &painter);
-		virtual void drawValue(int id, QPainter& painter, const QPoint& p,
+		virtual void drawValue(int id, QPainter& painter, const QPointF& p,
 		                       SymbolType type, bool valid) const;
 
 
@@ -211,11 +217,11 @@ class SC_GUI_API DiagramWidget : public QWidget {
 
 
 	private:
-		QPoint projectRectangular(const QPointF& p) const;
-		QPointF unProjectRectangular(const QPoint& p) const;
+		QPointF projectRectangular(const QPointF& p) const;
+		QPointF unProjectRectangular(const QPointF& p) const;
 
-		QPoint projectSpherical(const QPointF& p) const;
-		QPointF unProjectSpherical(const QPoint& p) const;
+		QPointF projectSpherical(const QPointF& p) const;
+		QPointF unProjectSpherical(const QPointF& p) const;
 
 		bool containsRectangular(const QRectF&, const QPointF&) const;
 		bool containsSpherical(const QRectF&, const QPointF&) const;
@@ -254,8 +260,8 @@ class SC_GUI_API DiagramWidget : public QWidget {
 	//  Members
 	// ------------------------------------------------------------------
 	protected:
-		typedef QPoint (DiagramWidget::*ProjectFunc)(const QPointF&) const;
-		typedef QPointF (DiagramWidget::*UnProjectFunc)(const QPoint&) const;
+		typedef QPointF (DiagramWidget::*ProjectFunc)(const QPointF&) const;
+		typedef QPointF (DiagramWidget::*UnProjectFunc)(const QPointF&) const;
 		typedef bool (DiagramWidget::*ContainsFunc)(const QRectF&, const QPointF&) const;
 		typedef void (DiagramWidget::*AdjustZoomFunc)(QRectF&);
 
@@ -279,15 +285,19 @@ class SC_GUI_API DiagramWidget : public QWidget {
 			void setColumns(int nc) { cols.resize(nc); }
 
 			QPointF pt(int x, int y) const { return QPointF(cols[x].value, cols[y].value); }
-			void setPt(int x, int y, const QPointF& p_) { cols[x].value = p_.x(); cols[y].value = p_.y(); }
+			void setPt(int x, int y, const QPointF& p_) {
+				cols[x].value = p_.x(); cols[x].lowerError = -1; cols[x].upperError = -1;
+				cols[y].value = p_.y(); cols[y].lowerError = -1; cols[y].upperError = -1;
+			}
 			float ptx(int x) const { return cols[x].value; }
 			bool valid(int x, int y) const { return cols[x].valid && cols[y].valid; }
 
 			struct ColumnValueItem {
-				ColumnValueItem() : valid(true) {}
 				float  value;
+				float  lowerError{-1}, upperError{-1};
+				bool   defaultError{false};
 				QColor color;
-				bool   valid;
+				bool   valid{true};
 			};
 
 			QVector<ColumnValueItem> cols;
@@ -313,6 +323,9 @@ class SC_GUI_API DiagramWidget : public QWidget {
 
 		Type   _type;
 		QColor _disabledColor;
+		QColor _background;
+		QPen   _penErrorBar;
+		QPen   _penDefaultErrorBar;
 
 		ProjectFunc project;
 		UnProjectFunc unProject;
@@ -343,8 +356,9 @@ class SC_GUI_API DiagramWidget : public QWidget {
 
 		bool _hideDisabledValues;
 		bool _drawGridLines;
+		bool _drawErrorBars;
 
-		QPoint _draggingStart;
+		QPointF _draggingStart;
 		bool _dragStart;
 		bool _dragZoom;
 		bool _dragging;
@@ -353,10 +367,9 @@ class SC_GUI_API DiagramWidget : public QWidget {
 
 		int _hoverId;
 
-		QColor _background;
-
 		QAction* _zoomAction;
 		QAction* _resetAction;
+		QAction* _toggleUncertainties;
 
 		QAction* _actionActivate;
 		QAction* _actionEnable;

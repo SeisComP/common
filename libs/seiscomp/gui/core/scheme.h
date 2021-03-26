@@ -63,11 +63,13 @@ class SC_GUI_API Scheme {
 
 			struct Arrivals {
 				Arrivals();
-				QColor manual;
-				QColor automatic;
-				QColor theoretical;
-				QColor undefined;
-				QColor disabled;
+				QColor   manual;
+				QColor   automatic;
+				QColor   theoretical;
+				QColor   undefined;
+				QColor   disabled;
+				QPen     uncertainties;
+				QPen     defaultUncertainties;
 				Gradient residuals;
 			};
 

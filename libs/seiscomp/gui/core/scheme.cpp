@@ -165,6 +165,8 @@ Scheme::Colors::Arrivals::Arrivals() {
 	theoretical = QColor(0, 0, 160);
 	undefined = QColor(160, 0, 0);
 	disabled = Qt::gray;
+	uncertainties = QPen(Qt::gray, 0.8);
+	defaultUncertainties = QPen(QColor(128,128,128,64), 0.8);
 
 	/* BERND Version
 	residuals.setColorAt(-10, QColor(0,0,255));
@@ -190,8 +192,7 @@ Scheme::Colors::Arrivals::Arrivals() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Colors::Magnitudes::Magnitudes()
-{
+Scheme::Colors::Magnitudes::Magnitudes() {
 	set = QColor(0, 160, 0);
 	unset = Qt::transparent;
 	disabled = Qt::gray;
@@ -582,6 +583,8 @@ void Scheme::fetch() {
 	READ_COLOR(colors.arrivals.theoretical);
 	READ_COLOR(colors.arrivals.undefined);
 	READ_COLOR(colors.arrivals.disabled);
+	READ_PEN(colors.arrivals.uncertainties);
+	READ_PEN(colors.arrivals.defaultUncertainties);
 	READ_COLOR_GRADIENT(colors.arrivals.residuals);
 
 	READ_COLOR(colors.magnitudes.set);

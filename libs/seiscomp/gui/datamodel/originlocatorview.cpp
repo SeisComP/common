@@ -1299,7 +1299,7 @@ class PlotWidget : public OriginLocatorPlot {
 			QRectF tmp(_displayRect);
 			_displayRect.setRight(1);
 
-			QPoint p;
+			QPointF p;
 
 			painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -1321,7 +1321,7 @@ class PlotWidget : public OriginLocatorPlot {
 		}
 
 
-		void drawValue(int id, QPainter& painter, const QPoint& p,
+		void drawValue(int id, QPainter& painter, const QPointF &p,
 		               SymbolType type, bool valid) const {
 			if ( _customDraw ) {
 				if ( valid ) {
@@ -2731,6 +2731,7 @@ void OriginLocatorView::init() {
 	_residuals->setEnabled(false);
 	_residuals->setColumnCount(PlotCols::Quantity);
 
+	_residuals->setErrorBarPens(SCScheme.colors.arrivals.uncertainties, SCScheme.colors.arrivals.defaultUncertainties);
 	_residuals->setValueDisabledColor(SCScheme.colors.arrivals.disabled);
 	_residuals->setDisplayRect(QRectF(0,-10,180,20));
 
@@ -3387,14 +3388,6 @@ void OriginLocatorView::closeEvent(QCloseEvent *e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::residualsSelected() {
-	QRectF brect = _residuals->getSelectedValuesRect();
-	if ( brect.isEmpty() && !brect.isNull() ) {
-		for ( int i = 0; i < _modelArrivals.rowCount(); ++i )
-			_modelArrivals.setData(_modelArrivals.index(i, 0), 0, UsedRole);
-
-		return;
-	}
-
 	QVector<int> selectedIds = _residuals->getSelectedValues();
 	int startIndex = 0;
 	for ( int i = 0; i < selectedIds.count(); ++i ) {
@@ -4707,6 +4700,8 @@ void OriginLocatorView::updateContent() {
 void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
                                    const Core::Time &time, const QColor& c) {
 	int id = _residuals->count();
+	Pick *pick = nullptr;
+
 	_residuals->addValue(QPointF());
 
 	_residuals->setValueColor(id, PC_DISTANCE, c);
@@ -4746,7 +4741,32 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 	}
 
 	try {
-		_residuals->setValue(id, PC_RESIDUAL, arrival->timeResidual());
+		double residual = arrival->timeResidual();
+		if ( !pick ) pick = Pick::Find(arrival->pickID());
+
+		double lowerUncertainty = -1, upperUncertainty = -1;
+
+		if ( pick ) {
+			try {
+				lowerUncertainty = pick->time().lowerUncertainty();
+				upperUncertainty = pick->time().upperUncertainty();
+			}
+			catch ( ... ) {
+				try {
+					lowerUncertainty = upperUncertainty = pick->time().uncertainty();
+				}
+				catch ( ... ) {
+					lowerUncertainty = upperUncertainty = -1;
+				}
+			}
+		}
+
+		if ( upperUncertainty < 0 ) {
+			_residuals->setValue(id, PC_RESIDUAL, residual);
+		}
+		else {
+			_residuals->setValue(id, PC_RESIDUAL, residual, lowerUncertainty, upperUncertainty);
+		}
 	}
 	catch ( ValueException& ) {
 		_residuals->setValue(id, PC_RESIDUAL, 0.0);
@@ -4784,7 +4804,7 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 		 phase == 'P' && _currentOrigin ) {
 
 		PlotWidget::PolarityType polarity = PlotWidget::POL_UNSET;
-		Pick *pick = Pick::Find(arrival->pickID());
+		if ( !pick ) pick = Pick::Find(arrival->pickID());
 		if ( pick ) {
 			try {
 				switch ( pick->polarity() ) {
