@@ -44,7 +44,8 @@ REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_mB, "mB");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor_mB::MagnitudeProcessor_mB::setup(const Settings &settings) {
-	MagnitudeProcessor::setup(settings);
+	if ( !MagnitudeProcessor::setup(settings) )
+		return false;
 
 	minDistanceDeg = 5.0; // default minimum distance
 	maxDistanceDeg = 105.0; // default maximum distance
@@ -86,7 +87,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_mB::computeMagnitude(
         double, double,
         double delta, double depth,
         const DataModel::Origin *, const DataModel::SensorLocation *,
-        const DataModel::Amplitude *, double &value) {
+        const DataModel::Amplitude *, const Locale *, double &value) {
 	// Clip depth to 0
 	if ( depth < 0 ) depth = 0;
 
@@ -101,7 +102,6 @@ MagnitudeProcessor::Status MagnitudeProcessor_mB::computeMagnitude(
 
 	bool status = Magnitudes::compute_mb(amplitude*1.E-3, 2*M_PI, delta, depth+1, &value);
 	value -= 0.14; // HACK until we have an optimal calibration function
-	value = correctMagnitude(value);
 	return status ? OK : Error;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

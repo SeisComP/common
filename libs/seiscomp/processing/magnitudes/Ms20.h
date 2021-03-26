@@ -37,12 +37,14 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_ms20 : public MagnitudeProcessor {
 
 		bool setup(const Settings &settings) override;
 
+	protected:
 		Status computeMagnitude(double amplitude, const std::string &unit,
 		                        double period, double snr,
 		                        double delta, double depth,
 		                        const DataModel::Origin *hypocenter,
 		                        const DataModel::SensorLocation *receiver,
 		                        const DataModel::Amplitude *,
+		                        const Locale *,
 		                        double &value) override;
 
 	private:

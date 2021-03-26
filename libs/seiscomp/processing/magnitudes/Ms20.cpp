@@ -54,7 +54,8 @@ REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_ms20, "Ms_20");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor_ms20::MagnitudeProcessor_ms20::setup(const Settings &settings) {
-	MagnitudeProcessor::setup(settings);
+	if ( !MagnitudeProcessor::setup(settings) )
+		return false;
 
 	// This is the default
 	lowPer = 18;
@@ -138,11 +139,12 @@ MagnitudeProcessor_ms20::MagnitudeProcessor_ms20()
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor::Status MagnitudeProcessor_ms20::computeMagnitude(
 	double amplitude, const std::string &unit,
-	double period, double snr,
+	double period, double,
 	double delta, double depth,
-	const DataModel::Origin *hypocenter,
-	const DataModel::SensorLocation *receiver,
+	const DataModel::Origin *,
+	const DataModel::SensorLocation *,
 	const DataModel::Amplitude *,
+	const Locale *,
 	double &value) {
 	if ( amplitude <= 0 )
 		return AmplitudeOutOfRange;
@@ -164,7 +166,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_ms20::computeMagnitude(
 		return InvalidAmplitudeUnit;
 
 	// Use amplitude in nm
-	value = correctMagnitude(log10((amplitude)/(period)) + 1.66*log10(delta) + 0.3);
+	value = log10((amplitude)/(period)) + 1.66*log10(delta) + 0.3;
 
 	return OK;
 }

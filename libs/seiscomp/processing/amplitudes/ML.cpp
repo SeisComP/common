@@ -22,16 +22,23 @@
 #define SEISCOMP_COMPONENT AmplitudeML
 
 #include <seiscomp/logging/log.h>
+#include <seiscomp/processing/regions.h>
 #include <seiscomp/processing/amplitudes/ML.h>
 #include <seiscomp/math/mean.h>
 #include <seiscomp/math/filter/seismometers.h>
 #include <seiscomp/math/restitution/fft.h>
+#include <seiscomp/geo/featureset.h>
+#include <seiscomp/system/environment.h>
+#include <seiscomp/config/config.h>
+
+#include <mutex>
 
 
+using namespace std;
 using namespace Seiscomp::Math;
 
-namespace Seiscomp {
 
+namespace Seiscomp {
 namespace Processing {
 
 
@@ -269,7 +276,7 @@ bool AbstractAmplitudeProcessor_ML::deconvolveData(Response *resp,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AbstractAmplitudeProcessor_ML::computeAmplitude(
 		const DoubleArray &data,
-		size_t i1, size_t i2,
+		size_t, size_t,
 		size_t si1, size_t si2,
 		double offset,
 		AmplitudeIndex *dt, AmplitudeValue *amplitude,

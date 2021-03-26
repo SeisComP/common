@@ -29,8 +29,8 @@ using namespace std;
 
 
 namespace Seiscomp {
-
 namespace Processing {
+
 
 IMPLEMENT_SC_ABSTRACT_CLASS(Processor, "Processor");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -129,14 +129,23 @@ bool Settings::getBool(const string &parameter) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Settings::getValue(std::string &value, const std::string &parameter) const {
 	if ( localConfiguration != nullptr ) {
-		if ( localConfiguration->getString(value, string(ROOT_CONFIG_KEY) + module + "." + networkCode + "." + stationCode + "." + parameter) )
+		std::vector<std::string> values;
+		if ( localConfiguration->getStrings(values, string(ROOT_CONFIG_KEY) + module + "." + networkCode + "." + stationCode + "." + parameter) ) {
+			value = Core::join(values, ",");
 			return true;
+		}
 
-		if ( localConfiguration->getString(value, string(ROOT_CONFIG_KEY) + module + "." + networkCode + "." + parameter) )
+		values.clear();
+		if ( localConfiguration->getStrings(values, string(ROOT_CONFIG_KEY) + module + "." + networkCode + "." + parameter) ) {
+			value = Core::join(values, ",");
 			return true;
+		}
 
-		if ( localConfiguration->getString(value, string(ROOT_CONFIG_KEY) + module + ".global." + parameter) )
+		values.clear();
+		if ( localConfiguration->getStrings(values, string(ROOT_CONFIG_KEY) + module + ".global." + parameter) ) {
+			value = Core::join(values, ",");
 			return true;
+		}
 	}
 
 	if ( keyParameters && keyParameters->getString(value, parameter) )

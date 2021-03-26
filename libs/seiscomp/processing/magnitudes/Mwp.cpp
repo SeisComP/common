@@ -51,10 +51,10 @@ MagnitudeProcessor_Mwp::MagnitudeProcessor_Mwp()
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor::Status MagnitudeProcessor_Mwp::computeMagnitude(
 	double amplitude, const std::string &unit,
-	double, double, double delta, double depth,
-	const DataModel::Origin *hypocenter,
-	const DataModel::SensorLocation *receiver,
-	const DataModel::Amplitude *,
+	double, double, double delta, double,
+	const DataModel::Origin *,
+	const DataModel::SensorLocation *,
+	const DataModel::Amplitude *, const Locale *,
 	double &value) {
 	if ( amplitude <= 0 )
 		return AmplitudeOutOfRange;
@@ -63,7 +63,6 @@ MagnitudeProcessor::Status MagnitudeProcessor_Mwp::computeMagnitude(
 		return InvalidAmplitudeUnit;
 
 	bool status = Magnitudes::compute_Mwp(amplitude*1.E-9, delta, value);
-	value = correctMagnitude(value);
 	return status ? OK : Error;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -3211,8 +3211,8 @@ void AmplitudeView::loadNextStations(float distance) {
 				double lon = s->longitude();
 				double delta, az1, az2;
 	
-				Geo::delazi(_origin->latitude(), _origin->longitude(),
-				            lat, lon, &delta, &az1, &az2);
+				Math::Geo::delazi(_origin->latitude(), _origin->longitude(),
+				                  lat, lon, &delta, &az1, &az2);
 	
 				if ( delta > distance ) continue;
 
@@ -3563,8 +3563,8 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 
 		if ( it->second.amp == nullptr ) {
 			double delta, az, baz;
-			Geo::delazi(_origin->latitude(), _origin->longitude(),
-			            loc->latitude(), loc->longitude(), &delta, &az, &baz);
+			Math::Geo::delazi(_origin->latitude(), _origin->longitude(),
+			                  loc->latitude(), loc->longitude(), &delta, &az, &baz);
 
 			if ( delta < _minDist || delta > _maxDist ) {
 				SEISCOMP_INFO("skipping station %s.%s: out of range",
@@ -3797,8 +3797,8 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 	if ( loc == nullptr ) return nullptr;
 
 	double delta, az, baz;
-	Geo::delazi(_origin->latitude(), _origin->longitude(),
-	            loc->latitude(), loc->longitude(), &delta, &az, &baz);
+	Math::Geo::delazi(_origin->latitude(), _origin->longitude(),
+	                  loc->latitude(), loc->longitude(), &delta, &az, &baz);
 
 	// Skip stations out of range
 	//if ( delta < _minDist || delta > _maxDist ) return nullptr;
@@ -5820,8 +5820,8 @@ void AmplitudeView::addStations() {
 		if ( _stations.contains(code) ) continue;
 
 		double delta, az1, az2;
-		Geo::delazi(_origin->latitude(), _origin->longitude(),
-		            s->latitude(), s->longitude(), &delta, &az1, &az2);
+		Math::Geo::delazi(_origin->latitude(), _origin->longitude(),
+		                  s->latitude(), s->longitude(), &delta, &az1, &az2);
 
 		// Skip stations out of amplitude processors range
 		if ( delta < _minDist || delta > _maxDist ) continue;

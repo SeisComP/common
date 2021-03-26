@@ -61,6 +61,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_Mjma::computeMagnitude(
 	double, double, double delta, double depth,
 	const DataModel::Origin *, const DataModel::SensorLocation *,
 	const DataModel::Amplitude *,
+	const Locale *,
 	double &value) {
 	if ( delta < DELTA_MIN || delta > DELTA_MAX )
 		return DistanceOutOfRange;
@@ -79,8 +80,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_Mjma::computeMagnitude(
 
 	double a1 = 1.73, a2 = 0., a3 = -0.83;
 	double r = Math::Geo::deg2km(delta);
-
-	value = correctMagnitude(log10(amplitude) + a1*log10(r) + a2*r + a3 + 0.44);
+	value = log10(amplitude) + a1*log10(r) + a2*r + a3 + 0.44;
 
 	return OK;
 }

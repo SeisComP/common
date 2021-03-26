@@ -32,6 +32,13 @@
 
 
 namespace Seiscomp {
+
+namespace Geo {
+
+class GeoFeature;
+
+}
+
 namespace Processing {
 
 
@@ -78,12 +85,26 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 			Math::SeismometerResponse::WoodAnderson::Config woodAndersonResponse;
 		};
 
+		struct Locale : Config {
+			enum Check {
+				Source,
+				SourceReceiver,
+				SourceReceiverPath
+			};
+
+			std::string            name;
+			const Geo::GeoFeature *feature;
+			Check                  check;
+			Core::BaseObjectPtr    extra;
+		};
+
 		struct Environment {
 			Environment();
 
 			const DataModel::Origin         *hypocenter;
 			const DataModel::SensorLocation *receiver;
 			const DataModel::Pick           *pick;
+			const Locale                    *locale;
 		};
 
 		struct AmplitudeIndex {
@@ -238,6 +259,8 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 	//  Public Interface
 	// ----------------------------------------------------------------------
 	public:
+		virtual bool initLocale(Locale *locale, const Settings &settings);
+
 		//! Reprocesses the current data chunk and searches for amplitudes
 		//! only in the given optional time window relative to trigger time
 		//! (if supported by the implementation).
@@ -369,9 +392,14 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		//! This method gets called when an amplitude has to be published
 		void emitAmplitude(const Result &result);
 
+	private:
+		bool readLocale(Locale *locale,
+		                const Settings &settings,
+		                const std::string &configPrefix);
 
 	private:
 		void init();
+		bool initRegionalization(const Settings &settings);
 		void process(const Record *record, const DoubleArray &filteredData) override;
 
 
@@ -379,28 +407,28 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 	//  Protected Members
 	// ----------------------------------------------------------------------
 	protected:
-		Core::Time       _trigger;
+		Core::Time  _trigger;
 
 		// User defined amplitude search window
-		OPT(double)      _searchBegin, _searchEnd;
+		OPT(double) _searchBegin, _searchEnd;
 
 		// pre-arrival offset and rms
-		OPT(double)      _noiseOffset, _noiseAmplitude, _lastAmplitude;
+		OPT(double) _noiseOffset, _noiseAmplitude, _lastAmplitude;
 
-		double           _snrMax, _snrRMS;
-		bool             _enableUpdates;
-		bool             _enableResponses;
+		double      _snrMax, _snrRMS;
+		bool        _enableUpdates;
+		bool        _enableResponses;
 
 		// config
-		Config           _config;
-		Environment      _environment;
+		Config      _config;
+		Environment _environment;
 
-		std::string      _type;
-		std::string      _unit;
+		std::string _type;
+		std::string _unit;
 
-		std::string      _pickID;
+		std::string _pickID;
 
-		bool             _responseApplied;
+		bool        _responseApplied;
 
 	// ----------------------------------------------------------------------
 	//  Private Members

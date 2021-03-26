@@ -18,47 +18,55 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_M_B_H
-#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_M_B_H
-
-
-#include <seiscomp//processing/magnitudeprocessor.h>
+#include <seiscomp/core/exceptions.h>
+#include <seiscomp/processing/magnitudes/utils.h>
+#include <sstream>
 
 
 namespace Seiscomp {
 namespace Processing {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mB : public MagnitudeProcessor {
-	DECLARE_SC_CLASS(MagnitudeProcessor_mB)
-
-	public:
-		MagnitudeProcessor_mB();
-		MagnitudeProcessor_mB(const std::string& type);
 
 
-		bool setup(const Settings &settings) override;
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool LogA0::set(const std::string &definition) {
+	nodes.clear();
 
-		Status computeMagnitude(double amplitude, const std::string &unit,
-		                        double period, double snr,
-		                        double delta, double depth,
-		                        const DataModel::Origin *hypocenter,
-		                        const DataModel::SensorLocation *receiver,
-		                        const DataModel::Amplitude *,
-		                        const Locale *,
-		                        double &value) override;
+	std::istringstream iss(definition);
+	std::string item;
 
-		Status estimateMw(double magnitude, double &Mw_estimate,
-		                  double &Mw_stdError) override;
+	while ( getline(iss, item,';') ) {
+		std::istringstream iss_item(item);
+		double dist, val;
+		iss_item >> dist >> val;
+		nodes.push_back(Node(dist, val));
+	}
 
-	private:
-		double                  minDistanceDeg;
-		double                  maxDistanceDeg;
-};
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+double LogA0::at(double dist_km) const {
+	for ( size_t i = 1; i < nodes.size(); ++i ) {
+		if ( nodes[i-1].first <= dist_km && dist_km <= nodes[i].first ) {
+			double q = (dist_km-nodes[i-1].first) / (nodes[i].first-nodes[i-1].first);
+			return q*(nodes[i].second-nodes[i-1].second) + nodes[i-1].second;
+		}
+	}
+
+	throw Core::ValueException("distance out of range");
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
-
-
-#endif

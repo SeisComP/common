@@ -283,50 +283,47 @@ bool WaveformProcessor::store(const Record *record) {
 
 	if ( _stream.lastRecord ) {
 		if ( record == _stream.lastRecord ) return false;
+		if ( record->samplingFrequency() != _stream.fsamp ) {
+			SEISCOMP_WARNING("%s: sampling rate changed, resetting stream: %f != %f",
+			                 record->streamID().c_str(),
+			                 record->samplingFrequency(), _stream.fsamp);
+			_stream.lastRecord = nullptr;
+		}
+		else {
+			Core::TimeSpan gap = record->startTime() - _stream.dataTimeWindow.endTime() - Core::TimeSpan(0,1);
+			double gapSecs = (double)gap;
 
-		Core::TimeSpan gap = record->startTime() - _stream.dataTimeWindow.endTime() - Core::TimeSpan(0,1);
-		double gapSecs = (double)gap;
-
-		if ( gap > _gapThreshold ) {
-			size_t gapsize = static_cast<size_t>(ceil(_stream.fsamp * gapSecs));
-			bool handled = handleGap(_stream.filter, gap, _stream.lastSample, (*arr)[0], gapsize);
-			if ( handled )
-				SEISCOMP_DEBUG("[%s] detected gap of %.6f secs or %lu samples (handled)",
-				               record->streamID().c_str(), (double)gap, (unsigned long)gapsize);
-			else {
-				SEISCOMP_DEBUG("[%s] detected gap of %.6f secs or %lu samples (NOT handled): status = %s",
-				               record->streamID().c_str(), (double)gap, (unsigned long)gapsize,
-				               status().toString());
-				if ( _status > InProgress ) return false;
+			if ( gap > _gapThreshold ) {
+				size_t gapsize = static_cast<size_t>(ceil(_stream.fsamp * gapSecs));
+				bool handled = handleGap(_stream.filter, gap, _stream.lastSample, (*arr)[0], gapsize);
+				if ( handled )
+					SEISCOMP_DEBUG("[%s] detected gap of %.6f secs or %lu samples (handled)",
+					               record->streamID().c_str(), (double)gap, (unsigned long)gapsize);
+				else {
+					SEISCOMP_DEBUG("[%s] detected gap of %.6f secs or %lu samples (NOT handled): status = %s",
+					               record->streamID().c_str(), (double)gap, (unsigned long)gapsize,
+					               status().toString());
+					if ( _status > InProgress ) return false;
+				}
 			}
-		}
-		else if ( gapSecs < 0 ) {
-			size_t gapsize = static_cast<size_t>(ceil(-_stream.fsamp * gapSecs));
-			if ( gapsize > 1 ) return false;
-		}
+			else if ( gapSecs < 0 ) {
+				size_t gapsize = static_cast<size_t>(ceil(-_stream.fsamp * gapSecs));
+				if ( gapsize > 1 ) return false;
+			}
 
-		// update the received data timewindow
-		_stream.dataTimeWindow.setEndTime(record->endTime());
+			// update the received data timewindow
+			_stream.dataTimeWindow.setEndTime(record->endTime());
+		}
 	}
 
 	// NOTE: Do not use else here, because lastRecord can be set nullptr
 	//       when calling reset() in handleGap(...)
 	if ( !_stream.lastRecord ) {
-
-		const auto minGapThres = 2 * 1.0 / record->samplingFrequency();
-		if ( minGapThres > _gapThreshold ) {
-			SEISCOMP_WARNING("Gap threshold smaller than twice the sampling interval: "
-			                 "%fs < %fs. Resetting gap threshold.",
-			                 static_cast<double>(_gapThreshold), minGapThres);
-
-			_gapThreshold = minGapThres;
-		}
-
 		try {
-			initFilter(record->samplingFrequency());
+			setupStream(record->samplingFrequency());
 		}
 		catch ( std::exception &e ) {
-			SEISCOMP_WARNING("%s: init filter: %s", record->streamID().c_str(),
+			SEISCOMP_WARNING("%s: setup stream: %s", record->streamID().c_str(),
 			                 e.what());
 			return false;
 		}
@@ -592,6 +589,24 @@ bool WaveformProcessor::parseSaturationThreshold(const Settings &settings,
 	}
 
 	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void WaveformProcessor::setupStream(double fsamp) {
+	const auto minGapThres = 2 * 1.0 / fsamp;
+	if ( minGapThres > _gapThreshold ) {
+		SEISCOMP_WARNING("Gap threshold smaller than twice the sampling interval: "
+		                 "%fs < %fs. Resetting gap threshold.",
+		                 static_cast<double>(_gapThreshold), minGapThres);
+
+		_gapThreshold = minGapThres;
+	}
+
+	initFilter(fsamp);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

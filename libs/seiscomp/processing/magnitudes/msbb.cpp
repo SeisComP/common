@@ -58,11 +58,12 @@ MagnitudeProcessor_msbb::MagnitudeProcessor_msbb()
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor::Status MagnitudeProcessor_msbb::computeMagnitude(
 	double amplitude, const std::string &unit,
-	double period, double snr,
+	double, double,
 	double delta, double depth,
-	const DataModel::Origin *hypocenter,
-	const DataModel::SensorLocation *receiver,
+	const DataModel::Origin *,
+	const DataModel::SensorLocation *,
 	const DataModel::Amplitude *,
+	const Locale *,
 	double &value) {
 	if ( amplitude <= 0 )
 		return AmplitudeOutOfRange;
@@ -80,7 +81,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_msbb::computeMagnitude(
 		return InvalidAmplitudeUnit;
 
 	// Convert amplitude unit from meters to micrometers
-	value = correctMagnitude(log10((amplitude*1E06)/(2*M_PI)) + 1.66*log10(delta) + 3.3);
+	value = log10((amplitude*1E06)/(2*M_PI)) + 1.66*log10(delta) + 3.3;
 
 	return OK;
 }

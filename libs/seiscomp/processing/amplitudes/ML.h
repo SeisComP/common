@@ -37,13 +37,13 @@ class SC_SYSTEM_CLIENT_API AbstractAmplitudeProcessor_ML : public AmplitudeProce
 		AbstractAmplitudeProcessor_ML(const Core::Time &trigger, const std::string &type);
 
 	public:
-		virtual void initFilter(double fsamp) override;
+		void initFilter(double fsamp) override;
 
-		virtual int capabilities() const override;
-		virtual IDList capabilityParameters(Capability cap) const override;
-		virtual bool setParameter(Capability cap, const std::string &value) override;
+		int capabilities() const override;
+		IDList capabilityParameters(Capability cap) const override;
+		bool setParameter(Capability cap, const std::string &value) override;
 
-		virtual bool setup(const Settings &settings) override;
+		bool setup(const Settings &settings) override;
 
 
 	protected:

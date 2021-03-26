@@ -394,6 +394,100 @@
 					</parameter>
 				</struct>
 			</group>
+			<group name="magnitudes">
+				<struct type="Magnitude type profile">
+					<parameter name="regions" type="path">
+						<description>
+						Path to a BNA file which defines type specific
+						geographical regions for further parametrization.
+						The order of regions matters. The list is tested from
+						front to back and the first hit wins.
+						</description>
+					</parameter>
+					<parameter name="world" type="boolean" default="false">
+						<description>
+						Defines whether the special region name &quot;world&quot;
+						is enabled or not. If enabled then a polygon covering
+						the entire planet will be appended to the list of regions
+						and the region profile name &quot;world&quot; can be used
+						to configure it.
+						</description>
+					</parameter>
+					<group name="region">
+						<description>
+						Region specific parameters. The profile name must match
+						on of the feature names defined in the regions BNA file
+						otherwise it is not taken into account. There is one
+						special name &quot;world&quot; which must not be present
+						in the BNA file. &quot;world&quot; maps to the polygon
+						covering the entire planet.
+						</description>
+						<struct type="Magnitude region profile">
+							<parameter name="minDist" type="double" unit="deg">
+								<description>
+								The minimum distance required to compute an magnitude.
+								This settings has no effect with e.g. scautopick as there
+								is no information about the source of the event to compute
+								the distance. The default value is implementation
+								specific.
+								</description>
+							</parameter>
+							<parameter name="maxDist" type="double" unit="deg">
+								<description>
+								The maximum distance allowed to compute an magnitude.
+								This settings has no effect with e.g. scautopick as there
+								is no information about the source of the event to compute
+								the distance. The default value is implementation
+								specific.
+								</description>
+							</parameter>
+							<parameter name="minDepth" type="double" unit="km">
+								<description>
+								The minimum depth required to compute an magnitude.
+								This settings has no effect with e.g. scautopick as there
+								is no information about the source of the event to
+								retrieve the depth. The default value is implementation
+								specific.
+								</description>
+							</parameter>
+							<parameter name="maxDepth" type="double" unit="km">
+								<description>
+								The maximum depth allowed to compute an magnitude.
+								This settings has no effect with e.g. scautopick as there
+								is no information about the source of the event to
+								retrieve the depth. The default value is implementation
+								specific.
+								</description>
+							</parameter>
+							<parameter name="check" type="string" default="source">
+								<description>
+								Defines how the region check is performed to accept
+								a source receiver pair for further processing.
+								Allowed values are:
+
+								source: Only the source/origin must be within the region.
+
+								source-receiver: Both source/origin and receiver/station must be within the region.
+
+								raypath: The entire path between source/origin and receiver/station must be withing the region.
+								</description>
+							</parameter>
+							<parameter name="multiplier" type="double" default="1">
+								<description>
+								Linear part of the default station correction
+								for this region.
+								</description>
+							</parameter>
+							<parameter name="offset" type="double" default="0">
+								<description>
+								Constant part of the default station correction
+								for this region.
+								</description>
+							</parameter>
+						</struct>
+					</group>
+				</struct>
+			</group>
 		</configuration>
 		<setup>
 			<group name="meta">
@@ -899,18 +993,24 @@
 					the type must match the one defined in the corresponding
 					MagnitudeProcessor.
 					</description>
-					<parameter name="multiplier" type="double" default="1">
+					<parameter name="multiplier" type="list:string" default="1">
 						<description>
 						Part of the magnitude station correction. The final
 						magnitude value is multiplier*M+offset. This value
-						is usually not required but is here for completeness.
+						can be regionalized with name-value pairs.
+						The name is the name of the region. Without
+						a name the value is the default without regionalization.
+						Example: &quot;1.0, regionA: 0.9, regionB: 1.1&quot;.
 						</description>
 					</parameter>
-					<parameter name="offset" type="double" default="0">
+					<parameter name="offset" type="list:string" default="0">
 						<description>
 						Part of the magnitude station correction. The final
 						magnitude value is multiplier*M+offset. This value
-						can be used to correct station magnitudes.
+						can be regionalized with name-value pairs.
+						The name is the name of the region. Without
+						a name the value is the default without regionalization.
+						Example: &quot;0.0, regionA: -0.1, regionB: 0.2&quot;.
 						</description>
 					</parameter>
 				</struct>

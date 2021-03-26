@@ -41,6 +41,7 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_Mwp : public MagnitudeProcessor {
 		                        const DataModel::Origin *hypocenter,
 		                        const DataModel::SensorLocation *receiver,
 		                        const DataModel::Amplitude *,
+		                        const Locale *,
 		                        double &value) override;
 
 		Status estimateMw(double magnitude, double &estimation, double &stdError) override;

@@ -18,42 +18,25 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_M_B_H
-#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_M_B_H
+#ifndef SEISCOMP_PROCESSING_MAGNITUDES_UTILS_H
+#define SEISCOMP_PROCESSING_MAGNITUDES_UTILS_H
 
 
-#include <seiscomp//processing/magnitudeprocessor.h>
+#include <string>
+#include <vector>
 
 
 namespace Seiscomp {
 namespace Processing {
 
 
-class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mB : public MagnitudeProcessor {
-	DECLARE_SC_CLASS(MagnitudeProcessor_mB)
+struct LogA0 {
+	typedef std::pair<double, double> Node; // Distance:Value pair
 
-	public:
-		MagnitudeProcessor_mB();
-		MagnitudeProcessor_mB(const std::string& type);
+	std::vector<Node> nodes;
 
-
-		bool setup(const Settings &settings) override;
-
-		Status computeMagnitude(double amplitude, const std::string &unit,
-		                        double period, double snr,
-		                        double delta, double depth,
-		                        const DataModel::Origin *hypocenter,
-		                        const DataModel::SensorLocation *receiver,
-		                        const DataModel::Amplitude *,
-		                        const Locale *,
-		                        double &value) override;
-
-		Status estimateMw(double magnitude, double &Mw_estimate,
-		                  double &Mw_stdError) override;
-
-	private:
-		double                  minDistanceDeg;
-		double                  maxDistanceDeg;
+	bool set(const std::string &definition);
+	double at(double dist_km) const;
 };
 
 

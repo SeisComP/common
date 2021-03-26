@@ -53,7 +53,8 @@ MagnitudeProcessor_mb::MagnitudeProcessor_mb()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor_mb::MagnitudeProcessor_mb::setup(const Settings &settings) {
-	MagnitudeProcessor::setup(settings);
+	if ( !MagnitudeProcessor::setup(settings) )
+		return false;
 
 	minDistanceDeg = 5.0; // default minimum distance
 	maxDistanceDeg = 105.0; // default maximum distance
@@ -77,10 +78,11 @@ bool MagnitudeProcessor_mb::MagnitudeProcessor_mb::setup(const Settings &setting
 MagnitudeProcessor::Status MagnitudeProcessor_mb::computeMagnitude(
 	double amplitude,
 	const std::string &unit,
-	double period, double snr,
+	double period, double,
 	double delta, double depth,
 	const DataModel::Origin *, const DataModel::SensorLocation *,
 	const DataModel::Amplitude *,
+	const Locale *,
 	double &value) {
 	// Clip depth to 0
 	if ( depth < 0 ) depth = 0;
@@ -101,7 +103,6 @@ MagnitudeProcessor::Status MagnitudeProcessor_mb::computeMagnitude(
 
 	// amplitude is nanometers, whereas compute_mb wants micrometers
 	bool valid = Magnitudes::compute_mb(amplitude*1.E-3, period, delta, depth+1, &value);
-	value = correctMagnitude(value);
 	return valid ? OK : Error;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -5,6 +5,23 @@
 		<description>
 		MLv is the Richter (1935) magnitude measured on the vertical component.
 		</description>
+		<configuration>
+			<group name="magnitudes">
+				<group name="MLv">
+					<group name="region">
+						<struct type="MLv region profile">
+							<parameter name="logA0" type="string">
+								<description>
+								Overrides the calibration function log10(A0)
+								for computing MLv per region. See logA0
+								description in the bindings.
+								</description>
+							</parameter>
+						</struct>
+					</group>
+				</group>
+			</group>
+		</configuration>
 	</plugin>
 	<binding name="MLv" module="global">
 		<description>

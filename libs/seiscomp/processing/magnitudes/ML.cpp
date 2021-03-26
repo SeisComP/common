@@ -18,9 +18,15 @@
  ***************************************************************************/
 
 
+#define SEISCOMP_COMPONENT ML
+
 #include <seiscomp/math/geo.h>
 #include <seiscomp/processing/magnitudes/ML.h>
+#include <seiscomp/config/config.h>
 #include <seiscomp/logging/log.h>
+
+
+using namespace std;
 
 
 namespace Seiscomp {
@@ -30,6 +36,12 @@ namespace Processing {
 namespace {
 
 std::string ExpectedAmplitudeUnit = "mm";
+
+DEFINE_SMARTPOINTER(ExtraLocale);
+class ExtraLocale : public Core::BaseObject {
+	public:
+		OPT(LogA0) logA0;
+};
 
 }
 
@@ -59,44 +71,35 @@ std::string MagnitudeProcessor_ML::amplitudeType() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor_ML::setup(const Settings &settings) {
-	MagnitudeProcessor::setup(settings);
-	std::string logA0;
+	if ( !MagnitudeProcessor::setup(settings) )
+		return false;
+
+	std::string defLogA0;
 
 	// This is the default
-	logA0 = "0 -1.3;60 -2.8;100 -3.0;400 -4.5;1000 -5.85";
-	maxDistanceKm = -1; // distance according to the logA0 range
+	defLogA0 = "0 -1.3;60 -2.8;100 -3.0;400 -4.5;1000 -5.85";
+	_maxDistanceKm = -1; // distance according to the logA0 range
 
-	try {
-		logA0 = settings.getString("magnitudes.ML.logA0");
-	}
+	try { defLogA0 = settings.getString("magnitudes.ML.logA0"); }
 	catch ( ... ) {}
 	try {
-		logA0 = settings.getString("ML.logA0");
+		defLogA0 = settings.getString("ML.logA0");
 		SEISCOMP_WARNING("ML.logA0 has been deprecated");
 		SEISCOMP_WARNING("  + remove the parameter from bindings and use magnitudes.ML.logA0");
 	}
 	catch ( ... ) {}
 
-	logA0_dist.clear(); logA0_val.clear();
-
-	std::istringstream iss(logA0);
-	std::string item;
-
-	while ( getline(iss, item,';') ) {
-		std::istringstream iss_item(item);
-		double dist, val;
-		iss_item >> dist >> val;
-		logA0_dist.push_back(dist);
-		logA0_val.push_back(val);
+	if ( !_logA0.set(defLogA0) ) {
+		return false;
 	}
 
 	try {
-		maxDistanceKm = settings.getDouble("magnitudes.ML.maxDistanceKm");
+		_maxDistanceKm = settings.getDouble("magnitudes.ML.maxDistanceKm");
 	}
 	catch ( ... ) {	}
 
 	try {
-		maxDistanceKm = settings.getDouble("ML.maxDistanceKm");
+		_maxDistanceKm = settings.getDouble("ML.maxDistanceKm");
 		SEISCOMP_WARNING("ML.maxDistanceKm has been deprecated");
 		SEISCOMP_WARNING("  + remove the parameter from bindings and use magnitudes.ML.maxDistanceKm");
 	}
@@ -110,15 +113,25 @@ bool MagnitudeProcessor_ML::setup(const Settings &settings) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double MagnitudeProcessor_ML::logA0(double dist_km) const {
-	for ( size_t i = 1; i < logA0_dist.size(); ++i ) {
-		if ( logA0_dist[i-1] <= dist_km && dist_km <= logA0_dist[i] ) {
-			double q = (dist_km-logA0_dist[i-1])/(logA0_dist[i]-logA0_dist[i-1]);
-			return q*(logA0_val[i]-logA0_val[i-1])+logA0_val[i-1];
+bool MagnitudeProcessor_ML::initLocale(Locale *locale,
+                                       const Settings &settings,
+                                       const string &configPrefix) {
+	const Seiscomp::Config::Config *cfg = settings.localConfiguration;
+	try {
+		string logA0 = cfg->getString(configPrefix + "logA0");
+		if ( !logA0.empty() ) {
+			ExtraLocalePtr extra = new ExtraLocale;
+			extra->logA0 = LogA0();
+			if ( !extra->logA0->set(logA0) ) {
+				return false;
+			}
+
+			locale->extra = extra;
 		}
 	}
+	catch ( ... ) {}
 
-	throw Core::ValueException("distance out of range");
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -131,6 +144,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_ML::computeMagnitude(
 	double, double, double delta, double depth,
 	const DataModel::Origin *, const DataModel::SensorLocation *,
 	const DataModel::Amplitude *,
+	const Locale *locale,
 	double &value) {
 	if ( amplitude <= 0 )
 		return AmplitudeOutOfRange;
@@ -139,20 +153,22 @@ MagnitudeProcessor::Status MagnitudeProcessor_ML::computeMagnitude(
 	if ( depth < 0 ) depth = 0;
 
 	double distanceKm = Math::Geo::deg2km(delta);
-	if ( maxDistanceKm > 0 && distanceKm > maxDistanceKm )
+	if ( _maxDistanceKm > 0 and distanceKm > _maxDistanceKm )
 		return DistanceOutOfRange;
 
 	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) )
 		return InvalidAmplitudeUnit;
 
+	ExtraLocale *extra = nullptr;
+	if ( locale )
+		extra = static_cast<ExtraLocale*>(locale->extra.get());
+
 	try {
-		value = log10(amplitude) - logA0(distanceKm);
+		value = log10(amplitude) - (extra and extra->logA0 ? extra->logA0->at(distanceKm) : _logA0.at(distanceKm));
 	}
 	catch ( Core::ValueException & ) {
 		return DistanceOutOfRange;
 	}
-
-	value = correctMagnitude(value);
 
 	return OK;
 }

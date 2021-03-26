@@ -148,7 +148,9 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 				//! regions
 				RayPathOutOfRegions,
 				//! Travel time table lookup failed
-				TravelTimeEstimateFailed
+				TravelTimeEstimateFailed,
+				//! Configuration error
+				ConfigurationError
 			),
 			ENAMES(
 				"waiting for data",
@@ -177,7 +179,8 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 				"epicenter out of regions",
 				"receiver out of regions",
 				"ray path out of regions",
-				"travel time estimate failed"
+				"travel time estimate failed",
+				"configuration error"
 			)
 		);
 
@@ -347,6 +350,8 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 
 		bool parseSaturationThreshold(const Settings &settings,
 		                              const std::string &optionName);
+
+		void setupStream(double fsamp);
 
 
 	// ----------------------------------------------------------------------

@@ -22,8 +22,10 @@
 #define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MLV_H
 
 
-#include <vector>
 #include <seiscomp/processing/magnitudeprocessor.h>
+#include <seiscomp/processing/magnitudes/utils.h>
+
+#include <vector>
 
 
 namespace Seiscomp {
@@ -40,6 +42,11 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_MLv : public MagnitudeProcessor {
 	public:
 		bool setup(const Settings &settings) override;
 
+
+	protected:
+		bool initLocale(Locale *locale, const Settings &settings,
+		                const std::string &configPrefix) override;
+
 		Status computeMagnitude(double amplitude,
 		                        const std::string &unit,
 		                        double period, double snr,
@@ -47,16 +54,13 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_MLv : public MagnitudeProcessor {
 		                        const DataModel::Origin *hypocenter,
 		                        const DataModel::SensorLocation *receiver,
 		                        const DataModel::Amplitude *,
+		                        const Locale *,
 		                        double &value) override;
 
 
 	private:
-		double logA0(double dist_km) const;
-
-
-	private:
-		std::vector<double> logA0_dist, logA0_val;
-		double maxDistanceKm;
+		LogA0  _logA0;
+		double _maxDistanceKm;
 };
 
 

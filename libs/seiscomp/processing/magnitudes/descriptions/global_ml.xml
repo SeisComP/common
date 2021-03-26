@@ -5,6 +5,23 @@
 		<description>
 		ML is the Richter (1935) magnitude.
 		</description>
+		<configuration>
+			<group name="magnitudes">
+				<group name="ML">
+					<group name="region">
+						<struct type="ML region profile">
+							<parameter name="logA0" type="string">
+								<description>
+								Overrides the calibration function log10(A0)
+								for computing ML per region. See logA0
+								description in the bindings.
+								</description>
+							</parameter>
+						</struct>
+					</group>
+				</group>
+			</group>
+		</configuration>
 	</plugin>
 	<binding name="ML" module="global">
 		<description>

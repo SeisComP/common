@@ -8,6 +8,7 @@ SET(PROC_SOURCES
 	waveformoperator.cpp
 	application.cpp
 	streambuffer.cpp
+	regions.cpp
 
 	detector.cpp
 	fx.cpp
@@ -27,6 +28,7 @@ SET(PROC_HEADERS
 	waveformoperator.h
 	application.h
 	streambuffer.h
+	regions.h
 
 	detector.h
 	picker.h

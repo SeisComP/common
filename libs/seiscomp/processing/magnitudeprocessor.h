@@ -30,12 +30,19 @@
 
 
 namespace Seiscomp {
+
 namespace DataModel {
 
 class Amplitude;
 class StationMagnitude;
 class Origin;
 class SensorLocation;
+
+}
+
+namespace Geo {
+
+class GeoFeature;
 
 }
 
@@ -106,6 +113,26 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 			)
 		);
 
+		struct Locale {
+			enum Check {
+				Source,
+				SourceReceiver,
+				SourceReceiverPath
+			};
+
+			OPT(double)            minimumDistance;
+			OPT(double)            maximumDistance;
+			OPT(double)            minimumDepth;
+			OPT(double)            maximumDepth;
+			double                 multiplier;
+			double                 offset;
+
+			std::string            name;
+			const Geo::GeoFeature *feature;
+			Check                  check;
+			Core::BaseObjectPtr    extra;
+		};
+
 
 	// ----------------------------------------------------------------------
 	//  X'truction
@@ -159,13 +186,13 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 		 * @param value The return value, the magnitude.
 		 * @return The status of the computation.
 		 */
-		virtual Status computeMagnitude(double amplitudeValue, const std::string &unit,
-		                                double period, double snr,
-		                                double delta, double depth,
-		                                const DataModel::Origin *hypocenter,
-		                                const DataModel::SensorLocation *receiver,
-		                                const DataModel::Amplitude *amplitude,
-		                                double &value) = 0;
+		Status computeMagnitude(double amplitudeValue, const std::string &unit,
+		                        double period, double snr,
+		                        double delta, double depth,
+		                        const DataModel::Origin *hypocenter,
+		                        const DataModel::SensorLocation *receiver,
+		                        const DataModel::Amplitude *amplitude,
+		                        double &value);
 
 		/**
 		 * @brief When computeMagnitude return an error the computed magnitude
@@ -197,12 +224,6 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 
 		void setCorrectionCoefficients(double a, double b);
 
-		//! Corrects the magnitudes based on a a configured
-		//! linear and constant correction:
-		//! out = a*val + b
-		//! where a = linearCorrection and b = constantCorrection
-		double correctMagnitude(double val) const;
-
 		/**
 		 * @brief Allows to finalize a magnitude object as created by
 		 *        client code.
@@ -218,6 +239,40 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 
 	protected:
 		/**
+		 * @brief Computes the magnitude from an amplitude. The method signature
+		 *        has changed with API version >= 11. Prior to that version,
+		 *        hypocenter, receiver and amplitude were not present.
+		 * @param amplitudeValue The amplitude value without unit. The unit is
+		                         implicitly defined by the requested amplitude
+		 *                       type.
+		 * @param unit The unit of the amplitude.
+		 * @param period The measured period of the amplitude in seconds.
+		 * @param snr The measured SNR of the amplitude.
+		 * @param delta The distance from the epicenter in degrees.
+		 * @param depth The depth of the hypocenter in kilometers.
+		 * @param hypocenter The optional origin which describes the hypocenter.
+		 * @param receiver The sensor location meta-data of the receiver.
+		 * @param amplitude The optional amplitude object from which the values
+		 *                  were extracted.
+		 * @param value The return value, the magnitude.
+		 * @return The status of the computation.
+		 */
+		virtual Status computeMagnitude(double amplitudeValue, const std::string &unit,
+		                                double period, double snr,
+		                                double delta, double depth,
+		                                const DataModel::Origin *hypocenter,
+		                                const DataModel::SensorLocation *receiver,
+		                                const DataModel::Amplitude *amplitude,
+		                                const Locale *locale,
+		                                double &value) = 0;
+
+		virtual bool initLocale(Locale *locale,
+		                        const Settings &settings,
+		                        const std::string &configPrefix);
+
+		bool initRegionalization(const Settings &settings);
+
+		/**
 		 * @brief Converts an amplitude value in an input unit to a value in
 		 *        an output unit, e.g. mm/s -> nm/s.
 		 * @param amplitude The input value which will be changed
@@ -230,11 +285,30 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 		                      const std::string &amplitudeUnit,
 		                      const std::string &desiredAmplitudeUnit) const;
 
-
 	private:
-		double _linearCorrection;
-		double _constantCorrection;
-		std::string _type;
+		bool readLocale(Locale *locale,
+		                const Settings &settings,
+		                const std::string &configPrefix);
+
+	protected:
+		struct Correction {
+			typedef std::pair<double, double> A;
+			typedef std::map<std::string, A> Profiles;
+
+			Profiles::mapped_type &operator[](const Profiles::key_type &key) {
+				return profiles[key];
+			}
+
+			const A *apply(double &val, const std::string &profile) const;
+
+			Profiles profiles;
+		};
+
+		std::string   _type;
+		std::string   _networkCode;
+		std::string   _stationCode;
+		Correction    _corrections;
+		Correction::A _defaultCorrection;
 };
 
 

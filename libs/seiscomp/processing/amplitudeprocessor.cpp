@@ -18,27 +18,53 @@
  ***************************************************************************/
 
 
-
 #define SEISCOMP_COMPONENT AmplitudeProcessor
 
 #include <seiscomp/datamodel/pick.h>
 #include <seiscomp/processing/amplitudeprocessor.h>
+#include <seiscomp/processing/regions.h>
+#include <seiscomp/geo/feature.h>
 #include <seiscomp/math/mean.h>
 #include <seiscomp/math/filter/iirdifferentiate.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/interfacefactory.ipp>
+#include <seiscomp/system/environment.h>
 
 #include <fstream>
 #include <limits>
+#include <vector>
+#include <mutex>
+
+
+using namespace std;
 
 
 IMPLEMENT_INTERFACE_FACTORY(Seiscomp::Processing::AmplitudeProcessor, SC_SYSTEM_CLIENT_API);
 
-namespace Seiscomp {
 
+namespace Seiscomp {
 namespace Processing {
 
+
 IMPLEMENT_SC_ABSTRACT_CLASS_DERIVED(AmplitudeProcessor, TimeWindowProcessor, "AmplitudeProcessor");
+
+
+namespace {
+
+typedef vector<AmplitudeProcessor::Locale> Regionalization;
+
+DEFINE_SMARTPOINTER(TypeSpecificRegionalization);
+class TypeSpecificRegionalization : public Core::BaseObject {
+	public:
+		const Regions   *regions;
+		Regionalization  regionalization;
+};
+
+typedef map<string, TypeSpecificRegionalizationPtr> RegionalizationRegistry;
+RegionalizationRegistry regionalizationRegistry;
+mutex regionalizationRegistryMutex;
+
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -55,7 +81,7 @@ AmplitudeProcessor::AmplitudeProcessor() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor::AmplitudeProcessor(const std::string& type)
- : _type(type) {
+: _type(type) {
 	init();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -65,7 +91,7 @@ AmplitudeProcessor::AmplitudeProcessor(const std::string& type)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor::AmplitudeProcessor(const Core::Time& trigger)
- : _trigger(trigger) {
+: _trigger(trigger) {
 
 	init();
 }
@@ -76,7 +102,7 @@ AmplitudeProcessor::AmplitudeProcessor(const Core::Time& trigger)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor::AmplitudeProcessor(const Core::Time& trigger, const std::string& type)
- : _trigger(trigger), _type(type) {
+: _trigger(trigger), _type(type) {
 
 	init();
 }
@@ -124,7 +150,107 @@ void AmplitudeProcessor::setEnvironment(const DataModel::Origin *hypocenter,
                                         const DataModel::Pick *pick) {
 	_environment.hypocenter = hypocenter;
 	_environment.receiver = receiver;
+	_environment.locale = nullptr;
 	setPick(pick);
+
+	// Check if regionalization is desired
+	lock_guard<mutex> l(regionalizationRegistryMutex);
+	auto it = regionalizationRegistry.find(type());
+	if ( it == regionalizationRegistry.end() )
+		// No type specific regionalization, OK
+		return;
+
+	TypeSpecificRegionalization *tsr = it->second.get();
+	if ( !tsr or tsr->regionalization.empty() )
+		// No type specific regionalization, OK
+		return;
+
+	// There are region profiles so meta data are required
+	if ( !hypocenter ) {
+		setStatus(MissingHypocenter, 0);
+		return;
+	}
+
+	if ( !receiver ) {
+		setStatus(MissingReceiver, 0);
+		return;
+	}
+
+	double hypoLat, hypoLon, hypoDepth;
+	double recvLat, recvLon;
+
+	try {
+		// All attributes are optional and throw an exception if not set
+		hypoLat = environment().hypocenter->latitude().value();
+		hypoLon = environment().hypocenter->longitude().value();
+		hypoDepth = environment().hypocenter->depth().value();
+	}
+	catch ( ... ) {
+		setStatus(MissingHypocenter, 1);
+		return;
+	}
+
+	try {
+		// Both attributes are optional and throw an exception if not set
+		recvLat = environment().receiver->latitude();
+		recvLon = environment().receiver->longitude();
+	}
+	catch ( ... ) {
+		setStatus(MissingReceiver, 1);
+		return;
+	}
+
+	for ( const Locale &profile : tsr->regionalization ) {
+		if ( profile.feature ) {
+			switch ( profile.check ) {
+				case Locale::Source:
+					if ( !profile.feature->contains(Geo::GeoCoordinate(hypoLat, hypoLon)) )
+						continue;
+
+					break;
+
+				case Locale::SourceReceiver:
+					if ( !Regions::contains(profile.feature, hypoLat, hypoLon, recvLat, recvLon, -1) )
+						continue;
+					break;
+
+				case Locale::SourceReceiverPath:
+					if ( !Regions::contains(profile.feature, hypoLat, hypoLon, recvLat, recvLon) )
+						continue;
+					break;
+			}
+		}
+
+		// Found region
+		_environment.locale = &profile;
+
+		// Copy the profile to the current configuration, actually only
+		// distance and depth ranges. Others can be easily added in future.
+		_config.minimumDistance = profile.minimumDistance;
+		_config.maximumDistance = profile.maximumDistance;
+		_config.minimumDepth = profile.minimumDepth;
+		_config.maximumDepth = profile.maximumDepth;
+		break;
+	}
+
+	if ( !_environment.locale ) {
+		setStatus(EpicenterOutOfRegions, 0);
+		return;
+	}
+
+	double dist, az, baz;
+	Math::Geo::delazi_wgs84(hypoLat, hypoLon, recvLat, recvLon,
+	                        &dist, &az, &baz);
+
+	if ( dist < _config.minimumDistance || dist > _config.maximumDistance ) {
+		setStatus(DistanceOutOfRange, dist);
+		return;
+	}
+
+	if ( hypoDepth < _config.minimumDepth || hypoDepth > _config.maximumDepth ) {
+		setStatus(DepthOutOfRange, hypoDepth);
+		return;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -257,7 +383,7 @@ bool AmplitudeProcessor::supports(Capability c) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor::IDList
-AmplitudeProcessor::capabilityParameters(Capability cap) const {
+AmplitudeProcessor::capabilityParameters(Capability) const {
 	return IDList();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -266,7 +392,7 @@ AmplitudeProcessor::capabilityParameters(Capability cap) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeProcessor::setParameter(Capability cap, const std::string &value) {
+bool AmplitudeProcessor::setParameter(Capability , const std::string &) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -502,9 +628,8 @@ void AmplitudeProcessor::process(const Record *record) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeProcessor::handleGap(Filter *filter, const Core::TimeSpan& span,
-                                   double lastSample, double nextSample,
-                                   size_t missingSamples) {
+bool AmplitudeProcessor::handleGap(Filter *, const Core::TimeSpan &span,
+                                   double, double, size_t) {
 	if ( _stream.dataTimeWindow.endTime()+span < timeWindow().startTime() ) {
 		// Save trigger, because reset will unset it
 		Core::Time t = _trigger;
@@ -687,6 +812,10 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	if ( !TimeWindowProcessor::setup(settings) )
 		return false;
 
+	// initalize regionalized settings
+	if ( !initRegionalization(settings) )
+		return false;
+
 	// Reset Wood-Anderson response to default
 	_config.woodAndersonResponse = Math::SeismometerResponse::WoodAnderson::Config();
 
@@ -738,6 +867,146 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool AmplitudeProcessor::initLocale(Locale *, const Settings &) {
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool AmplitudeProcessor::readLocale(Locale *locale,
+                                    const Settings &settings,
+                                    const std::string &cfgPrefix) {
+	OPT(double) minDist, maxDist, minDepth, maxDepth;
+	const Seiscomp::Config::Config *cfg = settings.localConfiguration;
+
+	try { minDist  = cfg->getDouble(cfgPrefix + "minDist"); } catch ( ... ) {}
+	try { maxDist  = cfg->getDouble(cfgPrefix + "maxDist"); } catch ( ... ) {}
+	try { minDepth = cfg->getDouble(cfgPrefix + "minDepth"); } catch ( ... ) {}
+	try { maxDepth = cfg->getDouble(cfgPrefix + "maxDepth"); } catch ( ... ) {}
+
+	locale->check = Locale::Source;
+	locale->minimumDistance = minDist ? *minDist : _config.minimumDistance;
+	locale->maximumDistance = maxDist ? *maxDist : _config.maximumDistance;
+	locale->minimumDepth = minDepth ? *minDepth : _config.minimumDepth;
+	locale->maximumDepth = maxDepth ? *maxDepth : _config.maximumDepth;
+
+	try {
+		string check = cfg->getString(cfgPrefix + "check");
+		if ( check == "source" ) {
+			locale->check = Locale::Source;
+		}
+		else if ( check == "source-receiver" ) {
+			locale->check = Locale::SourceReceiver;
+		}
+		else if ( check == "raypath" ) {
+			locale->check = Locale::SourceReceiverPath;
+		}
+		else {
+			SEISCOMP_ERROR("%scheck: invalid region check: %s",
+			               cfgPrefix.c_str(), check.c_str());
+			return false;
+		}
+	}
+	catch ( ... ) {}
+
+	if ( !initLocale(locale, settings) ) {
+		return false;
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool AmplitudeProcessor::initRegionalization(const Settings &settings) {
+	lock_guard<mutex> l(regionalizationRegistryMutex);
+
+	TypeSpecificRegionalizationPtr regionalizedSettings;
+	auto it = regionalizationRegistry.find(type());
+	if ( it == regionalizationRegistry.end() ) {
+		regionalizedSettings = new TypeSpecificRegionalization();
+		regionalizationRegistry[type()] = nullptr;
+
+		const Seiscomp::Config::Config *cfg = settings.localConfiguration;
+		if ( cfg ) {
+			bool regionalize = true;
+			try {
+				regionalize = cfg->getBool("amplitudes." + _type + ".regionalize");
+			}
+			catch ( ... ) {}
+
+			if ( regionalize ) {
+				try {
+					string filename = cfg->getString("magnitudes." + type() + ".regions");
+					filename = Seiscomp::Environment::Instance()->absolutePath(filename);
+					regionalizedSettings->regions = Regions::load(filename);
+
+					if ( !regionalizedSettings->regions ) {
+						SEISCOMP_ERROR("Failed to read/parse %s regions file: %s",
+						               type().c_str(), filename.c_str());
+						return false;
+					}
+
+					for ( Geo::GeoFeature *feature : regionalizedSettings->regions->featureSet.features()) {
+						if ( feature->name().empty() ) continue;
+						if ( feature->name() == "world" ) {
+							SEISCOMP_ERROR("Region name 'world' is not allowed as it is "
+							               "reserved");
+							return false;
+						}
+
+						string cfgPrefix = "magnitudes." + type() + ".region." + feature->name() + ".";
+						Locale config;
+						config.name = feature->name();
+						config.feature = feature;
+						if ( !readLocale(&config, settings, cfgPrefix) )
+							return false;
+
+						regionalizedSettings->regionalization.push_back(config);
+					}
+
+					try {
+						if ( cfg->getBool("magnitudes." + type() + ".world") ) {
+							string cfgPrefix = "magnitudes." + type() + ".region.world.";
+							Locale config;
+							config.name = "world";
+							config.feature = nullptr;
+							if ( !readLocale(&config, settings, cfgPrefix) )
+								return false;
+
+							regionalizedSettings->regionalization.push_back(config);
+						}
+					}
+					catch ( ... ) {}
+				}
+				catch ( ... ) {}
+			}
+		}
+
+		regionalizationRegistry[type()] = regionalizedSettings;
+	}
+	else
+		regionalizedSettings = it->second;
+
+	if ( regionalizedSettings ) {
+		return true;
+	}
+
+	setStatus(ConfigurationError, 0);
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::setTrigger(const Core::Time& trigger) {
 	if ( _trigger )
 		throw Core::ValueException("The trigger has been set already");
@@ -778,7 +1047,7 @@ void AmplitudeProcessor::emitAmplitude(const Result &res) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double AmplitudeProcessor::timeWindowLength(double distance) const {
+double AmplitudeProcessor::timeWindowLength(double) const {
 	return _config.signalEnd;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
