@@ -2471,6 +2471,8 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	connect(_ui.cbFilterRegions, SIGNAL(stateChanged(int)), this,  SLOT(onHideOutsideRegion(int)));
 	_hideOutsideRegion = _ui.cbFilterRegions->checkState() == Qt::Checked;
 
+	connect(_ui.cbFilterRegionMode, SIGNAL(currentIndexChanged(int)), this,  SLOT(onFilterRegionModeChanged(int)));
+
 	connect(_ui.cbShowLatestOnly, SIGNAL(stateChanged(int)), this,  SLOT(updateAgencyState()));
 	_showOnlyLatestPerAgency = _ui.cbShowLatestOnly->checkState() == Qt::Checked;
 
@@ -2561,6 +2563,11 @@ void EventListView::onHideOutsideRegion(int checked) {
 }
 
 
+void EventListView::onFilterRegionModeChanged(int index) {
+	updateHideState();
+}
+
+
 void EventListView::updateAgencyState() {
 	_showOnlyLatestPerAgency = _ui.cbShowLatestOnly->checkState() == Qt::Checked;
 
@@ -2641,6 +2648,8 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 	}
 
 	if ( !hide && _hideOutsideRegion && _regionIndex >= 0 ) {
+		bool invert = _ui.cbFilterRegionMode->currentIndex() == 1;
+
 		const Region &reg = _filterRegions[_regionIndex];
 		double lat = item->data(_itemConfig.columnMap[COL_LAT], Qt::UserRole).toDouble();
 		double lon = item->data(_itemConfig.columnMap[COL_LON], Qt::UserRole).toDouble();
@@ -2656,6 +2665,8 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 					hide = true;
 			}
 		}
+
+		if ( invert ) hide = !hide;
 	}
 
 	if ( hide != _treeWidget->isItemHidden(item) ) {

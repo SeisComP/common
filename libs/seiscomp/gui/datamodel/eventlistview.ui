@@ -398,8 +398,22 @@
         <item>
          <widget class="QCheckBox" name="cbFilterRegions" >
           <property name="text" >
-           <string>Hide events outside</string>
+           <string>Hide events</string>
           </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="cbFilterRegionMode" >
+          <item>
+           <property name="text" >
+            <string>outside</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>inside</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item>

@@ -201,6 +201,7 @@ class SC_GUI_API EventListView : public QWidget {
 		void onShowOtherEvents(int checked);
 		void onShowForeignEvents(int checked);
 		void onHideOutsideRegion(int checked);
+		void onFilterRegionModeChanged(int mode);
 
 		void updateAgencyState();
 
