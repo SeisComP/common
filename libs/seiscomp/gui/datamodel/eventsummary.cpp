@@ -129,7 +129,7 @@ void EventSummaryMagnitudeRow::reset() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventSummaryMagnitudeRow::set(const std::string &id, double mag, int stationCount) {
+void EventSummaryMagnitudeRow::set(const std::string &id, const double *mag, int stationCount) {
 	if ( magnitudeID.empty() ) {
 		magnitudeID = id;
 		label->setCursor(Qt::PointingHandCursor);
@@ -146,15 +146,20 @@ void EventSummaryMagnitudeRow::set(const std::string &id, double mag, int statio
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventSummaryMagnitudeRow::setMagnitude(double mag, int stationCount) {
-	char buf[32];
-	if ( stationCount > 0 ) {
-		sprintf(buf, "%.1f (%d)", mag, stationCount);
-		value->setText(buf);
+void EventSummaryMagnitudeRow::setMagnitude(const double *mag, int stationCount) {
+	if ( mag ) {
+		char buf[32];
+		if ( stationCount > 0 ) {
+			sprintf(buf, "%.1f (%d)", *mag, stationCount);
+			value->setText(buf);
+		}
+		else {
+			sprintf(buf, "%.1f", *mag);
+			value->setText(buf);
+		}
 	}
 	else {
-		sprintf(buf, "%.1f", mag);
-		value->setText(buf);
+		value->setText("-");
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -759,7 +764,16 @@ void EventSummary::setMagnitude(const Magnitude *mag) {
 	}
 	catch ( Core::ValueException& ) {}
 
-	it->second->set(mag->publicID(), mag->magnitude().value(), stationCount);
+	try {
+		if ( mag->evaluationStatus() == REJECTED ) {
+			it->second->set(mag->publicID(), nullptr, stationCount);
+			return;
+		}
+	}
+	catch ( ... ) {}
+
+	double value = mag->magnitude().value();
+	it->second->set(mag->publicID(), &value, stationCount);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

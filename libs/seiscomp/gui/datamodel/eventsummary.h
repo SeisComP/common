@@ -54,7 +54,7 @@ class SC_GUI_API EventSummaryMagnitudeRow : public QHBoxLayout {
 		void reset();
 		void select(bool);
 
-		void set(const std::string &id, double value, int stationCount);
+		void set(const std::string &id, const double *value, int stationCount);
 
 	signals:
 		void clicked(const std::string &magID);
@@ -63,7 +63,7 @@ class SC_GUI_API EventSummaryMagnitudeRow : public QHBoxLayout {
 		bool eventFilter(QObject *obj, QEvent *event);
 
 	private:
-		void setMagnitude(double value, int stationCount);
+		void setMagnitude(const double *value, int stationCount);
 
 	public:
 		std::string magnitudeID;
