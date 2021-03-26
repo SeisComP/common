@@ -4936,6 +4936,8 @@ bool PickerView::fillRawPicks() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::addPick(Seiscomp::DataModel::Pick* pick) {
+	if ( !_origin ) return;
+
 	if ( (Core::Time)pick->time() > ((Core::Time)_origin->time() + _config.minimumTimeWindow) )
 		return;
 
@@ -8774,8 +8776,8 @@ bool PickerView::applyRotation(RecordViewItem *item, int type) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::changeFilter(int index, bool force) {
-	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+void PickerView::changeFilter(int index, bool) {
+	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QString name = _comboFilter->itemText(index);
 	QString filter = _comboFilter->itemData(index).toString();
 
@@ -8796,8 +8798,10 @@ void PickerView::changeFilter(int index, bool force) {
 	RecordWidget::Filter *newFilter = RecordWidget::Filter::Create(filter.toStdString());
 
 	if ( !newFilter ) {
+		QApplication::setOverrideCursor(Qt::ArrowCursor);
 		QMessageBox::critical(this, "Invalid filter",
 		                      QString("Unable to create filter: %1\nFilter: %2").arg(name).arg(filter));
+		QApplication::restoreOverrideCursor();
 
 		_comboFilter->blockSignals(true);
 		_comboFilter->setCurrentIndex(_lastFilterIndex);
