@@ -201,41 +201,44 @@ void Application::registerProcessor(const std::string& networkCode,
 
 	twp->computeTimeWindow();
 
-	RecordSequence* seq = _waveformBuffer.sequence(
-		StreamBuffer::WaveformID(networkCode, stationCode, locationCode, channelCode));
-	if ( !seq ) return;
+	if ( !twp->isFinished() ) {
+		RecordSequence* seq = _waveformBuffer.sequence(
+			StreamBuffer::WaveformID(networkCode, stationCode, locationCode, channelCode));
+		if ( !seq ) return;
 
-	Core::Time startTime = twp->timeWindow().startTime() - twp->margin();
-	Core::Time endTime = twp->timeWindow().endTime() +  twp->margin();
+		Core::Time startTime = twp->timeWindow().startTime() - twp->margin();
+		Core::Time endTime = twp->timeWindow().endTime() +  twp->margin();
 
-	if ( startTime < seq->timeWindow().startTime() ) {
-		// TODO: Fetch historical data
-		// Actually feed as much data as possible
-		TimeWindowProcessorPtr twp_ptr = twp;
+		if ( startTime < seq->timeWindow().startTime() ) {
+			// TODO: Fetch historical data
+			// Actually feed as much data as possible
+			TimeWindowProcessorPtr twp_ptr = twp;
 
-		for ( RecordSequence::iterator it = seq->begin(); it != seq->end(); ++it ) {
-			if ( (*it)->startTime() > endTime )
-				break;
-			twp->feed((*it).get());
+			for ( RecordSequence::iterator it = seq->begin(); it != seq->end(); ++it ) {
+				if ( (*it)->startTime() > endTime )
+					break;
+				twp->feed((*it).get());
+			}
 		}
-	}
-	else {
-		// find the position in the recordsequence to fill the requested timewindow
-		RecordSequence::reverse_iterator rit;
-		for ( rit = seq->rbegin(); rit != seq->rend(); ++rit ) {
-			if ( (*rit)->endTime() < startTime )
-				break;
-		}
+		else {
+			// find the position in the recordsequence to fill
+			// the requested timewindow
+			RecordSequence::reverse_iterator rit;
+			for ( rit = seq->rbegin(); rit != seq->rend(); ++rit ) {
+				if ( (*rit)->endTime() < startTime )
+					break;
+			}
 
-		RecordSequence::iterator it;
-		if ( rit == seq->rend() )
-			it = seq->begin();
-		else
-			it = --rit.base();
+			RecordSequence::iterator it;
+			if ( rit == seq->rend() )
+				it = seq->begin();
+			else
+				it = --rit.base();
 
-		while ( it != seq->end() && (*it)->startTime() <= endTime ) {
-			twp->feed((*it).get());
-			++it;
+			while ( it != seq->end() && (*it)->startTime() <= endTime ) {
+				twp->feed((*it).get());
+				++it;
+			}
 		}
 	}
 
