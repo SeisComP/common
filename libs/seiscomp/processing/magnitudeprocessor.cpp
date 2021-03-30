@@ -410,6 +410,19 @@ bool MagnitudeProcessor::initRegionalization(const Settings &settings) {
 					}
 
 					string cfgPrefix = "magnitudes." + type() + ".region." + feature->name() + ".";
+					try {
+						if ( !cfg->getBool(cfgPrefix + "enable") ) {
+							SEISCOMP_DEBUG("%s: - region %s (disabled)",
+							               _type.c_str(), feature->name().c_str());
+							continue;
+						}
+					}
+					catch ( ... ) {
+						SEISCOMP_DEBUG("%s: - region %s (disabled)",
+						               _type.c_str(), feature->name().c_str());
+						continue;
+					}
+
 					Locale config;
 					config.name = feature->name();
 					config.feature = feature;
@@ -421,7 +434,7 @@ bool MagnitudeProcessor::initRegionalization(const Settings &settings) {
 				}
 
 				try {
-					if ( cfg->getBool("magnitudes." + type() + ".world") ) {
+					if ( cfg->getBool("magnitudes." + type() + ".region.world.enable") ) {
 						string cfgPrefix = "magnitudes." + type() + ".region.world.";
 						Locale config;
 						config.name = "world";

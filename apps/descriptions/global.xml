@@ -404,15 +404,6 @@
 						front to back and the first hit wins.
 						</description>
 					</parameter>
-					<parameter name="world" type="boolean" default="false">
-						<description>
-						Defines whether the special region name &quot;world&quot;
-						is enabled or not. If enabled then a polygon covering
-						the entire planet will be appended to the list of regions
-						and the region profile name &quot;world&quot; can be used
-						to configure it.
-						</description>
-					</parameter>
 					<group name="region">
 						<description>
 						Region specific parameters. The profile name must match
@@ -423,6 +414,11 @@
 						covering the entire planet.
 						</description>
 						<struct type="Magnitude region profile">
+							<parameter name="enable" type="boolean" default="false">
+								<description>
+								Whether to enable the region or not.
+								</description>
+							</parameter>
 							<parameter name="minDist" type="double" unit="deg">
 								<description>
 								The minimum distance required to compute an magnitude.

@@ -200,23 +200,35 @@ void AmplitudeProcessor::setEnvironment(const DataModel::Origin *hypocenter,
 		return;
 	}
 
+	Status notFoundStatus = Error;
+
 	for ( const Locale &profile : tsr->regionalization ) {
 		if ( profile.feature ) {
 			switch ( profile.check ) {
 				case Locale::Source:
-					if ( !profile.feature->contains(Geo::GeoCoordinate(hypoLat, hypoLon)) )
+					if ( !profile.feature->contains(Geo::GeoCoordinate(hypoLat, hypoLon)) ) {
+						notFoundStatus = EpicenterOutOfRegions;
 						continue;
+					}
 
 					break;
 
 				case Locale::SourceReceiver:
-					if ( !Regions::contains(profile.feature, hypoLat, hypoLon, recvLat, recvLon, -1) )
+					if ( !profile.feature->contains(Geo::GeoCoordinate(hypoLat, hypoLon)) ) {
+						notFoundStatus = EpicenterOutOfRegions;
 						continue;
+					}
+					if ( !profile.feature->contains(Geo::GeoCoordinate(recvLat, recvLon)) ) {
+						notFoundStatus = ReceiverOutOfRegions;
+						continue;
+					}
 					break;
 
 				case Locale::SourceReceiverPath:
-					if ( !Regions::contains(profile.feature, hypoLat, hypoLon, recvLat, recvLon) )
+					if ( !Regions::contains(profile.feature, hypoLat, hypoLon, recvLat, recvLon) ) {
+						notFoundStatus = RayPathOutOfRegions;
 						continue;
+					}
 					break;
 			}
 		}
@@ -234,7 +246,7 @@ void AmplitudeProcessor::setEnvironment(const DataModel::Origin *hypocenter,
 	}
 
 	if ( !_environment.locale ) {
-		setStatus(EpicenterOutOfRegions, 0);
+		setStatus(notFoundStatus, 0);
 		return;
 	}
 
@@ -962,6 +974,19 @@ bool AmplitudeProcessor::initRegionalization(const Settings &settings) {
 						}
 
 						string cfgPrefix = "magnitudes." + type() + ".region." + feature->name() + ".";
+						try {
+							if ( !cfg->getBool(cfgPrefix + "enable") ) {
+								SEISCOMP_DEBUG("%s: - region %s (disabled)",
+								               _type.c_str(), feature->name().c_str());
+								continue;
+							}
+						}
+						catch ( ... ) {
+							SEISCOMP_DEBUG("%s: - region %s (disabled)",
+							               _type.c_str(), feature->name().c_str());
+							continue;
+						}
+
 						Locale config;
 						config.name = feature->name();
 						config.feature = feature;
@@ -972,7 +997,7 @@ bool AmplitudeProcessor::initRegionalization(const Settings &settings) {
 					}
 
 					try {
-						if ( cfg->getBool("magnitudes." + type() + ".world") ) {
+						if ( cfg->getBool("magnitudes." + type() + ".region.world.enable") ) {
 							string cfgPrefix = "magnitudes." + type() + ".region.world.";
 							Locale config;
 							config.name = "world";
