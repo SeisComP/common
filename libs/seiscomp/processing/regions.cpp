@@ -151,7 +151,7 @@ bool Regions::contains(const Geo::GeoFeature *feature,
 			lat0, lon0, &lat1, &lon1
 		);
 
-		if ( !feature->contains(Geo::GeoCoordinate(lat0, lon0)) ) {
+		if ( !feature->contains(Geo::GeoCoordinate(lat1, lon1)) ) {
 			return false;
 		}
 	}
