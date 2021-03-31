@@ -179,13 +179,13 @@ bool Resample::setSource(const string &source) {
 					if ( !Core::fromString(lw, value) ) {
 						SEISCOMP_ERROR("Invalid resample value for '%s': expected a numerical value",
 						               name.c_str());
-						throw RecordStreamException("invalid uw parameter value");
+						throw RecordStreamException("invalid lw parameter value");
 					}
 
 					if ( lw <= 0 ) {
 						SEISCOMP_ERROR("Invalid resample value for '%s': expected a positive value",
 						               name.c_str());
-						throw RecordStreamException("invalid uw parameter value");
+						throw RecordStreamException("invalid lw parameter value");
 					}
 
 					_lanczosKernelWidth = lw;
