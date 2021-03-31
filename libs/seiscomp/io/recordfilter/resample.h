@@ -58,7 +58,7 @@ class SC_SYSTEM_CORE_API RecordResamplerBase : public RecordFilterInterface {
 		double                       _fp;
 		double                       _fs;
 		int                          _maxN;
-		int                          _lanzcosKernelWidth;
+		int                          _lanczosKernelWidth;
 		int                          _coeffScale;
 };
 
@@ -77,7 +77,7 @@ class SC_SYSTEM_CORE_API RecordResampler : public RecordResamplerBase {
 	public:
 		//! C'tor
 		RecordResampler(double targetFrequency, double fp = 0.7, double fs = 0.9,
-		                double coeffScale = 10, int lanzcosWidth = 3);
+		                double coeffScale = 10, int lanczosWidth = 3);
 
 		//! D'tor
 		virtual ~RecordResampler();

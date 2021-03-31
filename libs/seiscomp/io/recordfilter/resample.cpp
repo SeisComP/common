@@ -257,13 +257,13 @@ void RecordResamplerBase::reset() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 RecordResampler<T>::RecordResampler(double targetFrequency, double fp,
-                        double fs, double coeffScale, int lanzcosWidth)
+                        double fs, double coeffScale, int lanczosWidth)
 : _downsampler(nullptr), _upsampler(nullptr) {
 	_fp = fp;
 	_fs = fs;
 	_coeffScale = coeffScale;
 	_maxN = 500/_coeffScale;
-	_lanzcosKernelWidth = lanzcosWidth;
+	_lanczosKernelWidth = lanczosWidth;
 
 	_targetRate = targetFrequency;
 	_currentRate = -1;
@@ -311,7 +311,7 @@ void RecordResampler<T>::init(UpsampleStage *stage, const Record *rec, int N) {
 	stage->downRatio = 1.0/(double)stage->N;
 	stage->sampleRate = rec->samplingFrequency();
 	stage->targetRate = stage->sampleRate*stage->N;
-	stage->width = _lanzcosKernelWidth;
+	stage->width = _lanczosKernelWidth;
 	stage->N2 = stage->width;
 	// The sample itself, the width to the right and to the left and a buffer
 	// on the left side
@@ -848,7 +848,7 @@ void RecordResampler<T>::reset() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 RecordFilterInterface *RecordResampler<T>::clone() const {
-	return new RecordResampler<T>(_targetRate, _fp, _fs, _coeffScale, _lanzcosKernelWidth);
+	return new RecordResampler<T>(_targetRate, _fp, _fs, _coeffScale, _lanczosKernelWidth);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

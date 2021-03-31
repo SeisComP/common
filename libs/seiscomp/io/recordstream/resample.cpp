@@ -49,7 +49,7 @@ Resample::Resample() {
 	_fp = 0.7;
 	_fs = 0.9;
 	_coeffScale = 10;
-	_lanzcosKernelWidth = 3;
+	_lanczosKernelWidth = 3;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -188,7 +188,7 @@ bool Resample::setSource(const string &source) {
 						throw RecordStreamException("invalid uw parameter value");
 					}
 
-					_lanzcosKernelWidth = lw;
+					_lanczosKernelWidth = lw;
 				}
 				else if ( name == "debug") {
 					_debug = true;
@@ -218,7 +218,7 @@ bool Resample::setSource(const string &source) {
 	}
 
 	// Set the resampler record filter for the demuxer
-	_demuxer.setFilter(new IO::RecordResampler<double>(_targetRate, _fp, _fs, _coeffScale, _lanzcosKernelWidth));
+	_demuxer.setFilter(new IO::RecordResampler<double>(_targetRate, _fp, _fs, _coeffScale, _lanczosKernelWidth));
 
 	return true;
 }
