@@ -96,7 +96,7 @@ class SC_SYSTEM_CORE_API Resample : public Seiscomp::IO::RecordStream {
 		double                _targetRate;
 		double                _fp;
 		double                _fs;
-		int                   _lanzcosKernelWidth;
+		int                   _lanczosKernelWidth;
 		int                   _coeffScale;
 };
 
