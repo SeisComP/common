@@ -8,7 +8,19 @@
 		<configuration>
 			<group name="magnitudes">
 				<group name="ML">
+					<description>
+					Regionalized calibration parameters for ML. The region itself is defined
+					by another magnitude-type ML profile.
+					</description>
 					<group name="region">
+						<description>
+						Add one profile for every region. The profile name
+						equals the name of a polygon configured in the BNA file
+						of the Magnitude-type profile. The Magnitude-type profile
+						and the polygon must exist.
+						The special name &quot;world&quot; corresponds to the
+						region of the entire planet as a fallback.
+						</description>
 						<struct type="ML region profile">
 							<parameter name="logA0" type="string">
 								<description>

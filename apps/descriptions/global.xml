@@ -72,7 +72,7 @@
 			<parameter name="database" type="string">
 				<description>
 					Defines the database connection. If no database is configured
-					(which is the default) and a messaging connection is available
+					(which is the default) and a messaging connection is available,
 					the application will receive the parameters after the connection
 					is established. Override these values only if you know what you
 					are doing.
@@ -158,7 +158,7 @@
 						<parameter name="maxFileSize" type="int" default="104857600" unit="byte">
 							<description>
 							The maximum size of a logfile in byte. The default value
-							is 100 megabyte. If a logfile exceeds that size then it
+							is 100 megabyte. If a logfile exceeds that size, then it
 							is rotated. To disable the size limit give 0 or a negative
 							value.
 							</description>
@@ -203,7 +203,7 @@
 					<description>
 						The connection timeout in seconds. 3 seconds are normally
 						more than enough. If a client needs to connect to a
-						remote system with a slow connection a larger timeout might
+						remote system with a slow connection, a larger timeout might
 						be needed.
 					</description>
 				</parameter>
@@ -233,7 +233,7 @@
 			<group name="database">
 				<description>
 					Defines the database connection. If no database is configured
-					(which is the default) and a messaging connection is available
+					(which is the default) and a messaging connection is available,
 					the application will receive the parameters after the connection
 					is established. Override these values only if you know what you
 					are doing.
@@ -394,34 +394,51 @@
 					</parameter>
 				</struct>
 			</group>
+			<group name="amplitudes">
+				<description>
+				Amplitude configurations overriding global bindings.
+				</description>
+			</group>
 			<group name="magnitudes">
+				<description>
+				Magnitude configurations overriding global bindings.
+				Add regionalization by magnitude-type profiles. Profile
+				names correspond to magnitude types.
+				</description>
 				<struct type="Magnitude type profile">
 					<parameter name="regions" type="path">
 						<description>
-						Path to a BNA file which defines type specific
-						geographical regions for further parametrization.
-						The order of regions matters. The list is tested from
-						front to back and the first hit wins.
+						Path to a BNA file with one or more polygons
+						defining geographic regions. Each region allows
+						further magnitude parametrization.
+						The order of polygons/regions matters. The list is tested from
+						front to back and the first hit wins. Magnitude-region
+						profiles refer to the polygons by the name of the profile.
+						The special name &quot;world&quot; must not be present
+						in the BNA file.
 						</description>
 					</parameter>
 					<group name="region">
 						<description>
-						Region specific parameters. The profile name must match
-						on of the feature names defined in the regions BNA file
-						otherwise it is not taken into account. There is one
-						special name &quot;world&quot; which must not be present
-						in the BNA file. &quot;world&quot; maps to the polygon
-						covering the entire planet.
+						Add parameter profiles for regions defined in the BNA
+						file. Profile names must match one polygon name. Otherwise
+						the profile is not considered.
+						The special name &quot;world&quot; corresponds to the
+						region of the entire planet as a fallback.
+
+						Magnitude-specific parameters, e.g. calibration functions,
+						are adjusted in a separate section of  magnitudes with the
+						same name.
 						</description>
 						<struct type="Magnitude region profile">
 							<parameter name="enable" type="boolean" default="false">
 								<description>
-								Whether to enable the region or not.
+								Enable the region or not.
 								</description>
 							</parameter>
 							<parameter name="minDist" type="double" unit="deg">
 								<description>
-								The minimum distance required to compute an magnitude.
+								The minimum distance required to compute a magnitude.
 								This settings has no effect with e.g. scautopick as there
 								is no information about the source of the event to compute
 								the distance. The default value is implementation
@@ -430,7 +447,7 @@
 							</parameter>
 							<parameter name="maxDist" type="double" unit="deg">
 								<description>
-								The maximum distance allowed to compute an magnitude.
+								The maximum distance allowed to compute a magnitude.
 								This settings has no effect with e.g. scautopick as there
 								is no information about the source of the event to compute
 								the distance. The default value is implementation
@@ -439,7 +456,7 @@
 							</parameter>
 							<parameter name="minDepth" type="double" unit="km">
 								<description>
-								The minimum depth required to compute an magnitude.
+								The minimum depth required to compute a magnitude.
 								This settings has no effect with e.g. scautopick as there
 								is no information about the source of the event to
 								retrieve the depth. The default value is implementation
@@ -448,7 +465,7 @@
 							</parameter>
 							<parameter name="maxDepth" type="double" unit="km">
 								<description>
-								The maximum depth allowed to compute an magnitude.
+								The maximum depth allowed to compute a magnitude.
 								This settings has no effect with e.g. scautopick as there
 								is no information about the source of the event to
 								retrieve the depth. The default value is implementation
@@ -543,14 +560,14 @@
 					<description>
 						Sets the name of the master-module used for auto-shutdown. This
 						is the application name of the module actually started. If symlinks
-						are used then it is the name of the symlinked application.
+						are used, then it is the name of the symlinked application.
 					</description>
 				</option>
 
 				<option flag="" long-flag="shutdown-master-username" argument="arg" publicID="generic#shutdown-master-username">
 					<description>
 						Sets the name of the master-username of the messaging used for
-						auto-shutdown. If "shutdown-master-module" is given as well this
+						auto-shutdown. If "shutdown-master-module" is given as well, this
 						parameter is ignored.
 					</description>
 				</option>
@@ -664,7 +681,7 @@
 						The recordstream source URL, format: [service://]location[#type].
 						&quot;service&quot; is the name of the recordstream driver which can be
 						queried with &quot;--record-driver-list&quot;. If &quot;service&quot;
-						is not given &quot;file://&quot; is used.
+						is not given, &quot;file://&quot; is used.
 					</description>
 				</option>
 
@@ -825,14 +842,14 @@
 				</parameter>
 				<parameter name="enable" type="boolean" default="true">
 					<description>
-					Defines if amplitude calculation is enabled. If disabled then
+					Defines if amplitude calculation is enabled. If disabled,
 					this station will be skipped for amplitudes and magnitudes.
 					</description>
 				</parameter>
 				<parameter name="enableResponses" type="boolean" default="false">
 					<description>
 					Activates deconvolution for this station. If no responses are
-					configured an error is raised and the data is not processed.
+					configured, an error is raised and the data is not processed.
 					</description>
 				</parameter>
 				<struct type="Amplitude type profile">
@@ -869,7 +886,7 @@
 					<parameter name="enableResponses" type="boolean" default="false">
 						<description>
 						Activates deconvolution for this amplitude type. If not
-						set the global flag &quot;amplitudes.enableResponses&quot;
+						set, the global flag &quot;amplitudes.enableResponses&quot;
 						will be used instead.
 						</description>
 					</parameter>
@@ -1154,7 +1171,7 @@
 					</parameter>
 					<parameter name="marginAIC" type="double" default="5" unit="s">
 						<description>
-						The AIC time window around the detection used to pick. If 0 AIC is not used.
+						The AIC time window around the detection used to pick. If 0, AIC is not used.
 						</description>
 					</parameter>
 					<parameter name="minSNR" type="double" default="15">
