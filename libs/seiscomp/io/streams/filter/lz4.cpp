@@ -18,13 +18,11 @@
  ***************************************************************************/
 
 
-#include "lz4/lz4.c"
-#include "lz4/lz4frame.c"
-#include "lz4/lz4hc.c"
-#include "lz4/xxhash.c"
-
 #include <seiscomp/io/streams/filter/lz4.h>
 #include <stdexcept>
+#include <cstring>
+
+#include <lz4/lz4hc.h>
 
 
 namespace ext {
@@ -71,7 +69,7 @@ void lz4_base::cleanup_() {
 lz4_compress_base::lz4_compress_base(size_t inputBufferSize)
 : lz4_base(inputBufferSize)
 , _ctx(nullptr) {
-	MEM_INIT(&_prefs, 0, sizeof(_prefs));
+	std::memset(&_prefs, 0, sizeof(_prefs));
 	_prefs.compressionLevel = LZ4HC_CLEVEL_DEFAULT;
 	_prefs.autoFlush = 1;
 	_outputBufferSize = std::max(LZ4F_compressFrameBound(inputBufferSize, nullptr), size_t(64));
