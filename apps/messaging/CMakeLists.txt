@@ -1,9 +1,6 @@
 OPTION(SC_TRUNK_MASTER "Compile the messaging master" ON)
 
-SET(DIRS "")
-
 IF (SC_TRUNK_MASTER)
-	SET(DIRS ${DIRS} scmaster)
+	SUBDIRS(scmaster)
 ENDIF (SC_TRUNK_MASTER)
 
-SUBDIRS(${DIRS})
