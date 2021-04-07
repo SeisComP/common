@@ -969,6 +969,20 @@
 						specific.
 						</description>
 					</parameter>
+					<parameter name="regionalize" type="boolean" default="true">
+						<description>
+						Controls if the amplitude calculation should be regionalized
+						or not. The regions and their configuration are taken
+						from the corresponding magnitude profiles. If regionalization
+						is activate, then e.g. modules without origin information
+						will not be able to compute an amplitude as the origin is
+						required to determine the effective settings.
+
+						If amplitudes for this particular type shall be computed
+						regardless of any defined regions, set this parameter to
+						false.
+						</description>
+					</parameter>
 					<group name="resp">
 						<description>
 						Several parameters if usage of full responses is enabled.
