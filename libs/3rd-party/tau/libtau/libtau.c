@@ -196,7 +196,7 @@ fp10 = fopen("ttim1.lis", "wb");
 int tabout(libtau *h) {
 	int i;
 
-	if ( !h->allocated ) {
+	if ( h->allocated ) {
 		for ( i = 0; i < jseg; i++ ) free(h->phlst[i]);
 		for ( i = 0; i < jbrn; i++ ) free(h->segcd[i]);
 		h->allocated = 0;
