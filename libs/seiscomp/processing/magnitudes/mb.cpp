@@ -90,12 +90,14 @@ MagnitudeProcessor::Status MagnitudeProcessor_mb::computeMagnitude(
 	if ( delta < minDistanceDeg || delta > maxDistanceDeg )
 		return DistanceOutOfRange;
 
+	if ( (depth < 0) || (depth > 700) )
+		return DepthOutOfRange;
 
 	if ( amplitude <= 0 )
 		return AmplitudeOutOfRange;
 
 	// maximum allowed period is 3 s according to IASPEI standard (pers. comm. Peter Bormann)
-	if ( period < 0.4 || period > 3.0 )
+	if ( (period < 0.4) || (period > 3.0) )
 		return PeriodOutOfRange;
 
 	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) )
