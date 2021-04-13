@@ -476,92 +476,94 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 	const Locale *locale = nullptr;
 
 	// Check if regionalization is desired
-	lock_guard<mutex> l(regionalizationRegistryMutex);
-	auto it = regionalizationRegistry.find(type());
-	if ( it != regionalizationRegistry.end() ) {
-		TypeSpecificRegionalization *tsr = it->second.get();
-		if ( tsr and !tsr->regionalization.empty() ) {
-			// There are region profiles so meta data are required
-			if ( !hypocenter ) {
-				return MetaDataRequired;
-			}
-
-			if ( !receiver ) {
-				return MetaDataRequired;
-			}
-
-			double hypoLat, hypoLon;
-			double recvLat, recvLon;
-
-			try {
-				// All attributes are optional and throw an exception if not set
-				hypoLat = hypocenter->latitude().value();
-				hypoLon = hypocenter->longitude().value();
-			}
-			catch ( ... ) {
-				return MetaDataRequired;
-			}
-
-			try {
-				// Both attributes are optional and throw an exception if not set
-				recvLat = receiver->latitude();
-				recvLon = receiver->longitude();
-			}
-			catch ( ... ) {
-				return MetaDataRequired;
-			}
-
-			Status notFoundStatus = OK;
-
-			for ( const Locale &profile : tsr->regionalization ) {
-				if ( profile.feature ) {
-					switch ( profile.check ) {
-						case Locale::Source:
-							if ( !profile.feature->contains(Geo::GeoCoordinate(hypoLat, hypoLon)) ) {
-								notFoundStatus = EpicenterOutOfRegions;
-								continue;
-							}
-
-							break;
-
-						case Locale::SourceReceiver:
-							if ( !profile.feature->contains(Geo::GeoCoordinate(hypoLat, hypoLon)) ) {
-								notFoundStatus = EpicenterOutOfRegions;
-								continue;
-							}
-							if ( !profile.feature->contains(Geo::GeoCoordinate(recvLat, recvLon)) ) {
-								notFoundStatus = ReceiverOutOfRegions;
-								continue;
-							}
-							break;
-
-						case Locale::SourceReceiverPath:
-							if ( !Regions::contains(profile.feature, hypoLat, hypoLon, recvLat, recvLon) ) {
-								notFoundStatus = RayPathOutOfRegions;
-								continue;
-							}
-							break;
-					}
+	{
+		lock_guard<mutex> l(regionalizationRegistryMutex);
+		auto it = regionalizationRegistry.find(type());
+		if ( it != regionalizationRegistry.end() ) {
+			TypeSpecificRegionalization *tsr = it->second.get();
+			if ( tsr and !tsr->regionalization.empty() ) {
+				// There are region profiles so meta data are required
+				if ( !hypocenter ) {
+					return MetaDataRequired;
 				}
 
-				// Found region
-				locale = &profile;
+				if ( !receiver ) {
+					return MetaDataRequired;
+				}
 
-				if ( locale->minimumDistance and delta < *locale->minimumDistance )
-					return DistanceOutOfRange;
-				if ( locale->maximumDistance and delta > *locale->maximumDistance )
-					return DistanceOutOfRange;
+				double hypoLat, hypoLon;
+				double recvLat, recvLon;
 
-				if ( locale->minimumDepth and depth < *locale->minimumDepth )
-					return DepthOutOfRange;
-				if ( locale->maximumDepth and depth > *locale->maximumDepth )
-					return DepthOutOfRange;
+				try {
+					// All attributes are optional and throw an exception if not set
+					hypoLat = hypocenter->latitude().value();
+					hypoLon = hypocenter->longitude().value();
+				}
+				catch ( ... ) {
+					return MetaDataRequired;
+				}
 
-				break;
-			}
+				try {
+					// Both attributes are optional and throw an exception if not set
+					recvLat = receiver->latitude();
+					recvLon = receiver->longitude();
+				}
+				catch ( ... ) {
+					return MetaDataRequired;
+				}
 
-			if ( !locale ) {
-				return notFoundStatus;
+				Status notFoundStatus = OK;
+
+				for ( const Locale &profile : tsr->regionalization ) {
+					if ( profile.feature ) {
+						switch ( profile.check ) {
+							case Locale::Source:
+								if ( !profile.feature->contains(Geo::GeoCoordinate(hypoLat, hypoLon)) ) {
+									notFoundStatus = EpicenterOutOfRegions;
+									continue;
+								}
+
+								break;
+
+							case Locale::SourceReceiver:
+								if ( !profile.feature->contains(Geo::GeoCoordinate(hypoLat, hypoLon)) ) {
+									notFoundStatus = EpicenterOutOfRegions;
+									continue;
+								}
+								if ( !profile.feature->contains(Geo::GeoCoordinate(recvLat, recvLon)) ) {
+									notFoundStatus = ReceiverOutOfRegions;
+									continue;
+								}
+								break;
+
+							case Locale::SourceReceiverPath:
+								if ( !Regions::contains(profile.feature, hypoLat, hypoLon, recvLat, recvLon) ) {
+									notFoundStatus = RayPathOutOfRegions;
+									continue;
+								}
+								break;
+						}
+					}
+
+					// Found region
+					locale = &profile;
+
+					if ( locale->minimumDistance and delta < *locale->minimumDistance )
+						return DistanceOutOfRange;
+					if ( locale->maximumDistance and delta > *locale->maximumDistance )
+						return DistanceOutOfRange;
+
+					if ( locale->minimumDepth and depth < *locale->minimumDepth )
+						return DepthOutOfRange;
+					if ( locale->maximumDepth and depth > *locale->maximumDepth )
+						return DepthOutOfRange;
+
+					break;
+				}
+
+				if ( !locale ) {
+					return notFoundStatus;
+				}
 			}
 		}
 	}
