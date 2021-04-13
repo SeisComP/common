@@ -22,7 +22,7 @@
 #include <math.h>
 #include <seiscomp/seismology/magnitudes.h>
 
-#define DELTA_MIN 3.
+#define DELTA_MIN 5.
 #define DELTA_MAX 105.
 
 // degrees to radians factor
