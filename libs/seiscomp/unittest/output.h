@@ -21,8 +21,7 @@
 #ifndef SEISCOMP_UNITTEST_OUTPUT_H
 #define SEISCOMP_UNITTEST_OUTPUT_H
 
-
-#include <boost/algorithm/string.hpp>
+#include <boost/version.hpp>
 #if BOOST_VERSION >= 105900
 #include <boost/test/tree/observer.hpp>
 #include <boost/test/tree/visitor.hpp>
