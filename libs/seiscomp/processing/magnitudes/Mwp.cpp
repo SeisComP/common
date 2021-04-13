@@ -56,11 +56,18 @@ MagnitudeProcessor::Status MagnitudeProcessor_Mwp::computeMagnitude(
 	const DataModel::SensorLocation *receiver,
 	const DataModel::Amplitude *,
 	double &value) {
-	if ( amplitude <= 0 )
-		return AmplitudeOutOfRange;
 
-	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) )
+	if ( amplitude <= 0 ) {
+		return AmplitudeOutOfRange;
+	}
+
+	if ( delta < 5 || delta > 105 ) {
+		return DistanceOutOfRange;
+	}
+
+	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) ) {
 		return InvalidAmplitudeUnit;
+	}
 
 	bool status = Magnitudes::compute_Mwp(amplitude*1.E-9, delta, value);
 	value = correctMagnitude(value);
