@@ -29,6 +29,7 @@
 #endif
 
 #include <boost/version.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/test/included/unit_test.hpp>
 #if BOOST_VERSION >= 107000
 #include <boost/test/tools/floating_point_comparison.hpp>
@@ -36,29 +37,10 @@
 #include <boost/test/floating_point_comparison.hpp>
 #endif
 
-#include <seiscomp/unittest/output.h>
-
 // Compatibility definition for boost version < 1.35.0
 #if BOOST_VERSION <= 103500
 #define BOOST_TEST_MESSAGE(msg) BOOST_MESSAGE(msg)
 #endif
-
-
-
-namespace Seiscomp {
-namespace Unittest {
-
-#ifndef BOOST_INITIALIZED
-#define BOOST_INITIALIZED
-#if BOOST_VERSION < 105900
-BOOST_GLOBAL_FIXTURE(Output)
-#else
-BOOST_GLOBAL_FIXTURE(Output);
-#endif
-#endif
-
-}
-}
 
 
 #endif
