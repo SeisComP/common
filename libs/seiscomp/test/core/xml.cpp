@@ -190,12 +190,6 @@ BOOST_AUTO_TEST_CASE(TimeToString) {
 	check = "2008-04-12T20:44:03.567445Z";
 	match = boost::iequals(s,check);
 	BOOST_CHECK_EQUAL(match, true);
-
-	t1.set(1788,11,19,23,55,9,567778);
-	s = toString(t1);
-	check = "1788-11-19T23:55:09.567778Z";
-	match = boost::iequals(s,check);
-	BOOST_CHECK_EQUAL(match, true);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -207,8 +201,8 @@ BOOST_AUTO_TEST_CASE(comparisonSign) {
 	Time t1,t2;
 
 	// check equal
-	t1.set(1645,8,9,17,48,41,0);
-	t2.set(1645,8,9,17,48,41,0);
+	t1.set(2007,8,9,17,48,41,0);
+	t2.set(2007,8,9,17,48,41,0);
 	BOOST_CHECK_EQUAL(t1.seconds(), t2.seconds());
 	string s1 = toString(t1);
 	string s2 = toString(t2);
@@ -216,8 +210,8 @@ BOOST_AUTO_TEST_CASE(comparisonSign) {
 	BOOST_CHECK_EQUAL(match, true);
 
 	// check greater than
-	t1.set(1999,4,3,14,44,23,0);
-	t2.set(1999,4,3,4,44,23,0);
+	t1.set(2007,4,3,14,44,23,0);
+	t2.set(2007,4,3,4,44,23,0);
 	s1 = toString(t1);
 	s2 = toString(t2);
 	BOOST_CHECK_GT((double)t1, (double)t2);
@@ -237,13 +231,8 @@ BOOST_AUTO_TEST_CASE(comparisonSign) {
 	BOOST_CHECK_EQUAL(match, true);
 
 	// check lower equal
-	t1 = Time::GMT();
-	t2 = Time::LocalTime();
-	BOOST_CHECK_LE((double)t1, (double)t2);
-	match = boost::iequals(s1,s2);
-	BOOST_CHECK_EQUAL(match, true);
-	t1.set(2223,12,30,5,30,22,0);
-	t2.set(2224,12,30,5,30,22,0);
+	t1.set(2007,12,30,5,30,22,0);
+	t2.set(2008,12,30,5,30,22,0);
 	BOOST_CHECK_LE((double)t1, (double)t2);
 	s1 = toString(t1);
 	s2 = toString(t2);
