@@ -156,8 +156,8 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		int64_t value;
 		BOOST_CHECK(fromString(value, "10") && value == 10);
 		BOOST_CHECK(fromString(value, "-10") && value == -10);
-		BOOST_CHECK(fromString(value, toString(std::numeric_limits<int64_t>::max())) && value == std::numeric_limits<long>::max());
-		BOOST_CHECK(fromString(value, toString(std::numeric_limits<int64_t>::min())) && value == std::numeric_limits<long>::min());
+		BOOST_CHECK(fromString(value, toString(std::numeric_limits<int64_t>::max())) && value == std::numeric_limits<long long int>::max());
+		BOOST_CHECK(fromString(value, toString(std::numeric_limits<int64_t>::min())) && value == std::numeric_limits<long long int>::min());
 		BOOST_CHECK(!fromString(value, "abc"));
 	}
 
@@ -169,8 +169,8 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		BOOST_CHECK(fromString(value, "10") && value == 10);
 		BOOST_CHECK(!fromString(value, "-10"));
 		BOOST_CHECK(!fromString(value, toString(std::numeric_limits<uint64_t>::max())));
-		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::max()/2)) && value == std::numeric_limits<unsigned long int>::max()/2);
-		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::min())) && value == std::numeric_limits<unsigned long int>::min());
+		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::max()/2)) && value == std::numeric_limits<unsigned long long int>::max()/2);
+		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::min())) && value == std::numeric_limits<unsigned long long int>::min());
 		BOOST_CHECK(!fromString(value, "abc"));
 	}
 
