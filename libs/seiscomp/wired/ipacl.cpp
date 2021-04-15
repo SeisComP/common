@@ -253,7 +253,7 @@ IPACL &IPACL::operator+=(const IPACL &other) {
 		const_iterator it_this = begin();
 		bool found = false;
 		for ( ; it_this != end(); ++it_this ) {
-			if ( it_this->addr == it->addr && it_this->mask == it->mask ) {
+			if ( *it_this == *it ) {
 				found = true;
 				break;
 			}
@@ -276,7 +276,7 @@ IPACL &IPACL::operator-=(const IPACL &other) {
 	for ( it = other.begin(); it != other.end(); ++it ) {
 		IPMasks::iterator it_this = _masks.begin();
 		for ( ; it_this != _masks.end(); ++it_this ) {
-			if ( it_this->addr == it->addr && it_this->mask == it->mask ) {
+			if ( *it_this == *it ) {
 				_masks.erase(it_this);
 				break;
 			}
