@@ -274,7 +274,7 @@ void FDSNWSConnectionBase::handshake() {
 		_remainingBytes = 0;
 		return;
 	}
-	else if ( code == 302 ) {
+	else if ( code == 301 or code == 302 ) {
 		// Redirect
 	}
 	else
@@ -326,7 +326,7 @@ void FDSNWSConnectionBase::handshake() {
 		_remainingBytes = 0;
 	}
 
-	if ( code == 302 ) {
+	if ( code == 301 or code == 302 ) {
 		if ( redirectLocation.empty() ) {
 			_error = "Invalid redirect response";
 			SEISCOMP_ERROR("302 returned but empty Location header");
@@ -346,10 +346,16 @@ void FDSNWSConnectionBase::handshake() {
 				}
 			}
 			else {
-				if ( redirectLocation.compare(0, pos, "http") == 0 )
+				if ( redirectLocation.compare(0, pos, "http") == 0 ) {
 					_sock = new IO::Socket;
-				else if ( redirectLocation.compare(0, pos, "https") == 0 )
+					_protocol = "http";
+					_defaultPort = 80;
+				}
+				else if ( redirectLocation.compare(0, pos, "https") == 0 ) {
 					_sock = new IO::SSLSocket;
+					_protocol = "https";
+					_defaultPort = 443;
+				}
 				else {
 					_error = "Invalid redirect location protocol";
 					SEISCOMP_ERROR("Redirect URL invalid: %s", redirectLocation.c_str());
