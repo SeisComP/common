@@ -24,7 +24,7 @@
 				<parameter name="bind" type="ipbind" default="0.0.0.0:18180">
 					<description>
 						Local bind address and port of the messaging system.
-						0.0.0.0:18180 accepts connections from all clients, 127.0.0.0:18180
+						0.0.0.0:18180 accepts connections from all clients, 127.0.0.1:18180
 						only from localhost.
 					</description>
 				</parameter>
