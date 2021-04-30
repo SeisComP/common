@@ -347,7 +347,7 @@ bool Connection::selectArchived(Responses &responses, const Core::Time &from,
 
 	// read responses
 	string code;
-	while ( readResponseCode(code) ) {
+	while ( _sock->isOpen() and readResponseCode(code) ) {
 		if ( startsWith(code, "EOD/SELECT/ARCHIVED") ) {
 			if ( !readResponseCode(code) ) break;
 			if ( !equals(code, "EOD/SELECT") ) {
@@ -406,7 +406,7 @@ bool Connection::select(bool archived, const Core::Time &from,
 	ResponsesPtr updatesBetween;
 	Response *response;
 	string code;
-	while ( readResponseCode(code) ) {
+	while ( _sock->isOpen() and readResponseCode(code) ) {
 		if ( !archived && equals(code, "EOD/SELECT") ) {
 			SEISCOMP_DEBUG("%sEOD/SELECT", _logPrefix.c_str());
 			return true;
