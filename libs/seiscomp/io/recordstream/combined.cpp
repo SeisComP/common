@@ -353,7 +353,7 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 	if ( !_realtime ) {
 		string msg = "Could not create realtime RecordStream: " + type1;
 		SEISCOMP_ERROR_S(msg);
-		throw new RecordStreamException(msg);
+		throw RecordStreamException(msg);
 	}
 
 	_archive = IO::RecordStream::Create(type2.c_str());

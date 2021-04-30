@@ -151,6 +151,11 @@ RecordStream* RecordStream::Open(const char *url) {
 		delete stream;
 		return nullptr;
 	}
+	catch ( std::exception &e ) {
+		SEISCOMP_ERROR("exception: %s", e.what());
+		delete stream;
+		return nullptr;
+	}
 
 	if ( !type.empty() && !stream->setRecordType(type.c_str()) ) {
 		delete stream;
