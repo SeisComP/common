@@ -201,8 +201,14 @@ bool Decimation::setSource(const string &source) {
 		return false;
 	}
 
-	if ( !_source->setSource(addr) )
-		return false;
+	try {
+		if ( !_source->setSource(addr) )
+			return false;
+	}
+	catch ( ... ) {
+		_source = nullptr;
+		throw;
+	}
 
 	_source->setDataType(Array::DOUBLE);
 	_source->setDataHint(Record::DATA_ONLY);
