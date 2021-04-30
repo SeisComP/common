@@ -1059,7 +1059,6 @@ bool MercatorProjection::project(QPainterPath &screenPath, size_t n,
 			int px = p.x(), py = p.y();
 			int spanY = spansNorthPole ? _clipRect.top() : _clipRect.bottom();
 
-			std::cerr << "DRAW" << std::endl;
 			for ( size_t i = 1; i < n; ++i ) {
 				Math::Geo::CoordF::ValueType lonDiff = poly[i].lon - v.x();
 				if ( lonDiff > 180 ) lonDiff -= 360;
