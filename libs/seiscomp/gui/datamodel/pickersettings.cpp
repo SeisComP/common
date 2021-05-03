@@ -260,7 +260,9 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 
 	_ui.cbUsePerStreamTimeWindow->setChecked(_pickerConfig.usePerStreamTimeWindows);
 	_ui.preTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.preOffset.seconds()));
+	adjustPreSlider(_ui.preTimeEdit->time());
 	_ui.postTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.postOffset.seconds()));
+	adjustPostSlider(_ui.postTimeEdit->time());
 	_ui.minimumLengthTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.minimumTimeWindow.seconds()));
 
 	_ui.slWaveformAlignment->setValue(_pickerConfig.alignmentPosition*100);
@@ -272,7 +274,9 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 	_ui.editRecordSource->setText(_pickerConfig.recordURL);
 
 	_ui.preAmplitudeTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_amplitudeConfig.preOffset.seconds()));
+	adjustAmplitudePreSlider(_ui.preAmplitudeTimeEdit->time());
 	_ui.postAmplitudeTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_amplitudeConfig.postOffset.seconds()));
+	adjustAmplitudePostSlider(_ui.postAmplitudeTimeEdit->time());
 
 	QFont font;
 
@@ -340,17 +344,17 @@ bool PickerSettings::saveSettings() const {
 
 
 void PickerSettings::adjustPreTime(int value) {
-	_ui.preTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_ui.slPreOffset->value()*60));
+	_ui.preTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(value*60));
 }
 
 
 void PickerSettings::adjustPostTime(int value) {
-	_ui.postTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_ui.slPostOffset->value()*60));
+	_ui.postTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(value*60));
 }
 
 
 void PickerSettings::adjustLength(int value) {
-	_ui.minimumLengthTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_ui.slMinimumLength->value()*60));
+	_ui.minimumLengthTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(value*60));
 }
 
 
@@ -373,12 +377,12 @@ void PickerSettings::adjustLengthSlider(const QTime &t) {
 
 
 void PickerSettings::adjustAmplitudePreTime(int value) {
-	_ui.preAmplitudeTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_ui.slAmplitudePreOffset->value()*60));
+	_ui.preAmplitudeTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(value*60));
 }
 
 
 void PickerSettings::adjustAmplitudePostTime(int value) {
-	_ui.postAmplitudeTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_ui.slAmplitudePostOffset->value()*60));
+	_ui.postAmplitudeTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(value*60));
 }
 
 
