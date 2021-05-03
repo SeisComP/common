@@ -107,8 +107,9 @@ bool MySQLDatabase::open() {
 	}
 	if ( mysql_real_connect(_handle, _host.c_str(), _user.c_str(), _password.c_str(),
 	                        _database.c_str(), _port, NULL, 0) == NULL ) {
-		SEISCOMP_ERROR("Connect to %s:******@%s:%d/%s failed", _user.c_str(),
-		               _host.c_str(), _port, _database.c_str());
+		SEISCOMP_ERROR("Connect to %s:******@%s:%d/%s failed: %s", _user.c_str(),
+		               _host.c_str(), _port, _database.c_str(),
+		               mysql_error(_handle));
 		mysql_close(_handle);
 		_handle = NULL;
 		return false;
