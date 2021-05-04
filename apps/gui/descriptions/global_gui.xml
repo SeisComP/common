@@ -1239,6 +1239,7 @@
 						<parameter name="label" type="string" default="Show only own events">
 							<description>
 							Defines the text of the option &quot;Show only own events&quot;.
+							Use double quotes '&quot;' around the string if it contains spaces.
 							</description>
 						</parameter>
 						<parameter name="whitelist" type="list:string">
@@ -1268,12 +1269,14 @@
 						<parameter name="label" type="string" default="Hide other/fake events">
 							<description>
 							Defines the text of the option &quot;Hide other/fake events&quot;.
+							Use double quotes '&quot;' around the string if it contains spaces.
 							</description>
 						</parameter>
 						<parameter name="blacklist" type="list:string">
 							<description>
 							List of event type to be hidden if the &quot;Hide other/fake events&quot;
 							option is ticked.
+							Use double quotes '&quot;' around the string if it contains spaces.
 							</description>
 						</parameter>
 						<parameter name="enabled" type="boolean" default="false">
