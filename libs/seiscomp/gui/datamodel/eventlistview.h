@@ -131,6 +131,9 @@ class SC_GUI_API EventListView : public QWidget {
 
 		int eventCount() const;
 
+		//! \since 15.0.0
+		int visibleEventCount() const;
+
 
 	signals:
 		void originAdded();
@@ -153,6 +156,10 @@ class SC_GUI_API EventListView : public QWidget {
 		void eventAddedToList(Seiscomp::DataModel::Event*, bool fromNotification);
 		void eventUpdatedInList(Seiscomp::DataModel::Event*);
 		void eventRemovedFromList(Seiscomp::DataModel::Event*);
+
+		//! \since 15.0.0
+		void visibleEventCountChanged();
+
 		//! Emitted when a bigger update process has finished, such as show/hide
 		//! of a subset of events.
 		void eventsUpdated();
@@ -316,12 +323,14 @@ class SC_GUI_API EventListView : public QWidget {
 		//bool                              _withComments;
 		bool                                _blockSelection;
 		bool                                _blockRemovingOfExpiredEvents;
+		bool                                _blockCountSignal;
 		bool                                _hideOtherEvents;
 		bool                                _hideForeignEvents;
 		bool                                _hideOutsideRegion;
 		bool                                _checkEventAgency;
 		bool                                _showOnlyLatestPerAgency;
 		int                                 _regionIndex;
+		mutable int                         _visibleEventCount;
 };
 
 

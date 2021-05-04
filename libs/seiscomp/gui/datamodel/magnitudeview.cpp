@@ -225,6 +225,25 @@ string waveformIDToStdString(const WaveformStreamID& id) {
 }
 
 
+int usedStationCount(Magnitude *mag) {
+	int cnt = 0;
+	for ( size_t i = 0; i < mag->stationMagnitudeContributionCount(); ++i ) {
+		try {
+			if ( mag->stationMagnitudeContribution(i)->weight() > 0.0 )
+				++cnt;
+		}
+		catch ( ... ) {
+			++cnt;
+		}
+	}
+	return cnt;
+}
+
+int totalStationCount(Magnitude *mag) {
+	return mag->stationMagnitudeContributionCount();
+}
+
+
 template <typename T>
 struct like {
 	bool operator()(const T &lhs, const T &rhs) const {
@@ -1609,12 +1628,6 @@ void MagnitudeView::recalculateMagnitude() {
 		}
 	}
 
-	idx = findData(_tabMagnitudes, _netMag->publicID());
-	if ( idx != -1 )
-		_tabMagnitudes->setTabText(idx, QString("%1 %2")
-		                           .arg(_netMag->type().c_str())
-		                           .arg(_netMag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
-
 	idx = 0;
 	int staCount = 0;
 	for ( int i = 0; i < _modelStationMagnitudes.rowCount(); ++i ) {
@@ -1639,6 +1652,18 @@ void MagnitudeView::recalculateMagnitude() {
 	}
 
 	_netMag->setStationCount(staCount);
+
+	idx = findData(_tabMagnitudes, _netMag->publicID());
+	if ( idx != -1 )
+		_tabMagnitudes->setTabText(
+			idx,
+			QString("%1 %2 (%3/%4)")
+			.arg(_netMag->type().c_str())
+			.arg(_netMag->magnitude().value(), 0,
+			     'f', SCScheme.precision.magnitude)
+			.arg(usedStationCount(_netMag.get()))
+			.arg(totalStationCount(_netMag.get()))
+		);
 
 	updateMagnitudeLabels();
 	_ui.tableStationMagnitudes->reset();
@@ -2167,9 +2192,15 @@ void MagnitudeView::magnitudeCreated(Seiscomp::DataModel::Magnitude *netMag) {
 	*/
 
 	// Replace magnitude
-	_tabMagnitudes->setTabText(typeIdx, QString("%1 %2")
-	                           .arg(netMag->type().c_str())
-	                           .arg(netMag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
+	_tabMagnitudes->setTabText(
+		typeIdx,
+		QString("%1 %2 (%3/%4)")
+		.arg(netMag->type().c_str())
+		.arg(netMag->magnitude().value(), 0,
+		     'f', SCScheme.precision.magnitude)
+		.arg(usedStationCount(netMag))
+		.arg(totalStationCount(netMag))
+	);
 	_tabMagnitudes->setTabData(typeIdx, QVariant::fromValue<TabData>(netMag->publicID()));
 	if ( _tabMagnitudes->currentIndex() != typeIdx )
 		_tabMagnitudes->setCurrentIndex(typeIdx);
@@ -3082,9 +3113,14 @@ void MagnitudeView::updateObject(const QString &parentID, Seiscomp::DataModel::O
 		if ( _origin && _origin->publicID() == parentID.toStdString() ) {
 			int idx = findData(_tabMagnitudes, netMag->publicID());
 			if ( idx != -1 )
-				_tabMagnitudes->setTabText(idx, QString("%1 %2")
-				                           .arg(netMag->type().c_str())
-				                           .arg(netMag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
+				_tabMagnitudes->setTabText(
+					idx,
+					QString("%1 %2 (%3/%4)")
+					.arg(netMag->type().c_str())
+					.arg(netMag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)
+					.arg(usedStationCount(netMag))
+					.arg(totalStationCount(netMag))
+				);
 		}
 
 		// Not for now
@@ -3148,9 +3184,13 @@ int MagnitudeView::addMagnitude(Seiscomp::DataModel::Magnitude* netMag) {
 	}
 
 	//_ui.comboMagType->addItem(QString("%1").arg(netMag->type().c_str()), data);
-	int tabIndex = _tabMagnitudes->addTab(QString("%1 %2")
-	                                      .arg(netMag->type().c_str())
-	                                      .arg(netMag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
+	int tabIndex = _tabMagnitudes->addTab(
+		QString("%1 %2 (%3/%4)")
+		.arg(netMag->type().c_str())
+		.arg(netMag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)
+		.arg(usedStationCount(netMag))
+		.arg(totalStationCount(netMag))
+	);
 	TabData data(netMag->publicID());
 
 	try {

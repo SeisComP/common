@@ -52,6 +52,7 @@ namespace Core {
      to WindowFunc::process(int n, T *inout, double left, double right)
    - Added locale to Seiscomp::Processing::MagnitudeProcessor::computeMagnitude
    - Removed Seiscomp::Processing::MagnitudeProcessor::correctMagnitude
+   - Added signal Seiscomp::Gui::EventListView::visibleEventCountChanged()
 
  "14.2.0"   0x0E0200
    - Added Seiscomp::Client::Application::injectMessage

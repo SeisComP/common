@@ -2012,11 +2012,13 @@ using namespace Private;
 
 EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool withOrigins,
                              bool withFocalMechanisms, QWidget * parent, Qt::WindowFlags f)
- : QWidget(parent, f), _reader(reader),
-   _withOrigins(withOrigins), _withFocalMechanisms(withFocalMechanisms),
-   _blockSelection(false), _blockRemovingOfExpiredEvents(false) {
+: QWidget(parent, f), _reader(reader)
+, _withOrigins(withOrigins), _withFocalMechanisms(withFocalMechanisms)
+, _blockSelection(false), _blockRemovingOfExpiredEvents(false)
+, _blockCountSignal(false) {
 	_ui.setupUi(this);
 
+	_visibleEventCount = 0;
 	_regionIndex = 0;
 	_commandWaitDialog = nullptr;
 
@@ -2597,13 +2599,21 @@ void EventListView::updateAgencyState() {
 void EventListView::updateHideState() {
 	bool changed = false;
 
+	_blockCountSignal = true;
+
 	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
 		EventTreeItem* item = (EventTreeItem*)_treeWidget->topLevelItem(i);
-		if ( updateHideState(item) ) changed = true;
+		if ( updateHideState(item) ) {
+			changed = true;
+		}
 	}
 
-	if ( changed )
+	_blockCountSignal = false;
+
+	if ( changed ) {
 		emit eventsUpdated();
+		emit visibleEventCountChanged();
+	}
 }
 
 
@@ -2671,10 +2681,20 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 
 	if ( hide != _treeWidget->isItemHidden(item) ) {
 		_treeWidget->setItemHidden(item, hide);
-		if ( hide )
+		if ( hide ) {
+			if ( _visibleEventCount > 0 )
+				--_visibleEventCount;
 			emit eventRemovedFromList(event);
-		else
+			if ( !_blockCountSignal )
+				emit visibleEventCountChanged();
+		}
+		else {
+			if ( _visibleEventCount >= 0 )
+				++_visibleEventCount;
 			emit eventAddedToList(event, false);
+			if ( !_blockCountSignal )
+				emit visibleEventCountChanged();
+		}
 
 		return true;
 	}
@@ -2810,8 +2830,8 @@ void EventListView::setEventModificationsEnabled(bool e) {
 
 
 void EventListView::initTree() {
-
 	_treeWidget->clear();
+	_visibleEventCount = 0;
 
 	if ( _withOrigins )
 		_unassociatedEventItem = addEvent(nullptr, false);
@@ -2908,6 +2928,7 @@ bool EventListView::eventFilter(QObject *obj, QEvent *ev) {
 
 void EventListView::clear() {
 	initTree();
+	emit visibleEventCountChanged();
 }
 
 
@@ -3049,6 +3070,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 	_blockSelection = true;
 	_blockRemovingOfExpiredEvents = true;
+	_blockCountSignal = true;
 
 	EventPtr event;
 	size_t numberOfEvents = _reader->getObjectCount(&ep, Event::TypeInfo());
@@ -3380,10 +3402,13 @@ void EventListView::readFromDatabase(const Filter &filter) {
 	_treeWidget->setUpdatesEnabled(true);
 
 	QApplication::restoreOverrideCursor();
+
 	_blockSelection = false;
 	_blockRemovingOfExpiredEvents = false;
+	_blockCountSignal = false;
 
 	emit eventsUpdated();
+	emit visibleEventCountChanged();
 }
 
 
@@ -3413,8 +3438,13 @@ void EventListView::removeExpiredEvents() {
 			if ( remove ) {
 				QTreeWidgetItem* item = _treeWidget->takeTopLevelItem(i);
 				if ( item ) {
+					if ( !item->isHidden() ) {
+						if ( _visibleEventCount > 0 )
+							--_visibleEventCount;
+						emit eventRemovedFromList(event);
+						emit visibleEventCountChanged();
+					}
 					delete item;
-					eventRemovedFromList(event);
 					--i;
 				}
 			}
@@ -3505,7 +3535,16 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 
 	item->update(this);
 
-	updateHideState(item);
+	if ( event ) {
+		// Show event initially
+		if ( _visibleEventCount >= 0 and !item->isHidden() )
+			++_visibleEventCount;
+
+		if ( !updateHideState(item) and !item->isHidden() ) {
+			emit eventAddedToList(event, false);
+			emit visibleEventCountChanged();
+		}
+	}
 
 	int fixedItems = 0;
 	if ( _unassociatedEventItem ) fixedItems = 1;
@@ -3517,9 +3556,6 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 	_ui.btnClear->setEnabled(true);
 
 	updateEventProcessColumns(item, true);
-
-	if ( event && !item->isHidden() )
-		emit eventAddedToList(event, fromNotification);
 
 	return item;
 }
@@ -3771,6 +3807,12 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 				EventTreeItem* item = (EventTreeItem*)findEvent(e->publicID());
 				if ( item ) {
 					SEISCOMP_DEBUG("Delete event item %s", e->publicID().c_str());
+					if ( !item->isHidden() ) {
+						if ( _visibleEventCount > 0 )
+							--_visibleEventCount;
+						emit eventRemovedFromList(item->event());
+						emit visibleEventCountChanged();
+					}
 					delete item;
 				}
 				break;
@@ -3914,7 +3956,8 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 								originItem = addOrigin(org, eventItem, false);
 							}
 						}
-						if ( !_checkEventAgency ) updateHideState(eventItem);
+						if ( !_checkEventAgency )
+							updateHideState(eventItem);
 					}
 					else {
 						OriginTreeItem* originItem = findOrigin(ref->originID());
@@ -3942,7 +3985,8 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 								}
 							}
 						}
-						if ( !_checkEventAgency ) updateHideState(eventItem);
+						if ( !_checkEventAgency )
+							updateHideState(eventItem);
 					}
 					break;
 				}
@@ -4599,7 +4643,21 @@ EventListView::eventFromTreeItem(QTreeWidgetItem *item) const {
 
 
 int EventListView::eventCount() const {
-	return _treeWidget->topLevelItemCount()-1;
+	return _treeWidget->topLevelItemCount() - (_unassociatedEventItem ? 1 : 0);
+}
+
+
+int EventListView::visibleEventCount() const {
+	if ( _visibleEventCount < 0 ) {
+		qWarning() << "Counting visible events";
+		_visibleEventCount = 0;
+		for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
+			EventTreeItem* item = (EventTreeItem*)_treeWidget->topLevelItem(i);
+			if ( item->event() ) ++_visibleEventCount;
+		}
+	}
+
+	return _visibleEventCount;
 }
 
 
