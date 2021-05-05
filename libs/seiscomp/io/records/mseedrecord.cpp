@@ -53,6 +53,18 @@ void _Record_Handler(char *record, int reclen, void *packed) {
 }
 
 
+bool isPowerOfTwo(size_t n) {
+	if ( !n ) return false;
+
+	while ( n != 1 ) {
+		if ( n % 2 ) return false;
+		n >>= 1;
+	}
+
+	return true;
+}
+
+
 struct MSEEDLogger {
 	MSEEDLogger() {
 		ms_loginit(MSEEDLogger::print, "[libmseed] ", MSEEDLogger::diag, "[libmseed] ");
@@ -678,65 +690,161 @@ bool _isHeader(const char *header) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+
+bool fill(std::istream &is, std::vector<char> &buffer, size_t newSize) {
+	size_t oldSize = buffer.size();
+	if ( newSize > oldSize ) {
+		buffer.resize(newSize);
+		is.read(buffer.data() + oldSize, buffer.size() - oldSize);
+		return is.good();
+	}
+	else
+		return true;
+}
+
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::read(std::istream &is) {
 #define HEADER_BLOCK_LEN 64
 	int reclen = -1;
 	MSRecord *prec = nullptr;
-	const int LEN = 128;
-	char header[LEN];
+	bool swapflag = false;
+	char header[HEADER_BLOCK_LEN];
+	std::vector<char> buffer;
 
-	is.read(header, LEN);
 	while ( is.good() ) {
-		if ( MS_ISVALIDHEADER(header) ) {
-			reclen = ms_detect(header, LEN);
-			if ( reclen > 0 )
+		if ( is.read(header, sizeof(header))
+		 and MS_ISVALIDHEADER(header) ) {
+			buffer.reserve(512);
+			buffer.resize(sizeof(header));
+			memcpy(buffer.data(), header, sizeof(header));
+
+			// Remember current position
+			size_t p = is.tellg();
+
+			fsdh_s *fsdh = reinterpret_cast<fsdh_s*>(buffer.data());
+			uint16_t blkt_offset;
+			uint16_t blkt_type;
+			uint16_t next_blkt;
+
+			if ( !MS_ISVALIDYEARDAY(fsdh->start_time.year, fsdh->start_time.day) )
+				swapflag = true;
+
+			blkt_offset = fsdh->blockette_offset;
+			if ( swapflag ) ms_gswap2(&blkt_offset);
+
+			while ( blkt_offset != 0 ) {
+				blkt_type = *reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset);
+				next_blkt = *reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset + 2);
+
+				if ( swapflag ) {
+					ms_gswap2(&blkt_type);
+					ms_gswap2(&next_blkt);
+				}
+
+				if ( next_blkt != 0 ) {
+					if ( (next_blkt < 4 || (next_blkt - 4) <= blkt_offset) ) {
+						is.seekg(p);
+						throw Core::StreamException("Invalid blockette offset less than or equal to current offset");
+					}
+
+					if ( !fill(is, buffer, next_blkt) ) {
+						is.seekg(p);
+						throw Core::StreamException("Blockette reading error");
+					}
+				}
+
+				// Found a 1000 blockette
+				if ( blkt_type == 1000
+				  && size_t(blkt_offset + 4 + sizeof(blkt_1000_s)) <= buffer.size() ) {
+					blkt_1000_s *blkt_1000;blkt_1000 = reinterpret_cast<blkt_1000_s*>(buffer.data() + blkt_offset + 4);
+					reclen = (unsigned int)1 << blkt_1000->reclen;
+					break;
+				}
+
+				blkt_offset = next_blkt;
+			}
+
+			if ( reclen < 0 ) {
+				// Read current record to next power of two
+				size_t oldSize = buffer.size();
+				size_t newSize = 1;
+
+				while ( newSize < oldSize )
+					newSize <<= 1;
+
+				if ( !fill(is, buffer, newSize) ) {
+					is.seekg(p);
+					throw Core::StreamException("Data read error");
+				}
+
+				while ( is.read(header, sizeof(header)) ) {
+					if ( MS_ISVALIDHEADER(header)
+					  or MS_ISVALIDBLANK(header)
+					  or _isHeader(header) ) {
+						reclen = buffer.size();
+						// Set current stream position back to header start
+						is.seekg(-sizeof(header), std::ios::cur);
+						break;
+					}
+					else {
+						if ( buffer.size() < MAXRECLEN ) {
+							buffer.resize(buffer.size() + sizeof(header));
+							memcpy(buffer.data() + buffer.size() - sizeof(header), header, sizeof(header));
+						}
+						else {
+							throw Core::StreamException("Mini SEED Record exceeds 2**20 bytes");
+						}
+					}
+				}
+
+				if ( is.eof() and isPowerOfTwo(buffer.size()) ) {
+					reclen = buffer.size();
+				}
+			}
+
+			if ( reclen > 0 ) {
+				if ( reclen > MAXRECLEN )
+					throw Core::StreamException("Mini SEED Record exceeds 2**20 bytes");
+
+				if ( !fill(is, buffer, reclen) ) {
+					is.seekg(p);
+					if ( is.eof() )
+						throw Core::EndOfStreamException();
+					else
+						throw Core::StreamException("Fatal error occured during reading record from stream");
+				}
+
 				break;
+			}
 		}
-		else {
-			// ignore nondata records and scan to the next valid header
-			if ( LEN > HEADER_BLOCK_LEN )
-				memmove(header, header + HEADER_BLOCK_LEN, LEN - HEADER_BLOCK_LEN);
-			is.read(header + LEN - HEADER_BLOCK_LEN, HEADER_BLOCK_LEN);
-		}
+
+		// Skip over to the next header
 	}
 
-	if ( !is.good() ) {
+	if ( reclen <= 0 ) {
 		if ( is.eof() )
 			throw Core::EndOfStreamException();
 		else
-			throw Core::StreamException("Fatal error occured during reading header from stream");
+			throw LibmseedException("Retrieving the record length failed");
 	}
 
-	if ( reclen <= 0 )
-		throw LibmseedException("Retrieving the record length failed");
-
-	if ( reclen >= LEN ) {
-		if ( reclen <= (1 << 20) ) {
-			std::vector<char> rawrec((size_t(reclen)));
-			memmove(&rawrec[0],header,LEN);
-			is.read(&rawrec[LEN],reclen-LEN);
-			if ( is.good() ) {
-				if ( msr_unpack(&rawrec[0],reclen,&prec,0,0) == MS_NOERROR ) {
-					*this = MSeedRecord(prec,this->_datatype,this->_hint);
-					msr_free(&prec);
-					if ( _fsamp <= 0 )
-						throw LibmseedException("Unpacking of Mini SEED record failed");
-				}
-				else
-					throw LibmseedException("Unpacking of Mini SEED record failed");
-			}
-			else if ( is.bad() || !is.eof() )
-				throw Core::StreamException("Fatal error occured during reading from stream");
-			else if ( is.eof() )
-				throw Core::EndOfStreamException();
-		}
-		else {
-			throw Core::StreamException("Mini SEED Record exceeds 2**20 bytes");
-		}
-	}
-	else {
+	if ( reclen < MINRECLEN )
 		throw Core::EndOfStreamException("Invalid Mini SEED record, too small");
-	}
+
+	if ( msr_unpack(buffer.data(), reclen, &prec, 0, 0) != MS_NOERROR )
+		throw LibmseedException("Unpacking of Mini SEED record failed");
+
+	*this = MSeedRecord(prec,this->_datatype,this->_hint);
+	msr_free(&prec);
+	if ( _fsamp <= 0 )
+		throw LibmseedException("Unpacking of Mini SEED record failed");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
