@@ -740,6 +740,11 @@ void MSeedRecord::read(std::istream &is) {
 			if ( swapflag ) ms_gswap2(&blkt_offset);
 
 			while ( blkt_offset != 0 ) {
+				if ( !fill(is, buffer, blkt_offset + 4) ) {
+					is.seekg(p);
+					throw Core::StreamException("Blockette reading error");
+				}
+
 				blkt_type = *reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset);
 				next_blkt = *reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset + 2);
 
@@ -761,8 +766,12 @@ void MSeedRecord::read(std::istream &is) {
 				}
 
 				// Found a 1000 blockette
-				if ( blkt_type == 1000
-				  && size_t(blkt_offset + 4 + sizeof(blkt_1000_s)) <= buffer.size() ) {
+				if ( blkt_type == 1000 ) {
+					if ( !fill(is, buffer, blkt_offset + 4 + sizeof(blkt_1000_s)) ) {
+						is.seekg(p);
+						throw Core::StreamException("Blockette 1000 reading error");
+					}
+
 					blkt_1000_s *blkt_1000;blkt_1000 = reinterpret_cast<blkt_1000_s*>(buffer.data() + blkt_offset + 4);
 					reclen = (unsigned int)1 << blkt_1000->reclen;
 					break;
