@@ -182,12 +182,12 @@ struct FocalMechanismConnector : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
 	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
 		Event *event = Event::Cast(object);
-		if ( event == nullptr || event->eventParameters() == nullptr ) return false;
+		if ( !event || !event->eventParameters() ) return false;
 		EventParameters *ep = event->eventParameters();
 		FocalMechanism *fm;
 		for ( size_t i = 0; i < event->focalMechanismReferenceCount(); ++i ) {
 			fm = findFocalMechanism(ep, event->focalMechanismReference(i)->focalMechanismID());
-			if ( fm != nullptr ) {
+			if ( fm ) {
 				output->handle(fm, tag, ns);
 			}
 		}
@@ -204,7 +204,7 @@ struct OriginConnector : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
 	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
 		Event *event = Event::Cast(object);
-		if ( event == nullptr || event->eventParameters() == nullptr ) return false;
+		if ( !event || !event->eventParameters() ) return false;
 		EventParameters *ep = event->eventParameters();
 		Origin *origin;
 		Magnitude *magnitude;
@@ -219,6 +219,18 @@ struct OriginConnector : IO::XML::MemberHandler {
 		// Collect origin references
 		for ( size_t oi = 0; oi < event->originReferenceCount(); ++oi )
 			orgRefs.insert(event->originReference(oi)->originID());
+
+		// Collect derived origin ids
+		for ( size_t fmi = 0; fmi < event->focalMechanismReferenceCount(); ++fmi ) {
+			FocalMechanism *fm = ep->findFocalMechanism(event->focalMechanismReference(fmi)->focalMechanismID());
+			if ( fm ) {
+				for ( size_t mi = 0; mi < fm->momentTensorCount(); ++mi ) {
+					MomentTensor *mt = fm->momentTensor(mi);
+					if ( !mt->derivedOriginID().empty() )
+						orgRefs.insert(mt->derivedOriginID());
+				}
+			}
+		}
 
 		// Check all origins if they should be exported
 		for ( size_t i = 0; i < ep->originCount(); ++i ) {
@@ -237,14 +249,14 @@ struct OriginConnector : IO::XML::MemberHandler {
 					if ( staMag->originID().empty() )
 						staMag->setOriginID(origin->publicID());
 					amplitude = findAmplitude(ep, staMag->amplitudeID());
-					if ( amplitude != nullptr) {
+					if ( amplitude ) {
 						output->handle(amplitude, "amplitude", "");
 						// include picks referenced by amplitude
 						std::pair<std::set<std::string>::const_iterator, bool> res =
 						        pickRefs.insert(amplitude->pickID());
 						if ( res.second ) {
 							pick = findPick(ep, *res.first);
-							if ( pick != nullptr ) {
+							if ( pick ) {
 								output->handle(pick, "pick", "");
 							}
 						}
@@ -259,7 +271,7 @@ struct OriginConnector : IO::XML::MemberHandler {
 					        pickRefs.insert(origin->arrival(ai)->index().pickID);
 					if ( res.second ) {
 						pick = findPick(ep, *res.first);
-						if ( pick != nullptr ) {
+						if ( pick ) {
 							output->handle(pick, "pick", "");
 						}
 					}
@@ -294,7 +306,7 @@ struct RTMagnitudeConnector : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
 	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
 		EventParameters *ep = EventParameters::Cast(object);
-		if ( ep == nullptr ) return false;
+		if ( !ep ) return false;
 		Origin *origin;
 		for ( size_t oi = 0; oi < ep->originCount(); ++oi ) {
 			origin = ep->origin(oi);
@@ -322,12 +334,12 @@ struct RTMagnitudeReferenceConnector : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
 	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
 		Event *event = Event::Cast(object);
-		if ( event == nullptr || event->eventParameters() == nullptr ) return false;
+		if ( !event || !event->eventParameters() ) return false;
 		EventParameters *ep = event->eventParameters();
 		Origin *origin;
 		for ( size_t oi = 0; oi < event->originReferenceCount(); ++oi ) {
 			origin = findOrigin(ep, event->originReference(oi)->originID());
-			if ( origin == nullptr ) continue;
+			if ( !origin ) continue;
 			for ( size_t mi = 0; mi < origin->magnitudeCount(); ++mi ) {
 				std::string v = origin->magnitude(mi)->publicID();
 				__resRefMan.to(v);
@@ -349,7 +361,7 @@ struct FormatedPropertyHandler : IO::XML::PropertyHandler {
 
 	std::string value(Core::BaseObject *obj) {
 		std::string v = IO::XML::PropertyHandler::value(obj);
-		if ( formatter != nullptr ) formatter->to(v);
+		if ( formatter ) formatter->to(v);
 		return v;
 	}
 };
@@ -395,11 +407,11 @@ void TypedClassHandler<T>::add(const char *property, const char *name,
                                IO::XML::ClassHandler::Type t,
                                IO::XML::ClassHandler::Location l) {
 	const Core::MetaObject *obj = T::Meta();
-	if ( obj == nullptr )
+	if ( !obj )
 		throw Core::TypeException(std::string(T::ClassName()) + ": no metaobject");
 
 	const Core::MetaProperty *prop = obj->property(property);
-	if ( prop == nullptr )
+	if ( !prop )
 		throw Core::TypeException(std::string(T::ClassName()) + ": no metaproperty: " + property);
 	if ( prop->isArray() )
 		IO::XML::ClassHandler::addChild(property, "",
@@ -423,7 +435,7 @@ void TypedClassHandler<T>::addList(const char *properties,
 	std::vector<std::string> toks;
 	Core::split(toks, properties, ",");
 	const Core::MetaObject *obj = T::Meta();
-	if ( obj == nullptr )
+	if ( !obj )
 		throw Core::TypeException(std::string(T::ClassName()) + ": no metaobject");
 
 	std::vector<std::string>::iterator it = toks.begin();
@@ -431,7 +443,7 @@ void TypedClassHandler<T>::addList(const char *properties,
 		std::string property = Core::trim(*it);
 		const Core::MetaProperty *prop = nullptr;
 		prop = obj->property(property);
-		if ( prop == nullptr )
+		if ( !prop )
 			throw Core::TypeException(std::string(T::ClassName()) + ": no metaproperty: " + property);
 		if ( prop->isArray() ) {
 			IO::XML::ClassHandler::addChild(property.c_str(), "", new IO::XML::ChildPropertyHandler(prop));
@@ -507,7 +519,7 @@ struct ResourceURIHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
 	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
 		WaveformStreamID *wfsID = WaveformStreamID::Cast(object);
-		if ( wfsID == nullptr || wfsID->resourceURI().empty() ) return false;
+		if ( !wfsID || wfsID->resourceURI().empty() ) return false;
 		std::string uri = wfsID->resourceURI();
 		__resRef.to(uri);
 		output->put(uri.c_str());
@@ -555,7 +567,7 @@ struct OriginDepthHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
 	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
 		Origin *o = Origin::Cast(object);
-		if ( o == nullptr ) return false;
+		if ( !o ) return false;
 		try {
 			RealQuantity& depth = o->depth();
 			depth.setValue(depth.value() * 1000);
@@ -580,7 +592,7 @@ struct TakeOffAngleHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
 	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
 		Arrival *arrival = Arrival::Cast(object);
-		if ( arrival == nullptr ) return false;
+		if ( !arrival ) return false;
 		try {
 			std::string v = Core::toString(arrival->takeOffAngle());
 			const char *tagTA = "takeoffAngle";
@@ -606,7 +618,7 @@ struct ArrivalWeightHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
 	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
 		Arrival *arrival = Arrival::Cast(object);
-		if ( arrival == nullptr ) return false;
+		if ( !arrival ) return false;
 
 		bool weightSet = false;
 		std::string weight = "1";
@@ -707,7 +719,7 @@ struct OriginUncertaintyHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
 	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
 		Origin *o = Origin::Cast(object);
-		if ( o == nullptr ) return false;
+		if ( !o ) return false;
 		try {
 			OriginUncertainty &ou = o->uncertainty();
 			try { ou.setHorizontalUncertainty(ou.horizontalUncertainty() * 1000); }
@@ -816,7 +828,7 @@ struct AmplitudeValueHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
 	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
 		Amplitude *amp = Amplitude::Cast(object);
-		if ( amp == nullptr ) return false;
+		if ( !amp ) return false;
 		try {
 			double scale = 1.0;
 
@@ -824,13 +836,13 @@ struct AmplitudeValueHandler : IO::XML::MemberHandler {
 				AmplitudeUnitMap::iterator it = __amplitudeUnits.find(amp->type());
 				if ( it != __amplitudeUnits.end() ) {
 					const Util::UnitConversion *conv = Util::UnitConverter::get(it->second);
-					if ( conv != nullptr )
+					if ( conv )
 						scale = conv->scale;
 				}
 			}
 			else {
 				const Util::UnitConversion *conv = Util::UnitConverter::get(amp->unit());
-				if ( conv != nullptr )
+				if ( conv )
 					scale = conv->scale;
 			}
 
@@ -857,7 +869,7 @@ struct AmplitudeUnitHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
 	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
 		Amplitude *amp = Amplitude::Cast(object);
-		if ( amp == nullptr ) return false;
+		if ( !amp ) return false;
 
 		const std::string *ustr = nullptr;
 
@@ -865,19 +877,19 @@ struct AmplitudeUnitHandler : IO::XML::MemberHandler {
 			AmplitudeUnitMap::iterator it = __amplitudeUnits.find(amp->type());
 			if ( it != __amplitudeUnits.end() ) {
 				const Util::UnitConversion *conv = Util::UnitConverter::get(it->second);
-				if ( conv != nullptr )
+				if ( conv )
 					ustr = &conv->toQMLUnit;
 			}
 		}
 		else {
 			const Util::UnitConversion *conv = Util::UnitConverter::get(amp->unit());
-			if ( conv != nullptr )
+			if ( conv )
 				ustr = &conv->toQMLUnit;
 		}
 
 		if ( !output->openElement(tag, ns) ) return false;;
 
-		if ( ustr != nullptr )
+		if ( ustr )
 			output->put(ustr->c_str());
 		else if ( !amp->unit().empty() )
 			output->put("other");
@@ -911,7 +923,7 @@ struct AmplitudeHandler : TypedClassHandler<Amplitude> {
 	bool put(Core::BaseObject *obj, const char *tag, const char *ns,
 	         IO::XML::OutputHandler *output) {
 		Amplitude *amplitude = Amplitude::Cast(obj);
-		if ( amplitude == nullptr ) return false;
+		if ( !amplitude ) return false;
 
 		try {
 			amplitude->amplitude();
