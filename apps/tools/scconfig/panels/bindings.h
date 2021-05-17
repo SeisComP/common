@@ -68,11 +68,16 @@ class BindingView : public QWidget {
 		void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 		void rowsRemoved(const QModelIndex &parent, int start, int end);
 
+		void search(const QString &text);
+		void search();
+		void closeSearch();
+
 
 	private:
 		QAbstractItemModel                     *_model;
 		QPersistentModelIndex                   _rootIndex;
 		QWidget                                *_header;
+		QWidget                                *_searchWidget;
 		QLabel                                 *_icon;
 		QLabel                                 *_label;
 		ConfigurationTreeItemModel             *_bindingModel;

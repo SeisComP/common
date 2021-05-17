@@ -428,6 +428,44 @@ BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(NULL) {
 	pal.setColor(QPalette::WindowText, Qt::gray);
 	_header->setPalette(pal);
 
+	_searchWidget = new QWidget;
+	_searchWidget->setAutoFillBackground(true);
+	QHBoxLayout *searchLayout = new QHBoxLayout;
+	_searchWidget->setLayout(searchLayout);
+	QLabel *labelSearch = new QLabel;
+	labelSearch->setText("Search parameter:");
+	labelSearch->setSizePolicy(QSizePolicy(QSizePolicy::Maximum,QSizePolicy::Preferred));
+	QLineEdit *search = new QLineEdit;
+	connect(search, SIGNAL(textEdited(const QString &)),
+	        this, SLOT(search(const QString &)));
+	connect(search, SIGNAL(returnPressed()), this, SLOT(search()));
+	QPushButton *searchClose = new QPushButton;
+	searchClose->setIcon(style()->standardIcon(QStyle::SP_DockWidgetCloseButton));
+	searchClose->setFixedSize(18,18);
+
+	connect(searchClose, SIGNAL(clicked()), this, SLOT(closeSearch()));
+
+	searchLayout->setMargin(8);
+	searchLayout->addWidget(labelSearch);
+	searchLayout->addWidget(search);
+	searchLayout->addWidget(searchClose);
+
+	QAction *activateSearch = new QAction(this);
+	activateSearch->setShortcut(QKeySequence("Ctrl+f"));
+	addAction(activateSearch);
+	connect(activateSearch, SIGNAL(triggered()), _searchWidget, SLOT(show()));
+	connect(activateSearch, SIGNAL(triggered()), search, SLOT(setFocus()));
+
+	QAction *closeSearch = new QAction(_searchWidget);
+	closeSearch->setShortcut(QKeySequence("Esc"));
+#if QT_VERSION >= 0x040400
+	closeSearch->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+#endif
+	_searchWidget->addAction(closeSearch);
+	connect(closeSearch, SIGNAL(triggered()), this, SLOT(closeSearch()));
+
+	_searchWidget->hide();
+
 	QFont f = _header->font();
 	f.setPointSize(f.pointSize()*150/100);
 	f.setBold(true);
@@ -451,6 +489,7 @@ BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(NULL) {
 	l->setSpacing(1);
 	setLayout(l);
 	l->addWidget(_header);
+	l->addWidget(_searchWidget);
 	l->addWidget(_view);
 }
 
@@ -544,6 +583,45 @@ void BindingView::rowsRemoved(const QModelIndex &parent, int start, int end) {
 		i = p;
 		p = p.parent();
 	}
+}
+
+
+void BindingView::search(const QString &text) {
+	QModelIndexList hits;
+
+	QModelIndex idx = _view->rootIndex();
+	QAbstractItemModel *model = _view->model();
+
+	if ( text.isEmpty() ) {
+		_view->scrollTo(idx);
+		_view->setCurrentIndex(idx);
+		return;
+	}
+
+	int rows = model->rowCount(idx);
+
+	for ( int i = 0; i < rows; ++i ) {
+		hits = model->match(idx.child(i,0), Qt::DisplayRole, text, 1,
+		                    Qt::MatchStartsWith |
+		                    Qt::MatchRecursive |
+		                    Qt::MatchWrap);
+
+		if ( hits.isEmpty() ) continue;
+		_view->scrollTo(hits.first());
+		_view->setCurrentIndex(hits.first());
+		break;
+	}
+}
+
+
+void BindingView::search() {
+	search(static_cast<QLineEdit*>(sender())->text());
+}
+
+
+void BindingView::closeSearch() {
+	_view->setCurrentIndex(_rootIndex);
+	_searchWidget->hide();
 }
 
 
