@@ -703,6 +703,17 @@ bool fill(std::istream &is, std::vector<char> &buffer, size_t newSize) {
 		return true;
 }
 
+void error(std::istream &is, const char *msg, size_t fp) {
+	if ( is.eof() ) {
+		throw Core::EndOfStreamException();
+	}
+	else {
+		is.seekg(fp);
+		throw Core::StreamException(msg);
+	}
+}
+
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -740,10 +751,8 @@ void MSeedRecord::read(std::istream &is) {
 			if ( swapflag ) ms_gswap2(&blkt_offset);
 
 			while ( blkt_offset != 0 ) {
-				if ( !fill(is, buffer, blkt_offset + 4) ) {
-					is.seekg(p);
-					throw Core::StreamException("Blockette reading error");
-				}
+				if ( !fill(is, buffer, blkt_offset + 4) )
+					error(is, "Blockette reading error", p);
 
 				blkt_type = *reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset);
 				next_blkt = *reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset + 2);
@@ -754,23 +763,17 @@ void MSeedRecord::read(std::istream &is) {
 				}
 
 				if ( next_blkt != 0 ) {
-					if ( (next_blkt < 4 || (next_blkt - 4) <= blkt_offset) ) {
-						is.seekg(p);
-						throw Core::StreamException("Invalid blockette offset less than or equal to current offset");
-					}
+					if ( (next_blkt < 4 || (next_blkt - 4) <= blkt_offset) )
+						error(is, "Invalid blockette offset less than or equal to current offset", p);
 
-					if ( !fill(is, buffer, next_blkt) ) {
-						is.seekg(p);
-						throw Core::StreamException("Blockette reading error");
-					}
+					if ( !fill(is, buffer, next_blkt) )
+						error(is, "Blockette reading error", p);
 				}
 
 				// Found a 1000 blockette
 				if ( blkt_type == 1000 ) {
-					if ( !fill(is, buffer, blkt_offset + 4 + sizeof(blkt_1000_s)) ) {
-						is.seekg(p);
-						throw Core::StreamException("Blockette 1000 reading error");
-					}
+					if ( !fill(is, buffer, blkt_offset + 4 + sizeof(blkt_1000_s)) )
+						error(is, "Blockette 1000 reading error", p);
 
 					blkt_1000_s *blkt_1000;blkt_1000 = reinterpret_cast<blkt_1000_s*>(buffer.data() + blkt_offset + 4);
 					reclen = (unsigned int)1 << blkt_1000->reclen;
@@ -788,10 +791,8 @@ void MSeedRecord::read(std::istream &is) {
 				while ( newSize < oldSize )
 					newSize <<= 1;
 
-				if ( !fill(is, buffer, newSize) ) {
-					is.seekg(p);
-					throw Core::StreamException("Data read error");
-				}
+				if ( !fill(is, buffer, newSize) )
+					error(is, "Data read error", p);
 
 				while ( is.read(header, sizeof(header)) ) {
 					if ( MS_ISVALIDHEADER(header)
@@ -807,28 +808,21 @@ void MSeedRecord::read(std::istream &is) {
 							buffer.resize(buffer.size() + sizeof(header));
 							memcpy(buffer.data() + buffer.size() - sizeof(header), header, sizeof(header));
 						}
-						else {
-							throw Core::StreamException("Mini SEED Record exceeds 2**20 bytes");
-						}
+						else
+							error(is, "Mini SEED Record exceeds 2**20 bytes", p);
 					}
 				}
 
-				if ( is.eof() and isPowerOfTwo(buffer.size()) ) {
+				if ( is.eof() and isPowerOfTwo(buffer.size()) )
 					reclen = buffer.size();
-				}
 			}
 
 			if ( reclen > 0 ) {
 				if ( reclen > MAXRECLEN )
 					throw Core::StreamException("Mini SEED Record exceeds 2**20 bytes");
 
-				if ( !fill(is, buffer, reclen) ) {
-					is.seekg(p);
-					if ( is.eof() )
-						throw Core::EndOfStreamException();
-					else
-						throw Core::StreamException("Fatal error occured during reading record from stream");
-				}
+				if ( !fill(is, buffer, reclen) )
+					error(is, "Fatal error occured while reading record from stream", p);
 
 				break;
 			}
