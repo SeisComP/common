@@ -118,6 +118,34 @@ BOOST_AUTO_TEST_CASE(READ_FR_SALF_MULTIPLE) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(READ_FR_SALF_INCOMPLETE) {
+	SDSArchive sds("incomplete-archive");
+
+	Time startTime(2018,06,30,16,18,0,0);
+	Time endTime(2018,06,30,16,19,0,0);
+	sds.addStream("FR", "SALF", "00", "HHN", startTime, endTime);
+
+	RingBuffer buffer(0);
+	RecordPtr rec;
+
+	while ( (rec = sds.next()) ) {
+		buffer.push_back(rec);
+	}
+
+	BOOST_CHECK_EQUAL(buffer.size(), 20);
+
+	RecordPtr crec = buffer.contiguousRecord<double>();
+	BOOST_REQUIRE(crec);
+	SEISCOMP_DEBUG("%s ~ %s", crec->startTime().iso().c_str(), crec->endTime().iso().c_str());
+
+	BOOST_CHECK(crec->startTime() > startTime && crec->endTime() < endTime );
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 BOOST_AUTO_TEST_CASE(READ_GAPPY_ARCHIVE) {
 	SDSArchive sds("gappy-archive");
 
