@@ -1359,7 +1359,7 @@
 					</parameter>
 				</group>
 				<group name="fm">
-					<parameter name="visibleColumns" type="list:string" default="Depth, M, Count, Misfit, STDR, Azi. Gap(°), Stat, DC(%), CLVD(%), ISO(%), S1(°), D1(°), R1(°), S2(°), D2(°), R2(°), Agency, Author">
+					<parameter name="visibleColumns" type="list:string" default="Depth, M, Count, Misfit, STDR, &quot;Azi. Gap(°)&quot;, Stat, DC(%), CLVD(%), ISO(%), S1(°), D1(°), R1(°), S2(°), D2(°), R2(°), Agency, Author">
 						<description>
 						Configure the columns of the event edit focal mechanism
 						tab that are visible initially.
