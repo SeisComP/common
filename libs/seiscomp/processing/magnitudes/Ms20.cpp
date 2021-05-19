@@ -81,32 +81,32 @@ bool MagnitudeProcessor_ms20::MagnitudeProcessor_ms20::setup(const Settings &set
 	try { maxDepthKm = settings.getDouble("magnitudes.Ms_20.maxDepth"); }
 	catch ( ... ) {}
 
-	// depreciated parameters
+	// deprecated parameters
 	// period range in seconds
 	try {
 		lowPer = settings.getDouble("Ms_20.lowerPeriod");
-		SEISCOMP_WARNING("Ms_20.lowerPeriod has been depreciated");
+		SEISCOMP_WARNING("Ms_20.lowerPeriod has been deprecated");
 		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.lowerPeriod");
 	}
 	catch ( ... ) {}
 
 	try {
 		upPer = settings.getDouble("Ms_20.upperPeriod");
-		SEISCOMP_WARNING("Ms_20.upperPeriod has been depreciated");
+		SEISCOMP_WARNING("Ms_20.upperPeriod has been deprecated");
 		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.upperPeriod");}
 	catch ( ... ) {}
 
 	// distance range in degree
 	try {
 		minDistanceDeg = settings.getDouble("Ms_20.minimumDistance");
-		SEISCOMP_WARNING("Ms_20.minimumDistance has been depreciated");
+		SEISCOMP_WARNING("Ms_20.minimumDistance has been deprecated");
 		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.maxDist");
 	}
 	catch ( ... ) {}
 
 	try {
 		maxDistanceDeg = settings.getDouble("Ms_20.maximumDistance");
-		SEISCOMP_WARNING("Ms_20.maximumDistance has been depreciated");
+		SEISCOMP_WARNING("Ms_20.maximumDistance has been deprecated");
 		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.maxDist");
 	}
 	catch ( ... ) {}
@@ -114,7 +114,7 @@ bool MagnitudeProcessor_ms20::MagnitudeProcessor_ms20::setup(const Settings &set
 	// depth range in km
 	try {
 		maxDepthKm = settings.getDouble("Ms_20.maximumDepth");
-		SEISCOMP_WARNING("Ms_20.maximumDepth has been depreciated");
+		SEISCOMP_WARNING("Ms_20.maximumDepth has been deprecated");
 		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.maxDist");
 	}
 	catch ( ... ) {}
