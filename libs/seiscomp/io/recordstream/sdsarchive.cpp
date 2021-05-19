@@ -379,10 +379,10 @@ int SDSArchive::getDoy(const Time &time) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SDSArchive::resolveNet(string &pathStr,
-                     const string &net, const string &sta,
-                     const string &loc, const string &cha,
-                     const Time &requestStartTime,
-                     int doy, int year, bool first) {
+                            const string &net, const string &sta,
+                            const string &loc, const string &cha,
+                            const Time &requestStartTime,
+                            int doy, int year, bool first) {
 	if ( !isWildcard(net) ) {
 		pathStr += net + "/";
 		return resolveSta(pathStr, net, sta, loc, cha, requestStartTime, doy, year, first);
@@ -756,15 +756,18 @@ Seiscomp::Record *SDSArchive::next() {
 
 				return rec;
 			}
-			catch ( EndOfStreamException & ) {
-				delete rec;
+			catch ( EndOfStreamException &e ) {
 				// EOF for this file, do nothing
+				delete rec;
+				SEISCOMP_DEBUG("exc: %s", e.what());
 				break;
 			}
 			catch( exception &e ) {
-				SEISCOMP_ERROR("exc: %s", e.what());
 				// Invalid record, delete it
 				delete rec;
+				SEISCOMP_ERROR("exc: %d, %s", (int)_file.tellg(), e.what());
+				if ( !_file.good() )
+					break;
 			}
 		}
 
@@ -829,14 +832,15 @@ Seiscomp::Record *SDSArchive::next() {
 						}
 						catch ( EndOfStreamException &e ) {
 							delete rec;
-							SEISCOMP_DEBUG("Exc: %s", e.what());
+							SEISCOMP_DEBUG("exc: %s", e.what());
 							// EOF for this file, do nothing
 							break;
 						}
 						catch( exception &e ) {
-							SEISCOMP_ERROR("exc: %d, %s", (int)_file.tellg(), e.what());
-							// Invalid record, delete it
 							delete rec;
+							SEISCOMP_ERROR("exc: %d, %s", (int)_file.tellg(), e.what());
+							if ( !_file.good() )
+								break;
 						}
 					}
 
