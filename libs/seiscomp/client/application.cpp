@@ -148,6 +148,20 @@ void mapSchemaParameters(ParamMap &map, System::SchemaParameters *params,
 	}
 }
 
+bool configDefault(const System::Application::Arguments &args,
+                   const Config::Config &config, const string &query) {
+	std::string param = "--" + query + "=";
+	for ( size_t i = 1; i < args.size(); ++i ) {
+		if ( !args[i].compare(0, param.size(), param) )
+			return false;
+	}
+
+	Config::Symbol *symbol = config.symbolTable()->get(query);
+	return symbol != nullptr && (
+	       symbol->stage == Environment::CS_DEFAULT_GLOBAL ||
+	       symbol->stage == Environment::CS_DEFAULT_APP);
+}
+
 
 } // private namespace
 
@@ -1269,7 +1283,7 @@ void Application::createBaseCommandLineDescription() {
 	if ( _enableRecordStream ) {
 		commandline().addGroup("Records");
 		commandline().addOption("Records", "record-driver-list", "list all supported record stream drivers");
-		commandline().addOption("Records", "record-url,I", "the recordstream source URL, format: [service://]location[#type]", &_recordStream, false);
+		commandline().addOption("Records", "record-url,I", "the recordstream URL, format: [service://]location[#type]", &_recordStream, false);
 		commandline().addOption("Records", "record-file", "specify a file as recordsource", (std::string*)nullptr);
 		commandline().addOption("Records", "record-type", "specify a type for the records being read", (std::string*)nullptr);
 	}
@@ -1322,15 +1336,34 @@ bool Application::initConfiguration() {
 	try { _shutdownMasterModule = configGetString("client.shutdownMasterModule"); } catch ( ... ) {}
 	try { _shutdownMasterUsername = configGetString("client.shutdownMasterUsername"); } catch ( ... ) {}
 
+	std::string dbType, dbParams;
+	try { dbType = configGetString("database.type"); } catch ( ... ) {}
+	try { dbParams = configGetString("database.parameters"); } catch ( ... ) {}
 	try {
 		_db = configGetString("database");
+		if ( !dbType.empty() || !dbParams.empty() ) {
+			if ( !configDefault(_arguments, _configuration, "database.type") ||
+			     !configDefault(_arguments, _configuration, "database.parameters") ) {
+				SEISCOMP_ERROR("You are using the deprecated parameter "
+				               "'database.type' or 'database.parameters' along "
+				               "with the new 'database' parameter which takes "
+				               "precedence. Please remove the old parameters.");
+			}
+		}
 	}
 	catch ( ... ) {
-		std::string dbType, dbParams;
-		try { dbType = configGetString("database.type"); } catch ( ... ) {}
-		try { dbParams = configGetString("database.parameters"); } catch ( ... ) {}
-		if ( !dbType.empty() && !dbParams.empty() )
+		if ( !dbType.empty() && !dbParams.empty() ) {
 			_db = dbType + "://" + dbParams;
+			if ( !configDefault(_arguments, _configuration, "database.type") ||
+			     !configDefault(_arguments, _configuration, "database.parameters") ) {
+				SEISCOMP_ERROR("DEPRECATION WARNING: You are using the "
+				               "parameter 'database.type' and "
+				               "'database.parameters' which will be removed in "
+				               "the next major release. Please remove the old "
+				               "parameters and set the new 'database' "
+				               "parameter to '%s' instead.",_db.c_str());
+			}
+		}
 	}
 
 	try { _configModuleName = configGetString("configModule"); } catch ( ... ) {}
@@ -1348,11 +1381,32 @@ bool Application::initConfiguration() {
 
 	try {
 		_recordStream = configGetString("recordstream");
+		try {
+			if ( !configDefault(_arguments, _configuration, "recordstream.service") ||
+			     !configDefault(_arguments, _configuration, "recordstream.source") ) {
+				SEISCOMP_ERROR("You are using the deprecated parameter "
+				               "'recordstream.service' or "
+				               "'recordstream.source' along with the new "
+				               "'recordstream' parameter which takes "
+				               "precedence. Please remove the old parameters.");
+			}
+		}
+		catch (...) {}
 	}
 	catch (...) {
 		try {
 			_recordStream = configGetString("recordstream.service") + "://" +
 			                configGetString("recordstream.source");
+			if ( !configDefault(_arguments, _configuration, "recordstream.service") ||
+			     !configDefault(_arguments, _configuration, "recordstream.source") ) {
+				SEISCOMP_ERROR("DEPRECATION WARNING: You are using the "
+				               "parameter 'recordstream.service' or "
+				               "'recordstream.source' which will be removed in "
+				               "the next major release. Please remove the old "
+				               "parameters and set the new 'recordstream' "
+				               "parameter to '%s' instead.",
+				               _recordStream.c_str());
+			}
 		}
 		catch (...) {}
 	}

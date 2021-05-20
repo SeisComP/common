@@ -19,14 +19,17 @@ The following tables lists available implementations:
 Application
 ===========
 
-The RecordStream parameters considered by an application can be provided like a *URI*
+The RecordStream parameters considered by an application are provided as a *URL*
 in 2 alternative ways:
 
-* Specification of the *URI* on the command line. Use the option ``-I URI``
-* Configuration of the *URI* using the global parameters. Adjust either:
+* Specification of the *URL* on the command line. Use the option ``-I URL``
+* Configuration of the *URL* using the global parameter :confval:`recordstream`.
 
-  * the *URI* in :confval:`recordstream` or
-  * the *URI* separated into :confval:`recordstream.service` and :confval:`recordstream.source`.
+.. note::
+
+   Older SeisComP versions used to split the URL into the parameters
+   :confval:`recordstream.service` and :confval:`recordstream.source`. These
+   parameters are deprecated and will be removed in future versions.
 
 Implementations
 ===============
@@ -47,7 +50,7 @@ URL and supports URL encoded parameters. The default host is set to
 Examples
 ^^^^^^^^
 
-URI: *service://source?options*
+URL: *service://source?options*
 
 - ``slink://``
 - ``slink://geofon.gfz-potsdam.de?timeout=60&retries=5``
@@ -69,7 +72,7 @@ URL and supports URL encoded parameters. The default host is set to
 Examples
 ^^^^^^^^
 
-URI: *service://source?options*
+URL: *service://source?options*
 
 - ``arclink://``
 - ``arclink://geofon.gfz-potsdam.de?user=foo&pwd=secret``
@@ -87,7 +90,7 @@ URL.
 Examples
 ^^^^^^^^
 
-URI: *service://source?options*
+URL: *service://source?options*
 
 - ``fdsnws://service.iris.edu:80/fdsnws/dataselect/1/query``
 
@@ -112,7 +115,7 @@ Extension Record Type
 Examples
 ^^^^^^^^
 
-URI: *service://source*
+URL: *service://source*
 
 - ``file://-``
 - ``file:///tmp/input.mseed``
@@ -129,7 +132,7 @@ separated using commas.
 Example
 ^^^^^^^
 
-URI: *service://source*
+URL: *service://source*
 
 - ``sdsarchive:///home/sysop/seiscomp/var/lib/archive``
 
@@ -168,7 +171,7 @@ connection.
 Example
 ^^^^^^^
 
-URI: *service://user:password@source?options*
+URL: *service://user:password@source?options*
 
 - ``caps://localhost:18002``
 - ``capss://localhost:18022``
@@ -194,7 +197,7 @@ This RecordStream combines one archive and one real-time RecordStream, e.g.
 the size of the real-time buffer. Then the acquisition is switched to the
 real-time stream. The syntax for the source is similar to an URL:
 
-URI: *service://source??options*
+URL: *service://source??options*
 
 ``combined://real-time-stream;archive-stream??parameters``
 
@@ -225,7 +228,7 @@ in order to distinguish them from the parameters used in the proxy streams:
   or harddisks. See also the :ref:`examples<rs_splitTime>`.
 
 The combined record stream may be nested allowing the configuration of a
-(theoretically) infinite number of archive streams. The URI syntax for a nested
+(theoretically) infinite number of archive streams. The URL syntax for a nested
 configuration uses parenthesis:
 
 ``combined://real-time-stream;combined/(archive-stream1;archive-stream2??parameters)??parameters``
@@ -235,10 +238,10 @@ configuration uses parenthesis:
 Examples
 ^^^^^^^^
 
-URI: *service://source?options*
+URL: *service://source?options*
 
 .. csv-table::
-   :header: "URI", "Description"
+   :header: "URL", "Description"
 
    "``combined://localhost:18000;localhost:18001``", "Seedlink on localhost:18000 combined with Arclink on localhost 18001"
    "``combined://slink/localhost:18000;arclink/localhost:18001``", "Same as above"
@@ -273,10 +276,10 @@ station code and can be expressed in Python as follows:
 Examples
 ^^^^^^^^
 
-URI: *service://source*
+URL: *service://source*
 
 .. csv-table::
-   :header: "URI", "Description"
+   :header: "URL", "Description"
 
    "``balanced://slink/server1:18000;slink/server2:18000``", "Distribute requests to 2 :ref:`rs-slink` RecordStreams"
    "``balanced://combined/(server1:18000;server1:18001);combined/(server2:18000;server2:18001)``", "Distribute requests to 2 :ref:`rs-combined` RecordStreams"
@@ -301,7 +304,7 @@ Optional parameters are:
 Examples
 ^^^^^^^^
 
-URI: *service://source?options*
+URL: *service://source?options*
 
 - ``dec://slink/localhost:18000``
 - ``dec://file?rate=2/-``
@@ -330,7 +333,7 @@ Optional parameters are:
 Examples
 ^^^^^^^^
 
-URI: *service://source?options*
+URL: *service://source?options*
 
 - ``resample://slink/localhost:18000``
 - ``resample://file?rate=2/-``
