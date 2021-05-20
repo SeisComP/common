@@ -95,8 +95,8 @@
 				&quot;service&quot; is the name of the recordstream implementation.
 				If &quot;service&quot; is not given &quot;file://&quot; is implied.
 
-				This parameter overrides recordstream.service and recordstream.source
-				and has been added as a shortcut.
+				This parameter overrides the deprecated recordstream.service and
+				recordstream.source and should be used instead.
 				</description>
 			</parameter>
 			<group name="logging">
@@ -317,7 +317,7 @@
 				interface. Please consult the SeisComP documentation for a list of
 				supported services and their configuration. Note that this set of
 				parameters is deprecated and will be removed in future versions.
-				Please use the short form (recordstream = slink://localhost) in future.
+				Please use the URL form (recordstream = slink://localhost) in future.
 				</description>
 				<parameter name="service" type="string" default="slink">
 					<description>
