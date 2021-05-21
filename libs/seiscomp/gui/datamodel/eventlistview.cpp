@@ -94,6 +94,7 @@ MAKEENUM(
 		COL_DEPTH_TYPE,
 		COL_TYPE,
 		COL_FM,
+		COL_ORIGINS,
 		COL_AGENCY,
 		COL_AUTHOR,
 		COL_REGION,
@@ -113,6 +114,7 @@ MAKEENUM(
 		"DType",
 		"Stat",
 		"FM",
+		"Origins",
 		"Agency",
 		"Author",
 		"Region",
@@ -134,6 +136,7 @@ bool colVisibility[EventListColumns::Quantity] = {
 	true,
 	true,
 	true,
+	false,
 	false,
 	true,
 	true,
@@ -780,6 +783,7 @@ class SchemeTreeItem : public TreeItem {
 			setTextAlignment(config.columnMap[COL_TYPE], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_FM], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_PHASES], Qt::AlignCenter);
+			setTextAlignment(config.columnMap[COL_ORIGINS], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_RMS], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_M], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_MTYPE], Qt::AlignLeft | Qt::AlignVCenter);
@@ -1433,6 +1437,7 @@ class EventTreeItem : public SchemeTreeItem {
 
 				setText(config.columnMap[COL_ID], QString("%1").arg(ev->publicID().c_str()));
 				setText(config.columnMap[COL_REGION], QString("%1").arg(eventRegion(ev).c_str()));
+				setText(config.columnMap[COL_ORIGINS], QString("%1").arg(ev->originReferenceCount()));
 
 				if ( nm ){
 					QFont f = font(config.columnMap[COL_M]);
