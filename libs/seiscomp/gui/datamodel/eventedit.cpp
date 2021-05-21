@@ -68,7 +68,8 @@ MAKEENUM(
 		OL_METHOD,
 		OL_AGENCY,
 		OL_AUTHOR,
-		OL_REGION
+		OL_REGION,
+		OL_ID
 	),
 	ENAMES(
 		"Created(%1)",
@@ -83,7 +84,8 @@ MAKEENUM(
 		"Method",
 		"Agency",
 		"Author",
-		"Region"
+		"Region",
+		"ID"
 	)
 );
 
@@ -99,6 +101,7 @@ int OriginColAligns[OriginListColumns::Quantity] = {
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
+	Qt::AlignLeft | Qt::AlignVCenter,
 	Qt::AlignLeft | Qt::AlignVCenter
 };
 
@@ -114,11 +117,13 @@ bool OriginColBold[OriginListColumns::Quantity] = {
 	true,
 	false,
 	false,
+	false,
 	false
 };
 
 
 bool OriginColVisible[OriginListColumns::Quantity] = {
+	true,
 	true,
 	true,
 	true,
@@ -146,6 +151,7 @@ MAKEENUM(
 		MLC_STAT,
 		MLC_AGENCY,
 		MLC_AUTHOR,
+		MLC_ID,
 		MLC_DUMMY
 	),
 	ENAMES(
@@ -157,11 +163,12 @@ MAKEENUM(
 		"Stat",
 		"Agency",
 		"Author",
+		"ID",
 		""
 	)
 );
 
-int MagnitudeColAligns[OriginListColumns::Quantity] = {
+int MagnitudeColAligns[MagnitudeListColumns::Quantity] = {
 	Qt::AlignLeft | Qt::AlignVCenter,
 	Qt::AlignLeft | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
@@ -169,6 +176,8 @@ int MagnitudeColAligns[OriginListColumns::Quantity] = {
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
+	Qt::AlignHCenter | Qt::AlignVCenter,
+	Qt::AlignLeft | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter
 };
 
@@ -179,6 +188,9 @@ bool MagnitudeColBold[MagnitudeListColumns::Quantity] = {
 	true,
 	true,
 	true,
+	false,
+	false,
+	false,
 	false
 };
 
@@ -203,7 +215,8 @@ MAKEENUM(
 		FML_DIP2,
 		FML_RAKE2,
 		FML_AGENCY,
-		FML_AUTHOR
+		FML_AUTHOR,
+		FML_ID
 	),
 	ENAMES(
 		"Created(%1)",
@@ -224,7 +237,8 @@ MAKEENUM(
 		"D2(°)",
 		"R2(°)",
 		"Agency",
-		"Author"
+		"Author",
+		"ID"
 	)
 );
 
@@ -247,7 +261,8 @@ int FMColAligns[FMListColumns::Quantity] = {
 	Qt::AlignCenter,                  // DIP2
 	Qt::AlignCenter,                  // RAKE2
 	Qt::AlignCenter,                  // AGENCY
-	Qt::AlignCenter                   // AUTHOR
+	Qt::AlignCenter,                  // AUTHOR
+	Qt::AlignLeft | Qt::AlignVCenter  // ID
 };
 
 bool FMColBold[FMListColumns::Quantity] = {
@@ -269,11 +284,13 @@ bool FMColBold[FMListColumns::Quantity] = {
 	true,
 	true,
 	false,
+	false,
 	false
 };
 
 
 bool FMColVisible[FMListColumns::Quantity] = {
+	true,
 	true,
 	true,
 	true,
@@ -1370,6 +1387,8 @@ void EventEdit::init() {
 
 	_fixOriginDefaultActionCount = _ui.comboFixOrigin->count();
 
+	_ui.fmTree->setContextMenuPolicy(Qt::CustomContextMenu);
+
 	header = _ui.fmTree->header();
 	header->setSortIndicatorShown(true);
 	header->setSortIndicator(_fmColumnMap[FML_CREATED], Qt::DescendingOrder);
@@ -1383,6 +1402,8 @@ void EventEdit::init() {
 	connect(header, SIGNAL(customContextMenuRequested(const QPoint &)),
 	        this, SLOT(fmTreeHeaderCustomContextMenu(const QPoint &)));
 
+	connect(_ui.fmTree, SIGNAL(customContextMenuRequested(const QPoint &)),
+	        this, SLOT(fmTreeCustomContextMenu(const QPoint &)));
 	connect(_ui.fmTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
 	        this, SLOT(currentFMChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
 	connect(_ui.fmTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
@@ -2158,6 +2179,7 @@ void EventEdit::updateOriginRow(int row, Origin *org) {
 	item->setText(_originColumnMap[OL_METHOD], org->methodID().c_str());
 	item->setText(_originColumnMap[OL_AUTHOR], objectAuthor(org).c_str());
 	item->setText(_originColumnMap[OL_REGION], Regions::getRegionName(org->latitude(),org->longitude()).c_str());
+	item->setText(_originColumnMap[OL_ID], org->publicID().c_str());
 
 	if ( _customColumn >= 0 ) {
 		item->setText(_customColumn, _customDefaultText);
@@ -2218,6 +2240,7 @@ void EventEdit::updateMagnitudeRow(int row, Magnitude *mag) {
 		item->setText(MLC_STAT, QString());
 	item->setText(MLC_AGENCY, objectAgencyID(mag).c_str());
 	item->setText(MLC_AUTHOR, objectAuthor(mag).c_str());
+	item->setText(MLC_ID, mag->publicID().c_str());
 
 	item->setTextColor(MLC_TIMESTAMP, palette().color(QPalette::Disabled, QPalette::QPalette::Text));
 }
@@ -2321,6 +2344,7 @@ void EventEdit::updateFMRow(int row, FocalMechanism *fm) {
 
 	POPULATE_AGENCY(_fmColumnMap[FML_AGENCY], fm->creationInfo().agencyID());
 	item->setText(_fmColumnMap[FML_AUTHOR], objectAuthor(fm).c_str());
+	item->setText(_fmColumnMap[FML_ID], fm->publicID().c_str());
 
 	item->setTextColor(_fmColumnMap[OL_CREATED], palette().color(QPalette::Disabled, QPalette::QPalette::Text));
 }
@@ -3353,12 +3377,16 @@ void EventEdit::originTreeCustomContextMenu(const QPoint &pos) {
 	QModelIndexList selection = _originTree->selectionModel()->selectedRows();
 	QMenu menu;
 
+	QTreeWidgetItem *item = _originTree->itemAt(pos);
+	int column = _originTree->header()->visualIndexAt(pos.x());
+
 	QAction *actionMerge = nullptr;
 	if ( selection.count() >= 2 ) {
 		actionMerge = menu.addAction("Merge selected origins");
 		menu.addSeparator();
 	}
-	QAction *actionCopy = menu.addAction("Copy selected rows to clipboard");
+	QAction *actionCopyCell = item ? menu.addAction("Copy cell to clipboard") : nullptr;
+	QAction *actionCopyRows = menu.addAction("Copy selected rows to clipboard");
 
 	QAction *result = menu.exec(_originTree->mapToGlobal(pos));
 	if ( actionMerge && result == actionMerge ) {
@@ -3377,8 +3405,13 @@ void EventEdit::originTreeCustomContextMenu(const QPoint &pos) {
 
 		if ( !origins.isEmpty() ) handleOrigins(origins);
 	}
-	else if ( result == actionCopy )
+	else if ( result == actionCopyRows )
 		SCApp->copyToClipboard(_originTree);
+	else if ( actionCopyCell && result == actionCopyCell ) {
+		QClipboard *cb = QApplication::clipboard();
+		if ( cb )
+			cb->setText(item->text(column));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3410,6 +3443,33 @@ void EventEdit::originTreeHeaderCustomContextMenu(const QPoint &pos) {
 		OriginColVisible[i] = actions[i]->isChecked();
 
 	_originTree->header()->setSectionHidden(section, !OriginColVisible[section]);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void EventEdit::fmTreeCustomContextMenu(const QPoint &pos) {
+	if ( !_ui.fmTree->selectionModel() ) return;
+	if ( !_ui.fmTree->selectionModel()->hasSelection() ) return;
+
+	QMenu menu;
+
+	QTreeWidgetItem *item = _ui.fmTree->itemAt(pos);
+	int column = _ui.fmTree->header()->visualIndexAt(pos.x());
+
+	QAction *actionCopyCell = item ? menu.addAction("Copy cell to clipboard") : nullptr;
+	QAction *actionCopyRows = menu.addAction("Copy selected rows to clipboard");
+
+	QAction *result = menu.exec(_ui.fmTree->mapToGlobal(pos));
+	if ( result == actionCopyRows )
+		SCApp->copyToClipboard(_ui.fmTree);
+	else if ( actionCopyCell && result == actionCopyCell ) {
+		QClipboard *cb = QApplication::clipboard();
+		if ( cb )
+			cb->setText(item->text(column));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3452,12 +3512,21 @@ void EventEdit::magnitudeTreeCustomContextMenu(const QPoint &pos) {
 	if ( !_ui.treeMagnitudes->selectionModel() ) return;
 	if ( !_ui.treeMagnitudes->selectionModel()->hasSelection() ) return;
 
+	QTreeWidgetItem *item = _ui.treeMagnitudes->itemAt(pos);
+	int column = _ui.treeMagnitudes->header()->visualIndexAt(pos.x());
+
 	QMenu menu;
-	QAction *actionCopy = menu.addAction("Copy selected rows to clipboard");
+	QAction *actionCopyCell = item ? menu.addAction("Copy cell to clipboard") : nullptr;
+	QAction *actionCopyRows = menu.addAction("Copy selected rows to clipboard");
 
 	QAction *result = menu.exec(_ui.treeMagnitudes->mapToGlobal(pos));
-	if ( result == actionCopy )
+	if ( result == actionCopyRows )
 		SCApp->copyToClipboard(_ui.treeMagnitudes);
+	else if ( actionCopyCell && result == actionCopyCell ) {
+		QClipboard *cb = QApplication::clipboard();
+		if ( cb )
+			cb->setText(item->text(column));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
