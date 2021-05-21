@@ -181,6 +181,7 @@ class SC_GUI_API EventEdit : public QWidget, public DataModel::Observer {
 
 		void originTreeCustomContextMenu(const QPoint &);
 		void originTreeHeaderCustomContextMenu(const QPoint &);
+		void fmTreeCustomContextMenu(const QPoint &);
 		void fmTreeHeaderCustomContextMenu(const QPoint &);
 		void magnitudeTreeCustomContextMenu(const QPoint &);
 
