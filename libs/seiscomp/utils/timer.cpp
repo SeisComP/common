@@ -342,7 +342,7 @@ bool Timer::isActive() const {
 #if !defined(SC_HAS_TIMER_CREATE)
 	return _isActive;
 #else
-	return _timerID > 0;
+	return _timerID != 0;
 #endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
