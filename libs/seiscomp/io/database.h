@@ -138,7 +138,7 @@ DEFINE_SMARTPOINTER(DatabaseInterface);
 
 		//! Ends a transaction.
 		//! Everthing between begin and end transaction will
-		//! be comittet atomically
+		//! be committed atomically
 		virtual void commit() = 0;
 
 		//! Aborts a transaction and does a rollback of
