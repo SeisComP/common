@@ -194,7 +194,7 @@
 					</description>
 					<option value="false"/>
 					<option value="true">
-						<input name="backend" type="string" default="mysql">
+						<input name="backend" type="string" default="mysql/mariadb">
 							<text>Database backend</text>
 							<description>
 							SeisComP supports different database backends. Select
@@ -202,8 +202,8 @@
 							different additional packages to be installed on your
 							host system.
 							</description>
-							<option value="mysql">
-								<description>MySQL server.</description>
+							<option value="mysql/mariadb">
+								<description>MySQL/MariaDB server.</description>
 								<input name="create" type="boolean" default="true">
 									<text>Create database</text>
 									<description>
@@ -219,6 +219,14 @@
 											The server hostname will be entered in the next steps.
 											</description>
 										</input>
+										<input name="runAsSuperUser" type="boolean" default="false">
+											<text>Run as super user</text>
+											<description>
+											Activate this option to run the database setup script with
+											super user rights. For instance some MariaDB installation do not allow
+											root access per password and require privileged system access.
+											</description>
+										</input>
 										<input name="drop" type="boolean" default="false">
 											<text>Drop existing database</text>
 											<description>
@@ -230,75 +238,174 @@
 									</option>
 									<option value="false"/>
 								</input>
+								<input name="db" type="string" default="seiscomp">
+									<text>Database name</text>
+									<description>
+									Database name to use. If you want to avoid conflicts with
+									existing databases or if you have multiple installations
+									change the default name. If you are unsure, keep the default.
+									</description>
+								</input>
+								<input name="rwhost" type="string" default="localhost">
+									<text>Database hostname</text>
+									<description>
+									The hostname of the computer running the database server.
+									In most cases it is this computer (localhost). This hostname is
+									private and not published to any client connection to this
+									computer.
+									</description>
+								</input>
+								<input name="rwuser" type="string" default="sysop">
+									<text>Database read-write user</text>
+									<description>
+									The database username for read-write access to the database.
+									This account will not be visible to clients connecting to your
+									system unless read-only and read-write accounts are not separated.
+									</description>
+								</input>
+								<input name="rwpwd" type="string" default="sysop">
+									<text>Database read-write password</text>
+									<description>
+									The database user password for read-write access to the database.
+									This account will not be visible to clients connecting to your
+									system unless read-only and read-write accounts are not separated.
+									</description>
+								</input>
+								<input name="rohost" type="string" default="localhost">
+									<text>Database public hostname</text>
+									<description>
+									The hostname of the computer running the database server.
+									In most cases it is this computer (localhost). This hostname is
+									sent to all connected clients who in turn will try to resolve it.
+									If all modules run locally you can leave the defaults.
+									</description>
+								</input>
+								<input name="rouser" type="string" default="sysop">
+									<text>Database read-only user</text>
+									<description>
+									The database user that will have read-only access to the database.
+									This account will be visible to all clients connecting to your
+									system.
+									</description>
+								</input>
+								<input name="ropwd" type="string" default="sysop">
+									<text>Database read-only password</text>
+									<description>
+									The database user password for read-only access to the database.
+									This password will be visible to all clients connecting to your
+									system.
+									</description>
+								</input>
 							</option>
 							<option value="postgresql">
-								<description>
-								Postgresql server. There is currently no support in setup to create the
-								database for you. You have to setup the database and user accounts on
-								your own. The database schema is installed under share/db/postgresql.sql.
-								Note that the database encoding should be UTF8 and that you need
-								to set the encoding to 'escape' for PostgreSQL &gt;= 9,
-								e.g. &quot;ALTER DATABASE seiscomp SET bytea_output TO 'escape';&quot;
-								</description>
+								<description>PostgresSQL server version 9 or later</description>
+								<input name="create" type="boolean" default="true">
+									<text>Create database</text>
+									<description>
+									If you already have a database and want to reuse it, you can skip this step.
+									If you want to let setup create the database for you, check this option.&lt;br&gt;&lt;br&gt;
+									Note: By default the PostgresSQL server do not allow to login with username and
+									password. Due to this reason the SeisComP scmaster module can establish a connection
+									after database initialization. Please check the SeisComP documentation how to change
+									the server configuration.
+									</description>
+									<option value="true">
+										<input name="drop" type="boolean" default="false">
+											<text>Drop existing database</text>
+											<description>
+											When a database with the same name exists already, should it be destroyed
+											and recreated? If you say no here, an error will be raised if the database
+											to be created already exists.
+											</description>
+										</input>
+									</option>
+									<option value="false"/>
+								</input>
+								<input name="db" type="string" default="seiscomp">
+									<text>Database name</text>
+									<description>
+									Database name to use. If you want to avoid conflicts with
+									existing databases or if you have multiple installations
+									change the default name. If you are unsure, keep the default.
+									</description>
+								</input>
+								<input name="rwhost" type="string" default="localhost">
+									<text>Database hostname</text>
+									<description>
+									The hostname of the computer running the database server.
+									In most cases it is this computer (localhost). This hostname is
+									private and not published to any client connection to this
+									computer.
+									</description>
+								</input>
+								<input name="rwuser" type="string" default="sysop">
+									<text>Database read-write user</text>
+									<description>
+									The database username for read-write access to the database.
+									This account will not be visible to clients connecting to your
+									system unless read-only and read-write accounts are not separated.
+									</description>
+								</input>
+								<input name="rwpwd" type="string" default="sysop">
+									<text>Database read-write password</text>
+									<description>
+									The database user password for read-write access to the database.
+									This account will not be visible to clients connecting to your
+									system unless read-only and read-write accounts are not separated.
+									</description>
+								</input>
+								<input name="rohost" type="string" default="localhost">
+									<text>Database public hostname</text>
+									<description>
+									The hostname of the computer running the database server.
+									In most cases it is this computer (localhost). This hostname is
+									sent to all connected clients who in turn will try to resolve it.
+									If all modules run locally you can leave the defaults.
+									</description>
+								</input>
+								<input name="rouser" type="string" default="sysop">
+									<text>Database read-only user</text>
+									<description>
+									The database user that will have read-only access to the database.
+									This account will be visible to all clients connecting to your
+									system.
+									</description>
+								</input>
+								<input name="ropwd" type="string" default="sysop">
+									<text>Database read-only password</text>
+									<description>
+									The database user password for read-only access to the database.
+									This password will be visible to all clients connecting to your
+									system.
+									</description>
+								</input>
 							</option>
-						</input>
-						<input name="db" type="string" default="seiscomp">
-							<text>Database name</text>
-							<description>
-							Database name to use. If you want to avoid conflicts with
-							existing databases or if you have multiple installations
-							change the default name. If you are unsure, keep the default.
-							</description>
-						</input>
-						<input name="rwhost" type="string" default="localhost">
-							<text>Database hostname</text>
-							<description>
-							The hostname of the computer running the database server.
-							In most cases it is this computer (localhost). This hostname is
-							private and not published to any client connection to this
-							computer.
-							</description>
-						</input>
-						<input name="rwuser" type="string" default="sysop">
-							<text>Database read-write user</text>
-							<description>
-							The database username for read-write access to the database.
-							This account will not be visible to clients connecting to your
-							system unless read-only and read-write accounts are not separated.
-							</description>
-						</input>
-						<input name="rwpwd" type="string" default="sysop">
-							<text>Database read-write password</text>
-							<description>
-							The database user password for read-write access to the database.
-							This account will not be visible to clients connecting to your
-							system unless read-only and read-write accounts are not separated.
-							</description>
-						</input>
-						<input name="rohost" type="string" default="localhost">
-							<text>Database public hostname</text>
-							<description>
-							The hostname of the computer running the database server.
-							In most cases it is this computer (localhost). This hostname is
-							sent to all connected clients who in turn will try to resolve it.
-							If all modules run locally you can leave the defaults.
-							</description>
-						</input>
-						<input name="rouser" type="string" default="sysop">
-							<text>Database read-only user</text>
-							<description>
-							The database user that will have read-only access to the database.
-							This account will be visible to all clients connecting to your
-							system.
-							</description>
-						</input>
-						<input name="ropwd" type="string" default="sysop">
-							<text>Database read-only password</text>
-							<description>
-							The database user password for read-only access to the database.
-							This password will be visible to all clients connecting to your
-							system.
-							</description>
+							<option value="sqlite3">
+								<description>SQLite3 database</description>
+								<input name="create" type="boolean" default="true">
+									<text>Create database</text>
+									<description>
+									If you already have a database and want to reuse it, you can skip this step.
+									If you want to let setup create the database for you, check this option.
+									</description>
+									<option value="true">
+										<input name="override" type="boolean" default="false">
+											<text>Override existing database file</text>
+											<description>
+											When a database with the same name exists already, should it be overriden?
+											If you say no here, an error will be raised if the database
+											to be created already exists.
+											</description>
+										</input>
+									</option>
+									<option value="false"/>
+								</input>
+								<input name="filename" type="string" default="@ROOTDIR@/var/lib/seiscomp.db">
+									<text>Path to database file</text>
+									<description>
+									</description>
+								</input>
+							</option>
 						</input>
 					</option>
 				</input>

@@ -104,14 +104,12 @@ class WizardWidget : public QDialog {
 		typedef std::vector<Seiscomp::System::SchemaSetupInputPtr> Inputs;
 
 		struct Node {
-			Node(Node *p, Node *left, Node *right, Input *i);
+			Node(Node *p, Input *i, Node *next = nullptr);
 
 			~Node();
 
 			// Parent node
 			Node         *parent{nullptr};
-			// Left sibling
-			Node         *prev{nullptr};
 			// Right sibling
 			Node         *next{nullptr};
 			// First child node
@@ -127,14 +125,12 @@ class WizardWidget : public QDialog {
 			QString       path;
 			QString       optionValue;
 			bool          isOption{false};
-			bool          lastInGroup{false};
 		};
 
 		void addGroups(Node *, const QString &modname, const SetupGroups &);
-		void addInputs(Node *, const QString &modname,
-		               bool isOption, const QString &optionValue,
-		               Group *g,
+		void addInputs(Node *, const QString &modname, Group *g,
 		               const Inputs &, const QString &path);
+		void dumpNode(Node *node, int level = 0);
 
 		WizardModel   *_model;
 		Node          *_modelTree;

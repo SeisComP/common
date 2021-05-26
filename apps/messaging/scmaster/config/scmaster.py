@@ -1,8 +1,11 @@
 from __future__ import print_function
 
 import os
+import shutil
 import sys
 import subprocess
+import tempfile
+from distutils.dir_util import copy_tree
 from seiscomp import config, kernel, system
 
 #------------------------------------------------------------------------------
@@ -15,102 +18,23 @@ else:
     py3bstr = lambda s: s.encode('utf-8')
     py3ustr = lambda s: s.decode('utf-8', 'replace')
 
+class DBParams:
+    def __init__(self):
+        self.db = None
+        self.rwuser = None
+        self.rwpwd = None
+        self.rouser = None
+        self.ropwd = None
+        self.rohost = None
+        self.rwhost = None
+        self.drop = False
+        self.create = False
 
 def check_output(cmd):
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, shell=True)
     out = proc.communicate()
     return [py3ustr(out[0]), py3ustr(out[1]), proc.returncode]
-
-
-def createMYSQLDB(db, rwuser, rwpwd, rouser, ropwd, rwhost, rootpwd, drop, schemapath):
-    cmd = "mysql -u root -h " + rwhost
-    if rootpwd:
-        cmd += " -p" + rootpwd
-
-    sys.stdout.write("+ Create MYSQL database\n")
-
-    out = check_output(cmd + " -s --skip-column-names -e \"select version()\"")
-    version = out[0].strip()
-    err = out[1]
-    if out[1]:
-        sys.stdout.write("  %s\n" % out[1].strip())
-    if out[2]:
-        err = "Exitcode: %d" % out[2]
-        sys.stdout.write("  %s\n"
-                         "  Could not determine MYSQL server version. Is the root password correct\n"
-                         "  and MYSQL is running and the client installed on this machine?\n" % err.strip())
-    sys.stdout.write("  + Found MYSQL server version %s\n" % version)
-
-    if drop:
-        q = "DROP DATABASE IF EXISTS %s;" % db
-        sys.stdout.write("  + Drop database %s\n" % db)
-        out = check_output(cmd + " -e \"%s\"" % q)
-        if out[1]:
-            sys.stdout.write("  %s\n" % out[1].strip())
-        if out[2]:
-            if not out[1]:
-                sys.stdout.write("  Returned with error: %d\n" % out[2])
-            return False
-
-    sys.stdout.write("  + Create database %s\n" % db)
-    q = "CREATE DATABASE %s CHARACTER SET utf8 COLLATE utf8_bin;" % db
-    out = check_output(cmd + " -e \"%s\"" % q)
-    if out[1]:
-        sys.stdout.write("  %s\n" % out[1].strip())
-    if out[2]:
-        if not out[1]:
-            sys.stdout.write("  Returned with error: %d\n" % out[2])
-        return False
-
-    sys.stdout.write("  + Setup user roles\n")
-    # MySQL 8 requires explicit "CREATE USER", but this fails
-    # if the users already exists.
-    # "CREATE USER IF NOT EXISTS" is not supported by MySQL<5.7.
-    # Drop possibly existing users, ignoring errors.
-    check_output(cmd + " -e \"DROP USER '%s'@'localhost';\"" % rwuser)
-    check_output(cmd + " -e \"DROP USER '%s'@'%%';\"" % rwuser)
-    q = "CREATE USER '%s'@'localhost' IDENTIFIED BY '%s';" % (
-        rwuser, rwpwd)
-    q += "GRANT ALL ON %s.* TO '%s'@'localhost';" % (
-        db, rwuser)
-    q += "CREATE USER '%s'@'%%' IDENTIFIED BY '%s';" % (
-        rwuser, rwpwd)
-    q += "GRANT ALL ON %s.* TO '%s'@'%%';" % (
-        db, rwuser)
-
-    if rwuser != rouser:
-        check_output(cmd + " -e \"DROP USER '%s'@'localhost';\"" % rouser)
-        check_output(cmd + " -e \"DROP USER '%s'@'%%';\"" % rouser)
-        q += "CREATE USER '%s'@'localhost' IDENTIFIED BY '%s';" % (
-            rouser, ropwd)
-        q += "GRANT SELECT ON %s.* TO '%s'@'localhost';" % (
-            db, rouser)
-        q += "CREATE USER '%s'@'%%' IDENTIFIED BY '%s';" % (
-            rouser, ropwd)
-        q += "GRANT SELECT ON %s.* TO '%s'@'%%';" % (
-            db, rouser)
-
-    out = check_output(cmd + " -e \"%s\"" % q)
-    if out[1]:
-        sys.stdout.write("  %s\n" % out[1].strip())
-    if out[2]:
-        if not out[1]:
-            sys.stdout.write("  Returned with error: %d\n" % out[2])
-        return False
-
-    sys.stdout.write("  + Create tables\n")
-    q = "USE %s; source %s;" % (db, os.path.join(schemapath, "mysql.sql"))
-    out = check_output(cmd + " -e \"%s\"" % q)
-    if out[1]:
-        sys.stdout.write("  %s\n" % out[1].strip())
-    if out[2]:
-        if not out[1]:
-            sys.stdout.write("  Returned with error: %d\n" % out[2])
-        return False
-
-    return True
-
 
 def addEntry(cfg, param, item):
     # Adds an item to a parameter list
@@ -206,6 +130,76 @@ class Module(kernel.CoreModule):
             shouldRun = False
         return kernel.CoreModule.status(self, shouldRun)
 
+    def readDBParams(self, params, setup_config):
+        try:
+            params.db = setup_config.getString(self.name + ".database.enable.backend.db")
+        except ValueError as err:
+            print(err)
+            sys.stderr.write("  - database name not set, ignoring setup\n")
+            return False
+
+        try:
+            params.rwhost = setup_config.getString(
+                self.name + ".database.enable.backend.rwhost")
+        except ValueError:
+            sys.stderr.write(
+                "  - database host (rw) not set, ignoring setup\n")
+            return False
+
+        try:
+            params.rwuser = setup_config.getString(
+                self.name + ".database.enable.backend.rwuser")
+        except ValueError:
+            sys.stderr.write(
+                "  - database user (rw) not set, ignoring setup\n")
+            return False
+
+        try:
+            params.rwpwd = setup_config.getString(
+                self.name + ".database.enable.backend.rwpwd")
+        except ValueError:
+            sys.stderr.write(
+                "  - database password (rw) not set, ignoring setup\n")
+            return False
+
+        try:
+            params.rohost = setup_config.getString(
+                self.name + ".database.enable.backend.rohost")
+        except ValueError:
+            sys.stderr.write(
+                "  - database host (ro) not set, ignoring setup\n")
+            return False
+
+        try:
+            params.rouser = setup_config.getString(
+                self.name + ".database.enable.backend.rouser")
+        except ValueError:
+            sys.stderr.write(
+                "  - database user (ro) not set, ignoring setup\n")
+            return False
+
+        try:
+            params.ropwd = setup_config.getString(
+                self.name + ".database.enable.backend.ropwd")
+        except ValueError:
+            sys.stderr.write(
+                "  - database password (ro) not set, ignoring setup\n")
+            return False
+
+        try:
+            params.create = setup_config.getBool(
+                self.name + ".database.enable.backend.create")
+        except ValueError:
+            params.create = False
+
+        try:
+            params.drop = setup_config.getBool(
+                self.name + ".database.enable.backend.create.drop")
+        except ValueError:
+            params.drop = False
+
+        return True
+
     def setup(self, setup_config):
         cfgfile = os.path.join(self.env.SEISCOMP_ROOT,
                                "etc", self.name + ".cfg")
@@ -237,95 +231,167 @@ class Module(kernel.CoreModule):
                     "  - database backend not set, ignoring setup\n")
                 return 1
 
-            # Configure db backend for scmaster
-            cfg.setString("core.plugins", "db" + dbBackend)
-
-            try:
-                db = setup_config.getString(self.name + ".database.enable.db")
-            except ValueError:
-                sys.stderr.write("  - database name not set, ignoring setup\n")
-                return 1
-
-            try:
-                rwhost = setup_config.getString(
-                    self.name + ".database.enable.rwhost")
-            except ValueError:
-                sys.stderr.write(
-                    "  - database host (rw) not set, ignoring setup\n")
-                return 1
-
-            try:
-                rwuser = setup_config.getString(
-                    self.name + ".database.enable.rwuser")
-            except ValueError:
-                sys.stderr.write(
-                    "  - database user (rw) not set, ignoring setup\n")
-                return 1
-
-            try:
-                rwpwd = setup_config.getString(
-                    self.name + ".database.enable.rwpwd")
-            except ValueError:
-                sys.stderr.write(
-                    "  - database password (rw) not set, ignoring setup\n")
-                return 1
-
-            try:
-                rohost = setup_config.getString(
-                    self.name + ".database.enable.rohost")
-            except ValueError:
-                sys.stderr.write(
-                    "  - database host (ro) not set, ignoring setup\n")
-                return 1
-
-            try:
-                rouser = setup_config.getString(
-                    self.name + ".database.enable.rouser")
-            except ValueError:
-                sys.stderr.write(
-                    "  - database user (ro) not set, ignoring setup\n")
-                return 1
-
-            try:
-                ropwd = setup_config.getString(
-                    self.name + ".database.enable.ropwd")
-            except ValueError:
-                sys.stderr.write(
-                    "  - database password (ro) not set, ignoring setup\n")
-                return 1
-
-            if dbBackend == "mysql":
-                try:
-                    create = setup_config.getBool(
-                        self.name + ".database.enable.backend.create")
-                except ValueError:
-                    create = False
-                try:
-                    drop = setup_config.getBool(
-                        self.name + ".database.enable.backend.create.drop")
-                except ValueError:
-                    drop = False
+            if dbBackend == "mysql/mariadb":
+                dbBackend = "mysql"
                 try:
                     rootpwd = setup_config.getString(
                         self.name + ".database.enable.backend.create.rootpw")
                 except ValueError:
                     rootpwd = ""
 
-                if create:
-                    if not createMYSQLDB(db, rwuser, rwpwd, rouser, ropwd,
-                                         rwhost, rootpwd, drop, schemapath):
-                        sys.stdout.write("  - Failed to setup database\n")
+                try:
+                    runAsSuperUser = setup_config.getBool(
+                        self.name + ".database.enable.backend.create.runAsSuperUser")
+                except ValueError:
+                    runAsSuperUser = False
+
+                params = DBParams()
+                if not self.readDBParams(params, setup_config):
+                    return 1
+
+                cfg.setString("queues.production.processors.messages.dbstore.read",
+                              "{}:{}@{}/{}"
+                              .format(params.rouser, params.ropwd, params.rohost, params.db))
+                cfg.setString("queues.production.processors.messages.dbstore.write",
+                              "{}:{}@{}/{}"
+                              .format(params.rwuser, params.rwpwd, params.rwhost, params.db))
+
+                if params.create:
+                    dbScript = os.path.join(schemapath, "mysql_setup.py")
+                    options = [
+                        params.db,
+                        params.rwuser,
+                        params.rwpwd,
+                        params.rouser,
+                        params.ropwd,
+                        params.rwhost,
+                        rootpwd,
+                        str(params.drop),
+                        schemapath
+                    ]
+
+                    binary = os.path.join(schemapath, "pkexec_wrapper.sh")
+                    print("+ Running MySQL database setup script {}".format(dbScript))
+                    if runAsSuperUser:
+                        cmd = "{} seiscomp-python {} {}".format(binary, dbScript, " ".join(options))
+                    else:
+                        cmd = "{} {}".format(dbScript, " ".join(options))
+
+                    p = subprocess.Popen(cmd, shell=True)
+                    ret = p.wait()
+                    if ret != 0:
+                        print("  - Failed to setup database", file=sys.stderr)
                         return 1
+
+            elif dbBackend == "postgresql":
+                dbBackend = "postgresql"
+
+                params = DBParams()
+                if not self.readDBParams(params, setup_config):
+                    return 1
+
+                cfg.setString("queues.production.processors.messages.dbstore.read",
+                              "{}:{}@{}/{}"
+                              .format(params.rouser, params.ropwd, params.rohost, params.db))
+                cfg.setString("queues.production.processors.messages.dbstore.write",
+                              "{}:{}@{}/{}"
+                              .format(params.rwuser, params.rwpwd, params.rwhost, params.db))
+
+                if params.create:
+                    try:
+                        tmpPath = tempfile.mkdtemp()
+                        os.chmod(tmpPath, 0o755)
+                        try:
+                            copy_tree(schemapath, tmpPath)
+                            filename = os.path.join(self.env.SEISCOMP_ROOT, "bin",
+                                                    "seiscomp-python")
+                            shutil.copy(filename, tmpPath)
+                        except Exception as err:
+                            print(err)
+                            return 1
+
+                        dbScript = os.path.join(tmpPath, "postgres_setup.py")
+                        options = [
+                            params.db,
+                            params.rwuser,
+                            params.rwpwd,
+                            params.rouser,
+                            params.ropwd,
+                            params.rwhost,
+                            str(params.drop),
+                            tmpPath
+                        ]
+
+                        binary = os.path.join(schemapath, "pkexec_wrapper.sh")
+                        print("+ Running PostgreSQL database setup script {}".format(dbScript))
+                        cmd = "{} su postgres -c \"{}/seiscomp-python {} {}\"" \
+                            .format(binary, tmpPath, dbScript, " ".join(options))
+
+                        p = subprocess.Popen(cmd, shell=True)
+                        ret = p.wait()
+                        if ret != 0:
+                            print("  - Failed to setup database", file=sys.stderr)
+                            return 1
+                    finally:
+                        try:
+                            shutil.rmtree(tmpPath)
+                        except OSError:
+                            pass
+
+            elif dbBackend == "sqlite3":
+                dbBackend = "sqlite3"
+                dbScript = os.path.join(schemapath, "sqlite3_setup.py")
+
+                try:
+                    create = setup_config.getBool(
+                        self.name + ".database.enable.backend.create")
+                except BaseException:
+                    create = False
+
+                try:
+                    filename = setup_config.getString(
+                        self.name + ".database.enable.backend.filename")
+                    filename = system.Environment.Instance().absolutePath(filename)
+                except BaseException:
+                    filename = os.path.join(self.env.SEISCOMP_ROOT, "var", "lib", "seiscomp.db")
+
+                if not filename:
+                    sys.stderr.write(
+                        "  - location not set, ignoring setup\n")
+                    return 1
+
+                try:
+                    override = setup_config.getBool(
+                        self.name + ".database.enable.backend.create.override")
+                except BaseException:
+                    override = False
+
+                options = [
+                    filename,
+                    schemapath
+                ]
+
+                if create:
+                    print("+ Running SQLite3 database setup script {}".format(dbScript))
+                    cmd = "seiscomp-python {} {} {}".format(dbScript, " ".join(options), override)
+                    p = subprocess.Popen(cmd, shell=True)
+                    ret = p.wait()
+                    if ret != 0:
+                        print("  - Failed to setup database", file=sys.stderr)
+                        return 1
+
+                cfg.setString("queues.production.processors.messages.dbstore.read",
+                              filename)
+                cfg.setString("queues.production.processors.messages.dbstore.write",
+                              filename)
+
+            # Configure db backend for scmaster
+            cfg.setString("core.plugins", "db" + dbBackend)
+            cfg.setString(
+                "queues.production.processors.messages.dbstore.driver", dbBackend)
 
             addEntry(cfg, "queues.production.plugins", "dbstore")
             addEntry(cfg, "queues.production.processors.messages", "dbstore")
-
-            cfg.setString(
-                "queues.production.processors.messages.dbstore.driver", dbBackend)
-            cfg.setString("queues.production.processors.messages.dbstore.read",
-                          rouser + ":" + ropwd + "@" + rohost + "/" + db)
-            cfg.setString("queues.production.processors.messages.dbstore.write",
-                          rwuser + ":" + rwpwd + "@" + rwhost + "/" + db)
 
         cfg.writeConfig()
 

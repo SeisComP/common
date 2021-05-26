@@ -34,10 +34,15 @@
 #include <iostream>
 #include <sstream>
 
+
+#define DRY_RUN 0
+
+
 using namespace std;
 
-WizardWidget::Node::Node(Node *p, Node *left, Node *right, Input *i)
-: parent(p), prev(left), next(right), input(i) {}
+
+WizardWidget::Node::Node(Node *p, Input *i, Node *next)
+: parent(p), next(next), input(i) {}
 
 
 WizardWidget::Node::~Node() {
@@ -138,12 +143,16 @@ WizardWidget::WizardWidget(WizardModel *model, QWidget *parent)
 	connect(_buttonCancel, SIGNAL(clicked()), this, SLOT(reject()));
 
 	// Build model tree
-	_modelTree = new Node(nullptr, nullptr, nullptr, nullptr);
+	_modelTree = new Node(nullptr, nullptr);
 
 	for ( ModelIterator it = _model->begin(); it != _model->end(); ++it ) {
 		QString modname = it->first.c_str();
 		addGroups(_modelTree, modname, it->second);
 	}
+
+#if DRY_RUN
+	dumpNode(_modelTree);
+#endif
 
 	_modelTree->activeChild = _modelTree->child;
 
@@ -179,45 +188,85 @@ void WizardWidget::reject() {
 void WizardWidget::addGroups(Node *parent, const QString &modname,
                              const SetupGroups &groups) {
 	for ( Seiscomp::System::SchemaSetupGroup *group : groups ) {
-		addInputs(parent, modname, false, QString(),
-		          group, group->inputs, (group->name + ".").c_str());
+		addInputs(parent, modname, group, group->inputs,
+		          (group->name + ".").c_str());
+	}
+}
+
+
+void WizardWidget::dumpNode(Node *node, int level) {
+	for ( int i = 0; i < level; ++i ) cerr << " ";
+
+	std::cerr << "[";
+	if ( node->input ) {
+		std::cerr << qPrintable(node->path);
+	}
+	else {
+		std::cerr << "_";
+	}
+	if ( node->isOption )
+		std::cerr << "*";
+	if ( !node->optionValue.isEmpty() )
+		std::cerr << " : " << qPrintable(node->optionValue);
+
+	std::cerr << "]" << std::endl;
+	Node *child = node->child;
+	while ( child ) {
+		dumpNode(child, level + 1);
+		child = child->next;
 	}
 }
 
 
 void WizardWidget::addInputs(Node *parent, const QString &modname,
-                             bool isOption, const QString &optionValue,
                              Group *g, const Inputs &inputs,
                              const QString &path) {
-	Node *last = parent->child;
-
-	// find the last child and add the current list to it
-	while ( last ) {
-		if ( !last->next ) break;
-		last = last->next;
+	Node *childs = parent->child;
+	if ( childs ) {
+		while ( childs->next )
+			childs = childs->next;
 	}
 
 	for ( const Seiscomp::System::SchemaSetupInputPtr &input : inputs ) {
-		Node *n = new Node(parent, last, nullptr, input.get());
+		Node *n = new Node(parent, input.get());
 
 		n->path = path + input->name.c_str();
 		n->value = input->defaultValue.c_str();
 		n->modname = modname;
 		n->group = g;
-		n->isOption = isOption;
-		n->optionValue = optionValue;
+		n->isOption = !input->options.empty();
 
-		if ( last ) last->next = n;
-		last = n;
+		if ( !childs ) {
+			childs = n;
+			parent->child = childs;
+		}
+		else {
+			childs->next = n;
+			childs = childs->next;
+		}
 
-		if ( !parent->child ) parent->child = last;
-
+		Node *options = n->child;
 		for ( const Seiscomp::System::SchemaSetupInputOptionPtr &option : input->options ) {
-			addInputs(n, modname, true, option->value.c_str(), g, option->inputs, n->path + ".");
+			Node *optionNode = new Node(n, input.get());
+
+			optionNode->path = n->path + "." + option->value.c_str();
+			optionNode->modname = modname;
+			optionNode->group = g;
+			optionNode->isOption = false;
+			optionNode->optionValue = option->value.c_str();
+
+			if ( !options ) {
+				options = optionNode;
+				n->child = options;
+			}
+			else {
+				options->next = optionNode;
+				options = options->next;
+			}
+
+			addInputs(optionNode, modname, g, option->inputs, n->path + ".");
 		}
 	}
-
-	if ( isOption && last ) last->lastInGroup = true;
 }
 
 
@@ -247,31 +296,19 @@ void WizardWidget::next() {
 		return;
 	}
 
-	Input *input = _currentNode->input;
-	bool step = true;
-
 	_currentNode->activeChild = nullptr;
+	_path.push(_currentNode);
 
 	// Choice input?
-	if ( !input->options.empty() ) {
-		for ( size_t i = 0; i < input->options.size(); ++i ) {
-			if ( input->options[i]->value == _currentNode->value.toStdString() ) {
-				if ( !input->options[i]->inputs.empty() ) {
-					// Found new path to descend
-					Node *child = _currentNode->child;
-
-					// Search corresponding child in the three
-					while ( child ) {
-						if ( child->input == input->options[i]->inputs[0].get() ) {
-							_path.push(_currentNode);
-							_currentNode->activeChild = child;
-							_currentNode = _currentNode->activeChild;
-							step = false;
-							break;
-						}
-						child = child->next;
-					}
-
+	if ( _currentNode->isOption ) {
+		Node *child = _currentNode->child;
+		for ( ; child; child = child->next ) {
+			if ( child->optionValue == _currentNode->value ) {
+				if ( child->child ) {
+					_currentNode->activeChild = child;
+					_currentNode = child->child;
+					setPage(createCurrentPage());
+					return;
 				}
 
 				break;
@@ -279,35 +316,24 @@ void WizardWidget::next() {
 		}
 	}
 
-	if ( step ) {
-		bool pushed = false;
-		if ( !_currentNode->next ) {
-			Node *parent = _currentNode->parent;
+	// Goto next node
+	Node *next = _currentNode->next;
 
-			while ( parent ) {
-				if ( !parent->isOption && parent->next ) {
-					_path.push(_currentNode);
-					pushed = true;
-					_currentNode = parent;
-					break;
-				}
-
-				parent = parent->parent;
-			}
-
-			if ( !parent ) {
-				_path.push(_currentNode);
-				setPage(createExtroPage());
-				_buttonNext->setText(tr("Finish"));
-				return;
-			}
-		}
-
-		if ( !pushed ) _path.push(_currentNode);
-		_currentNode = _currentNode->next;
+	while ( !next && _currentNode->parent ) {
+		_currentNode = _currentNode->parent;
+		if ( !_currentNode->optionValue.isEmpty() )
+			continue;
+		next = _currentNode->next;
 	}
 
-	setPage(createCurrentPage());
+	if ( !next ) {
+		setPage(createExtroPage());
+		_buttonNext->setText(tr("Finish"));
+	}
+	else {
+		_currentNode = next;
+		setPage(createCurrentPage());
+	}
 }
 
 
@@ -327,10 +353,16 @@ QByteArray &operator<<(QByteArray &ar, WizardWidget::Node *n) {
 		ar.append("\n");
 	}
 
-	if ( n->activeChild )
-		ar << n->activeChild;
+	if ( n->activeChild ) {
+		if ( n->isOption )
+			ar << n->activeChild->child;
+		else
+			ar << n->activeChild;
+	}
 
-	if ( !n->lastInGroup && n->next ) ar << n->next;
+	if ( n->next )
+		ar << n->next;
+
 	return ar;
 }
 
@@ -343,6 +375,7 @@ QByteArray &operator<<(QByteArray &ar, WizardWidget::Node &n) {
 void WizardWidget::finish() {
 	setPage(createOutputPage());
 
+#if !DRY_RUN
 	Seiscomp::Environment *env = Seiscomp::Environment::Instance();
 	_procSeisComP = new QProcess(this);
 	_procSeisComP->start(QString("%1/bin/seiscomp --stdin setup")
@@ -354,6 +387,7 @@ void WizardWidget::finish() {
 		_procSeisComP = nullptr;
 		return;
 	}
+#endif
 
 	_ranSetup = true;
 
@@ -363,6 +397,7 @@ void WizardWidget::finish() {
 	QByteArray data;
 	data << _modelTree;
 
+#if !DRY_RUN
 	_procSeisComP->write(data);
 	_procSeisComP->closeWriteChannel();
 	_procSeisComP->setReadChannel(QProcess::StandardOutput);
@@ -373,6 +408,10 @@ void WizardWidget::finish() {
 	        this, SLOT(readProcStdErr()));
 	connect(_procSeisComP, SIGNAL(finished(int, QProcess::ExitStatus)),
 	        this, SLOT(finishedProc(int, QProcess::ExitStatus)));
+#else
+	std::cerr << data.toStdString() << std::endl;
+	finishedProc(0, QProcess::NormalExit);
+#endif
 }
 
 
