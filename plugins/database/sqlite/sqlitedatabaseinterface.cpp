@@ -59,17 +59,19 @@ SQLiteDatabase::~SQLiteDatabase() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SQLiteDatabase::open() {
-	std::string filename = Environment::Instance()->absolutePath(_host);
+	std::string uri(_host);
+	if ( uri != ":memory:" ) {
+		uri = Environment::Instance()->absolutePath(_host);
 
-	FILE *fp = fopen(filename.c_str(), "rb");
-	if ( fp == NULL ) {
-		SEISCOMP_ERROR("databasefile '%s' not found", filename.c_str());
-		return false;
+		FILE *fp = fopen(uri.c_str(), "rb");
+		if ( fp == NULL ) {
+			SEISCOMP_ERROR("databasefile '%s' not found", uri.c_str());
+			return false;
+		}
+		fclose(fp);
 	}
 
-	fclose(fp);
-
-	int res = sqlite3_open(filename.c_str(), &_handle);
+	int res = sqlite3_open(uri.c_str(), &_handle);
 	if ( res != SQLITE_OK ) {
 		SEISCOMP_ERROR("sqlite3 open error: %d", res);
 		sqlite3_close(_handle);
