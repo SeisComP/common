@@ -2183,9 +2183,9 @@ class RecordResamplerF(RecordResamplerBase):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self, targetFrequency, fp=0.7, fs=0.9, coeffScale=10, lanzcosWidth=3):
-        r"""__init__(RecordResamplerF self, double targetFrequency, double fp=0.7, double fs=0.9, double coeffScale=10, int lanzcosWidth=3) -> RecordResamplerF"""
-        _io.RecordResamplerF_swiginit(self, _io.new_RecordResamplerF(targetFrequency, fp, fs, coeffScale, lanzcosWidth))
+    def __init__(self, targetFrequency, fp=0.7, fs=0.9, coeffScale=10, lanczosWidth=3):
+        r"""__init__(RecordResamplerF self, double targetFrequency, double fp=0.7, double fs=0.9, double coeffScale=10, int lanczosWidth=3) -> RecordResamplerF"""
+        _io.RecordResamplerF_swiginit(self, _io.new_RecordResamplerF(targetFrequency, fp, fs, coeffScale, lanczosWidth))
     __swig_destroy__ = _io.delete_RecordResamplerF
 
     def feed(self, record):
@@ -2209,9 +2209,9 @@ class RecordResamplerD(RecordResamplerBase):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self, targetFrequency, fp=0.7, fs=0.9, coeffScale=10, lanzcosWidth=3):
-        r"""__init__(RecordResamplerD self, double targetFrequency, double fp=0.7, double fs=0.9, double coeffScale=10, int lanzcosWidth=3) -> RecordResamplerD"""
-        _io.RecordResamplerD_swiginit(self, _io.new_RecordResamplerD(targetFrequency, fp, fs, coeffScale, lanzcosWidth))
+    def __init__(self, targetFrequency, fp=0.7, fs=0.9, coeffScale=10, lanczosWidth=3):
+        r"""__init__(RecordResamplerD self, double targetFrequency, double fp=0.7, double fs=0.9, double coeffScale=10, int lanczosWidth=3) -> RecordResamplerD"""
+        _io.RecordResamplerD_swiginit(self, _io.new_RecordResamplerD(targetFrequency, fp, fs, coeffScale, lanczosWidth))
     __swig_destroy__ = _io.delete_RecordResamplerD
 
     def feed(self, record):
@@ -2235,9 +2235,9 @@ class RecordResamplerI(RecordResamplerBase):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self, targetFrequency, fp=0.7, fs=0.9, coeffScale=10, lanzcosWidth=3):
-        r"""__init__(RecordResamplerI self, double targetFrequency, double fp=0.7, double fs=0.9, double coeffScale=10, int lanzcosWidth=3) -> RecordResamplerI"""
-        _io.RecordResamplerI_swiginit(self, _io.new_RecordResamplerI(targetFrequency, fp, fs, coeffScale, lanzcosWidth))
+    def __init__(self, targetFrequency, fp=0.7, fs=0.9, coeffScale=10, lanczosWidth=3):
+        r"""__init__(RecordResamplerI self, double targetFrequency, double fp=0.7, double fs=0.9, double coeffScale=10, int lanczosWidth=3) -> RecordResamplerI"""
+        _io.RecordResamplerI_swiginit(self, _io.new_RecordResamplerI(targetFrequency, fp, fs, coeffScale, lanczosWidth))
     __swig_destroy__ = _io.delete_RecordResamplerI
 
     def feed(self, record):
