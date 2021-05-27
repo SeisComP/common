@@ -175,6 +175,8 @@ class SC_SYSTEM_CORE_API TimeWindowBuffer : public RecordSequence {
 		//! Return percentage of available data within TimeWindowBuffer's TimeWindow
 		double availability() const;
 
+		//! Return the TimeWindow used in constructing the TimeWindowBuffer
+		const TimeWindow& timeWindow() const;
 
 	// ----------------------------------------------------------------------
 	//  Members
@@ -252,6 +254,9 @@ inline size_t RecordSequence::recordCount() const {
 	return size();
 }
 
+inline const TimeWindow& TimeWindowBuffer::timeWindow() const {
+	return _timeWindow;
+}
 
 }
 
