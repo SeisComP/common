@@ -228,7 +228,7 @@ class SC_SYSTEM_CORE_API RingBuffer : public RecordSequence {
 		void reset() { clear(); }
 
 		//! Return the maximum number of records the RingBuffer stores
-		unsigned int maxNumRecords() const;
+		unsigned int numberOfRecords() const;
 	
 		//! Return the TimeSpan the RingBuffer stores
 		const Core::TimeSpan &timeSpan() const;
@@ -263,7 +263,7 @@ inline const Core::TimeWindow &bufferedTimeWindow() const {
 	return _timeWindow;
 }
 
-inline unsigned int RingBuffer::maxNumRecords() const {
+inline unsigned int RingBuffer::numberOfRecords() const {
 	return _nmax;
 }
 	
