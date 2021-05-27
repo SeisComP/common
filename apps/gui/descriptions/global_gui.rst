@@ -12,13 +12,14 @@ Styling
 
 To adjust the look-and-feel to the host desktop system and the personal taste
 several styling options are available. Since all GUI applications are using the
-Qt4 library the tool "qtconfig-qt4" can used to adjust the widget theme and the
-colors. If KDE is used as desktop system the same style is used since KDE
+Qt4 or QT5 library, the tool "qtconfig-qt4" can used to adjust the widget theme and the
+colors. If KDE is used as desktop system, the same style is used since KDE
 bases on Qt as well.
 
 The style options supported by |scname| (and not covered by the general Qt setup)
 have to be given in the applications (or global) configuration file. The
 parameters are configured with the *scheme.* parameters.
+
 In case of :ref:`map layers defined by BNA files <sec-gui_layers>` the parameters
 may also be defined by :file:`map.cfg` in the directory of the BNA file.
 
@@ -41,10 +42,11 @@ Colors
 
 .. code-block:: sh
 
-   color = RRGGBBAA | "rgb(red,green,blue)" | "rgba(red,green,blue,alpha)"
+   color = red | RRGGBBAA | "rgb(red,green,blue)" | "rgba(red,green,blue,alpha)"
 
-Colors are specified either in a hexadecimal notation or in a rgb(a) notation.
-When using the rgb(a) notation it should be quoted. Otherwise the configuration
+Colors are specified either by :term:`color keyword names`, in a hexadecimal
+notation or in a rgb(a) notation. When using the rgb(a) notation it should be
+quoted. Otherwise the configuration
 parser would tokenize the value into 3 or 4 strings due to the comma.
 
 
@@ -191,7 +193,7 @@ Currently supported data types are:
 
   * used for visualization of events regions and for setting the region name of the
     event by :ref:`scevent`.
-  * stored in directories: :file:`$SEISCOMP_ROOT/share/fep` or :file:`~/.seiscomp/fep`
+  * stored in directories: :file:`@DATADIR@/fep` or :file:`@CONFIGDIR@/fep`
   * file name extension: *.fep*
   * file format: ::
 

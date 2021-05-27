@@ -111,6 +111,15 @@
 						<parameter name="visible" type="boolean" default="false">
 						</parameter>
 					</group>
+					<group name="fep">
+						<description>
+						Configuration for the fep layer that showing the polygons
+						of FEP (FLinn-Engdahl-Polygon) files on maps if they
+						exist in @DATADIR@/fep or @CONFIGDIR@/fep.
+						</description>
+						<parameter name="visible" type="boolean" default="true">
+						</parameter>
+					</group>
 					<group name="cities">
 						<parameter name="topPopulatedPlaces" type="int" default="-1">
 							<description>
