@@ -181,6 +181,9 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 		void pop();
 		void push(PublicObject* obj);
 
+		void setCached(bool cached) { _cached = cached; }
+		DatabaseArchive *databaseArchive() { return _archive.get(); }
+
 
 	private:
 		DatabaseArchivePtr _archive;

@@ -263,13 +263,13 @@ void PublicObjectCache::clear() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PublicObject *PublicObjectCache::find(const Seiscomp::Core::RTTI &classType,
                                       const std::string &publicID) {
-	_cached = true;
+	bool cached = true;
 	PublicObject *po = PublicObject::Find(publicID);
 	if ( po == nullptr ) {
-		_cached = false;
+		cached = false;
 		po = _archive?_archive->getObject(classType, publicID):nullptr;
 	}
-
+	setCached(cached);
 	if ( po ) feed(po);
 
 	return po;
