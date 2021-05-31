@@ -109,15 +109,22 @@
 						event list.
 						</description>
 						<parameter name="visible" type="boolean" default="false">
+							<description>
+							Show the events layer on maps. Currently only supported
+							by scolv.
+							</description>
 						</parameter>
 					</group>
 					<group name="fep">
 						<description>
-						Configuration for the fep layer that showing the polygons
+						Configuration for the fep layer showing the polygons
 						of FEP (FLinn-Engdahl-Polygon) files on maps if they
 						exist in @DATADIR@/fep or @CONFIGDIR@/fep.
 						</description>
 						<parameter name="visible" type="boolean" default="true">
+							<description>
+							Show the fep layer on maps.
+							</description>
 						</parameter>
 					</group>
 					<group name="cities">

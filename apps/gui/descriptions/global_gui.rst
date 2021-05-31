@@ -181,12 +181,35 @@ Styles are:
 
 .. _sec-gui_layers:
 
-Map vector layers
-=================
+Map Layers
+==========
 
-|scname| supports arbitrary polygons/polylines for drawing on maps or for using
-by other :term:`modules <plugin>` and :term:`plugins <plugin>`. The polygons and
-polylines can be customized by the :ref:`available attributes <sec-gui_syntax>`.
+Additional features may be added to maps using configurable layers:
+
+* :ref:`sec-gui_layers-vector`, e.g. points, polylines, polygons from FEP and BNA files,
+* :ref:`sec-gui_layers-others`, e.g. cities, grids, events, custom layers.
+
+:ref:`sec-gui_layers-vector` are loaded and may be visualized together with
+:ref:`other layers <sec-gui_layers-others>`. The order of the drawing is defined by :confval:`map.layers`.
+
+The map layers can be explained on the maps by :ref:`configurable legends <sec-gui_legend>`
+and selected interactively by their :ref:`configurable category <sec-gui_layers-config>`.
+
+.. figure:: media/gui/map-layers.png
+   :align: center
+   :width: 18cm
+
+   Map with layers defined by BNA polygons, cities and legends.
+
+
+.. _sec-gui_layers-vector:
+
+Vector layers
+-------------
+
+|scname| supports arbitrary polygons, polylines or points for drawing as layers
+on maps or for using by other :term:`modules <plugin>` and :term:`plugins <plugin>`.
+The polygons, polylines and points can be customized by the :ref:`available attributes <sec-gui_syntax>`.
 Currently supported data types are:
 
 * FEP (Flinn-Engdahl polygons):
@@ -204,11 +227,15 @@ Currently supported data types are:
        99.0 99.0 length
        L name
 
-    where the coordinates, *length* and *name* are to be replaced by actual values.
+    where the coordinates, *length* and *name* are to be replaced by actual values,
+  * visibility and style can be controlled by :ref:`configuration <sec-gui_layers-config>`
+    and :confval:`map.layers.fep.visible`.
 
 * BNA polygons:
 
-  * used for visualization, e.g. faults or districts on maps or by other modules and plugins, e.g. the :ref:`region check <scevent_regioncheck>`
+  * used for visualization, e.g. points, polylines, polygons for faults or districts,
+    respectively, and even symbols or images on maps. Some objects, like closed lines can be
+    evaluated by other modules and plugins, e.g. the :ref:`region check <scevent_regioncheck>`
     plugin for :ref:`scevent`.
   * stored in directories or sub-directories of: :file:`$SEISCOMP_ROOT/share/bna` or :file:`~/.seiscomp/bna`
   * file name extension: *.bna*
@@ -223,40 +250,137 @@ Currently supported data types are:
     where the coordinates, *name* and *type/length* are to be replaced by actual values.
     For polylines (open polygons) set type/length to the negative number of points defining
     the line, e.g. -10. Positive numbers, e.g. 10, define closed polygons.
+    The BNA file format also supports multiple vertices per line and the definition
+    of islands. Please refer to https://www.softwright.com/faq/support/boundary_file_bna_format.html
+    for a more complete format specification.
 
-FEP and BNA data sets are loaded and may be visualized. While the
-FEP layer is configured through the layer 'fep', the layer (resp. category) of
-the BNA data is derived from the directory structure of the BNA folder.
+    .. note ::
 
-In fact the depth of the BNA directory tree is arbitrary and subfolders form
-subcategories.
+       * All |scname| map applications support the drawing of polygons and a subsequent
+         export to the BNA format.
+       * An extension of the header entries is possible. The extra entries can be
+         used by other modules or plugins, e.g. the :ref:`region check <scevent_regioncheck>`
+         plugin. Example ::
 
-E.g. the directory tree :file:`bna/coastline/europe/germany` will generate
-the categories coastline, coastline.europe and coastline.europe.germany which
+            "coal","rank 1","eventType: mining explosion, minDepth: -5, maxDepth: 10",6
+
+  * visibility and style can be controlled by :ref:`configuration <sec-gui_layers-config>`.
+
+
+.. _sec-gui_layers-config:
+
+Layer configuration
+~~~~~~~~~~~~~~~~~~~
+
+Layers may be grouped into categories and form a hierarchy. The categories of the
+BNA data are derived from the BNA directory structure, i.e. the names of the directories
+below the bna directory, e.g. :file:`@DATADIR@/bna`. BNA data directly located within the
+bna directory have no special category.
+The FEP data set is assigned to the fep category.
+
+The depth of the BNA directory tree is arbitrary and subfolders form
+sub-categories. E.g. the directory tree :file:`bna/coastline/europe/germany` will generate
+the categories *coastline*, *coastline.europe* and *coastline.europe.germany* which
 all may be configured individually. Every undefined property is inherited from
 the parent category.
 
-Each data set directory and sub-directory is scanned for an optional
-:file:`map.cfg` configuration file defining default drawing options. Available
-configuration parameters are described further below. This allows easy
-distribution of data sets and drawing properties without the need to change
-application configuration files.
+The layer properties can be configured either by
+
+* Global module configuration parameters or
+* Layer-specific configuration files (:file:`map.cfg`).
+
+.. note ::
+
+   The parameters in the global configuration of modules override the configurations
+   in :file:`map.cfg` allowing a specific configuration per application.
+
+All data set directories, e.g. :file:`@DATADIR@/bna` and sub-directories therein
+are scanned for an optional :file:`map.cfg` configuration file defining default
+drawing options. Parameters found in the lowest sub-directory take priority.
+This allows easy distribution of data sets and drawing properties without the
+need to change application configuration files.
+The available map layer configuration parameters are described further below.
 
 The default drawing options may be overridden in the global or application
 configuration file using the format *prefix.category.param*. If global layer
-properties are configured then just *prefix.param*. The prefix for layer
+properties are configured, then just use *prefix.param*. The prefix for layer
 configuration is *map.layers*. Due to its recursive structure the configuration
 options are not available through :ref:`scconfig`.
 
-The map layers can be explained on the maps by :ref:`configurable legends <sec-gui_legend>`.
 
-.. figure:: media/gui/map-layers.png
-   :align: center
-   :width: 10cm
+Examples
+~~~~~~~~
 
-   Map with layers defined by BNA polygons and legends.
+File and directory for plotting fault lines with specific configurations.
+The BNA polygons are defined in :file:`data.bna`, configurations are in :file:`map.cfg`:
 
-Available configuration parameters are:
+.. code-block:: sh
+
+   @DATADIR@/bna/
+   ├── maps.cfg
+   ├── faults/
+   |   ├── map.cfg
+   |   ├── reverse/
+   |   |   ├── map.cfg
+   |   |   ├── data.bna
+   |   ├── normal/
+   |   |   ├── map.cfg
+   |   |   ├── data.bna
+   |   ├── strike-slip/
+   |   |   ├── map.cfg
+   |   |   ├── data.bna
+   ├── others/
+   |   ├── maps.cfg
+   |   ├── data.bna
+
+Configuration examples for plotting the fault lines based on the example above:
+
+* Legend control in :file:`@DATADIR@/bna/faults/map.cfg` ::
+
+     # title of legend for all legend entries
+     title = "Faults"
+     # plot the legend vertically
+     orientation = vertical
+     # plot the legend in the top-right corner
+     legendArea = topright
+
+* Polygon property control in :file:`@DATADIR@/bna/faults/strike-slip/map.cfg`
+  common to all polygons in this directory. You may generate
+  different sub-directories with different parameters inheriting the legend and other
+  properties. Put this file, e.g. in the strike-slip directory. ::
+
+     # make the layer visible
+     visible = true
+     # do not draw the name of the polygon
+     drawName = false
+     # draw a solid line
+     pen.style = solidline
+     # set the pen with to 1 px
+     pen.width = 1
+     # set the pen line to blue
+     pen.color = blue
+     # label to be shown in legend
+     label = "strike-slip"
+
+Instead of using :file:`map.cfg`, the same properties can also be set per layer
+category by global parameters in module configurations, e.g. for the layer *strike-slip*
+below *faults* (:file:`global.cfg`): ::
+
+   map.layers.faults.title = "Faults"
+   map.layers.faults.orientation = vertical
+   map.layers.faults.legendArea = topright
+   map.layers.faults.strike-slip.visible = true
+   map.layers.faults.strike-slip.drawName = false
+   map.layers.faults.strike-slip.pen.style = solidline
+   map.layers.faults.strike-slip.pen.width = 1
+   map.layers.faults.strike-slip.pen.color = blue
+   map.layers.faults.strike-slip.label = "strike-slip"
+
+
+Parameters
+~~~~~~~~~~
+
+Available map layer configuration parameters for each category are:
 
 .. confval:: visible
 
@@ -469,20 +593,32 @@ Available configuration parameters are:
 
    Default is ``src-over``.
 
-Example:
 
-.. code-block:: sh
+.. _sec-gui_layers-others:
 
-   # Set global layer boundary color to black
-   map.layers.pen.color = 000000
+Other Layers
+------------
 
-   # Set coastline boundary color to orange and pen width to 2
-   map.layers.coastline.pen.color = ff8000
-   map.layers.coastline.pen.width = 2
+Other layers may be displayed on maps depending on the application.
 
-   # Set boundary of Germany to red. Pen width is still 2 (inherited from
-   # coastline)
-   map.layers.coastline.europe.germany = ff0000
+* Events layer:
 
-   # Set river color to blue
-   map.layers.river.pen.color = 0000ff
+  Event symbols are shown as an extra layer, e.g. in the Location tab of :ref:`scolv`.
+  Activate in the global module configuration by :confval:`map.layers.events.visible`.
+
+* Cities layer:
+
+  Cities are plotted based on the XML file :file:`@DATADIR@/cities.xml`. Custom
+  XML files, e.g. for multi-language support are provided by :confval:`cityXML`.
+  Properties are configured in various global module parameters :confval:`scheme.map.*`
+  and :confval:`scheme.colors.*`.
+
+* Grid layer:
+
+  The latitude/longitude grid plotted on top of maps. Properties are configured
+  in the global module parameters :confval:`scheme.colors.map.grid.*`.
+
+* Custom layers:
+
+  Additional custom layers may be added which can be loaded and displayed by specific
+  modules or plugins. They are added by :confval:`map.customLayers`.
