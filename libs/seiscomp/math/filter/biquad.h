@@ -26,7 +26,7 @@
 #include <string>
 #include <ostream>
 
-#include<seiscomp/math/filter.h>
+#include <seiscomp/math/filter.h>
 
 
 namespace Seiscomp {
@@ -95,13 +95,13 @@ class Biquad : public InPlaceFilter<TYPE> {
 	// ------------------------------------------------------------------
 	public:
 		// apply filter to data vector **in*place**
-		virtual void apply(int n, TYPE *inout) override;
+		void apply(int n, TYPE *inout) override;
 
 		// Implement InPlaceFilter interface with default values
-		virtual void setSamplingFrequency(double fsamp) override;
-		virtual int setParameters(int n, const double *params) override;
+		void setSamplingFrequency(double fsamp) override;
+		int setParameters(int n, const double *params) override;
 
-		virtual InPlaceFilter<TYPE> *clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 
 	// ------------------------------------------------------------------
@@ -147,11 +147,11 @@ class BiquadCascade : public InPlaceFilter<TYPE> {
 	// ------------------------------------------------------------------
 	public:
 		// apply filter to data vector **in*place**
-		virtual void apply(int n, TYPE *inout) override;
-		virtual InPlaceFilter<TYPE> *clone() const override;
+		void apply(int n, TYPE *inout) override;
+		InPlaceFilter<TYPE> *clone() const override;
 
-		virtual void setSamplingFrequency(double /*fsamp*/) override {}
-		virtual int setParameters(int n, const double *params) override ;
+		void setSamplingFrequency(double /*fsamp*/) override {}
+		int setParameters(int n, const double *params) override;
 
 
 	// ------------------------------------------------------------------

@@ -24,7 +24,7 @@
 
 #include <seiscomp/math/filter/cutoff.h>
 #include <seiscomp/core/exceptions.h>
-#include<seiscomp/logging/log.h>
+#include <seiscomp/logging/log.h>
 
 
 namespace Seiscomp {

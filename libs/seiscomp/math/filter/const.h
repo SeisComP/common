@@ -36,12 +36,12 @@ class ConstFilter : public InPlaceFilter<T> {
 		ConstFilter(T c = 1);
 
 	public:
-		void setSamplingFrequency(double fsamp);
-		int setParameters(int n, const double *params);
+		void setSamplingFrequency(double fsamp) override;
+		int setParameters(int n, const double *params) override;
 
-		void apply(int n, T *inout);
+		void apply(int n, T *inout) override;
 
-		InPlaceFilter<T>* clone() const;
+		InPlaceFilter<T>* clone() const override;
 
 	private:
 		T _const;

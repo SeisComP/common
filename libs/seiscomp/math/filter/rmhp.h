@@ -43,18 +43,15 @@ class RunningMean : public InPlaceFilter<TYPE> {
 		}
 
 		// apply filter to data vector **in*place**
-		void apply(int n, TYPE *inout);
-		virtual InPlaceFilter<TYPE>* clone() const;
+		void apply(int n, TYPE *inout) override;
+		InPlaceFilter<TYPE>* clone() const override;
+
+		void setSamplingFrequency(double fsamp) override;
+
+		int setParameters(int n, const double *params) override;
 
 		// resets the filter, i.e. erases the filter memory
-		void reset() {}
-
-		virtual void setSamplingFrequency(double fsamp) {
-			_samplingFrequency = fsamp;
-			_windowLengthI = int(_windowLength * _samplingFrequency);
-		}
-
-		virtual int setParameters(int n, const double *params);
+		void reset();
 
 
 	protected:
@@ -73,8 +70,8 @@ class RunningMeanHighPass : public RunningMean<TYPE> {
 
 	public:
 		// apply filter to data vector **in*place**
-		void apply(int n, TYPE *inout);
-		virtual InPlaceFilter<TYPE>* clone() const;
+		void apply(int n, TYPE *inout) override;
+		InPlaceFilter<TYPE>* clone() const override;
 };
 
 

@@ -24,7 +24,7 @@
 
 #include <seiscomp/math/filter/minmax.h>
 #include <seiscomp/core/exceptions.h>
-#include<seiscomp/logging/log.h>
+#include <seiscomp/logging/log.h>
 
 
 namespace Seiscomp {
@@ -65,11 +65,8 @@ void MinMax<TYPE>::setSamplingFrequency(double fsamp) {
 	_fsamp = fsamp;
 	_sampleCount = (int)(_fsamp * _timeSpan);
 	if ( _sampleCount < 1 ) _sampleCount = 1;
-
-	_index = 0;
-
 	_buffer.resize(_sampleCount);
-	_firstSample = true;
+	reset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
