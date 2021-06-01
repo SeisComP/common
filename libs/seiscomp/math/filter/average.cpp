@@ -98,13 +98,10 @@ void Average<TYPE>::setSamplingFrequency(double fsamp) {
 	_fsamp = fsamp;
 	_sampleCount = (int)(_fsamp * _timeSpan);
 	if ( _sampleCount < 1 ) _sampleCount = 1;
-	_lastSum = 0;
-	_index = 0;
-
 	_oocount = 1.0/_sampleCount;
-
 	_buffer.resize(_sampleCount);
-	_firstSample = true;
+
+  reset();
 }
 
 

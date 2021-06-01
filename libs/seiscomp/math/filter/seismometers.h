@@ -23,7 +23,7 @@
 
 #include <complex>
 
-#include<seiscomp/math/filter/biquad.h>
+#include <seiscomp/math/filter/biquad.h>
 
 
 namespace Seiscomp {
@@ -120,12 +120,12 @@ class Filter : public SeismometerResponse::PolesAndZeros,
 		Filter(const Filter &other);
 
 	public:
-		virtual void setSamplingFrequency(double fsamp) override;
-		virtual int setParameters(int n, const double *params) override;
+		void setSamplingFrequency(double fsamp) override;
+		int setParameters(int n, const double *params) override;
 
-		virtual void apply(int n, T *inout) override;
+		void apply(int n, T *inout) override;
 	
-		virtual Math::Filtering::InPlaceFilter<T>* clone() const override;
+		Math::Filtering::InPlaceFilter<T>* clone() const override;
 
 	private:
 		Math::Filtering::IIR::BiquadCascade<T> _cascade;
@@ -139,8 +139,8 @@ class WWSSN_SP_Filter : public Filter<T> {
 		WWSSN_SP_Filter(const WWSSN_SP_Filter &other);
 
 	public:
-		int setParameters(int n, const double *params);
-		Math::Filtering::InPlaceFilter<T>* clone() const;
+		int setParameters(int n, const double *params) override;
+		Math::Filtering::InPlaceFilter<T>* clone() const override;
 
 		void setInput(GroundMotion input);
 };
@@ -153,8 +153,8 @@ class WWSSN_LP_Filter : public Filter<T> {
 		WWSSN_LP_Filter(const WWSSN_LP_Filter &other);
 
 	public:
-		int setParameters(int n, const double *params);
-		Math::Filtering::InPlaceFilter<T>* clone() const;
+		int setParameters(int n, const double *params) override;
+		Math::Filtering::InPlaceFilter<T>* clone() const override;
 
 		void setInput(GroundMotion input);
 };
@@ -167,8 +167,8 @@ class WoodAndersonFilter : public Filter<T> {
 		WoodAndersonFilter(const WoodAndersonFilter &other);
 
 	public:
-		int setParameters(int n, const double *params);
-		Math::Filtering::InPlaceFilter<T>* clone() const;
+		int setParameters(int n, const double *params) override;
+		Math::Filtering::InPlaceFilter<T>* clone() const override;
 
 		void setInput(GroundMotion input,
 		              SeismometerResponse::WoodAnderson::Config config = SeismometerResponse::WoodAnderson::Config());
@@ -183,8 +183,8 @@ class GenericSeismometer : public Filter<T> {
 		GenericSeismometer(const GenericSeismometer &other);
 
 	public:
-		int setParameters(int n, const double *params);
-		Math::Filtering::InPlaceFilter<T>* clone() const;
+		int setParameters(int n, const double *params) override;
+		Math::Filtering::InPlaceFilter<T>* clone() const override;
 
 		void setInput(GroundMotion input);
 
@@ -199,8 +199,8 @@ class Seismometer5secFilter : public Filter<T> {
 		Seismometer5secFilter(const Seismometer5secFilter &other);
 
 	public:
-		int setParameters(int n, const double *params);
-		Math::Filtering::InPlaceFilter<T>* clone() const;
+		int setParameters(int n, const double *params) override;
+		Math::Filtering::InPlaceFilter<T>* clone() const override;
 
 		void setInput(GroundMotion input);
 };

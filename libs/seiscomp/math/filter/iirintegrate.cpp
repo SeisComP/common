@@ -29,7 +29,8 @@ namespace Filtering
 
 
 template <typename T>
-IIRIntegrate<T>::IIRIntegrate(double a, double fsamp) {
+IIRIntegrate<T>::IIRIntegrate(double a, double fsamp)
+{
 	init(a);
 	setSamplingFrequency(fsamp);
 }
@@ -55,7 +56,7 @@ void IIRIntegrate<T>::init(double a) {
 	_b1 = 0;
 	_b2 = -1;
 
-	_v1 = _v2 = 0;
+	reset();
 }
 
 
@@ -70,10 +71,16 @@ void IIRIntegrate<T>::setSamplingFrequency(double fsamp) {
 	if ( !fsamp ) return;
 
 	double dt = 1./fsamp;
+	// NOTE: Check for changing sampling rate. Do not store `fsamp` in a member
+	// variable in order to keep binary compatibility.
+	double a0 = _ia0 * dt;
+	if ( _a0 != a0 ) {
+		_a0 = a0;
+		_a1 = _ia1 * dt;
+		_a2 = _ia2 * dt;
 
-	_a0 = _ia0 * dt;
-	_a1 = _ia1 * dt;
-	_a2 = _ia2 * dt;
+		reset();
+	}
 }
 
 

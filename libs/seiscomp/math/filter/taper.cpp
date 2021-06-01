@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#include<math.h>
-#include<seiscomp/math/filter/taper.h>
+#include <math.h>
+#include <seiscomp/math/filter/taper.h>
 
 namespace Seiscomp {
 namespace Math {
@@ -33,6 +33,17 @@ InitialTaper<TYPE>::InitialTaper(double taperLength, TYPE offset, double fsamp)
 	if ( fsamp )
 		setSamplingFrequency(fsamp);
 }
+
+template<typename TYPE>
+void InitialTaper<TYPE>::setSamplingFrequency(double fsamp) {
+	if ( _samplingFrequency == fsamp ) return;
+
+	_samplingFrequency = fsamp;
+	_taperLengthI = int(_taperLength * _samplingFrequency);
+
+	reset();
+}
+
 
 template<typename TYPE>
 int InitialTaper<TYPE>::setParameters(int n, const double *params)

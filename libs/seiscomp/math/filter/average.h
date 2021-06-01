@@ -21,8 +21,8 @@
 #ifndef SEISCOMP_MATH_FILTER_RCA_H
 #define SEISCOMP_MATH_FILTER_RCA_H
 
-#include<vector>
-#include<seiscomp/math/filter.h>
+#include <vector>
+#include <seiscomp/math/filter.h>
 
 
 namespace Seiscomp {
@@ -38,12 +38,12 @@ class Average : public InPlaceFilter<TYPE> {
 	public:
 		void setLength(double timeSpan);
 
-		virtual void setSamplingFrequency(double fsamp);
-		virtual int setParameters(int n, const double *params);
+		void setSamplingFrequency(double fsamp) override;
+		int setParameters(int n, const double *params) override;
 
 		// apply filter to data vector **in*place**
-		virtual void apply(int n, TYPE *inout);
-		virtual InPlaceFilter<TYPE>* clone() const;
+		void apply(int n, TYPE *inout) override;
+		InPlaceFilter<TYPE>* clone() const override;
 
 		// Resets the filter values
 		void reset();
