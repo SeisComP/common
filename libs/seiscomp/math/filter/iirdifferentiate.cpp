@@ -30,15 +30,14 @@ namespace Filtering
 
 template <typename T>
 IIRDifferentiate<T>::IIRDifferentiate(double fsamp) : _fsamp(fsamp) {
-	reset();
 	setSamplingFrequency(fsamp);
 }
 
 
 template <typename T>
 IIRDifferentiate<T>::IIRDifferentiate(const IIRDifferentiate<T> &other) {
-	_fsamp = 0.0;
-	reset();
+  _fsamp = 0.0;
+  reset();
 }
 
 
@@ -51,7 +50,10 @@ void IIRDifferentiate<T>::reset() {
 
 template <typename T>
 void IIRDifferentiate<T>::setSamplingFrequency(double fsamp) {
+	if ( fsamp == _fsamp) return;
+
 	_fsamp = fsamp;
+  reset();
 }
 
 

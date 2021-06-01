@@ -64,6 +64,22 @@ void RunningMean<TYPE>::apply(int n, TYPE *inout) {
 }
 
 template<typename TYPE>
+void RunningMean<TYPE>::reset() {
+	_sampleCount = 0;
+	_average = 0;
+}
+
+template<typename TYPE>
+void RunningMean<TYPE>::setSamplingFrequency(double fsamp) {
+	if (fsamp == _samplingFrequency) return;
+
+	_samplingFrequency = fsamp;
+	_windowLengthI = int(_windowLength * _samplingFrequency);
+
+	reset();
+}
+
+template<typename TYPE>
 int RunningMean<TYPE>::setParameters(int n, const double *params) {
 	// Return an error stating that the passed parameter count
 	// does not match

@@ -22,7 +22,7 @@
 #define SEISCOMP_FILTERING_IIR_BUTTERWORTH_H
 
 
-#include<seiscomp/math/filter/biquad.h>
+#include <seiscomp/math/filter/biquad.h>
 
 
 namespace Seiscomp {
@@ -37,10 +37,10 @@ class ButterworthLowpass : public BiquadCascade<TYPE> {
 		ButterworthLowpass(int order = 3, double fmax = 0.7, double fsamp=0);
 
 	public:
-		virtual void setSamplingFrequency(double fsamp) override;
-		virtual int setParameters(int n, const double *params) override;
+		void setSamplingFrequency(double fsamp) override;
+		int setParameters(int n, const double *params) override;
 
-		virtual InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE>* clone() const override;
 
 	private:
 		int _order;
@@ -54,10 +54,10 @@ class ButterworthHighpass : public BiquadCascade<TYPE> {
 		ButterworthHighpass(int order = 3, double fmin = 2.0, double fsamp=0);
 
 	public:
-		virtual void setSamplingFrequency(double fsamp) override;
-		virtual int setParameters(int n, const double *params) override;
+		void setSamplingFrequency(double fsamp) override;
+		int setParameters(int n, const double *params) override;
 
-		virtual InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE>* clone() const override;
 
 	private:
 		int _order;
@@ -72,10 +72,10 @@ class ButterworthBandpass : public BiquadCascade<TYPE> {
 		                    double fsamp=0);
 
 	public:
-		virtual void setSamplingFrequency(double fsamp) override;
-		virtual int setParameters(int n, const double *params) override;
+		void setSamplingFrequency(double fsamp) override;
+		int setParameters(int n, const double *params) override;
 
-		virtual InPlaceFilter<TYPE>* clone() const;
+		InPlaceFilter<TYPE>* clone() const override;
 
 
 	protected:
@@ -92,10 +92,10 @@ class ButterworthBandstop : public BiquadCascade<TYPE> {
 		                    double fsamp=0);
 
 	public:
-		virtual void setSamplingFrequency(double fsamp) override;
-		virtual int setParameters(int n, const double *params) override;
+		void setSamplingFrequency(double fsamp) override;
+		int setParameters(int n, const double *params) override;
 
-		virtual InPlaceFilter<TYPE>* clone() const;
+		InPlaceFilter<TYPE>* clone() const override;
 
 	protected:
 		// configuration
@@ -111,10 +111,10 @@ class ButterworthHighLowpass : public BiquadCascade<TYPE> {
 		                       double fmax = 2.0, double fsamp = 0);
 
 	public:
-		virtual void setSamplingFrequency(double fsamp) override;
-		virtual int setParameters(int n, const double *params) override;
+		void setSamplingFrequency(double fsamp) override;
+		int setParameters(int n, const double *params) override;
 
-		virtual InPlaceFilter<TYPE>* clone() const;
+		InPlaceFilter<TYPE>* clone() const override;
 
 	private:
 		int _order;

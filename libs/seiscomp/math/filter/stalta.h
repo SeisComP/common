@@ -48,7 +48,7 @@ class STALTA : public InPlaceFilter<TYPE> {
 		// initialization when the data arrive.
 		void setSamplingFrequency(double fsamp) override;
 
-		int setParameters(int n, const double *params);
+		int setParameters(int n, const double *params) override;
 
 		InPlaceFilter<TYPE>* clone() const override;
 
@@ -94,7 +94,7 @@ class STALTA2 : public InPlaceFilter<TYPE> {
 		// initialization when the data arrive.
 		void setSamplingFrequency(double fsamp) override;
 
-		int setParameters(int n, const double *params);
+		int setParameters(int n, const double *params) override;
 
 		InPlaceFilter<TYPE>* clone() const override;
 
@@ -146,7 +146,7 @@ class STALTA_Classic : public InPlaceFilter<TYPE> {
 		// initialization when the data arrive.
 		void setSamplingFrequency(double fsamp) override;
 
-		int setParameters(int n, const double *params);
+		int setParameters(int n, const double *params) override;
 
 		InPlaceFilter<TYPE>* clone() const override;
 

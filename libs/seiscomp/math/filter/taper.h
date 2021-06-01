@@ -21,9 +21,8 @@
 #ifndef SEISCOMP_FILTERING_TAPER_H
 #define SEISCOMP_FILTERING_TAPER_H
 
-#include<vector>
-
-#include<seiscomp/math/filter.h>
+#include <vector>
+#include <seiscomp/math/filter.h>
 
 namespace Seiscomp {
 namespace Math {
@@ -43,19 +42,17 @@ class InitialTaper : public InPlaceFilter<TYPE> {
 		}
 
 		// apply filter to data vector **in*place**
-		void apply(int n, TYPE *inout);
+		void apply(int n, TYPE *inout) override;
 
-		virtual InPlaceFilter<TYPE>* clone() const;
+		InPlaceFilter<TYPE>* clone() const override;
+
+		void setSamplingFrequency(double fsamp) override;
+
+		int setParameters(int n, const double *params) override;
 
 		// resets the filter, i.e. erases the filter memory
 		void reset() { _sampleCount = 0; }
 
-		virtual void setSamplingFrequency(double fsamp) {
-			_samplingFrequency = fsamp;
-			_taperLengthI = int(_taperLength * _samplingFrequency);
-		}
-
-		virtual int setParameters(int n, const double *params);
 
 	private:
 		double _taperLength,  _samplingFrequency;

@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 #include <seiscomp/math/filter/seismometers.h>

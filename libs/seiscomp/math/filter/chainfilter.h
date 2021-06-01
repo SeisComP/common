@@ -69,19 +69,19 @@ class ChainFilter : public InPlaceFilter<TYPE>
 	//  Derived filter interface
 	// ------------------------------------------------------------------
 	public:
-		virtual void apply(int n, TYPE *inout);
+		void apply(int n, TYPE *inout) override;
 
-		virtual void setStartTime(const Core::Time &time);
+		void setStartTime(const Core::Time &time) override;
 
-		virtual void setStreamID(const std::string &net,
+		void setStreamID(const std::string &net,
 		                         const std::string &sta,
 		                         const std::string &loc,
-		                         const std::string &cha);
+		                         const std::string &cha) override;
 
-		virtual void setSamplingFrequency(double fsamp);
-		virtual int setParameters(int n, const double *params);
+		void setSamplingFrequency(double fsamp) override;
+		int setParameters(int n, const double *params) override;
 
-		virtual InPlaceFilter<TYPE>* clone() const;
+		InPlaceFilter<TYPE>* clone() const override;
 
 
 	// ------------------------------------------------------------------
