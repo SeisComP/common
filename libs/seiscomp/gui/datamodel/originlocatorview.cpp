@@ -1102,7 +1102,7 @@ class PlotWidget : public OriginLocatorPlot {
 			Math::tensor2matrix(_tensor, tmp);
 
 			_renderer.setPColor(palette().color(QPalette::Base));
-			_renderer.setTColor(palette().color(QPalette::AlternateBase));
+			_renderer.setTColor(palette().color(QPalette::Mid));
 			_renderer.setBorderColor(palette().color(QPalette::WindowText));
 			_renderer.render(_buffer, _tensor, tmp);
 
@@ -1266,7 +1266,7 @@ class PlotWidget : public OriginLocatorPlot {
 				Math::Matrix3f m;
 				Math::tensor2matrix(_tensor, m);
 				_renderer.setPColor(palette().color(QPalette::Base));
-				_renderer.setTColor(palette().color(QPalette::AlternateBase));
+				_renderer.setTColor(palette().color(QPalette::Mid));
 				_renderer.setBorderColor(palette().color(QPalette::WindowText));
 				_renderer.render(_buffer, _tensor, m);
 				_dirty = false;
