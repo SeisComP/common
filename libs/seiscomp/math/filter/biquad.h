@@ -46,7 +46,6 @@ namespace IIR {
  * to be 1. This is not checked.
  */
 struct BiquadCoefficients {
-
 	BiquadCoefficients(double b0 = 0, double b1 = 0, double b2 = 0,
 	                   double a0 = 1, double a1 = 0, double a2 = 0);
 	BiquadCoefficients(BiquadCoefficients const &bq);

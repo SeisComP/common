@@ -21,16 +21,14 @@
 #ifndef SEISCOMP_IIRDIFFERENTIATE_H
 #define SEISCOMP_IIRDIFFERENTIATE_H
 
+
 #include <vector>
 #include <seiscomp/math/filter.h>
 
 
-namespace Seiscomp
-{
-namespace Math
-{
-namespace Filtering
-{
+namespace Seiscomp {
+namespace Math {
+namespace Filtering {
 
 
 template <typename T>
@@ -51,7 +49,7 @@ class IIRDifferentiate : public InPlaceFilter<T> {
 
 		void apply(int n, T *inout) override;
 
-		InPlaceFilter<T>* clone() const override;
+		InPlaceFilter<T> *clone() const override;
 
 	private:
 		T _v1;
@@ -63,5 +61,6 @@ class IIRDifferentiate : public InPlaceFilter<T> {
 }
 }
 }
+
 
 #endif

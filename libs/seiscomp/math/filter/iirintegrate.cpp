@@ -20,17 +20,14 @@
 
 #include <seiscomp/math/filter/iirintegrate.h>
 
-namespace Seiscomp
-{
-namespace Math
-{
-namespace Filtering
-{
+
+namespace Seiscomp {
+namespace Math {
+namespace Filtering {
 
 
 template <typename T>
-IIRIntegrate<T>::IIRIntegrate(double a, double fsamp)
-{
+IIRIntegrate<T>::IIRIntegrate(double a, double fsamp) {
 	init(a);
 	setSamplingFrequency(fsamp);
 }
@@ -38,10 +35,9 @@ IIRIntegrate<T>::IIRIntegrate(double a, double fsamp)
 
 template <typename T>
 IIRIntegrate<T>::IIRIntegrate(const IIRIntegrate<T> &other)
- : _ia0(other._ia0), _ia1(other._ia1), _ia2(other._ia2),
-   _a0(other._a0), _a1(other._a1), _a2(other._a2),
-   _b0(other._b0), _b1(other._b1), _b2(other._b2)
-{
+: _ia0(other._ia0), _ia1(other._ia1), _ia2(other._ia2)
+, _a0(other._a0), _a1(other._a1), _a2(other._a2)
+, _b0(other._b0), _b1(other._b1), _b2(other._b2) {
 	reset();
 }
 
@@ -104,7 +100,7 @@ void IIRIntegrate<T>::apply(int n, T *inout) {
 
 
 template <typename T>
-InPlaceFilter<T>* IIRIntegrate<T>::clone() const {
+InPlaceFilter<T> *IIRIntegrate<T>::clone() const {
 	return new IIRIntegrate<T>(*this);
 }
 

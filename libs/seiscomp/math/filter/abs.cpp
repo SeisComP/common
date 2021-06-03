@@ -21,12 +21,10 @@
 #include <math.h>
 #include <seiscomp/math/filter/abs.h>
 
-namespace Seiscomp
-{
-namespace Math
-{
-namespace Filtering
-{
+
+namespace Seiscomp {
+namespace Math {
+namespace Filtering {
 
 
 template<typename T>
@@ -51,7 +49,7 @@ void AbsFilter<T>::apply(int n, T *inout) {
 
 
 template<typename T>
-InPlaceFilter<T>* AbsFilter<T>::clone() const {
+InPlaceFilter<T> *AbsFilter<T>::clone() const {
 	return new AbsFilter<T>();
 }
 

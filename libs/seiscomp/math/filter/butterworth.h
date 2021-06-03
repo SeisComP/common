@@ -40,7 +40,7 @@ class ButterworthLowpass : public BiquadCascade<TYPE> {
 		void setSamplingFrequency(double fsamp) override;
 		int setParameters(int n, const double *params) override;
 
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 	private:
 		int _order;
@@ -57,7 +57,7 @@ class ButterworthHighpass : public BiquadCascade<TYPE> {
 		void setSamplingFrequency(double fsamp) override;
 		int setParameters(int n, const double *params) override;
 
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 	private:
 		int _order;
@@ -75,7 +75,7 @@ class ButterworthBandpass : public BiquadCascade<TYPE> {
 		void setSamplingFrequency(double fsamp) override;
 		int setParameters(int n, const double *params) override;
 
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 
 	protected:
@@ -95,7 +95,7 @@ class ButterworthBandstop : public BiquadCascade<TYPE> {
 		void setSamplingFrequency(double fsamp) override;
 		int setParameters(int n, const double *params) override;
 
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 	protected:
 		// configuration
@@ -114,7 +114,7 @@ class ButterworthHighLowpass : public BiquadCascade<TYPE> {
 		void setSamplingFrequency(double fsamp) override;
 		int setParameters(int n, const double *params) override;
 
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 	private:
 		int _order;

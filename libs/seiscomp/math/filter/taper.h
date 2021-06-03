@@ -21,19 +21,20 @@
 #ifndef SEISCOMP_FILTERING_TAPER_H
 #define SEISCOMP_FILTERING_TAPER_H
 
+
 #include <vector>
 #include <seiscomp/math/filter.h>
+
 
 namespace Seiscomp {
 namespace Math {
 namespace Filtering {
 
+
 template<typename TYPE>
 class InitialTaper : public InPlaceFilter<TYPE> {
 	public:
-
 		InitialTaper(double taperLength=0, TYPE offset=0, double fsamp=0);
-	//	InitialTaper(InitialTaper const &other);
 		~InitialTaper() {}
 
 		void setLength(double taperLength, TYPE offset=0) {
@@ -44,7 +45,7 @@ class InitialTaper : public InPlaceFilter<TYPE> {
 		// apply filter to data vector **in*place**
 		void apply(int n, TYPE *inout) override;
 
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 		void setSamplingFrequency(double fsamp) override;
 
@@ -58,11 +59,12 @@ class InitialTaper : public InPlaceFilter<TYPE> {
 		double _taperLength,  _samplingFrequency;
 		int    _taperLengthI, _sampleCount;
 		TYPE   _offset;
-}; // class InitialTaper
+};
 
 
 } // namespace Seiscomp::Math::Filtering
 } // namespace Seiscomp::Math
 } // namespace Seiscomp
+
 
 #endif

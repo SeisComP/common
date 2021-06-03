@@ -23,12 +23,11 @@
 
 #include <seiscomp/math/filter.h>
 
-namespace Seiscomp
-{
-namespace Math
-{
-namespace Filtering
-{
+
+namespace Seiscomp {
+namespace Math {
+namespace Filtering {
+
 
 template<typename T>
 class AbsFilter : public InPlaceFilter<T> {
@@ -41,12 +40,14 @@ class AbsFilter : public InPlaceFilter<T> {
 
 		void apply(int n, T *inout) override;
 
-		InPlaceFilter<T>* clone() const override;
+		InPlaceFilter<T> *clone() const override;
 };
+
 
 }
 }
 }
+
 
 #endif
 

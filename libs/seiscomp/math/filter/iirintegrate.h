@@ -21,16 +21,14 @@
 #ifndef SEISCOMP_IIRINTEGRATE_H
 #define SEISCOMP_IIRINTEGRATE_H
 
+
 #include <vector>
 #include <seiscomp/math/filter.h>
 
 
-namespace Seiscomp
-{
-namespace Math
-{
-namespace Filtering
-{
+namespace Seiscomp {
+namespace Math {
+namespace Filtering {
 
 
 template <typename T>
@@ -51,7 +49,7 @@ class IIRIntegrate : public InPlaceFilter<T> {
 
 		void apply(int n, T *inout) override;
 
-		InPlaceFilter<T>* clone() const override;
+		InPlaceFilter<T> *clone() const override;
 
 	private:
 		void init(double a);

@@ -43,7 +43,7 @@ class Average : public InPlaceFilter<TYPE> {
 
 		// apply filter to data vector **in*place**
 		void apply(int n, TYPE *inout) override;
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 		// Resets the filter values
 		void reset();

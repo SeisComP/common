@@ -21,8 +21,10 @@
 #ifndef SEISCOMP_PICKER_STALTA_H
 #define SEISCOMP_PICKER_STALTA_H
 
+
 #include <vector>
 #include <seiscomp/math/filter.h>
+
 
 namespace Seiscomp {
 namespace Math {
@@ -35,10 +37,10 @@ namespace Filtering {
 
 template<typename TYPE>
 class STALTA : public InPlaceFilter<TYPE> {
-
 	public:
 		STALTA(double lenSTA=2, double lenLTA=50, double fsamp=1.);
 
+	public:
 		// Apply the picker in place to the (previously filtered) data.
 		void apply(int ndata, TYPE *data) override;
 
@@ -50,7 +52,7 @@ class STALTA : public InPlaceFilter<TYPE> {
 
 		int setParameters(int n, const double *params) override;
 
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 	protected:
 		// length of STA and LTA windows in seconds
@@ -79,12 +81,12 @@ class STALTA : public InPlaceFilter<TYPE> {
 
 template<typename TYPE>
 class STALTA2 : public InPlaceFilter<TYPE> {
-
 	public:
 		STALTA2(double lenSTA=2, double lenLTA=50,
 			double eventON=3., double eventOFF=1.,
 			double fsamp=1.);
 
+	public:
 		// Apply the picker in place to the (previously filtered) data.
 		void apply(int ndata, TYPE *data) override;
 
@@ -96,7 +98,7 @@ class STALTA2 : public InPlaceFilter<TYPE> {
 
 		int setParameters(int n, const double *params) override;
 
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 	protected:
 		// length of STA and LTA windows in seconds
@@ -137,6 +139,7 @@ class STALTA_Classic : public InPlaceFilter<TYPE> {
 			double lenLTA = 50.,
 			double fsamp  =  1.);
 
+	public:
 		// Apply the picker in place to the (previously filtered) data.
 		void apply(int ndata, TYPE *data) override;
 
@@ -148,7 +151,7 @@ class STALTA_Classic : public InPlaceFilter<TYPE> {
 
 		int setParameters(int n, const double *params) override;
 
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 	protected:
 		// length of STA and LTA windows in seconds
@@ -175,9 +178,9 @@ class STALTA_Classic : public InPlaceFilter<TYPE> {
 };
 
 
-
 } // namespace Seiscomp::Math::Filter
 } // namespace Seiscomp::Math
 } // namespace Seiscomp
+
 
 #endif

@@ -19,24 +19,29 @@
 
 
 #include <iostream>
-using namespace std;
-
 #include <seiscomp/math/filter/seismometers.h>
 #include <seiscomp/core/exceptions.h>
+
+
+using namespace std;
+
 
 namespace Seiscomp {
 namespace Math {
 
+
 namespace SeismometerResponse {
+
 
 PolesAndZeros::PolesAndZeros() {}
 
+
 PolesAndZeros::PolesAndZeros(const Poles &p, const Zeros &z, double n)
- : poles(p), zeros(z), norm(n) {}
+: poles(p), zeros(z), norm(n) {}
 
 
 PolesAndZeros::PolesAndZeros(const PolesAndZeros &other)
- : poles(other.poles), zeros(other.zeros), norm(other.norm) {}
+: poles(other.poles), zeros(other.zeros), norm(other.norm) {}
 
 
 WoodAnderson::WoodAnderson(GroundMotion input, Config config) {
@@ -185,6 +190,7 @@ pole2biquad(const SeismometerResponse::Pole &p, double fsamp, int nz0=0, double 
 	return Math::Filtering::IIR::Biquad<T>(a0, a1, a2, b0, b1, b2);
 }
 
+
 template <typename T>
 Math::Filtering::IIR::Biquad<T>
 zero2biquad(const SeismometerResponse::Zero &z, double fsamp)
@@ -198,6 +204,7 @@ zero2biquad(const SeismometerResponse::Zero &z, double fsamp)
 		biq.b0*ib0, biq.b1*ib0, biq.b2*ib0,
 		biq.a0*ib0, biq.a1*ib0, biq.a2*ib0);
 }
+
 
 template <typename T>
 Math::Filtering::IIR::BiquadCascade<T>
@@ -358,7 +365,7 @@ void Filter<T>::apply(int n, T *inout) {
 
 
 template <typename T>
-InPlaceFilter<T>* Filter<T>::clone() const {
+InPlaceFilter<T> *Filter<T>::clone() const {
 	return new Filter<T>(poles, zeros, norm);
 }
 
@@ -423,7 +430,7 @@ int WWSSN_SP_Filter<T>::setParameters(int n, const double *params) {
 
 
 template <typename T>
-InPlaceFilter<T>* WWSSN_SP_Filter<T>::clone() const {
+InPlaceFilter<T> *WWSSN_SP_Filter<T>::clone() const {
 	return new WWSSN_SP_Filter(*this);
 }
 
@@ -484,7 +491,7 @@ int WWSSN_LP_Filter<T>::setParameters(int n, const double *params) {
 
 
 template <typename T>
-InPlaceFilter<T>* WWSSN_LP_Filter<T>::clone() const {
+InPlaceFilter<T> *WWSSN_LP_Filter<T>::clone() const {
 	return new WWSSN_LP_Filter(*this);
 }
 
@@ -536,7 +543,7 @@ int WoodAndersonFilter<T>::setParameters(int n, const double *params) {
 
 
 template <typename T>
-InPlaceFilter<T>* WoodAndersonFilter<T>::clone() const {
+InPlaceFilter<T> *WoodAndersonFilter<T>::clone() const {
 	return new WoodAndersonFilter(*this);
 }
 
@@ -579,7 +586,7 @@ int Seismometer5secFilter<T>::setParameters(int n, const double *params) {
 
 
 template <typename T>
-InPlaceFilter<T>* Seismometer5secFilter<T>::clone() const {
+InPlaceFilter<T> *Seismometer5secFilter<T>::clone() const {
 	return new Seismometer5secFilter(*this);
 }
 
@@ -635,7 +642,7 @@ int GenericSeismometer<T>::setParameters(int n, const double *params) {
 
 
 template <typename T>
-InPlaceFilter<T>* GenericSeismometer<T>::clone() const {
+InPlaceFilter<T> *GenericSeismometer<T>::clone() const {
 	return new GenericSeismometer(*this);
 }
 

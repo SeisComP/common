@@ -25,12 +25,10 @@
 #include <seiscomp/math/filter.h>
 
 
-namespace Seiscomp
-{
-namespace Math
-{
-namespace Filtering
-{
+namespace Seiscomp {
+namespace Math {
+namespace Filtering {
+
 
 template<typename TYPE>
 class CutOff : public InPlaceFilter<TYPE> {
@@ -43,7 +41,7 @@ class CutOff : public InPlaceFilter<TYPE> {
 
 		// apply filter to data vector **in*place**
 		void apply(int n, TYPE *inout) override;
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 	private:
 		TYPE _threshold;
@@ -53,10 +51,8 @@ class CutOff : public InPlaceFilter<TYPE> {
 
 
 } // namespace Seiscomp::Math::Filtering
-
 } // namespace Seiscomp::Math
-
 } // namespace Seiscomp
 
-#endif
 
+#endif

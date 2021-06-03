@@ -22,6 +22,7 @@
 #include <seiscomp/math/filter/rmhp.h>
 #include <seiscomp/core/exceptions.h>
 
+
 namespace Seiscomp {
 namespace Math {
 namespace Filtering {
@@ -63,11 +64,13 @@ void RunningMean<TYPE>::apply(int n, TYPE *inout) {
 	}
 }
 
+
 template<typename TYPE>
 void RunningMean<TYPE>::reset() {
 	_sampleCount = 0;
 	_average = 0;
 }
+
 
 template<typename TYPE>
 void RunningMean<TYPE>::setSamplingFrequency(double fsamp) {
@@ -78,6 +81,7 @@ void RunningMean<TYPE>::setSamplingFrequency(double fsamp) {
 
 	reset();
 }
+
 
 template<typename TYPE>
 int RunningMean<TYPE>::setParameters(int n, const double *params) {
@@ -90,11 +94,11 @@ int RunningMean<TYPE>::setParameters(int n, const double *params) {
 	return n;
 }
 
+
 template<typename TYPE>
-InPlaceFilter<TYPE>* RunningMean<TYPE>::clone() const {
+InPlaceFilter<TYPE> *RunningMean<TYPE>::clone() const {
 	return new RunningMean<TYPE>(_windowLength, _samplingFrequency);
 }
-
 
 
 template<typename TYPE>
@@ -129,8 +133,9 @@ void RunningMeanHighPass<TYPE>::apply(int n, TYPE *inout) {
 	}	
 }
 
+
 template<typename TYPE>
-InPlaceFilter<TYPE>* RunningMeanHighPass<TYPE>::clone() const {
+InPlaceFilter<TYPE> *RunningMeanHighPass<TYPE>::clone() const {
 	return new RunningMeanHighPass<TYPE>(RunningMean<TYPE>::_windowLength, RunningMean<TYPE>::_samplingFrequency);
 }
 
