@@ -21,9 +21,10 @@
 #ifndef SEISCOMP_FILTERING_RMHP_H
 #define SEISCOMP_FILTERING_RMHP_H
 
-#include<vector>
 
+#include<vector>
 #include<seiscomp/math/filter.h>
+
 
 namespace Seiscomp {
 namespace Math {
@@ -44,7 +45,7 @@ class RunningMean : public InPlaceFilter<TYPE> {
 
 		// apply filter to data vector **in*place**
 		void apply(int n, TYPE *inout) override;
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 		void setSamplingFrequency(double fsamp) override;
 
@@ -71,12 +72,13 @@ class RunningMeanHighPass : public RunningMean<TYPE> {
 	public:
 		// apply filter to data vector **in*place**
 		void apply(int n, TYPE *inout) override;
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 };
 
 
 } // namespace Seiscomp::Math::Filtering
 } // namespace Seiscomp::Math
 } // namespace Seiscomp
+
 
 #endif

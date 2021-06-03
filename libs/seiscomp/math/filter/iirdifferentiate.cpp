@@ -20,12 +20,10 @@
 
 #include <seiscomp/math/filter/iirdifferentiate.h>
 
-namespace Seiscomp
-{
-namespace Math
-{
-namespace Filtering
-{
+
+namespace Seiscomp {
+namespace Math {
+namespace Filtering {
 
 
 template <typename T>
@@ -36,8 +34,8 @@ IIRDifferentiate<T>::IIRDifferentiate(double fsamp) : _fsamp(fsamp) {
 
 template <typename T>
 IIRDifferentiate<T>::IIRDifferentiate(const IIRDifferentiate<T> &other) {
-  _fsamp = 0.0;
-  reset();
+	_fsamp = 0.0;
+	reset();
 }
 
 
@@ -53,7 +51,7 @@ void IIRDifferentiate<T>::setSamplingFrequency(double fsamp) {
 	if ( fsamp == _fsamp) return;
 
 	_fsamp = fsamp;
-  reset();
+	reset();
 }
 
 
@@ -80,7 +78,7 @@ void IIRDifferentiate<T>::apply(int n, T *inout) {
 
 
 template <typename T>
-InPlaceFilter<T>* IIRDifferentiate<T>::clone() const {
+InPlaceFilter<T> *IIRDifferentiate<T>::clone() const {
 	return new IIRDifferentiate<T>(_fsamp);
 }
 

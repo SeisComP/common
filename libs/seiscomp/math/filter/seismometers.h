@@ -21,13 +21,14 @@
 #ifndef SEISCOMP_SEISMOMETERS_H
 #define SEISCOMP_SEISMOMETERS_H
 
-#include <complex>
 
+#include <complex>
 #include <seiscomp/math/filter/biquad.h>
 
 
 namespace Seiscomp {
 namespace Math {
+
 
 enum GroundMotion { Displacement, Velocity, Acceleration };
 
@@ -125,7 +126,7 @@ class Filter : public SeismometerResponse::PolesAndZeros,
 
 		void apply(int n, T *inout) override;
 	
-		Math::Filtering::InPlaceFilter<T>* clone() const override;
+		Math::Filtering::InPlaceFilter<T> *clone() const override;
 
 	private:
 		Math::Filtering::IIR::BiquadCascade<T> _cascade;
@@ -140,7 +141,7 @@ class WWSSN_SP_Filter : public Filter<T> {
 
 	public:
 		int setParameters(int n, const double *params) override;
-		Math::Filtering::InPlaceFilter<T>* clone() const override;
+		Math::Filtering::InPlaceFilter<T> *clone() const override;
 
 		void setInput(GroundMotion input);
 };
@@ -154,7 +155,7 @@ class WWSSN_LP_Filter : public Filter<T> {
 
 	public:
 		int setParameters(int n, const double *params) override;
-		Math::Filtering::InPlaceFilter<T>* clone() const override;
+		Math::Filtering::InPlaceFilter<T> *clone() const override;
 
 		void setInput(GroundMotion input);
 };
@@ -168,7 +169,7 @@ class WoodAndersonFilter : public Filter<T> {
 
 	public:
 		int setParameters(int n, const double *params) override;
-		Math::Filtering::InPlaceFilter<T>* clone() const override;
+		Math::Filtering::InPlaceFilter<T> *clone() const override;
 
 		void setInput(GroundMotion input,
 		              SeismometerResponse::WoodAnderson::Config config = SeismometerResponse::WoodAnderson::Config());
@@ -184,7 +185,7 @@ class GenericSeismometer : public Filter<T> {
 
 	public:
 		int setParameters(int n, const double *params) override;
-		Math::Filtering::InPlaceFilter<T>* clone() const override;
+		Math::Filtering::InPlaceFilter<T> *clone() const override;
 
 		void setInput(GroundMotion input);
 
@@ -200,7 +201,7 @@ class Seismometer5secFilter : public Filter<T> {
 
 	public:
 		int setParameters(int n, const double *params) override;
-		Math::Filtering::InPlaceFilter<T>* clone() const override;
+		Math::Filtering::InPlaceFilter<T> *clone() const override;
 
 		void setInput(GroundMotion input);
 };
@@ -208,14 +209,10 @@ class Seismometer5secFilter : public Filter<T> {
 
 }
 
-namespace FFT {
-	// We will in future also have corresponding FFT-based filters
-}
-
-
 
 } // namespace Seiscomp::Math::Filtering
 } // namespace Seiscomp::Math
 } // namespace Seiscomp
+
 
 #endif

@@ -20,12 +20,9 @@
 
 #include <seiscomp/math/filter/chainfilter.h>
 
-namespace Seiscomp
-{
-namespace Math
-{
-namespace Filtering
-{
+namespace Seiscomp {
+namespace Math {
+namespace Filtering{
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -42,10 +39,8 @@ ChainFilter<TYPE>::ChainFilter() {}
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename TYPE>
 ChainFilter<TYPE>::~ChainFilter() {
-	for ( typename FilterChain::iterator it = _filters.begin();
-	      it != _filters.end(); ++it ) {
-		delete *it;
-	}
+	for ( InPlaceFilter<TYPE> *filter : _filters )
+		delete filter;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -123,9 +118,8 @@ size_t ChainFilter<TYPE>::filterCount() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename TYPE>
 void ChainFilter<TYPE>::apply(int n, TYPE *inout) {
-	for ( typename FilterChain::iterator it = _filters.begin();
-	      it != _filters.end(); ++it )
-		(*it)->apply(n, inout);
+	for ( InPlaceFilter<TYPE> *filter : _filters )
+		filter->apply(n, inout);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -135,9 +129,8 @@ void ChainFilter<TYPE>::apply(int n, TYPE *inout) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename TYPE>
 void ChainFilter<TYPE>::setStartTime(const Core::Time &time) {
-	for ( typename FilterChain::iterator it = _filters.begin();
-	      it != _filters.end(); ++it )
-		(*it)->setStartTime(time);
+	for ( InPlaceFilter<TYPE> *filter : _filters )
+		filter->setStartTime(time);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -150,9 +143,8 @@ void ChainFilter<TYPE>::setStreamID(const std::string &net,
                                     const std::string &sta,
                                     const std::string &loc,
                                     const std::string &cha) {
-	for ( typename FilterChain::iterator it = _filters.begin();
-	      it != _filters.end(); ++it )
-		(*it)->setStreamID(net, sta, loc, cha);
+	for ( InPlaceFilter<TYPE> *filter : _filters )
+		filter->setStreamID(net, sta, loc, cha);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -162,9 +154,8 @@ void ChainFilter<TYPE>::setStreamID(const std::string &net,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename TYPE>
 void ChainFilter<TYPE>::setSamplingFrequency(double fsamp) {
-	for ( typename FilterChain::iterator it = _filters.begin();
-	      it != _filters.end(); ++it )
-		(*it)->setSamplingFrequency(fsamp);
+	for ( InPlaceFilter<TYPE> *filter : _filters )
+		filter->setSamplingFrequency(fsamp);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -183,11 +174,10 @@ int ChainFilter<TYPE>::setParameters(int n, const double *params) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename TYPE>
-InPlaceFilter<TYPE>* ChainFilter<TYPE>::clone() const {
+InPlaceFilter<TYPE> *ChainFilter<TYPE>::clone() const {
 	ChainFilter<TYPE> *clonee = new ChainFilter<TYPE>();
-	for ( typename FilterChain::const_iterator it = _filters.begin();
-	      it != _filters.end(); ++it )
-		clonee->add((*it)->clone());
+	for ( InPlaceFilter<TYPE> *filter : _filters )
+		clonee->add(filter->clone());
 
 	return clonee;
 }
@@ -205,7 +195,5 @@ INSTANTIATE_INPLACE_FILTER(ChainFilter, SC_SYSTEM_CORE_API);
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 } // namespace Seiscomp::Math::Filter
-
 } // namespace Seiscomp::Math
-
 } // namespace Seiscomp

@@ -23,12 +23,11 @@
 
 #include <seiscomp/math/filter.h>
 
-namespace Seiscomp
-{
-namespace Math
-{
-namespace Filtering
-{
+
+namespace Seiscomp {
+namespace Math {
+namespace Filtering {
+
 
 template<typename T>
 class ConstFilter : public InPlaceFilter<T> {
@@ -47,8 +46,10 @@ class ConstFilter : public InPlaceFilter<T> {
 		T _const;
 };
 
+
 }
 }
 }
+
 
 #endif

@@ -25,19 +25,20 @@
 #include <seiscomp/math/filter.h>
 
 
-namespace Seiscomp
-{
-namespace Math
-{
-namespace Filtering
-{
+namespace Seiscomp {
+namespace Math {
+namespace Filtering {
+
 
 template<typename TYPE, template <class T> class OPERATION>
-class Op2Filter : public InPlaceFilter<TYPE>
-{
+class Op2Filter : public InPlaceFilter<TYPE> {
+	// ------------------------------------------------------------------
+	//  X'truction
+	// ------------------------------------------------------------------
 	public:
 		Op2Filter(InPlaceFilter<TYPE> *op1, InPlaceFilter<TYPE> *op2, double fsamp=0.0);
 		~Op2Filter();
+
 
 	// ------------------------------------------------------------------
 	//  Derived filter interface
@@ -53,7 +54,7 @@ class Op2Filter : public InPlaceFilter<TYPE>
 		void setSamplingFrequency(double fsamp) override;
 		int setParameters(int n, double const *params) override;
 
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 
 	// ------------------------------------------------------------------
@@ -69,9 +70,7 @@ class Op2Filter : public InPlaceFilter<TYPE>
 
 
 } // namespace Seiscomp::Math::Filter
-
 } // namespace Seiscomp::Math
-
 } // namespace Seiscomp
 
 

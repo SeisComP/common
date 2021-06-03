@@ -25,19 +25,20 @@
 #include <seiscomp/math/filter.h>
 
 
-namespace Seiscomp
-{
-namespace Math
-{
-namespace Filtering
-{
+namespace Seiscomp {
+namespace Math {
+namespace Filtering {
+
 
 template<typename TYPE>
-class ChainFilter : public InPlaceFilter<TYPE>
-{
+class ChainFilter : public InPlaceFilter<TYPE> {
+	// ------------------------------------------------------------------
+	//  X'truction
+	// ------------------------------------------------------------------
 	public:
 		ChainFilter();
 		~ChainFilter();
+
 
 	// ------------------------------------------------------------------
 	//  Interface
@@ -74,14 +75,14 @@ class ChainFilter : public InPlaceFilter<TYPE>
 		void setStartTime(const Core::Time &time) override;
 
 		void setStreamID(const std::string &net,
-		                         const std::string &sta,
-		                         const std::string &loc,
-		                         const std::string &cha) override;
+		                 const std::string &sta,
+		                 const std::string &loc,
+		                 const std::string &cha) override;
 
 		void setSamplingFrequency(double fsamp) override;
 		int setParameters(int n, const double *params) override;
 
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 
 	// ------------------------------------------------------------------
@@ -94,9 +95,7 @@ class ChainFilter : public InPlaceFilter<TYPE>
 
 
 } // namespace Seiscomp::Math::Filter
-
 } // namespace Seiscomp::Math
-
 } // namespace Seiscomp
 
 

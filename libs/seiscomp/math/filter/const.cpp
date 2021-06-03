@@ -20,12 +20,11 @@
 
 #include <seiscomp/math/filter/const.h>
 
-namespace Seiscomp
-{
-namespace Math
-{
-namespace Filtering
-{
+
+namespace Seiscomp {
+namespace Math {
+namespace Filtering {
+
 
 template<typename T>
 ConstFilter<T>::ConstFilter(T c) : _const(c) {}
@@ -51,7 +50,7 @@ void ConstFilter<T>::apply(int n, T *inout) {
 
 
 template<typename T>
-InPlaceFilter<T>* ConstFilter<T>::clone() const {
+InPlaceFilter<T> *ConstFilter<T>::clone() const {
 	return new ConstFilter<T>(_const);
 }
 

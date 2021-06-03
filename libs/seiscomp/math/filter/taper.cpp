@@ -21,15 +21,19 @@
 #include <math.h>
 #include <seiscomp/math/filter/taper.h>
 
+
 namespace Seiscomp {
 namespace Math {
 namespace Filtering {
 
+
 template<typename TYPE>
 InitialTaper<TYPE>::InitialTaper(double taperLength, TYPE offset, double fsamp)
-	: _taperLength(taperLength), _samplingFrequency(0),
-	  _taperLengthI(0), _sampleCount(0), _offset(offset)
-{
+: _taperLength(taperLength)
+, _samplingFrequency(0)
+, _taperLengthI(0)
+, _sampleCount(0)
+, _offset(offset) {
 	if ( fsamp )
 		setSamplingFrequency(fsamp);
 }
@@ -46,9 +50,8 @@ void InitialTaper<TYPE>::setSamplingFrequency(double fsamp) {
 
 
 template<typename TYPE>
-int InitialTaper<TYPE>::setParameters(int n, const double *params)
-{
-	if ( n < 1 || n > 2 ) return 1;
+int InitialTaper<TYPE>::setParameters(int n, const double *params) {
+	if ( (n < 1) || (n > 2) ) return 1;
 
 	_taperLength = (int)params[0];
 
@@ -61,21 +64,20 @@ int InitialTaper<TYPE>::setParameters(int n, const double *params)
 }
 
 template<typename TYPE>
-InPlaceFilter<TYPE>* InitialTaper<TYPE>::clone() const
-{
+InPlaceFilter<TYPE>* InitialTaper<TYPE>::clone() const {
 	return new InitialTaper<TYPE>(_taperLength, _offset, _samplingFrequency);
 }
 
 template<typename TYPE>
-void InitialTaper<TYPE>::apply(int n, TYPE *inout)
-{
-	if (_sampleCount >= _taperLengthI) return;
+void InitialTaper<TYPE>::apply(int n, TYPE *inout) {
+	if ( _sampleCount >= _taperLengthI ) return;
 
-	for (int i=0; i<n && _sampleCount<_taperLengthI; i++) {
+	for ( int i = 0; i < n && _sampleCount < _taperLengthI; ++i ) {
 		double frac = double(_sampleCount++)/_taperLengthI;
 		inout[i] = (TYPE)((inout[i]-_offset)*0.5*(1-cos(M_PI*frac)) + _offset);
 	}
 }
+
 
 INSTANTIATE_INPLACE_FILTER(InitialTaper, SC_SYSTEM_CORE_API);
 REGISTER_INPLACE_FILTER(InitialTaper, "ITAPER");

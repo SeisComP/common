@@ -110,7 +110,7 @@ Min<TYPE>::Min(double timeSpan /*sec*/, double fsamp)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename TYPE>
-InPlaceFilter<TYPE>* Min<TYPE>::clone() const {
+InPlaceFilter<TYPE> *Min<TYPE>::clone() const {
 	return new Min<TYPE>(MinMax<TYPE>::_timeSpan, MinMax<TYPE>::_fsamp);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -177,7 +177,7 @@ Max<TYPE>::Max(double timeSpan /*sec*/, double fsamp)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename TYPE>
-InPlaceFilter<TYPE>* Max<TYPE>::clone() const {
+InPlaceFilter<TYPE> *Max<TYPE>::clone() const {
 	return new Max<TYPE>(MinMax<TYPE>::_timeSpan, MinMax<TYPE>::_fsamp);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -101,7 +101,7 @@ void Average<TYPE>::setSamplingFrequency(double fsamp) {
 	_oocount = 1.0/_sampleCount;
 	_buffer.resize(_sampleCount);
 
-  reset();
+	reset();
 }
 
 

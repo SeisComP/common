@@ -84,7 +84,7 @@ void CutOff<TYPE>::setSamplingFrequency(double fsamp) {}
 
 
 template<typename TYPE>
-InPlaceFilter<TYPE>* CutOff<TYPE>::clone() const {
+InPlaceFilter<TYPE> *CutOff<TYPE>::clone() const {
 	return new CutOff<TYPE>(_threshold);
 }
 

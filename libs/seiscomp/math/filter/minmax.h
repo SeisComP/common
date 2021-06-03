@@ -74,7 +74,7 @@ class Min : public MinMax<TYPE> {
 	public:
 		// apply filter to data vector **in*place**
 		void apply(int n, TYPE *inout) override;
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 	private:
 		TYPE _minimum;
@@ -89,17 +89,17 @@ class Max : public MinMax<TYPE> {
 	public:
 		// apply filter to data vector **in*place**
 		void apply(int n, TYPE *inout) override;
-		InPlaceFilter<TYPE>* clone() const override;
+		InPlaceFilter<TYPE> *clone() const override;
 
 	private:
 		TYPE _maximum;
 };
 
 
-
 } // namespace Seiscomp::Math::Filtering
 } // namespace Seiscomp::Math
 } // namespace Seiscomp
+
 
 #endif
 
