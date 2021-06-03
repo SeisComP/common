@@ -2,19 +2,20 @@
 The following tables lists available implementations:
 
 .. csv-table::
-   :header: "Name", "Service Prefix", "Description"
+   :header: "Name", "URL Scheme(s)", "Description"
 
-   ":ref:`rs-slink`", "``slink``", "Connects to :ref:`SeedLink server <seedlink>`"
    ":ref:`rs-arclink`", "``arclink``", "Connects to an ArcLink server"
-   ":ref:`rs-fdsnws`", "``fdsnws``", "Connects to :ref:`FDSN Web service <fdsnws>`"
-   ":ref:`rs-file`", "``file``", "Reads records from file"
-   ":ref:`rs-sdsarchive`", "``sdsarchive``", "Reads records from |scname| archive (:term:`SDS`)"
-   ":ref:`rs-caps`", "``caps``, ``capss``", "Connects to a gempa CAPS server"
-   ":ref:`rs-memory`", "``memory``", "Reads records from memory"
-   ":ref:`rs-combined`", "``combined``", "Combines archive and real-time stream"
    ":ref:`rs-balanced`", "``balanced``", "Distributes requests to multiple proxy streams"
-   ":ref:`rs-dec`", "``dec``", "Decimates (resamples) a proxy stream"
+   ":ref:`rs-caps`", "``caps``, ``capss``", "Connects to a `gempa CAPS server <https://www.gempa.de/products/caps/>`_"
+   ":ref:`rs-combined`", "``combined``", "Combines archive and real-time stream"
+   ":ref:`rs-dec`", "``dec``", "Decimates (downsamples) a proxy stream"
+   ":ref:`rs-fdsnws`", "``fdsnws``, ``fdsnwss``", "Connects to :ref:`FDSN web service <fdsnws>`"
+   ":ref:`rs-file`", "``file``", "Reads records from file"
+   ":ref:`rs-memory`", "``memory``", "Reads records from memory"
    ":ref:`rs-resample`", "``resample``", "Resamples (up or down) a proxy stream to a given sampling rate"
+   ":ref:`rs-sdsarchive`", "``sdsarchive``", "Reads records from |scname| archive (:term:`SDS`)"
+   ":ref:`rs-slink`", "``slink``", "Connects to :ref:`SeedLink server <seedlink>`"
+
 
 Application
 ===========
@@ -25,32 +26,43 @@ in 2 alternative ways:
 * Specification of the *URL* on the command line. Use the option ``-I URL``
 * Configuration of the *URL* using the global parameter :confval:`recordstream`.
 
+The URL scheme defines the specific RecordStream implementation. If the scheme
+is omitted, the :ref:`rs-file` implementation is used as default.
+
 .. note::
 
    Older SeisComP versions used to split the URL into the parameters
    :confval:`recordstream.service` and :confval:`recordstream.source`. These
    parameters are deprecated and will be removed in future versions.
 
+
 Implementations
 ===============
 
 .. _rs-slink:
 
+
 SeedLink
 --------
 
-This RecordStream fetches data from a SeedLink server. The source is read as an
-URL and supports URL encoded parameters. The default host is set to
-`localhost`, the default port to `18000`. Optional parameters are:
+This RecordStream fetches data from a SeedLink server.
+
+
+Definition
+^^^^^^^^^^
+
+URL: ``slink://[host][:port][?parameter]``
+
+The default host is set to `localhost`, the default port to `18000`. Optional
+URL encoded parameters are:
 
 - `timeout` - connection timeout in seconds, default: 300
 - `retries` - number of connection retry attempts, default: 0
 - `no-batch` - disables BATCH mode to request data, does not take a value
 
+
 Examples
 ^^^^^^^^
-
-URL: *service://source?options*
 
 - ``slink://``
 - ``slink://geofon.gfz-potsdam.de?timeout=60&retries=5``
@@ -58,21 +70,28 @@ URL: *service://source?options*
 
 .. _rs-arclink:
 
+
 ArcLink
 -------
 
-This RecordStream fetches data from a ArcLink server. The source is read as an
-URL and supports URL encoded parameters. The default host is set to
-`localhost`, the default port to `18001`. Optional parameters are:
+This RecordStream fetches data from a ArcLink server.
+
+
+Definition
+^^^^^^^^^^
+
+URL: ``arclink://[host][:port][?parameters]``
+
+The default host is set to `localhost`, the default port to `18001`. Optional
+URL encoded parameters are:
 
 - `user` - user name required on some servers
 - `pwd` - password required on some servers
 - `dump` - optional output file for all records being received
 
+
 Examples
 ^^^^^^^^
-
-URL: *service://source?options*
 
 - ``arclink://``
 - ``arclink://geofon.gfz-potsdam.de?user=foo&pwd=secret``
@@ -81,28 +100,56 @@ URL: *service://source?options*
 
 .. _rs-fdsnws:
 
+
 FDSNWS
 ------
 
-This RecordStream fetches data from a FDSN Web service. The source is read as an
-URL.
+This RecordStream fetches data from a FDSN web service.
+
+
+Definition
+^^^^^^^^^^
+
+URL: ``fdsnws[s]://host[:port][path]``
+
+The host is a mandatory parameter. The default port depends on the URL scheme
+used:
+
+- `fdsnws`: `80` (HTTP)
+- `fdsnwss`: `443` (HTTPS)
+
+The default path is set to `/fdsnws/dataselect/1/query`. If a path is specified,
+it needs to be complete up until the `query` resource.
+
+Authentication via the `queryauth` resource is currently not supported.
+
 
 Examples
 ^^^^^^^^
 
-URL: *service://source?options*
-
+- ``fdsnws://service.iris.edu``
 - ``fdsnws://service.iris.edu:80/fdsnws/dataselect/1/query``
+- ``fdsnwss://geofon.gfz-potsdam.de``
 
 .. _rs-file:
+
 
 File
 ----
 
-This RecordStream reads data from a file. The source is read as an file path. If
-the source is set to `'-'` the data is read from `stdin`. By default the record
-type is set to `mseed`. If a file name extension is available the record type is
-set as follows:
+This RecordStream reads data from a file.
+
+
+Definition
+^^^^^^^^^^
+
+URL: ``file://path``
+
+The path may be a absolute or relative path to a file. Environment variables
+are **not** resolved. If path is set to ``-`` the data is read from `stdin`.
+
+By default the record type is set to `mseed`. If a file name extension is
+available, then the record type is set as follows:
 
 ========= ===========
 Extension Record Type
@@ -112,31 +159,32 @@ Extension Record Type
 `*.mseed` `mseed`
 ========= ===========
 
+
 Examples
 ^^^^^^^^
-
-URL: *service://source*
 
 - ``file://-``
 - ``file:///tmp/input.mseed``
 
 .. _rs-sdsarchive:
 
+
 SDSArchive
 ----------
 
 This RecordStream reads data from one or more |scname| (:term:`SDS`) archives using the
-:ref:`rs-file` RecordStream. The source is interpreted as a directory path list
-separated using commas.
+:ref:`rs-file` RecordStream.
 
-Example
-^^^^^^^
 
-URL: *service://source*
+Definition
+^^^^^^^^^^
 
-- ``sdsarchive:///home/sysop/seiscomp/var/lib/archive``
+URL: ``sdsarchive://[path[,path2[, ...]]]``
 
-- ``sdsarchive:///SDSA,/SDSB,/SDSC``
+The default path is set to `$SEISCOMP_ROOT/var/lib/archive`. 
+
+In contrast to a formal URL definition, the URL path is interpreted as a directory path list
+separated by commas.
 
 Different SDS are not merged, but are read sequentially depending on data existence.
 If a requested file is missing in the current SDS, it is searched for in the archive
@@ -146,39 +194,59 @@ from this SDS archive. On failure the next SDS archive is searched.
 This process is repeated for each requested channel individually. It always starts to
 search data from the first given SDS to the last one, for each data channel.
 
+
+Examples
+^^^^^^^^
+
+- ``sdsarchive://``
+- ``sdsarchive:///home/sysop/seiscomp/var/lib/archive``
+- ``sdsarchive:///SDSA,/SDSB,/SDSC``
+
 .. _rs-caps:
+
 
 CAPS
 ----
 
-This RecordStream reads data from a gempa CAPS server. The source is an URL.
-The default host is set to `localhost`, the default port to `18002` for
-unencrypted connections and `18022` for SSL connections.
-Optional parameters are:
+This RecordStream reads data from a
+`gempa CAPS server <https://www.gempa.de/products/caps/>`_.
+
+Definition
+^^^^^^^^^^
+
+URL: ``caps[s]://[user:pass@][host[:port]][?parameters]``
+
+The default host is set to `localhost`. The default port depends on the URL scheme
+used:
+
+- `caps`: `18002`
+- `capss`: `18022` (SSL)
+
+Optional URL encoded parameters are:
 
 - `arch` - No parameter. Retrieve only archived data. In this mode the connection
    finished when all available data has been sent. It won't wait for additional
    real-time data.
 - `ooo` - Allow out-of-order data
 - `timeout` - The socket timeout in seconds
-- `user` - The user name of an authenticated request
-- `pwd` - The password of an authenticated request
+- `user` - **Deprecated:** The user name of an authenticated request. Please use
+   the standard URL userinfo in front of the host instead.
+- `pwd` - **Deprecated:** The password of an authenticated request. Please use
+   the standard URL userinfo in front of the host instead.
 - `request-file` - Use the given file to feed the request
 
-The service can either be `caps` or `capss`. The latter establishes an SSL
-connection.
 
 Example
 ^^^^^^^
 
-URL: *service://user:password@source?options*
-
+- ``caps://``
 - ``caps://localhost:18002``
 - ``capss://localhost:18022``
 - ``caps://localhost:18002?arch``
-- ``caps://user:mysecret@localhost:18002``
+- ``capss://user:mysecret@localhost``
 
 .. _rs-memory:
+
 
 Memory
 ------
@@ -189,6 +257,7 @@ be passed to an instance of this RecordStream for reading.
 
 .. _rs-combined:
 
+
 Combined
 --------
 
@@ -197,14 +266,22 @@ This RecordStream combines one archive and one real-time RecordStream, e.g.
 the size of the real-time buffer. Then the acquisition is switched to the
 real-time stream. The syntax for the source is similar to an URL:
 
-URL: *service://source??options*
 
-``combined://real-time-stream;archive-stream??parameters``
+Definition
+^^^^^^^^^^
+
+URL-like: ``combined://[real-time-stream];[archive-stream][??parameters]``
 
 By default the real-time stream is set to :ref:`rs-slink` and the
 archive-stream is set to :ref:`rs-arclink`. Any other streams may be configured.
-The parameters of the combined stream are separated by 2 question marks (`??`)
-in order to distinguish them from the parameters used in the proxy streams:
+
+The definition of the proxy streams has slightly changed: Scheme and source are
+only separated by a slash, e.g. `slink://localhost` needs to be defined as
+`slink/localhost`.
+
+The URL parameters of the combined stream are separated by 2 question marks
+(`??`) in order to distinguish them from the parameters used in the proxy
+streams:
 
 - `slinkMax|rtMax|1stMax` - Buffer size in seconds of the first stream
   (typically the real-time stream), default: 3600
@@ -224,8 +301,8 @@ in order to distinguish them from the parameters used in the proxy streams:
 - `splitTime` - The absolute time of the separation of both sources. The argument
   is an ISO time string, e.g. 2018-05-10T12:00:00Z or a year, e.g. 2018, which is
   the same as 2018-01-01T00:00:00.000Z.
-  `splitTime` can be used if the waveform archives are spread over several directories
-  or harddisks. See also the :ref:`examples<rs_splitTime>`.
+  `splitTime` can be used if the waveform archives are spread over several
+  directories or hard disks. See also the :ref:`examples<rs_splitTime>`.
 
 The combined record stream may be nested allowing the configuration of a
 (theoretically) infinite number of archive streams. The URL syntax for a nested
@@ -235,10 +312,9 @@ configuration uses parenthesis:
 
 .. _rs_splitTime:
 
+
 Examples
 ^^^^^^^^
-
-URL: *service://source?options*
 
 .. csv-table::
    :header: "URL", "Description"
@@ -253,6 +329,7 @@ URL: *service://source?options*
    "``combined://slink/localhost:18000;combined/(sdsarchive//home/sysop/seiscomp/var/lib/archive;combined/(sdsarchive//home/sysop/seiscomp/var/lib/archive2017;sdsarchive//home/sysop/seiscomp/var/lib/archive2016??splitTime=2017-06-01T00:00:00Z)??splitTime=2018-06-01T00:00:00Z)``", "Seedlink combined with a combined recordStream providing access to 3 different SDS archives separated by time. The first SDS archive contains the most recent archived data. The other two are separated in mid of 2016."
 
 .. _rs-balanced:
+
 
 Balanced
 --------
@@ -273,10 +350,19 @@ station code and can be expressed in Python as follows:
 
    print("choosing proxy stream", x % nproxies)
 
+
+Definition
+^^^^^^^^^^
+
+URL-like: ``balanced://proxy-stream[;proxy-stream2[; ...]]``
+
+The definition of the proxy streams has slightly changed: Scheme and source
+are only separated by a slash, e.g. `slink://localhost` needs to be defined as
+`slink/localhost`.
+
+
 Examples
 ^^^^^^^^
-
-URL: *service://source*
 
 .. csv-table::
    :header: "URL", "Description"
@@ -286,25 +372,33 @@ URL: *service://source*
 
 .. _rs-dec:
 
+
 Decimation
 ----------
 
-This RecordStream decimates (resamples) a proxy stream, e.g. :ref:`rs-slink`.
-The syntax for the source is similar to an URL:
+This RecordStream decimates (downsamples) a proxy stream, e.g. :ref:`rs-slink`.
 
-``dec://proxy-stream?parameters/address``
 
-Optional parameters are:
+Definition
+^^^^^^^^^^
+
+URL-like: ``dec://proxy-stream-scheme[?dec-parameters]/[proxy-stream-source]``
+
+The definition of the proxy streams has slightly changed: Scheme and source are
+only separated by a slash, e.g. `slink://localhost` needs to be defined as
+`slink/localhost`. Also optional decimation parameters directly follow the proxy
+stream scheme.
+
+Optional decimation parameters are:
 
 - `rate` - target sampling rate in Hz, default: 1
 - `fp` - default: 0.7
 - `fs` - default: 0.9
 - `cs` - coefficient scale, default: 10
 
+
 Examples
 ^^^^^^^^
-
-URL: *service://source?options*
 
 - ``dec://slink/localhost:18000``
 - ``dec://file?rate=2/-``
@@ -312,15 +406,25 @@ URL: *service://source?options*
 
 .. _rs-resample:
 
+
 Resample
 --------
 
 This RecordStream resamples (up or down) a proxy stream, e.g. :ref:`rs-slink`,
-to a given sampling rate. The syntax for the source is similar to an URL:
+to a given sampling rate.
 
-``resample://proxy-stream?parameters/address``
 
-Optional parameters are:
+Definition
+^^^^^^^^^^
+
+URL-like: ``resample://proxy-stream-scheme[?dec-parameters]/[proxy-stream-source]``
+
+The definition of the proxy streams has slightly changed: Scheme and source are
+only separated by a slash, e.g. `slink://localhost` needs to be defined as
+`slink/localhost`. Also optional decimation parameters directly follow the proxy
+stream scheme.
+
+Optional resample parameters are:
 
 - `rate` - target sampling rate in Hz, default: 1
 - `fp` - default: 0.7
@@ -332,8 +436,6 @@ Optional parameters are:
 
 Examples
 ^^^^^^^^
-
-URL: *service://source?options*
 
 - ``resample://slink/localhost:18000``
 - ``resample://file?rate=2/-``
