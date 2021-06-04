@@ -148,8 +148,16 @@ URL: ``file://path``
 The path may be a absolute or relative path to a file. Environment variables
 are **not** resolved. If path is set to ``-`` the data is read from `stdin`.
 
-By default the record type is set to `mseed`. If a file name extension is
-available, then the record type is set as follows:
+Supported files types are:
+
+* miniSEED
+* SAC
+* XML
+* binary
+
+By default the record type is set to `mseed`. SAC data can be read using the *#sac*
+descriptor. If a file name extension is available, then the record type is set as
+follows:
 
 ========= ===========
 Extension Record Type
@@ -159,15 +167,28 @@ Extension Record Type
 `*.mseed` `mseed`
 ========= ===========
 
+Optional descriptor:
+
+- `sac` - input data are in SAC format.
+
 
 Examples
 ^^^^^^^^
 
 - ``file://-``
 - ``file:///tmp/input.mseed``
+- ``file:///tmp/input.sac#sac``
+
+.. note ::
+
+   When defining the File RecordStream on the command line using the option `-I`,
+   the file name can also be passed without the URL scheme, e.g. ::
+
+      -I -
+      -I /tmp/input.mseed
+
 
 .. _rs-sdsarchive:
-
 
 SDSArchive
 ----------
@@ -181,7 +202,7 @@ Definition
 
 URL: ``sdsarchive://[path[,path2[, ...]]]``
 
-The default path is set to `$SEISCOMP_ROOT/var/lib/archive`. 
+The default path is set to `$SEISCOMP_ROOT/var/lib/archive`.
 
 In contrast to a formal URL definition, the URL path is interpreted as a directory path list
 separated by commas.
@@ -440,4 +461,3 @@ Examples
 - ``resample://slink/localhost:18000``
 - ``resample://file?rate=2/-``
 - ``resample://combined/;``
-
