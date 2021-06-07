@@ -80,17 +80,13 @@ bool Resample::setSource(const string &source) {
 	}
 
 	string name = source;
+	string service = name.substr(0, pos);
 	string addr = name.substr(pos+1);
-	name.erase(pos);
 
-	string service;
-
-	pos = name.find('?');
-	if ( pos == string::npos )
-		service = name;
-	else {
-		service = name.substr(0, pos);
-		name.erase(0, pos+1);
+	pos = addr.find('?');
+	if ( pos != string::npos ) {
+		name = addr.substr(pos+1);
+		addr.erase(pos);
 
 		vector<string> toks;
 		Core::split(toks, name.c_str(), "&");
