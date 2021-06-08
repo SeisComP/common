@@ -266,6 +266,15 @@
 							lets Qt decide.
 						</description>
 					</parameter>
+					<parameter name="agencies" type="list:string-tuples">
+						<description>
+						Sets desired colors for particular agencyIDs. It depends on the
+						applications if they honor this setting or not. The event list
+						will render the agencyID string with the defined colors.
+						This is a list of tuples (AGENCY:COLOR),
+						e.g. &quot;GEOFON:black, USGS:blue&quot;.
+						</description>
+					</parameter>
 
 					<group name="map">
 						<parameter name="lines" type="color">
