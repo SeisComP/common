@@ -259,7 +259,7 @@ inline size_t RecordSequence::recordCount() const {
 	return size();
 }
 
-inline const Core::TimeWindow &timeWindowToStore() const {
+inline const Core::TimeWindow &TimeWindowBuffer::timeWindowToStore() const {
 	return _timeWindow;
 }
 
