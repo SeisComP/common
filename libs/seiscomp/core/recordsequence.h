@@ -175,6 +175,8 @@ class SC_SYSTEM_CORE_API TimeWindowBuffer : public RecordSequence {
 		//! Return percentage of available data within TimeWindowBuffer's TimeWindow
 		double availability() const;
 
+		//! Return the buffered TimeWindow
+		const Core::TimeWindow &timeWindowToStore() const;
 
 	// ----------------------------------------------------------------------
 	//  Members
@@ -225,6 +227,11 @@ class SC_SYSTEM_CORE_API RingBuffer : public RecordSequence {
 		//! clear the buffer
 		void reset() { clear(); }
 
+		//! Return the maximum number of records the RingBuffer stores
+		unsigned int numberOfRecordsToStore() const;
+	
+		//! Return the TimeSpan the RingBuffer stores
+		const Core::TimeSpan &timeSpanToStore() const;
 
 	// ----------------------------------------------------------------------
 	//  Members
@@ -252,7 +259,18 @@ inline size_t RecordSequence::recordCount() const {
 	return size();
 }
 
+inline const Core::TimeWindow &timeWindowToStore() const {
+	return _timeWindow;
+}
 
+inline unsigned int RingBuffer::numberOfRecordsToStore() const {
+	return _nmax;
+}
+	
+inline const Core::TimeSpan &RingBuffer::timeSpanToStore() const {
+	return _span;
+}
+	
 }
 
 #endif
