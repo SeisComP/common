@@ -86,6 +86,10 @@ void Inventory::load(const char *filename) {
 		throw Core::GeneralException(std::string(filename) + " not found");
 
 	ar >> _inventory;
+
+	if ( !_inventory )
+		throw Core::GeneralException(std::string(filename) + " does not have inventory information");
+
 	ar.close();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
