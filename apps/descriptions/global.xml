@@ -186,7 +186,16 @@
 			<group name="connection">
 				<parameter name="server" type="host-with-port" default="localhost">
 					<description>
-						Defines the messaging server name to connect to. Format is host[:port].
+						Defines the URL of the messaging server to connect to.
+						URL format is [scheme://]host[:port][/queue]. Default scheme:
+						scmp, default port: 18180, default queue: production.
+						Examples:
+
+						All default: localhost
+
+						Specfic host: scmp://10.0.1.4:18180/production
+
+						Specfic host and SSL encryption: scmps://10.0.1.4:18180/production
 					</description>
 				</parameter>
 				<parameter name="username" type="string">
@@ -243,7 +252,7 @@
 					Defines the database backend to be used. The name corresponds to
 					the defined name in the database plugin. Examples are: mysql, postgresql or
 					sqlite3. Note that this parameter is deprecated. Please use
-					'database = mysql://localhost/seiscomp' instead.
+					the URL form 'database = mysql://sysop:sysop@localhost/seiscomp' instead.
 					</description>
 				</parameter>
 				<parameter name="parameters" type="string">
@@ -252,8 +261,8 @@
 					database backend. E.g. sqlite3 expects the path to the database
 					file whereas MYSQL or PostgreSQL expect an URI in the format
 					user:pwd@host/database?param1=val1&amp;param2=val2.
-					Note that this parameter is deprecated. Please use
-					'database = mysql://localhost/seiscomp' instead.
+					Note that this parameter is deprecated. Please use the URL form
+					'database = mysql://sysop:sysop@localhost/seiscomp' instead.
 					</description>
 				</parameter>
 				<parameter name="inventory" type="string">
