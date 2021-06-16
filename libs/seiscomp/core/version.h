@@ -31,12 +31,12 @@ namespace Seiscomp {
 namespace Core {
 
 
-/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(14, 2, 0)) */
+/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(14, 3, 0)) */
 #define SC_API_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 
 /* SC_API_VERSION is (major << 16) + (minor << 8) + patch. */
-#define SC_API_VERSION 0x0E0200
+#define SC_API_VERSION 0x0E0300
 
 #define SC_API_VERSION_MAJOR(v) (v >> 16)
 #define SC_API_VERSION_MINOR(v) ((v >> 8) & 0xff)
@@ -46,6 +46,11 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
+ "14.3.0"   0x0E0300
+   - Added RingBuffer::numberOfRecordsToStore()
+   - Added RingBuffer::timeSpanToStore()
+   - TimeWindowBuffer::timeWindowToStore()
+
  "14.2.0"   0x0E0200
    - Added Seiscomp::Client::Application::injectMessage
    - Added RecordStream factory "caps" and "capss"
