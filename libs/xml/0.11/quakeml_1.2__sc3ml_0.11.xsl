@@ -19,7 +19,17 @@ This stylesheet converts a QuakeML to a SC3ML document. It may be invoked using
 xalan or xsltproc:
 
     xalan -in quakeml.xml -xsl quakeml_1.2__sc3ml_0.11.xsl -out sc3ml.xml
-    xsltproc quakeml_1.2__sc3ml_0.11.xsl quakeml.xml -o sc3ml.xml
+    xsltproc quakeml_1.2__sc3ml_0.11.xsl quakeml.xml > sc3ml.xml
+
+Due to the QuakeML ID schemea the public IDs used by QuakeML are rather long
+and may cause problems in SeisComP application when displaying or processing
+them. Especially theslash causes problems, e.g. when an event ID is used on the
+command line or in a directory structure.
+To remove the ID prefix during the conversion you may use the ID_PREFIX
+parameter:
+
+    xalan -param ID_PREFIX "'smi:org.gfz-potsdam.de/geofon/'" -in quakeml.xml -xsl quakeml_1.2__sc3ml_0.11.xsl -out sc3ml.xml
+    xsltproc -stringparam ID_PREFIX smi:org.gfz-potsdam.de/geofon/ quakeml_1.2__sc3ml_0.11.xsl quakeml.xml > sc3ml.xml
 
 Transformation
 ==============
@@ -117,7 +127,12 @@ Nodes order
 Unlike SC3ML, QuakeML nodes can appear in any order. They must be reordered for
 SC3ML. Unnecessary attributes must also be removed.
 
-    ***************************************************************************
+Change log
+===============
+
+* Add ID_PREFIX parameter allowing to strip QuakeML ID prefix from publicIDs and
+  references thereof
+
 -->
 <xsl:stylesheet version="1.0"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -130,9 +145,14 @@ SC3ML. Unnecessary attributes must also be removed.
     <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
     <xsl:strip-space elements="*"/>
 
+    <!-- Define parameters-->
+    <xsl:param name="ID_PREFIX" select="'smi:org.gfz-potsdam.de/geofon/'"/>
+    <xsl:param name="ID_PREFIX_NA" select="concat($ID_PREFIX, 'NA')"/>
+
     <!-- Define some global variables -->
     <xsl:variable name="version" select="'0.11'"/>
     <xsl:variable name="schema" select="document('sc3ml_0.11.xsd')"/>
+    <xsl:variable name="PID" select="'publicID'"/>
 
     <!-- Define key to remove duplicates-->
     <xsl:key name="pick_key" match="qml:pick" use="@publicID"/>
@@ -149,7 +169,7 @@ SC3ML. Unnecessary attributes must also be removed.
     <!-- Default match: Map node 1:1 -->
     <xsl:template match="*">
         <xsl:element name="{local-name()}">
-            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates select="@*"/>
             <xsl:apply-templates select="node()"/>
         </xsl:element>
     </xsl:template>
@@ -162,7 +182,7 @@ SC3ML. Unnecessary attributes must also be removed.
         <xsl:variable name="disordered">
             <xsl:for-each select="./q:quakeml/qml:eventParameters">
                 <EventParameters>
-                    <xsl:copy-of select="@publicID"/>
+                    <xsl:apply-templates select="@publicID"/>
                     <xsl:apply-templates/>
                 </EventParameters>
             </xsl:for-each>
@@ -177,20 +197,24 @@ SC3ML. Unnecessary attributes must also be removed.
     <xsl:template match="qml:event">
         <!-- Create event node -->
         <xsl:element name="{local-name()}">
-            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates select="@*"/>
             <xsl:apply-templates/>
 
             <!-- Create origin references -->
             <xsl:for-each select="qml:origin[count(. | key('origin_key', @publicID)[1]) = 1]">
                 <xsl:element name="originReference">
-                    <xsl:value-of select="@publicID"/>
+                    <xsl:call-template name="convertID">
+                        <xsl:with-param name="id" select="@publicID"/>
+                    </xsl:call-template>
                 </xsl:element>
             </xsl:for-each>
 
             <!-- Create focal mechanism references -->
             <xsl:for-each select="qml:focalMechanism[count(. | key('focalMechanism_key', @publicID)[1]) = 1]">
                 <xsl:element name="focalMechanismReference">
-                    <xsl:value-of select="@publicID"/>
+                    <xsl:call-template name="convertID">
+                        <xsl:with-param name="id" select="@publicID"/>
+                    </xsl:call-template>
                 </xsl:element>
             </xsl:for-each>
         </xsl:element>
@@ -198,7 +222,7 @@ SC3ML. Unnecessary attributes must also be removed.
         <!-- Copy picks and remove duplicates -->
         <xsl:for-each select="qml:pick[count(. | key('pick_key', @publicID)[1]) = 1]">
             <xsl:element name="{local-name()}">
-                <xsl:copy-of select="@*"/>
+                <xsl:apply-templates select="@*"/>
                 <xsl:apply-templates/>
             </xsl:element>
         </xsl:for-each>
@@ -206,7 +230,7 @@ SC3ML. Unnecessary attributes must also be removed.
         <!-- Copy amplitudes and remove duplicates -->
         <xsl:for-each select="qml:amplitude[count(. | key('amplitude_key', @publicID)[1]) = 1]">
             <xsl:element name="{local-name()}">
-                <xsl:copy-of select="@*"/>
+                <xsl:apply-templates select="@*"/>
                 <xsl:if test="not(qml:type)">
                     <xsl:element name="type"/>
                 </xsl:if>
@@ -217,12 +241,12 @@ SC3ML. Unnecessary attributes must also be removed.
         <!-- Copy origins and remove duplicates -->
         <xsl:for-each select="qml:origin[count(. | key('origin_key', @publicID)[1]) = 1]">
             <xsl:element name="{local-name()}">
-                <xsl:copy-of select="@*"/>
+                <xsl:apply-templates select="@*"/>
 
                 <!-- Copy magnitudes and remove duplicates -->
                 <xsl:for-each select="../qml:magnitude[qml:originID/text()=current()/@publicID]">
                     <xsl:element name="{local-name()}">
-                        <xsl:copy-of select="@*"/>
+                        <xsl:apply-templates select="@*"/>
                         <xsl:apply-templates/>
                     </xsl:element>
                 </xsl:for-each>
@@ -230,7 +254,7 @@ SC3ML. Unnecessary attributes must also be removed.
                 <!-- Copy stations magnitudes and remove duplicates -->
                 <xsl:for-each select="../qml:stationMagnitude[qml:originID/text()=current()/@publicID]">
                     <xsl:element name="{local-name()}">
-                        <xsl:copy-of select="@*"/>
+                        <xsl:apply-templates select="@*"/>
                         <xsl:apply-templates/>
                     </xsl:element>
                 </xsl:for-each>
@@ -242,7 +266,7 @@ SC3ML. Unnecessary attributes must also be removed.
         <!-- Copy focal mechanisms and remove duplicates -->
         <xsl:for-each select="qml:focalMechanism[count(. | key('focalMechanism_key', @publicID)[1]) = 1]">
             <xsl:element name="{local-name()}">
-                <xsl:copy-of select="@*"/>
+                <xsl:apply-templates select="@*"/>
                 <xsl:apply-templates/>
             </xsl:element>
         </xsl:for-each>
@@ -321,7 +345,7 @@ SC3ML. Unnecessary attributes must also be removed.
     <!-- amplitude/genericAmplitutde -> amplitude/amplitude -->
     <xsl:template match="qml:amplitude/qml:genericAmplitude">
         <xsl:element name="amplitude">
-            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates select="@*"/>
             <xsl:apply-templates/>
         </xsl:element>
     </xsl:template>
@@ -329,7 +353,7 @@ SC3ML. Unnecessary attributes must also be removed.
     <!-- origin/originUncertainty -> origin/uncertainty -->
     <xsl:template match="qml:origin/qml:originUncertainty">
         <xsl:element name="uncertainty">
-            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates select="@*"/>
             <xsl:apply-templates/>
         </xsl:element>
     </xsl:template>
@@ -356,7 +380,7 @@ SC3ML. Unnecessary attributes must also be removed.
     <!-- waveformID/text() -> waveformID/resourceURI -->
     <xsl:template match="qml:waveformID">
         <xsl:element name="{local-name()}">
-            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates select="@*"/>
             <xsl:if test="current() != ''">
                 <xsl:element name="resourceURI">
                     <xsl:value-of select="."/>
@@ -542,7 +566,7 @@ SC3ML. Unnecessary attributes must also be removed.
                     <!-- Only copy allowed attributes -->
                     <xsl:for-each select="$schema//xs:complexType[@name=$name]
                                           /xs:attribute/@name">
-                        <xsl:copy-of select="$current/@*[local-name()=current()]"/>
+                        <xsl:apply-templates select="$current/@*[local-name()=current()]"/>
                     </xsl:for-each>
                     <!-- Reorder nodes according to the XSD -->
                     <xsl:for-each select="$schema//xs:complexType[@name=$name]
@@ -554,4 +578,53 @@ SC3ML. Unnecessary attributes must also be removed.
             </xsl:choose>
         </xsl:element>
     </xsl:template>
+
+    <!-- Removes ID_PREFIX, if the remainder is 'NA' an empty string is returned -->
+    <xsl:template name="convertID">
+        <xsl:param name="id"/>
+        <xsl:choose>
+            <xsl:when test="$id=$ID_PREFIX_NA">
+                <xsl:value-of select="''"/>
+            </xsl:when>
+            <xsl:when test="starts-with($id, $ID_PREFIX)">
+                <xsl:value-of select="substring-after($id, $ID_PREFIX)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$id"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <!-- Remove ID_PREFIX from publicID attributes -->
+    <xsl:template match="@publicID">
+        <xsl:variable name="id">
+            <xsl:call-template name="convertID">
+                <xsl:with-param name="id" select="current()"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:if test="$id != ''">
+            <xsl:attribute name="{$PID}">
+                <xsl:value-of select="$id"/>
+            </xsl:attribute>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template match="@*">
+        <xsl:copy-of select="."/>
+    </xsl:template>
+
+    <!-- Value of ID nodes must be stripped from ID_PREFIX -->
+    <xsl:template match="qml:agencyURI|qml:authorURI|qml:pickID|qml:methodID|qml:earthModelID|qml:amplitudeID|qml:originID|qml:stationMagnitudeID|qml:preferredOriginID|qml:preferredMagnitudeID|qml:originReference|qml:filterID|qml:slownessMethodID|qml:pickReference|qml:amplitudeReference|qml:referenceSystemID|qml:triggeringOriginID|qml:derivedOriginID|momentMagnitudeID|qml:preferredFocalMechanismID|qml:focalMechanismReference|qml:momentMagnitudeID|qml:greensFunctionID">
+        <xsl:variable name="id">
+            <xsl:call-template name="convertID">
+                <xsl:with-param name="id" select="string(.)"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:if test="$id != ''">
+            <xsl:element name="{local-name()}">
+                <xsl:apply-templates select="@*"/>
+                <xsl:value-of select="$id"/>
+            </xsl:element>
+        </xsl:if>
+    </xsl:template>
+
 </xsl:stylesheet>
