@@ -54,6 +54,11 @@ namespace Core {
    - Removed Seiscomp::Processing::MagnitudeProcessor::correctMagnitude
    - Added signal Seiscomp::Gui::EventListView::visibleEventCountChanged()
 
+ "14.3.0"   0x0E0300
+   - Added RingBuffer::numberOfRecordsToStore()
+   - Added RingBuffer::timeSpanToStore()
+   - TimeWindowBuffer::timeWindowToStore()
+
  "14.2.0"   0x0E0200
    - Added Seiscomp::Client::Application::injectMessage
    - Added RecordStream factory "caps" and "capss"
