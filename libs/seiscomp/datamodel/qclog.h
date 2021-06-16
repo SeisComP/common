@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_QCLOG_H
 
 
-#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/core/datetime.h>
 #include <string>
+#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/datamodel/publicobject.h>
 #include <seiscomp/core/exceptions.h>
 

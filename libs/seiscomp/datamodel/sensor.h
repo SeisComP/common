@@ -23,8 +23,8 @@
 
 
 #include <seiscomp/datamodel/blob.h>
-#include <vector>
 #include <string>
+#include <vector>
 #include <seiscomp/datamodel/sensorcalibration.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>

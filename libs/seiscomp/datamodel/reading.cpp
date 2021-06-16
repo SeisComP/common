@@ -588,7 +588,7 @@ bool Reading::removeAmplitudeReference(const AmplitudeReferenceIndex& i) {
 void Reading::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,11>() ) {
+	if ( ar.isHigherVersion<0,12>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Reading skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_ORIGINUNCERTAINTY_H
 
 
-#include <seiscomp/datamodel/types.h>
 #include <seiscomp/datamodel/confidenceellipsoid.h>
+#include <seiscomp/datamodel/types.h>
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core.h>
 #include <seiscomp/core/exceptions.h>
@@ -113,6 +113,10 @@ class SC_SYSTEM_CORE_API OriginUncertainty : public Core::BaseObject {
 		void setPreferredDescription(const OPT(OriginUncertaintyDescription)& preferredDescription);
 		OriginUncertaintyDescription preferredDescription() const;
 
+		//! Confidence level of the uncertainty, given in percent.
+		void setConfidenceLevel(const OPT(double)& confidenceLevel);
+		double confidenceLevel() const;
+
 
 	// ------------------------------------------------------------------
 	//  Implementation
@@ -125,6 +129,7 @@ class SC_SYSTEM_CORE_API OriginUncertainty : public Core::BaseObject {
 		OPT(double) _azimuthMaxHorizontalUncertainty;
 		OPT(ConfidenceEllipsoid) _confidenceEllipsoid;
 		OPT(OriginUncertaintyDescription) _preferredDescription;
+		OPT(double) _confidenceLevel;
 };
 
 

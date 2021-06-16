@@ -43,6 +43,7 @@ OriginUncertainty::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Co
 	addProperty(Core::simpleProperty("azimuthMaxHorizontalUncertainty", "float", false, false, false, false, true, false, nullptr, &OriginUncertainty::setAzimuthMaxHorizontalUncertainty, &OriginUncertainty::azimuthMaxHorizontalUncertainty));
 	addProperty(objectProperty<ConfidenceEllipsoid>("confidenceEllipsoid", "ConfidenceEllipsoid", false, false, true, &OriginUncertainty::setConfidenceEllipsoid, &OriginUncertainty::confidenceEllipsoid));
 	addProperty(enumProperty("preferredDescription", "OriginUncertaintyDescription", false, true, &metaOriginUncertaintyDescription, &OriginUncertainty::setPreferredDescription, &OriginUncertainty::preferredDescription));
+	addProperty(Core::simpleProperty("confidenceLevel", "float", false, false, false, false, true, false, nullptr, &OriginUncertainty::setConfidenceLevel, &OriginUncertainty::confidenceLevel));
 }
 
 
@@ -87,6 +88,8 @@ bool OriginUncertainty::operator==(const OriginUncertainty& rhs) const {
 	if ( !(_confidenceEllipsoid == rhs._confidenceEllipsoid) )
 		return false;
 	if ( !(_preferredDescription == rhs._preferredDescription) )
+		return false;
+	if ( !(_confidenceLevel == rhs._confidenceLevel) )
 		return false;
 	return true;
 }
@@ -245,6 +248,26 @@ OriginUncertaintyDescription OriginUncertainty::preferredDescription() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginUncertainty::setConfidenceLevel(const OPT(double)& confidenceLevel) {
+	_confidenceLevel = confidenceLevel;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+double OriginUncertainty::confidenceLevel() const {
+	if ( _confidenceLevel )
+		return *_confidenceLevel;
+	throw Seiscomp::Core::ValueException("OriginUncertainty.confidenceLevel is not set");
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 OriginUncertainty& OriginUncertainty::operator=(const OriginUncertainty& other) {
 	_horizontalUncertainty = other._horizontalUncertainty;
 	_minHorizontalUncertainty = other._minHorizontalUncertainty;
@@ -252,6 +275,7 @@ OriginUncertainty& OriginUncertainty::operator=(const OriginUncertainty& other) 
 	_azimuthMaxHorizontalUncertainty = other._azimuthMaxHorizontalUncertainty;
 	_confidenceEllipsoid = other._confidenceEllipsoid;
 	_preferredDescription = other._preferredDescription;
+	_confidenceLevel = other._confidenceLevel;
 	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -263,7 +287,7 @@ OriginUncertainty& OriginUncertainty::operator=(const OriginUncertainty& other) 
 void OriginUncertainty::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,11>() ) {
+	if ( ar.isHigherVersion<0,12>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: OriginUncertainty skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);
@@ -276,6 +300,7 @@ void OriginUncertainty::serialize(Archive& ar) {
 	ar & NAMED_OBJECT_HINT("azimuthMaxHorizontalUncertainty", _azimuthMaxHorizontalUncertainty, Archive::XML_ELEMENT);
 	ar & NAMED_OBJECT_HINT("confidenceEllipsoid", _confidenceEllipsoid, Archive::STATIC_TYPE | Archive::XML_ELEMENT);
 	ar & NAMED_OBJECT_HINT("preferredDescription", _preferredDescription, Archive::XML_ELEMENT);
+	ar & NAMED_OBJECT_HINT("confidenceLevel", _confidenceLevel, Archive::XML_ELEMENT);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

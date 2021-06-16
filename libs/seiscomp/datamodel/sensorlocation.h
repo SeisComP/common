@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_SENSORLOCATION_H
 
 
-#include <vector>
 #include <seiscomp/core/datetime.h>
 #include <string>
+#include <vector>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/auxstream.h>
 #include <seiscomp/datamodel/stream.h>

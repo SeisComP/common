@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_COMPOSITETIME_H
 
 
-#include <seiscomp/datamodel/realquantity.h>
 #include <seiscomp/datamodel/integerquantity.h>
+#include <seiscomp/datamodel/realquantity.h>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
 

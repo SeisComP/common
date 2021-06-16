@@ -165,7 +165,7 @@ RealPDF1D& RealPDF1D::operator=(const RealPDF1D& other) {
 void RealPDF1D::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,11>() ) {
+	if ( ar.isHigherVersion<0,12>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: RealPDF1D skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

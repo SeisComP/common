@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_TIMEARRAY_H
 
 
-#include <vector>
 #include <seiscomp/core/datetime.h>
+#include <vector>
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core.h>
 #include <seiscomp/core/exceptions.h>

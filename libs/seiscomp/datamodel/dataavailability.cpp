@@ -354,7 +354,7 @@ bool DataAvailability::removeDataExtent(const DataExtentIndex& i) {
 void DataAvailability::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,11>() ) {
+	if ( ar.isHigherVersion<0,12>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: DataAvailability skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

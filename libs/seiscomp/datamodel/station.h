@@ -22,10 +22,10 @@
 #define SEISCOMP_DATAMODEL_STATION_H
 
 
-#include <seiscomp/datamodel/blob.h>
-#include <vector>
 #include <seiscomp/core/datetime.h>
+#include <vector>
 #include <string>
+#include <seiscomp/datamodel/blob.h>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/sensorlocation.h>
 #include <seiscomp/datamodel/notifier.h>

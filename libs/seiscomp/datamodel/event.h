@@ -22,10 +22,10 @@
 #define SEISCOMP_DATAMODEL_EVENT_H
 
 
-#include <seiscomp/datamodel/types.h>
-#include <vector>
 #include <seiscomp/datamodel/creationinfo.h>
+#include <seiscomp/datamodel/types.h>
 #include <string>
+#include <vector>
 #include <seiscomp/datamodel/eventdescription.h>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/originreference.h>

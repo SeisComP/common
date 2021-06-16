@@ -85,7 +85,7 @@ CREATE TABLE PublicObject (
 		ON DELETE CASCADE
 ) ENGINE=INNODB;
 
-INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.11');
+INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.12');
 INSERT INTO Meta(name,value) VALUES ('Creation-Time', CURRENT_TIMESTAMP);
 
 INSERT INTO Object(_oid) VALUES (NULL);
@@ -953,6 +953,7 @@ CREATE TABLE Origin (
 	uncertainty_confidenceEllipsoid_majorAxisRotation DOUBLE,
 	uncertainty_confidenceEllipsoid_used TINYINT(1) NOT NULL DEFAULT '0',
 	uncertainty_preferredDescription VARCHAR(64),
+	uncertainty_confidenceLevel DOUBLE UNSIGNED,
 	uncertainty_used TINYINT(1) NOT NULL DEFAULT '0',
 	type VARCHAR(64),
 	evaluationMode VARCHAR(64),

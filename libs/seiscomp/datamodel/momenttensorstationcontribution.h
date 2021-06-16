@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_MOMENTTENSORSTATIONCONTRIBUTION_H
 
 
-#include <seiscomp/datamodel/waveformstreamid.h>
 #include <vector>
+#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/datamodel/momenttensorcomponentcontribution.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>

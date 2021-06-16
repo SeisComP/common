@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_STATIONMAGNITUDE_H
 
 
+#include <seiscomp/datamodel/realquantity.h>
 #include <string>
 #include <vector>
-#include <seiscomp/datamodel/realquantity.h>
 #include <seiscomp/datamodel/creationinfo.h>
 #include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/datamodel/comment.h>

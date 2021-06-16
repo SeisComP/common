@@ -93,14 +93,14 @@ SET(
 		dataattributeextent.h
 		dataextent.h
 		dataavailability.h
-		journaling_package.h
-		arclinklog_package.h
-		qualitycontrol_package.h
-		inventory_package.h
-		dataavailability_package.h
 		eventparameters_package.h
 		config_package.h
+		qualitycontrol_package.h
+		inventory_package.h
 		routing_package.h
+		journaling_package.h
+		arclinklog_package.h
+		dataavailability_package.h
 		databasereader.h
 		databasequery.h
 		version.h

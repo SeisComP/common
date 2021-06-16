@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_CONFIGSTATION_H
 
 
-#include <vector>
 #include <seiscomp/datamodel/creationinfo.h>
 #include <string>
+#include <vector>
 #include <seiscomp/datamodel/setup.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>

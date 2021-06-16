@@ -1,72 +1,71 @@
-DROP TABLE EventDescription;
-DROP TABLE Comment;
-DROP TABLE DataUsed;
-DROP TABLE CompositeTime;
-DROP TABLE PickReference;
-DROP TABLE AmplitudeReference;
-DROP TABLE Reading;
-DROP TABLE MomentTensorComponentContribution;
-DROP TABLE MomentTensorStationContribution;
-DROP TABLE MomentTensorPhaseSetting;
-DROP TABLE MomentTensor;
-DROP TABLE FocalMechanism;
-DROP TABLE Amplitude;
-DROP TABLE StationMagnitudeContribution;
-DROP TABLE Magnitude;
-DROP TABLE StationMagnitude;
-DROP TABLE Pick;
-DROP TABLE OriginReference;
-DROP TABLE FocalMechanismReference;
-DROP TABLE Event;
-DROP TABLE Arrival;
-DROP TABLE Origin;
-DROP TABLE Parameter;
-DROP TABLE ParameterSet;
-DROP TABLE Setup;
-DROP TABLE ConfigStation;
-DROP TABLE ConfigModule;
-DROP TABLE QCLog;
-DROP TABLE WaveformQuality;
-DROP TABLE Outage;
-DROP TABLE StationReference;
-DROP TABLE StationGroup;
-DROP TABLE AuxSource;
-DROP TABLE AuxDevice;
-DROP TABLE SensorCalibration;
-DROP TABLE Sensor;
-DROP TABLE ResponsePAZ;
-DROP TABLE ResponsePolynomial;
-DROP TABLE ResponseFAP;
-DROP TABLE ResponseFIR;
-DROP TABLE ResponseIIR;
-DROP TABLE DataloggerCalibration;
-DROP TABLE Decimation;
-DROP TABLE Datalogger;
-DROP TABLE AuxStream;
-DROP TABLE Stream;
-DROP TABLE SensorLocation;
-DROP TABLE Station;
-DROP TABLE Network;
-DROP TABLE RouteArclink;
-DROP TABLE RouteSeedlink;
-DROP TABLE Route;
-DROP TABLE Access;
-DROP TABLE JournalEntry;
-DROP TABLE ArclinkUser;
-DROP TABLE ArclinkStatusLine;
-DROP TABLE ArclinkRequestLine;
-DROP TABLE ArclinkRequest;
-DROP TABLE DataSegment;
-DROP TABLE DataAttributeExtent;
-DROP TABLE DataExtent;
-DROP TABLE PublicObject;
-DROP TABLE Object;
-DROP TABLE Meta;
-DROP SEQUENCE Object_seq;
-DROP FUNCTION update_modified();
-DROP LANGUAGE plpgsql;
+DROP TABLE IF EXISTS EventDescription;
+DROP TABLE IF EXISTS Comment;
+DROP TABLE IF EXISTS DataUsed;
+DROP TABLE IF EXISTS CompositeTime;
+DROP TABLE IF EXISTS PickReference;
+DROP TABLE IF EXISTS AmplitudeReference;
+DROP TABLE IF EXISTS Reading;
+DROP TABLE IF EXISTS MomentTensorComponentContribution;
+DROP TABLE IF EXISTS MomentTensorStationContribution;
+DROP TABLE IF EXISTS MomentTensorPhaseSetting;
+DROP TABLE IF EXISTS MomentTensor;
+DROP TABLE IF EXISTS FocalMechanism;
+DROP TABLE IF EXISTS Amplitude;
+DROP TABLE IF EXISTS StationMagnitudeContribution;
+DROP TABLE IF EXISTS Magnitude;
+DROP TABLE IF EXISTS StationMagnitude;
+DROP TABLE IF EXISTS Pick;
+DROP TABLE IF EXISTS OriginReference;
+DROP TABLE IF EXISTS FocalMechanismReference;
+DROP TABLE IF EXISTS Event;
+DROP TABLE IF EXISTS Arrival;
+DROP TABLE IF EXISTS Origin;
+DROP TABLE IF EXISTS Parameter;
+DROP TABLE IF EXISTS ParameterSet;
+DROP TABLE IF EXISTS Setup;
+DROP TABLE IF EXISTS ConfigStation;
+DROP TABLE IF EXISTS ConfigModule;
+DROP TABLE IF EXISTS QCLog;
+DROP TABLE IF EXISTS WaveformQuality;
+DROP TABLE IF EXISTS Outage;
+DROP TABLE IF EXISTS StationReference;
+DROP TABLE IF EXISTS StationGroup;
+DROP TABLE IF EXISTS AuxSource;
+DROP TABLE IF EXISTS AuxDevice;
+DROP TABLE IF EXISTS SensorCalibration;
+DROP TABLE IF EXISTS Sensor;
+DROP TABLE IF EXISTS ResponsePAZ;
+DROP TABLE IF EXISTS ResponsePolynomial;
+DROP TABLE IF EXISTS ResponseFAP;
+DROP TABLE IF EXISTS ResponseFIR;
+DROP TABLE IF EXISTS ResponseIIR;
+DROP TABLE IF EXISTS DataloggerCalibration;
+DROP TABLE IF EXISTS Decimation;
+DROP TABLE IF EXISTS Datalogger;
+DROP TABLE IF EXISTS AuxStream;
+DROP TABLE IF EXISTS Stream;
+DROP TABLE IF EXISTS SensorLocation;
+DROP TABLE IF EXISTS Station;
+DROP TABLE IF EXISTS Network;
+DROP TABLE IF EXISTS RouteArclink;
+DROP TABLE IF EXISTS RouteSeedlink;
+DROP TABLE IF EXISTS Route;
+DROP TABLE IF EXISTS Access;
+DROP TABLE IF EXISTS JournalEntry;
+DROP TABLE IF EXISTS ArclinkUser;
+DROP TABLE IF EXISTS ArclinkStatusLine;
+DROP TABLE IF EXISTS ArclinkRequestLine;
+DROP TABLE IF EXISTS ArclinkRequest;
+DROP TABLE IF EXISTS DataSegment;
+DROP TABLE IF EXISTS DataAttributeExtent;
+DROP TABLE IF EXISTS DataExtent;
+DROP TABLE IF EXISTS PublicObject;
+DROP TABLE IF EXISTS Object;
+DROP TABLE IF EXISTS Meta;
+DROP SEQUENCE IF EXISTS Object_seq;
+DROP FUNCTION IF EXISTS update_modified();
 
-CREATE LANGUAGE plpgsql;
+CREATE OR REPLACE LANGUAGE plpgsql;
 CREATE FUNCTION update_modified() returns trigger as $$begin new._last_modified := now(); return new; end;$$ LANGUAGE plpgsql;
 
 CREATE TABLE Meta (
@@ -92,7 +91,7 @@ CREATE TABLE PublicObject (
 		ON DELETE CASCADE
 );
 
-INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.11');
+INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.12');
 INSERT INTO Meta(name,value) VALUES ('Creation-Time', CURRENT_TIMESTAMP);
 
 INSERT INTO Object(_oid) VALUES (DEFAULT);
@@ -1041,6 +1040,7 @@ CREATE TABLE Origin (
 	m_uncertainty_confidenceEllipsoid_majorAxisRotation DOUBLE PRECISION,
 	m_uncertainty_confidenceEllipsoid_used BOOLEAN NOT NULL DEFAULT '0',
 	m_uncertainty_preferredDescription VARCHAR(64),
+	m_uncertainty_confidenceLevel DOUBLE PRECISION,
 	m_uncertainty_used BOOLEAN NOT NULL DEFAULT '0',
 	m_type VARCHAR(64),
 	m_evaluationMode VARCHAR(64),

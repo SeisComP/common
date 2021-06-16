@@ -129,7 +129,7 @@ class SC_SYSTEM_CORE_API DatabaseReader : public DatabaseArchive {
 		 * @param classType The type of the object
 		 * @param publicID The publicID of the object
 		 * @return An unmanaged pointer thats ownership goes
-		 *         over to the caller. If no object has been found, nullptr
+		 *         over to the caller. If no object has been found, NULL
 		 *         is returned.
 		 */
 		PublicObject* loadObject(const Seiscomp::Core::RTTI& classType,

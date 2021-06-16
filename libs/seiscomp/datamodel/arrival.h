@@ -23,8 +23,8 @@
 
 
 #include <seiscomp/datamodel/creationinfo.h>
-#include <seiscomp/datamodel/phase.h>
 #include <string>
+#include <seiscomp/datamodel/phase.h>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
 

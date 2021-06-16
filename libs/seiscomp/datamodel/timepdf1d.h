@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_TIMEPDF1D_H
 
 
-#include <seiscomp/datamodel/realarray.h>
 #include <seiscomp/datamodel/timearray.h>
+#include <seiscomp/datamodel/realarray.h>
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core.h>
 #include <seiscomp/core/exceptions.h>

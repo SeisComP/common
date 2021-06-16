@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_MOMENTTENSORCOMPONENTCONTRIBUTION_H
 
 
-#include <vector>
 #include <string>
+#include <vector>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
 

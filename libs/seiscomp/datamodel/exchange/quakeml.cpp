@@ -709,6 +709,7 @@ struct OriginUncertaintySecondaryHandler : TypedClassHandler<OriginUncertainty> 
 		        "maxHorizontalUncertainty, azimuthMaxHorizontalUncertainty, "
 		        "confidenceEllipsoid");
 		add("preferredDescription", &__originUncertaintyDescription);
+		add("confidenceLevel");
 	}
 };
 static OriginUncertaintySecondaryHandler __originUncertaintySecondaryHandler;
