@@ -47,6 +47,8 @@ namespace Core {
  API Changelog
  ******************************************************************************
  "15.0.0"   0x0F0000
+   - Added OriginUncertainty::confidenceLevel
+   - Set DataModel version to 0.12
    - Added WindowFunc::apply(..., left, right)
    - Changed WindowFunc::process(int n, T *inout, double width)
      to WindowFunc::process(int n, T *inout, double left, double right)
