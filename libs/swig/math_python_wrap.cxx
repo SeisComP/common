@@ -29915,41 +29915,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_RunningMeanFilterF_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::RunningMean< float > *arg1 = (Seiscomp::Math::Filtering::RunningMean< float > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunningMeanFilterF_reset" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::RunningMean< float > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::RunningMean< float > * >(argp1);
-  {
-    try {
-      (arg1)->reset();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_RunningMeanFilterF_setSamplingFrequency(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::RunningMean< float > *arg1 = (Seiscomp::Math::Filtering::RunningMean< float > *) 0 ;
@@ -30037,6 +30002,41 @@ SWIGINTERN PyObject *_wrap_RunningMeanFilterF_setParameters(PyObject *SWIGUNUSED
     }
   }
   resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RunningMeanFilterF_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::RunningMean< float > *arg1 = (Seiscomp::Math::Filtering::RunningMean< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunningMeanFilterF_reset" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::RunningMean< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::RunningMean< float > * >(argp1);
+  {
+    try {
+      (arg1)->reset();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
@@ -30321,41 +30321,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_RunningMeanFilterD_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::RunningMean< double > *arg1 = (Seiscomp::Math::Filtering::RunningMean< double > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunningMeanFilterD_reset" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::RunningMean< double > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::RunningMean< double > * >(argp1);
-  {
-    try {
-      (arg1)->reset();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_RunningMeanFilterD_setSamplingFrequency(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::RunningMean< double > *arg1 = (Seiscomp::Math::Filtering::RunningMean< double > *) 0 ;
@@ -30443,6 +30408,41 @@ SWIGINTERN PyObject *_wrap_RunningMeanFilterD_setParameters(PyObject *SWIGUNUSED
     }
   }
   resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RunningMeanFilterD_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::RunningMean< double > *arg1 = (Seiscomp::Math::Filtering::RunningMean< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RunningMeanFilterD_reset" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::RunningMean< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::RunningMean< double > * >(argp1);
+  {
+    try {
+      (arg1)->reset();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
@@ -31375,41 +31375,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_InitialTaperFilterF_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::InitialTaper< float > *arg1 = (Seiscomp::Math::Filtering::InitialTaper< float > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_float_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "InitialTaperFilterF_reset" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::InitialTaper< float > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::InitialTaper< float > * >(argp1);
-  {
-    try {
-      (arg1)->reset();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_InitialTaperFilterF_setSamplingFrequency(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::InitialTaper< float > *arg1 = (Seiscomp::Math::Filtering::InitialTaper< float > *) 0 ;
@@ -31497,6 +31462,41 @@ SWIGINTERN PyObject *_wrap_InitialTaperFilterF_setParameters(PyObject *SWIGUNUSE
     }
   }
   resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_InitialTaperFilterF_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::InitialTaper< float > *arg1 = (Seiscomp::Math::Filtering::InitialTaper< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "InitialTaperFilterF_reset" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::InitialTaper< float > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::InitialTaper< float > * >(argp1);
+  {
+    try {
+      (arg1)->reset();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
@@ -31957,41 +31957,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_InitialTaperFilterD_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Math::Filtering::InitialTaper< double > *arg1 = (Seiscomp::Math::Filtering::InitialTaper< double > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_double_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "InitialTaperFilterD_reset" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::InitialTaper< double > *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::InitialTaper< double > * >(argp1);
-  {
-    try {
-      (arg1)->reset();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_InitialTaperFilterD_setSamplingFrequency(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Filtering::InitialTaper< double > *arg1 = (Seiscomp::Math::Filtering::InitialTaper< double > *) 0 ;
@@ -32079,6 +32044,41 @@ SWIGINTERN PyObject *_wrap_InitialTaperFilterD_setParameters(PyObject *SWIGUNUSE
     }
   }
   resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_InitialTaperFilterD_reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Math::Filtering::InitialTaper< double > *arg1 = (Seiscomp::Math::Filtering::InitialTaper< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "InitialTaperFilterD_reset" "', argument " "1"" of type '" "Seiscomp::Math::Filtering::InitialTaper< double > *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Math::Filtering::InitialTaper< double > * >(argp1);
+  {
+    try {
+      (arg1)->reset();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
@@ -50639,18 +50639,18 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_RunningMeanFilterF", _wrap_delete_RunningMeanFilterF, METH_O, "delete_RunningMeanFilterF(RunningMeanFilterF self)"},
 	 { "RunningMeanFilterF_setLength", _wrap_RunningMeanFilterF_setLength, METH_VARARGS, "RunningMeanFilterF_setLength(RunningMeanFilterF self, double windowLength)"},
 	 { "RunningMeanFilterF_clone", _wrap_RunningMeanFilterF_clone, METH_O, "RunningMeanFilterF_clone(RunningMeanFilterF self) -> InPlaceFilterF"},
-	 { "RunningMeanFilterF_reset", _wrap_RunningMeanFilterF_reset, METH_O, "RunningMeanFilterF_reset(RunningMeanFilterF self)"},
 	 { "RunningMeanFilterF_setSamplingFrequency", _wrap_RunningMeanFilterF_setSamplingFrequency, METH_VARARGS, "RunningMeanFilterF_setSamplingFrequency(RunningMeanFilterF self, double fsamp)"},
 	 { "RunningMeanFilterF_setParameters", _wrap_RunningMeanFilterF_setParameters, METH_VARARGS, "RunningMeanFilterF_setParameters(RunningMeanFilterF self, int n, double const * params) -> int"},
+	 { "RunningMeanFilterF_reset", _wrap_RunningMeanFilterF_reset, METH_O, "RunningMeanFilterF_reset(RunningMeanFilterF self)"},
 	 { "RunningMeanFilterF_swigregister", RunningMeanFilterF_swigregister, METH_O, NULL},
 	 { "RunningMeanFilterF_swiginit", RunningMeanFilterF_swiginit, METH_VARARGS, NULL},
 	 { "new_RunningMeanFilterD", _wrap_new_RunningMeanFilterD, METH_VARARGS, "RunningMeanFilterD(double windowLength=0, double fsamp=0.0)"},
 	 { "delete_RunningMeanFilterD", _wrap_delete_RunningMeanFilterD, METH_O, "delete_RunningMeanFilterD(RunningMeanFilterD self)"},
 	 { "RunningMeanFilterD_setLength", _wrap_RunningMeanFilterD_setLength, METH_VARARGS, "RunningMeanFilterD_setLength(RunningMeanFilterD self, double windowLength)"},
 	 { "RunningMeanFilterD_clone", _wrap_RunningMeanFilterD_clone, METH_O, "RunningMeanFilterD_clone(RunningMeanFilterD self) -> InPlaceFilterD"},
-	 { "RunningMeanFilterD_reset", _wrap_RunningMeanFilterD_reset, METH_O, "RunningMeanFilterD_reset(RunningMeanFilterD self)"},
 	 { "RunningMeanFilterD_setSamplingFrequency", _wrap_RunningMeanFilterD_setSamplingFrequency, METH_VARARGS, "RunningMeanFilterD_setSamplingFrequency(RunningMeanFilterD self, double fsamp)"},
 	 { "RunningMeanFilterD_setParameters", _wrap_RunningMeanFilterD_setParameters, METH_VARARGS, "RunningMeanFilterD_setParameters(RunningMeanFilterD self, int n, double const * params) -> int"},
+	 { "RunningMeanFilterD_reset", _wrap_RunningMeanFilterD_reset, METH_O, "RunningMeanFilterD_reset(RunningMeanFilterD self)"},
 	 { "RunningMeanFilterD_swigregister", RunningMeanFilterD_swigregister, METH_O, NULL},
 	 { "RunningMeanFilterD_swiginit", RunningMeanFilterD_swiginit, METH_VARARGS, NULL},
 	 { "new_RunningMeanHighPassFilterF", _wrap_new_RunningMeanHighPassFilterF, METH_VARARGS, "RunningMeanHighPassFilterF(double windowLength=0, double fsamp=0.0)"},
@@ -50667,18 +50667,18 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_InitialTaperFilterF", _wrap_delete_InitialTaperFilterF, METH_O, "delete_InitialTaperFilterF(InitialTaperFilterF self)"},
 	 { "InitialTaperFilterF_setLength", _wrap_InitialTaperFilterF_setLength, METH_VARARGS, "InitialTaperFilterF_setLength(InitialTaperFilterF self, double taperLength, float offset=0)"},
 	 { "InitialTaperFilterF_clone", _wrap_InitialTaperFilterF_clone, METH_O, "InitialTaperFilterF_clone(InitialTaperFilterF self) -> InPlaceFilterF"},
-	 { "InitialTaperFilterF_reset", _wrap_InitialTaperFilterF_reset, METH_O, "InitialTaperFilterF_reset(InitialTaperFilterF self)"},
 	 { "InitialTaperFilterF_setSamplingFrequency", _wrap_InitialTaperFilterF_setSamplingFrequency, METH_VARARGS, "InitialTaperFilterF_setSamplingFrequency(InitialTaperFilterF self, double fsamp)"},
 	 { "InitialTaperFilterF_setParameters", _wrap_InitialTaperFilterF_setParameters, METH_VARARGS, "InitialTaperFilterF_setParameters(InitialTaperFilterF self, int n, double const * params) -> int"},
+	 { "InitialTaperFilterF_reset", _wrap_InitialTaperFilterF_reset, METH_O, "InitialTaperFilterF_reset(InitialTaperFilterF self)"},
 	 { "InitialTaperFilterF_swigregister", InitialTaperFilterF_swigregister, METH_O, NULL},
 	 { "InitialTaperFilterF_swiginit", InitialTaperFilterF_swiginit, METH_VARARGS, NULL},
 	 { "new_InitialTaperFilterD", _wrap_new_InitialTaperFilterD, METH_VARARGS, "InitialTaperFilterD(double taperLength=0, double offset=0, double fsamp=0)"},
 	 { "delete_InitialTaperFilterD", _wrap_delete_InitialTaperFilterD, METH_O, "delete_InitialTaperFilterD(InitialTaperFilterD self)"},
 	 { "InitialTaperFilterD_setLength", _wrap_InitialTaperFilterD_setLength, METH_VARARGS, "InitialTaperFilterD_setLength(InitialTaperFilterD self, double taperLength, double offset=0)"},
 	 { "InitialTaperFilterD_clone", _wrap_InitialTaperFilterD_clone, METH_O, "InitialTaperFilterD_clone(InitialTaperFilterD self) -> InPlaceFilterD"},
-	 { "InitialTaperFilterD_reset", _wrap_InitialTaperFilterD_reset, METH_O, "InitialTaperFilterD_reset(InitialTaperFilterD self)"},
 	 { "InitialTaperFilterD_setSamplingFrequency", _wrap_InitialTaperFilterD_setSamplingFrequency, METH_VARARGS, "InitialTaperFilterD_setSamplingFrequency(InitialTaperFilterD self, double fsamp)"},
 	 { "InitialTaperFilterD_setParameters", _wrap_InitialTaperFilterD_setParameters, METH_VARARGS, "InitialTaperFilterD_setParameters(InitialTaperFilterD self, int n, double const * params) -> int"},
+	 { "InitialTaperFilterD_reset", _wrap_InitialTaperFilterD_reset, METH_O, "InitialTaperFilterD_reset(InitialTaperFilterD self)"},
 	 { "InitialTaperFilterD_swigregister", InitialTaperFilterD_swigregister, METH_O, NULL},
 	 { "InitialTaperFilterD_swiginit", InitialTaperFilterD_swiginit, METH_VARARGS, NULL},
 	 { "new_BiquadCoefficients", _wrap_new_BiquadCoefficients, METH_VARARGS, "\n"
