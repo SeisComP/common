@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    ***************************************************************************
-
 QuakeML 1.2 to SC3ML 0.11 stylesheet converter
 
 Author:
@@ -128,10 +126,10 @@ Unlike SC3ML, QuakeML nodes can appear in any order. They must be reordered for
 SC3ML. Unnecessary attributes must also be removed.
 
 Change log
-===============
+==========
 
-* Add ID_PREFIX parameter allowing to strip QuakeML ID prefix from publicIDs and
-  references thereof
+* 16.06.2021: Add ID_PREFIX parameter allowing to strip QuakeML ID prefix from
+  publicIDs and references thereof
 
 -->
 <xsl:stylesheet version="1.0"
