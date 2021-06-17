@@ -31,6 +31,8 @@
 #include <sstream>
 #include <fstream>
 #include <string.h>
+#include <stdint.h>
+#include <limits>
 
 extern "C" {
 	#include "bson/bson.h"
@@ -468,7 +470,58 @@ void BSONArchive::read(Seiscomp::Core::Time& value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BSONArchive::read(int& value) {
+template <typename T>
+void BSONArchive::readInt(T& value) {
+	int64_t tmp;
+	read(tmp);
+
+	if ( !_validObject )
+		return;
+
+	if ( tmp < std::numeric_limits<T>::min() ||
+	     tmp > std::numeric_limits<T>::max() ) {
+		SEISCOMP_ERROR("Invalid int value");
+		setValidity(false);
+		return;
+	}
+
+	value = tmp;
+	setValidity(true);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BSONArchive::read(int8_t& value) {
+	readInt<int8_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BSONArchive::read(int16_t& value) {
+	readInt<int16_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BSONArchive::read(int32_t& value) {
+	readInt<int32_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BSONArchive::read(int64_t& value) {
 	switch ( bson_iter_type (&_impl->iter) ) {
 		case BSON_TYPE_INT32:
 			value = bson_iter_int32(&_impl->iter);
@@ -493,45 +546,21 @@ void BSONArchive::read(int& value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BSONArchive::read(float& value) {
-	switch ( bson_iter_type (&_impl->iter) ) {
-		case BSON_TYPE_DOUBLE:
-		{
-			double tmp = bson_iter_double(&_impl->iter);
-			if ( (tmp >= -std::numeric_limits<float>::max() && tmp <= std::numeric_limits<float>::max()) ||
-			     tmp == std::numeric_limits<double>::infinity() || tmp == -std::numeric_limits<double>::infinity()) {
-				value = tmp;
-				setValidity(true);
-				break;
-			}
-		}
+	double tmp;
+	read(tmp);
 
-		case BSON_TYPE_INT32:
-		{
-			double tmp = bson_iter_int32(&_impl->iter);
-			if ( (tmp >= -std::numeric_limits<float>::max() && tmp <= std::numeric_limits<float>::max()) ||
-			     tmp == std::numeric_limits<double>::infinity() || tmp == -std::numeric_limits<double>::infinity()) {
-				value = tmp;
-				setValidity(true);
-				break;
-			}
-		}
+	if ( !_validObject )
+		return;
 
-		case BSON_TYPE_INT64:
-		{
-			double tmp = bson_iter_int64(&_impl->iter);
-			if ( (tmp >= -std::numeric_limits<float>::max() && tmp <= std::numeric_limits<float>::max()) ||
-			      tmp == std::numeric_limits<double>::infinity() || tmp == -std::numeric_limits<double>::infinity()) {
-				value = tmp;
-				setValidity(true);
-				break;
-			}
-		}
-
-		default:
-			SEISCOMP_ERROR("Invalid float value");
-			setValidity(false);
-			break;
+	if ( (tmp < -std::numeric_limits<float>::max() || tmp > std::numeric_limits<float>::max()) &&
+	     tmp != -std::numeric_limits<double>::infinity() && tmp != std::numeric_limits<double>::infinity()) {
+		setValidity(false);
+		SEISCOMP_ERROR("Invalid float value");
+		return;
 	}
+
+	value = tmp;
+	setValidity(true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -543,16 +572,6 @@ void BSONArchive::read(double& value) {
 	switch ( bson_iter_type (&_impl->iter) ) {
 		case BSON_TYPE_DOUBLE:
 			value = bson_iter_double(&_impl->iter);
-			setValidity(true);
-			break;
-
-		case BSON_TYPE_INT32:
-			value = bson_iter_int32(&_impl->iter);
-			setValidity(true);
-			break;
-
-		case BSON_TYPE_INT64:
-			value = bson_iter_int64(&_impl->iter);
 			setValidity(true);
 			break;
 
@@ -677,8 +696,35 @@ void BSONArchive::readVector(std::vector<T>& value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BSONArchive::read(std::vector<int>& value) {
-	readVector<int>(value);
+void BSONArchive::read(std::vector<int8_t>& value) {
+	readVector<int8_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BSONArchive::read(std::vector<int16_t>& value) {
+	readVector<int16_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BSONArchive::read(std::vector<int32_t>& value) {
+	readVector<int32_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BSONArchive::read(std::vector<int64_t>& value) {
+	readVector<int64_t>(value);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -779,15 +825,6 @@ void BSONArchive::read(std::vector<std::complex<double> >& value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BSONArchive::write(time_t value) {
-	bson_append_time_t(_impl->current, _attribName.c_str(), -1, value);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BSONArchive::write(Seiscomp::Core::Time& value) {
 	if ( value.valid() || (hint() & XML_MANDATORY) )
 		bson_append_utf8(_impl->current, _attribName.c_str(), -1, Core::toString(value).c_str(), -1);
@@ -800,7 +837,34 @@ void BSONArchive::write(Seiscomp::Core::Time& value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BSONArchive::write(int value) {
+void BSONArchive::write(int8_t value) {
+	write(int32_t(value));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BSONArchive::write(int16_t value) {
+	write(int32_t(value));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BSONArchive::write(int32_t value) {
+	bson_append_int32(_impl->current, _attribName.c_str(), -1, value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BSONArchive::write(int64_t value) {
 	if ( (value >= std::numeric_limits<int32_t>::min() && value <= std::numeric_limits<int32_t>::max()) )
 		bson_append_int32(_impl->current, _attribName.c_str(), -1, value);
 	else
@@ -884,8 +948,35 @@ void BSONArchive::writeVector(std::vector<T>& value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BSONArchive::write(std::vector<int>& value) {
-	writeVector<int>(value);
+void BSONArchive::write(std::vector<int8_t>& value) {
+	writeVector<int8_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BSONArchive::write(std::vector<int16_t>& value) {
+	writeVector<int16_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BSONArchive::write(std::vector<int32_t>& value) {
+	writeVector<int32_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BSONArchive::write(std::vector<int64_t>& value) {
+	writeVector<int64_t>(value);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
