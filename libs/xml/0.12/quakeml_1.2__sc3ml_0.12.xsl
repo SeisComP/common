@@ -17,14 +17,13 @@ This stylesheet converts a QuakeML to a SC3ML document. It may be invoked using
 xalan or xsltproc:
 
     xalan -in quakeml.xml -xsl quakeml_1.2__sc3ml_0.12.xsl -out sc3ml.xml
-    xsltproc quakeml_1.2__sc3ml_0.12.xsl quakeml.xml -o sc3ml.xml
+    xsltproc quakeml_1.2__sc3ml_0.12.xsl quakeml.xml > sc3ml.xml
 
-Due to the QuakeML ID schemea the public IDs used by QuakeML are rather long
+Due to the QuakeML ID schema the public IDs used by QuakeML are rather long
 and may cause problems in SeisComP application when displaying or processing
-them. Especially theslash causes problems, e.g. when an event ID is used on the
-command line or in a directory structure.
-To remove the ID prefix during the conversion you may use the ID_PREFIX
-parameter:
+them. Especially the slash causes problems, e.g. when an event ID is used on
+the command line or in a directory structure. To remove the ID prefix during
+the conversion you may use the ID_PREFIX parameter:
 
     xalan -param ID_PREFIX "'smi:org.gfz-potsdam.de/geofon/'" -in quakeml.xml -xsl quakeml_1.2__sc3ml_0.12.xsl -out sc3ml.xml
     xsltproc -stringparam ID_PREFIX smi:org.gfz-potsdam.de/geofon/ quakeml_1.2__sc3ml_0.12.xsl quakeml.xml > sc3ml.xml
@@ -57,7 +56,7 @@ In SC3ML all information is grouped under the EventParameters element.
         </origin>
         <focalMechanism/>                   <focalMechanism/>
         <event/>                        </event>
-    </EventParameters>              </eventParameters
+    </EventParameters>              </eventParameters>
 
 Since origins and focalMechanism aren't in an event anymore, OriginReferences
 and FocalMechanismReferences need to be created.
@@ -132,8 +131,9 @@ Change log
 
 * 17.06.2021: Starting with schema version 0.12 SeisComP ML supports the
   confidenceLevel parameter in the originUncertainty element. This version
-  no longer strips this field.
-
+  no longer strips this field. Also support for ISO time stamps without a
+  trailing slash was added, hence the Z no longer needs to be added to time
+  values.
 -->
 <xsl:stylesheet version="1.0"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
