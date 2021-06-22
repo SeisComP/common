@@ -210,6 +210,19 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 }
 
 
+BOOST_AUTO_TEST_CASE(timeConversions) {
+	Time t1, t2;
+
+	BOOST_CHECK(fromString(t1, "2021-06-12T09:43:54Z"));
+	BOOST_CHECK(fromString(t2, "2021-06-12T09:43:54"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-06-12T09:43:54.627Z"));
+	BOOST_CHECK(fromString(t2, "2021-06-12T09:43:54.627"));
+	BOOST_REQUIRE(t1 == t2);
+}
+
+
 BOOST_AUTO_TEST_CASE(incompleteNumberConversions) {
 	int32_t value;
 	BOOST_CHECK(!fromString(value, ""));

@@ -45,7 +45,9 @@ namespace Core {
 namespace {
 
 const char *timeFormatPrecise = "%FT%T.%fZ";
-const char *timeFormat2 = "%FT%TZ";
+const char *timeFormatPrecise2 = "%FT%T.%f";
+const char *timeFormat = "%FT%TZ";
+const char *timeFormat2 = "%FT%T";
 
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -298,8 +300,13 @@ bool fromString(bool &value, const std::string &str) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool fromString(Time &value, const std::string &str) {
 	if ( !value.fromString(str.c_str(), timeFormatPrecise) ) {
-		if ( !value.fromString(str.c_str(), timeFormat2) )
-			return false;
+		if ( !value.fromString(str.c_str(), timeFormat) ) {
+			if ( !value.fromString(str.c_str(), timeFormatPrecise2) ) {
+				if ( !value.fromString(str.c_str(), timeFormat2) ) {
+					return false;
+				}
+			}
+		}
 	}
 
 	return true;
