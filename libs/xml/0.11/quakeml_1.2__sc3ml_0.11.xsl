@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    ***************************************************************************
-
 QuakeML 1.2 to SC3ML 0.11 stylesheet converter
 
 Author:
@@ -21,12 +19,11 @@ xalan or xsltproc:
     xalan -in quakeml.xml -xsl quakeml_1.2__sc3ml_0.11.xsl -out sc3ml.xml
     xsltproc quakeml_1.2__sc3ml_0.11.xsl quakeml.xml > sc3ml.xml
 
-Due to the QuakeML ID schemea the public IDs used by QuakeML are rather long
+Due to the QuakeML ID schema the public IDs used by QuakeML are rather long
 and may cause problems in SeisComP application when displaying or processing
-them. Especially theslash causes problems, e.g. when an event ID is used on the
-command line or in a directory structure.
-To remove the ID prefix during the conversion you may use the ID_PREFIX
-parameter:
+them. Especially the slash causes problems, e.g. when an event ID is used on
+the command line or in a directory structure. To remove the ID prefix during
+the conversion you may use the ID_PREFIX parameter:
 
     xalan -param ID_PREFIX "'smi:org.gfz-potsdam.de/geofon/'" -in quakeml.xml -xsl quakeml_1.2__sc3ml_0.11.xsl -out sc3ml.xml
     xsltproc -stringparam ID_PREFIX smi:org.gfz-potsdam.de/geofon/ quakeml_1.2__sc3ml_0.11.xsl quakeml.xml > sc3ml.xml
@@ -59,7 +56,7 @@ In SC3ML all information is grouped under the EventParameters element.
         </origin>
         <focalMechanism/>                   <focalMechanism/>
         <event/>                        </event>
-    </EventParameters>              </eventParameters
+    </EventParameters>              </eventParameters>
 
 Since origins and focalMechanism aren't in an event anymore, OriginReferences
 and FocalMechanismReferences need to be created.
@@ -128,10 +125,10 @@ Unlike SC3ML, QuakeML nodes can appear in any order. They must be reordered for
 SC3ML. Unnecessary attributes must also be removed.
 
 Change log
-===============
+==========
 
-* Add ID_PREFIX parameter allowing to strip QuakeML ID prefix from publicIDs and
-  references thereof
+* 16.06.2021: Add ID_PREFIX parameter allowing to strip QuakeML ID prefix from
+  publicIDs and references thereof
 
 -->
 <xsl:stylesheet version="1.0"
