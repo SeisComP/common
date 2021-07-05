@@ -83,7 +83,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_Mwp::estimateMw(
 	double &estimation,
 	double &stdError)
 {
-	const double a=1.31, b=-1.91; // Whitmore et al. (2002)
+	const double a=1.186, b=-1.222; // Whitmore et al. (2002)
 	estimation = a * magnitude + b;
 
 	stdError = 0.4; // Fixme
