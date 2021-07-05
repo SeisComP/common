@@ -751,76 +751,76 @@ class SC_GUI_API RecordWidget : public QWidget {
 		Seiscomp::Core::Time _alignment;
 		bool                 _clipRows;
 	
-		double    _tmin;            // time range min
-		double    _tmax;            // time range max
-		double    _smin, _smax;     // selection
-		double    _pixelPerSecond;
-		float     _amplScale;       // pixel per amplitude unit (0=normalize)
-		double    _gridHSpacing[2];
-		double    _gridHOffset;
+		double               _tmin;            // time range min
+		double               _tmax;            // time range max
+		double               _smin, _smax;     // selection
+		double               _pixelPerSecond;
+		float                _amplScale;       // pixel per amplitude unit (0=normalize)
+		double               _gridHSpacing[2];
+		double               _gridHOffset;
 
-		double    _gridVRange[2];
-		double    _gridVSpacing[2];
-		double    _gridVOffset;
-		double    _gridVScale;
+		double               _gridVRange[2];
+		double               _gridVSpacing[2];
+		double               _gridVOffset;
+		double               _gridVScale;
 
-		float     _amplitudeRange[2];
-		bool      _useFixedAmplitudeRange;
-		bool      _useMinAmplitudeRange;
+		float                _amplitudeRange[2];
+		bool                 _useFixedAmplitudeRange;
+		bool                 _useMinAmplitudeRange;
 
-		bool      _active;
-		bool      _filtering;
-		bool      _showScaledValues;
-	
-		bool      _drawRecords;
-		bool      _drawRecordID;
-		bool      _drawOffset;
-		bool      _showAllRecords;
-		bool      _showRecordBorders;
-		bool      _autoMaxScale;
-		bool      _enabled;
-		bool      _useGlobalOffset;
-		bool      _drawAxis;
+		bool                 _active;
+		bool                 _filtering;
+		bool                 _showScaledValues;
 
-		int          _tracePaintOffset;
-		int          _axisWidth;
-		AxisPosition _axisPosition;
-		int          _axisSpacing;
-		int          _rowSpacing;
+		bool                 _drawRecords;
+		bool                 _drawRecordID;
+		bool                 _drawOffset;
+		bool                 _showAllRecords;
+		bool                 _showRecordBorders;
+		bool                 _autoMaxScale;
+		bool                 _enabled;
+		bool                 _useGlobalOffset;
+		bool                 _drawAxis;
 
-		StreamMap _streams;
-		int       _currentSlot;
-		int       _requestedSlot;
-		int       _maxFilterSlot;
-		int       _currentCursorYPos;
-		int       _valuePrecision;
+		int                  _tracePaintOffset;
+		int                  _axisWidth;
+		AxisPosition         _axisPosition;
+		int                  _axisSpacing;
+		int                  _rowSpacing;
 
-		QColor    _customBackgroundColor;
-		bool      _hasCustomBackground;
+		StreamMap            _streams;
+		int                  _currentSlot;
+		int                  _requestedSlot;
+		int                  _maxFilterSlot;
+		int                  _currentCursorYPos;
+		int                  _valuePrecision;
+
+		QColor               _customBackgroundColor;
+		bool                 _hasCustomBackground;
 
 		Seiscomp::DataModel::WaveformStreamID _streamID;
 
 		QVector<RecordMarker*> _marker;
-		RecordMarker* _activeMarker;
-		RecordMarker* _hoveredMarker;
+		RecordMarker        *_activeMarker;
+		RecordMarker        *_hoveredMarker;
 
-		QScrollBar *_scrollBar;
+		QScrollBar          *_scrollBar;
 
-		QRect _canvasRect;
-		int _margins[4];
-		QString _cursorText;
+		QRect                _canvasRect;
+		int                  _margins[4];
+		QString              _cursorText;
 		Seiscomp::Core::Time _cursorPos;
 		Seiscomp::Core::Time _startDragPos;
 
 		Seiscomp::Core::TimeWindow _normalizationWindow;
 		Seiscomp::Core::TimeWindow _offsetWindow;
 
-		RecordWidget *_shadowWidget;
-		RecordWidget *_markerSourceWidget;
+		RecordWidget        *_shadowWidget;
+		RecordWidget        *_markerSourceWidget;
 
 		RecordWidgetDecorator *_decorator;
 
-		int                    _shadowWidgetFlags;
+		int                  _shadowWidgetFlags;
 };
 
 
