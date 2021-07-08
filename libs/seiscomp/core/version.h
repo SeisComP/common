@@ -47,9 +47,11 @@ namespace Core {
  API Changelog
  ******************************************************************************
  "14.3.0"   0x0E0300
-   - Added RingBuffer::numberOfRecordsToStore()
-   - Added RingBuffer::timeSpanToStore()
-   - TimeWindowBuffer::timeWindowToStore()
+   - Added Seiscomp::RingBuffer::numberOfRecordsToStore()
+   - Added Seiscomp::RingBuffer::timeSpanToStore()
+   - Seiscomp::TimeWindowBuffer::timeWindowToStore()
+   - Added Seiscomp::Gui::OriginLocatorMap::stationSymbolToolTip
+   - Added Seiscomp::Gui::MagnitudeMap::stationSymbolToolTip
 
  "14.2.0"   0x0E0200
    - Added Seiscomp::Client::Application::injectMessage

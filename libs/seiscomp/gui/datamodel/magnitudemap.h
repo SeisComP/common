@@ -69,6 +69,8 @@ class SC_GUI_API MagnitudeMap : public MapWidget {
 
 		void addStationMagnitude(DataModel::StationMagnitude* staMag, int index);
 
+		QString stationSymbolToolTip() const;
+
 	public slots:
 		void setDrawStations(bool);
 

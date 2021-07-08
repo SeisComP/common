@@ -51,6 +51,25 @@ using namespace Seiscomp::Math;
 
 namespace Seiscomp {
 namespace Gui {
+
+
+namespace {
+
+
+class StationSymbolLayer : public Map::Layer {
+	public:
+		StationSymbolLayer(MagnitudeMap *map)
+		: Map::Layer(map) {}
+
+	public:
+		bool isInside(const QMouseEvent *, const QPointF &) override {
+			setToolTip(static_cast<MagnitudeMap*>(parent())->stationSymbolToolTip());
+			return !toolTip().isEmpty();
+		}
+};
+
+
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -61,6 +80,7 @@ MagnitudeMap::MagnitudeMap(const MapsDesc &maps,
                            QWidget *parent, Qt::WindowFlags f)
  : MapWidget(maps, parent, f), _origin(nullptr),
    _interactive(true), _drawStations(false) {
+	canvas().addLayer(new StationSymbolLayer(this));
 	_lastSymbolSize = 0;
 	_stationsMaxDist = -1;
 }
@@ -74,6 +94,7 @@ MagnitudeMap::MagnitudeMap(Map::ImageTree* mapTree,
                            QWidget *parent, Qt::WindowFlags f)
  : MapWidget(mapTree, parent, f), _origin(nullptr),
    _interactive(true), _drawStations(false) {
+	canvas().addLayer(new StationSymbolLayer(this));
 	_lastSymbolSize = 0;
 	_hoverId = -1;
 	_stationsMaxDist = -1;
@@ -342,8 +363,6 @@ void MagnitudeMap::mouseMoveEvent(QMouseEvent *event) {
 		if ( _hoverId != -1 ) {
 			int magnitudeId = _stations[_hoverId].magnitudeId;
 			hoverMagnitude(magnitudeId);
-			if ( toolTip().isEmpty() )
-				setToolTip((_stations[_hoverId].net + "." + _stations[_hoverId].code).c_str());
 		}
 		else
 			hoverMagnitude(-1);
@@ -531,6 +550,20 @@ void MagnitudeMap::addStationMagnitude(StationMagnitude* staMag, int index) {
 	}
 	catch ( ... ) {
 		SEISCOMP_DEBUG("WaveformID in magnitude '%s' not set", staMag->publicID().c_str());
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QString MagnitudeMap::stationSymbolToolTip() const {
+	if ( _hoverId != -1 ) {
+		return (_stations[_hoverId].net + "." + _stations[_hoverId].code).c_str();
+	}
+	else {
+		return QString();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
