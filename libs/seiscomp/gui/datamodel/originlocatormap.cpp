@@ -631,7 +631,9 @@ void OriginLocatorMap::setOriginCreationEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QString OriginLocatorMap::stationSymbolToolTip() const {
-	if ( _hoverId != -1 ) {
+	if ( (_hoverId != -1)
+	  && !_stations[_hoverId].net.empty()
+	  && !_stations[_hoverId].code.empty() ) {
 		return (_stations[_hoverId].net + "." + _stations[_hoverId].code).c_str();
 	}
 	else {
