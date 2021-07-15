@@ -1268,7 +1268,7 @@ CREATE TABLE ResponsePAZ (
 	type CHAR(1),
 	gain DOUBLE,
 	gainFrequency DOUBLE UNSIGNED,
-	normalizationFactor DOUBLE UNSIGNED,
+	normalizationFactor DOUBLE,
 	normalizationFrequency DOUBLE UNSIGNED,
 	numberOfZeros TINYINT UNSIGNED,
 	numberOfPoles TINYINT UNSIGNED,
