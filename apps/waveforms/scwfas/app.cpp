@@ -82,11 +82,11 @@ bool Application::init() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::run() {
-	if ( _arclinkServerPort > 0 )
-		SEISCOMP_INFO("Starting Arclink server on port %d", _arclinkServerPort);
+	if ( global.arclink.port > 0 )
+		SEISCOMP_INFO("Starting Arclink server on port %d", global.arclink.port);
 
-	if ( _fdsnwsServerPort > 0 )
-		SEISCOMP_INFO("Starting FDSNWS server on port %d", _fdsnwsServerPort);
+	if ( global.fdsnws.port > 0 )
+		SEISCOMP_INFO("Starting FDSNWS server on port %d", global.fdsnws.port);
 
 	if ( !_server.init() )
 		return false;

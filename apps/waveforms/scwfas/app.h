@@ -50,8 +50,6 @@ class Application : public Seiscomp::Client::Application {
 		}
 
 	private:
-		int    _arclinkServerPort;
-		int    _fdsnwsServerPort;
 		Server _server;
 };
 
