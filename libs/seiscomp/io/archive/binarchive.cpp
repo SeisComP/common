@@ -230,12 +230,49 @@ void BinaryArchive::close() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BinaryArchive::read(int& value) {
-	int size = _buf?_buf->sgetn((char*)&value, sizeof(int)):0;
-	if ( size != sizeof(int) ) {
-		SEISCOMP_ERROR("read(int): expected %d bytes from stream, got %d", (int)sizeof(int), size);
+template <typename T>
+void BinaryArchive::readInt(T& value) {
+	int size = _buf?_buf->sgetn((char*)&value, sizeof(T)):0;
+	if ( size != sizeof(T) ) {
+		SEISCOMP_ERROR("read(int): expected %d bytes from stream, got %d", (int)sizeof(T), size);
 		setValidity(false);
 	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::read(int8_t& value) {
+	readInt<int8_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::read(int16_t& value) {
+	readInt<int16_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::read(int32_t& value) {
+	readInt<int32_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::read(int64_t& value) {
+	readInt<int64_t>(value);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -297,7 +334,8 @@ void BinaryArchive::read(std::vector<char>& value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BinaryArchive::read(std::vector<int>& value) {
+template <typename T>
+void BinaryArchive::readIntVector(std::vector<T>& value) {
 	if ( !_buf ) {
 		setValidity(false);
 		return;
@@ -318,6 +356,42 @@ void BinaryArchive::read(std::vector<int>& value) {
 		SEISCOMP_ERROR("read(int*): expected %d bytes from stream, got %d", vsize, size);
 		setValidity(false);
 	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::read(std::vector<int8_t>& value) {
+	readIntVector<int8_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::read(std::vector<int16_t>& value) {
+	readIntVector<int16_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::read(std::vector<int32_t>& value) {
+	readIntVector<int32_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::read(std::vector<int64_t>& value) {
+	readIntVector<int64_t>(value);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -561,9 +635,39 @@ inline int BinaryArchive::writeBytes(const void* buf, int size) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BinaryArchive::write(int value) {
+void BinaryArchive::write(int8_t value) {
 	if ( !_buf ) return;
-	writeBytes(&value, sizeof(int));
+	writeBytes(&value, sizeof(int8_t));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::write(int16_t value) {
+	if ( !_buf ) return;
+	writeBytes(&value, sizeof(int16_t));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::write(int32_t value) {
+	if ( !_buf ) return;
+	writeBytes(&value, sizeof(int32_t));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::write(int64_t value) {
+	if ( !_buf ) return;
+	writeBytes(&value, sizeof(int64_t));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -591,12 +695,13 @@ void BinaryArchive::write(double value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BinaryArchive::write(std::vector<char>& value) {
+template <typename T>
+void BinaryArchive::writeVector(std::vector<T>& value) {
 	if ( !_buf ) return;
 
-	int vsize = value.size();
-	writeBytes(&vsize, sizeof(int));
-	vsize *= sizeof(char);
+	int32_t vsize = value.size();
+	writeBytes(&vsize, sizeof(int32_t));
+	vsize *= sizeof(T);
 	writeBytes(&value[0], vsize);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -605,13 +710,44 @@ void BinaryArchive::write(std::vector<char>& value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BinaryArchive::write(std::vector<int>& value) {
-	if ( !_buf ) return;
+void BinaryArchive::write(std::vector<char>& value) {
+	writeVector<char>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-	int vsize = value.size();
-	writeBytes(&vsize, sizeof(int));
-	vsize *= sizeof(int);
-	writeBytes(&value[0], vsize);
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::write(std::vector<int8_t>& value) {
+	writeVector<int8_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::write(std::vector<int16_t>& value) {
+	writeVector<int16_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::write(std::vector<int32_t>& value) {
+	writeVector<int32_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BinaryArchive::write(std::vector<int64_t>& value) {
+	writeVector<int64_t>(value);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -620,12 +756,7 @@ void BinaryArchive::write(std::vector<int>& value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BinaryArchive::write(std::vector<float>& value) {
-	if ( !_buf ) return;
-
-	int vsize = value.size();
-	writeBytes(&vsize, sizeof(int));
-	vsize *= sizeof(float);
-	writeBytes(&value[0], vsize);
+	writeVector<float>(value);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -634,12 +765,7 @@ void BinaryArchive::write(std::vector<float>& value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BinaryArchive::write(std::vector<double>& value) {
-	if ( !_buf ) return;
-
-	int vsize = value.size();
-	writeBytes(&vsize, sizeof(int));
-	vsize *= sizeof(double);
-	writeBytes(&value[0], vsize);
+	writeVector<double>(value);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -724,17 +850,6 @@ void BinaryArchive::write(std::string& value) {
 	writeBytes(&ssize, sizeof(int));
 	ssize *= sizeof(std::string::value_type);
 	writeBytes(&value[0], ssize);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BinaryArchive::write(time_t value) {
-	if ( !_buf ) return;
-	dateint tmpValue = (dateint)value;
-	writeBytes(&tmpValue, sizeof(tmpValue));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

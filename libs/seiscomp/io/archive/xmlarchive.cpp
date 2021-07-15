@@ -36,6 +36,7 @@
 #include <sstream>
 #include <fstream>
 #include <string.h>
+#include <stdint.h>
 
 
 namespace Seiscomp {
@@ -530,7 +531,22 @@ void XMLArchive::read(Seiscomp::Core::Time& value) {
 }
 
 
-void XMLArchive::read(int& value) {
+void XMLArchive::read(int8_t& value) {
+	setValidity(Seiscomp::Core::fromString(value, _property));
+}
+
+
+void XMLArchive::read(int16_t& value) {
+	setValidity(Seiscomp::Core::fromString(value, _property));
+}
+
+
+void XMLArchive::read(int32_t& value) {
+	setValidity(Seiscomp::Core::fromString(value, _property));
+}
+
+
+void XMLArchive::read(int64_t& value) {
 	setValidity(Seiscomp::Core::fromString(value, _property));
 }
 
@@ -550,7 +566,22 @@ void XMLArchive::read(std::vector<char>& value) {
 }
 
 
-void XMLArchive::read(std::vector<int>& value) {
+void XMLArchive::read(std::vector<int8_t>& value) {
+	setValidity(Seiscomp::Core::fromString(value, _property));
+}
+
+
+void XMLArchive::read(std::vector<int16_t>& value) {
+	setValidity(Seiscomp::Core::fromString(value, _property));
+}
+
+
+void XMLArchive::read(std::vector<int32_t>& value) {
+	setValidity(Seiscomp::Core::fromString(value, _property));
+}
+
+
+void XMLArchive::read(std::vector<int64_t>& value) {
 	setValidity(Seiscomp::Core::fromString(value, _property));
 }
 
@@ -598,11 +629,6 @@ void XMLArchive::read(std::string& value) {
 }
 
 
-void XMLArchive::write(time_t value) {
-	writeAttrib(Seiscomp::Core::toString(value));
-}
-
-
 void XMLArchive::write(Seiscomp::Core::Time& value) {
 	if ( (hint() & XML_MANDATORY) || value.valid() )
 		writeAttrib(Seiscomp::Core::toString(value));
@@ -611,7 +637,22 @@ void XMLArchive::write(Seiscomp::Core::Time& value) {
 }
 
 
-void XMLArchive::write(int value) {
+void XMLArchive::write(int8_t value) {
+	writeAttrib(Seiscomp::Core::toString(value));
+}
+
+
+void XMLArchive::write(int16_t value) {
+	writeAttrib(Seiscomp::Core::toString(value));
+}
+
+
+void XMLArchive::write(int32_t value) {
+	writeAttrib(Seiscomp::Core::toString(value));
+}
+
+
+void XMLArchive::write(int64_t value) {
 	writeAttrib(Seiscomp::Core::toString(value));
 }
 
@@ -631,7 +672,22 @@ void XMLArchive::write(std::vector<char>& value) {
 }
 
 
-void XMLArchive::write(std::vector<int>& value) {
+void XMLArchive::write(std::vector<int8_t>& value) {
+	writeAttrib(Seiscomp::Core::toString(value));
+}
+
+
+void XMLArchive::write(std::vector<int16_t>& value) {
+	writeAttrib(Seiscomp::Core::toString(value));
+}
+
+
+void XMLArchive::write(std::vector<int32_t>& value) {
+	writeAttrib(Seiscomp::Core::toString(value));
+}
+
+
+void XMLArchive::write(std::vector<int64_t>& value) {
 	writeAttrib(Seiscomp::Core::toString(value));
 }
 

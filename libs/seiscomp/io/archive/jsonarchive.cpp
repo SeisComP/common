@@ -32,6 +32,7 @@
 #include <fstream>
 #include <string.h>
 #include <stdint.h>
+#include <limits>
 
 
 using namespace std;
@@ -48,11 +49,6 @@ namespace IO {
 namespace {
 
 
-struct jsontime_t {
-	jsontime_t(const time_t &r) : ref(r) {}
-	const time_t &ref;
-};
-
 struct jsontime {
 	jsontime(const Core::Time &r) : ref(r) {}
 	const Core::Time &ref;
@@ -63,12 +59,6 @@ struct jsonstring {
 	const string &str;
 };
 
-
-ostream &operator<<(ostream &os, const jsontime_t &js) {
-	//os << js.ref << "000";
-	os << Core::Time(js.ref).toString("\"" DATE_FORMAT "\"");
-	return os;
-}
 
 ostream &operator<<(ostream &os, const jsontime &js) {
 	os << js.ref.toString("\"" DATE_FORMAT "\"");
@@ -528,7 +518,55 @@ void JSONArchive::setRootObject(bool f) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void JSONArchive::read(int &value) {
+void JSONArchive::read(int8_t &value) {
+	if ( !_objectLocation->IsInt() ) {
+		SEISCOMP_ERROR("integer expected");
+		setValidity(false);
+		return;
+	}
+
+	int tmp = _objectLocation->GetInt();
+
+	if ( tmp < std::numeric_limits<int8_t>::min() ||
+	     tmp > std::numeric_limits<int8_t>::max() ) {
+		SEISCOMP_ERROR("int8 expected");
+		setValidity(false);
+		return;
+	}
+
+	value = tmp;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::read(int16_t &value) {
+	if ( !_objectLocation->IsInt() ) {
+		SEISCOMP_ERROR("integer expected");
+		setValidity(false);
+		return;
+	}
+
+	int tmp = _objectLocation->GetInt();
+
+	if ( tmp < std::numeric_limits<int16_t>::min() ||
+	     tmp > std::numeric_limits<int16_t>::max() ) {
+		SEISCOMP_ERROR("int16 expected");
+		setValidity(false);
+		return;
+	}
+
+	value = tmp;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::read(int32_t &value) {
 	if ( !_objectLocation->IsInt() ) {
 		SEISCOMP_ERROR("integer expected");
 		setValidity(false);
@@ -536,6 +574,21 @@ void JSONArchive::read(int &value) {
 	}
 
 	value = _objectLocation->GetInt();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::read(int64_t &value) {
+	if ( !_objectLocation->IsInt64() ) {
+		SEISCOMP_ERROR("integer expected");
+		setValidity(false);
+		return;
+	}
+
+	value = _objectLocation->GetInt64();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -611,7 +664,8 @@ void JSONArchive::read(std::vector<char> &value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void JSONArchive::read(std::vector<int> &value) {
+template <typename T>
+void JSONArchive::readIntVector(std::vector<T> &value) {
 	if ( !_objectLocation->IsArray() ) {
 		SEISCOMP_ERROR("expected int array");
 		setValidity(false);
@@ -627,6 +681,57 @@ void JSONArchive::read(std::vector<int> &value) {
 		}
 
 		value.push_back((*_objectLocation)[i].GetInt());
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::read(std::vector<int8_t> &value) {
+	readIntVector<int8_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::read(std::vector<int16_t> &value) {
+	readIntVector<int16_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::read(std::vector<int32_t> &value) {
+	readIntVector<int32_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::read(std::vector<int64_t> &value) {
+	if ( !_objectLocation->IsArray() ) {
+		SEISCOMP_ERROR("expected int array");
+		setValidity(false);
+		return;
+	}
+
+	Size l = _objectLocation->Size();
+	for ( Size i = 0; i < l; ++i ) {
+		if ( !(*_objectLocation)[i].IsInt64() ) {
+			SEISCOMP_ERROR("integer expected");
+			setValidity(false);
+			return;
+		}
+
+		value.push_back((*_objectLocation)[i].GetInt64());
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -927,7 +1032,43 @@ inline void JSONArchive::postAttrib() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void JSONArchive::write(int value) {
+void JSONArchive::write(int8_t value) {
+	if ( !_buf ) return;
+	preAttrib();
+	*_os << value;
+	postAttrib();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::write(int16_t value) {
+	if ( !_buf ) return;
+	preAttrib();
+	*_os << value;
+	postAttrib();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::write(int32_t value) {
+	if ( !_buf ) return;
+	preAttrib();
+	*_os << value;
+	postAttrib();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::write(int64_t value) {
 	if ( !_buf ) return;
 	preAttrib();
 	*_os << value;
@@ -969,7 +1110,8 @@ void JSONArchive::write(double value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void JSONArchive::write(std::vector<char> &value) {
+template <typename T>
+void JSONArchive::writeVector(std::vector<T> &value) {
 	if ( !_buf ) return;
 	preAttrib();
 	*_os << "[";
@@ -986,16 +1128,44 @@ void JSONArchive::write(std::vector<char> &value) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void JSONArchive::write(std::vector<int> &value) {
-	if ( !_buf ) return;
-	preAttrib();
-	*_os << "[";
-	for ( size_t i = 0; i < value.size(); ++i ) {
-		if ( i ) *_os << ",";
-		*_os << value[i];
-	}
-	*_os << "]";
-	postAttrib();
+void JSONArchive::write(std::vector<char> &value) {
+	writeVector<char>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::write(std::vector<int8_t> &value) {
+	writeVector<int8_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::write(std::vector<int16_t> &value) {
+	writeVector<int16_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::write(std::vector<int32_t> &value) {
+	writeVector<int32_t>(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void JSONArchive::write(std::vector<int64_t> &value) {
+	writeVector<int64_t>(value);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1004,15 +1174,7 @@ void JSONArchive::write(std::vector<int> &value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void JSONArchive::write(std::vector<float> &value) {
-	if ( !_buf ) return;
-	preAttrib();
-	*_os << "[";
-	for ( size_t i = 0; i < value.size(); ++i ) {
-		if ( i ) *_os << ",";
-		*_os << value[i];
-	}
-	*_os << "]";
-	postAttrib();
+	writeVector<float>(value);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1021,15 +1183,7 @@ void JSONArchive::write(std::vector<float> &value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void JSONArchive::write(std::vector<double> &value) {
-	if ( !_buf ) return;
-	preAttrib();
-	*_os << "[";
-	for ( size_t i = 0; i < value.size(); ++i ) {
-		if ( i ) *_os << ",";
-		*_os << value[i];
-	}
-	*_os << "]";
-	postAttrib();
+	writeVector<double>(value);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1135,19 +1289,6 @@ void JSONArchive::write(std::string &value) {
 		*_os << "\"" << jsonstring(value) << "\"";
 		postAttrib();
 	}
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void JSONArchive::write(time_t value) {
-	if ( !_buf ) return;
-
-	preAttrib();
-	*_os << jsontime_t(value);
-	postAttrib();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

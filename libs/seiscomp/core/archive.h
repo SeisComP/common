@@ -22,6 +22,7 @@
 #define SEISCOMP_CORE_ARCHIVE_H
 
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <list>
@@ -215,7 +216,11 @@ class Archive {
 	// ------------------------------------------------------------------
 	public:
 		//! Reads an integer
-		virtual void read(int& value) = 0;
+		virtual void read(std::int8_t& value) = 0;
+		virtual void read(std::int16_t& value) = 0;
+		virtual void read(std::int32_t& value) = 0;
+		virtual void read(std::int64_t& value) = 0;
+
 		//! Reads a float
 		virtual void read(float& value) = 0;
 		//! Reads a double
@@ -231,7 +236,10 @@ class Archive {
 		virtual void read(std::vector<char>& value) = 0;
 
 		//! Reads a vector of ints
-		virtual void read(std::vector<int>& value) = 0;
+		virtual void read(std::vector<std::int8_t>& value) = 0;
+		virtual void read(std::vector<std::int16_t>& value) = 0;
+		virtual void read(std::vector<std::int32_t>& value) = 0;
+		virtual void read(std::vector<std::int64_t>& value) = 0;
 
 		//! Reads a vector of floats
 		virtual void read(std::vector<float>& value) = 0;
@@ -279,7 +287,11 @@ class Archive {
 	// ------------------------------------------------------------------
 	public:
 		//! Writes an integer
-		virtual void write(int value) = 0;
+		virtual void write(std::int8_t value) = 0;
+		virtual void write(std::int16_t value) = 0;
+		virtual void write(std::int32_t value) = 0;
+		virtual void write(std::int64_t value) = 0;
+
 		//! Writes a float
 		virtual void write(float value) = 0;
 		//! Writes a double
@@ -295,7 +307,10 @@ class Archive {
 		virtual void write(std::vector<char>& value) = 0;
 
 		//! Writes a vector of ints
-		virtual void write(std::vector<int>& value) = 0;
+		virtual void write(std::vector<std::int8_t>& value) = 0;
+		virtual void write(std::vector<std::int16_t>& value) = 0;
+		virtual void write(std::vector<std::int32_t>& value) = 0;
+		virtual void write(std::vector<std::int64_t>& value) = 0;
 
 		//! Writes a vector of floats
 		virtual void write(std::vector<float>& value) = 0;
@@ -316,7 +331,6 @@ class Archive {
 		virtual void write(std::vector<Time>& value) = 0;
 
 		//! Writes a time
-		virtual void write(time_t value) = 0;
 		virtual void write(Seiscomp::Core::Time& value) = 0;
 
 		//! Writes an object

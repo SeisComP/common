@@ -112,8 +112,14 @@ class SC_SYSTEM_CORE_API XMLArchive : public Seiscomp::Core::Archive {
 	//  Read methods
 	// ----------------------------------------------------------------------
 	public:
-		//! Reads an integer
-		virtual void read(int& value);
+		//! Reads an int8
+		virtual void read(std::int8_t& value);
+		//! Reads an int16
+		virtual void read(std::int16_t& value);
+		//! Reads an int32
+		virtual void read(std::int32_t& value);
+		//! Reads an int64
+		virtual void read(std::int64_t& value);
 		//! Reads a float
 		virtual void read(float& value);
 		//! Reads a double
@@ -121,7 +127,10 @@ class SC_SYSTEM_CORE_API XMLArchive : public Seiscomp::Core::Archive {
 
 		//! Reads a vector of native types
 		virtual void read(std::vector<char>& value);
-		virtual void read(std::vector<int>& value);
+		virtual void read(std::vector<int8_t>& value);
+		virtual void read(std::vector<int16_t>& value);
+		virtual void read(std::vector<int32_t>& value);
+		virtual void read(std::vector<int64_t>& value);
 		virtual void read(std::vector<float>& value);
 		virtual void read(std::vector<double>& value);
 		virtual void read(std::vector<std::string>& value);
@@ -148,8 +157,14 @@ class SC_SYSTEM_CORE_API XMLArchive : public Seiscomp::Core::Archive {
 	//  Write methods
 	// ----------------------------------------------------------------------
 	public:
-		//! Writes an integer
-		virtual void write(int value);
+		//! Writes an int8
+		virtual void write(std::int8_t value);
+		//! Writes an int16
+		virtual void write(std::int16_t value);
+		//! Writes an int32
+		virtual void write(std::int32_t value);
+		//! Writes an int64
+		virtual void write(std::int64_t value);
 		//! Writes a float
 		virtual void write(float value);
 		//! Writes a double
@@ -157,7 +172,10 @@ class SC_SYSTEM_CORE_API XMLArchive : public Seiscomp::Core::Archive {
 
 		//! Writes a vector of native types
 		virtual void write(std::vector<char>& value);
-		virtual void write(std::vector<int>& value);
+		virtual void write(std::vector<int8_t>& value);
+		virtual void write(std::vector<int16_t>& value);
+		virtual void write(std::vector<int32_t>& value);
+		virtual void write(std::vector<int64_t>& value);
 		virtual void write(std::vector<float>& value);
 		virtual void write(std::vector<double>& value);
 		virtual void write(std::vector<std::string>& value);
@@ -177,7 +195,6 @@ class SC_SYSTEM_CORE_API XMLArchive : public Seiscomp::Core::Archive {
 		virtual void write(std::string& value);
 
 		//! Writes a time
-		virtual void write(time_t value);
 		virtual void write(Seiscomp::Core::Time& value);
 
 
