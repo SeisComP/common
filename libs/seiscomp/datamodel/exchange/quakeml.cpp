@@ -1035,9 +1035,10 @@ struct FocalMechanismHandler : TypedClassHandler<FocalMechanism> {
 		// NA: waveformID
 		addList("comment, momentTensor, nodalPlanes, principalAxes, "
 		        "azimuthalGap, stationPolarityCount, misfit, "
-		        "stationDistributionRatio, creationInfo");
+		        "stationDistributionRatio, evaluationMode, creationInfo");
 		add("triggeringOriginID", &__resRef);
 		add("methodID", &__resRef);
+		add("evaluationStatus", &__evaluationStatus);
 	}
 };
 
