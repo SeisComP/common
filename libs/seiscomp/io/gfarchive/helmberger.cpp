@@ -169,7 +169,8 @@ bool HelmbergerArchive::setSource(std::string source) {
 			}
 
 			if ( dists.empty() || depths.empty() ) {
-				SEISCOMP_WARNING("Empty distances or depths for matching directory: %s",
+				SEISCOMP_WARNING("Green's functions - Empty distances or depths"
+				                 "for matching directory: %s",
 				                 name.c_str());
 				_models.erase(_models.find(model));
 			}
@@ -278,7 +279,7 @@ bool HelmbergerArchive::addRequest(const std::string &id,
                                    const GFReceiver &receiver,
                                    const Core::TimeSpan &span) {
 	if ( !hasModel(model) ) {
-		SEISCOMP_DEBUG("Wrong model: %s", model.c_str());
+		SEISCOMP_DEBUG("Green's functions - Wrong model: %s", model.c_str());
 		return false;
 	}
 
@@ -316,7 +317,7 @@ Core::GreensFunction* HelmbergerArchive::get() {
 
 		ModelMap::iterator mit = _models.find(req.model);
 		if ( mit == _models.end() ) {
-			SEISCOMP_DEBUG("helmberger: req dropped, model %s not available",
+			SEISCOMP_DEBUG("Green's functions - helmberger: req dropped, model %s not available",
 			                req.model.c_str());
 			continue;
 		}
@@ -337,7 +338,7 @@ Core::GreensFunction* HelmbergerArchive::get() {
 
 			double maxDistError = dist2 - dist1;
 			if ( dist1 - distKm > maxDistError ) {
-				SEISCOMP_DEBUG("helmberger: distance too low: %d km", distKm);
+				SEISCOMP_DEBUG("Green's functions - helmberger: distance too low: %d km", distKm);
 				continue;
 			}
 
@@ -351,7 +352,7 @@ Core::GreensFunction* HelmbergerArchive::get() {
 
 			double maxDistError = dist2 - dist1;
 			if ( distKm - dist2 > maxDistError ) {
-				SEISCOMP_DEBUG("helmberger: distance too high: %d km", distKm);
+				SEISCOMP_DEBUG("Green's functions - helmberger: distance too high: %d km", distKm);
 				continue;
 			}
 
@@ -372,7 +373,7 @@ Core::GreensFunction* HelmbergerArchive::get() {
 
 			double maxDepError = dep2 - dep1;
 			if ( dep1 - iDepth > maxDepError ) {
-				SEISCOMP_DEBUG("helmberger: depth too low: %d km", iDepth);
+				SEISCOMP_DEBUG("Green's functions - helmberger: depth too low: %d km", iDepth);
 				continue;
 			}
 
@@ -387,7 +388,7 @@ Core::GreensFunction* HelmbergerArchive::get() {
 
 			double maxDepError = dep2 - dep1;
 			if ( iDepth - dep2 > maxDepError ) {
-				SEISCOMP_DEBUG("helmberger: depth too high: %d km", iDepth);
+				SEISCOMP_DEBUG("Green's functions - helmberger: depth too high: %d km", iDepth);
 				continue;
 			}
 
@@ -456,7 +457,7 @@ Core::GreensFunction* HelmbergerArchive::get() {
 				return gf1;
 			}
 			else {
-				SEISCOMP_ERROR("Unable to read %s or %s",
+				SEISCOMP_ERROR("Green's functions - Unable to read %s or %s",
 				               (pathprefix + Core::toString(dist1) + "d" + Core::toString(dep) + ".disp").c_str(),
 				               file.c_str());
 				if ( gf1 ) delete gf1;
@@ -490,7 +491,7 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 	int components = 0;
 	ifs >> components;
 	if ( components < 8 ) {
-		SEISCOMP_WARNING("%s: invalid number of components: %d, need 8",
+		SEISCOMP_WARNING("Green's functions - %s: invalid number of components: %d, need 8",
 		                 file.c_str(), components);
 		return nullptr;
 	}
@@ -501,24 +502,28 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 
 	boost::smatch what;
 	if ( !boost::regex_match(format, what, boost::regex("^\\(([0-9]*)e([0-9]*)\\.([0-9]*)\\)")) ) {
-		SEISCOMP_WARNING("%s: wrong format: %s", file.c_str(), format.c_str());
+		SEISCOMP_WARNING("Green's functions - %s: wrong format: %s",
+		                 file.c_str(), format.c_str());
 		return nullptr;
 	}
 
 	if ( what.size() != 4 ) {
-		SEISCOMP_WARNING("%s: wrong format: %s", file.c_str(), format.c_str());
+		SEISCOMP_WARNING("Green's functions - %s: wrong format: %s",
+		                 file.c_str(), format.c_str());
 		return nullptr;
 	}
 
 	int numTokens, tokenSize;
 
 	if ( !Core::fromString(numTokens, what.str(1)) ) {
-		SEISCOMP_WARNING("%s: wrong format: %s", file.c_str(), format.c_str());
+		SEISCOMP_WARNING("Green's functions - %s: wrong format: %s",
+		                 file.c_str(), format.c_str());
 		return nullptr;
 	}
 
 	if ( !Core::fromString(tokenSize, what.str(2)) ) {
-		SEISCOMP_WARNING("%s: wrong format: %s", file.c_str(), format.c_str());
+		SEISCOMP_WARNING("Green's functions - %s: wrong format: %s",
+		                 file.c_str(), format.c_str());
 		return nullptr;
 	}
 
@@ -565,7 +570,7 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 
 		}
 		else if ( samplingFrequency != gf->samplingFrequency() ) {
-			SEISCOMP_ERROR("%s: mismatching sampling frequencies between components",
+			SEISCOMP_ERROR("Green's functions - %s: mismatching sampling frequencies between components",
 			               file.c_str());
 			delete gf;
 			return nullptr;
@@ -585,7 +590,7 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 				while ( idx < tokenSize ) {
 					int read = ifs.readsome(&tmp[idx], tokenSize-idx);
 					if ( read <= 0 ) {
-						SEISCOMP_ERROR("%s: read error", file.c_str());
+						SEISCOMP_ERROR("Green's functions - %s: read error", file.c_str());
 						delete gf;
 						return nullptr;
 					}
@@ -596,7 +601,9 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 
 				float value;
 				if ( !Core::fromString(value, tmp) ) {
-					SEISCOMP_ERROR("%s: invalid numeric value %s at index %d", file.c_str(), tmp.c_str(), count);
+					SEISCOMP_ERROR("Green's functions - %s: invalid numeric value"
+					               "%s at index %d",
+					               file.c_str(), tmp.c_str(), count);
 					delete gf;
 					return nullptr;
 				}
@@ -625,7 +632,8 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 
 			float value;
 			if ( !Core::fromString(value, tmp) ) {
-				SEISCOMP_ERROR("%s: invalid numeric value %s at index %d", file.c_str(), tmp.c_str(), count);
+				SEISCOMP_ERROR("Green's functions - %s: invalid numeric value %s"
+				               "at index %d", file.c_str(), tmp.c_str(), count);
 				delete gf;
 				return nullptr;
 			}
