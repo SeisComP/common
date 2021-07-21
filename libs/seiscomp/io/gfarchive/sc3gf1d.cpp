@@ -269,8 +269,8 @@ bool SC3GF1DArchive::setSource(std::string source) {
 
 			ifDesc.open((_baseDirectory + "/" + name + ".desc").c_str());
 			if ( !ifDesc.is_open() ) {
-				SEISCOMP_WARNING("Unable to find model description, skipping directory: %s",
-				                 name.c_str());
+				SEISCOMP_WARNING("Green's functions - Unable to find a model description"
+				                 " for '%s', skipping this model", name.c_str());
 				continue;
 			}
 
@@ -289,7 +289,8 @@ bool SC3GF1DArchive::setSource(std::string source) {
 					ss >> depthFrom >> depthTo >> depthSpacing;
 
 					if ( (depthSpacing < 0) || (depthFrom > depthTo) ) {
-						SEISCOMP_WARNING("Invalid description format, skipping directory: %s",
+						SEISCOMP_WARNING("Green's functions - Invalid description"
+						                 " format, skipping directory: %s",
 						                 name.c_str());
 						validModel = false;
 						break;
@@ -308,7 +309,8 @@ bool SC3GF1DArchive::setSource(std::string source) {
 					ss >> distanceFrom >> distanceTo >> distanceSpacing;
 
 					if ( (distanceSpacing < 0) || (distanceFrom > distanceTo) ) {
-						SEISCOMP_WARNING("Invalid description format, skipping directory: %s",
+						SEISCOMP_WARNING("Green's functions - Invalid description"
+						                 " format, skipping directory: %s",
 						                 name.c_str());
 						validModel = false;
 						break;
@@ -324,11 +326,14 @@ bool SC3GF1DArchive::setSource(std::string source) {
 				}
 			}
 
-			if ( !validModel )
+			if ( !validModel ) {
 				_models.erase(_models.find(model));
+			}
 			else if ( dists.empty() || depths.empty() ) {
-				SEISCOMP_WARNING("Empty distances or depths for matching directory: %s",
+				SEISCOMP_WARNING("Green's functions - Empty distances or depths "
+				                 "for matching directory: %s",
 				                 name.c_str());
+				SEISCOMP_WARNING("  + check the describtion file '%s.desc'", name.c_str());
 				_models.erase(_models.find(model));
 			}
 		}
@@ -772,7 +777,7 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 		std::string filename = file + comps[i].toString();
 		std::ifstream ifs(filename .c_str());
 		if ( !ifs.good() ) {
-			SEISCOMP_DEBUG("%s: not found", filename.c_str());
+			SEISCOMP_DEBUG("Green's functions - %s: not found", filename.c_str());
 			return nullptr;
 		}
 
@@ -787,7 +792,7 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 		}
 
 		if ( sac.startTime() >= ts ) {
-			SEISCOMP_ERROR("%s: requested timespan not within range (%s < %s",
+			SEISCOMP_ERROR("Green's functions - %s: requested timespan not within range (%s < %s",
 			               filename.c_str(), Core::Time(ts).iso().c_str(), sac.startTime().iso().c_str());
 			if ( gf ) delete gf;
 			return nullptr;
@@ -797,7 +802,8 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 		double cutSeconds = (double)ts - timeOfs;
 
 		if ( gf && gf->timeOffset() != timeOfs ) {
-			SEISCOMP_ERROR("%s: mismatching start times, last component = %.4f, this = %.4f",
+			SEISCOMP_ERROR("Green's functions - %s: mismatching start times,"
+			               "last component = %.4f, this = %.4f",
 			               filename.c_str(), gf->timeOffset(), timeOfs);
 			delete gf;
 			return nullptr;
@@ -805,7 +811,8 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 
 		FloatArray *data = FloatArray::Cast(sac.data());
 		if ( data == nullptr ) {
-			SEISCOMP_ERROR("%s: invalid data, expected float array", filename.c_str());
+			SEISCOMP_ERROR("Green's functions - %s: invalid data, expected float array",
+			               filename.c_str());
 			if ( gf ) delete gf;
 			return nullptr;
 		}
@@ -822,7 +829,8 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 		int sampleOfs = 0;
 
 		if ( sampleOfs > data->size() ) {
-			SEISCOMP_ERROR("%s: not enough data, time-ofs = %.2f, sr = %.4f, samples = %d",
+			SEISCOMP_ERROR("Green's functions - %s: not enough data, time-ofs = %.2f,"
+			               "sr = %.4f, samples = %d",
 			               filename.c_str(), timeOfs, sac.samplingFrequency(), data->size());
 			if ( gf ) delete gf;
 			return nullptr;
@@ -834,7 +842,8 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 			gf->setTimeOffset(timeOfs);
 		}
 		else if ( gf->samplingFrequency() != sac.samplingFrequency() ) {
-			SEISCOMP_ERROR("%s: mismatching sampling frequencies, last component = %.4f, this = %.4f",
+			SEISCOMP_ERROR("Green's functions - %s: mismatching sampling frequencies,"
+			               "last component = %.4f, this = %.4f",
 			               filename.c_str(), gf->samplingFrequency(), sac.samplingFrequency());
 			delete gf;
 			return nullptr;
@@ -842,7 +851,8 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 
 		int sampleCount = std::min(data->size()-sampleOfs, (int)(cutSeconds * gf->samplingFrequency()));
 		if ( sampleCount <= 0 ) {
-			SEISCOMP_WARNING("%s: skipping empty result", filename.c_str());
+			SEISCOMP_WARNING("Green's functions - %s: skipping empty result",
+			                 filename.c_str());
 			if ( gf ) delete gf;
 			return nullptr;
 		}
