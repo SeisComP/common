@@ -726,9 +726,15 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	settings.getValue(_config.maximumDistance, "amplitudes." + _type + ".maxDist");
 	settings.getValue(_config.minimumDepth, "amplitudes." + _type + ".minDepth");
 	settings.getValue(_config.maximumDepth, "amplitudes." + _type + ".maxDepth");
-	settings.getValue(_config.respTaper, "amplitudes." + _type + ".resp.taper");
-	settings.getValue(_config.respMinFreq, "amplitudes." + _type + ".resp.minFreq");
-	settings.getValue(_config.respMaxFreq, "amplitudes." + _type + ".resp.maxFreq");
+
+	if ( !settings.getValue(_config.respTaper, "amplitudes." + _type + ".resp.taper") )
+		settings.getValue(_config.respTaper, "amplitudes.resp.taper");
+
+	if ( !settings.getValue(_config.respMinFreq, "amplitudes." + _type + ".resp.minFreq") )
+		settings.getValue(_config.respMinFreq, "amplitudes.resp.minFreq");
+
+	if ( !settings.getValue(_config.respMaxFreq, "amplitudes." + _type + ".resp.maxFreq") )
+		settings.getValue(_config.respMaxFreq, "amplitudes.resp.maxFreq");
 
 	return true;
 }

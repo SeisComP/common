@@ -638,6 +638,68 @@
 					minimum signal-to-noise ratio, amplitude thresholds and restitution
 					for measuring amplitudes of a certain type.
 				</description>
+				<parameter name="saturationThreshold" type="string" default="false" unit="counts; %">
+					<description>
+					Defines the saturation threshold for the optional saturation check.
+					By default the saturation check is disabled but giving a value above
+					0 will enable it. Waveforms that are saturated are not used
+					for amplitude calculations.
+
+					This value can either be an absolute value of counts such
+					as &quot;100000&quot; counts or a relative value
+					(optionally in percent) with respect to the number of
+					effective bits, e.g. &quot;0.8@23&quot; or &quot;80%@23&quot;.
+					The first version uses 1**23 * 0.8 whereas the latter
+					uses 1**23 * 80/100.
+
+					The boolean value &quot;false&quot; explicitly disables
+					the check.
+					</description>
+				</parameter>
+				<parameter name="enable" type="boolean" default="true">
+					<description>
+					Defines if amplitude calculation is enabled. If disabled,
+					this station will be skipped for amplitudes and magnitudes.
+					</description>
+				</parameter>
+				<parameter name="enableResponses" type="boolean" default="false">
+					<description>
+					Activates deconvolution for this station. If no responses are
+					configured, an error is raised and the data is not processed.
+					This flag will be overridden by the type specific flag
+					(see Amplitude type profile).
+					</description>
+				</parameter>
+				<group name="resp">
+					<description>
+					Several parameters if usage of full responses is enabled.
+					The parameters of this group will be overridden by type
+					specific settings if given (see Amplitude type profile).
+					</description>
+					<parameter name="taper" default="5" unit="s">
+						<description>
+						Defines the length of the taper at either side of the
+						waveform. The length will be added to the data
+						request: start - taper and end + taper.
+						</description>
+					</parameter>
+					<parameter name="minFreq" default="0.00833333" unit="Hz">
+						<description>
+						After data are converted in to the frequency domain that
+						minimum frequency defines the end of the left-side cosine taper for
+						the frequency spectrum. The taper applies from 0Hz to {minFreq}Hz.
+						A value of 0 or lower disables that taper.
+						</description>
+					</parameter>
+					<parameter name="maxFreq" default="0" unit="Hz">
+						<description>
+						After data are converted in to the frequency domain that
+						maximum frequency defines the start of the right-side cosine taper for
+						the frequency spectrum. The taper applies from {maxFreq}Hz to {fNyquist}Hz.
+						A value of 0 or lower disables that taper.
+						</description>
+					</parameter>
+				</group>
 				<group name="WoodAnderson">
 					<description>
 						Allows to configure the Wood-Anderson seismometer response.
@@ -715,36 +777,6 @@
 						</description>
 					</parameter>
 				</group>
-				<parameter name="saturationThreshold" type="string" default="false" unit="counts; %">
-					<description>
-					Defines the saturation threshold for the optional saturation check.
-					By default the saturation check is disabled but giving a value above
-					0 will enable it. Waveforms that are saturated are not used
-					for amplitude calculations.
-
-					This value can either be an absolute value of counts such
-					as &quot;100000&quot; counts or a relative value
-					(optionally in percent) with respect to the number of
-					effective bits, e.g. &quot;0.8@23&quot; or &quot;80%@23&quot;.
-					The first version uses 1**23 * 0.8 whereas the latter
-					uses 1**23 * 80/100.
-
-					The boolean value &quot;false&quot; explicitly disables
-					the check.
-					</description>
-				</parameter>
-				<parameter name="enable" type="boolean" default="true">
-					<description>
-					Defines if amplitude calculation is enabled. If disabled then
-					this station will be skipped for amplitudes and magnitudes.
-					</description>
-				</parameter>
-				<parameter name="enableResponses" type="boolean" default="false">
-					<description>
-					Activates deconvolution for this station. If no responses are
-					configured an error is raised and the data is not processed.
-					</description>
-				</parameter>
 				<struct type="Amplitude type profile">
 					<description>
 					An amplitude profile configures global parameters for a
@@ -866,6 +898,13 @@
 						<description>
 						Several parameters if usage of full responses is enabled.
 						</description>
+						<parameter name="taper" default="5" unit="s">
+							<description>
+							Defines the length of the taper at either side of the
+							waveform. The length will be added to the data
+							request: start - taper and end + taper.
+							</description>
+						</parameter>
 						<parameter name="minFreq" default="0.00833333" unit="Hz">
 							<description>
 							After data are converted in to the frequency domain that
