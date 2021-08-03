@@ -109,27 +109,31 @@ class WizardWidget : public QDialog {
 			~Node();
 
 			// Parent node
-			Node         *parent;
+			Node         *parent{nullptr};
 			// Left sibling
-			Node         *prev;
+			Node         *prev{nullptr};
 			// Right sibling
-			Node         *next;
+			Node         *next{nullptr};
 			// First child node
-			Node         *child;
+			Node         *child{nullptr};
 
 			// Selected child if it is a choice
-			Node         *activeChild;
+			Node         *activeChild{nullptr};
 
 			QString       modname;
-			Group        *group;
-			Input        *input;
+			Group        *group{nullptr};
+			Input        *input{nullptr};
 			QString       value;
 			QString       path;
-			bool          lastInGroup;
+			QString       optionValue;
+			bool          isOption{false};
+			bool          lastInGroup{false};
 		};
 
 		void addGroups(Node *, const QString &modname, const SetupGroups &);
-		void addInputs(Node *, bool isOption, const QString &modname, Group *g,
+		void addInputs(Node *, const QString &modname,
+		               bool isOption, const QString &optionValue,
+		               Group *g,
 		               const Inputs &, const QString &path);
 
 		WizardModel   *_model;
