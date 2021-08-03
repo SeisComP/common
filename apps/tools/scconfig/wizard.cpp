@@ -37,8 +37,7 @@
 using namespace std;
 
 WizardWidget::Node::Node(Node *p, Node *left, Node *right, Input *i)
-: parent(p), prev(left), next(right), child(NULL),
-  activeChild(NULL), input(i), lastInGroup(false) {}
+: parent(p), prev(left), next(right), input(i) {}
 
 
 WizardWidget::Node::~Node() {
@@ -78,11 +77,11 @@ WizardWidget::WizardWidget(WizardModel *model, QWidget *parent)
 	resize(500,400);
 	setWindowTitle(tr("SeisComP: Setup wizard"));
 
-	_currentInput = NULL;
+	_currentInput = nullptr;
 
 	_ranSetup = false;
-	_procSeisComP = NULL;
-	_currentPage = NULL;
+	_procSeisComP = nullptr;
+	_currentPage = nullptr;
 
 	_buttonBack = new QPushButton(tr("Back"));
 	_buttonNext = new QPushButton(tr("Next"));
@@ -139,7 +138,7 @@ WizardWidget::WizardWidget(WizardModel *model, QWidget *parent)
 	connect(_buttonCancel, SIGNAL(clicked()), this, SLOT(reject()));
 
 	// Build model tree
-	_modelTree = new Node(NULL, NULL, NULL, NULL);
+	_modelTree = new Node(nullptr, nullptr, nullptr, nullptr);
 
 	for ( ModelIterator it = _model->begin(); it != _model->end(); ++it ) {
 		QString modname = it->first.c_str();
@@ -164,7 +163,7 @@ bool WizardWidget::ranSetup() const {
 
 
 void WizardWidget::reject() {
-	if ( _procSeisComP != NULL ) {
+	if ( _procSeisComP ) {
 		if ( QMessageBox::question(this, tr("Abort setup"),
 		                           tr("Setup is still running. Do you really\n"
 		                              "want to abort the process? This is not\n"
@@ -179,44 +178,46 @@ void WizardWidget::reject() {
 
 void WizardWidget::addGroups(Node *parent, const QString &modname,
                              const SetupGroups &groups) {
-	SetupGroups::const_iterator it;
-
-	for ( it = groups.begin(); it != groups.end(); ++it )
-		addInputs(parent, false, modname, *it, (*it)->inputs, ((*it)->name + ".").c_str());
+	for ( Seiscomp::System::SchemaSetupGroup *group : groups ) {
+		addInputs(parent, modname, false, QString(),
+		          group, group->inputs, (group->name + ".").c_str());
+	}
 }
 
 
-void WizardWidget::addInputs(Node *parent, bool isOption, const QString &modname,
+void WizardWidget::addInputs(Node *parent, const QString &modname,
+                             bool isOption, const QString &optionValue,
                              Group *g, const Inputs &inputs,
                              const QString &path) {
-	Inputs::const_iterator it;
 	Node *last = parent->child;
 
 	// find the last child and add the current list to it
 	while ( last ) {
-		if ( last->next == NULL ) break;
+		if ( !last->next ) break;
 		last = last->next;
 	}
 
-	for ( it = inputs.begin(); it != inputs.end(); ++it ) {
-		Node *n = new Node(parent, last, NULL, it->get());
+	for ( const Seiscomp::System::SchemaSetupInputPtr &input : inputs ) {
+		Node *n = new Node(parent, last, nullptr, input.get());
 
-		n->path = path + (*it)->name.c_str();
-		n->value = (*it)->defaultValue.c_str();
+		n->path = path + input->name.c_str();
+		n->value = input->defaultValue.c_str();
 		n->modname = modname;
 		n->group = g;
+		n->isOption = isOption;
+		n->optionValue = optionValue;
 
-		if ( last != NULL ) last->next = n;
+		if ( last ) last->next = n;
 		last = n;
 
-		if ( parent->child == NULL ) parent->child = last;
+		if ( !parent->child ) parent->child = last;
 
-		std::vector<Seiscomp::System::SchemaSetupInputOptionPtr>::iterator oit;
-		for ( oit = (*it)->options.begin(); oit != (*it)->options.end(); ++oit )
-			addInputs(n, true, modname, g, (*oit)->inputs, n->path + ".");
+		for ( const Seiscomp::System::SchemaSetupInputOptionPtr &option : input->options ) {
+			addInputs(n, modname, true, option->value.c_str(), g, option->inputs, n->path + ".");
+		}
 	}
 
-	if ( isOption && last != NULL ) last->lastInGroup = true;
+	if ( isOption && last ) last->lastInGroup = true;
 }
 
 
@@ -249,7 +250,7 @@ void WizardWidget::next() {
 	Input *input = _currentNode->input;
 	bool step = true;
 
-	_currentNode->activeChild = NULL;
+	_currentNode->activeChild = nullptr;
 
 	// Choice input?
 	if ( !input->options.empty() ) {
@@ -280,11 +281,11 @@ void WizardWidget::next() {
 
 	if ( step ) {
 		bool pushed = false;
-		if ( _currentNode->next == NULL ) {
+		if ( !_currentNode->next ) {
 			Node *parent = _currentNode->parent;
 
 			while ( parent ) {
-				if ( parent->next ) {
+				if ( !parent->isOption && parent->next ) {
 					_path.push(_currentNode);
 					pushed = true;
 					_currentNode = parent;
@@ -294,7 +295,7 @@ void WizardWidget::next() {
 				parent = parent->parent;
 			}
 
-			if ( parent == NULL ) {
+			if ( !parent ) {
 				_path.push(_currentNode);
 				setPage(createExtroPage());
 				_buttonNext->setText(tr("Finish"));
@@ -326,10 +327,10 @@ QByteArray &operator<<(QByteArray &ar, WizardWidget::Node *n) {
 		ar.append("\n");
 	}
 
-	if ( n->activeChild != NULL )
+	if ( n->activeChild )
 		ar << n->activeChild;
 
-	if ( !n->lastInGroup && n->next != NULL ) ar << n->next;
+	if ( !n->lastInGroup && n->next ) ar << n->next;
 	return ar;
 }
 
@@ -350,7 +351,7 @@ void WizardWidget::finish() {
 	if ( !_procSeisComP->waitForStarted() ) {
 		cerr << "Failed to start 'seiscomp'" << endl;
 		delete _procSeisComP;
-		_procSeisComP = NULL;
+		_procSeisComP = nullptr;
 		return;
 	}
 
@@ -407,7 +408,7 @@ void WizardWidget::setPage(WizardPage *p) {
 	_contentLayout->addWidget(_currentPage);
 
 	if ( _currentInput ) _currentInput->setFocus();
-	_currentInput = NULL;
+	_currentInput = nullptr;
 }
 
 
@@ -479,6 +480,7 @@ WizardPage *WizardWidget::createOutputPage() {
 
 WizardPage *WizardWidget::createCurrentPage() {
 	WizardPage *w = new WizardPage;
+
 	w->setTitle(_currentNode->modname);
 	w->setSubTitle(_currentNode->group->name.c_str());
 
@@ -486,7 +488,7 @@ WizardPage *WizardWidget::createCurrentPage() {
 	l->setMargin(0);
 	w->setLayout(l);
 
-	_currentInput = NULL;
+	_currentInput = nullptr;
 
 	if ( _currentNode->input->type == "boolean" ) {
 		QCheckBox *checkBox = new QCheckBox();
@@ -588,7 +590,7 @@ void WizardWidget::readProcStdErr() {
 
 void WizardWidget::finishedProc(int res, QProcess::ExitStatus stat) {
 	delete _procSeisComP;
-	_procSeisComP = NULL;
+	_procSeisComP = nullptr;
 
 	if ( res != 0 ) {
 		QPalette pal = _procStatus->palette();
