@@ -5288,6 +5288,14 @@ class OriginUncertainty(seiscomp.core.BaseObject):
         r"""preferredDescription(OriginUncertainty self) -> Seiscomp::DataModel::OriginUncertaintyDescription"""
         return _datamodel.OriginUncertainty_preferredDescription(self)
 
+    def setConfidenceLevel(self, confidenceLevel):
+        r"""setConfidenceLevel(OriginUncertainty self, Seiscomp::Core::Optional< double >::Impl const & confidenceLevel)"""
+        return _datamodel.OriginUncertainty_setConfidenceLevel(self, confidenceLevel)
+
+    def confidenceLevel(self):
+        r"""confidenceLevel(OriginUncertainty self) -> double"""
+        return _datamodel.OriginUncertainty_confidenceLevel(self)
+
 # Register OriginUncertainty in _datamodel:
 _datamodel.OriginUncertainty_swigregister(OriginUncertainty)
 
@@ -22740,10 +22748,6 @@ class DatabaseQuery(DatabaseReader):
     def getOriginsForAmplitude(self, amplitudeID):
         r"""getOriginsForAmplitude(DatabaseQuery self, std::string const & amplitudeID) -> DatabaseIterator"""
         return _datamodel.DatabaseQuery_getOriginsForAmplitude(self, amplitudeID)
-
-    def getOriginsForAmplitudeViaMagnitude(self, amplitudeID):
-        r"""getOriginsForAmplitudeViaMagnitude(DatabaseQuery self, std::string const & amplitudeID) -> DatabaseIterator"""
-        return _datamodel.DatabaseQuery_getOriginsForAmplitudeViaMagnitude(self, amplitudeID)
 
     def getOriginByMagnitude(self, magnitudeID):
         r"""getOriginByMagnitude(DatabaseQuery self, std::string const & magnitudeID) -> Origin"""

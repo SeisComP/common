@@ -1776,10 +1776,6 @@ class RunningMeanFilterF(InPlaceFilterF):
         r"""clone(RunningMeanFilterF self) -> InPlaceFilterF"""
         return _math.RunningMeanFilterF_clone(self)
 
-    def reset(self):
-        r"""reset(RunningMeanFilterF self)"""
-        return _math.RunningMeanFilterF_reset(self)
-
     def setSamplingFrequency(self, fsamp):
         r"""setSamplingFrequency(RunningMeanFilterF self, double fsamp)"""
         return _math.RunningMeanFilterF_setSamplingFrequency(self, fsamp)
@@ -1787,6 +1783,10 @@ class RunningMeanFilterF(InPlaceFilterF):
     def setParameters(self, n, params):
         r"""setParameters(RunningMeanFilterF self, int n, double const * params) -> int"""
         return _math.RunningMeanFilterF_setParameters(self, n, params)
+
+    def reset(self):
+        r"""reset(RunningMeanFilterF self)"""
+        return _math.RunningMeanFilterF_reset(self)
 
 # Register RunningMeanFilterF in _math:
 _math.RunningMeanFilterF_swigregister(RunningMeanFilterF)
@@ -1810,10 +1810,6 @@ class RunningMeanFilterD(InPlaceFilterD):
         r"""clone(RunningMeanFilterD self) -> InPlaceFilterD"""
         return _math.RunningMeanFilterD_clone(self)
 
-    def reset(self):
-        r"""reset(RunningMeanFilterD self)"""
-        return _math.RunningMeanFilterD_reset(self)
-
     def setSamplingFrequency(self, fsamp):
         r"""setSamplingFrequency(RunningMeanFilterD self, double fsamp)"""
         return _math.RunningMeanFilterD_setSamplingFrequency(self, fsamp)
@@ -1821,6 +1817,10 @@ class RunningMeanFilterD(InPlaceFilterD):
     def setParameters(self, n, params):
         r"""setParameters(RunningMeanFilterD self, int n, double const * params) -> int"""
         return _math.RunningMeanFilterD_setParameters(self, n, params)
+
+    def reset(self):
+        r"""reset(RunningMeanFilterD self)"""
+        return _math.RunningMeanFilterD_reset(self)
 
 # Register RunningMeanFilterD in _math:
 _math.RunningMeanFilterD_swigregister(RunningMeanFilterD)
@@ -1880,10 +1880,6 @@ class InitialTaperFilterF(InPlaceFilterF):
         r"""clone(InitialTaperFilterF self) -> InPlaceFilterF"""
         return _math.InitialTaperFilterF_clone(self)
 
-    def reset(self):
-        r"""reset(InitialTaperFilterF self)"""
-        return _math.InitialTaperFilterF_reset(self)
-
     def setSamplingFrequency(self, fsamp):
         r"""setSamplingFrequency(InitialTaperFilterF self, double fsamp)"""
         return _math.InitialTaperFilterF_setSamplingFrequency(self, fsamp)
@@ -1891,6 +1887,10 @@ class InitialTaperFilterF(InPlaceFilterF):
     def setParameters(self, n, params):
         r"""setParameters(InitialTaperFilterF self, int n, double const * params) -> int"""
         return _math.InitialTaperFilterF_setParameters(self, n, params)
+
+    def reset(self):
+        r"""reset(InitialTaperFilterF self)"""
+        return _math.InitialTaperFilterF_reset(self)
 
 # Register InitialTaperFilterF in _math:
 _math.InitialTaperFilterF_swigregister(InitialTaperFilterF)
@@ -1914,10 +1914,6 @@ class InitialTaperFilterD(InPlaceFilterD):
         r"""clone(InitialTaperFilterD self) -> InPlaceFilterD"""
         return _math.InitialTaperFilterD_clone(self)
 
-    def reset(self):
-        r"""reset(InitialTaperFilterD self)"""
-        return _math.InitialTaperFilterD_reset(self)
-
     def setSamplingFrequency(self, fsamp):
         r"""setSamplingFrequency(InitialTaperFilterD self, double fsamp)"""
         return _math.InitialTaperFilterD_setSamplingFrequency(self, fsamp)
@@ -1925,6 +1921,10 @@ class InitialTaperFilterD(InPlaceFilterD):
     def setParameters(self, n, params):
         r"""setParameters(InitialTaperFilterD self, int n, double const * params) -> int"""
         return _math.InitialTaperFilterD_setParameters(self, n, params)
+
+    def reset(self):
+        r"""reset(InitialTaperFilterD self)"""
+        return _math.InitialTaperFilterD_reset(self)
 
 # Register InitialTaperFilterD in _math:
 _math.InitialTaperFilterD_swigregister(InitialTaperFilterD)
