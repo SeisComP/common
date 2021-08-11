@@ -61,7 +61,7 @@ class SC_SYSTEM_CORE_API ComplexArray : public Core::BaseObject {
 	public:
 		//! Copies the metadata of other to this
 		ComplexArray& operator=(const ComplexArray& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const ComplexArray& other) const;
 		bool operator!=(const ComplexArray& other) const;

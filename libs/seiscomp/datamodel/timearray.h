@@ -61,7 +61,7 @@ class SC_SYSTEM_CORE_API TimeArray : public Core::BaseObject {
 	public:
 		//! Copies the metadata of other to this
 		TimeArray& operator=(const TimeArray& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const TimeArray& other) const;
 		bool operator!=(const TimeArray& other) const;

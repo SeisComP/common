@@ -65,7 +65,7 @@ class SC_SYSTEM_CORE_API PrincipalAxes : public Core::BaseObject {
 	public:
 		//! Copies the metadata of other to this
 		PrincipalAxes& operator=(const PrincipalAxes& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const PrincipalAxes& other) const;
 		bool operator!=(const PrincipalAxes& other) const;

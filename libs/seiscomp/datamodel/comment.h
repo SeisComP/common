@@ -109,7 +109,7 @@ class SC_SYSTEM_CORE_API Comment : public Object {
 	public:
 		//! Copies the metadata of other to this
 		Comment& operator=(const Comment& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const Comment& other) const;
 		bool operator!=(const Comment& other) const;

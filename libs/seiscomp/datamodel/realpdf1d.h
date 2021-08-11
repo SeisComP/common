@@ -85,7 +85,7 @@ class SC_SYSTEM_CORE_API RealPDF1D : public Core::BaseObject {
 	public:
 		//! Copies the metadata of other to this
 		RealPDF1D& operator=(const RealPDF1D& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const RealPDF1D& other) const;
 		bool operator!=(const RealPDF1D& other) const;

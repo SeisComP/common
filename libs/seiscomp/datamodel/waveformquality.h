@@ -23,8 +23,8 @@
 
 
 #include <seiscomp/core/datetime.h>
-#include <string>
 #include <seiscomp/datamodel/waveformstreamid.h>
+#include <string>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
 
@@ -98,7 +98,7 @@ class SC_SYSTEM_CORE_API WaveformQuality : public Object {
 	public:
 		//! Copies the metadata of other to this
 		WaveformQuality& operator=(const WaveformQuality& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const WaveformQuality& other) const;
 		bool operator!=(const WaveformQuality& other) const;

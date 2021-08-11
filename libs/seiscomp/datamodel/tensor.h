@@ -70,7 +70,7 @@ class SC_SYSTEM_CORE_API Tensor : public Core::BaseObject {
 	public:
 		//! Copies the metadata of other to this
 		Tensor& operator=(const Tensor& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const Tensor& other) const;
 		bool operator!=(const Tensor& other) const;

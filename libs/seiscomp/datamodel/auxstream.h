@@ -97,7 +97,7 @@ class SC_SYSTEM_CORE_API AuxStream : public Object {
 	public:
 		//! Copies the metadata of other to this
 		AuxStream& operator=(const AuxStream& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const AuxStream& other) const;
 		bool operator!=(const AuxStream& other) const;

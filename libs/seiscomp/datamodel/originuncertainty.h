@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_ORIGINUNCERTAINTY_H
 
 
-#include <seiscomp/datamodel/confidenceellipsoid.h>
 #include <seiscomp/datamodel/types.h>
+#include <seiscomp/datamodel/confidenceellipsoid.h>
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core.h>
 #include <seiscomp/core/exceptions.h>
@@ -72,7 +72,7 @@ class SC_SYSTEM_CORE_API OriginUncertainty : public Core::BaseObject {
 	public:
 		//! Copies the metadata of other to this
 		OriginUncertainty& operator=(const OriginUncertainty& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const OriginUncertainty& other) const;
 		bool operator!=(const OriginUncertainty& other) const;

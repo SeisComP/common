@@ -65,7 +65,7 @@ class SC_SYSTEM_CORE_API CreationInfo : public Core::BaseObject {
 	public:
 		//! Copies the metadata of other to this
 		CreationInfo& operator=(const CreationInfo& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const CreationInfo& other) const;
 		bool operator!=(const CreationInfo& other) const;

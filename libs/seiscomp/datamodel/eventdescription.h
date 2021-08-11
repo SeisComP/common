@@ -103,7 +103,7 @@ class SC_SYSTEM_CORE_API EventDescription : public Object {
 	public:
 		//! Copies the metadata of other to this
 		EventDescription& operator=(const EventDescription& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const EventDescription& other) const;
 		bool operator!=(const EventDescription& other) const;

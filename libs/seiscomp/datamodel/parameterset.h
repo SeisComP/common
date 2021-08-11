@@ -23,8 +23,8 @@
 
 
 #include <seiscomp/core/datetime.h>
-#include <string>
 #include <vector>
+#include <string>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>
@@ -87,7 +87,7 @@ class SC_SYSTEM_CORE_API ParameterSet : public PublicObject {
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
 		ParameterSet& operator=(const ParameterSet& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const ParameterSet& other) const;
 		bool operator!=(const ParameterSet& other) const;

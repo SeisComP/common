@@ -100,7 +100,7 @@ class SC_SYSTEM_CORE_API StationMagnitudeContribution : public Object {
 	public:
 		//! Copies the metadata of other to this
 		StationMagnitudeContribution& operator=(const StationMagnitudeContribution& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const StationMagnitudeContribution& other) const;
 		bool operator!=(const StationMagnitudeContribution& other) const;

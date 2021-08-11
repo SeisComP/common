@@ -24,8 +24,8 @@
 
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/arclinkrequestsummary.h>
-#include <string>
 #include <vector>
+#include <string>
 #include <seiscomp/datamodel/arclinkstatusline.h>
 #include <seiscomp/datamodel/arclinkrequestline.h>
 #include <seiscomp/datamodel/notifier.h>
@@ -122,7 +122,7 @@ class SC_SYSTEM_CORE_API ArclinkRequest : public PublicObject {
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
 		ArclinkRequest& operator=(const ArclinkRequest& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const ArclinkRequest& other) const;
 		bool operator!=(const ArclinkRequest& other) const;

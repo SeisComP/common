@@ -99,7 +99,7 @@ class SC_SYSTEM_CORE_API DataloggerCalibration : public Object {
 	public:
 		//! Copies the metadata of other to this
 		DataloggerCalibration& operator=(const DataloggerCalibration& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const DataloggerCalibration& other) const;
 		bool operator!=(const DataloggerCalibration& other) const;
