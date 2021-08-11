@@ -248,8 +248,8 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 
 
 	// ----------------------------------------------------------------------
-	//  Initialization configuration functions
-	//  This functions have to be called before the init() method
+	//  Initialization configuration methods
+	//  These methods have to be called before the init() method.
 	// ----------------------------------------------------------------------
 	public:
 		//! Sets the primary messaging group
@@ -385,6 +385,12 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		//! is activated.
 		void setShutdownMasterUsername(const std::string &username);
 
+
+	// ----------------------------------------------------------------------
+	//  Public methods
+	//  These methods have to be called after the init() method.
+	// ----------------------------------------------------------------------
+	public:
 		/**
 		 * Adds a logger for an input object flow.
 		 * This method must be called after Application::init().
