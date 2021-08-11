@@ -92,7 +92,7 @@ class SC_SYSTEM_CORE_API Reading : public PublicObject {
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
 		Reading& operator=(const Reading& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const Reading& other) const;
 		bool operator!=(const Reading& other) const;

@@ -104,7 +104,7 @@ class SC_SYSTEM_CORE_API MomentTensorComponentContribution : public Object {
 	public:
 		//! Copies the metadata of other to this
 		MomentTensorComponentContribution& operator=(const MomentTensorComponentContribution& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const MomentTensorComponentContribution& other) const;
 		bool operator!=(const MomentTensorComponentContribution& other) const;

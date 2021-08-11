@@ -72,7 +72,7 @@ class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
 		EventParameters& operator=(const EventParameters& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const EventParameters& other) const;
 		bool operator!=(const EventParameters& other) const;

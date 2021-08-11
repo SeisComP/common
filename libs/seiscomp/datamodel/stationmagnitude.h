@@ -22,11 +22,11 @@
 #define SEISCOMP_DATAMODEL_STATIONMAGNITUDE_H
 
 
-#include <string>
-#include <vector>
-#include <seiscomp/datamodel/realquantity.h>
-#include <seiscomp/datamodel/creationinfo.h>
 #include <seiscomp/datamodel/waveformstreamid.h>
+#include <seiscomp/datamodel/creationinfo.h>
+#include <string>
+#include <seiscomp/datamodel/realquantity.h>
+#include <vector>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>
@@ -92,7 +92,7 @@ class SC_SYSTEM_CORE_API StationMagnitude : public PublicObject {
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
 		StationMagnitude& operator=(const StationMagnitude& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const StationMagnitude& other) const;
 		bool operator!=(const StationMagnitude& other) const;
@@ -141,8 +141,8 @@ class SC_SYSTEM_CORE_API StationMagnitude : public PublicObject {
 		WaveformStreamID& waveformID();
 		const WaveformStreamID& waveformID() const;
 
-		//! An optional flag that indiciates whether a station
-		//! magnitude has passed
+		//! An optional flag that indicates whether a station magnitude
+		//! has passed
 		//! the quality control or not. For example, if a station
 		//! magnitude is
 		//! out of the defined distance range but should be associated

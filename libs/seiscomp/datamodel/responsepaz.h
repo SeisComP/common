@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_RESPONSEPAZ_H
 
 
-#include <seiscomp/datamodel/blob.h>
 #include <seiscomp/datamodel/complexarray.h>
 #include <string>
+#include <seiscomp/datamodel/blob.h>
 #include <seiscomp/datamodel/publicobject.h>
 #include <seiscomp/core/exceptions.h>
 
@@ -115,7 +115,7 @@ class SC_SYSTEM_CORE_API ResponsePAZ : public PublicObject {
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
 		ResponsePAZ& operator=(const ResponsePAZ& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const ResponsePAZ& other) const;
 		bool operator!=(const ResponsePAZ& other) const;

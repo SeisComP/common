@@ -92,7 +92,7 @@ class SC_SYSTEM_CORE_API WaveformStreamID : public Core::BaseObject {
 
 		//! Copies the metadata of other to this
 		WaveformStreamID& operator=(const WaveformStreamID& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const WaveformStreamID& other) const;
 		bool operator!=(const WaveformStreamID& other) const;

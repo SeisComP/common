@@ -23,12 +23,12 @@
 
 
 #include <seiscomp/datamodel/types.h>
-#include <string>
-#include <seiscomp/datamodel/sourcetimefunction.h>
-#include <seiscomp/datamodel/realquantity.h>
-#include <seiscomp/datamodel/tensor.h>
 #include <seiscomp/datamodel/creationinfo.h>
+#include <string>
+#include <seiscomp/datamodel/tensor.h>
+#include <seiscomp/datamodel/realquantity.h>
 #include <vector>
+#include <seiscomp/datamodel/sourcetimefunction.h>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/momenttensorphasesetting.h>
 #include <seiscomp/datamodel/notifier.h>
@@ -99,7 +99,7 @@ class SC_SYSTEM_CORE_API MomentTensor : public PublicObject {
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
 		MomentTensor& operator=(const MomentTensor& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const MomentTensor& other) const;
 		bool operator!=(const MomentTensor& other) const;

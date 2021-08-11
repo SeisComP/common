@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_OUTAGE_H
 
 
-#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/core/datetime.h>
+#include <seiscomp/datamodel/waveformstreamid.h>
 #include <string>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
@@ -94,7 +94,7 @@ class SC_SYSTEM_CORE_API Outage : public Object {
 	public:
 		//! Copies the metadata of other to this
 		Outage& operator=(const Outage& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const Outage& other) const;
 		bool operator!=(const Outage& other) const;

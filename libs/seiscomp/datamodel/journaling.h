@@ -62,7 +62,7 @@ class SC_SYSTEM_CORE_API Journaling : public PublicObject {
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
 		Journaling& operator=(const Journaling& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const Journaling& other) const;
 		bool operator!=(const Journaling& other) const;

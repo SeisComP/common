@@ -23,13 +23,13 @@
 
 
 #include <seiscomp/datamodel/types.h>
+#include <seiscomp/datamodel/waveformstreamid.h>
+#include <seiscomp/datamodel/creationinfo.h>
 #include <string>
+#include <seiscomp/datamodel/phase.h>
 #include <seiscomp/datamodel/realquantity.h>
 #include <vector>
-#include <seiscomp/datamodel/phase.h>
 #include <seiscomp/datamodel/timequantity.h>
-#include <seiscomp/datamodel/creationinfo.h>
-#include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>
@@ -97,7 +97,7 @@ class SC_SYSTEM_CORE_API Pick : public PublicObject {
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
 		Pick& operator=(const Pick& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const Pick& other) const;
 		bool operator!=(const Pick& other) const;

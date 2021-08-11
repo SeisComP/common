@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_AUXSOURCE_H
 
 
-#include <seiscomp/datamodel/blob.h>
 #include <string>
+#include <seiscomp/datamodel/blob.h>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
 
@@ -104,7 +104,7 @@ class SC_SYSTEM_CORE_API AuxSource : public Object {
 	public:
 		//! Copies the metadata of other to this
 		AuxSource& operator=(const AuxSource& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const AuxSource& other) const;
 		bool operator!=(const AuxSource& other) const;

@@ -66,7 +66,7 @@ class SC_SYSTEM_CORE_API DataUsed : public Object {
 	public:
 		//! Copies the metadata of other to this
 		DataUsed& operator=(const DataUsed& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const DataUsed& other) const;
 		bool operator!=(const DataUsed& other) const;

@@ -23,10 +23,10 @@
 
 
 #include <seiscomp/datamodel/types.h>
-#include <string>
-#include <vector>
-#include <seiscomp/datamodel/realquantity.h>
 #include <seiscomp/datamodel/creationinfo.h>
+#include <string>
+#include <seiscomp/datamodel/realquantity.h>
+#include <vector>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/stationmagnitudecontribution.h>
 #include <seiscomp/datamodel/notifier.h>
@@ -100,7 +100,7 @@ class SC_SYSTEM_CORE_API Magnitude : public PublicObject {
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
 		Magnitude& operator=(const Magnitude& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const Magnitude& other) const;
 		bool operator!=(const Magnitude& other) const;
@@ -126,7 +126,7 @@ class SC_SYSTEM_CORE_API Magnitude : public PublicObject {
 		//! it is impossible to cover all existing magnitude type
 		//! designations
 		//! with an enumeration. Possible values are unspecified
-		//! magitude (M),
+		//! magnitude (M),
 		//! local magnitude (ML), body wave magnitude (Mb),
 		//! surface wave magnitude (MS), moment magnitude (Mw),
 		//! duration magnitude (Md), coda magnitude (Mc), MH, Mwp, M50,

@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_DATAEXTENT_H
 
 
+#include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/waveformstreamid.h>
 #include <vector>
-#include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/datasegment.h>
 #include <seiscomp/datamodel/dataattributeextent.h>
 #include <seiscomp/datamodel/notifier.h>
@@ -117,7 +117,7 @@ class SC_SYSTEM_CORE_API DataExtent : public PublicObject {
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
 		DataExtent& operator=(const DataExtent& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const DataExtent& other) const;
 		bool operator!=(const DataExtent& other) const;

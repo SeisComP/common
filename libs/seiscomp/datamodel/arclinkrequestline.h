@@ -22,6 +22,7 @@
 #define SEISCOMP_DATAMODEL_ARCLINKREQUESTLINE_H
 
 
+#include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/datamodel/arclinkstatusline.h>
 #include <seiscomp/core/datetime.h>
@@ -97,7 +98,7 @@ class SC_SYSTEM_CORE_API ArclinkRequestLine : public Object {
 	public:
 		//! Copies the metadata of other to this
 		ArclinkRequestLine& operator=(const ArclinkRequestLine& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const ArclinkRequestLine& other) const;
 		bool operator!=(const ArclinkRequestLine& other) const;

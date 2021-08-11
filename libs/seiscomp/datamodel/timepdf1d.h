@@ -86,7 +86,7 @@ class SC_SYSTEM_CORE_API TimePDF1D : public Core::BaseObject {
 	public:
 		//! Copies the metadata of other to this
 		TimePDF1D& operator=(const TimePDF1D& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const TimePDF1D& other) const;
 		bool operator!=(const TimePDF1D& other) const;

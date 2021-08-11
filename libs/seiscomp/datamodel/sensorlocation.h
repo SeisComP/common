@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_SENSORLOCATION_H
 
 
-#include <vector>
 #include <seiscomp/core/datetime.h>
+#include <vector>
 #include <string>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/auxstream.h>
@@ -124,7 +124,7 @@ class SC_SYSTEM_CORE_API SensorLocation : public PublicObject {
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
 		SensorLocation& operator=(const SensorLocation& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const SensorLocation& other) const;
 		bool operator!=(const SensorLocation& other) const;

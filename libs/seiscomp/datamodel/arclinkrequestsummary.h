@@ -59,7 +59,7 @@ class SC_SYSTEM_CORE_API ArclinkRequestSummary : public Core::BaseObject {
 	public:
 		//! Copies the metadata of other to this
 		ArclinkRequestSummary& operator=(const ArclinkRequestSummary& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const ArclinkRequestSummary& other) const;
 		bool operator!=(const ArclinkRequestSummary& other) const;

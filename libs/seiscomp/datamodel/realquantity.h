@@ -90,7 +90,7 @@ class SC_SYSTEM_CORE_API RealQuantity : public Core::BaseObject {
 
 		//! Copies the metadata of other to this
 		RealQuantity& operator=(const RealQuantity& other);
-		//! Checks for equality of two objects. Childs objects
+		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
 		bool operator==(const RealQuantity& other) const;
 		bool operator!=(const RealQuantity& other) const;
