@@ -2285,7 +2285,7 @@ void EventEdit::updateFMRow(int row, FocalMechanism *fm) {
 			POPULATE_COLUMN_DOUBLE(FML_MAG, m->magnitude().value(), SCScheme.precision.magnitude);
 	}
 
-	POPULATE_COLUMN_INT(FML_GAP, int(fm->azimuthalGap()));
+	POPULATE_COLUMN_DOUBLE(FML_GAP, fm->azimuthalGap(), 0);
 	POPULATE_COLUMN_INT(FML_COUNT, fm->stationPolarityCount());
 
 	// Strike, dip, rake
