@@ -88,6 +88,7 @@ MAKEENUM(
 		COL_MTYPE,
 		COL_PHASES,
 		COL_RMS,
+		COL_AZIMUTHAL_GAP,
 		COL_LAT,
 		COL_LON,
 		COL_DEPTH,
@@ -108,6 +109,7 @@ MAKEENUM(
 		"MType",
 		"Phases",
 		"RMS",
+		"Azi. Gap(°)",
 		"Lat",
 		"Lon",
 		"Depth",
@@ -132,6 +134,7 @@ bool colVisibility[EventListColumns::Quantity] = {
 	false,
 	true,
 	false,
+	true,
 	true,
 	true,
 	true,
@@ -785,6 +788,7 @@ class SchemeTreeItem : public TreeItem {
 			setTextAlignment(config.columnMap[COL_PHASES], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_ORIGINS], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_RMS], Qt::AlignCenter);
+			setTextAlignment(config.columnMap[COL_AZIMUTHAL_GAP], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_M], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_MTYPE], Qt::AlignLeft | Qt::AlignVCenter);
 			//setTextAlignment(MCOUNT, Qt::AlignCenter);
@@ -869,6 +873,15 @@ class OriginTreeItem : public SchemeTreeItem {
 			catch ( ... ) {
 				setText(config.columnMap[COL_RMS], "-");
 				setData(config.columnMap[COL_RMS], Qt::UserRole, QVariant());
+			}
+
+			try {
+				setText(config.columnMap[COL_AZIMUTHAL_GAP], QString("%1").arg(ori->quality().azimuthalGap(), 0, 'f', 0));
+				setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, ori->quality().azimuthalGap());
+			}
+			catch ( ... ) {
+				setText(config.columnMap[COL_AZIMUTHAL_GAP], "-");
+				setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, QVariant());
 			}
 
 			double lat = ori->latitude();
@@ -1037,6 +1050,13 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 					setText(config.columnMap[COL_RMS], "-");
 				}
 
+				try {
+					setText(config.columnMap[COL_AZIMUTHAL_GAP], QString("%1").arg(fmBaseOrg->quality().azimuthalGap(), 0, 'f', 0));
+				}
+				catch ( ... ) {
+					setText(config.columnMap[COL_AZIMUTHAL_GAP], "-");
+				}
+
 				double lat = fmBaseOrg->latitude();
 				double lon = fmBaseOrg->longitude();
 
@@ -1107,6 +1127,7 @@ class EventTreeItem : public SchemeTreeItem {
 
 			setText(config.columnMap[COL_PHASES], "-");
 			setText(config.columnMap[COL_RMS], "-");
+			setText(config.columnMap[COL_AZIMUTHAL_GAP], "-");
 			setText(config.columnMap[COL_M], "-");
 			setText(config.columnMap[COL_MTYPE], "-");
 			setText(config.columnMap[COL_DEPTH], "-");
@@ -1554,6 +1575,16 @@ class EventTreeItem : public SchemeTreeItem {
 					catch(...){
 						setText(config.columnMap[COL_RMS], "-");
 						setData(config.columnMap[COL_RMS], Qt::UserRole, QVariant());
+					}
+
+					try {
+						const OriginQuality &quality = origin->quality();
+						setText(config.columnMap[COL_AZIMUTHAL_GAP], QString("%1").arg(quality.azimuthalGap(), 0, 'f', 0));
+						setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, quality.azimuthalGap());
+					}
+					catch ( ... ) {
+						setText(config.columnMap[COL_AZIMUTHAL_GAP], "-");
+						setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, QVariant());
 					}
 
 					if ( config.customColumn != -1 ) {
@@ -4712,6 +4743,7 @@ void EventListView::sortItems(int col) {
 	     col == _itemConfig.columnMap[COL_M] ||
 	     col == _itemConfig.columnMap[COL_PHASES] ||
 	     col == _itemConfig.columnMap[COL_RMS] ||
+	     col == _itemConfig.columnMap[COL_AZIMUTHAL_GAP] ||
 	     col == _itemConfig.columnMap[COL_LAT] ||
 	     col == _itemConfig.columnMap[COL_LON] ||
 	     col == _itemConfig.columnMap[COL_DEPTH] )
