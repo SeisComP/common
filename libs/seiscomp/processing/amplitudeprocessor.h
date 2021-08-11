@@ -356,7 +356,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		                              AmplitudeValue *amplitude,
 		                              double *period, double *snr) = 0;
 
-		//! Computes the noise of data in the range [i1,i2] and returns the offfset and
+		//! Computes the noise of data in the range [i1,i2] and returns the offset and
 		//! the amplitude in 'offset' and 'amplitude'
 		//! The default implementation takes the median of the data as offset and
 		//! twice the rms regarding the offset as amplitude
