@@ -24,9 +24,12 @@
 #include <vector>
 #include <string>
 #include <complex>
+#include <cstdint>
+
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core/array.h>
 #include <seiscomp/core/arrayfactory.h>
+
 
 #ifdef WIN32
 	#if defined(min)
@@ -37,7 +40,9 @@
 	#endif
 #endif
 
+
 namespace Seiscomp {
+
 
 /**
  * Class defining different types of arrays (such as CharArray, IntArray, FloatArray, DoubleArray).
@@ -216,9 +221,13 @@ typedef NumericArray<char> CharArray;
 TYPEDEF_SMARTPOINTER(CharArray);
 TYPEDEF_CONST_SMARTPOINTER(CharArray);
 
-typedef NumericArray<int> IntArray;
-TYPEDEF_SMARTPOINTER(IntArray);
-TYPEDEF_CONST_SMARTPOINTER(IntArray);
+typedef NumericArray<std::int32_t> Int32Array;
+TYPEDEF_SMARTPOINTER(Int32Array);
+TYPEDEF_CONST_SMARTPOINTER(Int32Array);
+
+typedef Int32Array IntArray;
+typedef Int32ArrayPtr IntArrayPtr;
+typedef Int32ArrayCPtr IntArrayCPtr;
 
 typedef NumericArray<float> FloatArray;
 TYPEDEF_SMARTPOINTER(FloatArray);
@@ -292,5 +301,6 @@ inline typename TypedArray<T>::const_iterator TypedArray<T>::end() const {
 
 
 }
+
 
 #endif

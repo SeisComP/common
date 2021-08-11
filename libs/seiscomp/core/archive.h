@@ -216,56 +216,56 @@ class Archive {
 	// ------------------------------------------------------------------
 	public:
 		//! Reads an integer
-		virtual void read(std::int8_t& value) = 0;
-		virtual void read(std::int16_t& value) = 0;
-		virtual void read(std::int32_t& value) = 0;
-		virtual void read(std::int64_t& value) = 0;
+		virtual void read(std::int8_t &value) = 0;
+		virtual void read(std::int16_t &value) = 0;
+		virtual void read(std::int32_t &value) = 0;
+		virtual void read(std::int64_t &value) = 0;
 
 		//! Reads a float
-		virtual void read(float& value) = 0;
+		virtual void read(float &value) = 0;
 		//! Reads a double
-		virtual void read(double& value) = 0;
+		virtual void read(double &value) = 0;
 		//! Reads a float complex
-		virtual void read(std::complex<float>& value) = 0;
+		virtual void read(std::complex<float> &value) = 0;
 		//! Reads a double complex
-		virtual void read(std::complex<double>& value) = 0;
+		virtual void read(std::complex<double> &value) = 0;
 		//! Reads a boolean
-		virtual void read(bool& value) = 0;
+		virtual void read(bool &value) = 0;
 
 		//! Reads a vector of chars
-		virtual void read(std::vector<char>& value) = 0;
+		virtual void read(std::vector<char> &value) = 0;
 
 		//! Reads a vector of ints
-		virtual void read(std::vector<std::int8_t>& value) = 0;
-		virtual void read(std::vector<std::int16_t>& value) = 0;
-		virtual void read(std::vector<std::int32_t>& value) = 0;
-		virtual void read(std::vector<std::int64_t>& value) = 0;
+		virtual void read(std::vector<std::int8_t> &value) = 0;
+		virtual void read(std::vector<std::int16_t> &value) = 0;
+		virtual void read(std::vector<std::int32_t> &value) = 0;
+		virtual void read(std::vector<std::int64_t> &value) = 0;
 
 		//! Reads a vector of floats
-		virtual void read(std::vector<float>& value) = 0;
+		virtual void read(std::vector<float> &value) = 0;
 
 		//! Reads a vector of doubles
-		virtual void read(std::vector<double>& value) = 0;
+		virtual void read(std::vector<double> &value) = 0;
 
 		//! Reads a vector of complex doubles
-		virtual void read(std::vector<std::complex<double> >& value) = 0;
+		virtual void read(std::vector<std::complex<double> > &value) = 0;
 
 		//! Reads a vector of strings
-		virtual void read(std::vector<std::string>& value) = 0;
+		virtual void read(std::vector<std::string> &value) = 0;
 
 		//! Reads a vector of time
-		virtual void read(std::vector<Time>& value) = 0;
+		virtual void read(std::vector<Time> &value) = 0;
 
 		//! Reads a string
-		virtual void read(std::string& value) = 0;
+		virtual void read(std::string &value) = 0;
 
 		//! Reads a time
-		virtual void read(Time& value) = 0;
+		virtual void read(Time &value) = 0;
 
 		template <typename T>
-		void read(T& object);
+		void read(T &object);
 
-		void read(ROOT_TYPE& object);
+		void read(ROOT_TYPE &object);
 
 		//! Reads a generic pointer.
 		//! When the referenced type is not registered, nothing will be
@@ -273,13 +273,13 @@ class Archive {
 		//! Reading pointer to non class types (int, float, ...) implies
 		//! compiler errors.
 		template <typename T>
-		void read(T*& object);
+		void read(T *&object);
 
 		template <typename T>
-		void read(::boost::intrusive_ptr<T>& object);
+		void read(::boost::intrusive_ptr<T> &object);
 
 		template <typename T>
-		void read(::boost::optional<T>& object);
+		void read(::boost::optional<T> &object);
 
 
 	// ------------------------------------------------------------------
@@ -297,47 +297,47 @@ class Archive {
 		//! Writes a double
 		virtual void write(double value) = 0;
 		//! Writes a float complex
-		virtual void write(std::complex<float>& value) = 0;
+		virtual void write(std::complex<float> &value) = 0;
 		//! Writes a double complex
-		virtual void write(std::complex<double>& value) = 0;
+		virtual void write(std::complex<double> &value) = 0;
 		//! Writes a boolean
 		virtual void write(bool value) = 0;
 
 		//! Writes a vector of chars
-		virtual void write(std::vector<char>& value) = 0;
+		virtual void write(std::vector<char> &value) = 0;
 
 		//! Writes a vector of ints
-		virtual void write(std::vector<std::int8_t>& value) = 0;
-		virtual void write(std::vector<std::int16_t>& value) = 0;
-		virtual void write(std::vector<std::int32_t>& value) = 0;
-		virtual void write(std::vector<std::int64_t>& value) = 0;
+		virtual void write(std::vector<std::int8_t> &value) = 0;
+		virtual void write(std::vector<std::int16_t> &value) = 0;
+		virtual void write(std::vector<std::int32_t> &value) = 0;
+		virtual void write(std::vector<std::int64_t> &value) = 0;
 
 		//! Writes a vector of floats
-		virtual void write(std::vector<float>& value) = 0;
+		virtual void write(std::vector<float> &value) = 0;
 
 		//! Writes a vector of doubles
-		virtual void write(std::vector<double>& value) = 0;
+		virtual void write(std::vector<double> &value) = 0;
 
 		//! Writes a vector of complex doubles
-		virtual void write(std::vector<std::complex<double> >& value) = 0;
+		virtual void write(std::vector<std::complex<double> > &value) = 0;
 
 		//! Writes a vector of strings
-		virtual void write(std::vector<std::string>& value) = 0;
+		virtual void write(std::vector<std::string> &value) = 0;
 
 		//! Writes a string
-		virtual void write(std::string& value) = 0;
+		virtual void write(std::string &value) = 0;
 
 		//! Reads a vector of time
-		virtual void write(std::vector<Time>& value) = 0;
+		virtual void write(std::vector<Time> &value) = 0;
 
 		//! Writes a time
-		virtual void write(Seiscomp::Core::Time& value) = 0;
+		virtual void write(Seiscomp::Core::Time &value) = 0;
 
 		//! Writes an object
 		template <typename T>
-		void write(T& object);
+		void write(T &object);
 
-		void write(ROOT_TYPE& object);
+		void write(ROOT_TYPE &object);
 
 		//! Entry method for writing object pointers
 		template <typename T>
@@ -450,21 +450,21 @@ class Archive {
 
 			const char* className() { return nullptr; }
 
-			T* target;
+			T *target;
 		};
 
-		bool findObject(const char* name, const char* targetClass, bool nullable);
+		bool findObject(const char *name, const char *targetClass, bool nullable);
 	
 		//! Locates an object inside the archive. A derived class
 		//! must provide its specific location code.
-		virtual bool locateObjectByName(const char* name, const char* targetClass, bool nullable) = 0;
-		virtual bool locateNextObjectByName(const char* name, const char* targetClass) = 0;
+		virtual bool locateObjectByName(const char *name, const char *targetClass, bool nullable) = 0;
+		virtual bool locateNextObjectByName(const char *name, const char *targetClass) = 0;
 
 		//! Whenever a nullptr object has to be serialized this method will be called.
 		//! It has a default implementation (which does nothing) and does not need
 		//! to be implemented by derived classes. But sometimes this information
 		//! maybe quite useful. This method gets never called while in read mode.
-		virtual void locateNullObjectByName(const char* name, const char* targetClass, bool first);
+		virtual void locateNullObjectByName(const char *name, const char *targetClass, bool first);
 
 		//! When a sequence is to be read this methods gets called
 		virtual void readSequence();
@@ -497,8 +497,8 @@ class Archive {
 		    Do_really_cool_things_after_serialization();
 		    \endcode
 		 */
-		virtual void serialize(ROOT_TYPE* object);
-		virtual void serialize(SerializeDispatcher&);
+		virtual void serialize(ROOT_TYPE *object);
+		virtual void serialize(SerializeDispatcher &);
 
 
 	// ------------------------------------------------------------------
@@ -506,27 +506,27 @@ class Archive {
 	// ------------------------------------------------------------------
 	private:
 		template <typename T>
-		void readPtr(ROOT_TYPE*, T*& object);
+		void readPtr(ROOT_TYPE *, T *&object);
 
 		template <typename T>
-		void readPtr(void*, T*& object);
+		void readPtr(void*, T *&object);
 		
 		//! Helper function to distinguish between pointer and non pointer
 		//! types to avoid nullptr pointer serialization.
 		template <typename T>
-		void read(const char* name, T& object, const char* targetClass);
+		void read(const char *name, T &object, const char *targetClass);
 
 		template <typename T>
-		void read(const char* name, T*& object, const char* targetClass);
+		void read(const char *name, T *&object, const char *targetClass);
 
 		template <typename T>
-		void read(const char* name, ::boost::intrusive_ptr<T>& object, const char* targetClass);
+		void read(const char *name, ::boost::intrusive_ptr<T> &object, const char *targetClass);
 
 		template <typename T>
-		void read(const char* name, ::boost::optional<T>& object, const char* targetClass);
+		void read(const char *name, ::boost::optional<T> &object, const char *targetClass);
 		
 		template <typename T>
-		void write(const char* name, T& object, const char* targetClass);
+		void write(const char *name, T &object, const char *targetClass);
 
 		//! Helper function to distinguish between C pointer and SmartPointers
 		template <typename T>
@@ -534,11 +534,11 @@ class Archive {
 
 		//! Helper function to distinguish between C pointer and SmartPointers
 		template <typename T>
-		void write(const char* name, ::boost::intrusive_ptr<T>& object, const char* targetClass);
+		void write(const char *name, ::boost::intrusive_ptr<T> &object, const char *targetClass);
 
 		//! Helper function to distinguish between C pointer and Optionals
 		template <typename T>
-		void write(const char* name, ::boost::optional<T>& object, const char* targetClass);
+		void write(const char *name, ::boost::optional<T> &object, const char *targetClass);
 
 		int setChildHint(int h);
 

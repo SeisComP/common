@@ -39,7 +39,7 @@ Archive<ROOT_TYPE>::Archive()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
-bool Archive<ROOT_TYPE>::open(const char* dataSource) {
+bool Archive<ROOT_TYPE>::open(const char *dataSource) {
 	_isReading = true;
 	_validObject = true;
 	return true;
@@ -51,7 +51,7 @@ bool Archive<ROOT_TYPE>::open(const char* dataSource) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
-bool Archive<ROOT_TYPE>::create(const char* dataSource) {
+bool Archive<ROOT_TYPE>::create(const char *dataSource) {
 	_isReading = false;
 	_validObject = true;
 	return true;
@@ -125,7 +125,7 @@ void Archive<ROOT_TYPE>::readSequence() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
-bool Archive<ROOT_TYPE>::findObject(const char* name, const char* targetClass, bool nullable) {
+bool Archive<ROOT_TYPE>::findObject(const char *name, const char *targetClass, bool nullable) {
 	_found = _first ? locateObjectByName(name, targetClass, nullable)
 	                : locateNextObjectByName(name, targetClass);
 	return _found;
@@ -137,7 +137,7 @@ bool Archive<ROOT_TYPE>::findObject(const char* name, const char* targetClass, b
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
-void Archive<ROOT_TYPE>::serialize(ROOT_TYPE* object) {
+void Archive<ROOT_TYPE>::serialize(ROOT_TYPE *object) {
  	bool iterFlag = _first;
  	bool oldFound = _found;
  	_first = true;

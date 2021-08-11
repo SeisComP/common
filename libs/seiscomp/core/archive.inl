@@ -93,7 +93,7 @@ inline bool checkRootType(TYPE&) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE, typename TYPE>
-inline const char* checkClassName(const ROOT_TYPE**, const TYPE*) {
+inline const char *checkClassName(const ROOT_TYPE**, const TYPE*) {
 	return TYPE::ClassName();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -103,7 +103,7 @@ inline const char* checkClassName(const ROOT_TYPE**, const TYPE*) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE, typename TYPE>
-inline const char* checkClassName(const ROOT_TYPE*, const TYPE&) {
+inline const char *checkClassName(const ROOT_TYPE*, const TYPE&) {
 	return TYPE::ClassName();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -113,7 +113,7 @@ inline const char* checkClassName(const ROOT_TYPE*, const TYPE&) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE, typename TYPE>
-inline const char* checkClassName(const ::boost::intrusive_ptr<TYPE>*, const ::boost::intrusive_ptr<TYPE>&) {
+inline const char *checkClassName(const ::boost::intrusive_ptr<TYPE>*, const ::boost::intrusive_ptr<TYPE>&) {
 	return TYPE::ClassName();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -123,7 +123,7 @@ inline const char* checkClassName(const ::boost::intrusive_ptr<TYPE>*, const ::b
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE, typename TYPE>
-inline const char* checkClassName(const void**, const TYPE*) {
+inline const char *checkClassName(const void**, const TYPE*) {
 	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -133,7 +133,7 @@ inline const char* checkClassName(const void**, const TYPE*) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE, typename TYPE>
-inline const char* checkClassName(const void*, const TYPE&) {
+inline const char *checkClassName(const void*, const TYPE&) {
 	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -147,15 +147,15 @@ struct ClassQuery {};
 
 template <typename T>
 struct ClassQuery<T,0> {
-	const char* operator()() const { return nullptr; }
+	const char *operator()() const { return nullptr; }
 };
 template <typename T>
 struct ClassQuery<T,1> {
-	const char* operator()() const { return T::ClassName(); }
+	const char *operator()() const { return T::ClassName(); }
 };
 
 template <typename ROOT_TYPE, typename TYPE>
-const char* checkClassName(const ::boost::optional<TYPE>*, const ::boost::optional<TYPE>&) {
+const char *checkClassName(const ::boost::optional<TYPE>*, const ::boost::optional<TYPE>&) {
 	ClassQuery<TYPE, boost::is_base_of<ROOT_TYPE, TYPE>::value> query;
 	return query();
 }
@@ -362,7 +362,7 @@ inline Archive<ROOT_TYPE>& Archive<ROOT_TYPE>::operator<<(const ObjectNamer<std:
 template <typename ROOT_TYPE>
 template <typename T>
 inline Archive<ROOT_TYPE>& Archive<ROOT_TYPE>::operator>>(T*& object) {
-	const char* classname = T::ClassName();
+	const char *classname = T::ClassName();
 	if ( !classname )
 		return *this;
 
@@ -382,7 +382,7 @@ template <typename ROOT_TYPE>
 template <typename T>
 inline Archive<ROOT_TYPE>& Archive<ROOT_TYPE>::operator>>(::boost::intrusive_ptr<T>& object) {
 	//_validObject = true;
-	const char* classname = T::ClassName();
+	const char *classname = T::ClassName();
 	if ( !classname )
 		return *this;
 
@@ -399,7 +399,7 @@ inline Archive<ROOT_TYPE>& Archive<ROOT_TYPE>::operator>>(::boost::intrusive_ptr
 template <typename ROOT_TYPE, typename T>
 struct ContainerReader<ROOT_TYPE, T,1> {
 	void operator()(Archive<ROOT_TYPE>& ar, const ObjectNamer<T>& namedObject) {
-		const char* objectName = namedObject.name();
+		const char *objectName = namedObject.name();
 		typename T::Type value;
 
 		bool oldState = ar.success();
@@ -431,7 +431,7 @@ template <typename ROOT_TYPE, typename T>
 struct ContainerReader<ROOT_TYPE,T,0> {
 	void operator()(Archive<ROOT_TYPE>& ar, const ObjectNamer<T>& namedObject) {
 		// goto the object location in the archive
-		const char* classname = checkClassName<ROOT_TYPE>(&namedObject.object(), namedObject.object());
+		const char *classname = checkClassName<ROOT_TYPE>(&namedObject.object(), namedObject.object());
 		ar.read(namedObject.name(), namedObject.object(), classname);
 	}
 };
@@ -471,7 +471,7 @@ inline Archive<ROOT_TYPE>& Archive<ROOT_TYPE>::operator>>(const ObjectNamer<T>& 
 template <typename ROOT_TYPE, typename T>
 struct VectorReader<ROOT_TYPE, T,1> {
 void operator()(Archive<ROOT_TYPE>& ar, const ObjectNamer<std::vector<T> >& namedObject) {
-		const char* objectName = namedObject.name();
+		const char *objectName = namedObject.name();
 		T value;
 
 		bool oldState = ar.success();
@@ -554,7 +554,7 @@ inline Archive<ROOT_TYPE>& Archive<ROOT_TYPE>::operator>>(const ObjectNamer<std:
 template <typename ROOT_TYPE, typename T>
 struct ListReader<ROOT_TYPE, T,1> {
 void operator()(Archive<ROOT_TYPE>& ar, const ObjectNamer<std::list<T> >& namedObject) {
-		const char* objectName = namedObject.name();
+		const char *objectName = namedObject.name();
 		T value;
 
 		bool oldState = ar.success();
@@ -658,7 +658,7 @@ inline void Archive<ROOT_TYPE>::read(T*& object) {
 template <typename ROOT_TYPE>
 template <typename T>
 inline void Archive<ROOT_TYPE>::read(::boost::intrusive_ptr<T>& object) {
-	T* ref = nullptr;
+	T *ref = nullptr;
 	read(ref);
 	object = ref;
 }
@@ -760,7 +760,7 @@ inline void Archive<ROOT_TYPE>::read(T& object) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 template <typename T>
-inline void Archive<ROOT_TYPE>::read(const char* name, T& object, const char* targetClass) {
+inline void Archive<ROOT_TYPE>::read(const char *name, T &object, const char *targetClass) {
 	if ( findObject(name, targetClass, false) )
 		read(object);
 	else if ( !(boost::is_base_of<std::string, T>::value || boost::is_same<std::string, T>::value) )
@@ -776,7 +776,7 @@ inline void Archive<ROOT_TYPE>::read(const char* name, T& object, const char* ta
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 template <typename T>
-inline void Archive<ROOT_TYPE>::read(const char* name, T*& object, const char* targetClass) {
+inline void Archive<ROOT_TYPE>::read(const char *name, T *&object, const char *targetClass) {
 	if ( findObject(name, targetClass, true) )
 		read(object);
 	else {
@@ -792,7 +792,7 @@ inline void Archive<ROOT_TYPE>::read(const char* name, T*& object, const char* t
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 template <typename T>
-inline void Archive<ROOT_TYPE>::read(const char* name, ::boost::intrusive_ptr<T>& object, const char* targetClass) {
+inline void Archive<ROOT_TYPE>::read(const char *name, ::boost::intrusive_ptr<T> &object, const char *targetClass) {
 	if ( findObject(name, targetClass, true) )
 		read(object);
 	else {
@@ -808,7 +808,7 @@ inline void Archive<ROOT_TYPE>::read(const char* name, ::boost::intrusive_ptr<T>
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 template <typename T>
-inline void Archive<ROOT_TYPE>::read(const char* name, ::boost::optional<T>& object, const char* targetClass) {
+inline void Archive<ROOT_TYPE>::read(const char *name, ::boost::optional<T> &object, const char *targetClass) {
 	if ( findObject(name, targetClass, true) )
 		read(object);
 	else {
@@ -841,7 +841,7 @@ inline void Archive<ROOT_TYPE>::write(T& object) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 template <typename T>
-inline void Archive<ROOT_TYPE>::write(T* object) {
+inline void Archive<ROOT_TYPE>::write(T *object) {
 	write(*object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -852,7 +852,7 @@ inline void Archive<ROOT_TYPE>::write(T* object) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 template <typename T>
-inline void Archive<ROOT_TYPE>::write(const char* name, T& object, const char* targetClass) {
+inline void Archive<ROOT_TYPE>::write(const char *name, T &object, const char *targetClass) {
 	// goto the object location in the archive
 	findObject(name, targetClass, false);
 	// write the object data
@@ -866,7 +866,7 @@ inline void Archive<ROOT_TYPE>::write(const char* name, T& object, const char* t
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 template <typename T>
-inline void Archive<ROOT_TYPE>::write(const char* name, T* object, const char* targetClass) {
+inline void Archive<ROOT_TYPE>::write(const char *name, T *object, const char *targetClass) {
 	if ( !object ) {
 		locateNullObjectByName(name, targetClass, _first);
 		return;
@@ -883,7 +883,7 @@ inline void Archive<ROOT_TYPE>::write(const char* name, T* object, const char* t
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 template <typename T>
-inline void Archive<ROOT_TYPE>::write(const char* name, ::boost::intrusive_ptr<T>& object, const char* targetClass) {
+inline void Archive<ROOT_TYPE>::write(const char *name, ::boost::intrusive_ptr<T> &object, const char *targetClass) {
 	write(name, object.get(), targetClass);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -894,7 +894,7 @@ inline void Archive<ROOT_TYPE>::write(const char* name, ::boost::intrusive_ptr<T
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 template <typename T>
-inline void Archive<ROOT_TYPE>::write(const char* name, ::boost::optional<T>& object, const char* targetClass) {
+inline void Archive<ROOT_TYPE>::write(const char *name, ::boost::optional<T> &object, const char *targetClass) {
 	write(name, object.get_ptr(), targetClass);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

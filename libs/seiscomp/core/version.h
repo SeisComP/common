@@ -55,6 +55,28 @@ namespace Core {
    - Added locale to Seiscomp::Processing::MagnitudeProcessor::computeMagnitude
    - Removed Seiscomp::Processing::MagnitudeProcessor::correctMagnitude
    - Added signal Seiscomp::Gui::EventListView::visibleEventCountChanged()
+   - Removed Seiscomp::Core::Generic::Archive::read(int)
+   - Removed Seiscomp::Core::Generic::Archive::write(int)
+   - Removed Seiscomp::Core::Generic::Archive::read(time_t)
+   - Removed Seiscomp::Core::Generic::Archive::write(time_t)
+   - Removed Seiscomp::Core::Generic::Archive::read(std::vector<int>)
+   - Removed Seiscomp::Core::Generic::Archive::write(std::vector<int>)
+   - Added Seiscomp::Core::Generic::Archive::read(int8_t)
+   - Added Seiscomp::Core::Generic::Archive::write(int8_t)
+   - Added Seiscomp::Core::Generic::Archive::read(int16_t)
+   - Added Seiscomp::Core::Generic::Archive::write(int16_t)
+   - Added Seiscomp::Core::Generic::Archive::read(int32_t)
+   - Added Seiscomp::Core::Generic::Archive::write(int32_t)
+   - Added Seiscomp::Core::Generic::Archive::read(int64_t)
+   - Added Seiscomp::Core::Generic::Archive::write(int64_t)
+   - Added Seiscomp::Core::Generic::Archive::read(std::vector<int8_t>)
+   - Added Seiscomp::Core::Generic::Archive::write(std::vector<int8_t>)
+   - Added Seiscomp::Core::Generic::Archive::read(std::vector<int16_t>)
+   - Added Seiscomp::Core::Generic::Archive::write(std::vector<int16_t>)
+   - Added Seiscomp::Core::Generic::Archive::read(std::vector<int32_t>)
+   - Added Seiscomp::Core::Generic::Archive::write(std::vector<int32_t>)
+   - Added Seiscomp::Core::Generic::Archive::read(std::vector<int64_t>)
+   - Added Seiscomp::Core::Generic::Archive::write(std::vector<int64_t>)
 
  "14.3.0"   0x0E0300
    - Added Seiscomp::RingBuffer::numberOfRecordsToStore()
