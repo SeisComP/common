@@ -39,7 +39,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLh : public AbstractAmplitudeProc
 };
 
 
-//! Proxy amplitude processor that holds to MLv processors to calculate
+//! Proxy amplitude processor that holds two MLh processors to calculate
 //! the amplitudes on both horizontals and then averages the result.
 //! This class does not handle waveforms itself. It directs them to the
 //! corresponding amplitude processors instead.
