@@ -55,6 +55,7 @@
 #include "seiscomp/datamodel/databasereader.h"
 #include "seiscomp/datamodel/databasequery.h"
 #include "seiscomp/datamodel/messages.h"
+#include "seiscomp/datamodel/version.h"
 %}
 
 %newobject Seiscomp::DataModel::DatabaseReader::loadEventParameters;
@@ -237,5 +238,6 @@ optional_enum(Seiscomp::DataModel::StationGroupType);
 %include "seiscomp/datamodel/databasereader.h"
 %include "seiscomp/datamodel/databasequery.h"
 %include "seiscomp/datamodel/messages.h"
+%include "seiscomp/datamodel/version.h"
 
 %include "datamodelext.i"
