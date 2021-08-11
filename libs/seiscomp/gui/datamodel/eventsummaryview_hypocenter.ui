@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>487</width>
-    <height>663</height>
+    <width>473</width>
+    <height>707</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -406,14 +406,14 @@
         </property>
        </widget>
       </item>
-	  <item row="8" column="0" >
+      <item row="8" column="0" >
        <widget class="QLabel" name="labelMinDistTxt" >
         <property name="text" >
          <string>Min dist:</string>
         </property>
        </widget>
       </item>
-	  <item row="9" column="0" >
+      <item row="9" column="0" >
        <widget class="QLabel" name="labelMaxDistTxt" >
         <property name="text" >
          <string>Max dist:</string>
@@ -490,61 +490,20 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <item row="8" column="0" colspan="3" >
-       <widget class="QLabel" name="_lbOriginStatusAutomatic" >
-        <property name="font" >
-         <font>
-          <family>Sans Serif</family>
-          <pointsize>14</pointsize>
-          <weight>50</weight>
-          <italic>false</italic>
-          <bold>false</bold>
-          <underline>false</underline>
-          <strikeout>false</strikeout>
-         </font>
-        </property>
-        <property name="text" >
-         <string/>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0" colspan="3" >
+      <item row="7" column="0" colspan="3" >
        <widget class="QLabel" name="labelVDistanceAutomatic" >
         <property name="text" >
          <string>&lt;Spacer></string>
         </property>
        </widget>
       </item>
-      <item row="5" column="0" >
-       <widget class="QLabel" name="_lbCommentAutomatic" >
+      <item row="4" column="0" >
+       <widget class="QLabel" name="_lbRMSAutomatic" >
         <property name="text" >
-         <string>-</string>
+         <string>0.0</string>
         </property>
         <property name="alignment" >
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="QLabel" name="_lbDepthUnitAutomatic" >
-        <property name="text" >
-         <string>km</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2" >
-       <widget class="QLabel" name="_lbLongErrorAutomatic" >
-        <property name="text" >
-         <string>+/- 0 km</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -584,6 +543,57 @@
         </property>
        </widget>
       </item>
+      <item row="9" column="0" colspan="3" >
+       <widget class="QLabel" name="_lbOriginStatusAutomatic" >
+        <property name="font" >
+         <font>
+          <family>Sans Serif</family>
+          <pointsize>14</pointsize>
+          <weight>50</weight>
+          <italic>false</italic>
+          <bold>false</bold>
+          <underline>false</underline>
+          <strikeout>false</strikeout>
+         </font>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLabel" name="_lbLongitudeUnitAutomatic" >
+        <property name="text" >
+         <string>° E</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QLabel" name="_lbDepthUnitAutomatic" >
+        <property name="text" >
+         <string>km</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" >
+       <widget class="QLabel" name="_lbCommentAutomatic" >
+        <property name="text" >
+         <string>-</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
       <item row="3" column="0" >
        <widget class="QLabel" name="_lbNoPhasesAutomatic" >
         <property name="text" >
@@ -594,7 +604,7 @@
         </property>
        </widget>
       </item>
-      <item row="9" column="0" colspan="2" >
+      <item row="10" column="0" colspan="2" >
        <spacer>
         <property name="orientation" >
          <enum>Qt::Vertical</enum>
@@ -607,20 +617,31 @@
         </property>
        </spacer>
       </item>
+      <item row="8" column="0" colspan="3" >
+       <widget class="QLabel" name="_lbAgencyAutomatic" >
+        <property name="font" >
+         <font>
+          <family>Sans Serif</family>
+          <pointsize>14</pointsize>
+          <weight>50</weight>
+          <italic>false</italic>
+          <bold>false</bold>
+          <underline>false</underline>
+          <strikeout>false</strikeout>
+         </font>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="0" >
        <widget class="QLabel" name="_lbLongitudeAutomatic" >
         <property name="text" >
          <string>0.00</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0" >
-       <widget class="QLabel" name="_lbRMSAutomatic" >
-        <property name="text" >
-         <string>0.0</string>
         </property>
         <property name="alignment" >
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -647,6 +668,16 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="2" >
+       <widget class="QLabel" name="_lbLongErrorAutomatic" >
+        <property name="text" >
+         <string>+/- 0 km</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="1" >
        <widget class="QLabel" name="_lbLatitudeUnitAutomatic" >
         <property name="sizePolicy" >
@@ -665,34 +696,20 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
-       <widget class="QLabel" name="_lbLongitudeUnitAutomatic" >
+      <item row="5" column="0" >
+       <widget class="QLabel" name="_lbAzGapAutomatic" >
         <property name="text" >
-         <string>° E</string>
+         <string>-</string>
         </property>
         <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
-      <item row="7" column="0" colspan="3" >
-       <widget class="QLabel" name="_lbAgencyAutomatic" >
-        <property name="font" >
-         <font>
-          <family>Sans Serif</family>
-          <pointsize>14</pointsize>
-          <weight>50</weight>
-          <italic>false</italic>
-          <bold>false</bold>
-          <underline>false</underline>
-          <strikeout>false</strikeout>
-         </font>
-        </property>
+      <item row="5" column="1" >
+       <widget class="QLabel" name="label_2" >
         <property name="text" >
-         <string/>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         <string>°</string>
         </property>
        </widget>
       </item>
@@ -1043,40 +1060,13 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <item row="6" column="0" colspan="4" >
-       <widget class="QLabel" name="labelVDistance" >
+      <item row="4" column="0" >
+       <widget class="QLabel" name="_lbRMSTxt" >
         <property name="text" >
-         <string>&lt;Spacer></string>
-        </property>
-       </widget>
-      </item>
-      <item row="12" column="0" >
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>20</width>
-          <height>0</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="5" column="1" >
-       <widget class="QLabel" name="_lbComment" >
-        <property name="text" >
-         <string>-</string>
+         <string>RMS Residual:</string>
         </property>
         <property name="alignment" >
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0" >
-       <widget class="QLabel" name="_lbCommentTxt" >
-        <property name="text" >
-         <string>Custom:</string>
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -1090,64 +1080,53 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0" >
-       <widget class="QLabel" name="_lbRMSTxt" >
-        <property name="text" >
-         <string>RMS Residual:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="1" colspan="3" >
+      <item row="12" column="1" colspan="3" >
        <widget class="QLabel" name="_lbEventID" >
         <property name="text" >
          <string/>
         </property>
        </widget>
       </item>
-      <item row="3" column="0" >
-       <widget class="QLabel" name="_lbNoPhasesTxt" >
+      <item row="10" column="1" colspan="3" >
+       <widget class="QLabel" name="_lbFirstLocation" >
+        <property name="font" >
+         <font>
+          <family>Verdana</family>
+          <pointsize>12</pointsize>
+          <weight>50</weight>
+          <italic>false</italic>
+          <bold>false</bold>
+          <underline>false</underline>
+          <strikeout>false</strikeout>
+         </font>
+        </property>
         <property name="text" >
-         <string>Phase Count:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="10" column="0" >
-       <widget class="QLabel" name="_lbThisLocTxt" >
-        <property name="text" >
-         <string>This Location:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="_lbLatitudeTxt" >
-        <property name="text" >
-         <string>Latitude:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="QLabel" name="_lbDepth" >
-        <property name="text" >
-         <string>0</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <string/>
         </property>
        </widget>
       </item>
       <item row="8" column="1" colspan="3" >
+       <widget class="QLabel" name="_lbAgency" >
+        <property name="font" >
+         <font>
+          <family>Sans Serif</family>
+          <pointsize>14</pointsize>
+          <weight>50</weight>
+          <italic>false</italic>
+          <bold>false</bold>
+          <underline>false</underline>
+          <strikeout>false</strikeout>
+         </font>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="1" colspan="3" >
        <widget class="QLabel" name="_lbOriginStatus" >
         <property name="font" >
          <font>
@@ -1168,27 +1147,30 @@
         </property>
        </widget>
       </item>
-      <item row="11" column="0" >
-       <widget class="QLabel" name="_lbEventIDTxt" >
+      <item row="2" column="0" >
+       <widget class="QLabel" name="_lbDepthTxt" >
         <property name="text" >
-         <string>EventID:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="0" >
-       <widget class="QLabel" name="_lbOriginStatusTxt" >
-        <property name="text" >
-         <string>Status:</string>
+         <string>Depth:</string>
         </property>
         <property name="alignment" >
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
-      <item row="1" column="3" >
-       <widget class="QLabel" name="_lbLongError" >
+      <item row="0" column="0" >
+       <widget class="QLabel" name="_lbLatitudeTxt" >
         <property name="text" >
-         <string>+/- 0 km</string>
+         <string>Latitude:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0" >
+       <widget class="QLabel" name="_lbFirstLocTxt" >
+        <property name="text" >
+         <string>First Location:</string>
         </property>
         <property name="alignment" >
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1213,16 +1195,6 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="2" >
-       <widget class="QLabel" name="_lbDepthUnit" >
-        <property name="text" >
-         <string>km</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="1" >
        <widget class="QLabel" name="_lbNoPhases" >
         <property name="text" >
@@ -1230,16 +1202,6 @@
         </property>
         <property name="alignment" >
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="0" >
-       <widget class="QLabel" name="_lbFirstLocTxt" >
-        <property name="text" >
-         <string>First Location:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -1253,12 +1215,12 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="1" colspan="3" >
-       <widget class="QLabel" name="_lbAgency" >
+      <item row="11" column="1" colspan="3" >
+       <widget class="QLabel" name="_lbThisLocation" >
         <property name="font" >
          <font>
-          <family>Sans Serif</family>
-          <pointsize>14</pointsize>
+          <family>Verdana</family>
+          <pointsize>12</pointsize>
           <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
@@ -1269,8 +1231,110 @@
         <property name="text" >
          <string/>
         </property>
+       </widget>
+      </item>
+      <item row="13" column="0" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>20</width>
+          <height>0</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="8" column="0" >
+       <widget class="QLabel" name="_lbAgencyTxt" >
+        <property name="text" >
+         <string>Agency:</string>
+        </property>
         <property name="alignment" >
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3" >
+       <widget class="QLabel" name="_lbDepthError" >
+        <property name="text" >
+         <string>+/- 0 km</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="0" >
+       <widget class="QLabel" name="_lbEventIDTxt" >
+        <property name="text" >
+         <string>EventID:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3" >
+       <widget class="QLabel" name="_lbLongError" >
+        <property name="text" >
+         <string>+/- 0 km</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0" >
+       <widget class="QLabel" name="_lbThisLocTxt" >
+        <property name="text" >
+         <string>This Location:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0" >
+       <widget class="QLabel" name="_lbOriginStatusTxt" >
+        <property name="text" >
+         <string>Status:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLabel" name="_lbLongitude" >
+        <property name="text" >
+         <string>0.00</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QLabel" name="_lbLatitude" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>5</hsizetype>
+          <vsizetype>5</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string>0.00</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0" colspan="4" >
+       <widget class="QLabel" name="labelVDistance" >
+        <property name="text" >
+         <string>&lt;Spacer></string>
         </property>
        </widget>
       </item>
@@ -1284,13 +1348,13 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
-       <widget class="QLabel" name="_lbLongitude" >
+      <item row="3" column="0" >
+       <widget class="QLabel" name="_lbNoPhasesTxt" >
         <property name="text" >
-         <string>0.00</string>
+         <string>Phase Count:</string>
         </property>
         <property name="alignment" >
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -1312,87 +1376,64 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="3" >
-       <widget class="QLabel" name="_lbDepthError" >
+      <item row="2" column="1" >
+       <widget class="QLabel" name="_lbDepth" >
         <property name="text" >
-         <string>+/- 0 km</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0" >
-       <widget class="QLabel" name="_lbAgencyTxt" >
-        <property name="text" >
-         <string>Agency:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="10" column="1" colspan="3" >
-       <widget class="QLabel" name="_lbThisLocation" >
-        <property name="font" >
-         <font>
-          <family>Verdana</family>
-          <pointsize>12</pointsize>
-          <weight>50</weight>
-          <italic>false</italic>
-          <bold>false</bold>
-          <underline>false</underline>
-          <strikeout>false</strikeout>
-         </font>
-        </property>
-        <property name="text" >
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="_lbDepthTxt" >
-        <property name="text" >
-         <string>Depth:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="1" colspan="3" >
-       <widget class="QLabel" name="_lbFirstLocation" >
-        <property name="font" >
-         <font>
-          <family>Verdana</family>
-          <pointsize>12</pointsize>
-          <weight>50</weight>
-          <italic>false</italic>
-          <bold>false</bold>
-          <underline>false</underline>
-          <strikeout>false</strikeout>
-         </font>
-        </property>
-        <property name="text" >
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" >
-       <widget class="QLabel" name="_lbLatitude" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>5</hsizetype>
-          <vsizetype>5</vsizetype>
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text" >
-         <string>0.00</string>
+         <string>0</string>
         </property>
         <property name="alignment" >
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" >
+       <widget class="QLabel" name="_lbDepthUnit" >
+        <property name="text" >
+         <string>km</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" >
+       <widget class="QLabel" name="_lbCommentTxt" >
+        <property name="text" >
+         <string>Custom:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1" >
+       <widget class="QLabel" name="_lbComment" >
+        <property name="text" >
+         <string>-</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" >
+       <widget class="QLabel" name="_lbGapTxt" >
+        <property name="text" >
+         <string>Azimuthal Gap:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1" >
+       <widget class="QLabel" name="_lbAzGap" >
+        <property name="text" >
+         <string>-</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2" >
+       <widget class="QLabel" name="label" >
+        <property name="text" >
+         <string>°</string>
         </property>
        </widget>
       </item>

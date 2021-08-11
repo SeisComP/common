@@ -823,9 +823,11 @@ void EventSummaryView::init() {
 	uiHypocenter._lbNoPhasesTxt->setFont(SCScheme.fonts.normal);
 	uiHypocenter._lbNoPhases->setFont(SCScheme.fonts.normal);
 	uiHypocenter._lbRMSTxt->setFont(SCScheme.fonts.normal);
+	uiHypocenter._lbGapTxt->setFont(SCScheme.fonts.normal);
 	uiHypocenter._lbComment->setFont(SCScheme.fonts.normal);
 	uiHypocenter._lbCommentTxt->setFont(SCScheme.fonts.normal);
 	uiHypocenter._lbRMS->setFont(SCScheme.fonts.normal);
+	uiHypocenter._lbAzGap->setFont(SCScheme.fonts.normal);
 	uiHypocenter._lbAgencyTxt->setFont(SCScheme.fonts.normal);
 	uiHypocenter._lbAgency->setFont(SCScheme.fonts.normal);
 	uiHypocenter._lbOriginStatusTxt->setFont(SCScheme.fonts.normal);
@@ -850,6 +852,7 @@ void EventSummaryView::init() {
 	uiHypocenter._lbDepthErrorAutomatic->setFont(SCScheme.fonts.normal);
 	uiHypocenter._lbNoPhasesAutomatic->setFont(SCScheme.fonts.normal);
 	uiHypocenter._lbRMSAutomatic->setFont(SCScheme.fonts.normal);
+	uiHypocenter._lbAzGapAutomatic->setFont(SCScheme.fonts.normal);
 	uiHypocenter._lbCommentAutomatic->setFont(SCScheme.fonts.normal);
 	uiHypocenter._lbAgencyAutomatic->setFont(SCScheme.fonts.normal);
 	uiHypocenter._lbOriginStatusAutomatic->setFont(SCScheme.fonts.normal);
@@ -1697,10 +1700,18 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 		catch(Core::ValueException&) {
 			uiHypocenter._lbRMS->setText("--");
 		}
+
+		try {
+			uiHypocenter._lbAzGap->setText(QString("%1").arg(quality.azimuthalGap(), 0, 'f', 0));
+		}
+		catch(Core::ValueException&) {
+			uiHypocenter._lbAzGap->setText("--");
+		}
 	}
 	catch ( ... ) {
 		uiHypocenter._lbNoPhases->setText("--");
 		uiHypocenter._lbRMS->setText("--");
+		uiHypocenter._lbAzGap->setText("--");
 	}
 
 	if ( _displayComment ) {
@@ -1863,10 +1874,18 @@ void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
 		catch(Core::ValueException&) {
 			uiHypocenter._lbRMSAutomatic->setText("--");
 		}
+
+		try {
+			uiHypocenter._lbAzGapAutomatic->setText(QString("%1").arg(quality.azimuthalGap(), 0, 'f', 0));
+		}
+		catch(Core::ValueException&) {
+			uiHypocenter._lbAzGapAutomatic->setText("--");
+		}
 	}
 	catch ( ... ) {
 		uiHypocenter._lbNoPhasesAutomatic->setText("--");
 		uiHypocenter._lbRMSAutomatic->setText("--");
+		uiHypocenter._lbAzGapAutomatic->setText("--");
 	}
 
 
@@ -2527,6 +2546,7 @@ void EventSummaryView::clearOriginParameter(){
 
 	uiHypocenter._lbNoPhases->setText("--");
 	uiHypocenter._lbRMS->setText("--");
+	uiHypocenter._lbAzGap->setText("--");
 //	uiHypocenter._lbMinDist->setText("--");
 
 	uiHypocenter._lbLatError->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
@@ -2567,6 +2587,7 @@ void EventSummaryView::clearAutomaticOriginParameter() {
 	uiHypocenter._lbDepthUnitAutomatic->setText("");
 	uiHypocenter._lbNoPhasesAutomatic->setText("--");
 	uiHypocenter._lbRMSAutomatic->setText("--");
+	uiHypocenter._lbAzGapAutomatic->setText("--");
 	uiHypocenter._lbCommentAutomatic->setText(_displayCommentDefault.c_str());
 	uiHypocenter._lbLatErrorAutomatic->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
 	uiHypocenter._lbLongErrorAutomatic->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
