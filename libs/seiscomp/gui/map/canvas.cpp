@@ -388,13 +388,14 @@ void Canvas::init() {
 	// available projections
 	const char *projection = "Rectangular";
 	if ( !SCScheme.map.projection.empty() ) {
-		Map::ProjectionFactory::ServiceNames* services = Map::ProjectionFactory::Services();
+		Map::ProjectionFactory::ServiceNames *services = Map::ProjectionFactory::Services();
 		if ( services && std::find(services->begin(), services->end(),
 		                           SCScheme.map.projection) != services->end() )
 			projection = SCScheme.map.projection.c_str();
 		else
 			SEISCOMP_WARNING("Projection %s not available, defaulting to %s",
 			                 SCScheme.map.projection.c_str(), projection);
+		if ( services ) delete services;
 	}
 
 	setProjectionByName(projection);
