@@ -98,7 +98,7 @@ void TimeWindowProcessor::setTimeWindow(const Core::TimeWindow &tw) {
 	}
 
 	_timeWindow = tw;
-	_safetyTimeWindow.setStartTime(_timeWindow.startTime() - _safetyMargin);
+	_safetyTimeWindow.setStartTime(_timeWindow.startTime() - _safetyMargin - _initTime);
 	_safetyTimeWindow.setEndTime(_timeWindow.endTime());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -132,7 +132,7 @@ void TimeWindowProcessor::setMargin(const Core::TimeSpan& margin) {
 
 	_safetyMargin = margin;
 	if ( static_cast<bool>(_timeWindow) ) {
-		_safetyTimeWindow.setStartTime(_timeWindow.startTime() - _safetyMargin);
+		_safetyTimeWindow.setStartTime(_timeWindow.startTime() - _safetyMargin - _initTime);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
