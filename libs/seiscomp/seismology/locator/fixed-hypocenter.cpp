@@ -172,6 +172,10 @@ bool FixedHypocenter::init(const Config::Config &config) {
 	}
 	catch ( ... ) {}
 
+	_initLat = Core::None;
+	_initLon = Core::None;
+	_initDepth = Core::None;
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -185,6 +189,9 @@ FixedHypocenter::IDList FixedHypocenter::parameters() const {
 
 	if ( allowedParameters.empty() ) {
 		allowedParameters.push_back("VERBOSE");
+		allowedParameters.push_back("LATITUDE");
+		allowedParameters.push_back("LONGITUDE");
+		allowedParameters.push_back("DEPTH");
 		allowedParameters.push_back("USE_PICK_UNCERTAINTIES");
 		allowedParameters.push_back("DEFAULT_TIME_ERROR");
 		allowedParameters.push_back("NUM_DEG_FREEDOM");
@@ -210,6 +217,12 @@ string FixedHypocenter::parameter(const string &name) const {
 		return Core::toString(_degreesOfFreedom);
 	else if ( name == "CONF_LEVEL" )
 		return Core::toString(_confidenceLevel);
+	else if ( name == "LATITUDE" && _initLat )
+		return Core::toString(*_initLat);
+	else if ( name == "LONGITUDE" && _initLon )
+		return Core::toString(*_initLon);
+	else if ( name == "DEPTH" && _initDepth )
+		return Core::toString(*_initDepth);
 	return string();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -241,9 +254,39 @@ bool FixedHypocenter::setParameter(const string &name, const string &value) {
 		double tmp;
 		if ( !Core::fromString(tmp, value) )
 			return false;
-		if ( tmp < 0.5 || tmp > 1.0 )
+		if ( (tmp < 0.5) || (tmp > 1.0) )
 			return false;
 		_confidenceLevel = tmp;
+	}
+	else if ( name == "LATITUDE" ) {
+		if ( value.empty() )
+			_initLat = Core::None;
+		else {
+			double tmp;
+			if ( !Core::fromString(tmp, value) )
+				return false;
+			_initLat = tmp;
+		}
+	}
+	else if ( name == "LONGITUDE" ) {
+		if ( value.empty() )
+			_initLon = Core::None;
+		else {
+			double tmp;
+			if ( !Core::fromString(tmp, value) )
+				return false;
+			_initLon = tmp;
+		}
+	}
+	else if ( name == "DEPTH" ) {
+		if ( value.empty() )
+			_initDepth = Core::None;
+		else {
+			double tmp;
+			if ( !Core::fromString(tmp, value) )
+				return false;
+			_initDepth = tmp;
+		}
 	}
 	else
 		return false;
@@ -344,13 +387,37 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 	double slat, slon, sdepth;
 	double rlat, rlon, relev;
 
-	try {
-		slat = origin->latitude().value();
-		slon = origin->longitude().value();
-		sdepth = origin->depth().value();
+	if ( _initLat )
+		slat = *_initLat;
+	else {
+		try {
+			slat = origin->latitude().value();
+		}
+		catch ( ... ) {
+			throw LocatorException("incomplete origin, latitude is not set");
+		}
 	}
-	catch ( ... ) {
-		throw LocatorException("incomplete origin, either lat, lon or depth is not set");
+
+	if ( _initLon )
+		slon = *_initLon;
+	else {
+		try {
+			slon = origin->longitude().value();
+		}
+		catch ( ... ) {
+			throw LocatorException("incomplete origin, longitude is not set");
+		}
+	}
+
+	if ( _initDepth )
+		sdepth = *_initDepth;
+	else {
+		try {
+			sdepth = origin->depth().value();
+		}
+		catch ( ... ) {
+			throw LocatorException("incomplete origin, depth is not set");
+		}
 	}
 
 	pickTimes.resize(origin->arrivalCount());
@@ -511,6 +578,10 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 
 	string description = Core::stringify("Confidence coefficient: %s, $\\kappa_p$ = %0.1f, $n_{eff}$ = %.1f",
 	                                     label.c_str(), kappa_p, effectiveSampleSize);
+
+	if ( _initLat )	newOrigin->setLatitude(*_initLat);
+	if ( _initLon )	newOrigin->setLongitude(*_initLon);
+	if ( _initDepth ) newOrigin->setDepth(RealQuantity(*_initDepth));
 
 	newOrigin->setTime(TimeQuantity(Core::Time(originTime)));
 	newOrigin->time().setConfidenceLevel(_confidenceLevel * 100.0);

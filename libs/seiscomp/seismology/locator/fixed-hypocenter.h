@@ -84,6 +84,9 @@ class SC_SYSTEM_CORE_API FixedHypocenter : public LocatorInterface {
 		bool        _usePickUncertainties;
 		bool        _verbose;
 		std::string _lastError;
+		OPT(double) _initLat;
+		OPT(double) _initLon;
+		OPT(double) _initDepth;
 
 		// Runtime
 		TravelTimeTableInterfacePtr _ttt;
