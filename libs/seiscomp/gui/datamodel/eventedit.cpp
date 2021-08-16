@@ -64,6 +64,7 @@ MAKEENUM(
 		OL_DEPTH,
 		OL_DEPTH_TYPE,
 		OL_RMS,
+		OL_AZGAP,
 		OL_STAT,
 		OL_METHOD,
 		OL_AGENCY,
@@ -72,14 +73,15 @@ MAKEENUM(
 		OL_ID
 	),
 	ENAMES(
-		"Created(%1)",
-		"OT(%1)",
+		"Created (%1)",
+		"OT (%1)",
 		"Phases",
 		"Lat",
 		"Lon",
 		"Depth",
 		"DType",
 		"RMS",
+		"AzGap",
 		"Stat",
 		"Method",
 		"Agency",
@@ -101,6 +103,7 @@ int OriginColAligns[OriginListColumns::Quantity] = {
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
+	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignLeft | Qt::AlignVCenter,
 	Qt::AlignLeft | Qt::AlignVCenter
 };
@@ -114,6 +117,7 @@ bool OriginColBold[OriginListColumns::Quantity] = {
 	true,
 	false,
 	true,
+	false,
 	true,
 	false,
 	false,
@@ -123,6 +127,7 @@ bool OriginColBold[OriginListColumns::Quantity] = {
 
 
 bool OriginColVisible[OriginListColumns::Quantity] = {
+	true,
 	true,
 	true,
 	true,
@@ -155,8 +160,8 @@ MAKEENUM(
 		MLC_DUMMY
 	),
 	ENAMES(
-		"Created(%1)",
-		"TP",
+		"Created (%1)",
+		"MType",
 		"M",
 		"Count",
 		"RMS",
@@ -203,7 +208,7 @@ MAKEENUM(
 		FML_COUNT,
 		FML_MISFIT,
 		FML_STDR,
-		FML_GAP,
+		FML_AZGAP,
 		FML_STAT,
 		FML_DC,
 		FML_CLVD,
@@ -219,23 +224,23 @@ MAKEENUM(
 		FML_ID
 	),
 	ENAMES(
-		"Created(%1)",
+		"Created (%1)",
 		"Depth",
 		"M",
 		"Count",
 		"Misfit",
 		"STDR",
-		"Azi. Gap(°)",
+		"AzGap",
 		"Stat",
-		"DC(%)",
-		"CLVD(%)",
-		"ISO(%)",
-		"S1(°)",
-		"D1(°)",
-		"R1(°)",
-		"S2(°)",
-		"D2(°)",
-		"R2(°)",
+		"DC",
+		"CLVD",
+		"ISO",
+		"S1",
+		"D1",
+		"R1",
+		"S2",
+		"D2",
+		"R2",
 		"Agency",
 		"Author",
 		"ID"
@@ -1092,28 +1097,66 @@ void EventEdit::init() {
 		if ( i == _customColumn )
 			_originTableHeader << _customColumnLabel;
 
-		if ( i == OL_CREATED || i == OL_TIME ) {
-			if ( SCScheme.dateTime.useLocalTime )
-				_originTableHeader << QString(EOriginListColumnsNames::name(i)).arg(Core::Time::LocalTimeZone().c_str());
-			else
-				_originTableHeader << QString(EOriginListColumnsNames::name(i)).arg("UTC");
+		switch ( i ) {
+			case OL_CREATED:
+			case OL_TIME:
+				if ( SCScheme.dateTime.useLocalTime )
+					_originTableHeader << QString(EOriginListColumnsNames::name(i)).arg(Core::Time::LocalTimeZone().c_str());
+				else
+					_originTableHeader << QString(EOriginListColumnsNames::name(i)).arg("UTC");
+				break;
+			case OL_AZGAP:
+				_originTableHeader << QString("%1 (°)").arg(EOriginListColumnsNames::name(i));
+				break;
+			case OL_DEPTH:
+				_originTableHeader << QString("%1").arg(EOriginListColumnsNames::name(i));
+				break;
+			case OL_RMS:
+				_originTableHeader << QString("%1 (s)").arg(EOriginListColumnsNames::name(i));
+				break;
+			case OL_LAT:
+				_originTableHeader << QString("%1 (°)").arg(EOriginListColumnsNames::name(i));
+				break;
+			case OL_LON:
+				_originTableHeader << QString("%1 (°)").arg(EOriginListColumnsNames::name(i));
+				break;
+			default:
+				_originTableHeader << EOriginListColumnsNames::name(i);
+				break;
 		}
-		else
-			_originTableHeader << EOriginListColumnsNames::name(i);
 	}
 
 	if ( _customColumn == OriginListColumns::Quantity )
 		_originTableHeader << _customColumnLabel;
 
 	for ( int i = 0; i < FMListColumns::Quantity; ++i ) {
-		if ( i == FML_CREATED ) {
-			if ( SCScheme.dateTime.useLocalTime )
-				_fmTableHeader << QString(EFMListColumnsNames::name(i)).arg(Core::Time::LocalTimeZone().c_str());
-			else
-				_fmTableHeader << QString(EFMListColumnsNames::name(i)).arg("UTC");
+		switch ( i ) {
+			case FML_CREATED:
+				if ( SCScheme.dateTime.useLocalTime )
+					_fmTableHeader << QString(EFMListColumnsNames::name(i)).arg(Core::Time::LocalTimeZone().c_str());
+				else
+					_fmTableHeader << QString(EFMListColumnsNames::name(i)).arg("UTC");
+				break;
+			case FML_AZGAP:
+				_fmTableHeader << QString("%1 (°)").arg(EFMListColumnsNames::name(i));
+				break;
+			case FML_DC:
+			case FML_CLVD:
+			case FML_ISO:
+				_fmTableHeader << QString("%1 (%)").arg(EFMListColumnsNames::name(i));
+				break;
+			case FML_STRIKE1:
+			case FML_STRIKE2:
+			case FML_DIP1:
+			case FML_DIP2:
+			case FML_RAKE1:
+			case FML_RAKE2:
+				_fmTableHeader << QString("%1 (°)").arg(EFMListColumnsNames::name(i));
+				break;
+			default:
+				_fmTableHeader << EFMListColumnsNames::name(i);
+				break;
 		}
-		else
-			_fmTableHeader << EFMListColumnsNames::name(i);
 	}
 
 	// Custom event types
@@ -2153,6 +2196,14 @@ void EventEdit::updateOriginRow(int row, Origin *org) {
 		item->setData(_originColumnMap[OL_RMS], Qt::UserRole, QVariant());
 	}
 	try {
+		item->setText(_originColumnMap[OL_AZGAP], QString("%1").arg(org->quality().azimuthalGap(), 0, 'f', 0));
+		item->setData(_originColumnMap[OL_AZGAP], Qt::UserRole, org->quality().azimuthalGap());
+	}
+	catch ( ... ) {
+		item->setText(_originColumnMap[OL_AZGAP], "-");
+		item->setData(_originColumnMap[OL_AZGAP], Qt::UserRole, QVariant());
+	}
+	try {
 		item->setText(_originColumnMap[OL_CREATED], timeToString(org->creationInfo().creationTime(), "%F %T"));
 	}
 	catch ( ... ) {
@@ -2263,13 +2314,13 @@ void EventEdit::updateFMRow(int row, FocalMechanism *fm) {
 		auto mt = fm->momentTensor(0);
 		auto o = Origin::Find(mt->derivedOriginID());
 		if ( o )
-			POPULATE_COLUMN(FML_DEPTH, (depthToString(o->depth(), SCScheme.precision.depth) + " km"), o->depth().value());
+			POPULATE_COLUMN(FML_DEPTH, (depthToString(o->depth(), SCScheme.precision.depth)), o->depth().value());
 		auto m = Magnitude::Find(mt->momentMagnitudeID());
 		if ( m )
 			POPULATE_COLUMN_DOUBLE(FML_MAG, m->magnitude().value(), SCScheme.precision.magnitude);
 	}
 
-	POPULATE_COLUMN_DOUBLE(FML_GAP, fm->azimuthalGap(), 0);
+	POPULATE_COLUMN_DOUBLE(FML_AZGAP, fm->azimuthalGap(), 0);
 	POPULATE_COLUMN_INT(FML_COUNT, fm->stationPolarityCount());
 
 	// Strike, dip, rake
@@ -2806,7 +2857,7 @@ void EventEdit::updateOrigin() {
 
 	try {
 		_ui.labelDepthValue->setText(depthToString(_currentOrigin->depth(), SCScheme.precision.depth));
-		_ui.labelDepthUnit->setText("km");
+		_ui.labelDepthUnit->setText(" km");
 	}
 	catch ( Core::ValueException& ) {
 		_ui.labelDepthValue->setText("-");
@@ -2973,7 +3024,7 @@ void EventEdit::updateMT() {
 		// depth
 		try {
 			_ui.mtOriginDepth->setText(depthToString(o->depth(), SCScheme.precision.depth));
-			_ui.mtOriginDepthUnit->setText("km");
+			_ui.mtOriginDepthUnit->setText(" km");
 		}
 		catch ( Core::ValueException& ) {}
 		try {
@@ -3088,7 +3139,7 @@ void EventEdit::sortOriginItems(int column) {
 
 	if ( column == _originColumnMap[OL_PHASES] || column == _originColumnMap[OL_LAT] ||
 	     column == _originColumnMap[OL_LON] || column == _originColumnMap[OL_DEPTH] ||
-	     column == _originColumnMap[OL_RMS] )
+	     column == _originColumnMap[OL_RMS] || column == _originColumnMap[OL_AZGAP] )
 		compare = (order == Qt::AscendingOrder ? &itemLessThan : &itemGreaterThan);
 	else
 		compare = (order == Qt::AscendingOrder ? &itemTextLessThan : &itemTextGreaterThan);
@@ -3136,7 +3187,7 @@ void EventEdit::sortFMItems(int column) {
 
 	LessThan compare;
 
-	if ( column == _fmColumnMap[FML_GAP] ||  column == _fmColumnMap[FML_COUNT] ||
+	if ( column == _fmColumnMap[FML_AZGAP] ||  column == _fmColumnMap[FML_COUNT] ||
 	     column == _fmColumnMap[FML_MISFIT] || column == _fmColumnMap[FML_STDR] ||
 	     column == _fmColumnMap[FML_DEPTH] || column == _fmColumnMap[FML_MAG] )
 		compare = (order == Qt::AscendingOrder ? &itemLessThan : &itemGreaterThan);
