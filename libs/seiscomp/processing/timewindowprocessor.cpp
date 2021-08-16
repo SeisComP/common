@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 
+#include <seiscomp/core/exceptions.h>
 #include <seiscomp/processing/timewindowprocessor.h>
 
 
@@ -125,7 +126,14 @@ const Core::TimeWindow &TimeWindowProcessor::safetyTimeWindow() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TimeWindowProcessor::setMargin(const Core::TimeSpan& margin) {
+	if ( margin.length() < 0 ) {
+		throw Core::UnderflowException("margin must be greater or equal to zero");
+	}
+
 	_safetyMargin = margin;
+	if ( static_cast<bool>(_timeWindow) ) {
+		_safetyTimeWindow.setStartTime(_timeWindow.startTime() - _safetyMargin);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
