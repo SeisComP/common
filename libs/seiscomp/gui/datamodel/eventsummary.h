@@ -22,9 +22,12 @@
 #ifndef SEISCOMP_GUI_EVENTSUMMARY_H
 #define SEISCOMP_GUI_EVENTSUMMARY_H
 
-#include <QWidget>
 #include <string>
 #include <set>
+
+#include <QWidget>
+#include <QHBoxLayout>
+#include <QLabel>
 
 #ifndef Q_MOC_RUN
 #include <seiscomp/datamodel/event.h>
@@ -37,7 +40,11 @@
 #include <seiscomp/gui/map/mapwidget.h>
 #include <seiscomp/gui/qt.h>
 
-#include <seiscomp/gui/datamodel/ui_eventsummary.h>
+
+namespace Ui {
+	class EventSummary;
+}
+
 
 namespace Seiscomp {
 namespace Gui {
@@ -156,7 +163,7 @@ class SC_GUI_API EventSummary : public QWidget {
 		};
 
 	private:
-		Ui::EventSummary _ui;
+		::Ui::EventSummary *_ui;
 		Map::ImageTreePtr _maptree;
 		MapWidget *_map;
 

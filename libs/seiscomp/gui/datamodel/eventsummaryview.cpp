@@ -21,6 +21,8 @@
 #define SEISCOMP_COMPONENT EventSummaryView
 
 #include "eventsummaryview.h"
+#include <seiscomp/gui/datamodel/ui_eventsummaryview.h>
+#include <seiscomp/gui/datamodel/ui_eventsummaryview_hypocenter.h>
 
 #include <seiscomp/logging/log.h>
 #include <seiscomp/datamodel/comment.h>
@@ -603,8 +605,10 @@ void MagRow::updateContent() {
 EventSummaryView::EventSummaryView(const MapsDesc &maps,
                                    DataModel::DatabaseQuery* reader,
                                    QWidget *parent)
-: QWidget(parent), _reader(reader)
-{
+: QWidget(parent)
+, _ui(new Ui::EventSummaryView)
+, _uiHypocenter(new Ui::Hypocenter)
+, _reader(reader) {
 	_maptree = new Gui::Map::ImageTree(maps);
 	init();
 }
@@ -613,24 +617,28 @@ EventSummaryView::EventSummaryView(const MapsDesc &maps,
 EventSummaryView::EventSummaryView(Map::ImageTree* mapTree,
                                    DataModel::DatabaseQuery* reader,
                                    QWidget *parent)
-: QWidget(parent), _reader(reader)
-{
+: QWidget(parent)
+, _ui(new Ui::EventSummaryView)
+, _uiHypocenter(new Ui::Hypocenter)
+, _reader(reader) {
 	_maptree = mapTree;
 	init();
 }
 
 
 EventSummaryView::~EventSummaryView(){
+	delete _ui;
+	delete _uiHypocenter;
 }
 
 
 #define SET_FONT(labelName, f1, f2) \
-	ui.label##labelName->setFont(SCScheme.fonts.f1); \
-	ui.label##labelName##Value->setFont(SCScheme.fonts.f2)
+	_ui->label##labelName->setFont(SCScheme.fonts.f1); \
+	_ui->label##labelName##Value->setFont(SCScheme.fonts.f2)
 
 
 #define SET_VALUE(labelName, txt) \
-	ui.label##labelName##Value->setText(txt)
+	_ui->label##labelName##Value->setText(txt)
 
 
 #define DISABLE_FRAME(f) \
@@ -680,12 +688,12 @@ class ScrollPanelWidget : public QWidget {
 
 
 void EventSummaryView::init() {
-	ui.setupUi(this);
+	_ui->setupUi(this);
 
 	_enableFullTensor = false;
 	_displayFocMechs = true;
 
-	ScrollArea *area = new ScrollArea(ui.frameEpicenterInformation);
+	ScrollArea *area = new ScrollArea(_ui->frameEpicenterInformation);
 	area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
 	QWidget *infoPanel = new ScrollPanelWidget(area);
@@ -698,12 +706,12 @@ void EventSummaryView::init() {
 	l->setMargin(0);
 
 	QWidget *hypoCenterInfo = new QWidget(infoPanel);
-	uiHypocenter.setupUi(hypoCenterInfo);
+	_uiHypocenter->setupUi(hypoCenterInfo);
 	l->addWidget(hypoCenterInfo);
 
 	/*
 	QWidget *focalMechanismInfo = new QWidget(infoPanel);
-	uiHypocenter.setupUi(focalMechanismInfo);
+	_uiHypocenter->setupUi(focalMechanismInfo);
 	l->addWidget(focalMechanismInfo);
 	//focalMechanismInfo->setVisible(false);
 	*/
@@ -719,7 +727,7 @@ void EventSummaryView::init() {
 	if ( area->layout() )
 		area->layout()->setMargin(0);
 
-	l = new QVBoxLayout(ui.frameEpicenterInformation);
+	l = new QVBoxLayout(_ui->frameEpicenterInformation);
 	l->setMargin(0);
 	l->addWidget(area);
 
@@ -731,7 +739,7 @@ void EventSummaryView::init() {
 	QObject *drawFilter = new ElideFadeDrawer(this);
 
 	// Set the font sizes
-	//ui.frameInformation->setVisible(false);
+	//_ui->frameInformation->setVisible(false);
 	bool withBorders = false;
 	try { withBorders = SCApp->configGetBool("summary.borders"); } catch ( ... ) {}
 
@@ -751,180 +759,180 @@ void EventSummaryView::init() {
 	QRectF displayRect;
 	displayRect.setRect(lonmin, latmin, lonmax-lonmin, latmax-latmin);
 
-	uiHypocenter.labelVDistance->setText("");
-	uiHypocenter.labelVDistanceAutomatic->setText("");
-	uiHypocenter.labelFrameInfoSpacer->setText("");
-	uiHypocenter.labelFrameInfoSpacer->setFixedWidth(16);
-	uiHypocenter.fmLabelFrameInfoSpacer->setText("");
-	uiHypocenter.fmLabelFrameInfoSpacer->setFixedWidth(16);
-	uiHypocenter.labelFMSeparator->setText("\n\nFocalMechanism\n");
+	_uiHypocenter->labelVDistance->setText("");
+	_uiHypocenter->labelVDistanceAutomatic->setText("");
+	_uiHypocenter->labelFrameInfoSpacer->setText("");
+	_uiHypocenter->labelFrameInfoSpacer->setFixedWidth(16);
+	_uiHypocenter->fmLabelFrameInfoSpacer->setText("");
+	_uiHypocenter->fmLabelFrameInfoSpacer->setFixedWidth(16);
+	_uiHypocenter->labelFMSeparator->setText("\n\nFocalMechanism\n");
 
-	uiHypocenter.fmLabelVDistance->setText("");
-	uiHypocenter.fmLabelVDistanceAutomatic->setText("");
+	_uiHypocenter->fmLabelVDistance->setText("");
+	_uiHypocenter->fmLabelVDistanceAutomatic->setText("");
 
 	if ( !withBorders ) {
 		QFontMetrics fm(SCScheme.fonts.normal);
 		QRect rect = fm.boundingRect('M');
 
-		ui.frameVDistance->setFixedHeight(rect.height()*2);
-		ui.frameHDistance->setFixedWidth(rect.width());
-		ui.frameMagnitudeDistance->setFixedHeight(rect.height());
+		_ui->frameVDistance->setFixedHeight(rect.height()*2);
+		_ui->frameHDistance->setFixedWidth(rect.width());
+		_ui->frameMagnitudeDistance->setFixedHeight(rect.height());
 
-		DISABLE_FRAME(ui.frameRegion);
-		DISABLE_FRAME(ui.frameMagnitudes);
-		DISABLE_FRAME(uiHypocenter.frameInformation);
-		DISABLE_FRAME(uiHypocenter.frameInformationAutomatic);
-		DISABLE_FRAME(uiHypocenter.fmFrameInformation);
-		DISABLE_FRAME(uiHypocenter.fmFrameInformationAutomatic);
-		DISABLE_FRAME(ui.frameProcessing);
-		DISABLE_FRAME(ui.framePlugable);
+		DISABLE_FRAME(_ui->frameRegion);
+		DISABLE_FRAME(_ui->frameMagnitudes);
+		DISABLE_FRAME(_uiHypocenter->frameInformation);
+		DISABLE_FRAME(_uiHypocenter->frameInformationAutomatic);
+		DISABLE_FRAME(_uiHypocenter->fmFrameInformation);
+		DISABLE_FRAME(_uiHypocenter->fmFrameInformationAutomatic);
+		DISABLE_FRAME(_ui->frameProcessing);
+		DISABLE_FRAME(_ui->framePlugable);
 	}
 	else {
-		ui.frameVDistance->setVisible(false);
-		ui.frameHDistance->setVisible(false);
-		ui.frameMagnitudeDistance->setVisible(false);
+		_ui->frameVDistance->setVisible(false);
+		_ui->frameHDistance->setVisible(false);
+		_ui->frameMagnitudeDistance->setVisible(false);
 
-		ENABLE_FRAME(ui.frameRegion);
-		ENABLE_FRAME(ui.frameMagnitudes);
-		ENABLE_FRAME(uiHypocenter.frameInformation);
-		ENABLE_FRAME(uiHypocenter.frameInformationAutomatic);
-		ENABLE_FRAME(uiHypocenter.fmFrameInformation);
-		ENABLE_FRAME(uiHypocenter.fmFrameInformationAutomatic);
-		ENABLE_FRAME(ui.frameProcessing);
+		ENABLE_FRAME(_ui->frameRegion);
+		ENABLE_FRAME(_ui->frameMagnitudes);
+		ENABLE_FRAME(_uiHypocenter->frameInformation);
+		ENABLE_FRAME(_uiHypocenter->frameInformationAutomatic);
+		ENABLE_FRAME(_uiHypocenter->fmFrameInformation);
+		ENABLE_FRAME(_uiHypocenter->fmFrameInformationAutomatic);
+		ENABLE_FRAME(_ui->frameProcessing);
 	}
 
-	ui._lbOriginTime->setFont(SCScheme.fonts.heading1);
-	ui._lbOriginTimeAutomatic->setFont(SCScheme.fonts.heading1);
-	ui._lbTimeAgo->setFont(SCScheme.fonts.heading2);
-	ui._lbRegion->setFont(SCScheme.fonts.highlight);
-	ui._lbRegion->installEventFilter(drawFilter);
-	ui._lbRegionExtra->setFont(SCScheme.fonts.normal);
-	ui._lbRegionExtra->installEventFilter(drawFilter);
+	_ui->_lbOriginTime->setFont(SCScheme.fonts.heading1);
+	_ui->_lbOriginTimeAutomatic->setFont(SCScheme.fonts.heading1);
+	_ui->_lbTimeAgo->setFont(SCScheme.fonts.heading2);
+	_ui->_lbRegion->setFont(SCScheme.fonts.highlight);
+	_ui->_lbRegion->installEventFilter(drawFilter);
+	_ui->_lbRegionExtra->setFont(SCScheme.fonts.normal);
+	_ui->_lbRegionExtra->installEventFilter(drawFilter);
 
-	ui._lbPreMagType->setFont(SCScheme.fonts.heading1);
-	ui._lbPreMagVal->setFont(SCScheme.fonts.heading1);
-	ui.labelDepth->setFont(SCScheme.fonts.heading1);
-	ui.labelCustomName->setFont(SCScheme.fonts.heading1);
-	ui.labelCustomValue->setFont(SCScheme.fonts.heading1);
-	ui.labelCustomValue->installEventFilter(drawFilter);
+	_ui->_lbPreMagType->setFont(SCScheme.fonts.heading1);
+	_ui->_lbPreMagVal->setFont(SCScheme.fonts.heading1);
+	_ui->labelDepth->setFont(SCScheme.fonts.heading1);
+	_ui->labelCustomName->setFont(SCScheme.fonts.heading1);
+	_ui->labelCustomValue->setFont(SCScheme.fonts.heading1);
+	_ui->labelCustomValue->installEventFilter(drawFilter);
 
-	uiHypocenter._lbLatitudeTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbLatitude->setFont(SCScheme.fonts.highlight);
-	uiHypocenter._lbLatitudeUnit->setFont(SCScheme.fonts.highlight);
-	uiHypocenter._lbLatError->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbLongitudeTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbLongitude->setFont(SCScheme.fonts.highlight);
-	uiHypocenter._lbLongitudeUnit->setFont(SCScheme.fonts.highlight);
-	uiHypocenter._lbLongError->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbDepthTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbDepth->setFont(SCScheme.fonts.highlight);
-	uiHypocenter._lbDepthUnit->setFont(SCScheme.fonts.highlight);
-	uiHypocenter._lbDepthError->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbNoPhasesTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbNoPhases->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbRMSTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbGapTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbComment->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbCommentTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbRMS->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbAzGap->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbAgencyTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbAgency->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbOriginStatusTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbOriginStatus->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbFirstLocTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbFirstLocation->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbThisLocTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbThisLocation->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbEventIDTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbEventID->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbEventID->setSizePolicy(QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred));
-	uiHypocenter._lbEventID->installEventFilter(drawFilter);
+	_uiHypocenter->_lbLatitudeTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbLatitude->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->_lbLatitudeUnit->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->_lbLatError->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbLongitudeTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbLongitude->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->_lbLongitudeUnit->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->_lbLongError->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbDepthTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbDepth->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->_lbDepthUnit->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->_lbDepthError->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbNoPhasesTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbNoPhases->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbRMSTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbGapTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbComment->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbCommentTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbRMS->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbAzGap->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbAgencyTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbAgency->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbOriginStatusTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbOriginStatus->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbFirstLocTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbFirstLocation->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbThisLocTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbThisLocation->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbEventIDTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbEventID->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbEventID->setSizePolicy(QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred));
+	_uiHypocenter->_lbEventID->installEventFilter(drawFilter);
 
-	uiHypocenter._lbLatitudeAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter._lbLatitudeUnitAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter._lbLatErrorAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbLongitudeAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter._lbLongitudeUnitAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter._lbLongErrorAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbDepthAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter._lbDepthUnitAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter._lbDepthErrorAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbNoPhasesAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbRMSAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbAzGapAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbCommentAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbAgencyAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter._lbOriginStatusAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbLatitudeAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->_lbLatitudeUnitAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->_lbLatErrorAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbLongitudeAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->_lbLongitudeUnitAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->_lbLongErrorAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbDepthAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->_lbDepthUnitAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->_lbDepthErrorAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbNoPhasesAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbRMSAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbAzGapAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbCommentAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbAgencyAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->_lbOriginStatusAutomatic->setFont(SCScheme.fonts.normal);
 
-	uiHypocenter.labelFMSeparator->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelFMSeparator->setFont(SCScheme.fonts.highlight);
 
-	uiHypocenter.labelLatitudeTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelLatitude->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelLatitudeUnit->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelLatitudeError->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelLongitudeTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelLongitude->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelLongitudeUnit->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelLongitudeError->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelDepthTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelDepth->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelDepthUnit->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelDepthError->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMwTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMw->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelMomentTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMoment->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelMomentUnit->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelPhasesTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelPhases->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMisfitTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMisfit->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelCLVDTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelCLVD->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMinDistTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMinDist->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMinDistUnit->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMaxDistTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMaxDist->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMaxDistUnit->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelNPTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelNP0->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelNP1->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelTypeTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelType->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelAgencyTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelAgency->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelStatusTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelStatus->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelThisSolutionTxt->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelThisSolution->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelLatitudeTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelLatitude->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelLatitudeUnit->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelLatitudeError->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelLongitudeTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelLongitude->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelLongitudeUnit->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelLongitudeError->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelDepthTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelDepth->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelDepthUnit->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelDepthError->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMwTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMw->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelMomentTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMoment->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelMomentUnit->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelPhasesTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelPhases->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMisfitTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMisfit->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelCLVDTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelCLVD->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMinDistTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMinDist->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMinDistUnit->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMaxDistTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMaxDist->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMaxDistUnit->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelNPTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelNP0->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelNP1->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelTypeTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelType->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelAgencyTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelAgency->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelStatusTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelStatus->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelThisSolutionTxt->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelThisSolution->setFont(SCScheme.fonts.normal);
 
-	uiHypocenter.labelLatitudeAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelLatitudeUnitAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelLatitudeErrorAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelLongitudeAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelLongitudeUnitAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelLongitudeErrorAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelDepthAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelDepthUnitAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelDepthErrorAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMwAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelMomentAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelMomentUnitAutomatic->setFont(SCScheme.fonts.highlight);
-	uiHypocenter.labelPhasesAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMisfitAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelCLVDAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMinDistAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMinDistUnitAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMaxDistAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelMaxDistUnitAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelNP0Automatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelNP1Automatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelTypeAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelAgencyAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelStatusAutomatic->setFont(SCScheme.fonts.normal);
-	uiHypocenter.labelThisSolutionAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelLatitudeAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelLatitudeUnitAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelLatitudeErrorAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelLongitudeAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelLongitudeUnitAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelLongitudeErrorAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelDepthAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelDepthUnitAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelDepthErrorAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMwAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelMomentAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelMomentUnitAutomatic->setFont(SCScheme.fonts.highlight);
+	_uiHypocenter->labelPhasesAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMisfitAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelCLVDAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMinDistAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMinDistUnitAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMaxDistAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelMaxDistUnitAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelNP0Automatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelNP1Automatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelTypeAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelAgencyAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelStatusAutomatic->setFont(SCScheme.fonts.normal);
+	_uiHypocenter->labelThisSolutionAutomatic->setFont(SCScheme.fonts.normal);
 
 	_displayEventComment = false;
 	try {
@@ -937,19 +945,19 @@ void EventSummaryView::init() {
 		_displayEventCommentDefault = SCApp->configGetString("display.event.comment.default");
 	}
 	catch ( ... ) {
-		_displayEventCommentDefault = ui.labelCustomValue->text().toStdString();
+		_displayEventCommentDefault = _ui->labelCustomValue->text().toStdString();
 	}
 
 	try {
-		ui.labelCustomName->setText(QString("%1").arg(SCApp->configGetString("display.event.comment.label").c_str()));
+		_ui->labelCustomName->setText(QString("%1").arg(SCApp->configGetString("display.event.comment.label").c_str()));
 	}
 	catch ( ... ) {
-		ui.labelCustomName->setText(_displayEventCommentID.c_str());
+		_ui->labelCustomName->setText(_displayEventCommentID.c_str());
 	}
 
 	if ( !_displayEventComment ) {
-		ui.labelCustomName->setVisible(false);
-		ui.labelCustomValue->setVisible(false);
+		_ui->labelCustomName->setVisible(false);
+		_ui->labelCustomValue->setVisible(false);
 	}
 
 	_displayComment = false;
@@ -959,22 +967,22 @@ void EventSummaryView::init() {
 	}
 	catch ( ... ) {}
 
-	uiHypocenter._lbCommentTxt->setVisible(_displayComment);
-	uiHypocenter._lbComment->setVisible(_displayComment);
-	uiHypocenter._lbCommentAutomatic->setVisible(_displayComment);
+	_uiHypocenter->_lbCommentTxt->setVisible(_displayComment);
+	_uiHypocenter->_lbComment->setVisible(_displayComment);
+	_uiHypocenter->_lbCommentAutomatic->setVisible(_displayComment);
 
 	try {
 		_displayCommentDefault = SCApp->configGetString("display.origin.comment.default");
 	}
 	catch ( ... ) {
-		_displayCommentDefault = uiHypocenter._lbComment->text().toStdString();
+		_displayCommentDefault = _uiHypocenter->_lbComment->text().toStdString();
 	}
 
 	try {
-		uiHypocenter._lbCommentTxt->setText(QString("%1:").arg(SCApp->configGetString("display.origin.comment.label").c_str()));
+		_uiHypocenter->_lbCommentTxt->setText(QString("%1:").arg(SCApp->configGetString("display.origin.comment.label").c_str()));
 	}
 	catch ( ... ) {
-		uiHypocenter._lbCommentTxt->setText(_displayCommentID.c_str());
+		_uiHypocenter->_lbCommentTxt->setText(_displayCommentID.c_str());
 	}
 
 	_maxHotspotDist = 20.0;
@@ -983,7 +991,7 @@ void EventSummaryView::init() {
 
 	_showLastAutomaticSolution = false;
 	_showOnlyMostRecentEvent = true;
-	ui.btnSwitchToAutomatic->setVisible(false);
+	_ui->btnSwitchToAutomatic->setVisible(false);
 
 	try { _maxHotspotDist = SCApp->configGetDouble("poi.maxDist"); } catch ( ... ) {}
 	try { _hotSpotDescriptionPattern = SCApp->configGetString("poi.message"); } catch ( ... ) {}
@@ -995,7 +1003,7 @@ void EventSummaryView::init() {
 	}
 	try {
 		if ( SCApp->configGetBool("enableFixAutomaticSolutions") )
-			ui.btnSwitchToAutomatic->setVisible(true);
+			_ui->btnSwitchToAutomatic->setVisible(true);
 	}
 	catch ( ... ) {}
 
@@ -1015,22 +1023,22 @@ void EventSummaryView::init() {
 	}
 
 	try {
-		ui.btnPlugable0->setText(SCApp->configGetString("button0").c_str());
+		_ui->btnPlugable0->setText(SCApp->configGetString("button0").c_str());
 	} catch ( ... ) {}
 
 	try {
-		ui.btnPlugable1->setText(SCApp->configGetString("button1").c_str());
+		_ui->btnPlugable1->setText(SCApp->configGetString("button1").c_str());
 	} catch ( ... ) {}
 
-	ui.btnPlugable0->setVisible(false);
-	ui.btnPlugable1->setVisible(false);
+	_ui->btnPlugable0->setVisible(false);
+	_ui->btnPlugable1->setVisible(false);
 
-	_map = new OriginLocatorMap(_maptree.get(), ui.frameMap);
+	_map = new OriginLocatorMap(_maptree.get(), _ui->frameMap);
 	_map->setStationsInteractive(false);
 	_map->setMouseTracking(true);
 	_map->canvas().displayRect(displayRect);
 
-	QHBoxLayout* hboxLayout = new QHBoxLayout(ui.frameMap);
+	QHBoxLayout* hboxLayout = new QHBoxLayout(_ui->frameMap);
 	hboxLayout->setObjectName("hboxLayoutMap");
 	hboxLayout->setSpacing(6);
 	hboxLayout->setMargin(0);
@@ -1047,25 +1055,25 @@ void EventSummaryView::init() {
 	addAction(refreshAction);
 
 	_magList = new MagList();
-	ui.frameMagnitudes->layout()->addWidget(_magList);
+	_ui->frameMagnitudes->layout()->addWidget(_magList);
 
 	_currentEvent = DataModel::Event::Create("nullptr");
 
-//	QFont f(uiHypocenter._lbSystem->font());
+//	QFont f(_uiHypocenter->_lbSystem->font());
 //	f.setBold(true);
-//	uiHypocenter._lbSystem->setFont(f);
+//	_uiHypocenter->_lbSystem->setFont(f);
 
 	_autoSelect = true;
 
-	addAction(ui.actionShowInvisibleMagnitudes);
+	addAction(_ui->actionShowInvisibleMagnitudes);
 
-	connect(ui.actionShowInvisibleMagnitudes, SIGNAL(triggered(bool)),
+	connect(_ui->actionShowInvisibleMagnitudes, SIGNAL(triggered(bool)),
 	        this, SLOT(showVisibleMagnitudes(bool)));
 
-	connect(ui.btnShowDetails, SIGNAL(clicked()), this, SIGNAL(toolButtonPressed()));
-	connect(ui.btnSwitchToAutomatic, SIGNAL(clicked()), this, SLOT(switchToAutomaticPressed()));
-	connect(ui.btnPlugable0, SIGNAL(clicked()), this, SLOT(runScript0()));
-	connect(ui.btnPlugable1, SIGNAL(clicked()), this, SLOT(runScript1()));
+	connect(_ui->btnShowDetails, SIGNAL(clicked()), this, SIGNAL(toolButtonPressed()));
+	connect(_ui->btnSwitchToAutomatic, SIGNAL(clicked()), this, SLOT(switchToAutomaticPressed()));
+	connect(_ui->btnPlugable0, SIGNAL(clicked()), this, SLOT(runScript0()));
+	connect(_ui->btnPlugable1, SIGNAL(clicked()), this, SLOT(runScript1()));
 
 	connect(refreshAction, SIGNAL(triggered(bool)), this,  SLOT(updateEvent()));
 
@@ -1073,11 +1081,11 @@ void EventSummaryView::init() {
 	connect(TimeAgoTimer, SIGNAL(timeout()), this, SLOT(updateTimeAgoLabel()));
 	TimeAgoTimer->start(1000);
 
-	ui._lbPreMagType->setText(" --");
+	_ui->_lbPreMagType->setText(" --");
 
-	ui.btnShowDetails->setEnabled(false);
-	ui.btnPlugable0->setEnabled(false);
-	ui.btnPlugable1->setEnabled(false);
+	_ui->btnShowDetails->setEnabled(false);
+	_ui->btnPlugable0->setEnabled(false);
+	_ui->btnPlugable1->setEnabled(false);
 
 	_mapTimer = new QTimer(this);
 	_mapTimer->setSingleShot(true);
@@ -1092,7 +1100,7 @@ void EventSummaryView::init() {
 
 
 void EventSummaryView::setToolButtonText(const QString& text) {
-	ui.btnShowDetails->setText(text);
+	_ui->btnShowDetails->setText(text);
 }
 
 
@@ -1103,8 +1111,8 @@ void EventSummaryView::setScript0(const std::string& script, bool oldStyle,
 	_scriptExportMap0 = exportMap;
 	bool visible0 = !_script0.empty() && _interactive;
 	bool visible1 = !_script1.empty() && _interactive;
-	ui.btnPlugable0->setVisible(visible0);
-	ui.framePlugable->setVisible(visible0 || visible1);
+	_ui->btnPlugable0->setVisible(visible0);
+	_ui->framePlugable->setVisible(visible0 || visible1);
 }
 
 
@@ -1115,8 +1123,8 @@ void EventSummaryView::setScript1(const std::string& script, bool oldStyle,
 	_scriptExportMap1 = exportMap;
 	bool visible0 = !_script0.empty() && _interactive;
 	bool visible1 = !_script1.empty() && _interactive;
-	ui.btnPlugable1->setVisible(visible1);
-	ui.framePlugable->setVisible(visible0 || visible1);
+	_ui->btnPlugable1->setVisible(visible1);
+	_ui->framePlugable->setVisible(visible0 || visible1);
 }
 
 
@@ -1202,7 +1210,7 @@ void EventSummaryView::addObject(const QString& parentID, Seiscomp::DataModel::O
 		if ( parentID.toStdString() == _currentOrigin->publicID() ) {
 			Magnitude* mag = Magnitude::Find(netMag->publicID());
 			if ( mag ) {
-				bool visibleType = (_visibleMagnitudes.find(mag->type()) != _visibleMagnitudes.end()) || ui.actionShowInvisibleMagnitudes->isChecked();
+				bool visibleType = (_visibleMagnitudes.find(mag->type()) != _visibleMagnitudes.end()) || _ui->actionShowInvisibleMagnitudes->isChecked();
 				_magList->addMag(mag, false, visibleType);
 				if ( visibleType ) {
 					QString display;
@@ -1515,8 +1523,8 @@ void EventSummaryView::processEventMsg(DataModel::Event* event, Seiscomp::DataMo
 
 
 void EventSummaryView::updateEventComment() {
-	ui.labelCustomValue->setText(_displayEventCommentDefault.c_str());
-	ui.labelCustomValue->setToolTip("- no information available -");
+	_ui->labelCustomValue->setText(_displayEventCommentDefault.c_str());
+	_ui->labelCustomValue->setToolTip("- no information available -");
 
 	if ( !_currentEvent ) return;
 	if ( !_displayEventComment ) return;
@@ -1527,8 +1535,8 @@ void EventSummaryView::updateEventComment() {
 	for ( size_t i = 0; i < _currentEvent->commentCount(); ++i ) {
 		if ( _currentEvent->comment(i)->id() == _displayEventCommentID ) {
 			if ( !_currentEvent->comment(i)->text().empty() ) {
-				ui.labelCustomValue->setText(_currentEvent->comment(i)->text().c_str());
-				ui.labelCustomValue->setToolTip(_currentEvent->comment(i)->text().c_str());
+				_ui->labelCustomValue->setText(_currentEvent->comment(i)->text().c_str());
+				_ui->labelCustomValue->setToolTip(_currentEvent->comment(i)->text().c_str());
 			}
 			break;
 		}
@@ -1547,14 +1555,14 @@ void EventSummaryView::updateEventName() {
 	for ( size_t i = 0; i < _currentEvent->eventDescriptionCount(); ++i ) {
 		if ( _currentEvent->eventDescription(i)->type() == EARTHQUAKE_NAME ) {
 			if ( !_currentEvent->eventDescription(i)->text().empty() ) {
-				//ui._lbName->setText(_currentEvent->eventDescription(i)->text().c_str());
+				//_ui->_lbName->setText(_currentEvent->eventDescription(i)->text().c_str());
 				return;
 			}
 			break;
 		}
 	}
 
-	//ui._lbName->setText("-");
+	//_ui->_lbName->setText("-");
 }
 
 
@@ -1613,19 +1621,19 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 	std::string desc = description(_currentOrigin.get());
 	if ( desc.empty() )
 		//desc = _currentEvent->description();
-		ui._lbRegionExtra->setVisible(false);
+		_ui->_lbRegionExtra->setVisible(false);
 	else {
-		ui._lbRegionExtra->setVisible(true);
-		ui._lbRegionExtra->setText(desc.c_str());
+		_ui->_lbRegionExtra->setVisible(true);
+		_ui->_lbRegionExtra->setText(desc.c_str());
 	}
 
-	ui._lbRegion->setVisible(true);
+	_ui->_lbRegion->setVisible(true);
 	std::string region = _currentEvent?eventRegion(_currentEvent.get()):"";
 	if ( _currentEvent && !region.empty() )
-		ui._lbRegion->setText(region.c_str());
+		_ui->_lbRegion->setText(region.c_str());
 	else {
 		Regions regions;
-		ui._lbRegion->setText(regions.getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
+		_ui->_lbRegion->setText(regions.getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
 	}
 
 	updateTimeAgoLabel();
@@ -1634,32 +1642,32 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 	setMagnitudeParameter(_currentOrigin.get());
 
 	// set origin parameters
-	uiHypocenter._lbLatitude->setText(latitudeToString(_currentOrigin->latitude(), true, false, SCScheme.precision.location));
-	uiHypocenter._lbLatitudeUnit->setText(latitudeToString(_currentOrigin->latitude(), false, true));
+	_uiHypocenter->_lbLatitude->setText(latitudeToString(_currentOrigin->latitude(), true, false, SCScheme.precision.location));
+	_uiHypocenter->_lbLatitudeUnit->setText(latitudeToString(_currentOrigin->latitude(), false, true));
 
-	uiHypocenter._lbLongitude->setText(longitudeToString(_currentOrigin->longitude(), true, false, SCScheme.precision.location));
-	uiHypocenter._lbLongitudeUnit->setText(longitudeToString(_currentOrigin->longitude(), false, true));
+	_uiHypocenter->_lbLongitude->setText(longitudeToString(_currentOrigin->longitude(), true, false, SCScheme.precision.location));
+	_uiHypocenter->_lbLongitudeUnit->setText(longitudeToString(_currentOrigin->longitude(), false, true));
 
 	try { // depth error
 		double err_z = quantityUncertainty(_currentOrigin->depth());
 		if (err_z == 0.0)
-			uiHypocenter._lbDepthError->setText(QString("  fixed"));
+			_uiHypocenter->_lbDepthError->setText(QString("  fixed"));
 		else
-			uiHypocenter._lbDepthError->setText(QString("+/-%1 km").arg(err_z, 4, 'f', SCScheme.precision.uncertainties));
+			_uiHypocenter->_lbDepthError->setText(QString("+/-%1 km").arg(err_z, 4, 'f', SCScheme.precision.uncertainties));
 	}
 	catch(...) {
-		uiHypocenter._lbDepthError->setText(QString(""));
+		_uiHypocenter->_lbDepthError->setText(QString(""));
 	}
 	try { // depth
-		uiHypocenter._lbDepth->setText(depthToString(_currentOrigin->depth(), SCScheme.precision.depth));
-		ui.labelDepth->setText(depthToString(_currentOrigin->depth(), SCScheme.precision.depth) + " km");
-		uiHypocenter._lbDepthUnit->setText("km");
+		_uiHypocenter->_lbDepth->setText(depthToString(_currentOrigin->depth(), SCScheme.precision.depth));
+		_ui->labelDepth->setText(depthToString(_currentOrigin->depth(), SCScheme.precision.depth) + " km");
+		_uiHypocenter->_lbDepthUnit->setText("km");
 
 	} catch(...) {
-		uiHypocenter._lbDepth->setText(QString("---"));
-		uiHypocenter._lbDepthUnit->setText("");
-		uiHypocenter._lbDepthError->setText(QString(""));
-		ui.labelDepth->setText("");
+		_uiHypocenter->_lbDepth->setText(QString("---"));
+		_uiHypocenter->_lbDepthUnit->setText("");
+		_uiHypocenter->_lbDepthError->setText(QString(""));
+		_ui->labelDepth->setText("");
 	}
 
 	string timeFormat = "%F %T";
@@ -1668,75 +1676,75 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 		timeFormat += Core::toString(SCScheme.precision.originTime);
 		timeFormat += "f";
 	}
-	timeToLabel(ui._lbOriginTime, _currentOrigin->time().value(), timeFormat.c_str(), true);
+	timeToLabel(_ui->_lbOriginTime, _currentOrigin->time().value(), timeFormat.c_str(), true);
 
 	try {
-		uiHypocenter._lbOriginStatus->setText(_currentOrigin->evaluationMode().toString());
+		_uiHypocenter->_lbOriginStatus->setText(_currentOrigin->evaluationMode().toString());
 	} catch(...){
-		uiHypocenter._lbOriginStatus->setText("---");
+		_uiHypocenter->_lbOriginStatus->setText("---");
 	}
 
 	try {
-		uiHypocenter._lbLatError->setText(QString("+/-%1 km").arg(quantityUncertainty(_currentOrigin->latitude()), 4, 'f', SCScheme.precision.uncertainties));
+		_uiHypocenter->_lbLatError->setText(QString("+/-%1 km").arg(quantityUncertainty(_currentOrigin->latitude()), 4, 'f', SCScheme.precision.uncertainties));
 	}
 	catch ( ... ) {
-		uiHypocenter._lbLatError->setText("");
+		_uiHypocenter->_lbLatError->setText("");
 	}
 
 	try {
-		uiHypocenter._lbLongError->setText(QString("+/-%1 km").arg(quantityUncertainty(_currentOrigin->longitude()), 4, 'f', SCScheme.precision.uncertainties));
+		_uiHypocenter->_lbLongError->setText(QString("+/-%1 km").arg(quantityUncertainty(_currentOrigin->longitude()), 4, 'f', SCScheme.precision.uncertainties));
 	}
 	catch ( ... ) {
-		uiHypocenter._lbLongError->setText("");
+		_uiHypocenter->_lbLongError->setText("");
 	}
 
 	try {
 		DataModel::OriginQuality quality = _currentOrigin->quality();
 		try{
-			uiHypocenter._lbNoPhases->setText(QString("%1").arg(quality.usedPhaseCount(), 0, 'd', 0, ' '));
+			_uiHypocenter->_lbNoPhases->setText(QString("%1").arg(quality.usedPhaseCount(), 0, 'd', 0, ' '));
 		}
 		catch(Core::ValueException&) {
-			uiHypocenter._lbNoPhases->setText("--");
+			_uiHypocenter->_lbNoPhases->setText("--");
 		}
 
 		try {
-			uiHypocenter._lbRMS->setText(QString("%1").arg(quality.standardError(), 0, 'f', 1));
+			_uiHypocenter->_lbRMS->setText(QString("%1").arg(quality.standardError(), 0, 'f', 1));
 		}
 		catch(Core::ValueException&) {
-			uiHypocenter._lbRMS->setText("--");
+			_uiHypocenter->_lbRMS->setText("--");
 		}
 
 		try {
-			uiHypocenter._lbAzGap->setText(QString("%1").arg(quality.azimuthalGap(), 0, 'f', 0));
+			_uiHypocenter->_lbAzGap->setText(QString("%1").arg(quality.azimuthalGap(), 0, 'f', 0));
 		}
 		catch(Core::ValueException&) {
-			uiHypocenter._lbAzGap->setText("--");
+			_uiHypocenter->_lbAzGap->setText("--");
 		}
 	}
 	catch ( ... ) {
-		uiHypocenter._lbNoPhases->setText("--");
-		uiHypocenter._lbRMS->setText("--");
-		uiHypocenter._lbAzGap->setText("--");
+		_uiHypocenter->_lbNoPhases->setText("--");
+		_uiHypocenter->_lbRMS->setText("--");
+		_uiHypocenter->_lbAzGap->setText("--");
 	}
 
 	if ( _displayComment ) {
 		if ( _reader && _currentOrigin->commentCount() == 0 )
 			_reader->loadComments(_currentOrigin.get());
 
-		uiHypocenter._lbComment->setText(_displayCommentDefault.c_str());
+		_uiHypocenter->_lbComment->setText(_displayCommentDefault.c_str());
 		for ( size_t i = 0; i < _currentOrigin->commentCount(); ++i ) {
 			if ( _currentOrigin->comment(i)->id() == _displayCommentID ) {
-				uiHypocenter._lbComment->setText(_currentOrigin->comment(i)->text().c_str());
+				_uiHypocenter->_lbComment->setText(_currentOrigin->comment(i)->text().c_str());
 				break;
 			}
 		}
 	}
 
 	try {
-		uiHypocenter._lbAgency->setText(_currentOrigin->creationInfo().agencyID().c_str());
+		_uiHypocenter->_lbAgency->setText(_currentOrigin->creationInfo().agencyID().c_str());
 	}
 	catch ( ... ) {
-		uiHypocenter._lbAgency->setText("");
+		_uiHypocenter->_lbAgency->setText("");
 	}
 
 	// get the time of first location of an origin belonging to this Event
@@ -1748,7 +1756,7 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 		}
 	}
 	catch (...) {}
-	uiHypocenter._lbFirstLocation->setText(str);
+	_uiHypocenter->_lbFirstLocation->setText(str);
 
 	str = "-";
 	// get the time of the current location
@@ -1757,12 +1765,12 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 		elapsedTimeString(dt, str);
 	}
 	catch (...) {}
-	uiHypocenter._lbThisLocation->setText(str);
+	_uiHypocenter->_lbThisLocation->setText(str);
 
 	if ( _currentEvent )
-		uiHypocenter._lbEventID->setText(_currentEvent->publicID().c_str());
+		_uiHypocenter->_lbEventID->setText(_currentEvent->publicID().c_str());
 	else
-		uiHypocenter._lbEventID->setText("");
+		_uiHypocenter->_lbEventID->setText("");
 
 	// set map
 	if ( !_mapTimer->isActive() ){
@@ -1786,9 +1794,9 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 		setFMParametersVisible(false);
 
 
-	ui.btnShowDetails->setEnabled(true);
-	ui.btnPlugable0->setEnabled(true);
-	ui.btnPlugable1->setEnabled(true);
+	_ui->btnShowDetails->setEnabled(true);
+	_ui->btnPlugable0->setEnabled(true);
+	_ui->btnPlugable1->setEnabled(true);
 
 	SEISCOMP_DEBUG("***** Setting origin %s", _currentOrigin->publicID().c_str());
 }
@@ -1804,41 +1812,41 @@ void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
 		_reader->loadMagnitudes(origin);
 
 	if ( _currentOrigin && _currentOrigin->publicID() == origin->publicID() ) {
-		ui.btnSwitchToAutomatic->setEnabled(false);
+		_ui->btnSwitchToAutomatic->setEnabled(false);
 		setLastAutomaticOriginColor(_automaticOriginDisabledColor);
 	}
 	else {
-		ui.btnSwitchToAutomatic->setEnabled(true);
+		_ui->btnSwitchToAutomatic->setEnabled(true);
 		setLastAutomaticOriginColor(_automaticOriginEnabledColor);
 	}
 
 	setAutomaticMagnitudeParameter(origin);
 
 	// set origin parameters
-	uiHypocenter._lbLatitudeAutomatic->setText(latitudeToString(origin->latitude(), true, false, SCScheme.precision.location));
-	uiHypocenter._lbLatitudeUnitAutomatic->setText(latitudeToString(origin->latitude(), false, true));
+	_uiHypocenter->_lbLatitudeAutomatic->setText(latitudeToString(origin->latitude(), true, false, SCScheme.precision.location));
+	_uiHypocenter->_lbLatitudeUnitAutomatic->setText(latitudeToString(origin->latitude(), false, true));
 
-	uiHypocenter._lbLongitudeAutomatic->setText(longitudeToString(origin->longitude(), true, false, SCScheme.precision.location));
-	uiHypocenter._lbLongitudeUnitAutomatic->setText(longitudeToString(origin->longitude(), false, true));
+	_uiHypocenter->_lbLongitudeAutomatic->setText(longitudeToString(origin->longitude(), true, false, SCScheme.precision.location));
+	_uiHypocenter->_lbLongitudeUnitAutomatic->setText(longitudeToString(origin->longitude(), false, true));
 
 	try { // depth error
 		double err_z = quantityUncertainty(origin->depth());
 		if (err_z == 0.0)
-			uiHypocenter._lbDepthErrorAutomatic->setText(QString("  fixed"));
+			_uiHypocenter->_lbDepthErrorAutomatic->setText(QString("  fixed"));
 		else
-			uiHypocenter._lbDepthErrorAutomatic->setText(QString("+/-%1 km").arg(err_z, 4, 'f', SCScheme.precision.uncertainties));
+			_uiHypocenter->_lbDepthErrorAutomatic->setText(QString("+/-%1 km").arg(err_z, 4, 'f', SCScheme.precision.uncertainties));
 	}
 	catch(...) {
-		uiHypocenter._lbDepthErrorAutomatic->setText(QString(""));
+		_uiHypocenter->_lbDepthErrorAutomatic->setText(QString(""));
 	}
 	try { // depth
-		uiHypocenter._lbDepthAutomatic->setText(depthToString(origin->depth(), SCScheme.precision.depth));
-		uiHypocenter._lbDepthUnitAutomatic->setText("km");
+		_uiHypocenter->_lbDepthAutomatic->setText(depthToString(origin->depth(), SCScheme.precision.depth));
+		_uiHypocenter->_lbDepthUnitAutomatic->setText("km");
 
 	} catch(...) {
-		uiHypocenter._lbDepthAutomatic->setText(QString("---"));
-		uiHypocenter._lbDepthUnitAutomatic->setText("");
-		uiHypocenter._lbDepthErrorAutomatic->setText(QString(""));
+		_uiHypocenter->_lbDepthAutomatic->setText(QString("---"));
+		_uiHypocenter->_lbDepthUnitAutomatic->setText("");
+		_uiHypocenter->_lbDepthErrorAutomatic->setText(QString(""));
 	}
 
 	string timeFormat = "%F %T";
@@ -1847,55 +1855,55 @@ void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
 		timeFormat += Core::toString(SCScheme.precision.originTime);
 		timeFormat += "f";
 	}
-	timeToLabel(ui._lbOriginTimeAutomatic, origin->time().value(), timeFormat.c_str(), true);
+	timeToLabel(_ui->_lbOriginTimeAutomatic, origin->time().value(), timeFormat.c_str(), true);
 
 	try {
-		uiHypocenter._lbOriginStatusAutomatic->setText(origin->evaluationMode().toString());
+		_uiHypocenter->_lbOriginStatusAutomatic->setText(origin->evaluationMode().toString());
 	} catch(...){
-		uiHypocenter._lbOriginStatusAutomatic->setText("---");
+		_uiHypocenter->_lbOriginStatusAutomatic->setText("---");
 	}
 
 	try {
-		uiHypocenter._lbLatErrorAutomatic->setText(QString("+/-%1 km").arg(quantityUncertainty(origin->latitude()), 4, 'f', SCScheme.precision.uncertainties));
+		_uiHypocenter->_lbLatErrorAutomatic->setText(QString("+/-%1 km").arg(quantityUncertainty(origin->latitude()), 4, 'f', SCScheme.precision.uncertainties));
 	}
 	catch ( ... ) {
-		uiHypocenter._lbLatErrorAutomatic->setText("");
+		_uiHypocenter->_lbLatErrorAutomatic->setText("");
 	}
 
 	try {
-		uiHypocenter._lbLongErrorAutomatic->setText(QString("+/-%1 km").arg(quantityUncertainty(origin->longitude()), 4, 'f', SCScheme.precision.uncertainties));
+		_uiHypocenter->_lbLongErrorAutomatic->setText(QString("+/-%1 km").arg(quantityUncertainty(origin->longitude()), 4, 'f', SCScheme.precision.uncertainties));
 	}
 	catch ( ... ) {
-		uiHypocenter._lbLongErrorAutomatic->setText("");
+		_uiHypocenter->_lbLongErrorAutomatic->setText("");
 	}
 
 	try {
 		DataModel::OriginQuality quality = origin->quality();
 		try{
-			uiHypocenter._lbNoPhasesAutomatic->setText(QString("%1").arg(quality.usedPhaseCount(), 0, 'd', 0, ' '));
+			_uiHypocenter->_lbNoPhasesAutomatic->setText(QString("%1").arg(quality.usedPhaseCount(), 0, 'd', 0, ' '));
 		}
 		catch(Core::ValueException&) {
-			uiHypocenter._lbNoPhasesAutomatic->setText("--");
+			_uiHypocenter->_lbNoPhasesAutomatic->setText("--");
 		}
 
 		try {
-			uiHypocenter._lbRMSAutomatic->setText(QString("%1").arg(quality.standardError(), 0, 'f', 1));
+			_uiHypocenter->_lbRMSAutomatic->setText(QString("%1").arg(quality.standardError(), 0, 'f', 1));
 		}
 		catch(Core::ValueException&) {
-			uiHypocenter._lbRMSAutomatic->setText("--");
+			_uiHypocenter->_lbRMSAutomatic->setText("--");
 		}
 
 		try {
-			uiHypocenter._lbAzGapAutomatic->setText(QString("%1").arg(quality.azimuthalGap(), 0, 'f', 0));
+			_uiHypocenter->_lbAzGapAutomatic->setText(QString("%1").arg(quality.azimuthalGap(), 0, 'f', 0));
 		}
 		catch(Core::ValueException&) {
-			uiHypocenter._lbAzGapAutomatic->setText("--");
+			_uiHypocenter->_lbAzGapAutomatic->setText("--");
 		}
 	}
 	catch ( ... ) {
-		uiHypocenter._lbNoPhasesAutomatic->setText("--");
-		uiHypocenter._lbRMSAutomatic->setText("--");
-		uiHypocenter._lbAzGapAutomatic->setText("--");
+		_uiHypocenter->_lbNoPhasesAutomatic->setText("--");
+		_uiHypocenter->_lbRMSAutomatic->setText("--");
+		_uiHypocenter->_lbAzGapAutomatic->setText("--");
 	}
 
 
@@ -1903,10 +1911,10 @@ void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
 		if ( _reader && origin->commentCount() == 0 )
 			_reader->loadComments(origin);
 
-		uiHypocenter._lbCommentAutomatic->setText(_displayCommentDefault.c_str());
+		_uiHypocenter->_lbCommentAutomatic->setText(_displayCommentDefault.c_str());
 		for ( size_t i = 0; i < origin->commentCount(); ++i ) {
 			if ( origin->comment(i)->id() == _displayCommentID ) {
-				uiHypocenter._lbCommentAutomatic->setText(origin->comment(i)->text().c_str());
+				_uiHypocenter->_lbCommentAutomatic->setText(origin->comment(i)->text().c_str());
 				break;
 			}
 		}
@@ -1914,10 +1922,10 @@ void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
 
 
 	try {
-		uiHypocenter._lbAgencyAutomatic->setText(origin->creationInfo().agencyID().c_str());
+		_uiHypocenter->_lbAgencyAutomatic->setText(origin->creationInfo().agencyID().c_str());
 	}
 	catch ( ... ) {
-		uiHypocenter._lbAgencyAutomatic->setText("");
+		_uiHypocenter->_lbAgencyAutomatic->setText("");
 	}
 }
 
@@ -1926,46 +1934,46 @@ void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
 	OriginPtr derivedOrigin = nullptr;
 
 	try {
-		uiHypocenter.labelMisfit->setText(QString("%1").arg(fm->misfit(), 0, 'f', 2));
+		_uiHypocenter->labelMisfit->setText(QString("%1").arg(fm->misfit(), 0, 'f', 2));
 	}
 	catch ( ... ) {
-		uiHypocenter.labelMisfit->setText("-");
+		_uiHypocenter->labelMisfit->setText("-");
 	}
 
 	try {
-		uiHypocenter.labelNP0->setText(
+		_uiHypocenter->labelNP0->setText(
 			QString("S: %1, D: %2, R: %3")
 			.arg((int)fm->nodalPlanes().nodalPlane1().strike())
 			.arg((int)fm->nodalPlanes().nodalPlane1().dip())
 			.arg((int)fm->nodalPlanes().nodalPlane1().rake()));
 	}
 	catch ( ... ) {
-		uiHypocenter.labelNP0->setText("S: -, D: -, R: -");
+		_uiHypocenter->labelNP0->setText("S: -, D: -, R: -");
 	}
 
 	try {
-		uiHypocenter.labelNP1->setText(
+		_uiHypocenter->labelNP1->setText(
 			QString("S: %1, D: %2, R: %3")
 			.arg((int)fm->nodalPlanes().nodalPlane2().strike())
 			.arg((int)fm->nodalPlanes().nodalPlane2().dip())
 			.arg((int)fm->nodalPlanes().nodalPlane2().rake()));
 	}
 	catch ( ... ) {
-		uiHypocenter.labelNP1->setText("S: -, D: -, R: -");
+		_uiHypocenter->labelNP1->setText("S: -, D: -, R: -");
 	}
 
 	try {
-		uiHypocenter.labelAgency->setText(fm->creationInfo().agencyID().c_str());
+		_uiHypocenter->labelAgency->setText(fm->creationInfo().agencyID().c_str());
 	}
 	catch ( ... ) {
-		uiHypocenter.labelAgency->setText("-");
+		_uiHypocenter->labelAgency->setText("-");
 	}
 
 	try {
-		uiHypocenter.labelStatus->setText(fm->evaluationMode().toString());
+		_uiHypocenter->labelStatus->setText(fm->evaluationMode().toString());
 	}
 	catch ( ... ) {
-		uiHypocenter.labelStatus->setText("-");
+		_uiHypocenter->labelStatus->setText("-");
 	}
 
 	QString str = "-";
@@ -1974,7 +1982,7 @@ void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
 		elapsedTimeString(dt, str);
 	}
 	catch ( ... ) {}
-	uiHypocenter.labelThisSolution->setText(str);
+	_uiHypocenter->labelThisSolution->setText(str);
 
 	if ( fm->momentTensorCount() > 0 ) {
 		MomentTensor *mt = fm->momentTensor(0);
@@ -1983,10 +1991,10 @@ void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
 			derivedOrigin = Origin::Cast(_reader->getObject(Origin::TypeInfo(), mt->derivedOriginID()));
 
 		try {
-			uiHypocenter.labelCLVD->setText(QString("%1").arg(mt->clvd(), 0, 'f', 2));
+			_uiHypocenter->labelCLVD->setText(QString("%1").arg(mt->clvd(), 0, 'f', 2));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelCLVD->setText("-");
+			_uiHypocenter->labelCLVD->setText("-");
 		}
 
 		MagnitudePtr mag = Magnitude::Find(mt->momentMagnitudeID());
@@ -1994,110 +2002,110 @@ void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
 			mag = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), mt->momentMagnitudeID()));
 
 		if ( mag )
-			uiHypocenter.labelMw->setText(QString("%1").arg(mag->magnitude().value(), 0, 'f', 1));
+			_uiHypocenter->labelMw->setText(QString("%1").arg(mag->magnitude().value(), 0, 'f', 1));
 		else
-			uiHypocenter.labelMw->setText("-");
+			_uiHypocenter->labelMw->setText("-");
 
 		try {
-			uiHypocenter.labelMoment->setText(QString("%1").arg(mt->scalarMoment(), 0, 'E', 2));
+			_uiHypocenter->labelMoment->setText(QString("%1").arg(mt->scalarMoment(), 0, 'E', 2));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelMoment->setText("-");
+			_uiHypocenter->labelMoment->setText("-");
 		}
 	}
 	else {
-		uiHypocenter.labelCLVD->setText("-");
-		uiHypocenter.labelMw->setText("-");
-		uiHypocenter.labelMoment->setText("-");
+		_uiHypocenter->labelCLVD->setText("-");
+		_uiHypocenter->labelMw->setText("-");
+		_uiHypocenter->labelMoment->setText("-");
 
 		derivedOrigin = Origin::Find(fm->triggeringOriginID());
 	}
 
 	if ( derivedOrigin ) {
-		uiHypocenter.labelLatitude->setText(latitudeToString(derivedOrigin->latitude(), true, false, SCScheme.precision.location));
-		uiHypocenter.labelLatitudeUnit->setText(latitudeToString(derivedOrigin->latitude(), false, true));
+		_uiHypocenter->labelLatitude->setText(latitudeToString(derivedOrigin->latitude(), true, false, SCScheme.precision.location));
+		_uiHypocenter->labelLatitudeUnit->setText(latitudeToString(derivedOrigin->latitude(), false, true));
 
-		uiHypocenter.labelLongitude->setText(longitudeToString(derivedOrigin->longitude(), true, false, SCScheme.precision.location));
-		uiHypocenter.labelLongitudeUnit->setText(longitudeToString(derivedOrigin->longitude(), false, true));
-
-		try {
-			uiHypocenter.labelLatitudeError->setText(QString("+/-%1 km").arg(quantityUncertainty(derivedOrigin->latitude()), 4, 'f', SCScheme.precision.depth));
-		}
-		catch ( ... ) {
-			uiHypocenter.labelLatitudeError->setText("");
-		}
+		_uiHypocenter->labelLongitude->setText(longitudeToString(derivedOrigin->longitude(), true, false, SCScheme.precision.location));
+		_uiHypocenter->labelLongitudeUnit->setText(longitudeToString(derivedOrigin->longitude(), false, true));
 
 		try {
-			uiHypocenter.labelLongitudeError->setText(QString("+/-%1 km").arg(quantityUncertainty(derivedOrigin->longitude()), 4, 'f', SCScheme.precision.depth));
+			_uiHypocenter->labelLatitudeError->setText(QString("+/-%1 km").arg(quantityUncertainty(derivedOrigin->latitude()), 4, 'f', SCScheme.precision.depth));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelLongitudeError->setText("");
+			_uiHypocenter->labelLatitudeError->setText("");
+		}
+
+		try {
+			_uiHypocenter->labelLongitudeError->setText(QString("+/-%1 km").arg(quantityUncertainty(derivedOrigin->longitude()), 4, 'f', SCScheme.precision.depth));
+		}
+		catch ( ... ) {
+			_uiHypocenter->labelLongitudeError->setText("");
 		}
 		
 		try { // depth error
 			double err_z = quantityUncertainty(derivedOrigin->depth());
 			if (err_z == 0.0)
-				uiHypocenter.labelDepthError->setText(QString("  fixed"));
+				_uiHypocenter->labelDepthError->setText(QString("  fixed"));
 			else
-				uiHypocenter.labelDepthError->setText(QString("+/-%1 km").arg(err_z, 4, 'f', SCScheme.precision.depth));
+				_uiHypocenter->labelDepthError->setText(QString("+/-%1 km").arg(err_z, 4, 'f', SCScheme.precision.depth));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelDepthError->setText(QString(""));
+			_uiHypocenter->labelDepthError->setText(QString(""));
 		}
 
 		try { // depth
-			uiHypocenter.labelDepth->setText(depthToString(derivedOrigin->depth(), SCScheme.precision.depth));
-			uiHypocenter.labelDepthUnit->setText("km");
+			_uiHypocenter->labelDepth->setText(depthToString(derivedOrigin->depth(), SCScheme.precision.depth));
+			_uiHypocenter->labelDepthUnit->setText("km");
 
 		}
 		catch ( ... ) {
-			uiHypocenter.labelDepth->setText(QString("---"));
-			uiHypocenter.labelDepthUnit->setText("");
-			uiHypocenter.labelDepthError->setText(QString(""));
+			_uiHypocenter->labelDepth->setText(QString("---"));
+			_uiHypocenter->labelDepthUnit->setText("");
+			_uiHypocenter->labelDepthError->setText(QString(""));
 		}
 
 		try {
-			uiHypocenter.labelPhases->setText(
+			_uiHypocenter->labelPhases->setText(
 				QString("%1").arg(derivedOrigin->quality().usedPhaseCount()));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelPhases->setText("-");
+			_uiHypocenter->labelPhases->setText("-");
 		}
 
 		try {
-			uiHypocenter.labelType->setText(derivedOrigin->type().toString());
+			_uiHypocenter->labelType->setText(derivedOrigin->type().toString());
 		}
 		catch ( ... ) {
-			uiHypocenter.labelType->setText("-");
+			_uiHypocenter->labelType->setText("-");
 		}
 
 		try {
-			uiHypocenter.labelMinDist->setText(
+			_uiHypocenter->labelMinDist->setText(
 				QString("%1").arg(derivedOrigin->quality().minimumDistance(), 0, 'f', 1));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelMinDist->setText("-");
+			_uiHypocenter->labelMinDist->setText("-");
 		}
 
 		try {
-			uiHypocenter.labelMaxDist->setText(
+			_uiHypocenter->labelMaxDist->setText(
 				QString("%1").arg(derivedOrigin->quality().maximumDistance(), 0, 'f', 1));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelMaxDist->setText("-");
+			_uiHypocenter->labelMaxDist->setText("-");
 		}
 	}
 	else {
-		uiHypocenter.labelLatitude->setText("---.--");
-		uiHypocenter.labelLatitudeUnit->setText("");
-		uiHypocenter.labelLongitude->setText("---.--");
-		uiHypocenter.labelLongitudeUnit->setText("");
-		uiHypocenter.labelDepth->setText("---");
-		uiHypocenter.labelDepthUnit->setText("");
-		uiHypocenter.labelPhases->setText("-");
-		uiHypocenter.labelType->setText("-");
-		uiHypocenter.labelMinDist->setText("-");
-		uiHypocenter.labelMaxDist->setText("-");
+		_uiHypocenter->labelLatitude->setText("---.--");
+		_uiHypocenter->labelLatitudeUnit->setText("");
+		_uiHypocenter->labelLongitude->setText("---.--");
+		_uiHypocenter->labelLongitudeUnit->setText("");
+		_uiHypocenter->labelDepth->setText("---");
+		_uiHypocenter->labelDepthUnit->setText("");
+		_uiHypocenter->labelPhases->setText("-");
+		_uiHypocenter->labelType->setText("-");
+		_uiHypocenter->labelMinDist->setText("-");
+		_uiHypocenter->labelMaxDist->setText("-");
 	}
 }
 
@@ -2105,23 +2113,23 @@ void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
 void EventSummaryView::clearAutomaticFMParameter() {
 	setLastAutomaticFMColor(_automaticOriginDisabledColor);
 
-	uiHypocenter.labelMisfitAutomatic->setText("-");
-	uiHypocenter.labelNP0Automatic->setText("S: -, D: -, R: -");
-	uiHypocenter.labelNP1Automatic->setText("S: -, D: -, R: -");
-	uiHypocenter.labelAgencyAutomatic->setText("-");
-	uiHypocenter.labelStatusAutomatic->setText("-");
-	uiHypocenter.labelThisSolutionAutomatic->setText("-");
-	uiHypocenter.labelCLVDAutomatic->setText("-");
-	uiHypocenter.labelMwAutomatic->setText("-");
-	uiHypocenter.labelMomentAutomatic->setText("-");
-	uiHypocenter.labelLatitudeAutomatic->setText("---.--");
-	uiHypocenter.labelLatitudeUnitAutomatic->setText("");
-	uiHypocenter.labelLongitudeAutomatic->setText("---.--");
-	uiHypocenter.labelLongitudeUnitAutomatic->setText("");
-	uiHypocenter.labelDepthAutomatic->setText("---");
-	uiHypocenter.labelDepthUnitAutomatic->setText("");
-	uiHypocenter.labelPhasesAutomatic->setText("-");
-	uiHypocenter.labelTypeAutomatic->setText("-");
+	_uiHypocenter->labelMisfitAutomatic->setText("-");
+	_uiHypocenter->labelNP0Automatic->setText("S: -, D: -, R: -");
+	_uiHypocenter->labelNP1Automatic->setText("S: -, D: -, R: -");
+	_uiHypocenter->labelAgencyAutomatic->setText("-");
+	_uiHypocenter->labelStatusAutomatic->setText("-");
+	_uiHypocenter->labelThisSolutionAutomatic->setText("-");
+	_uiHypocenter->labelCLVDAutomatic->setText("-");
+	_uiHypocenter->labelMwAutomatic->setText("-");
+	_uiHypocenter->labelMomentAutomatic->setText("-");
+	_uiHypocenter->labelLatitudeAutomatic->setText("---.--");
+	_uiHypocenter->labelLatitudeUnitAutomatic->setText("");
+	_uiHypocenter->labelLongitudeAutomatic->setText("---.--");
+	_uiHypocenter->labelLongitudeUnitAutomatic->setText("");
+	_uiHypocenter->labelDepthAutomatic->setText("---");
+	_uiHypocenter->labelDepthUnitAutomatic->setText("");
+	_uiHypocenter->labelPhasesAutomatic->setText("-");
+	_uiHypocenter->labelTypeAutomatic->setText("-");
 }
 
 
@@ -2142,46 +2150,46 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 	OriginPtr derivedOrigin = nullptr;
 
 	try {
-		uiHypocenter.labelMisfitAutomatic->setText(QString("%1").arg(fm->misfit(), 0, 'f', 2));
+		_uiHypocenter->labelMisfitAutomatic->setText(QString("%1").arg(fm->misfit(), 0, 'f', 2));
 	}
 	catch ( ... ) {
-		uiHypocenter.labelMisfitAutomatic->setText("-");
+		_uiHypocenter->labelMisfitAutomatic->setText("-");
 	}
 
 	try {
-		uiHypocenter.labelNP0Automatic->setText(
+		_uiHypocenter->labelNP0Automatic->setText(
 			QString("S: %1, D: %2, R: %3")
 			.arg((int)fm->nodalPlanes().nodalPlane1().strike())
 			.arg((int)fm->nodalPlanes().nodalPlane1().dip())
 			.arg((int)fm->nodalPlanes().nodalPlane1().rake()));
 	}
 	catch ( ... ) {
-		uiHypocenter.labelNP0Automatic->setText("S: -, D: -, R: -");
+		_uiHypocenter->labelNP0Automatic->setText("S: -, D: -, R: -");
 	}
 
 	try {
-		uiHypocenter.labelNP1Automatic->setText(
+		_uiHypocenter->labelNP1Automatic->setText(
 			QString("S: %1, D: %2, R: %3")
 			.arg((int)fm->nodalPlanes().nodalPlane2().strike())
 			.arg((int)fm->nodalPlanes().nodalPlane2().dip())
 			.arg((int)fm->nodalPlanes().nodalPlane2().rake()));
 	}
 	catch ( ... ) {
-		uiHypocenter.labelNP1Automatic->setText("S: -, D: -, R: -");
+		_uiHypocenter->labelNP1Automatic->setText("S: -, D: -, R: -");
 	}
 
 	try {
-		uiHypocenter.labelAgencyAutomatic->setText(fm->creationInfo().agencyID().c_str());
+		_uiHypocenter->labelAgencyAutomatic->setText(fm->creationInfo().agencyID().c_str());
 	}
 	catch ( ... ) {
-		uiHypocenter.labelAgencyAutomatic->setText("-");
+		_uiHypocenter->labelAgencyAutomatic->setText("-");
 	}
 
 	try {
-		uiHypocenter.labelStatusAutomatic->setText(fm->evaluationMode().toString());
+		_uiHypocenter->labelStatusAutomatic->setText(fm->evaluationMode().toString());
 	}
 	catch ( ... ) {
-		uiHypocenter.labelStatusAutomatic->setText("-");
+		_uiHypocenter->labelStatusAutomatic->setText("-");
 	}
 
 	QString str = "-";
@@ -2190,7 +2198,7 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 		elapsedTimeString(dt, str);
 	}
 	catch ( ... ) {}
-	uiHypocenter.labelThisSolutionAutomatic->setText(str);
+	_uiHypocenter->labelThisSolutionAutomatic->setText(str);
 
 	if ( fm->momentTensorCount() > 0 ) {
 		MomentTensor *mt = fm->momentTensor(0);
@@ -2199,10 +2207,10 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 			derivedOrigin = Origin::Cast(_reader->getObject(Origin::TypeInfo(), mt->derivedOriginID()));
 
 		try {
-			uiHypocenter.labelCLVDAutomatic->setText(QString("%1").arg(mt->clvd(), 0, 'f', 2));
+			_uiHypocenter->labelCLVDAutomatic->setText(QString("%1").arg(mt->clvd(), 0, 'f', 2));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelCLVDAutomatic->setText("-");
+			_uiHypocenter->labelCLVDAutomatic->setText("-");
 		}
 
 		MagnitudePtr mag = Magnitude::Find(mt->momentMagnitudeID());
@@ -2210,109 +2218,109 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 			mag = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), mt->momentMagnitudeID()));
 
 		if ( mag )
-			uiHypocenter.labelMwAutomatic->setText(QString("%1").arg(mag->magnitude().value(), 0, 'f', 1));
+			_uiHypocenter->labelMwAutomatic->setText(QString("%1").arg(mag->magnitude().value(), 0, 'f', 1));
 		else
-			uiHypocenter.labelMwAutomatic->setText("-");
+			_uiHypocenter->labelMwAutomatic->setText("-");
 
 		try {
-			uiHypocenter.labelMomentAutomatic->setText(QString("%1").arg(mt->scalarMoment(), 0, 'E', 2));
+			_uiHypocenter->labelMomentAutomatic->setText(QString("%1").arg(mt->scalarMoment(), 0, 'E', 2));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelMomentAutomatic->setText("-");
+			_uiHypocenter->labelMomentAutomatic->setText("-");
 		}
 	}
 	else {
-		uiHypocenter.labelCLVDAutomatic->setText("-");
-		uiHypocenter.labelMwAutomatic->setText("-");
-		uiHypocenter.labelMomentAutomatic->setText("-");
+		_uiHypocenter->labelCLVDAutomatic->setText("-");
+		_uiHypocenter->labelMwAutomatic->setText("-");
+		_uiHypocenter->labelMomentAutomatic->setText("-");
 	}
 
 	if ( derivedOrigin ) {
-		uiHypocenter.labelLatitudeAutomatic->setText(latitudeToString(derivedOrigin->latitude(), true, false, SCScheme.precision.location));
-		uiHypocenter.labelLatitudeUnitAutomatic->setText(latitudeToString(derivedOrigin->latitude(), false, true));
+		_uiHypocenter->labelLatitudeAutomatic->setText(latitudeToString(derivedOrigin->latitude(), true, false, SCScheme.precision.location));
+		_uiHypocenter->labelLatitudeUnitAutomatic->setText(latitudeToString(derivedOrigin->latitude(), false, true));
 
-		uiHypocenter.labelLongitudeAutomatic->setText(longitudeToString(derivedOrigin->longitude(), true, false, SCScheme.precision.location));
-		uiHypocenter.labelLongitudeUnitAutomatic->setText(longitudeToString(derivedOrigin->longitude(), false, true));
-
-		try {
-			uiHypocenter.labelLatitudeErrorAutomatic->setText(QString("+/-%1 km").arg(quantityUncertainty(derivedOrigin->latitude()), 4, 'f', SCScheme.precision.uncertainties));
-		}
-		catch ( ... ) {
-			uiHypocenter.labelLatitudeErrorAutomatic->setText("");
-		}
+		_uiHypocenter->labelLongitudeAutomatic->setText(longitudeToString(derivedOrigin->longitude(), true, false, SCScheme.precision.location));
+		_uiHypocenter->labelLongitudeUnitAutomatic->setText(longitudeToString(derivedOrigin->longitude(), false, true));
 
 		try {
-			uiHypocenter.labelLongitudeErrorAutomatic->setText(QString("+/-%1 km").arg(quantityUncertainty(derivedOrigin->longitude()), 4, 'f', SCScheme.precision.uncertainties));
+			_uiHypocenter->labelLatitudeErrorAutomatic->setText(QString("+/-%1 km").arg(quantityUncertainty(derivedOrigin->latitude()), 4, 'f', SCScheme.precision.uncertainties));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelLongitudeErrorAutomatic->setText("");
+			_uiHypocenter->labelLatitudeErrorAutomatic->setText("");
+		}
+
+		try {
+			_uiHypocenter->labelLongitudeErrorAutomatic->setText(QString("+/-%1 km").arg(quantityUncertainty(derivedOrigin->longitude()), 4, 'f', SCScheme.precision.uncertainties));
+		}
+		catch ( ... ) {
+			_uiHypocenter->labelLongitudeErrorAutomatic->setText("");
 		}
 		
 		try { // depth error
 			double err_z = quantityUncertainty(derivedOrigin->depth());
 			if (err_z == 0.0)
-				uiHypocenter.labelDepthErrorAutomatic->setText(QString("  fixed"));
+				_uiHypocenter->labelDepthErrorAutomatic->setText(QString("  fixed"));
 			else
-				uiHypocenter.labelDepthErrorAutomatic->setText(QString("+/-%1 km").arg(err_z, 4, 'f', SCScheme.precision.uncertainties));
+				_uiHypocenter->labelDepthErrorAutomatic->setText(QString("+/-%1 km").arg(err_z, 4, 'f', SCScheme.precision.uncertainties));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelDepthErrorAutomatic->setText(QString(""));
+			_uiHypocenter->labelDepthErrorAutomatic->setText(QString(""));
 		}
 
 		try { // depth
-			uiHypocenter.labelDepthAutomatic->setText(depthToString(derivedOrigin->depth(), SCScheme.precision.depth));
-			uiHypocenter.labelDepthUnitAutomatic->setText("km");
+			_uiHypocenter->labelDepthAutomatic->setText(depthToString(derivedOrigin->depth(), SCScheme.precision.depth));
+			_uiHypocenter->labelDepthUnitAutomatic->setText("km");
 
 		}
 		catch ( ... ) {
-			uiHypocenter.labelDepthAutomatic->setText(QString("---"));
-			uiHypocenter.labelDepthUnitAutomatic->setText("");
-			uiHypocenter.labelDepthErrorAutomatic->setText(QString(""));
+			_uiHypocenter->labelDepthAutomatic->setText(QString("---"));
+			_uiHypocenter->labelDepthUnitAutomatic->setText("");
+			_uiHypocenter->labelDepthErrorAutomatic->setText(QString(""));
 		}
 
 		try {
-			uiHypocenter.labelPhasesAutomatic->setText(
+			_uiHypocenter->labelPhasesAutomatic->setText(
 				QString("%1").arg(derivedOrigin->quality().usedPhaseCount()));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelPhasesAutomatic->setText("-");
+			_uiHypocenter->labelPhasesAutomatic->setText("-");
 		}
 
 		try {
-			uiHypocenter.labelTypeAutomatic->setText(derivedOrigin->type().toString());
+			_uiHypocenter->labelTypeAutomatic->setText(derivedOrigin->type().toString());
 		}
 		catch ( ... ) {
-			uiHypocenter.labelTypeAutomatic->setText("-");
+			_uiHypocenter->labelTypeAutomatic->setText("-");
 		}
 
 		try {
-			uiHypocenter.labelMinDistAutomatic->setText(
+			_uiHypocenter->labelMinDistAutomatic->setText(
 				QString("%1").arg(derivedOrigin->quality().minimumDistance(), 0, 'f', 1));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelMinDistAutomatic->setText("-");
+			_uiHypocenter->labelMinDistAutomatic->setText("-");
 		}
 
 		try {
-			uiHypocenter.labelMaxDistAutomatic->setText(
+			_uiHypocenter->labelMaxDistAutomatic->setText(
 				QString("%1").arg(derivedOrigin->quality().maximumDistance(), 0, 'f', 1));
 		}
 		catch ( ... ) {
-			uiHypocenter.labelMaxDist->setText("-");
+			_uiHypocenter->labelMaxDist->setText("-");
 		}
 
 	}
 	else {
-		uiHypocenter.labelLatitudeAutomatic->setText("---.--");
-		uiHypocenter.labelLatitudeUnitAutomatic->setText("");
-		uiHypocenter.labelLongitudeAutomatic->setText("---.--");
-		uiHypocenter.labelLongitudeUnitAutomatic->setText("");
-		uiHypocenter.labelDepthAutomatic->setText("---");
-		uiHypocenter.labelDepthUnitAutomatic->setText("");
-		uiHypocenter.labelPhasesAutomatic->setText("-");
-		uiHypocenter.labelTypeAutomatic->setText("-");
-		uiHypocenter.labelMinDistAutomatic->setText("-");
-		uiHypocenter.labelMaxDistAutomatic->setText("-");
+		_uiHypocenter->labelLatitudeAutomatic->setText("---.--");
+		_uiHypocenter->labelLatitudeUnitAutomatic->setText("");
+		_uiHypocenter->labelLongitudeAutomatic->setText("---.--");
+		_uiHypocenter->labelLongitudeUnitAutomatic->setText("");
+		_uiHypocenter->labelDepthAutomatic->setText("---");
+		_uiHypocenter->labelDepthUnitAutomatic->setText("");
+		_uiHypocenter->labelPhasesAutomatic->setText("-");
+		_uiHypocenter->labelTypeAutomatic->setText("-");
+		_uiHypocenter->labelMinDistAutomatic->setText("-");
+		_uiHypocenter->labelMaxDistAutomatic->setText("-");
 	}
 }
 
@@ -2466,12 +2474,12 @@ void EventSummaryView::setPrefMagnitudeParameter(std::string MagnitudeID){
 		return;
 	}
 
-	ui._lbPreMagType->setText((Magnitude->type()).c_str());
+	_ui->_lbPreMagType->setText((Magnitude->type()).c_str());
 	double premagval = Magnitude->magnitude().value();
 	char buf[10] = "-";
 	if (premagval<12)
 		sprintf(buf, "%.1f", premagval);
-	ui._lbPreMagVal->setText(buf);
+	_ui->_lbPreMagVal->setText(buf);
 
 	_magList->selectMagnitude(MagnitudeID.c_str());
 
@@ -2493,7 +2501,7 @@ void EventSummaryView::setMagnitudeParameter(DataModel::Origin* origin){
 
 		bool typeEnabled =
 			(_visibleMagnitudes.find(origin->magnitude(i)->type()) != _visibleMagnitudes.end())
-			|| ui.actionShowInvisibleMagnitudes->isChecked();
+			|| _ui->actionShowInvisibleMagnitudes->isChecked();
 
 		// create new magnitudeList display row
 		_magList->addMag(origin->magnitude(i), pref, typeEnabled);
@@ -2520,8 +2528,8 @@ void EventSummaryView::setAutomaticMagnitudeParameter(DataModel::Origin* origin)
 void EventSummaryView::clearPrefMagnitudeParameter(){
 
 	// clear preferred magnitude parameter
-	ui._lbPreMagType->setText("--");
-	ui._lbPreMagVal->setText("-.-");
+	_ui->_lbPreMagType->setText("--");
+	_ui->_lbPreMagVal->setText("-.-");
 
 }
 
@@ -2535,48 +2543,48 @@ void EventSummaryView::clearMagnitudeParameter(){
 		_magList->addMag(*it, false, true);
 	}
 
-	ui._lbPreMagType->setText("");
-	ui._lbPreMagVal->setText("");
+	_ui->_lbPreMagType->setText("");
+	_ui->_lbPreMagVal->setText("");
 }
 
 
 void EventSummaryView::clearOriginParameter(){
-	ui.labelDepth->setText("");
-	uiHypocenter._lbAgency->setText("");
-	uiHypocenter._lbFirstLocation->setText("");
-	uiHypocenter._lbThisLocation->setText("");
-	uiHypocenter._lbEventID->setText("");
+	_ui->labelDepth->setText("");
+	_uiHypocenter->_lbAgency->setText("");
+	_uiHypocenter->_lbFirstLocation->setText("");
+	_uiHypocenter->_lbThisLocation->setText("");
+	_uiHypocenter->_lbEventID->setText("");
 
-	uiHypocenter._lbLatitude->setText("---.--");
-	uiHypocenter._lbLatitudeUnit->setText("");
-	uiHypocenter._lbLongitude->setText("---.--");
-	uiHypocenter._lbLongitudeUnit->setText("");
-	uiHypocenter._lbDepth->setText("---");
-	uiHypocenter._lbDepthUnit->setText("---");
+	_uiHypocenter->_lbLatitude->setText("---.--");
+	_uiHypocenter->_lbLatitudeUnit->setText("");
+	_uiHypocenter->_lbLongitude->setText("---.--");
+	_uiHypocenter->_lbLongitudeUnit->setText("");
+	_uiHypocenter->_lbDepth->setText("---");
+	_uiHypocenter->_lbDepthUnit->setText("---");
 
-	uiHypocenter._lbNoPhases->setText("--");
-	uiHypocenter._lbRMS->setText("--");
-	uiHypocenter._lbAzGap->setText("--");
-//	uiHypocenter._lbMinDist->setText("--");
+	_uiHypocenter->_lbNoPhases->setText("--");
+	_uiHypocenter->_lbRMS->setText("--");
+	_uiHypocenter->_lbAzGap->setText("--");
+//	_uiHypocenter->_lbMinDist->setText("--");
 
-	uiHypocenter._lbLatError->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
-	uiHypocenter._lbLongError->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
-	uiHypocenter._lbDepthError->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
+	_uiHypocenter->_lbLatError->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
+	_uiHypocenter->_lbLongError->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
+	_uiHypocenter->_lbDepthError->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
 
-	ui._lbOriginTime->setText("0000/00/00  00:00:00");
-	ui._lbTimeAgo->setVisible(false);
+	_ui->_lbOriginTime->setText("0000/00/00  00:00:00");
+	_ui->_lbTimeAgo->setVisible(false);
 
-	ui._lbRegion->setText(""); ui._lbRegion->setVisible(false);
-	ui._lbRegionExtra->setText(""); ui._lbRegionExtra->setVisible(false);
-	uiHypocenter._lbOriginStatus->setText("");
+	_ui->_lbRegion->setText(""); _ui->_lbRegion->setVisible(false);
+	_ui->_lbRegionExtra->setText(""); _ui->_lbRegionExtra->setVisible(false);
+	_uiHypocenter->_lbOriginStatus->setText("");
 
 	clearAutomaticOriginParameter();
 
-	ui.btnShowDetails->setEnabled(false);
-	ui.btnPlugable0->setEnabled(false);
-	ui.btnPlugable1->setEnabled(false);
+	_ui->btnShowDetails->setEnabled(false);
+	_ui->btnPlugable0->setEnabled(false);
+	_ui->btnPlugable1->setEnabled(false);
 
-	ui.btnSwitchToAutomatic->setEnabled(false);
+	_ui->btnSwitchToAutomatic->setEnabled(false);
 
 	setFMParametersVisible(false);
 
@@ -2588,22 +2596,22 @@ void EventSummaryView::clearOriginParameter(){
 void EventSummaryView::clearAutomaticOriginParameter() {
 	setLastAutomaticOriginColor(_automaticOriginDisabledColor);
 
-	ui._lbOriginTimeAutomatic->setText("0000/00/00  00:00:00");
-	uiHypocenter._lbLatitudeAutomatic->setText("---.--");
-	uiHypocenter._lbLatitudeUnitAutomatic->setText("");
-	uiHypocenter._lbLongitudeAutomatic->setText("---.--");
-	uiHypocenter._lbLongitudeUnitAutomatic->setText("");
-	uiHypocenter._lbDepthAutomatic->setText("---");
-	uiHypocenter._lbDepthUnitAutomatic->setText("");
-	uiHypocenter._lbNoPhasesAutomatic->setText("--");
-	uiHypocenter._lbRMSAutomatic->setText("--");
-	uiHypocenter._lbAzGapAutomatic->setText("--");
-	uiHypocenter._lbCommentAutomatic->setText(_displayCommentDefault.c_str());
-	uiHypocenter._lbLatErrorAutomatic->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
-	uiHypocenter._lbLongErrorAutomatic->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
-	uiHypocenter._lbDepthErrorAutomatic->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
-	uiHypocenter._lbOriginStatusAutomatic->setText("");
-	uiHypocenter._lbAgencyAutomatic->setText("");
+	_ui->_lbOriginTimeAutomatic->setText("0000/00/00  00:00:00");
+	_uiHypocenter->_lbLatitudeAutomatic->setText("---.--");
+	_uiHypocenter->_lbLatitudeUnitAutomatic->setText("");
+	_uiHypocenter->_lbLongitudeAutomatic->setText("---.--");
+	_uiHypocenter->_lbLongitudeUnitAutomatic->setText("");
+	_uiHypocenter->_lbDepthAutomatic->setText("---");
+	_uiHypocenter->_lbDepthUnitAutomatic->setText("");
+	_uiHypocenter->_lbNoPhasesAutomatic->setText("--");
+	_uiHypocenter->_lbRMSAutomatic->setText("--");
+	_uiHypocenter->_lbAzGapAutomatic->setText("--");
+	_uiHypocenter->_lbCommentAutomatic->setText(_displayCommentDefault.c_str());
+	_uiHypocenter->_lbLatErrorAutomatic->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
+	_uiHypocenter->_lbLongErrorAutomatic->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
+	_uiHypocenter->_lbDepthErrorAutomatic->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
+	_uiHypocenter->_lbOriginStatusAutomatic->setText("");
+	_uiHypocenter->_lbAgencyAutomatic->setText("");
 
 	setAutomaticMagnitudeParameter(nullptr);
 }
@@ -2687,7 +2695,7 @@ void EventSummaryView::updateTimeAgoLabel(){
 // 	emit showInStatusbar(QString("%1").arg(Core::BaseObject::ObjectCount(), 0, 'd', 0, ' '), 0);
 
 	if (!_currentOrigin){
-		ui._lbTimeAgo->setVisible(false);
+		_ui->_lbTimeAgo->setVisible(false);
 		return;
 	}
 
@@ -2700,8 +2708,8 @@ void EventSummaryView::updateTimeAgoLabel(){
 	ct.gmt();
 	ts = ct - _currentOrigin->time();
 
-	if ( !ui._lbTimeAgo->isVisible() )
-		ui._lbTimeAgo->setVisible(true);
+	if ( !_ui->_lbTimeAgo->isVisible() )
+		_ui->_lbTimeAgo->setVisible(true);
 
 	int sec = ts.seconds();
 	int days = sec / 86400;
@@ -2724,8 +2732,8 @@ void EventSummaryView::updateTimeAgoLabel(){
 	else if ((days==0)&&(hours==0)&&(minutes==0)&&(seconds>0))
 		text = QString("%1 seconds ago").arg(seconds, 0, 'd', 0, ' ');
 
-	if ( text != ui._lbTimeAgo->text() )
-		ui._lbTimeAgo->setText(text);
+	if ( text != _ui->_lbTimeAgo->text() )
+		_ui->_lbTimeAgo->setText(text);
 
 	/*
 	double tsd = ts;
@@ -2781,8 +2789,8 @@ void EventSummaryView::setAutoSelect(bool s) {
 void EventSummaryView::setInteractiveEnabled(bool e) {
 	_interactive = e;
 
-	ui.frameProcessing->setVisible(_interactive);
-	//ui.btnShowDetails->setVisible(_interactive);
+	_ui->frameProcessing->setVisible(_interactive);
+	//_ui->btnShowDetails->setVisible(_interactive);
 
 	setScript0(_script0, _scriptStyle0, _scriptExportMap0);
 	setScript1(_script1, _scriptStyle1, _scriptExportMap1);
@@ -2870,12 +2878,12 @@ void EventSummaryView::switchToAutomaticPressed() {
 
 
 void EventSummaryView::runScript0() {
-	runScript(_script0.c_str(), ui.btnPlugable0->text(), _scriptStyle0,
+	runScript(_script0.c_str(), _ui->btnPlugable0->text(), _scriptStyle0,
 	          _scriptExportMap0);
 }
 
 void EventSummaryView::runScript1() {
-	runScript(_script1.c_str(), ui.btnPlugable1->text(), _scriptStyle1,
+	runScript(_script1.c_str(), _ui->btnPlugable1->text(), _scriptStyle1,
 	          _scriptExportMap1);
 }
 
@@ -3007,8 +3015,8 @@ void EventSummaryView::calcOriginDistances() {
 void EventSummaryView::setLastAutomaticOriginColor(QColor c) {
 	if ( _automaticOriginColor == c ) return;
 
-	SET_COLOR(ui._lbOriginTimeAutomatic, c);
-	SET_COLOR(uiHypocenter.frameInformationAutomatic, c);
+	SET_COLOR(_ui->_lbOriginTimeAutomatic, c);
+	SET_COLOR(_uiHypocenter->frameInformationAutomatic, c);
 
 	_magList->setReferenceMagnitudesColor(c);
 
@@ -3019,25 +3027,25 @@ void EventSummaryView::setLastAutomaticOriginColor(QColor c) {
 void EventSummaryView::setLastAutomaticFMColor(QColor c) {
 	if ( _automaticFMColor == c ) return;
 
-	SET_COLOR(uiHypocenter.fmFrameInformationAutomatic, c);
+	SET_COLOR(_uiHypocenter->fmFrameInformationAutomatic, c);
 
 	_automaticFMColor = c;
 }
 
 
 void EventSummaryView::setLastAutomaticOriginVisible(bool v) {
-	uiHypocenter.frameInformationAutomatic->setVisible(v);
-	uiHypocenter.labelFrameInfoSpacer->setVisible(v);
-	ui._lbOriginTimeAutomatic->setVisible(v);
+	_uiHypocenter->frameInformationAutomatic->setVisible(v);
+	_uiHypocenter->labelFrameInfoSpacer->setVisible(v);
+	_ui->_lbOriginTimeAutomatic->setVisible(v);
 	_magList->setReferenceMagnitudesVisible(v);
 }
 
 
 void EventSummaryView::setFMParametersVisible(bool v) {
-	uiHypocenter.labelFMSeparator->setVisible(v);
-	uiHypocenter.fmFrameInformation->setVisible(v);
-	uiHypocenter.fmFrameInformationAutomatic->setVisible(v && _showLastAutomaticSolution);
-	uiHypocenter.fmLabelFrameInfoSpacer->setVisible(v && _showLastAutomaticSolution);
+	_uiHypocenter->labelFMSeparator->setVisible(v);
+	_uiHypocenter->fmFrameInformation->setVisible(v);
+	_uiHypocenter->fmFrameInformationAutomatic->setVisible(v && _showLastAutomaticSolution);
+	_uiHypocenter->fmLabelFrameInfoSpacer->setVisible(v && _showLastAutomaticSolution);
 }
 
 

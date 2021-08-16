@@ -22,6 +22,8 @@
 #define SEISCOMP_COMPONENT Gui::PickerView
 
 #include "pickerview.h"
+#include <seiscomp/gui/datamodel/ui_pickerview.h>
+
 #include <seiscomp/core/platform/platform.h>
 #include <seiscomp/gui/datamodel/selectstation.h>
 #include <seiscomp/gui/datamodel/origindialog.h>
@@ -1556,7 +1558,7 @@ void selectFirstVisibleItem(RecordView *view) {
 }
 
 
-#define CFG_LOAD_PICKS _ui.actionShowUnassociatedPicks->isChecked()
+#define CFG_LOAD_PICKS _ui->actionShowUnassociatedPicks->isChecked()
 
 
 }
@@ -2260,7 +2262,8 @@ void PickerView::Config::getPickPhases(StringList &phases, const QList<PhaseGrou
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PickerView::PickerView(QWidget *parent, Qt::WindowFlags f)
-: QMainWindow(parent,f) {
+: QMainWindow(parent,f)
+, _ui(new Ui::PickerView) {
 	_recordView = new TraceList();
 	init();
 }
@@ -2272,7 +2275,8 @@ PickerView::PickerView(QWidget *parent, Qt::WindowFlags f)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PickerView::PickerView(const Seiscomp::Core::TimeWindow& tw,
                        QWidget *parent, Qt::WindowFlags f)
-: QMainWindow(parent, f) {
+: QMainWindow(parent, f)
+, _ui(new Ui::PickerView) {
 	_recordView = new TraceList(tw);
 	init();
 }
@@ -2284,7 +2288,8 @@ PickerView::PickerView(const Seiscomp::Core::TimeWindow& tw,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PickerView::PickerView(const Seiscomp::Core::TimeSpan& ts,
                        QWidget *parent, Qt::WindowFlags f)
-: QMainWindow(parent, f) {
+: QMainWindow(parent, f)
+, _ui(new Ui::PickerView) {
 	_recordView = new TraceList(ts);
 	init();
 }
@@ -2302,7 +2307,7 @@ PickerView::~PickerView() {
 
 	closeThreads();
 
-	QList<int> sizes = _ui.splitter->sizes();
+	QList<int> sizes = _ui->splitter->sizes();
 
 	if ( SCApp ) {
 		SCApp->settings().beginGroup(objectName());
@@ -2317,6 +2322,8 @@ PickerView::~PickerView() {
 
 		SCApp->settings().endGroup();
 	}
+
+	delete _ui;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2341,11 +2348,11 @@ void PickerView::init() {
 	Mac::addFullscreen(this);
 #endif
 
-	_ui.setupUi(this);
+	_ui->setupUi(this);
 
 	QFont f(font());
 	f.setBold(true);
-	_ui.labelStationCode->setFont(f);
+	_ui->labelStationCode->setFont(f);
 
 	//setContextMenuPolicy(Qt::ActionsContextMenu);
 	//_recordView->setMinimumRowHeight(70);
@@ -2410,13 +2417,13 @@ void PickerView::init() {
 	wrapper->setBackgroundRole(QPalette::Base);
 	wrapper->setAutoFillBackground(true);
 
-	QBoxLayout* layout = new QVBoxLayout(_ui.framePickList);
+	QBoxLayout* layout = new QVBoxLayout(_ui->framePickList);
 	layout->setMargin(0);
 	layout->setSpacing(0);
 	layout->addWidget(wrapper);
 
 	layout = new QVBoxLayout(wrapper);
-	layout->setMargin(_ui.frameZoom->layout()->margin());
+	layout->setMargin(_ui->frameZoom->layout()->margin());
 	layout->setSpacing(6);
 	layout->addWidget(_recordView);
 
@@ -2441,8 +2448,8 @@ void PickerView::init() {
 	statusBar()->addPermanentWidget(_connectionState);
 
 	_currentRecord = new ZoomRecordWidget();
-	_currentRecord->showScaledValues(_ui.actionShowTraceValuesInNmS->isChecked());
-	_currentRecord->setClippingEnabled(_ui.actionClipComponentsToViewport->isChecked());
+	_currentRecord->showScaledValues(_ui->actionShowTraceValuesInNmS->isChecked());
+	_currentRecord->setClippingEnabled(_ui->actionClipComponentsToViewport->isChecked());
 	_currentRecord->setMouseTracking(true);
 	_currentRecord->setContextMenuPolicy(Qt::CustomContextMenu);
 	_currentRecord->setRowSpacing(6);
@@ -2465,7 +2472,7 @@ void PickerView::init() {
 	connect(_currentRecord, SIGNAL(currentMarkerChanged(Seiscomp::Gui::RecordMarker*)),
 	        this, SLOT(currentMarkerChanged(Seiscomp::Gui::RecordMarker*)));
 
-	layout = new QVBoxLayout(_ui.frameCurrentRow);
+	layout = new QVBoxLayout(_ui->frameCurrentRow);
 	layout->setMargin(0);
 	layout->setSpacing(0);
 	layout->addWidget(_currentRecord);
@@ -2476,7 +2483,7 @@ void PickerView::init() {
 	_timeScale->setAbsoluteTimeEnabled(true);
 	_timeScale->setRangeSelectionEnabled(true);
 
-	layout = new QVBoxLayout(_ui.frameTimeScale);
+	layout = new QVBoxLayout(_ui->frameTimeScale);
 	layout->setMargin(0);
 	layout->setSpacing(0);
 	layout->addWidget(_timeScale);
@@ -2507,74 +2514,74 @@ void PickerView::init() {
 	_currentRecord->setAutoFillBackground(true);
 
 	// add actions
-	addAction(_ui.actionIncreaseAmplitudeScale);
-	addAction(_ui.actionDecreaseAmplitudeScale);
-	addAction(_ui.actionTimeScaleUp);
-	addAction(_ui.actionTimeScaleDown);
-	addAction(_ui.actionClipComponentsToViewport);
+	addAction(_ui->actionIncreaseAmplitudeScale);
+	addAction(_ui->actionDecreaseAmplitudeScale);
+	addAction(_ui->actionTimeScaleUp);
+	addAction(_ui->actionTimeScaleDown);
+	addAction(_ui->actionClipComponentsToViewport);
 
-	addAction(_ui.actionIncreaseRowHeight);
-	addAction(_ui.actionDecreaseRowHeight);
-	addAction(_ui.actionIncreaseRowTimescale);
-	addAction(_ui.actionDecreaseRowTimescale);
+	addAction(_ui->actionIncreaseRowHeight);
+	addAction(_ui->actionDecreaseRowHeight);
+	addAction(_ui->actionIncreaseRowTimescale);
+	addAction(_ui->actionDecreaseRowTimescale);
 
-	addAction(_ui.actionScrollLeft);
-	addAction(_ui.actionScrollFineLeft);
-	addAction(_ui.actionScrollRight);
-	addAction(_ui.actionScrollFineRight);
-	addAction(_ui.actionSelectNextTrace);
-	addAction(_ui.actionSelectPreviousTrace);
-	addAction(_ui.actionSelectFirstRow);
-	addAction(_ui.actionSelectLastRow);
+	addAction(_ui->actionScrollLeft);
+	addAction(_ui->actionScrollFineLeft);
+	addAction(_ui->actionScrollRight);
+	addAction(_ui->actionScrollFineRight);
+	addAction(_ui->actionSelectNextTrace);
+	addAction(_ui->actionSelectPreviousTrace);
+	addAction(_ui->actionSelectFirstRow);
+	addAction(_ui->actionSelectLastRow);
 
-	addAction(_ui.actionDefaultView);
+	addAction(_ui->actionDefaultView);
 
-	addAction(_ui.actionSortAlphabetically);
-	addAction(_ui.actionSortByDistance);
-	addAction(_ui.actionSortByAzimuth);
-	addAction(_ui.actionSortByResidual);
+	addAction(_ui->actionSortAlphabetically);
+	addAction(_ui->actionSortByDistance);
+	addAction(_ui->actionSortByAzimuth);
+	addAction(_ui->actionSortByResidual);
 
-	addAction(_ui.actionShowZComponent);
-	addAction(_ui.actionShowNComponent);
-	addAction(_ui.actionShowEComponent);
+	addAction(_ui->actionShowZComponent);
+	addAction(_ui->actionShowNComponent);
+	addAction(_ui->actionShowEComponent);
 
-	addAction(_ui.actionAlignOnOriginTime);
-	addAction(_ui.actionAlignOnPArrival);
-	addAction(_ui.actionAlignOnSArrival);
+	addAction(_ui->actionAlignOnOriginTime);
+	addAction(_ui->actionAlignOnPArrival);
+	addAction(_ui->actionAlignOnSArrival);
 
-	addAction(_ui.actionToggleFilter);
-	addAction(_ui.actionNextFilter);
-	addAction(_ui.actionPreviousFilter);
-	addAction(_ui.actionMaximizeAmplitudes);
+	addAction(_ui->actionToggleFilter);
+	addAction(_ui->actionNextFilter);
+	addAction(_ui->actionPreviousFilter);
+	addAction(_ui->actionMaximizeAmplitudes);
 
-	addAction(_ui.actionPickP);
-	addAction(_ui.actionPickS);
-	addAction(_ui.actionDisablePicking);
+	addAction(_ui->actionPickP);
+	addAction(_ui->actionPickS);
+	addAction(_ui->actionDisablePicking);
 
-	addAction(_ui.actionCreatePick);
-	addAction(_ui.actionConfirmPick);
-	addAction(_ui.actionSetPick);
-	addAction(_ui.actionDeletePick);
+	addAction(_ui->actionCreatePick);
+	addAction(_ui->actionConfirmPick);
+	addAction(_ui->actionSetPick);
+	addAction(_ui->actionDeletePick);
 
-	addAction(_ui.actionShowZComponent);
-	addAction(_ui.actionShowNComponent);
-	addAction(_ui.actionShowEComponent);
+	addAction(_ui->actionShowZComponent);
+	addAction(_ui->actionShowNComponent);
+	addAction(_ui->actionShowEComponent);
 
-	addAction(_ui.actionRepickAutomatically);
-	addAction(_ui.actionGotoNextMarker);
-	addAction(_ui.actionGotoPreviousMarker);
+	addAction(_ui->actionRepickAutomatically);
+	addAction(_ui->actionGotoNextMarker);
+	addAction(_ui->actionGotoPreviousMarker);
 
-	addAction(_ui.actionSetPolarityPositive);
-	addAction(_ui.actionSetPolarityNegative);
-	addAction(_ui.actionSetPolarityUndecidable);
-	addAction(_ui.actionSetPolarityUnset);
+	addAction(_ui->actionSetPolarityPositive);
+	addAction(_ui->actionSetPolarityNegative);
+	addAction(_ui->actionSetPolarityUndecidable);
+	addAction(_ui->actionSetPolarityUnset);
 
-	addAction(_ui.actionRelocate);
-	addAction(_ui.actionSwitchFullscreen);
-	addAction(_ui.actionAddStations);
-	addAction(_ui.actionSearchStation);
+	addAction(_ui->actionRelocate);
+	addAction(_ui->actionSwitchFullscreen);
+	addAction(_ui->actionAddStations);
+	addAction(_ui->actionSearchStation);
 
-	addAction(_ui.actionShowSpectrogram);
+	addAction(_ui->actionShowSpectrogram);
 
 	_lastFilterIndex = 0;
 
@@ -2586,7 +2593,7 @@ void PickerView::init() {
 	_comboFilter->setCurrentIndex(_lastFilterIndex);
 	changeFilter(_comboFilter->currentIndex());
 
-	_ui.toolBarFilter->insertWidget(_ui.actionToggleFilter, _comboFilter);
+	_ui->toolBarFilter->insertWidget(_ui->actionToggleFilter, _comboFilter);
 
 	_comboRotation = new QComboBox;
 	//_comboRotation->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
@@ -2595,7 +2602,7 @@ void PickerView::init() {
 		_comboRotation->addItem(ERotationTypeNames::name(i));
 	_comboRotation->setCurrentIndex(_currentRotationMode);
 
-	_ui.toolBarFilter->insertWidget(_ui.actionToggleFilter, _comboRotation);
+	_ui->toolBarFilter->insertWidget(_ui->actionToggleFilter, _comboRotation);
 
 	_comboUnit = new QComboBox;
 	_comboUnit->setDuplicatesEnabled(false);
@@ -2603,11 +2610,11 @@ void PickerView::init() {
 		_comboUnit->addItem(EUnitTypeNames::name(i));
 	_comboUnit->setCurrentIndex(_currentUnitMode);
 
-	_ui.toolBarFilter->insertWidget(_ui.actionToggleFilter, _comboUnit);
+	_ui->toolBarFilter->insertWidget(_ui->actionToggleFilter, _comboUnit);
 
 	// TTT selection
 	_comboTTT = new QComboBox;
-	_ui.toolBarTTT->addWidget(_comboTTT);
+	_ui->toolBarTTT->addWidget(_comboTTT);
 
 	_comboTTT->setToolTip(tr("Select one of the supported travel time table backends."));
 	TravelTimeTableInterfaceFactory::ServiceNames *ttServices = TravelTimeTableInterfaceFactory::Services();
@@ -2629,7 +2636,7 @@ void PickerView::init() {
 		connect(_comboTTT, SIGNAL(currentIndexChanged(QString)), this, SLOT(ttInterfaceChanged(QString)));
 		_comboTTTables = new QComboBox;
 		_comboTTTables->setToolTip(tr("Select one of the supported tables for the current travel time table backend."));
-		_ui.toolBarTTT->addWidget(_comboTTTables);
+		_ui->toolBarTTT->addWidget(_comboTTTables);
 		ttInterfaceChanged(_comboTTT->currentText());
 		connect(_comboTTTables, SIGNAL(currentIndexChanged(QString)), this, SLOT(ttTableChanged(QString)));
 	}
@@ -2638,13 +2645,13 @@ void PickerView::init() {
 		_comboTTT = nullptr;
 	}
 
-	connect(_ui.actionSetPolarityPositive, SIGNAL(triggered(bool)),
+	connect(_ui->actionSetPolarityPositive, SIGNAL(triggered(bool)),
 	        this, SLOT(setPickPolarity()));
-	connect(_ui.actionSetPolarityNegative, SIGNAL(triggered(bool)),
+	connect(_ui->actionSetPolarityNegative, SIGNAL(triggered(bool)),
 	        this, SLOT(setPickPolarity()));
-	connect(_ui.actionSetPolarityUndecidable, SIGNAL(triggered(bool)),
+	connect(_ui->actionSetPolarityUndecidable, SIGNAL(triggered(bool)),
 	        this, SLOT(setPickPolarity()));
-	connect(_ui.actionSetPolarityUnset, SIGNAL(triggered(bool)),
+	connect(_ui->actionSetPolarityUnset, SIGNAL(triggered(bool)),
 	        this, SLOT(setPickPolarity()));
 
 	connect(_comboFilter, SIGNAL(currentIndexChanged(int)),
@@ -2654,17 +2661,17 @@ void PickerView::init() {
 	connect(_comboUnit, SIGNAL(currentIndexChanged(int)),
 	        this, SLOT(changeUnit(int)));
 
-	connect(_ui.actionLimitFilterToZoomTrace, SIGNAL(triggered(bool)),
+	connect(_ui->actionLimitFilterToZoomTrace, SIGNAL(triggered(bool)),
 	        this, SLOT(limitFilterToZoomTrace(bool)));
 
-	connect(_ui.actionShowTheoreticalArrivals, SIGNAL(triggered(bool)),
+	connect(_ui->actionShowTheoreticalArrivals, SIGNAL(triggered(bool)),
 	        this, SLOT(showTheoreticalArrivals(bool)));
-	connect(_ui.actionShowUnassociatedPicks, SIGNAL(triggered(bool)),
+	connect(_ui->actionShowUnassociatedPicks, SIGNAL(triggered(bool)),
 	        this, SLOT(showUnassociatedPicks(bool)));
-	connect(_ui.actionShowSpectrogram, SIGNAL(triggered(bool)),
+	connect(_ui->actionShowSpectrogram, SIGNAL(triggered(bool)),
 	        this, SLOT(showSpectrogram(bool)));
 
-	connect(_ui.actionOpenSpectrum, SIGNAL(triggered(bool)),
+	connect(_ui->actionOpenSpectrum, SIGNAL(triggered(bool)),
 	        this, SLOT(showSpectrum()));
 
 	_spinDistance = new QDoubleSpinBox;
@@ -2681,7 +2688,7 @@ void PickerView::init() {
 		_spinDistance->setSuffix(degrees);
 	}
 
-	_ui.toolBarStations->insertWidget(_ui.actionShowAllStations, _spinDistance);
+	_ui->toolBarStations->insertWidget(_ui->actionShowAllStations, _spinDistance);
 
 	/*
 	connect(_spinDistance, SIGNAL(editingFinished()),
@@ -2695,7 +2702,7 @@ void PickerView::init() {
 	connect(cb, SIGNAL(toggled(bool)), this, SLOT(specLogToggled(bool)));
 	specLogToggled(cb->isChecked());
 
-	_ui.toolBarSpectrogram->addWidget(cb);
+	_ui->toolBarSpectrogram->addWidget(cb);
 
 	cb = new QCheckBox;
 	cb->setObjectName("spec.smooth");
@@ -2704,7 +2711,7 @@ void PickerView::init() {
 	connect(cb, SIGNAL(toggled(bool)), this, SLOT(specSmoothToggled(bool)));
 	specSmoothToggled(cb->isChecked());
 
-	_ui.toolBarSpectrogram->addWidget(cb);
+	_ui->toolBarSpectrogram->addWidget(cb);
 
 	_specOpts.minRange = -15;
 	_specOpts.maxRange = -5;
@@ -2717,8 +2724,8 @@ void PickerView::init() {
 	connect(spinLower, SIGNAL(valueChanged(double)), this, SLOT(specMinValue(double)));
 	specMinValue(spinLower->value());
 
-	_ui.toolBarSpectrogram->addSeparator();
-	_ui.toolBarSpectrogram->addWidget(spinLower);
+	_ui->toolBarSpectrogram->addSeparator();
+	_ui->toolBarSpectrogram->addWidget(spinLower);
 
 	QDoubleSpinBox *spinUpper = new QDoubleSpinBox;
 	spinUpper->setMinimum(-100);
@@ -2727,8 +2734,8 @@ void PickerView::init() {
 	connect(spinUpper, SIGNAL(valueChanged(double)), this, SLOT(specMaxValue(double)));
 	specMaxValue(spinUpper->value());
 
-	_ui.toolBarSpectrogram->addSeparator();
-	_ui.toolBarSpectrogram->addWidget(spinUpper);
+	_ui->toolBarSpectrogram->addSeparator();
+	_ui->toolBarSpectrogram->addWidget(spinUpper);
 
 	QDoubleSpinBox *spinTW = new QDoubleSpinBox;
 	spinTW->setMinimum(0.1);
@@ -2740,142 +2747,142 @@ void PickerView::init() {
 	specTimeWindow(spinTW->value());
 	specApply();
 
-	_ui.toolBarSpectrogram->addSeparator();
-	_ui.toolBarSpectrogram->addWidget(spinTW);
+	_ui->toolBarSpectrogram->addSeparator();
+	_ui->toolBarSpectrogram->addWidget(spinTW);
 
 	QToolButton *btnSpecUpdate = new QToolButton;
 	btnSpecUpdate->setToolTip(tr("Applies the time window changes to the current spectrogram (if active)."));
 	btnSpecUpdate->setText(tr("Apply"));
 	connect(btnSpecUpdate, SIGNAL(clicked()), this, SLOT(specApply()));
-	_ui.toolBarSpectrogram->addWidget(btnSpecUpdate);
+	_ui->toolBarSpectrogram->addWidget(btnSpecUpdate);
 
 	// connect actions
-	connect(_ui.actionDefaultView, SIGNAL(triggered(bool)),
+	connect(_ui->actionDefaultView, SIGNAL(triggered(bool)),
 	        this, SLOT(setDefaultDisplay()));
-	connect(_ui.actionSortAlphabetically, SIGNAL(triggered(bool)),
+	connect(_ui->actionSortAlphabetically, SIGNAL(triggered(bool)),
 	        this, SLOT(sortAlphabetically()));
-	connect(_ui.actionSortByDistance, SIGNAL(triggered(bool)),
+	connect(_ui->actionSortByDistance, SIGNAL(triggered(bool)),
 	        this, SLOT(sortByDistance()));
-	connect(_ui.actionSortByAzimuth, SIGNAL(triggered(bool)),
+	connect(_ui->actionSortByAzimuth, SIGNAL(triggered(bool)),
 	        this, SLOT(sortByAzimuth()));
-	connect(_ui.actionSortByResidual, SIGNAL(triggered(bool)),
+	connect(_ui->actionSortByResidual, SIGNAL(triggered(bool)),
 	        this, SLOT(sortByResidual()));
 
-	connect(_ui.actionShowAllComponents, SIGNAL(triggered(bool)),
+	connect(_ui->actionShowAllComponents, SIGNAL(triggered(bool)),
 	        this, SLOT(showAllComponents(bool)));
-	connect(_ui.actionShowZComponent, SIGNAL(triggered(bool)),
+	connect(_ui->actionShowZComponent, SIGNAL(triggered(bool)),
 	        this, SLOT(showZComponent()));
-	connect(_ui.actionShowNComponent, SIGNAL(triggered(bool)),
+	connect(_ui->actionShowNComponent, SIGNAL(triggered(bool)),
 	        this, SLOT(showNComponent()));
-	connect(_ui.actionShowEComponent, SIGNAL(triggered(bool)),
+	connect(_ui->actionShowEComponent, SIGNAL(triggered(bool)),
 	        this, SLOT(showEComponent()));
 
-	connect(_ui.actionAlignOnOriginTime, SIGNAL(triggered(bool)),
+	connect(_ui->actionAlignOnOriginTime, SIGNAL(triggered(bool)),
 	        this, SLOT(alignOnOriginTime()));
-	connect(_ui.actionAlignOnPArrival, SIGNAL(triggered(bool)),
+	connect(_ui->actionAlignOnPArrival, SIGNAL(triggered(bool)),
 	        this, SLOT(alignOnPArrivals()));
-	connect(_ui.actionAlignOnSArrival, SIGNAL(triggered(bool)),
+	connect(_ui->actionAlignOnSArrival, SIGNAL(triggered(bool)),
 	        this, SLOT(alignOnSArrivals()));
 
-	connect(_ui.actionIncreaseAmplitudeScale, SIGNAL(triggered(bool)),
+	connect(_ui->actionIncreaseAmplitudeScale, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleAmplUp()));
-	connect(_ui.actionDecreaseAmplitudeScale, SIGNAL(triggered(bool)),
+	connect(_ui->actionDecreaseAmplitudeScale, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleAmplDown()));
-	connect(_ui.actionTimeScaleUp, SIGNAL(triggered(bool)),
+	connect(_ui->actionTimeScaleUp, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleTimeUp()));
-	connect(_ui.actionTimeScaleDown, SIGNAL(triggered(bool)),
+	connect(_ui->actionTimeScaleDown, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleTimeDown()));
-	connect(_ui.actionResetScale, SIGNAL(triggered(bool)),
+	connect(_ui->actionResetScale, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleReset()));
-	connect(_ui.actionClipComponentsToViewport, SIGNAL(triggered(bool)),
+	connect(_ui->actionClipComponentsToViewport, SIGNAL(triggered(bool)),
 	        _currentRecord, SLOT(setClippingEnabled(bool)));
-	connect(_ui.actionScrollLeft, SIGNAL(triggered(bool)),
+	connect(_ui->actionScrollLeft, SIGNAL(triggered(bool)),
 	        this, SLOT(scrollLeft()));
-	connect(_ui.actionScrollFineLeft, SIGNAL(triggered(bool)),
+	connect(_ui->actionScrollFineLeft, SIGNAL(triggered(bool)),
 	        this, SLOT(scrollFineLeft()));
-	connect(_ui.actionScrollRight, SIGNAL(triggered(bool)),
+	connect(_ui->actionScrollRight, SIGNAL(triggered(bool)),
 	        this, SLOT(scrollRight()));
-	connect(_ui.actionScrollFineRight, SIGNAL(triggered(bool)),
+	connect(_ui->actionScrollFineRight, SIGNAL(triggered(bool)),
 	        this, SLOT(scrollFineRight()));
-	connect(_ui.actionRepickAutomatically, SIGNAL(triggered(bool)),
+	connect(_ui->actionRepickAutomatically, SIGNAL(triggered(bool)),
 	        this, SLOT(automaticRepick()));
-	connect(_ui.actionGotoNextMarker, SIGNAL(triggered(bool)),
+	connect(_ui->actionGotoNextMarker, SIGNAL(triggered(bool)),
 	        this, SLOT(gotoNextMarker()));
-	connect(_ui.actionGotoPreviousMarker, SIGNAL(triggered(bool)),
+	connect(_ui->actionGotoPreviousMarker, SIGNAL(triggered(bool)),
 	        this, SLOT(gotoPreviousMarker()));
-	connect(_ui.actionSelectNextTrace, SIGNAL(triggered(bool)),
+	connect(_ui->actionSelectNextTrace, SIGNAL(triggered(bool)),
 	        _recordView, SLOT(selectNextRow()));
-	connect(_ui.actionSelectPreviousTrace, SIGNAL(triggered(bool)),
+	connect(_ui->actionSelectPreviousTrace, SIGNAL(triggered(bool)),
 	        _recordView, SLOT(selectPreviousRow()));
-	connect(_ui.actionSelectFirstRow, SIGNAL(triggered(bool)),
+	connect(_ui->actionSelectFirstRow, SIGNAL(triggered(bool)),
 	        _recordView, SLOT(selectFirstRow()));
-	connect(_ui.actionSelectLastRow, SIGNAL(triggered(bool)),
+	connect(_ui->actionSelectLastRow, SIGNAL(triggered(bool)),
 	        _recordView, SLOT(selectLastRow()));
-	connect(_ui.actionIncreaseRowHeight, SIGNAL(triggered(bool)),
+	connect(_ui->actionIncreaseRowHeight, SIGNAL(triggered(bool)),
 	        _recordView, SLOT(verticalZoomIn()));
-	connect(_ui.actionDecreaseRowHeight, SIGNAL(triggered(bool)),
+	connect(_ui->actionDecreaseRowHeight, SIGNAL(triggered(bool)),
 	        _recordView, SLOT(verticalZoomOut()));
-	connect(_ui.actionIncreaseRowTimescale, SIGNAL(triggered(bool)),
+	connect(_ui->actionIncreaseRowTimescale, SIGNAL(triggered(bool)),
 	        _recordView, SLOT(horizontalZoomIn()));
-	connect(_ui.actionDecreaseRowTimescale, SIGNAL(triggered(bool)),
+	connect(_ui->actionDecreaseRowTimescale, SIGNAL(triggered(bool)),
 	        _recordView, SLOT(horizontalZoomOut()));
-	connect(_ui.actionShowTraceValuesInNmS, SIGNAL(triggered(bool)),
+	connect(_ui->actionShowTraceValuesInNmS, SIGNAL(triggered(bool)),
 	        this, SLOT(showTraceScaleToggled(bool)));
 
-	connect(_ui.actionToggleFilter, SIGNAL(triggered(bool)),
+	connect(_ui->actionToggleFilter, SIGNAL(triggered(bool)),
 	        this, SLOT(toggleFilter()));
-	connect(_ui.actionNextFilter, SIGNAL(triggered(bool)),
+	connect(_ui->actionNextFilter, SIGNAL(triggered(bool)),
 	        this, SLOT(nextFilter()));
-	connect(_ui.actionPreviousFilter, SIGNAL(triggered(bool)),
+	connect(_ui->actionPreviousFilter, SIGNAL(triggered(bool)),
 	        this, SLOT(previousFilter()));
 
-	connect(_ui.actionMaximizeAmplitudes, SIGNAL(triggered(bool)),
+	connect(_ui->actionMaximizeAmplitudes, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleVisibleAmplitudes()));
 
-	connect(_ui.actionDisablePicking, SIGNAL(triggered(bool)),
+	connect(_ui->actionDisablePicking, SIGNAL(triggered(bool)),
 	        this, SLOT(pickNone(bool)));
-	connect(_ui.actionDisablePicking, SIGNAL(triggered(bool)),
+	connect(_ui->actionDisablePicking, SIGNAL(triggered(bool)),
 	        this, SLOT(abortSearchStation()));
-	connect(_ui.actionPickP, SIGNAL(triggered(bool)),
+	connect(_ui->actionPickP, SIGNAL(triggered(bool)),
 	        this, SLOT(pickP(bool)));
-	connect(_ui.actionPickS, SIGNAL(triggered(bool)),
+	connect(_ui->actionPickS, SIGNAL(triggered(bool)),
 	        this, SLOT(pickS(bool)));
 
-	connect(_ui.actionCreatePick, SIGNAL(triggered(bool)),
+	connect(_ui->actionCreatePick, SIGNAL(triggered(bool)),
 	        this, SLOT(createPick()));
-	connect(_ui.actionSetPick, SIGNAL(triggered(bool)),
+	connect(_ui->actionSetPick, SIGNAL(triggered(bool)),
 	        this, SLOT(setPick()));
-	connect(_ui.actionConfirmPick, SIGNAL(triggered(bool)),
+	connect(_ui->actionConfirmPick, SIGNAL(triggered(bool)),
 	        this, SLOT(confirmPick()));
-	connect(_ui.actionDeletePick, SIGNAL(triggered(bool)),
+	connect(_ui->actionDeletePick, SIGNAL(triggered(bool)),
 	        this, SLOT(deletePick()));
 
-	connect(_ui.actionRelocate, SIGNAL(triggered(bool)),
+	connect(_ui->actionRelocate, SIGNAL(triggered(bool)),
 	        this, SLOT(relocate()));
 
-	connect(_ui.actionModifyOrigin, SIGNAL(triggered(bool)),
+	connect(_ui->actionModifyOrigin, SIGNAL(triggered(bool)),
 	        this, SLOT(modifyOrigin()));
 
-	connect(_ui.actionShowAllStations, SIGNAL(triggered(bool)),
+	connect(_ui->actionShowAllStations, SIGNAL(triggered(bool)),
 	        this, SLOT(loadNextStations()));
 
-	connect(_ui.actionShowUsedStations, SIGNAL(triggered(bool)),
+	connect(_ui->actionShowUsedStations, SIGNAL(triggered(bool)),
 	        this, SLOT(showUsedStations(bool)));
 
 	/* TODO: Remove me
-	connect(_ui.btnScaleReset, SIGNAL(clicked()),
+	connect(_ui->btnScaleReset, SIGNAL(clicked()),
 	        this, SLOT(scaleReset()));
 	*/
 
-	connect(_ui.btnRowAccept, SIGNAL(clicked()),
+	connect(_ui->btnRowAccept, SIGNAL(clicked()),
 	        this, SLOT(confirmPick()));
-	connect(_ui.btnRowRemove, SIGNAL(clicked(bool)),
+	connect(_ui->btnRowRemove, SIGNAL(clicked(bool)),
 	        this, SLOT(setCurrentRowDisabled(bool)));
-	connect(_ui.btnRowRemove, SIGNAL(clicked(bool)),
+	connect(_ui->btnRowRemove, SIGNAL(clicked(bool)),
 	        _recordView, SLOT(selectNextRow()));
-	connect(_ui.btnRowReset, SIGNAL(clicked(bool)),
+	connect(_ui->btnRowReset, SIGNAL(clicked(bool)),
 	        this, SLOT(resetPick()));
-	connect(_ui.btnRowReset, SIGNAL(clicked(bool)),
+	connect(_ui->btnRowReset, SIGNAL(clicked(bool)),
 	        _recordView, SLOT(selectNextRow()));
 
 	connect(_currentRecord, SIGNAL(cursorUpdated(RecordWidget*,int)),
@@ -2884,22 +2891,22 @@ void PickerView::init() {
 	connect(_currentRecord, SIGNAL(clickedOnTime(Seiscomp::Core::Time)),
 	        this, SLOT(updateRecordValue(Seiscomp::Core::Time)));
 
-	connect(_ui.frameZoom, SIGNAL(lineDown()),
+	connect(_ui->frameZoom, SIGNAL(lineDown()),
 	        _recordView, SLOT(selectNextRow()));
-	connect(_ui.frameZoom, SIGNAL(lineUp()),
+	connect(_ui->frameZoom, SIGNAL(lineUp()),
 	        _recordView, SLOT(selectPreviousRow()));
 
-	connect(_ui.frameZoom, SIGNAL(verticalZoomIn()),
+	connect(_ui->frameZoom, SIGNAL(verticalZoomIn()),
 	        this, SLOT(scaleAmplUp()));
-	connect(_ui.frameZoom, SIGNAL(verticalZoomOut()),
+	connect(_ui->frameZoom, SIGNAL(verticalZoomOut()),
 	        this, SLOT(scaleAmplDown()));
 
-	connect(_ui.frameZoom, SIGNAL(horizontalZoomIn()),
+	connect(_ui->frameZoom, SIGNAL(horizontalZoomIn()),
 	        this, SLOT(scaleTimeUp()));
-	connect(_ui.frameZoom, SIGNAL(horizontalZoomOut()),
+	connect(_ui->frameZoom, SIGNAL(horizontalZoomOut()),
 	        this, SLOT(scaleTimeDown()));
 
-	connect(_ui.actionSwitchFullscreen, SIGNAL(triggered(bool)),
+	connect(_ui->actionSwitchFullscreen, SIGNAL(triggered(bool)),
 	        this, SLOT(showFullscreen(bool)));
 
 	connect(_timeScale, SIGNAL(changedInterval(double, double, double)),
@@ -2917,18 +2924,18 @@ void PickerView::init() {
 	connect(_recordView, SIGNAL(amplScaleChanged(float)),
 	        _currentRecord, SLOT(setAmplScale(float)));
 
-	connect(_ui.actionAddStations, SIGNAL(triggered(bool)),
+	connect(_ui->actionAddStations, SIGNAL(triggered(bool)),
 	        this, SLOT(addStations()));
 
-	connect(_ui.actionSearchStation, SIGNAL(triggered(bool)),
+	connect(_ui->actionSearchStation, SIGNAL(triggered(bool)),
 	        this, SLOT(searchStation()));
 	/*
 	connect(_recordView, SIGNAL(cursorTextChanged(const QString&)),
 	        _currentRecord, SLOT(setCursorText(const QString&)));
 	*/
 
-	_ui.frameZoom->setBackgroundRole(QPalette::Base);
-	_ui.frameZoom->setAutoFillBackground(true);
+	_ui->frameZoom->setBackgroundRole(QPalette::Base);
+	_ui->frameZoom->setAutoFillBackground(true);
 
 	_actionsUncertainty = nullptr;
 	_actionsPickGroupPhases = nullptr;
@@ -2994,19 +3001,19 @@ void PickerView::init() {
 		for ( it = pickers->begin(); it != pickers->end(); ++it )
 			_comboPicker->addItem(it->c_str());
 
-		_ui.toolBarPicking->addSeparator();
-		_ui.toolBarPicking->addWidget(_comboPicker);
+		_ui->toolBarPicking->addSeparator();
+		_ui->toolBarPicking->addWidget(_comboPicker);
 		delete pickers;
 	}
 	else
 		_comboPicker = nullptr;
 
-	_ui.menuPicking->addAction(_ui.actionGotoNextMarker);
-	_ui.menuPicking->addAction(_ui.actionGotoPreviousMarker);
-	_ui.menuPicking->addSeparator();
-	_ui.menuPicking->addAction(_ui.actionDisablePicking);
-	_ui.menuPicking->addAction(_ui.actionPickP);
-	_ui.menuPicking->addAction(_ui.actionPickS);
+	_ui->menuPicking->addAction(_ui->actionGotoNextMarker);
+	_ui->menuPicking->addAction(_ui->actionGotoPreviousMarker);
+	_ui->menuPicking->addSeparator();
+	_ui->menuPicking->addAction(_ui->actionDisablePicking);
+	_ui->menuPicking->addAction(_ui->actionPickP);
+	_ui->menuPicking->addAction(_ui->actionPickS);
 
 	/*
 	QDockWidget *dock = new QDockWidget(tr("Filter picks"), this);
@@ -3018,7 +3025,7 @@ void PickerView::init() {
 	dock->setWidget(_pickInfoList);
 	addDockWidget(Qt::RightDockWidgetArea, dock);
 
-	QMenu *viewWindows = _ui.menuView->addMenu(tr("Windows"));
+	QMenu *viewWindows = _ui->menuView->addMenu(tr("Windows"));
 	viewWindows->addAction(dock->toggleViewAction());
 	*/
 
@@ -3176,8 +3183,8 @@ void PickerView::initPhases() {
 
 	// Create favourite phase actions + shortcuts
 	if ( !_config.favouritePhases.empty() ) {
-		_ui.menuPicking->addSeparator();
-		_ui.menuAlignArrival->addSeparator();
+		_ui->menuPicking->addSeparator();
+		_ui->menuAlignArrival->addSeparator();
 
 		_actionsPickFavourites = new QActionGroup(this);
 		_actionsAlignOnFavourites = new QActionGroup(this);
@@ -3208,9 +3215,9 @@ void PickerView::initPhases() {
 				alignTheoreticalAction->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_1 + i);
 			}
 
-			_ui.menuPicking->addAction(pickAction);
-			_ui.menuAlignArrival->addAction(alignAction);
-			_ui.menuAlignArrival->addAction(alignTheoreticalAction);
+			_ui->menuPicking->addAction(pickAction);
+			_ui->menuAlignArrival->addAction(alignAction);
+			_ui->menuAlignArrival->addAction(alignTheoreticalAction);
 
 			++i;
 		}
@@ -3223,22 +3230,22 @@ void PickerView::initPhases() {
 	}
 
 	if ( !_config.phaseGroups.empty() ) {
-		_ui.menuPicking->addSeparator();
+		_ui->menuPicking->addSeparator();
 
 		_actionsPickGroupPhases = new QActionGroup(this);
 
 		createPhaseMenus(_actionsPickGroupPhases, _menusPickGroups,
-		                 _config.phaseGroups, _ui.menuPicking);
+		                 _config.phaseGroups, _ui->menuPicking);
 
 		connect(_actionsPickGroupPhases, SIGNAL(triggered(QAction*)),
 		        this, SLOT(setPickPhase(QAction*)));
 
 
-		_ui.menuAlignArrival->addSeparator();
+		_ui->menuAlignArrival->addSeparator();
 		_actionsAlignOnGroupPhases = new QActionGroup(this);
 
 		createAlignPhaseMenus(_actionsAlignOnGroupPhases, _menusAlignGroups,
-		                      _config.phaseGroups, _ui.menuAlignArrival);
+		                      _config.phaseGroups, _ui->menuAlignArrival);
 
 		connect(_actionsAlignOnGroupPhases, SIGNAL(triggered(QAction*)),
 		        this, SLOT(alignOnPhase(QAction*)));
@@ -3323,12 +3330,12 @@ bool PickerView::setConfig(const Config &c, QString *error) {
 		else
 			_currentRecord->setDrawMode(RecordWidget::Single);
 
-		_ui.actionShowAllComponents->setEnabled(true);
-		_ui.actionShowAllComponents->setChecked(_currentRecord->drawMode() == RecordWidget::InRows);
+		_ui->actionShowAllComponents->setEnabled(true);
+		_ui->actionShowAllComponents->setChecked(_currentRecord->drawMode() == RecordWidget::InRows);
 	}
 	else {
-		_ui.actionShowAllComponents->setChecked(false);
-		_ui.actionShowAllComponents->setEnabled(false);
+		_ui->actionShowAllComponents->setChecked(false);
+		_ui->actionShowAllComponents->setEnabled(false);
 	}
 
 	/*
@@ -3411,7 +3418,7 @@ bool PickerView::setConfig(const Config &c, QString *error) {
 	if ( reselectCurrentItem )
 		selectFirstVisibleItem(_recordView);
 
-	_ui.actionShowUnassociatedPicks->setChecked(_config.loadAllPicks);
+	_ui->actionShowUnassociatedPicks->setChecked(_config.loadAllPicks);
 
 	initPhases();
 	acquireStreams();
@@ -3453,9 +3460,9 @@ void PickerView::setStrongMotionCodes(const std::vector<std::string> &codes) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::showEvent(QShowEvent *e) {
 	// avoid truncated distance labels
-	int w1 = _ui.frameZoomControls->sizeHint().width();
+	int w1 = _ui->frameZoomControls->sizeHint().width();
 	int w2 = 0;
-	QFont f(_ui.labelDistance->font()); // hack to get default font size
+	QFont f(_ui->labelDistance->font()); // hack to get default font size
 	QFontMetrics fm(f);
 	w2 += fm.boundingRect("WW ").width();
 	f.setBold(true);
@@ -3500,12 +3507,12 @@ void PickerView::showEvent(QShowEvent *e) {
 			sizes.append(400);
 		}
 
-		_ui.splitter->setSizes(sizes);
+		_ui->splitter->setSizes(sizes);
 
 		_settingsRestored = true;
 	}
 
-	_ui.frameZoomControls->setFixedWidth(w2);
+	_ui->frameZoomControls->setFixedWidth(w2);
 	_recordView->setLabelWidth(w2);
 	_currentRecord->setAxisWidth(w2 + _currentRecord->axisSpacing());
 
@@ -3922,7 +3929,7 @@ void PickerView::loadNextStations() {
 			else
 				show = item->value(ITEM_DISTANCE_INDEX) <= distance;
 
-			if ( _ui.actionShowUsedStations->isChecked() )
+			if ( _ui->actionShowUsedStations->isChecked() )
 				show = show && isTraceUsed(item->widget());
 
 			item->setVisible(show);
@@ -3951,13 +3958,13 @@ void PickerView::loadNextStations() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::sortByState() {
-	if ( _ui.actionSortByDistance->isChecked() )
+	if ( _ui->actionSortByDistance->isChecked() )
 		sortByDistance();
-	else if ( _ui.actionSortByAzimuth->isChecked() )
+	else if ( _ui->actionSortByAzimuth->isChecked() )
 		sortByAzimuth();
-	else if ( _ui.actionSortAlphabetically->isChecked() )
+	else if ( _ui->actionSortAlphabetically->isChecked() )
 		sortAlphabetically();
-	else if ( _ui.actionSortByResidual->isChecked() )
+	else if ( _ui->actionSortByResidual->isChecked() )
 		sortByResidual();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3977,11 +3984,11 @@ void PickerView::alignByState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::componentByState() {
-	if ( _ui.actionShowZComponent->isChecked() )
+	if ( _ui->actionShowZComponent->isChecked() )
 		showComponent('Z');
-	else if ( _ui.actionShowNComponent->isChecked() )
+	else if ( _ui->actionShowNComponent->isChecked() )
 		showComponent('1');
-	else if ( _ui.actionShowEComponent->isChecked() )
+	else if ( _ui->actionShowEComponent->isChecked() )
 		showComponent('2');
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3998,7 +4005,7 @@ void PickerView::resetState() {
 	alignOnOriginTime();
 	pickNone(true);
 	sortByDistance();
-	_ui.actionShowUsedStations->setChecked(false);
+	_ui->actionShowUsedStations->setChecked(false);
 	showUsedStations(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4145,9 +4152,9 @@ void PickerView::showComponent(char componentCode) {
 	}
 
 	_recordView->showSlot(_currentSlot);
-	_ui.actionShowZComponent->setChecked(componentCode == 'Z');
-	_ui.actionShowNComponent->setChecked(componentCode == '1');
-	_ui.actionShowEComponent->setChecked(componentCode == '2');
+	_ui->actionShowZComponent->setChecked(componentCode == 'Z');
+	_ui->actionShowNComponent->setChecked(componentCode == '1');
+	_ui->actionShowEComponent->setChecked(componentCode == '2');
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4259,7 +4266,7 @@ void PickerView::loadNextStations(float distance) {
 					RecordViewItem* item = addStream(stream->sensorLocation(), streamID, delta, streamID.stationCode().c_str(), false, true, stream);
 					if ( item ) {
 						_stations.insert(code);
-						item->setVisible(!_ui.actionShowUsedStations->isChecked());
+						item->setVisible(!_ui->actionShowUsedStations->isChecked());
 						if ( _config.hideStationsWithoutData )
 							item->forceInvisibilty(true);
 					}
@@ -4463,7 +4470,7 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* origin,
 	if ( CFG_LOAD_PICKS ) loadPicks();
 
 	if ( _loadedPicks )
-		_ui.actionShowUnassociatedPicks->setChecked(true);
+		_ui->actionShowUnassociatedPicks->setChecked(true);
 
 	fillRawPicks();
 	fillTheoreticalArrivals();
@@ -4836,7 +4843,7 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 					false
 				);
 
-				marker->setVisible(_ui.actionShowTheoreticalArrivals->isChecked());
+				marker->setVisible(_ui->actionShowTheoreticalArrivals->isChecked());
 
 				// Set the description of the marker that is used as display text
 				marker->setDescription(tt->phase.c_str());
@@ -4866,7 +4873,7 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 					false
 				);
 
-				marker->setVisible(_ui.actionShowTheoreticalArrivals->isChecked());
+				marker->setVisible(_ui->actionShowTheoreticalArrivals->isChecked());
 
 				// Set the description of the marker that is used as display text
 				marker->setDescription(tt->phase.c_str());
@@ -5136,16 +5143,16 @@ void PickerView::setPickPolarity() {
 		old->parent()->setCurrentMarker(m);
 	}
 
-	if ( sender() == _ui.actionSetPolarityPositive ) {
+	if ( sender() == _ui->actionSetPolarityPositive ) {
 		m->setPolarity(PickPolarity(POSITIVE));
 	}
-	else if ( sender() == _ui.actionSetPolarityNegative ) {
+	else if ( sender() == _ui->actionSetPolarityNegative ) {
 		m->setPolarity(PickPolarity(NEGATIVE));
 	}
-	else if ( sender() == _ui.actionSetPolarityUndecidable ) {
+	else if ( sender() == _ui->actionSetPolarityUndecidable ) {
 		m->setPolarity(PickPolarity(UNDECIDABLE));
 	}
-	else if ( sender() == _ui.actionSetPolarityUnset ) {
+	else if ( sender() == _ui->actionSetPolarityUnset ) {
 		m->setPolarity(Core::None);
 	}
 
@@ -5382,10 +5389,10 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 
 		defineUncertainties = menuUncertainty->addAction("Define...");
 
-		menuPolarity->addAction(_ui.actionSetPolarityPositive);
-		menuPolarity->addAction(_ui.actionSetPolarityNegative);
-		menuPolarity->addAction(_ui.actionSetPolarityUndecidable);
-		menuPolarity->addAction(_ui.actionSetPolarityUnset);
+		menuPolarity->addAction(_ui->actionSetPolarityPositive);
+		menuPolarity->addAction(_ui->actionSetPolarityNegative);
+		menuPolarity->addAction(_ui->actionSetPolarityUndecidable);
+		menuPolarity->addAction(_ui->actionSetPolarityUnset);
 	}
 
 	bool needSeparator = !menu.isEmpty();
@@ -5875,11 +5882,11 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 char PickerView::currentComponent() const {
-	if ( _ui.actionShowZComponent->isChecked() )
+	if ( _ui->actionShowZComponent->isChecked() )
 		return 'Z';
-	else if ( _ui.actionShowNComponent->isChecked() )
+	else if ( _ui->actionShowNComponent->isChecked() )
 		return '1';
-	else if ( _ui.actionShowEComponent->isChecked() )
+	else if ( _ui->actionShowEComponent->isChecked() )
 		return '2';
 
 	return '\0';
@@ -5938,7 +5945,7 @@ void PickerView::setupItem(const char comps[3],
 		}
 	}
 
-	item->widget()->showScaledValues(_ui.actionShowTraceValuesInNmS->isChecked());
+	item->widget()->showScaledValues(_ui->actionShowTraceValuesInNmS->isChecked());
 	updateRecordAxisLabel(item);
 
 	// Default station distance is INFINITY to sort unknown stations
@@ -6040,7 +6047,7 @@ void PickerView::updateItemLabel(RecordViewItem* item, char component) {
 	int slot = item->mapComponentToSlot(component);
 
 	if ( item == _recordView->currentItem() ) {
-		QString text = _ui.labelCode->text();
+		QString text = _ui->labelCode->text();
 
 		int index = text.lastIndexOf(' ');
 		if ( index < 0 ) return;
@@ -6068,7 +6075,7 @@ void PickerView::updateItemLabel(RecordViewItem* item, char component) {
 		else
 			text += comp;
 
-		_ui.labelCode->setText(text);
+		_ui->labelCode->setText(text);
 	}
 
 	updateTraceInfo(item, nullptr);
@@ -6367,7 +6374,7 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 	item->widget()->setShadowWidget(_currentRecord, false);
 	_currentRecord->setMarkerSourceWidget(item->widget());
 
-	if ( _ui.actionLimitFilterToZoomTrace->isChecked() )
+	if ( _ui->actionLimitFilterToZoomTrace->isChecked() )
 		applyFilter(item);
 
 	if ( item->value(ITEM_DISTANCE_INDEX) >= 0 ) {
@@ -6380,8 +6387,8 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 	else
 		_currentRecord->setDrawMode(RecordWidget::Single);
 
-	_ui.actionShowAllComponents->setEnabled(true);
-	_ui.actionShowAllComponents->setChecked(_currentRecord->drawMode() == RecordWidget::InRows);
+	_ui->actionShowAllComponents->setEnabled(true);
+	_ui->actionShowAllComponents->setChecked(_currentRecord->drawMode() == RecordWidget::InRows);
 
 	/*
 	_currentRecord->clearMarker();
@@ -6389,15 +6396,15 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 		new PickerMarker(_currentRecord, *static_cast<PickerMarker*>(item->widget()->marker(i)));
 	*/
 
-	//_ui.labelCode->setText(item->label()->text(0));
-	//_ui.labelInfo->setText(item->label()->text(1));
+	//_ui->labelCode->setText(item->label()->text(0));
+	//_ui->labelInfo->setText(item->label()->text(1));
 
 	if ( item->value(ITEM_DISTANCE_INDEX) >= 0 ) {
 		if ( SCScheme.unit.distanceInKM )
-			_ui.labelDistance->setText(QString("%1 km").arg(Math::Geo::deg2km(item->value(ITEM_DISTANCE_INDEX)),0,'f',SCScheme.precision.distance));
+			_ui->labelDistance->setText(QString("%1 km").arg(Math::Geo::deg2km(item->value(ITEM_DISTANCE_INDEX)),0,'f',SCScheme.precision.distance));
 		else
-			_ui.labelDistance->setText(QString("%1%2").arg(item->value(ITEM_DISTANCE_INDEX),0,'f',1).arg(degrees));
-		_ui.labelAzimuth->setText(QString("%1%2").arg(item->value(ITEM_AZIMUTH_INDEX),0,'f',1).arg(degrees));
+			_ui->labelDistance->setText(QString("%1%2").arg(item->value(ITEM_DISTANCE_INDEX),0,'f',1).arg(degrees));
+		_ui->labelAzimuth->setText(QString("%1%2").arg(item->value(ITEM_AZIMUTH_INDEX),0,'f',1).arg(degrees));
 	}
 
 	WaveformStreamID streamID = _recordView->streamID(item->row());
@@ -6446,17 +6453,17 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 	else
 		cha += component;
 
-	_ui.labelStationCode->setText(streamID.stationCode().c_str());
-	_ui.labelCode->setText(QString("%1  %2%3")
+	_ui->labelStationCode->setText(streamID.stationCode().c_str());
+	_ui->labelCode->setText(QString("%1  %2%3")
 	                        .arg(streamID.networkCode().c_str())
 	                        .arg(streamID.locationCode().c_str())
 	                        .arg(cha.c_str()));
 	/*
 	const RecordSequence* seq = _currentRecord->records();
 	if ( seq && !seq->empty() )
-		_ui.labelCode->setText((*seq->begin())->streamID().c_str());
+		_ui->labelCode->setText((*seq->begin())->streamID().c_str());
 	else
-		_ui.labelCode->setText("NO DATA");
+		_ui->labelCode->setText("NO DATA");
 	*/
 
 	PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
@@ -6572,10 +6579,10 @@ void PickerView::updateCurrentRowState() {
 		enabled = m?m->isEnabled():true;
 	}
 
-	_ui.btnRowAccept->setChecked(false);
-	_ui.btnRowAccept->setEnabled(enabled);
-	_ui.btnRowReset->setEnabled(enabled);
-	_ui.btnRowRemove->setChecked(!enabled);
+	_ui->btnRowAccept->setChecked(false);
+	_ui->btnRowAccept->setEnabled(enabled);
+	_ui->btnRowReset->setEnabled(enabled);
+	_ui->btnRowRemove->setChecked(!enabled);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6783,10 +6790,10 @@ void PickerView::changeTimeRange(double, double) {
 void PickerView::sortAlphabetically() {
 	_recordView->sortByTextAndValue(0, ITEM_PRIORITY_INDEX);
 
-	_ui.actionSortAlphabetically->setChecked(true);
-	_ui.actionSortByDistance->setChecked(false);
-	_ui.actionSortByAzimuth->setChecked(false);
-	_ui.actionSortByResidual->setChecked(false);
+	_ui->actionSortAlphabetically->setChecked(true);
+	_ui->actionSortByDistance->setChecked(false);
+	_ui->actionSortByAzimuth->setChecked(false);
+	_ui->actionSortByResidual->setChecked(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6797,10 +6804,10 @@ void PickerView::sortAlphabetically() {
 void PickerView::sortByDistance() {
 	_recordView->sortByValue(ITEM_DISTANCE_INDEX, ITEM_PRIORITY_INDEX);
 
-	_ui.actionSortAlphabetically->setChecked(false);
-	_ui.actionSortByDistance->setChecked(true);
-	_ui.actionSortByAzimuth->setChecked(false);
-	_ui.actionSortByResidual->setChecked(false);
+	_ui->actionSortAlphabetically->setChecked(false);
+	_ui->actionSortByDistance->setChecked(true);
+	_ui->actionSortByAzimuth->setChecked(false);
+	_ui->actionSortByResidual->setChecked(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6811,10 +6818,10 @@ void PickerView::sortByDistance() {
 void PickerView::sortByAzimuth() {
 	_recordView->sortByValue(ITEM_AZIMUTH_INDEX, ITEM_PRIORITY_INDEX);
 
-	_ui.actionSortAlphabetically->setChecked(false);
-	_ui.actionSortByDistance->setChecked(false);
-	_ui.actionSortByAzimuth->setChecked(true);
-	_ui.actionSortByResidual->setChecked(false);
+	_ui->actionSortAlphabetically->setChecked(false);
+	_ui->actionSortByDistance->setChecked(false);
+	_ui->actionSortByAzimuth->setChecked(true);
+	_ui->actionSortByResidual->setChecked(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6825,10 +6832,10 @@ void PickerView::sortByAzimuth() {
 void PickerView::sortByResidual() {
 	_recordView->sortByValue(ITEM_RESIDUAL_INDEX);
 
-	_ui.actionSortAlphabetically->setChecked(false);
-	_ui.actionSortByDistance->setChecked(false);
-	_ui.actionSortByAzimuth->setChecked(false);
-	_ui.actionSortByResidual->setChecked(true);
+	_ui->actionSortAlphabetically->setChecked(false);
+	_ui->actionSortByDistance->setChecked(false);
+	_ui->actionSortByAzimuth->setChecked(false);
+	_ui->actionSortByResidual->setChecked(true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6839,10 +6846,10 @@ void PickerView::sortByResidual() {
 void PickerView::sortByPhase(const QString& phase) {
 	_recordView->sortByMarkerTime(phase);
 
-	_ui.actionSortAlphabetically->setChecked(false);
-	_ui.actionSortByDistance->setChecked(false);
-	_ui.actionSortByAzimuth->setChecked(false);
-	_ui.actionSortByResidual->setChecked(false);
+	_ui->actionSortAlphabetically->setChecked(false);
+	_ui->actionSortByDistance->setChecked(false);
+	_ui->actionSortByAzimuth->setChecked(false);
+	_ui->actionSortByResidual->setChecked(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8006,7 +8013,7 @@ void PickerView::addStations() {
 			                                 false, true, stream);
 			if ( item ) {
 				_stations.insert(code);
-				item->setVisible(!_ui.actionShowUsedStations->isChecked());
+				item->setVisible(!_ui->actionShowUsedStations->isChecked());
 				if ( _config.hideStationsWithoutData )
 					item->forceInvisibilty(true);
 			}
@@ -8041,7 +8048,7 @@ void PickerView::searchStation() {
 	_searchStation->setFocus();
 	_recordView->setFocusProxy(_searchStation);
 
-	_ui.actionCreatePick->setEnabled(false);
+	_ui->actionCreatePick->setEnabled(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8115,7 +8122,7 @@ void PickerView::abortSearchStation() {
 	_searchStation->setVisible(false);
 	_searchLabel->setVisible(false);
 
-	_ui.actionCreatePick->setEnabled(true);
+	_ui->actionCreatePick->setEnabled(true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8539,20 +8546,20 @@ void PickerView::changeRotation(int index) {
 
 	// Change icons depending on the current rotation mode
 	if ( index == RT_ZRT ) {
-		_ui.actionShowNComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelR.png")));
-		_ui.actionShowNComponent->setText(QString::fromUtf8("Radial"));
-		_ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Radial Component (N)"));
-		_ui.actionShowEComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelT.png")));
-		_ui.actionShowEComponent->setText(QString::fromUtf8("Transversal"));
-		_ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Transversal Component (E)"));
+		_ui->actionShowNComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelR.png")));
+		_ui->actionShowNComponent->setText(QString::fromUtf8("Radial"));
+		_ui->actionShowNComponent->setToolTip(QString::fromUtf8("Show Radial Component (N)"));
+		_ui->actionShowEComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelT.png")));
+		_ui->actionShowEComponent->setText(QString::fromUtf8("Transversal"));
+		_ui->actionShowEComponent->setToolTip(QString::fromUtf8("Show Transversal Component (E)"));
 	}
 	else {
-		_ui.actionShowNComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelN.png")));
-		_ui.actionShowNComponent->setText(QString::fromUtf8("North"));
-		_ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show North Component (N)"));
-		_ui.actionShowEComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelE.png")));
-		_ui.actionShowEComponent->setText(QString::fromUtf8("East"));
-		_ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show East Component (E)"));
+		_ui->actionShowNComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelN.png")));
+		_ui->actionShowNComponent->setText(QString::fromUtf8("North"));
+		_ui->actionShowNComponent->setToolTip(QString::fromUtf8("Show North Component (N)"));
+		_ui->actionShowEComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelE.png")));
+		_ui->actionShowEComponent->setText(QString::fromUtf8("East"));
+		_ui->actionShowEComponent->setToolTip(QString::fromUtf8("Show East Component (E)"));
 	}
 
 
@@ -8791,7 +8798,7 @@ void PickerView::changeFilter(int index, bool) {
 		_currentFilter = nullptr;
 		_currentFilterID = QString();
 
-		if ( !_ui.actionLimitFilterToZoomTrace->isChecked() )
+		if ( !_ui->actionLimitFilterToZoomTrace->isChecked() )
 			applyFilter();
 		else
 			applyFilter(_recordView->currentItem());
@@ -8817,7 +8824,7 @@ void PickerView::changeFilter(int index, bool) {
 
 	if ( _currentFilter ) delete _currentFilter;
 	_currentFilter = newFilter;
-	if ( !_ui.actionLimitFilterToZoomTrace->isChecked() )
+	if ( !_ui->actionLimitFilterToZoomTrace->isChecked() )
 		applyFilter();
 	else
 		applyFilter(_recordView->currentItem());
@@ -8827,7 +8834,7 @@ void PickerView::changeFilter(int index, bool) {
 
 	/*
 	if ( index == _lastFilterIndex && !force ) {
-		if ( !_ui.actionLimitFilterToZoomTrace->isChecked() )
+		if ( !_ui->actionLimitFilterToZoomTrace->isChecked() )
 			_recordView->enableFilter(_lastFilterIndex > 0);
 		else
 			_currentRecord->enableFiltering(_lastFilterIndex > 0);
@@ -8838,7 +8845,7 @@ void PickerView::changeFilter(int index, bool) {
 	QString filter = _comboFilter->itemData(index).toString();
 
 	if ( name == NO_FILTER_STRING ) {
-		if ( !_ui.actionLimitFilterToZoomTrace->isChecked() )
+		if ( !_ui->actionLimitFilterToZoomTrace->isChecked() )
 			_recordView->enableFilter(false);
 		else
 			_currentRecord->enableFiltering(false);
@@ -8848,7 +8855,7 @@ void PickerView::changeFilter(int index, bool) {
 
 	bool filterApplied = false;
 	// Here one should
-	if ( !_ui.actionLimitFilterToZoomTrace->isChecked() ) {
+	if ( !_ui->actionLimitFilterToZoomTrace->isChecked() ) {
 		if ( _recordView->setFilterByName(filter) ) {
 			_currentRecord->setFilter(_recordView->filter());
 			_lastFilterIndex = index;
@@ -8878,7 +8885,7 @@ void PickerView::changeFilter(int index, bool) {
 	}
 
 	//std::cout << "Current filter index: " << _lastFilterIndex << std::endl;
-	if ( !_ui.actionLimitFilterToZoomTrace->isChecked() )
+	if ( !_ui->actionLimitFilterToZoomTrace->isChecked() )
 		_recordView->enableFilter(_lastFilterIndex > 0);
 	else
 		_currentRecord->enableFiltering(_lastFilterIndex > 0);
@@ -8896,7 +8903,7 @@ void PickerView::setArrivalState(int arrivalId, bool state) {
 	for ( int r = 0; r < _recordView->rowCount(); ++r ) {
 		RecordViewItem* item = _recordView->itemAt(r);
 		if ( setArrivalState(item->widget(), arrivalId, state) ) {
-			item->setVisible(!(_ui.actionShowUsedStations->isChecked() &&
+			item->setVisible(!(_ui->actionShowUsedStations->isChecked() &&
 			                   item->widget()->hasMovableMarkers()));
 			if ( state )
 				item->label()->setEnabled(true);

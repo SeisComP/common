@@ -2,8 +2,8 @@
  <author></author>
  <comment></comment>
  <exportmacro></exportmacro>
- <class>OriginLocaterView</class>
- <widget class="QWidget" name="OriginLocaterView" >
+ <class>OriginLocatorView</class>
+ <widget class="QWidget" name="OriginLocatorView" >
   <property name="geometry" >
    <rect>
     <x>0</x>

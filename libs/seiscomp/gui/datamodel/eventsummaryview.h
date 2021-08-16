@@ -22,9 +22,8 @@
 #ifndef SEISCOMP_GUI_EVENTSUMMARYVIEW_H
 #define SEISCOMP_GUI_EVENTSUMMARYVIEW_H
 
+
 #include <QtGui>
-#include <seiscomp/gui/datamodel/ui_eventsummaryview.h>
-#include <seiscomp/gui/datamodel/ui_eventsummaryview_hypocenter.h>
 
 #ifndef Q_MOC_RUN
 #include <seiscomp/datamodel/event.h>
@@ -41,6 +40,14 @@
 #include <seiscomp/gui/core/application.h>
 
 #include <QProcess>
+
+
+namespace Ui {
+	class EventSummaryView;
+	class Hypocenter;
+}
+
+
 
 namespace Seiscomp {
 
@@ -259,9 +266,9 @@ class SC_GUI_API EventSummaryView : public QWidget
 
 
 	private:
-		Ui::EventSummaryView ui;
-		Ui::Hypocenter uiHypocenter;
-		MagList* _magList;
+		Ui::EventSummaryView *_ui;
+		Ui::Hypocenter       *_uiHypocenter;
+		MagList              *_magList;
 
 		Seiscomp::DataModel::EventPtr _currentEvent;
 		Seiscomp::DataModel::EventPtr _lastEvent;

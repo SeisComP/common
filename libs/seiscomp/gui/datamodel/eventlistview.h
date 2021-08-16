@@ -29,17 +29,24 @@
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core/timewindow.h>
 #endif
-#include <seiscomp/gui/datamodel/ui_eventlistview.h>
-#include <seiscomp/gui/datamodel/ui_eventlistviewregionfilterdialog.h>
 
 #include <QWidget>
 
+
+// Ui forward declarations
 class QTreeWidget;
 class QTreeWidgetItem;
+
+namespace Ui {
+	class EventListView;
+	class EventListViewRegionFilterDialog;
+}
+
 
 namespace Seiscomp {
 
 namespace DataModel {
+
 
 DEFINE_SMARTPOINTER(Event);
 DEFINE_SMARTPOINTER(Origin);
@@ -303,7 +310,7 @@ class SC_GUI_API EventListView : public QWidget {
 		typedef QList<Region> FilterRegions;
 
 	private:
-		::Ui::EventListView                 _ui;
+		::Ui::EventListView                *_ui;
 		Private::EventFilterWidget         *_filterWidget;
 		ItemConfig                          _itemConfig;
 		FilterRegions                       _filterRegions;
@@ -343,6 +350,7 @@ class SC_GUI_API EventListViewRegionFilterDialog : public QDialog {
 	public:
 		EventListViewRegionFilterDialog(QWidget *parent, EventListView::Region *target,
 		                                EventListView::FilterRegions *regionList);
+		~EventListViewRegionFilterDialog();
 
 
 	// ------------------------------------------------------------------
@@ -364,7 +372,7 @@ class SC_GUI_API EventListViewRegionFilterDialog : public QDialog {
 	//  Private members
 	// ------------------------------------------------------------------
 	private:
-		::Ui::EventListViewRegionFilterDialog  _ui;
+		::Ui::EventListViewRegionFilterDialog *_ui;
 		EventListView::Region                 *_target;
 		EventListView::FilterRegions          *_regionList;
 };
@@ -372,5 +380,6 @@ class SC_GUI_API EventListViewRegionFilterDialog : public QDialog {
 
 }
 }
+
 
 #endif

@@ -21,6 +21,9 @@
 
 #define SEISCOMP_COMPONENT EventList
 #include "eventlistview.h"
+#include <seiscomp/gui/datamodel/ui_eventlistview.h>
+#include <seiscomp/gui/datamodel/ui_eventlistviewregionfilterdialog.h>
+
 #include <seiscomp/gui/core/connectiondialog.h>
 #include <seiscomp/gui/core/messages.h>
 #include <seiscomp/gui/core/application.h>
@@ -148,6 +151,7 @@ bool colVisibility[EventListColumns::Quantity] = {
 };
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #define POPULATE_AGENCY(VALUE) \
 do {\
 	try {\
@@ -163,8 +167,12 @@ do {\
 		setData(config.columnMap[COL_AGENCY], Qt::TextColorRole, QVariant());\
 	}\
 } while (0)
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 class ByteArrayBuf : public std::streambuf {
 	public:
 		ByteArrayBuf(QByteArray &array) : _array(array) {}
@@ -183,8 +191,12 @@ class ByteArrayBuf : public std::streambuf {
 	private:
 		QByteArray &_array;
 };
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #define _T(name) ar->driver()->convertColumnName(name)
 
 DatabaseIterator getEvents(DatabaseArchive *ar, const EventListView::Filter& filter) {
@@ -244,8 +256,12 @@ DatabaseIterator getEvents(DatabaseArchive *ar, const EventListView::Filter& fil
 
 	return ar->getObjectIterator(oss.str(), Event::TypeInfo());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getEventOriginReferences(DatabaseArchive *ar, const EventListView::Filter& filter) {
 	if ( !ar->driver() ) return DatabaseIterator();
 
@@ -291,8 +307,12 @@ DatabaseIterator getEventOriginReferences(DatabaseArchive *ar, const EventListVi
 
 	return ar->getObjectIterator(oss.str(), OriginReference::TypeInfo());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getEventFocalMechanismReferences(DatabaseArchive *ar, const EventListView::Filter& filter) {
 	if ( !ar->driver() ) return DatabaseIterator();
 
@@ -338,8 +358,12 @@ DatabaseIterator getEventFocalMechanismReferences(DatabaseArchive *ar, const Eve
 
 	return ar->getObjectIterator(oss.str(), FocalMechanismReference::TypeInfo());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getEventOrigins(DatabaseArchive *ar, const EventListView::Filter& filter) {
 	if ( !ar->driver() ) return DatabaseIterator();
 
@@ -387,8 +411,12 @@ DatabaseIterator getEventOrigins(DatabaseArchive *ar, const EventListView::Filte
 
 	return ar->getObjectIterator(oss.str(), Origin::TypeInfo());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getEventFocalMechanisms(DatabaseArchive *ar, const EventListView::Filter& filter) {
 	if ( !ar->driver() ) return DatabaseIterator();
 
@@ -437,8 +465,12 @@ DatabaseIterator getEventFocalMechanisms(DatabaseArchive *ar, const EventListVie
 
 	return ar->getObjectIterator(oss.str(), FocalMechanism::TypeInfo());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getEventMomentTensors(DatabaseArchive *ar, const EventListView::Filter& filter) {
 	if ( !ar->driver() ) return DatabaseIterator();
 
@@ -491,7 +523,12 @@ DatabaseIterator getEventMomentTensors(DatabaseArchive *ar, const EventListView:
 
 	return ar->getObjectIterator(oss.str(), MomentTensor::TypeInfo());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getUnassociatedOrigins(DatabaseArchive *ar, const EventListView::Filter& filter) {
 	if ( !ar->driver() ) return DatabaseIterator();
 
@@ -521,8 +558,12 @@ DatabaseIterator getUnassociatedOrigins(DatabaseArchive *ar, const EventListView
 
 	return ar->getObjectIterator(oss.str(), Origin::TypeInfo());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getComments4Origins(DatabaseArchive *ar, const EventListView::Filter& filter) {
 	if( !ar->driver() )
 		return DatabaseIterator();
@@ -551,8 +592,12 @@ DatabaseIterator getComments4Origins(DatabaseArchive *ar, const EventListView::F
 
 	return ar->getObjectIterator( oss.str(), Comment::TypeInfo() );
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getComments4Events(DatabaseArchive *ar, const EventListView::Filter& filter) {
 	if( !ar->driver() )
 		return DatabaseIterator();
@@ -601,8 +646,12 @@ DatabaseIterator getComments4Events(DatabaseArchive *ar, const EventListView::Fi
 
 	return ar->getObjectIterator( oss.str(), Comment::TypeInfo() );
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getComments4PrefOrigins(DatabaseArchive *ar, const EventListView::Filter& filter) {
 	if( !ar->driver() )
 		return DatabaseIterator();
@@ -652,8 +701,12 @@ DatabaseIterator getComments4PrefOrigins(DatabaseArchive *ar, const EventListVie
 
 	return ar->getObjectIterator( oss.str(), Comment::TypeInfo() );
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getDescriptions4Events(DatabaseArchive *ar, const EventListView::Filter& filter) {
 	if( !ar->driver() )
 		return DatabaseIterator();
@@ -701,7 +754,12 @@ DatabaseIterator getDescriptions4Events(DatabaseArchive *ar, const EventListView
 
 	 return ar->getObjectIterator( oss.str(), EventDescription::TypeInfo() );
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 typedef QPair<QTreeWidgetItem*,int> SortItem;
 typedef bool(*LessThan)(const SortItem&,const SortItem&);
 
@@ -725,8 +783,12 @@ bool itemTextGreaterThan(const SortItem& left, const SortItem& right) {
 
 
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Private {
 
 
@@ -1722,11 +1784,19 @@ class EventTreeItem : public SchemeTreeItem {
 
 		static std::string TimeFormat;
 };
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string EventTreeItem::TimeFormat;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool sendJournal(const std::string &objectID, const std::string &action,
                  const std::string &params, const char *group) {
 	JournalEntryPtr entry = new JournalEntry;
@@ -1741,8 +1811,12 @@ bool sendJournal(const std::string &objectID, const std::string &action,
 	nm->attach(n.get());
 	return SCApp->sendMessage(group, nm.get());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 class TreeWidget : public QTreeWidget {
 	public:
 		TreeWidget(QWidget *p)
@@ -1866,8 +1940,12 @@ class TreeWidget : public QTreeWidget {
 	private:
 		QTreeWidgetItem *_lastDropItem;
 };
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 class CommandWaitDialog : public QDialog {
 	public:
 		CommandWaitDialog(QWidget *parent)
@@ -1993,16 +2071,24 @@ class CommandWaitDialog : public QDialog {
 		std::string   _objectID;
 		std::string   _command;
 };
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 struct ConfigProcessColumn {
 	int     pos;
 	QString label;
 	QString originScript;
 	QString eventScript;
 };
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 class EventFilterWidget : public QWidget {
 	public:
 		EventFilterWidget(QWidget *parent = 0)
@@ -2057,8 +2143,12 @@ class EventFilterWidget : public QWidget {
 	private:
 		Ui::EventFilter _ui;
 };
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Helper class to allow proper positioning of the tool buttons menu
 class CustomWidgetMenu : public QMenu {
 	public:
@@ -2067,21 +2157,31 @@ class CustomWidgetMenu : public QMenu {
 	public:
 		QSize sizeHint() const { return QWidget::sizeHint(); }
 };
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 
 
 using namespace Private;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool withOrigins,
                              bool withFocalMechanisms, QWidget * parent, Qt::WindowFlags f)
-: QWidget(parent, f), _reader(reader)
+: QWidget(parent, f)
+, _ui(new Ui::EventListView)
+, _reader(reader)
 , _withOrigins(withOrigins), _withFocalMechanisms(withFocalMechanisms)
 , _blockSelection(false), _blockRemovingOfExpiredEvents(false)
 , _blockCountSignal(false) {
-	_ui.setupUi(this);
+	_ui->setupUi(this);
 
 	_visibleEventCount = 0;
 	_regionIndex = 0;
@@ -2089,9 +2189,9 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	QBoxLayout *l = new QVBoxLayout;
 	l->setMargin(0);
-	_ui.frameList->setLayout(l);
+	_ui->frameList->setLayout(l);
 
-	_treeWidget = new TreeWidget(_ui.frameList);
+	_treeWidget = new TreeWidget(_ui->frameList);
 	_treeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	_treeWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 	_treeWidget->setMouseTracking(true);
@@ -2197,19 +2297,19 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 		_checkEventAgency = true;
 	}
 
-	try { _ui.cbHideForeign->setText(SCApp->configGetString("eventlist.filter.agencies.label").c_str()); }
+	try { _ui->cbHideForeign->setText(SCApp->configGetString("eventlist.filter.agencies.label").c_str()); }
 	catch ( ... ) {}
 
-	try { _ui.cbHideForeign->setChecked(SCApp->configGetBool("eventlist.filter.agencies.enabled")); }
+	try { _ui->cbHideForeign->setChecked(SCApp->configGetBool("eventlist.filter.agencies.enabled")); }
 	catch ( ... ) {}
 
-	try { _ui.cbHideOther->setText(SCApp->configGetString("eventlist.filter.types.label").c_str()); }
+	try { _ui->cbHideOther->setText(SCApp->configGetString("eventlist.filter.types.label").c_str()); }
 	catch ( ... ) {}
 
-	try { _ui.cbHideOther->setChecked(SCApp->configGetBool("eventlist.filter.types.enabled")); }
+	try { _ui->cbHideOther->setChecked(SCApp->configGetBool("eventlist.filter.types.enabled")); }
 	catch ( ... ) {}
 
-	try { _ui.cbFilterRegions->setChecked(SCApp->configGetBool("eventlist.filter.regions.enabled")); }
+	try { _ui->cbFilterRegions->setChecked(SCApp->configGetBool("eventlist.filter.regions.enabled")); }
 	catch ( ... ) {}
 
 	try {
@@ -2484,15 +2584,15 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	catch ( ... ) {}
 
 	for ( int i = 0; i < _filterRegions.size(); ++i )
-		_ui.lstFilterRegions->addItem(_filterRegions[i].name);
+		_ui->lstFilterRegions->addItem(_filterRegions[i].name);
 
-	if ( _ui.lstFilterRegions->count() > 1 ) {
+	if ( _ui->lstFilterRegions->count() > 1 ) {
 		_regionIndex = 1;
-		_ui.lstFilterRegions->setCurrentIndex(_regionIndex);
-		_ui.btnChangeRegion->hide();
+		_ui->lstFilterRegions->setCurrentIndex(_regionIndex);
+		_ui->btnChangeRegion->hide();
 	}
 
-	_ui.btnFilter->setPopupMode(QToolButton::InstantPopup);
+	_ui->btnFilter->setPopupMode(QToolButton::InstantPopup);
 
 	_filterWidget = new EventFilterWidget;
 	_filterWidget->setFilter(_filter);
@@ -2500,14 +2600,14 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	QVBoxLayout *vl = new QVBoxLayout;
 	vl->addWidget(_filterWidget);
 
-	QMenu *menu = new CustomWidgetMenu(_ui.btnFilter);
+	QMenu *menu = new CustomWidgetMenu(_ui->btnFilter);
 	menu->setLayout(vl);
-	_ui.btnFilter->setMenu(menu);
+	_ui->btnFilter->setMenu(menu);
 
-	connect(_ui.lstFilterRegions, SIGNAL(currentIndexChanged(int)),
+	connect(_ui->lstFilterRegions, SIGNAL(currentIndexChanged(int)),
 	        this, SLOT(regionSelectionChanged(int)));
 
-	connect(_ui.btnChangeRegion, SIGNAL(clicked()), this, SLOT(changeRegion()));
+	connect(_ui->btnChangeRegion, SIGNAL(clicked()), this, SLOT(changeRegion()));
 
 	//_treeWidget->setHeaderLabels(QStringList() << "PublicID" << "Desc/Time" << "Mag" << "StaCount" << "defPhaseCount");
 	_treeWidget->setHeaderLabels(_itemConfig.header);
@@ -2523,7 +2623,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	connect(_treeWidget->header(), SIGNAL(sectionClicked(int)),
 	        this, SLOT(sortItems(int)));
 
-	addAction(_ui.actionCopyRowToClipboard);
+	addAction(_ui->actionCopyRowToClipboard);
 
 	QAction* expandAll = new QAction(this);
 	expandAll->setShortcut(Qt::CTRL + Qt::Key_E);
@@ -2534,42 +2634,42 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	addAction(expandAll);
 	addAction(collapseAll);
 
-	_ui.btnReadDays->setEnabled(_reader != nullptr);
-	_ui.btnReadInterval->setEnabled(_reader != nullptr);
+	_ui->btnReadDays->setEnabled(_reader != nullptr);
+	_ui->btnReadInterval->setEnabled(_reader != nullptr);
 
-	_ui.dateTimeEditStart->setDateTime(QDateTime::currentDateTime().toUTC());
-	_ui.dateTimeEditEnd->setDateTime(QDateTime::currentDateTime().toUTC());
+	_ui->dateTimeEditStart->setDateTime(QDateTime::currentDateTime().toUTC());
+	_ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime().toUTC());
 
 	initTree();
 
 	_autoSelect = false;
 
-	connect(_ui.cbHideOther, SIGNAL(stateChanged(int)), this,  SLOT(onShowOtherEvents(int)));
-	_hideOtherEvents = _ui.cbHideOther->checkState() == Qt::Checked;
+	connect(_ui->cbHideOther, SIGNAL(stateChanged(int)), this,  SLOT(onShowOtherEvents(int)));
+	_hideOtherEvents = _ui->cbHideOther->checkState() == Qt::Checked;
 
-	connect(_ui.cbHideForeign, SIGNAL(stateChanged(int)), this,  SLOT(onShowForeignEvents(int)));
-	_hideForeignEvents = _ui.cbHideForeign->checkState() == Qt::Checked;
+	connect(_ui->cbHideForeign, SIGNAL(stateChanged(int)), this,  SLOT(onShowForeignEvents(int)));
+	_hideForeignEvents = _ui->cbHideForeign->checkState() == Qt::Checked;
 
-	connect(_ui.cbFilterRegions, SIGNAL(stateChanged(int)), this,  SLOT(onHideOutsideRegion(int)));
-	_hideOutsideRegion = _ui.cbFilterRegions->checkState() == Qt::Checked;
+	connect(_ui->cbFilterRegions, SIGNAL(stateChanged(int)), this,  SLOT(onHideOutsideRegion(int)));
+	_hideOutsideRegion = _ui->cbFilterRegions->checkState() == Qt::Checked;
 
-	connect(_ui.cbFilterRegionMode, SIGNAL(currentIndexChanged(int)), this,  SLOT(onFilterRegionModeChanged(int)));
+	connect(_ui->cbFilterRegionMode, SIGNAL(currentIndexChanged(int)), this,  SLOT(onFilterRegionModeChanged(int)));
 
-	connect(_ui.cbShowLatestOnly, SIGNAL(stateChanged(int)), this,  SLOT(updateAgencyState()));
-	_showOnlyLatestPerAgency = _ui.cbShowLatestOnly->checkState() == Qt::Checked;
+	connect(_ui->cbShowLatestOnly, SIGNAL(stateChanged(int)), this,  SLOT(updateAgencyState()));
+	_showOnlyLatestPerAgency = _ui->cbShowLatestOnly->checkState() == Qt::Checked;
 
 	if ( !_withOrigins )
-		_ui.cbShowLatestOnly->setVisible(false);
+		_ui->cbShowLatestOnly->setVisible(false);
 
-	connect(_ui.btnReadDays, SIGNAL(clicked()), this, SLOT(readLastDays()));
-	connect(_ui.btnReadInterval, SIGNAL(clicked()), this, SLOT(readInterval()));
-	connect(_ui.btnClear, SIGNAL(clicked()), this, SLOT(clear()));
+	connect(_ui->btnReadDays, SIGNAL(clicked()), this, SLOT(readLastDays()));
+	connect(_ui->btnReadInterval, SIGNAL(clicked()), this, SLOT(readInterval()));
+	connect(_ui->btnClear, SIGNAL(clicked()), this, SLOT(clear()));
 	connect(_treeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(itemSelected(QTreeWidgetItem*,int)));
 	connect(_treeWidget, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(itemPressed(QTreeWidgetItem*,int)));
 	connect(_treeWidget, SIGNAL(itemEntered(QTreeWidgetItem*,int)), this, SLOT(itemEntered(QTreeWidgetItem*,int)));
 	connect(_treeWidget, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(itemExpanded(QTreeWidgetItem*)));
 	connect(_treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
-	connect(_ui.actionCopyRowToClipboard, SIGNAL(triggered(bool)), this, SLOT(copyRowToClipboard()));
+	connect(_ui->actionCopyRowToClipboard, SIGNAL(triggered(bool)), this, SLOT(copyRowToClipboard()));
 
 	connect(expandAll, SIGNAL(triggered()), _treeWidget, SLOT(expandAll()));
 	connect(collapseAll, SIGNAL(triggered()), _treeWidget, SLOT(collapseAll()));
@@ -2616,8 +2716,12 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	PublicObjectEvaluator::Instance().setDatabaseURI(SCApp->databaseURI().c_str());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::indicatorResized(const QSize &size) {
 	_busyIndicatorLabel->resize(size);
 	_busyIndicatorLabel->move(
@@ -2625,33 +2729,53 @@ void EventListView::indicatorResized(const QSize &size) {
 		(_treeWidget->viewport()->height()-_busyIndicatorLabel->height())/2
 	);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::onShowOtherEvents(int checked) {
 	_hideOtherEvents = checked == Qt::Checked;
 	updateHideState();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::onShowForeignEvents(int checked) {
 	_hideForeignEvents = checked == Qt::Checked;
 	updateHideState();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::onHideOutsideRegion(int checked) {
 	_hideOutsideRegion = checked == Qt::Checked;
 	updateHideState();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::onFilterRegionModeChanged(int index) {
 	updateHideState();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::updateAgencyState() {
-	_showOnlyLatestPerAgency = _ui.cbShowLatestOnly->checkState() == Qt::Checked;
+	_showOnlyLatestPerAgency = _ui->cbShowLatestOnly->checkState() == Qt::Checked;
 
 	_treeWidget->setUpdatesEnabled(false);
 
@@ -2674,8 +2798,12 @@ void EventListView::updateAgencyState() {
 
 	_treeWidget->setUpdatesEnabled(true);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::updateHideState() {
 	bool changed = false;
 
@@ -2695,8 +2823,12 @@ void EventListView::updateHideState() {
 		emit visibleEventCountChanged();
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventListView::updateHideState(QTreeWidgetItem *item) {
 	EventTreeItem *eitem = static_cast<EventTreeItem*>(item);
 	Event* event = eitem->event();
@@ -2738,7 +2870,7 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 	}
 
 	if ( !hide && _hideOutsideRegion && _regionIndex >= 0 ) {
-		bool invert = _ui.cbFilterRegionMode->currentIndex() == 1;
+		bool invert = _ui->cbFilterRegionMode->currentIndex() == 1;
 
 		const Region &reg = _filterRegions[_regionIndex];
 		double lat = item->data(_itemConfig.columnMap[COL_LAT], Qt::UserRole).toDouble();
@@ -2781,18 +2913,31 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 
 	return false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventListView::~EventListView() {
 	PublicObjectEvaluator::Instance().clear(this);
+	delete _ui;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setRelativeMinimumEventTime(const Seiscomp::Core::TimeSpan& timeAgo) {
 	_timeAgo = timeAgo;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::add(Seiscomp::DataModel::Event* event,
                         Seiscomp::DataModel::Origin* origin) {
 	if ( !origin && !event ) return;
@@ -2894,21 +3039,33 @@ void EventListView::add(Seiscomp::DataModel::Event* event,
 
 	_blockRemovingOfExpiredEvents = false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setMessagingEnabled(bool e) {
 	_updateLocalEPInstance = !e;
 	if ( _updateLocalEPInstance )
 		_treeWidget->setDragEnabled(false);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setEventModificationsEnabled(bool e) {
 	_treeWidget->setDragEnabled(e);
 	_treeWidget->setAcceptDrops(e);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::initTree() {
 	_treeWidget->clear();
 	_visibleEventCount = 0;
@@ -2926,8 +3083,12 @@ void EventListView::initTree() {
 
 	emit reset();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventListView::eventFilter(QObject *obj, QEvent *ev) {
 	if ( obj == _treeWidget->viewport() ) {
 		if ( ev->type() == QEvent::Drop ) {
@@ -3004,40 +3165,60 @@ bool EventListView::eventFilter(QObject *obj, QEvent *ev) {
 
 	return QObject::eventFilter(obj, ev);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::clear() {
 	initTree();
 	emit visibleEventCountChanged();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::selectEventFM(const QString &url) {
 	Event *ev = (Event*)sender()->property("eventPtr").value<void*>();
 	if ( ev )
 		eventFMSelected(ev);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::regionSelectionChanged(int index) {
 	_regionIndex = index;
 
 	if ( _regionIndex == 0 )
-		_ui.btnChangeRegion->show();
+		_ui->btnChangeRegion->show();
 	else
-		_ui.btnChangeRegion->hide();
+		_ui->btnChangeRegion->hide();
 
 	if ( _hideOutsideRegion ) updateHideState();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::changeRegion() {
 	EventListViewRegionFilterDialog dlg(this, &_filterRegions[0], &_filterRegions);
 	if ( dlg.exec() == QDialog::Accepted && _hideOutsideRegion )
 		updateHideState();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setInterval(const Seiscomp::Core::TimeWindow& tw) {
 	QDateTime start, end;
 
@@ -3052,11 +3233,15 @@ void EventListView::setInterval(const Seiscomp::Core::TimeWindow& tw) {
 		end.setTime_t(tw.endTime().seconds());
 	}
 
-	_ui.dateTimeEditStart->setDateTime(start);
-	_ui.dateTimeEditEnd->setDateTime(end);
+	_ui->dateTimeEditStart->setDateTime(start);
+	_ui->dateTimeEditEnd->setDateTime(end);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::selectFirstEnabledEvent() {
 	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
 		QTreeWidgetItem *item = _treeWidget->topLevelItem(i);
@@ -3065,8 +3250,12 @@ void EventListView::selectFirstEnabledEvent() {
 		break;
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::selectEvent(int index) {
 	if ( index >= _treeWidget->topLevelItemCount() )
 		return;
@@ -3074,8 +3263,12 @@ void EventListView::selectEvent(int index) {
 	_treeWidget->setCurrentItem(_treeWidget->topLevelItem(index));
 	loadItem(_treeWidget->currentItem());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::selectEventID(const std::string& publicID) {
 	SchemeTreeItem *item = findEvent(publicID);
 	if ( item ) {
@@ -3083,8 +3276,12 @@ void EventListView::selectEventID(const std::string& publicID) {
 		loadItem(_treeWidget->currentItem());
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setPreviousEvent() {
 	int idx = _treeWidget->currentIndex().row();
 	if ( idx > 0 ) {
@@ -3094,8 +3291,12 @@ void EventListView::setPreviousEvent() {
 		_treeWidget->setSelectionMode(oldMode);
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setNextEvent() {
 	int idx = _treeWidget->currentIndex().row();
 	if ( idx < _treeWidget->topLevelItemCount()-1 ) {
@@ -3105,41 +3306,58 @@ void EventListView::setNextEvent() {
 		_treeWidget->setSelectionMode(oldMode);
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::readLastDays() {
 	_filter = _filterWidget->filter();
 	_filter.endTime = Core::Time::GMT();
-	_filter.startTime = _filter.endTime - Core::TimeSpan(_ui.spinBox->value()*86400);
+	_filter.startTime = _filter.endTime - Core::TimeSpan(_ui->spinBox->value()*86400);
 	setInterval(Core::TimeWindow(_filter.startTime, _filter.endTime));
 	readFromDatabase(_filter);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::readInterval() {
 	_filter = _filterWidget->filter();
-	_filter.startTime = Core::Time(_ui.dateTimeEditStart->date().year(),
-	                               _ui.dateTimeEditStart->date().month(),
-	                               _ui.dateTimeEditStart->date().day(),
-	                               _ui.dateTimeEditStart->time().hour(),
-	                               _ui.dateTimeEditStart->time().minute(),
-	                               _ui.dateTimeEditStart->time().second());
+	_filter.startTime = Core::Time(_ui->dateTimeEditStart->date().year(),
+	                               _ui->dateTimeEditStart->date().month(),
+	                               _ui->dateTimeEditStart->date().day(),
+	                               _ui->dateTimeEditStart->time().hour(),
+	                               _ui->dateTimeEditStart->time().minute(),
+	                               _ui->dateTimeEditStart->time().second());
 
-	_filter.endTime = Core::Time(_ui.dateTimeEditEnd->date().year(),
-	                             _ui.dateTimeEditEnd->date().month(),
-	                             _ui.dateTimeEditEnd->date().day(),
-	                             _ui.dateTimeEditEnd->time().hour(),
-	                             _ui.dateTimeEditEnd->time().minute(),
-	                             _ui.dateTimeEditEnd->time().second());
+	_filter.endTime = Core::Time(_ui->dateTimeEditEnd->date().year(),
+	                             _ui->dateTimeEditEnd->date().month(),
+	                             _ui->dateTimeEditEnd->date().day(),
+	                             _ui->dateTimeEditEnd->time().hour(),
+	                             _ui->dateTimeEditEnd->time().minute(),
+	                             _ui->dateTimeEditEnd->time().second());
 
 	readFromDatabase(_filter);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::readFromDatabase() {
 	readInterval();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::readFromDatabase(const Filter &filter) {
 	if ( _reader == nullptr ) return;
 
@@ -3490,13 +3708,21 @@ void EventListView::readFromDatabase(const Filter &filter) {
 	emit eventsUpdated();
 	emit visibleEventCountChanged();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setAutoSelect(bool s) {
 	_autoSelect = s;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::removeExpiredEvents() {
 	if ( _blockRemovingOfExpiredEvents ) return;
 
@@ -3564,8 +3790,12 @@ void EventListView::removeExpiredEvents() {
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool fromNotification) {
 	removeExpiredEvents();
 
@@ -3633,14 +3863,18 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 			_treeWidget->resizeColumnToContents(i);
 	}
 
-	_ui.btnClear->setEnabled(true);
+	_ui->btnClear->setEnabled(true);
 
 	updateEventProcessColumns(item, true);
 
 	return item;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 OriginTreeItem *
 EventListView::addOrigin(Seiscomp::DataModel::Origin* origin, QTreeWidgetItem* parent, bool highPriority) {
 	//removeExpiredEvents();
@@ -3650,7 +3884,7 @@ EventListView::addOrigin(Seiscomp::DataModel::Origin* origin, QTreeWidgetItem* p
 	eitem->addOriginItem(0,item);
 	eitem->resort();
 
-	_ui.btnClear->setEnabled(true);
+	_ui->btnClear->setEnabled(true);
 
 	updateOriginProcessColumns(item, highPriority);
 
@@ -3658,8 +3892,12 @@ EventListView::addOrigin(Seiscomp::DataModel::Origin* origin, QTreeWidgetItem* p
 
 	return item;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::updateOriginProcessColumns(QTreeWidgetItem *item, bool highPriority) {
 	if ( _itemConfig.originScriptColumns.empty() ) return;
 	if ( !item ) return;
@@ -3689,7 +3927,12 @@ void EventListView::updateOriginProcessColumns(QTreeWidgetItem *item, bool highP
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::updateEventProcessColumns(QTreeWidgetItem *item, bool highPriority) {
 	if ( _itemConfig.eventScriptColumns.empty() ) return;
 	if ( !item ) return;
@@ -3719,21 +3962,29 @@ void EventListView::updateEventProcessColumns(QTreeWidgetItem *item, bool highPr
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FocalMechanismTreeItem* EventListView::addFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm, QTreeWidgetItem* parent) {
 	FocalMechanismTreeItem* item = new FocalMechanismTreeItem(fm, _itemConfig);
 	EventTreeItem *eitem = static_cast<EventTreeItem*>(parent?parent:_unassociatedEventItem);
 	eitem->addFocalMechanismItem(0,item);
 	eitem->resort();
 
-	_ui.btnClear->setEnabled(true);
+	_ui->btnClear->setEnabled(true);
 
 	emit focalMechanismAdded();
 	return item;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::messageAvailable(Seiscomp::Core::Message* msg, Seiscomp::Client::Packet*) {
 	CommandMessage *cmsg = CommandMessage::Cast(msg);
 	if ( cmsg ) {
@@ -3748,8 +3999,12 @@ void EventListView::messageAvailable(Seiscomp::Core::Message* msg, Seiscomp::Cli
 			emit originSelected(o, nullptr);
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::onCommand(Seiscomp::Gui::CommandMessage* cmsg) {
 	if ( cmsg->command() == CM_SHOW_ORIGIN ) {
 		QTreeWidgetItem* item = findOrigin(cmsg->parameter());
@@ -3796,8 +4051,12 @@ void EventListView::onCommand(Seiscomp::Gui::CommandMessage* cmsg) {
 
 	return;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 	_treeWidget->setUpdatesEnabled(false);
 
@@ -4231,8 +4490,12 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 
 	_treeWidget->setUpdatesEnabled(true);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::updateOrigin(Seiscomp::DataModel::Origin* origin) {
 	EventParametersPtr ep;
 
@@ -4275,13 +4538,16 @@ void EventListView::updateOrigin(Seiscomp::DataModel::Origin* origin) {
 
 	Notifier::SetEnabled(wasEnabled);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
                                  Seiscomp::DataModel::Event* baseEvent,
                                  const Seiscomp::Gui::ObjectChangeList<Seiscomp::DataModel::Pick> &changedPicks,
-                                 const std::vector<Seiscomp::DataModel::AmplitudePtr>& newAmplitudes)
-{
+                                 const std::vector<Seiscomp::DataModel::AmplitudePtr>& newAmplitudes) {
 	EventParametersPtr ep;
 
 	if ( _updateLocalEPInstance )
@@ -4348,8 +4614,12 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 	for ( NotifierMessage::iterator it = msg->begin(); it != msg->end(); ++it )
 		notifierAvailable((*it).get());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::updateFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm) {
 	EventParametersPtr ep;
 
@@ -4392,8 +4662,12 @@ void EventListView::updateFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
 
 	Notifier::SetEnabled(wasEnabled);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::insertFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm,
                                          Seiscomp::DataModel::Event *event,
                                          Seiscomp::DataModel::Origin *origin) {
@@ -4449,8 +4723,12 @@ void EventListView::insertFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
 	for ( NotifierMessage::iterator it = msg->begin(); it != msg->end(); ++it )
 		notifierAvailable((*it).get());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventTreeItem* EventListView::findEvent(const std::string& publicID) {
 	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
 		SchemeTreeItem* item = (SchemeTreeItem*)_treeWidget->topLevelItem(i);
@@ -4461,8 +4739,12 @@ EventTreeItem* EventListView::findEvent(const std::string& publicID) {
 
 	return nullptr;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 OriginTreeItem* EventListView::findOrigin(const std::string& publicID) {
 	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
 		QTreeWidgetItem* item = _treeWidget->topLevelItem(i);
@@ -4479,8 +4761,12 @@ OriginTreeItem* EventListView::findOrigin(const std::string& publicID) {
 
 	return nullptr;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FocalMechanismTreeItem* EventListView::findFocalMechanism(const std::string &publicID) {
 	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
 		QTreeWidgetItem* item = _treeWidget->topLevelItem(i);
@@ -4497,8 +4783,12 @@ FocalMechanismTreeItem* EventListView::findFocalMechanism(const std::string &pub
 
 	return nullptr;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::loadItem(QTreeWidgetItem *item) {
 	if ( _blockSelection ) return;
 
@@ -4562,8 +4852,12 @@ void EventListView::loadItem(QTreeWidgetItem *item) {
 
 	_blockSelection = false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::itemSelected(QTreeWidgetItem* item, int column) {
 	if ( QApplication::keyboardModifiers() != Qt::NoModifier ) return;
 	if ( column == _itemConfig.columnMap[COL_FM] ) {
@@ -4576,8 +4870,12 @@ void EventListView::itemSelected(QTreeWidgetItem* item, int column) {
 
 	loadItem(item);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 	if ( QApplication::mouseButtons() != Qt::RightButton ) return;
 
@@ -4670,8 +4968,12 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::copyRowToClipboard() {
 	QClipboard *cb = QApplication::clipboard();
 	if ( !cb ) return;
@@ -4691,8 +4993,12 @@ void EventListView::copyRowToClipboard() {
 	cb->setText(text);
 
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QList<Event*> EventListView::selectedEvents() {
 	QList<Event*> events;
 	if ( _blockSelection ) return events;
@@ -4712,21 +5018,33 @@ QList<Event*> EventListView::selectedEvents() {
 
 	return events;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Seiscomp::DataModel::Event *
 EventListView::eventFromTreeItem(QTreeWidgetItem *item) const {
 	SchemeTreeItem* schemeItem = dynamic_cast<SchemeTreeItem*>(item);
 	if ( schemeItem == nullptr ) return nullptr;
 	return Event::Cast(schemeItem->object());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int EventListView::eventCount() const {
 	return _treeWidget->topLevelItemCount() - (_unassociatedEventItem ? 1 : 0);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int EventListView::visibleEventCount() const {
 	if ( _visibleEventCount < 0 ) {
 		qWarning() << "Counting visible events";
@@ -4739,8 +5057,12 @@ int EventListView::visibleEventCount() const {
 
 	return _visibleEventCount;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setSortingEnabled(bool enable) {
 	QHeaderView* header = _treeWidget->header();
 	if ( header == nullptr ) return;
@@ -4764,8 +5086,12 @@ void EventListView::setSortingEnabled(bool enable) {
 #endif
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::sortItems(int col) {
 	int count = _treeWidget->topLevelItemCount();
 	QHeaderView* header = _treeWidget->header();
@@ -4807,26 +5133,41 @@ void EventListView::sortItems(int col) {
 	_treeWidget->blockSignals(false);
 
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setControlsHidden(bool hide) {
-	_ui.frameControls->setHidden(hide);
+	_ui->frameControls->setHidden(hide);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setCustomControls(QWidget* widget) const {
-	_ui.frameCustomControls->setLayout(new QHBoxLayout());
-	_ui.frameCustomControls->layout()->setMargin(0);
-	_ui.frameCustomControls->layout()->addWidget(widget);
+	_ui->frameCustomControls->setLayout(new QHBoxLayout());
+	_ui->frameCustomControls->layout()->setMargin(0);
+	_ui->frameCustomControls->layout()->addWidget(widget);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setFMLinkEnabled(bool e) {
 	_itemConfig.createFMLink = e;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::moveSection(int from, int to) {
 	QHeaderView* header = _treeWidget->header();
 	if ( header == nullptr ) return;
@@ -4837,8 +5178,12 @@ void EventListView::moveSection(int from, int to) {
 
 	header->moveSection(from, to);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::headerContextMenuRequested(const QPoint &pos) {
 	int count = _treeWidget->header()->count();
 	QAbstractItemModel *model = _treeWidget->header()->model();
@@ -4865,8 +5210,12 @@ void EventListView::headerContextMenuRequested(const QPoint &pos) {
 	_treeWidget->header()->setSectionHidden(section, !result->isChecked());
 	//std::cout << "visibility[" << section << "] = " << !_treeWidget->header()->isSectionHidden(section) << std::endl;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventListView::sendJournalAndWait(const std::string &objectID,
                                        const std::string &action,
                                        const std::string &params,
@@ -4886,13 +5235,21 @@ bool EventListView::sendJournalAndWait(const std::string &objectID,
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::waitDialogDestroyed(QObject *o) {
 	if ( _commandWaitDialog == o ) _commandWaitDialog = nullptr;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::itemEntered(QTreeWidgetItem *item, int column) {
 	if ( column == _itemConfig.columnMap[COL_FM]
 	  && item->data(column, Qt::UserRole+1).isValid() )
@@ -4900,8 +5257,12 @@ void EventListView::itemEntered(QTreeWidgetItem *item, int column) {
 	else
 		unsetCursor();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::itemExpanded(QTreeWidgetItem *item) {
 	if ( item->type() != ST_OriginGroup ) return;
 	if ( _itemConfig.originScriptColumns.isEmpty() ) return;
@@ -4914,8 +5275,12 @@ void EventListView::itemExpanded(QTreeWidgetItem *item) {
 		PublicObjectEvaluator::Instance().moveToFront(oitem->text(_itemConfig.columnMap[COL_ID]));
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous) {
 	if ( !current ) return;
 	if ( (current->type() == ST_Origin && !_itemConfig.originScriptColumns.isEmpty()) ||
@@ -4923,8 +5288,12 @@ void EventListView::currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem
 		PublicObjectEvaluator::Instance().moveToFront(current->text(_itemConfig.columnMap[COL_ID]));
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::evalResultAvailable(const QString &publicID,
                                         const QString &className,
                                         const QString &script,
@@ -4974,8 +5343,12 @@ void EventListView::evalResultAvailable(const QString &publicID,
 		item->setForeground(it.value(), Qt::NoBrush);
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::evalResultError(const QString &publicID,
                                     const QString &className,
                                     const QString &script,
@@ -5019,97 +5392,129 @@ void EventListView::evalResultError(const QString &publicID,
 		                 .arg(PublicObjectEvaluator::Instance().errorMsg(error)));
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventListViewRegionFilterDialog::EventListViewRegionFilterDialog(QWidget *parent,
                                                                  EventListView::Region *target,
                                                                  EventListView::FilterRegions *regionList)
-: QDialog(parent), _target(target), _regionList(regionList) {
-	_ui.setupUi(this);
+: QDialog(parent)
+, _ui(new Ui::EventListViewRegionFilterDialog)
+, _target(target), _regionList(regionList) {
+	_ui->setupUi(this);
 
-	_ui.edMinLat->setText(QString::number(_target->minLat));
-	_ui.edMaxLat->setText(QString::number(_target->maxLat));
-	_ui.edMinLon->setText(QString::number(_target->minLong));
-	_ui.edMaxLon->setText(QString::number(_target->maxLong));
+	_ui->edMinLat->setText(QString::number(_target->minLat));
+	_ui->edMaxLat->setText(QString::number(_target->maxLat));
+	_ui->edMinLon->setText(QString::number(_target->minLong));
+	_ui->edMaxLon->setText(QString::number(_target->maxLong));
 
 	QValidator *valLat = new QDoubleValidator(-90,90,6,this);
 	QValidator *valLong = new QDoubleValidator(-180,180,6,this);
 
-	_ui.edMinLat->setValidator(valLat); _ui.edMaxLat->setValidator(valLat);
-	_ui.edMinLon->setValidator(valLong); _ui.edMaxLon->setValidator(valLong);
+	_ui->edMinLat->setValidator(valLat); _ui->edMaxLat->setValidator(valLat);
+	_ui->edMinLon->setValidator(valLong); _ui->edMaxLon->setValidator(valLong);
 
 	if ( _regionList->isEmpty() ) return;
 
 	for ( int i = 0; i < _regionList->size(); ++i )
-		_ui.cbRegions->addItem((*_regionList)[i].name);
+		_ui->cbRegions->addItem((*_regionList)[i].name);
 
-	connect(_ui.cbRegions, SIGNAL(currentIndexChanged(const QString &)),
+	connect(_ui->cbRegions, SIGNAL(currentIndexChanged(const QString &)),
 	        this, SLOT(regionSelectionChanged(const QString &)));
 
-	connect(_ui.okButton, SIGNAL(clicked()), this, SLOT(accept()));
-	connect(_ui.cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+	connect(_ui->okButton, SIGNAL(clicked()), this, SLOT(accept()));
+	connect(_ui->cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+EventListViewRegionFilterDialog::~EventListViewRegionFilterDialog() {
+	delete _ui;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListViewRegionFilterDialog::regionSelectionChanged(const QString &text) {
 	for ( int i = 0; i < _regionList->size(); ++i ) {
 		if ( (*_regionList)[i].name == text ) {
-			_ui.edMinLat->setText(QString::number((*_regionList)[i].minLat));
-			_ui.edMaxLat->setText(QString::number((*_regionList)[i].maxLat));
-			_ui.edMinLon->setText(QString::number((*_regionList)[i].minLong));
-			_ui.edMaxLon->setText(QString::number((*_regionList)[i].maxLong));
+			_ui->edMinLat->setText(QString::number((*_regionList)[i].minLat));
+			_ui->edMaxLat->setText(QString::number((*_regionList)[i].maxLat));
+			_ui->edMinLon->setText(QString::number((*_regionList)[i].minLong));
+			_ui->edMaxLon->setText(QString::number((*_regionList)[i].maxLong));
 			return;
 		}
 	}
 
-	_ui.edMinLat->setText("");
-	_ui.edMaxLat->setText("");
-	_ui.edMinLon->setText("");
-	_ui.edMaxLon->setText("");
+	_ui->edMinLat->setText("");
+	_ui->edMaxLat->setText("");
+	_ui->edMinLon->setText("");
+	_ui->edMaxLon->setText("");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListViewRegionFilterDialog::showError(const QString &msg) {
 	QMessageBox::critical(this, "Error", msg);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListViewRegionFilterDialog::accept() {
 	// Copy minimum latitude
-	if ( _ui.edMinLat->text().isEmpty() ) {
+	if ( _ui->edMinLat->text().isEmpty() ) {
 		showError("Minimum latitude must not be empty.");
-		_ui.edMinLat->setFocus();
+		_ui->edMinLat->setFocus();
 		return;
 	}
-	_target->minLat = _ui.edMinLat->text().toDouble();
+	_target->minLat = _ui->edMinLat->text().toDouble();
 
 	// Copy maximum latitude
-	if ( _ui.edMaxLat->text().isEmpty() ) {
+	if ( _ui->edMaxLat->text().isEmpty() ) {
 		showError("Maximum latitude must not be empty.");
-		_ui.edMaxLat->setFocus();
+		_ui->edMaxLat->setFocus();
 		return;
 	}
-	_target->maxLat = _ui.edMaxLat->text().toDouble();
+	_target->maxLat = _ui->edMaxLat->text().toDouble();
 
 	// Copy minimum longitude
-	if ( _ui.edMinLon->text().isEmpty() ) {
+	if ( _ui->edMinLon->text().isEmpty() ) {
 		showError("Minimum longitude must not be empty.");
-		_ui.edMinLon->setFocus();
+		_ui->edMinLon->setFocus();
 		return;
 	}
-	_target->minLong = _ui.edMinLon->text().toDouble();
+	_target->minLong = _ui->edMinLon->text().toDouble();
 
 	// Copy maximum longitude
-	if ( _ui.edMaxLon->text().isEmpty() ) {
+	if ( _ui->edMaxLon->text().isEmpty() ) {
 		showError("Maximum longitude must not be empty.");
-		_ui.edMaxLon->setFocus();
+		_ui->edMaxLon->setFocus();
 		return;
 	}
-	_target->maxLong = _ui.edMaxLon->text().toDouble();
+	_target->maxLong = _ui->edMaxLon->text().toDouble();
 
 	QDialog::accept();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

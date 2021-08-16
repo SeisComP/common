@@ -19,6 +19,7 @@
 
 
 #include <seiscomp/gui/datamodel/eventsummary.h>
+#include <seiscomp/gui/datamodel/ui_eventsummary.h>
 
 #include <seiscomp/core/system.h>
 
@@ -32,8 +33,10 @@
 
 #include <seiscomp/seismology/regions.h>
 
+
 using namespace Seiscomp::DataModel;
 using namespace Seiscomp::Core;
+
 
 namespace Seiscomp {
 namespace Gui {
@@ -185,7 +188,9 @@ void EventSummaryMagnitudeRow::select(bool selected) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventSummary::EventSummary(const MapsDesc &maps,
                            DatabaseQuery* reader,
-                           QWidget *parent) : QWidget(parent) {
+                           QWidget *parent)
+: QWidget(parent)
+, _ui(new Ui::EventSummary) {
 	_reader = reader;
 	_maptree = new Map::ImageTree(maps);
 	init();
@@ -198,7 +203,9 @@ EventSummary::EventSummary(const MapsDesc &maps,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventSummary::EventSummary(Map::ImageTree* mapTree,
                            DatabaseQuery* reader,
-                           QWidget * parent) : QWidget(parent) {
+                           QWidget * parent)
+: QWidget(parent)
+, _ui(new Ui::EventSummary) {
 	_reader = reader;
 	_maptree = mapTree;
 	init();
@@ -209,7 +216,9 @@ EventSummary::EventSummary(Map::ImageTree* mapTree,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EventSummary::~EventSummary() {}
+EventSummary::~EventSummary() {
+	delete _ui;
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -239,18 +248,18 @@ class EventSummaryMap : public MapWidget {
 
 
 void EventSummary::init() {
-	_ui.setupUi(this);
+	_ui->setupUi(this);
 
 	_showComment = true;
 	_defaultEventRadius = 0.0;
 	_maxMinutesSecondDisplay = -1;
 
-	_ui.labelOpComment->setVisible(false);
-	_ui.labelOpCommentSeparator->setVisible(false);
+	_ui->labelOpComment->setVisible(false);
+	_ui->labelOpCommentSeparator->setVisible(false);
 
 	_symbol = nullptr;
-	_map = new EventSummaryMap(this, _maptree.get(), _ui.map);
-	QHBoxLayout* hboxLayout = new QHBoxLayout(_ui.map);
+	_map = new EventSummaryMap(this, _maptree.get(), _ui->map);
+	QHBoxLayout* hboxLayout = new QHBoxLayout(_ui->map);
 	hboxLayout->setMargin(0);
 	hboxLayout->addWidget(_map);
 
@@ -264,75 +273,75 @@ void EventSummary::init() {
 	connect(&_timeAgo, SIGNAL(timeout()), this, SLOT(updateTimeAgo()));
 
 	// Set the font sizes
-	setupFont(_ui.originTime, SCScheme.fonts.highlight);
-	_ui.originTime->setMinimumWidth(_ui.originTime->fontMetrics().width("9999-99-99 99:99:99 "));
+	setupFont(_ui->originTime, SCScheme.fonts.highlight);
+	_ui->originTime->setMinimumWidth(_ui->originTime->fontMetrics().width("9999-99-99 99:99:99 "));
 
-	setupFont(_ui.timeAgo, SCScheme.fonts.base);
+	setupFont(_ui->timeAgo, SCScheme.fonts.base);
 
 	//QColor highlightColor = Qt::red;
 
-	setupFont(_ui.magnitudeText, SCScheme.fonts.highlight/*, highlightColor*/);
-	setupFont(_ui.magnitude, SCScheme.fonts.highlight/*, highlightColor*/);
-	setupFont(_ui.depthText, SCScheme.fonts.highlight/*, highlightColor*/);
-	setupFont(_ui.depth, SCScheme.fonts.highlight/*, highlightColor*/);
-	setupFont(_ui.region, SCScheme.fonts.highlight/*, highlightColor*/);
-	_ui.region->installEventFilter(drawFilter);
-	_ui.timeAgo->installEventFilter(drawFilter);
+	setupFont(_ui->magnitudeText, SCScheme.fonts.highlight/*, highlightColor*/);
+	setupFont(_ui->magnitude, SCScheme.fonts.highlight/*, highlightColor*/);
+	setupFont(_ui->depthText, SCScheme.fonts.highlight/*, highlightColor*/);
+	setupFont(_ui->depth, SCScheme.fonts.highlight/*, highlightColor*/);
+	setupFont(_ui->region, SCScheme.fonts.highlight/*, highlightColor*/);
+	_ui->region->installEventFilter(drawFilter);
+	_ui->timeAgo->installEventFilter(drawFilter);
 
-	setupFont(_ui.nearestCity, SCScheme.fonts.highlight);
-	_ui.nearestCity->installEventFilter(drawFilter);
-	_ui.nearestCity->setVisible(false);
+	setupFont(_ui->nearestCity, SCScheme.fonts.highlight);
+	_ui->nearestCity->installEventFilter(drawFilter);
+	_ui->nearestCity->setVisible(false);
 
-	//setupFont(_ui.latitudeText, locationFont);
-	setupFont(_ui.latitude, locationFontBold);
-	//setupFont(_ui.longitudeText, locationFont);
-	setupFont(_ui.longitude, locationFontBold);
+	//setupFont(_ui->latitudeText, locationFont);
+	setupFont(_ui->latitude, locationFontBold);
+	//setupFont(_ui->longitudeText, locationFont);
+	setupFont(_ui->longitude, locationFontBold);
 
-	setupFont(_ui.phaseCountText, locationFont);
-	setupFont(_ui.phaseCount, locationFontBold);
+	setupFont(_ui->phaseCountText, locationFont);
+	setupFont(_ui->phaseCount, locationFontBold);
 
-	setupFont(_ui.azimuthalGapText, locationFont);
-	setupFont(_ui.azimuthalGap, locationFont);
+	setupFont(_ui->azimuthalGapText, locationFont);
+	setupFont(_ui->azimuthalGap, locationFont);
 
-	setupFont(_ui.rmsText, locationFont);
-	setupFont(_ui.rms, locationFont);
+	setupFont(_ui->rmsText, locationFont);
+	setupFont(_ui->rms, locationFont);
 
-	setupFont(_ui.minimumDistanceText, locationFont);
-	setupFont(_ui.minimumDistance, locationFont);
+	setupFont(_ui->minimumDistanceText, locationFont);
+	setupFont(_ui->minimumDistance, locationFont);
 
-	setupFont(_ui.maximumDistanceText, locationFont);
-	setupFont(_ui.maximumDistance, locationFont);
+	setupFont(_ui->maximumDistanceText, locationFont);
+	setupFont(_ui->maximumDistance, locationFont);
 
-	setupFont(_ui.firstLocationText, SCScheme.fonts.base);
-	setupFont(_ui.firstLocation, SCScheme.fonts.base);
+	setupFont(_ui->firstLocationText, SCScheme.fonts.base);
+	setupFont(_ui->firstLocation, SCScheme.fonts.base);
 
-	setupFont(_ui.thisLocationText, SCScheme.fonts.base);
-//	setupFont(_ui.thisLocation, SCScheme.fonts.base);
+	setupFont(_ui->thisLocationText, SCScheme.fonts.base);
+//	setupFont(_ui->thisLocation, SCScheme.fonts.base);
 
-	setupFont(_ui.eventIDText, SCScheme.fonts.base);
-	setupFont(_ui.eventID, SCScheme.fonts.base);
-	_ui.eventID->installEventFilter(drawFilter);
+	setupFont(_ui->eventIDText, SCScheme.fonts.base);
+	setupFont(_ui->eventID, SCScheme.fonts.base);
+	_ui->eventID->installEventFilter(drawFilter);
 
-	setupFont(_ui.originIDText, SCScheme.fonts.base);
-	setupFont(_ui.originID, SCScheme.fonts.base);
-	_ui.originID->installEventFilter(drawFilter);
+	setupFont(_ui->originIDText, SCScheme.fonts.base);
+	setupFont(_ui->originID, SCScheme.fonts.base);
+	_ui->originID->installEventFilter(drawFilter);
 
-	setupFont(_ui.agencyID, SCScheme.fonts.base);
-	_ui.agencyID->installEventFilter(drawFilter);
+	setupFont(_ui->agencyID, SCScheme.fonts.base);
+	_ui->agencyID->installEventFilter(drawFilter);
 
-	setupFont(_ui.state, SCScheme.fonts.base);
-	setupFont(_ui.mode, SCScheme.fonts.base);
+	setupFont(_ui->state, SCScheme.fonts.base);
+	setupFont(_ui->mode, SCScheme.fonts.base);
 
-	setupFont(_ui.type, SCScheme.fonts.base);
-	_ui.type->installEventFilter(drawFilter);
+	setupFont(_ui->type, SCScheme.fonts.base);
+	_ui->type->installEventFilter(drawFilter);
 
-	_magnitudeRows = new QVBoxLayout(_ui.magnitudes);
+	_magnitudeRows = new QVBoxLayout(_ui->magnitudes);
 	_magnitudeRows->setMargin(0);
 	_magnitudeRows->setSpacing(layout()->spacing());
 
-	_ui.exportButton->setVisible(false);
+	_ui->exportButton->setVisible(false);
 
-	_ui.focalMechanism->setVisible(false);
+	_ui->focalMechanism->setVisible(false);
 
 	try {
 		std::vector<std::string> mags = SCApp->configGetStrings("visibleMagnitudes");
@@ -369,12 +378,12 @@ void EventSummary::init() {
 	catch ( ... ) {}
 
 
-	_ui.azimuthalGapText->setVisible(false); _ui.azimuthalGap->setVisible(false);
-	_ui.firstLocationText->setVisible(false); _ui.firstLocation->setVisible(false);
-	_ui.thisLocationText->setVisible(false);
-	_ui.minimumDistanceText->setVisible(false); _ui.minimumDistance->setVisible(false);
-	_ui.maximumDistanceText->setVisible(false); _ui.maximumDistance->setVisible(false);
-	_ui.originIDText->setVisible(false); _ui.originID->setVisible(false);
+	_ui->azimuthalGapText->setVisible(false); _ui->azimuthalGap->setVisible(false);
+	_ui->firstLocationText->setVisible(false); _ui->firstLocation->setVisible(false);
+	_ui->thisLocationText->setVisible(false);
+	_ui->minimumDistanceText->setVisible(false); _ui->minimumDistance->setVisible(false);
+	_ui->maximumDistanceText->setVisible(false); _ui->maximumDistance->setVisible(false);
+	_ui->originIDText->setVisible(false); _ui->originID->setVisible(false);
 
 	resetContent();
 }
@@ -389,28 +398,28 @@ void EventSummary::setTextContrast(bool f) {
 	           palette().color(QPalette::Disabled, QPalette::WindowText):
 	           palette().color(QPalette::Normal, QPalette::WindowText);
 
-	setupColor(_ui.depth, c);
-	setupColor(_ui.region, c);
-	setupColor(_ui.nearestCity, c);
+	setupColor(_ui->depth, c);
+	setupColor(_ui->region, c);
+	setupColor(_ui->nearestCity, c);
 
-	setupColor(_ui.latitude, c);
-	setupColor(_ui.longitude, c);
+	setupColor(_ui->latitude, c);
+	setupColor(_ui->longitude, c);
 
-	setupColor(_ui.phaseCount, c);
-	setupColor(_ui.azimuthalGap, c);
+	setupColor(_ui->phaseCount, c);
+	setupColor(_ui->azimuthalGap, c);
 
-	setupColor(_ui.rms, c);
+	setupColor(_ui->rms, c);
 
-	setupColor(_ui.minimumDistance, c);
-	setupColor(_ui.maximumDistance, c);
+	setupColor(_ui->minimumDistance, c);
+	setupColor(_ui->maximumDistance, c);
 
-	setupColor(_ui.thisLocationText, c);
+	setupColor(_ui->thisLocationText, c);
 
-	setupColor(_ui.originID, c);
-	setupColor(_ui.agencyID, c);
+	setupColor(_ui->originID, c);
+	setupColor(_ui->agencyID, c);
 
-	setupColor(_ui.state, c);
-	setupColor(_ui.mode, c);
+	setupColor(_ui->state, c);
+	setupColor(_ui->mode, c);
 
 	MagnitudeList::iterator it = _magnitudes.begin();
 	for ( ; it != _magnitudes.end(); ++it )
@@ -423,7 +432,7 @@ void EventSummary::setTextContrast(bool f) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPushButton *EventSummary::exportButton() const {
-	return _ui.exportButton;
+	return _ui->exportButton;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -478,16 +487,16 @@ void EventSummary::updateTimeAgo() {
 	else if ( ( days == 0 ) && ( hours == 0 ) && ( minutes == 0 ) && ( seconds > 0 ) )
 		text = QString("%1s %3").arg(seconds, 0, 'd', 0, ' ').arg(ago);
 
-	if ( text != _ui.timeAgo->text() )
-		_ui.timeAgo->setText(text);
+	if ( text != _ui->timeAgo->text() )
+		_ui->timeAgo->setText(text);
 
 	if ( _alertActive && _alertSettings.gradient.size() != 0 ) {
 		// update color only on change
-		QPalette pal = _ui.timeAgo->palette();
+		QPalette pal = _ui->timeAgo->palette();
 		const QColor &c =  _alertSettings.gradient.colorAt(sec, true);
 		if ( pal.color(QPalette::WindowText) != c ) {
 			pal.setColor(QPalette::WindowText, c);
-			_ui.timeAgo->setPalette(pal);
+			_ui->timeAgo->setPalette(pal);
 		}
 	}
 }
@@ -615,7 +624,7 @@ void EventSummary::removeObject(const QString& parentID, Object* obj) {
 
 		if ( _currentMag && mag->publicID() == _currentMag->publicID() ) {
 			_currentMag = nullptr;
-			_ui.magnitude->setText("-");
+			_ui->magnitude->setText("-");
 			if ( _symbol ) {
 				_symbol->setPreferredMagnitudeValue(0);
 				if ( _map ) _map->update();
@@ -682,7 +691,7 @@ void EventSummary::setEvent(Event *event, Origin *org, bool fixed) {
 		selectMagnitude(_currentMag->type());
 	}
 	else {
-		_ui.magnitude->setText("-");
+		_ui->magnitude->setText("-");
 		if ( _symbol ) {
 			_symbol->setPreferredMagnitudeValue(0);
 			if ( _map ) _map->update();
@@ -701,7 +710,7 @@ void EventSummary::setEvent(Event *event, Origin *org, bool fixed) {
 void EventSummary::updateMagnitude() {
 	char buf[32];
 	sprintf(buf, "%.1f", _currentMag->magnitude().value());
-	setText(_ui.magnitude, buf);
+	setText(_ui->magnitude, buf);
 
 	if ( _symbol ) {
 		_symbol->setPreferredMagnitudeValue(_currentMag->magnitude().value());
@@ -795,40 +804,40 @@ void EventSummary::selectMagnitude(const std::string &type) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventSummary::updateOrigin() {
 	// Origin time
-	timeToLabel(_ui.originTime, _currentOrigin->time().value(), "%F %T");
+	timeToLabel(_ui->originTime, _currentOrigin->time().value(), "%F %T");
 
 	// Depth
 	try {
-		setText(_ui.depth, depthToString(_currentOrigin->depth().value(), SCScheme.precision.depth) + " km");
+		setText(_ui->depth, depthToString(_currentOrigin->depth().value(), SCScheme.precision.depth) + " km");
 	}
 	catch ( Core::ValueException& ) {
-		_ui.depth->setText("-");
+		_ui->depth->setText("-");
 	}
 
 	// Region information
 	std::string region = _currentEvent?eventRegion(_currentEvent.get()):"";
 	if ( _currentEvent && !region.empty() )
-		setText(_ui.region, region.c_str());
+		setText(_ui->region, region.c_str());
 	else {
 		try {
 			Regions regions;
-			setText(_ui.region, regions.getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
+			setText(_ui->region, regions.getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
 		}
 		catch ( Core::ValueException& ) {
-			_ui.region->setText("-");
+			_ui->region->setText("-");
 		}
 	}
 
 	// Operators comment
-	_ui.labelOpComment->setVisible(false);
-	_ui.labelOpCommentSeparator->setVisible(false);
+	_ui->labelOpComment->setVisible(false);
+	_ui->labelOpCommentSeparator->setVisible(false);
 	if ( _currentEvent && _showComment ) {
 		for ( size_t i = 0; i < _currentEvent->commentCount(); ++i ) {
 			if ( _currentEvent->comment(i)->id() == "Operator" ) {
 				if ( !_currentEvent->comment(i)->text().empty() ) {
-					_ui.labelOpComment->setVisible(true);
-					_ui.labelOpCommentSeparator->setVisible(true);
-					_ui.labelOpComment->setText(_currentEvent->comment(i)->text().c_str());
+					_ui->labelOpComment->setVisible(true);
+					_ui->labelOpCommentSeparator->setVisible(true);
+					_ui->labelOpComment->setText(_currentEvent->comment(i)->text().c_str());
 				}
 				break;
 			}
@@ -839,39 +848,39 @@ void EventSummary::updateOrigin() {
 	updateAlert();
 
 	// Origin information
-	try { setText(_ui.latitude, latitudeToString(_currentOrigin->latitude(), true, true, SCScheme.precision.location)); }
-	catch ( Core::ValueException& ) { _ui.latitude->setText("-"); }
+	try { setText(_ui->latitude, latitudeToString(_currentOrigin->latitude(), true, true, SCScheme.precision.location)); }
+	catch ( Core::ValueException& ) { _ui->latitude->setText("-"); }
 
-	try { setText(_ui.longitude, longitudeToString(_currentOrigin->longitude(), true, true, SCScheme.precision.location)); }
-	catch ( Core::ValueException& ) { _ui.longitude->setText("-"); }
+	try { setText(_ui->longitude, longitudeToString(_currentOrigin->longitude(), true, true, SCScheme.precision.location)); }
+	catch ( Core::ValueException& ) { _ui->longitude->setText("-"); }
 
-	try { setText(_ui.phaseCount, QString("%1").arg(int(_currentOrigin->quality().usedPhaseCount()))); }
-	catch ( Core::ValueException& ) { _ui.phaseCount->setText("-"); }
+	try { setText(_ui->phaseCount, QString("%1").arg(int(_currentOrigin->quality().usedPhaseCount()))); }
+	catch ( Core::ValueException& ) { _ui->phaseCount->setText("-"); }
 
-	try { setText(_ui.rms, QString("%1").arg(_currentOrigin->quality().standardError(), 0, 'f', 1)); }
-	catch ( Core::ValueException& ) { _ui.rms->setText("-"); }
+	try { setText(_ui->rms, QString("%1").arg(_currentOrigin->quality().standardError(), 0, 'f', 1)); }
+	catch ( Core::ValueException& ) { _ui->rms->setText("-"); }
 
-	try { setText(_ui.azimuthalGap, QString("%1%2").arg(_currentOrigin->quality().azimuthalGap(), 0, 'f', 1).arg(degrees)); }
-	catch ( Core::ValueException& ) { _ui.azimuthalGap->setText("-"); }
+	try { setText(_ui->azimuthalGap, QString("%1%2").arg(_currentOrigin->quality().azimuthalGap(), 0, 'f', 1).arg(degrees)); }
+	catch ( Core::ValueException& ) { _ui->azimuthalGap->setText("-"); }
 
-	try { setText(_ui.minimumDistance, QString("%1%2").arg(_currentOrigin->quality().minimumDistance(), 0, 'f', 1).arg(degrees)); }
-	catch ( Core::ValueException& ) { _ui.minimumDistance->setText("-"); }
+	try { setText(_ui->minimumDistance, QString("%1%2").arg(_currentOrigin->quality().minimumDistance(), 0, 'f', 1).arg(degrees)); }
+	catch ( Core::ValueException& ) { _ui->minimumDistance->setText("-"); }
 
-	try { setText(_ui.maximumDistance, QString("%1%2").arg(_currentOrigin->quality().maximumDistance(), 0, 'f', 1).arg(degrees)); }
-	catch ( Core::ValueException& ) { _ui.maximumDistance->setText("-"); }
+	try { setText(_ui->maximumDistance, QString("%1%2").arg(_currentOrigin->quality().maximumDistance(), 0, 'f', 1).arg(degrees)); }
+	catch ( Core::ValueException& ) { _ui->maximumDistance->setText("-"); }
 
 	if ( _currentOrigin ) {
-		setText(_ui.originID, _currentOrigin->publicID().c_str());
-		try { setText(_ui.agencyID, _currentOrigin->creationInfo().agencyID().c_str()); }
-		catch ( Core::ValueException& ) { _ui.agencyID->setText(""); }
-		try { setText(_ui.state, _currentOrigin->evaluationStatus().toString()); }
-		catch ( Core::ValueException& ) { _ui.state->setText("-"); }
-		try { setText(_ui.mode, _currentOrigin->evaluationMode().toString()); }
-		catch ( Core::ValueException& ) { _ui.mode->setText("-"); }
+		setText(_ui->originID, _currentOrigin->publicID().c_str());
+		try { setText(_ui->agencyID, _currentOrigin->creationInfo().agencyID().c_str()); }
+		catch ( Core::ValueException& ) { _ui->agencyID->setText(""); }
+		try { setText(_ui->state, _currentOrigin->evaluationStatus().toString()); }
+		catch ( Core::ValueException& ) { _ui->state->setText("-"); }
+		try { setText(_ui->mode, _currentOrigin->evaluationMode().toString()); }
+		catch ( Core::ValueException& ) { _ui->mode->setText("-"); }
 	}
 	else {
-		_ui.originID->setText("-");
-		_ui.agencyID->setText("-");
+		_ui->originID->setText("-");
+		_ui->agencyID->setText("-");
 	}
 
 	// get the time of first location of an origin belonging to this Event
@@ -883,7 +892,7 @@ void EventSummary::updateOrigin() {
 		}
 		catch ( Core::ValueException& ) {}
 	}
-	setText(_ui.firstLocation, str);
+	setText(_ui->firstLocation, str);
 
 	str = "-";
 	// get the time of the current location
@@ -896,7 +905,7 @@ void EventSummary::updateOrigin() {
 	}
 
 	updateTimeAgo();
-//	setText(_ui.thisLocation, str);
+//	setText(_ui->thisLocation, str);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -909,8 +918,8 @@ void EventSummary::updateAlert() {
 
 	// reset
 	_alertActive = false;
-	setupFont(_ui.timeAgo, SCScheme.fonts.base);
-	setupColor(_ui.timeAgo, palette().color(QPalette::WindowText));
+	setupFont(_ui->timeAgo, SCScheme.fonts.base);
+	setupColor(_ui->timeAgo, palette().color(QPalette::WindowText));
 
 	for ( size_t i = 0; i < _currentEvent->commentCount(); ++i ) {
 		if ( _currentEvent->comment(i)->text().empty() ) continue;
@@ -923,10 +932,10 @@ void EventSummary::updateAlert() {
 			_alertActive = true;
 
 			if ( _alertSettings.textSize > 0 ) {
-				QFont font = _ui.timeAgo->font();
+				QFont font = _ui->timeAgo->font();
 				font.setPointSize(_alertSettings.textSize);
 
-				setupFont(_ui.timeAgo, font);
+				setupFont(_ui->timeAgo, font);
 			}
 
 			break;
@@ -975,11 +984,11 @@ void EventSummary::setFocalMechanism(FocalMechanism* fm) {
 		try {
 			depth = o->depth();
 			QString text = depthToString(*depth, SCScheme.precision.depth) + " km";
-			_ui.fmDepth->setText(text);
+			_ui->fmDepth->setText(text);
 			toolTip += "Depth: " + text + "\n";
 		}
 		catch(...) {
-			_ui.fmDepth->setText(QString("-"));
+			_ui->fmDepth->setText(QString("-"));
 			toolTip += "Depth: n/a\n";
 		}
 
@@ -1005,11 +1014,11 @@ void EventSummary::setFocalMechanism(FocalMechanism* fm) {
 
 	if ( mag ) {
 		QString text = QString("%1").arg(mag->magnitude().value(), 0, 'f', 1);
-		_ui.mw->setText(QString("Mw %1").arg(text));
+		_ui->mw->setText(QString("Mw %1").arg(text));
 		toolTip += "Mw: " + text + "\n";
 	}
 	else {
-		_ui.mw->setText("-");
+		_ui->mw->setText("-");
 		toolTip += "Mw: n/a\n";
 	}
 
@@ -1034,17 +1043,17 @@ void EventSummary::setFocalMechanism(FocalMechanism* fm) {
 	}
 
 	if ( strike && dip && rake ) {
-		const QSize& size = _ui.momentTensor->size();
+		const QSize& size = _ui->momentTensor->size();
 		QImage img(size, QImage::Format_ARGB32);
 
 		Gui::TensorRenderer renderer;
 		renderer.setTColor(c);
 		renderer.setShadingEnabled(true);
 		renderer.render(img, *strike, *dip, *rake);
-		_ui.momentTensor->setPixmap(QPixmap::fromImage(img));
+		_ui->momentTensor->setPixmap(QPixmap::fromImage(img));
 	}
 
-	_ui.focalMechanism->setToolTip(toolTip);
+	_ui->focalMechanism->setToolTip(toolTip);
 }
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1082,31 +1091,31 @@ void EventSummary::updateContent() {
 		_map->setCursor(Qt::PointingHandCursor);
 	}
 
-	_ui.exportButton->setEnabled(true);
-	_ui.exportButton->setCursor(Qt::PointingHandCursor);
+	_ui->exportButton->setEnabled(true);
+	_ui->exportButton->setCursor(Qt::PointingHandCursor);
 
 	updateOrigin();
 
 	std::string eventType;
 	if ( _currentEvent ) {
-		setText(_ui.eventID, _currentEvent->publicID().c_str());
-		_ui.eventID->setToolTip(_currentEvent->publicID().c_str());
+		setText(_ui->eventID, _currentEvent->publicID().c_str());
+		_ui->eventID->setToolTip(_currentEvent->publicID().c_str());
 		try { eventType = _currentEvent->type().toString(); }
 		catch ( Core::ValueException& ) {}
 	}
 	else {
-		_ui.eventID->setText("-");
-		_ui.eventID->setToolTip("");
+		_ui->eventID->setText("-");
+		_ui->eventID->setToolTip("");
 	}
 
 	if ( eventType.empty() ) {
-		_ui.type->setText("");
-		_ui.type->setVisible(false);
+		_ui->type->setText("");
+		_ui->type->setVisible(false);
 	}
 	else {
-		setText(_ui.type, eventType.c_str());
-		_ui.type->setVisible(true);
-		_ui.type->setToolTip(eventType.c_str());
+		setText(_ui->type, eventType.c_str());
+		_ui->type->setVisible(true);
+		_ui->type->setToolTip(eventType.c_str());
 	}
 
 	resetMagnitudes();
@@ -1132,10 +1141,10 @@ void EventSummary::updateContent() {
 
 	if ( _currentFocalMechanism ) {
 		setFocalMechanism(_currentFocalMechanism.get());
-		_ui.focalMechanism->setVisible(true);
+		_ui->focalMechanism->setVisible(true);
 	}
 	else
-		_ui.focalMechanism->setVisible(false);
+		_ui->focalMechanism->setVisible(false);
 
 	_timeAgo.start(1000);
 }
@@ -1159,8 +1168,8 @@ void EventSummary::resetMagnitudes() {
 void EventSummary::resetContent() {
 	if ( _map ) _map->setCursor(QCursor());
 
-	_ui.exportButton->setEnabled(false);
-	_ui.exportButton->setCursor(QCursor());
+	_ui->exportButton->setEnabled(false);
+	_ui->exportButton->setCursor(QCursor());
 
 	_timeAgo.stop();
 
@@ -1171,31 +1180,31 @@ void EventSummary::resetContent() {
 		}
 	}
 
-	_ui.originTime->setText("1970/01/01 - 00:00:00");
-	_ui.timeAgo->setText("");
-	_ui.magnitude->setText("-");
-	_ui.depth->setText("-");
-	_ui.region->setText("...");
-	_ui.nearestCity->setText("");
-	_ui.latitude->setText("-");
-	_ui.longitude->setText("-");
-	_ui.phaseCount->setText("-");
-	_ui.azimuthalGap->setText("-");
-	_ui.rms->setText("-");
-	_ui.minimumDistance->setText("-");
-	_ui.maximumDistance->setText("-");
-	_ui.firstLocation->setText("-");
-//	_ui.thisLocation->setText("-");
-	_ui.eventID->setText("-");
-	_ui.originID->setText("-");
-	_ui.agencyID->setText("-");
-	_ui.state->setText("-");
-	_ui.mode->setText("-");
+	_ui->originTime->setText("1970/01/01 - 00:00:00");
+	_ui->timeAgo->setText("");
+	_ui->magnitude->setText("-");
+	_ui->depth->setText("-");
+	_ui->region->setText("...");
+	_ui->nearestCity->setText("");
+	_ui->latitude->setText("-");
+	_ui->longitude->setText("-");
+	_ui->phaseCount->setText("-");
+	_ui->azimuthalGap->setText("-");
+	_ui->rms->setText("-");
+	_ui->minimumDistance->setText("-");
+	_ui->maximumDistance->setText("-");
+	_ui->firstLocation->setText("-");
+//	_ui->thisLocation->setText("-");
+	_ui->eventID->setText("-");
+	_ui->originID->setText("-");
+	_ui->agencyID->setText("-");
+	_ui->state->setText("-");
+	_ui->mode->setText("-");
 
-	_ui.mw->setText("-");
-	_ui.fmDepth->setText("-");
-	_ui.momentTensor->setPixmap(QPixmap());
-	_ui.momentTensor->setToolTip("");
+	_ui->mw->setText("-");
+	_ui->fmDepth->setText("-");
+	_ui->momentTensor->setPixmap(QPixmap());
+	_ui->momentTensor->setToolTip("");
 	if ( _map ) {
 		_map->canvas().displayRect(QRectF(-180.0, -90.0, 360.0, 180.0));
 		_map->update();
@@ -1203,7 +1212,7 @@ void EventSummary::resetContent() {
 
 	resetMagnitudes();
 
-	_ui.focalMechanism->setVisible(false);
+	_ui->focalMechanism->setVisible(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1270,7 +1279,7 @@ void EventSummary::setSecondDisplayUpToMaxMinutes(int v) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QList<QFrame*> EventSummary::separators() const {
-	return QList<QFrame*>() << _ui.separator1 << _ui.separator2;
+	return QList<QFrame*>() << _ui->separator1 << _ui->separator2;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -22,8 +22,6 @@
 #define SEISCOMP_GUI_ORIGINLOCATORVIEW_H
 
 
-#include <seiscomp/gui/datamodel/ui_originlocatorview.h>
-#include <seiscomp/gui/core/ui_diagramfilter.h>
 #include <seiscomp/gui/core/diagramwidget.h>
 #include <seiscomp/gui/datamodel/originlocatormap.h>
 #include <seiscomp/gui/datamodel/pickerview.h>
@@ -42,7 +40,15 @@
 
 #include <set>
 
+
+// Ui forward declarations
 class QTreeWidgetItem;
+
+namespace Ui {
+	class OriginLocatorView;
+	class FilterSettings;
+}
+
 
 
 namespace Seiscomp {
@@ -109,15 +115,15 @@ class SC_GUI_API ArrivalModel : public QAbstractTableModel {
 		void setTimeUsed(int row, bool enabled);
 
 	private:
-		DataModel::Origin* _origin;
-		QVector<int> _used;
-		QVector<int>  _hoverState;
-		QVector<QVariant> _takeOffs;
-		QVector<bool> _enableState;
-		QVector<QVariant> _backgroundColors;
-		QColor _disabledForeground;
-		QStringList _header;
-		std::string _pickTimeFormat;
+		DataModel::Origin *_origin;
+		QVector<int>       _used;
+		QVector<int>       _hoverState;
+		QVector<QVariant>  _takeOffs;
+		QVector<bool>      _enableState;
+		QVector<QVariant>  _backgroundColors;
+		QColor             _disabledForeground;
+		QStringList        _header;
+		std::string        _pickTimeFormat;
 };
 
 
@@ -144,12 +150,12 @@ class SC_GUI_API ArrivalDelegate : public QStyledItemDelegate {
 		               const QModelIndex &index);
 
 	private:
-		int                    _flags[3];
-		QString                _labels[3];
-		int                    _margin;
-		int                    _spacing;
-		int                    _statusRectWidth;
-		mutable int            _labelWidth;
+		int         _flags[3];
+		QString     _labels[3];
+		int         _margin;
+		int         _spacing;
+		int         _statusRectWidth;
+		mutable int _labelWidth;
 };
 
 
@@ -165,6 +171,7 @@ class SC_GUI_API DiagramFilterSettingsDialog : public QDialog {
 
 	public:
 		DiagramFilterSettingsDialog(QWidget *parent = 0);
+		~DiagramFilterSettingsDialog();
 
 		Filter *createFilter() const;
 
@@ -173,7 +180,7 @@ class SC_GUI_API DiagramFilterSettingsDialog : public QDialog {
 		void filterChanged(int);
 
 	private:
-		::Ui::FilterSettings _ui;
+		::Ui::FilterSettings *_ui;
 };
 
 
@@ -463,7 +470,7 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 
 		Seiscomp::DataModel::DatabaseQuery   *_reader;
 		Map::ImageTreePtr                     _maptree;
-		::Ui::OriginLocaterView               _ui;
+		::Ui::OriginLocatorView              *_ui;
 		QTabBar                              *_plotTab;
 		OriginLocatorMap                     *_map;
 		OriginLocatorMap                     *_toolMap;

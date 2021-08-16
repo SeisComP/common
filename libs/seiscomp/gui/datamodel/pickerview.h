@@ -22,7 +22,6 @@
 #define SEISCOMP_GUI_PICKERVIEW_H
 
 
-#include <seiscomp/gui/datamodel/ui_pickerview.h>
 #include <seiscomp/gui/core/recordview.h>
 #include <seiscomp/gui/core/connectionstatelabel.h>
 #include <seiscomp/gui/core/utils.h>
@@ -37,11 +36,19 @@
 #endif
 #include <QActionGroup>
 #include <QComboBox>
+#include <QPushButton>
 #include <QSpinBox>
 #include <QMovie>
 #include <QSet>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMainWindow>
+
+
+// Ui forward declaration
+namespace Ui {
+	class PickerView;
+}
 
 
 namespace Seiscomp {
@@ -719,7 +726,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 
 		QWidget                            *_spectrumView;
 
-		::Ui::PickerView                    _ui;
+		::Ui::PickerView                   *_ui;
 		bool                                _settingsRestored;
 
 		static std::string                  _ttInterface;
