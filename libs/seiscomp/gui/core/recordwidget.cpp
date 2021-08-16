@@ -769,6 +769,7 @@ RecordWidget::Stream::Stream(bool owner) {
 	stepFunction = false;
 	hasCustomBackgroundColor = false;
 	scale = 1.0;
+	axisSpacing[0] = axisSpacing[1] = 0;
 	axisDirty = true;
 	ownRawRecords = owner;
 	ownFilteredRecords = true;
