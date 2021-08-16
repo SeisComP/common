@@ -1542,13 +1542,10 @@ void EventEdit::onObjectModified(Object* object) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventEdit::addObject(const QString& parentID,
-                          Object* obj) {
+void EventEdit::addObject(const QString &parentID, Object *obj) {
 	if ( !_currentEvent ) return;
-	const char *pid = (const char*)parentID.toLatin1();
 
-	if ( _currentEvent->publicID() == pid ) {
-
+	if ( parentID == _currentEvent->publicID().c_str() ) {
 		OriginReference *ref = OriginReference::Cast(obj);
 		if ( ref ) {
 			for ( int i = 0; i < _originTree->topLevelItemCount(); ++i )
@@ -1620,7 +1617,7 @@ void EventEdit::addObject(const QString& parentID,
 		}
 
 	}
-	else if ( _currentOrigin && _currentOrigin->publicID() == pid ) {
+	else if ( _currentOrigin && parentID == _currentOrigin->publicID().c_str() ) {
 		Magnitude *mag = Magnitude::Cast(obj);
 		if ( mag ) {
 			addMagnitude(mag);
@@ -1631,7 +1628,7 @@ void EventEdit::addObject(const QString& parentID,
 			return;
 		}
 	}
-	else if ( _currentFM && _currentFM->publicID() == pid ) {
+	else if ( _currentFM && parentID == _currentFM->publicID().c_str() ) {
 		MomentTensor *mt = MomentTensor::Cast(obj);
 		if ( mt ) {
 			std::string derivedID = mt->derivedOriginID();
