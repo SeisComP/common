@@ -499,6 +499,7 @@ Scheme::Precision::Precision() {
 	distance = 1;
 	location = 2;
 	magnitude = 2;
+	originTime = 0;
 	pickTime = 1;
 	traceValues = 1;
 	rms = 1;
@@ -719,6 +720,7 @@ void Scheme::fetch() {
 	READ_INT(precision.distance);
 	READ_INT(precision.location);
 	READ_INT(precision.magnitude);
+	READ_INT(precision.originTime);
 	READ_INT(precision.pickTime);
 	READ_INT(precision.traceValues);
 	READ_INT(precision.rms);

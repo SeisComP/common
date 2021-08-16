@@ -1049,6 +1049,11 @@
 							The precision of magnitude values.
 						</description>
 					</parameter>
+					<parameter name="originTime" type="int" default="0">
+						<description>
+							The precision of origin times.
+						</description>
+					</parameter>
 					<parameter name="pickTime" type="int" default="1">
 						<description>
 							The precision of pick times.

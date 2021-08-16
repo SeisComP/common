@@ -4398,7 +4398,14 @@ void OriginLocatorView::updateContent() {
 	Regions regions;
 	_ui.labelRegion->setText(regions.getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
 	//timeToLabel(_ui.labelDate, timeToString(t, "%Y-%m-%d");
-	timeToLabel(_ui.labelTime, t, "%Y-%m-%d %H:%M:%S");
+	std::string format = "%Y-%m-%d %H:%M:%S";
+	if ( SCScheme.precision.originTime > 0 ) {
+		format += ".%";
+		format += Core::toString(SCScheme.precision.originTime);
+		format += "f";
+	}
+
+	timeToLabel(_ui.labelTime, t, format.c_str());
 
 	double radius;
 	if ( _config.defaultEventRadius > 0 )

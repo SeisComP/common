@@ -1662,8 +1662,13 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 		ui.labelDepth->setText("");
 	}
 
-
-	timeToLabel(ui._lbOriginTime, _currentOrigin->time().value(), "%F %T", true);
+	string timeFormat = "%F %T";
+	if ( SCScheme.precision.originTime > 0 ) {
+		timeFormat += ".%";
+		timeFormat += Core::toString(SCScheme.precision.originTime);
+		timeFormat += "f";
+	}
+	timeToLabel(ui._lbOriginTime, _currentOrigin->time().value(), timeFormat.c_str(), true);
 
 	try {
 		uiHypocenter._lbOriginStatus->setText(_currentOrigin->evaluationMode().toString());
@@ -1836,8 +1841,13 @@ void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
 		uiHypocenter._lbDepthErrorAutomatic->setText(QString(""));
 	}
 
-
-	timeToLabel(ui._lbOriginTimeAutomatic, origin->time().value(), "%F %T", true);
+	string timeFormat = "%F %T";
+	if ( SCScheme.precision.originTime > 0 ) {
+		timeFormat += ".%";
+		timeFormat += Core::toString(SCScheme.precision.originTime);
+		timeFormat += "f";
+	}
+	timeToLabel(ui._lbOriginTimeAutomatic, origin->time().value(), timeFormat.c_str(), true);
 
 	try {
 		uiHypocenter._lbOriginStatusAutomatic->setText(origin->evaluationMode().toString());

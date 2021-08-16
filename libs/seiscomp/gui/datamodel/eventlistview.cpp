@@ -819,12 +819,21 @@ class SchemeTreeItem : public TreeItem {
 class OriginTreeItem : public SchemeTreeItem {
 	public:
 		OriginTreeItem(Origin* origin, const EventListView::ItemConfig &config, QTreeWidgetItem * parent = 0)
-		  : SchemeTreeItem(ST_Origin, origin, config, parent),_published( false ) {
+		: SchemeTreeItem(ST_Origin, origin, config, parent),_published( false ) {
 			update(nullptr);
 
 			QFont f = font(config.columnMap[COL_REGION]);
 			f.setItalic(true);
 			setFont(config.columnMap[COL_REGION], f);
+
+			if ( TimeFormat.empty() ) {
+				TimeFormat = "... %T";
+				if ( SCScheme.precision.originTime > 0 ) {
+					TimeFormat += ".%";
+					TimeFormat += Core::toString(SCScheme.precision.originTime);
+					TimeFormat += "f";
+				}
+			}
 		}
 
 		~OriginTreeItem() {
@@ -852,7 +861,7 @@ class OriginTreeItem : public SchemeTreeItem {
 			catch ( ... ) {
 				setText(config.columnMap[COL_AUTHOR], "");
 			}
-			setText(config.columnMap[COL_OTIME], timeToString(ori->time().value(), "... %T"));
+			setText(config.columnMap[COL_OTIME], timeToString(ori->time().value(), TimeFormat.c_str()));
 			setData(config.columnMap[COL_OTIME], Qt::UserRole, QVariant((double)ori->time().value()));
 			setText(config.columnMap[COL_M], "-"); // Mag
 			setText(config.columnMap[COL_MTYPE], "-"); // MagType
@@ -951,7 +960,7 @@ class OriginTreeItem : public SchemeTreeItem {
 				}
 			}
 
-			setToolTip(config.columnMap[COL_OTIME], timeToString(ori->time().value(), "%F %T", true));
+			setToolTip(config.columnMap[COL_OTIME], timeToString(ori->time().value(), "%F %T.%f", true));
 			setToolTip(config.columnMap[COL_ID], text(config.columnMap[COL_ID]));
 			setToolTip(config.columnMap[COL_REGION], text(config.columnMap[COL_REGION])); // Region ToolTip
 		}
@@ -982,8 +991,14 @@ class OriginTreeItem : public SchemeTreeItem {
 	private:
 		bool _published;
 
+	public:
+		static std::string TimeFormat;
+
 	friend class EventTreeItem;
 };
+
+
+std::string OriginTreeItem::TimeFormat;
 
 
 class FocalMechanismTreeItem : public SchemeTreeItem {
@@ -1033,7 +1048,7 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 				fmBaseOrg = Origin::Find(fm->triggeringOriginID());
 
 			if ( fmBaseOrg ) {
-				setText(config.columnMap[COL_OTIME], timeToString(fmBaseOrg->time().value(), "... %T"));
+				setText(config.columnMap[COL_OTIME], timeToString(fmBaseOrg->time().value(), OriginTreeItem::TimeFormat.c_str()));
 				setData(config.columnMap[COL_OTIME], Qt::UserRole, QVariant((double)fmBaseOrg->time().value()));
 
 				try {
@@ -1140,6 +1155,15 @@ class EventTreeItem : public SchemeTreeItem {
 
 			_origins = nullptr;
 			_focalMechanisms = nullptr;
+
+			if ( TimeFormat.empty() ) {
+				TimeFormat = "%F %T";
+				if ( SCScheme.precision.originTime > 0 ) {
+					TimeFormat += ".%";
+					TimeFormat += Core::toString(SCScheme.precision.originTime);
+					TimeFormat += "f";
+				}
+			}
 
 			update(nullptr);
 		}
@@ -1503,7 +1527,7 @@ class EventTreeItem : public SchemeTreeItem {
 					}
 
 					int column = config.columnMap[COL_OTIME];
-					setText(column, timeToString(origin->time().value(), "%F %T"));
+					setText(column, timeToString(origin->time().value(), TimeFormat.c_str()));
 					setData(column, Qt::UserRole, QVariant((double)origin->time().value()));
 
 					double lat = origin->latitude();
@@ -1695,7 +1719,12 @@ class EventTreeItem : public SchemeTreeItem {
 		bool _resort;
 		bool _hasMultipleAgencies;
 		bool _published;
+
+		static std::string TimeFormat;
 };
+
+
+std::string EventTreeItem::TimeFormat;
 
 
 bool sendJournal(const std::string &objectID, const std::string &action,

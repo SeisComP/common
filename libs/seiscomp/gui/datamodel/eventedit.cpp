@@ -489,6 +489,12 @@ double subGeo(double a, double b) {
 
 QSize FMDefaultSize = QSize(32, 32);
 QSize FMSelectedSize = QSize(40, 40);
+
+
+std::string TableOTimeFormat;
+std::string PanelOTimeFormat;
+
+
 } // namespace anonymous
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -949,6 +955,25 @@ EventEdit::EventEdit(DatabaseQuery* reader,
 	_reader = reader;
 	_mapTreeOrigin = mapTree;
 	_mapTreeFM = mapTree;
+
+	if ( TableOTimeFormat.empty() ) {
+		TableOTimeFormat = "%T";
+		if ( SCScheme.precision.originTime > 0 ) {
+			TableOTimeFormat += ".%";
+			TableOTimeFormat += Core::toString(SCScheme.precision.originTime);
+			TableOTimeFormat += "f";
+		}
+	}
+
+	if ( PanelOTimeFormat.empty() ) {
+		PanelOTimeFormat = "%F %T";
+		if ( SCScheme.precision.originTime > 0 ) {
+			PanelOTimeFormat += ".%";
+			PanelOTimeFormat += Core::toString(SCScheme.precision.originTime);
+			PanelOTimeFormat += "f";
+		}
+	}
+
 	init();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2151,7 +2176,7 @@ void EventEdit::updateOriginRow(int row, Origin *org) {
 	QTreeWidgetItem *item = _originTree->topLevelItem(row);
 
 	item->setData(0, Qt::UserRole, QString(org->publicID().c_str()));
-	item->setText(_originColumnMap[OL_TIME], timeToString(org->time().value(), "%T"));
+	item->setText(_originColumnMap[OL_TIME], timeToString(org->time().value(), TableOTimeFormat.c_str()));
 	item->setText(_originColumnMap[OL_LAT], QString("%1 %2").arg(fabs(org->latitude()), 0, 'f', SCScheme.precision.location).arg(org->latitude() < 0?"S":"N"));
 	item->setData(_originColumnMap[OL_LAT], Qt::UserRole, org->latitude().value());
 	item->setText(_originColumnMap[OL_LON], QString("%1 %2").arg(fabs(org->longitude()), 0, 'f', SCScheme.precision.location).arg(org->longitude() < 0?"W":"E"));
@@ -2846,7 +2871,7 @@ void EventEdit::updateEvent() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::updateOrigin() {
-	timeToLabel(_ui.labelTimeValue, _currentOrigin->time().value(), "%F %T");
+	timeToLabel(_ui.labelTimeValue, _currentOrigin->time().value(), PanelOTimeFormat.c_str());
 
 	_ui.labelLatitudeValue->setText(latitudeToString(_currentOrigin->latitude(), true, false, SCScheme.precision.location));
 	_ui.labelLatitudeUnit->setText(latitudeToString(_currentOrigin->latitude(), false, true));
@@ -3028,7 +3053,7 @@ void EventEdit::updateMT() {
 		_ui.mtOriginInfo->setEnabled(true);
 
 		// time
-		timeToLabel(_ui.mtOriginTime, o->time().value(), "%F %T");
+		timeToLabel(_ui.mtOriginTime, o->time().value(), PanelOTimeFormat.c_str());
 
 		// region
 		Regions regions;
