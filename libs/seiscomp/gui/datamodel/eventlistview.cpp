@@ -102,14 +102,14 @@ MAKEENUM(
 		COL_ID
 	),
 	ENAMES(
-		"OT(%1)",
+		"OT (%1)",
 		"Certainty",
 		"Type",
 		"M",
 		"MType",
 		"Phases",
 		"RMS",
-		"Azi. Gap(°)",
+		"AzGap",
 		"Lat",
 		"Lon",
 		"Depth",
@@ -2079,14 +2079,29 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	_itemConfig.disabledColor = palette().color(QPalette::Disabled, QPalette::Text);
 	_itemConfig.columnMap.clear();
 	for ( int i = 0; i < EventListColumns::Quantity; ++i ) {
-		if ( i == COL_OTIME ) {
-			if ( SCScheme.dateTime.useLocalTime )
-				_itemConfig.header << QString(EEventListColumnsNames::name(i)).arg(Core::Time::LocalTimeZone().c_str());
-			else
-				_itemConfig.header << QString(EEventListColumnsNames::name(i)).arg("UTC");
+		switch ( i ) {
+			case COL_OTIME:
+				if ( SCScheme.dateTime.useLocalTime )
+					_itemConfig.header << QString(EEventListColumnsNames::name(i)).arg(Core::Time::LocalTimeZone().c_str());
+				else
+					_itemConfig.header << QString(EEventListColumnsNames::name(i)).arg("UTC");
+				break;
+			case COL_AZIMUTHAL_GAP:
+				_itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (°)");
+				break;
+			case COL_LAT:
+				_itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (°)");
+				break;
+			case COL_LON:
+				_itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (°)");
+				break;
+			case COL_RMS:
+				_itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (s)");
+				break;
+			default:
+				_itemConfig.header << EEventListColumnsNames::name(i);
+				break;
 		}
-		else
-			_itemConfig.header << EEventListColumnsNames::name(i);
 		_itemConfig.columnMap.append(i);
 	}
 
