@@ -230,8 +230,8 @@ bool ARAICPicker::calculatePick(int n, const double *data,
 			filter->setSamplingFrequency(_stream.fsamp);
 		}
 		catch ( std::exception &e ) {
-			SEISCOMP_WARNING("%s: init AIC filter: %s",
-			                 _stream.lastRecord->streamID().c_str(), e.what());
+			SEISCOMP_WARNING("Init AIC filter for fsamp = %f sps: %s",
+			                 _stream.fsamp, e.what());
 			return false;
 		}
 	}
