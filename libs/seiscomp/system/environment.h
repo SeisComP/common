@@ -100,6 +100,7 @@ public:
 	std::string logFile(const std::string& name) const;
 
 	std::string absolutePath(const std::string& name) const;
+	std::string resolvePath(const std::string& name) const;
 
 	std::string configFileLocation(const std::string& name, int stage) const;
 
