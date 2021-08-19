@@ -52,6 +52,7 @@ namespace Core {
    - Seiscomp::TimeWindowBuffer::timeWindowToStore()
    - Added Seiscomp::Gui::OriginLocatorMap::stationSymbolToolTip
    - Added Seiscomp::Gui::MagnitudeMap::stationSymbolToolTip
+   - Added Seiscomp::Environment::resolvePath
 
  "14.2.0"   0x0E0200
    - Added Seiscomp::Client::Application::injectMessage
