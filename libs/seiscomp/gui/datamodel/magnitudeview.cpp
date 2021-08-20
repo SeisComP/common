@@ -3204,7 +3204,12 @@ int MagnitudeView::addMagnitude(Seiscomp::DataModel::Magnitude* netMag) {
 
 	try {
 		if ( netMag->evaluationStatus() == REJECTED ) {
-			_tabMagnitudes->setTabText(tabIndex, QString("%1 -.--").arg(netMag->type().c_str()));
+			_tabMagnitudes->setTabText(
+				tabIndex, QString("%1 -.-- (%2/%3)")
+				.arg(netMag->type().c_str())
+				.arg(usedStationCount(netMag))
+				.arg(totalStationCount(netMag))
+			);
 			_tabMagnitudes->setTabTextColor(tabIndex, palette().color(QPalette::Disabled, QPalette::WindowText));
 			_tabMagnitudes->setTabIcon(tabIndex, QIcon(":icons/icons/disabled.png"));
 			data.valid = false;
