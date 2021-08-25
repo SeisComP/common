@@ -991,7 +991,7 @@ class PlotWidget : public OriginLocatorPlot {
 			_commitButton.setText("C");
 			_commitButton.setToolTip("Confirm and send the current solution.");
 			_commitButton.setMenu(new QMenu(this));
-			QAction *commitWithMTAction = _commitButton.menu()->addAction("With MT sololution...");
+			QAction *commitWithMTAction = _commitButton.menu()->addAction("With MT solution...");
 
 			connect(_npLabel, SIGNAL(linkActivated(const QString &)),
 			        this, SLOT(linkClicked()));
