@@ -267,7 +267,7 @@
           <string>If enabled additional stations are initially hidden and only become visible if data is available.</string>
          </property>
          <property name="text" >
-          <string>Hide station traces without data</string>
+          <string>Hide station traces without data and arrivals</string>
          </property>
         </widget>
        </item>
