@@ -76,18 +76,20 @@ void updateSymbol(Map::Canvas *canvas, OriginSymbol *symbol,
 EventLegend::EventLegend(QObject *parent) : Map::Legend(parent) {
 	setArea(Qt::Alignment(Qt::AlignLeft | Qt::AlignBottom));
 
-	Gui::Gradient::iterator it = SCScheme.colors.originSymbol.depth.gradient.begin();
+	Seiscomp::Gui::Gradient::iterator it = SCScheme.colors.originSymbol.depth.gradient.begin();
 	QColor currentColor = it.value().first;
-	qreal lastValue = it.key();
 	++it;
 
-	for ( ; it != SCScheme.colors.originSymbol.depth.gradient.end(); ++it ) {
-		lastValue = it.key();
-		_depthItems.append(DepthItem(currentColor, StringWithWidth(QString("< %1").arg(lastValue),-1)));
-		currentColor = it.value().first;
-	}
+	_depthItems.append(DepthItem(currentColor, StringWithWidth(QString("< %1").arg(it.key()),-1)));
 
-	_depthItems.append(DepthItem(currentColor, StringWithWidth(QString(">= %1").arg(lastValue),-1)));
+	for ( ; it != SCScheme.colors.originSymbol.depth.gradient.end(); ++it ) {
+		_depthItems.append(
+			DepthItem(
+				it.value().first,
+				StringWithWidth(QString("%1").arg(it.key()),-1)
+			)
+		);
+	}
 
 	for ( int i = 1; i <= 8; ++i )
 		_magItems.append(MagItem(Gui::OriginSymbol::getSize(i), StringWithWidth(QString::number(i), -1)));
