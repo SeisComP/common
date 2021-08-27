@@ -74,7 +74,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 	_actionToggleFullScreen->setObjectName(QString::fromUtf8("toggleFS"));
 #if QT_VERSION >= 0x050000
 	_actionToggleFullScreen->setShortcut(QApplication::translate("MainWindow", "F11", 0));
-	_actionToggleFullScreen->setText(QApplication::translate("MainWindow", "Toggle FullScreen", 0));
+	_actionToggleFullScreen->setText(QApplication::translate("MainWindow", "Toggle fullscreen", 0));
 #else
 	_actionToggleFullScreen->setShortcut(QApplication::translate("MainWindow", "F11", 0, QApplication::UnicodeUTF8));
 	_actionToggleFullScreen->setText(QApplication::translate("MainWindow", "Toggle FullScreen", 0, QApplication::UnicodeUTF8));
@@ -84,7 +84,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 	_actionShowSettings->setObjectName(QString::fromUtf8("showSettings"));
 #if QT_VERSION >= 0x050000
 	_actionShowSettings->setShortcut(QApplication::translate("MainWindow", "F2", 0));
-	_actionShowSettings->setText(QApplication::translate("MainWindow", "Configure &Connection...", 0));
+	_actionShowSettings->setText(QApplication::translate("MainWindow", "Configure &connection...", 0));
 #else
 	_actionShowSettings->setShortcut(QApplication::translate("MainWindow", "F2", 0, QApplication::UnicodeUTF8));
 	_actionShowSettings->setText(QApplication::translate("MainWindow", "Configure &Connection...", 0, QApplication::UnicodeUTF8));
@@ -102,7 +102,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 	inspectConfig->setObjectName(QString::fromUtf8("inspectConfig"));
 #if QT_VERSION >= 0x050000
 	inspectConfig->setShortcut(QApplication::translate("MainWindow", "Alt+Ctrl+C", 0));
-	inspectConfig->setText(QApplication::translate("MainWindow", "Inspect &Configmodule...", 0));
+	inspectConfig->setText(QApplication::translate("MainWindow", "Inspect &configmodule...", 0));
 #else
 	inspectConfig->setShortcut(QApplication::translate("MainWindow", "Alt+Ctrl+C", 0, QApplication::UnicodeUTF8));
 	inspectConfig->setText(QApplication::translate("MainWindow", "Inspect &Configmodule...", 0, QApplication::UnicodeUTF8));
@@ -112,7 +112,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 	inspectInventory->setObjectName(QString::fromUtf8("inspectInventory"));
 #if QT_VERSION >= 0x050000
 	inspectInventory->setShortcut(QApplication::translate("MainWindow", "Alt+Ctrl+I", 0));
-	inspectInventory->setText(QApplication::translate("MainWindow", "Inspect &Inventory...", 0));
+	inspectInventory->setText(QApplication::translate("MainWindow", "Inspect &inventory...", 0));
 #else
 	inspectInventory->setShortcut(QApplication::translate("MainWindow", "Alt+Ctrl+I", 0, QApplication::UnicodeUTF8));
 	inspectInventory->setText(QApplication::translate("MainWindow", "Inspect &Inventory...", 0, QApplication::UnicodeUTF8));
