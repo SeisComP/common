@@ -300,7 +300,9 @@ void OriginUncertainty::serialize(Archive& ar) {
 	ar & NAMED_OBJECT_HINT("azimuthMaxHorizontalUncertainty", _azimuthMaxHorizontalUncertainty, Archive::XML_ELEMENT);
 	ar & NAMED_OBJECT_HINT("confidenceEllipsoid", _confidenceEllipsoid, Archive::STATIC_TYPE | Archive::XML_ELEMENT);
 	ar & NAMED_OBJECT_HINT("preferredDescription", _preferredDescription, Archive::XML_ELEMENT);
-	ar & NAMED_OBJECT_HINT("confidenceLevel", _confidenceLevel, Archive::XML_ELEMENT);
+	if ( ar.supportsVersion<0,12>() ) {
+		ar & NAMED_OBJECT_HINT("confidenceLevel", _confidenceLevel, Archive::XML_ELEMENT);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
