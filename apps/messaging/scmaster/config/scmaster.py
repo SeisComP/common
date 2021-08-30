@@ -531,14 +531,14 @@ class Module(kernel.CoreModule):
                   file=sys.stderr)
             return True
 
-        strictVersionCheck = True
+        strictVersionMatch = True
         try:
-            strictVersionCheck = cfg.getBool("{}.strictVersionCheck" \
+            strictVersionMatch = cfg.getBool("{}.strictVersionMatch" \
                                              .format(prefix))
         except ValueError:
             pass
 
-        if not strictVersionCheck:
+        if not strictVersionMatch:
             print("  * database version check is disabled", file=sys.stderr)
             return True
 
