@@ -94,6 +94,7 @@ void TimeWindowProcessor::fill(size_t n, double *samples) {
 void TimeWindowProcessor::setTimeWindow(const Core::TimeWindow &tw) {
 	if ( !(bool)tw ) {
 		_timeWindow = Core::TimeWindow();
+		_safetyTimeWindow = Core::TimeWindow();
 		return;
 	}
 
