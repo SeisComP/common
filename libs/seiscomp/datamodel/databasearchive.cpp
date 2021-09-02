@@ -510,7 +510,7 @@ DatabaseArchive::DatabaseArchive(Seiscomp::IO::DatabaseInterface *i)
 	Object::RegisterObserver(this);
 	_allowDbClose = false;
 
-	if ( !fetchVersion() ) DatabaseArchive::close();
+	if ( !fetchVersion() ) close();
 
 	if ( _db )
 		_publicIDColumn = _db->convertColumnName("publicID");
@@ -560,7 +560,9 @@ bool DatabaseArchive::open(const char *dataSource) {
 bool DatabaseArchive::fetchVersion() {
 	setVersion(Core::Version(0,0));
 
-	if ( _db == nullptr ) return false;
+	if ( !_db ) {
+		return false;
+	}
 
 	if ( !_db->beginQuery("select value from Meta where name='Schema-Version'") ) {
 		SEISCOMP_WARNING("Unable to read schema version from database, "
@@ -592,7 +594,7 @@ bool DatabaseArchive::fetchVersion() {
 
 	if ( v > Core::Version(Version::Major, Version::Minor) ) {
 		_errorMsg = "Database version v";
-		_errorMsg += toString(v.majorTag()) + "." + toString(v.minorTag());
+		_errorMsg += toString(static_cast<int>(v.majorTag())) + "." + toString(static_cast<int>(v.minorTag()));
 		_errorMsg += " not supported by client";
 		SEISCOMP_ERROR("%s", _errorMsg.c_str());
 		_db->endQuery();
