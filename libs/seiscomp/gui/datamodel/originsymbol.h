@@ -97,7 +97,7 @@ class SC_GUI_API OriginSymbol : public Map::Symbol {
 		void setFilled(bool val);
 		bool isFilled() const;
 
-		virtual bool isInside(int x, int y) const;
+		bool isInside(int x, int y) const override;
 
 		/**
 		 * @brief Returns the size of an origin symbol in pixel depending on
@@ -109,7 +109,7 @@ class SC_GUI_API OriginSymbol : public Map::Symbol {
 
 
 	protected:
-		virtual void customDraw(const Map::Canvas *canvas, QPainter& painter);
+		void customDraw(const Map::Canvas *canvas, QPainter &painter) override;
 
 		void init();
 		void updateSize();
@@ -117,12 +117,12 @@ class SC_GUI_API OriginSymbol : public Map::Symbol {
 
 
 	protected:
-		Seiscomp::DataModel::Origin *_origin;
-		QColor                       _color;
-		QColor                       _fillColor;
-		bool                         _filled;
-		double                       _magnitude;
-		double                       _depth;
+		DataModel::Origin *_origin;
+		QColor             _color;
+		QColor             _fillColor;
+		bool               _filled;
+		double             _magnitude;
+		double             _depth;
 };
 
 
