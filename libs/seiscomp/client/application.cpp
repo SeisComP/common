@@ -1682,10 +1682,16 @@ bool Application::initDatabase() {
 		SEISCOMP_INFO("Trying to connect to %s", _db.c_str());
 
 		IO::DatabaseInterfacePtr db = IO::DatabaseInterface::Open(_db.c_str());
-		if (db) {
+		if ( db ) {
 			SEISCOMP_INFO("Connected successfully");
 			setDatabase(db.get());
-			return !_query->hasError();
+			if ( _query->hasError() ) {
+				SEISCOMP_ERROR("%s", _query->errorMsg().c_str());
+				setDatabase(nullptr);
+				return false;
+			}
+			else
+				return true;
 		}
 		else {
 			if ( _enableFetchDatabase )
@@ -1725,7 +1731,13 @@ bool Application::initDatabase() {
 				setDatabase(db.get());
 				SEISCOMP_INFO("Connected successfully");
 				_connection->setTimeout(0);
-				return !_query->hasError();
+				if ( _query->hasError() ) {
+					SEISCOMP_ERROR("%s", _query->errorMsg().c_str());
+					setDatabase(nullptr);
+					return false;
+				}
+				else
+					return true;
 			}
 			else
 				SEISCOMP_WARNING("Database connection to %s://%s failed",

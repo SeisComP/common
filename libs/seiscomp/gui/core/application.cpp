@@ -1524,7 +1524,8 @@ void Application::databaseChanged() {
 		query()->setDriver(_database.get());
 		_db = cdlg()->databaseURI();
 		if ( query()->hasError() ) {
-			_database->disconnect();
+			if ( _database )
+				_database->disconnect();
 			QMessageBox::critical(nullptr, "Database Error",
 			                      query()->errorMsg().c_str());
 		}
