@@ -2102,6 +2102,9 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	}
 	catch ( ... ) {}
 
+	if ( !withOrigins )
+		colVisibility[COL_ORIGINS] = false;
+
 	try {
 		std::vector<std::string> types = SCApp->configGetStrings("eventlist.filter.types.blacklist");
 		for ( size_t i = 0; i < types.size(); ++i ) {
@@ -4714,12 +4717,16 @@ void EventListView::headerContextMenuRequested(const QPoint &pos) {
 
 	QMenu menu;
 
-	QVector<QAction*> actions(count);
+	QVector<QAction*> actions;
 
 	for ( int i = 0; i < count; ++i ) {
-		actions[i] = menu.addAction(model->headerData(i, Qt::Horizontal).toString());
-		actions[i]->setCheckable(true);
-		actions[i]->setChecked(!_treeWidget->header()->isSectionHidden(i));
+		if ( i == _itemConfig.columnMap[COL_ORIGINS] && !_withOrigins )
+			continue;
+
+		actions.append(menu.addAction(model->headerData(i, Qt::Horizontal).toString()));
+		actions.back()->setData(i);
+		actions.back()->setCheckable(true);
+		actions.back()->setChecked(!_treeWidget->header()->isSectionHidden(i));
 
 		if ( i == 0 ) actions[i]->setEnabled(false);
 	}
@@ -4727,7 +4734,7 @@ void EventListView::headerContextMenuRequested(const QPoint &pos) {
 	QAction *result = menu.exec(_treeWidget->header()->mapToGlobal(pos));
 	if ( result == nullptr ) return;
 
-	int section = actions.indexOf(result);
+	int section = result->data().toInt();
 	if ( section == -1 ) return;
 
 	//std::cout << "switch visibility[" << section << "] = " << result->isChecked() << std::endl;
