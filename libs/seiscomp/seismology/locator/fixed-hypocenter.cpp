@@ -45,6 +45,7 @@ namespace {
 #include <seiscomp/logging/log.h>
 #include <seiscomp/math/math.h>
 #include <seiscomp/math/mean.h>
+#include <seiscomp/math/geo.h>
 #include <seiscomp/seismology/locator/utils.h>
 #include <iostream>
 
@@ -383,30 +384,37 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 	vector<double> travelTimes;
 	vector<double> pickTimes;
 	vector<double> arrivalWeights;
+	vector<double> distances;
 
 	double slat, slon, sdepth;
 	double rlat, rlon, relev;
 
-	if ( _initLat )
-		slat = *_initLat;
-	else {
-		try {
-			slat = origin->latitude().value();
-		}
-		catch ( ... ) {
-			throw LocatorException("incomplete origin, latitude is not set");
-		}
+	bool recomputeDistance = false;
+
+	try {
+		slat = origin->latitude().value();
+	}
+	catch ( ... ) {
+		throw LocatorException("incomplete origin, latitude is not set");
 	}
 
-	if ( _initLon )
+	try {
+		slon = origin->longitude().value();
+	}
+	catch ( ... ) {
+		throw LocatorException("incomplete origin, longitude is not set");
+	}
+
+	if ( _initLat ) {
+		if ( slat != *_initLat )
+			recomputeDistance = true;
+		slat = *_initLat;
+	}
+
+	if ( _initLon ) {
+		if ( slon != *_initLon )
+			recomputeDistance = true;
 		slon = *_initLon;
-	else {
-		try {
-			slon = origin->longitude().value();
-		}
-		catch ( ... ) {
-			throw LocatorException("incomplete origin, longitude is not set");
-		}
 	}
 
 	if ( _initDepth )
@@ -423,6 +431,8 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 	pickTimes.resize(origin->arrivalCount());
 	travelTimes.resize(origin->arrivalCount());
 	arrivalWeights.resize(origin->arrivalCount());
+	if ( recomputeDistance )
+		distances.resize(origin->arrivalCount());
 
 	int activeArrivals = 0;
 
@@ -496,6 +506,11 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 		pickTimes[i] = pickTime;
 		travelTimes[i] = travelTime;
 
+		if ( recomputeDistance ) {
+			double az, baz;
+			Math::Geo::delazi_wgs84(slat, slon, rlat, rlon, &distances[i], &az, &baz);
+		}
+
 		try {
 			if ( arrival->weight() == 0 ) {
 				if ( _verbose )
@@ -562,6 +577,10 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 			newOrigin->arrival(i)->setTimeResidual(Core::None);
 			newOrigin->arrival(i)->setTimeUsed(false);
 			newOrigin->arrival(i)->setWeight(0.0);
+		}
+
+		if ( recomputeDistance ) {
+			newOrigin->arrival(i)->setDistance(distances[i]);
 		}
 	}
 
