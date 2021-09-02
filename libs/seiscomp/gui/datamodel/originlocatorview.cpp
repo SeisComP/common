@@ -3571,6 +3571,9 @@ void OriginLocatorView::plotTabChanged(int tab) {
 	QRectF rect = _residuals->boundingRect();
 
 	rect.setLeft(std::min(0.0, double(rect.left())));
+	if ( rect.bottom() == rect.top() ) {
+		rect.setTop(rect.bottom() + 1.0);
+	}
 
 	if ( tab == PT_AZIMUTH )
 		rect.setRight(360.0);
