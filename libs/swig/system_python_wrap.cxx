@@ -10261,6 +10261,59 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Environment_resolvePath(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Environment *arg1 = (Seiscomp::Environment *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  std::string result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "Environment_resolvePath", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Environment, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Environment_resolvePath" "', argument " "1"" of type '" "Seiscomp::Environment const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Environment * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Environment_resolvePath" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Environment_resolvePath" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = ((Seiscomp::Environment const *)arg1)->resolvePath((std::string const &)*arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Environment_configFileLocation(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Environment *arg1 = (Seiscomp::Environment *) 0 ;
@@ -47214,6 +47267,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "Environment_globalConfigFileName", _wrap_Environment_globalConfigFileName, METH_VARARGS, NULL},
 	 { "Environment_logFile", _wrap_Environment_logFile, METH_VARARGS, NULL},
 	 { "Environment_absolutePath", _wrap_Environment_absolutePath, METH_VARARGS, NULL},
+	 { "Environment_resolvePath", _wrap_Environment_resolvePath, METH_VARARGS, NULL},
 	 { "Environment_configFileLocation", _wrap_Environment_configFileLocation, METH_VARARGS, NULL},
 	 { "Environment_initConfig", _wrap_Environment_initConfig, METH_VARARGS, NULL},
 	 { "Environment_swigregister", Environment_swigregister, METH_O, NULL},
