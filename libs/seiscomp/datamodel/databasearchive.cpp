@@ -208,7 +208,7 @@ DatabaseIterator::~DatabaseIterator() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Object *DatabaseIterator::fetch() const {
-	if ( _rtti == nullptr || _reader == nullptr ) return nullptr;
+	if ( !_rtti || !_reader ) return nullptr;
 
 	_cached = false;
 
