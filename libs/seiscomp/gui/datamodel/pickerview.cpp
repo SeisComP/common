@@ -101,6 +101,7 @@ QByteArray PickerView::_spectrumWidgetGeometry;
 
 
 IMPLEMENT_INTERFACE_FACTORY(Seiscomp::Gui::PickerMarkerActionPlugin, SC_GUI_API);
+Q_DECLARE_METATYPE(Seiscomp::Core::Time)
 
 
 namespace {
@@ -1379,7 +1380,7 @@ Stream* findStream(Station *station, const std::string &code, const std::string 
 }
 
 
-Stream* findStream(Station *station, const Seiscomp::Core::Time &time,
+Stream *findStream(Station *station, const Seiscomp::Core::Time &time,
                    Processing::WaveformProcessor::SignalUnit requestedUnit) {
 	for ( size_t i = 0; i < station->sensorLocationCount(); ++i ) {
 		SensorLocation *loc = station->sensorLocation(i);
@@ -1421,7 +1422,7 @@ Stream* findStream(Station *station, const Seiscomp::Core::Time &time,
 }
 
 
-Stream* findConfiguredStream(Station *station, const Seiscomp::Core::Time &time) {
+Stream *findConfiguredStream(Station *station, const Seiscomp::Core::Time &time) {
 	DataModel::Stream *stream = nullptr;
 	DataModel::ConfigModule *module = SCApp->configModule();
 	if ( module ) {
@@ -1470,21 +1471,7 @@ Stream* findConfiguredStream(Station *station, const Seiscomp::Core::Time &time)
 }
 
 
-Pick* findNonManualPick(Seiscomp::Gui::RecordWidget* w, const Seiscomp::Core::Time& t, const QString& /*phase*/) {
-	for ( int i = 0; i < w->markerCount(); ++i ) {
-		PickerMarker* m = static_cast<PickerMarker*>(w->marker(i));
-		Pick* p = m->pick();
-		if ( p && m->isPick()/* && (m->text() == phase || m->text().isEmpty())*/ ) {
-			if ( p->time() == t )
-				return p;
-		}
-	}
-
-	return nullptr;
-}
-
-
-Pick* findPick(Seiscomp::Gui::RecordWidget* w, const Seiscomp::Core::Time& t) {
+Pick *findPick(Seiscomp::Gui::RecordWidget *w, const Seiscomp::Core::Time &t) {
 	for ( int i = 0; i < w->markerCount(); ++i ) {
 		PickerMarker* m = static_cast<PickerMarker*>(w->marker(i));
 		Pick* p = m->pick();
@@ -1496,7 +1483,7 @@ Pick* findPick(Seiscomp::Gui::RecordWidget* w, const Seiscomp::Core::Time& t) {
 }
 
 
-std::string adjustChannelCode(const std::string& channelCode, bool allComponents) {
+std::string adjustChannelCode(const std::string &channelCode, bool allComponents) {
 	if ( channelCode.size() < 3 )
 		return channelCode + (allComponents?'?':'Z');
 	else
@@ -1527,17 +1514,10 @@ std::string waveformIDToStdString(const WaveformStreamID& id) {
 }
 
 
-char waveformIDComponent(const WaveformStreamID& id) {
-	if ( id.channelCode().size() > 2 )
-		return id.channelCode()[2];
-
-	return '\0';
-}
-
-
 bool isLinkedItem(RecordViewItem *item) {
 	return static_cast<PickerRecordLabel*>(item->label())->isLinkedItem();
 }
+
 
 void unlinkItem(RecordViewItem *item) {
 	static_cast<PickerRecordLabel*>(item->label())->unlink();
@@ -5346,83 +5326,97 @@ void PickerView::openContextMenu(const QPoint &p) {
 void PickerView::openRecordContextMenu(const QPoint &p) {
 	_currentRecord->setCurrentMarker(_currentRecord->hoveredMarker());
 	PickerMarker *m = static_cast<PickerMarker*>(_currentRecord->currentMarker());
-	if ( m == nullptr ) return;
-
-	if ( !m->isPick() && !m->isArrival() ) return;
 
 	QMenu menu;
-
-	// Save uncertainties to reset them again if changed
-	// during preview
-	_tmpLowerUncertainty = m->lowerUncertainty();
-	_tmpUpperUncertainty = m->upperUncertainty();
-
-	double lowerUncertainty = _tmpLowerUncertainty;
-	double upperUncertainty = _tmpUpperUncertainty;
 
 	QAction *defineUncertainties = nullptr;
 	QAction *deleteArrival = nullptr;
 	QAction *deleteArrivalWithRemove = nullptr;
 	QAction *removePick = nullptr;
 	QAction *createArrival = nullptr;
-
-	if ( !m->pick() || m->isEnabled() ) {
-		QMenu *menuPolarity = menu.addMenu("Polarity");
-
-		QMenu *menuUncertainty = menu.addMenu("Uncertainty");
-
-		if ( _actionsUncertainty ) {
-			connect(menuUncertainty, SIGNAL(hovered(QAction*)),
-			        this, SLOT(previewUncertainty(QAction*)));
-
-			foreach ( QAction *action, _actionsUncertainty->actions() )
-				menuUncertainty->addAction(action);
-			menuUncertainty->addSeparator();
-		}
-
-		defineUncertainties = menuUncertainty->addAction("Define...");
-
-		menuPolarity->addAction(_ui.actionSetPolarityPositive);
-		menuPolarity->addAction(_ui.actionSetPolarityNegative);
-		menuPolarity->addAction(_ui.actionSetPolarityUndecidable);
-		menuPolarity->addAction(_ui.actionSetPolarityUnset);
-	}
-
-	bool needSeparator = !menu.isEmpty();
-
-	if ( !_currentRecord->cursorText().isEmpty() &&
-	     (m->isPick() || (m->isArrival() && m->text() != _currentRecord->cursorText())) ) {
-		if ( needSeparator ) { menu.addSeparator(); needSeparator = false; }
-		createArrival = menu.addAction(QString("Declare %1 arrival").arg(_currentRecord->cursorText()));
-	}
-
-	if ( m->isArrival() ) {
-		if ( needSeparator ) { menu.addSeparator(); needSeparator = false; }
-		deleteArrival = menu.addAction("Delete arrival");
-		if ( _loadedPicks )
-			deleteArrivalWithRemove = menu.addAction("Delete arrival and remove pick");
-	}
-	else if ( m->isPick() ) {
-		if ( needSeparator ) { menu.addSeparator(); needSeparator = false; }
-		removePick = menu.addAction("Remove pick");
-	}
+	QAction *modifyOrigin = nullptr;
+	QAction *artificialOrigin = nullptr;
 
 	QList<QAction*> plugins;
-	if ( !_markerPlugins.empty() ) {
-		menu.addSeparator();
-		foreach ( PickerMarkerActionPlugin *plugin, _markerPlugins ) {
-			QAction *action = menu.addAction(plugin->title());
-			action->setData(qVariantFromValue((void*)plugin));
-			plugins.append(action);
+
+	double lowerUncertainty = -1;
+	double upperUncertainty = -1;
+
+	bool markerMode = m && (m->isPick() || m->isArrival());
+
+	if ( markerMode ) {
+		// Save uncertainties to reset them again if changed
+		// during preview
+		_tmpLowerUncertainty = m->lowerUncertainty();
+		_tmpUpperUncertainty = m->upperUncertainty();
+	
+		lowerUncertainty = _tmpLowerUncertainty;
+		upperUncertainty = _tmpUpperUncertainty;
+
+		if ( !m->pick() || m->isEnabled() ) {
+			QMenu *menuPolarity = menu.addMenu(tr("Polarity"));
+
+			QMenu *menuUncertainty = menu.addMenu(tr("Uncertainty"));
+
+			if ( _actionsUncertainty ) {
+				connect(menuUncertainty, SIGNAL(hovered(QAction*)),
+				        this, SLOT(previewUncertainty(QAction*)));
+
+				foreach ( QAction *action, _actionsUncertainty->actions() )
+					menuUncertainty->addAction(action);
+				menuUncertainty->addSeparator();
+			}
+
+			defineUncertainties = menuUncertainty->addAction(tr("Define..."));
+
+			menuPolarity->addAction(_ui.actionSetPolarityPositive);
+			menuPolarity->addAction(_ui.actionSetPolarityNegative);
+			menuPolarity->addAction(_ui.actionSetPolarityUndecidable);
+			menuPolarity->addAction(_ui.actionSetPolarityUnset);
 		}
+
+		bool needSeparator = !menu.isEmpty();
+
+		if ( !_currentRecord->cursorText().isEmpty() &&
+		     (m->isPick() || (m->isArrival() && m->text() != _currentRecord->cursorText())) ) {
+			if ( needSeparator ) { menu.addSeparator(); needSeparator = false; }
+			createArrival = menu.addAction(tr("Declare %1 arrival").arg(_currentRecord->cursorText()));
+		}
+
+		if ( m->isArrival() ) {
+			if ( needSeparator ) { menu.addSeparator(); needSeparator = false; }
+			deleteArrival = menu.addAction(tr("Delete arrival"));
+			if ( _loadedPicks )
+				deleteArrivalWithRemove = menu.addAction(tr("Delete arrival and remove pick"));
+		}
+		else if ( m->isPick() ) {
+			if ( needSeparator ) { menu.addSeparator(); needSeparator = false; }
+			removePick = menu.addAction(tr("Remove pick"));
+		}
+
+		if ( !_markerPlugins.empty() ) {
+			menu.addSeparator();
+			foreach ( PickerMarkerActionPlugin *plugin, _markerPlugins ) {
+				QAction *action = menu.addAction(plugin->title());
+				action->setData(qVariantFromValue((void*)plugin));
+				plugins.append(action);
+			}
+		}
+
+		menu.addSeparator();
 	}
+
+	modifyOrigin = menu.addAction(tr("Set origin time and location"));
+	artificialOrigin = menu.addAction(tr("Create artificial origin"));
 
 	QAction *res = menu.exec(_currentRecord->mapToGlobal(p));
 
-	if ( res == nullptr ) {
-		m->setUncertainty(_tmpLowerUncertainty, _tmpUpperUncertainty);
-		m->update();
-		_currentRecord->update();
+	if ( !res ) {
+		if ( markerMode ) {
+			m->setUncertainty(_tmpLowerUncertainty, _tmpUpperUncertainty);
+			m->update();
+			_currentRecord->update();
+		}
 		return;
 	}
 
@@ -5471,62 +5465,125 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 
 		return;
 	}
-
-	// Reset uncertainties again
-	m->setUncertainty(lowerUncertainty, upperUncertainty);
-
-	// Fetch the current marker if changed in an action handler
-	m = static_cast<PickerMarker*>(_currentRecord->currentMarker());
-
-	if ( res == defineUncertainties ) {
-		EditUncertainties dlg(this);
-
-		dlg.setUncertainties(_tmpLowerUncertainty, _tmpUpperUncertainty);
-		connect(&dlg, SIGNAL(uncertaintiesChanged(double, double)),
-		        this, SLOT(previewUncertainty(double, double)));
-
-		int res = dlg.exec();
-
-		m->setUncertainty(_tmpLowerUncertainty, _tmpUpperUncertainty);
-		m->update();
-
-		if ( res == QDialog::Accepted ) {
-			// Create a new pick if the current marker refers to an existing
-			// pick already
-			if ( m->pick() ) {
-				PickerMarker *old = m;
-				m = new PickerMarker(old->parent(), *old);
-				m->convertToManualPick();
-				old->setType(PickerMarker::Pick);
-				old->parent()->setCurrentMarker(m);
-			}
-			m->setUncertainty(dlg.lowerUncertainty(), dlg.upperUncertainty());
+	else if ( res == modifyOrigin ) {
+		if ( markerMode ) {
+			m->setUncertainty(_tmpLowerUncertainty, _tmpUpperUncertainty);
+			m->update();
+			_currentRecord->update();
 		}
 
-		updateUncertaintyHandles(m);
+		double dep = _config.defaultDepth;
+		try { dep = _origin->depth(); } catch ( ... ) {}
+		OriginDialog dialog(
+			static_cast<PickerRecordLabel*>(_recordView->currentItem()->label())->latitude,
+			static_cast<PickerRecordLabel*>(_recordView->currentItem()->label())->longitude,
+			dep,
+			this
+		);
+		dialog.setTime(_currentRecord->unmapTime(p.x()));
+		dialog.setWindowTitle("Modify origin");
+		dialog.setSendButtonText("Apply");
+		if ( dialog.exec() == QDialog::Accepted ) {
+			OriginPtr tmpOrigin = Origin::Create();
+			CreationInfo ci;
+			ci.setAgencyID(SCApp->agencyID());
+			ci.setAuthor(SCApp->author());
+			ci.setCreationTime(Core::Time::GMT());
+			//tmpOrigin->assign(_origin.get());
+			tmpOrigin->setLatitude(dialog.latitude());
+			tmpOrigin->setLongitude(dialog.longitude());
+			tmpOrigin->setTime(Core::Time(dialog.getTime_t()));
+			tmpOrigin->setDepth(RealQuantity(dialog.depth()));
+			tmpOrigin->setDepthType(OriginDepthType(OPERATOR_ASSIGNED));
+			tmpOrigin->setEvaluationMode(EvaluationMode(MANUAL));
+			tmpOrigin->setCreationInfo(ci);
+			for ( size_t i = 0; i < _origin->arrivalCount(); ++i ) {
+				ArrivalPtr ar = new Arrival(*_origin->arrival(i));
+				tmpOrigin->add(ar.get());
+			}
+			setOrigin(tmpOrigin.get());
+			updateLayoutFromState();
+		}
 
-		_currentRecord->update();
-		_recordView->currentItem()->widget()->update();
+		return;
 	}
-	else {
-		m->setUncertainty(_tmpLowerUncertainty, _tmpUpperUncertainty);
-		updateUncertaintyHandles(m);
-		m->update();
-		_currentRecord->update();
+	else if ( res == artificialOrigin ) {
+		if ( markerMode ) {
+			m->setUncertainty(_tmpLowerUncertainty, _tmpUpperUncertainty);
+			m->update();
+			_currentRecord->update();
+		}
+
+		double dep = _config.defaultDepth;
+		try { dep = _origin->depth(); } catch ( ... ) {}
+
+		emit requestArtificialOrigin(
+			static_cast<PickerRecordLabel*>(_recordView->currentItem()->label())->latitude,
+			static_cast<PickerRecordLabel*>(_recordView->currentItem()->label())->longitude,
+			dep,
+			_currentRecord->unmapTime(p.x())
+		);
+
+		return;
 	}
 
-	if ( plugins.contains(res) ) {
-		PickerMarkerActionPlugin *plugin;
-		plugin = static_cast<PickerMarkerActionPlugin*>(res->data().value<void*>());
-		if ( plugin ) {
-			if ( plugin->init(_currentRecord->streamID(), m->time()) ) {
-				PickerRecordLabel *label = static_cast<PickerRecordLabel*>(_recordView->currentItem()->label());
-				RecordSequence *seqZ = label->data.traces[0].raw;
-				RecordSequence *seq1 = label->data.traces[1].raw;
-				RecordSequence *seq2 = label->data.traces[2].raw;
+	if ( markerMode ) {
+		// Reset uncertainties again
+		m->setUncertainty(lowerUncertainty, upperUncertainty);
 
-				plugin->setRecords(seqZ, seq1, seq2);
-				plugin->finalize();
+		// Fetch the current marker if changed in an action handler
+		m = static_cast<PickerMarker*>(_currentRecord->currentMarker());
+
+		if ( res == defineUncertainties ) {
+			EditUncertainties dlg(this);
+
+			dlg.setUncertainties(_tmpLowerUncertainty, _tmpUpperUncertainty);
+			connect(&dlg, SIGNAL(uncertaintiesChanged(double, double)),
+			        this, SLOT(previewUncertainty(double, double)));
+
+			int res = dlg.exec();
+
+			m->setUncertainty(_tmpLowerUncertainty, _tmpUpperUncertainty);
+			m->update();
+
+			if ( res == QDialog::Accepted ) {
+				// Create a new pick if the current marker refers to an existing
+				// pick already
+				if ( m->pick() ) {
+					PickerMarker *old = m;
+					m = new PickerMarker(old->parent(), *old);
+					m->convertToManualPick();
+					old->setType(PickerMarker::Pick);
+					old->parent()->setCurrentMarker(m);
+				}
+				m->setUncertainty(dlg.lowerUncertainty(), dlg.upperUncertainty());
+			}
+
+			updateUncertaintyHandles(m);
+
+			_currentRecord->update();
+			_recordView->currentItem()->widget()->update();
+		}
+		else {
+			m->setUncertainty(_tmpLowerUncertainty, _tmpUpperUncertainty);
+			updateUncertaintyHandles(m);
+			m->update();
+			_currentRecord->update();
+		}
+
+		if ( plugins.contains(res) ) {
+			PickerMarkerActionPlugin *plugin;
+			plugin = static_cast<PickerMarkerActionPlugin*>(res->data().value<void*>());
+			if ( plugin ) {
+				if ( plugin->init(_currentRecord->streamID(), m->time()) ) {
+					PickerRecordLabel *label = static_cast<PickerRecordLabel*>(_recordView->currentItem()->label());
+					RecordSequence *seqZ = label->data.traces[0].raw;
+					RecordSequence *seq1 = label->data.traces[1].raw;
+					RecordSequence *seq2 = label->data.traces[2].raw;
+
+					plugin->setRecords(seqZ, seq1, seq2);
+					plugin->finalize();
+				}
 			}
 		}
 	}

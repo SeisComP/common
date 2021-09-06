@@ -347,6 +347,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 
 
 	signals:
+		void requestArtificialOrigin(double lat, double lon, double depth, Seiscomp::Core::Time time);
 		void originCreated(Seiscomp::DataModel::Origin*);
 		void arrivalChanged(int id, bool state);
 		void arrivalEnableStateChanged(int id, bool state);
