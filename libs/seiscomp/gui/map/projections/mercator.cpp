@@ -409,10 +409,12 @@ void MercatorProjection::render(QImage &img, TextureCache *cache) {
 	else
 		visibleRadius = _radius;
 
+	int tileHeight = cache && cache->tileHeight() > 0 ? cache->tileHeight() : 256;
+
 	// Adjust visible radius to fixed zoom levels
 	if ( _discreteSteps ) {
 		qreal scale = _screenRadius * visibleRadius;
-		qreal pixelRatio = scale / (cache ? cache->tileHeight() : 256);
+		qreal pixelRatio = scale / tileHeight;
 		if ( !cache || cache->isMercatorProjected() )
 			pixelRatio *= 2;
 		if ( pixelRatio < 1 ) pixelRatio = 1;
@@ -425,10 +427,11 @@ void MercatorProjection::render(QImage &img, TextureCache *cache) {
 			if ( level > 18 ) level = 18;
 		}
 
-		scale = (1 << int(level-0.7)) * (cache != nullptr?cache->tileHeight():256);
+		scale = (1 << int(level-0.7)) * tileHeight;
 		if ( scale < 1 ) scale = 1;
 		while ( scale < _halfWidth ) scale *= 2;
 		while ( scale < _halfHeight ) scale *= 2;
+
 		visibleRadius = scale / _screenRadius;
 		radius = _screenRadius * visibleRadius;
 	}
@@ -505,9 +508,9 @@ void MercatorProjection::render(QImage &img, TextureCache *cache) {
 	int fromX = (int)fx;
 	int toX = (int)tx;
 
-	if ( cache == nullptr ) return;
+	if ( !cache ) return;
 
-	qreal pixelRatio = _scale / cache->tileHeight();
+	qreal pixelRatio = _scale / tileHeight;
 	if ( cache->isMercatorProjected() )
 		pixelRatio *= 2;
 	if ( pixelRatio < 1 ) pixelRatio = 1;
