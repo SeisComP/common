@@ -5406,7 +5406,7 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 		menu.addSeparator();
 	}
 
-	modifyOrigin = menu.addAction(tr("Set origin time and location"));
+	modifyOrigin = menu.addAction(tr("Modify origin"));
 	artificialOrigin = menu.addAction(tr("Create artificial origin"));
 
 	QAction *res = menu.exec(_currentRecord->mapToGlobal(p));
