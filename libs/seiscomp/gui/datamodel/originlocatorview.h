@@ -363,6 +363,7 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 		void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 		void changeArrival(int,bool);
 		void changeArrivalEnableState(int,bool);
+		void artificialOriginRequested(double lat, double lon, double depth, Seiscomp::Core::Time time);
 
 		void updateBlinkState();
 
@@ -397,6 +398,11 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 		};
 
 		void init();
+
+		void createArtificialOrigin(const QPointF &epicenter,
+		                            double depth,
+		                            Seiscomp::Core::Time time,
+		                            const QPoint &dialogPos);
 
 		void updateOrigin(Seiscomp::DataModel::Origin*);
 		void updateContent();

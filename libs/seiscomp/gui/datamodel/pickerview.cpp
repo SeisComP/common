@@ -103,6 +103,7 @@ QByteArray PickerView::_spectrumWidgetGeometry;
 
 
 IMPLEMENT_INTERFACE_FACTORY(Seiscomp::Gui::PickerMarkerActionPlugin, SC_GUI_API);
+Q_DECLARE_METATYPE(Seiscomp::Core::Time)
 
 
 namespace {
@@ -5340,6 +5341,7 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 	QAction *deleteArrivalWithRemove = nullptr;
 	QAction *removePick = nullptr;
 	QAction *createArrival = nullptr;
+	QAction *modifyOrigin = nullptr;
 	QAction *artificialOrigin = nullptr;
 
 	QList<QAction*> plugins;
@@ -5411,7 +5413,8 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 		menu.addSeparator();
 	}
 
-	artificialOrigin = menu.addAction(tr("Set origin time and location"));
+	modifyOrigin = menu.addAction(tr("Set origin time and location"));
+	artificialOrigin = menu.addAction(tr("Create artificial origin"));
 
 	QAction *res = menu.exec(_currentRecord->mapToGlobal(p));
 
@@ -5469,7 +5472,7 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 
 		return;
 	}
-	else if ( res == artificialOrigin ) {
+	else if ( res == modifyOrigin ) {
 		if ( markerMode ) {
 			m->setUncertainty(_tmpLowerUncertainty, _tmpUpperUncertainty);
 			m->update();
@@ -5508,6 +5511,25 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 			setOrigin(tmpOrigin.get());
 			updateLayoutFromState();
 		}
+
+		return;
+	}
+	else if ( res == artificialOrigin ) {
+		if ( markerMode ) {
+			m->setUncertainty(_tmpLowerUncertainty, _tmpUpperUncertainty);
+			m->update();
+			_currentRecord->update();
+		}
+
+		double dep = _config.defaultDepth;
+		try { dep = _origin->depth(); } catch ( ... ) {}
+
+		emit requestArtificialOrigin(
+			static_cast<PickerRecordLabel*>(_recordView->currentItem()->label())->latitude,
+			static_cast<PickerRecordLabel*>(_recordView->currentItem()->label())->longitude,
+			dep,
+			_currentRecord->unmapTime(p.x())
+		);
 
 		return;
 	}

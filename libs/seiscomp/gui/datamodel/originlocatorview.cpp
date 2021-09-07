@@ -3635,6 +3635,17 @@ void OriginLocatorView::changeArrivalEnableState(int id,bool state) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::artificialOriginRequested(double lat, double lon,
+                                                  double depth,
+                                                  Seiscomp::Core::Time time) {
+	createArtificialOrigin(QPointF(lon, lat), depth, time, QCursor::pos());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::zoomMap() {
 	if ( _toolMap != nullptr ) {
 		_toolMap->activateWindow();
@@ -5399,6 +5410,8 @@ void OriginLocatorView::showWaveforms() {
 
 	_recordView = new PickerView(nullptr, Qt::Window);
 	_recordView->setDatabase(_reader);
+	connect(_recordView, SIGNAL(requestArtificialOrigin(double, double, double, Seiscomp::Core::Time)),
+	        this, SLOT(artificialOriginRequested(double, double, double, Seiscomp::Core::Time)));
 
 	try {
 		_recordView->setBroadBandCodes(SCApp->configGetStrings("picker.velocityChannelCodes"));
@@ -5983,6 +5996,19 @@ void OriginLocatorView::createArtificialOrigin() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
                                               const QPoint &dialogPos) {
+	createArtificialOrigin(epicenter, _pickerConfig.defaultDepth,
+	                       Core::Time::GMT(), dialogPos);
+}
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
+                                               double depth,
+                                               Seiscomp::Core::Time time,
+                                               const QPoint &dialogPos) {
 	OriginDialog dialog(this);
 	try {
 		if ( SCApp->configGetBool("olv.artificialOriginAdvanced") ) {
@@ -6003,8 +6029,10 @@ void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
 	dialog.loadSettings();
 	dialog.setLongitude(epicenter.x());
 	dialog.setLatitude(epicenter.y());
+	dialog.setDepth(depth);
+	dialog.setTime(time);
 
-	if ( ! dialogPos.isNull() )
+	if ( !dialogPos.isNull() )
 		dialog.move(dialogPos.x(), dialogPos.y());
 
 	if ( dialog.exec() == QDialog::Accepted ) {
