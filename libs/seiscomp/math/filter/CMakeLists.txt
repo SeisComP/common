@@ -7,6 +7,7 @@ SET(FILTER_SOURCES
 	iirintegrate.cpp
 	iirdifferentiate.cpp
 	average.cpp
+	median.cpp
 	minmax.cpp
 	stalta.cpp
 	taper.cpp
@@ -26,6 +27,7 @@ SET(FILTER_HEADERS
 	iirintegrate.h
 	iirdifferentiate.h
 	average.h
+	median.h
 	minmax.h
 	stalta.h
 	taper.h
