@@ -904,14 +904,14 @@ size_t Canvas::drawFeature(QPainter &painter, const Geo::GeoFeature *f,
 					if ( !_projection->project(path, endIdx - startIdx, &f->vertices()[startIdx], true, effectiveRoughness, clipHint) )
 						continue;
 					gotFirstPath = true;
-					firstForward = Geo::GeoFeature::area(&f->vertices()[startIdx], endIdx-startIdx) > 0;
+					firstForward = Geo::area(&f->vertices()[startIdx], endIdx-startIdx) > 0;
 				}
 				else {
 					QPainterPath subPath;
 					if ( !_projection->project(subPath, endIdx - startIdx, &f->vertices()[startIdx], true, effectiveRoughness, clipHint) )
 						continue;
 
-					bool forward = Geo::GeoFeature::area(&f->vertices()[startIdx], endIdx-startIdx) > 0;
+					bool forward = Geo::area(&f->vertices()[startIdx], endIdx-startIdx) > 0;
 					forward = firstForward == forward;
 
 					if ( forward )
