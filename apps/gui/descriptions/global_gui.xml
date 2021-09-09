@@ -298,7 +298,7 @@
 							<parameter name="style" type="string" default="DotLine">
 								<description>The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.</description>
 							</parameter>
-							<parameter name="width" type="double" default="1">
+							<parameter name="width" type="double" default="1" unit="px">
 								<description>The width of the pen.</description>
 							</parameter>
 						</group>
@@ -371,7 +371,7 @@
 											NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
 										</description>
 									</parameter>
-									<parameter name="width" type="double" default="">
+									<parameter name="width" type="double" default="" unit="px">
 										<description>The width of the pen.</description>
 									</parameter>
 								</group>
@@ -406,7 +406,7 @@
 											NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
 										</description>
 									</parameter>
-									<parameter name="width" type="double" default="">
+									<parameter name="width" type="double" default="" unit="px">
 										<description>The width of the pen.</description>
 									</parameter>
 								</group>
@@ -441,7 +441,7 @@
 											NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
 										</description>
 									</parameter>
-									<parameter name="width" type="double" default="">
+									<parameter name="width" type="double" default="" unit="px">
 										<description>The width of the pen.</description>
 									</parameter>
 								</group>
@@ -472,7 +472,7 @@
 							<parameter name="style" type="string" default="SolidLine">
 								<description>The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.</description>
 							</parameter>
-							<parameter name="width" type="double" default="0.0">
+							<parameter name="width" type="double" default="0.0" unit="px">
 								<description>The width of the pen.</description>
 							</parameter>
 						</group>
@@ -486,7 +486,7 @@
 							<parameter name="style" type="string" default="DashLine">
 								<description>The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.</description>
 							</parameter>
-							<parameter name="width" type="double" default="1.0">
+							<parameter name="width" type="double" default="1.0" unit="px">
 								<description>The width of the pen.</description>
 							</parameter>
 						</group>
@@ -500,7 +500,7 @@
 							<parameter name="style" type="string" default="DotLine">
 								<description>The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.</description>
 							</parameter>
-							<parameter name="width" type="double" default="1.0">
+							<parameter name="width" type="double" default="1.0" unit="px">
 								<description>The width of the pen.</description>
 							</parameter>
 						</group>
@@ -776,7 +776,7 @@
 				</group>
 
 				<group name="marker">
-					<parameter name="lineWidth" type="int">
+					<parameter name="lineWidth" type="int" unit="px">
 						<description>
 						The line width of the marker (e.g. picks of manual picker).
 						</description>
@@ -784,7 +784,7 @@
 				</group>
 
 				<group name="records">
-					<parameter name="lineWidth" type="int" default="1">
+					<parameter name="lineWidth" type="int" default="1" unit="px">
 						<description>
 						The line width of the records / traces.
 						</description>
@@ -1106,12 +1106,12 @@
 							<description>
 							Position in screen coordinates.
 							</description>
-							<parameter name="x" type="int" default="200">
+							<parameter name="x" type="int" default="200" unit="px">
 								<description>
 								Horizontal position.
 								</description>
 							</parameter>
-							<parameter name="y" type="int" default="260">
+							<parameter name="y" type="int" default="260" unit="px">
 								<description>
 								Vertical position.
 								</description>
@@ -1131,12 +1131,12 @@
 							<description>
 							Position in screen coordinates.
 							</description>
-							<parameter name="x" type="int" default="362">
+							<parameter name="x" type="int" default="362" unit="px">
 								<description>
 								Horizontal position.
 								</description>
 							</parameter>
-							<parameter name="y" type="int" default="190">
+							<parameter name="y" type="int" default="190" unit="px">
 								<description>
 								Vertical position.
 								</description>
