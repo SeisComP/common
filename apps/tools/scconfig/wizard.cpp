@@ -273,6 +273,7 @@ void WizardWidget::addInputs(Node *parent, const QString &modname,
 void WizardWidget::back() {
 	_buttonCancel->setText(tr("Cancel"));
 	_buttonNext->setText(tr("Next"));
+	_buttonNext->setProperty("finished", QVariant());
 	_buttonNext->setEnabled(true);
 
 	_currentNode = _path.pop();
@@ -284,7 +285,7 @@ void WizardWidget::back() {
 
 
 void WizardWidget::next() {
-	if ( _buttonNext->text() == tr("Finish") ) {
+	if ( _buttonNext->property("finished").toBool() == true ) {
 		finish();
 		return;
 	}
@@ -328,6 +329,7 @@ void WizardWidget::next() {
 
 	if ( !next ) {
 		setPage(createExtroPage());
+		_buttonNext->setProperty("finished", true);
 		_buttonNext->setText(tr("Finish"));
 	}
 	else {
