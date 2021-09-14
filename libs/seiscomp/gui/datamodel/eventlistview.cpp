@@ -882,8 +882,6 @@ class OriginTreeItem : public SchemeTreeItem {
 	public:
 		OriginTreeItem(Origin* origin, const EventListView::ItemConfig &config, QTreeWidgetItem * parent = 0)
 		: SchemeTreeItem(ST_Origin, origin, config, parent),_published( false ) {
-			update(nullptr);
-
 			QFont f = font(config.columnMap[COL_REGION]);
 			f.setItalic(true);
 			setFont(config.columnMap[COL_REGION], f);
@@ -896,6 +894,8 @@ class OriginTreeItem : public SchemeTreeItem {
 					TimeFormat += "f";
 				}
 			}
+
+			update(nullptr);
 		}
 
 		~OriginTreeItem() {
