@@ -1430,10 +1430,8 @@ Stream *findConfiguredStream(Station *station, const Seiscomp::Core::Time &time)
 			DataModel::ConfigStation* cs = module->configStation(ci);
 			if ( cs->networkCode() == station->network()->code() &&
 			     cs->stationCode() == station->code() ) {
-
-				for ( size_t si = 0; si < cs->setupCount(); ++si ) {
-					DataModel::Setup* setup = cs->setup(si);
-
+				DataModel::Setup *setup = findSetup(cs, SCApp->name(), true);
+				if ( setup ) {
 					DataModel::ParameterSet* ps = nullptr;
 					try {
 						ps = DataModel::ParameterSet::Find(setup->parameterSetID());
@@ -1459,9 +1457,11 @@ Stream *findConfiguredStream(Station *station, const Seiscomp::Core::Time &time)
 					}
 
 					// No channel defined
-					if ( cha.empty() ) continue;
-					stream = findStream(station, cha, loc, time);
-					if ( stream ) return stream;
+					if ( !cha.empty() ) {
+						stream = findStream(station, cha, loc, time);
+						if ( stream )
+							return stream;
+					}
 				}
 			}
 		}
@@ -4193,7 +4193,7 @@ void PickerView::loadNextStations(float distance) {
 
 				// try to get the configured location and stream code
 				Stream *stream = findConfiguredStream(s, _origin->time());
-				if ( stream != nullptr ) {
+				if ( stream ) {
 					SEISCOMP_DEBUG("Adding configured stream %s.%s.%s.%s",
 					               stream->sensorLocation()->station()->network()->code().c_str(),
 					               stream->sensorLocation()->station()->code().c_str(),
@@ -4202,7 +4202,7 @@ void PickerView::loadNextStations(float distance) {
 				}
 
 				// Try to get a default stream
-				if ( stream == nullptr ) {
+				if ( !stream ) {
 					// Preferred channel code is BH. If not available use either SH or skip.
 					for ( size_t c = 0; c < _broadBandCodes.size(); ++c ) {
 						stream = findStream(s, _broadBandCodes[c], _origin->time());
@@ -4210,7 +4210,7 @@ void PickerView::loadNextStations(float distance) {
 					}
 				}
 
-				if ( (stream == nullptr) && !_config.ignoreUnconfiguredStations ) {
+				if ( !stream && !_config.ignoreUnconfiguredStations ) {
 					stream = findStream(s, _origin->time(), Processing::WaveformProcessor::MeterPerSecond);
 					if ( stream != nullptr ) {
 						SEISCOMP_DEBUG("Adding velocity stream %s.%s.%s.%s",
