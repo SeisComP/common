@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Calculate amplitudes</string>
+   <string>Measure amplitudes</string>
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
