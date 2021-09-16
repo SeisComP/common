@@ -1288,14 +1288,14 @@
 							Use double quotes '&quot;' around the string if it contains spaces.
 							</description>
 						</parameter>
-						<parameter name="blacklist" type="list:string">
+						<parameter name="blacklist" type="list:string" default="&quot;not existing&quot;">
 							<description>
 							List of event type to be hidden if the &quot;Hide other/fake events&quot;
 							option is ticked.
 							Use double quotes '&quot;' around the string if it contains spaces.
 							</description>
 						</parameter>
-						<parameter name="enabled" type="boolean" default="false">
+						<parameter name="enabled" type="boolean" default="true">
 							<description>
 							Sets the default state of the &quot;Hide other/fake events&quot;
 							option.
