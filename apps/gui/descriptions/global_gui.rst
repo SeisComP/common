@@ -249,10 +249,13 @@ Currently supported data types are:
 
     where the coordinates, *name* and *type/length* are to be replaced by actual values.
     For polylines (open polygons) set type/length to the negative number of points defining
-    the line, e.g. -10. Positive numbers, e.g. 10, define closed polygons.
+    the line, e.g. -10. Positive numbers, e.g. 10, define closed polygons. Such
+    polygons are automatically closed between their end points. Thus, the end points
+    do not need to be identical.
+
     The BNA file format also supports multiple vertices per line and the definition
     of islands. Please refer to https://www.softwright.com/faq/support/boundary_file_bna_format.html
-    for a more complete format specification.
+    for more format specifications.
 
     .. note ::
 
