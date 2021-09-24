@@ -3593,8 +3593,14 @@ void MagnitudeView::updateMagnitudeLabels() {
 			_stamagnitudes->setDisplayRect(newRect);
 			_stamagnitudes->setUpdatesEnabled(true);
 
-			// _map->setMagnitude(_netMag.get());
-			// _map->update();
+			_map->setMagnitude(_netMag.get());
+
+			for ( int i = 0; i < _modelStationMagnitudes.rowCount(); ++i ) {
+				bool state = _modelStationMagnitudes.data(_modelStationMagnitudes.index(i, USED), Qt::CheckStateRole).toInt() == Qt::Checked;
+				_map->setMagnitudeState(i, state);
+			}
+
+			_map->update();
 		}
 	}
 	else {
