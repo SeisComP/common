@@ -25,6 +25,8 @@
 #include <seiscomp/core/system.h>
 #include <seiscomp/core/platform/platform.h>
 
+#include <seiscomp/datamodel/version.h>
+
 #include <seiscomp/logging/fd.h>
 #include <seiscomp/logging/filerotator.h>
 #ifndef WIN32
@@ -504,10 +506,16 @@ void Application::printVersion() {
 		cout << name() << ": " << appVersion << endl;
 		cout << "Framework: " << frameworkVersion() << endl;
 	}
+
 	cout << "API version: "
 	     << SC_API_VERSION_MAJOR(SC_API_VERSION) << "."
 	     << SC_API_VERSION_MINOR(SC_API_VERSION) << "."
 	     << SC_API_VERSION_PATCH(SC_API_VERSION) << endl;
+
+	cout << "Data schema version: "
+	     << toString(Seiscomp::DataModel::Version().Major) << "."
+	     << toString(Seiscomp::DataModel::Version().Minor) << endl;
+
 	cout << CurrentVersion.systemInfo() << endl;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
