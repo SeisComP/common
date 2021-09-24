@@ -25,11 +25,11 @@
 #include <set>
 #include <iostream>
 #include <sstream>
+#include <seiscomp/core.h>
 #include <seiscomp/core/interruptible.h>
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/utils/timer.h>
 #include <seiscomp/io/recordstream.h>
-#include <seiscomp/core.h>
 #include <seiscomp/io/socket.h>
 #include <seiscomp/io/recordstream/streamidx.h>
 
@@ -88,25 +88,28 @@ class SC_SYSTEM_CORE_API FDSNWSConnectionBase : public IO::RecordStream {
 
 
 	private:
+		const char *getProxy() const;
+		void openConnection(const std::string &);
+
 		//! Blocking read from socket
 		std::string readBinary(int size);
 		void handshake();
 
 
 	private:
-		const char *_protocol;
-		IO::SocketPtr _sock;
-		std::string _host;
-		std::string _url;
-		int _defaultPort;
-		std::set<Seiscomp::RecordStream::StreamIdx> _streams;
-		Core::Time _stime;
-		Core::Time _etime;
-		std::string _reqID;
-		bool _readingData;
-		bool _chunkMode;
-		int _remainingBytes;
-		std::string _error;
+		const char          *_protocol;
+		IO::SocketPtr        _socket;
+		std::string          _host;
+		std::string          _url;
+		int                  _defaultPort;
+		std::set<StreamIdx>  _streams;
+		Core::Time           _stime;
+		Core::Time           _etime;
+		std::string          _reqID;
+		bool                 _readingData;
+		bool                 _chunkMode;
+		int                  _remainingBytes;
+		std::string          _error;
 };
 
 
