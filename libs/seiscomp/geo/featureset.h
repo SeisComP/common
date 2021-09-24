@@ -83,11 +83,42 @@ class SC_SYSTEM_CORE_API GeoFeatureSet : public Core::BaseObject {
 		 * Initializes the _feature vector with all BNA-files of the specified
 		 * directory. The directory is searched recursively. The name of any
 		 * subdirectory is used as a category.
+		 * The feature set is cleared prior to reading the files.
+		 *
+		 * @deprecated This method is deprecated and will be removed in future
+		 * releases. Consider readDir() instead.
 		 */
-		size_t readBNADir(const std::string& dirPath);
+		size_t readBNADir(const std::string &dirPath) __attribute__((deprecated));
 
-		/** Reads one BNA-file */
-		bool readBNAFile(const std::string& filename, const Category* category);
+		/**
+		 * Reads one BNA-file
+		 * @deprecated This method is deprecated and will be removed in future
+		 * releases. Consider readFile() or Seiscomp::Geo::readBNA() instead.
+		 */
+		bool readBNAFile(const std::string& filename, const Category* category) __attribute__((deprecated));
+
+		/**
+		 * Initializes the _feature vector with all files (*.bna, *.geojson) of
+		 * the specified directory. The directory is searched recursively.
+		 * The name of any subdirectory is used as a category.
+		 *
+		 * All files found are added to the current feature set. It is not
+		 * cleared automatically.
+		 */
+		size_t readDir(const std::string &dirPath);
+
+		/**
+		 * @brief Reads a geo feature vector file of any supported format.
+		 * This method might throw an exception to signal an error.
+		 *
+ 		 * @param filename The filename to be read. The file extension is being
+ 		 *        used to determin the file format.
+		 * @param category An optional category.
+		 * @return Number of features read. If a negative number is returned
+		 *         then this file was ignored because its file extension is
+		 *         unknown.
+		 */
+		ssize_t readFile(const std::string& filename, const Category* category);
 
 		bool addFeature(GeoFeature *feature);
 
@@ -106,15 +137,13 @@ class SC_SYSTEM_CORE_API GeoFeatureSet : public Core::BaseObject {
 		size_t readBNADirRecursive(const boost::filesystem::path &directory,
 		                           Category *category);
 
+		/** Reads a GeoJSONDir recursively, used by readGeoJSONDir() */
+		size_t readDirRecursive(const boost::filesystem::path &directory,
+		                        Category *category);
+
 		/** Prints the number of polygons read */
 		const std::string initStatus(const std::string &directory,
 		                             unsigned int fileCount) const;
-
-		/** Reads the BNA-header */
-		bool readBNAHeader(std::string &segment, unsigned int &rank,
-		                   GeoFeature::Attributes &attributes,
-		                   unsigned int &points, bool &isClosed, std::string &error,
-		                   const std::string &line) const;
 
 		/** Compares two GeoFeatures by their rank */
 		static bool compareByRank(const GeoFeature* gf1, const GeoFeature* gf2);

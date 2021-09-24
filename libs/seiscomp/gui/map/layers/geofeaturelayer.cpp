@@ -270,7 +270,7 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 	const static string cfgLegendOrientation = "orientation";
 	const static string cfgCompositionMode = "composition";
 
-	// Read additional configuration file (e.g. map.cfg in BNA folder)
+	// Read additional configuration file (e.g. map.cfg in spatial vector folder)
 	if ( !dataDir.empty() ) {
 		Config::Config cfg;
 		if ( cfg.readConfig(dataDir + "/map.cfg", -1, true) ) {

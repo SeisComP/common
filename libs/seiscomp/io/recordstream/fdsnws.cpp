@@ -281,13 +281,12 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 		if ( proxyScheme.empty() )
 			proxyScheme = "http";
 
-		if ( proxyScheme == "https" ) {
-			throw GeneralException("HTTPS proxy connections are not yet supported");
-		}
-
 		if ( proxyScheme != _protocol ) {
 			if ( proxyScheme == "http" ) {
 				_socket = new IO::Socket;
+			}
+			else if ( proxyScheme == "https" ) {
+				_socket = new IO::SSLSocket;
 			}
 			else {
 				throw GeneralException("Request and proxy protocol mismatch");
@@ -297,10 +296,12 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 		size_t port = url.port() == size_t(-1) ? 3128 : url.port();
 
 		if ( url.username().empty() || url.password().empty() )
-			SEISCOMP_DEBUG("Connect to web proxy at %s:%d",
+			SEISCOMP_DEBUG("Connect to web proxy at %s://%s:%d",
+			               proxyScheme.c_str(),
 			               url.host().c_str(), int(port));
 		else
-			SEISCOMP_DEBUG("Connect to web proxy at %s:****@%s:%d",
+			SEISCOMP_DEBUG("Connect to web proxy at %s://%s:****@%s:%d",
+			               proxyScheme.c_str(),
 			               url.username().c_str(), url.host().c_str(), int(port));
 
 		_socket->open(url.host() + ":" + toString(port));
@@ -316,27 +317,34 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 			_socket->sendRequest("Host: " + _host, false);
 			_socket->sendRequest("", false);
 
-			// Now read result unbuffered and blocking
-			int fd = _socket->takeFd();
-			int flags = fcntl(fd, F_GETFL, 0);
-			flags &= ~O_NONBLOCK;
-			fcntl(fd, F_SETFL, flags);
-
 			string line;
 
-			char c;
-			while ( ::read(fd, &c, 1) == 1 ) {
-				if ( c == '\r' ) continue;
-				if ( c == '\n' )
-					break;
+			if ( proxyScheme == "http" ) {
+				// Now read result unbuffered and blocking
+				int fd = _socket->takeFd();
+				int flags = fcntl(fd, F_GETFL, 0);
+				flags &= ~O_NONBLOCK;
+				fcntl(fd, F_SETFL, flags);
 
-				line += c;
-			}
+				char c;
+				while ( ::read(fd, &c, 1) == 1 ) {
+					if ( c == '\r' ) continue;
+					if ( c == '\n' )
+						break;
 
-			while ( ::read(fd, &c, 1) == 1 ) {
-				if ( c == '\n' )
-					break;
+					line += c;
+				}
+
+				while ( ::read(fd, &c, 1) == 1 ) {
+					if ( c == '\n' )
+						break;
+				}
+
+				_socket = new IO::SSLSocket;
+				static_cast<IO::SSLSocket*>(_socket.get())->setFd(fd);
 			}
+			else
+				line = _socket->readline();
 
 			SEISCOMP_DEBUG("%s", line.c_str());
 			if ( line.compare(0, 7, "HTTP/1.") != 0 )
@@ -359,9 +367,6 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 
 			if ( code != 200 )
 				throw GeneralException("proxy returned code: " + line.substr(0, pos));
-
-			_socket = new IO::SSLSocket;
-			static_cast<IO::SSLSocket*>(_socket.get())->setFd(fd);
 		}
 	}
 	else {

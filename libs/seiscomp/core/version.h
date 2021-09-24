@@ -81,10 +81,21 @@ namespace Core {
  "14.3.0"   0x0E0300
    - Added Seiscomp::RingBuffer::numberOfRecordsToStore()
    - Added Seiscomp::RingBuffer::timeSpanToStore()
-   - Seiscomp::TimeWindowBuffer::timeWindowToStore()
-   - Added Seiscomp::Gui::OriginLocatorMap::stationSymbolToolTip
-   - Added Seiscomp::Gui::MagnitudeMap::stationSymbolToolTip
-   - Added Seiscomp::Environment::resolvePath
+   - Added Seiscomp::TimeWindowBuffer::timeWindowToStore()
+   - Added Seiscomp::Gui::OriginLocatorMap::stationSymbolToolTip()
+   - Added Seiscomp::Gui::MagnitudeMap::stationSymbolToolTip()
+   - Added Seiscomp::Environment::resolvePath()
+   - Added Seiscomp::Wired::Device::takeFd()
+   - Added Seiscomp::Wired::SSLSocket::take()
+   - Added Seiscomp::IO::Socket::takeFd()
+   - Added Seiscomp::IO::SSLSocket::setFd()
+   - Added Seiscomp::Geo::GeoFeature::setAttribute()
+   - Added Seiscomp::Geo::GeoFeatureSet::readFile()
+   - Added Seiscomp::Geo::GeoFeatureSet::readDir()
+   - Added Seiscomp::Geo::readGeoJSON()
+   - Deprecated Seiscomp::Geo::GeoFeatureSet::readBNAFile()
+   - Deprecated Seiscomp::Geo::GeoFeatureSet::readBNADir()
+   - Added Seiscomp::Gui::CM_SHOW_NOTIFICATION enumeration
 
  "14.2.0"   0x0E0200
    - Added Seiscomp::Client::Application::injectMessage
