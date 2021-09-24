@@ -3394,10 +3394,6 @@ void MagnitudeView::updateContent() {
 	//  use selection from comboBox for netmagType
 	//_netMag = _origin->findMagnitude((_ui.comboMagType->itemData(_ui.comboMagType->currentIndex()).value<QString>()).toAscii().data());
 	_netMag = _origin->findMagnitude(_tabMagnitudes->tabData(_tabMagnitudes->currentIndex()).value<TabData>().publicID);
-	if ( _map ) {
-		_map->setMagnitude(_netMag.get());
-		_map->update();
-	}
 
 	if ( _netMag ) {
 		for ( size_t i = 0; i < _netMag->stationMagnitudeContributionCount(); ++i ) {
@@ -3407,6 +3403,11 @@ void MagnitudeView::updateContent() {
 					_origin->add(stamag.get());
 			}
 		}
+	}
+
+	if ( _map ) {
+		_map->setMagnitude(_netMag.get());
+		_map->update();
 	}
 
 	// clear diagram
@@ -3592,8 +3593,8 @@ void MagnitudeView::updateMagnitudeLabels() {
 			_stamagnitudes->setDisplayRect(newRect);
 			_stamagnitudes->setUpdatesEnabled(true);
 
-			_map->setMagnitude(_netMag.get());
-			_map->update();
+			// _map->setMagnitude(_netMag.get());
+			// _map->update();
 		}
 	}
 	else {

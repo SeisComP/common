@@ -296,6 +296,7 @@ void MagnitudeMap::mouseDoubleClickEvent(QMouseEvent* event) {
 				if ( !canvas().projection()->project(pp, _stations[i].location) ) continue;
 				if ( abs(pp.x() - event->x()) <= stationHalfSize &&
 					abs(pp.y() - event->y()) <= stationHalfSize ) {
+
 					if ( _stations[i].isMagnitude ) {
 						setMagnitudeState(_stations[i].magnitudeId, !_stations[i].isActive);
 						emit magnitudeChanged(_stations[i].magnitudeId, _stations[i].isActive);
@@ -445,6 +446,11 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 				);
 
 				std::string stationCode = p->waveformID().networkCode() + "." + p->waveformID().stationCode();
+				if ( _stationCodes.find(stationCode) != _stationCodes.end() ) {
+					foundStation = true;
+					continue;
+				}
+
 				_stations.push_back(StationEntry(QPointF(loc.longitude,loc.latitude),
 				                                 p->waveformID().networkCode(),
 				                                 p->waveformID().stationCode(), true));
@@ -545,6 +551,9 @@ void MagnitudeMap::addStationMagnitude(StationMagnitude* staMag, int index) {
 	try {
 		std::string stationCode = staMag->waveformID().networkCode() + "." + staMag->waveformID().stationCode();
 		int stationId = findStation(stationCode);
+		if ( stationId == -1 )
+			stationId = addStation(staMag->waveformID().networkCode(), staMag->waveformID().stationCode());
+
 		if ( stationId != -1 )
 			addMagnitude(stationId, index);
 	}
@@ -586,6 +595,52 @@ int MagnitudeMap::findStation(const std::string& stationCode) const {
 	it = _stationCodes.find(stationCode);
 	if ( it != _stationCodes.end() )
 		return it->second;
+	return -1;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+int MagnitudeMap::addStation(const std::string &netCode, const std::string &staCode) {
+	if ( !_origin ) return -1;
+	// Add station
+	DataModel::Inventory *inv = Client::Inventory::Instance()->inventory();
+	if ( !inv ) return -1;
+
+	for ( size_t n = 0; n < inv->networkCount(); ++n ) {
+		DataModel::Network *net = inv->network(n);
+		if ( net->code() != netCode ) continue;
+		if ( net->start() > _origin->time().value() )
+			continue;
+		try { if ( net->end() < _origin->time().value() ) continue; }
+		catch ( ... ) {}
+
+		for ( size_t s = 0; s < net->stationCount(); ++s ) {
+			DataModel::Station *sta = net->station(s);
+			if ( sta->code() != staCode ) continue;
+			if ( sta->start() > _origin->time().value() )
+				continue;
+			try { if ( sta->end() < _origin->time().value() ) continue; }
+			catch ( ... ) {}
+
+			std::string stationCode = net->code() + "." + sta->code();
+
+			_stations.push_back(
+				StationEntry(
+					QPointF(sta->longitude(),sta->latitude()),
+					net->code(), sta->code().c_str(), true
+				)
+			);
+
+			int stationId = _stations.size()-1;
+			_stations.back().isActive = true;
+			_stationCodes[stationCode] = stationId;
+			return stationId;
+		}
+	}
+
 	return -1;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
