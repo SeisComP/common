@@ -1451,10 +1451,14 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 
 		if ( isOverridden ) {
 			QPalette pal = checkBox->palette();
-			QColor oldButton = pal.color(QPalette::Disabled, QPalette::Button);
+			QColor oldButton = pal.color(QPalette::Disabled, QPalette::Base);
+			pal.setColor(QPalette::Base, AlertColor);
 			pal.setColor(QPalette::Button, AlertColor);
+			pal.setColor(QPalette::Window, AlertColor);
 			pal.setColor(QPalette::ButtonText, Qt::white);
+			pal.setColor(QPalette::Disabled, QPalette::Base, blend(AlertColor, oldButton, 50));
 			pal.setColor(QPalette::Disabled, QPalette::Button, blend(AlertColor, oldButton, 50));
+			pal.setColor(QPalette::Disabled, QPalette::Window, blend(AlertColor, oldButton, 50));
 			checkBox->setPalette(pal);
 		}
 	}
