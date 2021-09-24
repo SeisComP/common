@@ -2844,32 +2844,33 @@ SWIGINTERN PyObject *SWIG_PyStaticMethod_New(PyObject *SWIGUNUSEDPARM(self), PyO
 #define SWIGTYPE_p_short swig_types[149]
 #define SWIGTYPE_p_signed_char swig_types[150]
 #define SWIGTYPE_p_size_type swig_types[151]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__Category_p_t swig_types[152]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t swig_types[153]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t swig_types[154]
-#define SWIGTYPE_p_std__allocatorT_size_t_t swig_types[155]
-#define SWIGTYPE_p_std__complexT_double_t swig_types[156]
-#define SWIGTYPE_p_std__invalid_argument swig_types[157]
-#define SWIGTYPE_p_std__mapT_std__string_std__string_std__lessT_std__string_t_std__allocatorT_std__pairT_std__string_const_std__string_t_t_t swig_types[158]
-#define SWIGTYPE_p_std__ostream swig_types[159]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[160]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[161]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__Category_p_std__allocatorT_Seiscomp__Geo__Category_p_t_t swig_types[162]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoCoordinate_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t_t swig_types[163]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoFeature_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t_t swig_types[164]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[165]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[166]
-#define SWIGTYPE_p_std__vectorT_size_t_std__allocatorT_size_t_t_t swig_types[167]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t swig_types[168]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[169]
-#define SWIGTYPE_p_unsigned_char swig_types[170]
-#define SWIGTYPE_p_unsigned_int swig_types[171]
-#define SWIGTYPE_p_unsigned_long_long swig_types[172]
-#define SWIGTYPE_p_unsigned_short swig_types[173]
-#define SWIGTYPE_p_value_type swig_types[174]
-#define SWIGTYPE_p_void swig_types[175]
-static swig_type_info *swig_types[177];
-static swig_module_info swig_module = {swig_types, 176, 0, 0, 0, 0};
+#define SWIGTYPE_p_ssize_t swig_types[152]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__Category_p_t swig_types[153]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t swig_types[154]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t swig_types[155]
+#define SWIGTYPE_p_std__allocatorT_size_t_t swig_types[156]
+#define SWIGTYPE_p_std__complexT_double_t swig_types[157]
+#define SWIGTYPE_p_std__invalid_argument swig_types[158]
+#define SWIGTYPE_p_std__mapT_std__string_std__string_std__lessT_std__string_t_std__allocatorT_std__pairT_std__string_const_std__string_t_t_t swig_types[159]
+#define SWIGTYPE_p_std__ostream swig_types[160]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[161]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[162]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__Category_p_std__allocatorT_Seiscomp__Geo__Category_p_t_t swig_types[163]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoCoordinate_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t_t swig_types[164]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoFeature_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t_t swig_types[165]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[166]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[167]
+#define SWIGTYPE_p_std__vectorT_size_t_std__allocatorT_size_t_t_t swig_types[168]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t swig_types[169]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[170]
+#define SWIGTYPE_p_unsigned_char swig_types[171]
+#define SWIGTYPE_p_unsigned_int swig_types[172]
+#define SWIGTYPE_p_unsigned_long_long swig_types[173]
+#define SWIGTYPE_p_unsigned_short swig_types[174]
+#define SWIGTYPE_p_value_type swig_types[175]
+#define SWIGTYPE_p_void swig_types[176]
+static swig_type_info *swig_types[178];
+static swig_module_info swig_module = {swig_types, 177, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -10060,6 +10061,48 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_GeoFeature_setRank(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::GeoFeature *arg1 = (Seiscomp::Geo::GeoFeature *) 0 ;
+  unsigned int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "GeoFeature_setRank", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__GeoFeature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GeoFeature_setRank" "', argument " "1"" of type '" "Seiscomp::Geo::GeoFeature *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::GeoFeature * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "GeoFeature_setRank" "', argument " "2"" of type '" "unsigned int""'");
+  } 
+  arg2 = static_cast< unsigned int >(val2);
+  {
+    try {
+      (arg1)->setRank(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_GeoFeature_rank(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Geo::GeoFeature *arg1 = (Seiscomp::Geo::GeoFeature *) 0 ;
@@ -10092,6 +10135,70 @@ SWIGINTERN PyObject *_wrap_GeoFeature_rank(PyObject *SWIGUNUSEDPARM(self), PyObj
   resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
   return resultobj;
 fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_GeoFeature_setAttribute(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::GeoFeature *arg1 = (Seiscomp::Geo::GeoFeature *) 0 ;
+  std::string *arg2 = 0 ;
+  std::string *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  int res3 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[3] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "GeoFeature_setAttribute", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__GeoFeature, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GeoFeature_setAttribute" "', argument " "1"" of type '" "Seiscomp::Geo::GeoFeature *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::GeoFeature * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "GeoFeature_setAttribute" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "GeoFeature_setAttribute" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    std::string *ptr = (std::string *)0;
+    res3 = SWIG_AsPtr_std_string(swig_obj[2], &ptr);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "GeoFeature_setAttribute" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "GeoFeature_setAttribute" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    arg3 = ptr;
+  }
+  {
+    try {
+      (arg1)->setAttribute((std::string const &)*arg2,(std::string const &)*arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
   return NULL;
 }
 
@@ -11371,6 +11478,114 @@ SWIGINTERN PyObject *_wrap_GeoFeatureSet_readBNAFile(PyObject *SWIGUNUSEDPARM(se
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_GeoFeatureSet_readDir(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::GeoFeatureSet *arg1 = (Seiscomp::Geo::GeoFeatureSet *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  size_t result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "GeoFeatureSet_readDir", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__GeoFeatureSet, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GeoFeatureSet_readDir" "', argument " "1"" of type '" "Seiscomp::Geo::GeoFeatureSet *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::GeoFeatureSet * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "GeoFeatureSet_readDir" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "GeoFeatureSet_readDir" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = (arg1)->readDir((std::string const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_GeoFeatureSet_readFile(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::GeoFeatureSet *arg1 = (Seiscomp::Geo::GeoFeatureSet *) 0 ;
+  std::string *arg2 = 0 ;
+  Seiscomp::Geo::Category *arg3 = (Seiscomp::Geo::Category *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject *swig_obj[3] ;
+  ssize_t result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "GeoFeatureSet_readFile", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__GeoFeatureSet, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GeoFeatureSet_readFile" "', argument " "1"" of type '" "Seiscomp::Geo::GeoFeatureSet *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::GeoFeatureSet * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "GeoFeatureSet_readFile" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "GeoFeatureSet_readFile" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_Seiscomp__Geo__Category, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "GeoFeatureSet_readFile" "', argument " "3"" of type '" "Seiscomp::Geo::Category const *""'"); 
+  }
+  arg3 = reinterpret_cast< Seiscomp::Geo::Category * >(argp3);
+  {
+    try {
+      result = (arg1)->readFile((std::string const &)*arg2,(Seiscomp::Geo::Category const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new ssize_t(static_cast< const ssize_t& >(result))), SWIGTYPE_p_ssize_t, SWIG_POINTER_OWN |  0 );
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
@@ -21228,7 +21443,9 @@ static PyMethodDef SwigMethods[] = {
 	 { "GeoFeature_setName", _wrap_GeoFeature_setName, METH_VARARGS, "GeoFeature_setName(GeoFeature self, std::string const & name)"},
 	 { "GeoFeature_name", _wrap_GeoFeature_name, METH_O, "GeoFeature_name(GeoFeature self) -> std::string const &"},
 	 { "GeoFeature_category", _wrap_GeoFeature_category, METH_O, "GeoFeature_category(GeoFeature self) -> Category"},
+	 { "GeoFeature_setRank", _wrap_GeoFeature_setRank, METH_VARARGS, "GeoFeature_setRank(GeoFeature self, unsigned int rank)"},
 	 { "GeoFeature_rank", _wrap_GeoFeature_rank, METH_O, "GeoFeature_rank(GeoFeature self) -> unsigned int"},
+	 { "GeoFeature_setAttribute", _wrap_GeoFeature_setAttribute, METH_VARARGS, "GeoFeature_setAttribute(GeoFeature self, std::string const & name, std::string const & value)"},
 	 { "GeoFeature_attributes", _wrap_GeoFeature_attributes, METH_O, "GeoFeature_attributes(GeoFeature self) -> Seiscomp::Geo::GeoFeature::Attributes const &"},
 	 { "GeoFeature_addVertex", _wrap_GeoFeature_addVertex, METH_VARARGS, "\n"
 		"GeoFeature_addVertex(GeoFeature self, GeoCoordinate vertex, bool newSubFeature=False)\n"
@@ -21262,6 +21479,8 @@ static PyMethodDef SwigMethods[] = {
 	 { "GeoFeatureSet_load", _wrap_GeoFeatureSet_load, METH_O, "GeoFeatureSet_load(GeoFeatureSet self)"},
 	 { "GeoFeatureSet_readBNADir", _wrap_GeoFeatureSet_readBNADir, METH_VARARGS, "GeoFeatureSet_readBNADir(GeoFeatureSet self, std::string const & dirPath) -> size_t"},
 	 { "GeoFeatureSet_readBNAFile", _wrap_GeoFeatureSet_readBNAFile, METH_VARARGS, "GeoFeatureSet_readBNAFile(GeoFeatureSet self, std::string const & filename, Category category) -> bool"},
+	 { "GeoFeatureSet_readDir", _wrap_GeoFeatureSet_readDir, METH_VARARGS, "GeoFeatureSet_readDir(GeoFeatureSet self, std::string const & dirPath) -> size_t"},
+	 { "GeoFeatureSet_readFile", _wrap_GeoFeatureSet_readFile, METH_VARARGS, "GeoFeatureSet_readFile(GeoFeatureSet self, std::string const & filename, Category category) -> ssize_t"},
 	 { "GeoFeatureSet_addFeature", _wrap_GeoFeatureSet_addFeature, METH_VARARGS, "GeoFeatureSet_addFeature(GeoFeatureSet self, GeoFeature feature) -> bool"},
 	 { "GeoFeatureSet_features", _wrap_GeoFeatureSet_features, METH_O, "GeoFeatureSet_features(GeoFeatureSet self) -> GeoFeatures"},
 	 { "GeoFeatureSet_categories", _wrap_GeoFeatureSet_categories, METH_O, "GeoFeatureSet_categories(GeoFeatureSet self) -> Categories"},
@@ -21914,6 +22133,7 @@ static swig_type_info _swigt__p_p_PyObject = {"_p_p_PyObject", "PyObject **", 0,
 static swig_type_info _swigt__p_short = {"_p_short", "short *|int_least16_t *|int16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_signed_char = {"_p_signed_char", "signed char *|int_least8_t *|int_fast8_t *|int8_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_size_type = {"_p_size_type", "size_type *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_ssize_t = {"_p_ssize_t", "ssize_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__allocatorT_Seiscomp__Geo__Category_p_t = {"_p_std__allocatorT_Seiscomp__Geo__Category_p_t", "std::vector< Seiscomp::Geo::Category * >::allocator_type *|std::allocator< Seiscomp::Geo::Category * > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t = {"_p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t", "std::allocator< Seiscomp::Geo::GeoCoordinate > *|std::vector< Seiscomp::Geo::GeoCoordinate >::allocator_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t = {"_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t", "std::allocator< Seiscomp::Geo::GeoFeature * > *|std::vector< Seiscomp::Geo::GeoFeature * >::allocator_type *", 0, 0, (void*)0, 0};
@@ -22092,6 +22312,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_short,
   &_swigt__p_signed_char,
   &_swigt__p_size_type,
+  &_swigt__p_ssize_t,
   &_swigt__p_std__allocatorT_Seiscomp__Geo__Category_p_t,
   &_swigt__p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t,
   &_swigt__p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t,
@@ -22270,6 +22491,7 @@ static swig_cast_info _swigc__p_p_PyObject[] = {  {&_swigt__p_p_PyObject, 0, 0, 
 static swig_cast_info _swigc__p_short[] = {  {&_swigt__p_short, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_signed_char[] = {  {&_swigt__p_signed_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_size_type[] = {  {&_swigt__p_size_type, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_ssize_t[] = {  {&_swigt__p_ssize_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_Seiscomp__Geo__Category_p_t[] = {  {&_swigt__p_std__allocatorT_Seiscomp__Geo__Category_p_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t[] = {  {&_swigt__p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t[] = {  {&_swigt__p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -22448,6 +22670,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_short,
   _swigc__p_signed_char,
   _swigc__p_size_type,
+  _swigc__p_ssize_t,
   _swigc__p_std__allocatorT_Seiscomp__Geo__Category_p_t,
   _swigc__p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t,
   _swigc__p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t,

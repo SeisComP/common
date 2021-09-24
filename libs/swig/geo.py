@@ -421,9 +421,17 @@ class GeoFeature(seiscomp.core.BaseObject):
         r"""category(GeoFeature self) -> Category"""
         return _geo.GeoFeature_category(self)
 
+    def setRank(self, rank):
+        r"""setRank(GeoFeature self, unsigned int rank)"""
+        return _geo.GeoFeature_setRank(self, rank)
+
     def rank(self):
         r"""rank(GeoFeature self) -> unsigned int"""
         return _geo.GeoFeature_rank(self)
+
+    def setAttribute(self, name, value):
+        r"""setAttribute(GeoFeature self, std::string const & name, std::string const & value)"""
+        return _geo.GeoFeature_setAttribute(self, name, value)
 
     def attributes(self):
         r"""attributes(GeoFeature self) -> Seiscomp::Geo::GeoFeature::Attributes const &"""
@@ -549,6 +557,14 @@ class GeoFeatureSet(seiscomp.core.BaseObject):
     def readBNAFile(self, filename, category):
         r"""readBNAFile(GeoFeatureSet self, std::string const & filename, Category category) -> bool"""
         return _geo.GeoFeatureSet_readBNAFile(self, filename, category)
+
+    def readDir(self, dirPath):
+        r"""readDir(GeoFeatureSet self, std::string const & dirPath) -> size_t"""
+        return _geo.GeoFeatureSet_readDir(self, dirPath)
+
+    def readFile(self, filename, category):
+        r"""readFile(GeoFeatureSet self, std::string const & filename, Category category) -> ssize_t"""
+        return _geo.GeoFeatureSet_readFile(self, filename, category)
 
     def addFeature(self, feature):
         r"""addFeature(GeoFeatureSet self, GeoFeature feature) -> bool"""
