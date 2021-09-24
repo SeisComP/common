@@ -64,7 +64,11 @@ class SC_SYSTEM_CORE_API GeoFeature : public Core::BaseObject {
 		const std::string &name() const { return _name; }
 
 		const Category *category() const { return _category; }
+
+		void setRank(unsigned int rank);
 		unsigned int rank() const { return _rank; }
+
+		void setAttribute(const std::string &name, const std::string &value);
 		const Attributes &attributes() const { return _attributes; }
 
 		/** Adds a vertex to the GeoFeature and changes the BBox if
@@ -104,7 +108,10 @@ class SC_SYSTEM_CORE_API GeoFeature : public Core::BaseObject {
 
 		double area() const;
 
-		//! Deprecated, use Seiscomp::Geo::area instead
+		/**
+		 * @deprecated This method is deprecated and will be removed in future
+		 * releases. Use Seiscomp::Geo::area instead.
+		 */
 		static double area(const GeoCoordinate *polygon, size_t sides) __attribute__((deprecated));
 
 	private:

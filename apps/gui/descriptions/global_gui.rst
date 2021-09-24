@@ -20,8 +20,9 @@ The style options supported by |scname| (and not covered by the general Qt setup
 have to be given in the applications (or global) configuration file. The
 parameters are configured with the *scheme.* parameters.
 
-In case of :ref:`map layers defined by BNA files <sec-gui_layers>` the parameters
-may also be defined by :file:`map.cfg` in the directory of the BNA file.
+In case of :ref:`map layers defined by geo feature files <sec-gui_layers>` the
+parameters may also be defined by :file:`map.cfg` in the directory of the geo
+feature file.
 
 
 .. _sec-gui_syntax:
@@ -157,7 +158,7 @@ Symbols
 -------
 
 Symbols configured by the :confval:`symbol.*` parameters can be plotted on coordinate
-points defined by :ref:`BNA files <sec-gui_layers>` or by :confval:`symbol.icon.hotspot.x`
+points defined by :ref:`geo feature files <sec-gui_layers>` or by :confval:`symbol.icon.hotspot.x`
 and :confval:`symbol.icon.hotspot.y`. The symbols can be shapes (:confval:`symbol.shape`)
 or icons from a file (:confval:`symbol.icon`).
 
@@ -186,7 +187,7 @@ Map Layers
 
 Additional features may be added to maps using configurable layers:
 
-* :ref:`sec-gui_layers-vector`, e.g. points, polylines, polygons from FEP and BNA files,
+* :ref:`sec-gui_layers-vector`, e.g. points, polylines, polygons from FEP, BNA or GeoJSON files,
 * :ref:`sec-gui_layers-others`, e.g. cities, grids, events, custom layers.
 
 :ref:`sec-gui_layers-vector` are loaded and may be visualized together with
@@ -199,13 +200,23 @@ and selected interactively by their :ref:`configurable category <sec-gui_layers-
    :align: center
    :width: 18cm
 
-   Map with layers defined by BNA polygons, cities and legends.
+   Map with layers defined by polygons, cities and legends.
 
 
 .. _sec-gui_layers-vector:
 
 Vector layers
 -------------
+
+.. admonition:: Deprecation warning
+   :class: warning
+
+   The old vector file directories :file:`@DATADIR@/bna` or :file:`@CONFIGDIR@/bna`
+   are still supported but superseded by :file:`@DATADIR@/spatial/vector` or
+   :file:`@CONFIGDIR@/spatial vector`. The latter directories have higher priority
+   are are being read first. If one of the old directories has been found, a
+   warning will be logged.
+
 
 |scname| supports arbitrary polygons, polylines or points for drawing as layers
 on maps or for using by other :term:`modules <plugin>` and :term:`plugins <plugin>`.
@@ -237,7 +248,8 @@ Currently supported data types are:
     respectively, and even symbols or images on maps. Some objects, like closed lines can be
     evaluated by other modules and plugins, e.g. the :ref:`region check <scevent_regioncheck>`
     plugin for :ref:`scevent`.
-  * stored in directories or sub-directories of: :file:`$SEISCOMP_ROOT/share/bna` or :file:`~/.seiscomp/bna`
+  * stored in directories or sub-directories of: :file:`$SEISCOMP_ROOT/share/spatial/vector`
+    or :file:`~/.seiscomp/spatial/vector`
   * file name extension: *.bna*
   * file format: ::
 
@@ -266,9 +278,26 @@ Currently supported data types are:
          plugin. Example ::
 
             "coal","rank 1","eventType: mining explosion, minDepth: -5, maxDepth: 10",6
+       * The name is extracted from the first part of the header.
+       * The rank is extracted from the second part of the header if it has the
+         form "rank VALUE", e.g. rank 12.
 
   * visibility and style can be controlled by :ref:`configuration <sec-gui_layers-config>`.
 
+
+* GeoJSON features:
+
+  * used for visualization, e.g. points, polylines, polygons for faults or districts,
+    respectively, and even symbols or images on maps.
+  * stored in directories or sub-directories of: :file:`$SEISCOMP_ROOT/share/spatial/vector` or :file:`~/.seiscomp/spatial/vector`
+  * file name extension: *.geojson*
+  * file format: https://geojson.org/
+
+    .. note ::
+
+       Currently the geometry type GeometryCollection is not supported. The name
+       of the feature is derived from the `name` property of a feature and the
+       rank can be provided in a `rank` property with an integer value.
 
 .. _sec-gui_layers-config:
 
@@ -276,12 +305,12 @@ Layer configuration
 ~~~~~~~~~~~~~~~~~~~
 
 Layers may be grouped into categories and form a hierarchy. The categories of the
-BNA data are derived from the BNA directory structure, i.e. the names of the directories
-below the bna directory, e.g. :file:`@DATADIR@/bna`. BNA data directly located within the
-bna directory have no special category.
+geo feature data are derived from the feature directory structure, i.e. the names
+of the directories below the feature directory, e.g. :file:`@DATADIR@/spatial/vector`.
+Feature data directly located within the feature directory have no special category.
 The FEP data set is assigned to the fep category.
 
-The depth of the BNA directory tree is arbitrary and subfolders form
+The depth of the feature directory tree is arbitrary and subfolders form
 sub-categories. E.g. the directory tree :file:`bna/coastline/europe/germany` will generate
 the categories *coastline*, *coastline.europe* and *coastline.europe.germany* which
 all may be configured individually. Every undefined property is inherited from
@@ -297,9 +326,9 @@ The layer properties can be configured either by
    The parameters in the global configuration of modules override the configurations
    in :file:`map.cfg` allowing a specific configuration per application.
 
-All data set directories, e.g. :file:`@DATADIR@/bna` and sub-directories therein
-are scanned for an optional :file:`map.cfg` configuration file defining default
-drawing options. Parameters found in the lowest sub-directory take priority.
+All data set directories and sub-directories therein are scanned for an optional
+:file:`map.cfg` configuration file defining default drawing options. Parameters
+found in the lowest sub-directory take priority.
 This allows easy distribution of data sets and drawing properties without the
 need to change application configuration files.
 The available map layer configuration parameters are described further below.
@@ -315,11 +344,12 @@ Examples
 ~~~~~~~~
 
 File and directory for plotting fault lines with specific configurations.
-The BNA polygons are defined in :file:`data.bna`, configurations are in :file:`map.cfg`:
+The geo features are defined in :file:`data.bna`, configurations are in
+:file:`map.cfg`:
 
 .. code-block:: sh
 
-   @DATADIR@/bna/
+   @DATADIR@/spatial/vector/
    ├── maps.cfg
    ├── faults/
    |   ├── map.cfg
@@ -338,7 +368,7 @@ The BNA polygons are defined in :file:`data.bna`, configurations are in :file:`m
 
 Configuration examples for plotting the fault lines based on the example above:
 
-* Legend control in :file:`@DATADIR@/bna/faults/map.cfg` ::
+* Legend control in :file:`@DATADIR@/spatial/vector/faults/map.cfg` ::
 
      # title of legend for all legend entries
      title = "Faults"
@@ -347,7 +377,7 @@ Configuration examples for plotting the fault lines based on the example above:
      # plot the legend in the top-right corner
      legendArea = topright
 
-* Polygon property control in :file:`@DATADIR@/bna/faults/strike-slip/map.cfg`
+* Polygon property control in :file:`@DATADIR@/spatical/vector/faults/strike-slip/map.cfg`
   common to all polygons in this directory. You may generate
   different sub-directories with different parameters inheriting the legend and other
   properties. Put this file, e.g. in the strike-slip directory. ::
@@ -435,8 +465,7 @@ Available map layer configuration parameters for each category are:
 
    Type: *boolean*
 
-   Draws the segment name in the center of the bounding box. For segments read
-   from BNA files the name is extracted from the first part of the header.
+   Draws the segment name in the center of the bounding box.
    Default is ``false``.
 
 .. confval:: rank
@@ -444,10 +473,7 @@ Available map layer configuration parameters for each category are:
    Type: *int*
 
    Set or override the rank of the segment. The rank defines
-   the zoom level at which drawing of the segment starts. For
-   segments read from BNA files the name is extracted from the
-   second part of the header if it has the form "rank VALUE",
-   e.g. rank 12.
+   the zoom level at which drawing of the segment starts.
    Default is ``1``.
 
 
