@@ -56,8 +56,12 @@ namespace IO {
 
 using namespace std;
 using namespace Seiscomp::Core;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Socket::Socket()
     : _sockfd(-1), _rp(0), _wp(0), _timeout(0), _timer(false),
       _interrupt(false), _reconnect(false), _eol("\r\n") {
@@ -81,7 +85,12 @@ Socket::Socket()
 	fcntl(_pipefd[WRITE], F_SETFL, O_NONBLOCK);
 #endif
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Socket::~Socket() {
 	Socket::close();
 #ifndef WIN32
@@ -89,7 +98,12 @@ Socket::~Socket() {
 	::close(_pipefd[WRITE]);
 #endif
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Socket::setTimeout(int seconds) {
 	if ( seconds <= 0 )
 		_timeout = 0;
@@ -97,15 +111,30 @@ void Socket::setTimeout(int seconds) {
 		_timeout = seconds;
 	SEISCOMP_DEBUG("Set timeout=%d", seconds);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Socket::startTimer() {
 	_timer.restart();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Socket::stopTimer() {
 	_timer.reset();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Socket::open(const string& serverLocation) {
 #if WIN32
 	WSADATA wsaData;
@@ -182,7 +211,12 @@ void Socket::open(const string& serverLocation) {
 
 	SEISCOMP_DEBUG("%s connected", serverLocation.c_str());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Socket::close() {
 	if ( _sockfd != -1 ) {
 #ifndef WIN32
@@ -199,15 +233,30 @@ void Socket::close() {
 
 	_rp = _wp = 0;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Socket::isOpen() {
 	return _sockfd != -1;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Socket::tryReconnect() {
 	return _reconnect;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Socket::fillbuf() {
 	if ( _rp > 0 ) {
 		if ( _wp > _rp ) {
@@ -291,7 +340,12 @@ void Socket::fillbuf() {
 
 	_wp += byteCount;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Socket::write(const string& s) {
 	ssize_t nleft = s.length();
 	const char *ptr = (const char *) s.c_str();
@@ -372,7 +426,12 @@ void Socket::write(const string& s) {
 		ptr += byteCount;
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 string Socket::read(int size) {
 	if ( size > BUFSIZE ) {
 		SEISCOMP_ERROR("Socket read: size > BUFSIZE");
@@ -389,7 +448,12 @@ string Socket::read(int size) {
 		fillbuf();
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 string Socket::readline() {
 	while ( 1 ) {
 		if ( _wp > _rp ) {
@@ -418,7 +482,12 @@ string Socket::readline() {
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 string Socket::sendRequest(const string& request, bool waitResponse) {
 	write(request + _eol);
 
@@ -432,11 +501,21 @@ string Socket::sendRequest(const string& request, bool waitResponse) {
 	} else
 		return resp;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Socket::isInterrupted() {
 	return _interrupt;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Socket::interrupt() {
 	_interrupt = true;
 
@@ -466,11 +545,21 @@ void Socket::interrupt() {
 	Socket::close();
 #endif
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Socket::handleInterrupt(int) throw() {
 	interrupt();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Socket::readImpl(char *buf, int count) {
 #ifndef WIN32
 	return ::posix_read(_sockfd, buf, count);
@@ -478,7 +567,12 @@ int Socket::readImpl(char *buf, int count) {
 	return recv(_sockfd, buf, count, 0);
 #endif
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Socket::writeImpl(const char *buf, int count) {
 #ifndef WIN32
 		return ::write(_sockfd, buf, count);
@@ -486,7 +580,12 @@ int Socket::writeImpl(const char *buf, int count) {
 		return send(_sockfd, buf, count, MSG_OOB);
 #endif
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Socket::connectSocket(struct sockaddr *addr, int len) {
 #ifndef WIN32
 	if ( connect(_sockfd,addr,len) == -1 )
@@ -501,7 +600,12 @@ int Socket::connectSocket(struct sockaddr *addr, int len) {
 #endif
 	return 0;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Socket::nonblockSocket() {
 #ifndef WIN32
 	int flags = fcntl(_sockfd, F_GETFL, 0);
@@ -517,7 +621,12 @@ int Socket::nonblockSocket() {
 
 	return 0;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Socket::addrSocket(char *hostname, char *port, struct sockaddr *addr, size_t *len) {
 	struct addrinfo *res;
 	struct addrinfo hints;
@@ -535,7 +644,12 @@ int Socket::addrSocket(char *hostname, char *port, struct sockaddr *addr, size_t
 
 	return 0;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Socket::checkSocket(int secs, int usecs) {
 	int ret;
 	char testbuf[1];
@@ -578,7 +692,12 @@ int Socket::checkSocket(int secs, int usecs) {
 
 	return ret;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Socket::poll() {
 	int num_bytes;
 	int ret = ioctl(_sockfd, FIONREAD, &num_bytes);
@@ -590,21 +709,44 @@ int Socket::poll() {
 
 	return num_bytes;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+int Socket::takeFd() {
+	int fd = _sockfd;
+	_sockfd = -1;
+	close();
+	return fd;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SSLSocket::SSLSocket() : Socket(), _bio(nullptr), _ssl(nullptr), _ctx(nullptr) {
 	SSL_library_init();
 	OpenSSL_add_all_algorithms();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SSLSocket::~SSLSocket() {
 	close();
 	cleanUp();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SSLSocket::open(const std::string &serverLocation) {
 #if WIN32
 	WSADATA wsaData;
@@ -649,15 +791,21 @@ void SSLSocket::open(const std::string &serverLocation) {
 
 	if ( BIO_do_connect(_bio) <= 0 )
 		throw SocketException(string("error establishing secure socket "
-	                                 "connection: ") +
-	                          ERR_error_string(ERR_get_error(), _errBuf));
+		                             "connection: ") +
+		                      ERR_error_string(ERR_get_error(), _errBuf));
+
 	if ( BIO_do_handshake(_bio) <= 0 )
 		throw SocketException(string("error performing SSL handshake: ") +
-	                          ERR_error_string(ERR_get_error(), _errBuf));
+		                      ERR_error_string(ERR_get_error(), _errBuf));
 
 	BIO_get_fd(_bio, &_sockfd);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SSLSocket::close() {
 	Socket::close();
 	if ( _bio )
@@ -665,16 +813,74 @@ void SSLSocket::close() {
 
 	_ssl = nullptr;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void SSLSocket::setFd(int fd) {
+#if WIN32
+	WSADATA wsaData;
+	int wsaerr = WSAStartup(MAKEWORD(2, 0), &wsaData);
+	if ( wsaerr != 0 ) {
+		SEISCOMP_ERROR("WSAStartup failed with error: %d", wsaerr);
+		throw SocketException("WSAStartup failed");
+	}
+#endif
+
+	if ( _sockfd != -1 ) {
+		SEISCOMP_WARNING("closing stale socket");
+		close();
+	}
+	cleanUp();
+
+	_ctx = SSL_CTX_new(SSLv23_client_method());
+	if ( _ctx == nullptr )
+		throw SocketException(string("invalid SSL context: ") +
+	                          ERR_error_string(ERR_get_error(), _errBuf));
+
+	_bio = BIO_new_ssl(_ctx, 1);
+
+	if ( _bio == nullptr )
+		throw SocketException(string("invalid bio: ") +
+	                          ERR_error_string(ERR_get_error(), _errBuf));
+
+	BIO_get_ssl(_bio, &_ssl);
+	_bio = BIO_push(_bio, BIO_new_socket(fd, BIO_CLOSE));
+
+	/*
+	if ( BIO_do_handshake(_bio) <= 0 )
+		throw SocketException(string("error performing SSL handshake: ") +
+		                      ERR_error_string(ERR_get_error(), _errBuf));
+	*/
+
+	BIO_get_fd(_bio, &_sockfd);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int SSLSocket::readImpl(char *buf, int count) {
 	return BIO_read(_bio, buf, count);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int SSLSocket::writeImpl(const char *buf, int count) {
 	return BIO_write(_bio, buf, count);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SSLSocket::cleanUp() {
 	if ( _bio ) {
 		BIO_free_all(_bio);
@@ -687,6 +893,11 @@ void SSLSocket::cleanUp() {
 		_ctx = nullptr;
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }

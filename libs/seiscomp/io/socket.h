@@ -88,6 +88,8 @@ class SC_SYSTEM_CORE_API Socket: public Seiscomp::Core::InterruptibleObject {
 		void interrupt();
 		int poll();
 
+		int takeFd();
+
 	protected:
 		void handleInterrupt(int) throw();
 		virtual int readImpl(char *buf, int count);
@@ -121,14 +123,16 @@ DEFINE_SMARTPOINTER(SSLSocket);
 class SC_SYSTEM_CORE_API SSLSocket: public Socket {
 	public:
 		SSLSocket();
-		virtual ~SSLSocket();
+		~SSLSocket() override;
 
-		virtual void open(const std::string& serverLocation);
-		virtual void close();
+		void open(const std::string& serverLocation) override;
+		void close() override;
+
+		void setFd(int fd);
 
 	protected:
-		virtual int readImpl(char *buf, int count);
-		virtual int writeImpl(const char *buf, int count);
+		int readImpl(char *buf, int count) override;
+		int writeImpl(const char *buf, int count) override;
 
 	private:
 		void cleanUp();
