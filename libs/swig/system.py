@@ -238,6 +238,9 @@ class Environment(object):
     def absolutePath(self, name):
         return _system.Environment_absolutePath(self, name)
 
+    def resolvePath(self, name):
+        return _system.Environment_resolvePath(self, name)
+
     def configFileLocation(self, name, stage):
         return _system.Environment_configFileLocation(self, name, stage)
 
