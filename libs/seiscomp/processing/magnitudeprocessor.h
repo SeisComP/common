@@ -82,7 +82,7 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 				MissingAmplitudeObject,
 				//! The estimation of the Mw magnitude is not supported
 				MwEstimationNotSupported,
-				//! Unspecified error
+				//! The configuration is not complete
 				IncompleteConfiguration,
 				//! Unspecified error
 				Error
