@@ -2014,6 +2014,19 @@ class CustomWidgetMenu : public QMenu {
 using namespace Private;
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool EventListView::Filter::isNull() const {
+	return !minLatitude && !maxLatitude &&
+	       !minLongitude && !maxLongitude &&
+	       !minDepth && !maxDepth &&
+	       !minMagnitude && !maxMagnitude;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool withOrigins,
                              bool withFocalMechanisms, QWidget * parent, Qt::WindowFlags f)
  : QWidget(parent, f), _reader(reader),
@@ -3022,6 +3035,15 @@ void EventListView::readLastDays() {
 	_filter.endTime = Core::Time::GMT();
 	_filter.startTime = _filter.endTime - Core::TimeSpan(_ui.spinBox->value()*86400);
 	setInterval(Core::TimeWindow(_filter.startTime, _filter.endTime));
+
+	if ( _filter.isNull() )
+		_ui.btnFilter->setPalette(QPalette());
+	else {
+		QPalette p = _ui.btnFilter->palette();
+		p.setColor(QPalette::Button, p.color(QPalette::Highlight));
+		_ui.btnFilter->setPalette(p);
+	}
+
 	readFromDatabase(_filter);
 }
 
@@ -3040,6 +3062,14 @@ void EventListView::readInterval() {
 	                             _ui.dateTimeEditEnd->time().hour(),
 	                             _ui.dateTimeEditEnd->time().minute(),
 	                             _ui.dateTimeEditEnd->time().second());
+
+	if ( _filter.isNull() )
+		_ui.btnFilter->setPalette(QPalette());
+	else {
+		QPalette p = _ui.btnFilter->palette();
+		p.setColor(QPalette::Button, p.color(QPalette::Highlight));
+		_ui.btnFilter->setPalette(p);
+	}
 
 	readFromDatabase(_filter);
 }

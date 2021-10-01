@@ -92,6 +92,8 @@ class SC_GUI_API EventListView : public QWidget {
 			OPT(float)               minLongitude, maxLongitude;
 			OPT(float)               minDepth, maxDepth;
 			OPT(float)               minMagnitude, maxMagnitude;
+
+			bool isNull() const;
 		};
 
 
