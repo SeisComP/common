@@ -54,10 +54,10 @@ GridLayer::~GridLayer() {}
 void GridLayer::draw(const Seiscomp::Gui::Map::Canvas *canvas,
                      QPainter &painter) {
 	if ( !isVisible() ) return;
-	if ( canvas == nullptr ) return;
+	if ( !canvas ) return;
 
 	Seiscomp::Gui::Map::Projection *projection = canvas->projection();
-	if ( projection == nullptr ) return;
+	if ( !projection ) return;
 
 	painter.save();
 

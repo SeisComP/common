@@ -161,74 +161,97 @@ void Projection::updateBoundingBox() {
 		}
 	}
 	else {
-		bool hasVCoords = false;
-		bool hasHCoords = false;
+		QPointF center;
+		bool hasCoords = false;
+		unproject(center, QPoint(_width/2, _height/2));
 
-#define UPDATE_VCOORDS \
-	if ( !hasVCoords )\
+#define UPDATE_COORDS \
+	dx = Geo::GeoCoordinate::distanceLon(gc.x(), center.x());\
+	if ( dx < _mapBoundingBox.west )\
+		_mapBoundingBox.west = dx;\
+	else if ( dx > _mapBoundingBox.east )\
+		_mapBoundingBox.east = dx;\
+\
+	if ( !hasCoords ) {\
 		_mapBoundingBox.north = _mapBoundingBox.south = gc.y();\
+	}\
 	else {\
 		if ( gc.y() > _mapBoundingBox.north )\
 			_mapBoundingBox.north = gc.y();\
 		else if ( gc.y() < _mapBoundingBox.south )\
 			_mapBoundingBox.south = gc.y();\
 	}\
-	hasVCoords = true
-
-#define UPDATE_HCOORDS \
-	if ( !hasHCoords )\
-		_mapBoundingBox.west = _mapBoundingBox.east = gc.x();\
-	else {\
-		if ( gc.x() > _mapBoundingBox.east )\
-			_mapBoundingBox.east = gc.x();\
-		else if ( gc.x() < _mapBoundingBox.west )\
-			_mapBoundingBox.west = gc.x();\
-	}\
-	hasHCoords = true
+\
+	hasCoords = true
 
 		QPointF gc;
+		Geo::GeoCoordinate::ValueType dx;
 
 		for ( int x = 0; x < _width; x += 10 ) {
 			if ( unproject(gc, QPoint(x, top)) ) {
-				UPDATE_VCOORDS;
+				UPDATE_COORDS;
 			}
 
 			if ( unproject(gc, QPoint(x, bottom)) ) {
-				UPDATE_VCOORDS;
+				UPDATE_COORDS;
 			}
 		}
 
 		if ( unproject(gc, QPoint(right, top)) ) {
-			UPDATE_VCOORDS;
-			UPDATE_HCOORDS;
+			UPDATE_COORDS;
 		}
 
 		if ( unproject(gc, QPoint(right, bottom)) ) {
-			UPDATE_VCOORDS;
-			UPDATE_HCOORDS;
+			UPDATE_COORDS;
 		}
 
 		for ( int y = 0; y < _height; y += 10 ) {
 			if ( unproject(gc, QPoint(left, y)) ) {
-				UPDATE_HCOORDS;
+				UPDATE_COORDS;
 			}
 
 			if ( unproject(gc, QPoint(right, y)) ) {
-				UPDATE_HCOORDS;
+				UPDATE_COORDS;
 			}
 		}
 
-		QPointF center;
-		unproject(center, QPoint(_width/2, _height/2));
+		if ( unproject(gc, QPoint(0, _height / 2)) ) {
+			UPDATE_COORDS;
+		}
+		else {
+			_mapBoundingBox.west = -90.0;
+		}
 
-		if ( !hasVCoords ) {
-			_mapBoundingBox.south = Geo::GeoCoordinate::normalizeLat(center.y() - 90.0);
+		if ( unproject(gc, QPoint(_width + 1, _height / 2)) ) {
+			UPDATE_COORDS;
+		}
+		else {
+			_mapBoundingBox.east = 90.0;
+		}
+
+		if ( unproject(gc, QPoint(_width / 2, 0)) ) {
+			UPDATE_COORDS;
+		}
+		else {
 			_mapBoundingBox.north = Geo::GeoCoordinate::normalizeLat(center.y() + 90.0);
 		}
 
-		if ( !hasHCoords ) {
+		if ( unproject(gc, QPoint(_width / 2, _height - 1)) ) {
+			UPDATE_COORDS;
+		}
+		else {
+			_mapBoundingBox.south = Geo::GeoCoordinate::normalizeLat(center.y() - 90.0);
+		}
+
+		if ( !hasCoords ) {
+			_mapBoundingBox.south = Geo::GeoCoordinate::normalizeLat(center.y() - 90.0);
+			_mapBoundingBox.north = Geo::GeoCoordinate::normalizeLat(center.y() + 90.0);
 			_mapBoundingBox.west = Geo::GeoCoordinate::normalizeLon(center.x() - (fabs(center.y())+90.0));
 			_mapBoundingBox.east = Geo::GeoCoordinate::normalizeLon(center.x() + (fabs(center.y())+90.0));
+		}
+		else {
+			_mapBoundingBox.west = Geo::GeoCoordinate::normalizeLon(_mapBoundingBox.west + center.x());
+			_mapBoundingBox.east = Geo::GeoCoordinate::normalizeLon(_mapBoundingBox.east + center.x());
 		}
 
 		QPoint tmp;
