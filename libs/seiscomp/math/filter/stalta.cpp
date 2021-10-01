@@ -17,22 +17,25 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
 #include <seiscomp/core/exceptions.h>
 #include <seiscomp/math/filter/stalta.h>
+
+#include <cmath>
+#include <limits>
+
 
 namespace Seiscomp {
 namespace Math {
 namespace Filtering {
 
-#define FABS(x) (((x)<0)?(-(x)):(x))
-
 
 static void checkParameters(double lenSTA, double lenLTA) {
-	if (lenSTA <= 0.)
+	if ( lenSTA <= 0. )
 		throw Core::ValueException("STA length must be positive");
-	if (lenLTA <= 0.)
+	if ( lenLTA <= 0. )
 		throw Core::ValueException("LTA length must be positive");
-	if (lenSTA > lenLTA)
+	if ( lenSTA > lenLTA )
 		throw Core::ValueException("STA length must not exceed LTA length");
 }
 
@@ -49,6 +52,7 @@ template<typename TYPE>
 void STALTA<TYPE>::setSamplingFrequency(double fsamp) {
 	if ( fsamp <= 0. )
 		throw Core::ValueException("Sampling frequency must be positive");
+
 	_fsamp  = fsamp;
 	_numSTA = int(_lenSTA*fsamp+0.5);
 	_numLTA = int(_lenLTA*fsamp+0.5);
@@ -76,35 +80,40 @@ void STALTA<TYPE>::reset() {
 
 
 template<typename TYPE>
-void STALTA<TYPE>::apply(int ndata, TYPE *data) {
-	double normLTA = 1./_numLTA;
-	double normSTA = 1./_numSTA;
+void STALTA<TYPE>::apply(int n, TYPE *inout) {
+	double normLTA = 1. / _numLTA;
+	double normSTA = 1. / _numSTA;
 
-	for ( int i = 0; i < ndata; ++i, ++_sampleCount ) {
-		double current = FABS(data[i]);
+	for ( int i = 0; i < n; ++i, ++_sampleCount ) {
+		double current = std::abs(inout[i]);
 
 		if ( _sampleCount < _numSTA ) {
-			normSTA = 1./(_sampleCount+1);
-			_STA = (_STA*_sampleCount + current)*normSTA;
+			normSTA = 1. / (_sampleCount + 1);
+			_STA = (_STA * _sampleCount + current) * normSTA;
 		}
 		else
-			_STA += (current - _STA)*normSTA;
+			_STA += (current - _STA) * normSTA;
 
 		if ( _sampleCount < _numLTA ) {
-			normLTA = 1./(_sampleCount+1);
-			_LTA = (_LTA*_sampleCount + current)*normLTA;
+			normLTA = 1. / (_sampleCount + 1);
+			_LTA = (_LTA * _sampleCount + current) * normLTA;
 		}
 		else {
 			// Normally we would expect:
 			// _LTA += (current - _LTA)*normLTA;
 			// But this is a little smoother and
 			// with a slightly delayed LTA:
-			_LTA += (_STA - _LTA)*normLTA;
+			_LTA += (_STA - _LTA) * normLTA;
 		}
 
-		// During the initial _numSTA samples, _STA and _LTA
-		// are identical, so we skip the division here.
-		data[i] = (TYPE) (_sampleCount < _numSTA ? 1 : _STA/_LTA);
+		if ( _LTA < std::numeric_limits<double>::epsilon() ) {
+			inout[i] = static_cast<TYPE>(_STA * 1e6);
+		}
+		else {
+			// During the initial _numSTA samples, _STA and _LTA
+			// are identical, so we skip the division here.
+			inout[i] = static_cast<TYPE>(_sampleCount < _numSTA ? 1 : _STA / _LTA);
+		}
 	}
 }
 
@@ -137,9 +146,10 @@ template<typename TYPE>
 void STALTA2<TYPE>::setSamplingFrequency(double fsamp) {
 	if ( fsamp <= 0. )
 		throw Core::ValueException("Sampling frequency must be positive");
+
 	_fsamp  = fsamp;
-	_numSTA = int(_lenSTA*_fsamp+0.5);
-	_numLTA = int(_lenLTA*_fsamp+0.5);
+	_numSTA = static_cast<int>(_lenSTA * _fsamp + 0.5);
+	_numLTA = static_cast<int>(_lenLTA * _fsamp + 0.5);
 	reset();
 }
 
@@ -167,39 +177,44 @@ void STALTA2<TYPE>::reset() {
 
 
 template<typename TYPE>
-void STALTA2<TYPE>::apply(int ndata, TYPE *data) {
-	double normLTA = 1./_numLTA;
-	double normSTA = 1./_numSTA;
+void STALTA2<TYPE>::apply(int n, TYPE *inout) {
+	double normLTA = 1. / _numLTA;
+	double normSTA = 1. / _numSTA;
 
-	for ( int i = 0; i < ndata; ++i, ++_sampleCount ) {
-		double current = FABS(data[i]);
+	for ( int i = 0; i < n; ++i, ++_sampleCount ) {
+		double current = std::abs(inout[i]);
 
 		if ( _sampleCount < _numSTA ) {
-			normSTA = 1./(_sampleCount+1);
-			_STA = (_STA*_sampleCount + current)*normSTA;
+			normSTA = 1. / (_sampleCount+1);
+			_STA = (_STA * _sampleCount + current) * normSTA;
 		}
 		else
-			_STA += (current - _STA)*normSTA;
+			_STA += (current - _STA) * normSTA;
 
 		if ( _sampleCount < _numLTA ) {
-			normLTA = 1./(_sampleCount+1);
-			_LTA = (_LTA*_sampleCount + current)*normLTA;
+			normLTA = 1. / (_sampleCount + 1);
+			_LTA = (_LTA * _sampleCount + current) * normLTA;
 		}
 		else {
 			// Normally we would expect:
 			// _LTA += (current - _LTA)*normLTA;
 			// But this is a little smoother and
 			// with a slightly delayed LTA:
-			_LTA += (_STA - _LTA)*normLTA*_updateLTA;
+			_LTA += (_STA - _LTA) * normLTA * _updateLTA;
 		}
 
-		// During the initial _numSTA samples, _STA and _LTA
-		// are identical, so we skip the division here.
-		data[i] = (TYPE) (_sampleCount < _numSTA ? 1 : _STA/_LTA);
+		if ( _LTA < std::numeric_limits<double>::epsilon() ) {
+			inout[i] = static_cast<TYPE>(_STA * 1e6);
+		}
+		else {
+			// During the initial _numSTA samples, _STA and _LTA
+			// are identical, so we skip the division here.
+			inout[i] = static_cast<TYPE>(_sampleCount < _numSTA ? 1 : _STA / _LTA);
+		}
 
-		if ( (_updateLTA > 0.) && (data[i] > _eventOn) )
+		if ( (_updateLTA > 0.) && (inout[i] > _eventOn) )
 			_updateLTA = 0.;
-		else if ( (_updateLTA < 1.) && (data[i] < _eventOff) )
+		else if ( (_updateLTA < 1.) && (inout[i] < _eventOff) )
 			_updateLTA = 1.;
 	}
 }
@@ -229,9 +244,10 @@ template<typename TYPE>
 void STALTA_Classic<TYPE>::setSamplingFrequency(double fsamp) {
 	if ( fsamp <= 0. )
 		throw Core::ValueException("Sampling frequency must be positive");
+
 	_fsamp  = fsamp;
-	_numSTA = int(_lenSTA*fsamp+0.5);
-	_numLTA = int(_lenLTA*fsamp+0.5);
+	_numSTA = static_cast<int>(_lenSTA * fsamp + 0.5);
+	_numLTA = static_cast<int>(_lenLTA * fsamp + 0.5);
 	reset();
 }
 
@@ -260,9 +276,9 @@ void STALTA_Classic<TYPE>::reset() {
 
 
 template <typename TYPE>
-void STALTA_Classic<TYPE>::apply(int ndata, TYPE *data) {
-	for ( int i = 0; i < ndata; ++i, ++_sampleCount ) {
-		double current = FABS(data[i]);
+void STALTA_Classic<TYPE>::apply(int n, TYPE *inout) {
+	for ( int i = 0; i < n; ++i, ++_sampleCount ) {
+		double current = std::abs(inout[i]);
 
 		if ( _sampleCount < _numSTA ) {
 			_STA += current;
@@ -286,9 +302,14 @@ void STALTA_Classic<TYPE>::apply(int ndata, TYPE *data) {
 			_lta_buffer[k] = current;
 		}
 
-		data[i] = (TYPE) (
-			(_STA/_sta_buffer.size()) /
-			(_LTA/_lta_buffer.size()) );
+		if ( _LTA < std::numeric_limits<double>::epsilon() ) {
+			inout[i] = static_cast<TYPE>(_STA / _sta_buffer.size() * 1e6);
+		}
+		else {
+			inout[i] = static_cast<TYPE> (
+				(_STA / _sta_buffer.size()) / (_LTA / _lta_buffer.size())
+			);
+		}
 	}
 }
 
