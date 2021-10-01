@@ -4735,6 +4735,8 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 	char phase = Util::getShortPhaseName(arrival->phase().code());
 	if ( phase == 'S' )
 		_residuals->setValueSymbol(id, DiagramWidget::Rectangle);
+	else if ( phase == 'L' or phase == 'R' )
+		_residuals->setValueSymbol(id, DiagramWidget::Triangle);
 	else
 		_residuals->setValueSymbol(id, DiagramWidget::Circle);
 
