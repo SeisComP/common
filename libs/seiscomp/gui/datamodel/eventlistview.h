@@ -101,6 +101,8 @@ class SC_GUI_API EventListView : public QWidget {
 			OPT(float)               minDepth, maxDepth;
 			OPT(float)               minMagnitude, maxMagnitude;
 			std::string              eventID;
+
+			bool isNull() const;
 		};
 
 
