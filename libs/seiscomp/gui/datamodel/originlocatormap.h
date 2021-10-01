@@ -33,11 +33,18 @@
 namespace Seiscomp {
 
 namespace DataModel {
+
 DEFINE_SMARTPOINTER(Station);
+
 }
 
 namespace Gui {
 
+namespace Map {
+
+class AnnotationLayer;
+
+}
 
 class OriginSymbol;
 
@@ -68,16 +75,24 @@ class SC_GUI_API OriginLocatorMap : public MapWidget {
 
 		void setOriginCreationEnabled(bool enable);
 
-		QString stationSymbolToolTip() const;
+		void addLayer(Map::Layer *layer);
+
 
 	public slots:
 		void setDrawStations(bool);
 		void setDrawStationLines(bool);
+		void setDrawStationAnnotations(bool);
 		void setWaveformPropagation(bool);
 
 
 	signals:
+#ifndef Q_MOC_RUN
+	// This is in particular for Qt 4 where signals are protected by default.
+	public:
+#endif
 		void hoverArrival(int id);
+
+	signals:
 		void clickedArrival(int id);
 		void arrivalChanged(int id, bool state);
 		void clickedStation(const std::string &net, const std::string &code);
@@ -87,51 +102,26 @@ class SC_GUI_API OriginLocatorMap : public MapWidget {
 
 
 	protected:
-		void drawCustomLayer(QPainter*);
-		void mouseMoveEvent(QMouseEvent*);
 		void mousePressEvent(QMouseEvent*);
 		void mouseDoubleClickEvent(QMouseEvent*);
 		void contextMenuEvent(QContextMenuEvent*);
+
 
 	private:
 		void addArrival();
 		void setStationState(int i, bool state);
 
+
 	private:
-		struct StationEntry {
-			StationEntry()
-			 : validLocation(false), isActive(false), isArrival(false),
-			   arrivalId(-1) {}
-
-			StationEntry(QPointF loc, const std::string &nc,
-			             const std::string &sc, bool valid)
-			 : location(loc), validLocation(valid),
-			   isActive(false), isArrival(false),
-			   net(nc), code(sc), arrivalId(-1) {}
-
-			QPointF location;
-			bool validLocation;
-			bool isActive;
-			bool isArrival;
-			std::string net;
-			std::string code;
-			QColor color;
-			int arrivalId;
-		};
-
-		DataModel::OriginPtr _origin;
-		OriginSymbol *_originSymbol;
-		bool _drawStations;
-		bool _drawStationsLines;
-		bool _interactive;
-		bool _waveformPropagation;
-		bool _enabledCreateOrigin;
-		QVector<StationEntry> _stations;
-		QVector<int> _arrivals;
+		DataModel::OriginPtr       _origin;
+		OriginSymbol              *_originSymbol;
+		Map::Layer                *_symbolLayer;
+		Map::AnnotationLayer      *_annotationLayer;
+		bool                       _waveformPropagation{false};
+		bool                       _enabledCreateOrigin{false};
+		QVector<int>               _arrivals;
 		std::map<std::string, int> _stationCodes;
-		int _lastSymbolSize;
-		int _hoverId;
-		double _stationsMaxDist;
+		double                     _stationsMaxDist{-1};
 };
 
 

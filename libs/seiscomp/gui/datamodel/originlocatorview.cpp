@@ -3388,7 +3388,7 @@ void OriginLocatorView::setMagnitudeCalculationEnabled(bool e) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MapWidget* OriginLocatorView::map() const {
+OriginLocatorMap *OriginLocatorView::map() const {
 	return _map;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3720,6 +3720,21 @@ void OriginLocatorView::drawStations(bool enable) {
 
 	if ( _toolMap ) {
 		_toolMap->setDrawStations(enable);
+		_toolMap->update();
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::drawStationAnnotations(bool enable) {
+	_map->setDrawStationAnnotations(enable);
+	_map->update();
+
+	if ( _toolMap ) {
+		_toolMap->setDrawStationAnnotations(enable);
 		_toolMap->update();
 	}
 }

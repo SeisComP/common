@@ -32,14 +32,16 @@
 #include <seiscomp/gui/datamodel/advancedoriginsymbol.h>
 #include <seiscomp/gui/datamodel/ttdecorator.h>
 #include <seiscomp/gui/core/application.h>
-#include <seiscomp/gui/map/projection.h>
+#include <seiscomp/gui/map/layers/annotationlayer.h>
 
 #include <QMenu>
+
 
 #ifdef WIN32
 #undef min
 #undef max
 #endif
+
 
 using namespace Seiscomp::Core;
 using namespace Seiscomp::Client;
@@ -54,17 +56,170 @@ namespace Gui {
 namespace {
 
 
-class StationSymbolLayer : public Map::Layer {
-	public:
-		StationSymbolLayer(OriginLocatorMap *map)
-		: Map::Layer(map) {}
+struct StationLayer : Map::Layer {
+	StationLayer(OriginLocatorMap *map)
+	: Map::Layer(map) {}
 
-	public:
-		bool isInside(const QMouseEvent *, const QPointF &) override {
-			setToolTip(static_cast<OriginLocatorMap*>(parent())->stationSymbolToolTip());
-			return !toolTip().isEmpty();
+	void setVisible(bool v) {
+		Map::Layer::setVisible(v);
+		if ( !v ) {
+			for ( Symbol &entry : stations ) {
+				if ( entry.annotation )
+					entry.annotation->visible = false;
+			}
 		}
+		else {
+			for ( Symbol &entry : stations ) {
+				if ( entry.annotation )
+					entry.annotation->visible = entry.visible;
+			}
+		}
+	}
+
+	void calculateMapPosition(const Map::Canvas *canvas) override {
+		for ( Symbol &entry : stations ) {
+			if ( !entry.validLocation ) {
+				entry.visible = false;
+			}
+			else {
+				entry.visible = canvas->projection()->project(
+					entry.position, entry.location
+				);
+			}
+
+			if ( entry.annotation ) {
+				entry.annotation->visible = entry.visible;
+			}
+		}
+	}
+
+	bool isInside(const QMouseEvent *event, const QPointF &) override {
+		int tmpHoverId = -1;
+		int stationHalfSize = SCScheme.map.stationSize / 2;
+		for ( int i = 0; i < stations.count(); ++i ) {
+			if ( !stations[i].visible ) continue;
+			if ( abs(stations[i].position.x() - event->x()) <= stationHalfSize &&
+			     abs(stations[i].position.y() - event->y()) <= stationHalfSize ) {
+				tmpHoverId = i;
+				break;
+			}
+		}
+
+		if ( tmpHoverId != hoverId ) {
+			hoverId = tmpHoverId;
+			if ( hoverId != -1 ) {
+				int arrivalId = stations[hoverId].arrivalId;
+				static_cast<OriginLocatorMap*>(parent())->hoverArrival(arrivalId);
+				setToolTip(static_cast<OriginLocatorMap*>(parent())->toolTip());
+				if ( toolTip().isEmpty() ) {
+					if ( !stations[hoverId].net.empty()
+					  && !stations[hoverId].code.empty() ) {
+						setToolTip((stations[hoverId].net + "." + stations[hoverId].code).c_str());
+					}
+				}
+			}
+			else {
+				setToolTip(QString());
+				static_cast<OriginLocatorMap*>(parent())->hoverArrival(-1);
+			}
+		}
+
+		return hoverId != -1;
+	}
+
+	void draw(const Map::Canvas *canvas, QPainter &p) override {
+		int size = SCScheme.map.stationSize;
+
+		QPoint annotationOffset(0, -size);
+
+		if ( drawStationsLines && canvas->symbolCollection()->count() > 0 ) {
+			const Map::Symbol *originSymbol = (*canvas->symbolCollection()->begin());
+			int cutOff = originSymbol->size().width();
+
+			if ( cutOff ) {
+				p.setClipping(true);
+				p.setClipRegion(
+					QRegion(
+						p.window()
+					)
+					-
+					QRegion(
+						QRect(
+							originSymbol->pos().x() - cutOff / 2,
+							originSymbol->pos().y() - cutOff / 2,
+							cutOff, cutOff
+						),
+						QRegion::Ellipse
+					)
+				);
+			}
+
+			p.setPen(SCScheme.colors.map.lines);
+			for ( Symbol &s : stations ) {
+				if ( !s.validLocation || !s.isArrival ) continue;
+				if ( !s.isActive ) continue;
+				canvas->drawLine(p, originSymbol->location(), s.location);
+			}
+
+			if ( cutOff )
+				p.setClipping(false);
+		}
+
+		p.setPen(SCScheme.colors.map.outlines);
+		for ( int i = stations.count()-1; i >= 0; --i ) {
+			if ( !stations[i].visible ) continue;
+			if ( !interactive && !stations[i].isActive ) continue;
+			p.setBrush(
+				stations[i].isArrival?
+					stations[i].isActive?stations[i].color:SCScheme.colors.arrivals.disabled
+				:
+					stations[i].isActive?SCScheme.colors.stations.idle:Qt::gray);
+			p.drawEllipse(
+				stations[i].position.x() - size / 2,
+				stations[i].position.y() - size / 2,
+				size, size
+			);
+
+			if ( stations[i].annotation ) {
+				stations[i].annotation->updateLabelRect(p, stations[i].position + annotationOffset);
+			}
+		}
+	}
+
+
+	struct Symbol {
+		Symbol() = default;
+
+		Symbol(QPointF loc, const std::string &nc,
+		       const std::string &sc, bool valid,
+		       Map::AnnotationItem *annotation = nullptr)
+		: location(loc), validLocation(valid)
+		, isActive(false), isArrival(false)
+		, net(nc), code(sc), arrivalId(-1)
+		, annotation(annotation) {}
+
+		QPointF              location;
+		bool                 validLocation{false};
+		bool                 isActive{false};
+		bool                 isArrival{false};
+		std::string          net;
+		std::string          code;
+		QColor               color;
+		int                  arrivalId{-1};
+		Map::AnnotationItem *annotation{nullptr};
+
+		QPoint               position;
+		bool                 visible;
+	};
+
+	QVector<Symbol> stations;
+	bool            interactive{true};
+	bool            drawStationsLines{true};
+	int             hoverId{-1};
 };
+
+
+#define SYMBOLLAYER static_cast<StationLayer*>(_symbolLayer)
 
 
 }
@@ -77,16 +232,12 @@ class StationSymbolLayer : public Map::Layer {
 OriginLocatorMap::OriginLocatorMap(const MapsDesc &maps,
                                    QWidget *parent, Qt::WindowFlags f)
 : MapWidget(maps, parent, f)
-, _origin(nullptr), _drawStations(false)
-, _drawStationsLines(true), _interactive(true)
-{
-	canvas().addLayer(new StationSymbolLayer(this));
-	_originSymbol = nullptr;
-	_lastSymbolSize = 0;
-	_waveformPropagation = false;
-	_enabledCreateOrigin = false;
-	_hoverId = -1;
-	_stationsMaxDist = -1;
+, _origin(nullptr) {
+	_symbolLayer = new StationLayer(this);
+	canvas().addLayer(_symbolLayer);
+	_annotationLayer = new Map::AnnotationLayer(this, new Map::Annotations(this));
+	_annotationLayer->setVisible(false);
+	canvas().addLayer(_annotationLayer);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -96,111 +247,13 @@ OriginLocatorMap::OriginLocatorMap(const MapsDesc &maps,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 OriginLocatorMap::OriginLocatorMap(Map::ImageTree* mapTree,
                                    QWidget *parent, Qt::WindowFlags f)
-: MapWidget(mapTree, parent, f), _origin(nullptr)
-, _drawStations(false), _drawStationsLines(true)
-, _interactive(true)
-{
-	canvas().addLayer(new StationSymbolLayer(this));
-	_originSymbol = nullptr;
-	_lastSymbolSize = 0;
-	_waveformPropagation = false;
-	_enabledCreateOrigin = false;
-	_hoverId = -1;
-	_stationsMaxDist = -1;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void OriginLocatorMap::drawCustomLayer(QPainter *painter) {
-	if ( _origin ) {
-		QPainter &p(*painter);
-		p.save();
-
-		QPointF originLocationF(_origin->longitude(), _origin->latitude());
-
-		if ( _drawStations ) {
-			if ( _drawStationsLines ) {
-				int cutOff = 0;
-
-				QPoint originLocation;
-				if ( canvas().projection()->project(originLocation, originLocationF) ) {
-					if ( canvas().symbolCollection()->count() > 0 )
-						cutOff = (*canvas().symbolCollection()->begin())->size().width();
-
-					if ( cutOff ) {
-						p.setClipping(true);
-						p.setClipRegion(QRegion(rect()) -
-						                QRegion(QRect(originLocation.x() - cutOff/2, originLocation.y() - cutOff/2,
-						                              cutOff, cutOff), QRegion::Ellipse));
-					}
-				}
-
-				p.setPen(SCScheme.colors.map.lines);
-				for ( QVector<StationEntry>::iterator it = _stations.begin(); it != _stations.end(); ++it ) {
-					if ( !(*it).validLocation || !(*it).isArrival ) continue;
-					if ( !(*it).isActive ) continue;
-					canvas().drawLine(p, originLocationF, (*it).location);
-				}
-
-				if ( cutOff )
-					p.setClipping(false);
-			}
-
-			p.setPen(SCScheme.colors.map.outlines);
-			for ( int i = _stations.count()-1; i >= 0; --i ) {
-				if ( !_stations[i].validLocation ) continue;
-				if ( !_interactive && !_stations[i].isActive ) continue;
-				p.setBrush(
-					_stations[i].isArrival?
-						_stations[i].isActive?_stations[i].color:SCScheme.colors.arrivals.disabled
-					:
-						_stations[i].isActive?SCScheme.colors.stations.idle:Qt::gray);
-				QPoint pp;
-				if ( canvas().projection()->project(pp, _stations[i].location) ) {
-					int size = SCScheme.map.stationSize;
-					p.drawEllipse(pp.x()-size/2, pp.y()-size/2, size, size);
-				}
-			}
-		}
-
-
-		/*
-		#define STAR_POINTS 4
-		#define STAR_RADIUS 9
-		#define STAR_INNER_RADIUS 4
-
-		static QPoint starPoints[STAR_POINTS*2];
-
-		for ( int i = 0; i < STAR_POINTS; ++i ) {
-			starPoints[i*2] = QPoint((int)(STAR_RADIUS*sin((i*(360.0/STAR_POINTS))*M_PI/180.0))+originLocation.x(),
-			                         -(int)(STAR_RADIUS*cos((i*(360.0/STAR_POINTS))*M_PI/180.0))+originLocation.y());
-			starPoints[i*2+1] = QPoint((int)(STAR_INNER_RADIUS*sin((i*360.0+180.0)/STAR_POINTS*M_PI/180.0))+originLocation.x(),
-			                           -(int)(STAR_INNER_RADIUS*cos((i*360.0+180.0)/STAR_POINTS*M_PI/180.0))+originLocation.y());
-		}
-		*/
-
-		/* Drawing of origin symbol will be handled by the MapWidget
-		p.setPen(Qt::white);
-		p.setBrush(Qt::magenta);
-		//p.drawPolygon(starPoints, STAR_POINTS*2);
-		p.drawEllipse(originLocation.x()-5, originLocation.y()-5, 10, 10);
-		*/
-
-		/*
-		#undef STAR_POINTS
-		#undef STAR_RADIUS
-		*/
-
-		p.restore();
-	}
-
-	/* --- DEBUG OUTPUT ---
-	p.setPen(SCScheme.colors.map.lines);
-	drawLine(p, QPointF(5, 50), QPointF(-1, 50));
-	*/
+: MapWidget(mapTree, parent, f)
+, _origin(nullptr) {
+	_symbolLayer = new StationLayer(this);
+	canvas().addLayer(_symbolLayer);
+	_annotationLayer = new Map::AnnotationLayer(this, new Map::Annotations(this));
+	_annotationLayer->setVisible(false);
+	canvas().addLayer(_annotationLayer);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -236,59 +289,17 @@ void OriginLocatorMap::contextMenuEvent(QContextMenuEvent *e) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void OriginLocatorMap::mouseMoveEvent(QMouseEvent *event) {
-	int hoverId = -1;
-	int stationHalfSize = SCScheme.map.stationSize/2;
-	for ( int i = 0; i < _stations.count(); ++i ) {
-		QPoint pp;
-		if ( !canvas().projection()->project(pp, _stations[i].location) ) continue;
-		if ( abs(pp.x() - event->x()) <= stationHalfSize &&
-		     abs(pp.y() - event->y()) <= stationHalfSize ) {
-			hoverId = i;
-			break;
-		}
-	}
-
-	if ( hoverId != _hoverId ) {
-		_hoverId = hoverId;
-		if ( _hoverId != -1 ) {
-			int arrivalId = _stations[_hoverId].arrivalId;
-			hoverArrival(arrivalId);
-		}
-		else {
-			hoverArrival(-1);
-		}
-	}
-
-	MapWidget::mouseMoveEvent(event);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorMap::mouseDoubleClickEvent(QMouseEvent *event) {
-	if ( (event->button() == Qt::LeftButton) && _drawStations && _interactive ) {
+	if ( (event->button() == Qt::LeftButton) && SYMBOLLAYER->isVisible() && SYMBOLLAYER->interactive ) {
 		if ( event->modifiers() == Qt::NoModifier ) {
-			int stationHalfSize = SCScheme.map.stationSize/2;
-			for ( int i = 0; i < _stations.count(); ++i ) {
-				QPoint pp;
-				if ( !canvas().projection()->project(pp, _stations[i].location) ) continue;
-				if ( abs(pp.x() - event->x()) <= stationHalfSize &&
-					abs(pp.y() - event->y()) <= stationHalfSize ) {
-					if ( _stations[i].isArrival ) {
-						setArrivalState(_stations[i].arrivalId, !_stations[i].isActive);
-						emit arrivalChanged(_stations[i].arrivalId, _stations[i].isActive);
-					}
-					/*
-					else {
-						setStationState(i, !_stations[i].isActive);
-						emit stationChanged(_stations[i].code, _stations[i].isActive);
-					}
-					*/
-					return;
+			if ( SYMBOLLAYER->hoverId != -1 ) {
+				StationLayer::Symbol &symbol = SYMBOLLAYER->stations[SYMBOLLAYER->hoverId];
+				if ( symbol.isArrival ) {
+					setArrivalState(symbol.arrivalId, !symbol.isActive);
+					emit arrivalChanged(symbol.arrivalId, symbol.isActive);
 				}
+
+				return;
 			}
 		}
 	}
@@ -302,20 +313,18 @@ void OriginLocatorMap::mouseDoubleClickEvent(QMouseEvent *event) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorMap::mousePressEvent(QMouseEvent *event) {
-	if ( (event->button() == Qt::LeftButton) && _drawStations && _interactive ) {
+	if ( (event->button() == Qt::LeftButton)
+	   && SYMBOLLAYER->isVisible()
+	   && SYMBOLLAYER->interactive ) {
 		if ( event->modifiers() == Qt::NoModifier ) {
-			int stationHalfSize = SCScheme.map.stationSize/2;
-			for ( int i = 0; i < _stations.count(); ++i ) {
-				QPoint pp;
-				if ( !canvas().projection()->project(pp, _stations[i].location) ) continue;
-				if ( abs(pp.x() - event->x()) <= stationHalfSize &&
-					abs(pp.y() - event->y()) <= stationHalfSize ) {
-					if ( _stations[i].isArrival )
-						emit clickedArrival(_stations[i].arrivalId);
-					else
-						emit clickedStation(_stations[i].net, _stations[i].code);
-					return;
-				}
+			if ( SYMBOLLAYER->hoverId != -1 ) {
+				StationLayer::Symbol &symbol = SYMBOLLAYER->stations[SYMBOLLAYER->hoverId];
+				if ( symbol.isArrival )
+					emit clickedArrival(symbol.arrivalId);
+				else
+					emit clickedStation(symbol.net, symbol.code);
+
+				return;
 			}
 		}
 	}
@@ -343,7 +352,7 @@ void OriginLocatorMap::setStationsMaxDist(double d) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorMap::setStationsInteractive(bool e) {
-	_interactive = e;
+	SYMBOLLAYER->interactive = e;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -354,9 +363,10 @@ void OriginLocatorMap::setStationsInteractive(bool e) {
 void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 	_origin = o;
 	_originSymbol = nullptr;
+	SYMBOLLAYER->stations.clear();
 	canvas().symbolCollection()->clear();
+	_annotationLayer->annotations()->clear();
 	_arrivals.clear();
-	_stations.clear();
 	_stationCodes.clear();
 
 	if ( !_origin ) return;
@@ -420,11 +430,16 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 				);
 
 				std::string stationCode = p->waveformID().networkCode() + "." + p->waveformID().stationCode();
-				_stations.push_back(StationEntry(QPointF(loc.longitude,loc.latitude),
-				                                 p->waveformID().networkCode(),
-				                                 p->waveformID().stationCode(),
-				                                 true));
-				_stationCodes[stationCode] = _stations.size()-1;
+				SYMBOLLAYER->stations.push_back(
+					StationLayer::Symbol(
+						QPointF(loc.longitude,loc.latitude),
+						p->waveformID().networkCode(),
+						p->waveformID().stationCode(),
+						true
+					)
+				);
+				SYMBOLLAYER->stations.back().annotation = _annotationLayer->annotations()->add(stationCode.c_str());
+				_stationCodes[stationCode] = SYMBOLLAYER->stations.size()-1;
 				addArrival();
 				foundStation = true;
 
@@ -455,23 +470,31 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 				if ( lat < 0 ) lat += 180.0;
 				lat -= 90.0;
 
-				_stations.push_back(StationEntry(QPointF(lon,lat), "", "", true));
+				SYMBOLLAYER->stations.push_back(
+					StationLayer::Symbol(
+						QPointF(lon,lat), "", "", true
+					)
+				);
 				addArrival();
 			}
 			catch ( ... ) {
-				_stations.push_back(StationEntry(QPointF(0,0), "", "", false));
+				SYMBOLLAYER->stations.push_back(
+					StationLayer::Symbol(
+						QPointF(0,0), "", "", false
+					)
+				);
 				addArrival();
 			}
 		}
 
 		try {
-			_stations.back().isActive = arrival->weight() > 0.0;
+			SYMBOLLAYER->stations.back().isActive = arrival->weight() > 0.0;
 		}
 		catch ( ... ) {
-			_stations.back().isActive = true;
+			SYMBOLLAYER->stations.back().isActive = true;
 		}
 
-		_stations.back().color = itemColor;
+		SYMBOLLAYER->stations.back().color = itemColor;
 	}
 
 	DataModel::Inventory *inv = Client::Inventory::Instance()->inventory();
@@ -510,16 +533,23 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 				if ( _stationCodes.find(stationCode) != _stationCodes.end() )
 					continue;
 
-				_stations.push_back(
-					StationEntry(
+				SYMBOLLAYER->stations.push_back(
+					StationLayer::Symbol(
 						QPointF(sta->longitude(),sta->latitude()),
 						net->code(), sta->code(), true
 					)
 				);
+				SYMBOLLAYER->stations.back().annotation = _annotationLayer->annotations()->add(stationCode.c_str());
 
-				_stations.back().isActive = true;
-				_stationCodes[stationCode] = _stations.size()-1;
+				SYMBOLLAYER->stations.back().isActive = true;
+				_stationCodes[stationCode] = SYMBOLLAYER->stations.size()-1;
 			}
+		}
+	}
+
+	for ( StationLayer::Symbol &symbol : SYMBOLLAYER->stations ) {
+		if ( symbol.annotation ) {
+			symbol.annotation->highlighted = symbol.isActive && symbol.isArrival;
 		}
 	}
 }
@@ -530,9 +560,9 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorMap::addArrival() {
-	_stations.back().arrivalId = _arrivals.size();
-	_stations.back().isArrival = true;
-	_arrivals.push_back(_stations.size()-1);
+	SYMBOLLAYER->stations.back().arrivalId = _arrivals.size();
+	SYMBOLLAYER->stations.back().isArrival = true;
+	_arrivals.push_back(SYMBOLLAYER->stations.size()-1);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -541,7 +571,7 @@ void OriginLocatorMap::addArrival() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorMap::setDrawStations(bool draw) {
-	_drawStations = draw;
+	SYMBOLLAYER->setVisible(draw);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -550,9 +580,9 @@ void OriginLocatorMap::setDrawStations(bool draw) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorMap::setDrawStationLines(bool draw) {
-	if ( _drawStationsLines == draw ) return;
+	if ( SYMBOLLAYER->drawStationsLines == draw ) return;
 
-	_drawStationsLines = draw;
+	SYMBOLLAYER->drawStationsLines = draw;
 	update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -561,8 +591,17 @@ void OriginLocatorMap::setDrawStationLines(bool draw) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorMap::setDrawStationAnnotations(bool draw) {
+	_annotationLayer->setVisible(draw);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginLocatorMap::drawStations() const {
-	return _drawStations;
+	return SYMBOLLAYER->isVisible();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -606,13 +645,16 @@ void OriginLocatorMap::setArrivalState(int id, bool state) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorMap::setStationState(int i, bool state) {
-	if ( _stations[i].isActive == state ) return;
-	_stations[i].isActive = state;
-	if ( _drawStations ) {
-		QPoint p;
-		if ( canvas().projection()->project(p, _stations[i].location) )
+	if ( SYMBOLLAYER->stations[i].isActive == state ) return;
+	SYMBOLLAYER->stations[i].isActive = state;
+	if ( SYMBOLLAYER->isVisible() ) {
+		if ( SYMBOLLAYER->stations[i].visible ) {
+			if ( SYMBOLLAYER->stations[i].annotation ) {
+				SYMBOLLAYER->stations[i].annotation->highlighted = state;
+			}
 			//update(p.x()-5, p.y()-5, 10, 10);
 			update();
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -630,15 +672,8 @@ void OriginLocatorMap::setOriginCreationEnabled(bool enable) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QString OriginLocatorMap::stationSymbolToolTip() const {
-	if ( (_hoverId != -1)
-	  && !_stations[_hoverId].net.empty()
-	  && !_stations[_hoverId].code.empty() ) {
-		return (_stations[_hoverId].net + "." + _stations[_hoverId].code).c_str();
-	}
-	else {
-		return QString();
-	}
+void OriginLocatorMap::addLayer(Map::Layer *layer) {
+	canvas().insertLayerBefore(_annotationLayer, layer);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

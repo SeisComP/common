@@ -1304,7 +1304,6 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery* reader) {
 	hboxLayout->setMargin(0);
 	if ( _map ) {
 		_map->setMouseTracking(true);
-		connect(_map, SIGNAL(hoverMagnitude(int)), this, SLOT(hoverMagnitude(int)));
 		hboxLayout->addWidget(_map);
 
 		try {
@@ -2957,6 +2956,16 @@ void MagnitudeView::setMagnitudeTypeSelectionEnabled(bool f) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::drawStations(bool enable) {
 	_map->setDrawStations(enable);
+	_map->update();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MagnitudeView::drawStationAnnotations(bool enable) {
+	_map->setDrawStationAnnotations(enable);
 	_map->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

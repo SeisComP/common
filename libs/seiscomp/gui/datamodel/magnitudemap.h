@@ -41,6 +41,11 @@ DEFINE_SMARTPOINTER(Station);
 
 namespace Gui {
 
+namespace Map {
+
+class AnnotationLayer;
+
+}
 
 class SC_GUI_API MagnitudeMap : public MapWidget {
 	Q_OBJECT
@@ -69,13 +74,13 @@ class SC_GUI_API MagnitudeMap : public MapWidget {
 
 		void addStationMagnitude(DataModel::StationMagnitude* staMag, int index);
 
-		QString stationSymbolToolTip() const;
 
 	public slots:
 		void setDrawStations(bool);
+		void setDrawStationAnnotations(bool);
+
 
 	signals:
-		void hoverMagnitude(int id);
 		void clickedMagnitude(int id);
 		void clickedStation(const std::string &net, const std::string &code);
 		void magnitudeChanged(int id, bool state);
@@ -83,12 +88,9 @@ class SC_GUI_API MagnitudeMap : public MapWidget {
 
 
 	protected:
-		void paintEvent(QPaintEvent*);
-		void drawCustomLayer(QPainter*);
-		void drawLines(QPainter&);
-		void mouseMoveEvent(QMouseEvent *);
 		void mousePressEvent(QMouseEvent*);
 		void mouseDoubleClickEvent(QMouseEvent*);
+
 
 	private:
 		void addMagnitude(int stationId, int magId);
@@ -98,38 +100,16 @@ class SC_GUI_API MagnitudeMap : public MapWidget {
 		int findStation(const std::string& stationCode) const;
 		int addStation(const std::string &net, const std::string &sta);
 
+
 	private:
-		struct StationEntry {
-			StationEntry()
-			 : validLocation(false), isActive(false), isMagnitude(false), magnitudeId(-1) {}
-
-			StationEntry(QPointF loc, const std::string &nc,
-			             const std::string &sc, bool valid)
-			 : location(loc), validLocation(valid),
-			   isActive(false), isMagnitude(false),
-			   net(nc), code(sc), magnitudeId(-1) {}
-
-			QPointF location;
-			QColor color;
-			bool validLocation;
-			bool isActive;
-			bool isMagnitude;
-			std::string net;
-			std::string code;
-			double residual;
-			int magnitudeId;
-		};
-
-		DataModel::OriginPtr _origin;
-		DataModel::MagnitudePtr _magnitude;
-		bool _interactive;
-		bool _drawStations;
-		QVector<StationEntry> _stations;
-		QVector<int> _magnitudes;
+		DataModel::OriginPtr       _origin;
+		Map::Layer                *_symbolLayer;
+		Map::AnnotationLayer      *_annotationLayer;
+		DataModel::MagnitudePtr    _magnitude;
+		QVector<int>               _magnitudes;
 		std::map<std::string, int> _stationCodes;
-		int _lastSymbolSize;
-		int _hoverId;
-		double _stationsMaxDist;
+		int                        _hoverId{-1};
+		double                     _stationsMaxDist{-1};
 };
 
 

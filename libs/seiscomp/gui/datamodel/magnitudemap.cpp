@@ -33,9 +33,10 @@
 #include <seiscomp/math/math.h>
 #include <seiscomp/math/geo.h>
 
-#include <seiscomp/gui/datamodel/originsymbol.h>
+#include <seiscomp/gui/datamodel/advancedoriginsymbol.h>
 #include <seiscomp/gui/core/application.h>
-#include <seiscomp/gui/map/projection.h>
+#include <seiscomp/gui/map/layers/annotationlayer.h>
+
 
 #ifdef WIN32
 #undef min
@@ -56,17 +57,166 @@ namespace Gui {
 namespace {
 
 
-class StationSymbolLayer : public Map::Layer {
-	public:
-		StationSymbolLayer(MagnitudeMap *map)
-		: Map::Layer(map) {}
+struct StationLayer : Map::Layer {
+	StationLayer(MagnitudeMap *map)
+	: Map::Layer(map) {}
 
-	public:
-		bool isInside(const QMouseEvent *, const QPointF &) override {
-			setToolTip(static_cast<MagnitudeMap*>(parent())->stationSymbolToolTip());
-			return !toolTip().isEmpty();
+	void setVisible(bool v) {
+		Map::Layer::setVisible(v);
+		if ( !v ) {
+			for ( Symbol &entry : stations ) {
+				if ( entry.annotation )
+					entry.annotation->visible = false;
+			}
 		}
+		else {
+			for ( Symbol &entry : stations ) {
+				if ( entry.annotation )
+					entry.annotation->visible = entry.visible;
+			}
+		}
+	}
+
+	void calculateMapPosition(const Map::Canvas *canvas) override {
+		for ( Symbol &entry : stations ) {
+			if ( !entry.validLocation ) {
+				entry.visible = false;
+			}
+			else {
+				entry.visible = canvas->projection()->project(
+					entry.position, entry.location
+				);
+			}
+
+			if ( entry.annotation ) {
+				entry.annotation->visible = entry.visible;
+			}
+		}
+	}
+
+	bool isInside(const QMouseEvent *event, const QPointF &) override {
+		int tmpHoverId = -1;
+		int stationHalfSize = SCScheme.map.stationSize / 2;
+		for ( int i = 0; i < stations.count(); ++i ) {
+			if ( !stations[i].visible ) continue;
+			if ( abs(stations[i].position.x() - event->x()) <= stationHalfSize &&
+			     abs(stations[i].position.y() - event->y()) <= stationHalfSize ) {
+				tmpHoverId = i;
+				break;
+			}
+		}
+
+		if ( tmpHoverId != hoverId ) {
+			hoverId = tmpHoverId;
+			if ( hoverId != -1 ) {
+				if ( !stations[hoverId].net.empty()
+				  && !stations[hoverId].code.empty() ) {
+					setToolTip((stations[hoverId].net + "." + stations[hoverId].code).c_str());
+				}
+				else {
+					setToolTip(QString());
+				}
+			}
+			else {
+				setToolTip(QString());
+			}
+		}
+
+		return hoverId != -1;
+	}
+
+	void draw(const Map::Canvas *canvas, QPainter &p) override {
+		int size = SCScheme.map.stationSize;
+
+		QPoint annotationOffset(0, -size);
+
+		if ( canvas->symbolCollection()->count() > 0 ) {
+			const Map::Symbol *originSymbol = (*canvas->symbolCollection()->begin());
+			int cutOff = originSymbol->size().width();
+
+			if ( cutOff ) {
+				p.setClipping(true);
+				p.setClipRegion(
+					QRegion(
+						p.window()
+					)
+					-
+					QRegion(
+						QRect(
+							originSymbol->pos().x() - cutOff / 2,
+							originSymbol->pos().y() - cutOff / 2,
+							cutOff, cutOff
+						),
+						QRegion::Ellipse
+					)
+				);
+			}
+
+			p.setPen(SCScheme.colors.map.lines);
+			for ( Symbol &s : stations ) {
+				if ( !s.validLocation || !s.isMagnitude ) continue;
+				if ( !s.isActive ) continue;
+				canvas->drawLine(p, originSymbol->location(), s.location);
+			}
+
+			if ( cutOff )
+				p.setClipping(false);
+		}
+
+		p.setPen(SCScheme.colors.map.outlines);
+		for ( int i = stations.count()-1; i >= 0; --i ) {
+			if ( !stations[i].visible ) continue;
+			if ( !interactive && !stations[i].isActive ) continue;
+			p.setBrush(
+				stations[i].isMagnitude?
+					stations[i].isActive?stations[i].color:SCScheme.colors.magnitudes.disabled
+				:
+					stations[i].isActive?SCScheme.colors.stations.idle:Qt::gray);
+			p.drawEllipse(
+				stations[i].position.x() - size / 2,
+				stations[i].position.y() - size / 2,
+				size, size
+			);
+
+			if ( stations[i].annotation ) {
+				stations[i].annotation->updateLabelRect(p, stations[i].position + annotationOffset);
+			}
+		}
+	}
+
+
+	struct Symbol {
+		Symbol() = default;
+
+		Symbol(QPointF loc, const std::string &nc,
+		       const std::string &sc, bool valid,
+		       Map::AnnotationItem *annotation = nullptr)
+		: location(loc), validLocation(valid)
+		, net(nc), code(sc)
+		, annotation(annotation) {}
+
+		QPointF              location;
+		QColor               color;
+		bool                 validLocation{false};
+		bool                 isActive{false};
+		bool                 isMagnitude{false};
+		std::string          net;
+		std::string          code;
+		double               residual;
+		int                  magnitudeId{-1};
+		Map::AnnotationItem *annotation{nullptr};
+
+		QPoint               position;
+		bool                 visible{false};
+	};
+
+	QVector<Symbol> stations;
+	bool            interactive{true};
+	int             hoverId{-1};
 };
+
+
+#define SYMBOLLAYER static_cast<StationLayer*>(_symbolLayer)
 
 
 }
@@ -78,11 +228,12 @@ class StationSymbolLayer : public Map::Layer {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeMap::MagnitudeMap(const MapsDesc &maps,
                            QWidget *parent, Qt::WindowFlags f)
- : MapWidget(maps, parent, f), _origin(nullptr),
-   _interactive(true), _drawStations(false) {
-	canvas().addLayer(new StationSymbolLayer(this));
-	_lastSymbolSize = 0;
-	_stationsMaxDist = -1;
+: MapWidget(maps, parent, f) {
+	_symbolLayer = new StationLayer(this);
+	canvas().addLayer(_symbolLayer);
+	_annotationLayer = new Map::AnnotationLayer(this, new Map::Annotations(this));
+	_annotationLayer->setVisible(false);
+	canvas().addLayer(_annotationLayer);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -92,12 +243,12 @@ MagnitudeMap::MagnitudeMap(const MapsDesc &maps,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeMap::MagnitudeMap(Map::ImageTree* mapTree,
                            QWidget *parent, Qt::WindowFlags f)
- : MapWidget(mapTree, parent, f), _origin(nullptr),
-   _interactive(true), _drawStations(false) {
-	canvas().addLayer(new StationSymbolLayer(this));
-	_lastSymbolSize = 0;
-	_hoverId = -1;
-	_stationsMaxDist = -1;
+ : MapWidget(mapTree, parent, f) {
+	_symbolLayer = new StationLayer(this);
+	canvas().addLayer(_symbolLayer);
+	_annotationLayer = new Map::AnnotationLayer(this, new Map::Annotations(this));
+	_annotationLayer->setVisible(false);
+	canvas().addLayer(_annotationLayer);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -121,194 +272,17 @@ void MagnitudeMap::setStationsMaxDist(double maxDist) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MagnitudeMap::paintEvent(QPaintEvent* e) {
-	MapWidget::paintEvent(e);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MagnitudeMap::drawLines(QPainter& p) {
-	if ( _origin ) {
-		QPointF originLocationF(_origin->longitude(), _origin->latitude());
-		QPoint originLocation;
-		int cutOff = 0;
-		if ( canvas().projection()->project(originLocation, originLocationF) ) {
-			if ( canvas().symbolCollection()->count() > 0 )
-			cutOff = (*canvas().symbolCollection()->begin())->size().width();
-			if ( cutOff ) {
-				p.setClipping(true);
-				p.setClipRegion(QRegion(rect()) -
-				                QRegion(QRect(originLocation.x() - cutOff/2, originLocation.y() - cutOff/2,
-				                        cutOff, cutOff), QRegion::Ellipse));
-			}
-		}
-
-		p.setPen(SCScheme.colors.map.lines);
-		for ( QVector<StationEntry>::iterator it = _stations.begin(); it != _stations.end(); ++it ) {
-			if ( !(*it).validLocation ) continue;
-			if ( !(*it).isActive ) continue;
-			if ( !(*it).isMagnitude ) continue;
-			canvas().drawLine(p, originLocationF, (*it).location);
-		}
-
-		if ( cutOff )
-			p.setClipping(false);
-	}
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MagnitudeMap::drawCustomLayer(QPainter *painter) {
-	QPainter &p(*painter);
-
-	if ( _origin ) {
-		int currentSymbolSize = 0;
-
-		if ( canvas().symbolCollection()->count() > 0 )
-			currentSymbolSize = (*canvas().symbolCollection()->begin())->size().width();
-
-		if ( currentSymbolSize != _lastSymbolSize ) {
-			_lastSymbolSize = currentSymbolSize;
-		}
-
-		if ( _drawStations ) drawLines(p);
-
-		QPointF originLocationF(_origin->longitude(), _origin->latitude());
-		//QPoint originLocation = project(originLocationF);
-
-		try {
-			double az = _origin->uncertainty().azimuthMaxHorizontalUncertainty();
-			double lenMax = _origin->uncertainty().maxHorizontalUncertainty();
-			double lenMin = _origin->uncertainty().minHorizontalUncertainty();
-
-			p.setPen(Qt::NoPen);
-			QColor fill = Qt::magenta;
-			fill.setAlpha(64);
-			p.setBrush(fill);
-
-			lenMin = Math::Geo::km2deg(lenMin);
-			lenMax = Math::Geo::km2deg(lenMax);
-
-			QPoint min, max;
-			if ( canvas().projection()->project(min, QPointF(originLocationF.x()-lenMin, originLocationF.y()+lenMax)) &&
-			     canvas().projection()->project(max, QPointF(originLocationF.x()+lenMin, originLocationF.y()-lenMax)) ) {
-
-				QRect r(min, max);
-				r = r.normalized();
-
-				QPoint center = r.center();
-				r.moveCenter(QPoint(0,0));
-
-				p.translate(center);
-				p.rotate(az);
-				p.drawEllipse(r);
-				p.resetMatrix();
-			}
-		}
-		catch ( ... ) {
-			double rad_x = 0.0, rad_y = 0.0;
-			try {
-				double err_x_l = _origin->longitude().lowerUncertainty();
-				double err_x_u = _origin->longitude().upperUncertainty();
-
-				rad_x = std::max(err_x_l, err_x_u);
-			}
-			catch ( ValueException& ) {
-				try {
-					rad_x = _origin->longitude().uncertainty();
-				}
-				catch ( ValueException& ) {}
-			}
-
-			try {
-				double err_y_l = _origin->latitude().lowerUncertainty();
-				double err_y_u = _origin->latitude().upperUncertainty();
-
-				rad_y = std::max(err_y_l, err_y_u);
-			}
-			catch ( ValueException& ) {
-				try {
-					rad_y = _origin->latitude().uncertainty();
-				}
-				catch ( ValueException& ) {}
-			}
-
-			if ( rad_x == 0 && rad_y == 0 ) {
-				try {
-					rad_x = rad_y = _origin->uncertainty().horizontalUncertainty();
-				}
-				catch ( ValueException& ) {}
-			}
-
-			if ( rad_x > 0.0 && rad_y > 0.0 ) {
-				rad_y = Math::Geo::km2deg(rad_y);
-				rad_x = Math::Geo::km2deg(rad_x)/cos(deg2rad(std::max(-89.0, std::min(89.0, (double)_origin->latitude()))));
-
-				p.setPen(Qt::NoPen);
-				QColor fill = Qt::magenta;
-				fill.setAlpha(64);
-				p.setBrush(fill);
-
-				QPoint min, max;
-
-				if ( canvas().projection()->project(min, QPointF(originLocationF.x()-rad_x, originLocationF.y()+rad_y)) &&
-				     canvas().projection()->project(max, QPointF(originLocationF.x()+rad_x, originLocationF.y()-rad_y)) )
-					p.drawEllipse(min.x(), min.y(), max.x()-min.x()+1, max.y()-min.y()+1);
-			}
-		}
-
-		if ( _drawStations ) {
-			p.setPen(SCScheme.colors.map.outlines);
-			int size = SCScheme.map.stationSize;
-			for ( int i = _stations.count()-1; i >= 0; --i ) {
-				if ( !_stations[i].validLocation ) continue;
-				if ( !_interactive && !_stations[i].isActive ) continue;
-				p.setBrush(
-					_stations[i].isMagnitude?
-						_stations[i].isActive?_stations[i].color:SCScheme.colors.magnitudes.disabled
-					:
-						_stations[i].isActive?SCScheme.colors.stations.idle:SCScheme.colors.magnitudes.unset);
-				QPoint pp;
-				if ( canvas().projection()->project(pp, _stations[i].location) )
-					p.drawEllipse(pp.x()-size/2, pp.y()-size/2, size, size);
-			}
-		}
-	}
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeMap::mouseDoubleClickEvent(QMouseEvent* event) {
-	if ( (event->button() == Qt::LeftButton) && _interactive && _drawStations ) {
+	if ( (event->button() == Qt::LeftButton) && SYMBOLLAYER->isVisible() && SYMBOLLAYER->interactive ) {
 		if ( event->modifiers() == Qt::NoModifier ) {
-			int stationHalfSize = SCScheme.map.stationSize / 2;
-			for ( int i = 0; i < _stations.count(); ++i ) {
-				QPoint pp;
-				if ( !canvas().projection()->project(pp, _stations[i].location) ) continue;
-				if ( abs(pp.x() - event->x()) <= stationHalfSize &&
-					abs(pp.y() - event->y()) <= stationHalfSize ) {
-
-					if ( _stations[i].isMagnitude ) {
-						setMagnitudeState(_stations[i].magnitudeId, !_stations[i].isActive);
-						emit magnitudeChanged(_stations[i].magnitudeId, _stations[i].isActive);
-					}
-					/*
-					else {
-						setStationState(i, !_stations[i].isActive);
-						emit stationChanged(_stations[i].code, _stations[i].isActive);
-					}
-					*/
-					return;
+			if ( SYMBOLLAYER->hoverId != -1 ) {
+				StationLayer::Symbol &symbol = SYMBOLLAYER->stations[SYMBOLLAYER->hoverId];
+				if ( symbol.isMagnitude ) {
+					setMagnitudeState(symbol.magnitudeId, !symbol.isActive);
+					emit magnitudeChanged(symbol.magnitudeId, symbol.isActive);
 				}
+
+				return;
 			}
 		}
 	}
@@ -322,17 +296,17 @@ void MagnitudeMap::mouseDoubleClickEvent(QMouseEvent* event) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeMap::mousePressEvent(QMouseEvent* event) {
-	if ( (event->button() == Qt::LeftButton) && _interactive && _drawStations ) {
-		int stationHalfSize = SCScheme.map.stationSize / 2;
-		for ( int i = 0; i < _stations.count(); ++i ) {
-			QPoint pp;
-			if ( !canvas().projection()->project(pp, _stations[i].location) ) continue;
-			if ( abs(pp.x() - event->x()) <= stationHalfSize &&
-				abs(pp.y() - event->y()) <= stationHalfSize ) {
-				if ( _stations[i].isMagnitude )
-					clickedMagnitude(_stations[i].magnitudeId);
+	if ( (event->button() == Qt::LeftButton)
+	   && SYMBOLLAYER->isVisible()
+	   && SYMBOLLAYER->interactive ) {
+		if ( event->modifiers() == Qt::NoModifier ) {
+			if ( SYMBOLLAYER->hoverId != -1 ) {
+				StationLayer::Symbol &symbol = SYMBOLLAYER->stations[SYMBOLLAYER->hoverId];
+				if ( symbol.isMagnitude )
+					emit clickedMagnitude(symbol.magnitudeId);
 				else
-					clickedStation(_stations[i].net, _stations[i].code);
+					emit clickedStation(symbol.net, symbol.code);
+
 				return;
 			}
 		}
@@ -346,39 +320,8 @@ void MagnitudeMap::mousePressEvent(QMouseEvent* event) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MagnitudeMap::mouseMoveEvent(QMouseEvent *event) {
-	int hoverId = -1;
-	int stationHalfSize = SCScheme.map.stationSize / 2;
-	for ( int i = 0; i < _stations.count(); ++i ) {
-		QPoint pp;
-		if ( !canvas().projection()->project(pp, _stations[i].location) ) continue;
-		if ( abs(pp.x() - event->x()) <= stationHalfSize  &&
-		     abs(pp.y() - event->y()) <= stationHalfSize ) {
-			hoverId = i;
-			break;
-		}
-	}
-
-	if ( hoverId != _hoverId ) {
-		_hoverId = hoverId;
-		if ( _hoverId != -1 ) {
-			int magnitudeId = _stations[_hoverId].magnitudeId;
-			hoverMagnitude(magnitudeId);
-		}
-		else
-			hoverMagnitude(-1);
-	}
-
-	MapWidget::mouseMoveEvent(event);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeMap::setStationsInteractive(bool e) {
-	_interactive = e;
+	SYMBOLLAYER->interactive = e;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -390,10 +333,10 @@ void MagnitudeMap::setMagnitude(DataModel::Magnitude* nm) {
 	_magnitude = nm;
 	_magnitudes.clear();
 
-	for ( int i = 0; i < _stations.size(); ++i ) {
-		_stations[i].isActive = true;
-		_stations[i].isMagnitude = false;
-		_stations[i].magnitudeId = -1;
+	for ( int i = 0; i < SYMBOLLAYER->stations.size(); ++i ) {
+		SYMBOLLAYER->stations[i].isActive = true;
+		SYMBOLLAYER->stations[i].isMagnitude = false;
+		SYMBOLLAYER->stations[i].magnitudeId = -1;
 	}
 
 	if ( _magnitude ) {
@@ -408,6 +351,12 @@ void MagnitudeMap::setMagnitude(DataModel::Magnitude* nm) {
 			addStationMagnitude(staMag, i);
 			setMagnitudeResidual(i, residual);
 		}
+
+		for ( StationLayer::Symbol &symbol : SYMBOLLAYER->stations ) {
+			if ( symbol.annotation ) {
+				symbol.annotation->highlighted = symbol.isActive && symbol.isMagnitude;
+			}
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -419,17 +368,16 @@ void MagnitudeMap::setMagnitude(DataModel::Magnitude* nm) {
 void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 	_origin = o;
 
-	_lastSymbolSize = 0;
-
+	SYMBOLLAYER->stations.clear();
 	canvas().symbolCollection()->clear();
-	_stations.clear();
+	_annotationLayer->annotations()->clear();
 	_stationCodes.clear();
 
 	setMagnitude(nullptr);
 
 	if ( !_origin ) return;
 
-	OriginSymbol *symbol = new OriginSymbol(o->latitude(), o->longitude());
+	AdvancedOriginSymbol *symbol = new AdvancedOriginSymbol(o);
 	try { symbol->setDepth(o->depth()); } catch ( Core::ValueException& ) {}
 	canvas().symbolCollection()->add(symbol);
 
@@ -451,10 +399,15 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 					continue;
 				}
 
-				_stations.push_back(StationEntry(QPointF(loc.longitude,loc.latitude),
-				                                 p->waveformID().networkCode(),
-				                                 p->waveformID().stationCode(), true));
-				_stationCodes[stationCode] = _stations.size()-1;
+				SYMBOLLAYER->stations.push_back(
+					StationLayer::Symbol(
+						QPointF(loc.longitude,loc.latitude),
+						p->waveformID().networkCode(),
+						p->waveformID().stationCode(), true
+					)
+				);
+				SYMBOLLAYER->stations.back().annotation = _annotationLayer->annotations()->add(stationCode.c_str());
+				_stationCodes[stationCode] = SYMBOLLAYER->stations.size()-1;
 				foundStation = true;
 			}
 			catch ( Core::ValueException& e ) {
@@ -482,10 +435,14 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 				if ( lat < 0 ) lat += 180.0;
 				lat -= 90.0;
 
-				_stations.push_back(StationEntry(QPointF(lon,lat), "", "", true));
+				SYMBOLLAYER->stations.push_back(
+					StationLayer::Symbol(QPointF(lon,lat), "", "", true)
+				);
 			}
 			catch ( ... ) {
-				_stations.push_back(StationEntry(QPointF(0,0), "", "", false));
+				SYMBOLLAYER->stations.push_back(
+					StationLayer::Symbol(QPointF(0,0), "", "", false)
+				);
 			}
 		}
 	}
@@ -526,15 +483,16 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 				if ( _stationCodes.find(stationCode) != _stationCodes.end() )
 					continue;
 
-				_stations.push_back(
-					StationEntry(
+				SYMBOLLAYER->stations.push_back(
+					StationLayer::Symbol(
 						QPointF(sta->longitude(),sta->latitude()),
 						net->code(), sta->code().c_str(), true
 					)
 				);
 
-				_stations.back().isActive = true;
-				_stationCodes[stationCode] = _stations.size()-1;
+				SYMBOLLAYER->stations.back().isActive = true;
+				SYMBOLLAYER->stations.back().annotation = _annotationLayer->annotations()->add(stationCode.c_str());
+				_stationCodes[stationCode] = SYMBOLLAYER->stations.size()-1;
 			}
 		}
 	}
@@ -567,13 +525,8 @@ void MagnitudeMap::addStationMagnitude(StationMagnitude* staMag, int index) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QString MagnitudeMap::stationSymbolToolTip() const {
-	if ( _hoverId != -1 ) {
-		return (_stations[_hoverId].net + "." + _stations[_hoverId].code).c_str();
-	}
-	else {
-		return QString();
-	}
+void MagnitudeMap::setDrawStations(bool f) {
+	SYMBOLLAYER->setVisible(f);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -581,8 +534,8 @@ QString MagnitudeMap::stationSymbolToolTip() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MagnitudeMap::setDrawStations(bool f) {
-	_drawStations = f;
+void MagnitudeMap::setDrawStationAnnotations(bool f) {
+	_annotationLayer->setVisible(f);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -627,15 +580,15 @@ int MagnitudeMap::addStation(const std::string &netCode, const std::string &staC
 
 			std::string stationCode = net->code() + "." + sta->code();
 
-			_stations.push_back(
-				StationEntry(
+			SYMBOLLAYER->stations.push_back(
+				StationLayer::Symbol(
 					QPointF(sta->longitude(),sta->latitude()),
 					net->code(), sta->code().c_str(), true
 				)
 			);
 
-			int stationId = _stations.size()-1;
-			_stations.back().isActive = true;
+			int stationId = SYMBOLLAYER->stations.size()-1;
+			SYMBOLLAYER->stations.back().isActive = true;
 			_stationCodes[stationCode] = stationId;
 			return stationId;
 		}
@@ -650,8 +603,8 @@ int MagnitudeMap::addStation(const std::string &netCode, const std::string &staC
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeMap::addMagnitude(int stationId, int magId) {
-	_stations[stationId].magnitudeId = magId;
-	_stations[stationId].isMagnitude = true;
+	SYMBOLLAYER->stations[stationId].magnitudeId = magId;
+	SYMBOLLAYER->stations[stationId].isMagnitude = true;
 
 	if ( magId >= _magnitudes.size() )
 		_magnitudes.resize(magId+1);
@@ -687,12 +640,15 @@ void MagnitudeMap::setMagnitudeResidual(int id, double residual) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeMap::setStationState(int i, bool state) {
-	if ( _stations[i].isActive == state ) return;
-	_stations[i].isActive = state;
-	//QPoint p = project(_stations[i].location);
-	//update(p.x()-5, p.y()-5, 10, 10);
-	if ( _drawStations )
+	if ( SYMBOLLAYER->stations[i].isActive == state ) return;
+	SYMBOLLAYER->stations[i].isActive = state;
+	if ( SYMBOLLAYER->stations[i].visible ) {
+		if ( SYMBOLLAYER->stations[i].annotation ) {
+			SYMBOLLAYER->stations[i].annotation->highlighted = state;
+		}
+		//update(p.x()-5, p.y()-5, 10, 10);
 		update();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -700,7 +656,7 @@ void MagnitudeMap::setStationState(int i, bool state) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MagnitudeMap::setStationState(const std::string& code, bool state) {
+void MagnitudeMap::setStationState(const std::string &code, bool state) {
 	std::map<std::string, int>::iterator it = _stationCodes.find(code);
 	if ( it == _stationCodes.end() ) return;
 	setStationState((*it).second, state);
@@ -712,10 +668,11 @@ void MagnitudeMap::setStationState(const std::string& code, bool state) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeMap::setStationResidual(int i, double residual) {
-	_stations[i].residual = residual;
-	_stations[i].color = SCScheme.colors.magnitudes.residuals.colorAt(residual);
+	SYMBOLLAYER->stations[i].residual = residual;
+	SYMBOLLAYER->stations[i].color = SCScheme.colors.magnitudes.residuals.colorAt(residual);
 
-	if ( _drawStations ) update();
+	if ( SYMBOLLAYER->isVisible() )
+		update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -327,6 +327,115 @@
 								The color of a &quot;normal&quot; city.
 							</description>
 						</parameter>
+
+						<group name="annotations">
+							<description>
+								Appearance of map annotations including a text
+								color (pen), a border color (pen) and a background
+								color (brush).
+							</description>
+							<group name="normalText">
+								<description>
+									Text pen for non highlighted annotations.
+								</description>
+								<parameter name="color" type="color" default="c0c0c0">
+									<description>The color of the pen.</description>
+								</parameter>
+								<parameter name="style" type="string" default="SolidLine">
+									<description>
+										The style of the pen. Supported values are:
+										NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+									</description>
+								</parameter>
+								<parameter name="width" type="double" default="1" unit="px">
+									<description>The width of the pen.</description>
+								</parameter>
+							</group>
+							<group name="normalBorder">
+								<description>
+									Border pen for non highlighted annotations.
+								</description>
+								<parameter name="color" type="color" default="a0a0a4">
+									<description>The color of the pen.</description>
+								</parameter>
+								<parameter name="style" type="string" default="SolidLine">
+									<description>
+										The style of the pen. Supported values are:
+										NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+									</description>
+								</parameter>
+								<parameter name="width" type="double" default="1" unit="px">
+									<description>The width of the pen.</description>
+								</parameter>
+							</group>
+							<group name="normalBackground">
+								<description>
+									Background brush for non highlighted annotations.
+								</description>
+								<parameter name="color" type="color" default="202020c0">
+									<description>The color of the brush.</description>
+								</parameter>
+								<parameter name="style" type="string" default="solid">
+									<description>
+										The style of the brush. Supported values are, e.g.:
+										solid, dense1, dense7, horizontal, vertical,
+										cross, bdiag, fdiag, diagcross.
+									</description>
+								</parameter>
+							</group>
+							<group name="highlightedText">
+								<description>
+									Text pen for highlighted annotations.
+								</description>
+								<parameter name="color" type="color" default="000000">
+									<description>The color of the pen.</description>
+								</parameter>
+								<parameter name="style" type="string" default="SolidLine">
+									<description>
+										The style of the pen. Supported values are:
+										NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+									</description>
+								</parameter>
+								<parameter name="width" type="double" default="1" unit="px">
+									<description>The width of the pen.</description>
+								</parameter>
+							</group>
+							<group name="highlightedBorder">
+								<description>
+									Border pen for highlighted annotations.
+								</description>
+								<parameter name="color" type="color" default="a0a0a4">
+									<description>The color of the pen.</description>
+								</parameter>
+								<parameter name="style" type="string" default="SolidLine">
+									<description>
+										The style of the pen. Supported values are:
+										NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+									</description>
+								</parameter>
+								<parameter name="width" type="double" default="1" unit="px">
+									<description>The width of the pen.</description>
+								</parameter>
+							</group>
+							<group name="highlightedBackground">
+								<description>
+									Background brush for highlighted annotations.
+								</description>
+								<parameter name="color" type="color" default="ffffffa0">
+									<description>The color of the brush.</description>
+								</parameter>
+								<parameter name="style" type="string" default="solid">
+									<description>
+										The style of the brush. Supported values are, e.g.:
+										solid, dense1, dense7, horizontal, vertical,
+										cross, bdiag, fdiag, diagcross.
+									</description>
+								</parameter>
+							</group>
+							<parameter name="textSize" type="int" unit="pt" default="9">
+								<description>Font point size of the label text.</description>
+							</parameter>
+						</group>
 					</group>
 
 					<group name="records">
@@ -384,7 +493,7 @@
 									</parameter>
 									<parameter name="style" type="string" default="">
 										<description>
-											The style of the pen. Supported values are, e.g.:
+											The style of the brush. Supported values are, e.g.:
 											solid, dense1, dense7, horizontal, vertical,
 											cross, bdiag, fdiag, diagcross.
 										</description>

@@ -1,4 +1,5 @@
 SET(GUI_MAP_SOURCES
+	annotations.cpp
 	layer.cpp
 	legend.cpp
 	standardlegend.cpp
@@ -12,6 +13,7 @@ SET(GUI_MAP_SOURCES
 )
 
 SET(GUI_MAP_HEADERS
+	annotations.h
 	maptree.h
 	imagetree.h
 	mapsymbol.h

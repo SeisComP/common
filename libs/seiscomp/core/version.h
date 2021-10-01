@@ -77,6 +77,10 @@ namespace Core {
    - Added Seiscomp::Core::Generic::Archive::write(std::vector<int32_t>)
    - Added Seiscomp::Core::Generic::Archive::read(std::vector<int64_t>)
    - Added Seiscomp::Core::Generic::Archive::write(std::vector<int64_t>)
+   - Added Seiscomp::Gui::Map::AnnotationItem
+   - Added Seiscomp::Gui::Map::AnnotationStyle
+   - Added Seiscomp::Gui::Map::Annotations
+   - Added Seiscomp::Gui::Map::AnnotationLayer
 
  "14.3.0"   0x0E0300
    - Added Seiscomp::RingBuffer::numberOfRecordsToStore()

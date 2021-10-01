@@ -288,6 +288,7 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 		void setLocalAmplitudes(Seiscomp::DataModel::Origin*, AmplitudeSet*, StringSet*);
 
 		void drawStations(bool);
+		void drawStationAnnotations(bool);
 
 		bool undo();
 		bool redo();
@@ -323,7 +324,7 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 		void setDatabase(Seiscomp::DataModel::DatabaseQuery*);
 		void setPickerView(PickerView*);
 
-		MapWidget* map() const;
+		OriginLocatorMap* map() const;
 
 
 	protected:

@@ -194,6 +194,18 @@ class SC_GUI_API Scheme {
 				QColor cityOutlines;
 				QColor cityCapital;
 				QColor cityNormal;
+
+				struct {
+					QPen   normalText;
+					QPen   normalBorder;
+					QBrush normalBackground;
+
+					QPen   highlightedText;
+					QPen   highlightedBorder;
+					QBrush highlightedBackground;
+
+					int    textSize;
+				}      annotations;
 			};
 
 			struct Legend {

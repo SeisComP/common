@@ -357,16 +357,26 @@ Scheme::Colors::RecordView::RecordView() :
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Colors::Map::Map() :
-	lines(255, 255, 255, 64),
-	outlines(255, 255, 255),
-	grid(Qt::white, 1, Qt::DotLine),
-	stationAnnotations(Qt::red),
-	cityLabels(Qt::black),
-	cityOutlines(Qt::black),
-	cityCapital(255, 160, 122),
-	cityNormal(Qt::white)
-{}
+Scheme::Colors::Map::Map()
+: lines(255, 255, 255, 64)
+, outlines(255, 255, 255)
+, grid(Qt::white, 1, Qt::DotLine)
+, stationAnnotations(Qt::red)
+, cityLabels(Qt::black)
+, cityOutlines(Qt::black)
+, cityCapital(255, 160, 122)
+, cityNormal(Qt::white)
+{
+	annotations.normalText = QPen(QColor(192,192,192));
+	annotations.normalBorder = QPen(QColor(160,160,164));
+	annotations.normalBackground = QColor(32,32,32,192);
+
+	annotations.highlightedText = QPen(QColor(0,0,0));
+	annotations.highlightedBorder = QPen(QColor(160,160,164));
+	annotations.highlightedBackground = QColor(255,255,255,192);
+
+	annotations.textSize = 9;
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -637,6 +647,13 @@ void Scheme::fetch() {
 	READ_COLOR(colors.map.cityOutlines);
 	READ_COLOR(colors.map.cityCapital);
 	READ_COLOR(colors.map.cityNormal);
+	READ_PEN(colors.map.annotations.normalBorder);
+	READ_PEN(colors.map.annotations.normalText);
+	READ_BRUSH(colors.map.annotations.normalBackground);
+	READ_PEN(colors.map.annotations.highlightedBorder);
+	READ_PEN(colors.map.annotations.highlightedText);
+	READ_BRUSH(colors.map.annotations.highlightedBackground);
+	READ_INT(colors.map.annotations.textSize);
 
 	READ_COLOR(colors.legend.background);
 	READ_COLOR(colors.legend.border);

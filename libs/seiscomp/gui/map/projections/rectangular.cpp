@@ -683,8 +683,7 @@ bool RectangularProjection::project(QPoint &screenCoords, const QPointF &geoCoor
 	// Wrapping
 	if ( x > _halfMapWidth )
 		x -= _mapWidth;
-
-	if ( x < -_halfMapWidth )
+	else if ( x < -_halfMapWidth )
 		x += _mapWidth;
 
 	screenCoords.setX(_halfWidth  + x);

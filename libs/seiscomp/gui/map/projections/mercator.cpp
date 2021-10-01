@@ -684,19 +684,16 @@ bool MercatorProjection::project(QPoint &screenCoords, const QPointF &geoCoords)
 	if ( sy > 1.0 ) sy = 1.0;
 	else if ( sy < -1.0 ) sy = -1.0;
 
-	qreal y = fabs(sy) < 1.0?atanh(sy) * ooPi:sy;
-
+	qreal y = std::abs(sy) < 1.0?atanh(sy) * ooPi:sy;
 	x = (x - _visibleCenter.x()) * _scale;
-	y = (y - _centerY) * _scale;
 
 	if ( x > _scale )
 		x -= _halfMapWidth;
-
-	if ( x < -_scale )
+	else if ( x < -_scale )
 		x += _halfMapWidth;
 
-	screenCoords.setX(_halfWidth + x);
-	screenCoords.setY(_halfHeight - y);
+	screenCoords.setX(_halfWidth  + x);
+	screenCoords.setY(_halfHeight + static_cast<int>(_centerY * _scale) - static_cast<int>(y * _scale));
 
 	return true;
 }
