@@ -3810,6 +3810,8 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 		return nullptr;
 	}
 
+	proc->setTrigger(referenceTime);
+
 	bool allComponents = true;
 	ThreeComponents tc;
 	char comps[3] = {COMPS[0],COMPS[1],COMPS[2]};
@@ -3891,8 +3893,6 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 		else
 			_spinDistance->setMaximum(_maxDist);
 	}
-
-	proc->setTrigger(referenceTime);
 
 	try {
 		proc->setHint(Processing::WaveformProcessor::Depth, _origin->depth());
