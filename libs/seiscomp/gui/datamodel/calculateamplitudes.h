@@ -141,6 +141,7 @@ class SC_GUI_API CalculateAmplitudes : public QDialog {
 		void setValue(int row, double value);
 
 		void filterView(int startRow = 0, int cnt = -1);
+		void updateTitle();
 
 
 	private:
