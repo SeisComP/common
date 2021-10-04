@@ -479,6 +479,8 @@ bool CalculateAmplitudes::process() {
 	_ui.table->resizeColumnsToContents();
 	_ui.table->resizeRowsToContents();
 
+	updateTitle();
+
 	if ( _thread ) {
 		if ( _timeWindow ) {
 			_thread->setTimeWindow(_timeWindow);
@@ -907,6 +909,15 @@ void CalculateAmplitudes::receivedRecord(Seiscomp::Record *rec) {
 
 	if ( slot_it->second.empty() )
 		_processors.erase(slot_it);
+
+	updateTitle();
+}
+
+
+void CalculateAmplitudes::updateTitle() {
+	auto done = static_cast<size_t>(_ui.table->rowCount()) - _processors.size();
+	setWindowTitle(tr("Measure amplitudes: %1 / %2 processors finished")
+	               .arg(done).arg(_ui.table->rowCount()));
 }
 
 
