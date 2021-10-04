@@ -510,6 +510,18 @@ class AmplitudeViewMarker : public RecordMarker {
 				catch ( ... ) {}
 
 				try {
+					text += QString("\nuncertainty: -%1, +%2")
+					        .arg(_referencedAmplitude->amplitude().lowerUncertainty())
+					        .arg(_referencedAmplitude->amplitude().upperUncertainty());
+				}
+				catch ( ... ) {
+					try {
+						text += QString("\nuncertainty: %1").arg(_referencedAmplitude->amplitude().uncertainty());
+					}
+					catch ( ... ) {}
+				}
+
+				try {
 					text += QString("\nperiod: %1").arg(_referencedAmplitude->period());
 				}
 				catch ( ... ) {}
