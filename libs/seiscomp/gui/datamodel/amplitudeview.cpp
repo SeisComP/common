@@ -463,7 +463,7 @@ class AmplitudeViewMarker : public RecordMarker {
 		QString toolTip() const {
 			QString text;
 
-			if ( (_referencedAmplitude == nullptr) && !isAmplitude() )
+			if ( (!_referencedAmplitude) && !isAmplitude() )
 				return text;
 
 			if ( _magnitude )
@@ -540,6 +540,18 @@ class AmplitudeViewMarker : public RecordMarker {
 			else if ( _manualAmplitude ){
 				text += "amplitude\n";
 				text += QString("value: %1").arg(_manualAmplitude->amplitude().value());
+
+				try {
+					text += QString("\nuncertainty: -%1, +%2")
+					        .arg(_manualAmplitude->amplitude().lowerUncertainty())
+					        .arg(_manualAmplitude->amplitude().upperUncertainty());
+				}
+				catch ( ... ) {
+					try {
+						text += QString("\nuncertainty: %1").arg(_manualAmplitude->amplitude().uncertainty());
+					}
+					catch ( ... ) {}
+				}
 
 				try {
 					if ( _manualAmplitude->period() > 0 )
@@ -637,16 +649,6 @@ bool isTracePicked(Seiscomp::Gui::RecordWidget* w) {
 	for ( int i = 0; i < w->markerCount(); ++i ) {
 		AmplitudeViewMarker *m = static_cast<AmplitudeViewMarker*>(w->marker(i));
 		if ( m->type() == AmplitudeViewMarker::Amplitude ) return true;
-	}
-
-	return false;
-}
-
-
-bool isArrivalTrace(Seiscomp::Gui::RecordWidget *w) {
-	for ( int i = 0; i < w->markerCount(); ++i ) {
-		AmplitudeViewMarker *m = static_cast<AmplitudeViewMarker*>(w->marker(i));
-		if ( m->amplitude() && m->id() >= 0 ) return true;
 	}
 
 	return false;
@@ -886,23 +888,9 @@ WaveformStreamID adjustWaveformStreamID(const WaveformStreamID& id) {
 	                        adjustChannelCode(id.channelCode(), true), id.resourceURI());
 }
 
-QString waveformIDToQString(const WaveformStreamID& id) {
-	return (id.networkCode() + "." + id.stationCode() + "." +
-	        id.locationCode() + "." + id.channelCode()).c_str();
-}
-
-
 std::string waveformIDToStdString(const WaveformStreamID& id) {
 	return (id.networkCode() + "." + id.stationCode() + "." +
 	        id.locationCode() + "." + id.channelCode());
-}
-
-
-char waveformIDComponent(const WaveformStreamID& id) {
-	if ( id.channelCode().size() > 2 )
-		return id.channelCode()[2];
-
-	return '\0';
 }
 
 
