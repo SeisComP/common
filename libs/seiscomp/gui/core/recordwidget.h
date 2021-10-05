@@ -235,31 +235,30 @@ class SC_GUI_API RecordWidget : public QWidget {
 		typedef Math::Filtering::InPlaceFilter<float> Filter;
 
 		struct Trace {
-			Trace() : timingQuality(-1), timingQualityCount(0) {
-				reset();
-			}
+			Trace() = default;
 
-			float                     dyMin;   // Data minimum value
-			float                     dyMax;   // Data maximum value
-			float                     dOffset; // Data offset
-			float                     absMax;
-			int                       pyMin;   //
-			int                       pyMax;
-			float                     fyMin;
-			float                     fyMax;
+			float                     dyMin{0};   // Data minimum value
+			float                     dyMax{0};   // Data maximum value
+			float                     dOffset{0}; // Data offset
+			float                     absMax{0};
+			int                       pyMin{0};   //
+			int                       pyMax{0};
+			float                     fyMin{-1};
+			float                     fyMax{1};
 
-			float                     yMin;
-			float                     yMax;
-			float                     yOffset; // The used offset
+			float                     yMin{0};
+			float                     yMax{0};
+			float                     yOffset{0}; // The used offset
 
-			float                     timingQuality;
-			int                       timingQualityCount;
-			bool                      dirty;
-			bool                      visible;
+			float                     timingQuality{-1};
+			int                       timingQualityCount{0};
+			bool                      dirty{false};
+			bool                      visible{false};
 			AbstractRecordPolylinePtr poly;
 
 			void reset() {
 				dyMin = dyMax = dOffset  = absMax = 0;
+				fyMin = -1; fyMax = 1;
 				pyMin = pyMax = 0;
 				visible = false;
 				poly = nullptr;
