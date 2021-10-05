@@ -760,9 +760,6 @@ static int RecordWidgetCount = 0;
 
 RecordWidget::Stream::Stream(bool owner) {
 	records[0] = records[1] = nullptr;
-	traces[0].dirty = traces[1].dirty = false;
-	traces[0].timingQuality = traces[1].timingQuality = -1;
-	traces[0].timingQualityCount = traces[1].timingQualityCount = 0;
 	filter = nullptr;
 	pen = QPen(SCScheme.colors.records.foreground, SCScheme.records.lineWidth);
 	antialiasing = SCScheme.records.antiAliasing;
@@ -2351,7 +2348,7 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 			else
 				stream = _streams[_currentSlot];
 
-			if ( stream != nullptr ) {
+			if ( stream ) {
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
 				double axisLower = stream->traces[frontIndex].fyMin,
 				       axisUpper = stream->traces[frontIndex].fyMax;
@@ -2638,7 +2635,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				}
 			}
 
-			if ( stream != nullptr ) {
+			if ( stream ) {
 				if ( stream->hasCustomBackgroundColor )
 					painter.fillRect(0, stream->posY, _canvasRect.width(), stream->height, blend(bg, stream->customBackgroundColor));
 
