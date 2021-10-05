@@ -915,7 +915,13 @@ void CalculateAmplitudes::receivedRecord(Seiscomp::Record *rec) {
 
 
 void CalculateAmplitudes::updateTitle() {
-	auto done = static_cast<size_t>(_ui.table->rowCount()) - _processors.size();
+	size_t unfinished = 0;
+	for ( auto it : _rows ) {
+		if ( !it.first->isFinished() )
+			++unfinished;
+	}
+
+	auto done = static_cast<size_t>(_ui.table->rowCount()) - unfinished;
 	setWindowTitle(tr("Measure amplitudes: %1 / %2 processors finished")
 	               .arg(done).arg(_ui.table->rowCount()));
 }
