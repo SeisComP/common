@@ -1,1 +1,1 @@
-SUBDIRS(core io utils)
+SUBDIRS(core datamodel io utils)
