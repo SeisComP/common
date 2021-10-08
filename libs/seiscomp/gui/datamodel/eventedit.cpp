@@ -1087,31 +1087,70 @@ void EventEdit::init() {
 		_fmColumnMap.append(i);
 
 	try {
-		_customDefaultText = SCApp->configGetString("eventedit.customColumn.default").c_str();
+		_customDefaultText = SCApp->configGetString("eventedit.origin.customColumn.default").c_str();
 	}
-	catch ( ... ) {}
+	catch ( ... ) {
+		try {
+			_customDefaultText = SCApp->configGetString("eventedit.customColumn.default").c_str();
+			SEISCOMP_WARNING("The parameter 'eventedit.customColumn.default' is deprecated and will be removed in future. "
+			                 "Please replace with 'eventedit.origin.customColumn.default'.");
+		}
+		catch ( ... ) {}
+	}
 
 	try {
-		_commentID = SCApp->configGetString("eventedit.customColumn.originCommentID");
+		_commentID = SCApp->configGetString("eventedit.origin.customColumn.originCommentID");
 	}
-	catch ( ... ) {}
+	catch ( ... ) {
+		try {
+			_commentID = SCApp->configGetString("eventedit.customColumn.originCommentID");
+			SEISCOMP_WARNING("The parameter 'eventedit.customColumn.originCommentID' is deprecated and will be removed in future. "
+			                 "Please replace with 'eventedit.origin.customColumn.originCommentID'.");
+		}
+		catch ( ... ) {}
+	}
 
 	try {
-		_customColumnLabel = SCApp->configGetString("eventedit.customColumn").c_str();
-
+		_customColumn = SCApp->configGetInt("eventedit.origin.customColumn.pos");
 		try {
 			_customColumn = SCApp->configGetInt("eventedit.customColumn.pos");
+			SEISCOMP_WARNING("The parameter 'eventedit.customColumn.pos' is deprecated and will be removed in future. "
+			                 "Please replace with 'eventedit.origin.customColumn.pos'.");
 		}
 		catch ( ... ) {
 			_customColumn = 6;
 		}
 	}
-	catch ( ... ) {
-		_customColumn = -1;
-	}
+	catch ( ... ) {}
 
 	try {
-		std::vector<std::string> customColors = SCApp->configGetStrings("eventedit.customColumn.colors");
+		_customColumnLabel = SCApp->configGetString("eventedit.origin.customColumn.name").c_str();
+	}
+	catch ( ... ) {
+		try {
+			_customColumnLabel = SCApp->configGetString("eventedit.customColumn").c_str();
+			SEISCOMP_WARNING("The parameter 'eventedit.customColumn' is deprecated and will be removed in future. "
+			                 "Please replace with 'eventedit.origin.customColumn.name'.");
+		}
+		catch ( ... ) {
+			_customColumn = -1;
+		}
+	}
+
+	{
+		std::vector<std::string> customColors;
+		try {
+			customColors = SCApp->configGetStrings("eventedit.origin.customColumn.colors");
+		}
+		catch ( ... ) {
+			try {
+				customColors = SCApp->configGetStrings("eventedit.customColumn.colors");
+				SEISCOMP_WARNING("The parameter 'eventedit.customColumn.colors' is deprecated and will be removed in future. "
+				                 "Please replace with 'eventedit.origin.customColumn.colors'.");
+			}
+			catch ( ... ) {}
+		}
+
 		for ( size_t i = 0; i < customColors.size(); ++i ) {
 			size_t pos = customColors[i].rfind(':');
 			if ( pos == std::string::npos ) continue;
@@ -1122,7 +1161,6 @@ void EventEdit::init() {
 				_customColorMap[value] = color;
 		}
 	}
-	catch ( ... ) {}
 
 	if ( _customColumn >= 0 ) {
 		if ( _customColumn < _originColumnMap.size() ) {
