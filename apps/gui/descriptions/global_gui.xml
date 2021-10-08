@@ -1306,6 +1306,9 @@
 				</parameter>
 			</group>
 			<group name="eventlist">
+				<description>
+				Control the Events tab, e.g. in scolv, showing the list of loaded events.
+				</description>
 				<parameter name="visibleColumns" type="list:string" default="M, TP, Phases, RMS, Lat, Lon, Depth, Stat, Agency, Region, ID">
 					<description>
 					Configure the columns of the event list that are visible initially.
@@ -1313,19 +1316,16 @@
 					be hidden. Possible values are: Type, M, TP, Phases, Lat, Lon, Depth, DType, Stat, AzGap, FM, Origins, Agency, Author, Region, ID.
 					</description>
 				</parameter>
-				<parameter name="regions" type="list:string">
-					<description>
-					Configured a list of regions that can be used as filter of
-					the result set.
-					</description>
-				</parameter>
-				<parameter name="customColumn" type="string">
-					<description>
-					Name of an additional custom column which displays the value
-					of certain origin and event comments.
-					</description>
-				</parameter>
 				<group name="customColumn">
+					<description>
+					Custom column showing origin or event comments.
+					</description>
+					<parameter name="name" type="string">
+						<description>
+						Name of the custom column to be shown in the column
+						header.
+						</description>
+					</parameter>
 					<parameter name="originCommentID" type="string">
 						<description>
 						ID of the origin comment to look up.
@@ -1353,28 +1353,56 @@
 						</description>
 					</parameter>
 				</group>
-				<group name="region">
-					<struct type="eventlist filter region" link="eventlist.regions">
+				<group name="scripts">
+					<description>
+					Custom columns showing parameters extracted by scripts e.g.
+					from origins or events.
+					</description>
+					<parameter name="columns" type="list:string">
 						<description>
-						Defines a rectangular region that can be used as a result
-						set filter on client side.
+						Name of custom column profiles to be registered. Comma separated list.
 						</description>
-						<parameter name="name" type="string">
-							<description>
-							Defines the name of the region that shows up in the
-							listbox.
-							</description>
-						</parameter>
-						<parameter name="rect" type="list:double">
-							<description>
-							Defines a rectangular region with a list of 4 values:
-							latmin, lonmin, latmax, lonmax.
-							</description>
-						</parameter>
-					</struct>
+					</parameter>
+					<group name="column">
+						<description>
+						Definition of custom column profiles for creating custom
+						event list columns whose values are filled by external scripts.
+						The scolv documentation provides an example script.
+						</description>
+						<struct type="custom column profile" link="eventlist.scripts.profiles">
+							<parameter name="script" type="path">
+								<description>
+								External script to invoke for each event list entry. The object represented by the
+								list entry is serialized to XML and passed to the script on stdin. If the return
+								code of the script is 0 ('success') then the script result is read from stdout and
+								displayed in the corresponding event list cell.
+								</description>
+							</parameter>
+							<parameter name="pos" type="int" default="-1">
+								<description>
+								Position of the column. If the configured position is less than 0 or if it
+								exceeds the total number of columns then the column is appended to the right.
+								</description>
+							</parameter>
+							<parameter name="label" type="string">
+								<description>
+								Column name shown in header of event list table.
+								</description>
+							</parameter>
+							<parameter name="types" type="list:string">
+								<description>
+								Object types this script should be invoked for.
+								Supported values are 'Event' and 'Origin'.
+								</description>
+							</parameter>
+						</struct>
+					</group>
 				</group>
 				<group name="filter">
 					<group name="agencies">
+					<description>
+					Filter the loaded event list by agency ID.
+					</description>
 						<parameter name="label" type="string" default="Show only own events">
 							<description>
 							Defines the text of the option &quot;Show only own events&quot;.
@@ -1404,8 +1432,47 @@
 							</description>
 						</parameter>
 					</group>
+					<group name="regions">
+						<description>
+						Filter the loaded event list by region within or outside a
+						bounding box. Register the profile name in the regions parameter.
+						</description>
+						<parameter name="profiles" type="list:string">
+							<description>
+							Add the defined region profiles separated by comma.
+							The order determines the ocurrence in the filter menu.
+							</description>
+						</parameter>
+						<parameter name="enabled" type="boolean" default="false">
+							<description>
+							Hide events by the defined region by default.
+							</description>
+						</parameter>
+						<group name="region">
+							<struct type="region filter profile" link="eventlist.filter.regions.profiles">
+								<description>
+								Define a rectangular region to filter the loaded event list.
+								</description>
+								<parameter name="name" type="string">
+									<description>
+									Defines the name of the region that shows up in the
+									listbox.
+									</description>
+								</parameter>
+								<parameter name="rect" type="list:double">
+									<description>
+									Defines a rectangular region with a list of 4 values:
+									latmin, lonmin, latmax, lonmax.
+									</description>
+								</parameter>
+							</struct>
+						</group>
+					</group>
 					<group name="types">
-						<parameter name="label" type="string" default="Hide other/fake events">
+						<description>
+						Filter the loaded event list by event types.
+						</description>
+						<parameter name="label" type="string" default="&quot;Hide other/fake events&quot;">
 							<description>
 							Defines the text of the option &quot;Hide other/fake events&quot;.
 							Use double quotes '&quot;' around the string if it contains spaces.
@@ -1425,68 +1492,59 @@
 							</description>
 						</parameter>
 					</group>
-					<group name="regions">
-						<parameter name="enabled" type="boolean" default="false">
-							<description>
-							Sets the default state of the &quot;Hide events outside&quot;
-							option.
-							</description>
-						</parameter>
-					</group>
 					<group name="database">
 						<description>
-						Pre-set options to filter an event list request.
+						Pre-set options to filter a database request to load events
+						into the event list.
 						</description>
-						<parameter name="minlat" type="double" unit="deg"/>
-						<parameter name="maxlat" type="double" unit="deg"/>
-						<parameter name="minlon" type="double" unit="deg"/>
-						<parameter name="maxlon" type="double" unit="deg"/>
-						<parameter name="mindepth" type="double" unit="km"/>
-						<parameter name="maxdepth" type="double" unit="km"/>
-						<parameter name="minmag" type="double"/>
-						<parameter name="maxmag" type="double"/>
-					</group>
-				</group>
-				<group name="scripts">
-					<parameter name="columns" type="list:string">
-						<description>
-						Registration of custom event list columns.
-						</description>
-					</parameter>
-					<group name="column">
-						<description>
-						Definition of custom event list column whose values are filled by external scripts.
-						</description>
-						<struct type="custom column profile">
-							<parameter name="script" type="path">
-								<description>
-								External script to invoke for each event list entry. The object represented by the
-								list entry is serialized to XML and passed to the script on stdin. If the return
-								code of the script is 0 ('success') then the script result is read from stdout and
-								displayed in the corresponding event list cell.
-								</description>
-							</parameter>
-							<parameter name="pos" type="int" default="-1">
-								<description>
-								Position of the column. If the configured position is less than 0 or if it
-								exceeds the total number of columns then the column is appended to the right.
-								</description>
-							</parameter>
-							<parameter name="label" type="string">
-								<description>
-								Column name shown in header of event list table.
-								</description>
-							</parameter>
-							<parameter name="types" type="list:string">
-								<description>
-								Object types this script should be invoked for. Supported values are 'Event' and 'Origin'.
-								</description>
-							</parameter>
-						</struct>
+						<parameter name="minlat" type="double" unit="deg">
+							<description>
+							Minimum latitude
+							</description>
+						</parameter>
+						<parameter name="maxlat" type="double" unit="deg">
+							<description>
+							Maximum latitude
+							</description>
+						</parameter>
+						<parameter name="minlon" type="double" unit="deg">
+							<description>
+							Minimum longitude
+							</description>
+						</parameter>
+						<parameter name="maxlon" type="double" unit="deg">
+							<description>
+							Maximum longitude
+							</description>
+						</parameter>
+						<parameter name="mindepth" type="double" unit="km">
+							<description>
+							Minimum depth
+							</description>
+						</parameter>
+						<parameter name="maxdepth" type="double" unit="km">
+							<description>
+							Maximum depth
+							</description>
+						</parameter>
+						<parameter name="minmag" type="double">
+							<description>
+							Minimum magnitude
+							</description>
+						</parameter>
+						<parameter name="maxmag" type="double">
+							<description>
+							Maximum magnitude
+							</description>
+						</parameter>
 					</group>
 				</group>
 			</group>
 			<group name="eventedit">
+				<description>
+				Control the Event tab, e.g. in scolv, showing origins and
+				focal mechanisms of a selected event.
+				</description>
 				<group name="origin">
 					<parameter name="visibleColumns" type="list:string" default="Phases, Lat, Lon, Depth, DType, RMS, Stat, Method, Agency, Author, Region">
 						<description>
@@ -1496,6 +1554,38 @@
 						Method, Agency, Author, Region
 						</description>
 					</parameter>
+					<group name="customColumn">
+						<description>
+						Custom column showing origin comments.
+						</description>
+						<parameter name="name" type="string">
+							<description>
+							Name of the custom column to be shown in the column
+							header.
+							</description>
+						</parameter>
+						<parameter name="originCommentID" type="string">
+							<description>
+							ID of the origin comment to look up.
+							</description>
+						</parameter>
+						<parameter name="pos" type="int" default="-1">
+							<description>
+							Position of the column. If the configured position is less than 0 or if it
+							exceeds the total number of columns then the column is appended to the right.
+							</description>
+						</parameter>
+						<parameter name="default" type="string">
+							<description>
+							Default value to display if the specified origin or event comment id was not found.
+							</description>
+						</parameter>
+						<parameter name="colors" type="list:string">
+							<description>
+							Mapping of comment values to colors used as text color. E.g. "foo:#000,bar:red".
+							</description>
+						</parameter>
+					</group>
 				</group>
 				<group name="fm">
 					<parameter name="visibleColumns" type="list:string" default="Depth, M, Count, Misfit, STDR, AzGap, Stat, DC, CLVD, ISO, S1, D1, R1, S2, D2, R2, Agency, Author">
