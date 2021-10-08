@@ -294,11 +294,11 @@ void Inspector::applyFilter() {
 }
 
 
-bool Inspector::filterTree(QTreeWidgetItem *parent, const std::string &type,
+bool Inspector::filterTree(QTreeWidgetItem *node, const std::string &type,
                            const std::string &attr, const std::string &value,
                            QTreeWidgetItem **firstMatch,
                            bool parentMatch) {
-	Core::BaseObject *obj = static_cast<TreeItem*>(parent)->object();
+	Core::BaseObject *obj = static_cast<TreeItem*>(node)->object();
 	int visibleChildCount = 0;
 	bool match = parentMatch;
 
@@ -330,11 +330,11 @@ bool Inspector::filterTree(QTreeWidgetItem *parent, const std::string &type,
 	}
 
 	if ( match && firstMatch && !*firstMatch ) {
-		*firstMatch = parent;
+		*firstMatch = node;
 	}
 
-	for ( int i = 0; i < parent->childCount(); ++i ) {
-		QTreeWidgetItem *item = parent->child(i);
+	for ( int i = 0; i < node->childCount(); ++i ) {
+		QTreeWidgetItem *item = node->child(i);
 		if ( !item ) continue;
 
 		if ( !filterTree(item, type, attr, value, firstMatch, match) ) {
@@ -344,23 +344,18 @@ bool Inspector::filterTree(QTreeWidgetItem *parent, const std::string &type,
 	}
 
 	if ( parentMatch ) {
-		parent->setHidden(false);
+		node->setHidden(false);
 	}
 	else {
-		if ( !obj ) {
-			parent->setHidden(visibleChildCount == 0 && parent->childCount() > 0);
+		if ( !obj || !match ) {
+			node->setHidden(visibleChildCount == 0);
 		}
-		else {
-			if ( match ) {
-				parent->setHidden(false);
-			}
-			else {
-				parent->setHidden(visibleChildCount == 0);
-			}
+		else if ( match ) {
+			node->setHidden(false);
 		}
 	}
 
-	return parent->isHidden();
+	return node->isHidden();
 }
 
 
