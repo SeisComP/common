@@ -2352,23 +2352,33 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	}
 	catch ( ... ) {}
 
-	try {
-		std::string customColumn = SCApp->configGetString("eventlist.customColumn");
-		if ( !customColumn.empty() ) {
-			if ( _itemConfig.customColumn >= 0 && _itemConfig.customColumn < _itemConfig.header.size() )
-				_itemConfig.header.insert(_itemConfig.customColumn, customColumn.c_str());
-			else {
-				_itemConfig.header.append(customColumn.c_str());
-				_itemConfig.customColumn = _itemConfig.header.size()-1;
-			}
+	std::string customColumn;
 
-			if ( _itemConfig.customColumn >= 0 && _itemConfig.customColumn < _itemConfig.columnMap.size() ) {
-				for ( int i = _itemConfig.customColumn; i < _itemConfig.columnMap.size(); ++i )
-					_itemConfig.columnMap[i] = i+1;
-			}
+	try {
+		customColumn = SCApp->configGetString("eventlist.customColumn.name");
+	}
+	catch ( ... ) {
+		try {
+			customColumn = SCApp->configGetString("eventlist.customColumn");
+			SEISCOMP_WARNING("The parameter 'eventlist.customColumn' is deprecated and will be removed in future. "
+			                 "Please replace with 'eventlist.customColumn.name'.");
+		}
+		catch ( ... ) {}
+	}
+
+	if ( !customColumn.empty() ) {
+		if ( _itemConfig.customColumn >= 0 && _itemConfig.customColumn < _itemConfig.header.size() )
+			_itemConfig.header.insert(_itemConfig.customColumn, customColumn.c_str());
+		else {
+			_itemConfig.header.append(customColumn.c_str());
+			_itemConfig.customColumn = _itemConfig.header.size()-1;
+		}
+
+		if ( _itemConfig.customColumn >= 0 && _itemConfig.customColumn < _itemConfig.columnMap.size() ) {
+			for ( int i = _itemConfig.customColumn; i < _itemConfig.columnMap.size(); ++i )
+				_itemConfig.columnMap[i] = i+1;
 		}
 	}
-	catch ( ... ) {}
 
 	try {
 		_itemConfig.originCommentID = SCApp->configGetString("eventlist.customColumn.originCommentID");
@@ -2531,39 +2541,70 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	_filterRegions.append(reg);
 
 	// Read region definitions for filters
-	try {
-		std::vector<std::string> regionProfiles =
-			SCApp->configGetStrings("eventlist.regions");
+	{
+		std::vector<std::string> regionProfiles;
+
+		try {
+			regionProfiles = SCApp->configGetStrings("eventlist.filter.regions.profiles");
+		}
+		catch ( ... ) {
+			try {
+				regionProfiles = SCApp->configGetStrings("eventlist.regions");
+				SEISCOMP_WARNING("The parameter 'eventlist.regions' is deprecated and will be removed in future. "
+				                 "Please replace with 'eventlist.filter.regions.profiles'.");
+			}
+			catch ( ... ) {}
+		}
 
 		for ( size_t i = 0; i < regionProfiles.size(); ++i ) {
 			std::string name;
 			std::vector<double> defs;
 
-			try { name = SCApp->configGetString("eventlist.region." + regionProfiles[i] + ".name"); }
+			try {
+				name = SCApp->configGetString("eventlist.filter.regions.region." + regionProfiles[i] + ".name");
+			}
 			catch ( ... ) {
-				std::cerr << "WARNING: eventlist.region."
-				          << regionProfiles[i] << ".name is not set: ignoring"
-				          << std::endl;
-				continue;
+				try {
+					name = SCApp->configGetString("eventlist.region." + regionProfiles[i] + ".name");
+					SEISCOMP_WARNING("The parameter 'eventlist.region.%s.name' is deprecated and will be removed in future. "
+					                 "Please replace with 'eventlist.filter.regions.region.%s.name'.",
+					                 regionProfiles[i].c_str(), regionProfiles[i].c_str());
+				}
+				catch ( ... ) {
+					std::cerr << "WARNING: eventlist.filter.regions.region."
+					          << regionProfiles[i] << ".name is not set: ignoring"
+					          << std::endl;
+					continue;
+				}
 			}
 
-			try { defs = SCApp->configGetDoubles("eventlist.region." + regionProfiles[i] + ".rect"); }
+			try {
+				defs = SCApp->configGetDoubles("eventlist.filter.regions.region." + regionProfiles[i] + ".rect");
+			}
 			catch ( ... ) {
-				std::cerr << "WARNING: eventlist.region."
-				          << regionProfiles[i] << ".rect requires exactly 4 parameters (nothing given): ignoring"
-				          << std::endl;
-				continue;
+				try {
+					defs = SCApp->configGetDoubles("eventlist.region." + regionProfiles[i] + ".rect");
+					SEISCOMP_WARNING("The parameter 'eventlist.region.%s.rect' is deprecated and will be removed in future. "
+					                 "Please replace with 'eventlist.filter.regions.region.%s.rect'.",
+					                 regionProfiles[i].c_str(), regionProfiles[i].c_str());
+				}
+				catch ( ... ) {
+					std::cerr << "WARNING: eventlist.filter.regions.region."
+					          << regionProfiles[i] << ".rect requires exactly 4 parameters (nothing given): ignoring"
+					          << std::endl;
+					continue;
+				}
 			}
 
 			if ( name.empty() ) {
-				std::cerr << "WARNING: eventlist.region."
+				std::cerr << "WARNING: eventlist.filter.regions.region."
 				          << regionProfiles[i] << ".name is empty: ignoring"
 				          << std::endl;
 				continue;
 			}
 
 			if ( defs.size() != 4 ) {
-				std::cerr << "WARNING: eventlist.region."
+				std::cerr << "WARNING: eventlist.filter.regions.region."
 				          << regionProfiles[i] << ".rect requires exactly 4 parameters ("
 				          << defs.size() << " given): ignoring"
 				          << std::endl;
@@ -2579,7 +2620,6 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 			_filterRegions.append(reg);
 		}
 	}
-	catch ( ... ) {}
 
 	// Initialize database filter
 	try { _filter.minLatitude = SCApp->configGetDouble("eventlist.filter.database.minlat"); }
