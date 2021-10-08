@@ -2894,7 +2894,7 @@ void EventEdit::updateOrigin() {
 	}
 
 	try {
-		_ui.labelDepthValue->setText(depthToString(_currentOrigin->depth(), SCScheme.precision.depth));
+		_ui.labelDepthValue->setText(depthToString(_currentOrigin->depth(), std::max(3, SCScheme.precision.depth)));
 		_ui.labelDepthUnit->setText(" km");
 	}
 	catch ( Core::ValueException& ) {
