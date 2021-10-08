@@ -4511,7 +4511,7 @@ void OriginLocatorView::updateContent() {
 
 	try {
 		_ui->labelDepth->setText(depthToString(_currentOrigin->depth(), SCScheme.precision.depth));
-		_ui->editFixedDepth->setText(_ui->labelDepth->text());
+		_ui->editFixedDepth->setText(depthToString(_currentOrigin->depth(), std::max(3, SCScheme.precision.depth)));
 		_ui->labelDepthUnit->setText("km");
 	}
 	catch ( ValueException& ) {
