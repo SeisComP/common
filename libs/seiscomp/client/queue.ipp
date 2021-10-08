@@ -140,6 +140,36 @@ bool ThreadedQueue<T>::push(T v) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
+bool ThreadedQueue<T>::pushUnique(T v) {
+	lock lk(_monitor);
+	// Find existing item
+	auto it = _begin;
+	while ( it != _end ) {
+		if ( _buffer[it] == v ) {
+			return false;
+		}
+		it = (it + 1) % _buffer.size();
+	}
+
+	while (_buffered == _buffer.size() && !_closed)
+		_notFull.wait(lk);
+	if ( _closed ) {
+		_notEmpty.notify_all();
+		return false;
+	}
+	_buffer[_end] = v;
+	_end = (_end+1) % _buffer.size();
+	++_buffered;
+	_notEmpty.notify_all();
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
 bool ThreadedQueue<T>::canPop() const {
 	lock lk(_monitor);
 

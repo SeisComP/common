@@ -72,6 +72,7 @@ class ThreadedQueue {
 
 		bool canPush() const;
 		bool push(T v);
+		bool pushUnique(T v);
 
 		bool canPop() const;
 		T pop();
