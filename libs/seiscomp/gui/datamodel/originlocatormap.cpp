@@ -552,6 +552,9 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 			symbol.annotation->highlighted = symbol.isActive && symbol.isArrival;
 		}
 	}
+
+	SYMBOLLAYER->setDirty();
+	update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
