@@ -36,6 +36,13 @@ using namespace Seiscomp::IO;
 using namespace Seiscomp::RecordStream;
 
 
+struct GlobalFixture {
+	GlobalFixture() {
+		Logging::enableConsoleLogging(Logging::getAll());
+	}
+};
+
+BOOST_GLOBAL_FIXTURE(GlobalFixture);
 BOOST_AUTO_TEST_SUITE(seiscomp_io_recordstream_sdsarchive)
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -44,7 +51,6 @@ BOOST_AUTO_TEST_SUITE(seiscomp_io_recordstream_sdsarchive)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 BOOST_AUTO_TEST_CASE(READ_FR_SALF) {
-	Logging::enableConsoleLogging(Logging::getAll());
 	SDSArchive sds("archive");
 	Time startTime(2018,06,30,16,18,38,943300);
 	Time endTime(2018,06,30,16,21,58,943300);
