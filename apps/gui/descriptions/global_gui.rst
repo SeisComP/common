@@ -299,6 +299,7 @@ are:
        of the feature is derived from the `name` property of a feature and the
        rank can be provided in a `rank` property with an integer value.
 
+
 .. _sec-gui_layers-config:
 
 Layer configuration
@@ -311,7 +312,8 @@ Feature data directly located within the feature directory have no special categ
 The FEP data set is assigned to the fep category.
 
 The depth of the feature directory tree is arbitrary and subfolders form
-sub-categories. E.g. the directory tree :file:`bna/coastline/europe/germany` will generate
+sub-categories. E.g. the directory tree
+:file:`$SEISCOMP_ROOT/share/spatial/vector/coastline/europe/germany` will generate
 the categories *coastline*, *coastline.europe* and *coastline.europe.germany* which
 all may be configured individually. Every undefined property is inherited from
 the parent category.
