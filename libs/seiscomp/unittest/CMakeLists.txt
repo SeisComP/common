@@ -8,4 +8,3 @@ SET(CORE_UNITTEST_HEADERS
 )
 
 SC_ADD_LIBRARY(CORE_UNITTEST unittest)
-SC_LIB_LINK_LIBRARIES(unittest ${Boost_unit_test_framework_LIBRARY})
