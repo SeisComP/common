@@ -146,7 +146,7 @@ bool ThreadedQueue<T>::pushUnique(T v) {
 	auto it = _begin;
 	while ( it != _end ) {
 		if ( _buffer[it] == v ) {
-			return false;
+			return true;
 		}
 		it = (it + 1) % _buffer.size();
 	}
