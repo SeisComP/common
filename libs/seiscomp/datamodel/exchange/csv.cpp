@@ -26,6 +26,9 @@
 #include <seiscomp/datamodel/magnitude.h>
 #include <seiscomp/datamodel/origin.h>
 
+#include <iostream>
+#include <iomanip>
+
 using namespace Seiscomp::DataModel;
 
 namespace Seiscomp {
@@ -66,6 +69,7 @@ bool ExporterCSV::put(std::streambuf* buf, Core::BaseObject* obj) {
 	if ( ep == nullptr ) return false;
 
 	std::ostream os(buf);
+	os  << std::setiosflags(std::ios_base::fixed);
 
 	// prettyPrint flag enables header output
 	if ( _prettyPrint )
@@ -83,15 +87,15 @@ bool ExporterCSV::put(std::streambuf* buf, Core::BaseObject* obj) {
 		}
 		else {
 			os << o->time().value().iso() << _delim
-			   << o->latitude().value() << _delim
-			   << o->longitude().value() << _delim;
+			   << std::setprecision(8) << o->latitude().value() << _delim
+			   << std::setprecision(8) << o->longitude().value() << _delim;
 			try {
-				os << o->depth().value();
+				os << std::setprecision(6) << o->depth().value();
 			} catch (Core::ValueException&) {}
 			os << _delim;
 			Magnitude* m = findMagnitude(o, e->preferredMagnitudeID());
 			if ( m )
-				os << m->magnitude().value();
+				os << std::setprecision(4) << m->magnitude().value();
 		}
 		os << _delim;
 
