@@ -12,6 +12,9 @@
 		</description>
 		<configuration>
 			<group name="fx">
+				<description>
+				Feature extraction types, e.g. for scautopick.
+				</description>
 				<group name="DFX">
 					<description>
 					Three component feature extraction algorithm ported from the

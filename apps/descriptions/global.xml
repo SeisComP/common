@@ -1091,6 +1091,10 @@
 				</struct>
 			</group>
 			<group name="picker">
+				<description>
+				Parameters controlling the second-stage picker for re-picking P
+				phases after inital trigger.
+				</description>
 				<group name="BK">
 					<description>
 					Bkpicker is an implementation of the Baer/Kradolfer picker adapted
@@ -1181,6 +1185,9 @@
 				</group>
 			</group>
 			<group name="spicker">
+				<description>
+				Parameters controlling the secondary picker, e.g for picking S phases.
+				</description>
 				<group name="L2">
 					<description>
 					L2 is an algorithm to pick S-phases based on existing P-phases. The
