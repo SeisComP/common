@@ -211,22 +211,22 @@ Vector layers
 .. admonition:: Deprecation warning
    :class: warning
 
-   The old vector file directories :file:`@DATADIR@/bna` or :file:`@CONFIGDIR@/bna`
+   The old directories :file:`@DATADIR@/bna` or :file:`@CONFIGDIR@/bna`
    are still supported but superseded by :file:`@DATADIR@/spatial/vector` or
-   :file:`@CONFIGDIR@/spatial vector`. The latter directories have higher priority
-   are are being read first. If one of the old directories has been found, a
-   warning will be logged.
+   :file:`@CONFIGDIR@/spatial/vector`. The latter directories have higher priority.
+   If one of the old directories has been found, a warning will be logged.
 
 
 |scname| supports arbitrary polygons, polylines or points for drawing as layers
 on maps or for using by other :term:`modules <plugin>` and :term:`plugins <plugin>`.
-The polygons, polylines and points can be customized by the :ref:`available attributes <sec-gui_syntax>`.
-Currently supported data types are:
+The polygons, polylines and points can be customized by the
+:ref:`available attributes <sec-gui_syntax>`. Currently supported data types
+are:
 
 * FEP (Flinn-Engdahl polygons):
 
-  * used for visualization of events regions and for setting the region name of the
-    event by :ref:`scevent`.
+  * used for visualization of events regions and for setting the region name of
+    the event by :ref:`scevent`.
   * stored in directories: :file:`@DATADIR@/fep` or :file:`@CONFIGDIR@/fep`
   * file name extension: *.fep*
   * file format: ::
