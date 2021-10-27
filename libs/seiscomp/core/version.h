@@ -85,6 +85,10 @@ namespace Core {
    - Added Seiscomp::Core::Time::UTC()
    - Added Seiscomp::Core::Time::toUTC()
 
+ "14.4.0"   0x0E0400
+   - Added class Seiscomp::Core::Number<T> (ostream output)
+   - Added Seiscomp::Core::number<T>() (Number<T> generator)
+
  "14.3.0"   0x0E0300
    - Added Seiscomp::RingBuffer::numberOfRecordsToStore()
    - Added Seiscomp::RingBuffer::timeSpanToStore()
