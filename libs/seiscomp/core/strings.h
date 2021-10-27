@@ -54,15 +54,15 @@ const std::string WHITESPACE = "\t\n\v\f\r ";
  * @return The value as string
  */
 template <typename T>
-std::string toString(const T& value);
+std::string toString(const T &value);
 
 template <typename T>
-std::string toString(const std::complex<T>& value);
+std::string toString(const std::complex<T> &value);
 
-SC_SYSTEM_CORE_API std::string toString(const std::string& value);
+SC_SYSTEM_CORE_API std::string toString(const std::string &value);
 SC_SYSTEM_CORE_API std::string toString(bool value);
-SC_SYSTEM_CORE_API std::string toString(const Time& value);
-SC_SYSTEM_CORE_API std::string toString(const Enumeration& value);
+SC_SYSTEM_CORE_API std::string toString(const Time &value);
+SC_SYSTEM_CORE_API std::string toString(const Enumeration &value);
 
 template <typename ENUMTYPE, ENUMTYPE END, typename NAMES>
 std::string toString(const Enum<ENUMTYPE, END, NAMES> &value);
@@ -73,6 +73,18 @@ std::string toString(const std::vector<T> &v);
 template <typename T>
 std::string toString(const ::boost::optional<T> &v);
 
+
+template <typename T>
+struct Number {
+	Number(const T &v) : ref(v) {}
+	const T &ref;
+};
+
+template <typename T>
+Number<T> number(const T &v) { return Number<T>(v); }
+
+template <typename T>
+std::ostream &operator<<(std::ostream &ostream, Number<T> s);
 
 /**
  * Converts a string into a value. Conversions are supported
