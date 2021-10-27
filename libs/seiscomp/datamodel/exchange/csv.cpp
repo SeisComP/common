@@ -17,19 +17,25 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
 #include "csv.h"
 
 #include <seiscomp/core/exceptions.h>
+#include <seiscomp/core/strings.h>
 #include <seiscomp/datamodel/event.h>
 #include <seiscomp/datamodel/eventdescription.h>
 #include <seiscomp/datamodel/eventparameters.h>
 #include <seiscomp/datamodel/magnitude.h>
 #include <seiscomp/datamodel/origin.h>
 
+
+using namespace Seiscomp;
 using namespace Seiscomp::DataModel;
+
 
 namespace Seiscomp {
 namespace DataModel {
+
 
 REGISTER_EXPORTER_INTERFACE(ExporterCSV, "csv");
 
@@ -83,15 +89,20 @@ bool ExporterCSV::put(std::streambuf* buf, Core::BaseObject* obj) {
 		}
 		else {
 			os << o->time().value().iso() << _delim
-			   << o->latitude().value() << _delim
-			   << o->longitude().value() << _delim;
+			   << Core::number(o->latitude().value()) << _delim
+			   << Core::number(o->longitude().value()) << _delim;
+
 			try {
-				os << o->depth().value();
-			} catch (Core::ValueException&) {}
+				os << Core::number(o->depth().value());
+			}
+			catch (Core::ValueException&) {}
+
 			os << _delim;
+
 			Magnitude* m = findMagnitude(o, e->preferredMagnitudeID());
-			if ( m )
-				os << m->magnitude().value();
+			if ( m ) {
+				os << Core::number(m->magnitude().value());
+			}
 		}
 		os << _delim;
 
@@ -107,6 +118,7 @@ bool ExporterCSV::put(std::streambuf* buf, Core::BaseObject* obj) {
 	}
 	return true;
 }
+
 
 } // namespace DataModel
 } // namesapce Seiscomp
