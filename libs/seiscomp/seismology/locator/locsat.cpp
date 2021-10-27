@@ -713,8 +713,14 @@ bool LocSAT::loadArrivals(const DataModel::Origin *origin) {
 		SEISCOMP_DEBUG(" [%s] set phase to %s", stationID.c_str(), phaseCode.c_str());
 #endif
 
-		_locateEvent->addSite(stationID.c_str(),
-		                      sloc->latitude(), sloc->longitude(), sloc->elevation());
+		try {
+			_locateEvent->addSite(stationID.c_str(),
+			                      sloc->latitude(), sloc->longitude(), sloc->elevation());
+		}
+		catch ( std::exception &e ) {
+			throw LocatorException(sloc->publicID() + "' (" +
+			                       stationID + "): " + e.what());
+		}
 
 		double cor = stationCorrection(stationID, pick->waveformID().stationCode(), phaseCode);
 
