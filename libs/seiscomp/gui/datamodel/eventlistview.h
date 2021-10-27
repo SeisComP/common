@@ -203,6 +203,7 @@ class SC_GUI_API EventListView : public QWidget {
 		void readFromDatabase();
 		void readFromDatabase(const Seiscomp::Gui::EventListView::Filter&);
 		void clear();
+		void clearDatabaseFilter();
 
 		void selectEventFM(const QString &);
 

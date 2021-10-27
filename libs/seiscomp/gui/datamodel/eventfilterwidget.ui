@@ -9,7 +9,7 @@
     <x>0</x>
     <y>0</y>
     <width>407</width>
-    <height>502</height>
+    <height>419</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -375,6 +375,23 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QFrame" name="frame_5" >
+     <property name="frameShape" >
+      <enum>QFrame::HLine</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Sunken</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="btnReset" >
+     <property name="text" >
+      <string>Reset all</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

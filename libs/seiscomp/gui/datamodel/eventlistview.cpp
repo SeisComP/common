@@ -2097,6 +2097,18 @@ class EventFilterWidget : public QWidget {
 		}
 
 	public:
+		void setView(EventListView *view) {
+			if ( _view ) {
+				_view->disconnect(_ui.btnReset, SIGNAL(clicked()));
+			}
+
+			_view = view;
+
+			if ( _view ) {
+				connect(_ui.btnReset, SIGNAL(clicked()), _view, SLOT(clearDatabaseFilter()));
+			}
+		}
+
 		void setFilter(const EventListView::Filter &filter) {
 			_ui.fromLatitude->setValue(filter.minLatitude ? *filter.minLatitude : _ui.fromLatitude->minimum());
 			_ui.toLatitude->setValue(filter.maxLatitude ? *filter.maxLatitude : _ui.toLatitude->minimum());
@@ -2141,7 +2153,8 @@ class EventFilterWidget : public QWidget {
 		}
 
 	private:
-		Ui::EventFilter _ui;
+		EventListView   *_view{nullptr};
+		Ui::EventFilter  _ui;
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2651,6 +2664,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	_ui->btnFilter->setPopupMode(QToolButton::InstantPopup);
 
 	_filterWidget = new EventFilterWidget;
+	_filterWidget->setView(this);
 	_filterWidget->setFilter(_filter);
 
 	QVBoxLayout *vl = new QVBoxLayout;
@@ -3230,6 +3244,15 @@ bool EventListView::eventFilter(QObject *obj, QEvent *ev) {
 void EventListView::clear() {
 	initTree();
 	emit visibleEventCountChanged();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void EventListView::clearDatabaseFilter() {
+	_filterWidget->setFilter(EventListView::Filter());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

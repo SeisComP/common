@@ -77,7 +77,7 @@
            <string>Removes all events from the list</string>
           </property>
           <property name="text" >
-           <string>Clear</string>
+           <string>Clear list</string>
           </property>
          </widget>
         </item>
