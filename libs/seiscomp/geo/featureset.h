@@ -112,11 +112,12 @@ class SC_SYSTEM_CORE_API GeoFeatureSet : public Core::BaseObject {
 		 * This method might throw an exception to signal an error.
 		 *
  		 * @param filename The filename to be read. The file extension is being
- 		 *        used to determin the file format.
+ 		 *        used to determine the file format.
 		 * @param category An optional category.
 		 * @return Number of features read. If a negative number is returned
 		 *         then this file was ignored because its file extension is
 		 *         unknown.
+		 * @since SeisComP ABI version 14.3.0
 		 */
 		ssize_t readFile(const std::string& filename, const Category* category);
 
