@@ -33,11 +33,22 @@ namespace Core {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-inline std::string toString(const T& v) {
+inline std::string toString(const T &v) {
 	std::ostringstream os;
-	os.precision(10);
-	os << v;
+	os << Number<T>(v);
 	return os.str();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+std::ostream &operator<<(std::ostream &ostream, Number<T> n) {
+	ostream.precision(10);
+	ostream << n.ref;
+	return ostream;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
