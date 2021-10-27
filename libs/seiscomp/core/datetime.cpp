@@ -815,6 +815,17 @@ std::string Time::LocalTimeZone() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Time Time::UTC() {
+	Time t;
+	t.utc();
+	return t;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Time Time::GMT() {
 	Time t;
 	t.gmt();
@@ -838,7 +849,7 @@ Time Time::FromYearDay(int year, int year_day) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TimeSpan Time::localTimeZoneOffset() const {
-	return *this - toGMT();
+	return *this - toUTC();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -851,6 +862,20 @@ Time& Time::localtime() {
 	time_t secs = (time_t)_timeval.tv_sec;
 	struct tm _tm;
 	_timeval.tv_sec = (long)timegm(::localtime_r(&secs, &_tm));
+
+	return *this;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Time& Time::utc() {
+	gettimeofday(&_timeval, nullptr);
+	time_t secs = (time_t)_timeval.tv_sec;
+	struct tm _tm;
+	_timeval.tv_sec = (long)mktime(::localtime_r(&secs, &_tm));
 
 	return *this;
 }
@@ -879,6 +904,21 @@ Time Time::toLocalTime() const {
 	time_t secs = _timeval.tv_sec;
 	struct tm _tm;
 	ret._timeval.tv_sec = (long)timegm(::localtime_r(&secs, &_tm));
+	ret._timeval.tv_usec = _timeval.tv_usec;
+
+	return ret;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Time Time::toUTC() const {
+	Time ret;
+	time_t secs = _timeval.tv_sec;
+	struct tm _tm;
+	ret._timeval.tv_sec = _timeval.tv_sec - ((long)timegm(::localtime_r(&secs, &_tm)) - _timeval.tv_sec);
 	ret._timeval.tv_usec = _timeval.tv_usec;
 
 	return ret;

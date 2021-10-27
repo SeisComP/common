@@ -81,6 +81,9 @@ namespace Core {
    - Added Seiscomp::Gui::Map::AnnotationStyle
    - Added Seiscomp::Gui::Map::Annotations
    - Added Seiscomp::Gui::Map::AnnotationLayer
+   - Added Seiscomp::Core::Time::utc()
+   - Added Seiscomp::Core::Time::UTC()
+   - Added Seiscomp::Core::Time::toUTC()
 
  "14.3.0"   0x0E0300
    - Added Seiscomp::RingBuffer::numberOfRecordsToStore()

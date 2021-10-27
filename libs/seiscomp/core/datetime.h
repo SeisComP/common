@@ -204,6 +204,9 @@ class SC_SYSTEM_CORE_API Time : public TimeSpan {
 		static std::string LocalTimeZone();
 
 		//! Returns the current gmtime
+		static Time UTC();
+
+		//! Alias for UTC()
 		static Time GMT();
 
 		/** Creates a time from the year and the day of the year
@@ -223,12 +226,18 @@ class SC_SYSTEM_CORE_API Time : public TimeSpan {
 		Time &localtime();
 
 		//! Saves the current gmtime in the calling object
+		Time &utc();
+
+		//! Alias for utc()
 		Time &gmt();
 
 		//! Converts the time to localtime
 		Time toLocalTime() const;
 
 		//! Converts the time to gmtime
+		Time toUTC() const;
+
+		//! Alias for toUTC()
 		Time toGMT() const;
 
 		//! Returns whether the date is valid or not
