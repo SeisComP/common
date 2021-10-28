@@ -22,14 +22,14 @@
 #define SEISCOMP_DATAMODEL_PICK_H
 
 
-#include <seiscomp/datamodel/types.h>
-#include <seiscomp/datamodel/waveformstreamid.h>
-#include <seiscomp/datamodel/creationinfo.h>
-#include <string>
-#include <seiscomp/datamodel/phase.h>
-#include <seiscomp/datamodel/realquantity.h>
-#include <vector>
 #include <seiscomp/datamodel/timequantity.h>
+#include <seiscomp/datamodel/waveformstreamid.h>
+#include <string>
+#include <seiscomp/datamodel/realquantity.h>
+#include <seiscomp/datamodel/types.h>
+#include <seiscomp/datamodel/phase.h>
+#include <seiscomp/datamodel/creationinfo.h>
+#include <vector>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>

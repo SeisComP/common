@@ -22,28 +22,28 @@
 #define SEISCOMP_DATAMODEL_DATABASE_QUERY_H__
 
 
-#include <seiscomp/datamodel/realarray.h>
-#include <seiscomp/core/datetime.h>
-#include <seiscomp/datamodel/phase.h>
-#include <seiscomp/datamodel/nodalplanes.h>
-#include <seiscomp/datamodel/blob.h>
 #include <vector>
-#include <seiscomp/datamodel/complexarray.h>
+#include <seiscomp/datamodel/timequantity.h>
+#include <seiscomp/datamodel/waveformstreamid.h>
+#include <string>
+#include <seiscomp/datamodel/realquantity.h>
+#include <seiscomp/datamodel/types.h>
+#include <seiscomp/datamodel/phase.h>
+#include <seiscomp/datamodel/creationinfo.h>
+#include <seiscomp/core/datetime.h>
+#include <seiscomp/datamodel/timewindow.h>
 #include <seiscomp/datamodel/originquality.h>
 #include <seiscomp/datamodel/originuncertainty.h>
-#include <seiscomp/datamodel/arclinkrequestsummary.h>
 #include <seiscomp/datamodel/integerquantity.h>
+#include <seiscomp/datamodel/nodalplanes.h>
 #include <seiscomp/datamodel/principalaxes.h>
-#include <seiscomp/datamodel/types.h>
-#include <seiscomp/datamodel/waveformstreamid.h>
-#include <seiscomp/datamodel/creationinfo.h>
-#include <seiscomp/datamodel/timewindow.h>
-#include <string>
 #include <seiscomp/datamodel/tensor.h>
-#include <seiscomp/datamodel/realquantity.h>
-#include <seiscomp/datamodel/timequantity.h>
-#include <seiscomp/datamodel/arclinkstatusline.h>
 #include <seiscomp/datamodel/sourcetimefunction.h>
+#include <seiscomp/datamodel/blob.h>
+#include <seiscomp/datamodel/complexarray.h>
+#include <seiscomp/datamodel/realarray.h>
+#include <seiscomp/datamodel/arclinkrequestsummary.h>
+#include <seiscomp/datamodel/arclinkstatusline.h>
 #include <seiscomp/datamodel/databasereader.h>
 
 

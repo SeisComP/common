@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_AUXDEVICE_H
 
 
-#include <vector>
 #include <string>
 #include <seiscomp/datamodel/blob.h>
+#include <vector>
 #include <seiscomp/datamodel/auxsource.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>

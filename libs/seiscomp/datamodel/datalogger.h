@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_DATALOGGER_H
 
 
-#include <vector>
 #include <string>
 #include <seiscomp/datamodel/blob.h>
+#include <vector>
 #include <seiscomp/datamodel/dataloggercalibration.h>
 #include <seiscomp/datamodel/decimation.h>
 #include <seiscomp/datamodel/notifier.h>

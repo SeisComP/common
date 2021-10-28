@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_DATAEXTENT_H
 
 
-#include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/waveformstreamid.h>
+#include <seiscomp/core/datetime.h>
 #include <vector>
 #include <seiscomp/datamodel/datasegment.h>
 #include <seiscomp/datamodel/dataattributeextent.h>

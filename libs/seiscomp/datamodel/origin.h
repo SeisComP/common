@@ -22,14 +22,14 @@
 #define SEISCOMP_DATAMODEL_ORIGIN_H
 
 
+#include <seiscomp/datamodel/timequantity.h>
+#include <seiscomp/datamodel/realquantity.h>
 #include <seiscomp/datamodel/types.h>
-#include <seiscomp/datamodel/creationinfo.h>
 #include <string>
 #include <seiscomp/datamodel/originquality.h>
-#include <seiscomp/datamodel/realquantity.h>
-#include <vector>
-#include <seiscomp/datamodel/timequantity.h>
 #include <seiscomp/datamodel/originuncertainty.h>
+#include <seiscomp/datamodel/creationinfo.h>
+#include <vector>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/arrival.h>
 #include <seiscomp/datamodel/notifier.h>

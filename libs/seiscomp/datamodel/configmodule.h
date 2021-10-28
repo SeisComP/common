@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_CONFIGMODULE_H
 
 
-#include <vector>
 #include <string>
+#include <vector>
 #include <seiscomp/datamodel/configstation.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>

@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_EVENTDESCRIPTION_H
 
 
-#include <seiscomp/datamodel/types.h>
 #include <string>
+#include <seiscomp/datamodel/types.h>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
 

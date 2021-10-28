@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_CREATIONINFO_H
 
 
-#include <seiscomp/core/datetime.h>
 #include <string>
+#include <seiscomp/core/datetime.h>
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core.h>
 #include <seiscomp/core/exceptions.h>

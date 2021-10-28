@@ -22,11 +22,11 @@
 #define SEISCOMP_DATAMODEL_FOCALMECHANISM_H
 
 
+#include <string>
+#include <seiscomp/datamodel/nodalplanes.h>
 #include <seiscomp/datamodel/principalaxes.h>
 #include <seiscomp/datamodel/types.h>
 #include <seiscomp/datamodel/creationinfo.h>
-#include <seiscomp/datamodel/nodalplanes.h>
-#include <string>
 #include <vector>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/notifier.h>

@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_ORIGINUNCERTAINTY_H
 
 
-#include <seiscomp/datamodel/types.h>
 #include <seiscomp/datamodel/confidenceellipsoid.h>
+#include <seiscomp/datamodel/types.h>
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core.h>
 #include <seiscomp/core/exceptions.h>

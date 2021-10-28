@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_SENSORCALIBRATION_H
 
 
-#include <seiscomp/core/datetime.h>
 #include <string>
+#include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/blob.h>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>

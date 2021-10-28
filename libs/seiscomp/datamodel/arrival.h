@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_ARRIVAL_H
 
 
-#include <seiscomp/datamodel/creationinfo.h>
 #include <string>
 #include <seiscomp/datamodel/phase.h>
+#include <seiscomp/datamodel/creationinfo.h>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
 

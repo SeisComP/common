@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_RESPONSEPAZ_H
 
 
-#include <seiscomp/datamodel/complexarray.h>
 #include <string>
+#include <seiscomp/datamodel/complexarray.h>
 #include <seiscomp/datamodel/blob.h>
 #include <seiscomp/datamodel/publicobject.h>
 #include <seiscomp/core/exceptions.h>

@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_SENSOR_H
 
 
-#include <vector>
 #include <string>
 #include <seiscomp/datamodel/blob.h>
+#include <vector>
 #include <seiscomp/datamodel/sensorcalibration.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>

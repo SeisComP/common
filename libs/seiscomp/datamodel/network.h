@@ -22,10 +22,10 @@
 #define SEISCOMP_DATAMODEL_NETWORK_H
 
 
-#include <seiscomp/core/datetime.h>
-#include <vector>
 #include <string>
+#include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/blob.h>
+#include <vector>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/station.h>
 #include <seiscomp/datamodel/notifier.h>

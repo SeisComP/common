@@ -23,9 +23,9 @@
 
 
 #include <seiscomp/datamodel/types.h>
-#include <vector>
 #include <string>
 #include <seiscomp/core/datetime.h>
+#include <vector>
 #include <seiscomp/datamodel/stationreference.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>

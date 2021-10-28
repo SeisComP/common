@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_ACCESS_H
 
 
-#include <seiscomp/core/datetime.h>
 #include <string>
+#include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
 

@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_COMMENT_H
 
 
+#include <string>
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/datamodel/creationinfo.h>
-#include <string>
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/core/exceptions.h>
 

@@ -22,9 +22,9 @@
 #define SEISCOMP_DATAMODEL_PARAMETERSET_H
 
 
+#include <string>
 #include <seiscomp/core/datetime.h>
 #include <vector>
-#include <string>
 #include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>

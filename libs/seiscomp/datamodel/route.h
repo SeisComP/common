@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_ROUTE_H
 
 
-#include <vector>
 #include <string>
+#include <vector>
 #include <seiscomp/datamodel/routearclink.h>
 #include <seiscomp/datamodel/routeseedlink.h>
 #include <seiscomp/datamodel/notifier.h>
