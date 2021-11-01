@@ -165,6 +165,22 @@ struct EventTypeFormatter : Formatter {
 };
 static EventTypeFormatter __eventType;
 
+struct EventTypeCertaintyFormatter : Formatter {
+	void to(std::string &v) {
+		if ( v.empty() ) return;
+		EventTypeCertainty type;
+		if ( !type.fromString(v) ) {
+			SEISCOMP_WARNING("unknown event type certainty '%s' found, mapping to "
+			                 "unset", v.c_str());
+			v.clear();
+		}
+		else {
+			v = TypeMapper::EventTypeCertaintyToString(type);
+		}
+	}
+};
+static EventTypeCertaintyFormatter __eventTypeCertainty;
+
 struct OriginUncertaintyDescriptionFormatter : Formatter {
 	void to(std::string &v) {
 		if ( v == "probability density function" ) {
@@ -1053,7 +1069,7 @@ struct EventDescriptionHandler : TypedClassHandler<EventDescription> {
 struct EventHandler : TypedClassHandler<Event> {
 	EventHandler() {
 		addPID();
-		addList("description, comment, typeCertainty, creationInfo");
+		addList("description, comment, creationInfo");
 		addChild("focalMechanism", "", new FocalMechanismConnector());
 		// amplitude, magnitude, stationMagnitude, pick: handled by
 		// OriginConnector
@@ -1062,19 +1078,21 @@ struct EventHandler : TypedClassHandler<Event> {
 		add("preferredMagnitudeID", &__resRef);
 		add("preferredFocalMechanismID", &__resRef);
 		add("type", &__eventType);
+		add("typeCertainty", &__eventTypeCertainty);
 	}
 };
 
 struct RTEventHandler : TypedClassHandler<Event> {
 	RTEventHandler() {
 		addPID();
-		addList("description, comment, typeCertainty, creationInfo, "
+		addList("description, comment, creationInfo, "
 		        "originReference, focalMechanismReference");
 		addChild("magnitudeReference", "", new RTMagnitudeReferenceConnector());
 		add("preferredOriginID", &__resRef);
 		add("preferredMagnitudeID", &__resRef);
 		add("preferredFocalMechanismID", &__resRef);
 		add("type", &__eventType);
+		add("typeCertainty", &__eventTypeCertainty);
 	}
 };
 
@@ -1261,7 +1279,7 @@ EventType TypeMapper::EventTypeFromString(const std::string &str) {
 }
 
 std::string TypeMapper::EventTypeToString(EventType type) {
-	switch(type) {
+	switch ( type ) {
 		case INDUCED_EARTHQUAKE: {
 			EventType t(INDUCED_OR_TRIGGERED_EVENT);
 			SEISCOMP_DEBUG("mapping unsupported EventType '%s' to '%s'",
@@ -1275,11 +1293,29 @@ std::string TypeMapper::EventTypeToString(EventType type) {
 		case DUPLICATE:
 		case NOT_LOCATABLE:
 		case OUTSIDE_OF_NETWORK_INTEREST:
+		case CALVING:
+		case FROST_QUAKE:
+		case TREMOR_PULSE:
+		case SUBMARINE_LANDSLIDE:
 			SEISCOMP_DEBUG("mapping unsupported EventType '%s' to 'other event'",
 			               type.toString());
 			return "other event";
 		default:
 			return type.toString();
+	}
+}
+
+std::string TypeMapper::EventTypeCertaintyToString(EventTypeCertainty type) {
+	// QuakeML does only support 'known' and 'suspected' as event type
+	// certainty. SeisComP supports additionally 'felt' and 'damaging' starting
+	// from schema version 0.12. If one of the latter is found then the event
+	// type certainty will be removed in QuakeML.
+	switch ( type ) {
+		case KNOWN:
+		case SUSPECTED:
+			return type.toString();
+		default:
+			return std::string();
 	}
 }
 

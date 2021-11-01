@@ -50,6 +50,13 @@ class TypeMapper {
 		 * @return The QML event type string
 		 */
 		static std::string EventTypeToString(DataModel::EventType type);
+
+		/**
+		 * @brief Maps an EventTypeCertainty to an QML event type string.
+		 * @param type The EventTypeCertainty
+		 * @return The QML event type certainty string
+		 */
+		static std::string EventTypeCertaintyToString(DataModel::EventTypeCertainty type);
 };
 
 class Exporter : public IO::XML::Exporter {
