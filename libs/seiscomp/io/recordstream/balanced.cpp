@@ -30,25 +30,22 @@
 #include <seiscomp/core/strings.h>
 #include <seiscomp/io/recordinput.h>
 
-#include "balanced.h"
+#include "balanced_private.h"
 
-#include <seiscomp/client/queue.ipp>
-
-namespace Seiscomp {
-namespace RecordStream {
-namespace Balanced {
-namespace _private {
 
 using namespace std;
-using namespace Seiscomp::Core;
+using namespace Seiscomp;
 using namespace Seiscomp::IO;
-
-const size_t QueueSize = 1024;
+using namespace Seiscomp::RecordStream;
 
 
 namespace {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 size_t findClosingParenthesis(const string &s, size_t p) {
 	int cnt = 1;
 	for ( size_t i = p; i < s.size(); ++i ) {
@@ -59,28 +56,19 @@ size_t findClosingParenthesis(const string &s, size_t p) {
 
 	return string::npos;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-}
 
 
-IMPLEMENT_SC_CLASS_DERIVED(BalancedConnection, Seiscomp::IO::RecordStream,
-                           "BalancedConnection");
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 REGISTER_RECORDSTREAM(BalancedConnection, "balanced");
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-BalancedConnection::BalancedConnection(): _started(false), _nthreads(0), _queue(QueueSize),
-	_stream(istringstream::in|istringstream::binary) {
-}
 
-BalancedConnection::BalancedConnection(string serverloc): _started(false), _nthreads(0), _queue(QueueSize),
-	_stream(istringstream::in|istringstream::binary) {
-	setSource(serverloc);
-}
 
-BalancedConnection::~BalancedConnection() {
-	close();
-}
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool BalancedConnection::setSource(const string &source) {
 	if ( _started )
 		return false;
@@ -160,7 +148,7 @@ bool BalancedConnection::setSource(const string &source) {
 			return false;
 		}
 
-		_rsarray.push_back(make_pair(rs, 0));
+		_rsarray.push_back(make_pair(rs, false));
 
 		if ( p2 == serverloc.length() )
 			break;
@@ -170,183 +158,24 @@ bool BalancedConnection::setSource(const string &source) {
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-int BalancedConnection::streamHash(const string &sta) {
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+int BalancedConnection::getRS(const string &net, const string &sta,
+                              const string &loc, const string &cha) {
+	// create hash on stastion code
 	size_t i = 0;
 	for ( const char* p = sta.c_str(); *p != 0; ++p ) i += *p;
 
 	return i % _rsarray.size();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-bool BalancedConnection::addStream(const string &net, const string &sta,
-                                   const string &loc, const string &cha) {
-	SEISCOMP_DEBUG("add stream %s.%s.%s.%s", net.c_str(),
-	               sta.c_str(), loc.c_str(), cha.c_str());
 
-	if ( _rsarray.empty() )
-		return false;
 
-	int i = streamHash(sta);
 
-	if ( !_rsarray[i].first->addStream(net, sta, loc, cha) )
-		return false;
-
-	_rsarray[i].second = true;
-
-	return true;
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
-
-bool BalancedConnection::addStream(const string &net, const string &sta,
-                                   const string &loc, const string &cha,
-                                   const Seiscomp::Core::Time &stime,
-                                   const Seiscomp::Core::Time &etime) {
-	SEISCOMP_DEBUG("add stream %s.%s.%s.%s", net.c_str(),
-	               sta.c_str(), loc.c_str(), cha.c_str());
-
-	if ( _rsarray.empty() )
-		return false;
-
-	int i = streamHash(sta);
-
-	if ( !_rsarray[i].first->addStream(net, sta, loc, cha, stime, etime) )
-		return false;
-
-	_rsarray[i].second = true;
-
-	return true;
-}
-
-bool BalancedConnection::setStartTime(const Seiscomp::Core::Time &stime) {
-	if ( _rsarray.empty() )
-		return false;
-
-	for ( size_t i = 0; i < _rsarray.size(); ++i) {
-		if ( !_rsarray[i].first->setStartTime(stime) )
-			return false;
-	}
-
-	return true;
-}
-
-bool BalancedConnection::setEndTime(const Seiscomp::Core::Time &etime) {
-	if ( _rsarray.empty() )
-		return false;
-
-	for ( size_t i = 0; i < _rsarray.size(); ++i) {
-		if ( !_rsarray[i].first->setEndTime(etime) )
-			return false;
-	}
-
-	return true;
-}
-
-bool BalancedConnection::setTimeWindow(const Seiscomp::Core::TimeWindow &w) {
-	if ( _rsarray.empty() )
-		return false;
-
-	for ( size_t i = 0; i < _rsarray.size(); ++i) {
-		if ( !_rsarray[i].first->setTimeWindow(w) )
-			return false;
-	}
-
-	return true;
-}
-
-bool BalancedConnection::setRecordType(const char* type) {
-	if ( _rsarray.empty() )
-		return false;
-
-	for ( size_t i = 0; i < _rsarray.size(); ++i) {
-		if ( !_rsarray[i].first->setRecordType(type) )
-			return false;
-	}
-
-	return true;
-}
-
-bool BalancedConnection::setTimeout(int seconds) {
-	if ( _rsarray.empty() )
-		return false;
-
-	for ( size_t i = 0; i < _rsarray.size(); ++i) {
-		if ( !_rsarray[i].first->setTimeout(seconds) )
-			return false;
-	}
-
-	return true;
-}
-
-void BalancedConnection::close() {
-	lock_guard<mutex> lock(_mtx);
-
-	if ( _rsarray.empty() )
-		return;
-
-	for ( size_t i = 0; i < _rsarray.size(); ++i)
-		_rsarray[i].first->close();
-
-	_queue.close();
-
-	for ( auto &&thread : _threads )
-		thread->join();
-
-	_threads.clear();
-	_started = false;
-}
-
-void BalancedConnection::acquiThread(RecordStreamPtr rs) {
-	SEISCOMP_DEBUG("Starting acquisition thread");
-
-	Record *rec;
-	try {
-		while ( (rec = rs->next()) )
-			_queue.push(rec);
-	}
-	catch ( OperationInterrupted &e ) {
-		SEISCOMP_DEBUG("Interrupted acquisition thread, msg: '%s'", e.what());
-	}
-	catch ( exception& e ) {
-		SEISCOMP_ERROR("Exception in acquisition thread: '%s'", e.what());
-	}
-
-	SEISCOMP_DEBUG("Finished acquisition thread");
-
-	_queue.push(nullptr);
-}
-
-Record *BalancedConnection::next() {
-	if ( !_started ) {
-		_started = true;
-
-		for ( size_t i = 0; i < _rsarray.size(); ++i) {
-			if ( _rsarray[i].second ) {
-				_rsarray[i].first->setDataType(_dataType);
-				_rsarray[i].first->setDataHint(_hint);
-				_threads.push_back(new thread(std::bind(&BalancedConnection::acquiThread, this, _rsarray[i].first)));
-				++_nthreads;
-			}
-		}
-	}
-
-	while (_nthreads > 0) {
-		Record *rec = _queue.pop();
-
-		if ( rec == nullptr ) {
-			--_nthreads;
-			continue;
-		}
-
-		return rec;
-	}
-
-	SEISCOMP_DEBUG("All acquisition threads finished -> finish iteration");
-
-	return nullptr;
-}
-
-
-} // namesapce Balanced
-} // namespace _private
-} // namespace RecordStream
-} // namespace Seiscomp
-
