@@ -108,8 +108,8 @@ class SC_SYSTEM_CORE_API BalancedConnection : public Seiscomp::IO::RecordStream 
 		std::mutex _mtx;
 };
 
-} // namesapce Balanced
 } // namespace _private
+} // namesapce Balanced
 } // namespace RecordStream
 } // namespace Seiscomp
 

@@ -160,7 +160,7 @@ bool BalancedConnection::setSource(const string &source) {
 			return false;
 		}
 
-		_rsarray.push_back(make_pair(rs, 0));
+		_rsarray.push_back(make_pair(rs, false));
 
 		if ( p2 == serverloc.length() )
 			break;
@@ -285,6 +285,8 @@ void BalancedConnection::close() {
 	for ( size_t i = 0; i < _rsarray.size(); ++i)
 		_rsarray[i].first->close();
 
+	_rsarray.clear();
+
 	_queue.close();
 
 	for ( auto &&thread : _threads )
@@ -294,7 +296,7 @@ void BalancedConnection::close() {
 	_started = false;
 }
 
-void BalancedConnection::acquiThread(RecordStreamPtr rs) {
+void BalancedConnection::acquiThread(RecordStream* rs) {
 	SEISCOMP_DEBUG("Starting acquisition thread");
 
 	Record *rec;
@@ -315,6 +317,7 @@ void BalancedConnection::acquiThread(RecordStreamPtr rs) {
 }
 
 Record *BalancedConnection::next() {
+	lock_guard<mutex> lock(_mtx);
 	if ( !_started ) {
 		_started = true;
 
@@ -322,7 +325,7 @@ Record *BalancedConnection::next() {
 			if ( _rsarray[i].second ) {
 				_rsarray[i].first->setDataType(_dataType);
 				_rsarray[i].first->setDataHint(_hint);
-				_threads.push_back(new thread(std::bind(&BalancedConnection::acquiThread, this, _rsarray[i].first)));
+				_threads.push_back(new thread(std::bind(&BalancedConnection::acquiThread, this, _rsarray[i].first.get())));
 				++_nthreads;
 			}
 		}
@@ -345,8 +348,8 @@ Record *BalancedConnection::next() {
 }
 
 
-} // namesapce Balanced
 } // namespace _private
+} // namesapce Balanced
 } // namespace RecordStream
 } // namespace Seiscomp
 
