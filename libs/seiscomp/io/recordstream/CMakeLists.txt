@@ -6,7 +6,6 @@ SET(RECORDSTREAM_SOURCES
 	slconnection.cpp
 	combined.cpp
 	balanced.cpp
-	split.cpp
 	streamidx.cpp
 	decimation.cpp
 	resample.cpp
@@ -30,7 +29,6 @@ SET(RECORDSTREAM_HEADERS
 	slconnection.h
 	combined.h
 	balanced.h
-	split.h
 	streamidx.h
 	decimation.h
 	resample.h
