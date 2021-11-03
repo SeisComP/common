@@ -171,7 +171,9 @@ bool BalancedConnection::setSource(const string &source) {
 	return true;
 }
 
-int BalancedConnection::streamHash(const string &sta) {
+int BalancedConnection::getRS(const string &net, const string &sta,
+                                  const string &loc, const string &cha) {
+	// create hash on stastion code
 	size_t i = 0;
 	for ( const char* p = sta.c_str(); *p != 0; ++p ) i += *p;
 
@@ -186,7 +188,9 @@ bool BalancedConnection::addStream(const string &net, const string &sta,
 	if ( _rsarray.empty() )
 		return false;
 
-	int i = streamHash(sta);
+	int i = getRS(net, sta, loc, cha);
+
+	if (i < 0) return false;
 
 	if ( !_rsarray[i].first->addStream(net, sta, loc, cha) )
 		return false;
@@ -206,7 +210,9 @@ bool BalancedConnection::addStream(const string &net, const string &sta,
 	if ( _rsarray.empty() )
 		return false;
 
-	int i = streamHash(sta);
+	int i = getRS(net, sta, loc, cha);
+
+	if (i < 0) return false;
 
 	if ( !_rsarray[i].first->addStream(net, sta, loc, cha, stime, etime) )
 		return false;
@@ -318,6 +324,7 @@ void BalancedConnection::acquiThread(RecordStream* rs) {
 
 Record *BalancedConnection::next() {
 	lock_guard<mutex> lock(_mtx);
+
 	if ( !_started ) {
 		_started = true;
 

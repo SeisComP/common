@@ -91,17 +91,23 @@ class SC_SYSTEM_CORE_API BalancedConnection : public Seiscomp::IO::RecordStream 
 
 		virtual Record *next();
 
+	protected:
+		virtual int getRS(const std::string &networkCode,
+		                      const std::string &stationCode,
+		                      const std::string &locationCode,
+		                      const std::string &channelCode);
 
 	private:
-		int streamHash(const std::string &sta);
 		void putRecord(RecordPtr rec);
 		Record* getRecord();
-		void acquiThread(IO::RecordStreamPtr rs);
+		void acquiThread(IO::RecordStream* rs);
+
+	protected:
+		bool _started;
+		std::vector<std::pair<IO::RecordStreamPtr, bool> > _rsarray;
 
 	private:
-		bool _started;
 		int _nthreads;
-		std::vector<std::pair<IO::RecordStreamPtr, bool> > _rsarray;
 		std::list<std::thread *> _threads;
 		Client::ThreadedQueue<Record*> _queue;
 		std::istringstream _stream;
