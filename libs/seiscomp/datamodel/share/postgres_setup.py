@@ -83,7 +83,7 @@ def createPostgresSQLDB(
         return False
 
     q = ""
-    exits = ("1" in res.data)
+    exits = "1" in res.data
     if not exits:
         q += "CREATE USER {} WITH ENCRYPTED PASSWORD '{}';".format(rwuser, rwpwd)
 
@@ -98,7 +98,7 @@ def createPostgresSQLDB(
             return False
 
         q = ""
-        exits = ("1" in res.data)
+        exits = "1" in res.data
         if not exits:
             q += "CREATE USER {} WITH ENCRYPTED PASSWORD '{}';".format(rouser, ropwd)
 

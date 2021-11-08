@@ -69,7 +69,7 @@ def createMYSQLDB(
     write("  + Setup user roles")
 
     # MySQL 8 requires explicit "CREATE USER", but this fails
-    # if the users already exists.
+    # if the user already exists.
     # "CREATE USER IF NOT EXISTS" is not supported by MySQL<5.7.
     # Drop possibly existing users, ignoring errors.
 
@@ -89,15 +89,15 @@ def createMYSQLDB(
     q += "GRANT ALL ON {}.* TO '{}'@'%';".format(db, rwuser)
 
     if rwuser != rouser:
-        res = execute(cmd + " -e \"SELECT EXISTS(SELECT 1 FROM mysql.user "
-                      "WHERE user = '{}')\"".format(rwuser))
+        res = execute(cmd + " -e \"SELECT 1 FROM mysql.user "
+                      "WHERE user = '{}'\"".format(rouser))
         if res.error:
             print("  + {}".format(res.error))
             return False
 
         q = ""
-        exits = bool(res.data.strip())
-        if not exits:
+        exists = "1" in res.data
+        if not exists:
             q += "CREATE USER '{}'@'localhost' IDENTIFIED BY '{}';".format(rouser, ropwd)
             q += "CREATE USER '{}'@'%' IDENTIFIED BY '{}';".format(rouser, ropwd)
 
