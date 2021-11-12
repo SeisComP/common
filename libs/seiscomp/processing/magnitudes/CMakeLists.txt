@@ -5,6 +5,7 @@ SET(
 		m_B.cpp
 		Mjma.cpp
 		ML.cpp
+		MLc.cpp
 		MLv.cpp
 		Ms20.cpp
 		msbb.cpp
@@ -19,6 +20,7 @@ SET(
 		m_B.h
 		Mjma.h
 		ML.h
+		MLc.h
 		MLv.h
 		Ms20.h
 		msbb.h

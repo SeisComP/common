@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<plugin name="MLc">
+		<extends>global</extends>
+		<description>
+		Custom magnitude for local events provided by the mlc plugin.
+		The implementation is based on specifications by Hessian Agency for Nature
+		Conservation, Environment and Geology, Hessian Earthquake Service.
+		</description>
+	</plugin>
+	<binding name="MLc" module="global">
+		<description>
+		Custom magnitude for local events provided by the mlc plugin.
+		</description>
+		<configuration>
+			<group name="amplitudes">
+				<group name="MLc">
+					<description>
+					Parameters for measuring MLc amplitudes. Add more parameters
+					by adding an amplitude type profile 'MLc',
+					</description>
+					<parameter name="preFilter" type="string" default="BW(3,0.5,12)">
+						<description>
+						The filter applied to raw records before applying
+						Wood-Anderson simulation.
+						</description>
+					</parameter>
+					<parameter name="applyWoodAnderson" type="boolean" default="true">
+						<description>
+						Applying Wood-Anderson simulation. To achieve displacement
+						records without WA simulation, an integration filter can
+						be applied with the pre-filter.
+						</description>
+					</parameter>
+					<parameter name="amplitudeScale" type="string" default="1.0">
+						<description>
+						Scaling value multiplied to the measured amplitudes to
+						match the amplitude units expected by the magnitude
+						calibration function.
+
+						Expected amplitudes are
+						in units of mym but actual amplitudes provided from
+						Wood-Anderson-corrected seismograms are in units of mm:
+						amplitudeScale = 1000.
+
+						If data are not corrected for WA, measured amplitudes
+						take the unit of gain-corrected data considering the
+						preFilter:
+						amplitudeScale converts between units of measured and
+						excpected amplitude.
+						</description>
+					</parameter>
+					<parameter name="measureType" type="string" default="AbsMax">
+						<description>
+						Type for measuring amplitudes. Available:
+
+						AbsMax: absolute maximum
+
+						MinMax: half difference between absolute maximum and minimum
+
+						PeakTrough: half difference between maximum and minimum
+						on a half cycle
+						</description>
+					</parameter>
+					<parameter name="combiner" type="string" default="max">
+						<description>
+						Define how to combine the amplitudes measured on both
+						horizontals components:
+
+						min: take the minimum
+
+						max: take the maxium
+
+						avgerage: form the average
+
+						geometric_mean: form the geometric mean
+						</description>
+					</parameter>
+				</group>
+			</group>
+			<group name="magnitudes">
+				<group name="MLc">
+					<description>
+					Parameters for computing MLc magntiudes from MLc amplitudes.
+					</description>
+
+					<parameter name="distMode" type="string" default="hypocentral">
+						<description>
+						Considered distance measure between source and receiver.
+						Possible values are
+
+						hypocentral: hypocentral distance
+
+						epicentral: epicentral
+						</description>
+					</parameter>
+					<parameter name="maxDist" type="double" default="6" unit="deg">
+						<description>
+						The maximum distance up to which magnitudes are computed.
+						</description>
+					</parameter>
+					<parameter name="maxDepth" type="double" default="60" unit="km">
+						<description>
+						The maximum depth up to which magnitudes are computed.
+						</description>
+					</parameter>
+					<description>
+					MLc magnitudes from MLc amplitudes.
+					</description>
+					<parameter name="c0" type="double" default="0.0">
+						<description>
+						Station correction. This is the calibration value 'c0'
+						applied in the magnitude calibration formula
+
+						MLc = c0(station) + c1 + c2 * (r + c4) + c3 * log(r/c5) + log10(A)
+						</description>
+					</parameter>
+					<parameter name="c1" type="double" default="0.69">
+						<description>
+						The calibration value 'c1' applied in the magnitude
+						calibration formula
+
+						MLc = c0(station) + c1 + c2 * (r + c4) + c3 * log(r/c5) + log10(A)
+						</description>
+					</parameter>
+					<parameter name="c2" type="double"  default="0.00095">
+						<description>
+						The calibration value 'c2' applied in the
+						magnitude calibration formula
+
+						MLc = c0(station) + c1 + c2 * (r + c4) + c3 * log(r/c5) + log10(A)
+						</description>
+					</parameter>
+					<parameter name="c3" type="double" default="1.11">
+						<description>
+						The calibration value 'c3' applied in the
+						magnitude calibration formula
+
+						MLc = c0(station) + c1 + c2 * (r + c4) + c3 * log(r/c5) + log10(A)
+						</description>
+					</parameter>
+					<parameter name="c4" type="double" default="0.0">
+						<description>
+						The calibration value 'c4' applied in the
+						magnitude calibration formula
+
+						MLc = c0(station) + c1 + c2 * (r + c4) + c3 * log(r/c5) + log10(A)
+						</description>
+					</parameter>
+					<parameter name="c5" type="double" default="1.0">
+						<description>
+						The calibration value 'c4' applied in the
+						magnitude calibration formula
+
+						MLc = c0(station) + c1 + c2 * (r + c4) + c3 * log(r/c5) + log10(A)
+						</description>
+					</parameter>
+				</group>
+			</group>
+		</configuration>
+	</binding>
+</seiscomp>

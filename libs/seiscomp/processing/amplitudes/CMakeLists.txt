@@ -7,6 +7,7 @@ SET(AMPS_SOURCES
 	m_B.cpp
 	Mjma.cpp
 	ML.cpp
+	MLc.cpp
 	MLh.cpp
 	MLv.cpp
 	msbb.cpp
@@ -23,6 +24,7 @@ SET(AMPS_HEADERS
 	m_B.h
 	Mjma.h
 	ML.h
+	MLc.h
 	MLh.h
 	MLv.h
 	msbb.h
