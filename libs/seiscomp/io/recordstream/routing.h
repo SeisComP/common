@@ -31,19 +31,18 @@
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core/timewindow.h>
 #include <seiscomp/io/recordstream.h>
+#include <seiscomp/io/recordstream/concurrent.h>
 #include <seiscomp/core.h>
 #include <seiscomp/client/queue.h>
 
-#include "balanced.h"
-
 namespace Seiscomp {
 namespace RecordStream {
-namespace Balanced {
+namespace Routing {
 namespace _private {
 
 DEFINE_SMARTPOINTER(RoutingConnection);
 
-class SC_SYSTEM_CORE_API RoutingConnection : public BalancedConnection {
+class SC_SYSTEM_CORE_API RoutingConnection : public Concurrent::_private::ConcurrentConnection {
 	DECLARE_SC_CLASS(RoutingConnection)
 
 	public:
@@ -65,7 +64,7 @@ class SC_SYSTEM_CORE_API RoutingConnection : public BalancedConnection {
 		virtual int getRS(const std::string &networkCode,
 		                      const std::string &stationCode,
 		                      const std::string &locationCode,
-		                      const std::string &channelCode); 
+		                      const std::string &channelCode);
 
 	private:
 		struct Rule {
@@ -78,7 +77,7 @@ class SC_SYSTEM_CORE_API RoutingConnection : public BalancedConnection {
 };
 
 } // namespace _private
-} // namesapce Balanced
+} // namesapce Routing
 } // namespace RecordStream
 } // namespace Seiscomp
 

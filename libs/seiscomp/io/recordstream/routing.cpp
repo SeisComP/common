@@ -37,7 +37,7 @@
 
 namespace Seiscomp {
 namespace RecordStream {
-namespace Balanced {
+namespace Routing {
 namespace _private {
 
 using namespace std;
@@ -66,10 +66,10 @@ IMPLEMENT_SC_CLASS_DERIVED(RoutingConnection, Seiscomp::IO::RecordStream,
 
 REGISTER_RECORDSTREAM(RoutingConnection, "routing");
 
-RoutingConnection::RoutingConnection() : BalancedConnection() {
+RoutingConnection::RoutingConnection() : ConcurrentConnection() {
 }
 
-RoutingConnection::RoutingConnection(string serverloc) : BalancedConnection() {
+RoutingConnection::RoutingConnection(string serverloc) : ConcurrentConnection() {
 	setSource(serverloc);
 }
 
@@ -210,7 +210,7 @@ int RoutingConnection::getRS(const string &net, const string &sta,
 }
 
 } // namespace _private
-} // namesapce Balanced
+} // namesapce Routing
 } // namespace RecordStream
 } // namespace Seiscomp
 
