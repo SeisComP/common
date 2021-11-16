@@ -21,12 +21,11 @@
 #define SEISCOMP_COMPONENT QLClient
 
 #define DEFAULT_PORT                ":18010"
-#define MAX_CONTENT_LENGTH          10485760 // 10MiB
+#define MAX_CONTENT_LENGTH          104857600 // 100MiB
 
 #include <sstream>
 #include <string>
 
-//#include <seiscomp/client/application.h>
 #include <seiscomp/core/strings.h>
 #include <seiscomp/logging/log.h>
 
@@ -324,7 +323,8 @@ bool Connection::get(Response &response, const std::string &eventId,
 bool Connection::selectArchived(Responses &responses, const Core::Time &from,
                                 const Core::Time &to,
                                 const RequestFormatVersion &formatVersion,
-                                const std::string &where, OrderBy orderBy,
+                                const std::string &where,
+                                OrderBy orderBy,
                                 unsigned long limit, unsigned long offset) {
 	responses.clear();
 	if ( !connect() || !isSupported(formatVersion, true) )
@@ -333,6 +333,7 @@ bool Connection::selectArchived(Responses &responses, const Core::Time &from,
 	// send request
 	stringstream req;
 	req << "SELECT ARCHIVED EVENTS";
+
 	if ( from )
 		req << " FROM " << from.toString(RequestTimeFormat);
 	if ( to )
@@ -380,16 +381,20 @@ bool Connection::selectArchived(Responses &responses, const Core::Time &from,
 bool Connection::select(bool archived, const Core::Time &from,
                         const Core::Time &to,
                         const RequestFormatVersion &formatVersion,
-                        const std::string &where, int updatedBufferSize,
-                        OrderBy orderBy, unsigned long limit,
-                        unsigned long offset) {
+                        const std::string &where,
+                        int updatedBufferSize, OrderBy orderBy,
+                        unsigned long limit, unsigned long offset) {
 
 	if ( !connect() || !isSupported(formatVersion, true) )
 		return false;
 
 	// send request
 	stringstream req;
-	req << (archived ? "SELECT EVENTS" : "SELECT UPDATED EVENTS");
+	req << "SELECT ";
+	if ( !archived )
+		req << "UPDATED ";
+	req << "EVENTS";
+
 	if ( from )
 		req << " FROM " << from.toString(RequestTimeFormat);
 	if ( to )
@@ -439,8 +444,12 @@ bool Connection::select(bool archived, const Core::Time &from,
 				processResponse(response);
 				continue;
 			}
-			else if ( startsWith(code, "DATA/SELECT/UPDATED 200") ) {
-				response->timestamp = Core::Time::GMT();
+			if ( startsWith(code, "DATA/SELECT/UPDATED 200") ) {
+				// QuakeLink < 2022.060 did not set the Content-Timestamp
+				// header for UPDATED data. As a workarround the current
+				// timestamp is used.
+				if ( !response->timestamp.valid() )
+					response->timestamp = Core::Time::GMT();
 
 				// archived data processed or cache disabled: sent update immediately
 				if ( !archived || updatedBufferSize < 0 ) {
@@ -455,7 +464,7 @@ bool Connection::select(bool archived, const Core::Time &from,
 				}
 
 				SEISCOMP_WARNING("%sreceived to many updates while still "
-				                 "proccessing archived events, ignoring "
+				                 "processing archived events, ignoring "
 				                 "archived data now", _logPrefix.c_str());
 			}
 			else
@@ -623,8 +632,11 @@ bool Connection::readResponse(Response &response) {
 				return false;
 			}
 			if ( response.length > MAX_CONTENT_LENGTH ) {
-				logAndDisconnect("response header: Content-Length exceeds "
-				                 "maximum of %s bytes", value.c_str());
+				stringstream detail;
+				detail << "received: " << value << ", allowed: "
+				       << MAX_CONTENT_LENGTH;
+				logAndDisconnect("response header: Maximum Content-Length "
+				                 "excceded", detail.str().c_str());
 				return false;
 			}
 		}
@@ -648,7 +660,7 @@ bool Connection::readResponse(Response &response) {
 		}
 		else if ( readHeaderValue(value, line, "Content-Revision:") ) {
 			int rev;
-			if ( !Core::fromString(rev, value.c_str()) ) {
+			if ( !Core::fromString(rev, value) ) {
 				logAndDisconnect("response header: Invalid Content-Revision",
 				                 value.c_str());
 				return false;
@@ -658,7 +670,7 @@ bool Connection::readResponse(Response &response) {
 		}
 		else if ( readHeaderValue(value, line, "Disposed:") ) {
 			bool disposed;
-			if ( !Core::fromString(disposed, value.c_str()) ) {
+			if ( !Core::fromString(disposed, value) ) {
 				logAndDisconnect("response header: Invalid Disposed value",
 				                 value.c_str());
 				return false;
@@ -752,15 +764,15 @@ bool Connection::assertLineBreak() {
 	return false;
 }
 
-bool Connection::readPayload(string &data, uint n) {
-	SEISCOMP_DEBUG("%sreading %u payload bytes", _logPrefix.c_str(), n);
+bool Connection::readPayload(string &data, uint count) {
+	SEISCOMP_DEBUG("%sreading %u payload bytes", _logPrefix.c_str(), count);
 
 	uint read = 0;
 	uint total = 0;
-	data.reserve(n);
+	data.reserve(count);
 
-	while ( total < n ) {
-		read = n - total < BUFSIZE ? n - total : BUFSIZE;
+	while ( total < count ) {
+		read = count - total < BUFSIZE ? count - total : BUFSIZE;
 		try { data += _sock->read(static_cast<int>(read)); }
 		catch ( SocketException& se) {
 			logAndDisconnect("could not read response payload", se.what());
@@ -769,7 +781,7 @@ bool Connection::readPayload(string &data, uint n) {
 		total += read;
 	}
 
-	if ( total < n ) {
+	if ( total < count ) {
 		logAndDisconnect("read incomplete response payload");
 		return false;
 	}
