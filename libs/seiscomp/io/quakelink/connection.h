@@ -72,6 +72,11 @@ enum OrderBy {
 	obOTimeDesc         = 1
 };
 
+enum Domain {
+	doEvents            = 0,
+	doDYFI              = 1
+};
+
 // API and format version type
 typedef unsigned int Version;
 
@@ -249,6 +254,7 @@ class Connection : public Core::BaseObject {
 		                    const Core::Time &to = Core::Time(),
 		                    const RequestFormatVersion &formatVersion = rfSummary,
 		                    const std::string &where = "",
+		                    Domain domain = doEvents,
 		                    OrderBy orderBy = obUndefined,
 		                    unsigned long limit = 0,
 		                    unsigned long offset = 0);
@@ -293,6 +299,7 @@ class Connection : public Core::BaseObject {
 		            const Core::Time &to = Core::Time(),
 		            const RequestFormatVersion &formatVersion = rfSummary,
 		            const std::string &where = "",
+		            Domain domain = doEvents,
 		            int updatedBufferSize = 1000,
 		            OrderBy orderBy = obUndefined,
 		            unsigned long limit = 0,
