@@ -24,10 +24,14 @@
 #define SEISCOMP_COMPONENT MASTER
 
 #include <seiscomp/logging/log.h>
+#include <seiscomp/core/strings.h>
 #include <seiscomp/system/pluginregistry.h>
 #include <seiscomp/system/application.h>
 #include <seiscomp/wired/devices/socket.h>
 #include <seiscomp/broker/messageprocessor.h>
+
+#include <openssl/err.h>
+#include <openssl/x509.h>
 
 #include "server.h"
 #include "settings.h"
@@ -88,36 +92,42 @@ bool Master::init() {
 
 	_server = new Broker::Server;
 
-	for ( size_t i = 0; i < global.queues.size(); ++i ) {
-		Broker::Queue *q = _server->addQueue(global.queues[i].name,
-		                                     global.queues[i].maxPayloadSize,
-		                                     global.queues[i].acl);
-		if ( q == NULL ) {
-			SEISCOMP_ERROR("Failed to add queue: %s", global.queues[i].name.c_str());
+	for ( auto &queue : global.queues ) {
+		auto q_item = _server->addQueue(queue.name,
+		                                queue.maxPayloadSize);
+		if ( !q_item ) {
+			SEISCOMP_ERROR("Failed to add queue: %s", queue.name.c_str());
 			return false;
 		}
 
-		SEISCOMP_INFO("+ A %s", toString(global.queues[i].acl).c_str());
-		SEISCOMP_INFO("+ Q %s", global.queues[i].name.c_str());
+		q_item->acl = queue.acl;
+		q_item->dbURL = queue.dbstore.driver + "://" + queue.dbstore.parameters;
 
-		if ( global.queues[i].groups.empty() )
-			global.queues[i].groups = global.defaultGroups;
+		SEISCOMP_INFO("+ A %s", toString(queue.acl).c_str());
+		SEISCOMP_INFO("+ Q %s", queue.name.c_str());
 
-		for ( size_t g = 0; g < global.queues[i].groups.size(); ++g ) {
-			Broker::Queue::Result r = q->addGroup(global.queues[i].groups[g]);
+		auto q = q_item->queue;
+
+		if ( queue.groups.empty() ) {
+			queue.groups = global.defaultGroups;
+		}
+
+		for ( size_t g = 0; g < queue.groups.size(); ++g ) {
+			Broker::Queue::Result r = q->addGroup(queue.groups[g]);
 			if ( r != Broker::Queue::Success ) {
 				SEISCOMP_ERROR("Failed to add group: %s/%s: %s",
-				               global.queues[i].name.c_str(),
-				               global.queues[i].groups[g].c_str(),
+				               queue.name.c_str(),
+				               queue.groups[g].c_str(),
 				               r.toString());
 				return false;
 			}
-			else
-				SEISCOMP_INFO("  + G %s", global.queues[i].groups[g].c_str());
+			else {
+				SEISCOMP_INFO("  + G %s", queue.groups[g].c_str());
+			}
 		}
 
-		for ( size_t p = 0; p < global.queues[i].messageProcessors.size(); ++p ) {
-			string interface = global.queues[i].messageProcessors[p];
+		for ( size_t p = 0; p < queue.messageProcessors.size(); ++p ) {
+			string interface = queue.messageProcessors[p];
 			Broker::MessageProcessorPtr proc = Broker::MessageProcessorFactory::Create(interface);
 			if ( !proc ) {
 				SEISCOMP_ERROR("Could not create message processor interface '%s'",
@@ -175,12 +185,33 @@ bool Master::run() {
 	  && !global.interface.ssl.key.empty()
 	  && !global.interface.ssl.certificate.empty() ) {
 		SSL_CTX *ctx = Wired::SSLSocket::createServerContext(global.interface.ssl.certificate.c_str(), global.interface.ssl.key.c_str());
-		if ( ctx == NULL ) {
+		if ( !ctx ) {
 			SEISCOMP_ERROR("Failed to create SSL server context");
 			return false;
 		}
 
-		Wired::SocketPtr socket = new Wired::SSLSocket(ctx);
+		if ( global.interface.ssl.verifyPeer ) {
+			// Allow self-signed certificates
+			if ( !SSL_CTX_load_verify_locations(ctx, global.interface.ssl.certificate.c_str(), nullptr) ) {
+				SEISCOMP_ERROR("Loading verification certificate failed");
+				ERR_print_errors_cb([](const char *str, size_t len, void *) -> int {
+					Core::trimBack(str, len);
+					SEISCOMP_ERROR("%.*s", static_cast<int>(len), str);
+					return 0;
+				}, nullptr);
+				SSL_CTX_free(ctx);
+				return false;
+			}
+
+			SSL_CTX_set_verify(
+				ctx, SSL_VERIFY_PEER | SSL_VERIFY_CLIENT_ONCE,
+				[](int, X509_STORE_CTX *) -> int {
+					return 1;
+				}
+			);
+		}
+
+		Wired::SSLSocketPtr socket = new Wired::SSLSocket(ctx);
 		socket->setNoDelay(true);
 
 		if ( socket->setReuseAddr(global.interface.ssl.socketPortReuse) != Wired::Socket::Success ) {
@@ -188,7 +219,15 @@ bool Master::run() {
 			return false;
 		}
 
-		Broker::WebsocketEndpoint *endpoint = new Broker::WebsocketEndpoint(_server.get(), socket.get(), global.interface.ssl.acl);
+		Broker::WebsocketEndpoint *endpoint = nullptr;
+
+		if ( global.interface.ssl.verifyPeer ) {
+			endpoint = new Broker::SSLVerifyWebsocketEndpoint(_server.get(), socket.get(), global.interface.ssl.acl);
+		}
+		else {
+			endpoint = new Broker::WebsocketEndpoint(_server.get(), socket.get(), global.interface.ssl.acl);
+		}
+
 		if ( !_server->addEndpoint(global.interface.ssl.bind.address, global.interface.ssl.bind.port, endpoint) ) {
 			delete endpoint;
 			SEISCOMP_ERROR("Failed to bind to port %d", global.interface.ssl.bind.port);

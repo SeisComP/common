@@ -51,7 +51,7 @@ to the clients of the messaging system (compare with the :ref:`concepts section 
 The database is configured per queue.
 
 
-Single machine
+Single Machine
 --------------
 
 When running all |scname| modules on a single machine, the read and write
@@ -63,7 +63,7 @@ Example: ::
    queues.production.processors.messages.dbstore.write = sysop:sysop@localhost/seiscomp
 
 
-Multiple machines
+Multiple Machines
 -----------------
 
 If the clients are located on machines different from the messaging, the
@@ -83,3 +83,38 @@ with the :ref:`concepts section <messaging-distribution>`).
 * Global configuration of client on computerB: ::
 
      connection.server = computerA/production
+
+Database Proxy
+--------------
+
+scmaster can accept database requests and forward results to clients without
+exposing the underlying database. That allows clients to connect to the database
+of a particular queue via the Websocket HTTP protocol. No specific database
+plugin is required at the client which reduces the complexity of configuration.
+
+Be aware that due to the nature of a proxy which is another layer on top of the
+actual database connection the performance is not as high as direct database
+access.
+
+To let scmaster return the proxy address of the database connection, set
+
+.. code::
+
+   queues.production.processors.messages.dbstore.proxy = true
+
+in the configuration file.
+
+
+Access Control
+==============
+
+scmaster does not provide any built-in access control to connecting clients.
+The only exception is the possibility to verify client certificates against
+the server certificate if SSL is enabled.
+
+.. code::
+
+   interface.ssl.verifyPeer = true
+
+It is required that the client certificate is signed by the server certificate
+otherwise the client connection will be rejected.

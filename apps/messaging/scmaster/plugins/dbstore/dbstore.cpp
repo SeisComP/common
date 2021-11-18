@@ -104,7 +104,12 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 		                      KeyValues &outParams) override {
 			outParams.push_back(KeyValuePair("DB-Schema-Version", SchemaVersion));
 			if ( !_settings.read.empty() ) {
-				outParams.push_back(KeyValuePair("DB-Access", _settings.driver + "://" + _settings.read));
+				if ( _settings.proxy ) {
+					outParams.push_back(KeyValuePair("DB-Access", "proxy://"));
+				}
+				else {
+					outParams.push_back(KeyValuePair("DB-Access", _settings.driver + "://" + _settings.read));
+				}
 			}
 			return true;
 		}
@@ -293,19 +298,18 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 
 	private:
 		struct Settings {
-			Settings()
-			: strictVersionMatch(true) {}
-
 			string driver;
 			string write;
 			string read;
-			bool   strictVersionMatch;
+			bool   proxy{false};
+			bool   strictVersionMatch{true};
 
 			void accept(ConfigSettingsLinker &linker) {
 				linker
 				& ConfigSettingsLinker::cfg(driver, "driver")
 				& ConfigSettingsLinker::cfg(write, "write")
 				& ConfigSettingsLinker::cfg(read, "read")
+				& ConfigSettingsLinker::cfg(proxy, "proxy")
 				& ConfigSettingsLinker::cfg(strictVersionMatch, "strictVersionMatch");
 			}
 		};

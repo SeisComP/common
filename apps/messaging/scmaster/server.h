@@ -112,11 +112,23 @@ class Server : public Wired::Server {
 	//  Public interface
 	// ----------------------------------------------------------------------
 	public:
-		Queue *addQueue(const std::string &name, uint64_t maxPayloadSize,
-		                const Wired::IPACL &acl);
+		struct QueueItem {
+			Queue          *queue{nullptr};
+			Wired::IPACL    acl;
+			std::string     dbURL;
+			QueueWorker    *worker{nullptr};
+			std::thread    *thread{nullptr};
+		};
+
+		struct DatabaseItem {
+			Wired::Reactor *reactor{nullptr};
+			std::thread    *thread{nullptr};
+		};
+
+		QueueItem *addQueue(const std::string &name, uint64_t maxPayloadSize);
 		Queue *getQueue(const std::string &name,
-		                Client *enquirer,
 		                const Wired::Socket::IPAddress &remoteAddress) const;
+		const QueueItem *getQueue(const std::string &name) const;
 
 		size_t numberOfQueues() const;
 
@@ -142,15 +154,11 @@ class Server : public Wired::Server {
 	//  Private members
 	// ----------------------------------------------------------------------
 	private:
-		struct QueueItem {
-			Queue          *queue;
-			Wired::IPACL    acl;
-			QueueWorker    *worker;
-			std::thread    *thread;
-		};
+		using Queues = std::map<std::string, QueueItem>;
+		using DatabaseWorkers = std::list<DatabaseItem>;
 
-		typedef std::map<std::string, QueueItem> Queues;
 		Queues                               _queues;
+		DatabaseWorkers                      _databases;
 		circular_buffer<ServerStatisticsPtr> _serverStats;
 		ServerStatistics                     _cummulatedStats;
 		std::mutex                           _statsMutex;
@@ -174,8 +182,28 @@ class WebsocketEndpoint : public Wired::AccessControlledEndpoint {
 		virtual Wired::Session *createSession(Wired::Socket *socket);
 
 
-	private:
+	protected:
 		Server *_server;
+};
+
+
+class SSLVerifyWebsocketEndpoint : public WebsocketEndpoint {
+	// ----------------------------------------------------------------------
+	//  X'truction
+	// ----------------------------------------------------------------------
+	public:
+		//! C'tor
+		SSLVerifyWebsocketEndpoint(Server *server, Wired::SSLSocket *socket,
+		                           Wired::IPACL &allowAddresses);
+
+
+	// ----------------------------------------------------------------------
+	//  Acceptor interface
+	// ----------------------------------------------------------------------
+	protected:
+		virtual Wired::Session *createSession(Wired::Socket *socket);
+
+
 };
 
 

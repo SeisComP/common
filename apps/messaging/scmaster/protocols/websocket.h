@@ -36,17 +36,55 @@ namespace Messaging {
 namespace Protocols {
 
 
+class WebsocketSession;
+
+DEFINE_SMARTPOINTER(WebsocketHandler);
+class WebsocketHandler : public Seiscomp::Core::BaseObject {
+	public:
+		WebsocketHandler(WebsocketSession *session) : _session(session) {}
+
+	public:
+		//! When the HTTP session upgrades the connection to a websocket
+		//! connection then this method is called and can be used to inject
+		//! additional HTTP headers into the upgrade response.
+		virtual void addUpgradeHeader() {}
+
+		//! Called at the beginning of a new update cycle when the reactor
+		//! gives connection control to the underlying session.
+		virtual void start() = 0;
+
+		//! Main function to handle a websocket frame.
+		virtual void handleFrame(Seiscomp::Wired::Websocket::Frame &frame) = 0;
+
+		//! Callback when all buffers in the underlying session have been
+		//! flushed.
+		virtual void buffersFlushed() = 0;
+
+		//! Callback when the outbox in the underlying session has been
+		//! flushed.
+		virtual void outboxFlushed() = 0;
+
+		//! Called when a websocket close frame has been received.
+		virtual void close() = 0;
+
+		virtual Broker::Queue *queue() const { return nullptr; }
+
+	protected:
+		WebsocketSession *_session;
+};
+
+
 /**
  * @brief The WsSession class implements a WebSocket session that communicates
  *        via the WebSocket protocol with the clients.
  */
-class WebsocketSession : public HttpSession, Broker::Client {
+class WebsocketSession : public HttpSession {
 	// ----------------------------------------------------------------------
 	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
 		//! C'tor
-		WebsocketSession(Wired::Socket *sock, Broker::Server *server);
+		WebsocketSession(Seiscomp::Wired::Socket *sock, Broker::Server *server);
 
 
 	// ----------------------------------------------------------------------
@@ -58,62 +96,36 @@ class WebsocketSession : public HttpSession, Broker::Client {
 		void handleHeader(const char *name, size_t nlen,
 		                  const char *value, size_t vlen) override;
 
-		bool handleGETRequest(Wired::HttpRequest &req) override;
-
 		void close() override;
 		void buffersFlushed() override;
 		void outboxFlushed() override;
 
-		void replyWithError(const char *msg, int len);
-		void replyWithError(const std::string &msg);
+		void requestFinished() override;
 
-		void handleWebsocketFrame(Wired::Websocket::Frame &frame) override;
-		void handleFrame(char *data, int len);
+		void handleWebsocketFrame(Seiscomp::Wired::Websocket::Frame &frame) override;
+		void upgradeToWebsocket(const char *protocol,
+		                        WebsocketHandler *handler,
+		                        uint64_t maxPayloadSize);
 
-		virtual bool handleWSUpgrade(Wired::HttpRequest &req);
+		bool handleBrokerUpgrade(const std::string &requestQueue) override;
+		bool handleDatabaseUpgrade(const std::string &dbURL) override;
 
-		void commandCONNECT(char *frame, int len);
-		void commandDISCONNECT(char *frame, int len);
-		void commandSUBSCRIBE(char *frame, int len);
-		void commandUNSUBSCRIBE(char *frame, int len);
-		void commandSEND(char *frame, int len);
-		void commandSTATE(char *frame, int len, bool service);
+		Seiscomp::Wired::HttpRequest &request() { return _request; }
+		Seiscomp::Wired::Websocket::Frame *frame() { return _websocketFrame.get(); }
+		size_t bufferdOutgoingBytes() { return inAvail(); }
 
-		Broker::Queue *queue() const { return _queue; }
+		// Expose protected method to public
+		using HttpSession::invalidate;
+		using HttpSession::finishReading;
 
-
-	// ----------------------------------------------------------------------
-	//  Subscriber interface
-	// ----------------------------------------------------------------------
-	protected:
-		Wired::Socket::IPAddress IPAddress() const override;
-
-		size_t publish(Broker::Client *sender, Broker::Message *msg) override;
-		void enter(const Broker::Group *group, const Broker::Client *newMember,
-		           Broker::Message *msg) override;
-		void leave(const Broker::Group *, const Broker::Client *newMember,
-		           Broker::Message *msg) override;
-		void disconnected(const Broker::Client *newMember,
-		                  Broker::Message *msg) override;
-		void ack() override;
-		void dispose() override;
-
-
-	// ----------------------------------------------------------------------
-	//  Private interface
-	// ----------------------------------------------------------------------
-	private:
-		size_t sendMessage(Broker::Message *msg);
+		Broker::Queue *queue() const { return _handler ? _handler->queue() : nullptr; }
 
 
 	// ----------------------------------------------------------------------
 	//  Private members
 	// ----------------------------------------------------------------------
 	private:
-		OPT(Broker::SequenceNumber) _continueWithSeqNo;
-		int                         _bytesSent;
-		int                         _messageBacklog;
-		std::string                 _requestQueue;
+		WebsocketHandlerPtr _handler;
 };
 
 

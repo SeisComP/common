@@ -21,13 +21,12 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_BROKER_PROTOCOL_HTTP_H
-#define SEISCOMP_BROKER_PROTOCOL_HTTP_H
+#ifndef SEISCOMP_BROKER_PROTOCOL_HANDLER_DB_H
+#define SEISCOMP_BROKER_PROTOCOL_HANDLER_DB_H
 
 
-#include <seiscomp/wired/protocols/http.h>
 #include <seiscomp/io/database.h>
-#include "../server.h"
+#include "../websocket.h"
 
 
 namespace Seiscomp {
@@ -35,38 +34,29 @@ namespace Messaging {
 namespace Protocols {
 
 
-/**
- * @brief The WsSession class implements a WebSocket session that communicates
- *        via the WebSocket protocol with the clients.
- */
-class HttpSession : public Wired::HttpSession {
+class DBHandler : public WebsocketHandler {
 	public:
-		HttpSession(Wired::Socket *sock, Broker::Server *server);
+		static constexpr const char *PROTOCOL_NAME = "scsql";
+		static constexpr const int DEFAULT_MAX_PAYLOAD_SIZE = 1024*1024;
 
 	public:
-		bool handleRequest(Wired::HttpRequest &req) override;
-		bool handleGETRequest(Wired::HttpRequest &req) override;
-		bool handlePOSTRequest(Wired::HttpRequest &req) override;
+		DBHandler(WebsocketSession *session, Seiscomp::IO::DatabaseInterfacePtr db);
+		~DBHandler();
 
-		void setAuthenticated(bool auth) { _isAuthenticated = auth; }
-		bool isAuthenticated() const { return _isAuthenticated; }
+	public:
+		void addUpgradeHeader() override;
+		void start() override;
+		void handleFrame(Seiscomp::Wired::Websocket::Frame &frame) override;
+		void buffersFlushed() override;
+		void outboxFlushed() override;
+		void close() override;
 
-		void setAuthorized(bool auth) { _isAuthorized = auth; }
-		bool isAuthorized() const { return _isAuthorized; }
+	private:
+		void sendClose();
+		void sendResult(uint8_t command, uint8_t code, const char *message);
 
-		Broker::Server *server() const {
-			return _server;
-		}
-
-	protected:
-		virtual bool handleBrokerUpgrade(const std::string &requestQueue);
-		virtual bool handleDatabaseUpgrade(const std::string &dbURL);
-
-	protected:
-		Broker::Server *_server;
-
-		bool            _isAuthenticated{true};
-		bool            _isAuthorized{true};
+	private:
+		Seiscomp::IO::DatabaseInterfacePtr _db;
 };
 
 

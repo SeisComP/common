@@ -53,11 +53,13 @@ def removeEntry(cfg, param, item):
     # Removes an items from a parameter list
     try:
         items = cfg.getStrings(param)
-        for i in range(items.size()):
-            if items[i] == item:
-                items.erase(items.begin() + i)
+        it = items.begin()
+        while it != items.end():
+            if it.value() == item:
+                items.erase(it)
                 cfg.setStrings(param, items)
                 break
+            it.next()
     except ValueError:
         # No parameter set, nothing to do
         pass

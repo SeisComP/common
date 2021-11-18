@@ -8,6 +8,8 @@ SET(WIRED_APP_TARGET scmaster)
 SET(WIRED_APP_SOURCES
 	protocols/http.cpp
 	protocols/websocket.cpp
+	protocols/handler/broker.cpp
+	protocols/handler/db.cpp
 	statistics/statistics.cpp
 	main.cpp
 	server.cpp

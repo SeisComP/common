@@ -88,13 +88,15 @@ void QueueWorker::idle() {
 	if ( interrupted() ) {
 		flushMessages(_queue);
 
-		for ( auto &item : _messages ) {
+		while ( !_messages.empty() ) {
+			auto item = _messages.front();
+			_messages.pop_front();
+			unlock();
 			if ( _queue->push(item.first, item.second) != Queue::Success ) {
 				delete item.second;
 			}
+			lock();
 		}
-
-		_messages.clear();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -155,8 +157,14 @@ Server::Server() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Server::~Server() {
-	for ( Queues::iterator it = _queues.begin(); it != _queues.end(); ++it )
-		delete it->second.queue;
+	for ( auto &item : _queues ) {
+		delete item.second.worker;
+		delete item.second.queue;
+	}
+
+	for ( auto &item : _databases ) {
+		delete item.reactor;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -164,21 +172,19 @@ Server::~Server() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Queue *Server::addQueue(const std::string &name, uint64_t maxPayloadSize,
-                        const Wired::IPACL &acl) {
+Server::QueueItem *Server::addQueue(const std::string &name, uint64_t maxPayloadSize) {
 	if ( _queues.find(name) != _queues.end() )
-		return NULL;
+		return nullptr;
 
 	Queue *newQueue = new Queue(name, maxPayloadSize);
 	QueueItem &item = _queues[name];
 	item.queue = newQueue;
-	item.acl = acl;
 	item.worker = new QueueWorker(item.queue);
 	item.worker->setTriggerMode(Wired::DeviceGroup::LevelTriggered);
-	item.thread = NULL;
+	item.thread = nullptr;
 	item.queue->setMessageDispatcher(item.worker);
 
-	return newQueue;
+	return &item;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -198,19 +204,32 @@ const char *makeString(const Wired::Socket::IPAddress &addr) {
 
 }
 
-Queue *Server::getQueue(const std::string &name, Client *,
+Queue *Server::getQueue(const std::string &name,
                         const Wired::Socket::IPAddress &remoteAddress) const {
 	Queues::const_iterator it = _queues.find(name);
 	if ( it == _queues.end() )
-		return NULL;
+		return nullptr;
 
 	if ( !it->second.acl.check(remoteAddress) ) {
 		SEISCOMP_INFO("Access blocked to queue %s for IP %s",
 		              name.c_str(), makeString(remoteAddress));
-		return NULL;
+		return nullptr;
 	}
 
 	return it->second.queue;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const Server::QueueItem *Server::getQueue(const std::string &name) const {
+	auto it = _queues.find(name);
+	if ( it == _queues.end() )
+		return nullptr;
+
+	return &it->second;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -317,8 +336,7 @@ bool Server::init() {
 void Server::shutdown() {
 	Wired::Server::shutdown();
 
-	Queues::iterator it;
-	for ( it = _queues.begin(); it != _queues.end(); ++it ) {
+	for ( auto it = _queues.begin(); it != _queues.end(); ++it ) {
 		SEISCOMP_DEBUG("Shutdown sequence for queue %s", it->first.c_str());
 		QueueItem &item = it->second;
 		SEISCOMP_DEBUG("* Shutdown worker");
@@ -327,11 +345,23 @@ void Server::shutdown() {
 		if ( item.thread ) {
 			item.thread->join();
 			delete item.thread;
-			item.thread = NULL;
+			item.thread = nullptr;
 		}
 
 		SEISCOMP_DEBUG("* Shutdown queue itself");
 		item.queue->shutdown();
+	}
+
+	for ( auto &item : _databases ) {
+		SEISCOMP_DEBUG("Shutdown sequence for database handler");
+		SEISCOMP_DEBUG("* Shutdown worker");
+		item.reactor->shutdown();
+		SEISCOMP_DEBUG("* Wait for thread");
+		if ( item.thread ) {
+			item.thread->join();
+			delete item.thread;
+			item.thread = nullptr;
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -375,14 +405,38 @@ void Server::sessionTagged(Wired::Session *session) {
 
 	session->setTag(false);
 
-	Queues::const_iterator it = _queues.find(ws->queue()->name());
-	if ( it == _queues.end() )
-		return;
+	auto q = ws->queue();
 
-	if ( it->second.worker ) {
-		// Move session to the corresponding queue worker
-		moveTo(it->second.worker, session);
-		it->second.worker->interrupt();
+	if ( q ) {
+		auto it = _queues.find(q->name());
+		if ( it == _queues.end() )
+			return;
+
+		if ( it->second.worker ) {
+			// Move session to the corresponding queue worker
+			moveTo(it->second.worker, session);
+			it->second.worker->interrupt();
+		}
+	}
+	else {
+		// Database WS session
+		if ( _databases.empty() ) {
+			DatabaseItem db;
+			db.reactor = new Wired::Reactor;
+			if ( !db.reactor->setup() ) {
+				delete db.reactor;
+				SEISCOMP_ERROR("Setup database handler thread failed, skip connection");
+				ws->sendStatus(Wired::HTTP_503);
+				ws->invalidate();
+				return;
+			}
+
+			db.thread = new thread(bind(&Wired::Reactor::run, db.reactor));
+			_databases.push_back(db);
+		}
+
+		moveTo(_databases.back().reactor, session);
+		_databases.back().reactor->interrupt();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -402,6 +456,86 @@ WebsocketEndpoint::WebsocketEndpoint(Server *server, Wired::Socket *socket, Wire
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Wired::Session *WebsocketEndpoint::createSession(Wired::Socket *socket) {
 	return new Protocols::WebsocketSession(socket, _server);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+
+
+class SSLWebsocketSession : public Protocols::WebsocketSession {
+	public:
+		SSLWebsocketSession(Wired::Socket *sock, Broker::Server *server)
+		: Protocols::WebsocketSession(sock, server) {}
+
+	public:
+		void accepted() override {
+			auto socket = static_cast<Wired::SSLSocket*>(device());
+			setAuthenticated(socket->peerCertificate());
+			if ( isAuthenticated() ) {
+				long ret = SSL_get_verify_result(socket->ssl());
+				switch( ret ) {
+					case X509_V_OK:
+					{
+						setAuthorized(true);
+						break;
+					}
+					case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
+					{
+						setAuthorized(true);
+						char buf[Wired::Socket::IPAddress::MAX_IP_STRING_LEN];
+						socket->address().toString(buf);
+						SEISCOMP_WARNING(
+							"[%s:%d] %s",
+							buf, socket->port(),
+							X509_verify_cert_error_string(SSL_get_verify_result(socket->ssl()))
+						);
+						break;
+					}
+					default:
+					{
+						setAuthorized(false);
+						char buf[Wired::Socket::IPAddress::MAX_IP_STRING_LEN];
+						socket->address().toString(buf);
+						SEISCOMP_WARNING(
+							"[%s:%d] %s",
+							buf, socket->port(),
+							X509_verify_cert_error_string(SSL_get_verify_result(socket->ssl()))
+						);
+					}
+				}
+			}
+			else {
+				char buf[Wired::Socket::IPAddress::MAX_IP_STRING_LEN];
+				socket->address().toString(buf);
+				SEISCOMP_WARNING(
+					"[%s:%d] no authentication certificate provided",
+					buf, socket->port()
+				);
+				setAuthorized(false);
+			}
+		}
+};
+
+
+}
+
+
+SSLVerifyWebsocketEndpoint::SSLVerifyWebsocketEndpoint(Server *server,
+                                                       Wired::SSLSocket *socket,
+                                                       Wired::IPACL &allowAddresses)
+: WebsocketEndpoint(server, socket, allowAddresses) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Wired::Session *SSLVerifyWebsocketEndpoint::createSession(Wired::Socket *socket) {
+	return new SSLWebsocketSession(socket, _server);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

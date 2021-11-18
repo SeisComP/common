@@ -73,6 +73,14 @@
 
 						</description>
 					</parameter>
+					<parameter name="verifyPeer" type="boolean" default="false">
+						<description>
+						If enabled then the certificate of a connecting client
+						is verified against the servers certificate. It is
+						required that the client certificate is signed by the
+						server certificate otherwise the connection is refused.
+						</description>
+					</parameter>
 				</group>
 			</group>
 			<group name="queues">
@@ -154,6 +162,18 @@
 									A separate write connection enables different
 									permissions on the database level for scmaster
 									and clients.
+									</description>
+								</parameter>
+								<parameter name="proxy" type="boolean" default="false">
+									<description>
+									If enabled then the database connection as configured
+									in 'read' is not being returned to the client
+									but the URL &quot;proxy://&quot;. This URL
+									tells the client to open the database via the
+									websocket proxy at the messaging address,
+									e.g. http://localhost/production/db. The same
+									hostname and queue must be used as for the
+									initial messaging connection.
 									</description>
 								</parameter>
 								<parameter name="strictVersionMatch" type="boolean" default="true">

@@ -37,12 +37,12 @@
 
 
 struct BindAddress {
-	BindAddress() {}
+	BindAddress() = default;
 	BindAddress(const Seiscomp::Wired::Socket::IPAddress &addr, int port)
 	: address(addr), port(port) {}
 
 	Seiscomp::Wired::Socket::IPAddress address;
-	int                                port;
+	int                                port{-1};
 };
 
 
@@ -63,6 +63,15 @@ struct Settings : Seiscomp::System::Application::AbstractSettings {
 		unsigned int             maxPayloadSize;
 		std::vector<std::string> messageProcessors;
 
+		struct DB {
+			std::string driver;
+			std::string parameters;
+
+			void accept(Seiscomp::System::Application::SettingsLinker &linker) {
+				linker & cfg(driver, "driver") & cfg(parameters, "read");
+			}
+		} dbstore;
+
 		void accept(Seiscomp::System::Application::SettingsLinker &linker) {
 			linker
 			& key(name)
@@ -70,7 +79,8 @@ struct Settings : Seiscomp::System::Application::AbstractSettings {
 			& cfg(acl, "acl")
 			& cfg(plugins, "plugins")
 			& cfg(maxPayloadSize, "maxPayloadSize")
-			& cfg(messageProcessors, "processors.messages");
+			& cfg(messageProcessors, "processors.messages")
+			& cfg(dbstore, "processors.messages.dbstore");
 		}
 	};
 
@@ -86,15 +96,14 @@ struct Settings : Seiscomp::System::Application::AbstractSettings {
 		bool                   socketPortReuse;
 
 		struct SSL {
-			SSL()
-			: bind(Seiscomp::Wired::Socket::IPAddress(0,0,0,0), -1)
-			, socketPortReuse(true) {}
+			SSL() {}
 
 			BindAddress            bind;
 			Seiscomp::Wired::IPACL acl;
-			bool                   socketPortReuse;
+			bool                   socketPortReuse{true};
 			std::string            key;
 			std::string            certificate;
+			bool                   verifyPeer{false};
 
 			void accept(Seiscomp::System::Application::SettingsLinker &linker) {
 				linker
@@ -103,7 +112,8 @@ struct Settings : Seiscomp::System::Application::AbstractSettings {
 				& cfg(acl, "acl")
 				& cfg(socketPortReuse, "socketPortReuse")
 				& cfgAsPath(key, "key")
-				& cfgAsPath(certificate, "certificate");
+				& cfgAsPath(certificate, "certificate")
+				& cfg(verifyPeer, "verifyPeer");
 			}
 		} ssl;
 
