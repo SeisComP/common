@@ -527,7 +527,7 @@
               <string>Unfixes a previouly fixed magnitude type and lets scevent decide which magnitude to set preferred.</string>
              </property>
              <property name="text" >
-              <string>Unfix</string>
+              <string>Unfix type</string>
              </property>
             </widget>
            </item>
@@ -862,7 +862,7 @@
             <item row="13" column="0" >
              <widget class="QPushButton" name="fmFixButton" >
               <property name="text" >
-               <string>Fix</string>
+               <string>Fix FM</string>
               </property>
              </widget>
             </item>
@@ -1493,7 +1493,7 @@
                <string>Unfixes a previously fixed moment magnitude as preferred magnitude and lets scevent decide which magnitude (part of the preferred origin) to set preferred.</string>
               </property>
               <property name="text" >
-               <string>Unfix</string>
+               <string>Unfix Type</string>
               </property>
              </widget>
             </item>
@@ -1553,7 +1553,7 @@
                <string>Fixes the moment magnitude of the current preferred focal mechanism as preferred magnitude if available.</string>
               </property>
               <property name="text" >
-               <string>Fix Mw</string>
+               <string>Fix Mw type</string>
               </property>
              </widget>
             </item>
