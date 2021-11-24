@@ -43,6 +43,22 @@
 					as fallback.
 					</description>
 				</parameter>
+				<parameter name="usePickBackazimuth" type="boolean" default="true">
+					<description>
+					Whether to forward pick backazimuth to LOCSAT or not. In an
+					automatic mode backazimuth measurements might be inaccurrate
+					and disabling their usage in LOCSAT can be controlled with
+					this parameter.
+					</description>
+				</parameter>
+				<parameter name="usePickSlowness" type="boolean" default="true">
+					<description>
+					Whether to forward pick horizontal slowness to LOCSAT or not.
+					In an automatic mode slowness measurements might be
+					inaccurrate and disabling their usage in LOCSAT can be
+					controlled with	this parameter.
+					</description>
+				</parameter>
 				<parameter name="degreesOfFreedom" type="int" default="9999">
 					<description>
 					Number of degrees of freedom.
