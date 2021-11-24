@@ -139,9 +139,11 @@ class SC_SYSTEM_CORE_API LocSAT : public Seismology::LocatorInterface {
 		bool                      _computeConfidenceEllipsoid;
 		Internal::LocSAT         *_locateEvent;
 		Internal::Locator_params *_locator_params;
-		double                    _minArrivalWeight;
+		double                    _minArrivalWeight{0.5};
 		double                    _defaultPickUncertainty;
-		bool                      _usePickUncertainties;
+		bool                      _usePickUncertainties{false};
+		bool                      _usePickBackazimuth{true};
+		bool                      _usePickSlowness{true};
 
 		bool                      _enableDebugOutput;
 

@@ -81,7 +81,9 @@ enum LocSATParams {
 	LP_PREFIX,               /* nullptr    - dir name & prefix of tt tables  */
 	LP_MIN_ARRIVAL_WEIGHT,   /* 0.5     - if arr-weight = less than this, locsat will ignore this arrival */
 	LP_DEFAULT_TIME_ERROR,   /* 1.0     - the default pick uncertainty */
-	LP_USE_PICK_UNCERTAINTY  /* false   - whether to use pick uncertainty or not */
+	LP_USE_PICK_UNCERTAINTY, /* false   - whether to use pick uncertainty or not */
+	LP_USE_PICK_BACKAZIMUTH, /* true    - whether to use pick backazimuth or not */
+	LP_USE_PICK_SLOWNESS     /* true    - whether to use pick slowness or not */
 };
 
 
@@ -145,6 +147,8 @@ LocSAT::LocSAT() {
 		_allowedParameters.push_back("CONF_LEVEL");
 		_allowedParameters.push_back("DEFAULT_TIME_ERROR");
 		_allowedParameters.push_back("USE_PICK_UNCERTAINTY");
+		_allowedParameters.push_back("USE_PICK_BACKAZIMUTH");
+		_allowedParameters.push_back("USE_PICK_SLOWNESS");
 	}
 
 	_locator_params = new Internal::Locator_params;
@@ -194,6 +198,16 @@ bool LocSAT::init(const Config::Config &config) {
 
 	try {
 		_usePickUncertainties = config.getBool("LOCSAT.usePickUncertainties");
+	}
+	catch ( ... ) {}
+
+	try {
+		_usePickBackazimuth = config.getBool("LOCSAT.usePickBackazimuth");
+	}
+	catch ( ... ) {}
+
+	try {
+		_usePickSlowness = config.getBool("LOCSAT.usePickSlowness");
 	}
 	catch ( ... ) {}
 
@@ -249,6 +263,10 @@ std::string LocSAT::parameter(const std::string &name) const {
 		return getLocatorParams(LP_DEFAULT_TIME_ERROR);
 	else if ( name == "USE_PICK_UNCERTAINTY" )
 		return getLocatorParams(LP_USE_PICK_UNCERTAINTY);
+	else if ( name == "USE_PICK_BACKAZIMUTH" )
+		return getLocatorParams(LP_USE_PICK_BACKAZIMUTH);
+	else if ( name == "USE_PICK_SLOWNESS" )
+		return getLocatorParams(LP_USE_PICK_SLOWNESS);
 
 	return std::string();
 }
@@ -272,6 +290,10 @@ bool LocSAT::setParameter(const std::string &name,
 		setLocatorParams(LP_DEFAULT_TIME_ERROR, value.c_str());
 	else if ( name == "USE_PICK_UNCERTAINTY" )
 		setLocatorParams(LP_USE_PICK_UNCERTAINTY, value.c_str());
+	else if ( name == "USE_PICK_BACKAZIMUTH" )
+		setLocatorParams(LP_USE_PICK_BACKAZIMUTH, value.c_str());
+	else if ( name == "USE_PICK_SLOWNESS" )
+		setLocatorParams(LP_USE_PICK_SLOWNESS, value.c_str());
 	else
 		return false;
 
@@ -382,7 +404,7 @@ DataModel::Origin* LocSAT::fromPicks(PickList &picks){
 			                         pickItem.flags & F_TIME);
 
 			// Set backazimuth
-			if ( pickItem.flags & F_BACKAZIMUTH ) {
+			if ( _usePickBackazimuth && (pickItem.flags & F_BACKAZIMUTH) ) {
 				try {
 					float az = pick->backazimuth().value();
 					float delaz;
@@ -395,7 +417,7 @@ DataModel::Origin* LocSAT::fromPicks(PickList &picks){
 			}
 
 			// Set slowness
-			if ( pickItem.flags & F_SLOWNESS ) {
+			if ( _usePickSlowness && (pickItem.flags & F_SLOWNESS) ) {
 				try {
 					float slo = pick->horizontalSlowness().value();
 					float delslo;
@@ -742,7 +764,7 @@ bool LocSAT::loadArrivals(const DataModel::Origin *origin) {
 		}
 		catch ( ... ) {}
 
-		if ( backazimuthUsed ) {
+		if ( _usePickBackazimuth && backazimuthUsed ) {
 			try {
 				float az = pick->backazimuth().value();
 				float delaz;
@@ -763,7 +785,7 @@ bool LocSAT::loadArrivals(const DataModel::Origin *origin) {
 		}
 		catch ( ... ) {}
 
-		if ( horizontalSlownessUsed ) {
+		if ( _usePickSlowness && horizontalSlownessUsed ) {
 			try {
 				float slo = pick->horizontalSlowness().value();
 				float delslo;
@@ -1196,7 +1218,7 @@ DataModel::Origin* LocSAT::loc2Origin(Internal::Loc* loc){
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void LocSAT::setDefaultLocatorParams(){
+void LocSAT::setDefaultLocatorParams() {
 	_locator_params->cor_level      = 0;
 	_locator_params->use_location   = TRUE;
 	_locator_params->fix_depth      = 'n';
@@ -1210,9 +1232,10 @@ void LocSAT::setDefaultLocatorParams(){
 	_locator_params->est_std_error  = 1.00;
 	_locator_params->num_dof        = 9999;
 	_locator_params->max_iterations = 100;
-	_minArrivalWeight               = 0.5;
 	_defaultPickUncertainty         = ARRIVAL_DEFAULT_TIME_ERROR;
 	_usePickUncertainties           = false;
+	_usePickBackazimuth             = true;
+	_usePickSlowness                = true;
 
 	strcpy(_locator_params->outfile_name, "");
 }
@@ -1377,6 +1400,20 @@ std::string LocSAT::getLocatorParams(int param) const {
 				strcpy(value, "n");
 			break;
 
+		case LP_USE_PICK_BACKAZIMUTH:
+			if ( _usePickBackazimuth )
+				strcpy(value, "y");
+			else
+				strcpy(value, "n");
+			break;
+
+		case LP_USE_PICK_SLOWNESS:
+			if ( _usePickSlowness )
+				strcpy(value, "y");
+			else
+				strcpy(value, "n");
+			break;
+
 		default:
 			SEISCOMP_ERROR("getLocatorParam: wrong Parameter: %d", param);
 			return "error";
@@ -1447,6 +1484,20 @@ void LocSAT::setLocatorParams(int param, const char* value){
 				_usePickUncertainties = true;
 			else
 				_usePickUncertainties = false;
+			break;
+
+		case LP_USE_PICK_BACKAZIMUTH:
+			if ( !strcmp(value, "y") )
+				_usePickBackazimuth = true;
+			else
+				_usePickBackazimuth = false;
+			break;
+
+		case LP_USE_PICK_SLOWNESS:
+			if ( !strcmp(value, "y") )
+				_usePickSlowness = true;
+			else
+				_usePickSlowness = false;
 			break;
 
 		default:
