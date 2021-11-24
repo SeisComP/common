@@ -17,7 +17,9 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
 #define SEISCOMP_COMPONENT AICPicker
+
 
 #include <seiscomp/logging/log.h>
 #include <seiscomp/processing/picker/araic.h>
@@ -28,28 +30,37 @@
 
 using namespace std;
 
-namespace Seiscomp {
 
+namespace Seiscomp {
 namespace Processing {
+
 
 REGISTER_POSTPICKPROCESSOR(ARAICPicker, "AIC");
 
+
 namespace {
+
 
 template<typename TYPE>
 static double
-maeda_aic_snr_const(int n, const TYPE *data, int onset, int margin)
-{
+maeda_aic_snr_const(int n, const TYPE *data, int onset, int margin) {
 	// expects a properly filtered and demeaned trace
-	double snr=0, noise=0, signal=0;
-	for (int i=margin; i<onset; i++)
-		noise += data[i]*data[i];
-	noise = sqrt(noise/(onset-margin));
-	for (int i=onset; i<n-margin; i++) {
-		double a=fabs(data[i]);
-		if (a>signal) signal=a;
+	double snr = 0, noise = 0, signal = 0;
+
+	for ( int i = margin; i < onset; ++i ) {
+		noise += data[i] * data[i];
 	}
-	snr = 0.707*signal/noise;
+
+	noise = sqrt(noise / (onset-margin));
+
+	for ( int i = onset; i < n-margin; ++i ) {
+		double a = fabs(data[i]);
+		if ( a > signal ) {
+			signal = a;
+		}
+	}
+
+	snr = 0.707 * signal / noise;
 
 	return snr;
 }
@@ -61,9 +72,7 @@ maeda_aic_snr_const(int n, const TYPE *data, int onset, int margin)
 //
 
 template<typename TYPE>
-void
-maeda_aic(int n, TYPE *data, int &kmin, double &snr, int margin=10)
-{
+void maeda_aic(int n, TYPE *data, int &kmin, double &snr, int margin=10) {
 	// expects a properly filtered and demeaned trace
 
 	// square trace in place
@@ -108,9 +117,7 @@ maeda_aic(int n, TYPE *data, int &kmin, double &snr, int margin=10)
 
 
 template<typename TYPE>
-void
-maeda_aic_const(int n, const TYPE *data, int &kmin, double &snr, int margin=10)
-{
+void maeda_aic_const(int n, const TYPE *data, int &kmin, double &snr, int margin=10) {
 	// expects a properly filtered and demeaned trace
 
 	// windowed sum for variance computation
@@ -290,5 +297,4 @@ bool ARAICPicker::calculatePick(int n, const double *data,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
-
 }
