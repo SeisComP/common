@@ -262,8 +262,6 @@ class SSLSocket : public Socket {
 		~SSLSocket();
 
 	public:
-		bool useFd(int fd);
-
 		Status bind(IPAddress ip, port_t port) override;
 		Status bindV6(IPAddress ip, port_t port) override;
 
