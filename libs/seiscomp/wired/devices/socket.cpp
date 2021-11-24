@@ -1280,6 +1280,7 @@ ssize_t SSLSocket::read(char *data, size_t len) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Socket::Status SSLSocket::connect(const std::string &hostname, port_t port) {
+	close();
 	cleanUp();
 
 	if ( !_ctx ) _ctx = SSL_CTX_new(SSLv23_client_method());
@@ -1320,6 +1321,7 @@ Socket::Status SSLSocket::connect(const std::string &hostname, port_t port) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Socket::Status SSLSocket::connectV6(const std::string &hostname, port_t port) {
+	close();
 	cleanUp();
 
 	if ( !_ctx ) _ctx = SSL_CTX_new(SSLv23_client_method());
@@ -1337,6 +1339,52 @@ Socket::Status SSLSocket::connectV6(const std::string &hostname, port_t port) {
 		SEISCOMP_DEBUG("Failed to create SSL context");
 		return ConnectError;
 	}
+
+	SSL_set_fd(_ssl, _fd);
+	SSL_set_shutdown(_ssl, 0);
+	SSL_set_connect_state(_ssl);
+	int err = SSL_connect(_ssl);
+	if ( err < 0 ) {
+		SEISCOMP_ERROR("Failed to connect with SSL, error %d",
+		               SSL_get_error(_ssl, err));
+		close();
+		return ConnectError;
+	}
+
+	return Success;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Socket::Status SSLSocket::take(Socket *socket) {
+	close();
+	cleanUp();
+
+	if ( !_ctx ) _ctx = SSL_CTX_new(SSLv23_client_method());
+	if ( !_ctx ) {
+		SEISCOMP_DEBUG("Invalid SSL context");
+		return ConnectError;
+	}
+
+	_ssl = SSL_new(_ctx);
+	if ( _ssl == nullptr ) {
+		SEISCOMP_DEBUG("Failed to create SSL context");
+		return ConnectError;
+	}
+
+	_hostname = socket->hostname();
+	_addr = socket->address();
+	_port = socket->port();
+	_flags = socket->_flags;
+
+	_bytesSent = socket->_bytesSent;
+	_bytesReceived = socket->_bytesReceived;
+	_timeOutSecs = socket->_timeOutSecs;
+	_timeOutUsecs = socket->_timeOutUsecs;
+	_fd = socket->takeFd();
 
 	SSL_set_fd(_ssl, _fd);
 	SSL_set_shutdown(_ssl, 0);

@@ -162,7 +162,7 @@ class SC_SYSTEM_CORE_API Socket : public Device {
 		static const char *toString(Status);
 
 		void shutdown();
-		virtual void close() override;
+		void close() override;
 
 		const std::string &hostname() const;
 		port_t port() const;
@@ -170,14 +170,14 @@ class SC_SYSTEM_CORE_API Socket : public Device {
 
 		ssize_t send(const char *data);
 
-		virtual ssize_t write(const char *data, size_t len) override;
-		virtual ssize_t read(char *data, size_t len) override;
+		ssize_t write(const char *data, size_t len) override;
+		ssize_t read(char *data, size_t len) override;
 
 		//! Sets the socket timeout. This utilizes setsockopt which does not
 		//! work in non blocking sockets.
 		Status setSocketTimeout(int secs, int usecs);
 
-		virtual Device::Status setNonBlocking(bool nb) override;
+		Device::Status setNonBlocking(bool nb) override;
 		bool isNonBlocking() const { return _flags & NonBlocking; }
 
 		Status setReuseAddr(bool ra);
@@ -238,6 +238,8 @@ class SC_SYSTEM_CORE_API Socket : public Device {
 
 		int         _timeOutSecs;
 		int         _timeOutUsecs;
+
+	friend class SSLSocket;
 };
 
 
@@ -260,6 +262,8 @@ class SSLSocket : public Socket {
 		~SSLSocket();
 
 	public:
+		bool useFd(int fd);
+
 		Status bind(IPAddress ip, port_t port) override;
 		Status bindV6(IPAddress ip, port_t port) override;
 
@@ -272,6 +276,14 @@ class SSLSocket : public Socket {
 
 		Status connect(const std::string &hostname, port_t port) override;
 		Status connectV6(const std::string &hostname, port_t port) override;
+
+		/**
+		 * @brief Takes the connection from a socket and renders the source
+		 *        socket invalid.
+		 * @param socket The socket the connection parameters will be taken from.
+		 * @return Status flag
+		 */
+		Status take(Socket *socket);
 
 		SSL_CTX *sslContext() const;
 		SSL *ssl() const;

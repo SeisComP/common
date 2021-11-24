@@ -154,6 +154,12 @@ class SC_SYSTEM_CORE_API Device : public Core::BaseObject {
 		virtual ssize_t write(const char *data, size_t len) = 0;
 		virtual ssize_t read(char *data, size_t len) = 0;
 
+		/**
+		 * @brief Returns the current file descriptor and sets the internal
+		 *        file descriptor to invalid
+		 * @return The current file descriptor
+		 */
+		int takeFd();
 		int fd() const;
 
 		virtual Status setNonBlocking(bool nb);
