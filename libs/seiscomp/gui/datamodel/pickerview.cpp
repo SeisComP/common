@@ -1242,6 +1242,78 @@ class SpectrumView : public SpectrumViewBase {
 
 
 
+class PickerTimeWindowDecorator : public RecordWidgetDecorator {
+	public:
+		PickerTimeWindowDecorator(QObject *parent = 0)
+		: RecordWidgetDecorator(parent) {}
+
+	public:
+		void setVisible(bool visible) {
+			_visible = visible;
+		}
+
+		void setTimeWindowAndSNR(const Core::TimeWindow &tw, double snr) {
+			_timeWindow = tw;
+			_snr = snr;
+		}
+
+		void drawDecoration(QPainter *painter, RecordWidget *widget) override {
+			if ( !_visible ) {
+				return;
+			}
+
+			painter->setPen(SCScheme.colors.arrivals.theoretical);
+
+			int x0 = widget->mapCanvasTime(_timeWindow.startTime());
+			int x1 = widget->mapCanvasTime(_timeWindow.endTime());
+
+			bool clippedX0 = false;
+			bool clippedX1 = false;
+
+			if ( x0 < 0 ) {
+				x0 = 0;
+				clippedX0 = true;
+			}
+
+			if ( x1 >= widget->canvasRect().width() ) {
+				x1 = widget->canvasRect().width() - 1;
+				clippedX1 = true;
+			}
+
+			int left = widget->canvasRect().left() + x0;
+			int right = widget->canvasRect().left() + x1;
+			int bottom = widget->canvasRect().bottom();
+			int top = widget->canvasRect().top();
+
+			QColor c = SCScheme.colors.arrivals.theoretical;
+			c.setAlpha(32);
+			painter->fillRect(left, top, right-left, bottom-top, c);
+			painter->drawLine(left, top, right, top);
+			painter->drawLine(left, bottom, right, bottom);
+
+			if ( !clippedX0 ) {
+				painter->drawLine(left, bottom, left, top);
+			}
+
+			if ( !clippedX1 ) {
+				painter->drawLine(right, bottom, right, top);
+			}
+
+			painter->drawText(widget->canvasRect().left() + x0 + 4,
+			                  widget->canvasRect().top(),
+			                  x1 - x0,
+			                  widget->canvasRect().height() - 4,
+			                  Qt::AlignLeft | Qt::AlignBottom,
+			                  QString("SNR: %1").arg(_snr, 0, 'f', 1));
+		}
+
+	private:
+		bool             _visible{false};
+		Core::TimeWindow _timeWindow;
+		double           _snr{-1};
+};
+
+
 bool isTraceUsed(Seiscomp::Gui::RecordWidget* w) {
 	for ( int i = 0; i < w->markerCount(); ++i ) {
 		PickerMarker* m = static_cast<PickerMarker*>(w->marker(i));
@@ -5730,8 +5802,6 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
                                          const std::string& text,
                                          bool theoreticalArrivals,
                                          const Stream *base) {
-
-
 	WaveformStreamID streamID(sid);
 
 	// Lookup station channel mapping
@@ -6012,13 +6082,22 @@ void PickerView::updateMainCursor(RecordWidget* w, int s) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::updateSubCursor(RecordWidget* w, int s) {
+	// Hide decorator on move
+	if ( SC_D.currentRecord ) {
+		auto d = static_cast<PickerTimeWindowDecorator*>(SC_D.currentRecord->decorator());
+		if ( d ) {
+			d->setVisible(false);
+			SC_D.currentRecord->update();
+		}
+	}
+
 	char comps[3] = {'Z', '1', '2'};
 	int slot = s >= 0 && s < 3?s:-1;
 
 	if ( slot != -1 && slot != SC_D.currentSlot )
 		showComponent(comps[slot]);
 
-	if ( SC_D.recordView->currentItem() == nullptr ) return;
+	if ( !SC_D.recordView->currentItem() ) return;
 
 	SC_D.recordView->currentItem()->widget()->blockSignals(true);
 	SC_D.recordView->currentItem()->widget()->setCursorPos(w->cursorPos());
@@ -6135,8 +6214,6 @@ void PickerView::updateItemRecordState(const Seiscomp::Record *rec) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::setCursorPos(const Seiscomp::Core::Time& t, bool always) {
-
-
 	SC_D.currentRecord->setCursorPos(t);
 
 	if ( !always && SC_D.currentRecord->cursorText() == "" ) return;
@@ -8169,7 +8246,22 @@ void PickerView::abortSearchStation() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::emitPick(const Processing::Picker *picker,
                           const Processing::Picker::Result &res) {
+	PickerTimeWindowDecorator *d;
+	d = static_cast<PickerTimeWindowDecorator*>(SC_D.currentRecord->decorator());
+	if ( !d ) {
+		d = new PickerTimeWindowDecorator(this);
+		SC_D.currentRecord->setDecorator(d);
+	}
+
+	// First set the cursor position otherwise the decorator would be
+	// hidden immediately.
 	setCursorPos(res.time);
+
+	// Set up the decorator. It will be hidden on cursor move.
+	d->setTimeWindowAndSNR(picker->signalWindow(), res.snr);
+	d->setVisible(true);
+
+	SC_D.currentRecord->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

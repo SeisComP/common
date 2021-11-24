@@ -50,7 +50,7 @@ namespace Gui {
 
 
 class PickerViewPrivate {
-	public:
+	private:
 		struct WaveformRequest {
 			WaveformRequest(double dist, const Core::TimeWindow &tw,
 			                const DataModel::WaveformStreamID &sid,
@@ -80,6 +80,7 @@ class PickerViewPrivate {
 	private:
 		Seiscomp::DataModel::DatabaseQuery *reader;
 		QSet<QString>                       stations;
+
 		QComboBox                          *comboFilter;
 		QComboBox                          *comboRotation;
 		QComboBox                          *comboUnit;
