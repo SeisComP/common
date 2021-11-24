@@ -3491,7 +3491,14 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 	painter.translate(-_canvasRect.left(), -_canvasRect.top());
 	painter.setClipping(false);
 
-	if ( _decorator ) _decorator->drawDecoration(&painter, this);
+	if ( _decorator ) {
+		if ( font.bold() ) {
+			font.setBold(false);
+			painter.setFont(font);
+		}
+
+		_decorator->drawDecoration(&painter, this);
+	}
 
 	if ( emitUpdated ) emit traceUpdated(this);
 }
