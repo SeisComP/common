@@ -57,6 +57,10 @@ namespace {
 
 
 GeoCoordinate readCoordinate(const rapidjson::Value &node) {
+	if ( !node.IsArray() ) {
+		throw Core::StreamException("Coordinate is not an array");
+	}
+
 	if ( node.Size() < 2 ) {
 		throw Core::StreamException("Coordinate has less than two elements");
 	}
