@@ -265,16 +265,19 @@ GeoFeature *readGeometry(const rapidjson::Value &node,
 	if ( symbol ) {
 		try {
 			symbol(feature, JVAL, category, rank);
+			return feature;
 		}
-		catch ( ... ) {
-			if ( feature ) {
-				delete feature;
-				feature = nullptr;
-			}
+		catch ( Core::StreamException &e ) {
+			SEISCOMP_WARNING("Could not read geometry: %s", e.what());
+		}
+		catch ( ... ) {}
+
+		if ( feature ) {
+			delete feature;
 		}
 	}
 
-	return feature;
+	return nullptr;
 }
 
 
