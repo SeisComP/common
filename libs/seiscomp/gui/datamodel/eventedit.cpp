@@ -3150,7 +3150,7 @@ void EventEdit::updateMT() {
 		_ui.mtMagInfo->setEnabled(true);
 
 		_ui.mtMagType->setText(m->type().c_str());
-		_ui.mtMag->setText(QString("%1").arg(m->magnitude().value(), 0, 'f', 2));
+		_ui.mtMag->setText(QString("%1").arg(m->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
 
 		char buf[10];
 		try {
