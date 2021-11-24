@@ -90,12 +90,19 @@ class SC_SYSTEM_CORE_API RecordStream : public Core::InterruptibleObject {
 		virtual void close() = 0;
 
 		/**
-		 * @brief Adds a data stream to the request. This will not yet start
+		 * @brief Adds a data channel to the request. This will not yet start
 		 *        the request. Some implementations may support wildcard
 		 *        characters (* and ?) at any level.
-		 * The time window request for this stream will be the globally
+		 *
+		 * The time window request for this channel will be using the globally
 		 * configured time window, see setStartTime(const Seiscomp::Core::Time &),
 		 * setEndTime(const Seiscomp::Core::Time &) and  setTimeWindow(const Seiscomp::Core::TimeWindow &timeWindow).
+		 *
+		 * If addStream() is called another time with the same channel
+		 * identifiers then most implementations will overwrite the previous
+		 * request. In short: multiple requests (different time windows) for
+		 * the same channel are not supported.
+		 *
 		 * @param networkCode The network code
 		 * @param stationCode The station code
 		 * @param locationCode The location code
@@ -109,7 +116,13 @@ class SC_SYSTEM_CORE_API RecordStream : public Core::InterruptibleObject {
 
 		/**
 		 * @brief Same as addStream(const std::string &, const std::string &, const std::string &, const std::string &)
-		 *        but with an additional time window for this particular stream.
+		 *        but with an additional time window for this particular channel.
+		 *
+		 * If addStream() is called another time with the same channel
+		 * identifiers then most implementations will overwrite the previous
+		 * request. In short: multiple requests (different time windows) for
+		 * the same channel are not supported.
+		 *
 		 * @param networkCode The network code
 		 * @param stationCode The station code
 		 * @param locationCode The location code
