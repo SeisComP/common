@@ -131,6 +131,24 @@ class SC_SYSTEM_CLIENT_API SecondaryPicker : public TimeWindowProcessor {
 		void setTrigger(const Trigger& trigger);
 		const Trigger &trigger() const { return _trigger; }
 
+		/**
+		 * @brief Returns the currently set noise window
+		 *
+		 * This is being computed as trigger + noiseBegin and
+		 * trigger + signalBegin
+		 * @return The time window of the noise
+		 */
+		Core::TimeWindow noiseWindow() const;
+
+		/**
+		 * @brief Returns the currently set signal window
+		 *
+		 * This is being computed as trigger + signalBegin and
+		 * trigger + signalEnd
+		 * @return The time window of the signal
+		 */
+		Core::TimeWindow signalWindow() const;
+
 		void setPublishFunction(const PublishFunc& func);
 
 		void setReferencingPickID(const std::string&);
@@ -173,6 +191,21 @@ class SC_SYSTEM_CLIENT_API SecondaryPicker : public TimeWindowProcessor {
 
 
 DEFINE_INTERFACE_FACTORY(SecondaryPicker);
+
+
+inline Core::TimeWindow SecondaryPicker::noiseWindow() const {
+	return Core::TimeWindow(
+		_trigger.onset + Core::TimeSpan(_config.noiseBegin),
+		_trigger.onset + Core::TimeSpan(_config.signalBegin)
+	);
+}
+
+inline Core::TimeWindow SecondaryPicker::signalWindow() const {
+	return Core::TimeWindow(
+		_trigger.onset + Core::TimeSpan(_config.signalBegin),
+		_trigger.onset + Core::TimeSpan(_config.signalEnd)
+	);
+}
 
 
 }

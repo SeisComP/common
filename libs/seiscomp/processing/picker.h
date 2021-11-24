@@ -123,7 +123,26 @@ class SC_SYSTEM_CLIENT_API Picker : public TimeWindowProcessor {
 		//! Sets the trigger used to compute the timewindow to calculate
 		//! the amplitude
 		//! Once a trigger has been set all succeeding calls will fail.
-		void setTrigger(const Core::Time& trigger);
+		void setTrigger(const Core::Time &trigger);
+		Core::Time trigger() const;
+
+		/**
+		 * @brief Returns the currently set noise window
+		 *
+		 * This is being computed as trigger + noiseBegin and
+		 * trigger + signalBegin
+		 * @return The time window of the noise
+		 */
+		Core::TimeWindow noiseWindow() const;
+
+		/**
+		 * @brief Returns the currently set signal window
+		 *
+		 * This is being computed as trigger + signalBegin and
+		 * trigger + signalEnd
+		 * @return The time window of the signal
+		 */
+		Core::TimeWindow signalWindow() const;
 
 		void setPublishFunction(const PublishFunc& func);
 
@@ -177,6 +196,25 @@ class SC_SYSTEM_CLIENT_API Picker : public TimeWindowProcessor {
 
 
 DEFINE_INTERFACE_FACTORY(Picker);
+
+
+inline Core::Time Picker::trigger() const {
+	return _trigger;
+}
+
+inline Core::TimeWindow Picker::noiseWindow() const {
+	return Core::TimeWindow(
+		_trigger + Core::TimeSpan(_config.noiseBegin),
+		_trigger + Core::TimeSpan(_config.signalBegin)
+	);
+}
+
+inline Core::TimeWindow Picker::signalWindow() const {
+	return Core::TimeWindow(
+		_trigger + Core::TimeSpan(_config.signalBegin),
+		_trigger + Core::TimeSpan(_config.signalEnd)
+	);
+}
 
 
 }
