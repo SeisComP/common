@@ -1493,7 +1493,7 @@
                <string>Unfixes a previously fixed moment magnitude as preferred magnitude and lets scevent decide which magnitude (part of the preferred origin) to set preferred.</string>
               </property>
               <property name="text" >
-               <string>Unfix Type</string>
+               <string>Unfix type</string>
               </property>
              </widget>
             </item>
