@@ -5344,6 +5344,10 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 
 	bool markerMode = m && (m->isPick() || m->isArrival());
 
+	if ( !markerMode && !SC_D.currentRecord->cursorText().isEmpty() ) {
+		return;
+	}
+
 	if ( markerMode ) {
 		// Save uncertainties to reset them again if changed
 		// during preview
