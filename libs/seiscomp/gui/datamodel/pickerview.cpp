@@ -5344,7 +5344,7 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 
 	bool markerMode = m && (m->isPick() || m->isArrival());
 
-	if ( !markerMode && !SC_D.currentRecord->cursorText().isEmpty() ) {
+	if ( !markerMode && !_currentRecord->cursorText().isEmpty() ) {
 		return;
 	}
 
