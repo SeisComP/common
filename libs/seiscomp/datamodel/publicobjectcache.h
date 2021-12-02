@@ -176,6 +176,21 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 		const_iterator begin() const;
 		const_iterator end() const;
 
+		/**
+		 * @brief Checks if the passed object pointer is part of the cache.
+		 * @param object The object to be checked
+		 * @return true if part of this cache, false otherwise
+		 */
+		bool contains(PublicObject *object) const;
+
+		/**
+		 * @brief Checks if an instance with the passed publicID is part of
+		 *        the cache.
+		 * @param publicID The publicID of the object that is part of the cache.
+		 * @return true if part of this cache, false otherwise
+		 */
+		bool contains(const std::string &publicID) const;
+
 
 	protected:
 		void pop();
