@@ -2219,18 +2219,10 @@ void DatabaseArchive::serializeObject(Object *obj) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DatabaseArchive::removeId(Object *o) {
-	static int debug = 3;
-
 	_objectIdMutex.lock();
 
 	ObjectIdMap::iterator it = _objectIdCache.find(o);
 	if ( it != _objectIdCache.end() ) {
-		if ( debug ) {
-			SEISCOMP_DEBUG("Object removed from cache with id: %" PRIu64, (*it).second);
-			if ( debug == 1 )
-				SEISCOMP_DEBUG("This message will not be repeated for other objects");
-			--debug;
-		}
 		_objectIdCache.erase(it);
 	}
 
