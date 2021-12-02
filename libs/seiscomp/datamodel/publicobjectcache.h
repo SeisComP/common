@@ -108,13 +108,13 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 
 	public:
 		PublicObjectCache();
-		PublicObjectCache(DatabaseArchive* ar);
+		PublicObjectCache(DatabaseArchive *ar);
 		~PublicObjectCache() override;
 
 	public:
-		void setDatabaseArchive(DatabaseArchive*);
+		void setDatabaseArchive(DatabaseArchive *);
 
-		void setPopCallback(const PopCallback&);
+		void setPopCallback(const PopCallback &);
 		void setPopCallback(CachePopCallback *);
 
 		void removePopCallback();
@@ -124,7 +124,7 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 		 * @param po The PublicObject pointer to insert
 		 * @return True or False
 		 */
-		virtual bool feed(PublicObject* po) = 0;
+		virtual bool feed(PublicObject *po) = 0;
 
 		/**
 		 * Removes an object from the cache. This function
@@ -145,8 +145,8 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 		 *                 retrieved
 		 * @return The PublicObject pointer or nullptr
 		 */
-		PublicObject *find(const Core::RTTI& classType,
-		                   const std::string& publicID);
+		PublicObject *find(const Core::RTTI &classType,
+		                   const std::string &publicID);
 
 		/**
 		 * Returns the cached state the the last object returned by find.
@@ -160,7 +160,7 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 
 		template <typename T>
 		typename Core::SmartPointer<T>::Impl
-		get(const std::string& publicID) {
+		get(const std::string &publicID) {
 			return T::Cast(find(T::TypeInfo(), publicID));
 		}
 
@@ -194,7 +194,7 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 
 	protected:
 		void pop();
-		void push(PublicObject* obj);
+		void push(PublicObject *obj);
 
 		void setCached(bool cached) { _cached = cached; }
 		DatabaseArchive *databaseArchive() { return _archive.get(); }
@@ -216,13 +216,13 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 class SC_SYSTEM_CORE_API PublicObjectRingBuffer : public PublicObjectCache {
 	public:
 		PublicObjectRingBuffer();
-		PublicObjectRingBuffer(DatabaseArchive* ar,
+		PublicObjectRingBuffer(DatabaseArchive *ar,
 		                       size_t bufferSize);
 
 	public:
 		bool setBufferSize(size_t bufferSize);
 
-		bool feed(PublicObject* po) override;
+		bool feed(PublicObject *po) override;
 
 	private:
 		size_t _bufferSize;
@@ -232,13 +232,13 @@ class SC_SYSTEM_CORE_API PublicObjectRingBuffer : public PublicObjectCache {
 class SC_SYSTEM_CORE_API PublicObjectTimeSpanBuffer : public PublicObjectCache {
 	public:
 		PublicObjectTimeSpanBuffer();
-		PublicObjectTimeSpanBuffer(DatabaseArchive* ar,
-		                           const Core::TimeSpan& length);
+		PublicObjectTimeSpanBuffer(DatabaseArchive *ar,
+		                           const Core::TimeSpan &length);
 
 	public:
-		bool setTimeSpan(const Core::TimeSpan&);
+		bool setTimeSpan(const Core::TimeSpan &);
 
-		bool feed(PublicObject* po) override;
+		bool feed(PublicObject *po) override;
 
 	private:
 		Core::TimeSpan _timeSpan;
