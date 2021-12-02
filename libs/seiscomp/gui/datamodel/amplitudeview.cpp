@@ -376,15 +376,23 @@ class AmplitudeViewMarker : public RecordMarker {
 		}
 
 		bool equalsAmplitude(DataModel::Amplitude *amp) const {
-			if ( amp == nullptr ) return false;
+			if ( !amp ) {
+				return false;
+			}
 
 			// Time + uncertainties do not match: not equal
-			if ( correctedTime() != amp->timeWindow().reference() ) return false;
+			if ( correctedTime() != amp->timeWindow().reference() ) {
+				return false;
+			}
 
-			if ( _manualAmplitude == nullptr ) return false;
+			if ( !_manualAmplitude ) {
+				return false;
+			}
 
 			try {
-				if ( _manualAmplitude->amplitude().value() != amp->amplitude().value() ) return false;
+				if ( _manualAmplitude->amplitude().value() != amp->amplitude().value() ) {
+					return false;
+				}
 			}
 			catch ( ... ) {
 				return false;
@@ -644,7 +652,6 @@ bool isTraceUsed(Seiscomp::Gui::RecordWidget *w) {
 	return false;
 }
 
-
 bool isTracePicked(Seiscomp::Gui::RecordWidget* w) {
 	for ( int i = 0; i < w->markerCount(); ++i ) {
 		AmplitudeViewMarker *m = static_cast<AmplitudeViewMarker*>(w->marker(i));
@@ -653,7 +660,6 @@ bool isTracePicked(Seiscomp::Gui::RecordWidget* w) {
 
 	return false;
 }
-
 
 SensorLocation *findSensorLocation(Station *station, const std::string &code,
                                    const Seiscomp::Core::Time &time) {
@@ -673,7 +679,6 @@ SensorLocation *findSensorLocation(Station *station, const std::string &code,
 
 	return nullptr;
 }
-
 
 Stream* findStream(Station *station, const std::string &code,
                    const Seiscomp::Core::Time &time) {
@@ -705,7 +710,6 @@ Stream* findStream(Station *station, const std::string &code,
 
 	return nullptr;
 }
-
 
 Stream* findStream(Station *station, const std::string &code, const std::string &locCode,
                    const Seiscomp::Core::Time &time) {
@@ -739,7 +743,6 @@ Stream* findStream(Station *station, const std::string &code, const std::string 
 
 	return nullptr;
 }
-
 
 Stream* findStream(Station *station, const Seiscomp::Core::Time &time,
                    Processing::WaveformProcessor::SignalUnit requestedUnit) {
@@ -778,7 +781,6 @@ Stream* findStream(Station *station, const Seiscomp::Core::Time &time,
 
 	return nullptr;
 }
-
 
 Stream* findConfiguredStream(Station *station, const Seiscomp::Core::Time &time) {
 	DataModel::Stream *stream = nullptr;
@@ -828,7 +830,6 @@ Stream* findConfiguredStream(Station *station, const Seiscomp::Core::Time &time)
 	return stream;
 }
 
-
 Util::KeyValuesPtr getParams(const string &net, const string &sta) {
 	ConfigModule *module = SCApp->configModule();
 	if ( module == nullptr ) return nullptr;
@@ -856,19 +857,6 @@ Util::KeyValuesPtr getParams(const string &net, const string &sta) {
 	return nullptr;
 }
 
-
-Amplitude* findAmplitude(Seiscomp::Gui::RecordWidget* w, const Seiscomp::Core::Time& t) {
-	for ( int i = 0; i < w->markerCount(); ++i ) {
-		AmplitudeViewMarker *m = static_cast<AmplitudeViewMarker*>(w->marker(i));
-		Amplitude *a = m->amplitude();
-		if ( a && a->timeWindow().reference() == t )
-			return a;
-	}
-
-	return nullptr;
-}
-
-
 std::string adjustChannelCode(const std::string& channelCode, bool allComponents) {
 	if ( channelCode.size() < 3 )
 		return channelCode + (allComponents?'?':'Z');
@@ -876,12 +864,10 @@ std::string adjustChannelCode(const std::string& channelCode, bool allComponents
 		return allComponents?channelCode.substr(0,2) + '?':channelCode;
 }
 
-
 WaveformStreamID setWaveformIDComponent(const WaveformStreamID& id, char component) {
 	return WaveformStreamID(id.networkCode(), id.stationCode(), id.locationCode(),
 	                        id.channelCode().substr(0,2) + component, id.resourceURI());
 }
-
 
 WaveformStreamID adjustWaveformStreamID(const WaveformStreamID& id) {
 	return WaveformStreamID(id.networkCode(), id.stationCode(), id.locationCode(),
@@ -893,7 +879,6 @@ std::string waveformIDToStdString(const WaveformStreamID& id) {
 	        id.locationCode() + "." + id.channelCode());
 }
 
-
 bool isLinkedItem(RecordViewItem *item) {
 	return static_cast<AmplitudeRecordLabel*>(item->label())->isLinkedItem();
 }
@@ -903,7 +888,6 @@ void unlinkItem(RecordViewItem *item) {
 	item->disconnect(SIGNAL(firstRecordAdded(const Seiscomp::Record*)));
 }
 
-
 void selectFirstVisibleItem(RecordView *view) {
 	for ( int i = 0; i < view->rowCount(); ++i ) {
 		view->setCurrentItem(view->itemAt(i));
@@ -911,112 +895,6 @@ void selectFirstVisibleItem(RecordView *view) {
 		break;
 	}
 }
-
-
-
-/*
-bool calcAmpTime(RecordSequence *seq, const Core::Time &begin, const Core::Time &end,
-                 double offset, Processing::AmplitudeProcessor::AmplitudeMeasureType type,
-                 double &ampValue, Core::Time &ampTime, double &ampWidth) {
-	if ( seq == nullptr ) return false;
-
-	Core::Time minTime, maxTime;
-	OPT(double) minValue;
-	OPT(double) maxValue;
-
-	for ( RecordSequence::iterator it = seq->begin(); it != seq->end(); ++it) {
-		RecordCPtr rec = *it;
-		Core::Time startTime = rec->startTime();
-		Core::Time endTime = rec->endTime();
-
-		if ( startTime >= end ) continue;
-		if ( endTime <= begin ) continue;
-
-		const FloatArray *data = static_cast<const FloatArray*>(rec->data());
-		int from = double(begin - startTime) * rec->samplingFrequency();
-		int to   = double(end - startTime) * rec->samplingFrequency();
-
-		if ( from == to ) to += 2;
-
-		if ( from < 0 ) from = 0;
-		if ( to > data->size() ) to = data->size();
-
-		int imin = -1;
-		int imax = -1;
-
-		switch ( type ) {
-			case Processing::AmplitudeProcessor::AbsMax:
-				for ( int i = from; i < to; ++i ) {
-					double v = fabs((*data)[i]-offset);
-					if ( !maxValue || (v > *maxValue) ) {
-						maxValue = v;
-						imax = i;
-					}
-				}
-				break;
-			case Processing::AmplitudeProcessor::MinMax:
-				for ( int i = from; i < to; ++i ) {
-					double v = (*data)[i]-offset;
-					if ( !maxValue || (v > *maxValue)) {
-						maxValue = v;
-						imax = i;
-					}
-
-					if ( !minValue || (v < *minValue) ) {
-						minValue = v;
-						imin = i;
-					}
-				}
-				break;
-			default:
-				return false;
-		}
-
-		if ( imin != -1 )
-			minTime = startTime + Core::TimeSpan(double(imin) / rec->samplingFrequency());
-
-		if ( imax != -1 )
-			maxTime = startTime + Core::TimeSpan(double(imax) / rec->samplingFrequency());
-	}
-
-	switch ( type ) {
-		case Processing::AmplitudeProcessor::AbsMax:
-			if ( !maxValue ) return false;
-			ampValue = *maxValue;
-			ampWidth = -1;
-			ampTime = maxTime;
-			return true;
-		case Processing::AmplitudeProcessor::MinMax:
-		{
-			if ( !minValue || !maxValue ) return false;
-
-			ampValue = *maxValue - *minValue;
-
-			double dMinTime = (double)minTime;
-			double dMaxTime = (double)maxTime;
-			double center = (dMinTime + dMaxTime) * 0.5;
-			ampWidth = fabs(center-dMinTime);
-			ampTime = Core::Time(center);
-			return true;
-		}
-		default:
-			break;
-	};
-
-	return false;
-}
-
-
-bool calcAmpTime(RecordSequence *seq, const Core::Time &time,
-                 double timeWidth, double offset,
-                 Processing::AmplitudeProcessor::AmplitudeMeasureType type,
-                 double &ampValue, Core::Time &ampTime, double &ampWidth) {
-	Core::Time begin = time - Core::TimeSpan(timeWidth);
-	Core::Time end = time + Core::TimeSpan(timeWidth);
-
-	return calcAmpTime(seq, begin, end, offset, type, ampValue, ampTime, ampWidth);
-}
-*/
 
 
 }
@@ -2681,7 +2559,6 @@ RecordMarker* AmplitudeView::updatePhaseMarker(Seiscomp::Gui::RecordViewItem *it
 	);
 	a->setPickID(label->processor->referencingPickID());
 	a->setFilterID(label->data.filterID);
-
 	a->setEvaluationMode(EvaluationMode(MANUAL));
 
 	CreationInfo ci;
@@ -2708,7 +2585,7 @@ RecordMarker* AmplitudeView::updatePhaseMarker(Seiscomp::Gui::RecordViewItem *it
 		}
 	}
 
-	AmplitudeViewMarker *marker = (AmplitudeViewMarker*)widget->marker(proc->type().c_str(), true);
+	AmplitudeViewMarker *marker = static_cast<AmplitudeViewMarker*>(widget->marker(proc->type().c_str(), true));
 	// Marker found?
 	if ( marker ) {
 		// Set the marker time to the new picked time
@@ -2726,7 +2603,6 @@ RecordMarker* AmplitudeView::updatePhaseMarker(Seiscomp::Gui::RecordViewItem *it
 	else {
 		// Valid phase code?
 		if ( !proc->type().empty() ) {
-
 			// Create a new marker for the phase
 			marker = new AmplitudeViewMarker(widget, res.time.reference, proc->type().c_str(),
 			                                 AmplitudeViewMarker::Amplitude, true);
@@ -2740,13 +2616,17 @@ RecordMarker* AmplitudeView::updatePhaseMarker(Seiscomp::Gui::RecordViewItem *it
 	
 			for ( int i = 0; i < widget->markerCount(); ++i ) {
 				RecordMarker* marker2 = widget->marker(i);
-				if ( marker == marker2 ) continue;
-					if ( marker2->text() == marker->text() && !marker2->isMovable() )
-						marker2->setEnabled(false);
-			}
-		}
+				if ( marker == marker2 ) {
+					continue;
+				}
 
-		widget->update();
+				if ( marker2->text() == marker->text() && !marker2->isMovable() ) {
+					marker2->setEnabled(false);
+				}
+			}
+
+			widget->update();
+		}
 	}
 
 	return marker;
@@ -3516,15 +3396,14 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 		}
 	}
 
-	for ( map<string, StationItem>::iterator it = items.begin();
-	      it != items.end(); ++it ) {
+	for ( auto it : items ) {
 		WaveformStreamID streamID;
 		Core::Time reference;
 
-		if ( it->second.amp )
-			streamID = adjustWaveformStreamID(it->second.amp->waveformID());
-		else if ( it->second.pick )
-			streamID = adjustWaveformStreamID(it->second.pick->waveformID());
+		if ( it.second.amp )
+			streamID = adjustWaveformStreamID(it.second.amp->waveformID());
+		else if ( it.second.pick )
+			streamID = adjustWaveformStreamID(it.second.pick->waveformID());
 		else
 			continue;
 
@@ -3543,8 +3422,8 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 			continue;
 		}
 
-		if ( it->second.pick && it->second.isTrigger )
-			reference = it->second.pick->time().value();
+		if ( it.second.pick && it.second.isTrigger )
+			reference = it.second.pick->time().value();
 		else /*if ( it->second.amp )*/ {
 			try {
 				TravelTime ttime =
@@ -3561,7 +3440,7 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 			}
 		}
 
-		if ( it->second.amp == nullptr ) {
+		if ( it.second.amp == nullptr ) {
 			double delta, az, baz;
 			Geo::delazi(_origin->latitude(), _origin->longitude(),
 			            loc->latitude(), loc->longitude(), &delta, &az, &baz);
@@ -3576,7 +3455,7 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 		RecordViewItem *item = addStream(loc, streamID, reference, true);
 		// A new item has been inserted
 		if ( item != nullptr ) {
-			addAmplitude(item, it->second.amp.get(), it->second.pick.get(), reference, -1);
+			addAmplitude(item, it.second.amp.get(), it.second.pick.get(), reference, -1);
 			_stations.insert((streamID.networkCode() + "." + streamID.stationCode()).c_str());
 		}
 		else {
@@ -5322,6 +5201,7 @@ void AmplitudeView::getChangedAmplitudes(ObjectChangeList<DataModel::Amplitude> 
 void AmplitudeView::fetchManualAmplitudes(std::vector<RecordMarker*>* markers) const {
 	for ( int r = 0; r < _recordView->rowCount(); ++r ) {
 		RecordViewItem* rvi = _recordView->itemAt(r);
+
 		AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(rvi->label());
 		RecordWidget* widget = rvi->widget();
 
@@ -5338,7 +5218,7 @@ void AmplitudeView::fetchManualAmplitudes(std::vector<RecordMarker*>* markers) c
 
 		// Count the number of interesting markers for a particular phase
 		for ( int m = 0; m < widget->markerCount(); ++m ) {
-			AmplitudeViewMarker *marker = (AmplitudeViewMarker*)widget->marker(m);
+			AmplitudeViewMarker *marker = static_cast<AmplitudeViewMarker*>(widget->marker(m));
 			if ( !marker->isEnabled() ) continue;
 			if ( marker->isNewAmplitude() ) {
 				hasManualMarker = true;
@@ -5347,7 +5227,7 @@ void AmplitudeView::fetchManualAmplitudes(std::vector<RecordMarker*>* markers) c
 		}
 
 		for ( int m = 0; m < widget->markerCount(); ++m ) {
-			AmplitudeViewMarker *marker = (AmplitudeViewMarker*)widget->marker(m);
+			AmplitudeViewMarker *marker = static_cast<AmplitudeViewMarker*>(widget->marker(m));
 
 			// If the marker is not an amplitude do nothing
 			if ( !marker->isAmplitude() ) continue;
@@ -5371,24 +5251,19 @@ void AmplitudeView::fetchManualAmplitudes(std::vector<RecordMarker*>* markers) c
 				}
 			}
 
-			AmplitudePtr a = findAmplitude(widget, marker->correctedTime());
-
-			// If the marker did not make any changes to the amplitude
-			// attributes, reuse it.
-			if ( a && !marker->equalsAmplitude(a.get()) ) a = nullptr;
-
+			auto a = marker->manualAmplitude();
 			if ( !a ) {
-				a = marker->manualAmplitude();
-				if ( !a ) continue;
-				_changedAmplitudes.push_back(ObjectChangeList<DataModel::Amplitude>::value_type(a,true));
-				SEISCOMP_DEBUG("   - created new amplitude");
-			}
-			else {
-				SEISCOMP_DEBUG("   - reuse active amplitude");
+				continue;
 			}
 
-			if ( markers ) markers->push_back(marker);
-			marker->setAmplitude(a.get());
+			_changedAmplitudes.push_back(ObjectChangeList<DataModel::Amplitude>::value_type(a, true));
+			SEISCOMP_DEBUG("   - created new amplitude");
+
+			if ( markers ) {
+				markers->push_back(marker);
+			}
+
+			marker->setAmplitude(a);
 		}
 	}
 
