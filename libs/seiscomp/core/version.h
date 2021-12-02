@@ -51,6 +51,8 @@ namespace Core {
    - Added Seiscomp::Core::number<T>() (Number<T> generator)
    - Added Seiscomp::Processing::Picker::noiseWindow()
    - Added Seiscomp::Processing::Picker::signalWindow()
+   - Added Seiscomp::DataModel::PublicObjectCache::contains(PublicObject*)
+   - Added Seiscomp::DataModel::PublicObjectCache::contains(string)
 
  "14.3.0"   0x0E0300
    - Added Seiscomp::RingBuffer::numberOfRecordsToStore()
