@@ -969,6 +969,13 @@ class PublicObjectCache(seiscomp.core.BaseObject):
         r"""size(PublicObjectCache self) -> size_t"""
         return _datamodel.PublicObjectCache_size(self)
 
+    def contains(self, *args):
+        r"""
+        contains(PublicObjectCache self, PublicObject object) -> bool
+        contains(PublicObjectCache self, std::string const & publicID) -> bool
+        """
+        return _datamodel.PublicObjectCache_contains(self, *args)
+
     def get(self, klass, publicID):
         o = self.find(klass.TypeInfo(), publicID)
         return klass.Cast(o)
