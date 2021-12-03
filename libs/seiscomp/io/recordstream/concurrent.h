@@ -105,7 +105,7 @@ class SC_SYSTEM_CORE_API ConcurrentConnection : public Seiscomp::IO::RecordStrea
 
 	private:
 		int _nthreads;
-		std::list<std::thread *> _threads;
+		std::list<std::thread> _threads;
 		Client::ThreadedQueue<Record*> _queue;
 		std::istringstream _stream;
 		std::mutex _mtx;

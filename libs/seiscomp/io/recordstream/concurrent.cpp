@@ -172,7 +172,7 @@ void ConcurrentConnection::close() {
 	_queue.close();
 
 	for ( auto &&thread : _threads )
-		thread->join();
+		thread.join();
 
 	_threads.clear();
 	_started = false;
@@ -208,7 +208,7 @@ Record *ConcurrentConnection::next() {
 			if ( _rsarray[i].second ) {
 				_rsarray[i].first->setDataType(_dataType);
 				_rsarray[i].first->setDataHint(_hint);
-				_threads.push_back(new thread(std::bind(&ConcurrentConnection::acquiThread, this, _rsarray[i].first.get())));
+				_threads.push_back(thread(std::bind(&ConcurrentConnection::acquiThread, this, _rsarray[i].first.get())));
 				++_nthreads;
 			}
 		}
