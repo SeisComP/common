@@ -369,6 +369,17 @@ TimeSpan& TimeSpan::operator=(double t) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+TimeSpan& TimeSpan::operator=(const TimeSpan& t) {
+	_timeval = t._timeval;
+
+	return *this;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TimeSpan TimeSpan::operator+(const TimeSpan& t) const {
 	long diff_usec = _timeval.tv_usec + t._timeval.tv_usec;
 	long int sec = _timeval.tv_sec + t._timeval.tv_sec;

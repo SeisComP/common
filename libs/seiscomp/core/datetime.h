@@ -75,6 +75,7 @@ class SC_SYSTEM_CORE_API TimeSpan {
 		//! Assignment
 		TimeSpan& operator=(long t);
 		TimeSpan& operator=(double t);
+		TimeSpan& operator=(const TimeSpan& t);
 
 		//! Arithmetic
 		TimeSpan operator+(const TimeSpan&) const;
@@ -106,7 +107,7 @@ class SC_SYSTEM_CORE_API TimeSpan {
 		TimeSpan& setUSecs(long);
 
 		//! Assigns the elapsed time to the passed out parameters
-		void elapsedTime(int* days	, int* hours = nullptr,
+		void elapsedTime(int* days, int* hours = nullptr,
 		                 int* minutes = nullptr, int* seconds = nullptr) const;
 
 	// ----------------------------------------------------------------------
