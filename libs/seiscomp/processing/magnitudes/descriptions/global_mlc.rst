@@ -18,7 +18,8 @@ MLc also provides additional flexibility by configuration of global bindings:
 Station Amplitudes
 ------------------
 
-The MLc amplitude calculation is very similar to the original :ref:`ML<global_ml>`,
+MLc amplitudes are measured automatically by :ref:`scautopick` or :ref:`scamp`
+or interactively by :ref:`scolv` very similarly to the original :ref:`ML<global_ml>`,
 except that they can be pre-filtered and applying Wood-Anderson simulation is
 optional: :confval:`amplitudes.MLc.preFilter`, :confval:`amplitudes.MLc.applyWoodAnderson`.
 By default amplitudes are measured on both horizontal components where the absolute
@@ -37,9 +38,11 @@ amplitude.
 
 .. _mlc_station_magnitude:
 
-Station Magnitude
------------------
+Station Magnitudes
+------------------
 
+Station magnitudes are computed from measured amplitudes automatically by :ref:`scmag`
+or interactively by :ref:`scolv`.
 MLc considers a parametric calibration function and hypocentral (default) or
 epicentral distance :math:`r` as configurable by :confval:`magnitudes.MLc.distMode`.
 For r <= :confval:`magnitudes.MLc.maxDist` individual station magnitudes
@@ -59,15 +62,17 @@ where
 The following conditions apply:
 
 * Amplitude unit in SeisComP: **millimeter** (mm)
-* Time window: 150 s by :ref:`scautopick` or distance dependent with :math:`endTime = distance [km]/ 3 + 30`
+* Time window: 150 s by :ref:`scautopick` or distance dependent, e.g. by :ref:`scmag`
+  or :ref:`scolv` with :math:`endTime = distance [km]/ 3 + 30`
 * Distance range: 0 - 8 deg (can be lowered)
 * Depth range: 0 - 60 km (can be lowered)
-
 
 Network Magnitude
 -----------------
 
-Originally the media was computed from all station MLc to form the
+The network magnitude is computed from station magnitudes automatically by
+:ref:`scmag` or interactively by :ref:`scolv`.
+Originally the median was computed from all station MLc to form the
 :term:`network magnitude` MLc. Here, the trimmed mean is applied. Outliers beyond the
 outer 12.5% percentiles are removed before forming the mean. The method can be
 adjusted in :ref:`scmag` by :confval:`magnitudes.average`.
@@ -79,32 +84,41 @@ Examples
 The flexibility of the amplitude and magnitude processing allows to apply MLc
 in various use cases, e.g.
 
-* Pre-filtered and gain-corrected amplitudes, Wood-Anderson corrected and
-  measured in mm, e.g. Stange, 2006:
+* **Default:** Pre-filtered and gain-corrected amplitudes, Wood-Anderson corrected
+  and measured in mm for Southwestern Germany, Stange, 2006:
 
   .. math::
 
      MLc = \log_{10}(A) + 1.11 * \log_{10}(r) + 0.00095 * r + 0.69 + c_0
 
-* Wood-Anderson-corrected displacement amplitudes measured in mm, e.g.
-  Hutton and Boore, 1987, for southern California:
+* Wood-Anderson-corrected displacement amplitudes measured in mm for
+  Southern California, Hutton and Boore, 1987:
 
   .. math::
 
      MLc = \log_{10}(A) + 1.110 * \log_{10}(r / 100) + 0.00189 * (r - 100) + 3.0
 
-* Pre-filtered velocity amplitudes in units of mym/s, no Wood-Anderson correction,
-  e.g. Hiemer and Roessler, 2012:
+* Pre-filtered velocity amplitudes in units of mym/s (requiring to set
+  :confval:`amplitudes.MLc.amplitudeScale`), no Wood-Anderson correction,
+  for West Bohemia, e.g. Hiemer and Roessler, 2012:
 
   .. math::
 
      MLc = \log_{10}(A) - log_{10}(2\Pi) + 2.1 * \log_{10}(r) - 1.7 + c_0
 
+.. figure:: media/magnitude-calibrations_MLc_s_MLc_hb.png
+   :align: center
+   :width: 18cm
+
+   MLc magnitudes for measured amplitude of 1 mm with default magnitude
+   calibration (*MLc_s*, Stange, 2006) and calibration values for Southern
+   California (*MLc_hb*, Hutton and Boore, 1987).
+
 
 Configuration
 =============
 
-#. Set the configuration and calibration parameters in the global bindings similar
+#. **Set the configuration and calibration parameters** in the global bindings similar
    to :ref:`global_ml`. Instead of configuring lots of global bindings profiles or
    station bindings one line per parameter can be added to the global module
    configuration (:file:`global.cfg`) which takes the form ::
@@ -114,11 +128,17 @@ Configuration
 
 #. Add MLc to the list of default amplitudes and magnitudes if MLc is to be
    computed by automatic modules, e.g. of :ref:`scamp`, :ref:`scmag`.
-#. Set defaults / visibility of MLc in :ref:`scolv` and in :ref:`scesv`.
-#. Configure :ref:`scmag` (:file:`scmag.cfg`) for choosing the method to form the
+#. Configure :ref:`scmag` (:confval:`magnitudes.average` in :file:`scmag.cfg`)
+   for choosing the method to form the
    network magnitude from station magnitudes, e.g. ::
 
       magnitudes.average = MLc:median
+
+#. Add MLc to the list of magnitudes preferred by :ref:`scevent`
+   (:confval:`eventAssociation.magTypes` in :file:`scevent.cfg`) in order to let
+   MLc become the preferred magnitude.
+#. Set defaults / visibility of MLc in :term:`GUI` modules, e.g. :ref:`scolv`
+   or :ref:`scesv`.
 
 .. note ::
 
