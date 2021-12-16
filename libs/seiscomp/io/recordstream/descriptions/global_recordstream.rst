@@ -6,6 +6,7 @@ The following tables lists available implementations:
 
    ":ref:`rs-arclink`", "``arclink``", "Connects to an ArcLink server"
    ":ref:`rs-balanced`", "``balanced``", "Distributes requests to multiple proxy streams"
+   ":ref:`rs-routing`", "``routing``", "Distributes requests to multiple proxy streams according to user defined rules"
    ":ref:`rs-caps`", "``caps``, ``capss``", "Connects to a `gempa CAPS server <https://www.gempa.de/products/caps/>`_"
    ":ref:`rs-combined`", "``combined``", "Combines archive and real-time stream"
    ":ref:`rs-dec`", "``dec``", "Decimates (downsamples) a proxy stream"
@@ -390,6 +391,43 @@ Examples
 
    "``balanced://slink/server1:18000;slink/server2:18000``", "Distribute requests to 2 :ref:`rs-slink` RecordStreams"
    "``balanced://combined/(server1:18000;server1:18001);combined/(server2:18000;server2:18001)``", "Distribute requests to 2 :ref:`rs-combined` RecordStreams"
+
+.. _rs-routing:
+
+
+Routing
+--------
+
+This RecordStream distributes requests to multiple proxy streams according to
+user supplied routing rules, which allow to route specific network, station,
+location or channel codes to fixed proxy streams.
+
+Definition
+^^^^^^^^^^
+
+URL-like: ``routing://proxy-stream??match=pattern[;proxy-stream2??match=pattern[; ...]]``
+    
+The definition of the proxy streams has slightly changed: Scheme and source
+are only separated by a slash, e.g. `slink://localhost` needs to be defined as
+`slink/localhost`.
+
+The URL parameters of the routing stream are separated by 2 question marks
+(`??`) in order to distinguish them from the parameters used in the proxy
+streams.
+
+`pattern` defines the rule used to route the request to the proxy stream and it is
+in `NET.STA.LOC.CHA` format. The special characters `?` `*` `|` `(` `)` are allowed.
+
+Examples
+^^^^^^^^
+
+.. csv-table::
+   :header: "URL", "Description"
+
+   "``routing://slink/server1:18000??match=(NET1|NET2).*.*.*;slink/server2:18000??match=*.*.*.*``", "Requests for network `NET1` and `NET2` go to server1, all the rest to server2"
+   "``routing://slink/server1:18000??match=TMP?.*.*.*;slink/server2:18000??match=NET.*.*.*``", "Requests for network `TMPX` go to server1, for network `NET` go to server 2, all the rest are not fulfilled"
+   "``routing://slink/server1:18000??match=*.*.*.(HH|EH)?;slink/server2:18000??match=*.*.*.*``", "Requests for channels `HH` and `EH` go to server1, all the rest to server2"   
+   "``routing://combined/(server1:18000;server1:18001??rtMax=1800)??match=NET1.*.*.*;combined/(server2:18000;server2:18001??rtMax=1800)??match=NET2.*.*.*``", "Split requests to 2 :ref:`rs-combined` RecordStreams according to the network code `STA1` or `STA2`. Other network codes are not fullfilled"
 
 .. _rs-dec:
 
