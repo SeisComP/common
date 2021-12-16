@@ -5,7 +5,9 @@ SET(RECORDSTREAM_SOURCES
 	arclink.cpp
 	slconnection.cpp
 	combined.cpp
+	concurrent.cpp
 	balanced.cpp
+	routing.cpp
 	streamidx.cpp
 	decimation.cpp
 	resample.cpp
@@ -28,7 +30,7 @@ SET(RECORDSTREAM_HEADERS
 	arclink.h
 	slconnection.h
 	combined.h
-	balanced.h
+	concurrent.h
 	streamidx.h
 	decimation.h
 	resample.h
