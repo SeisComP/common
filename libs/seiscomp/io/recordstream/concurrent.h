@@ -22,11 +22,6 @@
 #define SEISCOMP_SERVICES_RECORDSTREAM_CONCURRENT_H
 
 
-#include <string>
-#include <vector>
-#include <list>
-#include <thread>
-
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core/timewindow.h>
 #include <seiscomp/io/recordstream.h>
@@ -102,9 +97,7 @@ class SC_SYSTEM_CORE_API Concurrent : public IO::RecordStream {
 	//  Private methods and members
 	// ----------------------------------------------------------------------
 	private:
-		void putRecord(RecordPtr rec);
-		Record *getRecord();
-		void acquiThread(IO::RecordStream* rs);
+		void acquiThread(IO::RecordStream *rs);
 
 	protected:
 		using RecordStreamItem = std::pair<IO::RecordStreamPtr, bool>;

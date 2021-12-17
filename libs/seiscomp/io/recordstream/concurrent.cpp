@@ -74,13 +74,13 @@ bool Concurrent::addStream(const string &net, const string &sta,
 
 	int i = getRS(net, sta, loc, cha);
 
-	if (i < 0) return false;
+	if ( i < 0 )
+		return false;
 
 	if ( !_rsarray[i].first->addStream(net, sta, loc, cha) )
 		return false;
 
 	_rsarray[i].second = true;
-
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -101,13 +101,13 @@ bool Concurrent::addStream(const string &net, const string &sta,
 
 	int i = getRS(net, sta, loc, cha);
 
-	if (i < 0) return false;
+	if ( i < 0 )
+		return false;
 
 	if ( !_rsarray[i].first->addStream(net, sta, loc, cha, stime, etime) )
 		return false;
 
 	_rsarray[i].second = true;
-
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -230,6 +230,7 @@ void Concurrent::acquiThread(RecordStream *rs) {
 	SEISCOMP_DEBUG("Starting acquisition thread");
 
 	Record *rec;
+
 	try {
 		while ( (rec = rs->next()) )
 			_queue.push(rec);
@@ -237,7 +238,7 @@ void Concurrent::acquiThread(RecordStream *rs) {
 	catch ( OperationInterrupted &e ) {
 		SEISCOMP_DEBUG("Interrupted acquisition thread, msg: '%s'", e.what());
 	}
-	catch ( exception& e ) {
+	catch ( exception &e ) {
 		SEISCOMP_ERROR("Exception in acquisition thread: '%s'", e.what());
 	}
 
@@ -261,16 +262,24 @@ Record *Concurrent::next() {
 			if ( _rsarray[i].second ) {
 				_rsarray[i].first->setDataType(_dataType);
 				_rsarray[i].first->setDataHint(_hint);
-				_threads.push_back(thread(std::bind(&Concurrent::acquiThread, this, _rsarray[i].first.get())));
+				_threads.push_back(
+					thread(
+						bind(
+							&Concurrent::acquiThread,
+							this,
+							_rsarray[i].first.get()
+						)
+					)
+				);
 				++_nthreads;
 			}
 		}
 	}
 
 	while (_nthreads > 0) {
-		Record *rec = _queue.pop();
+		auto rec = _queue.pop();
 
-		if ( rec == nullptr ) {
+		if ( !rec ) {
 			--_nthreads;
 			continue;
 		}
