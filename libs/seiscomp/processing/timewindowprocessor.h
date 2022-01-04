@@ -50,7 +50,7 @@ class SC_SYSTEM_CLIENT_API TimeWindowProcessor : public WaveformProcessor {
 	//  Public Interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual void reset() override;
+		void reset() override;
 
 		//! Sets the time window for the data to be fed
 		void setTimeWindow(const Core::TimeWindow &tw);
@@ -64,7 +64,7 @@ class SC_SYSTEM_CLIENT_API TimeWindowProcessor : public WaveformProcessor {
 		//! when feeding the data into the processor. The default
 		//! margin are 60 seconds.
 		void setMargin(const Core::TimeSpan&);
-		const Core::TimeSpan& margin() const;
+		const Core::TimeSpan &margin() const;
 
 		//! Derived classes should implement this method to
 		//! compute their needed timewindow
@@ -78,20 +78,20 @@ class SC_SYSTEM_CLIENT_API TimeWindowProcessor : public WaveformProcessor {
 	//  Protected Interface
 	// ----------------------------------------------------------------------
 	protected:
-		virtual void fill(size_t n, double *samples) override;
-		virtual bool store(const Record *rec) override;
+		void fill(size_t n, double *samples) override;
+		bool store(const Record *rec) override;
 
 
 	// ----------------------------------------------------------------------
 	//  Members
 	// ----------------------------------------------------------------------
 	protected:
-		DoubleArray _data;
+		DoubleArray      _data;
 
 	private:
 		Core::TimeWindow _timeWindow;
 		Core::TimeWindow _safetyTimeWindow;
-		Core::TimeSpan _safetyMargin;
+		Core::TimeSpan   _safetyMargin;
 };
 
 
