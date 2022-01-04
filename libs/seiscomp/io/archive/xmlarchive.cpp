@@ -852,16 +852,28 @@ void XMLArchive::writeAttrib(const std::string& value) {
 
 	if ( !_property.empty() && !(hint() & XML_CDATA) ) {
 		if ( hint() & XML_ELEMENT ) {
-			xmlNewTextChild(static_cast<xmlNodePtr>(_current), nullptr,
-			                (const xmlChar*)_property.c_str(),
-			                (const xmlChar*)(value.empty()?nullptr:value.c_str()));
+			xmlNewTextChild(
+				static_cast<xmlNodePtr>(_current), nullptr,
+				reinterpret_cast<const xmlChar*>(_property.c_str()),
+				reinterpret_cast<const xmlChar*>(value.empty()?nullptr:value.c_str())
+			);
 		}
-		else
-			xmlSetProp(static_cast<xmlNodePtr>(_current), (const xmlChar*)_property.c_str(), (const xmlChar*)value.c_str());
+		else {
+			xmlSetProp(
+				static_cast<xmlNodePtr>(_current),
+				reinterpret_cast<const xmlChar*>(_property.c_str()),
+				reinterpret_cast<const xmlChar*>(value.c_str())
+			);
+		}
 	}
-	else if ( !value.empty() )
-		xmlNodeSetContent(static_cast<xmlNodePtr>(_current), (const xmlChar*)value.c_str());
-
+	else if ( !value.empty() ) {
+		auto encoded = xmlEncodeEntitiesReentrant(
+			static_cast<xmlDocPtr>(_document),
+			reinterpret_cast<const xmlChar*>(value.c_str())
+		);
+		xmlNodeSetContent(static_cast<xmlNodePtr>(_current), encoded);
+		xmlFree(encoded);
+	}
 	_property = "";
 }
 
