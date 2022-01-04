@@ -184,7 +184,7 @@ class SC_SYSTEM_CORE_API Stream : public PublicObject {
 		void setSampleRateDenominator(const OPT(int)& sampleRateDenominator);
 		int sampleRateDenominator() const;
 
-		//! Depth (52.13)
+		//! Depth (52.13) of the sensor below sensorLocation in meters
 		void setDepth(const OPT(double)& depth);
 		double depth() const;
 

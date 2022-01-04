@@ -418,10 +418,10 @@ DatabaseIterator DatabaseQuery::getWaveformQuality(const WaveformStreamID& wavef
 	query += toString(waveformID.channelCode());
 	query += "' and WaveformQuality." + _T("waveformID_resourceURI") + "='";
 	query += toString(waveformID.resourceURI());
-	query += "') and WaveformQuality." + _T("parameter") + "='";
-	query += toString(parameter);
-	query += "' and WaveformQuality." + _T("type") + "='";
+	query += "') and WaveformQuality." + _T("type") + "='";
 	query += toString(type);
+	query += "' and WaveformQuality." + _T("parameter") + "='";
+	query += toString(parameter);
 	query += "'";
 
 	return getObjectIterator(query, WaveformQuality::TypeInfo());
@@ -448,10 +448,10 @@ DatabaseIterator DatabaseQuery::getWaveformQualityDescending(const WaveformStrea
 	query += toString(waveformID.channelCode());
 	query += "' and WaveformQuality." + _T("waveformID_resourceURI") + "='";
 	query += toString(waveformID.resourceURI());
-	query += "') and WaveformQuality." + _T("parameter") + "='";
-	query += toString(parameter);
-	query += "' and WaveformQuality." + _T("type") + "='";
+	query += "') and WaveformQuality." + _T("type") + "='";
 	query += toString(type);
+	query += "' and WaveformQuality." + _T("parameter") + "='";
+	query += toString(parameter);
 	query += "' order by WaveformQuality._oid desc limit 10";
 
 	return getObjectIterator(query, WaveformQuality::TypeInfo());
@@ -708,10 +708,10 @@ DatabaseIterator DatabaseQuery::getConfigModule(const std::string& name,
 	if ( !validInterface() ) return DatabaseIterator();
 
 	std::string query;
-	query += "select PConfigModule." + _T("publicID") + ",ConfigModule.* from ConfigModule,PublicObject as PConfigModule where ConfigModule._oid=PConfigModule._oid and ConfigModule." + _T("name") + "='";
-	query += toString(name);
-	query += "' and ConfigModule." + _T("enabled") + "='";
+	query += "select PConfigModule." + _T("publicID") + ",ConfigModule.* from ConfigModule,PublicObject as PConfigModule where ConfigModule._oid=PConfigModule._oid and ConfigModule." + _T("enabled") + "='";
 	query += toString(enabled);
+	query += "' and ConfigModule." + _T("name") + "='";
+	query += toString(name);
 	query += "'";
 
 	return getObjectIterator(query, ConfigModule::TypeInfo());
@@ -735,14 +735,14 @@ DatabaseIterator DatabaseQuery::getEquivalentPick(const std::string& stationCode
 	query += toString(startTime);
 	query += "' and Pick." + _T("time_value") + "<='";
 	query += toString(endTime);
-	query += "' and Pick." + _T("waveformID_stationCode") + "='";
-	query += toString(stationCode);
 	query += "' and Pick." + _T("waveformID_networkCode") + "='";
 	query += toString(networkCode);
-	query += "' and Pick." + _T("waveformID_locationCode") + "='";
-	query += toString(locationCode);
 	query += "' and Pick." + _T("waveformID_channelCode") + "='";
 	query += toString(channelCode);
+	query += "' and Pick." + _T("waveformID_stationCode") + "='";
+	query += toString(stationCode);
+	query += "' and Pick." + _T("waveformID_locationCode") + "='";
+	query += toString(locationCode);
 	query += "'";
 
 	return getObjectIterator(query, Pick::TypeInfo());
@@ -774,10 +774,10 @@ DatabaseIterator DatabaseQuery::getJournalAction(const std::string& objectID,
 	if ( !validInterface() ) return DatabaseIterator();
 
 	std::string query;
-	query += "select JournalEntry.* from JournalEntry where JournalEntry." + _T("objectID") + "='";
-	query += toString(objectID);
-	query += "' and JournalEntry." + _T("action") + "='";
+	query += "select JournalEntry.* from JournalEntry where JournalEntry." + _T("action") + "='";
 	query += toString(action);
+	query += "' and JournalEntry." + _T("objectID") + "='";
+	query += toString(objectID);
 	query += "'";
 
 	return getObjectIterator(query, JournalEntry::TypeInfo());
@@ -806,12 +806,12 @@ DatabaseIterator DatabaseQuery::getArclinkRequestByStreamCode(Seiscomp::Core::Ti
 	query += toString(type);
 	query += "' and ArclinkRequestLine." + _T("streamID_networkCode") + "='";
 	query += toString(networkCode);
+	query += "' and ArclinkRequestLine." + _T("streamID_channelCode") + "='";
+	query += toString(channelCode);
 	query += "' and ArclinkRequestLine." + _T("streamID_stationCode") + "='";
 	query += toString(stationCode);
 	query += "' and ArclinkRequestLine." + _T("streamID_locationCode") + "='";
 	query += toString(locationCode);
-	query += "' and ArclinkRequestLine." + _T("streamID_channelCode") + "='";
-	query += toString(channelCode);
 	query += "'";
 
 	return getObjectIterator(query, ArclinkRequest::TypeInfo());

@@ -153,15 +153,29 @@ class SC_SYSTEM_CORE_API StationGroup : public PublicObject {
 		void setDescription(const std::string& description);
 		const std::string& description() const;
 
-		//! Optional latitude (eg., of the central station)
+		//! Optional latitude (eg., of the central station) with
+		//! respect to the
+		//! World Geodetic System 1984 (WGS84) reference system
+		//! (National
+		//! Imagery and Mapping Agency 2000) in degrees. The
+		//! uncertainties are
+		//! given in kilometers.
 		void setLatitude(const OPT(double)& latitude);
 		double latitude() const;
 
-		//! Optional longitude (eg., of the central station)
+		//! Optional longitude (eg., of the central station) with
+		//! respect to the
+		//! World Geodetic System 1984 (WGS84) reference system
+		//! (National
+		//! Imagery and Mapping Agency 2000) in degrees.
 		void setLongitude(const OPT(double)& longitude);
 		double longitude() const;
 
-		//! Optional elevation (eg., of the central station)
+		//! Optional elevation (eg., of the central station) with
+		//! respect to the
+		//! World Geodetic System 1984 (WGS84) reference system
+		//! (National Imagery
+		//! and Mapping Agency 2000) in meters.
 		void setElevation(const OPT(double)& elevation);
 		double elevation() const;
 
