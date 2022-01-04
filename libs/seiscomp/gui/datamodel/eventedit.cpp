@@ -1482,6 +1482,7 @@ void EventEdit::init() {
 	        this, SLOT(releaseMagnitudeType()));
 
 	connect(_ui.buttonFixMw, SIGNAL(clicked()), this, SLOT(fixMw()));
+	connect(_ui.buttonFixFmMw, SIGNAL(clicked()), this, SLOT(fixFmMw()));
 	connect(_ui.buttonReleaseMw, SIGNAL(clicked()), this, SLOT(releaseMw()));
 
 	connect(_originTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
@@ -3739,6 +3740,21 @@ void EventEdit::releaseMagnitudeType() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::fixMw() {
+	sendJournal("EvPrefMw", "true");
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void EventEdit::fixFmMw() {
+	if ( !_currentFM ) {
+		QMessageBox::critical(this, "Error", "No focal mechanism selected.");
+		return;
+	}
+
+	sendJournal("EvPrefFocMecID", _currentFM->publicID());
 	sendJournal("EvPrefMw", "true");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -1557,6 +1557,16 @@
               </property>
              </widget>
             </item>
+            <item row="6" column="0" >
+             <widget class="QPushButton" name="buttonFixFmMw" >
+              <property name="toolTip" >
+               <string>Fixes currently selected focal mechanism and the associated moment magnitude as preferred magnitude if available.</string>
+              </property>
+              <property name="text" >
+               <string>Fix FM + Mw type</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>

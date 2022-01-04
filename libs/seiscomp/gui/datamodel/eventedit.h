@@ -194,6 +194,7 @@ class SC_GUI_API EventEdit : public QWidget, public DataModel::Observer {
 		void releaseMagnitudeType();
 
 		void fixMw();
+		void fixFmMw();
 		void releaseMw();
 		void triggerMw();
 
