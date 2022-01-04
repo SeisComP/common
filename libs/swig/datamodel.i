@@ -20,14 +20,14 @@
 %module(package="seiscomp", directors="1") datamodel
 %{
 #include "seiscomp/datamodel/types.h"
-#include "seiscomp/datamodel/eventparameters_package.h"
-#include "seiscomp/datamodel/config_package.h"
-#include "seiscomp/datamodel/qualitycontrol_package.h"
-#include "seiscomp/datamodel/inventory_package.h"
-#include "seiscomp/datamodel/routing_package.h"
 #include "seiscomp/datamodel/journaling_package.h"
 #include "seiscomp/datamodel/arclinklog_package.h"
+#include "seiscomp/datamodel/qualitycontrol_package.h"
+#include "seiscomp/datamodel/inventory_package.h"
 #include "seiscomp/datamodel/dataavailability_package.h"
+#include "seiscomp/datamodel/eventparameters_package.h"
+#include "seiscomp/datamodel/config_package.h"
+#include "seiscomp/datamodel/routing_package.h"
 #include "seiscomp/datamodel/realarray.h"
 #include "seiscomp/datamodel/timearray.h"
 #include "seiscomp/datamodel/timepdf1d.h"
@@ -58,14 +58,14 @@
 #include "seiscomp/datamodel/version.h"
 %}
 
-%newobject Seiscomp::DataModel::DatabaseReader::loadEventParameters;
-%newobject Seiscomp::DataModel::DatabaseReader::loadConfig;
-%newobject Seiscomp::DataModel::DatabaseReader::loadQualityControl;
-%newobject Seiscomp::DataModel::DatabaseReader::loadInventory;
-%newobject Seiscomp::DataModel::DatabaseReader::loadRouting;
 %newobject Seiscomp::DataModel::DatabaseReader::loadJournaling;
 %newobject Seiscomp::DataModel::DatabaseReader::loadArclinkLog;
+%newobject Seiscomp::DataModel::DatabaseReader::loadQualityControl;
+%newobject Seiscomp::DataModel::DatabaseReader::loadInventory;
 %newobject Seiscomp::DataModel::DatabaseReader::loadDataAvailability;
+%newobject Seiscomp::DataModel::DatabaseReader::loadEventParameters;
+%newobject Seiscomp::DataModel::DatabaseReader::loadConfig;
+%newobject Seiscomp::DataModel::DatabaseReader::loadRouting;
 
 %include "datamodelbase.i"
 %include "seiscomp/datamodel/types.h"
@@ -150,6 +150,51 @@ optional_enum(Seiscomp::DataModel::StationGroupType);
 %include "seiscomp/datamodel/blob.h"
 %include "seiscomp/datamodel/arclinkrequestsummary.h"
 
+// package Journaling
+%include "seiscomp/datamodel/journalentry.h"
+%include "seiscomp/datamodel/journaling.h"
+
+// package ArclinkLog
+%include "seiscomp/datamodel/arclinkuser.h"
+%include "seiscomp/datamodel/arclinkstatusline.h"
+%include "seiscomp/datamodel/arclinkrequestline.h"
+%include "seiscomp/datamodel/arclinkrequest.h"
+%include "seiscomp/datamodel/arclinklog.h"
+
+// package QualityControl
+%include "seiscomp/datamodel/qclog.h"
+%include "seiscomp/datamodel/waveformquality.h"
+%include "seiscomp/datamodel/outage.h"
+%include "seiscomp/datamodel/qualitycontrol.h"
+
+// package Inventory
+%include "seiscomp/datamodel/stationreference.h"
+%include "seiscomp/datamodel/stationgroup.h"
+%include "seiscomp/datamodel/auxsource.h"
+%include "seiscomp/datamodel/auxdevice.h"
+%include "seiscomp/datamodel/sensorcalibration.h"
+%include "seiscomp/datamodel/sensor.h"
+%include "seiscomp/datamodel/responsepaz.h"
+%include "seiscomp/datamodel/responsepolynomial.h"
+%include "seiscomp/datamodel/responsefap.h"
+%include "seiscomp/datamodel/responsefir.h"
+%include "seiscomp/datamodel/responseiir.h"
+%include "seiscomp/datamodel/dataloggercalibration.h"
+%include "seiscomp/datamodel/decimation.h"
+%include "seiscomp/datamodel/datalogger.h"
+%include "seiscomp/datamodel/auxstream.h"
+%include "seiscomp/datamodel/stream.h"
+%include "seiscomp/datamodel/sensorlocation.h"
+%include "seiscomp/datamodel/station.h"
+%include "seiscomp/datamodel/network.h"
+%include "seiscomp/datamodel/inventory.h"
+
+// package DataAvailability
+%include "seiscomp/datamodel/datasegment.h"
+%include "seiscomp/datamodel/dataattributeextent.h"
+%include "seiscomp/datamodel/dataextent.h"
+%include "seiscomp/datamodel/dataavailability.h"
+
 // package EventParameters
 %include "seiscomp/datamodel/eventdescription.h"
 %include "seiscomp/datamodel/dataused.h"
@@ -182,57 +227,12 @@ optional_enum(Seiscomp::DataModel::StationGroupType);
 %include "seiscomp/datamodel/configmodule.h"
 %include "seiscomp/datamodel/config.h"
 
-// package QualityControl
-%include "seiscomp/datamodel/qclog.h"
-%include "seiscomp/datamodel/waveformquality.h"
-%include "seiscomp/datamodel/outage.h"
-%include "seiscomp/datamodel/qualitycontrol.h"
-
-// package Inventory
-%include "seiscomp/datamodel/stationreference.h"
-%include "seiscomp/datamodel/stationgroup.h"
-%include "seiscomp/datamodel/auxsource.h"
-%include "seiscomp/datamodel/auxdevice.h"
-%include "seiscomp/datamodel/sensorcalibration.h"
-%include "seiscomp/datamodel/sensor.h"
-%include "seiscomp/datamodel/responsepaz.h"
-%include "seiscomp/datamodel/responsepolynomial.h"
-%include "seiscomp/datamodel/responsefap.h"
-%include "seiscomp/datamodel/responsefir.h"
-%include "seiscomp/datamodel/responseiir.h"
-%include "seiscomp/datamodel/dataloggercalibration.h"
-%include "seiscomp/datamodel/decimation.h"
-%include "seiscomp/datamodel/datalogger.h"
-%include "seiscomp/datamodel/auxstream.h"
-%include "seiscomp/datamodel/stream.h"
-%include "seiscomp/datamodel/sensorlocation.h"
-%include "seiscomp/datamodel/station.h"
-%include "seiscomp/datamodel/network.h"
-%include "seiscomp/datamodel/inventory.h"
-
 // package Routing
 %include "seiscomp/datamodel/routearclink.h"
 %include "seiscomp/datamodel/routeseedlink.h"
 %include "seiscomp/datamodel/route.h"
 %include "seiscomp/datamodel/access.h"
 %include "seiscomp/datamodel/routing.h"
-
-// package Journaling
-%include "seiscomp/datamodel/journalentry.h"
-%include "seiscomp/datamodel/journaling.h"
-
-// package ArclinkLog
-%include "seiscomp/datamodel/arclinkuser.h"
-%include "seiscomp/datamodel/arclinkstatusline.h"
-%include "seiscomp/datamodel/arclinkrequestline.h"
-%include "seiscomp/datamodel/arclinkrequest.h"
-%include "seiscomp/datamodel/arclinklog.h"
-
-// package DataAvailability
-%include "seiscomp/datamodel/datasegment.h"
-%include "seiscomp/datamodel/dataattributeextent.h"
-%include "seiscomp/datamodel/dataextent.h"
-%include "seiscomp/datamodel/dataavailability.h"
 
 // additional headers
 %include "seiscomp/datamodel/databasereader.h"

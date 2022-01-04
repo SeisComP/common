@@ -149,15 +149,27 @@ class SC_SYSTEM_CORE_API SensorLocation : public PublicObject {
 		void setEnd(const OPT(Seiscomp::Core::Time)& end);
 		Seiscomp::Core::Time end() const;
 
-		//! Sensor latitude (52.10)
+		//! Sensor latitude (52.10) with respect to the World Geodetic
+		//! System
+		//! 1984 (WGS84) reference system (National Imagery and Mapping
+		//! Agency
+		//! 2000) in degrees.
 		void setLatitude(const OPT(double)& latitude);
 		double latitude() const;
 
-		//! Sensor longitude (52.11)
+		//! Sensor longitude (52.11) with respect to the World Geodetic
+		//! System
+		//! 1984 (WGS84) reference system (National Imagery and Mapping
+		//! Agency
+		//! 2000) in degrees.
 		void setLongitude(const OPT(double)& longitude);
 		double longitude() const;
 
-		//! Sensor elevation (52.12)
+		//! Sensor elevation (52.12) with respect to the World Geodetic
+		//! System
+		//! 1984 (WGS84) reference system (National Imagery and Mapping
+		//! Agency
+		//! 2000) in meters.
 		void setElevation(const OPT(double)& elevation);
 		double elevation() const;
 
