@@ -3021,11 +3021,9 @@ void EventEdit::updateMagnitude() {
 		_ui.labelMagnitudeCountValue->setText("-");
 	}
 
-	char buf[10];
 	try {
 		double rms = quantityUncertainty(_currentMagnitude->magnitude());
-		snprintf(buf, 10, "+/- %.2f", rms);
-		_ui.labelMagnitudeError->setText(buf);
+		_ui.labelMagnitudeError->setText(QString("+/- %1").arg(rms, 0, 'f', SCScheme.precision.magnitude));
 	}
 	catch ( ... ) {
 		_ui.labelMagnitudeError->setText("");
@@ -3152,11 +3150,9 @@ void EventEdit::updateMT() {
 		_ui.mtMagType->setText(m->type().c_str());
 		_ui.mtMag->setText(QString("%1").arg(m->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
 
-		char buf[10];
 		try {
 			double rms = quantityUncertainty(m->magnitude());
-			snprintf(buf, 10, "+/- %.2f", rms);
-			_ui.mtMagError->setText(buf);
+			_ui.mtMagError->setText(QString("+/- %1").arg(rms, 0, 'f', SCScheme.precision.magnitude));
 		}
 		catch ( ... ) {
 			_ui.mtMagError->setText("");

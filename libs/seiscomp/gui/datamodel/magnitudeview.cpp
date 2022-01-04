@@ -3567,7 +3567,7 @@ void MagnitudeView::updateMagnitudeLabels() {
 		try {
 			double rms = quantityUncertainty(_netMag->magnitude());
 			if ( rms < 10 )
-				snprintf(buf, 10, "%.*f", SCScheme.precision.rms, rms);
+				snprintf(buf, 10, "%.*f", SCScheme.precision.magnitude, rms);
 		}
 		catch ( ... ) {}
 		_ui.labelRMS->setText(buf);

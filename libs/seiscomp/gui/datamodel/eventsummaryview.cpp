@@ -512,12 +512,17 @@ void MagRow::setVisible(bool v) {
 
 void MagRow::updateContent() {
 	if (_netMag) { // set Magnitude Row
-		char buf[10] = "-";
+		QString text;
 		double netmagval = _netMag->magnitude().value();
-		if (netmagval<12)
-			sprintf(buf, "%.1f", netmagval);
-		_magnitude->setText(buf);
+		if ( netmagval < 12 ) {
+			text = QString("%1").arg(netmagval, 0, 'f', SCScheme.precision.magnitude);
+		}
+		else {
+			text = "-";
+		}
+		_magnitude->setText(text);
 		_type->setText(QString("%1").arg(_netMag->type().c_str()));
+
 		try {
 			int count = _netMag->stationCount();
 			_quality->setText(QString("%1").arg(count));
@@ -538,11 +543,11 @@ void MagRow::updateContent() {
 		}
 
 		if ( stdev < 10 ) {
-			sprintf(buf, "%.2f", stdev);
-			_stdev->setText(buf);
+			_stdev->setText(QString("%1").arg(stdev, 0, 'f', SCScheme.precision.magnitude));
 		}
-		else
+		else {
 			_stdev->setText("-");
+		}
 	}
 	else if ( _header ){ // set Header Row
 		_magnitude->setText(QString("Value"));
@@ -558,11 +563,16 @@ void MagRow::updateContent() {
 
 	if ( _referenceMagVisible ) {
 		if ( _netMagReference ) {
-			char buf[10] = "-";
+			QString text;
 			double netmagval = _netMagReference->magnitude().value();
-			if (netmagval<12)
-				sprintf(buf, "%.1f", netmagval);
-			_magnitudeReference->setText(buf);
+			if ( netmagval < 12 ) {
+				text = QString("%1").arg(netmagval, 0, 'f', SCScheme.precision.magnitude);
+			}
+			else {
+				text = "-";
+			}
+			_magnitudeReference->setText(text);
+
 			try {
 				int count = _netMagReference->stationCount();
 				_qualityReference->setText(QString("%1").arg(count));
@@ -583,11 +593,11 @@ void MagRow::updateContent() {
 			}
 
 			if ( stdev < 10 ) {
-				sprintf(buf, "%.2f", stdev);
-				_stdevReference->setText(buf);
+				_stdevReference->setText(QString("%1").arg(stdev, 0, 'f', SCScheme.precision.magnitude));
 			}
-			else
+			else {
 				_stdevReference->setText(QString("-"));
+			}
 		}
 		else {
 			_magnitudeReference->setText(QString("-"));
@@ -1192,13 +1202,12 @@ void EventSummaryView::addObject(const QString& parentID, Seiscomp::DataModel::O
 
 		if ( _autoSelect ) {
 			if ( checkAndDisplay(event.get()) ) {
-	// 			clearLastMagnitudes();
 				_mapTimer->stop();
 			}
 		}
 		else {
 			emit showInStatusbar(QString("a new event has arrived: %1 [event displayed is %2]")
-                   .arg(event->publicID().c_str()).arg(_currentEvent->publicID().c_str()), 10000);
+			                     .arg(event->publicID().c_str()).arg(_currentEvent->publicID().c_str()), 10000);
 		}
 		return;
 	}
@@ -1218,14 +1227,14 @@ void EventSummaryView::addObject(const QString& parentID, Seiscomp::DataModel::O
 						display =
 							QString("%1 %2 (%3)")
 								.arg(mag->type().c_str())
-								.arg(mag->magnitude().value(), 0, 'f', 1)
+								.arg(mag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)
 								.arg(mag->stationCount());
 					}
 					catch ( ... ) {
 						display =
 							QString("%1 %2 (-)")
 								.arg(mag->type().c_str())
-								.arg(mag->magnitude().value(), 0, 'f', 1);
+								.arg(mag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude);
 					}
 				}
 			}
@@ -2002,7 +2011,7 @@ void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
 			mag = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), mt->momentMagnitudeID()));
 
 		if ( mag )
-			_uiHypocenter->labelMw->setText(QString("%1").arg(mag->magnitude().value(), 0, 'f', 1));
+			_uiHypocenter->labelMw->setText(QString("%1").arg(mag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
 		else
 			_uiHypocenter->labelMw->setText("-");
 
@@ -2218,7 +2227,7 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 			mag = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), mt->momentMagnitudeID()));
 
 		if ( mag )
-			_uiHypocenter->labelMwAutomatic->setText(QString("%1").arg(mag->magnitude().value(), 0, 'f', 1));
+			_uiHypocenter->labelMwAutomatic->setText(QString("%1").arg(mag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
 		else
 			_uiHypocenter->labelMwAutomatic->setText("-");
 
@@ -2476,10 +2485,14 @@ void EventSummaryView::setPrefMagnitudeParameter(std::string MagnitudeID){
 
 	_ui->_lbPreMagType->setText((Magnitude->type()).c_str());
 	double premagval = Magnitude->magnitude().value();
-	char buf[10] = "-";
-	if (premagval<12)
-		sprintf(buf, "%.1f", premagval);
-	_ui->_lbPreMagVal->setText(buf);
+	QString text;
+	if ( premagval < 12 ) {
+		text = QString("%1").arg(premagval, 0, 'f', SCScheme.precision.magnitude);
+	}
+	else {
+		text = "-";
+	}
+	_ui->_lbPreMagVal->setText(text);
 
 	_magList->selectMagnitude(MagnitudeID.c_str());
 
@@ -2815,7 +2828,7 @@ void EventSummaryView::runScript(const QString& script, const QString& name, boo
 		      .arg(script)
 		      .arg(_currentEvent->publicID().c_str())
 		      .arg(_currentOrigin->arrivalCount())
-		      .arg(nm?QString("%1").arg(nm->magnitude().value(), 0, 'f', 1):"")
+		      .arg(nm?QString("%1").arg(nm->magnitude().value(), 0, 'f', SCScheme.precision.magnitude):"")
 		      .arg(extraDescription.c_str());
 	}
 	else {

@@ -708,9 +708,7 @@ void EventSummary::setEvent(Event *event, Origin *org, bool fixed) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventSummary::updateMagnitude() {
-	char buf[32];
-	sprintf(buf, "%.1f", _currentMag->magnitude().value());
-	setText(_ui->magnitude, buf);
+	setText(_ui->magnitude, QString("%1").arg(_currentMag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
 
 	if ( _symbol ) {
 		_symbol->setPreferredMagnitudeValue(_currentMag->magnitude().value());
@@ -1013,7 +1011,7 @@ void EventSummary::setFocalMechanism(FocalMechanism* fm) {
 		mag = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), mt->momentMagnitudeID()));
 
 	if ( mag ) {
-		QString text = QString("%1").arg(mag->magnitude().value(), 0, 'f', 1);
+		QString text = QString("%1").arg(mag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude);
 		_ui->mw->setText(QString("Mw %1").arg(text));
 		toolTip += "Mw: " + text + "\n";
 	}

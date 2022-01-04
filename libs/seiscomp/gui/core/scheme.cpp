@@ -508,7 +508,7 @@ Scheme::Precision::Precision() {
 	depth = 0;
 	distance = 1;
 	location = 2;
-	magnitude = 2;
+	magnitude = 1;
 	originTime = 0;
 	pickTime = 1;
 	traceValues = 1;

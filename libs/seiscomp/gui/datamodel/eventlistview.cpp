@@ -1097,7 +1097,7 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 
 				Magnitude *momentmag = Magnitude::Find(mt->momentMagnitudeID());
 				if ( momentmag ) {
-					setText(config.columnMap[COL_M], QString("%1").arg(momentmag->magnitude().value(), 0, 'f', 1));
+					setText(config.columnMap[COL_M], QString("%1").arg(momentmag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
 					setData(config.columnMap[COL_M], Qt::UserRole, QVariant(momentmag->magnitude().value()));
 					setText(config.columnMap[COL_MTYPE], QString("%1").arg(momentmag->type().c_str()));
 				}
@@ -1550,7 +1550,7 @@ class EventTreeItem : public SchemeTreeItem {
 					QFont f = font(config.columnMap[COL_M]);
 					f.setBold(true);
 					setFont(config.columnMap[COL_M],f);
-					setText(config.columnMap[COL_M], QString("%1").arg(nm->magnitude().value(), 0, 'f', 1));
+					setText(config.columnMap[COL_M], QString("%1").arg(QString("%1").arg(nm->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)));
 					setData(config.columnMap[COL_M], Qt::UserRole, QVariant(nm->magnitude().value()));
 					setText(config.columnMap[COL_MTYPE], QString("%1").arg(nm->type().c_str()));
 
