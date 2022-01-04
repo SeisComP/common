@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 
+#include <seiscomp/system/application.h>
 #include <seiscomp/system/hostinfo.h>
 #include <seiscomp/utils/files.h>
 #include <seiscomp/core/strings.h>
@@ -184,67 +185,84 @@ struct HostInfoImpl {
 		// Program name
 		programName.clear();
 
-#ifdef LINUX
-		ifstream file("/proc/self/cmdline");
-		if ( file.is_open() )
-			getline(file, programName);
+		auto app = Application::Instance();
+		if ( app ) {
+			programName = app->name();
+		}
+		else {
+			#ifdef LINUX
+			ifstream file("/proc/self/cmdline");
+			if ( file.is_open() ) {
+				getline(file, programName);
+			}
 
-		while ( true ) {
-			size_t p;
-			p = programName.find('\0');
-			if ( p != string::npos ) {
-				if ( programName.compare(0, p, "python") == 0 )
-					programName.erase(0, p+1);
+			while ( true ) {
+				size_t p;
+				p = programName.find('\0');
+				if ( p != string::npos ) {
+					string baseName = Util::basename(programName.substr(0, p));
+					if ( baseName.compare(0, 6, "python") == 0 ) {
+						programName.erase(0, p+1);
+					}
+					else {
+						programName.erase(p);
+						break;
+					}
+				}
 				else {
-					programName.erase(p);
 					break;
 				}
 			}
-			else
-				break;
+
+			programName = Util::basename(programName);
+			#endif
+			#ifdef MACOSX
+			const char* programName  = getprogname();
+			if ( programName ) {
+				programName = programName;
+			}
+			#endif
+
+			#if defined(_MSC_VER)
+			char path[MAX_PATH];
+			GetModuleFileName(nullptr, path, MAX_PATH);
+			char *prog = strrchr(path, '\\');
+			if ( !prog ) {
+				prog = path;
+			}
+			else {
+				++prog;
+			}
+			char *ending = strrchr(prog, '.');
+			if ( ending ) *ending = '\0';
+			programName = prog;
+			#endif
+
+			#ifdef sun
+			programName = staticProgramName;
+			#endif
 		}
-
-		programName = Util::basename(programName);
-
-#endif
-
-#ifdef MACOSX
-		const char* programName  = getprogname();
-		if ( programName )
-			programName = programName;
-#endif
-
-#if defined(_MSC_VER)
-		char path[MAX_PATH];
-		GetModuleFileName(nullptr, path, MAX_PATH);
-		char *prog = strrchr(path, '\\');
-		if ( !prog )
-			prog = path;
-		else
-			++prog;
-		char *ending = strrchr(prog, '.');
-		if ( ending ) *ending = '\0';
-		programName = prog;
-#endif
-
-#ifdef sun
-		programName = staticProgramName;
-#endif
 
 		// Total memory
 		totalMemory = -1;
 #ifdef LINUX
 		string line = getLineFromFile("/proc/meminfo", "MemTotal");
-		if ( line.empty() ) return;
+		if ( line.empty() ) {
+			return;
+		}
 
 		vector<string> tokens;
 		Core::split(tokens, line.c_str(), ":");
-		if ( tokens.size() < 2 ) return;
+		if ( tokens.size() < 2 ) {
+			return;
+		}
 
 		line.assign(tokens[1]);
 		tokens.clear();
 		Core::split(tokens, line.c_str(), "kB");
-		if ( tokens.size() < 1 ) return;
+		if ( tokens.size() < 1 ) {
+			return;
+		}
 
 		Core::trim(tokens[0]);
 		totalMemory = 0;
@@ -263,10 +281,12 @@ struct HostInfoImpl {
 
 #ifdef sun
 		totalMemory = sysconf(_SC_PHYS_PAGES);
-		if ( staticPageShift > 0 )
+		if ( staticPageShift > 0 ) {
 			totalMemory <<= staticPageShift;
-		else if ( staticPageShift < 0 )
+		}
+		else if ( staticPageShift < 0 ) {
 			totalMemory >>= staticPageShift;
+		}
 #endif
 
 #if _MSC_VER
