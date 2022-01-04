@@ -21,7 +21,6 @@
 
 #include <QHash>
 #include <QMutex>
-#include <iostream>
 
 #include <seiscomp/gui/map/texturecache.h>
 #include <seiscomp/gui/map/imagetree.h>
@@ -31,22 +30,52 @@
 namespace Seiscomp {
 namespace Gui {
 namespace Map {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QMap<QString, TextureCache::CacheEntry> TextureCache::_images;
 QMutex imageCacheMutex(QMutex::Recursive);
+Texture dummyTexture(true);
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TextureCache *getTexelCache = nullptr;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-Texture::Texture() {
-	data = nullptr;
-	w = 0;
-	h = 0;
-	isDummy = false;
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Texture::Texture(bool isDummyTexture) {
+	isDummy = isDummyTexture;
+
+	if ( !isDummy ) {
+		data = nullptr;
+		w = 0;
+		h = 0;
+	}
+	else {
+		image = QImage(1,1, QImage::Format_RGB32);
+		QRgb *bits = reinterpret_cast<QRgb*>(image.bits());
+		*bits = qRgb(224,224,224);
+		w = image.width();
+		h = image.height();
+		data = bits;
+		id = TileIndex(0,0,0);
+	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Texture::numBytes() const {
 #if QT_VERSION >= 0x040600
 	return image.byteCount();
@@ -54,39 +83,12 @@ int Texture::numBytes() const {
 	return image.numBytes();
 #endif
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
-bool Texture::load(TextureCache *cache, Alg::MapTreeNode *node) {
-	data = nullptr;
-	if ( node == nullptr || !cache->load(image, node) || image.isNull() ) {
-		image = QImage(1,1, QImage::Format_RGB32);
-		QRgb *bits = (QRgb*)image.bits();
-		*bits = qRgb(224,224,224);
-		isDummy = true;
-	}
-	else
-		isDummy = false;
 
-	if ( node ) {
-		id.level = node->level();
-		id.row = node->row();
-		id.column = node->column();
-	}
-	else {
-		id.level = 0;
-		id.row = 0;
-		id.column = 0;
-	}
-
-	w = image.width();
-	h = image.height();
-	data = (const QRgb*)image.bits();
-
-	return true;
-}
-
-
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Texture::setImage(QImage &img) {
 	image = img;
 	w = image.width();
@@ -94,10 +96,14 @@ void Texture::setImage(QImage &img) {
 	data = (const QRgb*)image.bits();
 	isDummy = false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-TextureCache::TextureCache(TileStore *tree, bool mercatorProjected) {
-	_mapTree = tree;
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+TextureCache::TextureCache(TileStore *store, bool mercatorProjected) {
+	_tileStore = store;
 	_isMercatorProjected = mercatorProjected;
 	_storedBytes = 0;
 	_textureCacheLimit = 128*1024*1024; // 128mb cache limit
@@ -105,66 +111,128 @@ TextureCache::TextureCache(TileStore *tree, bool mercatorProjected) {
 	_currentIndex = 0;
 	_currentTick = 0;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TextureCache::~TextureCache() {
 	// remove storage textures
-	for ( Storage::iterator it = _storage.begin(); it != _storage.end(); ++it ) {
-		Alg::MapTreeNode *node = it.key();
-		if ( node != nullptr )
-			remove(_mapTree->getID(node));
-		else
-			std::cerr << "Warning: cached texture node is nullptr" << std::endl;
+	for ( auto it = _storage.begin(); it != _storage.end(); ++it ) {
+		remove(_tileStore->getID(it->first));
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TextureCache::beginPaint() {
+	/*
+	std::cerr << "Begin paint" << std::endl;
+	if ( _lastTile[0] ) {
+		std::cerr << " Cache[0]: " << _lastId[0] << "; " << _lastTile[0]->id << " with dims "
+		          << _lastTile[0]->image.width() << "x"
+		          << _lastTile[0]->image.height() << std::endl;
+	}
+
+	if ( _lastTile[1] ) {
+		std::cerr << " Cache[1]: " << _lastId[1] << "; " << _lastTile[1]->id << " with dims "
+		          << _lastTile[1]->image.width() << "x"
+		          << _lastTile[1]->image.height() << std::endl;
+	}
+	*/
+
+	_invalidMapping.clear();
+
+	quint64 oldTick = _currentTick;
+	++_currentTick;
+	// Wrap. Reset lastUsed of all other tiles
+	if ( _currentTick < oldTick ) {
+		for ( auto it = _storage.begin(); it != _storage.end(); ++it )
+			it->second->lastUsed = _currentTick;
+		++_currentTick;
+	}
+
+	// std::cerr << _storage.size() << ": " << _storedBytes << " @ " << _currentTick << std::endl;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TextureCache::setCacheLimit(int limit) {
 	_textureCacheLimit = limit;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int TextureCache::maxLevel() const {
-	if ( _mapTree ) return _mapTree->depth();
+	if ( _tileStore )
+		return std::min(_tileStore->maxLevel(), static_cast<int>(TileIndex::MaxLevel));
 	return 0;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int TextureCache::tileWidth() const {
-	if ( _mapTree ) return _mapTree->tileSize().width();
+	if ( _tileStore ) return _tileStore->tileSize().width();
 	return 0;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int TextureCache::tileHeight() const {
-	if ( _mapTree ) return _mapTree->tileSize().height();
+	if ( _tileStore ) return _tileStore->tileSize().height();
 	return 0;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-bool TextureCache::load(QImage &img, Alg::MapTreeNode *node) {
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool TextureCache::load(QImage &img, const TileIndex &tile) {
 	QMutexLocker lock(&imageCacheMutex);
 
 	ImageCache::iterator it;
-	QString id = _mapTree->getID(node);
+	QString id = _tileStore->getID(tile);
 	it = _images.find(id);
 	if ( it == _images.end() ) {
-		if ( !_mapTree->load(img, node) )
+		//std::cerr << "L " << tile << std::endl;
+		if ( _tileStore->load(img, tile) != TileStore::OK ) {
 			return false;
+		}
 
 		if ( img.format() != QImage::Format_RGB32 &&
-		     img.format() != QImage::Format_ARGB32 )
+		     img.format() != QImage::Format_ARGB32 ) {
 			img = img.convertToFormat(QImage::Format_ARGB32);
+		}
 
-		_images[id] = CacheEntry(img, 1);
+		if ( !img.isNull() ) {
+			// Add to global image cache
+			_images[id] = CacheEntry(img, 1);
+		}
+		else {
+			return false;
+		}
 	}
 	else {
 		img = it.value().first;
 		++it.value().second;
+		//std::cerr << "IC " << tile << ": " << id.toStdString() << std::endl;
 	}
 
 	/*
@@ -182,100 +250,173 @@ bool TextureCache::load(QImage &img, Alg::MapTreeNode *node) {
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void TextureCache::checkResources(Texture *tex) {
-	//if ( _textureCountLimit <= 0 || _storage.size () < _textureCountLimit ) return;
-	if ( _storedBytes <= _textureCacheLimit ) return;
 
-	qint64 min = _currentTick;
-	Storage::iterator it, min_it = _storage.end();
-	for ( it = _storage.begin(); it != _storage.end(); ++it ) {
-		if ( (it.value()->lastUsed < min || min_it == _storage.end()) && it.value() != tex ) {
-			min = it.value()->lastUsed;
-			min_it = it;
-		}
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Texture *TextureCache::fetch(const TileIndex &tile) {
+	QImage image;
+	if ( !tile || !load(image, tile) || image.isNull() ) {
+		return nullptr;
 	}
 
-	// Remove texture completely
-	if ( min_it != _storage.end() ) {
-		TexturePtr min_tex = min_it.value();
-		remove(_mapTree->getID(min_it.key()));
-		_storage.erase(min_it);
-		_storedBytes -= min_tex->numBytes();
+	Texture *tex = new Texture;
+	tex->id = tile;
+	tex->setImage(image);
 
-		for ( Lookup::iterator lit = _firstLevel.begin(); lit != _firstLevel.end(); ) {
-			if ( lit.value() == min_tex.get() ) {
-				lit = _firstLevel.erase(lit);
+	return tex;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void TextureCache::checkResources(Texture *tex) {
+	while ( _storedBytes > _textureCacheLimit ) {
+		quint64 min = _currentTick;
+		Storage::iterator it, min_it = _storage.end();
+		for ( it = _storage.begin(); it != _storage.end(); ++it ) {
+			if ( (it->second->lastUsed < min || min_it == _storage.end()) && it->second != tex ) {
+				min = it->second->lastUsed;
+				min_it = it;
 			}
-			else
-				++lit;
 		}
 
-		if ( _lastTile[0] == min_tex.get() )
-			_lastTile[0] = nullptr;
+		// Remove texture completely
+		if ( min_it != _storage.end() ) {
+			TexturePtr min_tex = min_it->second;
+			remove(_tileStore->getID(min_it->first));
+			// std::cerr << "Uncaching texture " << min_it->second->id << std::endl;
+			_storage.erase(min_it);
+			_storedBytes -= min_tex->numBytes();
 
-		if ( _lastTile[1] == min_tex.get() )
-			_lastTile[1] = nullptr;
+			for ( auto iit = _invalidMapping.begin(); iit != _invalidMapping.end(); ) {
+				if ( iit->second == min_tex.get() ) {
+					iit = _invalidMapping.erase(iit);
+				}
+				else {
+					++iit;
+				}
+			}
+
+			if ( _lastTile[0] == min_tex.get() )
+				_lastTile[0] = nullptr;
+
+			if ( _lastTile[1] == min_tex.get() )
+				_lastTile[1] = nullptr;
+		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void TextureCache::setTexture(QImage &img, Alg::MapTreeNode *node) {
-	// Update image cache
-	{
-		QMutexLocker lock(&imageCacheMutex);
 
-		ImageCache::iterator it;
-		QString id = _mapTree->getID(node);
-		it = _images.find(id);
 
-		// Image not yet cached, do nothing
-		if ( it == _images.end() ) return;
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool TextureCache::setTexture(QImage &img, const TileIndex &tile) {
+	if ( img.isNull() ) {
+		// Special case when a texture could not be loaded from the source
+		// e.g. asynchonously. No update requested.
+		return false;
+	}
 
-		it->first = img;
+	//std::cerr << "U " << tile << std::endl;
+	// Erase level1 cache if tile is part of it
+	if ( _lastId[0] == tile ) {
+		_lastTile[0] = nullptr;
+	}
+
+	if ( _lastId[1] == tile ) {
+		_lastTile[1] = nullptr;
+	}
+
+	if ( !img.isNull() &&
+	     img.format() != QImage::Format_RGB32 &&
+	     img.format() != QImage::Format_ARGB32 ) {
+		img = img.convertToFormat(QImage::Format_ARGB32);
 	}
 
 	// Update texture cache
-	{
-		Storage::iterator it = _storage.find(node);
-		if ( it != _storage.end() ) {
-			Texture *tex = it.value().get();
+	Storage::iterator it = _storage.find(tile);
+	if ( it != _storage.end() ) {
+		Texture *tex = it->second.get();
 
-			// Update storage size
-			_storedBytes -= tex->numBytes();
-			tex->setImage(img);
-			_storedBytes += tex->numBytes();
+		// Update storage size
+		_storedBytes -= tex->numBytes();
+		tex->setImage(img);
+		_storedBytes += tex->numBytes();
 
-			checkResources();
+		// Update image cache
+		{
+			QMutexLocker lock(&imageCacheMutex);
+
+			ImageCache::iterator it;
+			QString id = _tileStore->getID(tile);
+			it = _images.find(id);
+			if ( it != _images.end() ) {
+				it->first = img;
+			}
 		}
+
+		// Check level1 cache for updates
+		if ( _lastId[0] == tile ) {
+			_lastTile[0] = tex;
+		}
+
+		if ( _lastId[1] == tile ) {
+			_lastTile[1] = tex;
+		}
+
+		checkResources(tex);
 	}
+	else {
+		Texture *tex = new Texture;
+		tex->lastUsed = _currentTick;
+		tex->id = tile;
+		tex->setImage(img);
+		cache(tex);
+	}
+
+	// Request update
+	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void TextureCache::invalidateTexture(Alg::MapTreeNode *node) {
-	QString id = _mapTree->getID(node);
-	remove(id);
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void TextureCache::cache(Texture *tex) {
+	// std::cerr << "Caching texture " << tex->id <<  std::endl;
 	{
-		Lookup::iterator it = _firstLevel.find(TextureID(node->level(), node->row(), node->column()));
-		if ( it != _firstLevel.end() )
-			_firstLevel.erase(it);
+		QMutexLocker lock(&imageCacheMutex);
+
+		//std::cerr << "C " << tex->id << std::endl;
+		_storage[tex->id] = tex;
+		_storedBytes += tex->numBytes();
+		// Add image to global cache
+		_images[_tileStore->getID(tex->id)] = CacheEntry(tex->image, 1);
 	}
+
+	checkResources(tex);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void TextureCache::invalidateTexture(const TileIndex &tile) {
+	remove(_tileStore->getID(tile));
 
 	{
 		// Remove node from texture cache
-		Storage::iterator it = _storage.find(node);
+		Storage::iterator it = _storage.find(tile);
 		if ( it != _storage.end() ) {
-			Texture *tex = it.value().get();
-
-			for ( Lookup::iterator lit = _firstLevel.begin(); lit != _firstLevel.end(); ) {
-				if ( lit.value() == tex ) {
-					lit = _firstLevel.erase(lit);
-				}
-				else
-					++lit;
-			}
+			Texture *tex = it->second.get();
 
 			if ( _lastTile[0] == tex )
 				_lastTile[0] = nullptr;
@@ -285,25 +426,44 @@ void TextureCache::invalidateTexture(Alg::MapTreeNode *node) {
 
 			// Update storage size
 			_storedBytes -= tex->numBytes();
+
+			//std::cerr << "I " << tex->id << std::endl;
 			_storage.erase(it);
+
+			for ( auto iit = _invalidMapping.begin(); iit != _invalidMapping.end(); ) {
+				if ( iit->second == tex ) {
+					iit = _invalidMapping.erase(iit);
+				}
+				else {
+					++iit;
+				}
+			}
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TextureCache::clear() {
 	QMutexLocker lock(&imageCacheMutex);
 
-	_firstLevel.clear();
 	_storage.clear();
 	_images.clear();
+	_invalidMapping.clear();
 	_storedBytes = 0;
 	_lastTile[0] = _lastTile[1] = nullptr;
 	_currentIndex = 0;
 	_currentTick = 0;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TextureCache::remove(const QString &name) {
 	QMutexLocker lock(&imageCacheMutex);
 	ImageCache::iterator it;
@@ -314,109 +474,81 @@ void TextureCache::remove(const QString &name) {
 			_images.erase(it);
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-Alg::MapTreeNode *TextureCache::getNode(Alg::MapTreeNode *node, const TextureID &id) const {
-	if ( node->level() == id.level ) {
-		if ( node->row() == id.row && node->column() == id.column )
-			return node;
-		return nullptr;
-	}
-
-	int shift = id.level-node->level()-1;
-	int cells = 1 << shift;
-
-	for ( int i = 0; i < 4; ++i ) {
-		Alg::MapTreeNode *child = node->children(i);
-		if ( !child ) {
-			if ( !node->initialized(i) ) {
-				node->loadChildren(_mapTree, i);
-				child = node->children(i);
-				if ( !child ) continue;
-			}
-			else
-				continue;
-		}
-
-		int row = child->row() << shift;
-		int col = child->column() << shift;
-		if ( id.row >= row && id.row < row + cells &&
-		     id.column >= col && id.column < col + cells ) {
-			child = getNode(child, id);
-			if ( child )
-				return child;
-			return node;
-		}
-	}
-
-	return node;
-}
 
 
-uint qHash(const TextureID &id) {
-	return ::qHash(id.level << 28 | id.row << 14 | id.column);
-}
-
-
-Texture *TextureCache::get(const TextureID &id) {
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Texture *TextureCache::get(const TileIndex &requestTile) {
 	Texture *tex;
-	Storage::iterator it;
 
-	quint64 oldTick = _currentTick;
-	++_currentTick;
-	// Wrap. Reset lastUsed of all other tiles
-	if ( _currentTick < oldTick ) {
-		for ( it = _storage.begin(); it != _storage.end(); ++it )
-			it.value()->lastUsed = _currentTick;
-		++_currentTick;
+	TileIndex tile = requestTile;
+	int maxTileLevel = std::max(maxLevel(), 0);
+
+	while ( tile.level() > maxTileLevel )
+		tile = tile.parent();
+
+	/*
+	while ( tile.level > 0
+	     && !_tileStore->validate(tile.level, tile.column, tile.row) )
+		tile = tile.parent();
+	*/
+
+	bool invalid = false;
+	auto it = _storage.find(tile);
+	if ( it != _storage.end() ) {
+		tex = it->second.get();
 	}
-
-	Alg::MapTreeNode *node = nullptr;
-	Lookup::iterator lit = _firstLevel.find(id);
-	if ( lit != _firstLevel.end() )
-		tex = *lit;
 	else {
-		node = getNode(_mapTree, id);
-		it = _storage.find(node);
-		if ( it != _storage.end() )
-			tex = it.value().get();
-		else {
-			tex = new Texture;
-			tex->load(this, node);
-
-			_storage[node] = tex;
-			_storedBytes += tex->numBytes();
-
-			checkResources(tex);
+		auto iit = _invalidMapping.find(tile);
+		if ( iit != _invalidMapping.end() ) {
+			tex = iit->second;
 		}
-
-		_firstLevel[id] = tex;
+		else {
+			// std::cerr << "F " << tile << std::endl;
+			tex = fetch(tile);
+			if ( tex ) {
+				cache(tex);
+			}
+			else {
+				tex = &dummyTexture;
+				invalid = true;
+			}
+		}
 	}
-
-	tex->lastUsed = _currentTick;
 
 	// If its a dummy texture then travel up the parent chain to check
 	// for valid textures
 	if ( tex->isDummy ) {
-		if ( node == nullptr ) node = getNode(_mapTree, id);
-
-		while ( (node = node->parent()) != nullptr ) {
-			it = _storage.find(node);
+		TileIndex ptile = tile;
+		while ( (ptile = ptile.parent()) ) {
+			it = _storage.find(ptile);
 			if ( it == _storage.end() )
 				continue;
 
-			Texture *tmp = it.value().get();
+			Texture *tmp = it->second.get();
 			if ( !tmp->isDummy ) {
 				tex = tmp;
 				break;
 			}
 		}
+
+		if ( invalid ) {
+			_invalidMapping[tile] = tex;
+		}
 	}
 
+	// std::cerr << "> " << tex->id << " with dims " << tex->image.width() << "x" << tex->image.height() << std::endl;
+	tex->lastUsed = _currentTick;
 	return tex;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
 }

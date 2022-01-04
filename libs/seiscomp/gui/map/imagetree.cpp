@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT Gui::ImageTree
 
 #include <seiscomp/gui/map/imagetree.h>
+#include <seiscomp/gui/map/texturecache.h>
 #include <seiscomp/core/interfacefactory.ipp>
 #include <seiscomp/logging/log.h>
 
@@ -34,11 +35,19 @@ IMPLEMENT_INTERFACE_FACTORY(Seiscomp::Gui::Map::TileStore, SC_GUI_API);
 namespace Seiscomp {
 namespace Gui {
 namespace Map {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QString generateID(int level, int column, int row) {
 	QString id = "";
 
@@ -70,8 +79,12 @@ QString generateID(int level, int column, int row) {
 
 	return id;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QString generatePath(int level, int col, int row,
                          const std::string &pattern) {
 	QString path;
@@ -106,35 +119,23 @@ QString generatePath(int level, int col, int row,
 
 	return path;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
-char buffer[1024+1];
-const char* generateID(const std::string& pattern, const std::string& id) {
-	snprintf(buffer, 1024, pattern.c_str(), id.c_str());
-	return buffer;
-}
-
-
-
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 class TileDirectory : public TileStore {
 	public:
 		TileDirectory() {}
 
-		bool open(MapsDesc &desc) {
+		bool open(MapsDesc &desc) override {
 			_filePattern = desc.location.toStdString();
 
 			if ( validate(0, 0, 0) ) {
 				QString id = generatePath(0, 0, 0, _filePattern);
-
-				_level = 0;
-				_row = 0;
-				_column = 0;
-
 				QImage img(id);
 				_tilesize = img.size();
-				_mapsize = _tilesize * (1 << depth());
 
 				return true;
 			}
@@ -142,12 +143,16 @@ class TileDirectory : public TileStore {
 			return false;
 		}
 
-		bool load(QImage &img, Alg::MapTreeNode *node) {
-			return img.load(getID(node));
+		int maxLevel() const override {
+			return TileIndex::MaxLevel;
 		}
 
-		QString getID(const MapTreeNode *node) const {
-			return generatePath(node->level(), node->column(), node->row(), _filePattern);
+		LoadResult load(QImage &img, const TileIndex &tile) override {
+			return img.load(getID(tile)) ? OK : Error;
+		}
+
+		QString getID(const TileIndex &tile) const override {
+			return generatePath(tile.level(), tile.column(), tile.row(), _filePattern);
 		}
 
 		// Tiles are never loaded asynchronously
@@ -155,7 +160,7 @@ class TileDirectory : public TileStore {
 			return false;
 		}
 
-		void refresh() {}
+		void refresh() override {}
 
 
 	protected:
@@ -163,7 +168,7 @@ class TileDirectory : public TileStore {
 			QString id = generatePath(level, column, row, _filePattern);
 
 			FILE* fp = fopen(id.toLatin1(), "rb");
-			if ( fp == nullptr ) return false;
+			if ( !fp ) return false;
 			fclose(fp);
 
 			return true;
@@ -172,34 +177,56 @@ class TileDirectory : public TileStore {
 	private:
 		std::string _filePattern;
 };
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TileStore::TileStore()
-: _tree(nullptr) {
+: _tree(nullptr) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-}
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TileStore::setImageTree(ImageTree *tree) {
 	_tree = tree;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void TileStore::finishedLoading(QImage &img, Alg::MapTreeNode *node) {
-	if ( _tree != nullptr )
-		_tree->finishedLoading(img, node);
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void TileStore::finishedLoading(QImage &img, const TileIndex &tile) {
+	if ( _tree )
+		_tree->finishedLoading(img, tile);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void TileStore::invalidate(Alg::MapTreeNode *node) {
-	if ( _tree != nullptr )
-		_tree->invalidate(node);
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void TileStore::invalidate(const TileIndex &tile) {
+	if ( _tree )
+		_tree->invalidate(tile);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ImageTree::ImageTree(const MapsDesc &meta) {
 	if ( meta.type.isEmpty() )
 		_store = new TileDirectory;
@@ -230,14 +257,22 @@ ImageTree::ImageTree(const MapsDesc &meta) {
 		               (const char*)meta.type.toLatin1());
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ImageTree::~ImageTree() {
 	_cache = nullptr;
 	_store = nullptr;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TextureCache *ImageTree::getCache() {
 	if ( !_cache && _store ) {
 		_cache = new TextureCache(_store.get(), _isMercatorProjected);
@@ -247,30 +282,46 @@ TextureCache *ImageTree::getCache() {
 
 	return _cache.get();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ImageTree::refresh() {
 	if ( _store ) _store->refresh();
 	if ( _cache ) _cache->clear();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void ImageTree::finishedLoading(QImage &img, Alg::MapTreeNode *node) {
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ImageTree::finishedLoading(QImage &img, const TileIndex &tile) {
 	if ( !_cache ) return;
-	_cache->setTexture(img, node);
-
-	tilesUpdated();
+	if ( _cache->setTexture(img, tile) )
+		tilesUpdated();
 
 	if ( !hasPendingRequests() )
 		tilesComplete();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void ImageTree::invalidate(Alg::MapTreeNode *node) {
-	if ( _cache ) _cache->invalidateTexture(node);
-}
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ImageTree::invalidate(const TileIndex &tile) {
+	if ( _cache ) _cache->invalidateTexture(tile);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

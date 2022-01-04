@@ -26,11 +26,7 @@ inline void TextureCache::getTexel(QRgb &c, Coord u, Coord v, int level) {
 	u.parts.hi = 0;
 	v.parts.hi = 0;
 
-	TextureID id;
-	id.level = level;
-	id.row = (v.value << level) >> Coord::fraction_shift;
-	id.column = (u.value << level) >> Coord::fraction_shift;
-
+	TileIndex id(level, (v.value << level) >> Coord::fraction_shift, (u.value << level) >> Coord::fraction_shift);
 	Texture *tex;
 
 	if ( !_lastTile[0] || _lastId[0] != id ) {
@@ -47,8 +43,8 @@ inline void TextureCache::getTexel(QRgb &c, Coord u, Coord v, int level) {
 	else
 		tex = _lastTile[0];
 
-	u.value <<= tex->id.level;
-	v.value <<= tex->id.level;
+	u.value <<= tex->id.level();
+	v.value <<= tex->id.level();
 
 	u.value = Coord::value_type(u.parts.lo) * tex->w;
 	v.value = Coord::value_type(v.parts.lo) * tex->h;
@@ -61,11 +57,7 @@ inline void TextureCache::getTexelBilinear(QRgb &c, Coord u, Coord v, int level)
 	u.parts.hi = 0;
 	v.parts.hi = 0;
 
-	TextureID id;
-	id.level = level;
-	id.row = (v.value << level) >> Coord::fraction_shift;
-	id.column = (u.value << level) >> Coord::fraction_shift;
-
+	TileIndex id(level, (v.value << level) >> Coord::fraction_shift, (u.value << level) >> Coord::fraction_shift);
 	Texture *tex;
 
 	if ( !_lastTile[0] || _lastId[0] != id ) {
@@ -82,8 +74,8 @@ inline void TextureCache::getTexelBilinear(QRgb &c, Coord u, Coord v, int level)
 	else
 		tex = _lastTile[0];
 
-	u.value <<= tex->id.level;
-	v.value <<= tex->id.level;
+	u.value <<= tex->id.level();
+	v.value <<= tex->id.level();
 
 	u.value = Coord::value_type(u.parts.lo) * tex->w;
 	v.value = Coord::value_type(v.parts.lo) * tex->h;

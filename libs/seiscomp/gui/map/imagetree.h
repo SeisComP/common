@@ -24,10 +24,11 @@
 
 #ifndef Q_MOC_RUN
 #include <seiscomp/core/interfacefactory.h>
+#include <seiscomp/core/baseobject.h>
 #endif
 #include <seiscomp/gui/core/maps.h>
-#include <seiscomp/gui/map/maptree.h>
-#include <seiscomp/gui/map/texturecache.h>
+
+#include <QImage>
 
 
 namespace Seiscomp {
@@ -35,27 +36,81 @@ namespace Gui {
 namespace Map {
 
 
+DEFINE_SMARTPOINTER(TextureCache);
 class ImageTree;
 
 
+struct SC_GUI_API TileIndex {
+	typedef uint64_t Storage;
+	enum Traits {
+		Invalid = uint64_t(-1),
+		MaxLevel = 29,
+		LevelBits = 5,
+		RowBits = MaxLevel,
+		ColumnBits = MaxLevel
+	};
+
+	Storage id;
+
+	TileIndex();
+	TileIndex(uint8_t level, uint32_t row, uint32_t column);
+
+	uint8_t level() const;
+	uint32_t row() const;
+	uint32_t column() const;
+
+	TileIndex parent() const;
+
+	bool operator==(const TileIndex &other) const;
+	bool operator!=(const TileIndex &other) const;
+	bool operator<(const TileIndex &other) const;
+
+	operator bool() const;
+};
+
+
+std::ostream &operator<<(std::ostream &os, const TileIndex &index);
+
+
 DEFINE_SMARTPOINTER(TileStore);
-class SC_GUI_API TileStore : public Alg::MapTree {
+class SC_GUI_API TileStore : public Core::BaseObject {
 	public:
+		enum LoadResult {
+			OK,
+			Deferred,
+			Error
+		};
+
 		TileStore();
+
+	public:
+		const QSize &tileSize() const { return _tilesize; }
 
 		//! Sets the parent image tree that gets notificiations about
 		//! state changed, e.g. finishedLoading.
 		void setImageTree(ImageTree *tree);
 
+	public:
+		virtual int maxLevel() const = 0;
+
 		//! Opens a tile repository and sets the desc flags accordingly
 		//! if necessary.
 		virtual bool open(MapsDesc &desc) = 0;
 
-		//! Load a tile for the given node
-		virtual bool load(QImage &img, Alg::MapTreeNode *node) = 0;
+		/**
+		 * @brief Load a tile for a given index.
+		 * Loading can happen synchronously or asynchronously. The later case
+		 * should return the status LoadResult::Deferred and an invalid
+		 * image. If a deferred image could not be loaded by the store it
+		 * should then call invalidate with the failed index.
+		 * @param img The image to be populated.
+		 * @param tile The tile index
+		 * @return Success flag.
+		 */
+		virtual LoadResult load(QImage &img, const TileIndex &tile) = 0;
 
 		//! Return a unique ID for a node
-		virtual QString getID(const MapTreeNode *node) const = 0;
+		virtual QString getID(const TileIndex &tile) const = 0;
 
 		//! Validate the existance of a tile
 		virtual bool validate(int level, int column, int row) const = 0;
@@ -68,14 +123,16 @@ class SC_GUI_API TileStore : public Alg::MapTree {
 
 	protected:
 		//! Async notification that a tile has been loaded.
-		void finishedLoading(QImage &img, Alg::MapTreeNode *node);
+		void finishedLoading(QImage &img, const TileIndex &tile);
 
 		//! Invalidates the tile of a particular node
-		void invalidate(Alg::MapTreeNode *node);
+		void invalidate(const TileIndex &tile);
 
 
 	protected:
 		ImageTree *_tree;
+		QSize      _tilesize;
+
 };
 
 
@@ -112,8 +169,8 @@ class SC_GUI_API ImageTree : public QObject, public Core::BaseObject {
 
 
 	public:
-		void finishedLoading(QImage &img, Alg::MapTreeNode *node);
-		void invalidate(Alg::MapTreeNode *node);
+		void finishedLoading(QImage &img, const TileIndex &tile);
+		void invalidate(const TileIndex &tile);
 
 
 	signals:
@@ -126,14 +183,60 @@ class SC_GUI_API ImageTree : public QObject, public Core::BaseObject {
 
 
 	protected:
-		TextureCachePtr  _cache;
-		TileStorePtr     _store;
-		bool             _isMercatorProjected;
-		size_t           _cacheSize;
+		TextureCachePtr _cache;
+		TileStorePtr    _store;
+		bool            _isMercatorProjected;
+		size_t          _cacheSize;
 
 
 	friend class TileStore;
 };
+
+
+inline TileIndex::TileIndex() : id(Invalid) {}
+inline TileIndex::TileIndex(uint8_t level, uint32_t row, uint32_t column) {
+	id = ((Storage(level) & ((1 << LevelBits) - 1)) << (RowBits + ColumnBits)) |
+	     ((Storage(row) & ((1 << RowBits) - 1)) << ColumnBits) |
+	     (Storage(column) & ((1 << ColumnBits) - 1));
+}
+
+inline uint8_t TileIndex::level() const {
+	return (id >> (RowBits + ColumnBits)) & ((1 << LevelBits) - 1);
+}
+
+inline uint32_t TileIndex::row() const {
+	return (id >> ColumnBits) & ((1 << RowBits) - 1);
+}
+
+inline uint32_t TileIndex::column() const {
+	return id & ((1 << ColumnBits) - 1);
+}
+
+inline TileIndex TileIndex::parent() const {
+	auto l = level();
+	return l ? TileIndex(l-1, row() >> 1, column() >> 1) : TileIndex();
+}
+
+inline bool TileIndex::operator==(const TileIndex &other) const {
+	return id == other.id;
+}
+
+inline bool TileIndex::operator!=(const TileIndex &other) const {
+	return id != other.id;
+}
+
+inline bool TileIndex::operator<(const TileIndex &other) const {
+	return id < other.id;
+}
+
+inline TileIndex::operator bool() const {
+	return id != Invalid;
+}
+
+inline std::ostream &operator<<(std::ostream &os, const TileIndex &index) {
+	os << static_cast<int>(index.level()) << "/" << index.row() << "/" << index.column();
+	return os;
+}
 
 
 }

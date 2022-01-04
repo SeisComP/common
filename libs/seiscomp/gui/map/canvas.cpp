@@ -225,13 +225,7 @@ int Canvas::LegendArea::findNext(bool forward) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Canvas::Canvas(const MapsDesc &meta)
-: _backgroundColor(Qt::lightGray)
-, _dirtyRasterLayer(true)
-, _dirtyVectorLayers(true)
-, _hoverLayer(nullptr)
-, _margin(10)
-, _isDrawLegendsEnabled(true) {
+Canvas::Canvas(const MapsDesc &meta) {
 	_maptree = new ImageTree(meta);
 	if ( !_maptree->valid() )
 		_maptree = nullptr;
@@ -402,6 +396,7 @@ void Canvas::init() {
 
 	if ( _maptree ) {
 		connect(_maptree.get(), SIGNAL(tilesUpdated()), this, SLOT(updatedTiles()));
+		connect(_maptree.get(), SIGNAL(tilesComplete()), this, SLOT(completeTiles()));
 	}
 
 	setupLayer(&_citiesLayer);
@@ -424,10 +419,6 @@ void Canvas::init() {
 	_layers.append(&_symbolLayer);
 
 	_center = QPointF(0.0, 0.0);
-	_zoomLevel = 1;
-
-	_grayScale = false;
-	_stackLegends = true;
 
 	_projection->setView(_center, _zoomLevel);
 
@@ -1848,8 +1839,27 @@ void Canvas::updateLayer(const Layer::UpdateHints &hints) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Canvas::updatedTiles() {
+	if ( _tileUpdateTimer.isActive() ) {
+		if ( _tileUpdateTimer.elapsed() > Core::TimeSpan(0,500000) ) {
+			updateBuffer();
+			updateRequested();
+			_tileUpdateTimer.restart();
+		}
+	}
+	else {
+		_tileUpdateTimer.restart();
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Canvas::completeTiles() {
 	updateBuffer();
 	updateRequested();
+	_tileUpdateTimer.reset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

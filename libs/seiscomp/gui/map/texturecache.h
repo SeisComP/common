@@ -31,17 +31,11 @@
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core/datetime.h>
 #endif
-#include <seiscomp/gui/qt.h>
+#include <seiscomp/gui/map/imagetree.h>
 
 
 namespace Seiscomp {
 namespace Gui {
-
-namespace Alg {
-
-class MapTreeNode;
-
-}
 
 namespace Map {
 
@@ -71,44 +65,20 @@ union Coord {
 };
 
 
-struct SC_GUI_API TextureID {
-	int level;
-	int row;
-	int column;
-
-	TextureID() {}
-	TextureID(int l, int r, int c) : level(l), row(r), column(c) {}
-
-	bool operator==(const TextureID &other) const {
-		return level == other.level &&
-		       row == other.row &&
-		       column == other.column;
-	}
-
-	bool operator!=(const TextureID &other) const {
-		return level != other.level ||
-		       row != other.row ||
-		       column != other.column;
-	}
-};
-
-
-
 DEFINE_SMARTPOINTER(Texture);
 
 struct SC_GUI_API Texture : public Core::BaseObject {
-	Texture();
+	Texture(bool isDummy = false);
 
 	int numBytes() const;
-	bool load(TextureCache *cache, Alg::MapTreeNode *node);
 	void setImage(QImage &img);
 
 	QImage      image;
 	const QRgb *data;
-	TextureID   id;
+	TileIndex   id;
 	quint32     w;
 	quint32     h;
-	qint64      lastUsed;
+	quint64     lastUsed;
 	bool        isDummy;
 };
 
@@ -134,46 +104,45 @@ class SC_GUI_API TextureCache : public Core::BaseObject {
 		void getTexel(QRgb &c, Coord u, Coord v, int level);
 		void getTexelBilinear(QRgb &c, Coord u, Coord v, int level);
 
-		Texture *get(const TextureID &id);
+		Texture *get(const TileIndex &id);
 
 		const quint64 &startTick() const { return _currentTick; }
 
-		bool load(QImage &img, Alg::MapTreeNode *node);
+		bool load(QImage &img, const TileIndex &tile);
 
-		void setTexture(QImage &img, Alg::MapTreeNode *node);
+		bool setTexture(QImage &img, const TileIndex &tile);
 
 		//! Invalidates a texture and causes load() to be called next time
 		//! it needs to be accessed.
 		//! This function was introduced in API 1.1
-		void invalidateTexture(Alg::MapTreeNode *node);
+		void invalidateTexture(const TileIndex &tile);
 
 		//! Clears the cache
 		void clear();
 
 
 	private:
-		Alg::MapTreeNode *
-		getNode(Alg::MapTreeNode *node, const TextureID &id) const;
-
+		void cache(Texture *tex);
 		void checkResources(Texture *tex = nullptr);
+		Texture *fetch(const TileIndex &tile);
 
 		static void remove(const QString &name);
 
 
 	private:
-		typedef QHash<TextureID, Texture*> Lookup;
-		typedef QMap<Alg::MapTreeNode*, TexturePtr> Storage;
+		typedef std::map<TileIndex, TexturePtr> Storage;
+		typedef std::map<TileIndex, Texture*> InvalidMapping;
 
-		TileStore        *_mapTree;
+		TileStore        *_tileStore;
 		bool              _isMercatorProjected;
-		Lookup            _firstLevel;
 		Storage           _storage;
 		int               _storedBytes;
 		int               _textureCacheLimit;
 		quint64           _currentTick;
+		InvalidMapping    _invalidMapping;
 
 		Texture          *_lastTile[2];
-		TextureID         _lastId[2];
+		TileIndex         _lastId[2];
 		int               _currentIndex;
 
 		typedef QPair<QImage, int> CacheEntry;

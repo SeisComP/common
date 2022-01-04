@@ -4,7 +4,6 @@ SET(GUI_MAP_SOURCES
 	legend.cpp
 	standardlegend.cpp
 	mapsymbol.cpp
-	maptree.cpp
 	imagetree.cpp
 	canvas.cpp
 	mapwidget.cpp
@@ -14,7 +13,6 @@ SET(GUI_MAP_SOURCES
 
 SET(GUI_MAP_HEADERS
 	annotations.h
-	maptree.h
 	imagetree.h
 	mapsymbol.h
 	decorator.h

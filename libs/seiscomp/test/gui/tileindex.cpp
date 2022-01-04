@@ -17,47 +17,50 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEISCOMP_GUI_MAPS_H
-#define SEISCOMP_GUI_MAPS_H
+
+#define SEISCOMP_TEST_MODULE SeisComP
+#include <seiscomp/unittest/unittests.h>
+
+#include <seiscomp/gui/map/imagetree.h>
+#include <random>
+
+namespace bu = boost::unit_test;
+using namespace std;
 
 
-#include <seiscomp/gui/qt.h>
-#include <QString>
-
-
-namespace Seiscomp {
-namespace Gui {
-
-
-/**
- * ----------------------------------------------------------------------------
- * TileStore version history
- * ----------------------------------------------------------------------------
- * 1
- *   - Initial version
- * 2
- *   - Allow TileStore::load to return null images
- * 3
- *   - Do not inherit from MapTree and remove MapTreeNode completely
- *   - Add maxLevel query
- *   - Replace TextureID with Tile
- *   - All parameters with type MapTreeNode are replaced by parameters
- *     with type Tile
- */
-#define TILESTORE_VERSION 3
-
-
-struct SC_GUI_API MapsDesc {
-	QString location;
-	QString type;
-	bool    isMercatorProjected;
-	size_t  cacheSize;
-};
+BOOST_AUTO_TEST_SUITE(seiscomp_gui_tileindex)
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
 
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(index) {
+	Seiscomp::Gui::Map::TileIndex index;
+	index = Seiscomp::Gui::Map::TileIndex(1, 2, 3);
+	BOOST_CHECK_EQUAL(index.level(), 1);
+	BOOST_CHECK_EQUAL(index.row(), 2);
+	BOOST_CHECK_EQUAL(index.column(), 3);
+
+	int maxLevel = 1 << Seiscomp::Gui::Map::TileIndex::LevelBits;
+	int maxRow = 1 << Seiscomp::Gui::Map::TileIndex::RowBits;
+	int maxColumn = 1 << Seiscomp::Gui::Map::TileIndex::ColumnBits;
+
+	for ( int l = 0; l < maxLevel; ++l ) {
+		for ( int r = 0; r < 100000; ++r ) {
+			int row = int64_t(rand()) * maxRow / RAND_MAX;
+			int column = int64_t(rand()) * maxColumn / RAND_MAX;
+			index = Seiscomp::Gui::Map::TileIndex(l, row, column);
+			BOOST_CHECK_EQUAL(index.level(), l);
+			BOOST_CHECK_EQUAL(index.row(), row);
+			BOOST_CHECK_EQUAL(index.column(), column);
+		}
+	}
 }
-}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
-#endif
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_SUITE_END()

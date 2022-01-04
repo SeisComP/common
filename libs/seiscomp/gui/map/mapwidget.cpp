@@ -206,7 +206,6 @@ void MapWidget::init() {
 
 	_isDragging = false;
 	_isMeasuring = false;
-	_isMeasureDragging = false;
 	_filterMap = SCScheme.map.bilinearFilter;
 	_canvas.setBilinearFilter(_filterMap);
 
@@ -316,7 +315,7 @@ bool MapWidget::saveScreenshot() {
 
 
 void MapWidget::draw(QPainter &painter) {
-	_canvas.setPreviewMode(_isDragging || _isMeasureDragging);
+	_canvas.setPreviewMode(_isDragging);
 	_canvas.setGrayScale(!isEnabled() || _forceGrayScale);
 	_canvas.draw(painter);
 
@@ -568,8 +567,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event) {
 
 
 void MapWidget::mousePressEvent(QMouseEvent* event) {
-	_isMeasureDragging = false;
-
 	if ( event->button() == Qt::LeftButton ) {
 		_lastDraggingPosition = event->pos();
 		_firstDrag = true;
@@ -595,7 +592,6 @@ void MapWidget::mousePressEvent(QMouseEvent* event) {
 		if ( event->modifiers() == Qt::NoModifier ) {
 			_isDragging = true;
 			_isMeasuring = false;
-			_isMeasureDragging = false;
 			_measurePoints.clear();
 			_measureText.clear();
 		}
@@ -606,8 +602,6 @@ void MapWidget::mousePressEvent(QMouseEvent* event) {
 
 
 void MapWidget::mouseReleaseEvent(QMouseEvent* event) {
-	_isMeasureDragging = false;
-
 	if ( _isDragging && (event->button() == Qt::LeftButton) ) {
 		_isDragging = false;
 		update();
@@ -629,7 +623,6 @@ void MapWidget::mouseMoveEvent(QMouseEvent* event) {
 		update();
 	}
 	else if ( _isMeasuring ) {
-		_isMeasureDragging = true;
 		_canvas.projection()->unproject(_measurePoints.last(), event->pos());
 		update();
 	}

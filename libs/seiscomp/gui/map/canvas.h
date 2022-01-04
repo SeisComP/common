@@ -33,6 +33,7 @@
 #include <seiscomp/gui/map/layers/symbollayer.h>
 #include <seiscomp/math/coord.h>
 #include <seiscomp/geo/feature.h>
+#include <seiscomp/utils/timer.h>
 #endif
 
 #include <QHash>
@@ -357,6 +358,7 @@ class SC_GUI_API Canvas : public QObject {
 
 	private slots:
 		void updatedTiles();
+		void completeTiles();
 		void updateLayer(const Layer::UpdateHints&);
 
 
@@ -406,21 +408,22 @@ class SC_GUI_API Canvas : public QObject {
 		std::string                   _projectionName;
 
 		QImage                        _buffer;
-		QColor                        _backgroundColor;
+		QColor                        _backgroundColor{Qt::lightGray};
 
 		uint                          _polygonRoughness;
 		double                        _maxZoom;
 		QPointF                       _center;
-		float                         _zoomLevel;
-		bool                          _grayScale;
+		float                         _zoomLevel{1.0f};
+		bool                          _grayScale{false};
 		bool                          _filterMap;
-		bool                          _dirtyRasterLayer;
-		bool                          _dirtyVectorLayers;
-		bool                          _previewMode;
-		bool                          _stackLegends;
+		bool                          _dirtyRasterLayer{true};
+		bool                          _dirtyVectorLayers{true};
+		bool                          _previewMode{false};
+		bool                          _stackLegends{true};
+
 
 		Layers                        _layers;
-		Layer                        *_hoverLayer;
+		Layer                        *_hoverLayer{nullptr};
 		CustomLayers                  _customLayers;
 		CitiesLayer                   _citiesLayer;
 		GridLayer                     _gridLayer;
@@ -428,8 +431,10 @@ class SC_GUI_API Canvas : public QObject {
 		SymbolLayer                   _symbolLayer;
 
 		LegendAreas                   _legendAreas;
-		int                           _margin;
-		bool                          _isDrawLegendsEnabled;
+		int                           _margin{10};
+		bool                          _isDrawLegendsEnabled{true};
+
+		Util::StopWatch               _tileUpdateTimer;
 };
 
 

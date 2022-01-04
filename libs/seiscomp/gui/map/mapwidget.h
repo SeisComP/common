@@ -135,7 +135,6 @@ class SC_GUI_API MapWidget : public QWidget {
 		bool     _firstDrag;
 		bool     _isDragging;
 		bool     _isMeasuring;
-		bool     _isMeasureDragging;
 		bool     _filterMap;
 		bool     _forceGrayScale;
 

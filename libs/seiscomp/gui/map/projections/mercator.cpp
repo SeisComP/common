@@ -393,7 +393,7 @@ void MercatorProjection::render(QImage &img, TextureCache *cache) {
 
 	QSize size(img.size());
 
-	int radius = _screenRadius * _radius;
+	qint64 radius = static_cast<qint64>(_screenRadius) * _radius;
 	double dt;
 	qreal visibleRadius;
 
@@ -404,7 +404,7 @@ void MercatorProjection::render(QImage &img, TextureCache *cache) {
 		if ( radius < _halfHeight )
 			radius = _halfHeight;
 
-		visibleRadius = (qreal)radius / _screenRadius;
+		visibleRadius = static_cast<qreal>(radius) / _screenRadius;
 	}
 	else
 		visibleRadius = _radius;
@@ -418,25 +418,20 @@ void MercatorProjection::render(QImage &img, TextureCache *cache) {
 		if ( !cache || cache->isMercatorProjected() )
 			pixelRatio *= 2;
 		if ( pixelRatio < 1 ) pixelRatio = 1;
-		int level = (int)(log(pixelRatio) / log(2.0) + 0.7);
-		if ( cache ) {
-			if ( level > cache->maxLevel() )
-				level = cache->maxLevel();
-		}
-		else {
-			if ( level > 18 ) level = 18;
-		}
+		double level = log(pixelRatio) / log(2.0) + 0.7;
+		if ( level > static_cast<double>(TileIndex::MaxLevel) )
+			level = static_cast<double>(TileIndex::MaxLevel);
 
-		scale = (1 << int(level-0.7)) * tileHeight;
+		scale = (qint64(1) << static_cast<qint64>(level-0.7)) * tileHeight;
 		if ( scale < 1 ) scale = 1;
 		while ( scale < _halfWidth ) scale *= 2;
 		while ( scale < _halfHeight ) scale *= 2;
 
 		visibleRadius = scale / _screenRadius;
-		radius = _screenRadius * visibleRadius;
+		radius = static_cast<qint64>(_screenRadius) * visibleRadius;
 	}
 
-	dt = 1.0f / qreal(radius-1);
+	dt = 1.0 / static_cast<qreal>(radius-1);
 	setVisibleRadius(visibleRadius);
 
 	QPoint center = QPoint(_halfWidth, _halfHeight);
