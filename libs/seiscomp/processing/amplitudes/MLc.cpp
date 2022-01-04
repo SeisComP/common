@@ -173,8 +173,9 @@ AmplitudeProcessor_MLc::AmplitudeProcessor_MLc()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeProcessor_MLc::initFilter(double fsamp) {
-	AmplitudeProcessor::initFilter(fsamp);
+void AmplitudeProcessor_MLc::reset() {
+	AbstractAmplitudeProcessor_ML::reset();
+	_preFilter = "BW(3,0.5,12)";
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -184,10 +185,7 @@ void AmplitudeProcessor_MLc::initFilter(double fsamp) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h()
 : AmplitudeProcessor("MLc") {
-	setSignalEnd(150.);
-	setMinSNR(0);
-	setMaxDist(6);
-	setMaxDepth(60);
+	reset();
 
 	setUsedComponent(Horizontal);
 
@@ -196,10 +194,6 @@ AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h()
 
 	_ampE.setPublishFunction(bind(&AmplitudeProcessor_MLc2h::newAmplitude, this, placeholders::_1, placeholders::_2));
 	_ampN.setPublishFunction(bind(&AmplitudeProcessor_MLc2h::newAmplitude, this, placeholders::_1, placeholders::_2));
-
-	// Propagate configuration to single processors
-	_ampN.setConfig(config());
-	_ampE.setConfig(config());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -209,10 +203,7 @@ AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h()
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h(const Core::Time& trigger)
 : AmplitudeProcessor(trigger, "MLc") {
-	setSignalEnd(150.);
-	setMinSNR(0);
-	setMaxDist(6);
-	setMaxDepth(60);
+	reset();
 	computeTimeWindow();
 
 	setUsedComponent(Horizontal);
@@ -222,10 +213,6 @@ AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h(const Core::Time& trigger)
 
 	_ampE.setPublishFunction(bind(&AmplitudeProcessor_MLc2h::newAmplitude, this, placeholders::_1, placeholders::_2));
 	_ampN.setPublishFunction(bind(&AmplitudeProcessor_MLc2h::newAmplitude, this, placeholders::_1, placeholders::_2));
-
-	// Propagate configuration to single processors
-	_ampN.setConfig(config());
-	_ampE.setConfig(config());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -292,6 +279,29 @@ bool AmplitudeProcessor_MLc2h::setParameter(Capability cap, const std::string &v
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeProcessor_MLc2h::reset() {
+	AmplitudeProcessor::reset();
+
+	setSignalEnd(150.);
+	setMinSNR(0);
+	setMaxDist(6);
+	setMaxDepth(60);
+
+	// Propagate configuration to single processors
+	_ampN.reset();
+	_ampN.setConfig(config());
+
+	_ampE.reset();
+	_ampE.setConfig(config());
+
+	_results[0] = _results[1] = Core::None;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor_MLc2h::setup(const Settings &settings) {
 	// Copy the stream configurations (gain, orientation, responses, ...) to
 	// the horizontal processors
@@ -320,50 +330,17 @@ bool AmplitudeProcessor_MLc2h::setup(const Settings &settings) {
 	}
 	catch ( ... ) {}
 
-	// amplitude pre-processing
-	try { _preFilter = settings.getString("amplitudes." + _type + ".preFilter"); }
+	try {
+		_amplitudeScale = settings.getDouble("amplitudes." + _type + ".amplitudeScale");
+	}
 	catch ( ... ) {}
 
-	try { _applyWA = settings.getBool("amplitudes." + _type + ".applyWoodAnderson"); }
-	catch ( ... ) {}
-	try { _amplitudeScale = settings.getDouble("amplitudes." + _type + ".amplitudeScale"); }
-	catch ( ... ) {}
-	if ( !AmplitudeProcessor::setup(settings) ) return false;
-
-	// Setup each component
-	if ( !_ampN.setup(settings) || !_ampE.setup(settings) ) return false;
-
-	if ( !_preFilter.empty() ) {
-		string error;
-		auto preFilter = Filter::Create(_preFilter, &error);
-		if ( !preFilter ) {
-			SEISCOMP_ERROR("Wrong filter: %s", error.c_str());
-			return false;
-		}
-		else {
-			Filter *filter;
-
-			if ( !_enableResponses && _applyWA ) {
-				auto chain = new Filtering::ChainFilter<double>;
-				chain->add(preFilter);
-				chain->add(
-					new Filtering::IIR::WoodAndersonFilter<double>(
-						Velocity,
-						_config.woodAndersonResponse
-					)
-				);
-				filter = chain;
-			}
-			else {
-				filter = preFilter;
-			}
-
-			_ampN.setFilter(filter);
-			_ampE.setFilter(filter->clone());
-		}
+	if ( !AmplitudeProcessor::setup(settings) ) {
+		return false;
 	}
 
-	return true;
+	// Setup each component
+	return _ampN.setup(settings) && _ampE.setup(settings);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -418,20 +395,6 @@ double AmplitudeProcessor_MLc2h::timeWindowLength(double distance_deg) const {
 	_ampN.setSignalEnd(endN);
 	_ampE.setSignalEnd(endE);
 	return max(endN, endE);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeProcessor_MLc2h::reset() {
-	AmplitudeProcessor::reset();
-
-	_results[0] = _results[1] = Core::None;
-
-	_ampE.reset();
-	_ampN.reset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

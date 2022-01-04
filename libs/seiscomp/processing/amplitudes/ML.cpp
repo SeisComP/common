@@ -113,12 +113,11 @@ IMPLEMENT_SC_ABSTRACT_CLASS_DERIVED(AbstractAmplitudeProcessor_ML, AmplitudeProc
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AbstractAmplitudeProcessor_ML::AbstractAmplitudeProcessor_ML(const std::string& type)
+AbstractAmplitudeProcessor_ML::AbstractAmplitudeProcessor_ML(
+	const std::string &type
+)
 : AmplitudeProcessor(type) {
-	setSignalEnd(150.);
-	setMinSNR(0);
-	setMaxDist(8);
-	_amplitudeMeasureType = AbsMax;
+	reset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -126,13 +125,61 @@ AbstractAmplitudeProcessor_ML::AbstractAmplitudeProcessor_ML(const std::string& 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AbstractAmplitudeProcessor_ML::AbstractAmplitudeProcessor_ML(const Core::Time& trigger, const std::string &type)
+AbstractAmplitudeProcessor_ML::AbstractAmplitudeProcessor_ML(
+	const Core::Time &trigger,
+	const std::string &type
+)
 : AmplitudeProcessor(trigger, type) {
-	setSignalEnd(150.);
-	setMinSNR(0);
-	setMaxDist(8);
+	reset();
 	computeTimeWindow();
-	_amplitudeMeasureType = AbsMax;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AbstractAmplitudeProcessor_ML::initFilter(double fsamp) {
+	Filter *preFilter{nullptr};
+
+	if ( !_preFilter.empty() ) {
+		string error;
+		preFilter = Filter::Create(_preFilter, &error);
+		if ( !preFilter ) {
+			SEISCOMP_ERROR("Wrong filter: %s", error.c_str());
+			setStatus(ConfigurationError, 10);
+			return;
+		}
+	}
+
+	if ( !_enableResponses ) {
+		Filter *waFilter{nullptr};
+
+		if ( _applyWA ) {
+			waFilter  = new Filtering::IIR::WoodAndersonFilter<double>(
+				Velocity,
+				_config.woodAndersonResponse
+			);
+		}
+
+		if ( preFilter && waFilter ) {
+			auto chain = new Filtering::ChainFilter<double>;
+			chain->add(preFilter);
+			chain->add(waFilter);
+			setFilter(chain);
+		}
+		else if ( preFilter ) {
+			setFilter(preFilter);
+		}
+		else {
+			setFilter(waFilter);
+		}
+	}
+	else {
+		setFilter(preFilter);
+	}
+
+	AmplitudeProcessor::initFilter(fsamp);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -193,17 +240,39 @@ bool AbstractAmplitudeProcessor_ML::setParameter(Capability cap, const std::stri
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AbstractAmplitudeProcessor_ML::reset() {
+	AmplitudeProcessor::reset();
+
+	// Default settings
+	setSignalEnd(150.);
+	setMinSNR(0);
+	setMaxDist(8);
+
+	_amplitudeMeasureType = AbsMax;
+	_preFilter = string();
+	_applyWA = true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AbstractAmplitudeProcessor_ML::setup(const Settings &settings) {
 	if ( !AmplitudeProcessor::setup(settings) ) return false;
 
 	bool absMax = true;
-	string preFilterStr;
 
 	// amplitude pre-processing
 	try {
-		preFilterStr = settings.getString("amplitudes." + _type + ".preFilter");
+		_preFilter = settings.getString("amplitudes." + _type + ".preFilter");
 	}
-	catch ( ... ) { }
+	catch ( ... ) {}
+
+	try {
+		_applyWA = settings.getBool("amplitudes." + _type + ".applyWoodAnderson");
+	}
+	catch ( ... ) {}
 
 	if ( settings.getValue(absMax, "amplitudes." + _type + ".absMax") ) {
 		_amplitudeMeasureType = absMax ? AbsMax : MinMax;
@@ -223,37 +292,6 @@ bool AbstractAmplitudeProcessor_ML::setup(const Settings &settings) {
 		}
 	}
 
-	Filter *preFilter{nullptr};
-
-	if ( !preFilterStr.empty() ) {
-		string error;
-		preFilter = Filter::Create(preFilterStr, &error);
-		if ( !preFilter ) {
-			SEISCOMP_ERROR("Wrong filter: %s", error.c_str());
-			return false;
-		}
-	}
-
-	if ( !_enableResponses ) {
-		auto waFilter  = new Filtering::IIR::WoodAndersonFilter<double>(
-			Velocity,
-			_config.woodAndersonResponse
-		);
-
-		if ( preFilter ) {
-			auto chain = new Filtering::ChainFilter<double>;
-			chain->add(preFilter);
-			chain->add(waFilter);
-			setFilter(chain);
-		}
-		else {
-			setFilter(waFilter);
-		}
-	}
-	else {
-		setFilter(preFilter);
-	}
-
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -271,14 +309,15 @@ bool AbstractAmplitudeProcessor_ML::deconvolveData(Response *resp,
 	Math::Restitution::FFT::TransferFunctionPtr tf =
 		resp->getTransferFunction(numberOfIntegrations < 0 ? 0 : numberOfIntegrations);
 
-	if ( tf == nullptr )
+	if ( !tf )
 		return false;
 
-	Math::SeismometerResponse::WoodAnderson paz(numberOfIntegrations < 0 ? Math::Displacement : Math::Velocity,
-	                                            _config.woodAndersonResponse);
-	Math::Restitution::FFT::PolesAndZeros woodAnderson(paz);
-	Math::Restitution::FFT::TransferFunctionPtr cascade =
-		*tf / woodAnderson;
+	if ( _applyWA ) {
+		Math::SeismometerResponse::WoodAnderson paz(numberOfIntegrations < 0 ? Math::Displacement : Math::Velocity,
+		                                            _config.woodAndersonResponse);
+		Math::Restitution::FFT::PolesAndZeros woodAnderson(paz);
+		tf = *tf / woodAnderson;
+	}
 
 	// Remove linear trend
 	double m,n;
@@ -286,7 +325,7 @@ bool AbstractAmplitudeProcessor_ML::deconvolveData(Response *resp,
 	Math::Statistics::detrend(data.size(), data.typedData(), m, n);
 
 	return Math::Restitution::transformFFT(data.size(), data.typedData(),
-	                                       _stream.fsamp, cascade.get(),
+	                                       _stream.fsamp, tf.get(),
 	                                       _config.respTaper, _config.respMinFreq,
 	                                       _config.respMaxFreq);
 }

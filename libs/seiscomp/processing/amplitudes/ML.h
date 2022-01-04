@@ -37,10 +37,13 @@ class SC_SYSTEM_CLIENT_API AbstractAmplitudeProcessor_ML : public AmplitudeProce
 		AbstractAmplitudeProcessor_ML(const Core::Time &trigger, const std::string &type);
 
 	public:
+		void initFilter(double fsamp) override;
+
 		int capabilities() const override;
 		IDList capabilityParameters(Capability cap) const override;
 		bool setParameter(Capability cap, const std::string &value) override;
 
+		void reset() override;
 		bool setup(const Settings &settings) override;
 
 
@@ -60,7 +63,7 @@ class SC_SYSTEM_CLIENT_API AbstractAmplitudeProcessor_ML : public AmplitudeProce
 
 		double timeWindowLength(double distance) const override;
 
-	private:
+	protected:
 		enum AmplitudeMeasureType {
 			AbsMax,
 			MinMax,
@@ -68,6 +71,8 @@ class SC_SYSTEM_CLIENT_API AbstractAmplitudeProcessor_ML : public AmplitudeProce
 		};
 
 		AmplitudeMeasureType _amplitudeMeasureType;
+		std::string          _preFilter;
+		bool                 _applyWA{true};
 };
 
 

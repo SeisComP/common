@@ -36,7 +36,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc : public AbstractAmplitudeProc
 		AmplitudeProcessor_MLc();
 
 	public:
-		void initFilter(double fsamp) override;
+		void reset() override;
 
 	friend class AmplitudeProcessor_MLc2h;
 };
@@ -51,13 +51,13 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc2h : public AmplitudeProcessor 
 		IDList capabilityParameters(Capability cap) const override;
 		bool setParameter(Capability cap, const std::string &value) override;
 
+		void reset() override;
 		bool setup(const Settings &settings) override;
 
 		void setTrigger(const Core::Time &trigger) override;
 
 		void computeTimeWindow() override;
 
-		void reset() override;
 		void close() const override;
 
 		bool feed(const Record *record) override;
@@ -99,17 +99,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc2h : public AmplitudeProcessor 
 		mutable AmplitudeProcessor_MLc _ampE, _ampN;
 		CombinerProc                   _combiner{TakeMax};
 		OPT(ComponentResult)           _results[2];
-
-		enum AmplitudeMeasureType {
-			AbsMax,
-			MinMax,
-			PeakTrough
-		};
-
-		double               _amplitudeScale{1.0};
-		std::string          _preFilter{"BW(3,0.5,12)"};
-		bool                 _applyWA{true};
-		AmplitudeMeasureType _amplitudeMeasureType{AbsMax};
+		double                         _amplitudeScale{1.0};
 };
 
 
