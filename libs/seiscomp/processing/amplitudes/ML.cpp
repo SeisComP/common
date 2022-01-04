@@ -25,6 +25,7 @@
 #include <seiscomp/processing/regions.h>
 #include <seiscomp/processing/amplitudes/ML.h>
 #include <seiscomp/math/mean.h>
+#include <seiscomp/math/filter/chainfilter.h>
 #include <seiscomp/math/filter/seismometers.h>
 #include <seiscomp/math/restitution/fft.h>
 #include <seiscomp/geo/featureset.h>
@@ -139,23 +140,6 @@ AbstractAmplitudeProcessor_ML::AbstractAmplitudeProcessor_ML(const Core::Time& t
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AbstractAmplitudeProcessor_ML::initFilter(double fsamp) {
-	if ( !_enableResponses ) {
-		AmplitudeProcessor::setFilter(
-			new Filtering::IIR::WoodAndersonFilter<double>(Velocity, _config.woodAndersonResponse)
-		);
-	}
-	else
-		AmplitudeProcessor::setFilter(nullptr);
-
-	AmplitudeProcessor::initFilter(fsamp);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int AbstractAmplitudeProcessor_ML::capabilities() const {
 	return MeasureType;
 }
@@ -213,6 +197,13 @@ bool AbstractAmplitudeProcessor_ML::setup(const Settings &settings) {
 	if ( !AmplitudeProcessor::setup(settings) ) return false;
 
 	bool absMax = true;
+	string preFilterStr;
+
+	// amplitude pre-processing
+	try {
+		preFilterStr = settings.getString("amplitudes." + _type + ".preFilter");
+	}
+	catch ( ... ) { }
 
 	if ( settings.getValue(absMax, "amplitudes." + _type + ".absMax") ) {
 		_amplitudeMeasureType = absMax ? AbsMax : MinMax;
@@ -230,6 +221,37 @@ bool AbstractAmplitudeProcessor_ML::setup(const Settings &settings) {
 				return false;
 			}
 		}
+	}
+
+	Filter *preFilter{nullptr};
+
+	if ( !preFilterStr.empty() ) {
+		string error;
+		preFilter = Filter::Create(preFilterStr, &error);
+		if ( !preFilter ) {
+			SEISCOMP_ERROR("Wrong filter: %s", error.c_str());
+			return false;
+		}
+	}
+
+	if ( !_enableResponses ) {
+		auto waFilter  = new Filtering::IIR::WoodAndersonFilter<double>(
+			Velocity,
+			_config.woodAndersonResponse
+		);
+
+		if ( preFilter ) {
+			auto chain = new Filtering::ChainFilter<double>;
+			chain->add(preFilter);
+			chain->add(waFilter);
+			setFilter(chain);
+		}
+		else {
+			setFilter(waFilter);
+		}
+	}
+	else {
+		setFilter(preFilter);
 	}
 
 	return true;
@@ -368,5 +390,4 @@ double AbstractAmplitudeProcessor_ML::timeWindowLength(double distance_deg) cons
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
-
 }
