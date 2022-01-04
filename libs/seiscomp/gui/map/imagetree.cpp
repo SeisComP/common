@@ -156,7 +156,7 @@ class TileDirectory : public TileStore {
 		}
 
 		// Tiles are never loaded asynchronously
-		bool hasPendingRequests() const {
+		bool hasPendingRequests() const override {
 			return false;
 		}
 
