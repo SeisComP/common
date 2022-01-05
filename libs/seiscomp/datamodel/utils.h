@@ -28,6 +28,7 @@
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/datamodel/types.h>
 #include <seiscomp/datamodel/creationinfo.h>
+#include <seiscomp/geo/coordinate.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -40,6 +41,7 @@ class Event;
 class Origin;
 class Pick;
 class Inventory;
+class Network;
 class Station;
 class SensorLocation;
 class Stream;
@@ -294,6 +296,93 @@ findSetup(const ConfigStation *configStation, const std::string &setupName,
  * Creates a deep copy of an object including all child objects.
  */
 SC_SYSTEM_CORE_API Object *copy(const Object* obj);
+
+
+/**
+ * @brief Returns the id of a network. This is essentially the network code.
+ * @param net The network to get the id from.
+ * @return The id
+ */
+SC_SYSTEM_CORE_API std::string id(const Network *net);
+
+/**
+ * @brief Returns the id of a station as networkCode + '.' + stationCode.
+ *
+ * @param sta The station to get the id from.
+ * @return The id
+ */
+SC_SYSTEM_CORE_API std::string id(const Station *sta);
+
+/**
+ * @brief Returns the id of a sensor location as
+ *        networkCode + '.' + stationCode + '.' + locationCode.
+ *
+ * If any of the parent objects is not set then \p unsetCode is used for
+ * the corresponding code.
+ *
+ * @param loc The sensor location to get the id from.
+ * @param unsetCode The code used if a parent object is not set or if \p loc is null
+ * @return The id
+ */
+SC_SYSTEM_CORE_API std::string id(const SensorLocation *loc,
+                                  const char *unsetCode = "");
+
+/**
+ * @brief Returns the id of a stream as
+ *        networkCode + '.' + stationCode + '.' + locationCode + '.' + streamCode
+ *
+ * If any of the parent objects is not set then \p unsetCode is used for
+ * the corresponding code.
+ *
+ * @param loc The stream to get the id from.
+ * @param unsetCode The code used if a parent object is not set or if \p stream is null
+ * @param includeComponent Whether to include the component code or not. The
+ *                         component code is the last character of the stream
+ *                         code.
+ * @return The id
+ */
+SC_SYSTEM_CORE_API std::string id(const Stream *stream,
+                                  const char *unsetCode = "",
+                                  bool includeComponent = true);
+
+
+/**
+ * @brief Retrieves the geo coordinate (WGS84) from a station.
+ *
+ * This requires that the station has both latitude and longitude attributes
+ * set. If any of the attributes is unset then an exception is thrown.
+ *
+ * @param sta The station to get the coordinate from
+ * @return The geo coordinate of the station
+ */
+SC_SYSTEM_CORE_API Geo::GeoCoordinate getLocation(const Station *sta);
+
+/**
+ * @brief Retrieves the geo coordinate (WGS84) from a sensor location.
+ *
+ * This requires that either the sensor location or the parent station has
+ * the latitude as well as longitude set. If one attribute is not set in
+ * the sensor location then the parent station will be lookup up.
+ * If any of the attributes cannot be extracted then an exception is thrown.
+ *
+ * @param loc The sensor location to get the coordinate from
+ * @return The geo coordinate of the sensor location
+ */
+SC_SYSTEM_CORE_API Geo::GeoCoordinate getLocation(const SensorLocation *loc);
+
+/**
+ * @brief Retrieves the geo coordinate (WGS84) from a stream.
+ *
+ * This looks up the location of the parent sensor location which must be set.
+ * If it is incomplete or unset then the parent station of the sensor location
+ * will be lookup up.
+ * If any of the attributes cannot be extracted then an exception is thrown.
+ *
+ * @param coord The output geo location
+ * @param stream The stream to get the location from
+ * @return Success flag
+ */
+SC_SYSTEM_CORE_API Geo::GeoCoordinate getLocation(const Stream *stream);
 
 
 ///////////////////////////////////////////////////////////////////////////////

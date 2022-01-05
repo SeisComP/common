@@ -1,5 +1,6 @@
 SET(TESTS
 	cache.cpp
+	utils.cpp
 )
 
 FOREACH(testSrc ${TESTS})

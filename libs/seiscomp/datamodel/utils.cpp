@@ -470,6 +470,144 @@ Object *copy(const Object *obj) {
 }
 
 
+std::string id(const Network *net) {
+	if ( !net ) {
+		return std::string();
+	}
+	else {
+		return net->code();
+	}
+}
+
+
+std::string id(const Station *sta) {
+	std::string ret;
+
+	if ( !sta || !sta->network() ) {
+		ret = id(static_cast<Network*>(nullptr));
+	}
+	else {
+		ret = id(sta->network());
+	}
+
+	ret += '.';
+
+	if ( sta ) {
+		ret += sta->code();
+	}
+
+	return ret;
+}
+
+
+std::string id(const SensorLocation *loc, const char *unsetCode) {
+	std::string ret;
+
+	if ( !loc || !loc->station() ) {
+		ret = id(static_cast<Station*>(nullptr));
+	}
+	else {
+		ret = id(loc->station());
+	}
+
+	ret += '.';
+
+	if ( !loc || loc->code().empty() ) {
+		ret += unsetCode;
+	}
+	else {
+		ret += loc->code();
+	}
+
+	return ret;
+}
+
+
+std::string id(const Stream *stream, const char *unsetCode, bool includeComponent) {
+	std::string ret;
+
+	if ( !stream || !stream->sensorLocation() ) {
+		ret = id(static_cast<SensorLocation*>(nullptr), unsetCode);
+	}
+	else {
+		ret = id(stream->sensorLocation(), unsetCode);
+	}
+
+	ret += '.';
+
+	if ( stream ) {
+		if ( includeComponent ) {
+			ret += stream->code();
+		}
+		else {
+			ret.append(stream->code().begin(), stream->code().begin() + stream->code().size() - 1);
+		}
+	}
+
+	return ret;
+}
+
+
+Geo::GeoCoordinate getLocation(const Station *sta) {
+	try {
+		return Geo::GeoCoordinate(sta->latitude(), sta->longitude());
+	}
+	catch ( const std::exception &e ) {
+		throw Core::ValueException(id(sta) + ": " + e.what());
+	}
+}
+
+
+Geo::GeoCoordinate getLocation(const SensorLocation *loc) {
+	Geo::GeoCoordinate coord;
+
+	try {
+		coord.lat = loc->latitude();
+	}
+	catch ( const std::exception &e ) {
+		if ( loc->station() ) {
+			try {
+				coord.lat = loc->station()->latitude();
+			}
+			catch ( const std::exception &e ) {
+				throw Core::ValueException(id(loc) + ": " + e.what());
+			}
+		}
+		else {
+			throw Core::ValueException(id(loc) + ": " + e.what());
+		}
+	}
+
+	try {
+		coord.lon = loc->longitude();
+	}
+	catch ( const std::exception &e ) {
+		if ( loc->station() ) {
+			try {
+				coord.lon = loc->station()->longitude();
+			}
+			catch ( const std::exception &e ) {
+				throw Core::ValueException(id(loc) + ": " + e.what());
+			}
+		}
+		else {
+			throw Core::ValueException(id(loc) + ": " + e.what());
+		}
+	}
+
+	return coord;
+}
+
+
+Geo::GeoCoordinate getLocation(const Stream *stream) {
+	if ( !stream->sensorLocation() ) {
+		throw Core::ValueException("Sensor location not set for stream " + stream->publicID());
+	}
+
+	return getLocation(stream->sensorLocation());
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // DataModel Diff / Merge
 ///////////////////////////////////////////////////////////////////////////////

@@ -58,5 +58,17 @@ inline void toHex<char>(std::string &out, char v) {
 }
 
 
+template <typename R, class... Types>
+inline bool catchBool(R f(Types...), R &ret, Types... args) {
+	try {
+		ret = f(args...);
+		return true;
+	}
+	catch ( ... ) {
+		return false;
+	}
+}
+
+
 }
 }

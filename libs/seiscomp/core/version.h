@@ -86,6 +86,11 @@ namespace Core {
    - Added Seiscomp::Core::Time::toUTC()
    - Set TileStore API to version 3 which is incompatible with previous versions
    - Remove Seiscomp::Gui::Alg::MapTree and Seiscomp::Gui::Alg::MapTreeNode
+   - Added Seiscomp::DataModel::id(const Network*, ...)
+   - Added Seiscomp::DataModel::id(const Station*, ...)
+   - Added Seiscomp::DataModel::id(const SensorLocation*, ...)
+   - Added Seiscomp::DataModel::id(const Stream*, ...)
+   - Added Seiscomp::Util::catchBool
 
  "14.4.0"   0x0E0400
    - Added class Seiscomp::Core::Number<T> (ostream output)
