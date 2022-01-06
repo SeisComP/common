@@ -880,11 +880,6 @@ void RecordWidget::init() {
 	_useFixedAmplitudeRange = false;
 	_useMinAmplitudeRange = false;
 
-	// set the widget's background color
-	QPalette pal = palette();
-	pal.setColor(QPalette::WindowText, Qt::black);
-	setPalette(pal);
-
 	_amplScale = 0;
 	_tmin = 0;
 	_tmax = 0;
@@ -3511,7 +3506,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 void RecordWidget::drawActiveCursor(QPainter &painter, int x, int y) {
 	int h = height();
 
-	painter.setPen(Qt::black);
+	painter.setPen(palette().color(QPalette::Text));
 	painter.drawLine(x, 0, x, h);
 	//painter.drawLine(0, _currentPos.y(), w, _currentPos.y());
 	painter.drawText(0,0,x-2,h, Qt::TextSingleLine | Qt::AlignRight | Qt::AlignTop, _cursorText);

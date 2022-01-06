@@ -2530,12 +2530,6 @@ void PickerView::init() {
 	connect(SC_D.recordView, SIGNAL(updatedRecords()),
 	        SC_D.currentRecord, SLOT(updateRecords()));
 
-	QPalette pal = SC_D.currentRecord->palette();
-	pal.setColor(SC_D.currentRecord->backgroundRole(), Qt::white);
-	pal.setColor(SC_D.currentRecord->foregroundRole(), Qt::black);
-	SC_D.currentRecord->setPalette(pal);
-	SC_D.currentRecord->setAutoFillBackground(true);
-
 	// add actions
 	addAction(SC_D.ui.actionIncreaseAmplitudeScale);
 	addAction(SC_D.ui.actionDecreaseAmplitudeScale);
