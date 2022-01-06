@@ -19,6 +19,7 @@
 
 
 #include <seiscomp/gui/core/spectrumwidget.h>
+#include <seiscomp/gui/core/scheme.h>
 
 #include <math.h>
 #include <fstream>
@@ -56,6 +57,20 @@ SpectrumWidget::SpectrumWidget(QWidget *parent, Qt::WindowFlags f)
 
 	_xAxis.setLabel(tr("Frequency in Hz (1/T)"));
 	updateAxisLabels();
+
+	QColor axisColor = palette().color(QPalette::Text);
+
+	_xAxis.setPen(axisColor);
+	_xAxis.setGridPen(blend(palette().color(QPalette::Base), axisColor, 192 * 100 / 256));
+	_xAxis.setSubGridPen(blend(palette().color(QPalette::Base), axisColor, 224 * 100 / 256));
+
+	_yAxis.setPen(palette().color(QPalette::Text));
+	_yAxis.setGridPen(blend(palette().color(QPalette::Base), axisColor, 192 * 100 / 256));
+	_yAxis.setSubGridPen(blend(palette().color(QPalette::Base), axisColor, 224 * 100 / 256));
+
+	_yAxis2.setPen(palette().color(QPalette::Text));
+	_yAxis2.setGridPen(blend(palette().color(QPalette::Base), axisColor, 192 * 100 / 256));
+	_yAxis2.setSubGridPen(blend(palette().color(QPalette::Base), axisColor, 224 * 100 / 256));
 
 	_xAxis.setPosition(Axis::Bottom);
 	_yAxis.setPosition(Axis::Left);
@@ -433,19 +448,17 @@ void SpectrumWidget::paintEvent(QPaintEvent *e) {
 
 	QRect plotRect(xAxisRect.left(), yAxisRect.top(), xAxisRect.width(), yAxisRect.height());
 
-	p.setPen(QColor(192,192,192));
 	_xAxis.drawGrid(p, plotRect, true, false);
 	_yAxis.drawGrid(p, plotRect, true, false);
 
-	p.setPen(QColor(224,224,224));
 	_xAxis.drawGrid(p, plotRect, false, true);
 	_yAxis.drawGrid(p, plotRect, false, true);
 
-	p.setPen(Qt::black);
 	_xAxis.draw(p, xAxisRect);
 	_yAxis.draw(p, yAxisRect);
 	_yAxis2.draw(p, yAxis2Rect);
 
+	p.setPen(palette().color(QPalette::Text));
 	p.setClipRect(plotRect.adjusted(0, -_margin, 0, 0));
 	p.translate(xAxisRect.left(), yAxisRect.bottom());
 	draw(p, &_graphPowerSpectrum);

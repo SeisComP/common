@@ -95,7 +95,7 @@ DiagramWidget::DiagramWidget(QWidget * parent, Type type, Qt::WindowFlags f)
 	_dragging = false;
 	_dragStart = false;
 	_indicesChanged = false;
-	_background = Qt::white;
+	_background = palette().color(QPalette::Base);
 	_hoverId = -1;
 	_markerDistance = QPointF(0,0);
 	setMouseTracking(true);
@@ -381,12 +381,12 @@ void DiagramWidget::paintRectangular(QPainter &painter) {
 	QColor mainColor, subColor;
 
 	if ( _displayRect != _requestRect ) {
-		mainColor = blend(Qt::black, Qt::red, 60);
-		subColor = blend(Qt::gray, Qt::red, 60);
+		mainColor = blend(palette().color(QPalette::Text), Qt::red, 60);
+		subColor = blend(palette().color(QPalette::Inactive, QPalette::Text), Qt::red, 60);
 	}
 	else {
-		mainColor = Qt::black;
-		subColor = Qt::gray;
+		mainColor = palette().color(QPalette::Text);
+		subColor = palette().color(QPalette::Inactive, QPalette::Text);
 	}
 
 	/*
@@ -528,12 +528,12 @@ void DiagramWidget::paintSphericalBackground(QPainter &painter) {
 	painter.drawEllipse(left-2, top-2, diameter+4, diameter+4);
 
 	if ( _displayRect != _requestRect ) {
-		mainColor = blend(Qt::black, Qt::red, 60);
-		subColor = blend(Qt::gray, Qt::red, 60);
+		mainColor = blend(palette().color(QPalette::Text), Qt::red, 60);
+		subColor = blend(palette().color(QPalette::Inactive, QPalette::Text), Qt::red, 60);
 	}
 	else {
-		mainColor = Qt::black;
-		subColor = Qt::gray;
+		mainColor = palette().color(QPalette::Text);
+		subColor = palette().color(QPalette::Inactive, QPalette::Text);
 	}
 
 	QColor c = blend(Qt::gray, _background, 50);
