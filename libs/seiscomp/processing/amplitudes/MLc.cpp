@@ -173,18 +173,9 @@ AmplitudeProcessor_MLc::AmplitudeProcessor_MLc()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeProcessor_MLc::reset() {
-	AbstractAmplitudeProcessor_ML::reset();
-	_preFilter = "BW(3,0.5,12)";
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h()
 : AmplitudeProcessor("MLc") {
+	setDefaultConfiguration();
 	reset();
 
 	setUsedComponent(Horizontal);
@@ -203,6 +194,7 @@ AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h()
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h(const Core::Time& trigger)
 : AmplitudeProcessor(trigger, "MLc") {
+	setDefaultConfiguration();
 	reset();
 	computeTimeWindow();
 
@@ -213,6 +205,24 @@ AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h(const Core::Time& trigger)
 
 	_ampE.setPublishFunction(bind(&AmplitudeProcessor_MLc2h::newAmplitude, this, placeholders::_1, placeholders::_2));
 	_ampN.setPublishFunction(bind(&AmplitudeProcessor_MLc2h::newAmplitude, this, placeholders::_1, placeholders::_2));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeProcessor_MLc2h::setDefaultConfiguration() {
+	setSignalEnd(150.);
+	setMinSNR(0);
+	setMaxDist(6);
+	setMaxDepth(60);
+
+	_ampE._preFilter = _ampN._preFilter = "BW(3,0.5,12)";
+
+	// Propagate configuration to single processors
+	_ampE.setConfig(config());
+	_ampN.setConfig(config());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -282,19 +292,10 @@ bool AmplitudeProcessor_MLc2h::setParameter(Capability cap, const std::string &v
 void AmplitudeProcessor_MLc2h::reset() {
 	AmplitudeProcessor::reset();
 
-	setSignalEnd(150.);
-	setMinSNR(0);
-	setMaxDist(6);
-	setMaxDepth(60);
-
-	// Propagate configuration to single processors
-	_ampN.reset();
-	_ampN.setConfig(config());
+	_results[0] = _results[1] = Core::None;
 
 	_ampE.reset();
-	_ampE.setConfig(config());
-
-	_results[0] = _results[1] = Core::None;
+	_ampN.reset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -303,6 +304,8 @@ void AmplitudeProcessor_MLc2h::reset() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor_MLc2h::setup(const Settings &settings) {
+	setDefaultConfiguration();
+
 	// Copy the stream configurations (gain, orientation, responses, ...) to
 	// the horizontal processors
 	_ampN.streamConfig(FirstHorizontalComponent) = streamConfig(FirstHorizontalComponent);

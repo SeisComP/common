@@ -117,6 +117,7 @@ AbstractAmplitudeProcessor_ML::AbstractAmplitudeProcessor_ML(
 	const std::string &type
 )
 : AmplitudeProcessor(type) {
+	setDefaultConfiguration();
 	reset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -130,6 +131,7 @@ AbstractAmplitudeProcessor_ML::AbstractAmplitudeProcessor_ML(
 	const std::string &type
 )
 : AmplitudeProcessor(trigger, type) {
+	setDefaultConfiguration();
 	reset();
 	computeTimeWindow();
 }
@@ -240,26 +242,10 @@ bool AbstractAmplitudeProcessor_ML::setParameter(Capability cap, const std::stri
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AbstractAmplitudeProcessor_ML::reset() {
-	AmplitudeProcessor::reset();
-
-	// Default settings
-	setSignalEnd(150.);
-	setMinSNR(0);
-	setMaxDist(8);
-
-	_amplitudeMeasureType = AbsMax;
-	_preFilter = string();
-	_applyWA = true;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AbstractAmplitudeProcessor_ML::setup(const Settings &settings) {
 	if ( !AmplitudeProcessor::setup(settings) ) return false;
+
+	setDefaultConfiguration();
 
 	bool absMax = true;
 
@@ -421,6 +407,22 @@ double AbstractAmplitudeProcessor_ML::timeWindowLength(double distance_deg) cons
 	double distance_km = distance_deg*111.2;
 	double windowLength = distance_km/v_min + 30;
 	return windowLength < _config.signalEnd ? windowLength :_config.signalEnd;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AbstractAmplitudeProcessor_ML::setDefaultConfiguration() {
+	// Default settings
+	setSignalEnd(150.);
+	setMinSNR(0);
+	setMaxDist(8);
+
+	_amplitudeMeasureType = AbsMax;
+	_preFilter = string();
+	_applyWA = true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

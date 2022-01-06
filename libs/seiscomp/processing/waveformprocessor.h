@@ -278,8 +278,14 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 		//! check is enabled.
 		double saturationThreshold() const { return _saturationThreshold; }
 
-		//! Resets the processor completely. The configured init time
-		//! is going to be processed again.
+		/**
+		 * @brief Resets the processing state
+		 *
+		 * This method resets the current processing states back to as if
+		 * wouldn't have received any data yet. It not *not* meant to reset
+		 * the processors configuration to its defaults. This method is going
+		 * to be called when e.g. gaps are detected.
+		 */
 		virtual void reset();
 
 		//! Returns the data's sampling frequency

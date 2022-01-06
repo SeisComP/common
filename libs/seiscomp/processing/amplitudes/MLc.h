@@ -35,9 +35,6 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc : public AbstractAmplitudeProc
 	public:
 		AmplitudeProcessor_MLc();
 
-	public:
-		void reset() override;
-
 	friend class AmplitudeProcessor_MLc2h;
 };
 
@@ -80,6 +77,8 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc2h : public AmplitudeProcessor 
 
 
 	private:
+		void setDefaultConfiguration();
+
 		void newAmplitude(const AmplitudeProcessor *proc,
 		                  const AmplitudeProcessor::Result &res);
 
