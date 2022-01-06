@@ -148,10 +148,31 @@ SaveBNADialog::SaveBNADialog(QWidget *parent, Qt::WindowFlags f)
 
 	// file name
 	layout->addWidget(new QLabel("File Name"), row, 0);
-	filename = new QLineEdit(QString("%1/bna/custom.bna")
-	        .arg(Seiscomp::Environment::Instance()->shareDir().c_str()));
-	filename->setToolTip("Path and file name");
+	filename = new QLineEdit(QString("%1/spatial/vector/custom.bna")
+	                         .arg(Seiscomp::Environment::Instance()->shareDir().c_str()));
+
+	std::ostringstream toolTip;
+	std::ostringstream toolTipPath;
+	toolTip << "Path and file name. ";
+	QDir dir1((Environment::Instance()->shareDir() + "/bna").c_str());
+	QDir dir2((Environment::Instance()->configDir() + "/bna").c_str());
+	if ( dir1.exists() || dir2.exists() ) {
+		toolTipPath << "Writing to 'spatial/' is default. "
+		               "BNA files will be ignored in:\n";
+		if ( dir1.exists() ) {
+			toolTipPath << Environment::Instance()->shareDir().c_str() << "/bna";
+		}
+		if ( dir1.exists() && dir2.exists() ) toolTipPath << "\n";
+		if ( dir2.exists() ) {
+			toolTipPath << Environment::Instance()->configDir().c_str() << "/bna";
+		}
+		toolTip << toolTipPath.str();
+	}
+	filename->setToolTip(toolTip.str().c_str());
 	layout->addWidget(filename, row++, 1);
+	if ( dir1.exists() || dir2.exists() ) {
+		layout->addWidget(new QLabel(toolTipPath.str().c_str()), row++, 1);
+	}
 
 	// is closed polygon
 	fileAppend = new QCheckBox("Append to File");
