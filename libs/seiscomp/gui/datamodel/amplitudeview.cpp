@@ -952,7 +952,12 @@ void ThreeComponentTrace::setFilter(RecordWidget::Filter *f, const std::string &
 		removeProcessedData(i);
 	}
 
-	transform();
+	try {
+		transform();
+	}
+	catch ( std::exception &e ) {
+		label->infoText = e.what();
+	}
 }
 
 
@@ -5646,8 +5651,15 @@ void AmplitudeView::receivedRecord(Seiscomp::Record *rec) {
 		label->data.setFilter(f, label->data.filterID);
 		delete f;
 	}
-	else
-		label->data.transform(i, rec);
+	else {
+		try {
+			label->data.transform(i, rec);
+		}
+		catch ( std::exception &e ) {
+			SEISCOMP_ERROR("%s: %s", streamID.c_str(), e.what());
+			label->infoText = e.what();
+		}
+	}
 
 	if ( firstRecord ) {
 		item->widget()->setRecordBackgroundColor(_componentMap[i], SCScheme.colors.records.states.inProgress);
