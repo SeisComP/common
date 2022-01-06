@@ -94,7 +94,6 @@
 using namespace std;
 using namespace Seiscomp;
 using namespace Seiscomp::DataModel;
-using namespace Seiscomp::Math;
 using namespace Seiscomp::Util;
 using namespace Seiscomp::Gui;
 using namespace Seiscomp::Gui::PrivatePickerView;
@@ -4237,8 +4236,8 @@ void PickerView::loadNextStations(float distance) {
 					continue;
 				}
 
-				Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-				            lat, lon, &delta, &az1, &az2);
+				Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
+				                  lat, lon, &delta, &az1, &az2);
 
 				if ( delta > distance ) continue;
 
@@ -4649,8 +4648,8 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* o) {
 
 		if ( SC_D.origin ) {
 			double delta, az, baz;
-			Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-			            label->latitude, label->longitude, &delta, &az, &baz);
+			Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
+			                  label->latitude, label->longitude, &delta, &az, &baz);
 
 			label->orientationZRT.loadRotateZ(deg2rad(baz + 180.0));
 		}
@@ -4803,7 +4802,7 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 			return false;
 		}
 
-		Geo::delazi(elat, elon, slat, slon, &delta, &az1, &az2);
+		Math::Geo::delazi(elat, elon, slat, slon, &delta, &az1, &az2);
 
 		item->setValue(ITEM_DISTANCE_INDEX, delta);
 		item->setValue(ITEM_AZIMUTH_INDEX, az1);
@@ -5358,8 +5357,8 @@ void PickerView::openContextMenu(const QPoint &p) {
 
 	double delta, az, baz;
 	if ( SC_D.origin )
-		Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-		            loc->latitude(), loc->longitude(), &delta, &az, &baz);
+		Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
+		                  loc->latitude(), loc->longitude(), &delta, &az, &baz);
 	else
 		delta = 0;
 
@@ -5905,8 +5904,8 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
 		label->longitude = loc->longitude();
 
 		double delta, az, baz;
-		Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-		            label->latitude, label->longitude, &delta, &az, &baz);
+		Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
+		                  label->latitude, label->longitude, &delta, &az, &baz);
 
 		label->orientationZRT.loadRotateZ(deg2rad(baz + 180.0));
 	}
@@ -7951,8 +7950,8 @@ void PickerView::relocate() {
 		if ( !sloc /*&& !m->isEnabled()*/ ) continue;
 
 		double delta, az1, az2;
-		Geo::delazi(tmpOrigin->latitude(), tmpOrigin->longitude(),
-		            sloc->latitude(), sloc->longitude(), &delta, &az1, &az2);
+		Math::Geo::delazi(tmpOrigin->latitude(), tmpOrigin->longitude(),
+		                  sloc->latitude(), sloc->longitude(), &delta, &az1, &az2);
 
 		ArrivalPtr a = new Arrival();
 
@@ -8120,9 +8119,9 @@ void PickerView::addStations() {
 
 			double delta, az1, az2;
 			if ( SC_D.origin )
-				Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-				            stream->sensorLocation()->latitude(),
-				            stream->sensorLocation()->longitude(), &delta, &az1, &az2);
+				Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
+				                  stream->sensorLocation()->latitude(),
+				                  stream->sensorLocation()->longitude(), &delta, &az1, &az2);
 			else
 				delta = 0;
 
