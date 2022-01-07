@@ -251,8 +251,6 @@ Scheme::Colors::RecordBorders::RecordBorders() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Scheme::Colors::Records::Records() {
 	alignment = Qt::red;
-	background = SCApp->palette().base().color();
-	alternateBackground = SCApp->palette().alternateBase().color();
 	foreground = QColor(128, 128, 128);
 	alternateForeground = foreground;
 	spectrogram = Qt::black;

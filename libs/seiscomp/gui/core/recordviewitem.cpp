@@ -160,12 +160,9 @@ void RecordLabel::setBackgroundColor(const QColor &c) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 StandardRecordLabel::StandardRecordLabel(int items, QWidget *parent, const char*)
  : Seiscomp::Gui::RecordLabel(parent) {
-	//setFrameStyle(QFrame::NoFrame);
-
 	_items.resize(items);
 
 	for ( int i = 0; i < _items.count(); ++i ) {
-		_items[i].color = palette().color(QPalette::Text);
 		_items[i].font = QWidget::font();
 		_items[i].width = -1;
 		_items[i].align = Qt::AlignLeft | Qt::AlignVCenter;
@@ -300,18 +297,15 @@ void StandardRecordLabel::paintEvent(QPaintEvent *e) {
 		if ( !lines ) return;
 
 		int fontSize = std::min(h / lines, painter.fontMetrics().ascent());
-		//font.setPixelSize(fontSize);
-		//painter.setFont(font);
-
 		int spacing = std::min(4, (h - fontSize*lines) / (lines+1));
 
 		int posY = (h - spacing*(lines+1) - fontSize*lines)/2;
-		for (int i=0; i<_items.count(); i++) {
+		for ( int i = 0; i < _items.count(); ++i ) {
 			if ( _items[i].text.isEmpty() ) continue;
 			QFont f(_items[i].font);
 			f.setPixelSize(fontSize);
 			painter.setFont(f);
-			painter.setPen (isEnabled() ? (_items[i].colorSet?_items[i].color:palette().color(QPalette::Text)) : palette().color(QPalette::Disabled, QPalette::Text));
+			painter.setPen(isEnabled() ? (_items[i].colorSet?_items[i].color:palette().color(QPalette::Text)) : palette().color(QPalette::Disabled, QPalette::Text));
 			painter.drawText (0,posY, w, fontSize, _items[i].align, _items[i].text);
 			posY += fontSize + spacing;
 		}
@@ -319,11 +313,11 @@ void StandardRecordLabel::paintEvent(QPaintEvent *e) {
 	else {
 		int posX = lw;
 
-		for (int i=0; i<_items.count(); i++) {
+		for ( int i = 0; i < _items.count(); ++i ) {
 			if ( _items[i].text.isEmpty() ) continue;
 			painter.setFont(_items[i].font);
-			painter.setPen (isEnabled() ? (_items[i].colorSet?_items[i].color:palette().color(QPalette::Text)) : palette().color(QPalette::Disabled, QPalette::Text));
-			painter.drawText (posX,lw, w, h, _items[i].align, _items[i].text);
+			painter.setPen(isEnabled() ? (_items[i].colorSet?_items[i].color:palette().color(QPalette::Text)) : palette().color(QPalette::Disabled, QPalette::Text));
+			painter.drawText(posX,lw, w, h, _items[i].align, _items[i].text);
 
 			if ( _items[i].width < 0 )
 				posX += painter.fontMetrics().boundingRect(_items[i].text).width();

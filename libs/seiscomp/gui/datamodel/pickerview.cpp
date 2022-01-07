@@ -188,6 +188,13 @@ class ZoomRecordWidget : public RecordWidget {
 
 			spectrogramAxis.setLabel(tr("f [1/T] in Hz"));
 			spectrogramAxis.setPosition(Seiscomp::Gui::Axis::Right);
+
+			if ( SCScheme.colors.records.background.isValid() ) {
+				QPalette p = palette();
+				p.setColor(QPalette::Base, SCScheme.colors.records.background);
+				setPalette(p);
+				setAutoFillBackground(true);
+			}
 		}
 
 		void setUncertainties(const PickerView::Config::UncertaintyList &list) {
@@ -339,12 +346,12 @@ class ZoomRecordWidget : public RecordWidget {
 		}
 
 	protected:
-		virtual void paintEvent(QPaintEvent *p) {
+		void paintEvent(QPaintEvent *p) override {
 			RecordWidget::paintEvent(p);
 
 			if ( showSpectrogram ) {
 				QPainter painter(this);
-				painter.setBrush(palette().color(QPalette::Window));
+				painter.setBrush(palette().brush(QPalette::Base));
 
 				switch ( drawMode() ) {
 					case InRows:
@@ -361,9 +368,9 @@ class ZoomRecordWidget : public RecordWidget {
 			}
 		}
 
-		virtual void drawCustomBackground(QPainter &painter) {
+		void drawCustomBackground(QPainter &painter) override {
 			if ( showSpectrogram ) {
-				painter.setBrush(palette().color(QPalette::Window));
+				painter.setBrush(palette().brush(QPalette::Base));
 
 				switch ( drawMode() ) {
 					case InRows:
@@ -380,7 +387,7 @@ class ZoomRecordWidget : public RecordWidget {
 			}
 		}
 
-		virtual void drawActiveCursor(QPainter &painter, int x, int y) {
+		void drawActiveCursor(QPainter &painter, int x, int y) override {
 			RecordWidget::drawActiveCursor(painter, x, y);
 
 			if ( !crossHair ) return;
@@ -2177,13 +2184,19 @@ void PickerRecordLabel::paintEvent(QPaintEvent *e) {
 	int h = height();
 
 	int posX = 0;
-
-	int posY = (h - fontSize*2 - 4)/2;
+	int posY = (h - fontSize * 2 - 4) / 2;
 
 	for ( int i = 0; i < _items.count()-1; ++i ) {
 		if ( _items[i].text.isEmpty() ) continue;
 		p.setFont(_items[i].font);
-		p.setPen(isEnabled() ? _items[i].color : palette().color(QPalette::Disabled, QPalette::WindowText));
+		p.setPen(
+			isEnabled()
+			?
+			(_items[i].color.isValid() ? _items[i].color : palette().color(QPalette::Text))
+			:
+			palette().color(QPalette::Disabled, QPalette::Text)
+		);
+
 		p.drawText(posX,posY, w, fontSize, _items[i].align, _items[i].text);
 
 		if ( _items[i].width < 0 )
@@ -2193,8 +2206,21 @@ void PickerRecordLabel::paintEvent(QPaintEvent *e) {
 	}
 
 	posY += fontSize + 4;
-	p.setPen(isEnabled() ? _items.last().color : palette().color(QPalette::Disabled, QPalette::WindowText));
-	p.drawText(0,posY, _items.last().width < 0?w-18:std::min(_items.last().width,w-18), fontSize, _items.last().align, _items.last().text);
+
+	p.setPen(
+		isEnabled()
+		?
+		(_items.last().color.isValid() ? _items.last().color : palette().color(QPalette::Text))
+		:
+		palette().color(QPalette::Disabled, QPalette::Text)
+	);
+
+	p.drawText(
+		0, posY,
+		_items.last().width < 0 ? w - 18 : std::min(_items.last().width, w - 18),
+		fontSize, _items.last().align,
+		_items.last().text
+	);
 }
 
 void PickerRecordLabel::enableExpandable(const Seiscomp::Record *rec) {

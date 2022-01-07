@@ -760,6 +760,7 @@ static int RecordWidgetCount = 0;
 RecordWidget::Stream::Stream(bool owner) {
 	records[0] = records[1] = nullptr;
 	filter = nullptr;
+
 	pen = QPen(SCScheme.colors.records.foreground, SCScheme.records.lineWidth);
 	antialiasing = SCScheme.records.antiAliasing;
 	stepFunction = false;
@@ -2551,7 +2552,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 	QRect rect = event->rect();
 	QColor fg;
-	QColor bg = SCScheme.colors.records.background;
+	QColor bg = palette().color(QPalette::Base);
 	QColor alignColor;
 	int    x;
 

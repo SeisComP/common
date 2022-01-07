@@ -189,7 +189,15 @@ class TraceDecorator : public RecordWidgetDecorator {
 
 class MyRecordWidget : public RecordWidget {
 	public:
-		MyRecordWidget() {}
+		MyRecordWidget() {
+			if ( SCScheme.colors.records.background.isValid() ) {
+				QPalette p = palette();
+				p.setColor(QPalette::Base, SCScheme.colors.records.background);
+				setPalette(p);
+				setAutoFillBackground(true);
+				std::cerr << "Custom background" << std::endl;
+			}
+		}
 
 		void setSelected(const Core::Time &t1, const Core::Time &t2) {
 			_t1 = t1;
@@ -1569,18 +1577,25 @@ void AmplitudeRecordLabel::paintEvent(QPaintEvent *e) {
 
 	if ( _items.count() == 0 ) return;
 
+	int fontSize = p.fontMetrics().ascent();
+
 	int w = width();
 	int h = height();
 
 	int posX = 0;
-
-	int fontSize = p.fontMetrics().ascent();
-	int posY = (h - fontSize*2 - 4)/2;
+	int posY = (h - fontSize * 2 - 4)/2;
 
 	for ( int i = 0; i < _items.count()-1; ++i ) {
 		if ( _items[i].text.isEmpty() ) continue;
 		p.setFont(_items[i].font);
-		p.setPen(isEnabled() ? _items[i].color : palette().color(QPalette::Disabled, QPalette::WindowText));
+		p.setPen(
+			isEnabled()
+			?
+			(_items[i].color.isValid() ? _items[i].color : palette().color(QPalette::Text))
+			:
+			palette().color(QPalette::Disabled, QPalette::Text)
+		);
+
 		p.drawText(posX,posY, w, fontSize, _items[i].align, _items[i].text);
 
 		if ( _items[i].width < 0 )
@@ -1590,8 +1605,21 @@ void AmplitudeRecordLabel::paintEvent(QPaintEvent *e) {
 	}
 
 	posY += fontSize + 4;
-	p.setPen(isEnabled() ? _items.last().color : palette().color(QPalette::Disabled, QPalette::WindowText));
-	p.drawText(0,posY, _items.last().width < 0?w-18:std::min(_items.last().width,w-18), fontSize, _items.last().align, _items.last().text);
+
+	p.setPen(
+		isEnabled()
+		?
+		(_items.last().color.isValid() ? _items.last().color : palette().color(QPalette::Text))
+		:
+		palette().color(QPalette::Disabled, QPalette::Text)
+	);
+
+	p.drawText(
+		0, posY,
+		_items.last().width < 0 ? w - 18 : std::min(_items.last().width, w - 18),
+		fontSize, _items.last().align,
+		_items.last().text
+	);
 }
 
 void AmplitudeRecordLabel::setLabelColor(QColor c) {
@@ -1881,11 +1909,6 @@ void AmplitudeView::init() {
 
 	connect(_recordView, SIGNAL(updatedRecords()),
 	        _currentRecord, SLOT(updateRecords()));
-
-	QPalette pal = _currentRecord->palette();
-	pal.setColor(_currentRecord->backgroundRole(), Qt::white);
-	pal.setColor(_currentRecord->foregroundRole(), Qt::black);
-	_currentRecord->setPalette(pal);
 
 	// add actions
 	addAction(_ui.actionIncreaseAmplitudeScale);

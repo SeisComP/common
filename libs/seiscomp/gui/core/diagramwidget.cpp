@@ -96,7 +96,6 @@ DiagramWidget::DiagramWidget(QWidget * parent, Type type, Qt::WindowFlags f)
 	_dragging = false;
 	_dragStart = false;
 	_indicesChanged = false;
-	_background = palette().color(QPalette::Base);
 	_hoverId = -1;
 	_markerDistance = QPointF(0,0);
 	setMouseTracking(true);
@@ -456,7 +455,8 @@ void DiagramWidget::paintRectangular(QPainter &painter) {
 	//_diagramArea.translate(_horMargin, -_horMargin);
 	//_diagramArea.setHeight(_diagramArea.height() + _horMargin);
 
-	painter.fillRect(_diagramArea, _background);
+	QColor bg = _background.isValid() ? _background : palette().color(QPalette::Base);
+	painter.fillRect(_diagramArea, bg);
 
 	qreal abscissaValue = 0;
 	QPointF abscissa = (this->*project)(QPointF(0,abscissaValue));
@@ -479,12 +479,12 @@ void DiagramWidget::paintRectangular(QPainter &painter) {
 	}
 
 	/*
-	QColor c = blend(Qt::lightGray, _background, 50);
+	QColor c = blend(Qt::lightGray, bg, 50);
 	QPoint p0 = (this->*project)(QPointF(std::min(LOW_BORDER, _displayRect.right()), _displayRect.bottom()));
 	QPoint p1 = (this->*project)(QPointF(std::min(HIGH_BORDER, _displayRect.right()), _displayRect.top()));
 	painter.fillRect(p0.x(), p0.y(), p1.x()-p0.x(), p1.y() - p0.y(), c);
 
-	c = blend(Qt::gray, _background, 50);
+	c = blend(Qt::gray, bg, 50);
 	p0 = (this->*project)(QPointF(std::min(HIGH_BORDER, _displayRect.right()), _displayRect.bottom()));
 	p1 = (this->*project)(QPointF(_displayRect.right(), _displayRect.top()));
 	painter.fillRect(p0.x(), p0.y(), p1.x()-p0.x(), p1.y() - p0.y(), c);
@@ -609,8 +609,10 @@ void DiagramWidget::paintSphericalBackground(QPainter &painter) {
 	int left = center.x() - radius;
 	int top = center.y() - radius;
 
-	painter.setPen(_background);
-	painter.setBrush(_background);
+	QColor bg = _background.isValid() ? _background : palette().color(QPalette::Base);
+
+	painter.setPen(bg);
+	painter.setBrush(bg);
 
 	painter.setRenderHint(QPainter::Antialiasing);
 
@@ -625,14 +627,14 @@ void DiagramWidget::paintSphericalBackground(QPainter &painter) {
 		subColor = palette().color(QPalette::Inactive, QPalette::Text);
 	}
 
-	QColor c = blend(Qt::gray, _background, 50);
+	QColor c = blend(Qt::gray, bg, 50);
 	painter.setPen(c);
 	painter.setBrush(c);
 
 	painter.drawEllipse(left, top, diameter, diameter);
 
 	{
-		QColor c = blend(Qt::lightGray, _background, 50);
+		QColor c = blend(Qt::lightGray, bg, 50);
 		painter.setPen(c);
 		painter.setBrush(c);
 		QPointF tmp = (this->*project)(QPointF(std::min(HIGH_BORDER, double(_displayRect.right())), 0));
@@ -641,8 +643,8 @@ void DiagramWidget::paintSphericalBackground(QPainter &painter) {
 	}
 
 	{
-		painter.setPen(_background);
-		painter.setBrush(_background);
+		painter.setPen(bg);
+		painter.setBrush(bg);
 		QPointF tmp = (this->*project)(QPointF(std::min(LOW_BORDER , double(_displayRect.right())), 0));
 		qreal w = tmp.y() - center.y();
 		painter.drawEllipse(center.x()-w, center.y()-w, w*2, w*2);
@@ -650,7 +652,7 @@ void DiagramWidget::paintSphericalBackground(QPainter &painter) {
 
 	painter.setRenderHint(QPainter::Antialiasing, false);
 
-	painter.setPen(blend(Qt::gray, _background, 25));
+	painter.setPen(blend(Qt::gray, bg, 25));
 
 	if ( _displayRect.right() < 60 )
 		painter.drawEllipse(left, top, diameter, diameter);
