@@ -18,7 +18,7 @@ Objectives of this locator are:
   in use, such as GENLOC [#Pavl]_ and GRL, a
   grid-based locator developed at the Canadian Hazards Information Service (CHIS).
 
-The implementation of this locator by :term:`gempa` was initiated and has received
+The implementation of this locator by :term:`gempa GmbH` was initiated and has received
 initial funding by National Resources Canada (NRCAN) [#NRCAN]_.
 
 
