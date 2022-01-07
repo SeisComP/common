@@ -1078,11 +1078,22 @@ RecordViewItem* RecordView::addItem(const DataModel::WaveformStreamID& streamID,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::colorItem(RecordViewItem* item, int row) {
-	QPalette pal;
-	if ( (row % 2) && _alternatingColors )
-		item->setBackgroundColor(SCScheme.colors.records.alternateBackground);
-	else
-		item->setBackgroundColor(SCScheme.colors.records.background);
+	if ( (row % 2) && _alternatingColors ) {
+		if ( SCScheme.colors.records.alternateBackground.isValid() ) {
+			item->setBackgroundColor(SCScheme.colors.records.alternateBackground);
+		}
+		else {
+			item->setBackgroundColor(palette().color(QPalette::AlternateBase));
+		}
+	}
+	else {
+		if ( SCScheme.colors.records.background.isValid() ) {
+			item->setBackgroundColor(SCScheme.colors.records.background);
+		}
+		else {
+			item->setBackgroundColor(palette().color(QPalette::Base));
+		}
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
