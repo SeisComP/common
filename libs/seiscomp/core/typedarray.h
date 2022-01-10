@@ -78,29 +78,29 @@ class TypedArray : public Array {
 		T& operator[](int index);
 		
 		//! Returns an array of the specified data type.
-		Array* copy(DataType dt) const;
+		Array* copy(DataType dt) const override;
 
 		//! Sets the data from a typed memory chunk
 		void setData(int size, const T* data);
 		
 		//! Returns the data address pointer.
-		const void* data() const;
+		const void* data() const override;
 
 		//! Returns the typed data pointer
 		T* typedData();
 		const T* typedData() const;
 		
 		//! Returns the size of the array.
-		int size() const;
+		int size() const override;
 
 		//! Returns the number of bytes of an array element.
-		int elementSize() const;
+		int elementSize() const override;
 
 		//! Resizes the array
-		void resize(int size);
+		void resize(int size) override;
 
 		//! Drops all elements.
-		void clear();
+		void clear() override;
 
 		//! Sets all values to v
 		void fill(const T &v);
@@ -112,7 +112,7 @@ class TypedArray : public Array {
 		T get(int index) const;
 
 		//! Concatenates the given array to this array.
-		void append(const Array *array);
+		void append(const Array *array) override;
 
 		//! Concatenates the given array to this array.
 		void append(int size, const T* data);
@@ -132,7 +132,7 @@ class TypedArray : public Array {
 		void prepend(int n, T value);
 
 		//! Returns the slice m...n-1 of the array
-		TypedArray<T>* slice(int m, int n) const;
+		TypedArray<T>* slice(int m, int n) const override;
 
 		//! Returns an iterator to the first element of the array
 		iterator begin();
@@ -202,7 +202,7 @@ class NumericArray : public TypedArray<T> {
 		T rms(T offset = 0) const;
 
 		//! Returns the slice m...n-1 of the array
-		NumericArray<T>* slice(int m, int n) const;
+		NumericArray<T>* slice(int m, int n) const override;
 
 		NumericArray<T> &operator+=(T v);
 		NumericArray<T> &operator-=(T v);
