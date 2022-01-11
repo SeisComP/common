@@ -1047,8 +1047,16 @@ bool Application::reloadBindings() {
 				return false;
 			}
 		}
+		else {
+			SEISCOMP_ERROR("Failed to load configuration module");
+			return false;
+		}
 
 		DataModel::Config* config = ConfigDB::Instance()->config();
+		if ( !config ) {
+			return false;
+		}
+
 		for ( size_t i = 0; i < config->configModuleCount(); ++i ) {
 			if ( config->configModule(i)->name() == _configModuleName ) {
 				_configModule = config->configModule(i);
@@ -1242,6 +1250,7 @@ void Application::done() {
 	_database = nullptr;
 
 	Inventory::Instance()->setInventory(nullptr);
+	ConfigDB::Instance()->setConfig(nullptr);
 
 	SEISCOMP_DEBUG("Leaving ::done");
 }

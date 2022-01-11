@@ -52,7 +52,8 @@ class SC_SYSTEM_CLIENT_API ConfigDB {
 			const std::set<std::string>& parameterNames = std::set<std::string>());
 
 		void load(const char *xml);
-
+		
+		void setConfig(DataModel::Config *config);
 		Seiscomp::DataModel::Config* config();
 
 	private:
