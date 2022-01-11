@@ -262,6 +262,9 @@ void ConfigDB::load(const char *xml) {
 	ar.close();
 }
 
+void ConfigDB::setConfig(DataModel::Config *config) {
+	_config = config;
+}
 
 Seiscomp::DataModel::Config* ConfigDB::config() {
 	return _config.get();
