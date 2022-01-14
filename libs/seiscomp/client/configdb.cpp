@@ -116,7 +116,7 @@ Seiscomp::DataModel::DatabaseIterator ConfigDB::getConfigObjects(Seiscomp::DataM
 		query << "Setup." << _T("name") << "='" << *setupName << "' ";
 	}
 	if ( parameterNames.size() != 0 ) {
-		if ( first ) { query << " WHERE "; first = false; }
+		if ( first ) { query << " WHERE "; }
 		else query << " AND ";
 		std::set<std::string>::const_iterator it = parameterNames.begin();
 		query << "(Parameter." << _T("name") << "='" << *it << "'";
