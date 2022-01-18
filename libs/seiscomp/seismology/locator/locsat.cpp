@@ -1021,11 +1021,23 @@ DataModel::Origin* LocSAT::loc2Origin(Internal::Loc* loc){
 		}
 
 		double sx, sy, smajax, sminax, strike;
+#ifdef LOCSAT_TESTING
+		double stime, sdepth;
+#endif
 
 		// 1D confidence intervals
 		sx = kppf[0] * pow(M4d[0], 0.5); // sxx
 		sy = kppf[0] * pow(M4d[5], 0.5); // syy
-
+#ifdef LOCSAT_TESTING
+		// Take into account fixed depth: LocSAT's szz = -1
+		if ( M4d[10] != -1 ) {
+			sdepth = kppf[0] * pow(M4d[10], 0.5);
+		}
+		else {
+			sdepth = -1.0;
+		}
+		stime  = kppf[0] * pow(M4d[15], 0.5); // stt
+#endif
 
 		// 1D confidence intervals
 		origin->setTime(DataModel::TimeQuantity(Core::Time(loc->origin->time), sqrt(loc->origerr->stt) * kppf[0], Core::None, Core::None, _locator_params->conf_level * 100.0));
