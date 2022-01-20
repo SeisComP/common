@@ -41,7 +41,7 @@ RunningMean<TYPE>::RunningMean(double windowLength, double fsamp)
 template<typename TYPE>
 void RunningMean<TYPE>::apply(int n, TYPE *inout) {
 	if ( !_windowLengthI )
-		throw Core::GeneralException("RMHP: Window length is 0");
+		throw Core::GeneralException("RM: Window length is 0");
 
 	if ( _sampleCount < _windowLengthI ) {
 		// Initially compute initial average from as many samples
