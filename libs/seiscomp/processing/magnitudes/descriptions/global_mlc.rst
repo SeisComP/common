@@ -1,18 +1,35 @@
 The MLc magnitude is very similar to the original :ref:`ML<global_ml>`,
-except that
+except that by default
 
-* A parametric :ref:`magnitude calibration <mlc_station_magnitude>` function applies,
-* Hypocentral distance is used by default.
+* Amplitude pre-filtering is applied.
+* A parametric :ref:`magnitude calibration <mlc_station_magnitude>` function
+  applies.
+* Hypocentral distance is used.
 
-MLc also provides additional flexibility by configuration of global bindings:
+Regionalization of magnitude computation is provided through global module
+configuration.
+Configuration of global bindings provides additional flexibility:
 
 * Amplitudes can be pre-filtered before applying Wood-Anderson simulation
   (:confval:`amplitudes.MLc.preFilter`),
 * Wood-Anderson simulation is optional (:confval:`amplitudes.MLc.applyWoodAnderson`),
 * Measured amplitudes can be scaled accounting for expected unit
   (:confval:`amplitudes.MLc.amplitudeScale`),
-* Consider either hypocentral or epicentral distance
+* A parametric or A0-based non-parametric :ref:`magnitude calibration <mlc_station_magnitude>`
+  function can be applied as controlled by :confval:`magnitudes.MLc.calibrationType`.
+* Consider either hypocentral or epicentral distance for computing magnitudes
   (:confval:`magnitudes.MLc.distMode`).
+
+General default conditions apply:
+
+* Amplitude pre-filtering: :ref:`BW(3,0.5,12) <filter-bw>`.
+* Amplitude unit in SeisComP: **millimeter** (mm), scaling can be applied.
+* Time window: 150 s by :ref:`scautopick` or distance dependent with
+  :math:`endTime = distance [km]/ 3 + 30`, e.g. by :ref:`scmag` or :ref:`scolv`.
+* Distance range: 0 - 8 deg.
+* Depth range: <= 80 km.
+* Distance measure: hypocentral.
+* Magnitude calibration: parametric.
 
 
 Station Amplitudes
@@ -35,6 +52,14 @@ for converting the unit of the processed data to the unit expected by the
 :ref:`station magnitude calibration <mlc_station_magnitude>` for the measured
 amplitude.
 
+.. note::
+
+   For comparing MLc amplitudes with :ref:`ML amplitudes <global_ml>` set the
+   global bindings parameters ::
+
+      amplitudes.MLc.preFilter = ""
+      amplitudes.MLc.combiner = average
+
 
 .. _mlc_station_magnitude:
 
@@ -42,30 +67,46 @@ Station Magnitudes
 ------------------
 
 Station magnitudes are computed from measured amplitudes automatically by :ref:`scmag`
-or interactively by :ref:`scolv`.
-MLc considers a parametric calibration function and hypocentral (default) or
-epicentral distance :math:`r` as configurable by :confval:`magnitudes.MLc.distMode`.
-For r <= :confval:`magnitudes.MLc.maxDist` individual station magnitudes
-MLc are calculated as:
+or interactively by :ref:`scolv`. By global bindings configuration MLc considers
 
-.. math::
+* Hypocentral (default) or epicentral distance: :confval:`magnitudes.MLc.distMode`.
+* Distance range: :confval:`magnitudes.MLc.minDist`, :confval:`magnitudes.MLc.maxDist`.
+* Events with depth up to :confval:`magnitudes.MLc.maxDepth`.
+* Parametric or non-parametric calibration functions
 
-   MLc = \log_{10}(A) + c_3 * \log_{10}(r/c_5) + c_2 * (r + c_4) + c_1 + c_0(station)
+  * parametric when :confval:`magnitudes.MLc.calibrationType` = "parametric"`:
 
-where
+    .. math::
 
-* A: displacement amplitude measured in unit of mm or as per configuration
-* r: hypocentral (default) or epicentral distance
-* c1, c2, c3, c4, c5: general calibration parameters
-* c0: station-specific correction
+       MLc = \log_{10}(A) + c_3 * \log_{10}(r/c_5) + c_2 * (r + c_4) + c_1 + c_0(station)
 
-The following conditions apply:
+    where
 
-* Amplitude unit in SeisComP: **millimeter** (mm)
-* Time window: 150 s by :ref:`scautopick` or distance dependent, e.g. by :ref:`scmag`
-  or :ref:`scolv` with :math:`endTime = distance [km]/ 3 + 30`
-* Distance range: 0 - 8 deg (can be lowered)
-* Depth range: 0 - 60 km (can be lowered)
+    * A: displacement amplitude measured in unit of mm or as per configuration
+    * r: hypocentral (default) or epicentral distance
+    * c1, c2, c3, c4, c5: general calibration parameters
+    * c0: station-specific correction
+    * Hypocentral (default) or epicentral distance :math:`r` as configurable by
+      :confval:`magnitudes.MLc.distMode`.
+
+  * A0-based non-parametric when :confval:`magnitudes.MLc.calibrationType` = "A0"`:
+
+    .. math::
+
+       MLc = \log_{10}(A) - \log_{10}(A_0)
+
+    where
+
+    * :math:`log_{10}(A_0)`: distance-dependent correction value. The default is
+      derived from the :ref:`ML magnitude <global_ml>`.
+
+.. note::
+
+   The magnitude calibration function can regionalized by adjusting global module
+   configuration parameters in MLc region profiles of
+   :confval:`magnitudes.MLc.region.*` and in a *MLc* Magnitude type profile e.g.
+   in :file:`global.cfg`.
+
 
 Network Magnitude
 -----------------
@@ -124,7 +165,7 @@ Configuration
    configuration (:file:`global.cfg`) which takes the form ::
 
       module.trunk.NET.STA.amplitude.MLc.preFilter = value
-      module.trunk.NET.STA.magnitude.MLc.c0 = value
+      module.trunk.NET.STA.magnitude.MLc.parametric.c0 = value
 
 #. Add MLc to the list of default amplitudes and magnitudes if MLc is to be
    computed by automatic modules, e.g. of :ref:`scamp`, :ref:`scmag`.

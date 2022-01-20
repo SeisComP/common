@@ -216,8 +216,8 @@ AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h(const Core::Time& trigger)
 void AmplitudeProcessor_MLc2h::setDefaultConfiguration() {
 	setSignalEnd(150.);
 	setMinSNR(0);
-	setMaxDist(6);
-	setMaxDepth(60);
+	setMaxDist(8);
+	setMaxDepth(80);
 
 	_ampE._preFilter = _ampN._preFilter = "BW(3,0.5,12)";
 

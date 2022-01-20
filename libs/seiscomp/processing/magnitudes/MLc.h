@@ -52,17 +52,25 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_MLc : public MagnitudeProcessor {
 		                        const Locale *,
 		                        double &value) override;
 
+	protected:
+		bool initLocale(Locale *locale, const Settings &settings,
+		                const std::string &configPrefix) override;
 
 	private:
+		double      _minDistanceKm{-1.0};
+		double      _maxDistanceKm{8.0 * KM_OF_DEGREE};
+		double      _maxDepth{80.0};
+		std::string _distanceMode{"hypocentral"};
+		std::string _calibrationType{"parametric"};
+		// parameters for parametric magnitude calibration
 		double      _c0{0.0};
 		double      _c1{0.69};
 		double      _c2{0.00095};
 		double      _c3{1.11};
 		double      _c4{0.0};
 		double      _c5{1.0};
-		double      _maxDistanceKm{8.0 * KM_OF_DEGREE};
-		double      _maxDepth{60.0};
-		std::string _distanceMode{"hypocentral"};
+		// parameters for non-parametric magnitude calibration
+		LogA0  _logA0;
 };
 
 
