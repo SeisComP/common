@@ -113,6 +113,7 @@ class ConfigDBUpdater(seiscomp.client.Application):
             # Switch to offline mode
             self.setMessagingEnabled(False)
             self.setDatabaseEnabled(False, False)
+            self.setLoadConfigModuleEnabled(False)
         except:
             pass
 
