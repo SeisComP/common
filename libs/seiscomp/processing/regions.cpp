@@ -164,7 +164,7 @@ bool Regions::contains(const Geo::GeoFeature *feature,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const Regions *Regions::load(const std::string& filename) {
+const Regions *Regions::load(const std::string &filename) {
 	std::lock_guard<std::mutex> l(registryMutex);
 
 	auto it = registry.find(filename);
@@ -172,7 +172,7 @@ const Regions *Regions::load(const std::string& filename) {
 		return it->second.get();
 
 	RegionsPtr regions = new Regions;
-	if ( !regions->featureSet.readBNAFile(filename, nullptr) ) {
+	if ( !regions->featureSet.readFile(filename, nullptr) ) {
 		return nullptr;
 	}
 
