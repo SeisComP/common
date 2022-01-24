@@ -288,21 +288,26 @@ bool AbstractAmplitudeProcessor_ML::deconvolveData(Response *resp,
 	if ( numberOfIntegrations < -1 )
 		return false;
 
-	Math::Restitution::FFT::TransferFunctionPtr tf =
+	Math::Restitution::FFT::TransferFunctionPtr instrumentResponse =
 		resp->getTransferFunction(numberOfIntegrations < 0 ? 0 : numberOfIntegrations);
 
-	if ( !tf )
+	if ( !instrumentResponse )
 		return false;
 
+	Math::Restitution::FFT::TransferFunctionPtr tf;
+	Math::SeismometerResponse::WoodAnderson paz(numberOfIntegrations < 0 ? Math::Displacement : Math::Velocity,
+	                                            _config.woodAndersonResponse);
+	Math::Restitution::FFT::PolesAndZeros woodAnderson(paz);
+
 	if ( _applyWA ) {
-		Math::SeismometerResponse::WoodAnderson paz(numberOfIntegrations < 0 ? Math::Displacement : Math::Velocity,
-		                                            _config.woodAndersonResponse);
-		Math::Restitution::FFT::PolesAndZeros woodAnderson(paz);
-		tf = *tf / woodAnderson;
+		tf = *instrumentResponse / woodAnderson;
+	}
+	else {
+		tf = instrumentResponse;
 	}
 
 	// Remove linear trend
-	double m,n;
+	double m, n;
 	Math::Statistics::computeLinearTrend(data.size(), data.typedData(), m, n);
 	Math::Statistics::detrend(data.size(), data.typedData(), m, n);
 
