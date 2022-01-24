@@ -18,9 +18,6 @@
  ***************************************************************************/
 
 
-
-#define SEISCOMP_COMPONENT AmplitudeMjma
-
 #include <seiscomp/processing/amplitudes/Mjma.h>
 #include <seiscomp/math/mean.h>
 #include <seiscomp/math/filter/seismometers.h>

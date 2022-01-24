@@ -18,11 +18,7 @@
  ***************************************************************************/
 
 
-
-#define SEISCOMP_COMPONENT Amplitudemsbb
-
 #include <seiscomp/processing/amplitudes/msbb.h>
-#include <seiscomp/math/filter/seismometers.h>
 
 #include <limits>
 
@@ -113,10 +109,9 @@ bool measure_period(int n, const double *f, int i0, double offset,
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
-IMPLEMENT_SC_CLASS_DERIVED(AmplitudeProcessor_msbb, AmplitudeProcessor, "AmplitudeProcessor_msbb");
+
 REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_msbb, "Ms(BB)");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -234,5 +229,4 @@ double AmplitudeProcessor_msbb::timeWindowLength(double distance_deg) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
-
 }

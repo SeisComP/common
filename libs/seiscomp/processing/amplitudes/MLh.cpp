@@ -33,7 +33,9 @@ using namespace std;
 namespace Seiscomp {
 namespace Processing {
 
+
 namespace {
+
 
 AmplitudeProcessor::AmplitudeValue average(
 	const AmplitudeProcessor::AmplitudeValue &v0,
@@ -147,7 +149,6 @@ AmplitudeProcessor::AmplitudeValue gmean(
 }
 
 
-IMPLEMENT_SC_CLASS_DERIVED(AmplitudeProcessor_ML2h, AbstractAmplitudeProcessor_ML, "AmplitudeProcessor_ML");
 REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_ML2h, "ML");
 
 

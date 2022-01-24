@@ -30,8 +30,6 @@ namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_Mwp : public AmplitudeProcessor {
-	DECLARE_SC_CLASS(AmplitudeProcessor_Mwp)
-
 	public:
 		AmplitudeProcessor_Mwp();
 		AmplitudeProcessor_Mwp(const Seiscomp::Core::Time& trigger);

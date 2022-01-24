@@ -18,9 +18,6 @@
  ***************************************************************************/
 
 
-#define SEISCOMP_COMPONENT AmplitudeMwp
-
-
 #include <seiscomp/processing/amplitudes/Mwp.h>
 #include <seiscomp/math/filter/iirintegrate.h>
 #include<seiscomp/math/filter/butterworth.h>
@@ -125,7 +122,6 @@ void Mwp_double_integration(int n, double *f, int i0, double fsamp) {
 }
 
 
-IMPLEMENT_SC_ABSTRACT_CLASS_DERIVED(AmplitudeProcessor_Mwp, AmplitudeProcessor, "AmplitudeProcessor_Mwp");
 REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_Mwp, "Mwp");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

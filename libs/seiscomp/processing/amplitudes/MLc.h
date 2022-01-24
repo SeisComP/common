@@ -38,6 +38,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc : public AbstractAmplitudeProc
 	friend class AmplitudeProcessor_MLc2h;
 };
 
+
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc2h : public AmplitudeProcessor {
 	public:
 		AmplitudeProcessor_MLc2h();

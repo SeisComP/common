@@ -44,8 +44,6 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLh : public AbstractAmplitudeProc
 //! This class does not handle waveforms itself. It directs them to the
 //! corresponding amplitude processors instead.
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_ML2h : public AmplitudeProcessor {
-	DECLARE_SC_CLASS(AmplitudeProcessor_ML2h)
-
 	public:
 		AmplitudeProcessor_ML2h();
 		AmplitudeProcessor_ML2h(const Core::Time &trigger);

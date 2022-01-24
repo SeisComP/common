@@ -18,9 +18,6 @@
  ***************************************************************************/
 
 
-
-#define SEISCOMP_COMPONENT Amplitudemb
-
 #include <seiscomp/processing/amplitudes/mb.h>
 #include <seiscomp/math/filter/seismometers.h>
 

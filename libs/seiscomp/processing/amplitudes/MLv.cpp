@@ -18,19 +18,16 @@
  ***************************************************************************/
 
 
-
-#define SEISCOMP_COMPONENT AmplitudeMLv
-
 #include <seiscomp/processing/amplitudes/MLv.h>
 
 
 using namespace Seiscomp::Math;
 
+
 namespace Seiscomp {
 namespace Processing {
 
 
-IMPLEMENT_SC_CLASS_DERIVED(AmplitudeProcessor_MLv, AbstractAmplitudeProcessor_ML, "AmplitudeProcessor_MLv");
 REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_MLv, "MLv");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -78,5 +75,4 @@ bool AmplitudeProcessor_MLv::computeAmplitude(const DoubleArray &data,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
-
 }

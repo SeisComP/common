@@ -18,9 +18,6 @@
  ***************************************************************************/
 
 
-
-#define SEISCOMP_COMPONENT Amplitudems20
-
 #include <seiscomp/processing/amplitudes/Ms20.h>
 #include <seiscomp/math/filter/seismometers.h>
 
@@ -116,7 +113,6 @@ namespace Seiscomp {
 namespace Processing {
 
 
-IMPLEMENT_SC_CLASS_DERIVED(AmplitudeProcessor_ms20, AmplitudeProcessor, "AmplitudeProcessor_ms20");
 REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_ms20, "Ms_20");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

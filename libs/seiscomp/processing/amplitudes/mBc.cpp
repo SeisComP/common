@@ -18,9 +18,6 @@
  ***************************************************************************/
 
 
-
-#define SEISCOMP_COMPONENT AmplitudemBc
-
 #include <seiscomp/processing/amplitudes/mBc.h>
 #include <limits>
 #include "mBc_measure.h"
@@ -31,7 +28,6 @@ namespace Processing {
 
 // #define M_CAPITAL_B_DEFAULT_WINDOW_LENGTH 60 // Same as for mB since it is only a default
 
-IMPLEMENT_SC_CLASS_DERIVED(AmplitudeProcessor_mBc, AmplitudeProcessor_mB, "AmplitudeProcessor_mBc");
 REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_mBc, "mBc");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -49,6 +49,7 @@ REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_MLc2h, "MLc");
 
 namespace {
 
+
 AmplitudeProcessor::AmplitudeValue average(
 	const AmplitudeProcessor::AmplitudeValue &v0,
 	const AmplitudeProcessor::AmplitudeValue &v1)

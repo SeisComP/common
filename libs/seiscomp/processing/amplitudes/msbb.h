@@ -30,8 +30,6 @@ namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_msbb : public AmplitudeProcessor {
-	DECLARE_SC_CLASS(AmplitudeProcessor_msbb)
-
 	public:
 		AmplitudeProcessor_msbb();
 		AmplitudeProcessor_msbb(const Seiscomp::Core::Time& trigger, double duration = 60.);

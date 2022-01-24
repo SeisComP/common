@@ -18,15 +18,11 @@
  ***************************************************************************/
 
 
-
-#define SEISCOMP_COMPONENT AmplitudemB
-
 #include <seiscomp/processing/amplitudes/m_B.h>
 #include <limits>
 
 
 namespace Seiscomp {
-
 namespace Processing {
 
 // 60 s should be OK for rupture durations up to ~100 s.
@@ -36,7 +32,6 @@ namespace Processing {
 // leak into the time window thus contaminating the measurement.
 #define M_CAPITAL_B_DEFAULT_WINDOW_LENGTH 60
 
-IMPLEMENT_SC_CLASS_DERIVED(AmplitudeProcessor_mB, AmplitudeProcessor, "AmplitudeProcessor_mB");
 REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_mB, "mB");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -142,5 +137,4 @@ bool AmplitudeProcessor_mB::computeAmplitude(const DoubleArray &data,
 
 
 }
-
 }

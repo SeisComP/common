@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 
-
 #define SEISCOMP_COMPONENT AmplitudeML
 
 #include <seiscomp/logging/log.h>
@@ -104,9 +103,6 @@ bool computePeak2Peak(const double *data, size_t npts,
 
 
 }
-
-
-IMPLEMENT_SC_ABSTRACT_CLASS_DERIVED(AbstractAmplitudeProcessor_ML, AmplitudeProcessor, "AbstractAmplitudeProcessor_ML");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
