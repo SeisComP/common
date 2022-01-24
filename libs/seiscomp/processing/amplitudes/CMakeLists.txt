@@ -13,7 +13,6 @@ SET(AMPS_SOURCES
 	msbb.cpp
 	Ms20.cpp
 	Mwp.cpp
-	mwp_utils.c
 	sbsnr.cpp
 )
 
@@ -30,7 +29,6 @@ SET(AMPS_HEADERS
 	msbb.h
 	Ms20.h
 	Mwp.h
-	mwp_utils.h
 )
 
 SC_SETUP_LIB_SUBDIR(AMPS)

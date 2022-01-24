@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-
 #define SEISCOMP_COMPONENT AmplitudeMwp
+
 
 #include <seiscomp/processing/amplitudes/Mwp.h>
 #include <seiscomp/math/filter/iirintegrate.h>
@@ -29,49 +29,98 @@
 
 #include <limits>
 
-extern "C" {
-
-#include "mwp_utils.h"
-
-}
 
 using namespace Seiscomp::Math::Filtering::IIR;
 
-namespace Seiscomp {
 
+namespace Seiscomp {
 namespace Processing {
+
 
 namespace {
 
 
-/*
-double calcSlope(DoubleArray& ar, double dt) {
-	double varx = 0.;
-	double covxy = 0.;
-	double tq = 0.;
-	double yq = 0.;
-	int n = ar.size();
+void Mwp_demean(int n, double *f, int i0) {
+	int i;
+	double sum = 0, mean;
 
-	for ( int i = 0; i < ar.size(); ++i ) {
-		tq += i*dt;
-		yq += ar[i];
-	}
+	for (i=0; i<i0; i++)
+			sum += f[i];
+	mean = sum/i0;
 
-	tq /= n;
-	yq /= n;
-
-	for ( int i = 0; i < ar.size() ; ++i ) {
-		varx += pow((i*dt-tq),2);
-		covxy+=(ar[i]-yq)*(i*dt-tq);
-	}
-
-	varx /= n;
-	covxy = covxy/n;
-	double slope = covxy/varx;
-
-	return slope;
+	for (i=0; i<n; i++)
+			f[i] -= mean;
 }
-*/
+
+void Mwp_taper(int n, double *f, int i0) {
+	int i, nn=i0/2;
+	double q = M_PI/nn;
+	for (i=0; i<nn; i++)
+			f[i] *= 0.5*(1-cos(i*q));
+}
+
+void Mwp_integr(int n, double *f, int i0) {
+	int i;
+	double sum = 0;
+
+	for (i=0; i<n; i++) {
+		sum += f[i];
+		f[i] = sum;
+	}
+}
+
+
+void Mwp_scale(int n, double *f, double factor) {
+	int i;
+
+	for (i=0; i<n; i++) {
+		f[i] *= factor;
+	}
+}
+
+
+double Mwp_SNR(int n, double *f, int i0) {
+	int i;
+	double smax = 0, nmax = 0;
+
+	for (i=0; i<i0; i++) {
+		double n = fabs(f[i]);
+		if (n > nmax)
+			nmax = n;
+	}
+	for (i=i0; i<n; i++) {
+		double s = fabs(f[i]);
+		if (s > smax)
+			smax = s;
+	}
+
+	return smax/nmax;
+}
+
+
+double Mwp_amplitude(int n, double *f, int i0, int *pos) {
+	int i;
+	double smax = 0;
+	*pos = i0;
+
+	for (i=i0; i<n; i++) {
+		double s = fabs(f[i]);
+		if (s > smax) {
+			*pos = i;
+			smax = s;
+		}
+	}
+
+	return smax;
+}
+
+
+void Mwp_double_integration(int n, double *f, int i0, double fsamp) {
+	Mwp_integr(n, f, i0);
+	Mwp_integr(n, f, i0);
+	Mwp_scale (n, f, 1/(fsamp*fsamp));
+}
+
 
 }
 
