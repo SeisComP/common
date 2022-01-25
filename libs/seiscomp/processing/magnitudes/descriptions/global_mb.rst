@@ -1,4 +1,4 @@
-Compare also with the :ref:`mB magnitude <global_m_B>`.
+Compare also with the :ref:`mB magnitude <global_mb_bb>`.
 
 
 Amplitude
@@ -60,7 +60,8 @@ removed before forming the mean.
 Configuration
 -------------
 
-Adjust the configurable parameters in global bindings in the mB section or use :ref:`global.cfg`
+Adjust the configurable parameters in global bindings in the mB section or use
+:file:`global.cfg`
 as :ref:`global_mlv`. Add mb to the list of computed amplitudes and magnitudes in the configuration of
 :ref:`scamp` and :ref:`scmag` and in :ref:`scesv` or :ref:`scolv` for visibility.
 

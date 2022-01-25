@@ -75,11 +75,11 @@
 			<group name="queues">
 				<description>
 				Set the parameters for each messaging queue. The queues are used
-				when listed in the :confval:`queues` parameter. Several queues
+				when listed in the "queues" parameter. Several queues
 				can be used in parallel. For queues with without databases leave
 				the processor parameters empty.
 				</description>
-				<struct type="Queue">
+				<struct type="Queue" link="queues">
 					<parameter name="groups" type="list:string">
 						<description>
 						Define the list of message groups added to the queue. If unset
