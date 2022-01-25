@@ -28,6 +28,7 @@ If the epicentral is known, the length of the time window after the P wave onset
 where :math:`\Delta` is the epicentral distance. The methods for measuring
 amplitudes are configurable in the global bindings.
 
+
 Station Magnitude
 -----------------
 
@@ -65,8 +66,10 @@ removed before forming the mean.
 Configuration
 -------------
 
-Adjust the configurable parameters in global bindings in the mB section or use :ref:`global.cfg`
-as :ref:`global_mlv`. Add mB to the list of computed amplitudes and magnitudes in the configuration of
+Adjust the configurable parameters in global bindings in the mB section or use
+:file:`global.cfg`
+as :ref:`global_mlv`. Add mB to the list of computed amplitudes and magnitudes
+in the configuration of
 :ref:`scamp` and :ref:`scmag` and in :ref:`scesv` or :ref:`scolv` for visibility.
 
 

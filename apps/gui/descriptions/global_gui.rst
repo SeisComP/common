@@ -45,9 +45,9 @@ Colors
 
    color = red | RRGGBBAA | "rgb(red,green,blue)" | "rgba(red,green,blue,alpha)"
 
-Colors are specified either by :term:`color keyword names`, in a hexadecimal
-notation or in a rgb(a) notation. When using the rgb(a) notation it should be
-quoted. Otherwise the configuration
+Colors are specified either by :term:`color keyword names <color keyword name>`,
+in a hexadecimal notation or in a rgb(a) notation. When using the rgb(a)
+notation it should be quoted. Otherwise the configuration
 parser would tokenize the value into 3 or 4 strings due to the comma.
 
 

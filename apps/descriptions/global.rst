@@ -57,9 +57,9 @@ is described in the :ref:`concepts section <concepts>`.
 Bindings
 ========
 
-Bindings provide specific configurations per :ref:`module <global_bindings_module>` and
+Bindings provide specific configurations per :ref:`module <global_module_config>` and
 station and even stream. Read the :ref:`bindings section <global_bindings_config>`
-in concepts for more details.
+in concepts for more details on bindings.
 
 
 Extensions
