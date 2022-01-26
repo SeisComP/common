@@ -1220,8 +1220,6 @@ void Application::idle() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::done() {
-	_exitRequested = true;
-
 	if ( _connection && _connection->isConnected() ) {
 		if ( _enableStartStopMessages ) {
 			ApplicationStatusMessage stat(name(), _messagingUser, FINISHED);
@@ -1249,8 +1247,10 @@ void Application::done() {
 	_query = nullptr;
 	_database = nullptr;
 
-	Inventory::Instance()->setInventory(nullptr);
-	ConfigDB::Instance()->setConfig(nullptr);
+	Inventory::Reset();
+	ConfigDB::Reset();
+
+	System::Application::done();
 
 	SEISCOMP_DEBUG("Leaving ::done");
 }
