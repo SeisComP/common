@@ -446,12 +446,9 @@ void Application::handleRecord(Record *rec) {
 
 	RecordPtr tmp(rec);
 
-	if ( rec->data() == nullptr ) return;
-
-	if ( !_waveformBuffer.feed(rec) ) return;
-
-	if ( _waveformBuffer.addedNewStream() )
-		handleNewStream(rec);
+	if ( !rec || !rec->data() ) {
+		return;
+	}
 
 	_registrationBlocked = true;
 
@@ -489,6 +486,13 @@ void Application::handleRecord(Record *rec) {
 		WaveformProcessorPtr wp = _waveformProcessorRemovalQueue.front();
 		_waveformProcessorRemovalQueue.pop_front();
 		removeProcessor(wp.get());
+	}
+
+	// Add the record to the buffer
+	if ( _waveformBuffer.feed(rec) ) {
+		if ( _waveformBuffer.addedNewStream() ) {
+			handleNewStream(rec);
+		}
 	}
 
 	// Register pending processors
