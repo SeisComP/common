@@ -153,10 +153,23 @@ PluginRegistry::~PluginRegistry() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PluginRegistry *PluginRegistry::Instance() {
-	if ( _instance == nullptr )
+	if ( !_instance ) {
 		_instance = new PluginRegistry();
+	}
 
 	return _instance;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PluginRegistry::Reset() {
+	if ( _instance ) {
+		delete _instance;
+		_instance = nullptr;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

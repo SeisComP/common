@@ -80,6 +80,7 @@ class SC_SYSTEM_CORE_API PluginRegistry {
 	public:
 		//! Returns the global instance
 		static PluginRegistry *Instance();
+		static void Reset();
 
 		//! Adds a plugin to be loaded
 		void addPluginName(const std::string &name);
