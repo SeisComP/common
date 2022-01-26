@@ -70,9 +70,9 @@ System::HostInfo HostInfo;
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Queue::Queue(const std::string &name, uint64_t maxPayloadSize)
 : _name(name)
-, _processedMessageDispatcher(NULL)
+, _processedMessageDispatcher(nullptr)
 , _sequenceNumber(0)
-, _messageProcessor(NULL)
+, _messageProcessor(nullptr)
 , _allocatedClientHeap(0)
 , _sohInterval(12)
 , _inactivityLimit(36)
@@ -85,7 +85,7 @@ Queue::Queue(const std::string &name, uint64_t maxPayloadSize)
 	_results.resize(10);
 
 	// Register MASTER name to block it
-	_clients.insert(senderName(), NULL);
+	_clients.insert(senderName(), nullptr);
 
 	_created = Core::Time::GMT();
 
@@ -101,10 +101,8 @@ Queue::Queue(const std::string &name, uint64_t maxPayloadSize)
 Queue::~Queue() {
 	shutdown();
 
-	{
-		MessageProcessors::iterator it;
-		for ( it = _messageProcessors.begin(); it != _messageProcessors.end(); ++it )
-			(*it)->_queue = NULL;
+	for ( MessageProcessorPtr &proc : _messageProcessors ) {
+		proc->_queue = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -114,7 +112,7 @@ Queue::~Queue() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Queue::add(MessageProcessor *proc) {
-	if ( proc->_queue != NULL )
+	if ( proc->_queue )
 		return false;
 
 	_processors.push_back(proc);
@@ -275,7 +273,7 @@ bool Queue::publish(Client *sender, Message *msg) {
 
 	//NOTIFY(0, publish, sender, msg);
 
-	if ( sender != NULL ) {
+	if ( sender ) {
 		// Increase the senders sequence number
 		++sender->_sequenceNumber;
 
@@ -291,10 +289,10 @@ bool Queue::publish(Client *sender, Message *msg) {
 		}
 	}
 
-	Groups::iterator git = _groups.find(msg->target);
+	auto git = _groups.find(msg->target);
 	if ( git == _groups.end() ) {
 		// Peer to peer
-		Clients::iterator cit = _clients.find(msg->target);
+		auto cit = _clients.find(msg->target);
 		if ( cit == _clients.end() )
 			return false;
 
@@ -305,12 +303,11 @@ bool Queue::publish(Client *sender, Message *msg) {
 	}
 	else {
 		// Distribute to members
-		Group *group = git->second.get();
+		auto group = git->second.get();
 		msg->_internalGroupPtr = group;
 
-		Group::Members::iterator mit;
-		for ( mit = group->_members.begin(); mit != group->_members.end(); ++mit ) {
-			(*mit)->publish(sender, msg);
+		for ( auto client : group->_members ) {
+			client->publish(sender, msg);
 			// Each message sent to a member of a particular group is tagged
 			// as sent.
 			++git->second->_txMessages.sent;
@@ -341,7 +338,6 @@ Queue::Result Queue::subscribe(Client *client, const std::string &groupName) {
 		return GroupAlreadySubscribed;
 
 	Message msg;
-	Group::Members::iterator mit;
 
 	msg.sender = senderName();
 	msg.target = group->name();
@@ -349,9 +345,10 @@ Queue::Result Queue::subscribe(Client *client, const std::string &groupName) {
 
 	client->enter(group, client, &msg);
 
-	for ( mit = group->_members.begin(); mit != group->_members.end(); ++mit ) {
-		if ( (*mit)->wantsMembershipInformation() && client != *mit )
-			(*mit)->enter(group, client, &msg);
+	for ( auto member : group->_members ) {
+		if ( member ->wantsMembershipInformation() && client != member ) {
+			member ->enter(group, member , &msg);
+		}
 	}
 
 	return Success;
@@ -374,7 +371,6 @@ Queue::Result Queue::unsubscribe(Client *client, const std::string &groupName) {
 		return GroupNotSubscribed;
 
 	Message msg;
-	Group::Members::iterator mit;
 
 	msg.sender = senderName();
 	msg.target = group->name();
@@ -382,9 +378,10 @@ Queue::Result Queue::unsubscribe(Client *client, const std::string &groupName) {
 
 	client->leave(group, client, &msg);
 
-	for ( mit = group->_members.begin(); mit != group->_members.end(); ++mit ) {
-		if ( (*mit)->wantsMembershipInformation() && client != *mit )
-			(*mit)->leave(group, client, &msg);
+	for ( auto member : group->_members ) {
+		if ( member->wantsMembershipInformation() && client != member ) {
+			member->leave(group, client, &msg);
+		}
 	}
 
 	return Success;
@@ -400,7 +397,7 @@ Message *Queue::getMessage(SequenceNumber sequenceNumber,
 	SequenceNumber firstSeqNo, lastSeqNo, idx;
 
 	if ( _messages.empty() )
-		return NULL;
+		return nullptr;
 
 	firstSeqNo = _messages.front()->sequenceNumber;
 	lastSeqNo = _messages.back()->sequenceNumber;
@@ -415,7 +412,7 @@ Message *Queue::getMessage(SequenceNumber sequenceNumber,
 			sequenceNumber = firstSeqNo;
 
 		if ( sequenceNumber > lastSeqNo )
-			return NULL;
+			return nullptr;
 	}
 
 	idx = sequenceNumber-firstSeqNo;
@@ -440,7 +437,7 @@ Message *Queue::getMessage(SequenceNumber sequenceNumber,
 		++idx;
 	}
 
-	return NULL;
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -488,10 +485,11 @@ Queue::Result Queue::connect(Client *client,
 	}
 
 	if ( !_connectionProcessors.empty() ) {
-		MessageProcessors::iterator it;
-		for ( it = _connectionProcessors.begin(); it != _connectionProcessors.end(); ++it )
-			if ( !(*it)->acceptConnection(client, inParams, inParamCount, outParams) )
+		for ( auto proc : _connectionProcessors ) {
+			if ( !proc->acceptConnection(client, inParams, inParamCount, outParams) ) {
 				return ClientNotAccepted;
+			}
+		}
 	}
 
 	client->_created = Core::Time::GMT();
@@ -510,24 +508,21 @@ Queue::Result Queue::connect(Client *client,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Queue::Result Queue::disconnect(Client *client) {
 	Seiscomp::Core::Time now = Seiscomp::Core::Time::GMT();
-	Groups::iterator it;
-	for ( it = _groups.begin(); it != _groups.end(); ++it ) {
-		Group *group = it->second.get();
-		if ( !group->removeMember(client) ) continue;
+	for ( auto group : _groups ) {
+		if ( !group.second->removeMember(client) ) continue;
 
 		// Notify all remaining clients about the membership change
 		Message msg;
-		Group::Members::iterator mit;
 
-		for ( mit = group->_members.begin(); mit != group->_members.end(); ++mit ) {
-			if ( (*mit)->wantsMembershipInformation() ) {
+		for ( auto member : group.second->_members ) {
+			if ( member->wantsMembershipInformation() ) {
 				if ( msg.sender.empty() ) {
 					msg.sender = senderName();
-					msg.target = group->name();
+					msg.target = group.second->name();
 					msg.timestamp = now;
 				}
 
-				(*mit)->leave(group, client, &msg);
+				member->leave(group.second.get(), client, &msg);
 			}
 		}
 	}
@@ -540,17 +535,15 @@ Queue::Result Queue::disconnect(Client *client) {
 	}
 
 	_clients.erase(_clients.find(client->_name.c_str()));
-	client->_queue = NULL;
+	client->_queue = nullptr;
 
 	SEISCOMP_DEBUG("Disconnect client '%s'" , client->_name.c_str());
 
 	{
 		Message msg;
-		Clients::iterator cit;
 
-		for ( cit = _clients.begin(); cit != _clients.end(); ++cit ) {
-			if ( (cit.value() != NULL)
-			  && cit.value()->wantsMembershipInformation() ) {
+		for ( auto cit = _clients.begin(); cit != _clients.end(); ++cit ) {
+			if ( cit.value() && cit.value()->wantsMembershipInformation() ) {
 				if ( msg.sender.empty() ) {
 					msg.sender = senderName();
 					msg.timestamp = now;
@@ -579,10 +572,10 @@ void Queue::flushProcessedMessages() {
 			Clients::iterator cit = _clients.find(result.second->sender);
 			if ( cit == _clients.end() )
 				// Client not registered anymore, clear it
-				result.first = NULL;
+				result.first = nullptr;
 			else if ( cit.value() != result.first )
 				// It is another instance due to reconnect, clear it
-				result.first = NULL;
+				result.first = nullptr;
 			publish(result.first, result.second);
 		}
 	}
@@ -603,8 +596,8 @@ void Queue::returnToSender(Message *msg, BaseObject *obj) {
 	msg->object = obj;
 
 	// Reset other attributes
-	msg->encodingWebSocket = NULL;
-	msg->_internalGroupPtr = NULL;
+	msg->encodingWebSocket = nullptr;
+	msg->_internalGroupPtr = nullptr;
 
 	// Disable self discarding as the sender has changed
 	msg->selfDiscard = false;
@@ -657,12 +650,13 @@ void Queue::process(ProcessingTask &task) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Queue::taskReady(const ProcessingTask &task) {
-	if ( _processedMessageDispatcher != NULL ) {
+	if ( _processedMessageDispatcher ) {
 		_results.push(task);
 		_processedMessageDispatcher->messageAvailable(this);
 	}
-	else
+	else {
 		publish(task.first, task.second);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -671,8 +665,14 @@ void Queue::taskReady(const ProcessingTask &task) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Queue::activate() {
-	if ( _messageProcessor ) return;
-	if ( _messageProcessors.empty() ) return;
+	if ( _messageProcessor ) {
+		return;
+	}
+
+	if ( _messageProcessors.empty() ) {
+		return;
+	}
+
 	// Start the processing thread
 	_messageProcessor = new thread(bind(&Queue::processingLoop, this));
 }
@@ -689,27 +689,26 @@ void Queue::shutdown() {
 	_tasks.close();
 	_results.close();
 
-	if ( _messageProcessor != NULL ) {
+	if ( _messageProcessor ) {
 		_messageProcessor->join();
 		delete _messageProcessor;
-		_messageProcessor = NULL;
+		_messageProcessor = nullptr;
 	}
 
 	// Disconnect all clients
 	{
 		Clients::iterator it;
 		for ( it = _clients.begin(); it != _clients.end(); ++it ) {
-			if ( it.value() != NULL )
-				it.value()->_queue = NULL;
+			if ( it.value() ) {
+				it.value()->_queue = nullptr;
+			}
 		}
 		_clients.clear();
 	}
 
 	// Remove all members from all groups
-	{
-		Groups::iterator it;
-		for ( it = _groups.begin(); it != _groups.end(); ++it )
-			it->second->clearMembers();
+	for ( auto it = _groups.begin(); it != _groups.end(); ++it ) {
+		it->second->clearMembers();
 	}
 
 	// Clear remaining tasks
@@ -761,7 +760,7 @@ void Queue::timeout() {
 		Client *client = cit.value();
 		++cit;
 
-		if ( client == NULL ) continue;
+		if ( !client ) continue;
 
 		if ( client->_ackInitiated ) {
 			Core::TimeSpan dt = now - client->_ackInitiated;
@@ -824,7 +823,7 @@ void Queue::timeout() {
 
 			Group::Members::iterator mit;
 			for ( mit = group->_members.begin(); mit != group->_members.end(); ++mit ) {
-				double lengthMessage = (*mit)->publish(NULL, &sohMessage);
+				double lengthMessage = (*mit)->publish(nullptr, &sohMessage);
 				// Each message sent to a member of a particular group is tagged
 				// as sent.
 				++git->second->_txMessages.sent;

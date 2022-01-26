@@ -37,6 +37,7 @@
 #include <seiscomp/broker/messageprocessor.h>
 
 
+using namespace std;
 using namespace Seiscomp;
 using namespace Seiscomp::System;
 
@@ -44,22 +45,24 @@ using namespace Seiscomp::System;
 namespace {
 
 
-std::string SchemaVersion = Core::Version(DataModel::Version::Major, DataModel::Version::Minor).toString();
+auto SchemaVersion = Core::Version(DataModel::Version::Major, DataModel::Version::Minor).toString();
 
 
 class DBStore : public Messaging::Broker::MessageProcessor {
 	public:
-		DBStore() : _operational(false) {
+		DBStore() {
 			setMode(Messages | Connections);
 		}
 
-		virtual bool init(const Config::Config &cfg, const std::string &configPrefix) override {
+		bool init(const Config::Config &cfg, const string &configPrefix) override {
 			ConfigSettingsLinker linker;
 			linker.configPrefix = configPrefix;
 			linker.proc().get(cfg);
 			_settings.accept(linker);
 
-			if ( !linker ) return false;
+			if ( !linker ) {
+				return false;
+			}
 
 			if ( _settings.driver.empty() ) {
 				SEISCOMP_ERROR("'%sdriver' is not set", configPrefix.c_str());
@@ -96,20 +99,21 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 		}
 
 
-		virtual bool acceptConnection(Messaging::Broker::Client *,
-		                              const KeyCStrValues, int,
-		                              KeyValues &outParams) override {
+		bool acceptConnection(Messaging::Broker::Client *,
+		                      const KeyCStrValues, int,
+		                      KeyValues &outParams) override {
 			outParams.push_back(KeyValuePair("DB-Schema-Version", SchemaVersion));
-			if ( !_settings.read.empty() )
+			if ( !_settings.read.empty() ) {
 				outParams.push_back(KeyValuePair("DB-Access", _settings.driver + "://" + _settings.read));
+			}
 			return true;
 		}
 
 
-		virtual void dropConnection(Messaging::Broker::Client *) override {}
+		void dropConnection(Messaging::Broker::Client *) override {}
 
 
-		virtual bool process(Messaging::Broker::Message *tmsg) override {
+		bool process(Messaging::Broker::Message *tmsg) override {
 			SEISCOMP_DEBUG("Writing message to database");
 
 			if ( _firstMessage ) {
@@ -119,21 +123,22 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 
 			if ( !tmsg->object ) {
 				tmsg->decode();
-				if ( !tmsg->object )
+				if ( !tmsg->object ) {
 					// Nothing to do
 					return true;
+				}
 			}
 
-			Core::Message *msg = Core::Message::Cast(tmsg->object.get());
+			auto msg = Core::Message::Cast(tmsg->object.get());
 			if ( !msg ) {
 				// Just ignore unknown messages
 				return true;
 			}
 
-			int error = 0;
-			for ( Core::MessageIterator it = msg->iter(); *it != NULL; ++it ) {
-				DataModel::Notifier *notifier = DataModel::Notifier::Cast(*it);
-				if ( notifier != NULL && notifier->object() != NULL ) {
+			// int error = 0;
+			for ( auto it = msg->iter(); *it; ++it ) {
+				auto notifier = DataModel::Notifier::Cast(*it);
+				if ( notifier && notifier->object() ) {
 					bool result = false;
 					while ( !result ) {
 						switch ( notifier->operation() ) {
@@ -141,18 +146,24 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 								++_statistics.addedObjects;
 								DataModel::DatabaseObjectWriter writer(*_dbArchive.get());
 								result = writer(notifier->object(), notifier->parentID());
-								if ( !result ) --error;
+								// if ( !result ) {
+								// 	--error;
+								// }
 							}
 								break;
 							case DataModel::OP_REMOVE:
 								++_statistics.removedObjects;
 								result = _dbArchive->remove(notifier->object(), notifier->parentID());
-								if ( !result ) --error;
+								// if ( !result ) {
+								// 	--error;
+								// }
 								break;
 							case DataModel::OP_UPDATE:
 								++_statistics.updatedObjects;
 								result = _dbArchive->update(notifier->object(), notifier->parentID());
-								if ( !result ) --error;
+								// if ( !result ) {
+								// 	--error;
+								// }
 								break;
 							default:
 								break;
@@ -166,8 +177,9 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 									SEISCOMP_INFO("Stopping dbstore");
 									break;
 								}
-								else
+								else {
 									SEISCOMP_INFO("Reconnected to database: %s", _settings.write.c_str());
+								}
 							}
 							else {
 								SEISCOMP_WARNING(
@@ -191,14 +203,15 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 			return true;
 		}
 
-		virtual bool close() override {
-			if ( _db && _db->isConnected() )
+		bool close() override {
+			if ( _db && _db->isConnected() ) {
 				_db->disconnect();
+			}
 			_operational = false;
 			return true;
 		}
 
-		virtual void getInfo(const Core::Time &, std::ostream &os) override {
+		void getInfo(const Core::Time &, ostream &os) override {
 			double elapsed = (double)_stopWatch.elapsed();
 			if ( elapsed > 0.0 ) {
 				double aa = _statistics.addedObjects / elapsed;
@@ -227,8 +240,9 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 		bool connect(int retries = 10) {
 			int counter = 0;
 			while ( _operational && !_db->connect(_settings.write.c_str()) ) {
-				if ( !counter )
+				if ( !counter ) {
 					SEISCOMP_ERROR("Database check... connection refused, retry");
+				}
 
 				if ( counter >= retries ) {
 					SEISCOMP_ERROR("Database check... connection not available, abort");
@@ -248,10 +262,11 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 				return false;
 			}
 
-			if ( _dbArchive->hasError() )
+			if ( _dbArchive->hasError() ) {
 				return false;
+			}
 
-			Core::Version localSchemaVersion = Core::Version(DataModel::Version::Major, DataModel::Version::Minor);
+			auto localSchemaVersion = Core::Version(DataModel::Version::Major, DataModel::Version::Minor);
 			if ( localSchemaVersion > _dbArchive->version() ) {
 				SEISCOMP_WARNING("Database schema v%s is older than schema v%s "
 				                 "currently supported. Information will be lost when "
@@ -263,12 +278,14 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 					               "do not match.");
 					return false;
 				}
-				else
+				else {
 					SEISCOMP_INFO("Strict version check is disabled and different "
 					              "schema versions are not treated as error");
+				}
 			}
-			else
+			else {
 				SEISCOMP_DEBUG("Database check... ok");
+			}
 
 			return true;
 		}
@@ -279,10 +296,10 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 			Settings()
 			: strictVersionMatch(true) {}
 
-			std::string driver;
-			std::string write;
-			std::string read;
-			bool        strictVersionMatch;
+			string driver;
+			string write;
+			string read;
+			bool   strictVersionMatch;
 
 			void accept(ConfigSettingsLinker &linker) {
 				linker
@@ -307,8 +324,8 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 		Settings                      _settings;
 		IO::DatabaseInterfacePtr      _db;
 		DataModel::DatabaseArchivePtr _dbArchive;
-		bool                          _operational;
-		bool                          _firstMessage;
+		bool                          _operational{false};
+		bool                          _firstMessage{true};
 
 		mutable Util::StopWatch       _stopWatch;
 		mutable Statistics            _statistics;

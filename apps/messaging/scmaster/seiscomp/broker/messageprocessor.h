@@ -59,7 +59,7 @@ class SC_BROKER_API MessageProcessor : public Processor {
 	// ----------------------------------------------------------------------
 	public:
 		enum Constants {
-			MaxAdditionalParams = 100,
+			MaxAdditionalParams = 100
 		};
 
 		enum Mode {
@@ -68,11 +68,11 @@ class SC_BROKER_API MessageProcessor : public Processor {
 			Connections = 0x02
 		};
 
-		typedef std::pair<const char*,const char*> KeyValueCStrPair;
-		typedef KeyValueCStrPair *KeyCStrValues;
+		using KeyValueCStrPair = std::pair<const char*,const char*>;
+		using KeyCStrValues = KeyValueCStrPair *;
 
-		typedef std::pair<std::string,std::string> KeyValuePair;
-		typedef std::vector<KeyValuePair> KeyValues;
+		using KeyValuePair = std::pair<std::string,std::string>;
+		using KeyValues = std::vector<KeyValuePair>;
 
 
 	// ----------------------------------------------------------------------

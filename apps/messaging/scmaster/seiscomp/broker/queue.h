@@ -63,16 +63,16 @@ class SC_BROKER_API Queue {
 	//  Public types
 	// ----------------------------------------------------------------------
 	public:
-		typedef std::vector<std::string> StringList;
-		typedef std::vector<MessageProcessorPtr> MessageProcessors;
+		using StringList = std::vector<std::string>;
+		using MessageProcessors = std::vector<MessageProcessorPtr>;
 
-		typedef MessageProcessor::KeyValueCStrPair KeyValueCStrPair;
-		typedef MessageProcessor::KeyCStrValues KeyCStrValues;
+		using KeyValueCStrPair = MessageProcessor::KeyValueCStrPair;
+		using KeyCStrValues = MessageProcessor::KeyCStrValues;
 
-		typedef MessageProcessor::KeyValuePair KeyValuePair;
-		typedef MessageProcessor::KeyValues KeyValues;
+		using KeyValuePair = MessageProcessor::KeyValuePair;
+		using KeyValues = MessageProcessor::KeyValues;
 
-		enum Contants {
+		enum Constants {
 			MaxAdditionalParams = MessageProcessor::MaxAdditionalParams
 		};
 
@@ -308,8 +308,8 @@ class SC_BROKER_API Queue {
 	//  Private interface
 	// ----------------------------------------------------------------------
 	private:
-		typedef std::pair<Client*,Message*> ProcessingTask;
-		typedef Utils::BlockingDequeue<ProcessingTask> TaskQueue;
+		using ProcessingTask = std::pair<Client*,Message*>;
+		using TaskQueue = Utils::BlockingDequeue<ProcessingTask>;
 
 		/**
 		 * @brief Publishes a message from a client to all registered clients
@@ -359,10 +359,10 @@ class SC_BROKER_API Queue {
 	//  Private members
 	// ----------------------------------------------------------------------
 	private:
-		typedef std::map<std::string, GroupPtr> Groups;
-		typedef circular_buffer<MessagePtr> MessageRing;
-		typedef KHashSet<const char*> ClientNames;
-		typedef KHashMap<const char*, Client*> Clients;
+		using Groups = std::map<std::string, GroupPtr>;
+		using MessageRing = circular_buffer<MessagePtr>;
+		using ClientNames = KHashSet<const char*>;
+		using Clients = KHashMap<const char*, Client*>;
 
 		std::string          _name;
 		MessageProcessors    _processors;
