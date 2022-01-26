@@ -64,6 +64,7 @@ class SC_SYSTEM_CLIENT_API Inventory {
 	// ----------------------------------------------------------------------
 	public:
 		static Inventory* Instance();
+		static void Reset();
 
 		void load(const char *filename);
 		void load(DataModel::DatabaseReader*);
