@@ -1098,6 +1098,8 @@ int Application::exec() {
 			_returnCode = 1;
 	}
 
+	_exitRequested = true;
+
 	done();
 
 	if ( !_baseSettings.logging.toStdout ) SEISCOMP_NOTICE("Shutdown");
@@ -1354,7 +1356,7 @@ bool Application::handleInitializationError(int) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::done() {
-	_exitRequested = true;
+	PluginRegistry::Reset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
