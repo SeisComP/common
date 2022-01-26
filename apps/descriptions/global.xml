@@ -841,58 +841,6 @@
 						</description>
 					</parameter>
 				</group>
-				<group name="ML">
-					<parameter name="absMax" type="boolean" default="true">
-						<description>
-						Whether to use the absolute maximum of the filtered WA
-						trace or the difference of the maximum and minimum value
-						of the signal window.
-						</description>
-					</parameter>
-					<parameter name="measureType" type="string" default="AbsMax">
-						<description>
-						This parameter allows to set how the amplitude is measured.
-						Either by finding the absolute maximum of the demeaned
-						trace (AbsMax), the difference of maximum and minimum of
-						the signal window (MinMax) or the maximum peak-trough
-						of one cycle (PeakTrough).
-
-						Note that if absMax is already explicitly configured, this
-						parameter has no effect.
-						</description>
-					</parameter>
-					<parameter name="combiner" type="string" default="average">
-						<description>
-						Defines the combiner operation for the amplitudes measured
-						on either both horizontal component. The default is to
-						use the average. Allowed values are: &quot;average&quot;,
-						&quot;min&quot;, &quot;max&quot; and &quot;geometric_mean&quot;.
-						&quot;geometric_mean&quot; corresponds to averaging single-trace
-						magnitudes instead of their amplitudes.
-						</description>
-					</parameter>
-				</group>
-				<group name="MLv">
-					<parameter name="absMax" type="boolean" default="true">
-						<description>
-						Whether to use the absolute maximum of the filtered WA
-						trace or the difference of the maximum and minimum value
-						of the signal window.
-						</description>
-					</parameter>
-					<parameter name="measureType" type="string" default="AbsMax">
-						<description>
-						This parameter allows to set how the amplitude is measured.
-						Either by finding the absolute maximum of the demeaned
-						trace (AbsMax), the difference of maximum and minimum of
-						the signal window (MinMax) or the maximum peak-trough
-						of one cycle (PeakTrough).
-
-						Note that if absMax is already explicitly configured, this
-						parameter has no effect.
-						</description>
-					</parameter>
-				</group>
 				<struct type="Amplitude type profile">
 					<description>
 					An amplitude profile configures global parameters for a
