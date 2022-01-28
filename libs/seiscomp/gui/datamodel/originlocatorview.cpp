@@ -4329,7 +4329,16 @@ void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
 			if ( !Client::Inventory::Instance()->getStation(Pick::Find(arrival->pickID())) ) {
 				changeArrivalEnableState(i, false);
 			}
-			else {
+		}
+
+		// Preset the locator type and profile
+		int idx = _ui.cbLocator->findText(_currentOrigin->methodID().c_str());
+		if ( idx >= 0 ) {
+			_ui.cbLocator->setCurrentIndex(idx);
+
+			idx = _ui.cbLocatorProfile->findText(_currentOrigin->earthModelID().c_str());
+			if ( idx >= 0 ) {
+				_ui.cbLocatorProfile->setCurrentIndex(idx);
 			}
 		}
 	}
