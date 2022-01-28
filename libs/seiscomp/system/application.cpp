@@ -452,6 +452,8 @@ Application::Application(int argc, char** argv) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Application::~Application() {
+	PluginRegistry::Reset();
+
 	closeLogging();
 
 	if ( _instance == this )
@@ -1355,9 +1357,7 @@ bool Application::handleInitializationError(int) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::done() {
-	PluginRegistry::Reset();
-}
+void Application::done() {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
