@@ -608,6 +608,7 @@
     <addaction name="actionDefaultView" />
     <addaction name="actionShowUsedStations" />
     <addaction name="actionShowTraceValuesInNmS" />
+    <addaction name="actionShowTheoreticalArrivals" />
     <addaction name="separator" />
     <addaction name="menu_Zoomtrace" />
     <addaction name="menuTraces" />
@@ -641,6 +642,17 @@
    <addaction name="menu_Navigation" />
    <addaction name="menu_Filter" />
    <addaction name="menu_Locate" />
+  </widget>
+  <widget class="QToolBar" name="toolBarTTT" >
+   <property name="windowTitle" >
+    <string>Travel times</string>
+   </property>
+   <property name="orientation" >
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <attribute name="toolBarArea" >
+    <number>4</number>
+   </attribute>
   </widget>
   <widget class="QToolBar" name="toolBarFilter" >
    <property name="orientation" >
@@ -1055,6 +1067,26 @@
    </property>
    <property name="shortcut" >
     <string>F5</string>
+   </property>
+  </action>
+  <action name="actionShowTheoreticalArrivals" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Show theoretical arrivals</string>
+   </property>
+   <property name="iconText" >
+    <string>Show theoretical arrivals</string>
+   </property>
+   <property name="toolTip" >
+    <string>Shows theoretical arrivals as blue bars in the traces</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+T</string>
    </property>
   </action>
   <action name="actionShowAllStations" >

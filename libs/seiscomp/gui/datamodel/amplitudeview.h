@@ -190,6 +190,9 @@ class SC_GUI_API AmplitudeRecordLabel : public StandardRecordLabel {
 }
 
 
+class AmplitudeViewPrivate;
+
+
 class SC_GUI_API AmplitudeView : public QMainWindow {
 	public:
 		struct SC_GUI_API Config {
@@ -247,7 +250,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		void selectTrace(const Seiscomp::DataModel::WaveformStreamID &wid);
 		void selectTrace(const std::string &code);
 
-		const std::string &currentMagnitudeType() const { return _magnitudeType; }
+		const std::string &currentMagnitudeType() const;
 
 		void setStrongMotionCodes(const std::vector<std::string> &codes);
 
@@ -290,6 +293,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		void updateItemRecordState(const Seiscomp::Record*);
 		void updateRecordValue(Seiscomp::Core::Time);
 		void showTraceScaleToggled(bool);
+		void showTheoreticalArrivals(bool);
 
 		void limitFilterToZoomTrace(bool);
 
@@ -377,6 +381,9 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 
 		void openConnectionInfo(const QPoint &);
 
+		void ttInterfaceChanged(QString);
+		void ttTableChanged(QString);
+
 
 	protected:
 		void showEvent(QShowEvent* event);
@@ -385,6 +392,8 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 
 
 	private:
+		void figureOutTravelTimeTable();
+
 		void init();
 
 		RecordViewItem* addStream(const DataModel::SensorLocation *,
@@ -399,7 +408,11 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		void queueStream(const DataModel::WaveformStreamID& streamID, int component);
 
 		void setupItem(const char comps[3], RecordViewItem*);
-		bool addRawAmplitude(Seiscomp::DataModel::Pick*);
+		bool addTheoreticalArrivals(RecordViewItem*,
+		                            const std::string& netCode,
+		                            const std::string& staCode,
+		                            const std::string& locCode);
+		bool fillTheoreticalArrivals();
 
 		void resetState();
 
@@ -457,88 +470,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		                           const Processing::AmplitudeProcessor::Result &);
 
 	private:
-		struct WaveformRequest {
-			WaveformRequest(const Core::TimeWindow &tw,
-			                const DataModel::WaveformStreamID &sid,
-			                char c)
-			: timeWindow(tw), streamID(sid), component(c) {}
-
-			Core::TimeWindow            timeWindow;
-			DataModel::WaveformStreamID streamID;
-			int                         component;
-		};
-
-		typedef std::map<std::string, PrivateAmplitudeView::AmplitudeRecordLabel*> RecordItemMap;
-		typedef std::list<WaveformRequest> WaveformStreamList;
-
-		Seiscomp::DataModel::DatabaseQuery *_reader;
-		QSet<QString> _stations;
-		QComboBox *_comboFilter;
-		QLabel    *_labelAmpType;
-		QComboBox *_comboAmpType;
-		QLabel    *_labelAmpCombiner;
-		QComboBox *_comboAmpCombiner;
-		QDoubleSpinBox *_spinDistance;
-		QCheckBox      *_checkOverrideSNR;
-		QDoubleSpinBox *_spinSNR;
-
-		QLineEdit *_searchStation;
-		QLabel *_searchLabel;
-
-		ConnectionStateLabel *_connectionState;
-		RecordView *_recordView;
-		RecordWidget *_currentRecord;
-		TimeScale *_timeScale;
-		DataModel::OriginPtr _origin;
-		DataModel::MagnitudePtr _magnitude;
-		std::string _magnitudeType;
-		std::string _amplitudeType;
-
-		TravelTimeTable _ttTable;
-		double _minTime, _maxTime;
-		double _minDist;
-		double _maxDist;
-
-		float _zoom;
-		float _currentAmplScale;
-		QString _lastRecordURL;
-		bool _centerSelection;
-		bool _checkVisibility;
-		bool _acquireNextStations;
-		int _lastFilterIndex;
-		bool _autoScaleZoomTrace;
-		bool _showProcessedData;
-		int _currentSlot;
-		RecordWidget::Filter *_currentFilter;
-		std::string _currentFilterStr;
-
-		int _lastFoundRow;
-		QColor _searchBase, _searchError;
-
-		WaveformStreamList _nextStreams;
-		WaveformStreamList _allStreams;
-
-		std::vector<std::string> _broadBandCodes;
-
-		RecordItemMap _recordItemLabels;
-
-		mutable ObjectChangeList<DataModel::Amplitude> _changedAmplitudes;
-		std::vector<DataModel::AmplitudePtr> _amplitudesInTime;
-
-		QVector<RecordStreamThread*> _acquisitionThreads;
-
-		std::vector<std::string> _strongMotionCodes;
-
-		RecordWidgetDecorator *_zoomDecorator;
-		RecordWidgetDecorator *_generalDecorator;
-
-		Config _config;
-
-		::Ui::AmplitudeView _ui;
-		bool _settingsRestored;
-
-		int _componentMap[3];
-		int _slotCount;
+		AmplitudeViewPrivate *_d_ptr;
 };
 
 

@@ -52,6 +52,8 @@
 #include <limits>
 #include <set>
 
+#include "./amplitudeview_p.h"
+
 
 #ifdef MACOSX
 #include <seiscomp/gui/core/osx.h>
@@ -65,6 +67,10 @@
 #define ITEM_PRIORITY_INDEX  2
 //#define ITEM_ARRIVALID_INDEX 2
 
+#define THEORETICAL_POSTFIX  "  "
+
+#define SC_D (*_d_ptr)
+
 
 using namespace std;
 using namespace Seiscomp;
@@ -76,6 +82,7 @@ using namespace Seiscomp::Gui::PrivateAmplitudeView;
 
 
 namespace {
+
 
 char COMPS[3] = {'Z', '1', '2'};
 
@@ -195,7 +202,6 @@ class MyRecordWidget : public RecordWidget {
 				p.setColor(QPalette::Base, SCScheme.colors.records.background);
 				setPalette(p);
 				setAutoFillBackground(true);
-				std::cerr << "Custom background" << std::endl;
 			}
 		}
 
@@ -235,7 +241,8 @@ class AmplitudeViewMarker : public RecordMarker {
 		enum Type {
 			UndefinedType, /* Something undefined */
 			Reference,     /* The amplitude reference marker (first P arrival) */
-			Amplitude      /* An amplitude */
+			Amplitude,     /* An amplitude */
+			Theoretical    /* A theoretical marker */
 		};
 
 	public:
@@ -419,6 +426,10 @@ class AmplitudeViewMarker : public RecordMarker {
 
 		bool isReference() const {
 			return _type == Reference;
+		}
+
+		bool isTheoretical() const {
+			return _type == Theoretical;
 		}
 
 		RecordMarker *copy() { return new AmplitudeViewMarker(nullptr, *this); }
@@ -622,6 +633,11 @@ class AmplitudeViewMarker : public RecordMarker {
 					break;
 
 				case Reference:
+					col = SCScheme.colors.arrivals.undefined;
+					al = Qt::AlignTop;
+					break;
+
+				case Theoretical:
 					col = SCScheme.colors.arrivals.theoretical;
 					al = Qt::AlignBottom;
 					break;
@@ -902,6 +918,52 @@ void selectFirstVisibleItem(RecordView *view) {
 		view->ensureVisible(i);
 		break;
 	}
+}
+
+
+const TravelTime *findPhase(const TravelTimeList &ttt, const QString &phase, double delta) {
+	if ( phase == "P" || phase == "P1" ) {
+		return firstArrivalP(&ttt);
+	}
+
+	// First pass -> exact match
+	for ( const auto &tt : ttt ) {
+		if ( delta > 115 ) { // skip Pdiff et al.
+			if ( tt.phase ==  "Pdiff" ) continue;
+			if ( tt.phase == "pPdiff" ) continue;
+			if ( tt.phase == "sPdiff" ) continue;
+		}
+
+		QString ph(tt.phase.c_str());
+
+		if ( phase == ph ) {
+			return &tt;
+		}
+
+		if ( phase == "P" &&
+		     (tt.phase == "Pn" || tt.phase == "Pg" || tt.phase == "Pb") ) {
+			return &tt;
+		}
+	}
+
+	if ( phase != "P" && phase != "S" )
+		return nullptr;
+
+	// Second pass -> find first phase that represents a
+	// P or S phase
+	for ( const auto &tt : ttt ) {
+		if ( delta > 115 ) { // skip Pdiff et al.
+			if ( tt.phase ==  "Pdiff" ) continue;
+			if ( tt.phase == "pPdiff" ) continue;
+			if ( tt.phase == "sPdiff" ) continue;
+		}
+
+		if ( phase[0] == getShortPhaseName(tt.phase) ) {
+			return &tt;
+		}
+	}
+
+	return nullptr;
 }
 
 
@@ -1693,8 +1755,11 @@ AmplitudeView::Config::Config() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeView::AmplitudeView(QWidget *parent, Qt::WindowFlags f)
-: QMainWindow(parent,f) {
-	_recordView = new TraceList();
+: QMainWindow(parent,f)
+, _d_ptr(new AmplitudeViewPrivate) {
+	SC_D.recordView = new TraceList();
+	SC_D.phases.append("P");
+	SC_D.phases.append("S");
 	init();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1704,14 +1769,14 @@ AmplitudeView::AmplitudeView(QWidget *parent, Qt::WindowFlags f)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeView::~AmplitudeView() {
-	for ( int i = 0; i < _recordView->rowCount(); ++i )
-		_recordView->itemAt(i)->widget()->setShadowWidget(nullptr, false);
+	for ( int i = 0; i < SC_D.recordView->rowCount(); ++i )
+		SC_D.recordView->itemAt(i)->widget()->setShadowWidget(nullptr, false);
 
-	if ( _currentFilter ) delete _currentFilter;
+	if ( SC_D.currentFilter ) delete SC_D.currentFilter;
 
 	closeThreads();
 
-	QList<int> sizes = _ui.splitter->sizes();
+	QList<int> sizes = SC_D.ui.splitter->sizes();
 
 	if ( SCApp ) {
 		SCApp->settings().beginGroup(objectName());
@@ -1726,6 +1791,8 @@ AmplitudeView::~AmplitudeView() {
 
 		SCApp->settings().endGroup();
 	}
+
+	delete _d_ptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1742,6 +1809,21 @@ RecordLabel* AmplitudeView::createLabel(RecordViewItem *item) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::figureOutTravelTimeTable() {
+	if ( !SC_D.origin ) return;
+
+	int idx = SC_D.comboTTT->findText(SC_D.origin->methodID().c_str());
+	if ( idx < 0 ) return;
+
+	SC_D.ttTableName = SC_D.origin->earthModelID();
+	SC_D.comboTTT->setCurrentIndex(idx);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::init() {
 	setObjectName("Amplitudes");
 
@@ -1749,474 +1831,509 @@ void AmplitudeView::init() {
 	Mac::addFullscreen(this);
 #endif
 
-	_ui.setupUi(this);
+	SC_D.ui.setupUi(this);
 
 	QFont f(font());
 	f.setBold(true);
-	_ui.labelStationCode->setFont(f);
+	SC_D.ui.labelStationCode->setFont(f);
 
-	_settingsRestored = false;
-	_currentSlot = -1;
-	_currentFilter = nullptr;
-	_currentFilterStr = "";
-	_autoScaleZoomTrace = true;
-	_showProcessedData = true;
+	SC_D.settingsRestored = false;
+	SC_D.currentSlot = -1;
+	SC_D.currentFilter = nullptr;
+	SC_D.currentFilterStr = "";
+	SC_D.autoScaleZoomTrace = true;
+	SC_D.showProcessedData = true;
 
-	_reader = nullptr;
+	SC_D.reader = nullptr;
 
-	_zoom = 1.0;
-	_currentAmplScale = 1.0;
+	SC_D.zoom = 1.0;
+	SC_D.currentAmplScale = 1.0;
 
-	_centerSelection = false;
-	_checkVisibility = true;
+	SC_D.centerSelection = false;
+	SC_D.checkVisibility = true;
 
-	insertToolBarBreak(_ui.toolBarFilter);
+	insertToolBarBreak(SC_D.ui.toolBarFilter);
 
-	_recordView->setSelectionMode(RecordView::SingleSelection);
-	_recordView->setMinimumRowHeight(fontMetrics().ascent()*2+6);
-	_recordView->setDefaultRowHeight(fontMetrics().ascent()*2+6);
-	_recordView->setSelectionEnabled(false);
-	_recordView->setRecordUpdateInterval(1000);
+	SC_D.recordView->setSelectionMode(RecordView::SingleSelection);
+	SC_D.recordView->setMinimumRowHeight(fontMetrics().ascent()*2+6);
+	SC_D.recordView->setDefaultRowHeight(fontMetrics().ascent()*2+6);
+	SC_D.recordView->setSelectionEnabled(false);
+	SC_D.recordView->setRecordUpdateInterval(1000);
 
-	connect(_recordView, SIGNAL(currentItemChanged(RecordViewItem*, RecordViewItem*)),
+	connect(SC_D.recordView, SIGNAL(currentItemChanged(RecordViewItem*, RecordViewItem*)),
 	        this, SLOT(itemSelected(RecordViewItem*, RecordViewItem*)));
 
-	connect(_recordView, SIGNAL(fedRecord(RecordViewItem*, const Seiscomp::Record*)),
+	connect(SC_D.recordView, SIGNAL(fedRecord(RecordViewItem*, const Seiscomp::Record*)),
 	        this, SLOT(updateTraceInfo(RecordViewItem*, const Seiscomp::Record*)));
 
-	connect(_recordView, SIGNAL(filterChanged(const QString&)),
+	connect(SC_D.recordView, SIGNAL(filterChanged(const QString&)),
 	        this, SLOT(addNewFilter(const QString&)));
 
-	connect(_recordView, SIGNAL(progressStarted()),
+	connect(SC_D.recordView, SIGNAL(progressStarted()),
 	        this, SLOT(beginWaitForRecords()));
 
-	connect(_recordView, SIGNAL(progressChanged(int)),
+	connect(SC_D.recordView, SIGNAL(progressChanged(int)),
 	        this, SLOT(doWaitForRecords(int)));
 
-	connect(_recordView, SIGNAL(progressFinished()),
+	connect(SC_D.recordView, SIGNAL(progressFinished()),
 	        this, SLOT(endWaitForRecords()));
 
-	_recordView->setAlternatingRowColors(true);
-	_recordView->setAutoInsertItem(false);
-	_recordView->setAutoScale(true);
-	_recordView->setRowSpacing(2);
-	_recordView->setHorizontalSpacing(6);
-	_recordView->setFramesEnabled(false);
-	//_recordView->setDefaultActions();
+	SC_D.recordView->setAlternatingRowColors(true);
+	SC_D.recordView->setAutoInsertItem(false);
+	SC_D.recordView->setAutoScale(true);
+	SC_D.recordView->setRowSpacing(2);
+	SC_D.recordView->setHorizontalSpacing(6);
+	SC_D.recordView->setFramesEnabled(false);
+	//SC_D.recordView->setDefaultActions();
 
-	_recordView->timeWidget()->setSelectionHandleCount(4);
-	_recordView->timeWidget()->setSelectionHandleEnabled(2, false);
+	SC_D.recordView->timeWidget()->setSelectionHandleCount(4);
+	SC_D.recordView->timeWidget()->setSelectionHandleEnabled(2, false);
 
-	_connectionState = new ConnectionStateLabel(this);
-	connect(_connectionState, SIGNAL(customInfoWidgetRequested(const QPoint &)),
+	SC_D.connectionState = new ConnectionStateLabel(this);
+	connect(SC_D.connectionState, SIGNAL(customInfoWidgetRequested(const QPoint &)),
 	        this, SLOT(openConnectionInfo(const QPoint &)));
 
 	QWidget *wrapper = new QWidget;
 	wrapper->setBackgroundRole(QPalette::Base);
 	wrapper->setAutoFillBackground(true);
 
-	QBoxLayout* layout = new QVBoxLayout(_ui.frameTraces);
+	QBoxLayout* layout = new QVBoxLayout(SC_D.ui.frameTraces);
 	layout->setMargin(2);
 	layout->setSpacing(0);
 	layout->addWidget(wrapper);
 
 	layout = new QVBoxLayout(wrapper);
-	layout->setMargin(_ui.frameZoom->layout()->margin());
+	layout->setMargin(SC_D.ui.frameZoom->layout()->margin());
 	layout->setSpacing(6);
-	layout->addWidget(_recordView);
+	layout->addWidget(SC_D.recordView);
 
-	_searchStation = new QLineEdit();
-	_searchStation->setVisible(false);
+	SC_D.searchStation = new QLineEdit();
+	SC_D.searchStation->setVisible(false);
 
-	_searchBase = _searchStation->palette().color(QPalette::Base);
-	_searchError = blend(Qt::red, _searchBase, 50);
+	SC_D.searchBase = SC_D.searchStation->palette().color(QPalette::Base);
+	SC_D.searchError = blend(Qt::red, SC_D.searchBase, 50);
 
-	_searchLabel = new QLabel();
-	_searchLabel->setVisible(false);
-	_searchLabel->setText(tr("Type the station code to search for"));
+	SC_D.searchLabel = new QLabel();
+	SC_D.searchLabel->setVisible(false);
+	SC_D.searchLabel->setText(tr("Type the station code to search for"));
 
-	connect(_searchStation, SIGNAL(textChanged(const QString&)),
+	connect(SC_D.searchStation, SIGNAL(textChanged(const QString&)),
 	        this, SLOT(search(const QString&)));
 
-	connect(_searchStation, SIGNAL(returnPressed()),
+	connect(SC_D.searchStation, SIGNAL(returnPressed()),
 	        this, SLOT(nextSearch()));
 
-	statusBar()->addPermanentWidget(_searchStation, 1);
-	statusBar()->addPermanentWidget(_searchLabel, 5);
-	statusBar()->addPermanentWidget(_connectionState);
+	statusBar()->addPermanentWidget(SC_D.searchStation, 1);
+	statusBar()->addPermanentWidget(SC_D.searchLabel, 5);
+	statusBar()->addPermanentWidget(SC_D.connectionState);
 
-	_currentRecord = new MyRecordWidget();
-	_currentRecord->showScaledValues(_ui.actionShowTraceValuesInNmS->isChecked());
-	_currentRecord->setClippingEnabled(_ui.actionClipComponentsToViewport->isChecked());
-	_currentRecord->setMouseTracking(true);
-	_currentRecord->setContextMenuPolicy(Qt::CustomContextMenu);
-	_currentRecord->setRowSpacing(6);
-	_currentRecord->setAxisSpacing(6);
-	_currentRecord->setDrawAxis(true);
-	_currentRecord->setAxisPosition(RecordWidget::Left);
+	SC_D.currentRecord = new MyRecordWidget();
+	SC_D.currentRecord->showScaledValues(SC_D.ui.actionShowTraceValuesInNmS->isChecked());
+	SC_D.currentRecord->setClippingEnabled(SC_D.ui.actionClipComponentsToViewport->isChecked());
+	SC_D.currentRecord->setMouseTracking(true);
+	SC_D.currentRecord->setContextMenuPolicy(Qt::CustomContextMenu);
+	SC_D.currentRecord->setRowSpacing(6);
+	SC_D.currentRecord->setAxisSpacing(6);
+	SC_D.currentRecord->setDrawAxis(true);
+	SC_D.currentRecord->setAxisPosition(RecordWidget::Left);
 
 	//_currentRecord->setFocusPolicy(Qt::StrongFocus);
 
 	//_currentRecord->setDrawMode(RecordWidget::Single);
 	//_currentRecord->setDrawMode(RecordWidget::InRows);
 	/*
-	_currentRecord->setRecordColor(0, Qt::red);
-	_currentRecord->setRecordColor(1, Qt::green);
-	_currentRecord->setRecordColor(2, Qt::blue);
+	SC_D.currentRecord->setRecordColor(0, Qt::red);
+	SC_D.currentRecord->setRecordColor(1, Qt::green);
+	SC_D.currentRecord->setRecordColor(2, Qt::blue);
 	*/
 
 	/*
-	connect(_currentRecord, SIGNAL(customContextMenuRequested(const QPoint &)),
+	connect(SC_D.currentRecord, SIGNAL(customContextMenuRequested(const QPoint &)),
 	        this, SLOT(openRecordContextMenu(const QPoint &)));
 	*/
 
-	layout = new QVBoxLayout(_ui.frameCurrentRow);
+	layout = new QVBoxLayout(SC_D.ui.frameCurrentRow);
 	layout->setMargin(0);
 	layout->setSpacing(0);
-	layout->addWidget(_currentRecord);
+	layout->addWidget(SC_D.currentRecord);
 
-	_timeScale = new TimeScale();
-	_timeScale->setSelectionEnabled(true);
-	_timeScale->setRangeSelectionEnabled(true);
-	_timeScale->setAbsoluteTimeEnabled(true);
-	_timeScale->setSelectionHandleCount(4);
-	_timeScale->setSelectionHandleEnabled(2, false);
+	SC_D.timeScale = new TimeScale();
+	SC_D.timeScale->setSelectionEnabled(true);
+	SC_D.timeScale->setRangeSelectionEnabled(true);
+	SC_D.timeScale->setAbsoluteTimeEnabled(true);
+	SC_D.timeScale->setSelectionHandleCount(4);
+	SC_D.timeScale->setSelectionHandleEnabled(2, false);
 
-	layout = new QVBoxLayout(_ui.frameTimeScale);
+	layout = new QVBoxLayout(SC_D.ui.frameTimeScale);
 	layout->setMargin(0);
 	layout->setSpacing(0);
-	layout->addWidget(_timeScale);
+	layout->addWidget(SC_D.timeScale);
 
-	connect(_timeScale, SIGNAL(dragged(double)),
+	connect(SC_D.timeScale, SIGNAL(dragged(double)),
 	        this, SLOT(move(double)));
-	connect(_timeScale, SIGNAL(dragStarted()),
+	connect(SC_D.timeScale, SIGNAL(dragStarted()),
 	        this, SLOT(disableAutoScale()));
-	connect(_timeScale, SIGNAL(dragFinished()),
+	connect(SC_D.timeScale, SIGNAL(dragFinished()),
 	        this, SLOT(enableAutoScale()));
-	connect(_timeScale, SIGNAL(rangeChangeRequested(double,double)),
+	connect(SC_D.timeScale, SIGNAL(rangeChangeRequested(double,double)),
 	        this, SLOT(applyTimeRange(double,double)));
-	connect(_timeScale, SIGNAL(selectionHandleMoved(int,double,Qt::KeyboardModifiers)),
+	connect(SC_D.timeScale, SIGNAL(selectionHandleMoved(int,double,Qt::KeyboardModifiers)),
 	        this, SLOT(zoomSelectionHandleMoved(int,double,Qt::KeyboardModifiers)));
-	connect(_timeScale, SIGNAL(selectionHandleMoveFinished()),
+	connect(SC_D.timeScale, SIGNAL(selectionHandleMoveFinished()),
 	        this, SLOT(zoomSelectionHandleMoveFinished()));
 
-	connect(_recordView->timeWidget(), SIGNAL(dragged(double)),
+	connect(SC_D.recordView->timeWidget(), SIGNAL(dragged(double)),
 	        this, SLOT(moveTraces(double)));
-	connect(_recordView->timeWidget(), SIGNAL(selectionHandleMoved(int,double,Qt::KeyboardModifiers)),
+	connect(SC_D.recordView->timeWidget(), SIGNAL(selectionHandleMoved(int,double,Qt::KeyboardModifiers)),
 	        this, SLOT(selectionHandleMoved(int,double,Qt::KeyboardModifiers)));
-	connect(_recordView->timeWidget(), SIGNAL(selectionHandleMoveFinished()),
+	connect(SC_D.recordView->timeWidget(), SIGNAL(selectionHandleMoveFinished()),
 	        this, SLOT(selectionHandleMoveFinished()));
 
-	connect(_recordView, SIGNAL(updatedRecords()),
-	        _currentRecord, SLOT(updateRecords()));
+	connect(SC_D.recordView, SIGNAL(updatedRecords()),
+	        SC_D.currentRecord, SLOT(updateRecords()));
 
 	// add actions
-	addAction(_ui.actionIncreaseAmplitudeScale);
-	addAction(_ui.actionDecreaseAmplitudeScale);
-	addAction(_ui.actionTimeScaleUp);
-	addAction(_ui.actionTimeScaleDown);
-	addAction(_ui.actionClipComponentsToViewport);
+	addAction(SC_D.ui.actionIncreaseAmplitudeScale);
+	addAction(SC_D.ui.actionDecreaseAmplitudeScale);
+	addAction(SC_D.ui.actionTimeScaleUp);
+	addAction(SC_D.ui.actionTimeScaleDown);
+	addAction(SC_D.ui.actionClipComponentsToViewport);
 
-	addAction(_ui.actionIncreaseRowHeight);
-	addAction(_ui.actionDecreaseRowHeight);
-	addAction(_ui.actionIncreaseRowTimescale);
-	addAction(_ui.actionDecreaseRowTimescale);
+	addAction(SC_D.ui.actionIncreaseRowHeight);
+	addAction(SC_D.ui.actionDecreaseRowHeight);
+	addAction(SC_D.ui.actionIncreaseRowTimescale);
+	addAction(SC_D.ui.actionDecreaseRowTimescale);
 
-	addAction(_ui.actionScrollLeft);
-	addAction(_ui.actionScrollFineLeft);
-	addAction(_ui.actionScrollRight);
-	addAction(_ui.actionScrollFineRight);
-	addAction(_ui.actionSelectNextTrace);
-	addAction(_ui.actionSelectPreviousTrace);
-	addAction(_ui.actionSelectFirstRow);
-	addAction(_ui.actionSelectLastRow);
+	addAction(SC_D.ui.actionScrollLeft);
+	addAction(SC_D.ui.actionScrollFineLeft);
+	addAction(SC_D.ui.actionScrollRight);
+	addAction(SC_D.ui.actionScrollFineRight);
+	addAction(SC_D.ui.actionSelectNextTrace);
+	addAction(SC_D.ui.actionSelectPreviousTrace);
+	addAction(SC_D.ui.actionSelectFirstRow);
+	addAction(SC_D.ui.actionSelectLastRow);
 
-	addAction(_ui.actionDefaultView);
+	addAction(SC_D.ui.actionDefaultView);
 
-	addAction(_ui.actionSortAlphabetically);
-	addAction(_ui.actionSortByDistance);
+	addAction(SC_D.ui.actionSortAlphabetically);
+	addAction(SC_D.ui.actionSortByDistance);
 
-	addAction(_ui.actionShowZComponent);
-	addAction(_ui.actionShowNComponent);
-	addAction(_ui.actionShowEComponent);
+	addAction(SC_D.ui.actionShowZComponent);
+	addAction(SC_D.ui.actionShowNComponent);
+	addAction(SC_D.ui.actionShowEComponent);
 	
-	addAction(_ui.actionAlignOnOriginTime);
-	addAction(_ui.actionAlignOnPArrival);
+	addAction(SC_D.ui.actionAlignOnOriginTime);
+	addAction(SC_D.ui.actionAlignOnPArrival);
 
-	addAction(_ui.actionToggleFilter);
-	addAction(_ui.actionMaximizeAmplitudes);
+	addAction(SC_D.ui.actionToggleFilter);
+	addAction(SC_D.ui.actionMaximizeAmplitudes);
 
-	addAction(_ui.actionCreateAmplitude);
-	addAction(_ui.actionSetAmplitude);
-	addAction(_ui.actionConfirmAmplitude);
-	addAction(_ui.actionDeleteAmplitude);
+	addAction(SC_D.ui.actionCreateAmplitude);
+	addAction(SC_D.ui.actionSetAmplitude);
+	addAction(SC_D.ui.actionConfirmAmplitude);
+	addAction(SC_D.ui.actionDeleteAmplitude);
 
-	addAction(_ui.actionShowZComponent);
-	addAction(_ui.actionShowNComponent);
-	addAction(_ui.actionShowEComponent);
+	addAction(SC_D.ui.actionShowZComponent);
+	addAction(SC_D.ui.actionShowNComponent);
+	addAction(SC_D.ui.actionShowEComponent);
 
-	addAction(_ui.actionGotoNextMarker);
-	addAction(_ui.actionGotoPreviousMarker);
+	addAction(SC_D.ui.actionGotoNextMarker);
+	addAction(SC_D.ui.actionGotoPreviousMarker);
 
-	addAction(_ui.actionComputeMagnitudes);
-	addAction(_ui.actionSwitchFullscreen);
-	addAction(_ui.actionAddStations);
-	addAction(_ui.actionSearchStation);
+	addAction(SC_D.ui.actionComputeMagnitudes);
+	addAction(SC_D.ui.actionSwitchFullscreen);
+	addAction(SC_D.ui.actionAddStations);
+	addAction(SC_D.ui.actionSearchStation);
 
-	addAction(_ui.actionRecalculateAmplitude);
-	addAction(_ui.actionRecalculateAmplitudes);
+	addAction(SC_D.ui.actionRecalculateAmplitude);
+	addAction(SC_D.ui.actionRecalculateAmplitudes);
 
-	_lastFilterIndex = -1;
+	SC_D.lastFilterIndex = -1;
 
-	_comboFilter = new QComboBox;
-	//_comboFilter->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
-	_comboFilter->setDuplicatesEnabled(false);
-	_comboFilter->addItem(NO_FILTER_STRING);
-	_comboFilter->addItem(DEFAULT_FILTER_STRING);
+	SC_D.comboFilter = new QComboBox;
+	//SC_D.comboFilter->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
+	SC_D.comboFilter->setDuplicatesEnabled(false);
+	SC_D.comboFilter->addItem(NO_FILTER_STRING);
+	SC_D.comboFilter->addItem(DEFAULT_FILTER_STRING);
 
-	_comboFilter->setCurrentIndex(1);
-	changeFilter(_comboFilter->currentIndex());
+	SC_D.comboFilter->setCurrentIndex(1);
+	changeFilter(SC_D.comboFilter->currentIndex());
 
-	_spinSNR = new QDoubleSpinBox;
-	_spinSNR->setRange(0, 10000);
-	_spinSNR->setDecimals(2);
-	_spinSNR->setSingleStep(1);
-	//_spinSNR->setPrefix("Min. SNR ");
-	_spinSNR->setSpecialValueText("Disabled");
-	_checkOverrideSNR = new QCheckBox;
-	_checkOverrideSNR->setToolTip(tr("Enable to override the minimum SNR"));
-	_checkOverrideSNR->setChecked(false);
-	_spinSNR->setEnabled(_checkOverrideSNR->isChecked());
+	SC_D.spinSNR = new QDoubleSpinBox;
+	SC_D.spinSNR->setRange(0, 10000);
+	SC_D.spinSNR->setDecimals(2);
+	SC_D.spinSNR->setSingleStep(1);
+	//SC_D.spinSNR->setPrefix("Min. SNR ");
+	SC_D.spinSNR->setSpecialValueText("Disabled");
+	SC_D.checkOverrideSNR = new QCheckBox;
+	SC_D.checkOverrideSNR->setToolTip(tr("Enable to override the minimum SNR"));
+	SC_D.checkOverrideSNR->setChecked(false);
+	SC_D.spinSNR->setEnabled(SC_D.checkOverrideSNR->isChecked());
 
-	connect(_checkOverrideSNR, SIGNAL(toggled(bool)), _spinSNR, SLOT(setEnabled(bool)));
+	connect(SC_D.checkOverrideSNR, SIGNAL(toggled(bool)), SC_D.spinSNR, SLOT(setEnabled(bool)));
 
-	_comboAmpType = new QComboBox;
-	_comboAmpType->setEnabled(false);
+	SC_D.comboAmpType = new QComboBox;
+	SC_D.comboAmpType->setEnabled(false);
 
-	_comboAmpCombiner = new QComboBox;
-	_comboAmpCombiner->setEnabled(false);
+	SC_D.comboAmpCombiner = new QComboBox;
+	SC_D.comboAmpCombiner->setEnabled(false);
 
-	connect(_ui.actionRecalculateAmplitude, SIGNAL(triggered()),
+	connect(SC_D.ui.actionRecalculateAmplitude, SIGNAL(triggered()),
 	        this, SLOT(recalculateAmplitude()));
-	connect(_ui.actionRecalculateAmplitudes, SIGNAL(triggered()),
+	connect(SC_D.ui.actionRecalculateAmplitudes, SIGNAL(triggered()),
 	        this, SLOT(recalculateAmplitudes()));
 
-	_ui.toolBarFilter->insertWidget(_ui.actionToggleFilter, _comboFilter);
-	_ui.toolBarSetup->insertWidget(_ui.actionRecalculateAmplitude, _checkOverrideSNR);
-	_ui.toolBarSetup->insertWidget(_ui.actionRecalculateAmplitude, new QLabel("Min SNR:"));
-	_ui.toolBarSetup->insertWidget(_ui.actionRecalculateAmplitude, _spinSNR);
-	_ui.toolBarSetup->insertSeparator(_ui.actionRecalculateAmplitude);
-	_ui.toolBarSetup->insertWidget(_ui.actionRecalculateAmplitude, _labelAmpType = new QLabel("Amp.type:"));
-	_ui.toolBarSetup->insertWidget(_ui.actionRecalculateAmplitude, _comboAmpType);
-	_ui.toolBarSetup->insertSeparator(_ui.actionRecalculateAmplitude);
-	_ui.toolBarSetup->insertWidget(_ui.actionRecalculateAmplitude, _labelAmpCombiner = new QLabel("Amp.combiner:"));
-	_ui.toolBarSetup->insertWidget(_ui.actionRecalculateAmplitude, _comboAmpCombiner);
+	SC_D.ui.toolBarFilter->insertWidget(SC_D.ui.actionToggleFilter, SC_D.comboFilter);
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, SC_D.checkOverrideSNR);
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, new QLabel("Min SNR:"));
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, SC_D.spinSNR);
+	SC_D.ui.toolBarSetup->insertSeparator(SC_D.ui.actionRecalculateAmplitude);
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, SC_D.labelAmpType = new QLabel("Amp.type:"));
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, SC_D.comboAmpType);
+	SC_D.ui.toolBarSetup->insertSeparator(SC_D.ui.actionRecalculateAmplitude);
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, SC_D.labelAmpCombiner = new QLabel("Amp.combiner:"));
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, SC_D.comboAmpCombiner);
 
-	_labelAmpType->setEnabled(false);
-	_labelAmpCombiner->setEnabled(false);
+	// TTT selection
+	SC_D.comboTTT = new QComboBox;
+	SC_D.ui.toolBarTTT->addWidget(SC_D.comboTTT);
 
-	connect(_comboFilter, SIGNAL(currentIndexChanged(int)),
-	        this, SLOT(changeFilter(int)));
+	SC_D.comboTTT->setToolTip(tr("Select one of the supported travel time table backends."));
+	TravelTimeTableInterfaceFactory::ServiceNames *ttServices = TravelTimeTableInterfaceFactory::Services();
+	if ( ttServices ) {
+		TravelTimeTableInterfaceFactory::ServiceNames::iterator it;
+		int currentIndex = -1;
+		for ( it = ttServices->begin(); it != ttServices->end(); ++it ) {
+			SC_D.comboTTT->addItem((*it).c_str());
+			if ( SC_D.ttInterface == *it )
+				currentIndex = SC_D.comboTTT->count()-1;
+		}
+		delete ttServices;
 
-	connect(_ui.actionLimitFilterToZoomTrace, SIGNAL(triggered(bool)),
-	        this, SLOT(limitFilterToZoomTrace(bool)));
+		if ( currentIndex >= 0 )
+			SC_D.comboTTT->setCurrentIndex(currentIndex);
+	}
 
-	_spinDistance = new QDoubleSpinBox;
-	_spinDistance->setValue(15);
-
-	if ( SCScheme.unit.distanceInKM ) {
-		_spinDistance->setRange(0, 25000);
-		_spinDistance->setDecimals(0);
-		_spinDistance->setSuffix("km");
+	if ( SC_D.comboTTT->count() > 0 ) {
+		connect(SC_D.comboTTT, SIGNAL(currentIndexChanged(QString)), this, SLOT(ttInterfaceChanged(QString)));
+		SC_D.comboTTTables = new QComboBox;
+		SC_D.comboTTTables->setToolTip(tr("Select one of the supported tables for the current travel time table backend."));
+		SC_D.ui.toolBarTTT->addWidget(SC_D.comboTTTables);
+		ttInterfaceChanged(SC_D.comboTTT->currentText());
+		connect(SC_D.comboTTTables, SIGNAL(currentIndexChanged(QString)), this, SLOT(ttTableChanged(QString)));
 	}
 	else {
-		_spinDistance->setRange(0, 180);
-		_spinDistance->setDecimals(1);
-		_spinDistance->setSuffix(degrees);
+		delete SC_D.comboTTT;
+		SC_D.comboTTT = nullptr;
 	}
 
-	_ui.toolBarStations->insertWidget(_ui.actionShowAllStations, _spinDistance);
+	SC_D.labelAmpType->setEnabled(false);
+	SC_D.labelAmpCombiner->setEnabled(false);
+
+	connect(SC_D.comboFilter, SIGNAL(currentIndexChanged(int)),
+	        this, SLOT(changeFilter(int)));
+
+	connect(SC_D.ui.actionLimitFilterToZoomTrace, SIGNAL(triggered(bool)),
+	        this, SLOT(limitFilterToZoomTrace(bool)));
+
+	SC_D.spinDistance = new QDoubleSpinBox;
+	SC_D.spinDistance->setValue(15);
+
+	if ( SCScheme.unit.distanceInKM ) {
+		SC_D.spinDistance->setRange(0, 25000);
+		SC_D.spinDistance->setDecimals(0);
+		SC_D.spinDistance->setSuffix("km");
+	}
+	else {
+		SC_D.spinDistance->setRange(0, 180);
+		SC_D.spinDistance->setDecimals(1);
+		SC_D.spinDistance->setSuffix(degrees);
+	}
+
+	SC_D.ui.toolBarStations->insertWidget(SC_D.ui.actionShowAllStations, SC_D.spinDistance);
 
 	/*
-	connect(_spinDistance, SIGNAL(editingFinished()),
+	connect(SC_D.spinDistance, SIGNAL(editingFinished()),
 	        this, SLOT(loadNextStations()));
 	*/
 
 	// connect actions
-	connect(_ui.actionDefaultView, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionDefaultView, SIGNAL(triggered(bool)),
 	        this, SLOT(setDefaultDisplay()));
-	connect(_ui.actionSortAlphabetically, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionSortAlphabetically, SIGNAL(triggered(bool)),
 	        this, SLOT(sortAlphabetically()));
-	connect(_ui.actionSortByDistance, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionSortByDistance, SIGNAL(triggered(bool)),
 	        this, SLOT(sortByDistance()));
 
-	connect(_ui.actionShowZComponent, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionShowZComponent, SIGNAL(triggered(bool)),
 	        this, SLOT(showZComponent()));
-	connect(_ui.actionShowNComponent, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionShowNComponent, SIGNAL(triggered(bool)),
 	        this, SLOT(showNComponent()));
-	connect(_ui.actionShowEComponent, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionShowEComponent, SIGNAL(triggered(bool)),
 	        this, SLOT(showEComponent()));
 	
-	connect(_ui.actionAlignOnOriginTime, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionAlignOnOriginTime, SIGNAL(triggered(bool)),
 	        this, SLOT(alignOnOriginTime()));
-	connect(_ui.actionAlignOnPArrival, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionAlignOnPArrival, SIGNAL(triggered(bool)),
 	        this, SLOT(alignOnPArrivals()));
 
-	connect(_ui.actionIncreaseAmplitudeScale, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionIncreaseAmplitudeScale, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleAmplUp()));
-	connect(_ui.actionDecreaseAmplitudeScale, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionDecreaseAmplitudeScale, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleAmplDown()));
-	connect(_ui.actionTimeScaleUp, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionTimeScaleUp, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleTimeUp()));
-	connect(_ui.actionTimeScaleDown, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionTimeScaleDown, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleTimeDown()));
-	connect(_ui.actionClipComponentsToViewport, SIGNAL(triggered(bool)),
-	        _currentRecord, SLOT(setClippingEnabled(bool)));
-	connect(_ui.actionScrollLeft, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionClipComponentsToViewport, SIGNAL(triggered(bool)),
+	        SC_D.currentRecord, SLOT(setClippingEnabled(bool)));
+	connect(SC_D.ui.actionScrollLeft, SIGNAL(triggered(bool)),
 	        this, SLOT(scrollLeft()));
-	connect(_ui.actionScrollFineLeft, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionScrollFineLeft, SIGNAL(triggered(bool)),
 	        this, SLOT(scrollFineLeft()));
-	connect(_ui.actionScrollRight, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionScrollRight, SIGNAL(triggered(bool)),
 	        this, SLOT(scrollRight()));
-	connect(_ui.actionScrollFineRight, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionScrollFineRight, SIGNAL(triggered(bool)),
 	        this, SLOT(scrollFineRight()));
 	/*
-	connect(_ui.actionGotoNextMarker, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionGotoNextMarker, SIGNAL(triggered(bool)),
 	        this, SLOT(gotoNextMarker()));
-	connect(_ui.actionGotoPreviousMarker, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionGotoPreviousMarker, SIGNAL(triggered(bool)),
 	        this, SLOT(gotoPreviousMarker()));
 	*/
-	connect(_ui.actionSelectNextTrace, SIGNAL(triggered(bool)),
-	        _recordView, SLOT(selectNextRow()));
-	connect(_ui.actionSelectPreviousTrace, SIGNAL(triggered(bool)),
-	        _recordView, SLOT(selectPreviousRow()));
-	connect(_ui.actionSelectFirstRow, SIGNAL(triggered(bool)),
-	        _recordView, SLOT(selectFirstRow()));
-	connect(_ui.actionSelectLastRow, SIGNAL(triggered(bool)),
-	        _recordView, SLOT(selectLastRow()));
-	connect(_ui.actionIncreaseRowHeight, SIGNAL(triggered(bool)),
-	        _recordView, SLOT(verticalZoomIn()));
-	connect(_ui.actionDecreaseRowHeight, SIGNAL(triggered(bool)),
-	        _recordView, SLOT(verticalZoomOut()));
-	connect(_ui.actionIncreaseRowTimescale, SIGNAL(triggered(bool)),
-	        _recordView, SLOT(horizontalZoomIn()));
-	connect(_ui.actionDecreaseRowTimescale, SIGNAL(triggered(bool)),
-	        _recordView, SLOT(horizontalZoomOut()));
-	connect(_ui.actionShowTraceValuesInNmS, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionSelectNextTrace, SIGNAL(triggered(bool)),
+	        SC_D.recordView, SLOT(selectNextRow()));
+	connect(SC_D.ui.actionSelectPreviousTrace, SIGNAL(triggered(bool)),
+	        SC_D.recordView, SLOT(selectPreviousRow()));
+	connect(SC_D.ui.actionSelectFirstRow, SIGNAL(triggered(bool)),
+	        SC_D.recordView, SLOT(selectFirstRow()));
+	connect(SC_D.ui.actionSelectLastRow, SIGNAL(triggered(bool)),
+	        SC_D.recordView, SLOT(selectLastRow()));
+	connect(SC_D.ui.actionIncreaseRowHeight, SIGNAL(triggered(bool)),
+	        SC_D.recordView, SLOT(verticalZoomIn()));
+	connect(SC_D.ui.actionDecreaseRowHeight, SIGNAL(triggered(bool)),
+	        SC_D.recordView, SLOT(verticalZoomOut()));
+	connect(SC_D.ui.actionIncreaseRowTimescale, SIGNAL(triggered(bool)),
+	        SC_D.recordView, SLOT(horizontalZoomIn()));
+	connect(SC_D.ui.actionDecreaseRowTimescale, SIGNAL(triggered(bool)),
+	        SC_D.recordView, SLOT(horizontalZoomOut()));
+	connect(SC_D.ui.actionShowTraceValuesInNmS, SIGNAL(triggered(bool)),
 	        this, SLOT(showTraceScaleToggled(bool)));
+	connect(SC_D.ui.actionShowTheoreticalArrivals, SIGNAL(triggered(bool)),
+	        this, SLOT(showTheoreticalArrivals(bool)));
 
-	connect(_ui.actionToggleFilter, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionToggleFilter, SIGNAL(triggered(bool)),
 	        this, SLOT(toggleFilter()));
 
-	connect(_ui.actionMaximizeAmplitudes, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionMaximizeAmplitudes, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleVisibleAmplitudes()));
 
-	connect(_ui.actionPickAmplitude, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionPickAmplitude, SIGNAL(triggered(bool)),
 	        this, SLOT(pickAmplitudes(bool)));
-	connect(_ui.actionDisablePicking, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionDisablePicking, SIGNAL(triggered(bool)),
 	        this, SLOT(pickNone(bool)));
-	connect(_ui.actionDisablePicking, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionDisablePicking, SIGNAL(triggered(bool)),
 	        this, SLOT(abortSearchStation()));
 
-	connect(_ui.actionCreateAmplitude, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionCreateAmplitude, SIGNAL(triggered(bool)),
 	        this, SLOT(createAmplitude()));
-	connect(_ui.actionSetAmplitude, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionSetAmplitude, SIGNAL(triggered(bool)),
 	        this, SLOT(setAmplitude()));
-	connect(_ui.actionConfirmAmplitude, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionConfirmAmplitude, SIGNAL(triggered(bool)),
 	        this, SLOT(confirmAmplitude()));
-	connect(_ui.actionDeleteAmplitude, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionDeleteAmplitude, SIGNAL(triggered(bool)),
 	        this, SLOT(deleteAmplitude()));
 
-	connect(_ui.actionComputeMagnitudes, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionComputeMagnitudes, SIGNAL(triggered(bool)),
 	        this, SLOT(commit()));
 
-	connect(_ui.actionShowAllStations, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionShowAllStations, SIGNAL(triggered(bool)),
 	        this, SLOT(loadNextStations()));
 
-	connect(_ui.actionShowUsedStations, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionShowUsedStations, SIGNAL(triggered(bool)),
 	        this, SLOT(showUsedStations(bool)));
 
 	/*
-	connect(_ui.btnAmplScaleUp, SIGNAL(clicked()),
+	connect(SC_D.ui.btnAmplScaleUp, SIGNAL(clicked()),
 	        this, SLOT(scaleAmplUp()));
-	connect(_ui.btnAmplScaleDown, SIGNAL(clicked()),
+	connect(SC_D.ui.btnAmplScaleDown, SIGNAL(clicked()),
 	        this, SLOT(scaleAmplDown()));
-	connect(_ui.btnTimeScaleUp, SIGNAL(clicked()),
+	connect(SC_D.ui.btnTimeScaleUp, SIGNAL(clicked()),
 	        this, SLOT(scaleTimeUp()));
-	connect(_ui.btnTimeScaleDown, SIGNAL(clicked()),
+	connect(SC_D.ui.btnTimeScaleDown, SIGNAL(clicked()),
 	        this, SLOT(scaleTimeDown()));
-	connect(_ui.btnScaleReset, SIGNAL(clicked()),
+	connect(SC_D.ui.btnScaleReset, SIGNAL(clicked()),
 	        this, SLOT(scaleReset()));
 	*/
 
-	connect(_ui.btnRowAccept, SIGNAL(clicked()),
+	connect(SC_D.ui.btnRowAccept, SIGNAL(clicked()),
 	        this, SLOT(confirmAmplitude()));
-	connect(_ui.btnRowRemove, SIGNAL(clicked(bool)),
+	connect(SC_D.ui.btnRowRemove, SIGNAL(clicked(bool)),
 	        this, SLOT(setCurrentRowDisabled(bool)));
-	connect(_ui.btnRowRemove, SIGNAL(clicked(bool)),
-	        _recordView, SLOT(selectNextRow()));
-	connect(_ui.btnRowReset, SIGNAL(clicked(bool)),
+	connect(SC_D.ui.btnRowRemove, SIGNAL(clicked(bool)),
+	        SC_D.recordView, SLOT(selectNextRow()));
+	connect(SC_D.ui.btnRowReset, SIGNAL(clicked(bool)),
 	        this, SLOT(deleteAmplitude()));
-	connect(_ui.btnRowReset, SIGNAL(clicked(bool)),
-	        _recordView, SLOT(selectNextRow()));
+	connect(SC_D.ui.btnRowReset, SIGNAL(clicked(bool)),
+	        SC_D.recordView, SLOT(selectNextRow()));
 
-	connect(_currentRecord, SIGNAL(cursorUpdated(RecordWidget*,int)),
+	connect(SC_D.currentRecord, SIGNAL(cursorUpdated(RecordWidget*,int)),
 	        this, SLOT(updateSubCursor(RecordWidget*,int)));
 
-	connect(_currentRecord, SIGNAL(clickedOnTime(Seiscomp::Core::Time)),
+	connect(SC_D.currentRecord, SIGNAL(clickedOnTime(Seiscomp::Core::Time)),
 	        this, SLOT(updateRecordValue(Seiscomp::Core::Time)));
 
-	connect(_ui.frameZoom, SIGNAL(lineDown()),
-	        _recordView, SLOT(selectNextRow()));
-	connect(_ui.frameZoom, SIGNAL(lineUp()),
-	        _recordView, SLOT(selectPreviousRow()));
+	connect(SC_D.ui.frameZoom, SIGNAL(lineDown()),
+	        SC_D.recordView, SLOT(selectNextRow()));
+	connect(SC_D.ui.frameZoom, SIGNAL(lineUp()),
+	        SC_D.recordView, SLOT(selectPreviousRow()));
 
-	connect(_ui.frameZoom, SIGNAL(verticalZoomIn()),
+	connect(SC_D.ui.frameZoom, SIGNAL(verticalZoomIn()),
 	        this, SLOT(scaleAmplUp()));
-	connect(_ui.frameZoom, SIGNAL(verticalZoomOut()),
+	connect(SC_D.ui.frameZoom, SIGNAL(verticalZoomOut()),
 	        this, SLOT(scaleAmplDown()));
 
-	connect(_ui.frameZoom, SIGNAL(horizontalZoomIn()),
+	connect(SC_D.ui.frameZoom, SIGNAL(horizontalZoomIn()),
 	        this, SLOT(scaleTimeUp()));
-	connect(_ui.frameZoom, SIGNAL(horizontalZoomOut()),
+	connect(SC_D.ui.frameZoom, SIGNAL(horizontalZoomOut()),
 	        this, SLOT(scaleTimeDown()));
 
-	connect(_ui.actionSwitchFullscreen, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionSwitchFullscreen, SIGNAL(triggered(bool)),
 	        this, SLOT(showFullscreen(bool)));
 
-	connect(_timeScale, SIGNAL(changedInterval(double, double, double)),
-	        _currentRecord, SLOT(setGridSpacing(double, double, double)));
-	connect(_recordView, SIGNAL(toggledFilter(bool)),
-	        _currentRecord, SLOT(enableFiltering(bool)));
-	connect(_recordView, SIGNAL(scaleChanged(double, float)),
+	connect(SC_D.timeScale, SIGNAL(changedInterval(double, double, double)),
+	        SC_D.currentRecord, SLOT(setGridSpacing(double, double, double)));
+	connect(SC_D.recordView, SIGNAL(toggledFilter(bool)),
+	        SC_D.currentRecord, SLOT(enableFiltering(bool)));
+	connect(SC_D.recordView, SIGNAL(scaleChanged(double, float)),
 	        this, SLOT(changeScale(double, float)));
-	connect(_recordView, SIGNAL(timeRangeChanged(double, double)),
+	connect(SC_D.recordView, SIGNAL(timeRangeChanged(double, double)),
 	        this, SLOT(changeTimeRange(double, double)));
-	connect(_recordView, SIGNAL(selectionChanged(double, double)),
-	        _currentRecord, SLOT(setSelected(double, double)));
-	connect(_recordView, SIGNAL(alignmentChanged(const Seiscomp::Core::Time&)),
+	connect(SC_D.recordView, SIGNAL(selectionChanged(double, double)),
+	        SC_D.currentRecord, SLOT(setSelected(double, double)));
+	connect(SC_D.recordView, SIGNAL(alignmentChanged(const Seiscomp::Core::Time&)),
 	        this, SLOT(setAlignment(Seiscomp::Core::Time)));
-	connect(_recordView, SIGNAL(amplScaleChanged(float)),
-	        _currentRecord, SLOT(setAmplScale(float)));
+	connect(SC_D.recordView, SIGNAL(amplScaleChanged(float)),
+	        SC_D.currentRecord, SLOT(setAmplScale(float)));
 
-	connect(_ui.actionAddStations, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionAddStations, SIGNAL(triggered(bool)),
 	        this, SLOT(addStations()));
 
-	connect(_ui.actionSearchStation, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionSearchStation, SIGNAL(triggered(bool)),
 	        this, SLOT(searchStation()));
 
-	connect(_recordView, SIGNAL(selectedTime(Seiscomp::Gui::RecordWidget*, Seiscomp::Core::Time)),
+	connect(SC_D.recordView, SIGNAL(selectedTime(Seiscomp::Gui::RecordWidget*, Seiscomp::Core::Time)),
 	        this, SLOT(onSelectedTime(Seiscomp::Gui::RecordWidget*, Seiscomp::Core::Time)));
 
-	connect(_currentRecord, SIGNAL(selectedTime(Seiscomp::Core::Time)),
+	connect(SC_D.currentRecord, SIGNAL(selectedTime(Seiscomp::Core::Time)),
 	        this, SLOT(onSelectedTime(Seiscomp::Core::Time)));
 
-	connect(_currentRecord, SIGNAL(selectedTimeRangeChanged(Seiscomp::Core::Time, Seiscomp::Core::Time)),
+	connect(SC_D.currentRecord, SIGNAL(selectedTimeRangeChanged(Seiscomp::Core::Time, Seiscomp::Core::Time)),
 	        this, SLOT(onChangingTimeRange(Seiscomp::Core::Time, Seiscomp::Core::Time)));
-	connect(_currentRecord, SIGNAL(selectedTimeRange(Seiscomp::Core::Time, Seiscomp::Core::Time)),
+	connect(SC_D.currentRecord, SIGNAL(selectedTimeRange(Seiscomp::Core::Time, Seiscomp::Core::Time)),
 	        this, SLOT(onSelectedTimeRange(Seiscomp::Core::Time, Seiscomp::Core::Time)));
 
-	connect(_recordView, SIGNAL(addedItem(const Seiscomp::Record*, Seiscomp::Gui::RecordViewItem*)),
+	connect(SC_D.recordView, SIGNAL(addedItem(const Seiscomp::Record*, Seiscomp::Gui::RecordViewItem*)),
 	        this, SLOT(onAddedItem(const Seiscomp::Record*, Seiscomp::Gui::RecordViewItem*)));
 
 	connect(&RecordStreamState::Instance(), SIGNAL(firstConnectionEstablished()),
@@ -2224,8 +2341,8 @@ void AmplitudeView::init() {
 	connect(&RecordStreamState::Instance(), SIGNAL(lastConnectionClosed()),
 	        this, SLOT(lastConnectionClosed()));
 
-	_ui.frameZoom->setBackgroundRole(QPalette::Base);
-	_ui.frameZoom->setAutoFillBackground(true);
+	SC_D.ui.frameZoom->setBackgroundRole(QPalette::Base);
+	SC_D.ui.frameZoom->setAutoFillBackground(true);
 
 	if ( RecordStreamState::Instance().connectionCount() )
 		firstConnectionEstablished();
@@ -2239,76 +2356,76 @@ void AmplitudeView::init() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeView::setConfig(const Config &c, QString *error) {
-	_config = c;
+	SC_D.config = c;
 
 	if ( SCScheme.unit.distanceInKM )
-		_spinDistance->setValue(Math::Geo::deg2km(_config.defaultAddStationsDistance));
+		SC_D.spinDistance->setValue(Math::Geo::deg2km(SC_D.config.defaultAddStationsDistance));
 	else
-		_spinDistance->setValue(_config.defaultAddStationsDistance);
+		SC_D.spinDistance->setValue(SC_D.config.defaultAddStationsDistance);
 
 	//_config.filters.append(Config::FilterEntry("4 pole HP @2s", "BW_HP(4,0.5)"));
 
-	if ( _comboFilter ) {
-		_comboFilter->blockSignals(true);
-		_comboFilter->clear();
-		_comboFilter->addItem(NO_FILTER_STRING);
-		_comboFilter->addItem(DEFAULT_FILTER_STRING);
+	if ( SC_D.comboFilter ) {
+		SC_D.comboFilter->blockSignals(true);
+		SC_D.comboFilter->clear();
+		SC_D.comboFilter->addItem(NO_FILTER_STRING);
+		SC_D.comboFilter->addItem(DEFAULT_FILTER_STRING);
 
-		_lastFilterIndex = -1;
+		SC_D.lastFilterIndex = -1;
 
 		int defaultIndex = -1;
-		for ( int i = 0; i < _config.filters.count(); ++i ) {
-			if ( _config.filters[i].first.isEmpty() ) continue;
+		for ( int i = 0; i < SC_D.config.filters.count(); ++i ) {
+			if ( SC_D.config.filters[i].first.isEmpty() ) continue;
 
-			if ( _config.filters[i].first[0] == '@' ) {
-				if ( defaultIndex == -1 ) defaultIndex = _comboFilter->count();
-				addFilter(_config.filters[i].first.mid(1), _config.filters[i].second);
+			if ( SC_D.config.filters[i].first[0] == '@' ) {
+				if ( defaultIndex == -1 ) defaultIndex = SC_D.comboFilter->count();
+				addFilter(SC_D.config.filters[i].first.mid(1), SC_D.config.filters[i].second);
 			}
 			else
-				addFilter(_config.filters[i].first, _config.filters[i].second);
+				addFilter(SC_D.config.filters[i].first, SC_D.config.filters[i].second);
 		}
 
-		_comboFilter->blockSignals(false);
+		SC_D.comboFilter->blockSignals(false);
 
-		_comboFilter->setCurrentIndex(defaultIndex != -1?defaultIndex:1);
+		SC_D.comboFilter->setCurrentIndex(defaultIndex != -1?defaultIndex:1);
 	}
 
-	RecordViewItem *item = _recordView->currentItem();
-	if ( item && _currentRecord ) {
+	RecordViewItem *item = SC_D.recordView->currentItem();
+	if ( item && SC_D.currentRecord ) {
 		if ( item->value(ITEM_DISTANCE_INDEX) >= 0 ) {
-			if ( _config.showAllComponents &&
-				_config.allComponentsMaximumStationDistance >= item->value(ITEM_DISTANCE_INDEX) )
-				_currentRecord->setDrawMode(RecordWidget::InRows);
+			if ( SC_D.config.showAllComponents &&
+				SC_D.config.allComponentsMaximumStationDistance >= item->value(ITEM_DISTANCE_INDEX) )
+				SC_D.currentRecord->setDrawMode(RecordWidget::InRows);
 			else
-				_currentRecord->setDrawMode(RecordWidget::Single);
+				SC_D.currentRecord->setDrawMode(RecordWidget::Single);
 		}
 		else
-			_currentRecord->setDrawMode(RecordWidget::Single);
+			SC_D.currentRecord->setDrawMode(RecordWidget::Single);
 	}
 
-	if ( _config.hideStationsWithoutData ) {
+	if ( SC_D.config.hideStationsWithoutData ) {
 		bool reselectCurrentItem = false;
 
-		for ( int r = 0; r < _recordView->rowCount(); ++r ) {
-			RecordViewItem* item = _recordView->itemAt(r);
+		for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+			RecordViewItem* item = SC_D.recordView->itemAt(r);
 			AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
 			if ( isLinkedItem(item) ) continue;
 
 			if ( !isTracePicked(item->widget()) && !label->hasGotData ) {
 				item->forceInvisibilty(true);
-				if ( item == _recordView->currentItem() )
+				if ( item == SC_D.recordView->currentItem() )
 					reselectCurrentItem = true;
 			}
 		}
 
-		if ( _recordView->currentItem() == nullptr ) reselectCurrentItem = true;
+		if ( SC_D.recordView->currentItem() == nullptr ) reselectCurrentItem = true;
 
 		if ( reselectCurrentItem )
-			selectFirstVisibleItem(_recordView);
+			selectFirstVisibleItem(SC_D.recordView);
 	}
 	else {
-		for ( int r = 0; r < _recordView->rowCount(); ++r ) {
-			RecordViewItem* item = _recordView->itemAt(r);
+		for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+			RecordViewItem* item = SC_D.recordView->itemAt(r);
 			AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
 			if ( isLinkedItem(item) ) continue;
 
@@ -2328,7 +2445,7 @@ bool AmplitudeView::setConfig(const Config &c, QString *error) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setDatabase(Seiscomp::DataModel::DatabaseQuery* reader) {
-	_reader = reader;
+	SC_D.reader = reader;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2337,7 +2454,16 @@ void AmplitudeView::setDatabase(Seiscomp::DataModel::DatabaseQuery* reader) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setStrongMotionCodes(const std::vector<std::string> &codes) {
-	_strongMotionCodes = codes;
+	SC_D.strongMotionCodes = codes;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const std::string &AmplitudeView::currentMagnitudeType() const {
+	return SC_D.magnitudeType;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2347,9 +2473,9 @@ void AmplitudeView::setStrongMotionCodes(const std::vector<std::string> &codes) 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::showEvent(QShowEvent *e) {
 	// avoid truncated distance labels
-	int w1 = _ui.frameZoomControls->sizeHint().width();
+	int w1 = SC_D.ui.frameZoomControls->sizeHint().width();
 	int w2 = 0;
-	QFont f(_ui.labelDistance->font()); // hack to get default font size
+	QFont f(SC_D.ui.labelDistance->font()); // hack to get default font size
 	QFontMetrics fm(f);
 	w2 += fm.boundingRect("WW ").width();
 	f.setBold(true);
@@ -2363,7 +2489,7 @@ void AmplitudeView::showEvent(QShowEvent *e) {
 	if ( w2 < w1 )
 		w2 = w1;
 
-	if ( !_settingsRestored ) {
+	if ( !SC_D.settingsRestored ) {
 		QList<int> sizes;
 
 		if ( SCApp ) {
@@ -2394,14 +2520,14 @@ void AmplitudeView::showEvent(QShowEvent *e) {
 			sizes.append(400);
 		}
 
-		_ui.splitter->setSizes(sizes);
+		SC_D.ui.splitter->setSizes(sizes);
 
-		_settingsRestored = true;
+		SC_D.settingsRestored = true;
 	}
 
-	_ui.frameZoomControls->setFixedWidth(w2);
-	_recordView->setLabelWidth(w2);
-	_currentRecord->setAxisWidth(w2 + _currentRecord->axisSpacing());
+	SC_D.ui.frameZoomControls->setFixedWidth(w2);
+	SC_D.recordView->setLabelWidth(w2);
+	SC_D.currentRecord->setAxisWidth(w2 + SC_D.currentRecord->axisSpacing());
 
 	QWidget::showEvent(e);
 }
@@ -2412,10 +2538,10 @@ void AmplitudeView::showEvent(QShowEvent *e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::onSelectedTime(Seiscomp::Core::Time time) {
-	//setPhaseMarker(_currentRecord, time);
-	if ( _recordView->currentItem() ) {
-		setPhaseMarker(_recordView->currentItem()->widget(), time);
-		_currentRecord->update();
+	//setPhaseMarker(SC_D.currentRecord, time);
+	if ( SC_D.recordView->currentItem() ) {
+		setPhaseMarker(SC_D.recordView->currentItem()->widget(), time);
+		SC_D.currentRecord->update();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2425,7 +2551,7 @@ void AmplitudeView::onSelectedTime(Seiscomp::Core::Time time) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::onChangingTimeRange(Seiscomp::Core::Time t1, Seiscomp::Core::Time t2) {
-	static_cast<MyRecordWidget*>(_currentRecord)->setSelected(t1, t2);
+	static_cast<MyRecordWidget*>(SC_D.currentRecord)->setSelected(t1, t2);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2434,28 +2560,28 @@ void AmplitudeView::onChangingTimeRange(Seiscomp::Core::Time t1, Seiscomp::Core:
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::onSelectedTimeRange(Seiscomp::Core::Time t1, Seiscomp::Core::Time t2) {
-	static_cast<MyRecordWidget*>(_currentRecord)->setSelected(Core::Time(), Core::Time());
+	static_cast<MyRecordWidget*>(SC_D.currentRecord)->setSelected(Core::Time(), Core::Time());
 
-	RecordViewItem *item = _recordView->currentItem();
+	RecordViewItem *item = SC_D.recordView->currentItem();
 	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
 
 	if ( t1 == t2 ) return;
 
-	if ( _currentSlot < 0 ) return;
+	if ( SC_D.currentSlot < 0 ) return;
 	if ( label->processor == nullptr ) return;
 
 	double smin = t1-label->processor->trigger();
 	double smax = t2-label->processor->trigger();
 
-	if ( _checkOverrideSNR->isChecked() )
-		label->processor->setMinSNR(_spinSNR->value());
+	if ( SC_D.checkOverrideSNR->isChecked() )
+		label->processor->setMinSNR(SC_D.spinSNR->value());
 	else
 		label->processor->setMinSNR(label->initialMinSNR);
 
-	if ( _comboAmpType->isEnabled() )
-		label->processor->setParameter(Processing::AmplitudeProcessor::MeasureType, _comboAmpType->currentText().toStdString());
-	if ( _comboAmpCombiner->isEnabled() )
-		label->processor->setParameter(Processing::AmplitudeProcessor::Combiner, _comboAmpCombiner->currentText().toStdString());
+	if ( SC_D.comboAmpType->isEnabled() )
+		label->processor->setParameter(Processing::AmplitudeProcessor::MeasureType, SC_D.comboAmpType->currentText().toStdString());
+	if ( SC_D.comboAmpCombiner->isEnabled() )
+		label->processor->setParameter(Processing::AmplitudeProcessor::Combiner, SC_D.comboAmpCombiner->currentText().toStdString());
 
 	label->processor->setPublishFunction(bind(&AmplitudeView::newAmplitudeAvailable, this, placeholders::_1, placeholders::_2));
 	label->processor->reprocess(smin, smax);
@@ -2494,10 +2620,10 @@ void AmplitudeView::onSelectedTimeRange(Seiscomp::Core::Time t1, Seiscomp::Core:
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::onSelectedTime(Seiscomp::Gui::RecordWidget* widget,
                                    Seiscomp::Core::Time time) {
-	if ( widget == _currentRecord ) return;
+	if ( widget == SC_D.currentRecord ) return;
 	setPhaseMarker(widget, time);
-	//setPhaseMarker(_currentRecord, time);
-	_currentRecord->update();
+	//setPhaseMarker(SC_D.currentRecord, time);
+	SC_D.currentRecord->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2507,27 +2633,27 @@ void AmplitudeView::onSelectedTime(Seiscomp::Gui::RecordWidget* widget,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setPhaseMarker(Seiscomp::Gui::RecordWidget* widget,
                                    const Seiscomp::Core::Time& time) {
-	if ( widget != _recordView->currentItem()->widget() ) return;
+	if ( widget != SC_D.recordView->currentItem()->widget() ) return;
 	if ( widget->cursorText().isEmpty() ) return;
 
-	RecordViewItem *item = _recordView->currentItem();
+	RecordViewItem *item = SC_D.recordView->currentItem();
 	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
 
-	if ( _currentSlot < 0 ) return;
+	if ( SC_D.currentSlot < 0 ) return;
 	if ( label->processor == nullptr ) return;
 
 	double smin = double(time-label->processor->trigger())-0.5;
 	double smax = smin+1.0;
 
-	if ( _checkOverrideSNR->isChecked() )
-		label->processor->setMinSNR(_spinSNR->value());
+	if ( SC_D.checkOverrideSNR->isChecked() )
+		label->processor->setMinSNR(SC_D.spinSNR->value());
 	else
 		label->processor->setMinSNR(label->initialMinSNR);
 
-	if ( _comboAmpType->isEnabled() )
-		label->processor->setParameter(Processing::AmplitudeProcessor::MeasureType, _comboAmpType->currentText().toStdString());
-	if ( _comboAmpCombiner->isEnabled() )
-		label->processor->setParameter(Processing::AmplitudeProcessor::Combiner, _comboAmpCombiner->currentText().toStdString());
+	if ( SC_D.comboAmpType->isEnabled() )
+		label->processor->setParameter(Processing::AmplitudeProcessor::MeasureType, SC_D.comboAmpType->currentText().toStdString());
+	if ( SC_D.comboAmpCombiner->isEnabled() )
+		label->processor->setParameter(Processing::AmplitudeProcessor::Combiner, SC_D.comboAmpCombiner->currentText().toStdString());
 
 	label->processor->setPublishFunction(bind(&AmplitudeView::newAmplitudeAvailable, this, placeholders::_1, placeholders::_2));
 	label->processor->reprocess(smin, smax);
@@ -2551,7 +2677,7 @@ RecordMarker* AmplitudeView::updatePhaseMarker(Seiscomp::Gui::RecordViewItem *it
 
 	int slot = -1;
 	if ( res.component < Processing::WaveformProcessor::Horizontal )
-		slot = _componentMap[res.component];
+		slot = SC_D.componentMap[res.component];
 
 	// Create amplitude
 	WaveformStreamID s = item->streamID();
@@ -2603,7 +2729,7 @@ RecordMarker* AmplitudeView::updatePhaseMarker(Seiscomp::Gui::RecordViewItem *it
 		status = label->magnitudeProcessor->computeMagnitude(
 			res.amplitude.value, label->processor->unit(),
 			res.period, res.snr, item->value(ITEM_DISTANCE_INDEX),
-			_origin->depth(), _origin.get(), label->location, a.get(), m);
+			SC_D.origin->depth(), SC_D.origin.get(), label->location, a.get(), m);
 		if ( status == Processing::MagnitudeProcessor::OK )
 			mag = m;
 		else {
@@ -2680,18 +2806,18 @@ void AmplitudeView::onAddedItem(const Record* rec, RecordViewItem* item) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setCursorText(const QString& text) {
-	_recordView->setCursorText(text);
-	_currentRecord->setCursorText(text);
-	_currentRecord->setActive(text != "");
+	SC_D.recordView->setCursorText(text);
+	SC_D.currentRecord->setCursorText(text);
+	SC_D.currentRecord->setActive(text != "");
 
-	if ( _currentRecord->isActive() ) {
+	if ( SC_D.currentRecord->isActive() ) {
 		//_centerSelection = true;
-		RecordMarker* m = _currentRecord->marker(text);
+		RecordMarker* m = SC_D.currentRecord->marker(text);
 		if ( m )
 			setCursorPos(m->correctedTime());
-		else if ( _recordView->currentItem() )
-			setCursorPos(_recordView->currentItem()->widget()->visibleTimeWindow().startTime() +
-			             Core::TimeSpan(_recordView->currentItem()->widget()->visibleTimeWindow().length()*0.5));
+		else if ( SC_D.recordView->currentItem() )
+			setCursorPos(SC_D.recordView->currentItem()->widget()->visibleTimeWindow().startTime() +
+			             Core::TimeSpan(SC_D.recordView->currentItem()->widget()->visibleTimeWindow().length()*0.5));
 	}
 
 	updateCurrentRowState();
@@ -2706,14 +2832,14 @@ void AmplitudeView::setCursorText(const QString& text) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::loadNextStations() {
-	float distance = _spinDistance->value();
+	float distance = SC_D.spinDistance->value();
 
 	if ( SCScheme.unit.distanceInKM )
 		distance = Math::Geo::km2deg(distance);
 
 	std::vector<Seiscomp::DataModel::WaveformStreamID>::iterator it;
 
-	_recordView->setUpdatesEnabled(false);
+	SC_D.recordView->setUpdatesEnabled(false);
 
 	loadNextStations(distance);
 
@@ -2723,16 +2849,16 @@ void AmplitudeView::loadNextStations() {
 
 	// Load all required components
 	for ( int i = 0; i < 3; ++i )
-		if ( _componentMap[i] >= 0 )
+		if ( SC_D.componentMap[i] >= 0 )
 			fetchComponent(COMPS[i]);
 
-	if ( _recordView->currentItem() == nullptr ) {
-		selectFirstVisibleItem(_recordView);
+	if ( SC_D.recordView->currentItem() == nullptr ) {
+		selectFirstVisibleItem(SC_D.recordView);
 	}
-	setCursorText(_currentRecord->cursorText());
+	setCursorText(SC_D.currentRecord->cursorText());
 
-	_recordView->setUpdatesEnabled(true);
-	_recordView->setFocus();
+	SC_D.recordView->setUpdatesEnabled(true);
+	SC_D.recordView->setFocus();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2741,9 +2867,9 @@ void AmplitudeView::loadNextStations() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::sortByState() {
-	if ( _ui.actionSortByDistance->isChecked() )
+	if ( SC_D.ui.actionSortByDistance->isChecked() )
 		sortByDistance();
-	else if ( _ui.actionSortAlphabetically->isChecked() )
+	else if ( SC_D.ui.actionSortAlphabetically->isChecked() )
 		sortAlphabetically();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2753,9 +2879,9 @@ void AmplitudeView::sortByState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::alignByState() {
-	if ( _ui.actionAlignOnPArrival->isChecked() )
+	if ( SC_D.ui.actionAlignOnPArrival->isChecked() )
 		alignOnPArrivals();
-	else if ( _ui.actionAlignOnOriginTime->isChecked() )
+	else if ( SC_D.ui.actionAlignOnOriginTime->isChecked() )
 		alignOnOriginTime();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2765,11 +2891,11 @@ void AmplitudeView::alignByState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::componentByState() {
-	if ( _ui.actionShowZComponent->isChecked() )
+	if ( SC_D.ui.actionShowZComponent->isChecked() )
 		showComponent('Z');
-	else if ( _ui.actionShowNComponent->isChecked() )
+	else if ( SC_D.ui.actionShowNComponent->isChecked() )
 		showComponent('1');
-	else if ( _ui.actionShowEComponent->isChecked() )
+	else if ( SC_D.ui.actionShowEComponent->isChecked() )
 		showComponent('2');
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2780,14 +2906,14 @@ void AmplitudeView::componentByState() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::resetState() {
 	for ( int i = 0; i < 3; ++i )
-		if ( _componentMap[i] >= 0 )
+		if ( SC_D.componentMap[i] >= 0 )
 			showComponent(COMPS[i]);
 	//showComponent('Z');
 	//alignOnOriginTime();
 	alignOnPArrivals();
 	pickNone(true);
 	sortByDistance();
-	_ui.actionShowUsedStations->setChecked(false);
+	SC_D.ui.actionShowUsedStations->setChecked(false);
 	showUsedStations(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2808,7 +2934,7 @@ void AmplitudeView::updateLayoutFromState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::firstConnectionEstablished() {
-	_connectionState->start();
+	SC_D.connectionState->start();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2817,7 +2943,7 @@ void AmplitudeView::firstConnectionEstablished() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::lastConnectionClosed() {
-	_connectionState->stop();
+	SC_D.connectionState->stop();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2868,7 +2994,7 @@ void AmplitudeView::showFullscreen(bool e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::recalculateAmplitude() {
-	RecordViewItem *item = _recordView->currentItem();
+	RecordViewItem *item = SC_D.recordView->currentItem();
 	if ( item == nullptr ) return;
 
 	AmplitudeRecordLabel *l = static_cast<AmplitudeRecordLabel*>(item->label());
@@ -2876,17 +3002,17 @@ void AmplitudeView::recalculateAmplitude() {
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	if ( _checkOverrideSNR->isChecked() )
-		l->processor->setMinSNR(_spinSNR->value());
+	if ( SC_D.checkOverrideSNR->isChecked() )
+		l->processor->setMinSNR(SC_D.spinSNR->value());
 	else
 		l->processor->setMinSNR(l->initialMinSNR);
 
-	resetAmplitude(item, _amplitudeType.c_str(), false);
+	resetAmplitude(item, SC_D.amplitudeType.c_str(), false);
 
-	if ( _comboAmpType->isEnabled() )
-		l->processor->setParameter(Processing::AmplitudeProcessor::MeasureType, _comboAmpType->currentText().toStdString());
-	if ( _comboAmpCombiner->isEnabled() )
-		l->processor->setParameter(Processing::AmplitudeProcessor::Combiner, _comboAmpCombiner->currentText().toStdString());
+	if ( SC_D.comboAmpType->isEnabled() )
+		l->processor->setParameter(Processing::AmplitudeProcessor::MeasureType, SC_D.comboAmpType->currentText().toStdString());
+	if ( SC_D.comboAmpCombiner->isEnabled() )
+		l->processor->setParameter(Processing::AmplitudeProcessor::Combiner, SC_D.comboAmpCombiner->currentText().toStdString());
 
 	if ( l->processor->isFinished() ) {
 		l->processor->setPublishFunction(bind(&AmplitudeView::newAmplitudeAvailable, this, placeholders::_1, placeholders::_2));
@@ -2920,7 +3046,7 @@ void AmplitudeView::recalculateAmplitude() {
 	l->updateProcessingInfo();
 	//l->setEnabled(!l->isError);
 
-	_currentRecord->update();
+	SC_D.currentRecord->update();
 	QApplication::restoreOverrideCursor();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2932,8 +3058,8 @@ void AmplitudeView::recalculateAmplitude() {
 void AmplitudeView::recalculateAmplitudes() {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	for ( int r = 0; r < _recordView->rowCount(); ++r ) {
-		RecordViewItem *item = _recordView->itemAt(r);
+	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+		RecordViewItem *item = SC_D.recordView->itemAt(r);
 		AmplitudeRecordLabel *l = static_cast<AmplitudeRecordLabel*>(item->label());
 		if ( !l->processor ) continue;
 
@@ -2944,17 +3070,17 @@ void AmplitudeView::recalculateAmplitudes() {
 			if ( !controllerLabel->isExpanded() ) continue;
 		}
 
-		if ( _checkOverrideSNR->isChecked() )
-			l->processor->setMinSNR(_spinSNR->value());
+		if ( SC_D.checkOverrideSNR->isChecked() )
+			l->processor->setMinSNR(SC_D.spinSNR->value());
 		else
 			l->processor->setMinSNR(l->initialMinSNR);
 
-		resetAmplitude(item, _amplitudeType.c_str(), false);
+		resetAmplitude(item, SC_D.amplitudeType.c_str(), false);
 
-		if ( _comboAmpType->isEnabled() )
-			l->processor->setParameter(Processing::AmplitudeProcessor::MeasureType, _comboAmpType->currentText().toStdString());
-		if ( _comboAmpCombiner->isEnabled() )
-			l->processor->setParameter(Processing::AmplitudeProcessor::Combiner, _comboAmpCombiner->currentText().toStdString());
+		if ( SC_D.comboAmpType->isEnabled() )
+			l->processor->setParameter(Processing::AmplitudeProcessor::MeasureType, SC_D.comboAmpType->currentText().toStdString());
+		if ( SC_D.comboAmpCombiner->isEnabled() )
+			l->processor->setParameter(Processing::AmplitudeProcessor::Combiner, SC_D.comboAmpCombiner->currentText().toStdString());
 
 		if ( l->processor->isFinished() ) {
 			l->processor->setPublishFunction(bind(&AmplitudeView::newAmplitudeAvailable, this, placeholders::_1, placeholders::_2));
@@ -2989,7 +3115,7 @@ void AmplitudeView::recalculateAmplitudes() {
 		//l->setEnabled(!l->isError);
 	}
 
-	_currentRecord->update();
+	SC_D.currentRecord->update();
 	QApplication::restoreOverrideCursor();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3001,15 +3127,15 @@ void AmplitudeView::recalculateAmplitudes() {
 void AmplitudeView::newAmplitudeAvailable(const Processing::AmplitudeProcessor *proc,
                                           const Processing::AmplitudeProcessor::Result &res) {
 	std::string streamID = res.record->streamID();
-	RecordItemMap::iterator it = _recordItemLabels.find(streamID);
-	if ( it == _recordItemLabels.end() )
+	auto it = SC_D.recordItemLabels.find(streamID);
+	if ( it == SC_D.recordItemLabels.end() )
 		return;
 
 	AmplitudeRecordLabel *label = it->second;
 	RecordViewItem *item = label->recordViewItem();
 
 	if ( label->processor.get() != proc ) return;
-	if ( proc->type() != _amplitudeType ) return;
+	if ( proc->type() != SC_D.amplitudeType ) return;
 
 	updatePhaseMarker(item, proc, res);
 }
@@ -3020,19 +3146,18 @@ void AmplitudeView::newAmplitudeAvailable(const Processing::AmplitudeProcessor *
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::fetchComponent(char componentCode) {
-	for ( WaveformStreamList::iterator it = _allStreams.begin();
-	      it != _allStreams.end(); ) {
+	for ( auto it = SC_D.allStreams.begin(); it != SC_D.allStreams.end(); ) {
 		char queuedComponent = COMPS[it->component];
 		if ( queuedComponent == componentCode || queuedComponent == '?' ) {
 			// Cut the needed timewindow
-			RecordViewItem* item = _recordView->item(it->streamID);
+			RecordViewItem* item = SC_D.recordView->item(it->streamID);
 			if ( item ) {
 				AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
 				it->timeWindow = label->timeWindow;
 			}
 
-			_nextStreams.push_back(*it);
-			it = _allStreams.erase(it);
+			SC_D.nextStreams.push_back(*it);
+			it = SC_D.allStreams.erase(it);
 		}
 		else
 			++it;
@@ -3062,15 +3187,15 @@ void AmplitudeView::showComponent(char componentCode) {
 			break;
 	}
 
-	if ( _componentMap[newSlot] >= 0 ) {
+	if ( SC_D.componentMap[newSlot] >= 0 ) {
 		fetchComponent(componentCode);
-		_currentSlot = newSlot;
+		SC_D.currentSlot = newSlot;
 	}
 
-	_recordView->showSlot(_componentMap[_currentSlot]);
-	_ui.actionShowZComponent->setChecked(_currentSlot == 0);
-	_ui.actionShowNComponent->setChecked(_currentSlot == 1);
-	_ui.actionShowEComponent->setChecked(_currentSlot == 2);
+	SC_D.recordView->showSlot(SC_D.componentMap[SC_D.currentSlot]);
+	SC_D.ui.actionShowZComponent->setChecked(SC_D.currentSlot == 0);
+	SC_D.ui.actionShowNComponent->setChecked(SC_D.currentSlot == 1);
+	SC_D.ui.actionShowEComponent->setChecked(SC_D.currentSlot == 2);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3079,8 +3204,8 @@ void AmplitudeView::showComponent(char componentCode) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::showUsedStations(bool usedOnly) {
-	for ( int r = 0; r < _recordView->rowCount(); ++r ) {
-		RecordViewItem* item = _recordView->itemAt(r);
+	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+		RecordViewItem* item = SC_D.recordView->itemAt(r);
 		if ( !isLinkedItem(item) ) {
 			if ( usedOnly )
 				item->setVisible(isTraceUsed(item->widget()));
@@ -3107,10 +3232,10 @@ void AmplitudeView::loadNextStations(float distance) {
 	
 				QString code = (n->code() + "." + s->code()).c_str();
 	
-				if ( _stations.contains(code) ) continue;
+				if ( SC_D.stations.contains(code) ) continue;
 	
 				try {
-					if ( s->end() <= _origin->time() )
+					if ( s->end() <= SC_D.origin->time() )
 						continue;
 				}
 				catch ( Core::ValueException& ) {}
@@ -3119,44 +3244,44 @@ void AmplitudeView::loadNextStations(float distance) {
 				double lon = s->longitude();
 				double delta, az1, az2;
 	
-				Math::Geo::delazi(_origin->latitude(), _origin->longitude(),
+				Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
 				                  lat, lon, &delta, &az1, &az2);
 	
 				if ( delta > distance ) continue;
 
 				// Skip stations out of amplitude processors range
-				if ( delta < _minDist || delta > _maxDist ) continue;
+				if ( delta < SC_D.minDist || delta > SC_D.maxDist ) continue;
 	
 				// try to get the configured location and stream code
-				Stream *stream = findConfiguredStream(s, _origin->time());
+				Stream *stream = findConfiguredStream(s, SC_D.origin->time());
 
 				// Try to get a default stream
 				if ( stream == nullptr ) {
 					// Preferred channel code is BH. If not available use either SH or skip.
-					for ( size_t c = 0; c < _broadBandCodes.size(); ++c ) {
-						stream = findStream(s, _broadBandCodes[c], _origin->time());
+					for ( size_t c = 0; c < SC_D.broadBandCodes.size(); ++c ) {
+						stream = findStream(s, SC_D.broadBandCodes[c], SC_D.origin->time());
 						if ( stream ) break;
 					}
 				}
 
 				if ( stream == nullptr )
-					stream = findStream(s, _origin->time(), Processing::WaveformProcessor::MeterPerSecond);
+					stream = findStream(s, SC_D.origin->time(), Processing::WaveformProcessor::MeterPerSecond);
 	
 				if ( stream ) {
 					WaveformStreamID streamID(n->code(), s->code(), stream->sensorLocation()->code(), stream->code().substr(0,stream->code().size()-1) + '?', "");
 
 					try {
 						TravelTime ttime =
-							_ttTable.computeFirst(_origin->latitude(), _origin->longitude(),
-							                      _origin->depth(), lat, lon);
+							SC_D.ttTable->computeFirst(SC_D.origin->latitude(), SC_D.origin->longitude(),
+							                           SC_D.origin->depth(), lat, lon);
 
-						Core::Time referenceTime = _origin->time().value() + Core::TimeSpan(ttime.time);
+						Core::Time referenceTime = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 
 						RecordViewItem* item = addStream(stream->sensorLocation(), streamID, referenceTime, false);
 						if ( item ) {
-							_stations.insert(code);
-							item->setVisible(!_ui.actionShowUsedStations->isChecked());
-							if ( _config.hideStationsWithoutData )
+							SC_D.stations.insert(code);
+							item->setVisible(!SC_D.ui.actionShowUsedStations->isChecked());
+							if ( SC_D.config.hideStationsWithoutData )
 								item->forceInvisibilty(true);
 						}
 					}
@@ -3189,7 +3314,7 @@ void AmplitudeView::addAmplitude(Gui::RecordViewItem *item,
 		AmplitudeViewMarker *marker;
 		marker = new AmplitudeViewMarker(widget, amp->timeWindow().reference(), AmplitudeViewMarker::Amplitude, false);
 		marker->setAmplitude(amp);
-		marker->setText(_magnitudeType.c_str());
+		marker->setText(SC_D.magnitudeType.c_str());
 		marker->setId(id);
 
 		if ( amp->waveformID().channelCode().size() > 2 )
@@ -3205,7 +3330,7 @@ void AmplitudeView::addAmplitude(Gui::RecordViewItem *item,
 			stat = label->magnitudeProcessor->computeMagnitude(
 				amp->amplitude().value(), label->processor->unit(),
 				per, snr, item->value(ITEM_DISTANCE_INDEX),
-				_origin->depth(), _origin.get(), label->location, amp, m);
+				SC_D.origin->depth(), SC_D.origin.get(), label->location, amp, m);
 			if ( stat == Processing::MagnitudeProcessor::OK )
 				marker->setMagnitude(m, QString());
 			else {
@@ -3225,30 +3350,32 @@ void AmplitudeView::addAmplitude(Gui::RecordViewItem *item,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
                               const std::string &magType) {
-	if ( (origin == _origin) && (_magnitudeType == magType) ) return true;
+	if ( (origin == SC_D.origin) && (SC_D.magnitudeType == magType) ) return true;
 
 	SEISCOMP_DEBUG("stopping record acquisition");
 	stop();
 
-	_recordView->clear();
-	_recordItemLabels.clear();
+	SC_D.recordView->clear();
+	SC_D.recordItemLabels.clear();
 
-	_labelAmpType->setEnabled(false);
-	_comboAmpType->clear();
-	_comboAmpType->setEnabled(false);
+	SC_D.labelAmpType->setEnabled(false);
+	SC_D.comboAmpType->clear();
+	SC_D.comboAmpType->setEnabled(false);
 
-	_labelAmpCombiner->setEnabled(false);
-	_comboAmpCombiner->clear();
-	_comboAmpCombiner->setEnabled(false);
+	SC_D.labelAmpCombiner->setEnabled(false);
+	SC_D.comboAmpCombiner->clear();
+	SC_D.comboAmpCombiner->setEnabled(false);
 
-	_origin = origin;
-	_magnitude = nullptr;
+	SC_D.origin = origin;
+	SC_D.magnitude = nullptr;
 
+	figureOutTravelTimeTable();
 	updateOriginInformation();
-	if ( _comboFilter->currentIndex() == 0 )
-		_comboFilter->setCurrentIndex(1);
 
-	if ( _origin == nullptr )
+	if ( SC_D.comboFilter->currentIndex() == 0 )
+		SC_D.comboFilter->setCurrentIndex(1);
+
+	if ( SC_D.origin == nullptr )
 		return false;
 
 	Processing::MagnitudeProcessorPtr procMag = Processing::MagnitudeProcessorFactory::Create(magType.c_str());
@@ -3258,140 +3385,140 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 		return false;
 	}
 
-	_magnitudeType = magType;
-	_amplitudeType = procMag->amplitudeType();
-	Processing::AmplitudeProcessorPtr procAmp = Processing::AmplitudeProcessorFactory::Create(_amplitudeType.c_str());
+	SC_D.magnitudeType = magType;
+	SC_D.amplitudeType = procMag->amplitudeType();
+	Processing::AmplitudeProcessorPtr procAmp = Processing::AmplitudeProcessorFactory::Create(SC_D.amplitudeType.c_str());
 	if ( !procAmp ) {
 		QMessageBox::critical(this, "Amplitude waveform review",
-		                      QString("Failed to create amplitude processor with type %1").arg(_amplitudeType.c_str()));
+		                      QString("Failed to create amplitude processor with type %1").arg(SC_D.amplitudeType.c_str()));
 		return false;
 	}
 
 	if ( procAmp->supports(Processing::AmplitudeProcessor::MeasureType) ) {
 		Processing::AmplitudeProcessor::IDList params = procAmp->capabilityParameters(Processing::AmplitudeProcessor::MeasureType);
 		for ( size_t i = 0; i < params.size(); ++i )
-			_comboAmpType->addItem(params[i].c_str());
+			SC_D.comboAmpType->addItem(params[i].c_str());
 	}
-	_comboAmpType->setEnabled(_comboAmpType->count() > 0);
-	_labelAmpType->setEnabled(_comboAmpType->isEnabled());
+	SC_D.comboAmpType->setEnabled(SC_D.comboAmpType->count() > 0);
+	SC_D.labelAmpType->setEnabled(SC_D.comboAmpType->isEnabled());
 
 	if ( procAmp->supports(Processing::AmplitudeProcessor::Combiner) ) {
-		_comboAmpCombiner->setEnabled(true);
+		SC_D.comboAmpCombiner->setEnabled(true);
 		Processing::AmplitudeProcessor::IDList params = procAmp->capabilityParameters(Processing::AmplitudeProcessor::Combiner);
 		for ( size_t i = 0; i < params.size(); ++i )
-			_comboAmpCombiner->addItem(params[i].c_str());
+			SC_D.comboAmpCombiner->addItem(params[i].c_str());
 	}
-	_comboAmpCombiner->setEnabled(_comboAmpCombiner->count() > 0);
-	_labelAmpCombiner->setEnabled(_comboAmpCombiner->isEnabled());
+	SC_D.comboAmpCombiner->setEnabled(SC_D.comboAmpCombiner->count() > 0);
+	SC_D.labelAmpCombiner->setEnabled(SC_D.comboAmpCombiner->isEnabled());
 
 	// Default map from component to trace slot in RecordWidget
-	_componentMap[0] = -1;
-	_componentMap[1] = -1;
-	_componentMap[2] = -1;
-	_slotCount = 0;
+	SC_D.componentMap[0] = -1;
+	SC_D.componentMap[1] = -1;
+	SC_D.componentMap[2] = -1;
+	SC_D.slotCount = 0;
 
 	Processing::WaveformProcessor::StreamComponent c = procAmp->usedComponent();
 	switch ( c ) {
 		case Processing::WaveformProcessor::Vertical:
-			_componentMap[0] = 0;
-			_slotCount = 1;
+			SC_D.componentMap[0] = 0;
+			SC_D.slotCount = 1;
 			break;
 		case Processing::WaveformProcessor::FirstHorizontal:
-			_componentMap[1] = 0;
-			_slotCount = 1;
+			SC_D.componentMap[1] = 0;
+			SC_D.slotCount = 1;
 			break;
 		case Processing::WaveformProcessor::SecondHorizontal:
-			_componentMap[2] = 0;
-			_slotCount = 1;
+			SC_D.componentMap[2] = 0;
+			SC_D.slotCount = 1;
 			break;
 		case Processing::WaveformProcessor::Horizontal:
-			_componentMap[1] = 0;
-			_componentMap[2] = 1;
-			_slotCount = 2;
+			SC_D.componentMap[1] = 0;
+			SC_D.componentMap[2] = 1;
+			SC_D.slotCount = 2;
 			break;
 		case Processing::WaveformProcessor::Any:
-			_componentMap[0] = 0;
-			_componentMap[1] = 1;
-			_componentMap[2] = 2;
-			_slotCount = 3;
+			SC_D.componentMap[0] = 0;
+			SC_D.componentMap[1] = 1;
+			SC_D.componentMap[2] = 2;
+			SC_D.slotCount = 3;
 			break;
 		default:
 			return false;
 	}
 
-	_spinSNR->setValue(procAmp->config().snrMin);
+	SC_D.spinSNR->setValue(procAmp->config().snrMin);
 
-	_minDist = procAmp->config().minimumDistance;
-	_maxDist = procAmp->config().maximumDistance;
+	SC_D.minDist = procAmp->config().minimumDistance;
+	SC_D.maxDist = procAmp->config().maximumDistance;
 
 	if ( SCScheme.unit.distanceInKM ) {
-		_spinDistance->setMinimum(Math::Geo::deg2km(_minDist));
-		_spinDistance->setMaximum(Math::Geo::deg2km(_maxDist));
+		SC_D.spinDistance->setMinimum(Math::Geo::deg2km(SC_D.minDist));
+		SC_D.spinDistance->setMaximum(Math::Geo::deg2km(SC_D.maxDist));
 	}
 	else {
-		_spinDistance->setMinimum(_minDist);
-		_spinDistance->setMaximum(_maxDist);
+		SC_D.spinDistance->setMinimum(SC_D.minDist);
+		SC_D.spinDistance->setMaximum(SC_D.maxDist);
 	}
 
 	setUpdatesEnabled(false);
 
-	_stations.clear();
+	SC_D.stations.clear();
 
-	Core::Time originTime = _origin->time();
+	Core::Time originTime = SC_D.origin->time();
 	if ( !originTime ) originTime = Core::Time::GMT();	
 
 	// Default is 1h travel time for 180deg
 	double maxTravelTime = 3600.0;
 
 	try {
-		TravelTime tt = _ttTable.computeFirst(0.0,0.0, _origin->depth(), 180.0,0.0);
+		TravelTime tt = SC_D.ttTable->computeFirst(0.0,0.0, SC_D.origin->depth(), 180.0,0.0);
 		maxTravelTime = tt.time;
 	}
 	catch ( ... ) {}
 
 	SEISCOMP_DEBUG("MaxTravelTime = %.2f", maxTravelTime);
 
-	_minTime = procAmp->config().noiseBegin;
-	_maxTime = maxTravelTime+procAmp->config().signalEnd;
-	Core::TimeWindow timeWindow(originTime+Core::TimeSpan(_minTime),
-	                            originTime+Core::TimeSpan(_maxTime));
-	_recordView->setTimeWindow(timeWindow);
-	_recordView->setTimeRange(_minTime, _maxTime);
+	SC_D.minTime = procAmp->config().noiseBegin;
+	SC_D.maxTime = maxTravelTime+procAmp->config().signalEnd;
+	Core::TimeWindow timeWindow(originTime+Core::TimeSpan(SC_D.minTime),
+	                            originTime+Core::TimeSpan(SC_D.maxTime));
+	SC_D.recordView->setTimeWindow(timeWindow);
+	SC_D.recordView->setTimeRange(SC_D.minTime, SC_D.maxTime);
 
-	for ( size_t i = 0; i < _origin->magnitudeCount(); ++i ) {
-		if ( _origin->magnitude(i)->type() == magType ) {
-			_magnitude = _origin->magnitude(i);
+	for ( size_t i = 0; i < SC_D.origin->magnitudeCount(); ++i ) {
+		if ( SC_D.origin->magnitude(i)->type() == magType ) {
+			SC_D.magnitude = SC_D.origin->magnitude(i);
 			break;
 		}
 	}
 
 	map<string, StationItem> items;
 
-	if ( _magnitude ) {
-		for ( size_t i = 0; i < _magnitude->stationMagnitudeContributionCount(); ++i ) {
-			StationMagnitudeContribution *staMagRef = _magnitude->stationMagnitudeContribution(i);
+	if ( SC_D.magnitude ) {
+		for ( size_t i = 0; i < SC_D.magnitude->stationMagnitudeContributionCount(); ++i ) {
+			StationMagnitudeContribution *staMagRef = SC_D.magnitude->stationMagnitudeContribution(i);
 			StationMagnitude *staMag = StationMagnitude::Find(staMagRef->stationMagnitudeID());
 			if ( !staMag ) continue;
 			StationItem item;
 
 			item.amp = Amplitude::Find(staMag->amplitudeID());
-			if ( !item.amp && _reader )
-				item.amp = Amplitude::Cast(_reader->getObject(Amplitude::TypeInfo(), staMag->amplitudeID()));
+			if ( !item.amp && SC_D.reader )
+				item.amp = Amplitude::Cast(SC_D.reader->getObject(Amplitude::TypeInfo(), staMag->amplitudeID()));
 
 			if ( !item.amp ) continue;
 
 			item.pick = Pick::Cast(PublicObject::Find(item.amp->pickID()));
 			item.isTrigger = true;
 
-			if ( !item.amp->pickID().empty() && !item.pick && _reader )
-				item.pick = Pick::Cast(_reader->getObject(Pick::TypeInfo(), item.amp->pickID()));
+			if ( !item.amp->pickID().empty() && !item.pick && SC_D.reader )
+				item.pick = Pick::Cast(SC_D.reader->getObject(Pick::TypeInfo(), item.amp->pickID()));
 
 			string itemID = item.amp->waveformID().networkCode() + "." + item.amp->waveformID().stationCode();
 			items[itemID] = item;
 		}
 	}
 
-	for ( size_t i = 0; i < _origin->arrivalCount(); ++i ) {
+	for ( size_t i = 0; i < SC_D.origin->arrivalCount(); ++i ) {
 		Arrival* arrival = origin->arrival(i);
 
 		StationItem item;
@@ -3438,10 +3565,10 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 		SensorLocation *loc = nullptr;
 
 		Station *sta = Client::Inventory::Instance()->getStation(
-		               streamID.networkCode(), streamID.stationCode(), _origin->time());
+		               streamID.networkCode(), streamID.stationCode(), SC_D.origin->time());
 
 		if ( sta )
-			loc = findSensorLocation(sta, streamID.locationCode(), _origin->time());
+			loc = findSensorLocation(sta, streamID.locationCode(), SC_D.origin->time());
 		if ( loc == nullptr ) {
 			SEISCOMP_ERROR("skipping station %s.%s: sensor location %s not found",
 			               streamID.networkCode().c_str(),
@@ -3455,10 +3582,10 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 		else /*if ( it->second.amp )*/ {
 			try {
 				TravelTime ttime =
-					_ttTable.computeFirst(_origin->latitude(), _origin->longitude(),
-					                      _origin->depth(), loc->latitude(), loc->longitude());
+					SC_D.ttTable->computeFirst(SC_D.origin->latitude(), SC_D.origin->longitude(),
+					                           SC_D.origin->depth(), loc->latitude(), loc->longitude());
 
-				reference = _origin->time().value() + Core::TimeSpan(ttime.time);
+				reference = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 			}
 			catch ( ... ) {
 				SEISCOMP_ERROR("skipping station %s.%s: unable to compute trigger time",
@@ -3470,10 +3597,10 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 
 		if ( it.second.amp == nullptr ) {
 			double delta, az, baz;
-			Math::Geo::delazi(_origin->latitude(), _origin->longitude(),
+			Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
 			                  loc->latitude(), loc->longitude(), &delta, &az, &baz);
 
-			if ( delta < _minDist || delta > _maxDist ) {
+			if ( delta < SC_D.minDist || delta > SC_D.maxDist ) {
 				SEISCOMP_INFO("skipping station %s.%s: out of range",
 				              streamID.networkCode().c_str(), streamID.stationCode().c_str());
 				continue;
@@ -3484,11 +3611,11 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 		// A new item has been inserted
 		if ( item != nullptr ) {
 			addAmplitude(item, it.second.amp.get(), it.second.pick.get(), reference, -1);
-			_stations.insert((streamID.networkCode() + "." + streamID.stationCode()).c_str());
+			SC_D.stations.insert((streamID.networkCode() + "." + streamID.stationCode()).c_str());
 		}
 		else {
 			// Try to find the existing item for the stream
-			item = _recordView->item(streamID);
+			item = SC_D.recordView->item(streamID);
 
 			// If not found ignore this stream, we can't do anything else
 			if ( item == nullptr ) continue;
@@ -3500,22 +3627,22 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 		}
 	}
 
-	if ( _recordView->rowCount() == 0 )
+	if ( SC_D.recordView->rowCount() == 0 )
 		loadNextStations();
 
-	_recordView->setAlignment(originTime);
+	SC_D.recordView->setAlignment(originTime);
 
-	_ui.actionShowZComponent->setEnabled(_componentMap[0] >= 0);
-	_ui.actionShowZComponent->setVisible(_componentMap[0] >= 0);
-	_ui.actionShowNComponent->setEnabled(_componentMap[1] >= 0);
-	_ui.actionShowNComponent->setVisible(_componentMap[1] >= 0);
-	_ui.actionShowEComponent->setEnabled(_componentMap[2] >= 0);
-	_ui.actionShowEComponent->setVisible(_componentMap[2] >= 0);
+	SC_D.ui.actionShowZComponent->setEnabled(SC_D.componentMap[0] >= 0);
+	SC_D.ui.actionShowZComponent->setVisible(SC_D.componentMap[0] >= 0);
+	SC_D.ui.actionShowNComponent->setEnabled(SC_D.componentMap[1] >= 0);
+	SC_D.ui.actionShowNComponent->setVisible(SC_D.componentMap[1] >= 0);
+	SC_D.ui.actionShowEComponent->setEnabled(SC_D.componentMap[2] >= 0);
+	SC_D.ui.actionShowEComponent->setVisible(SC_D.componentMap[2] >= 0);
 
 	resetState();
 	updateLayoutFromState();
 
-	selectFirstVisibleItem(_recordView);
+	selectFirstVisibleItem(SC_D.recordView);
 
 	setUpdatesEnabled(true);
 
@@ -3530,19 +3657,19 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 void AmplitudeView::updateOriginInformation() {
 	QString title;
 
-	if ( _origin ) {
+	if ( SC_D.origin ) {
 		QString depth;
 		try {
-			depth = QString("%1").arg((int)_origin->depth());
+			depth = QString("%1").arg(static_cast<int>(SC_D.origin->depth()));
 		}
 		catch ( Core::ValueException& ) {
 			depth = "nullptr";
 		}
 
 		title = QString("ID: %1, Lat/Lon: %2 | %3, Depth: %4 km")
-		                 .arg(_origin->publicID().c_str())
-		                 .arg(_origin->latitude(), 0, 'f', 2)
-		                 .arg(_origin->longitude(), 0, 'f', 2)
+		                 .arg(SC_D.origin->publicID().c_str())
+		                 .arg(SC_D.origin->latitude(), 0, 'f', 2)
+		                 .arg(SC_D.origin->longitude(), 0, 'f', 2)
 		                 .arg(depth);
 	}
 	else {
@@ -3560,14 +3687,14 @@ void AmplitudeView::updateOriginInformation() {
 void AmplitudeView::setStationEnabled(const std::string& networkCode,
                                       const std::string& stationCode,
                                       bool state) {
-	QList<RecordViewItem*> streams = _recordView->stationStreams(networkCode, stationCode);
+	QList<RecordViewItem*> streams = SC_D.recordView->stationStreams(networkCode, stationCode);
 	foreach ( RecordViewItem* item, streams ) {
 		AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
 
 		label->isEnabledByConfig = state;
 
 		// Force state to false if item has no data yet and should be hidden
-		if ( _config.hideStationsWithoutData && !label->hasGotData && !isTracePicked(item->widget()) )
+		if ( SC_D.config.hideStationsWithoutData && !label->hasGotData && !isTracePicked(item->widget()) )
 			state = false;
 
 		item->forceInvisibilty(!state);
@@ -3581,9 +3708,9 @@ void AmplitudeView::setStationEnabled(const std::string& networkCode,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setCurrentStation(const std::string& networkCode,
                                       const std::string& stationCode) {
-	QList<RecordViewItem*> streams = _recordView->stationStreams(networkCode, stationCode);
+	QList<RecordViewItem*> streams = SC_D.recordView->stationStreams(networkCode, stationCode);
 	if ( streams.isEmpty() ) return;
-	_recordView->setCurrentItem(streams.front());
+	SC_D.recordView->setCurrentItem(streams.front());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3593,7 +3720,9 @@ void AmplitudeView::setCurrentStation(const std::string& networkCode,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::queueStream(const DataModel::WaveformStreamID& streamID,
                                 int component) {
-	_allStreams.push_back(WaveformRequest(Core::TimeWindow(), streamID, component));
+	SC_D.allStreams.push_back(
+		AmplitudeViewPrivate::WaveformRequest(Core::TimeWindow(), streamID, component)
+	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3617,23 +3746,23 @@ RecordViewItem* AmplitudeView::addStream(const DataModel::SensorLocation *sloc,
 	SensorLocation *smsloc = nullptr;
 	bool hasStrongMotion = false;
 
-	if ( _config.loadStrongMotionData ) {
+	if ( SC_D.config.loadStrongMotionData ) {
 
 		Station *sta = Client::Inventory::Instance()->getStation(
 			streamID.networkCode(),
 			streamID.stationCode(),
-			_origin->time());
+			SC_D.origin->time());
 
 		if ( sta ) {
 			// Find the stream with given code priorities
 			Stream *stream = nullptr;
-			for ( size_t c = 0; c < _strongMotionCodes.size(); ++c ) {
-				stream = findStream(sta, _strongMotionCodes[c], _origin->time());
+			for ( size_t c = 0; c < SC_D.strongMotionCodes.size(); ++c ) {
+				stream = findStream(sta, SC_D.strongMotionCodes[c], SC_D.origin->time());
 				if ( stream ) break;
 			}
 
 			if ( stream == nullptr )
-				stream = findStream(sta, _origin->time(), Processing::WaveformProcessor::MeterPerSecondSquared);
+				stream = findStream(sta, SC_D.origin->time(), Processing::WaveformProcessor::MeterPerSecondSquared);
 
 			if ( stream ) {
 				smsloc = stream->sensorLocation();
@@ -3680,6 +3809,8 @@ RecordViewItem* AmplitudeView::addStream(const DataModel::SensorLocation *sloc,
 		}
 	}
 
+	addTheoreticalArrivals(item, streamID.networkCode(), streamID.stationCode(), streamID.locationCode());
+
 	return item;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3696,6 +3827,60 @@ void AmplitudeView::openConnectionInfo(const QPoint &p) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::ttInterfaceChanged(QString interface) {
+	SC_D.comboTTTables->blockSignals(true);
+	SC_D.comboTTTables->clear();
+
+	SC_D.ttInterface = interface.toStdString();
+
+	try {
+		vector<string> models = SCApp->configGetStrings("ttt." + interface.toStdString() + ".tables");
+		int currentIndex = -1;
+		for ( size_t i = 0; i < models.size(); ++i ) {
+			SC_D.comboTTTables->addItem(models[i].c_str());
+			if ( SC_D.ttTableName == models[i] )
+				currentIndex = SC_D.comboTTTables->count()-1;
+		}
+
+		if ( currentIndex >= 0 )
+			SC_D.comboTTTables->setCurrentIndex(currentIndex);
+	}
+	catch ( ... ) {}
+
+	SC_D.comboTTTables->setEnabled(SC_D.comboTTTables->count() > 0);
+	SC_D.comboTTTables->blockSignals(false);
+
+	ttTableChanged(SC_D.comboTTTables->currentText());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::ttTableChanged(QString tables) {
+	SC_D.ttTableName = tables.toStdString();
+
+	SC_D.ttTable = TravelTimeTableInterfaceFactory::Create(SC_D.ttInterface.c_str());
+	if ( !SC_D.ttTable ) {
+		QMessageBox::critical(this, tr("Error"),
+		                      tr("Error creating travel time table backend %1")
+		                      .arg(SC_D.ttInterface.c_str()));
+	}
+	else if ( !SC_D.ttTable->setModel(SC_D.ttTableName.c_str()) ) {
+		QMessageBox::critical(this, tr("Error"),
+		                      tr("Failed to set table %1")
+		                      .arg(SC_D.ttTableName.c_str()));
+	}
+
+	fillTheoreticalArrivals();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc,
                                             const WaveformStreamID& sid,
                                             const Core::Time &referenceTime) {
@@ -3704,16 +3889,16 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 	if ( loc == nullptr ) return nullptr;
 
 	double delta, az, baz;
-	Math::Geo::delazi(_origin->latitude(), _origin->longitude(),
+	Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
 	                  loc->latitude(), loc->longitude(), &delta, &az, &baz);
 
 	// Skip stations out of range
-	//if ( delta < _minDist || delta > _maxDist ) return nullptr;
+	//if ( delta < SC_D.minDist || delta > SC_D.maxDist ) return nullptr;
 
-	Processing::AmplitudeProcessorPtr proc = Processing::AmplitudeProcessorFactory::Create(_amplitudeType.c_str());
+	Processing::AmplitudeProcessorPtr proc = Processing::AmplitudeProcessorFactory::Create(SC_D.amplitudeType.c_str());
 	if ( proc == nullptr ) {
 		cerr << sid.networkCode() << "." << sid.stationCode() << ": unable to create processor "
-		     << _amplitudeType << ": ignoring station" << endl;
+		     << SC_D.amplitudeType << ": ignoring station" << endl;
 		return nullptr;
 	}
 
@@ -3724,7 +3909,7 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 	char comps[3] = {COMPS[0],COMPS[1],COMPS[2]};
 
 	// Fetch all three components
-	getThreeComponents(tc, loc, streamID.channelCode().substr(0, streamID.channelCode().size()-1).c_str(), _origin->time());
+	getThreeComponents(tc, loc, streamID.channelCode().substr(0, streamID.channelCode().size()-1).c_str(), SC_D.origin->time());
 	if ( tc.comps[ThreeComponents::Vertical] ) {
 		comps[0] = *tc.comps[ThreeComponents::Vertical]->code().rbegin();
 		Processing::Stream stream;
@@ -3778,42 +3963,42 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 		return nullptr;
 	}
 
-	Processing::MagnitudeProcessorPtr magProc = Processing::MagnitudeProcessorFactory::Create(_magnitudeType.c_str());
+	Processing::MagnitudeProcessorPtr magProc = Processing::MagnitudeProcessorFactory::Create(SC_D.magnitudeType.c_str());
 	if ( magProc == nullptr ) {
 		cerr << sid.networkCode() << "." << sid.stationCode() << ": unable to create magnitude processor "
-		     << _magnitudeType << ": ignoring station" << endl;
+		     << SC_D.magnitudeType << ": ignoring station" << endl;
 		return nullptr;
 	}
 
-	if ( proc->config().minimumDistance < _minDist ) {
-		_minDist = proc->config().minimumDistance;
+	if ( proc->config().minimumDistance < SC_D.minDist ) {
+		SC_D.minDist = proc->config().minimumDistance;
 		if ( SCScheme.unit.distanceInKM )
-			_spinDistance->setMinimum(Math::Geo::deg2km(_minDist));
+			SC_D.spinDistance->setMinimum(Math::Geo::deg2km(SC_D.minDist));
 		else
-			_spinDistance->setMinimum(_minDist);
+			SC_D.spinDistance->setMinimum(SC_D.minDist);
 	}
 
-	if ( proc->config().maximumDistance > _maxDist ) {
-		_maxDist = proc->config().maximumDistance;
+	if ( proc->config().maximumDistance > SC_D.maxDist ) {
+		SC_D.maxDist = proc->config().maximumDistance;
 		if ( SCScheme.unit.distanceInKM )
-			_spinDistance->setMaximum(Math::Geo::deg2km(_maxDist));
+			SC_D.spinDistance->setMaximum(Math::Geo::deg2km(SC_D.maxDist));
 		else
-			_spinDistance->setMaximum(_maxDist);
+			SC_D.spinDistance->setMaximum(SC_D.maxDist);
 	}
 
 	try {
-		proc->setHint(Processing::WaveformProcessor::Depth, _origin->depth());
+		proc->setHint(Processing::WaveformProcessor::Depth, SC_D.origin->depth());
 	}
 	catch ( ... ) {}
 
 	proc->setHint(Processing::WaveformProcessor::Distance, delta);
 
 	try {
-		proc->setHint(Processing::WaveformProcessor::Time, (double) _origin->time().value());
+		proc->setHint(Processing::WaveformProcessor::Time, (double) SC_D.origin->time().value());
 	}
 	catch ( ... ) {}
 
-	proc->setEnvironment(_origin.get(), loc, proc->pick());
+	proc->setEnvironment(SC_D.origin.get(), loc, proc->pick());
 	proc->computeTimeWindow();
 
 	if ( proc->isFinished() ) {
@@ -3833,11 +4018,11 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 		return nullptr;
 	}
 
-	RecordViewItem* item = _recordView->addItem(adjustWaveformStreamID(streamID), sid.stationCode().c_str());
+	RecordViewItem* item = SC_D.recordView->addItem(adjustWaveformStreamID(streamID), sid.stationCode().c_str());
 	if ( item == nullptr ) return nullptr;
 
-	if ( _currentRecord )
-		item->widget()->setCursorText(_currentRecord->cursorText());
+	if ( SC_D.currentRecord )
+		item->widget()->setCursorText(SC_D.currentRecord->cursorText());
 
 	item->label()->setText(sid.stationCode().c_str(), 0);
 	QFont f(item->label()->font(0));
@@ -3870,8 +4055,8 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 	label->setAlignment(Qt::AlignRight, 2);
 	label->setColor(palette().color(QPalette::Disabled, QPalette::WindowText), 2);
 
-	label->timeWindow.set(referenceTime+Core::TimeSpan(label->processor->config().noiseBegin-_config.preOffset),
-	                      referenceTime+Core::TimeSpan(label->processor->config().signalEnd+_config.postOffset));
+	label->timeWindow.set(referenceTime+Core::TimeSpan(label->processor->config().noiseBegin - SC_D.config.preOffset),
+	                      referenceTime+Core::TimeSpan(label->processor->config().signalEnd + SC_D.config.postOffset));
 	//label->timeWindow = label->processor->safetyTimeWindow();
 
 	if ( !allComponents )
@@ -3920,9 +4105,9 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 	for ( int i = 0; i < 3; ++i ) {
 		WaveformStreamID componentID = setWaveformIDComponent(streamID, comps[i]);
 		label->data.traces[i].channelCode = componentID.channelCode();
-		label->data.traces[i].recordSlot = _componentMap[i];
+		label->data.traces[i].recordSlot = SC_D.componentMap[i];
 		// Map waveformID to recordviewitem label
-		_recordItemLabels[waveformIDToStdString(componentID)] = label;
+		SC_D.recordItemLabels[waveformIDToStdString(componentID)] = label;
 
 		if ( label->data.traces[i].recordSlot >= 0 )
 			queueStream(setWaveformIDComponent(streamID, comps[i]), i);
@@ -3936,7 +4121,7 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 
 	AmplitudeViewMarker *marker =
 		new AmplitudeViewMarker(item->widget(), referenceTime, AmplitudeViewMarker::Reference, false);
-	marker->setText("P");
+	Q_UNUSED(marker);
 
 	return item;
 }
@@ -3947,11 +4132,11 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 char AmplitudeView::currentComponent() const {
-	if ( _ui.actionShowZComponent->isChecked() )
+	if ( SC_D.ui.actionShowZComponent->isChecked() )
 		return 'Z';
-	else if ( _ui.actionShowNComponent->isChecked() )
+	else if ( SC_D.ui.actionShowNComponent->isChecked() )
 		return '1';
-	else if ( _ui.actionShowEComponent->isChecked() )
+	else if ( SC_D.ui.actionShowEComponent->isChecked() )
 		return '2';
 
 	return '\0';
@@ -3963,7 +4148,7 @@ char AmplitudeView::currentComponent() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setupItem(const char comps[3],
-                              RecordViewItem* item) {
+                              RecordViewItem *item) {
 	connect(item->widget(), SIGNAL(cursorUpdated(RecordWidget*,int)),
 	        this, SLOT(updateMainCursor(RecordWidget*,int)));
 
@@ -3987,11 +4172,11 @@ void AmplitudeView::setupItem(const char comps[3],
 
 	item->widget()->setCustomBackgroundColor(SCScheme.colors.records.states.unrequested);
 
-	item->widget()->setSlotCount(_slotCount);
+	item->widget()->setSlotCount(SC_D.slotCount);
 
 	for ( int i = 0; i < 3; ++i ) {
-		if ( _componentMap[i] < 0 ) continue;
-		item->insertComponent(comps[i], _componentMap[i]);
+		if ( SC_D.componentMap[i] < 0 ) continue;
+		item->insertComponent(comps[i], SC_D.componentMap[i]);
 	}
 
 	Client::Inventory *inv = Client::Inventory::Instance();
@@ -4000,18 +4185,175 @@ void AmplitudeView::setupItem(const char comps[3],
 		double gain;
 
 		for ( int i = 0; i < 3; ++i ) {
-			if ( _componentMap[i] < 0 ) continue;
+			if ( SC_D.componentMap[i] < 0 ) continue;
 			try {
 				gain = inv->getGain(item->streamID().networkCode(), item->streamID().stationCode(),
 				                    item->streamID().locationCode(), channelCode + comps[i],
-				                    _origin->time().value());
-				item->widget()->setRecordScale(_componentMap[i], 1E9 / gain);
+				                    SC_D.origin->time().value());
+				item->widget()->setRecordScale(SC_D.componentMap[i], 1E9 / gain);
 			}
 			catch ( ... ) {}
 		}
 	}
 
-	item->widget()->showScaledValues(_ui.actionShowTraceValuesInNmS->isChecked());
+	item->widget()->showScaledValues(SC_D.ui.actionShowTraceValuesInNmS->isChecked());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool AmplitudeView::addTheoreticalArrivals(RecordViewItem *item,
+                                           const std::string &netCode,
+                                           const std::string &staCode,
+                                           const std::string &locCode) {
+	if ( !SC_D.origin ) return false;
+
+	// First clear all theoretical arrivals
+	for ( int i = 0; i < item->widget()->markerCount(); ) {
+		auto m = static_cast<AmplitudeViewMarker*>(item->widget()->marker(i));
+		if ( m->type() == AmplitudeViewMarker::Theoretical )
+			item->widget()->removeMarker(i);
+		else
+			++i;
+	}
+
+	item->widget()->update();
+
+	if ( !SC_D.ttTable ) return false;
+
+	try {
+		DataModel::SensorLocation *loc =
+			Client::Inventory::Instance()->getSensorLocation(
+				netCode, staCode, locCode, SC_D.origin->time()
+		);
+
+		if ( loc == nullptr ) {
+			SEISCOMP_ERROR("SensorLocation %s.%s.%s not found",
+			               netCode.c_str(), staCode.c_str(), locCode.c_str());
+			return false;
+		}
+
+		double delta, az1, az2;
+		double elat = SC_D.origin->latitude();
+		double elon = SC_D.origin->longitude();
+		double slat, slon;
+		double salt = loc->elevation();
+
+		try {
+			slat = loc->latitude(); slon = loc->longitude();
+		}
+		catch ( ... ) {
+			SEISCOMP_WARNING("SensorLocation %s.%s.%s has no valid coordinates",
+			                 netCode.c_str(), staCode.c_str(), locCode.c_str());
+			return false;
+		}
+
+		Math::Geo::delazi(elat, elon, slat, slon, &delta, &az1, &az2);
+
+		item->setValue(ITEM_DISTANCE_INDEX, delta);
+		item->setValue(ITEM_AZIMUTH_INDEX, az1);
+
+		/*
+		if ( SC_D.config.showAllComponents && SC_D.config.allComponentsMaximumStationDistance >= delta )
+			item->widget()->setDrawMode(RecordWidget::InRows);
+		else
+			item->widget()->setDrawMode(RecordWidget::Single);
+		*/
+
+		/*
+		item->label()->setText(QApplication::translate("PickerView", "D: %1\302\260 A: %2\302\260", 0, QApplication::UnicodeUTF8)
+		                        .arg(delta,0,'f',1).arg(az1,0,'f',1), 1);
+		*/
+
+		item->label()->setText(QString("%1").arg(netCode.c_str()), 1);
+		QFontMetrics fm(item->label()->font(1));
+		item->label()->setWidth(fm.boundingRect("WW  ").width(), 1);
+
+		if ( SCScheme.unit.distanceInKM )
+			item->label()->setText(QString("%1 km").arg(Math::Geo::deg2km(delta),0,'f',SCScheme.precision.distance), 2);
+		else
+			item->label()->setText(QString("%1%2").arg(delta,0,'f',1).arg(degrees), 2);
+		item->label()->setAlignment(Qt::AlignRight, 2);
+		item->label()->setColor(palette().color(QPalette::Disabled, QPalette::WindowText), 2);
+
+		double depth;
+		try {
+			depth = SC_D.origin->depth();
+		}
+		catch ( ... ) {
+			depth = 0.0;
+		}
+
+		if ( depth <= 0.0 ) depth = 1.0;
+
+		TravelTimeList* ttt = SC_D.ttTable->compute(elat, elon, depth, slat, slon, salt);
+
+		if ( ttt ) {
+			QMap<QString, RecordMarker*> currentPhases;
+
+			foreach ( const QString &phase, SC_D.phases ) {
+				// Find the TravelTime from the TravelTimeList that corresponds
+				// the current phase
+				const TravelTime *tt = findPhase(*ttt, phase, delta);
+				if ( !tt ) continue;
+
+				// If there is already a theoretical marker for the given
+				// TravelTime the current item gets another alias
+				if ( currentPhases.contains(tt->phase.c_str()) ) {
+					currentPhases[tt->phase.c_str()]->addAlias(phase + THEORETICAL_POSTFIX);
+					continue;
+				}
+
+				auto marker = new AmplitudeViewMarker(
+					item->widget(),
+					static_cast<Core::Time>(SC_D.origin->time()) + Core::TimeSpan(tt->time),
+					phase + THEORETICAL_POSTFIX,
+					AmplitudeViewMarker::Theoretical,
+					false
+				);
+
+				marker->setVisible(SC_D.ui.actionShowTheoreticalArrivals->isChecked());
+
+				// Set the description of the marker that is used as display text
+				marker->setDescription(tt->phase.c_str());
+
+				// Remember the phase
+				currentPhases[tt->phase.c_str()] = marker;
+			}
+
+			delete ttt;
+		}
+
+		return true;
+	}
+	catch ( std::exception &exc ) {
+		SEISCOMP_ERROR("%s", exc.what());
+	}
+
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool AmplitudeView::fillTheoreticalArrivals() {
+	bool stationSet = false;
+
+	for ( int i = 0; i < SC_D.recordView->rowCount(); ++i ) {
+		WaveformStreamID stream_id = SC_D.recordView->streamID(i);
+
+		RecordViewItem* item = SC_D.recordView->itemAt(i);
+		if ( addTheoreticalArrivals(item, stream_id.networkCode(), stream_id.stationCode(), stream_id.locationCode()) )
+			stationSet = true;
+	}
+
+	SC_D.currentRecord->update();
+
+	return stationSet;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4023,7 +4365,7 @@ void AmplitudeView::updateMainCursor(RecordWidget* w, int s) {
 	char comps[3] = {'Z', '1', '2'};
 	int slot = s >= 0 && s < 3?s:-1;
 
-	if ( slot != -1 && slot != _currentSlot )
+	if ( slot != -1 && slot != SC_D.currentSlot )
 		showComponent(comps[slot]);
 
 	setCursorPos(w->cursorPos(), true);
@@ -4039,18 +4381,18 @@ void AmplitudeView::updateSubCursor(RecordWidget* w, int s) {
 	int slot = s >= 0 && s < 3?s:-1;
 
 	if ( slot != -1 ) {
-		if ( _componentMap[0] == slot ) slot = 0;
-		else if ( _componentMap[1] == slot ) slot = 1;
-		else if ( _componentMap[2] == slot ) slot = 2;
+		if ( SC_D.componentMap[0] == slot ) slot = 0;
+		else if ( SC_D.componentMap[1] == slot ) slot = 1;
+		else if ( SC_D.componentMap[2] == slot ) slot = 2;
 		else slot = -1;
 	}
 
-	if ( slot != -1 && slot != _currentSlot )
+	if ( slot != -1 && slot != SC_D.currentSlot )
 		showComponent(comps[slot]);
 
-	_recordView->currentItem()->widget()->blockSignals(true);
-	_recordView->currentItem()->widget()->setCursorPos(w->cursorPos());
-	_recordView->currentItem()->widget()->blockSignals(false);
+	SC_D.recordView->currentItem()->widget()->blockSignals(true);
+	SC_D.recordView->currentItem()->widget()->setCursorPos(w->cursorPos());
+	SC_D.recordView->currentItem()->widget()->blockSignals(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4061,7 +4403,7 @@ void AmplitudeView::updateSubCursor(RecordWidget* w, int s) {
 void AmplitudeView::updateRecordValue(Seiscomp::Core::Time t) {
 	if ( !statusBar() ) return;
 
-	const double *v = _currentRecord->value(t);
+	const double *v = SC_D.currentRecord->value(t);
 
 	if ( v == nullptr )
 		statusBar()->clearMessage();
@@ -4075,10 +4417,39 @@ void AmplitudeView::updateRecordValue(Seiscomp::Core::Time t) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::showTraceScaleToggled(bool e) {
-	_currentRecord->showScaledValues(e);
-	for ( int i = 0; i < _recordView->rowCount(); ++i ) {
-		RecordViewItem* item = _recordView->itemAt(i);
+	SC_D.currentRecord->showScaledValues(e);
+	for ( int i = 0; i < SC_D.recordView->rowCount(); ++i ) {
+		RecordViewItem* item = SC_D.recordView->itemAt(i);
 		item->widget()->showScaledValues(e);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::showTheoreticalArrivals(bool v) {
+	for ( int i = 0; i < SC_D.currentRecord->markerCount(); ++i ) {
+		auto m = static_cast<AmplitudeViewMarker*>(SC_D.currentRecord->marker(i));
+		if ( m->isTheoretical() ) {
+			m->setVisible(v);
+		}
+	}
+
+	// Since all markers are just proxies of the real traces we need
+	// to update the zoom trace explicitly.
+	SC_D.currentRecord->update();
+
+	for ( int i = 0; i < SC_D.recordView->rowCount(); ++i ) {
+		RecordWidget *w = SC_D.recordView->itemAt(i)->widget();
+
+		for ( int i = 0; i < w->markerCount(); ++i ) {
+			auto m = static_cast<AmplitudeViewMarker*>(w->marker(i));
+			if ( m->isTheoretical() ) {
+				m->setVisible(v);
+			}
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4089,8 +4460,8 @@ void AmplitudeView::showTraceScaleToggled(bool e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::updateItemLabel(RecordViewItem* item, char component) {
 	/*
-	if ( item == _recordView->currentItem() )
-		_currentRecord->setRecords(item->widget()->records(component), component, false);
+	if ( item == SC_D.recordView->currentItem() )
+		SC_D.currentRecord->setRecords(item->widget()->records(component), component, false);
 	*/
 
 	/*
@@ -4105,8 +4476,8 @@ void AmplitudeView::updateItemLabel(RecordViewItem* item, char component) {
 	item->label()->setText(text, 0);
 	*/
 
-	if ( item == _recordView->currentItem() ) {
-		QString text = _ui.labelCode->text();
+	if ( item == SC_D.recordView->currentItem() ) {
+		QString text = SC_D.ui.labelCode->text();
 
 		int index = text.lastIndexOf(' ');
 		if ( index < 0 ) return;
@@ -4116,7 +4487,7 @@ void AmplitudeView::updateItemLabel(RecordViewItem* item, char component) {
 		else
 			text += component;
 
-		_ui.labelCode->setText(text);
+		SC_D.ui.labelCode->setText(text);
 	}
 
 	updateTraceInfo(item, nullptr);
@@ -4142,30 +4513,30 @@ void AmplitudeView::updateItemRecordState(const Seiscomp::Record *rec) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setCursorPos(const Seiscomp::Core::Time& t, bool always) {
-	_currentRecord->setCursorPos(t);
+	SC_D.currentRecord->setCursorPos(t);
 
-	if ( !always && _currentRecord->cursorText() == "" ) return;
+	if ( !always && SC_D.currentRecord->cursorText() == "" ) return;
 
 	float offset = 0;
 
-	if ( _centerSelection ) {
-		float len = _recordView->currentItem()?
-			_recordView->currentItem()->widget()->width()/_currentRecord->timeScale():
-			_currentRecord->tmax() - _currentRecord->tmin();
+	if ( SC_D.centerSelection ) {
+		float len = SC_D.recordView->currentItem()?
+			SC_D.recordView->currentItem()->widget()->width() / SC_D.currentRecord->timeScale():
+			SC_D.currentRecord->tmax() - SC_D.currentRecord->tmin();
 
-		float pos = float(t - _currentRecord->alignment()) - len/2;
-		offset = pos - _currentRecord->tmin();
+		float pos = float(t - SC_D.currentRecord->alignment()) - len/2;
+		offset = pos - SC_D.currentRecord->tmin();
 	}
 	else {
-		if ( t > _currentRecord->rightTime() )
-			offset = t - _currentRecord->rightTime();
-		else if ( t < _currentRecord->leftTime() )
-			offset = t - _currentRecord->leftTime();
+		if ( t > SC_D.currentRecord->rightTime() )
+			offset = t - SC_D.currentRecord->rightTime();
+		else if ( t < SC_D.currentRecord->leftTime() )
+			offset = t - SC_D.currentRecord->leftTime();
 	}
 
 	move(offset);
 
-	_centerSelection = false;
+	SC_D.centerSelection = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4174,28 +4545,28 @@ void AmplitudeView::setCursorPos(const Seiscomp::Core::Time& t, bool always) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setTimeRange(float tmin, float tmax) {
-	float amplScale = _currentRecord->amplScale();
-	_currentRecord->setTimeRange(tmin, tmax);
+	float amplScale = SC_D.currentRecord->amplScale();
+	SC_D.currentRecord->setTimeRange(tmin, tmax);
 
-	if ( _autoScaleZoomTrace )
-		_currentRecord->setNormalizationWindow(_currentRecord->visibleTimeWindow());
+	if ( SC_D.autoScaleZoomTrace )
+		SC_D.currentRecord->setNormalizationWindow(SC_D.currentRecord->visibleTimeWindow());
 
 	/*
-	std::cout << "ScaleWindow: " << Core::toString(_currentRecord->visibleTimeWindow().startTime()) << ", "
-	          << Core::toString(_currentRecord->visibleTimeWindow().endTime()) << std::endl;
+	std::cout << "ScaleWindow: " << Core::toString(SC_D.currentRecord->visibleTimeWindow().startTime()) << ", "
+	          << Core::toString(SC_D.currentRecord->visibleTimeWindow().endTime()) << std::endl;
 	*/
 
-	_currentRecord->setAmplScale(amplScale);
-	_timeScale->setTimeRange(tmin, tmax);
+	SC_D.currentRecord->setAmplScale(amplScale);
+	SC_D.timeScale->setTimeRange(tmin, tmax);
 
 	/*
 	std::cout << "[setTimeRange]" << std::endl;
-	std::cout << "new TimeRange(" << _currentRecord->tmin() << ", " << _currentRecord->tmax() << ")" << std::endl;
-	std::cout << "current TimeScale = " << _currentRecord->timeScale() << std::endl;
+	std::cout << "new TimeRange(" << SC_D.currentRecord->tmin() << ", " << SC_D.currentRecord->tmax() << ")" << std::endl;
+	std::cout << "current TimeScale = " << SC_D.currentRecord->timeScale() << std::endl;
 	*/
 
-	if ( _recordView->currentItem() )
-		_recordView->currentItem()->widget()->setSelected(_currentRecord->tmin(), _currentRecord->tmax());
+	if ( SC_D.recordView->currentItem() )
+		SC_D.recordView->currentItem()->widget()->setSelected(SC_D.currentRecord->tmin(), SC_D.currentRecord->tmax());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4204,11 +4575,11 @@ void AmplitudeView::setTimeRange(float tmin, float tmax) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::enableAutoScale() {
-	_autoScaleZoomTrace = true;
-	if ( _currentRecord ) {
-		float amplScale = _currentRecord->amplScale();
-		_currentRecord->setNormalizationWindow(_currentRecord->visibleTimeWindow());
-		_currentRecord->setAmplScale(amplScale);
+	SC_D.autoScaleZoomTrace = true;
+	if ( SC_D.currentRecord ) {
+		float amplScale = SC_D.currentRecord->amplScale();
+		SC_D.currentRecord->setNormalizationWindow(SC_D.currentRecord->visibleTimeWindow());
+		SC_D.currentRecord->setAmplScale(amplScale);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4218,7 +4589,7 @@ void AmplitudeView::enableAutoScale() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::disableAutoScale() {
-	_autoScaleZoomTrace = false;
+	SC_D.autoScaleZoomTrace = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4227,48 +4598,48 @@ void AmplitudeView::disableAutoScale() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::zoomSelectionHandleMoved(int idx, double v, Qt::KeyboardModifiers mods) {
-	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(_recordView->currentItem()->label());
+	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(SC_D.recordView->currentItem()->label());
 	if ( label->processor ) {
-		double relTime = v - (double)(label->processor->trigger()-_timeScale->alignment());
+		double relTime = v - (double)(label->processor->trigger() - SC_D.timeScale->alignment());
 
 		switch ( idx ) {
 			case 0:
 				label->processor->setNoiseStart(relTime);
-				_recordView->timeWidget()->setSelectionHandle(0, v);
+				SC_D.recordView->timeWidget()->setSelectionHandle(0, v);
 				break;
 			case 1:
 				label->processor->setNoiseEnd(relTime);
-				_recordView->timeWidget()->setSelectionHandle(1, v);
+				SC_D.recordView->timeWidget()->setSelectionHandle(1, v);
 				if ( !mods.testFlag(Qt::ShiftModifier) ) {
 					label->processor->setSignalStart(relTime);
-					_timeScale->setSelectionHandle(2, _timeScale->selectionHandlePos(1));
-					_timeScale->setSelectionHandleEnabled(2, false);
-					_recordView->timeWidget()->setSelectionHandle(2, _recordView->timeWidget()->selectionHandlePos(1));
+					SC_D.timeScale->setSelectionHandle(2, SC_D.timeScale->selectionHandlePos(1));
+					SC_D.timeScale->setSelectionHandleEnabled(2, false);
+					SC_D.recordView->timeWidget()->setSelectionHandle(2, SC_D.recordView->timeWidget()->selectionHandlePos(1));
 				}
 				else {
-					_timeScale->setSelectionHandleEnabled(2, true);
+					SC_D.timeScale->setSelectionHandleEnabled(2, true);
 				}
 				break;
 			case 2:
 				label->processor->setSignalStart(relTime);
-				_recordView->timeWidget()->setSelectionHandle(2, v);
+				SC_D.recordView->timeWidget()->setSelectionHandle(2, v);
 				if ( !mods.testFlag(Qt::ShiftModifier) ) {
 					label->processor->setNoiseEnd(relTime);
-					_timeScale->setSelectionHandle(1, _timeScale->selectionHandlePos(2));
-					_recordView->timeWidget()->setSelectionHandle(1, _recordView->timeWidget()->selectionHandlePos(2));
-					_timeScale->setSelectionHandleEnabled(2, false);
+					SC_D.timeScale->setSelectionHandle(1, SC_D.timeScale->selectionHandlePos(2));
+					SC_D.recordView->timeWidget()->setSelectionHandle(1, SC_D.recordView->timeWidget()->selectionHandlePos(2));
+					SC_D.timeScale->setSelectionHandleEnabled(2, false);
 				}
 				break;
 			case 3:
 				label->processor->setSignalEnd(relTime);
-				_recordView->timeWidget()->setSelectionHandle(3, v);
+				SC_D.recordView->timeWidget()->setSelectionHandle(3, v);
 				break;
 			default:
 				return;
 		}
 
-		_currentRecord->update();
-		_recordView->currentItem()->widget()->update();
+		SC_D.currentRecord->update();
+		SC_D.recordView->currentItem()->widget()->update();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4278,12 +4649,12 @@ void AmplitudeView::zoomSelectionHandleMoved(int idx, double v, Qt::KeyboardModi
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::zoomSelectionHandleMoveFinished() {
-	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(_recordView->currentItem()->label());
+	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(SC_D.recordView->currentItem()->label());
 	if ( label->processor ) label->processor->computeTimeWindow();
 
-	applyFilter(_recordView->currentItem());
-	_recordView->currentItem()->widget()->update();
-	_currentRecord->update();
+	applyFilter(SC_D.recordView->currentItem());
+	SC_D.recordView->currentItem()->widget()->update();
+	SC_D.currentRecord->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4292,8 +4663,8 @@ void AmplitudeView::zoomSelectionHandleMoveFinished() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::selectionHandleMoved(int idx, double v, Qt::KeyboardModifiers mods) {
-	for ( int r = 0; r < _recordView->rowCount(); ++r ) {
-		RecordViewItem* item = _recordView->itemAt(r);
+	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+		RecordViewItem* item = SC_D.recordView->itemAt(r);
 		AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
 		if ( label->processor ) {
 			double relTime = v;
@@ -4306,16 +4677,16 @@ void AmplitudeView::selectionHandleMoved(int idx, double v, Qt::KeyboardModifier
 					label->processor->setNoiseEnd(relTime);
 					if ( !mods.testFlag(Qt::ShiftModifier) ) {
 						label->processor->setSignalStart(relTime);
-						_recordView->timeWidget()->setSelectionHandleEnabled(2, false);
-						_recordView->timeWidget()->setSelectionHandle(2, _recordView->timeWidget()->selectionHandlePos(1));
+						SC_D.recordView->timeWidget()->setSelectionHandleEnabled(2, false);
+						SC_D.recordView->timeWidget()->setSelectionHandle(2, SC_D.recordView->timeWidget()->selectionHandlePos(1));
 					}
 					else
-						_recordView->timeWidget()->setSelectionHandleEnabled(2, true);
+						SC_D.recordView->timeWidget()->setSelectionHandleEnabled(2, true);
 					break;
 				case 2:
 					label->processor->setSignalStart(relTime);
 					if ( !mods.testFlag(Qt::ShiftModifier) ) {
-						_recordView->timeWidget()->setSelectionHandleEnabled(2, false);
+						SC_D.recordView->timeWidget()->setSelectionHandleEnabled(2, false);
 						label->processor->setNoiseEnd(relTime);
 					}
 					break;
@@ -4330,17 +4701,17 @@ void AmplitudeView::selectionHandleMoved(int idx, double v, Qt::KeyboardModifier
 		}
 	}
 
-	_currentRecord->update();
+	SC_D.currentRecord->update();
 
-	if ( _recordView->currentItem() == nullptr ) return;
+	if ( SC_D.recordView->currentItem() == nullptr ) return;
 
-	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(_recordView->currentItem()->label());
+	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(SC_D.recordView->currentItem()->label());
 	if ( label->processor ) {
-		_timeScale->setSelectionEnabled(true);
-		_timeScale->setSelectionHandle(0, double(label->processor->trigger()-_timeScale->alignment())+label->processor->config().noiseBegin);
-		_timeScale->setSelectionHandle(1, double(label->processor->trigger()-_timeScale->alignment())+label->processor->config().noiseEnd);
-		_timeScale->setSelectionHandle(2, double(label->processor->trigger()-_timeScale->alignment())+label->processor->config().signalBegin);
-		_timeScale->setSelectionHandle(3, double(label->processor->trigger()-_timeScale->alignment())+label->processor->config().signalEnd);
+		SC_D.timeScale->setSelectionEnabled(true);
+		SC_D.timeScale->setSelectionHandle(0, double(label->processor->trigger() - SC_D.timeScale->alignment()) + label->processor->config().noiseBegin);
+		SC_D.timeScale->setSelectionHandle(1, double(label->processor->trigger() - SC_D.timeScale->alignment()) + label->processor->config().noiseEnd);
+		SC_D.timeScale->setSelectionHandle(2, double(label->processor->trigger() - SC_D.timeScale->alignment()) + label->processor->config().signalBegin);
+		SC_D.timeScale->setSelectionHandle(3, double(label->processor->trigger() - SC_D.timeScale->alignment()) + label->processor->config().signalEnd);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4350,14 +4721,14 @@ void AmplitudeView::selectionHandleMoved(int idx, double v, Qt::KeyboardModifier
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::selectionHandleMoveFinished() {
-	for ( int r = 0; r < _recordView->rowCount(); ++r ) {
-		RecordViewItem* item = _recordView->itemAt(r);
+	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+		RecordViewItem* item = SC_D.recordView->itemAt(r);
 		AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
 		if ( label->processor ) label->processor->computeTimeWindow();
 	}
 
 	applyFilter();
-	_currentRecord->update();
+	SC_D.currentRecord->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4366,22 +4737,22 @@ void AmplitudeView::selectionHandleMoveFinished() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setAlignment(Seiscomp::Core::Time t) {
-	double offset = _currentRecord->alignment() - t;
-	_currentRecord->setAlignment(t);
+	double offset = SC_D.currentRecord->alignment() - t;
+	SC_D.currentRecord->setAlignment(t);
 
 	// Because selection handle position are relative to the alignment
 	// move them
-	if ( _timeScale->isSelectionEnabled() ) {
-		for ( int i = 0; i < _timeScale->selectionHandleCount(); ++i )
-			_timeScale->setSelectionHandle(i, _timeScale->selectionHandlePos(i)+offset);
+	if ( SC_D.timeScale->isSelectionEnabled() ) {
+		for ( int i = 0; i < SC_D.timeScale->selectionHandleCount(); ++i )
+			SC_D.timeScale->setSelectionHandle(i, SC_D.timeScale->selectionHandlePos(i)+offset);
 	}
 
-	_timeScale->setAlignment(t);
+	SC_D.timeScale->setAlignment(t);
 
-	float tmin = _currentRecord->tmin()+offset;
-	float tmax = _currentRecord->tmax()+offset;
+	float tmin = SC_D.currentRecord->tmin()+offset;
+	float tmax = SC_D.currentRecord->tmax()+offset;
 
-	if ( _checkVisibility ) ensureVisibility(tmin, tmax);
+	if ( SC_D.checkVisibility ) ensureVisibility(tmin, tmax);
 	setTimeRange(tmin, tmax);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4391,8 +4762,8 @@ void AmplitudeView::setAlignment(Seiscomp::Core::Time t) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::ensureVisibility(float& tmin, float& tmax) {
-	if ( _recordView->currentItem() ) {
-		RecordWidget* w = _recordView->currentItem()->widget();
+	if ( SC_D.recordView->currentItem() ) {
+		RecordWidget* w = SC_D.recordView->currentItem()->widget();
 		float leftOffset = tmin - w->tmin();
 		float rightOffset = tmax - w->tmax();
 		if ( leftOffset < 0 ) {
@@ -4413,17 +4784,17 @@ void AmplitudeView::ensureVisibility(float& tmin, float& tmax) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::ensureVisibility(const Seiscomp::Core::Time &time, int pixelMargin) {
-	Core::Time left = time - Core::TimeSpan(pixelMargin/_currentRecord->timeScale());
-	Core::Time right = time + Core::TimeSpan(pixelMargin/_currentRecord->timeScale());
+	Core::Time left = time - Core::TimeSpan(pixelMargin / SC_D.currentRecord->timeScale());
+	Core::Time right = time + Core::TimeSpan(pixelMargin / SC_D.currentRecord->timeScale());
 
 	double offset = 0;
-	if ( right > _currentRecord->rightTime() )
-		offset = right - _currentRecord->rightTime();
-	else if ( left < _currentRecord->leftTime() )
-		offset = left - _currentRecord->leftTime();
+	if ( right > SC_D.currentRecord->rightTime() )
+		offset = right - SC_D.currentRecord->rightTime();
+	else if ( left < SC_D.currentRecord->leftTime() )
+		offset = left - SC_D.currentRecord->leftTime();
 
 	if ( offset != 0 )
-		setTimeRange(_currentRecord->tmin() + offset, _currentRecord->tmax() + offset);
+		setTimeRange(SC_D.currentRecord->tmin() + offset, SC_D.currentRecord->tmax() + offset);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4434,19 +4805,19 @@ void AmplitudeView::ensureVisibility(const Seiscomp::Core::Time &time, int pixel
 void AmplitudeView::moveTraces(double offset) {
 	if ( fabs(offset) < 0.001 ) return;
 
-	_recordView->move(offset);
+	SC_D.recordView->move(offset);
 
-	float tmin = _recordView->timeRangeMin();
-	float tmax = _recordView->timeRangeMax();
+	float tmin = SC_D.recordView->timeRangeMin();
+	float tmax = SC_D.recordView->timeRangeMax();
 
-	if ( tmin > _currentRecord->tmin() ) {
-		offset = tmin - _currentRecord->tmin();
+	if ( tmin > SC_D.currentRecord->tmin() ) {
+		offset = tmin - SC_D.currentRecord->tmin();
 	}
-	else if ( tmax < _currentRecord->tmax() ) {
+	else if ( tmax < SC_D.currentRecord->tmax() ) {
 		float length = tmax - tmin;
-		float cr_length = _currentRecord->tmax() - _currentRecord->tmin();
+		float cr_length = SC_D.currentRecord->tmax() - SC_D.currentRecord->tmin();
 
-		offset = tmax - _currentRecord->tmax();
+		offset = tmax - SC_D.currentRecord->tmax();
 
 		if ( cr_length > length )
 			offset += cr_length - length;
@@ -4454,8 +4825,8 @@ void AmplitudeView::moveTraces(double offset) {
 	else
 		offset = 0;
 
-	setTimeRange(_currentRecord->tmin() + offset,
-	             _currentRecord->tmax() + offset);
+	setTimeRange(SC_D.currentRecord->tmin() + offset,
+	             SC_D.currentRecord->tmax() + offset);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4466,17 +4837,17 @@ void AmplitudeView::moveTraces(double offset) {
 void AmplitudeView::move(double offset) {
 	if ( fabs(offset) < 0.001 ) return;
 
-	float tmin = _currentRecord->tmin() + offset;
-	float tmax = _currentRecord->tmax() + offset;
+	float tmin = SC_D.currentRecord->tmin() + offset;
+	float tmax = SC_D.currentRecord->tmax() + offset;
 
-	if ( tmin < _recordView->timeRangeMin() ) {
-		offset = tmin - _recordView->timeRangeMin();
+	if ( tmin < SC_D.recordView->timeRangeMin() ) {
+		offset = tmin - SC_D.recordView->timeRangeMin();
 	}
-	else if ( tmax > _recordView->timeRangeMax() ) {
+	else if ( tmax > SC_D.recordView->timeRangeMax() ) {
 		float length = tmax - tmin;
-		float rv_length = _recordView->timeRangeMax() - _recordView->timeRangeMin();
+		float rv_length = SC_D.recordView->timeRangeMax() - SC_D.recordView->timeRangeMin();
 
-		offset = tmax - _recordView->timeRangeMax();
+		offset = tmax - SC_D.recordView->timeRangeMax();
 
 		if ( length > rv_length )
 			offset -= length - rv_length;
@@ -4484,7 +4855,7 @@ void AmplitudeView::move(double offset) {
 	else
 		offset = 0;
 
-	_recordView->move(offset);
+	SC_D.recordView->move(offset);
 	setTimeRange(tmin, tmax);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4513,11 +4884,11 @@ void AmplitudeView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem)
 	}
 
 	if ( !item ) {
-		_currentRecord->setDecorator(nullptr);
-		_currentRecord->clearRecords();
-		_currentRecord->setEnabled(false);
-		_currentRecord->setMarkerSourceWidget(nullptr);
-		_timeScale->setSelectionEnabled(false);
+		SC_D.currentRecord->setDecorator(nullptr);
+		SC_D.currentRecord->clearRecords();
+		SC_D.currentRecord->setEnabled(false);
+		SC_D.currentRecord->setMarkerSourceWidget(nullptr);
+		SC_D.timeScale->setSelectionEnabled(false);
 		return;
 	}
 
@@ -4532,110 +4903,110 @@ void AmplitudeView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem)
 
 	//item->widget()->setCursorPos(cursorPos);
 	//_currentRecord->setCursorPos(cursorPos);
-	_currentRecord->setEnabled(item->widget()->isEnabled());
-	_currentRecord->setDecorator(item->widget()->decorator());
+	SC_D.currentRecord->setEnabled(item->widget()->isEnabled());
+	SC_D.currentRecord->setDecorator(item->widget()->decorator());
 
 	connect(item->label(), SIGNAL(statusChanged(bool)),
 	        this, SLOT(setCurrentRowEnabled(bool)));
 
-	double amplScale = _currentRecord->amplScale();
+	double amplScale = SC_D.currentRecord->amplScale();
 
-	_currentRecord->setNormalizationWindow(item->widget()->normalizationWindow());
-	_currentRecord->setAlignment(item->widget()->alignment());
+	SC_D.currentRecord->setNormalizationWindow(item->widget()->normalizationWindow());
+	SC_D.currentRecord->setAlignment(item->widget()->alignment());
 
-	_timeScale->setAlignment(item->widget()->alignment());
+	SC_D.timeScale->setAlignment(item->widget()->alignment());
 
 	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
 	if ( label->processor ) {
-		_timeScale->setSelectionEnabled(true);
-		_timeScale->setSelectionHandle(0, double(label->processor->trigger()-_timeScale->alignment())+label->processor->config().noiseBegin);
-		_timeScale->setSelectionHandle(1, double(label->processor->trigger()-_timeScale->alignment())+label->processor->config().noiseEnd);
-		_timeScale->setSelectionHandle(2, double(label->processor->trigger()-_timeScale->alignment())+label->processor->config().signalBegin);
-		_timeScale->setSelectionHandle(3, double(label->processor->trigger()-_timeScale->alignment())+label->processor->config().signalEnd);
-		_timeScale->setSelectionHandleEnabled(2, true);
+		SC_D.timeScale->setSelectionEnabled(true);
+		SC_D.timeScale->setSelectionHandle(0, double(label->processor->trigger() - SC_D.timeScale->alignment()) + label->processor->config().noiseBegin);
+		SC_D.timeScale->setSelectionHandle(1, double(label->processor->trigger() - SC_D.timeScale->alignment()) + label->processor->config().noiseEnd);
+		SC_D.timeScale->setSelectionHandle(2, double(label->processor->trigger() - SC_D.timeScale->alignment()) + label->processor->config().signalBegin);
+		SC_D.timeScale->setSelectionHandle(3, double(label->processor->trigger() - SC_D.timeScale->alignment()) + label->processor->config().signalEnd);
+		SC_D.timeScale->setSelectionHandleEnabled(2, true);
 
-		_recordView->timeWidget()->setSelectionHandle(0, label->processor->config().noiseBegin);
-		_recordView->timeWidget()->setSelectionHandle(1, label->processor->config().noiseEnd);
-		_recordView->timeWidget()->setSelectionHandle(2, label->processor->config().signalBegin);
-		_recordView->timeWidget()->setSelectionHandle(3, label->processor->config().signalEnd);
-		_recordView->timeWidget()->setSelectionHandleEnabled(2, true);
+		SC_D.recordView->timeWidget()->setSelectionHandle(0, label->processor->config().noiseBegin);
+		SC_D.recordView->timeWidget()->setSelectionHandle(1, label->processor->config().noiseEnd);
+		SC_D.recordView->timeWidget()->setSelectionHandle(2, label->processor->config().signalBegin);
+		SC_D.recordView->timeWidget()->setSelectionHandle(3, label->processor->config().signalEnd);
+		SC_D.recordView->timeWidget()->setSelectionHandleEnabled(2, true);
 	}
 	else
-		_timeScale->setSelectionEnabled(false);
+		SC_D.timeScale->setSelectionEnabled(false);
 
 	if ( smax - smin > 0 )
 		setTimeRange(smin, smax);
 	else
-		setTimeRange(_recordView->timeRangeMin(),_recordView->timeRangeMax());
+		setTimeRange(SC_D.recordView->timeRangeMin(), SC_D.recordView->timeRangeMax());
 
 	//_currentRecord->setAmplScale(item->widget()->amplScale());
-	_currentRecord->setAmplScale(amplScale);
+	SC_D.currentRecord->setAmplScale(amplScale);
 
-	item->widget()->setShadowWidget(_currentRecord, false);
-	_currentRecord->setMarkerSourceWidget(item->widget());
+	item->widget()->setShadowWidget(SC_D.currentRecord, false);
+	SC_D.currentRecord->setMarkerSourceWidget(item->widget());
 
-	if ( _ui.actionLimitFilterToZoomTrace->isChecked() )
+	if ( SC_D.ui.actionLimitFilterToZoomTrace->isChecked() )
 		applyFilter(item);
 
 	/*
 	if ( item->value(ITEM_DISTANCE_INDEX) >= 0 ) {
-		if ( _config.showAllComponents &&
-		     _config.allComponentsMaximumStationDistance >= item->value(ITEM_DISTANCE_INDEX) )
-			_currentRecord->setDrawMode(RecordWidget::InRows);
+		if ( SC_D.config.showAllComponents &&
+		     SC_D.config.allComponentsMaximumStationDistance >= item->value(ITEM_DISTANCE_INDEX) )
+			SC_D.currentRecord->setDrawMode(RecordWidget::InRows);
 		else
-			_currentRecord->setDrawMode(RecordWidget::Single);
+			SC_D.currentRecord->setDrawMode(RecordWidget::Single);
 	}
 	else
-		_currentRecord->setDrawMode(RecordWidget::Single);
+		SC_D.currentRecord->setDrawMode(RecordWidget::Single);
 	*/
-	_currentRecord->setDrawMode(RecordWidget::InRows);
+	SC_D.currentRecord->setDrawMode(RecordWidget::InRows);
 
 	/*
-	_currentRecord->clearMarker();
+	SC_D.currentRecord->clearMarker();
 	for ( int i = 0; i < item->widget()->markerCount(); ++i )
-		new AmplitudeViewMarker(_currentRecord, *static_cast<AmplitudeViewMarker*>(item->widget()->marker(i)));
+		new AmplitudeViewMarker(SC_D.currentRecord, *static_cast<AmplitudeViewMarker*>(item->widget()->marker(i)));
 	*/
 
-	//_ui.labelCode->setText(item->label()->text(0));
-	//_ui.labelInfo->setText(item->label()->text(1));
+	//SC_D.ui.labelCode->setText(item->label()->text(0));
+	//SC_D.ui.labelInfo->setText(item->label()->text(1));
 
 	if ( item->value(ITEM_DISTANCE_INDEX) >= 0 ) {
 		if ( SCScheme.unit.distanceInKM )
-			_ui.labelDistance->setText(QString("%1 km").arg(Math::Geo::deg2km(item->value(ITEM_DISTANCE_INDEX)),0,'f',SCScheme.precision.distance));
+			SC_D.ui.labelDistance->setText(QString("%1 km").arg(Math::Geo::deg2km(item->value(ITEM_DISTANCE_INDEX)),0,'f',SCScheme.precision.distance));
 		else
-			_ui.labelDistance->setText(QString("%1%2").arg(item->value(ITEM_DISTANCE_INDEX),0,'f',1).arg(degrees));
-		_ui.labelAzimuth->setText(QString("%1%2").arg(item->value(ITEM_AZIMUTH_INDEX),0,'f',1).arg(degrees));
+			SC_D.ui.labelDistance->setText(QString("%1%2").arg(item->value(ITEM_DISTANCE_INDEX),0,'f',1).arg(degrees));
+		SC_D.ui.labelAzimuth->setText(QString("%1%2").arg(item->value(ITEM_AZIMUTH_INDEX),0,'f',1).arg(degrees));
 	}
 
-	WaveformStreamID streamID = _recordView->streamID(item->row());
+	WaveformStreamID streamID = SC_D.recordView->streamID(item->row());
 	std::string cha = streamID.channelCode();
 	char component = item->currentComponent();
 
-	for ( int i = 0; i < _currentRecord->slotCount(); ++i )
-		_currentRecord->setRecordID(i, QString("%1").arg(item->mapSlotToComponent(i)));
+	for ( int i = 0; i < SC_D.currentRecord->slotCount(); ++i )
+		SC_D.currentRecord->setRecordID(i, QString("%1").arg(item->mapSlotToComponent(i)));
 
 	if ( cha.size() > 2 )
 		cha[cha.size()-1] = component;
 	else
 		cha += component;
 
-	_ui.labelStationCode->setText(streamID.stationCode().c_str());
-	_ui.labelCode->setText(QString("%1  %2%3")
+	SC_D.ui.labelStationCode->setText(streamID.stationCode().c_str());
+	SC_D.ui.labelCode->setText(QString("%1  %2%3")
 	                        .arg(streamID.networkCode().c_str())
 	                        .arg(streamID.locationCode().c_str())
 	                        .arg(cha.c_str()));
 	/*
-	const RecordSequence* seq = _currentRecord->records();
+	const RecordSequence* seq = SC_D.currentRecord->records();
 	if ( seq && !seq->empty() )
-		_ui.labelCode->setText((*seq->begin())->streamID().c_str());
+		SC_D.ui.labelCode->setText((*seq->begin())->streamID().c_str());
 	else
-		_ui.labelCode->setText("NO DATA");
+		SC_D.ui.labelCode->setText("NO DATA");
 	*/
 
 	//_centerSelection = true;
 	//_currentRecord->enableFiltering(item->widget()->isFilteringEnabled());
 	setCursorPos(cursorPos);
-	_currentRecord->update();
+	SC_D.currentRecord->update();
 
 	updateCurrentRowState();
 }
@@ -4646,10 +5017,10 @@ void AmplitudeView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setCurrentRowEnabled(bool enabled) {
-	_currentRecord->setEnabled(enabled);
+	SC_D.currentRecord->setEnabled(enabled);
 	updateCurrentRowState();
 
-	RecordWidget* w = _recordView->currentItem()->widget();
+	RecordWidget* w = SC_D.recordView->currentItem()->widget();
 
 	if ( w ) {
 		for ( int i = 0; i < w->markerCount(); ++i ) {
@@ -4672,16 +5043,16 @@ void AmplitudeView::setCurrentRowEnabled(bool enabled) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setCurrentRowDisabled(bool disabled) {
 	//setCurrentRowEnabled(!disabled);
-	if ( _currentRecord->cursorText().isEmpty() ||
-	     (!disabled && !_currentRecord->isEnabled()) ) {
-		_currentRecord->setEnabled(!disabled);
-		if ( _recordView->currentItem() )
-			_recordView->currentItem()->label()->setEnabled(!disabled);
+	if ( SC_D.currentRecord->cursorText().isEmpty() ||
+	     (!disabled && !SC_D.currentRecord->isEnabled()) ) {
+		SC_D.currentRecord->setEnabled(!disabled);
+		if ( SC_D.recordView->currentItem() )
+			SC_D.recordView->currentItem()->label()->setEnabled(!disabled);
 	}
 	else {
-		setMarkerState(_currentRecord, !disabled);
-		if ( _recordView->currentItem() )
-			setMarkerState(_recordView->currentItem()->widget(), !disabled);
+		setMarkerState(SC_D.currentRecord, !disabled);
+		if ( SC_D.recordView->currentItem() )
+			setMarkerState(SC_D.recordView->currentItem()->widget(), !disabled);
 	}
 
 	updateCurrentRowState();
@@ -4726,24 +5097,24 @@ void AmplitudeView::setMarkerState(Seiscomp::Gui::RecordWidget* w, bool enabled)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::updateCurrentRowState() {
-	//setMarkerState(_currentRecord, enabled);
+	//setMarkerState(SC_D.currentRecord, enabled);
 	//_currentRecord->setEnabled(enabled);
 
 	bool enabled = true;
 
-	if ( !_currentRecord->isEnabled() )
+	if ( !SC_D.currentRecord->isEnabled() )
 		enabled = false;
-	else if ( !_currentRecord->cursorText().isEmpty() ) {
-		RecordMarker* m = _currentRecord->marker(_currentRecord->cursorText(), true);
-		if ( !m ) m = _currentRecord->marker(_currentRecord->cursorText(), false);
+	else if ( !SC_D.currentRecord->cursorText().isEmpty() ) {
+		RecordMarker* m = SC_D.currentRecord->marker(SC_D.currentRecord->cursorText(), true);
+		if ( !m ) m = SC_D.currentRecord->marker(SC_D.currentRecord->cursorText(), false);
 		enabled = m?m->isEnabled():true;
 	}
 
-	_ui.btnRowAccept->setChecked(false);
-	_ui.btnRowAccept->setEnabled(enabled);
-	_ui.btnRowReset->setEnabled(enabled);
+	SC_D.ui.btnRowAccept->setChecked(false);
+	SC_D.ui.btnRowAccept->setEnabled(enabled);
+	SC_D.ui.btnRowReset->setEnabled(enabled);
 
-	_ui.btnRowRemove->setChecked(!enabled);
+	SC_D.ui.btnRowRemove->setChecked(!enabled);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4753,14 +5124,14 @@ void AmplitudeView::updateCurrentRowState() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::updateTraceInfo(RecordViewItem* item,
                                  const Seiscomp::Record* rec) {
-	float timingQuality = item->widget()->timingQuality(_componentMap[_currentSlot]);
+	float timingQuality = item->widget()->timingQuality(SC_D.componentMap[SC_D.currentSlot]);
 	if ( timingQuality >= 0 ) {
 		if ( timingQuality > 100 ) timingQuality = 100;
 
 		if ( timingQuality < 50 )
-			static_cast<AmplitudeRecordLabel*>(item->label())->setLabelColor(blend(_config.timingQualityMedium, _config.timingQualityLow, (int)(timingQuality*2)));
+			static_cast<AmplitudeRecordLabel*>(item->label())->setLabelColor(blend(SC_D.config.timingQualityMedium, SC_D.config.timingQualityLow, (int)(timingQuality*2)));
 		else
-			static_cast<AmplitudeRecordLabel*>(item->label())->setLabelColor(blend(_config.timingQualityHigh, _config.timingQualityMedium, (int)((timingQuality-50)*2)));
+			static_cast<AmplitudeRecordLabel*>(item->label())->setLabelColor(blend(SC_D.config.timingQualityHigh, SC_D.config.timingQualityMedium, (int)((timingQuality-50)*2)));
 
 		item->label()->setToolTip(QString("Timing quality: %1").arg((int)timingQuality));
 	}
@@ -4776,13 +5147,13 @@ void AmplitudeView::updateTraceInfo(RecordViewItem* item,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::toggleFilter() {
-	if ( _comboFilter->currentIndex() > 1 )
-		_comboFilter->setCurrentIndex(1);
+	if ( SC_D.comboFilter->currentIndex() > 1 )
+		SC_D.comboFilter->setCurrentIndex(1);
 	else {
-		if ( _lastFilterIndex < 0 )
-			_lastFilterIndex = std::min(_comboFilter->count()-1,2);
+		if ( SC_D.lastFilterIndex < 0 )
+			SC_D.lastFilterIndex = std::min(SC_D.comboFilter->count()-1,2);
 
-		_comboFilter->setCurrentIndex(_lastFilterIndex);
+		SC_D.comboFilter->setCurrentIndex(SC_D.lastFilterIndex);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4792,15 +5163,15 @@ void AmplitudeView::toggleFilter() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::addNewFilter(const QString& filter) {
-	_lastFilterIndex = _comboFilter->findData(filter);
+	SC_D.lastFilterIndex = SC_D.comboFilter->findData(filter);
 
-	if ( _lastFilterIndex == -1 ) {
-		_comboFilter->addItem(filter, filter);
-		_lastFilterIndex = _comboFilter->count()-1;
+	if ( SC_D.lastFilterIndex == -1 ) {
+		SC_D.comboFilter->addItem(filter, filter);
+		SC_D.lastFilterIndex = SC_D.comboFilter->count()-1;
 	}
 
-	_comboFilter->setCurrentIndex(_lastFilterIndex);
-	_currentRecord->setFilter(_recordView->filter());
+	SC_D.comboFilter->setCurrentIndex(SC_D.lastFilterIndex);
+	SC_D.currentRecord->setFilter(SC_D.recordView->filter());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4809,10 +5180,10 @@ void AmplitudeView::addNewFilter(const QString& filter) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::scaleVisibleAmplitudes() {
-	_recordView->scaleVisibleAmplitudes();
+	SC_D.recordView->scaleVisibleAmplitudes();
 
-	_currentRecord->setNormalizationWindow(_currentRecord->visibleTimeWindow());
-	_currentAmplScale = 1;
+	SC_D.currentRecord->setNormalizationWindow(SC_D.currentRecord->visibleTimeWindow());
+	SC_D.currentAmplScale = 1;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4838,10 +5209,10 @@ void AmplitudeView::changeTimeRange(double, double) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::sortAlphabetically() {
-	_recordView->sortByTextAndValue(0, ITEM_PRIORITY_INDEX);
+	SC_D.recordView->sortByTextAndValue(0, ITEM_PRIORITY_INDEX);
 
-	_ui.actionSortAlphabetically->setChecked(true);
-	_ui.actionSortByDistance->setChecked(false);
+	SC_D.ui.actionSortAlphabetically->setChecked(true);
+	SC_D.ui.actionSortByDistance->setChecked(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4850,10 +5221,10 @@ void AmplitudeView::sortAlphabetically() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::sortByDistance() {
-	_recordView->sortByValue(ITEM_DISTANCE_INDEX, ITEM_PRIORITY_INDEX);
+	SC_D.recordView->sortByValue(ITEM_DISTANCE_INDEX, ITEM_PRIORITY_INDEX);
 
-	_ui.actionSortAlphabetically->setChecked(false);
-	_ui.actionSortByDistance->setChecked(true);
+	SC_D.ui.actionSortAlphabetically->setChecked(false);
+	SC_D.ui.actionSortByDistance->setChecked(true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4889,16 +5260,16 @@ void AmplitudeView::showEComponent() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::alignOnOriginTime() {
-	_checkVisibility = false;
-	_recordView->setAbsoluteTimeEnabled(true);
-	_recordView->setTimeRange(_minTime, _maxTime);
-	_recordView->setSelectionEnabled(false);
-	_checkVisibility = true;
+	SC_D.checkVisibility = false;
+	SC_D.recordView->setAbsoluteTimeEnabled(true);
+	SC_D.recordView->setTimeRange(SC_D.minTime, SC_D.maxTime);
+	SC_D.recordView->setSelectionEnabled(false);
+	SC_D.checkVisibility = true;
 
-	_recordView->setAlignment(_origin->time());
+	SC_D.recordView->setAlignment(SC_D.origin->time());
 
-	_ui.actionAlignOnPArrival->setChecked(false);
-	_ui.actionAlignOnOriginTime->setChecked(true);
+	SC_D.ui.actionAlignOnPArrival->setChecked(false);
+	SC_D.ui.actionAlignOnOriginTime->setChecked(true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4911,17 +5282,17 @@ void AmplitudeView::alignOnPArrivals() {
 	double minTime = -10;
 	double maxTime = 60;
 
-	_ui.actionAlignOnPArrival->setChecked(true);
-	_ui.actionAlignOnOriginTime->setChecked(false);
+	SC_D.ui.actionAlignOnPArrival->setChecked(true);
+	SC_D.ui.actionAlignOnOriginTime->setChecked(false);
 
-	for ( int r = 0; r < _recordView->rowCount(); ++r ) {
-		RecordViewItem *item = _recordView->itemAt(r);
+	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+		RecordViewItem *item = SC_D.recordView->itemAt(r);
 		AmplitudeRecordLabel *l = static_cast<AmplitudeRecordLabel*>(item->label());
 
 		RecordWidget* w = item->widget();
 
 		// Find modified arrivals for phase of controller item
-		RecordMarker* m = w->marker("P");
+		RecordMarker* m = w->marker("");
 
 		if ( m ) {
 			w->setAlignment(m->correctedTime());
@@ -4938,12 +5309,12 @@ void AmplitudeView::alignOnPArrivals() {
 
 	if ( !used ) return;
 
-	_recordView->setAbsoluteTimeEnabled(false);
-	_recordView->setTimeRange(minTime-5, maxTime+5);
-	_recordView->setSelectionEnabled(true);
+	SC_D.recordView->setAbsoluteTimeEnabled(false);
+	SC_D.recordView->setTimeRange(minTime-5, maxTime+5);
+	SC_D.recordView->setSelectionEnabled(true);
 
-	if ( _recordView->currentItem() ) {
-		RecordWidget* w = _recordView->currentItem()->widget();
+	if ( SC_D.recordView->currentItem() ) {
+		RecordWidget* w = SC_D.recordView->currentItem()->widget();
 		setAlignment(w->alignment());
 		setCursorPos(w->alignment(), true);
 	}
@@ -4955,7 +5326,7 @@ void AmplitudeView::alignOnPArrivals() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::pickAmplitudes(bool) {
-	setCursorText(_amplitudeType.c_str());
+	setCursorText(SC_D.amplitudeType.c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4972,20 +5343,20 @@ void AmplitudeView::pickNone(bool) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::scaleAmplUp() {
-	float scale = _currentRecord->amplScale();
-	//if ( scale >= 1 ) scale = _currentAmplScale;
-	float value = (scale == 0?1.0:scale)*_recordView->zoomFactor();
+	float scale = SC_D.currentRecord->amplScale();
+	//if ( scale >= 1 ) scale = SC_D.currentAmplScale;
+	float value = (scale == 0?1.0:scale)*SC_D.recordView->zoomFactor();
 	if ( value > 1000 ) value = 1000;
 	if ( /*value < 1*/true ) {
-		_currentRecord->setAmplScale(value);
-		_currentAmplScale = 1;
+		SC_D.currentRecord->setAmplScale(value);
+		SC_D.currentAmplScale = 1;
 	}
 	else {
-		_currentRecord->setAmplScale(1);
-		_currentAmplScale = value;
+		SC_D.currentRecord->setAmplScale(1);
+		SC_D.currentAmplScale = value;
 	}
 
-	//_currentRecord->resize(_zoomTrace->width(), (int)(_zoomTrace->height()*_currentAmplScale));
+	//_currentRecord->resize(SC_D.zoomTrace->width(), (int)(SC_D.zoomTrace->height()*_currentAmplScale));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4994,23 +5365,23 @@ void AmplitudeView::scaleAmplUp() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::scaleAmplDown() {
-	float scale = _currentRecord->amplScale();
-	//if ( scale >= 1 ) scale = _currentAmplScale;
-	float value = (scale == 0?1.0:scale)/_recordView->zoomFactor();
+	float scale = SC_D.currentRecord->amplScale();
+	//if ( scale >= 1 ) scale = SC_D.currentAmplScale;
+	float value = (scale == 0?1.0:scale) / SC_D.recordView->zoomFactor();
 	//if ( value < 1 ) value = 1;
 	if ( value < 0.001 ) value = 0.001;
 
 	//_currentRecord->setAmplScale(value);
 	if ( /*value < 1*/true ) {
-		_currentRecord->setAmplScale(value);
-		_currentAmplScale = 1;
+		SC_D.currentRecord->setAmplScale(value);
+		SC_D.currentAmplScale = 1;
 	}
 	else {
-		_currentRecord->setAmplScale(1);
-		_currentAmplScale = value;
+		SC_D.currentRecord->setAmplScale(1);
+		SC_D.currentAmplScale = value;
 	}
 
-	//_currentRecord->resize(_zoomTrace->width(), (int)(_zoomTrace->height()*_currentAmplScale));
+	//_currentRecord->resize(SC_D.zoomTrace->width(), (int)(SC_D.zoomTrace->height()*_currentAmplScale));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5019,11 +5390,11 @@ void AmplitudeView::scaleAmplDown() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::scaleReset() {
-	_currentRecord->setAmplScale(1.0);
-	_currentAmplScale = 1.0;
+	SC_D.currentRecord->setAmplScale(1.0);
+	SC_D.currentAmplScale = 1.0;
 	zoom(0.0);
 
-	//_currentRecord->resize(_zoomTrace->width(), (int)(_zoomTrace->height()*_currentAmplScale));
+	//_currentRecord->resize(SC_D.zoomTrace->width(), (int)(SC_D.zoomTrace->height()*_currentAmplScale));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5032,7 +5403,7 @@ void AmplitudeView::scaleReset() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::scaleTimeUp() {
-	zoom(_recordView->zoomFactor());
+	zoom(SC_D.recordView->zoomFactor());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5041,7 +5412,7 @@ void AmplitudeView::scaleTimeUp() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::scaleTimeDown() {
-	zoom(1.0/_recordView->zoomFactor());
+	zoom(1.0 / SC_D.recordView->zoomFactor());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5050,31 +5421,31 @@ void AmplitudeView::scaleTimeDown() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::zoom(float factor) {
-	_zoom *= factor;
-	if ( _zoom < 1.0 )
-		_zoom = 1.0;
+	SC_D.zoom *= factor;
+	if ( SC_D.zoom < 1.0 )
+		SC_D.zoom = 1.0;
 
-	if ( _zoom > 100 )
-		_zoom = 100;
+	if ( SC_D.zoom > 100 )
+		SC_D.zoom = 100;
 
-	float currentScale = _currentRecord->timeScale();
-	float newScale = _recordView->timeScale()*_zoom;
+	float currentScale = SC_D.currentRecord->timeScale();
+	float newScale = SC_D.recordView->timeScale() * SC_D.zoom;
 
-	factor = newScale/currentScale;
+	factor = newScale / currentScale;
 
-	float tmin = _currentRecord->tmin();
-	float tmax = _recordView->currentItem()?
-		tmin + _recordView->currentItem()->widget()->width()/_currentRecord->timeScale():
-		_currentRecord->tmax();
+	float tmin = SC_D.currentRecord->tmin();
+	float tmax = SC_D.recordView->currentItem()?
+		tmin + SC_D.recordView->currentItem()->widget()->width() / SC_D.currentRecord->timeScale():
+		SC_D.currentRecord->tmax();
 	float tcen = tmin + (tmax-tmin)*0.5;
 
 	tmin = tcen - (tcen-tmin)/factor;
 	tmax = tcen + (tmax-tcen)/factor;
 
-	_currentRecord->setTimeScale(newScale);
-	_timeScale->setScale(newScale);
+	SC_D.currentRecord->setTimeScale(newScale);
+	SC_D.timeScale->setScale(newScale);
 	
-	if ( _checkVisibility ) ensureVisibility(tmin, tmax);
+	if ( SC_D.checkVisibility ) ensureVisibility(tmin, tmax);
 	setTimeRange(tmin, tmax);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5087,20 +5458,20 @@ void AmplitudeView::applyTimeRange(double rmin, double rmax) {
 	float tmin = (float)rmin;
 	float tmax = (float)rmax;
 
-	float newScale = _currentRecord->width() / (tmax-tmin);
-	if ( newScale < _recordView->timeScale() )
-		newScale = _recordView->timeScale();
+	float newScale = SC_D.currentRecord->width() / (tmax-tmin);
+	if ( newScale < SC_D.recordView->timeScale() )
+		newScale = SC_D.recordView->timeScale();
 
-	if ( tmin < _recordView->currentItem()->widget()->tmin() )
-		tmin = _recordView->currentItem()->widget()->tmin();
+	if ( tmin < SC_D.recordView->currentItem()->widget()->tmin() )
+		tmin = SC_D.recordView->currentItem()->widget()->tmin();
 
-	_currentRecord->setTimeScale(newScale);
-	_timeScale->setScale(newScale);
+	SC_D.currentRecord->setTimeScale(newScale);
+	SC_D.timeScale->setScale(newScale);
 
 	// Calculate zoom
-	_zoom = newScale / _recordView->timeScale();
+	SC_D.zoom = newScale / SC_D.recordView->timeScale();
 
-	if ( _checkVisibility ) ensureVisibility(tmin, tmax);
+	if ( SC_D.checkVisibility ) ensureVisibility(tmin, tmax);
 	setTimeRange(tmin, tmax);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5110,14 +5481,14 @@ void AmplitudeView::applyTimeRange(double rmin, double rmax) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::scrollLeft() {
-	if ( !_currentRecord->cursorText().isEmpty() ) {
-		Core::Time cp = _currentRecord->cursorPos();
-		cp -= Core::TimeSpan((float)width()/(20*_currentRecord->timeScale()));
+	if ( !SC_D.currentRecord->cursorText().isEmpty() ) {
+		Core::Time cp = SC_D.currentRecord->cursorPos();
+		cp -= Core::TimeSpan((float)width()/(20 * SC_D.currentRecord->timeScale()));
 		setCursorPos(cp);
 		return;
 	}
 	
-	float offset = -(float)width()/(8*_currentRecord->timeScale());
+	float offset = -(float)width()/(8 * SC_D.currentRecord->timeScale());
 	move(offset);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5127,14 +5498,14 @@ void AmplitudeView::scrollLeft() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::scrollFineLeft() {
-if ( !_currentRecord->cursorText().isEmpty() ) {
-		Core::Time cp = _currentRecord->cursorPos();
-		cp -= Core::TimeSpan(1.0/_currentRecord->timeScale());
+	if ( !SC_D.currentRecord->cursorText().isEmpty() ) {
+		Core::Time cp = SC_D.currentRecord->cursorPos();
+		cp -= Core::TimeSpan(1.0 / SC_D.currentRecord->timeScale());
 		setCursorPos(cp);
 		return;
 	}
 	
-	float offset = -1.0/_currentRecord->timeScale();
+	float offset = -1.0 / SC_D.currentRecord->timeScale();
 	move(offset);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5144,14 +5515,14 @@ if ( !_currentRecord->cursorText().isEmpty() ) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::scrollRight() {
-	if ( !_currentRecord->cursorText().isEmpty() ) {
-		Core::Time cp = _currentRecord->cursorPos();
-		cp += Core::TimeSpan((float)width()/(20*_currentRecord->timeScale()));
+	if ( !SC_D.currentRecord->cursorText().isEmpty() ) {
+		Core::Time cp = SC_D.currentRecord->cursorPos();
+		cp += Core::TimeSpan((float)width()/(20 * SC_D.currentRecord->timeScale()));
 		setCursorPos(cp);
 		return;
 	}
 
-	float offset = (float)width()/(8*_currentRecord->timeScale());
+	float offset = (float)width()/(8 * SC_D.currentRecord->timeScale());
 	move(offset);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5161,14 +5532,14 @@ void AmplitudeView::scrollRight() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::scrollFineRight() {
-	if ( !_currentRecord->cursorText().isEmpty() ) {
-		Core::Time cp = _currentRecord->cursorPos();
-		cp += Core::TimeSpan(1.0/_currentRecord->timeScale());
+	if ( !SC_D.currentRecord->cursorText().isEmpty() ) {
+		Core::Time cp = SC_D.currentRecord->cursorPos();
+		cp += Core::TimeSpan(1.0 / SC_D.currentRecord->timeScale());
 		setCursorPos(cp);
 		return;
 	}
 
-	float offset = 1.0/_currentRecord->timeScale();
+	float offset = 1.0 / SC_D.currentRecord->timeScale();
 	move(offset);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5178,8 +5549,8 @@ void AmplitudeView::scrollFineRight() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::applyAmplitudes() {
-	for ( int r = 0; r < _recordView->rowCount(); ++r ) {
-		RecordViewItem *rvi = _recordView->itemAt(r);
+	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+		RecordViewItem *rvi = SC_D.recordView->itemAt(r);
 		RecordWidget *widget = rvi->widget();
 
 		for ( int m = 0; m < widget->markerCount(); ++m ) {
@@ -5188,8 +5559,8 @@ void AmplitudeView::applyAmplitudes() {
 		}
 	}
 
-	_changedAmplitudes.clear();
-	_recordView->update();
+	SC_D.changedAmplitudes.clear();
+	SC_D.recordView->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5198,8 +5569,8 @@ void AmplitudeView::applyAmplitudes() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeView::hasModifiedAmplitudes() const {
-	for ( int r = 0; r < _recordView->rowCount(); ++r ) {
-		RecordViewItem *rvi = _recordView->itemAt(r);
+	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+		RecordViewItem *rvi = SC_D.recordView->itemAt(r);
 		RecordWidget *widget = rvi->widget();
 		for ( int m = 0; m < widget->markerCount(); ++m ) {
 			RecordMarker *marker = widget->marker(m);
@@ -5217,8 +5588,8 @@ bool AmplitudeView::hasModifiedAmplitudes() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::getChangedAmplitudes(ObjectChangeList<DataModel::Amplitude> &list) const {
-	list = _changedAmplitudes;
-	_changedAmplitudes.clear();
+	list = SC_D.changedAmplitudes;
+	SC_D.changedAmplitudes.clear();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5227,8 +5598,8 @@ void AmplitudeView::getChangedAmplitudes(ObjectChangeList<DataModel::Amplitude> 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::fetchManualAmplitudes(std::vector<RecordMarker*>* markers) const {
-	for ( int r = 0; r < _recordView->rowCount(); ++r ) {
-		RecordViewItem* rvi = _recordView->itemAt(r);
+	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+		RecordViewItem* rvi = SC_D.recordView->itemAt(r);
 
 		AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(rvi->label());
 		RecordWidget* widget = rvi->widget();
@@ -5284,7 +5655,7 @@ void AmplitudeView::fetchManualAmplitudes(std::vector<RecordMarker*>* markers) c
 				continue;
 			}
 
-			_changedAmplitudes.push_back(ObjectChangeList<DataModel::Amplitude>::value_type(a, true));
+			SC_D.changedAmplitudes.push_back(ObjectChangeList<DataModel::Amplitude>::value_type(a, true));
 			SEISCOMP_DEBUG("   - created new amplitude");
 
 			if ( markers ) {
@@ -5297,7 +5668,7 @@ void AmplitudeView::fetchManualAmplitudes(std::vector<RecordMarker*>* markers) c
 
 	/*
 	// Remove all automatic amplitudes if configured
-	if ( _config.removeAutomaticPicks ) {
+	if ( SC_D.config.removeAutomaticPicks ) {
 		for ( std::vector<RecordMarker*>::iterator it = markers->begin();
 		      it != markers->end(); ) {
 			try {
@@ -5338,32 +5709,34 @@ void AmplitudeView::commit() {
 	}
 
 	if ( !amps.isEmpty() )
-		emit amplitudesConfirmed(_origin.get(), amps);
+		emit amplitudesConfirmed(SC_D.origin.get(), amps);
 
 	return;
 
 
-	SEISCOMP_DEBUG("Origin.stationMags before: %d", (int)_origin->stationMagnitudeCount());
+	SEISCOMP_DEBUG("Origin.stationMags before: %d",
+	               static_cast<int>(SC_D.origin->stationMagnitudeCount()));
 
 	// Remove all station magnitudes of origin with requested type
-	for ( size_t i = 0; i < _origin->stationMagnitudeCount(); ) {
-		if ( _origin->stationMagnitude(i)->type() == _magnitudeType )
-			_origin->removeStationMagnitude(i);
+	for ( size_t i = 0; i < SC_D.origin->stationMagnitudeCount(); ) {
+		if ( SC_D.origin->stationMagnitude(i)->type() == SC_D.magnitudeType )
+			SC_D.origin->removeStationMagnitude(i);
 		else
 			++i;
 	}
 
-	SEISCOMP_DEBUG("Origin.stationMags after: %d", (int)_origin->stationMagnitudeCount());
+	SEISCOMP_DEBUG("Origin.stationMags after: %d",
+	               static_cast<int>(SC_D.origin->stationMagnitudeCount()));
 
-	if ( !_magnitude )
-		_magnitude = Magnitude::Create();
+	if ( !SC_D.magnitude )
+		SC_D.magnitude = Magnitude::Create();
 	else {
 		// Remove all stationmagnitude references from magnitude
-		while ( _magnitude->stationMagnitudeContributionCount() > 0 )
-			_magnitude->removeStationMagnitudeContribution(0);
+		while ( SC_D.magnitude->stationMagnitudeContributionCount() > 0 )
+			SC_D.magnitude->removeStationMagnitudeContribution(0);
 
 		SEISCOMP_DEBUG("Mag.stationMagRefs after: %d",
-		               (int)_magnitude->stationMagnitudeContributionCount());
+		               static_cast<int>(SC_D.magnitude->stationMagnitudeContributionCount()));
 	}
 
 	CreationInfo ci;
@@ -5371,10 +5744,10 @@ void AmplitudeView::commit() {
 	ci.setAuthor(SCApp->author());
 	ci.setCreationTime(Core::Time::GMT());
 
-	_magnitude->setCreationInfo(ci);
-	_magnitude->setType(_magnitudeType);
-	_magnitude->setEvaluationStatus(EvaluationStatus(CONFIRMED));
-	_magnitude->setOriginID("");
+	SC_D.magnitude->setCreationInfo(ci);
+	SC_D.magnitude->setType(SC_D.magnitudeType);
+	SC_D.magnitude->setEvaluationStatus(EvaluationStatus(CONFIRMED));
+	SC_D.magnitude->setOriginID("");
 
 	vector<double> mags;
 	vector<double> azimuths;
@@ -5409,8 +5782,8 @@ void AmplitudeView::commit() {
 		Processing::MagnitudeProcessor::Status stat =
 			label->magnitudeProcessor->computeMagnitude(
 				amp->amplitude().value(), label->processor->unit(), period, snr,
-				item->value(ITEM_DISTANCE_INDEX), _origin->depth(),
-				_origin.get(), label->location, amp.get(), magValue
+				item->value(ITEM_DISTANCE_INDEX), SC_D.origin->depth(),
+				SC_D.origin.get(), label->location, amp.get(), magValue
 			);
 
 		if ( stat != Processing::MagnitudeProcessor::OK ) {
@@ -5428,7 +5801,7 @@ void AmplitudeView::commit() {
 		ci.setAgencyID(SCApp->agencyID());
 		ci.setAuthor(SCApp->author());
 		ci.setCreationTime(Core::Time::GMT());
-		staMag->setType(_magnitude->type());
+		staMag->setType(SC_D.magnitude->type());
 		staMag->setCreationInfo(ci);
 		staMag->setWaveformID(amp->waveformID());
 		staMag->setMagnitude(magValue);
@@ -5436,19 +5809,19 @@ void AmplitudeView::commit() {
 
 		label->magnitudeProcessor->finalizeMagnitude(staMag.get());
 
-		_origin->add(staMag.get());
+		SC_D.origin->add(staMag.get());
 
 		StationMagnitudeContributionPtr ref = new StationMagnitudeContribution;
 		ref->setStationMagnitudeID(staMag->publicID());
 		ref->setWeight(m->isEnabled()?1.0:0.0);
 
-		_magnitude->add(ref.get());
+		SC_D.magnitude->add(ref.get());
 
 		stations.insert(amp->waveformID().networkCode() + "." + amp->waveformID().stationCode());
 	}
 
 	// Magnitudes are averaged by the handler of this signal
-	emit magnitudeCreated(_magnitude.get());
+	emit magnitudeCreated(SC_D.magnitude.get());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5459,7 +5832,7 @@ void AmplitudeView::commit() {
 void AmplitudeView::setDefaultDisplay() {
 	//alignByState();
 	alignOnPArrivals();
-	selectFirstVisibleItem(_recordView);
+	selectFirstVisibleItem(SC_D.recordView);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5471,8 +5844,8 @@ void AmplitudeView::setDefaultDisplay() {
 bool AmplitudeView::start() {
 	stop();
 
-	if ( _recordView->start() ) {
-		connect(_recordView->recordStreamThread(), SIGNAL(finished()),
+	if ( SC_D.recordView->start() ) {
+		connect(SC_D.recordView->recordStreamThread(), SIGNAL(finished()),
 		        this, SLOT(acquisitionFinished()));
 		return true;
 	}
@@ -5487,7 +5860,7 @@ bool AmplitudeView::start() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::stop() {
-	_recordView->stop();
+	SC_D.recordView->stop();
 	closeThreads();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5497,10 +5870,10 @@ void AmplitudeView::stop() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::selectTrace(const Seiscomp::DataModel::WaveformStreamID &wid) {
-	RecordViewItem *item = _recordView->item(wid);
+	RecordViewItem *item = SC_D.recordView->item(wid);
 	if ( item ) {
-		_recordView->setCurrentItem(item);
-		_recordView->ensureVisible(item->row());
+		SC_D.recordView->setCurrentItem(item);
+		SC_D.recordView->ensureVisible(item->row());
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5510,10 +5883,10 @@ void AmplitudeView::selectTrace(const Seiscomp::DataModel::WaveformStreamID &wid
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::selectTrace(const std::string &code) {
-	for ( int i = 0; i < _recordView->rowCount(); ++i ) {
-		if ( _recordView->itemAt(i)->streamID().stationCode() == code ) {
-			_recordView->setCurrentItem(_recordView->itemAt(i));
-			_recordView->ensureVisible(i);
+	for ( int i = 0; i < SC_D.recordView->rowCount(); ++i ) {
+		if ( SC_D.recordView->itemAt(i)->streamID().stationCode() == code ) {
+			SC_D.recordView->setCurrentItem(SC_D.recordView->itemAt(i));
+			SC_D.recordView->ensureVisible(i);
 			return;
 		}
 	}
@@ -5525,13 +5898,13 @@ void AmplitudeView::selectTrace(const std::string &code) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::closeThreads() {
-	foreach ( RecordStreamThread* t, _acquisitionThreads) {
+	foreach ( RecordStreamThread* t, SC_D.acquisitionThreads) {
 		t->stop(true);
 		SEISCOMP_DEBUG("removed finished thread %d from list", t->ID());
 		delete t;
 	}
 
-	_acquisitionThreads.clear();
+	SC_D.acquisitionThreads.clear();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5543,16 +5916,16 @@ void AmplitudeView::acquisitionFinished() {
 	QObject* s = sender();
 	if ( s ) {
 		RecordStreamThread* t = static_cast<RecordStreamThread*>(s);
-		int index = _acquisitionThreads.indexOf(t);
+		int index = SC_D.acquisitionThreads.indexOf(t);
 		if ( index != -1 ) {
-			_acquisitionThreads.remove(index);
+			SC_D.acquisitionThreads.remove(index);
 			SEISCOMP_DEBUG("removed finished thread %d from list", t->ID());
 			delete t;
 		}
 
 		// Update color states
-		for ( int i = 0; i < _recordView->rowCount(); ++i ) {
-			RecordViewItem *item = _recordView->itemAt(i);
+		for ( int i = 0; i < SC_D.recordView->rowCount(); ++i ) {
+			RecordViewItem *item = SC_D.recordView->itemAt(i);
 			RecordWidget *widget = item->widget();
 
 			AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
@@ -5576,17 +5949,17 @@ void AmplitudeView::acquisitionFinished() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::acquireStreams() {
-	if ( _nextStreams.empty() ) return;
+	if ( SC_D.nextStreams.empty() ) return;
 
-	RecordStreamThread *t = new RecordStreamThread(_config.recordURL.toStdString());
+	RecordStreamThread *t = new RecordStreamThread(SC_D.config.recordURL.toStdString());
 
 	if ( !t->connect() ) {
-		if ( _config.recordURL != _lastRecordURL ) {
+		if ( SC_D.config.recordURL != SC_D.lastRecordURL ) {
 			QMessageBox::critical(this, "Waveform acquisition",
-			                      QString("Unable to open recordstream '%1'").arg(_config.recordURL));
+			                      QString("Unable to open recordstream '%1'").arg(SC_D.config.recordURL));
 		}
 
-		_lastRecordURL = _config.recordURL;
+		SC_D.lastRecordURL = SC_D.config.recordURL;
 		delete t;
 		return;
 	}
@@ -5597,8 +5970,7 @@ void AmplitudeView::acquireStreams() {
 	connect(t, SIGNAL(finished()),
 	        this, SLOT(acquisitionFinished()));
 
-	for ( WaveformStreamList::const_iterator it = _nextStreams.begin();
-	      it != _nextStreams.end(); ++it ) {
+	for ( auto it = SC_D.nextStreams.begin(); it != SC_D.nextStreams.end(); ++it ) {
 		if ( it->timeWindow ) {
 			if ( !t->addStream(it->streamID.networkCode(),
 				               it->streamID.stationCode(),
@@ -5615,7 +5987,7 @@ void AmplitudeView::acquireStreams() {
 			continue;
 		}
 
-		RecordViewItem *item = _recordView->item(adjustWaveformStreamID(it->streamID));
+		RecordViewItem *item = SC_D.recordView->item(adjustWaveformStreamID(it->streamID));
 		if ( item ) {
 			int slot = item->mapComponentToSlot(*it->streamID.channelCode().rbegin());
 			item->widget()->setRecordBackgroundColor(slot, SCScheme.colors.records.states.requested);
@@ -5625,9 +5997,9 @@ void AmplitudeView::acquireStreams() {
 		}
 	}
 
-	_nextStreams.clear();
+	SC_D.nextStreams.clear();
 
-	_acquisitionThreads.push_back(t);
+	SC_D.acquisitionThreads.push_back(t);
 	t->start();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5641,8 +6013,8 @@ void AmplitudeView::receivedRecord(Seiscomp::Record *rec) {
 	if ( !rec->data() ) return;
 
 	std::string streamID = rec->streamID();
-	RecordItemMap::iterator it = _recordItemLabels.find(streamID);
-	if ( it == _recordItemLabels.end() )
+	auto it = SC_D.recordItemLabels.find(streamID);
+	if ( it == SC_D.recordItemLabels.end() )
 		return;
 
 	AmplitudeRecordLabel *label = it->second;
@@ -5685,10 +6057,10 @@ void AmplitudeView::receivedRecord(Seiscomp::Record *rec) {
 	}
 
 	if ( firstRecord ) {
-		item->widget()->setRecordBackgroundColor(_componentMap[i], SCScheme.colors.records.states.inProgress);
+		item->widget()->setRecordBackgroundColor(SC_D.componentMap[i], SCScheme.colors.records.states.inProgress);
 		label->hasGotData = true;
 
-		if ( _config.hideStationsWithoutData )
+		if ( SC_D.config.hideStationsWithoutData )
 			item->forceInvisibilty(!label->isEnabledByConfig);
 
 		//item->widget()->setRecords(i, label->traces[i].raw, false);
@@ -5711,56 +6083,56 @@ void AmplitudeView::receivedRecord(Seiscomp::Record *rec) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::addStations() {
-	if ( !_origin ) return;
+	if ( !SC_D.origin ) return;
 
-	SelectStation dlg(_origin->time(), _config.ignoreDisabledStations, _stations, this);
-	dlg.setReferenceLocation(_origin->latitude(), _origin->longitude());
+	SelectStation dlg(SC_D.origin->time(), SC_D.config.ignoreDisabledStations, SC_D.stations, this);
+	dlg.setReferenceLocation(SC_D.origin->latitude(), SC_D.origin->longitude());
 	if ( dlg.exec() != QDialog::Accepted ) return;
 
 	QList<DataModel::Station *> stations = dlg.selectedStations();
 	if ( stations.isEmpty() ) return;
 
-	_recordView->setUpdatesEnabled(false);
+	SC_D.recordView->setUpdatesEnabled(false);
 
 	foreach ( DataModel::Station *s, stations ) {
 		DataModel::Network *n = s->network();
 
 		QString code = (n->code() + "." + s->code()).c_str();
 
-		if ( _stations.contains(code) ) continue;
+		if ( SC_D.stations.contains(code) ) continue;
 
 		double delta, az1, az2;
-		Math::Geo::delazi(_origin->latitude(), _origin->longitude(),
+		Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
 		                  s->latitude(), s->longitude(), &delta, &az1, &az2);
 
 		// Skip stations out of amplitude processors range
-		if ( delta < _minDist || delta > _maxDist ) continue;
+		if ( delta < SC_D.minDist || delta > SC_D.maxDist ) continue;
 
 		Stream *stream = nullptr;
 		// Preferred channel code is BH. If not available use either SH or skip.
-		for ( size_t c = 0; c < _broadBandCodes.size(); ++c ) {
-			stream = findStream(s, _broadBandCodes[c], _origin->time());
+		for ( size_t c = 0; c < SC_D.broadBandCodes.size(); ++c ) {
+			stream = findStream(s, SC_D.broadBandCodes[c], SC_D.origin->time());
 			if ( stream ) break;
 		}
 
 		if ( stream == nullptr )
-			stream = findStream(s, _origin->time(), Processing::WaveformProcessor::MeterPerSecond);
+			stream = findStream(s, SC_D.origin->time(), Processing::WaveformProcessor::MeterPerSecond);
 
 		if ( stream ) {
 			WaveformStreamID streamID(n->code(), s->code(), stream->sensorLocation()->code(), stream->code().substr(0,stream->code().size()-1) + '?', "");
 
 			try {
 				TravelTime ttime =
-					_ttTable.computeFirst(_origin->latitude(), _origin->longitude(),
-					                      _origin->depth(), s->latitude(), s->longitude());
+					SC_D.ttTable->computeFirst(SC_D.origin->latitude(), SC_D.origin->longitude(),
+				                               SC_D.origin->depth(), s->latitude(), s->longitude());
 
-				Core::Time referenceTime = _origin->time().value() + Core::TimeSpan(ttime.time);
+				Core::Time referenceTime = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 
 				RecordViewItem* item = addStream(stream->sensorLocation(), streamID, referenceTime, false);
 				if ( item ) {
-					_stations.insert(code);
-					item->setVisible(!_ui.actionShowUsedStations->isChecked());
-					if ( _config.hideStationsWithoutData )
+					SC_D.stations.insert(code);
+					item->setVisible(!SC_D.ui.actionShowUsedStations->isChecked());
+					if ( SC_D.config.hideStationsWithoutData )
 						item->forceInvisibilty(true);
 				}
 			}
@@ -5772,12 +6144,12 @@ void AmplitudeView::addStations() {
 	alignByState();
 	componentByState();
 
-	if ( _recordView->currentItem() == nullptr )
-		selectFirstVisibleItem(_recordView);
+	if ( SC_D.recordView->currentItem() == nullptr )
+		selectFirstVisibleItem(SC_D.recordView);
 
-	setCursorText(_currentRecord->cursorText());
+	setCursorText(SC_D.currentRecord->cursorText());
 
-	_recordView->setUpdatesEnabled(true);
+	SC_D.recordView->setUpdatesEnabled(true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5786,13 +6158,13 @@ void AmplitudeView::addStations() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::searchStation() {
-	_searchStation->selectAll();
-	_searchStation->setVisible(true);
-	_searchLabel->setVisible(true);
+	SC_D.searchStation->selectAll();
+	SC_D.searchStation->setVisible(true);
+	SC_D.searchLabel->setVisible(true);
 
 	//_searchStation->grabKeyboard();
-	_searchStation->setFocus();
-	_recordView->setFocusProxy(_searchStation);
+	SC_D.searchStation->setFocus();
+	SC_D.recordView->setFocusProxy(SC_D.searchStation);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5807,22 +6179,22 @@ void AmplitudeView::searchByText(const QString &text) {
 	rx.setPatternSyntax(QRegExp::Wildcard);
 	rx.setCaseSensitivity(Qt::CaseInsensitive);
 
-	int row = _recordView->findByText(0, rx, _lastFoundRow+1);
+	int row = SC_D.recordView->findByText(0, rx, SC_D.lastFoundRow+1);
 	if ( row != -1 ) {
-		_recordView->setCurrentItem(_recordView->itemAt(row));
-		_lastFoundRow = row;
+		SC_D.recordView->setCurrentItem(SC_D.recordView->itemAt(row));
+		SC_D.lastFoundRow = row;
 
-		QPalette pal = _searchStation->palette();
-		pal.setColor(QPalette::Base, _searchBase);
-		_searchStation->setPalette(pal);
+		QPalette pal = SC_D.searchStation->palette();
+		pal.setColor(QPalette::Base, SC_D.searchBase);
+		SC_D.searchStation->setPalette(pal);
 
-		_recordView->ensureVisible(_lastFoundRow);
+		SC_D.recordView->ensureVisible(SC_D.lastFoundRow);
 	}
 	else {
-		QPalette pal = _searchStation->palette();
-		pal.setColor(QPalette::Base, _searchError);
-		_searchStation->setPalette(pal);
-		_lastFoundRow = -1;
+		QPalette pal = SC_D.searchStation->palette();
+		pal.setColor(QPalette::Base, SC_D.searchError);
+		SC_D.searchStation->setPalette(pal);
+		SC_D.lastFoundRow = -1;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5832,7 +6204,7 @@ void AmplitudeView::searchByText(const QString &text) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::search(const QString &text) {
-	_lastFoundRow = -1;
+	SC_D.lastFoundRow = -1;
 
 	searchByText(text);
 }
@@ -5843,9 +6215,9 @@ void AmplitudeView::search(const QString &text) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::nextSearch() {
-	searchByText(_searchStation->text());
-	if ( _lastFoundRow == -1 )
-		searchByText(_searchStation->text());
+	searchByText(SC_D.searchStation->text());
+	if ( SC_D.lastFoundRow == -1 )
+		searchByText(SC_D.searchStation->text());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5854,11 +6226,11 @@ void AmplitudeView::nextSearch() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::abortSearchStation() {
-	_recordView->setFocusProxy(nullptr);
-	_searchStation->releaseKeyboard();
+	SC_D.recordView->setFocusProxy(nullptr);
+	SC_D.searchStation->releaseKeyboard();
 
-	_searchStation->setVisible(false);
-	_searchLabel->setVisible(false);
+	SC_D.searchStation->setVisible(false);
+	SC_D.searchLabel->setVisible(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5879,12 +6251,12 @@ void AmplitudeView::emitPick(const Processing::Picker *,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::createAmplitude() {
-	RecordViewItem* item = _recordView->currentItem();
+	RecordViewItem* item = SC_D.recordView->currentItem();
 	if ( item && !item->widget()->cursorText().isEmpty() ) {
 		onSelectedTime(item->widget(), item->widget()->cursorPos());
-		onSelectedTime(_currentRecord, _currentRecord->cursorPos());
+		onSelectedTime(SC_D.currentRecord, SC_D.currentRecord->cursorPos());
 
-		_recordView->selectNextRow();
+		SC_D.recordView->selectNextRow();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5894,10 +6266,10 @@ void AmplitudeView::createAmplitude() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setAmplitude() {
-	RecordViewItem* item = _recordView->currentItem();
+	RecordViewItem* item = SC_D.recordView->currentItem();
 	if ( item && !item->widget()->cursorText().isEmpty() ) {
 		onSelectedTime(item->widget(), item->widget()->cursorPos());
-		onSelectedTime(_currentRecord, _currentRecord->cursorPos());
+		onSelectedTime(SC_D.currentRecord, SC_D.currentRecord->cursorPos());
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5907,19 +6279,19 @@ void AmplitudeView::setAmplitude() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::confirmAmplitude() {
-	RecordViewItem* item = _recordView->currentItem();
+	RecordViewItem* item = SC_D.recordView->currentItem();
 	if ( item && !item->widget()->cursorText().isEmpty() ) {
 		onSelectedTime(item->widget(), item->widget()->cursorPos());
-		onSelectedTime(_currentRecord, _currentRecord->cursorPos());
+		onSelectedTime(SC_D.currentRecord, SC_D.currentRecord->cursorPos());
 
 		int row = item->row() + 1;
 
 		item = nullptr;
 
-		for ( int i = 0; i < _recordView->rowCount(); ++i, ++row ) {
-			if ( row >= _recordView->rowCount() ) row -= _recordView->rowCount();
+		for ( int i = 0; i < SC_D.recordView->rowCount(); ++i, ++row ) {
+			if ( row >= SC_D.recordView->rowCount() ) row -= SC_D.recordView->rowCount();
 
-			RecordViewItem* nextItem = _recordView->itemAt(row);
+			RecordViewItem* nextItem = SC_D.recordView->itemAt(row);
 
 			// ignore disabled rows
 			if ( !nextItem->widget()->isEnabled() ) continue;
@@ -5927,8 +6299,8 @@ void AmplitudeView::confirmAmplitude() {
 			RecordMarker* m = nextItem->widget()->marker(nextItem->widget()->cursorText());
 			if ( m ) {
 				item = nextItem;
-				_recordView->setCurrentItem(nextItem);
-				_recordView->ensureVisible(row);
+				SC_D.recordView->setCurrentItem(nextItem);
+				SC_D.recordView->ensureVisible(row);
 				break;
 			}
 		}
@@ -5941,13 +6313,13 @@ void AmplitudeView::confirmAmplitude() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::deleteAmplitude() {
-	RecordViewItem* item = _recordView->currentItem();
+	RecordViewItem* item = SC_D.recordView->currentItem();
 	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
 	if ( item ) {
 		label->isError = false;
 		label->infoText = QString();
 		if ( item->widget()->cursorText().isEmpty() )
-			resetAmplitude(item, _amplitudeType.c_str(), true);
+			resetAmplitude(item, SC_D.amplitudeType.c_str(), true);
 		else
 			resetAmplitude(item, item->widget()->cursorText(), true);
 	}
@@ -5979,7 +6351,7 @@ void AmplitudeView::resetAmplitude(RecordViewItem *item, const QString &text, bo
 	}
 
 	item->widget()->update();
-	_currentRecord->update();
+	SC_D.currentRecord->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5988,11 +6360,11 @@ void AmplitudeView::resetAmplitude(RecordViewItem *item, const QString &text, bo
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::addFilter(const QString& name, const QString& filter) {
-	if ( _comboFilter ) {
-		if ( _comboFilter->findText(name) != -1 )
+	if ( SC_D.comboFilter ) {
+		if ( SC_D.comboFilter->findText(name) != -1 )
 			return;
 
-		_comboFilter->addItem(name, filter);
+		SC_D.comboFilter->addItem(name, filter);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6002,7 +6374,7 @@ void AmplitudeView::addFilter(const QString& name, const QString& filter) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::limitFilterToZoomTrace(bool e) {
-	changeFilter(_comboFilter->currentIndex(), true);
+	changeFilter(SC_D.comboFilter->currentIndex(), true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6021,23 +6393,23 @@ void AmplitudeView::changeFilter(int index) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeView::applyFilter(RecordViewItem *item) {
 	if ( item == nullptr ) {
-		for ( int i = 0; i < _recordView->rowCount(); ++i ) {
-			RecordViewItem* rvi = _recordView->itemAt(i);
+		for ( int i = 0; i < SC_D.recordView->rowCount(); ++i ) {
+			RecordViewItem* rvi = SC_D.recordView->itemAt(i);
 			AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(rvi->label());
 			if ( label->processor ) {
 				Core::Time t = label->processor->trigger();
 				label->processor->reset();
 				label->processor->setTrigger(t);
 			}
-			label->data.setFilter(_currentFilter, _currentFilterStr);
-			label->data.showProcessedData(_showProcessedData);
+			label->data.setFilter(SC_D.currentFilter, SC_D.currentFilterStr);
+			label->data.showProcessedData(SC_D.showProcessedData);
 		}
 	}
 	else {
-		for ( int i = 0; i < _recordView->rowCount(); ++i ) {
-			RecordViewItem* rvi = _recordView->itemAt(i);
+		for ( int i = 0; i < SC_D.recordView->rowCount(); ++i ) {
+			RecordViewItem* rvi = SC_D.recordView->itemAt(i);
 			AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(rvi->label());
-			label->data.showProcessedData(_showProcessedData);
+			label->data.showProcessedData(SC_D.showProcessedData);
 		}
 
 		AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
@@ -6046,7 +6418,7 @@ bool AmplitudeView::applyFilter(RecordViewItem *item) {
 			label->processor->reset();
 			label->processor->setTrigger(t);
 		}
-		label->data.setFilter(_currentFilter, _currentFilterStr);
+		label->data.setFilter(SC_D.currentFilter, SC_D.currentFilterStr);
 	}
 
 	return true;
@@ -6059,61 +6431,61 @@ bool AmplitudeView::applyFilter(RecordViewItem *item) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::changeFilter(int index, bool force) {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	QString name = _comboFilter->itemText(index);
-	QString filter = _comboFilter->itemData(index).toString();
+	QString name = SC_D.comboFilter->itemText(index);
+	QString filter = SC_D.comboFilter->itemData(index).toString();
 
-	_showProcessedData = false;
+	SC_D.showProcessedData = false;
 
 	if ( name == NO_FILTER_STRING ) {
-		if ( _currentFilter ) delete _currentFilter;
-		_currentFilter = nullptr;
-		_currentFilterStr = "";
+		if ( SC_D.currentFilter ) delete SC_D.currentFilter;
+		SC_D.currentFilter = nullptr;
+		SC_D.currentFilterStr = "";
 
-		if ( !_ui.actionLimitFilterToZoomTrace->isChecked() )
+		if ( !SC_D.ui.actionLimitFilterToZoomTrace->isChecked() )
 			applyFilter();
 		else
-			applyFilter(_recordView->currentItem());
+			applyFilter(SC_D.recordView->currentItem());
 
 		QApplication::restoreOverrideCursor();
 		return;
 	}
 	else if ( name == DEFAULT_FILTER_STRING ) {
-		if ( _currentFilter ) delete _currentFilter;
-		_currentFilter = nullptr;
-		_currentFilterStr = "";
+		if ( SC_D.currentFilter ) delete SC_D.currentFilter;
+		SC_D.currentFilter = nullptr;
+		SC_D.currentFilterStr = "";
 
-		_showProcessedData = true;
+		SC_D.showProcessedData = true;
 		applyFilter();
 
 		QApplication::restoreOverrideCursor();
 		return;
 	}
 
-	_showProcessedData = true;
+	SC_D.showProcessedData = true;
 	RecordWidget::Filter *newFilter = RecordWidget::Filter::Create(filter.toStdString());
 
 	if ( newFilter == nullptr ) {
 		QMessageBox::critical(this, "Invalid filter",
 		                      QString("Unable to create filter: %1\nFilter: %2").arg(name).arg(filter));
 
-		_comboFilter->blockSignals(true);
-		_comboFilter->setCurrentIndex(_lastFilterIndex);
-		_comboFilter->blockSignals(false);
+		SC_D.comboFilter->blockSignals(true);
+		SC_D.comboFilter->setCurrentIndex(SC_D.lastFilterIndex);
+		SC_D.comboFilter->blockSignals(false);
 
 		QApplication::restoreOverrideCursor();
 		return;
 	}
 
-	if ( _currentFilter ) delete _currentFilter;
-	_currentFilter = newFilter;
-	_currentFilterStr = filter.toStdString();
+	if ( SC_D.currentFilter ) delete SC_D.currentFilter;
+	SC_D.currentFilter = newFilter;
+	SC_D.currentFilterStr = filter.toStdString();
 
-	if ( !_ui.actionLimitFilterToZoomTrace->isChecked() )
+	if ( !SC_D.ui.actionLimitFilterToZoomTrace->isChecked() )
 		applyFilter();
 	else
-		applyFilter(_recordView->currentItem());
+		applyFilter(SC_D.recordView->currentItem());
 
-	_lastFilterIndex = index;
+	SC_D.lastFilterIndex = index;
 	QApplication::restoreOverrideCursor();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6123,12 +6495,12 @@ void AmplitudeView::changeFilter(int index, bool force) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setArrivalState(int arrivalId, bool state) {
-	setArrivalState(_currentRecord, arrivalId, state);
+	setArrivalState(SC_D.currentRecord, arrivalId, state);
 
-	for ( int r = 0; r < _recordView->rowCount(); ++r ) {
-		RecordViewItem* item = _recordView->itemAt(r);
+	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+		RecordViewItem* item = SC_D.recordView->itemAt(r);
 		if ( setArrivalState(item->widget(), arrivalId, state) ) {
-			item->setVisible(!(_ui.actionShowUsedStations->isChecked() &&
+			item->setVisible(!(SC_D.ui.actionShowUsedStations->isChecked() &&
 			                   item->widget()->hasMovableMarkers()));
 			if ( state )
 				item->label()->setEnabled(true);
