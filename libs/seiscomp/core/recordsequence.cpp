@@ -473,16 +473,16 @@ bool RecordSequence::timingQuality(int &count, float &quality) const {
 	double q = 0;
 	count = 0;
 
-	for (const_iterator it = begin(); it != end(); ++it ) {
-		RecordCPtr rec = (*it);
-		if (rec && rec->timingQuality() >= 0 ) {
+	for ( auto rec : *this ) {
+		if ( rec && rec->timingQuality() >= 0 ) {
 			q += rec->timingQuality();
 			++count;
 		}
 	}
 
-	if (count == 0)
+	if ( !count ) {
 		return false;
+	}
 
 	quality = q/count;
 	return true;
@@ -512,24 +512,17 @@ double TimeWindowBuffer::availability() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool TimeWindowBuffer::feed(const Record *rec) {
-	// FIXME some consistency checks needed before a record is added
-
 	// does this record overlap with the interesting time window?
-	if ( ! _timeWindow.overlaps(rec->timeWindow()))
+	if ( !_timeWindow.overlaps(rec->timeWindow()) ) {
 		return false;
+	}
 
 	iterator it;
-	if ( !findInsertPosition(rec, &it) )
+	if ( !findInsertPosition(rec, &it) ) {
 		return false;
+	}
 
 	insert(it, rec);
-
-	/*
-	if ( alreadyHasRecord(rec) )
-		return false;
-
-	push_back(rec);
-	*/
 
 	return true;
 }
@@ -540,11 +533,11 @@ bool TimeWindowBuffer::feed(const Record *rec) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordSequence *TimeWindowBuffer::copy() const {
-	TimeWindowBuffer *cp = (TimeWindowBuffer*)clone();
-	for (const_iterator it = begin(); it != end(); ++it)
-		cp->feed(it->get()->copy());
-
-	return (RecordSequence*) cp;
+	auto cp = static_cast<TimeWindowBuffer*>(clone());
+	for ( auto rec : *this ) {
+		cp->feed(rec->copy());
+	}
+	return cp;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
