@@ -109,14 +109,16 @@ RecordSequence* StreamBuffer::sequence(const WaveformID& wid) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordSequence* StreamBuffer::feed(const Record *rec) {
-	if ( rec == nullptr ) return nullptr;
-
 	_newStreamAdded = false;
+
+	if ( !rec ) {
+		return nullptr;
+	}
 
 	WaveformID wid(rec);
 	RecordSequence *seq = sequence(wid);
 
-	if ( seq == nullptr ) {
+	if ( !seq ) {
 		switch ( _mode ) {
 			case TIME_WINDOW:
 				seq = new TimeWindowBuffer(Core::TimeWindow(_timeStart, _timeStart + _timeSpan));
@@ -130,10 +132,11 @@ RecordSequence* StreamBuffer::feed(const Record *rec) {
 		_newStreamAdded = true;
 	}
 
-	if ( seq->feed(rec) )
-		return seq;
+	if ( !seq->feed(rec) ) {
+		return nullptr;
+	}
 
-	return nullptr;
+	return seq;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

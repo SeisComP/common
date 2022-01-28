@@ -22,8 +22,8 @@
 #define SEISCOMP_PROCESSING_STREAMBUFFER_H
 
 
-#include<string>
-#include<list>
+#include <string>
+#include <list>
 
 #include <seiscomp/core/recordsequence.h>
 #include <seiscomp/client.h>
@@ -39,16 +39,18 @@ class SC_SYSTEM_CLIENT_API StreamBuffer {
 	// ----------------------------------------------------------------------
 	public:
 		struct SC_SYSTEM_CLIENT_API WaveformID {
-			WaveformID(const std::string& net,
-			           const std::string& sta,
-			           const std::string& loc,
-			           const std::string& cha)
+			WaveformID(const std::string &net, const std::string &sta,
+			           const std::string &loc, const std::string &cha)
 			: networkCode(net), stationCode(sta)
-			, locationCode(loc), channelCode(cha) {}
+			, locationCode(loc), channelCode(cha)
+			{}
 		
 			WaveformID(const Record *rec)
-			: networkCode(rec->networkCode()), stationCode(rec->stationCode())
-			, locationCode(rec->locationCode()), channelCode(rec->channelCode()) {}
+			: networkCode(rec->networkCode())
+			, stationCode(rec->stationCode())
+			, locationCode(rec->locationCode())
+			, channelCode(rec->channelCode())
+			{}
 
 
 			bool operator<(const WaveformID& other) const {
@@ -73,7 +75,7 @@ class SC_SYSTEM_CLIENT_API StreamBuffer {
 
 
 	// ----------------------------------------------------------------------
-	//  Xstruction
+	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
 		//! Creates streambuffer with no type yet
@@ -81,10 +83,10 @@ class SC_SYSTEM_CLIENT_API StreamBuffer {
 		StreamBuffer();
 
 		//! Creates a timewindow buffer
-		StreamBuffer(const Seiscomp::Core::TimeWindow& timeWindow);
+		StreamBuffer(const Core::TimeWindow &timeWindow);
 
 		//! Creates a ringbuffer
-		StreamBuffer(const Seiscomp::Core::TimeSpan& timeSpan);
+		StreamBuffer(const Core::TimeSpan &timeSpan);
 
 		~StreamBuffer();
 
@@ -93,15 +95,15 @@ class SC_SYSTEM_CLIENT_API StreamBuffer {
 	//  Interface
 	// ----------------------------------------------------------------------
 	public:
-		void setTimeWindow(const Seiscomp::Core::TimeWindow& timeWindow);
-		void setTimeSpan(const Seiscomp::Core::TimeSpan& timeSpan);
+		void setTimeWindow(const Core::TimeWindow &timeWindow);
+		void setTimeSpan(const Core::TimeSpan &timeSpan);
 
-		RecordSequence* sequence(const WaveformID& wid) const;
-		RecordSequence* feed(const Record *rec);
+		RecordSequence *sequence(const WaveformID &wid) const;
+		RecordSequence *feed(const Record *rec);
 
 		bool addedNewStream() const;
 
-		void printStreams(std::ostream& os=std::cout) const;
+		void printStreams(std::ostream &os = std::cout) const;
 		std::list<std::string> getStreams() const;
 
 		//! Clears the streambuffer and removes all cached records
@@ -117,15 +119,13 @@ class SC_SYSTEM_CLIENT_API StreamBuffer {
 			RING_BUFFER
 		};
 
-		Mode _mode;
+		using SequenceMap = std::map<WaveformID, RecordSequence*>;
 
-		Seiscomp::Core::Time _timeStart;
+		Mode                     _mode;
+		Seiscomp::Core::Time     _timeStart;
 		Seiscomp::Core::TimeSpan _timeSpan;
-
-		typedef std::map<WaveformID, RecordSequence*> SequenceMap;
-		SequenceMap _sequences;
-
-		bool _newStreamAdded;
+		SequenceMap              _sequences;
+		bool                     _newStreamAdded;
 };
 
 
