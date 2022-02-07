@@ -245,11 +245,226 @@ void ApplicationStatusMessage::serialize(Archive& ar) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::AppSettings::Messaging::accept(SettingsLinker &linker) {
+	linker
+
+	& cfg(user, "username")
+	& cfg(URL, "server")
+	& cfg(primaryGroup, "primaryGroup")
+	& cfg(subscriptions, "subscriptions")
+	& cfg(contentType, "encoding")
+	& cfg(timeout, "timeout")
+
+	& cli(
+		user, "Messaging", "user,u",
+		"Client name used when connecting to the messaging.",
+		true
+	)
+	& cli(
+		URL, "Messaging", "host,H",
+		"Messaging URL (host[:port][/queue]).", true
+	)
+	& cli(
+		timeout, "Messaging", "timeout,t",
+		"Connection timeout in seconds.", true
+	)
+	& cli(
+		primaryGroup, "Messaging", "primary-group,g",
+		"The primary message group of the client.", true
+	)
+	& cli(
+		subscriptions, "Messaging", "subscribe-group,S",
+		"A group to subscribe to. This option can be given more than once.",
+		true
+	)
+	& cli(
+		contentType, "Messaging", "content-type",
+		"Sets the message content type (binary, json or xml).",
+		true
+	);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::AppSettings::Client::accept(SettingsLinker &linker) {
+	linker
+
+	& cfg(startStopMessages, "startStopMessage")
+	& cfg(autoShutdown, "autoShutdown")
+	& cfg(shutdownMasterModule, "shutdownMasterModule")
+	& cfg(shutdownMasterUsername, "shutdownMasterUsername")
+
+	& cli(
+		startStopMessages, "Messaging", "start-stop-msg",
+		"Sets sending of a start- and a stop message.", true
+	)
+	& cli(
+		autoShutdown, "Generic", "auto-shutdown",
+		"Enables automatic application shutdown triggered by a status message.",
+		true
+	)
+	& cli(
+		shutdownMasterModule, "Generic", "shutdown-master-username",
+		"Triggers shutdown if the user name of the received messages match.",
+		false
+	)
+	& cli(
+		shutdownMasterUsername, "Generic", "shutdown-master-username",
+		"Triggers shutdown if the user name of the received messages match.",
+		false
+	);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::AppSettings::Database::accept(SettingsLinker &linker) {
+	linker
+	& cfg(URI, "")
+	& cfg(inventoryDB, "inventory")
+	& cfg(configDB, "config")
+
+	& cfg(type, "type")
+	& cfg(parameters, "parameters")
+
+	& cliSwitch(
+		showDrivers, "Database", "db-driver-list",
+		"List all supported database drivers."
+	)
+	& cli(
+		URI, "Database", "database,d",
+		"The database connection string, format: service://user:pwd@host/database."
+	)
+	& cli(
+		inventoryDB, "Database", "inventory-db",
+		"Load the inventory from the given database or file, format: [service://]location."
+	)
+	& cli(
+		configDB, "Database", "config-db",
+		"Load the configuration from the given database or file, format: [service://]location."
+	);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::AppSettings::Inventory::accept(SettingsLinker &linker) {
+	linker
+	& cfg(netTypeWhitelist, "whitelist.nettype")
+	& cfg(netTypeBlacklist, "blacklist.nettype")
+	& cfg(staTypeWhitelist, "whitelist.statype")
+	& cfg(staTypeBlacklist, "blacklist.statype");
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::AppSettings::RecordStream::accept(SettingsLinker &linker) {
+	linker
+	& cliSwitch(
+		showDrivers, "Records", "record-driver-list",
+		"List all supported record stream drivers."
+	)
+	& cli(
+		URI, "Records", "record-url,I",
+		"The recordstream URL, format: [service://]location[#type]"
+	)
+	& cli(
+		file, "Records", "record-file",
+		"Specify a file as recordsource."
+	)
+	& cli(
+		fileType, "Records", "record-type",
+		"Specify a type for the records being read."
+	);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::AppSettings::Processing::accept(SettingsLinker &linker) {
+	linker
+	& cfg(agencyBlacklist, "whitelist.agencies")
+	& cfg(agencyWhitelist, "blacklist.agencies");
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::AppSettings::Cities::accept(SettingsLinker &linker) {
+	linker
+	& cfg(enable, "loadCities")
+	& cfg(db, "cityXML")
+	& cli(
+		db, "Cities", "city-xml",
+		"Load the cities from the given XML file."
+	);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::AppSettings::accept(SettingsLinker &linker) {
+	linker
+	& cfg(objectLogTimeWindow, "logging.objects.timeSpan")
+	& cfg(agencyID, "agencyID")
+	& cfg(author, "author")
+	& cfg(enableLoadRegions, "loadRegions")
+	& cfg(customPublicIDPattern, "publicIDPattern")
+	& cfg(processing, "processing");
+
+	if ( database.enable ) {
+		linker
+		& cfg(database, "database")
+		& cfg(inventory, "inventory")
+		& cfg(configModuleName, "configModule")
+		& cli(
+			configModuleName, "Database", "config-module",
+			"The configmodule to use.",
+			true
+		);
+	}
+
+	if ( messaging.enable ) {
+		linker & cfg(messaging, "connection") & cfg(client, "client");
+	}
+
+	if ( recordstream.enable ) {
+		linker
+		& cfg(recordstream.URI, "recordstream")
+		& cfg(recordstream, "recordstream");
+	}
+
+	if ( cities.enable ) {
+		linker
+		& cfg(cities, "");
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Application::Application(int argc, char** argv)
 : System::Application(argc, argv)
 , _messageThread(nullptr) {
 	_inputMonitor = _outputMonitor = nullptr;
-	_objectLogTimeWindow = 60;
 
 	if ( _instance != this && _instance ) {
 		SEISCOMP_WARNING("Another application object exists already. "
@@ -260,32 +475,8 @@ Application::Application(int argc, char** argv)
 
 	_instance = this;
 
-	if ( _messagingUser.empty() )
-		_messagingUser = _name;
-
-	_enableMessaging = true;
-	_enableMembershipMessages = false;
-	_enableDatabase = true;
-	_enableRecordStream = false;
-	_enableFetchDatabase = true;
-	_enableLoadStations = false;
-	_enableLoadInventory = false;
-	_enableLoadConfigModule = false;
-	_enableAutoApplyNotifier = true;
-	_enableInterpretNotifier = true;
-	_enableLoadCities = false;
-	_enableLoadRegions = false;
-	_enableStartStopMessages = false;
-	_enableAutoShutdown = false;
-	_customPublicIDPattern = false;
-
-	_retryCount = 0xFFFFFFFF;
-
-	_messagingTimeout = 3;
-	_messagingURL = "localhost/productive";
-	_messagingPrimaryGroup = Protocol::LISTENER_GROUP;
-
-	_configModuleName = "trunk";
+	if ( _settings.messaging.user.empty() )
+		_settings.messaging.user = _name;
 
 	DataModel::Notifier::SetEnabled(false);
 }
@@ -321,8 +512,8 @@ Application *Application::Instance() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setDatabaseEnabled(bool enable, bool tryToFetch) {
-	_enableDatabase = enable;
-	_enableFetchDatabase = tryToFetch;
+	_settings.database.enable = enable;
+	_settings.enableFetchDatabase = tryToFetch;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -331,7 +522,7 @@ void Application::setDatabaseEnabled(bool enable, bool tryToFetch) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isDatabaseEnabled() const {
-	return _enableDatabase;
+	return _settings.database.enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -340,7 +531,7 @@ bool Application::isDatabaseEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isInventoryDatabaseEnabled() const {
-	return _inventoryDB.empty();
+	return _settings.database.inventoryDB.empty();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -349,7 +540,7 @@ bool Application::isInventoryDatabaseEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isConfigDatabaseEnabled() const {
-	return _configDB.empty();
+	return _settings.database.configDB.empty();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -358,7 +549,7 @@ bool Application::isConfigDatabaseEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::addMessagingSubscription(const std::string& group) {
-	_messagingSubscriptionRequests.push_back(group);
+	_settings.messaging.subscriptions.push_back(group);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -367,7 +558,7 @@ void Application::addMessagingSubscription(const std::string& group) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setMessagingEnabled(bool enable) {
-	_enableMessaging = enable;
+	_settings.messaging.enable = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -376,7 +567,7 @@ void Application::setMessagingEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isMessagingEnabled() const {
-	return _enableMessaging;
+	return _settings.messaging.enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -385,7 +576,7 @@ bool Application::isMessagingEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setMembershipMessagesEnabled(bool enable) {
-	_enableMembershipMessages = enable;
+	_settings.messaging.membershipMessages = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -394,7 +585,7 @@ void Application::setMembershipMessagesEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::areMembershipMessagesEnabled() const {
-	return _enableMembershipMessages;
+	return _settings.messaging.membershipMessages;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -403,7 +594,7 @@ bool Application::areMembershipMessagesEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setStartStopMessagesEnabled(bool enable) {
-	_enableStartStopMessages = enable;
+	_settings.client.startStopMessages = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -412,7 +603,7 @@ void Application::setStartStopMessagesEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::areStartStopMessagesEnabled() const {
-	return _enableStartStopMessages;
+	return _settings.client.startStopMessages;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -421,7 +612,7 @@ bool Application::areStartStopMessagesEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setAutoShutdownEnabled(bool enable) {
-	_enableAutoShutdown = enable;
+	_settings.client.autoShutdown = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -430,7 +621,7 @@ void Application::setAutoShutdownEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isAutoShutdownEnabled() const {
-	return _enableAutoShutdown;
+	return _settings.client.autoShutdown;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -439,7 +630,7 @@ bool Application::isAutoShutdownEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setRecordStreamEnabled(bool enable) {
-	_enableRecordStream = enable;
+	_settings.recordstream.enable = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -448,7 +639,7 @@ void Application::setRecordStreamEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isRecordStreamEnabled() const {
-	return _enableRecordStream;
+	return _settings.recordstream.enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -457,7 +648,7 @@ bool Application::isRecordStreamEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setLoadStationsEnabled(bool enable) {
-	_enableLoadStations = enable;
+	_settings.enableLoadStations = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -466,7 +657,7 @@ void Application::setLoadStationsEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isLoadStationsEnabled() const {
-	return _enableLoadStations;
+	return _settings.enableLoadStations;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -475,7 +666,7 @@ bool Application::isLoadStationsEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setLoadInventoryEnabled(bool enable) {
-	_enableLoadInventory = enable;
+	_settings.enableLoadInventory = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -484,7 +675,7 @@ void Application::setLoadInventoryEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isLoadInventoryEnabled() const {
-	return _enableLoadInventory;
+	return _settings.enableLoadInventory;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -493,7 +684,7 @@ bool Application::isLoadInventoryEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setLoadConfigModuleEnabled(bool enable) {
-	_enableLoadConfigModule = enable;
+	_settings.enableLoadConfigModule = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -502,7 +693,7 @@ void Application::setLoadConfigModuleEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isLoadConfigModuleEnabled() const {
-	return _enableLoadConfigModule;
+	return _settings.enableLoadConfigModule;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -511,7 +702,7 @@ bool Application::isLoadConfigModuleEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setLoadCitiesEnabled(bool enable) {
-	_enableLoadCities = enable;
+	_settings.cities.enable = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -520,7 +711,7 @@ void Application::setLoadCitiesEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isLoadCitiesEnabled() const {
-	return _enableLoadCities;
+	return _settings.cities.enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -529,7 +720,7 @@ bool Application::isLoadCitiesEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setLoadRegionsEnabled(bool enable) {
-	_enableLoadRegions = enable;
+	_settings.enableLoadRegions = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -538,7 +729,7 @@ void Application::setLoadRegionsEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isLoadRegionsEnabled() const {
-	return _enableLoadRegions;
+	return _settings.enableLoadRegions;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -547,7 +738,7 @@ bool Application::isLoadRegionsEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setAutoApplyNotifierEnabled(bool enable) {
-	_enableAutoApplyNotifier = enable;
+	_settings.enableAutoApplyNotifier = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -556,7 +747,7 @@ void Application::setAutoApplyNotifierEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isAutoApplyNotifierEnabled() const {
-	return _enableAutoApplyNotifier;
+	return _settings.enableAutoApplyNotifier;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -565,7 +756,7 @@ bool Application::isAutoApplyNotifierEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setInterpretNotifierEnabled(bool enable) {
-	_enableInterpretNotifier = enable;
+	_settings.enableInterpretNotifier = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -574,7 +765,7 @@ void Application::setInterpretNotifierEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isInterpretNotifierEnabled() const {
-	return _enableInterpretNotifier;
+	return _settings.enableInterpretNotifier;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -583,7 +774,7 @@ bool Application::isInterpretNotifierEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::hasCustomPublicIDPattern() const {
-	return _customPublicIDPattern;
+	return !_settings.customPublicIDPattern.empty();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -592,7 +783,7 @@ bool Application::hasCustomPublicIDPattern() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setConnectionRetries(unsigned int r) {
-	_retryCount = r;
+	_settings.retryCount = r;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -600,7 +791,7 @@ void Application::setConnectionRetries(unsigned int r) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setConfigModuleName(const std::string &module) {
-	_configModuleName = module;
+	_settings.configModuleName = module;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -609,7 +800,7 @@ void Application::setConfigModuleName(const std::string &module) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const std::string &Application::configModuleName() const {
-	return _configModuleName;
+	return _settings.configModuleName;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -618,7 +809,7 @@ const std::string &Application::configModuleName() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setShutdownMasterModule(const std::string &module) {
-	_shutdownMasterModule = module;
+	_settings.client.shutdownMasterModule = module;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -627,7 +818,7 @@ void Application::setShutdownMasterModule(const std::string &module) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setShutdownMasterUsername(const std::string &name) {
-	_shutdownMasterUsername = name;
+	_settings.client.shutdownMasterUsername = name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -636,7 +827,7 @@ void Application::setShutdownMasterUsername(const std::string &name) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setPrimaryMessagingGroup(const std::string& group) {
-	_messagingPrimaryGroup = group;
+	_settings.messaging.primaryGroup = group;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -645,7 +836,7 @@ void Application::setPrimaryMessagingGroup(const std::string& group) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const std::string &Application::primaryMessagingGroup() const {
-	return _messagingPrimaryGroup;
+	return _settings.messaging.primaryGroup;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -654,7 +845,7 @@ const std::string &Application::primaryMessagingGroup() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setMessagingUsername(const std::string& user) {
-	_messagingUser = user;
+	_settings.messaging.user = user;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -672,7 +863,7 @@ Connection *Application::connection() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const std::string &Application::databaseType() const {
-	return _dbType;
+	return _settings.database.type;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -681,7 +872,7 @@ const std::string &Application::databaseType() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const std::string &Application::databaseParameters() const {
-	return _dbParameters;
+	return _settings.database.parameters;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -699,7 +890,7 @@ IO::DatabaseInterface* Application::database() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const std::string &Application::databaseURI() const {
-	return _db;
+	return _settings.database.URI;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -717,7 +908,7 @@ DataModel::DatabaseQuery* Application::query() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const std::string&  Application::recordStreamURL() const {
-	return _recordStream;
+	return _settings.recordstream.URI;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -774,7 +965,7 @@ bool Application::isStationEnabled(const std::string& networkCode,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const std::string &Application::messagingURL() const {
-	return _messagingURL;
+	return _settings.messaging.URL;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -811,12 +1002,12 @@ void Application::disableTimer() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::handlePreFork() {
-	_inputMonitor = new ObjectMonitor(_objectLogTimeWindow);
-	_outputMonitor = new ObjectMonitor(_objectLogTimeWindow);
+	_inputMonitor = new ObjectMonitor(_settings.objectLogTimeWindow);
+	_outputMonitor = new ObjectMonitor(_settings.objectLogTimeWindow);
 
 	_queue.resize(10);
 
-	if ( commandline().hasOption("db-driver-list") ) {
+	if ( _settings.database.showDrivers ) {
 		DatabaseInterfaceFactory::ServiceNames* services = DatabaseInterfaceFactory::Services();
 		if ( services ) {
 			cout << "Supported database drivers: ";
@@ -832,7 +1023,7 @@ bool Application::handlePreFork() {
 		}
 	}
 
-	if ( commandline().hasOption("record-driver-list") ) {
+	if ( _settings.recordstream.showDrivers ) {
 		RecordStreamFactory::ServiceNames* services = RecordStreamFactory::Services();
 		if ( services ) {
 			cout << "Supported recordstream drivers: ";
@@ -857,10 +1048,12 @@ bool Application::handlePreFork() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::init() {
+	bindSettings(&_settings);
+
 	if ( !System::Application::init() )
 		return false;
 
-	if ( _enableMessaging && !_connection ) {
+	if ( _settings.messaging.enable && !_connection ) {
 		SEISCOMP_INFO("Connect to messaging");
 		showMessage("Initialize messaging");
 		if ( !initMessaging() ) {
@@ -870,7 +1063,7 @@ bool Application::init() {
 		}
 	}
 
-	if ( _enableDatabase && !_database ) {
+	if ( _settings.database.enable && !_database ) {
 		SEISCOMP_INFO("Connect to database");
 		showMessage("Initialize database");
 		if ( !initDatabase() ) {
@@ -914,13 +1107,13 @@ bool Application::init() {
 		IO::XMLArchive ar;
 		bool foundCity;
 
-		if ( _cityDB.empty() ) {
+		if ( _settings.cities.db.empty() ) {
 			foundCity = ar.open((Environment::Instance()->configDir() + "/cities.xml").c_str());
 			if ( !foundCity )
 				foundCity = ar.open((Environment::Instance()->shareDir() + "/cities.xml").c_str());
 		}
 		else
-			foundCity = ar.open(_cityDB.c_str());
+			foundCity = ar.open(_settings.cities.db.c_str());
 
 		if ( foundCity ) {
 			ar >> NAMED_OBJECT("City", _cities);
@@ -970,9 +1163,9 @@ void Application::handleEndAcquisition() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::reloadInventory() {
-	if ( _enableLoadInventory ) {
-		if ( !_inventoryDB.empty() ) {
-			if ( !loadInventory(_inventoryDB) ) return false;
+	if ( _settings.enableLoadInventory ) {
+		if ( !_settings.database.inventoryDB.empty() ) {
+			if ( !loadInventory(_settings.database.inventoryDB) ) return false;
 		}
 		else if ( _database ) {
 			if ( _query ) {
@@ -987,14 +1180,14 @@ bool Application::reloadInventory() {
 			}
 		}
 
-		int filtered = Inventory::Instance()->filter(&_networkTypeFirewall,
-		                                             &_stationTypeFirewall);
+		int filtered = Inventory::Instance()->filter(&_settings.networkTypeFirewall,
+		                                             &_settings.stationTypeFirewall);
 		if ( filtered > 0 )
 			SEISCOMP_INFO("Filtered %d stations by type", filtered);
 	}
-	else if ( _enableLoadStations ) {
-		if ( !_inventoryDB.empty() ) {
-			if ( !loadInventory(_inventoryDB) ) return false;
+	else if ( _settings.enableLoadStations ) {
+		if ( !_settings.database.inventoryDB.empty() ) {
+			if ( !loadInventory(_settings.database.inventoryDB) ) return false;
 		}
 		else if ( _database ) {
 			if ( _query ) {
@@ -1009,8 +1202,8 @@ bool Application::reloadInventory() {
 			}
 		}
 
-		int filtered = Inventory::Instance()->filter(&_networkTypeFirewall,
-		                                             &_stationTypeFirewall);
+		int filtered = Inventory::Instance()->filter(&_settings.networkTypeFirewall,
+		                                             &_settings.stationTypeFirewall);
 		if ( filtered > 0 )
 			SEISCOMP_INFO("Filtered %d stations by type", filtered);
 	}
@@ -1026,18 +1219,18 @@ bool Application::reloadInventory() {
 bool Application::reloadBindings() {
 	_configModule = nullptr;
 
-	if ( _enableLoadConfigModule ) {
+	if ( _settings.enableLoadConfigModule ) {
 		std::set<std::string> params;
 
-		if ( !_configDB.empty() ) {
-			if ( !loadConfig(_configDB) ) return false;
+		if ( !_settings.database.configDB.empty() ) {
+			if ( !loadConfig(_settings.database.configDB) ) return false;
 		}
 		else if ( _database ) {
 			if ( _query ) {
 				SEISCOMP_INFO("Loading configuration module");
 				showMessage("Reading station config");
-				if ( !_configModuleName.empty() )
-					ConfigDB::Instance()->load(query(), _configModuleName, Core::None, Core::None, Core::None, params);
+				if ( !_settings.configModuleName.empty() )
+					ConfigDB::Instance()->load(query(), _settings.configModuleName, Core::None, Core::None, Core::None, params);
 				else
 					ConfigDB::Instance()->load(query(), Core::None, Core::None, Core::None, Core::None, params);
 				SEISCOMP_INFO("Finished loading configuration module");
@@ -1058,7 +1251,7 @@ bool Application::reloadBindings() {
 		}
 
 		for ( size_t i = 0; i < config->configModuleCount(); ++i ) {
-			if ( config->configModule(i)->name() == _configModuleName ) {
+			if ( config->configModule(i)->name() == _settings.configModuleName ) {
 				_configModule = config->configModule(i);
 				break;
 			}
@@ -1161,7 +1354,7 @@ bool Application::dispatch(Core::BaseObject* obj) {
 	//SEISCOMP_DEBUG("dispatch %s (refCount = %d)", obj->className(), obj->referenceCount());
 	Message *msg = Message::Cast(obj);
 	if ( msg ) {
-		if ( _enableAutoShutdown ) {
+		if ( _settings.client.autoShutdown ) {
 			// Filter application status messages
 			ApplicationStatusMessage *as = ApplicationStatusMessage::Cast(msg);
 			if ( as ) {
@@ -1169,12 +1362,14 @@ bool Application::dispatch(Core::BaseObject* obj) {
 				               as->module().c_str(), as->username().c_str(),
 				               as->status().toString());
 				if ( as->status() == FINISHED ) {
-					if ( !_shutdownMasterModule.empty() && as->module() == _shutdownMasterModule ) {
+					if ( !_settings.client.shutdownMasterModule.empty()
+					  && as->module() == _settings.client.shutdownMasterModule ) {
 						SEISCOMP_INFO("Initiate self shutdown because of module %s shutdown",
 						              as->module().c_str());
 						handleAutoShutdown();
 					}
-					else if ( !_shutdownMasterUsername.empty() && as->username() == _shutdownMasterUsername ) {
+					else if ( !_settings.client.shutdownMasterUsername.empty()
+					       && as->username() == _settings.client.shutdownMasterUsername ) {
 						SEISCOMP_INFO("Initiate self shutdown because of user %s shutdown",
 						              as->username().c_str());
 						handleAutoShutdown();
@@ -1221,8 +1416,8 @@ void Application::idle() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::done() {
 	if ( _connection && _connection->isConnected() ) {
-		if ( _enableStartStopMessages ) {
-			ApplicationStatusMessage stat(name(), _messagingUser, FINISHED);
+		if ( _settings.client.startStopMessages ) {
+			ApplicationStatusMessage stat(name(), _settings.messaging.user, FINISHED);
 			_connection->send(Protocol::STATUS_GROUP, &stat);
 		}
 		_connection->disconnect();
@@ -1260,65 +1455,77 @@ void Application::done() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::createBaseCommandLineDescription() {
-	System::Application::createBaseCommandLineDescription();
-
-	if ( _enableMessaging ) {
-		commandline().addOption("Generic", "auto-shutdown", "enables automatic application shutdown triggered by a status message", &_enableAutoShutdown);
-		commandline().addOption("Generic", "shutdown-master-module", "triggers shutdown if the module name of the received messages match", &_shutdownMasterModule, false);
-		commandline().addOption("Generic", "shutdown-master-username", "triggers shutdown if the user name of the received messages match", &_shutdownMasterUsername, false);
-	}
-
-	if ( _enableMessaging ) {
-		commandline().addGroup("Messaging");
-		commandline().addOption("Messaging", "user,u", "client name used when connecting to the messaging", &_messagingUser);
-		commandline().addOption("Messaging", "host,H", "messaging URL (host[:port][/queue])", &_messagingURL);
-		commandline().addOption("Messaging", "timeout,t", "connection timeout in seconds", &_messagingTimeout);
-		commandline().addOption("Messaging", "primary-group,g", "the primary message group of the client", &_messagingPrimaryGroup);
-		commandline().addOption("Messaging", "subscribe-group,S", "a group to subscribe to. this option can be given more than once", &_messagingSubscriptionRequests);
-		commandline().addOption("Messaging", "content-type", "sets the message content type (binary, json or xml)", &_messagingContentType);
-		commandline().addOption("Messaging", "start-stop-msg", "sets sending of a start- and a stop message", &_enableStartStopMessages);
-	}
-
-	if ( _enableDatabase ) {
-		commandline().addGroup("Database");
-		commandline().addOption("Database", "db-driver-list", "list all supported database drivers");
-		commandline().addOption("Database", "database,d", "the database connection string, format: service://user:pwd@host/database", &_db, false);
-		commandline().addOption("Database", "config-module", "the configmodule to use", &_configModuleName);
-		commandline().addOption("Database", "inventory-db", "load the inventory from the given database or file, format: [service://]location", &_inventoryDB, false);
-		commandline().addOption("Database", "config-db", "load the configuration from the given database or file, format: [service://]location", &_configDB, false);
-	}
-
-	if ( _enableRecordStream ) {
-		commandline().addGroup("Records");
-		commandline().addOption("Records", "record-driver-list", "list all supported record stream drivers");
-		commandline().addOption("Records", "record-url,I", "the recordstream URL, format: [service://]location[#type]", &_recordStream, false);
-		commandline().addOption("Records", "record-file", "specify a file as recordsource", (std::string*)nullptr);
-		commandline().addOption("Records", "record-type", "specify a type for the records being read", (std::string*)nullptr);
-	}
-
-	if ( _enableLoadCities ) {
-		commandline().addGroup("Cities");
-		commandline().addOption("Cities", "city-xml", "load the cities from the given XML file", &_cityDB, false);
-	}
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::validateParameters() {
-	_messagingUser = Util::replace(_messagingUser, AppResolver(_name));
+	_settings.messaging.user = Util::replace(_settings.messaging.user, AppResolver(_name));
 
 	//if ( commandline().hasOption("subscription-list") )
 	//	split(_messagingSubscriptionRequests, _messagingStrSubscriptions.c_str(), ",");
 
-	const char* tmp = strstr(_db.c_str(), "://");
-	if ( tmp ) {
-		std::copy(_db.c_str(), tmp, std::back_inserter(_dbType));
-		_dbParameters = tmp + 3;
+	if ( !_settings.database.URI.empty() ) {
+		if ( !_settings.database.type.empty() || !_settings.database.parameters.empty() ) {
+			if ( !configDefault(_arguments, _configuration, "database.type") ||
+			     !configDefault(_arguments, _configuration, "database.parameters") ) {
+				SEISCOMP_ERROR("You are using the deprecated parameter "
+				               "'database.type' or 'database.parameters' along "
+				               "with the new 'database' parameter which takes "
+				               "precedence. Please remove the old parameters.");
+			}
+		}
 	}
+	else {
+		if ( !_settings.database.type.empty() && !_settings.database.parameters.empty() ) {
+			_settings.database.URI = _settings.database.type + "://" + _settings.database.parameters;
+			if ( !configDefault(_arguments, _configuration, "database.type") ||
+			     !configDefault(_arguments, _configuration, "database.parameters") ) {
+				SEISCOMP_ERROR("DEPRECATION WARNING: You are using the "
+				               "parameter 'database.type' and "
+				               "'database.parameters' which will be removed in "
+				               "the next major release. Please remove the old "
+				               "parameters and set the new 'database' "
+				               "parameter to '%s' instead.",
+				               _settings.database.URI.c_str());
+			}
+		}
+	}
+
+	const char* tmp = strstr(_settings.database.URI.c_str(), "://");
+	if ( tmp ) {
+		std::copy(_settings.database.URI.c_str(), tmp, std::back_inserter(_settings.database.type));
+		_settings.database.parameters = tmp + 3;
+	}
+
+
+	if ( !_settings.recordstream.URI.empty() ) {
+		if ( !configDefault(_arguments, _configuration, "recordstream.service") ||
+		     !configDefault(_arguments, _configuration, "recordstream.source") ) {
+			SEISCOMP_ERROR("You are using the deprecated parameter "
+			               "'recordstream.service' or "
+			               "'recordstream.source' along with the new "
+			               "'recordstream' parameter which takes "
+			               "precedence. Please remove the old parameters.");
+		}
+	}
+	else {
+		try {
+			_settings.recordstream.URI = configGetString("recordstream.service") + "://" +
+			                configGetString("recordstream.source");
+			if ( !configDefault(_arguments, _configuration, "recordstream.service") ||
+			     !configDefault(_arguments, _configuration, "recordstream.source") ) {
+				SEISCOMP_ERROR("DEPRECATION WARNING: You are using the "
+				               "parameter 'recordstream.service' or "
+				               "'recordstream.source' which will be removed in "
+				               "the next major release. Please remove the old "
+				               "parameters and set the new 'recordstream' "
+				               "parameter to '%s' instead.",
+				               _settings.recordstream.URI.c_str());
+			}
+		}
+		catch (...) {}
+	}
+
+
+	_settings.agencyID = Util::replace(_settings.agencyID);
+	_settings.author = Util::replace(_settings.author);
 
 	return true;
 }
@@ -1332,154 +1539,44 @@ bool Application::initConfiguration() {
 	if ( !System::Application::initConfiguration() )
 		return false;
 
-	try { _objectLogTimeWindow = configGetInt("logging.objects.timeSpan"); } catch (...) {}
+	copy(
+		_settings.processing.agencyBlacklist.begin(),
+		_settings.processing.agencyBlacklist.end(),
+		inserter(_settings.processing.firewall.deny, _settings.processing.firewall.deny.end())
+	);
 
-	try { _messagingURL = configGetString("connection.server"); } catch ( ... ) {}
-	try { _messagingUser = Util::replace(configGetString("connection.username"), AppResolver(_name)); } catch ( ... ) {}
-	try { _messagingTimeout = configGetInt("connection.timeout"); } catch ( ... ) {}
-	try { _messagingPrimaryGroup = configGetString("connection.primaryGroup"); } catch ( ... ) {}
-	try { _messagingContentType = configGetString("connection.encoding"); } catch ( ... ) {}
+	copy(
+		_settings.processing.agencyWhitelist.begin(),
+		_settings.processing.agencyWhitelist.end(),
+		inserter(_settings.processing.firewall.allow, _settings.processing.firewall.allow.end())
+	);
 
-	try { _enableStartStopMessages = configGetBool("client.startStopMessage"); } catch ( ... ) {}
-	try { _enableAutoShutdown = configGetBool("client.autoShutdown"); } catch ( ... ) {}
-	try { _shutdownMasterModule = configGetString("client.shutdownMasterModule"); } catch ( ... ) {}
-	try { _shutdownMasterUsername = configGetString("client.shutdownMasterUsername"); } catch ( ... ) {}
+	copy(
+		_settings.inventory.netTypeBlacklist.begin(),
+		_settings.inventory.netTypeBlacklist.end(),
+		inserter(_settings.networkTypeFirewall.deny, _settings.networkTypeFirewall.deny.end())
+	);
 
-	std::string dbType, dbParams;
-	try { dbType = configGetString("database.type"); } catch ( ... ) {}
-	try { dbParams = configGetString("database.parameters"); } catch ( ... ) {}
-	try {
-		_db = configGetString("database");
-		if ( !dbType.empty() || !dbParams.empty() ) {
-			if ( !configDefault(_arguments, _configuration, "database.type") ||
-			     !configDefault(_arguments, _configuration, "database.parameters") ) {
-				SEISCOMP_ERROR("You are using the deprecated parameter "
-				               "'database.type' or 'database.parameters' along "
-				               "with the new 'database' parameter which takes "
-				               "precedence. Please remove the old parameters.");
-			}
-		}
-	}
-	catch ( ... ) {
-		if ( !dbType.empty() && !dbParams.empty() ) {
-			_db = dbType + "://" + dbParams;
-			if ( !configDefault(_arguments, _configuration, "database.type") ||
-			     !configDefault(_arguments, _configuration, "database.parameters") ) {
-				SEISCOMP_ERROR("DEPRECATION WARNING: You are using the "
-				               "parameter 'database.type' and "
-				               "'database.parameters' which will be removed in "
-				               "the next major release. Please remove the old "
-				               "parameters and set the new 'database' "
-				               "parameter to '%s' instead.",_db.c_str());
-			}
-		}
-	}
+	copy(
+		_settings.inventory.netTypeWhitelist.begin(),
+		_settings.inventory.netTypeWhitelist.end(),
+		inserter(_settings.networkTypeFirewall.allow, _settings.networkTypeFirewall.allow.end())
+	);
 
-	try { _configModuleName = configGetString("configModule"); } catch ( ... ) {}
+	copy(
+		_settings.inventory.staTypeBlacklist.begin(),
+		_settings.inventory.staTypeBlacklist.end(),
+		inserter(_settings.stationTypeFirewall.deny, _settings.stationTypeFirewall.deny.end())
+	);
 
-	std::vector<string> groups;
-	bool hasGroups = false;
-	try {
-		groups = _configuration.getStrings("connection.subscriptions");
-		hasGroups = true;
-	}
-	catch (...) {}
+	copy(
+		_settings.inventory.staTypeWhitelist.begin(),
+		_settings.inventory.staTypeWhitelist.end(),
+		inserter(_settings.stationTypeFirewall.allow, _settings.stationTypeFirewall.allow.end())
+	);
 
-	if ( hasGroups )
-		_messagingSubscriptionRequests = groups;
-
-	try {
-		_recordStream = configGetString("recordstream");
-		try {
-			if ( !configDefault(_arguments, _configuration, "recordstream.service") ||
-			     !configDefault(_arguments, _configuration, "recordstream.source") ) {
-				SEISCOMP_ERROR("You are using the deprecated parameter "
-				               "'recordstream.service' or "
-				               "'recordstream.source' along with the new "
-				               "'recordstream' parameter which takes "
-				               "precedence. Please remove the old parameters.");
-			}
-		}
-		catch (...) {}
-	}
-	catch (...) {
-		try {
-			_recordStream = configGetString("recordstream.service") + "://" +
-			                configGetString("recordstream.source");
-			if ( !configDefault(_arguments, _configuration, "recordstream.service") ||
-			     !configDefault(_arguments, _configuration, "recordstream.source") ) {
-				SEISCOMP_ERROR("DEPRECATION WARNING: You are using the "
-				               "parameter 'recordstream.service' or "
-				               "'recordstream.source' which will be removed in "
-				               "the next major release. Please remove the old "
-				               "parameters and set the new 'recordstream' "
-				               "parameter to '%s' instead.",
-				               _recordStream.c_str());
-			}
-		}
-		catch (...) {}
-	}
-
-	try { _inventoryDB = configGetPath("database.inventory"); }
-	catch ( ... ) {}
-
-	try { _configDB = configGetPath("database.config"); }
-	catch ( ... ) {}
-
-	try { _cityDB = configGetPath("cityXML"); }
-	catch ( ... ) {}
-
-	try { _agencyID = Util::replace(configGetString("agencyID"), AppResolver(_name)); }
-	catch (...) { _agencyID = "UNSET"; }
-
-	try { _author = Util::replace(configGetString("author"), AppResolver(_name)); }
-	catch (...) { _author = Util::replace("@appname@@@@hostname@", AppResolver(_name)); }
-
-	try {
-		std::vector<std::string> whiteList = configGetStrings("processing.whitelist.agencies");
-		std::copy(whiteList.begin(), whiteList.end(), std::inserter(_procFirewall.allow, _procFirewall.allow.end()));
-	}
-	catch ( ... ) {}
-
-	try {
-		std::vector<std::string> blackList = configGetStrings("processing.blacklist.agencies");
-		std::copy(blackList.begin(), blackList.end(), std::inserter(_procFirewall.deny, _procFirewall.deny.end()));
-	}
-	catch ( ... ) {}
-
-	try {
-		std::vector<std::string> whiteList = configGetStrings("inventory.whitelist.nettype");
-		std::copy(whiteList.begin(), whiteList.end(), std::inserter(_networkTypeFirewall.allow, _networkTypeFirewall.allow.end()));
-	}
-	catch ( ... ) {}
-
-	try {
-		std::vector<std::string> blackList = configGetStrings("inventory.blacklist.nettype");
-		std::copy(blackList.begin(), blackList.end(), std::inserter(_networkTypeFirewall.deny, _networkTypeFirewall.deny.end()));
-	}
-	catch ( ... ) {}
-
-	try {
-		std::vector<std::string> whiteList = configGetStrings("inventory.whitelist.statype");
-		std::copy(whiteList.begin(), whiteList.end(), std::inserter(_stationTypeFirewall.allow, _stationTypeFirewall.allow.end()));
-	}
-	catch ( ... ) {}
-
-	try {
-		std::vector<std::string> blackList = configGetStrings("inventory.blacklist.statype");
-		std::copy(blackList.begin(), blackList.end(), std::inserter(_stationTypeFirewall.deny, _stationTypeFirewall.deny.end()));
-	}
-	catch ( ... ) {}
-
-	try { _enableLoadCities = configGetBool("loadCities"); } catch ( ... ) {}
-	try { _enableLoadRegions = configGetBool("loadRegions"); } catch ( ... ) {}
-
-	try {
-		DataModel::PublicObject::SetIdPattern(configGetString("publicIDPattern"));
-		_customPublicIDPattern = true;
-	}
-	catch ( ... ) {
-		_customPublicIDPattern = false;
+	if ( !_settings.customPublicIDPattern.empty() ) {
+		DataModel::PublicObject::SetIdPattern(_settings.customPublicIDPattern);
 	}
 
 	return true;
@@ -1494,24 +1591,33 @@ bool Application::initMessaging() {
 	Result status = OK;
 
 	_messagingSubscriptions.clear();
-	for ( size_t i = 0; i < _messagingSubscriptionRequests.size(); ++i )
-		_messagingSubscriptions.insert(_messagingSubscriptionRequests[i]);
+	for ( size_t i = 0; i < _settings.messaging.subscriptions.size(); ++i )
+		_messagingSubscriptions.insert(_settings.messaging.subscriptions[i]);
+
+	int retryCount = _settings.retryCount;
 
 	while ( !_exitRequested && !_connection ) {
 		SEISCOMP_DEBUG("Trying to connect to %s@%s with primary group = %s",
-		               _messagingUser.c_str(), _messagingURL.c_str(), _messagingPrimaryGroup.c_str());
+		               _settings.messaging.user.c_str(),
+		               _settings.messaging.URL.c_str(),
+		               _settings.messaging.primaryGroup.c_str());
 		_connection = new Connection;
-		status = _connection->setSource(_messagingURL);
+		status = _connection->setSource(_settings.messaging.URL);
 		if ( status == OK ) {
-			_connection->setMembershipInfo(_enableMembershipMessages);
-			status = _connection->connect(_messagingUser, _messagingPrimaryGroup, _messagingTimeout*1000);
+			_connection->setMembershipInfo(_settings.messaging.membershipMessages);
+			status = _connection->connect(
+				_settings.messaging.user,
+				_settings.messaging.primaryGroup,
+				_settings.messaging.timeout * 1000
+			);
+
 			if ( status == OK )
 				break;
 		}
 
 		if ( status == GroupDoesNotExist ) {
 			SEISCOMP_ERROR("Connection error: primary messaging group '%s' does not exist",
-			               _messagingPrimaryGroup.c_str());
+			               _settings.messaging.primaryGroup.c_str());
 		}
 		else {
 			SEISCOMP_ERROR("Connection error: %s", _connection->lastErrorMessage().c_str());
@@ -1521,10 +1627,10 @@ bool Application::initMessaging() {
 		if ( status != NetworkError )
 			break;
 
-		if ( _retryCount )
-			--_retryCount;
+		if ( retryCount )
+			--retryCount;
 
-		if ( !_retryCount )
+		if ( !retryCount )
 			break;
 
 		SEISCOMP_WARNING("Connection error: %s -> trying again after 2 secs", status.toString());
@@ -1540,7 +1646,7 @@ bool Application::initMessaging() {
 	_connection->setInfoCallback(bind(&Application::monitorLog, this, placeholders::_1, placeholders::_2));
 
 	if ( !_baseSettings.logging.toStdout )
-		SEISCOMP_NOTICE("Connection to %s established", _messagingURL.c_str());
+		SEISCOMP_NOTICE("Connection to %s established", _settings.messaging.URL.c_str());
 
 	Version localSchemaVersion = Version(DataModel::Version::Major, DataModel::Version::Minor);
 	if ( _connection->schemaVersion() > localSchemaVersion ) {
@@ -1562,21 +1668,22 @@ bool Application::initMessaging() {
 		SEISCOMP_WARNING("%s", ss.str().c_str());
 	}
 
-	if ( _messagingContentType == "binary" )
+	if ( _settings.messaging.contentType == "binary" )
 		_connection->setContentType(Protocol::Binary);
-	else if ( _messagingContentType == "json" )
+	else if ( _settings.messaging.contentType == "json" )
 		_connection->setContentType(Protocol::JSON);
-	else if ( _messagingContentType == "xml" )
+	else if ( _settings.messaging.contentType == "xml" )
 		_connection->setContentType(Protocol::XML);
-	else if ( !_messagingContentType.empty() ) {
-		SEISCOMP_ERROR("Invalid message content type: %s", _messagingContentType.c_str());
+	else if ( !_settings.messaging.contentType.empty() ) {
+		SEISCOMP_ERROR("Invalid message content type: %s",
+		               _settings.messaging.contentType.c_str());
 		return false;
 	}
 
-	if ( _enableStartStopMessages ) {
+	if ( _settings.client.startStopMessages ) {
 		SEISCOMP_DEBUG("Send START message to group %s",
 		               Protocol::STATUS_GROUP.c_str());
-		ApplicationStatusMessage stat(name(), _messagingUser, STARTED);
+		ApplicationStatusMessage stat(name(), _settings.messaging.user, STARTED);
 		_connection->send(Protocol::STATUS_GROUP, &stat);
 	}
 
@@ -1639,7 +1746,7 @@ bool Application::initSubscriptions() {
 	}
 	*/
 
-	if ( _enableAutoShutdown )
+	if ( _settings.client.autoShutdown )
 		_connection->subscribe(Protocol::STATUS_GROUP);
 
 	return true;
@@ -1686,11 +1793,11 @@ void Application::setDatabase(IO::DatabaseInterface* db) {
 bool Application::initDatabase() {
 	setDatabase(nullptr);
 
-	if ( !_db.empty() ) {
+	if ( !_settings.database.URI.empty() ) {
 		SEISCOMP_INFO("Read database service parameters from configfile");
-		SEISCOMP_INFO("Trying to connect to %s", _db.c_str());
+		SEISCOMP_INFO("Trying to connect to %s", _settings.database.URI.c_str());
 
-		IO::DatabaseInterfacePtr db = IO::DatabaseInterface::Open(_db.c_str());
+		IO::DatabaseInterfacePtr db = IO::DatabaseInterface::Open(_settings.database.URI.c_str());
 		if ( db ) {
 			SEISCOMP_INFO("Connected successfully");
 			setDatabase(db.get());
@@ -1703,11 +1810,12 @@ bool Application::initDatabase() {
 				return true;
 		}
 		else {
-			if ( _enableFetchDatabase )
+			if ( _settings.enableFetchDatabase ) {
 				SEISCOMP_WARNING("Database connection to %s failed, trying to fetch the service message",
-				                 _db.c_str());
+				                 _settings.database.URI.c_str());
+			}
 			else {
-				SEISCOMP_WARNING("Database connection to %s failed", _db.c_str());
+				SEISCOMP_WARNING("Database connection to %s failed", _settings.database.URI.c_str());
 				return false;
 			}
 		}
@@ -1731,7 +1839,7 @@ bool Application::initDatabase() {
 		if ( dbrmsg ) {
 			std::string dbType = dbrmsg->service();
 			std::string dbParameters = dbrmsg->parameters();
-			_db = dbType + "://" + dbParameters;
+			_settings.database.URI = dbType + "://" + dbParameters;
 
 			SEISCOMP_INFO("Received database service parameters");
 			SEISCOMP_INFO("Trying to connect to %s database", dbrmsg->service());
@@ -1895,7 +2003,9 @@ void Application::logObject(ObjectMonitor::Log *log, const Core::Time &timestamp
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::readMessages() {
-	if ( !_connection ) return true;
+	if ( !_connection ) {
+		return true;
+	}
 
 	// We store a plain C-pointer here because SmartPointers are not
 	// thread-safe. So the message has to be deleted manually when enqueueing
@@ -1913,8 +2023,9 @@ bool Application::readMessages() {
 				return false;
 			}
 
-			if ( _queue.push(msg) )
+			if ( _queue.push(msg) ) {
 				return true;
+			}
 
 			delete msg;
 			return false;
@@ -1951,8 +2062,9 @@ bool Application::readMessages() {
 		}
 
 		SEISCOMP_WARNING("Connection lost, trying to reconnect");
-		if ( !_queue.push(Notification::Disconnect) )
+		if ( !_queue.push(Notification::Disconnect) ) {
 			return false;
+		}
 
 		bool first = true;
 		while ( !_exitRequested ) {
@@ -1961,11 +2073,15 @@ bool Application::readMessages() {
 				SEISCOMP_INFO("Reconnected successfully");
 				if ( _database ) {
 					while ( !_database->isConnected() ) {
-						SEISCOMP_WARNING("Connection lost to database %s, trying to reconnect", _db.c_str());
-						if ( _database->connect(_db.c_str()) )
-							SEISCOMP_INFO("Reconnected successfully to %s", _db.c_str());
-						else
+						SEISCOMP_WARNING("Connection lost to database %s, trying to reconnect",
+						                 _settings.database.URI.c_str());
+						if ( _database->connect(_settings.database.URI.c_str()) ) {
+							SEISCOMP_INFO("Reconnected successfully to %s",
+							              _settings.database.URI.c_str());
+						}
+						else {
 							Core::sleep(2);
+						}
 					}
 				}
 				_queue.push(Notification::Reconnect);
@@ -1980,8 +2096,9 @@ bool Application::readMessages() {
 			}
 		}
 
-		if ( _exitRequested )
+		if ( _exitRequested ) {
 			return false;
+		}
 	}
 	else {
 		return false;
@@ -2110,10 +2227,10 @@ void Application::handleDisconnect() {}
 void Application::handleMessage(Core::Message* msg) {
 	DataModel::NotifierMessage* nm;
 
-	if ( _enableAutoApplyNotifier || _enableInterpretNotifier )
+	if ( _settings.enableAutoApplyNotifier || _settings.enableInterpretNotifier )
 		nm = DataModel::NotifierMessage::Cast(msg);
 
-	if ( _enableAutoApplyNotifier ) {
+	if ( _settings.enableAutoApplyNotifier ) {
 		if ( !nm ) {
 			for ( MessageIterator it = msg->iter(); *it; ++it ) {
 				DataModel::Notifier* n = DataModel::Notifier::Cast(*it);
@@ -2126,7 +2243,7 @@ void Application::handleMessage(Core::Message* msg) {
 		}
 	}
 
-	if ( _enableInterpretNotifier ) {
+	if ( _settings.enableInterpretNotifier ) {
 		if ( !nm ) {
 			for ( MessageIterator it = msg->iter(); *it; ++it ) {
 				DataModel::Notifier* n = DataModel::Notifier::Cast(*it);
@@ -2197,7 +2314,7 @@ void Application::exit(int returnCode) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const std::string& Application::agencyID() const {
-	return _agencyID;
+	return _settings.agencyID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2206,7 +2323,7 @@ const std::string& Application::agencyID() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const std::string& Application::author() const {
-	return _author;
+	return _settings.author;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2215,7 +2332,7 @@ const std::string& Application::author() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isAgencyIDAllowed(const std::string &agencyID) const {
-	return _procFirewall.isAllowed(agencyID);
+	return _settings.processing.firewall.isAllowed(agencyID);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

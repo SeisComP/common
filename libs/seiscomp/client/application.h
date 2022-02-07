@@ -460,7 +460,6 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 	//  Protected functions
 	// ----------------------------------------------------------------------
 	protected:
-		virtual void createBaseCommandLineDescription() override;
 		virtual bool validateParameters() override;
 		virtual bool handlePreFork() override;
 
@@ -612,45 +611,11 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 	//  Implementation
 	// ----------------------------------------------------------------------
 	protected:
-		std::string                   _agencyID;
-		std::string                   _author;
-
-		Util::StringFirewall          _procFirewall;
-		Util::StringFirewall          _networkTypeFirewall;
-		Util::StringFirewall          _stationTypeFirewall;
-
 		DataModel::DatabaseQueryPtr   _query;
-
-		std::string                   _configModuleName;
 		DataModel::ConfigModulePtr    _configModule;
 
-		// Initialization configuration
-		bool                          _enableMessaging;
-		bool                          _enableMembershipMessages;
-		bool                          _enableStartStopMessages;
-		bool                          _enableAutoShutdown;
-		bool                          _enableDatabase;
-		bool                          _enableRecordStream;
-		bool                          _enableFetchDatabase;
-		bool                          _enableLoadStations;
-		bool                          _enableLoadInventory;
-		bool                          _enableLoadConfigModule;
-		bool                          _enableAutoApplyNotifier;
-		bool                          _enableInterpretNotifier;
-		bool                          _enableLoadCities;
-		bool                          _enableLoadRegions;
-
-		unsigned int                  _retryCount;
-
 		std::vector<Math::Geo::CityD> _cities;
-
-		std::vector<std::string>      _messagingSubscriptionRequests;
 		std::set<std::string>         _messagingSubscriptions;
-		std::string                   _shutdownMasterModule;
-		std::string                   _shutdownMasterUsername;
-
-		bool                          _customPublicIDPattern;
-		int                           _objectLogTimeWindow;
 
 
 	private:
@@ -658,31 +623,118 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 
 
 	protected:
-		ObjectMonitor                *_inputMonitor;
-		ObjectMonitor                *_outputMonitor;
+		using StringVector = std::vector<std::string>;
 
-		ThreadedQueue<Notification>   _queue;
-		std::thread                  *_messageThread;
+		struct AppSettings : AbstractSettings {
+			int                  objectLogTimeWindow{60};
+
+			std::string          agencyID{"UNSET"};
+			std::string          author{"@appname@@@@hostname@"};
+
+			bool                 enableLoadRegions{false};
+			std::string          customPublicIDPattern;
+			std::string          configModuleName{"trunk"};
+
+			bool                 enableFetchDatabase{true};
+			bool                 enableLoadStations{false};
+			bool                 enableLoadInventory{false};
+			bool                 enableLoadConfigModule{false};
+			bool                 enableAutoApplyNotifier{true};
+			bool                 enableInterpretNotifier{true};
+
+			unsigned int         retryCount{0xFFFFFFFF};
+
+			Util::StringFirewall networkTypeFirewall;
+			Util::StringFirewall stationTypeFirewall;
+
+			struct Database {
+				void accept(SettingsLinker &linker);
+
+				bool        enable{true};
+				bool        showDrivers{false};
+
+				std::string type;
+				std::string parameters;
+				std::string URI;
+
+				std::string inventoryDB;
+				std::string configDB;
+			}                    database;
+
+			struct Inventory {
+				void accept(SettingsLinker &linker);
+
+				StringVector netTypeWhitelist;
+				StringVector netTypeBlacklist;
+				StringVector staTypeWhitelist;
+				StringVector staTypeBlacklist;
+			}                    inventory;
+
+			// Messaging
+			struct Messaging {
+				void accept(SettingsLinker &linker);
+
+				bool         enable{true};
+				bool         membershipMessages{false};
+
+				std::string  user;
+				std::string  URL{"localhost/productive"};
+				std::string  primaryGroup{Protocol::LISTENER_GROUP};
+				std::string  contentType;
+				unsigned int timeout{3};
+
+				StringVector subscriptions;
+
+			}                    messaging;
+
+			struct Client {
+				void accept(SettingsLinker &linker);
+
+				bool        startStopMessages{false};
+				bool        autoShutdown{false};
+				std::string shutdownMasterModule;
+				std::string shutdownMasterUsername;
+			}                    client;
+
+			struct RecordStream {
+				void accept(SettingsLinker &linker);
+
+				bool        enable{false};
+				bool        showDrivers{false};
+
+				std::string URI;
+				std::string file;
+				std::string fileType;
+			}                    recordstream;
+
+			struct Processing {
+				void accept(SettingsLinker &linker);
+
+				StringVector         agencyWhitelist;
+				StringVector         agencyBlacklist;
+				Util::StringFirewall firewall;
+			}                    processing;
+
+			struct Cities {
+				void accept(SettingsLinker &linker);
+
+				bool        enable{false};
+				std::string db;
+			}                    cities;
+
+			void accept(SettingsLinker &linker) override;
+		};
+
+		AppSettings                  _settings;
+
+		ObjectMonitor               *_inputMonitor;
+		ObjectMonitor               *_outputMonitor;
+
+		ThreadedQueue<Notification>  _queue;
+		std::thread                 *_messageThread;
 
 		ConnectionPtr                _connection;
 		IO::DatabaseInterfacePtr     _database;
-
-		// State variables
-		std::string                  _messagingUser;
-		std::string                  _messagingURL;
-		std::string                  _messagingPrimaryGroup;
-		std::string                  _messagingContentType;
-		unsigned int                 _messagingTimeout;
-
-		std::string                  _inventoryDB;
-		std::string                  _configDB;
-		std::string                  _cityDB;
-
-		std::string                  _dbType;
-		std::string                  _dbParameters;
-		std::string                  _db;
-
-		std::string                  _recordStream;
 		Util::Timer                  _userTimer;
 
 		std::mutex                   _objectLogMutex;

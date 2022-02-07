@@ -76,9 +76,13 @@ template <template <typename> class VisitedItem, class Proc>
 template <typename T>
 inline void SettingsVisitor<VisitedItem, Proc>::push(const VisitedItem<T> &visitedItem) {
 	_prefixStack.push_back(configPrefix);
-	configPrefix += visitedItem.configFileRelativeSymbol;
-	configPrefix += '.';
 	indent += "  ";
+	if ( visitedItem.configFileRelativeSymbol && *visitedItem.configFileRelativeSymbol ) {
+		if ( !configPrefix.empty() ) {
+			configPrefix += '.';
+		}
+		configPrefix += visitedItem.configFileRelativeSymbol;
+	}
 }
 
 template <template <typename> class VisitedItem, class Proc>

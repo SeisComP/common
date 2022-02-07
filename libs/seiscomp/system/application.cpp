@@ -164,7 +164,7 @@ void crashHandler() {
 	Application *app = Application::Instance();
 	if ( !app ) return;
 
-	const std::string& crash_handler = app->crashHandler();
+	const string &crash_handler = app->crashHandler();
 	if ( crash_handler.empty() ) return;
 
 	FILE *fp;/* = fopen(crash_handler, "rb");
@@ -307,7 +307,7 @@ void mapSchemaParameters(ParamMap &map, System::SchemaParameters *params,
 }
 
 // comparison of strings separated into parts by '.' character
-bool compare_string_toks(const std::string& a, const std::string& b) {
+bool compare_string_toks(const string &a, const string &b) {
 	vector<string> ta, tb;
 	Core::split(ta, a.c_str(), ".", false);
 	Core::split(tb, b.c_str(), ".", false);
@@ -708,7 +708,7 @@ bool Application::validateSchemaParameters() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const std::string& Application::name() const {
+const string &Application::name() const {
 	return _name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -717,7 +717,7 @@ const std::string& Application::name() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::addPluginPackagePath(const std::string &package) {
+void Application::addPluginPackagePath(const string &package) {
 	PluginRegistry::Instance()->addPackagePath(package);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -787,7 +787,7 @@ void Application::setLoggingToStdErr(bool e) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::addLoggingComponentSubscription(const std::string& c) {
+void Application::addLoggingComponentSubscription(const string &c) {
 	_baseSettings.logging.components.push_back(c);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -826,7 +826,7 @@ void Application::closeLogging() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const std::string& Application::crashHandler() const {
+const string &Application::crashHandler() const {
 	return _baseSettings.crashHandler;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -844,11 +844,11 @@ void Application::bindSettings(AbstractSettings *settings) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string Application::argumentStr(const std::string& query) const {
-	std::string param = "--" + query;
+string Application::argumentStr(const string &query) const {
+	string param = "--" + query;
 	for ( size_t i = 1; i < _arguments.size(); ++i ) {
 		if ( !_arguments[i].compare(0, param.size(), param) ) {
-			std::string value = _arguments[i].substr(param.size());
+			string value = _arguments[i].substr(param.size());
 			if ( !value.empty() && value[0] == '=' ) {
 				value.erase(0, 1);
 				return value;
@@ -864,7 +864,7 @@ std::string Application::argumentStr(const std::string& query) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int Application::configGetInt(const std::string& query) const {
+int Application::configGetInt(const string &query) const {
 	try {
 		return atoi(argumentStr(query).c_str());
 	}
@@ -878,7 +878,7 @@ int Application::configGetInt(const std::string& query) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double Application::configGetDouble(const std::string& query) const {
+double Application::configGetDouble(const string &query) const {
 	try {
 		return atof(argumentStr(query).c_str());
 	}
@@ -892,7 +892,7 @@ double Application::configGetDouble(const std::string& query) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Application::configGetBool(const std::string& query) const {
+bool Application::configGetBool(const string &query) const {
 	try {
 		return argumentStr(query) == "true";
 	}
@@ -906,7 +906,7 @@ bool Application::configGetBool(const std::string& query) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string Application::configGetString(const std::string& query) const {
+string Application::configGetString(const string &query) const {
 	try {
 		return argumentStr(query);
 	}
@@ -920,7 +920,7 @@ std::string Application::configGetString(const std::string& query) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string Application::configGetPath(const std::string& query) const {
+string Application::configGetPath(const string &query) const {
 	try {
 		return Environment::Instance()->absolutePath(argumentStr(query));
 	}
@@ -934,7 +934,7 @@ std::string Application::configGetPath(const std::string& query) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::vector<int> Application::configGetInts(const std::string& query) const {
+vector<int> Application::configGetInts(const string &query) const {
 	return _configuration.getInts(query);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -943,7 +943,7 @@ std::vector<int> Application::configGetInts(const std::string& query) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::vector<double> Application::configGetDoubles(const std::string& query) const {
+vector<double> Application::configGetDoubles(const string &query) const {
 	return _configuration.getDoubles(query);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -952,7 +952,7 @@ std::vector<double> Application::configGetDoubles(const std::string& query) cons
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::vector<bool> Application::configGetBools(const std::string& query) const {
+vector<bool> Application::configGetBools(const string &query) const {
 	return _configuration.getBools(query);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -961,10 +961,10 @@ std::vector<bool> Application::configGetBools(const std::string& query) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::vector<std::string> Application::configGetStrings(const std::string& query) const {
+vector<string> Application::configGetStrings(const string &query) const {
 	try {
-		std::string param = argumentStr(query);
-		std::vector<std::string> tmp;
+		string param = argumentStr(query);
+		vector<string> tmp;
 		Core::split(tmp, param.c_str(), ",");
 		for ( size_t i = 0; i < tmp.size(); ++i )
 			Core::trim(tmp[i]);
@@ -980,7 +980,7 @@ std::vector<std::string> Application::configGetStrings(const std::string& query)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::configSetBool(const std::string& query, bool v) {
+void Application::configSetBool(const string &query, bool v) {
 	_configuration.setBool(query, v);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -989,7 +989,7 @@ void Application::configSetBool(const std::string& query, bool v) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::configSetInt(const std::string& query, int v) {
+void Application::configSetInt(const string &query, int v) {
 	_configuration.setInt(query, v);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -998,7 +998,7 @@ void Application::configSetInt(const std::string& query, int v) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::configSetDouble(const std::string& query, double v) {
+void Application::configSetDouble(const string &query, double v) {
 	_configuration.setDouble(query, v);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1007,7 +1007,7 @@ void Application::configSetDouble(const std::string& query, double v) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::configSetString(const std::string& query, const std::string &v) {
+void Application::configSetString(const string &query, const string &v) {
 	_configuration.setString(query, v);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1016,8 +1016,8 @@ void Application::configSetString(const std::string& query, const std::string &v
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::configSetBools(const std::string& query,
-                                 const std::vector<bool> &values) {
+void Application::configSetBools(const string &query,
+                                 const vector<bool> &values) {
 	_configuration.setBools(query, values);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1026,8 +1026,8 @@ void Application::configSetBools(const std::string& query,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::configSetInts(const std::string& query,
-                                const std::vector<int> &values) {
+void Application::configSetInts(const string &query,
+                                const vector<int> &values) {
 	_configuration.setInts(query, values);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1036,8 +1036,8 @@ void Application::configSetInts(const std::string& query,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::configSetDoubles(const std::string& query,
-                                   const std::vector<double> &values) {
+void Application::configSetDoubles(const string &query,
+                                   const vector<double> &values) {
 	_configuration.setDoubles(query, values);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1046,8 +1046,8 @@ void Application::configSetDoubles(const std::string& query,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::configSetStrings(const std::string& query,
-                                   const std::vector<std::string> &values) {
+void Application::configSetStrings(const string &query,
+                                   const vector<string> &values) {
 	_configuration.setStrings(query, values);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1056,7 +1056,7 @@ void Application::configSetStrings(const std::string& query,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::configUnset(const std::string& query) {
+void Application::configUnset(const string &query) {
 	_configuration.remove(query);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1121,9 +1121,9 @@ bool Application::initPlugins() {
 	PluginRegistry::Instance()->addPackagePath(name());
 
 	if ( !_baseSettings.plugins.empty() ) {
-		std::vector<std::string> tokens;
+		vector<string> tokens;
 		Core::split(tokens, _baseSettings.plugins.c_str(), ",");
-		std::vector<std::string>::iterator it = tokens.begin();
+		vector<string>::iterator it = tokens.begin();
 		for ( ; it != tokens.end(); ++it )
 			PluginRegistry::Instance()->addPluginName(Core::trim(*it));
 
@@ -1140,7 +1140,7 @@ bool Application::initPlugins() {
 	}
 
 	if ( PluginRegistry::Instance()->pluginCount() ) {
-		std::string pluginList;
+		string pluginList;
 		pluginList = "\nPlugins:\n"
 					  "--------\n";
 		int idx = 1;
@@ -1250,11 +1250,11 @@ bool Application::init() {
 
 	_settingsLinker.reset();
 	_settingsLinker.proc().get(&commandline());
-	for ( std::list<AbstractSettings*>::iterator it = _settings.begin();
+	for ( list<AbstractSettings*>::iterator it = _settings.begin();
 	      it != _settings.end(); ++it )
 		(*it)->accept(_settingsLinker);
 	if ( !_settingsLinker ) {
-		std::cerr << _settingsLinker.lastError() << std::endl;
+		cerr << _settingsLinker.lastError() << endl;
 		cerr << "Try --help for help" << endl;
 		exit(1);
 		return false;
@@ -1292,8 +1292,8 @@ bool Application::init() {
 
 	if ( commandline().hasOption("dump-settings") ) {
 		_settingsLinker.reset();
-		_settingsLinker.proc().dump(std::cout);
-		for ( std::list<AbstractSettings*>::iterator it = _settings.begin();
+		_settingsLinker.proc().dump(cout);
+		for ( list<AbstractSettings*>::iterator it = _settings.begin();
 		      it != _settings.end(); ++it )
 			(*it)->accept(_settingsLinker);
 		exit(0);
@@ -1367,19 +1367,19 @@ void Application::done() {}
 void Application::createBaseCommandLineDescription() {
 	commandline().addGroup("Generic");
 	//commandline().addOption("Generic", "name,N", "set application name used for configuration file lookup", &_name);
-	commandline().addOption("Generic", "help,h", "produce help message");
-	commandline().addOption("Generic", "version,V", "show version information");
-	commandline().addOption("Generic", "print-config-vars", "Print all available configuration variables and exit");
-	commandline().addOption("Generic", "validate-schema-params", "Validates the applications description xml and exit");
+	commandline().addOption("Generic", "help,h", "Produce help message.");
+	commandline().addOption("Generic", "version,V", "Show version information.");
+	commandline().addOption("Generic", "print-config-vars", "Print all available configuration variables and exit.");
+	commandline().addOption("Generic", "validate-schema-params", "Validates the applications description xml and exit.");
 	if ( !_settings.empty() )
-		commandline().addOption("Generic", "dump-settings", "Dump the bound settings and exit");
+		commandline().addOption("Generic", "dump-settings", "Dump the bound settings and exit.");
 	//commandline().addOption("Generic", "crash-handler", "path to crash handler script", &_crashHandler);
 
 	if ( _baseSettings.enableDaemon )
-		commandline().addOption("Generic", "daemon,D", "run as daemon");
+		commandline().addOption("Generic", "daemon,D", "Run as daemon.");
 
 	commandline().addGroup("Verbose");
-	commandline().addCustomOption("Verbose", "v,v", "increase verbosity level (may be repeated, eg. -vv)", new FlagCounter(&_baseSettings.logging.verbosity));
+	commandline().addCustomOption("Verbose", "v,v", "Increase verbosity level (may be repeated, eg. -vv).", new FlagCounter(&_baseSettings.logging.verbosity));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1388,14 +1388,14 @@ void Application::createBaseCommandLineDescription() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::initCommandLine() {
-	createBaseCommandLineDescription();
-	createCommandLineDescription();
-
 	_settingsLinker.reset();
 	_settingsLinker.proc().bind(&commandline());
-	for ( std::list<AbstractSettings*>::iterator it = _settings.begin();
+	for ( list<AbstractSettings*>::iterator it = _settings.begin();
 	      it != _settings.end(); ++it )
 		(*it)->accept(_settingsLinker);
+
+	createBaseCommandLineDescription();
+	createCommandLineDescription();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1466,11 +1466,11 @@ bool Application::initConfiguration() {
 	_settingsLinker.reset();
 
 	_settingsLinker.proc().get(this);
-	for ( std::list<AbstractSettings*>::iterator it = _settings.begin();
+	for ( list<AbstractSettings*>::iterator it = _settings.begin();
 	      it != _settings.end(); ++it )
 		(*it)->accept(_settingsLinker);
 	if ( !_settingsLinker ) {
-		std::cerr << _settingsLinker.lastError() << std::endl;
+		cerr << _settingsLinker.lastError() << endl;
 		return false;
 	}
 
@@ -1511,7 +1511,7 @@ bool Application::initLogging() {
 	}
 
 	if ( enableLogging ) {
-		//std::cerr << "using loglevel " << _verbosity << std::endl;
+		//cerr << "using loglevel " << _verbosity << endl;
 #ifndef WIN32
 		if ( _baseSettings.logging.syslog ) {
 			Logging::SyslogOutput* syslogOutput = new Logging::SyslogOutput();
@@ -1525,13 +1525,13 @@ bool Application::initLogging() {
 			catch ( ... ) {}
 
 			if ( syslogOutput->open(_name.c_str(), facility) ) {
-				std::cerr << "using syslog: " << _name << ", "
-				          << (facility?facility:"default") << "(code="
-				          << syslogOutput->facility() << ")" << std::endl;
+				cerr << "using syslog: " << _name << ", "
+				     << (facility?facility:"default") << "(code="
+				     << syslogOutput->facility() << ")" << endl;
 				_logger = syslogOutput;
 			}
 			else {
-				std::cerr << "failed to open syslog: " << _name << std::endl;
+				cerr << "failed to open syslog: " << _name << endl;
 				delete syslogOutput;
 				syslogOutput = nullptr;
 				return false;
@@ -1540,7 +1540,7 @@ bool Application::initLogging() {
 		else
 #endif
 		if ( !_baseSettings.logging.toStdout ) {
-			std::string logFile = _baseSettings.logging.alternativeLogFile;
+			string logFile = _baseSettings.logging.alternativeLogFile;
 			if ( logFile.empty() )
 				logFile = Environment::Instance()->logFile(_name.c_str());
 
@@ -1551,11 +1551,11 @@ bool Application::initLogging() {
 				logger = new Logging::FileOutput();
 
 			if ( logger->open(logFile.c_str()) ) {
-				//std::cerr << "using logfile: " << logFile << std::endl;
+				//cerr << "using logfile: " << logFile << endl;
 				_logger = logger;
 			}
 			else {
-				std::cerr << "failed to open logfile: " << logFile << std::endl;
+				cerr << "failed to open logfile: " << logFile << endl;
 				delete logger;
 				logger = nullptr;
 			}
@@ -1718,7 +1718,7 @@ bool Application::forkProcess() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int Application::acquireLockfile(const std::string &lockfile) {
+int Application::acquireLockfile(const string &lockfile) {
 #ifndef WIN32
 	int fd = open(lockfile.c_str(), O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
 	if( fd < 0 ) {
@@ -1837,42 +1837,42 @@ const char *Application::frameworkVersion() const {
 namespace Detail {
 
 template <>
-bool getConfig(const Application *app, const std::string &symbol, bool) {
+bool getConfig(const Application *app, const string &symbol, bool) {
 	return app->configGetBool(symbol);
 }
 
 template <>
-int getConfig(const Application *app, const std::string &symbol, bool) {
+int getConfig(const Application *app, const string &symbol, bool) {
 	return app->configGetInt(symbol);
 }
 
 template <>
-unsigned int getConfig(const Application *app, const std::string &symbol, bool) {
+unsigned int getConfig(const Application *app, const string &symbol, bool) {
 	return static_cast<unsigned int>(app->configGetInt(symbol));
 }
 
 template <>
-double getConfig(const Application *app, const std::string &symbol, bool) {
+double getConfig(const Application *app, const string &symbol, bool) {
 	return app->configGetDouble(symbol);
 }
 
 template <>
-std::vector<bool> getConfig(const Application *app, const std::string &symbol, bool) {
+vector<bool> getConfig(const Application *app, const string &symbol, bool) {
 	return app->configGetBools(symbol);
 }
 
 template <>
-std::vector<int> getConfig(const Application *app, const std::string &symbol, bool) {
+vector<int> getConfig(const Application *app, const string &symbol, bool) {
 	return app->configGetInts(symbol);
 }
 
 template <>
-std::vector<double> getConfig(const Application *app, const std::string &symbol, bool) {
+vector<double> getConfig(const Application *app, const string &symbol, bool) {
 	return app->configGetDoubles(symbol);
 }
 
 template <>
-std::string getConfig(const Application *app, const std::string &symbol, bool asPath) {
+string getConfig(const Application *app, const string &symbol, bool asPath) {
 	if ( asPath )
 		return Environment::Instance()->absolutePath(app->configGetString(symbol));
 	else
@@ -1880,15 +1880,24 @@ std::string getConfig(const Application *app, const std::string &symbol, bool as
 }
 
 template <>
-std::vector<std::string> getConfig(const Application *app, const std::string &symbol, bool asPath) {
+vector<string> getConfig(const Application *app, const string &symbol, bool asPath) {
 	if ( !asPath )
 		return app->configGetStrings(symbol);
 
-	std::vector<std::string> items = app->configGetStrings(symbol);
+	vector<string> items = app->configGetStrings(symbol);
 	for ( size_t i = 0; i < items.size(); ++i )
 		items[i] = Environment::Instance()->absolutePath(items[i]);
 
 	return items;
+}
+
+string join(const string &prefix, const char *relativeName) {
+	string symbolName = prefix;
+	if ( !symbolName.empty() && *relativeName ) {
+		symbolName += '.';
+	}
+	symbolName += relativeName;
+	return symbolName;
 }
 
 }

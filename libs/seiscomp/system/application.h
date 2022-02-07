@@ -50,6 +50,8 @@ namespace Detail {
 template <typename T>
 T getConfig(const Application *app, const std::string &symbol, bool asPath);
 
+std::string join(const std::string &prefix, const char *relativeName);
+
 
 }
 
@@ -620,13 +622,13 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 							if ( !visitedItem.isKey() && !visitedItem.configFileRelativeSymbol )
 								return;
 							if ( !CfgLinkHelper<T, IsNativelySupported<T>::value>::process(*this, visitedItem, visitor.configPrefix) )
-								visitor.setError("Invalid configuration value for " + visitor.configPrefix + visitedItem.configFileRelativeSymbol);
+								visitor.setError("Invalid configuration value for " + Detail::join(visitor.configPrefix, visitedItem.configFileRelativeSymbol));
 							break;
 						case PutCfg:
 							break;
 						case Print:
 							if ( visitedItem.configFileRelativeSymbol )
-								*_external.os << visitor.configPrefix << visitedItem.configFileRelativeSymbol;
+								*_external.os << Detail::join(visitor.configPrefix, visitedItem.configFileRelativeSymbol);
 							else if ( visitedItem.cliAbsoluteSymbol )
 								*_external.os << "--" << visitedItem.cliAbsoluteSymbol;
 							else if ( visitedItem.isKey() )
@@ -663,13 +665,19 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 							if ( !visitedItem.configFileRelativeSymbol )
 								return;
 							if ( !CfgLinkHelper<std::vector<T>, IsNativelySupported<T>::value>::process(*this, visitedItem, visitor.configPrefix) )
-								visitor.setError("Invalid configuration value for " + visitor.configPrefix + visitedItem.configFileRelativeSymbol);
+								visitor.setError("Invalid configuration value for " + Detail::join(visitor.configPrefix, visitedItem.configFileRelativeSymbol));
 							break;
 						case PutCfg:
 							break;
 						case Print:
-							if ( visitedItem.configFileRelativeSymbol )
-								*_external.os << visitor.configPrefix << visitedItem.configFileRelativeSymbol;
+							if ( visitedItem.configFileRelativeSymbol ) {
+								if ( *visitedItem.configFileRelativeSymbol ) {
+									*_external.os << Detail::join(visitor.configPrefix, visitedItem.configFileRelativeSymbol);
+								}
+								else {
+									*_external.os << visitor.configPrefix;
+								}
+							}
 							else if ( visitedItem.cliAbsoluteSymbol )
 								*_external.os << "--" << visitedItem.cliAbsoluteSymbol;
 							else if ( visitedItem.isKey() )
@@ -699,7 +707,14 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 						case GetCfg:
 							try {
 								std::vector<std::string> items;
-								items = Detail::getConfig< std::vector<std::string> >(_external.constApp, visitor.configPrefix + visitedItem.configFileRelativeSymbol, false);
+								items = Detail::getConfig< std::vector<std::string> >(
+									_external.constApp,
+									Detail::join(
+										visitor.configPrefix,
+										visitedItem.configFileRelativeSymbol
+									),
+									false
+								);
 								std::string oldKey = _key;
 								visitor.push(visitedItem);
 								for ( size_t i = 0; i < items.size(); ++i ) {
@@ -727,7 +742,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 							break;
 						case Print:
 							if ( visitedItem.configFileRelativeSymbol ) {
-								*_external.os << visitor.configPrefix << visitedItem.configFileRelativeSymbol;
+								*_external.os << Detail::join(visitor.configPrefix, visitedItem.configFileRelativeSymbol);
 								*_external.os << ": ";
 								if ( visitedItem.value.empty() )
 									*_external.os << "[]" << std::endl;
@@ -901,7 +916,11 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 							if ( visitedItem.isKey() )
 								tmp = proc.template key<std::string>();
 							else
-								tmp = Detail::getConfig<std::string>(proc._external.constApp, prefix + visitedItem.configFileRelativeSymbol, visitedItem.flags & OptionBinding<T>::InterpretAsPath);
+								tmp = Detail::getConfig<std::string>(
+									proc._external.constApp,
+									Detail::join(prefix, visitedItem.configFileRelativeSymbol),
+									visitedItem.flags & OptionBinding<T>::InterpretAsPath
+								);
 							return fromString(visitedItem.value, tmp);
 						}
 						catch ( ... ) {}
@@ -921,7 +940,11 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 							if ( visitedItem.isKey() )
 								tmp = proc.template key<std::vector<std::string> >();
 							else
-								tmp = Detail::getConfig<std::vector<std::string> >(proc._external.constApp, prefix + visitedItem.configFileRelativeSymbol, visitedItem.flags & OptionBinding< std::vector<T> >::InterpretAsPath);
+								tmp = Detail::getConfig<std::vector<std::string> >(
+									proc._external.constApp,
+									Detail::join(prefix, visitedItem.configFileRelativeSymbol),
+									visitedItem.flags & OptionBinding< std::vector<T> >::InterpretAsPath
+								);
 							visitedItem.value.resize(tmp.size());
 							for ( size_t i = 0; i < tmp.size(); ++i ) {
 								if ( !fromString(visitedItem.value[i], tmp[i]) )
@@ -944,7 +967,11 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 							visitedItem.value = proc.template key<T>();
 						else {
 							try {
-								visitedItem.value = Detail::getConfig<T>(proc._external.constApp, prefix + visitedItem.configFileRelativeSymbol, visitedItem.flags & OptionBinding<T>::InterpretAsPath);
+								visitedItem.value = Detail::getConfig<T>(
+									proc._external.constApp,
+									Detail::join(prefix, visitedItem.configFileRelativeSymbol),
+									visitedItem.flags & OptionBinding<T>::InterpretAsPath
+								);
 							}
 							catch ( ... ) {}
 						}

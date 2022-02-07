@@ -66,34 +66,28 @@ bool StreamApplication::init() {
 	_logRecords = addInputObjectLog("record");
 	_receivedRecords = 0;
 
-	try {
-		std::string inputFile = commandline().option<std::string>("record-file");
-		std::string type = "";
-
-		try {
-			type = commandline().option<std::string>("record-type");
-		} catch ( ... ) {}
-
-
+	if ( !_settings.recordstream.file.empty() ) {
 		_recordStream = IO::RecordStream::Create("file");
 		if ( !_recordStream ) {
 			SEISCOMP_ERROR("Failed to create recordstream 'file'");
 			return false;
 		}
 
-		if ( !type.empty() ) {
-			if ( !_recordStream->setRecordType(type.c_str()) ) {
-				SEISCOMP_ERROR("Failed to set recordtype to '%s'", type.c_str());
+		if ( !_settings.recordstream.fileType.empty() ) {
+			if ( !_recordStream->setRecordType(_settings.recordstream.fileType.c_str()) ) {
+				SEISCOMP_ERROR("Failed to set recordtype to '%s'",
+				               _settings.recordstream.fileType.c_str());
 				return false;
 			}
 		}
 
-		if ( !_recordStream->setSource(inputFile) ) {
-			SEISCOMP_ERROR("Failed to open recordfile %s", inputFile.c_str());
+		if ( !_recordStream->setSource(_settings.recordstream.file) ) {
+			SEISCOMP_ERROR("Failed to open recordfile %s",
+			               _settings.recordstream.file.c_str());
 			return false;
 		}
 	}
-	catch ( ... ) {
+	else {
 		openStream();
 	}
 

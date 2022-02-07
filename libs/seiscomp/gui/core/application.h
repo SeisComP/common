@@ -301,7 +301,7 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 		QApplication       *_app;
 		Type                _type;
 		Scheme             *_scheme;
-		mutable QSettings  *_settings;
+		mutable QSettings  *_qSettings;
 		QTimer              _timerSOH;
 		Core::Time          _lastSOH;
 		int                 _intervalSOH;

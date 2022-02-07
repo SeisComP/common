@@ -261,7 +261,7 @@ Application* Application::_instance = nullptr;
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Application::Application(int& argc, char **argv, int flags, Type type)
     : QObject(), Client::Application(argc, argv)
-, _settings(nullptr)
+, _qSettings(nullptr)
 , _intervalSOH(60)
 , _readOnlyMessaging(false)
 , _mainWidget(nullptr)
@@ -354,7 +354,7 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Application::~Application() {
 	if ( _dlgConnection ) delete _dlgConnection;
-	if ( _settings ) delete _settings;
+	if ( _qSettings ) delete _qSettings;
 	if ( _scheme ) delete _scheme;
 	if ( _app ) delete _app;
 #ifndef WIN32
@@ -595,8 +595,8 @@ Scheme& Application::scheme() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QSettings &Application::settings() {
-	if ( !_settings ) _settings = new QSettings;
-	return *_settings;
+	if ( !_qSettings ) _qSettings = new QSettings;
+	return *_qSettings;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -605,8 +605,8 @@ QSettings &Application::settings() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const QSettings &Application::settings() const {
-	if ( !_settings ) _settings = new QSettings;
-	return *_settings;
+	if ( !_qSettings ) _qSettings = new QSettings;
+	return *_qSettings;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1105,18 +1105,18 @@ bool Application::init() {
 			      it != subscriptions.end(); ++it )
 				groups << (*it).c_str();
 
-			cdlg()->setClientParameters(_messagingURL.c_str(),
-			                            _messagingUser.c_str(),
-			                            _messagingPrimaryGroup.c_str(),
-			                            groups, _messagingTimeout);
+			cdlg()->setClientParameters(_settings.messaging.URL.c_str(),
+			                            _settings.messaging.user.c_str(),
+			                            _settings.messaging.primaryGroup.c_str(),
+			                            groups, _settings.messaging.timeout);
 		}
 	}
 
 	if ( isDatabaseEnabled() && (_type != Tty) ) {
-		cdlg()->setDefaultDatabaseParameters(_db.c_str());
+		cdlg()->setDefaultDatabaseParameters(databaseURI().c_str());
 
 		if ( !cdlg()->hasDatabaseChanged() )
-			cdlg()->setDatabaseParameters(_db.c_str());
+			cdlg()->setDatabaseParameters(databaseURI().c_str());
 
 		cdlg()->connectToDatabase();
 	}
@@ -1213,12 +1213,12 @@ bool Application::handleInitializationError(int stage) {
 		      it != subscriptions.end(); ++it )
 			groups << (*it).c_str();
 
-		cdlg()->setClientParameters(_messagingURL.c_str(),
-		                            _messagingUser.c_str(),
-		                            _messagingPrimaryGroup.c_str(),
-		                            groups, _messagingTimeout);
+		cdlg()->setClientParameters(_settings.messaging.URL.c_str(),
+		                            _settings.messaging.user.c_str(),
+		                            _settings.messaging.primaryGroup.c_str(),
+		                            groups, _settings.messaging.timeout);
 
-		cdlg()->setDatabaseParameters(_db.c_str());
+		cdlg()->setDatabaseParameters(databaseURI().c_str());
 
 		cdlg()->connectToMessaging();
 		cdlg()->connectToDatabase();
@@ -1455,7 +1455,7 @@ void Application::createConnection(QString host, QString user,
 	_connection = new Client::Connection;
 	status = _connection->setSource(host.toStdString());
 	if ( status == Client::OK ) {
-		_connection->setMembershipInfo(_enableMembershipMessages);
+		_connection->setMembershipInfo(_settings.messaging.membershipMessages);
 		status = _connection->connect(user.toStdString(), group.toStdString(),
 		                              timeout);
 	}
@@ -1474,20 +1474,21 @@ void Application::createConnection(QString host, QString user,
 		                     .arg(_connection->lastErrorMessage().c_str()));
 	}
 	else {
-		if ( _messagingContentType == "binary" )
+		if ( _settings.messaging.contentType == "binary" )
 			_connection->setContentType(Client::Protocol::Binary);
-		else if ( _messagingContentType == "json" )
+		else if ( _settings.messaging.contentType == "json" )
 			_connection->setContentType(Client::Protocol::JSON);
-		else if ( _messagingContentType == "xml" )
+		else if ( _settings.messaging.contentType == "xml" )
 			_connection->setContentType(Client::Protocol::XML);
-		else if ( !_messagingContentType.empty() )
-			SEISCOMP_ERROR("Invalid message content type: %s", _messagingContentType.c_str());
+		else if ( !_settings.messaging.contentType.empty() )
+			SEISCOMP_ERROR("Invalid message content type: %s",
+			               _settings.messaging.contentType.c_str());
 	}
 
-	_messagingUser = user.toStdString();
-	_messagingURL = host.toStdString();
-	_messagingPrimaryGroup = group.toStdString();
-	_messagingTimeout = timeout;
+	_settings.messaging.user = user.toStdString();
+	_settings.messaging.URL = host.toStdString();
+	_settings.messaging.primaryGroup = group.toStdString();
+	_settings.messaging.timeout = timeout;
 
 	startMessageThread();
 	if ( _thread )
@@ -1526,7 +1527,7 @@ void Application::destroyConnection() {
 void Application::databaseChanged() {
 	if ( query() ) {
 		query()->setDriver(_database.get());
-		_db = cdlg()->databaseURI();
+		_settings.database.URI = cdlg()->databaseURI();
 		if ( query()->hasError() ) {
 			if ( _database )
 				_database->disconnect();
@@ -1606,7 +1607,7 @@ void Application::messagesAvailable() {
 					cdlg()->setDatabaseParameters(dbmsg->service(), dbmsg->parameters());
 					cdlg()->connectToDatabase();
 					if ( cdlg()->hasDatabaseChanged() ) {
-						_db = cdlg()->databaseURI();
+						_settings.database.URI = cdlg()->databaseURI();
 						setDatabase(database());
 					}
 				}
@@ -1616,11 +1617,12 @@ void Application::messagesAvailable() {
 		CommandMessage *cmd = CommandMessage::Cast(msg);
 		if ( cmd && _filterCommands ) {
 			QRegExp re(cmd->client().c_str());
-			if ( re.exactMatch(_messagingUser.c_str()) )
+			if ( re.exactMatch(_settings.messaging.user.c_str()) )
 				emit messageAvailable(cmd, pkt.get());
 			else {
 				SEISCOMP_DEBUG("Ignoring command message for client: %s, user is: %s",
-				               cmd->client().c_str(), _messagingUser.c_str());
+				               cmd->client().c_str(),
+				               _settings.messaging.user.c_str());
 			}
 
 			continue;
