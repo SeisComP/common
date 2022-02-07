@@ -30,7 +30,6 @@
 
 
 namespace Seiscomp {
-
 namespace Client {
 
 
@@ -137,7 +136,7 @@ class SC_SYSTEM_CLIENT_API StreamApplication : public Application {
 
 
 }
-
 }
+
 
 #endif
