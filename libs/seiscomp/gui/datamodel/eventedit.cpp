@@ -1268,18 +1268,18 @@ void EventEdit::init() {
 			}
 			else if ( EventType::Type(i) == NOT_EXISTING ) {
 				_ui.comboTypes->setItemText(2, EventType::NameDispatcher::name(i));
-				_ui.comboTypes->setItemData(_ui.comboTypes->count()-1,
-				                            EventType::NameDispatcher::name(i), Qt::ToolTipRole);
+				_ui.comboTypes->setItemData(2, EventType::NameDispatcher::name(i),
+				                            Qt::ToolTipRole);
 			}
 			else if ( EventType::Type(i) == NOT_LOCATABLE ) {
 				_ui.comboTypes->setItemText(3, EventType::NameDispatcher::name(i));
-				_ui.comboTypes->setItemData(_ui.comboTypes->count()-1,
-				                            EventType::NameDispatcher::name(i), Qt::ToolTipRole);
+				_ui.comboTypes->setItemData(3, EventType::NameDispatcher::name(i),
+				                            Qt::ToolTipRole);
 			}
 			else if ( EventType::Type(i) == OUTSIDE_OF_NETWORK_INTEREST ) {
 				_ui.comboTypes->setItemText(4, EventType::NameDispatcher::name(i));
-				_ui.comboTypes->setItemData(_ui.comboTypes->count()-1,
-				                            EventType::NameDispatcher::name(i), Qt::ToolTipRole);
+				_ui.comboTypes->setItemData(4, EventType::NameDispatcher::name(i),
+				                            Qt::ToolTipRole);
 			}
 			else {
 				types << EventType::NameDispatcher::name(i);
