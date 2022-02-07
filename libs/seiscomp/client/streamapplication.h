@@ -107,10 +107,17 @@ class SC_SYSTEM_CLIENT_API StreamApplication : public Application {
 		virtual void acquisitionFinished();
 
 		//! This method gets called when a new record has been received
+		//! by recordstream thread.
 		//! The default implementation stores it in the threaded object
-		//! queue which gets read by the main thread
+		//! queue which gets read by the main thread.
+		//! The input record is not managed and ownership is transferred
+		//! to this method.
 		virtual bool storeRecord(Record *rec);
 
+		//! This method gets called when a record has been popped from
+		//! the event queue in the main thread. The ownership of the
+		//! pointer is transferred to this method. An empty function
+		//! body override would cause a memory leak.
 		virtual void handleRecord(Record *rec) = 0;
 
 		//! Logs the received records for the last period
