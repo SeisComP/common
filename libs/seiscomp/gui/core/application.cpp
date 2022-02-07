@@ -959,6 +959,10 @@ bool Application::initConfiguration() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::validateParameters() {
+	if ( !Client::Application::validateParameters() ) {
+		return false;
+	}
+
 	if ( commandline().hasOption("full-screen") ) _startFullScreen = true;
 	if ( commandline().hasOption("non-interactive") ) _nonInteractive = true;
 
