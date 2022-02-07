@@ -636,9 +636,9 @@ void Queue::processingLoop() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Queue::process(ProcessingTask &task) {
 	MessageProcessors::iterator it;
-	for ( it = _messageProcessors.begin(); it != _messageProcessors.end(); ++it ) {
+	for ( auto &proc : _messageProcessors ) {
 		if ( task.second->type == Message::Type::Regular )
-			(*it)->process(task.second);
+			proc->process(task.second);
 		task.second->processed = true;
 		// TODO: Decide whether to skip messages where processing failed or not
 	}
@@ -734,11 +734,8 @@ void Queue::shutdown() {
 	_sequenceNumber = 0;
 
 	// Shutdown processors
-	{
-		MessageProcessors::iterator it;
-		for ( it = _messageProcessors.begin(); it != _messageProcessors.end(); ++it )
-			(*it)->close();
-	}
+	for ( auto &proc : _messageProcessors )
+		proc->close();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
