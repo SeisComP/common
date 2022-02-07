@@ -17,27 +17,86 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+IntrusiveList<T>::IntrusiveList(IntrusiveList &&other) {
+	_front = other._front;
+	_back = other._back;
+	_size = other._size;
+	_index = other._index;
+
+	other._front = other._back = nullptr;
+	other._size = 0;
+	other._index = 0;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+IntrusiveList<T> &IntrusiveList<T>::operator=(IntrusiveList<T> &&other) {
+	if ( this != &other ) {
+		clear();
+
+		_front = other._front;
+		_back = other._back;
+		_size = other._size;
+		_index = other._index;
+
+		other._front = other._back = nullptr;
+		other._size = 0;
+		other._index = 0;
+	}
+
+	return *this;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+typename IntrusiveList<T>::iterator IntrusiveList<T>::find(PointerType o) const {
+	if ( o->_ili_prev[_index] || o->_ili_next[_index] || o == _front ) {
+		return iterator(_index,o);
+	}
+
+	return iterator();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 void IntrusiveList<T>::push_back(T o) {
 	o->_ili_prev[_index] = _back;
 	o->_ili_next[_index] = nullptr;
 
 	// Update links
-	if ( o->_ili_prev[_index] )
-		o->_ili_prev[_index]->_ili_next[_index] = o;
-	else
-		_front = o;
-	_back = o;
-
-	// Register self in smart pointer to keep a reference
-	o->store(_index, o);
+	if ( o->_ili_prev[_index] ) {
+		o->_ili_prev[_index]->_ili_next[_index] = IntrusiveTraits<T>::toPointer(o);
+	}
+	else {
+		_front = IntrusiveTraits<T>::toPointer(o);
+	}
+	_back = IntrusiveTraits<T>::toPointer(o);
 
 	++_size;
-
-	//std::cerr << "add(" << o << ") to " << this << ": " << _front << "/" << _back << "/" << _size << std::endl;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 void IntrusiveList<T>::erase(T o) {
 	if ( o->_ili_prev[_index] )
@@ -53,22 +112,30 @@ void IntrusiveList<T>::erase(T o) {
 	o->reset(_index, o);
 
 	--_size;
-
-	//std::cerr << "erase(" << o << ") from " << this << ": " << _front << "/" << _back << "/" << _size << std::endl;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 typename IntrusiveList<T>::iterator
 IntrusiveList<T>::erase(const iterator &it) {
-	if ( it.item == nullptr ) return iterator();
+	if ( !it.item ) {
+		return iterator();
+	}
 
 	T n = it.item->_ili_next[_index];
 	erase(it.item);
 	return iterator(_index,n);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 void IntrusiveList<T>::swap(T o1, T o2) {
 	T tmp;
@@ -100,3 +167,52 @@ void IntrusiveList<T>::swap(T o1, T o2) {
 	else if ( _back == o1 )
 		_back = o2;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+void IntrusiveList<T>::replace(PointerType existingItem, PointerType newItem) {
+	newItem->_ili_next[_index] = existingItem->_ili_next[_index];
+	newItem->_ili_prev[_index] = existingItem->_ili_prev[_index];
+
+	existingItem->reset(_index, existingItem);
+
+	if ( newItem->_ili_prev[_index] ) {
+		newItem->_ili_prev[_index]->_ili_next[_index] = newItem;
+	}
+
+	if ( newItem->_ili_next[_index] ) {
+		newItem->_ili_next[_index]->_ili_prev[_index] = newItem;
+	}
+
+	if ( _front == existingItem ) {
+		_front = newItem;
+	}
+
+	if ( _back == existingItem ) {
+		_back = newItem;
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+void IntrusiveList<T>::clear() {
+	T n = _front;
+
+	while ( n ) {
+		T curr = n;
+		n = n->_ili_next[_index];
+		curr->reset(_index, curr);
+	}
+
+	_front = _back = nullptr;
+	_size = 0;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

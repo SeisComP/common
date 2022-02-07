@@ -85,7 +85,7 @@ bool Server::init() {
 
 	for ( SessionList::iterator it = _endpoints.begin();
 	      it != _endpoints.end(); ++it ) {
-		Endpoint *a = static_cast<Endpoint*>((*it).get());
+		Endpoint *a = static_cast<Endpoint*>(*it);
 		if ( a->socket()->listen() != Socket::Success ) {
 			SEISCOMP_ERROR("Unable to switch to listen state on port %d: errno=%d: %s",
 			               a->socket()->port(), errno, strerror(errno));
@@ -345,7 +345,7 @@ bool Server::removeEndpoint(Endpoint *endpoint) {
 bool Server::clearEndpoints() {
 	for ( SessionList::iterator it = _endpoints.begin();
 	      it != _endpoints.end(); ++it ) {
-		Endpoint *endpoint = static_cast<Endpoint*>((*it).get());
+		Endpoint *endpoint = static_cast<Endpoint*>(*it);
 		_devices.remove(endpoint->device());
 
 		char buf[Socket::IPAddress::MAX_IP_STRING_LEN];

@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CORE_LIST_H
-#define SEISCOMP_CORE_LIST_H
+#ifndef SEISCOMP_CORE_INTRUSIVE_LIST_H
+#define SEISCOMP_CORE_INTRUSIVE_LIST_H
 
 
 #include <boost/intrusive_ptr.hpp>
@@ -30,77 +30,77 @@ namespace Core {
 namespace Generic {
 
 
-template <typename T, int N=1>
-struct IntrusiveListItem {};
+template <typename T>
+struct IntrusiveTraits {};
 
-// An item for the intrusive list constructed from plain pointers which
-// are not managed by the list.
-template <typename T, int N>
-struct IntrusiveListItem<T*,N> {
+//! An item for the intrusive list constructed from plain pointers which
+//! are not managed by the list.
+template <typename T>
+struct IntrusiveTraits< T* > {
 	typedef T *Pointer;
 	typedef T *Element;
 
-	IntrusiveListItem<Element,N>() {
-		for ( int i = 0; i < N; ++i )
-			_ili_prev[i] = _ili_next[i] = nullptr;
+	static Pointer toPointer(const Element &o) {
+		return o;
 	}
-
-	// The second parameter is just a helper to derive the correct
-	// function.
-	void reset(int i, const Element &) { _ili_prev[i] = _ili_next[i] = nullptr; }
-	void store(int i, Element &o) {}
-
-	Element _ili_prev[N];
-	Element _ili_next[N];
 };
 
-
-// An item for the instrusive list constructed from smart pointers. All
-// items added to the list are managed as such as their reference counter
-// is increased by one. If an item is erased from the list the reference
-// counter is decreased by one.
-template <typename T, int N>
-struct IntrusiveListItem<boost::intrusive_ptr<T>,N> {
+//! An item for the instrusive list constructed from smart pointers. All
+//! items added to the list are managed as such as their reference counter
+//! is increased by one. If an item is erased from the list the reference
+//! counter is decreased by one.
+template <typename T>
+struct IntrusiveTraits< boost::intrusive_ptr<T> > {
 	typedef T *Pointer;
 	typedef boost::intrusive_ptr<T> Element;
 
-	IntrusiveListItem<Element,N>() {
+	static Pointer toPointer(const Element &o) {
+		return o.get();
+	}
+};
+
+
+template <typename T, int N=1>
+struct IntrusiveListItem {
+	typedef typename IntrusiveTraits<T>::Pointer Pointer;
+	typedef typename IntrusiveTraits<T>::Element Element;
+
+	IntrusiveListItem<T,N>() {
 		for ( int i = 0; i < N; ++i )
-			_ili_prev[i] = _ili_next[i] = nullptr;
+			_ili_next[i] = _ili_prev[i] = nullptr;
 	}
 
 	// The second parameter is just a helper to derive the correct
 	// function.
-	void reset(int i, const Element &) { _ili_self[i] = _ili_prev[i] = _ili_next[i] = nullptr; }
-	void store(int i, Element &o) { _ili_self[i] = o; }
+	void reset(int i, const Element &) { _ili_next[i] = _ili_prev[i] = nullptr; }
 
-	Element _ili_self[N];
-	Element _ili_prev[N];
+	Pointer _ili_prev[N];
 	Element _ili_next[N];
 };
 
 
 template <typename T>
-class IntrusiveListBase {};
+class IntrusiveList {
+	// ----------------------------------------------------------------------
+	//  Public type definitions
+	// ----------------------------------------------------------------------
+	public:
+		typedef typename IntrusiveTraits<T>::Pointer PointerType;
+		typedef typename IntrusiveTraits<T>::Element ElementType;
 
-template <typename T>
-struct IntrusiveListBase<T*> { typedef T *PointerType; };
 
-template <typename T>
-struct IntrusiveListBase<boost::intrusive_ptr<T> > { typedef T *PointerType; };
-
-template <typename T>
-class IntrusiveList : IntrusiveListBase<T> {
-	typedef typename IntrusiveListBase<T>::PointerType PointerType;
-
+	// ----------------------------------------------------------------------
+	//  Iterators
+	// ----------------------------------------------------------------------
 	public:
 		struct iterator {
-			iterator(int slot_idx = 0, T o = nullptr) : idx(slot_idx), item(o) {}
+			iterator(int slot_idx = 0, PointerType o = nullptr)
+			: idx(slot_idx), item(o) {}
 
 			int idx;
-			T item;
+			PointerType item;
 
-			T operator*() const {
+			PointerType operator*() const {
 				return item;
 			}
 
@@ -113,18 +113,19 @@ class IntrusiveList : IntrusiveListBase<T> {
 			}
 
 			iterator& operator++() {
-				item = item->_ili_next[idx];
+				item = IntrusiveTraits<T>::toPointer(item->_ili_next[idx]);
 				return *this;
 			}
 		};
 
 		struct const_iterator {
-			const_iterator(int slot_idx = 0, T o = nullptr) : idx(slot_idx), item(o) {}
+			const_iterator(int slot_idx = 0, PointerType o = nullptr)
+			: idx(slot_idx), item(o) {}
 
 			int idx;
-			T item;
+			PointerType item;
 
-			const T operator*() const {
+			const PointerType operator*() const {
 				return item;
 			}
 
@@ -142,49 +143,49 @@ class IntrusiveList : IntrusiveListBase<T> {
 			}
 		};
 
-		explicit IntrusiveList(int slotidx = 0) : _front(nullptr), _back(nullptr), _index(slotidx), _size(0) {}
-		virtual ~IntrusiveList() { clear(); }
 
-		void setSlot(int slotidx) { _index = slotidx; }
+	// ----------------------------------------------------------------------
+	//  X'truction
+	// ----------------------------------------------------------------------
+	public:
+		explicit IntrusiveList(int slotidx = 0) : _index(slotidx) {}
+		IntrusiveList(IntrusiveList &&);
+		~IntrusiveList() { clear(); }
 
-		T front() const { return _front; }
-		T back() const { return _back; }
 
-		iterator begin() { return iterator(_index, _front); }
+	// ----------------------------------------------------------------------
+	//  Operators
+	// ----------------------------------------------------------------------
+	public:
+		//! Move assignment operator
+		IntrusiveList<T> &operator=(IntrusiveList<T> &&other);
+
+
+	// ----------------------------------------------------------------------
+	//  Public interface
+	// ----------------------------------------------------------------------
+	public:
+		PointerType front() const { return IntrusiveTraits<T>::toPointer(_front); }
+		PointerType back() const { return _back; }
+
+		iterator begin() { return iterator(_index, IntrusiveTraits<T>::toPointer(_front)); }
 		iterator end() { return iterator(_index); }
 
 		const_iterator begin() const { return const_iterator(_index, _front); }
 		const_iterator end() const { return const_iterator(_index); }
 
-		iterator find(PointerType o) const {
-			if ( o->_ili_prev[_index] != nullptr || o->_ili_next[_index] != nullptr ||
-			     o == _front )
-				return iterator(_index,o);
-
-			return iterator();
-		}
+		iterator find(PointerType o) const;
 
 		void push_back(T o);
-
 		void pop_front() { erase(_front); }
 
 		void erase(T o);
 		iterator erase(const iterator &it);
 
+		void clear();
+
 		void swap(T o1, T o2);
-
-		void clear() {
-			T n = _front;
-
-			while ( n ) {
-				T curr = n;
-				n = n->_ili_next[_index];
-				curr->reset(_index, curr);
-			}
-
-			_front = _back = nullptr;
-			_size = 0;
-		}
+		void replace(PointerType existingItem, PointerType newItem);
 
 		size_t size() const {
 			return _size;
@@ -194,11 +195,15 @@ class IntrusiveList : IntrusiveListBase<T> {
 			return _size == 0;
 		}
 
+
+	// ----------------------------------------------------------------------
+	//  Private members
+	// ----------------------------------------------------------------------
 	private:
-		T      _front;
-		T      _back;
-		int    _index;
-		size_t _size;
+		ElementType _front{nullptr};
+		PointerType _back{nullptr};
+		size_t      _size{0};
+		int         _index;
 };
 
 

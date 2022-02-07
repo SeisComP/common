@@ -4,6 +4,7 @@ SET(TESTS
 	datetime_timespan.cpp
 	georegions.cpp
 	geolib.cpp
+	intrusive_list.cpp
 	refcounts.cpp
 	strings.cpp
  	version.cpp
