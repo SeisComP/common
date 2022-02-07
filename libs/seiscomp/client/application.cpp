@@ -106,7 +106,7 @@ struct AppResolver : public Util::VariableResolver {
 		return true;
 	}
 
-	const std::string& _name;
+	const std::string &_name;
 };
 
 
@@ -1524,8 +1524,8 @@ bool Application::validateParameters() {
 	}
 
 
-	_settings.agencyID = Util::replace(_settings.agencyID);
-	_settings.author = Util::replace(_settings.author);
+	_settings.agencyID = Util::replace(_settings.agencyID, AppResolver(_name));
+	_settings.author = Util::replace(_settings.author, AppResolver(_name));
 
 	return true;
 }
