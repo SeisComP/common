@@ -1062,7 +1062,8 @@ bool HttpSession::handleRequest(HttpRequest &req) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool HttpSession::handleGETRequest(HttpRequest &) {
-	return false;
+	sendStatus(HTTP_405);
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1071,7 +1072,8 @@ bool HttpSession::handleGETRequest(HttpRequest &) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool HttpSession::handlePOSTRequest(HttpRequest &) {
-	return false;
+	sendStatus(HTTP_405);
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1105,7 +1107,8 @@ bool HttpSession::handleOPTIONSRequest(HttpRequest &req) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool HttpSession::handleHEADRequest(HttpRequest &) {
-	return false;
+	sendStatus(HTTP_405);
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1114,7 +1117,8 @@ bool HttpSession::handleHEADRequest(HttpRequest &) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool HttpSession::handlePUTRequest(HttpRequest &) {
-	return false;
+	sendStatus(HTTP_405);
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1123,7 +1127,8 @@ bool HttpSession::handlePUTRequest(HttpRequest &) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool HttpSession::handleDELETERequest(HttpRequest &) {
-	return false;
+	sendStatus(HTTP_405);
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1132,7 +1137,8 @@ bool HttpSession::handleDELETERequest(HttpRequest &) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool HttpSession::handleTRACERequest(HttpRequest &) {
-	return false;
+	sendStatus(HTTP_405);
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
