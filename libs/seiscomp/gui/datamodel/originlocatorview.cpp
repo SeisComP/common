@@ -6171,7 +6171,7 @@ void OriginLocatorView::editComment() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void OriginLocatorView::commit(bool associate) {
+void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 	if ( _newOriginStatus != EvaluationStatus::Quantity ) {
 		// In this case the commit has been triggered by the corresponding
 		// button and not by "With additional options ..."
@@ -6343,7 +6343,7 @@ void OriginLocatorView::commit(bool associate) {
 		                     associate?_baseEvent.get():nullptr,
 		                     pickCommitList, amplitudeCommitList);
 
-	if ( _baseEvent && _defaultEventType ) {
+	if ( !ignoreDefaultEventType && _baseEvent && _defaultEventType ) {
 		// Check if event type changed
 		bool typeSet;
 		try { _baseEvent->type(); typeSet = true; }
@@ -6639,7 +6639,7 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 
 			// Do not override the status in commit
 			_newOriginStatus = EvaluationStatus::Quantity;
-			commit(options.forceEventAssociation);
+			commit(options.forceEventAssociation, true);
 			_newOriginStatus = CONFIRMED;
 		}
 		else {
@@ -6650,7 +6650,7 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 				_currentOrigin->setEvaluationStatus(*options.originStatus);
 
 				_newOriginStatus = EvaluationStatus::Quantity;
-				commit();
+				commit(true, true);
 				_newOriginStatus = CONFIRMED;
 			}
 		}

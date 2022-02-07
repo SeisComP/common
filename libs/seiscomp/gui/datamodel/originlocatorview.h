@@ -354,7 +354,7 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 		void importArrivals();
 		void showWaveforms();
 		void relocate();
-		void commit(bool associate = true);
+		void commit(bool associate = true, bool ignoreDefaultEventType = false);
 		void customCommit();
 		void commitFocalMechanism(bool withMT = false, QPoint pos = QPoint(0, 0));
 		void commitWithOptions();
