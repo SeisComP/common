@@ -326,8 +326,8 @@ void Application::AppSettings::Client::accept(SettingsLinker &linker) {
 void Application::AppSettings::Database::accept(SettingsLinker &linker) {
 	linker
 	& cfg(URI, "")
-	& cfg(inventoryDB, "inventory")
-	& cfg(configDB, "config")
+	& cfgAsPath(inventoryDB, "inventory")
+	& cfgAsPath(configDB, "config")
 
 	& cfg(type, "type")
 	& cfg(parameters, "parameters")
