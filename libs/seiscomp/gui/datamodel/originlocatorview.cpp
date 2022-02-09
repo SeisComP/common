@@ -6673,7 +6673,7 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 
 	// Do event specific things
 	if ( _baseEvent ) {
-		string type, newType,typeCertainty, newTypeCertainty;
+		string type, newType, typeCertainty, newTypeCertainty;
 		string name, comment;
 
 		if ( options.eventType )
