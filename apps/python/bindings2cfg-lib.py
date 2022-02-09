@@ -108,6 +108,9 @@ class ConfigDBUpdater(seiscomp.client.Application):
                                            "If given, an output XML file is generated")
 
     def validateParameters(self):
+        if not seiscomp.client.Application.validateParameters(self):
+            return False
+
         try:
             self._outputFile = self.commandline().optionString("output")
             # Switch to offline mode

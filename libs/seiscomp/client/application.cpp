@@ -1456,6 +1456,10 @@ void Application::done() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::validateParameters() {
+	if ( !System::Application::validateParameters() ) {
+		return false;
+	}
+
 	_settings.messaging.user = Util::replace(_settings.messaging.user, AppResolver(_name));
 
 	//if ( commandline().hasOption("subscription-list") )
