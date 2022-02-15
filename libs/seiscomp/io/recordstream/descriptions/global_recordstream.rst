@@ -428,7 +428,8 @@ Examples
    "``routing://slink/server1:18000??match=TMP?.*.*.*;slink/server2:18000??match=NET.*.*.*``", "Requests for network `TMPX` go to server1, for network `NET` go to server 2, all the rest are not fulfilled"
    "``routing://slink/server1:18000??match=*.*.*.(HH|EH)?;slink/server2:18000??match=*.*.*.*``", "Requests for channels `HH` and `EH` go to server1, all the rest to server2"   
    "``routing://combined/(server1:18000;server1:18001??rtMax=1800)??match=NET1.*.*.*;combined/(server2:18000;server2:18001??rtMax=1800)??match=NET2.*.*.*``", "Split requests to 2 :ref:`rs-combined` RecordStreams according to the network code `STA1` or `STA2`. Other network codes are not fullfilled"
-
+   "``routing://combined/(slink/special-server:18000;sdsarchive//home/sysop/seiscomp/var/lib/special-archive)??match=SP.*.*.*;combined/(slink/default-server:18000;sdsarchive//home/sysop/seiscomp/var/lib/default-archive)??match=*.*.*.*``", "Requests for special network `SP` are fullfilled by seedlink `special-server` and sdsarchive `/home/sysop/seiscomp/var/lib/special-archive`, all the rest are fullfilled by seedlink `default-server` and archive `/home/sysop/seiscomp/var/lib/default-archive`"
+   
 .. _rs-dec:
 
 
