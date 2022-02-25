@@ -3,16 +3,16 @@
 	<module name="global" category="System">
 		<description>Global parameters for all trunk applications.</description>
 		<configuration>
-			<parameter name="datacenterID" type="string">
-				<description>
-					Sets the datacenter ID which is primarily used by Arclink and
-					its tools. Should not contain spaces.
-				</description>
-			</parameter>
 			<parameter name="agencyID" type="string" default="GFZ">
 				<description>
-					Defines the agency ID used to set creationInfo.agencyID in
+					Agency ID used to set creationInfo.agencyID in
 					data model objects. Should not contain spaces.
+				</description>
+			</parameter>
+			<parameter name="datacenterID" type="string">
+				<description>
+					Datacenter ID which is primarily used by Arclink and
+					its tools. Should not contain spaces.
 				</description>
 			</parameter>
 			<parameter name="organization" type="string" default="Unset">
@@ -22,19 +22,23 @@
 			</parameter>
 			<parameter name="author" type="string" default="@appname@@@@hostname@">
 				<description>
-					Defines the author name used to set creationInfo.author in
-					data model objects.
+					Author name used to set creationInfo.author in
+					data model objects. @appname@ is replace by the name of the
+					respective executable, @hostname@ by the name of the computer
+					on which it runs.
 				</description>
 			</parameter>
 			<parameter name="plugins" type="list:string">
 				<description>
-					Defines a list of modules loaded at startup.
+					List of plugins loaded at startup. Separate multiple names by
+					comma. Add ${plugins} to consider all previously read values.
 				</description>
 			</parameter>
 			<parameter name="cityXML" type="string">
 				<description>
-					Path to the cities.xml file. If undefined, the data is read from
-					&quot;@CONFIGDIR@/cities.xml&quot; or &quot;@DATADIR@/cities.xml&quot;.
+					Path to the cities XML file. If undefined, the data is read
+					from &quot;@CONFIGDIR@/cities.xml&quot; or
+					&quot;@DATADIR@/cities.xml&quot;.
 					SeisComP ships with &quot;@DATADIR@/cities.xml&quot;.
 				</description>
 			</parameter>
@@ -42,7 +46,8 @@
 				<description>
 					Load cities from file configured by the &quot;cityXML&quot;
 					parameter. GUI and map applications enable loading of cities
-					by default considering the parameter &quot;scheme.map.showCities&quot;.
+					by default considering the parameter
+					&quot;scheme.map.showCities&quot;.
 				</description>
 			</parameter>
 			<parameter name="loadRegions" type="boolean">
@@ -56,12 +61,13 @@
 			</parameter>
 			<parameter name="publicIDPattern" type="string">
 				<description>
-					Defines a custom pattern for generation of public object ids. The following
-					variables are resolved:
+					Defines a custom pattern for generation of public object IDs.
+					The following variables are resolved:
 					@classname@ (class name of object),
 					@id@ (public object count),
 					@globalid@ (general object count),
-					@time@ (current time, use '/' to supply custom format, e.g. @time/%FT%T.%fZ@
+					@time@ (current time, use '/' to supply custom format e.g.
+					@time/%FT%T.%fZ@
 				</description>
 			</parameter>
 			<parameter name="configModule" type="string" default="trunk">
@@ -78,8 +84,8 @@
 					are doing.
 
 					The format is: service://user:pwd@host/database.
-					&quot;service&quot; is the name of the database driver which can be
-					queried with &quot;--db-driver-list&quot;.
+					&quot;service&quot; is the name of the database driver which
+					can be queried with &quot;--db-driver-list&quot;.
 
 					Note that this parameter overrides 'database.type' and
 					'database.parameters' if present.
@@ -117,7 +123,8 @@
 				</parameter>
 				<parameter name="components" type="list:string">
 					<description>
-						Limit the logging to the specified list of components, e.g. 'Application, Server'
+						Limit the logging to the specified list of components
+						e.g. 'Application, Server'
 					</description>
 				</parameter>
 				<parameter name="component" type="boolean">
@@ -274,7 +281,8 @@
 				<parameter name="config" type="string">
 					<description>
 					Load the configuration database from a given XML file if set. This
-					overrides the configuration definitions loaded from the database backend.
+					overrides the configuration definitions loaded from the
+					database backend.
 					</description>
 				</parameter>
 			</group>
@@ -282,14 +290,16 @@
 				<group name="whitelist">
 					<parameter name="agencies" type="list:string">
 						<description>
-						Defines a whitelist of agencies that are allowed for processing separated by comma.
+						Defines a whitelist of agencies that are allowed for
+						processing. Separate items by comma.
 						</description>
 					</parameter>
 				</group>
 				<group name="blacklist">
 					<parameter name="agencies" type="list:string">
 						<description>
-						Defines a blacklist of agencies that are not allowed for processing separated by comma.
+						Defines a blacklist of agencies that are not allowed for
+						processing. Separate items by comma.
 						</description>
 					</parameter>
 				</group>
@@ -330,12 +340,13 @@
 				</description>
 				<parameter name="service" type="string" default="slink">
 					<description>
-					Name of the recordstream service implementation.
+					Name of the RecordStream service implementation.
 					</description>
 				</parameter>
 				<parameter name="source" type="string" default="localhost:18000">
 					<description>
-					Service specific parameters like a IP address or a file name to use.
+					Service specific parameters like a IP address or a file name
+					to use.
 					</description>
 				</parameter>
 			</group>
@@ -356,12 +367,14 @@
 			<group name="client">
 				<parameter name="startStopMessage" type="boolean" default="false">
 					<description>
-					Enables sending of an application start- and stop message to the STATUS_GROUP.
+					Enables sending of an application start- and stop message to
+					the STATUS_GROUP.
 					</description>
 				</parameter>
 				<parameter name="autoShutdown" type="boolean" default="false">
 					<description>
-					Enablgs automatic application shutdown triggered by a status message.
+					Enables automatic application shutdown triggered by a status
+					message.
 					</description>
 				</parameter>
 				<parameter name="shutdownMasterModule" type="string">
@@ -390,12 +403,11 @@
 			<group name="ttt">
 				<description>
 				Travel time table related configuration. Travel time tables can
-				be added via plugins. Built-in interfaces are libtau and LOCSAT.
+				be added via plugins. Built-in interfaces are LOCSAT and libtau.
 				For each loaded interface a list of supported models must be
-				provided. The default list of tables for libtau is ak135 and
-				iasp91. LOCSAT's default tables are iasp91 and tab.
+				provided.
 				</description>
-				<struct type="TTT">
+				<struct type="ttt profile">
 					<parameter name="tables" type="list:string">
 						<description>
 						The list of supported model names per interface.
@@ -489,9 +501,11 @@
 
 								source: Only the source/origin must be within the region.
 
-								source-receiver: Both source/origin and receiver/station must be within the region.
+								source-receiver: Both source/origin and
+								receiver/station must be within the region.
 
-								raypath: The entire path between source/origin and receiver/station must be withing the region.
+								raypath: The entire path between source/origin
+								and receiver/station must be withing the region.
 								</description>
 							</parameter>
 							<parameter name="multiplier" type="double" default="1">
@@ -523,7 +537,10 @@
 				</input>
 				<input name="organization" type="string" default="">
 					<text>Organization string</text>
-					<description>This is used mainly by SeedLink and Arclink to identify the server organization. Also, the ArcLink full SEED volumes will have this organization value set.</description>
+					<description>This is used mainly by SeedLink and Arclink to
+					identify the server organization. Also, the ArcLink full
+					SEED volumes will have this organization value set.
+					</description>
 				</input>
 			</group>
 		</setup>
@@ -542,7 +559,8 @@
 						Use alternative configuration file. When this option is used
 						the loading of all stages is disabled. Only the given configuration
 						file is parsed and used. To use another name for the configuration
-						create a symbolic link of the application or copy it, eg scautopick -> scautopick2.
+						create a symbolic link of the application or copy it,
+						e.g. scautopick -> scautopick2.
 					</description>
 				</option>
 
@@ -567,32 +585,39 @@
 
 				<option flag="" long-flag="shutdown-master-module" argument="arg" publicID="generic#shutdown-master-module">
 					<description>
-						Sets the name of the master-module used for auto-shutdown. This
-						is the application name of the module actually started. If symlinks
-						are used, then it is the name of the symlinked application.
+						Sets the name of the master-module used for auto-shutdown.
+						This is the application name of the module actually
+						started. If symlinks are used, then it is the name of
+						the symlinked application.
 					</description>
 				</option>
 
 				<option flag="" long-flag="shutdown-master-username" argument="arg" publicID="generic#shutdown-master-username">
 					<description>
-						Sets the name of the master-username of the messaging used for
-						auto-shutdown. If "shutdown-master-module" is given as well, this
-						parameter is ignored.
+						Sets the name of the master-username of the messaging
+						used for auto-shutdown. If "shutdown-master-module" is
+						given as well, this parameter is ignored.
 					</description>
 				</option>
 			</group>
 
 			<group name="Verbose"  publicID="verbose">
 				<option flag="" long-flag="verbosity" argument="arg" publicID="verbosity#verbosity">
-					<description>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info, 4:debug</description>
+					<description>
+					Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info, 4:debug
+					</description>
 				</option>
 
 				<option flag="v" long-flag="v" argument="" publicID="verbosity#v">
-					<description>Increase verbosity level (may be repeated, eg. -vv)</description>
+					<description>
+					Increase verbosity level (may be repeated, eg. -vv)
+					</description>
 				</option>
 
 				<option flag="q" long-flag="quiet" argument="" publicID="verbosity#quiet">
-					<description>Quiet mode: no logging output</description>
+					<description>
+					Quiet mode: no logging output
+					</description>
 				</option>
 
 				<option flag="" long-flag="print-component" argument="arg" publicID="verbosity#print-component">
@@ -611,11 +636,16 @@
 				</option>
 
 				<option flag="" long-flag="component" argument="arg" publicID="verbosity#component">
-					<description>Limits the logging to a certain component. This option can be given more than once.</description>
+					<description>
+					Limits the logging to a certain component. This option can
+					be given more than once.
+					</description>
 				</option>
 
 				<option flag="s" long-flag="syslog" argument="" publicID="verbosity#syslog">
-					<description>Use syslog logging back end. The output usually goes to /var/lib/messages.</description>
+					<description>
+					Use syslog logging back end. The output usually goes to /var/lib/messages.
+					</description>
 				</option>
 
 				<option flag="l" long-flag="lockfile" argument="arg" publicID="verbosity#lockfile">
@@ -631,7 +661,9 @@
 				</option>
 
 				<option flag="" long-flag="trace" argument="" publicID="verbosity#trace">
-					<description>Trace mode: --verbosity=4 --console=1 --print-component=1 --print-context=1</description>
+					<description>
+					Trace mode: --verbosity=4 --console=1 --print-component=1 --print-context=1
+					</description>
 				</option>
 
 				<option flag="" long-flag="log-file" argument="arg" publicID="verbosity#log-file">
@@ -650,7 +682,9 @@
 				<option flag="" long-flag="content-type" argument="arg" default="binary" publicID="messaging#content-type" param-ref="connection.contentType"/>
 
 				<option flag="" long-flag="start-stop-msg" argument="arg" default="0" publicID="messaging#start-stop-msg">
-					<description>Sets sending of a start- and a stop message.</description>
+					<description>
+					Sets sending of a start- and a stop message.
+					</description>
 				</option>
 			</group>
 
@@ -661,9 +695,10 @@
 
 				<option flag="d" long-flag="database" argument="arg" publicID="database#database">
 					<description>
-						The database connection string, format: service://user:pwd@host/database.
-						&quot;service&quot; is the name of the database driver which can be
-						queried with &quot;--db-driver-list&quot;.
+					The database connection string, format:
+					service://user:pwd@host/database.
+					&quot;service&quot; is the name of the database driver which
+					can be queried with &quot;--db-driver-list&quot;.
 					</description>
 				</option>
 
@@ -672,25 +707,32 @@
 				</option>
 
 				<option flag="" long-flag="inventory-db" argument="arg" publicID="database#inventory-db">
-					<description>Load the inventory from the given database or file, format: [service://]location</description>
+					<description>
+					Load the inventory from the given database or file, format: [service://]location
+					</description>
 				</option>
 
 				<option flag="" long-flag="config-db" argument="arg" publicID="database#config-db">
-					<description>Load the configuration from the given database or file, format: [service://]location</description>
+					<description>
+					Load the configuration from the given database or file,
+					format: [service://]location
+					</description>
 				</option>
 			</group>
 
 			<group name="Records" publicID="records">
 				<option flag="" long-flag="record-driver-list" argument="" default="" publicID="records#record-driver-list">
-					<description>List all supported record stream drivers</description>
+					<description>
+					List all supported record stream drivers
+					</description>
 				</option>
 
 				<option flag="I" long-flag="record-url" argument="arg" default="" publicID="records#record-url">
 					<description>
-						The recordstream source URL, format: [service://]location[#type].
-						&quot;service&quot; is the name of the recordstream driver which can be
-						queried with &quot;--record-driver-list&quot;. If &quot;service&quot;
-						is not given, &quot;file://&quot; is used.
+					The recordstream source URL, format: [service://]location[#type].
+					&quot;service&quot; is the name of the recordstream driver which can be
+					queried with &quot;--record-driver-list&quot;. If &quot;service&quot;
+					is not given, &quot;file://&quot; is used.
 					</description>
 				</option>
 
@@ -720,7 +762,10 @@
 				</option>
 
 				<option flag="N" long-flag="non-interactive" argument="" default="" publicID="gui#non-interactive">
-					<description>Use non-interactive presentation mode. This only works with GUI applications.</description>
+					<description>
+					Use non-interactive presentation mode. This only works with
+					GUI applications.
+					</description>
 				</option>
 			</group>
 		</command-line>
@@ -731,20 +776,20 @@
 			Configures global parameters of a station for modules.
 		</description>
 		<configuration>
-			<parameter name="detecStream" type="string">
-				<description>
-					Defines the channel code of the preferred stream used by
-					e.g. scautopick and scrttv. If no component code is given,
-					the vertical component will be fetched from inventory.
-					For that the channel orientation (azimuth, dip) will be used.
-					If that approach fails, 'Z' will be appended and used as
-					fallback.
-				</description>
-			</parameter>
 			<parameter name="detecLocid" type="string">
 				<description>
-					Defines the location code of the preferred stream used
-					eg by scautopick and scrttv.
+					The sensor location code of the preferred stream used
+					e.g. by scautopick and scrttv.
+				</description>
+			</parameter>
+			<parameter name="detecStream" type="string">
+				<description>
+					The channel code of the preferred stream used by
+					e.g. scautopick and scrttv. If no component code is given,
+					the vertical component will be fetched from inventory
+					considering the channel orientation (azimuth, dip).
+					If that approach fails, 'Z' will be appended and used as
+					fallback. Do not use regular expressions!
 				</description>
 			</parameter>
 			<group name="amplitudes">
@@ -803,7 +848,8 @@
 						<description>
 						After data are converted in to the frequency domain that
 						minimum frequency defines the end of the left-side cosine taper for
-						the frequency spectrum. The taper applies from 0Hz to {minFreq}Hz.
+						the frequency spectrum. The taper applies from 0 Hz to
+						{minFreq} Hz.
 						A value of 0 or lower disables that taper.
 						</description>
 					</parameter>
@@ -811,7 +857,8 @@
 						<description>
 						After data are converted in to the frequency domain that
 						maximum frequency defines the start of the right-side cosine taper for
-						the frequency spectrum. The taper applies from {maxFreq}Hz to {fNyquist}Hz.
+						the frequency spectrum. The taper applies from
+						{maxFreq} Hz to {fNyquist} Hz.
 						A value of 0 or lower disables that taper.
 						</description>
 					</parameter>
@@ -823,7 +870,7 @@
 						Gutenberg (1935). The newer version by Uhrhammer and
 						Collins (1990) is part of the IASPEI Magnitude
 						Working Group recommendations of 2011 September 9. This
-						version uses gain=2800, T0=0.8, h=0.8.
+						version uses gain=2800, T0=0.8 s, h=0.8.
 					</description>
 					<parameter name="gain" type="double" default="2800">
 						<description>
@@ -986,16 +1033,20 @@
 						<parameter name="minFreq" default="0.00833333" unit="Hz">
 							<description>
 							After data are converted in to the frequency domain that
-							minimum frequency defines the end of the left-side cosine taper for
-							the frequency spectrum. The taper applies from 0Hz to {minFreq}Hz.
+							minimum frequency defines the end of the left-side
+							cosine taper for
+							the frequency spectrum. The taper applies from 0 Hz
+							to {minFreq} Hz.
 							A value of 0 or lower disables that taper.
 							</description>
 						</parameter>
 						<parameter name="maxFreq" default="0" unit="Hz">
 							<description>
 							After data are converted in to the frequency domain that
-							maximum frequency defines the start of the right-side cosine taper for
-							the frequency spectrum. The taper applies from {maxFreq}Hz to {fNyquist}Hz.
+							maximum frequency defines the start of the right-side
+							cosine taper for
+							the frequency spectrum. The taper applies from
+							{maxFreq} Hz to {fNyquist} Hz.
 							A value of 0 or lower disables that taper.
 							</description>
 						</parameter>
@@ -1041,15 +1092,56 @@
 			<group name="picker">
 				<description>
 				Parameters controlling the second-stage picker for re-picking P
-				phases after inital trigger.
+				phases after an initial detection.
 				</description>
+				<group name="AIC">
+					<description>
+					AIC picker is an implementation using the simple non-AR
+					algorithm of Maeda (1985),
+					see paper of Zhang et al. (2003) in BSSA. The picker
+					interface name to be used in configuration files, e.g. of
+					scautopick, is &quot;AIC&quot;.
+					</description>
+					<parameter name="noiseBegin" type="double" default="0" unit="s">
+						<description>
+						Overrides the relative data acquisition time (relative to the triggering
+						pick). This adds a margin to the actual processing and is useful
+						to initialize the filter (e.g. bandpass). The data is not used
+						at all until signalBegin is reached. The data time window start
+						is the minimum of noiseBegin and signalBegin.
+						</description>
+					</parameter>
+					<parameter name="signalBegin" type="double" default="-30" unit="s">
+						<description>
+						Overrides the default time (relative to the trigger
+						time) of the begin of the signal window used to pick.
+						</description>
+					</parameter>
+					<parameter name="signalEnd" type="double" default="10" unit="s">
+						<description>
+						Overrides the default time (relative to the trigger
+						time) of the begin of the signal window used to pick.
+						</description>
+					</parameter>
+					<parameter name="filter" type="string" >
+						<description>
+						Overrides the default filter which is "raw". The typical
+						filter grammar can be used.
+						</description>
+					</parameter>
+					<parameter name="minSNR" type="double" default="3">
+						<description>
+						Mininum SNR as returned from AIC for accepting picks.
+						</description>
+					</parameter>
+				</group>
 				<group name="BK">
 					<description>
 					Bkpicker is an implementation of the Baer/Kradolfer picker adapted
 					to SeisComP. It was created by converting Manfred Baers from Fortran
 					to C++ and inserting it as a replacement for the picker algorithm.
-					The picker interface name to be used in configuration files is
-					&quot;BK&quot;.
+					The picker interface name to be used in configuration files,
+					e.g. of scautopick,is &quot;BK&quot;.
 					</description>
 					<parameter name="noiseBegin" type="double" default="0" unit="s">
 						<description>
@@ -1093,44 +1185,6 @@
 						<description>Threshold for updating sigma  (c.f. paper), default 20</description>
 					</parameter>
 				</group>
-				<group name="AIC">
-					<description>
-					AIC picker is an implementation using the simple non-AR algorithm of Maeda (1985),
-					see paper of Zhang et al. (2003) in BSSA. The picker interface name to be used in configuration files is
-					&quot;AIC&quot;.
-					</description>
-					<parameter name="noiseBegin" type="double" default="0" unit="s">
-						<description>
-						Overrides the relative data acquisition time (relative to the triggering
-						pick). This adds a margin to the actual processing and is useful
-						to initialize the filter (e.g. bandpass). The data is not used
-						at all until signalBegin is reached. The data time window start
-						is the minimum of noiseBegin and signalBegin.
-						</description>
-					</parameter>
-					<parameter name="signalBegin" type="double" default="-30" unit="s">
-						<description>
-						Overrides the default time (relative to the trigger
-						time) of the begin of the signal window used to pick.
-						</description>
-					</parameter>
-					<parameter name="signalEnd" type="double" default="10" unit="s">
-						<description>
-						Overrides the default time (relative to the trigger
-						time) of the begin of the signal window used to pick.
-						</description>
-					</parameter>
-					<parameter name="filter" type="string" >
-						<description>
-						Overrides the default filter which is "raw". The typical filter grammar can be used.
-						</description>
-					</parameter>
-					<parameter name="minSNR" type="double" default="3">
-						<description>
-						Defines the mininum SNR.
-						</description>
-					</parameter>
-				</group>
 			</group>
 			<group name="spicker">
 				<description>
@@ -1139,8 +1193,8 @@
 				<group name="L2">
 					<description>
 					L2 is an algorithm to pick S-phases based on existing P-phases. The
-					picker interface name to be used in configuration files is
-					&quot;S-L2&quot;.
+					spicker interface name to be used in configuration, e.g. of 
+					scautopick, is &quot;S-L2&quot;.
 					</description>
 					<parameter name="noiseBegin" type="double" default="-10" unit="s">
 						<description>
@@ -1188,12 +1242,13 @@
 					</parameter>
 					<parameter name="marginAIC" type="double" default="5" unit="s">
 						<description>
-						The AIC time window around the detection used to pick. If 0, AIC is not used.
+						The AIC time window around the detection used to pick.
+						If 0, AIC is not used.
 						</description>
 					</parameter>
 					<parameter name="minSNR" type="double" default="15">
 						<description>
-						Defines the mininum SNR as returned from AIC.
+						Minimum SNR as returned from AIC for accepting picks.
 						</description>
 					</parameter>
 				</group>
