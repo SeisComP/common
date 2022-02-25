@@ -8,7 +8,6 @@ import tempfile
 from distutils.dir_util import copy_tree
 from seiscomp import config, kernel, system
 
-#------------------------------------------------------------------------------
 # Python version depended string conversion
 if sys.version_info[0] < 3:
     py3bstr = str
@@ -17,6 +16,7 @@ if sys.version_info[0] < 3:
 else:
     py3bstr = lambda s: s.encode('utf-8')
     py3ustr = lambda s: s.decode('utf-8', 'replace')
+
 
 class DBParams:
     def __init__(self):
@@ -30,11 +30,13 @@ class DBParams:
         self.drop = False
         self.create = False
 
+
 def check_output(cmd):
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, shell=True)
     out = proc.communicate()
     return [py3ustr(out[0]), py3ustr(out[1]), proc.returncode]
+
 
 def addEntry(cfg, param, item):
     # Adds an item to a parameter list
@@ -43,7 +45,7 @@ def addEntry(cfg, param, item):
     except ValueError:
         items = config.VectorStr()
 
-    if not item in items:
+    if item not in items:
         items.push_back(item)
     cfg.setStrings(param, items)
 
@@ -93,7 +95,8 @@ class Module(kernel.CoreModule):
 
     def start(self):
         if not self.messaging:
-            print("[kernel] %s is disabled by config" % self.name)
+            print("[kernel] {} is disabled by config".format(self.name),
+                  file=sys.stderr)
             return 0
 
         appConfig = system.Environment.Instance().appConfigFileName(self.name)
@@ -120,7 +123,8 @@ class Module(kernel.CoreModule):
 
     def check(self):
         if not self.messaging:
-            print("[kernel] %s is disabled by config" % self.name)
+            print("[kernel] {} is disabled by config".format(self.name),
+                  file=sys.stderr)
             return 0
 
         return kernel.CoreModule.check(self)
@@ -132,58 +136,60 @@ class Module(kernel.CoreModule):
 
     def readDBParams(self, params, setup_config):
         try:
-            params.db = setup_config.getString(self.name + ".database.enable.backend.db")
+            params.db = setup_config.getString(self.name
+                                               + ".database.enable.backend.db")
         except ValueError as err:
             print(err)
-            sys.stderr.write("  - database name not set, ignoring setup\n")
+            print("  - database name not set, ignoring setup",
+                  file=sys.stderr)
             return False
 
         try:
             params.rwhost = setup_config.getString(
                 self.name + ".database.enable.backend.rwhost")
         except ValueError:
-            sys.stderr.write(
-                "  - database host (rw) not set, ignoring setup\n")
+            print("  - database host (rw) not set, ignoring setup",
+                  file=sys.stderr)
             return False
 
         try:
             params.rwuser = setup_config.getString(
                 self.name + ".database.enable.backend.rwuser")
         except ValueError:
-            sys.stderr.write(
-                "  - database user (rw) not set, ignoring setup\n")
+            print("  - database user (rw) not set, ignoring setup",
+                  file=sys.stderr)
             return False
 
         try:
             params.rwpwd = setup_config.getString(
                 self.name + ".database.enable.backend.rwpwd")
         except ValueError:
-            sys.stderr.write(
-                "  - database password (rw) not set, ignoring setup\n")
+            print("  - database password (rw) not set, ignoring setup",
+                  file=sys.stderr)
             return False
 
         try:
             params.rohost = setup_config.getString(
                 self.name + ".database.enable.backend.rohost")
         except ValueError:
-            sys.stderr.write(
-                "  - database host (ro) not set, ignoring setup\n")
+            print("  - database host (ro) not set, ignoring setup",
+                  file=sys.stderr)
             return False
 
         try:
             params.rouser = setup_config.getString(
                 self.name + ".database.enable.backend.rouser")
         except ValueError:
-            sys.stderr.write(
-                "  - database user (ro) not set, ignoring setup\n")
+            print("  - database user (ro) not set, ignoring setup",
+                  file=sys.stderr)
             return False
 
         try:
             params.ropwd = setup_config.getString(
                 self.name + ".database.enable.backend.ropwd")
         except ValueError:
-            sys.stderr.write(
-                "  - database password (ro) not set, ignoring setup\n")
+            print("  - database password (ro) not set, ignoring setup",
+                  file=sys.stderr)
             return False
 
         try:
@@ -201,16 +207,16 @@ class Module(kernel.CoreModule):
         return True
 
     def setup(self, setup_config):
-        cfgfile = os.path.join(self.env.SEISCOMP_ROOT,
-                               "etc", self.name + ".cfg")
         schemapath = os.path.join(self.env.SEISCOMP_ROOT, "share", "db")
 
         cfg = config.Config()
-        cfg.readConfig(cfgfile)
+        system.Environment.Instance().initConfig(cfg, self.name)
+
         try:
             dbenable = setup_config.getBool(self.name + ".database.enable")
         except ValueError:
-            sys.stderr.write("  - database.enable not set, ignoring setup\n")
+            print("  - database.enable not set, ignoring setup",
+                  file=sys.stderr)
             return 0
 
         dbBackend = None
@@ -227,8 +233,8 @@ class Module(kernel.CoreModule):
                 dbBackend = setup_config.getString(
                     self.name + ".database.enable.backend")
             except ValueError:
-                sys.stderr.write(
-                    "  - database backend not set, ignoring setup\n")
+                print("  - database backend not set, ignoring setup",
+                      file=sys.stderr)
                 return 1
 
             if dbBackend == "mysql/mariadb":
@@ -271,7 +277,8 @@ class Module(kernel.CoreModule):
                     ]
 
                     binary = os.path.join(schemapath, "pkexec_wrapper.sh")
-                    print("+ Running MySQL database setup script {}".format(dbScript))
+                    print("+ Running MySQL database setup script {}"
+                          .format(dbScript), file=sys.stderr)
                     if runAsSuperUser:
                         cmd = "{} seiscomp-python {} {}".format(binary, dbScript, " ".join(options))
                     else:
@@ -292,10 +299,12 @@ class Module(kernel.CoreModule):
 
                 cfg.setString("queues.production.processors.messages.dbstore.read",
                               "{}:{}@{}/{}"
-                              .format(params.rouser, params.ropwd, params.rohost, params.db))
+                              .format(params.rouser, params.ropwd,
+                                      params.rohost, params.db))
                 cfg.setString("queues.production.processors.messages.dbstore.write",
                               "{}:{}@{}/{}"
-                              .format(params.rwuser, params.rwpwd, params.rwhost, params.db))
+                              .format(params.rwuser, params.rwpwd,
+                                      params.rwhost, params.db))
 
                 if params.create:
                     try:
@@ -303,8 +312,8 @@ class Module(kernel.CoreModule):
                         os.chmod(tmpPath, 0o755)
                         try:
                             copy_tree(schemapath, tmpPath)
-                            filename = os.path.join(self.env.SEISCOMP_ROOT, "bin",
-                                                    "seiscomp-python")
+                            filename = os.path.join(self.env.SEISCOMP_ROOT,
+                                                    "bin", "seiscomp-python")
                             shutil.copy(filename, tmpPath)
                         except Exception as err:
                             print(err)
@@ -323,14 +332,16 @@ class Module(kernel.CoreModule):
                         ]
 
                         binary = os.path.join(schemapath, "pkexec_wrapper.sh")
-                        print("+ Running PostgreSQL database setup script {}".format(dbScript))
+                        print("+ Running PostgreSQL database setup script {}"
+                              .format(dbScript), file=sys.stderr)
                         cmd = "{} su postgres -c \"{}/seiscomp-python {} {}\"" \
                             .format(binary, tmpPath, dbScript, " ".join(options))
 
                         p = subprocess.Popen(cmd, shell=True)
                         ret = p.wait()
                         if ret != 0:
-                            print("  - Failed to setup database", file=sys.stderr)
+                            print("  - Failed to setup database",
+                                  file=sys.stderr)
                             return 1
                     finally:
                         try:
@@ -353,11 +364,12 @@ class Module(kernel.CoreModule):
                         self.name + ".database.enable.backend.filename")
                     filename = system.Environment.Instance().absolutePath(filename)
                 except BaseException:
-                    filename = os.path.join(self.env.SEISCOMP_ROOT, "var", "lib", "seiscomp.db")
+                    filename = os.path.join(self.env.SEISCOMP_ROOT, "var",
+                                            "lib", "seiscomp.db")
 
                 if not filename:
-                    sys.stderr.write(
-                        "  - location not set, ignoring setup\n")
+                    print("  - location not set, ignoring setup",
+                          file=sys.stderr)
                     return 1
 
                 try:
@@ -372,7 +384,8 @@ class Module(kernel.CoreModule):
                 ]
 
                 if create:
-                    print("+ Running SQLite3 database setup script {}".format(dbScript))
+                    print("+ Running SQLite3 database setup script {}"
+                          .format(dbScript), file=sys.stderr)
                     cmd = "seiscomp-python {} {} {}".format(dbScript, " ".join(options), override)
                     p = subprocess.Popen(cmd, shell=True)
                     ret = p.wait()
@@ -388,7 +401,8 @@ class Module(kernel.CoreModule):
             # Configure db backend for scmaster
             cfg.setString("core.plugins", "db" + dbBackend)
             cfg.setString(
-                "queues.production.processors.messages.dbstore.driver", dbBackend)
+                "queues.production.processors.messages.dbstore.driver",
+                dbBackend)
 
             addEntry(cfg, "queues.production.plugins", "dbstore")
             addEntry(cfg, "queues.production.processors.messages", "dbstore")
@@ -407,17 +421,8 @@ class Module(kernel.CoreModule):
         return 0
 
     def updateConfig(self):
-        defaultcfgfile = os.path.join(
-            self.env.SEISCOMP_ROOT,
-            "etc", "defaults", self.name + ".cfg")
-
-        cfgfile = os.path.join(
-            self.env.SEISCOMP_ROOT,
-            "etc", self.name + ".cfg")
-
         cfg = config.Config()
-        cfg.readConfig(defaultcfgfile)
-        cfg.readConfig(cfgfile)
+        system.Environment.Instance().initConfig(cfg, self.name)
 
         try:
             queues = cfg.getStrings("queues")
@@ -427,44 +432,44 @@ class Module(kernel.CoreModule):
         # iterate through all queues and check DB schema version if message
         # processor dbstore is present
         for queue in queues:
+            print("INFO: Checking queue '{}'".format(queue), file=sys.stderr)
             try:
-                msgProcs = cfg.getStrings("queues.{}.processors.messages" \
+                msgProcs = cfg.getStrings("queues.{}.processors.messages"
                                           .format(queue))
                 if "dbstore" in msgProcs and not self.checkDBStore(cfg, queue):
                     return 1
             except ValueError:
-                pass
+                print("  * ignoring - no database backend configured",
+                      file=sys.stderr)
 
         return 0
 
     def checkDBStore(self, cfg, queue):
         prefix = "queues.{}.processors.messages.dbstore".format(queue)
 
-        print("INFO: checking DB schema version of queue: {}".format(queue),
-              file=sys.stderr)
+        print("  * checking DB schema version", file=sys.stderr)
 
         try:
             backend = cfg.getString("{}.driver".format(prefix))
         except ValueError:
-            print("WARNING: dbstore message processor activated but no " \
-                  "backend configured", file=sys.stderr)
+            print("WARNING: dbstore message processor activated but no "
+                  "database backend configured", file=sys.stderr)
             return True
 
         if backend not in ("mysql", "postgresql"):
-            print("WARNING: Only MySQL and PostgreSQL migrations are " \
-                  "supported right now. Please check and upgrade the " \
+            print("WARNING: Only MySQL and PostgreSQL migrations are "
+                  "supported right now. Please check and upgrade the "
                   "database schema version yourselves.", file=sys.stderr)
             return True
 
-        sys.stderr.write("  * check database write access ... ")
-        sys.stderr.flush()
+        print("  * check database write access ... ", end='', file=sys.stderr)
 
         # 1. Parse connection
         try:
             params = cfg.getString("{}.write".format(prefix))
         except ValueError:
             print("failed", file=sys.stderr)
-            print("WARNING: dbstore message processor activated but no " \
+            print("WARNING: dbstore message processor activated but no "
                   "write connection configured", file=sys.stderr)
             return True
 
@@ -486,7 +491,7 @@ class Module(kernel.CoreModule):
                 pwd = tmp[1]
             else:
                 print("failed", file=sys.stderr)
-                print("WARNING: Invalid scmaster.cfg:{}.write, cannot check " \
+                print("WARNING: Invalid scmaster.cfg:{}.write, cannot check "
                       "schema version".format(prefix), file=sys.stderr)
                 return True
 
@@ -515,14 +520,16 @@ class Module(kernel.CoreModule):
         out = check_output(cmd)
         if out[2] != 0:
             print("failed", file=sys.stderr)
-            print("WARNING: %s returned with error:" % backend, file=sys.stderr)
+            print("WARNING: {} returned with error:".format(backend),
+                  file=sys.stderr)
             print(out[1].strip(), file=sys.stderr)
-            return True
+            return False
 
-        print("OK", file=sys.stderr)
+        print("passed", file=sys.stderr)
 
         version = out[0].strip()
-        print("  * database schema version is %s" % version, file=sys.stderr)
+        print("  * database schema version is {}".format(version),
+              file=sys.stderr)
 
         try:
             vmaj, vmin = [int(t) for t in version.split('.')]
@@ -533,7 +540,7 @@ class Module(kernel.CoreModule):
 
         strictVersionMatch = True
         try:
-            strictVersionMatch = cfg.getBool("{}.strictVersionMatch" \
+            strictVersionMatch = cfg.getBool("{}.strictVersionMatch"
                                              .format(prefix))
         except ValueError:
             pass
@@ -586,13 +593,24 @@ class Module(kernel.CoreModule):
             print("  * no migrations found", file=sys.stderr)
             return True
 
-        print("  * migration to the current version is required. apply the " \
+        print("  * migration to the current version is required. Apply the "
               "following", file=sys.stderr)
-        print("    scripts in exactly the given order:", file=sys.stderr)
+        print("    database migration scripts in exactly the given order:",
+              file=sys.stderr)
         while (vmaj, vmin) in migration_paths:
             (vtomaj, vtomin) = migration_paths[(vmaj, vmin)]
             fname = "%d_%d_to_%d_%d.sql" % (vmaj, vmin, vtomaj, vtomin)
-            print("    * %s" % os.path.join(migrations, fname), file=sys.stderr)
+            if backend == "mysql":
+                print("    * mysql -u {} -h {} -p {} < {}"
+                      .format(user, host, db, os.path.join(migrations, fname)),
+                      file=sys.stderr)
+            elif backend == "postgresql":
+                print("    * psql -U {} -h {} -d {} -W -f {}"
+                      .format(user, host, db, os.path.join(migrations, fname)),
+                      file=sys.stderr)
+            else:
+                print("    * {}".format(os.path.join(migrations, fname)),
+                      file=sys.stderr)
             (vmaj, vmin) = (vtomaj, vtomin)
 
         return False
