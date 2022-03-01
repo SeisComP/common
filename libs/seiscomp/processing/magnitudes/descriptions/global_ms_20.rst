@@ -1,3 +1,7 @@
+Ms_20 is the surface wave magnitude measured on the vertical component at around
+20 s period	in accordance with the IASPEI standards.
+
+
 Amplitude
 ---------
 
@@ -9,7 +13,7 @@ Station Magnitude
 -----------------
 
 Ms_20 is the surface-wave magnitude at 20 s period based on the recommendations
-by the IASPEI magnitude working group issued on 27 March, 2013 [#iaspei2013]_.
+by the IASPEI magnitude working group issued on 27 March, 2013 (:cite:t:`iaspei-2013`).
 
 .. math::
 
@@ -23,7 +27,7 @@ seismogram as the maximum absolute trace amplitude of a surface wave at periods 
 
 T: period of the surface wave in seconds.
 
-The term *Ms_20* is chosen in accordance with the IASPEI standard as of 2013 [#iaspei2013]_.
+The term *Ms_20* is chosen in accordance with the IASPEI standard as of 2013 (:cite:t:`iaspei-2013`).
 Alternatively, the term *Ms(20)* may be used.
 
 * Amplitude unit in |scname|: **nanometer** (nm)
@@ -49,15 +53,3 @@ Configuration
 Adjust the configurable parameters in global bindings in the Ms_20 section. Add
 Ms_20 to the list of computed amplitudes and magnitudes in the configuration of
 :ref:`scamp` and :ref:`scmag` and in :ref:`scesv` or :ref:`scolv` for visibility.
-
-
-References
-==========
-
-.. target-notes::
-
-.. [#iaspei2013] IASPEI  magnitude working group (2013).
-   SUMMARY OF MAGNITUDE WORKING GROUP RECOMMENDATIONS ON
-   STANDARD PROCEDURES FOR DETERMINING EARTHQUAKE MAGNITUDES FROM DIGITAL DATA,
-   `Link to PDF document
-   <http://www.iaspei.org/commissions/commission-on-seismological-observation-and-interpretation/Summary_WG_recommendations_20130327.pdf>`_

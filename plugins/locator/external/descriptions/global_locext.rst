@@ -2,10 +2,12 @@ The ExternalLocator implements a wrapper for scripts which do the actual locatio
 process. The input and output are represented as XML and communicated via the
 input/output channels of the called process: stdin and stdout.
 
+
 Plugin
 ======
 
 To enable the ExternalLocator the plugin ``locext`` must be loaded.
+
 
 Commandline parameters
 ======================
@@ -20,6 +22,7 @@ Parameter                  Description
 --ignore-initial-location  Whether to ignore the initial origin location or not
 --fixed-depth=X            The depth in km to be fixed if enabled
 =========================  ====================================================
+
 
 Input
 =====
@@ -50,6 +53,7 @@ Example:
        </origin>
      </EventParameters>
    </seiscomp>
+
 
 Output
 ======

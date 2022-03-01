@@ -1,3 +1,6 @@
+ML is the standard local (Richter) magnitude originally designed for
+Southern California by :cite:t:`richter-1935`.
+
 Amplitude
 ---------
 
@@ -19,7 +22,7 @@ The individual station ML is calculated using the following formula:
 
 A is the measured ML Wood-Anderson amplitude in millimeters. The second term
 is the empirical calibration function, which in turn is a function
-of the epicentral distance (see Richter, 1935). This calibration
+of the epicentral distance (:cite:t:`richter-1935`). This calibration
 function and distance range can be configured globally or per station using global
 bindings or the global module configuration variable
 module.trunk.global.magnitudes.ML.logA0 in :file:`global.cfg`, e.g. ::
@@ -29,7 +32,7 @@ module.trunk.global.magnitudes.ML.logA0 in :file:`global.cfg`, e.g. ::
 
 The *logA0* configuration string consists of an arbitrary number of
 distance-value pairs separated by semicolons. The distance is in km
-and the value corresponds to the *log10(A0)* term above.
+and the second value corresponds to the *log10(A0)* term above.
 
 Within each interval the values are computed by linear
 interpolation. E.g. for the above default specification, at a
