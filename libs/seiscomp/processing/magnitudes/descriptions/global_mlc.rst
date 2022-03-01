@@ -1,3 +1,7 @@
+MLc is the custom magnitude for local events provided by the mlc plugin.
+The implementation is based on specifications by Hessian Agency for Nature
+Conservation, Environment and Geology, Hessian Earthquake Service.
+
 The MLc magnitude is very similar to the original :ref:`ML<global_ml>`,
 except that by default
 
@@ -126,14 +130,14 @@ The flexibility of the amplitude and magnitude processing allows to apply MLc
 in various use cases, e.g.
 
 * **Default:** Pre-filtered and gain-corrected amplitudes, Wood-Anderson corrected
-  and measured in mm for Southwestern Germany, Stange, 2006:
+  and measured in mm for Southwestern Germany, :cite:t:`stange-2006`:
 
   .. math::
 
      MLc = \log_{10}(A) + 1.11 * \log_{10}(r) + 0.00095 * r + 0.69 + c_0
 
 * Wood-Anderson-corrected displacement amplitudes measured in mm for
-  Southern California, Hutton and Boore, 1987:
+  Southern California, :cite:t:`hutton-1987`:
 
   .. math::
 
@@ -141,7 +145,7 @@ in various use cases, e.g.
 
 * Pre-filtered velocity amplitudes in units of mym/s (requiring to set
   :confval:`amplitudes.MLc.amplitudeScale`), no Wood-Anderson correction,
-  for West Bohemia, e.g. Hiemer and Roessler, 2012:
+  for West Bohemia, e.g. :cite:t:`hiemer-2012`:
 
   .. math::
 
@@ -153,7 +157,7 @@ in various use cases, e.g.
 
    MLc magnitudes for measured amplitude of 1 mm with default magnitude
    calibration (*MLc_s*, Stange, 2006) and calibration values for Southern
-   California (*MLc_hb*, Hutton and Boore, 1987).
+   California (*MLc_hb*, :cite:t:`hutton-1987`).
 
 
 Configuration
@@ -178,21 +182,10 @@ Configuration
 #. Add MLc to the list of magnitudes preferred by :ref:`scevent`
    (:confval:`eventAssociation.magTypes` in :file:`scevent.cfg`) in order to let
    MLc become the preferred magnitude.
-#. Set defaults / visibility of MLc in :term:`GUI` modules, e.g. :ref:`scolv`
+#. Set defaults/visibility of MLc in :term:`GUI` modules, e.g. :ref:`scolv`
    or :ref:`scesv`.
 
 .. note ::
 
-   All default values for bindings configuration values are from Stange, 2006.
-
-
-References
-==========
-
-* S. Stange (2006). ML determination for local and regional events using a sparse
-  network in Southwestern Germany. J. Seismology, 10:247–257. DOI: 10.1007/s10950-006-9010-6
-* Hutton, L.K. and D.M. Boore (1987). The ML scale in southern California,
-  Bull. Seismol. Soc. Am. 77, 2074–2094.
-* S. Hiemer and D. Roessler (2012). Monitoring the West Bohemian earthquake swarm
-  in 2008/2009 by a temporary small-aperture seismic array. J. Seismology, 16:169–182,
-  J Seismol (2012) 16:169–182. DOI: 10.1007/s10950-011-9256-5
+   All default values for bindings configuration parameters are from
+   :cite:t:`stange-2006`.

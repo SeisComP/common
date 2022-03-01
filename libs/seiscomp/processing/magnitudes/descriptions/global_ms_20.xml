@@ -3,17 +3,20 @@
 	<plugin name="Ms_20">
 		<extends>global</extends>
 		<description>
-		Ms_20 is the surface wave magnitude measured on the vertical component at around 20 s period
-		in accordance with the IASPEI standards.
+		Surface wave magnitude measured at around 20 s
 		</description>
 	</plugin>
 	<binding name="Ms_20" module="global">
 		<description>
-		Ms_20 is the surface wave magnitude measured on the vertical component at around 20 s period
+		The surface wave magnitude measured on the vertical component
+		at around 20 s period.
 		</description>
 		<configuration>
 			<group name="magnitudes">
 				<group name="Ms_20">
+					<description>
+					Parameters for computing Ms_20 magnitudes from Ms_20 amplitudes.
+					</description>
 					<parameter name="lowerPeriod" type="double" unit="s" default="18">
 						<description>
 						Lower period limit of the signal for computing Ms_20.

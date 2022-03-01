@@ -3,11 +3,12 @@
 	<plugin name="MLc">
 		<extends>global</extends>
 		<description>
-		Custom magnitude for local events provided by the mlc plugin.
-		The implementation is based on specifications by Hessian Agency for Nature
-		Conservation, Environment and Geology, Hessian Earthquake Service.
+		Custom magnitude for local events measured on horizontal components
 		</description>
 		<configuration>
+			<description>
+			Custom magnitude for local events measured on horizontal components
+			</description>
 			<group name="magnitudes">
 				<group name="MLc">
 					<description>
@@ -91,7 +92,7 @@
 	</plugin>
 	<binding name="MLc" module="global">
 		<description>
-		Custom magnitude for local events provided by the mlc plugin.
+		Custom magnitude for local events measured on horizontal components
 		</description>
 		<configuration>
 			<group name="amplitudes">

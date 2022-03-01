@@ -3,7 +3,7 @@
 	<plugin name="LOCSAT">
 		<extends>global</extends>
 		<description>
-			LOCSAT locator in SeisComP for computing source time and hypocenter
+			Locator in SeisComP for computing source time and hypocenter
 			coordinates from phase picks.
 		</description>
 		<configuration>

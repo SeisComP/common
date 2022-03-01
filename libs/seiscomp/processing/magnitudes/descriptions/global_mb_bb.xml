@@ -3,14 +3,19 @@
 	<plugin name="mB_BB">
 		<extends>global</extends>
 		<description>
-		mB or mB_BB is a body wave magnitude like mb but with amplitudes measured in a broad
-		frequency range and in longer time windows.
+		Body wave magnitude  at teleseismic distances similar to mb
 		</description>
 	</plugin>
 	<binding name="mB_BB" module="global">
+		<description>
+		The body wave magnitude at teleseismic distances similar to mb.
+		</description>
 		<configuration>
 			<group name="magnitudes">
 				<group name="mB">
+					<description>
+					Parameters for computing mB magnitudes from mB amplitudes.
+					</description>
 					<parameter name="minDist" type="double" unit="deg" default="5">
 						<description>
 						Minimum epicentral distance for computing mB. Note: According

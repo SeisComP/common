@@ -1,5 +1,12 @@
+LOCSAT is a locator in SeisComP for computing source time and hypocenter
+coordinates from phase picks considering:
+
+* Pick time,
+* Backazimuth,
+* Slowness.
+
 The LOCSAT locator interface implements a wrapper for the LocSAT locator
-by S.R. Bratt and W. Nagy [#Nagy]_ (according to the README file shipped with the
+by :cite:t:`bratt-1991` (according to the README file shipped with the
 LocSAT distribution) referred to as **LOCSAT** in |scname|.
 
 
@@ -42,8 +49,8 @@ the code:
 However the |scname| wrapper adds this feature. It allows to define a
 :file:`.stacor` file which defines corrections of observation times
 in seconds. A correction is **subtracted** (not added) from
-the observation time to be compatible with the NonLinLoc station correction
-definitions [#NLL]_.
+the observation time to be compatible with the NonLinLoc :cite:p:`nonlinloc`
+station correction definitions.
 
 Each LOCSAT profile (travel time table) can have an associated station
 correction file. To use station corrections for the iasp91 tables, the file
@@ -69,13 +76,3 @@ with
 
    The fourth column (numReadings) is ignored and just provided for compatibility
    reasons with :ref:`NonLinLoc <global_nonlinloc>`.
-
-
-References
-==========
-
-.. target-notes::
-
-.. [#Nagy] S.R. Bratt and W. Nagy 1991). The LocSAT Program, Science Applications
-   International Corporation (SAIC), San Diego.
-.. [#NLL] NonLinLoc station corrections: http://alomax.free.fr/nlloc/soft3.03/control.html#_NLLoc_locdelay_

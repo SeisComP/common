@@ -1,3 +1,6 @@
+MLv is the Richter (1935) magnitude measured on the vertical component.
+
+
 Amplitude
 ---------
 

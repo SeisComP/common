@@ -1,3 +1,4 @@
+mb is the standard body-wave magnitude.
 Compare also with the :ref:`mB magnitude <global_mb_bb>`.
 
 
@@ -5,7 +6,9 @@ Amplitude
 ---------
 
 mb is defined on the amplitude of the first few cycles of the P-wave,
-typically a time window of 20 s - 30 s. Only the first few cycles are used to minimize the effects of radiation pattern and depth phases, which result in complicate waveform signatures.
+typically a time window of 20 s - 30 s. Only the first few cycles are used to
+minimize the effects of radiation pattern and depth phases, which result in
+complicate waveform signatures.
 In |scname| mb amplitudes are measured on vertical-component displacement seismograms
 in a 30 s time window after simulation of a :term:`WWSSN_SP` short-period
 seismometer. Amplitudes are used from stations with epicentral distances between
@@ -32,7 +35,8 @@ have a distinct direct P-wave phase. A correction term for the distance has to
 be determined empirically, which is quite complicate for distances smaller than 20°.
 This reflects the complexity of the body waves that traverse only in the upper
 mantle. mb saturates at about magnitude 5.5 to 6.0 because the maximum amplitudes of larger
-earthquakes occur at lower frequencies than the frequency range between 0.7 Hz - 2 Hz used for the magnitude calculation.
+earthquakes occur at lower frequencies than the frequency range between 0.7 Hz - 2 Hz
+used for the magnitude calculation.
 
 * Amplitude unit in |scname|: **nanometers** (nm)
 * Time window: 30 s
@@ -42,7 +46,7 @@ earthquakes occur at lower frequencies than the frequency range between 0.7 Hz -
 
 .. note::
 
-   In 2013 the IASPEI commission [#iaspei2013]_ recommended a minimum distance of
+   In 2013 the IASPEI commission (:cite:t:`iaspei-2013`) recommended a minimum distance of
    20 deg. However, :ref:`scautoloc` requires mb amplitudes by default for
    considering a pick.
    For maintaining consistency, 5 deg is therefore kept as the default
@@ -62,17 +66,7 @@ Configuration
 
 Adjust the configurable parameters in global bindings in the mB section or use
 :file:`global.cfg`
-as :ref:`global_mlv`. Add mb to the list of computed amplitudes and magnitudes in the configuration of
-:ref:`scamp` and :ref:`scmag` and in :ref:`scesv` or :ref:`scolv` for visibility.
-
-
-References
-==========
-
-.. target-notes::
-
-.. [#iaspei2013] IASPEI  magnitude working group (2013).
-   SUMMARY OF MAGNITUDE WORKING GROUP RECOMMENDATIONS ON
-   STANDARD PROCEDURES FOR DETERMINING EARTHQUAKE MAGNITUDES FROM DIGITAL DATA,
-   `Link to PDF document
-   <http://www.iaspei.org/commissions/commission-on-seismological-observation-and-interpretation/Summary_WG_recommendations_20130327.pdf>`_
+as in :ref:`global_mlv`. Add mb to the list of computed amplitudes and magnitudes
+in the configuration of
+:ref:`scamp` and :ref:`scmag` and in :ref:`scesv` or :ref:`scolv`/:ref:`scesv`
+for visibility.
