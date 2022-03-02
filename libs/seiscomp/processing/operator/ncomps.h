@@ -165,6 +165,77 @@ class StreamConfigWrapper {
 };
 
 
+template <typename T, int N>
+class NoOpWrapper {
+	public:
+		NoOpWrapper(Stream configs[N]) : _configs(configs) { }
+
+		// Process N traces in place of length n
+		void operator()(const Record *, T *data[N], int n, const Core::Time &stime, double sfreq) const {}
+
+		// publishs a processed component
+		bool publish(int c) const { return c < N; }
+
+		// Returns the component index of a given channel code
+		int compIndex(const std::string &code) const {
+			for ( int i = 0; i < N; ++i )
+				if ( code == _configs[i].code() ) return i;
+			return -1;
+		}
+
+	private:
+			const Stream *_configs;
+};
+
+
+template <typename T, int N, class PROC>
+class FilterWrapper {
+	public:
+		FilterWrapper(Math::Filtering::InPlaceFilter<T> *filter,
+									const PROC &proc)
+		: _proc(proc), _baseFilter(filter) {
+			for ( int i = 0; i < N; ++i ) _filter[i] = nullptr;
+		}
+
+		~FilterWrapper() {
+			for ( int i = 0; i < N; ++i )
+				if ( _filter[i] ) delete _filter[i];
+		}
+
+		void operator()(const Record *rec, T *data[N], int n, const Core::Time &stime, double sfreq) const {
+			if ( _baseFilter ) {
+				for ( int i = 0; i < N; ++i ) {
+					if ( _filter[i] == nullptr ) {
+						_filter[i] = _baseFilter->clone();
+						_filter[i]->setSamplingFrequency(sfreq);
+					}
+
+					_filter[i]->apply(n, data[i]);
+				}
+			}
+
+			// Call real operator
+			_proc(rec, data, n, stime, sfreq);
+		}
+
+		bool publish(int c) const { return _proc.publish(c); }
+
+		int compIndex(const std::string &code) const {
+			return _proc.compIndex(code);
+		}
+
+		const std::string &translateChannelCode(int, const std::string &code) {
+			return code;
+		}
+
+
+	private:
+		PROC _proc;
+		Math::Filtering::InPlaceFilter<T> *_baseFilter;
+		mutable Math::Filtering::InPlaceFilter<T> *_filter[N];
+};
+
+
 }
 
 }

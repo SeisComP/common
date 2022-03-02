@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_PICKER_S_L2_H
-#define SEISCOMP_PROCESSING_PICKER_S_L2_H
+#ifndef SEISCOMP_PROCESSING_PICKER_S_V_H
+#define SEISCOMP_PROCESSING_PICKER_S_V_H
 
 #include "S_aic.h"
 
@@ -27,13 +27,13 @@ namespace Seiscomp {
 namespace Processing {
 
 
-class SC_SYSTEM_CLIENT_API SL2Picker : public SAICPicker {
+class SC_SYSTEM_CLIENT_API SVPicker : public SAICPicker {
 	public:
 		//! C'tor
-		SL2Picker();
+		SVPicker();
 
 		//! D'tor
-		~SL2Picker();
+		~SVPicker();
 
 		bool setup(const Settings &settings) override;
 
