@@ -50,7 +50,7 @@ bool compute_Mwp(
 //	double slope=1./1.6,
 	double alpha=7900.,
 	double rho=3400.,
-	double fp=1.);
+	double fp=0.52);
 
 
 
