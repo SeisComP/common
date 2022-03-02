@@ -1192,9 +1192,11 @@
 				</description>
 				<group name="L2">
 					<description>
-					L2 is an algorithm to pick S-phases based on existing P-phases. The
-					spicker interface name to be used in configuration, e.g. of 
-					scautopick, is &quot;S-L2&quot;.
+					L2 is an algorithm to pick S-phases based on existing P-phases. It works by
+					creating the L2 norm of the two filtered horizontal components and then running
+					the `detecFilter` on the L2 trace to find the S pick. Finally AIC is applied
+					around the detected pick time to refine the detection. The picker name to be used
+					in configuration files is &quot;S-L2&quot;.
 					</description>
 					<parameter name="noiseBegin" type="double" default="-10" unit="s">
 						<description>
@@ -1219,14 +1221,13 @@
 					</parameter>
 					<parameter name="filter" type="string" default="BW(4,0.3,1.0)">
 						<description>
-						Configures the filter used to compute the L2 and to pick
-						the onset (with AIC) after the detector triggered.
+						Configures the filter used to process the horizontal components traces
+						before computing the L2-norm.
 						</description>
 					</parameter>
 					<parameter name="detecFilter" type="string" default="STALTA(1,10)">
 						<description>
-						Configures the detector in the filtered L2. This filter is
-						applied on top of the base L2 filter.
+						 Configures the detector filter applied on the filtered L2 trace.
 						</description>
 					</parameter>
 					<parameter name="threshold" type="double" default="3">
@@ -1252,6 +1253,65 @@
 						</description>
 					</parameter>
 				</group>
+				<group name="V">
+					<description>
+					This S-picker works similarly to L2 but it only uses the vertical component
+					to pick S-phases. The picker name to use is configuration files is &quot;S-V&quot;
+					</description>
+					<parameter name="noiseBegin" type="double" default="-10" unit="s">
+						<description>
+						Overrides the relative data processing start time (relative to the triggering
+						pick). This adds a margin to the actual processing and is useful
+						to initialize the filter (e.g. bandpass). The data is not used
+						at all until signalBegin is reached. The data time window start
+						is the minimum of noiseBegin and signalBegin.
+						</description>
+					</parameter>
+					<parameter name="signalBegin" type="double" default="0" unit="s">
+						<description>
+						Overrides the relative start time (relative to the triggering
+						pick) of the begin of the signal processing.
+						</description>
+					</parameter>
+					<parameter name="signalEnd" type="double" default="60" unit="s">
+						<description>
+						Overrides the relative end time (relative to the triggering
+						pick) of the end of the signal window used to pick.
+						</description>
+					</parameter>
+					<parameter name="filter" type="string" default="BW(4,0.3,1.0)">
+						<description>
+						Configures the filter used to process the raw vertical component data
+						</description>
+					</parameter>
+					<parameter name="detecFilter" type="string" default="STALTA(1,10)">
+						<description>
+						Configures the detector filter applied on filtered data.
+						</description>
+					</parameter>
+					<parameter name="threshold" type="double" default="3">
+						<description>
+						The detector threshold that triggers the AIC picker.
+						</description>
+					</parameter>
+					<parameter name="timeCorr" type="double" default="0" unit="s">
+						<description>
+						The time correction (in seconds) added to the detection time
+						before AIC time window is computed.
+						</description>
+					</parameter>
+					<parameter name="marginAIC" type="double" default="5" unit="s">
+						<description>
+						The AIC time window around the detection used to pick. If 0 AIC is not used.
+						</description>
+					</parameter>
+					<parameter name="minSNR" type="double" default="15">
+						<description>
+						Defines the mininum SNR as returned from AIC.
+						</description>
+					</parameter>
+				</group>
+
 			</group>
 		</configuration>
 	</binding>

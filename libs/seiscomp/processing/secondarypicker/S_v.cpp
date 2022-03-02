@@ -18,14 +18,13 @@
  ***************************************************************************/
 
 
-#define SEISCOMP_COMPONENT L2Picker
+#define SEISCOMP_COMPONENT VPicker
 
 #include <seiscomp/logging/log.h>
 #include <seiscomp/processing/operator/ncomps.h>
-#include <seiscomp/processing/operator/l2norm.h>
 #include <seiscomp/math/filter.h>
 
-#include "S_l2.h"
+#include "S_v.h"
 
 
 using namespace std;
@@ -34,69 +33,54 @@ namespace Seiscomp {
 
 namespace Processing {
 
-REGISTER_SECONDARYPICKPROCESSOR(SL2Picker, "S-L2");
+REGISTER_SECONDARYPICKPROCESSOR(SVPicker, "S-V");
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SL2Picker::SL2Picker() : SAICPicker("L2-AIC", Horizontal) {}
+SVPicker::SVPicker() : SAICPicker("V-AIC", Vertical) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SL2Picker::~SL2Picker() { }
+SVPicker::~SVPicker() { }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SL2Picker::setup(const Settings &settings) {
+bool SVPicker::setup(const Settings &settings) {
 	if ( !SecondaryPicker::setup(settings) ) return false;
 
-	// Check all three components for valid gains and orientations
-	for ( int i = 1; i < 3; ++i ) {
-		if ( _streamConfig[i].code().empty() ) {
-			SEISCOMP_ERROR("[S-L2] component[%d] code is empty", i);
-			setStatus(Error, i);
-			return false;
-		}
-
-		if ( _streamConfig[i].gain == 0.0 ) {
-			SEISCOMP_ERROR("[S-L2] component[%d] gain is missing", i);
-			setStatus(MissingGain, i);
-			return false;
-		}
-	}
-
-	try { setNoiseStart(settings.getDouble("spicker.L2.noiseBegin")); }
+	try { setNoiseStart(settings.getDouble("spicker.V.noiseBegin")); }
 	catch ( ... ) {}
 
-	try { setSignalStart(settings.getDouble("spicker.L2.signalBegin")); }
+	try { setSignalStart(settings.getDouble("spicker.V.signalBegin")); }
 	catch ( ... ) {}
 
-	try { setSignalEnd(settings.getDouble("spicker.L2.signalEnd")); }
+	try { setSignalEnd(settings.getDouble("spicker.V.signalEnd")); }
 	catch ( ... ) {}
 
 	AICConfig cfg = aicConfig();
 
-	try { cfg.threshold = settings.getDouble("spicker.L2.threshold"); }
+	try { cfg.threshold = settings.getDouble("spicker.V.threshold"); }
 	catch ( ... ) {}
 
-	try { cfg.minSNR = settings.getDouble("spicker.L2.minSNR"); }
+	try { cfg.minSNR = settings.getDouble("spicker.V.minSNR"); }
 	catch ( ... ) {}
 
-	try { cfg.margin = settings.getDouble("spicker.L2.marginAIC"); }
+	try { cfg.margin = settings.getDouble("spicker.V.marginAIC"); }
 	catch ( ... ) {}
 
-	try { cfg.timeCorr = settings.getDouble("spicker.L2.timeCorr"); }
+	try { cfg.timeCorr = settings.getDouble("spicker.V.timeCorr"); }
 	catch ( ... ) {}
 
-	try { cfg.filter = settings.getString("spicker.L2.filter"); }
+	try { cfg.filter = settings.getString("spicker.V.filter"); }
 	catch ( ... ) { cfg.filter = "BW(4,0.3,1.0)"; }
 
-	try { cfg.detecFilter = settings.getString("spicker.L2.detecFilter"); }
+	try { cfg.detecFilter = settings.getString("spicker.V.detecFilter"); }
 	catch ( ... ) { cfg.detecFilter = "STALTA(1,10)"; }
 
 	return setAicConfig(cfg);
@@ -105,19 +89,13 @@ bool SL2Picker::setup(const Settings &settings) {
 
 
 
-
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-WaveformOperator* SL2Picker::createFilterOperator(Filter* compFilter)
+WaveformOperator* SVPicker::createFilterOperator(Filter* compFilter)
 {
-	// Create a waveform operator that combines the two horizontal channels and
-	// computes the l2norm of each 2 component sample
-	typedef Operator::StreamConfigWrapper<double,2,Operator::L2Norm> OpWrapper;
-	typedef Operator::FilterWrapper<double,2,OpWrapper> FilterL2Norm;
-	typedef NCompsOperator<double,2,FilterL2Norm> L2Norm;
-	return new L2Norm(
-		FilterL2Norm(compFilter,
-			OpWrapper(_streamConfig+1, Operator::L2Norm<double,2>())
-		)
+	typedef Operator::FilterWrapper<double,1,Operator::NoOpWrapper<double,1>> FilterL2V;
+	typedef NCompsOperator<double,1,FilterL2V> L2V;
+	return new L2V(
+			FilterL2V(compFilter, Operator::NoOpWrapper<double,1>(_streamConfig))
 	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
