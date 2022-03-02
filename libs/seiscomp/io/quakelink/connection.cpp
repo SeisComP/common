@@ -461,11 +461,13 @@ bool Connection::select(bool archived, const Core::Time &from,
 
 		response = new Response();
 		if ( readResponse(*response) ) {
-			if ( archived && startsWith(code, "DATA/SELECT/ARCHIVED 200") ) {
+			if ( startsWith(code, "DATA/SELECT/ARCHIVED 200") ) {
+				archived = true;
 				processResponse(response);
 				continue;
 			}
 			if ( startsWith(code, "DATA/SELECT/UPDATED 200") ) {
+
 				// QuakeLink < 2022.060 did not set the Content-Timestamp
 				// header for UPDATED data. As a workarround the current
 				// timestamp is used.
