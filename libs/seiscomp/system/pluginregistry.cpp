@@ -35,15 +35,17 @@
 #endif
 #include <stdlib.h>
 
+
+using namespace std;
 namespace fs = boost::filesystem;
 
 
 namespace {
 
-std::string sysLastError() {
+string sysLastError() {
 #ifdef WIN32
 	char *s;
-	std::string msg;
+	string msg;
 	int err = ::GetLastError();
 	if ( ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
 	                     FORMAT_MESSAGE_FROM_SYSTEM,
@@ -125,7 +127,7 @@ PluginRegistry::PluginRegistry() {
 #ifndef WIN32
 	const char *env = getenv("LD_LIBRARY_PATH");
 	if ( env != nullptr ) {
-		std::vector<std::string> paths;
+		vector<string> paths;
 		Core::split(paths, env, ":");
 		for ( size_t i = 0; i < paths.size(); ++i ) {
 			if ( paths[i].empty() ) continue;
@@ -177,7 +179,7 @@ void PluginRegistry::Reset() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PluginRegistry::addPluginName(const std::string &name) {
+void PluginRegistry::addPluginName(const string &name) {
 	if ( std::find(_pluginNames.begin(), _pluginNames.end(), name) == _pluginNames.end() )
 		_pluginNames.push_back(name);
 }
@@ -187,7 +189,7 @@ void PluginRegistry::addPluginName(const std::string &name) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PluginRegistry::addPluginPath(const std::string &path) {
+void PluginRegistry::addPluginPath(const string &path) {
 	if ( std::find(_paths.begin(), _paths.end(), path) == _paths.end() ) {
 		SEISCOMP_DEBUG("Adding plugin path: %s", path.c_str());
 		_paths.push_back(path);
@@ -199,7 +201,7 @@ void PluginRegistry::addPluginPath(const std::string &path) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PluginRegistry::addPackagePath(const std::string &package) {
+void PluginRegistry::addPackagePath(const string &package) {
 	addPluginPath(Environment::Instance()->shareDir() + "/plugins/" + package);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -209,12 +211,11 @@ void PluginRegistry::addPackagePath(const std::string &package) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int PluginRegistry::loadPlugins() {
-	for ( NameList::const_iterator it = _pluginNames.begin();
-	      it != _pluginNames.end(); ++it ) {
-		if ( it->empty() ) continue;
-		std::string filename = find(*it);
+	for ( const auto &name : _pluginNames ) {
+		if ( name.empty() ) continue;
+		string filename = find(name);
 		if ( filename.empty() ) {
-			SEISCOMP_ERROR("Did not find plugin %s", it->c_str());
+			SEISCOMP_ERROR("Did not find plugin %s", name.c_str());
 			return -1;
 		}
 
@@ -222,16 +223,16 @@ int PluginRegistry::loadPlugins() {
 		PluginEntry e = open(filename);
 		if ( e.plugin == nullptr ) {
 			if ( e.handle == nullptr ) {
-				SEISCOMP_ERROR("Unable to load plugin %s", it->c_str());
+				SEISCOMP_ERROR("Unable to load plugin %s", name.c_str());
 				return -1;
 			}
 			else
 				SEISCOMP_WARNING("The plugin %s has been loaded already",
-				                 it->c_str());
+				                 name.c_str());
 			continue;
 		}
 
-		SEISCOMP_INFO("Plugin %s registered", it->c_str());
+		SEISCOMP_INFO("Plugin %s registered", name.c_str());
 		_plugins.push_back(e);
 	}
 
@@ -261,27 +262,26 @@ int PluginRegistry::loadConfiguredPlugins(const Config::Config *config) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string PluginRegistry::find(const std::string &name) const {
+string PluginRegistry::find(const string &name) const {
 //#ifndef WIN32
-//	std::string alternativeName = name + ".so";
+//	string alternativeName = name + ".so";
 //#else
-//	std::string alternativeName = name + ".dll";
+//	string alternativeName = name + ".dll";
 //#endif
-	std::string alternativeName = name + SHARED_MODULE_SUFFIX;
-	for ( PathList::const_iterator it = _paths.begin(); it != _paths.end();
-	      ++it ) {
-		std::string path = *it + "/" + name;
+	string alternativeName = name + SHARED_MODULE_SUFFIX;
+	for ( const auto &p : _paths ) {
+		string path = p + "/" + name;
 
 		if ( Util::fileExists(path) )
 			return path;
 
-		path = *it + "/" + alternativeName;
+		path = p + "/" + alternativeName;
 
 		if ( Util::fileExists(path) )
 			return path;
 	}
 
-	return std::string();
+	return string();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -290,15 +290,14 @@ std::string PluginRegistry::find(const std::string &name) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PluginRegistry::freePlugins() {
-	for ( PluginList::iterator it = _plugins.begin(); it != _plugins.end();
-	      ++it ) {
-		SEISCOMP_DEBUG("Unload plugin '%s'", it->plugin->description().description.c_str());
+	for ( auto &p : _plugins ) {
+		SEISCOMP_DEBUG("Unload plugin '%s'", p.plugin->description().description.c_str());
 
-		it->plugin = nullptr;
+		p.plugin = nullptr;
 #ifndef WIN32
-		dlclose(it->handle);
+		dlclose(p.handle);
 #else
-		FreeLibrary((HMODULE)it->handle);
+		FreeLibrary((HMODULE)p.handle);
 #endif
 	}
 
@@ -338,10 +337,10 @@ PluginRegistry::iterator PluginRegistry::end() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PluginRegistry::findLibrary(void *handle) const {
-	for ( PluginList::const_iterator it = _plugins.begin(); it != _plugins.end();
-	      ++it ) {
-		if ( it->handle == handle )
+	for ( const auto &p : _plugins ) {
+		if ( p.handle == handle ) {
 			return true;
+		}
 	}
 
 	return false;
@@ -352,7 +351,7 @@ bool PluginRegistry::findLibrary(void *handle) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PluginRegistry::PluginEntry PluginRegistry::open(const std::string &file) const {
+PluginRegistry::PluginEntry PluginRegistry::open(const string &file) const {
 	// Load shared library
 #ifdef WIN32
 	void *handle = LoadLibrary(file.c_str());
