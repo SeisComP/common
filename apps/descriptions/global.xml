@@ -1056,9 +1056,13 @@
 			<group name="spicker">
 				<group name="L2">
 					<description>
-					L2 is an algorithm to pick S-phases based on existing P-phases. The
-					picker interface name to be used in configuration files is
-					&quot;S-L2&quot;.
+						L2 is an algorithm to pick S-phases based on existing P-phases. It works by
+						creating the L2 norm of the two filtered horizontal components and then running
+						the `detecFilter` on the L2 trace to find the S pick. Finally AIC is applied
+						around the detected pick time to refine the detection. The picker name to be used
+						in configuration files is &quot;S-L2&quot;. It is also possible to run this
+						secondary picker on the vertical component only, in that case the picker name
+						to use is &quot;S-L2V&quot;
 					</description>
 					<parameter name="noiseBegin" type="double" default="-10" unit="s">
 						<description>
@@ -1083,14 +1087,16 @@
 					</parameter>
 					<parameter name="filter" type="string" default="BW(4,0.3,1.0)">
 						<description>
-						Configures the filter used to compute the L2 and to pick
-						the onset (with AIC) after the detector triggered.
+							Configures the filter used to process the horizontal components traces
+							before computing the L2-norm. For S-L2V picker the filter is applied to
+							the vertical component
 						</description>
 					</parameter>
 					<parameter name="detecFilter" type="string" default="STALTA(1,10)">
 						<description>
-						Configures the detector in the filtered L2. This filter is
-						applied on top of the base L2 filter.
+							Configures the detector filter. For S-L2 picker it is applied on the
+							filtered L2 trace, for S-L2V picker this is applied on filtered
+							vertical component data.
 						</description>
 					</parameter>
 					<parameter name="threshold" type="double" default="3">

@@ -37,9 +37,6 @@ namespace Processing {
 
 namespace {
 
-string MethodID = "L2-AIC";
-
-
 template <typename T, int N, class PROC>
 class FilterWrapper {
 	public:
@@ -140,11 +137,17 @@ maeda_aic(int n, const TYPE *data, int &kmin, double &snr, int margin=10) {
 	snr = maeda_aic_snr_const(n, data, kmin, margin);
 }
 
+class SVPicker : public SL2Picker {
+	public:
+		//! C'tor
+		SVPicker() : SL2Picker("V-AIC") {}
+};
 
 }
 
 
 REGISTER_SECONDARYPICKPROCESSOR(SL2Picker, "S-L2");
+REGISTER_SECONDARYPICKPROCESSOR(SVPicker, "S-L2V");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -158,9 +161,19 @@ SL2Picker::State::State() : aicValid(false) {}
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SL2Picker::SL2Picker() {
-	// Request all three components
-	setUsedComponent(Horizontal);
+SL2Picker::SL2Picker() : SL2Picker("L2-AIC") {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SL2Picker::SL2Picker(const string& methodID) : _methodID(methodID) {
+
+	if (_methodID == "L2-AIC") // Request all three components
+		setUsedComponent(Horizontal);
+	else // Request just the vertical component
+		setUsedComponent(Vertical);
 	// Use ten seconds as noise to initialize the filter
 	setNoiseStart(-10);
 	// Start checking at onset time
@@ -209,17 +222,19 @@ bool SL2Picker::setup(const Settings &settings) {
 	if ( !SecondaryPicker::setup(settings) ) return false;
 
 	// Check all three components for valid gains and orientations
-	for ( int i = 1; i < 3; ++i ) {
-		if ( _streamConfig[i].code().empty() ) {
-			SEISCOMP_ERROR("[S-L2] component[%d] code is empty", i);
-			setStatus(Error, i);
-			return false;
-		}
+	if (_methodID == "L2-AIC") {
+		for ( int i = 1; i < 3; ++i ) {
+			if ( _streamConfig[i].code().empty() ) {
+				SEISCOMP_ERROR("[S-L2] component[%d] code is empty", i);
+				setStatus(Error, i);
+				return false;
+			}
 
-		if ( _streamConfig[i].gain == 0.0 ) {
-			SEISCOMP_ERROR("[S-L2] component[%d] gain is missing", i);
-			setStatus(MissingGain, i);
-			return false;
+			if ( _streamConfig[i].gain == 0.0 ) {
+				SEISCOMP_ERROR("[S-L2] component[%d] gain is missing", i);
+				setStatus(MissingGain, i);
+				return false;
+			}
 		}
 	}
 
@@ -268,7 +283,7 @@ void SL2Picker::setSaveIntermediate(bool e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const string &SL2Picker::methodID() const {
-	return MethodID;
+	return _methodID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -333,12 +348,20 @@ bool SL2Picker::applyConfig() {
 
 	// Create a waveform operator that combines all three channels and
 	// computes the l2norm of each 3 component sample
-	typedef Operator::StreamConfigWrapper<double,2,Operator::L2Norm> OpWrapper;
-	typedef FilterWrapper<double,2,OpWrapper> FilterL2Norm;
-	typedef NCompsOperator<double,2,FilterL2Norm> L2Norm;
+	if (_methodID == "L2-AIC") {
+		typedef Operator::StreamConfigWrapper<double,2,Operator::L2Norm> OpWrapper;
+		typedef FilterWrapper<double,2,OpWrapper> FilterL2Norm;
+		typedef NCompsOperator<double,2,FilterL2Norm> L2Norm;
 
-	WaveformOperatorPtr op = new L2Norm(FilterL2Norm(_compFilter, OpWrapper(_streamConfig+1, Operator::L2Norm<double,2>())));
-	setOperator(op.get());
+		WaveformOperatorPtr op = new L2Norm(FilterL2Norm(_compFilter, OpWrapper(_streamConfig+1, Operator::L2Norm<double,2>())));
+		setOperator(op.get());
+	} else {
+		typedef FilterWrapper<double,1,Operator::NoOpWrapper<double,1>> FilterL2V;
+		typedef NCompsOperator<double,1,FilterL2V> L2V;
+
+		WaveformOperatorPtr op = new L2V(FilterL2V(_compFilter, Operator::NoOpWrapper<double,1>(_streamConfig)));
+		setOperator(op.get()); 
+	}
 
 	_initialized = true;
 	return true;

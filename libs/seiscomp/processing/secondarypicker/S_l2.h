@@ -88,6 +88,9 @@ class SC_SYSTEM_CLIENT_API SL2Picker : public SecondaryPicker {
 		const DoubleArray &processedData() const { return _detectionTrace; }
 
 	protected:
+		//! C'tor
+		SL2Picker(const std::string& methodID);
+
 		bool applyConfig();
 		void fill(size_t n, double *samples) override;
 		void process(const Record *rec, const DoubleArray &filteredData) override;
@@ -100,6 +103,7 @@ class SC_SYSTEM_CLIENT_API SL2Picker : public SecondaryPicker {
 		Filter     *_compFilter;
 		bool        _saveIntermediate;
 		DoubleArray _detectionTrace;
+		const std::string _methodID;
 };
 
 

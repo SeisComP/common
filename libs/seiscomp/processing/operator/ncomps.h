@@ -165,6 +165,29 @@ class StreamConfigWrapper {
 };
 
 
+template <typename T, int N>
+class NoOpWrapper {
+	public:
+		NoOpWrapper(Stream configs[N]) : _configs(configs) { }
+
+		// Process N traces in place of length n
+		void operator()(const Record *, T *data[N], int n, const Core::Time &stime, double sfreq) const {}
+
+		// publishs a processed component
+		bool publish(int c) const { return c < N; }
+
+		// Returns the component index of a given channel code
+		int compIndex(const std::string &code) const {
+			for ( int i = 0; i < N; ++i )
+				if ( code == _configs[i].code() ) return i;
+			return -1;
+		}
+
+	private:
+		const Stream *_configs;
+};
+
+
 }
 
 }
