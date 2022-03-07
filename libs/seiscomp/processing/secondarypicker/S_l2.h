@@ -29,17 +29,35 @@ namespace Processing {
 
 class SC_SYSTEM_CLIENT_API SL2Picker : public SAICPicker {
 	public:
+		using L2Config = SAICPicker::AICConfig;
+
+	public:
 		//! C'tor
 		SL2Picker();
 
 		//! D'tor
 		~SL2Picker();
 
+	public:
 		bool setup(const Settings &settings) override;
+
+		bool setL2Config(const AICConfig &config);
+
+		//! Returns the current configuration
+		const L2Config &l2Config() const;
 
 	protected:
 		WaveformOperator* createFilterOperator(Filter* compFilter) override;
 };
+
+
+inline bool SL2Picker::setL2Config(const AICConfig &config) {
+	return setAicConfig(config);
+}
+
+inline const SL2Picker::L2Config &SL2Picker::l2Config() const {
+	return aicConfig();
+}
 
 
 }
