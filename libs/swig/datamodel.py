@@ -5560,6 +5560,9056 @@ def ArclinkRequestSummary_Meta():
     r"""ArclinkRequestSummary_Meta() -> MetaObject"""
     return _datamodel.ArclinkRequestSummary_Meta()
 
+class JournalEntry(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::JournalEntry class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.JournalEntry_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.JournalEntry_TypeInfo()
+
+    def className(self):
+        r"""className(JournalEntry self) -> char const *"""
+        return _datamodel.JournalEntry_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(JournalEntry self) -> RTTI"""
+        return _datamodel.JournalEntry_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> JournalEntry
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> JournalEntry
+        """
+        return _datamodel.JournalEntry_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> JournalEntry
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> JournalEntry
+        """
+        return _datamodel.JournalEntry_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(JournalEntry self, GenericArchive ar)"""
+        return _datamodel.JournalEntry_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.JournalEntry_Meta()
+
+    def meta(self):
+        r"""meta(JournalEntry self) -> MetaObject"""
+        return _datamodel.JournalEntry_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(JournalEntry self) -> JournalEntry
+        __init__(JournalEntry self, JournalEntry other) -> JournalEntry
+        """
+        _datamodel.JournalEntry_swiginit(self, _datamodel.new_JournalEntry(*args))
+    __swig_destroy__ = _datamodel.delete_JournalEntry
+
+    def __eq__(self, other):
+        r"""__eq__(JournalEntry self, JournalEntry other) -> bool"""
+        return _datamodel.JournalEntry___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(JournalEntry self, JournalEntry other) -> bool"""
+        return _datamodel.JournalEntry___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(JournalEntry self, JournalEntry other) -> bool"""
+        return _datamodel.JournalEntry_equal(self, other)
+
+    def setCreated(self, created):
+        r"""setCreated(JournalEntry self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & created)"""
+        return _datamodel.JournalEntry_setCreated(self, created)
+
+    def created(self):
+        r"""created(JournalEntry self) -> Time"""
+        return _datamodel.JournalEntry_created(self)
+
+    def setObjectID(self, objectID):
+        r"""setObjectID(JournalEntry self, std::string const & objectID)"""
+        return _datamodel.JournalEntry_setObjectID(self, objectID)
+
+    def objectID(self):
+        r"""objectID(JournalEntry self) -> std::string const &"""
+        return _datamodel.JournalEntry_objectID(self)
+
+    def setSender(self, sender):
+        r"""setSender(JournalEntry self, std::string const & sender)"""
+        return _datamodel.JournalEntry_setSender(self, sender)
+
+    def sender(self):
+        r"""sender(JournalEntry self) -> std::string const &"""
+        return _datamodel.JournalEntry_sender(self)
+
+    def setAction(self, action):
+        r"""setAction(JournalEntry self, std::string const & action)"""
+        return _datamodel.JournalEntry_setAction(self, action)
+
+    def action(self):
+        r"""action(JournalEntry self) -> std::string const &"""
+        return _datamodel.JournalEntry_action(self)
+
+    def setParameters(self, parameters):
+        r"""setParameters(JournalEntry self, std::string const & parameters)"""
+        return _datamodel.JournalEntry_setParameters(self, parameters)
+
+    def parameters(self):
+        r"""parameters(JournalEntry self) -> std::string const &"""
+        return _datamodel.JournalEntry_parameters(self)
+
+    def journaling(self):
+        r"""journaling(JournalEntry self) -> Journaling"""
+        return _datamodel.JournalEntry_journaling(self)
+
+    def assign(self, other):
+        r"""assign(JournalEntry self, Object other) -> bool"""
+        return _datamodel.JournalEntry_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(JournalEntry self, PublicObject parent) -> bool"""
+        return _datamodel.JournalEntry_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(JournalEntry self, PublicObject parent) -> bool"""
+        return _datamodel.JournalEntry_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(JournalEntry self) -> bool"""
+        return _datamodel.JournalEntry_detach(self)
+
+    def clone(self):
+        r"""clone(JournalEntry self) -> Object"""
+        return _datamodel.JournalEntry_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(JournalEntry self, Visitor visitor)"""
+        return _datamodel.JournalEntry_accept(self, visitor)
+
+# Register JournalEntry in _datamodel:
+_datamodel.JournalEntry_swigregister(JournalEntry)
+
+def JournalEntry_ClassName():
+    r"""JournalEntry_ClassName() -> char const *"""
+    return _datamodel.JournalEntry_ClassName()
+
+def JournalEntry_TypeInfo():
+    r"""JournalEntry_TypeInfo() -> RTTI"""
+    return _datamodel.JournalEntry_TypeInfo()
+
+def JournalEntry_Cast(*args):
+    r"""
+    JournalEntry_Cast(BaseObject o) -> JournalEntry
+    JournalEntry_Cast(Seiscomp::Core::BaseObjectPtr o) -> JournalEntry
+    """
+    return _datamodel.JournalEntry_Cast(*args)
+
+def JournalEntry_ConstCast(*args):
+    r"""
+    JournalEntry_ConstCast(BaseObject o) -> JournalEntry
+    JournalEntry_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> JournalEntry
+    """
+    return _datamodel.JournalEntry_ConstCast(*args)
+
+def JournalEntry_Meta():
+    r"""JournalEntry_Meta() -> MetaObject"""
+    return _datamodel.JournalEntry_Meta()
+
+class Journaling(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::Journaling class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.Journaling_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.Journaling_TypeInfo()
+
+    def className(self):
+        r"""className(Journaling self) -> char const *"""
+        return _datamodel.Journaling_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(Journaling self) -> RTTI"""
+        return _datamodel.Journaling_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> Journaling
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> Journaling
+        """
+        return _datamodel.Journaling_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> Journaling
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Journaling
+        """
+        return _datamodel.Journaling_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(Journaling self, GenericArchive ar)"""
+        return _datamodel.Journaling_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.Journaling_Meta()
+
+    def meta(self):
+        r"""meta(Journaling self) -> MetaObject"""
+        return _datamodel.Journaling_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(Journaling self) -> Journaling
+        __init__(Journaling self, Journaling other) -> Journaling
+        """
+        _datamodel.Journaling_swiginit(self, _datamodel.new_Journaling(*args))
+    __swig_destroy__ = _datamodel.delete_Journaling
+
+    def __eq__(self, other):
+        r"""__eq__(Journaling self, Journaling other) -> bool"""
+        return _datamodel.Journaling___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(Journaling self, Journaling other) -> bool"""
+        return _datamodel.Journaling___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(Journaling self, Journaling other) -> bool"""
+        return _datamodel.Journaling_equal(self, other)
+
+    def add(self, obj):
+        r"""add(Journaling self, JournalEntry obj) -> bool"""
+        return _datamodel.Journaling_add(self, obj)
+
+    def remove(self, obj):
+        r"""remove(Journaling self, JournalEntry obj) -> bool"""
+        return _datamodel.Journaling_remove(self, obj)
+
+    def removeJournalEntry(self, i):
+        r"""removeJournalEntry(Journaling self, size_t i) -> bool"""
+        return _datamodel.Journaling_removeJournalEntry(self, i)
+
+    def journalEntryCount(self):
+        r"""journalEntryCount(Journaling self) -> size_t"""
+        return _datamodel.Journaling_journalEntryCount(self)
+
+    def journalEntry(self, i):
+        r"""journalEntry(Journaling self, size_t i) -> JournalEntry"""
+        return _datamodel.Journaling_journalEntry(self, i)
+
+    def findJournalEntry(self, journalEntry):
+        r"""findJournalEntry(Journaling self, JournalEntry journalEntry) -> JournalEntry"""
+        return _datamodel.Journaling_findJournalEntry(self, journalEntry)
+
+    def assign(self, other):
+        r"""assign(Journaling self, Object other) -> bool"""
+        return _datamodel.Journaling_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(Journaling self, PublicObject parent) -> bool"""
+        return _datamodel.Journaling_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(Journaling self, PublicObject parent) -> bool"""
+        return _datamodel.Journaling_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(Journaling self) -> bool"""
+        return _datamodel.Journaling_detach(self)
+
+    def clone(self):
+        r"""clone(Journaling self) -> Object"""
+        return _datamodel.Journaling_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(Journaling self, Object child) -> bool"""
+        return _datamodel.Journaling_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(Journaling self, Visitor visitor)"""
+        return _datamodel.Journaling_accept(self, visitor)
+
+# Register Journaling in _datamodel:
+_datamodel.Journaling_swigregister(Journaling)
+
+def Journaling_ClassName():
+    r"""Journaling_ClassName() -> char const *"""
+    return _datamodel.Journaling_ClassName()
+
+def Journaling_TypeInfo():
+    r"""Journaling_TypeInfo() -> RTTI"""
+    return _datamodel.Journaling_TypeInfo()
+
+def Journaling_Cast(*args):
+    r"""
+    Journaling_Cast(BaseObject o) -> Journaling
+    Journaling_Cast(Seiscomp::Core::BaseObjectPtr o) -> Journaling
+    """
+    return _datamodel.Journaling_Cast(*args)
+
+def Journaling_ConstCast(*args):
+    r"""
+    Journaling_ConstCast(BaseObject o) -> Journaling
+    Journaling_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Journaling
+    """
+    return _datamodel.Journaling_ConstCast(*args)
+
+def Journaling_Meta():
+    r"""Journaling_Meta() -> MetaObject"""
+    return _datamodel.Journaling_Meta()
+
+class ArclinkUserIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::ArclinkUserIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(ArclinkUserIndex self) -> ArclinkUserIndex
+        __init__(ArclinkUserIndex self, std::string const & name, std::string const & email) -> ArclinkUserIndex
+        __init__(ArclinkUserIndex self, ArclinkUserIndex arg2) -> ArclinkUserIndex
+        """
+        _datamodel.ArclinkUserIndex_swiginit(self, _datamodel.new_ArclinkUserIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(ArclinkUserIndex self, ArclinkUserIndex arg2) -> bool"""
+        return _datamodel.ArclinkUserIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(ArclinkUserIndex self, ArclinkUserIndex arg2) -> bool"""
+        return _datamodel.ArclinkUserIndex___ne__(self, arg2)
+    name = property(_datamodel.ArclinkUserIndex_name_get, _datamodel.ArclinkUserIndex_name_set, doc=r"""name : std::string""")
+    email = property(_datamodel.ArclinkUserIndex_email_get, _datamodel.ArclinkUserIndex_email_set, doc=r"""email : std::string""")
+    __swig_destroy__ = _datamodel.delete_ArclinkUserIndex
+
+# Register ArclinkUserIndex in _datamodel:
+_datamodel.ArclinkUserIndex_swigregister(ArclinkUserIndex)
+
+class ArclinkUser(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::ArclinkUser class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.ArclinkUser_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.ArclinkUser_TypeInfo()
+
+    def className(self):
+        r"""className(ArclinkUser self) -> char const *"""
+        return _datamodel.ArclinkUser_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(ArclinkUser self) -> RTTI"""
+        return _datamodel.ArclinkUser_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> ArclinkUser
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkUser
+        """
+        return _datamodel.ArclinkUser_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> ArclinkUser
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkUser
+        """
+        return _datamodel.ArclinkUser_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(ArclinkUser self, GenericArchive ar)"""
+        return _datamodel.ArclinkUser_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.ArclinkUser_Meta()
+
+    def meta(self):
+        r"""meta(ArclinkUser self) -> MetaObject"""
+        return _datamodel.ArclinkUser_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(ArclinkUser self, ArclinkUser other) -> ArclinkUser
+        __init__(ArclinkUser self, std::string const & publicID) -> ArclinkUser
+        """
+        _datamodel.ArclinkUser_swiginit(self, _datamodel.new_ArclinkUser(*args))
+    __swig_destroy__ = _datamodel.delete_ArclinkUser
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> ArclinkUser
+        Create(std::string const & publicID) -> ArclinkUser
+        """
+        return _datamodel.ArclinkUser_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> ArclinkUser"""
+        return _datamodel.ArclinkUser_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(ArclinkUser self, ArclinkUser other) -> bool"""
+        return _datamodel.ArclinkUser___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(ArclinkUser self, ArclinkUser other) -> bool"""
+        return _datamodel.ArclinkUser___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(ArclinkUser self, ArclinkUser other) -> bool"""
+        return _datamodel.ArclinkUser_equal(self, other)
+
+    def setName(self, name):
+        r"""setName(ArclinkUser self, std::string const & name)"""
+        return _datamodel.ArclinkUser_setName(self, name)
+
+    def name(self):
+        r"""name(ArclinkUser self) -> std::string const &"""
+        return _datamodel.ArclinkUser_name(self)
+
+    def setEmail(self, email):
+        r"""setEmail(ArclinkUser self, std::string const & email)"""
+        return _datamodel.ArclinkUser_setEmail(self, email)
+
+    def email(self):
+        r"""email(ArclinkUser self) -> std::string const &"""
+        return _datamodel.ArclinkUser_email(self)
+
+    def setPassword(self, password):
+        r"""setPassword(ArclinkUser self, std::string const & password)"""
+        return _datamodel.ArclinkUser_setPassword(self, password)
+
+    def password(self):
+        r"""password(ArclinkUser self) -> std::string const &"""
+        return _datamodel.ArclinkUser_password(self)
+
+    def index(self):
+        r"""index(ArclinkUser self) -> ArclinkUserIndex"""
+        return _datamodel.ArclinkUser_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(ArclinkUser self, ArclinkUser lhs) -> bool"""
+        return _datamodel.ArclinkUser_equalIndex(self, lhs)
+
+    def arclinkLog(self):
+        r"""arclinkLog(ArclinkUser self) -> ArclinkLog"""
+        return _datamodel.ArclinkUser_arclinkLog(self)
+
+    def assign(self, other):
+        r"""assign(ArclinkUser self, Object other) -> bool"""
+        return _datamodel.ArclinkUser_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(ArclinkUser self, PublicObject parent) -> bool"""
+        return _datamodel.ArclinkUser_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(ArclinkUser self, PublicObject parent) -> bool"""
+        return _datamodel.ArclinkUser_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(ArclinkUser self) -> bool"""
+        return _datamodel.ArclinkUser_detach(self)
+
+    def clone(self):
+        r"""clone(ArclinkUser self) -> Object"""
+        return _datamodel.ArclinkUser_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(ArclinkUser self, Object child) -> bool"""
+        return _datamodel.ArclinkUser_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(ArclinkUser self, Visitor visitor)"""
+        return _datamodel.ArclinkUser_accept(self, visitor)
+
+# Register ArclinkUser in _datamodel:
+_datamodel.ArclinkUser_swigregister(ArclinkUser)
+
+def ArclinkUser_ClassName():
+    r"""ArclinkUser_ClassName() -> char const *"""
+    return _datamodel.ArclinkUser_ClassName()
+
+def ArclinkUser_TypeInfo():
+    r"""ArclinkUser_TypeInfo() -> RTTI"""
+    return _datamodel.ArclinkUser_TypeInfo()
+
+def ArclinkUser_Cast(*args):
+    r"""
+    ArclinkUser_Cast(BaseObject o) -> ArclinkUser
+    ArclinkUser_Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkUser
+    """
+    return _datamodel.ArclinkUser_Cast(*args)
+
+def ArclinkUser_ConstCast(*args):
+    r"""
+    ArclinkUser_ConstCast(BaseObject o) -> ArclinkUser
+    ArclinkUser_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkUser
+    """
+    return _datamodel.ArclinkUser_ConstCast(*args)
+
+def ArclinkUser_Meta():
+    r"""ArclinkUser_Meta() -> MetaObject"""
+    return _datamodel.ArclinkUser_Meta()
+
+def ArclinkUser_Create(*args):
+    r"""
+    ArclinkUser_Create() -> ArclinkUser
+    ArclinkUser_Create(std::string const & publicID) -> ArclinkUser
+    """
+    return _datamodel.ArclinkUser_Create(*args)
+
+def ArclinkUser_Find(publicID):
+    r"""ArclinkUser_Find(std::string const & publicID) -> ArclinkUser"""
+    return _datamodel.ArclinkUser_Find(publicID)
+
+class ArclinkStatusLineIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::ArclinkStatusLineIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(ArclinkStatusLineIndex self) -> ArclinkStatusLineIndex
+        __init__(ArclinkStatusLineIndex self, std::string const & volumeID, std::string const & type, std::string const & status) -> ArclinkStatusLineIndex
+        __init__(ArclinkStatusLineIndex self, ArclinkStatusLineIndex arg2) -> ArclinkStatusLineIndex
+        """
+        _datamodel.ArclinkStatusLineIndex_swiginit(self, _datamodel.new_ArclinkStatusLineIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(ArclinkStatusLineIndex self, ArclinkStatusLineIndex arg2) -> bool"""
+        return _datamodel.ArclinkStatusLineIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(ArclinkStatusLineIndex self, ArclinkStatusLineIndex arg2) -> bool"""
+        return _datamodel.ArclinkStatusLineIndex___ne__(self, arg2)
+    volumeID = property(_datamodel.ArclinkStatusLineIndex_volumeID_get, _datamodel.ArclinkStatusLineIndex_volumeID_set, doc=r"""volumeID : std::string""")
+    type = property(_datamodel.ArclinkStatusLineIndex_type_get, _datamodel.ArclinkStatusLineIndex_type_set, doc=r"""type : std::string""")
+    status = property(_datamodel.ArclinkStatusLineIndex_status_get, _datamodel.ArclinkStatusLineIndex_status_set, doc=r"""status : std::string""")
+    __swig_destroy__ = _datamodel.delete_ArclinkStatusLineIndex
+
+# Register ArclinkStatusLineIndex in _datamodel:
+_datamodel.ArclinkStatusLineIndex_swigregister(ArclinkStatusLineIndex)
+
+class ArclinkStatusLine(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::ArclinkStatusLine class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.ArclinkStatusLine_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.ArclinkStatusLine_TypeInfo()
+
+    def className(self):
+        r"""className(ArclinkStatusLine self) -> char const *"""
+        return _datamodel.ArclinkStatusLine_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(ArclinkStatusLine self) -> RTTI"""
+        return _datamodel.ArclinkStatusLine_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> ArclinkStatusLine
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkStatusLine
+        """
+        return _datamodel.ArclinkStatusLine_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> ArclinkStatusLine
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkStatusLine
+        """
+        return _datamodel.ArclinkStatusLine_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(ArclinkStatusLine self, GenericArchive ar)"""
+        return _datamodel.ArclinkStatusLine_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.ArclinkStatusLine_Meta()
+
+    def meta(self):
+        r"""meta(ArclinkStatusLine self) -> MetaObject"""
+        return _datamodel.ArclinkStatusLine_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(ArclinkStatusLine self) -> ArclinkStatusLine
+        __init__(ArclinkStatusLine self, ArclinkStatusLine other) -> ArclinkStatusLine
+        """
+        _datamodel.ArclinkStatusLine_swiginit(self, _datamodel.new_ArclinkStatusLine(*args))
+    __swig_destroy__ = _datamodel.delete_ArclinkStatusLine
+
+    def __eq__(self, other):
+        r"""__eq__(ArclinkStatusLine self, ArclinkStatusLine other) -> bool"""
+        return _datamodel.ArclinkStatusLine___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(ArclinkStatusLine self, ArclinkStatusLine other) -> bool"""
+        return _datamodel.ArclinkStatusLine___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(ArclinkStatusLine self, ArclinkStatusLine other) -> bool"""
+        return _datamodel.ArclinkStatusLine_equal(self, other)
+
+    def setType(self, type):
+        r"""setType(ArclinkStatusLine self, std::string const & type)"""
+        return _datamodel.ArclinkStatusLine_setType(self, type)
+
+    def type(self):
+        r"""type(ArclinkStatusLine self) -> std::string const &"""
+        return _datamodel.ArclinkStatusLine_type(self)
+
+    def setStatus(self, status):
+        r"""setStatus(ArclinkStatusLine self, std::string const & status)"""
+        return _datamodel.ArclinkStatusLine_setStatus(self, status)
+
+    def status(self):
+        r"""status(ArclinkStatusLine self) -> std::string const &"""
+        return _datamodel.ArclinkStatusLine_status(self)
+
+    def setSize(self, size):
+        r"""setSize(ArclinkStatusLine self, Seiscomp::Core::Optional< int >::Impl const & size)"""
+        return _datamodel.ArclinkStatusLine_setSize(self, size)
+
+    def size(self):
+        r"""size(ArclinkStatusLine self) -> int"""
+        return _datamodel.ArclinkStatusLine_size(self)
+
+    def setMessage(self, message):
+        r"""setMessage(ArclinkStatusLine self, std::string const & message)"""
+        return _datamodel.ArclinkStatusLine_setMessage(self, message)
+
+    def message(self):
+        r"""message(ArclinkStatusLine self) -> std::string const &"""
+        return _datamodel.ArclinkStatusLine_message(self)
+
+    def setVolumeID(self, volumeID):
+        r"""setVolumeID(ArclinkStatusLine self, std::string const & volumeID)"""
+        return _datamodel.ArclinkStatusLine_setVolumeID(self, volumeID)
+
+    def volumeID(self):
+        r"""volumeID(ArclinkStatusLine self) -> std::string const &"""
+        return _datamodel.ArclinkStatusLine_volumeID(self)
+
+    def index(self):
+        r"""index(ArclinkStatusLine self) -> ArclinkStatusLineIndex"""
+        return _datamodel.ArclinkStatusLine_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(ArclinkStatusLine self, ArclinkStatusLine lhs) -> bool"""
+        return _datamodel.ArclinkStatusLine_equalIndex(self, lhs)
+
+    def arclinkRequest(self):
+        r"""arclinkRequest(ArclinkStatusLine self) -> ArclinkRequest"""
+        return _datamodel.ArclinkStatusLine_arclinkRequest(self)
+
+    def assign(self, other):
+        r"""assign(ArclinkStatusLine self, Object other) -> bool"""
+        return _datamodel.ArclinkStatusLine_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(ArclinkStatusLine self, PublicObject parent) -> bool"""
+        return _datamodel.ArclinkStatusLine_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(ArclinkStatusLine self, PublicObject parent) -> bool"""
+        return _datamodel.ArclinkStatusLine_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(ArclinkStatusLine self) -> bool"""
+        return _datamodel.ArclinkStatusLine_detach(self)
+
+    def clone(self):
+        r"""clone(ArclinkStatusLine self) -> Object"""
+        return _datamodel.ArclinkStatusLine_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(ArclinkStatusLine self, Visitor visitor)"""
+        return _datamodel.ArclinkStatusLine_accept(self, visitor)
+
+# Register ArclinkStatusLine in _datamodel:
+_datamodel.ArclinkStatusLine_swigregister(ArclinkStatusLine)
+
+def ArclinkStatusLine_ClassName():
+    r"""ArclinkStatusLine_ClassName() -> char const *"""
+    return _datamodel.ArclinkStatusLine_ClassName()
+
+def ArclinkStatusLine_TypeInfo():
+    r"""ArclinkStatusLine_TypeInfo() -> RTTI"""
+    return _datamodel.ArclinkStatusLine_TypeInfo()
+
+def ArclinkStatusLine_Cast(*args):
+    r"""
+    ArclinkStatusLine_Cast(BaseObject o) -> ArclinkStatusLine
+    ArclinkStatusLine_Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkStatusLine
+    """
+    return _datamodel.ArclinkStatusLine_Cast(*args)
+
+def ArclinkStatusLine_ConstCast(*args):
+    r"""
+    ArclinkStatusLine_ConstCast(BaseObject o) -> ArclinkStatusLine
+    ArclinkStatusLine_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkStatusLine
+    """
+    return _datamodel.ArclinkStatusLine_ConstCast(*args)
+
+def ArclinkStatusLine_Meta():
+    r"""ArclinkStatusLine_Meta() -> MetaObject"""
+    return _datamodel.ArclinkStatusLine_Meta()
+
+class ArclinkRequestLineIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::ArclinkRequestLineIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(ArclinkRequestLineIndex self) -> ArclinkRequestLineIndex
+        __init__(ArclinkRequestLineIndex self, Time start, Time end, WaveformStreamID streamID) -> ArclinkRequestLineIndex
+        __init__(ArclinkRequestLineIndex self, ArclinkRequestLineIndex arg2) -> ArclinkRequestLineIndex
+        """
+        _datamodel.ArclinkRequestLineIndex_swiginit(self, _datamodel.new_ArclinkRequestLineIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(ArclinkRequestLineIndex self, ArclinkRequestLineIndex arg2) -> bool"""
+        return _datamodel.ArclinkRequestLineIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(ArclinkRequestLineIndex self, ArclinkRequestLineIndex arg2) -> bool"""
+        return _datamodel.ArclinkRequestLineIndex___ne__(self, arg2)
+    start = property(_datamodel.ArclinkRequestLineIndex_start_get, _datamodel.ArclinkRequestLineIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
+    end = property(_datamodel.ArclinkRequestLineIndex_end_get, _datamodel.ArclinkRequestLineIndex_end_set, doc=r"""end : Seiscomp::Core::Time""")
+    streamID = property(_datamodel.ArclinkRequestLineIndex_streamID_get, _datamodel.ArclinkRequestLineIndex_streamID_set, doc=r"""streamID : Seiscomp::DataModel::WaveformStreamID""")
+    __swig_destroy__ = _datamodel.delete_ArclinkRequestLineIndex
+
+# Register ArclinkRequestLineIndex in _datamodel:
+_datamodel.ArclinkRequestLineIndex_swigregister(ArclinkRequestLineIndex)
+
+class ArclinkRequestLine(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::ArclinkRequestLine class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.ArclinkRequestLine_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.ArclinkRequestLine_TypeInfo()
+
+    def className(self):
+        r"""className(ArclinkRequestLine self) -> char const *"""
+        return _datamodel.ArclinkRequestLine_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(ArclinkRequestLine self) -> RTTI"""
+        return _datamodel.ArclinkRequestLine_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> ArclinkRequestLine
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkRequestLine
+        """
+        return _datamodel.ArclinkRequestLine_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> ArclinkRequestLine
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkRequestLine
+        """
+        return _datamodel.ArclinkRequestLine_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(ArclinkRequestLine self, GenericArchive ar)"""
+        return _datamodel.ArclinkRequestLine_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.ArclinkRequestLine_Meta()
+
+    def meta(self):
+        r"""meta(ArclinkRequestLine self) -> MetaObject"""
+        return _datamodel.ArclinkRequestLine_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(ArclinkRequestLine self) -> ArclinkRequestLine
+        __init__(ArclinkRequestLine self, ArclinkRequestLine other) -> ArclinkRequestLine
+        """
+        _datamodel.ArclinkRequestLine_swiginit(self, _datamodel.new_ArclinkRequestLine(*args))
+    __swig_destroy__ = _datamodel.delete_ArclinkRequestLine
+
+    def __eq__(self, other):
+        r"""__eq__(ArclinkRequestLine self, ArclinkRequestLine other) -> bool"""
+        return _datamodel.ArclinkRequestLine___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(ArclinkRequestLine self, ArclinkRequestLine other) -> bool"""
+        return _datamodel.ArclinkRequestLine___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(ArclinkRequestLine self, ArclinkRequestLine other) -> bool"""
+        return _datamodel.ArclinkRequestLine_equal(self, other)
+
+    def setStart(self, start):
+        r"""setStart(ArclinkRequestLine self, Time start)"""
+        return _datamodel.ArclinkRequestLine_setStart(self, start)
+
+    def start(self):
+        r"""start(ArclinkRequestLine self) -> Time"""
+        return _datamodel.ArclinkRequestLine_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(ArclinkRequestLine self, Time end)"""
+        return _datamodel.ArclinkRequestLine_setEnd(self, end)
+
+    def end(self):
+        r"""end(ArclinkRequestLine self) -> Time"""
+        return _datamodel.ArclinkRequestLine_end(self)
+
+    def setStreamID(self, streamID):
+        r"""setStreamID(ArclinkRequestLine self, WaveformStreamID streamID)"""
+        return _datamodel.ArclinkRequestLine_setStreamID(self, streamID)
+
+    def streamID(self, *args):
+        r"""
+        streamID(ArclinkRequestLine self) -> WaveformStreamID
+        streamID(ArclinkRequestLine self) -> WaveformStreamID
+        """
+        return _datamodel.ArclinkRequestLine_streamID(self, *args)
+
+    def setRestricted(self, restricted):
+        r"""setRestricted(ArclinkRequestLine self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
+        return _datamodel.ArclinkRequestLine_setRestricted(self, restricted)
+
+    def restricted(self):
+        r"""restricted(ArclinkRequestLine self) -> bool"""
+        return _datamodel.ArclinkRequestLine_restricted(self)
+
+    def setShared(self, shared):
+        r"""setShared(ArclinkRequestLine self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
+        return _datamodel.ArclinkRequestLine_setShared(self, shared)
+
+    def shared(self):
+        r"""shared(ArclinkRequestLine self) -> bool"""
+        return _datamodel.ArclinkRequestLine_shared(self)
+
+    def setNetClass(self, netClass):
+        r"""setNetClass(ArclinkRequestLine self, std::string const & netClass)"""
+        return _datamodel.ArclinkRequestLine_setNetClass(self, netClass)
+
+    def netClass(self):
+        r"""netClass(ArclinkRequestLine self) -> std::string const &"""
+        return _datamodel.ArclinkRequestLine_netClass(self)
+
+    def setConstraints(self, constraints):
+        r"""setConstraints(ArclinkRequestLine self, std::string const & constraints)"""
+        return _datamodel.ArclinkRequestLine_setConstraints(self, constraints)
+
+    def constraints(self):
+        r"""constraints(ArclinkRequestLine self) -> std::string const &"""
+        return _datamodel.ArclinkRequestLine_constraints(self)
+
+    def setStatus(self, status):
+        r"""setStatus(ArclinkRequestLine self, ArclinkStatusLine status)"""
+        return _datamodel.ArclinkRequestLine_setStatus(self, status)
+
+    def status(self, *args):
+        r"""
+        status(ArclinkRequestLine self) -> ArclinkStatusLine
+        status(ArclinkRequestLine self) -> ArclinkStatusLine
+        """
+        return _datamodel.ArclinkRequestLine_status(self, *args)
+
+    def index(self):
+        r"""index(ArclinkRequestLine self) -> ArclinkRequestLineIndex"""
+        return _datamodel.ArclinkRequestLine_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(ArclinkRequestLine self, ArclinkRequestLine lhs) -> bool"""
+        return _datamodel.ArclinkRequestLine_equalIndex(self, lhs)
+
+    def arclinkRequest(self):
+        r"""arclinkRequest(ArclinkRequestLine self) -> ArclinkRequest"""
+        return _datamodel.ArclinkRequestLine_arclinkRequest(self)
+
+    def assign(self, other):
+        r"""assign(ArclinkRequestLine self, Object other) -> bool"""
+        return _datamodel.ArclinkRequestLine_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(ArclinkRequestLine self, PublicObject parent) -> bool"""
+        return _datamodel.ArclinkRequestLine_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(ArclinkRequestLine self, PublicObject parent) -> bool"""
+        return _datamodel.ArclinkRequestLine_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(ArclinkRequestLine self) -> bool"""
+        return _datamodel.ArclinkRequestLine_detach(self)
+
+    def clone(self):
+        r"""clone(ArclinkRequestLine self) -> Object"""
+        return _datamodel.ArclinkRequestLine_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(ArclinkRequestLine self, Visitor visitor)"""
+        return _datamodel.ArclinkRequestLine_accept(self, visitor)
+
+# Register ArclinkRequestLine in _datamodel:
+_datamodel.ArclinkRequestLine_swigregister(ArclinkRequestLine)
+
+def ArclinkRequestLine_ClassName():
+    r"""ArclinkRequestLine_ClassName() -> char const *"""
+    return _datamodel.ArclinkRequestLine_ClassName()
+
+def ArclinkRequestLine_TypeInfo():
+    r"""ArclinkRequestLine_TypeInfo() -> RTTI"""
+    return _datamodel.ArclinkRequestLine_TypeInfo()
+
+def ArclinkRequestLine_Cast(*args):
+    r"""
+    ArclinkRequestLine_Cast(BaseObject o) -> ArclinkRequestLine
+    ArclinkRequestLine_Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkRequestLine
+    """
+    return _datamodel.ArclinkRequestLine_Cast(*args)
+
+def ArclinkRequestLine_ConstCast(*args):
+    r"""
+    ArclinkRequestLine_ConstCast(BaseObject o) -> ArclinkRequestLine
+    ArclinkRequestLine_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkRequestLine
+    """
+    return _datamodel.ArclinkRequestLine_ConstCast(*args)
+
+def ArclinkRequestLine_Meta():
+    r"""ArclinkRequestLine_Meta() -> MetaObject"""
+    return _datamodel.ArclinkRequestLine_Meta()
+
+class ArclinkRequestIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::ArclinkRequestIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(ArclinkRequestIndex self) -> ArclinkRequestIndex
+        __init__(ArclinkRequestIndex self, Time created, std::string const & requestID, std::string const & userID) -> ArclinkRequestIndex
+        __init__(ArclinkRequestIndex self, ArclinkRequestIndex arg2) -> ArclinkRequestIndex
+        """
+        _datamodel.ArclinkRequestIndex_swiginit(self, _datamodel.new_ArclinkRequestIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(ArclinkRequestIndex self, ArclinkRequestIndex arg2) -> bool"""
+        return _datamodel.ArclinkRequestIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(ArclinkRequestIndex self, ArclinkRequestIndex arg2) -> bool"""
+        return _datamodel.ArclinkRequestIndex___ne__(self, arg2)
+    created = property(_datamodel.ArclinkRequestIndex_created_get, _datamodel.ArclinkRequestIndex_created_set, doc=r"""created : Seiscomp::Core::Time""")
+    requestID = property(_datamodel.ArclinkRequestIndex_requestID_get, _datamodel.ArclinkRequestIndex_requestID_set, doc=r"""requestID : std::string""")
+    userID = property(_datamodel.ArclinkRequestIndex_userID_get, _datamodel.ArclinkRequestIndex_userID_set, doc=r"""userID : std::string""")
+    __swig_destroy__ = _datamodel.delete_ArclinkRequestIndex
+
+# Register ArclinkRequestIndex in _datamodel:
+_datamodel.ArclinkRequestIndex_swigregister(ArclinkRequestIndex)
+
+class ArclinkRequest(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::ArclinkRequest class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.ArclinkRequest_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.ArclinkRequest_TypeInfo()
+
+    def className(self):
+        r"""className(ArclinkRequest self) -> char const *"""
+        return _datamodel.ArclinkRequest_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(ArclinkRequest self) -> RTTI"""
+        return _datamodel.ArclinkRequest_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> ArclinkRequest
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkRequest
+        """
+        return _datamodel.ArclinkRequest_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> ArclinkRequest
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkRequest
+        """
+        return _datamodel.ArclinkRequest_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(ArclinkRequest self, GenericArchive ar)"""
+        return _datamodel.ArclinkRequest_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.ArclinkRequest_Meta()
+
+    def meta(self):
+        r"""meta(ArclinkRequest self) -> MetaObject"""
+        return _datamodel.ArclinkRequest_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(ArclinkRequest self, ArclinkRequest other) -> ArclinkRequest
+        __init__(ArclinkRequest self, std::string const & publicID) -> ArclinkRequest
+        """
+        _datamodel.ArclinkRequest_swiginit(self, _datamodel.new_ArclinkRequest(*args))
+    __swig_destroy__ = _datamodel.delete_ArclinkRequest
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> ArclinkRequest
+        Create(std::string const & publicID) -> ArclinkRequest
+        """
+        return _datamodel.ArclinkRequest_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> ArclinkRequest"""
+        return _datamodel.ArclinkRequest_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(ArclinkRequest self, ArclinkRequest other) -> bool"""
+        return _datamodel.ArclinkRequest___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(ArclinkRequest self, ArclinkRequest other) -> bool"""
+        return _datamodel.ArclinkRequest___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(ArclinkRequest self, ArclinkRequest other) -> bool"""
+        return _datamodel.ArclinkRequest_equal(self, other)
+
+    def setRequestID(self, requestID):
+        r"""setRequestID(ArclinkRequest self, std::string const & requestID)"""
+        return _datamodel.ArclinkRequest_setRequestID(self, requestID)
+
+    def requestID(self):
+        r"""requestID(ArclinkRequest self) -> std::string const &"""
+        return _datamodel.ArclinkRequest_requestID(self)
+
+    def setUserID(self, userID):
+        r"""setUserID(ArclinkRequest self, std::string const & userID)"""
+        return _datamodel.ArclinkRequest_setUserID(self, userID)
+
+    def userID(self):
+        r"""userID(ArclinkRequest self) -> std::string const &"""
+        return _datamodel.ArclinkRequest_userID(self)
+
+    def setUserIP(self, userIP):
+        r"""setUserIP(ArclinkRequest self, std::string const & userIP)"""
+        return _datamodel.ArclinkRequest_setUserIP(self, userIP)
+
+    def userIP(self):
+        r"""userIP(ArclinkRequest self) -> std::string const &"""
+        return _datamodel.ArclinkRequest_userIP(self)
+
+    def setClientID(self, clientID):
+        r"""setClientID(ArclinkRequest self, std::string const & clientID)"""
+        return _datamodel.ArclinkRequest_setClientID(self, clientID)
+
+    def clientID(self):
+        r"""clientID(ArclinkRequest self) -> std::string const &"""
+        return _datamodel.ArclinkRequest_clientID(self)
+
+    def setClientIP(self, clientIP):
+        r"""setClientIP(ArclinkRequest self, std::string const & clientIP)"""
+        return _datamodel.ArclinkRequest_setClientIP(self, clientIP)
+
+    def clientIP(self):
+        r"""clientIP(ArclinkRequest self) -> std::string const &"""
+        return _datamodel.ArclinkRequest_clientIP(self)
+
+    def setType(self, type):
+        r"""setType(ArclinkRequest self, std::string const & type)"""
+        return _datamodel.ArclinkRequest_setType(self, type)
+
+    def type(self):
+        r"""type(ArclinkRequest self) -> std::string const &"""
+        return _datamodel.ArclinkRequest_type(self)
+
+    def setCreated(self, created):
+        r"""setCreated(ArclinkRequest self, Time created)"""
+        return _datamodel.ArclinkRequest_setCreated(self, created)
+
+    def created(self):
+        r"""created(ArclinkRequest self) -> Time"""
+        return _datamodel.ArclinkRequest_created(self)
+
+    def setStatus(self, status):
+        r"""setStatus(ArclinkRequest self, std::string const & status)"""
+        return _datamodel.ArclinkRequest_setStatus(self, status)
+
+    def status(self):
+        r"""status(ArclinkRequest self) -> std::string const &"""
+        return _datamodel.ArclinkRequest_status(self)
+
+    def setMessage(self, message):
+        r"""setMessage(ArclinkRequest self, std::string const & message)"""
+        return _datamodel.ArclinkRequest_setMessage(self, message)
+
+    def message(self):
+        r"""message(ArclinkRequest self) -> std::string const &"""
+        return _datamodel.ArclinkRequest_message(self)
+
+    def setLabel(self, label):
+        r"""setLabel(ArclinkRequest self, std::string const & label)"""
+        return _datamodel.ArclinkRequest_setLabel(self, label)
+
+    def label(self):
+        r"""label(ArclinkRequest self) -> std::string const &"""
+        return _datamodel.ArclinkRequest_label(self)
+
+    def setHeader(self, header):
+        r"""setHeader(ArclinkRequest self, std::string const & header)"""
+        return _datamodel.ArclinkRequest_setHeader(self, header)
+
+    def header(self):
+        r"""header(ArclinkRequest self) -> std::string const &"""
+        return _datamodel.ArclinkRequest_header(self)
+
+    def setSummary(self, summary):
+        r"""setSummary(ArclinkRequest self, Seiscomp::Core::Optional< Seiscomp::DataModel::ArclinkRequestSummary >::Impl const & summary)"""
+        return _datamodel.ArclinkRequest_setSummary(self, summary)
+
+    def summary(self, *args):
+        r"""
+        summary(ArclinkRequest self) -> ArclinkRequestSummary
+        summary(ArclinkRequest self) -> ArclinkRequestSummary
+        """
+        return _datamodel.ArclinkRequest_summary(self, *args)
+
+    def index(self):
+        r"""index(ArclinkRequest self) -> ArclinkRequestIndex"""
+        return _datamodel.ArclinkRequest_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(ArclinkRequest self, ArclinkRequest lhs) -> bool"""
+        return _datamodel.ArclinkRequest_equalIndex(self, lhs)
+
+    def add(self, *args):
+        r"""
+        add(ArclinkRequest self, ArclinkStatusLine obj) -> bool
+        add(ArclinkRequest self, ArclinkRequestLine obj) -> bool
+        """
+        return _datamodel.ArclinkRequest_add(self, *args)
+
+    def remove(self, *args):
+        r"""
+        remove(ArclinkRequest self, ArclinkStatusLine obj) -> bool
+        remove(ArclinkRequest self, ArclinkRequestLine obj) -> bool
+        """
+        return _datamodel.ArclinkRequest_remove(self, *args)
+
+    def removeArclinkStatusLine(self, *args):
+        r"""
+        removeArclinkStatusLine(ArclinkRequest self, size_t i) -> bool
+        removeArclinkStatusLine(ArclinkRequest self, ArclinkStatusLineIndex i) -> bool
+        """
+        return _datamodel.ArclinkRequest_removeArclinkStatusLine(self, *args)
+
+    def removeArclinkRequestLine(self, *args):
+        r"""
+        removeArclinkRequestLine(ArclinkRequest self, size_t i) -> bool
+        removeArclinkRequestLine(ArclinkRequest self, ArclinkRequestLineIndex i) -> bool
+        """
+        return _datamodel.ArclinkRequest_removeArclinkRequestLine(self, *args)
+
+    def arclinkStatusLineCount(self):
+        r"""arclinkStatusLineCount(ArclinkRequest self) -> size_t"""
+        return _datamodel.ArclinkRequest_arclinkStatusLineCount(self)
+
+    def arclinkRequestLineCount(self):
+        r"""arclinkRequestLineCount(ArclinkRequest self) -> size_t"""
+        return _datamodel.ArclinkRequest_arclinkRequestLineCount(self)
+
+    def arclinkStatusLine(self, *args):
+        r"""
+        arclinkStatusLine(ArclinkRequest self, size_t i) -> ArclinkStatusLine
+        arclinkStatusLine(ArclinkRequest self, ArclinkStatusLineIndex i) -> ArclinkStatusLine
+        """
+        return _datamodel.ArclinkRequest_arclinkStatusLine(self, *args)
+
+    def arclinkRequestLine(self, *args):
+        r"""
+        arclinkRequestLine(ArclinkRequest self, size_t i) -> ArclinkRequestLine
+        arclinkRequestLine(ArclinkRequest self, ArclinkRequestLineIndex i) -> ArclinkRequestLine
+        """
+        return _datamodel.ArclinkRequest_arclinkRequestLine(self, *args)
+
+    def arclinkLog(self):
+        r"""arclinkLog(ArclinkRequest self) -> ArclinkLog"""
+        return _datamodel.ArclinkRequest_arclinkLog(self)
+
+    def assign(self, other):
+        r"""assign(ArclinkRequest self, Object other) -> bool"""
+        return _datamodel.ArclinkRequest_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(ArclinkRequest self, PublicObject parent) -> bool"""
+        return _datamodel.ArclinkRequest_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(ArclinkRequest self, PublicObject parent) -> bool"""
+        return _datamodel.ArclinkRequest_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(ArclinkRequest self) -> bool"""
+        return _datamodel.ArclinkRequest_detach(self)
+
+    def clone(self):
+        r"""clone(ArclinkRequest self) -> Object"""
+        return _datamodel.ArclinkRequest_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(ArclinkRequest self, Object child) -> bool"""
+        return _datamodel.ArclinkRequest_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(ArclinkRequest self, Visitor visitor)"""
+        return _datamodel.ArclinkRequest_accept(self, visitor)
+
+# Register ArclinkRequest in _datamodel:
+_datamodel.ArclinkRequest_swigregister(ArclinkRequest)
+
+def ArclinkRequest_ClassName():
+    r"""ArclinkRequest_ClassName() -> char const *"""
+    return _datamodel.ArclinkRequest_ClassName()
+
+def ArclinkRequest_TypeInfo():
+    r"""ArclinkRequest_TypeInfo() -> RTTI"""
+    return _datamodel.ArclinkRequest_TypeInfo()
+
+def ArclinkRequest_Cast(*args):
+    r"""
+    ArclinkRequest_Cast(BaseObject o) -> ArclinkRequest
+    ArclinkRequest_Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkRequest
+    """
+    return _datamodel.ArclinkRequest_Cast(*args)
+
+def ArclinkRequest_ConstCast(*args):
+    r"""
+    ArclinkRequest_ConstCast(BaseObject o) -> ArclinkRequest
+    ArclinkRequest_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkRequest
+    """
+    return _datamodel.ArclinkRequest_ConstCast(*args)
+
+def ArclinkRequest_Meta():
+    r"""ArclinkRequest_Meta() -> MetaObject"""
+    return _datamodel.ArclinkRequest_Meta()
+
+def ArclinkRequest_Create(*args):
+    r"""
+    ArclinkRequest_Create() -> ArclinkRequest
+    ArclinkRequest_Create(std::string const & publicID) -> ArclinkRequest
+    """
+    return _datamodel.ArclinkRequest_Create(*args)
+
+def ArclinkRequest_Find(publicID):
+    r"""ArclinkRequest_Find(std::string const & publicID) -> ArclinkRequest"""
+    return _datamodel.ArclinkRequest_Find(publicID)
+
+class ArclinkLog(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::ArclinkLog class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.ArclinkLog_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.ArclinkLog_TypeInfo()
+
+    def className(self):
+        r"""className(ArclinkLog self) -> char const *"""
+        return _datamodel.ArclinkLog_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(ArclinkLog self) -> RTTI"""
+        return _datamodel.ArclinkLog_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> ArclinkLog
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkLog
+        """
+        return _datamodel.ArclinkLog_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> ArclinkLog
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkLog
+        """
+        return _datamodel.ArclinkLog_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(ArclinkLog self, GenericArchive ar)"""
+        return _datamodel.ArclinkLog_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.ArclinkLog_Meta()
+
+    def meta(self):
+        r"""meta(ArclinkLog self) -> MetaObject"""
+        return _datamodel.ArclinkLog_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(ArclinkLog self) -> ArclinkLog
+        __init__(ArclinkLog self, ArclinkLog other) -> ArclinkLog
+        """
+        _datamodel.ArclinkLog_swiginit(self, _datamodel.new_ArclinkLog(*args))
+    __swig_destroy__ = _datamodel.delete_ArclinkLog
+
+    def __eq__(self, other):
+        r"""__eq__(ArclinkLog self, ArclinkLog other) -> bool"""
+        return _datamodel.ArclinkLog___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(ArclinkLog self, ArclinkLog other) -> bool"""
+        return _datamodel.ArclinkLog___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(ArclinkLog self, ArclinkLog other) -> bool"""
+        return _datamodel.ArclinkLog_equal(self, other)
+
+    def add(self, *args):
+        r"""
+        add(ArclinkLog self, ArclinkRequest obj) -> bool
+        add(ArclinkLog self, ArclinkUser obj) -> bool
+        """
+        return _datamodel.ArclinkLog_add(self, *args)
+
+    def remove(self, *args):
+        r"""
+        remove(ArclinkLog self, ArclinkRequest obj) -> bool
+        remove(ArclinkLog self, ArclinkUser obj) -> bool
+        """
+        return _datamodel.ArclinkLog_remove(self, *args)
+
+    def removeArclinkRequest(self, *args):
+        r"""
+        removeArclinkRequest(ArclinkLog self, size_t i) -> bool
+        removeArclinkRequest(ArclinkLog self, ArclinkRequestIndex i) -> bool
+        """
+        return _datamodel.ArclinkLog_removeArclinkRequest(self, *args)
+
+    def removeArclinkUser(self, *args):
+        r"""
+        removeArclinkUser(ArclinkLog self, size_t i) -> bool
+        removeArclinkUser(ArclinkLog self, ArclinkUserIndex i) -> bool
+        """
+        return _datamodel.ArclinkLog_removeArclinkUser(self, *args)
+
+    def arclinkRequestCount(self):
+        r"""arclinkRequestCount(ArclinkLog self) -> size_t"""
+        return _datamodel.ArclinkLog_arclinkRequestCount(self)
+
+    def arclinkUserCount(self):
+        r"""arclinkUserCount(ArclinkLog self) -> size_t"""
+        return _datamodel.ArclinkLog_arclinkUserCount(self)
+
+    def arclinkRequest(self, *args):
+        r"""
+        arclinkRequest(ArclinkLog self, size_t i) -> ArclinkRequest
+        arclinkRequest(ArclinkLog self, ArclinkRequestIndex i) -> ArclinkRequest
+        """
+        return _datamodel.ArclinkLog_arclinkRequest(self, *args)
+
+    def arclinkUser(self, *args):
+        r"""
+        arclinkUser(ArclinkLog self, size_t i) -> ArclinkUser
+        arclinkUser(ArclinkLog self, ArclinkUserIndex i) -> ArclinkUser
+        """
+        return _datamodel.ArclinkLog_arclinkUser(self, *args)
+
+    def findArclinkRequest(self, publicID):
+        r"""findArclinkRequest(ArclinkLog self, std::string const & publicID) -> ArclinkRequest"""
+        return _datamodel.ArclinkLog_findArclinkRequest(self, publicID)
+
+    def findArclinkUser(self, publicID):
+        r"""findArclinkUser(ArclinkLog self, std::string const & publicID) -> ArclinkUser"""
+        return _datamodel.ArclinkLog_findArclinkUser(self, publicID)
+
+    def assign(self, other):
+        r"""assign(ArclinkLog self, Object other) -> bool"""
+        return _datamodel.ArclinkLog_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(ArclinkLog self, PublicObject parent) -> bool"""
+        return _datamodel.ArclinkLog_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(ArclinkLog self, PublicObject parent) -> bool"""
+        return _datamodel.ArclinkLog_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(ArclinkLog self) -> bool"""
+        return _datamodel.ArclinkLog_detach(self)
+
+    def clone(self):
+        r"""clone(ArclinkLog self) -> Object"""
+        return _datamodel.ArclinkLog_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(ArclinkLog self, Object child) -> bool"""
+        return _datamodel.ArclinkLog_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(ArclinkLog self, Visitor visitor)"""
+        return _datamodel.ArclinkLog_accept(self, visitor)
+
+# Register ArclinkLog in _datamodel:
+_datamodel.ArclinkLog_swigregister(ArclinkLog)
+
+def ArclinkLog_ClassName():
+    r"""ArclinkLog_ClassName() -> char const *"""
+    return _datamodel.ArclinkLog_ClassName()
+
+def ArclinkLog_TypeInfo():
+    r"""ArclinkLog_TypeInfo() -> RTTI"""
+    return _datamodel.ArclinkLog_TypeInfo()
+
+def ArclinkLog_Cast(*args):
+    r"""
+    ArclinkLog_Cast(BaseObject o) -> ArclinkLog
+    ArclinkLog_Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkLog
+    """
+    return _datamodel.ArclinkLog_Cast(*args)
+
+def ArclinkLog_ConstCast(*args):
+    r"""
+    ArclinkLog_ConstCast(BaseObject o) -> ArclinkLog
+    ArclinkLog_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkLog
+    """
+    return _datamodel.ArclinkLog_ConstCast(*args)
+
+def ArclinkLog_Meta():
+    r"""ArclinkLog_Meta() -> MetaObject"""
+    return _datamodel.ArclinkLog_Meta()
+
+class QCLogIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::QCLogIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(QCLogIndex self) -> QCLogIndex
+        __init__(QCLogIndex self, Time start, WaveformStreamID waveformID) -> QCLogIndex
+        __init__(QCLogIndex self, QCLogIndex arg2) -> QCLogIndex
+        """
+        _datamodel.QCLogIndex_swiginit(self, _datamodel.new_QCLogIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(QCLogIndex self, QCLogIndex arg2) -> bool"""
+        return _datamodel.QCLogIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(QCLogIndex self, QCLogIndex arg2) -> bool"""
+        return _datamodel.QCLogIndex___ne__(self, arg2)
+    start = property(_datamodel.QCLogIndex_start_get, _datamodel.QCLogIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
+    waveformID = property(_datamodel.QCLogIndex_waveformID_get, _datamodel.QCLogIndex_waveformID_set, doc=r"""waveformID : Seiscomp::DataModel::WaveformStreamID""")
+    __swig_destroy__ = _datamodel.delete_QCLogIndex
+
+# Register QCLogIndex in _datamodel:
+_datamodel.QCLogIndex_swigregister(QCLogIndex)
+
+class QCLog(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::QCLog class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.QCLog_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.QCLog_TypeInfo()
+
+    def className(self):
+        r"""className(QCLog self) -> char const *"""
+        return _datamodel.QCLog_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(QCLog self) -> RTTI"""
+        return _datamodel.QCLog_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> QCLog
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> QCLog
+        """
+        return _datamodel.QCLog_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> QCLog
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> QCLog
+        """
+        return _datamodel.QCLog_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(QCLog self, GenericArchive ar)"""
+        return _datamodel.QCLog_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.QCLog_Meta()
+
+    def meta(self):
+        r"""meta(QCLog self) -> MetaObject"""
+        return _datamodel.QCLog_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(QCLog self, QCLog other) -> QCLog
+        __init__(QCLog self, std::string const & publicID) -> QCLog
+        """
+        _datamodel.QCLog_swiginit(self, _datamodel.new_QCLog(*args))
+    __swig_destroy__ = _datamodel.delete_QCLog
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> QCLog
+        Create(std::string const & publicID) -> QCLog
+        """
+        return _datamodel.QCLog_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> QCLog"""
+        return _datamodel.QCLog_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(QCLog self, QCLog other) -> bool"""
+        return _datamodel.QCLog___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(QCLog self, QCLog other) -> bool"""
+        return _datamodel.QCLog___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(QCLog self, QCLog other) -> bool"""
+        return _datamodel.QCLog_equal(self, other)
+
+    def setWaveformID(self, waveformID):
+        r"""setWaveformID(QCLog self, WaveformStreamID waveformID)"""
+        return _datamodel.QCLog_setWaveformID(self, waveformID)
+
+    def waveformID(self, *args):
+        r"""
+        waveformID(QCLog self) -> WaveformStreamID
+        waveformID(QCLog self) -> WaveformStreamID
+        """
+        return _datamodel.QCLog_waveformID(self, *args)
+
+    def setCreatorID(self, creatorID):
+        r"""setCreatorID(QCLog self, std::string const & creatorID)"""
+        return _datamodel.QCLog_setCreatorID(self, creatorID)
+
+    def creatorID(self):
+        r"""creatorID(QCLog self) -> std::string const &"""
+        return _datamodel.QCLog_creatorID(self)
+
+    def setCreated(self, created):
+        r"""setCreated(QCLog self, Time created)"""
+        return _datamodel.QCLog_setCreated(self, created)
+
+    def created(self):
+        r"""created(QCLog self) -> Time"""
+        return _datamodel.QCLog_created(self)
+
+    def setStart(self, start):
+        r"""setStart(QCLog self, Time start)"""
+        return _datamodel.QCLog_setStart(self, start)
+
+    def start(self):
+        r"""start(QCLog self) -> Time"""
+        return _datamodel.QCLog_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(QCLog self, Time end)"""
+        return _datamodel.QCLog_setEnd(self, end)
+
+    def end(self):
+        r"""end(QCLog self) -> Time"""
+        return _datamodel.QCLog_end(self)
+
+    def setMessage(self, message):
+        r"""setMessage(QCLog self, std::string const & message)"""
+        return _datamodel.QCLog_setMessage(self, message)
+
+    def message(self):
+        r"""message(QCLog self) -> std::string const &"""
+        return _datamodel.QCLog_message(self)
+
+    def index(self):
+        r"""index(QCLog self) -> QCLogIndex"""
+        return _datamodel.QCLog_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(QCLog self, QCLog lhs) -> bool"""
+        return _datamodel.QCLog_equalIndex(self, lhs)
+
+    def qualityControl(self):
+        r"""qualityControl(QCLog self) -> QualityControl"""
+        return _datamodel.QCLog_qualityControl(self)
+
+    def assign(self, other):
+        r"""assign(QCLog self, Object other) -> bool"""
+        return _datamodel.QCLog_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(QCLog self, PublicObject parent) -> bool"""
+        return _datamodel.QCLog_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(QCLog self, PublicObject parent) -> bool"""
+        return _datamodel.QCLog_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(QCLog self) -> bool"""
+        return _datamodel.QCLog_detach(self)
+
+    def clone(self):
+        r"""clone(QCLog self) -> Object"""
+        return _datamodel.QCLog_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(QCLog self, Object child) -> bool"""
+        return _datamodel.QCLog_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(QCLog self, Visitor visitor)"""
+        return _datamodel.QCLog_accept(self, visitor)
+
+# Register QCLog in _datamodel:
+_datamodel.QCLog_swigregister(QCLog)
+
+def QCLog_ClassName():
+    r"""QCLog_ClassName() -> char const *"""
+    return _datamodel.QCLog_ClassName()
+
+def QCLog_TypeInfo():
+    r"""QCLog_TypeInfo() -> RTTI"""
+    return _datamodel.QCLog_TypeInfo()
+
+def QCLog_Cast(*args):
+    r"""
+    QCLog_Cast(BaseObject o) -> QCLog
+    QCLog_Cast(Seiscomp::Core::BaseObjectPtr o) -> QCLog
+    """
+    return _datamodel.QCLog_Cast(*args)
+
+def QCLog_ConstCast(*args):
+    r"""
+    QCLog_ConstCast(BaseObject o) -> QCLog
+    QCLog_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> QCLog
+    """
+    return _datamodel.QCLog_ConstCast(*args)
+
+def QCLog_Meta():
+    r"""QCLog_Meta() -> MetaObject"""
+    return _datamodel.QCLog_Meta()
+
+def QCLog_Create(*args):
+    r"""
+    QCLog_Create() -> QCLog
+    QCLog_Create(std::string const & publicID) -> QCLog
+    """
+    return _datamodel.QCLog_Create(*args)
+
+def QCLog_Find(publicID):
+    r"""QCLog_Find(std::string const & publicID) -> QCLog"""
+    return _datamodel.QCLog_Find(publicID)
+
+class WaveformQualityIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::WaveformQualityIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(WaveformQualityIndex self) -> WaveformQualityIndex
+        __init__(WaveformQualityIndex self, Time start, WaveformStreamID waveformID, std::string const & type, std::string const & parameter) -> WaveformQualityIndex
+        __init__(WaveformQualityIndex self, WaveformQualityIndex arg2) -> WaveformQualityIndex
+        """
+        _datamodel.WaveformQualityIndex_swiginit(self, _datamodel.new_WaveformQualityIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(WaveformQualityIndex self, WaveformQualityIndex arg2) -> bool"""
+        return _datamodel.WaveformQualityIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(WaveformQualityIndex self, WaveformQualityIndex arg2) -> bool"""
+        return _datamodel.WaveformQualityIndex___ne__(self, arg2)
+    start = property(_datamodel.WaveformQualityIndex_start_get, _datamodel.WaveformQualityIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
+    waveformID = property(_datamodel.WaveformQualityIndex_waveformID_get, _datamodel.WaveformQualityIndex_waveformID_set, doc=r"""waveformID : Seiscomp::DataModel::WaveformStreamID""")
+    type = property(_datamodel.WaveformQualityIndex_type_get, _datamodel.WaveformQualityIndex_type_set, doc=r"""type : std::string""")
+    parameter = property(_datamodel.WaveformQualityIndex_parameter_get, _datamodel.WaveformQualityIndex_parameter_set, doc=r"""parameter : std::string""")
+    __swig_destroy__ = _datamodel.delete_WaveformQualityIndex
+
+# Register WaveformQualityIndex in _datamodel:
+_datamodel.WaveformQualityIndex_swigregister(WaveformQualityIndex)
+
+class WaveformQuality(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::WaveformQuality class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.WaveformQuality_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.WaveformQuality_TypeInfo()
+
+    def className(self):
+        r"""className(WaveformQuality self) -> char const *"""
+        return _datamodel.WaveformQuality_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(WaveformQuality self) -> RTTI"""
+        return _datamodel.WaveformQuality_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> WaveformQuality
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> WaveformQuality
+        """
+        return _datamodel.WaveformQuality_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> WaveformQuality
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> WaveformQuality
+        """
+        return _datamodel.WaveformQuality_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(WaveformQuality self, GenericArchive ar)"""
+        return _datamodel.WaveformQuality_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.WaveformQuality_Meta()
+
+    def meta(self):
+        r"""meta(WaveformQuality self) -> MetaObject"""
+        return _datamodel.WaveformQuality_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(WaveformQuality self) -> WaveformQuality
+        __init__(WaveformQuality self, WaveformQuality other) -> WaveformQuality
+        """
+        _datamodel.WaveformQuality_swiginit(self, _datamodel.new_WaveformQuality(*args))
+    __swig_destroy__ = _datamodel.delete_WaveformQuality
+
+    def __eq__(self, other):
+        r"""__eq__(WaveformQuality self, WaveformQuality other) -> bool"""
+        return _datamodel.WaveformQuality___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(WaveformQuality self, WaveformQuality other) -> bool"""
+        return _datamodel.WaveformQuality___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(WaveformQuality self, WaveformQuality other) -> bool"""
+        return _datamodel.WaveformQuality_equal(self, other)
+
+    def setWaveformID(self, waveformID):
+        r"""setWaveformID(WaveformQuality self, WaveformStreamID waveformID)"""
+        return _datamodel.WaveformQuality_setWaveformID(self, waveformID)
+
+    def waveformID(self, *args):
+        r"""
+        waveformID(WaveformQuality self) -> WaveformStreamID
+        waveformID(WaveformQuality self) -> WaveformStreamID
+        """
+        return _datamodel.WaveformQuality_waveformID(self, *args)
+
+    def setCreatorID(self, creatorID):
+        r"""setCreatorID(WaveformQuality self, std::string const & creatorID)"""
+        return _datamodel.WaveformQuality_setCreatorID(self, creatorID)
+
+    def creatorID(self):
+        r"""creatorID(WaveformQuality self) -> std::string const &"""
+        return _datamodel.WaveformQuality_creatorID(self)
+
+    def setCreated(self, created):
+        r"""setCreated(WaveformQuality self, Time created)"""
+        return _datamodel.WaveformQuality_setCreated(self, created)
+
+    def created(self):
+        r"""created(WaveformQuality self) -> Time"""
+        return _datamodel.WaveformQuality_created(self)
+
+    def setStart(self, start):
+        r"""setStart(WaveformQuality self, Time start)"""
+        return _datamodel.WaveformQuality_setStart(self, start)
+
+    def start(self):
+        r"""start(WaveformQuality self) -> Time"""
+        return _datamodel.WaveformQuality_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(WaveformQuality self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        return _datamodel.WaveformQuality_setEnd(self, end)
+
+    def end(self):
+        r"""end(WaveformQuality self) -> Time"""
+        return _datamodel.WaveformQuality_end(self)
+
+    def setType(self, type):
+        r"""setType(WaveformQuality self, std::string const & type)"""
+        return _datamodel.WaveformQuality_setType(self, type)
+
+    def type(self):
+        r"""type(WaveformQuality self) -> std::string const &"""
+        return _datamodel.WaveformQuality_type(self)
+
+    def setParameter(self, parameter):
+        r"""setParameter(WaveformQuality self, std::string const & parameter)"""
+        return _datamodel.WaveformQuality_setParameter(self, parameter)
+
+    def parameter(self):
+        r"""parameter(WaveformQuality self) -> std::string const &"""
+        return _datamodel.WaveformQuality_parameter(self)
+
+    def setValue(self, value):
+        r"""setValue(WaveformQuality self, double value)"""
+        return _datamodel.WaveformQuality_setValue(self, value)
+
+    def value(self):
+        r"""value(WaveformQuality self) -> double"""
+        return _datamodel.WaveformQuality_value(self)
+
+    def setLowerUncertainty(self, lowerUncertainty):
+        r"""setLowerUncertainty(WaveformQuality self, Seiscomp::Core::Optional< double >::Impl const & lowerUncertainty)"""
+        return _datamodel.WaveformQuality_setLowerUncertainty(self, lowerUncertainty)
+
+    def lowerUncertainty(self):
+        r"""lowerUncertainty(WaveformQuality self) -> double"""
+        return _datamodel.WaveformQuality_lowerUncertainty(self)
+
+    def setUpperUncertainty(self, upperUncertainty):
+        r"""setUpperUncertainty(WaveformQuality self, Seiscomp::Core::Optional< double >::Impl const & upperUncertainty)"""
+        return _datamodel.WaveformQuality_setUpperUncertainty(self, upperUncertainty)
+
+    def upperUncertainty(self):
+        r"""upperUncertainty(WaveformQuality self) -> double"""
+        return _datamodel.WaveformQuality_upperUncertainty(self)
+
+    def setWindowLength(self, windowLength):
+        r"""setWindowLength(WaveformQuality self, Seiscomp::Core::Optional< double >::Impl const & windowLength)"""
+        return _datamodel.WaveformQuality_setWindowLength(self, windowLength)
+
+    def windowLength(self):
+        r"""windowLength(WaveformQuality self) -> double"""
+        return _datamodel.WaveformQuality_windowLength(self)
+
+    def index(self):
+        r"""index(WaveformQuality self) -> WaveformQualityIndex"""
+        return _datamodel.WaveformQuality_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(WaveformQuality self, WaveformQuality lhs) -> bool"""
+        return _datamodel.WaveformQuality_equalIndex(self, lhs)
+
+    def qualityControl(self):
+        r"""qualityControl(WaveformQuality self) -> QualityControl"""
+        return _datamodel.WaveformQuality_qualityControl(self)
+
+    def assign(self, other):
+        r"""assign(WaveformQuality self, Object other) -> bool"""
+        return _datamodel.WaveformQuality_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(WaveformQuality self, PublicObject parent) -> bool"""
+        return _datamodel.WaveformQuality_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(WaveformQuality self, PublicObject parent) -> bool"""
+        return _datamodel.WaveformQuality_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(WaveformQuality self) -> bool"""
+        return _datamodel.WaveformQuality_detach(self)
+
+    def clone(self):
+        r"""clone(WaveformQuality self) -> Object"""
+        return _datamodel.WaveformQuality_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(WaveformQuality self, Visitor visitor)"""
+        return _datamodel.WaveformQuality_accept(self, visitor)
+
+# Register WaveformQuality in _datamodel:
+_datamodel.WaveformQuality_swigregister(WaveformQuality)
+
+def WaveformQuality_ClassName():
+    r"""WaveformQuality_ClassName() -> char const *"""
+    return _datamodel.WaveformQuality_ClassName()
+
+def WaveformQuality_TypeInfo():
+    r"""WaveformQuality_TypeInfo() -> RTTI"""
+    return _datamodel.WaveformQuality_TypeInfo()
+
+def WaveformQuality_Cast(*args):
+    r"""
+    WaveformQuality_Cast(BaseObject o) -> WaveformQuality
+    WaveformQuality_Cast(Seiscomp::Core::BaseObjectPtr o) -> WaveformQuality
+    """
+    return _datamodel.WaveformQuality_Cast(*args)
+
+def WaveformQuality_ConstCast(*args):
+    r"""
+    WaveformQuality_ConstCast(BaseObject o) -> WaveformQuality
+    WaveformQuality_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> WaveformQuality
+    """
+    return _datamodel.WaveformQuality_ConstCast(*args)
+
+def WaveformQuality_Meta():
+    r"""WaveformQuality_Meta() -> MetaObject"""
+    return _datamodel.WaveformQuality_Meta()
+
+class OutageIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::OutageIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(OutageIndex self) -> OutageIndex
+        __init__(OutageIndex self, WaveformStreamID waveformID, Time start) -> OutageIndex
+        __init__(OutageIndex self, OutageIndex arg2) -> OutageIndex
+        """
+        _datamodel.OutageIndex_swiginit(self, _datamodel.new_OutageIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(OutageIndex self, OutageIndex arg2) -> bool"""
+        return _datamodel.OutageIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(OutageIndex self, OutageIndex arg2) -> bool"""
+        return _datamodel.OutageIndex___ne__(self, arg2)
+    waveformID = property(_datamodel.OutageIndex_waveformID_get, _datamodel.OutageIndex_waveformID_set, doc=r"""waveformID : Seiscomp::DataModel::WaveformStreamID""")
+    start = property(_datamodel.OutageIndex_start_get, _datamodel.OutageIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
+    __swig_destroy__ = _datamodel.delete_OutageIndex
+
+# Register OutageIndex in _datamodel:
+_datamodel.OutageIndex_swigregister(OutageIndex)
+
+class Outage(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::Outage class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.Outage_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.Outage_TypeInfo()
+
+    def className(self):
+        r"""className(Outage self) -> char const *"""
+        return _datamodel.Outage_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(Outage self) -> RTTI"""
+        return _datamodel.Outage_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> Outage
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> Outage
+        """
+        return _datamodel.Outage_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> Outage
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Outage
+        """
+        return _datamodel.Outage_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(Outage self, GenericArchive ar)"""
+        return _datamodel.Outage_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.Outage_Meta()
+
+    def meta(self):
+        r"""meta(Outage self) -> MetaObject"""
+        return _datamodel.Outage_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(Outage self) -> Outage
+        __init__(Outage self, Outage other) -> Outage
+        """
+        _datamodel.Outage_swiginit(self, _datamodel.new_Outage(*args))
+    __swig_destroy__ = _datamodel.delete_Outage
+
+    def __eq__(self, other):
+        r"""__eq__(Outage self, Outage other) -> bool"""
+        return _datamodel.Outage___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(Outage self, Outage other) -> bool"""
+        return _datamodel.Outage___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(Outage self, Outage other) -> bool"""
+        return _datamodel.Outage_equal(self, other)
+
+    def setWaveformID(self, waveformID):
+        r"""setWaveformID(Outage self, WaveformStreamID waveformID)"""
+        return _datamodel.Outage_setWaveformID(self, waveformID)
+
+    def waveformID(self, *args):
+        r"""
+        waveformID(Outage self) -> WaveformStreamID
+        waveformID(Outage self) -> WaveformStreamID
+        """
+        return _datamodel.Outage_waveformID(self, *args)
+
+    def setCreatorID(self, creatorID):
+        r"""setCreatorID(Outage self, std::string const & creatorID)"""
+        return _datamodel.Outage_setCreatorID(self, creatorID)
+
+    def creatorID(self):
+        r"""creatorID(Outage self) -> std::string const &"""
+        return _datamodel.Outage_creatorID(self)
+
+    def setCreated(self, created):
+        r"""setCreated(Outage self, Time created)"""
+        return _datamodel.Outage_setCreated(self, created)
+
+    def created(self):
+        r"""created(Outage self) -> Time"""
+        return _datamodel.Outage_created(self)
+
+    def setStart(self, start):
+        r"""setStart(Outage self, Time start)"""
+        return _datamodel.Outage_setStart(self, start)
+
+    def start(self):
+        r"""start(Outage self) -> Time"""
+        return _datamodel.Outage_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(Outage self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        return _datamodel.Outage_setEnd(self, end)
+
+    def end(self):
+        r"""end(Outage self) -> Time"""
+        return _datamodel.Outage_end(self)
+
+    def index(self):
+        r"""index(Outage self) -> OutageIndex"""
+        return _datamodel.Outage_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(Outage self, Outage lhs) -> bool"""
+        return _datamodel.Outage_equalIndex(self, lhs)
+
+    def qualityControl(self):
+        r"""qualityControl(Outage self) -> QualityControl"""
+        return _datamodel.Outage_qualityControl(self)
+
+    def assign(self, other):
+        r"""assign(Outage self, Object other) -> bool"""
+        return _datamodel.Outage_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(Outage self, PublicObject parent) -> bool"""
+        return _datamodel.Outage_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(Outage self, PublicObject parent) -> bool"""
+        return _datamodel.Outage_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(Outage self) -> bool"""
+        return _datamodel.Outage_detach(self)
+
+    def clone(self):
+        r"""clone(Outage self) -> Object"""
+        return _datamodel.Outage_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(Outage self, Visitor visitor)"""
+        return _datamodel.Outage_accept(self, visitor)
+
+# Register Outage in _datamodel:
+_datamodel.Outage_swigregister(Outage)
+
+def Outage_ClassName():
+    r"""Outage_ClassName() -> char const *"""
+    return _datamodel.Outage_ClassName()
+
+def Outage_TypeInfo():
+    r"""Outage_TypeInfo() -> RTTI"""
+    return _datamodel.Outage_TypeInfo()
+
+def Outage_Cast(*args):
+    r"""
+    Outage_Cast(BaseObject o) -> Outage
+    Outage_Cast(Seiscomp::Core::BaseObjectPtr o) -> Outage
+    """
+    return _datamodel.Outage_Cast(*args)
+
+def Outage_ConstCast(*args):
+    r"""
+    Outage_ConstCast(BaseObject o) -> Outage
+    Outage_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Outage
+    """
+    return _datamodel.Outage_ConstCast(*args)
+
+def Outage_Meta():
+    r"""Outage_Meta() -> MetaObject"""
+    return _datamodel.Outage_Meta()
+
+class QualityControl(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::QualityControl class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.QualityControl_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.QualityControl_TypeInfo()
+
+    def className(self):
+        r"""className(QualityControl self) -> char const *"""
+        return _datamodel.QualityControl_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(QualityControl self) -> RTTI"""
+        return _datamodel.QualityControl_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> QualityControl
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> QualityControl
+        """
+        return _datamodel.QualityControl_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> QualityControl
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> QualityControl
+        """
+        return _datamodel.QualityControl_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(QualityControl self, GenericArchive ar)"""
+        return _datamodel.QualityControl_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.QualityControl_Meta()
+
+    def meta(self):
+        r"""meta(QualityControl self) -> MetaObject"""
+        return _datamodel.QualityControl_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(QualityControl self) -> QualityControl
+        __init__(QualityControl self, QualityControl other) -> QualityControl
+        """
+        _datamodel.QualityControl_swiginit(self, _datamodel.new_QualityControl(*args))
+    __swig_destroy__ = _datamodel.delete_QualityControl
+
+    def __eq__(self, other):
+        r"""__eq__(QualityControl self, QualityControl other) -> bool"""
+        return _datamodel.QualityControl___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(QualityControl self, QualityControl other) -> bool"""
+        return _datamodel.QualityControl___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(QualityControl self, QualityControl other) -> bool"""
+        return _datamodel.QualityControl_equal(self, other)
+
+    def add(self, *args):
+        r"""
+        add(QualityControl self, QCLog obj) -> bool
+        add(QualityControl self, WaveformQuality obj) -> bool
+        add(QualityControl self, Outage obj) -> bool
+        """
+        return _datamodel.QualityControl_add(self, *args)
+
+    def remove(self, *args):
+        r"""
+        remove(QualityControl self, QCLog obj) -> bool
+        remove(QualityControl self, WaveformQuality obj) -> bool
+        remove(QualityControl self, Outage obj) -> bool
+        """
+        return _datamodel.QualityControl_remove(self, *args)
+
+    def removeQCLog(self, *args):
+        r"""
+        removeQCLog(QualityControl self, size_t i) -> bool
+        removeQCLog(QualityControl self, QCLogIndex i) -> bool
+        """
+        return _datamodel.QualityControl_removeQCLog(self, *args)
+
+    def removeWaveformQuality(self, *args):
+        r"""
+        removeWaveformQuality(QualityControl self, size_t i) -> bool
+        removeWaveformQuality(QualityControl self, WaveformQualityIndex i) -> bool
+        """
+        return _datamodel.QualityControl_removeWaveformQuality(self, *args)
+
+    def removeOutage(self, *args):
+        r"""
+        removeOutage(QualityControl self, size_t i) -> bool
+        removeOutage(QualityControl self, OutageIndex i) -> bool
+        """
+        return _datamodel.QualityControl_removeOutage(self, *args)
+
+    def qCLogCount(self):
+        r"""qCLogCount(QualityControl self) -> size_t"""
+        return _datamodel.QualityControl_qCLogCount(self)
+
+    def waveformQualityCount(self):
+        r"""waveformQualityCount(QualityControl self) -> size_t"""
+        return _datamodel.QualityControl_waveformQualityCount(self)
+
+    def outageCount(self):
+        r"""outageCount(QualityControl self) -> size_t"""
+        return _datamodel.QualityControl_outageCount(self)
+
+    def qCLog(self, *args):
+        r"""
+        qCLog(QualityControl self, size_t i) -> QCLog
+        qCLog(QualityControl self, QCLogIndex i) -> QCLog
+        """
+        return _datamodel.QualityControl_qCLog(self, *args)
+
+    def waveformQuality(self, *args):
+        r"""
+        waveformQuality(QualityControl self, size_t i) -> WaveformQuality
+        waveformQuality(QualityControl self, WaveformQualityIndex i) -> WaveformQuality
+        """
+        return _datamodel.QualityControl_waveformQuality(self, *args)
+
+    def outage(self, *args):
+        r"""
+        outage(QualityControl self, size_t i) -> Outage
+        outage(QualityControl self, OutageIndex i) -> Outage
+        """
+        return _datamodel.QualityControl_outage(self, *args)
+
+    def findQCLog(self, publicID):
+        r"""findQCLog(QualityControl self, std::string const & publicID) -> QCLog"""
+        return _datamodel.QualityControl_findQCLog(self, publicID)
+
+    def assign(self, other):
+        r"""assign(QualityControl self, Object other) -> bool"""
+        return _datamodel.QualityControl_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(QualityControl self, PublicObject parent) -> bool"""
+        return _datamodel.QualityControl_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(QualityControl self, PublicObject parent) -> bool"""
+        return _datamodel.QualityControl_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(QualityControl self) -> bool"""
+        return _datamodel.QualityControl_detach(self)
+
+    def clone(self):
+        r"""clone(QualityControl self) -> Object"""
+        return _datamodel.QualityControl_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(QualityControl self, Object child) -> bool"""
+        return _datamodel.QualityControl_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(QualityControl self, Visitor visitor)"""
+        return _datamodel.QualityControl_accept(self, visitor)
+
+# Register QualityControl in _datamodel:
+_datamodel.QualityControl_swigregister(QualityControl)
+
+def QualityControl_ClassName():
+    r"""QualityControl_ClassName() -> char const *"""
+    return _datamodel.QualityControl_ClassName()
+
+def QualityControl_TypeInfo():
+    r"""QualityControl_TypeInfo() -> RTTI"""
+    return _datamodel.QualityControl_TypeInfo()
+
+def QualityControl_Cast(*args):
+    r"""
+    QualityControl_Cast(BaseObject o) -> QualityControl
+    QualityControl_Cast(Seiscomp::Core::BaseObjectPtr o) -> QualityControl
+    """
+    return _datamodel.QualityControl_Cast(*args)
+
+def QualityControl_ConstCast(*args):
+    r"""
+    QualityControl_ConstCast(BaseObject o) -> QualityControl
+    QualityControl_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> QualityControl
+    """
+    return _datamodel.QualityControl_ConstCast(*args)
+
+def QualityControl_Meta():
+    r"""QualityControl_Meta() -> MetaObject"""
+    return _datamodel.QualityControl_Meta()
+
+class StationReferenceIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::StationReferenceIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(StationReferenceIndex self) -> StationReferenceIndex
+        __init__(StationReferenceIndex self, std::string const & stationID) -> StationReferenceIndex
+        __init__(StationReferenceIndex self, StationReferenceIndex arg2) -> StationReferenceIndex
+        """
+        _datamodel.StationReferenceIndex_swiginit(self, _datamodel.new_StationReferenceIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(StationReferenceIndex self, StationReferenceIndex arg2) -> bool"""
+        return _datamodel.StationReferenceIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(StationReferenceIndex self, StationReferenceIndex arg2) -> bool"""
+        return _datamodel.StationReferenceIndex___ne__(self, arg2)
+    stationID = property(_datamodel.StationReferenceIndex_stationID_get, _datamodel.StationReferenceIndex_stationID_set, doc=r"""stationID : std::string""")
+    __swig_destroy__ = _datamodel.delete_StationReferenceIndex
+
+# Register StationReferenceIndex in _datamodel:
+_datamodel.StationReferenceIndex_swigregister(StationReferenceIndex)
+
+class StationReference(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::StationReference class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.StationReference_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.StationReference_TypeInfo()
+
+    def className(self):
+        r"""className(StationReference self) -> char const *"""
+        return _datamodel.StationReference_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(StationReference self) -> RTTI"""
+        return _datamodel.StationReference_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> StationReference
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> StationReference
+        """
+        return _datamodel.StationReference_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> StationReference
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> StationReference
+        """
+        return _datamodel.StationReference_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(StationReference self, GenericArchive ar)"""
+        return _datamodel.StationReference_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.StationReference_Meta()
+
+    def meta(self):
+        r"""meta(StationReference self) -> MetaObject"""
+        return _datamodel.StationReference_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(StationReference self) -> StationReference
+        __init__(StationReference self, StationReference other) -> StationReference
+        __init__(StationReference self, std::string const & stationID) -> StationReference
+        """
+        _datamodel.StationReference_swiginit(self, _datamodel.new_StationReference(*args))
+    __swig_destroy__ = _datamodel.delete_StationReference
+
+    def __eq__(self, other):
+        r"""__eq__(StationReference self, StationReference other) -> bool"""
+        return _datamodel.StationReference___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(StationReference self, StationReference other) -> bool"""
+        return _datamodel.StationReference___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(StationReference self, StationReference other) -> bool"""
+        return _datamodel.StationReference_equal(self, other)
+
+    def setStationID(self, stationID):
+        r"""setStationID(StationReference self, std::string const & stationID)"""
+        return _datamodel.StationReference_setStationID(self, stationID)
+
+    def stationID(self):
+        r"""stationID(StationReference self) -> std::string const &"""
+        return _datamodel.StationReference_stationID(self)
+
+    def index(self):
+        r"""index(StationReference self) -> StationReferenceIndex"""
+        return _datamodel.StationReference_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(StationReference self, StationReference lhs) -> bool"""
+        return _datamodel.StationReference_equalIndex(self, lhs)
+
+    def stationGroup(self):
+        r"""stationGroup(StationReference self) -> StationGroup"""
+        return _datamodel.StationReference_stationGroup(self)
+
+    def assign(self, other):
+        r"""assign(StationReference self, Object other) -> bool"""
+        return _datamodel.StationReference_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(StationReference self, PublicObject parent) -> bool"""
+        return _datamodel.StationReference_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(StationReference self, PublicObject parent) -> bool"""
+        return _datamodel.StationReference_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(StationReference self) -> bool"""
+        return _datamodel.StationReference_detach(self)
+
+    def clone(self):
+        r"""clone(StationReference self) -> Object"""
+        return _datamodel.StationReference_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(StationReference self, Visitor visitor)"""
+        return _datamodel.StationReference_accept(self, visitor)
+
+# Register StationReference in _datamodel:
+_datamodel.StationReference_swigregister(StationReference)
+
+def StationReference_ClassName():
+    r"""StationReference_ClassName() -> char const *"""
+    return _datamodel.StationReference_ClassName()
+
+def StationReference_TypeInfo():
+    r"""StationReference_TypeInfo() -> RTTI"""
+    return _datamodel.StationReference_TypeInfo()
+
+def StationReference_Cast(*args):
+    r"""
+    StationReference_Cast(BaseObject o) -> StationReference
+    StationReference_Cast(Seiscomp::Core::BaseObjectPtr o) -> StationReference
+    """
+    return _datamodel.StationReference_Cast(*args)
+
+def StationReference_ConstCast(*args):
+    r"""
+    StationReference_ConstCast(BaseObject o) -> StationReference
+    StationReference_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> StationReference
+    """
+    return _datamodel.StationReference_ConstCast(*args)
+
+def StationReference_Meta():
+    r"""StationReference_Meta() -> MetaObject"""
+    return _datamodel.StationReference_Meta()
+
+class StationGroupIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::StationGroupIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(StationGroupIndex self) -> StationGroupIndex
+        __init__(StationGroupIndex self, std::string const & code) -> StationGroupIndex
+        __init__(StationGroupIndex self, StationGroupIndex arg2) -> StationGroupIndex
+        """
+        _datamodel.StationGroupIndex_swiginit(self, _datamodel.new_StationGroupIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(StationGroupIndex self, StationGroupIndex arg2) -> bool"""
+        return _datamodel.StationGroupIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(StationGroupIndex self, StationGroupIndex arg2) -> bool"""
+        return _datamodel.StationGroupIndex___ne__(self, arg2)
+    code = property(_datamodel.StationGroupIndex_code_get, _datamodel.StationGroupIndex_code_set, doc=r"""code : std::string""")
+    __swig_destroy__ = _datamodel.delete_StationGroupIndex
+
+# Register StationGroupIndex in _datamodel:
+_datamodel.StationGroupIndex_swigregister(StationGroupIndex)
+
+class StationGroup(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::StationGroup class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.StationGroup_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.StationGroup_TypeInfo()
+
+    def className(self):
+        r"""className(StationGroup self) -> char const *"""
+        return _datamodel.StationGroup_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(StationGroup self) -> RTTI"""
+        return _datamodel.StationGroup_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> StationGroup
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> StationGroup
+        """
+        return _datamodel.StationGroup_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> StationGroup
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> StationGroup
+        """
+        return _datamodel.StationGroup_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(StationGroup self, GenericArchive ar)"""
+        return _datamodel.StationGroup_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.StationGroup_Meta()
+
+    def meta(self):
+        r"""meta(StationGroup self) -> MetaObject"""
+        return _datamodel.StationGroup_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(StationGroup self, StationGroup other) -> StationGroup
+        __init__(StationGroup self, std::string const & publicID) -> StationGroup
+        """
+        _datamodel.StationGroup_swiginit(self, _datamodel.new_StationGroup(*args))
+    __swig_destroy__ = _datamodel.delete_StationGroup
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> StationGroup
+        Create(std::string const & publicID) -> StationGroup
+        """
+        return _datamodel.StationGroup_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> StationGroup"""
+        return _datamodel.StationGroup_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(StationGroup self, StationGroup other) -> bool"""
+        return _datamodel.StationGroup___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(StationGroup self, StationGroup other) -> bool"""
+        return _datamodel.StationGroup___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(StationGroup self, StationGroup other) -> bool"""
+        return _datamodel.StationGroup_equal(self, other)
+
+    def setType(self, type):
+        r"""setType(StationGroup self, Seiscomp::Core::Optional< Seiscomp::DataModel::StationGroupType >::Impl const & type)"""
+        return _datamodel.StationGroup_setType(self, type)
+
+    def type(self):
+        r"""type(StationGroup self) -> Seiscomp::DataModel::StationGroupType"""
+        return _datamodel.StationGroup_type(self)
+
+    def setCode(self, code):
+        r"""setCode(StationGroup self, std::string const & code)"""
+        return _datamodel.StationGroup_setCode(self, code)
+
+    def code(self):
+        r"""code(StationGroup self) -> std::string const &"""
+        return _datamodel.StationGroup_code(self)
+
+    def setStart(self, start):
+        r"""setStart(StationGroup self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & start)"""
+        return _datamodel.StationGroup_setStart(self, start)
+
+    def start(self):
+        r"""start(StationGroup self) -> Time"""
+        return _datamodel.StationGroup_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(StationGroup self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        return _datamodel.StationGroup_setEnd(self, end)
+
+    def end(self):
+        r"""end(StationGroup self) -> Time"""
+        return _datamodel.StationGroup_end(self)
+
+    def setDescription(self, description):
+        r"""setDescription(StationGroup self, std::string const & description)"""
+        return _datamodel.StationGroup_setDescription(self, description)
+
+    def description(self):
+        r"""description(StationGroup self) -> std::string const &"""
+        return _datamodel.StationGroup_description(self)
+
+    def setLatitude(self, latitude):
+        r"""setLatitude(StationGroup self, Seiscomp::Core::Optional< double >::Impl const & latitude)"""
+        return _datamodel.StationGroup_setLatitude(self, latitude)
+
+    def latitude(self):
+        r"""latitude(StationGroup self) -> double"""
+        return _datamodel.StationGroup_latitude(self)
+
+    def setLongitude(self, longitude):
+        r"""setLongitude(StationGroup self, Seiscomp::Core::Optional< double >::Impl const & longitude)"""
+        return _datamodel.StationGroup_setLongitude(self, longitude)
+
+    def longitude(self):
+        r"""longitude(StationGroup self) -> double"""
+        return _datamodel.StationGroup_longitude(self)
+
+    def setElevation(self, elevation):
+        r"""setElevation(StationGroup self, Seiscomp::Core::Optional< double >::Impl const & elevation)"""
+        return _datamodel.StationGroup_setElevation(self, elevation)
+
+    def elevation(self):
+        r"""elevation(StationGroup self) -> double"""
+        return _datamodel.StationGroup_elevation(self)
+
+    def index(self):
+        r"""index(StationGroup self) -> StationGroupIndex"""
+        return _datamodel.StationGroup_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(StationGroup self, StationGroup lhs) -> bool"""
+        return _datamodel.StationGroup_equalIndex(self, lhs)
+
+    def add(self, obj):
+        r"""add(StationGroup self, StationReference obj) -> bool"""
+        return _datamodel.StationGroup_add(self, obj)
+
+    def remove(self, obj):
+        r"""remove(StationGroup self, StationReference obj) -> bool"""
+        return _datamodel.StationGroup_remove(self, obj)
+
+    def removeStationReference(self, *args):
+        r"""
+        removeStationReference(StationGroup self, size_t i) -> bool
+        removeStationReference(StationGroup self, StationReferenceIndex i) -> bool
+        """
+        return _datamodel.StationGroup_removeStationReference(self, *args)
+
+    def stationReferenceCount(self):
+        r"""stationReferenceCount(StationGroup self) -> size_t"""
+        return _datamodel.StationGroup_stationReferenceCount(self)
+
+    def stationReference(self, *args):
+        r"""
+        stationReference(StationGroup self, size_t i) -> StationReference
+        stationReference(StationGroup self, StationReferenceIndex i) -> StationReference
+        """
+        return _datamodel.StationGroup_stationReference(self, *args)
+
+    def inventory(self):
+        r"""inventory(StationGroup self) -> Inventory"""
+        return _datamodel.StationGroup_inventory(self)
+
+    def assign(self, other):
+        r"""assign(StationGroup self, Object other) -> bool"""
+        return _datamodel.StationGroup_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(StationGroup self, PublicObject parent) -> bool"""
+        return _datamodel.StationGroup_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(StationGroup self, PublicObject parent) -> bool"""
+        return _datamodel.StationGroup_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(StationGroup self) -> bool"""
+        return _datamodel.StationGroup_detach(self)
+
+    def clone(self):
+        r"""clone(StationGroup self) -> Object"""
+        return _datamodel.StationGroup_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(StationGroup self, Object child) -> bool"""
+        return _datamodel.StationGroup_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(StationGroup self, Visitor visitor)"""
+        return _datamodel.StationGroup_accept(self, visitor)
+
+# Register StationGroup in _datamodel:
+_datamodel.StationGroup_swigregister(StationGroup)
+
+def StationGroup_ClassName():
+    r"""StationGroup_ClassName() -> char const *"""
+    return _datamodel.StationGroup_ClassName()
+
+def StationGroup_TypeInfo():
+    r"""StationGroup_TypeInfo() -> RTTI"""
+    return _datamodel.StationGroup_TypeInfo()
+
+def StationGroup_Cast(*args):
+    r"""
+    StationGroup_Cast(BaseObject o) -> StationGroup
+    StationGroup_Cast(Seiscomp::Core::BaseObjectPtr o) -> StationGroup
+    """
+    return _datamodel.StationGroup_Cast(*args)
+
+def StationGroup_ConstCast(*args):
+    r"""
+    StationGroup_ConstCast(BaseObject o) -> StationGroup
+    StationGroup_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> StationGroup
+    """
+    return _datamodel.StationGroup_ConstCast(*args)
+
+def StationGroup_Meta():
+    r"""StationGroup_Meta() -> MetaObject"""
+    return _datamodel.StationGroup_Meta()
+
+def StationGroup_Create(*args):
+    r"""
+    StationGroup_Create() -> StationGroup
+    StationGroup_Create(std::string const & publicID) -> StationGroup
+    """
+    return _datamodel.StationGroup_Create(*args)
+
+def StationGroup_Find(publicID):
+    r"""StationGroup_Find(std::string const & publicID) -> StationGroup"""
+    return _datamodel.StationGroup_Find(publicID)
+
+class AuxSourceIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::AuxSourceIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(AuxSourceIndex self) -> AuxSourceIndex
+        __init__(AuxSourceIndex self, std::string const & name) -> AuxSourceIndex
+        __init__(AuxSourceIndex self, AuxSourceIndex arg2) -> AuxSourceIndex
+        """
+        _datamodel.AuxSourceIndex_swiginit(self, _datamodel.new_AuxSourceIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(AuxSourceIndex self, AuxSourceIndex arg2) -> bool"""
+        return _datamodel.AuxSourceIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(AuxSourceIndex self, AuxSourceIndex arg2) -> bool"""
+        return _datamodel.AuxSourceIndex___ne__(self, arg2)
+    name = property(_datamodel.AuxSourceIndex_name_get, _datamodel.AuxSourceIndex_name_set, doc=r"""name : std::string""")
+    __swig_destroy__ = _datamodel.delete_AuxSourceIndex
+
+# Register AuxSourceIndex in _datamodel:
+_datamodel.AuxSourceIndex_swigregister(AuxSourceIndex)
+
+class AuxSource(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::AuxSource class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.AuxSource_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.AuxSource_TypeInfo()
+
+    def className(self):
+        r"""className(AuxSource self) -> char const *"""
+        return _datamodel.AuxSource_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(AuxSource self) -> RTTI"""
+        return _datamodel.AuxSource_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> AuxSource
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> AuxSource
+        """
+        return _datamodel.AuxSource_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> AuxSource
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> AuxSource
+        """
+        return _datamodel.AuxSource_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(AuxSource self, GenericArchive ar)"""
+        return _datamodel.AuxSource_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.AuxSource_Meta()
+
+    def meta(self):
+        r"""meta(AuxSource self) -> MetaObject"""
+        return _datamodel.AuxSource_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(AuxSource self) -> AuxSource
+        __init__(AuxSource self, AuxSource other) -> AuxSource
+        __init__(AuxSource self, std::string const & name) -> AuxSource
+        __init__(AuxSource self, std::string const & name, std::string const & description, std::string const & unit, std::string const & conversion, Seiscomp::Core::Optional< int >::Impl const & sampleRateNumerator=Unset, Seiscomp::Core::Optional< int >::Impl const & sampleRateDenominator=Unset, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark=Unset) -> AuxSource
+        """
+        _datamodel.AuxSource_swiginit(self, _datamodel.new_AuxSource(*args))
+    __swig_destroy__ = _datamodel.delete_AuxSource
+
+    def __eq__(self, other):
+        r"""__eq__(AuxSource self, AuxSource other) -> bool"""
+        return _datamodel.AuxSource___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(AuxSource self, AuxSource other) -> bool"""
+        return _datamodel.AuxSource___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(AuxSource self, AuxSource other) -> bool"""
+        return _datamodel.AuxSource_equal(self, other)
+
+    def setName(self, name):
+        r"""setName(AuxSource self, std::string const & name)"""
+        return _datamodel.AuxSource_setName(self, name)
+
+    def name(self):
+        r"""name(AuxSource self) -> std::string const &"""
+        return _datamodel.AuxSource_name(self)
+
+    def setDescription(self, description):
+        r"""setDescription(AuxSource self, std::string const & description)"""
+        return _datamodel.AuxSource_setDescription(self, description)
+
+    def description(self):
+        r"""description(AuxSource self) -> std::string const &"""
+        return _datamodel.AuxSource_description(self)
+
+    def setUnit(self, unit):
+        r"""setUnit(AuxSource self, std::string const & unit)"""
+        return _datamodel.AuxSource_setUnit(self, unit)
+
+    def unit(self):
+        r"""unit(AuxSource self) -> std::string const &"""
+        return _datamodel.AuxSource_unit(self)
+
+    def setConversion(self, conversion):
+        r"""setConversion(AuxSource self, std::string const & conversion)"""
+        return _datamodel.AuxSource_setConversion(self, conversion)
+
+    def conversion(self):
+        r"""conversion(AuxSource self) -> std::string const &"""
+        return _datamodel.AuxSource_conversion(self)
+
+    def setSampleRateNumerator(self, sampleRateNumerator):
+        r"""setSampleRateNumerator(AuxSource self, Seiscomp::Core::Optional< int >::Impl const & sampleRateNumerator)"""
+        return _datamodel.AuxSource_setSampleRateNumerator(self, sampleRateNumerator)
+
+    def sampleRateNumerator(self):
+        r"""sampleRateNumerator(AuxSource self) -> int"""
+        return _datamodel.AuxSource_sampleRateNumerator(self)
+
+    def setSampleRateDenominator(self, sampleRateDenominator):
+        r"""setSampleRateDenominator(AuxSource self, Seiscomp::Core::Optional< int >::Impl const & sampleRateDenominator)"""
+        return _datamodel.AuxSource_setSampleRateDenominator(self, sampleRateDenominator)
+
+    def sampleRateDenominator(self):
+        r"""sampleRateDenominator(AuxSource self) -> int"""
+        return _datamodel.AuxSource_sampleRateDenominator(self)
+
+    def setRemark(self, remark):
+        r"""setRemark(AuxSource self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        return _datamodel.AuxSource_setRemark(self, remark)
+
+    def remark(self, *args):
+        r"""
+        remark(AuxSource self) -> Blob
+        remark(AuxSource self) -> Blob
+        """
+        return _datamodel.AuxSource_remark(self, *args)
+
+    def index(self):
+        r"""index(AuxSource self) -> AuxSourceIndex"""
+        return _datamodel.AuxSource_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(AuxSource self, AuxSource lhs) -> bool"""
+        return _datamodel.AuxSource_equalIndex(self, lhs)
+
+    def auxDevice(self):
+        r"""auxDevice(AuxSource self) -> AuxDevice"""
+        return _datamodel.AuxSource_auxDevice(self)
+
+    def assign(self, other):
+        r"""assign(AuxSource self, Object other) -> bool"""
+        return _datamodel.AuxSource_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(AuxSource self, PublicObject parent) -> bool"""
+        return _datamodel.AuxSource_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(AuxSource self, PublicObject parent) -> bool"""
+        return _datamodel.AuxSource_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(AuxSource self) -> bool"""
+        return _datamodel.AuxSource_detach(self)
+
+    def clone(self):
+        r"""clone(AuxSource self) -> Object"""
+        return _datamodel.AuxSource_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(AuxSource self, Visitor visitor)"""
+        return _datamodel.AuxSource_accept(self, visitor)
+
+# Register AuxSource in _datamodel:
+_datamodel.AuxSource_swigregister(AuxSource)
+
+def AuxSource_ClassName():
+    r"""AuxSource_ClassName() -> char const *"""
+    return _datamodel.AuxSource_ClassName()
+
+def AuxSource_TypeInfo():
+    r"""AuxSource_TypeInfo() -> RTTI"""
+    return _datamodel.AuxSource_TypeInfo()
+
+def AuxSource_Cast(*args):
+    r"""
+    AuxSource_Cast(BaseObject o) -> AuxSource
+    AuxSource_Cast(Seiscomp::Core::BaseObjectPtr o) -> AuxSource
+    """
+    return _datamodel.AuxSource_Cast(*args)
+
+def AuxSource_ConstCast(*args):
+    r"""
+    AuxSource_ConstCast(BaseObject o) -> AuxSource
+    AuxSource_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> AuxSource
+    """
+    return _datamodel.AuxSource_ConstCast(*args)
+
+def AuxSource_Meta():
+    r"""AuxSource_Meta() -> MetaObject"""
+    return _datamodel.AuxSource_Meta()
+
+class AuxDeviceIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::AuxDeviceIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(AuxDeviceIndex self) -> AuxDeviceIndex
+        __init__(AuxDeviceIndex self, std::string const & name) -> AuxDeviceIndex
+        __init__(AuxDeviceIndex self, AuxDeviceIndex arg2) -> AuxDeviceIndex
+        """
+        _datamodel.AuxDeviceIndex_swiginit(self, _datamodel.new_AuxDeviceIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(AuxDeviceIndex self, AuxDeviceIndex arg2) -> bool"""
+        return _datamodel.AuxDeviceIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(AuxDeviceIndex self, AuxDeviceIndex arg2) -> bool"""
+        return _datamodel.AuxDeviceIndex___ne__(self, arg2)
+    name = property(_datamodel.AuxDeviceIndex_name_get, _datamodel.AuxDeviceIndex_name_set, doc=r"""name : std::string""")
+    __swig_destroy__ = _datamodel.delete_AuxDeviceIndex
+
+# Register AuxDeviceIndex in _datamodel:
+_datamodel.AuxDeviceIndex_swigregister(AuxDeviceIndex)
+
+class AuxDevice(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::AuxDevice class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.AuxDevice_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.AuxDevice_TypeInfo()
+
+    def className(self):
+        r"""className(AuxDevice self) -> char const *"""
+        return _datamodel.AuxDevice_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(AuxDevice self) -> RTTI"""
+        return _datamodel.AuxDevice_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> AuxDevice
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> AuxDevice
+        """
+        return _datamodel.AuxDevice_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> AuxDevice
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> AuxDevice
+        """
+        return _datamodel.AuxDevice_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(AuxDevice self, GenericArchive ar)"""
+        return _datamodel.AuxDevice_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.AuxDevice_Meta()
+
+    def meta(self):
+        r"""meta(AuxDevice self) -> MetaObject"""
+        return _datamodel.AuxDevice_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(AuxDevice self, AuxDevice other) -> AuxDevice
+        __init__(AuxDevice self, std::string const & publicID) -> AuxDevice
+        """
+        _datamodel.AuxDevice_swiginit(self, _datamodel.new_AuxDevice(*args))
+    __swig_destroy__ = _datamodel.delete_AuxDevice
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> AuxDevice
+        Create(std::string const & publicID) -> AuxDevice
+        """
+        return _datamodel.AuxDevice_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> AuxDevice"""
+        return _datamodel.AuxDevice_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(AuxDevice self, AuxDevice other) -> bool"""
+        return _datamodel.AuxDevice___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(AuxDevice self, AuxDevice other) -> bool"""
+        return _datamodel.AuxDevice___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(AuxDevice self, AuxDevice other) -> bool"""
+        return _datamodel.AuxDevice_equal(self, other)
+
+    def setName(self, name):
+        r"""setName(AuxDevice self, std::string const & name)"""
+        return _datamodel.AuxDevice_setName(self, name)
+
+    def name(self):
+        r"""name(AuxDevice self) -> std::string const &"""
+        return _datamodel.AuxDevice_name(self)
+
+    def setDescription(self, description):
+        r"""setDescription(AuxDevice self, std::string const & description)"""
+        return _datamodel.AuxDevice_setDescription(self, description)
+
+    def description(self):
+        r"""description(AuxDevice self) -> std::string const &"""
+        return _datamodel.AuxDevice_description(self)
+
+    def setModel(self, model):
+        r"""setModel(AuxDevice self, std::string const & model)"""
+        return _datamodel.AuxDevice_setModel(self, model)
+
+    def model(self):
+        r"""model(AuxDevice self) -> std::string const &"""
+        return _datamodel.AuxDevice_model(self)
+
+    def setManufacturer(self, manufacturer):
+        r"""setManufacturer(AuxDevice self, std::string const & manufacturer)"""
+        return _datamodel.AuxDevice_setManufacturer(self, manufacturer)
+
+    def manufacturer(self):
+        r"""manufacturer(AuxDevice self) -> std::string const &"""
+        return _datamodel.AuxDevice_manufacturer(self)
+
+    def setRemark(self, remark):
+        r"""setRemark(AuxDevice self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        return _datamodel.AuxDevice_setRemark(self, remark)
+
+    def remark(self, *args):
+        r"""
+        remark(AuxDevice self) -> Blob
+        remark(AuxDevice self) -> Blob
+        """
+        return _datamodel.AuxDevice_remark(self, *args)
+
+    def index(self):
+        r"""index(AuxDevice self) -> AuxDeviceIndex"""
+        return _datamodel.AuxDevice_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(AuxDevice self, AuxDevice lhs) -> bool"""
+        return _datamodel.AuxDevice_equalIndex(self, lhs)
+
+    def add(self, obj):
+        r"""add(AuxDevice self, AuxSource obj) -> bool"""
+        return _datamodel.AuxDevice_add(self, obj)
+
+    def remove(self, obj):
+        r"""remove(AuxDevice self, AuxSource obj) -> bool"""
+        return _datamodel.AuxDevice_remove(self, obj)
+
+    def removeAuxSource(self, *args):
+        r"""
+        removeAuxSource(AuxDevice self, size_t i) -> bool
+        removeAuxSource(AuxDevice self, AuxSourceIndex i) -> bool
+        """
+        return _datamodel.AuxDevice_removeAuxSource(self, *args)
+
+    def auxSourceCount(self):
+        r"""auxSourceCount(AuxDevice self) -> size_t"""
+        return _datamodel.AuxDevice_auxSourceCount(self)
+
+    def auxSource(self, *args):
+        r"""
+        auxSource(AuxDevice self, size_t i) -> AuxSource
+        auxSource(AuxDevice self, AuxSourceIndex i) -> AuxSource
+        """
+        return _datamodel.AuxDevice_auxSource(self, *args)
+
+    def inventory(self):
+        r"""inventory(AuxDevice self) -> Inventory"""
+        return _datamodel.AuxDevice_inventory(self)
+
+    def assign(self, other):
+        r"""assign(AuxDevice self, Object other) -> bool"""
+        return _datamodel.AuxDevice_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(AuxDevice self, PublicObject parent) -> bool"""
+        return _datamodel.AuxDevice_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(AuxDevice self, PublicObject parent) -> bool"""
+        return _datamodel.AuxDevice_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(AuxDevice self) -> bool"""
+        return _datamodel.AuxDevice_detach(self)
+
+    def clone(self):
+        r"""clone(AuxDevice self) -> Object"""
+        return _datamodel.AuxDevice_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(AuxDevice self, Object child) -> bool"""
+        return _datamodel.AuxDevice_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(AuxDevice self, Visitor visitor)"""
+        return _datamodel.AuxDevice_accept(self, visitor)
+
+# Register AuxDevice in _datamodel:
+_datamodel.AuxDevice_swigregister(AuxDevice)
+
+def AuxDevice_ClassName():
+    r"""AuxDevice_ClassName() -> char const *"""
+    return _datamodel.AuxDevice_ClassName()
+
+def AuxDevice_TypeInfo():
+    r"""AuxDevice_TypeInfo() -> RTTI"""
+    return _datamodel.AuxDevice_TypeInfo()
+
+def AuxDevice_Cast(*args):
+    r"""
+    AuxDevice_Cast(BaseObject o) -> AuxDevice
+    AuxDevice_Cast(Seiscomp::Core::BaseObjectPtr o) -> AuxDevice
+    """
+    return _datamodel.AuxDevice_Cast(*args)
+
+def AuxDevice_ConstCast(*args):
+    r"""
+    AuxDevice_ConstCast(BaseObject o) -> AuxDevice
+    AuxDevice_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> AuxDevice
+    """
+    return _datamodel.AuxDevice_ConstCast(*args)
+
+def AuxDevice_Meta():
+    r"""AuxDevice_Meta() -> MetaObject"""
+    return _datamodel.AuxDevice_Meta()
+
+def AuxDevice_Create(*args):
+    r"""
+    AuxDevice_Create() -> AuxDevice
+    AuxDevice_Create(std::string const & publicID) -> AuxDevice
+    """
+    return _datamodel.AuxDevice_Create(*args)
+
+def AuxDevice_Find(publicID):
+    r"""AuxDevice_Find(std::string const & publicID) -> AuxDevice"""
+    return _datamodel.AuxDevice_Find(publicID)
+
+class SensorCalibrationIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::SensorCalibrationIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(SensorCalibrationIndex self) -> SensorCalibrationIndex
+        __init__(SensorCalibrationIndex self, std::string const & serialNumber, int channel, Time start) -> SensorCalibrationIndex
+        __init__(SensorCalibrationIndex self, SensorCalibrationIndex arg2) -> SensorCalibrationIndex
+        """
+        _datamodel.SensorCalibrationIndex_swiginit(self, _datamodel.new_SensorCalibrationIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(SensorCalibrationIndex self, SensorCalibrationIndex arg2) -> bool"""
+        return _datamodel.SensorCalibrationIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(SensorCalibrationIndex self, SensorCalibrationIndex arg2) -> bool"""
+        return _datamodel.SensorCalibrationIndex___ne__(self, arg2)
+    serialNumber = property(_datamodel.SensorCalibrationIndex_serialNumber_get, _datamodel.SensorCalibrationIndex_serialNumber_set, doc=r"""serialNumber : std::string""")
+    channel = property(_datamodel.SensorCalibrationIndex_channel_get, _datamodel.SensorCalibrationIndex_channel_set, doc=r"""channel : int""")
+    start = property(_datamodel.SensorCalibrationIndex_start_get, _datamodel.SensorCalibrationIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
+    __swig_destroy__ = _datamodel.delete_SensorCalibrationIndex
+
+# Register SensorCalibrationIndex in _datamodel:
+_datamodel.SensorCalibrationIndex_swigregister(SensorCalibrationIndex)
+
+class SensorCalibration(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::SensorCalibration class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.SensorCalibration_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.SensorCalibration_TypeInfo()
+
+    def className(self):
+        r"""className(SensorCalibration self) -> char const *"""
+        return _datamodel.SensorCalibration_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(SensorCalibration self) -> RTTI"""
+        return _datamodel.SensorCalibration_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> SensorCalibration
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> SensorCalibration
+        """
+        return _datamodel.SensorCalibration_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> SensorCalibration
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> SensorCalibration
+        """
+        return _datamodel.SensorCalibration_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(SensorCalibration self, GenericArchive ar)"""
+        return _datamodel.SensorCalibration_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.SensorCalibration_Meta()
+
+    def meta(self):
+        r"""meta(SensorCalibration self) -> MetaObject"""
+        return _datamodel.SensorCalibration_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(SensorCalibration self) -> SensorCalibration
+        __init__(SensorCalibration self, SensorCalibration other) -> SensorCalibration
+        """
+        _datamodel.SensorCalibration_swiginit(self, _datamodel.new_SensorCalibration(*args))
+    __swig_destroy__ = _datamodel.delete_SensorCalibration
+
+    def __eq__(self, other):
+        r"""__eq__(SensorCalibration self, SensorCalibration other) -> bool"""
+        return _datamodel.SensorCalibration___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(SensorCalibration self, SensorCalibration other) -> bool"""
+        return _datamodel.SensorCalibration___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(SensorCalibration self, SensorCalibration other) -> bool"""
+        return _datamodel.SensorCalibration_equal(self, other)
+
+    def setSerialNumber(self, serialNumber):
+        r"""setSerialNumber(SensorCalibration self, std::string const & serialNumber)"""
+        return _datamodel.SensorCalibration_setSerialNumber(self, serialNumber)
+
+    def serialNumber(self):
+        r"""serialNumber(SensorCalibration self) -> std::string const &"""
+        return _datamodel.SensorCalibration_serialNumber(self)
+
+    def setChannel(self, channel):
+        r"""setChannel(SensorCalibration self, int channel)"""
+        return _datamodel.SensorCalibration_setChannel(self, channel)
+
+    def channel(self):
+        r"""channel(SensorCalibration self) -> int"""
+        return _datamodel.SensorCalibration_channel(self)
+
+    def setStart(self, start):
+        r"""setStart(SensorCalibration self, Time start)"""
+        return _datamodel.SensorCalibration_setStart(self, start)
+
+    def start(self):
+        r"""start(SensorCalibration self) -> Time"""
+        return _datamodel.SensorCalibration_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(SensorCalibration self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        return _datamodel.SensorCalibration_setEnd(self, end)
+
+    def end(self):
+        r"""end(SensorCalibration self) -> Time"""
+        return _datamodel.SensorCalibration_end(self)
+
+    def setGain(self, gain):
+        r"""setGain(SensorCalibration self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        return _datamodel.SensorCalibration_setGain(self, gain)
+
+    def gain(self):
+        r"""gain(SensorCalibration self) -> double"""
+        return _datamodel.SensorCalibration_gain(self)
+
+    def setGainFrequency(self, gainFrequency):
+        r"""setGainFrequency(SensorCalibration self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        return _datamodel.SensorCalibration_setGainFrequency(self, gainFrequency)
+
+    def gainFrequency(self):
+        r"""gainFrequency(SensorCalibration self) -> double"""
+        return _datamodel.SensorCalibration_gainFrequency(self)
+
+    def setRemark(self, remark):
+        r"""setRemark(SensorCalibration self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        return _datamodel.SensorCalibration_setRemark(self, remark)
+
+    def remark(self, *args):
+        r"""
+        remark(SensorCalibration self) -> Blob
+        remark(SensorCalibration self) -> Blob
+        """
+        return _datamodel.SensorCalibration_remark(self, *args)
+
+    def index(self):
+        r"""index(SensorCalibration self) -> SensorCalibrationIndex"""
+        return _datamodel.SensorCalibration_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(SensorCalibration self, SensorCalibration lhs) -> bool"""
+        return _datamodel.SensorCalibration_equalIndex(self, lhs)
+
+    def sensor(self):
+        r"""sensor(SensorCalibration self) -> Sensor"""
+        return _datamodel.SensorCalibration_sensor(self)
+
+    def assign(self, other):
+        r"""assign(SensorCalibration self, Object other) -> bool"""
+        return _datamodel.SensorCalibration_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(SensorCalibration self, PublicObject parent) -> bool"""
+        return _datamodel.SensorCalibration_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(SensorCalibration self, PublicObject parent) -> bool"""
+        return _datamodel.SensorCalibration_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(SensorCalibration self) -> bool"""
+        return _datamodel.SensorCalibration_detach(self)
+
+    def clone(self):
+        r"""clone(SensorCalibration self) -> Object"""
+        return _datamodel.SensorCalibration_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(SensorCalibration self, Visitor visitor)"""
+        return _datamodel.SensorCalibration_accept(self, visitor)
+
+# Register SensorCalibration in _datamodel:
+_datamodel.SensorCalibration_swigregister(SensorCalibration)
+
+def SensorCalibration_ClassName():
+    r"""SensorCalibration_ClassName() -> char const *"""
+    return _datamodel.SensorCalibration_ClassName()
+
+def SensorCalibration_TypeInfo():
+    r"""SensorCalibration_TypeInfo() -> RTTI"""
+    return _datamodel.SensorCalibration_TypeInfo()
+
+def SensorCalibration_Cast(*args):
+    r"""
+    SensorCalibration_Cast(BaseObject o) -> SensorCalibration
+    SensorCalibration_Cast(Seiscomp::Core::BaseObjectPtr o) -> SensorCalibration
+    """
+    return _datamodel.SensorCalibration_Cast(*args)
+
+def SensorCalibration_ConstCast(*args):
+    r"""
+    SensorCalibration_ConstCast(BaseObject o) -> SensorCalibration
+    SensorCalibration_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> SensorCalibration
+    """
+    return _datamodel.SensorCalibration_ConstCast(*args)
+
+def SensorCalibration_Meta():
+    r"""SensorCalibration_Meta() -> MetaObject"""
+    return _datamodel.SensorCalibration_Meta()
+
+class SensorIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::SensorIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(SensorIndex self) -> SensorIndex
+        __init__(SensorIndex self, std::string const & name) -> SensorIndex
+        __init__(SensorIndex self, SensorIndex arg2) -> SensorIndex
+        """
+        _datamodel.SensorIndex_swiginit(self, _datamodel.new_SensorIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(SensorIndex self, SensorIndex arg2) -> bool"""
+        return _datamodel.SensorIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(SensorIndex self, SensorIndex arg2) -> bool"""
+        return _datamodel.SensorIndex___ne__(self, arg2)
+    name = property(_datamodel.SensorIndex_name_get, _datamodel.SensorIndex_name_set, doc=r"""name : std::string""")
+    __swig_destroy__ = _datamodel.delete_SensorIndex
+
+# Register SensorIndex in _datamodel:
+_datamodel.SensorIndex_swigregister(SensorIndex)
+
+class Sensor(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::Sensor class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.Sensor_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.Sensor_TypeInfo()
+
+    def className(self):
+        r"""className(Sensor self) -> char const *"""
+        return _datamodel.Sensor_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(Sensor self) -> RTTI"""
+        return _datamodel.Sensor_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> Sensor
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> Sensor
+        """
+        return _datamodel.Sensor_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> Sensor
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Sensor
+        """
+        return _datamodel.Sensor_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(Sensor self, GenericArchive ar)"""
+        return _datamodel.Sensor_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.Sensor_Meta()
+
+    def meta(self):
+        r"""meta(Sensor self) -> MetaObject"""
+        return _datamodel.Sensor_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(Sensor self, Sensor other) -> Sensor
+        __init__(Sensor self, std::string const & publicID) -> Sensor
+        """
+        _datamodel.Sensor_swiginit(self, _datamodel.new_Sensor(*args))
+    __swig_destroy__ = _datamodel.delete_Sensor
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> Sensor
+        Create(std::string const & publicID) -> Sensor
+        """
+        return _datamodel.Sensor_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> Sensor"""
+        return _datamodel.Sensor_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(Sensor self, Sensor other) -> bool"""
+        return _datamodel.Sensor___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(Sensor self, Sensor other) -> bool"""
+        return _datamodel.Sensor___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(Sensor self, Sensor other) -> bool"""
+        return _datamodel.Sensor_equal(self, other)
+
+    def setName(self, name):
+        r"""setName(Sensor self, std::string const & name)"""
+        return _datamodel.Sensor_setName(self, name)
+
+    def name(self):
+        r"""name(Sensor self) -> std::string const &"""
+        return _datamodel.Sensor_name(self)
+
+    def setDescription(self, description):
+        r"""setDescription(Sensor self, std::string const & description)"""
+        return _datamodel.Sensor_setDescription(self, description)
+
+    def description(self):
+        r"""description(Sensor self) -> std::string const &"""
+        return _datamodel.Sensor_description(self)
+
+    def setModel(self, model):
+        r"""setModel(Sensor self, std::string const & model)"""
+        return _datamodel.Sensor_setModel(self, model)
+
+    def model(self):
+        r"""model(Sensor self) -> std::string const &"""
+        return _datamodel.Sensor_model(self)
+
+    def setManufacturer(self, manufacturer):
+        r"""setManufacturer(Sensor self, std::string const & manufacturer)"""
+        return _datamodel.Sensor_setManufacturer(self, manufacturer)
+
+    def manufacturer(self):
+        r"""manufacturer(Sensor self) -> std::string const &"""
+        return _datamodel.Sensor_manufacturer(self)
+
+    def setType(self, type):
+        r"""setType(Sensor self, std::string const & type)"""
+        return _datamodel.Sensor_setType(self, type)
+
+    def type(self):
+        r"""type(Sensor self) -> std::string const &"""
+        return _datamodel.Sensor_type(self)
+
+    def setUnit(self, unit):
+        r"""setUnit(Sensor self, std::string const & unit)"""
+        return _datamodel.Sensor_setUnit(self, unit)
+
+    def unit(self):
+        r"""unit(Sensor self) -> std::string const &"""
+        return _datamodel.Sensor_unit(self)
+
+    def setLowFrequency(self, lowFrequency):
+        r"""setLowFrequency(Sensor self, Seiscomp::Core::Optional< double >::Impl const & lowFrequency)"""
+        return _datamodel.Sensor_setLowFrequency(self, lowFrequency)
+
+    def lowFrequency(self):
+        r"""lowFrequency(Sensor self) -> double"""
+        return _datamodel.Sensor_lowFrequency(self)
+
+    def setHighFrequency(self, highFrequency):
+        r"""setHighFrequency(Sensor self, Seiscomp::Core::Optional< double >::Impl const & highFrequency)"""
+        return _datamodel.Sensor_setHighFrequency(self, highFrequency)
+
+    def highFrequency(self):
+        r"""highFrequency(Sensor self) -> double"""
+        return _datamodel.Sensor_highFrequency(self)
+
+    def setResponse(self, response):
+        r"""setResponse(Sensor self, std::string const & response)"""
+        return _datamodel.Sensor_setResponse(self, response)
+
+    def response(self):
+        r"""response(Sensor self) -> std::string const &"""
+        return _datamodel.Sensor_response(self)
+
+    def setRemark(self, remark):
+        r"""setRemark(Sensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        return _datamodel.Sensor_setRemark(self, remark)
+
+    def remark(self, *args):
+        r"""
+        remark(Sensor self) -> Blob
+        remark(Sensor self) -> Blob
+        """
+        return _datamodel.Sensor_remark(self, *args)
+
+    def index(self):
+        r"""index(Sensor self) -> SensorIndex"""
+        return _datamodel.Sensor_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(Sensor self, Sensor lhs) -> bool"""
+        return _datamodel.Sensor_equalIndex(self, lhs)
+
+    def add(self, obj):
+        r"""add(Sensor self, SensorCalibration obj) -> bool"""
+        return _datamodel.Sensor_add(self, obj)
+
+    def remove(self, obj):
+        r"""remove(Sensor self, SensorCalibration obj) -> bool"""
+        return _datamodel.Sensor_remove(self, obj)
+
+    def removeSensorCalibration(self, *args):
+        r"""
+        removeSensorCalibration(Sensor self, size_t i) -> bool
+        removeSensorCalibration(Sensor self, SensorCalibrationIndex i) -> bool
+        """
+        return _datamodel.Sensor_removeSensorCalibration(self, *args)
+
+    def sensorCalibrationCount(self):
+        r"""sensorCalibrationCount(Sensor self) -> size_t"""
+        return _datamodel.Sensor_sensorCalibrationCount(self)
+
+    def sensorCalibration(self, *args):
+        r"""
+        sensorCalibration(Sensor self, size_t i) -> SensorCalibration
+        sensorCalibration(Sensor self, SensorCalibrationIndex i) -> SensorCalibration
+        """
+        return _datamodel.Sensor_sensorCalibration(self, *args)
+
+    def inventory(self):
+        r"""inventory(Sensor self) -> Inventory"""
+        return _datamodel.Sensor_inventory(self)
+
+    def assign(self, other):
+        r"""assign(Sensor self, Object other) -> bool"""
+        return _datamodel.Sensor_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(Sensor self, PublicObject parent) -> bool"""
+        return _datamodel.Sensor_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(Sensor self, PublicObject parent) -> bool"""
+        return _datamodel.Sensor_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(Sensor self) -> bool"""
+        return _datamodel.Sensor_detach(self)
+
+    def clone(self):
+        r"""clone(Sensor self) -> Object"""
+        return _datamodel.Sensor_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(Sensor self, Object child) -> bool"""
+        return _datamodel.Sensor_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(Sensor self, Visitor visitor)"""
+        return _datamodel.Sensor_accept(self, visitor)
+
+# Register Sensor in _datamodel:
+_datamodel.Sensor_swigregister(Sensor)
+
+def Sensor_ClassName():
+    r"""Sensor_ClassName() -> char const *"""
+    return _datamodel.Sensor_ClassName()
+
+def Sensor_TypeInfo():
+    r"""Sensor_TypeInfo() -> RTTI"""
+    return _datamodel.Sensor_TypeInfo()
+
+def Sensor_Cast(*args):
+    r"""
+    Sensor_Cast(BaseObject o) -> Sensor
+    Sensor_Cast(Seiscomp::Core::BaseObjectPtr o) -> Sensor
+    """
+    return _datamodel.Sensor_Cast(*args)
+
+def Sensor_ConstCast(*args):
+    r"""
+    Sensor_ConstCast(BaseObject o) -> Sensor
+    Sensor_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Sensor
+    """
+    return _datamodel.Sensor_ConstCast(*args)
+
+def Sensor_Meta():
+    r"""Sensor_Meta() -> MetaObject"""
+    return _datamodel.Sensor_Meta()
+
+def Sensor_Create(*args):
+    r"""
+    Sensor_Create() -> Sensor
+    Sensor_Create(std::string const & publicID) -> Sensor
+    """
+    return _datamodel.Sensor_Create(*args)
+
+def Sensor_Find(publicID):
+    r"""Sensor_Find(std::string const & publicID) -> Sensor"""
+    return _datamodel.Sensor_Find(publicID)
+
+class ResponsePAZIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::ResponsePAZIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(ResponsePAZIndex self) -> ResponsePAZIndex
+        __init__(ResponsePAZIndex self, std::string const & name) -> ResponsePAZIndex
+        __init__(ResponsePAZIndex self, ResponsePAZIndex arg2) -> ResponsePAZIndex
+        """
+        _datamodel.ResponsePAZIndex_swiginit(self, _datamodel.new_ResponsePAZIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(ResponsePAZIndex self, ResponsePAZIndex arg2) -> bool"""
+        return _datamodel.ResponsePAZIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(ResponsePAZIndex self, ResponsePAZIndex arg2) -> bool"""
+        return _datamodel.ResponsePAZIndex___ne__(self, arg2)
+    name = property(_datamodel.ResponsePAZIndex_name_get, _datamodel.ResponsePAZIndex_name_set, doc=r"""name : std::string""")
+    __swig_destroy__ = _datamodel.delete_ResponsePAZIndex
+
+# Register ResponsePAZIndex in _datamodel:
+_datamodel.ResponsePAZIndex_swigregister(ResponsePAZIndex)
+
+class ResponsePAZ(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::ResponsePAZ class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.ResponsePAZ_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.ResponsePAZ_TypeInfo()
+
+    def className(self):
+        r"""className(ResponsePAZ self) -> char const *"""
+        return _datamodel.ResponsePAZ_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(ResponsePAZ self) -> RTTI"""
+        return _datamodel.ResponsePAZ_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> ResponsePAZ
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponsePAZ
+        """
+        return _datamodel.ResponsePAZ_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> ResponsePAZ
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponsePAZ
+        """
+        return _datamodel.ResponsePAZ_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(ResponsePAZ self, GenericArchive ar)"""
+        return _datamodel.ResponsePAZ_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.ResponsePAZ_Meta()
+
+    def meta(self):
+        r"""meta(ResponsePAZ self) -> MetaObject"""
+        return _datamodel.ResponsePAZ_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(ResponsePAZ self, ResponsePAZ other) -> ResponsePAZ
+        __init__(ResponsePAZ self, std::string const & publicID) -> ResponsePAZ
+        """
+        _datamodel.ResponsePAZ_swiginit(self, _datamodel.new_ResponsePAZ(*args))
+    __swig_destroy__ = _datamodel.delete_ResponsePAZ
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> ResponsePAZ
+        Create(std::string const & publicID) -> ResponsePAZ
+        """
+        return _datamodel.ResponsePAZ_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> ResponsePAZ"""
+        return _datamodel.ResponsePAZ_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(ResponsePAZ self, ResponsePAZ other) -> bool"""
+        return _datamodel.ResponsePAZ___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(ResponsePAZ self, ResponsePAZ other) -> bool"""
+        return _datamodel.ResponsePAZ___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(ResponsePAZ self, ResponsePAZ other) -> bool"""
+        return _datamodel.ResponsePAZ_equal(self, other)
+
+    def setName(self, name):
+        r"""setName(ResponsePAZ self, std::string const & name)"""
+        return _datamodel.ResponsePAZ_setName(self, name)
+
+    def name(self):
+        r"""name(ResponsePAZ self) -> std::string const &"""
+        return _datamodel.ResponsePAZ_name(self)
+
+    def setType(self, type):
+        r"""setType(ResponsePAZ self, std::string const & type)"""
+        return _datamodel.ResponsePAZ_setType(self, type)
+
+    def type(self):
+        r"""type(ResponsePAZ self) -> std::string const &"""
+        return _datamodel.ResponsePAZ_type(self)
+
+    def setGain(self, gain):
+        r"""setGain(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        return _datamodel.ResponsePAZ_setGain(self, gain)
+
+    def gain(self):
+        r"""gain(ResponsePAZ self) -> double"""
+        return _datamodel.ResponsePAZ_gain(self)
+
+    def setGainFrequency(self, gainFrequency):
+        r"""setGainFrequency(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        return _datamodel.ResponsePAZ_setGainFrequency(self, gainFrequency)
+
+    def gainFrequency(self):
+        r"""gainFrequency(ResponsePAZ self) -> double"""
+        return _datamodel.ResponsePAZ_gainFrequency(self)
+
+    def setNormalizationFactor(self, normalizationFactor):
+        r"""setNormalizationFactor(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & normalizationFactor)"""
+        return _datamodel.ResponsePAZ_setNormalizationFactor(self, normalizationFactor)
+
+    def normalizationFactor(self):
+        r"""normalizationFactor(ResponsePAZ self) -> double"""
+        return _datamodel.ResponsePAZ_normalizationFactor(self)
+
+    def setNormalizationFrequency(self, normalizationFrequency):
+        r"""setNormalizationFrequency(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & normalizationFrequency)"""
+        return _datamodel.ResponsePAZ_setNormalizationFrequency(self, normalizationFrequency)
+
+    def normalizationFrequency(self):
+        r"""normalizationFrequency(ResponsePAZ self) -> double"""
+        return _datamodel.ResponsePAZ_normalizationFrequency(self)
+
+    def setNumberOfZeros(self, numberOfZeros):
+        r"""setNumberOfZeros(ResponsePAZ self, Seiscomp::Core::Optional< int >::Impl const & numberOfZeros)"""
+        return _datamodel.ResponsePAZ_setNumberOfZeros(self, numberOfZeros)
+
+    def numberOfZeros(self):
+        r"""numberOfZeros(ResponsePAZ self) -> int"""
+        return _datamodel.ResponsePAZ_numberOfZeros(self)
+
+    def setNumberOfPoles(self, numberOfPoles):
+        r"""setNumberOfPoles(ResponsePAZ self, Seiscomp::Core::Optional< int >::Impl const & numberOfPoles)"""
+        return _datamodel.ResponsePAZ_setNumberOfPoles(self, numberOfPoles)
+
+    def numberOfPoles(self):
+        r"""numberOfPoles(ResponsePAZ self) -> int"""
+        return _datamodel.ResponsePAZ_numberOfPoles(self)
+
+    def setZeros(self, zeros):
+        r"""setZeros(ResponsePAZ self, Seiscomp::Core::Optional< Seiscomp::DataModel::ComplexArray >::Impl const & zeros)"""
+        return _datamodel.ResponsePAZ_setZeros(self, zeros)
+
+    def zeros(self, *args):
+        r"""
+        zeros(ResponsePAZ self) -> ComplexArray
+        zeros(ResponsePAZ self) -> ComplexArray
+        """
+        return _datamodel.ResponsePAZ_zeros(self, *args)
+
+    def setPoles(self, poles):
+        r"""setPoles(ResponsePAZ self, Seiscomp::Core::Optional< Seiscomp::DataModel::ComplexArray >::Impl const & poles)"""
+        return _datamodel.ResponsePAZ_setPoles(self, poles)
+
+    def poles(self, *args):
+        r"""
+        poles(ResponsePAZ self) -> ComplexArray
+        poles(ResponsePAZ self) -> ComplexArray
+        """
+        return _datamodel.ResponsePAZ_poles(self, *args)
+
+    def setRemark(self, remark):
+        r"""setRemark(ResponsePAZ self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        return _datamodel.ResponsePAZ_setRemark(self, remark)
+
+    def remark(self, *args):
+        r"""
+        remark(ResponsePAZ self) -> Blob
+        remark(ResponsePAZ self) -> Blob
+        """
+        return _datamodel.ResponsePAZ_remark(self, *args)
+
+    def setDecimationFactor(self, decimationFactor):
+        r"""setDecimationFactor(ResponsePAZ self, Seiscomp::Core::Optional< int >::Impl const & decimationFactor)"""
+        return _datamodel.ResponsePAZ_setDecimationFactor(self, decimationFactor)
+
+    def decimationFactor(self):
+        r"""decimationFactor(ResponsePAZ self) -> int"""
+        return _datamodel.ResponsePAZ_decimationFactor(self)
+
+    def setDelay(self, delay):
+        r"""setDelay(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & delay)"""
+        return _datamodel.ResponsePAZ_setDelay(self, delay)
+
+    def delay(self):
+        r"""delay(ResponsePAZ self) -> double"""
+        return _datamodel.ResponsePAZ_delay(self)
+
+    def setCorrection(self, correction):
+        r"""setCorrection(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & correction)"""
+        return _datamodel.ResponsePAZ_setCorrection(self, correction)
+
+    def correction(self):
+        r"""correction(ResponsePAZ self) -> double"""
+        return _datamodel.ResponsePAZ_correction(self)
+
+    def index(self):
+        r"""index(ResponsePAZ self) -> ResponsePAZIndex"""
+        return _datamodel.ResponsePAZ_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(ResponsePAZ self, ResponsePAZ lhs) -> bool"""
+        return _datamodel.ResponsePAZ_equalIndex(self, lhs)
+
+    def inventory(self):
+        r"""inventory(ResponsePAZ self) -> Inventory"""
+        return _datamodel.ResponsePAZ_inventory(self)
+
+    def assign(self, other):
+        r"""assign(ResponsePAZ self, Object other) -> bool"""
+        return _datamodel.ResponsePAZ_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(ResponsePAZ self, PublicObject parent) -> bool"""
+        return _datamodel.ResponsePAZ_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(ResponsePAZ self, PublicObject parent) -> bool"""
+        return _datamodel.ResponsePAZ_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(ResponsePAZ self) -> bool"""
+        return _datamodel.ResponsePAZ_detach(self)
+
+    def clone(self):
+        r"""clone(ResponsePAZ self) -> Object"""
+        return _datamodel.ResponsePAZ_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(ResponsePAZ self, Object child) -> bool"""
+        return _datamodel.ResponsePAZ_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(ResponsePAZ self, Visitor visitor)"""
+        return _datamodel.ResponsePAZ_accept(self, visitor)
+
+# Register ResponsePAZ in _datamodel:
+_datamodel.ResponsePAZ_swigregister(ResponsePAZ)
+
+def ResponsePAZ_ClassName():
+    r"""ResponsePAZ_ClassName() -> char const *"""
+    return _datamodel.ResponsePAZ_ClassName()
+
+def ResponsePAZ_TypeInfo():
+    r"""ResponsePAZ_TypeInfo() -> RTTI"""
+    return _datamodel.ResponsePAZ_TypeInfo()
+
+def ResponsePAZ_Cast(*args):
+    r"""
+    ResponsePAZ_Cast(BaseObject o) -> ResponsePAZ
+    ResponsePAZ_Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponsePAZ
+    """
+    return _datamodel.ResponsePAZ_Cast(*args)
+
+def ResponsePAZ_ConstCast(*args):
+    r"""
+    ResponsePAZ_ConstCast(BaseObject o) -> ResponsePAZ
+    ResponsePAZ_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponsePAZ
+    """
+    return _datamodel.ResponsePAZ_ConstCast(*args)
+
+def ResponsePAZ_Meta():
+    r"""ResponsePAZ_Meta() -> MetaObject"""
+    return _datamodel.ResponsePAZ_Meta()
+
+def ResponsePAZ_Create(*args):
+    r"""
+    ResponsePAZ_Create() -> ResponsePAZ
+    ResponsePAZ_Create(std::string const & publicID) -> ResponsePAZ
+    """
+    return _datamodel.ResponsePAZ_Create(*args)
+
+def ResponsePAZ_Find(publicID):
+    r"""ResponsePAZ_Find(std::string const & publicID) -> ResponsePAZ"""
+    return _datamodel.ResponsePAZ_Find(publicID)
+
+class ResponsePolynomialIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::ResponsePolynomialIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(ResponsePolynomialIndex self) -> ResponsePolynomialIndex
+        __init__(ResponsePolynomialIndex self, std::string const & name) -> ResponsePolynomialIndex
+        __init__(ResponsePolynomialIndex self, ResponsePolynomialIndex arg2) -> ResponsePolynomialIndex
+        """
+        _datamodel.ResponsePolynomialIndex_swiginit(self, _datamodel.new_ResponsePolynomialIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(ResponsePolynomialIndex self, ResponsePolynomialIndex arg2) -> bool"""
+        return _datamodel.ResponsePolynomialIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(ResponsePolynomialIndex self, ResponsePolynomialIndex arg2) -> bool"""
+        return _datamodel.ResponsePolynomialIndex___ne__(self, arg2)
+    name = property(_datamodel.ResponsePolynomialIndex_name_get, _datamodel.ResponsePolynomialIndex_name_set, doc=r"""name : std::string""")
+    __swig_destroy__ = _datamodel.delete_ResponsePolynomialIndex
+
+# Register ResponsePolynomialIndex in _datamodel:
+_datamodel.ResponsePolynomialIndex_swigregister(ResponsePolynomialIndex)
+
+class ResponsePolynomial(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::ResponsePolynomial class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.ResponsePolynomial_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.ResponsePolynomial_TypeInfo()
+
+    def className(self):
+        r"""className(ResponsePolynomial self) -> char const *"""
+        return _datamodel.ResponsePolynomial_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(ResponsePolynomial self) -> RTTI"""
+        return _datamodel.ResponsePolynomial_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> ResponsePolynomial
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponsePolynomial
+        """
+        return _datamodel.ResponsePolynomial_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> ResponsePolynomial
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponsePolynomial
+        """
+        return _datamodel.ResponsePolynomial_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(ResponsePolynomial self, GenericArchive ar)"""
+        return _datamodel.ResponsePolynomial_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.ResponsePolynomial_Meta()
+
+    def meta(self):
+        r"""meta(ResponsePolynomial self) -> MetaObject"""
+        return _datamodel.ResponsePolynomial_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(ResponsePolynomial self, ResponsePolynomial other) -> ResponsePolynomial
+        __init__(ResponsePolynomial self, std::string const & publicID) -> ResponsePolynomial
+        """
+        _datamodel.ResponsePolynomial_swiginit(self, _datamodel.new_ResponsePolynomial(*args))
+    __swig_destroy__ = _datamodel.delete_ResponsePolynomial
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> ResponsePolynomial
+        Create(std::string const & publicID) -> ResponsePolynomial
+        """
+        return _datamodel.ResponsePolynomial_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> ResponsePolynomial"""
+        return _datamodel.ResponsePolynomial_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(ResponsePolynomial self, ResponsePolynomial other) -> bool"""
+        return _datamodel.ResponsePolynomial___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(ResponsePolynomial self, ResponsePolynomial other) -> bool"""
+        return _datamodel.ResponsePolynomial___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(ResponsePolynomial self, ResponsePolynomial other) -> bool"""
+        return _datamodel.ResponsePolynomial_equal(self, other)
+
+    def setName(self, name):
+        r"""setName(ResponsePolynomial self, std::string const & name)"""
+        return _datamodel.ResponsePolynomial_setName(self, name)
+
+    def name(self):
+        r"""name(ResponsePolynomial self) -> std::string const &"""
+        return _datamodel.ResponsePolynomial_name(self)
+
+    def setGain(self, gain):
+        r"""setGain(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        return _datamodel.ResponsePolynomial_setGain(self, gain)
+
+    def gain(self):
+        r"""gain(ResponsePolynomial self) -> double"""
+        return _datamodel.ResponsePolynomial_gain(self)
+
+    def setGainFrequency(self, gainFrequency):
+        r"""setGainFrequency(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        return _datamodel.ResponsePolynomial_setGainFrequency(self, gainFrequency)
+
+    def gainFrequency(self):
+        r"""gainFrequency(ResponsePolynomial self) -> double"""
+        return _datamodel.ResponsePolynomial_gainFrequency(self)
+
+    def setFrequencyUnit(self, frequencyUnit):
+        r"""setFrequencyUnit(ResponsePolynomial self, std::string const & frequencyUnit)"""
+        return _datamodel.ResponsePolynomial_setFrequencyUnit(self, frequencyUnit)
+
+    def frequencyUnit(self):
+        r"""frequencyUnit(ResponsePolynomial self) -> std::string const &"""
+        return _datamodel.ResponsePolynomial_frequencyUnit(self)
+
+    def setApproximationType(self, approximationType):
+        r"""setApproximationType(ResponsePolynomial self, std::string const & approximationType)"""
+        return _datamodel.ResponsePolynomial_setApproximationType(self, approximationType)
+
+    def approximationType(self):
+        r"""approximationType(ResponsePolynomial self) -> std::string const &"""
+        return _datamodel.ResponsePolynomial_approximationType(self)
+
+    def setApproximationLowerBound(self, approximationLowerBound):
+        r"""setApproximationLowerBound(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & approximationLowerBound)"""
+        return _datamodel.ResponsePolynomial_setApproximationLowerBound(self, approximationLowerBound)
+
+    def approximationLowerBound(self):
+        r"""approximationLowerBound(ResponsePolynomial self) -> double"""
+        return _datamodel.ResponsePolynomial_approximationLowerBound(self)
+
+    def setApproximationUpperBound(self, approximationUpperBound):
+        r"""setApproximationUpperBound(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & approximationUpperBound)"""
+        return _datamodel.ResponsePolynomial_setApproximationUpperBound(self, approximationUpperBound)
+
+    def approximationUpperBound(self):
+        r"""approximationUpperBound(ResponsePolynomial self) -> double"""
+        return _datamodel.ResponsePolynomial_approximationUpperBound(self)
+
+    def setApproximationError(self, approximationError):
+        r"""setApproximationError(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & approximationError)"""
+        return _datamodel.ResponsePolynomial_setApproximationError(self, approximationError)
+
+    def approximationError(self):
+        r"""approximationError(ResponsePolynomial self) -> double"""
+        return _datamodel.ResponsePolynomial_approximationError(self)
+
+    def setNumberOfCoefficients(self, numberOfCoefficients):
+        r"""setNumberOfCoefficients(ResponsePolynomial self, Seiscomp::Core::Optional< int >::Impl const & numberOfCoefficients)"""
+        return _datamodel.ResponsePolynomial_setNumberOfCoefficients(self, numberOfCoefficients)
+
+    def numberOfCoefficients(self):
+        r"""numberOfCoefficients(ResponsePolynomial self) -> int"""
+        return _datamodel.ResponsePolynomial_numberOfCoefficients(self)
+
+    def setCoefficients(self, coefficients):
+        r"""setCoefficients(ResponsePolynomial self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & coefficients)"""
+        return _datamodel.ResponsePolynomial_setCoefficients(self, coefficients)
+
+    def coefficients(self, *args):
+        r"""
+        coefficients(ResponsePolynomial self) -> RealArray
+        coefficients(ResponsePolynomial self) -> RealArray
+        """
+        return _datamodel.ResponsePolynomial_coefficients(self, *args)
+
+    def setRemark(self, remark):
+        r"""setRemark(ResponsePolynomial self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        return _datamodel.ResponsePolynomial_setRemark(self, remark)
+
+    def remark(self, *args):
+        r"""
+        remark(ResponsePolynomial self) -> Blob
+        remark(ResponsePolynomial self) -> Blob
+        """
+        return _datamodel.ResponsePolynomial_remark(self, *args)
+
+    def index(self):
+        r"""index(ResponsePolynomial self) -> ResponsePolynomialIndex"""
+        return _datamodel.ResponsePolynomial_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(ResponsePolynomial self, ResponsePolynomial lhs) -> bool"""
+        return _datamodel.ResponsePolynomial_equalIndex(self, lhs)
+
+    def inventory(self):
+        r"""inventory(ResponsePolynomial self) -> Inventory"""
+        return _datamodel.ResponsePolynomial_inventory(self)
+
+    def assign(self, other):
+        r"""assign(ResponsePolynomial self, Object other) -> bool"""
+        return _datamodel.ResponsePolynomial_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(ResponsePolynomial self, PublicObject parent) -> bool"""
+        return _datamodel.ResponsePolynomial_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(ResponsePolynomial self, PublicObject parent) -> bool"""
+        return _datamodel.ResponsePolynomial_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(ResponsePolynomial self) -> bool"""
+        return _datamodel.ResponsePolynomial_detach(self)
+
+    def clone(self):
+        r"""clone(ResponsePolynomial self) -> Object"""
+        return _datamodel.ResponsePolynomial_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(ResponsePolynomial self, Object child) -> bool"""
+        return _datamodel.ResponsePolynomial_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(ResponsePolynomial self, Visitor visitor)"""
+        return _datamodel.ResponsePolynomial_accept(self, visitor)
+
+# Register ResponsePolynomial in _datamodel:
+_datamodel.ResponsePolynomial_swigregister(ResponsePolynomial)
+
+def ResponsePolynomial_ClassName():
+    r"""ResponsePolynomial_ClassName() -> char const *"""
+    return _datamodel.ResponsePolynomial_ClassName()
+
+def ResponsePolynomial_TypeInfo():
+    r"""ResponsePolynomial_TypeInfo() -> RTTI"""
+    return _datamodel.ResponsePolynomial_TypeInfo()
+
+def ResponsePolynomial_Cast(*args):
+    r"""
+    ResponsePolynomial_Cast(BaseObject o) -> ResponsePolynomial
+    ResponsePolynomial_Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponsePolynomial
+    """
+    return _datamodel.ResponsePolynomial_Cast(*args)
+
+def ResponsePolynomial_ConstCast(*args):
+    r"""
+    ResponsePolynomial_ConstCast(BaseObject o) -> ResponsePolynomial
+    ResponsePolynomial_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponsePolynomial
+    """
+    return _datamodel.ResponsePolynomial_ConstCast(*args)
+
+def ResponsePolynomial_Meta():
+    r"""ResponsePolynomial_Meta() -> MetaObject"""
+    return _datamodel.ResponsePolynomial_Meta()
+
+def ResponsePolynomial_Create(*args):
+    r"""
+    ResponsePolynomial_Create() -> ResponsePolynomial
+    ResponsePolynomial_Create(std::string const & publicID) -> ResponsePolynomial
+    """
+    return _datamodel.ResponsePolynomial_Create(*args)
+
+def ResponsePolynomial_Find(publicID):
+    r"""ResponsePolynomial_Find(std::string const & publicID) -> ResponsePolynomial"""
+    return _datamodel.ResponsePolynomial_Find(publicID)
+
+class ResponseFAPIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::ResponseFAPIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(ResponseFAPIndex self) -> ResponseFAPIndex
+        __init__(ResponseFAPIndex self, std::string const & name) -> ResponseFAPIndex
+        __init__(ResponseFAPIndex self, ResponseFAPIndex arg2) -> ResponseFAPIndex
+        """
+        _datamodel.ResponseFAPIndex_swiginit(self, _datamodel.new_ResponseFAPIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(ResponseFAPIndex self, ResponseFAPIndex arg2) -> bool"""
+        return _datamodel.ResponseFAPIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(ResponseFAPIndex self, ResponseFAPIndex arg2) -> bool"""
+        return _datamodel.ResponseFAPIndex___ne__(self, arg2)
+    name = property(_datamodel.ResponseFAPIndex_name_get, _datamodel.ResponseFAPIndex_name_set, doc=r"""name : std::string""")
+    __swig_destroy__ = _datamodel.delete_ResponseFAPIndex
+
+# Register ResponseFAPIndex in _datamodel:
+_datamodel.ResponseFAPIndex_swigregister(ResponseFAPIndex)
+
+class ResponseFAP(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::ResponseFAP class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.ResponseFAP_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.ResponseFAP_TypeInfo()
+
+    def className(self):
+        r"""className(ResponseFAP self) -> char const *"""
+        return _datamodel.ResponseFAP_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(ResponseFAP self) -> RTTI"""
+        return _datamodel.ResponseFAP_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> ResponseFAP
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponseFAP
+        """
+        return _datamodel.ResponseFAP_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> ResponseFAP
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponseFAP
+        """
+        return _datamodel.ResponseFAP_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(ResponseFAP self, GenericArchive ar)"""
+        return _datamodel.ResponseFAP_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.ResponseFAP_Meta()
+
+    def meta(self):
+        r"""meta(ResponseFAP self) -> MetaObject"""
+        return _datamodel.ResponseFAP_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(ResponseFAP self, ResponseFAP other) -> ResponseFAP
+        __init__(ResponseFAP self, std::string const & publicID) -> ResponseFAP
+        """
+        _datamodel.ResponseFAP_swiginit(self, _datamodel.new_ResponseFAP(*args))
+    __swig_destroy__ = _datamodel.delete_ResponseFAP
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> ResponseFAP
+        Create(std::string const & publicID) -> ResponseFAP
+        """
+        return _datamodel.ResponseFAP_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> ResponseFAP"""
+        return _datamodel.ResponseFAP_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(ResponseFAP self, ResponseFAP other) -> bool"""
+        return _datamodel.ResponseFAP___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(ResponseFAP self, ResponseFAP other) -> bool"""
+        return _datamodel.ResponseFAP___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(ResponseFAP self, ResponseFAP other) -> bool"""
+        return _datamodel.ResponseFAP_equal(self, other)
+
+    def setName(self, name):
+        r"""setName(ResponseFAP self, std::string const & name)"""
+        return _datamodel.ResponseFAP_setName(self, name)
+
+    def name(self):
+        r"""name(ResponseFAP self) -> std::string const &"""
+        return _datamodel.ResponseFAP_name(self)
+
+    def setGain(self, gain):
+        r"""setGain(ResponseFAP self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        return _datamodel.ResponseFAP_setGain(self, gain)
+
+    def gain(self):
+        r"""gain(ResponseFAP self) -> double"""
+        return _datamodel.ResponseFAP_gain(self)
+
+    def setGainFrequency(self, gainFrequency):
+        r"""setGainFrequency(ResponseFAP self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        return _datamodel.ResponseFAP_setGainFrequency(self, gainFrequency)
+
+    def gainFrequency(self):
+        r"""gainFrequency(ResponseFAP self) -> double"""
+        return _datamodel.ResponseFAP_gainFrequency(self)
+
+    def setNumberOfTuples(self, numberOfTuples):
+        r"""setNumberOfTuples(ResponseFAP self, Seiscomp::Core::Optional< int >::Impl const & numberOfTuples)"""
+        return _datamodel.ResponseFAP_setNumberOfTuples(self, numberOfTuples)
+
+    def numberOfTuples(self):
+        r"""numberOfTuples(ResponseFAP self) -> int"""
+        return _datamodel.ResponseFAP_numberOfTuples(self)
+
+    def setTuples(self, tuples):
+        r"""setTuples(ResponseFAP self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & tuples)"""
+        return _datamodel.ResponseFAP_setTuples(self, tuples)
+
+    def tuples(self, *args):
+        r"""
+        tuples(ResponseFAP self) -> RealArray
+        tuples(ResponseFAP self) -> RealArray
+        """
+        return _datamodel.ResponseFAP_tuples(self, *args)
+
+    def setRemark(self, remark):
+        r"""setRemark(ResponseFAP self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        return _datamodel.ResponseFAP_setRemark(self, remark)
+
+    def remark(self, *args):
+        r"""
+        remark(ResponseFAP self) -> Blob
+        remark(ResponseFAP self) -> Blob
+        """
+        return _datamodel.ResponseFAP_remark(self, *args)
+
+    def index(self):
+        r"""index(ResponseFAP self) -> ResponseFAPIndex"""
+        return _datamodel.ResponseFAP_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(ResponseFAP self, ResponseFAP lhs) -> bool"""
+        return _datamodel.ResponseFAP_equalIndex(self, lhs)
+
+    def inventory(self):
+        r"""inventory(ResponseFAP self) -> Inventory"""
+        return _datamodel.ResponseFAP_inventory(self)
+
+    def assign(self, other):
+        r"""assign(ResponseFAP self, Object other) -> bool"""
+        return _datamodel.ResponseFAP_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(ResponseFAP self, PublicObject parent) -> bool"""
+        return _datamodel.ResponseFAP_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(ResponseFAP self, PublicObject parent) -> bool"""
+        return _datamodel.ResponseFAP_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(ResponseFAP self) -> bool"""
+        return _datamodel.ResponseFAP_detach(self)
+
+    def clone(self):
+        r"""clone(ResponseFAP self) -> Object"""
+        return _datamodel.ResponseFAP_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(ResponseFAP self, Object child) -> bool"""
+        return _datamodel.ResponseFAP_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(ResponseFAP self, Visitor visitor)"""
+        return _datamodel.ResponseFAP_accept(self, visitor)
+
+# Register ResponseFAP in _datamodel:
+_datamodel.ResponseFAP_swigregister(ResponseFAP)
+
+def ResponseFAP_ClassName():
+    r"""ResponseFAP_ClassName() -> char const *"""
+    return _datamodel.ResponseFAP_ClassName()
+
+def ResponseFAP_TypeInfo():
+    r"""ResponseFAP_TypeInfo() -> RTTI"""
+    return _datamodel.ResponseFAP_TypeInfo()
+
+def ResponseFAP_Cast(*args):
+    r"""
+    ResponseFAP_Cast(BaseObject o) -> ResponseFAP
+    ResponseFAP_Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponseFAP
+    """
+    return _datamodel.ResponseFAP_Cast(*args)
+
+def ResponseFAP_ConstCast(*args):
+    r"""
+    ResponseFAP_ConstCast(BaseObject o) -> ResponseFAP
+    ResponseFAP_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponseFAP
+    """
+    return _datamodel.ResponseFAP_ConstCast(*args)
+
+def ResponseFAP_Meta():
+    r"""ResponseFAP_Meta() -> MetaObject"""
+    return _datamodel.ResponseFAP_Meta()
+
+def ResponseFAP_Create(*args):
+    r"""
+    ResponseFAP_Create() -> ResponseFAP
+    ResponseFAP_Create(std::string const & publicID) -> ResponseFAP
+    """
+    return _datamodel.ResponseFAP_Create(*args)
+
+def ResponseFAP_Find(publicID):
+    r"""ResponseFAP_Find(std::string const & publicID) -> ResponseFAP"""
+    return _datamodel.ResponseFAP_Find(publicID)
+
+class ResponseFIRIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::ResponseFIRIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(ResponseFIRIndex self) -> ResponseFIRIndex
+        __init__(ResponseFIRIndex self, std::string const & name) -> ResponseFIRIndex
+        __init__(ResponseFIRIndex self, ResponseFIRIndex arg2) -> ResponseFIRIndex
+        """
+        _datamodel.ResponseFIRIndex_swiginit(self, _datamodel.new_ResponseFIRIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(ResponseFIRIndex self, ResponseFIRIndex arg2) -> bool"""
+        return _datamodel.ResponseFIRIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(ResponseFIRIndex self, ResponseFIRIndex arg2) -> bool"""
+        return _datamodel.ResponseFIRIndex___ne__(self, arg2)
+    name = property(_datamodel.ResponseFIRIndex_name_get, _datamodel.ResponseFIRIndex_name_set, doc=r"""name : std::string""")
+    __swig_destroy__ = _datamodel.delete_ResponseFIRIndex
+
+# Register ResponseFIRIndex in _datamodel:
+_datamodel.ResponseFIRIndex_swigregister(ResponseFIRIndex)
+
+class ResponseFIR(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::ResponseFIR class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.ResponseFIR_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.ResponseFIR_TypeInfo()
+
+    def className(self):
+        r"""className(ResponseFIR self) -> char const *"""
+        return _datamodel.ResponseFIR_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(ResponseFIR self) -> RTTI"""
+        return _datamodel.ResponseFIR_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> ResponseFIR
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponseFIR
+        """
+        return _datamodel.ResponseFIR_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> ResponseFIR
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponseFIR
+        """
+        return _datamodel.ResponseFIR_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(ResponseFIR self, GenericArchive ar)"""
+        return _datamodel.ResponseFIR_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.ResponseFIR_Meta()
+
+    def meta(self):
+        r"""meta(ResponseFIR self) -> MetaObject"""
+        return _datamodel.ResponseFIR_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(ResponseFIR self, ResponseFIR other) -> ResponseFIR
+        __init__(ResponseFIR self, std::string const & publicID) -> ResponseFIR
+        """
+        _datamodel.ResponseFIR_swiginit(self, _datamodel.new_ResponseFIR(*args))
+    __swig_destroy__ = _datamodel.delete_ResponseFIR
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> ResponseFIR
+        Create(std::string const & publicID) -> ResponseFIR
+        """
+        return _datamodel.ResponseFIR_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> ResponseFIR"""
+        return _datamodel.ResponseFIR_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(ResponseFIR self, ResponseFIR other) -> bool"""
+        return _datamodel.ResponseFIR___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(ResponseFIR self, ResponseFIR other) -> bool"""
+        return _datamodel.ResponseFIR___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(ResponseFIR self, ResponseFIR other) -> bool"""
+        return _datamodel.ResponseFIR_equal(self, other)
+
+    def setName(self, name):
+        r"""setName(ResponseFIR self, std::string const & name)"""
+        return _datamodel.ResponseFIR_setName(self, name)
+
+    def name(self):
+        r"""name(ResponseFIR self) -> std::string const &"""
+        return _datamodel.ResponseFIR_name(self)
+
+    def setGain(self, gain):
+        r"""setGain(ResponseFIR self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        return _datamodel.ResponseFIR_setGain(self, gain)
+
+    def gain(self):
+        r"""gain(ResponseFIR self) -> double"""
+        return _datamodel.ResponseFIR_gain(self)
+
+    def setGainFrequency(self, gainFrequency):
+        r"""setGainFrequency(ResponseFIR self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        return _datamodel.ResponseFIR_setGainFrequency(self, gainFrequency)
+
+    def gainFrequency(self):
+        r"""gainFrequency(ResponseFIR self) -> double"""
+        return _datamodel.ResponseFIR_gainFrequency(self)
+
+    def setDecimationFactor(self, decimationFactor):
+        r"""setDecimationFactor(ResponseFIR self, Seiscomp::Core::Optional< int >::Impl const & decimationFactor)"""
+        return _datamodel.ResponseFIR_setDecimationFactor(self, decimationFactor)
+
+    def decimationFactor(self):
+        r"""decimationFactor(ResponseFIR self) -> int"""
+        return _datamodel.ResponseFIR_decimationFactor(self)
+
+    def setDelay(self, delay):
+        r"""setDelay(ResponseFIR self, Seiscomp::Core::Optional< double >::Impl const & delay)"""
+        return _datamodel.ResponseFIR_setDelay(self, delay)
+
+    def delay(self):
+        r"""delay(ResponseFIR self) -> double"""
+        return _datamodel.ResponseFIR_delay(self)
+
+    def setCorrection(self, correction):
+        r"""setCorrection(ResponseFIR self, Seiscomp::Core::Optional< double >::Impl const & correction)"""
+        return _datamodel.ResponseFIR_setCorrection(self, correction)
+
+    def correction(self):
+        r"""correction(ResponseFIR self) -> double"""
+        return _datamodel.ResponseFIR_correction(self)
+
+    def setNumberOfCoefficients(self, numberOfCoefficients):
+        r"""setNumberOfCoefficients(ResponseFIR self, Seiscomp::Core::Optional< int >::Impl const & numberOfCoefficients)"""
+        return _datamodel.ResponseFIR_setNumberOfCoefficients(self, numberOfCoefficients)
+
+    def numberOfCoefficients(self):
+        r"""numberOfCoefficients(ResponseFIR self) -> int"""
+        return _datamodel.ResponseFIR_numberOfCoefficients(self)
+
+    def setSymmetry(self, symmetry):
+        r"""setSymmetry(ResponseFIR self, std::string const & symmetry)"""
+        return _datamodel.ResponseFIR_setSymmetry(self, symmetry)
+
+    def symmetry(self):
+        r"""symmetry(ResponseFIR self) -> std::string const &"""
+        return _datamodel.ResponseFIR_symmetry(self)
+
+    def setCoefficients(self, coefficients):
+        r"""setCoefficients(ResponseFIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & coefficients)"""
+        return _datamodel.ResponseFIR_setCoefficients(self, coefficients)
+
+    def coefficients(self, *args):
+        r"""
+        coefficients(ResponseFIR self) -> RealArray
+        coefficients(ResponseFIR self) -> RealArray
+        """
+        return _datamodel.ResponseFIR_coefficients(self, *args)
+
+    def setRemark(self, remark):
+        r"""setRemark(ResponseFIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        return _datamodel.ResponseFIR_setRemark(self, remark)
+
+    def remark(self, *args):
+        r"""
+        remark(ResponseFIR self) -> Blob
+        remark(ResponseFIR self) -> Blob
+        """
+        return _datamodel.ResponseFIR_remark(self, *args)
+
+    def index(self):
+        r"""index(ResponseFIR self) -> ResponseFIRIndex"""
+        return _datamodel.ResponseFIR_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(ResponseFIR self, ResponseFIR lhs) -> bool"""
+        return _datamodel.ResponseFIR_equalIndex(self, lhs)
+
+    def inventory(self):
+        r"""inventory(ResponseFIR self) -> Inventory"""
+        return _datamodel.ResponseFIR_inventory(self)
+
+    def assign(self, other):
+        r"""assign(ResponseFIR self, Object other) -> bool"""
+        return _datamodel.ResponseFIR_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(ResponseFIR self, PublicObject parent) -> bool"""
+        return _datamodel.ResponseFIR_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(ResponseFIR self, PublicObject parent) -> bool"""
+        return _datamodel.ResponseFIR_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(ResponseFIR self) -> bool"""
+        return _datamodel.ResponseFIR_detach(self)
+
+    def clone(self):
+        r"""clone(ResponseFIR self) -> Object"""
+        return _datamodel.ResponseFIR_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(ResponseFIR self, Object child) -> bool"""
+        return _datamodel.ResponseFIR_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(ResponseFIR self, Visitor visitor)"""
+        return _datamodel.ResponseFIR_accept(self, visitor)
+
+# Register ResponseFIR in _datamodel:
+_datamodel.ResponseFIR_swigregister(ResponseFIR)
+
+def ResponseFIR_ClassName():
+    r"""ResponseFIR_ClassName() -> char const *"""
+    return _datamodel.ResponseFIR_ClassName()
+
+def ResponseFIR_TypeInfo():
+    r"""ResponseFIR_TypeInfo() -> RTTI"""
+    return _datamodel.ResponseFIR_TypeInfo()
+
+def ResponseFIR_Cast(*args):
+    r"""
+    ResponseFIR_Cast(BaseObject o) -> ResponseFIR
+    ResponseFIR_Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponseFIR
+    """
+    return _datamodel.ResponseFIR_Cast(*args)
+
+def ResponseFIR_ConstCast(*args):
+    r"""
+    ResponseFIR_ConstCast(BaseObject o) -> ResponseFIR
+    ResponseFIR_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponseFIR
+    """
+    return _datamodel.ResponseFIR_ConstCast(*args)
+
+def ResponseFIR_Meta():
+    r"""ResponseFIR_Meta() -> MetaObject"""
+    return _datamodel.ResponseFIR_Meta()
+
+def ResponseFIR_Create(*args):
+    r"""
+    ResponseFIR_Create() -> ResponseFIR
+    ResponseFIR_Create(std::string const & publicID) -> ResponseFIR
+    """
+    return _datamodel.ResponseFIR_Create(*args)
+
+def ResponseFIR_Find(publicID):
+    r"""ResponseFIR_Find(std::string const & publicID) -> ResponseFIR"""
+    return _datamodel.ResponseFIR_Find(publicID)
+
+class ResponseIIRIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::ResponseIIRIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(ResponseIIRIndex self) -> ResponseIIRIndex
+        __init__(ResponseIIRIndex self, std::string const & name) -> ResponseIIRIndex
+        __init__(ResponseIIRIndex self, ResponseIIRIndex arg2) -> ResponseIIRIndex
+        """
+        _datamodel.ResponseIIRIndex_swiginit(self, _datamodel.new_ResponseIIRIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(ResponseIIRIndex self, ResponseIIRIndex arg2) -> bool"""
+        return _datamodel.ResponseIIRIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(ResponseIIRIndex self, ResponseIIRIndex arg2) -> bool"""
+        return _datamodel.ResponseIIRIndex___ne__(self, arg2)
+    name = property(_datamodel.ResponseIIRIndex_name_get, _datamodel.ResponseIIRIndex_name_set, doc=r"""name : std::string""")
+    __swig_destroy__ = _datamodel.delete_ResponseIIRIndex
+
+# Register ResponseIIRIndex in _datamodel:
+_datamodel.ResponseIIRIndex_swigregister(ResponseIIRIndex)
+
+class ResponseIIR(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::ResponseIIR class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.ResponseIIR_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.ResponseIIR_TypeInfo()
+
+    def className(self):
+        r"""className(ResponseIIR self) -> char const *"""
+        return _datamodel.ResponseIIR_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(ResponseIIR self) -> RTTI"""
+        return _datamodel.ResponseIIR_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> ResponseIIR
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponseIIR
+        """
+        return _datamodel.ResponseIIR_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> ResponseIIR
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponseIIR
+        """
+        return _datamodel.ResponseIIR_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(ResponseIIR self, GenericArchive ar)"""
+        return _datamodel.ResponseIIR_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.ResponseIIR_Meta()
+
+    def meta(self):
+        r"""meta(ResponseIIR self) -> MetaObject"""
+        return _datamodel.ResponseIIR_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(ResponseIIR self, ResponseIIR other) -> ResponseIIR
+        __init__(ResponseIIR self, std::string const & publicID) -> ResponseIIR
+        """
+        _datamodel.ResponseIIR_swiginit(self, _datamodel.new_ResponseIIR(*args))
+    __swig_destroy__ = _datamodel.delete_ResponseIIR
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> ResponseIIR
+        Create(std::string const & publicID) -> ResponseIIR
+        """
+        return _datamodel.ResponseIIR_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> ResponseIIR"""
+        return _datamodel.ResponseIIR_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(ResponseIIR self, ResponseIIR other) -> bool"""
+        return _datamodel.ResponseIIR___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(ResponseIIR self, ResponseIIR other) -> bool"""
+        return _datamodel.ResponseIIR___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(ResponseIIR self, ResponseIIR other) -> bool"""
+        return _datamodel.ResponseIIR_equal(self, other)
+
+    def setName(self, name):
+        r"""setName(ResponseIIR self, std::string const & name)"""
+        return _datamodel.ResponseIIR_setName(self, name)
+
+    def name(self):
+        r"""name(ResponseIIR self) -> std::string const &"""
+        return _datamodel.ResponseIIR_name(self)
+
+    def setType(self, type):
+        r"""setType(ResponseIIR self, std::string const & type)"""
+        return _datamodel.ResponseIIR_setType(self, type)
+
+    def type(self):
+        r"""type(ResponseIIR self) -> std::string const &"""
+        return _datamodel.ResponseIIR_type(self)
+
+    def setGain(self, gain):
+        r"""setGain(ResponseIIR self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        return _datamodel.ResponseIIR_setGain(self, gain)
+
+    def gain(self):
+        r"""gain(ResponseIIR self) -> double"""
+        return _datamodel.ResponseIIR_gain(self)
+
+    def setGainFrequency(self, gainFrequency):
+        r"""setGainFrequency(ResponseIIR self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        return _datamodel.ResponseIIR_setGainFrequency(self, gainFrequency)
+
+    def gainFrequency(self):
+        r"""gainFrequency(ResponseIIR self) -> double"""
+        return _datamodel.ResponseIIR_gainFrequency(self)
+
+    def setDecimationFactor(self, decimationFactor):
+        r"""setDecimationFactor(ResponseIIR self, Seiscomp::Core::Optional< int >::Impl const & decimationFactor)"""
+        return _datamodel.ResponseIIR_setDecimationFactor(self, decimationFactor)
+
+    def decimationFactor(self):
+        r"""decimationFactor(ResponseIIR self) -> int"""
+        return _datamodel.ResponseIIR_decimationFactor(self)
+
+    def setDelay(self, delay):
+        r"""setDelay(ResponseIIR self, Seiscomp::Core::Optional< double >::Impl const & delay)"""
+        return _datamodel.ResponseIIR_setDelay(self, delay)
+
+    def delay(self):
+        r"""delay(ResponseIIR self) -> double"""
+        return _datamodel.ResponseIIR_delay(self)
+
+    def setCorrection(self, correction):
+        r"""setCorrection(ResponseIIR self, Seiscomp::Core::Optional< double >::Impl const & correction)"""
+        return _datamodel.ResponseIIR_setCorrection(self, correction)
+
+    def correction(self):
+        r"""correction(ResponseIIR self) -> double"""
+        return _datamodel.ResponseIIR_correction(self)
+
+    def setNumberOfNumerators(self, numberOfNumerators):
+        r"""setNumberOfNumerators(ResponseIIR self, Seiscomp::Core::Optional< int >::Impl const & numberOfNumerators)"""
+        return _datamodel.ResponseIIR_setNumberOfNumerators(self, numberOfNumerators)
+
+    def numberOfNumerators(self):
+        r"""numberOfNumerators(ResponseIIR self) -> int"""
+        return _datamodel.ResponseIIR_numberOfNumerators(self)
+
+    def setNumberOfDenominators(self, numberOfDenominators):
+        r"""setNumberOfDenominators(ResponseIIR self, Seiscomp::Core::Optional< int >::Impl const & numberOfDenominators)"""
+        return _datamodel.ResponseIIR_setNumberOfDenominators(self, numberOfDenominators)
+
+    def numberOfDenominators(self):
+        r"""numberOfDenominators(ResponseIIR self) -> int"""
+        return _datamodel.ResponseIIR_numberOfDenominators(self)
+
+    def setNumerators(self, numerators):
+        r"""setNumerators(ResponseIIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & numerators)"""
+        return _datamodel.ResponseIIR_setNumerators(self, numerators)
+
+    def numerators(self, *args):
+        r"""
+        numerators(ResponseIIR self) -> RealArray
+        numerators(ResponseIIR self) -> RealArray
+        """
+        return _datamodel.ResponseIIR_numerators(self, *args)
+
+    def setDenominators(self, denominators):
+        r"""setDenominators(ResponseIIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & denominators)"""
+        return _datamodel.ResponseIIR_setDenominators(self, denominators)
+
+    def denominators(self, *args):
+        r"""
+        denominators(ResponseIIR self) -> RealArray
+        denominators(ResponseIIR self) -> RealArray
+        """
+        return _datamodel.ResponseIIR_denominators(self, *args)
+
+    def setRemark(self, remark):
+        r"""setRemark(ResponseIIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        return _datamodel.ResponseIIR_setRemark(self, remark)
+
+    def remark(self, *args):
+        r"""
+        remark(ResponseIIR self) -> Blob
+        remark(ResponseIIR self) -> Blob
+        """
+        return _datamodel.ResponseIIR_remark(self, *args)
+
+    def index(self):
+        r"""index(ResponseIIR self) -> ResponseIIRIndex"""
+        return _datamodel.ResponseIIR_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(ResponseIIR self, ResponseIIR lhs) -> bool"""
+        return _datamodel.ResponseIIR_equalIndex(self, lhs)
+
+    def inventory(self):
+        r"""inventory(ResponseIIR self) -> Inventory"""
+        return _datamodel.ResponseIIR_inventory(self)
+
+    def assign(self, other):
+        r"""assign(ResponseIIR self, Object other) -> bool"""
+        return _datamodel.ResponseIIR_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(ResponseIIR self, PublicObject parent) -> bool"""
+        return _datamodel.ResponseIIR_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(ResponseIIR self, PublicObject parent) -> bool"""
+        return _datamodel.ResponseIIR_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(ResponseIIR self) -> bool"""
+        return _datamodel.ResponseIIR_detach(self)
+
+    def clone(self):
+        r"""clone(ResponseIIR self) -> Object"""
+        return _datamodel.ResponseIIR_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(ResponseIIR self, Object child) -> bool"""
+        return _datamodel.ResponseIIR_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(ResponseIIR self, Visitor visitor)"""
+        return _datamodel.ResponseIIR_accept(self, visitor)
+
+# Register ResponseIIR in _datamodel:
+_datamodel.ResponseIIR_swigregister(ResponseIIR)
+
+def ResponseIIR_ClassName():
+    r"""ResponseIIR_ClassName() -> char const *"""
+    return _datamodel.ResponseIIR_ClassName()
+
+def ResponseIIR_TypeInfo():
+    r"""ResponseIIR_TypeInfo() -> RTTI"""
+    return _datamodel.ResponseIIR_TypeInfo()
+
+def ResponseIIR_Cast(*args):
+    r"""
+    ResponseIIR_Cast(BaseObject o) -> ResponseIIR
+    ResponseIIR_Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponseIIR
+    """
+    return _datamodel.ResponseIIR_Cast(*args)
+
+def ResponseIIR_ConstCast(*args):
+    r"""
+    ResponseIIR_ConstCast(BaseObject o) -> ResponseIIR
+    ResponseIIR_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponseIIR
+    """
+    return _datamodel.ResponseIIR_ConstCast(*args)
+
+def ResponseIIR_Meta():
+    r"""ResponseIIR_Meta() -> MetaObject"""
+    return _datamodel.ResponseIIR_Meta()
+
+def ResponseIIR_Create(*args):
+    r"""
+    ResponseIIR_Create() -> ResponseIIR
+    ResponseIIR_Create(std::string const & publicID) -> ResponseIIR
+    """
+    return _datamodel.ResponseIIR_Create(*args)
+
+def ResponseIIR_Find(publicID):
+    r"""ResponseIIR_Find(std::string const & publicID) -> ResponseIIR"""
+    return _datamodel.ResponseIIR_Find(publicID)
+
+class DataloggerCalibrationIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::DataloggerCalibrationIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(DataloggerCalibrationIndex self) -> DataloggerCalibrationIndex
+        __init__(DataloggerCalibrationIndex self, std::string const & serialNumber, int channel, Time start) -> DataloggerCalibrationIndex
+        __init__(DataloggerCalibrationIndex self, DataloggerCalibrationIndex arg2) -> DataloggerCalibrationIndex
+        """
+        _datamodel.DataloggerCalibrationIndex_swiginit(self, _datamodel.new_DataloggerCalibrationIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(DataloggerCalibrationIndex self, DataloggerCalibrationIndex arg2) -> bool"""
+        return _datamodel.DataloggerCalibrationIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(DataloggerCalibrationIndex self, DataloggerCalibrationIndex arg2) -> bool"""
+        return _datamodel.DataloggerCalibrationIndex___ne__(self, arg2)
+    serialNumber = property(_datamodel.DataloggerCalibrationIndex_serialNumber_get, _datamodel.DataloggerCalibrationIndex_serialNumber_set, doc=r"""serialNumber : std::string""")
+    channel = property(_datamodel.DataloggerCalibrationIndex_channel_get, _datamodel.DataloggerCalibrationIndex_channel_set, doc=r"""channel : int""")
+    start = property(_datamodel.DataloggerCalibrationIndex_start_get, _datamodel.DataloggerCalibrationIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
+    __swig_destroy__ = _datamodel.delete_DataloggerCalibrationIndex
+
+# Register DataloggerCalibrationIndex in _datamodel:
+_datamodel.DataloggerCalibrationIndex_swigregister(DataloggerCalibrationIndex)
+
+class DataloggerCalibration(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::DataloggerCalibration class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.DataloggerCalibration_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.DataloggerCalibration_TypeInfo()
+
+    def className(self):
+        r"""className(DataloggerCalibration self) -> char const *"""
+        return _datamodel.DataloggerCalibration_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(DataloggerCalibration self) -> RTTI"""
+        return _datamodel.DataloggerCalibration_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> DataloggerCalibration
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> DataloggerCalibration
+        """
+        return _datamodel.DataloggerCalibration_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> DataloggerCalibration
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataloggerCalibration
+        """
+        return _datamodel.DataloggerCalibration_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(DataloggerCalibration self, GenericArchive ar)"""
+        return _datamodel.DataloggerCalibration_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.DataloggerCalibration_Meta()
+
+    def meta(self):
+        r"""meta(DataloggerCalibration self) -> MetaObject"""
+        return _datamodel.DataloggerCalibration_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(DataloggerCalibration self) -> DataloggerCalibration
+        __init__(DataloggerCalibration self, DataloggerCalibration other) -> DataloggerCalibration
+        """
+        _datamodel.DataloggerCalibration_swiginit(self, _datamodel.new_DataloggerCalibration(*args))
+    __swig_destroy__ = _datamodel.delete_DataloggerCalibration
+
+    def __eq__(self, other):
+        r"""__eq__(DataloggerCalibration self, DataloggerCalibration other) -> bool"""
+        return _datamodel.DataloggerCalibration___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(DataloggerCalibration self, DataloggerCalibration other) -> bool"""
+        return _datamodel.DataloggerCalibration___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(DataloggerCalibration self, DataloggerCalibration other) -> bool"""
+        return _datamodel.DataloggerCalibration_equal(self, other)
+
+    def setSerialNumber(self, serialNumber):
+        r"""setSerialNumber(DataloggerCalibration self, std::string const & serialNumber)"""
+        return _datamodel.DataloggerCalibration_setSerialNumber(self, serialNumber)
+
+    def serialNumber(self):
+        r"""serialNumber(DataloggerCalibration self) -> std::string const &"""
+        return _datamodel.DataloggerCalibration_serialNumber(self)
+
+    def setChannel(self, channel):
+        r"""setChannel(DataloggerCalibration self, int channel)"""
+        return _datamodel.DataloggerCalibration_setChannel(self, channel)
+
+    def channel(self):
+        r"""channel(DataloggerCalibration self) -> int"""
+        return _datamodel.DataloggerCalibration_channel(self)
+
+    def setStart(self, start):
+        r"""setStart(DataloggerCalibration self, Time start)"""
+        return _datamodel.DataloggerCalibration_setStart(self, start)
+
+    def start(self):
+        r"""start(DataloggerCalibration self) -> Time"""
+        return _datamodel.DataloggerCalibration_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(DataloggerCalibration self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        return _datamodel.DataloggerCalibration_setEnd(self, end)
+
+    def end(self):
+        r"""end(DataloggerCalibration self) -> Time"""
+        return _datamodel.DataloggerCalibration_end(self)
+
+    def setGain(self, gain):
+        r"""setGain(DataloggerCalibration self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        return _datamodel.DataloggerCalibration_setGain(self, gain)
+
+    def gain(self):
+        r"""gain(DataloggerCalibration self) -> double"""
+        return _datamodel.DataloggerCalibration_gain(self)
+
+    def setGainFrequency(self, gainFrequency):
+        r"""setGainFrequency(DataloggerCalibration self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        return _datamodel.DataloggerCalibration_setGainFrequency(self, gainFrequency)
+
+    def gainFrequency(self):
+        r"""gainFrequency(DataloggerCalibration self) -> double"""
+        return _datamodel.DataloggerCalibration_gainFrequency(self)
+
+    def setRemark(self, remark):
+        r"""setRemark(DataloggerCalibration self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        return _datamodel.DataloggerCalibration_setRemark(self, remark)
+
+    def remark(self, *args):
+        r"""
+        remark(DataloggerCalibration self) -> Blob
+        remark(DataloggerCalibration self) -> Blob
+        """
+        return _datamodel.DataloggerCalibration_remark(self, *args)
+
+    def index(self):
+        r"""index(DataloggerCalibration self) -> DataloggerCalibrationIndex"""
+        return _datamodel.DataloggerCalibration_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(DataloggerCalibration self, DataloggerCalibration lhs) -> bool"""
+        return _datamodel.DataloggerCalibration_equalIndex(self, lhs)
+
+    def datalogger(self):
+        r"""datalogger(DataloggerCalibration self) -> Datalogger"""
+        return _datamodel.DataloggerCalibration_datalogger(self)
+
+    def assign(self, other):
+        r"""assign(DataloggerCalibration self, Object other) -> bool"""
+        return _datamodel.DataloggerCalibration_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(DataloggerCalibration self, PublicObject parent) -> bool"""
+        return _datamodel.DataloggerCalibration_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(DataloggerCalibration self, PublicObject parent) -> bool"""
+        return _datamodel.DataloggerCalibration_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(DataloggerCalibration self) -> bool"""
+        return _datamodel.DataloggerCalibration_detach(self)
+
+    def clone(self):
+        r"""clone(DataloggerCalibration self) -> Object"""
+        return _datamodel.DataloggerCalibration_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(DataloggerCalibration self, Visitor visitor)"""
+        return _datamodel.DataloggerCalibration_accept(self, visitor)
+
+# Register DataloggerCalibration in _datamodel:
+_datamodel.DataloggerCalibration_swigregister(DataloggerCalibration)
+
+def DataloggerCalibration_ClassName():
+    r"""DataloggerCalibration_ClassName() -> char const *"""
+    return _datamodel.DataloggerCalibration_ClassName()
+
+def DataloggerCalibration_TypeInfo():
+    r"""DataloggerCalibration_TypeInfo() -> RTTI"""
+    return _datamodel.DataloggerCalibration_TypeInfo()
+
+def DataloggerCalibration_Cast(*args):
+    r"""
+    DataloggerCalibration_Cast(BaseObject o) -> DataloggerCalibration
+    DataloggerCalibration_Cast(Seiscomp::Core::BaseObjectPtr o) -> DataloggerCalibration
+    """
+    return _datamodel.DataloggerCalibration_Cast(*args)
+
+def DataloggerCalibration_ConstCast(*args):
+    r"""
+    DataloggerCalibration_ConstCast(BaseObject o) -> DataloggerCalibration
+    DataloggerCalibration_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataloggerCalibration
+    """
+    return _datamodel.DataloggerCalibration_ConstCast(*args)
+
+def DataloggerCalibration_Meta():
+    r"""DataloggerCalibration_Meta() -> MetaObject"""
+    return _datamodel.DataloggerCalibration_Meta()
+
+class DecimationIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::DecimationIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(DecimationIndex self) -> DecimationIndex
+        __init__(DecimationIndex self, int sampleRateNumerator, int sampleRateDenominator) -> DecimationIndex
+        __init__(DecimationIndex self, DecimationIndex arg2) -> DecimationIndex
+        """
+        _datamodel.DecimationIndex_swiginit(self, _datamodel.new_DecimationIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(DecimationIndex self, DecimationIndex arg2) -> bool"""
+        return _datamodel.DecimationIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(DecimationIndex self, DecimationIndex arg2) -> bool"""
+        return _datamodel.DecimationIndex___ne__(self, arg2)
+    sampleRateNumerator = property(_datamodel.DecimationIndex_sampleRateNumerator_get, _datamodel.DecimationIndex_sampleRateNumerator_set, doc=r"""sampleRateNumerator : int""")
+    sampleRateDenominator = property(_datamodel.DecimationIndex_sampleRateDenominator_get, _datamodel.DecimationIndex_sampleRateDenominator_set, doc=r"""sampleRateDenominator : int""")
+    __swig_destroy__ = _datamodel.delete_DecimationIndex
+
+# Register DecimationIndex in _datamodel:
+_datamodel.DecimationIndex_swigregister(DecimationIndex)
+
+class Decimation(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::Decimation class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.Decimation_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.Decimation_TypeInfo()
+
+    def className(self):
+        r"""className(Decimation self) -> char const *"""
+        return _datamodel.Decimation_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(Decimation self) -> RTTI"""
+        return _datamodel.Decimation_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> Decimation
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> Decimation
+        """
+        return _datamodel.Decimation_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> Decimation
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Decimation
+        """
+        return _datamodel.Decimation_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(Decimation self, GenericArchive ar)"""
+        return _datamodel.Decimation_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.Decimation_Meta()
+
+    def meta(self):
+        r"""meta(Decimation self) -> MetaObject"""
+        return _datamodel.Decimation_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(Decimation self) -> Decimation
+        __init__(Decimation self, Decimation other) -> Decimation
+        """
+        _datamodel.Decimation_swiginit(self, _datamodel.new_Decimation(*args))
+    __swig_destroy__ = _datamodel.delete_Decimation
+
+    def __eq__(self, other):
+        r"""__eq__(Decimation self, Decimation other) -> bool"""
+        return _datamodel.Decimation___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(Decimation self, Decimation other) -> bool"""
+        return _datamodel.Decimation___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(Decimation self, Decimation other) -> bool"""
+        return _datamodel.Decimation_equal(self, other)
+
+    def setSampleRateNumerator(self, sampleRateNumerator):
+        r"""setSampleRateNumerator(Decimation self, int sampleRateNumerator)"""
+        return _datamodel.Decimation_setSampleRateNumerator(self, sampleRateNumerator)
+
+    def sampleRateNumerator(self):
+        r"""sampleRateNumerator(Decimation self) -> int"""
+        return _datamodel.Decimation_sampleRateNumerator(self)
+
+    def setSampleRateDenominator(self, sampleRateDenominator):
+        r"""setSampleRateDenominator(Decimation self, int sampleRateDenominator)"""
+        return _datamodel.Decimation_setSampleRateDenominator(self, sampleRateDenominator)
+
+    def sampleRateDenominator(self):
+        r"""sampleRateDenominator(Decimation self) -> int"""
+        return _datamodel.Decimation_sampleRateDenominator(self)
+
+    def setAnalogueFilterChain(self, analogueFilterChain):
+        r"""setAnalogueFilterChain(Decimation self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & analogueFilterChain)"""
+        return _datamodel.Decimation_setAnalogueFilterChain(self, analogueFilterChain)
+
+    def analogueFilterChain(self, *args):
+        r"""
+        analogueFilterChain(Decimation self) -> Blob
+        analogueFilterChain(Decimation self) -> Blob
+        """
+        return _datamodel.Decimation_analogueFilterChain(self, *args)
+
+    def setDigitalFilterChain(self, digitalFilterChain):
+        r"""setDigitalFilterChain(Decimation self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & digitalFilterChain)"""
+        return _datamodel.Decimation_setDigitalFilterChain(self, digitalFilterChain)
+
+    def digitalFilterChain(self, *args):
+        r"""
+        digitalFilterChain(Decimation self) -> Blob
+        digitalFilterChain(Decimation self) -> Blob
+        """
+        return _datamodel.Decimation_digitalFilterChain(self, *args)
+
+    def index(self):
+        r"""index(Decimation self) -> DecimationIndex"""
+        return _datamodel.Decimation_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(Decimation self, Decimation lhs) -> bool"""
+        return _datamodel.Decimation_equalIndex(self, lhs)
+
+    def datalogger(self):
+        r"""datalogger(Decimation self) -> Datalogger"""
+        return _datamodel.Decimation_datalogger(self)
+
+    def assign(self, other):
+        r"""assign(Decimation self, Object other) -> bool"""
+        return _datamodel.Decimation_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(Decimation self, PublicObject parent) -> bool"""
+        return _datamodel.Decimation_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(Decimation self, PublicObject parent) -> bool"""
+        return _datamodel.Decimation_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(Decimation self) -> bool"""
+        return _datamodel.Decimation_detach(self)
+
+    def clone(self):
+        r"""clone(Decimation self) -> Object"""
+        return _datamodel.Decimation_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(Decimation self, Visitor visitor)"""
+        return _datamodel.Decimation_accept(self, visitor)
+
+# Register Decimation in _datamodel:
+_datamodel.Decimation_swigregister(Decimation)
+
+def Decimation_ClassName():
+    r"""Decimation_ClassName() -> char const *"""
+    return _datamodel.Decimation_ClassName()
+
+def Decimation_TypeInfo():
+    r"""Decimation_TypeInfo() -> RTTI"""
+    return _datamodel.Decimation_TypeInfo()
+
+def Decimation_Cast(*args):
+    r"""
+    Decimation_Cast(BaseObject o) -> Decimation
+    Decimation_Cast(Seiscomp::Core::BaseObjectPtr o) -> Decimation
+    """
+    return _datamodel.Decimation_Cast(*args)
+
+def Decimation_ConstCast(*args):
+    r"""
+    Decimation_ConstCast(BaseObject o) -> Decimation
+    Decimation_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Decimation
+    """
+    return _datamodel.Decimation_ConstCast(*args)
+
+def Decimation_Meta():
+    r"""Decimation_Meta() -> MetaObject"""
+    return _datamodel.Decimation_Meta()
+
+class DataloggerIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::DataloggerIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(DataloggerIndex self) -> DataloggerIndex
+        __init__(DataloggerIndex self, std::string const & name) -> DataloggerIndex
+        __init__(DataloggerIndex self, DataloggerIndex arg2) -> DataloggerIndex
+        """
+        _datamodel.DataloggerIndex_swiginit(self, _datamodel.new_DataloggerIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(DataloggerIndex self, DataloggerIndex arg2) -> bool"""
+        return _datamodel.DataloggerIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(DataloggerIndex self, DataloggerIndex arg2) -> bool"""
+        return _datamodel.DataloggerIndex___ne__(self, arg2)
+    name = property(_datamodel.DataloggerIndex_name_get, _datamodel.DataloggerIndex_name_set, doc=r"""name : std::string""")
+    __swig_destroy__ = _datamodel.delete_DataloggerIndex
+
+# Register DataloggerIndex in _datamodel:
+_datamodel.DataloggerIndex_swigregister(DataloggerIndex)
+
+class Datalogger(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::Datalogger class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.Datalogger_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.Datalogger_TypeInfo()
+
+    def className(self):
+        r"""className(Datalogger self) -> char const *"""
+        return _datamodel.Datalogger_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(Datalogger self) -> RTTI"""
+        return _datamodel.Datalogger_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> Datalogger
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> Datalogger
+        """
+        return _datamodel.Datalogger_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> Datalogger
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Datalogger
+        """
+        return _datamodel.Datalogger_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(Datalogger self, GenericArchive ar)"""
+        return _datamodel.Datalogger_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.Datalogger_Meta()
+
+    def meta(self):
+        r"""meta(Datalogger self) -> MetaObject"""
+        return _datamodel.Datalogger_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(Datalogger self, Datalogger other) -> Datalogger
+        __init__(Datalogger self, std::string const & publicID) -> Datalogger
+        """
+        _datamodel.Datalogger_swiginit(self, _datamodel.new_Datalogger(*args))
+    __swig_destroy__ = _datamodel.delete_Datalogger
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> Datalogger
+        Create(std::string const & publicID) -> Datalogger
+        """
+        return _datamodel.Datalogger_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> Datalogger"""
+        return _datamodel.Datalogger_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(Datalogger self, Datalogger other) -> bool"""
+        return _datamodel.Datalogger___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(Datalogger self, Datalogger other) -> bool"""
+        return _datamodel.Datalogger___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(Datalogger self, Datalogger other) -> bool"""
+        return _datamodel.Datalogger_equal(self, other)
+
+    def setName(self, name):
+        r"""setName(Datalogger self, std::string const & name)"""
+        return _datamodel.Datalogger_setName(self, name)
+
+    def name(self):
+        r"""name(Datalogger self) -> std::string const &"""
+        return _datamodel.Datalogger_name(self)
+
+    def setDescription(self, description):
+        r"""setDescription(Datalogger self, std::string const & description)"""
+        return _datamodel.Datalogger_setDescription(self, description)
+
+    def description(self):
+        r"""description(Datalogger self) -> std::string const &"""
+        return _datamodel.Datalogger_description(self)
+
+    def setDigitizerModel(self, digitizerModel):
+        r"""setDigitizerModel(Datalogger self, std::string const & digitizerModel)"""
+        return _datamodel.Datalogger_setDigitizerModel(self, digitizerModel)
+
+    def digitizerModel(self):
+        r"""digitizerModel(Datalogger self) -> std::string const &"""
+        return _datamodel.Datalogger_digitizerModel(self)
+
+    def setDigitizerManufacturer(self, digitizerManufacturer):
+        r"""setDigitizerManufacturer(Datalogger self, std::string const & digitizerManufacturer)"""
+        return _datamodel.Datalogger_setDigitizerManufacturer(self, digitizerManufacturer)
+
+    def digitizerManufacturer(self):
+        r"""digitizerManufacturer(Datalogger self) -> std::string const &"""
+        return _datamodel.Datalogger_digitizerManufacturer(self)
+
+    def setRecorderModel(self, recorderModel):
+        r"""setRecorderModel(Datalogger self, std::string const & recorderModel)"""
+        return _datamodel.Datalogger_setRecorderModel(self, recorderModel)
+
+    def recorderModel(self):
+        r"""recorderModel(Datalogger self) -> std::string const &"""
+        return _datamodel.Datalogger_recorderModel(self)
+
+    def setRecorderManufacturer(self, recorderManufacturer):
+        r"""setRecorderManufacturer(Datalogger self, std::string const & recorderManufacturer)"""
+        return _datamodel.Datalogger_setRecorderManufacturer(self, recorderManufacturer)
+
+    def recorderManufacturer(self):
+        r"""recorderManufacturer(Datalogger self) -> std::string const &"""
+        return _datamodel.Datalogger_recorderManufacturer(self)
+
+    def setClockModel(self, clockModel):
+        r"""setClockModel(Datalogger self, std::string const & clockModel)"""
+        return _datamodel.Datalogger_setClockModel(self, clockModel)
+
+    def clockModel(self):
+        r"""clockModel(Datalogger self) -> std::string const &"""
+        return _datamodel.Datalogger_clockModel(self)
+
+    def setClockManufacturer(self, clockManufacturer):
+        r"""setClockManufacturer(Datalogger self, std::string const & clockManufacturer)"""
+        return _datamodel.Datalogger_setClockManufacturer(self, clockManufacturer)
+
+    def clockManufacturer(self):
+        r"""clockManufacturer(Datalogger self) -> std::string const &"""
+        return _datamodel.Datalogger_clockManufacturer(self)
+
+    def setClockType(self, clockType):
+        r"""setClockType(Datalogger self, std::string const & clockType)"""
+        return _datamodel.Datalogger_setClockType(self, clockType)
+
+    def clockType(self):
+        r"""clockType(Datalogger self) -> std::string const &"""
+        return _datamodel.Datalogger_clockType(self)
+
+    def setGain(self, gain):
+        r"""setGain(Datalogger self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        return _datamodel.Datalogger_setGain(self, gain)
+
+    def gain(self):
+        r"""gain(Datalogger self) -> double"""
+        return _datamodel.Datalogger_gain(self)
+
+    def setMaxClockDrift(self, maxClockDrift):
+        r"""setMaxClockDrift(Datalogger self, Seiscomp::Core::Optional< double >::Impl const & maxClockDrift)"""
+        return _datamodel.Datalogger_setMaxClockDrift(self, maxClockDrift)
+
+    def maxClockDrift(self):
+        r"""maxClockDrift(Datalogger self) -> double"""
+        return _datamodel.Datalogger_maxClockDrift(self)
+
+    def setRemark(self, remark):
+        r"""setRemark(Datalogger self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        return _datamodel.Datalogger_setRemark(self, remark)
+
+    def remark(self, *args):
+        r"""
+        remark(Datalogger self) -> Blob
+        remark(Datalogger self) -> Blob
+        """
+        return _datamodel.Datalogger_remark(self, *args)
+
+    def index(self):
+        r"""index(Datalogger self) -> DataloggerIndex"""
+        return _datamodel.Datalogger_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(Datalogger self, Datalogger lhs) -> bool"""
+        return _datamodel.Datalogger_equalIndex(self, lhs)
+
+    def add(self, *args):
+        r"""
+        add(Datalogger self, DataloggerCalibration obj) -> bool
+        add(Datalogger self, Decimation obj) -> bool
+        """
+        return _datamodel.Datalogger_add(self, *args)
+
+    def remove(self, *args):
+        r"""
+        remove(Datalogger self, DataloggerCalibration obj) -> bool
+        remove(Datalogger self, Decimation obj) -> bool
+        """
+        return _datamodel.Datalogger_remove(self, *args)
+
+    def removeDataloggerCalibration(self, *args):
+        r"""
+        removeDataloggerCalibration(Datalogger self, size_t i) -> bool
+        removeDataloggerCalibration(Datalogger self, DataloggerCalibrationIndex i) -> bool
+        """
+        return _datamodel.Datalogger_removeDataloggerCalibration(self, *args)
+
+    def removeDecimation(self, *args):
+        r"""
+        removeDecimation(Datalogger self, size_t i) -> bool
+        removeDecimation(Datalogger self, DecimationIndex i) -> bool
+        """
+        return _datamodel.Datalogger_removeDecimation(self, *args)
+
+    def dataloggerCalibrationCount(self):
+        r"""dataloggerCalibrationCount(Datalogger self) -> size_t"""
+        return _datamodel.Datalogger_dataloggerCalibrationCount(self)
+
+    def decimationCount(self):
+        r"""decimationCount(Datalogger self) -> size_t"""
+        return _datamodel.Datalogger_decimationCount(self)
+
+    def dataloggerCalibration(self, *args):
+        r"""
+        dataloggerCalibration(Datalogger self, size_t i) -> DataloggerCalibration
+        dataloggerCalibration(Datalogger self, DataloggerCalibrationIndex i) -> DataloggerCalibration
+        """
+        return _datamodel.Datalogger_dataloggerCalibration(self, *args)
+
+    def decimation(self, *args):
+        r"""
+        decimation(Datalogger self, size_t i) -> Decimation
+        decimation(Datalogger self, DecimationIndex i) -> Decimation
+        """
+        return _datamodel.Datalogger_decimation(self, *args)
+
+    def inventory(self):
+        r"""inventory(Datalogger self) -> Inventory"""
+        return _datamodel.Datalogger_inventory(self)
+
+    def assign(self, other):
+        r"""assign(Datalogger self, Object other) -> bool"""
+        return _datamodel.Datalogger_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(Datalogger self, PublicObject parent) -> bool"""
+        return _datamodel.Datalogger_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(Datalogger self, PublicObject parent) -> bool"""
+        return _datamodel.Datalogger_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(Datalogger self) -> bool"""
+        return _datamodel.Datalogger_detach(self)
+
+    def clone(self):
+        r"""clone(Datalogger self) -> Object"""
+        return _datamodel.Datalogger_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(Datalogger self, Object child) -> bool"""
+        return _datamodel.Datalogger_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(Datalogger self, Visitor visitor)"""
+        return _datamodel.Datalogger_accept(self, visitor)
+
+# Register Datalogger in _datamodel:
+_datamodel.Datalogger_swigregister(Datalogger)
+
+def Datalogger_ClassName():
+    r"""Datalogger_ClassName() -> char const *"""
+    return _datamodel.Datalogger_ClassName()
+
+def Datalogger_TypeInfo():
+    r"""Datalogger_TypeInfo() -> RTTI"""
+    return _datamodel.Datalogger_TypeInfo()
+
+def Datalogger_Cast(*args):
+    r"""
+    Datalogger_Cast(BaseObject o) -> Datalogger
+    Datalogger_Cast(Seiscomp::Core::BaseObjectPtr o) -> Datalogger
+    """
+    return _datamodel.Datalogger_Cast(*args)
+
+def Datalogger_ConstCast(*args):
+    r"""
+    Datalogger_ConstCast(BaseObject o) -> Datalogger
+    Datalogger_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Datalogger
+    """
+    return _datamodel.Datalogger_ConstCast(*args)
+
+def Datalogger_Meta():
+    r"""Datalogger_Meta() -> MetaObject"""
+    return _datamodel.Datalogger_Meta()
+
+def Datalogger_Create(*args):
+    r"""
+    Datalogger_Create() -> Datalogger
+    Datalogger_Create(std::string const & publicID) -> Datalogger
+    """
+    return _datamodel.Datalogger_Create(*args)
+
+def Datalogger_Find(publicID):
+    r"""Datalogger_Find(std::string const & publicID) -> Datalogger"""
+    return _datamodel.Datalogger_Find(publicID)
+
+class AuxStreamIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::AuxStreamIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(AuxStreamIndex self) -> AuxStreamIndex
+        __init__(AuxStreamIndex self, std::string const & code, Time start) -> AuxStreamIndex
+        __init__(AuxStreamIndex self, AuxStreamIndex arg2) -> AuxStreamIndex
+        """
+        _datamodel.AuxStreamIndex_swiginit(self, _datamodel.new_AuxStreamIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(AuxStreamIndex self, AuxStreamIndex arg2) -> bool"""
+        return _datamodel.AuxStreamIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(AuxStreamIndex self, AuxStreamIndex arg2) -> bool"""
+        return _datamodel.AuxStreamIndex___ne__(self, arg2)
+    code = property(_datamodel.AuxStreamIndex_code_get, _datamodel.AuxStreamIndex_code_set, doc=r"""code : std::string""")
+    start = property(_datamodel.AuxStreamIndex_start_get, _datamodel.AuxStreamIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
+    __swig_destroy__ = _datamodel.delete_AuxStreamIndex
+
+# Register AuxStreamIndex in _datamodel:
+_datamodel.AuxStreamIndex_swigregister(AuxStreamIndex)
+
+class AuxStream(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::AuxStream class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.AuxStream_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.AuxStream_TypeInfo()
+
+    def className(self):
+        r"""className(AuxStream self) -> char const *"""
+        return _datamodel.AuxStream_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(AuxStream self) -> RTTI"""
+        return _datamodel.AuxStream_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> AuxStream
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> AuxStream
+        """
+        return _datamodel.AuxStream_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> AuxStream
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> AuxStream
+        """
+        return _datamodel.AuxStream_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(AuxStream self, GenericArchive ar)"""
+        return _datamodel.AuxStream_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.AuxStream_Meta()
+
+    def meta(self):
+        r"""meta(AuxStream self) -> MetaObject"""
+        return _datamodel.AuxStream_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(AuxStream self) -> AuxStream
+        __init__(AuxStream self, AuxStream other) -> AuxStream
+        """
+        _datamodel.AuxStream_swiginit(self, _datamodel.new_AuxStream(*args))
+    __swig_destroy__ = _datamodel.delete_AuxStream
+
+    def __eq__(self, other):
+        r"""__eq__(AuxStream self, AuxStream other) -> bool"""
+        return _datamodel.AuxStream___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(AuxStream self, AuxStream other) -> bool"""
+        return _datamodel.AuxStream___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(AuxStream self, AuxStream other) -> bool"""
+        return _datamodel.AuxStream_equal(self, other)
+
+    def setCode(self, code):
+        r"""setCode(AuxStream self, std::string const & code)"""
+        return _datamodel.AuxStream_setCode(self, code)
+
+    def code(self):
+        r"""code(AuxStream self) -> std::string const &"""
+        return _datamodel.AuxStream_code(self)
+
+    def setStart(self, start):
+        r"""setStart(AuxStream self, Time start)"""
+        return _datamodel.AuxStream_setStart(self, start)
+
+    def start(self):
+        r"""start(AuxStream self) -> Time"""
+        return _datamodel.AuxStream_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(AuxStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        return _datamodel.AuxStream_setEnd(self, end)
+
+    def end(self):
+        r"""end(AuxStream self) -> Time"""
+        return _datamodel.AuxStream_end(self)
+
+    def setDevice(self, device):
+        r"""setDevice(AuxStream self, std::string const & device)"""
+        return _datamodel.AuxStream_setDevice(self, device)
+
+    def device(self):
+        r"""device(AuxStream self) -> std::string const &"""
+        return _datamodel.AuxStream_device(self)
+
+    def setDeviceSerialNumber(self, deviceSerialNumber):
+        r"""setDeviceSerialNumber(AuxStream self, std::string const & deviceSerialNumber)"""
+        return _datamodel.AuxStream_setDeviceSerialNumber(self, deviceSerialNumber)
+
+    def deviceSerialNumber(self):
+        r"""deviceSerialNumber(AuxStream self) -> std::string const &"""
+        return _datamodel.AuxStream_deviceSerialNumber(self)
+
+    def setSource(self, source):
+        r"""setSource(AuxStream self, std::string const & source)"""
+        return _datamodel.AuxStream_setSource(self, source)
+
+    def source(self):
+        r"""source(AuxStream self) -> std::string const &"""
+        return _datamodel.AuxStream_source(self)
+
+    def setFormat(self, format):
+        r"""setFormat(AuxStream self, std::string const & format)"""
+        return _datamodel.AuxStream_setFormat(self, format)
+
+    def format(self):
+        r"""format(AuxStream self) -> std::string const &"""
+        return _datamodel.AuxStream_format(self)
+
+    def setFlags(self, flags):
+        r"""setFlags(AuxStream self, std::string const & flags)"""
+        return _datamodel.AuxStream_setFlags(self, flags)
+
+    def flags(self):
+        r"""flags(AuxStream self) -> std::string const &"""
+        return _datamodel.AuxStream_flags(self)
+
+    def setRestricted(self, restricted):
+        r"""setRestricted(AuxStream self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
+        return _datamodel.AuxStream_setRestricted(self, restricted)
+
+    def restricted(self):
+        r"""restricted(AuxStream self) -> bool"""
+        return _datamodel.AuxStream_restricted(self)
+
+    def setShared(self, shared):
+        r"""setShared(AuxStream self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
+        return _datamodel.AuxStream_setShared(self, shared)
+
+    def shared(self):
+        r"""shared(AuxStream self) -> bool"""
+        return _datamodel.AuxStream_shared(self)
+
+    def index(self):
+        r"""index(AuxStream self) -> AuxStreamIndex"""
+        return _datamodel.AuxStream_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(AuxStream self, AuxStream lhs) -> bool"""
+        return _datamodel.AuxStream_equalIndex(self, lhs)
+
+    def sensorLocation(self):
+        r"""sensorLocation(AuxStream self) -> SensorLocation"""
+        return _datamodel.AuxStream_sensorLocation(self)
+
+    def assign(self, other):
+        r"""assign(AuxStream self, Object other) -> bool"""
+        return _datamodel.AuxStream_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(AuxStream self, PublicObject parent) -> bool"""
+        return _datamodel.AuxStream_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(AuxStream self, PublicObject parent) -> bool"""
+        return _datamodel.AuxStream_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(AuxStream self) -> bool"""
+        return _datamodel.AuxStream_detach(self)
+
+    def clone(self):
+        r"""clone(AuxStream self) -> Object"""
+        return _datamodel.AuxStream_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(AuxStream self, Visitor visitor)"""
+        return _datamodel.AuxStream_accept(self, visitor)
+
+# Register AuxStream in _datamodel:
+_datamodel.AuxStream_swigregister(AuxStream)
+
+def AuxStream_ClassName():
+    r"""AuxStream_ClassName() -> char const *"""
+    return _datamodel.AuxStream_ClassName()
+
+def AuxStream_TypeInfo():
+    r"""AuxStream_TypeInfo() -> RTTI"""
+    return _datamodel.AuxStream_TypeInfo()
+
+def AuxStream_Cast(*args):
+    r"""
+    AuxStream_Cast(BaseObject o) -> AuxStream
+    AuxStream_Cast(Seiscomp::Core::BaseObjectPtr o) -> AuxStream
+    """
+    return _datamodel.AuxStream_Cast(*args)
+
+def AuxStream_ConstCast(*args):
+    r"""
+    AuxStream_ConstCast(BaseObject o) -> AuxStream
+    AuxStream_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> AuxStream
+    """
+    return _datamodel.AuxStream_ConstCast(*args)
+
+def AuxStream_Meta():
+    r"""AuxStream_Meta() -> MetaObject"""
+    return _datamodel.AuxStream_Meta()
+
+class StreamIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::StreamIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(StreamIndex self) -> StreamIndex
+        __init__(StreamIndex self, std::string const & code, Time start) -> StreamIndex
+        __init__(StreamIndex self, StreamIndex arg2) -> StreamIndex
+        """
+        _datamodel.StreamIndex_swiginit(self, _datamodel.new_StreamIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(StreamIndex self, StreamIndex arg2) -> bool"""
+        return _datamodel.StreamIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(StreamIndex self, StreamIndex arg2) -> bool"""
+        return _datamodel.StreamIndex___ne__(self, arg2)
+    code = property(_datamodel.StreamIndex_code_get, _datamodel.StreamIndex_code_set, doc=r"""code : std::string""")
+    start = property(_datamodel.StreamIndex_start_get, _datamodel.StreamIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
+    __swig_destroy__ = _datamodel.delete_StreamIndex
+
+# Register StreamIndex in _datamodel:
+_datamodel.StreamIndex_swigregister(StreamIndex)
+
+class Stream(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::Stream class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.Stream_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.Stream_TypeInfo()
+
+    def className(self):
+        r"""className(Stream self) -> char const *"""
+        return _datamodel.Stream_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(Stream self) -> RTTI"""
+        return _datamodel.Stream_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> Stream
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> Stream
+        """
+        return _datamodel.Stream_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> Stream
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Stream
+        """
+        return _datamodel.Stream_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(Stream self, GenericArchive ar)"""
+        return _datamodel.Stream_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.Stream_Meta()
+
+    def meta(self):
+        r"""meta(Stream self) -> MetaObject"""
+        return _datamodel.Stream_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(Stream self, Stream other) -> Stream
+        __init__(Stream self, std::string const & publicID) -> Stream
+        """
+        _datamodel.Stream_swiginit(self, _datamodel.new_Stream(*args))
+    __swig_destroy__ = _datamodel.delete_Stream
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> Stream
+        Create(std::string const & publicID) -> Stream
+        """
+        return _datamodel.Stream_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> Stream"""
+        return _datamodel.Stream_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(Stream self, Stream other) -> bool"""
+        return _datamodel.Stream___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(Stream self, Stream other) -> bool"""
+        return _datamodel.Stream___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(Stream self, Stream other) -> bool"""
+        return _datamodel.Stream_equal(self, other)
+
+    def setCode(self, code):
+        r"""setCode(Stream self, std::string const & code)"""
+        return _datamodel.Stream_setCode(self, code)
+
+    def code(self):
+        r"""code(Stream self) -> std::string const &"""
+        return _datamodel.Stream_code(self)
+
+    def setStart(self, start):
+        r"""setStart(Stream self, Time start)"""
+        return _datamodel.Stream_setStart(self, start)
+
+    def start(self):
+        r"""start(Stream self) -> Time"""
+        return _datamodel.Stream_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(Stream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        return _datamodel.Stream_setEnd(self, end)
+
+    def end(self):
+        r"""end(Stream self) -> Time"""
+        return _datamodel.Stream_end(self)
+
+    def setDatalogger(self, datalogger):
+        r"""setDatalogger(Stream self, std::string const & datalogger)"""
+        return _datamodel.Stream_setDatalogger(self, datalogger)
+
+    def datalogger(self):
+        r"""datalogger(Stream self) -> std::string const &"""
+        return _datamodel.Stream_datalogger(self)
+
+    def setDataloggerSerialNumber(self, dataloggerSerialNumber):
+        r"""setDataloggerSerialNumber(Stream self, std::string const & dataloggerSerialNumber)"""
+        return _datamodel.Stream_setDataloggerSerialNumber(self, dataloggerSerialNumber)
+
+    def dataloggerSerialNumber(self):
+        r"""dataloggerSerialNumber(Stream self) -> std::string const &"""
+        return _datamodel.Stream_dataloggerSerialNumber(self)
+
+    def setDataloggerChannel(self, dataloggerChannel):
+        r"""setDataloggerChannel(Stream self, Seiscomp::Core::Optional< int >::Impl const & dataloggerChannel)"""
+        return _datamodel.Stream_setDataloggerChannel(self, dataloggerChannel)
+
+    def dataloggerChannel(self):
+        r"""dataloggerChannel(Stream self) -> int"""
+        return _datamodel.Stream_dataloggerChannel(self)
+
+    def setSensor(self, sensor):
+        r"""setSensor(Stream self, std::string const & sensor)"""
+        return _datamodel.Stream_setSensor(self, sensor)
+
+    def sensor(self):
+        r"""sensor(Stream self) -> std::string const &"""
+        return _datamodel.Stream_sensor(self)
+
+    def setSensorSerialNumber(self, sensorSerialNumber):
+        r"""setSensorSerialNumber(Stream self, std::string const & sensorSerialNumber)"""
+        return _datamodel.Stream_setSensorSerialNumber(self, sensorSerialNumber)
+
+    def sensorSerialNumber(self):
+        r"""sensorSerialNumber(Stream self) -> std::string const &"""
+        return _datamodel.Stream_sensorSerialNumber(self)
+
+    def setSensorChannel(self, sensorChannel):
+        r"""setSensorChannel(Stream self, Seiscomp::Core::Optional< int >::Impl const & sensorChannel)"""
+        return _datamodel.Stream_setSensorChannel(self, sensorChannel)
+
+    def sensorChannel(self):
+        r"""sensorChannel(Stream self) -> int"""
+        return _datamodel.Stream_sensorChannel(self)
+
+    def setClockSerialNumber(self, clockSerialNumber):
+        r"""setClockSerialNumber(Stream self, std::string const & clockSerialNumber)"""
+        return _datamodel.Stream_setClockSerialNumber(self, clockSerialNumber)
+
+    def clockSerialNumber(self):
+        r"""clockSerialNumber(Stream self) -> std::string const &"""
+        return _datamodel.Stream_clockSerialNumber(self)
+
+    def setSampleRateNumerator(self, sampleRateNumerator):
+        r"""setSampleRateNumerator(Stream self, Seiscomp::Core::Optional< int >::Impl const & sampleRateNumerator)"""
+        return _datamodel.Stream_setSampleRateNumerator(self, sampleRateNumerator)
+
+    def sampleRateNumerator(self):
+        r"""sampleRateNumerator(Stream self) -> int"""
+        return _datamodel.Stream_sampleRateNumerator(self)
+
+    def setSampleRateDenominator(self, sampleRateDenominator):
+        r"""setSampleRateDenominator(Stream self, Seiscomp::Core::Optional< int >::Impl const & sampleRateDenominator)"""
+        return _datamodel.Stream_setSampleRateDenominator(self, sampleRateDenominator)
+
+    def sampleRateDenominator(self):
+        r"""sampleRateDenominator(Stream self) -> int"""
+        return _datamodel.Stream_sampleRateDenominator(self)
+
+    def setDepth(self, depth):
+        r"""setDepth(Stream self, Seiscomp::Core::Optional< double >::Impl const & depth)"""
+        return _datamodel.Stream_setDepth(self, depth)
+
+    def depth(self):
+        r"""depth(Stream self) -> double"""
+        return _datamodel.Stream_depth(self)
+
+    def setAzimuth(self, azimuth):
+        r"""setAzimuth(Stream self, Seiscomp::Core::Optional< double >::Impl const & azimuth)"""
+        return _datamodel.Stream_setAzimuth(self, azimuth)
+
+    def azimuth(self):
+        r"""azimuth(Stream self) -> double"""
+        return _datamodel.Stream_azimuth(self)
+
+    def setDip(self, dip):
+        r"""setDip(Stream self, Seiscomp::Core::Optional< double >::Impl const & dip)"""
+        return _datamodel.Stream_setDip(self, dip)
+
+    def dip(self):
+        r"""dip(Stream self) -> double"""
+        return _datamodel.Stream_dip(self)
+
+    def setGain(self, gain):
+        r"""setGain(Stream self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        return _datamodel.Stream_setGain(self, gain)
+
+    def gain(self):
+        r"""gain(Stream self) -> double"""
+        return _datamodel.Stream_gain(self)
+
+    def setGainFrequency(self, gainFrequency):
+        r"""setGainFrequency(Stream self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        return _datamodel.Stream_setGainFrequency(self, gainFrequency)
+
+    def gainFrequency(self):
+        r"""gainFrequency(Stream self) -> double"""
+        return _datamodel.Stream_gainFrequency(self)
+
+    def setGainUnit(self, gainUnit):
+        r"""setGainUnit(Stream self, std::string const & gainUnit)"""
+        return _datamodel.Stream_setGainUnit(self, gainUnit)
+
+    def gainUnit(self):
+        r"""gainUnit(Stream self) -> std::string const &"""
+        return _datamodel.Stream_gainUnit(self)
+
+    def setFormat(self, format):
+        r"""setFormat(Stream self, std::string const & format)"""
+        return _datamodel.Stream_setFormat(self, format)
+
+    def format(self):
+        r"""format(Stream self) -> std::string const &"""
+        return _datamodel.Stream_format(self)
+
+    def setFlags(self, flags):
+        r"""setFlags(Stream self, std::string const & flags)"""
+        return _datamodel.Stream_setFlags(self, flags)
+
+    def flags(self):
+        r"""flags(Stream self) -> std::string const &"""
+        return _datamodel.Stream_flags(self)
+
+    def setRestricted(self, restricted):
+        r"""setRestricted(Stream self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
+        return _datamodel.Stream_setRestricted(self, restricted)
+
+    def restricted(self):
+        r"""restricted(Stream self) -> bool"""
+        return _datamodel.Stream_restricted(self)
+
+    def setShared(self, shared):
+        r"""setShared(Stream self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
+        return _datamodel.Stream_setShared(self, shared)
+
+    def shared(self):
+        r"""shared(Stream self) -> bool"""
+        return _datamodel.Stream_shared(self)
+
+    def index(self):
+        r"""index(Stream self) -> StreamIndex"""
+        return _datamodel.Stream_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(Stream self, Stream lhs) -> bool"""
+        return _datamodel.Stream_equalIndex(self, lhs)
+
+    def add(self, obj):
+        r"""add(Stream self, Comment obj) -> bool"""
+        return _datamodel.Stream_add(self, obj)
+
+    def remove(self, obj):
+        r"""remove(Stream self, Comment obj) -> bool"""
+        return _datamodel.Stream_remove(self, obj)
+
+    def removeComment(self, *args):
+        r"""
+        removeComment(Stream self, size_t i) -> bool
+        removeComment(Stream self, CommentIndex i) -> bool
+        """
+        return _datamodel.Stream_removeComment(self, *args)
+
+    def commentCount(self):
+        r"""commentCount(Stream self) -> size_t"""
+        return _datamodel.Stream_commentCount(self)
+
+    def comment(self, *args):
+        r"""
+        comment(Stream self, size_t i) -> Comment
+        comment(Stream self, CommentIndex i) -> Comment
+        """
+        return _datamodel.Stream_comment(self, *args)
+
+    def sensorLocation(self):
+        r"""sensorLocation(Stream self) -> SensorLocation"""
+        return _datamodel.Stream_sensorLocation(self)
+
+    def assign(self, other):
+        r"""assign(Stream self, Object other) -> bool"""
+        return _datamodel.Stream_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(Stream self, PublicObject parent) -> bool"""
+        return _datamodel.Stream_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(Stream self, PublicObject parent) -> bool"""
+        return _datamodel.Stream_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(Stream self) -> bool"""
+        return _datamodel.Stream_detach(self)
+
+    def clone(self):
+        r"""clone(Stream self) -> Object"""
+        return _datamodel.Stream_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(Stream self, Object child) -> bool"""
+        return _datamodel.Stream_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(Stream self, Visitor visitor)"""
+        return _datamodel.Stream_accept(self, visitor)
+
+# Register Stream in _datamodel:
+_datamodel.Stream_swigregister(Stream)
+
+def Stream_ClassName():
+    r"""Stream_ClassName() -> char const *"""
+    return _datamodel.Stream_ClassName()
+
+def Stream_TypeInfo():
+    r"""Stream_TypeInfo() -> RTTI"""
+    return _datamodel.Stream_TypeInfo()
+
+def Stream_Cast(*args):
+    r"""
+    Stream_Cast(BaseObject o) -> Stream
+    Stream_Cast(Seiscomp::Core::BaseObjectPtr o) -> Stream
+    """
+    return _datamodel.Stream_Cast(*args)
+
+def Stream_ConstCast(*args):
+    r"""
+    Stream_ConstCast(BaseObject o) -> Stream
+    Stream_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Stream
+    """
+    return _datamodel.Stream_ConstCast(*args)
+
+def Stream_Meta():
+    r"""Stream_Meta() -> MetaObject"""
+    return _datamodel.Stream_Meta()
+
+def Stream_Create(*args):
+    r"""
+    Stream_Create() -> Stream
+    Stream_Create(std::string const & publicID) -> Stream
+    """
+    return _datamodel.Stream_Create(*args)
+
+def Stream_Find(publicID):
+    r"""Stream_Find(std::string const & publicID) -> Stream"""
+    return _datamodel.Stream_Find(publicID)
+
+class SensorLocationIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::SensorLocationIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(SensorLocationIndex self) -> SensorLocationIndex
+        __init__(SensorLocationIndex self, std::string const & code, Time start) -> SensorLocationIndex
+        __init__(SensorLocationIndex self, SensorLocationIndex arg2) -> SensorLocationIndex
+        """
+        _datamodel.SensorLocationIndex_swiginit(self, _datamodel.new_SensorLocationIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(SensorLocationIndex self, SensorLocationIndex arg2) -> bool"""
+        return _datamodel.SensorLocationIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(SensorLocationIndex self, SensorLocationIndex arg2) -> bool"""
+        return _datamodel.SensorLocationIndex___ne__(self, arg2)
+    code = property(_datamodel.SensorLocationIndex_code_get, _datamodel.SensorLocationIndex_code_set, doc=r"""code : std::string""")
+    start = property(_datamodel.SensorLocationIndex_start_get, _datamodel.SensorLocationIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
+    __swig_destroy__ = _datamodel.delete_SensorLocationIndex
+
+# Register SensorLocationIndex in _datamodel:
+_datamodel.SensorLocationIndex_swigregister(SensorLocationIndex)
+
+class SensorLocation(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::SensorLocation class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.SensorLocation_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.SensorLocation_TypeInfo()
+
+    def className(self):
+        r"""className(SensorLocation self) -> char const *"""
+        return _datamodel.SensorLocation_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(SensorLocation self) -> RTTI"""
+        return _datamodel.SensorLocation_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> SensorLocation
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> SensorLocation
+        """
+        return _datamodel.SensorLocation_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> SensorLocation
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> SensorLocation
+        """
+        return _datamodel.SensorLocation_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(SensorLocation self, GenericArchive ar)"""
+        return _datamodel.SensorLocation_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.SensorLocation_Meta()
+
+    def meta(self):
+        r"""meta(SensorLocation self) -> MetaObject"""
+        return _datamodel.SensorLocation_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(SensorLocation self, SensorLocation other) -> SensorLocation
+        __init__(SensorLocation self, std::string const & publicID) -> SensorLocation
+        """
+        _datamodel.SensorLocation_swiginit(self, _datamodel.new_SensorLocation(*args))
+    __swig_destroy__ = _datamodel.delete_SensorLocation
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> SensorLocation
+        Create(std::string const & publicID) -> SensorLocation
+        """
+        return _datamodel.SensorLocation_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> SensorLocation"""
+        return _datamodel.SensorLocation_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(SensorLocation self, SensorLocation other) -> bool"""
+        return _datamodel.SensorLocation___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(SensorLocation self, SensorLocation other) -> bool"""
+        return _datamodel.SensorLocation___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(SensorLocation self, SensorLocation other) -> bool"""
+        return _datamodel.SensorLocation_equal(self, other)
+
+    def setCode(self, code):
+        r"""setCode(SensorLocation self, std::string const & code)"""
+        return _datamodel.SensorLocation_setCode(self, code)
+
+    def code(self):
+        r"""code(SensorLocation self) -> std::string const &"""
+        return _datamodel.SensorLocation_code(self)
+
+    def setStart(self, start):
+        r"""setStart(SensorLocation self, Time start)"""
+        return _datamodel.SensorLocation_setStart(self, start)
+
+    def start(self):
+        r"""start(SensorLocation self) -> Time"""
+        return _datamodel.SensorLocation_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(SensorLocation self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        return _datamodel.SensorLocation_setEnd(self, end)
+
+    def end(self):
+        r"""end(SensorLocation self) -> Time"""
+        return _datamodel.SensorLocation_end(self)
+
+    def setLatitude(self, latitude):
+        r"""setLatitude(SensorLocation self, Seiscomp::Core::Optional< double >::Impl const & latitude)"""
+        return _datamodel.SensorLocation_setLatitude(self, latitude)
+
+    def latitude(self):
+        r"""latitude(SensorLocation self) -> double"""
+        return _datamodel.SensorLocation_latitude(self)
+
+    def setLongitude(self, longitude):
+        r"""setLongitude(SensorLocation self, Seiscomp::Core::Optional< double >::Impl const & longitude)"""
+        return _datamodel.SensorLocation_setLongitude(self, longitude)
+
+    def longitude(self):
+        r"""longitude(SensorLocation self) -> double"""
+        return _datamodel.SensorLocation_longitude(self)
+
+    def setElevation(self, elevation):
+        r"""setElevation(SensorLocation self, Seiscomp::Core::Optional< double >::Impl const & elevation)"""
+        return _datamodel.SensorLocation_setElevation(self, elevation)
+
+    def elevation(self):
+        r"""elevation(SensorLocation self) -> double"""
+        return _datamodel.SensorLocation_elevation(self)
+
+    def index(self):
+        r"""index(SensorLocation self) -> SensorLocationIndex"""
+        return _datamodel.SensorLocation_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(SensorLocation self, SensorLocation lhs) -> bool"""
+        return _datamodel.SensorLocation_equalIndex(self, lhs)
+
+    def add(self, *args):
+        r"""
+        add(SensorLocation self, Comment obj) -> bool
+        add(SensorLocation self, AuxStream obj) -> bool
+        add(SensorLocation self, Stream obj) -> bool
+        """
+        return _datamodel.SensorLocation_add(self, *args)
+
+    def remove(self, *args):
+        r"""
+        remove(SensorLocation self, Comment obj) -> bool
+        remove(SensorLocation self, AuxStream obj) -> bool
+        remove(SensorLocation self, Stream obj) -> bool
+        """
+        return _datamodel.SensorLocation_remove(self, *args)
+
+    def removeComment(self, *args):
+        r"""
+        removeComment(SensorLocation self, size_t i) -> bool
+        removeComment(SensorLocation self, CommentIndex i) -> bool
+        """
+        return _datamodel.SensorLocation_removeComment(self, *args)
+
+    def removeAuxStream(self, *args):
+        r"""
+        removeAuxStream(SensorLocation self, size_t i) -> bool
+        removeAuxStream(SensorLocation self, AuxStreamIndex i) -> bool
+        """
+        return _datamodel.SensorLocation_removeAuxStream(self, *args)
+
+    def removeStream(self, *args):
+        r"""
+        removeStream(SensorLocation self, size_t i) -> bool
+        removeStream(SensorLocation self, StreamIndex i) -> bool
+        """
+        return _datamodel.SensorLocation_removeStream(self, *args)
+
+    def commentCount(self):
+        r"""commentCount(SensorLocation self) -> size_t"""
+        return _datamodel.SensorLocation_commentCount(self)
+
+    def auxStreamCount(self):
+        r"""auxStreamCount(SensorLocation self) -> size_t"""
+        return _datamodel.SensorLocation_auxStreamCount(self)
+
+    def streamCount(self):
+        r"""streamCount(SensorLocation self) -> size_t"""
+        return _datamodel.SensorLocation_streamCount(self)
+
+    def comment(self, *args):
+        r"""
+        comment(SensorLocation self, size_t i) -> Comment
+        comment(SensorLocation self, CommentIndex i) -> Comment
+        """
+        return _datamodel.SensorLocation_comment(self, *args)
+
+    def auxStream(self, *args):
+        r"""
+        auxStream(SensorLocation self, size_t i) -> AuxStream
+        auxStream(SensorLocation self, AuxStreamIndex i) -> AuxStream
+        """
+        return _datamodel.SensorLocation_auxStream(self, *args)
+
+    def stream(self, *args):
+        r"""
+        stream(SensorLocation self, size_t i) -> Stream
+        stream(SensorLocation self, StreamIndex i) -> Stream
+        """
+        return _datamodel.SensorLocation_stream(self, *args)
+
+    def findStream(self, publicID):
+        r"""findStream(SensorLocation self, std::string const & publicID) -> Stream"""
+        return _datamodel.SensorLocation_findStream(self, publicID)
+
+    def station(self):
+        r"""station(SensorLocation self) -> Station"""
+        return _datamodel.SensorLocation_station(self)
+
+    def assign(self, other):
+        r"""assign(SensorLocation self, Object other) -> bool"""
+        return _datamodel.SensorLocation_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(SensorLocation self, PublicObject parent) -> bool"""
+        return _datamodel.SensorLocation_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(SensorLocation self, PublicObject parent) -> bool"""
+        return _datamodel.SensorLocation_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(SensorLocation self) -> bool"""
+        return _datamodel.SensorLocation_detach(self)
+
+    def clone(self):
+        r"""clone(SensorLocation self) -> Object"""
+        return _datamodel.SensorLocation_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(SensorLocation self, Object child) -> bool"""
+        return _datamodel.SensorLocation_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(SensorLocation self, Visitor visitor)"""
+        return _datamodel.SensorLocation_accept(self, visitor)
+
+# Register SensorLocation in _datamodel:
+_datamodel.SensorLocation_swigregister(SensorLocation)
+
+def SensorLocation_ClassName():
+    r"""SensorLocation_ClassName() -> char const *"""
+    return _datamodel.SensorLocation_ClassName()
+
+def SensorLocation_TypeInfo():
+    r"""SensorLocation_TypeInfo() -> RTTI"""
+    return _datamodel.SensorLocation_TypeInfo()
+
+def SensorLocation_Cast(*args):
+    r"""
+    SensorLocation_Cast(BaseObject o) -> SensorLocation
+    SensorLocation_Cast(Seiscomp::Core::BaseObjectPtr o) -> SensorLocation
+    """
+    return _datamodel.SensorLocation_Cast(*args)
+
+def SensorLocation_ConstCast(*args):
+    r"""
+    SensorLocation_ConstCast(BaseObject o) -> SensorLocation
+    SensorLocation_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> SensorLocation
+    """
+    return _datamodel.SensorLocation_ConstCast(*args)
+
+def SensorLocation_Meta():
+    r"""SensorLocation_Meta() -> MetaObject"""
+    return _datamodel.SensorLocation_Meta()
+
+def SensorLocation_Create(*args):
+    r"""
+    SensorLocation_Create() -> SensorLocation
+    SensorLocation_Create(std::string const & publicID) -> SensorLocation
+    """
+    return _datamodel.SensorLocation_Create(*args)
+
+def SensorLocation_Find(publicID):
+    r"""SensorLocation_Find(std::string const & publicID) -> SensorLocation"""
+    return _datamodel.SensorLocation_Find(publicID)
+
+class StationIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::StationIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(StationIndex self) -> StationIndex
+        __init__(StationIndex self, std::string const & code, Time start) -> StationIndex
+        __init__(StationIndex self, StationIndex arg2) -> StationIndex
+        """
+        _datamodel.StationIndex_swiginit(self, _datamodel.new_StationIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(StationIndex self, StationIndex arg2) -> bool"""
+        return _datamodel.StationIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(StationIndex self, StationIndex arg2) -> bool"""
+        return _datamodel.StationIndex___ne__(self, arg2)
+    code = property(_datamodel.StationIndex_code_get, _datamodel.StationIndex_code_set, doc=r"""code : std::string""")
+    start = property(_datamodel.StationIndex_start_get, _datamodel.StationIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
+    __swig_destroy__ = _datamodel.delete_StationIndex
+
+# Register StationIndex in _datamodel:
+_datamodel.StationIndex_swigregister(StationIndex)
+
+class Station(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::Station class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.Station_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.Station_TypeInfo()
+
+    def className(self):
+        r"""className(Station self) -> char const *"""
+        return _datamodel.Station_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(Station self) -> RTTI"""
+        return _datamodel.Station_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> Station
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> Station
+        """
+        return _datamodel.Station_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> Station
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Station
+        """
+        return _datamodel.Station_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(Station self, GenericArchive ar)"""
+        return _datamodel.Station_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.Station_Meta()
+
+    def meta(self):
+        r"""meta(Station self) -> MetaObject"""
+        return _datamodel.Station_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(Station self, Station other) -> Station
+        __init__(Station self, std::string const & publicID) -> Station
+        """
+        _datamodel.Station_swiginit(self, _datamodel.new_Station(*args))
+    __swig_destroy__ = _datamodel.delete_Station
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> Station
+        Create(std::string const & publicID) -> Station
+        """
+        return _datamodel.Station_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> Station"""
+        return _datamodel.Station_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(Station self, Station other) -> bool"""
+        return _datamodel.Station___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(Station self, Station other) -> bool"""
+        return _datamodel.Station___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(Station self, Station other) -> bool"""
+        return _datamodel.Station_equal(self, other)
+
+    def setCode(self, code):
+        r"""setCode(Station self, std::string const & code)"""
+        return _datamodel.Station_setCode(self, code)
+
+    def code(self):
+        r"""code(Station self) -> std::string const &"""
+        return _datamodel.Station_code(self)
+
+    def setStart(self, start):
+        r"""setStart(Station self, Time start)"""
+        return _datamodel.Station_setStart(self, start)
+
+    def start(self):
+        r"""start(Station self) -> Time"""
+        return _datamodel.Station_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(Station self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        return _datamodel.Station_setEnd(self, end)
+
+    def end(self):
+        r"""end(Station self) -> Time"""
+        return _datamodel.Station_end(self)
+
+    def setDescription(self, description):
+        r"""setDescription(Station self, std::string const & description)"""
+        return _datamodel.Station_setDescription(self, description)
+
+    def description(self):
+        r"""description(Station self) -> std::string const &"""
+        return _datamodel.Station_description(self)
+
+    def setLatitude(self, latitude):
+        r"""setLatitude(Station self, Seiscomp::Core::Optional< double >::Impl const & latitude)"""
+        return _datamodel.Station_setLatitude(self, latitude)
+
+    def latitude(self):
+        r"""latitude(Station self) -> double"""
+        return _datamodel.Station_latitude(self)
+
+    def setLongitude(self, longitude):
+        r"""setLongitude(Station self, Seiscomp::Core::Optional< double >::Impl const & longitude)"""
+        return _datamodel.Station_setLongitude(self, longitude)
+
+    def longitude(self):
+        r"""longitude(Station self) -> double"""
+        return _datamodel.Station_longitude(self)
+
+    def setElevation(self, elevation):
+        r"""setElevation(Station self, Seiscomp::Core::Optional< double >::Impl const & elevation)"""
+        return _datamodel.Station_setElevation(self, elevation)
+
+    def elevation(self):
+        r"""elevation(Station self) -> double"""
+        return _datamodel.Station_elevation(self)
+
+    def setPlace(self, place):
+        r"""setPlace(Station self, std::string const & place)"""
+        return _datamodel.Station_setPlace(self, place)
+
+    def place(self):
+        r"""place(Station self) -> std::string const &"""
+        return _datamodel.Station_place(self)
+
+    def setCountry(self, country):
+        r"""setCountry(Station self, std::string const & country)"""
+        return _datamodel.Station_setCountry(self, country)
+
+    def country(self):
+        r"""country(Station self) -> std::string const &"""
+        return _datamodel.Station_country(self)
+
+    def setAffiliation(self, affiliation):
+        r"""setAffiliation(Station self, std::string const & affiliation)"""
+        return _datamodel.Station_setAffiliation(self, affiliation)
+
+    def affiliation(self):
+        r"""affiliation(Station self) -> std::string const &"""
+        return _datamodel.Station_affiliation(self)
+
+    def setType(self, type):
+        r"""setType(Station self, std::string const & type)"""
+        return _datamodel.Station_setType(self, type)
+
+    def type(self):
+        r"""type(Station self) -> std::string const &"""
+        return _datamodel.Station_type(self)
+
+    def setArchive(self, archive):
+        r"""setArchive(Station self, std::string const & archive)"""
+        return _datamodel.Station_setArchive(self, archive)
+
+    def archive(self):
+        r"""archive(Station self) -> std::string const &"""
+        return _datamodel.Station_archive(self)
+
+    def setArchiveNetworkCode(self, archiveNetworkCode):
+        r"""setArchiveNetworkCode(Station self, std::string const & archiveNetworkCode)"""
+        return _datamodel.Station_setArchiveNetworkCode(self, archiveNetworkCode)
+
+    def archiveNetworkCode(self):
+        r"""archiveNetworkCode(Station self) -> std::string const &"""
+        return _datamodel.Station_archiveNetworkCode(self)
+
+    def setRestricted(self, restricted):
+        r"""setRestricted(Station self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
+        return _datamodel.Station_setRestricted(self, restricted)
+
+    def restricted(self):
+        r"""restricted(Station self) -> bool"""
+        return _datamodel.Station_restricted(self)
+
+    def setShared(self, shared):
+        r"""setShared(Station self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
+        return _datamodel.Station_setShared(self, shared)
+
+    def shared(self):
+        r"""shared(Station self) -> bool"""
+        return _datamodel.Station_shared(self)
+
+    def setRemark(self, remark):
+        r"""setRemark(Station self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        return _datamodel.Station_setRemark(self, remark)
+
+    def remark(self, *args):
+        r"""
+        remark(Station self) -> Blob
+        remark(Station self) -> Blob
+        """
+        return _datamodel.Station_remark(self, *args)
+
+    def index(self):
+        r"""index(Station self) -> StationIndex"""
+        return _datamodel.Station_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(Station self, Station lhs) -> bool"""
+        return _datamodel.Station_equalIndex(self, lhs)
+
+    def add(self, *args):
+        r"""
+        add(Station self, Comment obj) -> bool
+        add(Station self, SensorLocation obj) -> bool
+        """
+        return _datamodel.Station_add(self, *args)
+
+    def remove(self, *args):
+        r"""
+        remove(Station self, Comment obj) -> bool
+        remove(Station self, SensorLocation obj) -> bool
+        """
+        return _datamodel.Station_remove(self, *args)
+
+    def removeComment(self, *args):
+        r"""
+        removeComment(Station self, size_t i) -> bool
+        removeComment(Station self, CommentIndex i) -> bool
+        """
+        return _datamodel.Station_removeComment(self, *args)
+
+    def removeSensorLocation(self, *args):
+        r"""
+        removeSensorLocation(Station self, size_t i) -> bool
+        removeSensorLocation(Station self, SensorLocationIndex i) -> bool
+        """
+        return _datamodel.Station_removeSensorLocation(self, *args)
+
+    def commentCount(self):
+        r"""commentCount(Station self) -> size_t"""
+        return _datamodel.Station_commentCount(self)
+
+    def sensorLocationCount(self):
+        r"""sensorLocationCount(Station self) -> size_t"""
+        return _datamodel.Station_sensorLocationCount(self)
+
+    def comment(self, *args):
+        r"""
+        comment(Station self, size_t i) -> Comment
+        comment(Station self, CommentIndex i) -> Comment
+        """
+        return _datamodel.Station_comment(self, *args)
+
+    def sensorLocation(self, *args):
+        r"""
+        sensorLocation(Station self, size_t i) -> SensorLocation
+        sensorLocation(Station self, SensorLocationIndex i) -> SensorLocation
+        """
+        return _datamodel.Station_sensorLocation(self, *args)
+
+    def findSensorLocation(self, publicID):
+        r"""findSensorLocation(Station self, std::string const & publicID) -> SensorLocation"""
+        return _datamodel.Station_findSensorLocation(self, publicID)
+
+    def network(self):
+        r"""network(Station self) -> Network"""
+        return _datamodel.Station_network(self)
+
+    def assign(self, other):
+        r"""assign(Station self, Object other) -> bool"""
+        return _datamodel.Station_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(Station self, PublicObject parent) -> bool"""
+        return _datamodel.Station_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(Station self, PublicObject parent) -> bool"""
+        return _datamodel.Station_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(Station self) -> bool"""
+        return _datamodel.Station_detach(self)
+
+    def clone(self):
+        r"""clone(Station self) -> Object"""
+        return _datamodel.Station_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(Station self, Object child) -> bool"""
+        return _datamodel.Station_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(Station self, Visitor visitor)"""
+        return _datamodel.Station_accept(self, visitor)
+
+# Register Station in _datamodel:
+_datamodel.Station_swigregister(Station)
+
+def Station_ClassName():
+    r"""Station_ClassName() -> char const *"""
+    return _datamodel.Station_ClassName()
+
+def Station_TypeInfo():
+    r"""Station_TypeInfo() -> RTTI"""
+    return _datamodel.Station_TypeInfo()
+
+def Station_Cast(*args):
+    r"""
+    Station_Cast(BaseObject o) -> Station
+    Station_Cast(Seiscomp::Core::BaseObjectPtr o) -> Station
+    """
+    return _datamodel.Station_Cast(*args)
+
+def Station_ConstCast(*args):
+    r"""
+    Station_ConstCast(BaseObject o) -> Station
+    Station_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Station
+    """
+    return _datamodel.Station_ConstCast(*args)
+
+def Station_Meta():
+    r"""Station_Meta() -> MetaObject"""
+    return _datamodel.Station_Meta()
+
+def Station_Create(*args):
+    r"""
+    Station_Create() -> Station
+    Station_Create(std::string const & publicID) -> Station
+    """
+    return _datamodel.Station_Create(*args)
+
+def Station_Find(publicID):
+    r"""Station_Find(std::string const & publicID) -> Station"""
+    return _datamodel.Station_Find(publicID)
+
+class NetworkIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::NetworkIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(NetworkIndex self) -> NetworkIndex
+        __init__(NetworkIndex self, std::string const & code, Time start) -> NetworkIndex
+        __init__(NetworkIndex self, NetworkIndex arg2) -> NetworkIndex
+        """
+        _datamodel.NetworkIndex_swiginit(self, _datamodel.new_NetworkIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(NetworkIndex self, NetworkIndex arg2) -> bool"""
+        return _datamodel.NetworkIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(NetworkIndex self, NetworkIndex arg2) -> bool"""
+        return _datamodel.NetworkIndex___ne__(self, arg2)
+    code = property(_datamodel.NetworkIndex_code_get, _datamodel.NetworkIndex_code_set, doc=r"""code : std::string""")
+    start = property(_datamodel.NetworkIndex_start_get, _datamodel.NetworkIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
+    __swig_destroy__ = _datamodel.delete_NetworkIndex
+
+# Register NetworkIndex in _datamodel:
+_datamodel.NetworkIndex_swigregister(NetworkIndex)
+
+class Network(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::Network class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.Network_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.Network_TypeInfo()
+
+    def className(self):
+        r"""className(Network self) -> char const *"""
+        return _datamodel.Network_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(Network self) -> RTTI"""
+        return _datamodel.Network_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> Network
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> Network
+        """
+        return _datamodel.Network_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> Network
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Network
+        """
+        return _datamodel.Network_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(Network self, GenericArchive ar)"""
+        return _datamodel.Network_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.Network_Meta()
+
+    def meta(self):
+        r"""meta(Network self) -> MetaObject"""
+        return _datamodel.Network_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(Network self, Network other) -> Network
+        __init__(Network self, std::string const & publicID) -> Network
+        """
+        _datamodel.Network_swiginit(self, _datamodel.new_Network(*args))
+    __swig_destroy__ = _datamodel.delete_Network
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> Network
+        Create(std::string const & publicID) -> Network
+        """
+        return _datamodel.Network_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> Network"""
+        return _datamodel.Network_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(Network self, Network other) -> bool"""
+        return _datamodel.Network___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(Network self, Network other) -> bool"""
+        return _datamodel.Network___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(Network self, Network other) -> bool"""
+        return _datamodel.Network_equal(self, other)
+
+    def setCode(self, code):
+        r"""setCode(Network self, std::string const & code)"""
+        return _datamodel.Network_setCode(self, code)
+
+    def code(self):
+        r"""code(Network self) -> std::string const &"""
+        return _datamodel.Network_code(self)
+
+    def setStart(self, start):
+        r"""setStart(Network self, Time start)"""
+        return _datamodel.Network_setStart(self, start)
+
+    def start(self):
+        r"""start(Network self) -> Time"""
+        return _datamodel.Network_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(Network self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        return _datamodel.Network_setEnd(self, end)
+
+    def end(self):
+        r"""end(Network self) -> Time"""
+        return _datamodel.Network_end(self)
+
+    def setDescription(self, description):
+        r"""setDescription(Network self, std::string const & description)"""
+        return _datamodel.Network_setDescription(self, description)
+
+    def description(self):
+        r"""description(Network self) -> std::string const &"""
+        return _datamodel.Network_description(self)
+
+    def setInstitutions(self, institutions):
+        r"""setInstitutions(Network self, std::string const & institutions)"""
+        return _datamodel.Network_setInstitutions(self, institutions)
+
+    def institutions(self):
+        r"""institutions(Network self) -> std::string const &"""
+        return _datamodel.Network_institutions(self)
+
+    def setRegion(self, region):
+        r"""setRegion(Network self, std::string const & region)"""
+        return _datamodel.Network_setRegion(self, region)
+
+    def region(self):
+        r"""region(Network self) -> std::string const &"""
+        return _datamodel.Network_region(self)
+
+    def setType(self, type):
+        r"""setType(Network self, std::string const & type)"""
+        return _datamodel.Network_setType(self, type)
+
+    def type(self):
+        r"""type(Network self) -> std::string const &"""
+        return _datamodel.Network_type(self)
+
+    def setNetClass(self, netClass):
+        r"""setNetClass(Network self, std::string const & netClass)"""
+        return _datamodel.Network_setNetClass(self, netClass)
+
+    def netClass(self):
+        r"""netClass(Network self) -> std::string const &"""
+        return _datamodel.Network_netClass(self)
+
+    def setArchive(self, archive):
+        r"""setArchive(Network self, std::string const & archive)"""
+        return _datamodel.Network_setArchive(self, archive)
+
+    def archive(self):
+        r"""archive(Network self) -> std::string const &"""
+        return _datamodel.Network_archive(self)
+
+    def setRestricted(self, restricted):
+        r"""setRestricted(Network self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
+        return _datamodel.Network_setRestricted(self, restricted)
+
+    def restricted(self):
+        r"""restricted(Network self) -> bool"""
+        return _datamodel.Network_restricted(self)
+
+    def setShared(self, shared):
+        r"""setShared(Network self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
+        return _datamodel.Network_setShared(self, shared)
+
+    def shared(self):
+        r"""shared(Network self) -> bool"""
+        return _datamodel.Network_shared(self)
+
+    def setRemark(self, remark):
+        r"""setRemark(Network self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        return _datamodel.Network_setRemark(self, remark)
+
+    def remark(self, *args):
+        r"""
+        remark(Network self) -> Blob
+        remark(Network self) -> Blob
+        """
+        return _datamodel.Network_remark(self, *args)
+
+    def index(self):
+        r"""index(Network self) -> NetworkIndex"""
+        return _datamodel.Network_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(Network self, Network lhs) -> bool"""
+        return _datamodel.Network_equalIndex(self, lhs)
+
+    def add(self, *args):
+        r"""
+        add(Network self, Comment obj) -> bool
+        add(Network self, Station obj) -> bool
+        """
+        return _datamodel.Network_add(self, *args)
+
+    def remove(self, *args):
+        r"""
+        remove(Network self, Comment obj) -> bool
+        remove(Network self, Station obj) -> bool
+        """
+        return _datamodel.Network_remove(self, *args)
+
+    def removeComment(self, *args):
+        r"""
+        removeComment(Network self, size_t i) -> bool
+        removeComment(Network self, CommentIndex i) -> bool
+        """
+        return _datamodel.Network_removeComment(self, *args)
+
+    def removeStation(self, *args):
+        r"""
+        removeStation(Network self, size_t i) -> bool
+        removeStation(Network self, StationIndex i) -> bool
+        """
+        return _datamodel.Network_removeStation(self, *args)
+
+    def commentCount(self):
+        r"""commentCount(Network self) -> size_t"""
+        return _datamodel.Network_commentCount(self)
+
+    def stationCount(self):
+        r"""stationCount(Network self) -> size_t"""
+        return _datamodel.Network_stationCount(self)
+
+    def comment(self, *args):
+        r"""
+        comment(Network self, size_t i) -> Comment
+        comment(Network self, CommentIndex i) -> Comment
+        """
+        return _datamodel.Network_comment(self, *args)
+
+    def station(self, *args):
+        r"""
+        station(Network self, size_t i) -> Station
+        station(Network self, StationIndex i) -> Station
+        """
+        return _datamodel.Network_station(self, *args)
+
+    def findStation(self, publicID):
+        r"""findStation(Network self, std::string const & publicID) -> Station"""
+        return _datamodel.Network_findStation(self, publicID)
+
+    def inventory(self):
+        r"""inventory(Network self) -> Inventory"""
+        return _datamodel.Network_inventory(self)
+
+    def assign(self, other):
+        r"""assign(Network self, Object other) -> bool"""
+        return _datamodel.Network_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(Network self, PublicObject parent) -> bool"""
+        return _datamodel.Network_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(Network self, PublicObject parent) -> bool"""
+        return _datamodel.Network_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(Network self) -> bool"""
+        return _datamodel.Network_detach(self)
+
+    def clone(self):
+        r"""clone(Network self) -> Object"""
+        return _datamodel.Network_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(Network self, Object child) -> bool"""
+        return _datamodel.Network_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(Network self, Visitor visitor)"""
+        return _datamodel.Network_accept(self, visitor)
+
+# Register Network in _datamodel:
+_datamodel.Network_swigregister(Network)
+
+def Network_ClassName():
+    r"""Network_ClassName() -> char const *"""
+    return _datamodel.Network_ClassName()
+
+def Network_TypeInfo():
+    r"""Network_TypeInfo() -> RTTI"""
+    return _datamodel.Network_TypeInfo()
+
+def Network_Cast(*args):
+    r"""
+    Network_Cast(BaseObject o) -> Network
+    Network_Cast(Seiscomp::Core::BaseObjectPtr o) -> Network
+    """
+    return _datamodel.Network_Cast(*args)
+
+def Network_ConstCast(*args):
+    r"""
+    Network_ConstCast(BaseObject o) -> Network
+    Network_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Network
+    """
+    return _datamodel.Network_ConstCast(*args)
+
+def Network_Meta():
+    r"""Network_Meta() -> MetaObject"""
+    return _datamodel.Network_Meta()
+
+def Network_Create(*args):
+    r"""
+    Network_Create() -> Network
+    Network_Create(std::string const & publicID) -> Network
+    """
+    return _datamodel.Network_Create(*args)
+
+def Network_Find(publicID):
+    r"""Network_Find(std::string const & publicID) -> Network"""
+    return _datamodel.Network_Find(publicID)
+
+class Inventory(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::Inventory class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.Inventory_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.Inventory_TypeInfo()
+
+    def className(self):
+        r"""className(Inventory self) -> char const *"""
+        return _datamodel.Inventory_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(Inventory self) -> RTTI"""
+        return _datamodel.Inventory_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> Inventory
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> Inventory
+        """
+        return _datamodel.Inventory_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> Inventory
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Inventory
+        """
+        return _datamodel.Inventory_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(Inventory self, GenericArchive ar)"""
+        return _datamodel.Inventory_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.Inventory_Meta()
+
+    def meta(self):
+        r"""meta(Inventory self) -> MetaObject"""
+        return _datamodel.Inventory_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(Inventory self) -> Inventory
+        __init__(Inventory self, Inventory other) -> Inventory
+        """
+        _datamodel.Inventory_swiginit(self, _datamodel.new_Inventory(*args))
+    __swig_destroy__ = _datamodel.delete_Inventory
+
+    def __eq__(self, other):
+        r"""__eq__(Inventory self, Inventory other) -> bool"""
+        return _datamodel.Inventory___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(Inventory self, Inventory other) -> bool"""
+        return _datamodel.Inventory___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(Inventory self, Inventory other) -> bool"""
+        return _datamodel.Inventory_equal(self, other)
+
+    def add(self, *args):
+        r"""
+        add(Inventory self, StationGroup obj) -> bool
+        add(Inventory self, AuxDevice obj) -> bool
+        add(Inventory self, Sensor obj) -> bool
+        add(Inventory self, Datalogger obj) -> bool
+        add(Inventory self, ResponsePAZ obj) -> bool
+        add(Inventory self, ResponseFIR obj) -> bool
+        add(Inventory self, ResponseIIR obj) -> bool
+        add(Inventory self, ResponsePolynomial obj) -> bool
+        add(Inventory self, ResponseFAP obj) -> bool
+        add(Inventory self, Network obj) -> bool
+        """
+        return _datamodel.Inventory_add(self, *args)
+
+    def remove(self, *args):
+        r"""
+        remove(Inventory self, StationGroup obj) -> bool
+        remove(Inventory self, AuxDevice obj) -> bool
+        remove(Inventory self, Sensor obj) -> bool
+        remove(Inventory self, Datalogger obj) -> bool
+        remove(Inventory self, ResponsePAZ obj) -> bool
+        remove(Inventory self, ResponseFIR obj) -> bool
+        remove(Inventory self, ResponseIIR obj) -> bool
+        remove(Inventory self, ResponsePolynomial obj) -> bool
+        remove(Inventory self, ResponseFAP obj) -> bool
+        remove(Inventory self, Network obj) -> bool
+        """
+        return _datamodel.Inventory_remove(self, *args)
+
+    def removeStationGroup(self, *args):
+        r"""
+        removeStationGroup(Inventory self, size_t i) -> bool
+        removeStationGroup(Inventory self, StationGroupIndex i) -> bool
+        """
+        return _datamodel.Inventory_removeStationGroup(self, *args)
+
+    def removeAuxDevice(self, *args):
+        r"""
+        removeAuxDevice(Inventory self, size_t i) -> bool
+        removeAuxDevice(Inventory self, AuxDeviceIndex i) -> bool
+        """
+        return _datamodel.Inventory_removeAuxDevice(self, *args)
+
+    def removeSensor(self, *args):
+        r"""
+        removeSensor(Inventory self, size_t i) -> bool
+        removeSensor(Inventory self, SensorIndex i) -> bool
+        """
+        return _datamodel.Inventory_removeSensor(self, *args)
+
+    def removeDatalogger(self, *args):
+        r"""
+        removeDatalogger(Inventory self, size_t i) -> bool
+        removeDatalogger(Inventory self, DataloggerIndex i) -> bool
+        """
+        return _datamodel.Inventory_removeDatalogger(self, *args)
+
+    def removeResponsePAZ(self, *args):
+        r"""
+        removeResponsePAZ(Inventory self, size_t i) -> bool
+        removeResponsePAZ(Inventory self, ResponsePAZIndex i) -> bool
+        """
+        return _datamodel.Inventory_removeResponsePAZ(self, *args)
+
+    def removeResponseFIR(self, *args):
+        r"""
+        removeResponseFIR(Inventory self, size_t i) -> bool
+        removeResponseFIR(Inventory self, ResponseFIRIndex i) -> bool
+        """
+        return _datamodel.Inventory_removeResponseFIR(self, *args)
+
+    def removeResponseIIR(self, *args):
+        r"""
+        removeResponseIIR(Inventory self, size_t i) -> bool
+        removeResponseIIR(Inventory self, ResponseIIRIndex i) -> bool
+        """
+        return _datamodel.Inventory_removeResponseIIR(self, *args)
+
+    def removeResponsePolynomial(self, *args):
+        r"""
+        removeResponsePolynomial(Inventory self, size_t i) -> bool
+        removeResponsePolynomial(Inventory self, ResponsePolynomialIndex i) -> bool
+        """
+        return _datamodel.Inventory_removeResponsePolynomial(self, *args)
+
+    def removeResponseFAP(self, *args):
+        r"""
+        removeResponseFAP(Inventory self, size_t i) -> bool
+        removeResponseFAP(Inventory self, ResponseFAPIndex i) -> bool
+        """
+        return _datamodel.Inventory_removeResponseFAP(self, *args)
+
+    def removeNetwork(self, *args):
+        r"""
+        removeNetwork(Inventory self, size_t i) -> bool
+        removeNetwork(Inventory self, NetworkIndex i) -> bool
+        """
+        return _datamodel.Inventory_removeNetwork(self, *args)
+
+    def stationGroupCount(self):
+        r"""stationGroupCount(Inventory self) -> size_t"""
+        return _datamodel.Inventory_stationGroupCount(self)
+
+    def auxDeviceCount(self):
+        r"""auxDeviceCount(Inventory self) -> size_t"""
+        return _datamodel.Inventory_auxDeviceCount(self)
+
+    def sensorCount(self):
+        r"""sensorCount(Inventory self) -> size_t"""
+        return _datamodel.Inventory_sensorCount(self)
+
+    def dataloggerCount(self):
+        r"""dataloggerCount(Inventory self) -> size_t"""
+        return _datamodel.Inventory_dataloggerCount(self)
+
+    def responsePAZCount(self):
+        r"""responsePAZCount(Inventory self) -> size_t"""
+        return _datamodel.Inventory_responsePAZCount(self)
+
+    def responseFIRCount(self):
+        r"""responseFIRCount(Inventory self) -> size_t"""
+        return _datamodel.Inventory_responseFIRCount(self)
+
+    def responseIIRCount(self):
+        r"""responseIIRCount(Inventory self) -> size_t"""
+        return _datamodel.Inventory_responseIIRCount(self)
+
+    def responsePolynomialCount(self):
+        r"""responsePolynomialCount(Inventory self) -> size_t"""
+        return _datamodel.Inventory_responsePolynomialCount(self)
+
+    def responseFAPCount(self):
+        r"""responseFAPCount(Inventory self) -> size_t"""
+        return _datamodel.Inventory_responseFAPCount(self)
+
+    def networkCount(self):
+        r"""networkCount(Inventory self) -> size_t"""
+        return _datamodel.Inventory_networkCount(self)
+
+    def stationGroup(self, *args):
+        r"""
+        stationGroup(Inventory self, size_t i) -> StationGroup
+        stationGroup(Inventory self, StationGroupIndex i) -> StationGroup
+        """
+        return _datamodel.Inventory_stationGroup(self, *args)
+
+    def auxDevice(self, *args):
+        r"""
+        auxDevice(Inventory self, size_t i) -> AuxDevice
+        auxDevice(Inventory self, AuxDeviceIndex i) -> AuxDevice
+        """
+        return _datamodel.Inventory_auxDevice(self, *args)
+
+    def sensor(self, *args):
+        r"""
+        sensor(Inventory self, size_t i) -> Sensor
+        sensor(Inventory self, SensorIndex i) -> Sensor
+        """
+        return _datamodel.Inventory_sensor(self, *args)
+
+    def datalogger(self, *args):
+        r"""
+        datalogger(Inventory self, size_t i) -> Datalogger
+        datalogger(Inventory self, DataloggerIndex i) -> Datalogger
+        """
+        return _datamodel.Inventory_datalogger(self, *args)
+
+    def responsePAZ(self, *args):
+        r"""
+        responsePAZ(Inventory self, size_t i) -> ResponsePAZ
+        responsePAZ(Inventory self, ResponsePAZIndex i) -> ResponsePAZ
+        """
+        return _datamodel.Inventory_responsePAZ(self, *args)
+
+    def responseFIR(self, *args):
+        r"""
+        responseFIR(Inventory self, size_t i) -> ResponseFIR
+        responseFIR(Inventory self, ResponseFIRIndex i) -> ResponseFIR
+        """
+        return _datamodel.Inventory_responseFIR(self, *args)
+
+    def responseIIR(self, *args):
+        r"""
+        responseIIR(Inventory self, size_t i) -> ResponseIIR
+        responseIIR(Inventory self, ResponseIIRIndex i) -> ResponseIIR
+        """
+        return _datamodel.Inventory_responseIIR(self, *args)
+
+    def responsePolynomial(self, *args):
+        r"""
+        responsePolynomial(Inventory self, size_t i) -> ResponsePolynomial
+        responsePolynomial(Inventory self, ResponsePolynomialIndex i) -> ResponsePolynomial
+        """
+        return _datamodel.Inventory_responsePolynomial(self, *args)
+
+    def responseFAP(self, *args):
+        r"""
+        responseFAP(Inventory self, size_t i) -> ResponseFAP
+        responseFAP(Inventory self, ResponseFAPIndex i) -> ResponseFAP
+        """
+        return _datamodel.Inventory_responseFAP(self, *args)
+
+    def network(self, *args):
+        r"""
+        network(Inventory self, size_t i) -> Network
+        network(Inventory self, NetworkIndex i) -> Network
+        """
+        return _datamodel.Inventory_network(self, *args)
+
+    def findStationGroup(self, publicID):
+        r"""findStationGroup(Inventory self, std::string const & publicID) -> StationGroup"""
+        return _datamodel.Inventory_findStationGroup(self, publicID)
+
+    def findAuxDevice(self, publicID):
+        r"""findAuxDevice(Inventory self, std::string const & publicID) -> AuxDevice"""
+        return _datamodel.Inventory_findAuxDevice(self, publicID)
+
+    def findSensor(self, publicID):
+        r"""findSensor(Inventory self, std::string const & publicID) -> Sensor"""
+        return _datamodel.Inventory_findSensor(self, publicID)
+
+    def findDatalogger(self, publicID):
+        r"""findDatalogger(Inventory self, std::string const & publicID) -> Datalogger"""
+        return _datamodel.Inventory_findDatalogger(self, publicID)
+
+    def findResponsePAZ(self, publicID):
+        r"""findResponsePAZ(Inventory self, std::string const & publicID) -> ResponsePAZ"""
+        return _datamodel.Inventory_findResponsePAZ(self, publicID)
+
+    def findResponseFIR(self, publicID):
+        r"""findResponseFIR(Inventory self, std::string const & publicID) -> ResponseFIR"""
+        return _datamodel.Inventory_findResponseFIR(self, publicID)
+
+    def findResponseIIR(self, publicID):
+        r"""findResponseIIR(Inventory self, std::string const & publicID) -> ResponseIIR"""
+        return _datamodel.Inventory_findResponseIIR(self, publicID)
+
+    def findResponsePolynomial(self, publicID):
+        r"""findResponsePolynomial(Inventory self, std::string const & publicID) -> ResponsePolynomial"""
+        return _datamodel.Inventory_findResponsePolynomial(self, publicID)
+
+    def findResponseFAP(self, publicID):
+        r"""findResponseFAP(Inventory self, std::string const & publicID) -> ResponseFAP"""
+        return _datamodel.Inventory_findResponseFAP(self, publicID)
+
+    def findNetwork(self, publicID):
+        r"""findNetwork(Inventory self, std::string const & publicID) -> Network"""
+        return _datamodel.Inventory_findNetwork(self, publicID)
+
+    def assign(self, other):
+        r"""assign(Inventory self, Object other) -> bool"""
+        return _datamodel.Inventory_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(Inventory self, PublicObject parent) -> bool"""
+        return _datamodel.Inventory_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(Inventory self, PublicObject parent) -> bool"""
+        return _datamodel.Inventory_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(Inventory self) -> bool"""
+        return _datamodel.Inventory_detach(self)
+
+    def clone(self):
+        r"""clone(Inventory self) -> Object"""
+        return _datamodel.Inventory_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(Inventory self, Object child) -> bool"""
+        return _datamodel.Inventory_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(Inventory self, Visitor visitor)"""
+        return _datamodel.Inventory_accept(self, visitor)
+
+# Register Inventory in _datamodel:
+_datamodel.Inventory_swigregister(Inventory)
+
+def Inventory_ClassName():
+    r"""Inventory_ClassName() -> char const *"""
+    return _datamodel.Inventory_ClassName()
+
+def Inventory_TypeInfo():
+    r"""Inventory_TypeInfo() -> RTTI"""
+    return _datamodel.Inventory_TypeInfo()
+
+def Inventory_Cast(*args):
+    r"""
+    Inventory_Cast(BaseObject o) -> Inventory
+    Inventory_Cast(Seiscomp::Core::BaseObjectPtr o) -> Inventory
+    """
+    return _datamodel.Inventory_Cast(*args)
+
+def Inventory_ConstCast(*args):
+    r"""
+    Inventory_ConstCast(BaseObject o) -> Inventory
+    Inventory_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Inventory
+    """
+    return _datamodel.Inventory_ConstCast(*args)
+
+def Inventory_Meta():
+    r"""Inventory_Meta() -> MetaObject"""
+    return _datamodel.Inventory_Meta()
+
+class DataSegmentIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::DataSegmentIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(DataSegmentIndex self) -> DataSegmentIndex
+        __init__(DataSegmentIndex self, Time start) -> DataSegmentIndex
+        __init__(DataSegmentIndex self, DataSegmentIndex arg2) -> DataSegmentIndex
+        """
+        _datamodel.DataSegmentIndex_swiginit(self, _datamodel.new_DataSegmentIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(DataSegmentIndex self, DataSegmentIndex arg2) -> bool"""
+        return _datamodel.DataSegmentIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(DataSegmentIndex self, DataSegmentIndex arg2) -> bool"""
+        return _datamodel.DataSegmentIndex___ne__(self, arg2)
+    start = property(_datamodel.DataSegmentIndex_start_get, _datamodel.DataSegmentIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
+    __swig_destroy__ = _datamodel.delete_DataSegmentIndex
+
+# Register DataSegmentIndex in _datamodel:
+_datamodel.DataSegmentIndex_swigregister(DataSegmentIndex)
+
+class DataSegment(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::DataSegment class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.DataSegment_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.DataSegment_TypeInfo()
+
+    def className(self):
+        r"""className(DataSegment self) -> char const *"""
+        return _datamodel.DataSegment_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(DataSegment self) -> RTTI"""
+        return _datamodel.DataSegment_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> DataSegment
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> DataSegment
+        """
+        return _datamodel.DataSegment_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> DataSegment
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataSegment
+        """
+        return _datamodel.DataSegment_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(DataSegment self, GenericArchive ar)"""
+        return _datamodel.DataSegment_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.DataSegment_Meta()
+
+    def meta(self):
+        r"""meta(DataSegment self) -> MetaObject"""
+        return _datamodel.DataSegment_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(DataSegment self) -> DataSegment
+        __init__(DataSegment self, DataSegment other) -> DataSegment
+        """
+        _datamodel.DataSegment_swiginit(self, _datamodel.new_DataSegment(*args))
+    __swig_destroy__ = _datamodel.delete_DataSegment
+
+    def __eq__(self, other):
+        r"""__eq__(DataSegment self, DataSegment other) -> bool"""
+        return _datamodel.DataSegment___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(DataSegment self, DataSegment other) -> bool"""
+        return _datamodel.DataSegment___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(DataSegment self, DataSegment other) -> bool"""
+        return _datamodel.DataSegment_equal(self, other)
+
+    def setStart(self, start):
+        r"""setStart(DataSegment self, Time start)"""
+        return _datamodel.DataSegment_setStart(self, start)
+
+    def start(self):
+        r"""start(DataSegment self) -> Time"""
+        return _datamodel.DataSegment_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(DataSegment self, Time end)"""
+        return _datamodel.DataSegment_setEnd(self, end)
+
+    def end(self):
+        r"""end(DataSegment self) -> Time"""
+        return _datamodel.DataSegment_end(self)
+
+    def setUpdated(self, updated):
+        r"""setUpdated(DataSegment self, Time updated)"""
+        return _datamodel.DataSegment_setUpdated(self, updated)
+
+    def updated(self):
+        r"""updated(DataSegment self) -> Time"""
+        return _datamodel.DataSegment_updated(self)
+
+    def setSampleRate(self, sampleRate):
+        r"""setSampleRate(DataSegment self, double sampleRate)"""
+        return _datamodel.DataSegment_setSampleRate(self, sampleRate)
+
+    def sampleRate(self):
+        r"""sampleRate(DataSegment self) -> double"""
+        return _datamodel.DataSegment_sampleRate(self)
+
+    def setQuality(self, quality):
+        r"""setQuality(DataSegment self, std::string const & quality)"""
+        return _datamodel.DataSegment_setQuality(self, quality)
+
+    def quality(self):
+        r"""quality(DataSegment self) -> std::string const &"""
+        return _datamodel.DataSegment_quality(self)
+
+    def setOutOfOrder(self, outOfOrder):
+        r"""setOutOfOrder(DataSegment self, bool outOfOrder)"""
+        return _datamodel.DataSegment_setOutOfOrder(self, outOfOrder)
+
+    def outOfOrder(self):
+        r"""outOfOrder(DataSegment self) -> bool"""
+        return _datamodel.DataSegment_outOfOrder(self)
+
+    def index(self):
+        r"""index(DataSegment self) -> DataSegmentIndex"""
+        return _datamodel.DataSegment_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(DataSegment self, DataSegment lhs) -> bool"""
+        return _datamodel.DataSegment_equalIndex(self, lhs)
+
+    def dataExtent(self):
+        r"""dataExtent(DataSegment self) -> DataExtent"""
+        return _datamodel.DataSegment_dataExtent(self)
+
+    def assign(self, other):
+        r"""assign(DataSegment self, Object other) -> bool"""
+        return _datamodel.DataSegment_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(DataSegment self, PublicObject parent) -> bool"""
+        return _datamodel.DataSegment_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(DataSegment self, PublicObject parent) -> bool"""
+        return _datamodel.DataSegment_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(DataSegment self) -> bool"""
+        return _datamodel.DataSegment_detach(self)
+
+    def clone(self):
+        r"""clone(DataSegment self) -> Object"""
+        return _datamodel.DataSegment_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(DataSegment self, Visitor visitor)"""
+        return _datamodel.DataSegment_accept(self, visitor)
+
+# Register DataSegment in _datamodel:
+_datamodel.DataSegment_swigregister(DataSegment)
+
+def DataSegment_ClassName():
+    r"""DataSegment_ClassName() -> char const *"""
+    return _datamodel.DataSegment_ClassName()
+
+def DataSegment_TypeInfo():
+    r"""DataSegment_TypeInfo() -> RTTI"""
+    return _datamodel.DataSegment_TypeInfo()
+
+def DataSegment_Cast(*args):
+    r"""
+    DataSegment_Cast(BaseObject o) -> DataSegment
+    DataSegment_Cast(Seiscomp::Core::BaseObjectPtr o) -> DataSegment
+    """
+    return _datamodel.DataSegment_Cast(*args)
+
+def DataSegment_ConstCast(*args):
+    r"""
+    DataSegment_ConstCast(BaseObject o) -> DataSegment
+    DataSegment_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataSegment
+    """
+    return _datamodel.DataSegment_ConstCast(*args)
+
+def DataSegment_Meta():
+    r"""DataSegment_Meta() -> MetaObject"""
+    return _datamodel.DataSegment_Meta()
+
+class DataAttributeExtentIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::DataAttributeExtentIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(DataAttributeExtentIndex self) -> DataAttributeExtentIndex
+        __init__(DataAttributeExtentIndex self, double sampleRate, std::string const & quality) -> DataAttributeExtentIndex
+        __init__(DataAttributeExtentIndex self, DataAttributeExtentIndex arg2) -> DataAttributeExtentIndex
+        """
+        _datamodel.DataAttributeExtentIndex_swiginit(self, _datamodel.new_DataAttributeExtentIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(DataAttributeExtentIndex self, DataAttributeExtentIndex arg2) -> bool"""
+        return _datamodel.DataAttributeExtentIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(DataAttributeExtentIndex self, DataAttributeExtentIndex arg2) -> bool"""
+        return _datamodel.DataAttributeExtentIndex___ne__(self, arg2)
+    sampleRate = property(_datamodel.DataAttributeExtentIndex_sampleRate_get, _datamodel.DataAttributeExtentIndex_sampleRate_set, doc=r"""sampleRate : double""")
+    quality = property(_datamodel.DataAttributeExtentIndex_quality_get, _datamodel.DataAttributeExtentIndex_quality_set, doc=r"""quality : std::string""")
+    __swig_destroy__ = _datamodel.delete_DataAttributeExtentIndex
+
+# Register DataAttributeExtentIndex in _datamodel:
+_datamodel.DataAttributeExtentIndex_swigregister(DataAttributeExtentIndex)
+
+class DataAttributeExtent(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::DataAttributeExtent class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.DataAttributeExtent_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.DataAttributeExtent_TypeInfo()
+
+    def className(self):
+        r"""className(DataAttributeExtent self) -> char const *"""
+        return _datamodel.DataAttributeExtent_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(DataAttributeExtent self) -> RTTI"""
+        return _datamodel.DataAttributeExtent_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> DataAttributeExtent
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> DataAttributeExtent
+        """
+        return _datamodel.DataAttributeExtent_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> DataAttributeExtent
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataAttributeExtent
+        """
+        return _datamodel.DataAttributeExtent_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(DataAttributeExtent self, GenericArchive ar)"""
+        return _datamodel.DataAttributeExtent_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.DataAttributeExtent_Meta()
+
+    def meta(self):
+        r"""meta(DataAttributeExtent self) -> MetaObject"""
+        return _datamodel.DataAttributeExtent_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(DataAttributeExtent self) -> DataAttributeExtent
+        __init__(DataAttributeExtent self, DataAttributeExtent other) -> DataAttributeExtent
+        """
+        _datamodel.DataAttributeExtent_swiginit(self, _datamodel.new_DataAttributeExtent(*args))
+    __swig_destroy__ = _datamodel.delete_DataAttributeExtent
+
+    def __eq__(self, other):
+        r"""__eq__(DataAttributeExtent self, DataAttributeExtent other) -> bool"""
+        return _datamodel.DataAttributeExtent___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(DataAttributeExtent self, DataAttributeExtent other) -> bool"""
+        return _datamodel.DataAttributeExtent___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(DataAttributeExtent self, DataAttributeExtent other) -> bool"""
+        return _datamodel.DataAttributeExtent_equal(self, other)
+
+    def setStart(self, start):
+        r"""setStart(DataAttributeExtent self, Time start)"""
+        return _datamodel.DataAttributeExtent_setStart(self, start)
+
+    def start(self):
+        r"""start(DataAttributeExtent self) -> Time"""
+        return _datamodel.DataAttributeExtent_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(DataAttributeExtent self, Time end)"""
+        return _datamodel.DataAttributeExtent_setEnd(self, end)
+
+    def end(self):
+        r"""end(DataAttributeExtent self) -> Time"""
+        return _datamodel.DataAttributeExtent_end(self)
+
+    def setSampleRate(self, sampleRate):
+        r"""setSampleRate(DataAttributeExtent self, double sampleRate)"""
+        return _datamodel.DataAttributeExtent_setSampleRate(self, sampleRate)
+
+    def sampleRate(self):
+        r"""sampleRate(DataAttributeExtent self) -> double"""
+        return _datamodel.DataAttributeExtent_sampleRate(self)
+
+    def setQuality(self, quality):
+        r"""setQuality(DataAttributeExtent self, std::string const & quality)"""
+        return _datamodel.DataAttributeExtent_setQuality(self, quality)
+
+    def quality(self):
+        r"""quality(DataAttributeExtent self) -> std::string const &"""
+        return _datamodel.DataAttributeExtent_quality(self)
+
+    def setUpdated(self, updated):
+        r"""setUpdated(DataAttributeExtent self, Time updated)"""
+        return _datamodel.DataAttributeExtent_setUpdated(self, updated)
+
+    def updated(self):
+        r"""updated(DataAttributeExtent self) -> Time"""
+        return _datamodel.DataAttributeExtent_updated(self)
+
+    def setSegmentCount(self, segmentCount):
+        r"""setSegmentCount(DataAttributeExtent self, int segmentCount)"""
+        return _datamodel.DataAttributeExtent_setSegmentCount(self, segmentCount)
+
+    def segmentCount(self):
+        r"""segmentCount(DataAttributeExtent self) -> int"""
+        return _datamodel.DataAttributeExtent_segmentCount(self)
+
+    def index(self):
+        r"""index(DataAttributeExtent self) -> DataAttributeExtentIndex"""
+        return _datamodel.DataAttributeExtent_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(DataAttributeExtent self, DataAttributeExtent lhs) -> bool"""
+        return _datamodel.DataAttributeExtent_equalIndex(self, lhs)
+
+    def dataExtent(self):
+        r"""dataExtent(DataAttributeExtent self) -> DataExtent"""
+        return _datamodel.DataAttributeExtent_dataExtent(self)
+
+    def assign(self, other):
+        r"""assign(DataAttributeExtent self, Object other) -> bool"""
+        return _datamodel.DataAttributeExtent_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(DataAttributeExtent self, PublicObject parent) -> bool"""
+        return _datamodel.DataAttributeExtent_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(DataAttributeExtent self, PublicObject parent) -> bool"""
+        return _datamodel.DataAttributeExtent_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(DataAttributeExtent self) -> bool"""
+        return _datamodel.DataAttributeExtent_detach(self)
+
+    def clone(self):
+        r"""clone(DataAttributeExtent self) -> Object"""
+        return _datamodel.DataAttributeExtent_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(DataAttributeExtent self, Visitor visitor)"""
+        return _datamodel.DataAttributeExtent_accept(self, visitor)
+
+# Register DataAttributeExtent in _datamodel:
+_datamodel.DataAttributeExtent_swigregister(DataAttributeExtent)
+
+def DataAttributeExtent_ClassName():
+    r"""DataAttributeExtent_ClassName() -> char const *"""
+    return _datamodel.DataAttributeExtent_ClassName()
+
+def DataAttributeExtent_TypeInfo():
+    r"""DataAttributeExtent_TypeInfo() -> RTTI"""
+    return _datamodel.DataAttributeExtent_TypeInfo()
+
+def DataAttributeExtent_Cast(*args):
+    r"""
+    DataAttributeExtent_Cast(BaseObject o) -> DataAttributeExtent
+    DataAttributeExtent_Cast(Seiscomp::Core::BaseObjectPtr o) -> DataAttributeExtent
+    """
+    return _datamodel.DataAttributeExtent_Cast(*args)
+
+def DataAttributeExtent_ConstCast(*args):
+    r"""
+    DataAttributeExtent_ConstCast(BaseObject o) -> DataAttributeExtent
+    DataAttributeExtent_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataAttributeExtent
+    """
+    return _datamodel.DataAttributeExtent_ConstCast(*args)
+
+def DataAttributeExtent_Meta():
+    r"""DataAttributeExtent_Meta() -> MetaObject"""
+    return _datamodel.DataAttributeExtent_Meta()
+
+class DataExtentIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::DataExtentIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(DataExtentIndex self) -> DataExtentIndex
+        __init__(DataExtentIndex self, WaveformStreamID waveformID) -> DataExtentIndex
+        __init__(DataExtentIndex self, DataExtentIndex arg2) -> DataExtentIndex
+        """
+        _datamodel.DataExtentIndex_swiginit(self, _datamodel.new_DataExtentIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(DataExtentIndex self, DataExtentIndex arg2) -> bool"""
+        return _datamodel.DataExtentIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(DataExtentIndex self, DataExtentIndex arg2) -> bool"""
+        return _datamodel.DataExtentIndex___ne__(self, arg2)
+    waveformID = property(_datamodel.DataExtentIndex_waveformID_get, _datamodel.DataExtentIndex_waveformID_set, doc=r"""waveformID : Seiscomp::DataModel::WaveformStreamID""")
+    __swig_destroy__ = _datamodel.delete_DataExtentIndex
+
+# Register DataExtentIndex in _datamodel:
+_datamodel.DataExtentIndex_swigregister(DataExtentIndex)
+
+class DataExtent(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::DataExtent class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.DataExtent_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.DataExtent_TypeInfo()
+
+    def className(self):
+        r"""className(DataExtent self) -> char const *"""
+        return _datamodel.DataExtent_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(DataExtent self) -> RTTI"""
+        return _datamodel.DataExtent_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> DataExtent
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> DataExtent
+        """
+        return _datamodel.DataExtent_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> DataExtent
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataExtent
+        """
+        return _datamodel.DataExtent_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(DataExtent self, GenericArchive ar)"""
+        return _datamodel.DataExtent_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.DataExtent_Meta()
+
+    def meta(self):
+        r"""meta(DataExtent self) -> MetaObject"""
+        return _datamodel.DataExtent_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(DataExtent self, DataExtent other) -> DataExtent
+        __init__(DataExtent self, std::string const & publicID) -> DataExtent
+        """
+        _datamodel.DataExtent_swiginit(self, _datamodel.new_DataExtent(*args))
+    __swig_destroy__ = _datamodel.delete_DataExtent
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> DataExtent
+        Create(std::string const & publicID) -> DataExtent
+        """
+        return _datamodel.DataExtent_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> DataExtent"""
+        return _datamodel.DataExtent_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(DataExtent self, DataExtent other) -> bool"""
+        return _datamodel.DataExtent___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(DataExtent self, DataExtent other) -> bool"""
+        return _datamodel.DataExtent___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(DataExtent self, DataExtent other) -> bool"""
+        return _datamodel.DataExtent_equal(self, other)
+
+    def setWaveformID(self, waveformID):
+        r"""setWaveformID(DataExtent self, WaveformStreamID waveformID)"""
+        return _datamodel.DataExtent_setWaveformID(self, waveformID)
+
+    def waveformID(self, *args):
+        r"""
+        waveformID(DataExtent self) -> WaveformStreamID
+        waveformID(DataExtent self) -> WaveformStreamID
+        """
+        return _datamodel.DataExtent_waveformID(self, *args)
+
+    def setStart(self, start):
+        r"""setStart(DataExtent self, Time start)"""
+        return _datamodel.DataExtent_setStart(self, start)
+
+    def start(self):
+        r"""start(DataExtent self) -> Time"""
+        return _datamodel.DataExtent_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(DataExtent self, Time end)"""
+        return _datamodel.DataExtent_setEnd(self, end)
+
+    def end(self):
+        r"""end(DataExtent self) -> Time"""
+        return _datamodel.DataExtent_end(self)
+
+    def setUpdated(self, updated):
+        r"""setUpdated(DataExtent self, Time updated)"""
+        return _datamodel.DataExtent_setUpdated(self, updated)
+
+    def updated(self):
+        r"""updated(DataExtent self) -> Time"""
+        return _datamodel.DataExtent_updated(self)
+
+    def setLastScan(self, lastScan):
+        r"""setLastScan(DataExtent self, Time lastScan)"""
+        return _datamodel.DataExtent_setLastScan(self, lastScan)
+
+    def lastScan(self):
+        r"""lastScan(DataExtent self) -> Time"""
+        return _datamodel.DataExtent_lastScan(self)
+
+    def setSegmentOverflow(self, segmentOverflow):
+        r"""setSegmentOverflow(DataExtent self, bool segmentOverflow)"""
+        return _datamodel.DataExtent_setSegmentOverflow(self, segmentOverflow)
+
+    def segmentOverflow(self):
+        r"""segmentOverflow(DataExtent self) -> bool"""
+        return _datamodel.DataExtent_segmentOverflow(self)
+
+    def index(self):
+        r"""index(DataExtent self) -> DataExtentIndex"""
+        return _datamodel.DataExtent_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(DataExtent self, DataExtent lhs) -> bool"""
+        return _datamodel.DataExtent_equalIndex(self, lhs)
+
+    def add(self, *args):
+        r"""
+        add(DataExtent self, DataSegment obj) -> bool
+        add(DataExtent self, DataAttributeExtent obj) -> bool
+        """
+        return _datamodel.DataExtent_add(self, *args)
+
+    def remove(self, *args):
+        r"""
+        remove(DataExtent self, DataSegment obj) -> bool
+        remove(DataExtent self, DataAttributeExtent obj) -> bool
+        """
+        return _datamodel.DataExtent_remove(self, *args)
+
+    def removeDataSegment(self, *args):
+        r"""
+        removeDataSegment(DataExtent self, size_t i) -> bool
+        removeDataSegment(DataExtent self, DataSegmentIndex i) -> bool
+        """
+        return _datamodel.DataExtent_removeDataSegment(self, *args)
+
+    def removeDataAttributeExtent(self, *args):
+        r"""
+        removeDataAttributeExtent(DataExtent self, size_t i) -> bool
+        removeDataAttributeExtent(DataExtent self, DataAttributeExtentIndex i) -> bool
+        """
+        return _datamodel.DataExtent_removeDataAttributeExtent(self, *args)
+
+    def dataSegmentCount(self):
+        r"""dataSegmentCount(DataExtent self) -> size_t"""
+        return _datamodel.DataExtent_dataSegmentCount(self)
+
+    def dataAttributeExtentCount(self):
+        r"""dataAttributeExtentCount(DataExtent self) -> size_t"""
+        return _datamodel.DataExtent_dataAttributeExtentCount(self)
+
+    def dataSegment(self, *args):
+        r"""
+        dataSegment(DataExtent self, size_t i) -> DataSegment
+        dataSegment(DataExtent self, DataSegmentIndex i) -> DataSegment
+        """
+        return _datamodel.DataExtent_dataSegment(self, *args)
+
+    def dataAttributeExtent(self, *args):
+        r"""
+        dataAttributeExtent(DataExtent self, size_t i) -> DataAttributeExtent
+        dataAttributeExtent(DataExtent self, DataAttributeExtentIndex i) -> DataAttributeExtent
+        """
+        return _datamodel.DataExtent_dataAttributeExtent(self, *args)
+
+    def dataAvailability(self):
+        r"""dataAvailability(DataExtent self) -> DataAvailability"""
+        return _datamodel.DataExtent_dataAvailability(self)
+
+    def assign(self, other):
+        r"""assign(DataExtent self, Object other) -> bool"""
+        return _datamodel.DataExtent_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(DataExtent self, PublicObject parent) -> bool"""
+        return _datamodel.DataExtent_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(DataExtent self, PublicObject parent) -> bool"""
+        return _datamodel.DataExtent_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(DataExtent self) -> bool"""
+        return _datamodel.DataExtent_detach(self)
+
+    def clone(self):
+        r"""clone(DataExtent self) -> Object"""
+        return _datamodel.DataExtent_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(DataExtent self, Object child) -> bool"""
+        return _datamodel.DataExtent_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(DataExtent self, Visitor visitor)"""
+        return _datamodel.DataExtent_accept(self, visitor)
+
+# Register DataExtent in _datamodel:
+_datamodel.DataExtent_swigregister(DataExtent)
+
+def DataExtent_ClassName():
+    r"""DataExtent_ClassName() -> char const *"""
+    return _datamodel.DataExtent_ClassName()
+
+def DataExtent_TypeInfo():
+    r"""DataExtent_TypeInfo() -> RTTI"""
+    return _datamodel.DataExtent_TypeInfo()
+
+def DataExtent_Cast(*args):
+    r"""
+    DataExtent_Cast(BaseObject o) -> DataExtent
+    DataExtent_Cast(Seiscomp::Core::BaseObjectPtr o) -> DataExtent
+    """
+    return _datamodel.DataExtent_Cast(*args)
+
+def DataExtent_ConstCast(*args):
+    r"""
+    DataExtent_ConstCast(BaseObject o) -> DataExtent
+    DataExtent_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataExtent
+    """
+    return _datamodel.DataExtent_ConstCast(*args)
+
+def DataExtent_Meta():
+    r"""DataExtent_Meta() -> MetaObject"""
+    return _datamodel.DataExtent_Meta()
+
+def DataExtent_Create(*args):
+    r"""
+    DataExtent_Create() -> DataExtent
+    DataExtent_Create(std::string const & publicID) -> DataExtent
+    """
+    return _datamodel.DataExtent_Create(*args)
+
+def DataExtent_Find(publicID):
+    r"""DataExtent_Find(std::string const & publicID) -> DataExtent"""
+    return _datamodel.DataExtent_Find(publicID)
+
+class DataAvailability(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::DataAvailability class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.DataAvailability_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.DataAvailability_TypeInfo()
+
+    def className(self):
+        r"""className(DataAvailability self) -> char const *"""
+        return _datamodel.DataAvailability_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(DataAvailability self) -> RTTI"""
+        return _datamodel.DataAvailability_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> DataAvailability
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> DataAvailability
+        """
+        return _datamodel.DataAvailability_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> DataAvailability
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataAvailability
+        """
+        return _datamodel.DataAvailability_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(DataAvailability self, GenericArchive ar)"""
+        return _datamodel.DataAvailability_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.DataAvailability_Meta()
+
+    def meta(self):
+        r"""meta(DataAvailability self) -> MetaObject"""
+        return _datamodel.DataAvailability_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(DataAvailability self) -> DataAvailability
+        __init__(DataAvailability self, DataAvailability other) -> DataAvailability
+        """
+        _datamodel.DataAvailability_swiginit(self, _datamodel.new_DataAvailability(*args))
+    __swig_destroy__ = _datamodel.delete_DataAvailability
+
+    def __eq__(self, other):
+        r"""__eq__(DataAvailability self, DataAvailability other) -> bool"""
+        return _datamodel.DataAvailability___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(DataAvailability self, DataAvailability other) -> bool"""
+        return _datamodel.DataAvailability___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(DataAvailability self, DataAvailability other) -> bool"""
+        return _datamodel.DataAvailability_equal(self, other)
+
+    def add(self, obj):
+        r"""add(DataAvailability self, DataExtent obj) -> bool"""
+        return _datamodel.DataAvailability_add(self, obj)
+
+    def remove(self, obj):
+        r"""remove(DataAvailability self, DataExtent obj) -> bool"""
+        return _datamodel.DataAvailability_remove(self, obj)
+
+    def removeDataExtent(self, *args):
+        r"""
+        removeDataExtent(DataAvailability self, size_t i) -> bool
+        removeDataExtent(DataAvailability self, DataExtentIndex i) -> bool
+        """
+        return _datamodel.DataAvailability_removeDataExtent(self, *args)
+
+    def dataExtentCount(self):
+        r"""dataExtentCount(DataAvailability self) -> size_t"""
+        return _datamodel.DataAvailability_dataExtentCount(self)
+
+    def dataExtent(self, *args):
+        r"""
+        dataExtent(DataAvailability self, size_t i) -> DataExtent
+        dataExtent(DataAvailability self, DataExtentIndex i) -> DataExtent
+        """
+        return _datamodel.DataAvailability_dataExtent(self, *args)
+
+    def findDataExtent(self, publicID):
+        r"""findDataExtent(DataAvailability self, std::string const & publicID) -> DataExtent"""
+        return _datamodel.DataAvailability_findDataExtent(self, publicID)
+
+    def assign(self, other):
+        r"""assign(DataAvailability self, Object other) -> bool"""
+        return _datamodel.DataAvailability_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(DataAvailability self, PublicObject parent) -> bool"""
+        return _datamodel.DataAvailability_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(DataAvailability self, PublicObject parent) -> bool"""
+        return _datamodel.DataAvailability_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(DataAvailability self) -> bool"""
+        return _datamodel.DataAvailability_detach(self)
+
+    def clone(self):
+        r"""clone(DataAvailability self) -> Object"""
+        return _datamodel.DataAvailability_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(DataAvailability self, Object child) -> bool"""
+        return _datamodel.DataAvailability_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(DataAvailability self, Visitor visitor)"""
+        return _datamodel.DataAvailability_accept(self, visitor)
+
+# Register DataAvailability in _datamodel:
+_datamodel.DataAvailability_swigregister(DataAvailability)
+
+def DataAvailability_ClassName():
+    r"""DataAvailability_ClassName() -> char const *"""
+    return _datamodel.DataAvailability_ClassName()
+
+def DataAvailability_TypeInfo():
+    r"""DataAvailability_TypeInfo() -> RTTI"""
+    return _datamodel.DataAvailability_TypeInfo()
+
+def DataAvailability_Cast(*args):
+    r"""
+    DataAvailability_Cast(BaseObject o) -> DataAvailability
+    DataAvailability_Cast(Seiscomp::Core::BaseObjectPtr o) -> DataAvailability
+    """
+    return _datamodel.DataAvailability_Cast(*args)
+
+def DataAvailability_ConstCast(*args):
+    r"""
+    DataAvailability_ConstCast(BaseObject o) -> DataAvailability
+    DataAvailability_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataAvailability
+    """
+    return _datamodel.DataAvailability_ConstCast(*args)
+
+def DataAvailability_Meta():
+    r"""DataAvailability_Meta() -> MetaObject"""
+    return _datamodel.DataAvailability_Meta()
+
 class EventDescriptionIndex(object):
     r"""Proxy of C++ Seiscomp::DataModel::EventDescriptionIndex class."""
 
@@ -12233,6657 +21283,6 @@ def Config_Meta():
     r"""Config_Meta() -> MetaObject"""
     return _datamodel.Config_Meta()
 
-class QCLogIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::QCLogIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(QCLogIndex self) -> QCLogIndex
-        __init__(QCLogIndex self, Time start, WaveformStreamID waveformID) -> QCLogIndex
-        __init__(QCLogIndex self, QCLogIndex arg2) -> QCLogIndex
-        """
-        _datamodel.QCLogIndex_swiginit(self, _datamodel.new_QCLogIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(QCLogIndex self, QCLogIndex arg2) -> bool"""
-        return _datamodel.QCLogIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(QCLogIndex self, QCLogIndex arg2) -> bool"""
-        return _datamodel.QCLogIndex___ne__(self, arg2)
-    start = property(_datamodel.QCLogIndex_start_get, _datamodel.QCLogIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
-    waveformID = property(_datamodel.QCLogIndex_waveformID_get, _datamodel.QCLogIndex_waveformID_set, doc=r"""waveformID : Seiscomp::DataModel::WaveformStreamID""")
-    __swig_destroy__ = _datamodel.delete_QCLogIndex
-
-# Register QCLogIndex in _datamodel:
-_datamodel.QCLogIndex_swigregister(QCLogIndex)
-
-class QCLog(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::QCLog class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.QCLog_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.QCLog_TypeInfo()
-
-    def className(self):
-        r"""className(QCLog self) -> char const *"""
-        return _datamodel.QCLog_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(QCLog self) -> RTTI"""
-        return _datamodel.QCLog_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> QCLog
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> QCLog
-        """
-        return _datamodel.QCLog_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> QCLog
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> QCLog
-        """
-        return _datamodel.QCLog_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(QCLog self, GenericArchive ar)"""
-        return _datamodel.QCLog_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.QCLog_Meta()
-
-    def meta(self):
-        r"""meta(QCLog self) -> MetaObject"""
-        return _datamodel.QCLog_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(QCLog self, QCLog other) -> QCLog
-        __init__(QCLog self, std::string const & publicID) -> QCLog
-        """
-        _datamodel.QCLog_swiginit(self, _datamodel.new_QCLog(*args))
-    __swig_destroy__ = _datamodel.delete_QCLog
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> QCLog
-        Create(std::string const & publicID) -> QCLog
-        """
-        return _datamodel.QCLog_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> QCLog"""
-        return _datamodel.QCLog_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(QCLog self, QCLog other) -> bool"""
-        return _datamodel.QCLog___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(QCLog self, QCLog other) -> bool"""
-        return _datamodel.QCLog___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(QCLog self, QCLog other) -> bool"""
-        return _datamodel.QCLog_equal(self, other)
-
-    def setWaveformID(self, waveformID):
-        r"""setWaveformID(QCLog self, WaveformStreamID waveformID)"""
-        return _datamodel.QCLog_setWaveformID(self, waveformID)
-
-    def waveformID(self, *args):
-        r"""
-        waveformID(QCLog self) -> WaveformStreamID
-        waveformID(QCLog self) -> WaveformStreamID
-        """
-        return _datamodel.QCLog_waveformID(self, *args)
-
-    def setCreatorID(self, creatorID):
-        r"""setCreatorID(QCLog self, std::string const & creatorID)"""
-        return _datamodel.QCLog_setCreatorID(self, creatorID)
-
-    def creatorID(self):
-        r"""creatorID(QCLog self) -> std::string const &"""
-        return _datamodel.QCLog_creatorID(self)
-
-    def setCreated(self, created):
-        r"""setCreated(QCLog self, Time created)"""
-        return _datamodel.QCLog_setCreated(self, created)
-
-    def created(self):
-        r"""created(QCLog self) -> Time"""
-        return _datamodel.QCLog_created(self)
-
-    def setStart(self, start):
-        r"""setStart(QCLog self, Time start)"""
-        return _datamodel.QCLog_setStart(self, start)
-
-    def start(self):
-        r"""start(QCLog self) -> Time"""
-        return _datamodel.QCLog_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(QCLog self, Time end)"""
-        return _datamodel.QCLog_setEnd(self, end)
-
-    def end(self):
-        r"""end(QCLog self) -> Time"""
-        return _datamodel.QCLog_end(self)
-
-    def setMessage(self, message):
-        r"""setMessage(QCLog self, std::string const & message)"""
-        return _datamodel.QCLog_setMessage(self, message)
-
-    def message(self):
-        r"""message(QCLog self) -> std::string const &"""
-        return _datamodel.QCLog_message(self)
-
-    def index(self):
-        r"""index(QCLog self) -> QCLogIndex"""
-        return _datamodel.QCLog_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(QCLog self, QCLog lhs) -> bool"""
-        return _datamodel.QCLog_equalIndex(self, lhs)
-
-    def qualityControl(self):
-        r"""qualityControl(QCLog self) -> QualityControl"""
-        return _datamodel.QCLog_qualityControl(self)
-
-    def assign(self, other):
-        r"""assign(QCLog self, Object other) -> bool"""
-        return _datamodel.QCLog_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(QCLog self, PublicObject parent) -> bool"""
-        return _datamodel.QCLog_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(QCLog self, PublicObject parent) -> bool"""
-        return _datamodel.QCLog_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(QCLog self) -> bool"""
-        return _datamodel.QCLog_detach(self)
-
-    def clone(self):
-        r"""clone(QCLog self) -> Object"""
-        return _datamodel.QCLog_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(QCLog self, Object child) -> bool"""
-        return _datamodel.QCLog_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(QCLog self, Visitor visitor)"""
-        return _datamodel.QCLog_accept(self, visitor)
-
-# Register QCLog in _datamodel:
-_datamodel.QCLog_swigregister(QCLog)
-
-def QCLog_ClassName():
-    r"""QCLog_ClassName() -> char const *"""
-    return _datamodel.QCLog_ClassName()
-
-def QCLog_TypeInfo():
-    r"""QCLog_TypeInfo() -> RTTI"""
-    return _datamodel.QCLog_TypeInfo()
-
-def QCLog_Cast(*args):
-    r"""
-    QCLog_Cast(BaseObject o) -> QCLog
-    QCLog_Cast(Seiscomp::Core::BaseObjectPtr o) -> QCLog
-    """
-    return _datamodel.QCLog_Cast(*args)
-
-def QCLog_ConstCast(*args):
-    r"""
-    QCLog_ConstCast(BaseObject o) -> QCLog
-    QCLog_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> QCLog
-    """
-    return _datamodel.QCLog_ConstCast(*args)
-
-def QCLog_Meta():
-    r"""QCLog_Meta() -> MetaObject"""
-    return _datamodel.QCLog_Meta()
-
-def QCLog_Create(*args):
-    r"""
-    QCLog_Create() -> QCLog
-    QCLog_Create(std::string const & publicID) -> QCLog
-    """
-    return _datamodel.QCLog_Create(*args)
-
-def QCLog_Find(publicID):
-    r"""QCLog_Find(std::string const & publicID) -> QCLog"""
-    return _datamodel.QCLog_Find(publicID)
-
-class WaveformQualityIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::WaveformQualityIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(WaveformQualityIndex self) -> WaveformQualityIndex
-        __init__(WaveformQualityIndex self, Time start, WaveformStreamID waveformID, std::string const & type, std::string const & parameter) -> WaveformQualityIndex
-        __init__(WaveformQualityIndex self, WaveformQualityIndex arg2) -> WaveformQualityIndex
-        """
-        _datamodel.WaveformQualityIndex_swiginit(self, _datamodel.new_WaveformQualityIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(WaveformQualityIndex self, WaveformQualityIndex arg2) -> bool"""
-        return _datamodel.WaveformQualityIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(WaveformQualityIndex self, WaveformQualityIndex arg2) -> bool"""
-        return _datamodel.WaveformQualityIndex___ne__(self, arg2)
-    start = property(_datamodel.WaveformQualityIndex_start_get, _datamodel.WaveformQualityIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
-    waveformID = property(_datamodel.WaveformQualityIndex_waveformID_get, _datamodel.WaveformQualityIndex_waveformID_set, doc=r"""waveformID : Seiscomp::DataModel::WaveformStreamID""")
-    type = property(_datamodel.WaveformQualityIndex_type_get, _datamodel.WaveformQualityIndex_type_set, doc=r"""type : std::string""")
-    parameter = property(_datamodel.WaveformQualityIndex_parameter_get, _datamodel.WaveformQualityIndex_parameter_set, doc=r"""parameter : std::string""")
-    __swig_destroy__ = _datamodel.delete_WaveformQualityIndex
-
-# Register WaveformQualityIndex in _datamodel:
-_datamodel.WaveformQualityIndex_swigregister(WaveformQualityIndex)
-
-class WaveformQuality(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::WaveformQuality class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.WaveformQuality_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.WaveformQuality_TypeInfo()
-
-    def className(self):
-        r"""className(WaveformQuality self) -> char const *"""
-        return _datamodel.WaveformQuality_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(WaveformQuality self) -> RTTI"""
-        return _datamodel.WaveformQuality_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> WaveformQuality
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> WaveformQuality
-        """
-        return _datamodel.WaveformQuality_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> WaveformQuality
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> WaveformQuality
-        """
-        return _datamodel.WaveformQuality_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(WaveformQuality self, GenericArchive ar)"""
-        return _datamodel.WaveformQuality_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.WaveformQuality_Meta()
-
-    def meta(self):
-        r"""meta(WaveformQuality self) -> MetaObject"""
-        return _datamodel.WaveformQuality_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(WaveformQuality self) -> WaveformQuality
-        __init__(WaveformQuality self, WaveformQuality other) -> WaveformQuality
-        """
-        _datamodel.WaveformQuality_swiginit(self, _datamodel.new_WaveformQuality(*args))
-    __swig_destroy__ = _datamodel.delete_WaveformQuality
-
-    def __eq__(self, other):
-        r"""__eq__(WaveformQuality self, WaveformQuality other) -> bool"""
-        return _datamodel.WaveformQuality___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(WaveformQuality self, WaveformQuality other) -> bool"""
-        return _datamodel.WaveformQuality___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(WaveformQuality self, WaveformQuality other) -> bool"""
-        return _datamodel.WaveformQuality_equal(self, other)
-
-    def setWaveformID(self, waveformID):
-        r"""setWaveformID(WaveformQuality self, WaveformStreamID waveformID)"""
-        return _datamodel.WaveformQuality_setWaveformID(self, waveformID)
-
-    def waveformID(self, *args):
-        r"""
-        waveformID(WaveformQuality self) -> WaveformStreamID
-        waveformID(WaveformQuality self) -> WaveformStreamID
-        """
-        return _datamodel.WaveformQuality_waveformID(self, *args)
-
-    def setCreatorID(self, creatorID):
-        r"""setCreatorID(WaveformQuality self, std::string const & creatorID)"""
-        return _datamodel.WaveformQuality_setCreatorID(self, creatorID)
-
-    def creatorID(self):
-        r"""creatorID(WaveformQuality self) -> std::string const &"""
-        return _datamodel.WaveformQuality_creatorID(self)
-
-    def setCreated(self, created):
-        r"""setCreated(WaveformQuality self, Time created)"""
-        return _datamodel.WaveformQuality_setCreated(self, created)
-
-    def created(self):
-        r"""created(WaveformQuality self) -> Time"""
-        return _datamodel.WaveformQuality_created(self)
-
-    def setStart(self, start):
-        r"""setStart(WaveformQuality self, Time start)"""
-        return _datamodel.WaveformQuality_setStart(self, start)
-
-    def start(self):
-        r"""start(WaveformQuality self) -> Time"""
-        return _datamodel.WaveformQuality_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(WaveformQuality self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
-        return _datamodel.WaveformQuality_setEnd(self, end)
-
-    def end(self):
-        r"""end(WaveformQuality self) -> Time"""
-        return _datamodel.WaveformQuality_end(self)
-
-    def setType(self, type):
-        r"""setType(WaveformQuality self, std::string const & type)"""
-        return _datamodel.WaveformQuality_setType(self, type)
-
-    def type(self):
-        r"""type(WaveformQuality self) -> std::string const &"""
-        return _datamodel.WaveformQuality_type(self)
-
-    def setParameter(self, parameter):
-        r"""setParameter(WaveformQuality self, std::string const & parameter)"""
-        return _datamodel.WaveformQuality_setParameter(self, parameter)
-
-    def parameter(self):
-        r"""parameter(WaveformQuality self) -> std::string const &"""
-        return _datamodel.WaveformQuality_parameter(self)
-
-    def setValue(self, value):
-        r"""setValue(WaveformQuality self, double value)"""
-        return _datamodel.WaveformQuality_setValue(self, value)
-
-    def value(self):
-        r"""value(WaveformQuality self) -> double"""
-        return _datamodel.WaveformQuality_value(self)
-
-    def setLowerUncertainty(self, lowerUncertainty):
-        r"""setLowerUncertainty(WaveformQuality self, Seiscomp::Core::Optional< double >::Impl const & lowerUncertainty)"""
-        return _datamodel.WaveformQuality_setLowerUncertainty(self, lowerUncertainty)
-
-    def lowerUncertainty(self):
-        r"""lowerUncertainty(WaveformQuality self) -> double"""
-        return _datamodel.WaveformQuality_lowerUncertainty(self)
-
-    def setUpperUncertainty(self, upperUncertainty):
-        r"""setUpperUncertainty(WaveformQuality self, Seiscomp::Core::Optional< double >::Impl const & upperUncertainty)"""
-        return _datamodel.WaveformQuality_setUpperUncertainty(self, upperUncertainty)
-
-    def upperUncertainty(self):
-        r"""upperUncertainty(WaveformQuality self) -> double"""
-        return _datamodel.WaveformQuality_upperUncertainty(self)
-
-    def setWindowLength(self, windowLength):
-        r"""setWindowLength(WaveformQuality self, Seiscomp::Core::Optional< double >::Impl const & windowLength)"""
-        return _datamodel.WaveformQuality_setWindowLength(self, windowLength)
-
-    def windowLength(self):
-        r"""windowLength(WaveformQuality self) -> double"""
-        return _datamodel.WaveformQuality_windowLength(self)
-
-    def index(self):
-        r"""index(WaveformQuality self) -> WaveformQualityIndex"""
-        return _datamodel.WaveformQuality_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(WaveformQuality self, WaveformQuality lhs) -> bool"""
-        return _datamodel.WaveformQuality_equalIndex(self, lhs)
-
-    def qualityControl(self):
-        r"""qualityControl(WaveformQuality self) -> QualityControl"""
-        return _datamodel.WaveformQuality_qualityControl(self)
-
-    def assign(self, other):
-        r"""assign(WaveformQuality self, Object other) -> bool"""
-        return _datamodel.WaveformQuality_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(WaveformQuality self, PublicObject parent) -> bool"""
-        return _datamodel.WaveformQuality_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(WaveformQuality self, PublicObject parent) -> bool"""
-        return _datamodel.WaveformQuality_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(WaveformQuality self) -> bool"""
-        return _datamodel.WaveformQuality_detach(self)
-
-    def clone(self):
-        r"""clone(WaveformQuality self) -> Object"""
-        return _datamodel.WaveformQuality_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(WaveformQuality self, Visitor visitor)"""
-        return _datamodel.WaveformQuality_accept(self, visitor)
-
-# Register WaveformQuality in _datamodel:
-_datamodel.WaveformQuality_swigregister(WaveformQuality)
-
-def WaveformQuality_ClassName():
-    r"""WaveformQuality_ClassName() -> char const *"""
-    return _datamodel.WaveformQuality_ClassName()
-
-def WaveformQuality_TypeInfo():
-    r"""WaveformQuality_TypeInfo() -> RTTI"""
-    return _datamodel.WaveformQuality_TypeInfo()
-
-def WaveformQuality_Cast(*args):
-    r"""
-    WaveformQuality_Cast(BaseObject o) -> WaveformQuality
-    WaveformQuality_Cast(Seiscomp::Core::BaseObjectPtr o) -> WaveformQuality
-    """
-    return _datamodel.WaveformQuality_Cast(*args)
-
-def WaveformQuality_ConstCast(*args):
-    r"""
-    WaveformQuality_ConstCast(BaseObject o) -> WaveformQuality
-    WaveformQuality_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> WaveformQuality
-    """
-    return _datamodel.WaveformQuality_ConstCast(*args)
-
-def WaveformQuality_Meta():
-    r"""WaveformQuality_Meta() -> MetaObject"""
-    return _datamodel.WaveformQuality_Meta()
-
-class OutageIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::OutageIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(OutageIndex self) -> OutageIndex
-        __init__(OutageIndex self, WaveformStreamID waveformID, Time start) -> OutageIndex
-        __init__(OutageIndex self, OutageIndex arg2) -> OutageIndex
-        """
-        _datamodel.OutageIndex_swiginit(self, _datamodel.new_OutageIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(OutageIndex self, OutageIndex arg2) -> bool"""
-        return _datamodel.OutageIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(OutageIndex self, OutageIndex arg2) -> bool"""
-        return _datamodel.OutageIndex___ne__(self, arg2)
-    waveformID = property(_datamodel.OutageIndex_waveformID_get, _datamodel.OutageIndex_waveformID_set, doc=r"""waveformID : Seiscomp::DataModel::WaveformStreamID""")
-    start = property(_datamodel.OutageIndex_start_get, _datamodel.OutageIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
-    __swig_destroy__ = _datamodel.delete_OutageIndex
-
-# Register OutageIndex in _datamodel:
-_datamodel.OutageIndex_swigregister(OutageIndex)
-
-class Outage(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::Outage class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.Outage_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.Outage_TypeInfo()
-
-    def className(self):
-        r"""className(Outage self) -> char const *"""
-        return _datamodel.Outage_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(Outage self) -> RTTI"""
-        return _datamodel.Outage_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> Outage
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> Outage
-        """
-        return _datamodel.Outage_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> Outage
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Outage
-        """
-        return _datamodel.Outage_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(Outage self, GenericArchive ar)"""
-        return _datamodel.Outage_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.Outage_Meta()
-
-    def meta(self):
-        r"""meta(Outage self) -> MetaObject"""
-        return _datamodel.Outage_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(Outage self) -> Outage
-        __init__(Outage self, Outage other) -> Outage
-        """
-        _datamodel.Outage_swiginit(self, _datamodel.new_Outage(*args))
-    __swig_destroy__ = _datamodel.delete_Outage
-
-    def __eq__(self, other):
-        r"""__eq__(Outage self, Outage other) -> bool"""
-        return _datamodel.Outage___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(Outage self, Outage other) -> bool"""
-        return _datamodel.Outage___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(Outage self, Outage other) -> bool"""
-        return _datamodel.Outage_equal(self, other)
-
-    def setWaveformID(self, waveformID):
-        r"""setWaveformID(Outage self, WaveformStreamID waveformID)"""
-        return _datamodel.Outage_setWaveformID(self, waveformID)
-
-    def waveformID(self, *args):
-        r"""
-        waveformID(Outage self) -> WaveformStreamID
-        waveformID(Outage self) -> WaveformStreamID
-        """
-        return _datamodel.Outage_waveformID(self, *args)
-
-    def setCreatorID(self, creatorID):
-        r"""setCreatorID(Outage self, std::string const & creatorID)"""
-        return _datamodel.Outage_setCreatorID(self, creatorID)
-
-    def creatorID(self):
-        r"""creatorID(Outage self) -> std::string const &"""
-        return _datamodel.Outage_creatorID(self)
-
-    def setCreated(self, created):
-        r"""setCreated(Outage self, Time created)"""
-        return _datamodel.Outage_setCreated(self, created)
-
-    def created(self):
-        r"""created(Outage self) -> Time"""
-        return _datamodel.Outage_created(self)
-
-    def setStart(self, start):
-        r"""setStart(Outage self, Time start)"""
-        return _datamodel.Outage_setStart(self, start)
-
-    def start(self):
-        r"""start(Outage self) -> Time"""
-        return _datamodel.Outage_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(Outage self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
-        return _datamodel.Outage_setEnd(self, end)
-
-    def end(self):
-        r"""end(Outage self) -> Time"""
-        return _datamodel.Outage_end(self)
-
-    def index(self):
-        r"""index(Outage self) -> OutageIndex"""
-        return _datamodel.Outage_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(Outage self, Outage lhs) -> bool"""
-        return _datamodel.Outage_equalIndex(self, lhs)
-
-    def qualityControl(self):
-        r"""qualityControl(Outage self) -> QualityControl"""
-        return _datamodel.Outage_qualityControl(self)
-
-    def assign(self, other):
-        r"""assign(Outage self, Object other) -> bool"""
-        return _datamodel.Outage_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(Outage self, PublicObject parent) -> bool"""
-        return _datamodel.Outage_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(Outage self, PublicObject parent) -> bool"""
-        return _datamodel.Outage_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(Outage self) -> bool"""
-        return _datamodel.Outage_detach(self)
-
-    def clone(self):
-        r"""clone(Outage self) -> Object"""
-        return _datamodel.Outage_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(Outage self, Visitor visitor)"""
-        return _datamodel.Outage_accept(self, visitor)
-
-# Register Outage in _datamodel:
-_datamodel.Outage_swigregister(Outage)
-
-def Outage_ClassName():
-    r"""Outage_ClassName() -> char const *"""
-    return _datamodel.Outage_ClassName()
-
-def Outage_TypeInfo():
-    r"""Outage_TypeInfo() -> RTTI"""
-    return _datamodel.Outage_TypeInfo()
-
-def Outage_Cast(*args):
-    r"""
-    Outage_Cast(BaseObject o) -> Outage
-    Outage_Cast(Seiscomp::Core::BaseObjectPtr o) -> Outage
-    """
-    return _datamodel.Outage_Cast(*args)
-
-def Outage_ConstCast(*args):
-    r"""
-    Outage_ConstCast(BaseObject o) -> Outage
-    Outage_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Outage
-    """
-    return _datamodel.Outage_ConstCast(*args)
-
-def Outage_Meta():
-    r"""Outage_Meta() -> MetaObject"""
-    return _datamodel.Outage_Meta()
-
-class QualityControl(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::QualityControl class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.QualityControl_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.QualityControl_TypeInfo()
-
-    def className(self):
-        r"""className(QualityControl self) -> char const *"""
-        return _datamodel.QualityControl_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(QualityControl self) -> RTTI"""
-        return _datamodel.QualityControl_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> QualityControl
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> QualityControl
-        """
-        return _datamodel.QualityControl_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> QualityControl
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> QualityControl
-        """
-        return _datamodel.QualityControl_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(QualityControl self, GenericArchive ar)"""
-        return _datamodel.QualityControl_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.QualityControl_Meta()
-
-    def meta(self):
-        r"""meta(QualityControl self) -> MetaObject"""
-        return _datamodel.QualityControl_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(QualityControl self) -> QualityControl
-        __init__(QualityControl self, QualityControl other) -> QualityControl
-        """
-        _datamodel.QualityControl_swiginit(self, _datamodel.new_QualityControl(*args))
-    __swig_destroy__ = _datamodel.delete_QualityControl
-
-    def __eq__(self, other):
-        r"""__eq__(QualityControl self, QualityControl other) -> bool"""
-        return _datamodel.QualityControl___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(QualityControl self, QualityControl other) -> bool"""
-        return _datamodel.QualityControl___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(QualityControl self, QualityControl other) -> bool"""
-        return _datamodel.QualityControl_equal(self, other)
-
-    def add(self, *args):
-        r"""
-        add(QualityControl self, QCLog obj) -> bool
-        add(QualityControl self, WaveformQuality obj) -> bool
-        add(QualityControl self, Outage obj) -> bool
-        """
-        return _datamodel.QualityControl_add(self, *args)
-
-    def remove(self, *args):
-        r"""
-        remove(QualityControl self, QCLog obj) -> bool
-        remove(QualityControl self, WaveformQuality obj) -> bool
-        remove(QualityControl self, Outage obj) -> bool
-        """
-        return _datamodel.QualityControl_remove(self, *args)
-
-    def removeQCLog(self, *args):
-        r"""
-        removeQCLog(QualityControl self, size_t i) -> bool
-        removeQCLog(QualityControl self, QCLogIndex i) -> bool
-        """
-        return _datamodel.QualityControl_removeQCLog(self, *args)
-
-    def removeWaveformQuality(self, *args):
-        r"""
-        removeWaveformQuality(QualityControl self, size_t i) -> bool
-        removeWaveformQuality(QualityControl self, WaveformQualityIndex i) -> bool
-        """
-        return _datamodel.QualityControl_removeWaveformQuality(self, *args)
-
-    def removeOutage(self, *args):
-        r"""
-        removeOutage(QualityControl self, size_t i) -> bool
-        removeOutage(QualityControl self, OutageIndex i) -> bool
-        """
-        return _datamodel.QualityControl_removeOutage(self, *args)
-
-    def qCLogCount(self):
-        r"""qCLogCount(QualityControl self) -> size_t"""
-        return _datamodel.QualityControl_qCLogCount(self)
-
-    def waveformQualityCount(self):
-        r"""waveformQualityCount(QualityControl self) -> size_t"""
-        return _datamodel.QualityControl_waveformQualityCount(self)
-
-    def outageCount(self):
-        r"""outageCount(QualityControl self) -> size_t"""
-        return _datamodel.QualityControl_outageCount(self)
-
-    def qCLog(self, *args):
-        r"""
-        qCLog(QualityControl self, size_t i) -> QCLog
-        qCLog(QualityControl self, QCLogIndex i) -> QCLog
-        """
-        return _datamodel.QualityControl_qCLog(self, *args)
-
-    def waveformQuality(self, *args):
-        r"""
-        waveformQuality(QualityControl self, size_t i) -> WaveformQuality
-        waveformQuality(QualityControl self, WaveformQualityIndex i) -> WaveformQuality
-        """
-        return _datamodel.QualityControl_waveformQuality(self, *args)
-
-    def outage(self, *args):
-        r"""
-        outage(QualityControl self, size_t i) -> Outage
-        outage(QualityControl self, OutageIndex i) -> Outage
-        """
-        return _datamodel.QualityControl_outage(self, *args)
-
-    def findQCLog(self, publicID):
-        r"""findQCLog(QualityControl self, std::string const & publicID) -> QCLog"""
-        return _datamodel.QualityControl_findQCLog(self, publicID)
-
-    def assign(self, other):
-        r"""assign(QualityControl self, Object other) -> bool"""
-        return _datamodel.QualityControl_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(QualityControl self, PublicObject parent) -> bool"""
-        return _datamodel.QualityControl_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(QualityControl self, PublicObject parent) -> bool"""
-        return _datamodel.QualityControl_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(QualityControl self) -> bool"""
-        return _datamodel.QualityControl_detach(self)
-
-    def clone(self):
-        r"""clone(QualityControl self) -> Object"""
-        return _datamodel.QualityControl_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(QualityControl self, Object child) -> bool"""
-        return _datamodel.QualityControl_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(QualityControl self, Visitor visitor)"""
-        return _datamodel.QualityControl_accept(self, visitor)
-
-# Register QualityControl in _datamodel:
-_datamodel.QualityControl_swigregister(QualityControl)
-
-def QualityControl_ClassName():
-    r"""QualityControl_ClassName() -> char const *"""
-    return _datamodel.QualityControl_ClassName()
-
-def QualityControl_TypeInfo():
-    r"""QualityControl_TypeInfo() -> RTTI"""
-    return _datamodel.QualityControl_TypeInfo()
-
-def QualityControl_Cast(*args):
-    r"""
-    QualityControl_Cast(BaseObject o) -> QualityControl
-    QualityControl_Cast(Seiscomp::Core::BaseObjectPtr o) -> QualityControl
-    """
-    return _datamodel.QualityControl_Cast(*args)
-
-def QualityControl_ConstCast(*args):
-    r"""
-    QualityControl_ConstCast(BaseObject o) -> QualityControl
-    QualityControl_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> QualityControl
-    """
-    return _datamodel.QualityControl_ConstCast(*args)
-
-def QualityControl_Meta():
-    r"""QualityControl_Meta() -> MetaObject"""
-    return _datamodel.QualityControl_Meta()
-
-class StationReferenceIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::StationReferenceIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(StationReferenceIndex self) -> StationReferenceIndex
-        __init__(StationReferenceIndex self, std::string const & stationID) -> StationReferenceIndex
-        __init__(StationReferenceIndex self, StationReferenceIndex arg2) -> StationReferenceIndex
-        """
-        _datamodel.StationReferenceIndex_swiginit(self, _datamodel.new_StationReferenceIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(StationReferenceIndex self, StationReferenceIndex arg2) -> bool"""
-        return _datamodel.StationReferenceIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(StationReferenceIndex self, StationReferenceIndex arg2) -> bool"""
-        return _datamodel.StationReferenceIndex___ne__(self, arg2)
-    stationID = property(_datamodel.StationReferenceIndex_stationID_get, _datamodel.StationReferenceIndex_stationID_set, doc=r"""stationID : std::string""")
-    __swig_destroy__ = _datamodel.delete_StationReferenceIndex
-
-# Register StationReferenceIndex in _datamodel:
-_datamodel.StationReferenceIndex_swigregister(StationReferenceIndex)
-
-class StationReference(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::StationReference class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.StationReference_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.StationReference_TypeInfo()
-
-    def className(self):
-        r"""className(StationReference self) -> char const *"""
-        return _datamodel.StationReference_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(StationReference self) -> RTTI"""
-        return _datamodel.StationReference_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> StationReference
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> StationReference
-        """
-        return _datamodel.StationReference_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> StationReference
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> StationReference
-        """
-        return _datamodel.StationReference_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(StationReference self, GenericArchive ar)"""
-        return _datamodel.StationReference_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.StationReference_Meta()
-
-    def meta(self):
-        r"""meta(StationReference self) -> MetaObject"""
-        return _datamodel.StationReference_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(StationReference self) -> StationReference
-        __init__(StationReference self, StationReference other) -> StationReference
-        __init__(StationReference self, std::string const & stationID) -> StationReference
-        """
-        _datamodel.StationReference_swiginit(self, _datamodel.new_StationReference(*args))
-    __swig_destroy__ = _datamodel.delete_StationReference
-
-    def __eq__(self, other):
-        r"""__eq__(StationReference self, StationReference other) -> bool"""
-        return _datamodel.StationReference___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(StationReference self, StationReference other) -> bool"""
-        return _datamodel.StationReference___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(StationReference self, StationReference other) -> bool"""
-        return _datamodel.StationReference_equal(self, other)
-
-    def setStationID(self, stationID):
-        r"""setStationID(StationReference self, std::string const & stationID)"""
-        return _datamodel.StationReference_setStationID(self, stationID)
-
-    def stationID(self):
-        r"""stationID(StationReference self) -> std::string const &"""
-        return _datamodel.StationReference_stationID(self)
-
-    def index(self):
-        r"""index(StationReference self) -> StationReferenceIndex"""
-        return _datamodel.StationReference_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(StationReference self, StationReference lhs) -> bool"""
-        return _datamodel.StationReference_equalIndex(self, lhs)
-
-    def stationGroup(self):
-        r"""stationGroup(StationReference self) -> StationGroup"""
-        return _datamodel.StationReference_stationGroup(self)
-
-    def assign(self, other):
-        r"""assign(StationReference self, Object other) -> bool"""
-        return _datamodel.StationReference_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(StationReference self, PublicObject parent) -> bool"""
-        return _datamodel.StationReference_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(StationReference self, PublicObject parent) -> bool"""
-        return _datamodel.StationReference_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(StationReference self) -> bool"""
-        return _datamodel.StationReference_detach(self)
-
-    def clone(self):
-        r"""clone(StationReference self) -> Object"""
-        return _datamodel.StationReference_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(StationReference self, Visitor visitor)"""
-        return _datamodel.StationReference_accept(self, visitor)
-
-# Register StationReference in _datamodel:
-_datamodel.StationReference_swigregister(StationReference)
-
-def StationReference_ClassName():
-    r"""StationReference_ClassName() -> char const *"""
-    return _datamodel.StationReference_ClassName()
-
-def StationReference_TypeInfo():
-    r"""StationReference_TypeInfo() -> RTTI"""
-    return _datamodel.StationReference_TypeInfo()
-
-def StationReference_Cast(*args):
-    r"""
-    StationReference_Cast(BaseObject o) -> StationReference
-    StationReference_Cast(Seiscomp::Core::BaseObjectPtr o) -> StationReference
-    """
-    return _datamodel.StationReference_Cast(*args)
-
-def StationReference_ConstCast(*args):
-    r"""
-    StationReference_ConstCast(BaseObject o) -> StationReference
-    StationReference_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> StationReference
-    """
-    return _datamodel.StationReference_ConstCast(*args)
-
-def StationReference_Meta():
-    r"""StationReference_Meta() -> MetaObject"""
-    return _datamodel.StationReference_Meta()
-
-class StationGroupIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::StationGroupIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(StationGroupIndex self) -> StationGroupIndex
-        __init__(StationGroupIndex self, std::string const & code) -> StationGroupIndex
-        __init__(StationGroupIndex self, StationGroupIndex arg2) -> StationGroupIndex
-        """
-        _datamodel.StationGroupIndex_swiginit(self, _datamodel.new_StationGroupIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(StationGroupIndex self, StationGroupIndex arg2) -> bool"""
-        return _datamodel.StationGroupIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(StationGroupIndex self, StationGroupIndex arg2) -> bool"""
-        return _datamodel.StationGroupIndex___ne__(self, arg2)
-    code = property(_datamodel.StationGroupIndex_code_get, _datamodel.StationGroupIndex_code_set, doc=r"""code : std::string""")
-    __swig_destroy__ = _datamodel.delete_StationGroupIndex
-
-# Register StationGroupIndex in _datamodel:
-_datamodel.StationGroupIndex_swigregister(StationGroupIndex)
-
-class StationGroup(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::StationGroup class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.StationGroup_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.StationGroup_TypeInfo()
-
-    def className(self):
-        r"""className(StationGroup self) -> char const *"""
-        return _datamodel.StationGroup_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(StationGroup self) -> RTTI"""
-        return _datamodel.StationGroup_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> StationGroup
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> StationGroup
-        """
-        return _datamodel.StationGroup_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> StationGroup
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> StationGroup
-        """
-        return _datamodel.StationGroup_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(StationGroup self, GenericArchive ar)"""
-        return _datamodel.StationGroup_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.StationGroup_Meta()
-
-    def meta(self):
-        r"""meta(StationGroup self) -> MetaObject"""
-        return _datamodel.StationGroup_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(StationGroup self, StationGroup other) -> StationGroup
-        __init__(StationGroup self, std::string const & publicID) -> StationGroup
-        """
-        _datamodel.StationGroup_swiginit(self, _datamodel.new_StationGroup(*args))
-    __swig_destroy__ = _datamodel.delete_StationGroup
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> StationGroup
-        Create(std::string const & publicID) -> StationGroup
-        """
-        return _datamodel.StationGroup_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> StationGroup"""
-        return _datamodel.StationGroup_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(StationGroup self, StationGroup other) -> bool"""
-        return _datamodel.StationGroup___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(StationGroup self, StationGroup other) -> bool"""
-        return _datamodel.StationGroup___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(StationGroup self, StationGroup other) -> bool"""
-        return _datamodel.StationGroup_equal(self, other)
-
-    def setType(self, type):
-        r"""setType(StationGroup self, Seiscomp::Core::Optional< Seiscomp::DataModel::StationGroupType >::Impl const & type)"""
-        return _datamodel.StationGroup_setType(self, type)
-
-    def type(self):
-        r"""type(StationGroup self) -> Seiscomp::DataModel::StationGroupType"""
-        return _datamodel.StationGroup_type(self)
-
-    def setCode(self, code):
-        r"""setCode(StationGroup self, std::string const & code)"""
-        return _datamodel.StationGroup_setCode(self, code)
-
-    def code(self):
-        r"""code(StationGroup self) -> std::string const &"""
-        return _datamodel.StationGroup_code(self)
-
-    def setStart(self, start):
-        r"""setStart(StationGroup self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & start)"""
-        return _datamodel.StationGroup_setStart(self, start)
-
-    def start(self):
-        r"""start(StationGroup self) -> Time"""
-        return _datamodel.StationGroup_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(StationGroup self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
-        return _datamodel.StationGroup_setEnd(self, end)
-
-    def end(self):
-        r"""end(StationGroup self) -> Time"""
-        return _datamodel.StationGroup_end(self)
-
-    def setDescription(self, description):
-        r"""setDescription(StationGroup self, std::string const & description)"""
-        return _datamodel.StationGroup_setDescription(self, description)
-
-    def description(self):
-        r"""description(StationGroup self) -> std::string const &"""
-        return _datamodel.StationGroup_description(self)
-
-    def setLatitude(self, latitude):
-        r"""setLatitude(StationGroup self, Seiscomp::Core::Optional< double >::Impl const & latitude)"""
-        return _datamodel.StationGroup_setLatitude(self, latitude)
-
-    def latitude(self):
-        r"""latitude(StationGroup self) -> double"""
-        return _datamodel.StationGroup_latitude(self)
-
-    def setLongitude(self, longitude):
-        r"""setLongitude(StationGroup self, Seiscomp::Core::Optional< double >::Impl const & longitude)"""
-        return _datamodel.StationGroup_setLongitude(self, longitude)
-
-    def longitude(self):
-        r"""longitude(StationGroup self) -> double"""
-        return _datamodel.StationGroup_longitude(self)
-
-    def setElevation(self, elevation):
-        r"""setElevation(StationGroup self, Seiscomp::Core::Optional< double >::Impl const & elevation)"""
-        return _datamodel.StationGroup_setElevation(self, elevation)
-
-    def elevation(self):
-        r"""elevation(StationGroup self) -> double"""
-        return _datamodel.StationGroup_elevation(self)
-
-    def index(self):
-        r"""index(StationGroup self) -> StationGroupIndex"""
-        return _datamodel.StationGroup_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(StationGroup self, StationGroup lhs) -> bool"""
-        return _datamodel.StationGroup_equalIndex(self, lhs)
-
-    def add(self, obj):
-        r"""add(StationGroup self, StationReference obj) -> bool"""
-        return _datamodel.StationGroup_add(self, obj)
-
-    def remove(self, obj):
-        r"""remove(StationGroup self, StationReference obj) -> bool"""
-        return _datamodel.StationGroup_remove(self, obj)
-
-    def removeStationReference(self, *args):
-        r"""
-        removeStationReference(StationGroup self, size_t i) -> bool
-        removeStationReference(StationGroup self, StationReferenceIndex i) -> bool
-        """
-        return _datamodel.StationGroup_removeStationReference(self, *args)
-
-    def stationReferenceCount(self):
-        r"""stationReferenceCount(StationGroup self) -> size_t"""
-        return _datamodel.StationGroup_stationReferenceCount(self)
-
-    def stationReference(self, *args):
-        r"""
-        stationReference(StationGroup self, size_t i) -> StationReference
-        stationReference(StationGroup self, StationReferenceIndex i) -> StationReference
-        """
-        return _datamodel.StationGroup_stationReference(self, *args)
-
-    def inventory(self):
-        r"""inventory(StationGroup self) -> Inventory"""
-        return _datamodel.StationGroup_inventory(self)
-
-    def assign(self, other):
-        r"""assign(StationGroup self, Object other) -> bool"""
-        return _datamodel.StationGroup_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(StationGroup self, PublicObject parent) -> bool"""
-        return _datamodel.StationGroup_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(StationGroup self, PublicObject parent) -> bool"""
-        return _datamodel.StationGroup_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(StationGroup self) -> bool"""
-        return _datamodel.StationGroup_detach(self)
-
-    def clone(self):
-        r"""clone(StationGroup self) -> Object"""
-        return _datamodel.StationGroup_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(StationGroup self, Object child) -> bool"""
-        return _datamodel.StationGroup_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(StationGroup self, Visitor visitor)"""
-        return _datamodel.StationGroup_accept(self, visitor)
-
-# Register StationGroup in _datamodel:
-_datamodel.StationGroup_swigregister(StationGroup)
-
-def StationGroup_ClassName():
-    r"""StationGroup_ClassName() -> char const *"""
-    return _datamodel.StationGroup_ClassName()
-
-def StationGroup_TypeInfo():
-    r"""StationGroup_TypeInfo() -> RTTI"""
-    return _datamodel.StationGroup_TypeInfo()
-
-def StationGroup_Cast(*args):
-    r"""
-    StationGroup_Cast(BaseObject o) -> StationGroup
-    StationGroup_Cast(Seiscomp::Core::BaseObjectPtr o) -> StationGroup
-    """
-    return _datamodel.StationGroup_Cast(*args)
-
-def StationGroup_ConstCast(*args):
-    r"""
-    StationGroup_ConstCast(BaseObject o) -> StationGroup
-    StationGroup_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> StationGroup
-    """
-    return _datamodel.StationGroup_ConstCast(*args)
-
-def StationGroup_Meta():
-    r"""StationGroup_Meta() -> MetaObject"""
-    return _datamodel.StationGroup_Meta()
-
-def StationGroup_Create(*args):
-    r"""
-    StationGroup_Create() -> StationGroup
-    StationGroup_Create(std::string const & publicID) -> StationGroup
-    """
-    return _datamodel.StationGroup_Create(*args)
-
-def StationGroup_Find(publicID):
-    r"""StationGroup_Find(std::string const & publicID) -> StationGroup"""
-    return _datamodel.StationGroup_Find(publicID)
-
-class AuxSourceIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::AuxSourceIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(AuxSourceIndex self) -> AuxSourceIndex
-        __init__(AuxSourceIndex self, std::string const & name) -> AuxSourceIndex
-        __init__(AuxSourceIndex self, AuxSourceIndex arg2) -> AuxSourceIndex
-        """
-        _datamodel.AuxSourceIndex_swiginit(self, _datamodel.new_AuxSourceIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(AuxSourceIndex self, AuxSourceIndex arg2) -> bool"""
-        return _datamodel.AuxSourceIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(AuxSourceIndex self, AuxSourceIndex arg2) -> bool"""
-        return _datamodel.AuxSourceIndex___ne__(self, arg2)
-    name = property(_datamodel.AuxSourceIndex_name_get, _datamodel.AuxSourceIndex_name_set, doc=r"""name : std::string""")
-    __swig_destroy__ = _datamodel.delete_AuxSourceIndex
-
-# Register AuxSourceIndex in _datamodel:
-_datamodel.AuxSourceIndex_swigregister(AuxSourceIndex)
-
-class AuxSource(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::AuxSource class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.AuxSource_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.AuxSource_TypeInfo()
-
-    def className(self):
-        r"""className(AuxSource self) -> char const *"""
-        return _datamodel.AuxSource_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(AuxSource self) -> RTTI"""
-        return _datamodel.AuxSource_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> AuxSource
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> AuxSource
-        """
-        return _datamodel.AuxSource_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> AuxSource
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> AuxSource
-        """
-        return _datamodel.AuxSource_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(AuxSource self, GenericArchive ar)"""
-        return _datamodel.AuxSource_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.AuxSource_Meta()
-
-    def meta(self):
-        r"""meta(AuxSource self) -> MetaObject"""
-        return _datamodel.AuxSource_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(AuxSource self) -> AuxSource
-        __init__(AuxSource self, AuxSource other) -> AuxSource
-        __init__(AuxSource self, std::string const & name) -> AuxSource
-        __init__(AuxSource self, std::string const & name, std::string const & description, std::string const & unit, std::string const & conversion, Seiscomp::Core::Optional< int >::Impl const & sampleRateNumerator=Unset, Seiscomp::Core::Optional< int >::Impl const & sampleRateDenominator=Unset, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark=Unset) -> AuxSource
-        """
-        _datamodel.AuxSource_swiginit(self, _datamodel.new_AuxSource(*args))
-    __swig_destroy__ = _datamodel.delete_AuxSource
-
-    def __eq__(self, other):
-        r"""__eq__(AuxSource self, AuxSource other) -> bool"""
-        return _datamodel.AuxSource___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(AuxSource self, AuxSource other) -> bool"""
-        return _datamodel.AuxSource___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(AuxSource self, AuxSource other) -> bool"""
-        return _datamodel.AuxSource_equal(self, other)
-
-    def setName(self, name):
-        r"""setName(AuxSource self, std::string const & name)"""
-        return _datamodel.AuxSource_setName(self, name)
-
-    def name(self):
-        r"""name(AuxSource self) -> std::string const &"""
-        return _datamodel.AuxSource_name(self)
-
-    def setDescription(self, description):
-        r"""setDescription(AuxSource self, std::string const & description)"""
-        return _datamodel.AuxSource_setDescription(self, description)
-
-    def description(self):
-        r"""description(AuxSource self) -> std::string const &"""
-        return _datamodel.AuxSource_description(self)
-
-    def setUnit(self, unit):
-        r"""setUnit(AuxSource self, std::string const & unit)"""
-        return _datamodel.AuxSource_setUnit(self, unit)
-
-    def unit(self):
-        r"""unit(AuxSource self) -> std::string const &"""
-        return _datamodel.AuxSource_unit(self)
-
-    def setConversion(self, conversion):
-        r"""setConversion(AuxSource self, std::string const & conversion)"""
-        return _datamodel.AuxSource_setConversion(self, conversion)
-
-    def conversion(self):
-        r"""conversion(AuxSource self) -> std::string const &"""
-        return _datamodel.AuxSource_conversion(self)
-
-    def setSampleRateNumerator(self, sampleRateNumerator):
-        r"""setSampleRateNumerator(AuxSource self, Seiscomp::Core::Optional< int >::Impl const & sampleRateNumerator)"""
-        return _datamodel.AuxSource_setSampleRateNumerator(self, sampleRateNumerator)
-
-    def sampleRateNumerator(self):
-        r"""sampleRateNumerator(AuxSource self) -> int"""
-        return _datamodel.AuxSource_sampleRateNumerator(self)
-
-    def setSampleRateDenominator(self, sampleRateDenominator):
-        r"""setSampleRateDenominator(AuxSource self, Seiscomp::Core::Optional< int >::Impl const & sampleRateDenominator)"""
-        return _datamodel.AuxSource_setSampleRateDenominator(self, sampleRateDenominator)
-
-    def sampleRateDenominator(self):
-        r"""sampleRateDenominator(AuxSource self) -> int"""
-        return _datamodel.AuxSource_sampleRateDenominator(self)
-
-    def setRemark(self, remark):
-        r"""setRemark(AuxSource self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
-        return _datamodel.AuxSource_setRemark(self, remark)
-
-    def remark(self, *args):
-        r"""
-        remark(AuxSource self) -> Blob
-        remark(AuxSource self) -> Blob
-        """
-        return _datamodel.AuxSource_remark(self, *args)
-
-    def index(self):
-        r"""index(AuxSource self) -> AuxSourceIndex"""
-        return _datamodel.AuxSource_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(AuxSource self, AuxSource lhs) -> bool"""
-        return _datamodel.AuxSource_equalIndex(self, lhs)
-
-    def auxDevice(self):
-        r"""auxDevice(AuxSource self) -> AuxDevice"""
-        return _datamodel.AuxSource_auxDevice(self)
-
-    def assign(self, other):
-        r"""assign(AuxSource self, Object other) -> bool"""
-        return _datamodel.AuxSource_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(AuxSource self, PublicObject parent) -> bool"""
-        return _datamodel.AuxSource_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(AuxSource self, PublicObject parent) -> bool"""
-        return _datamodel.AuxSource_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(AuxSource self) -> bool"""
-        return _datamodel.AuxSource_detach(self)
-
-    def clone(self):
-        r"""clone(AuxSource self) -> Object"""
-        return _datamodel.AuxSource_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(AuxSource self, Visitor visitor)"""
-        return _datamodel.AuxSource_accept(self, visitor)
-
-# Register AuxSource in _datamodel:
-_datamodel.AuxSource_swigregister(AuxSource)
-
-def AuxSource_ClassName():
-    r"""AuxSource_ClassName() -> char const *"""
-    return _datamodel.AuxSource_ClassName()
-
-def AuxSource_TypeInfo():
-    r"""AuxSource_TypeInfo() -> RTTI"""
-    return _datamodel.AuxSource_TypeInfo()
-
-def AuxSource_Cast(*args):
-    r"""
-    AuxSource_Cast(BaseObject o) -> AuxSource
-    AuxSource_Cast(Seiscomp::Core::BaseObjectPtr o) -> AuxSource
-    """
-    return _datamodel.AuxSource_Cast(*args)
-
-def AuxSource_ConstCast(*args):
-    r"""
-    AuxSource_ConstCast(BaseObject o) -> AuxSource
-    AuxSource_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> AuxSource
-    """
-    return _datamodel.AuxSource_ConstCast(*args)
-
-def AuxSource_Meta():
-    r"""AuxSource_Meta() -> MetaObject"""
-    return _datamodel.AuxSource_Meta()
-
-class AuxDeviceIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::AuxDeviceIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(AuxDeviceIndex self) -> AuxDeviceIndex
-        __init__(AuxDeviceIndex self, std::string const & name) -> AuxDeviceIndex
-        __init__(AuxDeviceIndex self, AuxDeviceIndex arg2) -> AuxDeviceIndex
-        """
-        _datamodel.AuxDeviceIndex_swiginit(self, _datamodel.new_AuxDeviceIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(AuxDeviceIndex self, AuxDeviceIndex arg2) -> bool"""
-        return _datamodel.AuxDeviceIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(AuxDeviceIndex self, AuxDeviceIndex arg2) -> bool"""
-        return _datamodel.AuxDeviceIndex___ne__(self, arg2)
-    name = property(_datamodel.AuxDeviceIndex_name_get, _datamodel.AuxDeviceIndex_name_set, doc=r"""name : std::string""")
-    __swig_destroy__ = _datamodel.delete_AuxDeviceIndex
-
-# Register AuxDeviceIndex in _datamodel:
-_datamodel.AuxDeviceIndex_swigregister(AuxDeviceIndex)
-
-class AuxDevice(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::AuxDevice class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.AuxDevice_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.AuxDevice_TypeInfo()
-
-    def className(self):
-        r"""className(AuxDevice self) -> char const *"""
-        return _datamodel.AuxDevice_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(AuxDevice self) -> RTTI"""
-        return _datamodel.AuxDevice_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> AuxDevice
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> AuxDevice
-        """
-        return _datamodel.AuxDevice_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> AuxDevice
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> AuxDevice
-        """
-        return _datamodel.AuxDevice_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(AuxDevice self, GenericArchive ar)"""
-        return _datamodel.AuxDevice_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.AuxDevice_Meta()
-
-    def meta(self):
-        r"""meta(AuxDevice self) -> MetaObject"""
-        return _datamodel.AuxDevice_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(AuxDevice self, AuxDevice other) -> AuxDevice
-        __init__(AuxDevice self, std::string const & publicID) -> AuxDevice
-        """
-        _datamodel.AuxDevice_swiginit(self, _datamodel.new_AuxDevice(*args))
-    __swig_destroy__ = _datamodel.delete_AuxDevice
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> AuxDevice
-        Create(std::string const & publicID) -> AuxDevice
-        """
-        return _datamodel.AuxDevice_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> AuxDevice"""
-        return _datamodel.AuxDevice_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(AuxDevice self, AuxDevice other) -> bool"""
-        return _datamodel.AuxDevice___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(AuxDevice self, AuxDevice other) -> bool"""
-        return _datamodel.AuxDevice___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(AuxDevice self, AuxDevice other) -> bool"""
-        return _datamodel.AuxDevice_equal(self, other)
-
-    def setName(self, name):
-        r"""setName(AuxDevice self, std::string const & name)"""
-        return _datamodel.AuxDevice_setName(self, name)
-
-    def name(self):
-        r"""name(AuxDevice self) -> std::string const &"""
-        return _datamodel.AuxDevice_name(self)
-
-    def setDescription(self, description):
-        r"""setDescription(AuxDevice self, std::string const & description)"""
-        return _datamodel.AuxDevice_setDescription(self, description)
-
-    def description(self):
-        r"""description(AuxDevice self) -> std::string const &"""
-        return _datamodel.AuxDevice_description(self)
-
-    def setModel(self, model):
-        r"""setModel(AuxDevice self, std::string const & model)"""
-        return _datamodel.AuxDevice_setModel(self, model)
-
-    def model(self):
-        r"""model(AuxDevice self) -> std::string const &"""
-        return _datamodel.AuxDevice_model(self)
-
-    def setManufacturer(self, manufacturer):
-        r"""setManufacturer(AuxDevice self, std::string const & manufacturer)"""
-        return _datamodel.AuxDevice_setManufacturer(self, manufacturer)
-
-    def manufacturer(self):
-        r"""manufacturer(AuxDevice self) -> std::string const &"""
-        return _datamodel.AuxDevice_manufacturer(self)
-
-    def setRemark(self, remark):
-        r"""setRemark(AuxDevice self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
-        return _datamodel.AuxDevice_setRemark(self, remark)
-
-    def remark(self, *args):
-        r"""
-        remark(AuxDevice self) -> Blob
-        remark(AuxDevice self) -> Blob
-        """
-        return _datamodel.AuxDevice_remark(self, *args)
-
-    def index(self):
-        r"""index(AuxDevice self) -> AuxDeviceIndex"""
-        return _datamodel.AuxDevice_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(AuxDevice self, AuxDevice lhs) -> bool"""
-        return _datamodel.AuxDevice_equalIndex(self, lhs)
-
-    def add(self, obj):
-        r"""add(AuxDevice self, AuxSource obj) -> bool"""
-        return _datamodel.AuxDevice_add(self, obj)
-
-    def remove(self, obj):
-        r"""remove(AuxDevice self, AuxSource obj) -> bool"""
-        return _datamodel.AuxDevice_remove(self, obj)
-
-    def removeAuxSource(self, *args):
-        r"""
-        removeAuxSource(AuxDevice self, size_t i) -> bool
-        removeAuxSource(AuxDevice self, AuxSourceIndex i) -> bool
-        """
-        return _datamodel.AuxDevice_removeAuxSource(self, *args)
-
-    def auxSourceCount(self):
-        r"""auxSourceCount(AuxDevice self) -> size_t"""
-        return _datamodel.AuxDevice_auxSourceCount(self)
-
-    def auxSource(self, *args):
-        r"""
-        auxSource(AuxDevice self, size_t i) -> AuxSource
-        auxSource(AuxDevice self, AuxSourceIndex i) -> AuxSource
-        """
-        return _datamodel.AuxDevice_auxSource(self, *args)
-
-    def inventory(self):
-        r"""inventory(AuxDevice self) -> Inventory"""
-        return _datamodel.AuxDevice_inventory(self)
-
-    def assign(self, other):
-        r"""assign(AuxDevice self, Object other) -> bool"""
-        return _datamodel.AuxDevice_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(AuxDevice self, PublicObject parent) -> bool"""
-        return _datamodel.AuxDevice_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(AuxDevice self, PublicObject parent) -> bool"""
-        return _datamodel.AuxDevice_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(AuxDevice self) -> bool"""
-        return _datamodel.AuxDevice_detach(self)
-
-    def clone(self):
-        r"""clone(AuxDevice self) -> Object"""
-        return _datamodel.AuxDevice_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(AuxDevice self, Object child) -> bool"""
-        return _datamodel.AuxDevice_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(AuxDevice self, Visitor visitor)"""
-        return _datamodel.AuxDevice_accept(self, visitor)
-
-# Register AuxDevice in _datamodel:
-_datamodel.AuxDevice_swigregister(AuxDevice)
-
-def AuxDevice_ClassName():
-    r"""AuxDevice_ClassName() -> char const *"""
-    return _datamodel.AuxDevice_ClassName()
-
-def AuxDevice_TypeInfo():
-    r"""AuxDevice_TypeInfo() -> RTTI"""
-    return _datamodel.AuxDevice_TypeInfo()
-
-def AuxDevice_Cast(*args):
-    r"""
-    AuxDevice_Cast(BaseObject o) -> AuxDevice
-    AuxDevice_Cast(Seiscomp::Core::BaseObjectPtr o) -> AuxDevice
-    """
-    return _datamodel.AuxDevice_Cast(*args)
-
-def AuxDevice_ConstCast(*args):
-    r"""
-    AuxDevice_ConstCast(BaseObject o) -> AuxDevice
-    AuxDevice_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> AuxDevice
-    """
-    return _datamodel.AuxDevice_ConstCast(*args)
-
-def AuxDevice_Meta():
-    r"""AuxDevice_Meta() -> MetaObject"""
-    return _datamodel.AuxDevice_Meta()
-
-def AuxDevice_Create(*args):
-    r"""
-    AuxDevice_Create() -> AuxDevice
-    AuxDevice_Create(std::string const & publicID) -> AuxDevice
-    """
-    return _datamodel.AuxDevice_Create(*args)
-
-def AuxDevice_Find(publicID):
-    r"""AuxDevice_Find(std::string const & publicID) -> AuxDevice"""
-    return _datamodel.AuxDevice_Find(publicID)
-
-class SensorCalibrationIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::SensorCalibrationIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(SensorCalibrationIndex self) -> SensorCalibrationIndex
-        __init__(SensorCalibrationIndex self, std::string const & serialNumber, int channel, Time start) -> SensorCalibrationIndex
-        __init__(SensorCalibrationIndex self, SensorCalibrationIndex arg2) -> SensorCalibrationIndex
-        """
-        _datamodel.SensorCalibrationIndex_swiginit(self, _datamodel.new_SensorCalibrationIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(SensorCalibrationIndex self, SensorCalibrationIndex arg2) -> bool"""
-        return _datamodel.SensorCalibrationIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(SensorCalibrationIndex self, SensorCalibrationIndex arg2) -> bool"""
-        return _datamodel.SensorCalibrationIndex___ne__(self, arg2)
-    serialNumber = property(_datamodel.SensorCalibrationIndex_serialNumber_get, _datamodel.SensorCalibrationIndex_serialNumber_set, doc=r"""serialNumber : std::string""")
-    channel = property(_datamodel.SensorCalibrationIndex_channel_get, _datamodel.SensorCalibrationIndex_channel_set, doc=r"""channel : int""")
-    start = property(_datamodel.SensorCalibrationIndex_start_get, _datamodel.SensorCalibrationIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
-    __swig_destroy__ = _datamodel.delete_SensorCalibrationIndex
-
-# Register SensorCalibrationIndex in _datamodel:
-_datamodel.SensorCalibrationIndex_swigregister(SensorCalibrationIndex)
-
-class SensorCalibration(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::SensorCalibration class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.SensorCalibration_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.SensorCalibration_TypeInfo()
-
-    def className(self):
-        r"""className(SensorCalibration self) -> char const *"""
-        return _datamodel.SensorCalibration_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(SensorCalibration self) -> RTTI"""
-        return _datamodel.SensorCalibration_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> SensorCalibration
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> SensorCalibration
-        """
-        return _datamodel.SensorCalibration_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> SensorCalibration
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> SensorCalibration
-        """
-        return _datamodel.SensorCalibration_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(SensorCalibration self, GenericArchive ar)"""
-        return _datamodel.SensorCalibration_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.SensorCalibration_Meta()
-
-    def meta(self):
-        r"""meta(SensorCalibration self) -> MetaObject"""
-        return _datamodel.SensorCalibration_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(SensorCalibration self) -> SensorCalibration
-        __init__(SensorCalibration self, SensorCalibration other) -> SensorCalibration
-        """
-        _datamodel.SensorCalibration_swiginit(self, _datamodel.new_SensorCalibration(*args))
-    __swig_destroy__ = _datamodel.delete_SensorCalibration
-
-    def __eq__(self, other):
-        r"""__eq__(SensorCalibration self, SensorCalibration other) -> bool"""
-        return _datamodel.SensorCalibration___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(SensorCalibration self, SensorCalibration other) -> bool"""
-        return _datamodel.SensorCalibration___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(SensorCalibration self, SensorCalibration other) -> bool"""
-        return _datamodel.SensorCalibration_equal(self, other)
-
-    def setSerialNumber(self, serialNumber):
-        r"""setSerialNumber(SensorCalibration self, std::string const & serialNumber)"""
-        return _datamodel.SensorCalibration_setSerialNumber(self, serialNumber)
-
-    def serialNumber(self):
-        r"""serialNumber(SensorCalibration self) -> std::string const &"""
-        return _datamodel.SensorCalibration_serialNumber(self)
-
-    def setChannel(self, channel):
-        r"""setChannel(SensorCalibration self, int channel)"""
-        return _datamodel.SensorCalibration_setChannel(self, channel)
-
-    def channel(self):
-        r"""channel(SensorCalibration self) -> int"""
-        return _datamodel.SensorCalibration_channel(self)
-
-    def setStart(self, start):
-        r"""setStart(SensorCalibration self, Time start)"""
-        return _datamodel.SensorCalibration_setStart(self, start)
-
-    def start(self):
-        r"""start(SensorCalibration self) -> Time"""
-        return _datamodel.SensorCalibration_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(SensorCalibration self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
-        return _datamodel.SensorCalibration_setEnd(self, end)
-
-    def end(self):
-        r"""end(SensorCalibration self) -> Time"""
-        return _datamodel.SensorCalibration_end(self)
-
-    def setGain(self, gain):
-        r"""setGain(SensorCalibration self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
-        return _datamodel.SensorCalibration_setGain(self, gain)
-
-    def gain(self):
-        r"""gain(SensorCalibration self) -> double"""
-        return _datamodel.SensorCalibration_gain(self)
-
-    def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(SensorCalibration self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
-        return _datamodel.SensorCalibration_setGainFrequency(self, gainFrequency)
-
-    def gainFrequency(self):
-        r"""gainFrequency(SensorCalibration self) -> double"""
-        return _datamodel.SensorCalibration_gainFrequency(self)
-
-    def setRemark(self, remark):
-        r"""setRemark(SensorCalibration self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
-        return _datamodel.SensorCalibration_setRemark(self, remark)
-
-    def remark(self, *args):
-        r"""
-        remark(SensorCalibration self) -> Blob
-        remark(SensorCalibration self) -> Blob
-        """
-        return _datamodel.SensorCalibration_remark(self, *args)
-
-    def index(self):
-        r"""index(SensorCalibration self) -> SensorCalibrationIndex"""
-        return _datamodel.SensorCalibration_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(SensorCalibration self, SensorCalibration lhs) -> bool"""
-        return _datamodel.SensorCalibration_equalIndex(self, lhs)
-
-    def sensor(self):
-        r"""sensor(SensorCalibration self) -> Sensor"""
-        return _datamodel.SensorCalibration_sensor(self)
-
-    def assign(self, other):
-        r"""assign(SensorCalibration self, Object other) -> bool"""
-        return _datamodel.SensorCalibration_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(SensorCalibration self, PublicObject parent) -> bool"""
-        return _datamodel.SensorCalibration_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(SensorCalibration self, PublicObject parent) -> bool"""
-        return _datamodel.SensorCalibration_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(SensorCalibration self) -> bool"""
-        return _datamodel.SensorCalibration_detach(self)
-
-    def clone(self):
-        r"""clone(SensorCalibration self) -> Object"""
-        return _datamodel.SensorCalibration_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(SensorCalibration self, Visitor visitor)"""
-        return _datamodel.SensorCalibration_accept(self, visitor)
-
-# Register SensorCalibration in _datamodel:
-_datamodel.SensorCalibration_swigregister(SensorCalibration)
-
-def SensorCalibration_ClassName():
-    r"""SensorCalibration_ClassName() -> char const *"""
-    return _datamodel.SensorCalibration_ClassName()
-
-def SensorCalibration_TypeInfo():
-    r"""SensorCalibration_TypeInfo() -> RTTI"""
-    return _datamodel.SensorCalibration_TypeInfo()
-
-def SensorCalibration_Cast(*args):
-    r"""
-    SensorCalibration_Cast(BaseObject o) -> SensorCalibration
-    SensorCalibration_Cast(Seiscomp::Core::BaseObjectPtr o) -> SensorCalibration
-    """
-    return _datamodel.SensorCalibration_Cast(*args)
-
-def SensorCalibration_ConstCast(*args):
-    r"""
-    SensorCalibration_ConstCast(BaseObject o) -> SensorCalibration
-    SensorCalibration_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> SensorCalibration
-    """
-    return _datamodel.SensorCalibration_ConstCast(*args)
-
-def SensorCalibration_Meta():
-    r"""SensorCalibration_Meta() -> MetaObject"""
-    return _datamodel.SensorCalibration_Meta()
-
-class SensorIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::SensorIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(SensorIndex self) -> SensorIndex
-        __init__(SensorIndex self, std::string const & name) -> SensorIndex
-        __init__(SensorIndex self, SensorIndex arg2) -> SensorIndex
-        """
-        _datamodel.SensorIndex_swiginit(self, _datamodel.new_SensorIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(SensorIndex self, SensorIndex arg2) -> bool"""
-        return _datamodel.SensorIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(SensorIndex self, SensorIndex arg2) -> bool"""
-        return _datamodel.SensorIndex___ne__(self, arg2)
-    name = property(_datamodel.SensorIndex_name_get, _datamodel.SensorIndex_name_set, doc=r"""name : std::string""")
-    __swig_destroy__ = _datamodel.delete_SensorIndex
-
-# Register SensorIndex in _datamodel:
-_datamodel.SensorIndex_swigregister(SensorIndex)
-
-class Sensor(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::Sensor class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.Sensor_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.Sensor_TypeInfo()
-
-    def className(self):
-        r"""className(Sensor self) -> char const *"""
-        return _datamodel.Sensor_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(Sensor self) -> RTTI"""
-        return _datamodel.Sensor_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> Sensor
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> Sensor
-        """
-        return _datamodel.Sensor_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> Sensor
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Sensor
-        """
-        return _datamodel.Sensor_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(Sensor self, GenericArchive ar)"""
-        return _datamodel.Sensor_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.Sensor_Meta()
-
-    def meta(self):
-        r"""meta(Sensor self) -> MetaObject"""
-        return _datamodel.Sensor_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(Sensor self, Sensor other) -> Sensor
-        __init__(Sensor self, std::string const & publicID) -> Sensor
-        """
-        _datamodel.Sensor_swiginit(self, _datamodel.new_Sensor(*args))
-    __swig_destroy__ = _datamodel.delete_Sensor
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> Sensor
-        Create(std::string const & publicID) -> Sensor
-        """
-        return _datamodel.Sensor_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> Sensor"""
-        return _datamodel.Sensor_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(Sensor self, Sensor other) -> bool"""
-        return _datamodel.Sensor___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(Sensor self, Sensor other) -> bool"""
-        return _datamodel.Sensor___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(Sensor self, Sensor other) -> bool"""
-        return _datamodel.Sensor_equal(self, other)
-
-    def setName(self, name):
-        r"""setName(Sensor self, std::string const & name)"""
-        return _datamodel.Sensor_setName(self, name)
-
-    def name(self):
-        r"""name(Sensor self) -> std::string const &"""
-        return _datamodel.Sensor_name(self)
-
-    def setDescription(self, description):
-        r"""setDescription(Sensor self, std::string const & description)"""
-        return _datamodel.Sensor_setDescription(self, description)
-
-    def description(self):
-        r"""description(Sensor self) -> std::string const &"""
-        return _datamodel.Sensor_description(self)
-
-    def setModel(self, model):
-        r"""setModel(Sensor self, std::string const & model)"""
-        return _datamodel.Sensor_setModel(self, model)
-
-    def model(self):
-        r"""model(Sensor self) -> std::string const &"""
-        return _datamodel.Sensor_model(self)
-
-    def setManufacturer(self, manufacturer):
-        r"""setManufacturer(Sensor self, std::string const & manufacturer)"""
-        return _datamodel.Sensor_setManufacturer(self, manufacturer)
-
-    def manufacturer(self):
-        r"""manufacturer(Sensor self) -> std::string const &"""
-        return _datamodel.Sensor_manufacturer(self)
-
-    def setType(self, type):
-        r"""setType(Sensor self, std::string const & type)"""
-        return _datamodel.Sensor_setType(self, type)
-
-    def type(self):
-        r"""type(Sensor self) -> std::string const &"""
-        return _datamodel.Sensor_type(self)
-
-    def setUnit(self, unit):
-        r"""setUnit(Sensor self, std::string const & unit)"""
-        return _datamodel.Sensor_setUnit(self, unit)
-
-    def unit(self):
-        r"""unit(Sensor self) -> std::string const &"""
-        return _datamodel.Sensor_unit(self)
-
-    def setLowFrequency(self, lowFrequency):
-        r"""setLowFrequency(Sensor self, Seiscomp::Core::Optional< double >::Impl const & lowFrequency)"""
-        return _datamodel.Sensor_setLowFrequency(self, lowFrequency)
-
-    def lowFrequency(self):
-        r"""lowFrequency(Sensor self) -> double"""
-        return _datamodel.Sensor_lowFrequency(self)
-
-    def setHighFrequency(self, highFrequency):
-        r"""setHighFrequency(Sensor self, Seiscomp::Core::Optional< double >::Impl const & highFrequency)"""
-        return _datamodel.Sensor_setHighFrequency(self, highFrequency)
-
-    def highFrequency(self):
-        r"""highFrequency(Sensor self) -> double"""
-        return _datamodel.Sensor_highFrequency(self)
-
-    def setResponse(self, response):
-        r"""setResponse(Sensor self, std::string const & response)"""
-        return _datamodel.Sensor_setResponse(self, response)
-
-    def response(self):
-        r"""response(Sensor self) -> std::string const &"""
-        return _datamodel.Sensor_response(self)
-
-    def setRemark(self, remark):
-        r"""setRemark(Sensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
-        return _datamodel.Sensor_setRemark(self, remark)
-
-    def remark(self, *args):
-        r"""
-        remark(Sensor self) -> Blob
-        remark(Sensor self) -> Blob
-        """
-        return _datamodel.Sensor_remark(self, *args)
-
-    def index(self):
-        r"""index(Sensor self) -> SensorIndex"""
-        return _datamodel.Sensor_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(Sensor self, Sensor lhs) -> bool"""
-        return _datamodel.Sensor_equalIndex(self, lhs)
-
-    def add(self, obj):
-        r"""add(Sensor self, SensorCalibration obj) -> bool"""
-        return _datamodel.Sensor_add(self, obj)
-
-    def remove(self, obj):
-        r"""remove(Sensor self, SensorCalibration obj) -> bool"""
-        return _datamodel.Sensor_remove(self, obj)
-
-    def removeSensorCalibration(self, *args):
-        r"""
-        removeSensorCalibration(Sensor self, size_t i) -> bool
-        removeSensorCalibration(Sensor self, SensorCalibrationIndex i) -> bool
-        """
-        return _datamodel.Sensor_removeSensorCalibration(self, *args)
-
-    def sensorCalibrationCount(self):
-        r"""sensorCalibrationCount(Sensor self) -> size_t"""
-        return _datamodel.Sensor_sensorCalibrationCount(self)
-
-    def sensorCalibration(self, *args):
-        r"""
-        sensorCalibration(Sensor self, size_t i) -> SensorCalibration
-        sensorCalibration(Sensor self, SensorCalibrationIndex i) -> SensorCalibration
-        """
-        return _datamodel.Sensor_sensorCalibration(self, *args)
-
-    def inventory(self):
-        r"""inventory(Sensor self) -> Inventory"""
-        return _datamodel.Sensor_inventory(self)
-
-    def assign(self, other):
-        r"""assign(Sensor self, Object other) -> bool"""
-        return _datamodel.Sensor_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(Sensor self, PublicObject parent) -> bool"""
-        return _datamodel.Sensor_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(Sensor self, PublicObject parent) -> bool"""
-        return _datamodel.Sensor_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(Sensor self) -> bool"""
-        return _datamodel.Sensor_detach(self)
-
-    def clone(self):
-        r"""clone(Sensor self) -> Object"""
-        return _datamodel.Sensor_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(Sensor self, Object child) -> bool"""
-        return _datamodel.Sensor_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(Sensor self, Visitor visitor)"""
-        return _datamodel.Sensor_accept(self, visitor)
-
-# Register Sensor in _datamodel:
-_datamodel.Sensor_swigregister(Sensor)
-
-def Sensor_ClassName():
-    r"""Sensor_ClassName() -> char const *"""
-    return _datamodel.Sensor_ClassName()
-
-def Sensor_TypeInfo():
-    r"""Sensor_TypeInfo() -> RTTI"""
-    return _datamodel.Sensor_TypeInfo()
-
-def Sensor_Cast(*args):
-    r"""
-    Sensor_Cast(BaseObject o) -> Sensor
-    Sensor_Cast(Seiscomp::Core::BaseObjectPtr o) -> Sensor
-    """
-    return _datamodel.Sensor_Cast(*args)
-
-def Sensor_ConstCast(*args):
-    r"""
-    Sensor_ConstCast(BaseObject o) -> Sensor
-    Sensor_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Sensor
-    """
-    return _datamodel.Sensor_ConstCast(*args)
-
-def Sensor_Meta():
-    r"""Sensor_Meta() -> MetaObject"""
-    return _datamodel.Sensor_Meta()
-
-def Sensor_Create(*args):
-    r"""
-    Sensor_Create() -> Sensor
-    Sensor_Create(std::string const & publicID) -> Sensor
-    """
-    return _datamodel.Sensor_Create(*args)
-
-def Sensor_Find(publicID):
-    r"""Sensor_Find(std::string const & publicID) -> Sensor"""
-    return _datamodel.Sensor_Find(publicID)
-
-class ResponsePAZIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::ResponsePAZIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(ResponsePAZIndex self) -> ResponsePAZIndex
-        __init__(ResponsePAZIndex self, std::string const & name) -> ResponsePAZIndex
-        __init__(ResponsePAZIndex self, ResponsePAZIndex arg2) -> ResponsePAZIndex
-        """
-        _datamodel.ResponsePAZIndex_swiginit(self, _datamodel.new_ResponsePAZIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(ResponsePAZIndex self, ResponsePAZIndex arg2) -> bool"""
-        return _datamodel.ResponsePAZIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(ResponsePAZIndex self, ResponsePAZIndex arg2) -> bool"""
-        return _datamodel.ResponsePAZIndex___ne__(self, arg2)
-    name = property(_datamodel.ResponsePAZIndex_name_get, _datamodel.ResponsePAZIndex_name_set, doc=r"""name : std::string""")
-    __swig_destroy__ = _datamodel.delete_ResponsePAZIndex
-
-# Register ResponsePAZIndex in _datamodel:
-_datamodel.ResponsePAZIndex_swigregister(ResponsePAZIndex)
-
-class ResponsePAZ(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::ResponsePAZ class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.ResponsePAZ_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.ResponsePAZ_TypeInfo()
-
-    def className(self):
-        r"""className(ResponsePAZ self) -> char const *"""
-        return _datamodel.ResponsePAZ_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(ResponsePAZ self) -> RTTI"""
-        return _datamodel.ResponsePAZ_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> ResponsePAZ
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponsePAZ
-        """
-        return _datamodel.ResponsePAZ_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> ResponsePAZ
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponsePAZ
-        """
-        return _datamodel.ResponsePAZ_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(ResponsePAZ self, GenericArchive ar)"""
-        return _datamodel.ResponsePAZ_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.ResponsePAZ_Meta()
-
-    def meta(self):
-        r"""meta(ResponsePAZ self) -> MetaObject"""
-        return _datamodel.ResponsePAZ_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(ResponsePAZ self, ResponsePAZ other) -> ResponsePAZ
-        __init__(ResponsePAZ self, std::string const & publicID) -> ResponsePAZ
-        """
-        _datamodel.ResponsePAZ_swiginit(self, _datamodel.new_ResponsePAZ(*args))
-    __swig_destroy__ = _datamodel.delete_ResponsePAZ
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> ResponsePAZ
-        Create(std::string const & publicID) -> ResponsePAZ
-        """
-        return _datamodel.ResponsePAZ_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> ResponsePAZ"""
-        return _datamodel.ResponsePAZ_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(ResponsePAZ self, ResponsePAZ other) -> bool"""
-        return _datamodel.ResponsePAZ___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(ResponsePAZ self, ResponsePAZ other) -> bool"""
-        return _datamodel.ResponsePAZ___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(ResponsePAZ self, ResponsePAZ other) -> bool"""
-        return _datamodel.ResponsePAZ_equal(self, other)
-
-    def setName(self, name):
-        r"""setName(ResponsePAZ self, std::string const & name)"""
-        return _datamodel.ResponsePAZ_setName(self, name)
-
-    def name(self):
-        r"""name(ResponsePAZ self) -> std::string const &"""
-        return _datamodel.ResponsePAZ_name(self)
-
-    def setType(self, type):
-        r"""setType(ResponsePAZ self, std::string const & type)"""
-        return _datamodel.ResponsePAZ_setType(self, type)
-
-    def type(self):
-        r"""type(ResponsePAZ self) -> std::string const &"""
-        return _datamodel.ResponsePAZ_type(self)
-
-    def setGain(self, gain):
-        r"""setGain(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
-        return _datamodel.ResponsePAZ_setGain(self, gain)
-
-    def gain(self):
-        r"""gain(ResponsePAZ self) -> double"""
-        return _datamodel.ResponsePAZ_gain(self)
-
-    def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
-        return _datamodel.ResponsePAZ_setGainFrequency(self, gainFrequency)
-
-    def gainFrequency(self):
-        r"""gainFrequency(ResponsePAZ self) -> double"""
-        return _datamodel.ResponsePAZ_gainFrequency(self)
-
-    def setNormalizationFactor(self, normalizationFactor):
-        r"""setNormalizationFactor(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & normalizationFactor)"""
-        return _datamodel.ResponsePAZ_setNormalizationFactor(self, normalizationFactor)
-
-    def normalizationFactor(self):
-        r"""normalizationFactor(ResponsePAZ self) -> double"""
-        return _datamodel.ResponsePAZ_normalizationFactor(self)
-
-    def setNormalizationFrequency(self, normalizationFrequency):
-        r"""setNormalizationFrequency(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & normalizationFrequency)"""
-        return _datamodel.ResponsePAZ_setNormalizationFrequency(self, normalizationFrequency)
-
-    def normalizationFrequency(self):
-        r"""normalizationFrequency(ResponsePAZ self) -> double"""
-        return _datamodel.ResponsePAZ_normalizationFrequency(self)
-
-    def setNumberOfZeros(self, numberOfZeros):
-        r"""setNumberOfZeros(ResponsePAZ self, Seiscomp::Core::Optional< int >::Impl const & numberOfZeros)"""
-        return _datamodel.ResponsePAZ_setNumberOfZeros(self, numberOfZeros)
-
-    def numberOfZeros(self):
-        r"""numberOfZeros(ResponsePAZ self) -> int"""
-        return _datamodel.ResponsePAZ_numberOfZeros(self)
-
-    def setNumberOfPoles(self, numberOfPoles):
-        r"""setNumberOfPoles(ResponsePAZ self, Seiscomp::Core::Optional< int >::Impl const & numberOfPoles)"""
-        return _datamodel.ResponsePAZ_setNumberOfPoles(self, numberOfPoles)
-
-    def numberOfPoles(self):
-        r"""numberOfPoles(ResponsePAZ self) -> int"""
-        return _datamodel.ResponsePAZ_numberOfPoles(self)
-
-    def setZeros(self, zeros):
-        r"""setZeros(ResponsePAZ self, Seiscomp::Core::Optional< Seiscomp::DataModel::ComplexArray >::Impl const & zeros)"""
-        return _datamodel.ResponsePAZ_setZeros(self, zeros)
-
-    def zeros(self, *args):
-        r"""
-        zeros(ResponsePAZ self) -> ComplexArray
-        zeros(ResponsePAZ self) -> ComplexArray
-        """
-        return _datamodel.ResponsePAZ_zeros(self, *args)
-
-    def setPoles(self, poles):
-        r"""setPoles(ResponsePAZ self, Seiscomp::Core::Optional< Seiscomp::DataModel::ComplexArray >::Impl const & poles)"""
-        return _datamodel.ResponsePAZ_setPoles(self, poles)
-
-    def poles(self, *args):
-        r"""
-        poles(ResponsePAZ self) -> ComplexArray
-        poles(ResponsePAZ self) -> ComplexArray
-        """
-        return _datamodel.ResponsePAZ_poles(self, *args)
-
-    def setRemark(self, remark):
-        r"""setRemark(ResponsePAZ self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
-        return _datamodel.ResponsePAZ_setRemark(self, remark)
-
-    def remark(self, *args):
-        r"""
-        remark(ResponsePAZ self) -> Blob
-        remark(ResponsePAZ self) -> Blob
-        """
-        return _datamodel.ResponsePAZ_remark(self, *args)
-
-    def setDecimationFactor(self, decimationFactor):
-        r"""setDecimationFactor(ResponsePAZ self, Seiscomp::Core::Optional< int >::Impl const & decimationFactor)"""
-        return _datamodel.ResponsePAZ_setDecimationFactor(self, decimationFactor)
-
-    def decimationFactor(self):
-        r"""decimationFactor(ResponsePAZ self) -> int"""
-        return _datamodel.ResponsePAZ_decimationFactor(self)
-
-    def setDelay(self, delay):
-        r"""setDelay(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & delay)"""
-        return _datamodel.ResponsePAZ_setDelay(self, delay)
-
-    def delay(self):
-        r"""delay(ResponsePAZ self) -> double"""
-        return _datamodel.ResponsePAZ_delay(self)
-
-    def setCorrection(self, correction):
-        r"""setCorrection(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & correction)"""
-        return _datamodel.ResponsePAZ_setCorrection(self, correction)
-
-    def correction(self):
-        r"""correction(ResponsePAZ self) -> double"""
-        return _datamodel.ResponsePAZ_correction(self)
-
-    def index(self):
-        r"""index(ResponsePAZ self) -> ResponsePAZIndex"""
-        return _datamodel.ResponsePAZ_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(ResponsePAZ self, ResponsePAZ lhs) -> bool"""
-        return _datamodel.ResponsePAZ_equalIndex(self, lhs)
-
-    def inventory(self):
-        r"""inventory(ResponsePAZ self) -> Inventory"""
-        return _datamodel.ResponsePAZ_inventory(self)
-
-    def assign(self, other):
-        r"""assign(ResponsePAZ self, Object other) -> bool"""
-        return _datamodel.ResponsePAZ_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(ResponsePAZ self, PublicObject parent) -> bool"""
-        return _datamodel.ResponsePAZ_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(ResponsePAZ self, PublicObject parent) -> bool"""
-        return _datamodel.ResponsePAZ_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(ResponsePAZ self) -> bool"""
-        return _datamodel.ResponsePAZ_detach(self)
-
-    def clone(self):
-        r"""clone(ResponsePAZ self) -> Object"""
-        return _datamodel.ResponsePAZ_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(ResponsePAZ self, Object child) -> bool"""
-        return _datamodel.ResponsePAZ_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(ResponsePAZ self, Visitor visitor)"""
-        return _datamodel.ResponsePAZ_accept(self, visitor)
-
-# Register ResponsePAZ in _datamodel:
-_datamodel.ResponsePAZ_swigregister(ResponsePAZ)
-
-def ResponsePAZ_ClassName():
-    r"""ResponsePAZ_ClassName() -> char const *"""
-    return _datamodel.ResponsePAZ_ClassName()
-
-def ResponsePAZ_TypeInfo():
-    r"""ResponsePAZ_TypeInfo() -> RTTI"""
-    return _datamodel.ResponsePAZ_TypeInfo()
-
-def ResponsePAZ_Cast(*args):
-    r"""
-    ResponsePAZ_Cast(BaseObject o) -> ResponsePAZ
-    ResponsePAZ_Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponsePAZ
-    """
-    return _datamodel.ResponsePAZ_Cast(*args)
-
-def ResponsePAZ_ConstCast(*args):
-    r"""
-    ResponsePAZ_ConstCast(BaseObject o) -> ResponsePAZ
-    ResponsePAZ_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponsePAZ
-    """
-    return _datamodel.ResponsePAZ_ConstCast(*args)
-
-def ResponsePAZ_Meta():
-    r"""ResponsePAZ_Meta() -> MetaObject"""
-    return _datamodel.ResponsePAZ_Meta()
-
-def ResponsePAZ_Create(*args):
-    r"""
-    ResponsePAZ_Create() -> ResponsePAZ
-    ResponsePAZ_Create(std::string const & publicID) -> ResponsePAZ
-    """
-    return _datamodel.ResponsePAZ_Create(*args)
-
-def ResponsePAZ_Find(publicID):
-    r"""ResponsePAZ_Find(std::string const & publicID) -> ResponsePAZ"""
-    return _datamodel.ResponsePAZ_Find(publicID)
-
-class ResponsePolynomialIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::ResponsePolynomialIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(ResponsePolynomialIndex self) -> ResponsePolynomialIndex
-        __init__(ResponsePolynomialIndex self, std::string const & name) -> ResponsePolynomialIndex
-        __init__(ResponsePolynomialIndex self, ResponsePolynomialIndex arg2) -> ResponsePolynomialIndex
-        """
-        _datamodel.ResponsePolynomialIndex_swiginit(self, _datamodel.new_ResponsePolynomialIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(ResponsePolynomialIndex self, ResponsePolynomialIndex arg2) -> bool"""
-        return _datamodel.ResponsePolynomialIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(ResponsePolynomialIndex self, ResponsePolynomialIndex arg2) -> bool"""
-        return _datamodel.ResponsePolynomialIndex___ne__(self, arg2)
-    name = property(_datamodel.ResponsePolynomialIndex_name_get, _datamodel.ResponsePolynomialIndex_name_set, doc=r"""name : std::string""")
-    __swig_destroy__ = _datamodel.delete_ResponsePolynomialIndex
-
-# Register ResponsePolynomialIndex in _datamodel:
-_datamodel.ResponsePolynomialIndex_swigregister(ResponsePolynomialIndex)
-
-class ResponsePolynomial(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::ResponsePolynomial class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.ResponsePolynomial_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.ResponsePolynomial_TypeInfo()
-
-    def className(self):
-        r"""className(ResponsePolynomial self) -> char const *"""
-        return _datamodel.ResponsePolynomial_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(ResponsePolynomial self) -> RTTI"""
-        return _datamodel.ResponsePolynomial_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> ResponsePolynomial
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponsePolynomial
-        """
-        return _datamodel.ResponsePolynomial_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> ResponsePolynomial
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponsePolynomial
-        """
-        return _datamodel.ResponsePolynomial_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(ResponsePolynomial self, GenericArchive ar)"""
-        return _datamodel.ResponsePolynomial_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.ResponsePolynomial_Meta()
-
-    def meta(self):
-        r"""meta(ResponsePolynomial self) -> MetaObject"""
-        return _datamodel.ResponsePolynomial_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(ResponsePolynomial self, ResponsePolynomial other) -> ResponsePolynomial
-        __init__(ResponsePolynomial self, std::string const & publicID) -> ResponsePolynomial
-        """
-        _datamodel.ResponsePolynomial_swiginit(self, _datamodel.new_ResponsePolynomial(*args))
-    __swig_destroy__ = _datamodel.delete_ResponsePolynomial
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> ResponsePolynomial
-        Create(std::string const & publicID) -> ResponsePolynomial
-        """
-        return _datamodel.ResponsePolynomial_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> ResponsePolynomial"""
-        return _datamodel.ResponsePolynomial_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(ResponsePolynomial self, ResponsePolynomial other) -> bool"""
-        return _datamodel.ResponsePolynomial___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(ResponsePolynomial self, ResponsePolynomial other) -> bool"""
-        return _datamodel.ResponsePolynomial___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(ResponsePolynomial self, ResponsePolynomial other) -> bool"""
-        return _datamodel.ResponsePolynomial_equal(self, other)
-
-    def setName(self, name):
-        r"""setName(ResponsePolynomial self, std::string const & name)"""
-        return _datamodel.ResponsePolynomial_setName(self, name)
-
-    def name(self):
-        r"""name(ResponsePolynomial self) -> std::string const &"""
-        return _datamodel.ResponsePolynomial_name(self)
-
-    def setGain(self, gain):
-        r"""setGain(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
-        return _datamodel.ResponsePolynomial_setGain(self, gain)
-
-    def gain(self):
-        r"""gain(ResponsePolynomial self) -> double"""
-        return _datamodel.ResponsePolynomial_gain(self)
-
-    def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
-        return _datamodel.ResponsePolynomial_setGainFrequency(self, gainFrequency)
-
-    def gainFrequency(self):
-        r"""gainFrequency(ResponsePolynomial self) -> double"""
-        return _datamodel.ResponsePolynomial_gainFrequency(self)
-
-    def setFrequencyUnit(self, frequencyUnit):
-        r"""setFrequencyUnit(ResponsePolynomial self, std::string const & frequencyUnit)"""
-        return _datamodel.ResponsePolynomial_setFrequencyUnit(self, frequencyUnit)
-
-    def frequencyUnit(self):
-        r"""frequencyUnit(ResponsePolynomial self) -> std::string const &"""
-        return _datamodel.ResponsePolynomial_frequencyUnit(self)
-
-    def setApproximationType(self, approximationType):
-        r"""setApproximationType(ResponsePolynomial self, std::string const & approximationType)"""
-        return _datamodel.ResponsePolynomial_setApproximationType(self, approximationType)
-
-    def approximationType(self):
-        r"""approximationType(ResponsePolynomial self) -> std::string const &"""
-        return _datamodel.ResponsePolynomial_approximationType(self)
-
-    def setApproximationLowerBound(self, approximationLowerBound):
-        r"""setApproximationLowerBound(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & approximationLowerBound)"""
-        return _datamodel.ResponsePolynomial_setApproximationLowerBound(self, approximationLowerBound)
-
-    def approximationLowerBound(self):
-        r"""approximationLowerBound(ResponsePolynomial self) -> double"""
-        return _datamodel.ResponsePolynomial_approximationLowerBound(self)
-
-    def setApproximationUpperBound(self, approximationUpperBound):
-        r"""setApproximationUpperBound(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & approximationUpperBound)"""
-        return _datamodel.ResponsePolynomial_setApproximationUpperBound(self, approximationUpperBound)
-
-    def approximationUpperBound(self):
-        r"""approximationUpperBound(ResponsePolynomial self) -> double"""
-        return _datamodel.ResponsePolynomial_approximationUpperBound(self)
-
-    def setApproximationError(self, approximationError):
-        r"""setApproximationError(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & approximationError)"""
-        return _datamodel.ResponsePolynomial_setApproximationError(self, approximationError)
-
-    def approximationError(self):
-        r"""approximationError(ResponsePolynomial self) -> double"""
-        return _datamodel.ResponsePolynomial_approximationError(self)
-
-    def setNumberOfCoefficients(self, numberOfCoefficients):
-        r"""setNumberOfCoefficients(ResponsePolynomial self, Seiscomp::Core::Optional< int >::Impl const & numberOfCoefficients)"""
-        return _datamodel.ResponsePolynomial_setNumberOfCoefficients(self, numberOfCoefficients)
-
-    def numberOfCoefficients(self):
-        r"""numberOfCoefficients(ResponsePolynomial self) -> int"""
-        return _datamodel.ResponsePolynomial_numberOfCoefficients(self)
-
-    def setCoefficients(self, coefficients):
-        r"""setCoefficients(ResponsePolynomial self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & coefficients)"""
-        return _datamodel.ResponsePolynomial_setCoefficients(self, coefficients)
-
-    def coefficients(self, *args):
-        r"""
-        coefficients(ResponsePolynomial self) -> RealArray
-        coefficients(ResponsePolynomial self) -> RealArray
-        """
-        return _datamodel.ResponsePolynomial_coefficients(self, *args)
-
-    def setRemark(self, remark):
-        r"""setRemark(ResponsePolynomial self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
-        return _datamodel.ResponsePolynomial_setRemark(self, remark)
-
-    def remark(self, *args):
-        r"""
-        remark(ResponsePolynomial self) -> Blob
-        remark(ResponsePolynomial self) -> Blob
-        """
-        return _datamodel.ResponsePolynomial_remark(self, *args)
-
-    def index(self):
-        r"""index(ResponsePolynomial self) -> ResponsePolynomialIndex"""
-        return _datamodel.ResponsePolynomial_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(ResponsePolynomial self, ResponsePolynomial lhs) -> bool"""
-        return _datamodel.ResponsePolynomial_equalIndex(self, lhs)
-
-    def inventory(self):
-        r"""inventory(ResponsePolynomial self) -> Inventory"""
-        return _datamodel.ResponsePolynomial_inventory(self)
-
-    def assign(self, other):
-        r"""assign(ResponsePolynomial self, Object other) -> bool"""
-        return _datamodel.ResponsePolynomial_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(ResponsePolynomial self, PublicObject parent) -> bool"""
-        return _datamodel.ResponsePolynomial_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(ResponsePolynomial self, PublicObject parent) -> bool"""
-        return _datamodel.ResponsePolynomial_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(ResponsePolynomial self) -> bool"""
-        return _datamodel.ResponsePolynomial_detach(self)
-
-    def clone(self):
-        r"""clone(ResponsePolynomial self) -> Object"""
-        return _datamodel.ResponsePolynomial_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(ResponsePolynomial self, Object child) -> bool"""
-        return _datamodel.ResponsePolynomial_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(ResponsePolynomial self, Visitor visitor)"""
-        return _datamodel.ResponsePolynomial_accept(self, visitor)
-
-# Register ResponsePolynomial in _datamodel:
-_datamodel.ResponsePolynomial_swigregister(ResponsePolynomial)
-
-def ResponsePolynomial_ClassName():
-    r"""ResponsePolynomial_ClassName() -> char const *"""
-    return _datamodel.ResponsePolynomial_ClassName()
-
-def ResponsePolynomial_TypeInfo():
-    r"""ResponsePolynomial_TypeInfo() -> RTTI"""
-    return _datamodel.ResponsePolynomial_TypeInfo()
-
-def ResponsePolynomial_Cast(*args):
-    r"""
-    ResponsePolynomial_Cast(BaseObject o) -> ResponsePolynomial
-    ResponsePolynomial_Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponsePolynomial
-    """
-    return _datamodel.ResponsePolynomial_Cast(*args)
-
-def ResponsePolynomial_ConstCast(*args):
-    r"""
-    ResponsePolynomial_ConstCast(BaseObject o) -> ResponsePolynomial
-    ResponsePolynomial_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponsePolynomial
-    """
-    return _datamodel.ResponsePolynomial_ConstCast(*args)
-
-def ResponsePolynomial_Meta():
-    r"""ResponsePolynomial_Meta() -> MetaObject"""
-    return _datamodel.ResponsePolynomial_Meta()
-
-def ResponsePolynomial_Create(*args):
-    r"""
-    ResponsePolynomial_Create() -> ResponsePolynomial
-    ResponsePolynomial_Create(std::string const & publicID) -> ResponsePolynomial
-    """
-    return _datamodel.ResponsePolynomial_Create(*args)
-
-def ResponsePolynomial_Find(publicID):
-    r"""ResponsePolynomial_Find(std::string const & publicID) -> ResponsePolynomial"""
-    return _datamodel.ResponsePolynomial_Find(publicID)
-
-class ResponseFAPIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::ResponseFAPIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(ResponseFAPIndex self) -> ResponseFAPIndex
-        __init__(ResponseFAPIndex self, std::string const & name) -> ResponseFAPIndex
-        __init__(ResponseFAPIndex self, ResponseFAPIndex arg2) -> ResponseFAPIndex
-        """
-        _datamodel.ResponseFAPIndex_swiginit(self, _datamodel.new_ResponseFAPIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(ResponseFAPIndex self, ResponseFAPIndex arg2) -> bool"""
-        return _datamodel.ResponseFAPIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(ResponseFAPIndex self, ResponseFAPIndex arg2) -> bool"""
-        return _datamodel.ResponseFAPIndex___ne__(self, arg2)
-    name = property(_datamodel.ResponseFAPIndex_name_get, _datamodel.ResponseFAPIndex_name_set, doc=r"""name : std::string""")
-    __swig_destroy__ = _datamodel.delete_ResponseFAPIndex
-
-# Register ResponseFAPIndex in _datamodel:
-_datamodel.ResponseFAPIndex_swigregister(ResponseFAPIndex)
-
-class ResponseFAP(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::ResponseFAP class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.ResponseFAP_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.ResponseFAP_TypeInfo()
-
-    def className(self):
-        r"""className(ResponseFAP self) -> char const *"""
-        return _datamodel.ResponseFAP_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(ResponseFAP self) -> RTTI"""
-        return _datamodel.ResponseFAP_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> ResponseFAP
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponseFAP
-        """
-        return _datamodel.ResponseFAP_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> ResponseFAP
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponseFAP
-        """
-        return _datamodel.ResponseFAP_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(ResponseFAP self, GenericArchive ar)"""
-        return _datamodel.ResponseFAP_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.ResponseFAP_Meta()
-
-    def meta(self):
-        r"""meta(ResponseFAP self) -> MetaObject"""
-        return _datamodel.ResponseFAP_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(ResponseFAP self, ResponseFAP other) -> ResponseFAP
-        __init__(ResponseFAP self, std::string const & publicID) -> ResponseFAP
-        """
-        _datamodel.ResponseFAP_swiginit(self, _datamodel.new_ResponseFAP(*args))
-    __swig_destroy__ = _datamodel.delete_ResponseFAP
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> ResponseFAP
-        Create(std::string const & publicID) -> ResponseFAP
-        """
-        return _datamodel.ResponseFAP_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> ResponseFAP"""
-        return _datamodel.ResponseFAP_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(ResponseFAP self, ResponseFAP other) -> bool"""
-        return _datamodel.ResponseFAP___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(ResponseFAP self, ResponseFAP other) -> bool"""
-        return _datamodel.ResponseFAP___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(ResponseFAP self, ResponseFAP other) -> bool"""
-        return _datamodel.ResponseFAP_equal(self, other)
-
-    def setName(self, name):
-        r"""setName(ResponseFAP self, std::string const & name)"""
-        return _datamodel.ResponseFAP_setName(self, name)
-
-    def name(self):
-        r"""name(ResponseFAP self) -> std::string const &"""
-        return _datamodel.ResponseFAP_name(self)
-
-    def setGain(self, gain):
-        r"""setGain(ResponseFAP self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
-        return _datamodel.ResponseFAP_setGain(self, gain)
-
-    def gain(self):
-        r"""gain(ResponseFAP self) -> double"""
-        return _datamodel.ResponseFAP_gain(self)
-
-    def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(ResponseFAP self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
-        return _datamodel.ResponseFAP_setGainFrequency(self, gainFrequency)
-
-    def gainFrequency(self):
-        r"""gainFrequency(ResponseFAP self) -> double"""
-        return _datamodel.ResponseFAP_gainFrequency(self)
-
-    def setNumberOfTuples(self, numberOfTuples):
-        r"""setNumberOfTuples(ResponseFAP self, Seiscomp::Core::Optional< int >::Impl const & numberOfTuples)"""
-        return _datamodel.ResponseFAP_setNumberOfTuples(self, numberOfTuples)
-
-    def numberOfTuples(self):
-        r"""numberOfTuples(ResponseFAP self) -> int"""
-        return _datamodel.ResponseFAP_numberOfTuples(self)
-
-    def setTuples(self, tuples):
-        r"""setTuples(ResponseFAP self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & tuples)"""
-        return _datamodel.ResponseFAP_setTuples(self, tuples)
-
-    def tuples(self, *args):
-        r"""
-        tuples(ResponseFAP self) -> RealArray
-        tuples(ResponseFAP self) -> RealArray
-        """
-        return _datamodel.ResponseFAP_tuples(self, *args)
-
-    def setRemark(self, remark):
-        r"""setRemark(ResponseFAP self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
-        return _datamodel.ResponseFAP_setRemark(self, remark)
-
-    def remark(self, *args):
-        r"""
-        remark(ResponseFAP self) -> Blob
-        remark(ResponseFAP self) -> Blob
-        """
-        return _datamodel.ResponseFAP_remark(self, *args)
-
-    def index(self):
-        r"""index(ResponseFAP self) -> ResponseFAPIndex"""
-        return _datamodel.ResponseFAP_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(ResponseFAP self, ResponseFAP lhs) -> bool"""
-        return _datamodel.ResponseFAP_equalIndex(self, lhs)
-
-    def inventory(self):
-        r"""inventory(ResponseFAP self) -> Inventory"""
-        return _datamodel.ResponseFAP_inventory(self)
-
-    def assign(self, other):
-        r"""assign(ResponseFAP self, Object other) -> bool"""
-        return _datamodel.ResponseFAP_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(ResponseFAP self, PublicObject parent) -> bool"""
-        return _datamodel.ResponseFAP_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(ResponseFAP self, PublicObject parent) -> bool"""
-        return _datamodel.ResponseFAP_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(ResponseFAP self) -> bool"""
-        return _datamodel.ResponseFAP_detach(self)
-
-    def clone(self):
-        r"""clone(ResponseFAP self) -> Object"""
-        return _datamodel.ResponseFAP_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(ResponseFAP self, Object child) -> bool"""
-        return _datamodel.ResponseFAP_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(ResponseFAP self, Visitor visitor)"""
-        return _datamodel.ResponseFAP_accept(self, visitor)
-
-# Register ResponseFAP in _datamodel:
-_datamodel.ResponseFAP_swigregister(ResponseFAP)
-
-def ResponseFAP_ClassName():
-    r"""ResponseFAP_ClassName() -> char const *"""
-    return _datamodel.ResponseFAP_ClassName()
-
-def ResponseFAP_TypeInfo():
-    r"""ResponseFAP_TypeInfo() -> RTTI"""
-    return _datamodel.ResponseFAP_TypeInfo()
-
-def ResponseFAP_Cast(*args):
-    r"""
-    ResponseFAP_Cast(BaseObject o) -> ResponseFAP
-    ResponseFAP_Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponseFAP
-    """
-    return _datamodel.ResponseFAP_Cast(*args)
-
-def ResponseFAP_ConstCast(*args):
-    r"""
-    ResponseFAP_ConstCast(BaseObject o) -> ResponseFAP
-    ResponseFAP_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponseFAP
-    """
-    return _datamodel.ResponseFAP_ConstCast(*args)
-
-def ResponseFAP_Meta():
-    r"""ResponseFAP_Meta() -> MetaObject"""
-    return _datamodel.ResponseFAP_Meta()
-
-def ResponseFAP_Create(*args):
-    r"""
-    ResponseFAP_Create() -> ResponseFAP
-    ResponseFAP_Create(std::string const & publicID) -> ResponseFAP
-    """
-    return _datamodel.ResponseFAP_Create(*args)
-
-def ResponseFAP_Find(publicID):
-    r"""ResponseFAP_Find(std::string const & publicID) -> ResponseFAP"""
-    return _datamodel.ResponseFAP_Find(publicID)
-
-class ResponseFIRIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::ResponseFIRIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(ResponseFIRIndex self) -> ResponseFIRIndex
-        __init__(ResponseFIRIndex self, std::string const & name) -> ResponseFIRIndex
-        __init__(ResponseFIRIndex self, ResponseFIRIndex arg2) -> ResponseFIRIndex
-        """
-        _datamodel.ResponseFIRIndex_swiginit(self, _datamodel.new_ResponseFIRIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(ResponseFIRIndex self, ResponseFIRIndex arg2) -> bool"""
-        return _datamodel.ResponseFIRIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(ResponseFIRIndex self, ResponseFIRIndex arg2) -> bool"""
-        return _datamodel.ResponseFIRIndex___ne__(self, arg2)
-    name = property(_datamodel.ResponseFIRIndex_name_get, _datamodel.ResponseFIRIndex_name_set, doc=r"""name : std::string""")
-    __swig_destroy__ = _datamodel.delete_ResponseFIRIndex
-
-# Register ResponseFIRIndex in _datamodel:
-_datamodel.ResponseFIRIndex_swigregister(ResponseFIRIndex)
-
-class ResponseFIR(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::ResponseFIR class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.ResponseFIR_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.ResponseFIR_TypeInfo()
-
-    def className(self):
-        r"""className(ResponseFIR self) -> char const *"""
-        return _datamodel.ResponseFIR_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(ResponseFIR self) -> RTTI"""
-        return _datamodel.ResponseFIR_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> ResponseFIR
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponseFIR
-        """
-        return _datamodel.ResponseFIR_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> ResponseFIR
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponseFIR
-        """
-        return _datamodel.ResponseFIR_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(ResponseFIR self, GenericArchive ar)"""
-        return _datamodel.ResponseFIR_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.ResponseFIR_Meta()
-
-    def meta(self):
-        r"""meta(ResponseFIR self) -> MetaObject"""
-        return _datamodel.ResponseFIR_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(ResponseFIR self, ResponseFIR other) -> ResponseFIR
-        __init__(ResponseFIR self, std::string const & publicID) -> ResponseFIR
-        """
-        _datamodel.ResponseFIR_swiginit(self, _datamodel.new_ResponseFIR(*args))
-    __swig_destroy__ = _datamodel.delete_ResponseFIR
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> ResponseFIR
-        Create(std::string const & publicID) -> ResponseFIR
-        """
-        return _datamodel.ResponseFIR_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> ResponseFIR"""
-        return _datamodel.ResponseFIR_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(ResponseFIR self, ResponseFIR other) -> bool"""
-        return _datamodel.ResponseFIR___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(ResponseFIR self, ResponseFIR other) -> bool"""
-        return _datamodel.ResponseFIR___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(ResponseFIR self, ResponseFIR other) -> bool"""
-        return _datamodel.ResponseFIR_equal(self, other)
-
-    def setName(self, name):
-        r"""setName(ResponseFIR self, std::string const & name)"""
-        return _datamodel.ResponseFIR_setName(self, name)
-
-    def name(self):
-        r"""name(ResponseFIR self) -> std::string const &"""
-        return _datamodel.ResponseFIR_name(self)
-
-    def setGain(self, gain):
-        r"""setGain(ResponseFIR self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
-        return _datamodel.ResponseFIR_setGain(self, gain)
-
-    def gain(self):
-        r"""gain(ResponseFIR self) -> double"""
-        return _datamodel.ResponseFIR_gain(self)
-
-    def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(ResponseFIR self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
-        return _datamodel.ResponseFIR_setGainFrequency(self, gainFrequency)
-
-    def gainFrequency(self):
-        r"""gainFrequency(ResponseFIR self) -> double"""
-        return _datamodel.ResponseFIR_gainFrequency(self)
-
-    def setDecimationFactor(self, decimationFactor):
-        r"""setDecimationFactor(ResponseFIR self, Seiscomp::Core::Optional< int >::Impl const & decimationFactor)"""
-        return _datamodel.ResponseFIR_setDecimationFactor(self, decimationFactor)
-
-    def decimationFactor(self):
-        r"""decimationFactor(ResponseFIR self) -> int"""
-        return _datamodel.ResponseFIR_decimationFactor(self)
-
-    def setDelay(self, delay):
-        r"""setDelay(ResponseFIR self, Seiscomp::Core::Optional< double >::Impl const & delay)"""
-        return _datamodel.ResponseFIR_setDelay(self, delay)
-
-    def delay(self):
-        r"""delay(ResponseFIR self) -> double"""
-        return _datamodel.ResponseFIR_delay(self)
-
-    def setCorrection(self, correction):
-        r"""setCorrection(ResponseFIR self, Seiscomp::Core::Optional< double >::Impl const & correction)"""
-        return _datamodel.ResponseFIR_setCorrection(self, correction)
-
-    def correction(self):
-        r"""correction(ResponseFIR self) -> double"""
-        return _datamodel.ResponseFIR_correction(self)
-
-    def setNumberOfCoefficients(self, numberOfCoefficients):
-        r"""setNumberOfCoefficients(ResponseFIR self, Seiscomp::Core::Optional< int >::Impl const & numberOfCoefficients)"""
-        return _datamodel.ResponseFIR_setNumberOfCoefficients(self, numberOfCoefficients)
-
-    def numberOfCoefficients(self):
-        r"""numberOfCoefficients(ResponseFIR self) -> int"""
-        return _datamodel.ResponseFIR_numberOfCoefficients(self)
-
-    def setSymmetry(self, symmetry):
-        r"""setSymmetry(ResponseFIR self, std::string const & symmetry)"""
-        return _datamodel.ResponseFIR_setSymmetry(self, symmetry)
-
-    def symmetry(self):
-        r"""symmetry(ResponseFIR self) -> std::string const &"""
-        return _datamodel.ResponseFIR_symmetry(self)
-
-    def setCoefficients(self, coefficients):
-        r"""setCoefficients(ResponseFIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & coefficients)"""
-        return _datamodel.ResponseFIR_setCoefficients(self, coefficients)
-
-    def coefficients(self, *args):
-        r"""
-        coefficients(ResponseFIR self) -> RealArray
-        coefficients(ResponseFIR self) -> RealArray
-        """
-        return _datamodel.ResponseFIR_coefficients(self, *args)
-
-    def setRemark(self, remark):
-        r"""setRemark(ResponseFIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
-        return _datamodel.ResponseFIR_setRemark(self, remark)
-
-    def remark(self, *args):
-        r"""
-        remark(ResponseFIR self) -> Blob
-        remark(ResponseFIR self) -> Blob
-        """
-        return _datamodel.ResponseFIR_remark(self, *args)
-
-    def index(self):
-        r"""index(ResponseFIR self) -> ResponseFIRIndex"""
-        return _datamodel.ResponseFIR_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(ResponseFIR self, ResponseFIR lhs) -> bool"""
-        return _datamodel.ResponseFIR_equalIndex(self, lhs)
-
-    def inventory(self):
-        r"""inventory(ResponseFIR self) -> Inventory"""
-        return _datamodel.ResponseFIR_inventory(self)
-
-    def assign(self, other):
-        r"""assign(ResponseFIR self, Object other) -> bool"""
-        return _datamodel.ResponseFIR_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(ResponseFIR self, PublicObject parent) -> bool"""
-        return _datamodel.ResponseFIR_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(ResponseFIR self, PublicObject parent) -> bool"""
-        return _datamodel.ResponseFIR_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(ResponseFIR self) -> bool"""
-        return _datamodel.ResponseFIR_detach(self)
-
-    def clone(self):
-        r"""clone(ResponseFIR self) -> Object"""
-        return _datamodel.ResponseFIR_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(ResponseFIR self, Object child) -> bool"""
-        return _datamodel.ResponseFIR_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(ResponseFIR self, Visitor visitor)"""
-        return _datamodel.ResponseFIR_accept(self, visitor)
-
-# Register ResponseFIR in _datamodel:
-_datamodel.ResponseFIR_swigregister(ResponseFIR)
-
-def ResponseFIR_ClassName():
-    r"""ResponseFIR_ClassName() -> char const *"""
-    return _datamodel.ResponseFIR_ClassName()
-
-def ResponseFIR_TypeInfo():
-    r"""ResponseFIR_TypeInfo() -> RTTI"""
-    return _datamodel.ResponseFIR_TypeInfo()
-
-def ResponseFIR_Cast(*args):
-    r"""
-    ResponseFIR_Cast(BaseObject o) -> ResponseFIR
-    ResponseFIR_Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponseFIR
-    """
-    return _datamodel.ResponseFIR_Cast(*args)
-
-def ResponseFIR_ConstCast(*args):
-    r"""
-    ResponseFIR_ConstCast(BaseObject o) -> ResponseFIR
-    ResponseFIR_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponseFIR
-    """
-    return _datamodel.ResponseFIR_ConstCast(*args)
-
-def ResponseFIR_Meta():
-    r"""ResponseFIR_Meta() -> MetaObject"""
-    return _datamodel.ResponseFIR_Meta()
-
-def ResponseFIR_Create(*args):
-    r"""
-    ResponseFIR_Create() -> ResponseFIR
-    ResponseFIR_Create(std::string const & publicID) -> ResponseFIR
-    """
-    return _datamodel.ResponseFIR_Create(*args)
-
-def ResponseFIR_Find(publicID):
-    r"""ResponseFIR_Find(std::string const & publicID) -> ResponseFIR"""
-    return _datamodel.ResponseFIR_Find(publicID)
-
-class ResponseIIRIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::ResponseIIRIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(ResponseIIRIndex self) -> ResponseIIRIndex
-        __init__(ResponseIIRIndex self, std::string const & name) -> ResponseIIRIndex
-        __init__(ResponseIIRIndex self, ResponseIIRIndex arg2) -> ResponseIIRIndex
-        """
-        _datamodel.ResponseIIRIndex_swiginit(self, _datamodel.new_ResponseIIRIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(ResponseIIRIndex self, ResponseIIRIndex arg2) -> bool"""
-        return _datamodel.ResponseIIRIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(ResponseIIRIndex self, ResponseIIRIndex arg2) -> bool"""
-        return _datamodel.ResponseIIRIndex___ne__(self, arg2)
-    name = property(_datamodel.ResponseIIRIndex_name_get, _datamodel.ResponseIIRIndex_name_set, doc=r"""name : std::string""")
-    __swig_destroy__ = _datamodel.delete_ResponseIIRIndex
-
-# Register ResponseIIRIndex in _datamodel:
-_datamodel.ResponseIIRIndex_swigregister(ResponseIIRIndex)
-
-class ResponseIIR(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::ResponseIIR class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.ResponseIIR_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.ResponseIIR_TypeInfo()
-
-    def className(self):
-        r"""className(ResponseIIR self) -> char const *"""
-        return _datamodel.ResponseIIR_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(ResponseIIR self) -> RTTI"""
-        return _datamodel.ResponseIIR_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> ResponseIIR
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponseIIR
-        """
-        return _datamodel.ResponseIIR_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> ResponseIIR
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponseIIR
-        """
-        return _datamodel.ResponseIIR_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(ResponseIIR self, GenericArchive ar)"""
-        return _datamodel.ResponseIIR_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.ResponseIIR_Meta()
-
-    def meta(self):
-        r"""meta(ResponseIIR self) -> MetaObject"""
-        return _datamodel.ResponseIIR_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(ResponseIIR self, ResponseIIR other) -> ResponseIIR
-        __init__(ResponseIIR self, std::string const & publicID) -> ResponseIIR
-        """
-        _datamodel.ResponseIIR_swiginit(self, _datamodel.new_ResponseIIR(*args))
-    __swig_destroy__ = _datamodel.delete_ResponseIIR
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> ResponseIIR
-        Create(std::string const & publicID) -> ResponseIIR
-        """
-        return _datamodel.ResponseIIR_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> ResponseIIR"""
-        return _datamodel.ResponseIIR_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(ResponseIIR self, ResponseIIR other) -> bool"""
-        return _datamodel.ResponseIIR___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(ResponseIIR self, ResponseIIR other) -> bool"""
-        return _datamodel.ResponseIIR___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(ResponseIIR self, ResponseIIR other) -> bool"""
-        return _datamodel.ResponseIIR_equal(self, other)
-
-    def setName(self, name):
-        r"""setName(ResponseIIR self, std::string const & name)"""
-        return _datamodel.ResponseIIR_setName(self, name)
-
-    def name(self):
-        r"""name(ResponseIIR self) -> std::string const &"""
-        return _datamodel.ResponseIIR_name(self)
-
-    def setType(self, type):
-        r"""setType(ResponseIIR self, std::string const & type)"""
-        return _datamodel.ResponseIIR_setType(self, type)
-
-    def type(self):
-        r"""type(ResponseIIR self) -> std::string const &"""
-        return _datamodel.ResponseIIR_type(self)
-
-    def setGain(self, gain):
-        r"""setGain(ResponseIIR self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
-        return _datamodel.ResponseIIR_setGain(self, gain)
-
-    def gain(self):
-        r"""gain(ResponseIIR self) -> double"""
-        return _datamodel.ResponseIIR_gain(self)
-
-    def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(ResponseIIR self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
-        return _datamodel.ResponseIIR_setGainFrequency(self, gainFrequency)
-
-    def gainFrequency(self):
-        r"""gainFrequency(ResponseIIR self) -> double"""
-        return _datamodel.ResponseIIR_gainFrequency(self)
-
-    def setDecimationFactor(self, decimationFactor):
-        r"""setDecimationFactor(ResponseIIR self, Seiscomp::Core::Optional< int >::Impl const & decimationFactor)"""
-        return _datamodel.ResponseIIR_setDecimationFactor(self, decimationFactor)
-
-    def decimationFactor(self):
-        r"""decimationFactor(ResponseIIR self) -> int"""
-        return _datamodel.ResponseIIR_decimationFactor(self)
-
-    def setDelay(self, delay):
-        r"""setDelay(ResponseIIR self, Seiscomp::Core::Optional< double >::Impl const & delay)"""
-        return _datamodel.ResponseIIR_setDelay(self, delay)
-
-    def delay(self):
-        r"""delay(ResponseIIR self) -> double"""
-        return _datamodel.ResponseIIR_delay(self)
-
-    def setCorrection(self, correction):
-        r"""setCorrection(ResponseIIR self, Seiscomp::Core::Optional< double >::Impl const & correction)"""
-        return _datamodel.ResponseIIR_setCorrection(self, correction)
-
-    def correction(self):
-        r"""correction(ResponseIIR self) -> double"""
-        return _datamodel.ResponseIIR_correction(self)
-
-    def setNumberOfNumerators(self, numberOfNumerators):
-        r"""setNumberOfNumerators(ResponseIIR self, Seiscomp::Core::Optional< int >::Impl const & numberOfNumerators)"""
-        return _datamodel.ResponseIIR_setNumberOfNumerators(self, numberOfNumerators)
-
-    def numberOfNumerators(self):
-        r"""numberOfNumerators(ResponseIIR self) -> int"""
-        return _datamodel.ResponseIIR_numberOfNumerators(self)
-
-    def setNumberOfDenominators(self, numberOfDenominators):
-        r"""setNumberOfDenominators(ResponseIIR self, Seiscomp::Core::Optional< int >::Impl const & numberOfDenominators)"""
-        return _datamodel.ResponseIIR_setNumberOfDenominators(self, numberOfDenominators)
-
-    def numberOfDenominators(self):
-        r"""numberOfDenominators(ResponseIIR self) -> int"""
-        return _datamodel.ResponseIIR_numberOfDenominators(self)
-
-    def setNumerators(self, numerators):
-        r"""setNumerators(ResponseIIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & numerators)"""
-        return _datamodel.ResponseIIR_setNumerators(self, numerators)
-
-    def numerators(self, *args):
-        r"""
-        numerators(ResponseIIR self) -> RealArray
-        numerators(ResponseIIR self) -> RealArray
-        """
-        return _datamodel.ResponseIIR_numerators(self, *args)
-
-    def setDenominators(self, denominators):
-        r"""setDenominators(ResponseIIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & denominators)"""
-        return _datamodel.ResponseIIR_setDenominators(self, denominators)
-
-    def denominators(self, *args):
-        r"""
-        denominators(ResponseIIR self) -> RealArray
-        denominators(ResponseIIR self) -> RealArray
-        """
-        return _datamodel.ResponseIIR_denominators(self, *args)
-
-    def setRemark(self, remark):
-        r"""setRemark(ResponseIIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
-        return _datamodel.ResponseIIR_setRemark(self, remark)
-
-    def remark(self, *args):
-        r"""
-        remark(ResponseIIR self) -> Blob
-        remark(ResponseIIR self) -> Blob
-        """
-        return _datamodel.ResponseIIR_remark(self, *args)
-
-    def index(self):
-        r"""index(ResponseIIR self) -> ResponseIIRIndex"""
-        return _datamodel.ResponseIIR_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(ResponseIIR self, ResponseIIR lhs) -> bool"""
-        return _datamodel.ResponseIIR_equalIndex(self, lhs)
-
-    def inventory(self):
-        r"""inventory(ResponseIIR self) -> Inventory"""
-        return _datamodel.ResponseIIR_inventory(self)
-
-    def assign(self, other):
-        r"""assign(ResponseIIR self, Object other) -> bool"""
-        return _datamodel.ResponseIIR_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(ResponseIIR self, PublicObject parent) -> bool"""
-        return _datamodel.ResponseIIR_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(ResponseIIR self, PublicObject parent) -> bool"""
-        return _datamodel.ResponseIIR_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(ResponseIIR self) -> bool"""
-        return _datamodel.ResponseIIR_detach(self)
-
-    def clone(self):
-        r"""clone(ResponseIIR self) -> Object"""
-        return _datamodel.ResponseIIR_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(ResponseIIR self, Object child) -> bool"""
-        return _datamodel.ResponseIIR_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(ResponseIIR self, Visitor visitor)"""
-        return _datamodel.ResponseIIR_accept(self, visitor)
-
-# Register ResponseIIR in _datamodel:
-_datamodel.ResponseIIR_swigregister(ResponseIIR)
-
-def ResponseIIR_ClassName():
-    r"""ResponseIIR_ClassName() -> char const *"""
-    return _datamodel.ResponseIIR_ClassName()
-
-def ResponseIIR_TypeInfo():
-    r"""ResponseIIR_TypeInfo() -> RTTI"""
-    return _datamodel.ResponseIIR_TypeInfo()
-
-def ResponseIIR_Cast(*args):
-    r"""
-    ResponseIIR_Cast(BaseObject o) -> ResponseIIR
-    ResponseIIR_Cast(Seiscomp::Core::BaseObjectPtr o) -> ResponseIIR
-    """
-    return _datamodel.ResponseIIR_Cast(*args)
-
-def ResponseIIR_ConstCast(*args):
-    r"""
-    ResponseIIR_ConstCast(BaseObject o) -> ResponseIIR
-    ResponseIIR_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ResponseIIR
-    """
-    return _datamodel.ResponseIIR_ConstCast(*args)
-
-def ResponseIIR_Meta():
-    r"""ResponseIIR_Meta() -> MetaObject"""
-    return _datamodel.ResponseIIR_Meta()
-
-def ResponseIIR_Create(*args):
-    r"""
-    ResponseIIR_Create() -> ResponseIIR
-    ResponseIIR_Create(std::string const & publicID) -> ResponseIIR
-    """
-    return _datamodel.ResponseIIR_Create(*args)
-
-def ResponseIIR_Find(publicID):
-    r"""ResponseIIR_Find(std::string const & publicID) -> ResponseIIR"""
-    return _datamodel.ResponseIIR_Find(publicID)
-
-class DataloggerCalibrationIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::DataloggerCalibrationIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(DataloggerCalibrationIndex self) -> DataloggerCalibrationIndex
-        __init__(DataloggerCalibrationIndex self, std::string const & serialNumber, int channel, Time start) -> DataloggerCalibrationIndex
-        __init__(DataloggerCalibrationIndex self, DataloggerCalibrationIndex arg2) -> DataloggerCalibrationIndex
-        """
-        _datamodel.DataloggerCalibrationIndex_swiginit(self, _datamodel.new_DataloggerCalibrationIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(DataloggerCalibrationIndex self, DataloggerCalibrationIndex arg2) -> bool"""
-        return _datamodel.DataloggerCalibrationIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(DataloggerCalibrationIndex self, DataloggerCalibrationIndex arg2) -> bool"""
-        return _datamodel.DataloggerCalibrationIndex___ne__(self, arg2)
-    serialNumber = property(_datamodel.DataloggerCalibrationIndex_serialNumber_get, _datamodel.DataloggerCalibrationIndex_serialNumber_set, doc=r"""serialNumber : std::string""")
-    channel = property(_datamodel.DataloggerCalibrationIndex_channel_get, _datamodel.DataloggerCalibrationIndex_channel_set, doc=r"""channel : int""")
-    start = property(_datamodel.DataloggerCalibrationIndex_start_get, _datamodel.DataloggerCalibrationIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
-    __swig_destroy__ = _datamodel.delete_DataloggerCalibrationIndex
-
-# Register DataloggerCalibrationIndex in _datamodel:
-_datamodel.DataloggerCalibrationIndex_swigregister(DataloggerCalibrationIndex)
-
-class DataloggerCalibration(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::DataloggerCalibration class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.DataloggerCalibration_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.DataloggerCalibration_TypeInfo()
-
-    def className(self):
-        r"""className(DataloggerCalibration self) -> char const *"""
-        return _datamodel.DataloggerCalibration_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(DataloggerCalibration self) -> RTTI"""
-        return _datamodel.DataloggerCalibration_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> DataloggerCalibration
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> DataloggerCalibration
-        """
-        return _datamodel.DataloggerCalibration_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> DataloggerCalibration
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataloggerCalibration
-        """
-        return _datamodel.DataloggerCalibration_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(DataloggerCalibration self, GenericArchive ar)"""
-        return _datamodel.DataloggerCalibration_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.DataloggerCalibration_Meta()
-
-    def meta(self):
-        r"""meta(DataloggerCalibration self) -> MetaObject"""
-        return _datamodel.DataloggerCalibration_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(DataloggerCalibration self) -> DataloggerCalibration
-        __init__(DataloggerCalibration self, DataloggerCalibration other) -> DataloggerCalibration
-        """
-        _datamodel.DataloggerCalibration_swiginit(self, _datamodel.new_DataloggerCalibration(*args))
-    __swig_destroy__ = _datamodel.delete_DataloggerCalibration
-
-    def __eq__(self, other):
-        r"""__eq__(DataloggerCalibration self, DataloggerCalibration other) -> bool"""
-        return _datamodel.DataloggerCalibration___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(DataloggerCalibration self, DataloggerCalibration other) -> bool"""
-        return _datamodel.DataloggerCalibration___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(DataloggerCalibration self, DataloggerCalibration other) -> bool"""
-        return _datamodel.DataloggerCalibration_equal(self, other)
-
-    def setSerialNumber(self, serialNumber):
-        r"""setSerialNumber(DataloggerCalibration self, std::string const & serialNumber)"""
-        return _datamodel.DataloggerCalibration_setSerialNumber(self, serialNumber)
-
-    def serialNumber(self):
-        r"""serialNumber(DataloggerCalibration self) -> std::string const &"""
-        return _datamodel.DataloggerCalibration_serialNumber(self)
-
-    def setChannel(self, channel):
-        r"""setChannel(DataloggerCalibration self, int channel)"""
-        return _datamodel.DataloggerCalibration_setChannel(self, channel)
-
-    def channel(self):
-        r"""channel(DataloggerCalibration self) -> int"""
-        return _datamodel.DataloggerCalibration_channel(self)
-
-    def setStart(self, start):
-        r"""setStart(DataloggerCalibration self, Time start)"""
-        return _datamodel.DataloggerCalibration_setStart(self, start)
-
-    def start(self):
-        r"""start(DataloggerCalibration self) -> Time"""
-        return _datamodel.DataloggerCalibration_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(DataloggerCalibration self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
-        return _datamodel.DataloggerCalibration_setEnd(self, end)
-
-    def end(self):
-        r"""end(DataloggerCalibration self) -> Time"""
-        return _datamodel.DataloggerCalibration_end(self)
-
-    def setGain(self, gain):
-        r"""setGain(DataloggerCalibration self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
-        return _datamodel.DataloggerCalibration_setGain(self, gain)
-
-    def gain(self):
-        r"""gain(DataloggerCalibration self) -> double"""
-        return _datamodel.DataloggerCalibration_gain(self)
-
-    def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(DataloggerCalibration self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
-        return _datamodel.DataloggerCalibration_setGainFrequency(self, gainFrequency)
-
-    def gainFrequency(self):
-        r"""gainFrequency(DataloggerCalibration self) -> double"""
-        return _datamodel.DataloggerCalibration_gainFrequency(self)
-
-    def setRemark(self, remark):
-        r"""setRemark(DataloggerCalibration self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
-        return _datamodel.DataloggerCalibration_setRemark(self, remark)
-
-    def remark(self, *args):
-        r"""
-        remark(DataloggerCalibration self) -> Blob
-        remark(DataloggerCalibration self) -> Blob
-        """
-        return _datamodel.DataloggerCalibration_remark(self, *args)
-
-    def index(self):
-        r"""index(DataloggerCalibration self) -> DataloggerCalibrationIndex"""
-        return _datamodel.DataloggerCalibration_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(DataloggerCalibration self, DataloggerCalibration lhs) -> bool"""
-        return _datamodel.DataloggerCalibration_equalIndex(self, lhs)
-
-    def datalogger(self):
-        r"""datalogger(DataloggerCalibration self) -> Datalogger"""
-        return _datamodel.DataloggerCalibration_datalogger(self)
-
-    def assign(self, other):
-        r"""assign(DataloggerCalibration self, Object other) -> bool"""
-        return _datamodel.DataloggerCalibration_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(DataloggerCalibration self, PublicObject parent) -> bool"""
-        return _datamodel.DataloggerCalibration_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(DataloggerCalibration self, PublicObject parent) -> bool"""
-        return _datamodel.DataloggerCalibration_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(DataloggerCalibration self) -> bool"""
-        return _datamodel.DataloggerCalibration_detach(self)
-
-    def clone(self):
-        r"""clone(DataloggerCalibration self) -> Object"""
-        return _datamodel.DataloggerCalibration_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(DataloggerCalibration self, Visitor visitor)"""
-        return _datamodel.DataloggerCalibration_accept(self, visitor)
-
-# Register DataloggerCalibration in _datamodel:
-_datamodel.DataloggerCalibration_swigregister(DataloggerCalibration)
-
-def DataloggerCalibration_ClassName():
-    r"""DataloggerCalibration_ClassName() -> char const *"""
-    return _datamodel.DataloggerCalibration_ClassName()
-
-def DataloggerCalibration_TypeInfo():
-    r"""DataloggerCalibration_TypeInfo() -> RTTI"""
-    return _datamodel.DataloggerCalibration_TypeInfo()
-
-def DataloggerCalibration_Cast(*args):
-    r"""
-    DataloggerCalibration_Cast(BaseObject o) -> DataloggerCalibration
-    DataloggerCalibration_Cast(Seiscomp::Core::BaseObjectPtr o) -> DataloggerCalibration
-    """
-    return _datamodel.DataloggerCalibration_Cast(*args)
-
-def DataloggerCalibration_ConstCast(*args):
-    r"""
-    DataloggerCalibration_ConstCast(BaseObject o) -> DataloggerCalibration
-    DataloggerCalibration_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataloggerCalibration
-    """
-    return _datamodel.DataloggerCalibration_ConstCast(*args)
-
-def DataloggerCalibration_Meta():
-    r"""DataloggerCalibration_Meta() -> MetaObject"""
-    return _datamodel.DataloggerCalibration_Meta()
-
-class DecimationIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::DecimationIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(DecimationIndex self) -> DecimationIndex
-        __init__(DecimationIndex self, int sampleRateNumerator, int sampleRateDenominator) -> DecimationIndex
-        __init__(DecimationIndex self, DecimationIndex arg2) -> DecimationIndex
-        """
-        _datamodel.DecimationIndex_swiginit(self, _datamodel.new_DecimationIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(DecimationIndex self, DecimationIndex arg2) -> bool"""
-        return _datamodel.DecimationIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(DecimationIndex self, DecimationIndex arg2) -> bool"""
-        return _datamodel.DecimationIndex___ne__(self, arg2)
-    sampleRateNumerator = property(_datamodel.DecimationIndex_sampleRateNumerator_get, _datamodel.DecimationIndex_sampleRateNumerator_set, doc=r"""sampleRateNumerator : int""")
-    sampleRateDenominator = property(_datamodel.DecimationIndex_sampleRateDenominator_get, _datamodel.DecimationIndex_sampleRateDenominator_set, doc=r"""sampleRateDenominator : int""")
-    __swig_destroy__ = _datamodel.delete_DecimationIndex
-
-# Register DecimationIndex in _datamodel:
-_datamodel.DecimationIndex_swigregister(DecimationIndex)
-
-class Decimation(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::Decimation class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.Decimation_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.Decimation_TypeInfo()
-
-    def className(self):
-        r"""className(Decimation self) -> char const *"""
-        return _datamodel.Decimation_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(Decimation self) -> RTTI"""
-        return _datamodel.Decimation_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> Decimation
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> Decimation
-        """
-        return _datamodel.Decimation_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> Decimation
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Decimation
-        """
-        return _datamodel.Decimation_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(Decimation self, GenericArchive ar)"""
-        return _datamodel.Decimation_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.Decimation_Meta()
-
-    def meta(self):
-        r"""meta(Decimation self) -> MetaObject"""
-        return _datamodel.Decimation_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(Decimation self) -> Decimation
-        __init__(Decimation self, Decimation other) -> Decimation
-        """
-        _datamodel.Decimation_swiginit(self, _datamodel.new_Decimation(*args))
-    __swig_destroy__ = _datamodel.delete_Decimation
-
-    def __eq__(self, other):
-        r"""__eq__(Decimation self, Decimation other) -> bool"""
-        return _datamodel.Decimation___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(Decimation self, Decimation other) -> bool"""
-        return _datamodel.Decimation___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(Decimation self, Decimation other) -> bool"""
-        return _datamodel.Decimation_equal(self, other)
-
-    def setSampleRateNumerator(self, sampleRateNumerator):
-        r"""setSampleRateNumerator(Decimation self, int sampleRateNumerator)"""
-        return _datamodel.Decimation_setSampleRateNumerator(self, sampleRateNumerator)
-
-    def sampleRateNumerator(self):
-        r"""sampleRateNumerator(Decimation self) -> int"""
-        return _datamodel.Decimation_sampleRateNumerator(self)
-
-    def setSampleRateDenominator(self, sampleRateDenominator):
-        r"""setSampleRateDenominator(Decimation self, int sampleRateDenominator)"""
-        return _datamodel.Decimation_setSampleRateDenominator(self, sampleRateDenominator)
-
-    def sampleRateDenominator(self):
-        r"""sampleRateDenominator(Decimation self) -> int"""
-        return _datamodel.Decimation_sampleRateDenominator(self)
-
-    def setAnalogueFilterChain(self, analogueFilterChain):
-        r"""setAnalogueFilterChain(Decimation self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & analogueFilterChain)"""
-        return _datamodel.Decimation_setAnalogueFilterChain(self, analogueFilterChain)
-
-    def analogueFilterChain(self, *args):
-        r"""
-        analogueFilterChain(Decimation self) -> Blob
-        analogueFilterChain(Decimation self) -> Blob
-        """
-        return _datamodel.Decimation_analogueFilterChain(self, *args)
-
-    def setDigitalFilterChain(self, digitalFilterChain):
-        r"""setDigitalFilterChain(Decimation self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & digitalFilterChain)"""
-        return _datamodel.Decimation_setDigitalFilterChain(self, digitalFilterChain)
-
-    def digitalFilterChain(self, *args):
-        r"""
-        digitalFilterChain(Decimation self) -> Blob
-        digitalFilterChain(Decimation self) -> Blob
-        """
-        return _datamodel.Decimation_digitalFilterChain(self, *args)
-
-    def index(self):
-        r"""index(Decimation self) -> DecimationIndex"""
-        return _datamodel.Decimation_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(Decimation self, Decimation lhs) -> bool"""
-        return _datamodel.Decimation_equalIndex(self, lhs)
-
-    def datalogger(self):
-        r"""datalogger(Decimation self) -> Datalogger"""
-        return _datamodel.Decimation_datalogger(self)
-
-    def assign(self, other):
-        r"""assign(Decimation self, Object other) -> bool"""
-        return _datamodel.Decimation_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(Decimation self, PublicObject parent) -> bool"""
-        return _datamodel.Decimation_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(Decimation self, PublicObject parent) -> bool"""
-        return _datamodel.Decimation_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(Decimation self) -> bool"""
-        return _datamodel.Decimation_detach(self)
-
-    def clone(self):
-        r"""clone(Decimation self) -> Object"""
-        return _datamodel.Decimation_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(Decimation self, Visitor visitor)"""
-        return _datamodel.Decimation_accept(self, visitor)
-
-# Register Decimation in _datamodel:
-_datamodel.Decimation_swigregister(Decimation)
-
-def Decimation_ClassName():
-    r"""Decimation_ClassName() -> char const *"""
-    return _datamodel.Decimation_ClassName()
-
-def Decimation_TypeInfo():
-    r"""Decimation_TypeInfo() -> RTTI"""
-    return _datamodel.Decimation_TypeInfo()
-
-def Decimation_Cast(*args):
-    r"""
-    Decimation_Cast(BaseObject o) -> Decimation
-    Decimation_Cast(Seiscomp::Core::BaseObjectPtr o) -> Decimation
-    """
-    return _datamodel.Decimation_Cast(*args)
-
-def Decimation_ConstCast(*args):
-    r"""
-    Decimation_ConstCast(BaseObject o) -> Decimation
-    Decimation_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Decimation
-    """
-    return _datamodel.Decimation_ConstCast(*args)
-
-def Decimation_Meta():
-    r"""Decimation_Meta() -> MetaObject"""
-    return _datamodel.Decimation_Meta()
-
-class DataloggerIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::DataloggerIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(DataloggerIndex self) -> DataloggerIndex
-        __init__(DataloggerIndex self, std::string const & name) -> DataloggerIndex
-        __init__(DataloggerIndex self, DataloggerIndex arg2) -> DataloggerIndex
-        """
-        _datamodel.DataloggerIndex_swiginit(self, _datamodel.new_DataloggerIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(DataloggerIndex self, DataloggerIndex arg2) -> bool"""
-        return _datamodel.DataloggerIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(DataloggerIndex self, DataloggerIndex arg2) -> bool"""
-        return _datamodel.DataloggerIndex___ne__(self, arg2)
-    name = property(_datamodel.DataloggerIndex_name_get, _datamodel.DataloggerIndex_name_set, doc=r"""name : std::string""")
-    __swig_destroy__ = _datamodel.delete_DataloggerIndex
-
-# Register DataloggerIndex in _datamodel:
-_datamodel.DataloggerIndex_swigregister(DataloggerIndex)
-
-class Datalogger(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::Datalogger class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.Datalogger_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.Datalogger_TypeInfo()
-
-    def className(self):
-        r"""className(Datalogger self) -> char const *"""
-        return _datamodel.Datalogger_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(Datalogger self) -> RTTI"""
-        return _datamodel.Datalogger_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> Datalogger
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> Datalogger
-        """
-        return _datamodel.Datalogger_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> Datalogger
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Datalogger
-        """
-        return _datamodel.Datalogger_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(Datalogger self, GenericArchive ar)"""
-        return _datamodel.Datalogger_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.Datalogger_Meta()
-
-    def meta(self):
-        r"""meta(Datalogger self) -> MetaObject"""
-        return _datamodel.Datalogger_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(Datalogger self, Datalogger other) -> Datalogger
-        __init__(Datalogger self, std::string const & publicID) -> Datalogger
-        """
-        _datamodel.Datalogger_swiginit(self, _datamodel.new_Datalogger(*args))
-    __swig_destroy__ = _datamodel.delete_Datalogger
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> Datalogger
-        Create(std::string const & publicID) -> Datalogger
-        """
-        return _datamodel.Datalogger_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> Datalogger"""
-        return _datamodel.Datalogger_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(Datalogger self, Datalogger other) -> bool"""
-        return _datamodel.Datalogger___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(Datalogger self, Datalogger other) -> bool"""
-        return _datamodel.Datalogger___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(Datalogger self, Datalogger other) -> bool"""
-        return _datamodel.Datalogger_equal(self, other)
-
-    def setName(self, name):
-        r"""setName(Datalogger self, std::string const & name)"""
-        return _datamodel.Datalogger_setName(self, name)
-
-    def name(self):
-        r"""name(Datalogger self) -> std::string const &"""
-        return _datamodel.Datalogger_name(self)
-
-    def setDescription(self, description):
-        r"""setDescription(Datalogger self, std::string const & description)"""
-        return _datamodel.Datalogger_setDescription(self, description)
-
-    def description(self):
-        r"""description(Datalogger self) -> std::string const &"""
-        return _datamodel.Datalogger_description(self)
-
-    def setDigitizerModel(self, digitizerModel):
-        r"""setDigitizerModel(Datalogger self, std::string const & digitizerModel)"""
-        return _datamodel.Datalogger_setDigitizerModel(self, digitizerModel)
-
-    def digitizerModel(self):
-        r"""digitizerModel(Datalogger self) -> std::string const &"""
-        return _datamodel.Datalogger_digitizerModel(self)
-
-    def setDigitizerManufacturer(self, digitizerManufacturer):
-        r"""setDigitizerManufacturer(Datalogger self, std::string const & digitizerManufacturer)"""
-        return _datamodel.Datalogger_setDigitizerManufacturer(self, digitizerManufacturer)
-
-    def digitizerManufacturer(self):
-        r"""digitizerManufacturer(Datalogger self) -> std::string const &"""
-        return _datamodel.Datalogger_digitizerManufacturer(self)
-
-    def setRecorderModel(self, recorderModel):
-        r"""setRecorderModel(Datalogger self, std::string const & recorderModel)"""
-        return _datamodel.Datalogger_setRecorderModel(self, recorderModel)
-
-    def recorderModel(self):
-        r"""recorderModel(Datalogger self) -> std::string const &"""
-        return _datamodel.Datalogger_recorderModel(self)
-
-    def setRecorderManufacturer(self, recorderManufacturer):
-        r"""setRecorderManufacturer(Datalogger self, std::string const & recorderManufacturer)"""
-        return _datamodel.Datalogger_setRecorderManufacturer(self, recorderManufacturer)
-
-    def recorderManufacturer(self):
-        r"""recorderManufacturer(Datalogger self) -> std::string const &"""
-        return _datamodel.Datalogger_recorderManufacturer(self)
-
-    def setClockModel(self, clockModel):
-        r"""setClockModel(Datalogger self, std::string const & clockModel)"""
-        return _datamodel.Datalogger_setClockModel(self, clockModel)
-
-    def clockModel(self):
-        r"""clockModel(Datalogger self) -> std::string const &"""
-        return _datamodel.Datalogger_clockModel(self)
-
-    def setClockManufacturer(self, clockManufacturer):
-        r"""setClockManufacturer(Datalogger self, std::string const & clockManufacturer)"""
-        return _datamodel.Datalogger_setClockManufacturer(self, clockManufacturer)
-
-    def clockManufacturer(self):
-        r"""clockManufacturer(Datalogger self) -> std::string const &"""
-        return _datamodel.Datalogger_clockManufacturer(self)
-
-    def setClockType(self, clockType):
-        r"""setClockType(Datalogger self, std::string const & clockType)"""
-        return _datamodel.Datalogger_setClockType(self, clockType)
-
-    def clockType(self):
-        r"""clockType(Datalogger self) -> std::string const &"""
-        return _datamodel.Datalogger_clockType(self)
-
-    def setGain(self, gain):
-        r"""setGain(Datalogger self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
-        return _datamodel.Datalogger_setGain(self, gain)
-
-    def gain(self):
-        r"""gain(Datalogger self) -> double"""
-        return _datamodel.Datalogger_gain(self)
-
-    def setMaxClockDrift(self, maxClockDrift):
-        r"""setMaxClockDrift(Datalogger self, Seiscomp::Core::Optional< double >::Impl const & maxClockDrift)"""
-        return _datamodel.Datalogger_setMaxClockDrift(self, maxClockDrift)
-
-    def maxClockDrift(self):
-        r"""maxClockDrift(Datalogger self) -> double"""
-        return _datamodel.Datalogger_maxClockDrift(self)
-
-    def setRemark(self, remark):
-        r"""setRemark(Datalogger self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
-        return _datamodel.Datalogger_setRemark(self, remark)
-
-    def remark(self, *args):
-        r"""
-        remark(Datalogger self) -> Blob
-        remark(Datalogger self) -> Blob
-        """
-        return _datamodel.Datalogger_remark(self, *args)
-
-    def index(self):
-        r"""index(Datalogger self) -> DataloggerIndex"""
-        return _datamodel.Datalogger_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(Datalogger self, Datalogger lhs) -> bool"""
-        return _datamodel.Datalogger_equalIndex(self, lhs)
-
-    def add(self, *args):
-        r"""
-        add(Datalogger self, DataloggerCalibration obj) -> bool
-        add(Datalogger self, Decimation obj) -> bool
-        """
-        return _datamodel.Datalogger_add(self, *args)
-
-    def remove(self, *args):
-        r"""
-        remove(Datalogger self, DataloggerCalibration obj) -> bool
-        remove(Datalogger self, Decimation obj) -> bool
-        """
-        return _datamodel.Datalogger_remove(self, *args)
-
-    def removeDataloggerCalibration(self, *args):
-        r"""
-        removeDataloggerCalibration(Datalogger self, size_t i) -> bool
-        removeDataloggerCalibration(Datalogger self, DataloggerCalibrationIndex i) -> bool
-        """
-        return _datamodel.Datalogger_removeDataloggerCalibration(self, *args)
-
-    def removeDecimation(self, *args):
-        r"""
-        removeDecimation(Datalogger self, size_t i) -> bool
-        removeDecimation(Datalogger self, DecimationIndex i) -> bool
-        """
-        return _datamodel.Datalogger_removeDecimation(self, *args)
-
-    def dataloggerCalibrationCount(self):
-        r"""dataloggerCalibrationCount(Datalogger self) -> size_t"""
-        return _datamodel.Datalogger_dataloggerCalibrationCount(self)
-
-    def decimationCount(self):
-        r"""decimationCount(Datalogger self) -> size_t"""
-        return _datamodel.Datalogger_decimationCount(self)
-
-    def dataloggerCalibration(self, *args):
-        r"""
-        dataloggerCalibration(Datalogger self, size_t i) -> DataloggerCalibration
-        dataloggerCalibration(Datalogger self, DataloggerCalibrationIndex i) -> DataloggerCalibration
-        """
-        return _datamodel.Datalogger_dataloggerCalibration(self, *args)
-
-    def decimation(self, *args):
-        r"""
-        decimation(Datalogger self, size_t i) -> Decimation
-        decimation(Datalogger self, DecimationIndex i) -> Decimation
-        """
-        return _datamodel.Datalogger_decimation(self, *args)
-
-    def inventory(self):
-        r"""inventory(Datalogger self) -> Inventory"""
-        return _datamodel.Datalogger_inventory(self)
-
-    def assign(self, other):
-        r"""assign(Datalogger self, Object other) -> bool"""
-        return _datamodel.Datalogger_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(Datalogger self, PublicObject parent) -> bool"""
-        return _datamodel.Datalogger_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(Datalogger self, PublicObject parent) -> bool"""
-        return _datamodel.Datalogger_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(Datalogger self) -> bool"""
-        return _datamodel.Datalogger_detach(self)
-
-    def clone(self):
-        r"""clone(Datalogger self) -> Object"""
-        return _datamodel.Datalogger_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(Datalogger self, Object child) -> bool"""
-        return _datamodel.Datalogger_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(Datalogger self, Visitor visitor)"""
-        return _datamodel.Datalogger_accept(self, visitor)
-
-# Register Datalogger in _datamodel:
-_datamodel.Datalogger_swigregister(Datalogger)
-
-def Datalogger_ClassName():
-    r"""Datalogger_ClassName() -> char const *"""
-    return _datamodel.Datalogger_ClassName()
-
-def Datalogger_TypeInfo():
-    r"""Datalogger_TypeInfo() -> RTTI"""
-    return _datamodel.Datalogger_TypeInfo()
-
-def Datalogger_Cast(*args):
-    r"""
-    Datalogger_Cast(BaseObject o) -> Datalogger
-    Datalogger_Cast(Seiscomp::Core::BaseObjectPtr o) -> Datalogger
-    """
-    return _datamodel.Datalogger_Cast(*args)
-
-def Datalogger_ConstCast(*args):
-    r"""
-    Datalogger_ConstCast(BaseObject o) -> Datalogger
-    Datalogger_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Datalogger
-    """
-    return _datamodel.Datalogger_ConstCast(*args)
-
-def Datalogger_Meta():
-    r"""Datalogger_Meta() -> MetaObject"""
-    return _datamodel.Datalogger_Meta()
-
-def Datalogger_Create(*args):
-    r"""
-    Datalogger_Create() -> Datalogger
-    Datalogger_Create(std::string const & publicID) -> Datalogger
-    """
-    return _datamodel.Datalogger_Create(*args)
-
-def Datalogger_Find(publicID):
-    r"""Datalogger_Find(std::string const & publicID) -> Datalogger"""
-    return _datamodel.Datalogger_Find(publicID)
-
-class AuxStreamIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::AuxStreamIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(AuxStreamIndex self) -> AuxStreamIndex
-        __init__(AuxStreamIndex self, std::string const & code, Time start) -> AuxStreamIndex
-        __init__(AuxStreamIndex self, AuxStreamIndex arg2) -> AuxStreamIndex
-        """
-        _datamodel.AuxStreamIndex_swiginit(self, _datamodel.new_AuxStreamIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(AuxStreamIndex self, AuxStreamIndex arg2) -> bool"""
-        return _datamodel.AuxStreamIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(AuxStreamIndex self, AuxStreamIndex arg2) -> bool"""
-        return _datamodel.AuxStreamIndex___ne__(self, arg2)
-    code = property(_datamodel.AuxStreamIndex_code_get, _datamodel.AuxStreamIndex_code_set, doc=r"""code : std::string""")
-    start = property(_datamodel.AuxStreamIndex_start_get, _datamodel.AuxStreamIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
-    __swig_destroy__ = _datamodel.delete_AuxStreamIndex
-
-# Register AuxStreamIndex in _datamodel:
-_datamodel.AuxStreamIndex_swigregister(AuxStreamIndex)
-
-class AuxStream(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::AuxStream class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.AuxStream_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.AuxStream_TypeInfo()
-
-    def className(self):
-        r"""className(AuxStream self) -> char const *"""
-        return _datamodel.AuxStream_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(AuxStream self) -> RTTI"""
-        return _datamodel.AuxStream_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> AuxStream
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> AuxStream
-        """
-        return _datamodel.AuxStream_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> AuxStream
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> AuxStream
-        """
-        return _datamodel.AuxStream_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(AuxStream self, GenericArchive ar)"""
-        return _datamodel.AuxStream_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.AuxStream_Meta()
-
-    def meta(self):
-        r"""meta(AuxStream self) -> MetaObject"""
-        return _datamodel.AuxStream_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(AuxStream self) -> AuxStream
-        __init__(AuxStream self, AuxStream other) -> AuxStream
-        """
-        _datamodel.AuxStream_swiginit(self, _datamodel.new_AuxStream(*args))
-    __swig_destroy__ = _datamodel.delete_AuxStream
-
-    def __eq__(self, other):
-        r"""__eq__(AuxStream self, AuxStream other) -> bool"""
-        return _datamodel.AuxStream___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(AuxStream self, AuxStream other) -> bool"""
-        return _datamodel.AuxStream___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(AuxStream self, AuxStream other) -> bool"""
-        return _datamodel.AuxStream_equal(self, other)
-
-    def setCode(self, code):
-        r"""setCode(AuxStream self, std::string const & code)"""
-        return _datamodel.AuxStream_setCode(self, code)
-
-    def code(self):
-        r"""code(AuxStream self) -> std::string const &"""
-        return _datamodel.AuxStream_code(self)
-
-    def setStart(self, start):
-        r"""setStart(AuxStream self, Time start)"""
-        return _datamodel.AuxStream_setStart(self, start)
-
-    def start(self):
-        r"""start(AuxStream self) -> Time"""
-        return _datamodel.AuxStream_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(AuxStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
-        return _datamodel.AuxStream_setEnd(self, end)
-
-    def end(self):
-        r"""end(AuxStream self) -> Time"""
-        return _datamodel.AuxStream_end(self)
-
-    def setDevice(self, device):
-        r"""setDevice(AuxStream self, std::string const & device)"""
-        return _datamodel.AuxStream_setDevice(self, device)
-
-    def device(self):
-        r"""device(AuxStream self) -> std::string const &"""
-        return _datamodel.AuxStream_device(self)
-
-    def setDeviceSerialNumber(self, deviceSerialNumber):
-        r"""setDeviceSerialNumber(AuxStream self, std::string const & deviceSerialNumber)"""
-        return _datamodel.AuxStream_setDeviceSerialNumber(self, deviceSerialNumber)
-
-    def deviceSerialNumber(self):
-        r"""deviceSerialNumber(AuxStream self) -> std::string const &"""
-        return _datamodel.AuxStream_deviceSerialNumber(self)
-
-    def setSource(self, source):
-        r"""setSource(AuxStream self, std::string const & source)"""
-        return _datamodel.AuxStream_setSource(self, source)
-
-    def source(self):
-        r"""source(AuxStream self) -> std::string const &"""
-        return _datamodel.AuxStream_source(self)
-
-    def setFormat(self, format):
-        r"""setFormat(AuxStream self, std::string const & format)"""
-        return _datamodel.AuxStream_setFormat(self, format)
-
-    def format(self):
-        r"""format(AuxStream self) -> std::string const &"""
-        return _datamodel.AuxStream_format(self)
-
-    def setFlags(self, flags):
-        r"""setFlags(AuxStream self, std::string const & flags)"""
-        return _datamodel.AuxStream_setFlags(self, flags)
-
-    def flags(self):
-        r"""flags(AuxStream self) -> std::string const &"""
-        return _datamodel.AuxStream_flags(self)
-
-    def setRestricted(self, restricted):
-        r"""setRestricted(AuxStream self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
-        return _datamodel.AuxStream_setRestricted(self, restricted)
-
-    def restricted(self):
-        r"""restricted(AuxStream self) -> bool"""
-        return _datamodel.AuxStream_restricted(self)
-
-    def setShared(self, shared):
-        r"""setShared(AuxStream self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
-        return _datamodel.AuxStream_setShared(self, shared)
-
-    def shared(self):
-        r"""shared(AuxStream self) -> bool"""
-        return _datamodel.AuxStream_shared(self)
-
-    def index(self):
-        r"""index(AuxStream self) -> AuxStreamIndex"""
-        return _datamodel.AuxStream_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(AuxStream self, AuxStream lhs) -> bool"""
-        return _datamodel.AuxStream_equalIndex(self, lhs)
-
-    def sensorLocation(self):
-        r"""sensorLocation(AuxStream self) -> SensorLocation"""
-        return _datamodel.AuxStream_sensorLocation(self)
-
-    def assign(self, other):
-        r"""assign(AuxStream self, Object other) -> bool"""
-        return _datamodel.AuxStream_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(AuxStream self, PublicObject parent) -> bool"""
-        return _datamodel.AuxStream_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(AuxStream self, PublicObject parent) -> bool"""
-        return _datamodel.AuxStream_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(AuxStream self) -> bool"""
-        return _datamodel.AuxStream_detach(self)
-
-    def clone(self):
-        r"""clone(AuxStream self) -> Object"""
-        return _datamodel.AuxStream_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(AuxStream self, Visitor visitor)"""
-        return _datamodel.AuxStream_accept(self, visitor)
-
-# Register AuxStream in _datamodel:
-_datamodel.AuxStream_swigregister(AuxStream)
-
-def AuxStream_ClassName():
-    r"""AuxStream_ClassName() -> char const *"""
-    return _datamodel.AuxStream_ClassName()
-
-def AuxStream_TypeInfo():
-    r"""AuxStream_TypeInfo() -> RTTI"""
-    return _datamodel.AuxStream_TypeInfo()
-
-def AuxStream_Cast(*args):
-    r"""
-    AuxStream_Cast(BaseObject o) -> AuxStream
-    AuxStream_Cast(Seiscomp::Core::BaseObjectPtr o) -> AuxStream
-    """
-    return _datamodel.AuxStream_Cast(*args)
-
-def AuxStream_ConstCast(*args):
-    r"""
-    AuxStream_ConstCast(BaseObject o) -> AuxStream
-    AuxStream_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> AuxStream
-    """
-    return _datamodel.AuxStream_ConstCast(*args)
-
-def AuxStream_Meta():
-    r"""AuxStream_Meta() -> MetaObject"""
-    return _datamodel.AuxStream_Meta()
-
-class StreamIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::StreamIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(StreamIndex self) -> StreamIndex
-        __init__(StreamIndex self, std::string const & code, Time start) -> StreamIndex
-        __init__(StreamIndex self, StreamIndex arg2) -> StreamIndex
-        """
-        _datamodel.StreamIndex_swiginit(self, _datamodel.new_StreamIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(StreamIndex self, StreamIndex arg2) -> bool"""
-        return _datamodel.StreamIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(StreamIndex self, StreamIndex arg2) -> bool"""
-        return _datamodel.StreamIndex___ne__(self, arg2)
-    code = property(_datamodel.StreamIndex_code_get, _datamodel.StreamIndex_code_set, doc=r"""code : std::string""")
-    start = property(_datamodel.StreamIndex_start_get, _datamodel.StreamIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
-    __swig_destroy__ = _datamodel.delete_StreamIndex
-
-# Register StreamIndex in _datamodel:
-_datamodel.StreamIndex_swigregister(StreamIndex)
-
-class Stream(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::Stream class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.Stream_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.Stream_TypeInfo()
-
-    def className(self):
-        r"""className(Stream self) -> char const *"""
-        return _datamodel.Stream_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(Stream self) -> RTTI"""
-        return _datamodel.Stream_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> Stream
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> Stream
-        """
-        return _datamodel.Stream_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> Stream
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Stream
-        """
-        return _datamodel.Stream_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(Stream self, GenericArchive ar)"""
-        return _datamodel.Stream_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.Stream_Meta()
-
-    def meta(self):
-        r"""meta(Stream self) -> MetaObject"""
-        return _datamodel.Stream_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(Stream self, Stream other) -> Stream
-        __init__(Stream self, std::string const & publicID) -> Stream
-        """
-        _datamodel.Stream_swiginit(self, _datamodel.new_Stream(*args))
-    __swig_destroy__ = _datamodel.delete_Stream
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> Stream
-        Create(std::string const & publicID) -> Stream
-        """
-        return _datamodel.Stream_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> Stream"""
-        return _datamodel.Stream_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(Stream self, Stream other) -> bool"""
-        return _datamodel.Stream___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(Stream self, Stream other) -> bool"""
-        return _datamodel.Stream___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(Stream self, Stream other) -> bool"""
-        return _datamodel.Stream_equal(self, other)
-
-    def setCode(self, code):
-        r"""setCode(Stream self, std::string const & code)"""
-        return _datamodel.Stream_setCode(self, code)
-
-    def code(self):
-        r"""code(Stream self) -> std::string const &"""
-        return _datamodel.Stream_code(self)
-
-    def setStart(self, start):
-        r"""setStart(Stream self, Time start)"""
-        return _datamodel.Stream_setStart(self, start)
-
-    def start(self):
-        r"""start(Stream self) -> Time"""
-        return _datamodel.Stream_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(Stream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
-        return _datamodel.Stream_setEnd(self, end)
-
-    def end(self):
-        r"""end(Stream self) -> Time"""
-        return _datamodel.Stream_end(self)
-
-    def setDatalogger(self, datalogger):
-        r"""setDatalogger(Stream self, std::string const & datalogger)"""
-        return _datamodel.Stream_setDatalogger(self, datalogger)
-
-    def datalogger(self):
-        r"""datalogger(Stream self) -> std::string const &"""
-        return _datamodel.Stream_datalogger(self)
-
-    def setDataloggerSerialNumber(self, dataloggerSerialNumber):
-        r"""setDataloggerSerialNumber(Stream self, std::string const & dataloggerSerialNumber)"""
-        return _datamodel.Stream_setDataloggerSerialNumber(self, dataloggerSerialNumber)
-
-    def dataloggerSerialNumber(self):
-        r"""dataloggerSerialNumber(Stream self) -> std::string const &"""
-        return _datamodel.Stream_dataloggerSerialNumber(self)
-
-    def setDataloggerChannel(self, dataloggerChannel):
-        r"""setDataloggerChannel(Stream self, Seiscomp::Core::Optional< int >::Impl const & dataloggerChannel)"""
-        return _datamodel.Stream_setDataloggerChannel(self, dataloggerChannel)
-
-    def dataloggerChannel(self):
-        r"""dataloggerChannel(Stream self) -> int"""
-        return _datamodel.Stream_dataloggerChannel(self)
-
-    def setSensor(self, sensor):
-        r"""setSensor(Stream self, std::string const & sensor)"""
-        return _datamodel.Stream_setSensor(self, sensor)
-
-    def sensor(self):
-        r"""sensor(Stream self) -> std::string const &"""
-        return _datamodel.Stream_sensor(self)
-
-    def setSensorSerialNumber(self, sensorSerialNumber):
-        r"""setSensorSerialNumber(Stream self, std::string const & sensorSerialNumber)"""
-        return _datamodel.Stream_setSensorSerialNumber(self, sensorSerialNumber)
-
-    def sensorSerialNumber(self):
-        r"""sensorSerialNumber(Stream self) -> std::string const &"""
-        return _datamodel.Stream_sensorSerialNumber(self)
-
-    def setSensorChannel(self, sensorChannel):
-        r"""setSensorChannel(Stream self, Seiscomp::Core::Optional< int >::Impl const & sensorChannel)"""
-        return _datamodel.Stream_setSensorChannel(self, sensorChannel)
-
-    def sensorChannel(self):
-        r"""sensorChannel(Stream self) -> int"""
-        return _datamodel.Stream_sensorChannel(self)
-
-    def setClockSerialNumber(self, clockSerialNumber):
-        r"""setClockSerialNumber(Stream self, std::string const & clockSerialNumber)"""
-        return _datamodel.Stream_setClockSerialNumber(self, clockSerialNumber)
-
-    def clockSerialNumber(self):
-        r"""clockSerialNumber(Stream self) -> std::string const &"""
-        return _datamodel.Stream_clockSerialNumber(self)
-
-    def setSampleRateNumerator(self, sampleRateNumerator):
-        r"""setSampleRateNumerator(Stream self, Seiscomp::Core::Optional< int >::Impl const & sampleRateNumerator)"""
-        return _datamodel.Stream_setSampleRateNumerator(self, sampleRateNumerator)
-
-    def sampleRateNumerator(self):
-        r"""sampleRateNumerator(Stream self) -> int"""
-        return _datamodel.Stream_sampleRateNumerator(self)
-
-    def setSampleRateDenominator(self, sampleRateDenominator):
-        r"""setSampleRateDenominator(Stream self, Seiscomp::Core::Optional< int >::Impl const & sampleRateDenominator)"""
-        return _datamodel.Stream_setSampleRateDenominator(self, sampleRateDenominator)
-
-    def sampleRateDenominator(self):
-        r"""sampleRateDenominator(Stream self) -> int"""
-        return _datamodel.Stream_sampleRateDenominator(self)
-
-    def setDepth(self, depth):
-        r"""setDepth(Stream self, Seiscomp::Core::Optional< double >::Impl const & depth)"""
-        return _datamodel.Stream_setDepth(self, depth)
-
-    def depth(self):
-        r"""depth(Stream self) -> double"""
-        return _datamodel.Stream_depth(self)
-
-    def setAzimuth(self, azimuth):
-        r"""setAzimuth(Stream self, Seiscomp::Core::Optional< double >::Impl const & azimuth)"""
-        return _datamodel.Stream_setAzimuth(self, azimuth)
-
-    def azimuth(self):
-        r"""azimuth(Stream self) -> double"""
-        return _datamodel.Stream_azimuth(self)
-
-    def setDip(self, dip):
-        r"""setDip(Stream self, Seiscomp::Core::Optional< double >::Impl const & dip)"""
-        return _datamodel.Stream_setDip(self, dip)
-
-    def dip(self):
-        r"""dip(Stream self) -> double"""
-        return _datamodel.Stream_dip(self)
-
-    def setGain(self, gain):
-        r"""setGain(Stream self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
-        return _datamodel.Stream_setGain(self, gain)
-
-    def gain(self):
-        r"""gain(Stream self) -> double"""
-        return _datamodel.Stream_gain(self)
-
-    def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(Stream self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
-        return _datamodel.Stream_setGainFrequency(self, gainFrequency)
-
-    def gainFrequency(self):
-        r"""gainFrequency(Stream self) -> double"""
-        return _datamodel.Stream_gainFrequency(self)
-
-    def setGainUnit(self, gainUnit):
-        r"""setGainUnit(Stream self, std::string const & gainUnit)"""
-        return _datamodel.Stream_setGainUnit(self, gainUnit)
-
-    def gainUnit(self):
-        r"""gainUnit(Stream self) -> std::string const &"""
-        return _datamodel.Stream_gainUnit(self)
-
-    def setFormat(self, format):
-        r"""setFormat(Stream self, std::string const & format)"""
-        return _datamodel.Stream_setFormat(self, format)
-
-    def format(self):
-        r"""format(Stream self) -> std::string const &"""
-        return _datamodel.Stream_format(self)
-
-    def setFlags(self, flags):
-        r"""setFlags(Stream self, std::string const & flags)"""
-        return _datamodel.Stream_setFlags(self, flags)
-
-    def flags(self):
-        r"""flags(Stream self) -> std::string const &"""
-        return _datamodel.Stream_flags(self)
-
-    def setRestricted(self, restricted):
-        r"""setRestricted(Stream self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
-        return _datamodel.Stream_setRestricted(self, restricted)
-
-    def restricted(self):
-        r"""restricted(Stream self) -> bool"""
-        return _datamodel.Stream_restricted(self)
-
-    def setShared(self, shared):
-        r"""setShared(Stream self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
-        return _datamodel.Stream_setShared(self, shared)
-
-    def shared(self):
-        r"""shared(Stream self) -> bool"""
-        return _datamodel.Stream_shared(self)
-
-    def index(self):
-        r"""index(Stream self) -> StreamIndex"""
-        return _datamodel.Stream_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(Stream self, Stream lhs) -> bool"""
-        return _datamodel.Stream_equalIndex(self, lhs)
-
-    def add(self, obj):
-        r"""add(Stream self, Comment obj) -> bool"""
-        return _datamodel.Stream_add(self, obj)
-
-    def remove(self, obj):
-        r"""remove(Stream self, Comment obj) -> bool"""
-        return _datamodel.Stream_remove(self, obj)
-
-    def removeComment(self, *args):
-        r"""
-        removeComment(Stream self, size_t i) -> bool
-        removeComment(Stream self, CommentIndex i) -> bool
-        """
-        return _datamodel.Stream_removeComment(self, *args)
-
-    def commentCount(self):
-        r"""commentCount(Stream self) -> size_t"""
-        return _datamodel.Stream_commentCount(self)
-
-    def comment(self, *args):
-        r"""
-        comment(Stream self, size_t i) -> Comment
-        comment(Stream self, CommentIndex i) -> Comment
-        """
-        return _datamodel.Stream_comment(self, *args)
-
-    def sensorLocation(self):
-        r"""sensorLocation(Stream self) -> SensorLocation"""
-        return _datamodel.Stream_sensorLocation(self)
-
-    def assign(self, other):
-        r"""assign(Stream self, Object other) -> bool"""
-        return _datamodel.Stream_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(Stream self, PublicObject parent) -> bool"""
-        return _datamodel.Stream_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(Stream self, PublicObject parent) -> bool"""
-        return _datamodel.Stream_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(Stream self) -> bool"""
-        return _datamodel.Stream_detach(self)
-
-    def clone(self):
-        r"""clone(Stream self) -> Object"""
-        return _datamodel.Stream_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(Stream self, Object child) -> bool"""
-        return _datamodel.Stream_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(Stream self, Visitor visitor)"""
-        return _datamodel.Stream_accept(self, visitor)
-
-# Register Stream in _datamodel:
-_datamodel.Stream_swigregister(Stream)
-
-def Stream_ClassName():
-    r"""Stream_ClassName() -> char const *"""
-    return _datamodel.Stream_ClassName()
-
-def Stream_TypeInfo():
-    r"""Stream_TypeInfo() -> RTTI"""
-    return _datamodel.Stream_TypeInfo()
-
-def Stream_Cast(*args):
-    r"""
-    Stream_Cast(BaseObject o) -> Stream
-    Stream_Cast(Seiscomp::Core::BaseObjectPtr o) -> Stream
-    """
-    return _datamodel.Stream_Cast(*args)
-
-def Stream_ConstCast(*args):
-    r"""
-    Stream_ConstCast(BaseObject o) -> Stream
-    Stream_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Stream
-    """
-    return _datamodel.Stream_ConstCast(*args)
-
-def Stream_Meta():
-    r"""Stream_Meta() -> MetaObject"""
-    return _datamodel.Stream_Meta()
-
-def Stream_Create(*args):
-    r"""
-    Stream_Create() -> Stream
-    Stream_Create(std::string const & publicID) -> Stream
-    """
-    return _datamodel.Stream_Create(*args)
-
-def Stream_Find(publicID):
-    r"""Stream_Find(std::string const & publicID) -> Stream"""
-    return _datamodel.Stream_Find(publicID)
-
-class SensorLocationIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::SensorLocationIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(SensorLocationIndex self) -> SensorLocationIndex
-        __init__(SensorLocationIndex self, std::string const & code, Time start) -> SensorLocationIndex
-        __init__(SensorLocationIndex self, SensorLocationIndex arg2) -> SensorLocationIndex
-        """
-        _datamodel.SensorLocationIndex_swiginit(self, _datamodel.new_SensorLocationIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(SensorLocationIndex self, SensorLocationIndex arg2) -> bool"""
-        return _datamodel.SensorLocationIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(SensorLocationIndex self, SensorLocationIndex arg2) -> bool"""
-        return _datamodel.SensorLocationIndex___ne__(self, arg2)
-    code = property(_datamodel.SensorLocationIndex_code_get, _datamodel.SensorLocationIndex_code_set, doc=r"""code : std::string""")
-    start = property(_datamodel.SensorLocationIndex_start_get, _datamodel.SensorLocationIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
-    __swig_destroy__ = _datamodel.delete_SensorLocationIndex
-
-# Register SensorLocationIndex in _datamodel:
-_datamodel.SensorLocationIndex_swigregister(SensorLocationIndex)
-
-class SensorLocation(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::SensorLocation class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.SensorLocation_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.SensorLocation_TypeInfo()
-
-    def className(self):
-        r"""className(SensorLocation self) -> char const *"""
-        return _datamodel.SensorLocation_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(SensorLocation self) -> RTTI"""
-        return _datamodel.SensorLocation_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> SensorLocation
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> SensorLocation
-        """
-        return _datamodel.SensorLocation_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> SensorLocation
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> SensorLocation
-        """
-        return _datamodel.SensorLocation_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(SensorLocation self, GenericArchive ar)"""
-        return _datamodel.SensorLocation_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.SensorLocation_Meta()
-
-    def meta(self):
-        r"""meta(SensorLocation self) -> MetaObject"""
-        return _datamodel.SensorLocation_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(SensorLocation self, SensorLocation other) -> SensorLocation
-        __init__(SensorLocation self, std::string const & publicID) -> SensorLocation
-        """
-        _datamodel.SensorLocation_swiginit(self, _datamodel.new_SensorLocation(*args))
-    __swig_destroy__ = _datamodel.delete_SensorLocation
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> SensorLocation
-        Create(std::string const & publicID) -> SensorLocation
-        """
-        return _datamodel.SensorLocation_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> SensorLocation"""
-        return _datamodel.SensorLocation_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(SensorLocation self, SensorLocation other) -> bool"""
-        return _datamodel.SensorLocation___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(SensorLocation self, SensorLocation other) -> bool"""
-        return _datamodel.SensorLocation___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(SensorLocation self, SensorLocation other) -> bool"""
-        return _datamodel.SensorLocation_equal(self, other)
-
-    def setCode(self, code):
-        r"""setCode(SensorLocation self, std::string const & code)"""
-        return _datamodel.SensorLocation_setCode(self, code)
-
-    def code(self):
-        r"""code(SensorLocation self) -> std::string const &"""
-        return _datamodel.SensorLocation_code(self)
-
-    def setStart(self, start):
-        r"""setStart(SensorLocation self, Time start)"""
-        return _datamodel.SensorLocation_setStart(self, start)
-
-    def start(self):
-        r"""start(SensorLocation self) -> Time"""
-        return _datamodel.SensorLocation_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(SensorLocation self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
-        return _datamodel.SensorLocation_setEnd(self, end)
-
-    def end(self):
-        r"""end(SensorLocation self) -> Time"""
-        return _datamodel.SensorLocation_end(self)
-
-    def setLatitude(self, latitude):
-        r"""setLatitude(SensorLocation self, Seiscomp::Core::Optional< double >::Impl const & latitude)"""
-        return _datamodel.SensorLocation_setLatitude(self, latitude)
-
-    def latitude(self):
-        r"""latitude(SensorLocation self) -> double"""
-        return _datamodel.SensorLocation_latitude(self)
-
-    def setLongitude(self, longitude):
-        r"""setLongitude(SensorLocation self, Seiscomp::Core::Optional< double >::Impl const & longitude)"""
-        return _datamodel.SensorLocation_setLongitude(self, longitude)
-
-    def longitude(self):
-        r"""longitude(SensorLocation self) -> double"""
-        return _datamodel.SensorLocation_longitude(self)
-
-    def setElevation(self, elevation):
-        r"""setElevation(SensorLocation self, Seiscomp::Core::Optional< double >::Impl const & elevation)"""
-        return _datamodel.SensorLocation_setElevation(self, elevation)
-
-    def elevation(self):
-        r"""elevation(SensorLocation self) -> double"""
-        return _datamodel.SensorLocation_elevation(self)
-
-    def index(self):
-        r"""index(SensorLocation self) -> SensorLocationIndex"""
-        return _datamodel.SensorLocation_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(SensorLocation self, SensorLocation lhs) -> bool"""
-        return _datamodel.SensorLocation_equalIndex(self, lhs)
-
-    def add(self, *args):
-        r"""
-        add(SensorLocation self, Comment obj) -> bool
-        add(SensorLocation self, AuxStream obj) -> bool
-        add(SensorLocation self, Stream obj) -> bool
-        """
-        return _datamodel.SensorLocation_add(self, *args)
-
-    def remove(self, *args):
-        r"""
-        remove(SensorLocation self, Comment obj) -> bool
-        remove(SensorLocation self, AuxStream obj) -> bool
-        remove(SensorLocation self, Stream obj) -> bool
-        """
-        return _datamodel.SensorLocation_remove(self, *args)
-
-    def removeComment(self, *args):
-        r"""
-        removeComment(SensorLocation self, size_t i) -> bool
-        removeComment(SensorLocation self, CommentIndex i) -> bool
-        """
-        return _datamodel.SensorLocation_removeComment(self, *args)
-
-    def removeAuxStream(self, *args):
-        r"""
-        removeAuxStream(SensorLocation self, size_t i) -> bool
-        removeAuxStream(SensorLocation self, AuxStreamIndex i) -> bool
-        """
-        return _datamodel.SensorLocation_removeAuxStream(self, *args)
-
-    def removeStream(self, *args):
-        r"""
-        removeStream(SensorLocation self, size_t i) -> bool
-        removeStream(SensorLocation self, StreamIndex i) -> bool
-        """
-        return _datamodel.SensorLocation_removeStream(self, *args)
-
-    def commentCount(self):
-        r"""commentCount(SensorLocation self) -> size_t"""
-        return _datamodel.SensorLocation_commentCount(self)
-
-    def auxStreamCount(self):
-        r"""auxStreamCount(SensorLocation self) -> size_t"""
-        return _datamodel.SensorLocation_auxStreamCount(self)
-
-    def streamCount(self):
-        r"""streamCount(SensorLocation self) -> size_t"""
-        return _datamodel.SensorLocation_streamCount(self)
-
-    def comment(self, *args):
-        r"""
-        comment(SensorLocation self, size_t i) -> Comment
-        comment(SensorLocation self, CommentIndex i) -> Comment
-        """
-        return _datamodel.SensorLocation_comment(self, *args)
-
-    def auxStream(self, *args):
-        r"""
-        auxStream(SensorLocation self, size_t i) -> AuxStream
-        auxStream(SensorLocation self, AuxStreamIndex i) -> AuxStream
-        """
-        return _datamodel.SensorLocation_auxStream(self, *args)
-
-    def stream(self, *args):
-        r"""
-        stream(SensorLocation self, size_t i) -> Stream
-        stream(SensorLocation self, StreamIndex i) -> Stream
-        """
-        return _datamodel.SensorLocation_stream(self, *args)
-
-    def findStream(self, publicID):
-        r"""findStream(SensorLocation self, std::string const & publicID) -> Stream"""
-        return _datamodel.SensorLocation_findStream(self, publicID)
-
-    def station(self):
-        r"""station(SensorLocation self) -> Station"""
-        return _datamodel.SensorLocation_station(self)
-
-    def assign(self, other):
-        r"""assign(SensorLocation self, Object other) -> bool"""
-        return _datamodel.SensorLocation_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(SensorLocation self, PublicObject parent) -> bool"""
-        return _datamodel.SensorLocation_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(SensorLocation self, PublicObject parent) -> bool"""
-        return _datamodel.SensorLocation_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(SensorLocation self) -> bool"""
-        return _datamodel.SensorLocation_detach(self)
-
-    def clone(self):
-        r"""clone(SensorLocation self) -> Object"""
-        return _datamodel.SensorLocation_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(SensorLocation self, Object child) -> bool"""
-        return _datamodel.SensorLocation_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(SensorLocation self, Visitor visitor)"""
-        return _datamodel.SensorLocation_accept(self, visitor)
-
-# Register SensorLocation in _datamodel:
-_datamodel.SensorLocation_swigregister(SensorLocation)
-
-def SensorLocation_ClassName():
-    r"""SensorLocation_ClassName() -> char const *"""
-    return _datamodel.SensorLocation_ClassName()
-
-def SensorLocation_TypeInfo():
-    r"""SensorLocation_TypeInfo() -> RTTI"""
-    return _datamodel.SensorLocation_TypeInfo()
-
-def SensorLocation_Cast(*args):
-    r"""
-    SensorLocation_Cast(BaseObject o) -> SensorLocation
-    SensorLocation_Cast(Seiscomp::Core::BaseObjectPtr o) -> SensorLocation
-    """
-    return _datamodel.SensorLocation_Cast(*args)
-
-def SensorLocation_ConstCast(*args):
-    r"""
-    SensorLocation_ConstCast(BaseObject o) -> SensorLocation
-    SensorLocation_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> SensorLocation
-    """
-    return _datamodel.SensorLocation_ConstCast(*args)
-
-def SensorLocation_Meta():
-    r"""SensorLocation_Meta() -> MetaObject"""
-    return _datamodel.SensorLocation_Meta()
-
-def SensorLocation_Create(*args):
-    r"""
-    SensorLocation_Create() -> SensorLocation
-    SensorLocation_Create(std::string const & publicID) -> SensorLocation
-    """
-    return _datamodel.SensorLocation_Create(*args)
-
-def SensorLocation_Find(publicID):
-    r"""SensorLocation_Find(std::string const & publicID) -> SensorLocation"""
-    return _datamodel.SensorLocation_Find(publicID)
-
-class StationIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::StationIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(StationIndex self) -> StationIndex
-        __init__(StationIndex self, std::string const & code, Time start) -> StationIndex
-        __init__(StationIndex self, StationIndex arg2) -> StationIndex
-        """
-        _datamodel.StationIndex_swiginit(self, _datamodel.new_StationIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(StationIndex self, StationIndex arg2) -> bool"""
-        return _datamodel.StationIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(StationIndex self, StationIndex arg2) -> bool"""
-        return _datamodel.StationIndex___ne__(self, arg2)
-    code = property(_datamodel.StationIndex_code_get, _datamodel.StationIndex_code_set, doc=r"""code : std::string""")
-    start = property(_datamodel.StationIndex_start_get, _datamodel.StationIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
-    __swig_destroy__ = _datamodel.delete_StationIndex
-
-# Register StationIndex in _datamodel:
-_datamodel.StationIndex_swigregister(StationIndex)
-
-class Station(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::Station class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.Station_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.Station_TypeInfo()
-
-    def className(self):
-        r"""className(Station self) -> char const *"""
-        return _datamodel.Station_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(Station self) -> RTTI"""
-        return _datamodel.Station_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> Station
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> Station
-        """
-        return _datamodel.Station_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> Station
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Station
-        """
-        return _datamodel.Station_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(Station self, GenericArchive ar)"""
-        return _datamodel.Station_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.Station_Meta()
-
-    def meta(self):
-        r"""meta(Station self) -> MetaObject"""
-        return _datamodel.Station_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(Station self, Station other) -> Station
-        __init__(Station self, std::string const & publicID) -> Station
-        """
-        _datamodel.Station_swiginit(self, _datamodel.new_Station(*args))
-    __swig_destroy__ = _datamodel.delete_Station
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> Station
-        Create(std::string const & publicID) -> Station
-        """
-        return _datamodel.Station_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> Station"""
-        return _datamodel.Station_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(Station self, Station other) -> bool"""
-        return _datamodel.Station___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(Station self, Station other) -> bool"""
-        return _datamodel.Station___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(Station self, Station other) -> bool"""
-        return _datamodel.Station_equal(self, other)
-
-    def setCode(self, code):
-        r"""setCode(Station self, std::string const & code)"""
-        return _datamodel.Station_setCode(self, code)
-
-    def code(self):
-        r"""code(Station self) -> std::string const &"""
-        return _datamodel.Station_code(self)
-
-    def setStart(self, start):
-        r"""setStart(Station self, Time start)"""
-        return _datamodel.Station_setStart(self, start)
-
-    def start(self):
-        r"""start(Station self) -> Time"""
-        return _datamodel.Station_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(Station self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
-        return _datamodel.Station_setEnd(self, end)
-
-    def end(self):
-        r"""end(Station self) -> Time"""
-        return _datamodel.Station_end(self)
-
-    def setDescription(self, description):
-        r"""setDescription(Station self, std::string const & description)"""
-        return _datamodel.Station_setDescription(self, description)
-
-    def description(self):
-        r"""description(Station self) -> std::string const &"""
-        return _datamodel.Station_description(self)
-
-    def setLatitude(self, latitude):
-        r"""setLatitude(Station self, Seiscomp::Core::Optional< double >::Impl const & latitude)"""
-        return _datamodel.Station_setLatitude(self, latitude)
-
-    def latitude(self):
-        r"""latitude(Station self) -> double"""
-        return _datamodel.Station_latitude(self)
-
-    def setLongitude(self, longitude):
-        r"""setLongitude(Station self, Seiscomp::Core::Optional< double >::Impl const & longitude)"""
-        return _datamodel.Station_setLongitude(self, longitude)
-
-    def longitude(self):
-        r"""longitude(Station self) -> double"""
-        return _datamodel.Station_longitude(self)
-
-    def setElevation(self, elevation):
-        r"""setElevation(Station self, Seiscomp::Core::Optional< double >::Impl const & elevation)"""
-        return _datamodel.Station_setElevation(self, elevation)
-
-    def elevation(self):
-        r"""elevation(Station self) -> double"""
-        return _datamodel.Station_elevation(self)
-
-    def setPlace(self, place):
-        r"""setPlace(Station self, std::string const & place)"""
-        return _datamodel.Station_setPlace(self, place)
-
-    def place(self):
-        r"""place(Station self) -> std::string const &"""
-        return _datamodel.Station_place(self)
-
-    def setCountry(self, country):
-        r"""setCountry(Station self, std::string const & country)"""
-        return _datamodel.Station_setCountry(self, country)
-
-    def country(self):
-        r"""country(Station self) -> std::string const &"""
-        return _datamodel.Station_country(self)
-
-    def setAffiliation(self, affiliation):
-        r"""setAffiliation(Station self, std::string const & affiliation)"""
-        return _datamodel.Station_setAffiliation(self, affiliation)
-
-    def affiliation(self):
-        r"""affiliation(Station self) -> std::string const &"""
-        return _datamodel.Station_affiliation(self)
-
-    def setType(self, type):
-        r"""setType(Station self, std::string const & type)"""
-        return _datamodel.Station_setType(self, type)
-
-    def type(self):
-        r"""type(Station self) -> std::string const &"""
-        return _datamodel.Station_type(self)
-
-    def setArchive(self, archive):
-        r"""setArchive(Station self, std::string const & archive)"""
-        return _datamodel.Station_setArchive(self, archive)
-
-    def archive(self):
-        r"""archive(Station self) -> std::string const &"""
-        return _datamodel.Station_archive(self)
-
-    def setArchiveNetworkCode(self, archiveNetworkCode):
-        r"""setArchiveNetworkCode(Station self, std::string const & archiveNetworkCode)"""
-        return _datamodel.Station_setArchiveNetworkCode(self, archiveNetworkCode)
-
-    def archiveNetworkCode(self):
-        r"""archiveNetworkCode(Station self) -> std::string const &"""
-        return _datamodel.Station_archiveNetworkCode(self)
-
-    def setRestricted(self, restricted):
-        r"""setRestricted(Station self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
-        return _datamodel.Station_setRestricted(self, restricted)
-
-    def restricted(self):
-        r"""restricted(Station self) -> bool"""
-        return _datamodel.Station_restricted(self)
-
-    def setShared(self, shared):
-        r"""setShared(Station self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
-        return _datamodel.Station_setShared(self, shared)
-
-    def shared(self):
-        r"""shared(Station self) -> bool"""
-        return _datamodel.Station_shared(self)
-
-    def setRemark(self, remark):
-        r"""setRemark(Station self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
-        return _datamodel.Station_setRemark(self, remark)
-
-    def remark(self, *args):
-        r"""
-        remark(Station self) -> Blob
-        remark(Station self) -> Blob
-        """
-        return _datamodel.Station_remark(self, *args)
-
-    def index(self):
-        r"""index(Station self) -> StationIndex"""
-        return _datamodel.Station_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(Station self, Station lhs) -> bool"""
-        return _datamodel.Station_equalIndex(self, lhs)
-
-    def add(self, *args):
-        r"""
-        add(Station self, Comment obj) -> bool
-        add(Station self, SensorLocation obj) -> bool
-        """
-        return _datamodel.Station_add(self, *args)
-
-    def remove(self, *args):
-        r"""
-        remove(Station self, Comment obj) -> bool
-        remove(Station self, SensorLocation obj) -> bool
-        """
-        return _datamodel.Station_remove(self, *args)
-
-    def removeComment(self, *args):
-        r"""
-        removeComment(Station self, size_t i) -> bool
-        removeComment(Station self, CommentIndex i) -> bool
-        """
-        return _datamodel.Station_removeComment(self, *args)
-
-    def removeSensorLocation(self, *args):
-        r"""
-        removeSensorLocation(Station self, size_t i) -> bool
-        removeSensorLocation(Station self, SensorLocationIndex i) -> bool
-        """
-        return _datamodel.Station_removeSensorLocation(self, *args)
-
-    def commentCount(self):
-        r"""commentCount(Station self) -> size_t"""
-        return _datamodel.Station_commentCount(self)
-
-    def sensorLocationCount(self):
-        r"""sensorLocationCount(Station self) -> size_t"""
-        return _datamodel.Station_sensorLocationCount(self)
-
-    def comment(self, *args):
-        r"""
-        comment(Station self, size_t i) -> Comment
-        comment(Station self, CommentIndex i) -> Comment
-        """
-        return _datamodel.Station_comment(self, *args)
-
-    def sensorLocation(self, *args):
-        r"""
-        sensorLocation(Station self, size_t i) -> SensorLocation
-        sensorLocation(Station self, SensorLocationIndex i) -> SensorLocation
-        """
-        return _datamodel.Station_sensorLocation(self, *args)
-
-    def findSensorLocation(self, publicID):
-        r"""findSensorLocation(Station self, std::string const & publicID) -> SensorLocation"""
-        return _datamodel.Station_findSensorLocation(self, publicID)
-
-    def network(self):
-        r"""network(Station self) -> Network"""
-        return _datamodel.Station_network(self)
-
-    def assign(self, other):
-        r"""assign(Station self, Object other) -> bool"""
-        return _datamodel.Station_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(Station self, PublicObject parent) -> bool"""
-        return _datamodel.Station_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(Station self, PublicObject parent) -> bool"""
-        return _datamodel.Station_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(Station self) -> bool"""
-        return _datamodel.Station_detach(self)
-
-    def clone(self):
-        r"""clone(Station self) -> Object"""
-        return _datamodel.Station_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(Station self, Object child) -> bool"""
-        return _datamodel.Station_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(Station self, Visitor visitor)"""
-        return _datamodel.Station_accept(self, visitor)
-
-# Register Station in _datamodel:
-_datamodel.Station_swigregister(Station)
-
-def Station_ClassName():
-    r"""Station_ClassName() -> char const *"""
-    return _datamodel.Station_ClassName()
-
-def Station_TypeInfo():
-    r"""Station_TypeInfo() -> RTTI"""
-    return _datamodel.Station_TypeInfo()
-
-def Station_Cast(*args):
-    r"""
-    Station_Cast(BaseObject o) -> Station
-    Station_Cast(Seiscomp::Core::BaseObjectPtr o) -> Station
-    """
-    return _datamodel.Station_Cast(*args)
-
-def Station_ConstCast(*args):
-    r"""
-    Station_ConstCast(BaseObject o) -> Station
-    Station_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Station
-    """
-    return _datamodel.Station_ConstCast(*args)
-
-def Station_Meta():
-    r"""Station_Meta() -> MetaObject"""
-    return _datamodel.Station_Meta()
-
-def Station_Create(*args):
-    r"""
-    Station_Create() -> Station
-    Station_Create(std::string const & publicID) -> Station
-    """
-    return _datamodel.Station_Create(*args)
-
-def Station_Find(publicID):
-    r"""Station_Find(std::string const & publicID) -> Station"""
-    return _datamodel.Station_Find(publicID)
-
-class NetworkIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::NetworkIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(NetworkIndex self) -> NetworkIndex
-        __init__(NetworkIndex self, std::string const & code, Time start) -> NetworkIndex
-        __init__(NetworkIndex self, NetworkIndex arg2) -> NetworkIndex
-        """
-        _datamodel.NetworkIndex_swiginit(self, _datamodel.new_NetworkIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(NetworkIndex self, NetworkIndex arg2) -> bool"""
-        return _datamodel.NetworkIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(NetworkIndex self, NetworkIndex arg2) -> bool"""
-        return _datamodel.NetworkIndex___ne__(self, arg2)
-    code = property(_datamodel.NetworkIndex_code_get, _datamodel.NetworkIndex_code_set, doc=r"""code : std::string""")
-    start = property(_datamodel.NetworkIndex_start_get, _datamodel.NetworkIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
-    __swig_destroy__ = _datamodel.delete_NetworkIndex
-
-# Register NetworkIndex in _datamodel:
-_datamodel.NetworkIndex_swigregister(NetworkIndex)
-
-class Network(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::Network class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.Network_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.Network_TypeInfo()
-
-    def className(self):
-        r"""className(Network self) -> char const *"""
-        return _datamodel.Network_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(Network self) -> RTTI"""
-        return _datamodel.Network_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> Network
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> Network
-        """
-        return _datamodel.Network_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> Network
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Network
-        """
-        return _datamodel.Network_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(Network self, GenericArchive ar)"""
-        return _datamodel.Network_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.Network_Meta()
-
-    def meta(self):
-        r"""meta(Network self) -> MetaObject"""
-        return _datamodel.Network_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(Network self, Network other) -> Network
-        __init__(Network self, std::string const & publicID) -> Network
-        """
-        _datamodel.Network_swiginit(self, _datamodel.new_Network(*args))
-    __swig_destroy__ = _datamodel.delete_Network
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> Network
-        Create(std::string const & publicID) -> Network
-        """
-        return _datamodel.Network_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> Network"""
-        return _datamodel.Network_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(Network self, Network other) -> bool"""
-        return _datamodel.Network___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(Network self, Network other) -> bool"""
-        return _datamodel.Network___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(Network self, Network other) -> bool"""
-        return _datamodel.Network_equal(self, other)
-
-    def setCode(self, code):
-        r"""setCode(Network self, std::string const & code)"""
-        return _datamodel.Network_setCode(self, code)
-
-    def code(self):
-        r"""code(Network self) -> std::string const &"""
-        return _datamodel.Network_code(self)
-
-    def setStart(self, start):
-        r"""setStart(Network self, Time start)"""
-        return _datamodel.Network_setStart(self, start)
-
-    def start(self):
-        r"""start(Network self) -> Time"""
-        return _datamodel.Network_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(Network self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
-        return _datamodel.Network_setEnd(self, end)
-
-    def end(self):
-        r"""end(Network self) -> Time"""
-        return _datamodel.Network_end(self)
-
-    def setDescription(self, description):
-        r"""setDescription(Network self, std::string const & description)"""
-        return _datamodel.Network_setDescription(self, description)
-
-    def description(self):
-        r"""description(Network self) -> std::string const &"""
-        return _datamodel.Network_description(self)
-
-    def setInstitutions(self, institutions):
-        r"""setInstitutions(Network self, std::string const & institutions)"""
-        return _datamodel.Network_setInstitutions(self, institutions)
-
-    def institutions(self):
-        r"""institutions(Network self) -> std::string const &"""
-        return _datamodel.Network_institutions(self)
-
-    def setRegion(self, region):
-        r"""setRegion(Network self, std::string const & region)"""
-        return _datamodel.Network_setRegion(self, region)
-
-    def region(self):
-        r"""region(Network self) -> std::string const &"""
-        return _datamodel.Network_region(self)
-
-    def setType(self, type):
-        r"""setType(Network self, std::string const & type)"""
-        return _datamodel.Network_setType(self, type)
-
-    def type(self):
-        r"""type(Network self) -> std::string const &"""
-        return _datamodel.Network_type(self)
-
-    def setNetClass(self, netClass):
-        r"""setNetClass(Network self, std::string const & netClass)"""
-        return _datamodel.Network_setNetClass(self, netClass)
-
-    def netClass(self):
-        r"""netClass(Network self) -> std::string const &"""
-        return _datamodel.Network_netClass(self)
-
-    def setArchive(self, archive):
-        r"""setArchive(Network self, std::string const & archive)"""
-        return _datamodel.Network_setArchive(self, archive)
-
-    def archive(self):
-        r"""archive(Network self) -> std::string const &"""
-        return _datamodel.Network_archive(self)
-
-    def setRestricted(self, restricted):
-        r"""setRestricted(Network self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
-        return _datamodel.Network_setRestricted(self, restricted)
-
-    def restricted(self):
-        r"""restricted(Network self) -> bool"""
-        return _datamodel.Network_restricted(self)
-
-    def setShared(self, shared):
-        r"""setShared(Network self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
-        return _datamodel.Network_setShared(self, shared)
-
-    def shared(self):
-        r"""shared(Network self) -> bool"""
-        return _datamodel.Network_shared(self)
-
-    def setRemark(self, remark):
-        r"""setRemark(Network self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
-        return _datamodel.Network_setRemark(self, remark)
-
-    def remark(self, *args):
-        r"""
-        remark(Network self) -> Blob
-        remark(Network self) -> Blob
-        """
-        return _datamodel.Network_remark(self, *args)
-
-    def index(self):
-        r"""index(Network self) -> NetworkIndex"""
-        return _datamodel.Network_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(Network self, Network lhs) -> bool"""
-        return _datamodel.Network_equalIndex(self, lhs)
-
-    def add(self, *args):
-        r"""
-        add(Network self, Comment obj) -> bool
-        add(Network self, Station obj) -> bool
-        """
-        return _datamodel.Network_add(self, *args)
-
-    def remove(self, *args):
-        r"""
-        remove(Network self, Comment obj) -> bool
-        remove(Network self, Station obj) -> bool
-        """
-        return _datamodel.Network_remove(self, *args)
-
-    def removeComment(self, *args):
-        r"""
-        removeComment(Network self, size_t i) -> bool
-        removeComment(Network self, CommentIndex i) -> bool
-        """
-        return _datamodel.Network_removeComment(self, *args)
-
-    def removeStation(self, *args):
-        r"""
-        removeStation(Network self, size_t i) -> bool
-        removeStation(Network self, StationIndex i) -> bool
-        """
-        return _datamodel.Network_removeStation(self, *args)
-
-    def commentCount(self):
-        r"""commentCount(Network self) -> size_t"""
-        return _datamodel.Network_commentCount(self)
-
-    def stationCount(self):
-        r"""stationCount(Network self) -> size_t"""
-        return _datamodel.Network_stationCount(self)
-
-    def comment(self, *args):
-        r"""
-        comment(Network self, size_t i) -> Comment
-        comment(Network self, CommentIndex i) -> Comment
-        """
-        return _datamodel.Network_comment(self, *args)
-
-    def station(self, *args):
-        r"""
-        station(Network self, size_t i) -> Station
-        station(Network self, StationIndex i) -> Station
-        """
-        return _datamodel.Network_station(self, *args)
-
-    def findStation(self, publicID):
-        r"""findStation(Network self, std::string const & publicID) -> Station"""
-        return _datamodel.Network_findStation(self, publicID)
-
-    def inventory(self):
-        r"""inventory(Network self) -> Inventory"""
-        return _datamodel.Network_inventory(self)
-
-    def assign(self, other):
-        r"""assign(Network self, Object other) -> bool"""
-        return _datamodel.Network_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(Network self, PublicObject parent) -> bool"""
-        return _datamodel.Network_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(Network self, PublicObject parent) -> bool"""
-        return _datamodel.Network_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(Network self) -> bool"""
-        return _datamodel.Network_detach(self)
-
-    def clone(self):
-        r"""clone(Network self) -> Object"""
-        return _datamodel.Network_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(Network self, Object child) -> bool"""
-        return _datamodel.Network_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(Network self, Visitor visitor)"""
-        return _datamodel.Network_accept(self, visitor)
-
-# Register Network in _datamodel:
-_datamodel.Network_swigregister(Network)
-
-def Network_ClassName():
-    r"""Network_ClassName() -> char const *"""
-    return _datamodel.Network_ClassName()
-
-def Network_TypeInfo():
-    r"""Network_TypeInfo() -> RTTI"""
-    return _datamodel.Network_TypeInfo()
-
-def Network_Cast(*args):
-    r"""
-    Network_Cast(BaseObject o) -> Network
-    Network_Cast(Seiscomp::Core::BaseObjectPtr o) -> Network
-    """
-    return _datamodel.Network_Cast(*args)
-
-def Network_ConstCast(*args):
-    r"""
-    Network_ConstCast(BaseObject o) -> Network
-    Network_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Network
-    """
-    return _datamodel.Network_ConstCast(*args)
-
-def Network_Meta():
-    r"""Network_Meta() -> MetaObject"""
-    return _datamodel.Network_Meta()
-
-def Network_Create(*args):
-    r"""
-    Network_Create() -> Network
-    Network_Create(std::string const & publicID) -> Network
-    """
-    return _datamodel.Network_Create(*args)
-
-def Network_Find(publicID):
-    r"""Network_Find(std::string const & publicID) -> Network"""
-    return _datamodel.Network_Find(publicID)
-
-class Inventory(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::Inventory class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.Inventory_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.Inventory_TypeInfo()
-
-    def className(self):
-        r"""className(Inventory self) -> char const *"""
-        return _datamodel.Inventory_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(Inventory self) -> RTTI"""
-        return _datamodel.Inventory_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> Inventory
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> Inventory
-        """
-        return _datamodel.Inventory_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> Inventory
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Inventory
-        """
-        return _datamodel.Inventory_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(Inventory self, GenericArchive ar)"""
-        return _datamodel.Inventory_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.Inventory_Meta()
-
-    def meta(self):
-        r"""meta(Inventory self) -> MetaObject"""
-        return _datamodel.Inventory_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(Inventory self) -> Inventory
-        __init__(Inventory self, Inventory other) -> Inventory
-        """
-        _datamodel.Inventory_swiginit(self, _datamodel.new_Inventory(*args))
-    __swig_destroy__ = _datamodel.delete_Inventory
-
-    def __eq__(self, other):
-        r"""__eq__(Inventory self, Inventory other) -> bool"""
-        return _datamodel.Inventory___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(Inventory self, Inventory other) -> bool"""
-        return _datamodel.Inventory___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(Inventory self, Inventory other) -> bool"""
-        return _datamodel.Inventory_equal(self, other)
-
-    def add(self, *args):
-        r"""
-        add(Inventory self, StationGroup obj) -> bool
-        add(Inventory self, AuxDevice obj) -> bool
-        add(Inventory self, Sensor obj) -> bool
-        add(Inventory self, Datalogger obj) -> bool
-        add(Inventory self, ResponsePAZ obj) -> bool
-        add(Inventory self, ResponseFIR obj) -> bool
-        add(Inventory self, ResponseIIR obj) -> bool
-        add(Inventory self, ResponsePolynomial obj) -> bool
-        add(Inventory self, ResponseFAP obj) -> bool
-        add(Inventory self, Network obj) -> bool
-        """
-        return _datamodel.Inventory_add(self, *args)
-
-    def remove(self, *args):
-        r"""
-        remove(Inventory self, StationGroup obj) -> bool
-        remove(Inventory self, AuxDevice obj) -> bool
-        remove(Inventory self, Sensor obj) -> bool
-        remove(Inventory self, Datalogger obj) -> bool
-        remove(Inventory self, ResponsePAZ obj) -> bool
-        remove(Inventory self, ResponseFIR obj) -> bool
-        remove(Inventory self, ResponseIIR obj) -> bool
-        remove(Inventory self, ResponsePolynomial obj) -> bool
-        remove(Inventory self, ResponseFAP obj) -> bool
-        remove(Inventory self, Network obj) -> bool
-        """
-        return _datamodel.Inventory_remove(self, *args)
-
-    def removeStationGroup(self, *args):
-        r"""
-        removeStationGroup(Inventory self, size_t i) -> bool
-        removeStationGroup(Inventory self, StationGroupIndex i) -> bool
-        """
-        return _datamodel.Inventory_removeStationGroup(self, *args)
-
-    def removeAuxDevice(self, *args):
-        r"""
-        removeAuxDevice(Inventory self, size_t i) -> bool
-        removeAuxDevice(Inventory self, AuxDeviceIndex i) -> bool
-        """
-        return _datamodel.Inventory_removeAuxDevice(self, *args)
-
-    def removeSensor(self, *args):
-        r"""
-        removeSensor(Inventory self, size_t i) -> bool
-        removeSensor(Inventory self, SensorIndex i) -> bool
-        """
-        return _datamodel.Inventory_removeSensor(self, *args)
-
-    def removeDatalogger(self, *args):
-        r"""
-        removeDatalogger(Inventory self, size_t i) -> bool
-        removeDatalogger(Inventory self, DataloggerIndex i) -> bool
-        """
-        return _datamodel.Inventory_removeDatalogger(self, *args)
-
-    def removeResponsePAZ(self, *args):
-        r"""
-        removeResponsePAZ(Inventory self, size_t i) -> bool
-        removeResponsePAZ(Inventory self, ResponsePAZIndex i) -> bool
-        """
-        return _datamodel.Inventory_removeResponsePAZ(self, *args)
-
-    def removeResponseFIR(self, *args):
-        r"""
-        removeResponseFIR(Inventory self, size_t i) -> bool
-        removeResponseFIR(Inventory self, ResponseFIRIndex i) -> bool
-        """
-        return _datamodel.Inventory_removeResponseFIR(self, *args)
-
-    def removeResponseIIR(self, *args):
-        r"""
-        removeResponseIIR(Inventory self, size_t i) -> bool
-        removeResponseIIR(Inventory self, ResponseIIRIndex i) -> bool
-        """
-        return _datamodel.Inventory_removeResponseIIR(self, *args)
-
-    def removeResponsePolynomial(self, *args):
-        r"""
-        removeResponsePolynomial(Inventory self, size_t i) -> bool
-        removeResponsePolynomial(Inventory self, ResponsePolynomialIndex i) -> bool
-        """
-        return _datamodel.Inventory_removeResponsePolynomial(self, *args)
-
-    def removeResponseFAP(self, *args):
-        r"""
-        removeResponseFAP(Inventory self, size_t i) -> bool
-        removeResponseFAP(Inventory self, ResponseFAPIndex i) -> bool
-        """
-        return _datamodel.Inventory_removeResponseFAP(self, *args)
-
-    def removeNetwork(self, *args):
-        r"""
-        removeNetwork(Inventory self, size_t i) -> bool
-        removeNetwork(Inventory self, NetworkIndex i) -> bool
-        """
-        return _datamodel.Inventory_removeNetwork(self, *args)
-
-    def stationGroupCount(self):
-        r"""stationGroupCount(Inventory self) -> size_t"""
-        return _datamodel.Inventory_stationGroupCount(self)
-
-    def auxDeviceCount(self):
-        r"""auxDeviceCount(Inventory self) -> size_t"""
-        return _datamodel.Inventory_auxDeviceCount(self)
-
-    def sensorCount(self):
-        r"""sensorCount(Inventory self) -> size_t"""
-        return _datamodel.Inventory_sensorCount(self)
-
-    def dataloggerCount(self):
-        r"""dataloggerCount(Inventory self) -> size_t"""
-        return _datamodel.Inventory_dataloggerCount(self)
-
-    def responsePAZCount(self):
-        r"""responsePAZCount(Inventory self) -> size_t"""
-        return _datamodel.Inventory_responsePAZCount(self)
-
-    def responseFIRCount(self):
-        r"""responseFIRCount(Inventory self) -> size_t"""
-        return _datamodel.Inventory_responseFIRCount(self)
-
-    def responseIIRCount(self):
-        r"""responseIIRCount(Inventory self) -> size_t"""
-        return _datamodel.Inventory_responseIIRCount(self)
-
-    def responsePolynomialCount(self):
-        r"""responsePolynomialCount(Inventory self) -> size_t"""
-        return _datamodel.Inventory_responsePolynomialCount(self)
-
-    def responseFAPCount(self):
-        r"""responseFAPCount(Inventory self) -> size_t"""
-        return _datamodel.Inventory_responseFAPCount(self)
-
-    def networkCount(self):
-        r"""networkCount(Inventory self) -> size_t"""
-        return _datamodel.Inventory_networkCount(self)
-
-    def stationGroup(self, *args):
-        r"""
-        stationGroup(Inventory self, size_t i) -> StationGroup
-        stationGroup(Inventory self, StationGroupIndex i) -> StationGroup
-        """
-        return _datamodel.Inventory_stationGroup(self, *args)
-
-    def auxDevice(self, *args):
-        r"""
-        auxDevice(Inventory self, size_t i) -> AuxDevice
-        auxDevice(Inventory self, AuxDeviceIndex i) -> AuxDevice
-        """
-        return _datamodel.Inventory_auxDevice(self, *args)
-
-    def sensor(self, *args):
-        r"""
-        sensor(Inventory self, size_t i) -> Sensor
-        sensor(Inventory self, SensorIndex i) -> Sensor
-        """
-        return _datamodel.Inventory_sensor(self, *args)
-
-    def datalogger(self, *args):
-        r"""
-        datalogger(Inventory self, size_t i) -> Datalogger
-        datalogger(Inventory self, DataloggerIndex i) -> Datalogger
-        """
-        return _datamodel.Inventory_datalogger(self, *args)
-
-    def responsePAZ(self, *args):
-        r"""
-        responsePAZ(Inventory self, size_t i) -> ResponsePAZ
-        responsePAZ(Inventory self, ResponsePAZIndex i) -> ResponsePAZ
-        """
-        return _datamodel.Inventory_responsePAZ(self, *args)
-
-    def responseFIR(self, *args):
-        r"""
-        responseFIR(Inventory self, size_t i) -> ResponseFIR
-        responseFIR(Inventory self, ResponseFIRIndex i) -> ResponseFIR
-        """
-        return _datamodel.Inventory_responseFIR(self, *args)
-
-    def responseIIR(self, *args):
-        r"""
-        responseIIR(Inventory self, size_t i) -> ResponseIIR
-        responseIIR(Inventory self, ResponseIIRIndex i) -> ResponseIIR
-        """
-        return _datamodel.Inventory_responseIIR(self, *args)
-
-    def responsePolynomial(self, *args):
-        r"""
-        responsePolynomial(Inventory self, size_t i) -> ResponsePolynomial
-        responsePolynomial(Inventory self, ResponsePolynomialIndex i) -> ResponsePolynomial
-        """
-        return _datamodel.Inventory_responsePolynomial(self, *args)
-
-    def responseFAP(self, *args):
-        r"""
-        responseFAP(Inventory self, size_t i) -> ResponseFAP
-        responseFAP(Inventory self, ResponseFAPIndex i) -> ResponseFAP
-        """
-        return _datamodel.Inventory_responseFAP(self, *args)
-
-    def network(self, *args):
-        r"""
-        network(Inventory self, size_t i) -> Network
-        network(Inventory self, NetworkIndex i) -> Network
-        """
-        return _datamodel.Inventory_network(self, *args)
-
-    def findStationGroup(self, publicID):
-        r"""findStationGroup(Inventory self, std::string const & publicID) -> StationGroup"""
-        return _datamodel.Inventory_findStationGroup(self, publicID)
-
-    def findAuxDevice(self, publicID):
-        r"""findAuxDevice(Inventory self, std::string const & publicID) -> AuxDevice"""
-        return _datamodel.Inventory_findAuxDevice(self, publicID)
-
-    def findSensor(self, publicID):
-        r"""findSensor(Inventory self, std::string const & publicID) -> Sensor"""
-        return _datamodel.Inventory_findSensor(self, publicID)
-
-    def findDatalogger(self, publicID):
-        r"""findDatalogger(Inventory self, std::string const & publicID) -> Datalogger"""
-        return _datamodel.Inventory_findDatalogger(self, publicID)
-
-    def findResponsePAZ(self, publicID):
-        r"""findResponsePAZ(Inventory self, std::string const & publicID) -> ResponsePAZ"""
-        return _datamodel.Inventory_findResponsePAZ(self, publicID)
-
-    def findResponseFIR(self, publicID):
-        r"""findResponseFIR(Inventory self, std::string const & publicID) -> ResponseFIR"""
-        return _datamodel.Inventory_findResponseFIR(self, publicID)
-
-    def findResponseIIR(self, publicID):
-        r"""findResponseIIR(Inventory self, std::string const & publicID) -> ResponseIIR"""
-        return _datamodel.Inventory_findResponseIIR(self, publicID)
-
-    def findResponsePolynomial(self, publicID):
-        r"""findResponsePolynomial(Inventory self, std::string const & publicID) -> ResponsePolynomial"""
-        return _datamodel.Inventory_findResponsePolynomial(self, publicID)
-
-    def findResponseFAP(self, publicID):
-        r"""findResponseFAP(Inventory self, std::string const & publicID) -> ResponseFAP"""
-        return _datamodel.Inventory_findResponseFAP(self, publicID)
-
-    def findNetwork(self, publicID):
-        r"""findNetwork(Inventory self, std::string const & publicID) -> Network"""
-        return _datamodel.Inventory_findNetwork(self, publicID)
-
-    def assign(self, other):
-        r"""assign(Inventory self, Object other) -> bool"""
-        return _datamodel.Inventory_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(Inventory self, PublicObject parent) -> bool"""
-        return _datamodel.Inventory_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(Inventory self, PublicObject parent) -> bool"""
-        return _datamodel.Inventory_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(Inventory self) -> bool"""
-        return _datamodel.Inventory_detach(self)
-
-    def clone(self):
-        r"""clone(Inventory self) -> Object"""
-        return _datamodel.Inventory_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(Inventory self, Object child) -> bool"""
-        return _datamodel.Inventory_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(Inventory self, Visitor visitor)"""
-        return _datamodel.Inventory_accept(self, visitor)
-
-# Register Inventory in _datamodel:
-_datamodel.Inventory_swigregister(Inventory)
-
-def Inventory_ClassName():
-    r"""Inventory_ClassName() -> char const *"""
-    return _datamodel.Inventory_ClassName()
-
-def Inventory_TypeInfo():
-    r"""Inventory_TypeInfo() -> RTTI"""
-    return _datamodel.Inventory_TypeInfo()
-
-def Inventory_Cast(*args):
-    r"""
-    Inventory_Cast(BaseObject o) -> Inventory
-    Inventory_Cast(Seiscomp::Core::BaseObjectPtr o) -> Inventory
-    """
-    return _datamodel.Inventory_Cast(*args)
-
-def Inventory_ConstCast(*args):
-    r"""
-    Inventory_ConstCast(BaseObject o) -> Inventory
-    Inventory_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Inventory
-    """
-    return _datamodel.Inventory_ConstCast(*args)
-
-def Inventory_Meta():
-    r"""Inventory_Meta() -> MetaObject"""
-    return _datamodel.Inventory_Meta()
-
 class RouteArclinkIndex(object):
     r"""Proxy of C++ Seiscomp::DataModel::RouteArclinkIndex class."""
 
@@ -19950,2405 +22349,6 @@ def Routing_ConstCast(*args):
 def Routing_Meta():
     r"""Routing_Meta() -> MetaObject"""
     return _datamodel.Routing_Meta()
-
-class JournalEntry(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::JournalEntry class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.JournalEntry_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.JournalEntry_TypeInfo()
-
-    def className(self):
-        r"""className(JournalEntry self) -> char const *"""
-        return _datamodel.JournalEntry_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(JournalEntry self) -> RTTI"""
-        return _datamodel.JournalEntry_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> JournalEntry
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> JournalEntry
-        """
-        return _datamodel.JournalEntry_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> JournalEntry
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> JournalEntry
-        """
-        return _datamodel.JournalEntry_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(JournalEntry self, GenericArchive ar)"""
-        return _datamodel.JournalEntry_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.JournalEntry_Meta()
-
-    def meta(self):
-        r"""meta(JournalEntry self) -> MetaObject"""
-        return _datamodel.JournalEntry_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(JournalEntry self) -> JournalEntry
-        __init__(JournalEntry self, JournalEntry other) -> JournalEntry
-        """
-        _datamodel.JournalEntry_swiginit(self, _datamodel.new_JournalEntry(*args))
-    __swig_destroy__ = _datamodel.delete_JournalEntry
-
-    def __eq__(self, other):
-        r"""__eq__(JournalEntry self, JournalEntry other) -> bool"""
-        return _datamodel.JournalEntry___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(JournalEntry self, JournalEntry other) -> bool"""
-        return _datamodel.JournalEntry___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(JournalEntry self, JournalEntry other) -> bool"""
-        return _datamodel.JournalEntry_equal(self, other)
-
-    def setCreated(self, created):
-        r"""setCreated(JournalEntry self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & created)"""
-        return _datamodel.JournalEntry_setCreated(self, created)
-
-    def created(self):
-        r"""created(JournalEntry self) -> Time"""
-        return _datamodel.JournalEntry_created(self)
-
-    def setObjectID(self, objectID):
-        r"""setObjectID(JournalEntry self, std::string const & objectID)"""
-        return _datamodel.JournalEntry_setObjectID(self, objectID)
-
-    def objectID(self):
-        r"""objectID(JournalEntry self) -> std::string const &"""
-        return _datamodel.JournalEntry_objectID(self)
-
-    def setSender(self, sender):
-        r"""setSender(JournalEntry self, std::string const & sender)"""
-        return _datamodel.JournalEntry_setSender(self, sender)
-
-    def sender(self):
-        r"""sender(JournalEntry self) -> std::string const &"""
-        return _datamodel.JournalEntry_sender(self)
-
-    def setAction(self, action):
-        r"""setAction(JournalEntry self, std::string const & action)"""
-        return _datamodel.JournalEntry_setAction(self, action)
-
-    def action(self):
-        r"""action(JournalEntry self) -> std::string const &"""
-        return _datamodel.JournalEntry_action(self)
-
-    def setParameters(self, parameters):
-        r"""setParameters(JournalEntry self, std::string const & parameters)"""
-        return _datamodel.JournalEntry_setParameters(self, parameters)
-
-    def parameters(self):
-        r"""parameters(JournalEntry self) -> std::string const &"""
-        return _datamodel.JournalEntry_parameters(self)
-
-    def journaling(self):
-        r"""journaling(JournalEntry self) -> Journaling"""
-        return _datamodel.JournalEntry_journaling(self)
-
-    def assign(self, other):
-        r"""assign(JournalEntry self, Object other) -> bool"""
-        return _datamodel.JournalEntry_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(JournalEntry self, PublicObject parent) -> bool"""
-        return _datamodel.JournalEntry_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(JournalEntry self, PublicObject parent) -> bool"""
-        return _datamodel.JournalEntry_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(JournalEntry self) -> bool"""
-        return _datamodel.JournalEntry_detach(self)
-
-    def clone(self):
-        r"""clone(JournalEntry self) -> Object"""
-        return _datamodel.JournalEntry_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(JournalEntry self, Visitor visitor)"""
-        return _datamodel.JournalEntry_accept(self, visitor)
-
-# Register JournalEntry in _datamodel:
-_datamodel.JournalEntry_swigregister(JournalEntry)
-
-def JournalEntry_ClassName():
-    r"""JournalEntry_ClassName() -> char const *"""
-    return _datamodel.JournalEntry_ClassName()
-
-def JournalEntry_TypeInfo():
-    r"""JournalEntry_TypeInfo() -> RTTI"""
-    return _datamodel.JournalEntry_TypeInfo()
-
-def JournalEntry_Cast(*args):
-    r"""
-    JournalEntry_Cast(BaseObject o) -> JournalEntry
-    JournalEntry_Cast(Seiscomp::Core::BaseObjectPtr o) -> JournalEntry
-    """
-    return _datamodel.JournalEntry_Cast(*args)
-
-def JournalEntry_ConstCast(*args):
-    r"""
-    JournalEntry_ConstCast(BaseObject o) -> JournalEntry
-    JournalEntry_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> JournalEntry
-    """
-    return _datamodel.JournalEntry_ConstCast(*args)
-
-def JournalEntry_Meta():
-    r"""JournalEntry_Meta() -> MetaObject"""
-    return _datamodel.JournalEntry_Meta()
-
-class Journaling(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::Journaling class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.Journaling_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.Journaling_TypeInfo()
-
-    def className(self):
-        r"""className(Journaling self) -> char const *"""
-        return _datamodel.Journaling_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(Journaling self) -> RTTI"""
-        return _datamodel.Journaling_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> Journaling
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> Journaling
-        """
-        return _datamodel.Journaling_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> Journaling
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Journaling
-        """
-        return _datamodel.Journaling_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(Journaling self, GenericArchive ar)"""
-        return _datamodel.Journaling_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.Journaling_Meta()
-
-    def meta(self):
-        r"""meta(Journaling self) -> MetaObject"""
-        return _datamodel.Journaling_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(Journaling self) -> Journaling
-        __init__(Journaling self, Journaling other) -> Journaling
-        """
-        _datamodel.Journaling_swiginit(self, _datamodel.new_Journaling(*args))
-    __swig_destroy__ = _datamodel.delete_Journaling
-
-    def __eq__(self, other):
-        r"""__eq__(Journaling self, Journaling other) -> bool"""
-        return _datamodel.Journaling___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(Journaling self, Journaling other) -> bool"""
-        return _datamodel.Journaling___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(Journaling self, Journaling other) -> bool"""
-        return _datamodel.Journaling_equal(self, other)
-
-    def add(self, obj):
-        r"""add(Journaling self, JournalEntry obj) -> bool"""
-        return _datamodel.Journaling_add(self, obj)
-
-    def remove(self, obj):
-        r"""remove(Journaling self, JournalEntry obj) -> bool"""
-        return _datamodel.Journaling_remove(self, obj)
-
-    def removeJournalEntry(self, i):
-        r"""removeJournalEntry(Journaling self, size_t i) -> bool"""
-        return _datamodel.Journaling_removeJournalEntry(self, i)
-
-    def journalEntryCount(self):
-        r"""journalEntryCount(Journaling self) -> size_t"""
-        return _datamodel.Journaling_journalEntryCount(self)
-
-    def journalEntry(self, i):
-        r"""journalEntry(Journaling self, size_t i) -> JournalEntry"""
-        return _datamodel.Journaling_journalEntry(self, i)
-
-    def findJournalEntry(self, journalEntry):
-        r"""findJournalEntry(Journaling self, JournalEntry journalEntry) -> JournalEntry"""
-        return _datamodel.Journaling_findJournalEntry(self, journalEntry)
-
-    def assign(self, other):
-        r"""assign(Journaling self, Object other) -> bool"""
-        return _datamodel.Journaling_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(Journaling self, PublicObject parent) -> bool"""
-        return _datamodel.Journaling_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(Journaling self, PublicObject parent) -> bool"""
-        return _datamodel.Journaling_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(Journaling self) -> bool"""
-        return _datamodel.Journaling_detach(self)
-
-    def clone(self):
-        r"""clone(Journaling self) -> Object"""
-        return _datamodel.Journaling_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(Journaling self, Object child) -> bool"""
-        return _datamodel.Journaling_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(Journaling self, Visitor visitor)"""
-        return _datamodel.Journaling_accept(self, visitor)
-
-# Register Journaling in _datamodel:
-_datamodel.Journaling_swigregister(Journaling)
-
-def Journaling_ClassName():
-    r"""Journaling_ClassName() -> char const *"""
-    return _datamodel.Journaling_ClassName()
-
-def Journaling_TypeInfo():
-    r"""Journaling_TypeInfo() -> RTTI"""
-    return _datamodel.Journaling_TypeInfo()
-
-def Journaling_Cast(*args):
-    r"""
-    Journaling_Cast(BaseObject o) -> Journaling
-    Journaling_Cast(Seiscomp::Core::BaseObjectPtr o) -> Journaling
-    """
-    return _datamodel.Journaling_Cast(*args)
-
-def Journaling_ConstCast(*args):
-    r"""
-    Journaling_ConstCast(BaseObject o) -> Journaling
-    Journaling_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Journaling
-    """
-    return _datamodel.Journaling_ConstCast(*args)
-
-def Journaling_Meta():
-    r"""Journaling_Meta() -> MetaObject"""
-    return _datamodel.Journaling_Meta()
-
-class ArclinkUserIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::ArclinkUserIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(ArclinkUserIndex self) -> ArclinkUserIndex
-        __init__(ArclinkUserIndex self, std::string const & name, std::string const & email) -> ArclinkUserIndex
-        __init__(ArclinkUserIndex self, ArclinkUserIndex arg2) -> ArclinkUserIndex
-        """
-        _datamodel.ArclinkUserIndex_swiginit(self, _datamodel.new_ArclinkUserIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(ArclinkUserIndex self, ArclinkUserIndex arg2) -> bool"""
-        return _datamodel.ArclinkUserIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(ArclinkUserIndex self, ArclinkUserIndex arg2) -> bool"""
-        return _datamodel.ArclinkUserIndex___ne__(self, arg2)
-    name = property(_datamodel.ArclinkUserIndex_name_get, _datamodel.ArclinkUserIndex_name_set, doc=r"""name : std::string""")
-    email = property(_datamodel.ArclinkUserIndex_email_get, _datamodel.ArclinkUserIndex_email_set, doc=r"""email : std::string""")
-    __swig_destroy__ = _datamodel.delete_ArclinkUserIndex
-
-# Register ArclinkUserIndex in _datamodel:
-_datamodel.ArclinkUserIndex_swigregister(ArclinkUserIndex)
-
-class ArclinkUser(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::ArclinkUser class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.ArclinkUser_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.ArclinkUser_TypeInfo()
-
-    def className(self):
-        r"""className(ArclinkUser self) -> char const *"""
-        return _datamodel.ArclinkUser_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(ArclinkUser self) -> RTTI"""
-        return _datamodel.ArclinkUser_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> ArclinkUser
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkUser
-        """
-        return _datamodel.ArclinkUser_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> ArclinkUser
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkUser
-        """
-        return _datamodel.ArclinkUser_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(ArclinkUser self, GenericArchive ar)"""
-        return _datamodel.ArclinkUser_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.ArclinkUser_Meta()
-
-    def meta(self):
-        r"""meta(ArclinkUser self) -> MetaObject"""
-        return _datamodel.ArclinkUser_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(ArclinkUser self, ArclinkUser other) -> ArclinkUser
-        __init__(ArclinkUser self, std::string const & publicID) -> ArclinkUser
-        """
-        _datamodel.ArclinkUser_swiginit(self, _datamodel.new_ArclinkUser(*args))
-    __swig_destroy__ = _datamodel.delete_ArclinkUser
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> ArclinkUser
-        Create(std::string const & publicID) -> ArclinkUser
-        """
-        return _datamodel.ArclinkUser_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> ArclinkUser"""
-        return _datamodel.ArclinkUser_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(ArclinkUser self, ArclinkUser other) -> bool"""
-        return _datamodel.ArclinkUser___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(ArclinkUser self, ArclinkUser other) -> bool"""
-        return _datamodel.ArclinkUser___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(ArclinkUser self, ArclinkUser other) -> bool"""
-        return _datamodel.ArclinkUser_equal(self, other)
-
-    def setName(self, name):
-        r"""setName(ArclinkUser self, std::string const & name)"""
-        return _datamodel.ArclinkUser_setName(self, name)
-
-    def name(self):
-        r"""name(ArclinkUser self) -> std::string const &"""
-        return _datamodel.ArclinkUser_name(self)
-
-    def setEmail(self, email):
-        r"""setEmail(ArclinkUser self, std::string const & email)"""
-        return _datamodel.ArclinkUser_setEmail(self, email)
-
-    def email(self):
-        r"""email(ArclinkUser self) -> std::string const &"""
-        return _datamodel.ArclinkUser_email(self)
-
-    def setPassword(self, password):
-        r"""setPassword(ArclinkUser self, std::string const & password)"""
-        return _datamodel.ArclinkUser_setPassword(self, password)
-
-    def password(self):
-        r"""password(ArclinkUser self) -> std::string const &"""
-        return _datamodel.ArclinkUser_password(self)
-
-    def index(self):
-        r"""index(ArclinkUser self) -> ArclinkUserIndex"""
-        return _datamodel.ArclinkUser_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(ArclinkUser self, ArclinkUser lhs) -> bool"""
-        return _datamodel.ArclinkUser_equalIndex(self, lhs)
-
-    def arclinkLog(self):
-        r"""arclinkLog(ArclinkUser self) -> ArclinkLog"""
-        return _datamodel.ArclinkUser_arclinkLog(self)
-
-    def assign(self, other):
-        r"""assign(ArclinkUser self, Object other) -> bool"""
-        return _datamodel.ArclinkUser_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(ArclinkUser self, PublicObject parent) -> bool"""
-        return _datamodel.ArclinkUser_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(ArclinkUser self, PublicObject parent) -> bool"""
-        return _datamodel.ArclinkUser_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(ArclinkUser self) -> bool"""
-        return _datamodel.ArclinkUser_detach(self)
-
-    def clone(self):
-        r"""clone(ArclinkUser self) -> Object"""
-        return _datamodel.ArclinkUser_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(ArclinkUser self, Object child) -> bool"""
-        return _datamodel.ArclinkUser_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(ArclinkUser self, Visitor visitor)"""
-        return _datamodel.ArclinkUser_accept(self, visitor)
-
-# Register ArclinkUser in _datamodel:
-_datamodel.ArclinkUser_swigregister(ArclinkUser)
-
-def ArclinkUser_ClassName():
-    r"""ArclinkUser_ClassName() -> char const *"""
-    return _datamodel.ArclinkUser_ClassName()
-
-def ArclinkUser_TypeInfo():
-    r"""ArclinkUser_TypeInfo() -> RTTI"""
-    return _datamodel.ArclinkUser_TypeInfo()
-
-def ArclinkUser_Cast(*args):
-    r"""
-    ArclinkUser_Cast(BaseObject o) -> ArclinkUser
-    ArclinkUser_Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkUser
-    """
-    return _datamodel.ArclinkUser_Cast(*args)
-
-def ArclinkUser_ConstCast(*args):
-    r"""
-    ArclinkUser_ConstCast(BaseObject o) -> ArclinkUser
-    ArclinkUser_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkUser
-    """
-    return _datamodel.ArclinkUser_ConstCast(*args)
-
-def ArclinkUser_Meta():
-    r"""ArclinkUser_Meta() -> MetaObject"""
-    return _datamodel.ArclinkUser_Meta()
-
-def ArclinkUser_Create(*args):
-    r"""
-    ArclinkUser_Create() -> ArclinkUser
-    ArclinkUser_Create(std::string const & publicID) -> ArclinkUser
-    """
-    return _datamodel.ArclinkUser_Create(*args)
-
-def ArclinkUser_Find(publicID):
-    r"""ArclinkUser_Find(std::string const & publicID) -> ArclinkUser"""
-    return _datamodel.ArclinkUser_Find(publicID)
-
-class ArclinkStatusLineIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::ArclinkStatusLineIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(ArclinkStatusLineIndex self) -> ArclinkStatusLineIndex
-        __init__(ArclinkStatusLineIndex self, std::string const & volumeID, std::string const & type, std::string const & status) -> ArclinkStatusLineIndex
-        __init__(ArclinkStatusLineIndex self, ArclinkStatusLineIndex arg2) -> ArclinkStatusLineIndex
-        """
-        _datamodel.ArclinkStatusLineIndex_swiginit(self, _datamodel.new_ArclinkStatusLineIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(ArclinkStatusLineIndex self, ArclinkStatusLineIndex arg2) -> bool"""
-        return _datamodel.ArclinkStatusLineIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(ArclinkStatusLineIndex self, ArclinkStatusLineIndex arg2) -> bool"""
-        return _datamodel.ArclinkStatusLineIndex___ne__(self, arg2)
-    volumeID = property(_datamodel.ArclinkStatusLineIndex_volumeID_get, _datamodel.ArclinkStatusLineIndex_volumeID_set, doc=r"""volumeID : std::string""")
-    type = property(_datamodel.ArclinkStatusLineIndex_type_get, _datamodel.ArclinkStatusLineIndex_type_set, doc=r"""type : std::string""")
-    status = property(_datamodel.ArclinkStatusLineIndex_status_get, _datamodel.ArclinkStatusLineIndex_status_set, doc=r"""status : std::string""")
-    __swig_destroy__ = _datamodel.delete_ArclinkStatusLineIndex
-
-# Register ArclinkStatusLineIndex in _datamodel:
-_datamodel.ArclinkStatusLineIndex_swigregister(ArclinkStatusLineIndex)
-
-class ArclinkStatusLine(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::ArclinkStatusLine class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.ArclinkStatusLine_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.ArclinkStatusLine_TypeInfo()
-
-    def className(self):
-        r"""className(ArclinkStatusLine self) -> char const *"""
-        return _datamodel.ArclinkStatusLine_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(ArclinkStatusLine self) -> RTTI"""
-        return _datamodel.ArclinkStatusLine_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> ArclinkStatusLine
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkStatusLine
-        """
-        return _datamodel.ArclinkStatusLine_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> ArclinkStatusLine
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkStatusLine
-        """
-        return _datamodel.ArclinkStatusLine_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(ArclinkStatusLine self, GenericArchive ar)"""
-        return _datamodel.ArclinkStatusLine_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.ArclinkStatusLine_Meta()
-
-    def meta(self):
-        r"""meta(ArclinkStatusLine self) -> MetaObject"""
-        return _datamodel.ArclinkStatusLine_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(ArclinkStatusLine self) -> ArclinkStatusLine
-        __init__(ArclinkStatusLine self, ArclinkStatusLine other) -> ArclinkStatusLine
-        """
-        _datamodel.ArclinkStatusLine_swiginit(self, _datamodel.new_ArclinkStatusLine(*args))
-    __swig_destroy__ = _datamodel.delete_ArclinkStatusLine
-
-    def __eq__(self, other):
-        r"""__eq__(ArclinkStatusLine self, ArclinkStatusLine other) -> bool"""
-        return _datamodel.ArclinkStatusLine___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(ArclinkStatusLine self, ArclinkStatusLine other) -> bool"""
-        return _datamodel.ArclinkStatusLine___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(ArclinkStatusLine self, ArclinkStatusLine other) -> bool"""
-        return _datamodel.ArclinkStatusLine_equal(self, other)
-
-    def setType(self, type):
-        r"""setType(ArclinkStatusLine self, std::string const & type)"""
-        return _datamodel.ArclinkStatusLine_setType(self, type)
-
-    def type(self):
-        r"""type(ArclinkStatusLine self) -> std::string const &"""
-        return _datamodel.ArclinkStatusLine_type(self)
-
-    def setStatus(self, status):
-        r"""setStatus(ArclinkStatusLine self, std::string const & status)"""
-        return _datamodel.ArclinkStatusLine_setStatus(self, status)
-
-    def status(self):
-        r"""status(ArclinkStatusLine self) -> std::string const &"""
-        return _datamodel.ArclinkStatusLine_status(self)
-
-    def setSize(self, size):
-        r"""setSize(ArclinkStatusLine self, Seiscomp::Core::Optional< int >::Impl const & size)"""
-        return _datamodel.ArclinkStatusLine_setSize(self, size)
-
-    def size(self):
-        r"""size(ArclinkStatusLine self) -> int"""
-        return _datamodel.ArclinkStatusLine_size(self)
-
-    def setMessage(self, message):
-        r"""setMessage(ArclinkStatusLine self, std::string const & message)"""
-        return _datamodel.ArclinkStatusLine_setMessage(self, message)
-
-    def message(self):
-        r"""message(ArclinkStatusLine self) -> std::string const &"""
-        return _datamodel.ArclinkStatusLine_message(self)
-
-    def setVolumeID(self, volumeID):
-        r"""setVolumeID(ArclinkStatusLine self, std::string const & volumeID)"""
-        return _datamodel.ArclinkStatusLine_setVolumeID(self, volumeID)
-
-    def volumeID(self):
-        r"""volumeID(ArclinkStatusLine self) -> std::string const &"""
-        return _datamodel.ArclinkStatusLine_volumeID(self)
-
-    def index(self):
-        r"""index(ArclinkStatusLine self) -> ArclinkStatusLineIndex"""
-        return _datamodel.ArclinkStatusLine_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(ArclinkStatusLine self, ArclinkStatusLine lhs) -> bool"""
-        return _datamodel.ArclinkStatusLine_equalIndex(self, lhs)
-
-    def arclinkRequest(self):
-        r"""arclinkRequest(ArclinkStatusLine self) -> ArclinkRequest"""
-        return _datamodel.ArclinkStatusLine_arclinkRequest(self)
-
-    def assign(self, other):
-        r"""assign(ArclinkStatusLine self, Object other) -> bool"""
-        return _datamodel.ArclinkStatusLine_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(ArclinkStatusLine self, PublicObject parent) -> bool"""
-        return _datamodel.ArclinkStatusLine_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(ArclinkStatusLine self, PublicObject parent) -> bool"""
-        return _datamodel.ArclinkStatusLine_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(ArclinkStatusLine self) -> bool"""
-        return _datamodel.ArclinkStatusLine_detach(self)
-
-    def clone(self):
-        r"""clone(ArclinkStatusLine self) -> Object"""
-        return _datamodel.ArclinkStatusLine_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(ArclinkStatusLine self, Visitor visitor)"""
-        return _datamodel.ArclinkStatusLine_accept(self, visitor)
-
-# Register ArclinkStatusLine in _datamodel:
-_datamodel.ArclinkStatusLine_swigregister(ArclinkStatusLine)
-
-def ArclinkStatusLine_ClassName():
-    r"""ArclinkStatusLine_ClassName() -> char const *"""
-    return _datamodel.ArclinkStatusLine_ClassName()
-
-def ArclinkStatusLine_TypeInfo():
-    r"""ArclinkStatusLine_TypeInfo() -> RTTI"""
-    return _datamodel.ArclinkStatusLine_TypeInfo()
-
-def ArclinkStatusLine_Cast(*args):
-    r"""
-    ArclinkStatusLine_Cast(BaseObject o) -> ArclinkStatusLine
-    ArclinkStatusLine_Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkStatusLine
-    """
-    return _datamodel.ArclinkStatusLine_Cast(*args)
-
-def ArclinkStatusLine_ConstCast(*args):
-    r"""
-    ArclinkStatusLine_ConstCast(BaseObject o) -> ArclinkStatusLine
-    ArclinkStatusLine_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkStatusLine
-    """
-    return _datamodel.ArclinkStatusLine_ConstCast(*args)
-
-def ArclinkStatusLine_Meta():
-    r"""ArclinkStatusLine_Meta() -> MetaObject"""
-    return _datamodel.ArclinkStatusLine_Meta()
-
-class ArclinkRequestLineIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::ArclinkRequestLineIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(ArclinkRequestLineIndex self) -> ArclinkRequestLineIndex
-        __init__(ArclinkRequestLineIndex self, Time start, Time end, WaveformStreamID streamID) -> ArclinkRequestLineIndex
-        __init__(ArclinkRequestLineIndex self, ArclinkRequestLineIndex arg2) -> ArclinkRequestLineIndex
-        """
-        _datamodel.ArclinkRequestLineIndex_swiginit(self, _datamodel.new_ArclinkRequestLineIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(ArclinkRequestLineIndex self, ArclinkRequestLineIndex arg2) -> bool"""
-        return _datamodel.ArclinkRequestLineIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(ArclinkRequestLineIndex self, ArclinkRequestLineIndex arg2) -> bool"""
-        return _datamodel.ArclinkRequestLineIndex___ne__(self, arg2)
-    start = property(_datamodel.ArclinkRequestLineIndex_start_get, _datamodel.ArclinkRequestLineIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
-    end = property(_datamodel.ArclinkRequestLineIndex_end_get, _datamodel.ArclinkRequestLineIndex_end_set, doc=r"""end : Seiscomp::Core::Time""")
-    streamID = property(_datamodel.ArclinkRequestLineIndex_streamID_get, _datamodel.ArclinkRequestLineIndex_streamID_set, doc=r"""streamID : Seiscomp::DataModel::WaveformStreamID""")
-    __swig_destroy__ = _datamodel.delete_ArclinkRequestLineIndex
-
-# Register ArclinkRequestLineIndex in _datamodel:
-_datamodel.ArclinkRequestLineIndex_swigregister(ArclinkRequestLineIndex)
-
-class ArclinkRequestLine(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::ArclinkRequestLine class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.ArclinkRequestLine_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.ArclinkRequestLine_TypeInfo()
-
-    def className(self):
-        r"""className(ArclinkRequestLine self) -> char const *"""
-        return _datamodel.ArclinkRequestLine_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(ArclinkRequestLine self) -> RTTI"""
-        return _datamodel.ArclinkRequestLine_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> ArclinkRequestLine
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkRequestLine
-        """
-        return _datamodel.ArclinkRequestLine_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> ArclinkRequestLine
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkRequestLine
-        """
-        return _datamodel.ArclinkRequestLine_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(ArclinkRequestLine self, GenericArchive ar)"""
-        return _datamodel.ArclinkRequestLine_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.ArclinkRequestLine_Meta()
-
-    def meta(self):
-        r"""meta(ArclinkRequestLine self) -> MetaObject"""
-        return _datamodel.ArclinkRequestLine_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(ArclinkRequestLine self) -> ArclinkRequestLine
-        __init__(ArclinkRequestLine self, ArclinkRequestLine other) -> ArclinkRequestLine
-        """
-        _datamodel.ArclinkRequestLine_swiginit(self, _datamodel.new_ArclinkRequestLine(*args))
-    __swig_destroy__ = _datamodel.delete_ArclinkRequestLine
-
-    def __eq__(self, other):
-        r"""__eq__(ArclinkRequestLine self, ArclinkRequestLine other) -> bool"""
-        return _datamodel.ArclinkRequestLine___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(ArclinkRequestLine self, ArclinkRequestLine other) -> bool"""
-        return _datamodel.ArclinkRequestLine___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(ArclinkRequestLine self, ArclinkRequestLine other) -> bool"""
-        return _datamodel.ArclinkRequestLine_equal(self, other)
-
-    def setStart(self, start):
-        r"""setStart(ArclinkRequestLine self, Time start)"""
-        return _datamodel.ArclinkRequestLine_setStart(self, start)
-
-    def start(self):
-        r"""start(ArclinkRequestLine self) -> Time"""
-        return _datamodel.ArclinkRequestLine_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(ArclinkRequestLine self, Time end)"""
-        return _datamodel.ArclinkRequestLine_setEnd(self, end)
-
-    def end(self):
-        r"""end(ArclinkRequestLine self) -> Time"""
-        return _datamodel.ArclinkRequestLine_end(self)
-
-    def setStreamID(self, streamID):
-        r"""setStreamID(ArclinkRequestLine self, WaveformStreamID streamID)"""
-        return _datamodel.ArclinkRequestLine_setStreamID(self, streamID)
-
-    def streamID(self, *args):
-        r"""
-        streamID(ArclinkRequestLine self) -> WaveformStreamID
-        streamID(ArclinkRequestLine self) -> WaveformStreamID
-        """
-        return _datamodel.ArclinkRequestLine_streamID(self, *args)
-
-    def setRestricted(self, restricted):
-        r"""setRestricted(ArclinkRequestLine self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
-        return _datamodel.ArclinkRequestLine_setRestricted(self, restricted)
-
-    def restricted(self):
-        r"""restricted(ArclinkRequestLine self) -> bool"""
-        return _datamodel.ArclinkRequestLine_restricted(self)
-
-    def setShared(self, shared):
-        r"""setShared(ArclinkRequestLine self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
-        return _datamodel.ArclinkRequestLine_setShared(self, shared)
-
-    def shared(self):
-        r"""shared(ArclinkRequestLine self) -> bool"""
-        return _datamodel.ArclinkRequestLine_shared(self)
-
-    def setNetClass(self, netClass):
-        r"""setNetClass(ArclinkRequestLine self, std::string const & netClass)"""
-        return _datamodel.ArclinkRequestLine_setNetClass(self, netClass)
-
-    def netClass(self):
-        r"""netClass(ArclinkRequestLine self) -> std::string const &"""
-        return _datamodel.ArclinkRequestLine_netClass(self)
-
-    def setConstraints(self, constraints):
-        r"""setConstraints(ArclinkRequestLine self, std::string const & constraints)"""
-        return _datamodel.ArclinkRequestLine_setConstraints(self, constraints)
-
-    def constraints(self):
-        r"""constraints(ArclinkRequestLine self) -> std::string const &"""
-        return _datamodel.ArclinkRequestLine_constraints(self)
-
-    def setStatus(self, status):
-        r"""setStatus(ArclinkRequestLine self, ArclinkStatusLine status)"""
-        return _datamodel.ArclinkRequestLine_setStatus(self, status)
-
-    def status(self, *args):
-        r"""
-        status(ArclinkRequestLine self) -> ArclinkStatusLine
-        status(ArclinkRequestLine self) -> ArclinkStatusLine
-        """
-        return _datamodel.ArclinkRequestLine_status(self, *args)
-
-    def index(self):
-        r"""index(ArclinkRequestLine self) -> ArclinkRequestLineIndex"""
-        return _datamodel.ArclinkRequestLine_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(ArclinkRequestLine self, ArclinkRequestLine lhs) -> bool"""
-        return _datamodel.ArclinkRequestLine_equalIndex(self, lhs)
-
-    def arclinkRequest(self):
-        r"""arclinkRequest(ArclinkRequestLine self) -> ArclinkRequest"""
-        return _datamodel.ArclinkRequestLine_arclinkRequest(self)
-
-    def assign(self, other):
-        r"""assign(ArclinkRequestLine self, Object other) -> bool"""
-        return _datamodel.ArclinkRequestLine_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(ArclinkRequestLine self, PublicObject parent) -> bool"""
-        return _datamodel.ArclinkRequestLine_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(ArclinkRequestLine self, PublicObject parent) -> bool"""
-        return _datamodel.ArclinkRequestLine_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(ArclinkRequestLine self) -> bool"""
-        return _datamodel.ArclinkRequestLine_detach(self)
-
-    def clone(self):
-        r"""clone(ArclinkRequestLine self) -> Object"""
-        return _datamodel.ArclinkRequestLine_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(ArclinkRequestLine self, Visitor visitor)"""
-        return _datamodel.ArclinkRequestLine_accept(self, visitor)
-
-# Register ArclinkRequestLine in _datamodel:
-_datamodel.ArclinkRequestLine_swigregister(ArclinkRequestLine)
-
-def ArclinkRequestLine_ClassName():
-    r"""ArclinkRequestLine_ClassName() -> char const *"""
-    return _datamodel.ArclinkRequestLine_ClassName()
-
-def ArclinkRequestLine_TypeInfo():
-    r"""ArclinkRequestLine_TypeInfo() -> RTTI"""
-    return _datamodel.ArclinkRequestLine_TypeInfo()
-
-def ArclinkRequestLine_Cast(*args):
-    r"""
-    ArclinkRequestLine_Cast(BaseObject o) -> ArclinkRequestLine
-    ArclinkRequestLine_Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkRequestLine
-    """
-    return _datamodel.ArclinkRequestLine_Cast(*args)
-
-def ArclinkRequestLine_ConstCast(*args):
-    r"""
-    ArclinkRequestLine_ConstCast(BaseObject o) -> ArclinkRequestLine
-    ArclinkRequestLine_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkRequestLine
-    """
-    return _datamodel.ArclinkRequestLine_ConstCast(*args)
-
-def ArclinkRequestLine_Meta():
-    r"""ArclinkRequestLine_Meta() -> MetaObject"""
-    return _datamodel.ArclinkRequestLine_Meta()
-
-class ArclinkRequestIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::ArclinkRequestIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(ArclinkRequestIndex self) -> ArclinkRequestIndex
-        __init__(ArclinkRequestIndex self, Time created, std::string const & requestID, std::string const & userID) -> ArclinkRequestIndex
-        __init__(ArclinkRequestIndex self, ArclinkRequestIndex arg2) -> ArclinkRequestIndex
-        """
-        _datamodel.ArclinkRequestIndex_swiginit(self, _datamodel.new_ArclinkRequestIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(ArclinkRequestIndex self, ArclinkRequestIndex arg2) -> bool"""
-        return _datamodel.ArclinkRequestIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(ArclinkRequestIndex self, ArclinkRequestIndex arg2) -> bool"""
-        return _datamodel.ArclinkRequestIndex___ne__(self, arg2)
-    created = property(_datamodel.ArclinkRequestIndex_created_get, _datamodel.ArclinkRequestIndex_created_set, doc=r"""created : Seiscomp::Core::Time""")
-    requestID = property(_datamodel.ArclinkRequestIndex_requestID_get, _datamodel.ArclinkRequestIndex_requestID_set, doc=r"""requestID : std::string""")
-    userID = property(_datamodel.ArclinkRequestIndex_userID_get, _datamodel.ArclinkRequestIndex_userID_set, doc=r"""userID : std::string""")
-    __swig_destroy__ = _datamodel.delete_ArclinkRequestIndex
-
-# Register ArclinkRequestIndex in _datamodel:
-_datamodel.ArclinkRequestIndex_swigregister(ArclinkRequestIndex)
-
-class ArclinkRequest(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::ArclinkRequest class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.ArclinkRequest_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.ArclinkRequest_TypeInfo()
-
-    def className(self):
-        r"""className(ArclinkRequest self) -> char const *"""
-        return _datamodel.ArclinkRequest_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(ArclinkRequest self) -> RTTI"""
-        return _datamodel.ArclinkRequest_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> ArclinkRequest
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkRequest
-        """
-        return _datamodel.ArclinkRequest_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> ArclinkRequest
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkRequest
-        """
-        return _datamodel.ArclinkRequest_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(ArclinkRequest self, GenericArchive ar)"""
-        return _datamodel.ArclinkRequest_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.ArclinkRequest_Meta()
-
-    def meta(self):
-        r"""meta(ArclinkRequest self) -> MetaObject"""
-        return _datamodel.ArclinkRequest_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(ArclinkRequest self, ArclinkRequest other) -> ArclinkRequest
-        __init__(ArclinkRequest self, std::string const & publicID) -> ArclinkRequest
-        """
-        _datamodel.ArclinkRequest_swiginit(self, _datamodel.new_ArclinkRequest(*args))
-    __swig_destroy__ = _datamodel.delete_ArclinkRequest
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> ArclinkRequest
-        Create(std::string const & publicID) -> ArclinkRequest
-        """
-        return _datamodel.ArclinkRequest_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> ArclinkRequest"""
-        return _datamodel.ArclinkRequest_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(ArclinkRequest self, ArclinkRequest other) -> bool"""
-        return _datamodel.ArclinkRequest___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(ArclinkRequest self, ArclinkRequest other) -> bool"""
-        return _datamodel.ArclinkRequest___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(ArclinkRequest self, ArclinkRequest other) -> bool"""
-        return _datamodel.ArclinkRequest_equal(self, other)
-
-    def setRequestID(self, requestID):
-        r"""setRequestID(ArclinkRequest self, std::string const & requestID)"""
-        return _datamodel.ArclinkRequest_setRequestID(self, requestID)
-
-    def requestID(self):
-        r"""requestID(ArclinkRequest self) -> std::string const &"""
-        return _datamodel.ArclinkRequest_requestID(self)
-
-    def setUserID(self, userID):
-        r"""setUserID(ArclinkRequest self, std::string const & userID)"""
-        return _datamodel.ArclinkRequest_setUserID(self, userID)
-
-    def userID(self):
-        r"""userID(ArclinkRequest self) -> std::string const &"""
-        return _datamodel.ArclinkRequest_userID(self)
-
-    def setUserIP(self, userIP):
-        r"""setUserIP(ArclinkRequest self, std::string const & userIP)"""
-        return _datamodel.ArclinkRequest_setUserIP(self, userIP)
-
-    def userIP(self):
-        r"""userIP(ArclinkRequest self) -> std::string const &"""
-        return _datamodel.ArclinkRequest_userIP(self)
-
-    def setClientID(self, clientID):
-        r"""setClientID(ArclinkRequest self, std::string const & clientID)"""
-        return _datamodel.ArclinkRequest_setClientID(self, clientID)
-
-    def clientID(self):
-        r"""clientID(ArclinkRequest self) -> std::string const &"""
-        return _datamodel.ArclinkRequest_clientID(self)
-
-    def setClientIP(self, clientIP):
-        r"""setClientIP(ArclinkRequest self, std::string const & clientIP)"""
-        return _datamodel.ArclinkRequest_setClientIP(self, clientIP)
-
-    def clientIP(self):
-        r"""clientIP(ArclinkRequest self) -> std::string const &"""
-        return _datamodel.ArclinkRequest_clientIP(self)
-
-    def setType(self, type):
-        r"""setType(ArclinkRequest self, std::string const & type)"""
-        return _datamodel.ArclinkRequest_setType(self, type)
-
-    def type(self):
-        r"""type(ArclinkRequest self) -> std::string const &"""
-        return _datamodel.ArclinkRequest_type(self)
-
-    def setCreated(self, created):
-        r"""setCreated(ArclinkRequest self, Time created)"""
-        return _datamodel.ArclinkRequest_setCreated(self, created)
-
-    def created(self):
-        r"""created(ArclinkRequest self) -> Time"""
-        return _datamodel.ArclinkRequest_created(self)
-
-    def setStatus(self, status):
-        r"""setStatus(ArclinkRequest self, std::string const & status)"""
-        return _datamodel.ArclinkRequest_setStatus(self, status)
-
-    def status(self):
-        r"""status(ArclinkRequest self) -> std::string const &"""
-        return _datamodel.ArclinkRequest_status(self)
-
-    def setMessage(self, message):
-        r"""setMessage(ArclinkRequest self, std::string const & message)"""
-        return _datamodel.ArclinkRequest_setMessage(self, message)
-
-    def message(self):
-        r"""message(ArclinkRequest self) -> std::string const &"""
-        return _datamodel.ArclinkRequest_message(self)
-
-    def setLabel(self, label):
-        r"""setLabel(ArclinkRequest self, std::string const & label)"""
-        return _datamodel.ArclinkRequest_setLabel(self, label)
-
-    def label(self):
-        r"""label(ArclinkRequest self) -> std::string const &"""
-        return _datamodel.ArclinkRequest_label(self)
-
-    def setHeader(self, header):
-        r"""setHeader(ArclinkRequest self, std::string const & header)"""
-        return _datamodel.ArclinkRequest_setHeader(self, header)
-
-    def header(self):
-        r"""header(ArclinkRequest self) -> std::string const &"""
-        return _datamodel.ArclinkRequest_header(self)
-
-    def setSummary(self, summary):
-        r"""setSummary(ArclinkRequest self, Seiscomp::Core::Optional< Seiscomp::DataModel::ArclinkRequestSummary >::Impl const & summary)"""
-        return _datamodel.ArclinkRequest_setSummary(self, summary)
-
-    def summary(self, *args):
-        r"""
-        summary(ArclinkRequest self) -> ArclinkRequestSummary
-        summary(ArclinkRequest self) -> ArclinkRequestSummary
-        """
-        return _datamodel.ArclinkRequest_summary(self, *args)
-
-    def index(self):
-        r"""index(ArclinkRequest self) -> ArclinkRequestIndex"""
-        return _datamodel.ArclinkRequest_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(ArclinkRequest self, ArclinkRequest lhs) -> bool"""
-        return _datamodel.ArclinkRequest_equalIndex(self, lhs)
-
-    def add(self, *args):
-        r"""
-        add(ArclinkRequest self, ArclinkStatusLine obj) -> bool
-        add(ArclinkRequest self, ArclinkRequestLine obj) -> bool
-        """
-        return _datamodel.ArclinkRequest_add(self, *args)
-
-    def remove(self, *args):
-        r"""
-        remove(ArclinkRequest self, ArclinkStatusLine obj) -> bool
-        remove(ArclinkRequest self, ArclinkRequestLine obj) -> bool
-        """
-        return _datamodel.ArclinkRequest_remove(self, *args)
-
-    def removeArclinkStatusLine(self, *args):
-        r"""
-        removeArclinkStatusLine(ArclinkRequest self, size_t i) -> bool
-        removeArclinkStatusLine(ArclinkRequest self, ArclinkStatusLineIndex i) -> bool
-        """
-        return _datamodel.ArclinkRequest_removeArclinkStatusLine(self, *args)
-
-    def removeArclinkRequestLine(self, *args):
-        r"""
-        removeArclinkRequestLine(ArclinkRequest self, size_t i) -> bool
-        removeArclinkRequestLine(ArclinkRequest self, ArclinkRequestLineIndex i) -> bool
-        """
-        return _datamodel.ArclinkRequest_removeArclinkRequestLine(self, *args)
-
-    def arclinkStatusLineCount(self):
-        r"""arclinkStatusLineCount(ArclinkRequest self) -> size_t"""
-        return _datamodel.ArclinkRequest_arclinkStatusLineCount(self)
-
-    def arclinkRequestLineCount(self):
-        r"""arclinkRequestLineCount(ArclinkRequest self) -> size_t"""
-        return _datamodel.ArclinkRequest_arclinkRequestLineCount(self)
-
-    def arclinkStatusLine(self, *args):
-        r"""
-        arclinkStatusLine(ArclinkRequest self, size_t i) -> ArclinkStatusLine
-        arclinkStatusLine(ArclinkRequest self, ArclinkStatusLineIndex i) -> ArclinkStatusLine
-        """
-        return _datamodel.ArclinkRequest_arclinkStatusLine(self, *args)
-
-    def arclinkRequestLine(self, *args):
-        r"""
-        arclinkRequestLine(ArclinkRequest self, size_t i) -> ArclinkRequestLine
-        arclinkRequestLine(ArclinkRequest self, ArclinkRequestLineIndex i) -> ArclinkRequestLine
-        """
-        return _datamodel.ArclinkRequest_arclinkRequestLine(self, *args)
-
-    def arclinkLog(self):
-        r"""arclinkLog(ArclinkRequest self) -> ArclinkLog"""
-        return _datamodel.ArclinkRequest_arclinkLog(self)
-
-    def assign(self, other):
-        r"""assign(ArclinkRequest self, Object other) -> bool"""
-        return _datamodel.ArclinkRequest_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(ArclinkRequest self, PublicObject parent) -> bool"""
-        return _datamodel.ArclinkRequest_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(ArclinkRequest self, PublicObject parent) -> bool"""
-        return _datamodel.ArclinkRequest_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(ArclinkRequest self) -> bool"""
-        return _datamodel.ArclinkRequest_detach(self)
-
-    def clone(self):
-        r"""clone(ArclinkRequest self) -> Object"""
-        return _datamodel.ArclinkRequest_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(ArclinkRequest self, Object child) -> bool"""
-        return _datamodel.ArclinkRequest_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(ArclinkRequest self, Visitor visitor)"""
-        return _datamodel.ArclinkRequest_accept(self, visitor)
-
-# Register ArclinkRequest in _datamodel:
-_datamodel.ArclinkRequest_swigregister(ArclinkRequest)
-
-def ArclinkRequest_ClassName():
-    r"""ArclinkRequest_ClassName() -> char const *"""
-    return _datamodel.ArclinkRequest_ClassName()
-
-def ArclinkRequest_TypeInfo():
-    r"""ArclinkRequest_TypeInfo() -> RTTI"""
-    return _datamodel.ArclinkRequest_TypeInfo()
-
-def ArclinkRequest_Cast(*args):
-    r"""
-    ArclinkRequest_Cast(BaseObject o) -> ArclinkRequest
-    ArclinkRequest_Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkRequest
-    """
-    return _datamodel.ArclinkRequest_Cast(*args)
-
-def ArclinkRequest_ConstCast(*args):
-    r"""
-    ArclinkRequest_ConstCast(BaseObject o) -> ArclinkRequest
-    ArclinkRequest_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkRequest
-    """
-    return _datamodel.ArclinkRequest_ConstCast(*args)
-
-def ArclinkRequest_Meta():
-    r"""ArclinkRequest_Meta() -> MetaObject"""
-    return _datamodel.ArclinkRequest_Meta()
-
-def ArclinkRequest_Create(*args):
-    r"""
-    ArclinkRequest_Create() -> ArclinkRequest
-    ArclinkRequest_Create(std::string const & publicID) -> ArclinkRequest
-    """
-    return _datamodel.ArclinkRequest_Create(*args)
-
-def ArclinkRequest_Find(publicID):
-    r"""ArclinkRequest_Find(std::string const & publicID) -> ArclinkRequest"""
-    return _datamodel.ArclinkRequest_Find(publicID)
-
-class ArclinkLog(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::ArclinkLog class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.ArclinkLog_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.ArclinkLog_TypeInfo()
-
-    def className(self):
-        r"""className(ArclinkLog self) -> char const *"""
-        return _datamodel.ArclinkLog_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(ArclinkLog self) -> RTTI"""
-        return _datamodel.ArclinkLog_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> ArclinkLog
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkLog
-        """
-        return _datamodel.ArclinkLog_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> ArclinkLog
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkLog
-        """
-        return _datamodel.ArclinkLog_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(ArclinkLog self, GenericArchive ar)"""
-        return _datamodel.ArclinkLog_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.ArclinkLog_Meta()
-
-    def meta(self):
-        r"""meta(ArclinkLog self) -> MetaObject"""
-        return _datamodel.ArclinkLog_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(ArclinkLog self) -> ArclinkLog
-        __init__(ArclinkLog self, ArclinkLog other) -> ArclinkLog
-        """
-        _datamodel.ArclinkLog_swiginit(self, _datamodel.new_ArclinkLog(*args))
-    __swig_destroy__ = _datamodel.delete_ArclinkLog
-
-    def __eq__(self, other):
-        r"""__eq__(ArclinkLog self, ArclinkLog other) -> bool"""
-        return _datamodel.ArclinkLog___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(ArclinkLog self, ArclinkLog other) -> bool"""
-        return _datamodel.ArclinkLog___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(ArclinkLog self, ArclinkLog other) -> bool"""
-        return _datamodel.ArclinkLog_equal(self, other)
-
-    def add(self, *args):
-        r"""
-        add(ArclinkLog self, ArclinkRequest obj) -> bool
-        add(ArclinkLog self, ArclinkUser obj) -> bool
-        """
-        return _datamodel.ArclinkLog_add(self, *args)
-
-    def remove(self, *args):
-        r"""
-        remove(ArclinkLog self, ArclinkRequest obj) -> bool
-        remove(ArclinkLog self, ArclinkUser obj) -> bool
-        """
-        return _datamodel.ArclinkLog_remove(self, *args)
-
-    def removeArclinkRequest(self, *args):
-        r"""
-        removeArclinkRequest(ArclinkLog self, size_t i) -> bool
-        removeArclinkRequest(ArclinkLog self, ArclinkRequestIndex i) -> bool
-        """
-        return _datamodel.ArclinkLog_removeArclinkRequest(self, *args)
-
-    def removeArclinkUser(self, *args):
-        r"""
-        removeArclinkUser(ArclinkLog self, size_t i) -> bool
-        removeArclinkUser(ArclinkLog self, ArclinkUserIndex i) -> bool
-        """
-        return _datamodel.ArclinkLog_removeArclinkUser(self, *args)
-
-    def arclinkRequestCount(self):
-        r"""arclinkRequestCount(ArclinkLog self) -> size_t"""
-        return _datamodel.ArclinkLog_arclinkRequestCount(self)
-
-    def arclinkUserCount(self):
-        r"""arclinkUserCount(ArclinkLog self) -> size_t"""
-        return _datamodel.ArclinkLog_arclinkUserCount(self)
-
-    def arclinkRequest(self, *args):
-        r"""
-        arclinkRequest(ArclinkLog self, size_t i) -> ArclinkRequest
-        arclinkRequest(ArclinkLog self, ArclinkRequestIndex i) -> ArclinkRequest
-        """
-        return _datamodel.ArclinkLog_arclinkRequest(self, *args)
-
-    def arclinkUser(self, *args):
-        r"""
-        arclinkUser(ArclinkLog self, size_t i) -> ArclinkUser
-        arclinkUser(ArclinkLog self, ArclinkUserIndex i) -> ArclinkUser
-        """
-        return _datamodel.ArclinkLog_arclinkUser(self, *args)
-
-    def findArclinkRequest(self, publicID):
-        r"""findArclinkRequest(ArclinkLog self, std::string const & publicID) -> ArclinkRequest"""
-        return _datamodel.ArclinkLog_findArclinkRequest(self, publicID)
-
-    def findArclinkUser(self, publicID):
-        r"""findArclinkUser(ArclinkLog self, std::string const & publicID) -> ArclinkUser"""
-        return _datamodel.ArclinkLog_findArclinkUser(self, publicID)
-
-    def assign(self, other):
-        r"""assign(ArclinkLog self, Object other) -> bool"""
-        return _datamodel.ArclinkLog_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(ArclinkLog self, PublicObject parent) -> bool"""
-        return _datamodel.ArclinkLog_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(ArclinkLog self, PublicObject parent) -> bool"""
-        return _datamodel.ArclinkLog_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(ArclinkLog self) -> bool"""
-        return _datamodel.ArclinkLog_detach(self)
-
-    def clone(self):
-        r"""clone(ArclinkLog self) -> Object"""
-        return _datamodel.ArclinkLog_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(ArclinkLog self, Object child) -> bool"""
-        return _datamodel.ArclinkLog_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(ArclinkLog self, Visitor visitor)"""
-        return _datamodel.ArclinkLog_accept(self, visitor)
-
-# Register ArclinkLog in _datamodel:
-_datamodel.ArclinkLog_swigregister(ArclinkLog)
-
-def ArclinkLog_ClassName():
-    r"""ArclinkLog_ClassName() -> char const *"""
-    return _datamodel.ArclinkLog_ClassName()
-
-def ArclinkLog_TypeInfo():
-    r"""ArclinkLog_TypeInfo() -> RTTI"""
-    return _datamodel.ArclinkLog_TypeInfo()
-
-def ArclinkLog_Cast(*args):
-    r"""
-    ArclinkLog_Cast(BaseObject o) -> ArclinkLog
-    ArclinkLog_Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkLog
-    """
-    return _datamodel.ArclinkLog_Cast(*args)
-
-def ArclinkLog_ConstCast(*args):
-    r"""
-    ArclinkLog_ConstCast(BaseObject o) -> ArclinkLog
-    ArclinkLog_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkLog
-    """
-    return _datamodel.ArclinkLog_ConstCast(*args)
-
-def ArclinkLog_Meta():
-    r"""ArclinkLog_Meta() -> MetaObject"""
-    return _datamodel.ArclinkLog_Meta()
-
-class DataSegmentIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::DataSegmentIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(DataSegmentIndex self) -> DataSegmentIndex
-        __init__(DataSegmentIndex self, Time start) -> DataSegmentIndex
-        __init__(DataSegmentIndex self, DataSegmentIndex arg2) -> DataSegmentIndex
-        """
-        _datamodel.DataSegmentIndex_swiginit(self, _datamodel.new_DataSegmentIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(DataSegmentIndex self, DataSegmentIndex arg2) -> bool"""
-        return _datamodel.DataSegmentIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(DataSegmentIndex self, DataSegmentIndex arg2) -> bool"""
-        return _datamodel.DataSegmentIndex___ne__(self, arg2)
-    start = property(_datamodel.DataSegmentIndex_start_get, _datamodel.DataSegmentIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
-    __swig_destroy__ = _datamodel.delete_DataSegmentIndex
-
-# Register DataSegmentIndex in _datamodel:
-_datamodel.DataSegmentIndex_swigregister(DataSegmentIndex)
-
-class DataSegment(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::DataSegment class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.DataSegment_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.DataSegment_TypeInfo()
-
-    def className(self):
-        r"""className(DataSegment self) -> char const *"""
-        return _datamodel.DataSegment_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(DataSegment self) -> RTTI"""
-        return _datamodel.DataSegment_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> DataSegment
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> DataSegment
-        """
-        return _datamodel.DataSegment_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> DataSegment
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataSegment
-        """
-        return _datamodel.DataSegment_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(DataSegment self, GenericArchive ar)"""
-        return _datamodel.DataSegment_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.DataSegment_Meta()
-
-    def meta(self):
-        r"""meta(DataSegment self) -> MetaObject"""
-        return _datamodel.DataSegment_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(DataSegment self) -> DataSegment
-        __init__(DataSegment self, DataSegment other) -> DataSegment
-        """
-        _datamodel.DataSegment_swiginit(self, _datamodel.new_DataSegment(*args))
-    __swig_destroy__ = _datamodel.delete_DataSegment
-
-    def __eq__(self, other):
-        r"""__eq__(DataSegment self, DataSegment other) -> bool"""
-        return _datamodel.DataSegment___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(DataSegment self, DataSegment other) -> bool"""
-        return _datamodel.DataSegment___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(DataSegment self, DataSegment other) -> bool"""
-        return _datamodel.DataSegment_equal(self, other)
-
-    def setStart(self, start):
-        r"""setStart(DataSegment self, Time start)"""
-        return _datamodel.DataSegment_setStart(self, start)
-
-    def start(self):
-        r"""start(DataSegment self) -> Time"""
-        return _datamodel.DataSegment_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(DataSegment self, Time end)"""
-        return _datamodel.DataSegment_setEnd(self, end)
-
-    def end(self):
-        r"""end(DataSegment self) -> Time"""
-        return _datamodel.DataSegment_end(self)
-
-    def setUpdated(self, updated):
-        r"""setUpdated(DataSegment self, Time updated)"""
-        return _datamodel.DataSegment_setUpdated(self, updated)
-
-    def updated(self):
-        r"""updated(DataSegment self) -> Time"""
-        return _datamodel.DataSegment_updated(self)
-
-    def setSampleRate(self, sampleRate):
-        r"""setSampleRate(DataSegment self, double sampleRate)"""
-        return _datamodel.DataSegment_setSampleRate(self, sampleRate)
-
-    def sampleRate(self):
-        r"""sampleRate(DataSegment self) -> double"""
-        return _datamodel.DataSegment_sampleRate(self)
-
-    def setQuality(self, quality):
-        r"""setQuality(DataSegment self, std::string const & quality)"""
-        return _datamodel.DataSegment_setQuality(self, quality)
-
-    def quality(self):
-        r"""quality(DataSegment self) -> std::string const &"""
-        return _datamodel.DataSegment_quality(self)
-
-    def setOutOfOrder(self, outOfOrder):
-        r"""setOutOfOrder(DataSegment self, bool outOfOrder)"""
-        return _datamodel.DataSegment_setOutOfOrder(self, outOfOrder)
-
-    def outOfOrder(self):
-        r"""outOfOrder(DataSegment self) -> bool"""
-        return _datamodel.DataSegment_outOfOrder(self)
-
-    def index(self):
-        r"""index(DataSegment self) -> DataSegmentIndex"""
-        return _datamodel.DataSegment_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(DataSegment self, DataSegment lhs) -> bool"""
-        return _datamodel.DataSegment_equalIndex(self, lhs)
-
-    def dataExtent(self):
-        r"""dataExtent(DataSegment self) -> DataExtent"""
-        return _datamodel.DataSegment_dataExtent(self)
-
-    def assign(self, other):
-        r"""assign(DataSegment self, Object other) -> bool"""
-        return _datamodel.DataSegment_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(DataSegment self, PublicObject parent) -> bool"""
-        return _datamodel.DataSegment_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(DataSegment self, PublicObject parent) -> bool"""
-        return _datamodel.DataSegment_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(DataSegment self) -> bool"""
-        return _datamodel.DataSegment_detach(self)
-
-    def clone(self):
-        r"""clone(DataSegment self) -> Object"""
-        return _datamodel.DataSegment_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(DataSegment self, Visitor visitor)"""
-        return _datamodel.DataSegment_accept(self, visitor)
-
-# Register DataSegment in _datamodel:
-_datamodel.DataSegment_swigregister(DataSegment)
-
-def DataSegment_ClassName():
-    r"""DataSegment_ClassName() -> char const *"""
-    return _datamodel.DataSegment_ClassName()
-
-def DataSegment_TypeInfo():
-    r"""DataSegment_TypeInfo() -> RTTI"""
-    return _datamodel.DataSegment_TypeInfo()
-
-def DataSegment_Cast(*args):
-    r"""
-    DataSegment_Cast(BaseObject o) -> DataSegment
-    DataSegment_Cast(Seiscomp::Core::BaseObjectPtr o) -> DataSegment
-    """
-    return _datamodel.DataSegment_Cast(*args)
-
-def DataSegment_ConstCast(*args):
-    r"""
-    DataSegment_ConstCast(BaseObject o) -> DataSegment
-    DataSegment_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataSegment
-    """
-    return _datamodel.DataSegment_ConstCast(*args)
-
-def DataSegment_Meta():
-    r"""DataSegment_Meta() -> MetaObject"""
-    return _datamodel.DataSegment_Meta()
-
-class DataAttributeExtentIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::DataAttributeExtentIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(DataAttributeExtentIndex self) -> DataAttributeExtentIndex
-        __init__(DataAttributeExtentIndex self, double sampleRate, std::string const & quality) -> DataAttributeExtentIndex
-        __init__(DataAttributeExtentIndex self, DataAttributeExtentIndex arg2) -> DataAttributeExtentIndex
-        """
-        _datamodel.DataAttributeExtentIndex_swiginit(self, _datamodel.new_DataAttributeExtentIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(DataAttributeExtentIndex self, DataAttributeExtentIndex arg2) -> bool"""
-        return _datamodel.DataAttributeExtentIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(DataAttributeExtentIndex self, DataAttributeExtentIndex arg2) -> bool"""
-        return _datamodel.DataAttributeExtentIndex___ne__(self, arg2)
-    sampleRate = property(_datamodel.DataAttributeExtentIndex_sampleRate_get, _datamodel.DataAttributeExtentIndex_sampleRate_set, doc=r"""sampleRate : double""")
-    quality = property(_datamodel.DataAttributeExtentIndex_quality_get, _datamodel.DataAttributeExtentIndex_quality_set, doc=r"""quality : std::string""")
-    __swig_destroy__ = _datamodel.delete_DataAttributeExtentIndex
-
-# Register DataAttributeExtentIndex in _datamodel:
-_datamodel.DataAttributeExtentIndex_swigregister(DataAttributeExtentIndex)
-
-class DataAttributeExtent(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::DataAttributeExtent class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.DataAttributeExtent_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.DataAttributeExtent_TypeInfo()
-
-    def className(self):
-        r"""className(DataAttributeExtent self) -> char const *"""
-        return _datamodel.DataAttributeExtent_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(DataAttributeExtent self) -> RTTI"""
-        return _datamodel.DataAttributeExtent_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> DataAttributeExtent
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> DataAttributeExtent
-        """
-        return _datamodel.DataAttributeExtent_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> DataAttributeExtent
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataAttributeExtent
-        """
-        return _datamodel.DataAttributeExtent_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(DataAttributeExtent self, GenericArchive ar)"""
-        return _datamodel.DataAttributeExtent_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.DataAttributeExtent_Meta()
-
-    def meta(self):
-        r"""meta(DataAttributeExtent self) -> MetaObject"""
-        return _datamodel.DataAttributeExtent_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(DataAttributeExtent self) -> DataAttributeExtent
-        __init__(DataAttributeExtent self, DataAttributeExtent other) -> DataAttributeExtent
-        """
-        _datamodel.DataAttributeExtent_swiginit(self, _datamodel.new_DataAttributeExtent(*args))
-    __swig_destroy__ = _datamodel.delete_DataAttributeExtent
-
-    def __eq__(self, other):
-        r"""__eq__(DataAttributeExtent self, DataAttributeExtent other) -> bool"""
-        return _datamodel.DataAttributeExtent___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(DataAttributeExtent self, DataAttributeExtent other) -> bool"""
-        return _datamodel.DataAttributeExtent___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(DataAttributeExtent self, DataAttributeExtent other) -> bool"""
-        return _datamodel.DataAttributeExtent_equal(self, other)
-
-    def setStart(self, start):
-        r"""setStart(DataAttributeExtent self, Time start)"""
-        return _datamodel.DataAttributeExtent_setStart(self, start)
-
-    def start(self):
-        r"""start(DataAttributeExtent self) -> Time"""
-        return _datamodel.DataAttributeExtent_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(DataAttributeExtent self, Time end)"""
-        return _datamodel.DataAttributeExtent_setEnd(self, end)
-
-    def end(self):
-        r"""end(DataAttributeExtent self) -> Time"""
-        return _datamodel.DataAttributeExtent_end(self)
-
-    def setSampleRate(self, sampleRate):
-        r"""setSampleRate(DataAttributeExtent self, double sampleRate)"""
-        return _datamodel.DataAttributeExtent_setSampleRate(self, sampleRate)
-
-    def sampleRate(self):
-        r"""sampleRate(DataAttributeExtent self) -> double"""
-        return _datamodel.DataAttributeExtent_sampleRate(self)
-
-    def setQuality(self, quality):
-        r"""setQuality(DataAttributeExtent self, std::string const & quality)"""
-        return _datamodel.DataAttributeExtent_setQuality(self, quality)
-
-    def quality(self):
-        r"""quality(DataAttributeExtent self) -> std::string const &"""
-        return _datamodel.DataAttributeExtent_quality(self)
-
-    def setUpdated(self, updated):
-        r"""setUpdated(DataAttributeExtent self, Time updated)"""
-        return _datamodel.DataAttributeExtent_setUpdated(self, updated)
-
-    def updated(self):
-        r"""updated(DataAttributeExtent self) -> Time"""
-        return _datamodel.DataAttributeExtent_updated(self)
-
-    def setSegmentCount(self, segmentCount):
-        r"""setSegmentCount(DataAttributeExtent self, int segmentCount)"""
-        return _datamodel.DataAttributeExtent_setSegmentCount(self, segmentCount)
-
-    def segmentCount(self):
-        r"""segmentCount(DataAttributeExtent self) -> int"""
-        return _datamodel.DataAttributeExtent_segmentCount(self)
-
-    def index(self):
-        r"""index(DataAttributeExtent self) -> DataAttributeExtentIndex"""
-        return _datamodel.DataAttributeExtent_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(DataAttributeExtent self, DataAttributeExtent lhs) -> bool"""
-        return _datamodel.DataAttributeExtent_equalIndex(self, lhs)
-
-    def dataExtent(self):
-        r"""dataExtent(DataAttributeExtent self) -> DataExtent"""
-        return _datamodel.DataAttributeExtent_dataExtent(self)
-
-    def assign(self, other):
-        r"""assign(DataAttributeExtent self, Object other) -> bool"""
-        return _datamodel.DataAttributeExtent_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(DataAttributeExtent self, PublicObject parent) -> bool"""
-        return _datamodel.DataAttributeExtent_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(DataAttributeExtent self, PublicObject parent) -> bool"""
-        return _datamodel.DataAttributeExtent_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(DataAttributeExtent self) -> bool"""
-        return _datamodel.DataAttributeExtent_detach(self)
-
-    def clone(self):
-        r"""clone(DataAttributeExtent self) -> Object"""
-        return _datamodel.DataAttributeExtent_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(DataAttributeExtent self, Visitor visitor)"""
-        return _datamodel.DataAttributeExtent_accept(self, visitor)
-
-# Register DataAttributeExtent in _datamodel:
-_datamodel.DataAttributeExtent_swigregister(DataAttributeExtent)
-
-def DataAttributeExtent_ClassName():
-    r"""DataAttributeExtent_ClassName() -> char const *"""
-    return _datamodel.DataAttributeExtent_ClassName()
-
-def DataAttributeExtent_TypeInfo():
-    r"""DataAttributeExtent_TypeInfo() -> RTTI"""
-    return _datamodel.DataAttributeExtent_TypeInfo()
-
-def DataAttributeExtent_Cast(*args):
-    r"""
-    DataAttributeExtent_Cast(BaseObject o) -> DataAttributeExtent
-    DataAttributeExtent_Cast(Seiscomp::Core::BaseObjectPtr o) -> DataAttributeExtent
-    """
-    return _datamodel.DataAttributeExtent_Cast(*args)
-
-def DataAttributeExtent_ConstCast(*args):
-    r"""
-    DataAttributeExtent_ConstCast(BaseObject o) -> DataAttributeExtent
-    DataAttributeExtent_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataAttributeExtent
-    """
-    return _datamodel.DataAttributeExtent_ConstCast(*args)
-
-def DataAttributeExtent_Meta():
-    r"""DataAttributeExtent_Meta() -> MetaObject"""
-    return _datamodel.DataAttributeExtent_Meta()
-
-class DataExtentIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::DataExtentIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(DataExtentIndex self) -> DataExtentIndex
-        __init__(DataExtentIndex self, WaveformStreamID waveformID) -> DataExtentIndex
-        __init__(DataExtentIndex self, DataExtentIndex arg2) -> DataExtentIndex
-        """
-        _datamodel.DataExtentIndex_swiginit(self, _datamodel.new_DataExtentIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(DataExtentIndex self, DataExtentIndex arg2) -> bool"""
-        return _datamodel.DataExtentIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(DataExtentIndex self, DataExtentIndex arg2) -> bool"""
-        return _datamodel.DataExtentIndex___ne__(self, arg2)
-    waveformID = property(_datamodel.DataExtentIndex_waveformID_get, _datamodel.DataExtentIndex_waveformID_set, doc=r"""waveformID : Seiscomp::DataModel::WaveformStreamID""")
-    __swig_destroy__ = _datamodel.delete_DataExtentIndex
-
-# Register DataExtentIndex in _datamodel:
-_datamodel.DataExtentIndex_swigregister(DataExtentIndex)
-
-class DataExtent(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::DataExtent class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.DataExtent_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.DataExtent_TypeInfo()
-
-    def className(self):
-        r"""className(DataExtent self) -> char const *"""
-        return _datamodel.DataExtent_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(DataExtent self) -> RTTI"""
-        return _datamodel.DataExtent_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> DataExtent
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> DataExtent
-        """
-        return _datamodel.DataExtent_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> DataExtent
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataExtent
-        """
-        return _datamodel.DataExtent_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(DataExtent self, GenericArchive ar)"""
-        return _datamodel.DataExtent_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.DataExtent_Meta()
-
-    def meta(self):
-        r"""meta(DataExtent self) -> MetaObject"""
-        return _datamodel.DataExtent_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(DataExtent self, DataExtent other) -> DataExtent
-        __init__(DataExtent self, std::string const & publicID) -> DataExtent
-        """
-        _datamodel.DataExtent_swiginit(self, _datamodel.new_DataExtent(*args))
-    __swig_destroy__ = _datamodel.delete_DataExtent
-
-    @staticmethod
-    def Create(*args):
-        r"""
-        Create() -> DataExtent
-        Create(std::string const & publicID) -> DataExtent
-        """
-        return _datamodel.DataExtent_Create(*args)
-
-    @staticmethod
-    def Find(publicID):
-        r"""Find(std::string const & publicID) -> DataExtent"""
-        return _datamodel.DataExtent_Find(publicID)
-
-    def __eq__(self, other):
-        r"""__eq__(DataExtent self, DataExtent other) -> bool"""
-        return _datamodel.DataExtent___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(DataExtent self, DataExtent other) -> bool"""
-        return _datamodel.DataExtent___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(DataExtent self, DataExtent other) -> bool"""
-        return _datamodel.DataExtent_equal(self, other)
-
-    def setWaveformID(self, waveformID):
-        r"""setWaveformID(DataExtent self, WaveformStreamID waveformID)"""
-        return _datamodel.DataExtent_setWaveformID(self, waveformID)
-
-    def waveformID(self, *args):
-        r"""
-        waveformID(DataExtent self) -> WaveformStreamID
-        waveformID(DataExtent self) -> WaveformStreamID
-        """
-        return _datamodel.DataExtent_waveformID(self, *args)
-
-    def setStart(self, start):
-        r"""setStart(DataExtent self, Time start)"""
-        return _datamodel.DataExtent_setStart(self, start)
-
-    def start(self):
-        r"""start(DataExtent self) -> Time"""
-        return _datamodel.DataExtent_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(DataExtent self, Time end)"""
-        return _datamodel.DataExtent_setEnd(self, end)
-
-    def end(self):
-        r"""end(DataExtent self) -> Time"""
-        return _datamodel.DataExtent_end(self)
-
-    def setUpdated(self, updated):
-        r"""setUpdated(DataExtent self, Time updated)"""
-        return _datamodel.DataExtent_setUpdated(self, updated)
-
-    def updated(self):
-        r"""updated(DataExtent self) -> Time"""
-        return _datamodel.DataExtent_updated(self)
-
-    def setLastScan(self, lastScan):
-        r"""setLastScan(DataExtent self, Time lastScan)"""
-        return _datamodel.DataExtent_setLastScan(self, lastScan)
-
-    def lastScan(self):
-        r"""lastScan(DataExtent self) -> Time"""
-        return _datamodel.DataExtent_lastScan(self)
-
-    def setSegmentOverflow(self, segmentOverflow):
-        r"""setSegmentOverflow(DataExtent self, bool segmentOverflow)"""
-        return _datamodel.DataExtent_setSegmentOverflow(self, segmentOverflow)
-
-    def segmentOverflow(self):
-        r"""segmentOverflow(DataExtent self) -> bool"""
-        return _datamodel.DataExtent_segmentOverflow(self)
-
-    def index(self):
-        r"""index(DataExtent self) -> DataExtentIndex"""
-        return _datamodel.DataExtent_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(DataExtent self, DataExtent lhs) -> bool"""
-        return _datamodel.DataExtent_equalIndex(self, lhs)
-
-    def add(self, *args):
-        r"""
-        add(DataExtent self, DataSegment obj) -> bool
-        add(DataExtent self, DataAttributeExtent obj) -> bool
-        """
-        return _datamodel.DataExtent_add(self, *args)
-
-    def remove(self, *args):
-        r"""
-        remove(DataExtent self, DataSegment obj) -> bool
-        remove(DataExtent self, DataAttributeExtent obj) -> bool
-        """
-        return _datamodel.DataExtent_remove(self, *args)
-
-    def removeDataSegment(self, *args):
-        r"""
-        removeDataSegment(DataExtent self, size_t i) -> bool
-        removeDataSegment(DataExtent self, DataSegmentIndex i) -> bool
-        """
-        return _datamodel.DataExtent_removeDataSegment(self, *args)
-
-    def removeDataAttributeExtent(self, *args):
-        r"""
-        removeDataAttributeExtent(DataExtent self, size_t i) -> bool
-        removeDataAttributeExtent(DataExtent self, DataAttributeExtentIndex i) -> bool
-        """
-        return _datamodel.DataExtent_removeDataAttributeExtent(self, *args)
-
-    def dataSegmentCount(self):
-        r"""dataSegmentCount(DataExtent self) -> size_t"""
-        return _datamodel.DataExtent_dataSegmentCount(self)
-
-    def dataAttributeExtentCount(self):
-        r"""dataAttributeExtentCount(DataExtent self) -> size_t"""
-        return _datamodel.DataExtent_dataAttributeExtentCount(self)
-
-    def dataSegment(self, *args):
-        r"""
-        dataSegment(DataExtent self, size_t i) -> DataSegment
-        dataSegment(DataExtent self, DataSegmentIndex i) -> DataSegment
-        """
-        return _datamodel.DataExtent_dataSegment(self, *args)
-
-    def dataAttributeExtent(self, *args):
-        r"""
-        dataAttributeExtent(DataExtent self, size_t i) -> DataAttributeExtent
-        dataAttributeExtent(DataExtent self, DataAttributeExtentIndex i) -> DataAttributeExtent
-        """
-        return _datamodel.DataExtent_dataAttributeExtent(self, *args)
-
-    def dataAvailability(self):
-        r"""dataAvailability(DataExtent self) -> DataAvailability"""
-        return _datamodel.DataExtent_dataAvailability(self)
-
-    def assign(self, other):
-        r"""assign(DataExtent self, Object other) -> bool"""
-        return _datamodel.DataExtent_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(DataExtent self, PublicObject parent) -> bool"""
-        return _datamodel.DataExtent_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(DataExtent self, PublicObject parent) -> bool"""
-        return _datamodel.DataExtent_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(DataExtent self) -> bool"""
-        return _datamodel.DataExtent_detach(self)
-
-    def clone(self):
-        r"""clone(DataExtent self) -> Object"""
-        return _datamodel.DataExtent_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(DataExtent self, Object child) -> bool"""
-        return _datamodel.DataExtent_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(DataExtent self, Visitor visitor)"""
-        return _datamodel.DataExtent_accept(self, visitor)
-
-# Register DataExtent in _datamodel:
-_datamodel.DataExtent_swigregister(DataExtent)
-
-def DataExtent_ClassName():
-    r"""DataExtent_ClassName() -> char const *"""
-    return _datamodel.DataExtent_ClassName()
-
-def DataExtent_TypeInfo():
-    r"""DataExtent_TypeInfo() -> RTTI"""
-    return _datamodel.DataExtent_TypeInfo()
-
-def DataExtent_Cast(*args):
-    r"""
-    DataExtent_Cast(BaseObject o) -> DataExtent
-    DataExtent_Cast(Seiscomp::Core::BaseObjectPtr o) -> DataExtent
-    """
-    return _datamodel.DataExtent_Cast(*args)
-
-def DataExtent_ConstCast(*args):
-    r"""
-    DataExtent_ConstCast(BaseObject o) -> DataExtent
-    DataExtent_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataExtent
-    """
-    return _datamodel.DataExtent_ConstCast(*args)
-
-def DataExtent_Meta():
-    r"""DataExtent_Meta() -> MetaObject"""
-    return _datamodel.DataExtent_Meta()
-
-def DataExtent_Create(*args):
-    r"""
-    DataExtent_Create() -> DataExtent
-    DataExtent_Create(std::string const & publicID) -> DataExtent
-    """
-    return _datamodel.DataExtent_Create(*args)
-
-def DataExtent_Find(publicID):
-    r"""DataExtent_Find(std::string const & publicID) -> DataExtent"""
-    return _datamodel.DataExtent_Find(publicID)
-
-class DataAvailability(PublicObject):
-    r"""Proxy of C++ Seiscomp::DataModel::DataAvailability class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.DataAvailability_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.DataAvailability_TypeInfo()
-
-    def className(self):
-        r"""className(DataAvailability self) -> char const *"""
-        return _datamodel.DataAvailability_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(DataAvailability self) -> RTTI"""
-        return _datamodel.DataAvailability_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> DataAvailability
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> DataAvailability
-        """
-        return _datamodel.DataAvailability_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> DataAvailability
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataAvailability
-        """
-        return _datamodel.DataAvailability_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(DataAvailability self, GenericArchive ar)"""
-        return _datamodel.DataAvailability_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.DataAvailability_Meta()
-
-    def meta(self):
-        r"""meta(DataAvailability self) -> MetaObject"""
-        return _datamodel.DataAvailability_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(DataAvailability self) -> DataAvailability
-        __init__(DataAvailability self, DataAvailability other) -> DataAvailability
-        """
-        _datamodel.DataAvailability_swiginit(self, _datamodel.new_DataAvailability(*args))
-    __swig_destroy__ = _datamodel.delete_DataAvailability
-
-    def __eq__(self, other):
-        r"""__eq__(DataAvailability self, DataAvailability other) -> bool"""
-        return _datamodel.DataAvailability___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(DataAvailability self, DataAvailability other) -> bool"""
-        return _datamodel.DataAvailability___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(DataAvailability self, DataAvailability other) -> bool"""
-        return _datamodel.DataAvailability_equal(self, other)
-
-    def add(self, obj):
-        r"""add(DataAvailability self, DataExtent obj) -> bool"""
-        return _datamodel.DataAvailability_add(self, obj)
-
-    def remove(self, obj):
-        r"""remove(DataAvailability self, DataExtent obj) -> bool"""
-        return _datamodel.DataAvailability_remove(self, obj)
-
-    def removeDataExtent(self, *args):
-        r"""
-        removeDataExtent(DataAvailability self, size_t i) -> bool
-        removeDataExtent(DataAvailability self, DataExtentIndex i) -> bool
-        """
-        return _datamodel.DataAvailability_removeDataExtent(self, *args)
-
-    def dataExtentCount(self):
-        r"""dataExtentCount(DataAvailability self) -> size_t"""
-        return _datamodel.DataAvailability_dataExtentCount(self)
-
-    def dataExtent(self, *args):
-        r"""
-        dataExtent(DataAvailability self, size_t i) -> DataExtent
-        dataExtent(DataAvailability self, DataExtentIndex i) -> DataExtent
-        """
-        return _datamodel.DataAvailability_dataExtent(self, *args)
-
-    def findDataExtent(self, publicID):
-        r"""findDataExtent(DataAvailability self, std::string const & publicID) -> DataExtent"""
-        return _datamodel.DataAvailability_findDataExtent(self, publicID)
-
-    def assign(self, other):
-        r"""assign(DataAvailability self, Object other) -> bool"""
-        return _datamodel.DataAvailability_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(DataAvailability self, PublicObject parent) -> bool"""
-        return _datamodel.DataAvailability_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(DataAvailability self, PublicObject parent) -> bool"""
-        return _datamodel.DataAvailability_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(DataAvailability self) -> bool"""
-        return _datamodel.DataAvailability_detach(self)
-
-    def clone(self):
-        r"""clone(DataAvailability self) -> Object"""
-        return _datamodel.DataAvailability_clone(self)
-
-    def updateChild(self, child):
-        r"""updateChild(DataAvailability self, Object child) -> bool"""
-        return _datamodel.DataAvailability_updateChild(self, child)
-
-    def accept(self, visitor):
-        r"""accept(DataAvailability self, Visitor visitor)"""
-        return _datamodel.DataAvailability_accept(self, visitor)
-
-# Register DataAvailability in _datamodel:
-_datamodel.DataAvailability_swigregister(DataAvailability)
-
-def DataAvailability_ClassName():
-    r"""DataAvailability_ClassName() -> char const *"""
-    return _datamodel.DataAvailability_ClassName()
-
-def DataAvailability_TypeInfo():
-    r"""DataAvailability_TypeInfo() -> RTTI"""
-    return _datamodel.DataAvailability_TypeInfo()
-
-def DataAvailability_Cast(*args):
-    r"""
-    DataAvailability_Cast(BaseObject o) -> DataAvailability
-    DataAvailability_Cast(Seiscomp::Core::BaseObjectPtr o) -> DataAvailability
-    """
-    return _datamodel.DataAvailability_Cast(*args)
-
-def DataAvailability_ConstCast(*args):
-    r"""
-    DataAvailability_ConstCast(BaseObject o) -> DataAvailability
-    DataAvailability_ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DataAvailability
-    """
-    return _datamodel.DataAvailability_ConstCast(*args)
-
-def DataAvailability_Meta():
-    r"""DataAvailability_Meta() -> MetaObject"""
-    return _datamodel.DataAvailability_Meta()
 
 class DatabaseReader(DatabaseArchive):
     r"""Proxy of C++ Seiscomp::DataModel::DatabaseReader class."""
