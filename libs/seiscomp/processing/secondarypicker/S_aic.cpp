@@ -202,8 +202,8 @@ bool SAICPicker::applyConfig() {
 	if ( !_aicConfig.filter.empty() ) {
 		_compFilter = Filter::Create(_aicConfig.filter.c_str());
 		if ( _compFilter == nullptr ) {
-			SEISCOMP_WARNING("AIC spicker: wrong component filter definition: %s",
-			                 _aicConfig.filter.c_str());
+			SEISCOMP_WARNING("[S-%s]: wrong component filter definition: %s",
+			                 _methodID.c_str(), _aicConfig.filter.c_str());
 			return false;
 		}
 	}
@@ -213,8 +213,8 @@ bool SAICPicker::applyConfig() {
 	if ( !_aicConfig.detecFilter.empty() ) {
 		Filter *filter = Filter::Create(_aicConfig.detecFilter.c_str());
 		if ( filter == nullptr ) {
-			SEISCOMP_WARNING("AIC spicker: wrong filter definition: %s",
-			                 _aicConfig.detecFilter.c_str());
+			SEISCOMP_WARNING("[S-%s]: wrong filter definition: %s",
+			                 _methodID.c_str(), _aicConfig.detecFilter.c_str());
 			return false;
 		}
 
@@ -305,8 +305,8 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 
 		maeda_aic(ae-ai, continuousData().typedData()+ai, kmin, snr);
 
-		SEISCOMP_DEBUG("[S-AIC] %s: AIC [%d;%d] = %d, ref: %d, si: %d, ri: %d, sb: %f",
-		               rec->streamID().c_str(), ai, ae, kmin+ai, ti, si, ri, _config.signalBegin);
+		SEISCOMP_DEBUG("[S-%s] %s: AIC [%d;%d] = %d, ref: %d, si: %d, ri: %d, sb: %f",
+		               _methodID.c_str(), rec->streamID().c_str(), ai, ae, kmin+ai, ti, si, ri, _config.signalBegin);
 
 		double t = (double)(kmin+ai)/(double)continuousData().size();
 		_result.time = dataTimeWindow().startTime() + Core::TimeSpan(t*dataTimeWindow().length());
@@ -315,10 +315,9 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 
 		if ( snr < _aicConfig.minSNR ) {
 			_initialized = false;
-			SEISCOMP_DEBUG("[S-AIC] %s: snr %f too low at %s, need %f",
-			               rec->streamID().c_str(), snr,
-			               _result.time.iso().c_str(),
-			               _aicConfig.minSNR);
+			SEISCOMP_DEBUG("[S-%s] %s: snr %f too low at %s, need %f",
+			                _methodID.c_str(), rec->streamID().c_str(), snr,
+			               _result.time.iso().c_str(), _aicConfig.minSNR);
 			setStatus(LowSNR, snr);
 			_result = Result();
 			return;
@@ -326,8 +325,8 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 
 		if ( _result.time <= _trigger.onset ) {
 			_initialized = false;
-			SEISCOMP_DEBUG("[S-AIC] %s: pick at %s is before trigger at %s: rejected",
-			               rec->streamID().c_str(),
+			SEISCOMP_DEBUG("[S-%s] %s: pick at %s is before trigger at %s: rejected",
+			               _methodID.c_str(), rec->streamID().c_str(),
 			               _result.time.iso().c_str(),
 			               _trigger.onset.iso().c_str());
 			setStatus(Terminated, 1);
@@ -375,8 +374,9 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 				_result.snr = -1;
 				_state.detection = _result.time;
 
-				SEISCOMP_DEBUG("[S-AIC] %s: detection at %s with value %f",
-				               rec->streamID().c_str(), _result.time.iso().c_str(), fv);
+				SEISCOMP_DEBUG("[S-%s] %s: detection at %s with value %f",
+				               _methodID.c_str(), rec->streamID().c_str(),
+				               _result.time.iso().c_str(), fv);
 
 				if ( _aicConfig.margin > 0 ) {
 					int kmin;
@@ -401,8 +401,9 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 					// Clip to signal begin
 					if ( ai < si ) ai = si;
 
-					SEISCOMP_DEBUG("[S-AIC] %s: AIC [%d;%d] = %d, ref: %d",
-					               rec->streamID().c_str(), ai, ae, kmin+ai, ti);
+					SEISCOMP_DEBUG("[S-%s] %s: AIC [%d;%d] = %d, ref: %d",
+					               _methodID.c_str(), rec->streamID().c_str(),
+					               ai, ae, kmin+ai, ti);
 
 					maeda_aic(ae-ai, continuousData().typedData()+ai, kmin, snr);
 
@@ -414,9 +415,9 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 					if ( snr < _aicConfig.minSNR ) {
 						_result = Result();
 						_initialized = false;
-						SEISCOMP_DEBUG("[S-AIC] %s: snr %f too low at %s, need %f",
-						               rec->streamID().c_str(), snr,
-						               _result.time.iso().c_str(),
+						SEISCOMP_DEBUG("[S-%s] %s: snr %f too low at %s, need %f",
+						               _methodID.c_str(), rec->streamID().c_str(),
+						               snr, _result.time.iso().c_str(),
 						               _aicConfig.minSNR);
 						setStatus(LowSNR, snr);
 						return;
@@ -428,8 +429,8 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 				if ( _result.time <= _trigger.onset ) {
 					_result = Result();
 					_initialized = false;
-					SEISCOMP_DEBUG("[S-AIC] %s: pick at %s is before trigger at %s: rejected",
-					               rec->streamID().c_str(),
+					SEISCOMP_DEBUG("[S-%s] %s: pick at %s is before trigger at %s: rejected",
+					               _methodID.c_str(), rec->streamID().c_str(),
 					               _result.time.iso().c_str(),
 					               _trigger.onset.iso().c_str());
 					setStatus(Terminated, 1);
@@ -445,7 +446,7 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 	if ( _result.time.valid() ) {
 		_result.phaseCode = "S";
 		_result.record = rec;
-		SEISCOMP_DEBUG("[S-AIC] %s: %s pick at %s with snr=%f",
+		SEISCOMP_DEBUG("[S-%s] %s: %s pick at %s with snr=%f",_methodID.c_str(),
 		               rec->streamID().c_str(), _result.phaseCode.c_str(),
 		               _result.time.iso().c_str(),
 		               _result.snr);
