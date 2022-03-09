@@ -226,13 +226,18 @@ void StandardLegend::update() {
 void StandardLegend::updateLayout(const QSize &size) {
 	if ( !size.isValid() ) return;
 
+	_columnWidth = 0;
+
+	if ( _items.empty() ) {
+		_layoutDirty = false;
+		return;
+	}
+
 	QFontMetrics fm(font());
 	int ch = size.height();
 	int fontHeight = fm.height();
 	int rows;
 	int symbolSize = 0;
-
-	_columnWidth = 0;
 
 	for ( int i = 0; i < _items.count(); ++i ) {
 		int itemWidth = fm.boundingRect(_items[i]->label).width();
@@ -310,6 +315,9 @@ void StandardLegend::contextResizeEvent(const QSize &size) {
 void StandardLegend::draw(const QRect &rect, QPainter &painter) {
 	if ( _layoutDirty && layer() )
 		updateLayout(layer()->size());
+
+	if ( !_columnWidth )
+		return;
 
 	QFontMetrics fm(font());
 	int fontHeight = fm.height();
