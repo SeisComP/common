@@ -23,7 +23,7 @@ n # P1      travel-time (and amplitude) tables
   170.00  171.00  172.00  173.00  174.00  175.00  176.00  177.00  178.00  179.00
   180.00
 # Travel-time/amplitude for z =    0.00
-       0.0
+       0.000
       19.170
       34.925
       48.677
