@@ -477,6 +477,7 @@ class Module(kernel.CoreModule):
         pwd = 'sysop'
         host = 'localhost'
         db = 'seiscomp'
+        port = None
 
         tmp = params.split('@')
         if len(tmp) > 1:
@@ -497,10 +498,21 @@ class Module(kernel.CoreModule):
 
         tmp = params.split('/')
         if len(tmp) > 1:
-            host = tmp[0]
+            tmpHost = tmp[0]
             db = tmp[1]
         else:
-            host = tmp[0]
+            tmpHost = tmp[0]
+
+        # get host name and port
+        tmp = tmpHost.split(':')
+        host = tmp[0]
+        if len(tmp) == 2:
+            try:
+                port = int(tmp[1])
+            except ValueError:
+                print("ERROR: Invalid port number {}".format(tmp[1]),
+                      file=sys.stderr)
+                return True
 
         db = db.split('?')[0]
 
@@ -508,6 +520,8 @@ class Module(kernel.CoreModule):
         if backend == "mysql":
             cmd = "mysql -u \"%s\" -h \"%s\" -D\"%s\" --skip-column-names" % (
                 user, host, db)
+            if port:
+                cmd += " -P %d" % (port)
             if pwd:
                 cmd += " -p\"%s\"" % pwd.replace('$', '\\$')
             cmd += " -e \"SELECT value from Meta where name='Schema-Version'\""
@@ -515,6 +529,8 @@ class Module(kernel.CoreModule):
             if pwd:
                 os.environ['PGPASSWORD'] = pwd
             cmd = "psql -U \"%s\" -h \"%s\" -t \"%s\"" % (user, host, db)
+            if port:
+                cmd += " -p %d" % (port)
             cmd += " -c \"SELECT value from Meta where name='Schema-Version'\""
 
         out = check_output(cmd)
