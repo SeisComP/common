@@ -150,20 +150,27 @@ MagnitudeProcessor::Status MagnitudeProcessor_ms20::computeMagnitude(
 		return AmplitudeOutOfRange;
 
 	// allowed periods are 18 - 22 s acocrding to IASPEI standard (IASPEI recommendations of magnitude working group, 2013)
-	if ( period < lowPer || period > upPer )
+	if ( period < lowPer || period > upPer ) {
+		SEISCOMP_DEBUG("Ms_20: period is %.2f s", period);
 		return PeriodOutOfRange;
+	}
 
-	if ( delta < minDistanceDeg || delta > maxDistanceDeg )
+	if ( delta < minDistanceDeg || delta > maxDistanceDeg ) {
 		return DistanceOutOfRange;
+	}
 
 	// Clip depth to 0
-	if ( depth < 0 ) depth = 0;
+	if ( depth < 0 ) {
+		depth = 0;
+	}
 
-	if ( depth > maxDepthKm )
+	if ( depth > maxDepthKm ) {
 		return DepthOutOfRange; // strictly speaking it would be 60 km
+	}
 
-	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) )
+	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) ) {
 		return InvalidAmplitudeUnit;
+	}
 
 	// Use amplitude in nm
 	value = log10((amplitude)/(period)) + 1.66*log10(delta) + 0.3;
