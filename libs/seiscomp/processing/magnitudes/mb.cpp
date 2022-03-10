@@ -21,6 +21,7 @@
 
 #include <seiscomp/processing/magnitudes/mb.h>
 #include <seiscomp/seismology/magnitudes.h>
+#include <seiscomp/logging/log.h>
 
 #include "iostream"
 
@@ -50,7 +51,6 @@ MagnitudeProcessor_mb::MagnitudeProcessor_mb()
 
 
 
-
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor_mb::MagnitudeProcessor_mb::setup(const Settings &settings) {
 	MagnitudeProcessor::setup(settings);
@@ -72,7 +72,6 @@ bool MagnitudeProcessor_mb::MagnitudeProcessor_mb::setup(const Settings &setting
 
 
 
-
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor::Status MagnitudeProcessor_mb::computeMagnitude(
 	double amplitude,
@@ -82,24 +81,33 @@ MagnitudeProcessor::Status MagnitudeProcessor_mb::computeMagnitude(
 	const DataModel::Origin *, const DataModel::SensorLocation *,
 	const DataModel::Amplitude *,
 	double &value) {
+
 	// Clip depth to 0
-	if ( depth < 0 ) depth = 0;
+	if ( depth < 0 ) {
+		depth = 0;
+	}
 
-	if ( delta < minDistanceDeg || delta > maxDistanceDeg )
+	if ( delta < minDistanceDeg || delta > maxDistanceDeg ) {
 		return DistanceOutOfRange;
+	}
 
-	if ( (depth < 0) || (depth > 700) )
+	if ( (depth < 0) || (depth > 700) ) {
 		return DepthOutOfRange;
+	}
 
-	if ( amplitude <= 0 )
+	if ( amplitude <= 0 ) {
 		return AmplitudeOutOfRange;
+	}
 
 	// maximum allowed period is 3 s according to IASPEI standard (pers. comm. Peter Bormann)
-	if ( (period < 0.4) || (period > 3.0) )
+	if ( (period < 0.4) || (period > 3.0) ) {
+		SEISCOMP_DEBUG("mb: period is %.2f s", period);
 		return PeriodOutOfRange;
+	}
 
-	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) )
+	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) ) {
 		return InvalidAmplitudeUnit;
+	}
 
 	// amplitude is nanometers, whereas compute_mb wants micrometers
 	bool valid = Magnitudes::compute_mb(amplitude*1.E-3, period, delta, depth+1, &value);
