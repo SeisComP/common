@@ -678,7 +678,7 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 				bool         membershipMessages{false};
 
 				std::string  user;
-				std::string  URL{"localhost/productive"};
+				std::string  URL{"localhost/production"};
 				std::string  primaryGroup{Protocol::LISTENER_GROUP};
 				std::string  contentType;
 				unsigned int timeout{3};
