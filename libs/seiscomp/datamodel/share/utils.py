@@ -47,9 +47,13 @@ def execute(cmd):
 
     res = ProcResult()
     res.data = py3ustr(out[0].strip())
-    res.error = py3ustr(out[1].strip())
-    if not res.error and len(out) > 2:
-        res.error = "Error: Process returned exit code: {}".format(out[2])
+    if proc.returncode != 0:
+        res.error = py3ustr(out[1].strip())
+        if not res.error:
+            res.error = "Error: Process returned exit code: {}".format(proc.returncode)
+    else:
+        # Ignore any stderr output in case of the exit code is 0
+        res.error = None
 
     return res
 
