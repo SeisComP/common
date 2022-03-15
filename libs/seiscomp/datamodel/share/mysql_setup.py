@@ -48,6 +48,7 @@ def createMYSQLDB(
               "  and MYSQL is running and the client installed on "
               "this machine?",
               file=sys.stderr)
+        return False
 
     write("  + Found MYSQL server version {}".format(res.data))
     if drop:

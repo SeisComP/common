@@ -51,6 +51,9 @@ def execute(cmd):
         res.error = py3ustr(out[1].strip())
         if not res.error:
             res.error = "Error: Process returned exit code: {}".format(proc.returncode)
+    else:
+        # Ignore any stderr output in case of the exit code is 0
+        res.error = None
 
     return res
 
