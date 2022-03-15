@@ -266,6 +266,8 @@ bool SC3GF1DArchive::setSource(std::string source) {
 			double depthSpacing = -1;
 			int distanceFrom = -1, distanceTo = -1, distanceSpacing = -1;
 			std::string line;
+			std::string ttP;
+			std::string ttN;
 
 			ifDesc.open((_baseDirectory + "/" + name + ".desc").c_str());
 			if ( !ifDesc.is_open() ) {
@@ -278,6 +280,8 @@ bool SC3GF1DArchive::setSource(std::string source) {
 
 			DoubleList &depths = _models[model].depths;
 			DoubleList &dists = _models[model].distances;
+			std::string &tttName = _models[model].travelTimeInterfaceName;
+			std::string &tttProfile = _models[model].travelTimeInterfaceProfile;
 
 			while ( getline(ifDesc, line) ) {
 				Core::trim(line);
@@ -324,22 +328,44 @@ bool SC3GF1DArchive::setSource(std::string source) {
 						}
 					}
 				}
+				else if ( line == "times" ) {
+					ss >> ttN >> ttP;
+					tttName = ttN;
+					tttProfile = ttP;
+				}
 			}
 
 			if ( !validModel ) {
 				_models.erase(_models.find(model));
 			}
 			else if ( dists.empty() || depths.empty() ) {
-				SEISCOMP_WARNING("Green's functions - Empty distances or depths "
-				                 "for matching directory: %s",
-				                 name.c_str());
-				SEISCOMP_WARNING("  + check the describtion file '%s.desc'", name.c_str());
-				_models.erase(_models.find(model));
+					SEISCOMP_WARNING("Green's functions - Empty distances or depths "
+					                 "for matching directory: %s",
+					                 name.c_str());
+					SEISCOMP_WARNING("  + check the description file: %s.desc", name.c_str());
+					_models.erase(_models.find(model));
+			}
+			else {
+				SEISCOMP_DEBUG("Green's functions model: %s", model.c_str());
+				if ( ttN.empty() || ttP.empty() ) {
+					SEISCOMP_DEBUG("  + found no travel-time interface "
+					                 "definition for matching directory: %s",
+					                 name.c_str());
+					SEISCOMP_DEBUG("  + considering default ttt interface/profile: %s/%s",
+					                  _models[model].travelTimeInterfaceName.c_str(),
+					                  _models[model].travelTimeInterfaceProfile.c_str());
+					SEISCOMP_DEBUG("  + check the description file: %s.desc", name.c_str());
+					SEISCOMP_DEBUG("  + missing line, e.g.: 'times LOCSAT iasp91'");
+				}
+				else {
+					SEISCOMP_DEBUG("  + considering ttt interface/profile: %s/%s",
+					               _models[model].travelTimeInterfaceName.c_str(),
+					               _models[model].travelTimeInterfaceProfile.c_str());
+				}
 			}
 		}
 	}
 	catch ( ... ) {}
-
 	return !_models.empty();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

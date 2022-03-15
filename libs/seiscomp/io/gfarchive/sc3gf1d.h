@@ -109,10 +109,12 @@ class SC_SYSTEM_CORE_API SC3GF1DArchive : public GFArchive {
 		struct ModelConfig {
 			ModelConfig() : travelTimesInitialized(false) {}
 
-			DoubleList distances;
-			DoubleList depths;
-			TTPhases   travelTimes;
-			bool       travelTimesInitialized;
+			DoubleList  distances;
+			DoubleList  depths;
+			TTPhases    travelTimes;
+			bool        travelTimesInitialized;
+			std::string travelTimeInterfaceName{"LOCSAT"};
+			std::string travelTimeInterfaceProfile{"iasp91"};
 		};
 
 		typedef std::map<std::string, ModelConfig> ModelMap;
