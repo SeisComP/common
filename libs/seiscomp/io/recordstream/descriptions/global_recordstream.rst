@@ -33,8 +33,8 @@ is omitted, the :ref:`rs-file` implementation is used as default.
 .. note::
 
    Older SeisComP versions used to split the URL into the parameters
-   :confval:`recordstream.service` and :confval:`recordstream.source`. These
-   parameters are deprecated and will be removed in future versions.
+   :confval:`recordstream.service` and :confval:`recordstream.source`.
+   These parameters are not being used anymore.
 
 
 Implementations
