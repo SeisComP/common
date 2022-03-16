@@ -148,20 +148,6 @@ void mapSchemaParameters(ParamMap &map, System::SchemaParameters *params,
 	}
 }
 
-bool configDefault(const System::Application::Arguments &args,
-                   const Config::Config &config, const string &query) {
-	std::string param = "--" + query + "=";
-	for ( size_t i = 1; i < args.size(); ++i ) {
-		if ( !args[i].compare(0, param.size(), param) )
-			return false;
-	}
-
-	Config::Symbol *symbol = config.symbolTable()->get(query);
-	return symbol != nullptr && (
-	       symbol->stage == Environment::CS_DEFAULT_GLOBAL ||
-	       symbol->stage == Environment::CS_DEFAULT_APP);
-}
-
 
 } // private namespace
 
@@ -328,9 +314,6 @@ void Application::AppSettings::Database::accept(SettingsLinker &linker) {
 	& cfg(URI, "")
 	& cfgAsPath(inventoryDB, "inventory")
 	& cfgAsPath(configDB, "config")
-
-	& cfg(type, "type")
-	& cfg(parameters, "parameters")
 
 	& cliSwitch(
 		showDrivers, "Database", "db-driver-list",
@@ -1464,33 +1447,6 @@ bool Application::validateParameters() {
 
 	//if ( commandline().hasOption("subscription-list") )
 	//	split(_messagingSubscriptionRequests, _messagingStrSubscriptions.c_str(), ",");
-
-	if ( !_settings.database.URI.empty() ) {
-		if ( !_settings.database.type.empty() || !_settings.database.parameters.empty() ) {
-			if ( !configDefault(_arguments, _configuration, "database.type") ||
-			     !configDefault(_arguments, _configuration, "database.parameters") ) {
-				SEISCOMP_ERROR("You are using the deprecated parameter "
-				               "'database.type' or 'database.parameters' along "
-				               "with the new 'database' parameter which takes "
-				               "precedence. Please remove the old parameters.");
-			}
-		}
-	}
-	else {
-		if ( !_settings.database.type.empty() && !_settings.database.parameters.empty() ) {
-			_settings.database.URI = _settings.database.type + "://" + _settings.database.parameters;
-			if ( !configDefault(_arguments, _configuration, "database.type") ||
-			     !configDefault(_arguments, _configuration, "database.parameters") ) {
-				SEISCOMP_ERROR("DEPRECATION WARNING: You are using the "
-				               "parameter 'database.type' and "
-				               "'database.parameters' which will be removed in "
-				               "the next major release. Please remove the old "
-				               "parameters and set the new 'database' "
-				               "parameter to '%s' instead.",
-				               _settings.database.URI.c_str());
-			}
-		}
-	}
 
 	const char* tmp = strstr(_settings.database.URI.c_str(), "://");
 	if ( tmp ) {

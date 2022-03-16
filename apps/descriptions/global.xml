@@ -86,9 +86,6 @@
 					The format is: service://user:pwd@host/database.
 					&quot;service&quot; is the name of the database driver which
 					can be queried with &quot;--db-driver-list&quot;.
-
-					Note that this parameter overrides 'database.type' and
-					'database.parameters' if present.
 				</description>
 			</parameter>
 			<parameter name="recordstream" type="string">
@@ -251,24 +248,6 @@
 					is established. Override these values only if you know what you
 					are doing.
 				</description>
-				<parameter name="type" type="string">
-					<description>
-					Defines the database backend to be used. The name corresponds to
-					the defined name in the database plugin. Examples are: mysql, postgresql or
-					sqlite3. Note that this parameter is deprecated. Please use
-					the URL form 'database = mysql://sysop:sysop@localhost/seiscomp' instead.
-					</description>
-				</parameter>
-				<parameter name="parameters" type="string">
-					<description>
-					The database connection parameters. This value depends on the used
-					database backend. E.g. sqlite3 expects the path to the database
-					file whereas MYSQL or PostgreSQL expect an URI in the format
-					user:pwd@host/database?param1=val1&amp;param2=val2.
-					Note that this parameter is deprecated. Please use the URL form
-					'database = mysql://sysop:sysop@localhost/seiscomp' instead.
-					</description>
-				</parameter>
 				<parameter name="inventory" type="string">
 					<description>
 					Load the inventory database from a given XML file if set. This
