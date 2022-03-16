@@ -86,17 +86,28 @@
 					The format is: service://user:pwd@host/database.
 					&quot;service&quot; is the name of the database driver which
 					can be queried with &quot;--db-driver-list&quot;.
+
+					IMPORTANT: This parameter replaces former
+					&quot;database.type&quot; and &quot;database.parameters&quot;
+					which have been removed.
 				</description>
 			</parameter>
 			<parameter name="recordstream" type="string">
 				<description>
 				SeisComP applications access waveform data through the RecordStream
-				interface. Please consult the SeisComP documentation for a list of
+				interface. Read the SeisComP documentation for a list of
 				supported services and their configuration.
 
-				This parameter configures recordstream source URL, format: [service://]location[#type].
-				&quot;service&quot; is the name of the recordstream implementation.
-				If &quot;service&quot; is not given &quot;file://&quot; is implied.
+				This parameter configures RecordStream source URL.
+
+				Format: [service://]location[#type]
+
+				&quot;service&quot;: The name of the RecordStream implementation.
+				If not given, &quot;file://&quot; is implied.
+
+				IMPORTANT: This parameter replaces former RecordStream
+				configurations in &quot;recordstream.service&quot; and
+				&quot;recordstream.source&quot; which have been removed.
 				</description>
 			</parameter>
 			<group name="logging">
