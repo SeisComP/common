@@ -336,10 +336,6 @@ which also reads global.cfg would end up in a tree like this:
    |  |    +-- username (global.cfg: connection.username)
    |  |
    |  +-- database (global.cfg: database)
-   |       |
-   |       +-- service (global.cfg: database.service [deprecated])
-   |       |
-   |       +-- parameters (global.cfg: database.parameters [deprecated])
    |
    + scautopick
       |
@@ -350,10 +346,6 @@ which also reads global.cfg would end up in a tree like this:
       |    +-- username (scautopick.cfg: connection.username)
       |
       +-- database (scautopick.cfg: database)
-           |
-           +-- service (scautopick.cfg: database.service [deprecated])
-           |
-           +-- parameters (scautopick.cfg: database.parameters [deprecated])
 
 
 Figure :ref:`fig-scconfig-modules-global` describes each item in the content
