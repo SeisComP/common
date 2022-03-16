@@ -100,9 +100,6 @@
 				This parameter configures recordstream source URL, format: [service://]location[#type].
 				&quot;service&quot; is the name of the recordstream implementation.
 				If &quot;service&quot; is not given &quot;file://&quot; is implied.
-
-				This parameter overrides the deprecated recordstream.service and
-				recordstream.source and should be used instead.
 				</description>
 			</parameter>
 			<group name="logging">
@@ -329,26 +326,6 @@
 						</description>
 					</parameter>
 				</group>
-			</group>
-			<group name="recordstream">
-				<description>
-				SeisComP applications access waveform data through the RecordStream
-				interface. Please consult the SeisComP documentation for a list of
-				supported services and their configuration. Note that this set of
-				parameters is deprecated and will be removed in future versions.
-				Please use the URL form (recordstream = slink://localhost) in future.
-				</description>
-				<parameter name="service" type="string" default="slink">
-					<description>
-					Name of the RecordStream service implementation.
-					</description>
-				</parameter>
-				<parameter name="source" type="string" default="localhost:18000">
-					<description>
-					Service specific parameters like a IP address or a file name
-					to use.
-					</description>
-				</parameter>
 			</group>
 			<group name="scripts">
 				<parameter name="crashHandler" type="path">

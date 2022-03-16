@@ -1498,36 +1498,6 @@ bool Application::validateParameters() {
 		_settings.database.parameters = tmp + 3;
 	}
 
-
-	if ( !_settings.recordstream.URI.empty() ) {
-		if ( !configDefault(_arguments, _configuration, "recordstream.service") ||
-		     !configDefault(_arguments, _configuration, "recordstream.source") ) {
-			SEISCOMP_ERROR("You are using the deprecated parameter "
-			               "'recordstream.service' or "
-			               "'recordstream.source' along with the new "
-			               "'recordstream' parameter which takes "
-			               "precedence. Please remove the old parameters.");
-		}
-	}
-	else {
-		try {
-			_settings.recordstream.URI = configGetString("recordstream.service") + "://" +
-			                configGetString("recordstream.source");
-			if ( !configDefault(_arguments, _configuration, "recordstream.service") ||
-			     !configDefault(_arguments, _configuration, "recordstream.source") ) {
-				SEISCOMP_ERROR("DEPRECATION WARNING: You are using the "
-				               "parameter 'recordstream.service' or "
-				               "'recordstream.source' which will be removed in "
-				               "the next major release. Please remove the old "
-				               "parameters and set the new 'recordstream' "
-				               "parameter to '%s' instead.",
-				               _settings.recordstream.URI.c_str());
-			}
-		}
-		catch (...) {}
-	}
-
-
 	_settings.agencyID = Util::replace(_settings.agencyID, AppResolver(_name));
 	_settings.author = Util::replace(_settings.author, AppResolver(_name));
 
