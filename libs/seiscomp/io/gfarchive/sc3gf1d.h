@@ -23,6 +23,7 @@
 
 
 #include <seiscomp/io/gfarchive.h>
+#include <seiscomp/seismology/ttt.h>
 
 #include <string>
 #include <map>
@@ -109,12 +110,13 @@ class SC_SYSTEM_CORE_API SC3GF1DArchive : public GFArchive {
 		struct ModelConfig {
 			ModelConfig() : travelTimesInitialized(false) {}
 
-			DoubleList  distances;
-			DoubleList  depths;
-			TTPhases    travelTimes;
-			bool        travelTimesInitialized;
-			std::string travelTimeInterfaceName{"LOCSAT"};
-			std::string travelTimeInterfaceProfile{"iasp91"};
+			DoubleList                  distances;
+			DoubleList                  depths;
+			TTPhases                    travelTimes;
+			bool                        travelTimesInitialized;
+			std::string                 travelTimeInterfaceName{"LOCSAT"};
+			std::string                 travelTimeInterfaceProfile{"iasp91"};
+			TravelTimeTableInterfacePtr travelTimeTable;
 		};
 
 		typedef std::map<std::string, ModelConfig> ModelMap;
