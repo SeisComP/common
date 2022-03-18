@@ -118,9 +118,15 @@ class SC_SYSTEM_CORE_API GFArchive : public Core::BaseObject {
 		                                  const GFReceiver &receiver) = 0;
 
 
+		bool hasLocalTravelTimes() const { return _hasLocalTravelTimes; }
+
+
 	public:
 		static GFArchive* Create(const char* service);
 		static GFArchive* Open(const char* url);
+
+	protected:
+		bool _hasLocalTravelTimes{false};
 };
 
 
