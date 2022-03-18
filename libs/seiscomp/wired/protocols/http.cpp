@@ -1092,7 +1092,7 @@ bool HttpSession::handleOPTIONSRequest(HttpRequest &req) {
 		send("\r\n");
 	}
 	send("Access-Control-Allow-Origin: *\r\n"
-	     "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n"
+	     "Access-Control-Allow-Methods: *\r\n"
 	     "Access-Control-Allow-Headers: Accept, Content-Type, X-Requested-With, Origin\r\n"
 	     "Content-Type: text/plain\r\n"
 	     "Content-Length: 0\r\n");
