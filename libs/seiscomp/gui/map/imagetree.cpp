@@ -301,10 +301,10 @@ void ImageTree::refresh() {
 void ImageTree::finishedLoading(QImage &img, const TileIndex &tile) {
 	if ( !_cache ) return;
 	if ( _cache->setTexture(img, tile) )
-		tilesUpdated();
+		emit tilesUpdated();
 
 	if ( !hasPendingRequests() )
-		tilesComplete();
+		emit tilesComplete();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
