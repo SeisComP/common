@@ -9,7 +9,7 @@ Plugin
 To enable the ExternalLocator the plugin ``locext`` must be loaded.
 
 
-Commandline parameters
+Commandline Parameters
 ======================
 
 There are several commandline parameters passed to the script depending on
@@ -72,11 +72,24 @@ Example:
    </seiscomp>
 
 
-Example configuration
+Example Configuration
 =====================
 
-.. code::
+#. Define the external locator by global configuration e.g. in :file:`global.cfg`:
 
-   ExternalLocator.profiles = locator1:"python /path/to/locator/script.py",\
-                              locator2:/path/to/other/locator/script
+   .. code::
 
+      plugins = ${plugins}, locext
+
+      ExternalLocator.profiles = locator1:"python /path/to/locator/script1.py",\
+                                 locator2:"/path/to/other/locator/script1.sh"
+
+   with
+
+   * *locator1*/*locator2*: The names of the profiles as shown in :ref:`scolv`
+     or use in ther modules like :ref:`screloc` for calling the external locator,
+   * *script1.py*/*script2.sh*: The names of Python/Bash scripts with full path
+     called by the profile to execute the locator given within the scripts.
+
+#. Once defined, the external locator can be further configured and called
+   within :ref:`scolv` or by other modules e.g. :ref:`screloc`.
