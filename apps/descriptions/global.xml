@@ -599,7 +599,8 @@
 			<group name="Cities"  publicID="cities">
 				<option long-flag="city-xml" argument="arg" default="" publicID="cities#city-xml">
 					<description>
-						The path to the city.xml file. This overrides the default paths.
+						The path to the cities XML file. This overrides the default
+						paths. Compare with the global parameter &quot;citiesXML&quot;
 					</description>
 				</option>
 			</group>
