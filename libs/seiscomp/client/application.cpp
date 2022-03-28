@@ -1096,12 +1096,13 @@ bool Application::init() {
 				foundCity = ar.open((Environment::Instance()->shareDir() + "/cities.xml").c_str());
 		}
 		else
-			foundCity = ar.open(_settings.cities.db.c_str());
+			foundCity = ar.open(Seiscomp::Environment::Instance()->absolutePath(_settings.cities.db).c_str());
 
 		if ( foundCity ) {
 			ar >> NAMED_OBJECT("City", _cities);
 
-			SEISCOMP_INFO("Found cities.xml and read %lu entries", (unsigned long)_cities.size());
+			SEISCOMP_INFO("Found cities XML and read %lu entries",
+			              (unsigned long)_cities.size());
 
 			// Sort the cities descending
 			std::sort(_cities.begin(), _cities.end(), CityGreaterThan());
