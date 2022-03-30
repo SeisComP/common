@@ -5755,9 +5755,7 @@ int SwigDirector_ExportSink::write(char const *data, int size) {
   int c_result = SwigValueInit< int >() ;
   
   swig::SwigVar_PyObject obj0;
-  obj0 = SWIG_FromCharPtr((const char *)data);
-  swig::SwigVar_PyObject obj1;
-  obj1 = SWIG_From_int(static_cast< int >(size));
+  obj0 = PyBytes_FromStringAndSize(data, size);
   if (!swig_get_self()) {
     Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call ExportSink.__init__.");
   }
@@ -5765,10 +5763,10 @@ int SwigDirector_ExportSink::write(char const *data, int size) {
   const size_t swig_method_index = 0;
   const char *const swig_method_name = "write";
   PyObject *method = swig_get_method(swig_method_index, swig_method_name);
-  swig::SwigVar_PyObject result = PyObject_CallFunctionObjArgs(method ,(PyObject *)obj0,(PyObject *)obj1, NULL);
+  swig::SwigVar_PyObject result = PyObject_CallFunctionObjArgs(method ,(PyObject *)obj0, NULL);
 #else
   swig::SwigVar_PyObject swig_method_name = SWIG_Python_str_FromChar("write");
-  swig::SwigVar_PyObject result = PyObject_CallMethodObjArgs(swig_get_self(), (PyObject *) swig_method_name ,(PyObject *)obj0,(PyObject *)obj1, NULL);
+  swig::SwigVar_PyObject result = PyObject_CallMethodObjArgs(swig_get_self(), (PyObject *) swig_method_name ,(PyObject *)obj0, NULL);
 #endif
   if (!result) {
     PyObject *error = PyErr_Occurred();

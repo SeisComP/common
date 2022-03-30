@@ -59,25 +59,10 @@ struct SinkBuf : std::streambuf {
 		if ( pbase() == pptr() ) return 0;
 
 		int bytes = pptr() - pbase();
-		int keepbytes = 0;
-
-		// UTF-8 character can take up to 4 bytes.
-		// Avoid breaking the characters.
-		while (bytes > 0 && (pbase()[bytes - 1] & 0xc0) == 0x80 && keepbytes < 4) {
-			++keepbytes;
-			--bytes;
-		}
-
 		pbase()[bytes] = '\0';
 		int res = sink->write(pbase(), bytes);
 		// Reset put pointer
 		setp(out, out + N);
-
-		if (keepbytes > 0) {
-			memcpy(pbase(), pbase() + bytes, keepbytes);
-			pbump(keepbytes);
-		}
-
 		return res == bytes ? 0 : 1;
 	}
 
