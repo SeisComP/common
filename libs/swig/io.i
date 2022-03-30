@@ -94,6 +94,10 @@
   }
 }
 
+%typemap(directorin) (const char *data, int size) {
+    $input = PyBytes_FromStringAndSize($1, $2);
+}
+
 %import "math.i"
 %include "seiscomp/core.h"
 %include "seiscomp/io/database.h"
