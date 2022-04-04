@@ -5,7 +5,6 @@ import shutil
 import sys
 import subprocess
 import tempfile
-from distutils.dir_util import copy_tree
 from seiscomp import config, kernel, system
 
 # Python version depended string conversion
@@ -310,8 +309,9 @@ class Module(kernel.CoreModule):
                     try:
                         tmpPath = tempfile.mkdtemp()
                         os.chmod(tmpPath, 0o755)
+                        tmpPath = os.path.join(tmpPath, "setup")
                         try:
-                            copy_tree(schemapath, tmpPath)
+                            shutil.copytree(schemapath, tmpPath)
                             filename = os.path.join(self.env.SEISCOMP_ROOT,
                                                     "bin", "seiscomp-python")
                             shutil.copy(filename, tmpPath)
