@@ -3493,7 +3493,6 @@ void PickerView::setBroadBandCodes(const std::vector<std::string> &codes) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::setStrongMotionCodes(const std::vector<std::string> &codes) {
-
 	SC_D.strongMotionCodes = codes;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
