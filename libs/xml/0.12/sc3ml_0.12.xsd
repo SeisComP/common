@@ -155,12 +155,18 @@
       <xs:enumeration value="ice quake"/>
       <xs:enumeration value="slide"/>
       <xs:enumeration value="meteorite"/>
+      <xs:enumeration value="calving"/>
+      <xs:enumeration value="frost quake"/>
+      <xs:enumeration value="temor pulse"/>
+      <xs:enumeration value="submarine landslide"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="EventTypeCertainty">
     <xs:restriction base="xs:string">
       <xs:enumeration value="known"/>
       <xs:enumeration value="suspected"/>
+      <xs:enumeration value="damaging"/>
+      <xs:enumeration value="felt"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="SourceTimeFunctionType">
