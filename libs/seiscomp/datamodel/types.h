@@ -327,7 +327,7 @@ MAKEENUM(
 		"meteorite",
 		"calving",
 		"frost quake",
-		"temor pulse",
+		"tremor pulse",
 		"submarine landslide"
 	)
 );
