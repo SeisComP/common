@@ -1315,6 +1315,8 @@ std::string TypeMapper::EventTypeCertaintyToString(EventTypeCertainty type) {
 		case SUSPECTED:
 			return type.toString();
 		default:
+			SEISCOMP_WARNING("dropping unsupported EventTypeCertainty "
+			                 "value: '%s'", type.toString());
 			return std::string();
 	}
 }
