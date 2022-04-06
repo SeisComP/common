@@ -4,9 +4,7 @@
  *
  * Author: Andres Heinloo
  * Email: geofon_devel@gfz-potsdam.de
- * $Date$
- * $Revision$
- * $LastChangedBy$
+ * LastChangedBy: Stephan Herrnkind <herrnkind@gempa.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,9 +47,9 @@
         <xsl:apply-templates select="scs:type"/>
         <xs:element name="{$root}">
             <xs:complexType>
-                <xs:all>
-                    <xsl:apply-templates select="scs:element" mode="package"/>
-                </xs:all>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xsl:apply-templates select="//scs:element" mode="package"/>
+                </xs:choice>
                 <xs:attribute name="version" type="xs:string"/>
             </xs:complexType>
         </xs:element>
@@ -59,11 +57,11 @@
 </xsl:template>
 
 <xsl:template match="scs:enum">
-        <xs:simpleType name="{@name}">
-            <xs:restriction base="xs:string">
-                <xsl:apply-templates select="scs:option"/>
-            </xs:restriction>
-        </xs:simpleType>
+    <xs:simpleType name="{@name}">
+        <xs:restriction base="xs:string">
+            <xsl:apply-templates select="scs:option"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xsl:template>
  
 <xsl:template match="scs:option">
@@ -71,41 +69,45 @@
 </xsl:template>
 
 <xsl:template match="scs:type">
-        <xsl:variable name="attribute" select="scs:attribute"/>
-        <xsl:variable name="element" select="scs:element"/>
-        <xs:complexType name="{@name}">
-            <xsl:choose>
-                <xsl:when test="$attribute[@xmltype = 'cdata']">
-                    <xsl:apply-templates select="$attribute[@xmltype = 'cdata']" mode="cdata"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:choose>
-                        <xsl:when test="($attribute[@xmltype = 'element']) and ($element)">
-                            <xs:sequence>
-                                <xsl:apply-templates select="$attribute[@xmltype = 'element']" mode="element"/>
-                                <xsl:apply-templates select="$element"/>
-                            </xs:sequence>
-                        </xsl:when>
-                        <xsl:when test="$attribute[@xmltype = 'element']">
-                            <xs:sequence>
-                                <xsl:apply-templates select="$attribute[@xmltype = 'element']" mode="element"/>
-                            </xs:sequence>
-                        </xsl:when>
-                        <xsl:when test="$element">
-                            <xs:sequence>
-                                <xsl:apply-templates select="$element"/>
-                            </xs:sequence>
-                        </xsl:when>
-                    </xsl:choose>
-                    <xsl:apply-templates select="$attribute[@xmltype = 'attribute']"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xs:complexType>
+    <xsl:variable name="attribute" select="scs:attribute"/>
+    <xsl:variable name="element" select="scs:element"/>
+    <xs:complexType name="{@name}">
+        <xsl:choose>
+            <xsl:when test="$attribute[@xmltype = 'cdata']">
+                <xsl:apply-templates select="$attribute[@xmltype = 'cdata']" mode="cdata"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:choose>
+                    <xsl:when test="($attribute[@xmltype = 'element']) and ($element)">
+                        <xs:sequence>
+                            <xsl:apply-templates select="$attribute[@xmltype = 'element']" mode="element"/>
+                            <xsl:apply-templates select="$element"/>
+                        </xs:sequence>
+                    </xsl:when>
+                    <xsl:when test="$attribute[@xmltype = 'element']">
+                        <xs:sequence>
+                            <xsl:apply-templates select="$attribute[@xmltype = 'element']" mode="element"/>
+                        </xs:sequence>
+                    </xsl:when>
+                    <xsl:when test="$element">
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                            <xsl:apply-templates select="$element" mode="choice"/>
+                        </xs:choice>
+                    </xsl:when>
+                </xsl:choose>
+                <xsl:apply-templates select="$attribute[@xmltype = 'attribute']"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xs:complexType>
 </xsl:template>
 
 <xsl:template match="scs:element" mode="package">
     <!-- Use typeref as name since packages aren't objects -->
-    <xs:element name="{@typeref}" type="{$scs}{@typeref}" minOccurs="0" maxOccurs="1"/>
+    <xs:element name="{@typeref}" type="{$scs}{@typeref}"/>
+</xsl:template>
+
+<xsl:template match="scs:element" mode="choice">
+    <xs:element name="{@name}" type="{$scs}{@typeref}"/>
 </xsl:template>
 
 <xsl:template match="scs:element">
