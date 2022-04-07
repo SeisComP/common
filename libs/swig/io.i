@@ -24,20 +24,20 @@
 #include <seiscomp/core/genericrecord.h>
 #include <seiscomp/core/greensfunction.h>
 #include <seiscomp/core/datamessage.h>
-#include "seiscomp/math/geo.h"
-#include "seiscomp/math/coord.h"
-#include "seiscomp/math/math.h"
-#include "seiscomp/math/filter.h"
-#include "seiscomp/math/filter/rmhp.h"
-#include "seiscomp/math/filter/taper.h"
-#include "seiscomp/math/filter/average.h"
-#include "seiscomp/math/filter/stalta.h"
-#include "seiscomp/math/filter/chainfilter.h"
-#include "seiscomp/math/filter/biquad.h"
-#include "seiscomp/math/filter/butterworth.h"
-#include "seiscomp/math/filter/taper.h"
-#include "seiscomp/math/filter/seismometers.h"
-#include "seiscomp/math/restitution/transferfunction.h"
+#include <seiscomp/math/geo.h>
+#include <seiscomp/math/coord.h>
+#include <seiscomp/math/math.h>
+#include <seiscomp/math/filter.h>
+#include <seiscomp/math/filter/rmhp.h>
+#include <seiscomp/math/filter/taper.h>
+#include <seiscomp/math/filter/average.h>
+#include <seiscomp/math/filter/stalta.h>
+#include <seiscomp/math/filter/chainfilter.h>
+#include <seiscomp/math/filter/biquad.h>
+#include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/taper.h>
+#include <seiscomp/math/filter/seismometers.h>
+#include <seiscomp/math/restitution/transferfunction.h>
 #include <seiscomp/io/database.h>
 #include <seiscomp/io/recordinput.h>
 #include <seiscomp/io/recordstream.h>
@@ -92,6 +92,11 @@
   catch ( ... ) {
     SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
   }
+}
+
+%typemap(in) (const char *data, int size) {
+    $1 = PyBytes_AsString($input);
+    $2 = PyBytes_Size($input);
 }
 
 %typemap(directorin) (const char *data, int size) {

@@ -3478,20 +3478,20 @@ namespace swig {
 #include <seiscomp/core/genericrecord.h>
 #include <seiscomp/core/greensfunction.h>
 #include <seiscomp/core/datamessage.h>
-#include "seiscomp/math/geo.h"
-#include "seiscomp/math/coord.h"
-#include "seiscomp/math/math.h"
-#include "seiscomp/math/filter.h"
-#include "seiscomp/math/filter/rmhp.h"
-#include "seiscomp/math/filter/taper.h"
-#include "seiscomp/math/filter/average.h"
-#include "seiscomp/math/filter/stalta.h"
-#include "seiscomp/math/filter/chainfilter.h"
-#include "seiscomp/math/filter/biquad.h"
-#include "seiscomp/math/filter/butterworth.h"
-#include "seiscomp/math/filter/taper.h"
-#include "seiscomp/math/filter/seismometers.h"
-#include "seiscomp/math/restitution/transferfunction.h"
+#include <seiscomp/math/geo.h>
+#include <seiscomp/math/coord.h>
+#include <seiscomp/math/math.h>
+#include <seiscomp/math/filter.h>
+#include <seiscomp/math/filter/rmhp.h>
+#include <seiscomp/math/filter/taper.h>
+#include <seiscomp/math/filter/average.h>
+#include <seiscomp/math/filter/stalta.h>
+#include <seiscomp/math/filter/chainfilter.h>
+#include <seiscomp/math/filter/biquad.h>
+#include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/taper.h>
+#include <seiscomp/math/filter/seismometers.h>
+#include <seiscomp/math/restitution/transferfunction.h>
 #include <seiscomp/io/database.h>
 #include <seiscomp/io/recordinput.h>
 #include <seiscomp/io/recordstream.h>
@@ -15110,32 +15110,21 @@ SWIGINTERN PyObject *_wrap_ExportSink_write(PyObject *SWIGUNUSEDPARM(self), PyOb
   int arg3 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  PyObject *swig_obj[3] ;
+  PyObject *swig_obj[2] ;
   Swig::Director *director = 0;
   bool upcall = false;
   int result;
   
-  if (!SWIG_Python_UnpackTuple(args, "ExportSink_write", 3, 3, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "ExportSink_write", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__ExportSink, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ExportSink_write" "', argument " "1"" of type '" "Seiscomp::IO::ExportSink *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::IO::ExportSink * >(argp1);
-  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ExportSink_write" "', argument " "2"" of type '" "char const *""'");
+  {
+    arg2 = PyBytes_AsString(swig_obj[1]);
+    arg3 = PyBytes_Size(swig_obj[1]);
   }
-  arg2 = reinterpret_cast< char * >(buf2);
-  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "ExportSink_write" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
   director = SWIG_DIRECTOR_CAST(arg1);
   upcall = (director && (director->swig_get_self()==swig_obj[0]));
   try {
@@ -15161,10 +15150,8 @@ SWIGINTERN PyObject *_wrap_ExportSink_write(PyObject *SWIGUNUSEDPARM(self), PyOb
     SWIG_fail;
   }
   resultobj = SWIG_From_int(static_cast< int >(result));
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
   return resultobj;
 fail:
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
   return NULL;
 }
 
@@ -36360,7 +36347,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "Importer_withoutErrors", _wrap_Importer_withoutErrors, METH_O, "Importer_withoutErrors(Importer self) -> bool"},
 	 { "Importer_swigregister", Importer_swigregister, METH_O, NULL},
 	 { "delete_ExportSink", _wrap_delete_ExportSink, METH_O, "delete_ExportSink(ExportSink self)"},
-	 { "ExportSink_write", _wrap_ExportSink_write, METH_VARARGS, "ExportSink_write(ExportSink self, char const * data, int size) -> int"},
+	 { "ExportSink_write", _wrap_ExportSink_write, METH_VARARGS, "ExportSink_write(ExportSink self, char const * data) -> int"},
 	 { "new_ExportSink", _wrap_new_ExportSink, METH_O, "new_ExportSink(PyObject * _self) -> ExportSink"},
 	 { "disown_ExportSink", _wrap_disown_ExportSink, METH_O, NULL},
 	 { "ExportSink_swigregister", ExportSink_swigregister, METH_O, NULL},

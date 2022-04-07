@@ -1036,9 +1036,9 @@ class ExportSink(object):
     __repr__ = _swig_repr
     __swig_destroy__ = _io.delete_ExportSink
 
-    def write(self, data, size):
-        r"""write(ExportSink self, char const * data, int size) -> int"""
-        return _io.ExportSink_write(self, data, size)
+    def write(self, data):
+        r"""write(ExportSink self, char const * data) -> int"""
+        return _io.ExportSink_write(self, data)
 
     def __init__(self):
         r"""__init__(ExportSink self) -> ExportSink"""
