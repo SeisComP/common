@@ -39,6 +39,8 @@
 #include "seiscomp/math/filter/taper.h"
 #include "seiscomp/math/filter/seismometers.h"
 #include "seiscomp/math/restitution/transferfunction.h"
+#include "seiscomp/geo/feature.h"
+#include "seiscomp/geo/featureset.h"
 #include "seiscomp/io/recordstream.h"
 #include "seiscomp/io/recordinput.h"
 #include "seiscomp/io/recordfilter.h"

@@ -24,6 +24,8 @@
 #include "seiscomp/core/exceptions.h"
 #include "seiscomp/core/datamessage.h"
 #include "seiscomp/core/greensfunction.h"
+#include "seiscomp/geo/feature.h"
+#include "seiscomp/geo/featureset.h"
 #include "seiscomp/io/recordstream.h"
 #include "seiscomp/io/recordinput.h"
 #include "seiscomp/io/recordfilter.h"
