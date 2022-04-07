@@ -9261,6 +9261,19 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Time_UTC(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "Time_UTC", 0, 0, 0)) SWIG_fail;
+  result = Seiscomp::Core::Time::UTC();
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(static_cast< const Seiscomp::Core::Time& >(result))), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Time_GMT(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Time result;
@@ -9350,6 +9363,29 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Time_utc(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::Time *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_utc" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  result = (Seiscomp::Core::Time *) &(arg1)->utc();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Time_gmt(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
@@ -9389,6 +9425,29 @@ SWIGINTERN PyObject *_wrap_Time_toLocalTime(PyObject *SWIGUNUSEDPARM(self), PyOb
   }
   arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
   result = ((Seiscomp::Core::Time const *)arg1)->toLocalTime();
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(static_cast< const Seiscomp::Core::Time& >(result))), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_toUTC(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::Time result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_toUTC" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  result = ((Seiscomp::Core::Time const *)arg1)->toUTC();
   resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(static_cast< const Seiscomp::Core::Time& >(result))), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
@@ -47403,12 +47462,15 @@ static PyMethodDef SwigMethods[] = {
 	 { "Time_get2", _wrap_Time_get2, METH_VARARGS, NULL},
 	 { "Time_LocalTime", _wrap_Time_LocalTime, METH_NOARGS, NULL},
 	 { "Time_LocalTimeZone", _wrap_Time_LocalTimeZone, METH_NOARGS, NULL},
+	 { "Time_UTC", _wrap_Time_UTC, METH_NOARGS, NULL},
 	 { "Time_GMT", _wrap_Time_GMT, METH_NOARGS, NULL},
 	 { "Time_FromYearDay", _wrap_Time_FromYearDay, METH_VARARGS, NULL},
 	 { "Time_localTimeZoneOffset", _wrap_Time_localTimeZoneOffset, METH_O, NULL},
 	 { "Time_localtime", _wrap_Time_localtime, METH_O, NULL},
+	 { "Time_utc", _wrap_Time_utc, METH_O, NULL},
 	 { "Time_gmt", _wrap_Time_gmt, METH_O, NULL},
 	 { "Time_toLocalTime", _wrap_Time_toLocalTime, METH_O, NULL},
+	 { "Time_toUTC", _wrap_Time_toUTC, METH_O, NULL},
 	 { "Time_toGMT", _wrap_Time_toGMT, METH_O, NULL},
 	 { "Time_valid", _wrap_Time_valid, METH_O, NULL},
 	 { "Time_toString", _wrap_Time_toString, METH_VARARGS, NULL},

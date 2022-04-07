@@ -5755,7 +5755,9 @@ int SwigDirector_ExportSink::write(char const *data, int size) {
   int c_result = SwigValueInit< int >() ;
   
   swig::SwigVar_PyObject obj0;
-  obj0 = PyBytes_FromStringAndSize(data, size);
+  {
+    obj0 = PyBytes_FromStringAndSize(data, size);
+  }
   if (!swig_get_self()) {
     Swig::DirectorException::raise("'self' uninitialized, maybe you forgot to call ExportSink.__init__.");
   }

@@ -10865,6 +10865,34 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_PluginRegistry_Reset(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  
+  if (!SWIG_Python_UnpackTuple(args, "PluginRegistry_Reset", 0, 0, 0)) SWIG_fail;
+  {
+    try {
+      Seiscomp::System::PluginRegistry::Reset();
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_PluginRegistry_addPluginName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::System::PluginRegistry *arg1 = (Seiscomp::System::PluginRegistry *) 0 ;
@@ -11189,6 +11217,62 @@ SWIGINTERN PyObject *PluginRegistry_swigregister(PyObject *SWIGUNUSEDPARM(self),
   SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__System__PluginRegistry, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
+
+SWIGINTERN PyObject *_wrap_join(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::string *arg1 = 0 ;
+  char *arg2 = (char *) 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject *swig_obj[2] ;
+  std::string result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "join", 2, 2, swig_obj)) SWIG_fail;
+  {
+    std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "join" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "join" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "join" "', argument " "2"" of type '" "char const *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  {
+    try {
+      result = Seiscomp::System::Detail::join((std::string const &)*arg1,(char const *)arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
 
 SWIGINTERN PyObject *_wrap_new_SystemApplication(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
@@ -47273,6 +47357,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "Environment_swigregister", Environment_swigregister, METH_O, NULL},
 	 { "delete_PluginRegistry", _wrap_delete_PluginRegistry, METH_O, NULL},
 	 { "PluginRegistry_Instance", _wrap_PluginRegistry_Instance, METH_NOARGS, NULL},
+	 { "PluginRegistry_Reset", _wrap_PluginRegistry_Reset, METH_NOARGS, NULL},
 	 { "PluginRegistry_addPluginName", _wrap_PluginRegistry_addPluginName, METH_VARARGS, NULL},
 	 { "PluginRegistry_addPluginPath", _wrap_PluginRegistry_addPluginPath, METH_VARARGS, NULL},
 	 { "PluginRegistry_addPackagePath", _wrap_PluginRegistry_addPackagePath, METH_VARARGS, NULL},
@@ -47281,6 +47366,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "PluginRegistry_freePlugins", _wrap_PluginRegistry_freePlugins, METH_O, NULL},
 	 { "PluginRegistry_pluginCount", _wrap_PluginRegistry_pluginCount, METH_O, NULL},
 	 { "PluginRegistry_swigregister", PluginRegistry_swigregister, METH_O, NULL},
+	 { "join", _wrap_join, METH_VARARGS, NULL},
 	 { "new_SystemApplication", _wrap_new_SystemApplication, METH_VARARGS, NULL},
 	 { "delete_SystemApplication", _wrap_delete_SystemApplication, METH_O, NULL},
 	 { "SystemApplication___call__", _wrap_SystemApplication___call__, METH_O, NULL},

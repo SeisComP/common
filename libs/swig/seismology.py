@@ -130,6 +130,7 @@ import seiscomp.io
 import seiscomp.math
 import seiscomp.core
 import seiscomp.datamodel
+import seiscomp.geo
 import seiscomp.config
 class TravelTimeList_internal(object):
     r"""Proxy of C++ std::list< Seiscomp::TravelTime > class."""

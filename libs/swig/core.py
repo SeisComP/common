@@ -333,6 +333,10 @@ class Time(TimeSpan):
         return _core.Time_LocalTimeZone()
 
     @staticmethod
+    def UTC():
+        return _core.Time_UTC()
+
+    @staticmethod
     def GMT():
         return _core.Time_GMT()
 
@@ -346,11 +350,17 @@ class Time(TimeSpan):
     def localtime(self):
         return _core.Time_localtime(self)
 
+    def utc(self):
+        return _core.Time_utc(self)
+
     def gmt(self):
         return _core.Time_gmt(self)
 
     def toLocalTime(self):
         return _core.Time_toLocalTime(self)
+
+    def toUTC(self):
+        return _core.Time_toUTC(self)
 
     def toGMT(self):
         return _core.Time_toGMT(self)
@@ -385,6 +395,9 @@ def Time_LocalTime():
 
 def Time_LocalTimeZone():
     return _core.Time_LocalTimeZone()
+
+def Time_UTC():
+    return _core.Time_UTC()
 
 def Time_GMT():
     return _core.Time_GMT()

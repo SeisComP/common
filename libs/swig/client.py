@@ -131,6 +131,7 @@ import seiscomp.config
 import seiscomp.datamodel
 import seiscomp.io
 import seiscomp.math
+import seiscomp.geo
 import seiscomp.utils
 class Packet(seiscomp.core.BaseObject):
     r"""Proxy of C++ Seiscomp::Client::Packet class."""
@@ -1412,10 +1413,6 @@ class Application(seiscomp.system.SystemApplication):
         r"""Instance() -> Application"""
         return _client.Application_Instance()
 
-    def createBaseCommandLineDescription(self):
-        r"""createBaseCommandLineDescription(Application self)"""
-        return _client.Application_createBaseCommandLineDescription(self)
-
     def validateParameters(self):
         r"""validateParameters(Application self) -> bool"""
         return _client.Application_validateParameters(self)
@@ -1507,6 +1504,10 @@ class Application(seiscomp.system.SystemApplication):
         self.this.disown()
         _client.disown_Application(self)
         return weakref.proxy(self)
+
+    def createBaseCommandLineDescription(self):
+        r"""createBaseCommandLineDescription(Application self)"""
+        return _client.Application_createBaseCommandLineDescription(self)
 
     def createCommandLineDescription(self):
         r"""createCommandLineDescription(Application self)"""
@@ -1823,6 +1824,11 @@ class Inventory(object):
         r"""Instance() -> Inventory"""
         return _client.Inventory_Instance()
 
+    @staticmethod
+    def Reset():
+        r"""Reset()"""
+        return _client.Inventory_Reset()
+
     def load(self, *args):
         r"""
         load(Inventory self, char const * filename)
@@ -1894,6 +1900,10 @@ def Inventory_Instance():
     r"""Inventory_Instance() -> Inventory"""
     return _client.Inventory_Instance()
 
+def Inventory_Reset():
+    r"""Inventory_Reset()"""
+    return _client.Inventory_Reset()
+
 class ConfigDB(object):
     r"""Proxy of C++ Seiscomp::Client::ConfigDB class."""
 
@@ -1907,6 +1917,11 @@ class ConfigDB(object):
     def Instance():
         r"""Instance() -> ConfigDB"""
         return _client.ConfigDB_Instance()
+
+    @staticmethod
+    def Reset():
+        r"""Reset()"""
+        return _client.ConfigDB_Reset()
 
     def load(self, *args):
         r"""
@@ -1926,6 +1941,10 @@ _client.ConfigDB_swigregister(ConfigDB)
 def ConfigDB_Instance():
     r"""ConfigDB_Instance() -> ConfigDB"""
     return _client.ConfigDB_Instance()
+
+def ConfigDB_Reset():
+    r"""ConfigDB_Reset()"""
+    return _client.ConfigDB_Reset()
 
 
 

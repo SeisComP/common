@@ -34,7 +34,7 @@ public:
     virtual char const *version();
     virtual void createBaseCommandLineDescription();
     virtual void createBaseCommandLineDescriptionSwigPublic() {
-      Seiscomp::Client::Application::createBaseCommandLineDescription();
+      Seiscomp::System::Application::createBaseCommandLineDescription();
     }
     virtual void createCommandLineDescription();
     virtual void createCommandLineDescriptionSwigPublic() {
@@ -227,7 +227,7 @@ public:
     virtual char const *version();
     virtual void createBaseCommandLineDescription();
     virtual void createBaseCommandLineDescriptionSwigPublic() {
-      Seiscomp::Client::Application::createBaseCommandLineDescription();
+      Seiscomp::System::Application::createBaseCommandLineDescription();
     }
     virtual void createCommandLineDescription();
     virtual void createCommandLineDescriptionSwigPublic() {
