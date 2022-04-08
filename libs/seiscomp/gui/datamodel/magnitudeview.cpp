@@ -225,22 +225,42 @@ string waveformIDToStdString(const WaveformStreamID& id) {
 }
 
 
-int usedStationCount(Magnitude *mag) {
-	int cnt = 0;
-	for ( size_t i = 0; i < mag->stationMagnitudeContributionCount(); ++i ) {
-		try {
-			if ( mag->stationMagnitudeContribution(i)->weight() > 0.0 )
-				++cnt;
-		}
-		catch ( ... ) {
-			++cnt;
-		}
+int usedStationCount(const Magnitude *mag) {
+	try {
+		return mag->stationCount();
 	}
-	return cnt;
+	catch ( ... ) {
+		int cnt = 0;
+		for ( size_t i = 0; i < mag->stationMagnitudeContributionCount(); ++i ) {
+			try {
+				if ( mag->stationMagnitudeContribution(i)->weight() > 0.0 )
+					++cnt;
+			}
+			catch ( ... ) {
+				++cnt;
+			}
+		}
+		return cnt;
+	}
 }
 
-int totalStationCount(Magnitude *mag) {
+
+int totalStationCount(const Magnitude *mag) {
 	return mag->stationMagnitudeContributionCount();
+}
+
+
+void updateTab(QTabBar *tabBar, const Magnitude *mag) {
+	int idx = findData(tabBar, mag->publicID());
+	if ( idx != -1 ) {
+		QString text = QString("%1 %2 (%3/%4)")
+		        .arg(mag->type().c_str())
+		        .arg(mag->magnitude().value(), 0,
+		            'f', SCScheme.precision.magnitude)
+		        .arg(usedStationCount(mag))
+		        .arg(totalStationCount(mag));
+		tabBar->setTabText(idx, text);
+	}
 }
 
 
@@ -1662,17 +1682,7 @@ void MagnitudeView::recalculateMagnitude() {
 
 	_netMag->setStationCount(staCount);
 
-	idx = findData(_tabMagnitudes, _netMag->publicID());
-	if ( idx != -1 )
-		_tabMagnitudes->setTabText(
-			idx,
-			QString("%1 %2 (%3/%4)")
-			.arg(_netMag->type().c_str())
-			.arg(_netMag->magnitude().value(), 0,
-			     'f', SCScheme.precision.magnitude)
-			.arg(usedStationCount(_netMag.get()))
-			.arg(totalStationCount(_netMag.get()))
-		);
+	updateTab(_tabMagnitudes, _netMag.get());
 
 	updateMagnitudeLabels();
 	_ui.tableStationMagnitudes->reset();
@@ -2201,15 +2211,7 @@ void MagnitudeView::magnitudeCreated(Seiscomp::DataModel::Magnitude *netMag) {
 	*/
 
 	// Replace magnitude
-	_tabMagnitudes->setTabText(
-		typeIdx,
-		QString("%1 %2 (%3/%4)")
-		.arg(netMag->type().c_str())
-		.arg(netMag->magnitude().value(), 0,
-		     'f', SCScheme.precision.magnitude)
-		.arg(usedStationCount(netMag))
-		.arg(totalStationCount(netMag))
-	);
+	updateTab(_tabMagnitudes, netMag);
 	_tabMagnitudes->setTabData(typeIdx, QVariant::fromValue<TabData>(netMag->publicID()));
 	if ( _tabMagnitudes->currentIndex() != typeIdx )
 		_tabMagnitudes->setCurrentIndex(typeIdx);
@@ -3060,12 +3062,19 @@ void MagnitudeView::reload() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MagnitudeView::addObject(const QString& parentID, Seiscomp::DataModel::Object* o) {
+void MagnitudeView::addObject(const QString &parentID, Seiscomp::DataModel::Object* o) {
 	// Check whether a new stationmagnitude has been inserted into the current networkmagnitude
 	StationMagnitudeContribution* magRef = StationMagnitudeContribution::Cast(o);
 	if ( magRef ) {
+		auto pid = parentID.toStdString();
+		Magnitude *netMag = Magnitude::Find(pid);
+		if ( netMag ) {
+			// Update the corresponding tab header
+			updateTab(_tabMagnitudes, netMag);
+		}
+
 		// It does not influence the currently displayed magnitude -> dont care
-		if ( !_netMag || parentID.toStdString() != _netMag->publicID() )
+		if ( !_netMag || pid != _netMag->publicID() )
 			return;
 
 		StationMagnitude* staMag = StationMagnitude::Find(magRef->stationMagnitudeID());
@@ -3119,17 +3128,11 @@ void MagnitudeView::updateObject(const QString &parentID, Seiscomp::DataModel::O
 	// Check whether a networkmagnitude has been updated
 	Magnitude* netMag = Magnitude::Cast(o);
 	if ( netMag ) {
+		// Resolve the currently cached version which also holds the
+		// station magnitude contributions
+		netMag = Magnitude::Find(netMag->publicID());
 		if ( _origin && _origin->publicID() == parentID.toStdString() ) {
-			int idx = findData(_tabMagnitudes, netMag->publicID());
-			if ( idx != -1 )
-				_tabMagnitudes->setTabText(
-					idx,
-					QString("%1 %2 (%3/%4)")
-					.arg(netMag->type().c_str())
-					.arg(netMag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)
-					.arg(usedStationCount(netMag))
-					.arg(totalStationCount(netMag))
-				);
+			updateTab(_tabMagnitudes, netMag);
 		}
 
 		// Not for now
