@@ -51,6 +51,7 @@
 #include <seiscomp/datamodel/journalentry.h>
 #include <seiscomp/io/archive/xmlarchive.h>
 #include <seiscomp/io/archive/binarchive.h>
+#include <seiscomp/geo/featureset.h>
 #include <seiscomp/seismology/regions.h>
 
 #include <QHeaderView>
@@ -2547,10 +2548,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	Region reg;
 	reg.name = "- custom -";
-	reg.minLat = -90;
-	reg.minLong = -180;
-	reg.maxLat = 90;
-	reg.maxLong = 180;
+	reg.bbox = Geo::GeoBoundingBox(-90, -180, 90, 180);
 	_filterRegions.append(reg);
 
 	// Read region definitions for filters
@@ -2573,6 +2571,8 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 			std::string name;
 			std::vector<double> defs;
 
+			reg = Region();
+
 			try {
 				name = SCApp->configGetString("eventlist.filter.regions.region." + regionProfiles[i] + ".name");
 			}
@@ -2592,21 +2592,77 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 			}
 
 			try {
-				defs = SCApp->configGetDoubles("eventlist.filter.regions.region." + regionProfiles[i] + ".rect");
+				auto poly = SCApp->configGetString("eventlist.filter.regions.region." + regionProfiles[i] + ".poly");
+				if ( !poly.empty() ) {
+					for ( size_t i = 0; i < Seiscomp::Regions::polyRegions().regionCount(); ++i ) {
+						auto feature = Seiscomp::Regions::polyRegions().region(i);
+						if ( feature->name() == poly ) {
+							reg.poly = feature;
+							break;
+						}
+					}
+
+					if ( !reg.poly ) {
+						for ( auto feature : Geo::GeoFeatureSetSingleton::getInstance().features() ) {
+							if ( feature->name() == poly ) {
+								reg.poly = feature;
+								break;
+							}
+						}
+					}
+
+					if ( !reg.poly ) {
+						std::cerr << "WARNING: eventlist.filter.regions.region."
+						          << regionProfiles[i] << ".poly: polygon '"
+						          << poly
+						          << "' has not been found "
+						             "(neither in fep nor in spatial "
+						             "vector layer)"
+						          << std::endl;
+						continue;
+					}
+
+					if ( !reg.poly->closedPolygon() ) {
+						std::cerr << "WARNING: eventlist.filter.regions.region."
+						          << regionProfiles[i] << ".poly: feature '"
+						          << poly
+						          << "' is not a polygon (not closed) which "
+						             "will not work for polygon based filtering"
+						          << std::endl;
+						continue;
+					}
+				}
 			}
-			catch ( ... ) {
+			catch ( ... ) {}
+
+			if ( !reg.poly ) {
 				try {
-					defs = SCApp->configGetDoubles("eventlist.region." + regionProfiles[i] + ".rect");
-					SEISCOMP_WARNING("The parameter 'eventlist.region.%s.rect' is deprecated and will be removed in future. "
-					                 "Please replace with 'eventlist.filter.regions.region.%s.rect'.",
-					                 regionProfiles[i].c_str(), regionProfiles[i].c_str());
+					defs = SCApp->configGetDoubles("eventlist.filter.regions.region." + regionProfiles[i] + ".rect");
 				}
 				catch ( ... ) {
+					try {
+						defs = SCApp->configGetDoubles("eventlist.region." + regionProfiles[i] + ".rect");
+						SEISCOMP_WARNING("The parameter 'eventlist.region.%s.rect' is deprecated and will be removed in future. "
+						                 "Please replace with 'eventlist.filter.regions.region.%s.rect'.",
+						                 regionProfiles[i].c_str(), regionProfiles[i].c_str());
+					}
+					catch ( ... ) {
+						std::cerr << "WARNING: eventlist.filter.regions.region."
+						          << regionProfiles[i] << ".rect requires exactly 4 parameters (nothing given): ignoring"
+						          << std::endl;
+						continue;
+					}
+				}
+
+				if ( defs.size() != 4 ) {
 					std::cerr << "WARNING: eventlist.filter.regions.region."
-					          << regionProfiles[i] << ".rect requires exactly 4 parameters (nothing given): ignoring"
+					          << regionProfiles[i] << ".rect requires exactly 4 parameters ("
+					          << defs.size() << " given): ignoring"
 					          << std::endl;
 					continue;
 				}
+
+				reg.bbox = Geo::GeoBoundingBox(defs[0], defs[1], defs[2], defs[3]);
 			}
 
 			if ( name.empty() ) {
@@ -2616,20 +2672,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 				continue;
 			}
 
-			if ( defs.size() != 4 ) {
-				std::cerr << "WARNING: eventlist.filter.regions.region."
-				          << regionProfiles[i] << ".rect requires exactly 4 parameters ("
-				          << defs.size() << " given): ignoring"
-				          << std::endl;
-				continue;
-			}
-
 			reg.name = name.c_str();
-			reg.minLat = defs[0];
-			reg.minLong = defs[1];
-			reg.maxLat = defs[2];
-			reg.maxLong = defs[3];
-
 			_filterRegions.append(reg);
 		}
 	}
@@ -2935,7 +2978,9 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 				}
 			}
 
-			if ( !hasOwnOrigin ) hide = true;
+			if ( !hasOwnOrigin ) {
+				hide = true;
+			}
 		}
 	}
 
@@ -2945,20 +2990,15 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 		const Region &reg = _filterRegions[_regionIndex];
 		double lat = item->data(_itemConfig.columnMap[COL_LAT], Qt::UserRole).toDouble();
 		double lon = item->data(_itemConfig.columnMap[COL_LON], Qt::UserRole).toDouble();
-		if ( lat < reg.minLat || lat > reg.maxLat )
-			hide = true;
-		else {
-			if ( reg.minLong <= reg.maxLong ) {
-				if ( lon < reg.minLong || lon > reg.maxLong )
-					hide = true;
-			}
-			else {
-				if ( lon < reg.minLong && lon > reg.maxLong )
-					hide = true;
-			}
-		}
 
-		if ( invert ) hide = !hide;
+		bool isInRegion = reg.poly ?
+			reg.poly->contains(Geo::GeoCoordinate(lat, lon))
+			:
+			reg.bbox.contains(Geo::GeoCoordinate(lat, lon));
+
+		if ( isInRegion == invert ) {
+			hide = true;
+		}
 	}
 
 	if ( hide != _treeWidget->isItemHidden(item) ) {
@@ -5506,10 +5546,32 @@ EventListViewRegionFilterDialog::EventListViewRegionFilterDialog(QWidget *parent
 , _target(target), _regionList(regionList) {
 	_ui->setupUi(this);
 
-	_ui->edMinLat->setText(QString::number(_target->minLat));
-	_ui->edMaxLat->setText(QString::number(_target->maxLat));
-	_ui->edMinLon->setText(QString::number(_target->minLong));
-	_ui->edMaxLon->setText(QString::number(_target->maxLong));
+	_ui->cbPolys->addItem(tr("- Unset -"));
+
+	for ( size_t i = 0; i < Seiscomp::Regions::polyRegions().regionCount(); ++i ) {
+		auto feature = Seiscomp::Regions::polyRegions().region(i);
+		if ( feature->closedPolygon() ) {
+			_ui->cbPolys->addItem(feature->name().c_str());
+		}
+
+		for ( auto feature : Geo::GeoFeatureSetSingleton::getInstance().features() ) {
+			if ( feature->closedPolygon() ) {
+				_ui->cbPolys->addItem(feature->name().c_str());
+			}
+		}
+	}
+
+	_ui->labelPolys->setEnabled(_ui->cbPolys->count() > 0);
+	_ui->cbPolys->setEnabled(_ui->cbPolys->count() > 0);
+
+	_ui->edMinLat->setText(QString::number(_target->bbox.south));
+	_ui->edMaxLat->setText(QString::number(_target->bbox.north));
+	_ui->edMinLon->setText(QString::number(_target->bbox.west));
+	_ui->edMaxLon->setText(QString::number(_target->bbox.east));
+
+	if ( target->poly ) {
+		_ui->cbPolys->setCurrentIndex(_ui->cbPolys->findText(_target->poly->name().c_str()));
+	}
 
 	QValidator *valLat = new QDoubleValidator(-90,90,6,this);
 	QValidator *valLong = new QDoubleValidator(-180,180,6,this);
@@ -5546,10 +5608,16 @@ EventListViewRegionFilterDialog::~EventListViewRegionFilterDialog() {
 void EventListViewRegionFilterDialog::regionSelectionChanged(const QString &text) {
 	for ( int i = 0; i < _regionList->size(); ++i ) {
 		if ( (*_regionList)[i].name == text ) {
-			_ui->edMinLat->setText(QString::number((*_regionList)[i].minLat));
-			_ui->edMaxLat->setText(QString::number((*_regionList)[i].maxLat));
-			_ui->edMinLon->setText(QString::number((*_regionList)[i].minLong));
-			_ui->edMaxLon->setText(QString::number((*_regionList)[i].maxLong));
+			_ui->edMinLat->setText(QString::number((*_regionList)[i].bbox.south));
+			_ui->edMaxLat->setText(QString::number((*_regionList)[i].bbox.north));
+			_ui->edMinLon->setText(QString::number((*_regionList)[i].bbox.west));
+			_ui->edMaxLon->setText(QString::number((*_regionList)[i].bbox.east));
+			if ( (*_regionList)[i].poly ) {
+				_ui->cbPolys->setCurrentIndex(_ui->cbPolys->findText((*_regionList)[i].poly->name().c_str()));
+			}
+			else {
+				_ui->cbPolys->setCurrentIndex(0);
+			}
 			return;
 		}
 	}
@@ -5581,7 +5649,7 @@ void EventListViewRegionFilterDialog::accept() {
 		_ui->edMinLat->setFocus();
 		return;
 	}
-	_target->minLat = _ui->edMinLat->text().toDouble();
+	_target->bbox.south = _ui->edMinLat->text().toDouble();
 
 	// Copy maximum latitude
 	if ( _ui->edMaxLat->text().isEmpty() ) {
@@ -5589,7 +5657,7 @@ void EventListViewRegionFilterDialog::accept() {
 		_ui->edMaxLat->setFocus();
 		return;
 	}
-	_target->maxLat = _ui->edMaxLat->text().toDouble();
+	_target->bbox.north = _ui->edMaxLat->text().toDouble();
 
 	// Copy minimum longitude
 	if ( _ui->edMinLon->text().isEmpty() ) {
@@ -5597,7 +5665,7 @@ void EventListViewRegionFilterDialog::accept() {
 		_ui->edMinLon->setFocus();
 		return;
 	}
-	_target->minLong = _ui->edMinLon->text().toDouble();
+	_target->bbox.west = _ui->edMinLon->text().toDouble();
 
 	// Copy maximum longitude
 	if ( _ui->edMaxLon->text().isEmpty() ) {
@@ -5605,7 +5673,29 @@ void EventListViewRegionFilterDialog::accept() {
 		_ui->edMaxLon->setFocus();
 		return;
 	}
-	_target->maxLong = _ui->edMaxLon->text().toDouble();
+	_target->bbox.east = _ui->edMaxLon->text().toDouble();
+
+	std::string poly = _ui->cbPolys->currentText().toStdString();
+	_target->poly = nullptr;
+
+	if ( !poly.empty() ) {
+		for ( size_t i = 0; i < Seiscomp::Regions::polyRegions().regionCount(); ++i ) {
+			auto feature = Seiscomp::Regions::polyRegions().region(i);
+			if ( feature->name() == poly ) {
+				_target->poly = feature;
+				break;
+			}
+		}
+
+		if ( !_target->poly ) {
+			for ( auto feature : Geo::GeoFeatureSetSingleton::getInstance().features() ) {
+				if ( feature->name() == poly ) {
+					_target->poly = feature;
+					break;
+				}
+			}
+		}
+	}
 
 	QDialog::accept();
 }

@@ -28,6 +28,7 @@
 #ifndef Q_MOC_RUN
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core/timewindow.h>
+#include <seiscomp/geo/boundingbox.h>
 #endif
 
 #include <QWidget>
@@ -63,6 +64,12 @@ class Notifier;
 namespace Client {
 
 DEFINE_SMARTPOINTER(Connection);
+
+}
+
+namespace Geo {
+
+DEFINE_SMARTPOINTER(GeoFeature);
 
 }
 
@@ -303,11 +310,9 @@ class SC_GUI_API EventListView : public QWidget {
 		};
 
 		struct Region {
-			QString name;
-			float   minLat;
-			float   minLong;
-			float   maxLat;
-			float   maxLong;
+			QString                name;
+			Geo::GeoBoundingBox    bbox;
+			const Geo::GeoFeature *poly{nullptr};
 		};
 
 		typedef QList<Region> FilterRegions;

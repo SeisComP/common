@@ -1410,9 +1410,9 @@
 				</group>
 				<group name="filter">
 					<group name="agencies">
-					<description>
-					Filter the loaded event list by agency ID.
-					</description>
+						<description>
+						Filter the loaded event list by agency ID.
+						</description>
 						<parameter name="label" type="string" default="Show only own events">
 							<description>
 							Defines the text of the option &quot;Show only own events&quot;.
@@ -1473,6 +1473,16 @@
 									<description>
 									Defines a rectangular region with a list of 4 values:
 									latmin, lonmin, latmax, lonmax.
+									</description>
+								</parameter>
+								<parameter name="poly" type="string">
+									<description>
+									Defines the name of the polygon for the region check.
+									If defined then the rect region has no effect.
+									The configured polygon name is being search for
+									in the global FEP regions and the spatial
+									vector layer. The first polygon found with
+									the given name will be taken.
 									</description>
 								</parameter>
 							</struct>
