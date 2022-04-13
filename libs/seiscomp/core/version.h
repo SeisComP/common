@@ -91,9 +91,7 @@ namespace Core {
    - Added Seiscomp::DataModel::id(const SensorLocation*, ...)
    - Added Seiscomp::DataModel::id(const Stream*, ...)
    - Added Seiscomp::Util::catchBool
-
- "14.4.1"   0x0E0401
-   - Fixed Python API for ExportSink::write to always pass Bytes and
+   - Fixed Python API for ExportSink::write to always pass bytes and
      remove size parameter
 
  "14.4.0"   0x0E0400
