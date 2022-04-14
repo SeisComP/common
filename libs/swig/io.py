@@ -565,6 +565,10 @@ class GFArchive(seiscomp.core.BaseObject):
         r"""getTravelTime(GFArchive self, string phase, string model, GFSource source, GFReceiver receiver) -> Seiscomp::Core::Optional< double >::Impl"""
         return _io.GFArchive_getTravelTime(self, phase, model, source, receiver)
 
+    def hasLocalTravelTimes(self):
+        r"""hasLocalTravelTimes(GFArchive self) -> bool"""
+        return _io.GFArchive_hasLocalTravelTimes(self)
+
     @staticmethod
     def Create(service):
         r"""Create(char const * service) -> GFArchive"""

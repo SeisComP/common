@@ -339,6 +339,10 @@ class Protocol(object):
         r"""schemaVersion(Protocol self) -> Version"""
         return _client.Protocol_schemaVersion(self)
 
+    def extendedParameters(self):
+        r"""extendedParameters(Protocol self) -> Seiscomp::Client::Protocol::KeyValueStore const &"""
+        return _client.Protocol_extendedParameters(self)
+
     def clientName(self):
         r"""clientName(Protocol self) -> std::string const &"""
         return _client.Protocol_clientName(self)
@@ -575,6 +579,10 @@ class Connection(seiscomp.core.BaseObject):
     def schemaVersion(self):
         r"""schemaVersion(Connection self) -> Version"""
         return _client.Connection_schemaVersion(self)
+
+    def extendedParameters(self):
+        r"""extendedParameters(Connection self) -> Seiscomp::Client::Protocol::KeyValueStore const *"""
+        return _client.Connection_extendedParameters(self)
 
 # Register Connection in _client:
 _client.Connection_swigregister(Connection)

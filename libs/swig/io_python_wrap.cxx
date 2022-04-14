@@ -11614,6 +11614,42 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_GFArchive_hasLocalTravelTimes(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::IO::GFArchive *arg1 = (Seiscomp::IO::GFArchive *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  bool result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__GFArchive, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GFArchive_hasLocalTravelTimes" "', argument " "1"" of type '" "Seiscomp::IO::GFArchive const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::IO::GFArchive * >(argp1);
+  {
+    try {
+      result = (bool)((Seiscomp::IO::GFArchive const *)arg1)->hasLocalTravelTimes();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_GFArchive_Create(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   char *arg1 = (char *) 0 ;
@@ -36244,6 +36280,7 @@ static PyMethodDef SwigMethods[] = {
 		""},
 	 { "GFArchive_get", _wrap_GFArchive_get, METH_O, "GFArchive_get(GFArchive self) -> GreensFunction"},
 	 { "GFArchive_getTravelTime", _wrap_GFArchive_getTravelTime, METH_VARARGS, "GFArchive_getTravelTime(GFArchive self, string phase, string model, GFSource source, GFReceiver receiver) -> Seiscomp::Core::Optional< double >::Impl"},
+	 { "GFArchive_hasLocalTravelTimes", _wrap_GFArchive_hasLocalTravelTimes, METH_O, "GFArchive_hasLocalTravelTimes(GFArchive self) -> bool"},
 	 { "GFArchive_Create", _wrap_GFArchive_Create, METH_O, "GFArchive_Create(char const * service) -> GFArchive"},
 	 { "GFArchive_Open", _wrap_GFArchive_Open, METH_O, "GFArchive_Open(char const * url) -> GFArchive"},
 	 { "GFArchive_swigregister", GFArchive_swigregister, METH_O, NULL},
