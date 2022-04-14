@@ -31,6 +31,7 @@
 #include <boost/thread/mutex.hpp>
 
 #include <deque>
+#include <map>
 #include <set>
 #include <string>
 
@@ -271,7 +272,8 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 		static const std::string IMPORT_GROUP;
 
 		//! A list of group names
-		typedef std::set<std::string> Groups;
+		using Groups = std::set<std::string>;
+		using KeyValueStore = std::map<std::string, std::string>;
 
 
 	// ----------------------------------------------------------------------
@@ -320,6 +322,15 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 		 * @return The version of the remote schema
 		 */
 		Core::Version schemaVersion() const;
+
+		/**
+		 * @brief Returns configuration parameters as key-value store
+		 *        returned by the broker.
+		 * Those parameters can be used or not, it is up to the user of
+		 * the connection.
+		 * @return The key-value store with additional parameters
+		 */
+		const KeyValueStore &extendedParameters() const;
 
 		/**
 		 * @brief Returns the client name. Either the one given during connect
@@ -520,7 +531,7 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 	//  Private types and members
 	// ----------------------------------------------------------------------
 	protected:
-		typedef std::deque<Packet*> PacketQueue;
+		using PacketQueue = std::deque<Packet*>;
 
 		bool                   _wantMembershipInfo;
 		Groups                 _groups;
@@ -530,6 +541,7 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 		std::string            _registeredClientName;
 		Core::Version          _schemaVersion; //!< The schema version the
 		                                       //!< server supports
+		KeyValueStore          _extendedParameters;
 
 		// Mutexes to synchronize read access from separate threads.
 		mutable boost::mutex   _readMutex;
@@ -544,6 +556,10 @@ Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::Client::Protocol, Class> __#
 
 inline Core::Version Protocol::schemaVersion() const {
 	return _schemaVersion;
+}
+
+inline const Protocol::KeyValueStore &Protocol::extendedParameters() const {
+	return _extendedParameters;
 }
 
 inline const std::string &Protocol::clientName() const {

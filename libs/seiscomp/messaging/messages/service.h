@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CLIENT_SERVICEMESSAGE_H
-#define SEISCOMP_CLIENT_SERVICEMESSAGE_H
+#ifndef SEISCOMP_MESSAGING_MESSAGES_DATABASE_H
+#define SEISCOMP_MESSAGING_MESSAGES_DATABASE_H
 
 
 #include <seiscomp/core/message.h>
@@ -61,7 +61,7 @@ class SC_SYSTEM_CLIENT_API ServiceRequestMessage : public Core::Message {
 		ServiceRequestMessage(const char *service);
 
 		//! Implemented interface from Message
-		virtual bool empty() const;
+		bool empty() const override;
 
 	public:
 		/**

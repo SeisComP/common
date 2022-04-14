@@ -261,6 +261,9 @@ class SC_SYSTEM_CLIENT_API Connection : public Core::BaseObject {
 		 */
 		Core::Version schemaVersion() const;
 
+		// See Protocoll::configurationParameters
+		const Protocol::KeyValueStore *extendedParameters() const;
+
 
 	// ----------------------------------------------------------------------
 	//  Protected interface

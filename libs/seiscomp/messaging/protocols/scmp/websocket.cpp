@@ -270,6 +270,7 @@ Result WebsocketConnection::connect(const char *address,
 	boost::mutex::scoped_lock lread(_readMutex);
 	boost::mutex::scoped_lock lwrite(_writeMutex);
 
+	_extendedParameters = KeyValueStore();
 	_state = State();
 	_select.clear();
 	_groups.clear();
@@ -534,7 +535,7 @@ Result WebsocketConnection::connect(const char *address,
 		}
 		else if ( headers.nameEquals("DB-Access") ) {
 			string readParameters(headers.val_start, headers.val_len);
-			Packet *packet = new Packet;
+			auto packet = new Packet;
 
 			size_t p = readParameters.find("://");
 			if ( p != string::npos ) {
@@ -547,6 +548,11 @@ Result WebsocketConnection::connect(const char *address,
 				Protocol::encode(packet->payload, &msg, Protocol::Identity, Protocol::Binary, -1);
 				queuePacket(packet);
 			}
+		}
+		else if ( headers.nameStartsWith("X-") ) {
+			_extendedParameters[
+				string(headers.name_start + 2, headers.name_len - 2)
+			] = string(headers.val_start, headers.val_len);
 		}
 	}
 
@@ -1125,6 +1131,7 @@ Result WebsocketConnection::disconnect() {
 	_registeredClientName = string();
 	_state.sequenceNumber = Core::None;
 	_schemaVersion = 0;
+	_extendedParameters = KeyValueStore();
 	// Remove all un-ack'ed messages as we have actively disconnected
 	// the session
 	_backlog.clear();

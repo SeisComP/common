@@ -489,6 +489,16 @@ Core::Version Connection::schemaVersion() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const Protocol::KeyValueStore *Connection::extendedParameters() const {
+	if ( !_protocol ) return nullptr;
+	return &_protocol->extendedParameters();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 size_t Connection::inboxSize() const {
 	if ( !_protocol ) return 0;
 	return _protocol->inboxSize();

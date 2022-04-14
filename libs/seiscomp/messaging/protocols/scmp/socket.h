@@ -171,6 +171,14 @@ struct FrameHeaders {
 		return !strncmp(s, name_start, name_len);
 	}
 
+	bool nameStartsWith(const char *s) const {
+		auto l = strlen(s);
+		if ( l > name_len ) {
+			return false;
+		}
+		return !strncmp(s, name_start, l);
+	}
+
 	bool valueEquals(const char *s) const {
 		return !strncmp(s, val_start, val_len);
 	}
