@@ -34,6 +34,7 @@
 #include "seiscomp/math/filter/taper.h"
 #include "seiscomp/math/filter/seismometers.h"
 #include "seiscomp/math/restitution/transferfunction.h"
+#include "seiscomp/math/restitution/td.h"
 
 
 #include "seiscomp/core/typedarray.h"
@@ -195,3 +196,16 @@ namespace std {
 %include "seiscomp/math/restitution/transferfunction.h"
 
 %template(vectorc) std::vector<Seiscomp::Math::Complex>;
+
+%include "seiscomp/math/restitution/td.h"
+
+//%template(TimeDomainF) Seiscomp::Math::Restitution::TimeDomain<float>;
+//%template(TimeDomainD) Seiscomp::Math::Restitution::TimeDomain<double>;
+%template(TimeDomain_from_T0_h_F) Seiscomp::Math::Restitution::TimeDomain_from_T0_h<float>;
+%template(TimeDomain_from_T0_h_D) Seiscomp::Math::Restitution::TimeDomain_from_T0_h<double>;
+%template(TimeDomain_from_T1_T2_F) Seiscomp::Math::Restitution::TimeDomain_from_T1_T2<float>;
+%template(TimeDomain_from_T1_T2_D) Seiscomp::Math::Restitution::TimeDomain_from_T1_T2<double>;
+%template(TimeDomainNullFilterF) Seiscomp::Math::Restitution::TimeDomainNullFilter<float>;
+%template(TimeDomainNullFilterD) Seiscomp::Math::Restitution::TimeDomainNullFilter<double>;
+%template(TimeDomainGenericF) Seiscomp::Math::Restitution::TimeDomainGeneric<float>;
+%template(TimeDomainGenericD) Seiscomp::Math::Restitution::TimeDomainGeneric<double>;

@@ -17,10 +17,13 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEIS_SIGNAL_TDRESTITUTION_H
-#define SEIS_SIGNAL_TDRESTITUTION_H
+#ifndef SEISCOMP_MATH_RESTITUTION_TD_H
+#define SEISCOMP_MATH_RESTITUTION_TD_H
 
 #include <math.h>
+#include <seiscomp/core/datetime.h>
+#include <seiscomp/datamodel/waveformstreamid.h>
+#include <seiscomp/datamodel/responsepaz.h>
 #include <seiscomp/math/filter.h>
 #include <seiscomp/math/filter/butterworth.h>
 
@@ -30,10 +33,10 @@ namespace Restitution {
 
 // subroutines to compute parameters for the recursive filter
 
-// from seismometer eigenperiod T0 and damping parameter h bool 
+// Form 1: from seismometer eigenperiod T0 and damping parameter h
 bool coefficients_from_T0_h(double fsamp, double gain, double T0, double h, double *c0, double *c1, double *c2);
 
-// from the two seismometer eigenperiods T1 and T2
+// Form 2: from the two seismometer eigenperiods T1 and T2
 bool coefficients_from_T1_T2(double fsamp, double gain, double T1, double T2, double *c0, double *c1, double *c2);
 
 template<typename TYPE>
@@ -73,6 +76,7 @@ class TimeDomain : public Filtering::InPlaceFilter<TYPE> {
 		Filtering::IIR::ButterworthHighLowpass<TYPE> *bandpass;
 };
 
+
 template<typename TYPE>
 class TimeDomain_from_T0_h: public TimeDomain<TYPE> {
 	public:
@@ -109,6 +113,92 @@ class TimeDomain_from_T1_T2: public TimeDomain<TYPE> {
 		double T1, T2;
 };
 
+
+// This is a filter that does not alter the data except correcting the
+// gain and optionally apply a bandpass filter.
+// 
+// The intended use case is to to simply pass on raw displacement to the
+// processing instead of applying one of the above restitution filters.
+template<typename TYPE>
+class TimeDomainNullFilter: public TimeDomain<TYPE> {
+	public:
+		TimeDomainNullFilter(double gain, double fsamp=0);
+
+		void setBandpass(int order, double fmin, double fmax);
+		virtual std::string print() const;
+
+		Filtering::InPlaceFilter<TYPE>* clone() const;
+
+		void apply(int n, TYPE *inout);
+
+	protected:
+		virtual void init();
+};
+
+
+
+// This is a filter that holds a reference to one of the above. In other
+// words, it is a wrapper filter that is initialized later.
+//
+// The typical use case for this is when we want to instantiate a filter
+// before we know the stream. E.g. in a filter chain, where we know the
+// sampling frequency, time and stream ID only when the data arrive.
+
+template<typename TYPE>
+class TimeDomainGeneric : public Filtering::InPlaceFilter<TYPE> {
+	public:
+		TimeDomainGeneric();
+		TimeDomainGeneric(const TimeDomainGeneric &other);
+		~TimeDomainGeneric();
+
+		// InPlaceFilter interface, to be used *strictly* in
+		// the following order:
+		//
+		// 1. setStartTime
+		// 2. setStreamID
+		// 3. setSamplingFrequency
+		virtual void setStartTime(const Core::Time &time);
+
+		virtual void setStreamID(
+			const std::string &net,
+			const std::string &sta,
+			const std::string &loc,
+			const std::string &cha);
+
+		virtual void setSamplingFrequency(double fsamp);
+
+		void setBandpass(int order, double fmin, double fmax);
+		virtual std::string print() const;
+
+		Filtering::InPlaceFilter<TYPE>* clone() const;
+
+		void apply(int n, TYPE *inout);
+
+		virtual int setParameters(int n, const double *params) {
+			return 0;
+		}
+	protected:
+		virtual void init();
+
+	private:
+		// This is the actual filter
+		TimeDomain<TYPE> *filter;
+	
+		// Ensure that filter has been initialized.
+		// If not the case, an error is generated and no
+		// filtering can take place.
+		bool initialized() const;
+
+		Core::Time time;
+		std::string net, sta, loc, cha;
+		double fsamp;
+};
+
+
+const Seiscomp::DataModel::ResponsePAZ*
+findResponsePAZ(
+	const Seiscomp::DataModel::WaveformStreamID &wfid,
+	const Seiscomp::Core::Time &time);
 
 } // namespace Seiscomp::Math::Restitution
 } // namespace Seiscomp::Math
