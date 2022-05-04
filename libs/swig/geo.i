@@ -38,6 +38,7 @@
 #include "seiscomp/math/filter/butterworth.h"
 #include "seiscomp/math/filter/taper.h"
 #include "seiscomp/math/filter/seismometers.h"
+#include "seiscomp/math/restitution/td.h"
 #include "seiscomp/math/restitution/transferfunction.h"
 
 #include "seiscomp/core/typedarray.h"
