@@ -70,6 +70,7 @@
 #include "seiscomp/math/filter/butterworth.h"
 #include "seiscomp/math/filter/taper.h"
 #include "seiscomp/math/filter/rmhp.h"
+#include "seiscomp/math/restitution/td.h"
 #include "seiscomp/math/restitution/transferfunction.h"
 
 %}
