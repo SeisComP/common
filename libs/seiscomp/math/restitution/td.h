@@ -54,8 +54,10 @@ class TimeDomain : public Filtering::InPlaceFilter<TYPE> {
 
 		virtual void reset() {}
 		virtual void apply(int n, TYPE *inout);
-		virtual std::string print() const;
 
+		virtual std::string info() const;
+		// obsolete, replaced by info()
+		virtual std::string print() const;
 	protected:
 		virtual void init();
 
@@ -83,7 +85,7 @@ class TimeDomain_from_T0_h: public TimeDomain<TYPE> {
 		TimeDomain_from_T0_h(double T0, double h, double gain, double fsamp=0);
 
 		void setBandpass(int order, double fmin, double fmax);
-		virtual std::string print() const;
+		virtual std::string info() const;
 
 		Filtering::InPlaceFilter<TYPE>* clone() const;
 
@@ -101,7 +103,7 @@ class TimeDomain_from_T1_T2: public TimeDomain<TYPE> {
 		TimeDomain_from_T1_T2(double T1, double T2, double gain, double fsamp=0);
 
 		void setBandpass(int order, double fmin, double fmax);
-		virtual std::string print() const;
+		virtual std::string info() const;
 
 		Filtering::InPlaceFilter<TYPE>* clone() const;
 
@@ -125,7 +127,7 @@ class TimeDomainNullFilter: public TimeDomain<TYPE> {
 		TimeDomainNullFilter(double gain, double fsamp=0);
 
 		void setBandpass(int order, double fmin, double fmax);
-		virtual std::string print() const;
+		virtual std::string info() const;
 
 		Filtering::InPlaceFilter<TYPE>* clone() const;
 
@@ -168,15 +170,14 @@ class TimeDomainGeneric : public Filtering::InPlaceFilter<TYPE> {
 		virtual void setSamplingFrequency(double fsamp);
 
 		void setBandpass(int order, double fmin, double fmax);
-		virtual std::string print() const;
+		virtual std::string info() const;
 
 		Filtering::InPlaceFilter<TYPE>* clone() const;
 
 		void apply(int n, TYPE *inout);
 
-		virtual int setParameters(int n, const double *params) {
-			return 0;
-		}
+		virtual int setParameters(int n, const double *params);
+
 	protected:
 		virtual void init();
 
@@ -192,6 +193,10 @@ class TimeDomainGeneric : public Filtering::InPlaceFilter<TYPE> {
 		Core::Time time;
 		std::string net, sta, loc, cha;
 		double fsamp;
+
+		// Bandpass specification
+		int order;
+		double fmin, fmax;
 };
 
 
