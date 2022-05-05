@@ -134,35 +134,35 @@ getResponsePAZ(
 	const Stream *stream =
 		getStream(inventory, wfid, time, &err);
 
-	if (stream==NULL) {
+	if (stream==nullptr) {
 		std::string s = dotted(wfid);
 		SEISCOMP_ERROR("%s: While attempting to retrieve ResponsePAZ:", s.c_str());
 		SEISCOMP_ERROR("%s: %s", s.c_str(), err.toString());
-		return NULL;
+		return nullptr;
 	}
 
 	const Sensor *sensor = Sensor::Find(stream->sensor());
-	if (sensor==NULL) {
+	if (sensor==nullptr) {
 		std::string s = dotted(wfid);
 		SEISCOMP_ERROR("%s: While attempting to retrieve ResponsePAZ:", s.c_str());
 		SEISCOMP_ERROR("%s: Sensor not found", s.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	/* const */ PublicObject *response = PublicObject::Find(sensor->response());
-	if (response==NULL) {
+	if (response==nullptr) {
 		std::string s = dotted(wfid);
 		SEISCOMP_ERROR("%s: While attempting to retrieve ResponsePAZ:", s.c_str());
 		SEISCOMP_ERROR("%s: Response not found", s.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	const ResponsePAZ *paz = ResponsePAZ::Cast(response);
-	if (paz==NULL) {
+	if (paz==nullptr) {
 		std::string s = dotted(wfid);
 		SEISCOMP_ERROR("%s: While attempting to retrieve ResponsePAZ:", s.c_str());
 		SEISCOMP_ERROR("%s: ResponsePAZ not found", s.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	return paz;
@@ -180,9 +180,9 @@ findResponsePAZ(
 
 	const Inventory *inventory =
 		Inventory::Cast(PublicObject::Find("Inventory"));
-	if (inventory==NULL) {
+	if (inventory==nullptr) {
 		SEISCOMP_ERROR("Global inventory not found");
-		return NULL;
+		return nullptr;
 	}
 
 	return getResponsePAZ(inventory, wfid, time);
@@ -220,7 +220,7 @@ bool coefficients_from_T1_T2(double fsamp, double gain, double T1, double T2, do
 template<class TYPE>
 TimeDomain<TYPE>::TimeDomain()
 {
-	bandpass = 0;
+	bandpass = nullptr;
 	fsamp = 0;
 	dt = 0;
 	init();
@@ -305,8 +305,8 @@ void
 TimeDomain<TYPE>::setSamplingFrequency(double _fsamp)
 {
 	fsamp = _fsamp;
-	if ( _fsamp>0 ) {
-		dt = 1.0 / fsamp;
+	if ( _fsamp > 0 ) {
+		dt = 1. / fsamp;
 		init();
 	}
 
@@ -323,9 +323,18 @@ TimeDomain<TYPE>::setCoefficients(double _c0, double _c1, double _c2)
 	c2 = _c2;
 }
 
+
 template<class TYPE>
 std::string
 TimeDomain<TYPE>::print() const
+{
+	return info();
+}
+
+
+template<class TYPE>
+std::string
+TimeDomain<TYPE>::info() const
 {
 	std::stringstream tmp;
 	if ( fsamp <= 0. )
@@ -336,6 +345,16 @@ TimeDomain<TYPE>::print() const
 		tmp << "  c0*gain = " << c0*gain << std::endl;
 		tmp << "  c1*gain = " << c1*gain << std::endl;
 		tmp << "  c2*gain = " << c2*gain << std::endl;
+	}
+
+	if (order <= 0) {
+		tmp << "  bandpass not configured" << std::endl;
+	}
+	else {
+		tmp << "  bandpass configuration" << std::endl;
+		tmp << "  order   = " << order << std::endl;
+		tmp << "  fmin    = " << fmin  << std::endl;
+		tmp << "  fmax    = " << fmax  << std::endl;
 	}
 	return tmp.str();
 }
@@ -379,13 +398,13 @@ TimeDomain_from_T0_h<TYPE>::clone() const {
 
 template<class TYPE>
 std::string
-TimeDomain_from_T0_h<TYPE>::print() const
+TimeDomain_from_T0_h<TYPE>::info() const
 {
 	std::stringstream tmp;
 	tmp << "TimeDomainRestitution_from_T0_h instance:" << std::endl;
 	tmp << "  T0      = " << T0   << std::endl;
 	tmp << "  h       = " << h    << std::endl;
-	tmp << TimeDomain<TYPE>::print();
+	tmp << TimeDomain<TYPE>::info();
 	return tmp.str();
 }
 
@@ -426,13 +445,13 @@ TimeDomain_from_T1_T2<TYPE>::clone() const {
 
 template<class TYPE>
 std::string
-TimeDomain_from_T1_T2<TYPE>::print() const
+TimeDomain_from_T1_T2<TYPE>::info() const
 {
 	std::stringstream tmp;
 	tmp << "TimeDomainRestitution_from_T1_T2 instance:" << std::endl;
 	tmp << "  T1      = " << T1   << std::endl;
 	tmp << "  T2      = " << T2   << std::endl;
-	tmp << TimeDomain<TYPE>::print();
+	tmp << TimeDomain<TYPE>::info();
 	return tmp.str();
 }
 
@@ -469,11 +488,11 @@ TimeDomainNullFilter<TYPE>::clone() const {
 
 template<class TYPE>
 std::string
-TimeDomainNullFilter<TYPE>::print() const
+TimeDomainNullFilter<TYPE>::info() const
 {
 	std::stringstream tmp;
 	tmp << "TimeDomainRestitutionNullFilter instance:" << std::endl;
-	tmp << TimeDomain<TYPE>::print();
+	tmp << TimeDomain<TYPE>::info();
 	return tmp.str();
 }
 
@@ -488,7 +507,7 @@ TimeDomainNullFilter<TYPE>::apply(int n, TYPE *inout)
 
 template<class TYPE>
 TimeDomainGeneric<TYPE>::TimeDomainGeneric()
-	: filter(NULL) {
+	: filter(nullptr), order(0), fmin(0.001), fmax(10.) {
 }
 
 
@@ -497,7 +516,12 @@ TimeDomainGeneric<TYPE>::TimeDomainGeneric(const TimeDomainGeneric &other)
 	: Filtering::InPlaceFilter<TYPE>(other),
 	  filter(other.filter),
 	  time(other.time),
-	  net(other.net), sta(other.sta), loc(other.loc), cha(other.cha) {
+	  net(other.net), sta(other.sta), loc(other.loc), cha(other.cha)
+//	  order(other.order), fmin(other.fmin), fmax(other.fmax) {
+{
+	order = other.order;
+	fmin = other.fmin;
+	fmax = other.fmax;
 }
 
 
@@ -536,13 +560,16 @@ template<class TYPE>
 void
 TimeDomainGeneric<TYPE>::setSamplingFrequency(double fs)
 {
+	// We allow setting the bandpass parameter before initialization
 	fsamp = fs;
 
-	if (fsamp > 0) {
-		init();
-		if (filter)
-			filter->setSamplingFrequency(fsamp);
-	}
+	if (fsamp <= 0)
+		return;
+
+	init();
+
+	if (filter)
+		filter->setSamplingFrequency(fsamp);
 }
 
 
@@ -551,14 +578,14 @@ void
 TimeDomainGeneric<TYPE>::init()
 {
 	using namespace DataModel;
-	std::cerr << "TimeDomainGeneric<TYPE>::init()" << std::endl;
+
 	assert( ! net.empty() && ! sta.empty());
 
 	WaveformStreamID wfid(net, sta, loc, cha, "");
 	std::string s = dotted(wfid);
 
 	const DataModel::ResponsePAZ *paz = findResponsePAZ(wfid, time);
-	assert(paz != NULL);
+	assert(paz != nullptr);
 
 	Math::Complex p1, p2; // TODO: std::complex?
 	PAZStatus status = checkPAZ(*paz, p1, p2);
@@ -601,16 +628,64 @@ TimeDomainGeneric<TYPE>::init()
 		SEISCOMP_WARNING("Stream %s:", s.c_str());
 		SEISCOMP_WARNING("Failed to initialize time domain restitution filter");
 	}
+
+	// make sure fmax <= 90% of Nyquist frequency
+	if (fsamp > 0 && fmax > 0.45*fsamp) {
+		std::cerr << "adjusting fmax from " << fmax;
+		fmax = 0.45*fsamp;
+		std::cerr << " to " << fmax << std::endl;
+	}
+	if (filter)
+		filter->setBandpass(order, fmin, fmax);
 }
 
 
 template<class TYPE>
 void
-TimeDomainGeneric<TYPE>::setBandpass(int order, double fmin, double fmax) {
+TimeDomainGeneric<TYPE>::setBandpass(int order, double fmin, double fmax)
+{
+	// make sure fmax <= 90% of Nyquist frequency
+	if (fsamp > 0 && fmax > 0.45*fsamp) {
+		std::cerr << "adjusting fmax from " << fmax;
+		fmax = 0.45*fsamp;
+		std::cerr << " to " << fmax << std::endl;
+	}
+
+	// We allow setting the bandpass parameter before initialization
+	this->order = order;
+	this->fmin = fmin;
+	this->fmax = fmax;
+
 	if ( ! initialized())
 		return;
 
-	filter->setBandpass(order, fmin, fmax);
+	if (filter) {
+		filter->setBandpass(order, fmin, fmax);
+	}
+}
+
+
+template<class TYPE>
+int
+TimeDomainGeneric<TYPE>::setParameters(int n, const double *params)
+{
+	switch(n) {
+	case 0:
+		order = 0; // deactivates the bandpass
+		fmin = fmax = 0; // dummy
+		break;
+	case 2:
+		fmin = params[0];
+		fmax = params[1];
+		order = 4;
+		break;
+	default:
+		// TODO : Consider highpass
+		order = 0; // deactivates the bandpass
+		fmin = fmax = 0; // dummy
+	}
+
+	return n;
 }
 
 
@@ -624,27 +699,29 @@ TimeDomainGeneric<TYPE>::clone() const {
 
 template<class TYPE>
 std::string
-TimeDomainGeneric<TYPE>::print() const
+TimeDomainGeneric<TYPE>::info() const
 {
 	std::stringstream tmp;
 	tmp << "TimeDomainGeneric instance:" << std::endl;
 	if (initialized())
-		tmp << filter->print();
+		tmp << filter->info();
 	else
 		tmp << "uninitialized";
 	return tmp.str();
 }
 
+
 template<class TYPE>
 bool
 TimeDomainGeneric<TYPE>::initialized() const
 {
-	if (filter == NULL) {
+	if (filter == nullptr) {
 		SEISCOMP_ERROR("Access to uninitialized Restitution::TimeDomainGeneric instance");
 		return false;
 	}
 	return true;
 }
+
 
 template<class TYPE>
 void
@@ -652,12 +729,13 @@ TimeDomainGeneric<TYPE>::apply(int n, TYPE *inout)
 {
 	if ( ! initialized())
 		return;
+
 	filter->apply(n, inout);
 }
 
 
-template class SC_SYSTEM_CORE_API TimeDomain<float>;
-template class SC_SYSTEM_CORE_API TimeDomain<double>;
+INSTANTIATE_INPLACE_FILTER(TimeDomainGeneric, SC_SYSTEM_CORE_API);
+REGISTER_INPLACE_FILTER(TimeDomainGeneric, "TDREST");
 
 template class SC_SYSTEM_CORE_API TimeDomain_from_T0_h<float>;
 template class SC_SYSTEM_CORE_API TimeDomain_from_T0_h<double>;
@@ -667,9 +745,6 @@ template class SC_SYSTEM_CORE_API TimeDomain_from_T1_T2<double>;
 
 template class SC_SYSTEM_CORE_API TimeDomainNullFilter<float>;
 template class SC_SYSTEM_CORE_API TimeDomainNullFilter<double>;
-
-template class SC_SYSTEM_CORE_API TimeDomainGeneric<float>;
-template class SC_SYSTEM_CORE_API TimeDomainGeneric<double>;
 
 }       // namespace Seiscomp::Math::Filtering
 }       // namespace Seiscomp::Math
