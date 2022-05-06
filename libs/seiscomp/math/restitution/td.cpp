@@ -584,49 +584,76 @@ TimeDomainGeneric<TYPE>::init()
 	WaveformStreamID wfid(net, sta, loc, cha, "");
 	std::string s = dotted(wfid);
 
+	InventoryError err;
+
+	const Stream *stream =
+		getStream(inventory, wfid, time, &err);
+        assert(stream != nullptr);
+	const std::string& gainUnit = stream->gainUnit();
+
 	const DataModel::ResponsePAZ *paz = findResponsePAZ(wfid, time);
 	assert(paz != nullptr);
 
 	Math::Complex p1, p2; // TODO: std::complex?
 	PAZStatus status = checkPAZ(*paz, p1, p2);
 
+	bool success = false;
+
 	switch(status) {
 	case TD_FOUND_EMPTY_PAZ:
 		{
-			// TODO: confirm that the input unit is meters
-			//       otherwise error
+			// Our expectation is that this is a raw displacement
+			// (e.g. GNSS) stream. We therefore additionally
+			// confirm that the input unit is meters.
+			// TODO: Otherwise issue a meaningful error.
+			assert(gainUnit == "M");
 			filter = new TimeDomainNullFilter<TYPE>(1);
 			SEISCOMP_DEBUG("Stream %s:", s.c_str());
 			SEISCOMP_DEBUG("Initialized time domain restitution filter"
-				       "(pass through)");
+				       "(displacement pass through)");
+			if (filter)
+				success = true;
 		}
 		break;
 
 	case TD_FOUND_TWO_REAL_POLES:
 		{
+			// Our expectation here is that we are dealing with velocity.
+			assert(gainUnit == "M/S");
 			double T1 = 2*M_PI/abs(p1);
 			double T2 = 2*M_PI/abs(p2);
 			filter = new TimeDomain_from_T1_T2<TYPE>(T1, T2, 1);
 			SEISCOMP_DEBUG("Stream %s:", s.c_str());
 			SEISCOMP_DEBUG("Initialized time domain restitution filter "
 				       "for T1=%gs T2=%gs", T1, T2);
+			if (filter)
+				success = true;
 		}
 		break;
 
 	case TD_FOUND_TWO_CONJUGATE_POLES:
 		{
+			// Our expectation here is that we are dealing with velocity.
+			assert(gainUnit == "M/S");
 			double T0 = 2*M_PI/abs(p1);
 			double h = -p1.real()/abs(p1);
 			filter = new TimeDomain_from_T0_h<TYPE>(T0, h, 1);
 			SEISCOMP_DEBUG("Stream %s:", s.c_str());
 			SEISCOMP_DEBUG("Initialized time domain restitution filter "
 				       "for T0=%gs h=%.6fs", T0, h);
+			if (filter)
+				success = true;
 		}
 		break;
 
 	default:
+	}
+
+	if ( ! success) {
 		SEISCOMP_WARNING("Stream %s:", s.c_str());
 		SEISCOMP_WARNING("Failed to initialize time domain restitution filter");
+		// TODO: Exception
+		return false;
 	}
 
 	// make sure fmax <= 90% of Nyquist frequency
