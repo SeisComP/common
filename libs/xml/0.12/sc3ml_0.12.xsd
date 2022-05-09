@@ -157,7 +157,7 @@
       <xs:enumeration value="meteorite"/>
       <xs:enumeration value="calving"/>
       <xs:enumeration value="frost quake"/>
-      <xs:enumeration value="temor pulse"/>
+      <xs:enumeration value="tremor pulse"/>
       <xs:enumeration value="submarine landslide"/>
     </xs:restriction>
   </xs:simpleType>
