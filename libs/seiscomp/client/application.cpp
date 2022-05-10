@@ -282,7 +282,7 @@ Application::Application(int argc, char** argv)
 	_retryCount = 0xFFFFFFFF;
 
 	_messagingTimeout = 3;
-	_messagingURL = "localhost/productive";
+	_messagingURL = "localhost/production";
 	_messagingPrimaryGroup = Protocol::LISTENER_GROUP;
 
 	_configModuleName = "trunk";
