@@ -86,7 +86,7 @@ class SC_GUI_API ThreeComponentTrace : public QObject {
 		                      const std::string &locationCode,
 		                      const Core::Time &startTime,
 		                      double samplingFrequency,
-		                      FloatArrayPtr data);
+		                      DoubleArrayPtr data);
 		void removeProcessedData(int comp);
 
 	private slots:
@@ -108,7 +108,7 @@ class SC_GUI_API ThreeComponentTrace : public QObject {
 		};
 
 		AmplitudeRecordLabel *label;
-		Math::Matrix3f        transformation;
+		Math::Matrix3d        transformation;
 		Component             traces[3];
 		std::string           filterID;
 		RecordWidget         *widget;
@@ -302,7 +302,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 
 		void scaleVisibleAmplitudes();
 
-		void changeScale(double, float);
+		void changeScale(double, double);
 		void changeTimeRange(double, double);
 
 		void sortAlphabetically();
@@ -432,7 +432,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		//! Makes sure that the time range [tmin, tmax] is visible.
 		//! When the interval is larger than the visible area
 		//! the time range will be left aligned.
-		void ensureVisibility(float& tmin, float& tmax);
+		void ensureVisibility(double &tmin, double &tmax);
 		void ensureVisibility(const Seiscomp::Core::Time &time, int pixelMargin);
 
 		RecordMarker *updatePhaseMarker(Seiscomp::Gui::RecordViewItem*,

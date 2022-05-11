@@ -95,6 +95,17 @@ namespace Core {
      remove size parameter
    - Added Regions::getFlinnEngdahlRegion
    - Removed public access of Regions constructor
+   - Changed RecordWidget::Filter from float to double
+   - Changed SLOT Gui::RecordWidget::setScale(double, float) to
+             SLOT Gui::RecordWidget::setScale(double, double)
+   - Changed SLOT Gui::RecordWidget::setAmplScale(float) to
+             SLOT Gui::RecordWidget::setAmplScale(double)
+   - Changed SIGNAL Gui::RecordView::scaleChanged(double, float) to
+                    Gui::RecordView::scaleChanged(double, double)
+   - Changed SIGNAL Gui::RecordView::amplScaleChanged(float) to
+                    Gui::RecordView::amplScaleChanged(double)
+   - Changed SLOT Gui::RecordView::setScale(double, float) to
+             SLOT Gui::RecordView::setScale(double, double)
 
  "14.4.0"   0x0E0400
    - Added class Seiscomp::Core::Number<T> (ostream output)

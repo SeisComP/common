@@ -237,7 +237,6 @@ void RecordStreamThread::run()
 			}
 			Record* rec = *it;
 			if ( rec ) {
-				
 				if ( !_gainMap.empty() ) {
 					std::string id = rec->stationCode()+"."+rec->locationCode()+"."+rec->channelCode();
 					GainMap::const_iterator git = _gainMap.find(id);

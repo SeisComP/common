@@ -89,7 +89,7 @@ class SC_GUI_API ThreeComponentTrace : public QObject {
 		void widgetDestroyed(QObject *obj);
 
 	public:
-		typedef IO::RecordIIRFilter<float> Filter;
+		typedef IO::RecordIIRFilter<double> Filter;
 
 		// One component
 		struct Component {
@@ -101,7 +101,7 @@ class SC_GUI_API ThreeComponentTrace : public QObject {
 			bool                  passthrough;
 		};
 
-		Math::Matrix3f  transformation;
+		Math::Matrix3d  transformation;
 		Component       traces[3];
 		RecordWidget   *widget;
 		bool            enableTransformation;
@@ -163,8 +163,8 @@ class SC_GUI_API PickerRecordLabel : public StandardRecordLabel {
 		int                  unit;
 		QString              gainUnit[3];
 		ThreeComponentTrace  data;
-		Math::Matrix3f       orientationZNE;
-		Math::Matrix3f       orientationZRT;
+		Math::Matrix3d       orientationZNE;
+		Math::Matrix3d       orientationZRT;
 
 		bool                 hasGotData;
 		bool                 isEnabledByConfig;
@@ -420,7 +420,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void zoomSelectionHandleMoved(int, double, Qt::KeyboardModifiers);
 		void zoomSelectionHandleMoveFinished();
 
-		void changeScale(double, float);
+		void changeScale(double, double);
 		void changeTimeRange(double, double);
 
 		void sortAlphabetically();
@@ -570,7 +570,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 
 		void setCursorText(const QString&);
 		void setCursorPos(const Seiscomp::Core::Time&, bool always = false);
-		void setTimeRange(float, float);
+		void setTimeRange(double, double);
 
 		void acquireStreams();
 

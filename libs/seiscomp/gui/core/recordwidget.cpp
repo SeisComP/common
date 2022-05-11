@@ -61,7 +61,7 @@ namespace {
 
 
 bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
-            float &ofs, float &min, float &max, bool globalOffset = false,
+            double &ofs, double &min, double &max, bool globalOffset = false,
             const Core::TimeWindow &ofsTw = Core::TimeWindow()) {
 	ofs = 0;
 	double tmpOfs = 0;
@@ -73,15 +73,28 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 
 	for (; it != seq->end(); ++it) {
 		RecordCPtr rec = (*it);
+		auto dataType = rec->data()->dataType();
 		int imin = 0, imax = 0;
 		int ns = rec->sampleCount();
-		if ( ns == 0 || rec->data() == nullptr ) continue;
-
-		FloatArray *arr = (FloatArray*)(rec->data());
+		if ( ns == 0 || rec->data() == nullptr ) {
+			continue;
+		}
 
 		if ( globalOffset ) {
-			for ( int i = 0; i < ns; ++i )
-				tmpOfs += (*arr)[i];
+			if ( dataType == Array::FLOAT ) {
+				auto arr = static_cast<const FloatArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i )
+					tmpOfs += (*arr)[i];
+			}
+			else if ( dataType == Array::DOUBLE ) {
+				auto arr = static_cast<const DoubleArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i )
+					tmpOfs += (*arr)[i];
+			}
+			else {
+				continue;
+			}
+
 			offsetSampleCount += ns;
 		}
 
@@ -110,12 +123,22 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 		else    // no time window specified -> search over whole record
 			imax = ns;
 
-		const float *f = (float*)arr->data();
+		sampleCount += imax - imin;
 
-		sampleCount += imax-imin;
+		double xmin, xmax;
 
-		float xmin, xmax;
-		::minmax(ns, f, imin, imax, &xmin, &xmax);
+		if ( dataType == Array::FLOAT ) {
+			float tmpMin, tmpMax;
+			::minmax(ns, static_cast<const FloatArray*>(rec->data())->typedData(), imin, imax, &tmpMin, &tmpMax);
+			xmin = tmpMin;
+			xmax = tmpMax;
+		}
+		else if ( dataType == Array::DOUBLE ) {
+			::minmax(ns, static_cast<const DoubleArray*>(rec->data())->typedData(), imin, imax, &xmin, &xmax);
+		}
+		else {
+			continue;
+		}
 
 		if ( !globalOffset ) {
 			if ( ofsTw ) {
@@ -135,16 +158,38 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 						if ( dt > 0 )
 							imax -= int(dt*fs);
 
-						for ( int i = imin; i < imax; ++i )
-							tmpOfs += f[i];
+						if ( dataType == Array::FLOAT ) {
+							auto arr = static_cast<const FloatArray*>(rec->data());
+							for ( int i = imin; i < imax; ++i ) {
+								tmpOfs += (*arr)[i];
+							}
+						}
+						else if ( dataType == Array::DOUBLE ) {
+							auto arr = static_cast<const DoubleArray*>(rec->data());
+							for ( int i = imin; i < imax; ++i ) {
+								tmpOfs += (*arr)[i];
+							}
+						}
+
 						offsetSampleCount = sampleCount;
 					}
 				}
 				catch ( ... ) {}
 			}
 			else {
-				for ( int i = imin; i < imax; ++i )
-					tmpOfs += f[i];
+				if ( dataType == Array::FLOAT ) {
+					auto arr = static_cast<const FloatArray*>(rec->data());
+					for ( int i = imin; i < imax; ++i ) {
+						tmpOfs += (*arr)[i];
+					}
+				}
+				else if ( dataType == Array::DOUBLE ) {
+					auto arr = static_cast<const DoubleArray*>(rec->data());
+					for ( int i = imin; i < imax; ++i ) {
+						tmpOfs += (*arr)[i];
+					}
+				}
+
 				offsetSampleCount = sampleCount;
 			}
 		}
@@ -155,12 +200,17 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 			isFirst = false;
 		}
 		else {
-			if (xmin<min) min = xmin;
-			if (xmax>max) max = xmax;
+			if ( xmin < min ) {
+				min = xmin;
+			}
+
+			if ( xmax > max ) {
+				max = xmax;
+			}
 		}
 	}
 
-	tmpOfs /= (offsetSampleCount?offsetSampleCount:1);
+	tmpOfs /= (offsetSampleCount ? offsetSampleCount : 1);
 	ofs = tmpOfs;
 
 	return sampleCount > 0;
@@ -1034,7 +1084,7 @@ bool RecordWidget::setRecords(int slot, RecordSequence *s, bool owner) {
 		stream->ownRawRecords = false;
 
 	// Reset filter to forget all old buffered samples
-	Math::Filtering::InPlaceFilter<float> *newFilter;
+	Filter *newFilter;
 	if ( stream->filter && !(_shadowWidgetFlags & Filtered) )
 		newFilter = stream->filter->clone();
 	else
@@ -1112,7 +1162,7 @@ bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 		stream->filter = filter->clone();
 	else {
 		// Create a default filter
-		stream->filter = new Math::Filtering::SelfFilter<float>();
+		stream->filter = new Math::Filtering::SelfFilter<double>();
 		//SEISCOMP_DEBUG("Create default filter");
 	}
 
@@ -1890,7 +1940,7 @@ void RecordWidget::setTimeScale (double t) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::setAmplScale (float a) {
+void RecordWidget::setAmplScale(double a) {
 	_amplScale = a;
 
 	setDirty();
@@ -1912,7 +1962,7 @@ void RecordWidget::scroll(int v) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::setScale (double t, float a) {
+void RecordWidget::setScale(double t, double a) {
 	_pixelPerSecond = t;
 	_tmax = _tmin + (_pixelPerSecond > 0 && canvasWidth()?canvasWidth()/_pixelPerSecond:0);
 
@@ -2089,13 +2139,17 @@ void RecordWidget::prepareRecords(Stream *s) {
 // to be called either by resize events or if new records are assigned
 void RecordWidget::drawRecords(Stream *s, int slot) {
 	//Core::TimeWindow tw(leftTime(), rightTime());
-	float magnify = 1; // or 0.2 etc.
+	double magnify = 1; // or 0.2 etc.
 
-	if ( _amplScale > 0 )
-		magnify = 1.0/_amplScale;
+	if ( _amplScale > 0 ) {
+		magnify = 1.0 / _amplScale;
+	}
 
-	int hMargin = s->pen.width()-1;
-	if ( hMargin < 0 ) hMargin = 0;
+	int hMargin = s->pen.width() - 1;
+
+	if ( hMargin < 0 ) {
+		hMargin = 0;
+	}
 
 	Trace *trace = &s->traces[Stream::Raw];
 
@@ -2231,7 +2285,7 @@ void RecordWidget::drawRecords(Stream *s, int slot) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::createPolyline(int slot, AbstractRecordPolylinePtr &polyline,
                                   RecordSequence const *seq, double pixelPerSecond,
-                                  float amplMin, float amplMax, float amplOffset,
+                                  double amplMin, double amplMax, double amplOffset,
                                   int height, bool optimization, bool highPrecision) {
 	if ( _streams[slot]->stepFunction ) {
 		RecordPolylinePtr pl = new RecordPolyline;
@@ -2670,7 +2724,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 		{
 			bool isDirty = false;
 			bool isFirst[2] = {true,true};
-			float minAmpl[2] = {0,0}, maxAmpl[2] = {0,0};
+			double minAmpl[2] = {0,0}, maxAmpl[2] = {0,0};
 			QColor customBackgroundColor;
 
 			// Two passes: First pass fetches the amplitude range and so on and scales all records appropriate
@@ -2737,7 +2791,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 		{
 			bool isDirty = false;
 			bool isFirst[2] = {true,true};
-			float minAmpl[2] = {0,0}, maxAmpl[2] = {0,0};
+			double minAmpl[2] = {0,0}, maxAmpl[2] = {0,0};
 			QColor customBackgroundColor;
 			// Two passes: First pass fetches the amplitude range and so on and scales all records appropriate
 			for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
@@ -4033,9 +4087,9 @@ void RecordWidget::setFilterSlotMax(int max) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::setFilter(Math::Filtering::InPlaceFilter<float>* filter) {
+void RecordWidget::setFilter(Filter *filter) {
 	int slot = 0;
-	for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it, ++slot ) {
+	for ( auto it = _streams.begin(); it != _streams.end(); ++it, ++slot ) {
 		if ( slot < _maxFilterSlot || _maxFilterSlot < 0 )
 			setRecordFilter(slot, filter);
 	}
@@ -4065,11 +4119,11 @@ void RecordWidget::filterRecords(Stream *s) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Record* RecordWidget::filteredRecord(Math::Filtering::InPlaceFilter<float> *filter,
+Record *RecordWidget::filteredRecord(Filter *filter,
                                      const Record* rec, const Record* lastRec) const {
 	if ( rec->data() == nullptr ) return nullptr;
 
-	FloatArrayPtr arr = (FloatArray*)rec->data()->copy(Array::FLOAT);
+	DoubleArrayPtr arr = static_cast<DoubleArray*>(rec->data()->copy(Array::DOUBLE));
 
 	GenericRecord* crec = new GenericRecord(*rec);
 
@@ -4162,7 +4216,7 @@ int RecordWidget::streamHeight(int slot) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPair<float,float> RecordWidget::amplitudeDataRange(int slot) const {
+QPair<double,double> RecordWidget::amplitudeDataRange(int slot) const {
 	if ( slot >= _streams.size() || slot < 0 ) return QPair<float,float>(0,0);
 	if ( _showScaledValues )
 		return QPair<float,float>(
@@ -4181,7 +4235,7 @@ QPair<float,float> RecordWidget::amplitudeDataRange(int slot) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPair<float,float> RecordWidget::amplitudeRange(int slot) const {
+QPair<double, double> RecordWidget::amplitudeRange(int slot) const {
 	if ( slot >= _streams.size() || slot < 0 ) return QPair<float,float>(-1,1);
 	return QPair<float,float>(
 		_streams[slot]->traces[_streams[slot]->filtering?Stream::Filtered:Stream::Raw].fyMin,

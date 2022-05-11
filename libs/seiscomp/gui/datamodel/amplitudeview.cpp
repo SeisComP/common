@@ -118,8 +118,7 @@ class TraceList : public RecordView {
 #else
 				QString strFilter = event->mimeData()->data("text/plain");
 #endif
-				Math::Filtering::InPlaceFilter<float> *f =
-					Math::Filtering::InPlaceFilter<float>::Create(strFilter.toStdString());
+				auto f = RecordWidget::Filter::Create(strFilter.toStdString());
 
 				if ( !f ) {
 					QMessageBox::critical(
@@ -1085,7 +1084,7 @@ bool ThreeComponentTrace::setProcessedData(int comp,
                                            const std::string &locationCode,
                                            const Core::Time &startTime,
                                            double samplingFrequency,
-                                           FloatArrayPtr data) {
+                                           DoubleArrayPtr data) {
 	GenericRecordPtr prec = new GenericRecord(networkCode,
 	                                          stationCode,
 	                                          locationCode,
@@ -1267,7 +1266,7 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 				                                         (*it[i])->channelCode(),
 				                                         maxStartTime, samplingFrequency);
 
-				FloatArrayPtr data = new FloatArray;
+				DoubleArrayPtr data = new DoubleArray;
 				RecordSequence::iterator seq_end = it_end[i];
 				++seq_end;
 
@@ -1283,10 +1282,10 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 
 					++it[i];
 
-					const FloatArray *srcData = FloatArray::ConstCast(rec_data);
-					FloatArrayPtr tmp;
+					const DoubleArray *srcData = DoubleArray::ConstCast(rec_data);
+					DoubleArrayPtr tmp;
 					if ( srcData == nullptr ) {
-						tmp = (FloatArray*)data->copy(Array::FLOAT);
+						tmp = static_cast<DoubleArray*>(data->copy(Array::DOUBLE));
 						srcData = tmp.get();
 					}
 
@@ -1323,7 +1322,7 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 
 			// Create record sequences
 			for ( int i = 0; i < 3; ++i ) {
-				FloatArray *data = static_cast<FloatArray*>(comps[i]->data());
+				DoubleArray *data = static_cast<DoubleArray*>(comps[i]->data());
 				if ( data->size() > minLen ) {
 					data->resize(minLen);
 					comps[i]->dataUpdated();
@@ -1343,13 +1342,13 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 
 			gotRecords = true;
 
-			float *dataZ = static_cast<FloatArray*>(comps[0]->data())->typedData();
-			float *data1 = static_cast<FloatArray*>(comps[1]->data())->typedData();
-			float *data2 = static_cast<FloatArray*>(comps[2]->data())->typedData();
+			double *dataZ = static_cast<DoubleArray*>(comps[0]->data())->typedData();
+			double *data1 = static_cast<DoubleArray*>(comps[1]->data())->typedData();
+			double *data2 = static_cast<DoubleArray*>(comps[2]->data())->typedData();
 
 			// Rotate finally
 			for ( int i = 0; i < minLen; ++i ) {
-				Math::Vector3f v = transformation*Math::Vector3f(*data2, *data1, *dataZ);
+				Math::Vector3d v = transformation * Math::Vector3d(*data2, *data1, *dataZ);
 				*dataZ = v.z;
 				*data1 = v.y;
 				*data2 = v.x;
@@ -1360,7 +1359,7 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 			// And filter
 			for ( int i = 0; i < 3; ++i ) {
 				if ( traces[i].filter )
-					traces[i].filter->apply(*static_cast<FloatArray*>(comps[i]->data()));
+					traces[i].filter->apply(*static_cast<DoubleArray*>(comps[i]->data()));
 			}
 
 			minStartTime = minEndTime;
@@ -1387,7 +1386,7 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 				                                          rec->samplingFrequency(),
 				                                          rec->timingQuality());
 
-				FloatArrayPtr data = (FloatArray*)rec->data()->copy(Array::FLOAT);
+				DoubleArrayPtr data = static_cast<DoubleArray*>(rec->data()->copy(Array::DOUBLE));
 				traces[comp].filter->apply(*data);
 				grec->setData(data.get());
 				toFeed = grec;
@@ -1439,7 +1438,7 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 						                                          s_rec->samplingFrequency(),
 						                                          s_rec->timingQuality());
 
-						FloatArrayPtr data = (FloatArray*)s_rec->data()->copy(Array::FLOAT);
+						DoubleArrayPtr data = static_cast<DoubleArray*>(s_rec->data()->copy(Array::DOUBLE));
 						traces[i].filter->apply(*data);
 						grec->setData(data.get());
 						s_rec = grec;
@@ -1507,7 +1506,7 @@ void ThreeComponentTrace::transformedRecord(int comp, const Record *rec) {
 						rec->locationCode(),
 						compProc->dataTimeWindow().startTime(),
 						compProc->samplingFrequency(),
-						FloatArray::Cast(processedData->copy(Array::FLOAT))
+						DoubleArray::Cast(processedData->copy(Array::DOUBLE))
 					);
 			}
 		}
@@ -2305,16 +2304,16 @@ void AmplitudeView::init() {
 	        SC_D.currentRecord, SLOT(setGridSpacing(double, double, double)));
 	connect(SC_D.recordView, SIGNAL(toggledFilter(bool)),
 	        SC_D.currentRecord, SLOT(enableFiltering(bool)));
-	connect(SC_D.recordView, SIGNAL(scaleChanged(double, float)),
-	        this, SLOT(changeScale(double, float)));
+	connect(SC_D.recordView, SIGNAL(scaleChanged(double, double)),
+	        this, SLOT(changeScale(double, double)));
 	connect(SC_D.recordView, SIGNAL(timeRangeChanged(double, double)),
 	        this, SLOT(changeTimeRange(double, double)));
 	connect(SC_D.recordView, SIGNAL(selectionChanged(double, double)),
 	        SC_D.currentRecord, SLOT(setSelected(double, double)));
 	connect(SC_D.recordView, SIGNAL(alignmentChanged(const Seiscomp::Core::Time&)),
 	        this, SLOT(setAlignment(Seiscomp::Core::Time)));
-	connect(SC_D.recordView, SIGNAL(amplScaleChanged(float)),
-	        SC_D.currentRecord, SLOT(setAmplScale(float)));
+	connect(SC_D.recordView, SIGNAL(amplScaleChanged(double)),
+	        SC_D.currentRecord, SLOT(setAmplScale(double)));
 
 	connect(SC_D.ui.actionAddStations, SIGNAL(triggered(bool)),
 	        this, SLOT(addStations()));
@@ -3031,7 +3030,7 @@ void AmplitudeView::recalculateAmplitude() {
 					item->streamID().locationCode(),
 					compProc->dataTimeWindow().startTime(),
 					compProc->samplingFrequency(),
-					FloatArray::Cast(processedData->copy(Array::FLOAT))
+					DoubleArray::Cast(processedData->copy(Array::DOUBLE))
 				);
 
 				//l->processor->writeData();
@@ -3099,7 +3098,7 @@ void AmplitudeView::recalculateAmplitudes() {
 						item->streamID().locationCode(),
 						compProc->dataTimeWindow().startTime(),
 						compProc->samplingFrequency(),
-						FloatArray::Cast(processedData->copy(Array::FLOAT))
+						DoubleArray::Cast(processedData->copy(Array::DOUBLE))
 					);
 
 					//l->processor->writeData();
@@ -4545,7 +4544,7 @@ void AmplitudeView::setCursorPos(const Seiscomp::Core::Time& t, bool always) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setTimeRange(float tmin, float tmax) {
-	float amplScale = SC_D.currentRecord->amplScale();
+	auto amplScale = SC_D.currentRecord->amplScale();
 	SC_D.currentRecord->setTimeRange(tmin, tmax);
 
 	if ( SC_D.autoScaleZoomTrace )
@@ -4577,7 +4576,7 @@ void AmplitudeView::setTimeRange(float tmin, float tmax) {
 void AmplitudeView::enableAutoScale() {
 	SC_D.autoScaleZoomTrace = true;
 	if ( SC_D.currentRecord ) {
-		float amplScale = SC_D.currentRecord->amplScale();
+		auto amplScale = SC_D.currentRecord->amplScale();
 		SC_D.currentRecord->setNormalizationWindow(SC_D.currentRecord->visibleTimeWindow());
 		SC_D.currentRecord->setAmplScale(amplScale);
 	}
@@ -4749,10 +4748,13 @@ void AmplitudeView::setAlignment(Seiscomp::Core::Time t) {
 
 	SC_D.timeScale->setAlignment(t);
 
-	float tmin = SC_D.currentRecord->tmin()+offset;
-	float tmax = SC_D.currentRecord->tmax()+offset;
+	auto tmin = SC_D.currentRecord->tmin() + offset;
+	auto tmax = SC_D.currentRecord->tmax() + offset;
 
-	if ( SC_D.checkVisibility ) ensureVisibility(tmin, tmax);
+	if ( SC_D.checkVisibility ) {
+		ensureVisibility(tmin, tmax);
+	}
+
 	setTimeRange(tmin, tmax);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4761,17 +4763,17 @@ void AmplitudeView::setAlignment(Seiscomp::Core::Time t) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeView::ensureVisibility(float& tmin, float& tmax) {
+void AmplitudeView::ensureVisibility(double &tmin, double &tmax) {
 	if ( SC_D.recordView->currentItem() ) {
 		RecordWidget* w = SC_D.recordView->currentItem()->widget();
-		float leftOffset = tmin - w->tmin();
-		float rightOffset = tmax - w->tmax();
+		auto leftOffset = tmin - w->tmin();
+		auto rightOffset = tmax - w->tmax();
 		if ( leftOffset < 0 ) {
 			tmin = w->tmin();
 			tmax -= leftOffset;
 		}
 		else if ( rightOffset > 0 ) {
-			float usedOffset = std::min(leftOffset, rightOffset);
+			auto usedOffset = std::min(leftOffset, rightOffset);
 			tmin -= usedOffset;
 			tmax -= usedOffset;
 		}
@@ -4909,7 +4911,7 @@ void AmplitudeView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem)
 	connect(item->label(), SIGNAL(statusChanged(bool)),
 	        this, SLOT(setCurrentRowEnabled(bool)));
 
-	double amplScale = SC_D.currentRecord->amplScale();
+	auto amplScale = SC_D.currentRecord->amplScale();
 
 	SC_D.currentRecord->setNormalizationWindow(item->widget()->normalizationWindow());
 	SC_D.currentRecord->setAlignment(item->widget()->alignment());
@@ -5191,7 +5193,7 @@ void AmplitudeView::scaleVisibleAmplitudes() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeView::changeScale(double, float) {
+void AmplitudeView::changeScale(double, double) {
 	zoom(1.0);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5343,9 +5345,9 @@ void AmplitudeView::pickNone(bool) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::scaleAmplUp() {
-	float scale = SC_D.currentRecord->amplScale();
+	double scale = SC_D.currentRecord->amplScale();
 	//if ( scale >= 1 ) scale = SC_D.currentAmplScale;
-	float value = (scale == 0?1.0:scale)*SC_D.recordView->zoomFactor();
+	double value = (scale == 0 ? 1.0 : scale) * SC_D.recordView->zoomFactor();
 	if ( value > 1000 ) value = 1000;
 	if ( /*value < 1*/true ) {
 		SC_D.currentRecord->setAmplScale(value);
@@ -5365,9 +5367,9 @@ void AmplitudeView::scaleAmplUp() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::scaleAmplDown() {
-	float scale = SC_D.currentRecord->amplScale();
+	double scale = SC_D.currentRecord->amplScale();
 	//if ( scale >= 1 ) scale = SC_D.currentAmplScale;
-	float value = (scale == 0?1.0:scale) / SC_D.recordView->zoomFactor();
+	double value = (scale == 0 ? 1.0 : scale) / SC_D.recordView->zoomFactor();
 	//if ( value < 1 ) value = 1;
 	if ( value < 0.001 ) value = 0.001;
 
@@ -5428,24 +5430,27 @@ void AmplitudeView::zoom(float factor) {
 	if ( SC_D.zoom > 100 )
 		SC_D.zoom = 100;
 
-	float currentScale = SC_D.currentRecord->timeScale();
-	float newScale = SC_D.recordView->timeScale() * SC_D.zoom;
+	auto currentScale = SC_D.currentRecord->timeScale();
+	auto newScale = SC_D.recordView->timeScale() * SC_D.zoom;
 
 	factor = newScale / currentScale;
 
-	float tmin = SC_D.currentRecord->tmin();
-	float tmax = SC_D.recordView->currentItem()?
+	auto tmin = SC_D.currentRecord->tmin();
+	auto tmax = SC_D.recordView->currentItem()?
 		tmin + SC_D.recordView->currentItem()->widget()->width() / SC_D.currentRecord->timeScale():
 		SC_D.currentRecord->tmax();
-	float tcen = tmin + (tmax-tmin)*0.5;
+	auto tcen = tmin + (tmax - tmin) * 0.5;
 
-	tmin = tcen - (tcen-tmin)/factor;
-	tmax = tcen + (tmax-tcen)/factor;
+	tmin = tcen - (tcen - tmin) / factor;
+	tmax = tcen + (tmax - tcen) / factor;
 
 	SC_D.currentRecord->setTimeScale(newScale);
 	SC_D.timeScale->setScale(newScale);
 	
-	if ( SC_D.checkVisibility ) ensureVisibility(tmin, tmax);
+	if ( SC_D.checkVisibility ) {
+		ensureVisibility(tmin, tmax);
+	}
+
 	setTimeRange(tmin, tmax);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5455,10 +5460,10 @@ void AmplitudeView::zoom(float factor) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::applyTimeRange(double rmin, double rmax) {
-	float tmin = (float)rmin;
-	float tmax = (float)rmax;
+	auto tmin = rmin;
+	auto tmax = rmax;
 
-	float newScale = SC_D.currentRecord->width() / (tmax-tmin);
+	auto newScale = SC_D.currentRecord->width() / (tmax-tmin);
 	if ( newScale < SC_D.recordView->timeScale() )
 		newScale = SC_D.recordView->timeScale();
 
@@ -5471,7 +5476,10 @@ void AmplitudeView::applyTimeRange(double rmin, double rmax) {
 	// Calculate zoom
 	SC_D.zoom = newScale / SC_D.recordView->timeScale();
 
-	if ( SC_D.checkVisibility ) ensureVisibility(tmin, tmax);
+	if ( SC_D.checkVisibility ) {
+		ensureVisibility(tmin, tmax);
+	}
+
 	setTimeRange(tmin, tmax);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

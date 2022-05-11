@@ -474,8 +474,7 @@ class TraceList : public RecordView {
 #else
 				QString strFilter = event->mimeData()->data("text/plain");
 #endif
-				Math::Filtering::InPlaceFilter<float> *f =
-					Math::Filtering::InPlaceFilter<float>::Create(strFilter.toStdString());
+				auto f = RecordWidget::Filter::Create(strFilter.toStdString());
 
 				if ( !f ) {
 					QMessageBox::critical(
@@ -1701,7 +1700,7 @@ void ThreeComponentTrace::setTransformationEnabled(bool f) {
 		}
 
 		if ( enableTransformation ) {
-			Math::Vector3f r = transformation.row(2-i);
+			Math::Vector3d r = transformation.row(2-i);
 			bool passthrough = true;
 
 			if ( enableL2Horizontals && i > 0 )
@@ -1936,13 +1935,13 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 				                                         (*it[i])->channelCode(),
 				                                         maxStartTime, samplingFrequency);
 
-				FloatArrayPtr data = new FloatArray;
+				DoubleArrayPtr data = new DoubleArray;
 				RecordSequence::iterator seq_end = it_end[i];
 				++seq_end;
 
-				for ( RecordSequence::iterator rec_it = it[i]; rec_it != seq_end; ++rec_it ) {
+				for ( auto rec_it = it[i]; rec_it != seq_end; ++rec_it ) {
 					const Array *rec_data = (*rec_it)->data();
-					if ( rec_data == nullptr ) {
+					if ( !rec_data ) {
 						SEISCOMP_ERROR("%s: no data for record", (*rec_it)->streamID().c_str());
 						return gotRecords;
 					}
@@ -1952,10 +1951,10 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 
 					++it[i];
 
-					const FloatArray *srcData = FloatArray::ConstCast(rec_data);
-					FloatArrayPtr tmp;
-					if ( srcData == nullptr ) {
-						tmp = (FloatArray*)data->copy(Array::FLOAT);
+					const DoubleArray *srcData = DoubleArray::ConstCast(rec_data);
+					DoubleArrayPtr tmp;
+					if ( !srcData ) {
+						tmp = static_cast<DoubleArray*>(rec_data->copy(Array::DOUBLE));
 						srcData = tmp.get();
 					}
 
@@ -1969,6 +1968,7 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 						endIndex -= (int)(double((*rec_it)->endTime()-minEndTime)*(*rec_it)->samplingFrequency());
 
 					int len = endIndex-startIndex;
+
 					// Skip empty records
 					if ( len <= 0 ) continue;
 
@@ -1992,7 +1992,7 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 
 			// Trim record sizes
 			for ( int i = 0; i < 3; ++i ) {
-				FloatArray *data = static_cast<FloatArray*>(comps[i]->data());
+				DoubleArray *data = static_cast<DoubleArray*>(comps[i]->data());
 				if ( data->size() > minLen ) {
 					data->resize(minLen);
 					comps[i]->dataUpdated();
@@ -2001,13 +2001,13 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 
 			gotRecords = true;
 
-			float *dataZ = static_cast<FloatArray*>(comps[0]->data())->typedData();
-			float *data1 = static_cast<FloatArray*>(comps[1]->data())->typedData();
-			float *data2 = static_cast<FloatArray*>(comps[2]->data())->typedData();
+			auto dataZ = static_cast<DoubleArray*>(comps[0]->data())->typedData();
+			auto data1 = static_cast<DoubleArray*>(comps[1]->data())->typedData();
+			auto data2 = static_cast<DoubleArray*>(comps[2]->data())->typedData();
 
 			// Rotate finally
 			for ( int i = 0; i < minLen; ++i ) {
-				Math::Vector3f v = transformation*Math::Vector3f(*data2, *data1, *dataZ);
+				Math::Vector3d v = transformation * Math::Vector3d(*data2, *data1, *dataZ);
 				*dataZ = v.z;
 				*data1 = v.y;
 				*data2 = v.x;
@@ -2016,11 +2016,11 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 			}
 
 			if ( enableL2Horizontals ) {
-				float *data1 = static_cast<FloatArray*>(comps[1]->data())->typedData();
-				float *data2 = static_cast<FloatArray*>(comps[2]->data())->typedData();
+				auto data1 = static_cast<DoubleArray*>(comps[1]->data())->typedData();
+				auto data2 = static_cast<DoubleArray*>(comps[2]->data())->typedData();
 
 				for ( int i = 0; i < minLen; ++i ) {
-					float rms = sqrt(*data1 * *data1 + *data2 * *data2);
+					double rms = sqrt(*data1 * *data1 + *data2 * *data2);
 					*data1 = rms;
 					*data2 = 0;
 
@@ -2956,16 +2956,16 @@ void PickerView::init() {
 	        SC_D.currentRecord, SLOT(setGridSpacing(double, double, double)));
 	connect(SC_D.recordView, SIGNAL(toggledFilter(bool)),
 	        SC_D.currentRecord, SLOT(enableFiltering(bool)));
-	connect(SC_D.recordView, SIGNAL(scaleChanged(double, float)),
-	        this, SLOT(changeScale(double, float)));
+	connect(SC_D.recordView, SIGNAL(scaleChanged(double, double)),
+	        this, SLOT(changeScale(double, double)));
 	connect(SC_D.recordView, SIGNAL(timeRangeChanged(double, double)),
 	        this, SLOT(changeTimeRange(double, double)));
 	connect(SC_D.recordView, SIGNAL(selectionChanged(double, double)),
 	        SC_D.currentRecord, SLOT(setSelected(double, double)));
 	connect(SC_D.recordView, SIGNAL(alignmentChanged(const Seiscomp::Core::Time&)),
 	        this, SLOT(setAlignment(Seiscomp::Core::Time)));
-	connect(SC_D.recordView, SIGNAL(amplScaleChanged(float)),
-	        SC_D.currentRecord, SLOT(setAmplScale(float)));
+	connect(SC_D.recordView, SIGNAL(amplScaleChanged(double)),
+	        SC_D.currentRecord, SLOT(setAmplScale(double)));
 
 	connect(SC_D.ui.actionAddStations, SIGNAL(triggered(bool)),
 	        this, SLOT(addStations()));
@@ -5950,7 +5950,7 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
 	if ( allComponents ) {
 		//cout << "[" << streamID.stationCode() << "]" << endl;
 		try {
-			Math::Vector3f n;
+			Math::Vector3d n;
 			n.fromAngles(+deg2rad(tc.comps[ThreeComponents::Vertical]->azimuth()),
 			             -deg2rad(tc.comps[ThreeComponents::Vertical]->dip())).normalize();
 			label->orientationZNE.setColumn(2, n);
@@ -6267,10 +6267,8 @@ void PickerView::setCursorPos(const Seiscomp::Core::Time& t, bool always) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::setTimeRange(float tmin, float tmax) {
-
-
-	float amplScale = SC_D.currentRecord->amplScale();
+void PickerView::setTimeRange(double tmin, double tmax) {
+	auto amplScale = SC_D.currentRecord->amplScale();
 	SC_D.currentRecord->setTimeRange(tmin, tmax);
 
 	if ( SC_D.autoScaleZoomTrace )
@@ -6302,7 +6300,7 @@ void PickerView::setTimeRange(float tmin, float tmax) {
 void PickerView::enableAutoScale() {
 	SC_D.autoScaleZoomTrace = true;
 	if ( SC_D.currentRecord ) {
-		float amplScale = SC_D.currentRecord->amplScale();
+		auto amplScale = SC_D.currentRecord->amplScale();
 		SC_D.currentRecord->setNormalizationWindow(SC_D.currentRecord->visibleTimeWindow());
 		SC_D.currentRecord->setAmplScale(amplScale);
 	}
@@ -6393,15 +6391,15 @@ void PickerView::moveTraces(double offset) {
 
 	SC_D.recordView->move(offset);
 
-	float tmin = SC_D.recordView->timeRangeMin();
-	float tmax = SC_D.recordView->timeRangeMax();
+	auto tmin = SC_D.recordView->timeRangeMin();
+	auto tmax = SC_D.recordView->timeRangeMax();
 
 	if ( tmin > SC_D.currentRecord->tmin() ) {
 		offset = tmin - SC_D.currentRecord->tmin();
 	}
 	else if ( tmax < SC_D.currentRecord->tmax() ) {
-		float length = tmax - tmin;
-		float cr_length = SC_D.currentRecord->tmax() - SC_D.currentRecord->tmin();
+		auto length = tmax - tmin;
+		auto cr_length = SC_D.currentRecord->tmax() - SC_D.currentRecord->tmin();
 
 		offset = tmax - SC_D.currentRecord->tmax();
 
@@ -6423,15 +6421,15 @@ void PickerView::moveTraces(double offset) {
 void PickerView::move(double offset) {
 	if ( fabs(offset) < 0.001 ) return;
 
-	float tmin = SC_D.currentRecord->tmin() + offset;
-	float tmax = SC_D.currentRecord->tmax() + offset;
+	auto tmin = SC_D.currentRecord->tmin() + offset;
+	auto tmax = SC_D.currentRecord->tmax() + offset;
 
 	if ( tmin < SC_D.recordView->timeRangeMin() ) {
 		offset = tmin - SC_D.recordView->timeRangeMin();
 	}
 	else if ( tmax > SC_D.recordView->timeRangeMax() ) {
-		float length = tmax - tmin;
-		float rv_length = SC_D.recordView->timeRangeMax() - SC_D.recordView->timeRangeMin();
+		auto length = tmax - tmin;
+		auto rv_length = SC_D.recordView->timeRangeMax() - SC_D.recordView->timeRangeMin();
 
 		offset = tmax - SC_D.recordView->timeRangeMax();
 
@@ -6451,8 +6449,8 @@ void PickerView::move(double offset) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
-	float smin = 0;
-	float smax = 0;
+	double smin = 0;
+	double smax = 0;
 
 	Core::TimeSpan relSelectedTime;
 
@@ -6902,7 +6900,7 @@ void PickerView::zoomSelectionHandleMoveFinished() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::changeScale(double, float) {
+void PickerView::changeScale(double, double) {
 	zoom(1.0);
 	/*
 	std::cout << "[changeScale]" << std::endl;
@@ -7102,9 +7100,9 @@ void PickerView::pickS(bool) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::scaleAmplUp() {
-	float scale = SC_D.currentRecord->amplScale();
+	auto scale = SC_D.currentRecord->amplScale();
 	//if ( scale >= 1 ) scale = SC_D.currentAmplScale;
-	float value = (scale == 0?1.0:scale)*SC_D.recordView->zoomFactor();
+	auto value = (scale == 0 ? 1.0 : scale) * SC_D.recordView->zoomFactor();
 	if ( value > 1000 ) value = 1000;
 	if ( /*value < 1*/true ) {
 		SC_D.currentRecord->setAmplScale(value);
@@ -7124,9 +7122,9 @@ void PickerView::scaleAmplUp() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::scaleAmplDown() {
-	float scale = SC_D.currentRecord->amplScale();
+	auto scale = SC_D.currentRecord->amplScale();
 	//if ( scale >= 1 ) scale = SC_D.currentAmplScale;
-	float value = (scale == 0?1.0:scale)/SC_D.recordView->zoomFactor();
+	auto value = (scale == 0 ? 1.0 : scale) / SC_D.recordView->zoomFactor();
 	//if ( value < 1 ) value = 1;
 	if ( value < 0.001 ) value = 0.001;
 
@@ -8833,7 +8831,7 @@ bool PickerView::applyFilter(RecordViewItem *item) {
 					integrationSteps = SC_D.currentUnitMode - label->unit;
 				}
 				else {
-					Math::Filtering::ConstFilter<float> constFilter(0);
+					Math::Filtering::ConstFilter<double> constFilter(0);
 					label->data.setFilter(&constFilter);
 					return true;
 				}
@@ -8848,22 +8846,22 @@ bool PickerView::applyFilter(RecordViewItem *item) {
 		if ( integrationSteps == 0 )
 			label->data.setFilter(SC_D.currentFilter);
 		else {
-			Math::Filtering::ChainFilter<float> chainFilter;
+			Math::Filtering::ChainFilter<double> chainFilter;
 
 			if ( integrationSteps < 0  ) {
 				// Derivation
 				for ( int s = 0; s < -integrationSteps; ++s )
-					chainFilter.add(new Math::Filtering::IIRDifferentiate<float>());
+					chainFilter.add(new Math::Filtering::IIRDifferentiate<double>());
 			}
 			else {
-				Math::Filtering::InPlaceFilter<float> *preFilter = nullptr;
+				Math::Filtering::InPlaceFilter<double> *preFilter = nullptr;
 
 				for ( int s = 0; s < integrationSteps; ++s ) {
 					if ( !SC_D.config.onlyApplyIntegrationFilterOnce || (s == 0) ) {
 						if ( preFilter != nullptr )
 							chainFilter.add(preFilter->clone());
 						else if ( !SC_D.config.integrationFilter.isEmpty() ) {
-							preFilter = Math::Filtering::InPlaceFilter<float>::Create(SC_D.config.integrationFilter.toStdString().c_str());
+							preFilter = Math::Filtering::InPlaceFilter<double>::Create(SC_D.config.integrationFilter.toStdString().c_str());
 							if ( preFilter == nullptr ) {
 								// ERROR
 							}
@@ -8872,7 +8870,7 @@ bool PickerView::applyFilter(RecordViewItem *item) {
 						}
 					}
 
-					chainFilter.add(new Math::Filtering::IIRIntegrate<float>());
+					chainFilter.add(new Math::Filtering::IIRIntegrate<double>());
 				}
 
 				if ( preFilter != nullptr )

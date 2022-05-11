@@ -157,7 +157,7 @@ TypedArray<T>& TypedArray<T>::operator=(const TypedArray &array) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename T>
 Array* TypedArray<T>::copy(DataType dt) const {
-	return ArrayFactory::Create(dt,this);
+	return ArrayFactory::Create(dt, this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

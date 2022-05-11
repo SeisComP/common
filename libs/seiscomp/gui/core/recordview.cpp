@@ -1858,15 +1858,17 @@ void RecordView::scaleContent() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordView::setScale(double t, float a) {
+void RecordView::setScale(double t, double a) {
 	_timeScale = t;
 	_amplScale = a;
 
-	if (_timeScaleWidget)
+	if ( _timeScaleWidget ) {
 		_timeScaleWidget->setScale(_timeScale);
+	}
 
-	foreach (RecordViewItem* item, _items)
+	foreach ( RecordViewItem* item, _items ) {
 		item->widget()->setScale(_timeScale, _amplScale);
+	}
 
 	emit scaleChanged(t, a);
 }
@@ -2284,13 +2286,13 @@ void RecordView::zoom(float factor) {
 void RecordView::scaleAmplitudesUp() {
 	if ( !currentItem() ) return;
 
-	float amplScale = currentItem()->widget()->amplScale();
+	auto amplScale = currentItem()->widget()->amplScale();
 	if ( amplScale == 0.0 )
 		amplScale = 1.0;
 
 	currentItem()->widget()->setAmplScale(amplScale*_zoomFactor);
 
-	emit amplScaleChanged(amplScale*_zoomFactor);
+	emit amplScaleChanged(amplScale * _zoomFactor);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2301,13 +2303,13 @@ void RecordView::scaleAmplitudesUp() {
 void RecordView::scaleAmplitudesDown() {
 	if ( !currentItem() ) return;
 
-	float amplScale = currentItem()->widget()->amplScale();
+	auto amplScale = currentItem()->widget()->amplScale();
 	if ( amplScale == 0.0 )
 		amplScale = 1.0;
 
 	currentItem()->widget()->setAmplScale(amplScale/_zoomFactor);
 
-	emit amplScaleChanged(amplScale/_zoomFactor);
+	emit amplScaleChanged(amplScale / _zoomFactor);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2730,7 +2732,7 @@ void RecordView::setZoomEnabled(bool e) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordView::setFilter(Seiscomp::Math::Filtering::InPlaceFilter<float>* filter) {
+void RecordView::setFilter(RecordWidget::Filter *filter) {
 	if ( _filter )
 		delete _filter;
 
@@ -2765,8 +2767,7 @@ void RecordView::setFilter(Seiscomp::Math::Filtering::InPlaceFilter<float>* filt
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordView::setFilterByName(const QString& strFilter) {
-	Math::Filtering::InPlaceFilter<float> *f =
-		Math::Filtering::InPlaceFilter<float>::Create(strFilter.toStdString());
+	auto f = RecordWidget::Filter::Create(strFilter.toStdString());
 	
 	if ( !f )
 		return false;
@@ -2780,7 +2781,7 @@ bool RecordView::setFilterByName(const QString& strFilter) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Seiscomp::Math::Filtering::InPlaceFilter<float>* RecordView::filter() const {
+RecordWidget::Filter *RecordView::filter() const {
 	return _filter;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

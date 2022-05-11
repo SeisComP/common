@@ -152,7 +152,8 @@ class SC_SYSTEM_CORE_API Record : public Seiscomp::Core::BaseObject {
 		//! Returns the data type specified for the data sample requests
 		Array::DataType dataType() const;
 
-		//! Sets the data type for the data requests which can differ from the real type of the data samples
+		//! Sets the data type for the data requests which can differ
+		//! from the real type of the data samples.
 		void setDataType(Array::DataType dt);
 
 		//! Sets the hint used for data operations

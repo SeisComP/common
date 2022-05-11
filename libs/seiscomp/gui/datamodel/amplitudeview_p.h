@@ -97,7 +97,7 @@ class AmplitudeViewPrivate {
 		double                              maxDist;
 
 		float                               zoom;
-		float                               currentAmplScale;
+		double                              currentAmplScale;
 		QString                             lastRecordURL;
 		TravelTimeTableInterfacePtr         ttTable;
 		bool                                centerSelection;

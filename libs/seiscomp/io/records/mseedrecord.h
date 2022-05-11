@@ -66,26 +66,26 @@ class SC_SYSTEM_CORE_API MSeedRecord: public Record {
 		MSeedRecord(const Record &rec, int reclen=512);
 
 		//! Destructor
-		virtual ~MSeedRecord();
+		~MSeedRecord() override;
 
 
 	public:
 		//! Assignment Operator
 		MSeedRecord& operator=(const MSeedRecord &ms);
 
-		virtual void setNetworkCode(std::string net);
+		void setNetworkCode(std::string net) override;
 
 		//! Sets the station code
-		virtual void setStationCode(std::string sta);
+		void setStationCode(std::string sta) override;
 
 		//! Sets the location code
-		virtual void setLocationCode(std::string loc);
+		void setLocationCode(std::string loc) override;
 
 		//! Sets the channel code
-		virtual void setChannelCode(std::string cha);
+		void setChannelCode(std::string cha) override;
 
 		//! Sets the start time
-		virtual void setStartTime(const Core::Time& time);
+		void setStartTime(const Core::Time& time) override;
 
 		//! Returns the sequence number
 		int sequenceNumber() const;
@@ -137,13 +137,13 @@ class SC_SYSTEM_CORE_API MSeedRecord: public Record {
 
 		//! Returns a nonmutable pointer to the data samples if the data is available; otherwise 0
 		//! (the data type is independent from the original one and was given by the DataType flag in the constructor)
-		const Array* data() const;
+		const Array* data() const override;
 
-		const Array* raw() const;
+		const Array* raw() const override;
 
 		//! Frees the memory occupied by the decoded data samples.
 		//! ! Use it with the hint SAVE_RAW only otherwise the data samples cannot be redecoded!
-		void saveSpace() const;
+		void saveSpace() const override;
 
 		//! Returns a deep copy of the calling object.
 		Record* copy() const;
@@ -162,6 +162,9 @@ class SC_SYSTEM_CORE_API MSeedRecord: public Record {
 		void write(std::ostream& out);
 
 	private:
+		void _setDataAttributes(int reclen, char *data) const;
+
+	private:
 		CharArray            _raw;
 		mutable ArrayPtr     _data;
 		int                  _seqno;
@@ -177,8 +180,6 @@ class SC_SYSTEM_CORE_API MSeedRecord: public Record {
 		int                  _leap;
 		Seiscomp::Core::Time _etime;
 		bool                 _encodingFlag;
-
-		void _setDataAttributes(int reclen, char *data) const;
 };
 
 } // namespace IO

@@ -313,9 +313,9 @@ class SC_GUI_API RecordView : public QWidget {
 
 		bool isFilterEnabled() const;
 
-		void setScale (double t, float a = 0.0f);
-		void setTimeRange (double t1, double t2);
-		void setSelection (double t1, double t2);
+		void setScale(double t, double a = 0.0f);
+		void setTimeRange(double t1, double t2);
+		void setSelection(double t1, double t2);
 
 		void move(double offset);
 
@@ -428,11 +428,11 @@ class SC_GUI_API RecordView : public QWidget {
 		void setDefaultDisplay();
 
 		//! Sets the parameters used to filter the traces
-		void setFilter(Seiscomp::Math::Filtering::InPlaceFilter<float>* filter);
+		void setFilter(RecordWidget::Filter *filter);
 		bool setFilterByName(const QString&);
 
 		//! Returns the set filter instance
-		Seiscomp::Math::Filtering::InPlaceFilter<float>* filter() const;
+		RecordWidget::Filter *filter() const;
 
 		void updateRecords();
 
@@ -446,12 +446,12 @@ class SC_GUI_API RecordView : public QWidget {
 		void updatedInterval(double da, double dt, double ofs);
 		void toggledFilter(bool);
 
-		void scaleChanged(double time, float amplitude);
+		void scaleChanged(double time, double amplitude);
 		void timeRangeChanged(double tmin, double tmax);
 		void selectionChanged(double smin, double smax);
 		void alignmentChanged(const Seiscomp::Core::Time&);
 
-		void amplScaleChanged(float);
+		void amplScaleChanged(double);
 
 		//! This signal will be emitted whenever a new item
 		//! has been automatically added to the view.
@@ -582,7 +582,7 @@ class SC_GUI_API RecordView : public QWidget {
 
 		double _timeScale;     // pixels per second
 		double _minTimeScale;
-		float  _amplScale;     // amplitude units per pixel
+		double _amplScale;     // amplitude units per pixel
 
 		bool _filtering;      // the filter state
 		bool _alternatingColors;
@@ -602,7 +602,7 @@ class SC_GUI_API RecordView : public QWidget {
 
 		RecordWidget::RecordBorderDrawMode _recordBorderDrawMode;
 
-		Seiscomp::Math::Filtering::InPlaceFilter<float> *_filter;
+		RecordWidget::Filter *_filter;
 
 	friend class RecordViewItem;
 };

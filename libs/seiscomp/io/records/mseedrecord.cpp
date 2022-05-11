@@ -483,7 +483,7 @@ int MSeedRecord::leapSeconds() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const Array* MSeedRecord::raw() const {
+const Array *MSeedRecord::raw() const {
 	return &_raw;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -492,9 +492,10 @@ const Array* MSeedRecord::raw() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const Array* MSeedRecord::data() const {
-	if ( _raw.data() && (!_data || _datatype != _data->dataType()) )
+const Array *MSeedRecord::data() const {
+	if ( _raw.data() && (!_data || _datatype != _data->dataType()) ) {
 		_setDataAttributes(_reclen, const_cast<char*>(_raw.typedData()));
+	}
 
 	return _data.get();
 }
@@ -512,19 +513,27 @@ void MSeedRecord::_setDataAttributes(int reclen, char *data) const {
 	if ( msr_unpack(data, reclen, &pmsr, 1, 0) != MS_NOERROR )
 		throw LibmseedException("Unpacking of Mini SEED record failed.");
 
+	Array::DataType dt = _datatype;
+	_data = nullptr;
+
 	if ( pmsr->numsamples == _nsamp ) {
 		switch ( pmsr->sampletype ) {
 			case 'i':
-				_data = ArrayFactory::Create(_datatype,Array::INT,_nsamp,pmsr->datasamples);
+				_data = ArrayFactory::Create(dt, Array::INT, _nsamp, pmsr->datasamples);
 				break;
 			case 'f':
-				_data = ArrayFactory::Create(_datatype,Array::FLOAT,_nsamp,pmsr->datasamples);
+				_data = ArrayFactory::Create(dt, Array::FLOAT, _nsamp, pmsr->datasamples);
 				break;
 			case 'd':
-				_data = ArrayFactory::Create(_datatype,Array::DOUBLE,_nsamp,pmsr->datasamples);
+				if ( dt < Array::DOUBLE ) {
+					// We need double precision in order to store doubles.
+					dt = Array::DOUBLE;
+				}
+
+				_data = ArrayFactory::Create(dt, Array::DOUBLE, _nsamp, pmsr->datasamples);
 				break;
 			case 'a':
-				_data = ArrayFactory::Create(_datatype,Array::CHAR,_nsamp,pmsr->datasamples);
+				_data = ArrayFactory::Create(dt, Array::CHAR, _nsamp, pmsr->datasamples);
 				break;
 		}
 
