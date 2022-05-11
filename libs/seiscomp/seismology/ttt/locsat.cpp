@@ -88,6 +88,10 @@ Locsat::~Locsat() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Locsat::setModel(const std::string &model) {
+	if ( _model == model ) {
+		return true;
+	}
+
 	_model = model;
 
 	if ( _model.empty() ) {
