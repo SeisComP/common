@@ -100,6 +100,8 @@
 %newobject Seiscomp::TravelTimeTableInterface::compute;
 %newobject Seiscomp::TravelTimeTable::compute;
 
+%apply int &OUTPUT { int *id };
+
 %include "seiscomp/core.h"
 %include "seiscomp/seismology/regions.h"
 %include "seiscomp/seismology/locatorinterface.h"
