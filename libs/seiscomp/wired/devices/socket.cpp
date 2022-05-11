@@ -44,10 +44,11 @@
 #include <seiscomp/wired/session.h>
 
 #include <openssl/err.h>
+#include <openssl/pkcs12.h>
 
 #include <pthread.h>
 #include <cerrno>
-
+#include <fstream>
 
 using namespace std;
 
@@ -61,6 +62,26 @@ namespace {
 
 pthread_mutex_t *ssl_mutex_buffer = nullptr;
 
+struct SSlDeleter {
+	void operator()(EVP_PKEY *key)
+	{
+		EVP_PKEY_free(key);
+	}
+
+	void operator()(PKCS12 *p12)
+	{
+		PKCS12_free(p12);
+	}
+
+	void operator()(X509 *x509)
+	{
+		X509_free(x509);
+	}
+};
+
+using X509Ptr = std::unique_ptr<X509, SSlDeleter>;
+using EVP_PKEYPtr = std::unique_ptr<EVP_PKEY, SSlDeleter>;
+using PKCS12Ptr = std::unique_ptr<PKCS12, SSlDeleter>;
 
 unsigned long SSL_thread_id_function(void) {
 	return reinterpret_cast<unsigned long>(pthread_self());
@@ -118,6 +139,9 @@ struct SSLInitializer {
 	SSLInitializer() {
 		SSL_library_init();
 		OpenSSL_add_all_algorithms();
+		SSL_load_error_strings();
+		ERR_load_crypto_strings();
+		ERR_load_SSL_strings();
 
 		SSL_static_init();
 	}
@@ -979,16 +1003,90 @@ SSLSocket::~SSLSocket() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SSL_CTX *SSLSocket::createClientContext(const char *pemCert, const char *pemKey) {
-	// Initialize ciphers and digests
-	SSL_library_init();
-	// Load human readable error reporting
-	SSL_load_error_strings();
-	ERR_load_crypto_strings();
-	ERR_load_SSL_strings();
-	// Load available cipher and digest algorithms
-	OpenSSL_add_all_algorithms();
+SSL_CTX *SSLSocket::createClientContextFromFile(const std::string &pkcs12File) {
+	FILE *fp = fopen(pkcs12File.c_str(), "rb");
+	if (!fp ) {
+		SEISCOMP_ERROR("Failed to open PKCS12 file '%s'", pkcs12File.c_str());
+		return nullptr;
+	}
 
+	PKCS12 *p12 = d2i_PKCS12_fp(fp, NULL);
+	fclose (fp);
+
+	PKCS12Ptr p12Ptr(p12);
+	if ( !p12Ptr ) {
+		SEISCOMP_ERROR("Loading client certificate failed");
+		ERR_print_errors_fp(stderr);
+		return nullptr;
+	}
+
+	return createClientContext(p12Ptr.get());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SSL_CTX *SSLSocket::createClientContext(const std::string &cert) {
+	PKCS12 *p12 = nullptr;
+	const unsigned char *data = reinterpret_cast<const unsigned char *>(cert.c_str());
+	d2i_PKCS12(&p12, &data, cert.size());
+
+	PKCS12Ptr p12Ptr(p12);
+	return createClientContext(p12Ptr.get());
+}
+
+SSL_CTX *SSLSocket::createClientContext(PKCS12 *p12) {
+	X509 *cert = nullptr;
+	EVP_PKEY *key = nullptr;
+
+	if ( !PKCS12_parse(p12, nullptr, &key, &cert, nullptr) ) {
+		PKCS12_free(p12);
+		ERR_print_errors_fp(stderr);
+		return nullptr;
+	}
+
+	X509Ptr certPtr(cert);
+	EVP_PKEYPtr keyPtr(key);
+
+	// Set the certificate to be used
+	SSL_CTX *ctx(SSL_CTX_new(SSLv23_client_method()));
+	SEISCOMP_DEBUG("Loading client certificate from X509 cert");
+	if ( !SSL_CTX_use_certificate(ctx, cert) ) {
+		SEISCOMP_ERROR("Loading client certificate failed");
+		ERR_print_errors_fp(stderr);
+		SSL_CTX_free(ctx);
+		return nullptr;
+	}
+
+
+	// Set the private key to be used
+	SEISCOMP_DEBUG("Loading private key");
+	if ( SSL_CTX_use_PrivateKey(ctx, key) <= 0 ) {
+		SEISCOMP_ERROR("Loading private key failed");
+		ERR_print_errors_fp(stderr);
+		SSL_CTX_free(ctx);
+		return nullptr;
+	}
+
+	SEISCOMP_DEBUG("Verifying keys...");
+	if ( !SSL_CTX_check_private_key(ctx)) {
+		SEISCOMP_ERROR("Private key check failed");
+		SSL_CTX_free(ctx);
+		return nullptr;
+	}
+
+	return ctx;
+}
+
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SSL_CTX *SSLSocket::createClientContext(const char *pemCert, const char *pemKey) {
 	SSL_CTX *ctx(SSL_CTX_new(SSLv23_client_method()));
 
 	// Set the server certificate to be used
@@ -1026,15 +1124,6 @@ SSL_CTX *SSLSocket::createClientContext(const char *pemCert, const char *pemKey)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SSL_CTX *SSLSocket::createServerContext(const char *pemCert, const char *pemKey) {
-	// Initialize ciphers and digests
-	SSL_library_init();
-	// Load human readable error reporting
-	SSL_load_error_strings();
-	ERR_load_crypto_strings();
-	ERR_load_SSL_strings();
-	// Load available cipher and digest algorithms
-	OpenSSL_add_all_algorithms();
-
 	SSL_CTX *ctx(SSL_CTX_new(SSLv23_method()));
 
 #ifdef SSL_OP_NO_COMPRESSION

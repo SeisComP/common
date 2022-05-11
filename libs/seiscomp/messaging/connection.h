@@ -26,6 +26,8 @@
 #include <seiscomp/messaging/protocol.h>
 #include <seiscomp/utils/timer.h>
 
+#include <openssl/x509.h>
+
 #include <mutex>
 #include <functional>
 
@@ -242,6 +244,7 @@ class SC_SYSTEM_CLIENT_API Connection : public Core::BaseObject {
 
 		void getInfo(const Core::Time &timestamp, std::ostream &os);
 
+		Result setCertificate(const std::string &cert);
 
 	// ----------------------------------------------------------------------
 	//  Query functions

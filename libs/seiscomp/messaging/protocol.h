@@ -494,6 +494,8 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 		 */
 		virtual size_t outboxSize() const = 0;
 
+		void setCertificate(const std::string &cert);
+
 		static Core::Message *decode(const std::string &blob,
 		                             ContentEncoding encoding,
 		                             ContentType type);
@@ -542,7 +544,7 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 		Core::Version          _schemaVersion; //!< The schema version the
 		                                       //!< server supports
 		KeyValueStore          _extendedParameters;
-		std::string            _certificate; //!< Optional client certificate
+		std::string            _certificate;   //!< Optional client certificate
 
 		// Mutexes to synchronize read access from separate threads.
 		mutable boost::mutex   _readMutex;
