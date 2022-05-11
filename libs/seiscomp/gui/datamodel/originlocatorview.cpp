@@ -4461,8 +4461,7 @@ void OriginLocatorView::updateContent() {
 
 	//_ui->cbFixedDepth->setChecked(Qt::Unchecked);
 	Time t = _currentOrigin->time();
-	Regions regions;
-	_ui->labelRegion->setText(regions.getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
+	_ui->labelRegion->setText(Regions::getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
 	//timeToLabel(_ui->labelDate, timeToString(t, "%Y-%m-%d");
 	std::string format = "%Y-%m-%d %H:%M:%S";
 	if ( SCScheme.precision.originTime > 0 ) {

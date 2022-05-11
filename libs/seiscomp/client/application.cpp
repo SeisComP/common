@@ -1080,8 +1080,7 @@ bool Application::init() {
 
 	if ( isLoadRegionsEnabled() ) {
 		showMessage("Reading custom regions");
-		Regions regions;
-		regions.load();
+		Regions::load();
 	}
 
 	if ( isLoadCitiesEnabled() ) {

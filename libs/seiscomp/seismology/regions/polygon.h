@@ -33,10 +33,11 @@ namespace Geo {
 
 class SC_SYSTEM_CORE_API PolyRegions {
 	public:
-		PolyRegions();
-		PolyRegions(const std::string& location);
+		PolyRegions() = default;
+		PolyRegions(const std::string &location);
 		~PolyRegions();
 
+	public:
 		void print();
 		void info();
 

@@ -2955,8 +2955,7 @@ void EventEdit::updateOrigin() {
 		_ui.labelDepthError->setText("");
 	}
 
-	Regions regions;
-	_ui.labelRegionValue->setText(regions.getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
+	_ui.labelRegionValue->setText(Regions::getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
 
 	try {
 		_ui.labelPhasesValue->setText(QString("%1/%2")
@@ -3093,8 +3092,7 @@ void EventEdit::updateMT() {
 		timeToLabel(_ui.mtOriginTime, o->time().value(), PanelOTimeFormat.c_str());
 
 		// region
-		Regions regions;
-		_ui.mtOriginRegion->setText(regions.getRegionName(o->latitude(), o->longitude()).c_str());
+		_ui.mtOriginRegion->setText(Regions::getRegionName(o->latitude(), o->longitude()).c_str());
 
 		// depth
 		try {

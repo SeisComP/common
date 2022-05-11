@@ -93,6 +93,8 @@ namespace Core {
    - Added Seiscomp::Util::catchBool
    - Fixed Python API for ExportSink::write to always pass bytes and
      remove size parameter
+   - Added Regions::getFlinnEngdahlRegion
+   - Removed public access of Regions constructor
 
  "14.4.0"   0x0E0400
    - Added class Seiscomp::Core::Number<T> (ostream output)

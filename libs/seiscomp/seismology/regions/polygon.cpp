@@ -33,20 +33,12 @@
 
 namespace fs = boost::filesystem;
 
-namespace Seiscomp
-{
-namespace Geo
-{
+namespace Seiscomp {
+namespace Geo {
 
 
 
-PolyRegions::PolyRegions()
-{
-}
-
-
-PolyRegions::PolyRegions(const std::string& location)
-{
+PolyRegions::PolyRegions(const std::string &location) {
 	read(location);
 }
 
@@ -153,10 +145,6 @@ bool PolyRegions::readFepBoundaries(const std::string& filename) {
 			last = Core::None;
 			newPolygon = true;
 		}
-		else {
-			//std::cout << "Warning: line ignored: " << line << std::endl;
-		}
-		
 	}
 
 	return true;
@@ -174,29 +162,19 @@ size_t PolyRegions::regionCount() const {
 
 
 GeoFeature *PolyRegions::region(int i) const{
-	if( _regions.size() > 0 )
-		return _regions[i];
-	else
-		return nullptr;
+	return _regions.size() > 0 ? _regions[i] : nullptr;
 }
 
 
 void PolyRegions::print(){
-
 	for ( size_t i = 0; i < _regions.size(); i++ ){
 		std::cerr << region(i)->name() << std::endl;
 		std::cerr <<  region(i)->vertices().size() << std::endl;
-
-	//for (int j = 0; j < region(i)->vertexCount(); j++)
-		//std::cerr << region(i)->vertex(j).lat << "\t" << region(i)->vertex(j).lon << std::endl;
-
 	}
-
 }
 
 
 void PolyRegions::info(){
-
 	SEISCOMP_DEBUG("Number of PolyRegions loaded: %lu", (unsigned long)_regions.size());
 
 	int sum = 0;
@@ -204,14 +182,15 @@ void PolyRegions::info(){
 		sum += region(i)->vertices().size();
 
 	SEISCOMP_DEBUG("Total number of vertices read in: %d", sum);
-
 }
 
 
 GeoFeature *PolyRegions::findRegion(double lat, double lon) const {
+	auto gc = GeoCoordinate(lat, lon).normalize();
 	for ( size_t i = 0; i < regionCount(); ++i ) {
-		if ( region(i)->contains(GeoCoordinate(lat, lon).normalize()) )
+		if ( region(i)->contains(gc) ) {
 			return region(i);
+		}
 	}
 
 	return nullptr;
@@ -220,8 +199,9 @@ GeoFeature *PolyRegions::findRegion(double lat, double lon) const {
 
 std::string PolyRegions::findRegionName(double lat, double lon) const {
 	GeoFeature *region = findRegion(lat, lon);
-	if ( region )
+	if ( region ) {
 		return region->name();
+	}
 
 	return "";
 }

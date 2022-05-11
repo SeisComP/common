@@ -3395,13 +3395,11 @@ void MagnitudeView::resetContent() {
 //! update map, diagram, table and labels
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::updateContent() {
-	Regions regions;
-
 	_ui.labelRegion->setText("");
 
 	if (!_origin) return;
 
-	_ui.labelRegion->setText(regions.getRegionName(_origin->latitude(), _origin->longitude()).c_str());
+	_ui.labelRegion->setText(Regions::getRegionName(_origin->latitude(), _origin->longitude()).c_str());
 
 	//  use selection from comboBox for netmagType
 	//_netMag = _origin->findMagnitude((_ui.comboMagType->itemData(_ui.comboMagType->currentIndex()).value<QString>()).toAscii().data());

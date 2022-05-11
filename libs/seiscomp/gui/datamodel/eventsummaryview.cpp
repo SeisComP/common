@@ -97,7 +97,7 @@ struct PoiResolver : public Seiscomp::Util::VariableResolver {
 		else if ( variable == "poi" )
 			variable = _name;
 		else if ( variable == "region" )
-			variable = Seiscomp::Regions().getRegionName(_lat, _lon);
+			variable = Regions::getRegionName(_lat, _lon);
 		else
 			return false;
 
@@ -1641,8 +1641,7 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 	if ( _currentEvent && !region.empty() )
 		_ui->_lbRegion->setText(region.c_str());
 	else {
-		Regions regions;
-		_ui->_lbRegion->setText(regions.getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
+		_ui->_lbRegion->setText(Regions::getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
 	}
 
 	updateTimeAgoLabel();

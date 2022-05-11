@@ -30,18 +30,15 @@
 namespace Seiscomp {
 
 class SC_SYSTEM_CORE_API Regions {
-
 	public:
-		Regions();
+		static std::string getFlinnEngdahlRegion(double lat, double lon, int *id = nullptr);
 
 		static void load();
 		static std::string getRegionName(double lat, double lon);
 		static Seiscomp::Geo::PolyRegions &polyRegions();
 
 	private:
-		static std::string getFeGeoRegionName(double lat, double lon);
-		static std::string getRegionalName(double lat, double lon);
-
+		Regions() = default;
 };
 
 

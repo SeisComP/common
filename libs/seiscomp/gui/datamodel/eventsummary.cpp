@@ -818,8 +818,7 @@ void EventSummary::updateOrigin() {
 		setText(_ui->region, region.c_str());
 	else {
 		try {
-			Regions regions;
-			setText(_ui->region, regions.getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
+			setText(_ui->region, Regions::getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
 		}
 		catch ( Core::ValueException& ) {
 			_ui->region->setText("-");

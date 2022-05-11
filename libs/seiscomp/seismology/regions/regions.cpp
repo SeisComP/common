@@ -18,10 +18,11 @@
  ***************************************************************************/
 
 
-
 #include <seiscomp/seismology/regions.h>
 #include <seiscomp/seismology/regions/ferdata.h>
 #include <seiscomp/seismology/regions/polygon.h>
+
+#include <seiscomp/geo/coordinate.h>
 
 #include <seiscomp/system/environment.h>
 
@@ -37,10 +38,6 @@ Geo::PolyRegions regions;
 }
 
 
-Regions::Regions() {
-}
-
-
 void Regions::load() {
 	if ( !regions.read(Environment::Instance()->configDir() + "/fep") )
 		regions.read(Environment::Instance()->shareDir() + "/fep");
@@ -53,32 +50,31 @@ Geo::PolyRegions &Regions::polyRegions() {
 
 
 std::string Regions::getRegionName(double lat, double lon) {
-	while ( lon < -180 ) lon += 360;
-	while ( lon > 180 ) lon -= 360;
-
-	std::string name = getRegionalName(lat, lon);
-	return name.empty()?getFeGeoRegionName(lat, lon):name;
+	std::string name = regions.findRegionName(lat, lon);
+	return name.empty() ? getFlinnEngdahlRegion(lat, lon, nullptr) : name;
 }
 
 
-std::string Regions::getFeGeoRegionName(double lat, double lon) {
-	std::string name;
+std::string Regions::getFlinnEngdahlRegion(double lat, double lon, int *id) {
+	lat = Geo::GeoCoordinate::normalizeLat(lat);
+	lon = Geo::GeoCoordinate::normalizeLon(lon);
 
-	int _lat = int(lat);
-	int _lon = int(lon);
+	int iLat = int(lat);
+	int iLon = int(lon);
 
-	if (lat >= 0.0) _lat += 1;
-	if (lon >= 0.0) _lon += 1;
+	if ( lat >= 0.0 ) {
+		iLat += 1;
+	}
 
-	if (lat >= -90 && lat <= +90 && lon >= -180 && lon <= +180)
-		name = feGeoRegionsNames[feGeoRegionsArray[_lat + 90][_lon + 180] - 1];
-	else
-		name = "unknown Region";
+	if ( lon >= 0.0 ) {
+		iLon += 1;
+	}
 
-	return name;
-}
+	int regionId = feGeoRegionsArray[iLat + 90][iLon + 180] - 1;
 
+	if ( id ) {
+		*id = regionId;
+	}
 
-std::string Regions::getRegionalName(double lat, double lon) {
-	return regions.findRegionName(lat, lon);
+	return feGeoRegionsNames[regionId];
 }
