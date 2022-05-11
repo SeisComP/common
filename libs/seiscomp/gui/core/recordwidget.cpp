@@ -4217,14 +4217,14 @@ int RecordWidget::streamHeight(int slot) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPair<double,double> RecordWidget::amplitudeDataRange(int slot) const {
-	if ( slot >= _streams.size() || slot < 0 ) return QPair<float,float>(0,0);
+	if ( slot >= _streams.size() || slot < 0 ) return QPair<double,double>(0,0);
 	if ( _showScaledValues )
-		return QPair<float,float>(
+		return QPair<double,double>(
 			_streams[slot]->traces[_streams[slot]->filtering?Stream::Filtered:Stream::Raw].dyMin * _streams[slot]->scale,
 			_streams[slot]->traces[_streams[slot]->filtering?Stream::Filtered:Stream::Raw].dyMax * _streams[slot]->scale
 		);
 	else
-		return QPair<float,float>(
+		return QPair<double,double>(
 			_streams[slot]->traces[_streams[slot]->filtering?Stream::Filtered:Stream::Raw].dyMin,
 			_streams[slot]->traces[_streams[slot]->filtering?Stream::Filtered:Stream::Raw].dyMax
 		);
@@ -4236,8 +4236,8 @@ QPair<double,double> RecordWidget::amplitudeDataRange(int slot) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPair<double, double> RecordWidget::amplitudeRange(int slot) const {
-	if ( slot >= _streams.size() || slot < 0 ) return QPair<float,float>(-1,1);
-	return QPair<float,float>(
+	if ( slot >= _streams.size() || slot < 0 ) return QPair<double,double>(-1,1);
+	return QPair<double,double>(
 		_streams[slot]->traces[_streams[slot]->filtering?Stream::Filtered:Stream::Raw].fyMin,
 		_streams[slot]->traces[_streams[slot]->filtering?Stream::Filtered:Stream::Raw].fyMax
 	);
