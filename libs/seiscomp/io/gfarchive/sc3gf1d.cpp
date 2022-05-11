@@ -1078,11 +1078,13 @@ OPT(double) SC3GF1DArchive::getTravelTime(const std::string &phase,
 	// Initialization done
 	if ( config.travelTimeTable ) {
 		try {
-			return config.travelTimeTable->compute(
-				phase.c_str(),
-				source.lat, source.lon, source.depth,
-				receiver.lat, receiver.lon, receiver.elevation
-			).time;
+			if ( config.travelTimeTable->setModel(config.travelTimeInterfaceProfile) ) {
+				return config.travelTimeTable->compute(
+					phase.c_str(),
+					source.lat, source.lon, source.depth,
+					receiver.lat, receiver.lon, receiver.elevation
+				).time;
+			}
 		}
 		catch ( ... ) {}
 	}
