@@ -138,6 +138,8 @@ WizardWidget::WizardWidget(WizardModel *model, QWidget *parent)
 	setTabOrder(_buttonNext, _buttonCancel);
 	setTabOrder(_buttonCancel, _buttonBack);
 
+	_buttonNext->setDefault(true);
+
 	connect(_buttonBack, SIGNAL(clicked()), this, SLOT(back()));
 	connect(_buttonNext, SIGNAL(clicked()), this, SLOT(next()));
 	connect(_buttonCancel, SIGNAL(clicked()), this, SLOT(reject()));
