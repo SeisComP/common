@@ -5752,6 +5752,13 @@ SWIGINTERN std::list< Seiscomp::TravelTime >::iterator std_list_Sl_Seiscomp_Trav
 SWIGINTERN std::list< Seiscomp::TravelTime >::iterator std_list_Sl_Seiscomp_TravelTime_Sg__insert__SWIG_0(std::list< Seiscomp::TravelTime > *self,std::list< Seiscomp::TravelTime >::iterator pos,std::list< Seiscomp::TravelTime >::value_type const &x){ return self->insert(pos, x); }
 SWIGINTERN void std_list_Sl_Seiscomp_TravelTime_Sg__insert__SWIG_1(std::list< Seiscomp::TravelTime > *self,std::list< Seiscomp::TravelTime >::iterator pos,std::list< Seiscomp::TravelTime >::size_type n,std::list< Seiscomp::TravelTime >::value_type const &x){ self->insert(pos, n, x); }
 
+SWIGINTERNINLINE PyObject*
+  SWIG_From_int  (int value)
+{
+  return PyInt_FromLong((long) value);
+}
+
+
 SWIGINTERN swig_type_info*
 SWIG_pchar_descriptor(void)
 {
@@ -5794,13 +5801,6 @@ SWIGINTERNINLINE PyObject *
 SWIG_From_std_string  (const std::string& s)
 {
   return SWIG_FromCharPtrAndSize(s.data(), s.size());
-}
-
-
-SWIGINTERNINLINE PyObject*
-  SWIG_From_int  (int value)
-{
-  return PyInt_FromLong((long) value);
 }
 
 
@@ -9366,14 +9366,34 @@ SWIGINTERN PyObject *TravelTimeList_internal_swiginit(PyObject *SWIGUNUSEDPARM(s
   return SWIG_Python_InitShadowInstance(args);
 }
 
-SWIGINTERN PyObject *_wrap_new_Regions(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Regions_getFlinnEngdahlRegion__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  Seiscomp::Regions *result = 0 ;
+  double arg1 ;
+  double arg2 ;
+  int *arg3 = (int *) 0 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  int temp3 ;
+  int res3 = SWIG_TMPOBJ ;
+  std::string result;
   
-  if (!SWIG_Python_UnpackTuple(args, "new_Regions", 0, 0, 0)) SWIG_fail;
+  arg3 = &temp3;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "Regions_getFlinnEngdahlRegion" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Regions_getFlinnEngdahlRegion" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
   {
     try {
-      result = (Seiscomp::Regions *)new Seiscomp::Regions();
+      result = Seiscomp::Regions::getFlinnEngdahlRegion(arg1,arg2,arg3);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -9385,10 +9405,108 @@ SWIGINTERN PyObject *_wrap_new_Regions(PyObject *SWIGUNUSEDPARM(self), PyObject 
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Regions, SWIG_POINTER_NEW |  0 );
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  if (SWIG_IsTmpObj(res3)) {
+    resultobj = SWIG_Python_AppendOutput(resultobj, SWIG_From_int((*arg3)));
+  } else {
+    int new_flags = SWIG_IsNewObj(res3) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
+    resultobj = SWIG_Python_AppendOutput(resultobj, SWIG_NewPointerObj((void*)(arg3), SWIGTYPE_p_int, new_flags));
+  }
   return resultobj;
 fail:
   return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Regions_getFlinnEngdahlRegion__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  std::string result;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "Regions_getFlinnEngdahlRegion" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Regions_getFlinnEngdahlRegion" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      result = Seiscomp::Regions::getFlinnEngdahlRegion(arg1,arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Regions_getFlinnEngdahlRegion(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "Regions_getFlinnEngdahlRegion", 0, 2, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_Regions_getFlinnEngdahlRegion__SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_Regions_getFlinnEngdahlRegion__SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Regions_getFlinnEngdahlRegion'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Regions::getFlinnEngdahlRegion(double,double,int *)\n"
+    "    Seiscomp::Regions::getFlinnEngdahlRegion(double,double)\n");
+  return 0;
 }
 
 
@@ -9526,10 +9644,6 @@ SWIGINTERN PyObject *Regions_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObje
   if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
   SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Regions, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
-}
-
-SWIGINTERN PyObject *Regions_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  return SWIG_Python_InitShadowInstance(args);
 }
 
 SWIGINTERN PyObject *_wrap_SensorLocationDelegate_getSensorLocation(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
@@ -17436,13 +17550,12 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_TravelTimeList_internal", _wrap_delete_TravelTimeList_internal, METH_O, "delete_TravelTimeList_internal(TravelTimeList_internal self)"},
 	 { "TravelTimeList_internal_swigregister", TravelTimeList_internal_swigregister, METH_O, NULL},
 	 { "TravelTimeList_internal_swiginit", TravelTimeList_internal_swiginit, METH_VARARGS, NULL},
-	 { "new_Regions", _wrap_new_Regions, METH_NOARGS, "new_Regions() -> Regions"},
+	 { "Regions_getFlinnEngdahlRegion", _wrap_Regions_getFlinnEngdahlRegion, METH_VARARGS, "Regions_getFlinnEngdahlRegion(double lat, double lon) -> std::string"},
 	 { "Regions_load", _wrap_Regions_load, METH_NOARGS, "Regions_load()"},
 	 { "Regions_getRegionName", _wrap_Regions_getRegionName, METH_VARARGS, "Regions_getRegionName(double lat, double lon) -> std::string"},
 	 { "Regions_polyRegions", _wrap_Regions_polyRegions, METH_NOARGS, "Regions_polyRegions() -> Seiscomp::Geo::PolyRegions &"},
 	 { "delete_Regions", _wrap_delete_Regions, METH_O, "delete_Regions(Regions self)"},
 	 { "Regions_swigregister", Regions_swigregister, METH_O, NULL},
-	 { "Regions_swiginit", Regions_swiginit, METH_VARARGS, NULL},
 	 { "SensorLocationDelegate_getSensorLocation", _wrap_SensorLocationDelegate_getSensorLocation, METH_VARARGS, "SensorLocationDelegate_getSensorLocation(SensorLocationDelegate self, Pick pick) -> SensorLocation"},
 	 { "delete_SensorLocationDelegate", _wrap_delete_SensorLocationDelegate, METH_O, "delete_SensorLocationDelegate(SensorLocationDelegate self)"},
 	 { "SensorLocationDelegate_swigregister", SensorLocationDelegate_swigregister, METH_O, NULL},

@@ -307,11 +307,15 @@ class Regions(object):
     r"""Proxy of C++ Seiscomp::Regions class."""
 
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
 
-    def __init__(self):
-        r"""__init__(Regions self) -> Regions"""
-        _seismology.Regions_swiginit(self, _seismology.new_Regions())
+    @staticmethod
+    def getFlinnEngdahlRegion(lat, lon):
+        r"""getFlinnEngdahlRegion(double lat, double lon) -> std::string"""
+        return _seismology.Regions_getFlinnEngdahlRegion(lat, lon)
 
     @staticmethod
     def load():
@@ -331,6 +335,10 @@ class Regions(object):
 
 # Register Regions in _seismology:
 _seismology.Regions_swigregister(Regions)
+
+def Regions_getFlinnEngdahlRegion(lat, lon):
+    r"""Regions_getFlinnEngdahlRegion(double lat, double lon) -> std::string"""
+    return _seismology.Regions_getFlinnEngdahlRegion(lat, lon)
 
 def Regions_load():
     r"""Regions_load()"""
