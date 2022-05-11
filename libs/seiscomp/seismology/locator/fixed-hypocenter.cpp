@@ -385,6 +385,7 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 	vector<double> pickTimes;
 	vector<double> arrivalWeights;
 	vector<double> distances;
+	vector<double> azimuths;
 
 	double slat, slon, sdepth;
 	double rlat, rlon, relev;
@@ -431,8 +432,23 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 	pickTimes.resize(origin->arrivalCount());
 	travelTimes.resize(origin->arrivalCount());
 	arrivalWeights.resize(origin->arrivalCount());
-	if ( recomputeDistance )
+
+	for ( size_t i = 0; i < origin->arrivalCount(); ++i ) {
+		try {
+			origin->arrival(i)->distance();
+			origin->arrival(i)->azimuth();
+		}
+		catch ( ... ) {
+			// If either of the attributes is not set, recompute them
+			recomputeDistance = true;
+		}
+	}
+
+	if ( recomputeDistance ) {
+		SEISCOMP_DEBUG("Recalculation of distances and aizmuths is required");
 		distances.resize(origin->arrivalCount());
+		azimuths.resize(origin->arrivalCount());
+	}
 
 	int activeArrivals = 0;
 
@@ -507,8 +523,8 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 		travelTimes[i] = travelTime;
 
 		if ( recomputeDistance ) {
-			double az, baz;
-			Math::Geo::delazi_wgs84(slat, slon, rlat, rlon, &distances[i], &az, &baz);
+			double baz;
+			Math::Geo::delazi_wgs84(slat, slon, rlat, rlon, &distances[i], &azimuths[i], &baz);
 		}
 
 		try {
@@ -581,6 +597,7 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 
 		if ( recomputeDistance ) {
 			newOrigin->arrival(i)->setDistance(distances[i]);
+			newOrigin->arrival(i)->setAzimuth(azimuths[i]);
 		}
 	}
 
