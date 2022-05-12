@@ -1297,6 +1297,13 @@ std::string TypeMapper::EventTypeToString(EventType type) {
 		case FROST_QUAKE:
 		case TREMOR_PULSE:
 		case SUBMARINE_LANDSLIDE:
+		case ROCKET_LAUNCH:
+		case ROCKET:
+		case ROCKET_IMPACT:
+		case ARTILLERY_STRIKE:
+		case BOMB_DETONATION:
+		case MOVING_AIRCRAFT:
+		case ATMOSPHERIC_METEOR_EXPLOSION:
 			SEISCOMP_DEBUG("mapping unsupported EventType '%s' to 'other event'",
 			               type.toString());
 			return "other event";
