@@ -255,6 +255,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 			bool                      dirty{false};
 			bool                      visible{false};
 			AbstractRecordPolylinePtr poly;
+			QString                   status;
 
 			void reset() {
 				dyMin = dyMax = dOffset  = absMax = 0;
@@ -264,7 +265,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 				poly = nullptr;
 			}
 
-			bool validTrace() {
+			bool validTrace() const {
 				return poly && !poly->isEmpty();
 			}
 		};
@@ -726,11 +727,12 @@ class SC_GUI_API RecordWidget : public QWidget {
 
 		void prepareRecords(Stream *s);
 		void drawRecords(Stream *s, int slot);
-		void drawTrace(QPainter &painter, Trace *trace,
-		               RecordSequence *seq,
+		void drawTrace(QPainter &painter,
+		               const Trace *trace,
+		               const RecordSequence *seq,
 		               const QPen &pen,
-		               const QPoint &paintOffset);
-		void drawRecordBorders(QPainter &painter, RecordSequence *seq);
+		               const QPoint &paintOffset) const;
+		void drawRecordBorders(QPainter &painter, const RecordSequence *seq) const;
 
 		void drawAxis(QPainter &painter, const QPen &p);
 

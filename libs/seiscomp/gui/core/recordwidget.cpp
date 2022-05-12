@@ -868,6 +868,9 @@ void RecordWidget::Stream::free() {
 	traces[0].poly = nullptr;
 	traces[1].poly = nullptr;
 
+	traces[0].status = QString();
+	traces[1].status = QString();
+
 	traces[0].timingQuality = -1;
 	traces[0].timingQualityCount = 0;
 
@@ -1171,6 +1174,8 @@ bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 		stream->records[Stream::Filtered] = nullptr;
 	}
 
+	stream->traces[Stream::Filtered].status = QString();
+
 	if ( stream->records[Stream::Raw] && !stream->records[Stream::Raw]->empty() ) {
 		const Record *rec = stream->records[Stream::Raw]->front().get();
 		double fs = rec->samplingFrequency();
@@ -1182,6 +1187,7 @@ bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 			filterRecords(stream);
 		}
 		catch ( std::exception &e ) {
+			stream->traces[Stream::Filtered].status = e.what();
 			SEISCOMP_ERROR("%s: filter: %s", rec->streamID().c_str(), e.what());
 		}
 	}
@@ -2671,7 +2677,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					painter.fillRect(0, stream->posY, _canvasRect.width(), stream->height, blend(bg, stream->customBackgroundColor));
 
 				if ( (stream->records[Stream::Filtered] && (stream->filtering || _showAllRecords) && stream->traces[Stream::Filtered].dirty) ||
-					(stream->records[Stream::Raw] && (!stream->filtering || _showAllRecords) && stream->traces[Stream::Raw].dirty) ) {
+				     (stream->records[Stream::Raw] && (!stream->filtering || _showAllRecords) && stream->traces[Stream::Raw].dirty) ) {
 					prepareRecords(stream);
 					drawRecords(stream, _currentSlot);
 					emitUpdated = true;
@@ -3068,7 +3074,8 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					painter.translate(QPoint(-x_tmin[1-frontIndex], -_tracePaintOffset));
 				}
 
-				if ( stream->traces[frontIndex].validTrace() ) {
+				auto &trace = stream->traces[frontIndex];
+				if ( trace.validTrace() ) {
 					if ( _drawOffset ) {
 						if ( _drawAxis ) {
 							QPen penOffset(SCScheme.colors.records.offset);
@@ -3078,8 +3085,12 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						else
 							painter.setPen(offsetColor);
 
-						painter.drawLine(0,_tracePaintOffset+stream->traces[frontIndex].poly->baseline(),
-						                 _canvasRect.width(),_tracePaintOffset+stream->traces[frontIndex].poly->baseline());
+						painter.drawLine(
+							0,
+							_tracePaintOffset + trace.poly->baseline(),
+							_canvasRect.width(),
+							_tracePaintOffset + trace.poly->baseline()
+						);
 					}
 
 					if ( stream->antialiasing != isAntialiasing )
@@ -3088,10 +3099,10 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					int hMargin = stream->pen.width()-1;
 					if ( hMargin < 0 ) hMargin = 0;
 
-					drawTrace(painter, &stream->traces[frontIndex],
+					drawTrace(painter, &trace,
 					          stream->records[frontIndex],
-					          QPen(_enabled?stream->pen:fg),
-					          QPoint(x_tmin[frontIndex], _tracePaintOffset+hMargin));
+					          QPen(_enabled ? stream->pen : fg),
+					          QPoint(x_tmin[frontIndex], _tracePaintOffset + hMargin));
 				}
 			}
 			break;
@@ -3138,13 +3149,18 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					painter.translate(QPoint(-x_tmin[1-frontIndex], -_tracePaintOffset - stream->posY));
 				}
 
-				if ( stream->traces[frontIndex].validTrace() ) {
+				auto &trace = stream->traces[frontIndex];
+				if ( trace.validTrace() ) {
 					if ( _drawOffset ) {
 						if ( _drawAxis )
 							painter.setPen(QPen(offsetColor, 1, Qt::DashLine));
 						else
 							painter.setPen(offsetColor);
-						painter.drawLine(0,_tracePaintOffset+stream->traces[frontIndex].poly->baseline() + stream->posY, _canvasRect.width(),_tracePaintOffset+stream->traces[frontIndex].poly->baseline() + stream->posY);
+						painter.drawLine(
+							0, _tracePaintOffset + trace.poly->baseline() + stream->posY,
+							_canvasRect.width(),
+							_tracePaintOffset + trace.poly->baseline() + stream->posY
+						);
 					}
 
 					if ( stream->antialiasing != isAntialiasing )
@@ -3153,9 +3169,9 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					int hMargin = stream->pen.width()-1;
 					if ( hMargin < 0 ) hMargin = 0;
 
-					drawTrace(painter, &stream->traces[frontIndex],
+					drawTrace(painter, &trace,
 					          stream->records[frontIndex],
-					          QPen(_enabled?stream->pen:fg),
+					          QPen(_enabled ? stream->pen : fg),
 					          QPoint(x_tmin[frontIndex], _tracePaintOffset + stream->posY + hMargin));
 				}
 			}
@@ -3224,16 +3240,18 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				x_tmin[1] = int(-(offset[1] + _tmin)*_pixelPerSecond);
 
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
-				if ( stream->traces[frontIndex].validTrace() ) {
+				auto &trace = stream->traces[frontIndex];
+
+				if ( trace.validTrace() ) {
 					if ( stream->antialiasing != isAntialiasing )
 						painter.setRenderHint(QPainter::Antialiasing, isAntialiasing = stream->antialiasing);
 
 					int hMargin = stream->pen.width()-1;
 					if ( hMargin < 0 ) hMargin = 0;
 
-					drawTrace(painter, &stream->traces[frontIndex],
+					drawTrace(painter, &trace,
 					          stream->records[frontIndex],
-					          QPen(_enabled?stream->pen:fg),
+					          QPen(_enabled ? stream->pen : fg),
 					          QPoint(x_tmin[frontIndex], _tracePaintOffset + hMargin));
 				}
 			}
@@ -3353,7 +3371,9 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 			if ( stream ) {
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
-				if ( stream->traces[frontIndex].validTrace() ) {
+				auto &trace = stream->traces[frontIndex];
+
+				if ( trace.validTrace() ) {
 					painter.setPen(fg);
 					font.setBold(false);
 					painter.setFont(font);
@@ -3362,30 +3382,30 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						QString str;
 						if ( _showScaledValues )
 							str = tr("amax: %1 %2")
-							      .arg(stream->traces[frontIndex].absMax*stream->scale)
+							      .arg(trace.absMax*stream->scale)
 							      .arg(stream->axisLabel);
 						else
 							str = tr("amax: %1 %2")
-							      .arg(stream->traces[frontIndex].absMax, 0, 'f', _valuePrecision)
+							      .arg(trace.absMax, 0, 'f', _valuePrecision)
 							      .arg(stream->axisLabel);
 
-						int rh = 2*painter.fontMetrics().ascent()+4;
+						int rh = 2 * painter.fontMetrics().ascent() + 4;
 						int y = stream->height - rh;
 						if  ( y < 0 ) y = 0;
 
-						painter.drawText(0,y, w,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignTop, str);
+						painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignTop, str);
 
 						if ( stream->height >= y+rh ) {
 							if ( _showScaledValues )
 								str = tr("mean: %1 %2")
-								      .arg(stream->traces[frontIndex].dOffset*stream->scale)
+								      .arg(trace.dOffset*stream->scale)
 								      .arg(stream->axisLabel);
 							else
 								str = tr("mean: %1 %2")
-								      .arg(stream->traces[frontIndex].dOffset, 0, 'f', _valuePrecision)
+								      .arg(trace.dOffset, 0, 'f', _valuePrecision)
 								      .arg(stream->axisLabel);
 
-							painter.drawText(0,y, w,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
+							painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
 						}
 					}
 
@@ -3396,6 +3416,15 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						painter.drawText(0,0, w,streamHeight, Qt::TextSingleLine | Qt::AlignRight | Qt::AlignTop, str);
 					}
 					*/
+				}
+
+				if ( !trace.status.isEmpty() ) {
+					painter.setPen(fg);
+					painter.drawText(4, stream->posY,
+					                 _canvasRect.width() - 4,
+					                 stream->height - 4,
+					                 Qt::AlignLeft | Qt::AlignBottom,
+					                 trace.status);
 				}
 
 				if ( !stream->id.isEmpty() && _drawRecordID ) {
@@ -3420,7 +3449,9 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				if ( stream == nullptr ) continue;
 
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
-				if ( stream->traces[frontIndex].validTrace() ) {
+				auto &trace = stream->traces[frontIndex];
+
+				if ( trace.validTrace() ) {
 					painter.setPen(fg);
 					font.setBold(false);
 					painter.setFont(font);
@@ -3430,31 +3461,40 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 						if ( _showScaledValues )
 							str = tr("amax: %1 %2")
-							      .arg(stream->traces[frontIndex].absMax*stream->scale)
+							      .arg(trace.absMax*stream->scale)
 							      .arg(stream->axisLabel);
 						else
 							str = tr("amax: %1 %2")
-							      .arg(stream->traces[frontIndex].absMax, 0, 'f', _valuePrecision)
+							      .arg(trace.absMax, 0, 'f', _valuePrecision)
 							      .arg(stream->axisLabel);
 
 						int rh = 2*painter.fontMetrics().ascent()+4;
 						int y = stream->posY + stream->height - rh;
 						if ( y < stream->posY ) y = stream->posY;
 
-						painter.drawText(0,y, w,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignTop, str);
+						painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignTop, str);
 
 						if ( stream->posY+stream->height >= y+rh ) {
 							if ( _showScaledValues )
 								str = tr("mean: %1 %2")
-								      .arg(stream->traces[frontIndex].dOffset*stream->scale)
+								      .arg(trace.dOffset*stream->scale)
 								      .arg(stream->axisLabel);
 							else
 								str = tr("mean: %1 %2")
-								      .arg(stream->traces[frontIndex].dOffset, 0, 'f', _valuePrecision)
+								      .arg(trace.dOffset, 0, 'f', _valuePrecision)
 								      .arg(stream->axisLabel);
-							painter.drawText(0,y, w,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
+							painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
 						}
 					}
+				}
+
+				if ( !trace.status.isEmpty() ) {
+					painter.setPen(fg);
+					painter.drawText(4, stream->posY,
+					                 _canvasRect.width() - 4,
+					                 stream->height - 4,
+					                 Qt::AlignLeft | Qt::AlignBottom,
+					                 trace.status);
 				}
 
 				if ( !stream->id.isEmpty() && _drawRecordID ) {
@@ -3520,7 +3560,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					int y = stream->height - rh;
 					if ( y < 0 ) y = 0;
 
-					painter.drawText(0,y, w,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignTop, str);
+					painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignTop, str);
 
 					if ( stream->height >= y+rh ) {
 						if ( _showScaledValues )
@@ -3531,7 +3571,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 							str = tr("mean: %1 %2")
 							      .arg(offset, 0, 'f', _valuePrecision)
 							      .arg(stream->axisLabel);
-						painter.drawText(0,y, w,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
+						painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
 					}
 				}
 			}
@@ -4052,6 +4092,8 @@ bool RecordWidget::createFilter(int slot) {
 		return true;
 	}
 
+	s->traces[Stream::Filtered].status = QString();
+
 	if (s->records[Stream::Raw] && !s->records[Stream::Raw]->empty()) {
 		const Record *rec = s->records[Stream::Raw]->front().get();
 		double fs = rec->samplingFrequency();
@@ -4066,6 +4108,7 @@ bool RecordWidget::createFilter(int slot) {
 				filterRecords(s);
 			}
 			catch ( std::exception &e ) {
+				s->traces[Stream::Filtered].status = e.what();
 				SEISCOMP_ERROR("%s: filter: %s", rec->streamID().c_str(), e.what());
 			}
 			return true;
@@ -4877,15 +4920,14 @@ QVariant RecordWidget::data() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::drawTrace(QPainter &painter, Trace *trace,
-                             RecordSequence *seq, const QPen &pen,
-                             const QPoint &paintOffset) {
+void RecordWidget::drawTrace(QPainter &painter,
+                             const Trace *trace,
+                             const RecordSequence *seq, const QPen &pen,
+                             const QPoint &paintOffset) const {
 	painter.setPen(pen);
 	painter.translate(paintOffset);
 	trace->poly->draw(painter);
-
 	drawRecordBorders(painter, seq);
-
 	painter.translate(paintOffset * -1);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4894,7 +4936,7 @@ void RecordWidget::drawTrace(QPainter &painter, Trace *trace,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::drawRecordBorders(QPainter &painter, RecordSequence *seq) {
+void RecordWidget::drawRecordBorders(QPainter &painter, const RecordSequence *seq) const {
 	if ( !_showRecordBorders ) return;
 
 	painter.setRenderHint(QPainter::Antialiasing, false);
