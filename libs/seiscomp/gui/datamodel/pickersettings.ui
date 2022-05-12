@@ -1575,9 +1575,9 @@
  </widget>
  <pixmapfunction></pixmapfunction>
  <tabstops>
-  <tabstop>spinPVel</tabstop>
-  <tabstop>cbComputeMagnitudesAfterRelocate</tabstop>
-  <tabstop>cbComputeMagnitudesSilently</tabstop>
+  <tabstop>okButton</tabstop>
+  <tabstop>saveButton</tabstop>
+  <tabstop>cancelButton</tabstop>
   <tabstop>cbAskForMagnitudeTypes</tabstop>
   <tabstop>cbComputeMissingTakeOffAngles</tabstop>
   <tabstop>cbMaplines</tabstop>
@@ -1625,9 +1625,12 @@
   <tabstop>btnRemoveAmplitudeFilter</tabstop>
   <tabstop>btnMoveAmplitudeFilterUp</tabstop>
   <tabstop>btnMoveAmplitudeFilterDown</tabstop>
-  <tabstop>saveButton</tabstop>
-  <tabstop>okButton</tabstop>
-  <tabstop>cancelButton</tabstop>
+  <tabstop>cbComputeMagnitudesAfterRelocate</tabstop>
+  <tabstop>spinPVel</tabstop>
+  <tabstop>cbComputeMagnitudesSilently</tabstop>
+  <tabstop>cbIgnoreDisabledStations</tabstop>
+  <tabstop>checkIntegrationPreFilterOnce</tabstop>
+  <tabstop>editIntegrationPreFilter</tabstop>
  </tabstops>
  <resources>
   <include location="icons.qrc" />
