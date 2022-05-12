@@ -31457,6 +31457,42 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_RecordIIRFilterF_lastError(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::IO::RecordIIRFilter< float > *arg1 = (Seiscomp::IO::RecordIIRFilter< float > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::string *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__RecordIIRFilterT_float_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RecordIIRFilterF_lastError" "', argument " "1"" of type '" "Seiscomp::IO::RecordIIRFilter< float > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::IO::RecordIIRFilter< float > * >(argp1);
+  {
+    try {
+      result = (std::string *) &((Seiscomp::IO::RecordIIRFilter< float > const *)arg1)->lastError();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_basic_string_Sl_char_Sg_(static_cast< std::basic_string<char> >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_RecordIIRFilterF_feed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::IO::RecordIIRFilter< float > *arg1 = (Seiscomp::IO::RecordIIRFilter< float > *) 0 ;
@@ -31965,6 +32001,42 @@ SWIGINTERN PyObject *_wrap_RecordIIRFilterD___nonzero__(PyObject *SWIGUNUSEDPARM
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_RecordIIRFilterD_lastError(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::IO::RecordIIRFilter< double > *arg1 = (Seiscomp::IO::RecordIIRFilter< double > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::string *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__RecordIIRFilterT_double_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RecordIIRFilterD_lastError" "', argument " "1"" of type '" "Seiscomp::IO::RecordIIRFilter< double > const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::IO::RecordIIRFilter< double > * >(argp1);
+  {
+    try {
+      result = (std::string *) &((Seiscomp::IO::RecordIIRFilter< double > const *)arg1)->lastError();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_basic_string_Sl_char_Sg_(static_cast< std::basic_string<char> >(*result));
   return resultobj;
 fail:
   return NULL;
@@ -36785,6 +36857,7 @@ static PyMethodDef SwigMethods[] = {
 		""},
 	 { "RecordIIRFilterF_apply", _wrap_RecordIIRFilterF_apply, METH_VARARGS, "RecordIIRFilterF_apply(RecordIIRFilterF self, GenericRecord rec) -> bool"},
 	 { "RecordIIRFilterF___nonzero__", _wrap_RecordIIRFilterF___nonzero__, METH_O, "RecordIIRFilterF___nonzero__(RecordIIRFilterF self) -> bool"},
+	 { "RecordIIRFilterF_lastError", _wrap_RecordIIRFilterF_lastError, METH_O, "RecordIIRFilterF_lastError(RecordIIRFilterF self) -> string"},
 	 { "RecordIIRFilterF_feed", _wrap_RecordIIRFilterF_feed, METH_VARARGS, "RecordIIRFilterF_feed(RecordIIRFilterF self, Record rec) -> Record"},
 	 { "RecordIIRFilterF_flush", _wrap_RecordIIRFilterF_flush, METH_O, "RecordIIRFilterF_flush(RecordIIRFilterF self) -> Record"},
 	 { "RecordIIRFilterF_reset", _wrap_RecordIIRFilterF_reset, METH_O, "RecordIIRFilterF_reset(RecordIIRFilterF self)"},
@@ -36800,6 +36873,7 @@ static PyMethodDef SwigMethods[] = {
 		""},
 	 { "RecordIIRFilterD_apply", _wrap_RecordIIRFilterD_apply, METH_VARARGS, "RecordIIRFilterD_apply(RecordIIRFilterD self, GenericRecord rec) -> bool"},
 	 { "RecordIIRFilterD___nonzero__", _wrap_RecordIIRFilterD___nonzero__, METH_O, "RecordIIRFilterD___nonzero__(RecordIIRFilterD self) -> bool"},
+	 { "RecordIIRFilterD_lastError", _wrap_RecordIIRFilterD_lastError, METH_O, "RecordIIRFilterD_lastError(RecordIIRFilterD self) -> string"},
 	 { "RecordIIRFilterD_feed", _wrap_RecordIIRFilterD_feed, METH_VARARGS, "RecordIIRFilterD_feed(RecordIIRFilterD self, Record rec) -> Record"},
 	 { "RecordIIRFilterD_flush", _wrap_RecordIIRFilterD_flush, METH_O, "RecordIIRFilterD_flush(RecordIIRFilterD self) -> Record"},
 	 { "RecordIIRFilterD_reset", _wrap_RecordIIRFilterD_reset, METH_O, "RecordIIRFilterD_reset(RecordIIRFilterD self)"},

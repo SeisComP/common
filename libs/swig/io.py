@@ -2133,6 +2133,10 @@ class RecordIIRFilterF(RecordFilterInterface):
 
 
 
+    def lastError(self):
+        r"""lastError(RecordIIRFilterF self) -> string"""
+        return _io.RecordIIRFilterF_lastError(self)
+
     def feed(self, rec):
         r"""feed(RecordIIRFilterF self, Record rec) -> Record"""
         return _io.RecordIIRFilterF_feed(self, rec)
@@ -2183,6 +2187,10 @@ class RecordIIRFilterD(RecordFilterInterface):
     __bool__ = __nonzero__
 
 
+
+    def lastError(self):
+        r"""lastError(RecordIIRFilterD self) -> string"""
+        return _io.RecordIIRFilterD_lastError(self)
 
     def feed(self, rec):
         r"""feed(RecordIIRFilterD self, Record rec) -> Record"""
