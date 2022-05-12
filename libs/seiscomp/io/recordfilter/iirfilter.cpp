@@ -164,11 +164,13 @@ bool RecordIIRFilter<T>::apply(GenericRecord *rec) {
 		try {
 			_filter->setSamplingFrequency(_samplingFrequency);
 			_filter->setStreamID(rec->networkCode(), rec->stationCode(), rec->locationCode(), rec->channelCode());
+			_lastError = std::string();
 		}
 		catch ( std::exception &e ) {
 			SEISCOMP_WARNING("[%s] apply %f sps: %s",
 			                 rec->streamID().c_str(), _samplingFrequency,
 			                 e.what());
+			_lastError = e.what();
 			return false;
 		}
 	}
@@ -206,6 +208,7 @@ void RecordIIRFilter<T>::reset() {
 
 	// Reset last end time
 	_lastEndTime = Core::Time();
+	_lastError = std::string();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -79,6 +79,9 @@ class SC_SYSTEM_CORE_API RecordIIRFilter : public RecordFilterInterface {
 		//! The bool operator returns if an IIR filter is set or not
 		operator bool() const { return _filter != nullptr; }
 
+		//! Returns the last error in case feed or apply returned nullptr or false.
+		const std::string &lastError() const;
+
 
 	// ------------------------------------------------------------------
 	//  RecordFilter interface
@@ -103,7 +106,14 @@ class SC_SYSTEM_CORE_API RecordIIRFilter : public RecordFilterInterface {
 		InplaceFilterType *_filter;
 		Core::Time         _lastEndTime;
 		double             _samplingFrequency;
+		std::string        _lastError;
 };
+
+
+template <typename T>
+inline const std::string &RecordIIRFilter<T>::lastError() const {
+	return _lastError;
+}
 
 
 }
