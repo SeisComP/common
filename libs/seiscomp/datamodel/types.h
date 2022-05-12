@@ -273,7 +273,14 @@ MAKEENUM(
 		CALVING,
 		FROST_QUAKE,
 		TREMOR_PULSE,
-		SUBMARINE_LANDSLIDE
+		SUBMARINE_LANDSLIDE,
+		ROCKET_LAUNCH,
+		ROCKET,
+		ROCKET_IMPACT,
+		ARTILLERY_STRIKE,
+		BOMB_DETONATION,
+		MOVING_AIRCRAFT,
+		ATMOSPHERIC_METEOR_EXPLOSION
 	),
 	ENAMES(
 		"not existing",
@@ -328,7 +335,14 @@ MAKEENUM(
 		"calving",
 		"frost quake",
 		"tremor pulse",
-		"submarine landslide"
+		"submarine landslide",
+		"rocket launch",
+		"rocket",
+		"rocket impact",
+		"artillery strike",
+		"bomb detonation",
+		"moving aircraft",
+		"atmospheric meteor explosion"
 	)
 );
 
