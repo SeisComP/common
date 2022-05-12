@@ -1919,6 +1919,7 @@ void AmplitudeView::init() {
 	SC_D.currentRecord->setRowSpacing(6);
 	SC_D.currentRecord->setAxisSpacing(6);
 	SC_D.currentRecord->setDrawAxis(true);
+	SC_D.currentRecord->setDrawSPS(true);
 	SC_D.currentRecord->setAxisPosition(RecordWidget::Left);
 
 	//_currentRecord->setFocusPolicy(Qt::StrongFocus);

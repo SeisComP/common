@@ -916,12 +916,8 @@ void RecordWidget::init() {
 	_shadowWidget = nullptr;
 	_shadowWidgetFlags = Raw;
 	_markerSourceWidget = nullptr;
-	_filtering = false;
 	_drawMode = Single;
 	_recordBorderDrawMode = SCScheme.records.recordBorders.drawMode;
-	_clipRows = true;
-	_drawOffset = true;
-	_drawRecordID = true;
 	_axisPosition = Left;
 	_axisSpacing = 4;
 	_rowSpacing = 0;
@@ -931,14 +927,10 @@ void RecordWidget::init() {
 	_currentSlot = _requestedSlot = 0;
 	_maxFilterSlot = -1;
 
-	_useFixedAmplitudeRange = false;
-	_useMinAmplitudeRange = false;
-
 	_amplScale = 0;
 	_tmin = 0;
 	_tmax = 0;
 	_smin = _smax = 0;
-	_active = false;
 	_gridHSpacing[0] = _gridHSpacing[1] = 0;
 	_gridVSpacing[0] = _gridVSpacing[1] = 0;
 	_gridHOffset = _gridVOffset = 0;
@@ -950,13 +942,6 @@ void RecordWidget::init() {
 
 	// pick/arrival times
 	_alignment = Core::Time(0.);
-
-	_drawRecords = false;
-	_showAllRecords = false;
-	_showRecordBorders = false;
-	_showScaledValues = false;
-	_autoMaxScale = false;
-	_useGlobalOffset = false;
 
 	_activeMarker = nullptr;
 	_hoveredMarker = nullptr;
@@ -1659,6 +1644,16 @@ RecordWidget::DrawMode RecordWidget::drawMode() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::setDrawOffset(bool f) {
 	_drawOffset = f;
+	update();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordWidget::setDrawSPS(bool f) {
+	_drawSPS = f;
 	update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3429,6 +3424,15 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						}
 					}
 
+					if ( _drawSPS && stream->records[frontIndex] ) {
+						painter.drawText(
+							0, 0, _canvasRect.width() - 4, stream->height,
+							Qt::TextSingleLine | Qt::AlignRight | Qt::AlignBottom,
+							QString("%1 sps")
+							.arg(stream->records[frontIndex]->front()->samplingFrequency())
+						);
+					}
+
 					/*
 					// Draw timing quality
 					if ( stream->traces[Stream::Raw].timingQuality > 0 ) {
@@ -3505,6 +3509,15 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 								      .arg(stream->axisLabel);
 							painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
 						}
+					}
+
+					if ( _drawSPS && stream->records[frontIndex] ) {
+						painter.drawText(
+							0, stream->posY, _canvasRect.width()-4, stream->height,
+							Qt::TextSingleLine | Qt::AlignRight | Qt::AlignBottom,
+							QString("%1 sps")
+							.arg(stream->records[frontIndex]->front()->samplingFrequency())
+						);
 					}
 				}
 
@@ -3598,6 +3611,15 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 							      .arg(stream->axisLabel);
 						painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
 					}
+				}
+
+				if ( _drawSPS && stream->records[frontIndex] ) {
+					painter.drawText(
+						0, 0, _canvasRect.width()-4, stream->height,
+						Qt::TextSingleLine | Qt::AlignRight | Qt::AlignBottom,
+						QString("%1 sps")
+						.arg(stream->records[frontIndex]->front()->samplingFrequency())
+					);
 				}
 			}
 			break;

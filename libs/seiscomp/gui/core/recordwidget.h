@@ -335,6 +335,9 @@ class SC_GUI_API RecordWidget : public QWidget {
 		void setDrawOffset(bool f);
 		bool drawOffset() const { return _drawOffset; }
 
+		void setDrawSPS(bool f);
+		bool drawSPS() const { return _drawSPS; }
+
 		void setDrawRecordID(bool f);
 		bool drawRecordID() const { return _drawRecordID; }
 
@@ -748,7 +751,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 		DrawMode             _drawMode;
 		RecordBorderDrawMode _recordBorderDrawMode;
 		Seiscomp::Core::Time _alignment;
-		bool                 _clipRows;
+		bool                 _clipRows{true};
 	
 		double               _tmin;            // time range min
 		double               _tmax;            // time range max
@@ -764,21 +767,22 @@ class SC_GUI_API RecordWidget : public QWidget {
 		double               _gridVScale;
 
 		double               _amplitudeRange[2];
-		bool                 _useFixedAmplitudeRange;
-		bool                 _useMinAmplitudeRange;
+		bool                 _useFixedAmplitudeRange{false};
+		bool                 _useMinAmplitudeRange{false};
 
-		bool                 _active;
-		bool                 _filtering;
-		bool                 _showScaledValues;
+		bool                 _active{false};
+		bool                 _filtering{false};
+		bool                 _showScaledValues{false};
 
-		bool                 _drawRecords;
-		bool                 _drawRecordID;
-		bool                 _drawOffset;
-		bool                 _showAllRecords;
-		bool                 _showRecordBorders;
-		bool                 _autoMaxScale;
+		bool                 _drawRecords{false};
+		bool                 _drawRecordID{true};
+		bool                 _drawOffset{true};
+		bool                 _drawSPS{false};
+		bool                 _showAllRecords{false};
+		bool                 _showRecordBorders{false};
+		bool                 _autoMaxScale{false};
 		bool                 _enabled;
-		bool                 _useGlobalOffset;
+		bool                 _useGlobalOffset{false};
 		bool                 _drawAxis;
 
 		int                  _tracePaintOffset;
