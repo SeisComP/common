@@ -1603,21 +1603,6 @@ namespace Gui {
 namespace PrivatePickerView {
 
 
-ThreeComponentTrace::ThreeComponentTrace() {
-	widget = nullptr;
-	enableTransformation = false;
-	enableL2Horizontals = false;
-
-	for ( int i = 0; i < 3; ++i ) {
-		traces[i].raw = nullptr;
-		traces[i].transformed = nullptr;
-		traces[i].thread = nullptr;
-		traces[i].filter = nullptr;
-		traces[i].passthrough = false;
-	}
-}
-
-
 ThreeComponentTrace::~ThreeComponentTrace() {
 	for ( int i = 0; i < 3; ++i ) {
 		if ( traces[i].raw ) delete traces[i].raw;
@@ -1636,7 +1621,10 @@ void ThreeComponentTrace::reset() {
 			delete traces[i].transformed;
 			traces[i].transformed = nullptr;
 
-			if ( widget ) widget->setRecords(i, nullptr);
+			if ( widget ) {
+				widget->setRecords(i, nullptr);
+				widget->setRecordStatus(i, false, QString());
+			}
 		}
 	}
 
@@ -1653,7 +1641,10 @@ void ThreeComponentTrace::setFilter(RecordWidget::Filter *f) {
 			delete traces[i].transformed;
 			traces[i].transformed = nullptr;
 
-			if ( widget ) widget->setRecords(i, nullptr);
+			if ( widget ) {
+				widget->setRecords(i, nullptr);
+				widget->setRecordStatus(i, false, QString());
+			}
 		}
 	}
 
@@ -1670,8 +1661,10 @@ void ThreeComponentTrace::setRecordWidget(RecordWidget *w) {
 	widget = w;
 
 	if ( widget ) {
-		for ( int i = 0; i < 3; ++i )
+		for ( int i = 0; i < 3; ++i ) {
 			widget->setRecords(i, traces[i].transformed, false);
+			widget->setRecordStatus(i, false, traces[i].filter.lastError().c_str());
+		}
 		connect(widget, SIGNAL(destroyed(QObject*)), this, SLOT(widgetDestroyed(QObject*)));
 	}
 }
@@ -1748,15 +1741,24 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 		if ( traces[comp].passthrough || !enableTransformation ) {
 			if ( traces[comp].transformed == nullptr ) {
 				traces[comp].transformed = new RingBuffer(0);
-				if ( widget ) widget->setRecords(comp, traces[comp].transformed, false);
+				if ( widget ) {
+					widget->setRecords(comp, traces[comp].transformed, false);
+				}
 			}
 
 			RecordPtr grec = traces[comp].filter.feed(rec);
 
 			if ( grec ) {
 				traces[comp].transformed->feed(grec.get());
-				if ( widget ) widget->fed(comp, grec.get());
+				if ( widget ) {
+					widget->fed(comp, grec.get());
+				}
 				gotRecords = true;
+			}
+			else {
+				if ( widget ) {
+					widget->setRecordStatus(comp, false, traces[comp].filter.lastError().c_str());
+				}
 			}
 		}
 	}
@@ -1787,14 +1789,23 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 
 				if ( traces[i].transformed == nullptr ) {
 					traces[i].transformed = new RingBuffer(0);
-					if ( widget ) widget->setRecords(i, traces[i].transformed, false);
+					if ( widget ) {
+						widget->setRecords(i, traces[i].transformed, false);
+					}
 				}
 
 				RecordPtr grec = traces[i].filter.feed(s_rec);
 				if ( grec ) {
 					traces[i].transformed->feed(grec.get());
-					if ( widget ) widget->fed(i, grec.get());
+					if ( widget ) {
+						widget->fed(i, grec.get());
+					}
 					gotRecords = true;
+				}
+				else {
+					if ( widget ) {
+						widget->setRecordStatus(i, false, traces[i].filter.lastError().c_str());
+					}
 				}
 			}
 		}
@@ -2030,21 +2041,42 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 
 			// And filter
 			for ( int i = 0; i < 3; ++i ) {
-				traces[i].filter.apply(comps[i].get());
+				if ( !traces[i].filter.apply(comps[i].get()) ) {
+					comps[i] = nullptr;
+					if ( widget ) {
+						widget->setRecordStatus(i, false, traces[i].filter.lastError().c_str());
+					}
+				}
 			}
 
 			// Create record sequences
 			for ( int i = 0; i < 3; ++i ) {
 				if ( traces[i].passthrough ) continue;
+				if ( !comps[i] ) {
+					if ( traces[i].transformed ) {
+						delete traces[i].transformed;
+						traces[i].transformed = nullptr;
+					}
+
+					if ( widget ) {
+						widget->setRecords(i, traces[i].transformed, false);
+					}
+
+					continue;
+				}
 
 				// Create ring buffer without limit if needed
-				if ( traces[i].transformed == nullptr ) {
+				if ( !traces[i].transformed ) {
 					traces[i].transformed = new RingBuffer(0);
-					if ( widget ) widget->setRecords(i, traces[i].transformed, false);
+					if ( widget ) {
+						widget->setRecords(i, traces[i].transformed, false);
+					}
 				}
 
 				traces[i].transformed->feed(comps[i].get());
-				if ( widget ) widget->fed(i, comps[i].get());
+				if ( widget ) {
+					widget->fed(i, comps[i].get());
+				}
 			}
 
 			minStartTime = minEndTime;

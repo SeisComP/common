@@ -1432,6 +1432,24 @@ bool RecordWidget::setRecordUserData(int slot, QVariant data) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool RecordWidget::setRecordStatus(int slot, bool filtered, QString status) {
+	Stream *stream = getStream(slot);
+	if ( stream == nullptr ) return false;
+
+	stream->traces[filtered ? 1 : 0].status = status;
+	update();
+
+	if ( _shadowWidget )
+		_shadowWidget->setRecordStatus(slot, filtered, status);
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QString RecordWidget::recordID(int slot) const {
 	const Stream *stream = getStream(slot);
 	if ( stream == nullptr ) return QString();
@@ -1830,6 +1848,8 @@ void RecordWidget::setShadowWidget(RecordWidget *shadow, bool copyMarker, int fl
 		_shadowWidget->setRecordID(i, _streams[i]->id);
 		_shadowWidget->setRecordLabel(i, _streams[i]->axisLabel);
 		_shadowWidget->setRecordVisible(i, _streams[i]->visible);
+		_shadowWidget->setRecordStatus(i, false, _streams[i]->traces[0].status);
+		_shadowWidget->setRecordStatus(i, true, _streams[i]->traces[1].status);
 
 		if ( _streams[i]->hasCustomBackgroundColor )
 			_shadowWidget->setRecordBackgroundColor(i, _streams[i]->customBackgroundColor);
@@ -3489,7 +3509,12 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				}
 
 				if ( !trace.status.isEmpty() ) {
-					painter.setPen(fg);
+					if ( !trace.validTrace() ) {
+						painter.setPen(fg);
+						font.setBold(false);
+						painter.setFont(font);
+					}
+
 					painter.drawText(4, stream->posY,
 					                 _canvasRect.width() - 4,
 					                 stream->height - 4,

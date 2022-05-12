@@ -974,21 +974,6 @@ namespace Gui {
 namespace PrivateAmplitudeView {
 
 
-ThreeComponentTrace::ThreeComponentTrace() {
-	widget = nullptr;
-	enableTransformation = false;
-	showProcessed = false;
-
-	for ( int i = 0; i < 3; ++i ) {
-		traces[i].raw = nullptr;
-		traces[i].transformed = nullptr;
-		traces[i].processed = nullptr;
-		traces[i].thread = nullptr;
-		traces[i].filter = nullptr;
-	}
-}
-
-
 ThreeComponentTrace::~ThreeComponentTrace() {
 	for ( int i = 0; i < 3; ++i ) {
 		if ( traces[i].raw ) delete traces[i].raw;

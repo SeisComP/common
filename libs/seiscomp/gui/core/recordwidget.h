@@ -299,6 +299,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 		bool setRecordFilter(int slot, const Filter *f);
 		bool setRecordScale(int slot, double scale);
 		bool setRecordUserData(int slot, QVariant data);
+		bool setRecordStatus(int slot, bool filtered, QString status);
 
 		RecordSequence *records() const;
 		RecordSequence *records(int slot) const;

@@ -70,7 +70,7 @@ class SC_GUI_API ThreeComponentTrace : public QObject {
 	Q_OBJECT
 
 	public:
-		ThreeComponentTrace();
+		ThreeComponentTrace() = default;
 		~ThreeComponentTrace();
 
 	public:
@@ -100,20 +100,20 @@ class SC_GUI_API ThreeComponentTrace : public QObject {
 		struct Component {
 			std::string           channelCode;
 			int                   recordSlot;
-			RecordSequence       *raw;
-			RecordSequence       *transformed;
-			RecordSequence       *processed;
-			RecordWidget::Filter *filter;
-			RecordStreamThread   *thread;
+			RecordSequence       *raw{nullptr};
+			RecordSequence       *transformed{nullptr};
+			RecordSequence       *processed{nullptr};
+			RecordWidget::Filter *filter{nullptr};
+			RecordStreamThread   *thread{nullptr};
 		};
 
 		AmplitudeRecordLabel *label;
 		Math::Matrix3d        transformation;
 		Component             traces[3];
 		std::string           filterID;
-		RecordWidget         *widget;
-		bool                  enableTransformation;
-		bool                  showProcessed;
+		RecordWidget         *widget{nullptr};
+		bool                  enableTransformation{false};
+		bool                  showProcessed{false};
 };
 
 

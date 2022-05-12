@@ -73,7 +73,7 @@ class SC_GUI_API ThreeComponentTrace : public QObject {
 	Q_OBJECT
 
 	public:
-		ThreeComponentTrace();
+		ThreeComponentTrace() = default;
 		~ThreeComponentTrace();
 
 	public:
@@ -93,19 +93,19 @@ class SC_GUI_API ThreeComponentTrace : public QObject {
 
 		// One component
 		struct Component {
-			std::string           channelCode;
-			RecordSequence       *raw;
-			RecordSequence       *transformed;
-			Filter                filter;
-			RecordStreamThread   *thread;
-			bool                  passthrough;
+			std::string         channelCode;
+			RecordSequence     *raw{nullptr};
+			RecordSequence     *transformed{nullptr};
+			Filter              filter{nullptr};
+			RecordStreamThread *thread{nullptr};
+			bool                passthrough{false};
 		};
 
 		Math::Matrix3d  transformation;
 		Component       traces[3];
-		RecordWidget   *widget;
-		bool            enableTransformation;
-		bool            enableL2Horizontals;
+		RecordWidget   *widget{nullptr};
+		bool            enableTransformation{false};
+		bool            enableL2Horizontals{false};
 };
 
 
