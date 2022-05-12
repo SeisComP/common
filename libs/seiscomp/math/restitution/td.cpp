@@ -22,6 +22,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <algorithm>
 #include <math.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/math/restitution/td.h>
@@ -637,7 +638,9 @@ TimeDomainGeneric<TYPE>::init()
 	PAZStatus status = checkPAZ(*paz, p1, p2);
 
 	success = false;
-	const std::string& gainUnit = stream->gainUnit();
+	std::string gainUnit = stream->gainUnit();
+	// to upper case
+	std::transform(gainUnit.begin(), gainUnit.end(), gainUnit.begin(), ::toupper);
 
 	switch(status) {
 	case TD_FOUND_EMPTY_PAZ:
@@ -702,9 +705,9 @@ TimeDomainGeneric<TYPE>::init()
 
 	// make sure fmax <= 90% of Nyquist frequency
 	if (fsamp > 0 && fmax > 0.45*fsamp) {
-		std::cerr << "adjusting fmax from " << fmax;
+//		std::cerr << "adjusting fmax from " << fmax;
 		fmax = 0.45*fsamp;
-		std::cerr << " to " << fmax << std::endl;
+//		std::cerr << " to " << fmax << std::endl;
 	}
 	if (filter)
 		filter->setBandpass(order, fmin, fmax);
