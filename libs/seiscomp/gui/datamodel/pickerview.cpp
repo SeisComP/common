@@ -2029,8 +2029,9 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 			}
 
 			// And filter
-			for ( int i = 0; i < 3; ++i )
+			for ( int i = 0; i < 3; ++i ) {
 				traces[i].filter.apply(comps[i].get());
+			}
 
 			// Create record sequences
 			for ( int i = 0; i < 3; ++i ) {
@@ -8854,7 +8855,7 @@ bool PickerView::applyFilter(RecordViewItem *item) {
 					chainFilter.add(new Math::Filtering::IIRDifferentiate<double>());
 			}
 			else {
-				Math::Filtering::InPlaceFilter<double> *preFilter = nullptr;
+				RecordWidget::Filter *preFilter = nullptr;
 
 				for ( int s = 0; s < integrationSteps; ++s ) {
 					if ( !SC_D.config.onlyApplyIntegrationFilterOnce || (s == 0) ) {
