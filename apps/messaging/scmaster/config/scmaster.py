@@ -96,7 +96,7 @@ class Module(kernel.CoreModule):
         if not self.messaging:
             print("[kernel] {} is disabled by config".format(self.name),
                   file=sys.stderr)
-            return 0
+            return 1
 
         appConfig = system.Environment.Instance().appConfigFileName(self.name)
         localConfig = system.Environment.Instance().configFileName(self.name)
