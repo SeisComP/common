@@ -1,19 +1,29 @@
-MLv is the Richter (1935) magnitude measured on the vertical component.
+MLv is the local (Richter) magnitude (:cite:t:`richter-1935`) computed from amplitudes measured on the
+vertical component.
+
+General (default) conditions apply:
+
+* Amplitude unit in SeisComP: **millimeter** (mm) by Wood-Anderson simulation.
+* Time window: 150 s by :ref:`scautopick` or distance dependent, configurable.
+* Default distance range: 0 - 8 deg,  maximum is configurable
+  :confval:`magnitudes.MLv.maxDistanceKm`, measurements beyond 8 deg will be
+  strictly ignored.
+* Depth range: no limitation.
 
 
-Amplitude
----------
+Amplitudes
+----------
 
 The MLv amplitude calculation is very similar to the original :ref:`ML<global_ml>`,
 except that the amplitude is measured on the vertical component. The methods
 for measuring amplitudes are configurable in the global bindings.
 
 
-Station Magnitude
------------------
+Station Magnitudes
+------------------
 
-The individual station MLv is calculated up to the epicentral distance maxDistanceKm
-using the following formula:
+The individual station MLv is calculated up to the epicentral distance
+:confval:`magnitudes.MLv.maxDistanceKm` using the following formula:
 
 .. math::
 
@@ -21,12 +31,12 @@ using the following formula:
 
 A is the MLv Wood-Anderson amplitude in millimeters. The second term
 is the empirical calibration function, which in turn is a function
-of the epicentral distance (see Richter, 1935). This calibration
+of the epicentral distance (see :cite:t:`richter-1935`). This calibration
 function can be configured globally or per station using global
 bindings or the global module configuration variable
 module.trunk.global.magnitudes.MLv.logA0 in :file:`global.cfg`, e.g. ::
 
-   module.trunk.global.magnitudes.MLv.logA0 = "0 -1.3;60 -2.8;100 -3.0;400 -4.5;1000 -5.85"
+   module.trunk.global.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
    module.trunk.global.magnitudes.MLv.maxDistanceKm = "-1"
 
 The logA0 configuration string consists of an arbitrary number of
@@ -49,14 +59,8 @@ In other words, at 80 km distance the magnitude would be
    MLv &= \log10(A) - (-2.9) \\
        &= \log10(A) + 2.9
 
-which is according to the original Richter (1935) formula if the
+which is according to the original Richter formula :cite:p:`richter-1935` if the
 amplitude is measured in millimeters.
-
-* Amplitude unit in SeisComP: **millimeter** (mm)
-* Time window: 150 s by :ref:`scautopick` or distance dependent, configurable
-* Default distance range: 0 - 8 deg,  maximum is configurable :confval:`magnitudes.MLv.maxDistanceKm`,
-  measurements beyond 8 deg will be strictly ignored.
-* Depth range: no limitation
 
 
 Network magnitude
@@ -81,22 +85,22 @@ global:
 
 .. code-block:: sh
 
-   module.trunk.global.magnitudes.MLv.logA0 = "0 -1.3;60 -2.8;400 -4.5;1000 -5.85"
+   module.trunk.global.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
    module.trunk.global.magnitudes.MLv.maxDistanceKm = -1
 
 or per network:
 
 .. code-block:: sh
 
-   module.trunk.GR.magnitudes.MLv.logA0 = "0 -1.3;60 -2.8;400 -4.5;1000 -5.85"
+   module.trunk.GR.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
    module.trunk.GR.magnitudes.MLv.maxDistanceKm = -1
 
 or per station:
 
 .. code-block:: sh
 
-   module.trunk.GR.MOX.magnitudes.MLv.logA0 = "0 -1.3;60 -2.8;400 -4.5;1000 -5.85"
+   module.trunk.GR.MOX.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
    module.trunk.GR.MOX.magnitudes.MLv.maxDistanceKm = -1
 
-Set the configuration and calibration parameters in the global bindings. By default MLv is computed
-by :ref:`scautopick` and is visible in GUIs.
+Set the configuration and calibration parameters in the global bindings. By
+default MLv is computed by :ref:`scautopick` and is visible in GUIs.

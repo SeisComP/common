@@ -77,7 +77,7 @@ bool MagnitudeProcessor_ML::setup(const Settings &settings) {
 	std::string defLogA0;
 
 	// This is the default
-	defLogA0 = "0 -1.3;60 -2.8;100 -3.0;400 -4.5;1000 -5.85";
+	defLogA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85";
 	_maxDistanceKm = -1; // distance according to the logA0 range
 
 	try { defLogA0 = settings.getString("magnitudes.ML.logA0"); }
@@ -90,6 +90,8 @@ bool MagnitudeProcessor_ML::setup(const Settings &settings) {
 	catch ( ... ) {}
 
 	if ( !_logA0.set(defLogA0) ) {
+		SEISCOMP_ERROR("%s: incorrect correction term log(A0): %s", _type.c_str(),
+		               defLogA0.c_str());
 		return false;
 	}
 

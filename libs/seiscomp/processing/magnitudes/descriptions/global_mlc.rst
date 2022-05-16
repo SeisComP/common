@@ -16,43 +16,53 @@ Configuration of global bindings provides additional flexibility:
 
 * Amplitudes can be pre-filtered before applying Wood-Anderson simulation
   (:confval:`amplitudes.MLc.preFilter`),
-* Wood-Anderson simulation is optional (:confval:`amplitudes.MLc.applyWoodAnderson`),
+* Wood-Anderson simulation is optional:
+  :confval:`amplitudes.MLc.applyWoodAnderson`,
 * Measured amplitudes can be scaled accounting for expected unit
   (:confval:`amplitudes.MLc.amplitudeScale`),
-* A parametric or A0-based non-parametric :ref:`magnitude calibration <mlc_station_magnitude>`
-  function can be applied as controlled by :confval:`magnitudes.MLc.calibrationType`.
+* A parametric or A0-based non-parametric
+  :ref:`magnitude calibration <mlc_station_magnitude>`
+  function can be applied as controlled by
+  :confval:`magnitudes.MLc.calibrationType`.
 * Consider either hypocentral or epicentral distance for computing magnitudes
   (:confval:`magnitudes.MLc.distMode`).
 
-General default conditions apply:
+General (default) conditions apply:
 
-* Amplitude pre-filtering: :ref:`BW(3,0.5,12) <filter-bw>`.
-* Amplitude unit in SeisComP: **millimeter** (mm), scaling can be applied.
-* Time window: 150 s by :ref:`scautopick` or distance dependent with
-  :math:`endTime = distance [km]/ 3 + 30`, e.g. by :ref:`scmag` or :ref:`scolv`.
-* Distance range: 0 - 8 deg.
-* Depth range: <= 80 km.
-* Distance measure: hypocentral.
-* Magnitude calibration: parametric.
+* Amplitude pre-filtering, configurable: :ref:`BW(3,0.5,12) <filter-bw>`.
+* Amplitude unit in SeisComP: **millimeter** (mm) or as considered by the
+  configured calibration parameters.
+* Optional amplitude scaling and Wood-Anderson simulation.
+* Time window, configurable: 150 s by :ref:`scautopick` or distance dependent
+  with :math:`endTime = distance [km]/ 3 + 30`, e.g. by :ref:`scmag` or
+  :ref:`scolv`.
+* Distance type, configurable: hypocentral or epicentral.
+* Distance range, configurable: 0 - 8 deg, measurements beyond 8 deg will be
+  strictly ignored.
+* Depth range, configurable: <= 80 km.
+* Magnitude calibration, configurable: parametric or non-parametric.
 
 
-Station Amplitudes
-------------------
+Amplitudes
+----------
 
-MLc amplitudes are measured automatically by :ref:`scautopick` or :ref:`scamp`
+MLc amplitudes can be measured automatically by :ref:`scautopick` or :ref:`scamp`
 or interactively by :ref:`scolv` very similarly to the original :ref:`ML<global_ml>`,
 except that they can be pre-filtered and applying Wood-Anderson simulation is
-optional: :confval:`amplitudes.MLc.preFilter`, :confval:`amplitudes.MLc.applyWoodAnderson`.
-By default amplitudes are measured on both horizontal components where the absolute
-maxima are taken. They are combined to a final measured amplitude by taking the mean.
-The methods for measuring and combining the amplitudes are configurable:
+optional: :confval:`amplitudes.MLc.preFilter`,
+:confval:`amplitudes.MLc.applyWoodAnderson`.
+By default amplitudes are measured on both horizontal components where the
+absolute maxima are taken. They are combined to a final measured amplitude by
+taking the mean. The methods for measuring and combining the amplitudes are
+configurable:
 :confval:`amplitudes.MLc.measureType`, :confval:`amplitudes.MLc.combiner`.
 
-The Wood-Anderson simulation will convert input velocity data to ground displacement
-in mm. The input data may be of a different unit after applying
+The Wood-Anderson simulation will convert input velocity data to ground
+displacement in mm. The input data may be of a different unit after applying
 :confval:`amplitudes.MLc.preFilter`, e.g. when integration is applied, and / or
-when Wood-Anderson simulation is disabled. Configure :confval:`amplitudes.MLc.amplitudeScale`
-for converting the unit of the processed data to the unit expected by the
+when Wood-Anderson simulation is disabled. Configure
+:confval:`amplitudes.MLc.amplitudeScale` for converting the unit of the
+processed data to the unit expected by the
 :ref:`station magnitude calibration <mlc_station_magnitude>` for the measured
 amplitude.
 
@@ -70,7 +80,8 @@ amplitude.
 Station Magnitudes
 ------------------
 
-Station magnitudes are computed from measured amplitudes automatically by :ref:`scmag`
+Station magnitudes are computed from measured amplitudes automatically by
+:ref:`scmag`
 or interactively by :ref:`scolv`. By global bindings configuration MLc considers
 
 * Hypocentral (default) or epicentral distance: :confval:`magnitudes.MLc.distMode`.
@@ -86,11 +97,11 @@ or interactively by :ref:`scolv`. By global bindings configuration MLc considers
 
     where
 
-    * A: displacement amplitude measured in unit of mm or as per configuration
-    * r: hypocentral (default) or epicentral distance
-    * c1, c2, c3, c4, c5: general calibration parameters
-    * c0: station-specific correction
-    * Hypocentral (default) or epicentral distance :math:`r` as configurable by
+    * *A*: displacement amplitude measured in unit of mm or as per configuration
+    * *r*: hypocentral (default) or epicentral distance
+    * *c1*, *c2*, *c3*, *c4*, *c5*: general calibration parameters
+    * *c0*: station-specific correction
+    * *r*: Hypocentral (default) or epicentral distance as configured by
       :confval:`magnitudes.MLc.distMode`.
 
   * A0-based non-parametric when :confval:`magnitudes.MLc.calibrationType` = "A0"`:
@@ -101,8 +112,8 @@ or interactively by :ref:`scolv`. By global bindings configuration MLc considers
 
     where
 
-    * :math:`log_{10}(A_0)`: distance-dependent correction value. The default is
-      derived from the :ref:`ML magnitude <global_ml>`.
+    * :math:`log_{10}(A_0)`: distance-dependent correction value. Read
+      :ref:`global_mlv` for the details.
 
 .. note::
 
@@ -118,9 +129,9 @@ Network Magnitude
 The network magnitude is computed from station magnitudes automatically by
 :ref:`scmag` or interactively by :ref:`scolv`.
 Originally the median was computed from all station MLc to form the
-:term:`network magnitude` MLc. Here, the trimmed mean is applied. Outliers beyond the
-outer 12.5% percentiles are removed before forming the mean. The method can be
-adjusted in :ref:`scmag` by :confval:`magnitudes.average`.
+:term:`network magnitude` MLc. Here, the trimmed mean is applied. Outliers
+beyond the outer 12.5% percentiles are removed before forming the mean. The
+method can be adjusted in :ref:`scmag` by :confval:`magnitudes.average`.
 
 
 Examples
@@ -129,8 +140,8 @@ Examples
 The flexibility of the amplitude and magnitude processing allows to apply MLc
 in various use cases, e.g.
 
-* **Default:** Pre-filtered and gain-corrected amplitudes, Wood-Anderson corrected
-  and measured in mm for Southwestern Germany, :cite:t:`stange-2006`:
+* **Default:** Pre-filtered and gain-corrected amplitudes, Wood-Anderson
+  corrected and measured in mm for Southwestern Germany, :cite:t:`stange-2006`:
 
   .. math::
 
@@ -160,12 +171,13 @@ in various use cases, e.g.
    California (*MLc_hb*, :cite:t:`hutton-1987`).
 
 
-Configuration
-=============
+Setup
+=====
 
-#. **Set the configuration and calibration parameters** in the global bindings similar
-   to :ref:`global_ml`. Instead of configuring lots of global bindings profiles or
-   station bindings one line per parameter can be added to the global module
+#. **Set the configuration and calibration parameters** in the global bindings
+   similar
+   to :ref:`global_ml`. Instead of configuring lots of global bindings profiles
+   or station bindings one line per parameter can be added to the global module
    configuration (:file:`global.cfg`) which takes the form ::
 
       module.trunk.NET.STA.amplitude.MLc.preFilter = value

@@ -119,7 +119,7 @@ bool MagnitudeProcessor_MLc::setup(const Settings &settings) {
 	catch ( ... ) {}
 
 	// A0, non-parametric calibration function
-	std::string defLogA0 = "0 -1.3;60 -2.8;100 -3.0;400 -4.5;1000 -5.85";
+	std::string defLogA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85";
 	try { defLogA0 = settings.getString("magnitudes." + _type + ".A0.logA0"); }
 	catch ( ... ) {}
 
