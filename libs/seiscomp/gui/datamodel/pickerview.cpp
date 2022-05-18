@@ -5585,8 +5585,8 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 		double dep = SC_D.config.defaultDepth;
 		try { dep = SC_D.origin->depth(); } catch ( ... ) {}
 		OriginDialog dialog(
-			static_cast<PickerRecordLabel*>(SC_D.recordView->currentItem()->label())->latitude,
 			static_cast<PickerRecordLabel*>(SC_D.recordView->currentItem()->label())->longitude,
+			static_cast<PickerRecordLabel*>(SC_D.recordView->currentItem()->label())->latitude,
 			dep,
 			this
 		);
