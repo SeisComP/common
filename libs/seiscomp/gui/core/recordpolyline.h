@@ -102,12 +102,14 @@ class SC_GUI_API RecordPolyline : public AbstractRecordPolyline,
 		                 double amplMin, double amplMax, double amplOffset,
 		                 int height, QVector<QPair<int,int> >* gaps = nullptr);
 
+		// Returns the number of points
+		int points() const;
 
 	public:
-		void draw(QPainter&);
-		void drawGaps(QPainter &, int yofs, int height, const QBrush &gapBrush, const QBrush &overlapBrush);
-		void draw(QPainter &, int yofs, int height, const QBrush &gapBrush, const QBrush &overlapBrush);
-		bool isEmpty() const { return QVector<QPolygon>::isEmpty(); }
+		void draw(QPainter&) override;
+		void drawGaps(QPainter &, int yofs, int height, const QBrush &gapBrush, const QBrush &overlapBrush) override;
+		void draw(QPainter &, int yofs, int height, const QBrush &gapBrush, const QBrush &overlapBrush) override;
+		bool isEmpty() const override { return QVector<QPolygon>::isEmpty(); }
 
 
 	private:
@@ -156,12 +158,14 @@ class SC_GUI_API RecordPolylineF : public AbstractRecordPolyline,
 		            QVector<QPair<qreal,qreal> >* gaps = nullptr,
 		            bool optimization = true);
 
+		// Returns the number of points
+		int points() const;
 
 	public:
-		void draw(QPainter &);
-		void drawGaps(QPainter &, int yofs, int height, const QBrush &gapBrush, const QBrush &overlapBrush);
-		void draw(QPainter &, int yofs, int height, const QBrush &gapBrush, const QBrush &overlapBrush);
-		bool isEmpty() const { return QVector<QPolygonF>::isEmpty(); }
+		void draw(QPainter &) override;
+		void drawGaps(QPainter &, int yofs, int height, const QBrush &gapBrush, const QBrush &overlapBrush) override;
+		void draw(QPainter &, int yofs, int height, const QBrush &gapBrush, const QBrush &overlapBrush) override;
+		bool isEmpty() const override { return QVector<QPolygonF>::isEmpty(); }
 
 
 	private:

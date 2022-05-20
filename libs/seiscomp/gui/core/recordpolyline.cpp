@@ -608,6 +608,19 @@ void RecordPolyline::createSteps(RecordSequence const *records,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+int RecordPolyline::points() const {
+	int count = 0;
+	for ( auto &poly : *this ) {
+		count += poly.count();
+	}
+	return count;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 void RecordPolyline::pushRecord(QPolygon *&poly, const T *samples,
                                 int count,
@@ -1008,6 +1021,19 @@ void RecordPolylineF::create(RecordSequence const *records,
 		else
 			*timingQuality = -1;
 	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+int RecordPolylineF::points() const {
+	int count = 0;
+	for ( auto &poly : *this ) {
+		count += poly.count();
+	}
+	return count;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
