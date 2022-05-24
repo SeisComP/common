@@ -69,11 +69,45 @@ class NameValidator : public QValidator {
 		NameValidator(QWidget *parent)
 		: QValidator(parent) {}
 
-		State validate(QString &txt, int& pos) const {
+		State validate(QString &txt, int &) const {
 			txt = txt.toUpper();
 			return Acceptable;
 		}
 };
+
+
+class ProfileValidator : public QValidator {
+	public:
+		ProfileValidator(QWidget *parent)
+		: QValidator(parent) {}
+
+		State validate(QString &txt, int &pos) const {
+			auto count = txt.count();
+			for ( auto i = 0; i < count; ++i ) {
+				if ( txt[i].isDigit() ) {
+					continue;
+				}
+
+				if ( txt[i].isLetterOrNumber() ) {
+					continue;
+				}
+
+				if ( txt[i] == '_' ) {
+					continue;
+				}
+
+				if ( txt[i] == '-' ) {
+					continue;
+				}
+
+				pos = i;
+				return Invalid;
+			}
+
+			return Acceptable;
+		}
+};
+
 
 class NewNameDialog : public QDialog {
 	public:
@@ -81,6 +115,12 @@ class NewNameDialog : public QDialog {
 			: QDialog(parent), _root(root) {
 			QVBoxLayout *layout = new QVBoxLayout;
 			setLayout(layout);
+
+			_hint = new QLabel();
+			QFont f = _hint->font();
+			f.setItalic(true);
+			_hint->setFont(f);
+			layout->addWidget(_hint);
 
 			QHBoxLayout *hlayout = new QHBoxLayout;
 			QLabel *label = new QLabel("Name:");
@@ -108,6 +148,14 @@ class NewNameDialog : public QDialog {
 			return _name->text();
 		}
 
+		void setValidator(QValidator *validator) {
+			_name->setValidator(validator);
+		}
+
+		void setHint(const QString &hint) {
+			_hint->setText(hint);
+		}
+
 		void accept() {
 			int rows = _root.model()->rowCount(_root);
 
@@ -130,6 +178,7 @@ class NewNameDialog : public QDialog {
 		}
 
 	private:
+		QLabel      *_hint;
 		QLineEdit   *_name;
 		QModelIndex  _root;
 };
@@ -1752,6 +1801,8 @@ void BindingsPanel::addProfile() {
 
 	NewNameDialog dlg(_modulesFolderView->rootIndex(), false, this);
 	dlg.setWindowTitle(QString("New %1 profile").arg(_modulesFolderView->rootIndex().data().toString()));
+	dlg.setHint("Only alphanumeric characters, underscore and dash are supported.");
+	dlg.setValidator(new ProfileValidator(&dlg));
 	if ( dlg.exec() != QDialog::Accepted ) return;
 
 	Module *mod = getLink<Module>(_modulesFolderView->rootIndex());
