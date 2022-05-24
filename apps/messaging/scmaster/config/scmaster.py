@@ -407,7 +407,9 @@ class Module(kernel.CoreModule):
             addEntry(cfg, "queues.production.plugins", "dbstore")
             addEntry(cfg, "queues.production.processors.messages", "dbstore")
 
-        cfg.writeConfig()
+        cfg.writeConfig(
+            system.Environment.Instance().configFileLocation(
+                self.name, system.Environment.CS_CONFIG_APP))
 
         # Now we need to insert the corresponding plugin to etc/global.cfg
         # that all connected local clients can handle the database backend
