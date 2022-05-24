@@ -5322,35 +5322,41 @@ void PickerView::setPickUncertainty() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::openContextMenu(const QPoint &p) {
-	RecordViewItem* item = (RecordViewItem*)sender();
-	if ( !item->widget()->cursorText().isEmpty() ) return;
-
+	RecordLabel *label = static_cast<RecordLabel*>(sender());
 	//std::cout << "Context menu request from " << waveformIDToStdString(item->streamID()) << std::endl;
 
 	Client::Inventory* inv = Client::Inventory::Instance();
-	if ( !inv ) return;
+	if ( !inv ) {
+		return;
+	}
 
 	QMenu menu(this);
 	int entries = 0;
 
 	QMenu *streams = menu.addMenu("Add stream");
 
-	WaveformStreamID tmp(item->streamID());
+	WaveformStreamID tmp(label->recordViewItem()->streamID());
 
-	Station* station = inv->getStation(item->streamID().networkCode(), item->streamID().stationCode(), SC_D.origin->time());
-	if ( station == nullptr ) return;
+	Station *station = inv->getStation(tmp.networkCode(), tmp.stationCode(), SC_D.origin->time());
+	if ( !station ) {
+		return;
+	}
 
 	std::set<std::string> codes;
 
 	for ( size_t i = 0; i < station->sensorLocationCount(); ++i ) {
-		SensorLocation* loc = station->sensorLocation(i);
+		SensorLocation *loc = station->sensorLocation(i);
 
 		try {
-			if ( loc->end() <= SC_D.origin->time() ) continue;
+			if ( loc->end() <= SC_D.origin->time() ) {
+				continue;
+			}
 		}
 		catch ( Seiscomp::Core::ValueException& ) {}
 
-		if ( loc->start() > SC_D.origin->time() ) continue;
+		if ( loc->start() > SC_D.origin->time() ) {
+			continue;
+		}
 
 		try {
 			loc->latitude(); loc->longitude();
@@ -5369,19 +5375,28 @@ void PickerView::openContextMenu(const QPoint &p) {
 			std::string id = loc->code() + "." + streamCode;
 
 			try {
-				if ( stream->end() <= SC_D.origin->time() ) continue;
+				if ( stream->end() <= SC_D.origin->time() ) {
+					continue;
+				}
 			}
 			catch ( Seiscomp::Core::ValueException& ) {}
 
-			if ( stream->start() > SC_D.origin->time() ) continue;
+			if ( stream->start() > SC_D.origin->time() ) {
+				continue;
+			}
 
-			if ( codes.find(id) != codes.end() ) continue;
+			if ( codes.find(id) != codes.end() ) {
+				continue;
+			}
+
 			codes.insert(id);
 
 			tmp.setLocationCode(loc->code());
 			tmp.setChannelCode(streamCode + '?');
 
-			if ( SC_D.recordView->item(tmp) != nullptr ) continue;
+			if ( SC_D.recordView->item(tmp) ) {
+				continue;
+			}
 
 			QAction *action = new QAction(id.c_str(), streams);
 			action->setData(waveformIDToQString(tmp));
@@ -5391,13 +5406,17 @@ void PickerView::openContextMenu(const QPoint &p) {
 		}
 	}
 
-	if ( !entries ) return;
+	if ( !entries ) {
+		return;
+	}
 
 	//menu.addAction(cutAct);
 	//menu.addAction(copyAct);
 	//menu.addAction(pasteAct);
-	QAction *res = menu.exec(item->mapToGlobal(p));
-	if ( !res ) return;
+	QAction *res = menu.exec(label->mapToGlobal(p));
+	if ( !res ) {
+		return;
+	}
 
 	QString data = res->data().toString();
 	QStringList l = data.split('.');
@@ -5409,13 +5428,15 @@ void PickerView::openContextMenu(const QPoint &p) {
 	SensorLocation *loc = findSensorLocation(station, tmp.locationCode(), SC_D.origin->time());
 
 	double delta, az, baz;
-	if ( SC_D.origin )
+	if ( SC_D.origin ) {
 		Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
 		                  loc->latitude(), loc->longitude(), &delta, &az, &baz);
-	else
+	}
+	else {
 		delta = 0;
+	}
 
-	item = addStream(loc, tmp, delta, tmp.stationCode().c_str(), false, true);
+	addStream(loc, tmp, delta, tmp.stationCode().c_str(), false, true);
 
 	fillRawPicks();
 
@@ -5889,10 +5910,13 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
 		}
 	}
 
-	RecordViewItem* item = SC_D.recordView->addItem(adjustWaveformStreamID(streamID), text.c_str());
-	if ( item == nullptr ) return nullptr;
+	RecordViewItem *item = SC_D.recordView->addItem(adjustWaveformStreamID(streamID), text.c_str());
+	if ( !item ) {
+		return nullptr;
+	}
 
-	connect(item, SIGNAL(customContextMenuRequested(const QPoint &)),
+	item->label()->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(item->label(), SIGNAL(customContextMenuRequested(const QPoint &)),
 	        this, SLOT(openContextMenu(const QPoint &)));
 
 	if ( SC_D.currentRecord )
