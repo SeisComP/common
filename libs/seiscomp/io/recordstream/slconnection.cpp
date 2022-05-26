@@ -178,7 +178,7 @@ SLConnection::SLConnection()
 : RecordStream() {
 	_readingData = false;
 	_sock.setTimeout(300); // default
-	_maxRetries = -1; // default
+	_maxRetries = 0; // default
 	_retriesLeft = -1;
 	_useBatch = true;
 }
@@ -187,7 +187,7 @@ SLConnection::SLConnection(string serverloc)
 : RecordStream() {
 	_readingData = false;
 	_sock.setTimeout(300); // default
-	_maxRetries = -1; // default
+	_maxRetries = 0; // default
 	_retriesLeft = -1;
 	_useBatch = true;
 }
@@ -436,7 +436,6 @@ Record *SLConnection::next() {
 					SEISCOMP_DEBUG("Handshaking SeedLink server at %s", _serverloc.c_str());
 					handshake();
 					_readingData = true;
-					_retriesLeft = -1;
 				}
 				catch ( SocketTimeout &ex ) {
 					Core::msleep(500);
