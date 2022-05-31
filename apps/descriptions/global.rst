@@ -35,6 +35,7 @@ functionality to check the state of all registered modules and to start and stop
 The configuration is divided into three parts: :ref:`stations <global-stations>`,
 :ref:`modules <global_modules>` and :ref:`bindings <global_bindings>`.
 
+
 .. _global-stations:
 
 Station meta data
@@ -44,22 +45,26 @@ Station meta-data is a fundamental requirement for a seismic processing system a
 for SeisComP. Read the :ref:`inventory section<concepts_inventory>` in concepts for
 more details.
 
+
 .. _global_modules:
 
 Modules
 =======
 
-The concepts of :ref:`modules <concepts_modules>` and :ref:`their configuration <global_modules_config>`
-is described in the :ref:`concepts section <concepts>`.
+The concepts of :ref:`modules <concepts_modules>` and
+:ref:`their configuration <global_modules_config>` is described in the
+:ref:`concepts section <concepts>`.
+
 
 .. _global_bindings:
 
 Bindings
 ========
 
-Bindings provide specific configurations per :ref:`module <global_module_config>` and
-station and even stream. Read the :ref:`bindings section <global_bindings_config>`
-in concepts for more details on bindings.
+Bindings provide specific configurations per
+:ref:`module <global_modules_config>` and station and even stream. Read the
+:ref:`bindings section <global_bindings_config>` in concepts for more details on
+bindings.
 
 
 Extensions
@@ -67,7 +72,8 @@ Extensions
 
 Extensions add new configuration options to :term:`modules<module>`. It does
 not matter how those extensions are used. Commonly a module loads a plugin,
-which requires additional configuration parameters - these are provided by an extension.
+which requires additional configuration parameters - these are provided by an
+extension.
 
 There are currently extensions for the following modules, corresponding to the
 plugins shown:
