@@ -89,6 +89,24 @@ const QColor& StationSymbol::color() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void StationSymbol::setOutlineColor(const QColor &color) {
+	_outlineColor = color;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const QColor &StationSymbol::outlineColor() const {
+	return _outlineColor;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void StationSymbol::setFrameColor(const QColor& color) {
 	_frameColor = color;
 }
@@ -160,7 +178,7 @@ void StationSymbol::customDraw(const Map::Canvas *, QPainter& painter) {
 		painter.drawPolygon(_stationPolygon);
 	}
 
-	pen.setColor(Qt::black);
+	pen.setColor(_outlineColor);
 	painter.setPen(pen);
 
 	brush.setColor(_color);
@@ -179,9 +197,10 @@ void StationSymbol::customDraw(const Map::Canvas *, QPainter& painter) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void StationSymbol::init() {
-	_frameColor = Qt::black;
-	_color      = Qt::black;
-	_frameSize = 1;
+	_frameColor   = Qt::black;
+	_outlineColor = Qt::black;
+	_color        = Qt::black;
+	_frameSize    = 1;
 	setRadius(SCScheme.map.stationSize);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -55,6 +55,7 @@ namespace Core {
    - Added locale to Seiscomp::Processing::MagnitudeProcessor::computeMagnitude
    - Removed Seiscomp::Processing::MagnitudeProcessor::correctMagnitude
    - Added signal Seiscomp::Gui::EventListView::visibleEventCountChanged()
+   - Added Seiscomp::Gui::StationSymbol::setOutlineColor(QColor)
    - Removed Seiscomp::Core::Generic::Archive::read(int)
    - Removed Seiscomp::Core::Generic::Archive::write(int)
    - Removed Seiscomp::Core::Generic::Archive::read(time_t)
