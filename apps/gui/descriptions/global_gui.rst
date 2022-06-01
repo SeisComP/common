@@ -1,7 +1,7 @@
 All |scname| graphical user interfaces are based on a common libraries.
 This chapter describes what configuration and styling options are available for
 all GUI applications. The GUI specific configuration options are additional to
-the standard application options. Setup the e.g. messaging connection and database
+the standard application options. Setup the e.g., messaging connection and database
 is equal to the CLI (command line interface) applications.
 
 
@@ -125,7 +125,7 @@ is a double and the styles are:
 
 Example:
 
-.. code-block:: sh
+.. code-block:: properties
 
    # Blue dotted pen
    pen.color = 0000ff
@@ -187,11 +187,14 @@ Map Layers
 
 Additional features may be added to maps using configurable layers:
 
-* :ref:`sec-gui_layers-vector`, e.g. points, polylines, polygons from FEP, BNA or GeoJSON files,
-* :ref:`sec-gui_layers-others`, e.g. cities, grids, events, custom layers.
+* :ref:`sec-gui_layers-vector`, e.g., points, polylines, polygons from FEP, BNA
+  or GeoJSON files. Files in BNA and GeoJSON format can be generated from other
+  formats by many GIS programs or web sites. BNA and GeoJSON are described below.
+* :ref:`sec-gui_layers-others`, e.g., cities, grids, events, custom layers.
 
 :ref:`sec-gui_layers-vector` are loaded and may be visualized together with
-:ref:`other layers <sec-gui_layers-others>`. The order of the drawing is defined by :confval:`map.layers`.
+:ref:`other layers <sec-gui_layers-others>`. The order of the drawing is defined
+by :confval:`map.layers`.
 
 The map layers can be explained on the maps by :ref:`configurable legends <sec-gui_legend>`
 and selected interactively by their :ref:`configurable category <sec-gui_layers-config>`.
@@ -225,11 +228,13 @@ are:
 
 * FEP (Flinn-Engdahl polygons):
 
-  * used for visualization of events regions and for setting the region name of
+  * used for visualization of event regions and for setting the region name of
     the event by :ref:`scevent`.
   * stored in directories: :file:`@DATADIR@/fep` or :file:`@CONFIGDIR@/fep`
   * file name extension: *.fep*
-  * file format: ::
+  * file format example with one polygon:
+
+    .. code-block:: none
 
        longitude1 latitude1
        longitude2 latitude2
@@ -244,14 +249,20 @@ are:
 
 * BNA polygons:
 
-  * used for visualization, e.g. points, polylines, polygons for faults or districts,
-    respectively, and even symbols or images on maps. Some objects, like closed lines can be
-    evaluated by other modules and plugins, e.g. the :ref:`region check <scevent_regioncheck>`
-    plugin for :ref:`scevent`.
+  * used for visualization, e.g., points, polylines, polygons for faults or
+    districts, respectively, and even symbols or images on maps. Some objects,
+    like closed lines, can be evaluated by other modules and plugins, e.g,. the
+    :ref:`region check <scevent_regioncheck>` plugin for :ref:`scevent`.
   * stored in directories or sub-directories of: :file:`$SEISCOMP_ROOT/share/spatial/vector`
     or :file:`~/.seiscomp/spatial/vector`
   * file name extension: *.bna*
-  * file format: ::
+  * properties are controlled as described in the section
+    :ref:`sec-gui_layers-config`
+  * for closed polygons the list of coordinates does not need to end on start
+    coordinates.
+  * file format example for one polygon/polyline:
+
+    .. code-block:: none
 
        "name 1","rank 1",type/length
        longitude1,latitude1
@@ -261,7 +272,7 @@ are:
 
     where the coordinates, *name* and *type/length* are to be replaced by actual values.
     For polylines (open polygons) set type/length to the negative number of points defining
-    the line, e.g. -10. Positive numbers, e.g. 10, define closed polygons. Such
+    the line, e.g., -10. Positive numbers, e.g., 10, define closed polygons. Such
     polygons are automatically closed between their end points. Thus, the end points
     do not need to be identical.
 
@@ -274,30 +285,98 @@ are:
        * All |scname| map applications support the drawing of polygons and a subsequent
          export to the BNA format.
        * An extension of the header entries is possible. The extra entries can be
-         used by other modules or plugins, e.g. the :ref:`region check <scevent_regioncheck>`
+         used by other modules or plugins, e.g., the :ref:`region check <scevent_regioncheck>`
          plugin. Example ::
 
             "coal","rank 1","eventType: mining explosion, minDepth: -5, maxDepth: 10",6
        * The name is extracted from the first part of the header.
        * The rank is extracted from the second part of the header if it has the
-         form "rank VALUE", e.g. rank 12.
+         form "rank VALUE", e.g., rank 12.
 
-  * visibility and style can be controlled by :ref:`configuration <sec-gui_layers-config>`.
+  * visibility and style can be controlled by
+    :ref:`configuration in map.cfg<sec-gui_layers-config>`.
 
 
 * GeoJSON features:
 
-  * used for visualization, e.g. points, polylines, polygons for faults or districts,
-    respectively, and even symbols or images on maps.
-  * stored in directories or sub-directories of: :file:`$SEISCOMP_ROOT/share/spatial/vector` or :file:`~/.seiscomp/spatial/vector`
+  * used for visualization, e.g., points, polylines, polygons for faults or
+    districts, respectively, and even symbols or images on maps.
+  * stored in directories or sub-directories of:
+    :file:`$SEISCOMP_ROOT/share/spatial/vector` or
+    :file:`~/.seiscomp/spatial/vector`
   * file name extension: *.geojson*
   * file format: https://geojson.org/
+  * properties are controlled as described in the section
+    :ref:`sec-gui_layers-config`. Other module-specific properties can be added
+    like the extra entries for BNA files (see above). They are evaluated by the
+    specific application.
+  * for closed polygons the list of coordinates must end on the start point.
+    Otherwise polylines are drawn.
 
     .. note ::
 
        Currently the geometry type GeometryCollection is not supported. The name
        of the feature is derived from the `name` property of a feature and the
        rank can be provided in a `rank` property with an integer value.
+
+  * file format example with two polygons and one point:
+
+    .. code-block:: properties
+
+       {
+         "type": "FeatureCollection",
+         "features": [
+           {
+             "type": "Feature",
+             "properties": {
+               "name": "polygon 1",
+               "rank" : 1,
+             },
+             "geometry": {
+               "type": "Polygon",
+               "coordinates": [
+                 [
+                   [ 10.0, -15.0 ],
+                   [ 13.0, -15.0 ],
+                   [ 13.0, -12.0 ],
+                   [ 10.0, -12.0 ],
+                   [ 10.0, -15.0 ]
+                 ]
+               ]
+             }
+           },  {
+             "type": "Feature",
+             "properties": {
+               "name": "polygon 2",
+               "rank" : 1,
+             },
+             "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [ 0.0, -5.0 ],
+                    [ 3.0, -5.0 ],
+                    [ 3.0, -2.0 ],
+                    [ 0.0, -2.0 ],
+                    [ 0.0, -5.0 ]
+                  ]
+                ]
+             }
+           },  {
+             "type": "Feature",
+             "properties": {
+               "name": "point 1",
+               "rank" : 1,
+             },
+             "geometry": {
+               "type": "Point",
+               "coordinates": [
+                 [ 13.0, 52.0 ]
+               ]
+             }
+           }
+         ]
+      }
 
 
 .. _sec-gui_layers-config:
@@ -307,12 +386,12 @@ Layer configuration
 
 Layers may be grouped into categories and form a hierarchy. The categories of the
 geo feature data are derived from the feature directory structure, i.e. the names
-of the directories below the feature directory, e.g. :file:`@DATADIR@/spatial/vector`.
+of the directories below the feature directory, e.g., :file:`@DATADIR@/spatial/vector`.
 Feature data directly located within the feature directory have no special category.
 The FEP data set is assigned to the fep category.
 
 The depth of the feature directory tree is arbitrary and subfolders form
-sub-categories. E.g. the directory tree
+sub-categories. E.g., the directory tree
 :file:`$SEISCOMP_ROOT/share/spatial/vector/coastline/europe/germany` will generate
 the categories *coastline*, *coastline.europe* and *coastline.europe.germany* which
 all may be configured individually. Every undefined property is inherited from
@@ -328,9 +407,9 @@ The layer properties can be configured either by
    The parameters in the global configuration of modules override the configurations
    in :file:`map.cfg` allowing a specific configuration per application.
 
-All data set directories and sub-directories therein are scanned for an optional
-:file:`map.cfg` configuration file defining default drawing options. Parameters
-found in the lowest sub-directory take priority.
+All data set directories and sub-directories in the feature directory are
+scanned for an optional :file:`map.cfg` configuration file defining default
+drawing options. Parameters found in the lowest sub-directory take priority.
 This allows easy distribution of data sets and drawing properties without the
 need to change application configuration files.
 The available map layer configuration parameters are described further below.
@@ -345,11 +424,11 @@ options are not available through :ref:`scconfig`.
 Examples
 ~~~~~~~~
 
-File and directory for plotting fault lines with specific configurations.
-The geo features are defined in :file:`data.bna`, configurations are in
-:file:`map.cfg`:
+The example below shows files and directories for plotting fault lines with
+specific configurations. The geo features are defined in :file:`data.bna` or
+:file:`data.geojson`, configurations are in :file:`map.cfg`:
 
-.. code-block:: sh
+.. code-block:: none
 
    @DATADIR@/spatial/vector/
    ├── maps.cfg
@@ -358,19 +437,25 @@ The geo features are defined in :file:`data.bna`, configurations are in
    |   ├── reverse/
    |   |   ├── map.cfg
    |   |   ├── data.bna
+   |   |   ├── data.geojson
    |   ├── normal/
    |   |   ├── map.cfg
    |   |   ├── data.bna
+   |   |   ├── data.geojson
    |   ├── strike-slip/
    |   |   ├── map.cfg
    |   |   ├── data.bna
+   |   |   ├── data.geojson
    ├── others/
    |   ├── maps.cfg
    |   ├── data.bna
+   |   ├── data.geojson
 
 Configuration examples for plotting the fault lines based on the example above:
 
-* Legend control in :file:`@DATADIR@/spatial/vector/faults/map.cfg` ::
+* Legend control in :file:`@DATADIR@/spatial/vector/faults/map.cfg`
+
+  .. code-block:: properties
 
      # title of legend for all legend entries
      title = "Faults"
@@ -382,7 +467,10 @@ Configuration examples for plotting the fault lines based on the example above:
 * Polygon property control in :file:`@DATADIR@/spatical/vector/faults/strike-slip/map.cfg`
   common to all polygons in this directory. You may generate
   different sub-directories with different parameters inheriting the legend and other
-  properties. Put this file, e.g. in the strike-slip directory. ::
+  properties. Put this file, e.g., in the strike-slip directory.
+
+
+  .. code-block:: properties
 
      # make the layer visible
      visible = true
@@ -398,8 +486,10 @@ Configuration examples for plotting the fault lines based on the example above:
      label = "strike-slip"
 
 Instead of using :file:`map.cfg`, the same properties can also be set per layer
-category by global parameters in module configurations, e.g. for the layer *strike-slip*
-below *faults* (:file:`global.cfg`): ::
+category by global parameters in module configurations, e.g., for the layer *strike-slip*
+below *faults* (:file:`global.cfg`):
+
+.. code-block:: properties
 
    map.layers.faults.title = "Faults"
    map.layers.faults.orientation = vertical
@@ -634,13 +724,13 @@ Other layers may be displayed on maps depending on the application.
 
 * Events layer:
 
-  Event symbols are shown as an extra layer, e.g. in the Location tab of :ref:`scolv`.
+  Event symbols are shown as an extra layer, e.g., in the Location tab of :ref:`scolv`.
   Activate in the global module configuration by :confval:`map.layers.events.visible`.
 
 * Cities layer:
 
   Cities are plotted based on the XML file :file:`@DATADIR@/cities.xml`. Custom
-  XML files, e.g. for multi-language support are provided by :confval:`cityXML`.
+  XML files, e.g., for multi-language support are provided by :confval:`cityXML`.
   Properties are configured in various global module parameters :confval:`scheme.map.*`
   and :confval:`scheme.colors.*`.
 
