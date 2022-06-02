@@ -58,7 +58,7 @@ The default host is set to `localhost`, the default port to `18000`. Optional
 URL encoded parameters are:
 
 - `timeout` - connection timeout in seconds, default: 300
-- `retries` - number of connection retry attempts, default: 0
+- `retries` - number of connection retry attempts, default: -1
 - `no-batch` - disables BATCH mode to request data, does not take a value
 
 
