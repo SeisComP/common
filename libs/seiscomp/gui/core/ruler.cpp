@@ -481,8 +481,9 @@ QRect Ruler::r2wRect(int rx, int ry, int w, int h) const {
 bool Ruler::rulerDrawText(QPainter &p, int rx, int ry, const QString &text,
                           bool allowClip, bool allowRotate) const {
 	// Text width and height
-	int tw = p.fontMetrics().boundingRect(text).width();
-	int th = p.fontMetrics().height();
+	auto fm = p.fontMetrics();
+	int tw = fm.boundingRect(text).width() + fm.width(' ')/2;
+	int th = fm.height();
 
 	// Top/left position of text box in widget coordinates
 	QPoint pos;
