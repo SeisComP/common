@@ -482,7 +482,7 @@ bool Ruler::rulerDrawText(QPainter &p, int rx, int ry, const QString &text,
                           bool allowClip, bool allowRotate) const {
 	// Text width and height
 	auto fm = p.fontMetrics();
-	int tw = fm.boundingRect(text).width() + fm.width(' ')/2;
+	int tw = fm.boundingRect(text).width();
 	int th = fm.height();
 
 	// Top/left position of text box in widget coordinates
@@ -509,11 +509,11 @@ bool Ruler::rulerDrawText(QPainter &p, int rx, int ry, const QString &text,
 		p.save();
 		p.translate(pos);
 		p.rotate(-90);
-		p.drawText(0, 0, tw, th, flags, text);
+		p.drawText(-tw, 0, 3 * tw, th, flags, text);
 		p.restore();
 	}
 	else {
-		p.drawText(pos.x(), pos.y(), tw, th, flags, text);
+		p.drawText(pos.x() - tw, pos.y(), 3 * tw, th, flags, text);
 	}
 	return true;
 }
