@@ -436,7 +436,7 @@ Record *SLConnection::next() {
 					SEISCOMP_DEBUG("Handshaking SeedLink server at %s", _serverloc.c_str());
 					handshake();
 					_readingData = true;
-					_retriesLeft = -1;
+					_retriesLeft = -1; // do not retry connection after handshake is completed
 				}
 				catch ( SocketTimeout &ex ) {
 					Core::msleep(500);
