@@ -326,18 +326,20 @@ void MagnitudeMap::mouseDoubleClickEvent(QMouseEvent* event) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeMap::mousePressEvent(QMouseEvent* event) {
-	if ( (event->button() == Qt::LeftButton)
-	   && SYMBOLLAYER->isVisible()
-	   && SYMBOLLAYER->interactive ) {
-		if ( event->modifiers() == Qt::NoModifier ) {
-			if ( SYMBOLLAYER->hoverId != -1 ) {
-				auto symbol = SYMBOLLAYER->stations[SYMBOLLAYER->hoverId];
-				if ( symbol->isMagnitude )
-					emit clickedMagnitude(symbol->magnitudeId);
-				else
-					emit clickedStation(symbol->net, symbol->code);
+	if ( !isMeasuring() && !isDragging() ) {
+		if ( (event->button() == Qt::LeftButton)
+		   && SYMBOLLAYER->isVisible()
+		   && SYMBOLLAYER->interactive ) {
+			if ( event->modifiers() == Qt::NoModifier ) {
+				if ( SYMBOLLAYER->hoverId != -1 ) {
+					auto symbol = SYMBOLLAYER->stations[SYMBOLLAYER->hoverId];
+					if ( symbol->isMagnitude )
+						emit clickedMagnitude(symbol->magnitudeId);
+					else
+						emit clickedStation(symbol->net, symbol->code);
 
-				return;
+					return;
+				}
 			}
 		}
 	}

@@ -342,25 +342,27 @@ void OriginLocatorMap::mouseDoubleClickEvent(QMouseEvent *event) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorMap::mousePressEvent(QMouseEvent *event) {
-	if ( (event->button() == Qt::LeftButton)
-	   && SYMBOLLAYER->isVisible()
-	   && SYMBOLLAYER->interactive ) {
-		if ( event->modifiers() == Qt::NoModifier ) {
-			if ( SYMBOLLAYER->hoverId != -1 ) {
-				auto symbol = SYMBOLLAYER->stations[SYMBOLLAYER->hoverId];
-				if ( symbol->isArrival )
-					emit clickedArrival(symbol->arrivalId);
-				else
-					emit clickedStation(symbol->net, symbol->code);
+	if ( !isMeasuring() && !isDragging() ) {
+		if ( (event->button() == Qt::LeftButton)
+		   && SYMBOLLAYER->isVisible()
+		   && SYMBOLLAYER->interactive ) {
+			if ( event->modifiers() == Qt::NoModifier ) {
+				if ( SYMBOLLAYER->hoverId != -1 ) {
+					auto symbol = SYMBOLLAYER->stations[SYMBOLLAYER->hoverId];
+					if ( symbol->isArrival )
+						emit clickedArrival(symbol->arrivalId);
+					else
+						emit clickedStation(symbol->net, symbol->code);
 
-				return;
+					return;
+				}
 			}
 		}
-	}
-	else if ( event->button() == Qt::MidButton && _enabledCreateOrigin ) {
-		QPointF epicenter;
-		if ( canvas().projection()->unproject(epicenter, event->pos()) )
-			emit artificialOriginRequested(epicenter, event->globalPos());
+		else if ( event->button() == Qt::MidButton && _enabledCreateOrigin ) {
+			QPointF epicenter;
+			if ( canvas().projection()->unproject(epicenter, event->pos()) )
+				emit artificialOriginRequested(epicenter, event->globalPos());
+		}
 	}
 
 	MapWidget::mousePressEvent(event);

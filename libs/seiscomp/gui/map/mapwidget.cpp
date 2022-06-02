@@ -606,15 +606,12 @@ void MapWidget::mousePressEvent(QMouseEvent* event) {
 			return;
 		}
 
-		if ( !_isMeasuring ) {
-			if ( _canvas.filterMousePressEvent(event) ) return;
-		}
-
-		if ( event->modifiers() == Qt::NoModifier ) {
+		if ( _isMeasuring && (event->modifiers() == Qt::NoModifier) ) {
 			_isDragging = true;
 			_isMeasuring = false;
 			_measurePoints.clear();
 			_measureText.clear();
+			update();
 		}
 	}
 
@@ -645,6 +642,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent* event) {
 	}
 	else if ( _isMeasuring ) {
 		_canvas.projection()->unproject(_measurePoints.last(), event->pos());
+		_canvas.filterMouseMoveEvent(event);
 		update();
 	}
 	else {
