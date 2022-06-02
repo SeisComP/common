@@ -606,12 +606,14 @@ void MapWidget::mousePressEvent(QMouseEvent* event) {
 			return;
 		}
 
-		if ( _isMeasuring && (event->modifiers() == Qt::NoModifier) ) {
+		if ( event->modifiers() == Qt::NoModifier ) {
+			if ( _isMeasuring ) {
+				_isMeasuring = false;
+				_measurePoints.clear();
+				_measureText.clear();
+			}
+
 			_isDragging = true;
-			_isMeasuring = false;
-			_measurePoints.clear();
-			_measureText.clear();
-			update();
 		}
 	}
 
