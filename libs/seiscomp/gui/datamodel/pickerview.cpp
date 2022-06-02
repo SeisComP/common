@@ -3855,10 +3855,15 @@ void PickerView::alignOnPhase(QAction *action) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::setCursorText(const QString& text) {
+void PickerView::setCursorText(const QString &text) {
 	SC_D.recordView->setCursorText(text);
 	SC_D.currentRecord->setCursorText(text);
 	SC_D.currentRecord->setActive(text != "");
+	auto d = static_cast<PickerTimeWindowDecorator*>(SC_D.currentRecord->decorator());
+	if ( d ) {
+		d->setVisible(false);
+		SC_D.currentRecord->update();
+	}
 
 	if ( SC_D.currentRecord->isActive() ) {
 #ifdef CENTER_SELECTION
