@@ -1,6 +1,11 @@
-scchkcfg checks for case-sensitivity issues of parameter names of a module
-configuration. It reads all defined stages (see :ref:`global_modules`) and
-checks for each parameter read if it exists again with a different spelling.
+scchkcfg checks for case-sensitivity issues of parameter names of the module
+configuration file for a module. It reads all defined configuration stages
+(see :ref:`global_modules`) and checks for each parameter read if it exists
+again with a different spelling.
+
+If *standalone* is not given, it checks all 6 configurations
+files (including :file:`global.cfg`), 3 otherwise.
+
 
 Examples
 ========
