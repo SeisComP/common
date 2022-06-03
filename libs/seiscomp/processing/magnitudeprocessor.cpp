@@ -392,7 +392,7 @@ bool MagnitudeProcessor::initRegionalization(const Settings &settings) {
 		const Seiscomp::Config::Config *cfg = settings.localConfiguration;
 		if ( cfg ) {
 			try {
-				string filename = cfg->getString("magnitudes." + type() + ".regions");
+				string filename = cfg->getString("magnitudes." + type() + ".regionFile");
 				filename = Seiscomp::Environment::Instance()->absolutePath(filename);
 				regionalizedSettings->regions = Regions::load(filename);
 				if ( !regionalizedSettings->regions ) {

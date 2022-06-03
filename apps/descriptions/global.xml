@@ -394,23 +394,23 @@
 				names correspond to magnitude types.
 				</description>
 				<struct type="Magnitude type profile">
-					<parameter name="regions" type="path">
+					<parameter name="regionFile" type="path">
 						<description>
-						Path to a BNA file with one or more polygons
-						defining geographic regions. Each region allows
-						further magnitude parametrization.
-						The order of polygons/regions matters. The list is tested from
-						front to back and the first hit wins. Magnitude-region
-						profiles refer to the polygons by the name of the profile.
-						The special name &quot;world&quot; must not be present
-						in the BNA file.
+						Path to a geofeature file, e.g. in BNA or GeoJSON format,
+						with one or more polygons defining geographic regions.
+						Each region allows further magnitude parametrization.
+						The order of polygons/regions matters. The list is
+						tested from front to back and the first hit wins.
+						Magnitude-region profiles refer to the polygons by the
+						name of the profile. The special name &quot;world&quot;
+						must not be present in the geofeature file.
 						</description>
 					</parameter>
 					<group name="region">
 						<description>
-						Add parameter profiles for regions defined in the BNA
-						file. Profile names must match one polygon name. Otherwise
-						the profile is not considered.
+						Add parameter profiles for regions defined in the
+						geofeature file. Profile names must match one polygon
+						name. Otherwise, the profile is not considered.
 						The special name &quot;world&quot; corresponds to the
 						region of the entire planet as a fallback.
 
