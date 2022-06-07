@@ -70,11 +70,11 @@ std::string Regions::getFlinnEngdahlRegion(double lat, double lon, int *id) {
 		iLon += 1;
 	}
 
-	int regionId = feGeoRegionsArray[iLat + 90][iLon + 180] - 1;
+	int regionId = feGeoRegionsArray[iLat + 90][iLon + 180];
 
 	if ( id ) {
 		*id = regionId;
 	}
 
-	return feGeoRegionsNames[regionId];
+	return feGeoRegionsNames[regionId - 1];
 }
