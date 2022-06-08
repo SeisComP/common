@@ -20,6 +20,7 @@
 
 #include <seiscomp/core/enumeration.h>
 
+#include <cctype>
 #include <sstream>
 #include <complex>
 
@@ -277,7 +278,9 @@ inline T *tokenize2(T *&str, const char *delim, size_t &len_source, size_t &len_
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 inline char *trimFront(char *&data, size_t &len) {
 	while ( len ) {
-		if ( *data != ' ' ) break;
+		if ( !isspace(*data) ) {
+			break;
+		}
 		else {
 			++data;
 			--len;
@@ -293,7 +296,9 @@ inline char *trimFront(char *&data, size_t &len) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 inline const char *trimFront(const char *&data, size_t &len) {
 	while ( len ) {
-		if ( *data != ' ' ) break;
+		if ( !isspace(*data) ) {
+			break;
+		}
 		else {
 			++data;
 			--len;
@@ -307,11 +312,14 @@ inline const char *trimFront(const char *&data, size_t &len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-inline char *trimBack(char *&data, size_t &len) {
+inline char *trimBack(char *data, size_t &len) {
 	while ( len ) {
-		if ( data[len-1] != ' ' ) break;
-		else
+		if ( !isspace(data[len-1]) ) {
+			break;
+		}
+		else {
 			--len;
+		}
 	}
 	return data;
 }
@@ -321,11 +329,14 @@ inline char *trimBack(char *&data, size_t &len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-inline const char *trimBack(const char *&data, size_t &len) {
+inline const char *trimBack(const char *data, size_t &len) {
 	while ( len ) {
-		if ( data[len-1] != ' ' ) break;
-		else
+		if ( !isspace(data[len-1]) ) {
+			break;
+		}
+		else {
 			--len;
+		}
 	}
 	return data;
 }

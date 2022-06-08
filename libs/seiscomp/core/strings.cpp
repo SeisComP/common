@@ -27,6 +27,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include <cctype>
 #include <sstream>
 #include <iostream>
 #include <stdarg.h>

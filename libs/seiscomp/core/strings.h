@@ -346,8 +346,8 @@ const char *trimFront(const char *&data, size_t &len);
  *            if the trimmed string.
  * @return The input pointer.
  */
-char *trimBack(char *&data, size_t &len);
-const char *trimBack(const char *&data, size_t &len);
+char *trimBack(char *data, size_t &len);
+const char *trimBack(const char *data, size_t &len);
 
 /**
  * @brief Strips whitespaces from the front and the back of the string.
