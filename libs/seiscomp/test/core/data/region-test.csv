@@ -103,7 +103,7 @@
 -21.20397949	-68.32587433	Antofagasta, Chile
 -21.19364738	-68.64033508	Antofagasta, Chile
 -23.0873127	-69.41679382	Antofagasta, Chile
--54.32674408	-136.1358643	Pacific Antarctic Ridge
+-54.32674408	-136.1358643	Pacific-Antarctic Ridge
 -22.62187004	-67.4336319	Potosi, Bolivia
 -21.50356102	-68.45304108	Antofagasta, Chile
 -19.58466339	-69.87075043	Tarapaca, Chile
@@ -185,7 +185,7 @@
 -19.00229073	-70.1428299	Tarapaca, Chile
 -18.6785717	-70.09368896	Tarapaca, Chile
 -23.82815552	-70.40459442	Antofagasta, Chile
--6.235965252	146.7870941	Eastern New Guinea Reg., P.N.G.
+-6.235965252	146.7870941	Papua New Guinea Region
 -22.5014286	-65.66215515	Jujuy, Argentina
 -12.93926239	168.9158783	Santa Cruz Islands Region
 -20.88312912	-70.04573822	Tarapaca, Chile
@@ -257,7 +257,7 @@
 -24.58870506	-67.10494232	Salta, Argentina
 -20.8655014	-69.29602814	Tarapaca, Chile
 -21.87992287	-70.64824677	Near Coast of Northern Chile
--54.39671707	-136.6058807	Pacific Antarctic Ridge
+-54.39671707	-136.6058807	Pacific-Antarctic Ridge
 -18.99292183	-69.45036316	Tarapaca, Chile
 -21.53970528	-68.58309937	Antofagasta, Chile
 -24.00802422	-67.56555176	Antofagasta, Chile
@@ -579,7 +579,7 @@
 -22.00952911	-68.67476654	Antofagasta, Chile
 46.26388931	165.9777527	South of Aleutian Islands
 -28.33870125	-56.39202499	Corrientes, Argentina
-63.34423447	51.20801926	Baltics/Belarus/Northwestern Russia Reg.
+63.34423447	51.20801926	Baltics-Belarus-Northwestern Russia Region
 -21.19938087	-68.64743042	Antofagasta, Chile
 -21.89177895	-69.07546234	Antofagasta, Chile
 -21.33508682	-68.65200043	Antofagasta, Chile
@@ -655,7 +655,7 @@
 -21.73372459	-69.6681366	Antofagasta, Chile
 -4.329624176	141.9326782	New Guinea, Papua New Guinea
 -21.60241318	-69.39750671	Antofagasta, Chile
-48.18540573	23.56637573	Ukraine/Moldova/SW Russia Region
+48.18540573	23.56637573	Ukraine-Moldova-Southwestern Russia Region
 -23.46186638	-68.19706726	Antofagasta, Chile
 -21.03531456	-68.88634491	Tarapaca, Chile
 -22.67825699	-69.21940613	Antofagasta, Chile
@@ -745,7 +745,7 @@
 -20.89871788	-68.92242432	Antofagasta, Chile
 -25.52758789	-67.04512787	Catamarca, Argentina
 -24.43629265	-78.81188202	Southeast Central Pacific Ocean
-42.96107101	18.71536255	NW Balkan Region
+42.96107101	18.71536255	Northwestern Balkan Region
 -9.68696022	112.7532196	South of Java, Indonesia
 -23.07997704	-69.04973602	Antofagasta, Chile
 -20.67617416	-71.01660919	Off Coast of Northern Chile
@@ -838,7 +838,7 @@
 -9.627848625	117.7075729	Sumbawa Region, Indonesia
 -20.69178581	-65.55151367	Potosi, Bolivia
 -20.92169952	-69.74085236	Tarapaca, Chile
--0.7624507546	150.1797943	New Ireland Region, P.N.G.
+-0.7624507546	150.1797943	New Ireland Region, Papua New Guinea
 -23.10733795	-68.7877121	Antofagasta, Chile
 -22.08289337	-68.68244171	Antofagasta, Chile
 -23.91667175	-67.6242981	Antofagasta, Chile
@@ -968,7 +968,7 @@
 -23.44550896	-68.94293976	Antofagasta, Chile
 -21.9200058	-69.43457031	Antofagasta, Chile
 -20.96261215	-69.01374054	Tarapaca, Chile
-55.38502121	24.96848488	Baltics/Belarus/Northwestern Russia Reg.
+55.38502121	24.96848488	Baltics-Belarus-Northwestern Russia Region
 -21.57283592	-67.61497498	Potosi, Bolivia
 -26.37886429	-69.37549591	Atacama, Chile
 -21.23517418	-68.87876892	Tarapaca, Chile
@@ -1033,7 +1033,7 @@
 -28.46114922	-88.03781128	Southeast Central Pacific Ocean
 -21.01801872	-68.49013519	Antofagasta, Chile
 -23.43575287	-68.72032928	Antofagasta, Chile
--49.13316345	122.101181	Western Indian Antarctic Ridge
+-49.13316345	122.101181	Western Indian-Antarctic Ridge
 -29.81262207	-56.42724991	Brazil
 -34.63540268	-61.8578186	Buenos Aires, Argentina
 -21.35914421	-68.63589478	Antofagasta, Chile
@@ -1080,7 +1080,7 @@
 -21.19117546	-68.79988861	Tarapaca, Chile
 -17.6493721	-58.04195404	Santa Cruz, Bolivia
 -22.62726593	-68.47451019	Antofagasta, Chile
--4.834693432	153.6216736	New Ireland Region, P.N.G.
+-4.834693432	153.6216736	New Ireland Region, Papua New Guinea
 -21.56282997	-68.8181839	Antofagasta, Chile
 -20.39406776	-69.89450836	Tarapaca, Chile
 -3.789672613	136.4117279	Irian Jaya, Indonesia
@@ -1109,7 +1109,7 @@
 -18.96086502	-68.59988403	Oruro, Bolivia
 -20.344841	-68.50572968	Potosi, Bolivia
 -20.34744453	-69.32707977	Tarapaca, Chile
-11.0641489	135.7641296	W. Caroline Islands, Micronesia
+11.0641489	135.7641296	Western Caroline Islands, Micronesia
 -20.43959045	-68.58647156	Potosi, Bolivia
 -18.89357185	-69.05121613	Tarapaca, Chile
 -21.84893036	-67.27435303	Potosi, Bolivia
@@ -1192,7 +1192,7 @@
 -23.10339737	-68.58444214	Antofagasta, Chile
 -16.73622513	-69.99646759	Peru-Bolivia Border Region
 -21.68140411	172.7750702	Southeast of Loyalty Islands
--57.88539505	-148.0200348	Pacific Antarctic Ridge
+-57.88539505	-148.0200348	Pacific-Antarctic Ridge
 -22.03077888	-68.43614197	Antofagasta, Chile
 -21.13438988	-68.61305237	Antofagasta, Chile
 4.341368198	127.6821671	Talaud Islands, Indonesia
@@ -1210,7 +1210,7 @@
 -31.24574471	-70.81685638	Coquimbo, Chile
 -22.11479568	-70.48788452	Near Coast of Northern Chile
 -21.60695267	-68.36264801	Antofagasta, Chile
--5.726728439	152.1296844	New Britain Region, P.N.G.
+-5.726728439	152.1296844	New Britain Region, Papua New Guinea
 -22.52599144	-68.78766632	Antofagasta, Chile
 -22.61897469	174.9368744	Southeast of Loyalty Islands
 -21.91275978	-69.43488312	Antofagasta, Chile
@@ -1296,7 +1296,7 @@
 -20.37256241	-69.74804688	Tarapaca, Chile
 -21.11598587	-68.59087372	Antofagasta, Chile
 -22.27701569	-68.84133148	Antofagasta, Chile
-55.03575516	164.1743011	Komandorskiye Ostrova Region
+55.03575516	164.1743011	Komandorsky Islands Region
 -3.438917398	128.2254181	Seram, Indonesia
 -13.2657156	-57.88373947	Brazil
 -38.28359222	176.3724213	North Island, New Zealand
@@ -1460,7 +1460,7 @@
 -21.91130447	-68.53533173	Antofagasta, Chile
 -20.91432381	-70.73288727	Near Coast of Northern Chile
 -23.14289856	-69.84301758	Antofagasta, Chile
-52.83186722	52.85227203	Baltics/Belarus/Northwestern Russia Reg.
+52.83186722	52.85227203	Baltics-Belarus-Northwestern Russia Region
 -23.87039375	-69.44577789	Antofagasta, Chile
 -23.73167992	-67.35441589	Antofagasta, Chile
 3.193074942	127.1157532	Talaud Islands, Indonesia
@@ -1718,7 +1718,7 @@
 -21.3588829	-68.81365967	Antofagasta, Chile
 -41.38180542	-53.1387291	South Atlantic Ocean
 -22.74655914	-68.63571167	Antofagasta, Chile
-43.50643539	20.64673805	NW Balkan Region
+43.50643539	20.64673805	Northwestern Balkan Region
 -19.92014694	-69.20478058	Tarapaca, Chile
 -19.95415497	-69.20074463	Tarapaca, Chile
 -21.30049896	-67.85409546	Potosi, Bolivia
@@ -1976,7 +1976,7 @@
 -25.23631287	-70.30751801	Antofagasta, Chile
 -15.65938091	-70.90631104	Southern Peru
 -21.55345917	-68.37163544	Antofagasta, Chile
-58.16750717	23.13961029	Baltics/Belarus/Northwestern Russia Reg.
+58.16750717	23.13961029	Baltics-Belarus-Northwestern Russia Region
 -21.99930954	-68.60549927	Antofagasta, Chile
 -21.20986557	-69.13069916	Tarapaca, Chile
 -21.86580658	-68.53363037	Antofagasta, Chile
@@ -2766,7 +2766,7 @@
 -21.83581543	-69.45347595	Antofagasta, Chile
 -10.61619377	-73.61785126	Central Peru
 -17.95978737	-70.29012299	Near Coast of Peru
--21.1987381	68.04493713	Mid Indian Ridge
+-21.1987381	68.04493713	Mid-Indian Ridge
 -22.62573624	-68.37449646	Antofagasta, Chile
 -20.35420609	-68.87191772	Tarapaca, Chile
 -16.33651352	-67.73591614	La Paz, Bolivia
@@ -2814,7 +2814,7 @@
 -22.39143753	-68.98286438	Antofagasta, Chile
 -18.53257561	-69.79911041	Tarapaca, Chile
 -21.47610664	-69.87033081	Antofagasta, Chile
--37.92152405	78.06317139	Mid Indian Ridge
+-37.92152405	78.06317139	Mid-Indian Ridge
 -7.72278738	122.5786362	Flores Sea
 -23.86040878	-67.35806274	Antofagasta, Chile
 -19.91696548	-70.3844223	Near Coast of Northern Chile
@@ -2856,7 +2856,7 @@
 -21.06199455	-70.51638031	Near Coast of Northern Chile
 -19.62796402	-69.41876221	Tarapaca, Chile
 -21.78142166	-68.47689819	Antofagasta, Chile
-35.18979263	139.1616516	Near S. Coast of Honshu, Japan
+35.18979263	139.1616516	Near South Coast of Honshu, Japan
 -21.68642235	-68.43909454	Antofagasta, Chile
 -19.84209633	-69.49965668	Tarapaca, Chile
 -21.19917297	-68.84388733	Tarapaca, Chile
@@ -2964,7 +2964,7 @@
 -20.23243332	-68.6208725	Potosi, Bolivia
 -23.78307915	-79.10162354	Southeast Central Pacific Ocean
 -20.62472725	-69.32758331	Tarapaca, Chile
-43.71152878	22.74323845	NW Balkan Region
+43.71152878	22.74323845	Northwestern Balkan Region
 -23.93099594	-67.54437256	Antofagasta, Chile
 -23.94994354	-67.53410339	Antofagasta, Chile
 -21.23657417	-68.76770782	Antofagasta, Chile
@@ -3362,7 +3362,7 @@
 -23.17455482	-69.32077789	Antofagasta, Chile
 -20.72333908	-68.97613525	Tarapaca, Chile
 -21.41603279	-68.44779968	Antofagasta, Chile
-3.054740667	-114.09021	East Central Pacific Ocean
+3.054740667	-114.09021	East-Central Pacific Ocean
 -22.15981293	-68.61576843	Antofagasta, Chile
 -22.68003273	-68.69146729	Antofagasta, Chile
 -18.67611122	-69.22792053	Tarapaca, Chile
@@ -3708,7 +3708,7 @@
 -21.25109673	-68.49920654	Antofagasta, Chile
 -20.77632141	-68.91295624	Tarapaca, Chile
 -20.81886673	-68.28126526	Potosi, Bolivia
-32.99141693	125.7459106	Off coast of Eastern China
+32.99141693	125.7459106	Off Coast of Eastern China
 -18.7087326	-67.16519928	Oruro, Bolivia
 -22.28393936	-68.54370117	Antofagasta, Chile
 -24.61321068	-70.84217072	Near Coast of Northern Chile
@@ -4063,7 +4063,7 @@
 -20.1554966	-69.25605774	Tarapaca, Chile
 -17.33626556	-71.50034332	Near Coast of Peru
 -20.13984489	-69.22628021	Tarapaca, Chile
--8.808198929	130.9751892	Tanimbar Islands Reg., Indonesia
+-8.808198929	130.9751892	Tanimbar Islands Region, Indonesia
 21.93545532	17.89297104	Chad Region
 -23.77415848	-67.36827087	Antofagasta, Chile
 -23.04534721	-67.71131897	Antofagasta, Chile
@@ -4359,9 +4359,9 @@
 -24.07952118	-67.55987549	Antofagasta, Chile
 59.97596359	-154.4682922	Southern Alaska
 -20.98005104	-69.16181183	Tarapaca, Chile
--35.92182541	-15.18436432	Tristan da Cunha Region
+-35.92182541	-15.18436432	Tristan Da Cunha Region
 -30.78115845	-179.224884	Kermadec Islands Region
--2.427530527	153.9347839	New Ireland Region, P.N.G.
+-2.427530527	153.9347839	New Ireland Region, Papua New Guinea
 -18.896698	-84.93419647	Southeast Central Pacific Ocean
 -21.41010284	-68.41575623	Antofagasta, Chile
 66.08451843	107.2109528	Northcentral Siberia, Russia
@@ -4473,7 +4473,7 @@
 -22.14034653	-68.41898346	Antofagasta, Chile
 -21.41712379	-69.73992157	Tarapaca, Chile
 -23.29642105	-67.3080368	Antofagasta, Chile
-7.998629093	134.8937531	W. Caroline Islands, Micronesia
+7.998629093	134.8937531	Western Caroline Islands, Micronesia
 -22.03396606	-68.56614685	Antofagasta, Chile
 -21.63488197	-68.54486847	Antofagasta, Chile
 -21.13225937	-68.65252686	Antofagasta, Chile
@@ -4702,7 +4702,7 @@
 -21.77450371	-68.35397339	Antofagasta, Chile
 -21.18985558	-68.79961395	Tarapaca, Chile
 60.28242493	82.24597931	Northwestern Siberia, Russia
--5.293399334	153.1820526	New Ireland Region, P.N.G.
+-5.293399334	153.1820526	New Ireland Region, Papua New Guinea
 -23.84827614	-67.25798035	Salta, Argentina
 -24.00406265	-68.88478851	Antofagasta, Chile
 -22.24411583	-67.75125122	Potosi, Bolivia
@@ -4774,7 +4774,7 @@
 -17.7573185	-70.54837799	Near Coast of Peru
 -22.79308891	-67.53784943	Potosi, Bolivia
 -21.1474781	-68.5997467	Antofagasta, Chile
--5.293715	153.2640686	New Ireland Region, P.N.G.
+-5.293715	153.2640686	New Ireland Region, Papua New Guinea
 -20.59587097	-68.40849304	Potosi, Bolivia
 -19.78961182	-69.56458282	Tarapaca, Chile
 -21.70252037	-69.57593536	Antofagasta, Chile
@@ -4812,7 +4812,7 @@
 -21.15405083	-68.92795563	Tarapaca, Chile
 -23.97097397	-66.88101959	Jujuy, Argentina
 -21.81862831	-68.58870697	Antofagasta, Chile
--48.47237015	125.5984802	Western Indian Antarctic Ridge
+-48.47237015	125.5984802	Western Indian-Antarctic Ridge
 -19.37322617	-69.82450867	Tarapaca, Chile
 -20.53711128	-69.4167099	Tarapaca, Chile
 -23.01057434	-67.86505127	Antofagasta, Chile
@@ -4830,7 +4830,7 @@
 -21.95323944	-69.01136017	Antofagasta, Chile
 -23.01108742	-67.12557983	Antofagasta, Chile
 22.62038422	143.9893799	Volcano Islands, Japan Region
--5.324827671	153.123703	New Ireland Region, P.N.G.
+-5.324827671	153.123703	New Ireland Region, Papua New Guinea
 -21.82360077	-174.8929138	Tonga Islands
 -16.0653038	-44.73248672	Brazil
 21.94218636	121.0834198	Taiwan Region
@@ -4870,11 +4870,11 @@
 -21.35945129	-67.02067566	Potosi, Bolivia
 -19.36134148	-70.51420593	Near Coast of Northern Chile
 -20.56427383	-69.16674805	Tarapaca, Chile
--5.300006866	153.0837402	New Ireland Region, P.N.G.
+-5.300006866	153.0837402	New Ireland Region, Papua New Guinea
 -22.71129036	-68.57210541	Antofagasta, Chile
 -20.08226967	-69.37858582	Tarapaca, Chile
 -18.73547363	-69.76000214	Tarapaca, Chile
--5.28309679	153.1462402	New Ireland Region, P.N.G.
+-5.28309679	153.1462402	New Ireland Region, Papua New Guinea
 -22.14924812	-68.7521286	Antofagasta, Chile
 -21.84939194	-68.42250824	Antofagasta, Chile
 -22.288414	-68.96607208	Antofagasta, Chile
@@ -4887,14 +4887,14 @@
 -22.8050499	-67.63140106	Potosi, Bolivia
 -20.95335007	-65.73958588	Potosi, Bolivia
 -24.52186775	-53.92398071	Brazil
--5.296425819	153.1282501	New Ireland Region, P.N.G.
+-5.296425819	153.1282501	New Ireland Region, Papua New Guinea
 -21.22225952	-68.66030884	Antofagasta, Chile
 -21.48576736	-70.32798004	Near Coast of Northern Chile
 -17.00509071	-77.12300873	Southeast Central Pacific Ocean
 -10.5612545	119.3512726	Sumba Region, Indonesia
 -18.97767448	-69.78223419	Tarapaca, Chile
 -20.88998032	-70.013237	Tarapaca, Chile
--5.662467003	152.7632294	New Britain Region, P.N.G.
+-5.662467003	152.7632294	New Britain Region, Papua New Guinea
 -17.92011261	-72.98751831	Near Coast of Peru
 -20.96939278	-67.8414917	Potosi, Bolivia
 -21.4593029	-69.72533417	Antofagasta, Chile
@@ -4918,7 +4918,7 @@
 -24.02679253	-67.58776855	Antofagasta, Chile
 -15.85870647	-63.75733185	Beni, Bolivia
 -22.14191055	-66.61656952	Potosi, Bolivia
-8.162894249	137.7171173	W. Caroline Islands, Micronesia
+8.162894249	137.7171173	Western Caroline Islands, Micronesia
 -22.12569427	-68.66051483	Antofagasta, Chile
 -10.61755657	-48.23753738	Brazil
 -21.0755806	-173.7441559	Tonga Islands
@@ -4963,7 +4963,7 @@
 -22.86516571	-70.4127655	Near Coast of Northern Chile
 -20.87240982	-70.30955505	Near Coast of Northern Chile
 -22.73307991	-68.81200409	Antofagasta, Chile
--6.487011433	149.0231781	New Britain Region, P.N.G.
+-6.487011433	149.0231781	New Britain Region, Papua New Guinea
 -2.254487753	-80.69348145	Near Coast of Ecuador
 -21.49190903	-70.17743683	Near Coast of Northern Chile
 -17.67599297	-69.69667053	Tarapaca, Chile
@@ -5044,7 +5044,7 @@
 -21.58272743	-67.13821411	Potosi, Bolivia
 -20.7700119	-69.26656342	Tarapaca, Chile
 -21.40886307	-68.41162109	Antofagasta, Chile
-1.062002778	-28.18377113	Central Mid Atlantic Ridge
+1.062002778	-28.18377113	Central Mid-Atlantic Ridge
 -22.21961594	-69.22323608	Antofagasta, Chile
 -19.64840698	-70.12260437	Tarapaca, Chile
 -20.40641403	-69.26598358	Tarapaca, Chile
@@ -5151,7 +5151,7 @@
 -21.89625359	-69.71418762	Antofagasta, Chile
 -21.20792961	-68.83006287	Tarapaca, Chile
 -21.40462112	-68.75531006	Antofagasta, Chile
--5.594206333	152.3265839	New Britain Region, P.N.G.
+-5.594206333	152.3265839	New Britain Region, Papua New Guinea
 -20.40909958	-64.99916077	Chuquisaca, Bolivia
 -20.1815567	-70.00286865	Tarapaca, Chile
 -20.19128227	-70.23083496	Near Coast of Northern Chile
@@ -5169,7 +5169,7 @@
 -21.65423775	-68.51171875	Antofagasta, Chile
 -21.2514782	-68.8819046	Tarapaca, Chile
 -23.40408134	-56.91030121	Paraguay
-0.9941744208	-28.11187744	Central Mid Atlantic Ridge
+0.9941744208	-28.11187744	Central Mid-Atlantic Ridge
 -20.80209351	-69.07687378	Tarapaca, Chile
 -20.96530151	-68.76474762	Antofagasta, Chile
 -23.75184631	-67.4616394	Antofagasta, Chile
@@ -5319,7 +5319,7 @@
 -20.85678673	-68.80606842	Tarapaca, Chile
 -18.64296341	-70.08250427	Tarapaca, Chile
 -22.29918098	-68.98660278	Antofagasta, Chile
--56.3451004	-144.0062866	Pacific Antarctic Ridge
+-56.3451004	-144.0062866	Pacific-Antarctic Ridge
 -21.68103981	-68.69132996	Antofagasta, Chile
 -23.08016205	-68.82206726	Antofagasta, Chile
 -18.48056984	-68.09920502	Oruro, Bolivia
@@ -5559,15 +5559,15 @@
 -21.68190002	-68.50714111	Antofagasta, Chile
 -19.58816147	-69.62837219	Tarapaca, Chile
 -21.97318649	-68.67563629	Antofagasta, Chile
-6.302669525	145.7581329	E. Caroline Islands, Micronesia
+6.302669525	145.7581329	Eastern Caroline Islands, Micronesia
 -22.11076355	-68.46720123	Antofagasta, Chile
 48.53473282	153.4797974	Kuril Islands
 -20.12355042	-71.01470184	Off Coast of Northern Chile
 -21.74787712	-68.00687408	Potosi, Bolivia
 -21.98897934	-68.70232391	Antofagasta, Chile
-41.09441376	-127.328598	Off Coast of N. California
+41.09441376	-127.328598	Off Coast of Northern California
 -21.32295418	-68.47896576	Antofagasta, Chile
-41.09761429	-127.6299591	Off Coast of N. California
+41.09761429	-127.6299591	Off Coast of Northern California
 -21.71483421	-69.39361572	Antofagasta, Chile
 -21.88666534	-68.66072845	Antofagasta, Chile
 -21.07572556	-68.50587463	Antofagasta, Chile
@@ -5797,7 +5797,7 @@
 -19.75705528	-65.75948334	Potosi, Bolivia
 -24.4685173	-66.83139038	Salta, Argentina
 -15.73212433	-72.19558716	Southern Peru
-42.45874023	18.30306435	NW Balkan Region
+42.45874023	18.30306435	Northwestern Balkan Region
 -22.28118896	-69.01264954	Antofagasta, Chile
 -18.7774334	-70.85272217	Near Coast of Northern Chile
 -21.29427528	-68.41631317	Antofagasta, Chile
@@ -5810,7 +5810,7 @@
 39.90403366	19.88641167	Greece-Albania Border Region
 -16.53013229	-69.74182892	Peru-Bolivia Border Region
 -23.595438	-71.19062042	Off Coast of Northern Chile
-5.166959286	147.7589417	E. Caroline Islands, Micronesia
+5.166959286	147.7589417	Eastern Caroline Islands, Micronesia
 -19.68230057	-69.65706635	Tarapaca, Chile
 -21.28572655	-68.73697662	Antofagasta, Chile
 -21.0072422	-68.96431732	Tarapaca, Chile
@@ -5819,7 +5819,7 @@
 -24.29286957	-68.75732422	Antofagasta, Chile
 -23.91559982	-54.18307877	Brazil
 -20.90341949	-68.84138489	Antofagasta, Chile
--2.913351536	147.1759186	Admiralty Islands Region, P.N.G.
+-2.913351536	147.1759186	Admiralty Islands Region, Papua New Guinea
 -23.5908165	-66.63215637	Jujuy, Argentina
 -20.70003891	-68.92541504	Tarapaca, Chile
 -19.53199577	-69.83351898	Tarapaca, Chile
@@ -5849,7 +5849,7 @@
 -20.62578583	-68.87516022	Tarapaca, Chile
 -23.87664986	-67.34578705	Antofagasta, Chile
 -21.58106041	-68.49507141	Antofagasta, Chile
--2.943455696	147.2815399	Admiralty Islands Region, P.N.G.
+-2.943455696	147.2815399	Admiralty Islands Region, Papua New Guinea
 -23.82888985	-67.30874634	Antofagasta, Chile
 -21.19054794	-68.72518158	Antofagasta, Chile
 -23.90322113	-67.35470581	Antofagasta, Chile
@@ -5979,7 +5979,7 @@
 -22.44045448	-69.54914856	Antofagasta, Chile
 -20.95542717	-68.99526215	Tarapaca, Chile
 -20.9889164	-69.02430725	Tarapaca, Chile
--2.913411856	147.2551727	Admiralty Islands Region, P.N.G.
+-2.913411856	147.2551727	Admiralty Islands Region, Papua New Guinea
 -18.44808006	-69.36161041	Tarapaca, Chile
 36.34149933	-3.313278675	Strait of Gibraltar
 -23.44794273	-70.11214447	Antofagasta, Chile
@@ -6396,7 +6396,7 @@
 -23.67306137	-67.10208893	Jujuy, Argentina
 -21.69157982	-68.36194611	Antofagasta, Chile
 -21.34455299	-68.28921509	Antofagasta, Chile
-41.31272888	22.69254112	NW Balkan Region
+41.31272888	22.69254112	Northwestern Balkan Region
 -18.95170403	-69.57970428	Tarapaca, Chile
 -21.55290604	-67.43921661	Potosi, Bolivia
 -22.97525406	-69.57595062	Antofagasta, Chile
@@ -6559,7 +6559,7 @@
 -21.27412987	-68.70653534	Antofagasta, Chile
 -21.03147507	-68.7454834	Tarapaca, Chile
 -20.94226456	-68.8085022	Antofagasta, Chile
-53.5573349	32.45066452	Baltics/Belarus/Northwestern Russia Reg.
+53.5573349	32.45066452	Baltics-Belarus-Northwestern Russia Region
 -21.7023468	-68.25590515	Antofagasta, Chile
 -21.01205826	-69.22335052	Tarapaca, Chile
 -20.71200371	-69.04660034	Tarapaca, Chile
@@ -6623,7 +6623,7 @@
 -19.72025681	-69.36566162	Tarapaca, Chile
 -18.87602997	-64.42075348	Chuquisaca, Bolivia
 -20.56915665	-47.77728271	Brazil
--6.740189552	131.9914703	Tanimbar Islands Reg., Indonesia
+-6.740189552	131.9914703	Tanimbar Islands Region, Indonesia
 -19.95939636	-66.53070831	Potosi, Bolivia
 -21.23607445	-69.36332703	Tarapaca, Chile
 -20.46101379	-69.18004608	Tarapaca, Chile
@@ -6784,7 +6784,7 @@
 -21.24713898	-68.8440094	Tarapaca, Chile
 -21.11921692	-69.0031662	Tarapaca, Chile
 -21.10301781	-68.94284058	Tarapaca, Chile
--6.355713844	147.5913696	Eastern New Guinea Reg., P.N.G.
+-6.355713844	147.5913696	Papua New Guinea Region
 -18.63283348	-71.07926178	Off Coast of Northern Chile
 -22.11089706	-68.58630371	Antofagasta, Chile
 -63.04266739	169.365799	Balleny Islands Region
