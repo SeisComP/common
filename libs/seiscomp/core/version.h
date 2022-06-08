@@ -85,12 +85,17 @@ namespace Core {
    - Added Seiscomp::Core::Time::utc()
    - Added Seiscomp::Core::Time::UTC()
    - Added Seiscomp::Core::Time::toUTC()
+   - Changed signature from
+     Seiscomp::Core::trimBack(char *&data, size_t &len) to
+     Seiscomp::Core::trimBack(char *data, size_t &len)
    - Set TileStore API to version 3 which is incompatible with previous versions
    - Remove Seiscomp::Gui::Alg::MapTree and Seiscomp::Gui::Alg::MapTreeNode
    - Added Seiscomp::DataModel::id(const Network*, ...)
    - Added Seiscomp::DataModel::id(const Station*, ...)
    - Added Seiscomp::DataModel::id(const SensorLocation*, ...)
    - Added Seiscomp::DataModel::id(const Stream*, ...)
+   - Added virtual Seiscomp::Wired::Session::accepted()
+   - Added Seiscomp::Wired::Socket::isAccepted()
    - Added Seiscomp::Util::catchBool
    - Fixed Python API for ExportSink::write to always pass bytes and
      remove size parameter

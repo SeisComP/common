@@ -682,6 +682,7 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 				std::string  primaryGroup{Protocol::LISTENER_GROUP};
 				std::string  contentType;
 				unsigned int timeout{3};
+				std::string  certificate;
 
 				StringVector subscriptions;
 

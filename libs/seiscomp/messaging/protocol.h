@@ -542,6 +542,7 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 		Core::Version          _schemaVersion; //!< The schema version the
 		                                       //!< server supports
 		KeyValueStore          _extendedParameters;
+		std::string            _certificate; //!< Optional client certificate
 
 		// Mutexes to synchronize read access from separate threads.
 		mutable boost::mutex   _readMutex;
