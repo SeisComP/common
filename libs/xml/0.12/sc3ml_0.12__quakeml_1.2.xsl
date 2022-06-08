@@ -190,6 +190,11 @@
  *    - Skip originUncertaintyDescription if value is set to
  *      'probability density function' not supported by QuakeML.
  *
+ *  * 08.06.2022:
+ *    - Map new SeisComP event types 'rocket impact', 'artillery strike',
+ *      'bomb detonation', 'moving aircraft' and 'atmospheric meteor explosion'
+ *      to QuakeML 'other event'.
+ *
  ********************************************************************** -->
 <xsl:stylesheet version="1.0"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -352,6 +357,12 @@
                 <xsl:when test="$v='frost quake'">other event</xsl:when>
                 <xsl:when test="$v='tremor pulse'">other event</xsl:when>
                 <xsl:when test="$v='submarine landslide'">other event</xsl:when>
+                <xsl:when test="$v='rocket'">other event</xsl:when>
+                <xsl:when test="$v='rocket impact'">other event</xsl:when>
+                <xsl:when test="$v='artillery strike'">other event</xsl:when>
+                <xsl:when test="$v='bomb detonation'">other event</xsl:when>
+                <xsl:when test="$v='moving aircraft'">other event</xsl:when>
+                <xsl:when test="$v='atmospheric meteor explosion'">other event</xsl:when>
                 <xsl:otherwise><xsl:value-of select="$v"/></xsl:otherwise>
             </xsl:choose>
         </xsl:element>
