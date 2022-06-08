@@ -180,6 +180,8 @@ class SC_SYSTEM_CORE_API Socket : public Device {
 		Device::Status setNonBlocking(bool nb) override;
 		bool isNonBlocking() const { return _flags & NonBlocking; }
 
+		bool isAccepted() const { return !(_flags & InAccept); }
+
 		Status setReuseAddr(bool ra);
 		Status setNoDelay(bool nd);
 

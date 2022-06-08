@@ -86,7 +86,11 @@ void Endpoint::update() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Session *Endpoint::accept(Socket *socket) {
 	if ( !checkSocket(socket) ) return nullptr;
-	return createSession(socket);
+	auto session = createSession(socket);
+	if ( session && socket->isAccepted() ) {
+		session->accepted();
+	}
+	return session;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -58,6 +58,13 @@ class SC_SYSTEM_CORE_API Session : public Core::BaseObject,
 
 		Reactor *parent() const { return _parent; }
 
+		/**
+		 * @brief Called if the underlying device completed the handshake with
+		 *        the remote end and is ready to receive and send data.
+		 * The default implementation does nothing.
+		 */
+		virtual void accepted();
+
 		//! Update the session state.
 		virtual void update() = 0;
 

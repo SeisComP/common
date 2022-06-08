@@ -41,6 +41,7 @@
 #endif
 
 #include <seiscomp/wired/devices/socket.h>
+#include <seiscomp/wired/session.h>
 
 #include <openssl/err.h>
 
@@ -1184,6 +1185,10 @@ ssize_t SSLSocket::write(const char *data, size_t len) {
 		}
 
 		_flags &= ~InAccept;
+
+		if ( _session ) {
+			_session->accepted();
+		}
 	}
 
 	int ret = SSL_write(_ssl, data, static_cast<int>(len));
@@ -1242,6 +1247,11 @@ ssize_t SSLSocket::read(char *data, size_t len) {
 		}
 
 		_flags &= ~InAccept;
+
+		if ( _session ) {
+			_session->accepted();
+		}
+
 	}
 
 	int ret = SSL_read(_ssl, data, static_cast<int>(len));
