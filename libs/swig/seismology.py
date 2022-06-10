@@ -318,6 +318,16 @@ class Regions(object):
         return _seismology.Regions_getFlinnEngdahlRegion(lat, lon)
 
     @staticmethod
+    def getFlinnEngdahlRegionsCount():
+        r"""getFlinnEngdahlRegionsCount() -> int"""
+        return _seismology.Regions_getFlinnEngdahlRegionsCount()
+
+    @staticmethod
+    def getFlinnEngdahlRegionById(id):
+        r"""getFlinnEngdahlRegionById(int id) -> std::string"""
+        return _seismology.Regions_getFlinnEngdahlRegionById(id)
+
+    @staticmethod
     def load():
         r"""load()"""
         return _seismology.Regions_load()
@@ -339,6 +349,14 @@ _seismology.Regions_swigregister(Regions)
 def Regions_getFlinnEngdahlRegion(lat, lon):
     r"""Regions_getFlinnEngdahlRegion(double lat, double lon) -> std::string"""
     return _seismology.Regions_getFlinnEngdahlRegion(lat, lon)
+
+def Regions_getFlinnEngdahlRegionsCount():
+    r"""Regions_getFlinnEngdahlRegionsCount() -> int"""
+    return _seismology.Regions_getFlinnEngdahlRegionsCount()
+
+def Regions_getFlinnEngdahlRegionById(id):
+    r"""Regions_getFlinnEngdahlRegionById(int id) -> std::string"""
+    return _seismology.Regions_getFlinnEngdahlRegionById(id)
 
 def Regions_load():
     r"""Regions_load()"""
