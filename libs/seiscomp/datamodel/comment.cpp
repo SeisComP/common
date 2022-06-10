@@ -34,6 +34,7 @@
 #include <seiscomp/datamodel/sensorlocation.h>
 #include <seiscomp/datamodel/station.h>
 #include <seiscomp/datamodel/network.h>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -783,7 +784,7 @@ void Comment::accept(Visitor* visitor) {
 void Comment::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Comment skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

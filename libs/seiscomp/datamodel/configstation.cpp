@@ -22,6 +22,7 @@
 #include <seiscomp/datamodel/configstation.h>
 #include <seiscomp/datamodel/configmodule.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -123,10 +124,9 @@ ConfigStation::ConfigStation(const std::string& publicID)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConfigStation::~ConfigStation() {
-	std::for_each(_setups.begin(), _setups.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Setup::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&SetupPtr::get)));
+	for ( auto &setup : _setups ) {
+		setup->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -594,7 +594,7 @@ bool ConfigStation::removeSetup(const SetupIndex& i) {
 void ConfigStation::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: ConfigStation skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

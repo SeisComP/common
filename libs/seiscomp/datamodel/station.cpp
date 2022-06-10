@@ -22,6 +22,7 @@
 #include <seiscomp/datamodel/station.h>
 #include <seiscomp/datamodel/network.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -134,14 +135,12 @@ Station::Station(const std::string& publicID)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Station::~Station() {
-	std::for_each(_comments.begin(), _comments.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&CommentPtr::get)));
-	std::for_each(_sensorLocations.begin(), _sensorLocations.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&SensorLocation::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&SensorLocationPtr::get)));
+	for ( auto &comment : _comments ) {
+		comment->setParent(nullptr);
+	}
+	for ( auto &sensorLocation : _sensorLocations ) {
+		sensorLocation->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1035,7 +1034,7 @@ bool Station::removeSensorLocation(const SensorLocationIndex& i) {
 void Station::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Station skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

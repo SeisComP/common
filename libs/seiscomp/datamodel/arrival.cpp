@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT DataModel
 #include <seiscomp/datamodel/arrival.h>
 #include <seiscomp/datamodel/origin.h>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -653,7 +654,7 @@ void Arrival::accept(Visitor* visitor) {
 void Arrival::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Arrival skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

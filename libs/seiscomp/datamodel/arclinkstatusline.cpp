@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT DataModel
 #include <seiscomp/datamodel/arclinkstatusline.h>
 #include <seiscomp/datamodel/arclinkrequest.h>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -382,7 +383,7 @@ void ArclinkStatusLine::accept(Visitor* visitor) {
 void ArclinkStatusLine::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: ArclinkStatusLine skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

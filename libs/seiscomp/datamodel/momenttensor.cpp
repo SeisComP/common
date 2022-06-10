@@ -24,6 +24,7 @@
 #include <seiscomp/datamodel/dataused.h>
 #include <seiscomp/datamodel/momenttensorstationcontribution.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -98,22 +99,18 @@ MomentTensor::MomentTensor(const std::string& publicID)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MomentTensor::~MomentTensor() {
-	std::for_each(_comments.begin(), _comments.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&CommentPtr::get)));
-	std::for_each(_dataUseds.begin(), _dataUseds.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&DataUsed::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&DataUsedPtr::get)));
-	std::for_each(_momentTensorPhaseSettings.begin(), _momentTensorPhaseSettings.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&MomentTensorPhaseSetting::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&MomentTensorPhaseSettingPtr::get)));
-	std::for_each(_momentTensorStationContributions.begin(), _momentTensorStationContributions.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&MomentTensorStationContribution::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&MomentTensorStationContributionPtr::get)));
+	for ( auto &comment : _comments ) {
+		comment->setParent(nullptr);
+	}
+	for ( auto &dataUsed : _dataUseds ) {
+		dataUsed->setParent(nullptr);
+	}
+	for ( auto &momentTensorPhaseSetting : _momentTensorPhaseSettings ) {
+		momentTensorPhaseSetting->setParent(nullptr);
+	}
+	for ( auto &momentTensorStationContribution : _momentTensorStationContributions ) {
+		momentTensorStationContribution->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1327,7 +1324,7 @@ bool MomentTensor::removeMomentTensorStationContribution(size_t i) {
 void MomentTensor::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: MomentTensor skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

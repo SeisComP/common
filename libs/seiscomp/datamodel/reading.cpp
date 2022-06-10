@@ -22,6 +22,7 @@
 #include <seiscomp/datamodel/reading.h>
 #include <seiscomp/datamodel/eventparameters.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -70,14 +71,12 @@ Reading::Reading(const std::string& publicID)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Reading::~Reading() {
-	std::for_each(_pickReferences.begin(), _pickReferences.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&PickReference::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&PickReferencePtr::get)));
-	std::for_each(_amplitudeReferences.begin(), _amplitudeReferences.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&AmplitudeReference::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&AmplitudeReferencePtr::get)));
+	for ( auto &pickReference : _pickReferences ) {
+		pickReference->setParent(nullptr);
+	}
+	for ( auto &amplitudeReference : _amplitudeReferences ) {
+		amplitudeReference->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -588,7 +587,7 @@ bool Reading::removeAmplitudeReference(const AmplitudeReferenceIndex& i) {
 void Reading::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Reading skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

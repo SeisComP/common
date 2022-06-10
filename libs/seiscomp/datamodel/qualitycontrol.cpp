@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT DataModel
 #include <seiscomp/datamodel/qualitycontrol.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -61,18 +62,15 @@ QualityControl::QualityControl(const QualityControl& other)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QualityControl::~QualityControl() {
-	std::for_each(_qCLogs.begin(), _qCLogs.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&QCLog::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&QCLogPtr::get)));
-	std::for_each(_waveformQualitys.begin(), _waveformQualitys.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&WaveformQuality::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&WaveformQualityPtr::get)));
-	std::for_each(_outages.begin(), _outages.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Outage::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&OutagePtr::get)));
+	for ( auto &qCLog : _qCLogs ) {
+		qCLog->setParent(nullptr);
+	}
+	for ( auto &waveformQuality : _waveformQualitys ) {
+		waveformQuality->setParent(nullptr);
+	}
+	for ( auto &outage : _outages ) {
+		outage->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -670,7 +668,7 @@ bool QualityControl::removeOutage(const OutageIndex& i) {
 void QualityControl::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: QualityControl skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

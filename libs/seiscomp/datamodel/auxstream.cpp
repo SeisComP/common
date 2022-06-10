@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT DataModel
 #include <seiscomp/datamodel/auxstream.h>
 #include <seiscomp/datamodel/sensorlocation.h>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -489,7 +490,7 @@ void AuxStream::accept(Visitor* visitor) {
 void AuxStream::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: AuxStream skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

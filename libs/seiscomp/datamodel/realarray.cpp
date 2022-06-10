@@ -20,6 +20,7 @@
 
 #define SEISCOMP_COMPONENT DataModel
 #include <seiscomp/datamodel/realarray.h>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -134,7 +135,7 @@ RealArray& RealArray::operator=(const RealArray& other) {
 void RealArray::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: RealArray skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

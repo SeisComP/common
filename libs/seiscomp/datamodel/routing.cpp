@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT DataModel
 #include <seiscomp/datamodel/routing.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -60,14 +61,12 @@ Routing::Routing(const Routing& other)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Routing::~Routing() {
-	std::for_each(_routes.begin(), _routes.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Route::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&RoutePtr::get)));
-	std::for_each(_accesss.begin(), _accesss.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Access::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&AccessPtr::get)));
+	for ( auto &route : _routes ) {
+		route->setParent(nullptr);
+	}
+	for ( auto &access : _accesss ) {
+		access->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -512,7 +511,7 @@ bool Routing::removeAccess(const AccessIndex& i) {
 void Routing::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Routing skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

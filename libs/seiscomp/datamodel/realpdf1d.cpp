@@ -20,6 +20,7 @@
 
 #define SEISCOMP_COMPONENT DataModel
 #include <seiscomp/datamodel/realpdf1d.h>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -165,7 +166,7 @@ RealPDF1D& RealPDF1D::operator=(const RealPDF1D& other) {
 void RealPDF1D::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: RealPDF1D skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);
