@@ -390,41 +390,14 @@ T NumericArray<T>::firstMax() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename T>
-class less_abs: public std::binary_function<T,T,bool> {
-	public:
-		bool operator()(const T& x, const T& y) const { return fabs((T)x) < fabs((T)y); }
-};
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template<>
-class less_abs<char>: public std::binary_function<char,char,bool> {
-	public:
-		bool operator()(const char& x, const char& y) const { return abs(x) < abs(y); }
-};
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template<>
-class less_abs<int>: public std::binary_function<int,int,bool> {
-	public:
-		bool operator()(const int& x, const int& y) const { return abs(x) < abs(y); }
-};
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template<typename T>
 T NumericArray<T>::absMax() const {
-	return *std::max_element(TypedArray<T>::_data.begin(),TypedArray<T>::_data.end(),less_abs<T>());
+	return *std::max_element(
+		TypedArray<T>::_data.begin(),
+		TypedArray<T>::_data.end(),
+		[](const T &x, const T &y) {
+			return std::abs(x) < std::abs(y);
+		}
+	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
