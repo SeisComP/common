@@ -21,14 +21,17 @@
 #include <seiscomp/seismology/regions.h>
 #include <seiscomp/seismology/regions/ferdata.h>
 #include <seiscomp/seismology/regions/polygon.h>
-
 #include <seiscomp/geo/coordinate.h>
-
 #include <seiscomp/system/environment.h>
 
+
 using namespace Seiscomp;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
 
@@ -36,25 +39,41 @@ Geo::PolyRegions regions;
 
 
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Regions::load() {
 	if ( !regions.read(Environment::Instance()->configDir() + "/fep") )
 		regions.read(Environment::Instance()->shareDir() + "/fep");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Geo::PolyRegions &Regions::polyRegions() {
 	return regions;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string Regions::getRegionName(double lat, double lon) {
 	std::string name = regions.findRegionName(lat, lon);
 	return name.empty() ? getFlinnEngdahlRegion(lat, lon, nullptr) : name;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string Regions::getFlinnEngdahlRegion(double lat, double lon, int *id) {
 	lat = Geo::GeoCoordinate::normalizeLat(lat);
 	lon = Geo::GeoCoordinate::normalizeLon(lon);
@@ -78,3 +97,31 @@ std::string Regions::getFlinnEngdahlRegion(double lat, double lon, int *id) {
 
 	return feGeoRegionsNames[regionId - 1];
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+int Regions::getFlinnEngdahlRegionsCount() {
+	return sizeof(feGeoRegionsNames) / sizeof(const char*);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string Regions::getFlinnEngdahlRegionById(int id) {
+	if ( id < 1 || id > getFlinnEngdahlRegionsCount() ) {
+		return std::string();
+	}
+
+	return feGeoRegionsNames[id - 1];
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
