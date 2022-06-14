@@ -119,6 +119,7 @@ namespace std {
   }
 }
 
+
 %include "seiscomp/client.h"
 %include "seiscomp/datamodel/object.h"
 %include "seiscomp/datamodel/publicobject.h"
@@ -127,6 +128,7 @@ namespace std {
 %include "seiscomp/datamodel/notifier.h"
 %include "seiscomp/datamodel/utils.h"
 %include "seiscomp/datamodel/diff.h"
+
 
 %extend Seiscomp::DataModel::DatabaseIterator {
 	void step() {
@@ -151,10 +153,48 @@ namespace std {
 	%}
 };
 
+
+%inline %{
+	class PublicObjectCacheIterator {
+		public:
+			PublicObjectCacheIterator(Seiscomp::DataModel::PublicObjectCache *cache)
+			: _cache(cache) {
+				_it = _cache->begin();
+			}
+
+			Seiscomp::DataModel::PublicObject *next() {
+				if ( _it == _cache->end() ) {
+					return nullptr;
+				}
+
+				auto obj = *_it;
+				++_it;
+				return obj;
+			}
+
+		private:
+			Seiscomp::DataModel::PublicObjectCache *_cache;
+			Seiscomp::DataModel::PublicObjectCache::const_iterator _it;
+	};
+%}
+
+%extend PublicObjectCacheIterator {
+	%pythoncode %{
+		def __next__(self):
+		    o = self.next()
+		    if o is None:
+		        raise StopIteration
+		    return o
+	%}
+};
+
 %extend Seiscomp::DataModel::PublicObjectCache {
 	%pythoncode %{
 		def get(self, klass, publicID):
 		    o = self.find(klass.TypeInfo(), publicID)
 		    return klass.Cast(o)
+
+		def __iter__(self):
+		    return PublicObjectCacheIterator(self)
 	%}
 };
