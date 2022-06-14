@@ -22,7 +22,7 @@ EXECUTE_PROCESS(
 
 # Get the OS version
 EXECUTE_PROCESS(
-	COMMAND bash -c "lsb_release -sd | sed 's/\"//g'"
+	COMMAND bash -c "cat /etc/os-release | grep PRETTY_NAME | sed 's/PRETTY_NAME=//g' | sed 's/\"//g'"
 	OUTPUT_VARIABLE SC_OS_VERSION
 	OUTPUT_STRIP_TRAILING_WHITESPACE
 )
