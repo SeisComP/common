@@ -52,7 +52,6 @@
 #include <fcntl.h>
 
 #include <sys/stat.h>
-#include <boost/bind.hpp>
 
 #ifdef WIN32
 #define snprintf _snprintf
@@ -399,7 +398,7 @@ Application::Application(int argc, char** argv) {
 
 	_instance = this;
 
-	_commandline = boost::shared_ptr<System::CommandLine>(new System::CommandLine);
+	_commandline = shared_ptr<System::CommandLine>(new System::CommandLine);
 
 	_logger = nullptr;
 
@@ -1216,7 +1215,7 @@ bool Application::init() {
 	}
 
 	_commandline.reset();
-	_commandline = boost::shared_ptr<System::CommandLine>(new System::CommandLine);
+	_commandline = shared_ptr<System::CommandLine>(new System::CommandLine);
 	initCommandLine();
 	if ( !parseCommandLine() ) {
 		exit(-1);

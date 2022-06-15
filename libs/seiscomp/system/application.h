@@ -21,8 +21,6 @@
 #ifndef SEISCOMP_SYSTEM_APPLICATION_H
 #define SEISCOMP_SYSTEM_APPLICATION_H
 
-#include <boost/shared_ptr.hpp>
-
 #include <seiscomp/core/exceptions.h>
 #include <seiscomp/core/interruptible.h>
 #include <seiscomp/config/config.h>
@@ -30,6 +28,9 @@
 #include <seiscomp/system/settings.h>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/system/schema.h>
+
+#include <memory>
+#include <type_traits>
 
 
 namespace Seiscomp {
@@ -777,7 +778,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 					enum {
 						value = Generic::Detail::IsClassType<T>::value  ?
 						(
-							boost::is_same<std::string,T>::value ?
+							std::is_same<std::string,T>::value ?
 							1
 							:
 							0
@@ -1143,7 +1144,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 		std::string                    _name;
 
 		Arguments                      _arguments;
-		boost::shared_ptr<CommandLine> _commandline;
+		std::shared_ptr<CommandLine>   _commandline;
 
 		Logging::Output               *_logger;
 
