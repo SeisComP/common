@@ -1169,45 +1169,26 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 			std::string certificateStoreDirectory;
 
 			struct Logging {
-				Logging()
-				: verbosity(2)
-				, quiet(false)
-				, trace(false)
-				, debug(false)
-				, syslog(false)
-				, context(false)
-				, component(-1)
-				, toStdout(false)
-				, UTC(false)
-				{}
-
-				unsigned int  verbosity;
-				bool          quiet;
-				bool          trace;
-				bool          debug;
+				unsigned int  verbosity{2};
+				bool          quiet{false};
+				bool          trace{false};
+				bool          debug{false};
 #ifndef WIN32
-				bool          syslog;
+				bool          syslog{false};
 #endif
-				bool          context;
-				int           component;
-				bool          toStdout;
-				bool          UTC;
+				bool          context{false};
+				int           component{-1};
+				bool          toStdout{false};
+				bool          UTC{false};
 				std::string   alternativeLogFile;
 				ComponentList components;
 
 				struct File {
 					struct Rotator {
-						Rotator()
-						: enable(true)
-						, timeSpan(60*60*24) /* one day*/
-						, archiveSize(7) /* one week archive */
-						, maxFileSize(100*1024*1024) /* max 100MB per logfile */
-						{}
-
-						bool enable;
-						int timeSpan;
-						int archiveSize;
-						int maxFileSize;
+						bool enable{true};
+						int timeSpan{60 * 60 * 24}; /* one day*/
+						int archiveSize{7}; /* one week archive */
+						int maxFileSize{100 * 1024 * 1024}; /* max 100MB per logfile */
 
 						void accept(SettingsLinker &linker) {
 							linker

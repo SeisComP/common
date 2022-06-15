@@ -1483,20 +1483,10 @@ bool Application::initConfiguration() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::initLogging() {
-	bool logRotator = true;
-	int logRotateTime = 60*60*24; /* one day*/
-	int logRotateArchiveSize = 7; /* one week archive */
-	int logRotateMaxFileSize = 100*1024*1024; /* max 100MB per logfile */
-
 	Logging::disableConsoleLogging();
 
 	if ( _baseSettings.logging.quiet )
 		return true;
-
-	try { logRotator = configGetBool("logging.file.rotator"); } catch (...) {}
-	try { logRotateTime = configGetInt("logging.file.rotator.timeSpan"); } catch (...) {}
-	try { logRotateArchiveSize = configGetInt("logging.file.rotator.archiveSize"); } catch (...) {}
-	try { logRotateMaxFileSize = configGetInt("logging.file.rotator.maxFileSize"); } catch (...) {}
 
 	bool enableLogging = _baseSettings.logging.verbosity > 0;
 
@@ -1545,8 +1535,12 @@ bool Application::initLogging() {
 				logFile = Environment::Instance()->logFile(_name.c_str());
 
 			Logging::FileOutput* logger;
-			if ( logRotator )
-				logger = new Logging::FileRotatorOutput(logRotateTime, logRotateArchiveSize, logRotateMaxFileSize);
+			if ( _baseSettings.logging.file.rotator.enable )
+				logger = new Logging::FileRotatorOutput(
+					_baseSettings.logging.file.rotator.timeSpan,
+					_baseSettings.logging.file.rotator.archiveSize,
+					_baseSettings.logging.file.rotator.maxFileSize
+				);
 			else
 				logger = new Logging::FileOutput();
 
