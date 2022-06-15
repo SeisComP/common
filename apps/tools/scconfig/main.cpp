@@ -33,11 +33,9 @@
 #include <QtGui>
 #include <QApplication>
 #include <QMessageBox>
-#if QT_VERSION >= 0x040400
 #include <QSharedMemory>
 #include <QSystemSemaphore>
 #include <QCryptographicHash>
-#endif
 
 
 using namespace std;
@@ -57,7 +55,6 @@ string outdir;
 }
 
 
-#if QT_VERSION >= 0x040400
 class RunGuard {
 	public:
 		RunGuard(const QString &key)
@@ -134,7 +131,6 @@ class RunGuard {
 		QSharedMemory    sharedMem;
 		QSystemSemaphore memLock;
 };
-#endif
 
 
 int main(int argc, char **argv) {
@@ -142,7 +138,6 @@ int main(int argc, char **argv) {
 
 	filebase = Seiscomp::Environment::Instance()->installDir();
 
-	#if QT_VERSION >= 0x040400
 	RunGuard guard(QString("SeisComP/apps/scconfig/%1").arg(filebase.c_str()));
 	if ( !guard.tryToRun() ) {
 		if ( QMessageBox::warning(NULL, "scconfig", app.tr("scconfig with SEISCOMP_ROOT '%1' is already running!\n"
@@ -153,7 +148,6 @@ int main(int argc, char **argv) {
 		                                            QMessageBox::No) != QMessageBox::Yes )
 			return 0;
 	}
-	#endif
 
 	if ( filebase.empty() )
 		filebase = ".";

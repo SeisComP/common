@@ -1049,12 +1049,7 @@ void RecordViewItem::mouseMoveEvent(QMouseEvent *event) {
 			mimeData->setText(streamList);
 			drag->setMimeData(mimeData);
 
-
-			#if QT_VERSION >= 0x040300
-				drag->exec(Qt::CopyAction | Qt::MoveAction, Qt::MoveAction);
-			#else
-				drag->start(Qt::MoveAction);
-			#endif
+			drag->exec(Qt::CopyAction | Qt::MoveAction, Qt::MoveAction);
 		}
 	}
 	else

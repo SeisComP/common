@@ -431,7 +431,6 @@ void SpectrumWidget::resizeEvent(QResizeEvent *e) {
 void SpectrumWidget::paintEvent(QPaintEvent *e) {
 	QPainter p(this);
 
-#if QT_VERSION >= 0x040300
 	int axisHeight = _xAxis.sizeHint(p);
 
 	updateRanges();
@@ -464,9 +463,6 @@ void SpectrumWidget::paintEvent(QPaintEvent *e) {
 	draw(p, &_graphPowerSpectrum);
 	draw(p, &_graphResponseCorrectedPowerSpectrum);
 	draw(p, &_graphResponsePowerSpectrum);
-#else
-	p.drawText(rect(), Qt::AlignCenter, tr("Minimum required Qt version is 4.3.0 to render the plot.\nInstalled version: %1").arg(QT_VERSION_STR));
-#endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

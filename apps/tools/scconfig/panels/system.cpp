@@ -114,9 +114,7 @@ SystemPanel::SystemPanel(QWidget *parent)
 
 	QAction *a = _cmdToolBar->addAction("Refresh");
 	a->setToolTip("Refresh the state of the modules");
-#if QT_VERSION >= 0x040400
 	a->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
-#endif
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(updateModuleState()));
 
 	_cmdToolBar->addSeparator();
@@ -124,37 +122,27 @@ SystemPanel::SystemPanel(QWidget *parent)
 
 	a = _cmdToolBar->addAction("Start");
 	a->setToolTip("Start modules");
-#if QT_VERSION >= 0x040400
 	a->setIcon(QIcon(":/res/icons/start.png"));
-#endif
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(start()));
 
 	a = _cmdToolBar->addAction("Stop");
 	a->setToolTip("Stop modules");
-#if QT_VERSION >= 0x040400
 	a->setIcon(QIcon(":/res/icons/stop.png"));
-#endif
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(stop()));
 
 	a = _cmdToolBar->addAction("Restart");
 	a->setToolTip("Stop and start modules");
-#if QT_VERSION >= 0x040400
 	a->setIcon(QIcon(":/res/icons/restart.png"));
-#endif
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(restart()));
 
 	a = _cmdToolBar->addAction("Check");
 	a->setToolTip("Restart modules which stopped unexpectedly");
-#if QT_VERSION >= 0x040400
 	a->setIcon(QIcon(":/res/icons/check.png"));
-#endif
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(check()));
 
 	a = _cmdToolBar->addAction("Reload");
 	a->setToolTip("Reload the module configuration and apply during runtime of the module. Not supported by all modules.");
-#if QT_VERSION >= 0x040400
 	a->setIcon(QIcon(":/res/icons/reload.png"));
-#endif
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(reload()));
 
 	_cmdToolBar->addSeparator();

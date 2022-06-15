@@ -81,9 +81,7 @@ HelpPanel::HelpPanel(QWidget *parent)
 
 	a = tools->addAction("Refresh");
 	a->setShortcut(QKeySequence(Qt::Key_F5));
-#if QT_VERSION >= 0x040400
 	a->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
-#endif
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(refresh()));
 
 	QVBoxLayout *l = new QVBoxLayout;

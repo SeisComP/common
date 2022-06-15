@@ -865,14 +865,6 @@ bool Application::initConfiguration() {
 	_scheme->fetch();
 
 	pal.setColor(QPalette::Window, _scheme->colors.background);
-#if QT_VERSION >= 0x040300
-	// Keep original Qt settings for buttons. This can be achieved by
-	// using a custom StyleSheet:
-	//   appname -stylesheet=mystyle.qss
-	// mystyle.qcc
-	//  QPushButton { background-color: red }
-	//pal.setColor(QPalette::Button, _scheme.colors.background.lighter(110));
-#endif
 
 	if ( _type == GuiClient) {
 		dynamic_cast<QApplication*>(_app)->setPalette(pal);

@@ -908,13 +908,7 @@ size_t Canvas::drawFeature(QPainter &painter, const Geo::GeoFeature *f,
 					if ( forward )
 						path.addPath(subPath);
 					else {
-#if QT_VERSION >= 0x040500
 						path -= subPath;
-#elif QT_VERSION >= 0x040300
-						path = path.subtracted(subPath);
-#else
-						path.addPath(subPath.toReversed());
-#endif
 					}
 
 					lines += subPath.elementCount();

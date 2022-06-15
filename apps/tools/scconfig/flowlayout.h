@@ -50,9 +50,7 @@ class FlowLayout : public QLayout {
 
 	private:
 		int doLayout(const QRect &rect, bool testOnly) const;
-#if QT_VERSION >= 0x040300
 		int smartSpacing(QStyle::PixelMetric pm) const;
-#endif
 
 		QVector<QLayoutItem *> itemList;
 		int m_hSpace;

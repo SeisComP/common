@@ -172,9 +172,7 @@ ModulesPanel::ModulesPanel(QWidget *parent)
 
 	QAction *closeSearch = new QAction(_searchWidget);
 	closeSearch->setShortcut(QKeySequence("Esc"));
-#if QT_VERSION >= 0x040400
 	closeSearch->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-#endif
 	_searchWidget->addAction(closeSearch);
 	connect(closeSearch, SIGNAL(triggered()), this, SLOT(closeSearch()));
 

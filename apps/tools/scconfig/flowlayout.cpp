@@ -51,11 +51,7 @@ int FlowLayout::horizontalSpacing() const {
 	if ( m_hSpace >= 0 )
 		return m_hSpace;
 	else
-#if QT_VERSION >= 0x040300
 		return smartSpacing(QStyle::PM_LayoutHorizontalSpacing);
-#else
-		return spacing();
-#endif
 }
 
 
@@ -63,11 +59,7 @@ int FlowLayout::verticalSpacing() const {
 	if ( m_vSpace >= 0 )
 		return m_vSpace;
 	else
-#if QT_VERSION >= 0x040300
 		return smartSpacing(QStyle::PM_LayoutVerticalSpacing);
-#else
-		return spacing();
-#endif
 }
 
 
@@ -216,7 +208,6 @@ int FlowLayout::doLayout(const QRect &rect, bool testOnly) const {
 
 	return y + lineHeight - rect.y() + bottom;
 }
-#if QT_VERSION >= 0x040300
 
 
 int FlowLayout::smartSpacing(QStyle::PixelMetric pm) const {
@@ -230,4 +221,3 @@ int FlowLayout::smartSpacing(QStyle::PixelMetric pm) const {
 	else
 		return static_cast<QLayout *>(parent)->spacing();
 }
-#endif
