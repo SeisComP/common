@@ -26,8 +26,10 @@
 #include <seiscomp/io/xml/handler.h>
 #include <seiscomp/utils/units.h>
 #include <seiscomp/logging/log.h>
-#include <set>
+
+#include <cstdlib>
 #include <map>
+#include <set>
 
 
 #define NS_QML           "http://quakeml.org/xmlns/quakeml/1.2"
@@ -40,6 +42,23 @@ using namespace Seiscomp::DataModel;
 
 namespace Seiscomp {
 namespace QML {
+
+namespace {
+
+const char *ReadSMIPrefix() {
+	const char *prefix = getenv(SMIPrefixEnvVar);
+	return prefix ? prefix : RES_REF_PREFIX;
+}
+std::string SMI_PREFIX = ReadSMIPrefix();
+
+} // ns anonymous
+
+const char *NS() { return NS_QML; }
+const char *NS_RT() { return NS_QML_RT; }
+const char *NS_BED() { return NS_QML_BED; }
+const char *NS_BED_RT() { return NS_QML_BED_RT; }
+const std::string &SMIPrefix() { return SMI_PREFIX; }
+
 
 REGISTER_EXPORTER_INTERFACE(Exporter, "qml1.2");
 REGISTER_EXPORTER_INTERFACE(RTExporter, "qml1.2rt");
@@ -82,8 +101,8 @@ struct TypeMap : TypeMapCommon {
 struct RTTypeMap : TypeMapCommon {
 	RTTypeMap();
 };
-TypeMap __typeMap;
-RTTypeMap __rtTypeMap;
+static TypeMap __typeMap;
+static RTTypeMap __rtTypeMap;
 
 inline std::string& replaceIDChars(std::string &id) {
 	std::string::iterator it;
@@ -95,10 +114,10 @@ inline std::string& replaceIDChars(std::string &id) {
 struct ResRefFormatter : Formatter {
 	bool mandatory;
 	ResRefFormatter(bool mandatory = false) : mandatory(mandatory) {}
-	void to(std::string& v) {
+	void to(std::string& v) override {
 		if ( v.empty() ) {
 			if ( mandatory )
-				v.append(RES_REF_PREFIX"NA");
+				v.append(SMI_PREFIX + "NA");
 		}
 		else {
 			// TODO: Use regex and replace every char not matching pattern
@@ -107,32 +126,32 @@ struct ResRefFormatter : Formatter {
 			// to be a valid smi
 			if ( v.compare(0, 4, "smi:") != 0 && v.compare(0, 8, "quakeml:") ) {
 				replaceIDChars(v);
-				v.insert(0, RES_REF_PREFIX);
+				v.insert(0, SMI_PREFIX);
 			}
 		}
 	}
 };
-ResRefFormatter __resRef;
-ResRefFormatter __resRefMan(true);
+static ResRefFormatter __resRef;
+static ResRefFormatter __resRefMan(true);
 
 struct MaxLenFormatter : Formatter {
 	size_t maxLen;
 	MaxLenFormatter(size_t maxLen) : maxLen(maxLen) {}
-	void to(std::string& v) {
+	void to(std::string& v) override {
 		if ( v.length() > maxLen ) {
 			v.resize(maxLen);
 			SEISCOMP_WARNING("max length constraint exceeded cutting string to "
-			                 "%lu bytes: %s", (unsigned long) maxLen, v.c_str());
+			                 "%zu bytes: %s", maxLen, v.c_str());
 		}
 	}
 };
-MaxLenFormatter __maxLen8(8);
-MaxLenFormatter __maxLen32(32);
-MaxLenFormatter __maxLen64(64);
-MaxLenFormatter __maxLen128(128);
+static MaxLenFormatter __maxLen8(8);
+static MaxLenFormatter __maxLen32(32);
+static MaxLenFormatter __maxLen64(64);
+static MaxLenFormatter __maxLen128(128);
 
 struct AmplitudeUnitFormatter : Formatter {
-	void to(std::string &v) {
+	void to(std::string &v) override {
 		if ( v != "m" && v != "s" && v != "m/s" && v != "m/(s*s)" &&
 		     v != "m*s" && v != "dimensionless" )
 			v = "other";
@@ -141,7 +160,7 @@ struct AmplitudeUnitFormatter : Formatter {
 static AmplitudeUnitFormatter __amplitudeUnitFormatter;
 
 struct EvaluationStatusFormatter : Formatter {
-	void to(std::string& v) {
+	void to(std::string& v) override {
 		if ( v == "reported" ) {
 			v = "";
 			SEISCOMP_WARNING("dropping unsupported EvaluationStatus value: "
@@ -149,10 +168,10 @@ struct EvaluationStatusFormatter : Formatter {
 		}
 	}
 };
-EvaluationStatusFormatter __evaluationStatus;
+static EvaluationStatusFormatter __evaluationStatus;
 
 struct EventTypeFormatter : Formatter {
-	void to(std::string &v) {
+	void to(std::string &v) override {
 		if ( v.empty() ) return;
 		EventType type;
 		if ( !type.fromString(v) ) {
@@ -166,7 +185,7 @@ struct EventTypeFormatter : Formatter {
 static EventTypeFormatter __eventType;
 
 struct EventTypeCertaintyFormatter : Formatter {
-	void to(std::string &v) {
+	void to(std::string &v) override {
 		if ( v.empty() ) return;
 		EventTypeCertainty type;
 		if ( !type.fromString(v) ) {
@@ -182,7 +201,7 @@ struct EventTypeCertaintyFormatter : Formatter {
 static EventTypeCertaintyFormatter __eventTypeCertainty;
 
 struct OriginUncertaintyDescriptionFormatter : Formatter {
-	void to(std::string &v) {
+	void to(std::string &v) override {
 		if ( v == "probability density function" ) {
 			v = "";
 			SEISCOMP_WARNING("dropping unsupported OriginUncertaintyDescription"
@@ -196,7 +215,8 @@ static OriginUncertaintyDescriptionFormatter __originUncertaintyDescription;
 // this Event object
 struct FocalMechanismConnector : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
-	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
+	         bool opt, IO::XML::OutputHandler *output,
+	         IO::XML::NodeHandler *) override {
 		Event *event = Event::Cast(object);
 		if ( !event || !event->eventParameters() ) return false;
 		EventParameters *ep = event->eventParameters();
@@ -209,8 +229,12 @@ struct FocalMechanismConnector : IO::XML::MemberHandler {
 		}
 		return true;
 	}
-	std::string value(Core::BaseObject *obj) { return ""; }
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	std::string value(Core::BaseObject *obj) override {
+		return "";
+	}
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 // Places Origins, Magnitudes, StationMagnitudes, Amplidues and Picks referenced
@@ -218,7 +242,8 @@ struct FocalMechanismConnector : IO::XML::MemberHandler {
 // nodes of this Event object
 struct OriginConnector : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
-	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
+	         bool opt, IO::XML::OutputHandler *output,
+	         IO::XML::NodeHandler *h) override {
 		Event *event = Event::Cast(object);
 		if ( !event || !event->eventParameters() ) return false;
 		EventParameters *ep = event->eventParameters();
@@ -312,15 +337,20 @@ struct OriginConnector : IO::XML::MemberHandler {
 
 		return true;
 	}
-	std::string value(Core::BaseObject *obj) { return ""; }
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	std::string value(Core::BaseObject *obj) override {
+		return "";
+	}
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 // Places Magnitudes and StationMagnitudes from Origins of all Events as direct
 // child nodes of this EventParameters object
 struct RTMagnitudeConnector : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
-	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
+	         bool opt, IO::XML::OutputHandler *output,
+	         IO::XML::NodeHandler *h) override {
 		EventParameters *ep = EventParameters::Cast(object);
 		if ( !ep ) return false;
 		Origin *origin;
@@ -341,14 +371,19 @@ struct RTMagnitudeConnector : IO::XML::MemberHandler {
 		}
 		return true;
 	}
-	std::string value(Core::BaseObject *obj) { return ""; }
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	std::string value(Core::BaseObject *obj) override {
+		return "";
+	}
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 // Creates MagnitudeReferences from Magniude IDs of all Origins of current Event
 struct RTMagnitudeReferenceConnector : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
-	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
+	         bool opt, IO::XML::OutputHandler *output,
+	         IO::XML::NodeHandler *h) override {
 		Event *event = Event::Cast(object);
 		if ( !event || !event->eventParameters() ) return false;
 		EventParameters *ep = event->eventParameters();
@@ -366,8 +401,12 @@ struct RTMagnitudeReferenceConnector : IO::XML::MemberHandler {
 		}
 		return true;
 	}
-	std::string value(Core::BaseObject *obj) { return ""; }
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	std::string value(Core::BaseObject *obj) override {
+		return "";
+	}
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 struct FormatedPropertyHandler : IO::XML::PropertyHandler {
@@ -375,7 +414,7 @@ struct FormatedPropertyHandler : IO::XML::PropertyHandler {
 	FormatedPropertyHandler(const Core::MetaProperty *prop, Formatter *format = nullptr)
 	    : PropertyHandler(prop), formatter(format) {}
 
-	std::string value(Core::BaseObject *obj) {
+	std::string value(Core::BaseObject *obj) override {
 		std::string v = IO::XML::PropertyHandler::value(obj);
 		if ( formatter ) formatter->to(v);
 		return v;
@@ -384,37 +423,44 @@ struct FormatedPropertyHandler : IO::XML::PropertyHandler {
 
 template <typename T>
 struct PublicIDHandler : IO::XML::MemberHandler {
-	std::string value(Core::BaseObject *obj) {
+	std::string value(Core::BaseObject *obj) override {
 		T *target = T::Cast(obj);
-		std::string v = "";
+		std::string v;
 		if ( target ) {
 			v = target->publicID();
 			__resRef.to(v);
 		}
 		return v;
-		//return RES_REF_PREFIX + target->publicID();
 	}
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 struct StaticHandler : IO::XML::MemberHandler {
 	std::string v;
-	StaticHandler(const std::string &value) : v(value) {}
-	std::string value(Core::BaseObject *obj) { return v; }
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	StaticHandler(std::string value) : v(std::move(value)) {}
+	std::string value(Core::BaseObject *obj) override {
+		return v;
+	}
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 // Creates an arrival publicID by combining the pick and origin ID
 struct ArrivalPublicIDHandler : IO::XML::MemberHandler {
-	std::string value(Core::BaseObject *obj) {
+	std::string value(Core::BaseObject *obj) override {
 		Arrival *arrival = Arrival::Cast(obj);
 		if ( arrival && arrival->origin() ) {
 			std::string oid = arrival->origin()->publicID();
-			return RES_REF_PREFIX + arrival->pickID() + "_" + replaceIDChars(oid);
+			return SMI_PREFIX + arrival->pickID() + "_" + replaceIDChars(oid);
 		}
-		return RES_REF_PREFIX"NA";
+		return SMI_PREFIX + "NA";
 	}
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 template <typename T>
@@ -454,9 +500,8 @@ void TypedClassHandler<T>::addList(const char *properties,
 	if ( !obj )
 		throw Core::TypeException(std::string(T::ClassName()) + ": no metaobject");
 
-	std::vector<std::string>::iterator it = toks.begin();
-	for ( ; it != toks.end(); ++it) {
-		std::string property = Core::trim(*it);
+	for ( auto &tok : toks ) {
+		std::string property = Core::trim(tok);
 		const Core::MetaProperty *prop = nullptr;
 		prop = obj->property(property);
 		if ( !prop )
@@ -482,7 +527,7 @@ void TypedClassHandler<T>::addEmptyPID() {
 	IO::XML::ClassHandler::addMember("publicID", "",
 	                                 IO::XML::ClassHandler::Mandatory,
 	                                 IO::XML::ClassHandler::Attribute,
-	                                 new StaticHandler(RES_REF_PREFIX"NA"));
+	                                 new StaticHandler(SMI_PREFIX + "NA"));
 }
 
 struct TimeQuantityHandler : TypedClassHandler<TimeQuantity> {
@@ -533,7 +578,8 @@ struct CommentHandler : TypedClassHandler<Comment> {
 
 struct ResourceURIHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
-	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
+	         bool opt, IO::XML::OutputHandler *output,
+	         IO::XML::NodeHandler *h) override {
 		WaveformStreamID *wfsID = WaveformStreamID::Cast(object);
 		if ( !wfsID || wfsID->resourceURI().empty() ) return false;
 		std::string uri = wfsID->resourceURI();
@@ -541,8 +587,12 @@ struct ResourceURIHandler : IO::XML::MemberHandler {
 		output->put(uri.c_str());
 		return true;
 	}
-	std::string value(Core::BaseObject *obj) { return ""; }
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	std::string value(Core::BaseObject *obj) override {
+		return "";
+	}
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 struct WaveformStreamIDHandler : TypedClassHandler<WaveformStreamID> {
@@ -581,7 +631,8 @@ struct OriginQualityHandler : TypedClassHandler<OriginQuality> {
 // QuakeML requires depth in meter (not kilometer)
 struct OriginDepthHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
-	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
+	         bool opt, IO::XML::OutputHandler *output,
+	         IO::XML::NodeHandler *h) override {
 		Origin *o = Origin::Cast(object);
 		if ( !o ) return false;
 		try {
@@ -600,13 +651,18 @@ struct OriginDepthHandler : IO::XML::MemberHandler {
 		catch ( Core::ValueException & ) {}
 		return false;
 	}
-	std::string value(Core::BaseObject *obj) { return ""; }
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	std::string value(Core::BaseObject *obj) override {
+		return "";
+	}
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 struct TakeOffAngleHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
-	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
+	         bool opt, IO::XML::OutputHandler *output,
+	         IO::XML::NodeHandler *h) override {
 		Arrival *arrival = Arrival::Cast(object);
 		if ( !arrival ) return false;
 		try {
@@ -626,13 +682,18 @@ struct TakeOffAngleHandler : IO::XML::MemberHandler {
 		catch ( Core::ValueException & ) {}
 		return false;
 	}
-	std::string value(Core::BaseObject *obj) { return ""; }
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	std::string value(Core::BaseObject *obj) override {
+		return "";
+	}
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 struct ArrivalWeightHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
-	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
+	         bool opt, IO::XML::OutputHandler *output,
+	         IO::XML::NodeHandler *h) override {
 		Arrival *arrival = Arrival::Cast(object);
 		if ( !arrival ) return false;
 
@@ -676,8 +737,12 @@ struct ArrivalWeightHandler : IO::XML::MemberHandler {
 
 		return true;
 	}
-	std::string value(Core::BaseObject *obj) { return ""; }
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	std::string value(Core::BaseObject *obj) override {
+		return "";
+	}
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 struct ArrivalHandler : TypedClassHandler<Arrival> {
@@ -734,7 +799,8 @@ static OriginUncertaintySecondaryHandler __originUncertaintySecondaryHandler;
 // QuakeML requires some uncertainty values in meter (not kilometer)
 struct OriginUncertaintyHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
-	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
+	         bool opt, IO::XML::OutputHandler *output,
+	         IO::XML::NodeHandler *h) override {
 		Origin *o = Origin::Cast(object);
 		if ( !o ) return false;
 		try {
@@ -759,8 +825,12 @@ struct OriginUncertaintyHandler : IO::XML::MemberHandler {
 		catch ( Core::ValueException & ) {}
 		return false;
 	}
-	std::string value(Core::BaseObject *obj) { return ""; }
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	std::string value(Core::BaseObject *obj) override {
+		return "";
+	}
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 struct CompositeTimeHandler : TypedClassHandler<CompositeTime> {
@@ -843,14 +913,15 @@ static AmplitudeUnitMap __amplitudeUnits;
 
 struct AmplitudeValueHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
-	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
+	         bool opt, IO::XML::OutputHandler *output,
+	         IO::XML::NodeHandler *h) override {
 		Amplitude *amp = Amplitude::Cast(object);
 		if ( !amp ) return false;
 		try {
 			double scale = 1.0;
 
 			if ( amp->unit().empty() ) {
-				AmplitudeUnitMap::iterator it = __amplitudeUnits.find(amp->type());
+				auto it = __amplitudeUnits.find(amp->type());
 				if ( it != __amplitudeUnits.end() ) {
 					const Util::UnitConversion *conv = Util::UnitConverter::get(it->second);
 					if ( conv )
@@ -877,21 +948,26 @@ struct AmplitudeValueHandler : IO::XML::MemberHandler {
 		catch ( Core::ValueException & ) {}
 		return false;
 	}
-	std::string value(Core::BaseObject *obj) { return ""; }
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	std::string value(Core::BaseObject *obj) override {
+		return "";
+	}
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 
 struct AmplitudeUnitHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
-	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
+	         bool opt, IO::XML::OutputHandler *output,
+	         IO::XML::NodeHandler *h) override {
 		Amplitude *amp = Amplitude::Cast(object);
 		if ( !amp ) return false;
 
 		const std::string *ustr = nullptr;
 
 		if ( amp->unit().empty() ) {
-			AmplitudeUnitMap::iterator it = __amplitudeUnits.find(amp->type());
+			auto it = __amplitudeUnits.find(amp->type());
 			if ( it != __amplitudeUnits.end() ) {
 				const Util::UnitConversion *conv = Util::UnitConverter::get(it->second);
 				if ( conv )
@@ -915,8 +991,12 @@ struct AmplitudeUnitHandler : IO::XML::MemberHandler {
 
 		return true;
 	}
-	std::string value(Core::BaseObject *obj) { return ""; }
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	std::string value(Core::BaseObject *obj) override {
+		return "";
+	}
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 
@@ -938,7 +1018,7 @@ struct AmplitudeHandler : TypedClassHandler<Amplitude> {
 	// remove amplitude if amplitude value is not set since genericAmplitude
 	// is mandatory in QuakeML
 	bool put(Core::BaseObject *obj, const char *tag, const char *ns,
-	         IO::XML::OutputHandler *output) {
+	         IO::XML::OutputHandler *output) override {
 		Amplitude *amplitude = Amplitude::Cast(obj);
 		if ( !amplitude ) return false;
 
@@ -988,7 +1068,7 @@ struct TensorHandler : TypedClassHandler<Tensor> {
 
 struct DataUsedHandler : TypedClassHandler<DataUsed> {
 	struct DataUsedWaveFormatter : Formatter {
-		void to(std::string &v) {
+		void to(std::string &v) override{
 			if ( v == "P body waves" )
 				v = "P waves";
 			else if ( v == "long-period body waves" )
@@ -1010,7 +1090,8 @@ struct DataUsedHandler : TypedClassHandler<DataUsed> {
 
 struct MomentTensorMethodHandler : IO::XML::MemberHandler {
 	bool put(Core::BaseObject *object, const char *tag, const char *ns,
-	         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
+	         bool opt, IO::XML::OutputHandler *output,
+	         IO::XML::NodeHandler *h) override {
 		MomentTensor *mt = MomentTensor::Cast(object);
 		try {
 			MomentTensorMethod method = mt->method();
@@ -1025,8 +1106,12 @@ struct MomentTensorMethodHandler : IO::XML::MemberHandler {
 		catch ( Core::ValueException & ) {}
 		return false;
 	}
-	std::string value(Core::BaseObject *obj) { return ""; }
-	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) { return false; }
+	std::string value(Core::BaseObject *obj) override {
+		return "";
+	}
+	bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
+		return false;
+	}
 };
 
 struct MomentTensorHandler : TypedClassHandler<MomentTensor> {
@@ -1146,8 +1231,8 @@ struct RTEventParametersHandler : TypedClassHandler<EventParameters> {
 };
 
 struct QuakeMLHandler : IO::XML::NodeHandler {
-	virtual bool put(Core::BaseObject *obj, const char *tag, const char *ns,
-	                 IO::XML::OutputHandler *output) {
+	bool put(Core::BaseObject *obj, const char *tag, const char *ns,
+	         IO::XML::OutputHandler *output) override {
 		static EventParametersHandler eventParametersHandler;
 		if ( !output->openElement(tag, ns) )
 			return false;
@@ -1158,8 +1243,8 @@ struct QuakeMLHandler : IO::XML::NodeHandler {
 };
 
 struct RTQuakeMLHandler : IO::XML::NodeHandler {
-	virtual bool put(Core::BaseObject *obj, const char *tag, const char *ns,
-	                 IO::XML::OutputHandler *output) {
+	bool put(Core::BaseObject *obj, const char *tag, const char *ns,
+	         IO::XML::OutputHandler *output) override {
 		static RTEventParametersHandler eventParametersHandler;
 		if ( !output->openElement(tag, ns) )
 			return false;

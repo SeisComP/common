@@ -32,6 +32,20 @@
 namespace Seiscomp {
 namespace QML {
 
+/** @version 15.1 */
+const char *NS();
+/** @version 15.1 */
+const char *NS_RT();
+/** @version 15.1 */
+const char *NS_BED();
+/** @version 15.1 */
+const char *NS_BED_RT();
+
+/** @version 15.1 */
+constexpr const char *SMIPrefixEnvVar = "QML_SMI_PREFIX";
+/** @version 15.1 */
+const std::string &SMIPrefix();
+
 class TypeMapper {
 	public:
 		/**
@@ -64,7 +78,7 @@ class Exporter : public IO::XML::Exporter {
 		Exporter();
 
 	protected:
-		virtual void collectNamespaces(Core::BaseObject *);
+		void collectNamespaces(Core::BaseObject *) override;
 };
 
 class RTExporter : public IO::XML::Exporter {
@@ -72,10 +86,11 @@ class RTExporter : public IO::XML::Exporter {
 		RTExporter();
 
 	protected:
-		virtual void collectNamespaces(Core::BaseObject *);
+		void collectNamespaces(Core::BaseObject *) override;
 };
 
 struct Formatter {
+	virtual ~Formatter() = default;
 	virtual void to(std::string& v) {}
 	virtual void from(std::string& v) {}
 };
