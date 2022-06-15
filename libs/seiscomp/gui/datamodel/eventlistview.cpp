@@ -1860,11 +1860,7 @@ class TreeWidget : public QTreeWidget {
 			//SEISCOMP_DEBUG("Start drag");
 			QDrag *drag = new QDrag(this);
 			drag->setMimeData(mimeData);
-#if QT_VERSION < 0x040300
-			drag->start(Qt::MoveAction);
-#else
 			drag->exec(Qt::MoveAction);
-#endif
 
 			for ( int i = 0; i < item->columnCount(); ++i ) {
 				item->setBackground(i, Qt::NoBrush);

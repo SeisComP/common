@@ -1340,9 +1340,7 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery* reader) {
 	_tabMagnitudes->setShape(QTabBar::RoundedNorth);
 	_tabMagnitudes->setUsesScrollButtons(true);
 
-#if QT_VERSION >= 0x040500
 	connect(_tabMagnitudes, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
-#endif
 
 	hboxLayout->addWidget(_tabMagnitudes);
 
@@ -2889,7 +2887,6 @@ void MagnitudeView::selectPreferredMagnitude(int idx) {
 
 		if ( d.selected )
 			mag = Magnitude::Find(d.publicID);
-		#if QT_VERSION >= 0x040500
 
 		QCheckBox *cb = static_cast<QCheckBox*>(_tabMagnitudes->tabButton(i, QTabBar::LeftSide));
 		if ( cb ) {
@@ -2897,7 +2894,6 @@ void MagnitudeView::selectPreferredMagnitude(int idx) {
 			cb->setCheckState(d.selected ? Qt::Checked : Qt::Unchecked);
 			cb->blockSignals(false);
 		}
-		#endif
 	}
 
 	emit magnitudeSelected(_origin->publicID().c_str(), mag);
@@ -2909,7 +2905,6 @@ void MagnitudeView::selectPreferredMagnitude(int idx) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::tabStateChanged(int state) {
-#if QT_VERSION >= 0x040500
 	if ( state == Qt::Checked ) {
 		for ( int i = 0; i < _tabMagnitudes->count(); ++i ) {
 			QCheckBox *cb = static_cast<QCheckBox*>(_tabMagnitudes->tabButton(i, QTabBar::LeftSide));
@@ -2921,7 +2916,6 @@ void MagnitudeView::tabStateChanged(int state) {
 	}
 
 	selectPreferredMagnitude(-1);
-#endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3162,9 +3156,7 @@ void MagnitudeView::updateObject(const QString &parentID, Seiscomp::DataModel::O
 void MagnitudeView::setReadOnly(bool e) {
 	_ui.groupReview->setVisible(!e);
 
-#if QT_VERSION >= 0x040500
 	_tabMagnitudes->setTabsClosable(!e);
-#endif
 
 	if ( _amplitudeView && e )
 		_amplitudeView->close();
@@ -3231,7 +3223,6 @@ int MagnitudeView::addMagnitude(Seiscomp::DataModel::Magnitude* netMag) {
 
 	_tabMagnitudes->setTabData(tabIndex, QVariant::fromValue<TabData>(data));
 
-#if QT_VERSION >= 0x040500
 	if ( data.valid ) {
 		QCheckBox *btn = new QCheckBox;
 		btn->setToolTip(tr("Select this magnitude type as preferred magnitude "
@@ -3242,7 +3233,6 @@ int MagnitudeView::addMagnitude(Seiscomp::DataModel::Magnitude* netMag) {
 		connect(btn, SIGNAL(stateChanged(int)), this, SLOT(tabStateChanged(int)));
 	}
 
-#endif
 	if ( tabIndex == _tabMagnitudes->currentIndex() )
 		updateContent();
 

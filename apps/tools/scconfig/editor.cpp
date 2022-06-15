@@ -167,11 +167,9 @@ void ConfigEditor::init() {
 	pal.setColor(QPalette::WindowText, QColor(96,96,96));
 	_lineNumbers->setPalette(pal);
 
-#if QT_VERSION >= 0x040500
 	QTextOption option = document()->defaultTextOption();
 	option.setFlags(option.flags() | QTextOption::ShowTabsAndSpaces);
 	document()->setDefaultTextOption(option);
-#endif
 
 	setTabStopWidth(fontMetrics().width(QLatin1Char('9'))*4);
 

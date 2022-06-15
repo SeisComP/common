@@ -24,9 +24,7 @@
 
 #include <QObject>
 #include <QPainter>
-#if QT_VERSION >= 0x040300
 #include <QTransform>
-#endif
 
 #include <seiscomp/gui/plot/range.h>
 
@@ -228,9 +226,7 @@ class SC_GUI_API Axis : public QObject {
 		int           _spacing;
 
 		// Render configuration
-#if QT_VERSION >= 0x040300
 		QTransform    _transform;
-#endif
 		int           _extent;
 		int           _width;
 		double        _axisStartValue;

@@ -174,7 +174,6 @@ double Axis::unproject(double axisValue) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Axis::updateLayout(const QFontMetrics &fm, QRect &rect) {
-#if QT_VERSION >= 0x040300
 	int fontHeight = fm.ascent();
 	int fontWidth = fm.boundingRect("-1.23E456").width();
 	int fontDescent = fm.descent();
@@ -372,7 +371,6 @@ void Axis::updateLayout(const QFontMetrics &fm, QRect &rect) {
 			firstTick = false;
 		}
 	}
-#endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -415,7 +413,6 @@ int Axis::sizeHint(const QPainter &painter) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Axis::draw(QPainter &painter, const QRect &rect, bool clipText) {
-#if QT_VERSION >= 0x040300
 	if ( !_visible ) return;
 
 	painter.setPen(_penAxis);
@@ -562,7 +559,6 @@ void Axis::draw(QPainter &painter, const QRect &rect, bool clipText) {
 			painter.restore();
 		}
 	}
-#endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
