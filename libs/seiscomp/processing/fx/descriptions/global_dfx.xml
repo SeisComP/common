@@ -3,12 +3,14 @@
 	<plugin name="FX-DFX">
 		<extends>global</extends>
 		<description>
-		Implementation of the CTBTO/IDC polar analysis for three-component stations.
+		Implementation of the CTBTO/IDC polarization analysis for
+		three-component stations.
 		</description>
 	</plugin>
 	<binding name="FX-DFX" module="global">
 		<description>
-		Implementation of the CTBTO/IDC polar analysis for three-component stations.
+		Implementation of the CTBTO/IDC polarization analysis for
+		three-component stations.
 		</description>
 		<configuration>
 			<group name="fx">
@@ -20,8 +22,8 @@
 					Three component feature extraction algorithm ported from the
 					automatic processing system implemented at CTBTO/IDC. The
 					documentation of the methods is not publically available.
-					In case of questions and comments, please contact
-					support@ctbto.org.
+					In case of questions and comments, please contact CTBTO by
+					email: support@ctbto.org.
 					</description>
 					<group name="filter">
 						<description>
