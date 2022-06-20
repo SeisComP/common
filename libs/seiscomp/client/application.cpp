@@ -378,8 +378,8 @@ void Application::AppSettings::RecordStream::accept(SettingsLinker &linker) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::AppSettings::Processing::accept(SettingsLinker &linker) {
 	linker
-	& cfg(agencyBlacklist, "whitelist.agencies")
-	& cfg(agencyWhitelist, "blacklist.agencies");
+	& cfg(agencyWhitelist, "whitelist.agencies")
+	& cfg(agencyBlacklist, "blacklist.agencies");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
