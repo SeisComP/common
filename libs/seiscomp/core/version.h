@@ -48,6 +48,7 @@ namespace Core {
  ******************************************************************************
  "15.1.0"   0x0F0100
    - Added Seiscomp::MetaObject::Find
+   - Added Seiscomp::DataModel::Diff4
 
  "15.0.0"   0x0F0000
    - Added OriginUncertainty::confidenceLevel

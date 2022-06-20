@@ -673,5 +673,148 @@ void Diff3::diff(Object *o1, Object *o2,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Diff4::diff(Object *o1, Object *o2,
+                 const string &o1ParentID, Notifiers &notifiers,
+                 LogNode *parentLogNode) {
+	// Both objects empty, nothing to compare here
+	if ( !o1 && !o2 ) return;
+
+	size_t ns = notifiers.size();
+
+	// Filter object
+	if ( o1 && blocked(o1, parentLogNode, true) ) return;
+	if ( o2 && blocked(o2, parentLogNode, false) ) return;
+
+	// No element on the left -> ADD
+	if ( !o1 ) {
+		AppendNotifier(notifiers, OP_ADD, o2, o1ParentID);
+		if ( parentLogNode && notifiers.size() > ns )
+			createLogNodes(parentLogNode, o1ParentID,
+			               notifiers.begin()+ns, notifiers.end());
+		return;
+	}
+
+	// No element on the right -> REMOVE
+	if ( !o2 ) {
+		AppendNotifier(notifiers, OP_REMOVE, o1, o1ParentID);
+		if ( parentLogNode && notifiers.size() > ns )
+			createLogNodes(parentLogNode, o1ParentID,
+			               notifiers.begin()+ns, notifiers.end());
+		return;
+	}
+
+	// UPDATE?
+	bool updateAdded = false;
+	LogNodePtr logNode;
+	if ( parentLogNode )
+		logNode = new LogNode(o2t(o1), parentLogNode->level());
+
+	PublicObject *o1PO = PublicObject::Cast(o1);
+
+	bool updateConfirmed = confirmUpdate(o1, o2, logNode.get());
+
+	// Iterate over all properties
+	for ( size_t i = 0; i < o1->meta()->propertyCount(); ++i ) {
+		const Core::MetaProperty* prop = o1->meta()->property(i);
+
+		// Non array property
+		if ( !prop->isArray() ) {
+			if ( !updateConfirmed ) {
+				continue;
+			}
+
+			// property has to be compared if no difference was detected so far
+			// or log level requires output
+			if ( updateAdded &&
+			     (!logNode || logNode->level() == LogNode::OPERATIONS) )
+				continue;
+			bool status = compareNonArrayProperty(prop, o1, o2, logNode.get());
+
+			if ( !updateAdded && !status ) {
+				notifiers.push_back(new Notifier(o1ParentID, OP_UPDATE, o2));
+				if ( logNode ) logNode->setMessage(op2str(OP_UPDATE));
+				updateAdded = true;
+			}
+
+			continue;
+		}
+
+		// only PublicObjects contain array properties
+		if ( !o1PO ) {
+			continue;
+		}
+
+		if ( !confirmDescent(o1, o2, updateConfirmed, prop, logNode.get()) ) {
+			if ( logNode ) {
+				LogNodePtr childLogNode = new LogNode(prop->name(), logNode->level());
+				childLogNode->setMessage("SKIP DESCENT because it is blocked");
+				logNode->addChild(childLogNode.get());
+			}
+			continue;
+		}
+
+		// Array property:
+		// The order of elements of a class array is arbitrary, hence
+		// each element of one array must be searched among all elements
+		// of the other array. PublicObjects are identified based on their
+		// publicID, other Objects are compared by their index fields.
+		map<string, PublicObject*> o2POChilds;
+		vector<Object*> o2Childs;
+		for ( size_t i_o2 = 0; i_o2 < prop->arrayElementCount(o2); ++i_o2 ) {
+			Core::BaseObject* bo = const_cast<Core::BaseObject*>(prop->arrayObject(o2, i_o2));
+
+			PublicObject *po = PublicObject::Cast(bo);
+			if ( po )
+				o2POChilds[po->publicID()] = po;
+			else
+				o2Childs.push_back(Object::Cast(bo));
+		}
+
+		// For each element of o1 array search counterpart in o2
+		for ( size_t i_o1 = 0; i_o1 < prop->arrayElementCount(o1); ++i_o1 ) {
+			Core::BaseObject* bo = const_cast<Core::BaseObject*>(prop->arrayObject(o1, i_o1));
+			Object *o1Child = Object::Cast(bo);
+			Object *o2Child = nullptr;
+			PublicObject *po = PublicObject::Cast(bo);
+			if ( po ) {
+				map<string, PublicObject*>::iterator it = o2POChilds.find(po->publicID());
+				if ( it != o2POChilds.end() ) {
+					o2Child = it->second;
+					o2POChilds.erase(it);
+				}
+			}
+			else {
+				for ( vector<Object*>::iterator it = o2Childs.begin();
+				      it != o2Childs.end(); ++it ) {
+					if ( compare(o1Child, *it, true) ) {
+						o2Child = *it;
+						o2Childs.erase(it);
+						break;
+					}
+				}
+			}
+
+			diff(o1Child, o2Child, o1PO->publicID(), notifiers, logNode.get());
+		}
+
+		// Add all elements of o2 array which have no counterpart in o1
+		for ( map<string, PublicObject*>::iterator it = o2POChilds.begin();
+		      it != o2POChilds.end(); ++it )
+			diff(nullptr, it->second, o1PO->publicID(), notifiers, logNode.get());
+		for ( vector<Object*>::iterator it = o2Childs.begin();
+		      it != o2Childs.end(); ++it )
+			diff(nullptr, *it, o1PO->publicID(), notifiers, logNode.get());
+	}
+
+	if ( parentLogNode && logNode &&
+	     (logNode->level() == LogNode::ALL || logNode->childCount()) )
+		parentLogNode->addChild(logNode.get());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 } // ns DataModel
 } // ns Seiscomp
