@@ -320,8 +320,20 @@ std::string MetaProperty::readString(const BaseObject *object) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+MetaObject::MetaObjectMap MetaObject::_map;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MetaObject::MetaObject(const RTTI* rtti, const MetaObject *base)
-: _rtti(rtti), _base(base) {}
+: _rtti(rtti), _base(base) {
+	if ( rtti ) {
+		_map[rtti->className()] = this;
+	}
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -331,6 +343,28 @@ MetaObject::MetaObject(const RTTI* rtti, const MetaObject *base)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MetaObject::~MetaObject() {
 	clearProperties();
+
+	if ( _rtti ) {
+		auto it = _map.find(_rtti->className());
+		if ( it != _map.end() ) {
+			_map.erase(it);
+		}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const MetaObject *MetaObject::Find(const std::string &className) {
+	auto it = _map.find(className);
+	if ( it == _map.end() ) {
+		return nullptr;
+	}
+
+	return it->second;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

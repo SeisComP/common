@@ -31,6 +31,7 @@
 #include <vector>
 #include <memory>
 #include <type_traits>
+#include <map>
 
 
 namespace Seiscomp {
@@ -267,6 +268,7 @@ class SC_SYSTEM_CORE_API MetaObject {
 		//! Returns the property with a given name
 		const MetaProperty *property(const std::string &name) const;
 
+		static const MetaObject *Find(const std::string &className);
 
 	// ----------------------------------------------------------------------
 	//  Protected interface
@@ -291,6 +293,9 @@ class SC_SYSTEM_CORE_API MetaObject {
 		const RTTI *_rtti;
 		const MetaObject *_base;
 		std::vector<MetaPropertyHandle> _properties;
+
+		using MetaObjectMap = std::map<std::string, const MetaObject*>;
+		static MetaObjectMap _map;
 };
 
 typedef std::shared_ptr<MetaObject> MetaObjectHandle;
