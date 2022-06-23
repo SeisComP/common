@@ -696,10 +696,12 @@ void Diff4::diff(Object *o1, Object *o2,
 
 	// No element on the right -> REMOVE
 	if ( !o2 ) {
-		AppendNotifier(notifiers, OP_REMOVE, o1, o1ParentID);
-		if ( parentLogNode && notifiers.size() > ns )
-			createLogNodes(parentLogNode, o1ParentID,
-			               notifiers.begin()+ns, notifiers.end());
+		if ( confirmRemove(o1, parentLogNode) ) {
+			AppendNotifier(notifiers, OP_REMOVE, o1, o1ParentID);
+			if ( parentLogNode && notifiers.size() > ns )
+				createLogNodes(parentLogNode, o1ParentID,
+				               notifiers.begin()+ns, notifiers.end());
+		}
 		return;
 	}
 

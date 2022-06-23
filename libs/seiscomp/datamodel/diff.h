@@ -196,6 +196,18 @@ class Diff4 : public Diff3 {
 
 	protected:
 		/**
+		 * @brief Confirm removal of an object.
+		 *
+		 * This method will be called if there is not remote counterpart.
+		 *
+		 * @param localO The local object
+		 * @param node The log node
+		 * @return true if the object is allowed to be removed, false otherwise
+		 */
+		virtual bool confirmRemove(const Core::BaseObject *localO,
+		                           LogNode *node) = 0;
+
+		/**
 		 * @brief Confirm descending to child objects.
 		 *
 		 * This method will only be called on array properties.
