@@ -761,13 +761,15 @@ void Diff4::diff(Object *o1, Object *o2,
 		map<string, PublicObject*> o2POChilds;
 		vector<Object*> o2Childs;
 		for ( size_t i_o2 = 0; i_o2 < prop->arrayElementCount(o2); ++i_o2 ) {
-			Core::BaseObject* bo = const_cast<Core::BaseObject*>(prop->arrayObject(o2, i_o2));
+			Core::BaseObject *bo = const_cast<Core::BaseObject*>(prop->arrayObject(o2, i_o2));
 
 			PublicObject *po = PublicObject::Cast(bo);
-			if ( po )
+			if ( po ) {
 				o2POChilds[po->publicID()] = po;
-			else
+			}
+			else {
 				o2Childs.push_back(Object::Cast(bo));
+			}
 		}
 
 		// For each element of o1 array search counterpart in o2
@@ -777,15 +779,14 @@ void Diff4::diff(Object *o1, Object *o2,
 			Object *o2Child = nullptr;
 			PublicObject *po = PublicObject::Cast(bo);
 			if ( po ) {
-				map<string, PublicObject*>::iterator it = o2POChilds.find(po->publicID());
+				auto it = o2POChilds.find(po->publicID());
 				if ( it != o2POChilds.end() ) {
 					o2Child = it->second;
 					o2POChilds.erase(it);
 				}
 			}
 			else {
-				for ( vector<Object*>::iterator it = o2Childs.begin();
-				      it != o2Childs.end(); ++it ) {
+				for ( auto it = o2Childs.begin(); it != o2Childs.end(); ++it ) {
 					if ( compare(o1Child, *it, true) ) {
 						o2Child = *it;
 						o2Childs.erase(it);
@@ -798,12 +799,13 @@ void Diff4::diff(Object *o1, Object *o2,
 		}
 
 		// Add all elements of o2 array which have no counterpart in o1
-		for ( map<string, PublicObject*>::iterator it = o2POChilds.begin();
-		      it != o2POChilds.end(); ++it )
-			diff(nullptr, it->second, o1PO->publicID(), notifiers, logNode.get());
-		for ( vector<Object*>::iterator it = o2Childs.begin();
-		      it != o2Childs.end(); ++it )
-			diff(nullptr, *it, o1PO->publicID(), notifiers, logNode.get());
+		for ( auto it : o2POChilds ) {
+			diff(nullptr, it.second, o1PO->publicID(), notifiers, logNode.get());
+		}
+
+		for ( auto obj : o2Childs ) {
+			diff(nullptr, obj, o1PO->publicID(), notifiers, logNode.get());
+		}
 	}
 
 	if ( parentLogNode && logNode &&
