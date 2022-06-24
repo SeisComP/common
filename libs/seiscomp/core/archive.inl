@@ -415,6 +415,7 @@ struct ContainerReader<ROOT_TYPE, T,1> {
 			if ( ar.success() )
 				namedObject.object().add(value);
 			ar._first = false;
+			ar._validObject = true;
 			ar >> namedItem;
 		}
 
@@ -486,6 +487,7 @@ void operator()(Archive<ROOT_TYPE>& ar, const ObjectNamer<std::vector<T> >& name
 			if ( ar.success() )
 				namedObject.object().push_back(value);
 			ar._first = false;
+			ar._validObject = true;
 			ar >> namedItem;
 		}
 
@@ -569,6 +571,7 @@ void operator()(Archive<ROOT_TYPE>& ar, const ObjectNamer<std::list<T> >& namedO
 			if ( ar.success() )
 				namedObject.object().push_back(value);
 			ar._first = false;
+			ar._validObject = true;
 			ar >> namedItem;
 		}
 
