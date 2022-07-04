@@ -981,6 +981,9 @@ class PublicObjectCache(seiscomp.core.BaseObject):
         o = self.find(klass.TypeInfo(), publicID)
         return klass.Cast(o)
 
+    def __iter__(self):
+        return PublicObjectCacheIterator(self)
+
 
 # Register PublicObjectCache in _datamodel:
 _datamodel.PublicObjectCache_swigregister(PublicObjectCache)
@@ -1569,6 +1572,44 @@ class Diff3(Diff2):
 
 # Register Diff3 in _datamodel:
 _datamodel.Diff3_swigregister(Diff3)
+
+class Diff4(Diff3):
+    r"""Proxy of C++ Seiscomp::DataModel::Diff4 class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+    __swig_destroy__ = _datamodel.delete_Diff4
+
+# Register Diff4 in _datamodel:
+_datamodel.Diff4_swigregister(Diff4)
+
+class PublicObjectCacheIterator(object):
+    r"""Proxy of C++ PublicObjectCacheIterator class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, cache):
+        r"""__init__(PublicObjectCacheIterator self, PublicObjectCache cache) -> PublicObjectCacheIterator"""
+        _datamodel.PublicObjectCacheIterator_swiginit(self, _datamodel.new_PublicObjectCacheIterator(cache))
+
+    def next(self):
+        r"""next(PublicObjectCacheIterator self) -> PublicObject"""
+        return _datamodel.PublicObjectCacheIterator_next(self)
+
+    def __next__(self):
+        o = self.next()
+        if o is None:
+            raise StopIteration
+        return o
+
+    __swig_destroy__ = _datamodel.delete_PublicObjectCacheIterator
+
+# Register PublicObjectCacheIterator in _datamodel:
+_datamodel.PublicObjectCacheIterator_swigregister(PublicObjectCacheIterator)
 
 HORIZONTAL = _datamodel.HORIZONTAL
 

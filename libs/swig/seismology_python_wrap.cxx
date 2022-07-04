@@ -5805,6 +5805,22 @@ SWIG_From_std_string  (const std::string& s)
 
 
 SWIGINTERN int
+SWIG_AsVal_int (PyObject * obj, int *val)
+{
+  long v;
+  int res = SWIG_AsVal_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v < INT_MIN || v > INT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< int >(v);
+    }
+  }  
+  return res;
+}
+
+
+SWIGINTERN int
 SWIG_AsCharPtrAndSize(PyObject *obj, char** cptr, size_t* psize, int *alloc)
 {
 #if PY_VERSION_HEX>=0x03000000
@@ -6018,22 +6034,6 @@ namespace swig {
 	};
       }
     
-
-SWIGINTERN int
-SWIG_AsVal_int (PyObject * obj, int *val)
-{
-  long v;
-  int res = SWIG_AsVal_long (obj, &v);
-  if (SWIG_IsOK(res)) {
-    if ((v < INT_MIN || v > INT_MAX)) {
-      return SWIG_OverflowError;
-    } else {
-      if (val) *val = static_cast< int >(v);
-    }
-  }  
-  return res;
-}
-
 
 SWIGINTERN int
 SWIG_AsVal_bool (PyObject *obj, bool *val)
@@ -9507,6 +9507,68 @@ fail:
     "    Seiscomp::Regions::getFlinnEngdahlRegion(double,double,int *)\n"
     "    Seiscomp::Regions::getFlinnEngdahlRegion(double,double)\n");
   return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_Regions_getFlinnEngdahlRegionsCount(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "Regions_getFlinnEngdahlRegionsCount", 0, 0, 0)) SWIG_fail;
+  {
+    try {
+      result = (int)Seiscomp::Regions::getFlinnEngdahlRegionsCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Regions_getFlinnEngdahlRegionById(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::string result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "Regions_getFlinnEngdahlRegionById" "', argument " "1"" of type '" "int""'");
+  } 
+  arg1 = static_cast< int >(val1);
+  {
+    try {
+      result = Seiscomp::Regions::getFlinnEngdahlRegionById(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
 }
 
 
@@ -17551,6 +17613,8 @@ static PyMethodDef SwigMethods[] = {
 	 { "TravelTimeList_internal_swigregister", TravelTimeList_internal_swigregister, METH_O, NULL},
 	 { "TravelTimeList_internal_swiginit", TravelTimeList_internal_swiginit, METH_VARARGS, NULL},
 	 { "Regions_getFlinnEngdahlRegion", _wrap_Regions_getFlinnEngdahlRegion, METH_VARARGS, "Regions_getFlinnEngdahlRegion(double lat, double lon) -> std::string"},
+	 { "Regions_getFlinnEngdahlRegionsCount", _wrap_Regions_getFlinnEngdahlRegionsCount, METH_NOARGS, "Regions_getFlinnEngdahlRegionsCount() -> int"},
+	 { "Regions_getFlinnEngdahlRegionById", _wrap_Regions_getFlinnEngdahlRegionById, METH_O, "Regions_getFlinnEngdahlRegionById(int id) -> std::string"},
 	 { "Regions_load", _wrap_Regions_load, METH_NOARGS, "Regions_load()"},
 	 { "Regions_getRegionName", _wrap_Regions_getRegionName, METH_VARARGS, "Regions_getRegionName(double lat, double lon) -> std::string"},
 	 { "Regions_polyRegions", _wrap_Regions_polyRegions, METH_NOARGS, "Regions_polyRegions() -> Seiscomp::Geo::PolyRegions &"},

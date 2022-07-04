@@ -212,8 +212,15 @@ class MetaObject(object):
     def property(self, *args):
         return _core.MetaObject_property(self, *args)
 
+    @staticmethod
+    def Find(className):
+        return _core.MetaObject_Find(className)
+
 # Register MetaObject in _core:
 _core.MetaObject_swigregister(MetaObject)
+
+def MetaObject_Find(className):
+    return _core.MetaObject_Find(className)
 
 class TimeSpan(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
