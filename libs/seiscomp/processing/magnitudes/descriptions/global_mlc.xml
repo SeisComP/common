@@ -39,7 +39,8 @@
 							</group>
 							<group name="parametric">
 								<description>
-								Parameters for parametric magnitude calibration.
+								Parameters for parametric magnitude calibration:
+								MLc = log10(A) + c3 * log10(r/c5) + c2 * (r + c4) + c1 + c0(station)
 								</description>
 								<parameter name="c0" type="double">
 									<description>
@@ -231,8 +232,10 @@
 					</group>
 					<group name="parametric">
 						<description>
-						Parameters for parametric magnitude calibration. Considered
-						if magnitude.MLc.calibrationType = "parametric".
+						Parameters for parametric magnitude calibration:
+						MLc = log10(A) + c3 * log10(r/c5) + c2 * (r + c4) + c1 + c0(station)
+						
+						Considered if magnitude.MLc.calibrationType = "parametric".
 						</description>
 						<parameter name="c0" type="double" default="0.0">
 							<description>
