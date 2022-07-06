@@ -32,6 +32,7 @@
 namespace Seiscomp {
 namespace QML {
 
+
 /** @version 15.1 */
 const char *NS();
 /** @version 15.1 */
@@ -45,6 +46,7 @@ const char *NS_BED_RT();
 constexpr const char *SMIPrefixEnvVar = "QML_SMI_PREFIX";
 /** @version 15.1 */
 const std::string &SMIPrefix();
+
 
 class TypeMapper {
 	public:
@@ -73,6 +75,7 @@ class TypeMapper {
 		static std::string EventTypeCertaintyToString(DataModel::EventTypeCertainty type);
 };
 
+
 class Exporter : public IO::XML::Exporter {
 	public:
 		Exporter();
@@ -80,6 +83,7 @@ class Exporter : public IO::XML::Exporter {
 	protected:
 		void collectNamespaces(Core::BaseObject *) override;
 };
+
 
 class RTExporter : public IO::XML::Exporter {
 	public:
@@ -89,26 +93,6 @@ class RTExporter : public IO::XML::Exporter {
 		void collectNamespaces(Core::BaseObject *) override;
 };
 
-struct Formatter {
-	virtual ~Formatter() = default;
-	virtual void to(std::string& v) {}
-	virtual void from(std::string& v) {}
-};
-
-template <typename T>
-struct TypedClassHandler : IO::XML::TypedClassHandler<T> {
-	void add(const char *property, const char *name, Formatter *format = nullptr,
-	         IO::XML::ClassHandler::Type t = IO::XML::ClassHandler::Optional,
-	         IO::XML::ClassHandler::Location l = IO::XML::ClassHandler::Element);
-	void add(const char *property, Formatter *format = nullptr,
-	         IO::XML::ClassHandler::Type t = IO::XML::ClassHandler::Optional,
-	         IO::XML::ClassHandler::Location l = IO::XML::ClassHandler::Element);
-	void addList(const char *properties,
-	             IO::XML::ClassHandler::Type t = IO::XML::ClassHandler::Optional,
-	             IO::XML::ClassHandler::Location l = IO::XML::ClassHandler::Element);
-	void addPID();
-	void addEmptyPID();
-};
 
 }
 }

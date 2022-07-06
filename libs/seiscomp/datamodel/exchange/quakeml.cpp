@@ -45,19 +45,34 @@ namespace QML {
 
 namespace {
 
+
+struct Formatter {
+	virtual ~Formatter() = default;
+	virtual void to(std::string& v) {}
+	virtual void from(std::string& v) {}
+};
+
+template <typename T>
+struct TypedClassHandler : IO::XML::TypedClassHandler<T> {
+	void add(const char *property, const char *name, Formatter *format = nullptr,
+	         IO::XML::ClassHandler::Type t = IO::XML::ClassHandler::Optional,
+	         IO::XML::ClassHandler::Location l = IO::XML::ClassHandler::Element);
+	void add(const char *property, Formatter *format = nullptr,
+	         IO::XML::ClassHandler::Type t = IO::XML::ClassHandler::Optional,
+	         IO::XML::ClassHandler::Location l = IO::XML::ClassHandler::Element);
+	void addList(const char *properties,
+	             IO::XML::ClassHandler::Type t = IO::XML::ClassHandler::Optional,
+	             IO::XML::ClassHandler::Location l = IO::XML::ClassHandler::Element);
+	void addPID();
+	void addEmptyPID();
+};
+
+
 const char *ReadSMIPrefix() {
 	const char *prefix = getenv(SMIPrefixEnvVar);
 	return prefix ? prefix : RES_REF_PREFIX;
 }
 std::string SMI_PREFIX = ReadSMIPrefix();
-
-} // ns anonymous
-
-const char *NS() { return NS_QML; }
-const char *NS_RT() { return NS_QML_RT; }
-const char *NS_BED() { return NS_QML_BED; }
-const char *NS_BED_RT() { return NS_QML_BED_RT; }
-const std::string &SMIPrefix() { return SMI_PREFIX; }
 
 
 REGISTER_EXPORTER_INTERFACE(Exporter, "qml1.2");
@@ -131,8 +146,9 @@ struct ResRefFormatter : Formatter {
 		}
 	}
 };
-static ResRefFormatter __resRef;
-static ResRefFormatter __resRefMan(true);
+
+ResRefFormatter __resRef;
+ResRefFormatter __resRefMan(true);
 
 struct MaxLenFormatter : Formatter {
 	size_t maxLen;
@@ -145,10 +161,10 @@ struct MaxLenFormatter : Formatter {
 		}
 	}
 };
-static MaxLenFormatter __maxLen8(8);
-static MaxLenFormatter __maxLen32(32);
-static MaxLenFormatter __maxLen64(64);
-static MaxLenFormatter __maxLen128(128);
+MaxLenFormatter __maxLen8(8);
+MaxLenFormatter __maxLen32(32);
+MaxLenFormatter __maxLen64(64);
+MaxLenFormatter __maxLen128(128);
 
 struct AmplitudeUnitFormatter : Formatter {
 	void to(std::string &v) override {
@@ -157,7 +173,7 @@ struct AmplitudeUnitFormatter : Formatter {
 			v = "other";
 	}
 };
-static AmplitudeUnitFormatter __amplitudeUnitFormatter;
+AmplitudeUnitFormatter __amplitudeUnitFormatter;
 
 struct EvaluationStatusFormatter : Formatter {
 	void to(std::string& v) override {
@@ -168,7 +184,7 @@ struct EvaluationStatusFormatter : Formatter {
 		}
 	}
 };
-static EvaluationStatusFormatter __evaluationStatus;
+EvaluationStatusFormatter __evaluationStatus;
 
 struct EventTypeFormatter : Formatter {
 	void to(std::string &v) override {
@@ -182,7 +198,7 @@ struct EventTypeFormatter : Formatter {
 		v = TypeMapper::EventTypeToString(type);
 	}
 };
-static EventTypeFormatter __eventType;
+EventTypeFormatter __eventType;
 
 struct EventTypeCertaintyFormatter : Formatter {
 	void to(std::string &v) override {
@@ -198,7 +214,7 @@ struct EventTypeCertaintyFormatter : Formatter {
 		}
 	}
 };
-static EventTypeCertaintyFormatter __eventTypeCertainty;
+EventTypeCertaintyFormatter __eventTypeCertainty;
 
 struct OriginUncertaintyDescriptionFormatter : Formatter {
 	void to(std::string &v) override {
@@ -209,7 +225,7 @@ struct OriginUncertaintyDescriptionFormatter : Formatter {
 		}
 	}
 };
-static OriginUncertaintyDescriptionFormatter __originUncertaintyDescription;
+OriginUncertaintyDescriptionFormatter __originUncertaintyDescription;
 
 // Places FocalMechanisms referenced by current Event as direct child nodes of
 // this Event object
@@ -1349,6 +1365,10 @@ RTTypeMap::RTTypeMap() : TypeMapCommon() {
 	registerMapping("AmplitudeReference", "", "AmplitudeReference", &rtAmplitudeReferenceHandler);
 }
 
+
+} // private namespace
+
+
 EventType TypeMapper::EventTypeFromString(const std::string &str) {
 	EventType type;
 	if ( !type.fromString(str) ) {
@@ -1442,6 +1462,13 @@ void RTExporter::collectNamespaces(Core::BaseObject *obj) {
 		_namespaces[std::string(NS_QML_RT)] = "q";
 	}
 }
+
+
+const char *NS() { return NS_QML; }
+const char *NS_RT() { return NS_QML_RT; }
+const char *NS_BED() { return NS_QML_BED; }
+const char *NS_BED_RT() { return NS_QML_BED_RT; }
+const std::string &SMIPrefix() { return SMI_PREFIX; }
 
 
 }
