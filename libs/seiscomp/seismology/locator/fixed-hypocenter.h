@@ -31,6 +31,7 @@
 #include <seiscomp/seismology/ttt.h>
 #include <seiscomp/core.h>
 
+#include <cstdint>
 #include <vector>
 
 
@@ -43,7 +44,7 @@ class SC_SYSTEM_CORE_API FixedHypocenter : public LocatorInterface {
 	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
-		FixedHypocenter();
+		FixedHypocenter() = default;
 
 
 	// ----------------------------------------------------------------------
@@ -76,13 +77,21 @@ class SC_SYSTEM_CORE_API FixedHypocenter : public LocatorInterface {
 
 
 	private:
+		enum Flag {
+			UsePickUncertainties   = 0x01,
+			UseOriginUncertainties = 0x02
+		};
+
 		// Configuration
 		IDList      _profiles;
-		int         _degreesOfFreedom;
-		double      _confidenceLevel;
-		double      _defaultTimeError;
-		bool        _usePickUncertainties;
-		bool        _verbose;
+		int         _degreesOfFreedom{8};
+		double      _confidenceLevel{0.9};
+		double      _defaultTimeError{1.0};
+		union {
+			uint8_t _flags{UseOriginUncertainties};
+			bool    _legacyAndUnusedFlag;
+		};
+		bool        _verbose{false};
 		std::string _lastError;
 		OPT(double) _initLat;
 		OPT(double) _initLon;

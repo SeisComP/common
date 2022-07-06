@@ -119,19 +119,6 @@ REGISTER_LOCATOR(FixedHypocenter, "FixedHypocenter");
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FixedHypocenter::FixedHypocenter() {
-	_degreesOfFreedom = 8;
-	_confidenceLevel = 0.9;
-	_defaultTimeError = 1.0;
-	_usePickUncertainties = true;
-	_verbose = false;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FixedHypocenter::init(const Config::Config &config) {
 	try {
 		_profiles = config.getStrings("FixedHypocenter.profiles");
@@ -150,7 +137,9 @@ bool FixedHypocenter::init(const Config::Config &config) {
 	}
 
 	try {
-		_usePickUncertainties = config.getBool("FixedHypocenter.usePickUncertainties");
+		if ( config.getBool("FixedHypocenter.usePickUncertainties") ) {
+			_flags |= UsePickUncertainties;
+		}
 	}
 	catch ( ... ) {}
 
@@ -209,7 +198,7 @@ FixedHypocenter::IDList FixedHypocenter::parameters() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 string FixedHypocenter::parameter(const string &name) const {
 	if ( name == "USE_PICK_UNCERTAINTIES" )
-		return _usePickUncertainties ? "y" : "n";
+		return (_flags & UsePickUncertainties) ? "y" : "n";
 	else if ( name == "DEFAULT_TIME_ERROR" )
 		return Core::toString(_defaultTimeError);
 	else if ( name == "VERBOSE" )
@@ -234,7 +223,12 @@ string FixedHypocenter::parameter(const string &name) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FixedHypocenter::setParameter(const string &name, const string &value) {
 	if ( name == "USE_PICK_UNCERTAINTIES" ) {
-		_usePickUncertainties = value == "y";
+		if ( value == "y" ) {
+			_flags |= UsePickUncertainties;
+		}
+		else {
+			_flags &= ~UsePickUncertainties;
+		}
 	}
 	else if ( name == "DEFAULT_TIME_ERROR" ) {
 		double tmp;
@@ -267,6 +261,7 @@ bool FixedHypocenter::setParameter(const string &name, const string &value) {
 			if ( !Core::fromString(tmp, value) )
 				return false;
 			_initLat = tmp;
+			_flags &= ~UseOriginUncertainties;
 		}
 	}
 	else if ( name == "LONGITUDE" ) {
@@ -277,6 +272,7 @@ bool FixedHypocenter::setParameter(const string &name, const string &value) {
 			if ( !Core::fromString(tmp, value) )
 				return false;
 			_initLon = tmp;
+			_flags &= ~UseOriginUncertainties;
 		}
 	}
 	else if ( name == "DEPTH" ) {
@@ -287,6 +283,7 @@ bool FixedHypocenter::setParameter(const string &name, const string &value) {
 			if ( !Core::fromString(tmp, value) )
 				return false;
 			_initDepth = tmp;
+			_flags &= ~UseOriginUncertainties;
 		}
 	}
 	else
@@ -538,7 +535,7 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 		catch ( ... ) {}
 
 		if ( arrivalWeights[i] > 0 ) {
-			double uncertainty = getTimeError(pick, _defaultTimeError, _usePickUncertainties);
+			double uncertainty = getTimeError(pick, _defaultTimeError, (_flags & UsePickUncertainties) ? true : false);
 			if ( Math::isNaN(uncertainty) || uncertainty <= 0.0 )
 				uncertainty = _defaultTimeError;
 			arrivalWeights[i] = 1.0 / uncertainty;
@@ -633,6 +630,15 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 	qual.setGroundTruthLevel("GT1");
 	compile(qual, newOrigin);
 	newOrigin->setQuality(qual);
+
+	if ( !(_flags & UseOriginUncertainties) ) {
+		// set uncertainties to zero in case any value was set manually
+		SEISCOMP_DEBUG("Coordinates set manually: using uncertainties of 0 km");
+		newOrigin->setUncertainty(Core::None);
+		newOrigin->latitude().setUncertainty(0.0);
+		newOrigin->longitude().setUncertainty(0.0);
+		newOrigin->depth().setUncertainty(0.0);
+	}
 
 	CreationInfo ci;
 	ci.setCreationTime(Core::Time::GMT());
