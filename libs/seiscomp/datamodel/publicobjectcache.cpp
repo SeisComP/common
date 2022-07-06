@@ -22,7 +22,6 @@
 
 #include <seiscomp/logging/log.h>
 #include <seiscomp/datamodel/publicobjectcache.h>
-#include <seiscomp/datamodel/origin.h>
 #include <seiscomp/datamodel/databasearchive.h>
 
 #include <assert.h>
