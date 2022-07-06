@@ -520,13 +520,25 @@ Texture *TextureCache::get(const TileIndex &requestTile) {
 		TileIndex ptile = tile;
 		while ( (ptile = ptile.parent()) ) {
 			it = _storage.find(ptile);
-			if ( it == _storage.end() )
-				continue;
-
-			Texture *tmp = it->second.get();
-			if ( !tmp->isDummy ) {
-				tex = tmp;
-				break;
+			if ( it == _storage.end() ) {
+				// Parent not in cache
+				auto iit = _invalidMapping.find(ptile);
+				if ( iit == _invalidMapping.end() ) {
+					// Parent not in invalid list try to fetch it
+					auto tmp = fetch(ptile);
+					if ( tmp ) {
+						cache(tmp);
+						tex = tmp;
+						break;
+					}
+				}
+			}
+			else {
+				Texture *tmp = it->second.get();
+				if ( !tmp->isDummy ) {
+					tex = tmp;
+					break;
+				}
 			}
 		}
 
