@@ -1851,8 +1851,10 @@ void Canvas::updatedTiles() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Canvas::completeTiles() {
-	updateBuffer();
-	updateRequested();
+	if ( _tileUpdateTimer.isActive() ) {
+		updateBuffer();
+		updateRequested();
+	}
 	_tileUpdateTimer.reset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
