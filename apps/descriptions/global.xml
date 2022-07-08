@@ -5,88 +5,87 @@
 		<configuration>
 			<parameter name="agencyID" type="string" default="GFZ">
 				<description>
-					Agency ID used to set creationInfo.agencyID in
-					data model objects. Should not contain spaces.
+				Agency ID used to set creationInfo.agencyID in
+				data model objects. Should not contain spaces.
 				</description>
 			</parameter>
 			<parameter name="datacenterID" type="string">
 				<description>
-					Datacenter ID which is primarily used by Arclink and
-					its tools. Should not contain spaces.
+				Datacenter ID which is primarily used by Arclink and
+				its tools. Should not contain spaces.
 				</description>
 			</parameter>
 			<parameter name="organization" type="string" default="Unset">
 				<description>
-					Organization name used mainly by ArcLink and SeedLink.
+				Organization name used mainly by ArcLink and SeedLink.
 				</description>
 			</parameter>
 			<parameter name="author" type="string" default="@appname@@@@hostname@">
 				<description>
-					Author name used to set creationInfo.author in
-					data model objects. @appname@ is replace by the name of the
-					respective executable, @hostname@ by the name of the computer
-					on which it runs.
+				Author name used to set creationInfo.author in data model
+				objects. @appname@ is replace by the name of the
+				respective executable, @hostname@ by the name of the computer
+				on which it runs.
 				</description>
 			</parameter>
 			<parameter name="plugins" type="list:string">
 				<description>
-					List of plugins loaded at startup. Separate multiple names by
-					comma. Add ${plugins} to consider all previously read values.
+				List of plugins loaded at startup. Separate multiple names by
+				comma. Add ${plugins} to consider all previously read values.
 				</description>
 			</parameter>
 			<parameter name="cityXML" type="string">
 				<description>
-					Path to the cities XML file. If undefined, the data is read
-					from &quot;@CONFIGDIR@/cities.xml&quot; or
-					&quot;@DATADIR@/cities.xml&quot;.
-					SeisComP ships with &quot;@DATADIR@/cities.xml&quot;.
+				Path to the cities XML file. If undefined, the data is read
+				from &quot;@CONFIGDIR@/cities.xml&quot; or
+				&quot;@DATADIR@/cities.xml&quot;.
+				SeisComP ships with &quot;@DATADIR@/cities.xml&quot;.
 				</description>
 			</parameter>
 			<parameter name="loadCities" type="boolean">
 				<description>
-					Load cities from file configured by the &quot;cityXML&quot;
-					parameter. GUI and map applications enable loading of cities
-					by default considering the parameter
-					&quot;scheme.map.showCities&quot;.
+				Load cities from file configured by the &quot;cityXML&quot;
+				parameter. GUI and map applications enable loading of cities
+				by default considering the parameter
+				&quot;scheme.map.showCities&quot;.
 				</description>
 			</parameter>
 			<parameter name="loadRegions" type="boolean">
 				<description>
-					Load custom FEP (Flinn-Engdahl polygon) regions from
-					&quot;@CONFIGDIR@/fep/&quot; or @DATADIR@/fep/&quot;.
-					GUI and map applications and scevent enable FEP regions by
-					default. Explicitly uncheck the option to disregard by these
-					applications.
+				Load custom FEP (Flinn-Engdahl polygon) regions from
+				&quot;@CONFIGDIR@/fep/&quot; or @DATADIR@/fep/&quot;.
+				GUI and map applications and scevent enable FEP regions by
+				default. Explicitly uncheck the option to disregard by these
+				applications.
 				</description>
 			</parameter>
 			<parameter name="publicIDPattern" type="string">
 				<description>
-					Defines a custom pattern for generation of public object IDs.
-					The following variables are resolved:
-					@classname@ (class name of object),
-					@id@ (public object count),
-					@globalid@ (general object count),
-					@time@ (current time, use '/' to supply custom format e.g.
-					@time/%FT%T.%fZ@
+				Define a custom pattern for generation of public object IDs.
+				The following variables are resolved:
+				@classname@ (class name of object),
+				@id@ (public object count),
+				@globalid@ (general object count),
+				@time@ (current time, use '/' to supply custom format e.g.
+				@time/%FT%T.%fZ@
 				</description>
 			</parameter>
 			<parameter name="configModule" type="string" default="trunk">
 				<description>
-					Name of the configuration module.
+				Name of the configuration module.
 				</description>
 			</parameter>
 			<parameter name="database" type="string">
 				<description>
-					Defines the database connection. If no database is configured
-					(which is the default) and a messaging connection is available,
-					the application will receive the parameters after the connection
-					is established. Override these values only if you know what you
-					are doing.
+				Define the database connection. If no database is configured
+				(which is the default) and a messaging connection is available,
+				the application will receive the parameters after the connection
+				is established. Override these values only if you know what you
+				are doing.
 
-					The format is: service://user:pwd@host/database.
-					&quot;service&quot; is the name of the database driver which
-					can be queried with &quot;--db-driver-list&quot;.
-
+				The format is: service://user:pwd@host/database.
+				&quot;service&quot; is the name of the database driver which
+				can be queried with &quot;--db-driver-list&quot;.
 					IMPORTANT: This parameter replaces former
 					&quot;database.type&quot; and &quot;database.parameters&quot;
 					which have been removed.
@@ -113,66 +112,68 @@
 			<group name="logging">
 				<parameter name="level" type="int" default="2">
 					<description>
-						Sets the logging level between 1 and 4 where 1=ERROR, 2=WARNING, 3=INFO and 4=DEBUG.
+					Set the logging level between 1 and 4 where 1=ERROR,
+					2=WARNING, 3=INFO and 4=DEBUG.
 					</description>
 				</parameter>
 				<parameter name="file" type="boolean" default="true">
 					<description>
-						Enables logging into a log file.
+					Enable logging into a log file.
 					</description>
 				</parameter>
 				<parameter name="syslog" type="boolean" default="false">
 					<description>
-						Enables logging to syslog if supported by the host system.
+					Enable logging to syslog if supported by the host system.
 					</description>
 				</parameter>
 				<parameter name="components" type="list:string">
 					<description>
-						Limit the logging to the specified list of components
-						e.g. 'Application, Server'
+					Limit the logging to the specified list of components.
+					Example: 'Application, Server'.
 					</description>
 				</parameter>
 				<parameter name="component" type="boolean">
 					<description>
-						For each log entry print the component right after the
-						log level. By default the component output is enabled
-						for file output but disabled for console output.
+					For each log entry print the component right after the
+					log level. By default, the component output is enabled
+					for file output but disabled for console output.
 					</description>
 				</parameter>
 				<parameter name="context" type="boolean" default="false">
 					<description>
-						For each log entry print the source file name and line
-						number.
+					For each log entry print the source file name and line
+					number.
 					</description>
 				</parameter>
 				<parameter name="utc" type="boolean">
 					<description>
-						Use UTC instead of localtime in logging timestamps.
+					Use UTC instead of local time in logging timestamps.
 					</description>
 				</parameter>
 				<group name="file">
 					<parameter name="rotator" type="boolean" default="true">
 						<description>
-						Enables rotation of log files.
+						Enable rotation of log files.
 						</description>
 					</parameter>
 					<group name="rotator">
-						<parameter name="timeSpan" type="int" unit="s" default="86400">
+						<parameter name="timeSpan" type="int" unit="s"
+						default="86400">
 							<description>
-								Time span after which a log file is rotated.
+							Time span after which a log file is rotated.
 							</description>
 						</parameter>
 						<parameter name="archiveSize" type="int" default="7">
 							<description>
-								How many historic log files to keep.
+							How many historic log files to keep.
 							</description>
 						</parameter>
 						<parameter name="maxFileSize" type="int" default="104857600" unit="byte">
 							<description>
-							The maximum size of a logfile in byte. The default value
-							is 100 megabyte. If a logfile exceeds that size, then it
-							is rotated. To disable the size limit give 0 or a negative
-							value.
+							The maximum size of a logfile in byte. The default
+							value is 100 megabyte. If a logfile exceeds that
+							size, then it is rotated. To disable the size limit
+							give 0 or a negative value.
 							</description>
 						</parameter>
 					</group>
@@ -180,17 +181,17 @@
 				<group name="objects">
 					<parameter name="timeSpan" type="int" unit="s" default="60">
 						<description>
-							Timespan for counting input/output of objects.
+						Time span for counting input/output of objects.
 						</description>
 					</parameter>
 				</group>
 				<group name="syslog">
 					<parameter name="facility" type="string" default="local0">
 						<description>
-						Defines the syslog facility to be used according to the
+						Define the syslog facility to be used according to the
 						defined facility names in syslog.h. The default is local0.
-						If the given name is invalid or not available, initializing
-						logging will fail and the application quits.
+						If the given name is invalid or not available, 
+						initializing logging will fail and the application quits.
 						</description>
 					</parameter>
 				</group>
@@ -198,77 +199,80 @@
 			<group name="connection">
 				<parameter name="server" type="host-with-port" default="localhost">
 					<description>
-						Defines the URL of the messaging server to connect to.
-						URL format is [scheme://]host[:port][/queue]. Default scheme:
-						scmp, default port: 18180, default queue: production.
-						Examples:
+					Define the URL of the messaging server to connect to.
+					URL format is [scheme://]host[:port][/queue].
+					Default scheme: scmp, default port: 18180,
+					default queue: production.
+					Examples:
 
-						All default: localhost
+					All default: localhost
 
-						Specfic host: scmp://10.0.1.4:18180/production
+					Specific host: scmp://10.0.1.4:18180/production
 
-						Specfic host and SSL encryption: scmps://10.0.1.4:18180/production
+					Specific host and SSL encryption:
+					scmps://10.0.1.4:18180/production
 					</description>
 				</parameter>
 				<parameter name="username" type="string">
 					<description>
-						Defines the username to be used. The length is maybe limited
-						by the messaging system used. By default the module name
-						(name of the executable) is used but sometimes it exceeds
-						the 10 character limit and access is denied. To prevent
-						errors set a different username. An empty username will
-						let the system to generate one.
+					Define the username to be used. The length is maybe limited
+					by the messaging system used. By default, the module name
+					(name of the executable) is used but sometimes it exceeds
+					the 10 character limit and access is denied. To prevent
+					errors set a different username. An empty username will
+					let the system to generate one.
 					</description>
 				</parameter>
 				<parameter name="timeout" type="int" unit="s" default="3">
 					<description>
-						The connection timeout in seconds. 3 seconds are normally
-						more than enough. If a client needs to connect to a
-						remote system with a slow connection, a larger timeout might
-						be needed.
+					The connection timeout in seconds. 3 seconds are normally
+					more than enough. If a client needs to connect to a
+					remote system with a slow connection, a larger timeout
+					might be needed.
 					</description>
 				</parameter>
 				<parameter name="primaryGroup" type="string">
 					<description>
-						Defines the primary group of a module. This is the name
-						of the group where a module sends its messages to if the
-						target group is not explicitely given in the send call.
+					Define the primary group of a module. This is the name
+					of the group where a module sends its messages to if the
+					target group is not explicitly given in the send call.
 					</description>
 				</parameter>
 				<parameter name="contentType" type="string" default="binary">
 					<description>
-						Defines the message encoding for sending. Allowed values
-						are &quot;binary&quot;, &quot;json&quot; or &quot;xml&quot;.
-						XML has more overhead in processing but is more robust when
-						schema versions between client and server are different.
+					Define the message encoding for sending. Allowed values
+					are &quot;binary&quot;, &quot;json&quot; or &quot;xml&quot;.
+					XML has more overhead in processing but is more robust when
+					schema versions between client and server are different.
 					</description>
 				</parameter>
 				<parameter name="subscriptions" type="list:string">
 					<description>
-						Defines a list of message groups to subscribe to. The
-						default is usually given by the application and does not
-						need to be changed.
+					Define a list of message groups to subscribe to. The
+					default is usually given by the application and does not
+					need to be changed.
 					</description>
 				</parameter>
 			</group>
 			<group name="database">
 				<description>
-					Defines the database connection. If no database is configured
-					(which is the default) and a messaging connection is available,
-					the application will receive the parameters after the connection
-					is established. Override these values only if you know what you
-					are doing.
+				Define the database connection. If no database is configured
+				(which is the default) and a messaging connection is available,
+				the application will receive the parameters after the connection
+				is established. Override these values only if you know what you
+				are doing.
 				</description>
 				<parameter name="inventory" type="string">
 					<description>
-					Load the inventory database from a given XML file if set. This
-					overrides the inventory definitions loaded from the database backend.
+					Load the inventory database from a given XML file if set.
+					This overrides the inventory definitions loaded from the
+					database backend.
 					</description>
 				</parameter>
 				<parameter name="config" type="string">
 					<description>
-					Load the configuration database from a given XML file if set. This
-					overrides the configuration definitions loaded from the
+					Load the configuration database from a given XML file if set.
+					This overrides the configuration definitions loaded from the
 					database backend.
 					</description>
 				</parameter>
@@ -277,7 +281,7 @@
 				<group name="whitelist">
 					<parameter name="agencies" type="list:string">
 						<description>
-						Defines a whitelist of agencies that are allowed for
+						Define a whitelist of agencies that are allowed for
 						processing. Separate items by comma.
 						</description>
 					</parameter>
@@ -285,7 +289,7 @@
 				<group name="blacklist">
 					<parameter name="agencies" type="list:string">
 						<description>
-						Defines a blacklist of agencies that are not allowed for
+						Define a blacklist of agencies that are not allowed for
 						processing. Separate items by comma.
 						</description>
 					</parameter>
@@ -295,24 +299,28 @@
 				<group name="whitelist">
 					<parameter name="nettype" type="list:string">
 						<description>
-						List of network types to include when loading the inventory.
+						List of network types to include when loading the
+						inventory.
 						</description>
 					</parameter>
 					<parameter name="statype" type="list:string">
 						<description>
-						List of station types to include when loading the inventory.
+						List of station types to include when loading the
+						inventory.
 						</description>
 					</parameter>
 				</group>
 				<group name="blacklist">
 					<parameter name="nettype" type="list:string">
 						<description>
-						List of network types to exclude when loading the inventory.
+						List of network types to exclude when loading the
+						inventory.
 						</description>
 					</parameter>
 					<parameter name="statype" type="list:string">
 						<description>
-						List of station types to exclude when loading the inventory.
+						List of station types to exclude when loading the
+						inventory.
 						</description>
 					</parameter>
 				</group>
@@ -320,50 +328,52 @@
 			<group name="scripts">
 				<parameter name="crashHandler" type="path">
 					<description>
-						Path to crash handler script
+					Path to crash handler script.
 					</description>
 				</parameter>
 			</group>
 			<group name="core">
 				<parameter name="plugins" type="list:string" default="dbmysql">
 					<description>
-					Defines a list of core modules loaded at startup.
+					Define a list of core modules loaded at startup.
 					</description>
 				</parameter>
 			</group>
 			<group name="client">
 				<parameter name="startStopMessage" type="boolean" default="false">
 					<description>
-					Enables sending of an application start- and stop message to
+					Enable sending of an application start- and stop message to
 					the STATUS_GROUP.
 					</description>
 				</parameter>
 				<parameter name="autoShutdown" type="boolean" default="false">
 					<description>
-					Enables automatic application shutdown triggered by a status
+					Enable automatic application shutdown triggered by a status
 					message.
 					</description>
 				</parameter>
 				<parameter name="shutdownMasterModule" type="string">
 					<description>
-					Triggers shutdown if the module name of the received messages match
+					Trigger shutdown if the module name of the received messages
+					match.
 					</description>
 				</parameter>
 				<parameter name="shutdownMasterUsername" type="string">
 					<description>
-					Triggers shutdown if the user name of the received messages match
+					Trigger shutdown if the user name of the received messages
+					match.
 					</description>
 				</parameter>
 			</group>
 			<group name="commands">
 				<parameter name="target" type="string">
 					<description>
-						A regular expression of all clients that should handle
-						a command message usually send to the GUI messaging group.
-						Currently this flag is only used by GUI applications to
-						set an artificial origin and to tell other clients to
-						show this origin. To let all connected clients handle the
-						command, ".*$" can be used.
+					A regular expression of all clients that should handle
+					a command message usually send to the GUI messaging group.
+					Currently this flag is only used by GUI applications to
+					set an artificial origin and to tell other clients to
+					show this origin. To let all connected clients handle the
+					command, ".*$" can be used.
 					</description>
 				</parameter>
 			</group>
@@ -415,8 +425,8 @@
 						region of the entire planet as a fallback.
 
 						Magnitude-specific parameters, e.g. calibration functions,
-						are adjusted in a separate section of  magnitudes with the
-						same name.
+						are adjusted in a separate section of  magnitudes with
+						the same name.
 						</description>
 						<struct type="Magnitude region profile">
 							<parameter name="enable" type="boolean" default="false">
@@ -426,47 +436,48 @@
 							</parameter>
 							<parameter name="minDist" type="double" unit="deg">
 								<description>
-								The minimum distance required to compute a magnitude.
-								This settings has no effect with e.g. scautopick as there
-								is no information about the source of the event to compute
-								the distance. The default value is implementation
-								specific.
+								The minimum distance required to compute a
+								magnitude. This settings has no effect with e.g.
+								scautopick as there is no information about the
+								source of the event to compute the distance.
+								The default value is implementation specific.
 								</description>
 							</parameter>
 							<parameter name="maxDist" type="double" unit="deg">
 								<description>
 								The maximum distance allowed to compute a magnitude.
-								This settings has no effect with e.g. scautopick as there
-								is no information about the source of the event to compute
-								the distance. The default value is implementation
-								specific.
+								This settings has no effect with e.g. scautopick
+								as there is no information about the source of
+								the event to compute the distance. The default
+								value is implementation specific.
 								</description>
 							</parameter>
 							<parameter name="minDepth" type="double" unit="km">
 								<description>
 								The minimum depth required to compute a magnitude.
-								This settings has no effect with e.g. scautopick as there
-								is no information about the source of the event to
-								retrieve the depth. The default value is implementation
-								specific.
+								This settings has no effect with e.g. scautopick
+								as there is no information about the source of 
+								the event to retrieve the depth. The default
+								value is implementation specific.
 								</description>
 							</parameter>
 							<parameter name="maxDepth" type="double" unit="km">
 								<description>
 								The maximum depth allowed to compute a magnitude.
-								This settings has no effect with e.g. scautopick as there
-								is no information about the source of the event to
-								retrieve the depth. The default value is implementation
-								specific.
+								This settings has no effect with e.g. scautopick
+								as there is no information about the source of 
+								the event to retrieve the depth. The default
+								value is implementation specific.
 								</description>
 							</parameter>
 							<parameter name="check" type="string" default="source">
 								<description>
-								Defines how the region check is performed to accept
+								Define how the region check is performed to accept
 								a source receiver pair for further processing.
 								Allowed values are:
 
-								source: Only the source/origin must be within the region.
+								source: Only the source/origin must be within 
+								the region.
 
 								source-receiver: Both source/origin and
 								receiver/station must be within the region.
@@ -504,7 +515,8 @@
 				</input>
 				<input name="organization" type="string" default="">
 					<text>Organization string</text>
-					<description>This is used mainly by SeedLink and Arclink to
+					<description>
+					This is used mainly by SeedLink and Arclink to
 					identify the server organization. Also, the ArcLink full
 					SEED volumes will have this organization value set.
 					</description>
@@ -514,20 +526,21 @@
 		<command-line>
 			<group name="Generic" publicID="generic">
 				<option flag="h" long-flag="help" publicID="generic#help">
-					<description>show help message.</description>
+					<description>Show help message.</description>
 				</option>
 
 				<option flag="V" long-flag="version" publicID="generic#version">
-					<description>show version information</description>
+					<description>Show version information.</description>
 				</option>
 
 				<option flag="" long-flag="config-file" argument="arg" publicID="generic#config-file">
 					<description>
-						Use alternative configuration file. When this option is used
-						the loading of all stages is disabled. Only the given configuration
-						file is parsed and used. To use another name for the configuration
-						create a symbolic link of the application or copy it,
-						e.g. scautopick -> scautopick2.
+					Use alternative configuration file. When this option is 
+					used the loading of all stages is disabled. Only the
+					given configuration file is parsed and used. To use
+					another name for the configuration create a symbolic
+					link of the application or copy it. Example:
+					scautopick -> scautopick2.
 					</description>
 				</option>
 
@@ -537,22 +550,23 @@
 
 				<option flag="D" long-flag="daemon" publicID="generic#daemon">
 					<description>
-						Run as daemon. This means the application will fork itself and
-						doesn't need to be started with &amp;.
+					Run as daemon. This means the application will fork itself
+					and doesn't need to be started with &amp;.
 					</description>
 				</option>
 
 				<option flag="" long-flag="auto-shutdown" argument="arg" publicID="generic#auto-shutdown">
 					<description>
-						Enable/disable self-shutdown because a master module shutdown. This only
-						works when messaging is enabled and the master module sends a shutdown
-						message (enabled with --start-stop-msg for the master module).
+					Enable/disable self-shutdown because a master module shutdown.
+					This only works when messaging is enabled and the master
+					module sends a shutdown message (enabled with --start-stop-msg
+					for the master module).
 					</description>
 				</option>
 
 				<option flag="" long-flag="shutdown-master-module" argument="arg" publicID="generic#shutdown-master-module">
 					<description>
-						Sets the name of the master-module used for auto-shutdown.
+						Set the name of the master-module used for auto-shutdown.
 						This is the application name of the module actually
 						started. If symlinks are used, then it is the name of
 						the symlinked application.
@@ -561,9 +575,9 @@
 
 				<option flag="" long-flag="shutdown-master-username" argument="arg" publicID="generic#shutdown-master-username">
 					<description>
-						Sets the name of the master-username of the messaging
-						used for auto-shutdown. If "shutdown-master-module" is
-						given as well, this parameter is ignored.
+					Set the name of the master-username of the messaging
+					used for auto-shutdown. If "shutdown-master-module" is
+					given as well, this parameter is ignored.
 					</description>
 				</option>
 			</group>
@@ -571,70 +585,83 @@
 			<group name="Verbose"  publicID="verbose">
 				<option flag="" long-flag="verbosity" argument="arg" publicID="verbosity#verbosity">
 					<description>
-					Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info, 4:debug
+					Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+					4:debug.
 					</description>
 				</option>
 
 				<option flag="v" long-flag="v" argument="" publicID="verbosity#v">
 					<description>
-					Increase verbosity level (may be repeated, eg. -vv)
+					Increase verbosity level (may be repeated, eg. -vv).
 					</description>
 				</option>
 
 				<option flag="q" long-flag="quiet" argument="" publicID="verbosity#quiet">
 					<description>
-					Quiet mode: no logging output
+					Quiet mode: no logging output.
 					</description>
 				</option>
 
 				<option flag="" long-flag="print-component" argument="arg" publicID="verbosity#print-component">
 					<description>
-						For each log entry print the component right after the
-						log level. By default the component output is enabled
-						for file output but disabled for console output.
+					For each log entry print the component right after the
+					log level. By default the component output is enabled
+					for file output but disabled for console output.
 					</description>
 				</option>
 
 				<option flag="" long-flag="print-context" argument="arg" publicID="verbosity#context">
 					<description>
-						For each log entry print the source file name and line
-						number.
+					For each log entry print the source file name and line
+					number.
 					</description>
 				</option>
 
 				<option flag="" long-flag="component" argument="arg" publicID="verbosity#component">
 					<description>
-					Limits the logging to a certain component. This option can
+					Limit the logging to a certain component. This option can
 					be given more than once.
 					</description>
 				</option>
 
 				<option flag="s" long-flag="syslog" argument="" publicID="verbosity#syslog">
 					<description>
-					Use syslog logging back end. The output usually goes to /var/lib/messages.
+					Use syslog logging backend. The output usually goes to 
+					/var/lib/messages.
 					</description>
 				</option>
 
 				<option flag="l" long-flag="lockfile" argument="arg" publicID="verbosity#lockfile">
-					<description>Path to lock file.</description>
+					<description>
+					Path to lock file.
+					</description>
 				</option>
 
 				<option flag="" long-flag="console" argument="arg" publicID="verbosity#console">
-					<description>Send log output to stdout.</description>
+					<description>
+					Send log output to stdout.
+					</description>
 				</option>
 
 				<option flag="" long-flag="debug" argument="" publicID="verbosity#debug">
-					<description>Debug mode: --verbosity=4 --console=1</description>
+					<description>
+					Execute in debug mode.
+					Equivalent to --verbosity=4 --console=1 .
+					</description>
 				</option>
 
 				<option flag="" long-flag="trace" argument="" publicID="verbosity#trace">
 					<description>
-					Trace mode: --verbosity=4 --console=1 --print-component=1 --print-context=1
+					Execute in trace mode.
+					Equivalent to --verbosity=4 --console=1 --print-component=1 
+					--print-context=1 .
 					</description>
 				</option>
 
 				<option flag="" long-flag="log-file" argument="arg" publicID="verbosity#log-file">
-					<description>Use alternative log file.</description>
+					<description>
+					Use alternative log file.
+					</description>
 				</option>
 			</group>
 
@@ -644,20 +671,25 @@
 				<option flag="t" long-flag="timeout" argument="arg" publicID="messaging#timeout" param-ref="connection.timeout"/>
 				<option flag="g" long-flag="primary-group" argument="arg" publicID="messaging#primary-group" param-ref="connection.primaryGroup"/>
 				<option flag="S" long-flag="subscribe-group" argument="arg" publicID="messaging#subscribe-group">
-					<description>A group to subscribe to. This option can be given more than once.</description>
+					<description>
+					A group to subscribe to.
+					This option can be given more than once.
+					</description>
 				</option>
 				<option flag="" long-flag="content-type" argument="arg" default="binary" publicID="messaging#content-type" param-ref="connection.contentType"/>
 
 				<option flag="" long-flag="start-stop-msg" argument="arg" default="0" publicID="messaging#start-stop-msg">
 					<description>
-					Sets sending of a start- and a stop message.
+					Set sending of a start and a stop message.
 					</description>
 				</option>
 			</group>
 
 			<group name="Database" publicID="database">
 				<option flag="" long-flag="db-driver-list" argument="" publicID="database#db-driver-list">
-					<description>List all supported database drivers.</description>
+					<description>
+					List all supported database drivers.
+					</description>
 				</option>
 
 				<option flag="d" long-flag="database" argument="arg" publicID="database#database">
@@ -670,19 +702,22 @@
 				</option>
 
 				<option flag="" long-flag="config-module" argument="arg" publicID="database#config-module">
-					<description>The configmodule to use.</description>
+					<description>
+					The config module to use.
+					</description>
 				</option>
 
 				<option flag="" long-flag="inventory-db" argument="arg" publicID="database#inventory-db">
 					<description>
-					Load the inventory from the given database or file, format: [service://]location
+					Load the inventory from the given database or file, format: 
+					[service://]location .
 					</description>
 				</option>
 
 				<option flag="" long-flag="config-db" argument="arg" publicID="database#config-db">
 					<description>
 					Load the configuration from the given database or file,
-					format: [service://]location
+					format: [service://]location .
 					</description>
 				</option>
 			</group>
@@ -690,16 +725,18 @@
 			<group name="Records" publicID="records">
 				<option flag="" long-flag="record-driver-list" argument="" default="" publicID="records#record-driver-list">
 					<description>
-					List all supported record stream drivers
+					List all supported record stream drivers.
 					</description>
 				</option>
 
 				<option flag="I" long-flag="record-url" argument="arg" default="" publicID="records#record-url">
 					<description>
-					The recordstream source URL, format: [service://]location[#type].
-					&quot;service&quot; is the name of the recordstream driver which can be
-					queried with &quot;--record-driver-list&quot;. If &quot;service&quot;
-					is not given, &quot;file://&quot; is used.
+					The recordstream source URL, format:
+					[service://]location[#type].
+					&quot;service&quot; is the name of the recordstream driver
+					which can be queried with &quot;--record-driver-list&quot;.
+					If &quot;service&quot; is not given, &quot;file://&quot; is
+					used.
 					</description>
 				</option>
 
@@ -708,15 +745,17 @@
 				</option>
 
 				<option flag="" long-flag="record-type" argument="arg" default="" publicID="records#record-type">
-					<description>Specify a type for the records being read.</description>
+					<description>
+					Specify a type for the records being read.
+					</description>
 				</option>
 			</group>
 
 			<group name="Cities"  publicID="cities">
 				<option long-flag="city-xml" argument="arg" default="" publicID="cities#city-xml">
 					<description>
-						The path to the cities XML file. This overrides the default
-						paths. Compare with the global parameter &quot;citiesXML&quot;
+					The path to the cities XML file. This overrides the default
+					paths. Compare with the global parameter &quot;citiesXML&quot;.
 					</description>
 				</option>
 			</group>
@@ -724,8 +763,8 @@
 			<group name="User interface"  publicID="gui">
 				<option flag="F" long-flag="full-screen" argument="" default="" publicID="gui#full-screen">
 					<description>
-						Starts the application filling the entire screen. This only works
-						with GUI applications.
+					Start the application filling the entire screen.
+					This only works with GUI applications.
 					</description>
 				</option>
 
@@ -741,38 +780,39 @@
 
 	<binding name="general" module="global">
 		<description>
-			Configures global parameters of a station for modules.
+		Configure global parameters of a station for modules.
 		</description>
 		<configuration>
 			<parameter name="detecLocid" type="string">
 				<description>
-					The sensor location code of the preferred stream used
-					e.g. by scautopick and scrttv.
+				The sensor location code of the preferred stream used e.g.
+				by scautopick and scrttv.
 				</description>
 			</parameter>
 			<parameter name="detecStream" type="string">
 				<description>
-					The channel code of the preferred stream used by
-					e.g. scautopick and scrttv. If no component code is given,
-					the vertical component will be fetched from inventory
-					considering the channel orientation (azimuth, dip).
-					If that approach fails, 'Z' will be appended and used as
-					fallback. Do not use regular expressions!
+				The channel code of the preferred stream used by
+				e.g. scautopick and scrttv. If no component code is given,
+				the vertical component will be fetched from inventory
+				considering the channel orientation (azimuth, dip).
+				If that approach fails, 'Z' will be appended and used as
+				fallback. Do not use regular expressions!
 				</description>
 			</parameter>
 			<group name="amplitudes">
 				<description>
-					Define general parameters for amplitudes of a certain type.
-					Create amplitude type profiles to define the time windows,
-					minimum signal-to-noise ratio, amplitude thresholds and restitution
-					for measuring amplitudes of a certain type.
+				Define general parameters for amplitudes of a certain type.
+				Create amplitude type profiles to define the time windows,
+				minimum signal-to-noise ratio, amplitude thresholds and
+				restitution for measuring amplitudes of a certain type.
 				</description>
 				<parameter name="saturationThreshold" type="string" default="false" unit="counts; %">
 					<description>
-					Defines the saturation threshold for the optional saturation check.
-					By default the saturation check is disabled but giving a value above
-					0 will enable it. Waveforms that are saturated are not used
-					for amplitude calculations.
+					Define the saturation threshold for the optional saturation
+					check.
+					By default, the saturation check is disabled but giving a
+					value above 0 will enable it. Waveforms that are saturated
+					are not used for amplitude calculations.
 
 					This value can either be an absolute value of counts such
 					as &quot;100000&quot; counts or a relative value
@@ -787,13 +827,13 @@
 				</parameter>
 				<parameter name="enable" type="boolean" default="true">
 					<description>
-					Defines if amplitude calculation is enabled. If disabled,
+					Define if amplitude calculation is enabled. If disabled,
 					this station will be skipped for amplitudes and magnitudes.
 					</description>
 				</parameter>
 				<parameter name="enableResponses" type="boolean" default="false">
 					<description>
-					Activates deconvolution for this station. If no responses are
+					Activate deconvolution for this station. If no responses are
 					configured, an error is raised and the data is not processed.
 					This flag will be overridden by the type specific flag
 					(see Amplitude type profile).
@@ -807,25 +847,29 @@
 					</description>
 					<parameter name="taper" default="5" unit="s">
 						<description>
-						Defines the length of the taper at either side of the
+						Define the length of the taper at either side of the
 						waveform. The length will be added to the data
 						request: start - taper and end + taper.
 						</description>
 					</parameter>
 					<parameter name="minFreq" default="0.00833333" unit="Hz">
 						<description>
-						After data are converted in to the frequency domain that
-						minimum frequency defines the end of the left-side cosine taper for
-						the frequency spectrum. The taper applies from 0 Hz to
-						{minFreq} Hz.
-						A value of 0 or lower disables that taper.
+						The minimum frequency of the considered spectrum.
+
+						After data is converted into the frequency domain that
+						minimum frequency defines the end of the left-side cosine
+						taper applied to the spectrum. The taper applies from
+						0 Hz to {minFreq} Hz. A value of 0 or lower disables
+						that taper.
 						</description>
 					</parameter>
 					<parameter name="maxFreq" default="0" unit="Hz">
 						<description>
+						The maximum frequency of the considered spectrum.
+
 						After data are converted in to the frequency domain that
-						maximum frequency defines the start of the right-side cosine taper for
-						the frequency spectrum. The taper applies from
+						maximum frequency defines the start of the right-side
+						cosine taper applied to the spectrum. The taper applies from
 						{maxFreq} Hz to {fNyquist} Hz.
 						A value of 0 or lower disables that taper.
 						</description>
@@ -833,12 +877,12 @@
 				</group>
 				<group name="WoodAnderson">
 					<description>
-						Allows to configure the Wood-Anderson seismometer response.
-						The default values are according to the version of
-						Gutenberg (1935). The newer version by Uhrhammer and
-						Collins (1990) is part of the IASPEI Magnitude
-						Working Group recommendations of 2011 September 9. This
-						version uses gain=2800, T0=0.8 s, h=0.8.
+					Allow to configure the Wood-Anderson seismometer response.
+					The default values are according to the version of
+					Gutenberg (1935). The newer version by Uhrhammer and
+					Collins (1990) is part of the IASPEI Magnitude
+					Working Group recommendations of 2011 September 9. This
+					version uses gain=2800, T0=0.8 s, h=0.8.
 					</description>
 					<parameter name="gain" type="double" default="2800">
 						<description>
@@ -866,10 +910,11 @@
 					</description>
 					<parameter name="saturationThreshold" type="string" default="false" unit="counts; %">
 						<description>
-						Defines the saturation threshold for the optional saturation check.
-						By default the saturation check is disabled but giving a value above
-						0 will enable it. Waveforms that are saturated are not used
-						for amplitude calculations.
+						Define the saturation threshold for the optional
+						saturation check. By default, the saturation check is
+						disabled but giving a value above 0 will enable it.
+						Waveforms that are saturated are not used for amplitude
+						calculations.
 
 						This value can either be an absolute value of counts such
 						as &quot;100000&quot; counts or a relative value
@@ -884,26 +929,26 @@
 					</parameter>
 					<parameter name="enable" type="boolean" default="true">
 						<description>
-						Defines if amplitude calculation of certain type is enabled.
+						Define if amplitude calculation of certain type is enabled.
 						</description>
 					</parameter>
 					<parameter name="enableResponses" type="boolean" default="false">
 						<description>
-						Activates deconvolution for this amplitude type. If not
+						Activate deconvolution for this amplitude type. If not
 						set, the global flag &quot;amplitudes.enableResponses&quot;
 						will be used instead.
 						</description>
 					</parameter>
 					<parameter name="minSNR" type="double">
 						<description>
-						Defines the mininum SNR to be reached to compute the
+						Define the mininum SNR to be reached to compute the
 						amplitudes. This value is amplitude type specific and
 						has no global default value.
 						</description>
 					</parameter>
 					<parameter name="noiseBegin" type="double" unit="s">
 						<description>
-						Overrides the default time (relative to the trigger
+						Override the default time (relative to the trigger
 						time) of the begin of the noise window used to compute
 						the noise offset and noise amplitude. Each amplitude
 						processor sets its own noise time window and this option
@@ -912,7 +957,7 @@
 					</parameter>
 					<parameter name="noiseEnd" type="double" unit="s">
 						<description>
-						Overrides the default time (relative to the trigger
+						Override the default time (relative to the trigger
 						time) of the end of the noise window used to compute
 						the noise offset and noise amplitude. Each amplitude
 						processor sets its own noise time window and this option
@@ -921,7 +966,7 @@
 					</parameter>
 					<parameter name="signalBegin" type="double" unit="s">
 						<description>
-						Overrides the default time (relative to the trigger
+						Override the default time (relative to the trigger
 						time) of the begin of the signal window used to compute
 						the final amplitude. Each amplitude processor sets its
 						own signal time window and this option should only be
@@ -930,7 +975,7 @@
 					</parameter>
 					<parameter name="signalEnd" type="double" unit="s">
 						<description>
-						Overrides the default time (relative to the trigger
+						Override the default time (relative to the trigger
 						time) of the end of the signal window used to compute
 						the final amplitude. Each amplitude processor sets its
 						own signal time window and this option should only be
@@ -975,12 +1020,13 @@
 					</parameter>
 					<parameter name="regionalize" type="boolean" default="true">
 						<description>
-						Controls if the amplitude calculation should be regionalized
-						or not. The regions and their configuration are taken
-						from the corresponding magnitude profiles. If regionalization
-						is activate, then e.g. modules without origin information
-						will not be able to compute an amplitude as the origin is
-						required to determine the effective settings.
+						Control if the amplitude calculation should be
+						regionalized or not. The regions and their configuration
+						are taken from the corresponding magnitude profiles. If
+						regionalization is activate, then e.g. modules without
+						origin information will not be able to compute an
+						amplitude as the origin is required to determine the
+						effective settings.
 
 						If amplitudes for this particular type shall be computed
 						regardless of any defined regions, set this parameter to
@@ -993,28 +1039,26 @@
 						</description>
 						<parameter name="taper" default="5" unit="s">
 							<description>
-							Defines the length of the taper at either side of the
+							Define the length of the taper at either side of the
 							waveform. The length will be added to the data
 							request: start - taper and end + taper.
 							</description>
 						</parameter>
 						<parameter name="minFreq" default="0.00833333" unit="Hz">
 							<description>
-							After data are converted in to the frequency domain that
-							minimum frequency defines the end of the left-side
-							cosine taper for
-							the frequency spectrum. The taper applies from 0 Hz
-							to {minFreq} Hz.
+							After data are converted in to the frequency domain
+							that minimum frequency defines the end of the left-side
+							cosine taper for the frequency spectrum. The taper
+							applies from 0 Hz to {minFreq} Hz.
 							A value of 0 or lower disables that taper.
 							</description>
 						</parameter>
 						<parameter name="maxFreq" default="0" unit="Hz">
 							<description>
-							After data are converted in to the frequency domain that
-							maximum frequency defines the start of the right-side
-							cosine taper for
-							the frequency spectrum. The taper applies from
-							{maxFreq} Hz to {fNyquist} Hz.
+							After data are converted in to the frequency domain
+							that maximum frequency defines the start of the right-side
+							cosine taper for the frequency spectrum. The taper
+							applies from {maxFreq} Hz to {fNyquist} Hz.
 							A value of 0 or lower disables that taper.
 							</description>
 						</parameter>
@@ -1023,9 +1067,9 @@
 			</group>
 			<group name="magnitudes">
 				<description>
-					Define magnitude parameters independent of amplitude-type profiles.
-					For magnitude correction parameters, e.g. network of station corrections,
-					create a magnitude type profile.
+				Define magnitude parameters independent of amplitude-type profiles.
+				For magnitude correction parameters, e.g, network of station
+				corrections, create a magnitude type profile.
 				</description>
 				<struct type="Magnitude type profile for corrections">
 					<description>
@@ -1072,28 +1116,29 @@
 					</description>
 					<parameter name="noiseBegin" type="double" default="0" unit="s">
 						<description>
-						Overrides the relative data acquisition time (relative to the triggering
-						pick). This adds a margin to the actual processing and is useful
-						to initialize the filter (e.g. bandpass). The data is not used
-						at all until signalBegin is reached. The data time window start
-						is the minimum of noiseBegin and signalBegin.
+						Override the relative data acquisition time (relative to
+						the triggering pick). This adds a margin to the actual
+						processing and is useful to initialize the filter (Example:
+						bandpass). The data is not used at all until signalBegin
+						is reached. The data time window start is the minimum of
+						noiseBegin and signalBegin.
 						</description>
 					</parameter>
 					<parameter name="signalBegin" type="double" default="-30" unit="s">
 						<description>
-						Overrides the default time (relative to the trigger
+						Override the default time (relative to the trigger
 						time) of the begin of the signal window used to pick.
 						</description>
 					</parameter>
 					<parameter name="signalEnd" type="double" default="10" unit="s">
 						<description>
-						Overrides the default time (relative to the trigger
+						Override the default time (relative to the trigger
 						time) of the begin of the signal window used to pick.
 						</description>
 					</parameter>
 					<parameter name="filter" type="string" >
 						<description>
-						Overrides the default filter which is "raw". The typical
+						Override the default filter which is "raw". The typical
 						filter grammar can be used.
 						</description>
 					</parameter>
@@ -1105,30 +1150,32 @@
 				</group>
 				<group name="BK">
 					<description>
-					Bkpicker is an implementation of the Baer/Kradolfer picker adapted
-					to SeisComP. It was created by converting Manfred Baers from Fortran
-					to C++ and inserting it as a replacement for the picker algorithm.
-					The picker interface name to be used in configuration files,
-					e.g. of scautopick,is &quot;BK&quot;.
+					Bkpicker is an implementation of the Baer/Kradolfer picker
+					adapted to SeisComP. It was created by converting Manfred
+					Baers from Fortran to C++ and inserting it as a replacement
+					for the picker algorithm. The picker interface name to be
+					used in configuration files, e.g. of scautopick,is
+					&quot;BK&quot;.
 					</description>
 					<parameter name="noiseBegin" type="double" default="0" unit="s">
 						<description>
-						Overrides the relative data acquisition time (relative to the triggering
-						pick). This adds a margin to the actual processing and is useful
-						to initialize the filter (e.g. bandpass). The data is not used
-						at all until signalBegin is reached. The data time window start
-						is the minimum of noiseBegin and signalBegin.
+						Override the relative data acquisition time (relative to
+						the triggering pick). This adds a margin to the actual
+						processing and is useful to initialize the filter (Example:
+						bandpass). The data is not used at all until signalBegin
+						is reached. The data time window start is the minimum of
+						noiseBegin and signalBegin.
 						</description>
 					</parameter>
 					<parameter name="signalBegin" type="double" default="-20" unit="s">
 						<description>
-						Overrides the default time (relative to the trigger
+						Override the default time (relative to the trigger
 						time) of the begin of the signal window used to pick.
 						</description>
 					</parameter>
 					<parameter name="signalEnd" type="double" default="80" unit="s">
 						<description>
-						Overrides the default time (relative to the trigger
+						Override the default time (relative to the trigger
 						time) of the begin of the signal window used to pick.
 						</description>
 					</parameter>
@@ -1141,61 +1188,74 @@
 						<description>Number of poles.</description>
 					</parameter>
 					<parameter name="f1" type="double" default="5" unit="Hz">
-						<description>Bandpass lower cutoff freq. in Hz.</description>
+						<description>
+						Bandpass lower cutoff freq. in Hz.
+						</description>
 					</parameter>
 					<parameter name="f2" type="double" default="20" unit="Hz">
-						<description>Bandpass upper cutoff freq. in Hz.</description>
+						<description>
+						Bandpass upper cutoff freq. in Hz.
+						</description>
 					</parameter>
 					<parameter name="thrshl1" type="double" default="10">
-						<description>Threshold to trigger for pick (c.f. paper), default 10 </description>
+						<description>
+						Threshold to trigger for pick (c.f. paper), default 10
+						</description>
 					</parameter>
 					<parameter name="thrshl2" type="double" default="20">
-						<description>Threshold for updating sigma  (c.f. paper), default 20</description>
+						<description>
+						Threshold for updating sigma  (c.f. paper), default 20
+						</description>
 					</parameter>
 				</group>
 			</group>
 			<group name="spicker">
 				<description>
-				Parameters controlling the secondary picker, e.g for picking S phases.
+				Parameters controlling the secondary picker. Example: for picking S
+				phases.
 				</description>
 				<group name="L2">
 					<description>
-					L2 is an algorithm to pick S-phases based on existing P-phases. It works by
-					creating the L2 norm of the two filtered horizontal components and then running
-					the `detecFilter` on the L2 trace to find the S pick. Finally AIC is applied
-					around the detected pick time to refine the detection. The picker name to be used
-					in configuration files is &quot;S-L2&quot;.
+					L2 is an algorithm to pick S-phases based on existing
+					P-phases. It works by creating the L2 norm of the two filtered
+					horizontal components and then running the `detecFilter` on
+					the L2 trace to find the S pick. Finally AIC is applied
+					around the detected pick time to refine the detection.
+					The picker name to be used in configuration files is
+					&quot;S-L2&quot;.
 					</description>
 					<parameter name="noiseBegin" type="double" default="-10" unit="s">
 						<description>
-						Overrides the relative data processing start time (relative to the triggering
-						pick). This adds a margin to the actual processing and is useful
-						to initialize the filter (e.g. bandpass). The data is not used
-						at all until signalBegin is reached. The data time window start
+						Override the relative data processing start time 
+						(relative to the triggering pick). This adds a margin to
+						the actual processing and is useful to initialize the
+						filter (Example: bandpass). The data is not used at all
+						until signalBegin is reached. The data time window start
 						is the minimum of noiseBegin and signalBegin.
 						</description>
 					</parameter>
 					<parameter name="signalBegin" type="double" default="0" unit="s">
 						<description>
-						Overrides the relative start time (relative to the triggering
-						pick) of the begin of the signal processing.
+						Override the relative start time (relative to the
+						triggering pick) of the begin of the signal processing.
 						</description>
 					</parameter>
 					<parameter name="signalEnd" type="double" default="60" unit="s">
 						<description>
-						Overrides the relative end time (relative to the triggering
+						Override the relative end time (relative to the triggering
 						pick) of the end of the signal window used to pick.
 						</description>
 					</parameter>
 					<parameter name="filter" type="string" default="BW(4,0.3,1.0)">
 						<description>
-						Configures the filter used to process the horizontal components traces
-						before computing the L2-norm.
+						Configure the filter used to process the horizontal
+						components traces before computing the L2-norm.
 						</description>
 					</parameter>
 					<parameter name="detecFilter" type="string" default="STALTA(1,10)">
 						<description>
-						 Configures the detector filter applied on the filtered L2 trace.
+						Configure the detector filter applied on the filtered
+						L2 trace.
 						</description>
 					</parameter>
 					<parameter name="threshold" type="double" default="3">
@@ -1205,8 +1265,8 @@
 					</parameter>
 					<parameter name="timeCorr" type="double" default="0" unit="s">
 						<description>
-						The time correction (in seconds) added to the detection time
-						before AIC time window is computed.
+						The time correction added to the detection
+						time before AIC time window is computed.
 						</description>
 					</parameter>
 					<parameter name="marginAIC" type="double" default="5" unit="s">
@@ -1223,38 +1283,41 @@
 				</group>
 				<group name="V">
 					<description>
-					This S-picker works similarly to L2 but it only uses the vertical component
-					to pick S-phases. The picker name to use is configuration files is &quot;S-V&quot;
+					This S-picker works similarly to L2 but it only uses the
+					vertical component to pick S-phases. The picker name to use
+					is configuration files is &quot;S-V&quot;
 					</description>
 					<parameter name="noiseBegin" type="double" default="-10" unit="s">
 						<description>
-						Overrides the relative data processing start time (relative to the triggering
-						pick). This adds a margin to the actual processing and is useful
-						to initialize the filter (e.g. bandpass). The data is not used
-						at all until signalBegin is reached. The data time window start
+						Override the relative data processing start time
+						(relative to the triggering pick). This adds a margin to
+						the actual processing and is useful to initialize the
+						filter (Example: bandpass). The data is not used at all
+						until signalBegin is reached. The data time window start
 						is the minimum of noiseBegin and signalBegin.
 						</description>
 					</parameter>
 					<parameter name="signalBegin" type="double" default="0" unit="s">
 						<description>
-						Overrides the relative start time (relative to the triggering
-						pick) of the begin of the signal processing.
+						Override the relative start time (relative to the
+						triggering pick) of the begin of the signal processing.
 						</description>
 					</parameter>
 					<parameter name="signalEnd" type="double" default="60" unit="s">
 						<description>
-						Overrides the relative end time (relative to the triggering
+						Override the relative end time (relative to the triggering
 						pick) of the end of the signal window used to pick.
 						</description>
 					</parameter>
 					<parameter name="filter" type="string" default="BW(4,0.3,1.0)">
 						<description>
-						Configures the filter used to process the raw vertical component data
+						Configure the filter used to process the raw vertical
+						component data.
 						</description>
 					</parameter>
-					<parameter name="detecFilter" type="string" default="STALTA(1,10)">
+					<parameter name="detecFilter" type="string"	default="STALTA(1,10)">
 						<description>
-						Configures the detector filter applied on filtered data.
+						Configure the detector filter applied on filtered data.
 						</description>
 					</parameter>
 					<parameter name="threshold" type="double" default="3">
@@ -1264,18 +1327,19 @@
 					</parameter>
 					<parameter name="timeCorr" type="double" default="0" unit="s">
 						<description>
-						The time correction (in seconds) added to the detection time
+						The time correction added to the detection time
 						before AIC time window is computed.
 						</description>
 					</parameter>
 					<parameter name="marginAIC" type="double" default="5" unit="s">
 						<description>
-						The AIC time window around the detection used to pick. If 0 AIC is not used.
+						The AIC time window around the detection used to pick.
+						If 0, AIC is not used.
 						</description>
 					</parameter>
 					<parameter name="minSNR" type="double" default="15">
 						<description>
-						Defines the mininum SNR as returned from AIC.
+						Define the mininum SNR as returned from AIC.
 						</description>
 					</parameter>
 				</group>
