@@ -25,6 +25,7 @@
 #include <seiscomp/core/interfacefactory.ipp>
 #include <seiscomp/logging/log.h>
 
+#include <iostream>
 #include <cstdio>
 #include <clocale>
 
@@ -217,6 +218,26 @@ void TileStore::finishedLoading(QImage &img, const TileIndex &tile) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void TileStore::loadingComplete(QImage &img, TileIndex tile) {
+	if ( _tree )
+		_tree->loadingComplete(img, tile);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void TileStore::loadingCancelled(TileIndex tile) {
+	if ( _tree )
+		_tree->loadingCancelled(tile);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TileStore::invalidate(const TileIndex &tile) {
 	if ( _tree )
 		_tree->invalidate(tile);
@@ -299,12 +320,52 @@ void ImageTree::refresh() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ImageTree::finishedLoading(QImage &img, const TileIndex &tile) {
-	if ( !_cache ) return;
-	if ( _cache->setTexture(img, tile) )
-		emit tilesUpdated();
+	// This function is API 3 behaviour and does not load parent tiles
+	if ( !_cache ) {
+		return;
+	}
 
-	if ( !hasPendingRequests() )
+	if ( _cache->setTexture(img, tile) ) {
+		emit tilesUpdated();
+	}
+
+	if ( !hasPendingRequests() ) {
 		emit tilesComplete();
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ImageTree::loadingComplete(QImage &img, TileIndex tile) {
+	// This function is API 4 behaviour and loads parent tiles if the requested
+	// tile cannot be loaded.
+	if ( !_cache ) {
+		return;
+	}
+
+	if ( _cache->setTextureOrLoadParent(img, tile) ) {
+		emit tilesUpdated();
+	}
+
+	if ( !hasPendingRequests() ) {
+		emit tilesComplete();
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ImageTree::loadingCancelled(TileIndex tile) {
+	if ( _cache  ) {
+		if ( !hasPendingRequests() ) {
+			emit tilesComplete();
+		}
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -313,7 +374,9 @@ void ImageTree::finishedLoading(QImage &img, const TileIndex &tile) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ImageTree::invalidate(const TileIndex &tile) {
-	if ( _cache ) _cache->invalidateTexture(tile);
+	if ( _cache ) {
+		_cache->invalidateTexture(tile);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

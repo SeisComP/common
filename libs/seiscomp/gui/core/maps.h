@@ -43,8 +43,10 @@ namespace Gui {
  *   - Replace TextureID with Tile
  *   - All parameters with type MapTreeNode are replaced by parameters
  *     with type Tile
+ * 4 - Add two new methods to notify about asynchronous tile loading
+ *     success and cancellation
  */
-#define TILESTORE_VERSION 3
+#define TILESTORE_VERSION 4
 
 
 struct SC_GUI_API MapsDesc {
