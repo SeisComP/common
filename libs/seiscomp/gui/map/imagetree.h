@@ -125,6 +125,11 @@ class SC_GUI_API TileStore : public Core::BaseObject {
 		//! Async notification that a tile has been loaded.
 		void finishedLoading(QImage &img, const TileIndex &tile);
 
+		//! Async notification that a tile has been loaded.
+		void loadingComplete(QImage &img, TileIndex tile);
+		//! Async notification that loading a tile has been aborted
+		void loadingCancelled(TileIndex tile);
+
 		//! Invalidates the tile of a particular node
 		void invalidate(const TileIndex &tile);
 
@@ -170,6 +175,8 @@ class SC_GUI_API ImageTree : public QObject, public Core::BaseObject {
 
 	public:
 		void finishedLoading(QImage &img, const TileIndex &tile);
+		void loadingComplete(QImage &img, TileIndex tile);
+		void loadingCancelled(TileIndex tile);
 		void invalidate(const TileIndex &tile);
 
 

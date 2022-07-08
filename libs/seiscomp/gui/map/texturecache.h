@@ -109,8 +109,10 @@ class SC_GUI_API TextureCache : public Core::BaseObject {
 		const quint64 &startTick() const { return _currentTick; }
 
 		bool load(QImage &img, const TileIndex &tile);
+		TileStore::LoadResult load2(QImage &img, const TileIndex &tile);
 
 		bool setTexture(QImage &img, const TileIndex &tile);
+		bool setTextureOrLoadParent(QImage &img, const TileIndex &tile);
 
 		//! Invalidates a texture and causes load() to be called next time
 		//! it needs to be accessed.
@@ -124,7 +126,7 @@ class SC_GUI_API TextureCache : public Core::BaseObject {
 	private:
 		void cache(Texture *tex);
 		void checkResources(Texture *tex = nullptr);
-		Texture *fetch(const TileIndex &tile);
+		Texture *fetch(const TileIndex &tile, bool &deferred);
 
 		static void remove(const QString &name);
 

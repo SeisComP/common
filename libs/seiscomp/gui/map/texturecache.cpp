@@ -22,6 +22,8 @@
 #include <QHash>
 #include <QMutex>
 
+#include <iostream>
+
 #include <seiscomp/gui/map/texturecache.h>
 #include <seiscomp/gui/map/imagetree.h>
 
@@ -127,7 +129,6 @@ TextureCache::~TextureCache() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TextureCache::beginPaint() {
 	/*
-	std::cerr << "Begin paint" << std::endl;
 	if ( _lastTile[0] ) {
 		std::cerr << " Cache[0]: " << _lastId[0] << "; " << _lastTile[0]->id << " with dims "
 		          << _lastTile[0]->image.width() << "x"
@@ -200,7 +201,7 @@ int TextureCache::tileHeight() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TextureCache::load(QImage &img, const TileIndex &tile) {
+TileStore::LoadResult TextureCache::load2(QImage &img, const TileIndex &tile) {
 	QMutexLocker lock(&imageCacheMutex);
 
 	ImageCache::iterator it;
@@ -208,8 +209,9 @@ bool TextureCache::load(QImage &img, const TileIndex &tile) {
 	it = _images.find(id);
 	if ( it == _images.end() ) {
 		//std::cerr << "L " << tile << std::endl;
-		if ( _tileStore->load(img, tile) != TileStore::OK ) {
-			return false;
+		auto r = _tileStore->load(img, tile);
+		if ( r != TileStore::OK ) {
+			return r;
 		}
 
 		if ( img.format() != QImage::Format_RGB32 &&
@@ -222,7 +224,7 @@ bool TextureCache::load(QImage &img, const TileIndex &tile) {
 			_images[id] = CacheEntry(img, 1);
 		}
 		else {
-			return false;
+			return TileStore::Error;
 		}
 	}
 	else {
@@ -244,7 +246,7 @@ bool TextureCache::load(QImage &img, const TileIndex &tile) {
 	}
 	*/
 
-	return true;
+	return TileStore::OK;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -252,9 +254,30 @@ bool TextureCache::load(QImage &img, const TileIndex &tile) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Texture *TextureCache::fetch(const TileIndex &tile) {
+bool TextureCache::load(QImage &img, const TileIndex &tile) {
+	return load2(img, tile) == TileStore::OK;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Texture *TextureCache::fetch(const TileIndex &tile, bool &deferred) {
+	deferred = false;
+
 	QImage image;
-	if ( !tile || !load(image, tile) || image.isNull() ) {
+	if ( !tile ) {
+		return nullptr;
+	}
+
+	auto r = load2(image, tile);
+	if ( r != TileStore::OK ) {
+		deferred = r == TileStore::Deferred;
+		return nullptr;
+	}
+
+	if ( image.isNull() ) {
 		return nullptr;
 	}
 
@@ -335,8 +358,13 @@ bool TextureCache::setTexture(QImage &img, const TileIndex &tile) {
 		img = img.convertToFormat(QImage::Format_ARGB32);
 	}
 
+	auto iit = _invalidMapping.find(tile);
+	if ( iit != _invalidMapping.end() ) {
+		_invalidMapping.erase(iit);
+	}
+
 	// Update texture cache
-	Storage::iterator it = _storage.find(tile);
+	auto it = _storage.find(tile);
 	if ( it != _storage.end() ) {
 		Texture *tex = it->second.get();
 
@@ -385,8 +413,32 @@ bool TextureCache::setTexture(QImage &img, const TileIndex &tile) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool TextureCache::setTextureOrLoadParent(QImage &img, const TileIndex &tile) {
+	if ( setTexture(img, tile) ) {
+		return true;
+	}
+
+	auto parent = tile.parent();
+	if ( parent ) {
+		if ( _storage.find(parent) != _storage.end() ) {
+			return false;
+		}
+
+		auto tex = get(parent);
+		if ( tex ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TextureCache::cache(Texture *tex) {
-	// std::cerr << "Caching texture " << tex->id <<  std::endl;
 	{
 		QMutexLocker lock(&imageCacheMutex);
 
@@ -492,6 +544,8 @@ Texture *TextureCache::get(const TileIndex &requestTile) {
 	*/
 
 	bool invalid = false;
+	bool deferred = false;
+
 	auto it = _storage.find(tile);
 	if ( it != _storage.end() ) {
 		tex = it->second.get();
@@ -503,7 +557,7 @@ Texture *TextureCache::get(const TileIndex &requestTile) {
 		}
 		else {
 			// std::cerr << "F " << tile << std::endl;
-			tex = fetch(tile);
+			tex = fetch(tile, deferred);
 			if ( tex ) {
 				cache(tex);
 			}
@@ -514,7 +568,7 @@ Texture *TextureCache::get(const TileIndex &requestTile) {
 		}
 	}
 
-	// If its a dummy texture then travel up the parent chain to check
+	// If it's a dummy texture then travel up the parent chain to check
 	// for valid textures
 	if ( tex->isDummy ) {
 		TileIndex ptile = tile;
@@ -522,14 +576,16 @@ Texture *TextureCache::get(const TileIndex &requestTile) {
 			it = _storage.find(ptile);
 			if ( it == _storage.end() ) {
 				// Parent not in cache
-				auto iit = _invalidMapping.find(ptile);
-				if ( iit == _invalidMapping.end() ) {
-					// Parent not in invalid list try to fetch it
-					auto tmp = fetch(ptile);
-					if ( tmp ) {
-						cache(tmp);
-						tex = tmp;
-						break;
+				if ( !deferred ) {
+					auto iit = _invalidMapping.find(ptile);
+					if ( iit == _invalidMapping.end() ) {
+						// Parent not in invalid list try to fetch it
+						auto tmp = fetch(ptile, deferred);
+						if ( tmp ) {
+							cache(tmp);
+							tex = tmp;
+							break;
+						}
 					}
 				}
 			}
