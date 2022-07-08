@@ -477,12 +477,10 @@
 				<optionReference>generic#version</optionReference>
 				<optionReference>generic#config-file</optionReference>
 				<optionReference>generic#plugins</optionReference>
-				<optionReference>generic#auto-shutdown</optionReference>
-				<optionReference>generic#shutdown-master-module</optionReference>
-				<optionReference>generic#shutdown-master-username</optionReference>
 				<optionReference>generic#print-config-vars</optionReference>
 				<optionReference>generic#validate-schema-params</optionReference>
 				<optionReference>generic#dump-settings</optionReference>
+				<optionReference>generic#daemon</optionReference>
 			</group>
 
 			<group name="Verbosity">

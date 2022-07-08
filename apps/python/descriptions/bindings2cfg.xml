@@ -2,7 +2,8 @@
 <seiscomp>
 	<module name="bindings2cfg" category="Utilities">
 		<description>
-		Dump global and module bindings configurations.
+		Synchronize key files with configuration database or convert them to
+		configuration XML.
 		</description>
 		<command-line>
 			<synopsis>
@@ -13,6 +14,9 @@
 				<optionReference>generic#version</optionReference>
 				<optionReference>generic#config-file</optionReference>
 				<optionReference>generic#plugins</optionReference>
+				<optionReference>generic#print-config-vars</optionReference>
+				<optionReference>generic#validate-schema-params</optionReference>
+				<optionReference>generic#dump-settings</optionReference>
 				<optionReference>generic#daemon</optionReference>
 				<optionReference>generic#auto-shutdown</optionReference>
 				<optionReference>generic#shutdown-master-module</optionReference>
@@ -37,6 +41,16 @@
 				<optionReference>database#config-module</optionReference>
 				<optionReference>database#inventory-db</optionReference>
 				<optionReference>database#config-db</optionReference>
+			</group>
+
+			<group name="Messaging">
+				<optionReference>messaging#user</optionReference>
+				<optionReference>messaging#host</optionReference>
+				<optionReference>messaging#timeout</optionReference>
+				<optionReference>messaging#primary-group</optionReference>
+				<optionReference>messaging#subscribe-group</optionReference>
+				<optionReference>messaging#content-type</optionReference>
+				<optionReference>messaging#start-stop-msg</optionReference>
 			</group>
 
 			<group name="Input">
