@@ -380,7 +380,8 @@
 			<group name="ttt">
 				<description>
 				Travel time table related configuration. Travel time tables can
-				be added via plugins. Built-in interfaces are LOCSAT and libtau.
+				be added via plugins. Built-in interfaces are LOCSAT, libtau and
+				homogeneous.
 				For each loaded interface a list of supported models must be
 				provided.
 				</description>
