@@ -69,7 +69,7 @@ struct TypedClassHandler : IO::XML::TypedClassHandler<T> {
 
 
 const char *ReadSMIPrefix() {
-	const char *prefix = getenv(SMIPrefixEnvVar);
+	const char *prefix = getenv(QML_SMIPrefixEnvVar);
 	return prefix ? prefix : RES_REF_PREFIX;
 }
 std::string SMI_PREFIX = ReadSMIPrefix();
@@ -1464,12 +1464,15 @@ void RTExporter::collectNamespaces(Core::BaseObject *obj) {
 }
 
 
-const char *NS() { return NS_QML; }
-const char *NS_RT() { return NS_QML_RT; }
-const char *NS_BED() { return NS_QML_BED; }
-const char *NS_BED_RT() { return NS_QML_BED_RT; }
-const std::string &SMIPrefix() { return SMI_PREFIX; }
+}
 
+namespace DataModel {
+
+const char *QML_NS() { return NS_QML; }
+const char *QML_NS_RT() { return NS_QML_RT; }
+const char *QML_NS_BED() { return NS_QML_BED; }
+const char *QML_NS_BED_RT() { return NS_QML_BED_RT; }
+const std::string &QML_SMIPrefix() { return QML::SMI_PREFIX; }
 
 }
 }

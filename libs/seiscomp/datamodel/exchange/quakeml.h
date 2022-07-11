@@ -30,22 +30,29 @@
 
 
 namespace Seiscomp {
+
+namespace DataModel {
+
+
+/** @version 15.1 */
+const char *QML_NS();
+/** @version 15.1 */
+const char *QML_NS_RT();
+/** @version 15.1 */
+const char *QML_NS_BED();
+/** @version 15.1 */
+const char *QML_NS_BED_RT();
+
+/** @version 15.1 */
+constexpr const char *QML_SMIPrefixEnvVar = "QML_SMI_PREFIX";
+/** @version 15.1 */
+const std::string &QML_SMIPrefix();
+
+
+}
+
+
 namespace QML {
-
-
-/** @version 15.1 */
-const char *NS();
-/** @version 15.1 */
-const char *NS_RT();
-/** @version 15.1 */
-const char *NS_BED();
-/** @version 15.1 */
-const char *NS_BED_RT();
-
-/** @version 15.1 */
-constexpr const char *SMIPrefixEnvVar = "QML_SMI_PREFIX";
-/** @version 15.1 */
-const std::string &SMIPrefix();
 
 
 class TypeMapper {

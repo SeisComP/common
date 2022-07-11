@@ -49,11 +49,11 @@ namespace Core {
  "15.1.0"   0x0F0100
    - Added Seiscomp::MetaObject::Find
    - Added Seiscomp::DataModel::Diff4
-   - Added Seiscomp::QML::NS
-   - Added Seiscomp::QML::NS_RT
-   - Added Seiscomp::QML::NS_BED
-   - Added Seiscomp::QML::NS_BED_RT
-   - Added Seiscomp::QML::SMIPrefixEnvVar
+   - Added Seiscomp::DataModel::QML_NS
+   - Added Seiscomp::DataModel::QML_NS_RT
+   - Added Seiscomp::DataModel::QML_NS_BED
+   - Added Seiscomp::DataModel::QML_NS_BED_RT
+   - Added Seiscomp::DataModel::QML_SMIPrefixEnvVar
    - Added Seiscomp::Gui::Map::TileStore::loadingComplete
    - Added Seiscomp::Gui::Map::TileStore::loadingCancelled
 
