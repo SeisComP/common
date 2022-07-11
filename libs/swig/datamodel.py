@@ -1573,6 +1573,19 @@ class Diff3(Diff2):
 # Register Diff3 in _datamodel:
 _datamodel.Diff3_swigregister(Diff3)
 
+class Diff4(Diff3):
+    r"""Proxy of C++ Seiscomp::DataModel::Diff4 class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+    __swig_destroy__ = _datamodel.delete_Diff4
+
+# Register Diff4 in _datamodel:
+_datamodel.Diff4_swigregister(Diff4)
+
 class PublicObjectCacheIterator(object):
     r"""Proxy of C++ PublicObjectCacheIterator class."""
 
@@ -23328,6 +23341,26 @@ class Version(object):
 # Register Version in _datamodel:
 _datamodel.Version_swigregister(Version)
 
+
+def NS():
+    r"""NS() -> char const *"""
+    return _datamodel.NS()
+
+def NS_RT():
+    r"""NS_RT() -> char const *"""
+    return _datamodel.NS_RT()
+
+def NS_BED():
+    r"""NS_BED() -> char const *"""
+    return _datamodel.NS_BED()
+
+def NS_BED_RT():
+    r"""NS_BED_RT() -> char const *"""
+    return _datamodel.NS_BED_RT()
+
+def SMIPrefix():
+    r"""SMIPrefix() -> std::string const &"""
+    return _datamodel.SMIPrefix()
 class QMLTypeMapper(object):
     r"""Proxy of C++ Seiscomp::QML::TypeMapper class."""
 
@@ -23356,6 +23389,8 @@ class QMLTypeMapper(object):
 
 # Register QMLTypeMapper in _datamodel:
 _datamodel.QMLTypeMapper_swigregister(QMLTypeMapper)
+cvar = _datamodel.cvar
+SMIPrefixEnvVar = cvar.SMIPrefixEnvVar
 
 def QMLTypeMapper_EventTypeFromString(str):
     r"""QMLTypeMapper_EventTypeFromString(std::string const & str) -> Seiscomp::DataModel::EventType"""
