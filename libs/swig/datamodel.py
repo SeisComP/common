@@ -23341,6 +23341,26 @@ class Version(object):
 # Register Version in _datamodel:
 _datamodel.Version_swigregister(Version)
 
+
+def QML_NS():
+    r"""QML_NS() -> char const *"""
+    return _datamodel.QML_NS()
+
+def QML_NS_RT():
+    r"""QML_NS_RT() -> char const *"""
+    return _datamodel.QML_NS_RT()
+
+def QML_NS_BED():
+    r"""QML_NS_BED() -> char const *"""
+    return _datamodel.QML_NS_BED()
+
+def QML_NS_BED_RT():
+    r"""QML_NS_BED_RT() -> char const *"""
+    return _datamodel.QML_NS_BED_RT()
+
+def QML_SMIPrefix():
+    r"""QML_SMIPrefix() -> std::string const &"""
+    return _datamodel.QML_SMIPrefix()
 class QMLTypeMapper(object):
     r"""Proxy of C++ Seiscomp::QML::TypeMapper class."""
 
@@ -23369,6 +23389,8 @@ class QMLTypeMapper(object):
 
 # Register QMLTypeMapper in _datamodel:
 _datamodel.QMLTypeMapper_swigregister(QMLTypeMapper)
+cvar = _datamodel.cvar
+QML_SMIPrefixEnvVar = cvar.QML_SMIPrefixEnvVar
 
 def QMLTypeMapper_EventTypeFromString(str):
     r"""QMLTypeMapper_EventTypeFromString(std::string const & str) -> Seiscomp::DataModel::EventType"""
