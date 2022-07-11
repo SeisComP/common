@@ -635,7 +635,6 @@ void Queue::processingLoop() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Queue::process(ProcessingTask &task) {
-	MessageProcessors::iterator it;
 	for ( auto &proc : _messageProcessors ) {
 		if ( task.second->type == Message::Type::Regular )
 			proc->process(task.second);
