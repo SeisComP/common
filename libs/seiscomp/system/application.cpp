@@ -1199,7 +1199,9 @@ bool Application::init() {
 
 	// First commandline parsing stage
 	initCommandLine();
-	if ( !commandline().parse(_argc, _argv) ) {
+
+	if ( !parseCommandLine() ) {
+		printUsage();
 		exit(-1);
 		return false;
 	}
@@ -1217,7 +1219,9 @@ bool Application::init() {
 	_commandline.reset();
 	_commandline = shared_ptr<System::CommandLine>(new System::CommandLine);
 	initCommandLine();
+
 	if ( !parseCommandLine() ) {
+		printUsage();
 		exit(-1);
 		return false;
 	}
@@ -1428,7 +1432,9 @@ bool Application::validateParameters() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::parseCommandLine() {
-	return commandline().parse(_argc, _argv);
+	return commandline().parse(_argc, _argv, [](const string &arg) {
+		return !arg.compare(0, 2, "--") && arg.find("=", 2) != string::npos;
+	});
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

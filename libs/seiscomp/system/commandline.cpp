@@ -112,8 +112,8 @@ bool CommandLine::parse(int argc, char** argv) {
 		//       of code
 		/*
 		ifstream ifs((Environment::Instance()->configDir() + "/seiscomp.cfg").c_str());
-     	if (ifs) {
-			std::cerr << "Using " << Environment::Instance()->configDir() << "/seiscomp.cfg" << std::endl;
+		if (ifs) {
+			cerr << "Using " << Environment::Instance()->configDir() << "/seiscomp.cfg" << endl;
 			store(parse_config_file(ifs, *_options), _variableMap);
 		}
 		*/
@@ -122,7 +122,7 @@ bool CommandLine::parse(int argc, char** argv) {
 
 		_unrecognizedOptions = collect_unrecognized(parsed.options, include_positional);
 	}
-	catch ( std::exception& e ) {
+	catch ( exception& e ) {
 		cout << "Error: " << e.what() << endl;
 		cout << *_options << endl;
 		return false;
@@ -138,8 +138,38 @@ bool CommandLine::parse(int argc, char** argv) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CommandLine::hasOption(const std::string& option) const {
-	std::map<std::string, boost::program_options::variable_value>::
+bool CommandLine::parse(int argc, char** argv,
+                        std::function<bool(const std::string &)> unknownArgumentFilter) {
+	if ( !CommandLine::parse(argc, argv) ) {
+		return false;
+	}
+
+	for ( size_t i = 0; i < _unrecognizedOptions.size(); ) {
+		const auto &arg = _unrecognizedOptions[i];
+		if ( arg.compare(0, 1, "-") == 0 ) {
+			if ( unknownArgumentFilter(arg) ) {
+				_unrecognizedOptions.erase(_unrecognizedOptions.begin() + i);
+			}
+			else {
+				cout << "Error: unknown option '" << arg << "'" << endl;
+				return false;
+			}
+		}
+		else {
+			++i;
+		}
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool CommandLine::hasOption(const string& option) const {
+	map<string, boost::program_options::variable_value>::
 	const_iterator it = _variableMap.find(option);
 	if ( it == _variableMap.end() ) return false;
 	return !it->second.defaulted();
@@ -150,7 +180,7 @@ bool CommandLine::hasOption(const std::string& option) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::vector<std::string> CommandLine::unrecognizedOptions() const {
+vector<string> CommandLine::unrecognizedOptions() const {
 	return _unrecognizedOptions;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

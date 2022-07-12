@@ -28,6 +28,8 @@
 #include <seiscomp/core.h>
 
 #include <map>
+#include <functional>
+
 
 namespace Seiscomp {
 namespace System {
@@ -69,6 +71,7 @@ class SC_SYSTEM_CORE_API CommandLine {
 		                     const char* description, T* customValidator);
 
 		bool parse(int argc, char** argv);
+		bool parse(int argc, char** argv, std::function<bool(const std::string &)> unknownArgumentFilter);
 
 		void printOptions() const;
 
