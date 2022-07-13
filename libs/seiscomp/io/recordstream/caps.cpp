@@ -280,6 +280,7 @@ bool RecordStream::setSource(const string &source) {
 
 	_realtime = true;
 	_ooo = false;
+	_minMTime = _maxMTime = sc::Time();
 
 	if ( !params.empty() ) {
 		vector<string> toks;
@@ -309,10 +310,24 @@ bool RecordStream::setSource(const string &source) {
 						return false;
 					}
 				}
-				else if ( name == "user" )
+				else if ( name == "user" ) {
 					_user = value;
-				else if ( name == "pwd" || name == "pass" || name == "password" )
+				}
+				else if ( name == "pwd" || name == "pass" || name == "password" ) {
 					_password = value;
+				}
+				else if ( name == "min-mtime" ) {
+					if ( !sc::fromString(_minMTime, value) ) {
+						SEISCOMP_ERROR("invalid min-mtime: %s", value.c_str());
+						return false;
+					}
+				}
+				else if ( name == "max-mtime" ) {
+					if ( !sc::fromString(_maxMTime, value) ) {
+						SEISCOMP_ERROR("invalid max-mtime: %s", value.c_str());
+						return false;
+					}
+				}
 				else if ( name == "request-file" ) {
 					ifstream ifs(value.c_str());
 					if ( !ifs.is_open() ) {
@@ -561,6 +576,20 @@ bool RecordStream::handshake() {
 
 		if ( _ooo )
 			_socket->write("OUTOFORDER ON\n", 14);
+
+		if ( _minMTime.valid() || _maxMTime.valid() ) {
+			_socket->write("MTIME ", 6);
+			if ( _minMTime.valid() ) {
+				auto s = _minMTime.toString("%Y,%m,%d,%H,%M,%S,%f");
+				_socket->write(s.c_str(), s.size());
+			}
+			_socket->write(":", 1);
+			if ( _maxMTime.valid() ) {
+				auto s = _maxMTime.toString("%Y,%m,%d,%H,%M,%S,%f");
+				_socket->write(s.c_str(), s.size());
+			}
+			_socket->write("\n", 1);
+		}
 
 		// First pass: continue all previous streams
 		for ( RequestList::iterator it = _requests.begin();
