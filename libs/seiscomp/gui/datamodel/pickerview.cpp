@@ -4896,8 +4896,6 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 			depth = 0.0;
 		}
 
-		if ( depth <= 0.0 ) depth = 1.0;
-
 		TravelTimeList* ttt = SC_D.ttTable->compute(elat, elon, depth, slat, slon, salt);
 
 		if ( ttt ) {
