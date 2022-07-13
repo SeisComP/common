@@ -254,6 +254,8 @@ class RecordStream : public Seiscomp::IO::RecordStream {
 		int                     _port;
 		Seiscomp::Core::Time    _startTime;
 		Seiscomp::Core::Time    _endTime;
+		Seiscomp::Core::Time    _minMTime;
+		Seiscomp::Core::Time    _maxMTime;
 		Seiscomp::Record       *_nextRecord;
 		bool                    _terminated;
 		bool                    _realtime;
