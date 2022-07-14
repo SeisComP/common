@@ -4376,6 +4376,23 @@ void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
 					_ui->cbLocatorProfile->setCurrentIndex(idx);
 				}
 			}
+
+			// Preset fixed depth
+			try {
+				_ui->cbFixedDepth->setChecked(quantityUncertainty(_currentOrigin->depth()) == 0.0);
+			}
+			catch ( ... ) {
+				_ui->cbFixedDepth->setChecked(false);
+			}
+
+			// Preset depth type
+			try {
+				idx = _ui->cbDepthType->findData(_currentOrigin->depthType().toInt());
+				_ui->cbDepthType->setCurrentIndex(idx > 0 ? idx : 1);
+			}
+			catch ( ValueException & ) {
+				_ui->cbDepthType->setCurrentIndex(1);
+			}
 		}
 	}
 
@@ -4544,7 +4561,7 @@ void OriginLocatorView::updateContent() {
 
 	try {
 		double err_z = quantityUncertainty(_currentOrigin->depth());
-		if (err_z == 0.0) {
+		if ( err_z == 0.0 ) {
 			_ui->labelDepthError->setText(QString("fixed"));
 			_ui->labelDepthErrorUnit->setText("");
 
@@ -4621,18 +4638,6 @@ void OriginLocatorView::updateContent() {
 		_ui->labelCreated->setText("");
 	}
 
-	/*
-	try {
-		int idx = _ui->cbDepthType->findData(_currentOrigin->depthType().toInt());
-		if ( idx > 0 )
-			_ui->cbDepthType->setCurrentIndex(idx);
-		else
-			_ui->cbDepthType->setCurrentIndex(1);
-	}
-	catch ( ValueException& ) {
-		_ui->cbDepthType->setCurrentIndex(1);
-	}
-	*/
 	_ui->cbDepthType->setCurrentIndex(0);
 
 	int activeArrivals = 0;
