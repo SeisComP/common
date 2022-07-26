@@ -415,7 +415,7 @@ static const char* feGeoRegionsNames[757] =
 /*  19 */	"Southeastern Alaska",
 /*  20 */	"Off Coast of Southeastern Alaska",
 /*  21 */	"West of Vancouver Island",
-/*  22 */	"Queen Charlotte Islands Region",
+/*  22 */	"Haida Gwaii Region",
 /*  23 */	"British Columbia, Canada",
 /*  24 */	"Alberta, Canada",
 /*  25 */	"Vancouver Island, Canada Region",
