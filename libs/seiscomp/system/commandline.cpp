@@ -146,7 +146,7 @@ bool CommandLine::parse(int argc, char** argv,
 
 	for ( size_t i = 0; i < _unrecognizedOptions.size(); ) {
 		const auto &arg = _unrecognizedOptions[i];
-		if ( arg.compare(0, 1, "-") == 0 ) {
+		if ( arg.compare(0, 2, "--") == 0 ) {
 			if ( unknownArgumentFilter(arg) ) {
 				_unrecognizedOptions.erase(_unrecognizedOptions.begin() + i);
 			}
