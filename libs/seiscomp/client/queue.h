@@ -124,6 +124,12 @@ class ThreadedQueue {
 		 */
 		size_t size() const;
 
+		/**
+		 * @brief Resets the queue which incorporates resetting the buffer
+		 *        insertations and the closed state.
+		 */
+		void reset();
+
 
 	// ----------------------------------------------------------------------
 	//  Private members

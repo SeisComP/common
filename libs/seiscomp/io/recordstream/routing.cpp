@@ -71,6 +71,8 @@ bool RoutingConnection::setSource(const string &source) {
 	if ( _started )
 		return false;
 
+	reset();
+
 	_rsarray.clear();
 	_rules.clear();
 
