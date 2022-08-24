@@ -22,6 +22,8 @@
 
 
 #include <seiscomp/core/exceptions.h>
+
+#include <algorithm>
 #include <type_traits>
 
 
@@ -223,6 +225,21 @@ template <typename T>
 size_t ThreadedQueue<T>::size() const {
 	lock lk(_monitor);
 	return _buffered;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+void ThreadedQueue<T>::reset() {
+	lock lk(_monitor);
+	_closed = false;
+	_begin = _end = 0;
+	_buffered = 0;
+	std::fill(_buffer.begin(), _buffer.end(), QueueHelper<T, std::is_pointer<T>::value>::defaultValue());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

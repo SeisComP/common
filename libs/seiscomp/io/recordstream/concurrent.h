@@ -92,6 +92,8 @@ class SC_SYSTEM_CORE_API Concurrent : public IO::RecordStream {
 		                      const std::string &locationCode,
 		                      const std::string &channelCode) = 0;
 
+		void reset();
+
 
 	// ----------------------------------------------------------------------
 	//  Private methods and members

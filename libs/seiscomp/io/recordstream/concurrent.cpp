@@ -204,20 +204,21 @@ bool Concurrent::setTimeout(int seconds) {
 void Concurrent::close() {
 	lock_guard<mutex> lock(_mtx);
 
-	if ( _rsarray.empty() )
-		return;
-
-	for ( size_t i = 0; i < _rsarray.size(); ++i)
-		_rsarray[i].first->close();
-
-	_rsarray.clear();
-
 	_queue.close();
 
-	for ( auto &&thread : _threads )
+	for ( size_t i = 0; i < _rsarray.size(); ++i ) {
+		_rsarray[i].first->close();
+	}
+
+	for ( auto &&thread : _threads ) {
 		thread.join();
+	}
+
+	SEISCOMP_DEBUG("All acquisition threads finished");
 
 	_threads.clear();
+	_rsarray.clear();
+
 	_started = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -243,8 +244,6 @@ void Concurrent::acquiThread(RecordStream *rs) {
 	}
 
 	SEISCOMP_DEBUG("Finished acquisition thread");
-
-	_queue.push(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -253,10 +252,10 @@ void Concurrent::acquiThread(RecordStream *rs) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record *Concurrent::next() {
-	lock_guard<mutex> lock(_mtx);
-
 	if ( !_started ) {
 		_started = true;
+
+		lock_guard<mutex> lock(_mtx);
 
 		for ( size_t i = 0; i < _rsarray.size(); ++i) {
 			if ( _rsarray[i].second ) {
@@ -271,25 +270,27 @@ Record *Concurrent::next() {
 						)
 					)
 				);
-				++_nthreads;
 			}
 		}
 	}
 
-	while (_nthreads > 0) {
-		auto rec = _queue.pop();
-
-		if ( !rec ) {
-			--_nthreads;
-			continue;
-		}
-
-		return rec;
+	try {
+		return _queue.pop();
+	}
+	catch ( Client::QueueClosedException & ) {
+		SEISCOMP_DEBUG("Queue closed, break streaming");
 	}
 
-	SEISCOMP_DEBUG("All acquisition threads finished -> finish iteration");
-
 	return nullptr;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Concurrent::reset() {
+	_queue.reset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

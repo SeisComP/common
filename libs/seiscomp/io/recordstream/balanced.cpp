@@ -73,6 +73,8 @@ bool BalancedConnection::setSource(const string &source) {
 	if ( _started )
 		return false;
 
+	reset();
+
 	_rsarray.clear();
 
 	size_t p1,p2;
