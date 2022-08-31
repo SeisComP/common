@@ -1251,7 +1251,6 @@ ssize_t SSLSocket::read(char *data, size_t len) {
 		if ( _session ) {
 			_session->accepted();
 		}
-
 	}
 
 	int ret = SSL_read(_ssl, data, static_cast<int>(len));

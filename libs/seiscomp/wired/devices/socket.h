@@ -288,6 +288,13 @@ class SSLSocket : public Socket {
 		SSL_CTX *sslContext() const;
 		SSL *ssl() const;
 
+		/**
+		 * @brief Returns the peer certificate presented by the other end.
+		 * @return An X509 pointer which is managed by this instance. It must
+		 *         not be deleted.
+		 */
+		X509 *peerCertificate() const;
+
 		static SSL_CTX *createClientContext(const char *pemCert, const char *pemKey);
 		static SSL_CTX *createServerContext(const char *pemCert, const char *pemKey);
 
@@ -306,6 +313,10 @@ inline SSL_CTX *SSLSocket::sslContext() const {
 
 inline SSL *SSLSocket::ssl() const {
 	return _ssl;
+}
+
+inline X509 *SSLSocket::peerCertificate() const {
+	return SSL_get_peer_certificate(_ssl);
 }
 
 
