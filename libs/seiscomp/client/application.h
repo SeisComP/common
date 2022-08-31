@@ -231,6 +231,14 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		//! Returns the messaging-server
 		const std::string &messagingURL() const;
 
+
+		//! Returns the filename of the OpenSSL certificate or
+		//! the certificate data Base64 encoded. The Base64 encoded
+		//! data starts with the special DataTag.
+		//! If no certificate is used the method returns an empty
+		//! string.
+		const std::string &messagingCertificate() const;
+
 		//! Enables a timer that calls every n seconds the
 		//! handleTimeout() methods
 		//! A value of 0 seconds disables the timer
