@@ -913,6 +913,12 @@ class PickerMarker : public RecordMarker {
 			}
 			catch ( ... ) {}
 
+			if ( !_referencedPick->publicID().empty() )
+				text += QString("\npublic ID: %1").arg(_referencedPick->publicID().c_str());
+			try {
+				text += QString("\ntime: %1").arg(timeToString(_referencedPick->time().value(), "%F %T.%6f"));
+			}
+			catch ( ... ) {}
 			if ( !_referencedPick->methodID().empty() )
 				text += QString("\nmethod: %1").arg(_referencedPick->methodID().c_str());
 			if ( !_referencedPick->filterID().empty() )
