@@ -316,7 +316,7 @@ bool DatabaseInterface::escape(std::string &out, const std::string &in) {
 
 	out_buf[j] = '\0';
 	out.resize(j);
-	return j;
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
