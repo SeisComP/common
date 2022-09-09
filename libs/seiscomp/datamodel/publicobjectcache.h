@@ -40,6 +40,73 @@ struct SC_SYSTEM_CORE_API CachePopCallback {
 };
 
 
+/**
+ * @brief The PublicObjectCache class implements an PublicObject store to
+ * prevent PublicObjects from de-registration when they go out of scope.
+ *
+ * The global registraty of PublicObject and the database access are common
+ * patterns in user code. To simplify the following code sequence:
+ *
+ * @code
+ * auto po = PublicObject::Find(publicID);
+ * if ( !po ) {
+ *     po = _archive->getObject(Pick::TypeInfo(), publicID)
+ * }
+ * auto pick = Pick::Cast(po);
+ * if ( pick ) {
+ *     // Do something
+ * }
+ * @endcode
+ *
+ * The cache encapsulates this code in a single function and can implement
+ * several strategies for storing objects in memory. Currently a cache size
+ * based strategy and a time span based strategy are implemented.
+ *
+ * The cache receives an optional pointer to the database archive to load
+ * objects from database if required. That makes the object lookup a breeze:
+ *
+ * @code
+ * auto pick = _cache.get<Pick>(publicID);
+ * if ( pick ) {
+ *     // Do something
+ * }
+ * @endcode
+ *
+ * The following two code examples illustrate the mode of operation of the
+ * cache:
+ *
+ * @code
+ * // A pick is being created and registered in the global object pool.
+ * PickPtr pick = Pick::Create();
+ * string publicID = pick->publicID();
+ *
+ * // Although the pick has never been added to the cache it will be found
+ * // through the global object registry. And it will be added to the cache
+ * // automatically for later retrieval.
+ * auto cachedPick = _cache.get<Pick>(publicID);
+ * cachedPick = nullptr; // Just drop the reference
+ *
+ * // Even if the pick pointer is set to nullptr which should cause the
+ * // pick to be disposed (-> SmartPointer) it is not the case. The cache still
+ * // manages a smart pointer to the pick and prevents it from being destroyed
+ * // until it will be removed from the cache.
+ * pick = nullptr;
+ *
+ * // The following lookup will succeed because the cache is still holding the
+ * // pick.
+ * cachedPick = _cache.get<Pick>(publicID);
+ * @endcode
+ *
+ * Continuing from the above code snippet, a totally different part of the code
+ * might want to lookup the object through the global registry. Due to the
+ * cache storage, it will success:
+ *
+ * @code
+ * // The pick is still registered globally because the cache is still holding
+ * // it.
+ * Pick *pick = PublicObject::Find(publicID);
+ * @endcode
+ */
 class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 	private:
 		struct CacheItem;
@@ -138,9 +205,27 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 		void clear();
 
 		/**
-		 * Retrieves the object from the cache. If the object is not
-		 * in the cache it will be fetched from the database and inserted
-		 * into the cache.
+		 * @brief Retrieves the type information of a public object which
+		 *        is either globally registered or stored in the cache.
+		 *
+		 * A database lookup will not be performed!
+		 *
+		 * @param publicID The publicID of the PublicObject
+		 * @return The RTTI pointer if found, nullptr otherwise.
+		 */
+		const Core::RTTI *typeInfo(const std::string &publicID) const;
+
+		/**
+		 * @brief Retrieves an object by publicID.
+		 *
+		 * If the object is not in the cache and not globally registered it
+		 * will be fetched from the database and inserted into the cache.
+		 * Please note that any object retrieved will be fed again to the
+		 * cache to raise its priority.
+		 *
+		 * @param classType The required class type of the searched objects.
+		 *                  If the object is not the same type or derived from
+		 *                  it then nullptr will be returned.
 		 * @param publicID The publicID of the PublicObject to be
 		 *                 retrieved
 		 * @return The PublicObject pointer or nullptr
@@ -161,7 +246,7 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 		template <typename T>
 		typename Core::SmartPointer<T>::Impl
 		get(const std::string &publicID) {
-			return T::Cast(find(T::TypeInfo(), publicID));
+			return static_cast<T*>(find(T::TypeInfo(), publicID));
 		}
 
 		//! Returns the time of the oldest entry

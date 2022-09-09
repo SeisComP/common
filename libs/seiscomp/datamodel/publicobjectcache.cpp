@@ -24,7 +24,7 @@
 #include <seiscomp/datamodel/publicobjectcache.h>
 #include <seiscomp/datamodel/databasearchive.h>
 
-#include <assert.h>
+#include <cassert>
 
 
 namespace Seiscomp {
@@ -260,16 +260,52 @@ void PublicObjectCache::clear() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const Core::RTTI *PublicObjectCache::typeInfo(const std::string &publicID) const {
+	PublicObject *po = PublicObject::Find(publicID);
+	if ( po ) {
+		return &po->typeInfo();
+	}
+
+	auto it = _lookup.find(publicID);
+	if ( it != _lookup.end() ) {
+		return &it->second->object->typeInfo();
+	}
+
+	return nullptr;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PublicObject *PublicObjectCache::find(const Seiscomp::Core::RTTI &classType,
                                       const std::string &publicID) {
 	bool cached = true;
 	PublicObject *po = PublicObject::Find(publicID);
-	if ( po == nullptr ) {
+
+	if ( !po ) {
+		auto it = _lookup.find(publicID);
+		if ( it != _lookup.end() ) {
+			if ( it->second->object->typeInfo().isTypeOf(classType) ) {
+				return it->second->object.get();
+			}
+			else {
+				return nullptr;
+			}
+		}
+
 		cached = false;
 		po = _archive?_archive->getObject(classType, publicID):nullptr;
 	}
+	else if ( !po->typeInfo().isTypeOf(classType) ) {
+		return nullptr;
+	}
+
 	setCached(cached);
-	if ( po ) feed(po);
+	if ( po ) {
+		feed(po);
+	}
 
 	return po;
 }
