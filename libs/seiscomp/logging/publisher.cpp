@@ -22,7 +22,6 @@
 #include <seiscomp/logging/publisher.h>
 
 #include <seiscomp/logging/channel.h>
-#include <seiscomp/logging/location.h>
 #include <seiscomp/logging/log.h>
 
 #include <stdio.h>
@@ -90,10 +89,6 @@ Publisher::Publisher(PublishLoc *loc) : Node(), src( loc )
 	Node *channelNode = getComponentChannel( src->component,
 	   src->channel->name().c_str(), src->channel->logLevel() );
 	channelNode->addPublisher( this );
-
-	// link to file
-	Node *fileNode = FileNode::Lookup(src->component, src->fileName);
-	fileNode->addPublisher(this);
 }
 
 Publisher::~Publisher()

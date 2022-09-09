@@ -3,7 +3,6 @@ SET(LOG_SOURCES
 	channel.cpp
 	node.cpp
 	publisher.cpp
-	location.cpp
 	init.cpp
 	fd.cpp
 	file.cpp
@@ -19,7 +18,6 @@ SET(LOG_HEADERS
 	node.h
 	publisher.h
 	publishloc.h
-	location.h
 	init.h
 	output.h
 	fd.h
