@@ -93,6 +93,8 @@ BOOST_AUTO_TEST_CASE(TIMESPAN) {
 	// again any valid object which has been found.
 	pick = buffer.get<Pick>(publicID);
 	BOOST_CHECK(pick);
+	BOOST_CHECK(buffer.typeInfo(publicID));
+	BOOST_CHECK(buffer.typeInfo(publicID)->isTypeOf(Pick::TypeInfo()));
 	BOOST_CHECK_EQUAL(buffer.size(), 2);
 	BOOST_CHECK_EQUAL(pick->publicID(), publicID);
 	BOOST_CHECK_EQUAL(pick->referenceCount(), 2);
@@ -107,6 +109,7 @@ BOOST_AUTO_TEST_CASE(TIMESPAN) {
 	pick.reset();
 	pick = buffer.get<Pick>(publicID);
 	BOOST_CHECK(!pick);
+	BOOST_CHECK(!buffer.typeInfo(publicID));
 
 	buffer.clear();
 
@@ -125,6 +128,8 @@ BOOST_AUTO_TEST_CASE(TIMESPAN) {
 	// to the cache.
 	pick = buffer.get<Pick>(publicID);
 	BOOST_CHECK(pick);
+	BOOST_CHECK(buffer.typeInfo(publicID));
+	BOOST_CHECK(buffer.typeInfo(publicID)->isTypeOf(Pick::TypeInfo()));
 
 	// Types other than pick must not be returned even if the publicID
 	// is registered.
@@ -150,6 +155,7 @@ BOOST_AUTO_TEST_CASE(TIMESPAN) {
 	// registration in PublicObject is disabled.
 	pick = buffer.get<Pick>(publicID);
 	BOOST_CHECK(!pick);
+	BOOST_CHECK(!buffer.typeInfo(publicID));
 	BOOST_CHECK_EQUAL(buffer.size(), 1);
 
 	// Sleep for two seconds
