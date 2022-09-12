@@ -41,6 +41,7 @@
 #include <list>
 #include <map>
 
+#include <seiscomp/version.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/system.h>
 #include <seiscomp/system/environment.h>
@@ -1469,13 +1470,18 @@ Configurator::~Configurator() {
 
 
 void Configurator::updateModeLabel() {
+	const auto version = Core::Version(SEISCOMP_VERSION).toString();
 	switch ( _configurationStage ) {
 		case Environment::CS_USER_APP:
-			setWindowTitle(tr("SeisComP - user configuration [ %1 ]").arg(Environment::Instance()->configDir().c_str()));
+			setWindowTitle(tr("SeisComP %1 - user configuration [ %2 ]")
+			               .arg(version.c_str())
+			               .arg(Environment::Instance()->configDir().c_str()));
 			static_cast<MouseTrackLabel*>(_modeLabel)->setIcon(QIcon(":/res/icons/user-settings.png"), QSize(72,72));
 			break;
 		case Environment::CS_CONFIG_APP:
-			setWindowTitle(tr("SeisComP - system configuration [ %1 ]").arg(Environment::Instance()->appConfigDir().c_str()));
+			setWindowTitle(tr("SeisComP %1 - system configuration [ %2 ]")
+			               .arg(version.c_str())
+			               .arg(Environment::Instance()->appConfigDir().c_str()));
 			static_cast<MouseTrackLabel*>(_modeLabel)->setIcon(QIcon(":/res/icons/system-settings.png"), QSize(72,72));
 			break;
 		default:
