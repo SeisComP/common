@@ -4423,11 +4423,13 @@ void OriginLocatorView::updateContent() {
 	_residuals->clear();
 	//_ui->tableArrivals->setModel(&_modelArrivals);
 
-	if ( _ui->tableArrivals->selectionModel() )
+	if ( _ui->tableArrivals->selectionModel() ) {
 		delete _ui->tableArrivals->selectionModel();
+	}
 
-	if ( _ui->tableArrivals->model() )
+	if ( _ui->tableArrivals->model() ) {
 		delete _ui->tableArrivals->model();
+	}
 
 	_modelArrivalsProxy = new ArrivalsSortFilterProxyModel(this);
 	_modelArrivalsProxy->setSourceModel(&_modelArrivals);
@@ -4435,8 +4437,9 @@ void OriginLocatorView::updateContent() {
 	connect(_ui->tableArrivals->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex&, const QModelIndex&)),
 	        this, SLOT(selectRow(const QModelIndex&, const QModelIndex&)));
 
-	for ( int i = 0; i < ArrivalListColumns::Quantity; ++i )
+	for ( int i = 0; i < ArrivalListColumns::Quantity; ++i ) {
 		_ui->tableArrivals->setColumnHidden(i, !colVisibility[i]);
+	}
 
 	//_ui->tableArrivals->resize(_ui->tableArrivals->size());
 #if QT_VERSION >= 0x050000
@@ -4466,8 +4469,9 @@ void OriginLocatorView::updateContent() {
 	_ui->btnCustom0->setEnabled(true);
 	_ui->btnCustom1->setEnabled(true);
 
-	if ( _ui->cbLocator->count() > 1 )
+	if ( _ui->cbLocator->count() > 1 ) {
 		_ui->cbLocator->setEnabled(true);
+	}
 
 	_ui->btnLocatorSettings->setEnabled(_locator != nullptr);
 
@@ -4490,8 +4494,9 @@ void OriginLocatorView::updateContent() {
 	timeToLabel(_ui->labelTime, t, format.c_str());
 
 	double radius;
-	if ( _config.defaultEventRadius > 0 )
+	if ( _config.defaultEventRadius > 0 ) {
 		radius = _config.defaultEventRadius;
+	}
 	else {
 		radius = 20;
 		try {
@@ -4643,13 +4648,15 @@ void OriginLocatorView::updateContent() {
 	int activeArrivals = 0;
 	for ( size_t i = 0; i < _currentOrigin->arrivalCount(); ++i ) {
 		Arrival* arrival = _currentOrigin->arrival(i);
-
 		Pick* pick = Pick::Cast(PublicObject::Find(arrival->pickID()));
 		QColor baseColor, pickColor;
-		if ( i%2 )
+
+		if ( i%2 ) {
 			baseColor = Qt::gray;
-		else
+		}
+		else {
 			baseColor = Qt::lightGray;
+		}
 
 		Time pickTime;
 
@@ -4680,10 +4687,12 @@ void OriginLocatorView::updateContent() {
 		_modelArrivals.setUseArrival(i, arrival);
 
 		QColor pickStateColor = pickColor;
-		if ( !_modelArrivals.useArrival(i) )
+		if ( !_modelArrivals.useArrival(i) ) {
 			pickStateColor = SCScheme.colors.arrivals.disabled;
-		else
+		}
+		else {
 			++activeArrivals;
+		}
 
 		_modelArrivals.setRowColor(i, pickStateColor);
 
@@ -4742,12 +4751,15 @@ void OriginLocatorView::updateContent() {
 	}
 
 	try {
-		if ( _currentOrigin->evaluationMode() == AUTOMATIC )
+		if ( _currentOrigin->evaluationMode() == AUTOMATIC ) {
 			evalMode += " (A)";
-		else if ( _currentOrigin->evaluationMode() == MANUAL )
+		}
+		else if ( _currentOrigin->evaluationMode() == MANUAL ) {
 			evalMode += " (M)";
-		else
+		}
+		else {
 			evalMode += " (-)";
+		}
 	}
 	catch ( ... ) {
 		evalMode += " (-)";
@@ -4791,12 +4803,15 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 	try { dist = arrival->distance(); } catch ( ... ) {}
 
 	char phase = Util::getShortPhaseName(arrival->phase().code());
-	if ( phase == 'S' )
+	if ( phase == 'S' ) {
 		_residuals->setValueSymbol(id, DiagramWidget::Rectangle);
-	else if ( phase == 'L' or phase == 'R' )
+	}
+	else if ( phase == 'L' or phase == 'R' ) {
 		_residuals->setValueSymbol(id, DiagramWidget::Triangle);
-	else
+	}
+	else {
 		_residuals->setValueSymbol(id, DiagramWidget::Circle);
+	}
 
 	try {
 		_residuals->setValueColor(id, PC_AZIMUTH, SCScheme.colors.arrivals.residuals.colorAt(arrival->timeResidual()));
@@ -4809,10 +4824,12 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 	_residuals->setValueColor(id, PC_REDUCEDTRAVELTIME, c);
 
 	try {
-		if ( SCScheme.unit.distanceInKM )
+		if ( SCScheme.unit.distanceInKM ) {
 			_residuals->setValue(id, PC_DISTANCE, Math::Geo::deg2km(dist));
-		else
+		}
+		else {
 			_residuals->setValue(id, PC_DISTANCE, dist);
+		}
 	}
 	catch ( ValueException& ) {
 		_residuals->setValue(id, PC_DISTANCE, 0.0);
@@ -4821,7 +4838,9 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 
 	try {
 		double residual = arrival->timeResidual();
-		if ( !pick ) pick = Pick::Find(arrival->pickID());
+		if ( !pick ) {
+			pick = Pick::Find(arrival->pickID());
+		}
 
 		double lowerUncertainty = -1, upperUncertainty = -1;
 
@@ -4852,8 +4871,9 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 		_residuals->setValueValid(id, PC_RESIDUAL, false);
 	}
 
-	if ( time )
+	if ( time ) {
 		_residuals->setValue(id, PC_TRAVELTIME, (float)(time - _currentOrigin->time().value()));
+	}
 	else {
 		_residuals->setValue(id, PC_TRAVELTIME, 0.0);
 		_residuals->setValueValid(id, PC_TRAVELTIME, false);
@@ -4868,10 +4888,12 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 	}
 
 	if ( _residuals->isValueValid(id, PC_DISTANCE) && _residuals->isValueValid(id, PC_TRAVELTIME) ) {
-		if ( SCScheme.unit.distanceInKM )
+		if ( SCScheme.unit.distanceInKM ) {
 			_residuals->setValue(id, PC_REDUCEDTRAVELTIME, _residuals->value(id,PC_TRAVELTIME) - _residuals->value(id,PC_DISTANCE)/_config.reductionVelocityP);
-		else
+		}
+		else {
 			_residuals->setValue(id, PC_REDUCEDTRAVELTIME, _residuals->value(id,PC_TRAVELTIME) - Math::Geo::deg2km(_residuals->value(id,PC_DISTANCE))/_config.reductionVelocityP);
+		}
 	}
 	else {
 		_residuals->setValue(id, PC_REDUCEDTRAVELTIME, 0.0);
@@ -4879,11 +4901,14 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 	}
 
 	if ( _residuals->isValueValid(id, PC_DISTANCE) &&
-		 _residuals->isValueValid(id, PC_AZIMUTH) &&
-		 phase == 'P' && _currentOrigin ) {
+	     _residuals->isValueValid(id, PC_AZIMUTH) &&
+	     phase == 'P' && _currentOrigin ) {
 
 		PlotWidget::PolarityType polarity = PlotWidget::POL_UNSET;
-		if ( !pick ) pick = Pick::Find(arrival->pickID());
+		if ( !pick ) {
+			pick = Pick::Find(arrival->pickID());
+		}
+
 		if ( pick ) {
 			try {
 				switch ( pick->polarity() ) {
@@ -4902,8 +4927,9 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 			}
 			catch ( ... ) {}
 
-			if ( Util::getShortPhaseName(arrival->phase().code()) != 'P' )
+			if ( Util::getShortPhaseName(arrival->phase().code()) != 'P' ) {
 				polarity = PlotWidget::POL_UNSET;
+			}
 
 			_residuals->setValue(id, PC_POLARITY, polarity);
 		}
