@@ -62,19 +62,31 @@ string toupper(const string &s) {
 int main(int argc, char **argv) {
 	bool standalone = false;
 
-	if ( argc < 2 ) {
-		cerr << "scchkcfg modulename [standalone]" << endl;
+	if ( argc < 2 || !strcmp(argv[1], "-h") ) {
+		cout << "Usage:" << endl  << "  scchkcfg modulename [standalone]" << endl
+		      << endl << "Check a SeisComP system configuration for "
+		        "case-sensitivity issues of parameter names" << endl;
+		cout << endl << "Examples:" << endl;
+		cout << "Check configuration of scautopick including global" << endl
+		     << "  scchkcfg scautopick" << endl;
+		cout << endl;
 		return EXIT_FAILURE;
 	}
 
+	cout << "Checking case-sensitivity issues of parameter names in configuration for: " << endl;
+	cout << "  + " << argv[1] << endl;
 	if ( argc > 2 ) {
 		if ( !strcmp(argv[2], "standalone") ) {
 			standalone = true;
 		}
 		else {
-			cerr << "Unknown specifier: " << argv[2] << ": expected 'standalone'" << endl;
+			cerr << "Unknown specifier '" << argv[2]
+			     << "': expecting 'standalone' or none" << endl;
 			return EXIT_FAILURE;
 		}
+	}
+	else {
+		cout << "  + global" << endl;
 	}
 
 	Config::Config cfg;
@@ -87,7 +99,12 @@ int main(int argc, char **argv) {
 		return EXIT_FAILURE;
 	}
 
-	cout << "Read configuration files OK" << endl;
+	cout << "Read configuration files OK:"  << endl;
+	vector<string> toks;
+	for ( auto fileIt = cfg.symbolTable()->includesBegin();
+	     fileIt != cfg.symbolTable()->includesEnd(); ++fileIt ) {
+		cout << "  + " << *fileIt << std::endl;
+	}
 
 	typedef vector<Config::Symbol*> SymbolList;
 	typedef map<string, SymbolList> SymbolConflicts;
@@ -97,14 +114,17 @@ int main(int argc, char **argv) {
 	Config::SymbolTable::iterator it;
 
 	// First pass, prepare uppercase symbols
-	for ( it = symtab->begin(); it != symtab->end(); ++it )
+	for ( it = symtab->begin(); it != symtab->end(); ++it ) {
 		conflicts[toupper((*it)->name)].push_back(*it);
+	}
 
 	SymbolConflicts::iterator cit;
 	int count = 0;
 
 	for ( cit = conflicts.begin(); cit != conflicts.end(); ++cit ) {
-		if ( cit->second.size() <= 1 ) continue;
+		if ( cit->second.size() <= 1 ) {
+			continue;
+		}
 
 		++count;
 		cout << "Conflict #" << count << endl;
