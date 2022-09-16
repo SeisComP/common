@@ -68,8 +68,9 @@ int main(int argc, char **argv) {
 	}
 
 	if ( argc > 2 ) {
-		if ( !strcmp(argv[2], "standalone") == 0 )
+		if ( !strcmp(argv[2], "standalone") ) {
 			standalone = true;
+		}
 		else {
 			cerr << "Unknown specifier: " << argv[2] << ": expected 'standalone'" << endl;
 			return EXIT_FAILURE;
