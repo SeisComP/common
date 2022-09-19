@@ -223,6 +223,13 @@
 					let the system to generate one.
 					</description>
 				</parameter>
+				<parameter name="certificate" type="string">
+					<description>
+					Define the OpenSSL client certificate to be used. Path to
+					OpenSSL certificate in PKCS 12 format or the prefix "data:"
+					followed by the Base64 encoded certificate data.
+					</description>
+				</parameter>
 				<parameter name="timeout" type="int" unit="s" default="3">
 					<description>
 					The connection timeout in seconds. 3 seconds are normally
