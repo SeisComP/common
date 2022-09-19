@@ -52,7 +52,7 @@ namespace {
 
 const static char *cmStrMeasure = "Measurements";
 const static char *cmStrMeasureClipboard = "Copy to Clipboard";
-const static char *cmStrMeasureSaveBNA = "Save as BNA File";
+const static char *cmStrMeasureSaveBNA = "Save as BNA/GeoJSON File";
 const static char *cmStrProjection = "Projection";
 const static char *cmStrFilter = "Filter";
 const static char *cmStrNearest = "Nearest";
@@ -158,7 +158,7 @@ SaveBNADialog::SaveBNADialog(QWidget *parent, Qt::WindowFlags f)
 	QDir dir2((Environment::Instance()->configDir() + "/bna").c_str());
 	if ( dir1.exists() || dir2.exists() ) {
 		toolTipPath << "Writing to 'spatial/' is default. "
-		               "BNA files will be ignored in:\n";
+		               "BNA/GeoJSON files will be ignored in:\n";
 		if ( dir1.exists() ) {
 			toolTipPath << Environment::Instance()->shareDir().c_str() << "/bna";
 		}
@@ -316,8 +316,16 @@ bool MapWidget::isGrayScale() const {
 
 
 bool MapWidget::saveScreenshot() {
-	QString filename = QFileDialog::getSaveFileName(this, tr("Save file"));
-	if ( filename.isEmpty() ) return false;
+	QString filename = QFileDialog::getSaveFileName(
+		this,
+		tr("Save image file"),
+		QString(),
+		tr("Images (*.png *.jpg *.bmp *.ppm *.xbm *.xpm)")
+	);
+
+	if ( filename.isEmpty() ) {
+		return false;
+	}
 
 	QImage image(size(), QImage::Format_ARGB32);
 	image.fill(0);
@@ -521,6 +529,13 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 				continue;
 			}
 
+			if ( fileInfo.suffix() != "bna" && fileInfo.suffix() != "geojson" ) {
+				QMessageBox::warning(this, "Invalid format",
+				                     QString("Unsupported file format: %s")
+				                            .arg(fileInfo.suffix()));
+				continue;
+			}
+
 			QDir dir = fileInfo.absoluteDir();
 			if ( !dir.exists() && !dir.mkpath(".") ) {
 				QMessageBox::warning(this, "Error creating path",
@@ -536,26 +551,98 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 				continue;
 			}
 
-			QFile file(fileInfo.absoluteFilePath());
-			if ( !file.open(QIODevice::WriteOnly |
-			                (append ? QIODevice::Append : QIODevice::Truncate)) ) {
-				QMessageBox::warning(this, "Could not open file",
-				                     QString("Could not open file for writing: %1")
-				                            .arg(fileInfo.absoluteFilePath()));
-				continue;
+			if ( fileInfo.suffix() == "bna" ) {
+				QFile file(fileInfo.absoluteFilePath());
+				if ( !file.open(QIODevice::WriteOnly |
+				                (append ? QIODevice::Append : QIODevice::Truncate)) ) {
+					QMessageBox::warning(this, "Could not open file",
+					                     QString("Could not open file for writing: %1")
+					                            .arg(fileInfo.absoluteFilePath()));
+					continue;
+				}
+
+				QTextStream stream(&file);
+				QString header = QString("\"%1\",\"rank %2\",%3")
+				    .arg(_measureBNADialog->name->text())
+				    .arg(_measureBNADialog->rank->value())
+				    .arg(_measureBNADialog->closedPolygon->isChecked()?_measurePoints.size():-_measurePoints.size());
+				stream << header << endl;
+				for ( int i = 0; i < _measurePoints.size(); ++i ) {
+					stream << _measurePoints[i].x() << ","
+					       << _measurePoints[i].y() << endl;;
+				}
+				file.close();
+			}
+			else if ( fileInfo.suffix() == "geojson" ) {
+				if ( append ) {
+					QMessageBox::warning(this, "Not supported",
+					                     QString("Appending a GeoJSON polygon is not supported."));
+					continue;
+				}
+
+				QFile file(fileInfo.absoluteFilePath());
+				if ( !file.open(QIODevice::WriteOnly | QIODevice::Truncate) ) {
+					QMessageBox::warning(this, "Could not open file",
+					                     QString("Could not open file for writing: %1")
+					                            .arg(fileInfo.absoluteFilePath()));
+					continue;
+				}
+
+				QTextStream stream(&file);
+				stream <<
+				"{" << endl;
+				stream <<
+				"	\"type\": \"Feature\"," << endl;
+				stream <<
+				"	\"geometry\": {" << endl;
+
+				if ( _measureBNADialog->closedPolygon->isChecked() ) {
+					stream <<
+					"		\"type\":\"Polygon\"," << endl;
+				}
+				else {
+					stream <<
+					"		\"type\":\"LineString\"," << endl;
+				}
+
+				stream <<
+				"		\"coordinates\":[" << endl;
+				stream <<
+				"			[";
+
+				for ( int i = 0; i < _measurePoints.size(); ++i ) {
+					if ( i ) {
+						stream << ", ";
+					}
+					stream << "[" << _measurePoints[i].x() << ", "
+					       << _measurePoints[i].y() << "]";
+				}
+
+				if ( _measureBNADialog->closedPolygon->isChecked() ) {
+					// Repeat last coordinate
+					stream << ", [" << _measurePoints.first().x() << ", "
+					       << _measurePoints.first().y() << "]";
+				}
+
+				stream << "]" << endl;
+				stream <<
+				"		]" << endl;
+				stream <<
+				"	}," << endl;
+				stream <<
+				"	\"properties\": {" << endl;
+				stream <<
+				"		\"name\": \"" << _measureBNADialog->name->text() << "\"," << endl;
+				stream <<
+				"		\"rank\": " << _measureBNADialog->rank->value() << endl;
+				stream <<
+				"	}" << endl;
+				stream <<
+				"}" << endl;
+
+				file.close();
 			}
 
-			QTextStream stream(&file);
-			QString header = QString("\"%1\",\"rank %2\",%3")
-			    .arg(_measureBNADialog->name->text())
-			    .arg(_measureBNADialog->rank->value())
-			    .arg(_measureBNADialog->closedPolygon->isChecked()?_measurePoints.size():-_measurePoints.size());
-			stream << header << endl;
-			for ( int i = 0; i < _measurePoints.size(); ++i ) {
-				stream << _measurePoints[i].x() << ","
-				       << _measurePoints[i].y() << endl;;
-			}
-			file.close();
 			break;
 		}
 	}
