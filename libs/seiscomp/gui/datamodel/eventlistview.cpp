@@ -501,17 +501,17 @@ DatabaseIterator getEventMomentTensors(DatabaseArchive *ar, const EventListView:
 	    <<       "PrefOrigin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "' and ";
 
 	if ( filter.minLatitude )
-		oss << "Origin." << _T("latitude_value") << " >= '" << *filter.minLatitude << "' and ";
+		oss << "PrefOrigin." << _T("latitude_value") << " >= '" << *filter.minLatitude << "' and ";
 	if ( filter.maxLatitude )
-		oss << "Origin." << _T("latitude_value") << " <= '" << *filter.maxLatitude << "' and ";
+		oss << "PrefOrigin." << _T("latitude_value") << " <= '" << *filter.maxLatitude << "' and ";
 	if ( filter.minLongitude )
-		oss << "Origin." << _T("longitude_value") << " >= '" << *filter.minLongitude << "' and ";
+		oss << "PrefOrigin." << _T("longitude_value") << " >= '" << *filter.minLongitude << "' and ";
 	if ( filter.maxLongitude )
-		oss << "Origin." << _T("longitude_value") << " <= '" << *filter.maxLongitude << "' and ";
+		oss << "PrefOrigin." << _T("longitude_value") << " <= '" << *filter.maxLongitude << "' and ";
 	if ( filter.minDepth )
-		oss << "Origin." << _T("depth_value") << " >= '" << *filter.minDepth << "' and ";
+		oss << "PrefOrigin." << _T("depth_value") << " >= '" << *filter.minDepth << "' and ";
 	if ( filter.maxDepth )
-		oss << "Origin." << _T("depth_value") << " <= '" << *filter.maxDepth << "' and ";
+		oss << "PrefOrigin." << _T("depth_value") << " <= '" << *filter.maxDepth << "' and ";
 	if ( filter.minMagnitude )
 		oss << "Magnitude." << _T("magnitude_value") << " >= '" << *filter.minMagnitude << "' and ";
 	if ( filter.maxMagnitude )
