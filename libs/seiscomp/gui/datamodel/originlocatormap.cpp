@@ -202,10 +202,26 @@ struct StationLayer : Map::Layer {
 		}
 	}
 
-	void sort() {
+	QVector<int> sort() {
+		QVector<int> permutation(stations.size());
+		for ( int i = 0; i < stations.size(); ++i ) {
+			permutation[i] = i;
+		}
+
+		qSort(permutation.begin(), permutation.end(), [this](int i1, int i2) {
+			return stations[i1]->latitude() < stations[i2]->latitude();
+		});
+
 		qSort(stations.begin(), stations.end(), [](Symbol *s1, Symbol *s2) {
 			return s1->latitude() < s2->latitude();
 		});
+
+		QVector<int> reversePermutation(permutation.size());
+		for ( int i = 0; i < permutation.size(); ++i ) {
+			reversePermutation[permutation[i]] = i;
+		}
+
+		return reversePermutation;
 	}
 
 	void clear() {
@@ -585,7 +601,11 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 	}
 
 	SYMBOLLAYER->setDirty();
-	SYMBOLLAYER->sort();
+	_arrivals = SYMBOLLAYER->sort();
+	for ( auto it = _stationCodes.begin(); it != _stationCodes.end(); ++it ) {
+		it->second = _arrivals[it->second];
+	}
+
 	update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
