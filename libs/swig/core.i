@@ -101,6 +101,12 @@ enum(Seiscomp::Core::GreensFunctionComponent);
 			case Seiscomp::Array::DOUBLE:
 				type = PyArray_DOUBLE;
 				break;
+			case Seiscomp::Array::COMPLEX_FLOAT:
+				type = PyArray_CFLOAT;
+				break;
+			case Seiscomp::Array::COMPLEX_DOUBLE:
+				type = PyArray_CDOUBLE;
+				break;
 			default:
 				SWIG_exception(SWIG_TypeError, "unsupported array type");
 				goto fail;
