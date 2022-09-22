@@ -23,6 +23,7 @@
 #include "seiscomp/math/geo.h"
 #include "seiscomp/math/coord.h"
 #include "seiscomp/math/math.h"
+#include "seiscomp/math/fft.h"
 #include "seiscomp/math/filter.h"
 #include "seiscomp/math/filter/rmhp.h"
 #include "seiscomp/math/filter/taper.h"
@@ -193,5 +194,6 @@ namespace std {
 
 %include "seiscomp/math/restitution/types.h"
 %include "seiscomp/math/restitution/transferfunction.h"
+%include "seiscomp/math/fft.h"
 
 %template(vectorc) std::vector<Seiscomp::Math::Complex>;
