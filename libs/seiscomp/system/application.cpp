@@ -451,9 +451,9 @@ Application::Application(int argc, char** argv) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Application::~Application() {
-	PluginRegistry::Reset();
-
 	closeLogging();
+
+	PluginRegistry::Reset();
 
 	if ( _instance == this )
 		_instance = nullptr;
