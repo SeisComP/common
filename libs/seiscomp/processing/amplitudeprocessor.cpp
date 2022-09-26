@@ -831,9 +831,32 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	// Reset Wood-Anderson response to default
 	_config.woodAndersonResponse = Math::SeismometerResponse::WoodAnderson::Config();
 
-	settings.getValue(_config.woodAndersonResponse.gain, "amplitudes.WoodAnderson.gain");
-	settings.getValue(_config.woodAndersonResponse.T0, "amplitudes.WoodAnderson.T0");
-	settings.getValue(_config.woodAndersonResponse.h, "amplitudes.WoodAnderson.h");
+	if ( settings.getValue(_config.woodAndersonResponse.gain, "amplitudes.WoodAnderson.gain") ) {
+		SEISCOMP_DEBUG("%s.%s.%s.%s: WA.gain = %f",
+		               settings.networkCode.c_str(),
+		               settings.stationCode.c_str(),
+		               settings.locationCode.c_str(),
+		               settings.channelCode.c_str(),
+		               _config.woodAndersonResponse.gain);
+	}
+
+	if ( settings.getValue(_config.woodAndersonResponse.T0, "amplitudes.WoodAnderson.T0") ) {
+		SEISCOMP_DEBUG("%s.%s.%s.%s: WA.T0 = %f",
+		               settings.networkCode.c_str(),
+		               settings.stationCode.c_str(),
+		               settings.locationCode.c_str(),
+		               settings.channelCode.c_str(),
+		               _config.woodAndersonResponse.T0);
+	}
+
+	if ( settings.getValue(_config.woodAndersonResponse.h, "amplitudes.WoodAnderson.h") ) {
+		SEISCOMP_DEBUG("%s.%s.%s.%s: WA.h = %f",
+		               settings.networkCode.c_str(),
+		               settings.stationCode.c_str(),
+		               settings.locationCode.c_str(),
+		               settings.channelCode.c_str(),
+		               _config.woodAndersonResponse.h);
+	}
 
 	if ( !parseSaturationThreshold(settings, "amplitudes.saturationThreshold") )
 		return false;
