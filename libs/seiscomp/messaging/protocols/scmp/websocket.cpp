@@ -31,6 +31,8 @@
 #include <seiscomp/utils/base64.h>
 #include <seiscomp/wired/protocols/http.h>
 
+#include <boost/algorithm/string.hpp>
+
 #include <iostream>
 #include <limits.h>
 #include <errno.h>
@@ -278,8 +280,25 @@ Result WebsocketConnection::connect(const char *address,
 
 	_sockMutex.lock();
 
-	if ( _useSSL )
-		_socket = new Wired::SSLSocket;
+	if ( _useSSL ) {
+		SSL_CTX *ctx = nullptr;
+		if ( !_certificate.empty() ) {
+			const string DataTag = "data:";
+			if ( !boost::istarts_with(_certificate, DataTag) ) {
+				ctx = Wired::SSLSocket::createClientContextFromFile(_certificate);
+			}
+			else {
+				string base64Data = _certificate;
+				base64Data.replace(0, DataTag.size(), "");
+				Seiscomp::Core::trim(base64Data);
+
+				string data;
+				Seiscomp::Util::decodeBase64(data, base64Data.c_str(), base64Data.size());
+				ctx = Wired::SSLSocket::createClientContext(data);
+			}
+		}
+		_socket = new Wired::SSLSocket(ctx);
+	}
 	else
 		_socket = new Wired::Socket;
 

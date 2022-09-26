@@ -25,6 +25,7 @@
 
 #include <stdint.h>
 #include <openssl/ssl.h>
+#include <openssl/pkcs12.h>
 #include <ostream>
 
 
@@ -295,6 +296,26 @@ class SSLSocket : public Socket {
 		 */
 		X509 *peerCertificate() const;
 
+		/**
+		 * @brief Creates SSL client context from PKCS12 file
+		 * @param pkcs12File Absolute path to pkcs12File
+		 * @return The client SSL context
+		 */
+		static SSL_CTX *createClientContextFromFile(const std::string &pkcs12File);
+
+		/**
+		 * @brief Creates SSL client context from Base64 encoded PKCS12 certificate
+		 * @param cert The Base64 encoded PKCS12 certificate
+		 * @return The client SSL context
+		 */
+		static SSL_CTX *createClientContext(const std::string &cert);
+
+		/**
+		 * @brief Creates SSL client context from OpenSSL PKCS12 structure
+		 * @param p12 Pointer to PKCS12 structure
+		 * @return The client SSL context
+		 */
+		static SSL_CTX *createClientContext(PKCS12 *p12);
 		static SSL_CTX *createClientContext(const char *pemCert, const char *pemKey);
 		static SSL_CTX *createServerContext(const char *pemCert, const char *pemKey);
 

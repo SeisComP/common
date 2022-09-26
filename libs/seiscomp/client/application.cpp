@@ -240,6 +240,7 @@ void Application::AppSettings::Messaging::accept(SettingsLinker &linker) {
 	& cfg(subscriptions, "subscriptions")
 	& cfg(contentType, "encoding")
 	& cfg(timeout, "timeout")
+	& cfg(certificate, "certificate")
 
 	& cli(
 		user, "Messaging", "user,u",
@@ -1456,6 +1457,8 @@ bool Application::validateParameters() {
 
 	_settings.agencyID = Util::replace(_settings.agencyID, AppResolver(_name));
 	_settings.author = Util::replace(_settings.author, AppResolver(_name));
+	_settings.messaging.certificate =
+	   Environment::Instance()->absolutePath(_settings.messaging.certificate);
 
 	return true;
 }
@@ -1535,6 +1538,10 @@ bool Application::initMessaging() {
 		status = _connection->setSource(_settings.messaging.URL);
 		if ( status == OK ) {
 			_connection->setMembershipInfo(_settings.messaging.membershipMessages);
+			if ( !_settings.messaging.certificate.empty() ) {
+				_connection->setCertificate(_settings.messaging.certificate);
+			}
+
 			status = _connection->connect(
 				_settings.messaging.user,
 				_settings.messaging.primaryGroup,
