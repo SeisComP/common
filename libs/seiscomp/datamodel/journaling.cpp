@@ -22,6 +22,7 @@
 #include <seiscomp/datamodel/journaling.h>
 #include <seiscomp/datamodel/journalentry.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -60,10 +61,9 @@ Journaling::Journaling(const Journaling& other)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Journaling::~Journaling() {
-	std::for_each(_journalEntrys.begin(), _journalEntrys.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&JournalEntry::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&JournalEntryPtr::get)));
+	for ( auto &journalEntry : _journalEntrys ) {
+		journalEntry->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -308,7 +308,7 @@ bool Journaling::removeJournalEntry(size_t i) {
 void Journaling::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Journaling skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

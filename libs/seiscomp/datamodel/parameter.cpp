@@ -22,6 +22,7 @@
 #include <seiscomp/datamodel/parameter.h>
 #include <seiscomp/datamodel/parameterset.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -71,10 +72,9 @@ Parameter::Parameter(const std::string& publicID)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Parameter::~Parameter() {
-	std::for_each(_comments.begin(), _comments.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&CommentPtr::get)));
+	for ( auto &comment : _comments ) {
+		comment->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -472,7 +472,7 @@ bool Parameter::removeComment(const CommentIndex& i) {
 void Parameter::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Parameter skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

@@ -27,6 +27,7 @@
 #include <seiscomp/datamodel/focalmechanism.h>
 #include <seiscomp/datamodel/event.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -70,30 +71,24 @@ EventParameters::EventParameters(const EventParameters& other)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventParameters::~EventParameters() {
-	std::for_each(_picks.begin(), _picks.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Pick::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&PickPtr::get)));
-	std::for_each(_amplitudes.begin(), _amplitudes.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Amplitude::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&AmplitudePtr::get)));
-	std::for_each(_readings.begin(), _readings.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Reading::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&ReadingPtr::get)));
-	std::for_each(_origins.begin(), _origins.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Origin::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&OriginPtr::get)));
-	std::for_each(_focalMechanisms.begin(), _focalMechanisms.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&FocalMechanism::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&FocalMechanismPtr::get)));
-	std::for_each(_events.begin(), _events.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Event::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&EventPtr::get)));
+	for ( auto &pick : _picks ) {
+		pick->setParent(nullptr);
+	}
+	for ( auto &amplitude : _amplitudes ) {
+		amplitude->setParent(nullptr);
+	}
+	for ( auto &reading : _readings ) {
+		reading->setParent(nullptr);
+	}
+	for ( auto &origin : _origins ) {
+		origin->setParent(nullptr);
+	}
+	for ( auto &focalMechanism : _focalMechanisms ) {
+		focalMechanism->setParent(nullptr);
+	}
+	for ( auto &event : _events ) {
+		event->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1111,7 +1106,7 @@ bool EventParameters::removeEvent(size_t i) {
 void EventParameters::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: EventParameters skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

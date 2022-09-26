@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT DataModel
 #include <seiscomp/datamodel/dataavailability.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -59,10 +60,9 @@ DataAvailability::DataAvailability(const DataAvailability& other)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DataAvailability::~DataAvailability() {
-	std::for_each(_dataExtents.begin(), _dataExtents.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&DataExtent::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&DataExtentPtr::get)));
+	for ( auto &dataExtent : _dataExtents ) {
+		dataExtent->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -354,7 +354,7 @@ bool DataAvailability::removeDataExtent(const DataExtentIndex& i) {
 void DataAvailability::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: DataAvailability skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

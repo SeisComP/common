@@ -22,6 +22,7 @@
 #include <seiscomp/datamodel/amplitude.h>
 #include <seiscomp/datamodel/eventparameters.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -88,10 +89,9 @@ Amplitude::Amplitude(const std::string& publicID)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Amplitude::~Amplitude() {
-	std::for_each(_comments.begin(), _comments.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&CommentPtr::get)));
+	for ( auto &comment : _comments ) {
+		comment->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -811,7 +811,7 @@ bool Amplitude::removeComment(const CommentIndex& i) {
 void Amplitude::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Amplitude skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

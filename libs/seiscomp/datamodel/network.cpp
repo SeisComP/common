@@ -22,6 +22,7 @@
 #include <seiscomp/datamodel/network.h>
 #include <seiscomp/datamodel/inventory.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -130,14 +131,12 @@ Network::Network(const std::string& publicID)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Network::~Network() {
-	std::for_each(_comments.begin(), _comments.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&CommentPtr::get)));
-	std::for_each(_stations.begin(), _stations.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Station::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&StationPtr::get)));
+	for ( auto &comment : _comments ) {
+		comment->setParent(nullptr);
+	}
+	for ( auto &station : _stations ) {
+		station->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -945,7 +944,7 @@ bool Network::removeStation(const StationIndex& i) {
 void Network::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Network skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

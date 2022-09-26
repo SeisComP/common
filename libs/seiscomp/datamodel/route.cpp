@@ -22,6 +22,7 @@
 #include <seiscomp/datamodel/route.h>
 #include <seiscomp/datamodel/routing.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -130,14 +131,12 @@ Route::Route(const std::string& publicID)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Route::~Route() {
-	std::for_each(_routeArclinks.begin(), _routeArclinks.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&RouteArclink::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&RouteArclinkPtr::get)));
-	std::for_each(_routeSeedlinks.begin(), _routeSeedlinks.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&RouteSeedlink::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&RouteSeedlinkPtr::get)));
+	for ( auto &routeArclink : _routeArclinks ) {
+		routeArclink->setParent(nullptr);
+	}
+	for ( auto &routeSeedlink : _routeSeedlinks ) {
+		routeSeedlink->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -741,7 +740,7 @@ bool Route::removeRouteSeedlink(const RouteSeedlinkIndex& i) {
 void Route::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Route skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

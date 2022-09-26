@@ -22,6 +22,7 @@
 #include <seiscomp/datamodel/sensorlocation.h>
 #include <seiscomp/datamodel/station.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -125,18 +126,15 @@ SensorLocation::SensorLocation(const std::string& publicID)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SensorLocation::~SensorLocation() {
-	std::for_each(_comments.begin(), _comments.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&CommentPtr::get)));
-	std::for_each(_auxStreams.begin(), _auxStreams.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&AuxStream::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&AuxStreamPtr::get)));
-	std::for_each(_streams.begin(), _streams.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Stream::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&StreamPtr::get)));
+	for ( auto &comment : _comments ) {
+		comment->setParent(nullptr);
+	}
+	for ( auto &auxStream : _auxStreams ) {
+		auxStream->setParent(nullptr);
+	}
+	for ( auto &stream : _streams ) {
+		stream->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -966,7 +964,7 @@ bool SensorLocation::removeStream(const StreamIndex& i) {
 void SensorLocation::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: SensorLocation skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

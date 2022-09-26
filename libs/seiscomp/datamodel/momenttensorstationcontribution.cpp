@@ -22,6 +22,7 @@
 #include <seiscomp/datamodel/momenttensorstationcontribution.h>
 #include <seiscomp/datamodel/momenttensor.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -75,10 +76,9 @@ MomentTensorStationContribution::MomentTensorStationContribution(const std::stri
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MomentTensorStationContribution::~MomentTensorStationContribution() {
-	std::for_each(_momentTensorComponentContributions.begin(), _momentTensorComponentContributions.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&MomentTensorComponentContribution::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&MomentTensorComponentContributionPtr::get)));
+	for ( auto &momentTensorComponentContribution : _momentTensorComponentContributions ) {
+		momentTensorComponentContribution->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -533,7 +533,7 @@ bool MomentTensorStationContribution::removeMomentTensorComponentContribution(co
 void MomentTensorStationContribution::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: MomentTensorStationContribution skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

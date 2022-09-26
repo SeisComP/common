@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT DataModel
 #include <seiscomp/datamodel/arclinklog.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -60,14 +61,12 @@ ArclinkLog::ArclinkLog(const ArclinkLog& other)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ArclinkLog::~ArclinkLog() {
-	std::for_each(_arclinkRequests.begin(), _arclinkRequests.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&ArclinkRequest::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&ArclinkRequestPtr::get)));
-	std::for_each(_arclinkUsers.begin(), _arclinkUsers.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&ArclinkUser::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&ArclinkUserPtr::get)));
+	for ( auto &arclinkRequest : _arclinkRequests ) {
+		arclinkRequest->setParent(nullptr);
+	}
+	for ( auto &arclinkUser : _arclinkUsers ) {
+		arclinkUser->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -533,7 +532,7 @@ bool ArclinkLog::removeArclinkUser(const ArclinkUserIndex& i) {
 void ArclinkLog::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: ArclinkLog skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

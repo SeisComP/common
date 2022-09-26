@@ -25,6 +25,7 @@
 #include <seiscomp/datamodel/stationmagnitude.h>
 #include <seiscomp/datamodel/magnitude.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -100,26 +101,21 @@ Origin::Origin(const std::string& publicID)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Origin::~Origin() {
-	std::for_each(_comments.begin(), _comments.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&CommentPtr::get)));
-	std::for_each(_compositeTimes.begin(), _compositeTimes.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&CompositeTime::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&CompositeTimePtr::get)));
-	std::for_each(_arrivals.begin(), _arrivals.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Arrival::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&ArrivalPtr::get)));
-	std::for_each(_stationMagnitudes.begin(), _stationMagnitudes.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&StationMagnitude::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&StationMagnitudePtr::get)));
-	std::for_each(_magnitudes.begin(), _magnitudes.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Magnitude::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&MagnitudePtr::get)));
+	for ( auto &comment : _comments ) {
+		comment->setParent(nullptr);
+	}
+	for ( auto &compositeTime : _compositeTimes ) {
+		compositeTime->setParent(nullptr);
+	}
+	for ( auto &arrival : _arrivals ) {
+		arrival->setParent(nullptr);
+	}
+	for ( auto &stationMagnitude : _stationMagnitudes ) {
+		stationMagnitude->setParent(nullptr);
+	}
+	for ( auto &magnitude : _magnitudes ) {
+		magnitude->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1468,7 +1464,7 @@ bool Origin::removeMagnitude(size_t i) {
 void Origin::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Origin skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

@@ -22,6 +22,7 @@
 #include <seiscomp/datamodel/event.h>
 #include <seiscomp/datamodel/eventparameters.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -84,22 +85,18 @@ Event::Event(const std::string& publicID)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Event::~Event() {
-	std::for_each(_eventDescriptions.begin(), _eventDescriptions.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&EventDescription::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&EventDescriptionPtr::get)));
-	std::for_each(_comments.begin(), _comments.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Comment::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&CommentPtr::get)));
-	std::for_each(_originReferences.begin(), _originReferences.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&OriginReference::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&OriginReferencePtr::get)));
-	std::for_each(_focalMechanismReferences.begin(), _focalMechanismReferences.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&FocalMechanismReference::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&FocalMechanismReferencePtr::get)));
+	for ( auto &eventDescription : _eventDescriptions ) {
+		eventDescription->setParent(nullptr);
+	}
+	for ( auto &comment : _comments ) {
+		comment->setParent(nullptr);
+	}
+	for ( auto &originReference : _originReferences ) {
+		originReference->setParent(nullptr);
+	}
+	for ( auto &focalMechanismReference : _focalMechanismReferences ) {
+		focalMechanismReference->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1053,7 +1050,7 @@ bool Event::removeFocalMechanismReference(const FocalMechanismReferenceIndex& i)
 void Event::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Event skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

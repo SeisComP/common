@@ -22,6 +22,7 @@
 #include <seiscomp/datamodel/arclinkrequest.h>
 #include <seiscomp/datamodel/arclinklog.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -134,14 +135,12 @@ ArclinkRequest::ArclinkRequest(const std::string& publicID)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ArclinkRequest::~ArclinkRequest() {
-	std::for_each(_arclinkStatusLines.begin(), _arclinkStatusLines.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&ArclinkStatusLine::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&ArclinkStatusLinePtr::get)));
-	std::for_each(_arclinkRequestLines.begin(), _arclinkRequestLines.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&ArclinkRequestLine::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&ArclinkRequestLinePtr::get)));
+	for ( auto &arclinkStatusLine : _arclinkStatusLines ) {
+		arclinkStatusLine->setParent(nullptr);
+	}
+	for ( auto &arclinkRequestLine : _arclinkRequestLines ) {
+		arclinkRequestLine->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -920,7 +919,7 @@ bool ArclinkRequest::removeArclinkRequestLine(const ArclinkRequestLineIndex& i) 
 void ArclinkRequest::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: ArclinkRequest skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);

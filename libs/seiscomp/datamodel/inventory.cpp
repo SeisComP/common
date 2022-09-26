@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT DataModel
 #include <seiscomp/datamodel/inventory.h>
 #include <algorithm>
+#include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
 #include <seiscomp/logging/log.h>
 
@@ -68,46 +69,36 @@ Inventory::Inventory(const Inventory& other)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Inventory::~Inventory() {
-	std::for_each(_stationGroups.begin(), _stationGroups.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&StationGroup::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&StationGroupPtr::get)));
-	std::for_each(_auxDevices.begin(), _auxDevices.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&AuxDevice::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&AuxDevicePtr::get)));
-	std::for_each(_sensors.begin(), _sensors.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Sensor::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&SensorPtr::get)));
-	std::for_each(_dataloggers.begin(), _dataloggers.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Datalogger::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&DataloggerPtr::get)));
-	std::for_each(_responsePAZs.begin(), _responsePAZs.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&ResponsePAZ::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&ResponsePAZPtr::get)));
-	std::for_each(_responseFIRs.begin(), _responseFIRs.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&ResponseFIR::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&ResponseFIRPtr::get)));
-	std::for_each(_responseIIRs.begin(), _responseIIRs.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&ResponseIIR::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&ResponseIIRPtr::get)));
-	std::for_each(_responsePolynomials.begin(), _responsePolynomials.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&ResponsePolynomial::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&ResponsePolynomialPtr::get)));
-	std::for_each(_responseFAPs.begin(), _responseFAPs.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&ResponseFAP::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&ResponseFAPPtr::get)));
-	std::for_each(_networks.begin(), _networks.end(),
-	              std::compose1(std::bind2nd(std::mem_fun(&Network::setParent),
-	                                         (PublicObject*)nullptr),
-	                            std::mem_fun_ref(&NetworkPtr::get)));
+	for ( auto &stationGroup : _stationGroups ) {
+		stationGroup->setParent(nullptr);
+	}
+	for ( auto &auxDevice : _auxDevices ) {
+		auxDevice->setParent(nullptr);
+	}
+	for ( auto &sensor : _sensors ) {
+		sensor->setParent(nullptr);
+	}
+	for ( auto &datalogger : _dataloggers ) {
+		datalogger->setParent(nullptr);
+	}
+	for ( auto &responsePAZ : _responsePAZs ) {
+		responsePAZ->setParent(nullptr);
+	}
+	for ( auto &responseFIR : _responseFIRs ) {
+		responseFIR->setParent(nullptr);
+	}
+	for ( auto &responseIIR : _responseIIRs ) {
+		responseIIR->setParent(nullptr);
+	}
+	for ( auto &responsePolynomial : _responsePolynomials ) {
+		responsePolynomial->setParent(nullptr);
+	}
+	for ( auto &responseFAP : _responseFAPs ) {
+		responseFAP->setParent(nullptr);
+	}
+	for ( auto &network : _networks ) {
+		network->setParent(nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1965,7 +1956,7 @@ bool Inventory::removeNetwork(const NetworkIndex& i) {
 void Inventory::serialize(Archive& ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
-	if ( ar.isHigherVersion<0,12>() ) {
+	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
 		SEISCOMP_ERROR("Archive version %d.%d too high: Inventory skipped",
 		               ar.versionMajor(), ar.versionMinor());
 		ar.setValidity(false);
