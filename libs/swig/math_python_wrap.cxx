@@ -2990,6 +2990,7 @@ namespace swig {
 #include "seiscomp/math/geo.h"
 #include "seiscomp/math/coord.h"
 #include "seiscomp/math/math.h"
+#include "seiscomp/math/fft.h"
 #include "seiscomp/math/filter.h"
 #include "seiscomp/math/filter/rmhp.h"
 #include "seiscomp/math/filter/taper.h"
@@ -47656,6 +47657,102 @@ SWIGINTERN PyObject *ResponseList_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObj
   return SWIG_Python_InitShadowInstance(args);
 }
 
+SWIGINTERN PyObject *_wrap_fft(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::ComplexDoubleArray *arg1 = 0 ;
+  Seiscomp::DoubleArray *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "fft", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_double_t_t,  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fft" "', argument " "1"" of type '" "Seiscomp::ComplexDoubleArray &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "fft" "', argument " "1"" of type '" "Seiscomp::ComplexDoubleArray &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::ComplexDoubleArray * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__NumericArrayT_double_t,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fft" "', argument " "2"" of type '" "Seiscomp::DoubleArray const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "fft" "', argument " "2"" of type '" "Seiscomp::DoubleArray const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::DoubleArray * >(argp2);
+  {
+    try {
+      Seiscomp::Math::fft(*arg1,(Seiscomp::NumericArray< double > const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ifft(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::DoubleArray *arg1 = 0 ;
+  Seiscomp::ComplexDoubleArray *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "ifft", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__NumericArrayT_double_t,  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ifft" "', argument " "1"" of type '" "Seiscomp::DoubleArray &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ifft" "', argument " "1"" of type '" "Seiscomp::DoubleArray &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::DoubleArray * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_double_t_t,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ifft" "', argument " "2"" of type '" "Seiscomp::ComplexDoubleArray &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ifft" "', argument " "2"" of type '" "Seiscomp::ComplexDoubleArray &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::ComplexDoubleArray * >(argp2);
+  {
+    try {
+      Seiscomp::Math::ifft(*arg1,*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_vectorc_iterator(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   std::vector< Seiscomp::Math::Complex > *arg1 = (std::vector< Seiscomp::Math::Complex > *) 0 ;
@@ -51029,6 +51126,8 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_ResponseList", _wrap_delete_ResponseList, METH_O, "delete_ResponseList(ResponseList self)"},
 	 { "ResponseList_swigregister", ResponseList_swigregister, METH_O, NULL},
 	 { "ResponseList_swiginit", ResponseList_swiginit, METH_VARARGS, NULL},
+	 { "fft", _wrap_fft, METH_VARARGS, "fft(ComplexDoubleArray spec, DoubleArray data)"},
+	 { "ifft", _wrap_ifft, METH_VARARGS, "ifft(DoubleArray out, ComplexDoubleArray spec)"},
 	 { "vectorc_iterator", _wrap_vectorc_iterator, METH_O, "vectorc_iterator(vectorc self) -> SwigPyIterator"},
 	 { "vectorc___nonzero__", _wrap_vectorc___nonzero__, METH_O, "vectorc___nonzero__(vectorc self) -> bool"},
 	 { "vectorc___bool__", _wrap_vectorc___bool__, METH_O, "vectorc___bool__(vectorc self) -> bool"},
@@ -51775,7 +51874,7 @@ static swig_type_info _swigt__p_std__vectorT_Seiscomp__Math__Geo__NamedCoordT_fl
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t = {"_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t", "std::vector< Seiscomp::Math::SeismometerResponse::FAP,std::allocator< Seiscomp::Math::SeismometerResponse::FAP > > *|Seiscomp::Math::SeismometerResponse::FAPs *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_double_std__allocatorT_double_t_t = {"_p_std__vectorT_double_std__allocatorT_double_t_t", "std::vector< double,std::allocator< double > > *|std::vector< double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_float_std__allocatorT_float_t_t = {"_p_std__vectorT_float_std__allocatorT_float_t_t", "std::vector< float > *|std::vector< float,std::allocator< float > > *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t = {"_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t", "std::vector< std::complex< double > > *|std::vector< Seiscomp::Math::Complex,std::allocator< Seiscomp::Math::Complex > > *|std::vector< Seiscomp::Math::Complex > *|std::vector< std::complex< double >,std::allocator< std::complex< double > > > *|Seiscomp::Math::Restitution::Poles *|Seiscomp::Math::SeismometerResponse::Poles *|Seiscomp::Math::Restitution::Zeros *|Seiscomp::Math::SeismometerResponse::Zeros *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t = {"_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t", "std::vector< std::complex< double > > *|std::vector< Seiscomp::Math::Complex,std::allocator< Seiscomp::Math::Complex > > *|Seiscomp::Math::ComplexArray *|std::vector< Seiscomp::Math::Complex > *|std::vector< std::complex< double >,std::allocator< std::complex< double > > > *|Seiscomp::Math::Restitution::Poles *|Seiscomp::Math::SeismometerResponse::Poles *|Seiscomp::Math::Restitution::Zeros *|Seiscomp::Math::SeismometerResponse::Zeros *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_swig__SwigPyIterator = {"_p_swig__SwigPyIterator", "swig::SwigPyIterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "unsigned char *|uint_least8_t *|uint_fast8_t *|uint8_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "uintptr_t *|uint_least32_t *|uint_fast32_t *|uint32_t *|unsigned int *|uint_fast16_t *", 0, 0, (void*)0, 0};

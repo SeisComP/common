@@ -946,6 +946,10 @@ class PublicObjectCache(seiscomp.core.BaseObject):
         r"""clear(PublicObjectCache self)"""
         return _datamodel.PublicObjectCache_clear(self)
 
+    def typeInfo(self, publicID):
+        r"""typeInfo(PublicObjectCache self, std::string const & publicID) -> RTTI"""
+        return _datamodel.PublicObjectCache_typeInfo(self, publicID)
+
     def find(self, classType, publicID):
         r"""find(PublicObjectCache self, RTTI classType, std::string const & publicID) -> PublicObject"""
         return _datamodel.PublicObjectCache_find(self, classType, publicID)
