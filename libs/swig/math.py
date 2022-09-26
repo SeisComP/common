@@ -2960,6 +2960,14 @@ class ResponseList(TransferFunction):
 # Register ResponseList in _math:
 _math.ResponseList_swigregister(ResponseList)
 
+
+def fft(spec, data):
+    r"""fft(ComplexDoubleArray spec, DoubleArray data)"""
+    return _math.fft(spec, data)
+
+def ifft(out, spec):
+    r"""ifft(DoubleArray out, ComplexDoubleArray spec)"""
+    return _math.ifft(out, spec)
 class vectorc(object):
     r"""Proxy of C++ std::vector< Seiscomp::Math::Complex > class."""
 

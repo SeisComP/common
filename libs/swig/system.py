@@ -140,8 +140,8 @@ class CommandLine(object):
     def addOption(self, group, option, description):
         return _system.CommandLine_addOption(self, group, option, description)
 
-    def parse(self, argc, argv):
-        return _system.CommandLine_parse(self, argc, argv)
+    def parse(self, *args):
+        return _system.CommandLine_parse(self, *args)
 
     def printOptions(self):
         return _system.CommandLine_printOptions(self)

@@ -12547,6 +12547,58 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Protocol_setCertificate(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Client::Protocol *arg1 = (Seiscomp::Client::Protocol *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "Protocol_setCertificate", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Client__Protocol, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Protocol_setCertificate" "', argument " "1"" of type '" "Seiscomp::Client::Protocol *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Client::Protocol * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Protocol_setCertificate" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Protocol_setCertificate" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      (arg1)->setCertificate((std::string const &)*arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e ) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e ) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Protocol_decode__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   std::string *arg1 = 0 ;
@@ -14991,6 +15043,62 @@ SWIGINTERN PyObject *_wrap_Connection_getInfo(PyObject *SWIGUNUSEDPARM(self), Py
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Connection_setCertificate(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Client::Connection *arg1 = (Seiscomp::Client::Connection *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  Seiscomp::Client::Result result;
+  
+  if (!SWIG_Python_UnpackTuple(args, "Connection_setCertificate", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Client__Connection, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Connection_setCertificate" "', argument " "1"" of type '" "Seiscomp::Client::Connection *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Client::Connection * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Connection_setCertificate" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Connection_setCertificate" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = (arg1)->setCertificate((std::string const &)*arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e ) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e ) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  {
+    Seiscomp::Client::Result tmp = result;
+    resultobj = PyInt_FromLong(static_cast<long>((Seiscomp::Client::Result::Type)tmp.toInt()));
+  }
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
   return NULL;
 }
 
@@ -20367,6 +20475,45 @@ SWIGINTERN PyObject *_wrap_Application_messagingURL(PyObject *SWIGUNUSEDPARM(sel
   {
     try {
       result = (std::string *) &((Seiscomp::Client::Application const *)arg1)->messagingURL();
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e ) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e ) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Application_messagingCertificate(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Client::Application *arg1 = (Seiscomp::Client::Application *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::string *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Client__Application, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Application_messagingCertificate" "', argument " "1"" of type '" "Seiscomp::Client::Application const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Client::Application * >(argp1);
+  {
+    try {
+      result = (std::string *) &((Seiscomp::Client::Application const *)arg1)->messagingCertificate();
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
@@ -31251,6 +31398,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "Protocol_state", _wrap_Protocol_state, METH_O, "Protocol_state(Protocol self) -> Seiscomp::Client::Protocol::State const &"},
 	 { "Protocol_inboxSize", _wrap_Protocol_inboxSize, METH_O, "Protocol_inboxSize(Protocol self) -> size_t"},
 	 { "Protocol_outboxSize", _wrap_Protocol_outboxSize, METH_O, "Protocol_outboxSize(Protocol self) -> size_t"},
+	 { "Protocol_setCertificate", _wrap_Protocol_setCertificate, METH_VARARGS, "Protocol_setCertificate(Protocol self, std::string const & cert)"},
 	 { "Protocol_decode", _wrap_Protocol_decode, METH_VARARGS, "\n"
 		"Protocol_decode(std::string const & blob, Seiscomp::Client::Protocol::ContentEncoding encoding, Seiscomp::Client::Protocol::ContentType type) -> Message\n"
 		"Protocol_decode(char const * blob, size_t blob_length, Seiscomp::Client::Protocol::ContentEncoding encoding, Seiscomp::Client::Protocol::ContentType type) -> Message\n"
@@ -31299,6 +31447,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "Connection_protocol", _wrap_Connection_protocol, METH_O, "Connection_protocol(Connection self) -> Protocol"},
 	 { "Connection_setInfoCallback", _wrap_Connection_setInfoCallback, METH_VARARGS, "Connection_setInfoCallback(Connection self, Seiscomp::Client::Connection::InfoCallback arg2)"},
 	 { "Connection_getInfo", _wrap_Connection_getInfo, METH_VARARGS, "Connection_getInfo(Connection self, Time timestamp, std::ostream & os)"},
+	 { "Connection_setCertificate", _wrap_Connection_setCertificate, METH_VARARGS, "Connection_setCertificate(Connection self, std::string const & cert) -> Seiscomp::Client::Result"},
 	 { "Connection_clientName", _wrap_Connection_clientName, METH_O, "Connection_clientName(Connection self) -> std::string const &"},
 	 { "Connection_schemaVersion", _wrap_Connection_schemaVersion, METH_O, "Connection_schemaVersion(Connection self) -> Version"},
 	 { "Connection_extendedParameters", _wrap_Connection_extendedParameters, METH_O, "Connection_extendedParameters(Connection self) -> Seiscomp::Client::Protocol::KeyValueStore const *"},
@@ -31458,6 +31607,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "Application_configModule", _wrap_Application_configModule, METH_O, "Application_configModule(Application self) -> ConfigModule"},
 	 { "Application_isStationEnabled", _wrap_Application_isStationEnabled, METH_VARARGS, "Application_isStationEnabled(Application self, std::string const & networkCode, std::string const & stationCode) -> bool"},
 	 { "Application_messagingURL", _wrap_Application_messagingURL, METH_O, "Application_messagingURL(Application self) -> std::string const &"},
+	 { "Application_messagingCertificate", _wrap_Application_messagingCertificate, METH_O, "Application_messagingCertificate(Application self) -> std::string const &"},
 	 { "Application_enableTimer", _wrap_Application_enableTimer, METH_VARARGS, "Application_enableTimer(Application self, unsigned int seconds)"},
 	 { "Application_disableTimer", _wrap_Application_disableTimer, METH_O, "Application_disableTimer(Application self)"},
 	 { "Application_sendNotification", _wrap_Application_sendNotification, METH_VARARGS, "Application_sendNotification(Application self, Notification arg2)"},
@@ -33440,7 +33590,7 @@ static swig_type_info _swigt__p_std__vectorT_Seiscomp__Core__BaseObject_p_std__a
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__DataModel__Station_p_std__allocatorT_Seiscomp__DataModel__Station_p_t_t = {"_p_std__vectorT_Seiscomp__DataModel__Station_p_std__allocatorT_Seiscomp__DataModel__Station_p_t_t", "Seiscomp::Client::StationList *|std::vector< Seiscomp::DataModel::Station *,std::allocator< Seiscomp::DataModel::Station * > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t = {"_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t", "std::vector< Seiscomp::Math::Filtering::IIR::BiquadCoefficients,std::allocator< Seiscomp::Math::Filtering::IIR::BiquadCoefficients > > *|Seiscomp::Math::Filtering::IIR::Biquads *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t = {"_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t", "std::vector< Seiscomp::Math::SeismometerResponse::FAP,std::allocator< Seiscomp::Math::SeismometerResponse::FAP > > *|Seiscomp::Math::SeismometerResponse::FAPs *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t = {"_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t", "std::vector< std::complex< double >,std::allocator< std::complex< double > > > *|Seiscomp::Math::SeismometerResponse::Poles *|Seiscomp::Math::Restitution::Poles *|Seiscomp::Math::SeismometerResponse::Zeros *|Seiscomp::Math::Restitution::Zeros *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t = {"_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t", "Seiscomp::Math::ComplexArray *|std::vector< std::complex< double >,std::allocator< std::complex< double > > > *|Seiscomp::Math::SeismometerResponse::Poles *|Seiscomp::Math::Restitution::Poles *|Seiscomp::Math::SeismometerResponse::Zeros *|Seiscomp::Math::Restitution::Zeros *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_std__string_std__allocatorT_std__string_t_t = {"_p_std__vectorT_std__string_std__allocatorT_std__string_t_t", "std::vector< std::string,std::allocator< std::string > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_swig__SwigPyIterator = {"_p_swig__SwigPyIterator", "swig::SwigPyIterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_traits_type = {"_p_traits_type", "traits_type *", 0, 0, (void*)0, 0};

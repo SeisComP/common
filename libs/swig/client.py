@@ -415,6 +415,10 @@ class Protocol(object):
         r"""outboxSize(Protocol self) -> size_t"""
         return _client.Protocol_outboxSize(self)
 
+    def setCertificate(self, cert):
+        r"""setCertificate(Protocol self, std::string const & cert)"""
+        return _client.Protocol_setCertificate(self, cert)
+
     @staticmethod
     def decode(*args):
         r"""
@@ -571,6 +575,10 @@ class Connection(seiscomp.core.BaseObject):
     def getInfo(self, timestamp, os):
         r"""getInfo(Connection self, Time timestamp, std::ostream & os)"""
         return _client.Connection_getInfo(self, timestamp, os)
+
+    def setCertificate(self, cert):
+        r"""setCertificate(Connection self, std::string const & cert) -> Seiscomp::Client::Result"""
+        return _client.Connection_setCertificate(self, cert)
 
     def clientName(self):
         r"""clientName(Connection self) -> std::string const &"""
@@ -1219,6 +1227,10 @@ class Application(seiscomp.system.SystemApplication):
     def messagingURL(self):
         r"""messagingURL(Application self) -> std::string const &"""
         return _client.Application_messagingURL(self)
+
+    def messagingCertificate(self):
+        r"""messagingCertificate(Application self) -> std::string const &"""
+        return _client.Application_messagingCertificate(self)
 
     def enableTimer(self, seconds):
         r"""enableTimer(Application self, unsigned int seconds)"""
