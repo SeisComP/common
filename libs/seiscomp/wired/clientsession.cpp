@@ -23,7 +23,9 @@
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/wired/clientsession.h>
 #include <seiscomp/wired/reactor.h>
-#include <errno.h>
+
+#include <cerrno>
+#include <iostream>
 
 
 using namespace std;
@@ -368,6 +370,9 @@ void ClientSession::handleReceive(const char *buf, size_t len) {
 				break;
 			}
 
+			_inboxPos = 0;
+			_inbox[0] = '\0';
+
 			if ( _postDataSize > 0 ) {
 				++buf; --len;
 				if ( len > 0 ) {
@@ -381,10 +386,10 @@ void ClientSession::handleReceive(const char *buf, size_t len) {
 					buf += read;
 					len -= read;
 				}
+				else {
+					break;
+				}
 			}
-
-			_inboxPos = 0;
-			_inbox[0] = '\0';
 		}
 		else {
 			// If one line of data exceeds the maximum number of allowed
