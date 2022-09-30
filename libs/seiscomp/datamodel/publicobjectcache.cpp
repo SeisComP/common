@@ -287,16 +287,15 @@ PublicObject *PublicObjectCache::find(const Seiscomp::Core::RTTI &classType,
 	if ( !po ) {
 		auto it = _lookup.find(publicID);
 		if ( it != _lookup.end() ) {
-			if ( it->second->object->typeInfo().isTypeOf(classType) ) {
-				return it->second->object.get();
-			}
-			else {
+			if ( !it->second->object->typeInfo().isTypeOf(classType) ) {
 				return nullptr;
 			}
+			po = it->second->object.get();
 		}
-
-		cached = false;
-		po = _archive?_archive->getObject(classType, publicID):nullptr;
+		else {
+			cached = false;
+			po = _archive?_archive->getObject(classType, publicID):nullptr;
+		}
 	}
 	else if ( !po->typeInfo().isTypeOf(classType) ) {
 		return nullptr;
