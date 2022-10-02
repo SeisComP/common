@@ -73,13 +73,13 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 
 	for (; it != seq->end(); ++it) {
 		RecordCPtr rec = (*it);
-		auto dataType = rec->data()->dataType();
 		int imin = 0, imax = 0;
 		int ns = rec->sampleCount();
 		if ( ns == 0 || rec->data() == nullptr ) {
 			continue;
 		}
 
+		auto dataType = rec->data()->dataType();
 		if ( globalOffset ) {
 			if ( dataType == Array::FLOAT ) {
 				auto arr = static_cast<const FloatArray*>(rec->data());
