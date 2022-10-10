@@ -239,9 +239,9 @@ bool AbstractAmplitudeProcessor_ML::setParameter(Capability cap, const std::stri
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AbstractAmplitudeProcessor_ML::setup(const Settings &settings) {
-	if ( !AmplitudeProcessor::setup(settings) ) return false;
-
 	setDefaultConfiguration();
+
+	if ( !AmplitudeProcessor::setup(settings) ) return false;
 
 	bool absMax = true;
 
@@ -404,9 +404,9 @@ double AbstractAmplitudeProcessor_ML::timeWindowLength(double distance_deg) cons
 	// we are probably on the safe side. We add 30 s to count for rupture
 	// duration, which may, however, not be sufficient.
 	double v_min = 3;
-
 	double distance_km = distance_deg*111.2;
 	double windowLength = distance_km/v_min + 30;
+
 	return windowLength < _config.signalEnd ? windowLength :_config.signalEnd;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
