@@ -182,6 +182,9 @@
  *    - Skip originUncertaintyDescription if value is set to
  *      'probability density function' not supported by QuakeML.
  *
+ *  * 11.10.2022: Always output preferred magnitude (even when containing
+ *                origin is not referenced by event)
+ *
  ********************************************************************** -->
 <xsl:stylesheet version="1.0"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -224,8 +227,19 @@
 
     <!-- event -->
     <xsl:template match="scs:event">
+        <xsl:variable name="event" select="." />
         <xsl:element name="{local-name()}">
             <xsl:apply-templates select="@*"/>
+
+            <!-- search for preferred magnitude so we can output it
+                 even if its containing origin is not included -->
+            <xsl:for-each select="../scs:origin">
+                <xsl:for-each select="scs:magnitude[@publicID=$event/scs:preferredMagnitudeID]">
+                    <xsl:apply-templates select="." mode="originMagnitude">
+                        <xsl:with-param name="oID" select="../@publicID"/>
+                    </xsl:apply-templates>
+                </xsl:for-each>
+            </xsl:for-each>
 
             <!-- search origins referenced by this event -->
             <xsl:for-each select="scs:originReference">
@@ -249,8 +263,8 @@
                         </xsl:apply-templates>
                     </xsl:for-each>
 
-                    <!-- magnitudes -->
-                    <xsl:for-each select="scs:magnitude">
+                    <!-- magnitudes, except the preferred magnitude (which we already handled) -->
+                    <xsl:for-each select="scs:magnitude[not(@publicID=$event/scs:preferredMagnitudeID)]">
                         <xsl:apply-templates select="." mode="originMagnitude">
                             <xsl:with-param name="oID" select="../@publicID"/>
                         </xsl:apply-templates>
