@@ -125,13 +125,13 @@ bool Master::init() {
 				return false;
 			}
 
+			SEISCOMP_INFO("  + MP %s", interface.c_str());
 			if ( !proc->init(configuration(), "queues." + q->name() + ".processors.messages." + interface + ".") ) {
 				SEISCOMP_ERROR("Failed to initialize message processor interface '%s'",
 				               interface.c_str());
 				return false;
 			}
 
-			SEISCOMP_INFO("  + MP %s", interface.c_str());
 			q->add(proc.get());
 		}
 	}
