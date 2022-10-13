@@ -35,6 +35,8 @@
 
 #include "statistics/statistics.h"
 
+#include <deque>
+
 
 namespace Seiscomp {
 namespace Messaging {
@@ -77,6 +79,7 @@ class QueueWorker : public Wired::Reactor, public MessageDispatcher {
 	//  MessageDispatcher interface
 	// ----------------------------------------------------------------------
 	public:
+		virtual void sendMessage(Client *sender, Message *message);
 		virtual void messageAvailable(Queue *);
 
 
@@ -84,8 +87,11 @@ class QueueWorker : public Wired::Reactor, public MessageDispatcher {
 	//  Private members
 	// ----------------------------------------------------------------------
 	private:
-		Queue      *_queue;
-		std::mutex  _idleMutex;
+		using ClientMessage = std::pair<Client*,Message*>;
+
+		Queue                     *_queue;
+		std::mutex                 _idleMutex;
+		std::deque<ClientMessage>  _messages;
 };
 
 

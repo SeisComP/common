@@ -257,6 +257,22 @@ Queue::Result Queue::push(Client *sender, Message *msg, int packetSize) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Queue::Result Queue::dispatch(Client *sender, Message *msg) {
+	if ( _processedMessageDispatcher ) {
+		_processedMessageDispatcher->sendMessage(sender, msg);
+	}
+	else {
+		return push(sender, msg);
+	}
+
+	return Success;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Queue::publish(Client *sender, Message *msg) {
 	msg->timestamp = Seiscomp::Core::Time::GMT();
 

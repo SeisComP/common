@@ -33,6 +33,8 @@ namespace Messaging {
 namespace Broker {
 
 
+class Client;
+class Message;
 class Queue;
 
 
@@ -56,6 +58,14 @@ class SC_BROKER_API MessageDispatcher {
 	//  Dispatcher interface
 	// ----------------------------------------------------------------------
 	public:
+		/**
+		 * @brief Sends a message thread-safe.
+		 * @param sender The sender of the message
+		 * @param message The message itself which must not be managed
+		 *                by the caller.
+		 */
+		virtual void sendMessage(Client *sender, Message *message) = 0;
+
 		/**
 		 * @brief Notifies the dispatcher about a new message. If the message
 		 *        should be published, dispatch() must be called.

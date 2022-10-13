@@ -85,8 +85,17 @@ Wired::Device *QueueWorker::wait() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void QueueWorker::idle() {
 	// If an interrupt occured, flush the messages.
-	if ( interrupted() )
+	if ( interrupted() ) {
 		flushMessages(_queue);
+
+		for ( auto &item : _messages ) {
+			if ( _queue->push(item.first, item.second) != Queue::Success ) {
+				delete item.second;
+			}
+		}
+
+		_messages.clear();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -105,7 +114,18 @@ bool QueueWorker::run() {
 	unlock();
 	return r;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void QueueWorker::sendMessage(Client *sender, Message *message) {
+	lock();
+	_messages.push_back(ClientMessage(sender, message));
+	unlock();
+	interrupt();
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

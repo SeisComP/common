@@ -218,6 +218,15 @@ class SC_BROKER_API Queue {
 		Result push(Client *sender, Message *msg, int packetSize = 0);
 
 		/**
+		 * @brief Dispatches a message via a message dispatcher. If none is
+		 *        set then this call is equal to push.
+		 * @param sender The sender instance
+		 * @param msg The message
+		 * @return The result code
+		 */
+		Result dispatch(Client *sender, Message *msg);
+
+		/**
 		 * @brief Activates the queue and starts the processing thread.
 		 */
 		void activate();
