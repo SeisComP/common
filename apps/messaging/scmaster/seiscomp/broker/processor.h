@@ -80,12 +80,19 @@ class SC_BROKER_API Processor : public Core::BaseObject {
 		 */
 		virtual void getInfo(const Core::Time &timestamp, std::ostream &os) = 0;
 
+		Queue *queue() const;
+
 
 	private:
 		Queue *_queue;
 
 	friend class Queue;
 };
+
+
+inline Queue *Processor::queue() const {
+	return _queue;
+}
 
 
 }
