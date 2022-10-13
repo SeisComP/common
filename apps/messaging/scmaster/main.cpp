@@ -132,7 +132,11 @@ bool Master::init() {
 				return false;
 			}
 
-			q->add(proc.get());
+			if ( !q->add(proc.get()) ) {
+				SEISCOMP_ERROR("Attaching message processor '%s' failed",
+				               interface.c_str());
+				return false;
+			}
 		}
 	}
 

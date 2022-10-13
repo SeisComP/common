@@ -124,8 +124,7 @@ bool Queue::add(MessageProcessor *proc) {
 		_connectionProcessors.push_back(proc);
 
 	proc->_queue = this;
-	proc->attach(this);
-	return true;
+	return proc->attach(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

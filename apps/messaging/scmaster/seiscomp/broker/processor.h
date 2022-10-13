@@ -65,7 +65,7 @@ class SC_BROKER_API Processor : public Core::BaseObject {
 		 *        the local client heap.
 		 * @param queue The queue the processor was attached to.
 		 */
-		virtual void attach(Queue *queue);
+		virtual bool attach(Queue *queue);
 
 		/**
 		 * @brief Shuts down the processor.
