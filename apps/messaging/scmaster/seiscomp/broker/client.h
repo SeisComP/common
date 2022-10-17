@@ -165,18 +165,18 @@ class SC_BROKER_API Client {
 	//  Protected members
 	// ----------------------------------------------------------------------
 	protected:
-		Queue          *_queue;
+		Queue          *_queue{nullptr};
 		Core::Time      _created;
 		Core::Time      _lastSOHReceived;
 		std::string     _name;
-		bool            _wantsMembershipInformation;
-		bool            _discardSelf;
-		SequenceNumber  _sequenceNumber;
-		SequenceNumber  _acknowledgeWindow;
-		SequenceNumber  _acknowledgeCounter;
+		bool            _wantsMembershipInformation{false};
+		bool            _discardSelf{false};
+		SequenceNumber  _sequenceNumber{0};
+		SequenceNumber  _acknowledgeWindow{20};
+		SequenceNumber  _acknowledgeCounter{20};
 		Core::Time      _ackInitiated;
-		int             _inactivityCounter; // The number of seconds
-		                                    // of inactivity
+		int             _inactivityCounter{0}; // The number of seconds
+		                                       // of inactivity
 
 
 	// ----------------------------------------------------------------------

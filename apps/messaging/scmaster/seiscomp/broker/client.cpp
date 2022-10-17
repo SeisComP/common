@@ -38,15 +38,7 @@ namespace Broker {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Client::Client()
-: _queue(nullptr)
-, _wantsMembershipInformation(false)
-, _discardSelf(false)
-, _sequenceNumber(0)
-, _acknowledgeWindow(20)
-, _acknowledgeCounter(20)
-, _inactivityCounter(0)
-{}
+Client::Client() { }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
