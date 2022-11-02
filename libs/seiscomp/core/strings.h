@@ -27,6 +27,7 @@
 #include <seiscomp/core/datetime.h>
 
 #include <boost/iostreams/stream.hpp>
+#include <limits>
 #include <string>
 #include <vector>
 #include <complex>

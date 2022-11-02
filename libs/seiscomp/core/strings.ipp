@@ -36,7 +36,31 @@ namespace Core {
 template <typename T>
 inline std::string toString(const T &v) {
 	std::ostringstream os;
-	os << Number<T>(v);
+	os << v;
+	return os.str();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <>
+inline std::string toString(const float &v) {
+	std::ostringstream os;
+	os << Number<float>(v);
+	return os.str();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <>
+inline std::string toString(const double &v) {
+	std::ostringstream os;
+	os << Number<double>(v);
 	return os.str();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -47,7 +71,7 @@ inline std::string toString(const T &v) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 std::ostream &operator<<(std::ostream &ostream, Number<T> n) {
-	ostream.precision(10);
+	ostream.precision(std::numeric_limits<T>::max_digits10);
 	ostream << n.ref;
 	return ostream;
 }
