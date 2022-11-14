@@ -195,6 +195,8 @@
  *      'bomb detonation', 'moving aircraft' and 'atmospheric meteor explosion'
  *      to QuakeML 'other event'.
  *
+ *  * 31.10.2022: Improve performance when processing origins with many arrivals.
+ *
  ********************************************************************** -->
 <xsl:stylesheet version="1.0"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -270,14 +272,10 @@
                     </xsl:for-each>
 
                     <!-- picks, referenced by arrivals -->
-                    <xsl:for-each select="scs:arrival">
-                        <!--xsl:value-of select="scs:pickID"/-->
-                        <!-- Don't copy picks already referenced in amplitudes -->
-                        <xsl:for-each select="
-                                ../../scs:pick[
-                                    @publicID=current()/scs:pickID
-                                    and not(@publicID=../scs:amplitude[
-                                        @publicID=$origin/scs:stationMagnitude/scs:amplitudeID]/scs:pickID)]">
+                    <!-- we exclude picks already referenced in amplitudes: -->
+                    <xsl:variable name="amplitudes" select="../scs:amplitude[@publicID=$origin/scs:stationMagnitude/scs:amplitudeID]" />
+                    <xsl:for-each select="scs:arrival[not(./scs:pickID=$amplitudes/scs:pickID)]">
+                        <xsl:for-each select="../../scs:pick[@publicID=current()/scs:pickID]">
                             <xsl:call-template name="genericNode"/>
                         </xsl:for-each>
                     </xsl:for-each>
