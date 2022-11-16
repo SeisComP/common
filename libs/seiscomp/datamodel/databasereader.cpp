@@ -32,7 +32,6 @@
 #include <seiscomp/datamodel/arclinklog_package.h>
 #include <seiscomp/datamodel/dataavailability_package.h>
 #include <seiscomp/datamodel/comment.h>
-#include <boost/bind.hpp>
 
 using namespace std;
 

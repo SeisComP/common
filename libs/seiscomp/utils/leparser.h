@@ -28,7 +28,6 @@
 #include <sstream>
 
 
-#include <boost/bind.hpp>
 #include <seiscomp/core.h>
 
 

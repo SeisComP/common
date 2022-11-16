@@ -26,6 +26,10 @@
 #include <assert.h>
 #include <iostream>
 
+#if !defined(SC_HAS_TIMER_CREATE)
+#include <boost/thread/thread.hpp>
+#endif
+
 #ifndef WIN32
 #include <errno.h>
 #include <string.h>
@@ -406,9 +410,9 @@ void Timer::handleTimeout(sigval_t self) {
 	Timer *timer = reinterpret_cast<Timer*>(self.sival_ptr);
 	if ( timer->_callback ) {
 #if (BOOST_VERSION >= 103500)
-			boost::try_mutex::scoped_try_lock l(timer->_callbackMutex, boost::defer_lock);
+		boost::try_mutex::scoped_try_lock l(timer->_callbackMutex, boost::defer_lock);
 #else
-			boost::try_mutex::scoped_try_lock l(timer->_callbackMutex, false);
+		boost::try_mutex::scoped_try_lock l(timer->_callbackMutex, false);
 #endif
 
 		if ( l.try_lock() )

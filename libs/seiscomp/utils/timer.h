@@ -27,7 +27,6 @@
 #include <seiscomp/core.h>
 
 #include <boost/function.hpp>
-#include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
 
 #if defined(SC_HAS_TIMER_CREATE)
