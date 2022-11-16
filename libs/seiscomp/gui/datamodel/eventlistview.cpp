@@ -4278,13 +4278,15 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 				EventTreeItem* item = (EventTreeItem*)findEvent(e->publicID());
 				if ( item ) {
 					SEISCOMP_DEBUG("Delete event item %s", e->publicID().c_str());
-					if ( !item->isHidden() ) {
+					bool visibleItem = !item->isHidden();
+					EventPtr event = item->event();
+					delete item;
+					if ( visibleItem ) {
 						if ( _visibleEventCount > 0 )
 							--_visibleEventCount;
-						emit eventRemovedFromList(item->event());
+						emit eventRemovedFromList(event.get());
 						emit visibleEventCountChanged();
 					}
-					delete item;
 				}
 				break;
 			}
@@ -4441,6 +4443,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 				{
 					EventTreeItem* eventItem = (EventTreeItem*)findEvent(n->parentID());
 					if ( eventItem ) {
+						eventItem->update(this);
 						OriginTreeItem* originItem = findOrigin(ref->originID());
 						if ( originItem && originItem->parent()->parent() == eventItem ) {
 							int index = originItem->parent()->indexOfChild(originItem);
@@ -4449,8 +4452,10 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 								QTreeWidgetItem *taken = originItem->parent()->takeChild(index);
 								if ( taken ) {
 									eventItem = (EventTreeItem*)_unassociatedEventItem;
-									if ( eventItem )
+									if ( eventItem ) {
 										eventItem->addOriginItem(taken);
+										eventItem->update(this);
+									}
 									else
 										delete taken;
 								}

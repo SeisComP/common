@@ -1843,6 +1843,34 @@ void EventEdit::updateObject(const QString &parentID, Object *obj) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::removeObject(const QString& parentID, Object* obj) {
 	if ( !_currentEvent ) return;
+	if ( parentID == _currentEvent->publicID().c_str() ) {
+		OriginReference *ref = OriginReference::Cast(obj);
+		if ( ref ) {
+			bool foundRow = false;
+			for ( int i = 0; i < _originTree->topLevelItemCount(); ++i ) {
+				auto item = _originTree->topLevelItem(i);
+				if ( item->data(0, Qt::UserRole).toString().toStdString() == ref->originID() ) {
+					foundRow = true;
+					delete item;
+					break;
+				}
+			}
+
+			if ( foundRow ) {
+				for ( auto it = _origins.begin(); it != _origins.end(); ++it) {
+					if ( (*it)->publicID() == ref->originID() ) {
+						PublicObjectEvaluator::Instance().erase(this, (*it)->publicID().c_str());
+						_origins.erase(it);
+						break;
+					}
+				}
+
+				currentOriginChanged(_originTree->currentItem(), nullptr);
+			}
+
+			return;
+		}
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
