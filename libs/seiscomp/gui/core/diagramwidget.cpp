@@ -51,7 +51,7 @@ double getSpacing(double width, int steps) {
 	double fSpacing = width / steps;
 	double pow10 = int(floor(log10(fSpacing)));
 	fSpacing /= pow(10, pow10);
-	int spacing = (int)Seiscomp::Math::round(fSpacing);
+	int spacing = (int)round(fSpacing);
 
 	// Round to even number if not equal than 5
 	/*if ( spacing > 5 ) spacing = 10;

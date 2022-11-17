@@ -57,6 +57,42 @@ const char *timeFormat2 = "%FT%T";
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::ostream &operator<<(std::ostream &ostream, const Number<float> &n) {
+	ostream.precision(
+		/*
+		ostream.flags() & std::ios_base::fixed ?
+		Math::significantFixedDigits10(n.ref) :
+		Math::significantScientificDigits10(n.ref)
+		*/
+		std::numeric_limits<float>::digits10
+	);
+	ostream << n.ref;
+	return ostream;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::ostream &operator<<(std::ostream &ostream, const Number<double> &n) {
+	ostream.precision(
+		/*
+		ostream.flags() & std::ios_base::fixed ?
+		Math::significantFixedDigits10(n.ref) :
+		Math::significantScientificDigits10(n.ref)
+		*/
+		std::numeric_limits<double>::digits10
+	);
+	ostream << n.ref;
+	return ostream;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string toString(const std::string& value) {
 	return value;
 }

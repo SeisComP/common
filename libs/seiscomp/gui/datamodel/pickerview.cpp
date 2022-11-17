@@ -61,6 +61,7 @@
 #include <QToolButton>
 
 #include <algorithm>
+#include <cmath>
 #include <functional>
 #include <numeric>
 #include <fstream>
@@ -6896,13 +6897,13 @@ void PickerView::zoomSelectionHandleMoved(int handle, double pos, Qt::KeyboardMo
 	// Clip to a hundredth of a seconds
 	if ( mods & Qt::ControlModifier ) {
 		value *= 1E2;
-		value = Math::round(value);
+		value = round(value);
 		value *= 1E-2;
 	}
 	// Clip to a tenthousandth of a seconds
 	else {
 		value *= 1E4;
-		value = Math::round(value);
+		value = round(value);
 		value *= 1E-4;
 	}
 

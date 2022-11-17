@@ -48,7 +48,7 @@ inline std::string toString(const T &v) {
 template <>
 inline std::string toString(const float &v) {
 	std::ostringstream os;
-	os << Number<float>(v);
+	os << number(v);
 	return os.str();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -60,20 +60,8 @@ inline std::string toString(const float &v) {
 template <>
 inline std::string toString(const double &v) {
 	std::ostringstream os;
-	os << Number<double>(v);
+	os << number(v);
 	return os.str();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <typename T>
-std::ostream &operator<<(std::ostream &ostream, Number<T> n) {
-	ostream.precision(std::numeric_limits<T>::max_digits10);
-	ostream << n.ref;
-	return ostream;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -84,7 +72,7 @@ std::ostream &operator<<(std::ostream &ostream, Number<T> n) {
 template <typename T>
 inline std::string toString(const std::complex<T>& v) {
 	std::ostringstream os;
-	os << "(" << toString(v.real()) << "," << toString(v.imag()) << ")";
+	os << "(" << number(v.real()) << "," << number(v.imag()) << ")";
 	return os.str();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

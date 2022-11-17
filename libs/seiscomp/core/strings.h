@@ -25,6 +25,7 @@
 #include <seiscomp/core/optional.h>
 #include <seiscomp/core/enumeration.h>
 #include <seiscomp/core/datetime.h>
+#include <seiscomp/math/math.h>
 
 #include <boost/iostreams/stream.hpp>
 #include <limits>
@@ -84,8 +85,8 @@ struct Number {
 template <typename T>
 Number<T> number(const T &v) { return Number<T>(v); }
 
-template <typename T>
-std::ostream &operator<<(std::ostream &ostream, Number<T> s);
+std::ostream &operator<<(std::ostream &ostream, const Number<float> &s);
+std::ostream &operator<<(std::ostream &ostream, const Number<double> &s);
 
 /**
  * Converts a string into a value. Conversions are supported

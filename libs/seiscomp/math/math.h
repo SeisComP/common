@@ -64,8 +64,6 @@ template <typename T>
 
 
 /** Rounds the given double value*/
-SC_SYSTEM_CORE_API double round(double val);
-
 SC_SYSTEM_CORE_API int significantFixedDigits10(float value);
 SC_SYSTEM_CORE_API int significantFixedDigits10(double value);
 

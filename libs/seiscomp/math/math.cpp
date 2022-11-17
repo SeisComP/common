@@ -20,6 +20,7 @@
 
 #include "math.h"
 #include <cstdint>
+#include <limits>
 
 
 namespace Seiscomp {
@@ -43,7 +44,8 @@ inline int getFixedDigits10(T val) {
 
 	val *= std::pow(10, p);
 
-	while ( std::abs(round(val * e) - val * e) > 1E-6 ) {
+	while ( p < std::numeric_limits<T>::digits10 &&
+	        std::abs(std::round(val * e) - val * e) > 1E-6 ) {
 		e *= 10;
 		++p;
 	}
@@ -66,11 +68,16 @@ inline int getScientificDigits10(T val) {
 		p = 0;
 	}
 
+	if ( n >= std::numeric_limits<T>::digits10 ) {
+		return std::numeric_limits<T>::digits10;
+	}
+
 	val *= std::pow(10, p);
 
 	p = n;
 
-	while ( std::abs(round(val * e) - val * e) > 1E-6 ) {
+	while ( p < std::numeric_limits<T>::digits10 &&
+	        std::abs(std::round(val * e) - val * e) > 1E-6 ) {
 		e *= 10;
 		++p;
 	}
@@ -79,11 +86,6 @@ inline int getScientificDigits10(T val) {
 }
 
 
-}
-
-
-double round(double val) {
-	return static_cast<int64_t>(val + 0.5);
 }
 
 

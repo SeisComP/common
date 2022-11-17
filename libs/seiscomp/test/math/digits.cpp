@@ -49,6 +49,13 @@ std::string toSignificantString(T val) {
 	return ss.str();
 }
 
+template <typename T>
+std::string toMaxString(T val) {
+	std::ostringstream ss;
+	ss << std::setprecision(std::numeric_limits<T>::digits10) << val;
+	return ss.str();
+}
+
 
 BOOST_AUTO_TEST_SUITE(seiscomp_math_digits)
 
@@ -60,7 +67,8 @@ BOOST_AUTO_TEST_CASE(digits) {
 	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.52), 2);
 	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.5000000002f), 1);
 	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.5000000002), 1);
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.50002f), 8);
+	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.50002f), 6);
+	BOOST_CHECK_EQUAL(toSignificantString(0.50002f), "0.50002");
 	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.50002), 5);
 	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.0000000002), 10);
 	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(321.0000000002), 0);
@@ -79,6 +87,8 @@ BOOST_AUTO_TEST_CASE(digits) {
 
 	BOOST_CHECK_EQUAL(toSignificantString(0.10879999999999999), "0.1088");
 	BOOST_CHECK_EQUAL(toSignificantString(9.3750000000000002e-05), "9.375e-05");
+
+	BOOST_CHECK_EQUAL(toSignificantString(5.76333e+19), "5.76333e+19");
 }
 
 
@@ -104,7 +114,7 @@ BOOST_AUTO_TEST_CASE(performance) {
 	int generatedCharacters = 0;
 
 	for ( size_t i = 0; i < numbers.size(); ++i ) {
-		auto out = Core::toString(numbers[i]);
+		auto out = toMaxString(numbers[i]);
 		generatedCharacters += out.size();
 	}
 

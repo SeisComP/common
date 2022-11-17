@@ -20,6 +20,7 @@
 
 #include <seiscomp/gui/plot/axis.h>
 #include <seiscomp/math/math.h>
+#include <cmath>
 #include <iostream>
 #include <limits.h>
 
@@ -40,7 +41,7 @@ double getSpacing(double width, int steps, bool onlyIntegerSpacing) {
 	double fSpacing = width / ((double)steps+1e-10);
 	int pow10 = int(floor(log10(fSpacing)));
 	fSpacing /= pow(10, pow10);
-	int spacing = (int)Seiscomp::Math::round(fSpacing);
+	int spacing = (int)round(fSpacing);
 
 	// Not multiple of 5
 	if ( spacing % 5 ) {
