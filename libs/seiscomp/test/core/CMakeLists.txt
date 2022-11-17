@@ -2,6 +2,7 @@ SET(TESTS
 	configuration_files.cpp
 	datetime_time.cpp
 	datetime_timespan.cpp
+	digits.cpp
 	georegions.cpp
 	geolib.cpp
 	intrusive_list.cpp

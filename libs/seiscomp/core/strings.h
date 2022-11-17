@@ -85,8 +85,8 @@ struct Number {
 template <typename T>
 Number<T> number(const T &v) { return Number<T>(v); }
 
-std::ostream &operator<<(std::ostream &ostream, const Number<float> &s);
-std::ostream &operator<<(std::ostream &ostream, const Number<double> &s);
+std::ostream &operator<<(std::ostream &os, const Number<float> &s);
+std::ostream &operator<<(std::ostream &os, const Number<double> &s);
 
 /**
  * Converts a string into a value. Conversions are supported
@@ -373,6 +373,31 @@ const char *strnchr(const char *p, size_t n, char c);
  * @return The pointer to the advanced string.
  */
 const char *advance(const char *&data, size_t &len, size_t offset);
+
+
+/**
+ * @brief Returns the number of "significant" digits including leading zeros
+ *        after the decimal point w.r.t. base 10.
+ *
+ * Example (fractionOnly = true): 0.1234 = 4, 0.001 = 3, 123.45678 = 5
+ * Example (fractionOnly = false): 0.1234 = 4, 0.001 = 3, 123.45678 = 8
+ *
+ * Actually a floating point value cannot be converted into a string
+ * in a perfect way. This function exists in order to output a floating
+ * point value with the number of most significant digits. "Most significant"
+ * means that if for one digits the difference between its representation and
+ * a number which cuts all subsequent digits is less than 1E-(6 + digit) then
+ * this is the last significant digit. Actually two digits separated by six
+ * or more zeros are cut. For example the number 0.500000001 has one
+ * significant digits only because 5 and 1 are separated by 7 zeros.
+ *
+ * @param value The input value
+ * @param fractionOnly Whether the fraction only or also the integer part
+ *                     should be considered.
+ * @return The number of digits to base 10
+ */
+size_t digits10(float value, bool fractionOnly = true);
+size_t digits10(double value, bool fractionOnly = true);
 
 
 /**

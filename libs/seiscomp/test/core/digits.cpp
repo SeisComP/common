@@ -42,9 +42,7 @@ template <typename T>
 std::string toSignificantString(T val) {
 	std::ostringstream ss;
 	ss << std::setprecision(
-		ss.flags() & std::ios_base::fixed ?
-		Math::significantFixedDigits10(val) :
-		Math::significantScientificDigits10(val)
+		Core::digits10(val, ss.flags() & std::ios_base::fixed)
 	) << val;
 	return ss.str();
 }
@@ -52,7 +50,8 @@ std::string toSignificantString(T val) {
 template <typename T>
 std::string toMaxString(T val) {
 	std::ostringstream ss;
-	ss << std::setprecision(std::numeric_limits<T>::digits10) << val;
+	ss.precision(std::numeric_limits<T>::max_digits10);
+	ss << val;
 	return ss.str();
 }
 
@@ -61,28 +60,28 @@ BOOST_AUTO_TEST_SUITE(seiscomp_math_digits)
 
 
 BOOST_AUTO_TEST_CASE(digits) {
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.5f), 1);
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.5), 1);
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.52f), 2);
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.52), 2);
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.5000000002f), 1);
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.5000000002), 1);
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.50002f), 6);
-	BOOST_CHECK_EQUAL(toSignificantString(0.50002f), "0.50002");
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.50002), 5);
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(0.0000000002), 10);
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(321.0000000002), 0);
-	BOOST_CHECK_EQUAL(Math::significantScientificDigits10(321.0000000002), 3);
+	BOOST_CHECK_EQUAL(Core::digits10(0.5f), 1);
+	BOOST_CHECK_EQUAL(Core::digits10(0.5), 1);
+	BOOST_CHECK_EQUAL(Core::digits10(0.52f), 2);
+	BOOST_CHECK_EQUAL(Core::digits10(0.52), 2);
+	BOOST_CHECK_EQUAL(Core::digits10(0.5000000002f), 1);
+	BOOST_CHECK_EQUAL(Core::digits10(0.5000000002), 1);
+	BOOST_CHECK_EQUAL(Core::digits10(0.50002f), 8);
+	BOOST_CHECK_EQUAL(toSignificantString(0.50002f), "0.50002003");
+	BOOST_CHECK_EQUAL(Core::digits10(0.50002), 5);
+	BOOST_CHECK_EQUAL(Core::digits10(0.0000000002), 10);
+	BOOST_CHECK_EQUAL(Core::digits10(321.0000000002), 0);
+	BOOST_CHECK_EQUAL(Core::digits10(321.0000000002, false), 3);
 
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(123.456), 3);
-	BOOST_CHECK_EQUAL(Math::significantScientificDigits10(123.456), 6);
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(123.45678), 5);
-	BOOST_CHECK_EQUAL(Math::significantScientificDigits10(123.45678), 8);
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(123.45678900000001), 6);
-	BOOST_CHECK_EQUAL(Math::significantScientificDigits10(123.45678900000001), 9);
+	BOOST_CHECK_EQUAL(Core::digits10(123.456), 3);
+	BOOST_CHECK_EQUAL(Core::digits10(123.456, false), 6);
+	BOOST_CHECK_EQUAL(Core::digits10(123.45678), 5);
+	BOOST_CHECK_EQUAL(Core::digits10(123.45678, false), 8);
+	BOOST_CHECK_EQUAL(Core::digits10(123.45678900000001), 6);
+	BOOST_CHECK_EQUAL(Core::digits10(123.45678900000001, false), 9);
 	BOOST_CHECK_EQUAL(toSignificantString(123.45678900000001), "123.456789");
-	BOOST_CHECK_EQUAL(Math::significantFixedDigits10(123.45678999999991), 5);
-	BOOST_CHECK_EQUAL(Math::significantScientificDigits10(123.45678999999991), 8);
+	BOOST_CHECK_EQUAL(Core::digits10(123.45678999999991), 5);
+	BOOST_CHECK_EQUAL(Core::digits10(123.45678999999991, false), 8);
 	BOOST_CHECK_EQUAL(toSignificantString(123.45678999999991), "123.45679");
 
 	BOOST_CHECK_EQUAL(toSignificantString(0.10879999999999999), "0.1088");
@@ -92,6 +91,7 @@ BOOST_AUTO_TEST_CASE(digits) {
 }
 
 
+/*
 BOOST_AUTO_TEST_CASE(performance) {
 	const size_t N = 1000000;
 	std::vector<double> numbers(N*2);
@@ -142,6 +142,7 @@ BOOST_AUTO_TEST_CASE(performance) {
 	          << (double(generatedCharacters2 - generatedCharacters) / generatedCharacters)*100 << "%"
 	          << std::endl;
 }
+*/
 
 
 BOOST_AUTO_TEST_SUITE_END()

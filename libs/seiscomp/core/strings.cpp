@@ -36,7 +36,11 @@
 #include <stdint.h>
 #include <cerrno>
 #include <cmath>
+#include <limits>
 #include <type_traits>
+
+
+#define AUTO_FLOAT_PRECISION 1
 
 
 namespace Seiscomp {
@@ -45,10 +49,68 @@ namespace Core {
 
 namespace {
 
+
 const char *timeFormatPrecise = "%FT%T.%fZ";
 const char *timeFormatPrecise2 = "%FT%T.%f";
 const char *timeFormat = "%FT%TZ";
 const char *timeFormat2 = "%FT%T";
+
+
+template <typename T>
+inline size_t getFixedDigits10(T val) {
+	T e = 1;
+	T p = std::log10(val < 0 ? -val : val);
+
+	if ( p < 0 ) {
+		p = std::floor(-p);
+	}
+	else {
+		p = 0;
+	}
+
+	val *= std::pow(10, p);
+
+	while ( p < std::numeric_limits<T>::max_digits10 &&
+	        std::abs(std::round(val * e) - val * e) > 1E-6 ) {
+		e *= 10;
+		++p;
+	}
+
+	return p;
+}
+
+
+template <typename T>
+inline size_t getScientificDigits10(T val) {
+	T e = 1;
+	T p = std::log10(val < 0 ? -val : val);
+	T n = 0;
+
+	if ( p < 0 ) {
+		p = std::floor(-p);
+	}
+	else {
+		n = std::floor(p) + 1;
+		p = 0;
+	}
+
+	if ( n >= std::numeric_limits<T>::max_digits10 ) {
+		return std::numeric_limits<T>::max_digits10;
+	}
+
+	val *= std::pow(10, p);
+
+	p = n;
+
+	while ( p < std::numeric_limits<T>::max_digits10 &&
+	        std::abs(std::round(val * e) - val * e) > 1E-6 ) {
+		e *= 10;
+		++p;
+	}
+
+	return p;
+}
+
 
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -59,12 +121,13 @@ const char *timeFormat2 = "%FT%T";
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::ostream &operator<<(std::ostream &ostream, const Number<float> &n) {
 	ostream.precision(
-		/*
+#if AUTO_FLOAT_PRECISION
 		ostream.flags() & std::ios_base::fixed ?
-		Math::significantFixedDigits10(n.ref) :
-		Math::significantScientificDigits10(n.ref)
-		*/
-		std::numeric_limits<float>::digits10
+		getFixedDigits10(n.ref) :
+		getScientificDigits10(n.ref)
+#else
+		std::numeric_limits<float>::max_digits10
+#endif
 	);
 	ostream << n.ref;
 	return ostream;
@@ -77,12 +140,13 @@ std::ostream &operator<<(std::ostream &ostream, const Number<float> &n) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::ostream &operator<<(std::ostream &ostream, const Number<double> &n) {
 	ostream.precision(
-		/*
+#if AUTO_FLOAT_PRECISION
 		ostream.flags() & std::ios_base::fixed ?
-		Math::significantFixedDigits10(n.ref) :
-		Math::significantScientificDigits10(n.ref)
-		*/
-		std::numeric_limits<double>::digits10
+		getFixedDigits10(n.ref) :
+		getScientificDigits10(n.ref)
+#else
+		std::numeric_limits<double>::max_digits10
+#endif
 	);
 	ostream << n.ref;
 	return ostream;
@@ -887,6 +951,24 @@ const char *strnchr(const char *p, size_t n, char c) {
 	}
 
 	return nullptr;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+size_t digits10(float value, bool fractionOnly) {
+	return fractionOnly ? getFixedDigits10(value) : getScientificDigits10(value);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+size_t digits10(double value, bool fractionOnly) {
+	return fractionOnly ? getFixedDigits10(value) : getScientificDigits10(value);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

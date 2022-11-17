@@ -63,15 +63,6 @@ template <typename T>
 #endif
 
 
-/** Rounds the given double value*/
-SC_SYSTEM_CORE_API int significantFixedDigits10(float value);
-SC_SYSTEM_CORE_API int significantFixedDigits10(double value);
-
-SC_SYSTEM_CORE_API int significantScientificDigits10(float value);
-SC_SYSTEM_CORE_API int significantScientificDigits10(double value);
-
-
-
 } // namespace Math
 } // namespace Seiscomp
 
