@@ -908,11 +908,11 @@ bool Application::configGetBool(const string &query) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 string Application::configGetString(const string &query) const {
 	try {
-		return argumentStr(query);
+		return Environment::Instance()->resolvePath(argumentStr(query));
 	}
 	catch ( ... ) {}
 
-	return _configuration.getString(query);
+	return Environment::Instance()->resolvePath(_configuration.getString(query));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -962,17 +962,21 @@ vector<bool> Application::configGetBools(const string &query) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 vector<string> Application::configGetStrings(const string &query) const {
+	vector<string> tmp;
+
 	try {
 		string param = argumentStr(query);
-		vector<string> tmp;
 		Core::split(tmp, param.c_str(), ",");
-		for ( size_t i = 0; i < tmp.size(); ++i )
-			Core::trim(tmp[i]);
-		return tmp;
 	}
-	catch ( ... ) {}
+	catch ( ... ) {
+		tmp = _configuration.getStrings(query);
+	}
 
-	return _configuration.getStrings(query);
+	for ( auto &item : tmp ) {
+		item = Environment::Instance()->resolvePath(Core::trim(item));
+	}
+
+	return tmp;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

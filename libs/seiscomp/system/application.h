@@ -463,8 +463,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 		std::string configGetString(const std::string& query) const;
 
 		/**
-		 * @brief Convenience method that calls configGetString and resolves
-		 *        variables such as \@DATADIR\@ and \@ROOTDIR\@ and produces a
+		 * @brief Method that resolves a string variable and produces a
 		 *        canonicalized absolute pathname.
 		 * @param query The query
 		 * @return The path
