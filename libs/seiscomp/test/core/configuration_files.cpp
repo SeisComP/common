@@ -20,9 +20,12 @@
 
 #define SEISCOMP_TEST_MODULE SeisComP
 #include <seiscomp/config/config.h>
+#include <seiscomp/logging/log.h>
+#include <seiscomp/system/application.h>
 #include <seiscomp/system/environment.h>
-#include <seiscomp/datamodel/config.h>
 #include <seiscomp/unittest/unittests.h>
+
+#include <cstdlib>
 
 
 using namespace Seiscomp::Config;
@@ -30,6 +33,18 @@ namespace bu = boost::unit_test;
 
 
 BOOST_AUTO_TEST_SUITE(seiscomp_core_config)
+
+
+class SimpleApp : public Seiscomp::System::Application {
+	public:
+		SimpleApp(int argc, char** argv)
+		: Seiscomp::System::Application(argc, argv) {}
+
+	public:
+		bool run() {
+			return true;
+		}
+};
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -295,7 +310,6 @@ BOOST_AUTO_TEST_CASE(getString_setString) {
 	vec2 = config.getStrings("plugins.QcLatency.realTimeOnly", &error);
 	BOOST_CHECK_EQUAL(vec2[0], "True");
 }
-
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
@@ -371,8 +385,34 @@ BOOST_AUTO_TEST_CASE(tools) {
 	BOOST_CHECK_EQUAL(get, "PortoNovo");
 	get = config.getString("earth.Europe.Madrid.language");
 	BOOST_CHECK_EQUAL(get, "Spanish, English");
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(paths) {
+	setenv("SEISCOMP_ROOT", "./data/seiscomp", 1);
+	setenv("SEISCOMP_LOCAL_CONFIG", "./data/.seiscomp", 1);
+
+	char *params[] = { strdup("testapp") };
+
+	SimpleApp app(1, params);
+	app.setLoggingToStdErr(true);
+	app();
+
+	auto env = Seiscomp::Environment::Instance();
+
+	BOOST_CHECK_EQUAL(app.configGetString("path"), env->resolvePath(env->installDir()));
+	BOOST_CHECK_EQUAL(app.configGetPath("path"), env->absolutePath(env->installDir()));
+
+	auto paths = app.configGetStrings("paths");
+	BOOST_CHECK_EQUAL(paths[0], env->resolvePath(env->installDir()));
+	BOOST_CHECK_EQUAL(paths[1], env->resolvePath(env->shareDir()));
+	BOOST_CHECK_EQUAL(paths[2], env->resolvePath(env->logDir()));
+
+	BOOST_CHECK_EQUAL(app.configGetString("string"), "@ROOTDIR@");
 }
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
