@@ -459,10 +459,6 @@ class vectord(object):
 # Register vectord in _math:
 _math.vectord_swigregister(vectord)
 
-
-def round(val):
-    r"""round(double val) -> double"""
-    return _math.round(val)
 class CoordF(seiscomp.core.BaseObject):
     r"""Proxy of C++ Seiscomp::Math::Geo::Coord< float > class."""
 

@@ -11506,42 +11506,6 @@ SWIGINTERN PyObject *vectord_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *
   return SWIG_Python_InitShadowInstance(args);
 }
 
-SWIGINTERN PyObject *_wrap_round(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  double arg1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  PyObject *swig_obj[1] ;
-  double result;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "round" "', argument " "1"" of type '" "double""'");
-  } 
-  arg1 = static_cast< double >(val1);
-  {
-    try {
-      result = (double)Seiscomp::Math::round(arg1);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_CoordF_serialize(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Math::Geo::Coord< float > *arg1 = (Seiscomp::Math::Geo::Coord< float > *) 0 ;
@@ -50293,7 +50257,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_vectord", _wrap_delete_vectord, METH_O, "delete_vectord(vectord self)"},
 	 { "vectord_swigregister", vectord_swigregister, METH_O, NULL},
 	 { "vectord_swiginit", vectord_swiginit, METH_VARARGS, NULL},
-	 { "round", _wrap_round, METH_O, "round(double val) -> double"},
 	 { "CoordF_serialize", _wrap_CoordF_serialize, METH_VARARGS, "CoordF_serialize(CoordF self, GenericArchive ar)"},
 	 { "new_CoordF", _wrap_new_CoordF, METH_VARARGS, "\n"
 		"CoordF()\n"
