@@ -907,11 +907,11 @@ bool Application::configGetBool(const string &query) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 string Application::configGetString(const string &query) const {
 	try {
-		return Environment::Instance()->absolutePath(argumentStr(query));
+		return Environment::Instance()->resolvePath(argumentStr(query));
 	}
 	catch ( ... ) {}
 
-	return Environment::Instance()->absolutePath(_configuration.getString(query));
+	return Environment::Instance()->resolvePath(_configuration.getString(query));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -920,7 +920,12 @@ string Application::configGetString(const string &query) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 string Application::configGetPath(const string &query) const {
-	return configGetString(query);
+	try {
+		return Environment::Instance()->absolutePath(argumentStr(query));
+	}
+	catch ( ... ) {}
+
+	return Environment::Instance()->absolutePath(_configuration.getString(query));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -967,7 +972,7 @@ vector<string> Application::configGetStrings(const string &query) const {
 	}
 
 	for ( auto &item : tmp ) {
-		item = Environment::Instance()->absolutePath(Core::trim(item));
+		item = Environment::Instance()->resolvePath(Core::trim(item));
 	}
 
 	return tmp;
