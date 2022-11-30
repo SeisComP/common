@@ -2693,8 +2693,8 @@ SWIGINTERN PyObject *SWIG_PyStaticMethod_New(PyObject *SWIGUNUSEDPARM(self), PyO
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define SWIGTYPE_p_Archive swig_types[0]
-#define SWIGTYPE_p_AttachementList swig_types[1]
-#define SWIGTYPE_p_AttachementType swig_types[2]
+#define SWIGTYPE_p_AttachmentList swig_types[1]
+#define SWIGTYPE_p_AttachmentType swig_types[2]
 #define SWIGTYPE_p_Attributes swig_types[3]
 #define SWIGTYPE_p_DataArray swig_types[4]
 #define SWIGTYPE_p_ImplType swig_types[5]
@@ -21982,8 +21982,8 @@ static void *_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_tTo_p_Sei
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Math::Filtering::InPlaceFilter< float > *)(Seiscomp::Math::Filtering::IIR::Filter< float > *) ((Seiscomp::Math::Filtering::IIR::WWSSN_LP_Filter< float > *) x));
 }
 static swig_type_info _swigt__p_Archive = {"_p_Archive", "Archive *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_AttachementList = {"_p_AttachementList", "AttachementList *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_AttachementType = {"_p_AttachementType", "AttachementType *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_AttachmentList = {"_p_AttachmentList", "AttachmentList *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_AttachmentType = {"_p_AttachmentType", "AttachmentType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Attributes = {"_p_Attributes", "Attributes *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_DataArray = {"_p_DataArray", "DataArray *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_ImplType = {"_p_ImplType", "ImplType *", 0, 0, (void*)0, 0};
@@ -22161,8 +22161,8 @@ static swig_type_info _swigt__p_void = {"_p_void", "void *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Archive,
-  &_swigt__p_AttachementList,
-  &_swigt__p_AttachementType,
+  &_swigt__p_AttachmentList,
+  &_swigt__p_AttachmentType,
   &_swigt__p_Attributes,
   &_swigt__p_DataArray,
   &_swigt__p_ImplType,
@@ -22340,8 +22340,8 @@ static swig_type_info *swig_type_initial[] = {
 };
 
 static swig_cast_info _swigc__p_Archive[] = {  {&_swigt__p_Archive, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_AttachementList[] = {  {&_swigt__p_AttachementList, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_AttachementType[] = {  {&_swigt__p_AttachementType, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_AttachmentList[] = {  {&_swigt__p_AttachmentList, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_AttachmentType[] = {  {&_swigt__p_AttachmentType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Attributes[] = {  {&_swigt__p_Attributes, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_DataArray[] = {  {&_swigt__p_DataArray, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ImplType[] = {  {&_swigt__p_ImplType, 0, 0, 0},{0, 0, 0, 0}};
@@ -22519,8 +22519,8 @@ static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0,
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Archive,
-  _swigc__p_AttachementList,
-  _swigc__p_AttachementType,
+  _swigc__p_AttachmentList,
+  _swigc__p_AttachmentType,
   _swigc__p_Attributes,
   _swigc__p_DataArray,
   _swigc__p_ImplType,

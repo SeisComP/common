@@ -2693,8 +2693,8 @@ SWIGINTERN PyObject *SWIG_PyStaticMethod_New(PyObject *SWIGUNUSEDPARM(self), PyO
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define SWIGTYPE_p_Archive swig_types[0]
-#define SWIGTYPE_p_AttachementList swig_types[1]
-#define SWIGTYPE_p_AttachementType swig_types[2]
+#define SWIGTYPE_p_AttachmentList swig_types[1]
+#define SWIGTYPE_p_AttachmentType swig_types[2]
 #define SWIGTYPE_p_DataArray swig_types[3]
 #define SWIGTYPE_p_ImplType swig_types[4]
 #define SWIGTYPE_p_MajorType swig_types[5]
@@ -25821,7 +25821,7 @@ fail:
 SWIGINTERN PyObject *_wrap_DataMessageBase_attach__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *arg1 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *) 0 ;
-  Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType *arg2 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType *) 0 ;
+  Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType *arg2 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -25836,9 +25836,9 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_attach__SWIG_0(PyObject *SWIGUNUSEDPA
   arg1 = reinterpret_cast< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__BaseObject, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataMessageBase_attach" "', argument " "2"" of type '" "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataMessageBase_attach" "', argument " "2"" of type '" "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType *""'"); 
   }
-  arg2 = reinterpret_cast< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType * >(argp2);
+  arg2 = reinterpret_cast< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType * >(argp2);
   {
     try {
       result = (bool)(arg1)->attach(arg2);
@@ -25863,7 +25863,7 @@ fail:
 SWIGINTERN PyObject *_wrap_DataMessageBase_attach__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *arg1 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *) 0 ;
-  Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType >::Impl *arg2 = 0 ;
+  Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -25878,12 +25878,12 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_attach__SWIG_1(PyObject *SWIGUNUSEDPA
   arg1 = reinterpret_cast< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataMessageBase_attach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType >::Impl &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataMessageBase_attach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl &""'"); 
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DataMessageBase_attach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType >::Impl &""'"); 
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DataMessageBase_attach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl &""'"); 
   }
-  arg2 = reinterpret_cast< Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType >::Impl * >(argp2);
+  arg2 = reinterpret_cast< Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl * >(argp2);
   {
     try {
       result = (bool)(arg1)->attach(*arg2);
@@ -25945,8 +25945,8 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_attach(PyObject *self, PyObject *args
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'DataMessageBase_attach'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::attach(Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType *)\n"
-    "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::attach(Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType >::Impl &)\n");
+    "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::attach(Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType *)\n"
+    "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::attach(Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl &)\n");
   return 0;
 }
 
@@ -25954,7 +25954,7 @@ fail:
 SWIGINTERN PyObject *_wrap_DataMessageBase_detach__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *arg1 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *) 0 ;
-  Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType *arg2 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType *) 0 ;
+  Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType *arg2 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -25969,9 +25969,9 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_detach__SWIG_0(PyObject *SWIGUNUSEDPA
   arg1 = reinterpret_cast< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__BaseObject, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataMessageBase_detach" "', argument " "2"" of type '" "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataMessageBase_detach" "', argument " "2"" of type '" "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType *""'"); 
   }
-  arg2 = reinterpret_cast< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType * >(argp2);
+  arg2 = reinterpret_cast< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType * >(argp2);
   {
     try {
       result = (bool)(arg1)->detach(arg2);
@@ -25996,7 +25996,7 @@ fail:
 SWIGINTERN PyObject *_wrap_DataMessageBase_detach__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *arg1 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *) 0 ;
-  Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType >::Impl *arg2 = 0 ;
+  Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -26011,12 +26011,12 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_detach__SWIG_1(PyObject *SWIGUNUSEDPA
   arg1 = reinterpret_cast< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataMessageBase_detach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType >::Impl &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataMessageBase_detach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl &""'"); 
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DataMessageBase_detach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType >::Impl &""'"); 
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DataMessageBase_detach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl &""'"); 
   }
-  arg2 = reinterpret_cast< Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType >::Impl * >(argp2);
+  arg2 = reinterpret_cast< Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl * >(argp2);
   {
     try {
       result = (bool)(arg1)->detach(*arg2);
@@ -26141,8 +26141,8 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_detach(PyObject *self, PyObject *args
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'DataMessageBase_detach'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::detach(Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType *)\n"
-    "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::detach(Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType >::Impl &)\n"
+    "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::detach(Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType *)\n"
+    "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::detach(Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl &)\n"
     "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::detach(Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::iterator)\n");
   return 0;
 }
@@ -48381,8 +48381,8 @@ static void *_p_Seiscomp__Core__DataMessageTo_p_Seiscomp__Core__GenericMessageT_
     return (void *)((Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *)  ((Seiscomp::Core::DataMessage *) x));
 }
 static swig_type_info _swigt__p_Archive = {"_p_Archive", "Archive *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_AttachementList = {"_p_AttachementList", "AttachementList *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_AttachementType = {"_p_AttachementType", "AttachementType *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_AttachmentList = {"_p_AttachmentList", "AttachmentList *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_AttachmentType = {"_p_AttachmentType", "AttachmentType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_DataArray = {"_p_DataArray", "DataArray *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_ImplType = {"_p_ImplType", "ImplType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_MajorType = {"_p_MajorType", "MajorType *", 0, 0, (void*)0, 0};
@@ -48395,7 +48395,7 @@ static swig_type_info _swigt__p_ReferenceType = {"_p_ReferenceType", "ReferenceT
 static swig_type_info _swigt__p_RootType = {"_p_RootType", "RootType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Array = {"_p_Seiscomp__Array", "Seiscomp::Array *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__BitSet = {"_p_Seiscomp__BitSet", "Seiscomp::BitSet *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__BaseObject = {"_p_Seiscomp__Core__BaseObject", "Seiscomp::Core::BaseObject *|Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__BaseObject = {"_p_Seiscomp__Core__BaseObject", "Seiscomp::Core::BaseObject *|Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__InterruptibleObject = {"_p_Seiscomp__Core__InterruptibleObject", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__ClassNotFound = {"_p_Seiscomp__Core__ClassNotFound", "Seiscomp::Core::ClassNotFound *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__DataMessage = {"_p_Seiscomp__Core__DataMessage", "Seiscomp::Core::DataMessage *", 0, 0, (void*)0, 0};
@@ -48424,7 +48424,7 @@ static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t_
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl", "Seiscomp::BitSetCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::BitSet const >::Impl *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl", "Seiscomp::Core::SmartPointer< Seiscomp::BitSet >::Impl *|Seiscomp::BitSetPtr *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl", "Seiscomp::Core::BaseObjectCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl", "Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl *|Seiscomp::Core::BaseObjectPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachementType >::Impl *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl", "Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl *|Seiscomp::Core::BaseObjectPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl", "::Seiscomp::Core::SmartPointer< Seiscomp::Core::DataMessage >::Impl *|Seiscomp::Core::DataMessagePtr *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl", "Seiscomp::Core::GreensFunctionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GreensFunction const >::Impl *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl", "Seiscomp::Core::GreensFunctionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GreensFunction >::Impl *", 0, 0, (void*)0, 0};
@@ -48537,8 +48537,8 @@ static swig_type_info _swigt__p_void = {"_p_void", "void *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Archive,
-  &_swigt__p_AttachementList,
-  &_swigt__p_AttachementType,
+  &_swigt__p_AttachmentList,
+  &_swigt__p_AttachmentType,
   &_swigt__p_DataArray,
   &_swigt__p_ImplType,
   &_swigt__p_MajorType,
@@ -48693,8 +48693,8 @@ static swig_type_info *swig_type_initial[] = {
 };
 
 static swig_cast_info _swigc__p_Archive[] = {  {&_swigt__p_Archive, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_AttachementList[] = {  {&_swigt__p_AttachementList, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_AttachementType[] = {  {&_swigt__p_AttachementType, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_AttachmentList[] = {  {&_swigt__p_AttachmentList, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_AttachmentType[] = {  {&_swigt__p_AttachmentType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_DataArray[] = {  {&_swigt__p_DataArray, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ImplType[] = {  {&_swigt__p_ImplType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_MajorType[] = {  {&_swigt__p_MajorType, 0, 0, 0},{0, 0, 0, 0}};
@@ -48849,8 +48849,8 @@ static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0,
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Archive,
-  _swigc__p_AttachementList,
-  _swigc__p_AttachementType,
+  _swigc__p_AttachmentList,
+  _swigc__p_AttachmentType,
   _swigc__p_DataArray,
   _swigc__p_ImplType,
   _swigc__p_MajorType,

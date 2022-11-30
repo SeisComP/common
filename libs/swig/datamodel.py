@@ -146,14 +146,14 @@ class NotifierMessageBase(seiscomp.core.Message):
     def attach(self, *args):
         r"""
         attach(NotifierMessageBase self, Notifier attachment) -> bool
-        attach(NotifierMessageBase self, Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::AttachementType >::Impl & attachment) -> bool
+        attach(NotifierMessageBase self, Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::AttachmentType >::Impl & attachment) -> bool
         """
         return _datamodel.NotifierMessageBase_attach(self, *args)
 
     def detach(self, *args):
         r"""
         detach(NotifierMessageBase self, Notifier attachment) -> bool
-        detach(NotifierMessageBase self, Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::AttachementType >::Impl & attachment) -> bool
+        detach(NotifierMessageBase self, Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::AttachmentType >::Impl & attachment) -> bool
         detach(NotifierMessageBase self, Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::iterator it) -> Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::iterator
         """
         return _datamodel.NotifierMessageBase_detach(self, *args)
