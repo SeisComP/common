@@ -88,6 +88,7 @@ BOOST_AUTO_TEST_CASE(digits) {
 	BOOST_CHECK_EQUAL(toSignificantString(9.3750000000000002e-05), "9.375e-05");
 
 	BOOST_CHECK_EQUAL(toSignificantString(5.76333e+19), "5.76333e+19");
+	BOOST_CHECK_EQUAL(toSignificantString(-4.055029736e+16), "-40550297360000000");
 }
 
 
