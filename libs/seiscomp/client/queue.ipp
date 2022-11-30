@@ -239,6 +239,7 @@ void ThreadedQueue<T>::reset() {
 	_closed = false;
 	_begin = _end = 0;
 	_buffered = 0;
+	QueueHelper<T, std::is_pointer<T>::value>::clean(_buffer);
 	std::fill(_buffer.begin(), _buffer.end(), QueueHelper<T, std::is_pointer<T>::value>::defaultValue());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
