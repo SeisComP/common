@@ -1535,7 +1535,12 @@ class EventTreeItem : public SchemeTreeItem {
 					setData(config.columnMap[COL_FM], Qt::UserRole+1, QVariant());
 				}
 				else if ( treeWidget() && view ) {
-					setText(config.columnMap[COL_FM], QObject::tr("Yes"));
+					if ( ev->focalMechanismReferenceCount() > 0 ) {
+						setText(config.columnMap[COL_FM], QString("%1").arg(ev->focalMechanismReferenceCount()));
+					}
+					else {
+						setText(config.columnMap[COL_FM], QObject::tr("Yes"));
+					}
 					setData(config.columnMap[COL_FM], Qt::ToolTipRole, QObject::tr("Load event and open the focal mechanism tab"));
 					setData(config.columnMap[COL_FM], Qt::UserRole+1, QVariant::fromValue<void*>(ev));
 				}
@@ -2720,6 +2725,95 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	//_treeWidget->setHeaderLabels(QStringList() << "PublicID" << "Desc/Time" << "Mag" << "StaCount" << "defPhaseCount");
 	_treeWidget->setHeaderLabels(_itemConfig.header);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_OTIME],
+		tr("Origin time")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_EVENTTYPE_CERTAINTY],
+		tr("Certainty of event")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_EVENTTYPE],
+		tr("Type of event")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_M],
+		tr("Preferred magnitude of event")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_MTYPE],
+		tr("Type of preferred magnitude of event")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_RMS],
+		tr("RMS of origin as returned by locator")
+	);
+
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_AZIMUTHAL_GAP],
+		tr("Largest azimuth between any 2 neighboring stations providing picks to an origins")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_LAT],
+		tr("Latitude of origin")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_LON],
+		tr("Longitude of origin")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_DEPTH],
+		tr("Depth of origin")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_DEPTH_TYPE],
+		tr("Depth type of origin")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_FM],
+		tr("Has event any referenced focal mechanism?")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_TYPE],
+		tr("Origin evaluation status\n"
+		   "A: not set\n"
+		   "F: final\n"
+		   "V: reviewed\n"
+		   "C: confirmed\n"
+		   "P: preliminary\n"
+		   "R: reported\n"
+		   "X: rejected\n"
+		   "Origin evaluation mode\n"
+		   "red: automatic\n"
+		   "green: manual\n"
+		   "Trailing\n"
+		   "+: event has origins from multiple agencies")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_PHASES],
+		tr("Number of arrivals = referenced phase picks")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_ORIGINS],
+		tr("Number of origins referenced by event")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_AGENCY],
+		tr("ID of agency providing origin")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_AUTHOR],
+		tr("ID of author providing origin")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_REGION],
+		tr("Region name of origin")
+	);
+	_treeWidget->headerItem()->setToolTip(
+		_itemConfig.columnMap[COL_ID],
+		tr("Event ID")
+	);
 	_treeWidget->setAlternatingRowColors(true);
 
 	for ( int i = 0; i < EventListColumns::Quantity; ++i )
