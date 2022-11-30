@@ -222,6 +222,17 @@ void ThreadedQueue<T>::close() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
+bool ThreadedQueue<T>::isClosed() const {
+	lock lk(_monitor);
+	return _closed;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
 size_t ThreadedQueue<T>::size() const {
 	lock lk(_monitor);
 	return _buffered;
