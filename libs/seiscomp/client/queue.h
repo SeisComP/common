@@ -119,6 +119,12 @@ class ThreadedQueue {
 		void close();
 
 		/**
+		 * @brief Returns whether the queue is closed or not.
+		 * @return The closed flag.
+		 */
+		bool isClosed() const;
+
+		/**
 		 * @brief Query the number of queued items.
 		 * @return The number of currently queued items.
 		 */
