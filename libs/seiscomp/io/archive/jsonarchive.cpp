@@ -41,6 +41,7 @@ using namespace Seiscomp::Core;
 
 
 #define DATE_FORMAT "%FT%T.%fZ"
+#define DATE_FORMAT_SIMPLE "%FT%TZ"
 
 
 namespace Seiscomp {
@@ -987,9 +988,11 @@ void JSONArchive::read(Core::Time &value) {
 	value.setUSecs(frac);
 	*/
 	if ( !value.fromString(_objectLocation->GetString(), DATE_FORMAT) ) {
-		SEISCOMP_ERROR("invalid iso date string: %s", _objectLocation->GetString());
-		setValidity(false);
-		return;
+		if ( !value.fromString(_objectLocation->GetString(), DATE_FORMAT_SIMPLE) ) {
+			SEISCOMP_ERROR("invalid iso date string: %s", _objectLocation->GetString());
+			setValidity(false);
+			return;
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
