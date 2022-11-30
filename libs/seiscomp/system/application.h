@@ -885,10 +885,13 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 								size_t len = static_cast<size_t>(s - visitedItem.cliAbsoluteSymbol);
 								s = visitedItem.cliAbsoluteSymbol;
 								Core::trim(s, len);
-								visitedItem.value = proc._external.constCli->hasOption(std::string(s, len));
+								if ( proc._external.constCli->hasOption(std::string(s, len)) ) {
+									visitedItem.value = true;
+								}
 							}
-							else
-								visitedItem.value = proc._external.constCli->hasOption(visitedItem.cliAbsoluteSymbol);
+							else if ( proc._external.constCli->hasOption(visitedItem.cliAbsoluteSymbol) ) {
+								visitedItem.value = true;
+							}
 						}
 
 						return true;
