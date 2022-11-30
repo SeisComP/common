@@ -1317,7 +1317,7 @@ bool JSONArchive::locateObjectByName(const char* name,
 		if ( _current == nullptr )
 			return false;
 
-		if ( targetClass != nullptr ) {
+		if ( targetClass ) {
 			if ( (hint() & STATIC_TYPE) == 0 ) {
 				_objectLocation = findTag(_current, _currentIndex, name, targetClass);
 				return _objectLocation != nullptr;
@@ -1355,6 +1355,37 @@ bool JSONArchive::locateObjectByName(const char* name,
 				_tagname = name;
 			else
 				_tagname = targetClass;
+		}
+
+		if ( _isSequence ) {
+			if ( _attribIndex > 0 ) {
+				_buf->sputn(",",1);
+			}
+			if ( _formattedOutput ) {
+				_buf->sputn("\n", 1);
+				for ( int i = 0; i < _indent; ++i ) {
+					_buf->sputn("\t", 1);
+				}
+			}
+			_buf->sputn("\"", 1);
+			_buf->sputn(_tagname.data(), _tagname.size());
+			_buf->sputn("\":", 2);
+
+			if ( _formattedOutput ) {
+				_buf->sputn("\n", 1);
+				for ( int i = 0; i < _indent; ++i ) {
+					_buf->sputn("\t", 1);
+				}
+			}
+
+			_buf->sputn("[", 1);
+
+			if ( _formattedOutput ) {
+				_buf->sputn("\n", 1);
+			}
+
+			++_indent;
+			++_attribIndex;
 		}
 	}
 
@@ -1440,8 +1471,9 @@ std::string JSONArchive::determineClassName() {
 void JSONArchive::setClassName(const char *className) {
 	if ( !_buf ) return;
 
-	if ( className )
+	if ( className ) {
 		_tagname = className;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1492,47 +1524,52 @@ inline void JSONArchive::_serialize(T &target) {
 	}
 	else {
 		if ( _sequenceSize > 0 ) --_sequenceSize;
+		if ( _attribIndex > 0 && !_isSequence ) {
+			_buf->sputn(",",1);
+		}
 
-		if ( !_isSequence || _first ) {
-			if ( _attribIndex > 0 ) {
-				_buf->sputn(",",1);
-			}
-
-			if ( _formattedOutput && _isClass ) {
+		if ( _formattedOutput && _isClass ) {
+			if ( !_isSequence ) {
 				_buf->sputn("\n", 1);
-				for ( int i = 0; i < _indent; ++i )
-					_buf->sputn("\t", 1);
 			}
+			for ( int i = 0; i < _indent; ++i ) {
+				_buf->sputn("\t", 1);
+			}
+		}
 
-			if ( _isClass ) {
-				_buf->sputn("\"",1);
-				_buf->sputn(_tagname.data(), _tagname.size());
-				_buf->sputn("\":",2);
+		bool unwrappedObject = _isSequence && (hint() & STATIC_TYPE);
+
+		if ( _isClass ) {
+			if ( unwrappedObject ) {
+				//
+			}
+			else {
+				++_attribIndex;
 				if ( _isSequence ) {
+					++_indent;
+					_buf->sputn("{",1);
 					if ( _formattedOutput ) {
 						_buf->sputn("\n", 1);
-						for ( int i = 0; i < _indent; ++i )
+						for ( int i = 0; i < _indent; ++i ) {
 							_buf->sputn("\t", 1);
-					}
-
-					_buf->sputn("[", 1);
-
-					if ( _formattedOutput ) {
-						++_indent;
+						}
 					}
 				}
 
-				++_attribIndex;
+				_buf->sputn("\"",1);
+				_buf->sputn(_tagname.data(), _tagname.size());
+				_buf->sputn("\":",2);
 
 				if ( _formattedOutput ) {
 					_buf->sputn("\n", 1);
 				}
 			}
-			else
-				++_attribIndex;
+		}
+		else {
+			++_attribIndex;
 		}
 
-		if ( _formattedOutput && _isClass ) {
+		if ( _formattedOutput && _isClass && !unwrappedObject ) {
 			for ( int i = 0; i < _indent; ++i )
 				_buf->sputn("\t", 1);
 		}
@@ -1568,21 +1605,33 @@ inline void JSONArchive::_serialize(T &target) {
 					_buf->sputn("\t", 1);
 			}
 
-			_buf->sputn("}",1);
+			_buf->sputn("}", 1);
+
+			if ( _isSequence && !unwrappedObject ) {
+				--_indent;
+				if ( _formattedOutput ) {
+					_buf->sputn("\n",1);
+					for ( int i = 0; i < _indent; ++i ) {
+						_buf->sputn("\t", 1);
+					}
+				}
+
+				_buf->sputn("}", 1);
+			}
 		}
 
 		if ( _sequenceSize > 0 ) {
-			_buf->sputn(",",1);
+			_buf->sputn(",", 1);
 			if ( _formattedOutput )
 				_buf->sputn("\n",1);
 		}
 
 		if ( !_sequenceSize ) {
+			--_indent;
 			if ( _formattedOutput ) {
 				if ( _formattedOutput ) {
 					_buf->sputn("\n", 1);
 				}
-				--_indent;
 				for ( int i = 0; i < _indent; ++i )
 					_buf->sputn("\t", 1);
 			}
@@ -1644,22 +1693,51 @@ JSONArchive::findTag(const Value *node, Size &index,
 		if ( !itr->value.IsObject() && !itr->value.IsArray() ) continue;
 
 		// Tag does not match the requested name?
-		if ( strcmp(itr->name.GetString(), name) ) {
-			if ( !Core::ClassFactory::IsTypeOf(name, itr->name.GetString()) )
-				continue;
-		}
-
 		if ( itr->value.IsArray() ) {
+			if ( strcmp(itr->name.GetString(), name) ) {
+				if ( !Core::ClassFactory::IsTypeOf(name, itr->name.GetString()) )
+					continue;
+			}
+
 			_currentArray = &itr->value;
 			index = 0;
 
 			if ( _currentArray->Size() <= index )
 				return nullptr;
 
-			return &(*_currentArray)[index];
+			if ( targetClass ) {
+				// Dynamic classes are wrapped
+				auto wrapper = &(*_currentArray)[index];
+				if ( wrapper->MemberBegin() != wrapper->MemberEnd() ) {
+					_current = wrapper;
+					return &_current->MemberBegin()->value;
+				}
+
+				return nullptr;
+			}
+			else {
+				return &(*_currentArray)[index];
+			}
 		}
-		else
+		else {
+			if ( name && *name ) {
+				if ( strcmp(itr->name.GetString(), name) ) {
+					if ( !Core::ClassFactory::IsTypeOf(name, itr->name.GetString()) ) {
+						continue;
+					}
+				}
+			}
+			else if ( targetClass ) {
+				if ( !Core::ClassFactory::IsTypeOf(targetClass, itr->name.GetString()) ) {
+					continue;
+				}
+			}
+			else {
+				continue;
+			}
+
 			index = -1;
+		}
 
 		return &itr->value;
 	}
@@ -1680,7 +1758,19 @@ JSONArchive::findNextTag(const Value *node, Size &index,
 	if ( _currentIndex >= node->Size() )
 		return nullptr;
 
-	return &(*node)[_currentIndex];
+	if ( targetClass ) {
+		// Dynamic classes are wrapped
+		auto wrapper = &(*node)[_currentIndex];
+		if ( wrapper->MemberBegin() != wrapper->MemberEnd() ) {
+			_current = wrapper;
+			return &_current->MemberBegin()->value;
+		}
+
+		return nullptr;
+	}
+	else {
+		return &(*node)[_currentIndex];
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
