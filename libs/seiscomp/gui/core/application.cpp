@@ -1789,7 +1789,7 @@ void Application::sendCommand(Command command, const std::string& parameter, Cor
 		            "Commands",
 		            "Variable <commands.target> is not set. To disable sending commands "
 		            "to all connected clients, set a proper target. You can use "
-		            "regular expressions to specify a group of clients (HINT: all = '.*$').");
+		            "regular expressions to specify a group of clients (HINT: all = \".*$\").");
 		return;
 	}
 
