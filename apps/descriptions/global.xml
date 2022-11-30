@@ -116,11 +116,6 @@
 					2=WARNING, 3=INFO and 4=DEBUG.
 					</description>
 				</parameter>
-				<parameter name="file" type="boolean" default="true">
-					<description>
-					Enable logging into a log file.
-					</description>
-				</parameter>
 				<parameter name="syslog" type="boolean" default="false">
 					<description>
 					Enable logging to syslog if supported by the host system.
