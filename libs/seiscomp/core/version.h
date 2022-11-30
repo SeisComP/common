@@ -49,6 +49,8 @@ namespace Core {
  "16.0.0"   0x100000
    - Added Seiscomp::Core::digits10
    - Removed Seiscomp::Math::round
+   - Renamed GenericMessage::AttachementType to GenericMessage::AttachmentType
+   - Renamed GenericMessage::AttachementList to GenericMessage::AttachmentList
 
  "15.2.0"   0x0F0200
    - Added Seiscomp::Wired::peerCertificate

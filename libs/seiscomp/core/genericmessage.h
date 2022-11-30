@@ -39,10 +39,10 @@ class GenericMessage : public ::Seiscomp::Core::Message {
 	//  Public Types
 	// ----------------------------------------------------------------------
 	public:
-		typedef T AttachementType;
-		typedef typename std::list<typename Seiscomp::Core::SmartPointer<T>::Impl> AttachementList;
-		typedef typename AttachementList::iterator iterator;
-		typedef typename AttachementList::const_iterator const_iterator;
+		using AttachmentType = T;
+		using AttachmentList = std::list<typename Seiscomp::Core::SmartPointer<T>::Impl>;
+		typedef typename AttachmentList::iterator iterator;
+		typedef typename AttachmentList::const_iterator const_iterator;
 
 	DECLARE_SERIALIZATION;
 
@@ -68,8 +68,8 @@ class GenericMessage : public ::Seiscomp::Core::Message {
 		 * @retval true The operation was successfull and the object has been attached properly
 		 * @retval false The object is nullptr or the object has been attached already
 		 */
-		bool attach(AttachementType* attachment);
-		bool attach(typename Seiscomp::Core::SmartPointer<AttachementType>::Impl& attachment);
+		bool attach(AttachmentType* attachment);
+		bool attach(typename Seiscomp::Core::SmartPointer<AttachmentType>::Impl& attachment);
 
 		/**
 		 * Detaches an already attached object from the message
@@ -77,8 +77,8 @@ class GenericMessage : public ::Seiscomp::Core::Message {
 		 * @retval true The object has been detached successfully
 		 * @retval false The object has not been attached before
 		 */
-		bool detach(AttachementType* attachment);
-		bool detach(typename Seiscomp::Core::SmartPointer<AttachementType>::Impl& attachment);
+		bool detach(AttachmentType* attachment);
+		bool detach(typename Seiscomp::Core::SmartPointer<AttachmentType>::Impl& attachment);
 
 		/**
 		 * Detaches an object from the message
@@ -118,7 +118,7 @@ class GenericMessage : public ::Seiscomp::Core::Message {
 	//  Implementation
 	// ----------------------------------------------------------------------
 	protected:
-		AttachementList _attachments;
+		AttachmentList _attachments;
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
