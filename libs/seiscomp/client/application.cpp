@@ -1034,8 +1034,41 @@ bool Application::handlePreFork() {
 bool Application::init() {
 	bindSettings(&_settings);
 
-	if ( !System::Application::init() )
+	if ( !System::Application::init() ) {
 		return false;
+	}
+
+	if ( isLoadRegionsEnabled() ) {
+		showMessage("Reading custom regions");
+		Regions::load();
+	}
+
+	if ( isLoadCitiesEnabled() ) {
+		showMessage("Reading city data");
+
+		IO::XMLArchive ar;
+		bool foundCity;
+
+		if ( _settings.cities.db.empty() ) {
+			foundCity = ar.open((Environment::Instance()->configDir() + "/cities.xml").c_str());
+			if ( !foundCity )
+				foundCity = ar.open((Environment::Instance()->shareDir() + "/cities.xml").c_str());
+		}
+		else
+			foundCity = ar.open(Seiscomp::Environment::Instance()->absolutePath(_settings.cities.db).c_str());
+
+		if ( foundCity ) {
+			ar >> NAMED_OBJECT("City", _cities);
+
+			SEISCOMP_INFO("Found cities XML and read %lu entries",
+			              (unsigned long)_cities.size());
+
+			// Sort the cities descending
+			std::sort(_cities.begin(), _cities.end(), CityGreaterThan());
+
+			ar.close();
+		}
+	}
 
 	if ( _settings.messaging.enable && !_connection ) {
 		SEISCOMP_INFO("Connect to messaging");
@@ -1078,38 +1111,6 @@ bool Application::init() {
 
 	if ( _exitRequested )
 		return false;
-
-	if ( isLoadRegionsEnabled() ) {
-		showMessage("Reading custom regions");
-		Regions::load();
-	}
-
-	if ( isLoadCitiesEnabled() ) {
-		showMessage("Reading city data");
-
-		IO::XMLArchive ar;
-		bool foundCity;
-
-		if ( _settings.cities.db.empty() ) {
-			foundCity = ar.open((Environment::Instance()->configDir() + "/cities.xml").c_str());
-			if ( !foundCity )
-				foundCity = ar.open((Environment::Instance()->shareDir() + "/cities.xml").c_str());
-		}
-		else
-			foundCity = ar.open(Seiscomp::Environment::Instance()->absolutePath(_settings.cities.db).c_str());
-
-		if ( foundCity ) {
-			ar >> NAMED_OBJECT("City", _cities);
-
-			SEISCOMP_INFO("Found cities XML and read %lu entries",
-			              (unsigned long)_cities.size());
-
-			// Sort the cities descending
-			std::sort(_cities.begin(), _cities.end(), CityGreaterThan());
-
-			ar.close();
-		}
-	}
 
 	showMessage("");
 
