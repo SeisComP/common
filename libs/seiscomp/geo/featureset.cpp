@@ -330,8 +330,9 @@ size_t GeoFeatureSet::readDirRecursive(const boost::filesystem::path &directory,
 					++fileCount;
 				}
 			}
-			catch ( ... ) {
-				SEISCOMP_ERROR("Error reading file: %s", SC_FS_IT_STR(itd).c_str());
+			catch ( std::exception &e ) {
+				SEISCOMP_ERROR("Error reading file '%s': %s",
+				               SC_FS_IT_STR(itd).c_str(), e.what());
 			}
 		}
 	}
@@ -372,8 +373,8 @@ const string GeoFeatureSet::initStatus(const string &directory,
 
 	ostringstream buffer;
 	buffer << "Read " << _features.size()
-	       << " segment(s) with a total number of "
-	       << vertexCount << " vertice(s) from " << fileCount
+	       << " features(s) with a total number of "
+	       << vertexCount << " vertices from " << fileCount
 	       << " file(s) found under " << directory;
 
 	return buffer.str();

@@ -43,7 +43,7 @@ Colors
 
 .. code-block:: sh
 
-   color = red | RRGGBBAA | "rgb(red,green,blue)" | "rgba(red,green,blue,alpha)"
+   color = red | RRGGBB | RRGGBBAA | "rgb(red,green,blue)" | "rgba(red,green,blue,alpha)"
 
 Colors are specified either by :term:`color keyword names <color keyword name>`,
 in a hexadecimal notation or in a rgb(a) notation. When using the rgb(a)
@@ -223,160 +223,182 @@ Vector layers
 |scname| supports arbitrary polygons, polylines or points for drawing as layers
 on maps or for using by other :term:`modules <plugin>` and :term:`plugins <plugin>`.
 The polygons, polylines and points can be customized by the
-:ref:`available attributes <sec-gui_syntax>`. Currently supported data types
+:ref:`available attributes <sec-gui_syntax>`. Currently supported data formats
 are:
 
-* FEP (Flinn-Engdahl polygons):
-
-  * used for visualization of event regions and for setting the region name of
-    the event by :ref:`scevent`.
-  * stored in directories: :file:`@DATADIR@/fep` or :file:`@CONFIGDIR@/fep`
-  * file name extension: *.fep*
-  * file format example with one polygon:
-
-    .. code-block:: none
-
-       longitude1 latitude1
-       longitude2 latitude2
-       longitude3 latitude3
-       ...
-       99.0 99.0 length
-       L name
-
-    where the coordinates, *length* and *name* are to be replaced by actual values,
-  * visibility and style can be controlled by :ref:`configuration <sec-gui_layers-config>`
-    and :confval:`map.layers.fep.visible`.
-
-* BNA polygons:
-
-  * used for visualization, e.g., points, polylines, polygons for faults or
-    districts, respectively, and even symbols or images on maps. Some objects,
-    like closed lines, can be evaluated by other modules and plugins, e.g,. the
-    :ref:`region check <scevent_regioncheck>` plugin for :ref:`scevent`.
-  * stored in directories or sub-directories of: :file:`$SEISCOMP_ROOT/share/spatial/vector`
-    or :file:`~/.seiscomp/spatial/vector`
-  * file name extension: *.bna*
-  * properties are controlled as described in the section
-    :ref:`sec-gui_layers-config`
-  * for closed polygons the list of coordinates does not need to end on start
-    coordinates.
-  * file format example for one polygon/polyline:
-
-    .. code-block:: none
-
-       "name 1","rank 1",type/length
-       longitude1,latitude1
-       longitude2,latitude2
-       longitude3,latitude3
-       ...
-
-    where the coordinates, *name* and *type/length* are to be replaced by actual values.
-    For polylines (open polygons) set type/length to the negative number of points defining
-    the line, e.g., -10. Positive numbers, e.g., 10, define closed polygons. Such
-    polygons are automatically closed between their end points. Thus, the end points
-    do not need to be identical.
-
-    The BNA file format also supports multiple vertices per line and the definition
-    of islands. Please refer to https://www.softwright.com/faq/support/boundary_file_bna_format.html
-    for more format specifications.
-
-    .. note ::
-
-       * All |scname| map applications support the drawing of polygons and a subsequent
-         export to the BNA format.
-       * An extension of the header entries is possible. The extra entries can be
-         used by other modules or plugins, e.g., the :ref:`region check <scevent_regioncheck>`
-         plugin. Example ::
-
-            "coal","rank 1","eventType: mining explosion, minDepth: -5, maxDepth: 10",6
-       * The name is extracted from the first part of the header.
-       * The rank is extracted from the second part of the header if it has the
-         form "rank VALUE", e.g., rank 12.
-
-  * visibility and style can be controlled by
-    :ref:`configuration in map.cfg<sec-gui_layers-config>`.
+* :ref:`sec-gui_layers-vector-format-fep`
+* :ref:`sec-gui_layers-vector-format-bna`
+* :ref:`sec-gui_layers-vector-format-geojson`
 
 
-* GeoJSON features:
+.. _sec-gui_layers-vector-format:
 
-  * used for visualization, e.g., points, polylines, polygons for faults or
-    districts, respectively, and even symbols or images on maps.
-  * stored in directories or sub-directories of:
-    :file:`$SEISCOMP_ROOT/share/spatial/vector` or
-    :file:`~/.seiscomp/spatial/vector`
-  * file name extension: *.geojson*
-  * file format: https://geojson.org/
-  * properties are controlled as described in the section
-    :ref:`sec-gui_layers-config`. Other module-specific properties can be added
-    like the extra entries for BNA files (see above). They are evaluated by the
-    specific application.
-  * for closed polygons the list of coordinates must end on the start point.
-    Otherwise polylines are drawn.
+Data formats
+~~~~~~~~~~~~
 
-    .. note ::
+.. _sec-gui_layers-vector-format-fep:
 
-       Currently the geometry type GeometryCollection is not supported. The name
-       of the feature is derived from the `name` property of a feature and the
-       rank can be provided in a `rank` property with an integer value.
+Flinn-Engdahl polygons (FEP)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  * file format example with two polygons and one point:
+* Used for visualization of event regions and for setting the region name of
+  the event by :ref:`scevent`.
+* Stored in directories: :file:`@DATADIR@/fep` or :file:`@CONFIGDIR@/fep`
+* File name extension: *.fep*
+* File format example with one polygon:
 
-    .. code-block:: properties
+  .. code-block:: none
 
-       {
-         "type": "FeatureCollection",
-         "features": [
-           {
-             "type": "Feature",
-             "properties": {
-               "name": "polygon 1",
-               "rank" : 1,
-             },
-             "geometry": {
-               "type": "Polygon",
-               "coordinates": [
-                 [
-                   [ 10.0, -15.0 ],
-                   [ 13.0, -15.0 ],
-                   [ 13.0, -12.0 ],
-                   [ 10.0, -12.0 ],
-                   [ 10.0, -15.0 ]
-                 ]
+     longitude1 latitude1
+     longitude2 latitude2
+     longitude3 latitude3
+     ...
+     99.0 99.0 length
+     L name
+
+  where the coordinates, *length* and *name* are to be replaced by actual values,
+* Visibility and style can be controlled by :ref:`configuration <sec-gui_layers-config>`
+  and :confval:`map.layers.fep.visible`.
+
+
+.. _sec-gui_layers-vector-format-bna:
+
+Boundary file format (BNA)
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* Used for visualization, e.g., points, polylines, polygons for faults or
+  districts, respectively, and even symbols or images on maps. Some objects,
+  like closed lines, can be evaluated by other modules and plugins, e.g,. the
+  :ref:`region check <scevent_regioncheck>` plugin for :ref:`scevent`.
+* Stored in directories or sub-directories of:
+  :file:`$SEISCOMP_ROOT/share/spatial/vector` or
+  :file:`~/.seiscomp/spatial/vector`
+* File name extension: *.bna*
+* Properties are controlled as described in the section
+  :ref:`sec-gui_layers-config`
+* For closed polygons the list of coordinates does not need to end on start
+  coordinates.
+* File format example for one polygon/polyline:
+
+  .. code-block:: none
+
+     "name 1","rank 1",type/length
+     longitude1,latitude1
+     longitude2,latitude2
+     longitude3,latitude3
+     ...
+
+  where the coordinates, *name* and *type/length* are to be replaced by actual
+  values.  For polylines (open polygons) set type/length to the negative number
+  of points defining the line, e.g., -10. Positive numbers, e.g., 10, define
+  closed polygons. Such polygons are automatically closed between their end
+  points. Thus, the end points do not need to be identical.
+
+  The BNA file format also supports multiple vertices per line and the
+  definition of islands. Please refer to
+  https://www.softwright.com/faq/support/boundary_file_bna_format.html for more
+  format specifications.
+
+  .. note ::
+
+     * All |scname| map applications support the drawing of polygons and a
+       subsequent export to the BNA format.
+     * An extension of the header entries is possible. The extra entries can be
+       used by other modules or plugins, e.g., the :ref:`region check
+       <scevent_regioncheck>` plugin. Example ::
+
+          "coal","rank 1","eventType: mining explosion, minDepth: -5, maxDepth: 10",6
+     * The name is extracted from the first part of the header.
+     * The rank is extracted from the second part of the header if it has the
+       form "rank VALUE", e.g., rank 12.
+
+* Visibility and style can be controlled by
+  :ref:`configuration in map.cfg<sec-gui_layers-config>`.
+
+
+.. _sec-gui_layers-vector-format-geojson:
+
+GeoJSON
+^^^^^^^
+
+* Used for visualization, e.g., points, polylines, polygons for faults or
+  districts, respectively, and even symbols or images on maps.
+* Stored in directories or sub-directories of:
+  :file:`$SEISCOMP_ROOT/share/spatial/vector` or
+  :file:`~/.seiscomp/spatial/vector`
+* File name extension: *.geojson*
+* File format: https://geojson.org/
+* Rendering properties are controlled as described in the section
+  :ref:`sec-gui_layers-config`.
+* Additional properties may be defined in the `properties` member of a `Feature`
+  object. The name and rank of a GeoFeature are extracted from the `name` and
+  `rank` property. Other property keys and values are added to the `attributes`
+  map of a GeoFeature for module-specific processing.
+* Basic file format example containing a single point without any meta
+  information
+
+  .. code-block:: properties
+
+     {
+       "type": "Point",
+       "coordinates": [ 13.0, 52.0 ]
+     }
+
+* File format example with a feature collection containing one polygon, one line
+  string and one point:
+
+  .. code-block:: properties
+
+     {
+       "type": "FeatureCollection",
+       "features": [
+         {
+           "type": "Feature",
+           "properties": {
+             "name": "polygon 1",
+             "rank" : 1
+           },
+           "geometry": {
+             "type": "Polygon",
+             "coordinates": [
+               [
+                 [ 10.0, -15.0 ],
+                 [ 13.0, -15.0 ],
+                 [ 13.0, -12.0 ],
+                 [ 10.0, -12.0 ],
+                 [ 10.0, -15.0 ]
                ]
-             }
-           },  {
-             "type": "Feature",
-             "properties": {
-               "name": "polygon 2",
-               "rank" : 1,
-             },
-             "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                  [
-                    [ 0.0, -5.0 ],
-                    [ 3.0, -5.0 ],
-                    [ 3.0, -2.0 ],
-                    [ 0.0, -2.0 ],
-                    [ 0.0, -5.0 ]
-                  ]
-                ]
-             }
-           },  {
-             "type": "Feature",
-             "properties": {
-               "name": "point 1",
-               "rank" : 1,
-             },
-             "geometry": {
-               "type": "Point",
-               "coordinates": [
-                 [ 13.0, 52.0 ]
-               ]
-             }
+             ]
            }
-         ]
-      }
+         }, {
+           "type": "Feature",
+           "properties": {
+             "name": "line string 1",
+             "rank" : 4
+           },
+           "geometry": {
+             "type": "LineString",
+             "coordinates": [
+               [ 0.0, -5.0 ],
+               [ 3.0, -5.0 ],
+               [ 3.0, -2.0 ],
+               [ 0.0, -2.0 ]
+             ]
+           }
+         }, {
+           "type": "Feature",
+           "properties": {
+             "name": "point 1",
+             "rank" : 1
+           },
+           "geometry": {
+             "type": "Point",
+             "coordinates": [ 13.0, 52.0 ]
+           }
+         }
+       ]
+     }
+
 
 
 .. _sec-gui_layers-config:
@@ -717,7 +739,7 @@ Available map layer configuration parameters for each category are:
 
 .. _sec-gui_layers-others:
 
-Other Layers
+Other layers
 ------------
 
 Other layers may be displayed on maps depending on the application.

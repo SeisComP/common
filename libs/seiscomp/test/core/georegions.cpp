@@ -31,6 +31,8 @@
 
 #include <seiscomp/core/strings.h>
 #include <seiscomp/logging/log.h>
+#include <seiscomp/geo/coordinate.h>
+#include <seiscomp/geo/feature.h>
 #include <seiscomp/geo/featureset.h>
 #include <seiscomp/seismology/regions.h>
 #include <seiscomp/seismology/regions/polygon.h>
@@ -243,7 +245,7 @@ BOOST_AUTO_TEST_CASE(fepRegions) {
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(bnaRegions) {
 	GeoFeatureSet features;
-	features.readBNAFile("./data/bna/brandenburg.bna", nullptr);
+	features.readFile("./data/bna/brandenburg.bna", nullptr);
 	BOOST_REQUIRE(!features.features().empty());
 
 	GeoFeature *f = features.features()[0];
@@ -254,10 +256,10 @@ BOOST_AUTO_TEST_CASE(bnaRegions) {
 
 	features.clear();
 
-	BOOST_REQUIRE(features.readBNAFile("./data/bna/bna-with-comments.bna", nullptr));
+	BOOST_REQUIRE(features.readFile("./data/bna/bna-with-comments.bna", nullptr));
 
 	features.clear();
-	features.readBNAFile("./data/bna/header-with-attributes.bna", nullptr);
+	features.readFile("./data/bna/header-with-attributes.bna", nullptr);
 
 	vector<GeoFeature> expected;
 	GeoFeature::Attributes atts;
@@ -295,6 +297,178 @@ BOOST_AUTO_TEST_CASE(bnaRegions) {
 			BOOST_CHECK(success);
 		}
 	}
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(geojsonRegions) {
+	GeoFeatureSet features;
+
+	// *********************
+	// Point outside Feature
+	BOOST_REQUIRE(features.readFile("./data/geojson/point.geojson", nullptr));
+	BOOST_REQUIRE_EQUAL(features.features().size(), 1);
+	auto f = features.features()[0];
+	BOOST_CHECK(!f->closedPolygon());
+	BOOST_CHECK(f->name().empty());
+	BOOST_CHECK_EQUAL(f->rank(), 1);
+	BOOST_CHECK(f->attributes().empty());
+	BOOST_CHECK_EQUAL(f->vertices().size(), 1);
+	BOOST_CHECK(f->subFeatures().empty());
+	BOOST_CHECK_EQUAL(f->vertices()[0], GeoCoordinate(52, 13));
+	BOOST_CHECK(f->bbox() == GeoBoundingBox(52, 13, 52, 13));
+
+	// ***********************
+	// Feature with MultiPoint
+	features.clear();
+	BOOST_REQUIRE(features.readFile("./data/geojson/feature.geojson", nullptr));
+	BOOST_REQUIRE_EQUAL(features.features().size(), 1);
+	BOOST_CHECK_EQUAL(f->subFeatures().size(), 1);
+	f = features.features()[0];
+	BOOST_CHECK(!f->closedPolygon());
+	BOOST_CHECK_EQUAL(f->name(), "MultiPoint");
+	BOOST_CHECK_EQUAL(f->rank(), 1);
+	BOOST_CHECK(f->attributes().empty());
+	BOOST_CHECK_EQUAL(f->vertices().size(), 2);
+	BOOST_CHECK(f->subFeatures() == vector<size_t>({1}));
+	BOOST_CHECK_EQUAL(f->vertices()[0], GeoCoordinate(52, 14));
+	BOOST_CHECK_EQUAL(f->vertices()[1], GeoCoordinate(52, 15));
+	BOOST_CHECK(f->bbox() == GeoBoundingBox(52, 14, 52, 15));
+
+	// ************************
+	// Feature without Geometry
+	features.clear();
+	BOOST_REQUIRE(features.readFile("./data/geojson/feature-no-geometry.geojson", nullptr));
+	BOOST_REQUIRE_EQUAL(features.features().size(), 1);
+	BOOST_CHECK_EQUAL(f->subFeatures().size(), 0);
+	f = features.features()[0];
+	BOOST_CHECK(!f->closedPolygon());
+	BOOST_CHECK_EQUAL(f->name(), "FeatureWithoutGeometry");
+	BOOST_CHECK_EQUAL(f->rank(), 2);
+	BOOST_CHECK(f->attributes().empty());
+	BOOST_CHECK(f->vertices().empty());
+	BOOST_CHECK(f->subFeatures().empty());
+	BOOST_CHECK(f->bbox().isEmpty());
+
+	// *****************
+	// FeatureCollection
+	features.clear();
+	BOOST_REQUIRE(features.readFile("./data/geojson/featurecollection.geojson", nullptr));
+	BOOST_CHECK_EQUAL(features.features().size(), 7);
+
+	// Point
+	BOOST_REQUIRE_GE(features.features().size(), 1);
+	f = features.features()[0];
+	BOOST_CHECK(!f->closedPolygon());
+	BOOST_CHECK_EQUAL(f->name(), "Point");
+	BOOST_CHECK_EQUAL(f->rank(), 16);
+	BOOST_CHECK_EQUAL(f->attributes().size(), 1);
+	BOOST_CHECK_EQUAL(f->subFeatures().size(), 0);
+	auto it = f->attributes().find("foo");
+	BOOST_CHECK(it != f->attributes().end());
+	BOOST_CHECK_EQUAL(it->second, "bar");
+	BOOST_CHECK_EQUAL(f->vertices().size(), 1);
+	BOOST_CHECK(f->subFeatures().empty());
+	BOOST_CHECK_EQUAL(f->vertices()[0], GeoCoordinate(52, 13));
+	BOOST_CHECK(f->bbox() == GeoBoundingBox(52, 13, 52, 13));
+
+	// MultiPoint
+	BOOST_REQUIRE_GE(features.features().size(), 2);
+	f = features.features()[1];
+	BOOST_CHECK(!f->closedPolygon());
+	BOOST_CHECK_EQUAL(f->name(), "MultiPoint");
+	BOOST_CHECK_EQUAL(f->rank(), 1);
+	BOOST_CHECK(f->attributes().empty());
+	BOOST_CHECK_EQUAL(f->vertices().size(), 2);
+	BOOST_CHECK(f->subFeatures() == vector<size_t>({1}));
+	BOOST_CHECK_EQUAL(f->vertices()[0], GeoCoordinate(52, 14));
+	BOOST_CHECK_EQUAL(f->vertices()[1], GeoCoordinate(52, 15));
+	BOOST_CHECK(f->bbox() == GeoBoundingBox(52, 14, 52, 15));
+
+	// LineString
+	BOOST_REQUIRE_GE(features.features().size(), 3);
+	f = features.features()[2];
+	BOOST_CHECK(!f->closedPolygon());
+	BOOST_CHECK_EQUAL(f->name(), "LineString");
+	BOOST_CHECK_EQUAL(f->rank(), 1);
+	BOOST_CHECK(f->attributes().empty());
+	BOOST_CHECK_EQUAL(f->vertices().size(), 2);
+	BOOST_CHECK_EQUAL(f->subFeatures().size(), 0);
+	BOOST_CHECK(f->subFeatures().empty());
+	BOOST_CHECK_EQUAL(f->vertices()[0], GeoCoordinate(-17, 20));
+	BOOST_CHECK_EQUAL(f->vertices()[1], GeoCoordinate(-17, 23));
+	BOOST_CHECK(f->bbox() == GeoBoundingBox(-17, 20, -17, 23));
+
+	// MultiLineString
+	BOOST_REQUIRE_GE(features.features().size(), 4);
+	f = features.features()[3];
+	BOOST_CHECK(!f->closedPolygon());
+	BOOST_CHECK_EQUAL(f->name(), "MultiLineString");
+	BOOST_CHECK_EQUAL(f->rank(), 1);
+	BOOST_CHECK(f->attributes().empty());
+	BOOST_CHECK_EQUAL(f->vertices().size(), 4);
+	BOOST_CHECK_EQUAL(f->subFeatures().size(), 1);
+	BOOST_CHECK(f->subFeatures() == vector<size_t>({2}));
+	BOOST_CHECK_EQUAL(f->vertices()[0], GeoCoordinate(-15, 20));
+	BOOST_CHECK_EQUAL(f->vertices()[1], GeoCoordinate(-15, 23));
+	BOOST_CHECK_EQUAL(f->vertices()[2], GeoCoordinate(-15, 26));
+	BOOST_CHECK_EQUAL(f->vertices()[3], GeoCoordinate(-15, 29));
+	BOOST_CHECK(f->bbox() == GeoBoundingBox(-15, 20, -15, 29));
+
+	// Polygon
+	BOOST_REQUIRE_GE(features.features().size(), 5);
+	f = features.features()[4];
+	BOOST_CHECK(f->closedPolygon());
+	BOOST_CHECK_EQUAL(f->name(), "Polygon");
+	BOOST_CHECK_EQUAL(f->rank(), 1);
+	BOOST_CHECK(f->attributes().empty());
+	BOOST_CHECK_EQUAL(f->vertices().size(), 4);
+	BOOST_CHECK(f->subFeatures().empty());
+	BOOST_CHECK_EQUAL(f->vertices()[0], GeoCoordinate(-5, 0));
+	BOOST_CHECK_EQUAL(f->vertices()[1], GeoCoordinate(-5, 3));
+	BOOST_CHECK_EQUAL(f->vertices()[2], GeoCoordinate(-2, 3));
+	BOOST_CHECK_EQUAL(f->vertices()[3], GeoCoordinate(-2, 0));
+	BOOST_CHECK(f->bbox() == GeoBoundingBox(-5, 0, -2, 3));
+
+	// MultiPolygon
+	BOOST_REQUIRE_GE(features.features().size(), 6);
+	f = features.features()[5];
+	BOOST_CHECK(f->closedPolygon());
+	BOOST_CHECK_EQUAL(f->name(), "MultiPolygon");
+	BOOST_CHECK_EQUAL(f->rank(), 1);
+	BOOST_CHECK(f->attributes().empty());
+	BOOST_CHECK_EQUAL(f->vertices().size(), 6);
+	BOOST_CHECK_EQUAL(f->subFeatures().size(), 1);
+	BOOST_CHECK(f->subFeatures() == vector<size_t>({3}));
+	BOOST_CHECK_EQUAL(f->vertices()[0], GeoCoordinate(-25, 10));
+	BOOST_CHECK_EQUAL(f->vertices()[1], GeoCoordinate(-25, 13));
+	BOOST_CHECK_EQUAL(f->vertices()[2], GeoCoordinate(-22, 13));
+	BOOST_CHECK_EQUAL(f->vertices()[3], GeoCoordinate(-25, 20));
+	BOOST_CHECK_EQUAL(f->vertices()[4], GeoCoordinate(-25, 23));
+	BOOST_CHECK_EQUAL(f->vertices()[5], GeoCoordinate(-22, 23));
+	BOOST_CHECK(f->bbox() == GeoBoundingBox(-25, 10, -22, 23));
+
+	// GeometryCollection consisting of Point, LineString, MultiPoint and LineString
+	BOOST_REQUIRE_GE(features.features().size(), 7);
+	f = features.features()[6];
+	BOOST_CHECK(!f->closedPolygon());
+	BOOST_CHECK_EQUAL(f->name(), "GeometryCollection");
+	BOOST_CHECK_EQUAL(f->rank(), 1);
+	BOOST_CHECK(f->attributes().empty());
+	BOOST_CHECK_EQUAL(f->vertices().size(), 7);
+	BOOST_CHECK_EQUAL(f->subFeatures().size(), 4);
+	BOOST_CHECK(f->subFeatures() == vector<size_t>({1, 3, 4, 5}));
+	BOOST_CHECK_EQUAL(f->vertices()[0], GeoCoordinate(52, 50)); // Point
+	BOOST_CHECK_EQUAL(f->vertices()[1], GeoCoordinate(52, 51)); // LineString
+	BOOST_CHECK_EQUAL(f->vertices()[2], GeoCoordinate(52, 52));
+	BOOST_CHECK_EQUAL(f->vertices()[3], GeoCoordinate(52, 53)); // MultiPoint
+	BOOST_CHECK_EQUAL(f->vertices()[4], GeoCoordinate(52, 54));
+	BOOST_CHECK_EQUAL(f->vertices()[5], GeoCoordinate(52, 55)); // LineString
+	BOOST_CHECK_EQUAL(f->vertices()[6], GeoCoordinate(52, 56));
+	BOOST_CHECK(f->bbox() == GeoBoundingBox(52, 50, 52, 56));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

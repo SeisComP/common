@@ -551,6 +551,7 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 				continue;
 			}
 
+			bool closedPolygon = _measureBNADialog->closedPolygon->isChecked();
 			if ( fileInfo.suffix() == "bna" ) {
 				QFile file(fileInfo.absoluteFilePath());
 				if ( !file.open(QIODevice::WriteOnly |
@@ -565,7 +566,7 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 				QString header = QString("\"%1\",\"rank %2\",%3")
 				    .arg(_measureBNADialog->name->text())
 				    .arg(_measureBNADialog->rank->value())
-				    .arg(_measureBNADialog->closedPolygon->isChecked()?_measurePoints.size():-_measurePoints.size());
+				    .arg(closedPolygon?_measurePoints.size():-_measurePoints.size());
 				stream << header << endl;
 				for ( int i = 0; i < _measurePoints.size(); ++i ) {
 					stream << _measurePoints[i].x() << ","
@@ -590,25 +591,25 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 
 				QTextStream stream(&file);
 				stream <<
-				"{" << endl;
-				stream <<
-				"	\"type\": \"Feature\"," << endl;
-				stream <<
-				"	\"geometry\": {" << endl;
+				"{" << endl <<
+				"	\"type\": \"Feature\"," << endl <<
+				"	\"geometry\": {" << endl <<
+				"		\"type\": \"";
 
-				if ( _measureBNADialog->closedPolygon->isChecked() ) {
-					stream <<
-					"		\"type\":\"Polygon\"," << endl;
+				if ( closedPolygon ) {
+					stream << "Polygon";
 				}
 				else {
-					stream <<
-					"		\"type\":\"LineString\"," << endl;
+					stream << "LineString";
 				}
 
-				stream <<
-				"		\"coordinates\":[" << endl;
-				stream <<
-				"			[";
+				stream << "\"," << endl <<
+				"		\"coordinates\": [" << endl <<
+				"			";
+				if ( closedPolygon ) {
+					stream << "[" << endl <<
+					"				";
+				}
 
 				for ( int i = 0; i < _measurePoints.size(); ++i ) {
 					if ( i ) {
@@ -618,26 +619,23 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 					       << _measurePoints[i].y() << "]";
 				}
 
-				if ( _measureBNADialog->closedPolygon->isChecked() ) {
-					// Repeat last coordinate
-					stream << ", [" << _measurePoints.first().x() << ", "
-					       << _measurePoints.first().y() << "]";
-				}
+				if ( closedPolygon ) {
+					if ( _measureBNADialog->closedPolygon->isChecked() ) {
+						// Repeat last coordinate
+						stream << ", [" << _measurePoints.first().x() << ", "
+						       << _measurePoints.first().y() << "]";
+					}
 
-				stream << "]" << endl;
-				stream <<
-				"		]" << endl;
-				stream <<
-				"	}," << endl;
-				stream <<
-				"	\"properties\": {" << endl;
-				stream <<
-				"		\"name\": \"" << _measureBNADialog->name->text() << "\"," << endl;
-				stream <<
-				"		\"rank\": " << _measureBNADialog->rank->value() << endl;
-				stream <<
-				"	}" << endl;
-				stream <<
+					stream << endl <<
+					"			]";
+				}
+				stream << endl <<
+				"		]" << endl <<
+				"	}," << endl <<
+				"	\"properties\": {" << endl <<
+				"		\"name\": \"" << _measureBNADialog->name->text() << "\"," << endl <<
+				"		\"rank\": " << _measureBNADialog->rank->value() << endl <<
+				"	}" << endl <<
 				"}" << endl;
 
 				file.close();
