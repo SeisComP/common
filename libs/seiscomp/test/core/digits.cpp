@@ -39,13 +39,24 @@ using namespace Seiscomp;
 
 
 template <typename T>
-std::string toSignificantString(T val) {
+std::string toSignificantScientificString(T val) {
 	std::ostringstream ss;
 	ss << std::setprecision(
 		Core::digits10(val, ss.flags() & std::ios_base::fixed)
 	) << val;
 	return ss.str();
 }
+
+
+template <typename T>
+std::string toSignificantFixedString(T val) {
+	std::ostringstream ss;
+	ss << std::fixed << std::setprecision(
+		Core::digits10(val, ss.flags() & std::ios_base::fixed)
+	) << val;
+	return ss.str();
+}
+
 
 template <typename T>
 std::string toMaxString(T val) {
@@ -63,11 +74,13 @@ BOOST_AUTO_TEST_CASE(digits) {
 	BOOST_CHECK_EQUAL(Core::digits10(0.5f), 1);
 	BOOST_CHECK_EQUAL(Core::digits10(0.5), 1);
 	BOOST_CHECK_EQUAL(Core::digits10(0.52f), 2);
+	BOOST_CHECK_EQUAL(toSignificantFixedString(0.52f), "0.52");
 	BOOST_CHECK_EQUAL(Core::digits10(0.52), 2);
 	BOOST_CHECK_EQUAL(Core::digits10(0.5000000002f), 1);
 	BOOST_CHECK_EQUAL(Core::digits10(0.5000000002), 1);
-	BOOST_CHECK_EQUAL(Core::digits10(0.50002f), 8);
-	BOOST_CHECK_EQUAL(toSignificantString(0.50002f), "0.50002003");
+	BOOST_CHECK_EQUAL(Core::digits10(0.50002f), 5);
+	BOOST_CHECK_EQUAL(toSignificantScientificString(0.50002f), "0.50002");
+	BOOST_CHECK_EQUAL(toSignificantFixedString(0.50002f), "0.50002");
 	BOOST_CHECK_EQUAL(Core::digits10(0.50002), 5);
 	BOOST_CHECK_EQUAL(Core::digits10(0.0000000002), 10);
 	BOOST_CHECK_EQUAL(Core::digits10(321.0000000002), 0);
@@ -79,16 +92,24 @@ BOOST_AUTO_TEST_CASE(digits) {
 	BOOST_CHECK_EQUAL(Core::digits10(123.45678, false), 8);
 	BOOST_CHECK_EQUAL(Core::digits10(123.45678900000001), 6);
 	BOOST_CHECK_EQUAL(Core::digits10(123.45678900000001, false), 9);
-	BOOST_CHECK_EQUAL(toSignificantString(123.45678900000001), "123.456789");
+	BOOST_CHECK_EQUAL(toSignificantScientificString(123.45678900000001), "123.456789");
+	BOOST_CHECK_EQUAL(toSignificantFixedString(123.45678900000001), "123.456789");
 	BOOST_CHECK_EQUAL(Core::digits10(123.45678999999991), 5);
 	BOOST_CHECK_EQUAL(Core::digits10(123.45678999999991, false), 8);
-	BOOST_CHECK_EQUAL(toSignificantString(123.45678999999991), "123.45679");
+	BOOST_CHECK_EQUAL(toSignificantScientificString(123.45678999999991), "123.45679");
+	BOOST_CHECK_EQUAL(toSignificantFixedString(123.45678999999991), "123.45679");
 
-	BOOST_CHECK_EQUAL(toSignificantString(0.10879999999999999), "0.1088");
-	BOOST_CHECK_EQUAL(toSignificantString(9.3750000000000002e-05), "9.375e-05");
+	BOOST_CHECK_EQUAL(toSignificantScientificString(0.10879999999999999), "0.1088");
+	BOOST_CHECK_EQUAL(toSignificantFixedString(0.10879999999999999), "0.1088");
+	BOOST_CHECK_EQUAL(toSignificantScientificString(9.3750000000000002e-05), "9.375e-05");
+	BOOST_CHECK_EQUAL(toSignificantFixedString(9.3750000000000002e-05), "0.00009375");
 
-	BOOST_CHECK_EQUAL(toSignificantString(5.76333e+19), "5.76333e+19");
-	BOOST_CHECK_EQUAL(toSignificantString(-4.055029736e+16), "-40550297360000000");
+	BOOST_CHECK_EQUAL(toSignificantScientificString(5.76333e+19), "5.76333e+19");
+	BOOST_CHECK_EQUAL(toSignificantScientificString(-4.055029736e+16), "-40550297360000000");
+	BOOST_CHECK_EQUAL(toSignificantFixedString(-4.055029736e+16), "-40550297360000000");
+
+	BOOST_CHECK_EQUAL(toSignificantScientificString(-0.00027956301912657736), "-0.00027956301912657736");
+	BOOST_CHECK_EQUAL(toSignificantFixedString(-0.00027956301912657736), "-0.00027956301912658");
 }
 
 
