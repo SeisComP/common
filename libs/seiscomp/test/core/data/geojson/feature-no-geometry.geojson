@@ -1,0 +1,8 @@
+{
+  "type": "Feature",
+  "properties": {
+    "name": "FeatureWithoutGeometry",
+    "rank": 2
+  },
+  "geometry": null
+}

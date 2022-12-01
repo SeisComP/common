@@ -1,0 +1,14 @@
+{
+  "type": "Feature",
+  "properties": {
+    "name": "MultiPoint",
+    "rank": 1
+  },
+  "geometry": {
+    "type": "MultiPoint",
+    "coordinates": [
+      [ 14.0, 52.0 ],
+      [ 15.0, 52.0 ]
+    ]
+  }
+}
