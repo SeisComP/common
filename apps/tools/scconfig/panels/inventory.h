@@ -107,6 +107,7 @@ class InventoryPanel : public ConfiguratorPanel {
 		void switchToIconView();
 		void switchToListView();
 		void switchToDetailedView();
+		void renameFile();
 		void deleteFiles();
 		void inspectFile();
 

@@ -519,8 +519,13 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	folderViewTools->setAutoFillBackground(true);
 	folderViewTools->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 
-	QAction *deleteFileAction = new QAction(tr("Delete"), this);
+	QAction *deleteFileAction = new QAction(tr("Delete file"), this);
+	deleteFileAction->setShortcut(QKeySequence(Qt::Key_Delete));
 	connect(deleteFileAction, SIGNAL(triggered()), this, SLOT(deleteFiles()));
+
+	QAction *renameFileAction = new QAction(tr("Rename file"), this);
+	renameFileAction->setShortcut(QKeySequence(Qt::Key_F2));
+	connect(renameFileAction, SIGNAL(triggered()), this, SLOT(renameFile()));
 
 	QAction *inspectFileAction = new QAction(tr("Show content"), this);
 	connect(inspectFileAction, SIGNAL(triggered()), this, SLOT(inspectFile()));
@@ -532,6 +537,7 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	_folderView->setContextMenuPolicy(Qt::ActionsContextMenu);
 	_folderView->addAction(inspectFileAction);
 	_folderView->addAction(deleteFileAction);
+	_folderView->addAction(renameFileAction);
 
 	_folderTree = new QTreeView;
 	_folderTree->setAutoFillBackground(true);
@@ -541,6 +547,7 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	_folderTree->setContextMenuPolicy(Qt::ActionsContextMenu);
 	_folderTree->addAction(inspectFileAction);
 	_folderTree->addAction(deleteFileAction);
+	_folderTree->addAction(renameFileAction);
 
 	_folderModel = new QFileSystemModel(this);
 	_folderModel->setReadOnly(false);
@@ -682,6 +689,32 @@ void InventoryPanel::deleteFiles() {
 		if ( i.isValid() ) _folderModel->remove(i);
 }
 
+
+void InventoryPanel::renameFile() {
+	QModelIndexList indexes;
+	indexes = _selectionModel->selectedRows();
+
+	if ( indexes.isEmpty() ) {
+		return;
+	}
+
+	if ( indexes.count() > 1 ) {
+		QMessageBox::critical(NULL, tr("Rename"),
+		                      tr("More than one file selected"));
+		return;
+	}
+
+	Seiscomp::Environment *env = Seiscomp::Environment::Instance();
+	QString source = (env->installDir() + "/etc/inventory").c_str();
+	source = QDir::toNativeSeparators(source + "/" + indexes[0].data().toString());
+
+	QString newFile = QFileDialog::getSaveFileName(this,
+	                                               tr("New inventory file name"),
+	                                               (env->installDir() + "/etc/inventory").c_str(),
+	                                               tr("XML Files (*.xml)"));
+	QFile file(source);
+	file.rename(newFile);
+}
 
 void InventoryPanel::inspectFile() {
 	QModelIndexList indexes;
