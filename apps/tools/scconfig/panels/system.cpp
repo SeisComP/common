@@ -226,31 +226,54 @@ void SystemPanel::onContextMenuRequested(const QPoint &pos) {
 
 	// Get item at the given pos
 	QTableWidgetItem *item = _procTable->itemAt(pos);
-	if ( item == NULL ) return;
+	if ( !item ) {
+		return;
+	}
 
 	// Get module item
-	if ( item->column() != 1 )
+	if ( item->column() != 1 ) {
 		item = _procTable->item(item->row(), 1);
+	}
 
+	// start log file
 	QDir installDir(QString::fromStdString(Seiscomp::Environment::Instance()->installDir()));
-	QString filename = installDir.filePath("var/log/" + item->text() + ".log");
+	QString startFileName = installDir.filePath("var/log/" + item->text() + ".log");
+	QFile startFile(startFileName);
+	bool enabled1 = startFile.open(QIODevice::ReadOnly | QIODevice::Text);
+	QAction *action1 = menu.addAction("Show start log");
+	action1->setEnabled(enabled1);
 
-	QFile file(filename);
-	bool enabled = file.open(QIODevice::ReadOnly | QIODevice::Text);
+	// module log file
+	QString moduleLogFileName = QDir::homePath() + "/.seiscomp/log/" + item->text() + ".log";
+	QFile logFile(moduleLogFileName);
+	bool enabled2 = logFile.open(QIODevice::ReadOnly | QIODevice::Text);
+	QAction *action2 = menu.addAction("Show module log");
+	action2->setEnabled(enabled2);
 
-	QAction *action = menu.addAction("Show log..");
-	action->setEnabled(enabled);
-	if ( menu.exec(QCursor::pos()) == action ) {
-		showStartLog(file.readAll());
+	QAction *result = menu.exec(QCursor::pos());
+
+	if ( result == action1 ) {
+		// start log file
+		showLog(startFileName, startFile.readAll());
+	}
+	else if ( result == action2 ) {
+		// module log file
+		showLog(moduleLogFileName, logFile.readAll());
 	}
 }
 
-void SystemPanel::showStartLog(const QString &text) {
+void SystemPanel::showLog(const QString fileName, const QString &text) {
 	LogDialog dlg;
-	dlg.setWindowTitle("Start log");
-	dlg.setContent(text);
+	dlg.setWindowTitle("Log file: " + fileName);
+	if ( text.trimmed().isEmpty()) {
+		dlg.setContent("File is empty.");
+	}
+	else {
+		dlg.setContent(text);
+	}
 	dlg.exec();
 }
+
 
 
 void SystemPanel::setModel(ConfigurationTreeItemModel *model) {
