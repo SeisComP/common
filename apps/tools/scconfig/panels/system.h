@@ -58,7 +58,7 @@ class SystemPanel : public ConfiguratorPanel {
 
 	private:
 		void runSeiscomp(const QStringList &params);
-		void showStartLog(const QString &text);
+		void showLog(const QString fileName, const QString &text);
 		void logStdOut(const QByteArray &data);
 		void logStdErr(const QByteArray &data);
 
