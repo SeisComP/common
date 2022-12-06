@@ -41,7 +41,7 @@ using namespace Seiscomp;
 template <typename T>
 std::string toSignificantDefaultString(T val) {
 	std::ostringstream ss;
-	ss << std::defaultfloat << Core::number(val);
+	ss << Core::number(val);
 	return ss.str();
 }
 
