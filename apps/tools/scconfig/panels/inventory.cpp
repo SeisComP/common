@@ -577,7 +577,9 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	folderViewTools->addSeparator();
 
 	a = folderViewTools->addAction("Check inventory");
-	a->setToolTip("Check consistency of all inventory files and report conflicts.\nApplies: scinv check");
+	a->setToolTip("Check consistency of all inventory files and report conflicts."
+	              "\nApplies: scinv check"
+	              "\nDefine criteria in scinv module configuration.");
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(testInventory()));
 	a = folderViewTools->addAction("Sync keys");
 	a->setToolTip("Synchronize key files from inventory. Delete key files from non-existing stations.\nApplies: scinv keys");
