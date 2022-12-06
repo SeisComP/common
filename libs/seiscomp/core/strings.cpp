@@ -58,6 +58,7 @@ const char *timeFormat2 = "%FT%T";
 
 template <typename T>
 inline size_t getFixedDigits10(T val) {
+	T e = 1;
 	T p = std::log10(val < 0 ? -val : val);
 
 	if ( p < 0 ) {
@@ -68,12 +69,11 @@ inline size_t getFixedDigits10(T val) {
 	}
 
 	val *= std::pow(10, p);
-	T tmp = val;
 
-	while ( (p < std::numeric_limits<T>::max_digits10) &&
-	        (std::abs(std::round(tmp) - tmp) > 1E-6) ) {
+	while ( p < std::numeric_limits<T>::max_digits10 &&
+	        std::abs(std::round(val * e) - val * e) > 1E-6 ) {
+		e *= 10;
 		++p;
-		tmp *= 10;
 	}
 
 	return p;
@@ -82,6 +82,7 @@ inline size_t getFixedDigits10(T val) {
 
 template <typename T>
 inline size_t getScientificDigits10(T val) {
+	T e = 1;
 	T p = std::log10(val < 0 ? -val : val);
 	T n = 0;
 
@@ -100,12 +101,10 @@ inline size_t getScientificDigits10(T val) {
 	val *= std::pow(10, p);
 
 	p = n;
-	T tmp = val;
-
-	while ( (p < std::numeric_limits<T>::max_digits10) &&
-	        (std::abs(std::round(tmp) - tmp) > 1E-6) ) {
+	while ( p < std::numeric_limits<T>::max_digits10 &&
+	        std::abs(std::round(val * e) - val * e) > 1E-6 ) {
+		e *= 10;
 		++p;
-		tmp *= 10;
 	}
 
 	return p;
