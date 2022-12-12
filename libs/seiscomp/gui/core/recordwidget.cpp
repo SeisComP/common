@@ -2178,8 +2178,8 @@ void RecordWidget::drawRecords(Stream *s, int slot) {
 		if ( _useFixedAmplitudeRange ) {
 			trace->yOffset = (_amplitudeRange[0] + _amplitudeRange[1])/2;
 
-			trace->yMin = _amplitudeRange[0]-trace->yOffset;
-			trace->yMax = _amplitudeRange[1]-trace->yOffset;
+			trace->yMin = _amplitudeRange[0] - trace->yOffset;
+			trace->yMax = _amplitudeRange[1] - trace->yOffset;
 		}
 		else if ( _useMinAmplitudeRange ) {
 			double minAmpl = std::min(trace->dyMin, _amplitudeRange[0]);
@@ -2187,18 +2187,18 @@ void RecordWidget::drawRecords(Stream *s, int slot) {
 
 			trace->yOffset = trace->dOffset;
 
-			trace->yMin = minAmpl-trace->dOffset;
-			trace->yMax = maxAmpl-trace->dOffset;
+			trace->yMin = minAmpl - trace->dOffset;
+			trace->yMax = maxAmpl - trace->dOffset;
 		}
 		else {
 			trace->yOffset = trace->dOffset;
 
-			trace->yMin = trace->dyMin-trace->dOffset;
-			trace->yMax = trace->dyMax-trace->dOffset;
+			trace->yMin = trace->dyMin - trace->dOffset;
+			trace->yMax = trace->dyMax - trace->dOffset;
 		}
 
-		trace->fyMin = magnify*trace->yMin;
-		trace->fyMax = magnify*trace->yMax;
+		trace->fyMin = magnify * trace->yMin;
+		trace->fyMax = magnify * trace->yMax;
 
 		createPolyline(slot, trace->poly, s->records[Stream::Raw], _pixelPerSecond,
 		               trace->fyMin, trace->fyMax, trace->yOffset, s->height-hMargin,
@@ -2226,8 +2226,8 @@ void RecordWidget::drawRecords(Stream *s, int slot) {
 		if ( _useFixedAmplitudeRange ) {
 			trace->yOffset = (_amplitudeRange[0] + _amplitudeRange[1])/2;
 
-			trace->yMin = _amplitudeRange[0]-trace->yOffset;
-			trace->yMax = _amplitudeRange[1]-trace->yOffset;
+			trace->yMin = _amplitudeRange[0] - trace->yOffset;
+			trace->yMax = _amplitudeRange[1] - trace->yOffset;
 		}
 		else if ( _useMinAmplitudeRange ) {
 			double minAmpl = std::min(trace->dyMin, _amplitudeRange[0]);
@@ -2235,18 +2235,18 @@ void RecordWidget::drawRecords(Stream *s, int slot) {
 
 			trace->yOffset = trace->dOffset;
 
-			trace->yMin = minAmpl-trace->dOffset;
-			trace->yMax = maxAmpl-trace->dOffset;
+			trace->yMin = minAmpl - trace->dOffset;
+			trace->yMax = maxAmpl - trace->dOffset;
 		}
 		else {
 			trace->yOffset = trace->dOffset;
 
-			trace->yMin = trace->dyMin-trace->dOffset;
-			trace->yMax = trace->dyMax-trace->dOffset;
+			trace->yMin = trace->dyMin - trace->dOffset;
+			trace->yMax = trace->dyMax - trace->dOffset;
 		}
 
-		trace->fyMin = magnify*trace->yMin;
-		trace->fyMax = magnify*trace->yMax;
+		trace->fyMin = magnify * trace->yMin;
+		trace->fyMax = magnify * trace->yMax;
 
 		createPolyline(slot, trace->poly, s->records[Stream::Filtered], _pixelPerSecond,
 		               trace->fyMin, trace->fyMax, trace->yOffset, s->height-hMargin,
