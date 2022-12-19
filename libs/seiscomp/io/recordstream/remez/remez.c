@@ -21,6 +21,7 @@
 
 
 #include "remez.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -121,7 +122,7 @@ void InitialGuess(int r, int Ext[], int gridsize)
    int i;
 
    for (i=0; i<=r; i++)
-      Ext[i] = i * (gridsize-1) / r;
+      Ext[i] = (int64_t)i * (int64_t)(gridsize-1) / r;
 }
 
 
