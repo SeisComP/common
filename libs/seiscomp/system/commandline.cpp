@@ -124,7 +124,6 @@ bool CommandLine::parse(int argc, char** argv) {
 	}
 	catch ( exception& e ) {
 		cout << "Error: " << e.what() << endl;
-		cout << *_options << endl;
 		return false;
 	}
 
