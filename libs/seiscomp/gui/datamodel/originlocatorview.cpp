@@ -6980,7 +6980,6 @@ void OriginLocatorView::tableArrivalsContextMenuRequested(const QPoint &pos) {
 	QMenu menu;
 
 	if ( !_ui->tableArrivals->selectionModel() ) return;
-
 	bool hasSelection = _ui->tableArrivals->selectionModel()->hasSelection();
 
 	QAction *actionInvertSelection = menu.addAction("Invert selection");
@@ -7028,6 +7027,7 @@ void OriginLocatorView::tableArrivalsContextMenuRequested(const QPoint &pos) {
 		actionDeleteSelectedArrivals->setEnabled(false);
 
 	menu.addSeparator();
+	QAction *actionCopyCellClipboard = menu.addAction("Copy cell to clipboard");
 	QAction *actionCopyToClipboard = menu.addAction("Copy selected rows to clipboard");
 
 	QAction *result = menu.exec(_ui->tableArrivals->mapToGlobal(pos));
@@ -7067,6 +7067,18 @@ void OriginLocatorView::tableArrivalsContextMenuRequested(const QPoint &pos) {
 		renameArrivals();
 	else if ( result == actionSelectDeactivated )
 		selectArrivals(DeactivatedArrivalFilter(_modelArrivalsProxy));
+	else if ( result == actionCopyCellClipboard ) {
+		QClipboard *cb = QApplication::clipboard();
+		if ( cb ) {
+			int column = _ui->tableArrivals->columnAt(pos.x());
+			int row = _ui->tableArrivals->rowAt(pos.y());
+			cb->setText(
+				_ui->tableArrivals->model()->data(
+					_ui->tableArrivals->model()->index(row, column)
+				).toString()
+			);
+		}
+	}
 	else if ( result == actionCopyToClipboard )
 		SCApp->copyToClipboard(_ui->tableArrivals);
 }
