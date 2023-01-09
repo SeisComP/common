@@ -156,6 +156,7 @@ MAKEENUM(
 	ArrivalListColumns,
 	EVALUES(
 		USED,
+		PUBLICID,
 		STATUS,
 		PHASE,
 		WEIGHT,
@@ -179,6 +180,7 @@ MAKEENUM(
 	),
 	ENAMES(
 		"Used",
+		"ID",
 		"Status",
 		"Phase",
 		"Weight",
@@ -259,6 +261,7 @@ QVariant colAligns[ArrivalListColumns::Quantity] = {
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
+	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
@@ -271,6 +274,7 @@ QVariant colAligns[ArrivalListColumns::Quantity] = {
 
 bool colVisibility[ArrivalListColumns::Quantity] = {
 	true,
+	false,
 	true,
 	true,
 	false,
@@ -1999,6 +2003,13 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 				}
 				break;
 
+			case PUBLICID:
+				pick = Pick::Find(a->pickID());
+				if ( pick ) {
+					return pick->publicID().c_str();
+				}
+				break;
+
 			default:
 				break;
 		}
@@ -2078,6 +2089,8 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 		pick = Pick::Cast(PublicObject::Find(a->pickID()));
 
 		if ( pick ) {
+			if ( l++ ) summary += '\n';
+			summary += pick->publicID().c_str();
 			if ( l++ ) summary += '\n';
 			summary += wfid2qstr(pick->waveformID());
 			if ( l++ ) summary += '\n';
