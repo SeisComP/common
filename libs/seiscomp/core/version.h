@@ -31,12 +31,12 @@ namespace Seiscomp {
 namespace Core {
 
 
-/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(15, 2, 0)) */
+/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(15, 3, 0)) */
 #define SC_API_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 
 /* SC_API_VERSION is (major << 16) + (minor << 8) + patch. */
-#define SC_API_VERSION 0x0F0200
+#define SC_API_VERSION 0x0F0300
 
 #define SC_API_VERSION_MAJOR(v) (v >> 16)
 #define SC_API_VERSION_MINOR(v) ((v >> 8) & 0xff)
@@ -46,6 +46,9 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
+ "15.3.0"   0x0F0300
+   - Added Seiscomp::Client::ThreadedQueue::isClosed
+
  "15.2.0"   0x0F0200
    - Added Seiscomp::Wired::peerCertificate
    - Added Seiscomp::Client::ThreadedQueue::reset
