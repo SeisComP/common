@@ -33,15 +33,16 @@
 #include <seiscomp/datamodel/utils.h>
 #include <seiscomp/math/vector3.h>
 #include <seiscomp/logging/log.h>
+
 #include <cmath>
-
-
 #include <cstring>
 #include <deque>
 #include <iostream>
 
+
 namespace Seiscomp {
 namespace DataModel {
+
 
 namespace {
 
@@ -325,7 +326,7 @@ Stream *getVerticalComponent(const SensorLocation *loc, const char *streamCode, 
 		try {
 			// Z is up vector. Since we do not care about the sign
 			// the maximum absolute value will be selected.
-			float z = (float)fabs(sin(-deg2rad(stream->dip())));
+			float z = static_cast<float>(std::abs(sin(-deg2rad(stream->dip()))));
 
 			if ( z > maxCorr ) {
 				maxCorr = z;
@@ -351,10 +352,22 @@ struct ComponentAxis {
 
 
 bool by_Z_desc_and_code_asc(const ComponentAxis &axis1, const ComponentAxis &axis2) {
-	if ( fabs(axis1.axis.z) > fabs(axis2.axis.z) ) return true;
-	if ( fabs(axis1.axis.z) < fabs(axis2.axis.z) ) return false;
-	if ( axis1.axis.z > axis2.axis.z ) return true;
-	if ( axis1.axis.z < axis2.axis.z ) return false;
+	if ( std::abs(axis1.axis.z) > std::abs(axis2.axis.z) ) {
+		return true;
+	}
+
+	if ( std::abs(axis1.axis.z) < std::abs(axis2.axis.z) ) {
+		return false;
+	}
+
+	if ( axis1.axis.z > axis2.axis.z ) {
+		return true;
+	}
+
+	if ( axis1.axis.z < axis2.axis.z ) {
+		return false;
+	}
+
 	return axis1.model->code() < axis2.model->code();
 }
 
@@ -382,29 +395,29 @@ bool getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const c
 		if ( stream->code().compare(0, len, streamCode) )
 			continue;
 
-		float azi=0, dip=0;
+		float azi = 0, dip = 0;
 		
 		try {
-			dip = (float) stream->dip();
+			dip = static_cast<float>(stream->dip());
 		}
 		catch ( ... ) {
 			continue;
 		}
 
 		try {
-			azi = (float) stream->azimuth();
+			azi = static_cast<float>(stream->azimuth());
 		}
 		catch ( ... ) {
 			// We allow the azimuth to be undefined
 			// in case the dip is -90 or +90 degrees.
-			double tolerance = 0.001;
-			if (fabs(fabs(dip)-90) > tolerance)
+			if ( std::abs(std::abs(dip) - 90.0f) > 0.001f ) {
 				continue;
+			}
 		}
 		
 		try {
-			dip = (float) deg2rad(-dip);
-			azi = (float) deg2rad(azi);
+			dip = static_cast<float>(deg2rad(-dip));
+			azi = static_cast<float>(deg2rad(azi));
 
 			Math::Vector3f axis;
 
