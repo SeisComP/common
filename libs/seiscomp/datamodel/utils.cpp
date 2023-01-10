@@ -382,9 +382,29 @@ bool getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const c
 		if ( stream->code().compare(0, len, streamCode) )
 			continue;
 
+		float azi=0, dip=0;
+		
 		try {
-			float azi = (float)deg2rad(stream->azimuth());
-			float dip = (float)deg2rad(-stream->dip());
+			dip = (float) stream->dip();
+		}
+		catch ( ... ) {
+			continue;
+		}
+
+		try {
+			azi = (float) stream->azimuth();
+		}
+		catch ( ... ) {
+			// We allow the azimuth to be undefined
+			// in case the dip is -90 or +90 degrees.
+			double tolerance = 0.001;
+			if (fabs(fabs(dip)-90) > tolerance)
+				continue;
+		}
+		
+		try {
+			dip = (float) deg2rad(-dip);
+			azi = (float) deg2rad(azi);
 
 			Math::Vector3f axis;
 
