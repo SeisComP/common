@@ -2041,6 +2041,7 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 
 			// And filter
 			for ( int i = 0; i < 3; ++i ) {
+				if ( traces[i].passthrough ) continue;
 				if ( !traces[i].filter.apply(comps[i].get()) ) {
 					comps[i] = nullptr;
 					if ( widget ) {
@@ -7951,6 +7952,7 @@ void PickerView::receivedRecord(Seiscomp::Record *rec) {
 	if ( i == 3 ) return;
 
 	bool firstRecord = label->data.traces[i].raw->empty();
+
 	if ( !label->data.traces[i].raw->feed(rec) ) return;
 
 	if ( label->recordViewItem() == SC_D.recordView->currentItem() )
