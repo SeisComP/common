@@ -52,6 +52,9 @@ namespace Core {
    - Renamed GenericMessage::AttachementType to GenericMessage::AttachmentType
    - Renamed GenericMessage::AttachementList to GenericMessage::AttachmentList
 
+ "15.3.0"   0x0F0300
+   - Added Seiscomp::Client::ThreadedQueue::isClosed
+
  "15.2.0"   0x0F0200
    - Added Seiscomp::Wired::peerCertificate
    - Added Seiscomp::Client::ThreadedQueue::reset
