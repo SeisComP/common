@@ -326,8 +326,8 @@ BOOST_AUTO_TEST_CASE(geojsonRegions) {
 	features.clear();
 	BOOST_REQUIRE(features.readFile("./data/geojson/feature.geojson", nullptr));
 	BOOST_REQUIRE_EQUAL(features.features().size(), 1);
-	BOOST_CHECK_EQUAL(f->subFeatures().size(), 1);
 	f = features.features()[0];
+	BOOST_CHECK_EQUAL(f->subFeatures().size(), 1);
 	BOOST_CHECK(!f->closedPolygon());
 	BOOST_CHECK_EQUAL(f->name(), "MultiPoint");
 	BOOST_CHECK_EQUAL(f->rank(), 1);
@@ -343,8 +343,8 @@ BOOST_AUTO_TEST_CASE(geojsonRegions) {
 	features.clear();
 	BOOST_REQUIRE(features.readFile("./data/geojson/feature-no-geometry.geojson", nullptr));
 	BOOST_REQUIRE_EQUAL(features.features().size(), 1);
-	BOOST_CHECK_EQUAL(f->subFeatures().size(), 0);
 	f = features.features()[0];
+	BOOST_CHECK_EQUAL(f->subFeatures().size(), 0);
 	BOOST_CHECK(!f->closedPolygon());
 	BOOST_CHECK_EQUAL(f->name(), "FeatureWithoutGeometry");
 	BOOST_CHECK_EQUAL(f->rank(), 2);
