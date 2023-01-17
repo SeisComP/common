@@ -595,6 +595,8 @@ class SC_SYSTEM_CORE_API Version {
 		MinorType minorTag() const { return (packed >> 0x08) & 0xff; }
 		PatchType patchTag() const { return packed & 0xff; }
 
+		PackType majorMinor() const { return packed & ~0xff; }
+
 		std::string toString() const;
 		bool fromString(const std::string &str);
 

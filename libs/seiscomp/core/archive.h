@@ -167,22 +167,22 @@ class Archive {
 
 		template <int major, int minor>
 		bool isLowerVersion() const {
-			return _version.packed <VersionPacker<major,minor,0>::Value;
+			return _version.majorMinor() < VersionPacker<major,minor,0>::Value;
 		}
 
 		template <int major, int minor>
 		bool isVersion() const {
-			return _version.packed == VersionPacker<major,minor,0>::Value;
+			return _version.majorMinor() == VersionPacker<major,minor,0>::Value;
 		}
 
 		template <int major, int minor>
 		bool isHigherVersion() const {
-			return _version.packed > VersionPacker<major,minor,0>::Value;
+			return _version.majorMinor() > VersionPacker<major,minor,0>::Value;
 		}
 
 		template <int major, int minor>
 		bool supportsVersion() const {
-			return _version.packed >= VersionPacker<major,minor,0>::Value;
+			return _version.majorMinor() >= VersionPacker<major,minor,0>::Value;
 		}
 
 
