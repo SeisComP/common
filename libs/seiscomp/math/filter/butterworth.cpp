@@ -354,7 +354,7 @@ void init_bw_biquads_inplace(Biquads &biquads, size_t order, double fmin, double
 			if ( fmax <= 0.0 )
 				throw std::runtime_error("High frequency cutoff must be greater than zero");
 
-			if ( fmax >= fnyquist )
+			if ( fmax > fnyquist )
 				throw std::runtime_error("High frequency cutoff must be lower than Nyquist frequency");
 
 			break;
@@ -363,7 +363,7 @@ void init_bw_biquads_inplace(Biquads &biquads, size_t order, double fmin, double
 			if ( fmin <= 0.0 )
 				throw std::runtime_error("Low frequency cutoff must be greater than zero");
 
-			if ( fmin >= fnyquist )
+			if ( fmin > fnyquist )
 				throw std::runtime_error("Low frequency cutoff must be lower than Nyquist frequency");
 
 			break;
