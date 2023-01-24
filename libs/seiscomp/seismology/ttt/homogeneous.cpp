@@ -195,12 +195,18 @@ Homogeneous::compute(const char *phase,
 	double Hdist = computeDistance(lat1, lon1, lat2, lon2);
 	double Vdist = dep1 + alt2/1000.;
 	double distance = sqrt(Hdist*Hdist + Vdist*Vdist); // [km]
-	double tt = distance / velocity; // [sec]
-	double takeOffAngle = atan2(Vdist, Hdist);
-	takeOffAngle += degToRad(90); // -90(down):+90(up) -> 0(down):180(up)
-	takeOffAngle = radToDeg(takeOffAngle);
 
-	return TravelTime(phase, tt, 0, 0, 0, takeOffAngle);
+	double tt = distance / velocity; // [sec]
+	double takeOffAngle = atan2(Vdist, Hdist); // [rad]
+
+	double dtdd = std::cos(takeOffAngle)             // [sec/deg]
+                / Math::Geo::km2deg(velocity); 
+	double dtdh = std::sin(takeOffAngle) / velocity; // [sec/km]
+
+	takeOffAngle = radToDeg(takeOffAngle);
+	takeOffAngle += 90; // -90(down):+90(up) -> 0(down):180(up)
+
+	return TravelTime(phase, tt, dtdd, dtdh, 0, takeOffAngle);
 }
 
 TravelTime
