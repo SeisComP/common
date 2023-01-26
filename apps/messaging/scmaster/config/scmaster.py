@@ -713,6 +713,7 @@ class Module(kernel.CoreModule):
                 print(
                     "    * {}".format(os.path.join(migrations, fname)), file=sys.stderr
                 )
+            print("    * seiscomp restart scmaster", file=sys.stderr)
 
             (vmaj, vmin, vrev) = (vtomaj, vtomin, vtorev)
 
