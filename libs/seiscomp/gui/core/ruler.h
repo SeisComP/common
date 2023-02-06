@@ -39,7 +39,8 @@ class SC_GUI_API Ruler : public QFrame
 		Ruler(QWidget* = 0, Qt::WindowFlags f = 0, Position pos = Bottom);
 		~Ruler() {}
 
-		void setPosition(Position);
+		void setPosition(Position, bool allowLabelTextRotation = false);
+		void setReverseDirection(bool reverse);
 		void setRange(double, double);
 		void setLimits(double leftValue, double rightValue, double minRange, double maxRange);
 		void setScale(double);
@@ -71,6 +72,17 @@ class SC_GUI_API Ruler : public QFrame
 		double dOfs() const { return _ofs; }
 
 		virtual QSize sizeHint() const;
+
+		//! Functions for position independent drawing
+		int rulerWidth() const { return isHorizontal() ? width() : height(); }
+		int rulerHeight() const { return isHorizontal() ? height() : width(); }
+
+		bool isBottom() const { return _position == Bottom; }
+		bool isTop() const { return _position == Top; }
+		bool isLeft() const { return _position == Left; }
+		bool isRight() const { return _position == Right; }
+		bool isHorizontal() const { return isBottom() || isTop(); }
+		bool isVertical() const { return !isHorizontal(); }
 
 
 	public slots:
@@ -123,15 +135,6 @@ class SC_GUI_API Ruler : public QFrame
 		virtual void drawSelection(QPainter &p);
 		void drawRangeSelection(QPainter &p);
 
-		//! Functions for position independent drawing
-		bool isBottom() const { return _position == Bottom; }
-		bool isTop() const { return _position == Top; }
-		bool isLeft() const { return _position == Left; }
-		bool isRight() const { return _position == Right; }
-		bool isHorizontal() const { return isBottom() || isTop(); }
-		bool isVertical() const { return !isHorizontal(); }
-		int rulerWidth() const { return isHorizontal() ? width() : height(); }
-		int rulerHeight() const { return isHorizontal() ? height() : width(); }
 		//! Converts ruler position to point in widget coordinates, rx is the
 		//! position on the ruler, ry the distance from the rulers baseline
 		QPoint r2wPos(int rx, int ry) const;
@@ -168,34 +171,35 @@ class SC_GUI_API Ruler : public QFrame
 
 		Position _position;
 
-		double  _ofs;
-		double  _scl,
-		        _min, _max,       // ruler range
-		        _da,              // annotation interval
-		        _dt,              // tick mark interval
+		double  _ofs{0};
+		double  _scl{1.0},
+		        _min{0}, _max{0},       // ruler range
+		        _da{-1},              // annotation interval
+		        _dt{-1},              // tick mark interval
 		        _limitLeft, _limitRight,
 		        _limitMinRange, _limitMaxRange;
-		int     _pos, _tickLong, _tickShort, _lc, _lineSpacing;
+		int     _pos{0}, _tickLong, _tickShort, _lc, _lineSpacing;
 		QVector<Handle> _selectionHandles;
-		int     _currentSelectionHandle;
+		int     _currentSelectionHandle{-1};
 
 		double  _drx[2];   // current intervals
 
-		int     _dragMode;
+		int     _dragMode{0};
 		double  _dragStart;
 		int     _iDragStart;
 
-		int     _rangemin, _rangemax;
+		int     _rangemin{0}, _rangemax{0};
 		bool    _rangeValid;
+
 		bool    _enableSelection;
-		bool    _enableRangeSelection;
-		bool    _emitRangeChangeWhileDragging;
-		bool    _hover;
-
-		bool    _wheelScale;
-		bool    _wheelTranslate;
-
-		bool    _autoScale;
+		bool    _enableRangeSelection{false};
+		bool    _enableLabelRotation{false};
+		bool    _leftToRight{true}; // Or bottomToTop
+		bool    _emitRangeChangeWhileDragging{false};
+		bool    _hover{false};
+		bool    _wheelScale{true};
+		bool    _wheelTranslate{true};
+		bool    _autoScale{false};
 };
 
 

@@ -51,6 +51,16 @@ namespace Core {
    - Removed Seiscomp::Math::round
    - Renamed GenericMessage::AttachementType to GenericMessage::AttachmentType
    - Renamed GenericMessage::AttachementList to GenericMessage::AttachmentList
+   - Made Seiscomp::Gui::Ruler::rulerWidth() public
+   - Made Seiscomp::Gui::Ruler::rulerHeight() public
+   - Made Seiscomp::Gui::Ruler::isBottom() public
+   - Made Seiscomp::Gui::Ruler::isTop() public
+   - Made Seiscomp::Gui::Ruler::isLeft() public
+   - Made Seiscomp::Gui::Ruler::isRight() public
+   - Made Seiscomp::Gui::Ruler::isHorizontal() public
+   - Made Seiscomp::Gui::Ruler::isVertical() public
+   - Add second parameter to Seiscomp::Gui::Ruler::setPosition(pos, allowRotation)
+   - Add Seiscomp::Gui::Ruler::setReverseDirection(bool)
 
  "15.3.0"   0x0F0300
    - Added Seiscomp::Client::ThreadedQueue::isClosed

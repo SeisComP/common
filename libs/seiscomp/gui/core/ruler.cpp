@@ -53,22 +53,6 @@ Ruler::Ruler(QWidget *parent, Qt::WindowFlags f, Position pos)
 	setLimits(-std::numeric_limits<double>::max(),
 	          std::numeric_limits<double>::max(),
 	          0, 0);
-	_scl = 1.;
-	_da = _dt = -1.;
-	_min = _max = 0.;
-	_pos = 0;
-	_ofs = 0;
-	_rangemin = _rangemax = 0;
-
-	_dragMode = 0;
-	_hover = false;
-	_autoScale = false;
-	_enableRangeSelection = false;
-	_currentSelectionHandle = -1;
-	_emitRangeChangeWhileDragging = false;
-
-	_wheelScale = _wheelTranslate = true;
-
 	setLineCount(1);
 	setSelectionHandleCount(2);
 	setSelectionEnabled(false);
@@ -133,8 +117,29 @@ void Ruler::setWheelEnabled(bool scale, bool translate) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Ruler::setPosition(Position pos) {
+void Ruler::setPosition(Position pos, bool allowLabelTextRotation) {
+	int h = isHorizontal() ? height() : width();
 	_position = pos;
+	_enableLabelRotation = allowLabelTextRotation;
+	if ( isHorizontal() ) {
+		setMinimumWidth(0);
+		setMaximumWidth(QWIDGETSIZE_MAX);
+		setFixedHeight(h);
+	}
+	else {
+		setFixedWidth(h);
+		setMinimumHeight(0);
+		setMaximumHeight(QWIDGETSIZE_MAX);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Ruler::setReverseDirection(bool reverse) {
+	_leftToRight = !reverse;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -447,8 +452,28 @@ void Ruler::drawRangeSelection(QPainter &p) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPoint Ruler::r2wPos(int rx, int ry) const {
-	return QPoint(isHorizontal() ? rx : isRight() ? ry : width()-ry-1,
-	              isVertical() ? height()-rx-1 : isBottom() ? ry : height()-ry-1);
+	return QPoint(
+		isHorizontal() ?
+			_leftToRight ?
+				rx
+				:
+				width() - 1 - rx
+			:
+			isRight() ?
+				ry
+				:
+				width() - ry - 1,
+		isVertical() ?
+			_leftToRight ?
+				height() - 1 - rx
+				:
+				rx
+			:
+			isBottom() ?
+				ry
+				:
+				height() - ry - 1
+	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -457,8 +482,28 @@ QPoint Ruler::r2wPos(int rx, int ry) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPoint Ruler::w2rPos(int x, int y) const {
-	return QPoint(isHorizontal() ? x : height()-y-1,
-		      isBottom() ? y : isTop() ? height()-y-1 : isRight() ? x : width()-x-1);
+	return QPoint(
+		isHorizontal() ?
+			_leftToRight ?
+				x
+				:
+				width() - 1 - x
+			:
+			_leftToRight ?
+				height() - y - 1
+				:
+				y,
+		isBottom() ?
+			y
+			:
+			isTop() ?
+				height() - y - 1
+				:
+				isRight() ?
+					x
+					:
+					width() - x - 1
+	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -467,10 +512,44 @@ QPoint Ruler::w2rPos(int x, int y) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QRect Ruler::r2wRect(int rx, int ry, int w, int h) const {
-	return QRect(isHorizontal() ? rx : isRight() ? ry : width()-ry-h-1,
-	             isVertical() ? height()-rx-w-1 : isBottom() ? ry : height()-ry-h-1,
-		     isHorizontal() ? w : h,
-		     isHorizontal() ? h : w);
+	return _leftToRight ?
+		QRect(
+			isHorizontal() ?
+				rx
+				:
+				isRight() ?
+					ry
+					:
+					width() - ry - h - 1,
+			isVertical() ?
+				height() - rx - w - 1
+				:
+				isBottom() ?
+					ry
+					:
+					height() - ry - h - 1,
+			isHorizontal() ? w : h,
+			isHorizontal() ? h : w
+		)
+		:
+		QRect(
+			isHorizontal() ?
+				width() - 1 - rx - w
+				:
+				isRight() ?
+					ry
+					:
+					width() - ry - h - 1,
+			isVertical() ?
+				rx
+				:
+				isBottom() ?
+					ry
+					:
+					height() - ry - h - 1,
+			isHorizontal() ? w : h,
+			isHorizontal() ? h : w
+		);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -482,15 +561,17 @@ bool Ruler::rulerDrawText(QPainter &p, int rx, int ry, const QString &text,
                           bool allowClip, bool allowRotate) const {
 	// Text width and height
 	auto fm = p.fontMetrics();
-	int tw = fm.boundingRect(text).width();
+	int tw = fm.boundingRect(text).width() * 5 / 4;
 	int th = fm.height();
 
 	// Top/left position of text box in widget coordinates
 	QPoint pos;
-	if ( isHorizontal() || allowRotate )
+	if ( isHorizontal() || allowRotate ) {
 		pos = r2wPos(rx-tw/2, isTop() || isLeft() ? ry+th : ry);
-	else
+	}
+	else {
 		pos = r2wPos(rx+th/2, isRight() ? ry : ry+tw);
+	}
 
 	bool rotate = isVertical() && allowRotate;
 	// Is text clipped?
@@ -507,8 +588,14 @@ bool Ruler::rulerDrawText(QPainter &p, int rx, int ry, const QString &text,
 	int flags = Qt::AlignCenter | Qt::AlignBottom;
 	if ( rotate ) {
 		p.save();
-		p.translate(pos);
-		p.rotate(-90);
+		if ( _leftToRight ) {
+			p.translate(pos);
+			p.rotate(-90);
+		}
+		else {
+			p.translate(pos + QPoint(th, 0));
+			p.rotate(90);
+		}
 		p.drawText(-tw, 0, 3 * tw, th, flags, text);
 		p.restore();
 	}
@@ -555,12 +642,15 @@ void Ruler::paintEvent(QPaintEvent *e) {
 
 	if ( _scl > 0 ) {
 		for ( int k = 0; k < 2; ++k ) {
-			if ( _drx[k] <= 0 ) continue; // no ticks/annotations
+			if ( _drx[k] <= 0 ) {
+				continue; // no ticks/annotations
+			}
 
 			double pos = _min + _ofs;
-			double cpos = floor((pos+_drx[k]*1E-2) / _drx[k])*_drx[k];
-			if ( fabs(cpos) < _drx[k]*1E-2 )
+			double cpos = floor((pos + _drx[k] * 1E-2) / _drx[k]) * _drx[k];
+			if ( fabs(cpos) < _drx[k] * 1E-2 ) {
 				cpos = 0.0;
+			}
 
 			double offset = cpos;
 			pos -= offset;
@@ -573,24 +663,27 @@ void Ruler::paintEvent(QPaintEvent *e) {
 			painter.drawLine(r2wPos(0, 0), r2wPos(rw, 0));
 
 			// Draw ticks and counts
-			int rx = (int)((cpos-pos)*_scl);
+			int rx = static_cast<int>((cpos - pos) * _scl);
 			QString str;
 			QVector<double> lastPos(_lc, 0);
+
 			while ( rx < rw ) {
 				painter.drawLine(r2wPos(rx, 0), r2wPos(rx, tick));
 				if ( k == 0 ) {
 					for ( int l = 0; l < _lc; ++l ) {
-						if ( getTickText(cpos+offset, lastPos[l], l, str) &&
-							 rulerDrawTextAtLine(painter, rx, l, str))
-							lastPos[l] = cpos+offset;
+						if ( getTickText(cpos + offset, lastPos[l], l, str) &&
+						     rulerDrawTextAtLine(painter, rx, l, str, false, _enableLabelRotation) ) {
+							lastPos[l] = cpos + offset;
+						}
 					}
 				}
 
 				cpos += _drx[k];
-				if ( fabs(cpos) < _drx[k]*1E-2 )
+				if ( fabs(cpos) < _drx[k] * 1E-2 ) {
 					cpos = 0.0;
+				}
 
-				rx = (int)((cpos-pos)*_scl);
+				rx = static_cast<int>((cpos - pos) * _scl);
 			}
 		}
 	}
