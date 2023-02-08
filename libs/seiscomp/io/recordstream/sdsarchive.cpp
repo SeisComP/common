@@ -351,9 +351,9 @@ void SDSArchive::close() {
 	lock_guard<mutex> l(_mutex);
 	_readFiles.clear();
 	_fnames = FileQueue();
-	_curiter = IndexList::iterator();
 	_streamSet.clear();
 	_orderedRequests.clear();
+	_curiter = _orderedRequests.begin();
 	_stime = _etime = Time();
 	_curidx = nullptr;
 	_closeRequested = true;
