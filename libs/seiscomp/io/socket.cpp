@@ -199,16 +199,6 @@ void Socket::open(const string& serverLocation) {
 		throw SocketException("Socket connect error");
 	}
 
-	int sockstat = checkSocket(10,0);
-	if ( sockstat < 0 ) {
-		_reconnect = true;
-		throw SocketException("Socket connect error");
-	}
-	else if ( sockstat == 0 ) {
-		_reconnect = true;
-		throw SocketException("Socket connect timeout");
-	}
-
 	SEISCOMP_DEBUG("%s connected", serverLocation.c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -270,63 +260,81 @@ void Socket::fillbuf() {
 		}
 	}
 
-	while ( 1 ) {
-		if ( _interrupt )
-			throw OperationInterrupted();
-
-		int remaining = _timeout?_timeout - int(_timer.elapsed()):1;
-		if ( remaining <= 0 ) {
-			SEISCOMP_DEBUG("Timeout");
-			_reconnect = true;
-			throw SocketTimeout();
-		}
-
-		struct timeval tv;
-		tv.tv_sec = remaining;
-		tv.tv_usec = 0;
-
-#ifndef WIN32
-		fd_set read_fds;
-		FD_ZERO(&read_fds);
-		FD_SET(_sockfd, &read_fds);
-		FD_SET(_pipefd[READ], &read_fds);
-		//SEISCOMP_DEBUG("Going into select with timeout of %d seconds",
-		//               _timeout?(int)tv.tv_sec:0);
-		int r = select(max(_pipefd[READ], _sockfd) + 1, &read_fds, nullptr, nullptr, _timeout?&tv:nullptr);
-#else
-		fd_set read_fds;
-		FD_ZERO(&read_fds);
-		FD_SET(_sockfd, &read_fds);
-
-		int r = select(_sockfd + 1, &read_fds, nullptr, nullptr, _timeout?&tv:nullptr);
-#endif
-
-		if ( r < 0 ) {
-#ifndef WIN32
-			if ( errno == EINTR )
-#else
-			int wsaerr = WSAGetLastError();
-			if ( wsaerr != WSAEINTR )
-#endif
-				continue;
-
-			SEISCOMP_ERROR("socket select: %s", strerror(errno));
-			throw SocketException("socket select error");
-		}
-		else if ( r == 0 ) {
-			SEISCOMP_DEBUG("Timeout");
-			_reconnect = true;
-			throw SocketTimeout();
-		}
-		else
-			break;
-	}
-
 	if ( _interrupt )
 		throw OperationInterrupted();
 
 	int byteCount = readImpl(_buf + _wp, BUFSIZE - _wp);
 	if ( byteCount < 0 ) {
+		if ( errno != EAGAIN && errno != EWOULDBLOCK ) {
+			_reconnect = true;
+			SEISCOMP_ERROR("socket read: %s", strerror(errno));
+			throw SocketException("socket read error");
+		}
+	}
+	else if ( byteCount == 0 ) {
+		_reconnect = true;
+		SEISCOMP_DEBUG("unexpected EOF while reading from socket");
+		throw SocketException("unexpected EOF while reading from socket");
+	}
+	else {
+		_wp += byteCount;
+		return;
+	}
+
+	int remaining = _timeout?_timeout - int(_timer.elapsed()):1;
+	if ( remaining <= 0 ) {
+		SEISCOMP_DEBUG("Timeout");
+		_reconnect = true;
+		throw SocketTimeout();
+	}
+
+	struct timeval tv;
+	tv.tv_sec = remaining;
+	tv.tv_usec = 0;
+
+#ifndef WIN32
+	fd_set read_fds;
+	FD_ZERO(&read_fds);
+	FD_SET(_sockfd, &read_fds);
+	FD_SET(_pipefd[READ], &read_fds);
+	// SEISCOMP_DEBUG("Going into select with timeout of %d seconds",
+	//                _timeout?(int)tv.tv_sec:0);
+	int r = select(max(_pipefd[READ], _sockfd) + 1, &read_fds, nullptr, nullptr, _timeout?&tv:nullptr);
+#else
+	fd_set read_fds;
+	FD_ZERO(&read_fds);
+	FD_SET(_sockfd, &read_fds);
+
+	int r = select(_sockfd + 1, &read_fds, nullptr, nullptr, _timeout?&tv:nullptr);
+#endif
+
+	if ( r < 0 ) {
+#ifndef WIN32
+		if ( errno == EINTR ) {
+#else
+		int wsaerr = WSAGetLastError();
+		if ( wsaerr == WSAEINTR ) {
+#endif
+			return;
+		}
+
+		SEISCOMP_ERROR("socket select: %s", strerror(errno));
+		throw SocketException("socket select error");
+	}
+	else if ( r == 0 ) {
+		SEISCOMP_DEBUG("Timeout");
+		_reconnect = true;
+		throw SocketTimeout();
+	}
+
+	if ( _interrupt )
+		throw OperationInterrupted();
+
+	byteCount = readImpl(_buf + _wp, BUFSIZE - _wp);
+	if ( byteCount < 0 ) {
+		if ( errno == EAGAIN || errno == EWOULDBLOCK ) {
+			return;
+		}
 		_reconnect = true;
 		SEISCOMP_ERROR("socket read: %s", strerror(errno));
 		throw SocketException("socket read error");
@@ -650,54 +658,6 @@ int Socket::addrSocket(char *hostname, char *port, struct sockaddr *addr, size_t
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int Socket::checkSocket(int secs, int usecs) {
-	int ret;
-	char testbuf[1];
-	fd_set fds;
-	struct timeval to;
-
-	FD_ZERO (&fds);
-	FD_SET ((unsigned int)_sockfd, &fds);
-
-	to.tv_sec = secs;
-	to.tv_usec = usecs;
-
-	/* Check write ability with select() */
-#ifndef WIN32
-	fd_set read_fds;
-	FD_ZERO(&read_fds);
-	FD_SET(_pipefd[READ], &read_fds);
-	ret = select(max(_pipefd[READ], _sockfd) + 1, &read_fds, &fds, nullptr, &to);
-#else
-	ret = select(_sockfd + 1, nullptr, &fds, nullptr, &to);
-#endif
-
-	// Socket interrupted?
-	if ( _interrupt )
-		throw OperationInterrupted();
-
-	if ( ret >= 0 )
-		ret = ret > 0 ? 1 : 0;
-	else
-		ret = -1;
-
-	/* Check read ability with recv() and
-	   MSG_PEEK -> leaving the character to read in the socket buffer */
-	if ( ret && (recv (_sockfd, testbuf, sizeof (char), MSG_PEEK)) <= 0 )
-#ifndef WIN32
-		ret = (errno == EWOULDBLOCK)?1:-1;
-#else
-		ret = (WSAGetLastError() == WSAEWOULDBLOCK)?1:-1;
-#endif
-
-	return ret;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Socket::poll() {
 	int num_bytes;
 	int ret = ioctl(_sockfd, FIONREAD, &num_bytes);
@@ -789,16 +749,23 @@ void SSLSocket::open(const std::string &serverLocation) {
 	BIO_set_conn_hostname(_bio, host.c_str());
 	BIO_set_conn_port(_bio, buf);
 
-	if ( BIO_do_connect(_bio) <= 0 )
+	if ( BIO_do_connect(_bio) <= 0 ) {
 		throw SocketException(string("error establishing secure socket "
 		                             "connection: ") +
 		                      ERR_error_string(ERR_get_error(), _errBuf));
+	}
 
-	if ( BIO_do_handshake(_bio) <= 0 )
+	if ( BIO_do_handshake(_bio) <= 0 ) {
 		throw SocketException(string("error performing SSL handshake: ") +
 		                      ERR_error_string(ERR_get_error(), _errBuf));
+	}
 
 	BIO_get_fd(_bio, &_sockfd);
+
+	if ( nonblockSocket() < 0 ) {
+		SEISCOMP_ERROR("Error setting socket to non-blocking (%s)",strerror(errno));
+		throw SocketException("Error setting socket to non-blocking");
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

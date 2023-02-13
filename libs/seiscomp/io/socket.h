@@ -95,12 +95,11 @@ class SC_SYSTEM_CORE_API Socket: public Seiscomp::Core::InterruptibleObject {
 		virtual int readImpl(char *buf, int count);
 		virtual int writeImpl(const char *buf, int count);
 
-	private:
+	protected:
 		void fillbuf();
 		int connectSocket(struct sockaddr *addr, int len);
 		int nonblockSocket();
 		int addrSocket(char *hostname, char *port, struct sockaddr *addr, size_t *len) ;
-		int checkSocket(int secs, int usecs);
 
 	protected:
 		int _sockfd;
