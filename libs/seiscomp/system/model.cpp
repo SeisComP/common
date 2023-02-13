@@ -29,6 +29,7 @@
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/regex.hpp>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -216,12 +217,12 @@ struct ParameterNameValidator : public SchemaVisitor {
 		}
 	}
 
-	virtual bool visit(const SchemaModule *module) {
+	bool visit(const SchemaModule *module) override {
 		++currentToken;
 		return currentToken <= tokens.size();
 	}
 
-	virtual bool visit(const SchemaGroup *group) {
+	bool visit(const SchemaGroup *group) override {
 		// Already validated?
 		if ( valid )
 			return false;
@@ -234,7 +235,7 @@ struct ParameterNameValidator : public SchemaVisitor {
 		return currentToken <= tokens.size();
 	}
 
-	virtual bool visit(const SchemaStructure *structure) {
+	bool visit(const SchemaStructure *structure) override {
 		// Already validated?
 		if ( valid )
 			return false;
@@ -243,12 +244,12 @@ struct ParameterNameValidator : public SchemaVisitor {
 		return currentToken <= tokens.size();
 	}
 
-	virtual void visit(const SchemaParameter *param) {
+	void visit(const SchemaParameter *param) override {
 		if ( !name.compare(tokens[currentToken-1].first, tokens[currentToken-1].second, param->name) )
 			valid = true;
 	}
 
-	virtual void finished() {
+	void finished() override {
 		if ( currentToken == 0 )
 			throw runtime_error("Unhandled schema traversal error");
 		--currentToken;
@@ -260,7 +261,6 @@ struct ParameterNameValidator : public SchemaVisitor {
 	size_t currentToken;
 	bool valid;
 };
-
 
 
 bool createPath(const std::string &pathname) {
@@ -340,6 +340,38 @@ time_t lastModificationTime(const string &fn) {
 
 
 bool loadGroup(Container *c, SchemaGroup *group, const std::string &prefix);
+Structure *loadStructure(SchemaStructure *struc, const std::string &prefix,
+                         const std::string &name);
+
+
+void populate(Container *container, SchemaParameters *params, const string &prefix) {
+	for ( size_t i = 0; i < params->parameterCount(); ++i ) {
+		SchemaParameter *pdef = params->parameter(i);
+		std::string paramName = prefix;
+		if ( !pdef->name.empty() )
+			paramName += "." + pdef->name;
+		ParameterPtr param = new Parameter(pdef, paramName);
+		container->add(param.get());
+	}
+
+	for ( size_t i = 0; i < params->groupCount(); ++i ) {
+		SchemaGroup *gdef = params->group(i);
+		loadGroup(container, gdef, prefix + ".");
+	}
+
+	for ( size_t i = 0; i < params->structureCount(); ++i ) {
+		SchemaStructure *gdef = params->structure(i);
+		if ( !gdef->isEmpty() ) {
+			container->addType(loadStructure(gdef, prefix + ".", ""));
+		}
+		else {
+			auto type = container->findStructureType(gdef->type);
+			if ( !type ) {
+				cerr << "E: " << gdef->type << " not found" << endl;
+			}
+		}
+	}
+}
 
 
 Structure *loadStructure(SchemaStructure *struc, const std::string &prefix,
@@ -348,24 +380,7 @@ Structure *loadStructure(SchemaStructure *struc, const std::string &prefix,
 
 	Structure *strucParam = new Structure(struc, namePrefix, name);
 
-	for ( size_t i = 0; i < struc->parameterCount(); ++i ) {
-		SchemaParameter *pdef = struc->parameter(i);
-		std::string paramName = namePrefix;
-		if ( !pdef->name.empty() )
-			paramName += "." + pdef->name;
-		ParameterPtr param = new Parameter(pdef, paramName);
-		strucParam->add(param.get());
-	}
-
-	for ( size_t i = 0; i < struc->groupCount(); ++i ) {
-		SchemaGroup *gdef = struc->group(i);
-		loadGroup(strucParam, gdef, namePrefix + ".");
-	}
-
-	for ( size_t i = 0; i < struc->structureCount(); ++i ) {
-		SchemaStructure *gdef = struc->structure(i);
-		strucParam->addType(loadStructure(gdef, namePrefix + ".", ""));
-	}
+	populate(strucParam, struc, namePrefix);
 
 	return strucParam;
 }
@@ -424,24 +439,12 @@ bool loadGroup(Container *c, SchemaGroup *group, const std::string &prefix) {
 		container = groupParam.get();
 	}
 
-	for ( size_t i = 0; i < group->parameterCount(); ++i ) {
-		SchemaParameter *pdef = group->parameter(i);
-		std::string paramName = namePrefix + "." + pdef->name;
-		ParameterPtr param = new Parameter(pdef, paramName);
-		container->add(param.get());
+	populate(container, group, namePrefix);
+
+	if ( groupParam ) {
+		c->add(groupParam.get());
 	}
 
-	for ( size_t i = 0; i < group->groupCount(); ++i ) {
-		SchemaGroup *gdef = group->group(i);
-		loadGroup(container, gdef, namePrefix + ".");
-	}
-
-	for ( size_t i = 0; i < group->structureCount(); ++i ) {
-		SchemaStructure *gdef = group->structure(i);
-		container->addType(loadStructure(gdef, namePrefix + ".", ""));
-	}
-
-	if ( groupParam ) c->add(groupParam.get());
 	return true;
 }
 
@@ -480,15 +483,16 @@ void updateContainer(Container *c, Model::SymbolFileMap &symbols, int stage) {
 
 			size_t pos = it->first.find('.', xpath.size());
 
-			string name;
-			if ( pos != string::npos )
-				name = it->first.substr(xpath.size(), pos-xpath.size());
-			else
-				name = it->first.substr(xpath.size());
+			if ( pos == string::npos ) {
 				// No dot means we are looking at a variable and not a struct
-				//continue;
+				continue;
+			}
 
-			if ( !name.empty() ) structs.insert(name);
+			string name = it->first.substr(xpath.size(), pos-xpath.size());
+
+			if ( !name.empty() ) {
+				structs.insert(name);
+			}
 		}
 
 		// Instantiate available structures
@@ -590,6 +594,37 @@ bool write(const Container *cont, const Section *sec, int stage,
 bool compareName(const BindingPtr &v1, const BindingPtr &v2) {
 	return v1->name < v2->name;
 }
+
+
+struct StructureExtender : public ModelVisitor {
+	StructureExtender(SchemaStructExtent *extension)
+	: extension(extension) {}
+
+	bool visit(Module *) override {
+		return true;
+	}
+
+	bool visit(Section *) override {
+		return true;
+	}
+
+	bool visit(Group *group) override {
+		for ( auto structure : group->structureTypes ) {
+			if ( structure->definition->type == extension->type ) {
+				structure->extensions.push_back(extension);
+			}
+		}
+		return true;
+	}
+
+	bool visit(Structure *) override {
+		return true;
+	}
+
+	void visit(Parameter*, bool) override { }
+
+	SchemaStructExtent *extension;
+};
 
 
 }
@@ -834,6 +869,13 @@ Structure *Structure::clone() const {
 Structure *Structure::instantiate(const char *n) const {
 	if ( !name.empty() ) return nullptr;
 	Structure *struc = loadStructure(definition, path, n);
+
+	for ( auto e : extensions ) {
+		if ( e->matchName.empty() || boost::regex_match(n, boost::regex(e->matchName)) ) {
+			populate(struc, e.get(), struc->path);
+		}
+	}
+
 	updateContainer(struc, Environment::CS_QUANTITY);
 
 	Model::SymbolFileMap symbols;
@@ -1913,11 +1955,18 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 				sec->add(param.get());
 			}
 
-			for ( size_t j = 0; j < plugin->parameters->groupCount(); ++j )
+			for ( size_t j = 0; j < plugin->parameters->groupCount(); ++j ) {
 				loadGroup(sec.get(), plugin->parameters->group(j), "");
+			}
 
-			for ( size_t j = 0; j < plugin->parameters->structureCount(); ++j )
+			for ( size_t j = 0; j < plugin->parameters->structureCount(); ++j ) {
 				sec->addType(loadStructure(plugin->parameters->structure(j), "", ""));
+			}
+
+			for ( auto e : plugin->parameters->structExtents ) {
+				StructureExtender v(e.get());
+				sec->accept(&v);
+			}
 		}
 	}
 

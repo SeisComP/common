@@ -239,8 +239,9 @@ class SC_SYSTEM_CORE_API Structure : public Container {
 	//  Attributes
 	// ------------------------------------------------------------------
 	public:
-		SchemaStructure  *definition;
-		std::string       name;
+		SchemaStructure                    *definition;
+		std::vector<SchemaStructExtentPtr>  extensions;
+		std::string                         name;
 };
 
 

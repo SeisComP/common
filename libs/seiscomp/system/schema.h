@@ -98,6 +98,8 @@ class SC_SYSTEM_CORE_API SchemaParameters : public Core::BaseObject {
 		SchemaStructure *structure(size_t i);
 		bool add(SchemaStructure *structure);
 
+		bool isEmpty() const;
+
 		void accept(SchemaVisitor *) const;
 
 
@@ -321,6 +323,25 @@ class SC_SYSTEM_CORE_API SchemaModule : public Core::BaseObject {
 };
 
 
+DEFINE_SMARTPOINTER(SchemaStructExtent);
+struct SchemaStructExtent : SchemaParameters {
+	DECLARE_SC_CLASS(SchemaStructExtent);
+
+	void serialize(Archive& ar);
+	std::string type;
+	std::string matchName;
+};
+
+
+DEFINE_SMARTPOINTER(SchemaPluginParameters);
+struct SchemaPluginParameters : SchemaParameters {
+	DECLARE_SC_CLASS(SchemaPluginParameters);
+
+	void serialize(Archive& ar);
+	std::vector<SchemaStructExtentPtr> structExtents;
+};
+
+
 DEFINE_SMARTPOINTER(SchemaPlugin);
 class SC_SYSTEM_CORE_API SchemaPlugin : public Core::BaseObject {
 	DECLARE_SC_CLASS(SchemaPlugin);
@@ -343,11 +364,11 @@ class SC_SYSTEM_CORE_API SchemaPlugin : public Core::BaseObject {
 	//  Attributes
 	// ------------------------------------------------------------------
 	public:
-		std::string              name;
-		std::vector<std::string> extends;
-		std::string              description;
-		SchemaParametersPtr      parameters;
-		SchemaSetupPtr           setup;
+		std::string               name;
+		std::vector<std::string>  extends;
+		std::string               description;
+		SchemaPluginParametersPtr parameters;
+		SchemaSetupPtr            setup;
 };
 
 
