@@ -307,7 +307,7 @@ void SchemaStructExtent::serialize(Archive& ar) {
 void SchemaPluginParameters::serialize(Archive& ar) {
 	SchemaParameters::serialize(ar);
 
-	ar & NAMED_OBJECT_HINT("extends-struct",
+	ar & NAMED_OBJECT_HINT("extend-struct",
 		Seiscomp::Core::Generic::containerMember(
 			structExtents,
 			[this](const SchemaStructExtentPtr &extension) {

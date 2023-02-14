@@ -12354,6 +12354,42 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Version_majorMinor(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Version *arg1 = (Seiscomp::Core::Version *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::Version::PackType result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Version, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Version_majorMinor" "', argument " "1"" of type '" "Seiscomp::Core::Version const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Version * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Core::Version::PackType)((Seiscomp::Core::Version const *)arg1)->majorMinor();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Version_toString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Version *arg1 = (Seiscomp::Core::Version *) 0 ;
@@ -47597,6 +47633,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "Version_majorTag", _wrap_Version_majorTag, METH_O, NULL},
 	 { "Version_minorTag", _wrap_Version_minorTag, METH_O, NULL},
 	 { "Version_patchTag", _wrap_Version_patchTag, METH_O, NULL},
+	 { "Version_majorMinor", _wrap_Version_majorMinor, METH_O, NULL},
 	 { "Version_toString", _wrap_Version_toString, METH_O, NULL},
 	 { "Version_fromString", _wrap_Version_fromString, METH_VARARGS, NULL},
 	 { "Version_pack", _wrap_Version_pack, METH_VARARGS, NULL},
