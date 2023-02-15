@@ -244,6 +244,11 @@ void Concurrent::acquiThread(RecordStream *rs) {
 	}
 
 	SEISCOMP_DEBUG("Finished acquisition thread");
+
+	if ( --_nthreads == 0) {
+		SEISCOMP_DEBUG("Closing record queue");
+		_queue.close();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -256,6 +261,12 @@ Record *Concurrent::next() {
 		_started = true;
 
 		lock_guard<mutex> lock(_mtx);
+
+		for ( size_t i = 0; i < _rsarray.size(); ++i) {
+			if ( _rsarray[i].second ) {
+				++_nthreads;
+			}
+		}
 
 		for ( size_t i = 0; i < _rsarray.size(); ++i) {
 			if ( _rsarray[i].second ) {

@@ -27,7 +27,7 @@
 #include <seiscomp/io/recordstream.h>
 #include <seiscomp/core.h>
 #include <seiscomp/client/queue.h>
-
+#include <atomic>
 
 namespace Seiscomp {
 namespace RecordStream {
@@ -108,7 +108,7 @@ class SC_SYSTEM_CORE_API Concurrent : public IO::RecordStream {
 		std::vector<RecordStreamItem>  _rsarray;
 
 	private:
-		int                            _nthreads{0};
+		std::atomic<int>               _nthreads{0};
 		std::list<std::thread>         _threads;
 		Client::ThreadedQueue<Record*> _queue;
 		std::mutex                     _mtx;
