@@ -204,6 +204,11 @@ bool Concurrent::setTimeout(int seconds) {
 void Concurrent::close() {
 	lock_guard<mutex> lock(_mtx);
 
+	if ( !_started ) {
+		SEISCOMP_DEBUG("Closing without being ever started");
+		return;
+	}
+
 	_queue.close();
 
 	for ( size_t i = 0; i < _rsarray.size(); ++i ) {
@@ -211,7 +216,11 @@ void Concurrent::close() {
 	}
 
 	for ( auto &&thread : _threads ) {
+		// Since each threads needs to acquire the mutex it must be released
+		// here temporarily.
+		_mtx.unlock();
 		thread.join();
+		_mtx.lock();
 	}
 
 	SEISCOMP_DEBUG("All acquisition threads finished");
@@ -233,8 +242,9 @@ void Concurrent::acquiThread(RecordStream *rs) {
 	Record *rec;
 
 	try {
-		while ( (rec = rs->next()) )
+		while ( (rec = rs->next()) ) {
 			_queue.push(rec);
+		}
 	}
 	catch ( OperationInterrupted &e ) {
 		SEISCOMP_DEBUG("Interrupted acquisition thread, msg: '%s'", e.what());
@@ -244,6 +254,13 @@ void Concurrent::acquiThread(RecordStream *rs) {
 	}
 
 	SEISCOMP_DEBUG("Finished acquisition thread");
+
+	_mtx.lock();
+	if ( --_nthreads == 0) {
+		SEISCOMP_DEBUG("Closing record queue");
+		_queue.close();
+	}
+	_mtx.unlock();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -259,6 +276,7 @@ Record *Concurrent::next() {
 
 		for ( size_t i = 0; i < _rsarray.size(); ++i) {
 			if ( _rsarray[i].second ) {
+				++_nthreads;
 				_rsarray[i].first->setDataType(_dataType);
 				_rsarray[i].first->setDataHint(_hint);
 				_threads.push_back(
