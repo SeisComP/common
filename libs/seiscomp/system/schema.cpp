@@ -300,7 +300,7 @@ void SchemaModule::serialize(Archive& ar) {
 void SchemaStructExtent::serialize(Archive& ar) {
 	ar & NAMED_OBJECT_HINT("type", type, Archive::XML_MANDATORY);
 	ar & NAMED_OBJECT("match-name", matchName);
-	SchemaParameters::serialize(ar);
+	SchemaPluginParameters::serialize(ar);
 }
 
 

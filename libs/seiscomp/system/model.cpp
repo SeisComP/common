@@ -377,11 +377,8 @@ void populate(Container *container, SchemaParameters *params, const string &pref
 Structure *loadStructure(SchemaStructure *struc, const std::string &prefix,
                          const std::string &name) {
 	std::string namePrefix = prefix + name;
-
 	Structure *strucParam = new Structure(struc, namePrefix, name);
-
 	populate(strucParam, struc, namePrefix);
-
 	return strucParam;
 }
 
@@ -625,6 +622,14 @@ struct StructureExtender : public ModelVisitor {
 
 	SchemaStructExtent *extension;
 };
+
+
+void injectExtensions(Container *container, SchemaPluginParameters *pluginParams) {
+	for ( auto e : pluginParams->structExtents ) {
+		StructureExtender v(e.get());
+		container->accept(&v);
+	}
+}
 
 
 }
@@ -873,6 +878,7 @@ Structure *Structure::instantiate(const char *n) const {
 	for ( auto e : extensions ) {
 		if ( e->matchName.empty() || boost::regex_match(n, boost::regex(e->matchName)) ) {
 			populate(struc, e.get(), struc->path);
+			injectExtensions(struc, e.get());
 		}
 	}
 
@@ -1963,10 +1969,7 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 				sec->addType(loadStructure(plugin->parameters->structure(j), "", ""));
 			}
 
-			for ( auto e : plugin->parameters->structExtents ) {
-				StructureExtender v(e.get());
-				sec->accept(&v);
-			}
+			injectExtensions(sec.get(), plugin->parameters.get());
 		}
 	}
 

@@ -324,21 +324,21 @@ class SC_SYSTEM_CORE_API SchemaModule : public Core::BaseObject {
 
 
 DEFINE_SMARTPOINTER(SchemaStructExtent);
-struct SchemaStructExtent : SchemaParameters {
-	DECLARE_SC_CLASS(SchemaStructExtent);
-
-	void serialize(Archive& ar);
-	std::string type;
-	std::string matchName;
-};
-
-
 DEFINE_SMARTPOINTER(SchemaPluginParameters);
 struct SchemaPluginParameters : SchemaParameters {
 	DECLARE_SC_CLASS(SchemaPluginParameters);
 
 	void serialize(Archive& ar);
 	std::vector<SchemaStructExtentPtr> structExtents;
+};
+
+
+struct SchemaStructExtent : SchemaPluginParameters {
+	DECLARE_SC_CLASS(SchemaStructExtent);
+
+	void serialize(Archive& ar);
+	std::string type;
+	std::string matchName;
 };
 
 
