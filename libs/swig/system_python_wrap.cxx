@@ -22018,6 +22018,557 @@ SWIGINTERN PyObject *SchemaModule_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObj
   return SWIG_Python_InitShadowInstance(args);
 }
 
+SWIGINTERN PyObject *_wrap_SchemaPluginParameters_ClassName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  char *result = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "SchemaPluginParameters_ClassName", 0, 0, 0)) SWIG_fail;
+  {
+    try {
+      result = (char *)Seiscomp::System::SchemaPluginParameters::ClassName();
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaPluginParameters_TypeInfo(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::RTTI *result = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "SchemaPluginParameters_TypeInfo", 0, 0, 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Core::RTTI *) &Seiscomp::System::SchemaPluginParameters::TypeInfo();
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__RTTI, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaPluginParameters_className(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::SchemaPluginParameters *arg1 = (Seiscomp::System::SchemaPluginParameters *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  char *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_className" "', argument " "1"" of type '" "Seiscomp::System::SchemaPluginParameters const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::SchemaPluginParameters * >(argp1);
+  {
+    try {
+      result = (char *)((Seiscomp::System::SchemaPluginParameters const *)arg1)->className();
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaPluginParameters_typeInfo(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::SchemaPluginParameters *arg1 = (Seiscomp::System::SchemaPluginParameters *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::RTTI *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_typeInfo" "', argument " "1"" of type '" "Seiscomp::System::SchemaPluginParameters const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::SchemaPluginParameters * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Core::RTTI *) &((Seiscomp::System::SchemaPluginParameters const *)arg1)->typeInfo();
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__RTTI, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaPluginParameters_Cast__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::BaseObject *arg1 = (Seiscomp::Core::BaseObject *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  Seiscomp::System::SchemaPluginParameters *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__BaseObject, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObject *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::BaseObject * >(argp1);
+  {
+    try {
+      result = (Seiscomp::System::SchemaPluginParameters *)Seiscomp::System::SchemaPluginParameters::Cast(arg1);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaPluginParameters_ConstCast__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::BaseObject *arg1 = (Seiscomp::Core::BaseObject *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  Seiscomp::System::SchemaPluginParameters *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__BaseObject, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObject const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::BaseObject * >(argp1);
+  {
+    try {
+      result = (Seiscomp::System::SchemaPluginParameters *)Seiscomp::System::SchemaPluginParameters::ConstCast((Seiscomp::Core::BaseObject const *)arg1);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaPluginParameters_Cast__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  void *argp1 ;
+  int res1 = 0 ;
+  Seiscomp::System::SchemaPluginParameters *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  {
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
+    }  
+    if (!argp1) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SchemaPluginParameters_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'");
+    } else {
+      Seiscomp::Core::BaseObjectPtr * temp = reinterpret_cast< Seiscomp::Core::BaseObjectPtr * >(argp1);
+      arg1 = *temp;
+      if (SWIG_IsNewObj(res1)) delete temp;
+    }
+  }
+  {
+    try {
+      result = (Seiscomp::System::SchemaPluginParameters *)Seiscomp::System::SchemaPluginParameters::Cast(arg1);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, SWIG_POINTER_OWN |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaPluginParameters_Cast(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[2] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "SchemaPluginParameters_Cast", 0, 1, argv))) SWIG_fail;
+  --argc;
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__BaseObject, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_SchemaPluginParameters_Cast__SWIG_0(self, argc, argv);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_SchemaPluginParameters_Cast__SWIG_1(self, argc, argv);
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'SchemaPluginParameters_Cast'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::System::SchemaPluginParameters::Cast(Seiscomp::Core::BaseObject *)\n"
+    "    Seiscomp::System::SchemaPluginParameters::Cast(Seiscomp::Core::BaseObjectPtr)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaPluginParameters_ConstCast__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  void *argp1 ;
+  int res1 = 0 ;
+  Seiscomp::System::SchemaPluginParameters *result = 0 ;
+  
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  {
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
+    }  
+    if (!argp1) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SchemaPluginParameters_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'");
+    } else {
+      Seiscomp::Core::BaseObjectCPtr * temp = reinterpret_cast< Seiscomp::Core::BaseObjectCPtr * >(argp1);
+      arg1 = *temp;
+      if (SWIG_IsNewObj(res1)) delete temp;
+    }
+  }
+  {
+    try {
+      result = (Seiscomp::System::SchemaPluginParameters *)Seiscomp::System::SchemaPluginParameters::ConstCast(arg1);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaPluginParameters_ConstCast(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[2] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "SchemaPluginParameters_ConstCast", 0, 1, argv))) SWIG_fail;
+  --argc;
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__BaseObject, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_SchemaPluginParameters_ConstCast__SWIG_0(self, argc, argv);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_SchemaPluginParameters_ConstCast__SWIG_1(self, argc, argv);
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'SchemaPluginParameters_ConstCast'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::System::SchemaPluginParameters::ConstCast(Seiscomp::Core::BaseObject const *)\n"
+    "    Seiscomp::System::SchemaPluginParameters::ConstCast(Seiscomp::Core::BaseObjectCPtr)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaPluginParameters_serialize(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::SchemaPluginParameters *arg1 = (Seiscomp::System::SchemaPluginParameters *) 0 ;
+  Seiscomp::Core::BaseObject::Archive *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "SchemaPluginParameters_serialize", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_serialize" "', argument " "1"" of type '" "Seiscomp::System::SchemaPluginParameters *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::SchemaPluginParameters * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SchemaPluginParameters_serialize" "', argument " "2"" of type '" "Seiscomp::Core::BaseObject::Archive &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SchemaPluginParameters_serialize" "', argument " "2"" of type '" "Seiscomp::Core::BaseObject::Archive &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::BaseObject::Archive * >(argp2);
+  {
+    try {
+      (arg1)->serialize(*arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaPluginParameters_structExtents_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::SchemaPluginParameters *arg1 = (Seiscomp::System::SchemaPluginParameters *) 0 ;
+  std::vector< Seiscomp::System::SchemaStructExtentPtr,std::allocator< Seiscomp::System::SchemaStructExtentPtr > > *arg2 = (std::vector< Seiscomp::System::SchemaStructExtentPtr,std::allocator< Seiscomp::System::SchemaStructExtentPtr > > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "SchemaPluginParameters_structExtents_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_structExtents_set" "', argument " "1"" of type '" "Seiscomp::System::SchemaPluginParameters *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::SchemaPluginParameters * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_std__vectorT_Seiscomp__Core__SmartPointerT_Seiscomp__System__SchemaStructExtent_t__Impl_std__allocatorT_Seiscomp__Core__SmartPointerT_Seiscomp__System__SchemaStructExtent_t__Impl_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SchemaPluginParameters_structExtents_set" "', argument " "2"" of type '" "std::vector< Seiscomp::System::SchemaStructExtentPtr,std::allocator< Seiscomp::System::SchemaStructExtentPtr > > *""'"); 
+  }
+  arg2 = reinterpret_cast< std::vector< Seiscomp::System::SchemaStructExtentPtr,std::allocator< Seiscomp::System::SchemaStructExtentPtr > > * >(argp2);
+  if (arg1) (arg1)->structExtents = *arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaPluginParameters_structExtents_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::SchemaPluginParameters *arg1 = (Seiscomp::System::SchemaPluginParameters *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::vector< Seiscomp::System::SchemaStructExtentPtr,std::allocator< Seiscomp::System::SchemaStructExtentPtr > > *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_structExtents_get" "', argument " "1"" of type '" "Seiscomp::System::SchemaPluginParameters *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::SchemaPluginParameters * >(argp1);
+  result = (std::vector< Seiscomp::System::SchemaStructExtentPtr,std::allocator< Seiscomp::System::SchemaStructExtentPtr > > *)& ((arg1)->structExtents);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_Seiscomp__Core__SmartPointerT_Seiscomp__System__SchemaStructExtent_t__Impl_std__allocatorT_Seiscomp__Core__SmartPointerT_Seiscomp__System__SchemaStructExtent_t__Impl_t_t, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_SchemaPluginParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::SchemaPluginParameters *result = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "new_SchemaPluginParameters", 0, 0, 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::System::SchemaPluginParameters *)new Seiscomp::System::SchemaPluginParameters();
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, SWIG_POINTER_NEW |  0 );
+  if (result) result->incrementReferenceCount();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_SchemaPluginParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::SchemaPluginParameters *arg1 = (Seiscomp::System::SchemaPluginParameters *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_SchemaPluginParameters" "', argument " "1"" of type '" "Seiscomp::System::SchemaPluginParameters *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::SchemaPluginParameters * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *SchemaPluginParameters_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *SchemaPluginParameters_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
 SWIGINTERN PyObject *_wrap_SchemaStructExtent_ClassName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   char *result = 0 ;
@@ -22632,557 +23183,6 @@ SWIGINTERN PyObject *SchemaStructExtent_swigregister(PyObject *SWIGUNUSEDPARM(se
 }
 
 SWIGINTERN PyObject *SchemaStructExtent_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  return SWIG_Python_InitShadowInstance(args);
-}
-
-SWIGINTERN PyObject *_wrap_SchemaPluginParameters_ClassName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  char *result = 0 ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "SchemaPluginParameters_ClassName", 0, 0, 0)) SWIG_fail;
-  {
-    try {
-      result = (char *)Seiscomp::System::SchemaPluginParameters::ClassName();
-    }
-    catch ( const Swig::DirectorException &e ) {
-      SWIG_fail;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_SchemaPluginParameters_TypeInfo(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::RTTI *result = 0 ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "SchemaPluginParameters_TypeInfo", 0, 0, 0)) SWIG_fail;
-  {
-    try {
-      result = (Seiscomp::Core::RTTI *) &Seiscomp::System::SchemaPluginParameters::TypeInfo();
-    }
-    catch ( const Swig::DirectorException &e ) {
-      SWIG_fail;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__RTTI, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_SchemaPluginParameters_className(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::System::SchemaPluginParameters *arg1 = (Seiscomp::System::SchemaPluginParameters *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  char *result = 0 ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_className" "', argument " "1"" of type '" "Seiscomp::System::SchemaPluginParameters const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::System::SchemaPluginParameters * >(argp1);
-  {
-    try {
-      result = (char *)((Seiscomp::System::SchemaPluginParameters const *)arg1)->className();
-    }
-    catch ( const Swig::DirectorException &e ) {
-      SWIG_fail;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_SchemaPluginParameters_typeInfo(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::System::SchemaPluginParameters *arg1 = (Seiscomp::System::SchemaPluginParameters *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  Seiscomp::Core::RTTI *result = 0 ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_typeInfo" "', argument " "1"" of type '" "Seiscomp::System::SchemaPluginParameters const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::System::SchemaPluginParameters * >(argp1);
-  {
-    try {
-      result = (Seiscomp::Core::RTTI *) &((Seiscomp::System::SchemaPluginParameters const *)arg1)->typeInfo();
-    }
-    catch ( const Swig::DirectorException &e ) {
-      SWIG_fail;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__RTTI, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_SchemaPluginParameters_Cast__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::BaseObject *arg1 = (Seiscomp::Core::BaseObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  Seiscomp::System::SchemaPluginParameters *result = 0 ;
-  
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__BaseObject, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObject *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::BaseObject * >(argp1);
-  {
-    try {
-      result = (Seiscomp::System::SchemaPluginParameters *)Seiscomp::System::SchemaPluginParameters::Cast(arg1);
-    }
-    catch ( const Swig::DirectorException &e ) {
-      SWIG_fail;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, SWIG_POINTER_OWN |  0 );
-  if (result) result->incrementReferenceCount();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_SchemaPluginParameters_ConstCast__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::BaseObject *arg1 = (Seiscomp::Core::BaseObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  Seiscomp::System::SchemaPluginParameters *result = 0 ;
-  
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__BaseObject, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObject const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::BaseObject * >(argp1);
-  {
-    try {
-      result = (Seiscomp::System::SchemaPluginParameters *)Seiscomp::System::SchemaPluginParameters::ConstCast((Seiscomp::Core::BaseObject const *)arg1);
-    }
-    catch ( const Swig::DirectorException &e ) {
-      SWIG_fail;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_SchemaPluginParameters_Cast__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  Seiscomp::System::SchemaPluginParameters *result = 0 ;
-  
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SchemaPluginParameters_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'");
-    } else {
-      Seiscomp::Core::BaseObjectPtr * temp = reinterpret_cast< Seiscomp::Core::BaseObjectPtr * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  {
-    try {
-      result = (Seiscomp::System::SchemaPluginParameters *)Seiscomp::System::SchemaPluginParameters::Cast(arg1);
-    }
-    catch ( const Swig::DirectorException &e ) {
-      SWIG_fail;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, SWIG_POINTER_OWN |  0 );
-  if (result) result->incrementReferenceCount();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_SchemaPluginParameters_Cast(PyObject *self, PyObject *args) {
-  Py_ssize_t argc;
-  PyObject *argv[2] = {
-    0
-  };
-  
-  if (!(argc = SWIG_Python_UnpackTuple(args, "SchemaPluginParameters_Cast", 0, 1, argv))) SWIG_fail;
-  --argc;
-  if (argc == 1) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__BaseObject, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_SchemaPluginParameters_Cast__SWIG_0(self, argc, argv);
-    }
-  }
-  if (argc == 1) {
-    int _v;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_SchemaPluginParameters_Cast__SWIG_1(self, argc, argv);
-    }
-  }
-  
-fail:
-  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'SchemaPluginParameters_Cast'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::System::SchemaPluginParameters::Cast(Seiscomp::Core::BaseObject *)\n"
-    "    Seiscomp::System::SchemaPluginParameters::Cast(Seiscomp::Core::BaseObjectPtr)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_SchemaPluginParameters_ConstCast__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  Seiscomp::System::SchemaPluginParameters *result = 0 ;
-  
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SchemaPluginParameters_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'");
-    } else {
-      Seiscomp::Core::BaseObjectCPtr * temp = reinterpret_cast< Seiscomp::Core::BaseObjectCPtr * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  {
-    try {
-      result = (Seiscomp::System::SchemaPluginParameters *)Seiscomp::System::SchemaPluginParameters::ConstCast(arg1);
-    }
-    catch ( const Swig::DirectorException &e ) {
-      SWIG_fail;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_SchemaPluginParameters_ConstCast(PyObject *self, PyObject *args) {
-  Py_ssize_t argc;
-  PyObject *argv[2] = {
-    0
-  };
-  
-  if (!(argc = SWIG_Python_UnpackTuple(args, "SchemaPluginParameters_ConstCast", 0, 1, argv))) SWIG_fail;
-  --argc;
-  if (argc == 1) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__BaseObject, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_SchemaPluginParameters_ConstCast__SWIG_0(self, argc, argv);
-    }
-  }
-  if (argc == 1) {
-    int _v;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_SchemaPluginParameters_ConstCast__SWIG_1(self, argc, argv);
-    }
-  }
-  
-fail:
-  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'SchemaPluginParameters_ConstCast'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::System::SchemaPluginParameters::ConstCast(Seiscomp::Core::BaseObject const *)\n"
-    "    Seiscomp::System::SchemaPluginParameters::ConstCast(Seiscomp::Core::BaseObjectCPtr)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_SchemaPluginParameters_serialize(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::System::SchemaPluginParameters *arg1 = (Seiscomp::System::SchemaPluginParameters *) 0 ;
-  Seiscomp::Core::BaseObject::Archive *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "SchemaPluginParameters_serialize", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_serialize" "', argument " "1"" of type '" "Seiscomp::System::SchemaPluginParameters *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::System::SchemaPluginParameters * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SchemaPluginParameters_serialize" "', argument " "2"" of type '" "Seiscomp::Core::BaseObject::Archive &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SchemaPluginParameters_serialize" "', argument " "2"" of type '" "Seiscomp::Core::BaseObject::Archive &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::BaseObject::Archive * >(argp2);
-  {
-    try {
-      (arg1)->serialize(*arg2);
-    }
-    catch ( const Swig::DirectorException &e ) {
-      SWIG_fail;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_SchemaPluginParameters_structExtents_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::System::SchemaPluginParameters *arg1 = (Seiscomp::System::SchemaPluginParameters *) 0 ;
-  std::vector< Seiscomp::System::SchemaStructExtentPtr,std::allocator< Seiscomp::System::SchemaStructExtentPtr > > *arg2 = (std::vector< Seiscomp::System::SchemaStructExtentPtr,std::allocator< Seiscomp::System::SchemaStructExtentPtr > > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "SchemaPluginParameters_structExtents_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_structExtents_set" "', argument " "1"" of type '" "Seiscomp::System::SchemaPluginParameters *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::System::SchemaPluginParameters * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_std__vectorT_Seiscomp__Core__SmartPointerT_Seiscomp__System__SchemaStructExtent_t__Impl_std__allocatorT_Seiscomp__Core__SmartPointerT_Seiscomp__System__SchemaStructExtent_t__Impl_t_t, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SchemaPluginParameters_structExtents_set" "', argument " "2"" of type '" "std::vector< Seiscomp::System::SchemaStructExtentPtr,std::allocator< Seiscomp::System::SchemaStructExtentPtr > > *""'"); 
-  }
-  arg2 = reinterpret_cast< std::vector< Seiscomp::System::SchemaStructExtentPtr,std::allocator< Seiscomp::System::SchemaStructExtentPtr > > * >(argp2);
-  if (arg1) (arg1)->structExtents = *arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_SchemaPluginParameters_structExtents_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::System::SchemaPluginParameters *arg1 = (Seiscomp::System::SchemaPluginParameters *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  std::vector< Seiscomp::System::SchemaStructExtentPtr,std::allocator< Seiscomp::System::SchemaStructExtentPtr > > *result = 0 ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaPluginParameters_structExtents_get" "', argument " "1"" of type '" "Seiscomp::System::SchemaPluginParameters *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::System::SchemaPluginParameters * >(argp1);
-  result = (std::vector< Seiscomp::System::SchemaStructExtentPtr,std::allocator< Seiscomp::System::SchemaStructExtentPtr > > *)& ((arg1)->structExtents);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_Seiscomp__Core__SmartPointerT_Seiscomp__System__SchemaStructExtent_t__Impl_std__allocatorT_Seiscomp__Core__SmartPointerT_Seiscomp__System__SchemaStructExtent_t__Impl_t_t, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_SchemaPluginParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::System::SchemaPluginParameters *result = 0 ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "new_SchemaPluginParameters", 0, 0, 0)) SWIG_fail;
-  {
-    try {
-      result = (Seiscomp::System::SchemaPluginParameters *)new Seiscomp::System::SchemaPluginParameters();
-    }
-    catch ( const Swig::DirectorException &e ) {
-      SWIG_fail;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, SWIG_POINTER_NEW |  0 );
-  if (result) result->incrementReferenceCount();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_delete_SchemaPluginParameters(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::System::SchemaPluginParameters *arg1 = (Seiscomp::System::SchemaPluginParameters *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_SchemaPluginParameters" "', argument " "1"" of type '" "Seiscomp::System::SchemaPluginParameters *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::System::SchemaPluginParameters * >(argp1);
-  {
-    try {
-      if (arg1) arg1->decrementReferenceCount();
-    }
-    catch ( const Swig::DirectorException &e ) {
-      SWIG_fail;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *SchemaPluginParameters_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *obj;
-  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__System__SchemaPluginParameters, SWIG_NewClientData(obj));
-  return SWIG_Py_Void();
-}
-
-SWIGINTERN PyObject *SchemaPluginParameters_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   return SWIG_Python_InitShadowInstance(args);
 }
 
@@ -49031,6 +49031,19 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_SchemaModule", _wrap_delete_SchemaModule, METH_O, NULL},
 	 { "SchemaModule_swigregister", SchemaModule_swigregister, METH_O, NULL},
 	 { "SchemaModule_swiginit", SchemaModule_swiginit, METH_VARARGS, NULL},
+	 { "SchemaPluginParameters_ClassName", _wrap_SchemaPluginParameters_ClassName, METH_NOARGS, NULL},
+	 { "SchemaPluginParameters_TypeInfo", _wrap_SchemaPluginParameters_TypeInfo, METH_NOARGS, NULL},
+	 { "SchemaPluginParameters_className", _wrap_SchemaPluginParameters_className, METH_O, NULL},
+	 { "SchemaPluginParameters_typeInfo", _wrap_SchemaPluginParameters_typeInfo, METH_O, NULL},
+	 { "SchemaPluginParameters_Cast", _wrap_SchemaPluginParameters_Cast, METH_VARARGS, NULL},
+	 { "SchemaPluginParameters_ConstCast", _wrap_SchemaPluginParameters_ConstCast, METH_VARARGS, NULL},
+	 { "SchemaPluginParameters_serialize", _wrap_SchemaPluginParameters_serialize, METH_VARARGS, NULL},
+	 { "SchemaPluginParameters_structExtents_set", _wrap_SchemaPluginParameters_structExtents_set, METH_VARARGS, NULL},
+	 { "SchemaPluginParameters_structExtents_get", _wrap_SchemaPluginParameters_structExtents_get, METH_O, NULL},
+	 { "new_SchemaPluginParameters", _wrap_new_SchemaPluginParameters, METH_NOARGS, NULL},
+	 { "delete_SchemaPluginParameters", _wrap_delete_SchemaPluginParameters, METH_O, NULL},
+	 { "SchemaPluginParameters_swigregister", SchemaPluginParameters_swigregister, METH_O, NULL},
+	 { "SchemaPluginParameters_swiginit", SchemaPluginParameters_swiginit, METH_VARARGS, NULL},
 	 { "SchemaStructExtent_ClassName", _wrap_SchemaStructExtent_ClassName, METH_NOARGS, NULL},
 	 { "SchemaStructExtent_TypeInfo", _wrap_SchemaStructExtent_TypeInfo, METH_NOARGS, NULL},
 	 { "SchemaStructExtent_className", _wrap_SchemaStructExtent_className, METH_O, NULL},
@@ -49046,19 +49059,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_SchemaStructExtent", _wrap_delete_SchemaStructExtent, METH_O, NULL},
 	 { "SchemaStructExtent_swigregister", SchemaStructExtent_swigregister, METH_O, NULL},
 	 { "SchemaStructExtent_swiginit", SchemaStructExtent_swiginit, METH_VARARGS, NULL},
-	 { "SchemaPluginParameters_ClassName", _wrap_SchemaPluginParameters_ClassName, METH_NOARGS, NULL},
-	 { "SchemaPluginParameters_TypeInfo", _wrap_SchemaPluginParameters_TypeInfo, METH_NOARGS, NULL},
-	 { "SchemaPluginParameters_className", _wrap_SchemaPluginParameters_className, METH_O, NULL},
-	 { "SchemaPluginParameters_typeInfo", _wrap_SchemaPluginParameters_typeInfo, METH_O, NULL},
-	 { "SchemaPluginParameters_Cast", _wrap_SchemaPluginParameters_Cast, METH_VARARGS, NULL},
-	 { "SchemaPluginParameters_ConstCast", _wrap_SchemaPluginParameters_ConstCast, METH_VARARGS, NULL},
-	 { "SchemaPluginParameters_serialize", _wrap_SchemaPluginParameters_serialize, METH_VARARGS, NULL},
-	 { "SchemaPluginParameters_structExtents_set", _wrap_SchemaPluginParameters_structExtents_set, METH_VARARGS, NULL},
-	 { "SchemaPluginParameters_structExtents_get", _wrap_SchemaPluginParameters_structExtents_get, METH_O, NULL},
-	 { "new_SchemaPluginParameters", _wrap_new_SchemaPluginParameters, METH_NOARGS, NULL},
-	 { "delete_SchemaPluginParameters", _wrap_delete_SchemaPluginParameters, METH_O, NULL},
-	 { "SchemaPluginParameters_swigregister", SchemaPluginParameters_swigregister, METH_O, NULL},
-	 { "SchemaPluginParameters_swiginit", SchemaPluginParameters_swiginit, METH_VARARGS, NULL},
 	 { "SchemaPlugin_ClassName", _wrap_SchemaPlugin_ClassName, METH_NOARGS, NULL},
 	 { "SchemaPlugin_TypeInfo", _wrap_SchemaPlugin_TypeInfo, METH_NOARGS, NULL},
 	 { "SchemaPlugin_className", _wrap_SchemaPlugin_className, METH_O, NULL},
@@ -49639,7 +49639,7 @@ static void *_p_Seiscomp__System__ModuleBindingTo_p_Seiscomp__Core__BaseObject(v
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::System::Binding *) ((Seiscomp::System::ModuleBinding *) x));
 }
 static void *_p_Seiscomp__System__SchemaStructExtentTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::System::SchemaParameters *) ((Seiscomp::System::SchemaStructExtent *) x));
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::System::SchemaParameters *)(Seiscomp::System::SchemaPluginParameters *) ((Seiscomp::System::SchemaStructExtent *) x));
 }
 static void *_p_Seiscomp__System__StationTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *)  ((Seiscomp::System::Station *) x));
@@ -49735,7 +49735,10 @@ static void *_p_Seiscomp__System__SchemaGroupTo_p_Seiscomp__System__SchemaParame
     return (void *)((Seiscomp::System::SchemaParameters *)  ((Seiscomp::System::SchemaGroup *) x));
 }
 static void *_p_Seiscomp__System__SchemaStructExtentTo_p_Seiscomp__System__SchemaParameters(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::System::SchemaParameters *)  ((Seiscomp::System::SchemaStructExtent *) x));
+    return (void *)((Seiscomp::System::SchemaParameters *) (Seiscomp::System::SchemaPluginParameters *) ((Seiscomp::System::SchemaStructExtent *) x));
+}
+static void *_p_Seiscomp__System__SchemaStructExtentTo_p_Seiscomp__System__SchemaPluginParameters(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::System::SchemaPluginParameters *)  ((Seiscomp::System::SchemaStructExtent *) x));
 }
 static void *_p_Seiscomp__System__ConfigDelegateTo_p_Seiscomp__Config__Logger(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Config::Logger *)  ((Seiscomp::System::ConfigDelegate *) x));
@@ -50392,7 +50395,7 @@ static swig_cast_info _swigc__p_Seiscomp__System__SchemaModule[] = {  {&_swigt__
 static swig_cast_info _swigc__p_Seiscomp__System__SchemaParameter[] = {  {&_swigt__p_Seiscomp__System__SchemaParameter, 0, 0, 0},  {&_swigt__p_Seiscomp__System__SchemaSetupInput, _p_Seiscomp__System__SchemaSetupInputTo_p_Seiscomp__System__SchemaParameter, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__System__SchemaParameters[] = {  {&_swigt__p_Seiscomp__System__SchemaStructure, _p_Seiscomp__System__SchemaStructureTo_p_Seiscomp__System__SchemaParameters, 0, 0},  {&_swigt__p_Seiscomp__System__SchemaParameters, 0, 0, 0},  {&_swigt__p_Seiscomp__System__SchemaPluginParameters, _p_Seiscomp__System__SchemaPluginParametersTo_p_Seiscomp__System__SchemaParameters, 0, 0},  {&_swigt__p_Seiscomp__System__SchemaGroup, _p_Seiscomp__System__SchemaGroupTo_p_Seiscomp__System__SchemaParameters, 0, 0},  {&_swigt__p_Seiscomp__System__SchemaStructExtent, _p_Seiscomp__System__SchemaStructExtentTo_p_Seiscomp__System__SchemaParameters, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__System__SchemaPlugin[] = {  {&_swigt__p_Seiscomp__System__SchemaPlugin, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__System__SchemaPluginParameters[] = {  {&_swigt__p_Seiscomp__System__SchemaPluginParameters, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__System__SchemaPluginParameters[] = {  {&_swigt__p_Seiscomp__System__SchemaPluginParameters, 0, 0, 0},  {&_swigt__p_Seiscomp__System__SchemaStructExtent, _p_Seiscomp__System__SchemaStructExtentTo_p_Seiscomp__System__SchemaPluginParameters, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__System__SchemaSetup[] = {  {&_swigt__p_Seiscomp__System__SchemaSetup, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__System__SchemaSetupGroup[] = {  {&_swigt__p_Seiscomp__System__SchemaSetupGroup, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__System__SchemaSetupInput[] = {  {&_swigt__p_Seiscomp__System__SchemaSetupInput, 0, 0, 0},{0, 0, 0, 0}};

@@ -32295,7 +32295,7 @@ static void *_p_Seiscomp__System__ModuleTo_p_Seiscomp__Core__BaseObject(void *x,
     return (void *)((Seiscomp::Core::BaseObject *)  ((Seiscomp::System::Module *) x));
 }
 static void *_p_Seiscomp__System__SchemaStructExtentTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::System::SchemaParameters *) ((Seiscomp::System::SchemaStructExtent *) x));
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::System::SchemaParameters *)(Seiscomp::System::SchemaPluginParameters *) ((Seiscomp::System::SchemaStructExtent *) x));
 }
 static void *_p_Seiscomp__DataModel__DecimationTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::Object *) ((Seiscomp::DataModel::Decimation *) x));
