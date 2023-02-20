@@ -733,29 +733,26 @@ void MapWidget::mouseMoveEvent(QMouseEvent* event) {
 
 		if ( _canvas.hoverLayer() ) {
 			Map::Layer *l = _canvas.hoverLayer();
-			if ( l && l->hasCursorShape() ) {
-				setCursor(l->cursorShape());
-				hasLayerCursor = true;
+			if ( l ) {
+				if ( l->hasCursorShape() ) {
+					setCursor(l->cursorShape());
+					hasLayerCursor = true;
+				}
+
+				if ( !l->toolTip().isEmpty() ) {
+					setToolTip(l->toolTip());
+					hasLayerToolTip = true;
+				}
 			}
 		}
 
-		if ( !hasLayerCursor )
+		if ( !hasLayerCursor ) {
 			unsetCursor();
-
-		// Check for tooltips
-		int count = _canvas.layerCount();
-
-		for ( int i = count-1; i >= 0; --i ) {
-			Map::Layer *l = _canvas.layer(i);
-			if ( l && !l->toolTip().isEmpty() ) {
-				setToolTip(l->toolTip());
-				hasLayerToolTip = true;
-				break;
-			}
 		}
 
-		if ( !hasLayerToolTip )
+		if ( !hasLayerToolTip ) {
 			setToolTip(QString());
+		}
 	}
 }
 
