@@ -162,6 +162,7 @@ MAKEENUM(
 		WEIGHT,
 		METHOD,
 		POLARITY,
+		ONSET,
 		TAKEOFF,
 		NETWORK,
 		STATION,
@@ -186,6 +187,7 @@ MAKEENUM(
 		"Weight",
 		"Method",
 		"Polarity",
+		"Onset",
 		"Takeoff",
 		"Net",
 		"Sta",
@@ -261,6 +263,7 @@ QVariant colAligns[ArrivalListColumns::Quantity] = {
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
+    int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
@@ -277,6 +280,7 @@ bool colVisibility[ArrivalListColumns::Quantity] = {
 	false,
 	true,
 	true,
+	false,
 	false,
 	false,
 	false,
@@ -1984,6 +1988,16 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 				if ( pick ) {
 					try {
 						return pick->polarity().toString();
+					}
+					catch ( ... ) {}
+				}
+				break;
+
+			case ONSET:
+				pick = Pick::Find(a->pickID());
+				if ( pick ) {
+					try {
+						return pick->onset().toString();
 					}
 					catch ( ... ) {}
 				}
