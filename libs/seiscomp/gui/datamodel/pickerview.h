@@ -500,6 +500,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void abortSearchStation();
 
 		void setPickPolarity();
+		void setPickOnset();
 		void setPickUncertainty();
 
 		void openContextMenu(const QPoint &p);

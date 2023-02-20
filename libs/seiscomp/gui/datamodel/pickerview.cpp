@@ -627,6 +627,8 @@ class PickerMarker : public RecordMarker {
 			_channelCode = std::string();
 			try { _polarity = p->polarity(); }
 			catch ( ... ) { _polarity = Core::None; }
+			try { _onset = p->onset(); }
+			catch ( ... ) { _onset = Core::None; }
 
 			_time = p->time();
 
@@ -655,6 +657,12 @@ class PickerMarker : public RecordMarker {
 			// Polarities do not match: not equal
 			if ( pol != _polarity ) return false;
 
+			OPT(PickOnset) onset;
+			try { onset = pick->onset(); } catch ( ... ) {}
+
+			// Onsets do not match: not equal
+			if ( onset != _onset ) return false;
+
 			// Time + uncertainties do not match: not equal
 			if ( _time != pick->time() ) return false;
 
@@ -671,6 +679,14 @@ class PickerMarker : public RecordMarker {
 
 		OPT(PickPolarity) polarity() const {
 			return _polarity;
+		}
+
+		void setPickOnset(OPT(PickOnset) o) {
+			_onset = o;
+		}
+
+		OPT(PickOnset) onset() const {
+			return _onset;
 		}
 
 		void setUncertainty(double lower, double upper) {
@@ -799,44 +815,47 @@ class PickerMarker : public RecordMarker {
 		void draw(QPainter &painter, RecordWidget *context, int x, int y1, int y2,
 		          QColor color, qreal lineWidth) {
 			static QPoint poly[3];
+			int em = painter.fontMetrics().height();
 
 			painter.setPen(QPen(color, lineWidth));
 			painter.drawLine(x, y1, x, y2);
 
+			int onsetOffset = -2;
+
 			if ( _polarity ) {
-				int fontSize = painter.font().pixelSize();
-				y1 += fontSize+2;
+				int y = y1 + em + 2;
+				int height = y2 - y + 1;
 
-				int height = y2-y1+1;
-
-				int h = std::min(height, std::max(8,std::min(24,height*30/100)));
-				int w = h*9/32;
+				int h = std::min(height, std::max(8, std::min(24, height * 30 / 100)));
+				int w = h * 9 / 32;
 
 				switch ( *_polarity ) {
 					case POSITIVE:
 					{
 						bool hasAA = painter.renderHints() & QPainter::Antialiasing;
 						painter.setRenderHint(QPainter::Antialiasing, true);
-						poly[0] = QPoint(x,y1);
-						poly[1] = QPoint(x+w,y1+h);
-						poly[2] = QPoint(x-w,y1+h);
+						poly[0] = QPoint(x, y);
+						poly[1] = QPoint(x + w, y + h);
+						poly[2] = QPoint(x - w, y + h);
 						painter.setBrush(color);
 						painter.drawPolygon(poly, 3);
 						painter.setBrush(Qt::NoBrush);
 						painter.setRenderHint(QPainter::Antialiasing, hasAA);
+						onsetOffset -= w;
 						break;
 					}
 					case NEGATIVE:
 					{
 						bool hasAA = painter.renderHints() & QPainter::Antialiasing;
 						painter.setRenderHint(QPainter::Antialiasing, true);
-						poly[0] = QPoint(x,y1+h);
-						poly[1] = QPoint(x-w,y1);
-						poly[2] = QPoint(x+w,y1);
+						poly[0] = QPoint(x, y + h);
+						poly[1] = QPoint(x - w, y);
+						poly[2] = QPoint(x + w, y);
 						painter.setBrush(color);
 						painter.drawPolygon(poly, 3);
 						painter.setBrush(Qt::NoBrush);
 						painter.setRenderHint(QPainter::Antialiasing, hasAA);
+						onsetOffset -= w;
 						break;
 					}
 					case UNDECIDABLE:
@@ -846,7 +865,7 @@ class PickerMarker : public RecordMarker {
 							f.setPixelSize(h);
 							f.setBold(true);
 							painter.setFont(f);
-							painter.drawText(x+2, y1+h, "X");
+							painter.drawText(x + 2, y + h, "X");
 						}
 						painter.restore();
 						break;
@@ -855,12 +874,39 @@ class PickerMarker : public RecordMarker {
 				}
 			}
 
+			if ( _onset ) {
+				int y = y1 + em + 2;
+				int height = y2 - y + 1;
+				int h = std::min(height, std::max(8, std::min(24, height * 30 / 100)));
+
+				painter.save();
+				QFont f = painter.font();
+				f.setPixelSize(h);
+				f.setBold(true);
+				painter.setFont(f);
+
+				switch ( *_onset ) {
+					case EMERGENT:
+						painter.drawText(0, y, x + onsetOffset, h, Qt::AlignRight | Qt::AlignTop, "/");
+						break;
+					case IMPULSIVE:
+						painter.drawText(0, y, x + onsetOffset, h, Qt::AlignRight | Qt::AlignTop, "|");
+						break;
+					case QUESTIONABLE:
+						painter.drawText(0, y, x + onsetOffset, h, Qt::AlignRight | Qt::AlignTop, "?");
+						break;
+					default:
+						break;
+				}
+
+				painter.restore();
+			}
+
 			const DataModel::Pick *p = pick();
 			if ( p ) {
 				try {
 					p->backazimuth();
-					int em = painter.fontMetrics().height();
-					painter.drawText(x-em-2, y1, em, em, Qt::AlignRight | Qt::AlignTop, "B");
+					painter.drawText(x - em - 2, y1, em, em, Qt::AlignRight | Qt::AlignTop, "B");
 				}
 				catch ( ... ) {}
 			}
@@ -1002,6 +1048,7 @@ class PickerMarker : public RecordMarker {
 	private:
 		PickPtr           _referencedPick;
 		OPT(PickPolarity) _polarity;
+		OPT(PickOnset)    _onset;
 		TimeQuantity      _time;
 		QString           _filter;
 		Type              _type;
@@ -2655,6 +2702,11 @@ void PickerView::init() {
 	addAction(SC_D.ui.actionSetPolarityUndecidable);
 	addAction(SC_D.ui.actionSetPolarityUnset);
 
+	addAction(SC_D.ui.actionSetPickOnsetEmergent);
+	addAction(SC_D.ui.actionSetPickOnsetImpulsive);
+	addAction(SC_D.ui.actionSetPickOnsetQuestionable);
+	addAction(SC_D.ui.actionSetPickOnsetUnset);
+
 	addAction(SC_D.ui.actionRelocate);
 	addAction(SC_D.ui.actionSwitchFullscreen);
 	addAction(SC_D.ui.actionAddStations);
@@ -2732,6 +2784,15 @@ void PickerView::init() {
 	        this, SLOT(setPickPolarity()));
 	connect(SC_D.ui.actionSetPolarityUnset, SIGNAL(triggered(bool)),
 	        this, SLOT(setPickPolarity()));
+
+	connect(SC_D.ui.actionSetPickOnsetEmergent, SIGNAL(triggered(bool)),
+	        this, SLOT(setPickOnset()));
+	connect(SC_D.ui.actionSetPickOnsetImpulsive, SIGNAL(triggered(bool)),
+	        this, SLOT(setPickOnset()));
+	connect(SC_D.ui.actionSetPickOnsetQuestionable, SIGNAL(triggered(bool)),
+	        this, SLOT(setPickOnset()));
+	connect(SC_D.ui.actionSetPickOnsetUnset, SIGNAL(triggered(bool)),
+	        this, SLOT(setPickOnset()));
 
 	connect(SC_D.comboFilter, SIGNAL(currentIndexChanged(int)),
 	        this, SLOT(changeFilter(int)));
@@ -5249,6 +5310,46 @@ void PickerView::setPickPolarity() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::setPickOnset() {
+	PickerMarker *m = static_cast<PickerMarker*>(SC_D.currentRecord->currentMarker());
+
+	if ( m == nullptr ) return;
+
+	if ( !m->isPick() && !m->isArrival() ) return;
+	if ( m->pick() && !m->isEnabled() ) return;
+
+	// Create a new marker if the existing marker uses a pick already
+	// to create a new pick
+	if ( m->pick() ) {
+		PickerMarker *old = m;
+		m = new PickerMarker(old->parent(), *old);
+		m->convertToManualPick();
+		old->setType(PickerMarker::Pick);
+		old->parent()->setCurrentMarker(m);
+	}
+
+	if ( sender() == SC_D.ui.actionSetPickOnsetEmergent ) {
+		m->setPickOnset(PickOnset(EMERGENT));
+	}
+	else if ( sender() == SC_D.ui.actionSetPickOnsetImpulsive ) {
+		m->setPickOnset(PickOnset(IMPULSIVE));
+	}
+	else if ( sender() == SC_D.ui.actionSetPickOnsetQuestionable ) {
+		m->setPickOnset(PickOnset(QUESTIONABLE));
+	}
+	else if ( sender() == SC_D.ui.actionSetPickOnsetUnset ) {
+		m->setPickOnset(Core::None);
+	}
+
+	SC_D.currentRecord->update();
+	SC_D.recordView->currentItem()->widget()->update();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::setPickUncertainty() {
 	PickerMarker *m = static_cast<PickerMarker*>(SC_D.currentRecord->currentMarker());
 	if ( !SC_D.actionsUncertainty ) return;
@@ -5491,7 +5592,7 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 
 		if ( !m->pick() || m->isEnabled() ) {
 			QMenu *menuPolarity = menu.addMenu(tr("Polarity"));
-
+			QMenu *menuOnset = menu.addMenu(tr("Onset"));
 			QMenu *menuUncertainty = menu.addMenu(tr("Uncertainty"));
 
 			if ( SC_D.actionsUncertainty ) {
@@ -5509,6 +5610,11 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 			menuPolarity->addAction(SC_D.ui.actionSetPolarityNegative);
 			menuPolarity->addAction(SC_D.ui.actionSetPolarityUndecidable);
 			menuPolarity->addAction(SC_D.ui.actionSetPolarityUnset);
+
+			menuOnset->addAction(SC_D.ui.actionSetPickOnsetEmergent);
+			menuOnset->addAction(SC_D.ui.actionSetPickOnsetImpulsive);
+			menuOnset->addAction(SC_D.ui.actionSetPickOnsetQuestionable);
+			menuOnset->addAction(SC_D.ui.actionSetPickOnsetUnset);
 		}
 
 		bool needSeparator = !menu.isEmpty();
@@ -7643,6 +7749,7 @@ void PickerView::fetchManualPicks(std::vector<RecordMarker*>* markers) const {
 				p->setPhaseHint(Phase((const char*)marker->text().toLatin1()));
 				p->setEvaluationMode(EvaluationMode(MANUAL));
 				p->setPolarity(marker->polarity());
+				p->setOnset(marker->onset());
 				CreationInfo ci;
 				ci.setAgencyID(SCApp->agencyID());
 				ci.setAuthor(SCApp->author());
