@@ -763,21 +763,31 @@ double Canvas::drawLine(QPainter& p, const QPointF& start, const QPointF& end) c
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 size_t Canvas::drawPolygon(QPainter &painter, size_t n, const Geo::GeoCoordinate *poly,
                            bool isClosedPolygon, int roughness, ClipHint clipHint) const {
-	QPainterPath pp;
+	if ( n == 1 ) {
+		QPoint p;
+		if ( _projection->project(p, QPointF(poly[0].lon, poly[0].lat)) ) {
+			painter.drawPoint(p);
+			return 1;
+		}
+		return 0;
+	}
 
+	QPainterPath pp;
 	if ( !_projection->project(pp, n, poly, isClosedPolygon,
 	                           roughness < 0 ? _polygonRoughness : roughness,
-	                           clipHint) )
+	                           clipHint) ) {
 		return 0;
+	}
 
-	if ( !isClosedPolygon ) {
+	if ( isClosedPolygon ) {
+		painter.drawPath(pp);
+	}
+	else {
 		QBrush backup = painter.brush();
 		painter.setBrush(Qt::NoBrush);
 		painter.drawPath(pp);
 		painter.setBrush(backup);
 	}
-	else
-		painter.drawPath(pp);
 
 	return pp.elementCount();
 }

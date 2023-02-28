@@ -236,12 +236,12 @@ bool GeoFeatureLayer::LayerProperties::isChild(const LayerProperties* child) con
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeatureLayer::LayerProperties::SymbolShape
 GeoFeatureLayer::LayerProperties::getSymbolShape(const std::string &type) {
-	if ( type == "square" )
-		return Square;
-	else if ( type == "circle" )
-		return Circle;
+	if ( type == "circle" ) return Circle;
+	if ( type == "triangle" ) return Triangle;
+	if ( type == "square" ) return Square;
+	if ( type == "diamond" ) return Diamond;
 
-	throw Core::ValueError();
+	return None;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -342,6 +342,7 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 
 	filled = brush.style() != Qt::NoBrush;
 
+	// scale symbol icon
 	if ( !symbolIcon.isNull() ) {
 		if ( symbolSize > 0 ) {
 			QSize oldSize = symbolIcon.size();
@@ -349,6 +350,24 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 			symbolIconHotspot.setX(symbolIconHotspot.x() * symbolIcon.size().width() / oldSize.width());
 			symbolIconHotspot.setY(symbolIconHotspot.y() * symbolIcon.size().height() / oldSize.height());
 		}
+	}
+	// create equilateral triangle shape with edge length of symbolSize and
+	// coordinate set to balance point of triangle
+	else if ( symbolShape == LayerProperties::Triangle ) {
+		// equilateral triangle
+		int size = symbolSize < 0 ? 8 : symbolSize;
+		int halfsize = size * 0.5;
+		symbolPolygon << QPoint(0, -0.577*size) // top, y: inner radius - height
+		              << QPoint(halfsize, int(0.289*size)) // right, y: inner radius
+		              << QPoint(-halfsize, int(0.289*size)); // left)
+	}
+	// create square rotated by 45 degrees
+	else if ( symbolShape == LayerProperties::Diamond ) {
+		int halfsize = symbolSize < 0 ? 4 : symbolSize * 0.5;
+		symbolPolygon << QPoint(0, -halfsize)
+		              << QPoint(halfsize, 0)
+		              << QPoint(0, halfsize)
+		              << QPoint(-halfsize, 0);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -550,110 +569,137 @@ void GeoFeatureLayer::drawFeatures(CategoryNode *node, Canvas *canvas,
 bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
                                   const QPen *debugPen, LayerProperties *props,
                                   const Geo::GeoFeature *f) {
+	// Skip feature if it contains no vertices
+	if ( f->vertices().empty() ) {
+		return true;
+	}
+
+	// Skip feature if its rank exceeds the current zoom level. The rank is
+	// obtained from the associated LayerPropeties or alternatively from the
+	// GeoFeature itself.
 	int rank = props->rank < 0?f->rank():props->rank;
-	if ( rank > canvas->zoomLevel() ) return true;
+	if ( rank > canvas->zoomLevel() ) {
+		return true;
+	}
 
+	// Skip feature if its bounding box is clipped
+	const Geo::GeoBoundingBox &bbox = f->bbox();
 	Projection *proj = canvas->projection();
+	if ( proj->isClipped(QPointF(bbox.east, bbox.south),
+	                     QPointF(bbox.west, bbox.north)) ) {
+		return true;
+	}
 
-	if ( props->compositionMode != painter->compositionMode() )
+	if ( props->compositionMode != painter->compositionMode() ) {
 		painter->setCompositionMode(props->compositionMode);
+	}
 
-	// There must be at least 2 verticies to draw something
-	if ( f->vertices().size() < 2 ) {
-		if ( f->vertices().size() == 1 ) {
-			QPoint p;
-			if ( !proj->project(p, QPointF(f->vertices()[0].lon, f->vertices()[0].lat)) )
-				return true;
-
-			int width = props->symbolSize;
-			if ( width < 0 ) width = 8;
-
-			if ( !props->symbolIcon.isNull() ) {
-				painter->drawImage(p - props->symbolIconHotspot, props->symbolIcon);
-				p.setY(p.y() - props->symbolIconHotspot.y() + props->symbolIcon.height());
+	// Icon
+	if ( !props->symbolIcon.isNull() ) {
+		QPoint p;
+		for ( auto it = f->vertices().begin(); it != f->vertices().end(); ++it ) {
+			if ( !proj->project(p, QPointF(it->lon, it->lat)) ) {
+				continue;
 			}
-			else {
-				switch ( props->symbolShape ) {
-					case LayerProperties::Square:
-						painter->drawRect(p.x()-width/2, p.y()-width/2, width, width);
-						break;
-					case LayerProperties::Circle:
-						painter->drawEllipse(p.x()-width/2, p.y()-width/2, width, width);
-						break;
-					default:
-						break;
-				}
-
-				p.setY(p.y() + width/2);
-			}
-
-			if ( props->drawName ) {
-				QString name = f->name().c_str();
-				QRect textRect = painter->fontMetrics().boundingRect(name);
-				textRect.moveTop(p.y() + textRect.height()/4);
-				textRect.moveLeft(p.x() - textRect.width()/2);
-				painter->drawText(textRect, Qt::AlignCenter, name);
+			painter->drawImage(p - props->symbolIconHotspot, props->symbolIcon);
+		}
+	}
+	// Shape, preprocessed into Polygon
+	else if ( !props->symbolPolygon.isEmpty() ) {
+		QPoint p;
+		for ( auto it = f->vertices().begin(); it != f->vertices().end(); ++it ) {
+			if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+				painter->drawPolygon(props->symbolPolygon.translated(p));
 			}
 		}
 	}
+	// Shape
+	else if ( props->symbolShape != LayerProperties::None ) {
+		QPoint p;
+		int size = props->symbolSize < 0 ? 8 : props->symbolSize;
+		int halfsize = size * 0.5;
+
+		switch ( props->symbolShape ) {
+			case LayerProperties::Circle:
+				// radius = size/2
+				for ( auto it = f->vertices().begin(); it != f->vertices().end(); ++it ) {
+					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+						painter->drawEllipse(p.x()-halfsize, p.y()-halfsize, size, size);
+					}
+				}
+				break;
+			case LayerProperties::Square:
+				// edge length = size
+				for ( auto it = f->vertices().begin(); it != f->vertices().end(); ++it ) {
+					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+						painter->drawRect(p.x()-halfsize, p.y()-halfsize, size, size);
+					}
+				}
+				break;
+			default:
+				break;
+		}
+	}
+	// Points, polylines and polygons
 	else {
 		canvas->drawFeature(*painter, f, props->filled, props->roughness);
+	}
 
-		const Geo::GeoBoundingBox &bbox = f->bbox();
+	// Draw the name if requested and if there is enough space
+	if ( props->drawName ) {
+		QPoint p1, p2;
+		qreal lonMin = bbox.west;
+		qreal lonMax = bbox.east;
 
-		// Draw the name if requested and if there is enough space
-		if ( props->drawName ) {
-			QPoint p1, p2;
-			qreal lonMin = bbox.west;
-			qreal lonMax = bbox.east;
-
-			if ( fabs(lonMax-lonMin) > 180 )
-				qSwap(lonMin, lonMax);
-
-			if ( proj->project(p1, QPointF(lonMin, bbox.north))
-			  && proj->project(p2, QPointF(lonMax, bbox.south)) ) {
-				QRect bboxRect = QRect(p1, p2);
-				QString name = f->name().c_str();
-				QRect textRect = painter->fontMetrics().boundingRect(name);
-				if ( textRect.width()*100 < bboxRect.width()*80 &&
-				     textRect.height()*100 < bboxRect.height()*80 )
-					painter->drawText(bboxRect, Qt::AlignCenter, name);
-			}
+		if ( fabs(lonMax-lonMin) > 180 ) {
+			qSwap(lonMin, lonMax);
 		}
 
-		// Debug: Print the segment name and draw the bounding box
-		if ( props->debug ) {
-			QPoint debugPoint;
-			painter->setPen(*debugPen);
-			// project the center of the bounding box
-			float bboxWidth = bbox.width();
-			float bboxHeight = bbox.height();
-			Geo::GeoCoordinate center = bbox.center();
-
-			if ( proj->project(debugPoint, QPointF(center.lon, center.lat)) ) {
-				QFont font;
-				float maxBBoxEdge = bboxWidth > bboxHeight ? bboxWidth : bboxHeight;
-				int pixelSize = (int)(proj->pixelPerDegree() * maxBBoxEdge / 10.0);
-				font.setPixelSize(pixelSize < 1 ? 1 : pixelSize > 30 ? 30 : pixelSize);
-				QFontMetrics metrics(font);
-				QRect labelRect(metrics.boundingRect(f->name().c_str()));
-				labelRect.moveTo(debugPoint.x() - labelRect.width()/2,
-				                 debugPoint.y() - labelRect.height()/2);
-
-				painter->setFont(font);
-				painter->drawText(labelRect, Qt::AlignLeft | Qt::AlignTop,
-				                  f->name().c_str());
+		if ( proj->project(p1, QPointF(lonMin, bbox.north))
+		     && proj->project(p2, QPointF(lonMax, bbox.south)) ) {
+			QRect bboxRect = QRect(p1, p2);
+			QString name = f->name().c_str();
+			QRect textRect = painter->fontMetrics().boundingRect(name);
+			int maxBBoxEdge = max(bboxRect.width(), bboxRect.height());
+			if ( textRect.width()*100 < maxBBoxEdge*80 ) {
+				textRect.moveCenter(bboxRect.center());
+				painter->drawText(bboxRect.united(textRect), Qt::AlignCenter, name);
 			}
-
-			proj->moveTo(QPointF(bbox.west, bbox.south));
-			proj->lineTo(*painter, QPointF(bbox.east, bbox.south));
-			proj->lineTo(*painter, QPointF(bbox.east, bbox.north));
-			proj->lineTo(*painter, QPointF(bbox.west, bbox.north));
-			proj->lineTo(*painter, QPointF(bbox.west, bbox.south));
-
-			painter->setPen(props->pen);
-			painter->setFont(props->font);
 		}
+	}
+
+	// Debug: Print the segment name and draw the bounding box
+	if ( props->debug ) {
+		QPoint debugPoint;
+		painter->setPen(*debugPen);
+		// project the center of the bounding box
+		float bboxWidth = bbox.width();
+		float bboxHeight = bbox.height();
+		Geo::GeoCoordinate center = bbox.center();
+
+		if ( proj->project(debugPoint, QPointF(center.lon, center.lat)) ) {
+			QFont font;
+			float maxBBoxEdge = bboxWidth > bboxHeight ? bboxWidth : bboxHeight;
+			int pixelSize = (int)(proj->pixelPerDegree() * maxBBoxEdge / 10.0);
+			font.setPixelSize(pixelSize < 1 ? 1 : pixelSize > 30 ? 30 : pixelSize);
+			QFontMetrics metrics(font);
+			QRect labelRect(metrics.boundingRect(f->name().c_str()));
+			labelRect.moveTo(debugPoint.x() - labelRect.width()/2,
+			                 debugPoint.y() - labelRect.height()/2);
+
+			painter->setFont(font);
+			painter->drawText(labelRect, Qt::AlignLeft | Qt::AlignTop,
+			                  f->name().c_str());
+		}
+
+		proj->moveTo(QPointF(bbox.west, bbox.south));
+		proj->lineTo(*painter, QPointF(bbox.east, bbox.south));
+		proj->lineTo(*painter, QPointF(bbox.east, bbox.north));
+		proj->lineTo(*painter, QPointF(bbox.west, bbox.north));
+		proj->lineTo(*painter, QPointF(bbox.west, bbox.south));
+
+		painter->setPen(props->pen);
+		painter->setFont(props->font);
 	}
 
 	return true;
@@ -751,21 +797,23 @@ void GeoFeatureLayer::reloadFeatures() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeatureLayer::CategoryNode *
 GeoFeatureLayer::createOrGetNodeForCategory(const Geo::Category *cat) {
-	if ( _root == nullptr ) {
+	if ( !_root ) {
 		_root = new CategoryNode(nullptr);
 		_root->properties = new LayerProperties("");
 		_root->properties->read();
 	}
 
-	if ( (cat == nullptr) )
+	if ( !cat) {
 		return _root;
+	}
 
-	CategoryNode *node = _root->nodeForCategory(cat);
-	if ( node != nullptr )
+	auto *node = _root->nodeForCategory(cat);
+	if ( node ) {
 		return node;
+	}
 
 	// Create parent chain
-	CategoryNode *parentNode = createOrGetNodeForCategory(cat->parent);
+	auto *parentNode = createOrGetNodeForCategory(cat->parent);
 	node = new CategoryNode(cat);
 
 	node->properties = new LayerProperties(cat->name.empty() ? "local" : cat->name.c_str(), parentNode->properties);
@@ -794,16 +842,18 @@ void GeoFeatureLayer::buildLegends(CategoryNode *node) {
 		// Find all child labels
 		collectLegendItems(node, items);
 
-		qSort(items.begin(), items.end(), compareByIndex);
+		sort(items.begin(), items.end(), compareByIndex);
 
 		for ( int i = 0; i < items.count(); ++i ) {
-			if ( items[i]->filled )
+			if ( items[i]->filled ) {
 				legend->addItem(new StandardLegendItem(items[i]->pen,
 				                                       items[i]->brush,
 				                                       items[i]->label.c_str()));
-			else
+			}
+			else {
 				legend->addItem(new StandardLegendItem(items[i]->pen,
 				                                       items[i]->label.c_str()));
+			}
 		}
 
 		addLegend(legend);

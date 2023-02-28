@@ -99,48 +99,46 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 	private:
 		struct SC_GUI_API LayerProperties {
 			enum SymbolShape {
+				None,
+				Circle,
+				Triangle,
 				Square,
-				Circle
+				Diamond
 			};
 
 			const LayerProperties     *parent;
 			std::string                name;
 			std::string                title;
-			Qt::Orientation            orientation;
-			Qt::Alignment              legendArea;
-			QPainter::CompositionMode  compositionMode;
+			Qt::Orientation            orientation{Qt::Vertical};
+			Qt::Alignment              legendArea{Qt::AlignTop | Qt::AlignLeft};
+			QPainter::CompositionMode  compositionMode{QPainter::CompositionMode_SourceOver};
 			std::string                label;
-			int                        index;
-			bool                       visible;
+			int                        index{0};
+			bool                       visible{true};
 			QPen                       pen;
 			QBrush                     brush;
 			QFont                      font;
-			bool                       drawName;
-			bool                       debug;
-			int                        rank;
-			int                        roughness;
-			bool                       filled;
-			int                        symbolSize;
-			SymbolShape                symbolShape;
+			bool                       drawName{false};
+			bool                       debug{false};
+			int                        rank{-1};
+			int                        roughness{-1};
+			bool                       filled{false};
+			int                        symbolSize{8};
+			SymbolShape                symbolShape{None};
+			QPolygon                   symbolPolygon;
 			QImage                     symbolIcon;
 			QPoint                     symbolIconHotspot;
 
 			LayerProperties(const std::string &name)
-			: parent(nullptr), name(name), orientation(Qt::Vertical)
-			, legendArea(Qt::AlignTop | Qt::AlignLeft)
-			, compositionMode(QPainter::CompositionMode_SourceOver)
-			, index(0), visible(true), drawName(false)
-			, debug(false), rank(-1), roughness(-1)
-			, filled(false), symbolSize(8), symbolShape(Circle) {}
+			: parent(nullptr), name(name)
+			, filled(false) {}
 
 			LayerProperties(const std::string &name, const LayerProperties *parent)
-			: parent(parent), name(name), orientation(Qt::Vertical)
-			, legendArea(Qt::AlignTop | Qt::AlignLeft)
-			, compositionMode(QPainter::CompositionMode_SourceOver)
-			, index(0), visible(parent->visible), pen(parent->pen)
+			: parent(parent), name(name)
+			, visible(parent->visible), pen(parent->pen)
 			, brush(parent->brush), font(parent->font)
 			, drawName(parent->drawName), debug(parent->debug)
-			, rank(-1), roughness(parent->roughness)
+			, rank(parent->rank), roughness(parent->roughness)
 			, filled(parent->filled), symbolSize(parent->symbolSize)
 			, symbolShape(parent->symbolShape) {}
 

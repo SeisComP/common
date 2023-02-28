@@ -407,7 +407,7 @@ Layer configuration
 ~~~~~~~~~~~~~~~~~~~
 
 Layers may be grouped into categories and form a hierarchy. The categories of the
-geo feature data are derived from the feature directory structure, i.e. the names
+geo feature data are derived from the feature directory structure, i.e., the names
 of the directories below the feature directory, e.g., :file:`@DATADIR@/spatial/vector`.
 Feature data directly located within the feature directory have no special category.
 The FEP data set is assigned to the fep category.
@@ -595,18 +595,19 @@ Available map layer configuration parameters for each category are:
 
    Type: *int*
 
-   Sets the roughness of a polyline or polygon while zooming. The roughness
-   is somehow defined in pixels and removes successive vertices if the distance
-   in pixel is less than roughness. The higher the value the less vertices
-   a rendered polyline or polygon will finally have and the faster the rendering.
-   If set to 0 then the feature is disabled.
+   Sets the roughness of a polyline or polygon in pixels. The higher the value
+   the less vertices are rendered. A vertex is skipped if its pixel distance to
+   the previous vertex is less than roughness. In any case the first and last
+   vertex of a feature or subfeaure is drawn.
+
    Default is ``3``.
 
 .. confval:: symbol.size
 
    Type: *int*
 
-   In case of single points, this specifies the size of the symbol in pixels.
+   The size of a symbol in pixels. Requires either :confval:`symbol.shape` or
+   :confval:`symbol.icon` to be configured.
 
    Default is ``8``.
 
@@ -614,18 +615,19 @@ Available map layer configuration parameters for each category are:
 
    Type: *string*
 
-   In case of single points, this specifies the shape of the symbol. Valid
-   values are *circle* and *square*.
-
-   Default is ``circle``.
+   Instead of drawing points, lines or polygons, the given shape is rendered
+   for each vertex of a feature. Supported values are *circle*, *triangle*,
+   *square* and *diamond*. The shape is scaled to :confval:`symbol.size`.
 
 .. confval:: symbol.icon
 
    Type: *string*
 
-   In case of single points this specifies the path to an image used as
-   icon to represent the map location. The image is scaled to :confval:`symbol.size`
-   if it is larger than zero otherwise the origin size is being used.
+   Instead of drawing points, lines or polygons, the given icon is rendered for
+   each vertex of a feature. If the string starts on a ``/`` it is interpreted as
+   an absolute path else it is resolved relative to the directory containing the
+   vector data. The image is scaled to :confval:`symbol.size` if it is larger
+   than zero otherwise the origin size is being used.
 
 .. confval:: symbol.icon.hotspot.x
 
