@@ -59,6 +59,16 @@ using namespace Seiscomp::DataModel;
 #define BLUR_SPLASH_TEXT 0
 
 
+bool fromString(QString &qstring, const std::string &stdstring) {
+	qstring = stdstring.c_str();
+	return true;
+}
+
+std::string toString(const QString &qstring) {
+	return qstring.toStdString();
+}
+
+
 namespace {
 
 
@@ -111,50 +121,6 @@ class ShowPlugins : public QDialog {
 	private:
 		Ui::ShowPlugins _ui;
 };
-
-
-void blurImage(QImage &img, int radius) {
-	if ( radius < 1 ) return;
-
-	QImage out = QImage(img.size(), QImage::Format_ARGB32);
-	int div = (radius*2+1)*(radius*2+1);
-
-	int w = out.width();
-	int h = out.height();
-
-	const QRgb *bits = (const QRgb*)img.bits();
-	QRgb *out_bits = (QRgb*)out.bits();
-
-	for ( int y = 0; y < h; ++y ) {
-		for ( int x = 0; x < w; ++x, ++bits, ++out_bits ) {
-			int r = 0; int g = 0; int b = 0; int a = 0;
-			div = 0;
-			for ( int ry = -radius; ry <= radius; ++ry ) {
-				int ny = y+ry;
-				if ( ny < 0 || ny >= h ) continue;
-				for ( int rx = -radius; rx <= radius; ++rx ) {
-					int nx = x+rx;
-					if ( nx < 0 || nx >= w ) continue;
-					QRgb c = *(bits + ry*w + rx);
-					r += qRed(c);
-					g += qGreen(c);
-					b += qBlue(c);
-					a += qAlpha(c);
-					++div;
-				}
-			}
-
-			r /= div;
-			g /= div;
-			b /= div;
-			a /= div;
-
-			*out_bits = qRgba(r,g,b,a);
-		}
-	}
-
-	img = out;
-}
 
 
 void drawText(QPainter &p, const QPoint &hotspot, int align, const QString &s) {
@@ -260,6 +226,55 @@ Application* Application::_instance = nullptr;
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::_GUI_Core_Settings::accept(SettingsLinker &linker) {
+	linker
+	& cliSwitch(
+		fullScreen,
+		"User interface",
+		"full-screen,F",
+		"starts the application in fullscreen"
+	)
+	& cliInverseSwitch(
+		interactive,
+		"User interface",
+		"non-interactive,N",
+		"use non interactive presentation mode"
+	)
+	& cfg(fullScreen, "mode.fullscreen")
+	& cfg(interactive, "mode.interactive")
+	& cfg(mapsDesc, "map")
+	& cfg(commandTargetClient, "commands.target");
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Application::_GUI_Core_Settings::_MapsDesc::_MapsDesc() {
+	location = "@DATADIR@/maps/world%s.png";
+	isMercatorProjected = false;
+	cacheSize = 0;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::_GUI_Core_Settings::_MapsDesc::accept(SettingsLinker &linker) {
+	linker
+	& cfg(type, "type")
+	& cfg(format, "format")
+	& cfg(location, "location")
+	& cfg(cacheSize, "cacheSize");
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Application::Application(int& argc, char **argv, int flags, Type type)
     : QObject(), Client::Application(argc, argv)
 , _qSettings(nullptr)
@@ -270,6 +285,8 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 , _dlgConnection(nullptr)
 , _settingsOpened(false)
 , _flags(flags) {
+	bindSettings(&_settings);
+
 	_type = type;
 	if ( type == Tty ) {
 		_flags &= ~SHOW_SPLASH;
@@ -311,12 +328,8 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 	                           QLocale::RejectGroupSeparator);
 	QLocale::setDefault(appLocale);
 
-	_guiGroup = "GUI";
 	_thread = nullptr;
-	_startFullScreen = false;
-	_nonInteractive = false;
 	_filterCommands = true;
-	_mapsDesc.isMercatorProjected = false;
 
 	// argc and argv may be modified by QApplication. It removes the
 	// commandline options it recognizes so we can go on without an
@@ -603,7 +616,9 @@ Scheme& Application::scheme() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QSettings &Application::settings() {
-	if ( !_qSettings ) _qSettings = new QSettings;
+	if ( !_qSettings ) {
+		_qSettings = new QSettings;
+	}
 	return *_qSettings;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -613,7 +628,9 @@ QSettings &Application::settings() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const QSettings &Application::settings() const {
-	if ( !_qSettings ) _qSettings = new QSettings;
+	if ( !_qSettings ) {
+		_qSettings = new QSettings;
+	}
 	return *_qSettings;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -623,7 +640,7 @@ const QSettings &Application::settings() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::startFullScreen() const {
-	return _startFullScreen;
+	return _settings.fullScreen;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -632,7 +649,7 @@ bool Application::startFullScreen() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::nonInteractive() const {
-	return _nonInteractive;
+	return !_settings.interactive;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -641,7 +658,7 @@ bool Application::nonInteractive() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const MapsDesc &Application::mapsDesc() const {
-	return _mapsDesc;
+	return _settings.mapsDesc;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -853,17 +870,6 @@ void Application::configSetColorGradient(const std::string& query, const Gradien
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::createCommandLineDescription() {
-	commandline().addGroup("User interface");
-	commandline().addOption("User interface", "full-screen,F", "starts the application in fullscreen");
-	commandline().addOption("User interface", "non-interactive,N", "use non interactive presentation mode");
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::initConfiguration() {
 	if ( !Client::Application::initConfiguration() )
 		return false;
@@ -878,33 +884,9 @@ bool Application::initConfiguration() {
 		dynamic_cast<QApplication*>(_app)->setPalette(pal);
 	}
 
-	try { _mapsDesc.location = configGetString("map.location").c_str(); }
-	catch (...) { _mapsDesc.location = "@DATADIR@/maps/world%s.png"; }
-
-	_mapsDesc.type = QString();
-	try { _mapsDesc.type = configGetString("map.type").c_str(); }
-	catch (...) {}
-
-	_mapsDesc.isMercatorProjected = false;
-
-	try {
-		string proj = configGetString("map.format");
-		if ( proj == "mercator" )
-			_mapsDesc.isMercatorProjected = true;
-		else if ( proj == "rectangular" )
-			_mapsDesc.isMercatorProjected = false;
-		else {
-			cerr << "Unknown map format: " << proj << endl;
-			return false;
-		}
-	}
-	catch (...) {}
-
-	_mapsDesc.cacheSize = 0;
-	try { _mapsDesc.cacheSize = configGetInt("map.cacheSize"); }
-	catch ( ... ) {}
-
-	_mapsDesc.location = Environment::Instance()->absolutePath(_mapsDesc.location.toStdString()).c_str();
+	_settings.mapsDesc.location = Environment::Instance()->absolutePath(
+		_settings.mapsDesc.location.toStdString()
+	).c_str();
 
 	_eventTimeAgo = 0.0;
 	bool setTimeAgo = false;
@@ -928,24 +910,11 @@ bool Application::initConfiguration() {
 		setTimeAgo = true;
 	}
 	catch (...) {}
-	try {
-		_nonInteractive = configGetBool("mode.interactive") == false;
-	}
-	catch (...) {}
-	try {
-		_startFullScreen = configGetBool("mode.fullscreen");
-	}
-	catch (...) {}
 
 	// Default is: display events from 1 day ago until 'now'
-	if ( !setTimeAgo )
+	if ( !setTimeAgo ) {
 		_eventTimeAgo = double(24*60*60);
-
-	_commandTargetClient = "";
-	try {
-		_commandTargetClient = configGetString("commands.target");
 	}
-	catch (...) {}
 
 	_app->setOrganizationName(agencyID().c_str());
 	_app->setApplicationName(name().c_str());
@@ -963,8 +932,16 @@ bool Application::validateParameters() {
 		return false;
 	}
 
-	if ( commandline().hasOption("full-screen") ) _startFullScreen = true;
-	if ( commandline().hasOption("non-interactive") ) _nonInteractive = true;
+	if ( _settings.mapsDesc.format == "mercator" ) {
+		_settings.mapsDesc.isMercatorProjected = true;
+	}
+	else if ( _settings.mapsDesc.format == "rectangular" ) {
+		_settings.mapsDesc.isMercatorProjected = false;
+	}
+	else if ( !_settings.mapsDesc.format.isEmpty() ) {
+		cerr << "Unknown map format: " << qPrintable(_settings.mapsDesc.format) << endl;
+		return false;
+	}
 
 	// There is nothing to validate. It is just the best place to show up
 	// the splash screen before the time consuming initialization starts
@@ -1105,10 +1082,10 @@ bool Application::init() {
 			      it != subscriptions.end(); ++it )
 				groups << (*it).c_str();
 
-			cdlg()->setClientParameters(_settings.messaging.URL.c_str(),
-			                            _settings.messaging.user.c_str(),
-			                            _settings.messaging.primaryGroup.c_str(),
-			                            groups, _settings.messaging.timeout);
+			cdlg()->setClientParameters(Client::Application::_settings.messaging.URL.c_str(),
+			                            Client::Application::_settings.messaging.user.c_str(),
+			                            Client::Application::_settings.messaging.primaryGroup.c_str(),
+			                            groups, Client::Application::_settings.messaging.timeout);
 		}
 	}
 
@@ -1213,10 +1190,10 @@ bool Application::handleInitializationError(int stage) {
 		      it != subscriptions.end(); ++it )
 			groups << (*it).c_str();
 
-		cdlg()->setClientParameters(_settings.messaging.URL.c_str(),
-		                            _settings.messaging.user.c_str(),
-		                            _settings.messaging.primaryGroup.c_str(),
-		                            groups, _settings.messaging.timeout);
+		cdlg()->setClientParameters(Client::Application::_settings.messaging.URL.c_str(),
+		                            Client::Application::_settings.messaging.user.c_str(),
+		                            Client::Application::_settings.messaging.primaryGroup.c_str(),
+		                            groups, Client::Application::_settings.messaging.timeout);
 
 		cdlg()->setDatabaseParameters(databaseURI().c_str());
 
@@ -1455,7 +1432,7 @@ void Application::createConnection(QString host, QString user,
 	_connection = new Client::Connection;
 	status = _connection->setSource(host.toStdString());
 	if ( status == Client::OK ) {
-		_connection->setMembershipInfo(_settings.messaging.membershipMessages);
+		_connection->setMembershipInfo(Client::Application::_settings.messaging.membershipMessages);
 		status = _connection->connect(user.toStdString(), group.toStdString(),
 		                              timeout);
 	}
@@ -1474,25 +1451,30 @@ void Application::createConnection(QString host, QString user,
 		                     .arg(_connection->lastErrorMessage().c_str()));
 	}
 	else {
-		if ( _settings.messaging.contentType == "binary" )
+		if ( Client::Application::_settings.messaging.contentType == "binary" ) {
 			_connection->setContentType(Client::Protocol::Binary);
-		else if ( _settings.messaging.contentType == "json" )
+		}
+		else if ( Client::Application::_settings.messaging.contentType == "json" ) {
 			_connection->setContentType(Client::Protocol::JSON);
-		else if ( _settings.messaging.contentType == "xml" )
+		}
+		else if ( Client::Application::_settings.messaging.contentType == "xml" ) {
 			_connection->setContentType(Client::Protocol::XML);
-		else if ( !_settings.messaging.contentType.empty() )
+		}
+		else if ( !Client::Application::_settings.messaging.contentType.empty() ) {
 			SEISCOMP_ERROR("Invalid message content type: %s",
-			               _settings.messaging.contentType.c_str());
+			               Client::Application::_settings.messaging.contentType.c_str());
+		}
 	}
 
-	_settings.messaging.user = user.toStdString();
-	_settings.messaging.URL = host.toStdString();
-	_settings.messaging.primaryGroup = group.toStdString();
-	_settings.messaging.timeout = timeout;
+	Client::Application::_settings.messaging.user = user.toStdString();
+	Client::Application::_settings.messaging.URL = host.toStdString();
+	Client::Application::_settings.messaging.primaryGroup = group.toStdString();
+	Client::Application::_settings.messaging.timeout = timeout;
 
 	startMessageThread();
-	if ( _thread )
+	if ( _thread ) {
 		_thread->setReconnectOnErrorEnabled(false);
+	}
 
 	emit changedConnection();
 }
@@ -1503,17 +1485,20 @@ void Application::createConnection(QString host, QString user,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::destroyConnection() {
-	if ( _thread )
+	if ( _thread ) {
 		_thread->setReconnectOnErrorEnabled(false);
+	}
 
-	if ( _connection )
+	if ( _connection ) {
 		_connection->disconnect();
+	}
 
 	closeMessageThread();
 
 	ConnectionDialog *dlg = cdlg();
-	if ( dlg != nullptr )
+	if ( dlg ) {
 		dlg->setDefaultDatabaseParameters("","");
+	}
 
 	_connection = nullptr;
 	emit changedConnection();
@@ -1527,10 +1512,11 @@ void Application::destroyConnection() {
 void Application::databaseChanged() {
 	if ( query() ) {
 		query()->setDriver(_database.get());
-		_settings.database.URI = cdlg()->databaseURI();
+		Client::Application::_settings.database.URI = cdlg()->databaseURI();
 		if ( query()->hasError() ) {
-			if ( _database )
+			if ( _database ) {
 				_database->disconnect();
+			}
 			QMessageBox::critical(nullptr, "Database Error",
 			                      query()->errorMsg().c_str());
 		}
@@ -1607,7 +1593,7 @@ void Application::messagesAvailable() {
 					cdlg()->setDatabaseParameters(dbmsg->service(), dbmsg->parameters());
 					cdlg()->connectToDatabase();
 					if ( cdlg()->hasDatabaseChanged() ) {
-						_settings.database.URI = cdlg()->databaseURI();
+						Client::Application::_settings.database.URI = cdlg()->databaseURI();
 						setDatabase(database());
 					}
 				}
@@ -1617,12 +1603,13 @@ void Application::messagesAvailable() {
 		CommandMessage *cmd = CommandMessage::Cast(msg);
 		if ( cmd && _filterCommands ) {
 			QRegExp re(cmd->client().c_str());
-			if ( re.exactMatch(_settings.messaging.user.c_str()) )
+			if ( re.exactMatch(Client::Application::_settings.messaging.user.c_str()) ) {
 				emit messageAvailable(cmd, pkt.get());
+			}
 			else {
 				SEISCOMP_DEBUG("Ignoring command message for client: %s, user is: %s",
 				               cmd->client().c_str(),
-				               _settings.messaging.user.c_str());
+				               Client::Application::_settings.messaging.user.c_str());
 			}
 
 			continue;
@@ -1773,8 +1760,8 @@ void Application::setFilterCommandsEnabled(bool e) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const std::string& Application::commandTarget() const {
-	return _commandTargetClient;
+const std::string &Application::commandTarget() const {
+	return _settings.commandTargetClient;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1782,7 +1769,7 @@ const std::string& Application::commandTarget() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::sendCommand(Command command, const std::string& parameter) {
+void Application::sendCommand(Command command, const std::string &parameter) {
 	sendCommand(command, parameter, nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1791,7 +1778,7 @@ void Application::sendCommand(Command command, const std::string& parameter) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::sendCommand(Command command, const std::string& parameter, Core::BaseObject *obj) {
+void Application::sendCommand(Command command, const std::string &parameter, Core::BaseObject *obj) {
 	if ( commandTarget().empty() ) {
 		QMessageBox::critical(nullptr,
 		            "Commands",
@@ -1805,7 +1792,7 @@ void Application::sendCommand(Command command, const std::string& parameter, Cor
 	cmsg->setParameter(parameter);
 	cmsg->setObject(obj);
 
-	sendMessage(_guiGroup.c_str(), cmsg.get());
+	sendMessage(_settings.guiGroup.c_str(), cmsg.get());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

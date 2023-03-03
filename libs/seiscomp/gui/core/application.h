@@ -199,8 +199,8 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 		//! splashscreen when the widget is shown
 		void setMainWidget(QWidget*);
 
-		void showMessage(const char*);
-		void showWarning(const char*);
+		void showMessage(const char*) override;
+		void showWarning(const char*) override;
 
 		bool notify(QObject *receiver, QEvent *e);
 
@@ -219,24 +219,22 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 
 
 	protected:
-		virtual bool init();
-		virtual bool run();
-		virtual void done();
+		bool init() override;
+		bool run() override;
+		void done() override;
 
-		virtual void exit(int returnCode);
+		void exit(int returnCode) override;
 
-		virtual void createCommandLineDescription();
+		bool initConfiguration() override;
+		bool initSubscriptions() override;
 
-		virtual bool initConfiguration();
-		virtual bool initSubscriptions();
+		void schemaValidationNames(std::vector<std::string> &modules,
+		                           std::vector<std::string> &plugins) const override;
 
-		virtual void schemaValidationNames(std::vector<std::string> &modules,
-		                                   std::vector<std::string> &plugins) const;
+		bool validateParameters() override;
 
-		virtual bool validateParameters();
-
-		virtual bool handleInitializationError(int);
-		virtual void handleInterrupt(int) throw();
+		bool handleInitializationError(int) override;
+		void handleInterrupt(int) throw() override;
 
 		virtual QString splashImagePath() const;
 
@@ -298,6 +296,24 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 
 
 	protected:
+		struct _GUI_Core_Settings : System::Application::AbstractSettings {
+			bool        fullScreen{false};
+			bool        interactive{true};
+			std::string guiGroup{"GUI"};
+			std::string commandTargetClient;
+
+			struct _MapsDesc : MapsDesc {
+				_MapsDesc();
+
+				QString format;
+
+				void accept(SettingsLinker &linker);
+			}           mapsDesc;
+
+			void accept(SettingsLinker &linker);
+
+		}                   _settings;
+
 		QApplication       *_app;
 		Type                _type;
 		Scheme             *_scheme;
@@ -306,14 +322,9 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 		Core::Time          _lastSOH;
 		int                 _intervalSOH;
 
-		bool                _startFullScreen;
-		bool                _nonInteractive;
 		bool                _readOnlyMessaging;
 		Core::TimeSpan      _eventTimeAgo;
-		MapsDesc            _mapsDesc;
 		MessageGroups       _messageGroups;
-		std::string         _guiGroup;
-		std::string         _commandTargetClient;
 
 		QWidget            *_mainWidget;
 		QSplashScreen      *_splash;
