@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<plugin name="StdLoc">
+		<extends>global</extends>
+		<description>
+			Generic locator plugin for SeisComP.
+		</description>
+		<configuration>
+			<group name="StdLoc">
+
+				<parameter name="profiles" type="list:string" default="">
+					<description>
+					Defines a list of profiles to make available to the plugin.
+					</description>
+				</parameter>
+
+				<group name="profile">
+					<struct type="stdloc profile" link = "StdLoc.profiles">
+
+						<parameter name="method" type="string" default="GridSearch+LeastSquares">
+							<description>The location method to use: LeastSquares, GridSearch 
+							or GridSearch+LeastSquares.
+							</description>
+						</parameter>
+ 
+						<parameter name="tableType" type="string" default="libtau">
+							<description>Travel time table format type.</description>
+						</parameter>
+						<parameter name="tableModel" type="string" default="iasp91">
+							<description>The model to be used. The format depends on tableType.</description>
+						</parameter>
+
+						<parameter name="usePickUncertainties" type="boolean" default="false">
+							<description>
+							Whether to use pick time uncertainties rather than a fixed
+							time error. If true, then the uncertainties are retrieved from
+							each individual pick object. If they are not defined, then the
+							default pick time uncertainty as defined by defaultTimeError
+							will be used instead.
+							</description>
+						</parameter>
+
+						<parameter name="defaultTimeError" type="double" default="1.0" unit="s">
+							<description>
+							The default pick time uncertainty if pick uncertainties are
+							not going to be used or if they are absent.
+							</description>
+						</parameter>
+
+						<group name="GridSearch">
+							<description>
+								The grid cell with lowest error is selected as source location and
+								the source time is derived from the average of travel time residuals.
+								The solution can be further improved enabling the Least Square
+								algorithm, which will then be run for each grid cell, using
+								the cell centroid as initial location. In this case only a few cells
+								are required, even a single one.
+							</description>
+							<parameter name="center" type="list:string" default="lat,lon,5">
+								<description>Latitude,longitude,depth[km]. </description>
+							</parameter>
+							<parameter name="autoLatLon" type="boolean" default="true">
+								<description>If enabled, the grid center latitude and longitude
+								are automatically computed as the average of the arrival station
+								locations. The center depth should still be provided.
+							</description>
+							</parameter> 
+							<parameter name="size" type="list:string" unit="km" default="20,20,5">
+								<description>Grid X, Y, Z size in km</description>
+							</parameter>
+							<parameter name="cellSize" type="list:string" unit="km" default="2.5,2.5,5">
+								<description>Cell X, Y, Z size in km</description>
+							</parameter>
+							<parameter name="errorType" type="string" default="L1">
+								<description>Error computation to use: L1 or L2 norm. L1 is less sensitive
+									to outliers and so more suitable with automatic picks, L2 is the preferred
+									choice for manual picks.
+							</description>
+							</parameter>
+							<parameter name="maxRms" type="double">
+								<description>
+									Maxmium rms accepterd for a location: a solution with a higher value
+									will be rejected. A negative or no value means that there is no maximum
+									threshold on the RMS.
+								</description>
+							</parameter>
+						</group>
+
+						<group name="LeastSquares">
+							<description>
+								Find the source location and time via iterative Least Square.
+								An initial source location and time are required.
+								if that is not available the Grid Search can be combined with
+								LeastSquares.
+							</description>
+							<parameter name="iterations" type="int" default="40">
+								<description>
+									Number of iterations. Each iteration will use the
+									location and time from the previous Least
+									Square solution.
+								</description>
+							</parameter> 
+							<parameter name="dampingFactor" type="double" default="0">
+								<description>
+									Damping factor value to be used when solving the equation system.
+									0 menas no damping factor.
+								</description>
+							</parameter>
+							<parameter name="solverType" type="string" default="LSMR">
+								<description>Algorithm to use: either LSMR or LSQR</description>
+							</parameter>
+						</group>
+
+					</struct>
+				</group> 
+			</group>
+		</configuration>
+	</plugin>
+</seiscomp>
