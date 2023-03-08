@@ -21,6 +21,7 @@
 #include <math.h>
 #include <vector>
 #include <complex>
+#include <iostream>
 
 #include <seiscomp/math/filter/butterworth.h>
 
@@ -329,8 +330,9 @@ void init_bw_biquads_inplace(Biquads &biquads, size_t order, double fmin, double
 		return;
 	}
 
-	if ( order > 20 )
+	if ( order > 20 ) {
 		throw std::runtime_error("Filter order exceeded maximum of 20");
+	}
 
 	if ( fsamp <= 0 )
 		throw std::runtime_error("Sample rate must be greater than zero");
@@ -338,32 +340,43 @@ void init_bw_biquads_inplace(Biquads &biquads, size_t order, double fmin, double
 	double fnyquist = 0.5*fsamp;
 
 	// Input validation
+	// Note that if the filter order is 0 then all values for fmin and
+	// fmax are in principle allowed.
 	switch ( type ) {
 		case BUTTERWORTH_BANDPASS:
 		case BUTTERWORTH_BANDSTOP:
 			if ( fmax < fmin )
 				throw std::runtime_error("High frequency cutoff must be greater than low freq");
 
-			if ( fmin <= 0.0 )
+			if ( fmin < 0.0 )
+				throw std::runtime_error("Low frequency cutoff must be greater than zero");
+
+			if ( order > 0 && fmin == 0.0 )
 				throw std::runtime_error("Low frequency cutoff must be greater than zero");
 
 			// The missing break here is intentional as the low pass check is
 			// also required for the bandpass and bandreject
 
 		case BUTTERWORTH_LOWPASS:
-			if ( fmax <= 0.0 )
+			if ( fmax < 0.0 )
 				throw std::runtime_error("High frequency cutoff must be greater than zero");
 
-			if ( fmax >= fnyquist )
+			if ( order > 0 && fmax == 0.0 )
+				throw std::runtime_error("High frequency cutoff must be greater than zero");
+
+			if ( order > 0 && fmax >= fnyquist )
 				throw std::runtime_error("High frequency cutoff must be lower than Nyquist frequency");
 
 			break;
 
 		case BUTTERWORTH_HIGHPASS:
-			if ( fmin <= 0.0 )
+			if ( fmin < 0.0 )
 				throw std::runtime_error("Low frequency cutoff must be greater than zero");
 
-			if ( fmin >= fnyquist )
+			if ( order > 0 && fmin == 0.0 )
+				throw std::runtime_error("Low frequency cutoff must be greater than zero");
+
+			if ( order > 0 && fmin >= fnyquist )
 				throw std::runtime_error("Low frequency cutoff must be lower than Nyquist frequency");
 
 			break;

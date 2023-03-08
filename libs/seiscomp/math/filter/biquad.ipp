@@ -83,18 +83,20 @@ int Biquad<TYPE>::setParameters(int n, const double *params) {
 template<typename TYPE>
 BiquadCascade<TYPE>::BiquadCascade() {}
 
+/*
 template<typename TYPE>
 BiquadCascade<TYPE>::BiquadCascade(const BiquadCascade &other) {
 	_biq = other._biq;
 	reset();
 }
+*/
 
-template<typename TYPE>
-int BiquadCascade<TYPE>::size() const { return _biq.size(); }
+//template<typename TYPE>
+//int BiquadCascade<TYPE>::size() const { return this->size(); }
 
 template<typename TYPE>
 void BiquadCascade<TYPE>::apply(int n, TYPE *inout) {
-	for ( Biquad<TYPE> &biq : _biq )
+	for ( Biquad<TYPE> &biq : *this )
 		biq.apply(n, inout);
 }
 
@@ -110,20 +112,20 @@ InPlaceFilter<TYPE>* BiquadCascade<TYPE>::clone() const {
 
 template<typename TYPE>
 void BiquadCascade<TYPE>::reset() {
-	for ( Biquad<TYPE> &biq : _biq )
+	for ( Biquad<TYPE> &biq : *this )
 		biq.reset();
 }
 
 template<typename TYPE>
 void BiquadCascade<TYPE>::append(Biquad<TYPE> const &biq) {
-	_biq.push_back(biq);
+	this->push_back(biq);
 }
 
 template<typename TYPE>
 void BiquadCascade<TYPE>::set(const Biquads &biquads) {
-	_biq.clear();
+	this->clear();
 	for ( const BiquadCoefficients &biq : biquads )
-		_biq.push_back(biq);
+		this->push_back(biq);
 }
 
 template <typename T>

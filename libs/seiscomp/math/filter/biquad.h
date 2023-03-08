@@ -24,6 +24,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 #include <ostream>
 
 #include <seiscomp/math/filter.h>
@@ -116,22 +117,19 @@ class Biquad : public InPlaceFilter<TYPE> {
 
 
 template<typename TYPE>
-class BiquadCascade : public InPlaceFilter<TYPE> {
+class BiquadCascade : public InPlaceFilter<TYPE>, public std::vector<Biquad<TYPE>> {
 	// ------------------------------------------------------------------
 	//  X'truction
 	// ------------------------------------------------------------------
 	public:
 		BiquadCascade();
-		BiquadCascade(const BiquadCascade &other);
+		BiquadCascade(const BiquadCascade &other) = default;
 
 
 	// ------------------------------------------------------------------
 	//  Public methods
 	// ------------------------------------------------------------------
 	public:
-		// number of biquads comprising the cascade
-		int size() const;
-
 		// resets the filter, i.e. erases the filter memory
 		void reset();
 
@@ -149,15 +147,16 @@ class BiquadCascade : public InPlaceFilter<TYPE> {
 		void apply(int n, TYPE *inout) override;
 		InPlaceFilter<TYPE> *clone() const override;
 
-		void setSamplingFrequency(double /*fsamp*/) override {}
+		void setSamplingFrequency(double fsamp) override {
+			std::cerr << "BiquadCascade::setSamplingFrequency()"<<std::endl;
+		}
+
 		int setParameters(int n, const double *params) override;
 
 
 	// ------------------------------------------------------------------
 	//  Protected members
 	// ------------------------------------------------------------------
-	protected:
-		std::vector< Biquad<TYPE> > _biq;
 
 	template <typename T>
 	friend std::ostream &operator<<(std::ostream &os, const BiquadCascade<T> &b);
