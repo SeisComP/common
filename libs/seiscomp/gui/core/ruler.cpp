@@ -995,11 +995,12 @@ void Ruler::wheelEvent(QWheelEvent *event) {
 
 	// shift modifier works as an amplifier
 	int delta = event->modifiers() & Qt::ShiftModifier ?
-	            event->delta() * 2 : event->delta() / 4;
+	            QT_WE_DELTA(event) * 2 : QT_WE_DELTA(event) / 4;
 
 	// scale (Ctrl key)
 	if ( event->modifiers() & Qt::ControlModifier ) {
-		QPoint rp = w2rPos(event->x(), event->y());
+		QPoint pos = QT_WE_POS(event);
+		QPoint rp = w2rPos(pos.x(), pos.y());
 		double center = (double)(rp.x() + _pos) / rulerWidth();
 		double ofs = delta / _scl;
 		changeRange(_min + ofs * center, _max - ofs * (1-center));

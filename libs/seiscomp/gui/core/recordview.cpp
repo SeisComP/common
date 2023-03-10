@@ -21,6 +21,7 @@
 
 #define SEISCOMP_COMPONENT Gui::RecordView
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/core/recordview.h>
 #include <seiscomp/gui/core/timescale.h>
 #include <seiscomp/core/recordsequence.h>
@@ -283,16 +284,18 @@ class RecordScrollArea : public QScrollArea {
 		}
 
 		void wheelEvent(QWheelEvent *event) {
-			Seiscomp::Gui::RecordView* p = (Seiscomp::Gui::RecordView*)parent();
+			auto p = static_cast<Seiscomp::Gui::RecordView*>(parent());
 			if ( event->modifiers() & Qt::ControlModifier ) {
 				QPointF tmp(p->zoomSpot());
 
-				p->setZoomSpotFromGlobal(event->globalPos());
+				p->setZoomSpotFromGlobal(QT_WE_GLOBALPOS(event));
 
-				if ( event->delta() < 0 )
+				if ( QT_WE_DELTA(event) < 0 ) {
 					p->zoomOut();
-				else
+				}
+				else {
 					p->zoomIn();
+				}
 
 				p->setZoomSpot(tmp);
 

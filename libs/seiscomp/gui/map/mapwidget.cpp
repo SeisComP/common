@@ -853,7 +853,7 @@ void MapWidget::keyReleaseEvent(QKeyEvent *e) {
 
 
 void MapWidget::wheelEvent(QWheelEvent *e) {
-	double zoomDelta = (double)e->delta() * (1.0/120.0);
+	double zoomDelta = static_cast<double>(QT_WE_DELTA(e)) * (1.0/120.0);
 	if ( _canvas.setZoomLevel(_canvas.zoomLevel() * pow(2.0, zoomDelta*_zoomSensitivity)) )
 		update();
 }

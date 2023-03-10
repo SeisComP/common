@@ -20,6 +20,8 @@
 
 
 #include <QWheelEvent>
+
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/datamodel/pickerzoomframe.h>
 
 namespace Seiscomp {
@@ -33,21 +35,21 @@ ZoomRecordFrame::ZoomRecordFrame(QWidget* parent, Qt::WindowFlags f)
 void ZoomRecordFrame::wheelEvent(QWheelEvent* e) {
 	if ( e->modifiers() != Qt::NoModifier ) {
 		if ( e->modifiers() & Qt::ShiftModifier ) {
-			if ( e->delta() < 0 )
+			if ( QT_WE_DELTA(e) < 0 )
 				emit horizontalZoomOut();
 			else
 				emit horizontalZoomIn();
 		}
 	
 		if ( e->modifiers() & Qt::ControlModifier ) {
-			if ( e->delta() < 0 )
+			if ( QT_WE_DELTA(e) < 0 )
 				emit verticalZoomOut();
 			else
 				emit verticalZoomIn();
 		}
 	}
 	else {
-		if ( e->delta() < 0 )
+		if ( QT_WE_DELTA(e) < 0 )
 			emit lineDown();
 		else
 			emit lineUp();
