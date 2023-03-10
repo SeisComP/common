@@ -207,7 +207,7 @@ DatabaseIterator getEvents(DatabaseArchive *ar, const EventListView::Filter& fil
 
 	std::ostringstream oss;
 
-	oss << "select PEvent." + _T("publicID") + ",Event.*"
+	oss << "select PEvent." + _T("publicID") + ",Event.* "
 	    << "from Origin, PublicObject as POrigin, Event, PublicObject as PEvent ";
 
 	if ( filterMagnitude ) oss << ", PublicObject as PMagnitude,  Magnitude ";
