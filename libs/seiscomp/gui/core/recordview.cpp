@@ -91,7 +91,7 @@ class RecordScrollArea : public QScrollArea {
 			setUpdatesEnabled(false);
 
 			_operation = Zooming;
-			_selectOperation = RecordView::Select;
+			_selectOperation = RecordView::SelectNone;
 			_overlay->setVisible(e);
 
 			if ( !e ) {
@@ -101,7 +101,7 @@ class RecordScrollArea : public QScrollArea {
 			setUpdatesEnabled(true);
 		}
 
-		void enableRubberBandSelection(bool e) {
+		void enableRubberBandSelection(bool e, RecordView::SelectionOperation filter) {
 			if ( !e && _operation != RubberBandSelection ) {
 				return;
 			}
@@ -109,7 +109,8 @@ class RecordScrollArea : public QScrollArea {
 			setUpdatesEnabled(false);
 
 			_operation = RubberBandSelection;
-			_selectOperation = RecordView::Select;
+			_selectOperation = RecordView::SelectNone;
+			_selectOperationFilter = filter;
 			_overlay->setVisible(e);
 
 			if ( !e ) {
@@ -137,7 +138,7 @@ class RecordScrollArea : public QScrollArea {
 				QRect viewport(p.window());
 				viewport.setLeft(view->labelWidth() + view->horizontalSpacing());
 
-				if ( _isActive ) {
+				if ( _isActive && _selectOperation ) {
 					switch ( _selectOperation ) {
 						case RecordView::SelectPlus:
 							p.setPen(QColor(32,96,64));
@@ -168,13 +169,20 @@ class RecordScrollArea : public QScrollArea {
 					_endPoint = _startPoint;
 					_isActive = true;
 
-					_selectOperation = RecordView::Select;
 					if ( _operation == RubberBandSelection ) {
+						if ( _selectOperationFilter.testFlag(RecordView::Select) ) {
+							_selectOperation = RecordView::Select;
+						}
+
 						if ( ev->modifiers().testFlag(Qt::ShiftModifier) ) {
-							_selectOperation = RecordView::SelectPlus;
+							if ( _selectOperationFilter.testFlag(RecordView::SelectPlus) ) {
+								_selectOperation = RecordView::SelectPlus;
+							}
 						}
 						else if ( ev->modifiers().testFlag(Qt::ControlModifier) ) {
-							_selectOperation = RecordView::SelectMinus;
+							if ( _selectOperationFilter.testFlag(RecordView::SelectMinus) ) {
+								_selectOperation = RecordView::SelectMinus;
+							}
 						}
 					}
 
@@ -189,7 +197,6 @@ class RecordScrollArea : public QScrollArea {
 
 				if ( ev->button() == Qt::LeftButton ) {
 					_isActive = false;
-					_selectOperation = RecordView::Select;
 
 					if ( _operation == Zooming ) {
 						view->setZoomRectFromGlobal(
@@ -200,7 +207,7 @@ class RecordScrollArea : public QScrollArea {
 							.normalized()
 						);
 					}
-					else {
+					else if ( _selectOperation ) {
 						QRect rubberBand = QRect(
 							_startPoint, _endPoint
 						)
@@ -232,7 +239,9 @@ class RecordScrollArea : public QScrollArea {
 						);
 					}
 
+					_selectOperation = RecordView::SelectNone;
 					_overlay->update();
+
 					return true;
 				}
 				else
@@ -242,13 +251,20 @@ class RecordScrollArea : public QScrollArea {
 				QMouseEvent *ev = static_cast<QMouseEvent*>(e);
 
 				if ( _isActive ) {
-					_selectOperation = RecordView::Select;
 					if ( _operation == RubberBandSelection ) {
+						if ( _selectOperationFilter.testFlag(RecordView::Select) ) {
+							_selectOperation = RecordView::Select;
+						}
+
 						if ( ev->modifiers().testFlag(Qt::ShiftModifier) ) {
-							_selectOperation = RecordView::SelectPlus;
+							if ( _selectOperationFilter.testFlag(RecordView::SelectPlus) ) {
+								_selectOperation = RecordView::SelectPlus;
+							}
 						}
 						else if ( ev->modifiers().testFlag(Qt::ControlModifier) ) {
-							_selectOperation = RecordView::SelectMinus;
+							if ( _selectOperationFilter.testFlag(RecordView::SelectMinus) ) {
+								_selectOperation = RecordView::SelectMinus;
+							}
 						}
 					}
 
@@ -285,6 +301,37 @@ class RecordScrollArea : public QScrollArea {
 			QScrollArea::wheelEvent(event);
 		}
 
+		void keyPressEvent(QKeyEvent *ev) {
+			updateKeyState(ev);
+			QScrollArea::keyPressEvent(ev);
+		}
+
+		void keyReleaseEvent(QKeyEvent *ev) {
+			updateKeyState(ev);
+			QScrollArea::keyReleaseEvent(ev);
+		}
+
+	private:
+		void updateKeyState(QKeyEvent *ev) {
+			if ( !_isActive || (_operation != RubberBandSelection) ) {
+				return;
+			}
+
+			RecordView::SelectionOperation newOperation = RecordView::Select;
+			if ( ev->modifiers().testFlag(Qt::ShiftModifier) ) {
+				newOperation = RecordView::SelectPlus;
+			}
+			else if ( ev->modifiers().testFlag(Qt::ControlModifier) ) {
+				newOperation = RecordView::SelectMinus;
+			}
+
+			newOperation &= _selectOperationFilter;
+			if ( _selectOperation != newOperation ) {
+				_selectOperation = newOperation;
+				_overlay->update();
+			}
+		}
+
 	private:
 		enum Operation {
 			Zooming,
@@ -294,6 +341,7 @@ class RecordScrollArea : public QScrollArea {
 		QPoint                          _startPoint;
 		QPoint                          _endPoint;
 		Operation                       _operation{Zooming};
+		RecordView::SelectionOperation  _selectOperationFilter{RecordView::SelectAll};
 		RecordView::SelectionOperation  _selectOperation{RecordView::Select};
 		bool                            _isActive{false};
 		QWidget                        *_overlay{nullptr};
@@ -2856,8 +2904,8 @@ void RecordView::setZoomEnabled(bool e) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordView::setRubberBandSelectionEnabled(bool e) {
-	static_cast<RecordScrollArea*>(_scrollArea)->enableRubberBandSelection(e);
+void RecordView::setRubberBandSelectionEnabled(bool e, SelectionOperation filter) {
+	static_cast<RecordScrollArea*>(_scrollArea)->enableRubberBandSelection(e, filter);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

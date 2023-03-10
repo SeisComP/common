@@ -64,11 +64,15 @@ class SC_GUI_API RecordView : public QWidget {
 			ExtendedSelection
 		};
 
-		enum SelectionOperation {
-			Select = 0,
-			SelectPlus,
-			SelectMinus
+		enum SelectionOperationFlag {
+			SelectNone   = 0x00,
+			Select       = 0x01,
+			SelectPlus   = 0x02,
+			SelectMinus  = 0x04,
+			SelectAll    = Select | SelectPlus | SelectMinus
 		};
+
+		Q_DECLARE_FLAGS(SelectionOperation, SelectionOperationFlag)
 
 
 	public:
@@ -437,8 +441,10 @@ class SC_GUI_API RecordView : public QWidget {
 		/**
 		 * @brief Enables rubber band selection with the mouse
 		 * @param enable Whether to enable or disable it
+		 * @param filter Which operations are enabled
 		 */
-		void setRubberBandSelectionEnabled(bool enable);
+		void setRubberBandSelectionEnabled(bool enable,
+		                                   SelectionOperation filter = SelectAll);
 
 		void setDefaultDisplay();
 
