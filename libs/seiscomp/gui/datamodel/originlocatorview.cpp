@@ -3764,19 +3764,23 @@ void OriginLocatorView::readPicks(Origin* o) {
 	_blockReadPicks = true;
 
 	if ( _reader ) {
-		if ( o->arrivalCount() == 0 )
+		if ( o->arrivalCount() == 0 ) {
 			_reader->loadArrivals(o);
-
-		if ( o->magnitudeCount() == 0 )
-			_reader->loadMagnitudes(o);
-
-		for ( size_t i = 0; i < o->magnitudeCount(); ++i ) {
-			if ( o->magnitude(i)->stationMagnitudeContributionCount() == 0 )
-				_reader->loadStationMagnitudeContributions(o->magnitude(i));
 		}
 
-		if ( o->stationMagnitudeCount() == 0 )
+		if ( o->magnitudeCount() == 0 ) {
+			_reader->loadMagnitudes(o);
+		}
+
+		for ( size_t i = 0; i < o->magnitudeCount(); ++i ) {
+			if ( o->magnitude(i)->stationMagnitudeContributionCount() == 0 ) {
+				_reader->loadStationMagnitudeContributions(o->magnitude(i));
+			}
+		}
+
+		if ( o->stationMagnitudeCount() == 0 ) {
 			_reader->loadStationMagnitudes(o);
+		}
 
 		PickMap originPicks;
 		std::vector<PickPtr> tmpPicks;
@@ -3799,8 +3803,9 @@ void OriginLocatorView::readPicks(Origin* o) {
 			DatabaseIterator it = _reader->getPicks(o->publicID());
 
 			while ( *it ) {
-				if ( !it.cached() )
+				if ( !it.cached() ) {
 					tmpPicks.push_back(Pick::Cast(*it));
+				}
 				++it;
 				progress.setValue(progress.value()+1);
 			}
@@ -3817,8 +3822,15 @@ void OriginLocatorView::readPicks(Origin* o) {
 
 			// try to find the pick somewhere in the client memory
 			PickPtr pick = Pick::Find(pickID);
-			if ( pick )
+			if ( pick ) {
 				originPicks[pickID] = pick;
+			}
+			else {
+				auto pick = static_cast<Pick*>(_reader->getObject(Pick::TypeInfo(), pickID));
+				if ( pick ) {
+					originPicks[pickID] = pick;
+				}
+			}
 		}
 
 		_associatedPicks = originPicks;
