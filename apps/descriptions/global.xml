@@ -402,12 +402,38 @@
 			</group>
 			<group name="magnitudes">
 				<description>
-				Regionalization of magnitude configurations overriding global
-				bindings. Add regionalization by magnitude-type profiles.
-				Profile names correspond to magnitude types. For parameters which
-				not set, the values defined in bindings apply.
+				Parameters for computing magnitudes.
+				Add regionalization of magnitudes by magnitude-type profiles.
+				One profile corresponds to one magnitude type.
 				</description>
-				<struct type="Magnitude type profile">
+				<parameter name="aliases" type="list:string">
+					<description>
+					Definition of magnitude aliases for deriving new magnitude
+					types from existing magnitude and amplitude types. Separate
+					multiple entries by comma.
+
+					Format:
+
+					NewType:OriginalMagnitudeType[:OriginalAmplitudeType]
+
+					OriginalAmplitudeType is optional. The default amplitude
+					type applies if OriginalAmplitudeType is undefined.
+
+					Examples for deriving magnitude of new type ABC from MLv:
+
+					ABC:MLv:MLv
+
+					ABC:MLv
+
+					Alias magnitudes can be configured like any other magnitude.
+					</description>
+				</parameter>
+				<struct type="Magnitude type profile" title="Magnitude-type profile for regionalization">
+					<description>
+					Regionalization of magnitude configurations overriding global
+					bindings. For parameters which are not set, the values
+					defined in bindings apply.
+					</description>
 					<parameter name="regionFile" type="path">
 						<description>
 						Path to a geofeature file, e.g. in BNA or GeoJSON format,
