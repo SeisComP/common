@@ -1045,7 +1045,7 @@ class OriginTreeItem : public SchemeTreeItem {
 				bool expanded = false;
 				QTreeWidget* tree = treeWidget();
 				if ( tree )
-					expanded = tree->isItemExpanded(p);
+					expanded = p->isExpanded();
 				//SEISCOMP_DEBUG("Reposition child");
 				p->insertChild(0, p->takeChild(p->indexOfChild(this)));
 				if ( !expanded && tree )
@@ -1361,7 +1361,7 @@ class EventTreeItem : public SchemeTreeItem {
 						if ( it != seenAgencies.end() ) {
 							// Is it the preferred origin?
 							if ( oitem->data(config.columnMap[COL_ID], Qt::UserRole).toBool() ) {
-								treeWidget()->setItemHidden(it.value(), true);
+								it.value()->setHidden(true);
 							}
 							else
 								hide = true;
@@ -1369,14 +1369,16 @@ class EventTreeItem : public SchemeTreeItem {
 						else
 							seenAgencies.insert(agency, oitem);
 
-						if ( treeWidget()->isItemHidden(oitem) != hide )
-							treeWidget()->setItemHidden(oitem, hide);
+						if ( oitem->isHidden() != hide ) {
+							oitem->setHidden(hide);
+						}
 					}
 				}
 				else {
 					for ( int i = 0; i < _origins->childCount(); ++i ) {
-						if ( treeWidget()->isItemHidden(_origins->child(i)) )
-							treeWidget()->setItemHidden(_origins->child(i), false);
+						if ( _origins->child(i)->isHidden() ) {
+							_origins->child(i)->setHidden(false);
+						}
 					}
 				}
 			}
@@ -1397,7 +1399,7 @@ class EventTreeItem : public SchemeTreeItem {
 						if ( it != seenAgencies.end() ) {
 							// Is it the preferred origin?
 							if ( fmitem->data(config.columnMap[COL_ID], Qt::UserRole).toBool() ) {
-								treeWidget()->setItemHidden(it.value(), true);
+								it.value()->setHidden(true);
 							}
 							else
 								hide = true;
@@ -1405,14 +1407,16 @@ class EventTreeItem : public SchemeTreeItem {
 						else
 							seenAgencies.insert(agency, fmitem);
 
-						if ( treeWidget()->isItemHidden(fmitem) != hide )
-							treeWidget()->setItemHidden(fmitem, hide);
+						if ( fmitem->isHidden() != hide ) {
+							fmitem->setHidden(hide);
+						}
 					}
 				}
 				else {
 					for ( int i = 0; i < _origins->childCount(); ++i ) {
-						if ( treeWidget()->isItemHidden(_origins->child(i)) )
-							treeWidget()->setItemHidden(_origins->child(i), false);
+						if ( _origins->child(i)->isHidden() ) {
+							_origins->child(i)->setHidden(false);
+						}
 					}
 				}
 			}
@@ -3093,8 +3097,8 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 		}
 	}
 
-	if ( hide != _treeWidget->isItemHidden(item) ) {
-		_treeWidget->setItemHidden(item, hide);
+	if ( hide != item->isHidden() ) {
+		item->setHidden(hide);
 		if ( hide ) {
 			if ( _visibleEventCount > 0 )
 				--_visibleEventCount;

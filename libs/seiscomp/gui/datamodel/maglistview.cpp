@@ -172,8 +172,9 @@ class OriginTreeItem : public SchemeTreeItem {
 			if ( p ) {
 				bool expanded = false;
 				QTreeWidget* tree = treeWidget();
-				if ( tree )
-					expanded = tree->isItemExpanded(p);
+				if ( tree ) {
+					expanded = p->isExpanded();
+				}
 				p->insertChild(0, p->takeChild(p->indexOfChild(this)));
 				if ( !expanded && tree )
 					tree->collapseItem(p);
@@ -226,8 +227,9 @@ class NetMagTreeItem : public SchemeTreeItem {
 			if ( p ) {
 				bool expanded = false;
 				QTreeWidget* tree = treeWidget();
-				if ( tree )
-					expanded = tree->isItemExpanded(p);
+				if ( tree ) {
+					expanded = p->isExpanded();
+				}
 				p->insertChild(0, p->takeChild(p->indexOfChild(this)));
 				if ( !expanded && tree )
 					tree->collapseItem(p);
