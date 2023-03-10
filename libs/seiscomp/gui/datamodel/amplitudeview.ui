@@ -1350,13 +1350,13 @@
     <iconset resource="icons.qrc" >:/icons/icons/ok.png</iconset>
    </property>
    <property name="text" >
-    <string>Recalculate all amplitudes</string>
+    <string>Remeasure all amplitudes</string>
    </property>
    <property name="iconText" >
-    <string>Recalculate all amplitudes</string>
+    <string>Remeasure all amplitudes</string>
    </property>
    <property name="toolTip" >
-    <string>Recalculate all amplitudes</string>
+    <string>Remeasure all amplitudes</string>
    </property>
    <property name="shortcut" >
     <string>Shift+R</string>
@@ -1372,6 +1372,9 @@
    <property name="iconText" >
     <string>Pick amplitudes</string>
    </property>
+   <property name="toolTip" >
+    <string>Drag time window for measuring amplitudes</string>
+   </property>
    <property name="shortcut" >
     <string>1</string>
    </property>
@@ -1381,13 +1384,13 @@
     <iconset resource="icons.qrc" >:/icons/icons/ok_single.png</iconset>
    </property>
    <property name="text" >
-    <string>Recalculate amplitude of selected waveform</string>
+    <string>Remeasure amplitude of selected waveform</string>
    </property>
    <property name="iconText" >
-    <string>Recalculate amplitude of selected waveform</string>
+    <string>Remeasure amplitude of selected waveform</string>
    </property>
    <property name="toolTip" >
-    <string>Recalculate amplitude of selected waveform</string>
+    <string>Remeasure amplitude of selected waveform</string>
    </property>
    <property name="shortcut" >
     <string>R</string>
