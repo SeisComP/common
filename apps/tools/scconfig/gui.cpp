@@ -155,12 +155,19 @@ class ModuleNamePainter : public QObject {
 					painter.fillRect(0,l->height()-1,l->width(),1,grad);
 				}
 
+#if QT_VERSION >= 0x050e00
+				QPixmap pm = l->pixmap(Qt::ReturnByValue);
+				int xofs = (l->width() - pm.width()) / 2;
+				int yofs = (l->height() - pm.height()) / 2;
+				painter.drawPixmap(xofs, yofs, pm);
+#else
 				const QPixmap *pm = l->pixmap();
 				if ( pm != NULL ) {
 					int xofs = (l->width() - pm->width()) / 2;
 					int yofs = (l->height() - pm->height()) / 2;
-					painter.drawPixmap(xofs,yofs, *pm);
+					painter.drawPixmap(xofs, yofs, *pm);
 				}
+#endif
 
 				painter.setPen(Qt::white);
 				painter.drawText(l->rect().adjusted(20,0,0,0), Qt::AlignLeft | Qt::AlignVCenter, l->text());
