@@ -8,6 +8,29 @@
 		<configuration>
 			<extend-struct type="Magnitude type profile" match-name="MLc">
 				<extend-struct type="Magnitude region profile">
+					<parameter name="distMode" type="string">
+						<description>
+						Considered distance measure between source and receiver.
+						Possible values are
+
+						hypocentral: hypocentral distance
+
+						epicentral: epicentral distance
+						</description>
+					</parameter>
+					<parameter name="calibrationType" type="string" unit="">
+						<description>
+						Type of magnitude calibration formula to be considered.
+						The calibration parameters are considered accordingly.
+						Currently supported are
+
+						&quot;parametric&quot;: consider parameters of parametric
+						configuration in parametric section
+
+						&quot;A0&quot;: consider parameters of non-parametric
+						configuration in A0 section.
+						</description>
+					</parameter>
 					<group name="A0">
 						<description>
 						Parameters for A0, non-parametric magnitude calibration.
@@ -155,7 +178,7 @@
 
 						hypocentral: hypocentral distance
 
-						epicentral: epicentral
+						epicentral: epicentral distance
 						</description>
 					</parameter>
 					<parameter name="minDist" type="double" default="-1.0" unit="deg">
