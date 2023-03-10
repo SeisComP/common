@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/plot/axis.h>
 #include <seiscomp/math/math.h>
 #include <cmath>
@@ -273,7 +274,7 @@ void Axis::updateLayout(const QFontMetrics &fm, QRect &rect) {
 				if ( fabs(value) < epsilon )
 					value = 0;
 
-				int s0Width = fm.width(QString::number(_logScale ? pow(_logBase, value) : value));
+				int s0Width = QT_FM_WIDTH(fm, QString::number(_logScale ? pow(_logBase, value) : value));
 				if ( s0Width > _extent )
 					_extent = s0Width;
 				s0i += _tickSpacing;

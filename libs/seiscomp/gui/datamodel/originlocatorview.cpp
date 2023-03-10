@@ -24,6 +24,7 @@
 #include <seiscomp/gui/datamodel/ui_originlocatorview.h>
 #include <seiscomp/gui/core/ui_diagramfilter.h>
 
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/core/diagramwidget.h>
 #include <seiscomp/gui/core/locator.h>
 #include <seiscomp/gui/core/gradient.h>
@@ -1426,7 +1427,7 @@ ArrivalDelegate::ArrivalDelegate(QWidget *parent)
 	_labels[2] = "B";
 
 	if ( parent )
-		_statusRectWidth = parent->fontMetrics().width('A');
+		_statusRectWidth = QT_FM_WIDTH(parent->fontMetrics(), 'A');
 }
 
 bool ArrivalDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,

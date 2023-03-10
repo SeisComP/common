@@ -19,51 +19,17 @@
 
 
 
-#include <seiscomp/gui/core/application.h>
-#include <seiscomp/gui/core/aboutwidget.h>
-#include <seiscomp/gui/core/compat.h>
-#include <seiscomp/system/environment.h>
-#include <seiscomp/utils/files.h>
-
-#include <QDesktopWidget>
+#ifndef SEISCOMP_GUI_COMPAT_H
+#define SEISCOMP_GUI_COMPAT_H
 
 
-namespace Seiscomp {
-namespace Gui {
+#include <QtGlobal>
+
+#if QT_VERSION >= 0x050b00
+    #define QT_FM_WIDTH(fm, str) fm.horizontalAdvance(str)
+#else
+    #define QT_FM_WIDTH(fm, str) fm.width(str)
+#endif
 
 
-AboutWidget::AboutWidget(QWidget* parent, Qt::WindowFlags f)
- : QWidget(parent, f) {
-	_ui.setupUi(this);
-	setWindowFlags(Qt::Tool| Qt::WindowStaysOnTopHint);
-	setAttribute(Qt::WA_DeleteOnClose);
-	activateWindow();
-
-	QFile licenseFile(Environment::Instance()->absolutePath("@DATADIR@/doc/seiscomp/LICENSE.html").c_str());
-	licenseFile.open(QFile::ReadOnly);
-
-	QString licenseText(licenseFile.readAll());
-
-	_ui.textLicense->setHtml(licenseText);
-	_ui.labelVersion->setText(SCApp->frameworkVersion());
-
-	int minWidth = QT_FM_WIDTH(fontMetrics(), 'M')*65;
-	int minHeight = fontMetrics().height()*45;
-	int w = width(), h = height();
-	if ( w < minWidth ) w = minWidth;
-	if ( h < minHeight ) h = minHeight;
-
-	if ( w > QApplication::desktop()->size().width() )
-		w = QApplication::desktop()->size().width();
-	if ( h > QApplication::desktop()->size().height() )
-		h = QApplication::desktop()->size().height();
-
-	resize(w, h);
-}
-
-
-AboutWidget::~AboutWidget() {}
-
-
-}
-}
+#endif

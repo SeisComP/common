@@ -32,6 +32,7 @@
 #include <math.h>
 #include <limits>
 
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/math/math.h>
 
 #define CHCK255(x) ((x)>255?255:((x)<0?0:(x)))
@@ -1049,7 +1050,7 @@ void Ruler::updateIntervals() {
 			// compute adequate tick/annotation interval
 			// the 1st factor is for fine-tuning
 			double textDim = isHorizontal() ?
-			                 fontMetrics().width(" XX:XX:XX ") :
+			                 QT_FM_WIDTH(fontMetrics(), " XX:XX:XX ") :
 			                 fontMetrics().height()*2;
 			double q = log10(2*(max-_min)*textDim/rulerWidth());
 			double rx = q - floor(q);

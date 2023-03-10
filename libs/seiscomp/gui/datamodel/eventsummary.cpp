@@ -27,6 +27,7 @@
 #include <seiscomp/datamodel/momenttensor.h>
 
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/datamodel/utils.h>
 #include <seiscomp/gui/datamodel/originsymbol.h>
 #include <seiscomp/gui/core/tensorrenderer.h>
@@ -274,7 +275,7 @@ void EventSummary::init() {
 
 	// Set the font sizes
 	setupFont(_ui->originTime, SCScheme.fonts.highlight);
-	_ui->originTime->setMinimumWidth(_ui->originTime->fontMetrics().width("9999-99-99 99:99:99 "));
+	_ui->originTime->setMinimumWidth(QT_FM_WIDTH(_ui->originTime->fontMetrics(), "9999-99-99 99:99:99 "));
 
 	setupFont(_ui->timeAgo, SCScheme.fonts.base);
 

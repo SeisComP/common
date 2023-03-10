@@ -32,6 +32,7 @@
 #include "utils.h"
 
 #include <seiscomp/core/exceptions.h>
+#include <seiscomp/gui/core/compat.h>
 
 namespace Seiscomp {
 namespace Gui {
@@ -114,7 +115,7 @@ void TimeScale::updateIntervals() {
 	_secondaryTimeFormat = spacings[imax-1].absoluteSecondFormat;
 	_relativeTimeFormat = spacings[imax-1].relativeFormat;
 
-	int minDistance = fontMetrics().width("  XXXX-XX-XX.X  ");
+	int minDistance = QT_FM_WIDTH(fontMetrics(), "  XXXX-XX-XX.X  ");
 	unsigned int i;
 	for ( i = 0; i < imax; ++i ) {
 		if ( spacings[i].major*_scl >= minDistance ) {

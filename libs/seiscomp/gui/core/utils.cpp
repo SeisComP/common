@@ -21,6 +21,7 @@
 
 #include <cstdio>
 #include <cmath>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/core/strings.h>
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/utils.h>
@@ -320,14 +321,14 @@ QString elapsedTimeString(const Core::TimeSpan &dt) {
 void setMaxWidth(QWidget *w, int numCharacters) {
 	QFont f = w->font();
 	QFontMetrics fm(f);
-	w->setMaximumWidth(fm.width("W")*numCharacters);
+	w->setMaximumWidth(QT_FM_WIDTH(fm, "W")*numCharacters);
 }
 
 
 void fixWidth(QWidget *w, int numCharacters) {
 	QFont f = w->font();
 	QFontMetrics fm(f);
-	w->setFixedWidth(fm.width("W")*numCharacters);
+	w->setFixedWidth(QT_FM_WIDTH(fm, "W")*numCharacters);
 }
 
 
@@ -355,7 +356,7 @@ bool ElideFadeDrawer::eventFilter(QObject *obj, QEvent *event) {
 		QRect rect = q->contentsRect();
 		int flags = q->alignment() | Qt::TextSingleLine;
 
-		if ( fm.width(q->text()) > rect.width() ) {
+		if ( QT_FM_WIDTH(fm, q->text()) > rect.width() ) {
 			//QPixmap pixmap(rect.size());//, QImage::Format_ARGB32);
 			QImage pixmap(rect.size(), QImage::Format_ARGB32);
 			pixmap.fill(Qt::transparent);
@@ -405,8 +406,8 @@ bool EllipsisDrawer::eventFilter(QObject *obj, QEvent *event) {
 		QFontMetrics fm(q->font());
 		QRect rect = q->contentsRect();
 
-		if ( fm.width(q->text()) > rect.width() ) {
-			int eWidth = fm.width("...");
+		if ( QT_FM_WIDTH(fm, q->text()) > rect.width() ) {
+			int eWidth = QT_FM_WIDTH(fm, "...");
 			painter.drawText(rect.adjusted(0,0,-eWidth,0), Qt::TextSingleLine, q->text());
 			painter.drawText(rect.adjusted(rect.width()-eWidth,0,0,0), Qt::TextSingleLine, "...");
 		}

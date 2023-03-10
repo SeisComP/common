@@ -25,6 +25,7 @@
 #include <seiscomp/gui/datamodel/originsymbol.h>
 #include <seiscomp/gui/datamodel/publicobjectevaluator.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/core/utils.h>
 #include <seiscomp/gui/map/projection.h>
 
@@ -586,19 +587,19 @@ void ExtTensorSymbol::customDraw(const Map::Canvas *c, QPainter &p) {
 	if ( _drawAgency && !_agency.isEmpty() ) {
 		text += _agency;
 		++lines;
-		width = fm.width(_agency);
+		width = QT_FM_WIDTH(fm, _agency);
 	}
 	if ( _drawMagnitude && !_magnitude.isEmpty() ) {
 		if ( !text.isEmpty() ) text += "\n";
 		text += _magnitude;
 		++lines;
-		width = max(width, fm.width(_magnitude));
+		width = max(width, QT_FM_WIDTH(fm, _magnitude));
 	}
 	if ( _drawDepth && !_depth.isEmpty() ) {
 		if ( !text.isEmpty() ) text += "\n";
 		text += _depth;
 		++lines;
-		width = max(width, fm.width(_depth));
+		width = max(width, QT_FM_WIDTH(fm, _depth));
 	}
 
 	if ( lines ) {

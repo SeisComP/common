@@ -33,6 +33,8 @@
 
 #include <set>
 
+#include <seiscomp/gui/core/compat.h>
+
 namespace {
 
 
@@ -71,7 +73,7 @@ class LineNumberArea : public QWidget {
 					break;
 
 				const QString txt = QString::number(lineCount);
-				p.drawText(width() - fm.width(txt) - 3, qRound(position.y() ) - contentsY + ascent, txt);
+				p.drawText(width() - QT_FM_WIDTH(fm, txt) - 3, qRound(position.y() ) - contentsY + ascent, txt);
 			}
 		}
 
@@ -171,7 +173,7 @@ void ConfigEditor::init() {
 	option.setFlags(option.flags() | QTextOption::ShowTabsAndSpaces);
 	document()->setDefaultTextOption(option);
 
-	setTabStopWidth(fontMetrics().width(QLatin1Char('9'))*4);
+	setTabStopWidth(QT_FM_WIDTH(fontMetrics(), QLatin1Char('9'))*4);
 
 	connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(updateExtraSelections()));
 	connect(document(), SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
@@ -246,7 +248,7 @@ int ConfigEditor::lineNumberAreaWidth() {
 		++digits;
 	}
 
-	int space = 8 + fontMetrics().width(QLatin1Char('9')) * digits;
+	int space = 8 + QT_FM_WIDTH(fontMetrics(), QLatin1Char('9')) * digits;
 
 	return space;
 }

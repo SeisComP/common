@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/plot/legend.h>
 #include <seiscomp/gui/plot/graph.h>
 
@@ -52,7 +53,7 @@ void Legend::draw(QPainter &p, const QRect &plotRect,
 		if ( g->isEmpty() ) continue;
 		if ( g->name().isEmpty() ) continue;
 
-		width = qMax(width, fm.width(g->name()));
+		width = qMax(width, QT_FM_WIDTH(fm, g->name()));
 		height += fontHeight;
 	}
 

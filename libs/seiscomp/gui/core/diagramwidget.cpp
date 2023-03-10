@@ -36,6 +36,7 @@
 #define SEISCOMP_COMPONENT Gui::DiagramWidget
 #include <seiscomp/logging/log.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
 
 
 #define LOW_BORDER  60.0
@@ -444,7 +445,7 @@ void DiagramWidget::paintRectangular(QPainter &painter) {
 
 		for ( ; s0 < _displayRect.bottom(); s0 += vGridSpacing ) {
 			if ( fabs(s0) < 1E-10 ) s0 = 0;
-			textOffset = max(textOffset, fontMetrics().width(QString("%1").arg(s0)));
+			textOffset = max(textOffset, QT_FM_WIDTH(fontMetrics(), QString("%1").arg(s0)));
 		}
 
 		_diagramArea.setLeft(_diagramArea.left() + textOffset + _annotOffset);
@@ -1349,11 +1350,11 @@ void DiagramWidget::drawAbscissa(QPainter& painter, int y, bool drawMarker, bool
 	if ( !drawMarker ) return;
 
 	int textOffset = topAligned ? +_annotOffset : -_annotOffset;
-	int textSpacing = painter.fontMetrics().width('0');
+	int textSpacing = QT_FM_WIDTH(painter.fontMetrics(), '0');
 	double spacing = getSpacing(_displayRect.width(), 6);
 	//double spacing = _markerDistance.x();
 
-	int lastTextX = _diagramArea.left() + painter.fontMetrics().width(QString("%1").arg(_displayRect.left()));
+	int lastTextX = _diagramArea.left() + QT_FM_WIDTH(painter.fontMetrics(), QString("%1").arg(_displayRect.left()));
 
 	if ( spacing > 0 ) {
 		qreal s0 = int(floor(_displayRect.left() / spacing)) * spacing;
@@ -1366,7 +1367,7 @@ void DiagramWidget::drawAbscissa(QPainter& painter, int y, bool drawMarker, bool
 			int posX = _diagramArea.left() + (int)((s0 - _displayRect.left()) * scale);
 			painter.drawLine(posX, y-_tickLength, posX, y+_tickLength);
 
-			int tw = painter.fontMetrics().width(QString("%1").arg(s0));
+			int tw = QT_FM_WIDTH(painter.fontMetrics(), QString("%1").arg(s0));
 			if ( (posX - tw/2 - lastTextX) >= textSpacing ) {
 				drawHText(painter, posX, y+textOffset, s0, Qt::AlignHCenter, topAligned);
 				lastTextX = posX + tw/2;
@@ -1381,7 +1382,7 @@ void DiagramWidget::drawAbscissa(QPainter& painter, int y, bool drawMarker, bool
 
 	painter.drawLine(_diagramArea.right(), y-_tickLengthA, _diagramArea.right(), y+_tickLengthA);
 
-	int tw = painter.fontMetrics().width(QString("%1").arg(_displayRect.right()));
+	int tw = QT_FM_WIDTH(painter.fontMetrics(), QString("%1").arg(_displayRect.right()));
 	if ( (_diagramArea.right() - tw - lastTextX) >= textSpacing )
 		drawHText(painter, _diagramArea.right(), y+textOffset, _displayRect.right(), Qt::AlignRight, topAligned);
 }

@@ -21,6 +21,7 @@
 #include <seiscomp/datamodel/event.h>
 #include <seiscomp/datamodel/magnitude.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/map/legend.h>
 
 #include <QMenu>
@@ -127,7 +128,7 @@ void EventLegend::contextResizeEvent(const QSize &size) {
 
 	int cnt = _depthItems.count();
 	for ( int i = 0; i < cnt; ++i ) {
-		_depthItems[i].second.second = fm.width(_depthItems[i].second.first);
+		_depthItems[i].second.second = QT_FM_WIDTH(fm, _depthItems[i].second.first);
 		_depthWidth += _depthItems[i].second.second + SPACING/2 + textHeight;
 	}
 
@@ -140,7 +141,7 @@ void EventLegend::contextResizeEvent(const QSize &size) {
 
 	cnt = _magItems.count();
 	for ( int i = 0; i < cnt; ++i ) {
-		_magItems[i].second.second = fm.width(_magItems[i].second.first);
+		_magItems[i].second.second = QT_FM_WIDTH(fm, _magItems[i].second.first);
 		_magWidth += _magItems[i].first + SPACING/2 + _magItems[i].second.second;
 		_magHeight = qMax(_magHeight, _magItems[i].first);
 	}

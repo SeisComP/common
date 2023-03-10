@@ -22,6 +22,7 @@
 #include <seiscomp/gui/map/canvas.h>
 
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/geo/featureset.h>
 #include <seiscomp/seismology/regions.h>
 #include <seiscomp/gui/map/layer.h>
@@ -1149,7 +1150,7 @@ void Canvas::drawLegends(QPainter& painter) {
 
 			QRect decorationRect(0, 0, 52, 22);
 			const QString &title = legend->title();
-			QRect textRect(0, 0, fm.width(title) + 2 * innerMargin, fm.height());
+			QRect textRect(0, 0, QT_FM_WIDTH(fm, title) + 2 * innerMargin, fm.height());
 			QSize contentSize = legend->size();
 			int contentHeight = contentSize.height(),
 			    contentWidth = contentSize.width(),
@@ -1280,7 +1281,7 @@ void Canvas::drawLegends(QPainter& painter) {
 
 				QRect decorationRect(0, 0, 52, 22);
 				const QString &title = legend->title();
-				QRect textRect(0, 0, fm.width(title) + 2 * innerMargin, fm.height());
+				QRect textRect(0, 0, QT_FM_WIDTH(fm, title) + 2 * innerMargin, fm.height());
 				QSize contentSize = legend->size();
 				int contentHeight = contentSize.height(),
 				    contentWidth = contentSize.width(),

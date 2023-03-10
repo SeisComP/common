@@ -24,6 +24,7 @@
 #include <seiscomp/gui/map/projection.h>
 #include <seiscomp/gui/map/texturecache.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/math/geo.h>
 
@@ -404,8 +405,8 @@ void MapWidget::draw(QPainter &painter) {
 		QFontMetrics mfm(mf);
 		QFontMetrics fm(f);
 		int h = mfm.height() * 4 + fm.height();
-		int padding = fm.width(" ");
-		QRect r = QRect(0, rect().height() - h, mfm.width(distStr) + 2*padding, h);
+		int padding = QT_FM_WIDTH(fm, " ");
+		QRect r = QRect(0, rect().height() - h, QT_FM_WIDTH(mfm, distStr) + 2*padding, h);
 		painter.setPen(QPen(Qt::black));
 		painter.fillRect(r, QBrush(QColor(255, 255, 255, 140)));
 

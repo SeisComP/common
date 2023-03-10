@@ -44,6 +44,7 @@
 #include <seiscomp/version.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/system.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/system/environment.h>
 
 #include "gui.h"
@@ -191,7 +192,7 @@ class ModuleInfoPainter : public QObject {
 				*/
 				painter.setPen(normalText);
 
-				int tw = l->fontMetrics().width(l->text());
+				int tw = QT_FM_WIDTH(l->fontMetrics(), l->text());
 				QRect tr = l->rect().adjusted(20,0,-20,0);
 
 				if ( tw > tr.width() ) {
