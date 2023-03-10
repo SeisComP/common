@@ -23336,6 +23336,8 @@ class Version(object):
     
     Minor = _datamodel.Version_Minor
     
+    Revision = _datamodel.Version_Revision
+    
 
     def __init__(self):
         r"""__init__(Version self) -> Version"""

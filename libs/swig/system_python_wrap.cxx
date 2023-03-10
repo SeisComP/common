@@ -18273,6 +18273,65 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_SchemaStructure_title_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::SchemaStructure *arg1 = (Seiscomp::System::SchemaStructure *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "SchemaStructure_title_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaStructure, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaStructure_title_set" "', argument " "1"" of type '" "Seiscomp::System::SchemaStructure *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::SchemaStructure * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SchemaStructure_title_set" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SchemaStructure_title_set" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  if (arg1) (arg1)->title = *arg2;
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaStructure_title_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::SchemaStructure *arg1 = (Seiscomp::System::SchemaStructure *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::string *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaStructure, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaStructure_title_get" "', argument " "1"" of type '" "Seiscomp::System::SchemaStructure *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::SchemaStructure * >(argp1);
+  result = (std::string *) & ((arg1)->title);
+  resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_SchemaStructure_link_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::System::SchemaStructure *arg1 = (Seiscomp::System::SchemaStructure *) 0 ;
@@ -30718,58 +30777,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Group_parent_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::System::Group *arg1 = (Seiscomp::System::Group *) 0 ;
-  Seiscomp::Core::BaseObject *arg2 = (Seiscomp::Core::BaseObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "Group_parent_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__Group, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Group_parent_set" "', argument " "1"" of type '" "Seiscomp::System::Group *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::System::Group * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__BaseObject, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Group_parent_set" "', argument " "2"" of type '" "Seiscomp::Core::BaseObject *""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::BaseObject * >(argp2);
-  if (arg1) (arg1)->parent = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Group_parent_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::System::Group *arg1 = (Seiscomp::System::Group *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  Seiscomp::Core::BaseObject *result = 0 ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__Group, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Group_parent_get" "', argument " "1"" of type '" "Seiscomp::System::Group *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::System::Group * >(argp1);
-  result = (Seiscomp::Core::BaseObject *) ((arg1)->parent);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__BaseObject, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_Group_definition_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::System::Group *arg1 = (Seiscomp::System::Group *) 0 ;
@@ -31335,58 +31342,6 @@ SWIGINTERN PyObject *_wrap_Section_dump(PyObject *SWIGUNUSEDPARM(self), PyObject
     }
   }
   resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Section_parent_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::System::Section *arg1 = (Seiscomp::System::Section *) 0 ;
-  Seiscomp::Core::BaseObject *arg2 = (Seiscomp::Core::BaseObject *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "Section_parent_set", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__Section, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Section_parent_set" "', argument " "1"" of type '" "Seiscomp::System::Section *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::System::Section * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__BaseObject, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Section_parent_set" "', argument " "2"" of type '" "Seiscomp::Core::BaseObject *""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::BaseObject * >(argp2);
-  if (arg1) (arg1)->parent = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Section_parent_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::System::Section *arg1 = (Seiscomp::System::Section *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  Seiscomp::Core::BaseObject *result = 0 ;
-  
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__Section, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Section_parent_get" "', argument " "1"" of type '" "Seiscomp::System::Section *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::System::Section * >(argp1);
-  result = (Seiscomp::Core::BaseObject *) ((arg1)->parent);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__BaseObject, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -48931,6 +48886,8 @@ static PyMethodDef SwigMethods[] = {
 	 { "SchemaStructure_serialize", _wrap_SchemaStructure_serialize, METH_VARARGS, NULL},
 	 { "SchemaStructure_type_set", _wrap_SchemaStructure_type_set, METH_VARARGS, NULL},
 	 { "SchemaStructure_type_get", _wrap_SchemaStructure_type_get, METH_O, NULL},
+	 { "SchemaStructure_title_set", _wrap_SchemaStructure_title_set, METH_VARARGS, NULL},
+	 { "SchemaStructure_title_get", _wrap_SchemaStructure_title_get, METH_O, NULL},
 	 { "SchemaStructure_link_set", _wrap_SchemaStructure_link_set, METH_VARARGS, NULL},
 	 { "SchemaStructure_link_get", _wrap_SchemaStructure_link_get, METH_O, NULL},
 	 { "SchemaStructure_description_set", _wrap_SchemaStructure_description_set, METH_VARARGS, NULL},
@@ -49222,8 +49179,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "Group_copy", _wrap_Group_copy, METH_VARARGS, NULL},
 	 { "Group_clone", _wrap_Group_clone, METH_O, NULL},
 	 { "Group_dump", _wrap_Group_dump, METH_VARARGS, NULL},
-	 { "Group_parent_set", _wrap_Group_parent_set, METH_VARARGS, NULL},
-	 { "Group_parent_get", _wrap_Group_parent_get, METH_O, NULL},
 	 { "Group_definition_set", _wrap_Group_definition_set, METH_VARARGS, NULL},
 	 { "Group_definition_get", _wrap_Group_definition_get, METH_O, NULL},
 	 { "delete_Group", _wrap_delete_Group, METH_O, NULL},
@@ -49237,8 +49192,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "Section_copy", _wrap_Section_copy, METH_VARARGS, NULL},
 	 { "Section_clone", _wrap_Section_clone, METH_O, NULL},
 	 { "Section_dump", _wrap_Section_dump, METH_VARARGS, NULL},
-	 { "Section_parent_set", _wrap_Section_parent_set, METH_VARARGS, NULL},
-	 { "Section_parent_get", _wrap_Section_parent_get, METH_O, NULL},
 	 { "Section_name_set", _wrap_Section_name_set, METH_VARARGS, NULL},
 	 { "Section_name_get", _wrap_Section_name_get, METH_O, NULL},
 	 { "Section_description_set", _wrap_Section_description_set, METH_VARARGS, NULL},

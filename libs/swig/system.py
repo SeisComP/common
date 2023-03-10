@@ -760,6 +760,7 @@ class SchemaStructure(SchemaParameters):
     def serialize(self, ar):
         return _system.SchemaStructure_serialize(self, ar)
     type = property(_system.SchemaStructure_type_get, _system.SchemaStructure_type_set)
+    title = property(_system.SchemaStructure_title_get, _system.SchemaStructure_title_set)
     link = property(_system.SchemaStructure_link_get, _system.SchemaStructure_link_set)
     description = property(_system.SchemaStructure_description_get, _system.SchemaStructure_description_set)
     __swig_destroy__ = _system.delete_SchemaStructure
@@ -1552,7 +1553,6 @@ class Group(Container):
 
     def dump(self, os):
         return _system.Group_dump(self, os)
-    parent = property(_system.Group_parent_get, _system.Group_parent_set)
     definition = property(_system.Group_definition_get, _system.Group_definition_set)
     __swig_destroy__ = _system.delete_Group
 
@@ -1594,7 +1594,6 @@ class Section(Container):
 
     def dump(self, os):
         return _system.Section_dump(self, os)
-    parent = property(_system.Section_parent_get, _system.Section_parent_set)
     name = property(_system.Section_name_get, _system.Section_name_set)
     description = property(_system.Section_description_get, _system.Section_description_set)
     __swig_destroy__ = _system.delete_Section

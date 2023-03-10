@@ -53159,7 +53159,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "Displacement",SWIG_From_int(static_cast< int >(Seiscomp::Math::Displacement)));
   SWIG_Python_SetConstant(d, "Velocity",SWIG_From_int(static_cast< int >(Seiscomp::Math::Velocity)));
   SWIG_Python_SetConstant(d, "Acceleration",SWIG_From_int(static_cast< int >(Seiscomp::Math::Acceleration)));
-  SWIG_Python_SetConstant(d, "KM_OF_DEGREE",SWIG_From_double(static_cast< double >(111.1329149013519096)));
+  SWIG_Python_SetConstant(d, "KM_OF_DEGREE",SWIG_From_double(static_cast< double >(111.195079734632)));
 #if PY_VERSION_HEX >= 0x03000000
   return m;
 #else
