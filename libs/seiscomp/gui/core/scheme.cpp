@@ -466,7 +466,7 @@ void Scheme::Fonts::setBase(const QFont& f) {
 	Q_UNUSED(f);
 
 	normal = base;
-	normal.setPointSize(base.pointSize() + 2);
+	normal.setPointSize(base.pointSize());
 
 	smaller = base;
 	smaller.setPointSize(base.pointSize() - 2);

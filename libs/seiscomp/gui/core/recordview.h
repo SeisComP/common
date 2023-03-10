@@ -436,15 +436,21 @@ class SC_GUI_API RecordView : public QWidget {
 	
 		//! Enables zooming by drawing a zoomrect with
 		//! the mouse
-		void setZoomEnabled(bool);
+		void setZoomEnabled(bool = true);
 
 		/**
 		 * @brief Enables rubber band selection with the mouse
 		 * @param enable Whether to enable or disable it
 		 * @param filter Which operations are enabled
 		 */
-		void setRubberBandSelectionEnabled(bool enable,
+		void setRubberBandSelectionEnabled(bool enable = true,
 		                                   SelectionOperation filter = SelectAll);
+
+		/**
+		 * @brief Restores the default selection mode (rows) and disables
+		 *        either rubberband selection or zooming.
+		 */
+		void restoreSelectionMode();
 
 		void setDefaultDisplay();
 

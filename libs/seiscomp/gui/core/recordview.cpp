@@ -138,7 +138,7 @@ class RecordScrollArea : public QScrollArea {
 				QRect viewport(p.window());
 				viewport.setLeft(view->labelWidth() + view->horizontalSpacing());
 
-				if ( _isActive && _selectOperation ) {
+				if ( _isActive && (_operation != RubberBandSelection || _selectOperation) ) {
 					switch ( _selectOperation ) {
 						case RecordView::SelectPlus:
 							p.setPen(QColor(32,96,64));
@@ -2858,6 +2858,16 @@ void RecordView::setCurrentItem(RecordViewItem* item) {
 
 	if ( item && _selectionMode == SingleSelection )
 		setItemSelected(item, true);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordView::restoreSelectionMode() {
+	setZoomEnabled(false);
+	setRubberBandSelectionEnabled(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
