@@ -1431,6 +1431,7 @@ void Application::done() {
 
 	Inventory::Reset();
 	ConfigDB::Reset();
+	Processing::MagnitudeProcessor::RemoveAllAliases();
 
 	System::Application::done();
 

@@ -237,6 +237,8 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 		virtual void finalizeMagnitude(DataModel::StationMagnitude *magnitude) const;
 
 		static bool CreateAlias(const std::string &aliasType, const std::string &sourceType);
+		static bool RemoveAlias(const std::string &aliasType);
+		static void RemoveAllAliases();
 
 
 	protected:

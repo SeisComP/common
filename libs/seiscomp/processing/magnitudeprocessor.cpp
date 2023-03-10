@@ -91,6 +91,31 @@ class AliasFactories : public std::vector<MagnitudeProcessorAliasFactory*> {
 
 			return true;
 		}
+
+		bool removeAlias(const std::string &aliasType) {
+			auto factory = MagnitudeProcessorFactory::Find(aliasType);
+			if ( !factory ) {
+				SEISCOMP_ERROR("alias: magnitude alias type '%s' does not exist",
+				               aliasType.c_str());
+				return false;
+			}
+
+			delete factory;
+
+			auto it = find(begin(), end(), factory);
+			if ( it != end() ) {
+				erase(it);
+			}
+
+			return true;
+		}
+
+		void clear() {
+			for ( auto f : *this ) {
+				delete f;
+			}
+			std::vector<MagnitudeProcessorAliasFactory*>::clear();
+		}
 };
 
 
@@ -721,6 +746,24 @@ void MagnitudeProcessor::finalizeMagnitude(DataModel::StationMagnitude *) const 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor::CreateAlias(const std::string &aliasType, const std::string &sourceType) {
 	return aliasFactories.createAlias(aliasType, sourceType);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool MagnitudeProcessor::RemoveAlias(const std::string &aliasType) {
+	return aliasFactories.removeAlias(aliasType);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MagnitudeProcessor::RemoveAllAliases() {
+	aliasFactories.clear();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
