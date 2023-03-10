@@ -64,6 +64,12 @@ class SC_GUI_API RecordView : public QWidget {
 			ExtendedSelection
 		};
 
+		enum SelectionOperation {
+			Select = 0,
+			SelectPlus,
+			SelectMinus
+		};
+
 
 	public:
 		//! Default c'tor
@@ -202,11 +208,14 @@ class SC_GUI_API RecordView : public QWidget {
 		RecordViewItem* currentItem() const;
 
 		QList<RecordViewItem*> selectedItems() const;
+		bool hasSelectedItems() const;
 
 		double timeRangeMin() const;
 		double timeRangeMax() const;
 
 		double timeScale() const;
+
+		Core::Time mapToTime(int x) const;
 
 		//! Returns all streams belonging to a station
 		QList<RecordViewItem*> stationStreams(const std::string& networkCode,
@@ -425,6 +434,12 @@ class SC_GUI_API RecordView : public QWidget {
 		//! the mouse
 		void setZoomEnabled(bool);
 
+		/**
+		 * @brief Enables rubber band selection with the mouse
+		 * @param enable Whether to enable or disable it
+		 */
+		void setRubberBandSelectionEnabled(bool enable);
+
 		void setDefaultDisplay();
 
 		//! Sets the parameters used to filter the traces
@@ -485,6 +500,17 @@ class SC_GUI_API RecordView : public QWidget {
 		//! recordview and the filter has been set and enabled successfully
 		void filterChanged(const QString&);
 
+		/**
+		 * @brief This signal is being emitted if the user selected an area
+		 *        with the rubber band selection tool.
+		 * @param tmin The minimum absolute time of the selected time range
+		 * @param tmax The maximum absolute time of the selected time range
+		 * @param operation The operation to apply.
+		 */
+		void selectedRubberBand(QList<Seiscomp::Gui::RecordViewItem*>,
+		                        double tmin, double tmax,
+		                        Seiscomp::Gui::RecordView::SelectionOperation operation);
+
 
 	private slots:
 		void onItemClicked(RecordViewItem*, bool buttonDown = false,
@@ -530,6 +556,7 @@ class SC_GUI_API RecordView : public QWidget {
 
 		void applyBufferChange();
 
+		double mapToUnit(int x) const;
 		// bool buildFilter(const QString& text, std::vector<Seiscomp::Math::Filtering::IIR::Filter<float>* >* filterList);
 
 

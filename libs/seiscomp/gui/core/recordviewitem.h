@@ -252,7 +252,7 @@ class SC_GUI_API RecordViewItem : public QWidget {
 	private:
 		typedef QMap<char, int> SlotMap;
 
-		RecordView*     _parent;
+		RecordView     *_parent;
 
 		SlotMap         _slotMapping;
 		RecordSequence *_seqTemplate;
