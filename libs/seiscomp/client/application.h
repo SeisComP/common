@@ -672,10 +672,10 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 			struct Inventory {
 				void accept(SettingsLinker &linker);
 
-				StringVector netTypeWhitelist;
-				StringVector netTypeBlacklist;
-				StringVector staTypeWhitelist;
-				StringVector staTypeBlacklist;
+				StringVector netTypeAllowlist;
+				StringVector netTypeBlocklist;
+				StringVector staTypeAllowlist;
+				StringVector staTypeBlocklist;
 			}                    inventory;
 
 			// Messaging
@@ -719,8 +719,8 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 			struct Processing {
 				void accept(SettingsLinker &linker);
 
-				StringVector         agencyWhitelist;
-				StringVector         agencyBlacklist;
+				StringVector         agencyAllowlist;
+				StringVector         agencyBlocklist;
 				Util::StringFirewall firewall;
 			}                    processing;
 

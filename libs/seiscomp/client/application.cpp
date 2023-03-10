@@ -341,10 +341,10 @@ void Application::AppSettings::Database::accept(SettingsLinker &linker) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::AppSettings::Inventory::accept(SettingsLinker &linker) {
 	linker
-	& cfg(netTypeWhitelist, "whitelist.nettype")
-	& cfg(netTypeBlacklist, "blacklist.nettype")
-	& cfg(staTypeWhitelist, "whitelist.statype")
-	& cfg(staTypeBlacklist, "blacklist.statype");
+	& cfg(netTypeAllowlist, "whitelist.nettype")
+	& cfg(netTypeBlocklist, "blacklist.nettype")
+	& cfg(staTypeAllowlist, "whitelist.statype")
+	& cfg(staTypeBlocklist, "blacklist.statype");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -379,8 +379,9 @@ void Application::AppSettings::RecordStream::accept(SettingsLinker &linker) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::AppSettings::Processing::accept(SettingsLinker &linker) {
 	linker
-	& cfg(agencyWhitelist, "whitelist.agencies")
-	& cfg(agencyBlacklist, "blacklist.agencies");
+	& cfg(agencyAllowlist, "whitelist.agencies")
+	& cfg(agencyBlocklist, "blacklist.agencies")
+	& cfg(magnitudeAliases, "aliases.magnitudes");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1474,38 +1475,38 @@ bool Application::initConfiguration() {
 		return false;
 
 	copy(
-		_settings.processing.agencyBlacklist.begin(),
-		_settings.processing.agencyBlacklist.end(),
+		_settings.processing.agencyBlocklist.begin(),
+		_settings.processing.agencyBlocklist.end(),
 		inserter(_settings.processing.firewall.deny, _settings.processing.firewall.deny.end())
 	);
 
 	copy(
-		_settings.processing.agencyWhitelist.begin(),
-		_settings.processing.agencyWhitelist.end(),
+		_settings.processing.agencyAllowlist.begin(),
+		_settings.processing.agencyAllowlist.end(),
 		inserter(_settings.processing.firewall.allow, _settings.processing.firewall.allow.end())
 	);
 
 	copy(
-		_settings.inventory.netTypeBlacklist.begin(),
-		_settings.inventory.netTypeBlacklist.end(),
+		_settings.inventory.netTypeBlocklist.begin(),
+		_settings.inventory.netTypeBlocklist.end(),
 		inserter(_settings.networkTypeFirewall.deny, _settings.networkTypeFirewall.deny.end())
 	);
 
 	copy(
-		_settings.inventory.netTypeWhitelist.begin(),
-		_settings.inventory.netTypeWhitelist.end(),
+		_settings.inventory.netTypeAllowlist.begin(),
+		_settings.inventory.netTypeAllowlist.end(),
 		inserter(_settings.networkTypeFirewall.allow, _settings.networkTypeFirewall.allow.end())
 	);
 
 	copy(
-		_settings.inventory.staTypeBlacklist.begin(),
-		_settings.inventory.staTypeBlacklist.end(),
+		_settings.inventory.staTypeBlocklist.begin(),
+		_settings.inventory.staTypeBlocklist.end(),
 		inserter(_settings.stationTypeFirewall.deny, _settings.stationTypeFirewall.deny.end())
 	);
 
 	copy(
-		_settings.inventory.staTypeWhitelist.begin(),
-		_settings.inventory.staTypeWhitelist.end(),
+		_settings.inventory.staTypeAllowlist.begin(),
+		_settings.inventory.staTypeAllowlist.end(),
 		inserter(_settings.stationTypeFirewall.allow, _settings.stationTypeFirewall.allow.end())
 	);
 
