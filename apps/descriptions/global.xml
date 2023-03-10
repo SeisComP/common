@@ -296,14 +296,6 @@
 						</description>
 					</parameter>
 				</group>
-				<group name="aliases">
-					<parameter name="magnitudes" type="list:string">
-						<description>
-						Define an alias list for existing magnitude types. Each
-						list item is defined as &lt;alias&gt;;&lt;type&gt;.
-						</description>
-					</parameter>
-				</group>
 			</group>
 			<group name="inventory">
 				<group name="whitelist">
