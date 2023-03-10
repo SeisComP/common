@@ -867,6 +867,8 @@ Structure *Structure::clone() const {
 	for ( size_t i = 0; i < structureTypes.size(); ++i )
 		struc->addType(structureTypes[i]->clone());
 
+	struc->extensions = extensions;
+
 	return struc;
 }
 
