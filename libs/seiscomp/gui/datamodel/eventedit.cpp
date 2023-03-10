@@ -2274,17 +2274,17 @@ void EventEdit::updateOriginRow(int row, Origin *org) {
 	try {
 		switch ( org->evaluationMode() ) {
 			case DataModel::AUTOMATIC:
-				item->setTextColor(_originColumnMap[OL_STAT], SCScheme.colors.originStatus.automatic);
+				item->setForeground(_originColumnMap[OL_STAT], SCScheme.colors.originStatus.automatic);
 				break;
 			case DataModel::MANUAL:
-				item->setTextColor(_originColumnMap[OL_STAT], SCScheme.colors.originStatus.manual);
+				item->setForeground(_originColumnMap[OL_STAT], SCScheme.colors.originStatus.manual);
 				break;
 			default:
 				break;
 		};
 	}
 	catch ( ... ) {
-		item->setTextColor(_originColumnMap[OL_STAT], SCScheme.colors.originStatus.automatic);
+		item->setForeground(_originColumnMap[OL_STAT], SCScheme.colors.originStatus.automatic);
 	}
 
 	try {
@@ -2339,7 +2339,7 @@ void EventEdit::updateOriginRow(int row, Origin *org) {
 		}
 	}
 
-	item->setTextColor(_originColumnMap[OL_CREATED], palette().color(QPalette::Disabled, QPalette::QPalette::Text));
+	item->setForeground(_originColumnMap[OL_CREATED], palette().color(QPalette::Disabled, QPalette::QPalette::Text));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2385,7 +2385,7 @@ void EventEdit::updateMagnitudeRow(int row, Magnitude *mag) {
 	item->setText(MLC_AUTHOR, objectAuthor(mag).c_str());
 	item->setText(MLC_ID, mag->publicID().c_str());
 
-	item->setTextColor(MLC_TIMESTAMP, palette().color(QPalette::Disabled, QPalette::QPalette::Text));
+	item->setForeground(MLC_TIMESTAMP, palette().color(QPalette::Disabled, QPalette::QPalette::Text));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2465,17 +2465,17 @@ void EventEdit::updateFMRow(int row, FocalMechanism *fm) {
 	try {
 		switch ( fm->evaluationMode() ) {
 			case DataModel::AUTOMATIC:
-				item->setTextColor(_fmColumnMap[FML_STAT], SCScheme.colors.originStatus.automatic);
+				item->setForeground(_fmColumnMap[FML_STAT], SCScheme.colors.originStatus.automatic);
 				break;
 			case DataModel::MANUAL:
-				item->setTextColor(_fmColumnMap[FML_STAT], SCScheme.colors.originStatus.manual);
+				item->setForeground(_fmColumnMap[FML_STAT], SCScheme.colors.originStatus.manual);
 				break;
 			default:
 				break;
 		};
 	}
 	catch ( ... ) {
-		item->setTextColor(_fmColumnMap[FML_STAT], SCScheme.colors.originStatus.automatic);
+		item->setForeground(_fmColumnMap[FML_STAT], SCScheme.colors.originStatus.automatic);
 	}
 
 	try {
@@ -2489,7 +2489,7 @@ void EventEdit::updateFMRow(int row, FocalMechanism *fm) {
 	item->setText(_fmColumnMap[FML_AUTHOR], objectAuthor(fm).c_str());
 	item->setText(_fmColumnMap[FML_ID], fm->publicID().c_str());
 
-	item->setTextColor(_fmColumnMap[OL_CREATED], palette().color(QPalette::Disabled, QPalette::QPalette::Text));
+	item->setForeground(_fmColumnMap[OL_CREATED], palette().color(QPalette::Disabled, QPalette::QPalette::Text));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

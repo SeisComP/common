@@ -992,17 +992,17 @@ class OriginTreeItem : public SchemeTreeItem {
 			try {
 				switch ( ori->evaluationMode() ) {
 					case DataModel::AUTOMATIC:
-						setTextColor(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
+						setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
 						break;
 					case DataModel::MANUAL:
-						setTextColor(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.manual);
+						setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.manual);
 						break;
 					default:
 						break;
 				};
 			}
 			catch ( ... ) {
-				setTextColor(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
+				setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
 			}
 
 			setText(config.columnMap[COL_REGION], Regions::getRegionName(lat,lon).c_str()); // Region
@@ -1166,17 +1166,17 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 			try {
 				switch ( fm->evaluationMode() ) {
 					case DataModel::AUTOMATIC:
-						setTextColor(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
+						setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
 						break;
 					case DataModel::MANUAL:
-						setTextColor(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.manual);
+						setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.manual);
 						break;
 					default:
 						break;
 				};
 			}
 			catch ( ... ) {
-				setTextColor(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
+				setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
 			}
 		}
 
@@ -1638,17 +1638,17 @@ class EventTreeItem : public SchemeTreeItem {
 					try {
 						switch ( origin->evaluationMode() ) {
 							case DataModel::AUTOMATIC:
-								setTextColor(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
+								setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
 								break;
 							case DataModel::MANUAL:
-								setTextColor(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.manual);
+								setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.manual);
 								break;
 							default:
 								break;
 						};
 					}
 					catch ( ... ) {
-						setTextColor(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
+						setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
 					}
 
 					try{

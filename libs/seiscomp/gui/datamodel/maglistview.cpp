@@ -130,12 +130,12 @@ class EventTreeItem : public SchemeTreeItem {
 				try{et = event->type().toString();}
 				catch(...){}
 				if (et == "other"){
-					setTextColor(0, Qt::lightGray);
-					setTextColor(1, Qt::lightGray);
-					setTextColor(2, Qt::lightGray);
-					setTextColor(3, Qt::lightGray);
-					setTextColor(4, Qt::lightGray);
-					setTextColor(5, Qt::lightGray);
+					setForeground(0, Qt::lightGray);
+					setForeground(1, Qt::lightGray);
+					setForeground(2, Qt::lightGray);
+					setForeground(3, Qt::lightGray);
+					setForeground(4, Qt::lightGray);
+					setForeground(5, Qt::lightGray);
 				}
 				//! HACK ---------------------------------------------------------
 
