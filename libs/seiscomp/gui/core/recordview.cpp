@@ -41,6 +41,7 @@
 using namespace std;
 using namespace Seiscomp;
 using namespace Seiscomp::Core;
+using namespace Seiscomp::Gui;
 
 
 #define DEFAULT_LABEL_WIDTH    70
@@ -76,7 +77,6 @@ class RecordScrollArea : public QScrollArea {
 	public:
 		RecordScrollArea(Seiscomp::Gui::RecordView* parent = 0)
 		 : QScrollArea(parent) {
-			_isZooming = false;
 			_overlay = new QWidget(this);
 			_overlay->installEventFilter(this);
 			_overlay->setVisible(false);
@@ -84,9 +84,38 @@ class RecordScrollArea : public QScrollArea {
 		 }
 
 		void enableZooming(bool e) {
+			if ( !e && _operation != Zooming ) {
+				return;
+			}
+
 			setUpdatesEnabled(false);
+
+			_operation = Zooming;
+			_selectOperation = RecordView::Select;
 			_overlay->setVisible(e);
-			if ( !e ) _isZooming = false;
+
+			if ( !e ) {
+				_isActive = false;
+			}
+
+			setUpdatesEnabled(true);
+		}
+
+		void enableRubberBandSelection(bool e) {
+			if ( !e && _operation != RubberBandSelection ) {
+				return;
+			}
+
+			setUpdatesEnabled(false);
+
+			_operation = RubberBandSelection;
+			_selectOperation = RecordView::Select;
+			_overlay->setVisible(e);
+
+			if ( !e ) {
+				_isActive = false;
+			}
+
 			setUpdatesEnabled(true);
 		}
 
@@ -108,9 +137,21 @@ class RecordScrollArea : public QScrollArea {
 				QRect viewport(p.window());
 				viewport.setLeft(view->labelWidth() + view->horizontalSpacing());
 
-				if ( _isZooming ) {
-					p.setPen(QColor(32,64,96));
-					p.setBrush(QColor(192,224,255,160));
+				if ( _isActive ) {
+					switch ( _selectOperation ) {
+						case RecordView::SelectPlus:
+							p.setPen(QColor(32,96,64));
+							p.setBrush(QColor(192,255,224,160));
+							break;
+						case RecordView::SelectMinus:
+							p.setPen(QColor(96,32,64));
+							p.setBrush(QColor(255,192,224,160));
+							break;
+						default:
+							p.setPen(QColor(32,64,96));
+							p.setBrush(QColor(192,224,255,160));
+							break;
+					}
 
 					QRect rect = QRect(_startPoint, _endPoint).normalized();
 					rect &= viewport;
@@ -125,7 +166,17 @@ class RecordScrollArea : public QScrollArea {
 				if ( ev->button() == Qt::LeftButton ) {
 					_startPoint = ev->pos();
 					_endPoint = _startPoint;
-					_isZooming = true;
+					_isActive = true;
+
+					_selectOperation = RecordView::Select;
+					if ( _operation == RubberBandSelection ) {
+						if ( ev->modifiers().testFlag(Qt::ShiftModifier) ) {
+							_selectOperation = RecordView::SelectPlus;
+						}
+						else if ( ev->modifiers().testFlag(Qt::ControlModifier) ) {
+							_selectOperation = RecordView::SelectMinus;
+						}
+					}
 
 					return true;
 				}
@@ -137,12 +188,50 @@ class RecordScrollArea : public QScrollArea {
 				QMouseEvent *ev = static_cast<QMouseEvent*>(e);
 
 				if ( ev->button() == Qt::LeftButton ) {
-					_isZooming = false;
+					_isActive = false;
+					_selectOperation = RecordView::Select;
 
-					QPoint p0 = mapToGlobal(_startPoint);
-					QPoint p1 = mapToGlobal(_endPoint);
+					if ( _operation == Zooming ) {
+						view->setZoomRectFromGlobal(
+							QRect(
+								mapToGlobal(_startPoint),
+								mapToGlobal(_endPoint)
+							)
+							.normalized()
+						);
+					}
+					else {
+						QRect rubberBand = QRect(
+							_startPoint, _endPoint
+						)
+						.normalized()
+						.translated(
+							0, verticalScrollBar()->sliderPosition()
+						);
 
-					view->setZoomRectFromGlobal(QRect(p0, p1).normalized());
+						QList<Seiscomp::Gui::RecordViewItem*> items;
+
+						int rowCount = view->rowCount();
+						for ( int i = 0; i < rowCount; ++i ) {
+							auto item = view->itemAt(i);
+							if ( item->rect().translated(item->pos()).intersects(rubberBand) ) {
+								items.append(item);
+							}
+						}
+
+						auto minTime = view->mapToTime(_startPoint.x());
+						auto maxTime = view->mapToTime(_endPoint.x());
+
+						if ( minTime > maxTime ) {
+							qSwap(minTime, maxTime);
+						}
+
+						emit view->selectedRubberBand(
+							items, minTime, maxTime,
+							_selectOperation
+						);
+					}
+
 					_overlay->update();
 					return true;
 				}
@@ -152,7 +241,17 @@ class RecordScrollArea : public QScrollArea {
 			else if ( e->type() == QEvent::MouseMove ) {
 				QMouseEvent *ev = static_cast<QMouseEvent*>(e);
 
-				if ( _isZooming ) {
+				if ( _isActive ) {
+					_selectOperation = RecordView::Select;
+					if ( _operation == RubberBandSelection ) {
+						if ( ev->modifiers().testFlag(Qt::ShiftModifier) ) {
+							_selectOperation = RecordView::SelectPlus;
+						}
+						else if ( ev->modifiers().testFlag(Qt::ControlModifier) ) {
+							_selectOperation = RecordView::SelectMinus;
+						}
+					}
+
 					_endPoint = ev->pos();
 					_overlay->update();
 					return true;
@@ -186,16 +285,18 @@ class RecordScrollArea : public QScrollArea {
 			QScrollArea::wheelEvent(event);
 		}
 
-		void finishZooming() {
-			_isZooming = false;
-			_overlay->update();
-		}
-
 	private:
-		QPoint _startPoint;
-		QPoint _endPoint;
-		bool _isZooming;
-		QWidget *_overlay;
+		enum Operation {
+			Zooming,
+			RubberBandSelection
+		};
+
+		QPoint                          _startPoint;
+		QPoint                          _endPoint;
+		Operation                       _operation{Zooming};
+		RecordView::SelectionOperation  _selectOperation{RecordView::Select};
+		bool                            _isActive{false};
+		QWidget                        *_overlay{nullptr};
 };
 
 
@@ -783,6 +884,15 @@ QList<RecordViewItem*> RecordView::selectedItems() const {
 		items << item;
 
 	return items;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool RecordView::hasSelectedItems() const {
+	return !_selectedItems.empty();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2190,17 +2300,31 @@ QPointF RecordView::zoomSpot() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+double RecordView::mapToUnit(int x) const {
+	return static_cast<double>(x - _labelWidth - _horizontalSpacing) /
+	       static_cast<double>(_scrollArea->viewport()->width() - _labelWidth - _horizontalSpacing);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Time RecordView::mapToTime(int x) const {
+	return Time(mapToUnit(x) * (_tmax - _tmin) + _tmin) + _alignment;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::setZoomRectFromGlobal(const QRect &rect) {
 	QPoint p0 = _scrollArea->mapFromGlobal(rect.topLeft());
 	QPoint p1 = _scrollArea->mapFromGlobal(rect.bottomRight());
 
-	QPointF p0f = QPointF((float)(p0.x() - _labelWidth - _horizontalSpacing) /
-	                      (float)(_scrollArea->viewport()->width() - _labelWidth - _horizontalSpacing),
-	                      (float)p0.y() / (float)_scrollArea->height());
-
-	QPointF p1f = QPointF((float)(p1.x() - _labelWidth - _horizontalSpacing) /
-	                      (float)(_scrollArea->viewport()->width() - _labelWidth - _horizontalSpacing),
-	                      (float)p1.y() / (float)_scrollArea->height());
+	QPointF p0f = QPointF(mapToUnit(p0.x()), static_cast<double>(p0.y()) / static_cast<double>(_scrollArea->height()));
+	QPointF p1f = QPointF(mapToUnit(p1.x()), static_cast<double>(p1.y()) / static_cast<double>(_scrollArea->height()));
 
 	setZoomRect(QRectF(p0f.x(), p0f.y(), p1f.x()-p0f.x(),p1f.y()-p0f.y()));
 }
@@ -2725,6 +2849,15 @@ void RecordView::setDefaultDisplay() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::setZoomEnabled(bool e) {
 	static_cast<RecordScrollArea*>(_scrollArea)->enableZooming(e);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordView::setRubberBandSelectionEnabled(bool e) {
+	static_cast<RecordScrollArea*>(_scrollArea)->enableRubberBandSelection(e);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
