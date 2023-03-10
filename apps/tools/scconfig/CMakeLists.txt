@@ -66,10 +66,10 @@ IF (SC_GLOBAL_GUI)
 		NEWCONFIG_SOURCES
 			main.cpp
 			gui.cpp
-			flowlayout.cpp
 			fancyview.cpp
 			wizard.cpp
 			editor.cpp
+			${SC3_PACKAGE_SOURCE_DIR}/libs/seiscomp/gui/core/flowlayout.cpp
 			panels/inspector.cpp
 			panels/bindings.cpp
 			panels/information.cpp
