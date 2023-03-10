@@ -272,8 +272,7 @@ class SC_SYSTEM_CORE_API Group : public Container {
 	//  Attributes
 	// ------------------------------------------------------------------
 	public:
-		Core::BaseObject  *parent;
-		SchemaGroup       *definition;
+		SchemaGroup *definition;
 };
 
 
@@ -285,8 +284,8 @@ class SC_SYSTEM_CORE_API Section : public Container {
 	//  X'truction
 	// ------------------------------------------------------------------
 	public:
-		Section(const char *n) : Container(""), parent(nullptr), name(n) {}
-		Section(const std::string &n) : Container(""), parent(nullptr), name(n) {}
+		Section(const char *n) : Container(""), name(n) {}
+		Section(const std::string &n) : Container(""), name(n) {}
 
 
 	// ------------------------------------------------------------------
@@ -303,9 +302,8 @@ class SC_SYSTEM_CORE_API Section : public Container {
 	//  Attributes
 	// ------------------------------------------------------------------
 	public:
-		Core::BaseObject               *parent;
-		std::string                     name;
-		std::string                     description;
+		std::string name;
+		std::string description;
 };
 
 
@@ -576,9 +574,9 @@ class SC_SYSTEM_CORE_API Module : public Core::BaseObject {
 	//  Attributes
 	// ------------------------------------------------------------------
 	public:
-		typedef std::map<StationID, ModuleBindingPtr> BindingMap;
-		typedef std::set<std::string>                 BindingCategories;
-		typedef std::vector<ModuleBindingPtr>         Profiles;
+		using BindingMap        = std::map<StationID, ModuleBindingPtr> ;
+		using BindingCategories = std::set<std::string>;
+		using Profiles          = std::vector<ModuleBindingPtr>;
 
 		Model                    *model;
 		std::string               keyDirectory;
