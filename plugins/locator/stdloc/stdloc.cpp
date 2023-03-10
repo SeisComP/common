@@ -222,32 +222,38 @@ bool StdLoc::init(const Config::Config &config) {
   } catch (...) {
   }
 
+  Profile defaultProf;
+  defaultProf.name = "default";
+  defaultProf.method = Profile::Method::GridAndLsqr;
+  defaultProf.tttType = "libtau";
+  defaultProf.tttModel = "iasp91";
+  defaultProf.gridSearch.autoLatLon = true;
+  defaultProf.gridSearch.originLat = 0.;
+  defaultProf.gridSearch.originLon = 0.;
+  defaultProf.gridSearch.originDepth = 5.;
+  defaultProf.gridSearch.xExtent = 20.;
+  defaultProf.gridSearch.yExtent = 20.;
+  defaultProf.gridSearch.zExtent = 5.;
+  defaultProf.gridSearch.cellXExtent = 2.5;
+  defaultProf.gridSearch.cellYExtent = 2.5;
+  defaultProf.gridSearch.cellZExtent = 5.0;
+  defaultProf.gridSearch.errorType = "L1";
+  defaultProf.gridSearch.maxRms = -1;
+  defaultProf.leastSquare.iterations = 40;
+  defaultProf.leastSquare.dampingFactor = 0;
+  defaultProf.leastSquare.solverType = "LSMR";
+  defaultProf.usePickUncertainties = false;
+  defaultProf.defaultTimeError = 1.0;
+
+  
+  _currentProfile = defaultProf;
+
   _profiles.clear();
 
   for (const string &profileName : profileNames) {
 
-    Profile prof;
+    Profile prof{defaultProf};
     prof.name = profileName;
-    prof.method = Profile::Method::GridAndLsqr;
-    prof.tttType = "libtau";
-    prof.tttModel = "iasp91";
-    prof.gridSearch.autoLatLon = true;
-    prof.gridSearch.originLat = 0.;
-    prof.gridSearch.originLon = 0.;
-    prof.gridSearch.originDepth = 5.;
-    prof.gridSearch.xExtent = 20.;
-    prof.gridSearch.yExtent = 20.;
-    prof.gridSearch.zExtent = 5.;
-    prof.gridSearch.cellXExtent = 2.5;
-    prof.gridSearch.cellYExtent = 2.5;
-    prof.gridSearch.cellZExtent = 5.0;
-    prof.gridSearch.errorType = "L1";
-    prof.gridSearch.maxRms = -1;
-    prof.leastSquare.iterations = 40;
-    prof.leastSquare.dampingFactor = 0;
-    prof.leastSquare.solverType = "LSMR";
-    prof.usePickUncertainties = false;
-    prof.defaultTimeError = 1.0;
 
     string prefix = string("StdLoc.profile.") + prof.name + ".";
 
