@@ -171,8 +171,11 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLv::computeMagnitude(
 	if ( locale )
 		extra = static_cast<ExtraLocale*>(locale->extra.get());
 
+	double correction = (extra and extra->logA0 ? extra->logA0->at(distanceKm) : _logA0.at(distanceKm));
+
+	SEISCOMP_DEBUG("  + distance: %.3f correction term: %.3f", distanceKm, correction);
 	try {
-		value = log10(amplitude) - (extra and extra->logA0 ? extra->logA0->at(distanceKm) : _logA0.at(distanceKm));
+		value = log10(amplitude) - correction;
 	}
 	catch ( Core::ValueException & ) {
 		return DistanceOutOfRange;
