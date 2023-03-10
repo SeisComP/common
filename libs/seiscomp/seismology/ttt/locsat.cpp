@@ -32,22 +32,27 @@
 
 namespace {
 
-const double earthRadius = 6371.; //km
+// Compute the "takeoff angle" of a wave at the source.
+// dtdd  [s/rad]
+// dtdh  [s/km]
+// depth [km]
+double takeoff_angle(double dtdd, double dtdh, double depth) {
 
-// from libtau
-double takeoff_angle(double p, double zs, double vzs) {
-	// Compute the "takeoff angle" of a wave at the source.
-	//
-	// p  is the *angular* slowness of the wave, i.e. sec/deg
-	// zs is the source depth
-	// vz is the velocity at the source
-	double pv;
+	// no slowness provided
+	if ( dtdd == 0 && dtdh == 0 ) {
+		return 0;
+	}
 
-	p  = p*180./M_PI;       // make p slowness in sec/rad
-	pv = p*vzs/(earthRadius-zs);
-	if (pv>1.) pv = 1.;
+	static const double earthMeanRadius = 6371.; // km
 
-	return 180.*asin(pv)/M_PI;
+	// We want dtdd and dtdh to use the same units:
+	// So transform dtdd [s/rad] -> [s/km]
+	double dtdd2 = dtdd / ((earthMeanRadius - depth) * M_PI / 180.);
+
+	double takeoff = std::atan2(dtdh, dtdd2) * 180.0 / M_PI; // degress
+	takeoff += 90; // -90(down):+90(up) -> 0(down):180(up)
+ 
+	return takeoff;
 }
 
 
@@ -66,7 +71,7 @@ extern "C" {
 
 void distaz2_(double *lat1, double *lon1, double *lat2, double *lon2, double *delta, double *azi1, double *azi2);
 int setup_tttables_dir(const char *new_dir);
-double compute_ttime(double distance, double depth, char *phase, int extrapolate, double radius, double *rdtdd, double *rdtdh, int *errorflag);
+double compute_ttime(double distance, double depth, char *phase, int extrapolate, double *rdtdd,  double *rdtdh, int *errorflag);
 int num_phases();
 char **phase_types();
 
@@ -185,22 +190,13 @@ TravelTimeList *Locsat::compute(double delta, double depth) {
 		int errorflag = 0;
 		double dtdd, dtdh;
 		double ttime = compute_ttime(delta, depth, phase, EXTRAPOLATE,
-		                             earthRadius, &dtdd, &dtdh, &errorflag);
+		                             &dtdd, &dtdh, &errorflag);
 		if (errorflag != 0)
 			continue;
 		// This comparison is there to also skip NaN values
 		if ( !(ttime > 0) ) continue;
 
-		double takeoff = 0;
-		if ( dtdd > 0 ) {
-			double v = 1 / std::sqrt(dtdd * dtdd + dtdh * dtdh);
-			dtdd = Math::Geo::deg2km(dtdd);
-			takeoff = takeoff_angle(dtdd, depth, v);
-			if ( dtdh > 0. ) {
-				takeoff = 180.-takeoff;
-			}
-		}
-
+		double takeoff = takeoff_angle(dtdd, dtdh, depth);
 		ttlist->push_back(TravelTime(phase, ttime, dtdd, dtdh, 0, takeoff));
 	}
 
@@ -218,18 +214,10 @@ TravelTime Locsat::compute(const char *phase, double delta, double depth) {
 	int errorflag=0;
 	double dtdd, dtdh;
 	double ttime = compute_ttime(delta, depth, const_cast<char*>(phase), 0,
-	                             earthRadius, &dtdd, &dtdh, &errorflag);
+	                             &dtdd, &dtdh, &errorflag);
 	if ( errorflag!=0 ) throw NoPhaseError();
 	if ( !(ttime > 0) ) throw NoPhaseError();
-	double takeoff = 0;
-	if ( dtdd > 0 ) {
-		double v = 1 / std::sqrt(dtdd * dtdd + dtdh * dtdh);
-		dtdd = Math::Geo::deg2km(dtdd);
-		takeoff = takeoff_angle(dtdd, depth, v);
-		if ( dtdh > 0. ) {
-			takeoff = 180.-takeoff;
-		}
-	} 
+ 	double takeoff = takeoff_angle(dtdd, dtdh, depth);
 	return TravelTime(phase, ttime, dtdd, dtdh, 0, takeoff);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -300,18 +288,10 @@ TravelTime Locsat::computeFirst(double delta, double depth) {
 	int errorflag=0;
 	double dtdd, dtdh;
 	double ttime = compute_ttime(delta, depth, const_cast<char*>(phase),
-	                 EXTRAPOLATE, earthRadius, &dtdd, &dtdh, &errorflag);
+	                             EXTRAPOLATE, &dtdd, &dtdh, &errorflag);
 	if ( errorflag!=0 ) throw NoPhaseError();
 	if ( !(ttime > 0) ) throw NoPhaseError();
-	double takeoff = 0;
-	if ( dtdd > 0 ) {
-		double v = 1 / std::sqrt(dtdd * dtdd + dtdh * dtdh);
-		dtdd = Math::Geo::deg2km(dtdd);
-		takeoff = takeoff_angle(dtdd, depth, v);
-		if ( dtdh > 0. ) {
-			takeoff = 180.-takeoff;
-		}
-	} 
+	double takeoff = takeoff_angle(dtdd, dtdh, depth);
 	return TravelTime(phase, ttime, dtdd, dtdh, 0, takeoff); 
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
