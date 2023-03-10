@@ -236,6 +236,16 @@ void OriginDialog::init(double lon, double lat, double dep) {
 	else
 		_ui.dateTimeEdit->setDisplayFormat(_ui.dateTimeEdit->displayFormat() + " UTC");
 
+	if ( SCScheme.precision.originTime > 0 ) {
+		// no evaluation of specific origin time precision because millisecond
+		// spinner controls only work with 3 digits
+		_ui.dateTimeEdit->setDisplayFormat("yyyy-MM-dd HH:mm:ss.zzz");
+	}
+	_ui.latDoubleSpinBox->setDecimals(SCScheme.precision.location);
+	_ui.lonDoubleSpinBox->setDecimals(SCScheme.precision.location);
+	_ui.depthDoubleSpinBox->setDecimals(SCScheme.precision.depth);
+	_ui.depthDoubleSpinBox->setDecimals(SCScheme.precision.magnitude);
+
 	setTime(Core::Time::GMT());
 	setLongitude(lon);
 	setLatitude(lat);
