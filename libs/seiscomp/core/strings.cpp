@@ -45,10 +45,15 @@ namespace Core {
 
 namespace {
 
-const char *timeFormatPrecise = "%FT%T.%fZ";
-const char *timeFormatPrecise2 = "%FT%T.%f";
-const char *timeFormat = "%FT%TZ";
-const char *timeFormat2 = "%FT%T";
+const char *timeFormats[] = {
+	"%FT%T.%fZ",
+	"%FT%T.%f",
+	"%FT%TZ",
+	"%FT%T",
+	"%F %T.%f",
+	"%F %T",
+	"%F"
+};
 
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -76,7 +81,7 @@ std::string toString(bool v) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string toString(const Seiscomp::Core::Time& v) {
-	return v.toString(timeFormatPrecise);
+	return v.toString(timeFormats[0]);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -300,17 +305,13 @@ bool fromString(bool &value, const std::string &str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool fromString(Time &value, const std::string &str) {
-	if ( !value.fromString(str.c_str(), timeFormatPrecise) ) {
-		if ( !value.fromString(str.c_str(), timeFormat) ) {
-			if ( !value.fromString(str.c_str(), timeFormatPrecise2) ) {
-				if ( !value.fromString(str.c_str(), timeFormat2) ) {
-					return false;
-				}
-			}
+	for ( size_t i = 0; i < sizeof(timeFormats) / sizeof(const char*); ++i ) {
+		if ( value.fromString(str.c_str(), timeFormats[i]) ) {
+			return true;
 		}
 	}
 
-	return true;
+	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
