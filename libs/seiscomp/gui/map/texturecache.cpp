@@ -79,7 +79,11 @@ Texture::Texture(bool isDummyTexture) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Texture::numBytes() const {
+#if QT_VERSION >= 0x050a00
+	return image.sizeInBytes();
+#else
 	return image.byteCount();
+#endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
