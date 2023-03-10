@@ -178,7 +178,9 @@ Setup
    similar
    to :ref:`global_ml`. Instead of configuring lots of global bindings profiles
    or station bindings one line per parameter can be added to the global module
-   configuration (:file:`global.cfg`) which takes the form ::
+   configuration (:file:`global.cfg`) which takes the form
+
+   .. code-block:: params
 
       module.trunk.NET.STA.amplitude.MLc.preFilter = value
       module.trunk.NET.STA.magnitude.MLc.parametric.c0 = value
@@ -187,7 +189,9 @@ Setup
    computed by automatic modules, e.g. of :ref:`scamp`, :ref:`scmag`.
 #. Configure :ref:`scmag` (:confval:`magnitudes.average` in :file:`scmag.cfg`)
    for choosing the method to form the
-   network magnitude from station magnitudes, e.g. ::
+   network magnitude from station magnitudes, e.g.
+
+   .. code-block:: params
 
       magnitudes.average = MLc:median
 

@@ -83,21 +83,21 @@ added to the global module configuration (:file:`global.cfg`), e.g.
 
 global:
 
-.. code-block:: sh
+.. code-block:: params
 
    module.trunk.global.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
    module.trunk.global.magnitudes.MLv.maxDistanceKm = -1
 
 or per network:
 
-.. code-block:: sh
+.. code-block:: params
 
    module.trunk.GR.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
    module.trunk.GR.magnitudes.MLv.maxDistanceKm = -1
 
 or per station:
 
-.. code-block:: sh
+.. code-block:: params
 
    module.trunk.GR.MOX.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
    module.trunk.GR.MOX.magnitudes.MLv.maxDistanceKm = -1

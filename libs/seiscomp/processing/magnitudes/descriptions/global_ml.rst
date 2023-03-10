@@ -36,7 +36,9 @@ is the empirical calibration function, which in turn is a function
 of the epicentral distance (:cite:t:`richter-1935`). This calibration
 function and distance range can be configured globally or per station using
 global bindings or the global module configuration variable
-module.trunk.global.magnitudes.ML.logA0 in :file:`global.cfg`, e.g. ::
+module.trunk.global.magnitudes.ML.logA0 in :file:`global.cfg`, e.g.
+
+.. code-block:: params
 
    module.trunk.global.magnitudes.ML.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
    module.trunk.global.magnitudes.ML.maxDistanceKm = "-1"

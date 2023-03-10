@@ -402,9 +402,9 @@
 			</group>
 			<group name="magnitudes">
 				<description>
-				Magnitude configurations overriding global bindings.
-				Add regionalization by magnitude-type profiles. Profile
-				names correspond to magnitude types.
+				Regionalization of magnitude configurations overriding global
+				bindings. Add regionalization by magnitude-type profiles.
+				Profile names correspond to magnitude types.
 				</description>
 				<struct type="Magnitude type profile">
 					<parameter name="regionFile" type="path">
@@ -421,15 +421,12 @@
 					</parameter>
 					<group name="region">
 						<description>
-						Add parameter profiles for regions defined in the
-						geofeature file. Profile names must match one polygon
-						name. Otherwise, the profile is not considered.
-						The special name &quot;world&quot; corresponds to the
-						region of the entire planet as a fallback.
-
-						Magnitude-specific parameters, e.g. calibration functions,
-						are adjusted in a separate section of  magnitudes with
-						the same name.
+						Add magnitude region profiles for regions defined by
+						polygons in the geofeature file of regionFile. Profile
+						names must match one polygon name. Otherwise, the
+						profile is not considered. The special name
+						&quot;world&quot; corresponds to the region of the
+						entire planet as a fallback.
 						</description>
 						<struct type="Magnitude region profile">
 							<parameter name="enable" type="boolean" default="false">
