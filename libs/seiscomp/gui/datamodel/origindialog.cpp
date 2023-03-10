@@ -95,78 +95,78 @@ void OriginDialog::setTime(Core::Time t) {
 }
 
 
-double OriginDialog::longitude() const {
-	return _ui.lonDoubleSpinBox->value();
-}
-
-
-void OriginDialog::setLongitude(double lon) {
-	_ui.lonDoubleSpinBox->setValue(lon);
-}
-
-
 double OriginDialog::latitude() const {
-	return _ui.latDoubleSpinBox->value();
+	return _ui.latLineEdit->text().toDouble();
 }
 
 
 void OriginDialog::setLatitude(double lat) {
-	_ui.latDoubleSpinBox->setValue(lat);
+	_ui.latLineEdit->setText(QString::number(lat));
+}
+
+
+double OriginDialog::longitude() const {
+	return _ui.lonLineEdit->text().toDouble();
+}
+
+
+void OriginDialog::setLongitude(double lon) {
+	_ui.lonLineEdit->setText(QString::number(lon));
 }
 
 
 double OriginDialog::depth() const {
-	return _ui.depthDoubleSpinBox->value();
+	return _ui.depthLineEdit->text().toDouble();
 }
 
 
 void OriginDialog::setDepth(double dep) {
-	_ui.depthDoubleSpinBox->setValue(dep);
+	_ui.depthLineEdit->setText(QString::number(dep));
 }
 
 
 void OriginDialog::enableAdvancedOptions(bool enable, bool checkable) {
 	if ( enable ) {
-		_ui.advancedGB->show();
-		_ui.advancedGB->setCheckable(checkable);
+		_ui.advancedGroupBox->show();
+		_ui.advancedGroupBox->setCheckable(checkable);
 	}
 	else
-		_ui.advancedGB->hide();
+		_ui.advancedGroupBox->hide();
 }
 
 
 bool OriginDialog::advanced() const {
-	return _ui.advancedGB->isChecked();
+	return _ui.advancedGroupBox->isChecked();
 }
 
 
 void OriginDialog::setAdvanced(bool checked) {
-	_ui.advancedGB->setChecked(checked);
+	_ui.advancedGroupBox->setChecked(checked);
 }
 
 
 int OriginDialog::phaseCount() const {
-	return (int) _ui.phaseCountSB->value();
+	return _ui.phaseCountLineEdit->text().toInt();
 }
 
 
 void OriginDialog::setPhaseCount(int count) {
-	_ui.phaseCountSB->setValue(count);
+	_ui.phaseCountLineEdit->setText(QString::number(count));
 }
 
 
 double OriginDialog::magValue() const {
-	return _ui.magSB->value();
+	return _ui.magLineEdit->text().toDouble();
 }
 
 
 void OriginDialog::setMagValue(double mag) {
-	_ui.magSB->setValue(mag);
+	_ui.magLineEdit->setText(QString::number(mag));
 }
 
 
 QString OriginDialog::magType() const {
-	return _ui.magTypeCB->currentText().trimmed();
+	return _ui.magTypeComboBox->currentText().trimmed();
 }
 
 
@@ -174,9 +174,9 @@ void OriginDialog::setMagType(const QString &type) {
 	int index = _magTypes.indexOf(type);
 	if ( index < 0 ) {
 		index = 0;
-		_ui.magTypeCB->addItem(type);
+		_ui.magTypeComboBox->addItem(type);
 	}
-	_ui.magTypeCB->setCurrentIndex(index);
+	_ui.magTypeComboBox->setCurrentIndex(index);
 }
 
 
@@ -184,8 +184,8 @@ void OriginDialog::setMagTypes(const QStringList &types) {
 	QString type = magType();
 	_magTypes = types;
 
-	_ui.magTypeCB->clear();
-	_ui.magTypeCB->addItems(_magTypes);
+	_ui.magTypeComboBox->clear();
+	_ui.magTypeComboBox->addItems(_magTypes);
 	if ( !type.isEmpty() ) {
 		setMagType(type);
 	}
@@ -227,9 +227,35 @@ void OriginDialog::saveSettings(const QString &groupName) {
 }
 
 
+void OriginDialog::onTextEdited(const QString &text) {
+	auto lineEdit = qobject_cast<QLineEdit*>(sender());
+	if ( !lineEdit || !lineEdit->validator() ) {
+		return;
+	}
+
+	auto validator = qobject_cast<const QDoubleValidator*>(lineEdit->validator());
+	if ( !validator ) {
+		return;
+	}
+
+	bool ok;
+	double value = text.toDouble(&ok);
+	if ( !ok ) {
+		return;
+	}
+
+	if ( value < validator->bottom() ) {
+		lineEdit->setText(QString::number(validator->bottom()));
+	}
+	else if ( value > validator->top() ) {
+		lineEdit->setText(QString::number(validator->top()));
+	}
+}
+
+
 void OriginDialog::init(double lon, double lat, double dep) {
 	_ui.setupUi(this);
-	_ui.advancedGB->hide();
+	_ui.advancedGroupBox->hide();
 
 	if ( SCScheme.dateTime.useLocalTime )
 		_ui.dateTimeEdit->setDisplayFormat(_ui.dateTimeEdit->displayFormat() + " " + Core::Time::LocalTimeZone().c_str());
@@ -241,10 +267,21 @@ void OriginDialog::init(double lon, double lat, double dep) {
 		// spinner controls only work with 3 digits
 		_ui.dateTimeEdit->setDisplayFormat("yyyy-MM-dd HH:mm:ss.zzz");
 	}
-	_ui.latDoubleSpinBox->setDecimals(SCScheme.precision.location);
-	_ui.lonDoubleSpinBox->setDecimals(SCScheme.precision.location);
-	_ui.depthDoubleSpinBox->setDecimals(SCScheme.precision.depth);
-	_ui.depthDoubleSpinBox->setDecimals(SCScheme.precision.magnitude);
+
+	QDoubleValidator *val = new QDoubleValidator(-90, 90, 10, _ui.latLineEdit);
+	val->setNotation(QDoubleValidator::StandardNotation);
+	_ui.latLineEdit->setValidator(val);
+
+	val = new QDoubleValidator(-180, 180, 10, _ui.lonLineEdit);
+	val->setNotation(QDoubleValidator::StandardNotation);
+	_ui.lonLineEdit->setValidator(val);
+
+	_ui.depthLineEdit->setValidator(new QDoubleValidator(_ui.depthLineEdit));
+	_ui.phaseCountLineEdit->setValidator(new QIntValidator(0, INT_MAX, _ui.phaseCountLineEdit));
+	_ui.magLineEdit->setValidator(new QDoubleValidator(_ui.magLineEdit));
+
+	connect(_ui.latLineEdit, SIGNAL(textEdited(QString)), this, SLOT(onTextEdited(QString)));
+	connect(_ui.lonLineEdit, SIGNAL(textEdited(QString)), this, SLOT(onTextEdited(QString)));
 
 	setTime(Core::Time::GMT());
 	setLongitude(lon);

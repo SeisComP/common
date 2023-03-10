@@ -52,7 +52,7 @@ public:
 	OriginDialog(double lon, double lat, double dep,
 	             QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
-	~OriginDialog();
+	~OriginDialog() override;
 
 	time_t getTime_t() const;
 	void setTime(Core::Time t);
@@ -86,6 +86,9 @@ public:
 
 	void loadSettings(const QString &groupName = "OriginDialog");
 	void saveSettings(const QString &groupName = "OriginDialog");
+
+protected slots:
+	void onTextEdited(const QString &text);
 
 private:
 	void init(double lon, double lat, double dep);
