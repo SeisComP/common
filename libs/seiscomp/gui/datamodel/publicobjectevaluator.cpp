@@ -77,7 +77,7 @@ bool PublicObjectEvaluator::setDatabaseURI(const char *uri) {
 	// Protect the list
 	QMutexLocker locker(&_mutexJobList);
 
-	if ( !_jobs.isEmpty() && !isRunning() ) {
+	if ( !_jobs.empty() && !isRunning() ) {
 		if ( !connect() ) return false;
 		start();
 	}
@@ -124,7 +124,7 @@ bool PublicObjectEvaluator::append(void *owner, const QString &publicID,
 			it.value()->scripts.insert(script, owner);
 	}
 
-	if ( !_jobs.isEmpty() && !isRunning() ) {
+	if ( !_jobs.empty() && !isRunning() ) {
 		if ( !connect() ) return false;
 		start();
 	}
@@ -157,7 +157,7 @@ bool PublicObjectEvaluator::append(void *owner, const QString &publicID,
 		}
 	}
 
-	if ( !_jobs.isEmpty() && !isRunning() ) {
+	if ( !_jobs.empty() && !isRunning() ) {
 		if ( !connect() ) return false;
 		start();
 	}
@@ -194,7 +194,7 @@ bool PublicObjectEvaluator::prepend(void *owner, const QString &publicID,
 		}
 	}
 
-	if ( !_jobs.isEmpty() && !isRunning() ) {
+	if ( !_jobs.empty() && !isRunning() ) {
 		if ( !connect() ) return false;
 		start();
 	}
@@ -234,7 +234,7 @@ bool PublicObjectEvaluator::prepend(void *owner, const QString &publicID,
 		}
 	}
 
-	if ( !_jobs.isEmpty() && !isRunning() ) {
+	if ( !_jobs.empty() && !isRunning() ) {
 		if ( !connect() ) return false;
 		start();
 	}

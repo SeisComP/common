@@ -21,12 +21,12 @@
 #ifndef SEISCOMP_GUI_DATAMODEL_ORIGINEVALUATOR_H
 #define SEISCOMP_GUI_DATAMODEL_ORIGINEVALUATOR_H
 
+#include <list>
 
 #include <QThread>
 #include <QMutex>
 #include <QHash>
 #include <QSet>
-#include <QLinkedList>
 #include <QProcess>
 #include <QStringList>
 
@@ -119,7 +119,7 @@ class PublicObjectEvaluator : public QThread {
 			Scripts     scripts;
 		};
 
-		typedef QLinkedList<Job> JobList;
+		typedef std::list<Job> JobList;
 		typedef QHash<QString, JobList::iterator> JobIDMap;
 
 		static PublicObjectEvaluator    *_instance;
