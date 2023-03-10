@@ -35,6 +35,7 @@
 #include <seiscomp/utils/misc.h>
 
 #include <QHeaderView>
+#include <QLocale>
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
@@ -302,6 +303,13 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 	QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 	QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 #endif
+
+	// Disable group separator (thousand separator) in output and input. E.g.,
+	// QLineEdits using a QDoubleValidator will no longer accept a comma.
+	auto appLocale = QLocale::c();
+	appLocale.setNumberOptions(QLocale::OmitGroupSeparator |
+	                           QLocale::RejectGroupSeparator);
+	QLocale::setDefault(appLocale);
 
 	_guiGroup = "GUI";
 	_thread = nullptr;
