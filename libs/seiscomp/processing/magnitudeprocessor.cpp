@@ -46,6 +46,33 @@ namespace Processing {
 IMPLEMENT_SC_ABSTRACT_CLASS_DERIVED(MagnitudeProcessor, Core::BaseObject, "MagnitudeProcessor");
 
 
+class MagnitudeProcessorAliasFactory : public Core::Generic::InterfaceFactoryInterface<MagnitudeProcessor> {
+	public:
+		MagnitudeProcessorAliasFactory(
+			const std::string &service,
+			const Core::Generic::InterfaceFactoryInterface<MagnitudeProcessor> *source
+		)
+		: Core::Generic::InterfaceFactoryInterface<MagnitudeProcessor>(service.c_str())
+		, _source(source) {}
+
+		MagnitudeProcessor *create() const {
+			auto proc = _source->create();
+			if ( proc->type() != serviceName() ) {
+				proc->_type = serviceName();
+			}
+			std::cerr << serviceName() << " " << proc->type() << std::endl;
+			return proc;
+		}
+
+	private:
+		const Core::Generic::InterfaceFactoryInterface<MagnitudeProcessor> *_source;
+};
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
 
@@ -143,7 +170,8 @@ MagnitudeProcessor::Correction::apply(double &val, const std::string &profile) c
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor::MagnitudeProcessor(const std::string& type)
-: _type(type) {
+: _type(type)
+, _amplitudeType(type) {
 	setCorrectionCoefficients(1.0, 0.0);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -178,7 +206,7 @@ std::string MagnitudeProcessor::typeMw() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string MagnitudeProcessor::amplitudeType() const {
-	return type();
+	return _amplitudeType;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
