@@ -821,8 +821,15 @@ bool AmplitudeProcessor::computeNoise(const DoubleArray &data, int i1, int i2, d
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor::setup(const Settings &settings) {
-	if ( !TimeWindowProcessor::setup(settings) )
+	SEISCOMP_DEBUG("%s.%s.%s.%s - %s amplitude configuration:",
+	               settings.networkCode.c_str(),
+	               settings.stationCode.c_str(),
+	               settings.locationCode.c_str(),
+	               settings.channelCode.c_str(),
+	               _type.c_str());
+	if ( !TimeWindowProcessor::setup(settings) ) {
 		return false;
+	}
 
 	// initalize regionalized settings
 	if ( !initRegionalization(settings) )
@@ -840,54 +847,44 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	catch ( ... ) {}
 
 	if ( settings.getValue(_config.woodAndersonResponse.gain, "amplitudes.WoodAnderson.gain") ) {
-		SEISCOMP_DEBUG("%s.%s.%s.%s: WA.gain = %f",
-		               settings.networkCode.c_str(),
-		               settings.stationCode.c_str(),
-		               settings.locationCode.c_str(),
-		               settings.channelCode.c_str(),
-		               _config.woodAndersonResponse.gain);
+		SEISCOMP_DEBUG("  + WA.gain = %f", _config.woodAndersonResponse.gain);
 	}
 
 	if ( settings.getValue(_config.woodAndersonResponse.T0, "amplitudes.WoodAnderson.T0") ) {
-		SEISCOMP_DEBUG("%s.%s.%s.%s: WA.T0 = %f",
-		               settings.networkCode.c_str(),
-		               settings.stationCode.c_str(),
-		               settings.locationCode.c_str(),
-		               settings.channelCode.c_str(),
-		               _config.woodAndersonResponse.T0);
+		SEISCOMP_DEBUG("  + WA.T0 = %f", _config.woodAndersonResponse.T0);
 	}
 
 	if ( settings.getValue(_config.woodAndersonResponse.h, "amplitudes.WoodAnderson.h") ) {
-		SEISCOMP_DEBUG("%s.%s.%s.%s: WA.h = %f",
-		               settings.networkCode.c_str(),
-		               settings.stationCode.c_str(),
-		               settings.locationCode.c_str(),
-		               settings.channelCode.c_str(),
-		               _config.woodAndersonResponse.h);
+		SEISCOMP_DEBUG("  + WA.h = %f", _config.woodAndersonResponse.h);
 	}
 
-	if ( !parseSaturationThreshold(settings, "amplitudes.saturationThreshold") )
+	if ( !parseSaturationThreshold(settings, "amplitudes.saturationThreshold") ) {
 		return false;
+	}
 
-	if ( !parseSaturationThreshold(settings, "amplitudes." + _type + ".saturationThreshold") )
+	if ( !parseSaturationThreshold(settings, "amplitudes." + _type + ".saturationThreshold") ) {
 		return false;
+	}
 
 	try {
-		if ( settings.getBool("amplitudes." + _type + ".enable") == false )
+		if ( settings.getBool("amplitudes." + _type + ".enable") == false ) {
 			return false;
+		}
 	}
 	catch ( ... ) {
 		// In case the amplitude specific enable flag is not set,
 		// check the global flag
 		try {
-			if ( settings.getBool("amplitudes.enable") == false )
+			if ( settings.getBool("amplitudes.enable") == false ) {
 				return false;
+			}
 		}
 		catch ( ... ) {}
 	}
 
-	if ( !settings.getValue(_enableResponses, "amplitudes." + _type + ".enableResponses") )
+	if ( !settings.getValue(_enableResponses, "amplitudes." + _type + ".enableResponses") ) {
 		settings.getValue(_enableResponses, "amplitudes.enableResponses");
+	}
 
 	settings.getValue(_config.snrMin, "amplitudes." + _type + ".minSNR");
 	settings.getValue(_config.noiseBegin, "amplitudes." + _type + ".noiseBegin");
@@ -899,14 +896,37 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	settings.getValue(_config.minimumDepth, "amplitudes." + _type + ".minDepth");
 	settings.getValue(_config.maximumDepth, "amplitudes." + _type + ".maxDepth");
 
-	if ( !settings.getValue(_config.respTaper, "amplitudes." + _type + ".resp.taper") )
+	SEISCOMP_DEBUG("  + minimum distance = %.5f deg", _config.minimumDistance);
+	SEISCOMP_DEBUG("  + maximum distance = %.5f deg", _config.maximumDistance);
+	SEISCOMP_DEBUG("  + minimum depth = %.3f km", _config.minimumDepth);
+	SEISCOMP_DEBUG("  + maximum depth = %.3f km", _config.maximumDepth);
+	SEISCOMP_DEBUG("  + noise begin = %.3f s", _config.noiseBegin);
+	SEISCOMP_DEBUG("  + noise end = %.3f s", _config.noiseEnd);
+	SEISCOMP_DEBUG("  + signal begin = %.3f s", _config.signalBegin);
+	SEISCOMP_DEBUG("  + signal end = %.3f s", _config.signalEnd);
+	SEISCOMP_DEBUG("  + minimum SNR = %.3f", _config.snrMin);
+	SEISCOMP_DEBUG("  + response correction = %i", _enableResponses);
+
+	if ( !settings.getValue(_config.respTaper, "amplitudes." + _type + ".resp.taper") ) {
 		settings.getValue(_config.respTaper, "amplitudes.resp.taper");
+		if ( _enableResponses ) {
+			SEISCOMP_DEBUG("  + response taper = %.3f", _config.respTaper);
+		}
+	}
 
-	if ( !settings.getValue(_config.respMinFreq, "amplitudes." + _type + ".resp.minFreq") )
+	if ( !settings.getValue(_config.respMinFreq, "amplitudes." + _type + ".resp.minFreq") ) {
 		settings.getValue(_config.respMinFreq, "amplitudes.resp.minFreq");
+		if ( _enableResponses && _config.respMinFreq != 0.0 ) {
+			SEISCOMP_DEBUG("  + response minimum frequency = %.3f", _config.respMinFreq);
+		}
+	}
 
-	if ( !settings.getValue(_config.respMaxFreq, "amplitudes." + _type + ".resp.maxFreq") )
+	if ( !settings.getValue(_config.respMaxFreq, "amplitudes." + _type + ".resp.maxFreq") ) {
 		settings.getValue(_config.respMaxFreq, "amplitudes.resp.maxFreq");
+		if ( _enableResponses && _config.respMaxFreq != 0.0 ) {
+			SEISCOMP_DEBUG("  + response maximum frequency = %.3f", _config.respMaxFreq);
+		}
+	}
 
 	return true;
 }
