@@ -365,20 +365,6 @@ class ArrivalsSortFilterProxyModel : public QSortFilterProxyModel {
 };
 
 
-void setBold(QWidget *w, bool b = true) {
-	QFont f = w->font();
-	f.setBold(b);
-	w->setFont(f);
-}
-
-void setItalic(QWidget *w, bool i = true) {
-	QFont f = w->font();
-	f.setItalic(i);
-	w->setFont(f);
-}
-
-
-
 class RenamePhases : public QDialog {
 	public:
 		RenamePhases(QWidget *parent = 0, Qt::WindowFlags f = 0)
