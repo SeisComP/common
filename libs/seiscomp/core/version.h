@@ -63,6 +63,19 @@ namespace Core {
    - Add Seiscomp::Gui::Ruler::setReverseDirection(bool)
    - Changed KM_OF_DEGREE constant according to WGS84 mean radius definition
 
+ "15.4.0"   0x0F0400
+   - Added Seiscomp::Gui::RecordView::hasSelectedItems()
+   - Added Seiscomp::Gui::RecordView::mapToTime()
+   - Added Seiscomp::Gui::RecordView::mapToUnit()
+   - Added Seiscomp::Gui::RecordView::setRubberBandSelectionEnabled()
+   - Added Seiscomp::Gui::RecordView::SelectionOperation
+   - Added Seiscomp::Gui::RecordView::SelectionOperationFlag
+   - Added Seiscomp::Gui::RecordView::visibleTimeRange
+   - Added signal Seiscomp::Gui::RecordView::selectedRubberBand()
+   - Added Seiscomp::Gui::FlowLayout
+   - Added Seiscomp::Gui::setBold
+   - Added Seiscomp::Gui::setItalic
+
  "15.3.0"   0x0F0300
    - Added Seiscomp::Client::ThreadedQueue::isClosed
 
