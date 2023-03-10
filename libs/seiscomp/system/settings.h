@@ -66,22 +66,27 @@ struct HasMemberAccept {
 template <typename T>
 struct IsClassType {
 	enum {
-		value = boost::is_same<int,T>::value ?
+		value = boost::is_same<int, T>::value ?
 		0
 		:
 		(
-			boost::is_same<unsigned int,T>::value ?
+			boost::is_same<unsigned int, T>::value ?
 			0
 			:
 			(
-				boost::is_same<double,T>::value ?
+				boost::is_same<size_t, T>::value ?
 				0
 				:
 				(
-					boost::is_same<bool,T>::value ?
+					boost::is_same<double, T>::value ?
 					0
 					:
-					1
+					(
+						boost::is_same<bool, T>::value ?
+						0
+						:
+						1
+					)
 				)
 			)
 		)

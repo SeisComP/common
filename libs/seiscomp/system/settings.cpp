@@ -39,6 +39,11 @@ int getConfig(const Config::Config *cfg, const std::string &symbol, bool) {
 }
 
 template <>
+size_t getConfig(const Config::Config *cfg, const std::string &symbol, bool) {
+	return static_cast<size_t>(cfg->getInt(symbol));
+}
+
+template <>
 double getConfig(const Config::Config *cfg, const std::string &symbol, bool) {
 	return cfg->getDouble(symbol);
 }
