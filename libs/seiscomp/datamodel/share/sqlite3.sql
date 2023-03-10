@@ -1979,7 +1979,7 @@ CREATE TABLE JournalEntry (
 	objectID VARCHAR NOT NULL,
 	sender VARCHAR NOT NULL,
 	action VARCHAR NOT NULL,
-	parameters VARCHAR,
+	parameters BLOB,
 	PRIMARY KEY(_oid),
 	FOREIGN KEY(_oid)
 		REFERENCES Object(_oid)
