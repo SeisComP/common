@@ -3464,7 +3464,9 @@ void MagnitudeView::updateContent() {
 #endif
 	//_ui.tableStationMagnitudes->resizeColumnsToContents();
 	_ui.tableStationMagnitudes->resizeRowsToContents();
-	_ui.tableStationMagnitudes->sortByColumn(_ui.tableStationMagnitudes->horizontalHeader()->sortIndicatorSection());
+	_ui.tableStationMagnitudes->sortByColumn(
+	            _ui.tableStationMagnitudes->horizontalHeader()->sortIndicatorSection(),
+	            _ui.tableStationMagnitudes->horizontalHeader()->sortIndicatorOrder());
 
 	if ( _netMag->stationMagnitudeContributionCount() == 0 ) {
 		_ui.groupReview->setEnabled(false);
