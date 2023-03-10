@@ -331,6 +331,20 @@ void fixWidth(QWidget *w, int numCharacters) {
 }
 
 
+void setBold(QWidget *w, bool bold) {
+	QFont f = w->font();
+	f.setBold(true);
+	w->setFont(f);
+}
+
+
+void setItalic(QWidget *w, bool italic) {
+	QFont f = w->font();
+	f.setItalic(italic);
+	w->setFont(f);
+}
+
+
 ElideFadeDrawer::ElideFadeDrawer(QObject *parent) : QObject(parent) {}
 
 bool ElideFadeDrawer::eventFilter(QObject *obj, QEvent *event) {

@@ -63,6 +63,9 @@ SC_GUI_API QString elapsedTimeString(const Core::TimeSpan &dt);
 SC_GUI_API void setMaxWidth(QWidget *w, int numCharacters);
 SC_GUI_API void fixWidth(QWidget *w, int numCharacters);
 
+SC_GUI_API void setBold(QWidget *w, bool bold = true);
+SC_GUI_API void setItalic(QWidget *w, bool italic = true);
+
 
 class SC_GUI_API ElideFadeDrawer : public QObject {
 	public:
