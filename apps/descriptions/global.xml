@@ -404,7 +404,8 @@
 				<description>
 				Regionalization of magnitude configurations overriding global
 				bindings. Add regionalization by magnitude-type profiles.
-				Profile names correspond to magnitude types.
+				Profile names correspond to magnitude types. For parameters which
+				not set, the values defined in bindings apply.
 				</description>
 				<struct type="Magnitude type profile">
 					<parameter name="regionFile" type="path">
@@ -486,13 +487,13 @@
 								and receiver/station must be withing the region.
 								</description>
 							</parameter>
-							<parameter name="multiplier" type="double" default="1">
+							<parameter name="multiplier" type="double">
 								<description>
 								Linear part of the default station correction
 								for this region.
 								</description>
 							</parameter>
-							<parameter name="offset" type="double" default="0">
+							<parameter name="offset" type="double">
 								<description>
 								Constant part of the default station correction
 								for this region.
