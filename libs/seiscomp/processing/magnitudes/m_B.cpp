@@ -51,10 +51,10 @@ bool MagnitudeProcessor_mB::MagnitudeProcessor_mB::setup(const Settings &setting
 	maxDistanceDeg = 105.0; // default maximum distance
 
 	// distance range in degree
-	try { minDistanceDeg = settings.getDouble("magnitudes.mB.minDist"); }
+	try { minDistanceDeg = settings.getDouble("magnitudes." + type() + ".minDist"); }
 	catch ( ... ) {}
 
-	try { maxDistanceDeg = settings.getDouble("magnitudes.mB.maxDist"); }
+	try { maxDistanceDeg = settings.getDouble("magnitudes." + type() + ".maxDist"); }
 	catch ( ... ) {}
 
 	return true;

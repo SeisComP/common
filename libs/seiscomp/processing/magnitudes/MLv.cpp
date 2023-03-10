@@ -78,12 +78,12 @@ bool MagnitudeProcessor_MLv::setup(const Settings &settings) {
 	defLogA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85";
 	_maxDistanceKm = -1; // distance according to the logA0 range
 
-	try { defLogA0 = settings.getString("magnitudes.MLv.logA0"); }
+	try { defLogA0 = settings.getString("magnitudes." + type() + ".logA0"); }
 	catch ( ... ) {}
 	try {
-		defLogA0 = settings.getString("MLv.logA0");
-		SEISCOMP_WARNING("MLv.logA0 is deprecated");
-		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.MLv.logA0");
+		defLogA0 = settings.getString(type() + ".logA0");
+		SEISCOMP_WARNING("%s.logA0 is deprecated", type().c_str());
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.%s.logA0", type().c_str());
 	}
 	catch ( ... ) {}
 
@@ -93,13 +93,13 @@ bool MagnitudeProcessor_MLv::setup(const Settings &settings) {
 		return false;
 	}
 
-	try { _maxDistanceKm = settings.getDouble("magnitudes.MLv.maxDistanceKm"); }
+	try { _maxDistanceKm = settings.getDouble("magnitudes." + type() + ".maxDistanceKm"); }
 	catch ( ... ) {}
 
 	try {
-		_maxDistanceKm = settings.getDouble("MLv.maxDistanceKm");
-		SEISCOMP_WARNING("MLv.maxDistanceKm is deprecated");
-		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.MLv.maxDistanceKm");
+		_maxDistanceKm = settings.getDouble(type() + ".maxDistanceKm");
+		SEISCOMP_WARNING("%s.maxDistanceKm is deprecated", type().c_str());
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.%s.maxDistanceKm", type().c_str());
 	}
 	catch ( ... ) {}
 
