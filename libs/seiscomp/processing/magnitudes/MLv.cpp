@@ -93,6 +93,9 @@ bool MagnitudeProcessor_MLv::setup(const Settings &settings) {
 		return false;
 	}
 
+	SEISCOMP_DEBUG("Applying parameters for %s:", type().c_str());
+	SEISCOMP_DEBUG("  + logA0: %s", defLogA0.c_str());
+
 	try { _maxDistanceKm = settings.getDouble("magnitudes." + type() + ".maxDistanceKm"); }
 	catch ( ... ) {}
 
@@ -124,10 +127,14 @@ bool MagnitudeProcessor_MLv::initLocale(Locale *locale,
 				return false;
 			}
 
+			SEISCOMP_DEBUG("  + local logA0: %s", logA0.c_str());
 			locale->extra = extra;
 		}
+		else {
+			SEISCOMP_DEBUG("  + no local definition of logA0");
+		}
 	}
-	catch ( ... ) {}
+	catch ( ... ) {SEISCOMP_DEBUG("  + no local definition of logA0");}
 
 	return true;
 }
