@@ -551,10 +551,14 @@ class Module(kernel.CoreModule):
 
         try:
             vmaj, vmin = [int(t) for t in version.split('.')]
+            vrev = 0
         except ValueError:
-            print("WARNING: wrong version format: expected MAJOR.MINOR",
-                  file=sys.stderr)
-            return True
+            try:
+                vmaj, vmin, vrev = [int(t) for t in version.split('.')]
+            except ValueError:
+                print("WARNING: wrong version format: expected MAJOR.MINOR[.REV]",
+                      file=sys.stderr)
+                return True
 
         strictVersionMatch = True
         try:
@@ -573,6 +577,7 @@ class Module(kernel.CoreModule):
 
         vcurrmaj = 0
         vcurrmin = 0
+        vcurrrev = 0
 
         for f in os.listdir(migrations):
             if os.path.isfile(os.path.join(migrations, f)):
@@ -586,28 +591,37 @@ class Module(kernel.CoreModule):
 
                 try:
                     vfrommaj, vfrommin = [int(t) for t in vfrom.split('_')]
+                    vfromrev = 0
                 except ValueError:
-                    continue
+                    try:
+                        vfrommaj, vfrommin, vromrev = [int(t) for t in vfrom.split('_')]
+                    except ValueError:
+                        continue
 
                 try:
                     vtomaj, vtomin = [int(t) for t in vto.split('_')]
+                    vtorev = 0
                 except ValueError:
-                    continue
+                    try:
+                        vtomaj, vtomin, vtorev = [int(t) for t in vto.split('_')]
+                    except ValueError:
+                        continue
 
-                migration_paths[(vfrommaj, vfrommin)] = (vtomaj, vtomin)
+                migration_paths[(vfrommaj, vfrommin, vfromrev)] = (vtomaj, vtomin, vtorev)
 
-                if (vtomaj > vcurrmaj) or ((vtomaj == vcurrmaj) and (vtomin > vcurrmin)):
+                if (vtomaj > vcurrmaj) or ((vtomaj == vcurrmaj) and ((vtomin > vcurrmin) or ((vtomin == vcurrmin) and (vtorev > vcurrrev)))):
                     vcurrmaj = vtomaj
                     vcurrmin = vtomin
+                    vcurrrev = vtorev
 
-        print("  * last migration version is %d.%d" % (vcurrmaj, vcurrmin),
+        print("  * last migration version is %d.%d.%d" % (vcurrmaj, vcurrmin, vcurrrev),
               file=sys.stderr)
 
-        if vcurrmaj == vmaj and vcurrmin == vmin:
+        if vcurrmaj == vmaj and vcurrmin == vmin and vcurrrev == vrev:
             print("  * schema up-to-date", file=sys.stderr)
             return True
 
-        if (vmaj, vmin) not in migration_paths:
+        if (vmaj, vmin, vrev) not in migration_paths:
             print("  * no migrations found", file=sys.stderr)
             return True
 
@@ -615,9 +629,13 @@ class Module(kernel.CoreModule):
               "following", file=sys.stderr)
         print("    database migration scripts in exactly the given order:",
               file=sys.stderr)
-        while (vmaj, vmin) in migration_paths:
-            (vtomaj, vtomin) = migration_paths[(vmaj, vmin)]
-            fname = "%d_%d_to_%d_%d.sql" % (vmaj, vmin, vtomaj, vtomin)
+
+        def fn(maj, min, rev):
+            return "%d_%d_%d" % (maj, min, rev) if rev else "%d_%d" % (maj, min)
+
+        while (vmaj, vmin, vrev) in migration_paths:
+            (vtomaj, vtomin, vtorev) = migration_paths[(vmaj, vmin, vrev)]
+            fname = "%s_to_%s.sql" % (fn(vmaj, vmin, vrev), fn(vtomaj, vtomin, vtorev))
             if backend == "mysql":
                 print("    * mysql -u {} -h {} -p {} < {}"
                       .format(user, host, db, os.path.join(migrations, fname)),
@@ -629,6 +647,6 @@ class Module(kernel.CoreModule):
             else:
                 print("    * {}".format(os.path.join(migrations, fname)),
                       file=sys.stderr)
-            (vmaj, vmin) = (vtomaj, vtomin)
+            (vmaj, vmin, vrev) = (vtomaj, vtomin, vtorev)
 
         return False
