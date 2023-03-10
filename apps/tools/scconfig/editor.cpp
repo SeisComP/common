@@ -173,7 +173,11 @@ void ConfigEditor::init() {
 	option.setFlags(option.flags() | QTextOption::ShowTabsAndSpaces);
 	document()->setDefaultTextOption(option);
 
+#if QT_VERSION >= 0x050a00
+	setTabStopDistance(QT_FM_WIDTH(fontMetrics(), QLatin1Char('9'))*4);
+#else
 	setTabStopWidth(QT_FM_WIDTH(fontMetrics(), QLatin1Char('9'))*4);
+#endif
 
 	connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(updateExtraSelections()));
 	connect(document(), SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
