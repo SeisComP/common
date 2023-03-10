@@ -847,7 +847,7 @@ void DiagramWidget::mouseReleaseEvent(QMouseEvent *event) {
 			if ( ( _rubberBand.width() > 0 || _rubberBand.height() > 0) ) {
 				_displayRect = _rubberBand;
 				(this->*adjustZoom)(_displayRect);
-				adjustZoomRect(_displayRect);
+				emit adjustZoomRect(_displayRect);
 			}
 		}
 		else {
@@ -1066,6 +1066,7 @@ void DiagramWidget::zoomIntoSelectedValues() {
 	_displayRect = getSelectedValuesRect();
 	(this->*adjustZoom)(_displayRect);
 	emit adjustZoomRect(_displayRect);
+	updateDiagramArea(); // indices might have changed
 	update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1088,6 +1089,7 @@ void DiagramWidget::saveStates() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DiagramWidget::resetZoom() {
 	_displayRect = _requestRect;
+	updateDiagramArea(); // indices might have changed
 	update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
