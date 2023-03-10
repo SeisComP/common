@@ -1022,11 +1022,15 @@ void DiagramWidget::contextMenuEvent(QContextMenuEvent *event) {
 	QMenu contextMenu(this);
 
 	_zoomAction->setEnabled(false);
-
+	bool activeFound = false;
 	for ( int i = 0; i < _values.count(); ++i ) {
 		if ( _values[i].isActive ) {
-			_zoomAction->setEnabled(true);
-			break;
+			// allow zoom action if at least 2 values are active
+			if ( activeFound ) {
+				_zoomAction->setEnabled(true);
+				break;
+			}
+			activeFound = true;
 		}
 	}
 
