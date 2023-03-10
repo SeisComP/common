@@ -69,8 +69,9 @@ MagnitudeProcessor_MLv::MagnitudeProcessor_MLv()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor_MLv::setup(const Settings &settings) {
-	if ( !MagnitudeProcessor::setup(settings) )
+	if ( !MagnitudeProcessor::setup(settings) ) {
 		return false;
+	}
 
 	std::string defLogA0;
 
@@ -93,7 +94,7 @@ bool MagnitudeProcessor_MLv::setup(const Settings &settings) {
 		return false;
 	}
 
-	SEISCOMP_DEBUG("Applying parameters for %s:", type().c_str());
+	SEISCOMP_DEBUG("Parameters for magnitude %s:", type().c_str());
 	SEISCOMP_DEBUG("  + logA0: %s", defLogA0.c_str());
 
 	try { _maxDistanceKm = settings.getDouble("magnitudes." + type() + ".maxDistanceKm"); }
@@ -153,29 +154,34 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLv::computeMagnitude(
 	const DataModel::Amplitude *,
 	const Locale *locale,
 	double &value) {
-	if ( amplitude <= 0 )
+
+	if ( amplitude <= 0 ) {
 		return AmplitudeOutOfRange;
+	}
 
 	// Clip depth to 0
-	if ( depth < 0 ) depth = 0;
-
+	if ( depth < 0 ) {
+		depth = 0;
+	}
 	double distanceKm = Math::Geo::deg2km(delta);
 
 	if ( _maxDistanceKm > 0 and distanceKm > _maxDistanceKm )
 		return DistanceOutOfRange;
 
-	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) )
+	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) ) {
 		return InvalidAmplitudeUnit;
+	}
 
 	ExtraLocale *extra = nullptr;
-	if ( locale )
+	if ( locale ) {
 		extra = static_cast<ExtraLocale*>(locale->extra.get());
+	}
 
-	double correction = (extra and extra->logA0 ? extra->logA0->at(distanceKm) : _logA0.at(distanceKm));
+	double correction = -1.0 * (extra and extra->logA0 ? extra->logA0->at(distanceKm) : _logA0.at(distanceKm));
 
-	SEISCOMP_DEBUG("  + distance: %.3f correction term: %.3f", distanceKm, correction);
+	SEISCOMP_DEBUG("  + distance: %.5f deg, logA0 correction: %.3f", distanceKm, correction);
 	try {
-		value = log10(amplitude) - correction;
+		value = log10(amplitude) + correction;
 	}
 	catch ( Core::ValueException & ) {
 		return DistanceOutOfRange;

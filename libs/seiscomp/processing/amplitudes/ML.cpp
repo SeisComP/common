@@ -274,17 +274,6 @@ bool AbstractAmplitudeProcessor_ML::setup(const Settings &settings) {
 		}
 	}
 
-	SEISCOMP_DEBUG("%s.%s.%s.%s: %s amplitude configuration:",
-	               settings.networkCode.c_str(),
-	               settings.stationCode.c_str(),
-	               settings.locationCode.c_str(),
-	               settings.channelCode.c_str(),
-	               _type.c_str());
-
-	SEISCOMP_DEBUG(" + WA gain: %.3f", _config.woodAndersonResponse.gain);
-	SEISCOMP_DEBUG(" + WA T0: %.3f s", _config.woodAndersonResponse.T0);
-	SEISCOMP_DEBUG(" + WA h: %.3f", _config.woodAndersonResponse.h);
-	SEISCOMP_DEBUG(" + maximum distance: %.3f deg", _config.maximumDistance);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
