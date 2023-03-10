@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT RECORDFILE
 #include "file.h"
 #include <seiscomp/logging/log.h>
+#include <seiscomp/system/environment.h>
 
 
 using namespace std;
@@ -109,11 +110,14 @@ bool File::setSource(const string &name) {
 	setRecordType("mseed");
 
 	if ( _name != "-" ) {
-		_fstream.open(_name.c_str(),ifstream::in|ifstream::binary);
+		_fstream.open(
+			Environment::Instance()->absolutePath(_name).c_str(),
+			ifstream::in | ifstream::binary
+		);
 
 		size_t pos = name.rfind('.');
 		if ( pos != string::npos ) {
-			string ext = name.substr(pos+1);
+			string ext = name.substr(pos + 1);
 			if ( ext == "xml" )
 				setRecordType("xml");
 			else if ( ext == "bin" )
