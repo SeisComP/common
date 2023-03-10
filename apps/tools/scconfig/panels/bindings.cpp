@@ -37,6 +37,8 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 
+#include <seiscomp/gui/core/compat.h>
+
 
 using namespace std;
 using namespace Seiscomp::System;
@@ -201,7 +203,7 @@ class StationTreeView : public QTreeView {
 				accepted = true;
 
 				// Validate text content
-				QStringList lines = event->mimeData()->text().split("\n", QString::SkipEmptyParts);
+				auto lines = event->mimeData()->text().split("\n", QT_SKIP_EMPTY_PARTS);
 				foreach ( const QString &l, lines ) {
 					// Do not accept unknown text
 					if ( !l.startsWith("PROFILE ") ) {
@@ -239,7 +241,7 @@ class StationTreeView : public QTreeView {
 		}
 
 		void dropEvent(QDropEvent * event) {
-			QStringList lines = event->mimeData()->text().split("\n", QString::SkipEmptyParts);
+			QStringList lines = event->mimeData()->text().split("\n", QT_SKIP_EMPTY_PARTS);
 			foreach ( const QString &l, lines ) {
 				if ( !l.startsWith("PROFILE ") ) continue;
 				QString module,profile;
@@ -282,7 +284,7 @@ class StationsFolderView : public QListView {
 				accepted = true;
 
 				// Validate text content
-				QStringList lines = event->mimeData()->text().split("\n", QString::SkipEmptyParts);
+				auto lines = event->mimeData()->text().split("\n", QT_SKIP_EMPTY_PARTS);
 				foreach ( const QString &l, lines ) {
 					// Do not accept unknown text
 					if ( !l.startsWith("PROFILE ") ) {
@@ -322,7 +324,7 @@ class StationsFolderView : public QListView {
 		}
 
 		void dropEvent(QDropEvent * event) {
-			QStringList lines = event->mimeData()->text().split("\n", QString::SkipEmptyParts);
+			auto lines = event->mimeData()->text().split("\n", QT_SKIP_EMPTY_PARTS);
 			foreach ( const QString &l, lines ) {
 				if ( !l.startsWith("PROFILE ") ) continue;
 				QString module,profile;

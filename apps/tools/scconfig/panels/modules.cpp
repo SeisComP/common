@@ -29,6 +29,8 @@
 #include <QHeaderView>
 #include <QAction>
 
+#include <seiscomp/gui/core/compat.h>
+
 
 using namespace std;
 using namespace Seiscomp;
@@ -39,7 +41,7 @@ namespace {
 
 QTreeWidgetItem *createPath(QTreeWidget *tree, const QString &path, bool expand) {
 	QTreeWidgetItem *parent = NULL;
-	QStringList dirs = path.split('/', QString::SkipEmptyParts);
+	auto dirs = path.split('/', QT_SKIP_EMPTY_PARTS);
 
 	foreach ( const QString &dir, dirs ) {
 		QTreeWidgetItem *node = NULL;

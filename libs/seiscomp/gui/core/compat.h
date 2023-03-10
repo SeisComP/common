@@ -55,13 +55,21 @@
     #define QT_FM_WIDTH(fm, str) fm.width(str)
 #endif
 
-// 5.14: QWheelEvent::pos() -> position()
+// 5.14:
+//  QWheelEvent::pos() -> position()
+//  QString::KeepEmptyParts|SkipEmptyParts -> Qt::QString::KeepEmptyParts|SkipEmptyParts
 #if QT_VERSION >= 0x050e00
     #define QT_WE_POSF(wheelEvent) wheelEvent->position()
     #define QT_WE_POS(wheelEvent) QT_WE_POSF(wheelEvent).toPoint()
+
+	#define QT_KEEP_EMPTY_PARTS Qt::KeepEmptyParts
+	#define QT_SKIP_EMPTY_PARTS Qt::SkipEmptyParts
 #else
     #define QT_WE_POS(wheelEvent) wheelEvent->pos()
     #define QT_WE_POSF(wheelEvent) QPointF(QT_WE_POS(wheelEvent))
+
+    #define QT_KEEP_EMPTY_PARTS QString::KeepEmptyParts
+    #define QT_SKIP_EMPTY_PARTS QString::SkipEmptyParts
 #endif
 
 
