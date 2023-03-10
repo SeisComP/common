@@ -459,10 +459,13 @@ Application::Application(int argc, char** argv)
 
 	_instance = this;
 
-	if ( _settings.messaging.user.empty() )
+	if ( _settings.messaging.user.empty() ) {
 		_settings.messaging.user = _name;
+	}
 
 	DataModel::Notifier::SetEnabled(false);
+
+	bindSettings(&_settings);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1032,8 +1035,6 @@ bool Application::handlePreFork() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::init() {
-	bindSettings(&_settings);
-
 	if ( !System::Application::init() ) {
 		return false;
 	}
