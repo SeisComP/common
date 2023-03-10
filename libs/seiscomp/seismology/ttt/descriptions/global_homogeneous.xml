@@ -2,42 +2,50 @@
 <seiscomp>
 	<plugin name="homogeneous">
 		<extends>global</extends>
-		<description>Travel time table for a homogeneous velocity model</description>
+		<description>
+		Travel-times for a homogeneous velocity model
+		</description>
 		<configuration>
-			<group name="ttt">
-			  <group name="homogeneous">
-				<description>
-				 Travel-time interface for homogeneous velocity models.
-				</description>
-					<group name="profile" link="ttt.homogeneous.tables">
+			<extend-struct type="ttt profile" match-name="homogeneous">
+				<struct type="table profile">
+					<description>
+					Parameters defining the area where the profile applies
+					and the P/S velocities. Once defined, the profile can
+					be registered in ttt.homogeneous.tables
+					</description>
+					<parameter name="origin" type="list:double" unit="deg">
 						<description>
-							Parameters defining the area where the profile applies and the P/S velocities.
-							Once defined, the profile can then be registered in ttt.homogeneous.tables
+						Geographic origin of the region. Expects 2 values:
+						latitude, longitude.
 						</description>
-						<struct type="homogeneous profile">
-							<description></description>
-							<parameter name="origin" type="list:double" unit="deg">
-								<description>Geographic origin of the region. Expects 2 values: latitude, longitude.</description>
-							</parameter>
-							<parameter name="radius" type="double" unit="km">
-								<description>Radius validity of the region.</description>
-							</parameter>
-							<parameter name="minDepth" type="double" unit="km">
-								<description>Min Depth validity of the region.</description>
-							</parameter>
-							<parameter name="maxDepth" type="double" unit="km">
-								<description>Max Depth validity of the region.</description>
-							</parameter> 
-							<parameter name="P-velocity" type="double" unit="km/s">
-								<description>P wave velocity.</description>
-							</parameter>
-							<parameter name="S-velocity" type="double" unit="km/s">
-								<description>S wave velocity.</description>
-							</parameter>
-						</struct>
-					</group>
-				</group>
-			</group>
+					</parameter>
+					<parameter name="radius" type="double" unit="km">
+						<description>
+						Radius validity of the region.
+						</description>
+					</parameter>
+					<parameter name="minDepth" type="double" unit="km">
+						<description>
+						Min Depth validity of the region.
+						</description>
+					</parameter>
+					<parameter name="maxDepth" type="double" unit="km">
+						<description>
+						Max Depth validity of the region.
+						</description>
+					</parameter>
+					<parameter name="P-velocity" type="double" unit="km/s">
+						<description>
+						P wave velocity.
+						</description>
+					</parameter>
+					<parameter name="S-velocity" type="double" unit="km/s">
+						<description>
+						S wave velocity.
+						</description>
+					</parameter>
+				</struct>
+			</extend-struct>
 		</configuration>
 	</plugin>
 </seiscomp>
