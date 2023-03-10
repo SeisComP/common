@@ -103,10 +103,12 @@ bool LogA0::set(const std::string &definition) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 double LogA0::at(double dist_km) const {
-	for ( size_t i = 1; i < nodes.size(); ++i ) {
-		if ( nodes[i-1].first <= dist_km && dist_km <= nodes[i].first ) {
-			double q = (dist_km-nodes[i-1].first) / (nodes[i].first-nodes[i-1].first);
-			return q*(nodes[i].second-nodes[i-1].second) + nodes[i-1].second;
+	if ( nodes.size() >= 2 ) {
+		for ( size_t i = 1; i < nodes.size(); ++i ) {
+			if ( nodes[i - 1].first <= dist_km && dist_km <= nodes[i].first ) {
+				double q = (dist_km - nodes[i - 1].first) / (nodes[i].first - nodes[i - 1].first);
+				return q * (nodes[i].second - nodes[i - 1].second) + nodes[i - 1].second;
+			}
 		}
 	}
 
