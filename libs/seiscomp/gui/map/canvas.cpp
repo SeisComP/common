@@ -1531,6 +1531,7 @@ bool Canvas::insertLayerBefore(const Layer *referenceLayer, Layer *layer) {
 		_layers.insert(index, layer);
 	else
 		_layers.append(layer);
+	setupLayer(layer);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
