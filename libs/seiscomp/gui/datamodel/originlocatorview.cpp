@@ -4792,7 +4792,8 @@ void OriginLocatorView::updateContent() {
 
 	//_ui->tableArrivals->resizeColumnsToContents();
 	_ui->tableArrivals->resizeRowsToContents();
-	_ui->tableArrivals->sortByColumn(_ui->tableArrivals->horizontalHeader()->sortIndicatorSection());
+	_ui->tableArrivals->sortByColumn(_ui->tableArrivals->horizontalHeader()->sortIndicatorSection(),
+	                                 _ui->tableArrivals->horizontalHeader()->sortIndicatorOrder());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
