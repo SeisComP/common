@@ -91,7 +91,7 @@ CREATE TABLE PublicObject (
 		ON DELETE CASCADE
 );
 
-INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.12');
+INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.12.1');
 INSERT INTO Meta(name,value) VALUES ('Creation-Time', CURRENT_TIMESTAMP);
 
 INSERT INTO Object(_oid) VALUES (DEFAULT);

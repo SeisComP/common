@@ -32,7 +32,8 @@ namespace DataModel {
 struct Version {
 	enum {
 		Major = 0,
-		Minor = 12
+		Minor = 12,
+		Revision = 1
 	};
 };
 
