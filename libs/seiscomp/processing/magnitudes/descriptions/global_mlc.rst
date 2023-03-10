@@ -27,20 +27,21 @@ Configuration of global bindings provides additional flexibility:
 * Consider either hypocentral or epicentral distance for computing magnitudes
   (:confval:`magnitudes.MLc.distMode`).
 
-General (default) conditions apply:
+General (default) conditions apply, all values are configurable:
 
-* Amplitude pre-filtering, configurable: :ref:`BW(3,0.5,12) <filter-bw>`.
+* Amplitude pre-filtering: :ref:`BW(3,0.5,12) <filter-bw>`.
 * Amplitude unit in SeisComP: **millimeter** (mm) or as considered by the
   configured calibration parameters.
-* Optional amplitude scaling and Wood-Anderson simulation.
-* Time window, configurable: 150 s by :ref:`scautopick` or distance dependent
+* Optional amplitude scaling: 1.
+* Wood-Anderson simulation: yes.
+* Time window: 150 s by :ref:`scautopick` or distance dependent
   with :math:`endTime = distance [km]/ 3 + 30`, e.g. by :ref:`scmag` or
   :ref:`scolv`.
-* Distance type, configurable: hypocentral or epicentral.
-* Distance range, configurable: 0 - 8 deg, measurements beyond 8 deg will be
+* Distance type: hypocentral.
+* Distance range: 0 - 8 deg, measurements beyond 8 deg will be
   strictly ignored.
-* Depth range, configurable: <= 80 km.
-* Magnitude calibration, configurable: parametric or non-parametric.
+* Depth range: <= 80 km.
+* Magnitude calibration: parametric.
 
 
 Amplitudes
@@ -167,7 +168,7 @@ in various use cases, e.g.
    :width: 18cm
 
    MLc magnitudes for measured amplitude of 1 mm with default magnitude
-   calibration (*MLc_s*, Stange, 2006) and calibration values for Southern
+   calibration (*MLc_s*, :cite:t:`stange-2006`) and calibration values for Southern
    California (*MLc_hb*, :cite:t:`hutton-1987`).
 
 
