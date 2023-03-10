@@ -1521,12 +1521,12 @@ bool Application::initConfiguration() {
 	for ( string &item : _settings.processing.magnitudeAliases ) {
 		StringVector toks;
 		Core::split(toks, item, ":", false);
-		if ( toks.size() != 2 ) {
-			SEISCOMP_ERROR("magnitude alias item must be of format <alias>:<source>");
+		if ( toks.size() < 2 || toks.size() > 3 ) {
+			SEISCOMP_ERROR("magnitude alias item must be of format <alias>:<source>[:<amp-source>]");
 			return false;
 		}
 
-		if ( !Processing::MagnitudeProcessor::CreateAlias(toks[0], toks[1]) ) {
+		if ( !Processing::MagnitudeProcessor::CreateAlias(toks[0], toks[1], toks.size() > 2 ? toks[2] : string()) ) {
 			return false;
 		}
 	}

@@ -50,22 +50,27 @@ class MagnitudeProcessorAliasFactory : public Core::Generic::InterfaceFactoryInt
 	public:
 		MagnitudeProcessorAliasFactory(
 			const std::string &service,
+			const std::string &ampType,
 			const Core::Generic::InterfaceFactoryInterface<MagnitudeProcessor> *source
 		)
 		: Core::Generic::InterfaceFactoryInterface<MagnitudeProcessor>(service.c_str())
-		, _source(source) {}
+		, _source(source)
+		, _ampType(ampType) {}
 
 		MagnitudeProcessor *create() const {
 			auto proc = _source->create();
 			if ( proc->type() != serviceName() ) {
 				proc->_type = serviceName();
+				if ( !_ampType.empty() ) {
+					proc->_amplitudeType = _ampType;
+				}
 			}
-			std::cerr << serviceName() << " " << proc->type() << std::endl;
 			return proc;
 		}
 
 	private:
 		const Core::Generic::InterfaceFactoryInterface<MagnitudeProcessor> *_source;
+		string _ampType;
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -99,7 +104,9 @@ class AliasFactories : public std::vector<MagnitudeProcessorAliasFactory*> {
 			}
 		}
 
-		bool createAlias(const std::string &aliasType, const std::string &sourceType) {
+		bool createAlias(const std::string &aliasType,
+		                 const std::string &sourceType,
+		                 const std::string &sourceAmpType) {
 			auto sourceFactory = MagnitudeProcessorFactory::Find(sourceType);
 			if ( !sourceFactory ) {
 				SEISCOMP_ERROR("alias: magnitude source factory '%s' does not exist",
@@ -114,7 +121,11 @@ class AliasFactories : public std::vector<MagnitudeProcessorAliasFactory*> {
 				return false;
 			}
 
-			push_back(new MagnitudeProcessorAliasFactory(aliasType, sourceFactory));
+			push_back(
+				new MagnitudeProcessorAliasFactory(
+					aliasType, sourceAmpType, sourceFactory
+				)
+			);
 
 			return true;
 		}
@@ -772,8 +783,10 @@ void MagnitudeProcessor::finalizeMagnitude(DataModel::StationMagnitude *) const 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MagnitudeProcessor::CreateAlias(const std::string &aliasType, const std::string &sourceType) {
-	return aliasFactories.createAlias(aliasType, sourceType);
+bool MagnitudeProcessor::CreateAlias(const std::string &aliasType,
+                                     const std::string &sourceType,
+                                     const string &sourceAmpType) {
+	return aliasFactories.createAlias(aliasType, sourceType, sourceAmpType);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
