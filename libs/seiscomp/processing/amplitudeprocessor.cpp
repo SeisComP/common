@@ -831,6 +831,14 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	// Reset Wood-Anderson response to default
 	_config.woodAndersonResponse = Math::SeismometerResponse::WoodAnderson::Config();
 
+	auto cfg = settings.localConfiguration;
+	try { _config.woodAndersonResponse.gain = cfg->getDouble("amplitudes.WoodAnderson.gain"); }
+	catch ( ... ) {}
+	try { _config.woodAndersonResponse.T0 = cfg->getDouble("amplitudes.WoodAnderson.T0"); }
+	catch ( ... ) {}
+	try { _config.woodAndersonResponse.h = cfg->getDouble("amplitudes.WoodAnderson.h"); }
+	catch ( ... ) {}
+
 	if ( settings.getValue(_config.woodAndersonResponse.gain, "amplitudes.WoodAnderson.gain") ) {
 		SEISCOMP_DEBUG("%s.%s.%s.%s: WA.gain = %f",
 		               settings.networkCode.c_str(),
