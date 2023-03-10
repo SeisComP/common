@@ -51,6 +51,7 @@
 #include <seiscomp/datamodel/configstation.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/version.h>
+#include <seiscomp/processing/magnitudeprocessor.h>
 
 #include <seiscomp/io/archive/xmlarchive.h>
 #include <seiscomp/io/recordstream.h>
@@ -380,8 +381,7 @@ void Application::AppSettings::RecordStream::accept(SettingsLinker &linker) {
 void Application::AppSettings::Processing::accept(SettingsLinker &linker) {
 	linker
 	& cfg(agencyAllowlist, "whitelist.agencies")
-	& cfg(agencyBlocklist, "blacklist.agencies")
-	& cfg(magnitudeAliases, "aliases.magnitudes");
+	& cfg(agencyBlocklist, "blacklist.agencies");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -411,7 +411,8 @@ void Application::AppSettings::accept(SettingsLinker &linker) {
 	& cfg(author, "author")
 	& cfg(enableLoadRegions, "loadRegions")
 	& cfg(customPublicIDPattern, "publicIDPattern")
-	& cfg(processing, "processing");
+	& cfg(processing, "processing")
+	& cfg(processing.magnitudeAliases, "magnitudes.aliases");
 
 	if ( database.enable ) {
 		linker
@@ -1459,8 +1460,9 @@ bool Application::validateParameters() {
 
 	_settings.agencyID = Util::replace(_settings.agencyID, AppResolver(_name));
 	_settings.author = Util::replace(_settings.author, AppResolver(_name));
-	_settings.messaging.certificate =
-	   Environment::Instance()->absolutePath(_settings.messaging.certificate);
+	_settings.messaging.certificate = Environment::Instance()->absolutePath(
+		_settings.messaging.certificate
+	);
 
 	return true;
 }
@@ -1471,8 +1473,9 @@ bool Application::validateParameters() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::initConfiguration() {
-	if ( !System::Application::initConfiguration() )
+	if ( !System::Application::initConfiguration() ) {
 		return false;
+	}
 
 	copy(
 		_settings.processing.agencyBlocklist.begin(),
@@ -1512,6 +1515,19 @@ bool Application::initConfiguration() {
 
 	if ( !_settings.customPublicIDPattern.empty() ) {
 		DataModel::PublicObject::SetIdPattern(_settings.customPublicIDPattern);
+	}
+
+	for ( string &item : _settings.processing.magnitudeAliases ) {
+		StringVector toks;
+		Core::split(toks, item, ":", false);
+		if ( toks.size() != 2 ) {
+			SEISCOMP_ERROR("magnitude alias item must be of format <source>:<alias>");
+			return false;
+		}
+
+		if ( !Processing::MagnitudeProcessor::CreateAlias(toks[1], toks[0]) ) {
+			return false;
+		}
 	}
 
 	return true;
