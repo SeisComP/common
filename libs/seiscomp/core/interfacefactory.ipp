@@ -30,7 +30,7 @@ namespace Generic {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-InterfaceFactoryInterface<T>::InterfaceFactoryInterface(const char* serviceName) {
+InterfaceFactoryInterface<T>::InterfaceFactoryInterface(const char *serviceName) {
 	_serviceName = serviceName;
 	RegisterFactory(this);
 }
@@ -51,7 +51,7 @@ InterfaceFactoryInterface<T>::~InterfaceFactoryInterface() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-T* InterfaceFactoryInterface<T>::Create(const char* serviceName) {
+T* InterfaceFactoryInterface<T>::Create(const char *serviceName) {
 	InterfaceFactoryInterface* factoryInterface = Find(serviceName);
 	if ( factoryInterface != nullptr )
 		return factoryInterface->create();
@@ -103,10 +103,11 @@ InterfaceFactoryInterface<T>::Services() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 InterfaceFactoryInterface<T>*
-InterfaceFactoryInterface<T>::Find(const char* serviceName) {
+InterfaceFactoryInterface<T>::Find(const char *serviceName) {
 	for ( typename ServicePool::iterator it = Pool().begin(); it != Pool().end(); ++it ) {
-		if ( !strcmp((*it)->serviceName(), serviceName) )
+		if ( !strcmp((*it)->serviceName().c_str(), serviceName) ) {
 			return *it;
+		}
 	}
 
 	return nullptr;
@@ -118,8 +119,15 @@ InterfaceFactoryInterface<T>::Find(const char* serviceName) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-const char* InterfaceFactoryInterface<T>::serviceName() const {
-	return _serviceName.c_str();
+InterfaceFactoryInterface<T>*
+InterfaceFactoryInterface<T>::Find(const std::string &serviceName) {
+	for ( typename ServicePool::iterator it = Pool().begin(); it != Pool().end(); ++it ) {
+		if ( (*it)->serviceName() == serviceName ) {
+			return *it;
+		}
+	}
+
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -128,7 +136,17 @@ const char* InterfaceFactoryInterface<T>::serviceName() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-bool InterfaceFactoryInterface<T>::RegisterFactory(InterfaceFactoryInterface* factory) {
+const std::string &InterfaceFactoryInterface<T>::serviceName() const {
+	return _serviceName;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+bool InterfaceFactoryInterface<T>::RegisterFactory(InterfaceFactoryInterface *factory) {
 	if ( factory == nullptr )
 		return false;
 
@@ -145,7 +163,7 @@ bool InterfaceFactoryInterface<T>::RegisterFactory(InterfaceFactoryInterface* fa
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-bool InterfaceFactoryInterface<T>::UnregisterFactory(InterfaceFactoryInterface* factory) {
+bool InterfaceFactoryInterface<T>::UnregisterFactory(InterfaceFactoryInterface *factory) {
 	for ( typename ServicePool::iterator it = Pool().begin(); it != Pool().end(); ++it ) {
 		if ( *it == factory ) {
 			Pool().erase(it);

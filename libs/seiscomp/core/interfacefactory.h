@@ -51,32 +51,31 @@ class InterfaceFactoryInterface {
 
 
 	protected:
-		InterfaceFactoryInterface() {}
-		InterfaceFactoryInterface(const char* serviceName);
+		InterfaceFactoryInterface(const char *serviceName);
 
 	public:
 		virtual ~InterfaceFactoryInterface();
 
 
 	public:
-		static T* Create(const char* serviceName);
-		static T* Create(const std::string &serviceName);
+		static T *Create(const char* serviceName);
+		static T *Create(const std::string &serviceName);
 
 		static unsigned int ServiceCount();
 
-		static ServiceNames* Services();
+		static ServiceNames *Services();
 
-		static InterfaceFactoryInterface* Find(const char* serviceName);
+		static InterfaceFactoryInterface *Find(const char* serviceName);
+		static InterfaceFactoryInterface *Find(const std::string &serviceName);
 
-		const char* serviceName() const;
+		const std::string &serviceName() const;
 
-		virtual Interface* create() const = 0;
+		virtual Interface *create() const = 0;
 
 
 	private:
-		static bool RegisterFactory(InterfaceFactoryInterface* factory);
-
-		static bool UnregisterFactory(InterfaceFactoryInterface* factory);
+		static bool RegisterFactory(InterfaceFactoryInterface *factory);
+		static bool UnregisterFactory(InterfaceFactoryInterface *factory);
 
 		static ServicePool &Pool();
 
@@ -110,7 +109,7 @@ class InterfaceFactory : public InterfaceFactoryInterface<T> {
 		typedef TYPE Type;
 
 	public:
-		InterfaceFactory(const char* serviceName)
+		InterfaceFactory(const char *serviceName)
 		 : InterfaceFactoryInterface<T>(serviceName) {}
 
 	public:
