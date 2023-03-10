@@ -8160,6 +8160,15 @@ void PickerView::relocate() {
 		a->setPhase(m->text().toStdString());
 		tmpOrigin->add(a.get());
 		pick2Marker[pick->publicID().c_str()] = static_cast<PickerMarker*>(markers[i]);
+
+		if ( SC_D.origin ) {
+			auto existingArrival = SC_D.origin->arrival(pick->publicID());
+			if ( existingArrival ) {
+				try { a->setTimeUsed(existingArrival->timeUsed()); } catch ( ... ) {}
+				try { a->setBackazimuthUsed(existingArrival->backazimuthUsed()); } catch ( ... ) {}
+				try { a->setHorizontalSlownessUsed(existingArrival->horizontalSlownessUsed()); } catch ( ... ) {}
+			}
+		}
 	}
 
 	OriginQuality q;
