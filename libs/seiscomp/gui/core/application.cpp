@@ -187,7 +187,7 @@ void drawText(QPainter &p, const QPoint &hotspot, int align, const QString &s) {
 
 class SplashScreen : public QSplashScreen {
 	public:
-		SplashScreen(const QPixmap & pixmap = QPixmap(), Qt::WindowFlags f = 0)
+		SplashScreen(const QPixmap & pixmap = QPixmap(), Qt::WindowFlags f = Qt::WindowFlags())
 		: QSplashScreen(pixmap, f), updated(false) {}
 
 		void setMessage(const QString &str, QApplication *app) {

@@ -203,7 +203,7 @@ class SpectrumViewBase : public QWidget {
 	Q_OBJECT
 
 	public:
-		SpectrumViewBase(QWidget *parent = 0, Qt::WindowFlags f = 0)
+		SpectrumViewBase(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags())
 		: QWidget(parent, f) {}
 
 	protected slots:
@@ -310,16 +310,16 @@ class SC_GUI_API PickerView : public QMainWindow {
 		//! Default c'tor
 		//! The mode defaults to ringbuffer with a buffer
 		//! size of 30 minutes
-		PickerView(QWidget *parent = 0, Qt::WindowFlags f = 0);
+		PickerView(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 		//! Creates a RecordView using a time window
 		PickerView(const Seiscomp::Core::TimeWindow&,
-		           QWidget *parent = 0, Qt::WindowFlags f = 0);
+		           QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 		//! Creates a RecordView using a timespan and
 		//! a ringbuffer
 		PickerView(const Seiscomp::Core::TimeSpan&,
-		           QWidget *parent = 0, Qt::WindowFlags f = 0);
+		           QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 		~PickerView();
 

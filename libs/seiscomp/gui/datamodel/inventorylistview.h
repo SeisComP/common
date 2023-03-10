@@ -51,7 +51,7 @@ class SC_GUI_API InventoryListView : public QTreeWidget,
 
 
 	public:
-		InventoryListView(QWidget *parent, Qt::WindowFlags f = 0);
+		InventoryListView(QWidget *parent, Qt::WindowFlags f = Qt::WindowFlags());
 
 		bool selectStream(const QString& streamID, bool);
 		void selectStreams(const QString&, bool);

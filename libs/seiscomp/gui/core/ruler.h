@@ -36,7 +36,7 @@ class SC_GUI_API Ruler : public QFrame
 	public:
 		enum Position { Bottom, Top, Left, Right };
 
-		Ruler(QWidget* = 0, Qt::WindowFlags f = 0, Position pos = Bottom);
+		Ruler(QWidget* = 0, Qt::WindowFlags f = Qt::WindowFlags(), Position pos = Bottom);
 		~Ruler() {}
 
 		void setPosition(Position, bool allowLabelTextRotation = false);

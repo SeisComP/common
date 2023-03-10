@@ -35,7 +35,7 @@ class SC_GUI_API TimeScale : public Ruler {
 	Q_OBJECT
 
 	public:
-		TimeScale(QWidget *parent = 0, Qt::WindowFlags f = 0, Position pos = Bottom);
+		TimeScale(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags(), Position pos = Bottom);
 		~TimeScale(){}
 
 		void setTimeRange(double tmin, double tmax) {

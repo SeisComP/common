@@ -44,7 +44,7 @@ class SC_GUI_API ImportPicksDialog : public QDialog {
 
 
 	public:
-		ImportPicksDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		ImportPicksDialog(QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 		Selection currentSelection() const;
 		bool importAllPicks() const;

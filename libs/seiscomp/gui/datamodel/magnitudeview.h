@@ -135,7 +135,7 @@ class SC_GUI_API MagnitudeRowFilter : public QDialog {
 
 	public:
 		MagnitudeRowFilter(ModelAbstractRowFilter **filter, QWidget * parent = 0,
-		                   Qt::WindowFlags f = 0);
+		                   Qt::WindowFlags f = Qt::WindowFlags());
 
 		virtual void accept();
 
@@ -171,11 +171,11 @@ class SC_GUI_API MagnitudeView : public QWidget {
 	public:
 		MagnitudeView(const MapsDesc &maps,
 		              Seiscomp::DataModel::DatabaseQuery* reader,
-		              QWidget * parent = 0, Qt::WindowFlags f = 0);
+		              QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 		MagnitudeView(Map::ImageTree* mapTree,
 		              Seiscomp::DataModel::DatabaseQuery* reader,
-		              QWidget * parent = 0, Qt::WindowFlags f = 0);
+		              QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 		~MagnitudeView();
 

@@ -36,7 +36,7 @@ class SC_GUI_API InfoText : public QDialog {
 	//  X'truction
 	// ------------------------------------------------------------------
 	public:
-		InfoText(QWidget* parent = 0, Qt::WindowFlags f = 0);
+		InfoText(QWidget* parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 		~InfoText();
 
 

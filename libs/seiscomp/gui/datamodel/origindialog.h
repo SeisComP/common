@@ -45,12 +45,12 @@ public:
 	static void SetDefaultDepth(double depth);
 	static double DefaultDepth();
 
-	OriginDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+	OriginDialog(QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 	OriginDialog(double lon, double lat,
-	             QWidget * parent = 0, Qt::WindowFlags f = 0);
+	             QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 	OriginDialog(double lon, double lat, double dep,
-	             QWidget * parent = 0, Qt::WindowFlags f = 0);
+	             QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 	~OriginDialog();
 

@@ -44,7 +44,7 @@ class SC_GUI_API ConnectionDialog : public QDialog {
 	public:
 		ConnectionDialog(Seiscomp::Client::ConnectionPtr*,
 		                 Seiscomp::IO::DatabaseInterfacePtr*,
-		                 QWidget* parent = 0, Qt::WindowFlags f = 0);
+		                 QWidget* parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 		~ConnectionDialog();
 
 

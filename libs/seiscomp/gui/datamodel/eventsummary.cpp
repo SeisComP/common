@@ -228,7 +228,7 @@ EventSummary::~EventSummary() {
 class EventSummaryMap : public MapWidget {
 	public:
 		EventSummaryMap(EventSummary *owner, Map::ImageTree* mapTree, QWidget *parent = 0,
-		                Qt::WindowFlags f = 0)
+		                Qt::WindowFlags f = Qt::WindowFlags())
 		 : MapWidget(mapTree, parent, f) {
 			_owner = owner;
 			QSizePolicy sp = sizePolicy();

@@ -38,7 +38,7 @@ class SC_GUI_API LocatorSettings : public QDialog {
 		typedef QList< QPair<QString,QString> > ContentList;
 
 	public:
-		LocatorSettings(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		LocatorSettings(QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 	public:
 		void addRow(const QString &name, const QString &value);

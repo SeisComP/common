@@ -367,7 +367,7 @@ class ArrivalsSortFilterProxyModel : public QSortFilterProxyModel {
 
 class RenamePhases : public QDialog {
 	public:
-		RenamePhases(QWidget *parent = 0, Qt::WindowFlags f = 0)
+		RenamePhases(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags())
 		: QDialog(parent, f) {
 			ui.setupUi(this);
 		}
@@ -379,7 +379,7 @@ class RenamePhases : public QDialog {
 
 class OriginCommitOptions : public QDialog {
 	public:
-		OriginCommitOptions(QWidget *parent = 0, Qt::WindowFlags f = 0)
+		OriginCommitOptions(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags())
 		: QDialog(parent, f) {
 			ui.setupUi(this);
 
@@ -656,7 +656,7 @@ class OriginCommitOptions : public QDialog {
 
 class CommentEdit : public QDialog {
 	public:
-		CommentEdit(QWidget *parent = 0, Qt::WindowFlags f = 0)
+		CommentEdit(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags())
 		: QDialog(parent, f) {
 			ui.setupUi(this);
 		}

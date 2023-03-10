@@ -321,7 +321,7 @@ class StageSelectionDialog : public QDialog {
 
 class MouseTrackLabel : public QLabel {
 	public:
-		MouseTrackLabel(QWidget *parent = NULL, Qt::WindowFlags f = 0)
+		MouseTrackLabel(QWidget *parent = NULL, Qt::WindowFlags f = Qt::WindowFlags())
 		: QLabel(parent, f), _hovered(false) { setMouseTracking(true); }
 
 		void setIcon(const QIcon &icon, const QSize &size) {

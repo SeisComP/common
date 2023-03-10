@@ -35,7 +35,7 @@ class SC_GUI_API QuestionBox {
 	//  X'truction
 	// ------------------------------------------------------------------
 	public:
-		QuestionBox(QWidget* parent = 0, Qt::WindowFlags = 0);
+		QuestionBox(QWidget* parent = 0, Qt::WindowFlags = Qt::WindowFlags());
 
 		~QuestionBox();
 

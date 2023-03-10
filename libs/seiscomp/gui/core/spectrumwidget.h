@@ -43,7 +43,7 @@ class SC_GUI_API SpectrumWidget : public QWidget {
 	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
-		SpectrumWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
+		SpectrumWidget(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 
 	// ----------------------------------------------------------------------

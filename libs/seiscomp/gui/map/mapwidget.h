@@ -45,7 +45,7 @@ class SaveBNADialog : public QDialog {
 	Q_OBJECT
 
 	public:
-		SaveBNADialog(QWidget *parent = 0, Qt::WindowFlags f = 0);
+		SaveBNADialog(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 	public:
 		QLineEdit *name;
@@ -60,9 +60,9 @@ class SC_GUI_API MapWidget : public QWidget {
 	Q_OBJECT
 
 	public:
-		MapWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
-		MapWidget(const MapsDesc &meta, QWidget *parent = 0, Qt::WindowFlags f = 0);
-		MapWidget(Map::ImageTree *mapTree, QWidget *parent = 0, Qt::WindowFlags f = 0);
+		MapWidget(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
+		MapWidget(const MapsDesc &meta, QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
+		MapWidget(Map::ImageTree *mapTree, QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 		virtual ~MapWidget();
 
 		Map::Canvas &canvas() { return _canvas; }

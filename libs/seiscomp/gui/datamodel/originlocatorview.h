@@ -227,10 +227,10 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 	public:
 		OriginLocatorView(const MapsDesc &maps,
 		                  const PickerView::Config &pickerConfig,
-		                  QWidget * parent = 0, Qt::WindowFlags f = 0);
+		                  QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 		OriginLocatorView(Map::ImageTree* mapTree,
 		                  const PickerView::Config &pickerConfig,
-		                  QWidget * parent = 0, Qt::WindowFlags f = 0);
+		                  QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 		~OriginLocatorView();
 
 	signals:

@@ -52,10 +52,10 @@ class SC_GUI_API MagnitudeMap : public MapWidget {
 
 	public:
 		MagnitudeMap(const MapsDesc &maps,
-		             QWidget *parent = 0, Qt::WindowFlags f = 0);
+		             QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 		MagnitudeMap(Map::ImageTree* mapTree,
-		             QWidget *parent = 0, Qt::WindowFlags f = 0);
+		             QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 		~MagnitudeMap();
 

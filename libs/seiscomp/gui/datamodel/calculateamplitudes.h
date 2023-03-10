@@ -67,7 +67,7 @@ class SC_GUI_API CalculateAmplitudes : public QDialog {
 
 	public:
 		CalculateAmplitudes(DataModel::Origin *origin,
-		                    QWidget * parent = 0, Qt::WindowFlags f = 0);
+		                    QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 		~CalculateAmplitudes();
 
 		void setOrigin(DataModel::Origin *origin);

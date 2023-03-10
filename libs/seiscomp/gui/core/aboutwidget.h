@@ -35,7 +35,7 @@ class AboutWidget : public QWidget {
 	Q_OBJECT
 
 	public:
-		AboutWidget(QWidget* parent = 0, Qt::WindowFlags f = 0);
+		AboutWidget(QWidget* parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 		~AboutWidget();
 
 	private:

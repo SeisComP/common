@@ -44,7 +44,7 @@ class SC_GUI_API SpectrogramWidget : public QWidget {
 	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
-		SpectrogramWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
+		SpectrogramWidget(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 
 	// ----------------------------------------------------------------------

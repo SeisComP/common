@@ -39,7 +39,7 @@ class SC_GUI_API PickerSettings : public QDialog {
 		PickerSettings(const OriginLocatorView::Config &c1,
 		               const PickerView::Config &c2,
 		               const AmplitudeView::Config &c3,
-		               QWidget *parent = 0, Qt::WindowFlags f = 0);
+		               QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 		~PickerSettings();
 
 

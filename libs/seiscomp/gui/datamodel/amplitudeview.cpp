@@ -95,15 +95,15 @@ struct StationItem {
 
 class TraceList : public RecordView {
 	public:
-		TraceList(QWidget *parent = 0, Qt::WindowFlags f = 0)
+		TraceList(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags())
 		 : RecordView(parent, f) {}
 
 		TraceList(const Seiscomp::Core::TimeWindow& tw,
-		          QWidget *parent = 0, Qt::WindowFlags f = 0)
+		          QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags())
 		 : RecordView(tw, parent, f) {}
 
 		TraceList(const Seiscomp::Core::TimeSpan& ts,
-		          QWidget *parent = 0, Qt::WindowFlags f = 0)
+		          QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags())
 		 : RecordView(ts, parent, f) {}
 
 	protected:

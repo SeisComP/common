@@ -34,7 +34,7 @@ namespace Gui {
 class SC_GUI_API XMLView : public QWidget {
 	Q_OBJECT
 	public:
-		XMLView(QWidget * parent = 0, Qt::WindowFlags f = 0,
+		XMLView(QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags(),
 		        bool deleteOnClose = true);
 		~XMLView();
 
