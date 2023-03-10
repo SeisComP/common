@@ -61,7 +61,7 @@ BaseObject::BaseObject() : _referenceCount(0) {
 	}
 	*/
 BaseObject::BaseObject(const BaseObject&) : _referenceCount(0) {
-    ++_objectCount;
+	++_objectCount;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
