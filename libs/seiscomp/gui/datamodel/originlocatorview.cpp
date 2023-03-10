@@ -141,8 +141,25 @@ QString toString(const CommitOptions &opts) {
 	return s;
 }
 
+double diagramCeil(double value, double range) {
+	if ( range == 0 ) {
+		return ceil(value);
+	}
 
+	double pow10 = pow(0.1, floor(log10(abs(range) * 0.5)));
+	return ceil(value * pow10) / pow10;
 }
+
+double diagramFloor(double value, double range) {
+	if ( range == 0 ) {
+		return floor(value);
+	}
+
+	double pow10 = pow(0.1, floor(log10(abs(range) * 0.5)));
+	return floor(value * pow10) / pow10;
+}
+
+} // ns anonymous
 
 
 namespace Seiscomp {
@@ -3514,27 +3531,53 @@ void OriginLocatorView::selectRow(const QModelIndex &current, const QModelIndex&
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::adjustResidualsRect(QRectF& rect) {
-	//rect.setLeft(std::max(0.0, floor(rect.left()*0.1) * 10));
-	//rect.setRight((int)(ceil(rect.right()*0.1)) * 10);
-	rect.setLeft(std::max(0.0, double(floor(rect.left()))));
-	rect.setRight((int)(ceil(rect.right())));
+	qreal width = rect.width();
 
+	// left
+	if ( rect.left() > 0 ) {
+		rect.setLeft(diagramFloor(rect.left(), width));
+	}
+	else {
+		rect.setLeft(0.0);
+	}
+
+	// right
+	qreal maxRight = 360.0;
+	if ( SCScheme.unit.distanceInKM && (
+	         _plotTab->currentIndex() == PT_DISTANCE ||
+	         _plotTab->currentIndex() == PT_TRAVELTIME ||
+	         _plotTab->currentIndex() == PT_MOVEOUT ||
+	         _plotTab->currentIndex() == PT_POLAR ) ) {
+		maxRight = ceil(Math::Geo::deg2km(maxRight));
+	}
+	if ( rect.right() < maxRight ) {
+		rect.setRight(diagramCeil(rect.right(), width));
+	}
+	else {
+		rect.setRight(maxRight);
+	}
+
+	// polar and fm plots: fixed values for top/bottom
 	if ( _plotTab->currentIndex() == PT_POLAR ||
 	     _plotTab->currentIndex() == PT_FM ) {
 		rect.setTop(0);
 		rect.setBottom(360);
 
-		if ( rect.right() == 0 )
-			rect.setRight(1);
-
 		return;
 	}
 
-	rect.setTop(-std::max(std::ceil(std::abs(rect.bottom())), std::ceil(std::abs(rect.top()))));
-	rect.setBottom(-rect.top());
+	// travel time plot: top starts at 0 unless negative values are present
+	if ( _plotTab->currentIndex() == PT_TRAVELTIME ) {
+		qreal vMargin = rect.height() * 0.1;
+		rect.setTop(rect.top() < 0.0 ? rect.top() - vMargin : 0.0);
+		rect.setBottom(rect.bottom() + vMargin);
+		return;
+	}
 
-	if ( _plotTab->currentIndex() == PT_TRAVELTIME )
-		rect.setTop(0);
+	// remaining plots
+	qreal maxResidual = max(abs(rect.bottom()), abs(rect.top())) * 1.1;
+	rect.setTop(-maxResidual);
+	rect.setBottom(maxResidual);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

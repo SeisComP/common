@@ -1981,19 +1981,23 @@ QRectF DiagramWidget::boundingRect() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DiagramWidget::updateBoundingRect(const QPointF& p) {
-	if ( count() < 2 )
-		_boundingRect.setCoords(floor(p.x()), floor(p.y()),
-		                        ceil(p.x()), ceil(p.y()));
+	if ( count() < 2 ) {
+		_boundingRect.setCoords(p.x(), p.y(), p.x(), p.y());
+	}
 	else {
-		if ( p.x() < _boundingRect.left() )
-			_boundingRect.setLeft(floor(p.x()));
-		else if ( p.x() > _boundingRect.right() )
-			_boundingRect.setRight(ceil(p.x()));
+		if ( p.x() < _boundingRect.left() ) {
+			_boundingRect.setLeft(p.x());
+		}
+		else if ( p.x() > _boundingRect.right() ) {
+			_boundingRect.setRight(p.x());
+		}
 
-		if ( p.y() < _boundingRect.top() )
-			_boundingRect.setTop(floor(p.y()));
-		else if ( p.y() > _boundingRect.bottom() )
-			_boundingRect.setBottom(ceil(p.y()));
+		if ( p.y() < _boundingRect.top() ) {
+			_boundingRect.setTop(p.y());
+		}
+		else if ( p.y() > _boundingRect.bottom() ) {
+			_boundingRect.setBottom(p.y());
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
