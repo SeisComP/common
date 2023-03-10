@@ -3459,23 +3459,23 @@ void OriginLocatorView::residualsSelected() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::hoverArrival(int id) {
-	QWidget *w = (QWidget*)sender();
-	if ( id == -1 )
+	auto w = static_cast<QWidget*>(sender());
+	if ( id == -1 ) {
 		w->setToolTip("");
+	}
 	else {
+		QString txt = QString("%1.%2-%3")
+		              .arg(_modelArrivals.data(_modelArrivals.index(id, NETWORK), Qt::DisplayRole).toString())
+		              .arg(_modelArrivals.data(_modelArrivals.index(id, STATION), Qt::DisplayRole).toString())
+		              .arg(_modelArrivals.data(_modelArrivals.index(id, PHASE), Qt::DisplayRole).toString());
 		QString method = _modelArrivals.data(_modelArrivals.index(id, METHOD), Qt::DisplayRole).toString();
 
-		if ( method.isEmpty() )
-			w->setToolTip(
-				_modelArrivals.data(_modelArrivals.index(id, NETWORK), Qt::DisplayRole).toString() + "." +
-				_modelArrivals.data(_modelArrivals.index(id, STATION), Qt::DisplayRole).toString() + "-" +
-				_modelArrivals.data(_modelArrivals.index(id, PHASE), Qt::DisplayRole).toString());
-		else
-			w->setToolTip(
-				_modelArrivals.data(_modelArrivals.index(id, NETWORK), Qt::DisplayRole).toString() + "." +
-				_modelArrivals.data(_modelArrivals.index(id, STATION), Qt::DisplayRole).toString() + "-" +
-				_modelArrivals.data(_modelArrivals.index(id, PHASE), Qt::DisplayRole).toString() + " (" +
-				method + ")");
+		if ( !method.isEmpty() ) {
+			txt += QString(" (%1)").arg(method);
+		}
+		QPointF p = _residuals->value(id);
+		txt += QString("\n%1 / %2").arg(p.x()).arg(p.y());
+		w->setToolTip(txt);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
