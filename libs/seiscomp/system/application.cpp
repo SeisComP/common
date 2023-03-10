@@ -1257,9 +1257,10 @@ bool Application::init() {
 
 	_settingsLinker.reset();
 	_settingsLinker.proc().get(&commandline());
-	for ( list<AbstractSettings*>::iterator it = _settings.begin();
-	      it != _settings.end(); ++it )
-		(*it)->accept(_settingsLinker);
+	for ( auto settings : _settings ) {
+		settings->accept(_settingsLinker);
+	}
+
 	if ( !_settingsLinker ) {
 		cerr << _settingsLinker.lastError() << endl;
 		cerr << "Try --help for help" << endl;
@@ -1300,9 +1301,9 @@ bool Application::init() {
 	if ( commandline().hasOption("dump-settings") ) {
 		_settingsLinker.reset();
 		_settingsLinker.proc().dump(cout);
-		for ( list<AbstractSettings*>::iterator it = _settings.begin();
-		      it != _settings.end(); ++it )
-			(*it)->accept(_settingsLinker);
+		for ( auto settings : _settings ) {
+			settings->accept(_settingsLinker);
+		}
 		exit(0);
 		return false;
 	}
@@ -1852,6 +1853,11 @@ int getConfig(const Application *app, const string &symbol, bool) {
 template <>
 unsigned int getConfig(const Application *app, const string &symbol, bool) {
 	return static_cast<unsigned int>(app->configGetInt(symbol));
+}
+
+template <>
+size_t getConfig(const Application *app, const string &symbol, bool) {
+	return static_cast<size_t>(app->configGetInt(symbol));
 }
 
 template <>
