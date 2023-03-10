@@ -18,6 +18,8 @@
  ***************************************************************************/
 
 
+#define SEISCOMP_COMPONENT MAGNITUDES
+
 #include <seiscomp/core/exceptions.h>
 #include <seiscomp/core/strings.h>
 #include <seiscomp/logging/log.h>

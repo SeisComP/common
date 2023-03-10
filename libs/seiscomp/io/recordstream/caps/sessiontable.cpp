@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 
-#define SEISCOMP_COMPOMENT CAPS
+#define SEISCOMP_COMPONENT CAPS
 #include <seiscomp/logging/log.h>
 
 #include "sessiontable.h"

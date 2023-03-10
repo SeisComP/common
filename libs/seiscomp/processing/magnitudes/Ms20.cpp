@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 
+#define SEISCOMP_COMPONENT MAGNITUDES
 
 #include <seiscomp/processing/magnitudes/Ms20.h>
 #include <seiscomp/seismology/magnitudes.h>

@@ -18,7 +18,9 @@
  ***************************************************************************/
 
 
+#define SEISCOMP_COMPONENT TEST_CORE
 #define SEISCOMP_TEST_MODULE SeisComP
+
 #include <seiscomp/config/config.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/system/application.h>
