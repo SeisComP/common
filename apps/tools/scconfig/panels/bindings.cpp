@@ -166,7 +166,7 @@ class NewNameDialog : public QDialog {
 			}
 
 			for ( int i = 0; i < rows; ++i ) {
-				if ( _root.child(i,0).data().toString() == _name->text() ) {
+				if ( _root.model()->index(i, 0, _root).data().toString() == _name->text() ) {
 					QMessageBox::critical(NULL, "Duplicate name",
 					                      "The name exists already and duplicate "
 					                      "names are not allowed.");
@@ -648,7 +648,7 @@ void BindingView::search(const QString &text) {
 	int rows = model->rowCount(idx);
 
 	for ( int i = 0; i < rows; ++i ) {
-		hits = model->match(idx.child(i,0), Qt::DisplayRole, text, 1,
+		hits = model->match(model->index(i, 0, idx), Qt::DisplayRole, text, 1,
 		                    Qt::MatchStartsWith |
 		                    Qt::MatchRecursive |
 		                    Qt::MatchWrap);
@@ -1159,9 +1159,11 @@ void BindingsPanel::collectModuleBindings(ModuleBindingMap &map,
                                           const QModelIndex &idx) {
 	int type = idx.data(Type).toInt();
 	if ( type == TypeNetwork || type == TypeStation ) {
-		int rowCount = _stationsFolderView->model()->rowCount(idx);
-		for ( int i = 0; i < rowCount; ++i )
-			collectModuleBindings(map, idx.child(i, 0));
+		auto model = _stationsFolderView->model();
+		int rowCount = model->rowCount(idx);
+		for ( int i = 0; i < rowCount; ++i ) {
+			collectModuleBindings(map, model->index(i, 0, idx));
+		}
 		return;
 	}
 
@@ -1176,19 +1178,22 @@ void BindingsPanel::collectModuleBindings(ModuleBindingMap &map,
 
 void BindingsPanel::clearModuleBindings(const QModelIndex &idx) {
 	int type = idx.data(Type).toInt();
+	auto model = _stationsFolderView->model();
 	if ( type == TypeRoot || type == TypeNetwork ) {
-		int rowCount = _stationsFolderView->model()->rowCount(idx);
-		for ( int i = 0; i < rowCount; ++i )
-			clearModuleBindings(idx.child(i, 0));
+		int rowCount = model->rowCount(idx);
+		for ( int i = 0; i < rowCount; ++i ) {
+			clearModuleBindings(model->index(i, 0, idx));
+		}
 		return;
 	}
 
 	if ( type == TypeStation ) {
 		// Collect all childs (bindings)
 		QList<QPersistentModelIndex> indexes;
-		int rowCount = _stationsFolderView->model()->rowCount(idx);
-		for ( int i = 0; i < rowCount; ++i )
-			indexes.append(idx.child(i, 0));
+		int rowCount = model->rowCount(idx);
+		for ( int i = 0; i < rowCount; ++i ) {
+			indexes.append(model->index(i, 0, idx));
+		}
 
 		foreach ( const QPersistentModelIndex &i, indexes ) {
 			if ( !i.isValid() ) continue;
@@ -1214,19 +1219,23 @@ void BindingsPanel::removeModuleBindings(const QModelIndex &idx,
                                          const QString &modName,
                                          const QString *name) {
 	int type = idx.data(Type).toInt();
+	auto model = _stationsFolderView->model();
 	if ( type == TypeRoot || type == TypeNetwork ) {
-		int rowCount = _stationsFolderView->model()->rowCount(idx);
-		for ( int i = 0; i < rowCount; ++i )
-			removeModuleBindings(idx.child(i, 0), modName, name);
+		int rowCount = model->rowCount(idx);
+		for ( int i = 0; i < rowCount; ++i ) {
+			removeModuleBindings(model->index(i, 0, idx), modName, name);
+		}
 		return;
 	}
 
 	if ( type == TypeStation ) {
 		// Collect all childs (bindings)
 		QList<QPersistentModelIndex> indexes;
-		int rowCount = _stationsFolderView->model()->rowCount(idx);
-		for ( int i = 0; i < rowCount; ++i )
-			indexes.append(idx.child(i, 0));
+		auto model = _stationsFolderView->model();
+		int rowCount = model->rowCount(idx);
+		for ( int i = 0; i < rowCount; ++i ) {
+			indexes.append(model->index(i, 0, idx));
+		}
 
 		foreach ( const QPersistentModelIndex &i, indexes ) {
 			if ( !i.isValid() ) continue;
@@ -1584,8 +1593,9 @@ void BindingsPanel::deleteItem() {
 		foreach ( const QPersistentModelIndex &i, indexes ) {
 			if ( !i.isValid() ) continue;
 
-			while ( i.model()->rowCount(i) > 0 )
-				deleteStation(i.child(0, 0));
+			while ( i.model()->rowCount(i) > 0 ) {
+				deleteStation(i.model()->index(0, 0, i));
+			}
 
 			_stationsFolderView->model()->removeRow(i.row(), idx);
 		}
@@ -1687,15 +1697,17 @@ bool BindingsPanel::assignProfile(const QModelIndex &idx, const QString &module,
 		case TypeRoot:
 		{
 			int rows = _bindingsModel->rowCount(idx);
-			for ( int i = 0; i < rows; ++i )
-				assignProfile(idx.child(i, 0), module, profile);
+			for ( int i = 0; i < rows; ++i ) {
+				assignProfile(_bindingsModel->index(i, 0, idx), module, profile);
+			}
 			return true;
 		}
 		case TypeNetwork:
 		{
 			int rows = _bindingsModel->rowCount(idx);
-			for ( int i = 0; i < rows; ++i )
-				assignProfile(idx.child(i, 0), module, profile);
+			for ( int i = 0; i < rows; ++i ) {
+				assignProfile(_bindingsModel->index(i, 0, idx), module, profile);
+			}
 			_model->setModified();
 			return true;
 		}
@@ -1712,7 +1724,7 @@ bool BindingsPanel::assignProfile(const QModelIndex &idx, const QString &module,
 
 			int rows = _bindingsModel->rowCount(idx);
 			for ( int i = 0; i < rows; ++i ) {
-				QModelIndex child = idx.child(i, 0);
+				auto child = _bindingsModel->index(i, 0, idx);
 				if ( mod->definition->name != qPrintable(child.data().toString()) )
 					continue;
 

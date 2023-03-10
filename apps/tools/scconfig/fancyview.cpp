@@ -691,7 +691,7 @@ void FancyView::setRootIndex(const QModelIndex &index) {
 		secName = index.data().toString();
 
 	for ( int i = 0; i < rows; ++i ) {
-		QModelIndex idx = index.child(i,0);
+		auto idx = model()->index(i, 0, index);
 		QWidget *w = createWidgetFromIndex(idx, secName);
 		if ( w )
 			l->addWidget(w);
@@ -738,7 +738,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				QLayout *paramLayout = NULL;
 
 				for ( int i = 0; i < rows; ++i ) {
-					QModelIndex child = idx.child(i,0);
+					auto child = model()->index(i, 0, idx);
 					if ( child.data(ConfigurationTreeItemModel::Type).toInt() != ConfigurationTreeItemModel::TypeParameter )
 						continue;
 
@@ -757,7 +757,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				}
 
 				for ( int i = 0; i < rows; ++i ) {
-					QModelIndex child = idx.child(i,0);
+					auto child = model()->index(i, 0, idx);
 					if ( child.data(ConfigurationTreeItemModel::Type).toInt() == ConfigurationTreeItemModel::TypeParameter )
 						continue;
 					QWidget *cw = createWidgetFromIndex(child, rootSecName);
@@ -800,7 +800,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				w->setProperty("statusLabel", QVariant::fromValue((void*)desc));
 
 				for ( int r = 0; r < rows; ++r ) {
-					QModelIndex secIdx = idx.child(r,0);
+					auto secIdx = model()->index(r, 0, idx);
 					int type = secIdx.data(ConfigurationTreeItemModel::Type).toInt();
 					if ( type != ConfigurationTreeItemModel::TypeCategoryBinding )
 						continue;
@@ -819,14 +819,16 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 
 				for ( size_t i = 0; i < catBindingCount; ++i ) {
 					Binding *b = cat->bindingTypes[i].get();
-					if ( b->definition->description.empty() )
-						comboBox->addItem(b->definition->name.c_str(), item.index.child(i,0).data());
+					if ( b->definition->description.empty() ) {
+						comboBox->addItem(b->definition->name.c_str(),
+						                  model()->index(i, 0, item.index).data());
+					}
 					else {
 						comboBox->addItem(
 							QString("%1 - %2")
 							.arg(b->definition->name.c_str())
 							.arg(maxSize(b->definition->description, 40).c_str()),
-							item.index.child(i,0).data()
+							model()->index(i, 0, item.index).data()
 						);
 						comboBox->setItemData(comboBox->count()-1, string2Block(b->definition->description, 100).c_str(), Qt::ToolTipRole);
 					}
@@ -883,7 +885,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				}
 
 				for ( int i = 0; i < rows; ++i ) {
-					QModelIndex child = idx.child(i,0);
+					auto child = model()->index(i, 0, idx);
 					if ( child.data(ConfigurationTreeItemModel::Type).toInt() != ConfigurationTreeItemModel::TypeParameter )
 						continue;
 
@@ -902,7 +904,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				}
 
 				for ( int i = 0; i < rows; ++i ) {
-					QModelIndex child = idx.child(i,0);
+					auto child = model()->index(i, 0, idx);
 					if ( child.data(ConfigurationTreeItemModel::Type).toInt() == ConfigurationTreeItemModel::TypeParameter )
 						continue;
 					QWidget *cw = createWidgetFromIndex(child, rootSecName);
@@ -937,7 +939,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				QLayout *paramLayout = NULL;
 
 				for ( int i = 0; i < rows; ++i ) {
-					QModelIndex child = idx.child(i,0);
+					auto child = model()->index(i, 0, idx);
 					if ( child.data(ConfigurationTreeItemModel::Type).toInt() != ConfigurationTreeItemModel::TypeParameter )
 						continue;
 
@@ -955,7 +957,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				}
 
 				for ( int i = 0; i < rows; ++i ) {
-					QModelIndex child = idx.child(i,0);
+					auto child = model()->index(i, 0, idx);
 					if ( child.data(ConfigurationTreeItemModel::Type).toInt() == ConfigurationTreeItemModel::TypeParameter )
 						continue;
 					QWidget *cw = createWidgetFromIndex(child, rootSecName);
@@ -1000,7 +1002,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				QLayout *paramLayout = NULL;
 
 				for ( int i = 0; i < rows; ++i ) {
-					QModelIndex child = idx.child(i,0);
+					auto child = model()->index(i, 0, idx);
 					if ( child.data(ConfigurationTreeItemModel::Type).toInt() != ConfigurationTreeItemModel::TypeParameter )
 						continue;
 
@@ -1018,7 +1020,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				}
 
 				for ( int i = 0; i < rows; ++i ) {
-					QModelIndex child = idx.child(i,0);
+					auto child = model()->index(i, 0, idx);
 					if ( child.data(ConfigurationTreeItemModel::Type).toInt() == ConfigurationTreeItemModel::TypeParameter )
 						continue;
 					QWidget *cw = createWidgetFromIndex(child, rootSecName);
@@ -1111,8 +1113,8 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 
 	for ( size_t i = 0; i < catBindingCount; ++i ) {
 		Binding *b = cat->bindingTypes[i].get();
-		//comboBox->addItem(b->definition->description.c_str(), item.index.child(i,0).data());
-		comboBox->addItem(b->definition->name.c_str(), item.index.child(i,0).data());
+		//comboBox->addItem(b->definition->description.c_str(), model()->index(i, 0, item.index).data());
+		comboBox->addItem(b->definition->name.c_str(), model()->index(i, 0, item.index).data());
 	}
 
 	catWidget->setBackgroundColor(blend(pal.color(QPalette::Base), CategoryBgColor, 90));
@@ -1939,7 +1941,7 @@ void FancyView::addCategoryBinding() {
 	// Propagate the new entry to the model and create new widgets
 	int row = item.index.model()->rowCount(item.index);
 	model()->insertRow(row, item.index);
-	QModelIndex ni = item.index.child(row, 0);
+	auto ni = model()->index(row, 0, item.index);
 	model()->setData(ni, alias);
 	model()->setData(ni, item.index.data(ConfigurationTreeItemModel::Level), ConfigurationTreeItemModel::Level);
 	model()->setData(ni, QVariant::fromValue((void*)nb), ConfigurationTreeItemModel::Link);
@@ -1996,7 +1998,7 @@ void FancyView::addStruct() {
 		// Propagate the new entry to the model and create new widgets
 		int row = item.index.row();//model()->rowCount(item.index.parent());
 		model()->insertRow(row, item.index.parent());
-		QModelIndex ni = item.index.parent().child(row, 0);
+		auto ni = model()->index(row, 0, item.index.parent());
 		model()->setData(ni, ns->name.c_str());
 		model()->setData(ni, item.index.data(ConfigurationTreeItemModel::Level), ConfigurationTreeItemModel::Level);
 		model()->setData(ni, QVariant::fromValue((void*)ns), ConfigurationTreeItemModel::Link);

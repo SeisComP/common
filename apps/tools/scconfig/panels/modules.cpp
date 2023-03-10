@@ -333,10 +333,10 @@ void ModulesPanel::search(const QString &text) {
 	int rows = model->rowCount(idx);
 
 	for ( int i = 0; i < rows; ++i ) {
-		hits = model->match(idx.child(i,0), Qt::DisplayRole, text, 1,
-	                         Qt::MatchStartsWith |
-	                         Qt::MatchRecursive |
-	                         Qt::MatchWrap);
+		hits = model->match(model->index(i, 0, idx), Qt::DisplayRole, text, 1,
+	                        Qt::MatchStartsWith |
+	                        Qt::MatchRecursive |
+	                        Qt::MatchWrap);
 
 		if ( hits.isEmpty() ) continue;
 		_moduleView->scrollTo(hits.first());
