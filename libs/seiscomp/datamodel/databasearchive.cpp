@@ -1444,7 +1444,7 @@ void DatabaseArchive::renderValues(const AttributeMap &attributes) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseArchive::OID DatabaseArchive::publicObjectId(const std::string &publicId) {
-	OID id = 0;
+	OID id = IO::DatabaseInterface::INVALID_OID;
 	std::stringstream ss;
 	ss << "select _oid from " << PublicObject::ClassName()
 	   << " where " << _publicIDColumn << "='" << toSQL(_db.get(), publicId) << "'";
