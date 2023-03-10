@@ -6,7 +6,7 @@
 		Standard local (Richter) magnitude
 		</description>
 		<configuration>
-			<extend-struct type="Magnitude type profile" match-name="ML">
+			<extend-struct type="GlobalMagnitudeProfile" match-name="ML">
 				<extend-struct type="Magnitude region profile">
 					<parameter name="logA0" type="string">
 						<description>

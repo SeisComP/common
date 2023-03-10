@@ -296,6 +296,14 @@
 						</description>
 					</parameter>
 				</group>
+				<group name="aliases">
+					<parameter name="magnitudes" type="list:string">
+						<description>
+						Define an alias list for existing magnitude types. Each
+						list item is defined as &lt;alias&gt;;&lt;type&gt;.
+						</description>
+					</parameter>
+				</group>
 			</group>
 			<group name="inventory">
 				<group name="whitelist">
@@ -450,7 +458,7 @@
 					Alias magnitudes can be configured like any other magnitude.
 					</description>
 				</parameter>
-				<struct type="Magnitude type profile" title="Magnitude-type profile for regionalization">
+				<struct type="GlobalMagnitudeProfile" title="Magnitude-type profile for regionalization" aliases="config:processing.aliases.magnitudes">
 					<description>
 					Regionalization of magnitude configurations overriding global
 					bindings. For parameters which are not set, the values
@@ -477,7 +485,7 @@
 						&quot;world&quot; corresponds to the region of the
 						entire planet as a fallback.
 						</description>
-						<struct type="Magnitude region profile">
+						<struct type="GlobalMagnitudeRegionProfile" title="Magnitude region profile">
 							<parameter name="enable" type="boolean" default="false">
 								<description>
 								Enable the region or not.
@@ -1121,7 +1129,7 @@
 				For magnitude correction parameters, e.g, network of station
 				corrections, create a magnitude type profile.
 				</description>
-				<struct type="Magnitude type profile for corrections">
+				<struct type="GlobalBindingsMagnitudeTypeProfile">
 					<description>
 					A magnitude profile configures global parameters for a
 					particular magnitude type. The available magnitude types

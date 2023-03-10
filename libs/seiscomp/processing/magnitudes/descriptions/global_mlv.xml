@@ -6,7 +6,7 @@
 		Local (Richter) magnitude measured on the vertical component
 		</description>
 		<configuration>
-			<extend-struct type="Magnitude type profile" match-name="MLv">
+			<extend-struct type="GlobalMagnitudeProfile" match-name="MLv">
 				<extend-struct type="Magnitude region profile">
 					<parameter name="logA0" type="string">
 						<description>

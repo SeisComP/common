@@ -6,7 +6,7 @@
 		Custom magnitude for local events measured on horizontal components
 		</description>
 		<configuration>
-			<extend-struct type="Magnitude type profile" match-name="MLc">
+			<extend-struct type="GlobalMagnitudeProfile" match-name="MLc">
 				<extend-struct type="Magnitude region profile">
 					<parameter name="distMode" type="string">
 						<description>
