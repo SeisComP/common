@@ -212,13 +212,6 @@ int findData(QTabBar *tab, const string &publicID) {
 }
 
 
-void setBold(QWidget *w, bool b) {
-	QFont f = w->font();
-	f.setBold(b);
-	w->setFont(f);
-}
-
-
 string waveformIDToStdString(const WaveformStreamID& id) {
 	return (id.networkCode() + "." + id.stationCode() + "." +
 	        id.locationCode() + "." + id.channelCode());
