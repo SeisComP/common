@@ -52,6 +52,9 @@ ADD_SC_PLUGIN("PostgreSQL database driver", "GFZ Potsdam <seiscomp-devel@gfz-pot
 	} while (0)
 
 
+#define PG_TYPE_BYTEA 17
+
+
 PostgreSQLDatabase::PostgreSQLDatabase()
 : _handle(NULL)
 , _result(NULL)
@@ -368,7 +371,7 @@ const void* PostgreSQLDatabase::getRowField(int index) {
 
 	value = PQgetvalue(_result, _row, index);
 
-	if ( PQftype(_result, index) == 17 ) {
+	if ( PQftype(_result, index) == PG_TYPE_BYTEA ) {
 		// bytea
 		XFREE(_unescapeBuffer);
 
@@ -385,7 +388,7 @@ const void* PostgreSQLDatabase::getRowField(int index) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 size_t PostgreSQLDatabase::getRowFieldSize(int index) {
-	if ( PQftype(_result, index) == 17 ) {
+	if ( PQftype(_result, index) == PG_TYPE_BYTEA ) {
 		// bytea
 		return _unescapeBufferSize;
 	}
