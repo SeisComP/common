@@ -333,9 +333,7 @@ bool ConfigFileWidget::saveFile(const QString &filename) {
 	// File not found is actually not an error
 	if ( !file.open(QIODevice::WriteOnly | QIODevice::Text) ) return false;
 
-	QByteArray text;
-	text += _editor->toPlainText();
-	file.write(text);
+	file.write(_editor->toPlainText().toUtf8());
 
 	return true;
 }

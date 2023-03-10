@@ -343,9 +343,9 @@ void WizardWidget::next() {
 
 QByteArray &operator<<(QByteArray &ar, WizardWidget::Node *n) {
 	if ( n->input ) {
-		ar.append(n->modname);
+		ar.append(n->modname.toUtf8());
 		ar.append(".");
-		ar.append(n->path);
+		ar.append(n->path.toUtf8());
 		ar.append(" = ");
 
 		stringstream ss;
