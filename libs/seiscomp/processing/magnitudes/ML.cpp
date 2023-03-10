@@ -107,6 +107,8 @@ bool MagnitudeProcessor_ML::setup(const Settings &settings) {
 	}
 	catch ( ... ) {	}
 
+	SEISCOMP_DEBUG("Parameters for magnitude %s", _type.c_str());
+	SEISCOMP_DEBUG("  + logA0: %s", defLogA0.c_str());
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -131,6 +133,7 @@ bool MagnitudeProcessor_ML::initLocale(Locale *locale,
 				return false;
 			}
 
+			SEISCOMP_DEBUG("  + local logA0: %s", logA0.c_str());
 			locale->extra = extra;
 		}
 	}
