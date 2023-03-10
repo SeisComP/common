@@ -249,12 +249,15 @@ SDSArchive::~SDSArchive() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SDSArchive::setSource(const string &src) {
-	if ( src.empty() )
+	if ( src.empty() ) {
 		_arcroots.push_back(Environment::Instance()->installDir() + "/var/lib/archive");
-	else
+	}
+	else {
 		Core::split(_arcroots, src.c_str(), ",");
+	}
 
 	for ( string &root : _arcroots ) {
+		root = Environment::Instance()->absolutePath(root);
 		SEISCOMP_DEBUG("+ Archive root: %s", root.c_str());
 	}
 
