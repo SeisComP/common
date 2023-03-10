@@ -500,6 +500,10 @@ class SC_GUI_API RecordView : public QWidget {
 		//! recordview and the filter has been set and enabled successfully
 		void filterChanged(const QString&);
 
+	#ifndef Q_MOC_RUN
+	// Hack to set the signal public for Qt 4 wich are protected by default.
+	public:
+	#endif
 		/**
 		 * @brief This signal is being emitted if the user selected an area
 		 *        with the rubber band selection tool.
