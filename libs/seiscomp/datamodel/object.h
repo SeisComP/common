@@ -166,7 +166,7 @@ class SC_SYSTEM_CORE_API Object : public Core::BaseObject {
 	// ------------------------------------------------------------------
 	protected:
 		//! Constructor
-		Object();
+		Object() = default;
 
 		//! Copy constructor
 		Object(const Object& other);
@@ -242,7 +242,7 @@ class SC_SYSTEM_CORE_API Object : public Core::BaseObject {
 	//  Private members
 	// ------------------------------------------------------------------
 	private:
-		PublicObject *_parent;
+		PublicObject *_parent{nullptr};
 		Core::Time    _lastModifiedInArchive;
 	
 		typedef std::vector<Observer*> ObserverList;

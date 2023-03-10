@@ -34,18 +34,14 @@ IMPLEMENT_SC_ABSTRACT_CLASS(Observer, "Observer");
 
 
 DECLARE_METAENUM(Operation, MetaOperation);
-
-
-Object::Object() : _parent(nullptr) {
-}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object::Object(const Object& other)
- : Seiscomp::Core::BaseObject(other) {
+Object::Object(const Object &other)
+: Seiscomp::Core::BaseObject(other) {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
