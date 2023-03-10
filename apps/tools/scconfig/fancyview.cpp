@@ -298,20 +298,19 @@ class BlockWidget : public QWidget {
 			if ( _hasCustomBackground )
 				p.fillRect(rect(), _bg);
 
-			int left, top, right, bottom;
-			getContentsMargins(&left, &top, &right, &bottom);
-			bottom = rect().bottom()-bottom;
-			//p.drawLine(0,top,left,top);
-			//p.drawLine(0,top,0,bottom);
-			//p.drawLine(0,bottom,left,bottom);
-			QLinearGradient grad(0,top,0,bottom);
+			auto m = contentsMargins();
+			m.setBottom(rect().bottom() - m.bottom());
+			//p.drawLine(0, m.top(), m.left(), m.top());
+			//p.drawLine(0, m.top(), 0, m.bottom());
+			//p.drawLine(0, m.bottom(), m.left(), m.bottom());
+			QLinearGradient grad(0, m.top(), 0, m.bottom());
 			QColor fg = Qt::gray;
 			grad.setColorAt(0.5,fg);
 			fg.setAlpha(0);
 			grad.setColorAt(0,fg);
 			grad.setColorAt(1,fg);
 			p.setPen(QPen(grad,1));
-			p.drawLine(left-1,top,left-1,bottom);
+			p.drawLine(m.left() - 1, m.top(), m.left() - 1, m.bottom());
 		}
 
 	private:
@@ -482,13 +481,12 @@ class DescLabel : public QWidget {
 		}
 
 		int heightForWidth(int w) const {
-			int l,t,r,b;
-			getContentsMargins(&l,&t,&r,&b);
+			auto m = contentsMargins();
 			int prefHeight =
 				fontMetrics().boundingRect(
-					0,0,w-l-r,QWIDGETSIZE_MAX,
+					0, 0, w - m.left() - m.right(), QWIDGETSIZE_MAX,
 					Qt::AlignLeft|Qt::AlignTop|Qt::TextWordWrap, _text
-				).height()+t+b;
+				).height() + m.top() + m.bottom();
 			return prefHeight;
 		}
 
