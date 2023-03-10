@@ -404,15 +404,13 @@ BOOST_AUTO_TEST_CASE(paths) {
 
 	auto env = Seiscomp::Environment::Instance();
 
-	BOOST_CHECK_EQUAL(app.configGetString("path"), env->resolvePath(env->installDir()));
+	BOOST_CHECK_EQUAL(app.configGetString("path"), "@ROOTDIR@");
 	BOOST_CHECK_EQUAL(app.configGetPath("path"), env->absolutePath(env->installDir()));
 
 	auto paths = app.configGetStrings("paths");
-	BOOST_CHECK_EQUAL(paths[0], env->resolvePath(env->installDir()));
-	BOOST_CHECK_EQUAL(paths[1], env->resolvePath(env->shareDir()));
-	BOOST_CHECK_EQUAL(paths[2], env->resolvePath(env->logDir()));
-
-	BOOST_CHECK_EQUAL(app.configGetString("string"), "@ROOTDIR@");
+	BOOST_CHECK_EQUAL(paths[0], "@ROOTDIR@");
+	BOOST_CHECK_EQUAL(paths[1], "@DATADIR@");
+	BOOST_CHECK_EQUAL(paths[2], "@LOGDIR@");
 }
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
