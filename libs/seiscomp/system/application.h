@@ -1263,16 +1263,19 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 						"Verbose", "quiet,q",
 						"Quiet mode: no logging output"
 					)
-					& cli(verbosity,
+					& cli(
+						verbosity,
 						"Verbose", "verbosity",
 						"Verbosity level [0..4]",
 						false)
-					& cli(context,
+					& cli(
+						context,
 						"Verbose", "print-context",
 						"Print source file and line number",
 						false
 					)
-					& cli(component,
+					& cli(
+						component,
 						"Verbose", "print-component",
 						"Print the log component (default: file:1, stdout:0)",
 						false
