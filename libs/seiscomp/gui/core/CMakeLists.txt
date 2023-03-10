@@ -5,6 +5,7 @@ SET(
 		messages.cpp
 		connectiondialog.cpp
 		connectionstatelabel.cpp
+		flowlayout.cpp
 		questionbox.cpp
 		infotext.cpp
 		diagramwidget.cpp
@@ -62,6 +63,7 @@ SET(
 		connectiondialog.h
 		connectionstatelabel.h
 		diagramwidget.h
+		flowlayout.h
 		mainwindow.h
 		messagethread.h
 		recordstreamthread.h

@@ -37,9 +37,9 @@
 #include <iostream>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/config/config.h>
+#include <seiscomp/gui/core/flowlayout.h>
 
 #include "fancyview.h"
-#include "flowlayout.h"
 #include "gui.h"
 
 
@@ -746,7 +746,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 
 					if ( firstParameter ) {
 						QFrame *paramWidget = new QFrame;
-						paramLayout = new FlowLayout(-1, -1, fontMetrics().ascent());
+						paramLayout = new Seiscomp::Gui::FlowLayout(-1, -1, fontMetrics().ascent());
 						paramWidget->setLayout(paramLayout);
 						l->addWidget(paramWidget);
 						firstParameter = false;
@@ -891,7 +891,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 
 					if ( firstParameter ) {
 						QFrame *paramWidget = new QFrame;
-						paramLayout = new FlowLayout(-1, -1, fontMetrics().ascent());
+						paramLayout = new Seiscomp::Gui::FlowLayout(-1, -1, fontMetrics().ascent());
 						paramWidget->setLayout(paramLayout);
 						l->addWidget(paramWidget);
 						firstParameter = false;
@@ -945,7 +945,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 
 					if ( firstParameter ) {
 						QFrame *paramWidget = new QFrame;
-						paramLayout = new FlowLayout(-1, -1, fontMetrics().ascent());
+						paramLayout = new Seiscomp::Gui::FlowLayout(-1, -1, fontMetrics().ascent());
 						paramWidget->setLayout(paramLayout);
 						l->addWidget(paramWidget);
 						firstParameter = false;
@@ -1008,7 +1008,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 
 					if ( firstParameter ) {
 						QFrame *paramWidget = new QFrame;
-						paramLayout = new FlowLayout(-1, -1, fontMetrics().ascent());
+						paramLayout = new Seiscomp::Gui::FlowLayout(-1, -1, fontMetrics().ascent());
 						paramWidget->setLayout(paramLayout);
 						l->addWidget(paramWidget);
 						firstParameter = false;

@@ -17,111 +17,187 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
 #include <QWidget>
 #include <iostream>
 
 #include "flowlayout.h"
 
 
+namespace Seiscomp {
+namespace Gui {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FlowLayout::FlowLayout(QWidget *parent, int margin, int hSpacing, int vSpacing)
-: QLayout(parent), m_hSpace(hSpacing), m_vSpace(vSpacing) {
+: QLayout(parent), _hSpace(hSpacing), _vSpace(vSpacing) {
 	setMargin(margin);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FlowLayout::FlowLayout(int margin, int hSpacing, int vSpacing)
-: m_hSpace(hSpacing), m_vSpace(vSpacing) {
+: _hSpace(hSpacing), _vSpace(vSpacing) {
 	setMargin(margin);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FlowLayout::~FlowLayout() {
 	QLayoutItem *item;
-	while ( (item = takeAt(0)) )
+	while ( (item = takeAt(0)) ) {
 		delete item;
+	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FlowLayout::addItem(QLayoutItem *item) {
-	itemList.append(item);
+	_itemList.append(item);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int FlowLayout::horizontalSpacing() const {
-	if ( m_hSpace >= 0 )
-		return m_hSpace;
-	else
+	if ( _hSpace >= 0 ) {
+		return _hSpace;
+	}
+	else {
 		return smartSpacing(QStyle::PM_LayoutHorizontalSpacing);
+	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int FlowLayout::verticalSpacing() const {
-	if ( m_vSpace >= 0 )
-		return m_vSpace;
-	else
+	if ( _vSpace >= 0 ) {
+		return _vSpace;
+	}
+	else {
 		return smartSpacing(QStyle::PM_LayoutVerticalSpacing);
+	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int FlowLayout::count() const {
-	return itemList.size();
+	return _itemList.size();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QLayoutItem *FlowLayout::itemAt(int index) const {
-	return itemList.value(index);
+	return _itemList.value(index);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QLayoutItem *FlowLayout::takeAt(int index) {
-	if ( index >= 0 && index < itemList.size() ) {
-		QLayoutItem *item = itemList[index];
-		itemList.remove(index);
+	if ( index >= 0 && index < _itemList.size() ) {
+		QLayoutItem *item = _itemList[index];
+		_itemList.remove(index);
 		return item;
 	}
-	else
+	else {
 		return 0;
+	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Qt::Orientations FlowLayout::expandingDirections() const {
 	return 0;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FlowLayout::hasHeightForWidth() const {
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int FlowLayout::heightForWidth(int width) const {
 	int height = doLayout(QRect(0, 0, width, 0), true);
 	return height;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FlowLayout::setGeometry(const QRect &rect) {
 	QLayout::setGeometry(rect);
 	doLayout(rect, false);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QSize FlowLayout::sizeHint() const {
 	return minimumSize();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QSize FlowLayout::minimumSize() const {
 	QSize size;
 	QLayoutItem *item;
-	foreach (item, itemList)
+	foreach (item, _itemList) {
 		size = size.expandedTo(item->minimumSize());
+	}
 
-	size += QSize(2*margin(), 2*margin());
+	size += QSize(2 * margin(), 2 * margin());
 	return size;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int FlowLayout::doLayout(const QRect &rect, bool testOnly) const {
 	int left, top, right, bottom;
 	left = top = right = bottom = margin();
@@ -138,34 +214,35 @@ int FlowLayout::doLayout(const QRect &rect, bool testOnly) const {
 
 	QSize minSize;
 	QLayoutItem *item;
-	for ( int i = 0; i < itemList.size(); ++i )
-		minSize = minSize.expandedTo(itemList[i]->minimumSize());
-
-	//itemsPerRow = 2;
-	//usedItemWidth = (effectiveRect.width()-(itemsPerRow-1)*spaceX) / itemsPerRow;
+	for ( int i = 0; i < _itemList.size(); ++i ) {
+		minSize = minSize.expandedTo(_itemList[i]->minimumSize());
+	}
 
 	int startIdx = 0;
 	while ( true ) {
 		int numItems = 0;
-		for ( int i = startIdx; i < itemList.size(); ++i, ++numItems ) {
-			item = itemList[i];
+		for ( int i = startIdx; i < _itemList.size(); ++i, ++numItems ) {
+			item = _itemList[i];
 
 			itemWidth = qMax(minSize.width(), item->sizeHint().width());
-			if ( usedItemWidth >= 0 && itemWidth > usedItemWidth )
+			if ( usedItemWidth >= 0 && itemWidth > usedItemWidth ) {
 				itemWidth = usedItemWidth;
+			}
 
 			int nextX = x + itemWidth + spaceX;
 
 			// Finished a line
-			if ( nextX - spaceX > effectiveRect.right()+1 && lineHeight > 0 )
+			if ( nextX - spaceX > effectiveRect.right()+1 && lineHeight > 0 ) {
 				break;
+			}
 
 			x = nextX;
 			lineHeight = qMax(lineHeight, item->sizeHint().height());
 		}
 
-		if ( numItems <= 0 ) break;
-		//if ( numItems > 2 ) numItems = 2;
+		if ( numItems <= 0 ) {
+			break;
+		}
 
 		if ( itemsPerRow < 0 ) {
 			itemsPerRow = (effectiveRect.width() - spaceX) /
@@ -179,22 +256,25 @@ int FlowLayout::doLayout(const QRect &rect, bool testOnly) const {
 		if ( maxItems > numItems ) maxItems = numItems;
 		if ( maxItems <= 0 ) break;
 
-		//std::cout << "idx:" << startIdx << ",y:" << y << ",cnt:" << numItems << std::endl;
 
 		x = effectiveRect.x();
 		lineHeight = 0;
 		for ( int i = startIdx; i < startIdx+maxItems; ++i ) {
-			item = itemList[i];
+			item = _itemList[i];
 
 			int itemHeight;
-			if ( item->hasHeightForWidth() )
+			if ( item->hasHeightForWidth() ) {
 				itemHeight = item->heightForWidth(usedItemWidth);
-			else
+			}
+			else {
 				itemHeight = item->sizeHint().height();
+			}
 
-			if ( !testOnly )
+			if ( !testOnly ) {
 				item->setGeometry(QRect(QPoint(x, y),
 				                  QSize(usedItemWidth, itemHeight)));
+			}
+
 			x += usedItemWidth + spaceX;
 			lineHeight = qMax(lineHeight, itemHeight);
 		}
@@ -208,16 +288,30 @@ int FlowLayout::doLayout(const QRect &rect, bool testOnly) const {
 
 	return y + lineHeight - rect.y() + bottom;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int FlowLayout::smartSpacing(QStyle::PixelMetric pm) const {
 	QObject *parent = this->parent();
-	if ( !parent )
+	if ( !parent ) {
 		return -1;
+	}
 	else if ( parent->isWidgetType() ) {
 		QWidget *pw = static_cast<QWidget *>(parent);
 		return pw->style()->pixelMetric(pm, 0, pw);
 	}
-	else
+	else {
 		return static_cast<QLayout *>(parent)->spacing();
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+}
 }
