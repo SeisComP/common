@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-QuakeML 1.2 to SCML (SeisComPML) 0.10 stylesheet converter
+QuakeML 1.2 to SCML (SeisComPML) 0.7 stylesheet converter
 
 Author:
     EOST (École et Observatoire des Sciences de la Terre)
@@ -17,8 +17,8 @@ Usage
 This stylesheet converts a QuakeML to a SCML document. It may be invoked using
 xalan or xsltproc:
 
-    xalan -in quakeml.xml -xsl quakeml_1.2__sc3ml_0.10.xsl -out sc3ml.xml
-    xsltproc quakeml_1.2__sc3ml_0.10.xsl quakeml.xml > sc3ml.xml
+    xalan -in quakeml.xml -xsl quakeml_1.2__sc3ml_0.7.xsl -out sc3ml.xml
+    xsltproc quakeml_1.2__sc3ml_0.7.xsl quakeml.xml > sc3ml.xml
 
 Due to the QuakeML ID schema the public IDs used by QuakeML are rather long
 and may cause problems in SeisComP applications when displaying or processing
@@ -26,8 +26,8 @@ them. Especially the slash causes problems, e.g., when an event ID is used on
 the command line or in a directory structure. To remove the ID prefix during
 the conversion you may use the ID_PREFIX parameter:
 
-    xalan -param ID_PREFIX "smi:org.gfz-potsdam.de/geofon/" -in quakeml.xml -xsl quakeml_1.2__sc3ml_0.10.xsl -out scml.xml
-    xsltproc -stringparam ID_PREFIX smi:org.gfz-potsdam.de/geofon/ quakeml_1.2__sc3ml_0.10.xsl quakeml.xml > scml.xml
+    xalan -param ID_PREFIX "smi:org.gfz-potsdam.de/geofon/" -in quakeml.xml -xsl quakeml_1.2__sc3ml_0.7.xsl -out scml.xml
+    xsltproc -stringparam ID_PREFIX smi:org.gfz-potsdam.de/geofon/ quakeml_1.2__sc3ml_0.7.xsl quakeml.xml > scml.xml
 
 Other variable exist which control
   - the eventID format (BUILD_EVENT_ID),
@@ -198,7 +198,7 @@ Change log
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:ext="http://exslt.org/common"
-        xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.10"
+        xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.7"
         xmlns:qml="http://quakeml.org/xmlns/bed/1.2"
         xmlns:q="http://quakeml.org/xmlns/quakeml/1.2"
         xmlns:catalog="http://anss.org/xmlns/catalog/0.1"
@@ -240,8 +240,8 @@ Change log
     <xsl:param name="EVENT_INFO_ID" select="0"/>
 
     <!-- Define some global variables -->
-    <xsl:variable name="version" select="'0.10'"/>
-    <xsl:variable name="schema" select="document('sc3ml_0.10.xsd')"/>
+    <xsl:variable name="version" select="'0.7'"/>
+    <xsl:variable name="schema" select="document('sc3ml_0.7.xsd')"/>
     <xsl:variable name="PID" select="'publicID'"/>
 
     <!-- Define key to remove duplicates-->
@@ -572,6 +572,34 @@ Change log
             <xsl:variable name="v" select="."/>
             <xsl:choose>
                 <xsl:when test="$v='other event'">other</xsl:when>
+                <xsl:when test="$v='not reported'">other</xsl:when>
+                <xsl:when test="$v='anthropogenic event'">other</xsl:when>
+                <xsl:when test="$v='collapse'">other</xsl:when>
+                <xsl:when test="$v='cavity collapse'">other</xsl:when>
+                <xsl:when test="$v='accidental explosion'">other</xsl:when>
+                <xsl:when test="$v='controlled explosion'">other</xsl:when>
+                <xsl:when test="$v='experimental explosion'">other</xsl:when>
+                <xsl:when test="$v='industrial explosion'">other</xsl:when>
+                <xsl:when test="$v='mining explosion'">other</xsl:when>
+                <xsl:when test="$v='road cut'">other</xsl:when>
+                <xsl:when test="$v='blasting levee'">other</xsl:when>
+                <xsl:when test="$v='induced or triggered event'">induced earthquake</xsl:when>
+                <xsl:when test="$v='rock burst'">other</xsl:when>
+                <xsl:when test="$v='reservoir loading'">other</xsl:when>
+                <xsl:when test="$v='fluid injection'">other</xsl:when>
+                <xsl:when test="$v='fluid extraction'">other</xsl:when>
+                <xsl:when test="$v='crash'">other</xsl:when>
+                <xsl:when test="$v='train crash'">other</xsl:when>
+                <xsl:when test="$v='boat crash'">other</xsl:when>
+                <xsl:when test="$v='atmospheric event'">other</xsl:when>
+                <xsl:when test="$v='sonic blast'">other</xsl:when>
+                <xsl:when test="$v='acoustic noise'">other</xsl:when>
+                <xsl:when test="$v='thunder'">other</xsl:when>
+                <xsl:when test="$v='avalanche'">other</xsl:when>
+                <xsl:when test="$v='hydroacoustic event'">other</xsl:when>
+                <xsl:when test="$v='ice quake'">other</xsl:when>
+                <xsl:when test="$v='slide'">other</xsl:when>
+                <xsl:when test="$v='meteorite'">meteor impact</xsl:when>
                 <xsl:otherwise><xsl:value-of select="$v"/></xsl:otherwise>
             </xsl:choose>
         </xsl:element>
