@@ -397,8 +397,30 @@
 			</group>
 			<group name="amplitudes">
 				<description>
-				Amplitude configurations overriding global bindings.
+				Parameters of amplitude measurements.
 				</description>
+				<group name="WoodAnderson">
+					<description>
+					Parameters of the Wood-Anderson seismometer response used
+					for instrument simulation. The WA parameters can be overridden
+					per stream by global bindings.
+					</description>
+					<parameter name="gain" type="double" default="2800">
+						<description>
+						The gain of the Wood-Anderson response.
+						</description>
+					</parameter>
+					<parameter name="T0" type="double" default="0.8" unit="s">
+						<description>
+						The eigenperiod of the Wood-Anderson seismometer.
+						</description>
+					</parameter>
+					<parameter name="h" type="double" default="0.8">
+						<description>
+						The damping constant of the Wood-Anderson seismometer.
+						</description>
+					</parameter>
+				</group>
 			</group>
 			<group name="magnitudes">
 				<description>
@@ -880,7 +902,8 @@
 				</group>
 				<group name="WoodAnderson">
 					<description>
-					Allow to configure the Wood-Anderson seismometer response.
+					Parameters of the Wood-Anderson seismometer response used
+					for instrument simulation.
 					The default values are according to the version of
 					Gutenberg (1935). The newer version by Uhrhammer and
 					Collins (1990) is part of the IASPEI Magnitude
@@ -894,7 +917,7 @@
 					</parameter>
 					<parameter name="T0" type="double" default="0.8" unit="s">
 						<description>
-						The eigen period of the Wood-Anderson seismometer.
+						The eigenperiod of the Wood-Anderson seismometer.
 						</description>
 					</parameter>
 					<parameter name="h" type="double" default="0.8">
