@@ -734,7 +734,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				FancyViewItem item(idx, w);
 				add(l, item, binding, true);
 
-				w->setProperty("viewBinding", qVariantFromValue((void*)binding));
+				w->setProperty("viewBinding", QVariant::fromValue((void*)binding));
 
 				bool firstParameter = true;
 				QLayout *paramLayout = NULL;
@@ -799,7 +799,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				l->addWidget(desc);
 				desc->setVisible(cat->bindings.empty());
 
-				w->setProperty("statusLabel", qVariantFromValue((void*)desc));
+				w->setProperty("statusLabel", QVariant::fromValue((void*)desc));
 
 				for ( int r = 0; r < rows; ++r ) {
 					QModelIndex secIdx = idx.child(r,0);
@@ -808,7 +808,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 						continue;
 
 					QWidget *bw = createWidgetFromIndex(secIdx, rootSecName);
-					bw->setProperty("statusLabel", qVariantFromValue((void*)desc));
+					bw->setProperty("statusLabel", QVariant::fromValue((void*)desc));
 					l->addWidget(bw);
 				}
 
@@ -841,7 +841,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				QToolButton *addButton = new QToolButton;
 				addButton->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
 				addButton->setProperty("viewItem", QVariant::fromValue<FancyViewItem>(item));
-				addButton->setProperty("comboBox", qVariantFromValue((void*)comboBox));
+				addButton->setProperty("comboBox", QVariant::fromValue((void*)comboBox));
 				addButton->setIcon(QIcon(":/res/icons/add.png"));
 				addButton->setToolTip(QString("Add a new '%1' instance").arg(cat->name.c_str()));
 				addButton->setEnabled(catBindingCount > 0);
@@ -857,7 +857,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 
 				if ( comboBox ) {
 					comboBox->setProperty("viewItem", QVariant::fromValue<FancyViewItem>(item));
-					comboBox->setProperty("cat.layout", qVariantFromValue((void*)l));
+					comboBox->setProperty("cat.layout", QVariant::fromValue((void*)l));
 				}
 
 				l->addLayout(hlayout);
@@ -1133,7 +1133,7 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 
 	if ( comboBox ) {
 		comboBox->setProperty("viewItem", QVariant::fromValue<FancyViewItem>(item));
-		comboBox->setProperty("cat.layout", qVariantFromValue((void*)layout));
+		comboBox->setProperty("cat.layout", QVariant::fromValue((void*)layout));
 	}
 	*/
 
@@ -1902,7 +1902,7 @@ void FancyView::bindingCategoryChanged(int idx) {
 	}
 
 	// Update link to trigger model.dataChanged signal
-	model()->setData(item.index, qVariantFromValue((void*)cat), ConfigurationTreeItemModel::Link);
+	model()->setData(item.index, QVariant::fromValue((void*)cat), ConfigurationTreeItemModel::Link);
 	*/
 }
 
@@ -1944,7 +1944,7 @@ void FancyView::addCategoryBinding() {
 	QModelIndex ni = item.index.child(row, 0);
 	model()->setData(ni, alias);
 	model()->setData(ni, item.index.data(ConfigurationTreeItemModel::Level), ConfigurationTreeItemModel::Level);
-	model()->setData(ni, qVariantFromValue((void*)nb), ConfigurationTreeItemModel::Link);
+	model()->setData(ni, QVariant::fromValue((void*)nb), ConfigurationTreeItemModel::Link);
 	model()->setData(ni, ConfigurationTreeItemModel::TypeCategoryBinding, ConfigurationTreeItemModel::Type);
 
 	QWidget *status = (QWidget*)item.container->property("statusLabel").value<void*>();
@@ -2001,7 +2001,7 @@ void FancyView::addStruct() {
 		QModelIndex ni = item.index.parent().child(row, 0);
 		model()->setData(ni, ns->name.c_str());
 		model()->setData(ni, item.index.data(ConfigurationTreeItemModel::Level), ConfigurationTreeItemModel::Level);
-		model()->setData(ni, qVariantFromValue((void*)ns), ConfigurationTreeItemModel::Link);
+		model()->setData(ni, QVariant::fromValue((void*)ns), ConfigurationTreeItemModel::Link);
 		model()->setData(ni, ConfigurationTreeItemModel::TypeStruct, ConfigurationTreeItemModel::Type);
 
 		QBoxLayout *l = (QBoxLayout*)item.container->parentWidget()->layout();

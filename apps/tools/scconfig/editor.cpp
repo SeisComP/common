@@ -399,7 +399,7 @@ void ConfigConflictWidget::setConflicts(const QList<Seiscomp::System::ConfigDele
 		line->setFlags(line->flags() & ~Qt::ItemIsSelectable);
 		line->setFlags(line->flags() | Qt::ItemIsUserCheckable);
 		line->setCheckState(Qt::Unchecked);
-		line->setData(Qt::UserRole, qVariantFromValue((void*)&cs));
+		line->setData(Qt::UserRole, QVariant::fromValue((void*)&cs));
 
 		if ( cs.stage != Seiscomp::Environment::CS_CONFIG_APP &&
 			 cs.stage != Seiscomp::Environment::CS_USER_APP )

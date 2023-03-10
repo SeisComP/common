@@ -438,7 +438,7 @@ void BindingsViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *mod
 		return;
 	}
 
-	model->setData(sibling, qVariantFromValue((void*)binding), Link);
+	model->setData(sibling, QVariant::fromValue((void*)binding), Link);
 	model->setData(index, value, Qt::EditRole);
 }
 
@@ -937,7 +937,7 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 				bindItem->setData(networkCode, Net);
 				bindItem->setData(stationCode, Sta);
 				bindItem->setData(TypeModule, Type);
-				bindItem->setData(qVariantFromValue((void*)binding), Link);
+				bindItem->setData(QVariant::fromValue((void*)binding), Link);
 
 				if ( binding->name.empty() )
 					bindItem->setData(_docIcon, Qt::DecorationRole);
@@ -983,7 +983,7 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 		QStandardItem *modItem = new QStandardItem(mod->definition->name.c_str());
 		modItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
 		modItem->setData(TypeModule, Type);
-		modItem->setData(qVariantFromValue((void*)mod), Link);
+		modItem->setData(QVariant::fromValue((void*)mod), Link);
 		modItem->setData(_docFolder, Qt::DecorationRole);
 		rootItem->appendRow(modItem);
 
@@ -992,7 +992,7 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 			QStandardItem *profItem = new QStandardItem(profile->name.c_str());
 			profItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
 			profItem->setData(TypeProfile, Type);
-			profItem->setData(qVariantFromValue((void*)profile), Link);
+			profItem->setData(QVariant::fromValue((void*)profile), Link);
 			profItem->setData(_docIcon, Qt::DecorationRole);
 			modItem->appendRow(profItem);
 		}
@@ -1342,10 +1342,10 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 				mod = (Module*)b->parent;
 				a = menuProfile->addAction("None");
 				a->setEnabled(!b->name.empty());
-				a->setData(qVariantFromValue((void*)NULL));
+				a->setData(QVariant::fromValue((void*)NULL));
 				for ( size_t i = 0; i < mod->profiles.size(); ++i ) {
 					a = menuProfile->addAction(mod->profiles[i]->name.c_str());
-					a->setData(qVariantFromValue((void*)mod->profiles[i].get()));
+					a->setData(QVariant::fromValue((void*)mod->profiles[i].get()));
 					QFont f = a->font();
 					f.setBold(true);
 					a->setFont(f);
@@ -1379,7 +1379,7 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 				}
 
 				QAbstractItemModel *m = _stationsFolderView->model();
-				m->setData(hoveredIdx, qVariantFromValue((void*)b), Link);
+				m->setData(hoveredIdx, QVariant::fromValue((void*)b), Link);
 				m->setData(hoveredIdx.sibling(hoveredIdx.row(), 1), b->name.c_str(), Qt::EditRole);
 			}
 		}
@@ -1467,7 +1467,7 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 			mod = model->modules[i].get();
 			if ( mod->supportsBindings() && mod->getBinding(id) == NULL ) {
 				a = bindingMenu->addAction(mod->definition->name.c_str());
-				a->setData(qVariantFromValue((void*)mod));
+				a->setData(QVariant::fromValue((void*)mod));
 			}
 		}
 
@@ -1491,7 +1491,7 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 			bindItem->setData(id.networkCode.c_str(), Net);
 			bindItem->setData(id.stationCode.c_str(), Sta);
 			bindItem->setData(TypeModule, Type);
-			bindItem->setData(qVariantFromValue((void*)binding), Link);
+			bindItem->setData(QVariant::fromValue((void*)binding), Link);
 
 			if ( binding->name.empty() )
 				bindItem->setData(_docIcon, Qt::DecorationRole);
@@ -1718,7 +1718,7 @@ bool BindingsPanel::assignProfile(const QModelIndex &idx, const QString &module,
 
 				if ( mod->bind(id, prof) ) {
 					// Update an available binding
-					_bindingsModel->setData(child, qVariantFromValue((void*)prof), Link);
+					_bindingsModel->setData(child, QVariant::fromValue((void*)prof), Link);
 					_bindingsModel->setData(child.sibling(child.row(), 1), prof->name.c_str(), Qt::EditRole);
 				}
 				else
@@ -1739,7 +1739,7 @@ bool BindingsPanel::assignProfile(const QModelIndex &idx, const QString &module,
 			bindItem->setData(id.networkCode.c_str(), Net);
 			bindItem->setData(id.stationCode.c_str(), Sta);
 			bindItem->setData(TypeModule, Type);
-			bindItem->setData(qVariantFromValue((void*)prof), Link);
+			bindItem->setData(QVariant::fromValue((void*)prof), Link);
 
 			if ( prof->name.empty() )
 				bindItem->setData(_docIcon, Qt::DecorationRole);
@@ -1816,7 +1816,7 @@ void BindingsPanel::addProfile() {
 	QStandardItem *profItem = new QStandardItem(profile->name.c_str());
 	profItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
 	profItem->setData(TypeProfile, Type);
-	profItem->setData(qVariantFromValue((void*)profile), Link);
+	profItem->setData(QVariant::fromValue((void*)profile), Link);
 	profItem->setData(_docIcon, Qt::DecorationRole);
 
 	QStandardItem *item = _profilesModel->itemFromIndex(_modulesFolderView->rootIndex());

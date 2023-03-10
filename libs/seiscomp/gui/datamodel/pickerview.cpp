@@ -5640,7 +5640,7 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 			menu.addSeparator();
 			foreach ( PickerMarkerActionPlugin *plugin, SC_D.markerPlugins ) {
 				QAction *action = menu.addAction(plugin->title());
-				action->setData(qVariantFromValue((void*)plugin));
+				action->setData(QVariant::fromValue((void*)plugin));
 				plugins.append(action);
 			}
 		}
@@ -8023,7 +8023,7 @@ void PickerView::acquireStreams() {
 			item->widget()->setRecordBackgroundColor(slot, SCScheme.colors.records.states.requested);
 			// Store the acquisition thread as user data
 			static_cast<PickerRecordLabel*>(item->label())->data.traces[slot].thread = t;
-			item->widget()->setRecordUserData(slot, qVariantFromValue((void*)t));
+			item->widget()->setRecordUserData(slot, QVariant::fromValue((void*)t));
 		}
 	}
 

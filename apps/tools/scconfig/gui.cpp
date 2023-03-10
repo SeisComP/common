@@ -405,7 +405,7 @@ void addParameter(QStandardItem *item, Parameter *param, int level,
 	bool paramLocked = symbol?symbol->symbol.stage == Environment::CS_UNDEFINED:true;
 
 	name->setData(level, ConfigurationTreeItemModel::Level);
-	name->setData(qVariantFromValue((void*)param), ConfigurationTreeItemModel::Link);
+	name->setData(QVariant::fromValue((void*)param), ConfigurationTreeItemModel::Link);
 	name->setData(ConfigurationTreeItemModel::TypeParameter, ConfigurationTreeItemModel::Type);
 	locked->setData(paramLocked, Qt::DisplayRole);
 
@@ -451,7 +451,7 @@ void addStructure(QStandardItem *item, const Structure *struc, int level,
                   Environment::ConfigStage targetStage) {
 	QStandardItem *child = new QStandardItem(struc->definition->type.c_str());
 	child->setData(level, ConfigurationTreeItemModel::Level);
-	child->setData(qVariantFromValue((void*)struc), ConfigurationTreeItemModel::Link);
+	child->setData(QVariant::fromValue((void*)struc), ConfigurationTreeItemModel::Link);
 	child->setData(ConfigurationTreeItemModel::TypeStruct, ConfigurationTreeItemModel::Type);
 	child->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	item->appendRow(QStandardItemList() << child);
@@ -464,7 +464,7 @@ void addGroup(QStandardItem *item, Group *group, int level,
 	QStandardItem *name = new QStandardItem(group->definition->name.c_str());
 
 	name->setData(level, ConfigurationTreeItemModel::Level);
-	name->setData(qVariantFromValue((void*)group), ConfigurationTreeItemModel::Link);
+	name->setData(QVariant::fromValue((void*)group), ConfigurationTreeItemModel::Link);
 	name->setData(ConfigurationTreeItemModel::TypeGroup, ConfigurationTreeItemModel::Type);
 
 	name->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -917,7 +917,7 @@ void ConfigurationTreeItemModel::setModel(System::Model *tree,
 		Module *mod = tree->modules[i].get();
 		QStandardItem *modItem = new QStandardItem(mod->definition->name.c_str());
 		modItem->setData(0, Level);
-		modItem->setData(qVariantFromValue((void*)mod), Link);
+		modItem->setData(QVariant::fromValue((void*)mod), Link);
 		modItem->setData(TypeModule, Type);
 		modItem->setColumnCount(columnCount());
 		modItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -928,7 +928,7 @@ void ConfigurationTreeItemModel::setModel(System::Model *tree,
 			Section *sec = mod->sections[j].get();
 			QStandardItem *secItem = new QStandardItem(sec->name.c_str());
 			secItem->setData(1, Level);
-			secItem->setData(qVariantFromValue((void*)sec), Link);
+			secItem->setData(QVariant::fromValue((void*)sec), Link);
 			secItem->setData(TypeSection, Type);
 			secItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 			modItem->appendRow(secItem);
@@ -961,7 +961,7 @@ void ConfigurationTreeItemModel::setModel(System::ModuleBinding *b) {
 
 	QStandardItem *bindItem = new QStandardItem(mod->definition->name.c_str());
 	bindItem->setData(0, Level);
-	bindItem->setData(qVariantFromValue((void*)b), Link);
+	bindItem->setData(QVariant::fromValue((void*)b), Link);
 	bindItem->setData(TypeBinding, Type);
 	bindItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	root->appendRow(bindItem);
@@ -973,7 +973,7 @@ void ConfigurationTreeItemModel::setModel(System::ModuleBinding *b) {
 
 		secItem = new QStandardItem(sec->name.c_str());
 		secItem->setData(1, Level);
-		secItem->setData(qVariantFromValue((void*)sec), Link);
+		secItem->setData(QVariant::fromValue((void*)sec), Link);
 		secItem->setData(TypeSection, Type);
 		secItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		bindItem->appendRow(secItem);
@@ -995,7 +995,7 @@ void ConfigurationTreeItemModel::setModel(System::ModuleBinding *b) {
 		BindingCategory *cat = b->categories[c].get();
 		QStandardItem *catItem = new QStandardItem(cat->name.c_str());
 		catItem->setData(1, Level);
-		catItem->setData(qVariantFromValue((void*)cat), Link);
+		catItem->setData(QVariant::fromValue((void*)cat), Link);
 		catItem->setData(TypeCategory, Type);
 		catItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		catItem->setColumnCount(columnCount());
@@ -1006,7 +1006,7 @@ void ConfigurationTreeItemModel::setModel(System::ModuleBinding *b) {
 
 			secItem = new QStandardItem(cat->bindings[s].alias.c_str());
 			secItem->setData(2, Level);
-			secItem->setData(qVariantFromValue((void*)catBinding), Link);
+			secItem->setData(QVariant::fromValue((void*)catBinding), Link);
 			secItem->setData(TypeCategoryBinding, Type);
 			secItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 			catItem->appendRow(secItem);
@@ -1439,7 +1439,7 @@ Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 		vlayout->addWidget(panel);
 		panel->hide();
 		p.first->setData(Qt::DecorationRole, panel->icon());
-		p.first->setData(Qt::UserRole, qVariantFromValue((void*)panel));
+		p.first->setData(Qt::UserRole, QVariant::fromValue((void*)panel));
 		_panels.append(p);
 
 		connect(panel, SIGNAL(reloadRequested()), this, SLOT(reload()));

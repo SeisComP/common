@@ -5983,7 +5983,7 @@ void AmplitudeView::acquireStreams() {
 		if ( item ) {
 			int slot = item->mapComponentToSlot(*it->streamID.channelCode().rbegin());
 			item->widget()->setRecordBackgroundColor(slot, SCScheme.colors.records.states.requested);
-			item->widget()->setRecordUserData(slot, qVariantFromValue((void*)t));
+			item->widget()->setRecordUserData(slot, QVariant::fromValue((void*)t));
 			// Store the acquisition thread as user data
 			static_cast<AmplitudeRecordLabel*>(item->label())->data.traces[it->component].thread = t;
 		}
