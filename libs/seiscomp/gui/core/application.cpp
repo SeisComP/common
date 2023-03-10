@@ -1629,14 +1629,14 @@ void Application::messagesAvailable() {
 				for ( Core::MessageIterator it = msg->iter(); *it; ++it ) {
 					DataModel::Notifier* n = DataModel::Notifier::Cast(*it);
 					if ( n ) {
-						SEISCOMP_DEBUG("Non persistent notifier for '%s'", n->parentID().c_str());
+						// SEISCOMP_DEBUG("Non persistent notifier for '%s'", n->parentID().c_str());
 						n->apply();
 					}
 				}
 			}
 			else {
 				for ( NotifierMessage::iterator it = nm->begin(); it != nm->end(); ++it ) {
-					SEISCOMP_DEBUG("Notifier for '%s'", (*it)->parentID().c_str());
+					// SEISCOMP_DEBUG("Notifier for '%s'", (*it)->parentID().c_str());
 					(*it)->apply();
 				}
 			}
