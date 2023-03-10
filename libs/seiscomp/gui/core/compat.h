@@ -25,6 +25,7 @@
 
 #include <QtGlobal>
 
+// 5.11: QFontMetrics width replaced by horizontalAdvance
 #if QT_VERSION >= 0x050b00
     #define QT_FM_WIDTH(fm, str) fm.horizontalAdvance(str)
 #else

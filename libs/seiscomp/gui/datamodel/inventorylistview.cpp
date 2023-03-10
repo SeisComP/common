@@ -156,7 +156,7 @@ QTreeWidgetItem* InventoryListView::create(DataModel::Network* n) {
 
 	try {
 		interval += QString(" - %1").arg(n->end().toString("%F").c_str());
-		item->setFlags(0);
+		item->setFlags(Qt::ItemFlags());
 		f.setItalic(true);
 	}
 	catch ( ... ) {
@@ -183,7 +183,7 @@ QTreeWidgetItem* InventoryListView::create(DataModel::Station* s) {
 
 	try {
 		interval += QString(" - %1").arg(s->end().toString("%F").c_str());
-		item->setFlags(0);
+		item->setFlags(Qt::ItemFlags());
 		f.setItalic(true);
 	}
 	catch ( ... ) {
@@ -212,7 +212,7 @@ QTreeWidgetItem* InventoryListView::create(DataModel::SensorLocation* loc) {
 
 	try {
 		interval += QString(" - %1").arg(loc->end().toString("%F").c_str());
-		item->setFlags(0);
+		item->setFlags(Qt::ItemFlags());
 		f.setItalic(true);
 	}
 	catch ( ... ) {
@@ -245,7 +245,7 @@ QTreeWidgetItem* InventoryListView::create(DataModel::Stream* s) {
 
 	try {
 		interval += QString(" - %1").arg(s->end().toString("%F").c_str());
-		item->setFlags(0);
+		item->setFlags(Qt::ItemFlags());
 		f.setItalic(true);
 	}
 	catch ( ... ) {
