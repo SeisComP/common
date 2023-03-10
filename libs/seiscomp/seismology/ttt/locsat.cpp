@@ -30,6 +30,30 @@
 
 #define EXTRAPOLATE 0
 
+namespace {
+
+const double earthRadius = 6371.; //km
+
+// from libtau
+double takeoff_angle(double p, double zs, double vzs) {
+	// Compute the "takeoff angle" of a wave at the source.
+	//
+	// p  is the *angular* slowness of the wave, i.e. sec/deg
+	// zs is the source depth
+	// vz is the velocity at the source
+	double pv;
+
+	p  = p*180./M_PI;       // make p slowness in sec/rad
+	pv = p*vzs/(earthRadius-zs);
+	if (pv>1.) pv = 1.;
+
+	return 180.*asin(pv)/M_PI;
+}
+
+
+}
+
+
 namespace Seiscomp {
 namespace TTT {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -42,7 +66,7 @@ extern "C" {
 
 void distaz2_(double *lat1, double *lon1, double *lat2, double *lon2, double *delta, double *azi1, double *azi2);
 int setup_tttables_dir(const char *new_dir);
-double compute_ttime(double distance, double depth, char *phase, int extrapolate, double *dtdel, int *errorflag);
+double compute_ttime(double distance, double depth, char *phase, int extrapolate, double radius, double *rdtdd, double *rdtdh, int *errorflag);
 int num_phases();
 char **phase_types();
 
@@ -149,8 +173,6 @@ bool Locsat::initTables() {
 TravelTimeList *Locsat::compute(double delta, double depth) {
 	int nphases = num_phases();
 	char **phases = phase_types();
-	//float vp, vs;
-	double takeoff;
 
 	TravelTimeList *ttlist = new TravelTimeList;
 	ttlist->delta = delta;
@@ -161,24 +183,25 @@ TravelTimeList *Locsat::compute(double delta, double depth) {
 	for ( int i = 0; i < nphases; ++i ) {
 		char *phase = phases[i];
 		int errorflag = 0;
-		double dtdel;
-		double ttime = compute_ttime(delta, depth, phase, EXTRAPOLATE, &dtdel, &errorflag);
+		double dtdd, dtdh;
+		double ttime = compute_ttime(delta, depth, phase, EXTRAPOLATE,
+		                             earthRadius, &dtdd, &dtdh, &errorflag);
 		if (errorflag != 0)
 			continue;
 		// This comparison is there to also skip NaN values
 		if ( !(ttime > 0) ) continue;
 
-		/*
-		if ( has_vel ) {
-			float v = (phase[i][0]=='s' || phase[i][0]=='S') ? vs : vp;
-			takeoff = takeoff_angle(dtdd[i], depth, v);
-			if ( dtdh[i] > 0. )
+		double takeoff = 0;
+		if ( dtdd > 0 ) {
+			double v = 1 / std::sqrt(dtdd * dtdd + dtdh * dtdh);
+			dtdd = Math::Geo::deg2km(dtdd);
+			takeoff = takeoff_angle(dtdd, depth, v);
+			if ( dtdh > 0. ) {
 				takeoff = 180.-takeoff;
+			}
 		}
-		else*/
-			takeoff = 0;
 
-		ttlist->push_back(TravelTime(phase, ttime, dtdel, 0, 0, takeoff));
+		ttlist->push_back(TravelTime(phase, ttime, dtdd, dtdh, 0, takeoff));
 	}
 
 	ttlist->sortByTime();
@@ -193,12 +216,21 @@ TravelTimeList *Locsat::compute(double delta, double depth) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TravelTime Locsat::compute(const char *phase, double delta, double depth) {
 	int errorflag=0;
-	double dtdel;
-	double ttime = compute_ttime(delta, depth, const_cast<char*>(phase), 0, &dtdel, &errorflag);
+	double dtdd, dtdh;
+	double ttime = compute_ttime(delta, depth, const_cast<char*>(phase), 0,
+	                             earthRadius, &dtdd, &dtdh, &errorflag);
 	if ( errorflag!=0 ) throw NoPhaseError();
 	if ( !(ttime > 0) ) throw NoPhaseError();
-
-	return TravelTime(phase, ttime, dtdel, 0, 0, 0);
+	double takeoff = 0;
+	if ( dtdd > 0 ) {
+		double v = 1 / std::sqrt(dtdd * dtdd + dtdh * dtdh);
+		dtdd = Math::Geo::deg2km(dtdd);
+		takeoff = takeoff_angle(dtdd, depth, v);
+		if ( dtdh > 0. ) {
+			takeoff = 180.-takeoff;
+		}
+	} 
+	return TravelTime(phase, ttime, dtdd, dtdh, 0, takeoff);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -266,12 +298,21 @@ TravelTime Locsat::computeFirst(double delta, double depth) {
 	char **phases = phase_types();
 	char *phase = phases[_Pindex];
 	int errorflag=0;
-	double dtdel;
-	double ttime = compute_ttime(delta, depth, phase, EXTRAPOLATE, &dtdel, &errorflag);
-	if ( ttime < 0 ) throw NoPhaseError();
+	double dtdd, dtdh;
+	double ttime = compute_ttime(delta, depth, const_cast<char*>(phase),
+	                 EXTRAPOLATE, earthRadius, &dtdd, &dtdh, &errorflag);
 	if ( errorflag!=0 ) throw NoPhaseError();
-
-	return TravelTime(phase, ttime, dtdel, 0, 0, 0);
+	if ( !(ttime > 0) ) throw NoPhaseError();
+	double takeoff = 0;
+	if ( dtdd > 0 ) {
+		double v = 1 / std::sqrt(dtdd * dtdd + dtdh * dtdh);
+		dtdd = Math::Geo::deg2km(dtdd);
+		takeoff = takeoff_angle(dtdd, depth, v);
+		if ( dtdh > 0. ) {
+			takeoff = 180.-takeoff;
+		}
+	} 
+	return TravelTime(phase, ttime, dtdd, dtdh, 0, takeoff); 
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

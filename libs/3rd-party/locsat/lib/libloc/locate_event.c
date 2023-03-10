@@ -1049,12 +1049,13 @@ int find_phase(const char *phase) {
 }
 
 
-double compute_ttime(double distance, double depth, char *phase, int extrapolate, double *rdtdel, int *errorflag) {
+double compute_ttime(double distance, double depth, char *phase, int extrapolate, double radius, 
+                     double *rdtdd,  double *rdtdh, int *errorflag) {
 	int ileft, jz, nz;
 	float zfoc = depth;
 	float bad_sample = -1.0;
 	float tcal; /* Travel time to return */
-	float delta, dtdel, dtdz, dcross;
+	float delta, dtddel, dtdz, dcross;
 	int iext, jext, ibad; /* Errors from holint2_ */
 	int phase_id;
 
@@ -1085,15 +1086,28 @@ double compute_ttime(double distance, double depth, char *phase, int extrapolate
 	holint2_(&phase_id, &extrapolate, &ntbd[phase_id], &nz,
 	         &tbd[phase_id * maxtbd], &tbz[phase_id * maxtbz + jz - 1],
 	         &tbtt[(phase_id * maxtbz * maxtbd) + ((jz - 1) * maxtbd)],
-	         &maxtbd, &bad_sample, &delta, &zfoc, &tcal, &dtdel, &dtdz,
+	         &maxtbd, &bad_sample, &delta, &zfoc, &tcal, &dtddel, &dtdz,
 	         &dcross, &iext, &jext, &ibad);
 
 	*errorflag = 0;
 	if (iext != 0 || jext != 0 || ibad != 0)
 		*errorflag = 1;
 
-	if (rdtdel)
-		*rdtdel = dtdel;
+	/*
+	 * Compute partial derivatives if point is not in a hole. see ttcal0_
+	 */
+	if (ibad == 0) {
+		double pd12 = dtddel / ((radius - zfoc) * (float).017453293);
+		if (rdtdd)
+			*rdtdd = pd12;
+		if (rdtdh)
+			*rdtdh = dtdz;
+	 } else {
+		if (rdtdd)
+			*rdtdd = 0;
+		if (rdtdh)
+			*rdtdh = 0;
+	 }
 
 	return (tcal);
 }
