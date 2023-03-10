@@ -27,6 +27,7 @@
 #include <QEvent>
 #include <QStyleOptionFocusRect>
 
+#include <algorithm>
 #include <iostream>
 #include <float.h>
 #include <math.h>
@@ -228,7 +229,7 @@ bool Ruler::setSelected(double smin, double smax) {
 	_selectionHandles[0].enabled = true;
 	_selectionHandles[1].pos = smax;
 	_selectionHandles[1].enabled = true;
-	qSort(_selectionHandles.begin(), _selectionHandles.end());
+	std::sort(_selectionHandles.begin(), _selectionHandles.end());
 	update();
 	return true;
 }
@@ -243,7 +244,7 @@ bool Ruler::setSelectionHandle(int handle, double pos) {
 		return false;
 
 	_selectionHandles[handle].pos = pos;
-	//qSort(selectionHandles.begin(), selectionHandles.end());
+	//std::sort(selectionHandles.begin(), selectionHandles.end());
 
 	update();
 	return true;
@@ -262,7 +263,7 @@ bool Ruler::setSelectionHandleEnabled(int handle, bool enable) {
 		return false;
 
 	_selectionHandles[handle].enabled = enable;
-	//qSort(selectionHandles.begin(), selectionHandles.end());
+	//std::sort(selectionHandles.begin(), selectionHandles.end());
 
 	if ( handle == _currentSelectionHandle )
 		_currentSelectionHandle = -1;

@@ -38,6 +38,8 @@
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/map/layers/annotationlayer.h>
 
+#include <algorithm>
+
 
 #ifdef WIN32
 #undef min
@@ -202,7 +204,7 @@ struct StationLayer : Map::Layer {
 	}
 
 	void sort() {
-		qSort(stations.begin(), stations.end(), [](Symbol *s1, Symbol *s2) {
+		std::sort(stations.begin(), stations.end(), [](Symbol *s1, Symbol *s2) {
 			return s1->latitude() < s2->latitude();
 		});
 	}

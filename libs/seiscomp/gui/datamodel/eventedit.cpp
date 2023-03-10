@@ -40,6 +40,8 @@
 #include <QMenu>
 #include <QMessageBox>
 
+#include <algorithm>
+
 #ifdef WIN32
 #define snprintf _snprintf
 #endif
@@ -3244,7 +3246,7 @@ void EventEdit::sortOriginItems(int column) {
 	else
 		compare = (order == Qt::AscendingOrder ? &itemTextLessThan : &itemTextGreaterThan);
 
-	qStableSort(items.begin(), items.end(), compare);
+	stable_sort(items.begin(), items.end(), compare);
 
 	for ( int i = 0; i < items.count(); ++i ) {
 		if ( prefItem == items[i].first )
@@ -3294,7 +3296,7 @@ void EventEdit::sortFMItems(int column) {
 	else
 		compare = (order == Qt::AscendingOrder ? &itemTextLessThan : &itemTextGreaterThan);
 
-	qStableSort(items.begin(), items.end(), compare);
+	stable_sort(items.begin(), items.end(), compare);
 
 	for ( int i = 0; i < items.count(); ++i ) {
 		if ( prefItem == items[i].first )

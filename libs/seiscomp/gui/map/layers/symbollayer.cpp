@@ -21,6 +21,7 @@
 #include <seiscomp/gui/map/layers/symbollayer.h>
 #include <QMouseEvent>
 
+#include <algorithm>
 
 namespace Seiscomp {
 namespace Gui {
@@ -195,7 +196,7 @@ SymbolLayer::Symbols::const_iterator SymbolLayer::end() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SymbolLayer::sortByLatitude() {
-	 qSort(_symbols.begin(), _symbols.end(), byLatitude);
+	 std::sort(_symbols.begin(), _symbols.end(), byLatitude);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

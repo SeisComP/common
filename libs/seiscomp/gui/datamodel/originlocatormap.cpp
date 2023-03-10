@@ -37,6 +37,8 @@
 
 #include <QMenu>
 
+#include <algorithm>
+
 
 #ifdef WIN32
 #undef min
@@ -208,11 +210,11 @@ struct StationLayer : Map::Layer {
 			permutation[i] = i;
 		}
 
-		qSort(permutation.begin(), permutation.end(), [this](int i1, int i2) {
+		std::sort(permutation.begin(), permutation.end(), [this](int i1, int i2) {
 			return stations[i1]->latitude() < stations[i2]->latitude();
 		});
 
-		qSort(stations.begin(), stations.end(), [](Symbol *s1, Symbol *s2) {
+		std::sort(stations.begin(), stations.end(), [](Symbol *s1, Symbol *s2) {
 			return s1->latitude() < s2->latitude();
 		});
 

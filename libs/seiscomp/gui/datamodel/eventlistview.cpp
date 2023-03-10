@@ -62,6 +62,8 @@
 #include <QTreeWidgetItem>
 #include <QHeaderView>
 
+#include <algorithm>
+
 
 using namespace Seiscomp::Core;
 using namespace Seiscomp::Client;
@@ -1436,7 +1438,7 @@ class EventTreeItem : public SchemeTreeItem {
 					// Preferred origin changed => resort origins
 					QList<QTreeWidgetItem*> childs = _origins->takeChildren();
 					if ( !childs.empty() ) {
-						qStableSort(childs.begin(), childs.end(), originItemLessThan);
+						std::stable_sort(childs.begin(), childs.end(), originItemLessThan);
 
 						QString firstAgency;
 
@@ -1487,7 +1489,7 @@ class EventTreeItem : public SchemeTreeItem {
 					// Preferred origin changed => resort origins
 					QList<QTreeWidgetItem*> childs = _focalMechanisms->takeChildren();
 					if ( !childs.empty() ) {
-						qStableSort(childs.begin(), childs.end(), fmItemLessThan);
+						std::stable_sort(childs.begin(), childs.end(), fmItemLessThan);
 
 						for ( QList<QTreeWidgetItem*>::iterator it = childs.begin();
 						      it != childs.end(); ++it ) {
@@ -5352,7 +5354,7 @@ void EventListView::sortItems(int col) {
 	else
 		compare = (order == Qt::AscendingOrder ? &itemTextLessThan : &itemTextGreaterThan);
 
-	qStableSort(items.begin(), items.end(), compare);
+	std::stable_sort(items.begin(), items.end(), compare);
 
 	for ( int i = 0; i < items.count(); ++i ) {
 		_treeWidget->addTopLevelItem(items[i].first);
