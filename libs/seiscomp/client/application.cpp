@@ -1521,11 +1521,11 @@ bool Application::initConfiguration() {
 		StringVector toks;
 		Core::split(toks, item, ":", false);
 		if ( toks.size() != 2 ) {
-			SEISCOMP_ERROR("magnitude alias item must be of format <source>:<alias>");
+			SEISCOMP_ERROR("magnitude alias item must be of format <alias>:<source>");
 			return false;
 		}
 
-		if ( !Processing::MagnitudeProcessor::CreateAlias(toks[1], toks[0]) ) {
+		if ( !Processing::MagnitudeProcessor::CreateAlias(toks[0], toks[1]) ) {
 			return false;
 		}
 	}
