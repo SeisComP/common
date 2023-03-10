@@ -1331,9 +1331,15 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Structure *struc) 
 
 	// Just the definition?
 	if ( struc->name.empty() ) {
-		type->setText(struc->definition->type.c_str());
+		if ( !struc->definition->title.empty() ) {
+			type->setText(struc->definition->title.c_str());
+			type->setToolTip(struc->definition->type.c_str());
+		}
+		else {
+			type->setText(struc->definition->type.c_str());
+		}
 		modify->setIcon(QIcon(":/res/icons/add.png"));
-		modify->setToolTip(QString("Create a new '%1' instance").arg(type->text()));
+		modify->setToolTip(QString("Create a new '%1' instance").arg(struc->definition->type.c_str()));
 		//add->setFlat(true);
 		//add->setIconSize(QSize(20,20));
 		//add->setFixedSize(QSize(22,22));
