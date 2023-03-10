@@ -113,7 +113,7 @@ bool Homogeneous::setModel(const string &model) {
 		return false;
 	}
 
-	string base = "ttt.homogeneous.profile." + model + ".";
+	string base = "ttt.homogeneous." + model + ".";
 	vector<string> origin;
 	try {
 		_pVel      = cfg.getDouble(base + "P-velocity");
@@ -200,7 +200,7 @@ Homogeneous::compute(const char *phase,
 	double takeOffAngle = atan2(Vdist, Hdist); // [rad]
 
 	double dtdd = std::cos(takeOffAngle)             // [sec/deg]
-                / Math::Geo::km2deg(velocity); 
+                / Math::Geo::km2deg(velocity);
 	double dtdh = std::sin(takeOffAngle) / velocity; // [sec/km]
 
 	takeOffAngle = radToDeg(takeOffAngle);
