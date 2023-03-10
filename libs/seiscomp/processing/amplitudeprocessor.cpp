@@ -846,17 +846,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	try { _config.woodAndersonResponse.h = cfg->getDouble("amplitudes.WoodAnderson.h"); }
 	catch ( ... ) {}
 
-	if ( settings.getValue(_config.woodAndersonResponse.gain, "amplitudes.WoodAnderson.gain") ) {
-		SEISCOMP_DEBUG("  + WA.gain = %f", _config.woodAndersonResponse.gain);
-	}
-
-	if ( settings.getValue(_config.woodAndersonResponse.T0, "amplitudes.WoodAnderson.T0") ) {
-		SEISCOMP_DEBUG("  + WA.T0 = %f", _config.woodAndersonResponse.T0);
-	}
-
-	if ( settings.getValue(_config.woodAndersonResponse.h, "amplitudes.WoodAnderson.h") ) {
-		SEISCOMP_DEBUG("  + WA.h = %f", _config.woodAndersonResponse.h);
-	}
+	settings.getValue(_config.woodAndersonResponse.gain, "amplitudes.WoodAnderson.gain");
+	settings.getValue(_config.woodAndersonResponse.T0, "amplitudes.WoodAnderson.T0");
+	settings.getValue(_config.woodAndersonResponse.h, "amplitudes.WoodAnderson.h");
 
 	if ( !parseSaturationThreshold(settings, "amplitudes.saturationThreshold") ) {
 		return false;
@@ -896,6 +888,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	settings.getValue(_config.minimumDepth, "amplitudes." + _type + ".minDepth");
 	settings.getValue(_config.maximumDepth, "amplitudes." + _type + ".maxDepth");
 
+	SEISCOMP_DEBUG("  + WA.gain = %f", _config.woodAndersonResponse.gain);
+	SEISCOMP_DEBUG("  + WA.T0 = %f", _config.woodAndersonResponse.T0);
+	SEISCOMP_DEBUG("  + WA.h = %f", _config.woodAndersonResponse.h);
 	SEISCOMP_DEBUG("  + minimum distance = %.5f deg", _config.minimumDistance);
 	SEISCOMP_DEBUG("  + maximum distance = %.5f deg", _config.maximumDistance);
 	SEISCOMP_DEBUG("  + minimum depth = %.3f km", _config.minimumDepth);
