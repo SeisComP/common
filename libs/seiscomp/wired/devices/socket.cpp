@@ -1267,7 +1267,8 @@ ssize_t SSLSocket::write(const char *data, size_t len) {
 					errno = EAGAIN;
 					return -1;
 				default:
-					SEISCOMP_DEBUG("SSL accept failed with error %d", err);
+					SEISCOMP_DEBUG("SSL accept failed with error %d with verify result %ld",
+					               err, SSL_get_verify_result(_ssl));
 					errno = EINVAL;
 					return 0;
 			}
@@ -1329,7 +1330,8 @@ ssize_t SSLSocket::read(char *data, size_t len) {
 					errno = EAGAIN;
 					return -1;
 				default:
-					SEISCOMP_DEBUG("SSL accept failed with error %d", err);
+					SEISCOMP_DEBUG("SSL accept failed with error %d with verify result %ld",
+					               err, SSL_get_verify_result(_ssl));
 					errno = EINVAL;
 					return 0;
 			}
