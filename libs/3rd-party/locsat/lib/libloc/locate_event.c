@@ -1049,7 +1049,7 @@ int find_phase(const char *phase) {
 }
 
 
-double compute_ttime(double distance, double depth, char *phase, int extrapolate, double radius, 
+double compute_ttime(double distance, double depth, char *phase, int extrapolate,
                      double *rdtdd,  double *rdtdh, int *errorflag) {
 	int ileft, jz, nz;
 	float zfoc = depth;
@@ -1093,21 +1093,17 @@ double compute_ttime(double distance, double depth, char *phase, int extrapolate
 	if (iext != 0 || jext != 0 || ibad != 0)
 		*errorflag = 1;
 
-	/*
-	 * Compute partial derivatives if point is not in a hole. see ttcal0_
-	 */
 	if (ibad == 0) {
-		double pd12 = dtddel / ((radius - zfoc) * (float).017453293);
 		if (rdtdd)
-			*rdtdd = pd12;
+			*rdtdd = dtddel;
 		if (rdtdh)
 			*rdtdh = dtdz;
-	 } else {
+	} else {
 		if (rdtdd)
 			*rdtdd = 0;
 		if (rdtdh)
 			*rdtdh = 0;
-	 }
+	}
 
 	return (tcal);
 }
