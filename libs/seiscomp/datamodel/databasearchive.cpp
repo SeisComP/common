@@ -592,7 +592,7 @@ bool DatabaseArchive::fetchVersion() {
 
 	setVersion(v);
 
-	if ( v > Core::Version(Version::Major, Version::Minor) ) {
+	if ( Core::Version(v.majorTag(), v.minorTag()) > Core::Version(Version::Major, Version::Minor) ) {
 		_errorMsg = "Database version v";
 		_errorMsg += toString(static_cast<int>(v.majorTag())) + "." + toString(static_cast<int>(v.minorTag()));
 		_errorMsg += " not supported by client";
@@ -601,8 +601,10 @@ bool DatabaseArchive::fetchVersion() {
 		return false;
 	}
 
-	SEISCOMP_DEBUG("Found database version v%d.%d",
-	               versionMajor(), versionMinor());
+	SEISCOMP_DEBUG("Found database version v%d.%d.%d",
+	               version().majorTag(),
+	               version().minorTag(),
+	               version().patchTag());
 
 	return true;
 }
