@@ -48,7 +48,9 @@ IMPLEMENT_SC_ABSTRACT_CLASS_DERIVED(MagnitudeProcessor, Core::BaseObject, "Magni
 
 namespace {
 
-typedef vector<MagnitudeProcessor::Locale> Regionalization;
+
+using Regionalization = vector<MagnitudeProcessor::Locale>;
+
 
 DEFINE_SMARTPOINTER(TypeSpecificRegionalization);
 class TypeSpecificRegionalization : public Core::BaseObject {
@@ -57,9 +59,43 @@ class TypeSpecificRegionalization : public Core::BaseObject {
 		Regionalization  regionalization;
 };
 
-typedef map<string, TypeSpecificRegionalizationPtr> RegionalizationRegistry;
+using RegionalizationRegistry = map<string, TypeSpecificRegionalizationPtr>;
 RegionalizationRegistry regionalizationRegistry;
 mutex regionalizationRegistryMutex;
+
+
+class AliasFactories : public std::vector<MagnitudeProcessorAliasFactory*> {
+	public:
+		~AliasFactories() {
+			for ( auto f : *this ) {
+				delete f;
+			}
+		}
+
+		bool createAlias(const std::string &aliasType, const std::string &sourceType) {
+			auto sourceFactory = MagnitudeProcessorFactory::Find(sourceType);
+			if ( !sourceFactory ) {
+				SEISCOMP_ERROR("alias: magnitude source factory '%s' does not exist",
+				               sourceType.c_str());
+				return false;
+			}
+
+			auto factory = MagnitudeProcessorFactory::Find(aliasType);
+			if ( factory ) {
+				SEISCOMP_ERROR("alias: magnitude alias type '%s' is already registered",
+				               aliasType.c_str());
+				return false;
+			}
+
+			push_back(new MagnitudeProcessorAliasFactory(aliasType, sourceFactory));
+
+			return true;
+		}
+};
+
+
+AliasFactories aliasFactories;
+
 
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -68,7 +104,8 @@ mutex regionalizationRegistryMutex;
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const MagnitudeProcessor::Correction::A *MagnitudeProcessor::Correction::apply(double &val, const std::string &profile) const {
+const MagnitudeProcessor::Correction::A *
+MagnitudeProcessor::Correction::apply(double &val, const std::string &profile) const {
 	auto it = profiles.find(profile);
 	if ( it == profiles.end() ) return nullptr;
 	val = it->second.first * val + it->second.second;
@@ -80,17 +117,8 @@ const MagnitudeProcessor::Correction::A *MagnitudeProcessor::Correction::apply(d
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MagnitudeProcessor::MagnitudeProcessor() {
-	setCorrectionCoefficients(1.0, 0.0);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor::MagnitudeProcessor(const std::string& type)
- : _type(type) {
+: _type(type) {
 	setCorrectionCoefficients(1.0, 0.0);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -684,6 +712,15 @@ bool MagnitudeProcessor::treatAsValidMagnitude() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeProcessor::finalizeMagnitude(DataModel::StationMagnitude *) const {
 	// Nothing
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool MagnitudeProcessor::CreateAlias(const std::string &aliasType, const std::string &sourceType) {
+	return aliasFactories.createAlias(aliasType, sourceType);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

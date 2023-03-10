@@ -137,11 +137,11 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 	// ----------------------------------------------------------------------
 	//  X'truction
 	// ----------------------------------------------------------------------
-	public:
+	protected:
 		//! C'tor
-		MagnitudeProcessor();
-		MagnitudeProcessor(const std::string& type);
+		MagnitudeProcessor(const std::string &type);
 
+	public:
 		//! D'tor
 		~MagnitudeProcessor();
 
@@ -236,6 +236,8 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 		 */
 		virtual void finalizeMagnitude(DataModel::StationMagnitude *magnitude) const;
 
+		static bool CreateAlias(const std::string &aliasType, const std::string &sourceType);
+
 
 	protected:
 		/**
@@ -309,7 +311,45 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 		std::string   _stationCode;
 		Correction    _corrections;
 		Correction::A _defaultCorrection;
+
+	template <typename T>
+	friend class MagnitudeProcessorInterfaceFactory;
 };
+
+
+
+template <typename T>
+struct MagnitudeProcessorInterfaceFactory : Core::Generic::InterfaceFactory<MagnitudeProcessor, T> {
+	MagnitudeProcessorInterfaceFactory(const char* serviceName)
+	: Core::Generic::InterfaceFactory<MagnitudeProcessor, T>(serviceName) {}
+
+	MagnitudeProcessor *create() const {
+		auto proc = new T;
+		if ( this->serviceName() != proc->type() ) {
+			proc->_type = this->serviceName();
+		}
+		return proc;
+	}
+};
+
+
+class MagnitudeProcessorAliasFactory : public Core::Generic::InterfaceFactoryInterface<MagnitudeProcessor> {
+	public:
+		MagnitudeProcessorAliasFactory(
+			const std::string &service,
+			const Core::Generic::InterfaceFactoryInterface<MagnitudeProcessor> *source
+		)
+		: Core::Generic::InterfaceFactoryInterface<MagnitudeProcessor>(service.c_str())
+		, _source(source) {}
+
+		MagnitudeProcessor *create() const {
+			return _source->create();
+		}
+
+	private:
+		const Core::Generic::InterfaceFactoryInterface<MagnitudeProcessor> *_source;
+};
+
 
 
 DEFINE_INTERFACE_FACTORY(MagnitudeProcessor);
@@ -320,7 +360,7 @@ DEFINE_INTERFACE_FACTORY(MagnitudeProcessor);
 
 
 #define REGISTER_MAGNITUDEPROCESSOR_VAR(Class, Service) \
-Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::Processing::MagnitudeProcessor, Class> __##Class##InterfaceFactory__(Service)
+Seiscomp::Processing::MagnitudeProcessorInterfaceFactory<Class> __##Class##InterfaceFactory__(Service)
 
 #define REGISTER_MAGNITUDEPROCESSOR(Class, Service) \
 static REGISTER_MAGNITUDEPROCESSOR_VAR(Class, Service)
