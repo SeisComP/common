@@ -329,7 +329,7 @@ DEFINE_INTERFACE_FACTORY(MagnitudeProcessor);
 
 
 #define REGISTER_MAGNITUDEPROCESSOR_VAR(Class, Service) \
-Core::Generic::InterfaceFactory<Seiscomp::Processing::MagnitudeProcessor, Class> __##Class##InterfaceFactory__(Service)
+Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::Processing::MagnitudeProcessor, Class> __##Class##InterfaceFactory__(Service)
 
 #define REGISTER_MAGNITUDEPROCESSOR(Class, Service) \
 static REGISTER_MAGNITUDEPROCESSOR_VAR(Class, Service)
