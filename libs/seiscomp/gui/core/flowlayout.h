@@ -68,10 +68,15 @@ class SC_GUI_API FlowLayout : public QLayout {
 
 
 	// ------------------------------------------------------------------
+	//  Protected interface
+	// ------------------------------------------------------------------
+	protected:
+		virtual int doLayout(const QRect &rect, bool testOnly) const;
+
+
+	// ------------------------------------------------------------------
 	//  Private members
 	// ------------------------------------------------------------------
-	private:
-		virtual int doLayout(const QRect &rect, bool testOnly) const;
 		int smartSpacing(QStyle::PixelMetric pm) const;
 
 	protected:
