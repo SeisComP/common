@@ -568,10 +568,10 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 				    .arg(_measureBNADialog->name->text())
 				    .arg(_measureBNADialog->rank->value())
 				    .arg(closedPolygon?_measurePoints.size():-_measurePoints.size());
-				stream << header << endl;
+				stream << header << "\n";
 				for ( int i = 0; i < _measurePoints.size(); ++i ) {
 					stream << _measurePoints[i].x() << ","
-					       << _measurePoints[i].y() << endl;;
+					       << _measurePoints[i].y() << "\n";
 				}
 				file.close();
 			}
@@ -592,9 +592,9 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 
 				QTextStream stream(&file);
 				stream <<
-				"{" << endl <<
-				"	\"type\": \"Feature\"," << endl <<
-				"	\"geometry\": {" << endl <<
+				"{\n" <<
+				"	\"type\": \"Feature\",\n" <<
+				"	\"geometry\": {\n" <<
 				"		\"type\": \"";
 
 				if ( closedPolygon ) {
@@ -604,11 +604,11 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 					stream << "LineString";
 				}
 
-				stream << "\"," << endl <<
-				"		\"coordinates\": [" << endl <<
+				stream << "\",\n" <<
+				"		\"coordinates\": [\n" <<
 				"			";
 				if ( closedPolygon ) {
-					stream << "[" << endl <<
+					stream << "[\n" <<
 					"				";
 				}
 
@@ -627,17 +627,17 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 						       << _measurePoints.first().y() << "]";
 					}
 
-					stream << endl <<
+					stream << "\n" <<
 					"			]";
 				}
-				stream << endl <<
-				"		]" << endl <<
-				"	}," << endl <<
-				"	\"properties\": {" << endl <<
-				"		\"name\": \"" << _measureBNADialog->name->text() << "\"," << endl <<
-				"		\"rank\": " << _measureBNADialog->rank->value() << endl <<
-				"	}" << endl <<
-				"}" << endl;
+				stream << "\n" <<
+				"		]\n" <<
+				"	},\n" <<
+				"	\"properties\": {\n" <<
+				"		\"name\": \"" << _measureBNADialog->name->text() << "\",\n" <<
+				"		\"rank\": " << _measureBNADialog->rank->value() << "\n" <<
+				"	}\n" <<
+				"}\n";
 
 				file.close();
 			}
