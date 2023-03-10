@@ -590,11 +590,12 @@ bool DatabaseArchive::fetchVersion() {
 
 	_db->endQuery();
 
-	setVersion(v);
+	setVersion(Core::Version(v.majorTag(), v.minorTag()));
 
-	if ( Core::Version(v.majorTag(), v.minorTag()) > Core::Version(Version::Major, Version::Minor) ) {
+	if ( version() > Core::Version(Version::Major, Version::Minor) ) {
 		_errorMsg = "Database version v";
-		_errorMsg += toString(static_cast<int>(v.majorTag())) + "." + toString(static_cast<int>(v.minorTag()));
+		_errorMsg += toString(static_cast<int>(version().majorTag())) + "." +
+		             toString(static_cast<int>(version().minorTag()));
 		_errorMsg += " not supported by client";
 		SEISCOMP_ERROR("%s", _errorMsg.c_str());
 		_db->endQuery();
