@@ -31,12 +31,12 @@ namespace Seiscomp {
 namespace Core {
 
 
-/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(15, 3, 0)) */
+/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(15, 4, 0)) */
 #define SC_API_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 
 /* SC_API_VERSION is (major << 16) + (minor << 8) + patch. */
-#define SC_API_VERSION 0x0F0300
+#define SC_API_VERSION 0x0F0400
 
 #define SC_API_VERSION_MAJOR(v) (v >> 16)
 #define SC_API_VERSION_MINOR(v) ((v >> 8) & 0xff)
@@ -46,6 +46,19 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
+ "15.4.0"   0x0F0400
+   - Added Seiscomp::Gui::RecordView::hasSelectedItems()
+   - Added Seiscomp::Gui::RecordView::mapToTime()
+   - Added Seiscomp::Gui::RecordView::mapToUnit()
+   - Added Seiscomp::Gui::RecordView::setRubberBandSelectionEnabled()
+   - Added Seiscomp::Gui::RecordView::SelectionOperation
+   - Added Seiscomp::Gui::RecordView::SelectionOperationFlag
+   - Added Seiscomp::Gui::RecordView::visibleTimeRange
+   - Added signal Seiscomp::Gui::RecordView::selectedRubberBand()
+   - Added Seiscomp::Gui::FlowLayout
+   - Added Seiscomp::Gui::setBold
+   - Added Seiscomp::Gui::setItalic
+
  "15.3.0"   0x0F0300
    - Added Seiscomp::Client::ThreadedQueue::isClosed
 
