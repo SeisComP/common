@@ -64,58 +64,59 @@ bool MagnitudeProcessor_ms20::MagnitudeProcessor_ms20::setup(const Settings &set
 	maxDistanceDeg = 160.0; // default maximum distance
 	maxDepthKm = 100.0; // default maximum depth
 
-	try { lowPer = settings.getDouble("magnitudes.Ms_20.lowerPeriod"); }
+	try { lowPer = settings.getDouble("magnitudes." + type() + ".lowerPeriod"); }
 	catch ( ... ) {}
 
-	try { upPer = settings.getDouble("magnitudes.Ms_20.upperPeriod"); }
+	try { upPer = settings.getDouble("magnitudes." + type() + ".upperPeriod"); }
 	catch ( ... ) {}
 
 	// distance range in degree
-	try { minDistanceDeg = settings.getDouble("magnitudes.Ms_20.minDist"); }
+	try { minDistanceDeg = settings.getDouble("magnitudes." + type() + ".minDist"); }
 	catch ( ... ) {}
 
-	try { maxDistanceDeg = settings.getDouble("magnitudes.Ms_20.maxDist"); }
+	try { maxDistanceDeg = settings.getDouble("magnitudes." + type() + ".maxDist"); }
 	catch ( ... ) {}
 
 	// depth range in km
-	try { maxDepthKm = settings.getDouble("magnitudes.Ms_20.maxDepth"); }
+	try { maxDepthKm = settings.getDouble("magnitudes." + type() + ".maxDepth"); }
 	catch ( ... ) {}
 
 	// deprecated parameters
 	// period range in seconds
 	try {
-		lowPer = settings.getDouble("Ms_20.lowerPeriod");
-		SEISCOMP_WARNING("Ms_20.lowerPeriod has been deprecated");
-		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.lowerPeriod");
+		lowPer = settings.getDouble(type() + ".lowerPeriod");
+		SEISCOMP_WARNING("%s.lowerPeriod has been deprecated", type().c_str());
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.%s.lowerPeriod", type().c_str());
 	}
 	catch ( ... ) {}
 
 	try {
-		upPer = settings.getDouble("Ms_20.upperPeriod");
-		SEISCOMP_WARNING("Ms_20.upperPeriod has been deprecated");
-		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.upperPeriod");}
+		upPer = settings.getDouble(type() + ".upperPeriod");
+		SEISCOMP_WARNING("%s.upperPeriod has been deprecated", type().c_str());
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.%s.upperPeriod", type().c_str());
+	}
 	catch ( ... ) {}
 
 	// distance range in degree
 	try {
-		minDistanceDeg = settings.getDouble("Ms_20.minimumDistance");
-		SEISCOMP_WARNING("Ms_20.minimumDistance has been deprecated");
-		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.maxDist");
+		minDistanceDeg = settings.getDouble(type() + ".minimumDistance");
+		SEISCOMP_WARNING("%s.minimumDistance has been deprecated", type().c_str());
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.%s.maxDist", type().c_str());
 	}
 	catch ( ... ) {}
 
 	try {
-		maxDistanceDeg = settings.getDouble("Ms_20.maximumDistance");
-		SEISCOMP_WARNING("Ms_20.maximumDistance has been deprecated");
-		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.maxDist");
+		maxDistanceDeg = settings.getDouble(type() + ".maximumDistance");
+		SEISCOMP_WARNING("%s.maximumDistance has been deprecated", type().c_str());
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.%s.maxDist", type().c_str());
 	}
 	catch ( ... ) {}
 
 	// depth range in km
 	try {
-		maxDepthKm = settings.getDouble("Ms_20.maximumDepth");
-		SEISCOMP_WARNING("Ms_20.maximumDepth has been deprecated");
-		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.Ms_20.maxDist");
+		maxDepthKm = settings.getDouble(type() + ".maximumDepth");
+		SEISCOMP_WARNING("%s.maximumDepth has been deprecated", type().c_str());
+		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.%s.maxDist", type().c_str());
 	}
 	catch ( ... ) {}
 
@@ -151,7 +152,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_ms20::computeMagnitude(
 
 	// allowed periods are 18 - 22 s acocrding to IASPEI standard (IASPEI recommendations of magnitude working group, 2013)
 	if ( period < lowPer || period > upPer ) {
-		SEISCOMP_DEBUG("Ms_20: period is %.2f s", period);
+		SEISCOMP_DEBUG("%s: period is %.2f s", type().c_str(), period);
 		return PeriodOutOfRange;
 	}
 
