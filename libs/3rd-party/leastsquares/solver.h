@@ -78,7 +78,11 @@ public:
     }
     std::fill_n(_eq.L2NScaler, _eq.numColsG, 1.);
     for (unsigned int ob = 0; ob < _eq.numRowsG; ob++) {
-      _eq.r[ob] *= _eq.W[ob];
+      if (_eq.W[ob] != 0) {
+        _eq.r[ob] *= _eq.W[ob];
+      } else {
+        _eq.r[ob] = 0;
+      }
     }
   }
   virtual ~Adapter() = default;
@@ -93,12 +97,18 @@ public:
     std::fill_n(_eq.L2NScaler, _eq.numColsG, 0.);
 
     for (unsigned int ob = 0; ob < _eq.numRowsG; ob++) {
-      const double obsW = _eq.W[ob];
 
-      _eq.L2NScaler[0] += (_eq.G[ob][0] * obsW) * (_eq.G[ob][0] * obsW);
-      _eq.L2NScaler[1] += (_eq.G[ob][1] * obsW) * (_eq.G[ob][1] * obsW);
-      _eq.L2NScaler[2] += (_eq.G[ob][2] * obsW) * (_eq.G[ob][2] * obsW);
-      _eq.L2NScaler[3] += (_eq.G[ob][3] * obsW) * (_eq.G[ob][3] * obsW);
+      if (_eq.W[ob] == 0)
+        continue;
+
+      _eq.L2NScaler[0] +=
+          (_eq.G[ob][0] * _eq.W[ob]) * (_eq.G[ob][0] * _eq.W[ob]);
+      _eq.L2NScaler[1] +=
+          (_eq.G[ob][1] * _eq.W[ob]) * (_eq.G[ob][1] * _eq.W[ob]);
+      _eq.L2NScaler[2] +=
+          (_eq.G[ob][2] * _eq.W[ob]) * (_eq.G[ob][2] * _eq.W[ob]);
+      _eq.L2NScaler[3] +=
+          (_eq.G[ob][3] * _eq.W[ob]) * (_eq.G[ob][3] * _eq.W[ob]);
     }
 
     _eq.L2NScaler[0] = 1. / std::sqrt(_eq.L2NScaler[0]);
@@ -133,6 +143,9 @@ public:
 
     for (unsigned int ob = 0; ob < _eq.numRowsG; ob++) {
 
+      if (_eq.W[ob] == 0)
+        continue;
+
       double sum = 0;
 
       sum += _eq.G[ob][0] * _eq.L2NScaler[0] * x[0];
@@ -159,6 +172,10 @@ public:
     }
 
     for (unsigned int ob = 0; ob < _eq.numRowsG; ob++) {
+
+      if (_eq.W[ob] == 0)
+        continue;
+
       x[0] += _eq.W[ob] * _eq.G[ob][0] * _eq.L2NScaler[0] * y[ob];
       x[1] += _eq.W[ob] * _eq.G[ob][1] * _eq.L2NScaler[1] * y[ob];
       x[2] += _eq.W[ob] * _eq.G[ob][2] * _eq.L2NScaler[2] * y[ob];
@@ -177,7 +194,7 @@ Adapter<T> solve(System &eq, std::ostringstream *solverLogs = nullptr,
   }
   solver.SetDamp(dampingFactor);
   solver.SetMaximumNumberOfIterations(numIterations ? numIterations
-                                                    : eq.numColsG / 2);
+                                                    : eq.numColsG * 4);
   const double eps = std::numeric_limits<double>::epsilon();
   solver.SetEpsilon(eps);
   solver.SetToleranceA(1e-6); // we use [km] and [sec] in the eq system, so

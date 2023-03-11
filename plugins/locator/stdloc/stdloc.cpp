@@ -38,8 +38,8 @@
 #include <cmath>
 #include <numeric>
 
-#include "stdloc.h"
 #include "solver.h"
+#include "stdloc.h"
 
 using namespace std;
 using namespace Seiscomp;
@@ -54,7 +54,8 @@ namespace {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ADD_SC_PLUGIN("Standard Method Locator", "Luca Scarabello <luca.scarabello@erdw.ethz.ch>", 1, 0, 0)
+ADD_SC_PLUGIN("Standard Method Locator",
+              "Luca Scarabello <luca.scarabello@erdw.ethz.ch>", 1, 0, 0)
 REGISTER_LOCATOR(StdLoc, "StdLoc");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -245,7 +246,6 @@ bool StdLoc::init(const Config::Config &config) {
   defaultProf.usePickUncertainties = false;
   defaultProf.defaultTimeError = 1.0;
 
-  
   _currentProfile = defaultProf;
 
   _profiles.clear();
@@ -786,7 +786,8 @@ void StdLoc::computeAdditionlPickInfo(const PickList &pickList,
     }
 
     if (pi.flags == LocatorInterface::F_NONE) {
-      SEISCOMP_DEBUG("Omitting disabled pick %s.%s.%s",
+      SEISCOMP_DEBUG("Omitting disabled pick %s@%s.%s.%s",
+                     pick->phaseHint().code().c_str(),
                      pick->waveformID().networkCode().c_str(),
                      pick->waveformID().stationCode().c_str(),
                      pick->waveformID().locationCode().c_str());
@@ -887,33 +888,39 @@ void StdLoc::locateGridSearch(
           const PickItem &pi = pickList[i];
           const PickPtr pick = pi.pick;
 
+          if (weights[i] <= 0) {
+            continue;
+          }
+
           TravelTime tt;
           try {
             tt = _ttt->compute(pick->phaseHint().code().c_str(), cellLat,
                                cellLon, cellDepth, sensorLat[i], sensorLon[i],
                                sensorElev[i]);
           } catch (exception &e) {
-            SEISCOMP_ERROR("Travel Time Table error for %s.%s.%s: %s",
+            SEISCOMP_ERROR("Travel Time Table error for %s@%s.%s.%s and lat "
+                           "%.6f lon %.6f depth %.3f: %s",
+                           pick->phaseHint().code().c_str(),
                            pick->waveformID().networkCode().c_str(),
                            pick->waveformID().stationCode().c_str(),
-                           pick->waveformID().locationCode().c_str(), e.what());
+                           pick->waveformID().locationCode().c_str(), cellLat,
+                           cellLon, cellDepth, e.what());
             tttError = true;
             break;
           }
 
           if (tt.time < 0) {
-            SEISCOMP_ERROR(
-                "Travel Time Table error: data not returned for %s.%s.%s",
-                pick->waveformID().networkCode().c_str(),
-                pick->waveformID().stationCode().c_str(),
-                pick->waveformID().locationCode().c_str());
+            SEISCOMP_ERROR("Travel Time Table error: data not returned for "
+                           "%s@%s.%s.%s and lat %.6f lon %.6f depth %.3f",
+                           pick->phaseHint().code().c_str(),
+                           pick->waveformID().networkCode().c_str(),
+                           pick->waveformID().stationCode().c_str(),
+                           pick->waveformID().locationCode().c_str(), cellLat,
+                           cellLon, cellDepth);
             tttError = true;
             break;
           }
           travelTimes[i] = tt.time;
-          if (weights[i] <= 0) {
-            continue;
-          }
           double pickTime = double(pick->time().value());
           originTimes.push_back(pickTime - travelTimes[i]);
           timeWeights.push_back(weights[i]);
@@ -1013,7 +1020,7 @@ void StdLoc::locateGridSearch(
   }
 
   if (!std::isfinite(lowestError)) {
-    throw LocatorException("Couldn't find a solution with Grid Search");
+    throw LocatorException("Couldn't find a solution");
   }
   SEISCOMP_INFO(
       "Grid Search lowest error %f for lat %.6f lon %.6f depth %.3f time %s",
@@ -1053,7 +1060,6 @@ void StdLoc::locateLeastSquares(
   vector<double> backazis(pickList.size());
   vector<double> dtdds(pickList.size());
   vector<double> dtdhs(pickList.size());
-  vector<double> takeoffs(pickList.size()); // not used at the moment
 
   for (int iteration = 0; iteration < _currentProfile.leastSquare.iterations;
        iteration++) {
@@ -1063,6 +1069,10 @@ void StdLoc::locateLeastSquares(
     for (size_t i = 0; i < pickList.size(); ++i) {
       const PickItem &pi = pickList[i];
       const PickPtr pick = pi.pick;
+
+      if (weights[i] <= 0) {
+        continue;
+      }
 
       computeDistance(initLat, initLon, initDepth, sensorLat[i], sensorLon[i],
                       -sensorElev[i] / 1000, nullptr, &backazis[i]);
@@ -1074,27 +1084,28 @@ void StdLoc::locateLeastSquares(
                           initDepth, sensorLat[i], sensorLon[i], sensorElev[i]);
 
       } catch (exception &e) {
-        SEISCOMP_ERROR("Travel Time Table error for %s.%s.%s: %s",
+        SEISCOMP_ERROR("Travel Time Table error for %s@%s.%s.%s and lat %.6f "
+                       "lon %.6f depth %.3f: %s",
+                       pick->phaseHint().code().c_str(),
                        pick->waveformID().networkCode().c_str(),
                        pick->waveformID().stationCode().c_str(),
-                       pick->waveformID().locationCode().c_str(), e.what());
+                       pick->waveformID().locationCode().c_str(), initLat,
+                       initLon, initDepth, e.what());
         throw LocatorException("Travel Time Table error");
       }
-      if (tt.time < 0 || (tt.time > 0 && (tt.dtdd == 0 || tt.dtdh == 0))) {
-        SEISCOMP_ERROR(
-            "Travel Time Table error: data not returned for %s.%s.%s",
-            pick->waveformID().networkCode().c_str(),
-            pick->waveformID().stationCode().c_str(),
-            pick->waveformID().locationCode().c_str());
+      if (tt.time < 0 || (tt.time > 0 && tt.dtdd == 0 && tt.dtdh == 0)) {
+        SEISCOMP_ERROR("Travel Time Table error: data not returned for "
+                       "%s@%s.%s.%s and lat %.6f lon %.6f depth %.3f",
+                       pick->phaseHint().code().c_str(),
+                       pick->waveformID().networkCode().c_str(),
+                       pick->waveformID().stationCode().c_str(),
+                       pick->waveformID().locationCode().c_str(), initLat,
+                       initLon, initDepth);
         throw LocatorException("Travel Time Table error");
       }
       travelTimes[i] = tt.time;
-      if (weights[i] <= 0) {
-        continue;
-      }
       dtdds[i] = tt.dtdd;
       dtdhs[i] = tt.dtdh;
-      takeoffs[i] = tt.takeoff;
     }
 
     //
@@ -1118,11 +1129,11 @@ void StdLoc::locateLeastSquares(
           (pickTime - (initTime + Core::TimeSpan(travelTimes[i]))).length();
       eq.r[i] = residual;
 
-      const double azi = degToRad(backazis[i]);
-      eq.G[i][0] = Math::Geo::km2deg(dtdds[i]) * std::cos(azi); // dy [sec/km]
-      eq.G[i][1] = Math::Geo::km2deg(dtdds[i]) * std::sin(azi); // dx [sec/km]
-      eq.G[i][2] = dtdhs[i];                                    // dz [sec/km]
-      eq.G[i][3] = 1.;                                          // dtime [sec]
+      const double bazi = degToRad(backazis[i]);
+      eq.G[i][0] = Math::Geo::km2deg(dtdds[i]) * std::cos(bazi); // dy [sec/km]
+      eq.G[i][1] = Math::Geo::km2deg(dtdds[i]) * std::sin(bazi); // dx [sec/km]
+      eq.G[i][2] = dtdhs[i];                                     // dz [sec/km]
+      eq.G[i][3] = 1.;                                           // dtime [sec]
     }
 
     //
@@ -1136,9 +1147,9 @@ void StdLoc::locateLeastSquares(
             eq, &solverLogs, _currentProfile.leastSquare.dampingFactor);
         // print some information
         SEISCOMP_DEBUG("Solver stopped because %u : %s (used %u iterations)",
-                      solver.GetStoppingReason(),
-                      solver.GetStoppingReasonMessage().c_str(),
-                      solver.GetNumberOfIterationsPerformed());
+                       solver.GetStoppingReason(),
+                       solver.GetStoppingReasonMessage().c_str(),
+                       solver.GetNumberOfIterationsPerformed());
 
       } else if (_currentProfile.leastSquare.solverType == "LSQR") {
         // solve
@@ -1146,9 +1157,9 @@ void StdLoc::locateLeastSquares(
             eq, &solverLogs, _currentProfile.leastSquare.dampingFactor);
         // print some information
         SEISCOMP_DEBUG("Solver stopped because %u : %s (used %u iterations)",
-                      solver.GetStoppingReason(),
-                      solver.GetStoppingReasonMessage().c_str(),
-                      solver.GetNumberOfIterationsPerformed());
+                       solver.GetStoppingReason(),
+                       solver.GetStoppingReasonMessage().c_str(),
+                       solver.GetNumberOfIterationsPerformed());
       } else {
         throw LocatorException(
             "Solver type can only be LSMR or LSQR, but it is set to" +
@@ -1266,17 +1277,18 @@ Origin *StdLoc::createOrigin(
     newArr->setAzimuth(azimuth);
     newArr->setDistance(distance);
 
-    double residual =
-        (pickTime - (originTime + Core::TimeSpan(travelTimes[i]))).length();
-    newArr->setTimeResidual(residual);
-
     if (weights[i] <= 0) {
       // Not used
       newArr->setTimeUsed(false);
       newArr->setWeight(0.0);
+      newArr->setTimeResidual(0);
     } else {
       newArr->setTimeUsed(true);
       newArr->setWeight(weights[i]);
+
+      double residual =
+          (pickTime - (originTime + Core::TimeSpan(travelTimes[i]))).length();
+      newArr->setTimeResidual(residual);
 
       sumSquaredResiduals += (residual * weights[i]) * (residual * weights[i]);
       sumSquaredWeights += weights[i] * weights[i];
