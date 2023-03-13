@@ -288,7 +288,7 @@ static const char *default_phases[] = {
 	"PKPab", "PKPbc", "PKPdf", "SKPdf",
 	"PcP", "Pg", "Pn", "Rg", "S", "SKS",
 	"SS", "ScS", "Sn", "Sg", "pP", "sP",
-	"Pb", "Sb", "Is", "It"
+	"Pb", "Sb", "Is", "It", "Iw"
 };
 
 
