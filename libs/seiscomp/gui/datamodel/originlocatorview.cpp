@@ -70,6 +70,7 @@
 #include <QWidget>
 
 #include <algorithm>
+#include <set>
 
 #ifdef WIN32
 #define snprintf _snprintf
@@ -87,24 +88,27 @@ namespace {
 
 
 struct CommitOptions {
-	CommitOptions()
-	: valid(false)
-	, forceEventAssociation(false)
-	, fixOrigin(false)
-	, returnToEventList(false)
-	, askForConfirmation(false) {}
+	bool                         valid{false};
+	bool                         forceEventAssociation{false};
+	bool                         fixOrigin{false};
+	bool                         returnToEventList{false};
+	bool                         askForConfirmation{false};
+	OPT(EventType)               eventType;
+	OPT(EventTypeCertainty)      eventTypeCertainty;
+	OPT(OPT(EvaluationStatus))   originStatus;
+	OPT(string)                  magnitudeType;
+	string                       eventName;
+	string                       eventComment;
 
-	bool                       valid;
-	bool                       forceEventAssociation;
-	bool                       fixOrigin;
-	bool                       returnToEventList;
-	bool                       askForConfirmation;
-	OPT(EventType)             eventType;
-	OPT(EventTypeCertainty)    eventTypeCertainty;
-	OPT(OPT(EvaluationStatus)) originStatus;
-	OPT(string)                magnitudeType;
-	string                     eventName;
-	string                     eventComment;
+	struct OriginCommentProfile {
+		string         id;
+		string         value; // Output value
+		string         label;
+		vector<string> options;
+		bool           allowFreeText{false};
+	};
+
+	vector<OriginCommentProfile> originCommentProfiles;
 };
 
 
@@ -606,6 +610,34 @@ class OriginCommitOptions : public QDialog {
 				if ( idx != -1 )
 					ui.comboOriginStates->setCurrentIndex(idx);
 			}
+
+			for ( auto comboBox : originComments ) {
+				delete comboBox;
+			}
+			originComments.clear();
+
+			for ( auto &profile : options.originCommentProfiles ) {
+				ui.frameEventOptions->layout()->addWidget(new QLabel((profile.label + ":").c_str()));
+				QComboBox *comboComment = new QComboBox;
+				comboComment->setProperty("id", QString(profile.id.c_str()));
+				comboComment->setEditable(profile.allowFreeText);
+				comboComment->setToolTip(
+					tr("Populates comment with id '%1'")
+					.arg(profile.id.c_str())
+				);
+				for ( auto &option : profile.options ) {
+					comboComment->addItem(option.c_str());
+				}
+				auto idx = comboComment->findText(profile.value.c_str());
+				if ( idx >= 0 ) {
+					comboComment->setCurrentIndex(idx);
+				}
+				else if ( profile.allowFreeText ) {
+					comboComment->setEditText(profile.value.c_str());
+				}
+				originComments.append(comboComment);
+				ui.frameEventOptions->layout()->addWidget(comboComment);
+			}
 		}
 
 		bool getOptions(CommitOptions &options) {
@@ -622,8 +654,9 @@ class OriginCommitOptions : public QDialog {
 					return false;
 				}
 			}
-			else
+			else {
 				options.eventType = Core::None;
+			}
 
 			if ( ui.comboEventTypeCertainty->currentIndex() > 0 ) {
 				EventTypeCertainty typeCertainty;
@@ -634,8 +667,9 @@ class OriginCommitOptions : public QDialog {
 					return false;
 				}
 			}
-			else
+			else {
 				options.eventTypeCertainty = Core::None;
+			}
 
 			if ( ui.comboOriginStates->currentIndex() > 0 ) {
 				EvaluationStatus originStatus;
@@ -656,10 +690,22 @@ class OriginCommitOptions : public QDialog {
 
 			options.eventName = ui.editEQName->text().toStdString();
 
-			if ( commentOptions.empty() )
+			if ( commentOptions.empty() ) {
 				options.eventComment = ui.editEQComment->text().toStdString();
-			else
+			}
+			else {
 				options.eventComment = ui.comboEQComment->currentText().toStdString();
+			}
+
+			for ( auto comboBox : originComments ) {
+				auto id = comboBox->property("id").toString().toStdString();
+				for ( auto &profile : options.originCommentProfiles ) {
+					if ( profile.id == id ) {
+						profile.value = comboBox->currentText().toStdString();
+						break;
+					}
+				}
+			}
 
 			return true;
 		}
@@ -667,7 +713,8 @@ class OriginCommitOptions : public QDialog {
 
 	public:
 		Ui::OriginCommitOptions ui;
-		vector<string> commentOptions;
+		vector<string>          commentOptions;
+		QVector<QComboBox*>     originComments;
 };
 
 
@@ -6519,11 +6566,13 @@ void OriginLocatorView::customCommit() {
 			customOptions.magnitudeType = fixedMagnitudeType.toStdString();
 	}
 
-	if ( customOptions.valid )
+	if ( customOptions.valid ) {
 		commitWithOptions(&customOptions);
-	else
+	}
+	else {
 		QMessageBox::critical(this, "Internal Error",
 		                      tr("No options connected with commit button"));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6705,14 +6754,69 @@ void OriginLocatorView::commitWithOptions() {
 
 	options.askForConfirmation = false;
 
+	try {
+		auto profiles = SCApp->configGetStrings("olv.originComments");
+		set<string> ids;
+
+		for ( const auto &profile : profiles ) {
+			CommitOptions::OriginCommentProfile commentProfile;
+
+			try {
+				commentProfile.id = SCApp->configGetString("olv.originComments." + profile + ".id");
+				if ( commentProfile.id.empty() ) {
+					SEISCOMP_WARNING("olv.originComments.%s.id is empty: ignoring",
+					                 profile.c_str());
+					continue;
+				}
+
+				if ( ids.find(commentProfile.id) != ids.end() ) {
+					SEISCOMP_WARNING("Duplicate olv.originComments.%s.id: ignoring",
+					                 profile.c_str());
+					continue;
+				}
+
+				commentProfile.label = SCApp->configGetString("olv.originComments." + profile + ".label");
+				if ( commentProfile.label.empty() ) {
+					SEISCOMP_WARNING("olv.originComments.%s.label is empty: ignoring",
+					                 profile.c_str());
+					continue;
+				}
+
+				commentProfile.options = SCApp->configGetStrings("olv.originComments." + profile + ".options");
+			}
+			catch ( exception &e ) {
+				SEISCOMP_WARNING("olv.originComments: %s, ignoring %s",
+				                 e.what(), profile.c_str());
+				continue;
+			}
+
+			try {
+				commentProfile.allowFreeText = SCApp->configGetBool("olv.originComments." + profile + ".allowFreeText");
+			}
+			catch ( ... ) {}
+
+			// Preset value if possible
+			auto comment = _currentOrigin->comment(commentProfile.id);
+			if ( comment ) {
+				commentProfile.value = comment->text();
+			}
+
+			options.originCommentProfiles.push_back(commentProfile);
+			ids.insert(commentProfile.id);
+		}
+	}
+	catch ( ... ) {}
+
 	// Populate dialog
 	dlg.setOptions(options, _baseEvent.get(), _localOrigin);
 
-	if ( dlg.exec() == QDialog::Rejected )
+	if ( dlg.exec() == QDialog::Rejected ) {
 		return;
+	}
 
-	if ( dlg.getOptions(options) )
+	if ( dlg.getOptions(options) ) {
 		commitWithOptions(&options);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6728,10 +6832,12 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 		OriginCommitOptions dlg;
 		tmp = *options_ptr;
 		dlg.setOptions(tmp, _baseEvent.get(), _localOrigin);
-		if ( dlg.exec() != QDialog::Accepted )
+		if ( dlg.exec() != QDialog::Accepted ) {
 			return;
-		if ( !dlg.getOptions(tmp) )
+		}
+		if ( !dlg.getOptions(tmp) ) {
 			return;
+		}
 
 		options_ptr = &tmp;
 	}
@@ -6782,25 +6888,29 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 		string type, newType, typeCertainty, newTypeCertainty;
 		string name, comment;
 
-		if ( options.eventType )
+		if ( options.eventType ) {
 			newType = options.eventType->toString();
+		}
 
 		try { type = _baseEvent->type().toString(); }
 		catch ( ... ) {}
 
-		if ( options.eventTypeCertainty )
+		if ( options.eventTypeCertainty ) {
 			newTypeCertainty = options.eventTypeCertainty->toString();
+		}
 
 		try { typeCertainty = _baseEvent->typeCertainty().toString(); }
 		catch ( ... ) {}
 
 		EventDescription *desc = _baseEvent->eventDescription(EventDescriptionIndex(EARTHQUAKE_NAME));
-		if ( desc )
+		if ( desc ) {
 			name = desc->text();
+		}
 
 		Comment *cmt = _baseEvent->comment(CommentIndex("Operator"));
-		if ( cmt )
+		if ( cmt ) {
 			comment = cmt->text();
+		}
 
 		NotifierMessagePtr nm = new NotifierMessage;
 
@@ -6858,6 +6968,52 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 			}
 		}
 
+		for ( const auto &profile : options.originCommentProfiles ) {
+			CommentPtr comment = _currentOrigin->comment(profile.id);
+
+			if ( profile.value.empty() ) {
+				if ( comment ) {
+					_currentOrigin->remove(comment.get());
+					if ( !Notifier::IsEnabled()) {
+						nm->attach(
+							new Notifier(
+								_currentOrigin->publicID(),
+								OP_REMOVE, comment.get()
+							)
+						);
+					}
+				}
+			}
+			else {
+				if ( comment ) {
+					comment->setText(profile.value);
+					comment->update();
+					if ( !Notifier::IsEnabled()) {
+						nm->attach(
+							new Notifier(
+								_currentOrigin->publicID(),
+								OP_UPDATE, comment.get()
+							)
+						);
+					}
+				}
+				else {
+					comment = new Comment;
+					comment->setId(profile.id);
+					comment->setText(profile.value);
+					_currentOrigin->add(comment.get());
+					if ( !Notifier::IsEnabled()) {
+						nm->attach(
+							new Notifier(
+								_currentOrigin->publicID(),
+								OP_ADD, comment.get()
+							)
+						);
+					}
+				}
+			}
+		}
+
 		if ( !nm->empty() ) {
 			if ( SCApp->sendMessage(SCApp->messageGroups().event.c_str(), nm.get()) ) {
 				NotifierMessage::iterator it;
@@ -6867,8 +7023,9 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 		}
 	}
 
-	if ( options.returnToEventList )
+	if ( options.returnToEventList ) {
 		emit eventListRequested();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
