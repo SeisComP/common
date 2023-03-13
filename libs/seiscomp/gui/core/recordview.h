@@ -160,6 +160,9 @@ class SC_GUI_API RecordView : public QWidget {
 		//! Clears all available records
 		void clearRecords();
 
+		//! Clears all available markers
+		void clearMarker();
+
 		//! Sets the height of a row in pixels
 		void setRowHeight(int height, bool allowStretch = false);
 
@@ -268,6 +271,8 @@ class SC_GUI_API RecordView : public QWidget {
 		 * @return The data time window
 		 */
 		Core::TimeWindow coveredTimeRange() const;
+
+		Core::TimeWindow visibleTimeRange() const;
 
 
 	public slots:
