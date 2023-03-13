@@ -1561,8 +1561,8 @@ void RecordView::clear() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::clearRecords() {
-	foreach ( RecordViewItem* item, _items ) {
-		RecordSequence* seq = nullptr;
+	foreach ( RecordViewItem *item, _items ) {
+		RecordSequence *seq = nullptr;
 
 		switch ( _mode ) {
 			case TIME_WINDOW:
@@ -1574,6 +1574,17 @@ void RecordView::clearRecords() {
 		}
 
 		item->setRecords(seq);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordView::clearMarker() {
+	foreach ( RecordViewItem *item, _items ) {
+		item->widget()->clearMarker();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3313,7 +3324,18 @@ Core::TimeWindow RecordView::coveredTimeRange() const {
 
 	return tw;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Core::TimeWindow RecordView::visibleTimeRange() const {
+	return Core::TimeWindow(
+		alignment() + Core::TimeSpan(timeRangeMin()),
+		alignment() + Core::TimeSpan(timeRangeMax())
+	);
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
