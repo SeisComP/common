@@ -12354,6 +12354,42 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Version_majorMinor(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Version *arg1 = (Seiscomp::Core::Version *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::Version::PackType result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Version, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Version_majorMinor" "', argument " "1"" of type '" "Seiscomp::Core::Version const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Version * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Core::Version::PackType)((Seiscomp::Core::Version const *)arg1)->majorMinor();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Version_toString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Version *arg1 = (Seiscomp::Core::Version *) 0 ;
@@ -47597,6 +47633,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "Version_majorTag", _wrap_Version_majorTag, METH_O, NULL},
 	 { "Version_minorTag", _wrap_Version_minorTag, METH_O, NULL},
 	 { "Version_patchTag", _wrap_Version_patchTag, METH_O, NULL},
+	 { "Version_majorMinor", _wrap_Version_majorMinor, METH_O, NULL},
 	 { "Version_toString", _wrap_Version_toString, METH_O, NULL},
 	 { "Version_fromString", _wrap_Version_fromString, METH_VARARGS, NULL},
 	 { "Version_pack", _wrap_Version_pack, METH_VARARGS, NULL},
@@ -49757,7 +49794,7 @@ SWIG_init(void) {
   SWIG_addvarlink(globals, "TimeSpan_MaxTime", Swig_var_TimeSpan_MaxTime_get, Swig_var_TimeSpan_MaxTime_set);
   SWIG_addvarlink(globals, "Time_Null", Swig_var_Time_Null_get, Swig_var_Time_Null_set);
   SWIG_addvarlink(globals, "Unset", Swig_var_Unset_get, Swig_var_Unset_set);
-  SWIG_Python_SetConstant(d, "SC_API_VERSION",SWIG_From_int(static_cast< int >(0x0F0200)));
+  SWIG_Python_SetConstant(d, "SC_API_VERSION",SWIG_From_int(static_cast< int >(0x0F0400)));
   SWIG_addvarlink(globals, "CurrentVersion", Swig_var_CurrentVersion_get, Swig_var_CurrentVersion_set);
   SWIG_Python_SetConstant(d, "GenericArchive_NONE",SWIG_From_int(static_cast< int >(Seiscomp::Core::Generic::Archive< Seiscomp::Core::BaseObject >::NONE)));
   SWIG_Python_SetConstant(d, "GenericArchive_STATIC_TYPE",SWIG_From_int(static_cast< int >(Seiscomp::Core::Generic::Archive< Seiscomp::Core::BaseObject >::STATIC_TYPE)));

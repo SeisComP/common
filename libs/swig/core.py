@@ -686,6 +686,9 @@ class Version(object):
     def patchTag(self):
         return _core.Version_patchTag(self)
 
+    def majorMinor(self):
+        return _core.Version_majorMinor(self)
+
     def toString(self):
         return _core.Version_toString(self)
 
