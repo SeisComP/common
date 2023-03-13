@@ -200,6 +200,7 @@ const IDList StdLoc::_allowedParameters = {
     "method",
     "tttType",
     "tttModel",
+    "PSTableOnly",
     "GridSearch.center",
     "GridSearch.autoLatLon",
     "GridSearch.size",
@@ -228,6 +229,7 @@ bool StdLoc::init(const Config::Config &config) {
   defaultProf.method = Profile::Method::GridAndLsqr;
   defaultProf.tttType = "libtau";
   defaultProf.tttModel = "iasp91";
+  defaultProf.PSTableOnly = true;
   defaultProf.gridSearch.autoLatLon = true;
   defaultProf.gridSearch.originLat = 0.;
   defaultProf.gridSearch.originLon = 0.;
@@ -280,6 +282,11 @@ bool StdLoc::init(const Config::Config &config) {
 
     try {
       prof.tttModel = config.getString(prefix + "tableModel");
+    } catch (...) {
+    }
+
+    try {
+      prof.PSTableOnly = config.getBool(prefix + "PSTableOnly");
     } catch (...) {
     }
 
@@ -430,6 +437,8 @@ string StdLoc::parameter(const string &name) const {
     return _currentProfile.tttType;
   } else if (name == "tttModel") {
     return _currentProfile.tttModel;
+  } else if (name == "PSTableOnly") {
+    return _currentProfile.PSTableOnly ? "y" : "n";
   } else if (name == "LeastSquares.iterations") {
     return Core::toString(_currentProfile.leastSquare.iterations);
   } else if (name == "LeastSquares.dampingFactor") {
@@ -490,6 +499,9 @@ bool StdLoc::setParameter(const string &name, const string &value) {
     return true;
   } else if (name == "tttModel") {
     _currentProfile.tttModel = value;
+    return true;
+  } else if (name == "PSTableOnly") {
+    _currentProfile.PSTableOnly = (value == "y");
     return true;
   } else if (name == "LeastSquares.iterations") {
     int tmp;
@@ -894,9 +906,16 @@ void StdLoc::locateGridSearch(
 
           TravelTime tt;
           try {
-            tt = _ttt->compute(pick->phaseHint().code().c_str(), cellLat,
-                               cellLon, cellDepth, sensorLat[i], sensorLon[i],
-                               sensorElev[i]);
+            const char * phaseName = pick->phaseHint().code().c_str();
+            if (_currentProfile.PSTableOnly) {
+              if (*pick->phaseHint().code().begin() == 'P') {
+                phaseName = "P";
+              } else if (*pick->phaseHint().code().begin() == 'S') {
+                phaseName = "S";
+              }
+            }
+            tt = _ttt->compute(phaseName, cellLat, cellLon, cellDepth,
+                               sensorLat[i], sensorLon[i], sensorElev[i]);
           } catch (exception &e) {
             SEISCOMP_ERROR("Travel Time Table error for %s@%s.%s.%s and lat "
                            "%.6f lon %.6f depth %.3f: %s",
@@ -1079,9 +1098,16 @@ void StdLoc::locateLeastSquares(
 
       TravelTime tt;
       try {
-        tt =
-            _ttt->compute(pick->phaseHint().code().c_str(), initLat, initLon,
-                          initDepth, sensorLat[i], sensorLon[i], sensorElev[i]);
+        const char * phaseName = pick->phaseHint().code().c_str();
+        if (_currentProfile.PSTableOnly) {
+          if (*pick->phaseHint().code().begin() == 'P') {
+            phaseName = "P";
+          } else if (*pick->phaseHint().code().begin() == 'S') {
+            phaseName = "S";
+          }
+        }
+        tt = _ttt->compute(phaseName, initLat, initLon, initDepth, sensorLat[i],
+                           sensorLon[i], sensorElev[i]);
 
       } catch (exception &e) {
         SEISCOMP_ERROR("Travel Time Table error for %s@%s.%s.%s and lat %.6f "

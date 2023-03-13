@@ -121,6 +121,7 @@ private:
     } method;
     std::string tttType;
     std::string tttModel;
+    bool PSTableOnly;
     struct {
       double autoLatLon;
       double originLat;
