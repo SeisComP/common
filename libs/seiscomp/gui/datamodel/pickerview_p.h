@@ -39,12 +39,6 @@
 #include <seiscomp/gui/datamodel/ui_pickerview.h>
 
 
-// Ui forward declaration
-namespace Ui {
-	class PickerView;
-}
-
-
 namespace Seiscomp {
 namespace Gui {
 

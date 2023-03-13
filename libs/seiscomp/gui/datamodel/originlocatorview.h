@@ -203,6 +203,9 @@ class SC_GUI_API OriginLocatorPlot : public DiagramWidget {
 };
 
 
+class OriginLocatorViewPrivate;
+
+
 class SC_GUI_API OriginLocatorView : public QWidget {
 	Q_OBJECT
 
@@ -459,78 +462,7 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 
 
 	private:
-		typedef QPair<QLabel*,QLabel*> ScriptLabel;
-		typedef QHash<QString, ScriptLabel> ScriptLabelMap;
-		struct OriginMemento {
-			OriginMemento() {}
-			OriginMemento(DataModel::Origin* o)
-			 : origin(o) {}
-			OriginMemento(DataModel::Origin* o, const PickSet &ps,
-			              const AmplitudeSet &as, bool newOne)
-			 : origin(o), newPicks(ps), newAmplitudes(as), newOrigin(newOne) {}
-
-			DataModel::OriginPtr origin;
-			PickSet              newPicks;
-			AmplitudeSet         newAmplitudes;
-			bool                 newOrigin;
-		};
-
-		Seiscomp::DataModel::DatabaseQuery   *_reader;
-		Map::ImageTreePtr                     _maptree;
-		::Ui::OriginLocatorView              *_ui;
-		QTabBar                              *_plotTab;
-		OriginLocatorMap                     *_map;
-		OriginLocatorMap                     *_toolMap;
-		PickerView                           *_recordView;
-		DiagramWidget                        *_residuals;
-		ArrivalModel                          _modelArrivals;
-		QSortFilterProxyModel                *_modelArrivalsProxy;
-		DataModel::EventPtr                   _baseEvent;
-		DataModel::OriginPtr                  _currentOrigin;
-		DataModel::OriginPtr                  _baseOrigin;
-		DataModel::EvaluationStatus           _newOriginStatus;
-		std::string                           _preferredFocMech;
-		bool                                  _localOrigin;
-
-		OPT(DataModel::EventType)             _defaultEventType;
-
-		QStack<OriginMemento>                 _undoList;
-		QStack<OriginMemento>                 _redoList;
-
-		QTreeWidgetItem                      *_unassociatedEventItem;
-		PickMap                               _associatedPicks;
-		PickList                              _originPicks;
-		PickSet                               _changedPicks;
-		AmplitudeSet                          _changedAmplitudes;
-		double                                _minimumDepth;
-		Seismology::LocatorInterfacePtr       _locator;
-		std::string                           _defaultEarthModel;
-		TravelTimeTable                       _ttTable;
-
-		ScriptLabelMap                        _scriptLabelMap;
-
-		bool                                  _blockReadPicks;
-
-		// Manual picker configuration attributes
-		Config                                _config;
-		PickerView::Config                    _pickerConfig;
-		std::string                           _script0;
-		std::string                           _script1;
-
-		std::string                           _displayCommentID;
-		std::string                           _displayCommentDefault;
-		bool                                  _displayComment;
-
-		int                                   _blinkCounter;
-		char                                  _blinker;
-		QColor                                _blinkColor;
-		QWidget                              *_blinkWidget;
-		QTimer                                _blinkTimer;
-		QMenu                                *_commitMenu;
-		QAction                              *_actionCommitOptions;
-
-		DiagramFilterSettingsDialog          *_plotFilterSettings;
-		DiagramFilterSettingsDialog::Filter  *_plotFilter;
+		OriginLocatorViewPrivate *_d_ptr;
 };
 
 

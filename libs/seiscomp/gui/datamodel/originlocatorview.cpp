@@ -21,6 +21,8 @@
 #define SEISCOMP_COMPONENT Gui::OriginLocatorView
 
 #include "originlocatorview.h"
+#include "originlocatorview_p.h"
+
 #include <seiscomp/gui/datamodel/ui_originlocatorview.h>
 #include <seiscomp/gui/core/ui_diagramfilter.h>
 
@@ -71,10 +73,15 @@
 #include <QWidget>
 
 #include <algorithm>
+#include <set>
 
 #ifdef WIN32
 #define snprintf _snprintf
 #endif
+
+
+#define SC_D (*_d_ptr)
+
 
 using namespace std;
 using namespace Seiscomp;
@@ -88,24 +95,27 @@ namespace {
 
 
 struct CommitOptions {
-	CommitOptions()
-	: valid(false)
-	, forceEventAssociation(false)
-	, fixOrigin(false)
-	, returnToEventList(false)
-	, askForConfirmation(false) {}
+	bool                         valid{false};
+	bool                         forceEventAssociation{false};
+	bool                         fixOrigin{false};
+	bool                         returnToEventList{false};
+	bool                         askForConfirmation{false};
+	OPT(EventType)               eventType;
+	OPT(EventTypeCertainty)      eventTypeCertainty;
+	OPT(OPT(EvaluationStatus))   originStatus;
+	OPT(string)                  magnitudeType;
+	string                       eventName;
+	string                       eventComment;
 
-	bool                       valid;
-	bool                       forceEventAssociation;
-	bool                       fixOrigin;
-	bool                       returnToEventList;
-	bool                       askForConfirmation;
-	OPT(EventType)             eventType;
-	OPT(EventTypeCertainty)    eventTypeCertainty;
-	OPT(OPT(EvaluationStatus)) originStatus;
-	OPT(string)                magnitudeType;
-	string                     eventName;
-	string                     eventComment;
+	struct OriginCommentProfile {
+		string         id;
+		string         value; // Output value
+		string         label;
+		vector<string> options;
+		bool           allowFreeText{false};
+	};
+
+	vector<OriginCommentProfile> originCommentProfiles;
 };
 
 
@@ -607,6 +617,34 @@ class OriginCommitOptions : public QDialog {
 				if ( idx != -1 )
 					ui.comboOriginStates->setCurrentIndex(idx);
 			}
+
+			for ( auto comboBox : originComments ) {
+				delete comboBox;
+			}
+			originComments.clear();
+
+			for ( auto &profile : options.originCommentProfiles ) {
+				ui.frameEventOptions->layout()->addWidget(new QLabel((profile.label + ":").c_str()));
+				QComboBox *comboComment = new QComboBox;
+				comboComment->setProperty("id", QString(profile.id.c_str()));
+				comboComment->setEditable(profile.allowFreeText);
+				comboComment->setToolTip(
+					tr("Populates comment with id '%1'")
+					.arg(profile.id.c_str())
+				);
+				for ( auto &option : profile.options ) {
+					comboComment->addItem(option.c_str());
+				}
+				auto idx = comboComment->findText(profile.value.c_str());
+				if ( idx >= 0 ) {
+					comboComment->setCurrentIndex(idx);
+				}
+				else if ( profile.allowFreeText ) {
+					comboComment->setEditText(profile.value.c_str());
+				}
+				originComments.append(comboComment);
+				ui.frameEventOptions->layout()->addWidget(comboComment);
+			}
 		}
 
 		bool getOptions(CommitOptions &options) {
@@ -623,8 +661,9 @@ class OriginCommitOptions : public QDialog {
 					return false;
 				}
 			}
-			else
+			else {
 				options.eventType = Core::None;
+			}
 
 			if ( ui.comboEventTypeCertainty->currentIndex() > 0 ) {
 				EventTypeCertainty typeCertainty;
@@ -635,8 +674,9 @@ class OriginCommitOptions : public QDialog {
 					return false;
 				}
 			}
-			else
+			else {
 				options.eventTypeCertainty = Core::None;
+			}
 
 			if ( ui.comboOriginStates->currentIndex() > 0 ) {
 				EvaluationStatus originStatus;
@@ -657,10 +697,22 @@ class OriginCommitOptions : public QDialog {
 
 			options.eventName = ui.editEQName->text().toStdString();
 
-			if ( commentOptions.empty() )
+			if ( commentOptions.empty() ) {
 				options.eventComment = ui.editEQComment->text().toStdString();
-			else
+			}
+			else {
 				options.eventComment = ui.comboEQComment->currentText().toStdString();
+			}
+
+			for ( auto comboBox : originComments ) {
+				auto id = comboBox->property("id").toString().toStdString();
+				for ( auto &profile : options.originCommentProfiles ) {
+					if ( profile.id == id ) {
+						profile.value = comboBox->currentText().toStdString();
+						break;
+					}
+				}
+			}
 
 			return true;
 		}
@@ -668,7 +720,8 @@ class OriginCommitOptions : public QDialog {
 
 	public:
 		Ui::OriginCommitOptions ui;
-		vector<string> commentOptions;
+		vector<string>          commentOptions;
+		QVector<QComboBox*>     originComments;
 };
 
 
@@ -2585,13 +2638,8 @@ OriginLocatorView::OriginLocatorView(const MapsDesc &maps,
                                      const PickerView::Config &pickerConfig,
                                      QWidget * parent, Qt::WindowFlags f)
 : QWidget(parent, f)
-, _ui(new Ui::OriginLocatorView)
-, _toolMap(nullptr)
-, _recordView(nullptr)
-, _currentOrigin(nullptr)
-, _baseOrigin(nullptr)
-, _pickerConfig(pickerConfig) {
-	_maptree = new Map::ImageTree(maps);
+, _d_ptr(new OriginLocatorViewPrivate(pickerConfig)) {
+	SC_D.maptree = new Map::ImageTree(maps);
 	init();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2604,13 +2652,8 @@ OriginLocatorView::OriginLocatorView(Map::ImageTree* mapTree,
                                      const PickerView::Config &pickerConfig,
                                      QWidget * parent, Qt::WindowFlags f)
 : QWidget(parent, f)
-, _ui(new Ui::OriginLocatorView)
-, _toolMap(nullptr)
-, _recordView(nullptr)
-, _currentOrigin(nullptr)
-, _baseOrigin(nullptr)
-, _pickerConfig(pickerConfig) {
-	_maptree = mapTree;
+, _d_ptr(new OriginLocatorViewPrivate(pickerConfig)) {
+	SC_D.maptree = mapTree;
 	init();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2636,164 +2679,164 @@ void OriginLocatorPlot::commitWithMTTriggered(bool) {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::init() {
-	_ui->setupUi(this);
+	SC_D.ui.setupUi(this);
 
-	_blinkWidget = nullptr;
-	_newOriginStatus = CONFIRMED;
+	SC_D.blinkWidget = nullptr;
+	SC_D.newOriginStatus = CONFIRMED;
 
 	QObject *drawFilter = new ElideFadeDrawer(this);
 
-	_ui->labelRegion->setFont(SCScheme.fonts.heading3);
-	_ui->labelRegion->installEventFilter(drawFilter);
-	_ui->label_15->setFont(SCScheme.fonts.normal);
-	_ui->label_12->setFont(SCScheme.fonts.normal);
-	_ui->label_10->setFont(SCScheme.fonts.normal);
-	_ui->label_11->setFont(SCScheme.fonts.normal);
-	_ui->label_8->setFont(SCScheme.fonts.normal);
-	_ui->label_13->setFont(SCScheme.fonts.normal);
-	_ui->label_7->setFont(SCScheme.fonts.normal);
-	_ui->label_9->setFont(SCScheme.fonts.normal);
-	_ui->labelTime->setFont(SCScheme.fonts.highlight);
-	_ui->labelDepth->setFont(SCScheme.fonts.highlight);
-	_ui->labelDepthUnit->setFont(SCScheme.fonts.normal);
-	_ui->labelDepthError->setFont(SCScheme.fonts.normal);
-	_ui->labelDepthErrorUnit->setFont(SCScheme.fonts.normal);
-	_ui->labelLatitude->setFont(SCScheme.fonts.highlight);
-	_ui->labelLatitudeUnit->setFont(SCScheme.fonts.normal);
-	_ui->labelLatitudeError->setFont(SCScheme.fonts.normal);
-	_ui->labelLatitudeErrorUnit->setFont(SCScheme.fonts.normal);
-	_ui->labelLongitude->setFont(SCScheme.fonts.highlight);
-	_ui->labelLongitudeUnit->setFont(SCScheme.fonts.normal);
-	_ui->labelLongitudeError->setFont(SCScheme.fonts.normal);
-	_ui->labelLongitudeErrorUnit->setFont(SCScheme.fonts.normal);
-	_ui->labelNumPhases->setFont(SCScheme.fonts.highlight);
-	_ui->labelNumPhasesUnit->setFont(SCScheme.fonts.normal);
-	_ui->labelNumPhasesError->setFont(SCScheme.fonts.normal);
-	_ui->labelStdError->setFont(SCScheme.fonts.normal);
-	_ui->labelStdErrorUnit->setFont(SCScheme.fonts.normal);
-	_ui->lbComment->setFont(SCScheme.fonts.normal);
-	_ui->labelComment->setFont(SCScheme.fonts.normal);
-	_ui->labelAzimuthGap->setFont(SCScheme.fonts.normal);
-	_ui->labelAzimuthGapUnit->setFont(SCScheme.fonts.normal);
-	_ui->labelMinDist->setFont(SCScheme.fonts.normal);
-	_ui->labelMinDistUnit->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelRegion->setFont(SCScheme.fonts.heading3);
+	SC_D.ui.labelRegion->installEventFilter(drawFilter);
+	SC_D.ui.label_15->setFont(SCScheme.fonts.normal);
+	SC_D.ui.label_12->setFont(SCScheme.fonts.normal);
+	SC_D.ui.label_10->setFont(SCScheme.fonts.normal);
+	SC_D.ui.label_11->setFont(SCScheme.fonts.normal);
+	SC_D.ui.label_8->setFont(SCScheme.fonts.normal);
+	SC_D.ui.label_13->setFont(SCScheme.fonts.normal);
+	SC_D.ui.label_7->setFont(SCScheme.fonts.normal);
+	SC_D.ui.label_9->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelTime->setFont(SCScheme.fonts.highlight);
+	SC_D.ui.labelDepth->setFont(SCScheme.fonts.highlight);
+	SC_D.ui.labelDepthUnit->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelDepthError->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelDepthErrorUnit->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelLatitude->setFont(SCScheme.fonts.highlight);
+	SC_D.ui.labelLatitudeUnit->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelLatitudeError->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelLatitudeErrorUnit->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelLongitude->setFont(SCScheme.fonts.highlight);
+	SC_D.ui.labelLongitudeUnit->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelLongitudeError->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelLongitudeErrorUnit->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelNumPhases->setFont(SCScheme.fonts.highlight);
+	SC_D.ui.labelNumPhasesUnit->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelNumPhasesError->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelStdError->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelStdErrorUnit->setFont(SCScheme.fonts.normal);
+	SC_D.ui.lbComment->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelComment->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelAzimuthGap->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelAzimuthGapUnit->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelMinDist->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelMinDistUnit->setFont(SCScheme.fonts.normal);
 
 	ElideFadeDrawer *elider = new ElideFadeDrawer(this);
 
 	/*
-	_ui->lbEventID->setFont(SCScheme.fonts.normal);
-	_ui->lbAgencyID->setFont(SCScheme.fonts.normal);
-	_ui->lbUser->setFont(SCScheme.fonts.normal);
-	_ui->lbEvaluation->setFont(SCScheme.fonts.normal);
-	_ui->labelEventID->setFont(SCScheme.fonts.normal);
-	_ui->labelAgency->setFont(SCScheme.fonts.highlight);
-	//setBold(_ui->labelAgency, true);
-	_ui->labelEvaluation->setFont(SCScheme.fonts.normal);
-	_ui->labelUser->setFont(SCScheme.fonts.highlight);
-	//setBold(_ui->labelUser, true);
+	SC_D.ui.lbEventID->setFont(SCScheme.fonts.normal);
+	SC_D.ui.lbAgencyID->setFont(SCScheme.fonts.normal);
+	SC_D.ui.lbUser->setFont(SCScheme.fonts.normal);
+	SC_D.ui.lbEvaluation->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelEventID->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelAgency->setFont(SCScheme.fonts.highlight);
+	//setBold(SC_D.ui.labelAgency, true);
+	SC_D.ui.labelEvaluation->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelUser->setFont(SCScheme.fonts.highlight);
+	//setBold(SC_D.ui.labelUser, true);
 
-	_ui->lbMethod->setFont(SCScheme.fonts.normal);
-	_ui->lbEarthModel->setFont(SCScheme.fonts.normal);
-	_ui->labelMethod->setFont(SCScheme.fonts.normal);
-	_ui->labelEarthModel->setFont(SCScheme.fonts.normal);
+	SC_D.ui.lbMethod->setFont(SCScheme.fonts.normal);
+	SC_D.ui.lbEarthModel->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelMethod->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelEarthModel->setFont(SCScheme.fonts.normal);
 	*/
 
-	setBold(_ui->labelAgency, true);
-	setBold(_ui->labelUser, true);
+	setBold(SC_D.ui.labelAgency, true);
+	setBold(SC_D.ui.labelUser, true);
 
-	_ui->labelEventID->installEventFilter(elider);
-	_ui->labelAgency->installEventFilter(elider);
-	_ui->labelUser->installEventFilter(elider);
-	_ui->labelEvaluation->installEventFilter(elider);
+	SC_D.ui.labelEventID->installEventFilter(elider);
+	SC_D.ui.labelAgency->installEventFilter(elider);
+	SC_D.ui.labelUser->installEventFilter(elider);
+	SC_D.ui.labelEvaluation->installEventFilter(elider);
 
-	_ui->labelMethod->installEventFilter(elider);
-	_ui->labelEarthModel->installEventFilter(elider);
+	SC_D.ui.labelMethod->installEventFilter(elider);
+	SC_D.ui.labelEarthModel->installEventFilter(elider);
 
 	if ( SCScheme.unit.distanceInKM )
-		_ui->labelMinDistUnit->setText("km");
+		SC_D.ui.labelMinDistUnit->setText("km");
 
-	_ui->btnMagnitudes->setEnabled(false);
-	_ui->btnMagnitudes->setVisible(false);
+	SC_D.ui.btnMagnitudes->setEnabled(false);
+	SC_D.ui.btnMagnitudes->setVisible(false);
 
-	_reader = nullptr;
-	_plotFilter = nullptr;
-	_plotFilterSettings = nullptr;
+	SC_D.reader = nullptr;
+	SC_D.plotFilter = nullptr;
+	SC_D.plotFilterSettings = nullptr;
 
-	_ui->btnCustom0->setVisible(false);
-	_ui->btnCustom1->setVisible(false);
+	SC_D.ui.btnCustom0->setVisible(false);
+	SC_D.ui.btnCustom1->setVisible(false);
 
-	_commitMenu = new QMenu(this);
-	_actionCommitOptions = _commitMenu->addAction("With additional options...");
+	SC_D.commitMenu = new QMenu(this);
+	SC_D.actionCommitOptions = SC_D.commitMenu->addAction("With additional options...");
 
-	_ui->btnCommit->setMenu(_commitMenu);
+	SC_D.ui.btnCommit->setMenu(SC_D.commitMenu);
 
-	_ui->editFixedDepth->setValidator(new QDoubleValidator(0, 1000.0, 3, _ui->editFixedDepth));
-	_ui->editDistanceCutOff->setValidator(new QDoubleValidator(0, 25000.0, 3, _ui->editFixedDepth));
-	_ui->editDistanceCutOff->setText("1000");
+	SC_D.ui.editFixedDepth->setValidator(new QDoubleValidator(0, 1000.0, 3, SC_D.ui.editFixedDepth));
+	SC_D.ui.editDistanceCutOff->setValidator(new QDoubleValidator(0, 25000.0, 3, SC_D.ui.editFixedDepth));
+	SC_D.ui.editDistanceCutOff->setText("1000");
 
-	_modelArrivalsProxy = nullptr;
-	_modelArrivals.setDisabledForeground(palette().color(QPalette::Disabled, QPalette::Text));
+	SC_D.modelArrivalsProxy = nullptr;
+	SC_D.modelArrivals.setDisabledForeground(palette().color(QPalette::Disabled, QPalette::Text));
 
-	ArrivalDelegate *delegate = new ArrivalDelegate(_ui->tableArrivals);
+	ArrivalDelegate *delegate = new ArrivalDelegate(SC_D.ui.tableArrivals);
 #if QT_VERSION >= 0x050000
-	_ui->tableArrivals->horizontalHeader()->setSectionsMovable(true);
+	SC_D.ui.tableArrivals->horizontalHeader()->setSectionsMovable(true);
 #else
-	_ui->tableArrivals->horizontalHeader()->setMovable(true);
+	SC_D.ui.tableArrivals->horizontalHeader()->setMovable(true);
 #endif
-	_ui->tableArrivals->setItemDelegate(delegate);
-	_ui->tableArrivals->setMouseTracking(true);
-	_ui->tableArrivals->resizeColumnToContents(0);
+	SC_D.ui.tableArrivals->setItemDelegate(delegate);
+	SC_D.ui.tableArrivals->setMouseTracking(true);
+	SC_D.ui.tableArrivals->resizeColumnToContents(0);
 
-	connect(_ui->tableArrivals->horizontalHeader(), SIGNAL(sectionClicked(int)),
-	        _ui->tableArrivals, SLOT(sortByColumn(int)));
+	connect(SC_D.ui.tableArrivals->horizontalHeader(), SIGNAL(sectionClicked(int)),
+	        SC_D.ui.tableArrivals, SLOT(sortByColumn(int)));
 
-	connect(_ui->tableArrivals, SIGNAL(customContextMenuRequested(const QPoint &)),
+	connect(SC_D.ui.tableArrivals, SIGNAL(customContextMenuRequested(const QPoint &)),
 	        this, SLOT(tableArrivalsContextMenuRequested(const QPoint &)));
 
-	connect(&_modelArrivals, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+	connect(&SC_D.modelArrivals, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
 	        this, SLOT(dataChanged(const QModelIndex&, const QModelIndex&)));
 
-	connect(_ui->tableArrivals->horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint &)),
+	connect(SC_D.ui.tableArrivals->horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint &)),
 	        this, SLOT(tableArrivalsHeaderContextMenuRequested(const QPoint &)));
 
-	_ui->tableArrivals->setContextMenuPolicy(Qt::CustomContextMenu);
-	_ui->tableArrivals->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-	_ui->tableArrivals->horizontalHeader()->setSortIndicatorShown(true);
-	_ui->tableArrivals->horizontalHeader()->setSortIndicator(DISTANCE, Qt::AscendingOrder);
-	//_ui->tableArrivals->horizontalHeader()->setStretchLastSection(true);
+	SC_D.ui.tableArrivals->setContextMenuPolicy(Qt::CustomContextMenu);
+	SC_D.ui.tableArrivals->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+	SC_D.ui.tableArrivals->horizontalHeader()->setSortIndicatorShown(true);
+	SC_D.ui.tableArrivals->horizontalHeader()->setSortIndicator(DISTANCE, Qt::AscendingOrder);
+	//SC_D.ui.tableArrivals->horizontalHeader()->setStretchLastSection(true);
 
 #if QT_VERSION >= 0x050000
-	_ui->tableArrivals->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	SC_D.ui.tableArrivals->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 #else
-	_ui->tableArrivals->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+	SC_D.ui.tableArrivals->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
 #endif
 
-	_ui->tableArrivals->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	SC_D.ui.tableArrivals->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
 	QAction *action = new QAction(this);
 	action->setShortcut(Qt::Key_Escape);
 	connect(action, SIGNAL(triggered()),
-	        _ui->tableArrivals, SLOT(clearSelection()));
+	        SC_D.ui.tableArrivals, SLOT(clearSelection()));
 
 	addAction(action);
 
-	_residuals = new PlotWidget(_ui->groupResiduals, &_modelArrivals);
-	_residuals->setEnabled(false);
-	_residuals->setColumnCount(PlotCols::Quantity);
+	SC_D.residuals = new PlotWidget(SC_D.ui.groupResiduals, &SC_D.modelArrivals);
+	SC_D.residuals->setEnabled(false);
+	SC_D.residuals->setColumnCount(PlotCols::Quantity);
 
-	_residuals->setErrorBarPens(SCScheme.colors.arrivals.uncertainties, SCScheme.colors.arrivals.defaultUncertainties);
-	_residuals->setValueDisabledColor(SCScheme.colors.arrivals.disabled);
-	_residuals->setDisplayRect(QRectF(0,-10,180,20));
+	SC_D.residuals->setErrorBarPens(SCScheme.colors.arrivals.uncertainties, SCScheme.colors.arrivals.defaultUncertainties);
+	SC_D.residuals->setValueDisabledColor(SCScheme.colors.arrivals.disabled);
+	SC_D.residuals->setDisplayRect(QRectF(0,-10,180,20));
 
-	_map = new OriginLocatorMap(_maptree.get(), _ui->frameMap);
-	_map->setMouseTracking(true);
-	_map->setOriginCreationEnabled(true);
+	SC_D.map = new OriginLocatorMap(SC_D.maptree.get(), SC_D.ui.frameMap);
+	SC_D.map->setMouseTracking(true);
+	SC_D.map->setOriginCreationEnabled(true);
 
 	try {
-		_map->setStationsMaxDist(SCApp->configGetDouble("olv.map.stations.unassociatedMaxDist"));
+		SC_D.map->setStationsMaxDist(SCApp->configGetDouble("olv.map.stations.unassociatedMaxDist"));
 	}
 	catch ( ... ) {
-		_map->setStationsMaxDist(360);
+		SC_D.map->setStationsMaxDist(360);
 	}
 
 	// Read custom column configuration
@@ -2801,11 +2844,11 @@ void OriginLocatorView::init() {
 		std::vector<std::string> processProfiles =
 			SCApp->configGetStrings("display.origin.addons");
 
-		QGridLayout *grid = static_cast<QGridLayout*>(_ui->groupBox->layout());
+		QGridLayout *grid = static_cast<QGridLayout*>(SC_D.ui.groupBox->layout());
 		int row, col, rowSpan, colSpan;
 
 		if ( !processProfiles.empty() ) {
-			grid->getItemPosition(grid->indexOf(_ui->frameInfoSeparator),
+			grid->getItemPosition(grid->indexOf(SC_D.ui.frameInfoSeparator),
 			                      &row, &col, &rowSpan, &colSpan);
 		}
 
@@ -2830,7 +2873,7 @@ void OriginLocatorView::init() {
 
 			QLabel *addonLabel = new QLabel;
 			addonLabel->setText(label + ":");
-			addonLabel->setAlignment(_ui->lbEventID->alignment());
+			addonLabel->setAlignment(SC_D.ui.lbEventID->alignment());
 			QLabel *addonText = new QLabel;
 
 			row = grid->rowCount();
@@ -2838,12 +2881,12 @@ void OriginLocatorView::init() {
 			grid->addWidget(addonText, row, 1, 1, grid->columnCount()-1);
 			++row;
 
-			_scriptLabelMap[script] = ScriptLabel(addonLabel, addonText);
+			SC_D.scriptLabelMap[script] = OriginLocatorViewPrivate::ScriptLabel(addonLabel, addonText);
 		}
 	}
 	catch ( ... ) {}
 
-	if ( !_scriptLabelMap.isEmpty() ) {
+	if ( !SC_D.scriptLabelMap.isEmpty() ) {
 		connect(&PublicObjectEvaluator::Instance(), SIGNAL(resultAvailable(const QString &, const QString &, const QString &, const QString &)),
 		        this, SLOT(evalResultAvailable(const QString &, const QString &, const QString &, const QString &)));
 		connect(&PublicObjectEvaluator::Instance(), SIGNAL(resultError(const QString &, const QString &, const QString &, int)),
@@ -2856,96 +2899,97 @@ void OriginLocatorView::init() {
 		                                  bool, bool)));
 	}
 
-	QHBoxLayout* hboxLayout = new QHBoxLayout(_ui->frameMap);
+	QHBoxLayout* hboxLayout = new QHBoxLayout(SC_D.ui.frameMap);
 	hboxLayout->setObjectName("hboxLayoutMap");
 	hboxLayout->setSpacing(6);
 	hboxLayout->setMargin(0);
-	hboxLayout->addWidget(_map);
+	hboxLayout->addWidget(SC_D.map);
 
-	_plotTab = new QTabBar(_ui->groupResiduals);
-	_plotTab->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
-	_plotTab->setShape(QTabBar::RoundedNorth);
+	SC_D.plotTab = new QTabBar(SC_D.ui.groupResiduals);
+	SC_D.plotTab->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
+	SC_D.plotTab->setShape(QTabBar::RoundedNorth);
 
-	for ( int i = 0; i < PlotTabs::Quantity; ++i )
-		_plotTab->addTab(EPlotTabsNames::name(i));
+	for ( int i = 0; i < PlotTabs::Quantity; ++i ) {
+		SC_D.plotTab->addTab(EPlotTabsNames::name(i));
+	}
 
-	_plotTab->setCurrentIndex(0);
+	SC_D.plotTab->setCurrentIndex(0);
 
-	QLayoutItem *item = _ui->groupResiduals->layout()->takeAt(0);
+	QLayoutItem *item = SC_D.ui.groupResiduals->layout()->takeAt(0);
 
-	_ui->groupResiduals->layout()->addWidget(_plotTab);
-	_ui->groupResiduals->layout()->addItem(item);
-	_ui->groupResiduals->layout()->addWidget(_residuals);
+	SC_D.ui.groupResiduals->layout()->addWidget(SC_D.plotTab);
+	SC_D.ui.groupResiduals->layout()->addItem(item);
+	SC_D.ui.groupResiduals->layout()->addWidget(SC_D.residuals);
 
-	connect(_plotTab, SIGNAL(currentChanged(int)), this, SLOT(plotTabChanged(int)));
+	connect(SC_D.plotTab, SIGNAL(currentChanged(int)), this, SLOT(plotTabChanged(int)));
 
-	plotTabChanged(_plotTab->currentIndex());
-	connect(_ui->labelPlotFilter, SIGNAL(linkActivated(const QString &)), this, SLOT(changePlotFilter()));
+	plotTabChanged(SC_D.plotTab->currentIndex());
+	connect(SC_D.ui.labelPlotFilter, SIGNAL(linkActivated(const QString &)), this, SLOT(changePlotFilter()));
 
-	connect(_residuals, SIGNAL(valueActiveStateChanged(int,bool)), this, SLOT(changeArrival(int,bool)));
-	connect(_residuals, SIGNAL(endSelection()), this, SLOT(residualsSelected()));
-	connect(_residuals, SIGNAL(adjustZoomRect(QRectF&)), this, SLOT(adjustResidualsRect(QRectF&)));
-	connect(_residuals, SIGNAL(hover(int)), this, SLOT(hoverArrival(int)));
-	connect(_residuals, SIGNAL(clicked(int)), this, SLOT(selectArrival(int)));
-	connect(_residuals, SIGNAL(focalMechanismCommitted(bool, QPoint)),
+	connect(SC_D.residuals, SIGNAL(valueActiveStateChanged(int,bool)), this, SLOT(changeArrival(int,bool)));
+	connect(SC_D.residuals, SIGNAL(endSelection()), this, SLOT(residualsSelected()));
+	connect(SC_D.residuals, SIGNAL(adjustZoomRect(QRectF&)), this, SLOT(adjustResidualsRect(QRectF&)));
+	connect(SC_D.residuals, SIGNAL(hover(int)), this, SLOT(hoverArrival(int)));
+	connect(SC_D.residuals, SIGNAL(clicked(int)), this, SLOT(selectArrival(int)));
+	connect(SC_D.residuals, SIGNAL(focalMechanismCommitted(bool, QPoint)),
 	        this, SLOT(commitFocalMechanism(bool)));
 
-	connect(_map, SIGNAL(arrivalChanged(int,bool)), this, SLOT(changeArrival(int,bool)));
-	connect(_map, SIGNAL(hoverArrival(int)), this, SLOT(hoverArrival(int)));
-	connect(_map, SIGNAL(clickedArrival(int)), this, SLOT(selectArrival(int)));
-	connect(_map, SIGNAL(clickedStation(const std::string &, const std::string &)),
+	connect(SC_D.map, SIGNAL(arrivalChanged(int,bool)), this, SLOT(changeArrival(int,bool)));
+	connect(SC_D.map, SIGNAL(hoverArrival(int)), this, SLOT(hoverArrival(int)));
+	connect(SC_D.map, SIGNAL(clickedArrival(int)), this, SLOT(selectArrival(int)));
+	connect(SC_D.map, SIGNAL(clickedStation(const std::string &, const std::string &)),
 	        this, SLOT(selectStation(const std::string &, const std::string &)));
-	connect(_map, SIGNAL(artificialOriginRequested(const QPointF &, const QPoint &)),
+	connect(SC_D.map, SIGNAL(artificialOriginRequested(const QPointF &, const QPoint &)),
 	        this, SLOT(createArtificialOrigin(const QPointF &, const QPoint &)));
 
-	//connect(_ui->btnZoom, SIGNAL(clicked()), this, SLOT(zoomMap()));
+	//connect(SC_D.ui.btnZoom, SIGNAL(clicked()), this, SLOT(zoomMap()));
 
-	connect(_ui->btnImportAllArrivals, SIGNAL(clicked()), this, SLOT(importArrivals()));
-	connect(_ui->btnShowWaveforms, SIGNAL(clicked()), this, SLOT(showWaveforms()));
-	//connect(_ui->btnShowWaveforms, SIGNAL(clicked()), this, SIGNAL(waveformsRequested()));
-	connect(_ui->btnRelocate, SIGNAL(clicked()), this, SLOT(relocate()));
-	connect(_ui->btnMagnitudes, SIGNAL(clicked()), this, SLOT(computeMagnitudes()));
-	connect(_ui->buttonEditComment, SIGNAL(clicked()), this, SLOT(editComment()));
-	connect(_ui->btnCommit, SIGNAL(clicked()), this, SLOT(commit()));
-	connect(_actionCommitOptions, SIGNAL(triggered()), this, SLOT(commitWithOptions()));
+	connect(SC_D.ui.btnImportAllArrivals, SIGNAL(clicked()), this, SLOT(importArrivals()));
+	connect(SC_D.ui.btnShowWaveforms, SIGNAL(clicked()), this, SLOT(showWaveforms()));
+	//connect(SC_D.ui.btnShowWaveforms, SIGNAL(clicked()), this, SIGNAL(waveformsRequested()));
+	connect(SC_D.ui.btnRelocate, SIGNAL(clicked()), this, SLOT(relocate()));
+	connect(SC_D.ui.btnMagnitudes, SIGNAL(clicked()), this, SLOT(computeMagnitudes()));
+	connect(SC_D.ui.buttonEditComment, SIGNAL(clicked()), this, SLOT(editComment()));
+	connect(SC_D.ui.btnCommit, SIGNAL(clicked()), this, SLOT(commit()));
+	connect(SC_D.actionCommitOptions, SIGNAL(triggered()), this, SLOT(commitWithOptions()));
 
-	connect(&_blinkTimer, SIGNAL(timeout()), this, SLOT(updateBlinkState()));
+	connect(&SC_D.blinkTimer, SIGNAL(timeout()), this, SLOT(updateBlinkState()));
 
 	/*
 	QFontMetrics fm = fontMetrics();
-	int width = _ui->lbAgencyID->width() + 6 + fm.boundingRect("WWWWWWWWWW").width();
+	int width = SC_D.ui.lbAgencyID->width() + 6 + fm.boundingRect("WWWWWWWWWW").width();
 
-	_ui->groupBox->setFixedWidth(width);
+	SC_D.ui.groupBox->setFixedWidth(width);
 	*/
 
-	_displayComment = false;
+	SC_D.displayComment = false;
 	try {
-		_displayCommentID = SCApp->configGetString("olv.display.origin.comment.id");
-		_displayComment = true;
+		SC_D.displayCommentID = SCApp->configGetString("olv.display.origin.comment.id");
+		SC_D.displayComment = true;
 	}
 	catch ( ... ) {}
 
-	_ui->lbComment->setVisible(_displayComment);
-	_ui->labelComment->setVisible(_displayComment);
+	SC_D.ui.lbComment->setVisible(SC_D.displayComment);
+	SC_D.ui.labelComment->setVisible(SC_D.displayComment);
 
 	try {
-		_displayCommentDefault = SCApp->configGetString("display.origin.comment.default");
+		SC_D.displayCommentDefault = SCApp->configGetString("display.origin.comment.default");
 	}
 	catch ( ... ) {
-		_displayCommentDefault = _ui->labelComment->text().toStdString();
+		SC_D.displayCommentDefault = SC_D.ui.labelComment->text().toStdString();
 	}
 
 	try {
-		_ui->lbComment->setText(QString("%1:").arg(SCApp->configGetString("display.origin.comment.label").c_str()));
+		SC_D.ui.lbComment->setText(QString("%1:").arg(SCApp->configGetString("display.origin.comment.label").c_str()));
 	}
 	catch ( ... ) {
-		_ui->lbComment->setText(_displayCommentID.c_str());
+		SC_D.ui.lbComment->setText(SC_D.displayCommentID.c_str());
 	}
 
 	try {
 		EventType et;
 		if ( et.fromString(SCApp->configGetString("olv.defaultEventType").c_str()) )
-			_defaultEventType = et;
+			SC_D.defaultEventType = et;
 		else
 			cerr << "ERROR: unknown type '" << SCApp->configGetString("olv.defaultEventType")
 			     << "' in olv.defaultEventType" << endl;
@@ -2953,7 +2997,7 @@ void OriginLocatorView::init() {
 	catch ( ... ) {}
 
 	try {
-		_defaultEarthModel = SCApp->configGetString("olv.locator.defaultProfile");
+		SC_D.defaultEarthModel = SCApp->configGetString("olv.locator.defaultProfile");
 	}
 	catch ( ... ) {}
 
@@ -2973,8 +3017,8 @@ void OriginLocatorView::init() {
 		QColor reducedColor;
 		reducedColor = blend(palette().color(QPalette::Text), palette().color(QPalette::Base), 75);
 
-		_ui->cbDepthType->addItem("depth type set by locator");
-		_ui->cbDepthType->addItem("- unset -");
+		SC_D.ui.cbDepthType->addItem("depth type set by locator");
+		SC_D.ui.cbDepthType->addItem("- unset -");
 
 		try {
 			vector<string> depthTypes = SCApp->configGetStrings("olv.commonDepthTypes");
@@ -2986,7 +3030,7 @@ void OriginLocatorView::init() {
 				}
 				else {
 					usedFlags[type.toInt()] = true;
-					_ui->cbDepthType->addItem(type.toString(), type.toInt());
+					SC_D.ui.cbDepthType->addItem(type.toString(), type.toInt());
 				}
 			}
 		}
@@ -2994,8 +3038,8 @@ void OriginLocatorView::init() {
 
 		for ( int i = 0; i < DataModel::EOriginDepthTypeQuantity; ++i ) {
 			if ( !usedFlags[i] ) {
-				_ui->cbDepthType->addItem(DataModel::EOriginDepthTypeNames::name(i), i);
-				_ui->cbDepthType->setItemData(_ui->cbDepthType->count()-1, reducedColor, Qt::ForegroundRole);
+				SC_D.ui.cbDepthType->addItem(DataModel::EOriginDepthTypeNames::name(i), i);
+				SC_D.ui.cbDepthType->setItemData(SC_D.ui.cbDepthType->count()-1, reducedColor, Qt::ForegroundRole);
 			}
 		}
 	}
@@ -3003,52 +3047,52 @@ void OriginLocatorView::init() {
 	vector<string> *locatorInterfaces = Seismology::LocatorInterfaceFactory::Services();
 	if ( locatorInterfaces ) {
 		for ( size_t i = 0; i < locatorInterfaces->size(); ++i )
-			_ui->cbLocator->addItem((*locatorInterfaces)[i].c_str());
+			SC_D.ui.cbLocator->addItem((*locatorInterfaces)[i].c_str());
 		delete locatorInterfaces;
 	}
 
-	int defaultLocatorIdx = _ui->cbLocator->findText(defaultLocator.c_str());
+	int defaultLocatorIdx = SC_D.ui.cbLocator->findText(defaultLocator.c_str());
 	if ( defaultLocatorIdx < 0 )
-		defaultLocatorIdx = _ui->cbLocator->findText("LOCSAT");
+		defaultLocatorIdx = SC_D.ui.cbLocator->findText("LOCSAT");
 
-	_ui->cbLocator->setCurrentIndex(defaultLocatorIdx);
+	SC_D.ui.cbLocator->setCurrentIndex(defaultLocatorIdx);
 
-	connect(_ui->cbLocator, SIGNAL(currentIndexChanged(const QString &)),
+	connect(SC_D.ui.cbLocator, SIGNAL(currentIndexChanged(const QString &)),
 	        this, SLOT(locatorChanged(const QString &)));
 
-	locatorChanged(_ui->cbLocator->currentText());
+	locatorChanged(SC_D.ui.cbLocator->currentText());
 
-	connect(_ui->cbLocatorProfile, SIGNAL(currentIndexChanged(const QString &)),
+	connect(SC_D.ui.cbLocatorProfile, SIGNAL(currentIndexChanged(const QString &)),
 	        this, SLOT(locatorProfileChanged(const QString &)));
 
-	connect(_ui->btnLocatorSettings, SIGNAL(clicked()),
+	connect(SC_D.ui.btnLocatorSettings, SIGNAL(clicked()),
 	        this, SLOT(configureLocator()));
 
-	_minimumDepth = -999;
+	SC_D.minimumDepth = -999;
 
 	try {
 		// "locator.minimumDepth" preferred
-		_minimumDepth = SCApp->configGetDouble("olv.locator.minimumDepth");
+		SC_D.minimumDepth = SCApp->configGetDouble("olv.locator.minimumDepth");
 	}
 	catch ( ... ) {
 		try {
-			_minimumDepth = SCApp->configGetDouble("locator.minimumDepth");
+			SC_D.minimumDepth = SCApp->configGetDouble("locator.minimumDepth");
 		}
 		catch ( ... ) {}
 	}
 
 	try {
-		_ui->btnCustom0->setText(SCApp->configGetString("button0").c_str());
+		SC_D.ui.btnCustom0->setText(SCApp->configGetString("button0").c_str());
 	}
 	catch ( ... ) {}
 
 	try {
-		_ui->btnCustom1->setText(SCApp->configGetString("button1").c_str());
+		SC_D.ui.btnCustom1->setText(SCApp->configGetString("button1").c_str());
 	}
 	catch ( ... ) {}
 
-	connect(_ui->btnCustom0, SIGNAL(clicked()), this, SLOT(runScript0()));
-	connect(_ui->btnCustom1, SIGNAL(clicked()), this, SLOT(runScript1()));
+	connect(SC_D.ui.btnCustom0, SIGNAL(clicked()), this, SLOT(runScript0()));
+	connect(SC_D.ui.btnCustom1, SIGNAL(clicked()), this, SLOT(runScript1()));
 
 	try {
 		vector<string> cols = SCApp->configGetStrings("olv.arrivalTable.visibleColumns");
@@ -3081,7 +3125,7 @@ void OriginLocatorView::init() {
 		if ( profiles.find(profile) != profiles.end() ) continue;
 		profiles.insert(profile);
 
-		QLayout *toolBarLayout = _ui->frameActionsRight->layout();
+		QLayout *toolBarLayout = SC_D.ui.frameActionsRight->layout();
 		string prefix = customConfigPrefix + profile + ".";
 
 		try {
@@ -3172,7 +3216,7 @@ void OriginLocatorView::init() {
 		}
 		catch ( ... ) {}
 
-		QToolButton *button = new QToolButton(_ui->toolButtonGroupBox);
+		QToolButton *button = new QToolButton(SC_D.ui.toolButtonGroupBox);
 
 		try {
 			button->setText(SCApp->configGetString(prefix + "label").c_str());
@@ -3223,8 +3267,11 @@ void OriginLocatorView::init() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 OriginLocatorView::~OriginLocatorView() {
-	if ( _plotFilter ) delete _plotFilter;
-	delete _ui;
+	if ( SC_D.plotFilter ) {
+		delete SC_D.plotFilter;
+	}
+
+	delete _d_ptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3233,35 +3280,37 @@ OriginLocatorView::~OriginLocatorView() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::locatorChanged(const QString &text) {
-	_ui->cbLocatorProfile->clear();
+	SC_D.ui.cbLocatorProfile->clear();
 
-	_locator = Seismology::LocatorInterfaceFactory::Create(_ui->cbLocator->currentText().toStdString().c_str());
-	if ( !_locator ) {
-		_ui->cbLocatorProfile->setEnabled(false);
+	SC_D.locator = Seismology::LocatorInterfaceFactory::Create(SC_D.ui.cbLocator->currentText().toStdString().c_str());
+	if ( !SC_D.locator ) {
+		SC_D.ui.cbLocatorProfile->setEnabled(false);
 		return;
 	}
 
-	_locator->init(SCApp->configuration());
+	SC_D.locator->init(SCApp->configuration());
 
 	set<string> models;
-	Seismology::LocatorInterface::IDList profiles = _locator->profiles();
+	Seismology::LocatorInterface::IDList profiles = SC_D.locator->profiles();
 	for ( Seismology::LocatorInterface::IDList::iterator it = profiles.begin();
 	      it != profiles.end(); ++it ) {
 		if ( models.find(*it) != models.end() ) continue;
-		_ui->cbLocatorProfile->addItem(it->c_str());
+		SC_D.ui.cbLocatorProfile->addItem(it->c_str());
 	}
 
-	int defaultIndex = _ui->cbLocatorProfile->findText(_defaultEarthModel.c_str());
-	if ( defaultIndex >= 0 )
-		_ui->cbLocatorProfile->setCurrentIndex(defaultIndex);
-	else
-		_ui->cbLocatorProfile->setCurrentIndex(0);
+	int defaultIndex = SC_D.ui.cbLocatorProfile->findText(SC_D.defaultEarthModel.c_str());
+	if ( defaultIndex >= 0 ) {
+		SC_D.ui.cbLocatorProfile->setCurrentIndex(defaultIndex);
+	}
+	else {
+		SC_D.ui.cbLocatorProfile->setCurrentIndex(0);
+	}
 
-	_ui->cbLocatorProfile->setEnabled(_ui->cbLocatorProfile->count() > 0);
+	SC_D.ui.cbLocatorProfile->setEnabled(SC_D.ui.cbLocatorProfile->count() > 0);
 
-	_ui->cbFixedDepth->setEnabled(_locator->supports(Seismology::LocatorInterface::FixedDepth));
-	_ui->cbDistanceCutOff->setEnabled(_locator->supports(Seismology::LocatorInterface::DistanceCutOff));
-	_ui->cbIgnoreInitialLocation->setEnabled(_locator->supports(Seismology::LocatorInterface::IgnoreInitialLocation));
+	SC_D.ui.cbFixedDepth->setEnabled(SC_D.locator->supports(Seismology::LocatorInterface::FixedDepth));
+	SC_D.ui.cbDistanceCutOff->setEnabled(SC_D.locator->supports(Seismology::LocatorInterface::DistanceCutOff));
+	SC_D.ui.cbIgnoreInitialLocation->setEnabled(SC_D.locator->supports(Seismology::LocatorInterface::IgnoreInitialLocation));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3270,36 +3319,36 @@ void OriginLocatorView::locatorChanged(const QString &text) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::configureLocator() {
-	if ( !_locator ) {
+	if ( !SC_D.locator ) {
 		QMessageBox::critical(this, "Locator settings",
 		                      "No locator selected.");
 		return;
 	}
 
-	Seismology::LocatorInterface::IDList params = _locator->parameters();
+	Seismology::LocatorInterface::IDList params = SC_D.locator->parameters();
 	if ( params.empty() ) {
 		QMessageBox::information(this, "Locator settings",
 		                         QString("%1 does not provide any "
 		                                 "parameters to adjust.")
-		                         .arg(_locator->name().c_str()));
+		                         .arg(SC_D.locator->name().c_str()));
 		return;
 	}
 
 	LocatorSettings dlg;
-	dlg.setWindowTitle(QString("%1 settings").arg(_locator->name().c_str()));
+	dlg.setWindowTitle(QString("%1 settings").arg(SC_D.locator->name().c_str()));
 
-	for ( Seismology::LocatorInterface::IDList::iterator it = params.begin();
-	      it != params.end(); ++it ) {
-		dlg.addRow(it->c_str(), _locator->parameter(*it).c_str());
+	for ( auto param : params ) {
+		dlg.addRow(param.c_str(), SC_D.locator->parameter(param).c_str());
 	}
 
-	if ( dlg.exec() != QDialog::Accepted )
+	if ( dlg.exec() != QDialog::Accepted ) {
 		return;
+	}
 
 	LocatorSettings::ContentList res = dlg.content();
-	for ( LocatorSettings::ContentList::iterator it = res.begin();
-	      it != res.end(); ++it )
-		_locator->setParameter(it->first.toStdString(), it->second.toStdString());
+	for ( auto it : res ) {
+		SC_D.locator->setParameter(it.first.toStdString(), it.second.toStdString());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3308,11 +3357,15 @@ void OriginLocatorView::configureLocator() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::changePlotFilter() {
-	if ( _plotFilterSettings == nullptr )
-		_plotFilterSettings = new DiagramFilterSettingsDialog(this);
+	if ( !SC_D.plotFilterSettings ) {
+		SC_D.plotFilterSettings = new DiagramFilterSettingsDialog(this);
+	}
 
-	if ( _plotFilterSettings->exec() == QDialog::Rejected ) return;
-	setPlotFilter(_plotFilterSettings->createFilter());
+	if ( SC_D.plotFilterSettings->exec() == QDialog::Rejected ) {
+		return;
+	}
+
+	setPlotFilter(SC_D.plotFilterSettings->createFilter());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3321,16 +3374,21 @@ void OriginLocatorView::changePlotFilter() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setPlotFilter(DiagramFilterSettingsDialog::Filter *f) {
-	if ( _plotFilter ) delete _plotFilter;
-	_plotFilter = f;
+	if ( SC_D.plotFilter ) {
+		delete SC_D.plotFilter;
+	}
+
+	SC_D.plotFilter = f;
 	applyPlotFilter();
 
-	if ( _plotFilter )
-		_ui->labelPlotFilter->setText("<a href=\"filter\">active</a>");
-	else
-		_ui->labelPlotFilter->setText("<a href=\"filter\">not active</a>");
+	if ( SC_D.plotFilter ) {
+		SC_D.ui.labelPlotFilter->setText("<a href=\"filter\">active</a>");
+	}
+	else {
+		SC_D.ui.labelPlotFilter->setText("<a href=\"filter\">not active</a>");
+	}
 
-	_ui->labelPlotFilter->setCursor(Qt::PointingHandCursor);
+	SC_D.ui.labelPlotFilter->setCursor(Qt::PointingHandCursor);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3339,21 +3397,21 @@ void OriginLocatorView::setPlotFilter(DiagramFilterSettingsDialog::Filter *f) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::applyPlotFilter() {
-	if ( _plotFilter == nullptr ) {
-		for ( int i = 0; i < _residuals->count(); ++i )
-			_residuals->showValue(i);
+	if ( SC_D.plotFilter == nullptr ) {
+		for ( int i = 0; i < SC_D.residuals->count(); ++i )
+			SC_D.residuals->showValue(i);
 	}
 	else {
-		for ( int i = 0; i < _residuals->count(); ++i )
-			_residuals->showValue(i, _plotFilter->accepts(_residuals, i));
+		for ( int i = 0; i < SC_D.residuals->count(); ++i )
+			SC_D.residuals->showValue(i, SC_D.plotFilter->accepts(SC_D.residuals, i));
 	}
 
-	_residuals->updateBoundingRect();
-	QRectF rect = _residuals->boundingRect();
+	SC_D.residuals->updateBoundingRect();
+	QRectF rect = SC_D.residuals->boundingRect();
 	rect.setLeft(std::min(0.0, double(rect.left())));
 	adjustResidualsRect(rect);
-	_residuals->setDisplayRect(rect);
-	_residuals->update();
+	SC_D.residuals->setDisplayRect(rect);
+	SC_D.residuals->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3362,9 +3420,9 @@ void OriginLocatorView::applyPlotFilter() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::runScript(const QString &script, const QString &name) {
-	QString cmd = QString("%1 %2").arg(script).arg(_currentOrigin->publicID().c_str());
-	if ( _baseEvent ) {
-		cmd += QString(" %1").arg(_baseEvent->publicID().c_str());
+	QString cmd = QString("%1 %2").arg(script).arg(SC_D.currentOrigin->publicID().c_str());
+	if ( SC_D.baseEvent ) {
+		cmd += QString(" %1").arg(SC_D.baseEvent->publicID().c_str());
 	}
 	SEISCOMP_DEBUG("Executing script %s", cmd.toStdString().c_str());
 
@@ -3381,7 +3439,7 @@ void OriginLocatorView::runScript(const QString &script, const QString &name) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::runScript0() {
-	runScript(_script0.c_str(), _ui->btnCustom0->text());
+	runScript(SC_D.script0.c_str(), SC_D.ui.btnCustom0->text());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3390,7 +3448,7 @@ void OriginLocatorView::runScript0() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::runScript1() {
-	runScript(_script1.c_str(), _ui->btnCustom1->text());
+	runScript(SC_D.script1.c_str(), SC_D.ui.btnCustom1->text());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3399,8 +3457,8 @@ void OriginLocatorView::runScript1() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::locatorProfileChanged(const QString &text) {
-	if ( _locator )
-		_locator->setProfile(text.toStdString());
+	if ( SC_D.locator )
+		SC_D.locator->setProfile(text.toStdString());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3409,9 +3467,9 @@ void OriginLocatorView::locatorProfileChanged(const QString &text) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setMagnitudeCalculationEnabled(bool e) {
-	_ui->btnMagnitudes->setVisible(e);
+	SC_D.ui.btnMagnitudes->setVisible(e);
 	if ( !e )
-		_ui->btnMagnitudes->setEnabled(false);
+		SC_D.ui.btnMagnitudes->setEnabled(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3420,7 +3478,7 @@ void OriginLocatorView::setMagnitudeCalculationEnabled(bool e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 OriginLocatorMap *OriginLocatorView::map() const {
-	return _map;
+	return SC_D.map;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3429,7 +3487,10 @@ OriginLocatorMap *OriginLocatorView::map() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::closeEvent(QCloseEvent *e) {
-	if ( _recordView ) _recordView->close();
+	if ( SC_D.recordView ) {
+		SC_D.recordView->close();
+	}
+
 	QWidget::closeEvent(e);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3439,19 +3500,22 @@ void OriginLocatorView::closeEvent(QCloseEvent *e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::residualsSelected() {
-	QVector<int> selectedIds = _residuals->getSelectedValues();
+	QVector<int> selectedIds = SC_D.residuals->getSelectedValues();
 	int startIndex = 0;
 	for ( int i = 0; i < selectedIds.count(); ++i ) {
-		for ( int j = startIndex; j < selectedIds[i]; ++j )
-			_modelArrivals.setData(_modelArrivals.index(j, 0), 0, UsedRole);
-		_modelArrivals.setData(_modelArrivals.index(selectedIds[i], 0),
-		                       getMask(_modelArrivals.index(selectedIds[i], 0)),
-		                       UsedRole);
+		for ( int j = startIndex; j < selectedIds[i]; ++j ) {
+			SC_D.modelArrivals.setData(SC_D.modelArrivals.index(j, 0), 0, UsedRole);
+		}
+
+		SC_D.modelArrivals.setData(SC_D.modelArrivals.index(selectedIds[i], 0),
+		                           getMask(SC_D.modelArrivals.index(selectedIds[i], 0)),
+		                           UsedRole);
 		startIndex = selectedIds[i]+1;
 	}
 
-	for ( int j = startIndex; j < _modelArrivals.rowCount(); ++j )
-		_modelArrivals.setData(_modelArrivals.index(j, 0), 0, UsedRole);
+	for ( int j = startIndex; j < SC_D.modelArrivals.rowCount(); ++j ) {
+		SC_D.modelArrivals.setData(SC_D.modelArrivals.index(j, 0), 0, UsedRole);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3466,15 +3530,15 @@ void OriginLocatorView::hoverArrival(int id) {
 	}
 	else {
 		QString txt = QString("%1.%2-%3")
-		              .arg(_modelArrivals.data(_modelArrivals.index(id, NETWORK), Qt::DisplayRole).toString())
-		              .arg(_modelArrivals.data(_modelArrivals.index(id, STATION), Qt::DisplayRole).toString())
-		              .arg(_modelArrivals.data(_modelArrivals.index(id, PHASE), Qt::DisplayRole).toString());
-		QString method = _modelArrivals.data(_modelArrivals.index(id, METHOD), Qt::DisplayRole).toString();
+		              .arg(SC_D.modelArrivals.data(SC_D.modelArrivals.index(id, NETWORK), Qt::DisplayRole).toString())
+		              .arg(SC_D.modelArrivals.data(SC_D.modelArrivals.index(id, STATION), Qt::DisplayRole).toString())
+		              .arg(SC_D.modelArrivals.data(SC_D.modelArrivals.index(id, PHASE), Qt::DisplayRole).toString());
+		QString method = SC_D.modelArrivals.data(SC_D.modelArrivals.index(id, METHOD), Qt::DisplayRole).toString();
 
 		if ( !method.isEmpty() ) {
 			txt += QString(" (%1)").arg(method);
 		}
-		QPointF p = _residuals->value(id);
+		QPointF p = SC_D.residuals->value(id);
 		txt += QString("\n%1 / %2").arg(p.x()).arg(p.y());
 		w->setToolTip(txt);
 	}
@@ -3486,17 +3550,17 @@ void OriginLocatorView::hoverArrival(int id) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::selectArrival(int id) {
-	if ( id >= 0 && _currentOrigin ) {
-		if ( _recordView ) {
-			Arrival *ar = _currentOrigin->arrival(id);
+	if ( id >= 0 && SC_D.currentOrigin ) {
+		if ( SC_D.recordView ) {
+			Arrival *ar = SC_D.currentOrigin->arrival(id);
 			Pick *pick = Pick::Find(ar->pickID());
 			if ( pick )
-				_recordView->selectTrace(pick->waveformID());
+				SC_D.recordView->selectTrace(pick->waveformID());
 		}
 
-		QModelIndex idx = _modelArrivalsProxy->mapFromSource(_modelArrivals.index(id, 0));
-		_ui->tableArrivals->setCurrentIndex(idx);
-		_ui->tableArrivals->scrollTo(idx);
+		QModelIndex idx = SC_D.modelArrivalsProxy->mapFromSource(SC_D.modelArrivals.index(id, 0));
+		SC_D.ui.tableArrivals->setCurrentIndex(idx);
+		SC_D.ui.tableArrivals->scrollTo(idx);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3507,7 +3571,7 @@ void OriginLocatorView::selectArrival(int id) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::selectStation(const std::string &net,
                                       const std::string &code) {
-	if ( _recordView ) _recordView->selectTrace(net, code);
+	if ( SC_D.recordView ) SC_D.recordView->selectTrace(net, code);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3516,12 +3580,12 @@ void OriginLocatorView::selectStation(const std::string &net,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::selectRow(const QModelIndex &current, const QModelIndex&) {
-	QModelIndex idx = _modelArrivalsProxy->mapToSource(current);
-	if ( idx.row() >= 0 && _currentOrigin && _recordView ) {
-		Arrival *ar = _currentOrigin->arrival(idx.row());
+	QModelIndex idx = SC_D.modelArrivalsProxy->mapToSource(current);
+	if ( idx.row() >= 0 && SC_D.currentOrigin && SC_D.recordView ) {
+		Arrival *ar = SC_D.currentOrigin->arrival(idx.row());
 		Pick *pick = Pick::Find(ar->pickID());
 		if ( pick )
-			_recordView->selectTrace(pick->waveformID());
+			SC_D.recordView->selectTrace(pick->waveformID());
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3544,10 +3608,10 @@ void OriginLocatorView::adjustResidualsRect(QRectF& rect) {
 	// right
 	qreal maxRight = 360.0;
 	if ( SCScheme.unit.distanceInKM && (
-	         _plotTab->currentIndex() == PT_DISTANCE ||
-	         _plotTab->currentIndex() == PT_TRAVELTIME ||
-	         _plotTab->currentIndex() == PT_MOVEOUT ||
-	         _plotTab->currentIndex() == PT_POLAR ) ) {
+	         SC_D.plotTab->currentIndex() == PT_DISTANCE ||
+	         SC_D.plotTab->currentIndex() == PT_TRAVELTIME ||
+	         SC_D.plotTab->currentIndex() == PT_MOVEOUT ||
+	         SC_D.plotTab->currentIndex() == PT_POLAR ) ) {
 		maxRight = ceil(Math::Geo::deg2km(maxRight));
 	}
 	if ( rect.right() < maxRight ) {
@@ -3558,8 +3622,8 @@ void OriginLocatorView::adjustResidualsRect(QRectF& rect) {
 	}
 
 	// polar and fm plots: fixed values for top/bottom
-	if ( _plotTab->currentIndex() == PT_POLAR ||
-	     _plotTab->currentIndex() == PT_FM ) {
+	if ( SC_D.plotTab->currentIndex() == PT_POLAR ||
+	     SC_D.plotTab->currentIndex() == PT_FM ) {
 		rect.setTop(0);
 		rect.setBottom(360);
 
@@ -3567,7 +3631,7 @@ void OriginLocatorView::adjustResidualsRect(QRectF& rect) {
 	}
 
 	// travel time plot: top starts at 0 unless negative values are present
-	if ( _plotTab->currentIndex() == PT_TRAVELTIME ) {
+	if ( SC_D.plotTab->currentIndex() == PT_TRAVELTIME ) {
 		qreal vMargin = rect.height() * 0.1;
 		rect.setTop(rect.top() < 0.0 ? rect.top() - vMargin : 0.0);
 		rect.setBottom(rect.bottom() + vMargin);
@@ -3586,59 +3650,59 @@ void OriginLocatorView::adjustResidualsRect(QRectF& rect) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::plotTabChanged(int tab) {
-	static_cast<PlotWidget*>(_residuals)->setCustomDraw(false);
+	static_cast<PlotWidget*>(SC_D.residuals)->setCustomDraw(false);
 
 	// Distance / Residual
 	if ( tab == PT_DISTANCE ) {
-		_residuals->setMarkerDistance(10, 1);
-		_residuals->setType(DiagramWidget::Rectangular);
-		_residuals->setIndicies(PC_DISTANCE,PC_RESIDUAL);
+		SC_D.residuals->setMarkerDistance(10, 1);
+		SC_D.residuals->setType(DiagramWidget::Rectangular);
+		SC_D.residuals->setIndicies(PC_DISTANCE,PC_RESIDUAL);
 		if ( SCScheme.unit.distanceInKM )
-			_residuals->setAbscissaName("Distance (km)");
+			SC_D.residuals->setAbscissaName("Distance (km)");
 		else
-			_residuals->setAbscissaName("Distance (°)");
-		_residuals->setOrdinateName("Residual (s)");
+			SC_D.residuals->setAbscissaName("Distance (°)");
+		SC_D.residuals->setOrdinateName("Residual (s)");
 	}
 	// Azimuth / Residual
 	else if ( tab == PT_AZIMUTH ) {
-		_residuals->setMarkerDistance(10, 1);
-		_residuals->setType(DiagramWidget::Rectangular);
-		_residuals->setIndicies(PC_AZIMUTH,PC_RESIDUAL);
-		_residuals->setAbscissaName("Azimuth (°)");
-		_residuals->setOrdinateName("Residual (s)");
+		SC_D.residuals->setMarkerDistance(10, 1);
+		SC_D.residuals->setType(DiagramWidget::Rectangular);
+		SC_D.residuals->setIndicies(PC_AZIMUTH,PC_RESIDUAL);
+		SC_D.residuals->setAbscissaName("Azimuth (°)");
+		SC_D.residuals->setOrdinateName("Residual (s)");
 	}
 	// Distance / TravelTime
 	else if ( tab == PT_TRAVELTIME ) {
-		_residuals->setMarkerDistance(10, 10);
-		_residuals->setType(DiagramWidget::Rectangular);
-		_residuals->setIndicies(PC_DISTANCE,PC_TRAVELTIME);
+		SC_D.residuals->setMarkerDistance(10, 10);
+		SC_D.residuals->setType(DiagramWidget::Rectangular);
+		SC_D.residuals->setIndicies(PC_DISTANCE,PC_TRAVELTIME);
 		if ( SCScheme.unit.distanceInKM )
-			_residuals->setAbscissaName("Distance (km)");
+			SC_D.residuals->setAbscissaName("Distance (km)");
 		else
-			_residuals->setAbscissaName("Distance (°)");
-		_residuals->setOrdinateName("TravelTime (s)");
+			SC_D.residuals->setAbscissaName("Distance (°)");
+		SC_D.residuals->setOrdinateName("TravelTime (s)");
 	}
 	else if ( tab == PT_MOVEOUT ) {
-		_residuals->setMarkerDistance(10, 10);
-		_residuals->setType(DiagramWidget::Rectangular);
-		_residuals->setIndicies(PC_DISTANCE,PC_REDUCEDTRAVELTIME);
+		SC_D.residuals->setMarkerDistance(10, 10);
+		SC_D.residuals->setType(DiagramWidget::Rectangular);
+		SC_D.residuals->setIndicies(PC_DISTANCE,PC_REDUCEDTRAVELTIME);
 		if ( SCScheme.unit.distanceInKM )
-			_residuals->setAbscissaName("Distance (km)");
+			SC_D.residuals->setAbscissaName("Distance (km)");
 		else
-			_residuals->setAbscissaName("Distance (°)");
-		_residuals->setOrdinateName(QString("Tred = T-d/%1 km/s (s)").arg(_config.reductionVelocityP));
+			SC_D.residuals->setAbscissaName("Distance (°)");
+		SC_D.residuals->setOrdinateName(QString("Tred = T-d/%1 km/s (s)").arg(SC_D.config.reductionVelocityP));
 	}
 	else if ( tab == PT_POLAR ) {
-		_residuals->setType(DiagramWidget::Spherical);
-		_residuals->setIndicies(PC_DISTANCE,PC_AZIMUTH);
+		SC_D.residuals->setType(DiagramWidget::Spherical);
+		SC_D.residuals->setIndicies(PC_DISTANCE,PC_AZIMUTH);
 	}
 	else if ( tab == PT_FM ) {
-		static_cast<PlotWidget*>(_residuals)->setCustomDraw(true);
-		_residuals->setType(DiagramWidget::Spherical);
-		_residuals->setIndicies(PC_FMDIST,PC_FMAZI);
+		static_cast<PlotWidget*>(SC_D.residuals)->setCustomDraw(true);
+		SC_D.residuals->setType(DiagramWidget::Spherical);
+		SC_D.residuals->setIndicies(PC_FMDIST,PC_FMAZI);
 	}
 
-	QRectF rect = _residuals->boundingRect();
+	QRectF rect = SC_D.residuals->boundingRect();
 
 	rect.setLeft(std::min(0.0, double(rect.left())));
 	if ( rect.bottom() == rect.top() ) {
@@ -3655,8 +3719,8 @@ void OriginLocatorView::plotTabChanged(int tab) {
 			  << " - " << rect.width() << " x " << rect.height() << std::endl;
 	*/
 
-	_residuals->setDisplayRect(rect);
-	_residuals->update();
+	SC_D.residuals->setDisplayRect(rect);
+	SC_D.residuals->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3665,15 +3729,19 @@ void OriginLocatorView::plotTabChanged(int tab) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::changeArrival(int id, bool state) {
-	QModelIndex idx = _modelArrivals.index(id, 0);
-	_modelArrivals.setData(idx, state?getMask(idx):0, UsedRole);
+	QModelIndex idx = SC_D.modelArrivals.index(id, 0);
+	SC_D.modelArrivals.setData(idx, state?getMask(idx):0, UsedRole);
 
-	_residuals->setValueSelected(id, state);
-	_map->setArrivalState(id, state);
-	if ( _toolMap )
-		_toolMap->setArrivalState(id, state);
-	if ( _recordView )
-		_recordView->setArrivalState(id, state);
+	SC_D.residuals->setValueSelected(id, state);
+	SC_D.map->setArrivalState(id, state);
+
+	if ( SC_D.toolMap ) {
+		SC_D.toolMap->setArrivalState(id, state);
+	}
+
+	if ( SC_D.recordView ) {
+		SC_D.recordView->setArrivalState(id, state);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3683,8 +3751,8 @@ void OriginLocatorView::changeArrival(int id, bool state) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::changeArrivalEnableState(int id,bool state) {
 	//changeArrival(id, state);
-	_modelArrivals.setRowEnabled(id, state);
-	_residuals->setValueEnabled(id, state);
+	SC_D.modelArrivals.setRowEnabled(id, state);
+	SC_D.residuals->setValueEnabled(id, state);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3704,24 +3772,24 @@ void OriginLocatorView::artificialOriginRequested(double lat, double lon,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::zoomMap() {
-	if ( _toolMap != nullptr ) {
-		_toolMap->activateWindow();
-		_toolMap->raise();
+	if ( SC_D.toolMap != nullptr ) {
+		SC_D.toolMap->activateWindow();
+		SC_D.toolMap->raise();
 		return;
 	}
 
-	_toolMap = new OriginLocatorMap(_maptree.get(), this, Qt::Window);
-	_toolMap->setAttribute(Qt::WA_DeleteOnClose);
-	connect(_toolMap, SIGNAL(keyPressed(QKeyEvent*)), this, SLOT(mapKeyPressed(QKeyEvent*)));
-	connect(_toolMap, SIGNAL(destroyed(QObject*)), this, SLOT(objectDestroyed(QObject*)));
-	connect(_toolMap, SIGNAL(arrivalChanged(int,bool)), this, SLOT(changeArrival(int,bool)));
-	if ( _currentOrigin ) {
-		_toolMap->setOrigin(_currentOrigin.get());
-		_toolMap->canvas().displayRect(QRectF(_currentOrigin->longitude()-20, _currentOrigin->latitude()-20, 40, 40));
-		_toolMap->setDrawStations(_map->drawStations());
+	SC_D.toolMap = new OriginLocatorMap(SC_D.maptree.get(), this, Qt::Window);
+	SC_D.toolMap->setAttribute(Qt::WA_DeleteOnClose);
+	connect(SC_D.toolMap, SIGNAL(keyPressed(QKeyEvent*)), this, SLOT(mapKeyPressed(QKeyEvent*)));
+	connect(SC_D.toolMap, SIGNAL(destroyed(QObject*)), this, SLOT(objectDestroyed(QObject*)));
+	connect(SC_D.toolMap, SIGNAL(arrivalChanged(int,bool)), this, SLOT(changeArrival(int,bool)));
+	if ( SC_D.currentOrigin ) {
+		SC_D.toolMap->setOrigin(SC_D.currentOrigin.get());
+		SC_D.toolMap->canvas().displayRect(QRectF(SC_D.currentOrigin->longitude()-20, SC_D.currentOrigin->latitude()-20, 40, 40));
+		SC_D.toolMap->setDrawStations(SC_D.map->drawStations());
 	}
-	_toolMap->setWindowTitle("OriginLocator::Map");
-	_toolMap->show();
+	SC_D.toolMap->setWindowTitle("OriginLocator::Map");
+	SC_D.toolMap->show();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3730,20 +3798,20 @@ void OriginLocatorView::zoomMap() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::mapKeyPressed(QKeyEvent* e) {
-	if ( _toolMap == nullptr ) return;
+	if ( SC_D.toolMap == nullptr ) return;
 
 	switch ( e->key() ) {
 		case Qt::Key_Escape:
-			_toolMap->close();
+			SC_D.toolMap->close();
 			break;
 		case Qt::Key_F9:
-			drawStations(!_map->drawStations());
+			drawStations(!SC_D.map->drawStations());
 			break;
 		case Qt::Key_F11:
-			if ( _toolMap->isFullScreen() )
-				_toolMap->showNormal();
+			if ( SC_D.toolMap->isFullScreen() )
+				SC_D.toolMap->showNormal();
 			else
-				_toolMap->showFullScreen();
+				SC_D.toolMap->showFullScreen();
 			break;
 	}
 
@@ -3755,14 +3823,14 @@ void OriginLocatorView::mapKeyPressed(QKeyEvent* e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::objectDestroyed(QObject* o) {
-	if ( o == _toolMap ) {
-		_toolMap = nullptr;
-		//_ui->btnZoom->setEnabled(true);
+	if ( o == SC_D.toolMap ) {
+		SC_D.toolMap = nullptr;
+		//SC_D.ui.btnZoom->setEnabled(true);
 	}
 
-	if ( o == _recordView ) {
+	if ( o == SC_D.recordView ) {
 		//std::cout << "Number of objects after: " << Core::BaseObject::ObjectCount() << std::endl;
-		_recordView = nullptr;
+		SC_D.recordView = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3772,12 +3840,12 @@ void OriginLocatorView::objectDestroyed(QObject* o) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::drawStations(bool enable) {
-	_map->setDrawStations(enable);
-	_map->update();
+	SC_D.map->setDrawStations(enable);
+	SC_D.map->update();
 
-	if ( _toolMap ) {
-		_toolMap->setDrawStations(enable);
-		_toolMap->update();
+	if ( SC_D.toolMap ) {
+		SC_D.toolMap->setDrawStations(enable);
+		SC_D.toolMap->update();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3787,12 +3855,12 @@ void OriginLocatorView::drawStations(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::drawStationAnnotations(bool enable) {
-	_map->setDrawStationAnnotations(enable);
-	_map->update();
+	SC_D.map->setDrawStationAnnotations(enable);
+	SC_D.map->update();
 
-	if ( _toolMap ) {
-		_toolMap->setDrawStationAnnotations(enable);
-		_toolMap->update();
+	if ( SC_D.toolMap ) {
+		SC_D.toolMap->setDrawStationAnnotations(enable);
+		SC_D.toolMap->update();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3802,27 +3870,27 @@ void OriginLocatorView::drawStationAnnotations(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::readPicks(Origin* o) {
-	if ( _blockReadPicks ) return;
+	if ( SC_D.blockReadPicks ) return;
 
-	_blockReadPicks = true;
+	SC_D.blockReadPicks = true;
 
-	if ( _reader ) {
+	if ( SC_D.reader ) {
 		if ( o->arrivalCount() == 0 ) {
-			_reader->loadArrivals(o);
+			SC_D.reader->loadArrivals(o);
 		}
 
 		if ( o->magnitudeCount() == 0 ) {
-			_reader->loadMagnitudes(o);
+			SC_D.reader->loadMagnitudes(o);
 		}
 
 		for ( size_t i = 0; i < o->magnitudeCount(); ++i ) {
 			if ( o->magnitude(i)->stationMagnitudeContributionCount() == 0 ) {
-				_reader->loadStationMagnitudeContributions(o->magnitude(i));
+				SC_D.reader->loadStationMagnitudeContributions(o->magnitude(i));
 			}
 		}
 
 		if ( o->stationMagnitudeCount() == 0 ) {
-			_reader->loadStationMagnitudes(o);
+			SC_D.reader->loadStationMagnitudes(o);
 		}
 
 		PickMap originPicks;
@@ -3843,7 +3911,7 @@ void OriginLocatorView::readPicks(Origin* o) {
 			progress.setRange(0, o->arrivalCount());
 			progress.setLabelText(tr("Loading picks..."));
 			progress.setCancelButton(nullptr);
-			DatabaseIterator it = _reader->getPicks(o->publicID());
+			DatabaseIterator it = SC_D.reader->getPicks(o->publicID());
 
 			while ( *it ) {
 				if ( !it.cached() ) {
@@ -3857,8 +3925,8 @@ void OriginLocatorView::readPicks(Origin* o) {
 		for ( size_t i = 0; i < o->arrivalCount(); ++i ) {
 			std::string pickID = o->arrival(i)->pickID();
 
-			PickMap::iterator it = _associatedPicks.find(pickID);
-			if ( it != _associatedPicks.end() ) {
+			PickMap::iterator it = SC_D.associatedPicks.find(pickID);
+			if ( it != SC_D.associatedPicks.end() ) {
 				originPicks[pickID] = it->second;
 				continue;
 			}
@@ -3869,17 +3937,17 @@ void OriginLocatorView::readPicks(Origin* o) {
 				originPicks[pickID] = pick;
 			}
 			else {
-				auto pick = static_cast<Pick*>(_reader->getObject(Pick::TypeInfo(), pickID));
+				auto pick = static_cast<Pick*>(SC_D.reader->getObject(Pick::TypeInfo(), pickID));
 				if ( pick ) {
 					originPicks[pickID] = pick;
 				}
 			}
 		}
 
-		_associatedPicks = originPicks;
+		SC_D.associatedPicks = originPicks;
 	}
 
-	_blockReadPicks = false;
+	SC_D.blockReadPicks = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3889,21 +3957,23 @@ void OriginLocatorView::readPicks(Origin* o) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::updateBlinkState() {
 	//--_relocateBlinkCounter;
-	if ( _blinkCounter <= 0 ) {
-		_blinkCounter = 0;
-		_blinker = 0;
-		_blinkTimer.stop();
+	if ( SC_D.blinkCounter <= 0 ) {
+		SC_D.blinkCounter = 0;
+		SC_D.blinker = 0;
+		SC_D.blinkTimer.stop();
 	}
 
-	if ( _blinkWidget == nullptr ) return;
+	if ( !SC_D.blinkWidget ) {
+		return;
+	}
 
-	QPalette pal = _blinkWidget->palette();
+	QPalette pal = SC_D.blinkWidget->palette();
 
-	int percent = (int)(25 * sin(8*(_blinker++) * 2 * M_PI / 100 - M_PI/2) + 25);
+	int percent = (int)(25 * sin(8*(SC_D.blinker++) * 2 * M_PI / 100 - M_PI/2) + 25);
 
-	QColor blink = blend(_blinkColor, qApp->palette().color(QPalette::Button), percent);
+	QColor blink = blend(SC_D.blinkColor, qApp->palette().color(QPalette::Button), percent);
 	pal.setColor(QPalette::Button, blink);
-	_blinkWidget->setPalette(pal);
+	SC_D.blinkWidget->setPalette(pal);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3912,14 +3982,14 @@ void OriginLocatorView::updateBlinkState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::startBlinking(QColor c, QWidget *w) {
-	if ( _blinkWidget != nullptr && _blinkWidget != w )
+	if ( SC_D.blinkWidget != nullptr && SC_D.blinkWidget != w )
 		stopBlinking();
 
-	_blinkCounter = 50;
-	_blinkColor = c;
-	_blinker = 0;
-	_blinkWidget = w;
-	_blinkTimer.start(40);
+	SC_D.blinkCounter = 50;
+	SC_D.blinkColor = c;
+	SC_D.blinker = 0;
+	SC_D.blinkWidget = w;
+	SC_D.blinkTimer.start(40);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3928,9 +3998,9 @@ void OriginLocatorView::startBlinking(QColor c, QWidget *w) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::stopBlinking() {
-	_blinkCounter = 0;
+	SC_D.blinkCounter = 0;
 	updateBlinkState();
-	_blinkWidget = nullptr;
+	SC_D.blinkWidget = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3940,34 +4010,34 @@ void OriginLocatorView::stopBlinking() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setCreatedOrigin(Seiscomp::DataModel::Origin* o) {
 	ObjectChangeList<DataModel::Pick> changedPicks;
-	_recordView->getChangedPicks(changedPicks);
+	SC_D.recordView->getChangedPicks(changedPicks);
 	SEISCOMP_DEBUG("received new origin with %lu manual picks", (unsigned long)changedPicks.size());
 
-	startBlinking(QColor(255,128,0), _ui->btnRelocate);
-	_ui->btnRelocate->setFocus();
+	startBlinking(QColor(255,128,0), SC_D.ui.btnRelocate);
+	SC_D.ui.btnRelocate->setFocus();
 
-	_ui->btnCommit->setEnabled(true);
-	_ui->btnCommit->setText("Commit");
-//	_ui->btnCommit->setMenu(_baseEvent?_commitMenu:nullptr);
-	_localOrigin = true;
+	SC_D.ui.btnCommit->setEnabled(true);
+	SC_D.ui.btnCommit->setText("Commit");
+//	SC_D.ui.btnCommit->setMenu(SC_D.baseEvent?_commitMenu:nullptr);
+	SC_D.localOrigin = true;
 
 	// Update pick cache
 	for ( size_t i = 0; i < o->arrivalCount(); ++i ) {
 		Pick* p = Pick::Find(o->arrival(i)->pickID());
-		if ( p ) _associatedPicks[p->publicID()] = p;
+		if ( p ) SC_D.associatedPicks[p->publicID()] = p;
 	}
 
 	pushUndo();
-	_blockReadPicks = true;
+	SC_D.blockReadPicks = true;
 	updateOrigin(o);
-	_blockReadPicks = false;
+	SC_D.blockReadPicks = false;
 
 	//computeMagnitudes();
-	_ui->btnMagnitudes->setEnabled(true);
+	SC_D.ui.btnMagnitudes->setEnabled(true);
 
-	_changedPicks.insert(changedPicks.begin(), changedPicks.end());
+	SC_D.changedPicks.insert(changedPicks.begin(), changedPicks.end());
 
-	emit newOriginSet(o, _baseEvent.get(), _localOrigin, false);
+	emit newOriginSet(o, SC_D.baseEvent.get(), SC_D.localOrigin, false);
 	emit requestRaise();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3977,65 +4047,65 @@ void OriginLocatorView::setCreatedOrigin(Seiscomp::DataModel::Origin* o) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setConfig(const Config &c) {
-	bool updateTakeOffAngles = _config.computeMissingTakeOffAngles != c.computeMissingTakeOffAngles;
+	bool updateTakeOffAngles = SC_D.config.computeMissingTakeOffAngles != c.computeMissingTakeOffAngles;
 
-	_config = c;
-	_residuals->setDrawGridLines(_config.drawGridLines);
-	_map->setDrawStationLines(c.drawMapLines);
+	SC_D.config = c;
+	SC_D.residuals->setDrawGridLines(SC_D.config.drawGridLines);
+	SC_D.map->setDrawStationLines(c.drawMapLines);
 
-	for ( int i = 0; i < _residuals->count(); ++i ) {
-		if ( _residuals->isValueValid(i,PC_DISTANCE) && _residuals->isValueValid(i,PC_TRAVELTIME) ) {
+	for ( int i = 0; i < SC_D.residuals->count(); ++i ) {
+		if ( SC_D.residuals->isValueValid(i,PC_DISTANCE) && SC_D.residuals->isValueValid(i,PC_TRAVELTIME) ) {
 			if ( SCScheme.unit.distanceInKM )
-				_residuals->setValue(i,PC_REDUCEDTRAVELTIME, _residuals->value(i,PC_TRAVELTIME) - _residuals->value(i,PC_DISTANCE)/_config.reductionVelocityP);
+				SC_D.residuals->setValue(i,PC_REDUCEDTRAVELTIME, SC_D.residuals->value(i,PC_TRAVELTIME) - SC_D.residuals->value(i,PC_DISTANCE)/SC_D.config.reductionVelocityP);
 			else
-				_residuals->setValue(i,PC_REDUCEDTRAVELTIME, _residuals->value(i,PC_TRAVELTIME) - Math::Geo::deg2km(_residuals->value(i,PC_DISTANCE))/_config.reductionVelocityP);
+				SC_D.residuals->setValue(i,PC_REDUCEDTRAVELTIME, SC_D.residuals->value(i,PC_TRAVELTIME) - Math::Geo::deg2km(SC_D.residuals->value(i,PC_DISTANCE))/SC_D.config.reductionVelocityP);
 		}
 		else {
-			_residuals->setValue(i, PC_REDUCEDTRAVELTIME, 0.0);
-			_residuals->setValueValid(i, PC_REDUCEDTRAVELTIME, false);
+			SC_D.residuals->setValue(i, PC_REDUCEDTRAVELTIME, 0.0);
+			SC_D.residuals->setValueValid(i, PC_REDUCEDTRAVELTIME, false);
 		}
 
-		if ( updateTakeOffAngles && _currentOrigin ) {
-			char phase = Util::getShortPhaseName(_currentOrigin->arrival(i)->phase().code());
-			PlotWidget::PolarityType polarity = (PlotWidget::PolarityType)_residuals->value(i, PC_POLARITY);
+		if ( updateTakeOffAngles && SC_D.currentOrigin ) {
+			char phase = Util::getShortPhaseName(SC_D.currentOrigin->arrival(i)->phase().code());
+			PlotWidget::PolarityType polarity = (PlotWidget::PolarityType)SC_D.residuals->value(i, PC_POLARITY);
 
-			_residuals->setValue(i, PC_FMDIST, 0.0);
-			_residuals->setValue(i, PC_FMAZI, 0.0);
-			_residuals->setValueValid(i, PC_FMDIST, false);
-			_residuals->setValueValid(i, PC_FMAZI, false);
+			SC_D.residuals->setValue(i, PC_FMDIST, 0.0);
+			SC_D.residuals->setValue(i, PC_FMAZI, 0.0);
+			SC_D.residuals->setValueValid(i, PC_FMDIST, false);
+			SC_D.residuals->setValueValid(i, PC_FMAZI, false);
 
-			if ( _residuals->isValueValid(i, PC_DISTANCE) &&
-				 _residuals->isValueValid(i, PC_AZIMUTH) &&
+			if ( SC_D.residuals->isValueValid(i, PC_DISTANCE) &&
+				 SC_D.residuals->isValueValid(i, PC_AZIMUTH) &&
 				 phase == 'P' ) {
 
 				double beta;
 				bool hasTakeOff;
 				try {
-					beta = _currentOrigin->arrival(i)->takeOffAngle();
+					beta = SC_D.currentOrigin->arrival(i)->takeOffAngle();
 					hasTakeOff = true;
 				}
 				catch ( ... ) {
 					hasTakeOff = false;
 				}
 
-				if ( !hasTakeOff && _config.computeMissingTakeOffAngles ) {
+				if ( !hasTakeOff && SC_D.config.computeMissingTakeOffAngles ) {
 					double lat, lon;
-					double azi = _residuals->value(i, PC_AZIMUTH);
+					double azi = SC_D.residuals->value(i, PC_AZIMUTH);
 
 					Math::Geo::delandaz2coord(
-						_currentOrigin->arrival(i)->distance(), azi,
-						_currentOrigin->latitude(), _currentOrigin->longitude(),
+						SC_D.currentOrigin->arrival(i)->distance(), azi,
+						SC_D.currentOrigin->latitude(), SC_D.currentOrigin->longitude(),
 						&lat, &lon
 					);
 
 					try {
-						TravelTime ttt = _ttTable.computeFirst(
-							_currentOrigin->latitude(), _currentOrigin->longitude(),
-							_currentOrigin->depth(), lat, lon
+						TravelTime ttt = SC_D.ttTable.computeFirst(
+							SC_D.currentOrigin->latitude(), SC_D.currentOrigin->longitude(),
+							SC_D.currentOrigin->depth(), lat, lon
 						);
 
 						beta = ttt.takeoff;
-						_modelArrivals.setTakeOffAngle(i, beta);
+						SC_D.modelArrivals.setTakeOffAngle(i, beta);
 
 						hasTakeOff = true;
 					}
@@ -4043,8 +4113,8 @@ void OriginLocatorView::setConfig(const Config &c) {
 				}
 
 				if ( hasTakeOff &&
-					 static_cast<PlotWidget*>(_residuals)->shape(polarity).shown ) {
-					double azi = _residuals->value(i, PC_AZIMUTH);
+					 static_cast<PlotWidget*>(SC_D.residuals)->shape(polarity).shown ) {
+					double azi = SC_D.residuals->value(i, PC_AZIMUTH);
 
 					if ( beta > 90 ) {
 						beta = 180-beta;
@@ -4054,25 +4124,25 @@ void OriginLocatorView::setConfig(const Config &c) {
 
 					beta = sqrt(2.0) * sin(0.5*deg2rad(beta));
 
-					_residuals->setValue(i, PC_FMAZI, azi);
-					_residuals->setValue(i, PC_FMDIST, beta);
-					_residuals->setValueValid(i, PC_FMDIST, true);
-					_residuals->setValueValid(i, PC_FMAZI, true);
+					SC_D.residuals->setValue(i, PC_FMAZI, azi);
+					SC_D.residuals->setValue(i, PC_FMDIST, beta);
+					SC_D.residuals->setValueValid(i, PC_FMDIST, true);
+					SC_D.residuals->setValueValid(i, PC_FMAZI, true);
 				}
 			}
 		}
 	}
 
-	if ( _plotTab->currentIndex() == PT_MOVEOUT ) {
-		_residuals->updateBoundingRect();
-		QRectF rect = _residuals->boundingRect();
+	if ( SC_D.plotTab->currentIndex() == PT_MOVEOUT ) {
+		SC_D.residuals->updateBoundingRect();
+		QRectF rect = SC_D.residuals->boundingRect();
 		rect.setLeft(std::min(0.0, double(rect.left())));
 		adjustResidualsRect(rect);
-		_residuals->setDisplayRect(rect);
-		_residuals->setOrdinateName(QString("TTred >x/%1").arg(_config.reductionVelocityP));
+		SC_D.residuals->setDisplayRect(rect);
+		SC_D.residuals->setOrdinateName(QString("TTred >x/%1").arg(SC_D.config.reductionVelocityP));
 	}
 
-	_residuals->update();
+	SC_D.residuals->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4081,7 +4151,7 @@ void OriginLocatorView::setConfig(const Config &c) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const OriginLocatorView::Config &OriginLocatorView::config() const {
-	return _config;
+	return SC_D.config;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4090,7 +4160,7 @@ const OriginLocatorView::Config &OriginLocatorView::config() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::addLocalPick(Seiscomp::DataModel::Pick *pick) {
-	_changedPicks.insert(std::pair<DataModel::PickPtr, bool>(pick, true));
+	SC_D.changedPicks.insert(std::pair<DataModel::PickPtr, bool>(pick, true));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4099,10 +4169,10 @@ void OriginLocatorView::addLocalPick(Seiscomp::DataModel::Pick *pick) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setPickerConfig(const PickerView::Config &c) {
-	_pickerConfig = c;
+	SC_D.pickerConfig = c;
 
-	if ( _recordView )
-		_recordView->setConfig(_pickerConfig);
+	if ( SC_D.recordView )
+		SC_D.recordView->setConfig(SC_D.pickerConfig);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4111,7 +4181,7 @@ void OriginLocatorView::setPickerConfig(const PickerView::Config &c) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const PickerView::Config& OriginLocatorView::pickerConfig() const {
-	return _pickerConfig;
+	return SC_D.pickerConfig;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4120,7 +4190,7 @@ const PickerView::Config& OriginLocatorView::pickerConfig() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setDatabase(Seiscomp::DataModel::DatabaseQuery* reader) {
-	_reader = reader;
+	SC_D.reader = reader;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4129,12 +4199,12 @@ void OriginLocatorView::setDatabase(Seiscomp::DataModel::DatabaseQuery* reader) 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setPickerView(PickerView* picker) {
-	_recordView = picker;
+	SC_D.recordView = picker;
 
-	connect(_recordView, SIGNAL(arrivalChanged(int,bool)), this, SLOT(changeArrival(int,bool)));
-	connect(_recordView, SIGNAL(arrivalEnableStateChanged(int,bool)), this, SLOT(changeArrivalEnableState(int,bool)));
-	connect(_recordView, SIGNAL(destroyed(QObject*)), this, SLOT(objectDestroyed(QObject*)));
-	connect(_recordView, SIGNAL(originCreated(Seiscomp::DataModel::Origin*)),
+	connect(SC_D.recordView, SIGNAL(arrivalChanged(int,bool)), this, SLOT(changeArrival(int,bool)));
+	connect(SC_D.recordView, SIGNAL(arrivalEnableStateChanged(int,bool)), this, SLOT(changeArrivalEnableState(int,bool)));
+	connect(SC_D.recordView, SIGNAL(destroyed(QObject*)), this, SLOT(objectDestroyed(QObject*)));
+	connect(SC_D.recordView, SIGNAL(originCreated(Seiscomp::DataModel::Origin*)),
 	        this, SLOT(setCreatedOrigin(Seiscomp::DataModel::Origin*)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4144,23 +4214,23 @@ void OriginLocatorView::setPickerView(PickerView* picker) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::addObject(const QString &parentID, Seiscomp::DataModel::Object *o) {
-	if ( _currentOrigin ) {
+	if ( SC_D.currentOrigin ) {
 		OriginReferencePtr ref = OriginReference::Cast(o);
 		if ( ref ) {
-			if ( _baseEvent ) {
-				if ( parentID == _baseEvent->publicID().c_str() ) {
+			if ( SC_D.baseEvent ) {
+				if ( parentID == SC_D.baseEvent->publicID().c_str() ) {
 					OriginPtr o = Origin::Find(ref->originID());
-					if ( o && (o->arrivalCount() > _currentOrigin->arrivalCount()) )
-						startBlinking(QColor(128,255,0), _ui->btnImportAllArrivals);
+					if ( o && (o->arrivalCount() > SC_D.currentOrigin->arrivalCount()) )
+						startBlinking(QColor(128,255,0), SC_D.ui.btnImportAllArrivals);
 
-					if ( ref->originID() == _currentOrigin->publicID() )
+					if ( ref->originID() == SC_D.currentOrigin->publicID() )
 						emit baseEventSet();
 				}
-				else if ( ref->originID() == _currentOrigin->publicID() ) {
+				else if ( ref->originID() == SC_D.currentOrigin->publicID() ) {
 					// Current origin is associated with another event, load it
 					EventPtr evt = Event::Find(parentID.toStdString());
-					if ( !evt && _reader )
-						evt = Event::Cast(_reader->loadObject(Event::TypeInfo(), parentID.toStdString()));
+					if ( !evt && SC_D.reader )
+						evt = Event::Cast(SC_D.reader->loadObject(Event::TypeInfo(), parentID.toStdString()));
 
 					if ( evt ) {
 						QMessageBox::information(this, tr("Event change"),
@@ -4177,16 +4247,16 @@ void OriginLocatorView::addObject(const QString &parentID, Seiscomp::DataModel::
 					}
 				}
 			}
-			else if ( ref->originID() == _currentOrigin->publicID() ) {
+			else if ( ref->originID() == SC_D.currentOrigin->publicID() ) {
 				// Set base event
 			}
 		}
 
-		if ( _displayComment ) {
-			if ( parentID == _currentOrigin->publicID().c_str() ) {
+		if ( SC_D.displayComment ) {
+			if ( parentID == SC_D.currentOrigin->publicID().c_str() ) {
 				Comment *comment = Comment::Cast(o);
-				if ( comment && comment->id() == _displayCommentID )
-					_ui->labelComment->setText(comment->text().c_str());
+				if ( comment && comment->id() == SC_D.displayCommentID )
+					SC_D.ui.labelComment->setText(comment->text().c_str());
 			}
 		}
 	}
@@ -4198,25 +4268,25 @@ void OriginLocatorView::addObject(const QString &parentID, Seiscomp::DataModel::
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::updateObject(const QString& parentID, Seiscomp::DataModel::Object *o) {
-	if ( _baseEvent) {
+	if ( SC_D.baseEvent) {
 		Event *evt = Event::Cast(o);
-		if ( evt && evt->publicID() == _baseEvent->publicID() ) {
-			if ( evt->preferredFocalMechanismID() != _preferredFocMech ) {
+		if ( evt && evt->publicID() == SC_D.baseEvent->publicID() ) {
+			if ( evt->preferredFocalMechanismID() != SC_D.preferredFocMech ) {
 				// Trigger preferred FM update
-				setBaseEvent(_baseEvent.get());
+				setBaseEvent(SC_D.baseEvent.get());
 			}
 		}
 	}
 
-	if ( _currentOrigin ) {
+	if ( SC_D.currentOrigin ) {
 		Origin *org = Origin::Cast(o);
-		if ( org && org->publicID() == _currentOrigin->publicID() )
+		if ( org && org->publicID() == SC_D.currentOrigin->publicID() )
 			updateContent();
-		else if ( _displayComment ) {
-			if ( parentID == _currentOrigin->publicID().c_str() ) {
+		else if ( SC_D.displayComment ) {
+			if ( parentID == SC_D.currentOrigin->publicID().c_str() ) {
 				Comment *comment = Comment::Cast(o);
-				if ( comment && comment->id() == _displayCommentID )
-					_ui->labelComment->setText(comment->text().c_str());
+				if ( comment && comment->id() == SC_D.displayCommentID )
+					SC_D.ui.labelComment->setText(comment->text().c_str());
 			}
 		}
 	}
@@ -4238,60 +4308,60 @@ void OriginLocatorView::setOrigin(Seiscomp::DataModel::Origin* o) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setBaseEvent(DataModel::Event *e) {
-	if ( !_baseEvent && e ) {
-		_baseEvent = e;
+	if ( !SC_D.baseEvent && e ) {
+		SC_D.baseEvent = e;
 		emit baseEventSet();
 	}
 	else
-		_baseEvent = e;
+		SC_D.baseEvent = e;
 
-	_preferredFocMech = string();
+	SC_D.preferredFocMech = string();
 
-	//static_cast<PlotWidget*>(_residuals)->setPreferredFM(355,60,41);
+	//static_cast<PlotWidget*>(SC_D.residuals)->setPreferredFM(355,60,41);
 	//return;
 
-	if ( _baseEvent ) {
-		_ui->labelEventID->setText(_baseEvent->publicID().c_str());
-		_ui->labelEventID->setToolTip(_baseEvent->publicID().c_str());
+	if ( SC_D.baseEvent ) {
+		SC_D.ui.labelEventID->setText(SC_D.baseEvent->publicID().c_str());
+		SC_D.ui.labelEventID->setToolTip(SC_D.baseEvent->publicID().c_str());
 	}
 	else {
-		_ui->labelEventID->setText("-");
-		_ui->labelEventID->setToolTip("");
+		SC_D.ui.labelEventID->setText("-");
+		SC_D.ui.labelEventID->setToolTip("");
 
-		static_cast<PlotWidget*>(_residuals)->set(90,90,0);
-		static_cast<PlotWidget*>(_residuals)->resetPreferredFM();
+		static_cast<PlotWidget*>(SC_D.residuals)->set(90,90,0);
+		static_cast<PlotWidget*>(SC_D.residuals)->resetPreferredFM();
 
 		return;
 	}
 
-	_preferredFocMech = e->preferredFocalMechanismID();
+	SC_D.preferredFocMech = e->preferredFocalMechanismID();
 
-	DataModel::FocalMechanismPtr fm = DataModel::FocalMechanism::Find(_preferredFocMech);
-	if ( !fm && !e->preferredFocalMechanismID().empty() && _reader )
-		fm = FocalMechanism::Cast(_reader->getObject(FocalMechanism::TypeInfo(), _preferredFocMech));
+	DataModel::FocalMechanismPtr fm = DataModel::FocalMechanism::Find(SC_D.preferredFocMech);
+	if ( !fm && !e->preferredFocalMechanismID().empty() && SC_D.reader )
+		fm = FocalMechanism::Cast(SC_D.reader->getObject(FocalMechanism::TypeInfo(), SC_D.preferredFocMech));
 
 	if ( !fm ) {
-		static_cast<PlotWidget*>(_residuals)->set(90,90,0);
-		static_cast<PlotWidget*>(_residuals)->resetPreferredFM();
+		static_cast<PlotWidget*>(SC_D.residuals)->set(90,90,0);
+		static_cast<PlotWidget*>(SC_D.residuals)->resetPreferredFM();
 		return;
 	}
 
 	try {
-		static_cast<PlotWidget*>(_residuals)->setPreferredFM(
+		static_cast<PlotWidget*>(SC_D.residuals)->setPreferredFM(
 			fm->nodalPlanes().nodalPlane1().strike(),
 			fm->nodalPlanes().nodalPlane1().dip(),
 			fm->nodalPlanes().nodalPlane1().rake()
 		);
 
-		static_cast<PlotWidget*>(_residuals)->set(
+		static_cast<PlotWidget*>(SC_D.residuals)->set(
 			fm->nodalPlanes().nodalPlane1().strike(),
 			fm->nodalPlanes().nodalPlane1().dip(),
 			fm->nodalPlanes().nodalPlane1().rake()
 		);
 	}
 	catch ( ... ) {
-		static_cast<PlotWidget*>(_residuals)->set(90,90,0);
-		static_cast<PlotWidget*>(_residuals)->resetPreferredFM();
+		static_cast<PlotWidget*>(SC_D.residuals)->set(90,90,0);
+		static_cast<PlotWidget*>(SC_D.residuals)->resetPreferredFM();
 	}
 }
 
@@ -4303,13 +4373,13 @@ void OriginLocatorView::setBaseEvent(DataModel::Event *e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginLocatorView::setOrigin(DataModel::Origin* o, DataModel::Event* e,
                                   bool local) {
-	if ( _currentOrigin == o ) {
-		if ( _baseEvent != e )
+	if ( SC_D.currentOrigin == o ) {
+		if ( SC_D.baseEvent != e )
 			setBaseEvent(e);
 		return true;
 	}
 
-	if ( !_undoList.isEmpty() ) {
+	if ( !SC_D.undoList.isEmpty() ) {
 		if ( QMessageBox::question(this, "Show origin",
 		                           tr("You have uncommitted modifications.\n"
 		                              "When setting the new origin your modifications get lost.\n"
@@ -4319,50 +4389,50 @@ bool OriginLocatorView::setOrigin(DataModel::Origin* o, DataModel::Event* e,
 	}
 
 	// Reset plot filter if a new event has been loaded
-	if ( (e != nullptr) && _baseEvent != e )
+	if ( (e != nullptr) && SC_D.baseEvent != e )
 		setPlotFilter(nullptr);
 
 	stopBlinking();
 
-	_changedPicks.clear();
-	_baseOrigin = o;
+	SC_D.changedPicks.clear();
+	SC_D.baseOrigin = o;
 	setBaseEvent(e);
 
-	_undoList.clear();
-	_redoList.clear();
+	SC_D.undoList.clear();
+	SC_D.redoList.clear();
 
-	_ui->btnCommit->setText(local?"Commit":"Confirm");
-//	_ui->btnCommit->setMenu(_baseEvent?_commitMenu:nullptr);
+	SC_D.ui.btnCommit->setText(local?"Commit":"Confirm");
+//	SC_D.ui.btnCommit->setMenu(SC_D.baseEvent?_commitMenu:nullptr);
 
 	// Disable distance cutoff when a new origin has been
 	// set from external.
-	_ui->cbDistanceCutOff->setChecked(false);
-	_ui->cbIgnoreInitialLocation->setChecked(false);
+	SC_D.ui.cbDistanceCutOff->setChecked(false);
+	SC_D.ui.cbIgnoreInitialLocation->setChecked(false);
 
-	emit undoStateChanged(!_undoList.isEmpty());
-	emit redoStateChanged(!_redoList.isEmpty());
+	emit undoStateChanged(!SC_D.undoList.isEmpty());
+	emit redoStateChanged(!SC_D.redoList.isEmpty());
 
-	_ui->btnImportAllArrivals->setEnabled(true);
+	SC_D.ui.btnImportAllArrivals->setEnabled(true);
 
 	try {
 		if ( o && o->evaluationMode() == AUTOMATIC )
-			_ui->btnCommit->setEnabled(false);
+			SC_D.ui.btnCommit->setEnabled(false);
 		else
-			_ui->btnCommit->setEnabled(true);
+			SC_D.ui.btnCommit->setEnabled(true);
 	}
 	catch ( ... ) {
-		_ui->btnCommit->setEnabled(false);
+		SC_D.ui.btnCommit->setEnabled(false);
 	}
 
-	_blockReadPicks = false;
+	SC_D.blockReadPicks = false;
 	updateOrigin(o);
 
-	if ( _recordView )
-		_recordView->setOrigin(o, -5*60, 30*60);
+	if ( SC_D.recordView )
+		SC_D.recordView->setOrigin(o, -5*60, 30*60);
 
-	_localOrigin = local;
-	emit newOriginSet(o, _baseEvent.get(), _localOrigin, false);
-	_ui->btnMagnitudes->setEnabled(false);
+	SC_D.localOrigin = local;
+	emit newOriginSet(o, SC_D.baseEvent.get(), SC_D.localOrigin, false);
+	SC_D.ui.btnMagnitudes->setEnabled(false);
 
 	return true;
 }
@@ -4375,32 +4445,32 @@ bool OriginLocatorView::setOrigin(DataModel::Origin* o, DataModel::Event* e,
 void OriginLocatorView::clear() {
 	stopBlinking();
 
-	_associatedPicks.clear();
-	_originPicks.clear();
-	_changedPicks.clear();
-	_baseOrigin = nullptr;
-	_baseEvent = nullptr;
+	SC_D.associatedPicks.clear();
+	SC_D.originPicks.clear();
+	SC_D.changedPicks.clear();
+	SC_D.baseOrigin = nullptr;
+	SC_D.baseEvent = nullptr;
 
-	_undoList.clear();
-	_redoList.clear();
+	SC_D.undoList.clear();
+	SC_D.redoList.clear();
 
-	_ui->btnCommit->setText("Confirm");
-	_ui->btnCommit->setMenu(nullptr);
+	SC_D.ui.btnCommit->setText("Confirm");
+	SC_D.ui.btnCommit->setMenu(nullptr);
 
 	emit undoStateChanged(false);
 	emit redoStateChanged(false);
 
-	_ui->btnImportAllArrivals->setEnabled(false);
-	_ui->btnCommit->setEnabled(false);
+	SC_D.ui.btnImportAllArrivals->setEnabled(false);
+	SC_D.ui.btnCommit->setEnabled(false);
 
-	_blockReadPicks = false;
+	SC_D.blockReadPicks = false;
 	resetCustomLabels();
 	updateOrigin(nullptr);
 
-	if ( _recordView )
-		_recordView->close();
+	if ( SC_D.recordView )
+		SC_D.recordView->close();
 
-	_ui->btnMagnitudes->setEnabled(false);
+	SC_D.ui.btnMagnitudes->setEnabled(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4409,20 +4479,20 @@ void OriginLocatorView::clear() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
-	if ( _currentOrigin == o ) return;
+	if ( SC_D.currentOrigin == o ) return;
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
 	if ( o ) readPicks(o);
 
-	_currentOrigin = o;
-	_modelArrivals.setOrigin(o);
+	SC_D.currentOrigin = o;
+	SC_D.modelArrivals.setOrigin(o);
 
 	updateContent();
 
-	if ( _currentOrigin ) {
-		for ( size_t i = 0; i < _currentOrigin->arrivalCount(); ++i ) {
-			Arrival *arrival = _currentOrigin->arrival(i);
+	if ( SC_D.currentOrigin ) {
+		for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+			Arrival *arrival = SC_D.currentOrigin->arrival(i);
 			if ( !Client::Inventory::Instance()->getStation(Pick::Find(arrival->pickID())) ) {
 				changeArrivalEnableState(i, false);
 			}
@@ -4436,36 +4506,36 @@ void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
 
 		if ( presetLocator ) {
 			// Preset the locator type and profile
-			int idx = _ui->cbLocator->findText(_currentOrigin->methodID().c_str());
+			int idx = SC_D.ui.cbLocator->findText(SC_D.currentOrigin->methodID().c_str());
 			if ( idx >= 0 ) {
-				_ui->cbLocator->setCurrentIndex(idx);
+				SC_D.ui.cbLocator->setCurrentIndex(idx);
 
-				idx = _ui->cbLocatorProfile->findText(_currentOrigin->earthModelID().c_str());
+				idx = SC_D.ui.cbLocatorProfile->findText(SC_D.currentOrigin->earthModelID().c_str());
 				if ( idx >= 0 ) {
-					_ui->cbLocatorProfile->setCurrentIndex(idx);
+					SC_D.ui.cbLocatorProfile->setCurrentIndex(idx);
 				}
 			}
 
 			// Preset fixed depth
 			try {
-				_ui->cbFixedDepth->setChecked(quantityUncertainty(_currentOrigin->depth()) == 0.0);
+				SC_D.ui.cbFixedDepth->setChecked(quantityUncertainty(SC_D.currentOrigin->depth()) == 0.0);
 			}
 			catch ( ... ) {
-				_ui->cbFixedDepth->setChecked(false);
+				SC_D.ui.cbFixedDepth->setChecked(false);
 			}
 
 			// Preset depth type
 			try {
-				idx = _ui->cbDepthType->findData(_currentOrigin->depthType().toInt());
-				_ui->cbDepthType->setCurrentIndex(idx > 0 ? idx : 1);
+				idx = SC_D.ui.cbDepthType->findData(SC_D.currentOrigin->depthType().toInt());
+				SC_D.ui.cbDepthType->setCurrentIndex(idx > 0 ? idx : 1);
 			}
 			catch ( ValueException & ) {
-				_ui->cbDepthType->setCurrentIndex(1);
+				SC_D.ui.cbDepthType->setCurrentIndex(1);
 			}
 		}
 	}
 
-	_residuals->setEnabled(_currentOrigin != nullptr);
+	SC_D.residuals->setEnabled(SC_D.currentOrigin != nullptr);
 
 	QApplication::restoreOverrideCursor();
 }
@@ -4476,8 +4546,7 @@ void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::resetCustomLabels() {
-	ScriptLabelMap::iterator it;
-	for ( it = _scriptLabelMap.begin(); it != _scriptLabelMap.end(); ++it ) {
+	for ( auto it = SC_D.scriptLabelMap.begin(); it != SC_D.scriptLabelMap.end(); ++it ) {
 		it.value().first->setEnabled(false);
 		it.value().second->setText("");
 	}
@@ -4489,70 +4558,70 @@ void OriginLocatorView::resetCustomLabels() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::updateContent() {
-	_residuals->clear();
-	//_ui->tableArrivals->setModel(&_modelArrivals);
+	SC_D.residuals->clear();
+	//SC_D.ui.tableArrivals->setModel(&SC_D.modelArrivals);
 
-	if ( _ui->tableArrivals->selectionModel() ) {
-		delete _ui->tableArrivals->selectionModel();
+	if ( SC_D.ui.tableArrivals->selectionModel() ) {
+		delete SC_D.ui.tableArrivals->selectionModel();
 	}
 
-	if ( _ui->tableArrivals->model() ) {
-		delete _ui->tableArrivals->model();
+	if ( SC_D.ui.tableArrivals->model() ) {
+		delete SC_D.ui.tableArrivals->model();
 	}
 
-	_modelArrivalsProxy = new ArrivalsSortFilterProxyModel(this);
-	_modelArrivalsProxy->setSourceModel(&_modelArrivals);
-	_ui->tableArrivals->setModel(_modelArrivalsProxy);
-	connect(_ui->tableArrivals->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex&, const QModelIndex&)),
+	SC_D.modelArrivalsProxy = new ArrivalsSortFilterProxyModel(this);
+	SC_D.modelArrivalsProxy->setSourceModel(&SC_D.modelArrivals);
+	SC_D.ui.tableArrivals->setModel(SC_D.modelArrivalsProxy);
+	connect(SC_D.ui.tableArrivals->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex&, const QModelIndex&)),
 	        this, SLOT(selectRow(const QModelIndex&, const QModelIndex&)));
 
 	for ( int i = 0; i < ArrivalListColumns::Quantity; ++i ) {
-		_ui->tableArrivals->setColumnHidden(i, !colVisibility[i]);
+		SC_D.ui.tableArrivals->setColumnHidden(i, !colVisibility[i]);
 	}
 
-	//_ui->tableArrivals->resize(_ui->tableArrivals->size());
+	//SC_D.ui.tableArrivals->resize(SC_D.ui.tableArrivals->size());
 #if QT_VERSION >= 0x050000
-	_ui->tableArrivals->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	SC_D.ui.tableArrivals->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 #else
-	_ui->tableArrivals->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+	SC_D.ui.tableArrivals->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
 #endif
 
-	_ui->buttonEditComment->setEnabled(_baseEvent.get());
+	SC_D.ui.buttonEditComment->setEnabled(SC_D.baseEvent.get());
 
 	// Reset custom labels and set background
 	resetCustomLabels();
 
-	if ( _currentOrigin == nullptr ) {
-		_ui->cbLocator->setEnabled(false);
-		_ui->retranslateUi(this);
-		_ui->btnShowWaveforms->setEnabled(false);
-		_ui->btnRelocate->setEnabled(false);
-		_ui->cbLocatorProfile->setEnabled(false);
-		_ui->btnCustom0->setEnabled(false);
-		_ui->btnCustom1->setEnabled(false);
-		_map->setOrigin(nullptr);
-		_residuals->update();
+	if ( SC_D.currentOrigin == nullptr ) {
+		SC_D.ui.cbLocator->setEnabled(false);
+		SC_D.ui.retranslateUi(this);
+		SC_D.ui.btnShowWaveforms->setEnabled(false);
+		SC_D.ui.btnRelocate->setEnabled(false);
+		SC_D.ui.cbLocatorProfile->setEnabled(false);
+		SC_D.ui.btnCustom0->setEnabled(false);
+		SC_D.ui.btnCustom1->setEnabled(false);
+		SC_D.map->setOrigin(nullptr);
+		SC_D.residuals->update();
 		return;
 	}
 
-	_ui->btnCustom0->setEnabled(true);
-	_ui->btnCustom1->setEnabled(true);
+	SC_D.ui.btnCustom0->setEnabled(true);
+	SC_D.ui.btnCustom1->setEnabled(true);
 
-	if ( _ui->cbLocator->count() > 1 ) {
-		_ui->cbLocator->setEnabled(true);
+	if ( SC_D.ui.cbLocator->count() > 1 ) {
+		SC_D.ui.cbLocator->setEnabled(true);
 	}
 
-	_ui->btnLocatorSettings->setEnabled(_locator != nullptr);
+	SC_D.ui.btnLocatorSettings->setEnabled(SC_D.locator != nullptr);
 
-	_ui->btnShowWaveforms->setEnabled(true);
-	_ui->btnRelocate->setEnabled(true);
-	_ui->cbLocatorProfile->setEnabled(true);
-	_ui->btnCommit->setEnabled(true);
+	SC_D.ui.btnShowWaveforms->setEnabled(true);
+	SC_D.ui.btnRelocate->setEnabled(true);
+	SC_D.ui.cbLocatorProfile->setEnabled(true);
+	SC_D.ui.btnCommit->setEnabled(true);
 
-	//_ui->cbFixedDepth->setChecked(Qt::Unchecked);
-	Time t = _currentOrigin->time();
-	_ui->labelRegion->setText(Regions::getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
-	//timeToLabel(_ui->labelDate, timeToString(t, "%Y-%m-%d");
+	//SC_D.ui.cbFixedDepth->setChecked(Qt::Unchecked);
+	Time t = SC_D.currentOrigin->time();
+	SC_D.ui.labelRegion->setText(Regions::getRegionName(SC_D.currentOrigin->latitude(), SC_D.currentOrigin->longitude()).c_str());
+	//timeToLabel(SC_D.ui.labelDate, timeToString(t, "%Y-%m-%d");
 	std::string format = "%Y-%m-%d %H:%M:%S";
 	if ( SCScheme.precision.originTime > 0 ) {
 		format += ".%";
@@ -4560,163 +4629,163 @@ void OriginLocatorView::updateContent() {
 		format += "f";
 	}
 
-	timeToLabel(_ui->labelTime, t, format.c_str());
+	timeToLabel(SC_D.ui.labelTime, t, format.c_str());
 
 	double radius;
-	if ( _config.defaultEventRadius > 0 ) {
-		radius = _config.defaultEventRadius;
+	if ( SC_D.config.defaultEventRadius > 0 ) {
+		radius = SC_D.config.defaultEventRadius;
 	}
 	else {
 		radius = 20;
 		try {
-			radius = std::min(radius, _currentOrigin->quality().maximumDistance()+0.1);
+			radius = std::min(radius, SC_D.currentOrigin->quality().maximumDistance()+0.1);
 		}
 		catch ( ... ) {}
 	}
 
-	if ( _undoList.isEmpty() ) {
-		_map->canvas().displayRect(QRectF(_currentOrigin->longitude()-radius, _currentOrigin->latitude()-radius, radius*2, radius*2));
+	if ( SC_D.undoList.isEmpty() ) {
+		SC_D.map->canvas().displayRect(QRectF(SC_D.currentOrigin->longitude()-radius, SC_D.currentOrigin->latitude()-radius, radius*2, radius*2));
 	}
 
-	_map->canvas().setMapCenter(QPointF(_currentOrigin->longitude(), _currentOrigin->latitude()));
-	//_map->setView(QPointF(_currentOrigin->longitude().value(), _currentOrigin->latitude().value()), _map->zoomLevel());
-	_map->setOrigin(_currentOrigin.get());
-	_map->update();
-	if ( _toolMap ) {
-		if ( _undoList.isEmpty() )
-			_toolMap->canvas().displayRect(QRectF(_currentOrigin->longitude()-radius, _currentOrigin->latitude()-radius, radius*2, radius*2));
+	SC_D.map->canvas().setMapCenter(QPointF(SC_D.currentOrigin->longitude(), SC_D.currentOrigin->latitude()));
+	//SC_D.map->setView(QPointF(SC_D.currentOrigin->longitude().value(), SC_D.currentOrigin->latitude().value()), SC_D.map->zoomLevel());
+	SC_D.map->setOrigin(SC_D.currentOrigin.get());
+	SC_D.map->update();
+	if ( SC_D.toolMap ) {
+		if ( SC_D.undoList.isEmpty() )
+			SC_D.toolMap->canvas().displayRect(QRectF(SC_D.currentOrigin->longitude()-radius, SC_D.currentOrigin->latitude()-radius, radius*2, radius*2));
 
-		_toolMap->canvas().setMapCenter(QPointF(_currentOrigin->longitude(), _currentOrigin->latitude()));
-		//_toolMap->setView(QPointF(_currentOrigin->longitude().value(), _currentOrigin->latitude().value()), _toolMap->zoomLevel());
-		_toolMap->setOrigin(_currentOrigin.get());
-		_toolMap->update();
+		SC_D.toolMap->canvas().setMapCenter(QPointF(SC_D.currentOrigin->longitude(), SC_D.currentOrigin->latitude()));
+		//SC_D.toolMap->setView(QPointF(SC_D.currentOrigin->longitude().value(), SC_D.currentOrigin->latitude().value()), SC_D.toolMap->zoomLevel());
+		SC_D.toolMap->setOrigin(SC_D.currentOrigin.get());
+		SC_D.toolMap->update();
 	}
 
-	_ui->labelLatitude->setText(latitudeToString(_currentOrigin->latitude(), true, false, SCScheme.precision.location));
-	_ui->labelLatitudeUnit->setText(latitudeToString(_currentOrigin->latitude(), false, true));
-	//_ui->labelLatitudeUnit->setText("deg");
+	SC_D.ui.labelLatitude->setText(latitudeToString(SC_D.currentOrigin->latitude(), true, false, SCScheme.precision.location));
+	SC_D.ui.labelLatitudeUnit->setText(latitudeToString(SC_D.currentOrigin->latitude(), false, true));
+	//SC_D.ui.labelLatitudeUnit->setText("deg");
 	try {
-		_ui->labelLatitudeError->setText(QString("+/- %1").arg(quantityUncertainty(_currentOrigin->latitude()), 0, 'f', SCScheme.precision.uncertainties));
-		_ui->labelLatitudeErrorUnit->setText("km");
+		SC_D.ui.labelLatitudeError->setText(QString("+/- %1").arg(quantityUncertainty(SC_D.currentOrigin->latitude()), 0, 'f', SCScheme.precision.uncertainties));
+		SC_D.ui.labelLatitudeErrorUnit->setText("km");
 	}
 	catch ( ValueException& ) {
-		_ui->labelLatitudeError->setText("");
-		_ui->labelLatitudeErrorUnit->setText("");
+		SC_D.ui.labelLatitudeError->setText("");
+		SC_D.ui.labelLatitudeErrorUnit->setText("");
 	}
 
-	_ui->labelLongitude->setText(longitudeToString(_currentOrigin->longitude(), true, false, SCScheme.precision.location));
-	_ui->labelLongitudeUnit->setText(longitudeToString(_currentOrigin->longitude(), false, true, SCScheme.precision.location));
-	//_ui->labelLongitudeUnit->setText("deg");
+	SC_D.ui.labelLongitude->setText(longitudeToString(SC_D.currentOrigin->longitude(), true, false, SCScheme.precision.location));
+	SC_D.ui.labelLongitudeUnit->setText(longitudeToString(SC_D.currentOrigin->longitude(), false, true, SCScheme.precision.location));
+	//SC_D.ui.labelLongitudeUnit->setText("deg");
 	try {
-		_ui->labelLongitudeError->setText(QString("+/- %1").arg(quantityUncertainty(_currentOrigin->longitude()), 0, 'f', SCScheme.precision.uncertainties));
-		_ui->labelLongitudeErrorUnit->setText("km");
+		SC_D.ui.labelLongitudeError->setText(QString("+/- %1").arg(quantityUncertainty(SC_D.currentOrigin->longitude()), 0, 'f', SCScheme.precision.uncertainties));
+		SC_D.ui.labelLongitudeErrorUnit->setText("km");
 	}
 	catch ( ValueException& ) {
-		_ui->labelLongitudeError->setText("");
-		_ui->labelLongitudeErrorUnit->setText("");
+		SC_D.ui.labelLongitudeError->setText("");
+		SC_D.ui.labelLongitudeErrorUnit->setText("");
 	}
 
 	try {
-		_ui->labelDepth->setText(depthToString(_currentOrigin->depth(), SCScheme.precision.depth));
-		_ui->editFixedDepth->setText(depthToString(_currentOrigin->depth(), std::max(3, SCScheme.precision.depth)));
-		_ui->labelDepthUnit->setText("km");
+		SC_D.ui.labelDepth->setText(depthToString(SC_D.currentOrigin->depth(), SCScheme.precision.depth));
+		SC_D.ui.editFixedDepth->setText(depthToString(SC_D.currentOrigin->depth(), std::max(3, SCScheme.precision.depth)));
+		SC_D.ui.labelDepthUnit->setText("km");
 	}
 	catch ( ValueException& ) {
-		_ui->labelDepth->setText("-");
-		_ui->editFixedDepth->setText("");
+		SC_D.ui.labelDepth->setText("-");
+		SC_D.ui.editFixedDepth->setText("");
 	}
 
 	try {
-		_ui->labelDepth->setToolTip(tr("Type: %1").arg(_currentOrigin->depthType().toString()));
+		SC_D.ui.labelDepth->setToolTip(tr("Type: %1").arg(SC_D.currentOrigin->depthType().toString()));
 	}
 	catch ( ValueException& ) {
-		_ui->labelDepth->setToolTip(tr("Type: unset"));
+		SC_D.ui.labelDepth->setToolTip(tr("Type: unset"));
 	}
 
 	try {
-		double err_z = quantityUncertainty(_currentOrigin->depth());
+		double err_z = quantityUncertainty(SC_D.currentOrigin->depth());
 		if ( err_z == 0.0 ) {
-			_ui->labelDepthError->setText(QString("fixed"));
-			_ui->labelDepthErrorUnit->setText("");
+			SC_D.ui.labelDepthError->setText(QString("fixed"));
+			SC_D.ui.labelDepthErrorUnit->setText("");
 
-			//_ui->cbFixedDepth->setChecked(true);
+			//SC_D.ui.cbFixedDepth->setChecked(true);
 		}
 		else {
-			_ui->labelDepthError->setText(QString("+/- %1").arg(err_z, 0, 'f', SCScheme.precision.uncertainties));
-			_ui->labelDepthErrorUnit->setText("km");
+			SC_D.ui.labelDepthError->setText(QString("+/- %1").arg(err_z, 0, 'f', SCScheme.precision.uncertainties));
+			SC_D.ui.labelDepthErrorUnit->setText("km");
 
-			//_ui->cbFixedDepth->setChecked(false);
+			//SC_D.ui.cbFixedDepth->setChecked(false);
 		}
 	}
 	catch ( ValueException& ) {
-		_ui->labelDepthError->setText(QString("fixed"));
-		_ui->labelDepthErrorUnit->setText("");
+		SC_D.ui.labelDepthError->setText(QString("fixed"));
+		SC_D.ui.labelDepthErrorUnit->setText("");
 	}
 
 	// When an origin has been loaded the depth is released
-	_ui->cbFixedDepth->setChecked(false);
+	SC_D.ui.cbFixedDepth->setChecked(false);
 
 	try {
-		_ui->labelStdError->setText(QString("%1").arg(_currentOrigin->quality().standardError(), 0, 'f', SCScheme.precision.rms));
+		SC_D.ui.labelStdError->setText(QString("%1").arg(SC_D.currentOrigin->quality().standardError(), 0, 'f', SCScheme.precision.rms));
 	}
 	catch ( ValueException& ) {
-		_ui->labelStdError->setText("-");
+		SC_D.ui.labelStdError->setText("-");
 	}
 
-	_ui->labelComment->setText(_displayCommentDefault.c_str());
-	if ( _displayComment ) {
-		if ( _reader && _currentOrigin->commentCount() == 0 )
-			_reader->loadComments(_currentOrigin.get());
+	SC_D.ui.labelComment->setText(SC_D.displayCommentDefault.c_str());
+	if ( SC_D.displayComment ) {
+		if ( SC_D.reader && SC_D.currentOrigin->commentCount() == 0 )
+			SC_D.reader->loadComments(SC_D.currentOrigin.get());
 
-		for ( size_t i = 0; i < _currentOrigin->commentCount(); ++i ) {
-			if ( _currentOrigin->comment(i)->id() == _displayCommentID ) {
-				_ui->labelComment->setText(_currentOrigin->comment(i)->text().c_str());
+		for ( size_t i = 0; i < SC_D.currentOrigin->commentCount(); ++i ) {
+			if ( SC_D.currentOrigin->comment(i)->id() == SC_D.displayCommentID ) {
+				SC_D.ui.labelComment->setText(SC_D.currentOrigin->comment(i)->text().c_str());
 				break;
 			}
 		}
 	}
 
 	try {
-		_ui->labelAzimuthGap->setText(QString("%1").arg(_currentOrigin->quality().azimuthalGap(), 0, 'f', 0));
-		//_ui->labelAzimuthGapUnit->setText("deg");
+		SC_D.ui.labelAzimuthGap->setText(QString("%1").arg(SC_D.currentOrigin->quality().azimuthalGap(), 0, 'f', 0));
+		//SC_D.ui.labelAzimuthGapUnit->setText("deg");
 	}
 	catch ( ValueException& ) {
-		_ui->labelAzimuthGap->setText("-");
+		SC_D.ui.labelAzimuthGap->setText("-");
 	}
 
 	try {
 		if ( SCScheme.unit.distanceInKM )
-			_ui->labelMinDist->setText(QString("%1").arg(Math::Geo::deg2km(_currentOrigin->quality().minimumDistance()), 0, 'f', SCScheme.precision.distance));
+			SC_D.ui.labelMinDist->setText(QString("%1").arg(Math::Geo::deg2km(SC_D.currentOrigin->quality().minimumDistance()), 0, 'f', SCScheme.precision.distance));
 		else
-			_ui->labelMinDist->setText(QString("%1").arg(_currentOrigin->quality().minimumDistance(), 0, 'f', 1));
-		//_ui->labelMinDistUnit->setText("deg");
+			SC_D.ui.labelMinDist->setText(QString("%1").arg(SC_D.currentOrigin->quality().minimumDistance(), 0, 'f', 1));
+		//SC_D.ui.labelMinDistUnit->setText("deg");
 	}
 	catch ( ValueException& ) {
-		_ui->labelMinDist->setText("-");
+		SC_D.ui.labelMinDist->setText("-");
 	}
 
 	try {
 		try {
-			timeToLabel(_ui->labelCreated, _currentOrigin->creationInfo().modificationTime(), "%Y-%m-%d %H:%M:%S");
+			timeToLabel(SC_D.ui.labelCreated, SC_D.currentOrigin->creationInfo().modificationTime(), "%Y-%m-%d %H:%M:%S");
 			try {
-				_ui->labelCreated->setToolTip(tr("Creation time: %1").arg(timeToString(_currentOrigin->creationInfo().creationTime(), "%Y-%m-%d %H:%M:%S")));
+				SC_D.ui.labelCreated->setToolTip(tr("Creation time: %1").arg(timeToString(SC_D.currentOrigin->creationInfo().creationTime(), "%Y-%m-%d %H:%M:%S")));
 			}
 			catch ( ... ) {}
 		}
 		catch ( ... ) {
-			timeToLabel(_ui->labelCreated, _currentOrigin->creationInfo().creationTime(), "%Y-%m-%d %H:%M:%S");
-			_ui->labelCreated->setToolTip(tr("That is actually the creation time"));
+			timeToLabel(SC_D.ui.labelCreated, SC_D.currentOrigin->creationInfo().creationTime(), "%Y-%m-%d %H:%M:%S");
+			SC_D.ui.labelCreated->setToolTip(tr("That is actually the creation time"));
 		}
 	}
 	catch ( ValueException& ) {
-		_ui->labelCreated->setText("");
+		SC_D.ui.labelCreated->setText("");
 	}
 
-	_ui->cbDepthType->setCurrentIndex(0);
+	SC_D.ui.cbDepthType->setCurrentIndex(0);
 
 	int activeArrivals = 0;
-	for ( size_t i = 0; i < _currentOrigin->arrivalCount(); ++i ) {
-		Arrival* arrival = _currentOrigin->arrival(i);
+	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+		Arrival* arrival = SC_D.currentOrigin->arrival(i);
 		Pick* pick = Pick::Cast(PublicObject::Find(arrival->pickID()));
 		QColor baseColor, pickColor;
 
@@ -4753,17 +4822,17 @@ void OriginLocatorView::updateContent() {
 
 		addArrival(i, arrival, pickTime, pickColor);
 
-		_modelArrivals.setUseArrival(i, arrival);
+		SC_D.modelArrivals.setUseArrival(i, arrival);
 
 		QColor pickStateColor = pickColor;
-		if ( !_modelArrivals.useArrival(i) ) {
+		if ( !SC_D.modelArrivals.useArrival(i) ) {
 			pickStateColor = SCScheme.colors.arrivals.disabled;
 		}
 		else {
 			++activeArrivals;
 		}
 
-		_modelArrivals.setRowColor(i, pickStateColor);
+		SC_D.modelArrivals.setRowColor(i, pickStateColor);
 
 		/*
 		try {
@@ -4775,44 +4844,44 @@ void OriginLocatorView::updateContent() {
 		*/
 	}
 
-	if ( _baseEvent ) {
-		_ui->labelEventID->setText(_baseEvent->publicID().c_str());
-		_ui->labelEventID->setToolTip(_baseEvent->publicID().c_str());
+	if ( SC_D.baseEvent ) {
+		SC_D.ui.labelEventID->setText(SC_D.baseEvent->publicID().c_str());
+		SC_D.ui.labelEventID->setToolTip(SC_D.baseEvent->publicID().c_str());
 	}
 	else {
-		_ui->labelEventID->setText("-");
-		_ui->labelEventID->setToolTip("");
+		SC_D.ui.labelEventID->setText("-");
+		SC_D.ui.labelEventID->setToolTip("");
 	}
 
 	try {
-		_ui->labelAgency->setText(_currentOrigin->creationInfo().agencyID().c_str());
-		_ui->labelAgency->setToolTip(_currentOrigin->creationInfo().agencyID().c_str());
+		SC_D.ui.labelAgency->setText(SC_D.currentOrigin->creationInfo().agencyID().c_str());
+		SC_D.ui.labelAgency->setToolTip(SC_D.currentOrigin->creationInfo().agencyID().c_str());
 	}
 	catch ( Core::ValueException & ) {
-		_ui->labelAgency->setText("-");
-		_ui->labelAgency->setToolTip("");
+		SC_D.ui.labelAgency->setText("-");
+		SC_D.ui.labelAgency->setToolTip("");
 	}
 
 	try {
-		_ui->labelUser->setText(_currentOrigin->creationInfo().author().c_str());
-		_ui->labelUser->setToolTip(_currentOrigin->creationInfo().author().c_str());
+		SC_D.ui.labelUser->setText(SC_D.currentOrigin->creationInfo().author().c_str());
+		SC_D.ui.labelUser->setToolTip(SC_D.currentOrigin->creationInfo().author().c_str());
 	}
 	catch ( Core::ValueException & ) {
-		_ui->labelUser->setText("-");
-		_ui->labelUser->setToolTip("");
+		SC_D.ui.labelUser->setText("-");
+		SC_D.ui.labelUser->setToolTip("");
 	}
 
-	QPalette pal = _ui->labelEvaluation->palette();
+	QPalette pal = SC_D.ui.labelEvaluation->palette();
 	pal.setColor(QPalette::WindowText, palette().color(QPalette::WindowText));
-	_ui->labelEvaluation->setPalette(pal);
+	SC_D.ui.labelEvaluation->setPalette(pal);
 
 	QString evalMode;
 	try {
-		evalMode = _currentOrigin->evaluationStatus().toString();
-		if ( _currentOrigin->evaluationStatus() == REJECTED ) {
-			QPalette pal = _ui->labelEvaluation->palette();
+		evalMode = SC_D.currentOrigin->evaluationStatus().toString();
+		if ( SC_D.currentOrigin->evaluationStatus() == REJECTED ) {
+			QPalette pal = SC_D.ui.labelEvaluation->palette();
 			pal.setColor(QPalette::WindowText, Qt::red);
-			_ui->labelEvaluation->setPalette(pal);
+			SC_D.ui.labelEvaluation->setPalette(pal);
 		}
 	}
 	catch ( ... ) {
@@ -4820,10 +4889,10 @@ void OriginLocatorView::updateContent() {
 	}
 
 	try {
-		if ( _currentOrigin->evaluationMode() == AUTOMATIC ) {
+		if ( SC_D.currentOrigin->evaluationMode() == AUTOMATIC ) {
 			evalMode += " (A)";
 		}
-		else if ( _currentOrigin->evaluationMode() == MANUAL ) {
+		else if ( SC_D.currentOrigin->evaluationMode() == MANUAL ) {
 			evalMode += " (M)";
 		}
 		else {
@@ -4834,21 +4903,21 @@ void OriginLocatorView::updateContent() {
 		evalMode += " (-)";
 	}
 
-	_ui->labelEvaluation->setText(evalMode);
-	_ui->labelMethod->setText(_currentOrigin->methodID().c_str());
-	_ui->labelEarthModel->setText(_currentOrigin->earthModelID().c_str());
+	SC_D.ui.labelEvaluation->setText(evalMode);
+	SC_D.ui.labelMethod->setText(SC_D.currentOrigin->methodID().c_str());
+	SC_D.ui.labelEarthModel->setText(SC_D.currentOrigin->earthModelID().c_str());
 
-	_ui->labelNumPhases->setText(QString("%1").arg(activeArrivals));
-	_ui->labelNumPhasesError->setText(QString("%1").arg(_currentOrigin->arrivalCount()));
+	SC_D.ui.labelNumPhases->setText(QString("%1").arg(activeArrivals));
+	SC_D.ui.labelNumPhasesError->setText(QString("%1").arg(SC_D.currentOrigin->arrivalCount()));
 
-	_residuals->updateBoundingRect();
+	SC_D.residuals->updateBoundingRect();
 
-	plotTabChanged(_plotTab->currentIndex());
+	plotTabChanged(SC_D.plotTab->currentIndex());
 
-	//_ui->tableArrivals->resizeColumnsToContents();
-	_ui->tableArrivals->resizeRowsToContents();
-	_ui->tableArrivals->sortByColumn(_ui->tableArrivals->horizontalHeader()->sortIndicatorSection(),
-	                                 _ui->tableArrivals->horizontalHeader()->sortIndicatorOrder());
+	//SC_D.ui.tableArrivals->resizeColumnsToContents();
+	SC_D.ui.tableArrivals->resizeRowsToContents();
+	SC_D.ui.tableArrivals->sortByColumn(SC_D.ui.tableArrivals->horizontalHeader()->sortIndicatorSection(),
+	                                 SC_D.ui.tableArrivals->horizontalHeader()->sortIndicatorOrder());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4858,52 +4927,52 @@ void OriginLocatorView::updateContent() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
                                    const Core::Time &time, const QColor& c) {
-	int id = _residuals->count();
+	int id = SC_D.residuals->count();
 	Pick *pick = nullptr;
 
-	_residuals->addValue(QPointF());
+	SC_D.residuals->addValue(QPointF());
 
-	_residuals->setValueColor(id, PC_DISTANCE, c);
-	_residuals->setValueColor(id, PC_RESIDUAL, c);
-	_residuals->setValueColor(id, PC_TRAVELTIME, c);
-	_residuals->setValueColor(id, PC_FMAZI, c);
-	//_residuals->setValueColor(id, 3, c);
+	SC_D.residuals->setValueColor(id, PC_DISTANCE, c);
+	SC_D.residuals->setValueColor(id, PC_RESIDUAL, c);
+	SC_D.residuals->setValueColor(id, PC_TRAVELTIME, c);
+	SC_D.residuals->setValueColor(id, PC_FMAZI, c);
+	//SC_D.residuals->setValueColor(id, 3, c);
 
 	double dist = -1;
 	try { dist = arrival->distance(); } catch ( ... ) {}
 
 	char phase = Util::getShortPhaseName(arrival->phase().code());
 	if ( phase == 'S' ) {
-		_residuals->setValueSymbol(id, DiagramWidget::Rectangle);
+		SC_D.residuals->setValueSymbol(id, DiagramWidget::Rectangle);
 	}
 	else if ( phase == 'L' or phase == 'R' ) {
-		_residuals->setValueSymbol(id, DiagramWidget::Triangle);
+		SC_D.residuals->setValueSymbol(id, DiagramWidget::Triangle);
 	}
 	else {
-		_residuals->setValueSymbol(id, DiagramWidget::Circle);
+		SC_D.residuals->setValueSymbol(id, DiagramWidget::Circle);
 	}
 
 	try {
-		_residuals->setValueColor(id, PC_AZIMUTH, SCScheme.colors.arrivals.residuals.colorAt(arrival->timeResidual()));
+		SC_D.residuals->setValueColor(id, PC_AZIMUTH, SCScheme.colors.arrivals.residuals.colorAt(arrival->timeResidual()));
 	}
 	catch ( Core::ValueException& ) {
-		_residuals->setValueColor(id, PC_AZIMUTH, SCScheme.colors.arrivals.undefined);
-		//_residuals->setValueColor(id, 3, SCScheme.colors.arrivals.undefined);
+		SC_D.residuals->setValueColor(id, PC_AZIMUTH, SCScheme.colors.arrivals.undefined);
+		//SC_D.residuals->setValueColor(id, 3, SCScheme.colors.arrivals.undefined);
 	}
 
-	_residuals->setValueColor(id, PC_REDUCEDTRAVELTIME, c);
+	SC_D.residuals->setValueColor(id, PC_REDUCEDTRAVELTIME, c);
 
 	try {
 		if ( SCScheme.unit.distanceInKM ) {
-			_residuals->setValue(id, PC_DISTANCE, Math::Geo::deg2km(dist));
+			SC_D.residuals->setValue(id, PC_DISTANCE, Math::Geo::deg2km(dist));
 		}
 		else {
-			_residuals->setValue(id, PC_DISTANCE, dist);
+			SC_D.residuals->setValue(id, PC_DISTANCE, dist);
 		}
 	}
 	catch ( ValueException& ) {
-		_residuals->setValue(id, PC_DISTANCE, 0.0);
-		_residuals->setValueValid(id, PC_DISTANCE, false);
+		SC_D.residuals->setValue(id, PC_DISTANCE, 0.0);
+		SC_D.residuals->setValueValid(id, PC_DISTANCE, false);
 	}
 
 	try {
@@ -4930,49 +4999,49 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 		}
 
 		if ( upperUncertainty < 0 ) {
-			_residuals->setValue(id, PC_RESIDUAL, residual);
+			SC_D.residuals->setValue(id, PC_RESIDUAL, residual);
 		}
 		else {
-			_residuals->setValue(id, PC_RESIDUAL, residual, lowerUncertainty, upperUncertainty);
+			SC_D.residuals->setValue(id, PC_RESIDUAL, residual, lowerUncertainty, upperUncertainty);
 		}
 	}
 	catch ( ValueException& ) {
-		_residuals->setValue(id, PC_RESIDUAL, 0.0);
-		_residuals->setValueValid(id, PC_RESIDUAL, false);
+		SC_D.residuals->setValue(id, PC_RESIDUAL, 0.0);
+		SC_D.residuals->setValueValid(id, PC_RESIDUAL, false);
 	}
 
 	if ( time ) {
-		_residuals->setValue(id, PC_TRAVELTIME, (float)(time - _currentOrigin->time().value()));
+		SC_D.residuals->setValue(id, PC_TRAVELTIME, (float)(time - SC_D.currentOrigin->time().value()));
 	}
 	else {
-		_residuals->setValue(id, PC_TRAVELTIME, 0.0);
-		_residuals->setValueValid(id, PC_TRAVELTIME, false);
+		SC_D.residuals->setValue(id, PC_TRAVELTIME, 0.0);
+		SC_D.residuals->setValueValid(id, PC_TRAVELTIME, false);
 	}
 
 	try {
-		_residuals->setValue(id, PC_AZIMUTH, arrival->azimuth());
+		SC_D.residuals->setValue(id, PC_AZIMUTH, arrival->azimuth());
 	}
 	catch ( ValueException& ) {
-		_residuals->setValue(id, PC_AZIMUTH, 0.0);
-		_residuals->setValueValid(id, PC_AZIMUTH, false);
+		SC_D.residuals->setValue(id, PC_AZIMUTH, 0.0);
+		SC_D.residuals->setValueValid(id, PC_AZIMUTH, false);
 	}
 
-	if ( _residuals->isValueValid(id, PC_DISTANCE) && _residuals->isValueValid(id, PC_TRAVELTIME) ) {
+	if ( SC_D.residuals->isValueValid(id, PC_DISTANCE) && SC_D.residuals->isValueValid(id, PC_TRAVELTIME) ) {
 		if ( SCScheme.unit.distanceInKM ) {
-			_residuals->setValue(id, PC_REDUCEDTRAVELTIME, _residuals->value(id,PC_TRAVELTIME) - _residuals->value(id,PC_DISTANCE)/_config.reductionVelocityP);
+			SC_D.residuals->setValue(id, PC_REDUCEDTRAVELTIME, SC_D.residuals->value(id,PC_TRAVELTIME) - SC_D.residuals->value(id,PC_DISTANCE)/SC_D.config.reductionVelocityP);
 		}
 		else {
-			_residuals->setValue(id, PC_REDUCEDTRAVELTIME, _residuals->value(id,PC_TRAVELTIME) - Math::Geo::deg2km(_residuals->value(id,PC_DISTANCE))/_config.reductionVelocityP);
+			SC_D.residuals->setValue(id, PC_REDUCEDTRAVELTIME, SC_D.residuals->value(id,PC_TRAVELTIME) - Math::Geo::deg2km(SC_D.residuals->value(id,PC_DISTANCE))/SC_D.config.reductionVelocityP);
 		}
 	}
 	else {
-		_residuals->setValue(id, PC_REDUCEDTRAVELTIME, 0.0);
-		_residuals->setValueValid(id, PC_REDUCEDTRAVELTIME, false);
+		SC_D.residuals->setValue(id, PC_REDUCEDTRAVELTIME, 0.0);
+		SC_D.residuals->setValueValid(id, PC_REDUCEDTRAVELTIME, false);
 	}
 
-	if ( _residuals->isValueValid(id, PC_DISTANCE) &&
-	     _residuals->isValueValid(id, PC_AZIMUTH) &&
-	     phase == 'P' && _currentOrigin ) {
+	if ( SC_D.residuals->isValueValid(id, PC_DISTANCE) &&
+	     SC_D.residuals->isValueValid(id, PC_AZIMUTH) &&
+	     phase == 'P' && SC_D.currentOrigin ) {
 
 		PlotWidget::PolarityType polarity = PlotWidget::POL_UNSET;
 		if ( !pick ) {
@@ -5001,7 +5070,7 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 				polarity = PlotWidget::POL_UNSET;
 			}
 
-			_residuals->setValue(id, PC_POLARITY, polarity);
+			SC_D.residuals->setValue(id, PC_POLARITY, polarity);
 		}
 
 		double beta;
@@ -5014,33 +5083,33 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 			hasTakeOff = false;
 		}
 
-		if ( !hasTakeOff && _config.computeMissingTakeOffAngles ) {
+		if ( !hasTakeOff && SC_D.config.computeMissingTakeOffAngles ) {
 			double lat, lon;
-			double azi = _residuals->value(id, PC_AZIMUTH);
+			double azi = SC_D.residuals->value(id, PC_AZIMUTH);
 
 			Math::Geo::delandaz2coord(
 				dist, azi,
-				_currentOrigin->latitude(), _currentOrigin->longitude(),
+				SC_D.currentOrigin->latitude(), SC_D.currentOrigin->longitude(),
 				&lat, &lon
 			);
 
 			try {
-				TravelTime ttt = _ttTable.computeFirst(
-					_currentOrigin->latitude(), _currentOrigin->longitude(),
-					_currentOrigin->depth(), lat, lon
+				TravelTime ttt = SC_D.ttTable.computeFirst(
+					SC_D.currentOrigin->latitude(), SC_D.currentOrigin->longitude(),
+					SC_D.currentOrigin->depth(), lat, lon
 				);
 
 				beta = ttt.takeoff;
-				_modelArrivals.setTakeOffAngle(idx, beta);
+				SC_D.modelArrivals.setTakeOffAngle(idx, beta);
 
 				hasTakeOff = true;
 			}
 			catch ( ... ) {}
 		}
 
-		if ( hasTakeOff && static_cast<PlotWidget*>(_residuals)->shape(polarity).shown ) {
+		if ( hasTakeOff && static_cast<PlotWidget*>(SC_D.residuals)->shape(polarity).shown ) {
 			double azi;
-			azi = _residuals->value(id, PC_AZIMUTH);
+			azi = SC_D.residuals->value(id, PC_AZIMUTH);
 
 			if ( beta > 90 ) {
 				beta = 180-beta;
@@ -5050,28 +5119,28 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 
 			beta = sqrt(2.0) * sin(0.5*deg2rad(beta));
 
-			//if ( static_cast<PlotWidget*>(_residuals)->shape(polarity).colorUsed )
-			//	_residuals->setValueColor(id, PC_FMAZI, static_cast<PlotWidget*>(_residuals)->shape(polarity).color);
+			//if ( static_cast<PlotWidget*>(SC_D.residuals)->shape(polarity).colorUsed )
+			//	SC_D.residuals->setValueColor(id, PC_FMAZI, static_cast<PlotWidget*>(SC_D.residuals)->shape(polarity).color);
 
-			_residuals->setValue(id, PC_FMAZI, azi);
-			_residuals->setValue(id, PC_FMDIST, beta);
+			SC_D.residuals->setValue(id, PC_FMAZI, azi);
+			SC_D.residuals->setValue(id, PC_FMDIST, beta);
 		}
 		else {
-			_residuals->setValue(id, PC_FMDIST, 0.0);
-			_residuals->setValue(id, PC_FMAZI, 0.0);
-			_residuals->setValueValid(id, PC_FMDIST, false);
-			_residuals->setValueValid(id, PC_FMAZI, false);
+			SC_D.residuals->setValue(id, PC_FMDIST, 0.0);
+			SC_D.residuals->setValue(id, PC_FMAZI, 0.0);
+			SC_D.residuals->setValueValid(id, PC_FMDIST, false);
+			SC_D.residuals->setValueValid(id, PC_FMAZI, false);
 		}
 	}
 	else {
-		_residuals->setValue(id, PC_FMDIST, 0.0);
-		_residuals->setValue(id, PC_FMAZI, 0.0);
-		_residuals->setValueValid(id, PC_FMDIST, false);
-		_residuals->setValueValid(id, PC_FMAZI, false);
+		SC_D.residuals->setValue(id, PC_FMDIST, 0.0);
+		SC_D.residuals->setValue(id, PC_FMAZI, 0.0);
+		SC_D.residuals->setValueValid(id, PC_FMDIST, false);
+		SC_D.residuals->setValueValid(id, PC_FMAZI, false);
 	}
 
-	if ( _plotFilter )
-		_residuals->showValue(id, _plotFilter->accepts(_residuals, id));
+	if ( SC_D.plotFilter )
+		SC_D.residuals->showValue(id, SC_D.plotFilter->accepts(SC_D.residuals, id));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5080,8 +5149,8 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::addPick(Seiscomp::DataModel::Pick* pick) {
-	if ( _recordView )
-		_recordView->addPick(pick);
+	if ( SC_D.recordView )
+		SC_D.recordView->addPick(pick);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5092,8 +5161,8 @@ void OriginLocatorView::addPick(Seiscomp::DataModel::Pick* pick) {
 void OriginLocatorView::setStationEnabled(const std::string& networkCode,
                                           const std::string& stationCode,
                                           bool state) {
-	if ( _recordView )
-		_recordView->setStationEnabled(networkCode, stationCode, state);
+	if ( SC_D.recordView )
+		SC_D.recordView->setStationEnabled(networkCode, stationCode, state);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5104,14 +5173,14 @@ void OriginLocatorView::setStationEnabled(const std::string& networkCode,
 void OriginLocatorView::importArrivals() {
 	stopBlinking();
 
-	if ( !_reader ) return;
+	if ( !SC_D.reader ) return;
 
-	EventPtr event = _baseEvent;
+	EventPtr event = SC_D.baseEvent;
 
 	if ( !event ) {
-		event = Event::Cast(_reader->getEvent(_baseOrigin->publicID()));
+		event = Event::Cast(SC_D.reader->getEvent(SC_D.baseOrigin->publicID()));
 		if ( !event )
-			event = Event::Cast(_reader->getEvent(_currentOrigin->publicID()));
+			event = Event::Cast(SC_D.reader->getEvent(SC_D.currentOrigin->publicID()));
 
 		if ( !event ) {
 			QMessageBox::critical(this, "ImportPicks::Error",
@@ -5137,7 +5206,7 @@ void OriginLocatorView::importArrivals() {
 	OriginPtr referenceOrigin;
 	bool associateOnly = false;
 
-	DataModel::PublicObjectTimeSpanBuffer cache(_reader, Core::TimeSpan(3600,0));
+	DataModel::PublicObjectTimeSpanBuffer cache(SC_D.reader, Core::TimeSpan(3600,0));
 	typedef std::pair<std::string,int> PhaseWithFlags;
 	typedef std::map<std::string, PhaseWithFlags> PhasePicks;
 
@@ -5148,7 +5217,7 @@ void OriginLocatorView::importArrivals() {
 			{
 				Core::Time maxTime;
 				OriginPtr latestOrigin;
-				DatabaseIterator or_it = _reader->getOrigins(event->publicID());
+				DatabaseIterator or_it = SC_D.reader->getOrigins(event->publicID());
 				while ( *or_it ) {
 					OriginPtr o = Origin::Cast(*or_it);
 					++or_it;
@@ -5164,7 +5233,7 @@ void OriginLocatorView::importArrivals() {
 				}
 				or_it.close();
 
-				if ( !latestOrigin || latestOrigin->publicID() == _currentOrigin->publicID() ) {
+				if ( !latestOrigin || latestOrigin->publicID() == SC_D.currentOrigin->publicID() ) {
 					SEISCOMP_DEBUG("There is no later origin than the current");
 					QMessageBox::information(this, "ImportPicks", "There is no later origin than the current.");
 					qApp->restoreOverrideCursor();
@@ -5173,7 +5242,7 @@ void OriginLocatorView::importArrivals() {
 
 				referenceOrigin = latestOrigin;
 				if ( referenceOrigin->arrivalCount() == 0 )
-					_reader->loadArrivals(referenceOrigin.get());
+					SC_D.reader->loadArrivals(referenceOrigin.get());
 
 				// Collect all picks with phases
 				for ( size_t i = 0; i < referenceOrigin->arrivalCount(); ++i ) {
@@ -5188,7 +5257,7 @@ void OriginLocatorView::importArrivals() {
 			{
 				Core::Time maxTime;
 				OriginPtr latestOrigin;
-				DatabaseIterator or_it = _reader->getOrigins(event->publicID());
+				DatabaseIterator or_it = SC_D.reader->getOrigins(event->publicID());
 				while ( *or_it ) {
 					OriginPtr o = Origin::Cast(*or_it);
 					++or_it;
@@ -5215,7 +5284,7 @@ void OriginLocatorView::importArrivals() {
 				}
 				or_it.close();
 
-				if ( !latestOrigin || latestOrigin->publicID() == _currentOrigin->publicID() ) {
+				if ( !latestOrigin || latestOrigin->publicID() == SC_D.currentOrigin->publicID() ) {
 					SEISCOMP_DEBUG("There is no later origin than the current");
 					QMessageBox::information(this, "ImportPicks", "There is no later origin than the current.");
 					qApp->restoreOverrideCursor();
@@ -5224,7 +5293,7 @@ void OriginLocatorView::importArrivals() {
 
 				referenceOrigin = latestOrigin;
 				if ( referenceOrigin->arrivalCount() == 0 )
-					_reader->loadArrivals(referenceOrigin.get());
+					SC_D.reader->loadArrivals(referenceOrigin.get());
 
 				// Collect all picks with phases
 				for ( size_t i = 0; i < referenceOrigin->arrivalCount(); ++i ) {
@@ -5240,7 +5309,7 @@ void OriginLocatorView::importArrivals() {
 				size_t maxPhase = 0;
 				OriginPtr latestOrigin;
 				std::vector<OriginPtr> origins;
-				DatabaseIterator or_it = _reader->getOrigins(event->publicID());
+				DatabaseIterator or_it = SC_D.reader->getOrigins(event->publicID());
 				while ( *or_it ) {
 					OriginPtr o = Origin::Cast(*or_it);
 					if ( o ) origins.push_back(o);
@@ -5251,7 +5320,7 @@ void OriginLocatorView::importArrivals() {
 				for ( size_t i = 0; i < origins.size(); ++i ) {
 					OriginPtr o = origins[i];
 					if ( o->arrivalCount() == 0 )
-						_reader->loadArrivals(o.get());
+						SC_D.reader->loadArrivals(o.get());
 
 					if ( o->arrivalCount() > maxPhase ) {
 						latestOrigin = o;
@@ -5260,7 +5329,7 @@ void OriginLocatorView::importArrivals() {
 					}
 				}
 
-				if ( !latestOrigin || latestOrigin->publicID() == _currentOrigin->publicID() ) {
+				if ( !latestOrigin || latestOrigin->publicID() == SC_D.currentOrigin->publicID() ) {
 					SEISCOMP_DEBUG("There is origin with more phases than the current");
 					qApp->restoreOverrideCursor();
 					QMessageBox::information(this, "ImportPicks", "There is no origin with more phases than the current.");
@@ -5269,7 +5338,7 @@ void OriginLocatorView::importArrivals() {
 
 				referenceOrigin = latestOrigin;
 				if ( referenceOrigin->arrivalCount() == 0 )
-					_reader->loadArrivals(referenceOrigin.get());
+					SC_D.reader->loadArrivals(referenceOrigin.get());
 
 				// Collect all picks with phases
 				for ( size_t i = 0; i < referenceOrigin->arrivalCount(); ++i ) {
@@ -5283,7 +5352,7 @@ void OriginLocatorView::importArrivals() {
 		case ImportPicksDialog::AllOrigins:
 		{
 			std::vector<OriginPtr> origins;
-			DatabaseIterator or_it = _reader->getOrigins(event->publicID());
+			DatabaseIterator or_it = SC_D.reader->getOrigins(event->publicID());
 			while ( *or_it ) {
 				OriginPtr o = Origin::Cast(*or_it);
 				if ( o ) origins.push_back(o);
@@ -5294,7 +5363,7 @@ void OriginLocatorView::importArrivals() {
 			for ( size_t i = 0; i < origins.size(); ++i ) {
 				OriginPtr o = origins[i];
 				if ( o->arrivalCount() == 0 )
-					_reader->loadArrivals(o.get());
+					SC_D.reader->loadArrivals(o.get());
 
 				// Collect all picks with phases
 				for ( size_t i = 0; i < o->arrivalCount(); ++i ) {
@@ -5337,8 +5406,8 @@ void OriginLocatorView::importArrivals() {
 	}
 
 	// Collect target phases grouped by stream
-	for ( size_t i = 0; i < _currentOrigin->arrivalCount(); ++i ) {
-		Arrival *ar = _currentOrigin->arrival(i);
+	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+		Arrival *ar = SC_D.currentOrigin->arrival(i);
 		PickPtr p = cache.get<Pick>(ar->pickID());
 
 		if ( !p ) continue;
@@ -5448,7 +5517,7 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 
 	SEISCOMP_DEBUG("*** Prepare merged origin ***");
 	OriginPtr org = Origin::Create();
-	org->assign(_currentOrigin.get());
+	org->assign(SC_D.currentOrigin.get());
 	for ( PickedPhases::iterator it = targetPhasesPtr->begin(); it != targetPhasesPtr->end(); ++it ) {
 		ArrivalPtr arrival = new Arrival;
 		arrival->setPickID(it->second.first->publicID());
@@ -5475,7 +5544,7 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 
 	if ( org->arrivalCount() == 0 ) {
 		for ( size_t i = 0; i < additionalPicks.size(); ++i ) {
-			SensorLocation *sloc = _locator->getSensorLocation(Pick::Find(additionalPicks[i].pick->publicID()));
+			SensorLocation *sloc = SC_D.locator->getSensorLocation(Pick::Find(additionalPicks[i].pick->publicID()));
 			if ( sloc == nullptr ) continue;
 
 			ArrivalPtr arrival = new Arrival();
@@ -5508,7 +5577,7 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 			catch ( ... ) {}
 
 			try {
-				tt = _ttTable.compute(arrival->phase().code().c_str(),
+				tt = SC_D.ttTable.compute(arrival->phase().code().c_str(),
 				                      org->latitude().value(), org->longitude().value(), depth,
 				                      sloc->latitude(), sloc->longitude(), elev);
 
@@ -5534,64 +5603,64 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::showWaveforms() {
-	if ( _recordView ) {
-		_recordView->activateWindow();
-		_recordView->raise();
+	if ( SC_D.recordView ) {
+		SC_D.recordView->activateWindow();
+		SC_D.recordView->raise();
 		return;
 	}
 
-	if ( !_currentOrigin ) return;
+	if ( !SC_D.currentOrigin ) return;
 
-	_recordView = new PickerView(nullptr, Qt::Window);
-	_recordView->setDatabase(_reader);
-	connect(_recordView, SIGNAL(requestArtificialOrigin(double, double, double, Seiscomp::Core::Time)),
+	SC_D.recordView = new PickerView(nullptr, Qt::Window);
+	SC_D.recordView->setDatabase(SC_D.reader);
+	connect(SC_D.recordView, SIGNAL(requestArtificialOrigin(double, double, double, Seiscomp::Core::Time)),
 	        this, SLOT(artificialOriginRequested(double, double, double, Seiscomp::Core::Time)));
 
 	try {
-		_recordView->setBroadBandCodes(SCApp->configGetStrings("picker.velocityChannelCodes"));
+		SC_D.recordView->setBroadBandCodes(SCApp->configGetStrings("picker.velocityChannelCodes"));
 	} catch ( ... ) {}
 
 	try {
-		_recordView->setStrongMotionCodes(SCApp->configGetStrings("picker.accelerationChannelCodes"));
+		SC_D.recordView->setStrongMotionCodes(SCApp->configGetStrings("picker.accelerationChannelCodes"));
 	} catch ( ... ) {}
 
 	QString errorMsg;
-	if ( !_recordView->setConfig(_pickerConfig, &errorMsg) ) {
+	if ( !SC_D.recordView->setConfig(SC_D.pickerConfig, &errorMsg) ) {
 		QMessageBox::information(this, "Picker Error", errorMsg);
-		delete _recordView;
-		_recordView = nullptr;
+		delete SC_D.recordView;
+		SC_D.recordView = nullptr;
 		return;
 	}
 
 	/*
 	for ( QVector<QPair<QString,QString> >::const_iterator it = _filters.begin();
 	      it != _filters.end(); ++it ) {
-		_recordView->addFilter(it->first, it->second);
+		SC_D.recordView->addFilter(it->first, it->second);
 	}
 
-	_recordView->activateFilter(0);
+	SC_D.recordView->activateFilter(0);
 
-	if ( !_recordView->setDataSource(_streamURL.c_str()) ) {
+	if ( !SC_D.recordView->setDataSource(_streamURL.c_str()) ) {
 		QMessageBox::information(this, "RecordStream Error",
 		                         QString("Setting recordstream '%1' failed.")
 		                           .arg(_streamURL.c_str()));
-		delete _recordView;
-		_recordView = nullptr;
+		delete SC_D.recordView;
+		SC_D.recordView = nullptr;
 		return;
 	}
 	*/
 
-	_recordView->setAttribute(Qt::WA_DeleteOnClose);
+	SC_D.recordView->setAttribute(Qt::WA_DeleteOnClose);
 
-	setPickerView(_recordView);
+	setPickerView(SC_D.recordView);
 
-	_recordView->setOrigin(_currentOrigin.get(), -5*60, 30*60);
+	SC_D.recordView->setOrigin(SC_D.currentOrigin.get(), -5*60, 30*60);
 
-	QVector<int> selectedArrivals = _residuals->getSelectedValues();
-	for ( size_t i = 0; i < _currentOrigin->arrivalCount(); ++i )
-		_recordView->setArrivalState(i, _residuals->isValueSelected(i));
+	QVector<int> selectedArrivals = SC_D.residuals->getSelectedValues();
+	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i )
+		SC_D.recordView->setArrivalState(i, SC_D.residuals->isValueSelected(i));
 
-	_recordView->show();
+	SC_D.recordView->show();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5600,7 +5669,7 @@ void OriginLocatorView::showWaveforms() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::relocate() {
-	relocate(_currentOrigin.get(), nullptr);
+	relocate(SC_D.currentOrigin.get(), nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5610,7 +5679,7 @@ void OriginLocatorView::relocate() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::relocate(std::vector<PhasePickWithFlags>* additionalPicks,
                                  bool associateOnly, bool replaceExistingPhases) {
-	relocate(_currentOrigin.get(), additionalPicks, associateOnly, replaceExistingPhases);
+	relocate(SC_D.currentOrigin.get(), additionalPicks, associateOnly, replaceExistingPhases);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5625,36 +5694,36 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 	OriginPtr oldOrigin = org;
 	OriginPtr origin;
 
-	if ( !_locator ) {
+	if ( !SC_D.locator ) {
 		QMessageBox::critical(this, "Locator error", "No locator set.");
 		return;
 	}
 
-	if ( _modelArrivals.useNoArrivals() ) {
+	if ( SC_D.modelArrivals.useNoArrivals() ) {
 		QMessageBox::critical(this, "Relocation error", "A relocation cannot be done without any arrivals.");
 		return;
 	}
 
-	_locator->setProfile(_ui->cbLocatorProfile->currentText().toStdString());
+	SC_D.locator->setProfile(SC_D.ui.cbLocatorProfile->currentText().toStdString());
 
 	oldOrigin = Origin::Create();
 	oldOrigin->assign(org);
 
 	if ( useArrivalTable ) {
-		for ( int i = 0; i < _modelArrivals.rowCount(); ++i ) {
-			if ( !_modelArrivals.isRowEnabled(i) ) continue;
+		for ( int i = 0; i < SC_D.modelArrivals.rowCount(); ++i ) {
+			if ( !SC_D.modelArrivals.isRowEnabled(i) ) continue;
 
 			ArrivalPtr arrival = new Arrival(*org->arrival(i));
-			arrival->setBackazimuthUsed(_modelArrivals.backazimuthUsed(i));
-			arrival->setTimeUsed(_modelArrivals.timeUsed(i));
-			arrival->setHorizontalSlownessUsed(_modelArrivals.horizontalSlownessUsed(i));
+			arrival->setBackazimuthUsed(SC_D.modelArrivals.backazimuthUsed(i));
+			arrival->setTimeUsed(SC_D.modelArrivals.timeUsed(i));
+			arrival->setHorizontalSlownessUsed(SC_D.modelArrivals.horizontalSlownessUsed(i));
 
 			if ( arrival->timeUsed() || arrival->backazimuthUsed() || arrival->horizontalSlownessUsed() )
 				arrival->setWeight(1.0);
 			else
 				arrival->setWeight(0.0);
 
-			if ( !_locator->getSensorLocation(Pick::Find(arrival->pickID())) )
+			if ( !SC_D.locator->getSensorLocation(Pick::Find(arrival->pickID())) )
 				continue;
 
 			oldOrigin->add(arrival.get());
@@ -5673,7 +5742,7 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 			ArrivalPtr ar = org->arrival(i);
 
 			try {
-				if ( !_locator->getSensorLocation(Pick::Find(ar->pickID())) &&
+				if ( !SC_D.locator->getSensorLocation(Pick::Find(ar->pickID())) &&
 					 ar->weight() < 0.5 )
 					continue;
 			}
@@ -5692,7 +5761,7 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 
 	if ( additionalPicks ) {
 		for ( size_t i = 0; i < additionalPicks->size(); ++i ) {
-			SensorLocation *sloc = _locator->getSensorLocation(Pick::Find((*additionalPicks)[i].pick->publicID()));
+			SensorLocation *sloc = SC_D.locator->getSensorLocation(Pick::Find((*additionalPicks)[i].pick->publicID()));
 			if ( sloc == nullptr ) continue;
 
 			ArrivalPtr arrival = new Arrival();
@@ -5721,32 +5790,32 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 		}
 	}
 
-	bool fixedDepth = _ui->cbFixedDepth->isEnabled() && _ui->cbFixedDepth->isChecked();
-	bool distanceCutOff = _ui->cbDistanceCutOff->isEnabled() && _ui->cbDistanceCutOff->isChecked();
-	bool ignoreInitialLocation = _ui->cbIgnoreInitialLocation->isEnabled() && _ui->cbIgnoreInitialLocation->isChecked();
+	bool fixedDepth = SC_D.ui.cbFixedDepth->isEnabled() && SC_D.ui.cbFixedDepth->isChecked();
+	bool distanceCutOff = SC_D.ui.cbDistanceCutOff->isEnabled() && SC_D.ui.cbDistanceCutOff->isChecked();
+	bool ignoreInitialLocation = SC_D.ui.cbIgnoreInitialLocation->isEnabled() && SC_D.ui.cbIgnoreInitialLocation->isChecked();
 
 	if ( distanceCutOff )
-		_locator->setDistanceCutOff(_ui->editDistanceCutOff->text().toDouble());
+		SC_D.locator->setDistanceCutOff(SC_D.ui.editDistanceCutOff->text().toDouble());
 	else
-		_locator->releaseDistanceCutOff();
+		SC_D.locator->releaseDistanceCutOff();
 
-	_locator->setIgnoreInitialLocation(ignoreInitialLocation);
+	SC_D.locator->setIgnoreInitialLocation(ignoreInitialLocation);
 
 	setCursor(Qt::WaitCursor);
 
 	for ( int loop = 1; loop <= 2; ++loop ) {
 		if ( fixedDepth ) {
-			double depth = loop == 1 ? _ui->editFixedDepth->text().toDouble() : _minimumDepth;
+			double depth = loop == 1 ? SC_D.ui.editFixedDepth->text().toDouble() : SC_D.minimumDepth;
 
-			_locator->setFixedDepth(depth);
+			SC_D.locator->setFixedDepth(depth);
 
 			SEISCOMP_DEBUG("setting depth to %.2f km", depth);
 		}
 		else
-			_locator->releaseDepth();
+			SC_D.locator->releaseDepth();
 
 		try {
-			origin = Gui::relocate(_locator.get(), oldOrigin.get());
+			origin = Gui::relocate(SC_D.locator.get(), oldOrigin.get());
 			/* DEBUG: Just copy the origin without relocating
 			origin = Origin::Cast(oldOrigin->clone());
 			origin->assign(oldOrigin.get());
@@ -5761,7 +5830,7 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 				return;
 			}
 
-			string msgWarning = _locator->lastMessage(Seismology::LocatorInterface::Warning);
+			string msgWarning = SC_D.locator->lastMessage(Seismology::LocatorInterface::Warning);
 			if ( !msgWarning.empty() ) {
 				QMessageBox::warning(this, "Relocation warning", msgWarning.c_str());
 			}
@@ -5781,14 +5850,14 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 			return;
 		}
 
-		if ( !fixedDepth && _locator->supports(Seismology::LocatorInterface::FixedDepth) ) {
+		if ( !fixedDepth && SC_D.locator->supports(Seismology::LocatorInterface::FixedDepth) ) {
 			try {
-				if ( origin->depth() < _minimumDepth )
-					origin->setDepth(RealQuantity(_minimumDepth,0.0,Core::None,Core::None,Core::None));
+				if ( origin->depth() < SC_D.minimumDepth )
+					origin->setDepth(RealQuantity(SC_D.minimumDepth,0.0,Core::None,Core::None,Core::None));
 				else break;
 			}
 			catch ( ... ) {
-				origin->setDepth(RealQuantity(_minimumDepth,0.0,Core::None,Core::None,Core::None));
+				origin->setDepth(RealQuantity(SC_D.minimumDepth,0.0,Core::None,Core::None,Core::None));
 			}
 			oldOrigin = origin;
 			fixedDepth = true;
@@ -5800,12 +5869,12 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 	unsetCursor();
 
 	if ( fixedDepth ) {
-		_ui->cbFixedDepth->setChecked(true);
+		SC_D.ui.cbFixedDepth->setChecked(true);
 
-		if ( _ui->cbDepthType->currentIndex() > 0 ) {
-			if ( _ui->cbDepthType->currentIndex() > 1 ) {
+		if ( SC_D.ui.cbDepthType->currentIndex() > 0 ) {
+			if ( SC_D.ui.cbDepthType->currentIndex() > 1 ) {
 				OriginDepthType type;
-				type.fromInt(_ui->cbDepthType->itemData(_ui->cbDepthType->currentIndex()).toInt());
+				type.fromInt(SC_D.ui.cbDepthType->itemData(SC_D.ui.cbDepthType->currentIndex()).toInt());
 				origin->setDepthType(type);
 			}
 		}
@@ -5814,10 +5883,10 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 	}
 
 	if ( distanceCutOff )
-		_ui->cbDistanceCutOff->setChecked(true);
+		SC_D.ui.cbDistanceCutOff->setChecked(true);
 
 	if ( ignoreInitialLocation )
-		_ui->cbIgnoreInitialLocation->setChecked(true);
+		SC_D.ui.cbIgnoreInitialLocation->setChecked(true);
 
 	applyNewOrigin(origin.get(), true);
 }
@@ -5840,35 +5909,35 @@ void OriginLocatorView::applyNewOrigin(DataModel::Origin *origin, bool relocated
 
 	pushUndo();
 
-	_localOrigin = true;
+	SC_D.localOrigin = true;
 	std::vector<DataModel::PickPtr> originPicks;
 
 	for ( size_t i = 0; i < origin->arrivalCount(); ++i ) {
 		Pick* p = Pick::Find(origin->arrival(i)->pickID());
 		if ( p ) {
 			originPicks.push_back(p);
-			_associatedPicks[p->publicID()] = p;
+			SC_D.associatedPicks[p->publicID()] = p;
 		}
 	}
 
-	_originPicks = originPicks;
+	SC_D.originPicks = originPicks;
 
 	stopBlinking();
 
-	_blockReadPicks = true;
+	SC_D.blockReadPicks = true;
 	updateOrigin(origin);
-	_blockReadPicks = false;
+	SC_D.blockReadPicks = false;
 
 	//computeMagnitudes();
-	_ui->btnMagnitudes->setEnabled(true);
+	SC_D.ui.btnMagnitudes->setEnabled(true);
 
-	if ( _recordView )
-		_recordView->setOrigin(origin);
+	if ( SC_D.recordView )
+		SC_D.recordView->setOrigin(origin);
 
-	emit newOriginSet(origin, _baseEvent.get(), _localOrigin, relocated);
+	emit newOriginSet(origin, SC_D.baseEvent.get(), SC_D.localOrigin, relocated);
 
-	_ui->btnCommit->setText("Commit");
-//	_ui->btnCommit->setMenu(_baseEvent?_commitMenu:nullptr);
+	SC_D.ui.btnCommit->setText("Commit");
+//	SC_D.ui.btnCommit->setMenu(SC_D.baseEvent?_commitMenu:nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5877,7 +5946,7 @@ void OriginLocatorView::applyNewOrigin(DataModel::Origin *origin, bool relocated
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::mergeOrigins(QList<DataModel::Origin*> orgs) {
-	DataModel::PublicObjectTimeSpanBuffer cache(_reader, Core::TimeSpan(3600,0));
+	DataModel::PublicObjectTimeSpanBuffer cache(SC_D.reader, Core::TimeSpan(3600,0));
 	typedef std::pair<std::string,double> PhaseWithWeight;
 	typedef std::map<std::string, PhaseWithWeight> PhasePicks;
 
@@ -5901,7 +5970,7 @@ void OriginLocatorView::mergeOrigins(QList<DataModel::Origin*> orgs) {
 	for ( int i = 0; i < orgs.size(); ++i ) {
 		OriginPtr o = orgs[i];
 		if ( o->arrivalCount() == 0 )
-			_reader->loadArrivals(o.get());
+			SC_D.reader->loadArrivals(o.get());
 
 		// Collect all picks with phases
 		for ( size_t i = 0; i < o->arrivalCount(); ++i ) {
@@ -5940,11 +6009,11 @@ void OriginLocatorView::mergeOrigins(QList<DataModel::Origin*> orgs) {
 
 	qApp->restoreOverrideCursor();
 
-	Origin *oldCurrent = _currentOrigin.get();
+	Origin *oldCurrent = SC_D.currentOrigin.get();
 
 	merge(&sourcePhases, &targetPhases, true, false, false);
 
-	if ( oldCurrent != _currentOrigin ) emit locatorRequested();
+	if ( oldCurrent != SC_D.currentOrigin ) emit locatorRequested();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5954,16 +6023,16 @@ void OriginLocatorView::mergeOrigins(QList<DataModel::Origin*> orgs) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setLocalAmplitudes(Seiscomp::DataModel::Origin *org,
                                            AmplitudeSet *amps, StringSet *ampIDs) {
-	if ( org != _currentOrigin ) return;
+	if ( org != SC_D.currentOrigin ) return;
 
-	for ( AmplitudeSet::iterator it = _changedAmplitudes.begin();
-	      it != _changedAmplitudes.end(); ++it ) {
+	for ( AmplitudeSet::iterator it = SC_D.changedAmplitudes.begin();
+	      it != SC_D.changedAmplitudes.end(); ++it ) {
 		if ( ampIDs->find(it->first->publicID()) != ampIDs->end() )
 			amps->insert(*it);
 	}
 
 	// Store new amplitudes in current set
-	_changedAmplitudes.swap(*amps);
+	SC_D.changedAmplitudes.swap(*amps);
 	emit requestRaise();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5975,12 +6044,12 @@ void OriginLocatorView::setLocalAmplitudes(Seiscomp::DataModel::Origin *org,
 void OriginLocatorView::computeMagnitudes() {
 	emit computeMagnitudesRequested();
 
-	_ui->btnMagnitudes->setEnabled(_currentOrigin->magnitudeCount() == 0);
+	SC_D.ui.btnMagnitudes->setEnabled(SC_D.currentOrigin->magnitudeCount() == 0);
 
-	if ( _currentOrigin->magnitudeCount() > 0 ) {
-		emit magnitudesAdded(_currentOrigin.get(), _baseEvent.get());
-		evaluateOrigin(_currentOrigin.get(), _baseEvent.get(),
-		               _localOrigin, false);
+	if ( SC_D.currentOrigin->magnitudeCount() > 0 ) {
+		emit magnitudesAdded(SC_D.currentOrigin.get(), SC_D.baseEvent.get());
+		evaluateOrigin(SC_D.currentOrigin.get(), SC_D.baseEvent.get(),
+		               SC_D.localOrigin, false);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5990,13 +6059,13 @@ void OriginLocatorView::computeMagnitudes() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::magnitudeRemoved(const QString &id, Seiscomp::DataModel::Object *obj) {
-	if ( id != _currentOrigin->publicID().c_str() ) return;
+	if ( id != SC_D.currentOrigin->publicID().c_str() ) return;
 
-	_ui->btnMagnitudes->setEnabled(_currentOrigin->magnitudeCount() == 0);
+	SC_D.ui.btnMagnitudes->setEnabled(SC_D.currentOrigin->magnitudeCount() == 0);
 
-	if ( _currentOrigin->magnitudeCount() > 0 ) {
-		evaluateOrigin(_currentOrigin.get(), _baseEvent.get(),
-		               _localOrigin, false);
+	if ( SC_D.currentOrigin->magnitudeCount() > 0 ) {
+		evaluateOrigin(SC_D.currentOrigin.get(), SC_D.baseEvent.get(),
+		               SC_D.localOrigin, false);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6006,10 +6075,12 @@ void OriginLocatorView::magnitudeRemoved(const QString &id, Seiscomp::DataModel:
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::magnitudeSelected(const QString &id, Seiscomp::DataModel::Magnitude *mag) {
-	if ( mag )
-		_actionCommitOptions->setProperty("EvPrefMagType", QString(mag->type().c_str()));
-	else
-		_actionCommitOptions->setProperty("EvPrefMagType", QVariant());
+	if ( mag ) {
+		SC_D.actionCommitOptions->setProperty("EvPrefMagType", QString(mag->type().c_str()));
+	}
+	else {
+		SC_D.actionCommitOptions->setProperty("EvPrefMagType", QVariant());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6018,20 +6089,20 @@ void OriginLocatorView::magnitudeSelected(const QString &id, Seiscomp::DataModel
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::pushUndo() {
-	_undoList.push(
-		OriginMemento(
-			_currentOrigin.get(), _changedPicks,
-			_changedAmplitudes, _localOrigin
+	SC_D.undoList.push(
+		OriginLocatorViewPrivate::OriginMemento(
+			SC_D.currentOrigin.get(), SC_D.changedPicks,
+			SC_D.changedAmplitudes, SC_D.localOrigin
 		)
 	);
 
-	if ( _undoList.size() > 20 )
-		_undoList.pop();
+	if ( SC_D.undoList.size() > 20 )
+		SC_D.undoList.pop();
 
-	_redoList.clear();
+	SC_D.redoList.clear();
 
-	emit undoStateChanged(!_undoList.isEmpty());
-	emit redoStateChanged(!_redoList.isEmpty());
+	emit undoStateChanged(!SC_D.undoList.isEmpty());
+	emit redoStateChanged(!SC_D.redoList.isEmpty());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6040,39 +6111,39 @@ void OriginLocatorView::pushUndo() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginLocatorView::undo() {
-	if ( _undoList.isEmpty() ) return false;
+	if ( SC_D.undoList.isEmpty() ) return false;
 
-	_redoList.push(
-		OriginMemento(
-			_currentOrigin.get(), _changedPicks,
-			_changedAmplitudes, _localOrigin
+	SC_D.redoList.push(
+		OriginLocatorViewPrivate::OriginMemento(
+			SC_D.currentOrigin.get(), SC_D.changedPicks,
+			SC_D.changedAmplitudes, SC_D.localOrigin
 		)
 	);
 
-	OriginPtr origin = _undoList.top().origin;
-	bool newOrigin = _undoList.top().newOrigin;
-	_changedPicks = _undoList.top().newPicks;
-	_changedAmplitudes = _undoList.top().newAmplitudes;
-	_undoList.pop();
+	OriginPtr origin = SC_D.undoList.top().origin;
+	bool newOrigin = SC_D.undoList.top().newOrigin;
+	SC_D.changedPicks = SC_D.undoList.top().newPicks;
+	SC_D.changedAmplitudes = SC_D.undoList.top().newAmplitudes;
+	SC_D.undoList.pop();
 
-	_ui->btnMagnitudes->setEnabled(newOrigin && (origin->magnitudeCount() == 0));
+	SC_D.ui.btnMagnitudes->setEnabled(newOrigin && (origin->magnitudeCount() == 0));
 
-	_blockReadPicks = true;
+	SC_D.blockReadPicks = true;
 	updateOrigin(origin.get());
-	_blockReadPicks = false;
+	SC_D.blockReadPicks = false;
 
-	if ( _recordView )
-		_recordView->setOrigin(origin.get());
+	if ( SC_D.recordView )
+		SC_D.recordView->setOrigin(origin.get());
 
-	_localOrigin = newOrigin;
+	SC_D.localOrigin = newOrigin;
 
-	emit newOriginSet(origin.get(), _baseEvent.get(), newOrigin, false);
-	emit undoStateChanged(!_undoList.isEmpty());
-	emit redoStateChanged(!_redoList.isEmpty());
+	emit newOriginSet(origin.get(), SC_D.baseEvent.get(), newOrigin, false);
+	emit undoStateChanged(!SC_D.undoList.isEmpty());
+	emit redoStateChanged(!SC_D.redoList.isEmpty());
 
 	stopBlinking();
 
-	return !_undoList.isEmpty();
+	return !SC_D.undoList.isEmpty();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6081,39 +6152,39 @@ bool OriginLocatorView::undo() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginLocatorView::redo() {
-	if ( _redoList.isEmpty() ) return false;
+	if ( SC_D.redoList.isEmpty() ) return false;
 
-	_undoList.push(
-		OriginMemento(
-			_currentOrigin.get(), _changedPicks,
-			_changedAmplitudes, _localOrigin
+	SC_D.undoList.push(
+		OriginLocatorViewPrivate::OriginMemento(
+			SC_D.currentOrigin.get(), SC_D.changedPicks,
+			SC_D.changedAmplitudes, SC_D.localOrigin
 		)
 	);
 
-	OriginPtr origin = _redoList.top().origin;
-	bool newOrigin = _redoList.top().newOrigin;
-	_changedPicks = _redoList.top().newPicks;
-	_changedAmplitudes = _redoList.top().newAmplitudes;
-	_redoList.pop();
+	OriginPtr origin = SC_D.redoList.top().origin;
+	bool newOrigin = SC_D.redoList.top().newOrigin;
+	SC_D.changedPicks = SC_D.redoList.top().newPicks;
+	SC_D.changedAmplitudes = SC_D.redoList.top().newAmplitudes;
+	SC_D.redoList.pop();
 
-	_ui->btnMagnitudes->setEnabled(newOrigin && (origin->magnitudeCount() == 0));
+	SC_D.ui.btnMagnitudes->setEnabled(newOrigin && (origin->magnitudeCount() == 0));
 
-	_blockReadPicks = true;
+	SC_D.blockReadPicks = true;
 	updateOrigin(origin.get());
-	_blockReadPicks = false;
+	SC_D.blockReadPicks = false;
 
-	if ( _recordView )
-		_recordView->setOrigin(origin.get());
+	if ( SC_D.recordView )
+		SC_D.recordView->setOrigin(origin.get());
 
-	_localOrigin = newOrigin;
+	SC_D.localOrigin = newOrigin;
 
-	emit newOriginSet(origin.get(), _baseEvent.get(), newOrigin, false);
-	emit undoStateChanged(!_undoList.isEmpty());
-	emit redoStateChanged(!_redoList.isEmpty());
+	emit newOriginSet(origin.get(), SC_D.baseEvent.get(), newOrigin, false);
+	emit undoStateChanged(!SC_D.undoList.isEmpty());
+	emit redoStateChanged(!SC_D.redoList.isEmpty());
 
 	stopBlinking();
 
-	return !_redoList.isEmpty();
+	return !SC_D.redoList.isEmpty();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6121,7 +6192,7 @@ bool OriginLocatorView::redo() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::createArtificialOrigin() {
-	createArtificialOrigin(_map->canvas().mapCenter(), QPoint());
+	createArtificialOrigin(SC_D.map->canvas().mapCenter(), QPoint());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6130,7 +6201,7 @@ void OriginLocatorView::createArtificialOrigin() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
                                               const QPoint &dialogPos) {
-	createArtificialOrigin(epicenter, _pickerConfig.defaultDepth,
+	createArtificialOrigin(epicenter, SC_D.pickerConfig.defaultDepth,
 	                       Core::Time::GMT(), dialogPos);
 }
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -6212,8 +6283,8 @@ void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setScript0(const std::string &script) {
-	_script0 = script;
-	_ui->btnCustom0->setVisible(!_script0.empty());
+	SC_D.script0 = script;
+	SC_D.ui.btnCustom0->setVisible(!SC_D.script0.empty());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6222,8 +6293,8 @@ void OriginLocatorView::setScript0(const std::string &script) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setScript1(const std::string &script) {
-	_script1 = script;
-	_ui->btnCustom1->setVisible(!_script1.empty());
+	SC_D.script1 = script;
+	SC_D.ui.btnCustom1->setVisible(!SC_D.script1.empty());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6232,7 +6303,7 @@ void OriginLocatorView::setScript1(const std::string &script) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::editComment() {
-	if ( !_baseEvent ) return;
+	if ( !SC_D.baseEvent ) return;
 
 	CommentEdit dlg;
 	dlg.ui.labelHeadline->setFont(SCScheme.fonts.highlight);
@@ -6243,24 +6314,24 @@ void OriginLocatorView::editComment() {
 	setItalic(dlg.ui.labelAuthor);
 	setItalic(dlg.ui.labelDate);
 
-	for ( size_t i = 0; i < _baseEvent->commentCount(); ++i ) {
-		if ( _baseEvent->comment(i)->id() == "Operator" ) {
+	for ( size_t i = 0; i < SC_D.baseEvent->commentCount(); ++i ) {
+		if ( SC_D.baseEvent->comment(i)->id() == "Operator" ) {
 			try {
-				dlg.ui.labelAuthor->setText(_baseEvent->comment(i)->creationInfo().author().c_str());
+				dlg.ui.labelAuthor->setText(SC_D.baseEvent->comment(i)->creationInfo().author().c_str());
 			}
 			catch ( ... ) {}
 
 			try {
-				timeToLabel(dlg.ui.labelDate, _baseEvent->comment(i)->creationInfo().modificationTime(), "%F %T");
+				timeToLabel(dlg.ui.labelDate, SC_D.baseEvent->comment(i)->creationInfo().modificationTime(), "%F %T");
 			}
 			catch ( ... ) {
 				try {
-					timeToLabel(dlg.ui.labelDate, _baseEvent->comment(i)->creationInfo().creationTime(), "%F %T");
+					timeToLabel(dlg.ui.labelDate, SC_D.baseEvent->comment(i)->creationInfo().creationTime(), "%F %T");
 				}
 				catch ( ... ) {}
 			}
 
-			dlg.ui.labelComment->setText(_baseEvent->comment(i)->text().c_str());
+			dlg.ui.labelComment->setText(SC_D.baseEvent->comment(i)->text().c_str());
 			dlg.ui.editComment->setPlainText(dlg.ui.labelComment->text());
 
 			break;
@@ -6270,7 +6341,7 @@ void OriginLocatorView::editComment() {
 	if ( dlg.exec() != QDialog::Accepted ) return;
 
 	if ( dlg.ui.labelComment->text() != dlg.ui.editComment->toPlainText() )
-		sendJournal(_baseEvent->publicID(), "EvOpComment",
+		sendJournal(SC_D.baseEvent->publicID(), "EvOpComment",
 		            dlg.ui.editComment->toPlainText().toStdString());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6280,26 +6351,26 @@ void OriginLocatorView::editComment() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
-	if ( _newOriginStatus != EvaluationStatus::Quantity ) {
+	if ( SC_D.newOriginStatus != EvaluationStatus::Quantity ) {
 		// In this case the commit has been triggered by the corresponding
 		// button and not by "With additional options ..."
 		OPT(EvaluationStatus) newStatus;
 
 		try {
-			if ( _currentOrigin->evaluationMode() == AUTOMATIC )
-				newStatus = _newOriginStatus;
+			if ( SC_D.currentOrigin->evaluationMode() == AUTOMATIC )
+				newStatus = SC_D.newOriginStatus;
 		}
 		catch ( ... ) {
 			// if evaluationMode isn't set yet we asume AUTOMATIC
-			newStatus = _newOriginStatus;
+			newStatus = SC_D.newOriginStatus;
 		}
 
-		if ( !_localOrigin ) {
+		if ( !SC_D.localOrigin ) {
 			bool needConfirmation = false;
 
 			if ( newStatus ) {
 				try {
-					if ( _currentOrigin->evaluationStatus() == *newStatus )
+					if ( SC_D.currentOrigin->evaluationStatus() == *newStatus )
 						needConfirmation = true;
 				}
 				catch ( ... ) {}
@@ -6322,34 +6393,34 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 		}
 
 		if ( newStatus )
-			_currentOrigin->setEvaluationStatus(*newStatus);
+			SC_D.currentOrigin->setEvaluationStatus(*newStatus);
 	}
 
 	try {
-		_currentOrigin->creationInfo();
+		SC_D.currentOrigin->creationInfo();
 	}
 	catch( ... ) {
-		_currentOrigin->setCreationInfo(CreationInfo());
+		SC_D.currentOrigin->setCreationInfo(CreationInfo());
 	}
 
-	CreationInfo &ci = _currentOrigin->creationInfo();
+	CreationInfo &ci = SC_D.currentOrigin->creationInfo();
 	ci.setAuthor( SCApp->author() );
 	ci.setModificationTime(Core::Time::GMT());
-	_ui->labelUser->setText(ci.author().c_str());
-	_ui->labelUser->setToolTip(ci.author().c_str());
+	SC_D.ui.labelUser->setText(ci.author().c_str());
+	SC_D.ui.labelUser->setToolTip(ci.author().c_str());
 
 	// Update evaluation line
-	QPalette pal = _ui->labelEvaluation->palette();
+	QPalette pal = SC_D.ui.labelEvaluation->palette();
 	pal.setColor(QPalette::WindowText, palette().color(QPalette::WindowText));
-	_ui->labelEvaluation->setPalette(pal);
+	SC_D.ui.labelEvaluation->setPalette(pal);
 
 	QString evalMode;
 	try {
-		evalMode = _currentOrigin->evaluationStatus().toString();
-		if ( _currentOrigin->evaluationStatus() == REJECTED ) {
-			QPalette pal = _ui->labelEvaluation->palette();
+		evalMode = SC_D.currentOrigin->evaluationStatus().toString();
+		if ( SC_D.currentOrigin->evaluationStatus() == REJECTED ) {
+			QPalette pal = SC_D.ui.labelEvaluation->palette();
 			pal.setColor(QPalette::WindowText, Qt::red);
-			_ui->labelEvaluation->setPalette(pal);
+			SC_D.ui.labelEvaluation->setPalette(pal);
 		}
 	}
 	catch ( ... ) {
@@ -6357,9 +6428,9 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 	}
 
 	try {
-		if ( _currentOrigin->evaluationMode() == AUTOMATIC )
+		if ( SC_D.currentOrigin->evaluationMode() == AUTOMATIC )
 			evalMode += " (A)";
-		else if ( _currentOrigin->evaluationMode() == MANUAL )
+		else if ( SC_D.currentOrigin->evaluationMode() == MANUAL )
 			evalMode += " (M)";
 		else
 			evalMode += " (-)";
@@ -6368,31 +6439,31 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 		evalMode += " (-)";
 	}
 
-	_ui->labelEvaluation->setText(evalMode);
+	SC_D.ui.labelEvaluation->setText(evalMode);
 
-	if ( _recordView )
-		_recordView->applyPicks();
+	if ( SC_D.recordView )
+		SC_D.recordView->applyPicks();
 
 	ObjectChangeList<DataModel::Pick> pickCommitList;
 	std::vector<AmplitudePtr> amplitudeCommitList;
 
 	// collect all picks belonging to the origin
 	std::set<PickPtr> originPicks;
-	for ( size_t i = 0; i < _currentOrigin->arrivalCount(); ++i ) {
-		PickPtr p = Pick::Find(_currentOrigin->arrival(i)->pickID());
+	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+		PickPtr p = Pick::Find(SC_D.currentOrigin->arrival(i)->pickID());
 		if ( p ) originPicks.insert(p);
 	}
 
 	// intersect the picks in the origin with the already tracked
 	// manual created picks
-	for ( PickSet::iterator it = _changedPicks.begin();
-	      it != _changedPicks.end(); ++it ) {
+	for ( PickSet::iterator it = SC_D.changedPicks.begin();
+	      it != SC_D.changedPicks.end(); ++it ) {
 		if ( originPicks.find(it->first) == originPicks.end() ) continue;
 		pickCommitList.push_back(*it);
 	}
 
-	for ( AmplitudeSet::iterator it = _changedAmplitudes.begin();
-	      it != _changedAmplitudes.end(); ++it ) {
+	for ( AmplitudeSet::iterator it = SC_D.changedAmplitudes.begin();
+	      it != SC_D.changedAmplitudes.end(); ++it ) {
 		amplitudeCommitList.push_back(it->first);
 	}
 
@@ -6416,26 +6487,26 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 	std::cerr << "--------------------" << std::endl;
 
 #endif
-	for ( size_t i = 0; i < _currentOrigin->arrivalCount(); ++i ) {
-		std::string pickID = _currentOrigin->arrival(i)->pickID();
+	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+		std::string pickID = SC_D.currentOrigin->arrival(i)->pickID();
 
 		// try to find the pick somewhere in the client memory
 		PickPtr pick = Pick::Find(pickID);
-		if ( pick ) _associatedPicks[pickID] = pick;
+		if ( pick ) SC_D.associatedPicks[pickID] = pick;
 	}
 
-	if ( _localOrigin ) {
+	if ( SC_D.localOrigin ) {
 		// Strip invalid magnitudes
 		size_t i = 0;
-		while ( i < _currentOrigin->magnitudeCount() ) {
-			Magnitude *mag = _currentOrigin->magnitude(i);
+		while ( i < SC_D.currentOrigin->magnitudeCount() ) {
+			Magnitude *mag = SC_D.currentOrigin->magnitude(i);
 			try {
 				// Only remove rejected magnitudes with no magnitude contributions.
 				// There are cases when network magnitudes are invalid but
 				// contain station magnitudes which did not pass QC checks.
 				if ( mag->evaluationStatus() == REJECTED
 				  && mag->stationMagnitudeContributionCount() == 0 ) {
-					_currentOrigin->removeMagnitude(i);
+					SC_D.currentOrigin->removeMagnitude(i);
 					continue;
 				}
 			}
@@ -6444,36 +6515,36 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 		}
 	}
 
-	if ( !_localOrigin )
-		emit updatedOrigin(_currentOrigin.get());
+	if ( !SC_D.localOrigin )
+		emit updatedOrigin(SC_D.currentOrigin.get());
 	else
-		emit committedOrigin(_currentOrigin.get(),
-		                     associate?_baseEvent.get():nullptr,
+		emit committedOrigin(SC_D.currentOrigin.get(),
+		                     associate?SC_D.baseEvent.get():nullptr,
 		                     pickCommitList, amplitudeCommitList);
 
-	if ( !ignoreDefaultEventType && _baseEvent && _defaultEventType ) {
+	if ( !ignoreDefaultEventType && SC_D.baseEvent && SC_D.defaultEventType ) {
 		// Check if event type changed
 		bool typeSet;
-		try { _baseEvent->type(); typeSet = true; }
+		try { SC_D.baseEvent->type(); typeSet = true; }
 		catch ( ... ) { typeSet = false; }
 
 		if ( !typeSet )
-			sendJournal(_baseEvent->publicID(), "EvType", _defaultEventType->toString());
+			sendJournal(SC_D.baseEvent->publicID(), "EvType", SC_D.defaultEventType->toString());
 	}
 
-	_changedPicks.clear();
-	_changedAmplitudes.clear();
-	_localOrigin = false;
+	SC_D.changedPicks.clear();
+	SC_D.changedAmplitudes.clear();
+	SC_D.localOrigin = false;
 
-	//_ui->btnCommit->setEnabled(false);
-	//_ui->btnCommit->setMenu(nullptr);
-	_ui->btnMagnitudes->setEnabled(false);
+	//SC_D.ui.btnCommit->setEnabled(false);
+	//SC_D.ui.btnCommit->setMenu(nullptr);
+	SC_D.ui.btnMagnitudes->setEnabled(false);
 
-	_undoList.clear();
-	_redoList.clear();
+	SC_D.undoList.clear();
+	SC_D.redoList.clear();
 
-	emit undoStateChanged(!_undoList.isEmpty());
-	emit redoStateChanged(!_redoList.isEmpty());
+	emit undoStateChanged(!SC_D.undoList.isEmpty());
+	emit redoStateChanged(!SC_D.redoList.isEmpty());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6486,7 +6557,7 @@ void OriginLocatorView::customCommit() {
 	if ( QApplication::keyboardModifiers() == Qt::ShiftModifier )
 		customOptions.askForConfirmation = true;
 
-	QString fixedMagnitudeType = _actionCommitOptions->property("EvPrefMagType").toString();
+	QString fixedMagnitudeType = SC_D.actionCommitOptions->property("EvPrefMagType").toString();
 	if ( !fixedMagnitudeType.isEmpty() ) {
 		QMessageBox::StandardButton res = QMessageBox::NoButton;
 
@@ -6521,11 +6592,13 @@ void OriginLocatorView::customCommit() {
 			customOptions.magnitudeType = fixedMagnitudeType.toStdString();
 	}
 
-	if ( customOptions.valid )
+	if ( customOptions.valid ) {
 		commitWithOptions(&customOptions);
-	else
+	}
+	else {
 		QMessageBox::critical(this, "Internal Error",
 		                      tr("No options connected with commit button"));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6534,7 +6607,7 @@ void OriginLocatorView::customCommit() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
-	if ( _localOrigin ) {
+	if ( SC_D.localOrigin ) {
 		QMessageBox::critical(this, "Commit",
 		                      "The origin this focal mechanism uses as "
 		                      "trigger is not yet committed.\n"
@@ -6545,18 +6618,18 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 
 	MomentTensorPtr mt;
 	OriginPtr derived;
-	if ( withMT && _currentOrigin ) {
-		OriginDialog dialog(_currentOrigin->longitude().value(),
-		                    _currentOrigin->latitude().value(), this);
-		try { dialog.setDepth(_currentOrigin->depth().value()); }
+	if ( withMT && SC_D.currentOrigin ) {
+		OriginDialog dialog(SC_D.currentOrigin->longitude().value(),
+		                    SC_D.currentOrigin->latitude().value(), this);
+		try { dialog.setDepth(SC_D.currentOrigin->depth().value()); }
 		catch ( ValueException &e ) {}
-		dialog.setTime(_currentOrigin->time().value());
+		dialog.setTime(SC_D.currentOrigin->time().value());
 
 		dialog.enableAdvancedOptions(true, false);
-		dialog.setPhaseCount(_residuals->count());
+		dialog.setPhaseCount(SC_D.residuals->count());
 		// search for preferred magnitude value
-		if ( _baseEvent ) {
-			Magnitude *m = Magnitude::Find(_baseEvent->preferredMagnitudeID());
+		if ( SC_D.baseEvent ) {
+			Magnitude *m = Magnitude::Find(SC_D.baseEvent->preferredMagnitudeID());
 			if ( m )
 				dialog.setMagValue(m->magnitude().value());
 		}
@@ -6606,11 +6679,11 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	}
 
 	// Create FocalMechanism of both nodal planes
-	NODAL_PLANE np1 = static_cast<PlotWidget*>(_residuals)->np1();
-	NODAL_PLANE np2 = static_cast<PlotWidget*>(_residuals)->np2();
+	NODAL_PLANE np1 = static_cast<PlotWidget*>(SC_D.residuals)->np1();
+	NODAL_PLANE np2 = static_cast<PlotWidget*>(SC_D.residuals)->np2();
 
 	FocalMechanismPtr fm = FocalMechanism::Create();
-	fm->setTriggeringOriginID(_currentOrigin->publicID());
+	fm->setTriggeringOriginID(SC_D.currentOrigin->publicID());
 	if ( mt )
 		fm->add(mt.get());
 	NodalPlanes nps;
@@ -6636,7 +6709,7 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	fm->setCreationInfo(ci);
 
 	if ( fm )
-		emit committedFocalMechanism(fm.get(), _baseEvent.get(),
+		emit committedFocalMechanism(fm.get(), SC_D.baseEvent.get(),
 		                             derived?derived.get():nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6660,46 +6733,46 @@ void OriginLocatorView::commitWithOptions() {
 	}
 	catch ( ... ) {}
 
-	options.magnitudeType = _actionCommitOptions->property("EvPrefMagType").toString().toStdString();
+	options.magnitudeType = SC_D.actionCommitOptions->property("EvPrefMagType").toString().toStdString();
 
 	try {
 		options.returnToEventList = SCApp->configGetBool("olv.commit.returnToEventList");
 	}
 	catch ( ... ) {}
 
-	options.eventType = _defaultEventType;
+	options.eventType = SC_D.defaultEventType;
 
-	if ( _baseEvent ) {
-		try { options.eventType = _baseEvent->type(); }
+	if ( SC_D.baseEvent ) {
+		try { options.eventType = SC_D.baseEvent->type(); }
 		catch ( ... ) {}
-		try { options.eventTypeCertainty = _baseEvent->typeCertainty(); }
+		try { options.eventTypeCertainty = SC_D.baseEvent->typeCertainty(); }
 		catch ( ... ) {}
 
-		if ( _reader && _baseEvent->eventDescriptionCount() == 0 )
-			_reader->loadEventDescriptions(_baseEvent.get());
+		if ( SC_D.reader && SC_D.baseEvent->eventDescriptionCount() == 0 )
+			SC_D.reader->loadEventDescriptions(SC_D.baseEvent.get());
 
-		if ( _reader && _baseEvent->commentCount() == 0 )
-			_reader->loadComments(_baseEvent.get());
+		if ( SC_D.reader && SC_D.baseEvent->commentCount() == 0 )
+			SC_D.reader->loadComments(SC_D.baseEvent.get());
 
 		// Fill earthquake name
-		for ( size_t i = 0; i < _baseEvent->eventDescriptionCount(); ++i ) {
-			if ( _baseEvent->eventDescription(i)->type() == EARTHQUAKE_NAME ) {
-				options.eventName = _baseEvent->eventDescription(i)->text().c_str();
+		for ( size_t i = 0; i < SC_D.baseEvent->eventDescriptionCount(); ++i ) {
+			if ( SC_D.baseEvent->eventDescription(i)->type() == EARTHQUAKE_NAME ) {
+				options.eventName = SC_D.baseEvent->eventDescription(i)->text().c_str();
 				break;
 			}
 		}
 
 		// Fill operator's comment
-		for ( size_t i = 0; i < _baseEvent->commentCount(); ++i ) {
-			if ( _baseEvent->comment(i)->id() == "Operator" ) {
-				options.eventComment = _baseEvent->comment(i)->text();
+		for ( size_t i = 0; i < SC_D.baseEvent->commentCount(); ++i ) {
+			if ( SC_D.baseEvent->comment(i)->id() == "Operator" ) {
+				options.eventComment = SC_D.baseEvent->comment(i)->text();
 				break;
 			}
 		}
 	}
 
 	try {
-		options.originStatus = _currentOrigin->evaluationStatus();
+		options.originStatus = SC_D.currentOrigin->evaluationStatus();
 	}
 	catch ( ... ) {
 		options.originStatus = OPT(EvaluationStatus)(CONFIRMED);
@@ -6707,14 +6780,69 @@ void OriginLocatorView::commitWithOptions() {
 
 	options.askForConfirmation = false;
 
+	try {
+		auto profiles = SCApp->configGetStrings("olv.originComments");
+		set<string> ids;
+
+		for ( const auto &profile : profiles ) {
+			CommitOptions::OriginCommentProfile commentProfile;
+
+			try {
+				commentProfile.id = SCApp->configGetString("olv.originComments." + profile + ".id");
+				if ( commentProfile.id.empty() ) {
+					SEISCOMP_WARNING("olv.originComments.%s.id is empty: ignoring",
+					                 profile.c_str());
+					continue;
+				}
+
+				if ( ids.find(commentProfile.id) != ids.end() ) {
+					SEISCOMP_WARNING("Duplicate olv.originComments.%s.id: ignoring",
+					                 profile.c_str());
+					continue;
+				}
+
+				commentProfile.label = SCApp->configGetString("olv.originComments." + profile + ".label");
+				if ( commentProfile.label.empty() ) {
+					SEISCOMP_WARNING("olv.originComments.%s.label is empty: ignoring",
+					                 profile.c_str());
+					continue;
+				}
+
+				commentProfile.options = SCApp->configGetStrings("olv.originComments." + profile + ".options");
+			}
+			catch ( exception &e ) {
+				SEISCOMP_WARNING("olv.originComments: %s, ignoring %s",
+				                 e.what(), profile.c_str());
+				continue;
+			}
+
+			try {
+				commentProfile.allowFreeText = SCApp->configGetBool("olv.originComments." + profile + ".allowFreeText");
+			}
+			catch ( ... ) {}
+
+			// Preset value if possible
+			auto comment = SC_D.currentOrigin->comment(commentProfile.id);
+			if ( comment ) {
+				commentProfile.value = comment->text();
+			}
+
+			options.originCommentProfiles.push_back(commentProfile);
+			ids.insert(commentProfile.id);
+		}
+	}
+	catch ( ... ) {}
+
 	// Populate dialog
-	dlg.setOptions(options, _baseEvent.get(), _localOrigin);
+	dlg.setOptions(options, SC_D.baseEvent.get(), SC_D.localOrigin);
 
-	if ( dlg.exec() == QDialog::Rejected )
+	if ( dlg.exec() == QDialog::Rejected ) {
 		return;
+	}
 
-	if ( dlg.getOptions(options) )
+	if ( dlg.getOptions(options) ) {
 		commitWithOptions(&options);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6729,43 +6857,45 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 	if ( options_ptr->askForConfirmation ) {
 		OriginCommitOptions dlg;
 		tmp = *options_ptr;
-		dlg.setOptions(tmp, _baseEvent.get(), _localOrigin);
-		if ( dlg.exec() != QDialog::Accepted )
+		dlg.setOptions(tmp, SC_D.baseEvent.get(), SC_D.localOrigin);
+		if ( dlg.exec() != QDialog::Accepted ) {
 			return;
-		if ( !dlg.getOptions(tmp) )
+		}
+		if ( !dlg.getOptions(tmp) ) {
 			return;
+		}
 
 		options_ptr = &tmp;
 	}
 
 	const CommitOptions &options = *options_ptr;
-	bool isLocalOrigin = _localOrigin;
+	bool isLocalOrigin = SC_D.localOrigin;
 
 	if ( options.originStatus ) {
-		if ( _localOrigin ) {
-			_currentOrigin->setEvaluationStatus(*options.originStatus);
+		if ( SC_D.localOrigin ) {
+			SC_D.currentOrigin->setEvaluationStatus(*options.originStatus);
 
 			// Do not override the status in commit
-			_newOriginStatus = EvaluationStatus::Quantity;
+			SC_D.newOriginStatus = EvaluationStatus::Quantity;
 			commit(options.forceEventAssociation, true);
-			_newOriginStatus = CONFIRMED;
+			SC_D.newOriginStatus = CONFIRMED;
 		}
 		else {
 			OPT(EvaluationStatus) os;
-			try { os = _currentOrigin->evaluationStatus(); } catch ( ... ) {}
+			try { os = SC_D.currentOrigin->evaluationStatus(); } catch ( ... ) {}
 
 			if ( os != *options.originStatus ) {
-				_currentOrigin->setEvaluationStatus(*options.originStatus);
+				SC_D.currentOrigin->setEvaluationStatus(*options.originStatus);
 
-				_newOriginStatus = EvaluationStatus::Quantity;
+				SC_D.newOriginStatus = EvaluationStatus::Quantity;
 				commit(true, true);
-				_newOriginStatus = CONFIRMED;
+				SC_D.newOriginStatus = CONFIRMED;
 			}
 		}
 	}
 
 	// wait for event
-	if ( !_baseEvent || (!options.forceEventAssociation && isLocalOrigin) ) {
+	if ( !SC_D.baseEvent || (!options.forceEventAssociation && isLocalOrigin) ) {
 		cerr << "Wait for association" << endl;
 		QProgressDialog progress("Origin has not been associated with an event yet.\n"
 		                         "Waiting for event association ...\n"
@@ -6780,54 +6910,63 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 	}
 
 	// Do event specific things
-	if ( _baseEvent ) {
+	if ( SC_D.baseEvent ) {
 		string type, newType, typeCertainty, newTypeCertainty;
 		string name, comment;
 
-		if ( options.eventType )
+		if ( options.eventType ) {
 			newType = options.eventType->toString();
+		}
 
-		try { type = _baseEvent->type().toString(); }
+		try { type = SC_D.baseEvent->type().toString(); }
 		catch ( ... ) {}
 
-		if ( options.eventTypeCertainty )
+		if ( options.eventTypeCertainty ) {
 			newTypeCertainty = options.eventTypeCertainty->toString();
+		}
 
-		try { typeCertainty = _baseEvent->typeCertainty().toString(); }
+		try { typeCertainty = SC_D.baseEvent->typeCertainty().toString(); }
 		catch ( ... ) {}
 
-		EventDescription *desc = _baseEvent->eventDescription(EventDescriptionIndex(EARTHQUAKE_NAME));
-		if ( desc )
+		EventDescription *desc = SC_D.baseEvent->eventDescription(EventDescriptionIndex(EARTHQUAKE_NAME));
+		if ( desc ) {
 			name = desc->text();
+		}
 
-		Comment *cmt = _baseEvent->comment(CommentIndex("Operator"));
-		if ( cmt )
+		Comment *cmt = SC_D.baseEvent->comment(CommentIndex("Operator"));
+		if ( cmt ) {
 			comment = cmt->text();
+		}
 
 		NotifierMessagePtr nm = new NotifierMessage;
 
-		if ( comment != options.eventComment )
-			nm->attach(createJournal(_baseEvent->publicID(), "EvOpComment", options.eventComment));
+		if ( comment != options.eventComment ) {
+			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvOpComment", options.eventComment));
+		}
 
-		if ( name != options.eventName )
-			nm->attach(createJournal(_baseEvent->publicID(), "EvName", options.eventName));
+		if ( name != options.eventName ) {
+			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvName", options.eventName));
+		}
 
-		if ( type != newType )
-			nm->attach(createJournal(_baseEvent->publicID(), "EvType", newType));
+		if ( type != newType ) {
+			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvType", newType));
+		}
 
-		if ( typeCertainty != newTypeCertainty )
-			nm->attach(createJournal(_baseEvent->publicID(), "EvTypeCertainty", newTypeCertainty));
+		if ( typeCertainty != newTypeCertainty ) {
+			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvTypeCertainty", newTypeCertainty));
+		}
 
-		if ( options.fixOrigin )
-			nm->attach(createJournal(_baseEvent->publicID(), "EvPrefOrgID", _currentOrigin->publicID()));
+		if ( options.fixOrigin ) {
+			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvPrefOrgID", SC_D.currentOrigin->publicID()));
+		}
 
 		if ( options.magnitudeType ) {
 			if ( !options.magnitudeType->empty() ) {
 				// Only attach the fix command if the requested type is not fixed already
-				if ( _reader ) {
+				if ( SC_D.reader ) {
 					DatabaseIterator it;
 					string lastFix;
-					it = _reader->getJournalAction(_baseEvent->publicID(), "EvPrefMagType");
+					it = SC_D.reader->getJournalAction(SC_D.baseEvent->publicID(), "EvPrefMagType");
 					while ( *it ) {
 						lastFix = JournalEntry::Cast(*it)->parameters();
 						++it;
@@ -6835,17 +6974,17 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 					it.close();
 
 					if ( lastFix != *options.magnitudeType )
-						nm->attach(createJournal(_baseEvent->publicID(), "EvPrefMagType", *options.magnitudeType));
+						nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvPrefMagType", *options.magnitudeType));
 				}
 				else
-					nm->attach(createJournal(_baseEvent->publicID(), "EvPrefMagType", *options.magnitudeType));
+					nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvPrefMagType", *options.magnitudeType));
 			}
 			else {
 				// Only attach the unfix command if currently a type is fixed
-				if ( _reader ) {
+				if ( SC_D.reader ) {
 					DatabaseIterator it;
 					string lastFix;
-					it = _reader->getJournalAction(_baseEvent->publicID(), "EvPrefMagType");
+					it = SC_D.reader->getJournalAction(SC_D.baseEvent->publicID(), "EvPrefMagType");
 					while ( *it ) {
 						lastFix = JournalEntry::Cast(*it)->parameters();
 						++it;
@@ -6853,10 +6992,56 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 					it.close();
 
 					if ( !lastFix.empty() )
-						nm->attach(createJournal(_baseEvent->publicID(), "EvPrefMagType", ""));
+						nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvPrefMagType", ""));
 				}
 				else
-					nm->attach(createJournal(_baseEvent->publicID(), "EvPrefMagType", ""));
+					nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvPrefMagType", ""));
+			}
+		}
+
+		for ( const auto &profile : options.originCommentProfiles ) {
+			CommentPtr comment = SC_D.currentOrigin->comment(profile.id);
+
+			if ( profile.value.empty() ) {
+				if ( comment ) {
+					SC_D.currentOrigin->remove(comment.get());
+					if ( !Notifier::IsEnabled()) {
+						nm->attach(
+							new Notifier(
+								SC_D.currentOrigin->publicID(),
+								OP_REMOVE, comment.get()
+							)
+						);
+					}
+				}
+			}
+			else {
+				if ( comment ) {
+					comment->setText(profile.value);
+					comment->update();
+					if ( !Notifier::IsEnabled()) {
+						nm->attach(
+							new Notifier(
+								SC_D.currentOrigin->publicID(),
+								OP_UPDATE, comment.get()
+							)
+						);
+					}
+				}
+				else {
+					comment = new Comment;
+					comment->setId(profile.id);
+					comment->setText(profile.value);
+					SC_D.currentOrigin->add(comment.get());
+					if ( !Notifier::IsEnabled()) {
+						nm->attach(
+							new Notifier(
+								SC_D.currentOrigin->publicID(),
+								OP_ADD, comment.get()
+							)
+						);
+					}
+				}
 			}
 		}
 
@@ -6869,8 +7054,9 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 		}
 	}
 
-	if ( options.returnToEventList )
+	if ( options.returnToEventList ) {
 		emit eventListRequested();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7036,8 +7222,8 @@ struct DeactivatedArrivalFilter : ArrivalModel::Filter {
 void OriginLocatorView::tableArrivalsContextMenuRequested(const QPoint &pos) {
 	QMenu menu;
 
-	if ( !_ui->tableArrivals->selectionModel() ) return;
-	bool hasSelection = _ui->tableArrivals->selectionModel()->hasSelection();
+	if ( !SC_D.ui.tableArrivals->selectionModel() ) return;
+	bool hasSelection = SC_D.ui.tableArrivals->selectionModel()->hasSelection();
 
 	QAction *actionInvertSelection = menu.addAction("Invert selection");
 	QMenu *subSelection = menu.addMenu("Select");
@@ -7087,7 +7273,7 @@ void OriginLocatorView::tableArrivalsContextMenuRequested(const QPoint &pos) {
 	QAction *actionCopyCellClipboard = menu.addAction("Copy cell to clipboard");
 	QAction *actionCopyToClipboard = menu.addAction("Copy selected rows to clipboard");
 
-	QAction *result = menu.exec(_ui->tableArrivals->mapToGlobal(pos));
+	QAction *result = menu.exec(SC_D.ui.tableArrivals->mapToGlobal(pos));
 
 	if ( result == actionDeleteSelectedArrivals )
 		deleteSelectedArrivals();
@@ -7109,7 +7295,7 @@ void OriginLocatorView::tableArrivalsContextMenuRequested(const QPoint &pos) {
 		activateSelectedArrivals(Seismology::LocatorInterface::F_SLOWNESS, false);
 
 	else if ( result == actionInvertSelection )
-		selectArrivals(InvertFilter(_ui->tableArrivals->selectionModel()));
+		selectArrivals(InvertFilter(SC_D.ui.tableArrivals->selectionModel()));
 	else if ( result == actionSelectAutomatic )
 		selectArrivals(AutomaticPickFilter());
 	else if ( result == actionSelectManual )
@@ -7119,25 +7305,25 @@ void OriginLocatorView::tableArrivalsContextMenuRequested(const QPoint &pos) {
 	else if ( result == actionSelectWeightNon0 )
 		selectArrivals(NonZeroWeightFilter());
 	else if ( result == actionSelectActivated )
-		selectArrivals(ActivatedArrivalFilter(_modelArrivalsProxy));
+		selectArrivals(ActivatedArrivalFilter(SC_D.modelArrivalsProxy));
 	else if ( result == actionRename )
 		renameArrivals();
 	else if ( result == actionSelectDeactivated )
-		selectArrivals(DeactivatedArrivalFilter(_modelArrivalsProxy));
+		selectArrivals(DeactivatedArrivalFilter(SC_D.modelArrivalsProxy));
 	else if ( result == actionCopyCellClipboard ) {
 		QClipboard *cb = QApplication::clipboard();
 		if ( cb ) {
-			int column = _ui->tableArrivals->columnAt(pos.x());
-			int row = _ui->tableArrivals->rowAt(pos.y());
+			int column = SC_D.ui.tableArrivals->columnAt(pos.x());
+			int row = SC_D.ui.tableArrivals->rowAt(pos.y());
 			cb->setText(
-				_ui->tableArrivals->model()->data(
-					_ui->tableArrivals->model()->index(row, column)
+				SC_D.ui.tableArrivals->model()->data(
+					SC_D.ui.tableArrivals->model()->index(row, column)
 				).toString()
 			);
 		}
 	}
 	else if ( result == actionCopyToClipboard )
-		SCApp->copyToClipboard(_ui->tableArrivals);
+		SCApp->copyToClipboard(SC_D.ui.tableArrivals);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7146,8 +7332,8 @@ void OriginLocatorView::tableArrivalsContextMenuRequested(const QPoint &pos) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::tableArrivalsHeaderContextMenuRequested(const QPoint &pos) {
-	int count = _ui->tableArrivals->horizontalHeader()->count();
-	QAbstractItemModel *model = _ui->tableArrivals->horizontalHeader()->model();
+	int count = SC_D.ui.tableArrivals->horizontalHeader()->count();
+	QAbstractItemModel *model = SC_D.ui.tableArrivals->horizontalHeader()->model();
 
 	QMenu menu;
 
@@ -7156,10 +7342,10 @@ void OriginLocatorView::tableArrivalsHeaderContextMenuRequested(const QPoint &po
 	for ( int i = 0; i < count; ++i ) {
 		actions[i] = menu.addAction(model->headerData(i, Qt::Horizontal).toString());
 		actions[i]->setCheckable(true);
-		actions[i]->setChecked(!_ui->tableArrivals->horizontalHeader()->isSectionHidden(i));
+		actions[i]->setChecked(!SC_D.ui.tableArrivals->horizontalHeader()->isSectionHidden(i));
 	}
 
-	QAction *result = menu.exec(_ui->tableArrivals->horizontalHeader()->mapToGlobal(pos));
+	QAction *result = menu.exec(SC_D.ui.tableArrivals->horizontalHeader()->mapToGlobal(pos));
 	if ( result == nullptr ) return;
 
 	int section = actions.indexOf(result);
@@ -7168,7 +7354,7 @@ void OriginLocatorView::tableArrivalsHeaderContextMenuRequested(const QPoint &po
 	for ( int i = 0; i < count; ++i )
 		colVisibility[i] = actions[i]->isChecked();
 
-	_ui->tableArrivals->horizontalHeader()->setSectionHidden(section, !colVisibility[section]);
+	SC_D.ui.tableArrivals->horizontalHeader()->setSectionHidden(section, !colVisibility[section]);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7177,22 +7363,22 @@ void OriginLocatorView::tableArrivalsHeaderContextMenuRequested(const QPoint &po
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::selectArrivals(const ArrivalModel::Filter *f) {
-	if ( _ui->tableArrivals->selectionModel() == nullptr )
+	if ( SC_D.ui.tableArrivals->selectionModel() == nullptr )
 		return;
 
 	QItemSelection selection;
 
-	for ( int i = 0; i < _modelArrivalsProxy->rowCount(); ++i ) {
-		Arrival *arr = _currentOrigin->arrival(i);
-		QModelIndex idx = _modelArrivalsProxy->mapFromSource(_modelArrivals.index(i,0));
+	for ( int i = 0; i < SC_D.modelArrivalsProxy->rowCount(); ++i ) {
+		Arrival *arr = SC_D.currentOrigin->arrival(i);
+		QModelIndex idx = SC_D.modelArrivalsProxy->mapFromSource(SC_D.modelArrivals.index(i,0));
 
 		if ( f != nullptr && !f->accepts(idx.row(), i, arr) ) continue;
 
 		selection.append(QItemSelectionRange(idx));
 	}
 
-	//selection = _modelArrivalsProxy->mapSelectionFromSource(selection);
-	_ui->tableArrivals->selectionModel()->select(selection, QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+	//selection = SC_D.modelArrivalsProxy->mapSelectionFromSource(selection);
+	SC_D.ui.tableArrivals->selectionModel()->select(selection, QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7210,25 +7396,25 @@ void OriginLocatorView::selectArrivals(const ArrivalModel::Filter &f) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::deleteSelectedArrivals() {
-	if ( _ui->tableArrivals->selectionModel() == nullptr )
+	if ( SC_D.ui.tableArrivals->selectionModel() == nullptr )
 		return;
 
-	QModelIndexList rows = _ui->tableArrivals->selectionModel()->selectedRows();
+	QModelIndexList rows = SC_D.ui.tableArrivals->selectionModel()->selectedRows();
 	if ( rows.empty() ) return;
 
-	if ( _currentOrigin == nullptr ) return;
+	if ( SC_D.currentOrigin == nullptr ) return;
 
 	OriginPtr origin = Origin::Create();
-	*origin = *_currentOrigin;
+	*origin = *SC_D.currentOrigin;
 
 	vector<bool> flags;
-	flags.resize(_currentOrigin->arrivalCount(), false);
+	flags.resize(SC_D.currentOrigin->arrivalCount(), false);
 
 	foreach ( const QModelIndex &idx, rows ) {
-		int row = _modelArrivalsProxy->mapToSource(idx).row();
-		if ( row >= (int)_currentOrigin->arrivalCount() ) {
+		int row = SC_D.modelArrivalsProxy->mapToSource(idx).row();
+		if ( row >= (int)SC_D.currentOrigin->arrivalCount() ) {
 			cerr << "Delete arrivals: invalid idx " << row
-			     << ": only " << _currentOrigin->arrivalCount() << " available"
+			     << ": only " << SC_D.currentOrigin->arrivalCount() << " available"
 			     << endl;
 			continue;
 		}
@@ -7236,18 +7422,18 @@ void OriginLocatorView::deleteSelectedArrivals() {
 		flags[row] = true;
 	}
 
-	for ( size_t i = 0; i < _currentOrigin->arrivalCount(); ++i ) {
+	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
 		// Skip arrivals to be deleted
 		if ( flags[i] ) continue;
 
 		// Copy existing arrivals
-		Arrival *arr = _currentOrigin->arrival(i);
+		Arrival *arr = SC_D.currentOrigin->arrival(i);
 		ArrivalPtr newArr = new Arrival(*arr);
 		origin->add(newArr.get());
 	}
 
 	applyNewOrigin(origin.get(), false);
-	startBlinking(QColor(255,128,0), _ui->btnRelocate);
+	startBlinking(QColor(255,128,0), SC_D.ui.btnRelocate);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7257,10 +7443,10 @@ void OriginLocatorView::deleteSelectedArrivals() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::activateSelectedArrivals(Seismology::LocatorInterface::Flags flags,
                                                  bool activate) {
-	if ( _ui->tableArrivals->selectionModel() == nullptr )
+	if ( SC_D.ui.tableArrivals->selectionModel() == nullptr )
 		return;
 
-	QModelIndexList rows = _ui->tableArrivals->selectionModel()->selectedRows();
+	QModelIndexList rows = SC_D.ui.tableArrivals->selectionModel()->selectedRows();
 	if ( rows.empty() ) return;
 
 	bool changed = false;
@@ -7276,13 +7462,13 @@ void OriginLocatorView::activateSelectedArrivals(Seismology::LocatorInterface::F
 		newFlags &= mask;
 
 		if ( oldFlags != newFlags ) {
-			_modelArrivalsProxy->setData(idx, newFlags, UsedRole);
+			SC_D.modelArrivalsProxy->setData(idx, newFlags, UsedRole);
 			changed = true;
 		}
 	}
 
 	if ( changed )
-		startBlinking(QColor(255,128,0), _ui->btnRelocate);
+		startBlinking(QColor(255,128,0), SC_D.ui.btnRelocate);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7296,11 +7482,11 @@ void OriginLocatorView::renameArrivals() {
 	QSet<QString> phases;
 	QSet<Arrival*> arrivals;
 
-	for ( int i = 0; i < _modelArrivalsProxy->rowCount(); ++i ) {
-		Arrival *arr = _currentOrigin->arrival(i);
-		QModelIndex idx = _modelArrivalsProxy->mapFromSource(_modelArrivals.index(i,0));
+	for ( int i = 0; i < SC_D.modelArrivalsProxy->rowCount(); ++i ) {
+		Arrival *arr = SC_D.currentOrigin->arrival(i);
+		QModelIndex idx = SC_D.modelArrivalsProxy->mapFromSource(SC_D.modelArrivals.index(i,0));
 
-		if ( _ui->tableArrivals->selectionModel()->isRowSelected(idx.row(), QModelIndex()) ) {
+		if ( SC_D.ui.tableArrivals->selectionModel()->isRowSelected(idx.row(), QModelIndex()) ) {
 			phases.insert(arr->phase().code().c_str());
 			arrivals.insert(arr);
 		}
@@ -7310,7 +7496,7 @@ void OriginLocatorView::renameArrivals() {
 		dlg.ui.listSourcePhases->addItem(ph);
 
 	PickerView::Config::StringList pickPhases;
-	_pickerConfig.getPickPhases(pickPhases);
+	SC_D.pickerConfig.getPickPhases(pickPhases);
 	foreach (const QString &ph, pickPhases)
 		dlg.ui.listTargetPhase->addItem(ph);
 
@@ -7337,17 +7523,17 @@ void OriginLocatorView::renameArrivals() {
 		return;
 	}
 
-	if ( _currentOrigin == nullptr ) return;
+	if ( SC_D.currentOrigin == nullptr ) return;
 
 	OriginPtr origin = Origin::Create();
-	*origin = *_currentOrigin;
+	*origin = *SC_D.currentOrigin;
 
 	phases.clear();
 	foreach ( QListWidgetItem *item, sourceItems )
 		phases.insert(item->text());
 
-	for ( size_t i = 0; i < _currentOrigin->arrivalCount(); ++i ) {
-		Arrival *arr = _currentOrigin->arrival(i);
+	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+		Arrival *arr = SC_D.currentOrigin->arrival(i);
 
 		// Copy existing arrivals
 		ArrivalPtr newArr = new Arrival(*arr);
@@ -7359,7 +7545,7 @@ void OriginLocatorView::renameArrivals() {
 	}
 
 	applyNewOrigin(origin.get(), false);
-	startBlinking(QColor(255,128,0), _ui->btnRelocate);
+	startBlinking(QColor(255,128,0), SC_D.ui.btnRelocate);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7370,14 +7556,14 @@ void OriginLocatorView::renameArrivals() {
 void OriginLocatorView::dataChanged(const QModelIndex& topLeft, const QModelIndex&) {
 	if ( topLeft.column() != USED ) return;
 
-	int flags = _modelArrivals.data(topLeft, UsedRole).toInt();
+	int flags = SC_D.modelArrivals.data(topLeft, UsedRole).toInt();
 	bool used = flags != 0;
-	_residuals->setValueSelected(topLeft.row(), used);
-	_map->setArrivalState(topLeft.row(), used);
-	if ( _toolMap )
-		_toolMap->setArrivalState(topLeft.row(), used);
-	if ( _recordView )
-		_recordView->setArrivalState(topLeft.row(), used);
+	SC_D.residuals->setValueSelected(topLeft.row(), used);
+	SC_D.map->setArrivalState(topLeft.row(), used);
+	if ( SC_D.toolMap )
+		SC_D.toolMap->setArrivalState(topLeft.row(), used);
+	if ( SC_D.recordView )
+		SC_D.recordView->setArrivalState(topLeft.row(), used);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7389,16 +7575,19 @@ void OriginLocatorView::evalResultAvailable(const QString &oid,
                                             const QString &className,
                                             const QString &script,
                                             const QString &result) {
-	if ( !_currentOrigin || _currentOrigin->publicID() != oid.toStdString() )
+	if ( !SC_D.currentOrigin || SC_D.currentOrigin->publicID() != oid.toStdString() ) {
 		return;
+	}
 
-	ScriptLabelMap::iterator it = _scriptLabelMap.find(script);
-	if ( it == _scriptLabelMap.end() ) return;
+	auto it = SC_D.scriptLabelMap.find(script);
+	if ( it == SC_D.scriptLabelMap.end() ) {
+		return;
+	}
 
 	it.value().first->setEnabled(true);
 	it.value().second->setText(result);
 
-	it.value().second->setPalette(_ui->labelEventID->palette());
+	it.value().second->setPalette(SC_D.ui.labelEventID->palette());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7410,11 +7599,14 @@ void OriginLocatorView::evalResultError(const QString &oid,
                                         const QString &className,
                                         const QString &script,
                                         int error) {
-	if ( !_currentOrigin || _currentOrigin->publicID() != oid.toStdString() )
+	if ( !SC_D.currentOrigin || SC_D.currentOrigin->publicID() != oid.toStdString() ) {
 		return;
+	}
 
-	ScriptLabelMap::iterator it = _scriptLabelMap.find(script);
-	if ( it == _scriptLabelMap.end() ) return;
+	auto it = SC_D.scriptLabelMap.find(script);
+	if ( it == SC_D.scriptLabelMap.end() ) {
+		return;
+	}
 
 	it.value().first->setEnabled(true);
 	it.value().second->setText("ERROR");
@@ -7430,19 +7622,20 @@ void OriginLocatorView::evalResultError(const QString &oid,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::evaluateOrigin(Seiscomp::DataModel::Origin *org,
-                                       Seiscomp::DataModel::Event *event,
-                                       bool localOrigin, bool relocated) {
+                                       Seiscomp::DataModel::Event *,
+                                       bool localOrigin, bool) {
 	QStringList scripts;
-	ScriptLabelMap::iterator it;
-	for ( it = _scriptLabelMap.begin(); it != _scriptLabelMap.end(); ++it )
+	for ( auto it = SC_D.scriptLabelMap.begin(); it != SC_D.scriptLabelMap.end(); ++it )
 		scripts << it.key();
 
 	// Local origins need special handling
-	if ( localOrigin )
+	if ( localOrigin ) {
 		PublicObjectEvaluator::Instance().eval(org, scripts);
-	else
+	}
+	else {
 		PublicObjectEvaluator::Instance().prepend(this, org->publicID().c_str(),
 		                                          org->typeInfo(), scripts);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
