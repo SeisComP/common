@@ -3958,6 +3958,9 @@ void OriginLocatorView::readPicks(Origin* o) {
 		}
 
 		for ( size_t i = 0; i < o->magnitudeCount(); ++i ) {
+			if ( o->magnitude(i)->commentCount() == 0 ) {
+				SC_D.reader->loadComments(o->magnitude(i));
+			}
 			if ( o->magnitude(i)->stationMagnitudeContributionCount() == 0 ) {
 				SC_D.reader->loadStationMagnitudeContributions(o->magnitude(i));
 			}
