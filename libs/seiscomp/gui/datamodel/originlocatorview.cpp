@@ -116,6 +116,87 @@ struct CommitOptions {
 	};
 
 	vector<OriginCommentProfile> originCommentProfiles;
+
+	void init(const std::string &prefix, Origin *origin) {
+		try {
+			forceEventAssociation = SCApp->configGetBool(prefix + "forceEventAssociation");
+		}
+		catch ( ... ) {}
+
+		try {
+			fixOrigin = SCApp->configGetBool(prefix + "fixOrigin");
+		}
+		catch ( ... ) {}
+
+		try {
+			returnToEventList = SCApp->configGetBool(prefix + "returnToEventList");
+		}
+		catch ( ... ) {}
+
+		try {
+			askForConfirmation = SCApp->configGetBool(prefix + "askForConfirmation");
+		}
+		catch ( ... ) {}
+
+		try {
+			auto profiles = SCApp->configGetStrings("olv.originComments");
+			set<string> ids;
+
+			for ( const auto &profile : profiles ) {
+				CommitOptions::OriginCommentProfile commentProfile;
+
+				try {
+					commentProfile.id = SCApp->configGetString("olv.originComments." + profile + ".id");
+					if ( commentProfile.id.empty() ) {
+						SEISCOMP_WARNING("olv.originComments.%s.id is empty: ignoring",
+						                 profile.c_str());
+						continue;
+					}
+
+					if ( ids.find(commentProfile.id) != ids.end() ) {
+						SEISCOMP_WARNING("Duplicate olv.originComments.%s.id: ignoring",
+						                 profile.c_str());
+						continue;
+					}
+
+					commentProfile.label = SCApp->configGetString("olv.originComments." + profile + ".label");
+					if ( commentProfile.label.empty() ) {
+						SEISCOMP_WARNING("olv.originComments.%s.label is empty: ignoring",
+						                 profile.c_str());
+						continue;
+					}
+
+					commentProfile.options = SCApp->configGetStrings("olv.originComments." + profile + ".options");
+				}
+				catch ( exception &e ) {
+					SEISCOMP_WARNING("olv.originComments: %s, ignoring %s",
+					                 e.what(), profile.c_str());
+					continue;
+				}
+
+				try {
+					commentProfile.allowFreeText = SCApp->configGetBool("olv.originComments." + profile + ".allowFreeText");
+				}
+				catch ( ... ) {}
+
+				originCommentProfiles.push_back(commentProfile);
+				ids.insert(commentProfile.id);
+			}
+		}
+		catch ( ... ) {}
+
+		updateComments(origin);
+	}
+
+	void updateComments(Origin *origin) {
+		for ( auto &profile : originCommentProfiles ) {
+			profile.value = string();
+			auto comment = origin ? origin->comment(profile.id) : nullptr;
+			if ( comment ) {
+				profile.value = comment->text();
+			}
+		}
+	}
 };
 
 
@@ -645,6 +726,15 @@ class OriginCommitOptions : public QDialog {
 				originComments.append(comboComment);
 				ui.frameEventOptions->layout()->addWidget(comboComment);
 			}
+
+			auto preferredSize = sizeHint();
+			if ( preferredSize.width() < width() ) {
+				preferredSize.setWidth(width());
+			}
+			if ( preferredSize.height() < height() ) {
+				preferredSize.setHeight(height());
+			}
+			resize(preferredSize);
 		}
 
 		bool getOptions(CommitOptions &options) {
@@ -3135,31 +3225,15 @@ void OriginLocatorView::init() {
 		catch ( ...) {}
 
 		CommitOptions customOptions;
+
 		// Configure the commit+ button
-		try {
-			customOptions.forceEventAssociation = SCApp->configGetBool(prefix + "forceEventAssociation");
-		}
-		catch ( ... ) {}
-
-		try {
-			customOptions.fixOrigin = SCApp->configGetBool(prefix + "fixOrigin");
-		}
-		catch ( ... ) {}
-
-		try {
-			customOptions.returnToEventList = SCApp->configGetBool(prefix + "returnToEventList");
-		}
-		catch ( ... ) {}
-
-		try {
-			customOptions.askForConfirmation = SCApp->configGetBool(prefix + "askForConfirmation");
-		}
-		catch ( ... ) {}
+		customOptions.init(prefix, nullptr);
 
 		try {
 			EventType et;
-			if ( et.fromString(SCApp->configGetString(prefix + "eventType")) )
+			if ( et.fromString(SCApp->configGetString(prefix + "eventType")) ) {
 				customOptions.eventType = et;
+			}
 			else {
 				QMessageBox::critical(this, "Error",
 				                      QString("Invalid '%1eventType': %2")
@@ -6554,8 +6628,11 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::customCommit() {
 	CommitOptions customOptions = sender()->property("customCommit").value<CommitOptions>();
-	if ( QApplication::keyboardModifiers() == Qt::ShiftModifier )
+	if ( QApplication::keyboardModifiers() == Qt::ShiftModifier ) {
 		customOptions.askForConfirmation = true;
+	}
+
+	customOptions.updateComments(SC_D.currentOrigin.get());
 
 	QString fixedMagnitudeType = SC_D.actionCommitOptions->property("EvPrefMagType").toString();
 	if ( !fixedMagnitudeType.isEmpty() ) {
@@ -6719,27 +6796,13 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::commitWithOptions() {
-	OriginCommitOptions dlg;
 	CommitOptions options;
 
 	// Setup options
-	try {
-		options.forceEventAssociation = SCApp->configGetBool("olv.commit.forceEventAssociation");
-	}
-	catch ( ... ) {}
-
-	try {
-		options.fixOrigin = SCApp->configGetBool("olv.commit.fixOrigin");
-	}
-	catch ( ... ) {}
+	options.init("olv.commit.", SC_D.currentOrigin.get());
+	options.askForConfirmation = true;
 
 	options.magnitudeType = SC_D.actionCommitOptions->property("EvPrefMagType").toString().toStdString();
-
-	try {
-		options.returnToEventList = SCApp->configGetBool("olv.commit.returnToEventList");
-	}
-	catch ( ... ) {}
-
 	options.eventType = SC_D.defaultEventType;
 
 	if ( SC_D.baseEvent ) {
@@ -6778,71 +6841,7 @@ void OriginLocatorView::commitWithOptions() {
 		options.originStatus = OPT(EvaluationStatus)(CONFIRMED);
 	}
 
-	options.askForConfirmation = false;
-
-	try {
-		auto profiles = SCApp->configGetStrings("olv.originComments");
-		set<string> ids;
-
-		for ( const auto &profile : profiles ) {
-			CommitOptions::OriginCommentProfile commentProfile;
-
-			try {
-				commentProfile.id = SCApp->configGetString("olv.originComments." + profile + ".id");
-				if ( commentProfile.id.empty() ) {
-					SEISCOMP_WARNING("olv.originComments.%s.id is empty: ignoring",
-					                 profile.c_str());
-					continue;
-				}
-
-				if ( ids.find(commentProfile.id) != ids.end() ) {
-					SEISCOMP_WARNING("Duplicate olv.originComments.%s.id: ignoring",
-					                 profile.c_str());
-					continue;
-				}
-
-				commentProfile.label = SCApp->configGetString("olv.originComments." + profile + ".label");
-				if ( commentProfile.label.empty() ) {
-					SEISCOMP_WARNING("olv.originComments.%s.label is empty: ignoring",
-					                 profile.c_str());
-					continue;
-				}
-
-				commentProfile.options = SCApp->configGetStrings("olv.originComments." + profile + ".options");
-			}
-			catch ( exception &e ) {
-				SEISCOMP_WARNING("olv.originComments: %s, ignoring %s",
-				                 e.what(), profile.c_str());
-				continue;
-			}
-
-			try {
-				commentProfile.allowFreeText = SCApp->configGetBool("olv.originComments." + profile + ".allowFreeText");
-			}
-			catch ( ... ) {}
-
-			// Preset value if possible
-			auto comment = SC_D.currentOrigin->comment(commentProfile.id);
-			if ( comment ) {
-				commentProfile.value = comment->text();
-			}
-
-			options.originCommentProfiles.push_back(commentProfile);
-			ids.insert(commentProfile.id);
-		}
-	}
-	catch ( ... ) {}
-
-	// Populate dialog
-	dlg.setOptions(options, SC_D.baseEvent.get(), SC_D.localOrigin);
-
-	if ( dlg.exec() == QDialog::Rejected ) {
-		return;
-	}
-
-	if ( dlg.getOptions(options) ) {
-		commitWithOptions(&options);
-	}
+	commitWithOptions(&options);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6853,6 +6852,7 @@ void OriginLocatorView::commitWithOptions() {
 void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 	const CommitOptions *options_ptr = reinterpret_cast<const CommitOptions*>(data_ptr);
 	CommitOptions tmp;
+	bool dialogConfirmed = false;
 
 	if ( options_ptr->askForConfirmation ) {
 		OriginCommitOptions dlg;
@@ -6866,6 +6866,7 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 		}
 
 		options_ptr = &tmp;
+		dialogConfirmed = true;
 	}
 
 	const CommitOptions &options = *options_ptr;
@@ -6999,47 +7000,54 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 			}
 		}
 
-		for ( const auto &profile : options.originCommentProfiles ) {
-			CommentPtr comment = SC_D.currentOrigin->comment(profile.id);
+		if ( dialogConfirmed ) {
+			// Only if the dialog was opened the synchronization of origin
+			// comments is allowed.
 
-			if ( profile.value.empty() ) {
-				if ( comment ) {
-					SC_D.currentOrigin->remove(comment.get());
-					if ( !Notifier::IsEnabled()) {
-						nm->attach(
-							new Notifier(
-								SC_D.currentOrigin->publicID(),
-								OP_REMOVE, comment.get()
-							)
-						);
-					}
-				}
-			}
-			else {
-				if ( comment ) {
-					comment->setText(profile.value);
-					comment->update();
-					if ( !Notifier::IsEnabled()) {
-						nm->attach(
-							new Notifier(
-								SC_D.currentOrigin->publicID(),
-								OP_UPDATE, comment.get()
-							)
-						);
+			for ( const auto &profile : options.originCommentProfiles ) {
+				CommentPtr comment = SC_D.currentOrigin->comment(profile.id);
+
+				if ( profile.value.empty() ) {
+					if ( comment ) {
+						SC_D.currentOrigin->remove(comment.get());
+						if ( !Notifier::IsEnabled()) {
+							nm->attach(
+								new Notifier(
+									SC_D.currentOrigin->publicID(),
+									OP_REMOVE, comment.get()
+								)
+							);
+						}
 					}
 				}
 				else {
-					comment = new Comment;
-					comment->setId(profile.id);
-					comment->setText(profile.value);
-					SC_D.currentOrigin->add(comment.get());
-					if ( !Notifier::IsEnabled()) {
-						nm->attach(
-							new Notifier(
-								SC_D.currentOrigin->publicID(),
-								OP_ADD, comment.get()
-							)
-						);
+					if ( comment ) {
+						if ( profile.value != comment->text() ) {
+							comment->setText(profile.value);
+							comment->update();
+							if ( !Notifier::IsEnabled()) {
+								nm->attach(
+									new Notifier(
+										SC_D.currentOrigin->publicID(),
+										OP_UPDATE, comment.get()
+									)
+								);
+							}
+						}
+					}
+					else {
+						comment = new Comment;
+						comment->setId(profile.id);
+						comment->setText(profile.value);
+						SC_D.currentOrigin->add(comment.get());
+						if ( !Notifier::IsEnabled()) {
+							nm->attach(
+								new Notifier(
+									SC_D.currentOrigin->publicID(),
+									OP_ADD, comment.get()
+								)
+							);
+						}
 					}
 				}
 			}
