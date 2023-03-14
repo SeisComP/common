@@ -71,6 +71,15 @@ struct TabData {
 };
 
 
+struct MagnitudeCommentProfile {
+	string         id;
+	string         value; // Output value
+	string         label;
+	vector<string> options;
+	bool           allowFreeText{false};
+};
+
+
 }
 
 
@@ -1413,6 +1422,85 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery* reader) {
 	}
 
 	_currentMagnitudeTypes = _magnitudeTypes;
+
+	try {
+		int baseIdx = _ui.layoutActions->indexOf(_ui.cbEvalStatus);
+		if ( baseIdx < 0 ) {
+			baseIdx = _ui.layoutActions->count() - 1;
+		}
+
+		auto profiles = SCApp->configGetStrings("olv.magnitudeComments");
+		set<string> ids;
+
+		for ( const auto &profile : profiles ) {
+			MagnitudeCommentProfile commentProfile;
+
+			try {
+				commentProfile.id = SCApp->configGetString("olv.magnitudeComments." + profile + ".id");
+				if ( commentProfile.id.empty() ) {
+					SEISCOMP_WARNING("olv.magnitudeComments.%s.id is empty: ignoring",
+					                 profile.c_str());
+					continue;
+				}
+
+				if ( ids.find(commentProfile.id) != ids.end() ) {
+					SEISCOMP_WARNING("Duplicate olv.magnitudeComments.%s.id: ignoring",
+					                 profile.c_str());
+					continue;
+				}
+
+				commentProfile.label = SCApp->configGetString("olv.magnitudeComments." + profile + ".label");
+				if ( commentProfile.label.empty() ) {
+					SEISCOMP_WARNING("olv.magnitudeComments.%s.label is empty: ignoring",
+					                 profile.c_str());
+					continue;
+				}
+
+				commentProfile.options = SCApp->configGetStrings("olv.magnitudeComments." + profile + ".options");
+			}
+			catch ( exception &e ) {
+				SEISCOMP_WARNING("olv.magnitudeComments: %s, ignoring %s",
+				                 e.what(), profile.c_str());
+				continue;
+			}
+
+			try {
+				commentProfile.allowFreeText = SCApp->configGetBool("olv.magnitudeComments." + profile + ".allowFreeText");
+			}
+			catch ( ... ) {}
+
+			ids.insert(commentProfile.id);
+
+			_ui.layoutActions->insertWidget(baseIdx + 1, new QLabel((commentProfile.label + ":").c_str()));
+
+			auto comboComment = new QComboBox;
+			comboComment->setObjectName(QString("comboBox/magnitude/comment/%1").arg(commentProfile.id.c_str()));
+			comboComment->setProperty("id", QString(commentProfile.id.c_str()));
+			comboComment->setEditable(commentProfile.allowFreeText);
+			comboComment->setToolTip(
+				tr("Populates comment with id '%1'")
+				.arg(commentProfile.id.c_str())
+			);
+			for ( auto &option : commentProfile.options ) {
+				comboComment->addItem(option.c_str());
+			}
+			auto idx = comboComment->findText(commentProfile.value.c_str());
+			if ( idx >= 0 ) {
+				comboComment->setCurrentIndex(idx);
+			}
+			else if ( commentProfile.allowFreeText ) {
+				comboComment->setEditText(commentProfile.value.c_str());
+			}
+
+			connect(comboComment, SIGNAL(currentTextChanged(QString)),
+			        this, SLOT(magnitudeCommentChanged(QString)));
+
+			_ui.layoutActions->insertWidget(baseIdx + 2, comboComment);
+
+			baseIdx += 2;
+		}
+	}
+	catch ( ... ) {}
 
 	setReadOnly(true);
 }
@@ -3432,8 +3520,14 @@ void MagnitudeView::updateContent() {
 	// set labels ...
 	updateMagnitudeLabels();
 
+	auto magnitudeComments = findChildren<QComboBox*>(QRegExp("^comboBox/magnitude/comment/.*$"));
+
 	if ( !_netMag ) {
 		_ui.cbEvalStatus->setCurrentIndex(0);
+		for ( auto comboBox : magnitudeComments ) {
+			comboBox->setCurrentIndex(0);
+		}
+
 		_ui.groupReview->setEnabled(false);
 
 		// set dist column in table & add Net/Sta-Mag to diagram: dist = addStationMagnitude()
@@ -3447,6 +3541,30 @@ void MagnitudeView::updateContent() {
 		}
 		catch ( ... ) {
 			_ui.cbEvalStatus->setCurrentIndex(0);
+		}
+
+		for ( QComboBox *comboBox : magnitudeComments ) {
+			comboBox->blockSignals(true);
+			auto id = comboBox->property("id").toString().toStdString();
+			auto comment = _netMag->comment(id);
+			if ( comment ) {
+				auto idx = comboBox->findText(comment->text().c_str());
+				if ( idx >= 0 ) {
+					comboBox->setCurrentIndex(idx);
+				}
+				else if ( comboBox->isEditable() ) {
+					comboBox->setEditText(comment->text().c_str());
+				}
+			}
+			else {
+				if ( comboBox->isEditable() ) {
+					comboBox->setEditText(QString());
+				}
+				else {
+					comboBox->setCurrentIndex(0);
+				}
+			}
+			comboBox->blockSignals(false);
 		}
 	}
 
@@ -3836,6 +3954,36 @@ void MagnitudeView::evaluationStatusChanged(int index) {
 	}
 
 	updateMagnitudeLabels();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MagnitudeView::magnitudeCommentChanged(QString) {
+	if ( !_netMag ) {
+		return;
+	}
+
+	auto comboComment = static_cast<QComboBox*>(sender());
+	auto id = comboComment->property("id").toString().toStdString();
+	auto text = comboComment->currentText().toStdString();
+
+	CommentPtr comment = _netMag->comment(id);
+	if ( comment ) {
+		if ( comment->text() == text ) {
+			return;
+		}
+
+		comment->setText(text);
+	}
+	else {
+		comment = new Comment;
+		comment->setId(id);
+		comment->setText(text);
+		_netMag->add(comment.get());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -252,6 +252,8 @@ class SC_GUI_API MagnitudeView : public QWidget {
 		void debugCreateMagRef();
 		void evaluationStatusChanged(int index);
 
+		void magnitudeCommentChanged(QString);
+
 
 	protected:
 		void closeEvent(QCloseEvent *e);
