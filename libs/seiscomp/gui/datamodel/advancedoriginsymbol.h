@@ -84,11 +84,12 @@ class SC_GUI_API AdvancedOriginSymbol : public OriginSymbol {
 		void init();
 
 	protected:
-		QVector<Geo::GeoCoordinate> _confidenceEllipse;
-		QPainterPath                _renderPath;
-		QPen                        _confidenceEllipsePen;
-		QBrush                      _confidenceEllipseBrush;
-		bool                        _confidenceEllipseEnabled;
+		DataModel::Origin           *_origin{nullptr};
+		QVector<Geo::GeoCoordinate>  _confidenceEllipse;
+		QPainterPath                 _renderPath;
+		QPen                         _confidenceEllipsePen;
+		QBrush                       _confidenceEllipseBrush;
+		bool                         _confidenceEllipseEnabled;
 };
 
 

@@ -43,10 +43,7 @@ namespace Gui {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 OriginSymbol::OriginSymbol(Map::Decorator* decorator)
-: Symbol(decorator)
-, _filled(false)
-, _magnitude(0)
-, _depth(0) {
+: Symbol(decorator) {
 	init();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -60,8 +57,6 @@ OriginSymbol::OriginSymbol(double latitude,
                            double depth,
                            Map::Decorator* decorator)
 : Symbol(latitude, longitude, decorator)
-, _filled(false)
-, _magnitude(0)
 , _depth(depth) {
 	init();
 }

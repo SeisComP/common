@@ -117,12 +117,11 @@ class SC_GUI_API OriginSymbol : public Map::Symbol {
 
 
 	protected:
-		DataModel::Origin *_origin;
-		QColor             _color;
-		QColor             _fillColor;
-		bool               _filled;
-		double             _magnitude;
-		double             _depth;
+		QColor _color;
+		QColor _fillColor;
+		bool   _filled{false};
+		double _magnitude{0};
+		double _depth{0};
 };
 
 
