@@ -31,7 +31,9 @@
 				<parameter name="acl" type="list:ipmask" default="">
 					<description>
 					The IP access control list for clients which are allowed
-					to connect to the interface.
+					to connect to the interface. Separate each IP with a space
+					and put the entire list in double quotes, e.g.
+					&quot;127.0.0.1 192.168.1.2 192.168.0.0/16&quot;.
 					</description>
 				</parameter>
 				<parameter name="socketPortReuse" type="boolean" default="true">
@@ -52,7 +54,8 @@
 					<parameter name="acl" type="list:ipmask" default="">
 						<description>
 						The IP access control list for clients which are allowed
-						to connect to the interface.
+						to connect to the interface. See interface.acl for
+						further details.
 						</description>
 					</parameter>
 					<parameter name="socketPortReuse" type="boolean" default="true">
@@ -91,7 +94,7 @@
 					<parameter name="acl" type="list:ipmask" default="0.0.0.0/0">
 						<description>
 						The IP access control list for clients which are allowed
-						to join the queue.
+						to join the queue. See interface.acl for further details.
 						</description>
 					</parameter>
 					<parameter name="maximumPayloadSize" type="int" unit="B" default="1048576">
