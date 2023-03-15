@@ -25,7 +25,7 @@
 #include <seiscomp/datamodel/waveformstreamid.h>
 #include <seiscomp/datamodel/responsepaz.h>
 #include <seiscomp/math/filter.h>
-#include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/iir/butterworth.h>
 
 namespace Seiscomp {
 namespace Math {

@@ -19,7 +19,7 @@
 
 
 #include <seiscomp/processing/amplitudes/Ms20.h>
-#include <seiscomp/math/filter/seismometers.h>
+#include <seiscomp/math/filter/iir/seismometers.h>
 
 #include <limits>
 

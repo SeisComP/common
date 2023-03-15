@@ -25,7 +25,7 @@
 #include <seiscomp/processing/amplitudes/ML.h>
 #include <seiscomp/math/mean.h>
 #include <seiscomp/math/filter/chainfilter.h>
-#include <seiscomp/math/filter/seismometers.h>
+#include <seiscomp/math/filter/seismometerresponse.h>
 #include <seiscomp/math/restitution/fft.h>
 #include <seiscomp/geo/featureset.h>
 #include <seiscomp/system/environment.h>

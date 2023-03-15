@@ -18,11 +18,11 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_FILTERING_IIR_BUTTERWORTH_H
-#define SEISCOMP_FILTERING_IIR_BUTTERWORTH_H
+#ifndef SEISCOMP_MATH_FILTERING_IIR_BUTTERWORTH_H
+#define SEISCOMP_MATH_FILTERING_IIR_BUTTERWORTH_H
 
 
-#include <seiscomp/math/filter/biquad.h>
+#include <seiscomp/math/filter/iir/biquad.h>
 
 
 namespace Seiscomp {
@@ -32,7 +32,7 @@ namespace IIR {
 
 
 template<class TYPE>
-class ButterworthLowpass : public BiquadCascade<TYPE> {
+class ButterworthLowpass : public BiquadFilter<TYPE> {
 	public:
 		ButterworthLowpass(int order = 3, double fmax = 0.7, double fsamp=0);
 
@@ -49,7 +49,7 @@ class ButterworthLowpass : public BiquadCascade<TYPE> {
 
 
 template<class TYPE>
-class ButterworthHighpass : public BiquadCascade<TYPE> {
+class ButterworthHighpass : public BiquadFilter<TYPE> {
 	public:
 		ButterworthHighpass(int order = 3, double fmin = 2.0, double fsamp=0);
 
@@ -66,7 +66,7 @@ class ButterworthHighpass : public BiquadCascade<TYPE> {
 
 
 template<class TYPE>
-class ButterworthBandpass : public BiquadCascade<TYPE> {
+class ButterworthBandpass : public BiquadFilter<TYPE> {
 	public:
 		ButterworthBandpass(int order = 3, double fmin = 0.7, double fmax = 2.0,
 		                    double fsamp=0);
@@ -86,7 +86,7 @@ class ButterworthBandpass : public BiquadCascade<TYPE> {
 
 
 template<class TYPE>
-class ButterworthBandstop : public BiquadCascade<TYPE> {
+class ButterworthBandstop : public BiquadFilter<TYPE> {
 	public:
 		ButterworthBandstop(int order = 3, double fmin = 0.7, double fmax = 2.0,
 		                    double fsamp=0);
@@ -105,7 +105,7 @@ class ButterworthBandstop : public BiquadCascade<TYPE> {
 
 
 template<class TYPE>
-class ButterworthHighLowpass : public BiquadCascade<TYPE> {
+class ButterworthHighLowpass : public BiquadFilter<TYPE> {
 	public:
 		ButterworthHighLowpass(int order = 3, double fmin = 0.7,
 		                       double fmax = 2.0, double fsamp = 0);

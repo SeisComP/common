@@ -24,7 +24,7 @@
 
 #include <seiscomp/core/interfacefactory.h>
 #include <seiscomp/processing/timewindowprocessor.h>
-#include <seiscomp/math/filter/seismometers.h>
+#include <seiscomp/math/filter/iir/seismometers.h>
 #include <seiscomp/datamodel/origin.h>
 #include <seiscomp/datamodel/sensorlocation.h>
 #include <seiscomp/client.h>

@@ -18,107 +18,30 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_SEISMOMETERS_H
-#define SEISCOMP_SEISMOMETERS_H
+#ifndef SEISCOMP_MATH_FILTERS_IIR_SEISMOMETERS_H
+#define SEISCOMP_MATH_FILTERS_IIR_SEISMOMETERS_H
 
 
 #include <complex>
-#include <seiscomp/math/filter/biquad.h>
+#include <seiscomp/math/filter/seismometerresponse.h>
+#include <seiscomp/math/filter/iir/biquad.h>
 
 
 namespace Seiscomp {
 namespace Math {
-
-
-enum GroundMotion { Displacement, Velocity, Acceleration };
-
-namespace SeismometerResponse {
-
-typedef std::complex<double> Pole;
-typedef std::complex<double> Zero;
-
-struct FAP {
-	FAP() {}
-	FAP(double f, double a, double p)
-	: frequency(f), amplitude(a), phaseAngle(p) {}
-
-	bool operator<(const FAP &other) const {
-		return frequency < other.frequency;
-	}
-
-	double frequency;  //! Frequency in Hz
-	double amplitude;  //! Amplitude
-	double phaseAngle; //! Phase angle in degree
-};
-
-typedef std::vector<Pole> Poles;
-typedef std::vector<Zero> Zeros;
-typedef std::vector<FAP> FAPs;
-
-class PolesAndZeros {
-	public:
-		PolesAndZeros();
-
-		PolesAndZeros(const Poles &poles, const Zeros &zeros,
-		              double norm);
-
-		PolesAndZeros(const PolesAndZeros &other);
-
-	public:
-		Poles  poles;
-		Zeros  zeros;
-		double norm;
-};
-
-class WoodAnderson : public PolesAndZeros {
-	public:
-		// Gutenberg(1935)              -> gain=2800, T0=0.8s, h=0.8
-		// Uhrhammer and Collins (1990) -> gain=2080, T0=0.8s, h=0.7
-		//
-		// Note that use of the Uhrhammer and Collins (1990) version
-		// is recommended by the IASPEI Magnitude Working Group
-		// recommendations of 2011 September 9.
-		struct Config {
-			Config(double gain=2800, double T0=0.8, double h=0.8) :
-				gain(gain), T0(T0), h(h) {}
-
-			double gain, T0, h;
-		};
-		WoodAnderson(GroundMotion input, Config config=Config());
-};
-
-
-class Seismometer5sec : public PolesAndZeros {
-public:
-	Seismometer5sec(GroundMotion input);
-};
-
-
-}
-
-
 namespace Filtering {
-
-
-// Responses that soon need to be implemented are (at least)
-// * STS2
-// * STS1
-// * Kirnos
-// * corresponding restitution filters
-// * generic filters that read PAZ from file/database/etc.
-
 namespace IIR {
 
 template <typename T>
-class Filter : public SeismometerResponse::PolesAndZeros,
-               public Math::Filtering::InPlaceFilter<T> {
+class Filter : public Seiscomp::Math::Filtering::IIR::BiquadFilter<T> {
 	public:
 		Filter();
 
 		Filter(const SeismometerResponse::Poles &poles,
-		       const SeismometerResponse::Zeros &zeros, double norm);
+		       const SeismometerResponse::Zeros &zeros,
+		       double norm);
 
-		Filter(const Filter &other);
+		Filter(const Filter &other) = default;
 
 	public:
 		void setSamplingFrequency(double fsamp) override;
@@ -128,8 +51,9 @@ class Filter : public SeismometerResponse::PolesAndZeros,
 	
 		Math::Filtering::InPlaceFilter<T> *clone() const override;
 
-	private:
-		Math::Filtering::IIR::BiquadCascade<T> _cascade;
+	protected:
+		// The poles and zeros that describe the seismometer response.
+		SeismometerResponse::PolesAndZeros paz;
 };
 
 

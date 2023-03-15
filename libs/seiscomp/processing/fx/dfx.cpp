@@ -21,7 +21,7 @@
 #include <seiscomp/logging/log.h>
 #include <seiscomp/datamodel/pick.h>
 #include <seiscomp/math/filter.h>
-#include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/iir/butterworth.h>
 #include <seiscomp/math/geo.h>
 #include <seiscomp/math/mean.h>
 #include <seiscomp/math/matrix3.h>

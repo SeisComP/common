@@ -2,10 +2,6 @@ SET(FILTER_SOURCES
 	abs.cpp
 	const.cpp
 	cutoff.cpp
-	biquad.cpp
-	butterworth.cpp
-	iirintegrate.cpp
-	iirdifferentiate.cpp
 	average.cpp
 	median.cpp
 	minmax.cpp
@@ -13,20 +9,25 @@ SET(FILTER_SOURCES
 	taper.cpp
 	rmhp.cpp
 	chainfilter.cpp
-	seismometers.cpp
+	seismometerresponse.cpp
+	iir/biquad.cpp
+	iir/butterworth.cpp
+	iir/integrate.cpp
+	iir/differentiate.cpp
 	iir/restitution.cpp
+	iir/seismometers.cpp
 )
 
 SET(FILTER_HEADERS
 	abs.h
 	const.h
 	cutoff.h
-	biquad.h
-	biquad.ipp
-	butterworth.h
-	butterworth.ipp
-	iirintegrate.h
-	iirdifferentiate.h
+	iir/biquad.h
+	iir/biquad.ipp
+	iir/butterworth.h
+	iir/butterworth.ipp
+	iir/integrate.h
+	iir/differentiate.h
 	average.h
 	median.h
 	minmax.h
@@ -36,8 +37,9 @@ SET(FILTER_HEADERS
 	chainfilter.h
 	op2filter.h
 	op2filter.ipp
-	seismometers.h
+	seismometerresponse.h
 	iir/restitution.h
+	iit/seismometers.h
 )
 
 SC_SETUP_LIB_SUBDIR(FILTER)

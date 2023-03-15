@@ -26,7 +26,7 @@
 #include <seiscomp/core/typedarray.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/math/math.h>
-#include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/iir/butterworth.h>
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/utils.h>
 

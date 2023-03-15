@@ -103,6 +103,7 @@ class Biquad : public InPlaceFilter<TYPE> {
 
 		InPlaceFilter<TYPE> *clone() const override;
 
+		std::string info() const;
 
 	// ------------------------------------------------------------------
 	//  Public members
@@ -116,14 +117,15 @@ class Biquad : public InPlaceFilter<TYPE> {
 };
 
 
+
 template<typename TYPE>
-class BiquadCascade : public InPlaceFilter<TYPE>, public std::vector<Biquad<TYPE>> {
+class BiquadFilter : public InPlaceFilter<TYPE> {
 	// ------------------------------------------------------------------
 	//  X'truction
 	// ------------------------------------------------------------------
 	public:
-		BiquadCascade();
-		BiquadCascade(const BiquadCascade &other) = default;
+		BiquadFilter() = default;
+		BiquadFilter(const BiquadFilter &other);
 
 
 	// ------------------------------------------------------------------
@@ -133,10 +135,14 @@ class BiquadCascade : public InPlaceFilter<TYPE>, public std::vector<Biquad<TYPE
 		// resets the filter, i.e. erases the filter memory
 		void reset();
 
-		// append a single biquad to this cascade
-		void append(const Biquad<TYPE> &biq);
+		// append a single biquad
+		void append(const Biquad<TYPE> &biquad);
 
 		void set(const Biquads &biquads);
+
+		const std::vector<Biquad<TYPE>> &biquads() const;
+
+		std::string info() const;
 
 
 	// ------------------------------------------------------------------
@@ -147,24 +153,28 @@ class BiquadCascade : public InPlaceFilter<TYPE>, public std::vector<Biquad<TYPE
 		void apply(int n, TYPE *inout) override;
 		InPlaceFilter<TYPE> *clone() const override;
 
-		void setSamplingFrequency(double fsamp) override {
-			std::cerr << "BiquadCascade::setSamplingFrequency()"<<std::endl;
-		}
-
+		// setting the sampling frequency has no effect on a biquad filter
+		void setSamplingFrequency(double) override {}
 		int setParameters(int n, const double *params) override;
 
+	protected:
+		// removes all biquads
+		void clear() { _biquads.clear(); }
 
 	// ------------------------------------------------------------------
 	//  Protected members
 	// ------------------------------------------------------------------
 
-	template <typename T>
-	friend std::ostream &operator<<(std::ostream &os, const BiquadCascade<T> &b);
+		template <typename T>
+		friend std::ostream &operator<<(std::ostream &os, const BiquadFilter<T> &b);
+
+	protected:
+		std::vector<Biquad<TYPE>> _biquads;
 };
 
 
 template <typename T>
-std::ostream &operator<<(std::ostream &os, const BiquadCascade<T> &b);
+std::ostream &operator<<(std::ostream &os, const BiquadFilter<T> &b);
 
 
 } // namespace Seiscomp::Math::Filtering::IIR

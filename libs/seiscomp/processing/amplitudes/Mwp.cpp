@@ -19,8 +19,8 @@
 
 
 #include <seiscomp/processing/amplitudes/Mwp.h>
-#include <seiscomp/math/filter/iirintegrate.h>
-#include<seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/iir/integrate.h>
+#include <seiscomp/math/filter/iir/butterworth.h>
 
 #include <seiscomp/math/geo.h>
 

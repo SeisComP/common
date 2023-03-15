@@ -155,7 +155,6 @@ void ChainFilter<TYPE>::setStreamID(const std::string &net,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename TYPE>
 void ChainFilter<TYPE>::setSamplingFrequency(double fsamp) {
-std::cerr << "ChainFilter<TYPE>::setSamplingFrequency "<<fsamp<<std::endl;
 	for ( InPlaceFilter<TYPE> *filter : _filters )
 		filter->setSamplingFrequency(fsamp);
 }

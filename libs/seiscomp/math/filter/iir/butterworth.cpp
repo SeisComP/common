@@ -23,7 +23,7 @@
 #include <complex>
 #include <iostream>
 
-#include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/iir/butterworth.h>
 
 
 namespace Seiscomp {
@@ -322,7 +322,6 @@ void init_bw_biquads_inplace(Biquads &biquads, size_t order, double fmin, double
 	// For the self-explaining set of input parameters a vector of biquads is returned.
 	//
 	// Note that the biquads object is not clear()ed. Biquads are just added to the end.
-
 	if ( type == BUTTERWORTH_HIGHLOWPASS ) {
 		// This is a bandpass obtained by combining lowpass and highpass
 		init_bw_biquads_inplace(biquads, order, fmin, 0, fsamp, BUTTERWORTH_HIGHPASS);
@@ -390,7 +389,7 @@ void init_bw_biquads_inplace(Biquads &biquads, size_t order, double fmin, double
 
 	Biquads _biquads;
 
-	// cascade generation
+	// biquads generation
 	switch ( type ) {
 		case BUTTERWORTH_BANDPASS:
 			_biquads = poles2bp(p, warped_fmin, warped_fmax);
@@ -441,7 +440,7 @@ Biquads init_bw_biquads(size_t order, double fmin, double fmax, double fsamp, in
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // load the template class definitions
-#include<seiscomp/math/filter/butterworth.ipp>
+#include<seiscomp/math/filter/iir/butterworth.ipp>
 
 
 INSTANTIATE_INPLACE_FILTER(ButterworthLowpass,     SC_SYSTEM_CORE_API);

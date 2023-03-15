@@ -25,7 +25,7 @@
 
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/math/math.h>
-#include <seiscomp/math/filter/seismometers.h>
+#include <seiscomp/math/filter/seismometerresponse.h>
 #include <seiscomp/math/restitution/types.h>
 #include <vector>
 #include <cstdlib>

@@ -20,7 +20,7 @@
 #ifndef SEISCOMP_MATH_FILTER_IIR_RESTITUTION_H_INCLUDED
 #define SEISCOMP_MATH_FILTER_IIR_RESTITUTION_H_INCLUDED
 
-#include <seiscomp/math/filter/biquad.h>
+#include <seiscomp/math/filter/iir/biquad.h>
 #include <math.h>
 #include <string>
 
@@ -59,12 +59,13 @@ bool coefficients_from_T1_T2(
 // The algorithm follows Kanamori and Rivera (2008).
 //
 template<typename TYPE>
-class RestitutionFilter : public BiquadCascade<TYPE> {
+class RestitutionFilter : public BiquadFilter<TYPE> {
 
 	public:
 		RestitutionFilter(double T0=1, double h=1, double gain=1);
 		~RestitutionFilter();
 
+		InPlaceFilter<TYPE>* clone() const;
 	public:
 		// Specify a bandpass parameters to stabilize the restitution.
 		//

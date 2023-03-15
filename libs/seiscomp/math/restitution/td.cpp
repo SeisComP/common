@@ -705,9 +705,7 @@ TimeDomainGeneric<TYPE>::init()
 
 	// make sure fmax <= 90% of Nyquist frequency
 	if (fsamp > 0 && fmax > 0.45*fsamp) {
-//		std::cerr << "adjusting fmax from " << fmax;
 		fmax = 0.45*fsamp;
-//		std::cerr << " to " << fmax << std::endl;
 	}
 	if (filter)
 		filter->setBandpass(order, fmin, fmax);
@@ -720,9 +718,7 @@ TimeDomainGeneric<TYPE>::setBandpass(int order, double fmin, double fmax)
 {
 	// make sure fmax <= 90% of Nyquist frequency
 	if (fsamp > 0 && fmax > 0.45*fsamp) {
-		std::cerr << "adjusting fmax from " << fmax;
 		fmax = 0.45*fsamp;
-		std::cerr << " to " << fmax << std::endl;
 	}
 
 	// We allow setting the bandpass parameter before initialization

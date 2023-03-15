@@ -45,8 +45,8 @@
 #include <seiscomp/math/filter.h>
 #include <seiscomp/math/filter/const.h>
 #include <seiscomp/math/filter/chainfilter.h>
-#include <seiscomp/math/filter/iirdifferentiate.h>
-#include <seiscomp/math/filter/iirintegrate.h>
+#include <seiscomp/math/filter/iir/differentiate.h>
+#include <seiscomp/math/filter/iir/integrate.h>
 #include <seiscomp/math/windows/cosine.h>
 #include <seiscomp/math/windows/hann.h>
 #include <seiscomp/math/windows/hamming.h>

@@ -18,60 +18,69 @@
  ***************************************************************************/
 
 
-#include <math.h>
-#include <vector>
-#include <ostream>
 #include <iostream>
+#include <seiscomp/math/filter/seismometerresponse.h>
+#include <seiscomp/core/exceptions.h>
 
-#include<seiscomp/math/filter/biquad.h>
+
+using namespace std;
 
 
 namespace Seiscomp {
 namespace Math {
-namespace Filtering {
-namespace IIR {
 
 
-// load the template class definitions
-#include<seiscomp/math/filter/biquad.ipp>
+namespace SeismometerResponse {
 
 
-BiquadCoefficients::BiquadCoefficients(double b0, double b1, double b2,
-                                       double a0, double a1, double a2) {
-	set(b0, b1, b2, a0, a1, a2);
+PolesAndZeros::PolesAndZeros() {}
+
+
+PolesAndZeros::PolesAndZeros(const Poles &p, const Zeros &z, double n)
+: poles(p), zeros(z), norm(n) {}
+
+
+PolesAndZeros::PolesAndZeros(const PolesAndZeros &other)
+: poles(other.poles), zeros(other.zeros), norm(other.norm) {}
+
+
+WoodAnderson::WoodAnderson(GroundMotion input, Config config) {
+	poles.clear();
+	zeros.clear();
+
+	double p_abs = 2*M_PI/config.T0;
+	double p_re  = config.h*p_abs;
+	double p_im  = sqrt(p_abs*p_abs-p_re*p_re);
+	poles.push_back( Pole(-p_re, -p_im));
+	poles.push_back( Pole(-p_re, +p_im));
+	norm = config.gain;
+
+	switch(input) {
+		case Displacement: zeros.push_back( 0 );
+		case Velocity:     zeros.push_back( 0 );
+		case Acceleration: break;
+	}
 }
 
 
-BiquadCoefficients::BiquadCoefficients(BiquadCoefficients const &bq)
-	: b0(bq.b0), b1(bq.b1), b2(bq.b2), a0(bq.a0), a1(bq.a1), a2(bq.a2) {}
+Seismometer5sec::Seismometer5sec(GroundMotion input) {
+	poles.clear();
+	zeros.clear();
 
+	// Poles from Seismic Handler
+	poles.push_back( Pole(-0.88857, -0.88857) );
+	poles.push_back( Pole(-0.88857, +0.88857) );
 
-void BiquadCoefficients::set(double b0, double b1, double b2,
-                             double a0, double a1, double a2) {
-	this->b0 = b0;
-	this->b1 = b1;
-	this->b2 = b2;
-	this->a0 = a0;
-	this->a1 = a1;
-	this->a2 = a2;
+	norm = 1.;
+
+	switch(input) {
+		case Displacement: zeros.push_back( 0 );
+		case Velocity:     zeros.push_back( 0 );
+		case Acceleration: break;
+	}
 }
 
 
-std::ostream &operator<<(std::ostream &os, const BiquadCoefficients &biq) {
-	os << "b: " << biq.b0 << ", " << biq.b1 << ", " << biq.b2 << std::endl
-	   << "a: " << biq.a0 << ", " << biq.a1 << ", " << biq.a2 << std::endl;
-	return os;
-}
-
-
-template class SC_SYSTEM_CORE_API Biquad<float>;
-template class SC_SYSTEM_CORE_API Biquad<double>;
-
-template class SC_SYSTEM_CORE_API BiquadCascade<float>;
-template class SC_SYSTEM_CORE_API BiquadCascade<double>;
-
-
-} // namespace Seiscomp::Math::Filtering::IIR
-} // namespace Seiscomp::Math::Filtering
+} // namespace SeismometerResponse
 } // namespace Seiscomp::Math
 } // namespace Seiscomp

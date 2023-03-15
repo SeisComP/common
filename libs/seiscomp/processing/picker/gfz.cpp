@@ -20,7 +20,7 @@
 #define SEISCOMP_COMPONENT Picker
 
 #include <seiscomp/logging/log.h>
-#include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/iir/butterworth.h>
 #include <seiscomp/processing/picker/gfz.h>
 
 

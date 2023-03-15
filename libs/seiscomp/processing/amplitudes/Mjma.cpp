@@ -20,7 +20,7 @@
 
 #include <seiscomp/processing/amplitudes/Mjma.h>
 #include <seiscomp/math/mean.h>
-#include <seiscomp/math/filter/seismometers.h>
+#include <seiscomp/math/filter/seismometerresponse.h>
 #include <seiscomp/math/restitution/fft.h>
 
 

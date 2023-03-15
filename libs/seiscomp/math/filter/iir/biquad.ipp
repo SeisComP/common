@@ -51,15 +51,30 @@ void Biquad<TYPE>::apply(int n, TYPE *inout) {
 
 		// a0 is assumed to be 1
 		double v0 = ff[i] - coefficients.a1*v1 - coefficients.a2*v2;
-		ff[i]     = TYPE(coefficients.b0*v0 + coefficients.b1*v1 + coefficients.b2*v2);
-		v2 = v1; v1 = v0;
+		ff[i] = TYPE(
+			coefficients.b0*v0 +
+			coefficients.b1*v1 +
+			coefficients.b2*v2);
+		v2 = v1;
+		v1 = v0;
 	}
 }
+
 
 template<typename TYPE>
 InPlaceFilter<TYPE>* Biquad<TYPE>::clone() const {
 	return new Biquad<TYPE>(coefficients);
 }
+
+
+template<typename TYPE>
+std::string Biquad<TYPE>::info() const {
+	std::stringstream s;
+	s << "  b = " << coefficients.b0 << ", " << coefficients.b1 << ", " << coefficients.b2 << std::endl;
+	s << "  a = " << coefficients.a0 << ", " << coefficients.a1 << ", " << coefficients.a2 << std::endl;
+	return s.str();
+}
+
 
 template<typename TYPE>
 void Biquad<TYPE>::reset() {
@@ -71,68 +86,88 @@ void Biquad<TYPE>::setSamplingFrequency(double fsamp) {}
 
 template<typename TYPE>
 int Biquad<TYPE>::setParameters(int n, const double *params) {
-	if ( n != 6 ) return 6;
+	if (n != 6)
+		return 6;
 
 	reset();
-	coefficients.set(params[0], params[1], params[2],
-	                 params[3], params[4], params[5]);
+	coefficients.set(
+		params[0], params[1], params[2],
+		params[3], params[4], params[5]);
 
 	return n;
 }
 
-template<typename TYPE>
-BiquadCascade<TYPE>::BiquadCascade() {}
 
-/*
 template<typename TYPE>
-BiquadCascade<TYPE>::BiquadCascade(const BiquadCascade &other) {
-	_biq = other._biq;
+BiquadFilter<TYPE>::BiquadFilter(const BiquadFilter &other) {
+	_biquads = other.biquads();
 	reset();
 }
-*/
+
 
 //template<typename TYPE>
-//int BiquadCascade<TYPE>::size() const { return this->size(); }
+//int BiquadFilter<TYPE>::size() const { return this->size(); }
+
 
 template<typename TYPE>
-void BiquadCascade<TYPE>::apply(int n, TYPE *inout) {
-	for ( Biquad<TYPE> &biq : *this )
-		biq.apply(n, inout);
+void BiquadFilter<TYPE>::apply(int n, TYPE *inout) {
+	for ( Biquad<TYPE> &biquad : _biquads )
+		biquad.apply(n, inout);
 }
 
+
 template<typename TYPE>
-int BiquadCascade<TYPE>::setParameters(int /*n*/, const double* /*params*/) {
+int BiquadFilter<TYPE>::setParameters(int /*n*/, const double* /*params*/) {
 	return 0;
 }
 
-template<typename TYPE>
-InPlaceFilter<TYPE>* BiquadCascade<TYPE>::clone() const {
-	return new BiquadCascade<TYPE>(*this);
-}
 
 template<typename TYPE>
-void BiquadCascade<TYPE>::reset() {
-	for ( Biquad<TYPE> &biq : *this )
-		biq.reset();
+InPlaceFilter<TYPE>* BiquadFilter<TYPE>::clone() const {
+	return new BiquadFilter<TYPE>(*this);
 }
+
 
 template<typename TYPE>
-void BiquadCascade<TYPE>::append(Biquad<TYPE> const &biq) {
-	this->push_back(biq);
+void BiquadFilter<TYPE>::reset() {
+	for ( Biquad<TYPE> &biquad : _biquads )
+		biquad.reset();
 }
+
 
 template<typename TYPE>
-void BiquadCascade<TYPE>::set(const Biquads &biquads) {
-	this->clear();
-	for ( const BiquadCoefficients &biq : biquads )
-		this->push_back(biq);
+void BiquadFilter<TYPE>::append(Biquad<TYPE> const &biquad) {
+	_biquads.push_back(biquad);
 }
 
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const BiquadCascade<T> &b) {
+
+template<typename TYPE>
+void BiquadFilter<TYPE>::set(const Biquads &biquads) {
+	_biquads.clear();
+	for (const BiquadCoefficients &biquad : biquads)
+		_biquads.push_back(biquad);
+}
+
+
+template<typename TYPE>
+const std::vector<Biquad<TYPE>> &BiquadFilter<TYPE>::biquads() const {
+	return _biquads;
+}
+
+
+template<typename TYPE>
+std::string BiquadFilter<TYPE>::info() const {
+	std::stringstream s;
+	for (auto &biquad : _biquads)
+		s << "Biquad" << std::endl << biquad.info();
+	return s.str();
+}
+
+
+template <typename TYPE>
+std::ostream &operator<<(std::ostream &os, const BiquadFilter<TYPE> &b) {
 	int i = 0;
-	for ( const Biquad<T> &biq : b._biq )
-		os << "Biquad #" << ++i << std::endl << biq.coefficients;
+	for ( const Biquad<TYPE> &biquads : b._biquads )
+		os << "Biquad #" << ++i << std::endl << biquads.coefficients;
 	return os;
 }
-

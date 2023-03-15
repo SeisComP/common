@@ -19,7 +19,8 @@
 
 
 #include <iostream>
-#include <seiscomp/math/filter/seismometers.h>
+#include <seiscomp/math/filter/seismometerresponse.h>
+#include <seiscomp/math/filter/iir/seismometers.h>
 #include <seiscomp/core/exceptions.h>
 
 
@@ -28,60 +29,6 @@ using namespace std;
 
 namespace Seiscomp {
 namespace Math {
-
-
-namespace SeismometerResponse {
-
-
-PolesAndZeros::PolesAndZeros() {}
-
-
-PolesAndZeros::PolesAndZeros(const Poles &p, const Zeros &z, double n)
-: poles(p), zeros(z), norm(n) {}
-
-
-PolesAndZeros::PolesAndZeros(const PolesAndZeros &other)
-: poles(other.poles), zeros(other.zeros), norm(other.norm) {}
-
-
-WoodAnderson::WoodAnderson(GroundMotion input, Config config) {
-	poles.clear();
-	zeros.clear();
-
-	double p_abs = 2*M_PI/config.T0;
-	double p_re  = config.h*p_abs;
-	double p_im  = sqrt(p_abs*p_abs-p_re*p_re);
-	poles.push_back( Pole(-p_re, -p_im));
-	poles.push_back( Pole(-p_re, +p_im));
-	norm = config.gain;
-
-	switch(input) {
-		case Displacement: zeros.push_back( 0 );
-		case Velocity:     zeros.push_back( 0 );
-		case Acceleration: break;
-	}
-}
-
-
-Seismometer5sec::Seismometer5sec(GroundMotion input) {
-	poles.clear();
-	zeros.clear();
-
-	// Poles from Seismic Handler
-	poles.push_back( Pole(-0.88857, -0.88857) );
-	poles.push_back( Pole(-0.88857, +0.88857) );
-
-	norm = 1.;
-
-	switch(input) {
-		case Displacement: zeros.push_back( 0 );
-		case Velocity:     zeros.push_back( 0 );
-		case Acceleration: break;
-	}
-}
-
-
-} // namespace SeismometerResponse
 
 
 using namespace Seiscomp::Math::SeismometerResponse;
@@ -207,7 +154,7 @@ zero2biquad(const SeismometerResponse::Zero &z, double fsamp)
 
 
 template <typename T>
-Math::Filtering::IIR::BiquadCascade<T>
+std::vector<IIR::Biquad<T>>
 pz2biquads(
 	const vector<SeismometerResponse::Pole> &p,
 	const vector<SeismometerResponse::Zero> &z,
@@ -218,7 +165,7 @@ pz2biquads(
 
 	int np = p.size(), nz = z.size();
 
-	Math::Filtering::IIR::BiquadCascade<T> cascade;
+	std::vector<IIR::Biquad<T>> biquads;
 	Math::Filtering::IIR::Biquad<T> biq;
 
 	double epsilon = 1.E-10;
@@ -230,22 +177,21 @@ pz2biquads(
 			nz0++;
 	}
 
-/*	for (int iz=0; iz<nz; iz++) {
-
-		// if at (0,0)
-		if (abs(z[iz]) < epsilon) {
-			double x = 1./sqrt(0.5/fsamp);
-			biq.set(x, -x, 0, 1, 1, 0);
-		}
-		else {
-			if ( onRealAxis(z) )
-				continue;
-			biq = zero2biquad(z[iz], fsamp);
-		}
-
-		cascade.append(biq);
-	}
-*/
+//	for (int iz=0; iz<nz; iz++) {
+//
+//		// if at (0,0)
+//		if (abs(z[iz]) < epsilon) {
+//			double x = 1./sqrt(0.5/fsamp);
+//			biq.set(x, -x, 0, 1, 1, 0);
+//		}
+//		else {
+//			if ( onRealAxis(z) )
+//				continue;
+//			biq = zero2biquad(z[iz], fsamp);
+//		}
+//
+//		_biquads.append(biq);
+//	}
 
 	for (int ip=0; ip<np; ip++) {
 
@@ -267,7 +213,7 @@ pz2biquads(
 				dnz0 = 1;
 
 			biq = pole2biquad<T>(p[ip], fsamp, dnz0, norm);
-			cascade.append(biq);
+			biquads.push_back(biq);
 
 			norm = 1.;
 			nz0 -= dnz0;
@@ -278,7 +224,7 @@ pz2biquads(
 	if (nz0)
 		cerr << "LEFT-OVER ZEROS AT (0,0) IGNORED" << endl;
 
-	return cascade;
+	return biquads;
 }
 
 }
@@ -301,27 +247,33 @@ Filter<T>::Filter(
 	const SeismometerResponse::Poles &poles,
 	const SeismometerResponse::Zeros &zeros,
 	double norm)
- : SeismometerResponse::PolesAndZeros(poles,zeros,norm) { }
+ : paz(poles, zeros, norm) { }
 
 
-template <typename T>
-Filter<T>::Filter(const Filter &other)
- : SeismometerResponse::PolesAndZeros(other.poles,other.zeros,other.norm)
- , _cascade(other._cascade)
-{}
+//template <typename T>
+//Filter<T>::Filter(const Filter &other)
+// : SeismometerResponse::PolesAndZeros(other.poles,other.zeros,other.norm)
+// , _biquads(other._biquads)
+//{}
 
 
 template <typename T>
 void Filter<T>::setSamplingFrequency(double fsamp) {
-	if ( fsamp == 0.0 ) return;
-	_cascade = pz2biquads<T>(poles, zeros, fsamp, norm);
+	if ( fsamp == 0.0 )
+		return;
+
+	// TODO: improve
+	std::vector<IIR::Biquad<T>> biquads =
+		pz2biquads<T>(paz.poles, paz.zeros, fsamp, paz.norm);
+	for (auto &biquad: biquads)
+		this->append(biquad);
 }
 
 
 template <typename T>
 int Filter<T>::setParameters(int n, const double *params) {
-	poles.clear();
-	zeros.clear();
+	paz.poles.clear();
+	paz.zeros.clear();
 
 	// norm, npoles, nzeros are required
 	if ( n < 3 ) return 3;
@@ -329,7 +281,7 @@ int Filter<T>::setParameters(int n, const double *params) {
 	int npoles = 0;
 	int nzeros = 0;
 
-	norm = params[0];
+	paz.norm = params[0];
 
 	npoles = (int)params[1];
 	if ( npoles < 0 )
@@ -339,7 +291,7 @@ int Filter<T>::setParameters(int n, const double *params) {
 		return 1+1+npoles*2;
 
 	for ( int i = 0; i < npoles; ++i )
-		poles.push_back(SeismometerResponse::Pole(params[1+i*2], params[1+i*2+1]));
+		paz.poles.push_back(SeismometerResponse::Pole(params[1+i*2], params[1+i*2+1]));
 
 	nzeros = (int)params[1+npoles*2];
 	if ( nzeros < 0 )
@@ -349,7 +301,7 @@ int Filter<T>::setParameters(int n, const double *params) {
 		return 1+1+(npoles+nzeros)*2;
 
 	for ( int i = 0; i < nzeros; ++i )
-		zeros.push_back(SeismometerResponse::Zero(params[1+1+npoles*2+i*2], params[1+1+npoles*2+i*2+1]));
+		paz.zeros.push_back(SeismometerResponse::Zero(params[1+1+npoles*2+i*2], params[1+1+npoles*2+i*2+1]));
 
 	return n;
 }
@@ -357,16 +309,17 @@ int Filter<T>::setParameters(int n, const double *params) {
 
 template <typename T>
 void Filter<T>::apply(int n, T *inout) {
-	if ( _cascade.size() == 0 )
-		throw Core::GeneralException("Samplerate not initialized");
+	if ( this->biquads().size() == 0 )
+		throw Core::GeneralException("Biquads are empty");
 
-	_cascade.apply(n, inout);
+	BiquadFilter<T>::apply(n, inout);
 }
 
 
 template <typename T>
 InPlaceFilter<T> *Filter<T>::clone() const {
-	return new Filter<T>(poles, zeros, norm);
+	// TODO: better with paz as argument for constructor
+	return new Filter<T>(paz.poles, paz.zeros, paz.norm);
 }
 
 INSTANTIATE_INPLACE_FILTER(Filter, SC_SYSTEM_CORE_API);
@@ -385,31 +338,31 @@ WWSSN_SP_Filter<T>::WWSSN_SP_Filter(const WWSSN_SP_Filter &other)
 
 template <typename T>
 void WWSSN_SP_Filter<T>::setInput(GroundMotion input) {
-	Filter<T>::poles.clear();
-	Filter<T>::zeros.clear();
+	this->paz.poles.clear();
+	this->paz.zeros.clear();
 
 	// Poles according to Jim Dewey (NEIC)
-	Filter<T>::poles.push_back( SeismometerResponse::Pole( -3.725, -6.220) );
-	Filter<T>::poles.push_back( SeismometerResponse::Pole( -3.725, +6.220) );
-	Filter<T>::poles.push_back( SeismometerResponse::Pole( -5.612) );
-	Filter<T>::poles.push_back( SeismometerResponse::Pole(-13.240) );
-	Filter<T>::poles.push_back( SeismometerResponse::Pole(-21.080) );
+	this->paz.poles.push_back( SeismometerResponse::Pole( -3.725, -6.220) );
+	this->paz.poles.push_back( SeismometerResponse::Pole( -3.725, +6.220) );
+	this->paz.poles.push_back( SeismometerResponse::Pole( -5.612) );
+	this->paz.poles.push_back( SeismometerResponse::Pole(-13.240) );
+	this->paz.poles.push_back( SeismometerResponse::Pole(-21.080) );
 
 /*	// Poles from Seismic Handler, also specified in NMSOP
-	poles.push_back( Pole(-3.367788, -3.731514) );
-	poles.push_back( Pole(-3.367788, +3.731514) );
-	poles.push_back( Pole(-7.037168, -4.545562) );
-	poles.push_back( Pole(-7.037168, +4.545562) );
+	this->paz.poles.push_back( Pole(-3.367788, -3.731514) );
+	this->paz.poles.push_back( Pole(-3.367788, +3.731514) );
+	this->paz.poles.push_back( Pole(-7.037168, -4.545562) );
+	this->paz.poles.push_back( Pole(-7.037168, +4.545562) );
 	double norm = 13.34714;
 */
-	Filter<T>::zeros.push_back( 0. );
+	this->paz.zeros.push_back( 0. );
 
 	// make the *displacement* amplitude response 1 at 1 Hz
-	Filter<T>::norm = 532.1425713966;
+	this->paz.norm = 532.1425713966;
 
 	switch(input) {
-		case Displacement: Filter<T>::zeros.push_back( 0 );
-		case Velocity:     Filter<T>::zeros.push_back( 0 );
+		case Displacement: this->paz.zeros.push_back( 0 );
+		case Velocity:     this->paz.zeros.push_back( 0 );
 		case Acceleration: break;
 	}
 }
@@ -451,25 +404,25 @@ WWSSN_LP_Filter<T>::WWSSN_LP_Filter(const WWSSN_LP_Filter &other)
 
 template <typename T>
 void WWSSN_LP_Filter<T>::setInput(GroundMotion input) {
-	Filter<T>::poles.clear();
-	Filter<T>::zeros.clear();
+	this->paz.poles.clear();
+	this->paz.zeros.clear();
 
         // This is the WWSSN-LP transfer function as defined by IASPEI
 	// http://www.iaspei.org/commissions/CSOI/Summary_WG-Recommendations_20110909.pdf
 
 	// Poles according to Jim Dewey (NEIC)
-	Filter<T>::poles.push_back( Pole( -0.40180, -0.08559) );
-	Filter<T>::poles.push_back( Pole( -0.40180, +0.08559) );
-	Filter<T>::poles.push_back( Pole( -0.04841) );
-	Filter<T>::poles.push_back( Pole( -0.08816) );
+	this->paz.poles.push_back( Pole( -0.40180, -0.08559) );
+	this->paz.poles.push_back( Pole( -0.40180, +0.08559) );
+	this->paz.poles.push_back( Pole( -0.04841) );
+	this->paz.poles.push_back( Pole( -0.08816) );
 
-	Filter<T>::zeros.push_back( 0. );
+	this->paz.zeros.push_back( 0. );
 
-	Filter<T>::norm = 0.826835;
+	this->paz.norm = 0.826835;
 
 	switch(input) {
-		case Displacement: Filter<T>::zeros.push_back( 0 );
-		case Velocity:     Filter<T>::zeros.push_back( 0 );
+		case Displacement: this->paz.zeros.push_back( 0 );
+		case Velocity:     this->paz.zeros.push_back( 0 );
 		case Acceleration: break;
 	}
 }
@@ -512,7 +465,7 @@ WoodAndersonFilter<T>::WoodAndersonFilter(const WoodAndersonFilter &other)
 
 template <typename T>
 void WoodAndersonFilter<T>::setInput(GroundMotion input, WoodAnderson::Config config) {
-	PolesAndZeros::operator=(WoodAnderson(input, config));
+	this->paz = WoodAnderson(input, config);
 }
 
 
@@ -566,7 +519,7 @@ Seismometer5secFilter<T>::Seismometer5secFilter(const Seismometer5secFilter &oth
 
 template <typename T>
 void Seismometer5secFilter<T>::setInput(GroundMotion input) {
-	PolesAndZeros::operator=(Seismometer5sec(input));
+	this->paz = Seismometer5sec(input);
 }
 
 
@@ -610,17 +563,17 @@ GenericSeismometer<T>::GenericSeismometer(const GenericSeismometer &other)
 
 template <typename T>
 void GenericSeismometer<T>::setInput(GroundMotion input) {
-	Filter<T>::poles.clear();
-	Filter<T>::zeros.clear();
+	this->paz.poles.clear();
+	this->paz.zeros.clear();
 
 	double x = sqrt(2.)*M_PI/_cornerPeriod;
-	Filter<T>::poles.push_back( Pole(-x, -x) );
-	Filter<T>::poles.push_back( Pole(-x, +x) );
-	Filter<T>::norm = 1;
+	this->paz.poles.push_back( Pole(-x, -x) );
+	this->paz.poles.push_back( Pole(-x, +x) );
+	this->paz.norm = 1;
 
 	switch(input) {
-		case Displacement: Filter<T>::zeros.push_back( 0 );
-		case Velocity:     Filter<T>::zeros.push_back( 0 );
+		case Displacement: this->paz.zeros.push_back( 0 );
+		case Velocity:     this->paz.zeros.push_back( 0 );
 		case Acceleration: break;
 	}
 }

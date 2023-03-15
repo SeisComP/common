@@ -30,14 +30,13 @@ RestitutionFilter<TYPE>::RestitutionFilter(
 template<class TYPE>
 RestitutionFilter<TYPE>::~RestitutionFilter()
 {
-	this->clear();
+	// this->clear();
 }
 
 
 template<class TYPE>
 void RestitutionFilter<TYPE>::init()
 {
-std::cerr << "init"<<std::endl;
 	std::string error;
 	bool OK = coefficients_from_T0_h(_fsamp, gain, T0, h, c0, c1, c2);
 	if ( ! OK)
@@ -60,7 +59,7 @@ std::cerr << "init"<<std::endl;
 	double b0 = c2, b1 = c1, b2 = c0;
 	double a0 =  1, a1 = -1, a2 =  0;
 	Biquad<TYPE> biquad(b0, b1, b2, a0, a1, a2);
-	this->push_back(biquad);
+	this->append(biquad);
 
 	// Add the bandpass but don't exceed the Nyquist frequency!
 	// If either the band pass fmax was unset (in other words: set to 0)
@@ -71,21 +70,26 @@ std::cerr << "init"<<std::endl;
 	if (bp_fmax == 0 || bp_fmax > 0.8*fnyqist) {
 		ButterworthHighpass<TYPE> flt(bp_order, bp_fmin);
 		flt.setSamplingFrequency(_fsamp);
-		for (auto &biquad : flt)
-			this->push_back(biquad);
+		for (auto &biquad : flt.biquads())
+			this->append(biquad);
 	}
 	else {
 		ButterworthBandpass<TYPE> flt(bp_order, bp_fmin, bp_fmax);
 		flt.setSamplingFrequency(_fsamp);
-		for (auto &biquad : flt)
-			this->push_back(biquad);
+		for (auto &biquad : flt.biquads())
+			this->append(biquad);
 	}
 
 	// Add the double integration.
 	double q = 0.5/(_fsamp*_fsamp);
-	Biquad<TYPE> flt(q, q, 0, 1, -2, 1);
-	flt.setSamplingFrequency(_fsamp);
-	this->push_back(flt);
+	Biquad<TYPE> dblint(q, q, 0, 1, -2, 1);
+	this->append(dblint);
+}
+
+
+template<typename TYPE>
+InPlaceFilter<TYPE>* RestitutionFilter<TYPE>::clone() const {
+	return new RestitutionFilter<TYPE>(*this);
 }
 
 
@@ -101,12 +105,21 @@ void RestitutionFilter<TYPE>::setParameters(double _T0, double _h, double _gain)
 template<class TYPE>
 int RestitutionFilter<TYPE>::setParameters(int n, const double *params)
 {
-	if (n != 3)
-		return 3; // TODO: clarify
+//	if (n != 3)
+//		return 3; // TODO: clarify
 
+	if (n==0) return n;
 	T0 = params[0];
+	if (n==1) return n;
 	h = params[1];
+	if (n==2) return n;
 	gain = params[2];
+	if (n==3) return n;
+	bp_order = params[3];
+	if (n==4) return n;
+	bp_fmin = params[4];
+	if (n==5) return n;
+	bp_fmax = params[5];
 
         return n;
 }
@@ -124,7 +137,6 @@ void RestitutionFilter<TYPE>::setBandpass(int order, double fmin, double fmax)
 template<class TYPE>
 void RestitutionFilter<TYPE>::setSamplingFrequency(double fsamp)
 {
-std::cerr << "RestitutionFilter<TYPE>::setSamplingFrequency()"<<std::endl;
 	_fsamp = fsamp;
 	init();
 }
@@ -147,11 +159,15 @@ std::string RestitutionFilter<TYPE>::info() const
 	if (_fsamp <= 0.)
 		tmp << "  Not yet initialized" << std::endl;
 	else {
-		tmp << "  fsamp   = " <<  _fsamp << std::endl;
+		tmp << "  T0      = " <<      T0 << std::endl;
+		tmp << "  h       = " <<       h << std::endl;
 		tmp << "  gain    = " <<    gain << std::endl;
+		tmp << "  fsamp   = " <<  _fsamp << std::endl;
 		tmp << "  c0*gain = " << c0*gain << std::endl;
 		tmp << "  c1*gain = " << c1*gain << std::endl;
 		tmp << "  c2*gain = " << c2*gain << std::endl;
+		tmp << "Biquads" << std::endl;
+		tmp << BiquadFilter<TYPE>::info() << std::endl;
 	}
 	return tmp.str();
 }

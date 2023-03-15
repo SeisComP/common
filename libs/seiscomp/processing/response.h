@@ -25,7 +25,7 @@
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core/typedarray.h>
 #include <seiscomp/math/restitution/transferfunction.h>
-#include <seiscomp/math/filter/seismometers.h>
+#include <seiscomp/math/filter/seismometerresponse.h>
 #include <seiscomp/client.h>
 
 #include <vector>

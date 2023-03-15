@@ -22,7 +22,7 @@
 #include <algorithm> 
 
 #include <seiscomp/qc/qcprocessor_spike.h>
-#include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/iir/butterworth.h>
 
 
 namespace Seiscomp {

@@ -27,7 +27,7 @@
 #include <sstream>
 #include <string>
 
-#include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/iir/butterworth.h>
 
 namespace Seiscomp {
 namespace Math {

@@ -25,7 +25,7 @@
 #include <seiscomp/processing/regions.h>
 #include <seiscomp/geo/feature.h>
 #include <seiscomp/math/mean.h>
-#include <seiscomp/math/filter/iirdifferentiate.h>
+#include <seiscomp/math/filter/iir/differentiate.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/interfacefactory.ipp>
 #include <seiscomp/system/environment.h>
