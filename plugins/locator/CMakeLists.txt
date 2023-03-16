@@ -1,1 +1,1 @@
-SUBDIRS(external)
+SC_ADD_SUBDIRS()
