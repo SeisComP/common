@@ -7,7 +7,7 @@
 		</description>
 		<configuration>
 			<extend-struct type="GlobalMagnitudeProfile" match-name="MLc">
-				<extend-struct type="Magnitude region profile">
+				<extend-struct type="GlobalMagnitudeRegionProfile">
 					<parameter name="distMode" type="string">
 						<description>
 						Considered distance measure between source and receiver.

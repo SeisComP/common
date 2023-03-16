@@ -7,7 +7,7 @@
 		</description>
 		<configuration>
 			<extend-struct type="GlobalMagnitudeProfile" match-name="MLv">
-				<extend-struct type="Magnitude region profile">
+				<extend-struct type="GlobalMagnitudeRegionProfile">
 					<parameter name="logA0" type="string">
 						<description>
 						Overrides the calibration function log10(A0)
