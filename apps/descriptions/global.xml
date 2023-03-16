@@ -450,7 +450,7 @@
 					Alias magnitudes can be configured like any other magnitude.
 					</description>
 				</parameter>
-				<struct type="GlobalMagnitudeProfile" title="Magnitude-type profile for regionalization" aliases="config:processing.aliases.magnitudes">
+				<struct type="GlobalMagnitudeProfile" title="Magnitude-type profile for regionalization" aliases="config:magnitudes.aliases">
 					<description>
 					Regionalization of magnitude configurations overriding global
 					bindings. For parameters which are not set, the values
