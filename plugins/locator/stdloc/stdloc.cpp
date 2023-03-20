@@ -254,7 +254,7 @@ bool StdLoc::init(const Config::Config &config) {
 	_profiles.clear();
 
 	for ( const string &profileName : profileNames) {
-		Profile prof{defaultProf};
+		Profile prof(defaultProf);
 		prof.name = profileName;
 
 		string prefix = string("StdLoc.profile.") + prof.name + ".";

@@ -117,6 +117,7 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 
 		struct Profile {
 			std::string name;
+
 			enum class Method {
 				LeastSquares,
 				GridSearch,
@@ -126,6 +127,7 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 			std::string tttType;
 			std::string tttModel;
 			bool PSTableOnly;
+
 			struct {
 				double autoLatLon;
 				double originLat;
