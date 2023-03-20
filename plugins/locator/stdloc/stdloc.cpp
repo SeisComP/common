@@ -243,7 +243,7 @@ bool StdLoc::init(const Config::Config &config) {
 	defaultProf.gridSearch.cellZExtent = 5.0;
 	defaultProf.gridSearch.errorType = "L1";
 	defaultProf.gridSearch.maxRms = -1;
-	defaultProf.leastSquare.iterations = 40;
+	defaultProf.leastSquare.iterations = 20;
 	defaultProf.leastSquare.dampingFactor = 0;
 	defaultProf.leastSquare.solverType = "LSMR";
 	defaultProf.usePickUncertainties = false;
@@ -989,25 +989,25 @@ void StdLoc::locateGridSearch(
 						                   sensorLat[i], sensorLon[i], sensorElev[i]);
 					}
 					catch ( exception &e ) {
-						SEISCOMP_ERROR("Travel Time Table error for %s@%s.%s.%s and lat "
-						               "%.6f lon %.6f depth %.3f: %s",
-						               pick->phaseHint().code().c_str(),
-						               pick->waveformID().networkCode().c_str(),
-						               pick->waveformID().stationCode().c_str(),
-						               pick->waveformID().locationCode().c_str(), cellLat,
-						               cellLon, cellDepth, e.what());
+						SEISCOMP_WARNING("Travel Time Table error for %s@%s.%s.%s and lat "
+						                 "%.6f lon %.6f depth %.3f: %s",
+						                 pick->phaseHint().code().c_str(),
+						                 pick->waveformID().networkCode().c_str(),
+						                 pick->waveformID().stationCode().c_str(),
+						                 pick->waveformID().locationCode().c_str(), cellLat,
+						                 cellLon, cellDepth, e.what());
 						tttError = true;
 						break;
 					}
 
 					if ( tt.time < 0 ) {
-						SEISCOMP_ERROR("Travel Time Table error: data not returned for "
-						               "%s@%s.%s.%s and lat %.6f lon %.6f depth %.3f",
-						               pick->phaseHint().code().c_str(),
-						               pick->waveformID().networkCode().c_str(),
-						               pick->waveformID().stationCode().c_str(),
-						               pick->waveformID().locationCode().c_str(), cellLat,
-						               cellLon, cellDepth);
+						SEISCOMP_WARNING("Travel Time Table error: data not returned for "
+						                 "%s@%s.%s.%s and lat %.6f lon %.6f depth %.3f",
+						                 pick->phaseHint().code().c_str(),
+						                 pick->waveformID().networkCode().c_str(),
+						                 pick->waveformID().stationCode().c_str(),
+						                 pick->waveformID().locationCode().c_str(), cellLat,
+						                 cellLon, cellDepth);
 						tttError = true;
 						break;
 					}
@@ -1041,7 +1041,7 @@ void StdLoc::locateGridSearch(
 						                   originTime, travelTimes);
 					}
 					catch ( exception &e ) {
-						SEISCOMP_ERROR(
+						SEISCOMP_DEBUG(
 							"Could not get a Least Square solution (%s): skip cell",
 							e.what()
 						);
@@ -1121,7 +1121,7 @@ void StdLoc::locateGridSearch(
 		throw LocatorException("Couldn't find a solution");
 	}
 
-	SEISCOMP_INFO(
+	SEISCOMP_DEBUG(
 		"Grid Search lowest error %f for lat %.6f lon %.6f depth %.3f time %s",
 		lowestError, newLat, newLon, newDepth, newTime.iso().c_str()
 	);
@@ -1140,7 +1140,7 @@ void StdLoc::locateLeastSquares(
 	double &newDepth, Core::Time &newTime, vector<double> &travelTimes
 ) const {
 
-	SEISCOMP_INFO(
+	SEISCOMP_DEBUG(
 		"Start Least Square with initial lat %.6f lon %.6f depth %.3f time %s",
 		initLat, initLon, initDepth, initTime.iso().c_str()
 	);
@@ -1200,24 +1200,24 @@ void StdLoc::locateLeastSquares(
 
 			}
 			catch ( exception &e ) {
-				SEISCOMP_ERROR("Travel Time Table error for %s@%s.%s.%s and lat %.6f "
-				               "lon %.6f depth %.3f: %s",
-				               pick->phaseHint().code().c_str(),
-				               pick->waveformID().networkCode().c_str(),
-				               pick->waveformID().stationCode().c_str(),
-				               pick->waveformID().locationCode().c_str(), initLat,
-				               initLon, initDepth, e.what());
+				SEISCOMP_WARNING("Travel Time Table error for %s@%s.%s.%s and lat %.6f "
+				                 "lon %.6f depth %.3f: %s",
+				                 pick->phaseHint().code().c_str(),
+				                 pick->waveformID().networkCode().c_str(),
+				                 pick->waveformID().stationCode().c_str(),
+				                 pick->waveformID().locationCode().c_str(), initLat,
+				                 initLon, initDepth, e.what());
 				throw LocatorException("Travel Time Table error");
 			}
 
 			if ( tt.time < 0 || (tt.time > 0 && tt.dtdd == 0 && tt.dtdh == 0) ) {
-				SEISCOMP_ERROR("Travel Time Table error: data not returned for "
-				               "%s@%s.%s.%s and lat %.6f lon %.6f depth %.3f",
-				               pick->phaseHint().code().c_str(),
-				               pick->waveformID().networkCode().c_str(),
-				               pick->waveformID().stationCode().c_str(),
-				               pick->waveformID().locationCode().c_str(), initLat,
-				               initLon, initDepth);
+				SEISCOMP_WARNING("Travel Time Table error: data not returned for "
+				                 "%s@%s.%s.%s and lat %.6f lon %.6f depth %.3f",
+				                 pick->phaseHint().code().c_str(),
+				                 pick->waveformID().networkCode().c_str(),
+				                 pick->waveformID().stationCode().c_str(),
+				                 pick->waveformID().locationCode().c_str(), initLat,
+				                 initLon, initDepth);
 				throw LocatorException("Travel Time Table error");
 			}
 
@@ -1334,9 +1334,9 @@ void StdLoc::locateLeastSquares(
 		initTime = newTime;
 	}
 
-	SEISCOMP_INFO("Least Square final solution lat %.6f lon %.6f "
-	              "depth %.3f time %s",
-	              newLat, newLon, newDepth, newTime.iso().c_str());
+	SEISCOMP_DEBUG("Least Square final solution lat %.6f lon %.6f "
+	               "depth %.3f time %s",
+	               newLat, newLon, newDepth, newTime.iso().c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1359,7 +1359,7 @@ Origin *StdLoc::createOrigin(
 	ci.setCreationTime(Core::Time::GMT());
 
 	Origin *origin = Origin::Create();
-	SEISCOMP_INFO("New origin publicID: %s", origin->publicID().c_str());
+	SEISCOMP_DEBUG("New origin publicID: %s", origin->publicID().c_str());
 
 	origin->setCreationInfo(ci);
 	origin->setEarthModelID(_tttType + ":" + _tttModel);
