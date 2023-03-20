@@ -1409,7 +1409,7 @@ Origin *StdLoc::createOrigin(
 			// Not used
 			newArr->setTimeUsed(false);
 			newArr->setWeight(0.0);
-			newArr->setTimeResidual(0);
+			newArr->setTimeResidual(0.0);
 		}
 		else {
 			newArr->setTimeUsed(true);
