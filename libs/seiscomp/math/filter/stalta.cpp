@@ -50,12 +50,14 @@ STALTA<TYPE>::STALTA(double lenSTA, double lenLTA, double fsamp)
 
 template<typename TYPE>
 void STALTA<TYPE>::setSamplingFrequency(double fsamp) {
-	if ( fsamp <= 0. )
+	if ( fsamp <= 0. ) {
 		throw Core::ValueException("Sampling frequency must be positive");
+	}
 
 	_fsamp  = fsamp;
-	_numSTA = int(_lenSTA*fsamp+0.5);
-	_numLTA = int(_lenLTA*fsamp+0.5);
+	_numSTA = static_cast<int>(_lenSTA * fsamp + 0.5);
+	_numLTA = static_cast<int>(_lenLTA * fsamp + 0.5);
+
 	reset();
 }
 
@@ -66,6 +68,7 @@ int STALTA<TYPE>::setParameters(int n, const double *params) {
 
 	_lenSTA = params[0];
 	_lenLTA = params[1];
+
 	checkParameters(_lenSTA, _lenLTA);
 
 	return 2;
@@ -84,19 +87,23 @@ void STALTA<TYPE>::apply(int n, TYPE *inout) {
 	double normLTA = 1. / _numLTA;
 	double normSTA = 1. / _numSTA;
 
-	for ( int i = 0; i < n; ++i, ++_sampleCount ) {
+	for ( int i = 0; i < n; ++i ) {
 		double current = std::abs(inout[i]);
+		bool initialized{true};
 
 		if ( _sampleCount < _numSTA ) {
 			normSTA = 1. / (_sampleCount + 1);
 			_STA = (_STA * _sampleCount + current) * normSTA;
+			initialized = false;
 		}
-		else
+		else {
 			_STA += (current - _STA) * normSTA;
+		}
 
 		if ( _sampleCount < _numLTA ) {
 			normLTA = 1. / (_sampleCount + 1);
 			_LTA = (_LTA * _sampleCount + current) * normLTA;
+			initialized = false;
 		}
 		else {
 			// Normally we would expect:
@@ -104,6 +111,10 @@ void STALTA<TYPE>::apply(int n, TYPE *inout) {
 			// But this is a little smoother and
 			// with a slightly delayed LTA:
 			_LTA += (_STA - _LTA) * normLTA;
+		}
+
+		if ( !initialized ) {
+			++_sampleCount;
 		}
 
 		if ( _LTA < std::numeric_limits<double>::epsilon() ) {
@@ -144,12 +155,14 @@ STALTA2<TYPE>::STALTA2(double lenSTA, double lenLTA,
 
 template<typename TYPE>
 void STALTA2<TYPE>::setSamplingFrequency(double fsamp) {
-	if ( fsamp <= 0. )
+	if ( fsamp <= 0. ) {
 		throw Core::ValueException("Sampling frequency must be positive");
+	}
 
 	_fsamp  = fsamp;
 	_numSTA = static_cast<int>(_lenSTA * _fsamp + 0.5);
 	_numLTA = static_cast<int>(_lenLTA * _fsamp + 0.5);
+
 	reset();
 }
 
@@ -162,6 +175,7 @@ int STALTA2<TYPE>::setParameters(int n, const double *params) {
 	_lenLTA   = params[1];
 	_eventOn  = params[2];
 	_eventOff = params[3];
+
 	checkParameters(_lenSTA, _lenLTA);
 
 	return 4;
@@ -181,19 +195,23 @@ void STALTA2<TYPE>::apply(int n, TYPE *inout) {
 	double normLTA = 1. / _numLTA;
 	double normSTA = 1. / _numSTA;
 
-	for ( int i = 0; i < n; ++i, ++_sampleCount ) {
+	for ( int i = 0; i < n; ++i ) {
 		double current = std::abs(inout[i]);
+		bool initialized{true};
 
 		if ( _sampleCount < _numSTA ) {
 			normSTA = 1. / (_sampleCount+1);
 			_STA = (_STA * _sampleCount + current) * normSTA;
+			initialized = false;
 		}
-		else
+		else {
 			_STA += (current - _STA) * normSTA;
+		}
 
 		if ( _sampleCount < _numLTA ) {
 			normLTA = 1. / (_sampleCount + 1);
 			_LTA = (_LTA * _sampleCount + current) * normLTA;
+			initialized = false;
 		}
 		else {
 			// Normally we would expect:
@@ -201,6 +219,10 @@ void STALTA2<TYPE>::apply(int n, TYPE *inout) {
 			// But this is a little smoother and
 			// with a slightly delayed LTA:
 			_LTA += (_STA - _LTA) * normLTA * _updateLTA;
+		}
+
+		if ( !initialized ) {
+			++_sampleCount;
 		}
 
 		if ( _LTA < std::numeric_limits<double>::epsilon() ) {
@@ -242,12 +264,14 @@ STALTA_Classic<TYPE>::STALTA_Classic(double lenSTA, double lenLTA, double fsamp)
 
 template<typename TYPE>
 void STALTA_Classic<TYPE>::setSamplingFrequency(double fsamp) {
-	if ( fsamp <= 0. )
+	if ( fsamp <= 0. ) {
 		throw Core::ValueException("Sampling frequency must be positive");
+	}
 
 	_fsamp  = fsamp;
 	_numSTA = static_cast<int>(_lenSTA * fsamp + 0.5);
 	_numLTA = static_cast<int>(_lenLTA * fsamp + 0.5);
+
 	reset();
 }
 
@@ -258,6 +282,7 @@ int STALTA_Classic<TYPE>::setParameters(int n, const double *params) {
 
 	_lenSTA = params[0];
 	_lenLTA = params[1];
+
 	checkParameters(_lenSTA, _lenLTA);
 
 	return 2;
@@ -280,7 +305,7 @@ void STALTA_Classic<TYPE>::apply(int n, TYPE *inout) {
 	for ( int i = 0; i < n; ++i, ++_sampleCount ) {
 		double current = std::abs(inout[i]);
 
-		if ( _sampleCount < _numSTA ) {
+		if ( static_cast<int>(_sta_buffer.size()) < _numSTA ) {
 			_STA += current;
 			_sta_buffer.push_back(current);
 		}
@@ -291,7 +316,7 @@ void STALTA_Classic<TYPE>::apply(int n, TYPE *inout) {
 			_sta_buffer[k] = current;
 		}
 
-		if ( _sampleCount < _numLTA ) {
+		if ( static_cast<int>(_lta_buffer.size()) < _numLTA ) {
 			_LTA += current;
 			_lta_buffer.push_back(current);
 		}
