@@ -99,7 +99,7 @@
 								if that is not available the Grid Search can be combined with
 								LeastSquares.
 							</description>
-							<parameter name="iterations" type="int" default="40">
+							<parameter name="iterations" type="int" default="20">
 								<description>
 									Number of iterations. Each iteration will use the
 									location and time from the previous Least

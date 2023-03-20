@@ -194,7 +194,7 @@ Adapter<T> solve(System &eq, std::ostringstream *solverLogs = nullptr,
   }
   solver.SetDamp(dampingFactor);
   solver.SetMaximumNumberOfIterations(numIterations ? numIterations
-                                                    : eq.numColsG * 4);
+                                                    : eq.numColsG / 2);
   const double eps = std::numeric_limits<double>::epsilon();
   solver.SetEpsilon(eps);
   solver.SetToleranceA(1e-6); // we use [km] and [sec] in the eq system, so
