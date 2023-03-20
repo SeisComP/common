@@ -555,6 +555,7 @@ class SC_GUI_API RecordView : public QWidget {
 		void showEvent(QShowEvent *event);
 		void closeEvent(QCloseEvent *event);
 
+		void changeEvent(QEvent* e);
 		void resizeEvent(QResizeEvent *event);
 
 		void dragEnterEvent(QDragEnterEvent *event);

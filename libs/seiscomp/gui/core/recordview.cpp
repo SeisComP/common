@@ -3034,6 +3034,20 @@ void RecordView::showEvent(QShowEvent *) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordView::changeEvent(QEvent* e) {
+	QWidget::changeEvent(e);
+
+	if ( e->type() == QEvent::StyleChange ||
+	     e->type() == QEvent::PaletteChange ) {
+		layoutRows();
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::resizeEvent(QResizeEvent *) {
 	/*
 	foreach (RecordViewItem* item, _items) {
