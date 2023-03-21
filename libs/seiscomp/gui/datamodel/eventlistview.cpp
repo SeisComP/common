@@ -200,46 +200,32 @@ class ByteArrayBuf : public std::streambuf {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #define _T(name) ar->driver()->convertColumnName(name)
 
-DatabaseIterator getEvents(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if ( !ar->driver() ) return DatabaseIterator();
 
-	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
-
-	std::ostringstream oss;
-
-	oss << "select PEvent." + _T("publicID") + ",Event.* "
-	    << "from Origin, PublicObject as POrigin, Event, PublicObject as PEvent ";
-
-	if ( filterMagnitude ) oss << ", PublicObject as PMagnitude,  Magnitude ";
-
-	oss << "where POrigin." + _T("publicID") + "=Event." + _T("preferredOriginID") + " and ";
-
-	if ( filterMagnitude ) {
-		oss << "PMagnitude._oid = Magnitude._oid and "
-		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID") << " and ";
+void addFilterConstraints(std::ostream &os, DatabaseArchive *ar, const EventListView::Filter& filter) {
+	if ( filter.minLatitude ) {
+		os << " and Origin." << _T("latitude_value") << " >= " << *filter.minLatitude;
 	}
-
-	oss << "Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
-	    << "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "' and ";
-
-	if ( filter.minLatitude )
-		oss << "Origin." << _T("latitude_value") << " >= '" << *filter.minLatitude << "' and ";
-	if ( filter.maxLatitude )
-		oss << "Origin." << _T("latitude_value") << " <= '" << *filter.maxLatitude << "' and ";
-	if ( filter.minLongitude )
-		oss << "Origin." << _T("longitude_value") << " >= '" << *filter.minLongitude << "' and ";
-	if ( filter.maxLongitude )
-		oss << "Origin." << _T("longitude_value") << " <= '" << *filter.maxLongitude << "' and ";
-	if ( filter.minDepth )
-		oss << "Origin." << _T("depth_value") << " >= '" << *filter.minDepth << "' and ";
-	if ( filter.maxDepth )
-		oss << "Origin." << _T("depth_value") << " <= '" << *filter.maxDepth << "' and ";
-	if ( filter.minMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " >= '" << *filter.minMagnitude << "' and ";
-	if ( filter.maxMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " <= '" << *filter.maxMagnitude << "' and ";
-
-	oss  << "Origin._oid=POrigin._oid and Event._oid=PEvent._oid";
+	if ( filter.maxLatitude ) {
+		os << " and Origin." << _T("latitude_value") << " <= " << *filter.maxLatitude;
+	}
+	if ( filter.minLongitude ) {
+		os << " and Origin." << _T("longitude_value") << " >= " << *filter.minLongitude;
+	}
+	if ( filter.maxLongitude ) {
+		os << " and Origin." << _T("longitude_value") << " <= " << *filter.maxLongitude;
+	}
+	if ( filter.minDepth ) {
+		os << " and Origin." << _T("depth_value") << " >= " << *filter.minDepth;
+	}
+	if ( filter.maxDepth ) {
+		os << " and Origin." << _T("depth_value") << " <= " << *filter.maxDepth;
+	}
+	if ( filter.minMagnitude ) {
+		os << " and Magnitude." << _T("magnitude_value") << " >= " << *filter.minMagnitude;
+	}
+	if ( filter.maxMagnitude ) {
+		os << " and Magnitude." << _T("magnitude_value") << " <= " << *filter.maxMagnitude;
+	}
 
 	if ( !filter.eventID.empty() ) {
 		// Convert to most common SQL LIKE format
@@ -252,8 +238,39 @@ DatabaseIterator getEvents(DatabaseArchive *ar, const EventListView::Filter& fil
 		std::string escapedPattern;
 		ar->driver()->escape(escapedPattern, pattern);
 
-		oss << " and PEvent." << _T("publicID") << " like '" << escapedPattern << "'";
+		os << " and PEvent." << _T("publicID") << " like '" << escapedPattern << "'";
 	}
+}
+
+
+DatabaseIterator getEvents(DatabaseArchive *ar, const EventListView::Filter& filter) {
+	if ( !ar->driver() ) return DatabaseIterator();
+
+	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
+
+	std::ostringstream oss;
+
+	oss << "select PEvent." + _T("publicID") + ",Event.* "
+	    << "from Origin, PublicObject as POrigin, Event, PublicObject as PEvent ";
+
+	if ( filterMagnitude ) oss << ", PublicObject as PMagnitude,  Magnitude ";
+
+	oss << "where POrigin." + _T("publicID") + "=Event." + _T("preferredOriginID");
+
+	if ( filterMagnitude ) {
+		oss << " and "
+		    << "PMagnitude._oid = Magnitude._oid and "
+		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID");
+	}
+
+	oss <<       " and "
+	    <<       "Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
+	    <<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "'";
+
+	addFilterConstraints(oss, ar, filter);
+
+	oss <<       " and "
+	    <<       "Origin._oid=POrigin._oid and Event._oid=PEvent._oid";
 
 	return ar->getObjectIterator(oss.str(), Event::TypeInfo());
 }
@@ -276,35 +293,23 @@ DatabaseIterator getEventOriginReferences(DatabaseArchive *ar, const EventListVi
 	if ( filterMagnitude )
 		oss << ", PublicObject as PMagnitude,  Magnitude ";
 
-	oss << "where POrigin._oid = Origin._oid and ";
+	oss << "where POrigin._oid = Origin._oid";
 
 	if ( filterMagnitude ) {
-		oss << "PMagnitude._oid = Magnitude._oid and "
-		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID") << " and ";
+		oss << " and "
+		    << "PMagnitude._oid = Magnitude._oid and "
+		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID");
 	}
 
-	oss <<       "Event." << _T("preferredOriginID") << " = POrigin." << _T("publicID") << " and "
+	oss <<       " and "
+	    <<       "Event." << _T("preferredOriginID") << " = POrigin." << _T("publicID") << " and "
 	    <<       "Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
-	    <<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "' and ";
+	    <<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "'";
 
-	if ( filter.minLatitude )
-		oss << "Origin." << _T("latitude_value") << " >= '" << *filter.minLatitude << "' and ";
-	if ( filter.maxLatitude )
-		oss << "Origin." << _T("latitude_value") << " <= '" << *filter.maxLatitude << "' and ";
-	if ( filter.minLongitude )
-		oss << "Origin." << _T("longitude_value") << " >= '" << *filter.minLongitude << "' and ";
-	if ( filter.maxLongitude )
-		oss << "Origin." << _T("longitude_value") << " <= '" << *filter.maxLongitude << "' and ";
-	if ( filter.minDepth )
-		oss << "Origin." << _T("depth_value") << " >= '" << *filter.minDepth << "' and ";
-	if ( filter.maxDepth )
-		oss << "Origin." << _T("depth_value") << " <= '" << *filter.maxDepth << "' and ";
-	if ( filter.minMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " >= '" << *filter.minMagnitude << "' and ";
-	if ( filter.maxMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " <= '" << *filter.maxMagnitude << "' and ";
+	addFilterConstraints(oss, ar, filter);
 
-	oss <<       "OriginReference._parent_oid = Event._oid";
+	oss <<       " and "
+	    <<       "OriginReference._parent_oid = Event._oid";
 
 	return ar->getObjectIterator(oss.str(), OriginReference::TypeInfo());
 }
@@ -327,35 +332,23 @@ DatabaseIterator getEventFocalMechanismReferences(DatabaseArchive *ar, const Eve
 	if ( filterMagnitude )
 		oss << ", PublicObject as PMagnitude,  Magnitude ";
 
-	oss << "where POrigin._oid = Origin._oid and ";
+	oss << "where POrigin._oid = Origin._oid";
 
 	if ( filterMagnitude ) {
-		oss << "PMagnitude._oid = Magnitude._oid and "
-		    <<  "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID") << " and ";
+		oss << " and "
+		    << "PMagnitude._oid = Magnitude._oid and "
+		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID");
 	}
 
-	oss <<       "Event." << _T("preferredOriginID") << " = POrigin." << _T("publicID") << " and "
+	oss <<       " and "
+	    <<       "Event." << _T("preferredOriginID") << " = POrigin." << _T("publicID") << " and "
 	    <<       "Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
-	    <<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "' and ";
+	    <<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "'";
 
-	if ( filter.minLatitude )
-		oss << "Origin." << _T("latitude_value") << " >= '" << *filter.minLatitude << "' and ";
-	if ( filter.maxLatitude )
-		oss << "Origin." << _T("latitude_value") << " <= '" << *filter.maxLatitude << "' and ";
-	if ( filter.minLongitude )
-		oss << "Origin." << _T("longitude_value") << " >= '" << *filter.minLongitude << "' and ";
-	if ( filter.maxLongitude )
-		oss << "Origin." << _T("longitude_value") << " <= '" << *filter.maxLongitude << "' and ";
-	if ( filter.minDepth )
-		oss << "Origin." << _T("depth_value") << " >= '" << *filter.minDepth << "' and ";
-	if ( filter.maxDepth )
-		oss << "Origin." << _T("depth_value") << " <= '" << *filter.maxDepth << "' and ";
-	if ( filter.minMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " >= '" << *filter.minMagnitude << "' and ";
-	if ( filter.maxMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " <= '" << *filter.maxMagnitude << "' and ";
+	addFilterConstraints(oss, ar, filter);
 
-	oss <<       "FocalMechanismReference._parent_oid = Event._oid";
+	oss <<       " and "
+	    <<       "FocalMechanismReference._parent_oid = Event._oid";
 
 	return ar->getObjectIterator(oss.str(), FocalMechanismReference::TypeInfo());
 }
@@ -379,36 +372,86 @@ DatabaseIterator getEventOrigins(DatabaseArchive *ar, const EventListView::Filte
 	if ( filterMagnitude )
 		oss << ", PublicObject as PMagnitude,  Magnitude ";
 
-	oss << "where POrigin._oid = Origin._oid and PPrefOrigin._oid = PrefOrigin._oid and ";
+	oss << "where POrigin._oid = Origin._oid and PPrefOrigin._oid = PrefOrigin._oid";
 
 	if ( filterMagnitude ) {
-		oss << "PMagnitude._oid = Magnitude._oid and "
-		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID") << " and ";
+		oss << " and "
+		    << "PMagnitude._oid = Magnitude._oid and "
+		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID");
 	}
 
-	oss <<       "Event." << _T("preferredOriginID") << " = PPrefOrigin." << _T("publicID") << " and "
+	oss <<       " and "
+	    <<       "Event." << _T("preferredOriginID") << " = PPrefOrigin." << _T("publicID") << " and "
 	    <<       "PrefOrigin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
-	    <<       "PrefOrigin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "' and ";
+	    <<       "PrefOrigin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "'";
 
-	if ( filter.minLatitude )
-		oss << "Origin." << _T("latitude_value") << " >= '" << *filter.minLatitude << "' and ";
-	if ( filter.maxLatitude )
-		oss << "Origin." << _T("latitude_value") << " <= '" << *filter.maxLatitude << "' and ";
-	if ( filter.minLongitude )
-		oss << "Origin." << _T("longitude_value") << " >= '" << *filter.minLongitude << "' and ";
-	if ( filter.maxLongitude )
-		oss << "Origin." << _T("longitude_value") << " <= '" << *filter.maxLongitude << "' and ";
-	if ( filter.minDepth )
-		oss << "Origin." << _T("depth_value") << " >= '" << *filter.minDepth << "' and ";
-	if ( filter.maxDepth )
-		oss << "Origin." << _T("depth_value") << " <= '" << *filter.maxDepth << "' and ";
-	if ( filter.minMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " >= '" << *filter.minMagnitude << "' and ";
-	if ( filter.maxMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " <= '" << *filter.maxMagnitude << "' and ";
+	addFilterConstraints(oss, ar, filter);
 
-	oss <<       "OriginReference._parent_oid = Event._oid and "
+	oss <<       " and "
+	    <<       "OriginReference._parent_oid = Event._oid and "
 	    <<       "OriginReference." << _T("originID") << " = POrigin." << _T("publicID");
+
+	return ar->getObjectIterator(oss.str(), Origin::TypeInfo());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+DatabaseIterator getEventMagnitudes(DatabaseArchive *ar, const EventListView::Filter& filter) {
+	if ( !ar->driver() ) return DatabaseIterator();
+
+	std::ostringstream oss;
+	oss << "select PMagnitude." << _T("publicID") << ", Magnitude.* "
+	    << "from PublicObject as PMagnitude, Magnitude, "
+	    <<      "Event, PublicObject as POrigin, Origin "
+	    << "where PMagnitude._oid = Magnitude._oid and POrigin._oid = Origin._oid and "
+	    <<       "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID") << " and "
+	    <<       "Event." << _T("preferredOriginID") << " = POrigin." << _T("publicID");
+
+	addFilterConstraints(oss, ar, filter);
+
+	oss <<       " and "
+	    <<       "Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
+	    <<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "'";
+
+	return ar->getObjectIterator(oss.str(), Magnitude::TypeInfo());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+DatabaseIterator getEventPreferredOrigins(DatabaseArchive *ar, const EventListView::Filter& filter) {
+	if ( !ar->driver() ) return DatabaseIterator();
+
+	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
+
+	std::ostringstream oss;
+	oss << "select POrigin." << _T("publicID") << ", Origin.* "
+	    << "from PublicObject as PMagnitude, Magnitude, "
+	    <<      "Event, PublicObject as POrigin, Origin ";
+
+	if ( filterMagnitude ) {
+		oss << ", PublicObject as PMagnitude,  Magnitude ";
+	}
+
+	oss << "where POrigin._oid = Origin._oid and "
+	    <<       "Event." << _T("preferredOriginID") << " = POrigin." << _T("publicID");
+
+	if ( filterMagnitude ) {
+		oss << " and "
+		       "PMagnitude._oid = Magnitude._oid and "
+		       "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID");
+	}
+
+	addFilterConstraints(oss, ar, filter);
+
+	oss <<       " and "
+	    <<       "Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
+	    <<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "'";
 
 	return ar->getObjectIterator(oss.str(), Origin::TypeInfo());
 }
@@ -432,36 +475,24 @@ DatabaseIterator getEventFocalMechanisms(DatabaseArchive *ar, const EventListVie
 	if ( filterMagnitude )
 		oss << ", PublicObject as PMagnitude,  Magnitude ";
 
-	oss << "where PFocalMechanism._oid = FocalMechanism._oid and PPrefOrigin._oid = PrefOrigin._oid and ";
+	oss << "where PFocalMechanism._oid = FocalMechanism._oid and PPrefOrigin._oid = PrefOrigin._oid";
 
 
 	if ( filterMagnitude ) {
-		oss << "PMagnitude._oid = Magnitude._oid and "
-		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID") << " and ";
+		oss << " and "
+		    << "PMagnitude._oid = Magnitude._oid and "
+		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID");
 	}
 
-	oss <<       "Event." << _T("preferredOriginID") << " = PPrefOrigin." << _T("publicID") << " and "
+	oss <<       " and "
+	    <<       "Event." << _T("preferredOriginID") << " = PPrefOrigin." << _T("publicID") << " and "
 	    <<       "PrefOrigin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
-	    <<       "PrefOrigin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "' and ";
+	    <<       "PrefOrigin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "'";
 
-	if ( filter.minLatitude )
-		oss << "PrefOrigin." << _T("latitude_value") << " >= '" << *filter.minLatitude << "' and ";
-	if ( filter.maxLatitude )
-		oss << "PrefOrigin." << _T("latitude_value") << " <= '" << *filter.maxLatitude << "' and ";
-	if ( filter.minLongitude )
-		oss << "PrefOrigin." << _T("longitude_value") << " >= '" << *filter.minLongitude << "' and ";
-	if ( filter.maxLongitude )
-		oss << "PrefOrigin." << _T("longitude_value") << " <= '" << *filter.maxLongitude << "' and ";
-	if ( filter.minDepth )
-		oss << "PrefOriginv." << _T("depth_value") << " >= '" << *filter.minDepth << "' and ";
-	if ( filter.maxDepth )
-		oss << "PrefOrigin." << _T("depth_value") << " <= '" << *filter.maxDepth << "' and ";
-	if ( filter.minMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " >= '" << *filter.minMagnitude << "' and ";
-	if ( filter.maxMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " <= '" << *filter.maxMagnitude << "' and ";
+	addFilterConstraints(oss, ar, filter);
 
-	oss <<       "FocalMechanismReference._parent_oid = Event._oid and "
+	oss <<       " and "
+	    <<       "FocalMechanismReference._parent_oid = Event._oid and "
 	    <<       "FocalMechanismReference." << _T("focalMechanismID") << " = PFocalMechanism." << _T("publicID");
 
 	return ar->getObjectIterator(oss.str(), FocalMechanism::TypeInfo());
@@ -488,37 +519,24 @@ DatabaseIterator getEventMomentTensors(DatabaseArchive *ar, const EventListView:
 		oss << ", PublicObject as PMagnitude,  Magnitude ";
 
 	oss << "where PFocalMechanism._oid = FocalMechanism._oid and PMomentTensor._oid = MomentTensor._oid and "
-	    <<       "PPrefOrigin._oid = PrefOrigin._oid and ";
+	    <<       "PPrefOrigin._oid = PrefOrigin._oid";
 
 
 	if ( filterMagnitude ) {
-		oss << "PMagnitude._oid = Magnitude._oid and "
-		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID") << " and ";
+		oss << " and "
+		    << "PMagnitude._oid = Magnitude._oid and "
+		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID");
 	}
 
-	oss <<       "Event." << _T("preferredOriginID") << " = PPrefOrigin." << _T("publicID") << " and "
+	oss <<       " and "
+	    <<       "Event." << _T("preferredOriginID") << " = PPrefOrigin." << _T("publicID") << " and "
 	    <<       "PrefOrigin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
-	    <<       "PrefOrigin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "' and ";
+	    <<       "PrefOrigin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "'";
 
-	if ( filter.minLatitude )
-		oss << "PrefOrigin." << _T("latitude_value") << " >= '" << *filter.minLatitude << "' and ";
-	if ( filter.maxLatitude )
-		oss << "PrefOrigin." << _T("latitude_value") << " <= '" << *filter.maxLatitude << "' and ";
-	if ( filter.minLongitude )
-		oss << "PrefOrigin." << _T("longitude_value") << " >= '" << *filter.minLongitude << "' and ";
-	if ( filter.maxLongitude )
-		oss << "PrefOrigin." << _T("longitude_value") << " <= '" << *filter.maxLongitude << "' and ";
-	if ( filter.minDepth )
-		oss << "PrefOrigin." << _T("depth_value") << " >= '" << *filter.minDepth << "' and ";
-	if ( filter.maxDepth )
-		oss << "PrefOrigin." << _T("depth_value") << " <= '" << *filter.maxDepth << "' and ";
-	if ( filter.minMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " >= '" << *filter.minMagnitude << "' and ";
-	if ( filter.maxMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " <= '" << *filter.maxMagnitude << "' and ";
+	addFilterConstraints(oss, ar, filter);
 
-
-	oss <<       "FocalMechanismReference._parent_oid = Event._oid and "
+	oss <<       " and "
+	    <<       "FocalMechanismReference._parent_oid = Event._oid and "
 	    <<       "FocalMechanismReference." << _T("focalMechanismID") << " = PFocalMechanism." << _T("publicID") << " and "
 	    <<       "MomentTensor._parent_oid = FocalMechanism._oid";
 
@@ -543,17 +561,17 @@ DatabaseIterator getUnassociatedOrigins(DatabaseArchive *ar, const EventListView
 	    <<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "' and ";
 
 	if ( filter.minLatitude )
-		oss << "Origin." << _T("latitude_value") << " >= '" << *filter.minLatitude << "' and ";
+		oss << "Origin." << _T("latitude_value") << " >= " << *filter.minLatitude << " and ";
 	if ( filter.maxLatitude )
-		oss << "Origin." << _T("latitude_value") << " <= '" << *filter.maxLatitude << "' and ";
+		oss << "Origin." << _T("latitude_value") << " <= " << *filter.maxLatitude << " and ";
 	if ( filter.minLongitude )
-		oss << "Origin." << _T("longitude_value") << " >= '" << *filter.minLongitude << "' and ";
+		oss << "Origin." << _T("longitude_value") << " >= " << *filter.minLongitude << " and ";
 	if ( filter.maxLongitude )
-		oss << "Origin." << _T("longitude_value") << " <= '" << *filter.maxLongitude << "' and ";
+		oss << "Origin." << _T("longitude_value") << " <= " << *filter.maxLongitude << " and ";
 	if ( filter.minDepth )
-		oss << "Origin." << _T("depth_value") << " >= '" << *filter.minDepth << "' and ";
+		oss << "Origin." << _T("depth_value") << " >= " << *filter.minDepth << " and ";
 	if ( filter.maxDepth )
-		oss << "Origin." << _T("depth_value") << " <= '" << *filter.maxDepth << "' and ";
+		oss << "Origin." << _T("depth_value") << " <= " << *filter.maxDepth << " and ";
 
 	oss <<       "OriginReference." << _T("originID") << " is NULL";
 
@@ -577,17 +595,17 @@ DatabaseIterator getComments4Origins(DatabaseArchive *ar, const EventListView::F
 		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "' and ";
 
 	if ( filter.minLatitude )
-		oss << "Origin." << _T("latitude_value") << " >= '" << *filter.minLatitude << "' and ";
+		oss << "Origin." << _T("latitude_value") << " >= " << *filter.minLatitude << " and ";
 	if ( filter.maxLatitude )
-		oss << "Origin." << _T("latitude_value") << " <= '" << *filter.maxLatitude << "' and ";
+		oss << "Origin." << _T("latitude_value") << " <= " << *filter.maxLatitude << " and ";
 	if ( filter.minLongitude )
-		oss << "Origin." << _T("longitude_value") << " >= '" << *filter.minLongitude << "' and ";
+		oss << "Origin." << _T("longitude_value") << " >= " << *filter.minLongitude << " and ";
 	if ( filter.maxLongitude )
-		oss << "Origin." << _T("longitude_value") << " <= '" << *filter.maxLongitude << "' and ";
+		oss << "Origin." << _T("longitude_value") << " <= " << *filter.maxLongitude << " and ";
 	if ( filter.minDepth )
-		oss << "Origin." << _T("depth_value") << " >= '" << *filter.minDepth << "' and ";
+		oss << "Origin." << _T("depth_value") << " >= " << *filter.minDepth << " and ";
 	if ( filter.maxDepth )
-		oss << "Origin." << _T("depth_value") << " <= '" << *filter.maxDepth << "' and ";
+		oss << "Origin." << _T("depth_value") << " <= " << *filter.maxDepth << " and ";
 
 	oss <<       "Comment._parent_oid = Origin._oid";
 
@@ -616,32 +634,18 @@ DatabaseIterator getComments4Events(DatabaseArchive *ar, const EventListView::Fi
 		oss <<  ", PublicObject as PMagnitude,  Magnitude ";
 
 	oss	<< "where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
-		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "' and ";
+		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "'";
 
 	if ( filterMagnitude ) {
-		oss << "PMagnitude._oid = Magnitude._oid and "
-		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID") << " and ";
+		oss << " and "
+		    << "PMagnitude._oid = Magnitude._oid and "
+		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID");
 	}
 
-	if ( filter.minLatitude )
-		oss << "Origin." << _T("latitude_value") << " >= '" << *filter.minLatitude << "' and ";
-	if ( filter.maxLatitude )
-		oss << "Origin." << _T("latitude_value") << " <= '" << *filter.maxLatitude << "' and ";
-	if ( filter.minLongitude )
-		oss << "Origin." << _T("longitude_value") << " >= '" << *filter.minLongitude << "' and ";
-	if ( filter.maxLongitude )
-		oss << "Origin." << _T("longitude_value") << " <= '" << *filter.maxLongitude << "' and ";
-	if ( filter.minDepth )
-		oss << "Origin." << _T("depth_value") << " >= '" << *filter.minDepth << "' and ";
-	if ( filter.maxDepth )
-		oss << "Origin." << _T("depth_value") << " <= '" << *filter.maxDepth << "' and ";
-	if ( filter.minMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " >= '" << *filter.minMagnitude << "' and ";
-	if ( filter.maxMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " <= '" << *filter.maxMagnitude << "' and ";
+	addFilterConstraints(oss, ar, filter);
 
-
-	oss	<<       "Origin._oid = POrigin._oid and "
+	oss	<<       " and "
+		<<       "Origin._oid = POrigin._oid and "
 		<<       "POrigin." << _T("publicID") << " = Event." << _T("preferredOriginID") << " and "
 		<<       "Comment._parent_oid = Event._oid";
 
@@ -671,32 +675,18 @@ DatabaseIterator getComments4PrefOrigins(DatabaseArchive *ar, const EventListVie
 
 
 	oss	<< "where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
-		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "' and ";
+		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "'";
 
 	if ( filterMagnitude ) {
-		oss << "PMagnitude._oid = Magnitude._oid and "
-		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID") << " and ";
+		oss << " and "
+		    << "PMagnitude._oid = Magnitude._oid and "
+		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID");
 	}
 
-	if ( filter.minLatitude )
-		oss << "Origin." << _T("latitude_value") << " >= '" << *filter.minLatitude << "' and ";
-	if ( filter.maxLatitude )
-		oss << "Origin." << _T("latitude_value") << " <= '" << *filter.maxLatitude << "' and ";
-	if ( filter.minLongitude )
-		oss << "Origin." << _T("longitude_value") << " >= '" << *filter.minLongitude << "' and ";
-	if ( filter.maxLongitude )
-		oss << "Origin." << _T("longitude_value") << " <= '" << *filter.maxLongitude << "' and ";
-	if ( filter.minDepth )
-		oss << "Origin." << _T("depth_value") << " >= '" << *filter.minDepth << "' and ";
-	if ( filter.maxDepth )
-		oss << "Origin." << _T("depth_value") << " <= '" << *filter.maxDepth << "' and ";
-	if ( filter.minMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " >= '" << *filter.minMagnitude << "' and ";
-	if ( filter.maxMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " <= '" << *filter.maxMagnitude << "' and ";
+	addFilterConstraints(oss, ar, filter);
 
-
-	oss	<<       "Origin._oid = POrigin._oid and "
+	oss	<<       " and "
+		<<       "Origin._oid = POrigin._oid and "
 		<<       "POrigin." << _T("publicID") << " = Event." << _T("preferredOriginID") << " and "
 		<<       "Comment._parent_oid = Origin._oid";
 
@@ -725,31 +715,18 @@ DatabaseIterator getDescriptions4Events(DatabaseArchive *ar, const EventListView
 		oss <<  ", PublicObject as PMagnitude,  Magnitude ";
 
 	oss	<< "where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
-		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "' and ";
+		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "'";
 
 	if ( filterMagnitude ) {
-		oss << "PMagnitude._oid = Magnitude._oid and "
-		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID") << " and ";
+		oss << " and "
+		    << "PMagnitude._oid = Magnitude._oid and "
+		    << "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID");
 	}
 
-	if ( filter.minLatitude )
-		oss << "Origin." << _T("latitude_value") << " >= " << *filter.minLatitude << " and ";
-	if ( filter.maxLatitude )
-		oss << "Origin." << _T("latitude_value") << " <= '" << *filter.maxLatitude << "' and ";
-	if ( filter.minLongitude )
-		oss << "Origin." << _T("longitude_value") << " >= '" << *filter.minLongitude << "' and ";
-	if ( filter.maxLongitude )
-		oss << "Origin." << _T("longitude_value") << " <= '" << *filter.maxLongitude << "' and ";
-	if ( filter.minDepth )
-		oss << "Origin." << _T("depth_value") << " >= '" << *filter.minDepth << "' and ";
-	if ( filter.maxDepth )
-		oss << "Origin." << _T("depth_value") << " <= '" << *filter.maxDepth << "' and ";
-	if ( filter.minMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " >= '" << *filter.minMagnitude << "' and ";
-	if ( filter.maxMagnitude )
-		oss << "Magnitude." << _T("magnitude_value") << " <= '" << *filter.maxMagnitude << "' and ";
+	addFilterConstraints(oss, ar, filter);
 
-	oss	<<       "Origin._oid = POrigin._oid and "
+	oss <<       " and "
+		<<       "Origin._oid = POrigin._oid and "
 		<<       "POrigin." << _T("publicID") << " = Event." << _T("preferredOriginID") << " and "
 		<<       "EventDescription._parent_oid = Event._oid";
 
@@ -3597,21 +3574,13 @@ void EventListView::readFromDatabase(const Filter &filter) {
 	_blockCountSignal = true;
 
 	EventPtr event;
-	size_t numberOfEvents = _reader->getObjectCount(&ep, Event::TypeInfo());
-	size_t numberOfOrigins = numberOfEvents*20;
-	size_t numberOfSteps = numberOfEvents*2;
-	size_t currentStep = 0;
 
-	if ( _withOrigins )
-		numberOfSteps += numberOfOrigins;
+	QProgressDialog progress;
+	progress.setWindowModality(Qt::WindowModal);
+	progress.setRange(0, 0);
 
-	if ( _withFocalMechanisms )
-		numberOfSteps += numberOfOrigins;
-
-	QProgressDialog progress(this);
 	//progress.setWindowModality(Qt::WindowModal);
 	progress.setWindowTitle(tr("Please wait..."));
-	progress.setRange(0, numberOfSteps);
 	progress.setLabelText(tr("Reading data..."));
 
 	QMap<int, EventPtr>  eventIDs;
@@ -3622,32 +3591,26 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 	_timeAgo = Core::Time::GMT() - filter.startTime;
 	progress.setLabelText(tr("Reading events..."));
+
 	DatabaseIterator it = getEvents(_reader, filter);
 	while ( (event = static_cast<Event*>(*it)) ) {
-		if ( progress.wasCanceled() )
+		if ( progress.wasCanceled() ) {
 			break;
+		}
 
 		ep.add(event.get());
 		eventIDs[it.oid()] = event.get();
 		++it;
-		progress.setValue(++currentStep);
 	}
 	it.close();
-
-	int eventDiff = numberOfEvents - it.count();
-	numberOfSteps -= eventDiff*2;
-
-	if ( _withOrigins ) numberOfSteps -= eventDiff*20;
-	if ( _withFocalMechanisms ) numberOfSteps -= eventDiff*20;
-
-	progress.setRange(0, numberOfSteps);
 
 	// Read comments
 	CommentPtr comment;
 	it = getComments4Events( _reader, filter);
 	while ( (comment = Comment::Cast(*it)) ) {
-		if( progress.wasCanceled() )
+		if( progress.wasCanceled() ) {
 			break;
+		}
 		EventPtr evt = eventIDs[it.parentOid()];
 		if ( evt ) evt->add(comment.get());
 		++it;
@@ -3662,11 +3625,14 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		OriginReferencePtr oref;
 
 		for ( ; (oref = static_cast<OriginReference*>(*it)); ++it ) {
-			if ( progress.wasCanceled() )
+			if ( progress.wasCanceled() ) {
 				break;
+			}
 
-			QMap<int, EventPtr>::iterator mit = eventIDs.find(it.parentOid());
-			if ( mit == eventIDs.end() ) continue;
+			auto mit = eventIDs.find(it.parentOid());
+			if ( mit == eventIDs.end() ) {
+				continue;
+			}
 
 			EventPtr ev = mit.value();
 
@@ -3675,16 +3641,14 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 		it.close();
 
-		currentStep += numberOfEvents*10;
-		progress.setValue(currentStep);
-
 		it = getEventOrigins(_reader, filter);
 
 		OriginPtr origin;
 
 		while ( (origin = static_cast<Origin*>(*it)) ) {
-			if ( progress.wasCanceled() )
+			if ( progress.wasCanceled() ) {
 				break;
+			}
 
 			ep.add(origin.get());
 			//if( _withComments )	originIDs[it.oid()] = origin.get();
@@ -3710,16 +3674,14 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		}
 		it.close();
 
-		currentStep += numberOfEvents*10;
-		progress.setValue(currentStep);
-
 		//fetch comments for relevant origins (marker for publishing)
 
 		it = getComments4Origins(_reader, filter);
 
 		while ( (comment = Comment::Cast(*it)) ) {
-			if( progress.wasCanceled() )
+			if( progress.wasCanceled() ) {
 				break;
+			}
 			OriginPtr org = originIDs[it.parentOid()];
 			if ( org ) org->add(comment.get());
 			++it;
@@ -3735,8 +3697,9 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		FocalMechanismReferencePtr fmref;
 
 		for ( ; (fmref = static_cast<FocalMechanismReference*>(*it)); ++it ) {
-			if ( progress.wasCanceled() )
+			if ( progress.wasCanceled() ) {
 				break;
+			}
 
 			QMap<int, EventPtr>::iterator mit = eventIDs.find(it.parentOid());
 			if ( mit == eventIDs.end() ) continue;
@@ -3748,16 +3711,14 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 		it.close();
 
-		currentStep += numberOfEvents*10;
-		progress.setValue(currentStep);
-
 		it = getEventFocalMechanisms(_reader, filter);
 
 		FocalMechanismPtr fm;
 
 		while ( (fm = static_cast<FocalMechanism*>(*it)) ) {
-			if ( progress.wasCanceled() )
+			if ( progress.wasCanceled() ) {
 				break;
+			}
 
 			fmIDs[it.oid()] = fm;
 			ep.add(fm.get());
@@ -3772,8 +3733,9 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		std::set<std::string> derivedOriginIDs;
 
 		while ( (mt = static_cast<MomentTensor*>(*it)) ) {
-			if ( progress.wasCanceled() )
+			if ( progress.wasCanceled() ) {
 				break;
+			}
 
 			fm = fmIDs[it.parentOid()];
 			if ( fm ) {
@@ -3794,16 +3756,18 @@ void EventListView::readFromDatabase(const Filter &filter) {
 				if ( org ) ep.add(org.get());
 			}
 
-			if ( org && org->magnitudeCount() == 0 )
+			if ( org && org->magnitudeCount() == 0 ) {
 				_reader->loadMagnitudes(org.get());
+			}
 		}
 	}
 
 	EventDescriptionPtr description;
 	it = getDescriptions4Events(_reader, filter);
 	while ( (description = EventDescription::Cast(*it)) ) {
-		if( progress.wasCanceled() )
+		if( progress.wasCanceled() ) {
 			break;
+		}
 
 		EventPtr evt = eventIDs[it.parentOid()];
 		if ( evt ) evt->add(description.get());
@@ -3816,20 +3780,20 @@ void EventListView::readFromDatabase(const Filter &filter) {
 	progress.setLabelText(tr("Reading magnitudes..."));
 	std::vector<MagnitudePtr> prefMags;
 	std::vector<OriginPtr> prefOrigins;
-	prefMags.reserve(numberOfEvents);
-	prefOrigins.reserve(numberOfEvents);
 
-	it = _reader->getPreferredMagnitudes(filter.startTime, filter.endTime, "");
+	prefOrigins.reserve(static_cast<size_t>(eventIDs.count()));
+	prefMags.reserve(static_cast<size_t>(eventIDs.count()));
+
+	it = getEventMagnitudes(_reader, filter);
 	MagnitudePtr mag;
 	while ( (mag = static_cast<Magnitude*>(*it)) ) {
 		prefMags.push_back(mag);
-		progress.setValue(++currentStep);
 		++it;
 	}
 	it.close();
 
 	if ( !_withOrigins ) {
-		it = _reader->getPreferredOrigins(filter.startTime, filter.endTime, "");
+		it = getEventPreferredOrigins(_reader, filter);
 		OriginPtr org;
 		while ( (org = static_cast<Origin*>(*it)) ) {
 			prefOrigins.push_back(org);
@@ -3933,6 +3897,8 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 	emit eventsUpdated();
 	emit visibleEventCountChanged();
+
+	SEISCOMP_DEBUG("Finished reading of events");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
