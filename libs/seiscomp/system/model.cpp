@@ -2168,8 +2168,9 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 				continue;
 			}
 
-			for ( SymbolTable::iterator it = symtab->begin(); it != symtab->end(); ++it )
-				symbols[(*it)->uri][(*it)->name] = new SymbolMapItem(**it);
+			for ( SymbolTable::iterator it = symtab->begin(); it != symtab->end(); ++it ) {
+				symbols[uri][(*it)->name] = new SymbolMapItem(**it);
+			}
 
 			delete cfg;
 		}
