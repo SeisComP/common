@@ -364,15 +364,15 @@ DatabaseIterator getEventOrigins(DatabaseArchive *ar, const EventListView::Filte
 	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
 
 	std::ostringstream oss;
-	oss << "select POrigin." << _T("publicID") << ", Origin.* "
-	    << "from PublicObject as POrigin, Origin, "
+	oss << "select PAssocOrigin." << _T("publicID") << ", AssocOrigin.* "
+	    << "from PublicObject as PAssocOrigin, Origin as AssocOrigin, "
 	    <<      "Event, OriginReference, "
-	    <<      "PublicObject as PPrefOrigin, Origin as PrefOrigin ";
+	    <<      "PublicObject as POrigin, Origin ";
 
 	if ( filterMagnitude )
 		oss << ", PublicObject as PMagnitude,  Magnitude ";
 
-	oss << "where POrigin._oid = Origin._oid and PPrefOrigin._oid = PrefOrigin._oid";
+	oss << "where PAssocOrigin._oid = AssocOrigin._oid and POrigin._oid = Origin._oid";
 
 	if ( filterMagnitude ) {
 		oss << " and "
@@ -381,15 +381,15 @@ DatabaseIterator getEventOrigins(DatabaseArchive *ar, const EventListView::Filte
 	}
 
 	oss <<       " and "
-	    <<       "Event." << _T("preferredOriginID") << " = PPrefOrigin." << _T("publicID") << " and "
-	    <<       "PrefOrigin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
-	    <<       "PrefOrigin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "'";
+	    <<       "Event." << _T("preferredOriginID") << " = POrigin." << _T("publicID") << " and "
+	    <<       "Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
+	    <<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "'";
 
 	addFilterConstraints(oss, ar, filter);
 
 	oss <<       " and "
 	    <<       "OriginReference._parent_oid = Event._oid and "
-	    <<       "OriginReference." << _T("originID") << " = POrigin." << _T("publicID");
+	    <<       "OriginReference." << _T("originID") << " = PAssocOrigin." << _T("publicID");
 
 	return ar->getObjectIterator(oss.str(), Origin::TypeInfo());
 }
