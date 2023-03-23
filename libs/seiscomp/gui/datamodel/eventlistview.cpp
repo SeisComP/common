@@ -433,14 +433,13 @@ DatabaseIterator getEventPreferredOrigins(DatabaseArchive *ar, const EventListVi
 
 	std::ostringstream oss;
 	oss << "select POrigin." << _T("publicID") << ", Origin.* "
-	    << "from PublicObject as PMagnitude, Magnitude, "
-	    <<      "Event, PublicObject as POrigin, Origin ";
+	    << "from PublicObject as POrigin, Origin, Event";
 
 	if ( filterMagnitude ) {
-		oss << ", PublicObject as PMagnitude,  Magnitude ";
+		oss << ", PublicObject as PMagnitude,  Magnitude";
 	}
 
-	oss << "where POrigin._oid = Origin._oid and "
+	oss << " where POrigin._oid = Origin._oid and "
 	    <<       "Event." << _T("preferredOriginID") << " = POrigin." << _T("publicID");
 
 	if ( filterMagnitude ) {
@@ -472,12 +471,12 @@ DatabaseIterator getEventFocalMechanisms(DatabaseArchive *ar, const EventListVie
 	oss << "select PFocalMechanism." << _T("publicID") << ", FocalMechanism.* "
 	    << "from PublicObject as PFocalMechanism, FocalMechanism, "
 	    <<      "Event, FocalMechanismReference, "
-	    <<      "PublicObject as PPrefOrigin, Origin as PrefOrigin ";
+	    <<      "PublicObject as PPrefOrigin, Origin as PrefOrigin";
 
 	if ( filterMagnitude )
-		oss << ", PublicObject as PMagnitude,  Magnitude ";
+		oss << ", PublicObject as PMagnitude,  Magnitude";
 
-	oss << "where PFocalMechanism._oid = FocalMechanism._oid and PPrefOrigin._oid = PrefOrigin._oid";
+	oss << " where PFocalMechanism._oid = FocalMechanism._oid and PPrefOrigin._oid = PrefOrigin._oid";
 
 
 	if ( filterMagnitude ) {
@@ -515,12 +514,12 @@ DatabaseIterator getEventMomentTensors(DatabaseArchive *ar, const EventListView:
 	    << "from PublicObject as PFocalMechanism, FocalMechanism, "
 	    <<      "PublicObject as PMomentTensor, MomentTensor, "
 	    <<      "Event, FocalMechanismReference, "
-	    <<      "PublicObject as PPrefOrigin, Origin as PrefOrigin ";
+	    <<      "PublicObject as PPrefOrigin, Origin as PrefOrigin";
 
 	if ( filterMagnitude )
-		oss << ", PublicObject as PMagnitude,  Magnitude ";
+		oss << ", PublicObject as PMagnitude,  Magnitude";
 
-	oss << "where PFocalMechanism._oid = FocalMechanism._oid and PMomentTensor._oid = MomentTensor._oid and "
+	oss << " where PFocalMechanism._oid = FocalMechanism._oid and PMomentTensor._oid = MomentTensor._oid and "
 	    <<       "PPrefOrigin._oid = PrefOrigin._oid";
 
 
@@ -630,12 +629,12 @@ DatabaseIterator getComments4Events(DatabaseArchive *ar, const EventListView::Fi
 		<< "from Event, "
 		<<      "Origin, "
 		<<      "PublicObject as POrigin, "
-		<<      "Comment ";
+		<<      "Comment";
 
 	if ( filterMagnitude )
-		oss <<  ", PublicObject as PMagnitude,  Magnitude ";
+		oss <<  ", PublicObject as PMagnitude,  Magnitude";
 
-	oss	<< "where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
+	oss	<< " where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
 		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "'";
 
 	if ( filterMagnitude ) {
@@ -670,13 +669,13 @@ DatabaseIterator getComments4PrefOrigins(DatabaseArchive *ar, const EventListVie
 		<< "from Event, "
 		<<      "Origin, "
 		<<      "PublicObject as POrigin, "
-		<<      "Comment ";
+		<<      "Comment";
 
 	if ( filterMagnitude )
-		oss <<  ", PublicObject as PMagnitude,  Magnitude ";
+		oss <<  ", PublicObject as PMagnitude,  Magnitude";
 
 
-	oss	<< "where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
+	oss	<< " where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
 		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "'";
 
 	if ( filterMagnitude ) {
@@ -711,12 +710,12 @@ DatabaseIterator getDescriptions4Events(DatabaseArchive *ar, const EventListView
 		<< "from Event, "
 		<<      "Origin, "
 		<<      "PublicObject as POrigin, "
-		<<      "EventDescription ";
+		<<      "EventDescription";
 
 	if ( filterMagnitude )
-		oss <<  ", PublicObject as PMagnitude,  Magnitude ";
+		oss <<  ", PublicObject as PMagnitude,  Magnitude";
 
-	oss	<< "where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
+	oss	<< " where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
 		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "'";
 
 	if ( filterMagnitude ) {
