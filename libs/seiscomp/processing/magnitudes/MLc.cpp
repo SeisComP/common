@@ -264,7 +264,8 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		auto c4 = (extra and extra->c4) ? *extra->c4 : _c4;
 		auto c5 = (extra and extra->c5) ? *extra->c5 : _c5;
 
-		SEISCOMP_DEBUG("  + c0 - c5: %.5f %.5f %.5f %.5f %.5f", c0, c1, c2, c3, c4, c5);
+		SEISCOMP_DEBUG("  + c0 - c5: %.5f %.5f %.5f %.5f %.5f %.5f",
+		               c0, c1, c2, c3, c4, c5);
 		correction = c3 * log10(distanceKm / c5)
 		             + c2 * (distanceKm + c4)
 		             + c1
