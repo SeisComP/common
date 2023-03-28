@@ -2919,7 +2919,7 @@ void AmplitudeView::updateLayoutFromState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::firstConnectionEstablished() {
-	SC_D.connectionState->start();
+	SC_D.connectionState->start(SC_D.config.recordURL);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

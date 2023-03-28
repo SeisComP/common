@@ -240,12 +240,6 @@ void MainWindow::showEvent(QShowEvent *e) {
 
 	onChangedConnection();
 
-	connect(SCApp, SIGNAL(connectionEstablished()),
-	        _connectionState, SLOT(start()));
-
-	connect(SCApp, SIGNAL(connectionLost()),
-	        _connectionState, SLOT(stop()));
-
 	connect(SCApp, SIGNAL(changedConnection()),
 	        this, SLOT(onChangedConnection()));
 }
@@ -335,10 +329,7 @@ QString MainWindow::title() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MainWindow::connectionEstablished() {
-	QString title = _title + "@" + SCApp->messagingURL().c_str();
-	if ( SCApp->isReadOnlyMessaging() )
-		title += " (read-only)";
-	setWindowTitle(title);
+	onChangedConnection();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -346,7 +337,9 @@ void MainWindow::connectionEstablished() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MainWindow::connectionLost() {}
+void MainWindow::connectionLost() {
+	onChangedConnection();
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -354,19 +347,23 @@ void MainWindow::connectionLost() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MainWindow::onChangedConnection() {
-	if ( SCApp->connection() && SCApp->connection()->isConnected() )
-		_connectionState->start();
-	else
+	if ( SCApp->connection() && SCApp->connection()->isConnected() ) {
+		_connectionState->start(SCApp->messagingURL().c_str());
+	}
+	else {
 		_connectionState->stop();
+	}
 
 	if ( SCApp->connection() ) {
 		QString title = _title + "@" + SCApp->messagingURL().c_str();
-		if ( SCApp->isReadOnlyMessaging() )
+		if ( SCApp->isReadOnlyMessaging() ) {
 			title += " (read-only)";
+		}
 		setWindowTitle(title);
 	}
-	else
+	else {
 		setWindowTitle(_title);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

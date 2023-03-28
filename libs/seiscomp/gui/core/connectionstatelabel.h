@@ -40,7 +40,7 @@ class SC_GUI_API ConnectionStateLabel : public QLabel {
 		ConnectionStateLabel(QWidget *parent = 0, Qt::WindowFlags f = 0);
 
 	public slots:
-		void start();
+		void start(const QString &source);
 		void stop();
 
 
