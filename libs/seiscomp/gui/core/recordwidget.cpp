@@ -4594,8 +4594,13 @@ void RecordWidget::clearMarker() {
 		return;
 	}
 
-	while ( !_marker.isEmpty() )
+	if ( !_marker.isEmpty() ) {
+		update();
+	}
+
+	while ( !_marker.isEmpty() ) {
 		delete _marker[0];
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
