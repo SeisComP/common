@@ -45,9 +45,17 @@ ConnectionStateLabel::ConnectionStateLabel(QWidget *parent, Qt::WindowFlags f)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ConnectionStateLabel::start() {
+void ConnectionStateLabel::start(const QString &source) {
 	setPixmap(_connected);
-	setToolTip("connected at: " + QDateTime::currentDateTime().toString() );
+	if ( source.isEmpty() ) {
+		setToolTip(QString("connected at: %1")
+		           .arg(QDateTime::currentDateTime().toString()));
+	}
+	else {
+		setToolTip(QString("connected to %1 at: %2")
+		           .arg(source)
+		           .arg(QDateTime::currentDateTime().toString()));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

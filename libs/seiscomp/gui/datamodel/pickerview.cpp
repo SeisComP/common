@@ -4171,7 +4171,7 @@ void PickerView::updateLayoutFromState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::firstConnectionEstablished() {
-	SC_D.connectionState->start();
+	SC_D.connectionState->start(SC_D.config.recordURL);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
