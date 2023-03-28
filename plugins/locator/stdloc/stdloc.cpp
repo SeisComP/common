@@ -123,30 +123,15 @@ void computeCoordinates(double distance, double azimuth, double clat,
 double computeDistance(double lat1, double lon1, double lat2, double lon2,
                        double *azimuth = nullptr,
                        double *backAzimuth = nullptr) {
-  double dist, az, baz;
-  Math::Geo::delazi(lat1, lon1, lat2, lon2, &dist, &az, &baz);
-  dist = Math::Geo::deg2km(dist);
+	double dist, az, baz;
+	Math::Geo::delazi(lat1, lon1, lat2, lon2, &dist, &az, &baz);
 
-  if (azimuth)
-    *azimuth = az;
-  if (backAzimuth)
-    *backAzimuth = baz;
+	if (azimuth)
+		*azimuth = az;
+	if (backAzimuth)
+		*backAzimuth = baz;
 
-  return dist;
-}
-
-double computeDistance(double lat1, double lon1, double depth1, double lat2,
-                       double lon2, double depth2, double *azimuth = nullptr,
-                       double *backAzimuth = nullptr) {
-  double Hdist = computeDistance(lat1, lon1, lat2, lon2, azimuth, backAzimuth);
-
-  if (depth1 == depth2)
-    return Hdist;
-
-  // Use the Euclidean distance. This approximation is sufficient when the
-  // distance is small and the Earth curvature can be assumed flat.
-  double Vdist = abs(depth1 - depth2);
-  return sqrt(Hdist * Hdist + Vdist * Vdist);
+	return dist;
 }
 
 double computePickWeight(double uncertainty /* secs */) {
@@ -933,6 +918,7 @@ void StdLoc::locateGridSearch(
 	vector<double> originTimes;
 	vector<double> timeWeights;
 	double lowestError = nan("");
+	vector<double> lowestErrorTravelTimes;
 	double x, y, z;
 
 	for ( x = -_currentProfile.gridSearch.xExtent / 2. +
@@ -951,7 +937,7 @@ void StdLoc::locateGridSearch(
 				double cellLat, cellLon;
 				// compute distance and azimuth of the cell centroid to the grid origin
 				double distance = sqrt(y * y + x * x); // km
-				double azimuth = rad2deg(atan2(y, x));
+				double azimuth = rad2deg(atan2(x, y));
 				// Computes the coordinates (lat, lon) of the point which is at a degree
 				// azimuth and km distance as seen from the original event location
 				computeCoordinates(distance, azimuth,
@@ -1108,6 +1094,7 @@ void StdLoc::locateGridSearch(
 					newLon = cellLon;
 					newDepth = cellDepth;
 					newTime = originTime;
+					lowestErrorTravelTimes = travelTimes;
 					SEISCOMP_DEBUG("Preferring this cell with error %f lat %.6f lon %.6f "
 					               "depth %.3f time %s",
 					               error, newLat, newLon, newDepth,
@@ -1120,6 +1107,9 @@ void StdLoc::locateGridSearch(
 	if ( !isfinite(lowestError) ) {
 		throw LocatorException("Couldn't find a solution");
 	}
+
+	// return the travel times for the solution
+	travelTimes = lowestErrorTravelTimes;
 
 	SEISCOMP_DEBUG(
 		"Grid Search lowest error %f for lat %.6f lon %.6f depth %.3f time %s",
@@ -1179,8 +1169,9 @@ void StdLoc::locateLeastSquares(
 				continue;
 			}
 
-			computeDistance(initLat, initLon, initDepth, sensorLat[i], sensorLon[i],
-			                -sensorElev[i] / 1000, nullptr, &backazis[i]);
+			// get back azimuth, we don't need the distance
+			computeDistance(initLat, initLon, sensorLat[i], sensorLon[i],
+			                nullptr, &backazis[i]);
 
 			TravelTime tt;
 
@@ -1297,8 +1288,8 @@ void StdLoc::locateLeastSquares(
 		//
 		// Load the solution
 		//
-		double xCorrection = eq.m[0];    // km
-		double yCorrection = eq.m[1];    // km
+		double yCorrection = eq.m[0];    // km
+		double xCorrection = eq.m[1];    // km
 		double zCorrection = eq.m[2];    // km
 		double timeCorrection = eq.m[3]; // sec
 
@@ -1312,7 +1303,7 @@ void StdLoc::locateLeastSquares(
 
 		// compute distance and azimuth of the event to the new location
 		double distance = sqrt(xCorrection * xCorrection + yCorrection * yCorrection); // km
-		double azimuth = rad2deg(atan2(yCorrection, xCorrection));
+		double azimuth = rad2deg(atan2(xCorrection, yCorrection));
 
 		// Computes the coordinates (lat, lon) of the point which is at a degree
 		// azimuth and km distance as seen from the original event location
@@ -1390,10 +1381,12 @@ Origin *StdLoc::createOrigin(
 		                          pick->waveformID().locationCode());
 
 		double azimuth = 0;
-		double distance = computeDistance(originLat, originLon, originDepth,
-		                                  sensorLat[i], sensorLon[i],
-		                                  -sensorElev[i] / 1000, &azimuth);
-		distance = Math::Geo::km2deg(distance);
+		double Hdist = computeDistance(originLat, originLon,
+		                               sensorLat[i], sensorLon[i],
+		                               &azimuth);
+		Hdist = Math::Geo::deg2km(Hdist);
+		double Vdist = abs(originDepth + sensorElev[i] / 1000);
+		double distance = Math::Geo::km2deg(sqrt(Hdist * Hdist + Vdist * Vdist));
 
 		// prepare the new arrival
 		DataModel::Arrival *newArr = new DataModel::Arrival();
