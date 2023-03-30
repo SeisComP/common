@@ -4099,7 +4099,6 @@ void RecordWidget::setAutoMaxScale(bool e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::setNormalizationWindow(const Seiscomp::Core::TimeWindow &tw) {
 	_normalizationWindow = tw;
-	_amplScale = 0.0;
 	setDirty();
 	update();
 }
