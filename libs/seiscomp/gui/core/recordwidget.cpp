@@ -298,13 +298,13 @@ void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
 		if ( spacing[k] <= 0 ) continue; // no ticks/annotations
 
 		double cpos = rangeLower - fmod(rangeLower, spacing[k]);
-		if ( fabs(cpos) < spacing[k]*1E-2 )
+		if ( fabs(cpos) < spacing[k] * 1E-2 )
 			cpos = 0.0;
 
 		int tick = (k == 0 ? tickLength : tickLength / 2) * tickDir;
 
 		// Draw ticks and counts
-		int ry = rect.bottom() - (int)((cpos-rangeLower)*ppa);
+		int ry = rect.bottom() - static_cast<int>((cpos-rangeLower)*ppa);
 		QString str;
 
 		p.setPen(fg);
@@ -317,19 +317,24 @@ void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
 			if ( k == 0 ) {
 				str.setNum(cpos);
 				QRect labelRect = p.fontMetrics().boundingRect(str);
-				labelRect.adjust(-1,0,1,0);
-				if ( leftAligned )
+				// Safety margin to not cut text
+				labelRect.adjust(0, 0, labelRect.width(), 0);
+				if ( leftAligned ) {
 					labelRect.moveRight(labelPos);
-				else
+				}
+				else {
 					labelRect.moveLeft(labelPos);
-				labelRect.moveTop(ry-labelRect.height()/2);
+				}
+				labelRect.moveTop(ry - labelRect.height() / 2);
 
 				if ( labelRect.top() < rect.bottom() &&
 				     labelRect.bottom() > rect.top() ) {
-					if ( labelRect.bottom() > rect.bottom() )
+					if ( labelRect.bottom() > rect.bottom() ) {
 						labelRect.moveBottom(rect.bottom());
-					else if ( labelRect.top() < rect.top() )
+					}
+					else if ( labelRect.top() < rect.top() ) {
 						labelRect.moveTop(rect.top());
+					}
 
 					if ( labelRect.bottom() <= lastLabelTop ) {
 						p.drawText(labelRect, labelFlags, str);
@@ -339,21 +344,22 @@ void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
 			}
 
 			cpos += spacing[k];
-			if ( fabs(cpos) < spacing[k]*1E-2 )
+			if ( fabs(cpos) < spacing[k] * 1E-2 ) {
 				cpos = 0.0;
+			}
 
-			ry = rect.bottom() - (int)((cpos-rangeLower)*ppa);
+			ry = rect.bottom() - static_cast<int>((cpos-rangeLower)*ppa);
 		}
 
 		if ( k == 0 ) {
 			p.setPen(grid);
 
 			cpos = rangeLower - fmod(rangeLower, spacing[k]);
-			ry = rect.bottom() - (int)((cpos-rangeLower)*ppa);
+			ry = rect.bottom() - static_cast<int>((cpos-rangeLower)*ppa);
 			while ( ry >= rect.top() ) {
 				p.drawLine(gridLeft, ry, gridRight, ry);
 				cpos += spacing[k];
-				ry = rect.bottom() - (int)((cpos-rangeLower)*ppa);
+				ry = rect.bottom() - static_cast<int>((cpos-rangeLower)*ppa);
 			}
 		}
 	}
@@ -4340,17 +4346,21 @@ QPair<double, double> RecordWidget::amplitudeRange(int slot) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::ensureVisibility(const Core::Time &time,
                                     int pixelMargin) {
-	Core::Time left = time - Core::TimeSpan(pixelMargin/_pixelPerSecond);
-	Core::Time right = time + Core::TimeSpan(pixelMargin/_pixelPerSecond);
+	Core::Time left = time - Core::TimeSpan(pixelMargin / _pixelPerSecond);
+	Core::Time right = time + Core::TimeSpan(pixelMargin / _pixelPerSecond);
 
 	double offset = 0;
-	if ( right > rightTime() )
-		offset = right - rightTime();
-	else if ( left < leftTime() )
-		offset = left - leftTime();
 
-	if ( offset != 0 )
+	if ( right > rightTime() ) {
+		offset = right - rightTime();
+	}
+	else if ( left < leftTime() ) {
+		offset = left - leftTime();
+	}
+
+	if ( offset != 0 ) {
 		setTimeRange(tmin() + offset, tmax() + offset);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
