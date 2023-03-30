@@ -150,7 +150,7 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 			} leastSquare;
 
 			bool usePickUncertainties;
-			double defaultTimeError;
+			std::vector<double> pickUncertaintyClasses;
 		};
 
 		Profile _currentProfile;
