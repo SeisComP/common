@@ -134,45 +134,40 @@ double computeDistance(double lat1, double lon1, double lat2, double lon2,
 	return dist;
 }
 
-double computePickWeight(double uncertainty /* secs */) {
-  unsigned uncertaintyClass;
+double computePickWeight(DataModel::Pick *pick, const vector<double>& uncertaintyClasses) {
 
-  if (uncertainty >= 0.000 && uncertainty <= 0.025)
-    uncertaintyClass = 0;
-  else if (uncertainty > 0.025 && uncertainty <= 0.050)
-    uncertaintyClass = 1;
-  else if (uncertainty > 0.050 && uncertainty <= 0.100)
-    uncertaintyClass = 2;
-  else if (uncertainty > 0.100 && uncertainty <= 0.200)
-    uncertaintyClass = 3;
-  else if (uncertainty > 0.200 && uncertainty <= 0.400)
-    uncertaintyClass = 4;
-  else
-    uncertaintyClass = 5;
-
-  return 1 / pow(2, uncertaintyClass);
-}
-
-double getPickUncertainty(DataModel::Pick *pick, double defaultUncertainty) {
-  double uncertainty = -1; // secs
-  try {
-    // symmetric uncertainty
-    uncertainty = pick->time().uncertainty();
-  } catch (Core::ValueException &) {
-    // asymmetric uncertainty
-    try {
-      uncertainty =
-          (pick->time().lowerUncertainty() + pick->time().upperUncertainty()) /
-          2.0;
-    } catch (Core::ValueException &) {
-    }
-  }
-
-	if (uncertainty < 0 || !isfinite(uncertainty)) {
-		uncertainty = defaultUncertainty;
+	double uncertainty = -1; // secs
+	try {
+		// symmetric uncertainty
+		uncertainty = pick->time().uncertainty();
+	} catch (Core::ValueException &) {
+		// asymmetric uncertainty
+		try {
+			uncertainty =
+					(pick->time().lowerUncertainty() + pick->time().upperUncertainty()) /
+					2.0;
+		} catch (Core::ValueException &) {
+		}
 	}
 
-	return uncertainty;
+	// set lowest class as default
+	unsigned uncertaintyClass = uncertaintyClasses.size()-1;
+
+	if (uncertainty >= 0 && isfinite(uncertainty) && 
+			uncertaintyClasses.size() > 1 &&
+			uncertainty < uncertaintyClasses.back() ) {
+
+		for ( unsigned curr = 0, next = 1; 
+		      next < uncertaintyClasses.size(); curr++, next++ ) {
+			if (uncertainty >= uncertaintyClasses.at(curr) && 
+			    uncertainty <= uncertaintyClasses.at(next)) {
+				uncertaintyClass = curr;
+				break;
+			}
+		}
+	}
+
+	return 1 / pow(2, uncertaintyClass);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -195,7 +190,7 @@ const IDList StdLoc::_allowedParameters = {
 	"LeastSquares.dampingFactor",
 	"LeastSquares.solverType",
 	"usePickUncertainties",
-	"defaultTimeError",
+	"pickUncertaintyClasses",
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -211,7 +206,7 @@ bool StdLoc::init(const Config::Config &config) {
 	catch (...) {}
 
 	Profile defaultProf;
-	defaultProf.name = "default";
+	defaultProf.name = "";
 	defaultProf.method = Profile::Method::GridAndLsqr;
 	defaultProf.tttType = "libtau";
 	defaultProf.tttModel = "iasp91";
@@ -232,7 +227,7 @@ bool StdLoc::init(const Config::Config &config) {
 	defaultProf.leastSquare.dampingFactor = 0;
 	defaultProf.leastSquare.solverType = "LSMR";
 	defaultProf.usePickUncertainties = false;
-	defaultProf.defaultTimeError = 1.0;
+	defaultProf.pickUncertaintyClasses = {0.000,0.025,0.050,0.100,0.200,0.400};
 
 	_currentProfile = defaultProf;
 
@@ -368,7 +363,22 @@ bool StdLoc::init(const Config::Config &config) {
 		catch (...) {}
 
 		try {
-			prof.defaultTimeError = config.getDouble(prefix + "defaultTimeError");
+			vector<string> tokens = config.getStrings(prefix + "pickUncertaintyClasses");
+			if ( tokens.size() < 2 ) {
+				SEISCOMP_ERROR("Profile %s: pickUncertaintyClasses should contain at least "
+				               "2 values", prof.name.c_str());
+				return false;
+			}
+			prof.pickUncertaintyClasses.clear();
+			for(const string& tok : tokens ) {
+				double time;
+				if ( !Core::fromString(time, tok) ) {
+					SEISCOMP_ERROR("Profile %s: pickUncertaintyClasses is invalid",
+				                 prof.name.c_str());
+					return false;
+				}
+				prof.pickUncertaintyClasses.push_back(time);
+			}
 		}
 		catch (...) {}
 
@@ -479,8 +489,15 @@ string StdLoc::parameter(const string &name) const {
 	else if ( name == "usePickUncertainties" ) {
 		return _currentProfile.usePickUncertainties ? "y" : "n";
 	}
-	else if ( name == "defaultTimeError" ) {
-		return Core::toString(_currentProfile.defaultTimeError);
+	else if ( name == "pickUncertaintyClasses" ) {
+		string value;
+		for(double time :_currentProfile.pickUncertaintyClasses) {
+			if ( !value.empty() ) {
+				value += ",";
+			}
+			value += Core::toString(time);
+		}
+		return value;
 	}
 
 	return "";
@@ -615,12 +632,23 @@ bool StdLoc::setParameter(const string &name, const string &value) {
 		_currentProfile.usePickUncertainties = (value == "y");
 		return true;
 	}
-	else if ( name == "defaultTimeError" ) {
-		double tmp;
-		if ( !Core::fromString(tmp, value) ) {
+	else if ( name == "pickUncertaintyClasses" ) {
+		vector<string> tokens = splitString(value);
+		if ( tokens.size() < 2 ) {
+			SEISCOMP_ERROR("Profile %s: pickUncertaintyClasses should contain at least "
+			               "2 values", _currentProfile.name.c_str());
 			return false;
 		}
-		_currentProfile.defaultTimeError = tmp;
+		_currentProfile.pickUncertaintyClasses.clear();
+		for(const string& tok : tokens ) {
+			double time;
+			if ( !Core::fromString(time, tok) ) {
+				SEISCOMP_ERROR("Profile %s: pickUncertaintyClasses is invalid",
+				               _currentProfile.name.c_str());
+				return false;
+			}
+			_currentProfile.pickUncertaintyClasses.push_back(time);
+		}
 		return true;
 	}
 
@@ -865,8 +893,7 @@ void StdLoc::computeAdditionlPickInfo(const PickList &pickList,
 		weights[i] = 1.0; // marks the pick as used
 
 		if (_currentProfile.usePickUncertainties) {
-			double uncertainty = getPickUncertainty(pick.get(), _currentProfile.defaultTimeError);
-			weights[i] = computePickWeight(uncertainty);
+			weights[i] = computePickWeight(pick.get(), _currentProfile.pickUncertaintyClasses);
 		}
 		++activeArrivals;
 	}
@@ -1169,7 +1196,8 @@ void StdLoc::locateLeastSquares(
 				continue;
 			}
 
-			// get back azimuth, we don't need the distance
+			// get back azimuth, we don't need the distance, which will 
+			// be discarded (it's a waste of computation)
 			computeDistance(initLat, initLon, sensorLat[i], sensorLon[i],
 			                nullptr, &backazis[i]);
 

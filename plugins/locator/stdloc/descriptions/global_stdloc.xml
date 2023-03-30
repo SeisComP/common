@@ -40,16 +40,19 @@
 							<description>
 							Whether to use pick time uncertainties rather than a fixed
 							time error. If true, then the uncertainties are retrieved from
-							each individual pick object. If they are not defined, then the
-							default pick time uncertainty as defined by defaultTimeError
-							will be used instead.
+							each individual picks and a weight associated accordingly to
+							'pickUncertaintyClasses' parameter.
 							</description>
 						</parameter>
 
-						<parameter name="defaultTimeError" type="double" default="1.0" unit="s">
+						<parameter name="pickUncertaintyClasses" type="list:string" unit="s" default="0.000,0.025,0.050,0.100,0.200,0.400" >
 							<description>
-							The default pick time uncertainty if pick uncertainties are
-							not going to be used or if they are absent.
+							Define the pick time uncertainty classes from which the pick weight is computed.
+							This parameter defines a list of uncertainty time intervals: the interval
+							in which a pick time uncertainty falls defines the pick class e.g. a pick
+							wich uncertainty of 0.150 falls in the 4th interval and the pick class
+							is then 4. if pick uncertainties are absent, the lowest class will be used.
+							The pick weight then is computed as: 1 / 2^(class-1)
 							</description>
 						</parameter>
 
