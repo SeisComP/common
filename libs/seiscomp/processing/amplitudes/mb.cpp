@@ -18,42 +18,42 @@
  ***************************************************************************/
 
 
+#include <seiscomp/datamodel/amplitude.h>
 #include <seiscomp/processing/amplitudes/mb.h>
+#include <seiscomp/processing/amplitudes/iaspei.h>
 #include <seiscomp/math/filter/seismometers.h>
 
 #include <limits>
-
 
 using namespace Seiscomp::Math;
 
 
 namespace {
 
-bool measure_period(int n, const double *f, int i0, double offset,
-                    double *per, double *std) {
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool measurePeriod(
+	int n, const double *f, int i0, double offset,
+	double *per, double *std)
+{
 
-	//  Measures the period of an approximately sinusoidal signal f about
-	//  the sample with index i0. It does so by measuring the zero
-	//  crossings of the signal as well as the position of its extrema.
-	//
-	//  To be improved e.g. by using splines
-
-	// TODO offset!
+	// Measures the period of an approximately sinusoidal signal f about
+	// the sample with index i0. It does so by measuring the zero
+	// crossings of the signal as well as the position of its extrema.
 	int ip1, ip2, in1, in2;
 
-	double f0 = f[i0];
+	double f0 = f[i0] - offset;
 
-// ******* find zero crossings **********************************
+	// Find zero crossings
 
 	// first previous
-	for (ip1=i0;   ip1>=0 && (f[ip1]-offset)*f0 >= 0;  ip1--);
+	for ( ip1 = i0;   ip1 >= 0 && (f[ip1] - offset)*f0 >= 0;  ip1-- );
 	// second previous
-	for (ip2=ip1;  ip2>=0 && (f[ip2]-offset)*f0 <  0;  ip2--);
+	for ( ip2 = ip1;  ip2 >= 0 && (f[ip2] - offset)*f0 <  0;  ip2-- );
 
 	// first next
-	for (in1=i0;   in1<n  && (f[in1]-offset)*f0 >= 0;  in1++);
+	for ( in1 = i0;   in1 < n  && (f[in1] - offset)*f0 >= 0;  in1++ );
 	// second next
-	for (in2=in1;  in2<n  && (f[in2]-offset)*f0 <  0;  in2++);
+	for ( in2 = in1;  in2 < n  && (f[in2] - offset)*f0 <  0;  in2++ );
 
 	double wt = 0, pp = 0;
 
@@ -61,22 +61,22 @@ bool measure_period(int n, const double *f, int i0, double offset,
 	double m[5];
 	int nm=0;
 
-	if (ip2>=0) {
+	if ( ip2 >= 0 ) {
 		wt += 0.5;
-		pp += 0.5*(ip1 -ip2);
-		m[nm++] = ip1 -ip2;
+		pp += 0.5*(ip1 - ip2);
+		m[nm++] = ip1 - ip2;
 
 		int imax = find_absmax(n, f, ip2, ip1, offset);
 		wt += 1;
 		pp += i0 -imax;
 		m[nm++] = i0 -imax;
 	}
-	if (ip1>=0 && in1<n) {
+	if ( ip1 >= 0 && in1 < n ) {
 		wt += 1;
 		pp += in1 -ip1;
 		m[nm++] = in1 -ip1;
 	}
-	if (in2<n) {
+	if ( in2 < n ) {
 		wt += 0.5;
 		pp += 0.5*(in2 -in1);
 		m[nm++] = in2 -in1;
@@ -89,25 +89,29 @@ bool measure_period(int n, const double *f, int i0, double offset,
 	}
 
 	// compute standard deviation of period
-	if (nm>=3) {
+	if ( nm >= 3 ) {
 		double avg = 0, sum = 0;
-		for(int i=0; i<nm; i++) avg += m[i];
+		for ( int i = 0; i < nm; i++ )
+			avg += m[i];
 		avg /= nm;
-		for(int i=0; i<nm; i++) sum += (m[i]-avg)*(m[i]-avg);
+		for ( int i = 0; i < nm; i++ )
+			sum += (m[i]-avg)*(m[i]-avg);
 		*std = 2*sqrt(sum/(nm-1));
 	}
-	else    *std = 0;
+	else {
+		*std = 0;
+	}
 
-
-	if (wt < 0.9) return false;
+	if (wt < 0.9)
+		return false;
 
 	*per = 2*pp/wt;
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 }
-
 
 namespace Seiscomp {
 namespace Processing {
@@ -115,7 +119,6 @@ namespace Processing {
 
 IMPLEMENT_SC_CLASS_DERIVED(AmplitudeProcessor_mb, AmplitudeProcessor, "AmplitudeProcessor_mb");
 REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_mb, "mb");
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
@@ -171,46 +174,48 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 {
 	const int n = data.size();
 	const double *f = static_cast<const double*>(data.data());
-	std::vector<double> d(n);
 
-	// We want to find (A/T)_max, so we locate the max. of the derivative
-	for (int i=1; i<n-1; i++)
-		d[i] = 0.5*(f[i+1] - f[i-1]);
-	d[0] = d[n-1] = 0;
+	double amax, pmax;
+	int imax;
 
-	// find the max. amplitude in the *derivative*
-	int    imax = find_absmax(n, &d[0], si1, si2, offset);
-//	double amax = fabs(f[imax] - offset);
-	double pmax = -1; // dominant period around maximum
-	double pstd =  0; // standard error of period
+	if ( _config.iaspeiAmplitudes ) {
+		IASPEI::AmplitudePeriodMeasurement m;
 
-	// measure period in the original trace but at the position of the max. amplitude of its *derivative*
-	if ( !measure_period(n, f, imax, offset, &pmax, &pstd) )
-		pmax = -1;
+		bool OK = IASPEI::measureAmplitudePeriod(n, f, offset, si1, si2, m);
+		if ( ! OK )
+			return false;
 
-	// finally relocate the max. amplitude in the original trace at the position of the max. amplitude of its *derivative*
-	imax = find_absmax(n, f, imax-(int)pmax, imax+(int)pmax, offset);
-	double amax = fabs(f[imax] - offset);
-
-	// string sta = _records->back()->stationCode();
-	// cerr << sta << " mb ampl="<<amax<<"  period=" << pmax << "   +/- " << pstd << endl;
-
-#ifdef WRITE_ASCII_FILES_DEBUG
-	ofstream of((sta+".asc").c_str());
-	for(int i=-1000;i<=1000;i++) {
-		if(imax+i<0 || imax+i >n)
-			continue;
-		of << i << " " << f[imax+i]-offset << endl;
+		amax = (m.ap2p2 + m.ap2p1)/2;
+		imax = (m.ip2p2 + m.ip2p1)/2;
+		pmax = (m.ip2p2 - m.ip2p1)*2;
+		// We don't determine the standard error of the period.
 	}
-	of.close();
-#endif
+	else {
+		std::vector<double> d(n);
 
-	// Bei Mwp bestimmt man amax zur Berechnung des SNR. Die eigentliche
-	// Amplitude ist aber was anderes! Daher ist SNR-Bestimmung auch
-	// magnitudenspezifisch!
+		// Locate the max. of the derivative to find (A/T)_max
+		for ( int i = 1; i < n-1; i++ )
+			d[i] = 0.5*(f[i+1] - f[i-1]);
+		d[0] = d[n-1] = 0;
+
+		// Find the max. amplitude in the *derivative*
+		imax = find_absmax(n, &d[0], si1, si2, offset);
+		pmax = -1; // dominant period around maximum
+		double pstd =  0; // standard error of period
+
+		// Measure period in the original trace but at the position
+		// of the max. amplitude of its *derivative*
+		if ( ! measurePeriod(n, f, imax, offset, &pmax, &pstd) )
+			pmax = -1;
+
+		// Finally relocate the max. amplitude in the original trace
+		// at the position of the max. amplitude of its *derivative*
+		imax = find_absmax(n, f, imax-(int)pmax, imax+(int)pmax, offset);
+		amax = std::abs(f[imax] - offset);
+	}
 
 	if ( *_noiseAmplitude == 0. )
-		*snr = 1000000.0;
+		*snr = 1E6;
 	else
 		*snr = amax / *_noiseAmplitude;
 
@@ -222,7 +227,7 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 
 	dt->index = imax;
 
-	if(pmax>0)
+	if ( pmax > 0 )
 		*period = pmax;
 
 	amplitude->value = amax;
@@ -234,13 +239,43 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 		return false;
 	}
 
-	// Convert m to nm
+	// Convert meters to nanometers
 	amplitude->value *= 1.E9;
 
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeProcessor_mb::finalizeAmplitude(DataModel::Amplitude *amplitude) const {
+	if ( amplitude == NULL )
+		return;
+
+	try {
+		DataModel::TimeQuantity time(amplitude->timeWindow().reference());
+		amplitude->setScalingTime(time);
+	}
+	catch ( ... ) {
+	}
+
+	try {
+		DataModel::RealQuantity A = amplitude->amplitude();
+		double f = 1. / amplitude->period().value();
+		double c = 1. / IASPEI::wwssnspAmplitudeResponse(f);
+		A.setValue(c*A.value());
+		amplitude->setAmplitude(A);
+	}
+	catch ( ... ) {
+	}
+
+	if (_config.iaspeiAmplitudes) {
+		amplitude->setMethodID("IASPEI mb amplitude");
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 

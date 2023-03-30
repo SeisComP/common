@@ -40,6 +40,8 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mb : public AmplitudeProcessor {
 	public:
 		void initFilter(double fsamp) override;
 
+		void finalizeAmplitude(DataModel::Amplitude *amplitude) const override;
+
 	protected:
 		bool computeAmplitude(const DoubleArray &data,
 		                      size_t i1, size_t i2,

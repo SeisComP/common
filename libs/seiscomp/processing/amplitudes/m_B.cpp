@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 
+#include <seiscomp/datamodel/amplitude.h>
 #include <seiscomp/processing/amplitudes/m_B.h>
 #include <limits>
 
@@ -62,6 +63,24 @@ AmplitudeProcessor_mB::AmplitudeProcessor_mB(const Core::Time& trigger)
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeProcessor_mB::finalizeAmplitude(DataModel::Amplitude *amplitude) const {
+	if ( !amplitude )
+		return;
+
+	try {
+		DataModel::TimeQuantity time(amplitude->timeWindow().reference());
+		amplitude->setScalingTime(time);
+	}
+	catch ( ... ) {
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 double AmplitudeProcessor_mB::timeWindowLength(double distance) const {
 	// make sure the measurement is not contaminated by S energy
@@ -69,6 +88,8 @@ double AmplitudeProcessor_mB::timeWindowLength(double distance) const {
 	return tdist < _config.signalEnd ? tdist :_config.signalEnd;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
