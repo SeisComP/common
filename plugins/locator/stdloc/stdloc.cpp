@@ -123,71 +123,51 @@ void computeCoordinates(double distance, double azimuth, double clat,
 double computeDistance(double lat1, double lon1, double lat2, double lon2,
                        double *azimuth = nullptr,
                        double *backAzimuth = nullptr) {
-  double dist, az, baz;
-  Math::Geo::delazi(lat1, lon1, lat2, lon2, &dist, &az, &baz);
-  dist = Math::Geo::deg2km(dist);
+	double dist, az, baz;
+	Math::Geo::delazi(lat1, lon1, lat2, lon2, &dist, &az, &baz);
 
-  if (azimuth)
-    *azimuth = az;
-  if (backAzimuth)
-    *backAzimuth = baz;
+	if (azimuth)
+		*azimuth = az;
+	if (backAzimuth)
+		*backAzimuth = baz;
 
-  return dist;
+	return dist;
 }
 
-double computeDistance(double lat1, double lon1, double depth1, double lat2,
-                       double lon2, double depth2, double *azimuth = nullptr,
-                       double *backAzimuth = nullptr) {
-  double Hdist = computeDistance(lat1, lon1, lat2, lon2, azimuth, backAzimuth);
+double computePickWeight(DataModel::Pick *pick, const vector<double>& uncertaintyClasses) {
 
-  if (depth1 == depth2)
-    return Hdist;
-
-  // Use the Euclidean distance. This approximation is sufficient when the
-  // distance is small and the Earth curvature can be assumed flat.
-  double Vdist = abs(depth1 - depth2);
-  return sqrt(Hdist * Hdist + Vdist * Vdist);
-}
-
-double computePickWeight(double uncertainty /* secs */) {
-  unsigned uncertaintyClass;
-
-  if (uncertainty >= 0.000 && uncertainty <= 0.025)
-    uncertaintyClass = 0;
-  else if (uncertainty > 0.025 && uncertainty <= 0.050)
-    uncertaintyClass = 1;
-  else if (uncertainty > 0.050 && uncertainty <= 0.100)
-    uncertaintyClass = 2;
-  else if (uncertainty > 0.100 && uncertainty <= 0.200)
-    uncertaintyClass = 3;
-  else if (uncertainty > 0.200 && uncertainty <= 0.400)
-    uncertaintyClass = 4;
-  else
-    uncertaintyClass = 5;
-
-  return 1 / pow(2, uncertaintyClass);
-}
-
-double getPickUncertainty(DataModel::Pick *pick, double defaultUncertainty) {
-  double uncertainty = -1; // secs
-  try {
-    // symmetric uncertainty
-    uncertainty = pick->time().uncertainty();
-  } catch (Core::ValueException &) {
-    // asymmetric uncertainty
-    try {
-      uncertainty =
-          (pick->time().lowerUncertainty() + pick->time().upperUncertainty()) /
-          2.0;
-    } catch (Core::ValueException &) {
-    }
-  }
-
-	if (uncertainty < 0 || !isfinite(uncertainty)) {
-		uncertainty = defaultUncertainty;
+	double uncertainty = -1; // secs
+	try {
+		// symmetric uncertainty
+		uncertainty = pick->time().uncertainty();
+	} catch (Core::ValueException &) {
+		// asymmetric uncertainty
+		try {
+			uncertainty =
+					(pick->time().lowerUncertainty() + pick->time().upperUncertainty()) /
+					2.0;
+		} catch (Core::ValueException &) {
+		}
 	}
 
-	return uncertainty;
+	// set lowest class as default
+	unsigned uncertaintyClass = uncertaintyClasses.size()-1;
+
+	if (uncertainty >= 0 && isfinite(uncertainty) && 
+			uncertaintyClasses.size() > 1 &&
+			uncertainty < uncertaintyClasses.back() ) {
+
+		for ( unsigned curr = 0, next = 1; 
+		      next < uncertaintyClasses.size(); curr++, next++ ) {
+			if (uncertainty >= uncertaintyClasses.at(curr) && 
+			    uncertainty <= uncertaintyClasses.at(next)) {
+				uncertaintyClass = curr;
+				break;
+			}
+		}
+	}
+
+	return 1 / pow(2, uncertaintyClass);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -210,7 +190,7 @@ const IDList StdLoc::_allowedParameters = {
 	"LeastSquares.dampingFactor",
 	"LeastSquares.solverType",
 	"usePickUncertainties",
-	"defaultTimeError",
+	"pickUncertaintyClasses",
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -226,7 +206,7 @@ bool StdLoc::init(const Config::Config &config) {
 	catch (...) {}
 
 	Profile defaultProf;
-	defaultProf.name = "default";
+	defaultProf.name = "";
 	defaultProf.method = Profile::Method::GridAndLsqr;
 	defaultProf.tttType = "libtau";
 	defaultProf.tttModel = "iasp91";
@@ -247,7 +227,7 @@ bool StdLoc::init(const Config::Config &config) {
 	defaultProf.leastSquare.dampingFactor = 0;
 	defaultProf.leastSquare.solverType = "LSMR";
 	defaultProf.usePickUncertainties = false;
-	defaultProf.defaultTimeError = 1.0;
+	defaultProf.pickUncertaintyClasses = {0.000,0.025,0.050,0.100,0.200,0.400};
 
 	_currentProfile = defaultProf;
 
@@ -383,7 +363,22 @@ bool StdLoc::init(const Config::Config &config) {
 		catch (...) {}
 
 		try {
-			prof.defaultTimeError = config.getDouble(prefix + "defaultTimeError");
+			vector<string> tokens = config.getStrings(prefix + "pickUncertaintyClasses");
+			if ( tokens.size() < 2 ) {
+				SEISCOMP_ERROR("Profile %s: pickUncertaintyClasses should contain at least "
+				               "2 values", prof.name.c_str());
+				return false;
+			}
+			prof.pickUncertaintyClasses.clear();
+			for(const string& tok : tokens ) {
+				double time;
+				if ( !Core::fromString(time, tok) ) {
+					SEISCOMP_ERROR("Profile %s: pickUncertaintyClasses is invalid",
+				                 prof.name.c_str());
+					return false;
+				}
+				prof.pickUncertaintyClasses.push_back(time);
+			}
 		}
 		catch (...) {}
 
@@ -494,8 +489,15 @@ string StdLoc::parameter(const string &name) const {
 	else if ( name == "usePickUncertainties" ) {
 		return _currentProfile.usePickUncertainties ? "y" : "n";
 	}
-	else if ( name == "defaultTimeError" ) {
-		return Core::toString(_currentProfile.defaultTimeError);
+	else if ( name == "pickUncertaintyClasses" ) {
+		string value;
+		for(double time :_currentProfile.pickUncertaintyClasses) {
+			if ( !value.empty() ) {
+				value += ",";
+			}
+			value += Core::toString(time);
+		}
+		return value;
 	}
 
 	return "";
@@ -630,12 +632,23 @@ bool StdLoc::setParameter(const string &name, const string &value) {
 		_currentProfile.usePickUncertainties = (value == "y");
 		return true;
 	}
-	else if ( name == "defaultTimeError" ) {
-		double tmp;
-		if ( !Core::fromString(tmp, value) ) {
+	else if ( name == "pickUncertaintyClasses" ) {
+		vector<string> tokens = splitString(value);
+		if ( tokens.size() < 2 ) {
+			SEISCOMP_ERROR("Profile %s: pickUncertaintyClasses should contain at least "
+			               "2 values", _currentProfile.name.c_str());
 			return false;
 		}
-		_currentProfile.defaultTimeError = tmp;
+		_currentProfile.pickUncertaintyClasses.clear();
+		for(const string& tok : tokens ) {
+			double time;
+			if ( !Core::fromString(time, tok) ) {
+				SEISCOMP_ERROR("Profile %s: pickUncertaintyClasses is invalid",
+				               _currentProfile.name.c_str());
+				return false;
+			}
+			_currentProfile.pickUncertaintyClasses.push_back(time);
+		}
 		return true;
 	}
 
@@ -880,8 +893,7 @@ void StdLoc::computeAdditionlPickInfo(const PickList &pickList,
 		weights[i] = 1.0; // marks the pick as used
 
 		if (_currentProfile.usePickUncertainties) {
-			double uncertainty = getPickUncertainty(pick.get(), _currentProfile.defaultTimeError);
-			weights[i] = computePickWeight(uncertainty);
+			weights[i] = computePickWeight(pick.get(), _currentProfile.pickUncertaintyClasses);
 		}
 		++activeArrivals;
 	}
@@ -933,6 +945,7 @@ void StdLoc::locateGridSearch(
 	vector<double> originTimes;
 	vector<double> timeWeights;
 	double lowestError = nan("");
+	vector<double> lowestErrorTravelTimes;
 	double x, y, z;
 
 	for ( x = -_currentProfile.gridSearch.xExtent / 2. +
@@ -951,7 +964,7 @@ void StdLoc::locateGridSearch(
 				double cellLat, cellLon;
 				// compute distance and azimuth of the cell centroid to the grid origin
 				double distance = sqrt(y * y + x * x); // km
-				double azimuth = rad2deg(atan2(y, x));
+				double azimuth = rad2deg(atan2(x, y));
 				// Computes the coordinates (lat, lon) of the point which is at a degree
 				// azimuth and km distance as seen from the original event location
 				computeCoordinates(distance, azimuth,
@@ -1108,6 +1121,7 @@ void StdLoc::locateGridSearch(
 					newLon = cellLon;
 					newDepth = cellDepth;
 					newTime = originTime;
+					lowestErrorTravelTimes = travelTimes;
 					SEISCOMP_DEBUG("Preferring this cell with error %f lat %.6f lon %.6f "
 					               "depth %.3f time %s",
 					               error, newLat, newLon, newDepth,
@@ -1120,6 +1134,9 @@ void StdLoc::locateGridSearch(
 	if ( !isfinite(lowestError) ) {
 		throw LocatorException("Couldn't find a solution");
 	}
+
+	// return the travel times for the solution
+	travelTimes = lowestErrorTravelTimes;
 
 	SEISCOMP_DEBUG(
 		"Grid Search lowest error %f for lat %.6f lon %.6f depth %.3f time %s",
@@ -1179,8 +1196,10 @@ void StdLoc::locateLeastSquares(
 				continue;
 			}
 
-			computeDistance(initLat, initLon, initDepth, sensorLat[i], sensorLon[i],
-			                -sensorElev[i] / 1000, nullptr, &backazis[i]);
+			// get back azimuth, we don't need the distance, which will 
+			// be discarded (it's a waste of computation)
+			computeDistance(initLat, initLon, sensorLat[i], sensorLon[i],
+			                nullptr, &backazis[i]);
 
 			TravelTime tt;
 
@@ -1297,8 +1316,8 @@ void StdLoc::locateLeastSquares(
 		//
 		// Load the solution
 		//
-		double xCorrection = eq.m[0];    // km
-		double yCorrection = eq.m[1];    // km
+		double yCorrection = eq.m[0];    // km
+		double xCorrection = eq.m[1];    // km
 		double zCorrection = eq.m[2];    // km
 		double timeCorrection = eq.m[3]; // sec
 
@@ -1312,7 +1331,7 @@ void StdLoc::locateLeastSquares(
 
 		// compute distance and azimuth of the event to the new location
 		double distance = sqrt(xCorrection * xCorrection + yCorrection * yCorrection); // km
-		double azimuth = rad2deg(atan2(yCorrection, xCorrection));
+		double azimuth = rad2deg(atan2(xCorrection, yCorrection));
 
 		// Computes the coordinates (lat, lon) of the point which is at a degree
 		// azimuth and km distance as seen from the original event location
@@ -1390,10 +1409,12 @@ Origin *StdLoc::createOrigin(
 		                          pick->waveformID().locationCode());
 
 		double azimuth = 0;
-		double distance = computeDistance(originLat, originLon, originDepth,
-		                                  sensorLat[i], sensorLon[i],
-		                                  -sensorElev[i] / 1000, &azimuth);
-		distance = Math::Geo::km2deg(distance);
+		double Hdist = computeDistance(originLat, originLon,
+		                               sensorLat[i], sensorLon[i],
+		                               &azimuth);
+		Hdist = Math::Geo::deg2km(Hdist);
+		double Vdist = abs(originDepth + sensorElev[i] / 1000);
+		double distance = Math::Geo::km2deg(sqrt(Hdist * Hdist + Vdist * Vdist));
 
 		// prepare the new arrival
 		DataModel::Arrival *newArr = new DataModel::Arrival();
