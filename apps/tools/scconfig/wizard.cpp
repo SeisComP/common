@@ -382,8 +382,9 @@ void WizardWidget::finish() {
 #if !DRY_RUN
 	Seiscomp::Environment *env = Seiscomp::Environment::Instance();
 	_procSeisComP = new QProcess(this);
-	_procSeisComP->start(QString("%1/bin/seiscomp --stdin setup")
+	_procSeisComP->start(QString("%1/bin/seiscomp")
 	                     .arg(env->installDir().c_str()),
+	                     QStringList() << "--stdin" << "setup",
 	                     QProcess::Unbuffered | QProcess::ReadWrite);
 	if ( !_procSeisComP->waitForStarted() ) {
 		cerr << "Failed to start 'seiscomp'" << endl;

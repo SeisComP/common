@@ -87,7 +87,7 @@ class Homogeneous : public TravelTimeTableInterface {
 
 double radToDeg(double r) { return 180.0 * r / M_PI; }
 
-double degToRad(double d) { return M_PI * d / 180.0; }
+//double degToRad(double d) { return M_PI * d / 180.0; }
 
 double computeDistance(double lat1, double lon1,
                        double lat2, double lon2,

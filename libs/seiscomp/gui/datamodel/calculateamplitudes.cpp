@@ -62,15 +62,16 @@ string waveformIDToStdString(const WaveformStreamID& id) {
 }
 
 
+/*
 WaveformStreamID setWaveformIDComponent(const WaveformStreamID& id, char component) {
 	return WaveformStreamID(id.networkCode(), id.stationCode(), id.locationCode(),
                             id.channelCode().substr(0,2) + component, id.resourceURI());
 }
 
-
 bool hasHigherPriority(AmplitudePtr candidate, AmplitudePtr reference) {
 	return false;
 }
+*/
 
 
 }

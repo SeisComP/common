@@ -3528,7 +3528,12 @@ void MagnitudeView::updateContent() {
 	// set labels ...
 	updateMagnitudeLabels();
 
-	auto magnitudeComments = findChildren<QComboBox*>(QRegExp("^comboBox/magnitude/comment/.*$"));
+#if QT_VERSION < 0x050000
+	auto regExp = QRegExp("^comboBox/magnitude/comment/.*$");
+#else
+	auto regExp = QRegularExpression("^comboBox/magnitude/comment/.*$");
+#endif
+	auto magnitudeComments = findChildren<QComboBox*>(regExp);
 
 	if ( !_netMag ) {
 		_ui->cbEvalStatus->setCurrentIndex(0);

@@ -60,8 +60,6 @@ namespace Wired {
 namespace {
 
 
-pthread_mutex_t *ssl_mutex_buffer = nullptr;
-
 struct SSlDeleter {
 	void operator()(EVP_PKEY *key)
 	{
@@ -82,6 +80,10 @@ struct SSlDeleter {
 using X509Ptr = std::unique_ptr<X509, SSlDeleter>;
 using EVP_PKEYPtr = std::unique_ptr<EVP_PKEY, SSlDeleter>;
 using PKCS12Ptr = std::unique_ptr<PKCS12, SSlDeleter>;
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+pthread_mutex_t *ssl_mutex_buffer = nullptr;
+
 
 unsigned long SSL_thread_id_function(void) {
 	return reinterpret_cast<unsigned long>(pthread_self());
@@ -128,7 +130,6 @@ void SSL_static_cleanup() {
 }
 
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
 void SSL_CTX_up_ref(SSL_CTX *ctx) {
 	CRYPTO_add(&ctx->references, 1, CRYPTO_LOCK_SSL_CTX);
 }
@@ -142,12 +143,14 @@ struct SSLInitializer {
 		SSL_load_error_strings();
 		ERR_load_crypto_strings();
 		ERR_load_SSL_strings();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 
 		SSL_static_init();
 	}
 
 	~SSLInitializer() {
 		SSL_static_cleanup();
+#endif
 	}
 };
 

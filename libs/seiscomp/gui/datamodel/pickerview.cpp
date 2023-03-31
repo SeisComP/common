@@ -3401,7 +3401,7 @@ void PickerView::initPhases() {
 			phases.insert(action->text());
 	}
 
-	SC_D.phases = phases.toList();
+	SC_D.phases = phases.values();
 
 	foreach ( const QString &ph, SC_D.config.showPhases ) {
 		if ( !phases.contains(ph) ) {

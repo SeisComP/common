@@ -24,7 +24,6 @@
 #include <algorithm>
 #include <functional>
 
-#include <QMatrix>
 #include <QPointF>
 
 #include <seiscomp/core/datetime.h>
