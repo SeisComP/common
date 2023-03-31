@@ -4588,13 +4588,17 @@ void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
 
 		if ( presetLocator ) {
 			// Preset the locator type and profile
-			int idx = SC_D.ui.cbLocator->findText(SC_D.currentOrigin->methodID().c_str());
-			if ( idx >= 0 ) {
-				SC_D.ui.cbLocator->setCurrentIndex(idx);
-
-				idx = SC_D.ui.cbLocatorProfile->findText(SC_D.currentOrigin->earthModelID().c_str());
+			if ( !SC_D.localOrigin ) {
+				// Do not change the profile if the origin has been relocated
+				// locally.
+				int idx = SC_D.ui.cbLocator->findText(SC_D.currentOrigin->methodID().c_str());
 				if ( idx >= 0 ) {
-					SC_D.ui.cbLocatorProfile->setCurrentIndex(idx);
+					SC_D.ui.cbLocator->setCurrentIndex(idx);
+
+					idx = SC_D.ui.cbLocatorProfile->findText(SC_D.currentOrigin->earthModelID().c_str());
+					if ( idx >= 0 ) {
+						SC_D.ui.cbLocatorProfile->setCurrentIndex(idx);
+					}
 				}
 			}
 
@@ -4608,7 +4612,7 @@ void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
 
 			// Preset depth type
 			try {
-				idx = SC_D.ui.cbDepthType->findData(SC_D.currentOrigin->depthType().toInt());
+				int idx = SC_D.ui.cbDepthType->findData(SC_D.currentOrigin->depthType().toInt());
 				SC_D.ui.cbDepthType->setCurrentIndex(idx > 0 ? idx : 1);
 			}
 			catch ( ValueException & ) {
