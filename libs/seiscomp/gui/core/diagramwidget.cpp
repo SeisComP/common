@@ -1145,6 +1145,9 @@ void DiagramWidget::setDrawGridLines(bool f) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DiagramWidget::setDrawErrorBars(bool f) {
 	_drawErrorBars = f;
+	_toggleUncertainties->blockSignals(true);
+	_toggleUncertainties->setChecked(_drawErrorBars);
+	_toggleUncertainties->blockSignals(false);
 	update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
