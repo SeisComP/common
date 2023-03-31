@@ -2917,6 +2917,11 @@ void OriginLocatorView::init() {
 	_residuals->setEnabled(false);
 	_residuals->setColumnCount(PlotCols::Quantity);
 
+	try {
+		_residuals->setDrawErrorBars(SCApp->configGetBool("olv.arrivalPlot.showUncertainties"));
+	}
+	catch ( ... ) {}
+
 	_residuals->setErrorBarPens(SCScheme.colors.arrivals.uncertainties, SCScheme.colors.arrivals.defaultUncertainties);
 	_residuals->setValueDisabledColor(SCScheme.colors.arrivals.disabled);
 	_residuals->setDisplayRect(QRectF(0,-10,180,20));
