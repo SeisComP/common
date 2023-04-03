@@ -524,11 +524,13 @@ class SC_GUI_API RecordView : public QWidget {
 		/**
 		 * @brief This signal is being emitted if the user selected an area
 		 *        with the rubber band selection tool.
+		 * @param rect The selected rectangle in global coordinates
 		 * @param tmin The minimum absolute time of the selected time range
 		 * @param tmax The maximum absolute time of the selected time range
 		 * @param operation The operation to apply.
 		 */
-		void selectedRubberBand(QList<Seiscomp::Gui::RecordViewItem*>,
+		void selectedRubberBand(QRect rect,
+		                        QList<Seiscomp::Gui::RecordViewItem*>,
 		                        double tmin, double tmax,
 		                        Seiscomp::Gui::RecordView::SelectionOperation operation);
 
