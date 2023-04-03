@@ -208,20 +208,20 @@ class RecordScrollArea : public QScrollArea {
 						);
 					}
 					else if ( _selectOperation ) {
+						QRect viewport(view->rect());
+						viewport.setLeft(view->labelWidth() + view->horizontalSpacing());
+
 						QRect rubberBand = QRect(
 							_startPoint, _endPoint
 						)
-						.normalized()
-						.translated(
-							0, verticalScrollBar()->sliderPosition()
-						);
+						.normalized() & viewport;
 
 						QList<Seiscomp::Gui::RecordViewItem*> items;
 
 						int rowCount = view->rowCount();
 						for ( int i = 0; i < rowCount; ++i ) {
 							auto item = view->itemAt(i);
-							if ( item->rect().translated(item->pos()).intersects(rubberBand) ) {
+							if ( item->rect().translated(item->pos() - QPoint(0, verticalScrollBar()->sliderPosition())).intersects(rubberBand) ) {
 								items.append(item);
 							}
 						}
@@ -234,6 +234,10 @@ class RecordScrollArea : public QScrollArea {
 						}
 
 						emit view->selectedRubberBand(
+							QRect(
+								_overlay->mapToGlobal(rubberBand.topLeft()),
+								_overlay->mapToGlobal(rubberBand.bottomRight())
+							),
 							items, minTime, maxTime,
 							_selectOperation
 						);
