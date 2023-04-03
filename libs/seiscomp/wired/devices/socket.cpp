@@ -603,6 +603,8 @@ Socket::Status Socket::connect(const std::string &hostname, port_t port) {
 	struct addrinfo *res;
 	struct addrinfo hints;
 
+	setMode(Idle);
+
 	memset (&hints, 0, sizeof(hints));
 	hints.ai_family = PF_INET;
 	hints.ai_socktype = SOCK_STREAM;
@@ -679,6 +681,8 @@ Socket::Status Socket::connectV6(const std::string &hostname, port_t port) {
 
 	struct addrinfo *res;
 	struct addrinfo hints;
+
+	setMode(Idle);
 
 	memset (&hints, 0, sizeof(hints));
 	hints.ai_family = PF_INET6;
@@ -1382,6 +1386,7 @@ ssize_t SSLSocket::read(char *data, size_t len) {
 Socket::Status SSLSocket::connect(const std::string &hostname, port_t port) {
 	close();
 	cleanUp();
+	setMode(Idle);
 
 	if ( !_ctx ) _ctx = SSL_CTX_new(SSLv23_client_method());
 	if ( !_ctx ) {
@@ -1423,6 +1428,7 @@ Socket::Status SSLSocket::connect(const std::string &hostname, port_t port) {
 Socket::Status SSLSocket::connectV6(const std::string &hostname, port_t port) {
 	close();
 	cleanUp();
+	setMode(Idle);
 
 	if ( !_ctx ) _ctx = SSL_CTX_new(SSLv23_client_method());
 	if ( !_ctx ) {
