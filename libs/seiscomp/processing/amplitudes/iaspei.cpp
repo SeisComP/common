@@ -30,7 +30,7 @@ bool measureAmplitudePeriod(
 	// computational cost that in tests have shown to be irrelevant in
 	// a normal processing setup.
 
-	if ( istart >= iend || iend >= data.size() ) {
+	if ( istart >= iend || iend >= n ) {
 		return false;
 	}
 
