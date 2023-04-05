@@ -928,7 +928,7 @@
 					<group name="base">
 						<description>
 							The general base font of an application. This overrides
-							the default Qt4 application font.
+							the default Qt application font.
 						</description>
 						<parameter name="family" type="string">
 							<description>

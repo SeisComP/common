@@ -12,7 +12,7 @@ Styling
 
 To adjust the look-and-feel to the host desktop system and the personal taste
 several styling options are available. Since all GUI applications are using the
-Qt4 or QT5 library, the tool "qtconfig-qt4" can used to adjust the widget theme and the
+Qt5 library, the tool "qtconfig" can used to adjust the widget theme and the
 colors. If KDE is used as desktop system, the same style is used since KDE
 bases on Qt as well.
 
