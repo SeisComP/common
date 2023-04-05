@@ -31,9 +31,43 @@ namespace IO {
 
 DEFINE_SMARTPOINTER(RecordFilterInterface);
 
+/**
+ * @brief The RecordFilterInterface class defines an interface to process
+ * records.
+ *
+ * There are actually two methods involved: push and flush. A filter might
+ * produce:
+ * 1. the same amount of output records as input records
+ * 2. less output records than input records
+ * 3. more output records than input records
+ *
+ * Case 1 and 2 is trivial. Whenever a record is pushed, the method returns
+ * either a new record or nothing (nullptr). Case 3 requires that after a
+ * record was fed, nullptr must be fed as long as a valid records is being
+ * returned.
+ *
+ * A generic way to implement the consumer part is the following code
+ * snippet:
+ *
+ * @code
+ * auto out = filter.feed(rec)
+ * while ( out ) {
+ *     // Do something with out
+ *     out = filter.feed(nullptr)
+ * }
+ * @endcode
+ *
+ * Once feeding has finished, call flush to retrieve possible pending records:
+ *
+ * @code
+ * while ( (out = filter.flush()) ) {
+ *     // Do something with out
+ * }
+ * @endcode
+ */
 class SC_SYSTEM_CORE_API RecordFilterInterface : public Seiscomp::Core::BaseObject {
 	// ------------------------------------------------------------------
-	//  Xstruction
+	//  X'truction
 	// ------------------------------------------------------------------
 	public:
 		virtual ~RecordFilterInterface();
@@ -45,7 +79,10 @@ class SC_SYSTEM_CORE_API RecordFilterInterface : public Seiscomp::Core::BaseObje
 	public:
 		//! Can return a copy of the filtered record. Some filters might
 		//! collect more data until a record is output so a return of
-		//! nullptr is *not* an error. Call flush() if no more records are
+		//! nullptr is *not* an error. Other filters might produce more
+		//! output records than input records. Calling feed(nullptr) will
+		//! return pending records as long as nullptr is returned.
+		//! Call flush() if no more records are
 		//! expected to be fed.
 		//! @return A copy of a filtered record
 		virtual Record *feed(const Record *rec) = 0;
