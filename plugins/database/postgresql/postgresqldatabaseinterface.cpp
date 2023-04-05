@@ -376,6 +376,7 @@ const void* PostgreSQLDatabase::getRowField(int index) {
 		XFREE(_unescapeBuffer);
 
 		_unescapeBuffer = PQunescapeBytea(reinterpret_cast<const unsigned char *>(value), &_unescapeBufferSize);
+		static_cast<char*>(_unescapeBuffer)[_unescapeBufferSize] = '\0';
 		value = _unescapeBuffer;
 	}
 
