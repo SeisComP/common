@@ -3,6 +3,7 @@ SET(RECORDFILTER_SOURCES
 	resample.cpp
 	demux.cpp
 	spectralizer.cpp
+	crop.cpp
 )
 
 SET(RECORDFILTER_HEADERS
@@ -10,6 +11,7 @@ SET(RECORDFILTER_HEADERS
 	resample.h
 	demux.h
 	spectralizer.h
+	crop.h
 )
 
 SC_SETUP_LIB_SUBDIR(RECORDFILTER)

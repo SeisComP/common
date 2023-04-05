@@ -61,20 +61,35 @@ void RecordDemuxFilter::setFilter(RecordFilterInterface *recordFilter) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record *RecordDemuxFilter::feed(const Record *rec) {
 	// We do not do anything if no filter has been provided
-	if ( !_template ) return nullptr;
-
-	std::pair<FilterMap::iterator,bool> itp;
-	itp = _streams.insert(FilterMap::value_type(rec->streamID(), _template));
-	// New slot created
-	if ( itp.second ) {
-		// Is that the first, reuse the template otherwise clone it
-		if ( _streams.size() == 1 )
-			itp.first->second = _template;
-		else
-			itp.first->second = _template->clone();
+	if ( !_template ) {
+		return nullptr;
 	}
 
-	return itp.first->second->feed(rec);
+	if ( rec ) {
+		auto itp = _streams.insert(FilterMap::value_type(rec->streamID(), _template));
+		// New slot created
+		if ( itp.second ) {
+			// Is that the first, reuse the template otherwise clone it
+			if ( _streams.size() == 1 ) {
+				itp.first->second = _template;
+			}
+			else {
+				itp.first->second = _template->clone();
+			}
+		}
+
+		return itp.first->second->feed(rec);
+	}
+	else {
+		for ( auto it = _streams.begin(); it != _streams.end(); ++it ) {
+			auto rec = it->second->feed(nullptr);
+			if ( rec ) {
+				return rec;
+			}
+		}
+
+		return nullptr;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -85,7 +100,9 @@ Record *RecordDemuxFilter::feed(const Record *rec) {
 Record *RecordDemuxFilter::flush() {
 	while ( _streams.begin() != _streams.end() ) {
 		Record *rec = _streams.begin()->second->flush();
-		if ( rec != nullptr ) return rec;
+		if ( rec ) {
+			return rec;
+		}
 		_streams.erase(_streams.begin());
 	}
 

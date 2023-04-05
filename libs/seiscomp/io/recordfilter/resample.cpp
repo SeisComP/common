@@ -630,6 +630,10 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 Record *RecordResampler<T>::feed(const Record *record) {
+	if ( !record ) {
+		return nullptr;
+	}
+
 	//SEISCOMP_DEBUG("O %s %s %f", record->startTime().iso().data(), record->endTime().iso().data(),
 	//               record->samplingFrequency());
 

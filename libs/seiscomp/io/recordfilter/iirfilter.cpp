@@ -106,22 +106,25 @@ void RecordIIRFilter<T>::setIIR(Math::Filtering::InPlaceFilter<T> *f) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 Record *RecordIIRFilter<T>::feed(const Record *rec) {
-	const Array *data = rec->data();
-	if ( data == nullptr ) return nullptr;
+	if ( rec ) {
+		const Array *data = rec->data();
+		if ( data == nullptr ) return nullptr;
 
-	TypedArray<T> *tdata = (TypedArray<T>*)data->copy(dataType<T>());
-	if ( tdata == nullptr ) return nullptr;
+		TypedArray<T> *tdata = (TypedArray<T>*)data->copy(dataType<T>());
+		if ( tdata == nullptr ) return nullptr;
 
-	// Copy the record and assign the data
-	GenericRecord *out = new GenericRecord(*rec);
-	out->setData(tdata);
+		// Copy the record and assign the data
+		GenericRecord *out = new GenericRecord(*rec);
+		out->setData(tdata);
 
-	if ( apply(out) )
-		return out;
-	else {
-		delete out;
-		return nullptr;
+		if ( apply(out) )
+			return out;
+		else {
+			delete out;
+		}
 	}
+
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
