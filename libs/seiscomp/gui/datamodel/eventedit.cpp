@@ -1435,11 +1435,7 @@ void EventEdit::init() {
 	QHeaderView* header = _originTree->header();
 	header->setSortIndicatorShown(true);
 	header->setSortIndicator(_originColumnMap[OL_CREATED], Qt::DescendingOrder);
-#if QT_VERSION >= 0x050000
 	header->setSectionsClickable(true);
-#else
-	header->setClickable(true);
-#endif
 	connect(header, SIGNAL(sectionClicked(int)),
 	        this, SLOT(sortOriginItems(int)));
 
@@ -1448,11 +1444,7 @@ void EventEdit::init() {
 	header = _ui.treeMagnitudes->header();
 	header->setSortIndicatorShown(true);
 	header->setSortIndicator(MLC_TIMESTAMP, Qt::DescendingOrder);
-#if QT_VERSION >= 0x050000
 	header->setSectionsClickable(true);
-#else
-	header->setClickable(true);
-#endif
 	connect(header, SIGNAL(sectionClicked(int)),
 	        this, SLOT(sortMagnitudeItems(int)));
 
@@ -1502,11 +1494,7 @@ void EventEdit::init() {
 	header = _ui.fmTree->header();
 	header->setSortIndicatorShown(true);
 	header->setSortIndicator(_fmColumnMap[FML_CREATED], Qt::DescendingOrder);
-#if QT_VERSION >= 0x050000
 	header->setSectionsClickable(true);
-#else
-	header->setClickable(true);
-#endif
 	header->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(header, SIGNAL(sectionClicked(int)), this, SLOT(sortFMItems(int)));
 	connect(header, SIGNAL(customContextMenuRequested(const QPoint &)),

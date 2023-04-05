@@ -2886,16 +2886,8 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	// Stop movie and hide label when the thread finishes
 	connect(&PublicObjectEvaluator::Instance(), SIGNAL(finished()),
 	        _busyIndicatorLabel, SLOT(hide()));
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	connect(&PublicObjectEvaluator::Instance(), SIGNAL(terminated()),
-	        _busyIndicatorLabel, SLOT(hide()));
-#endif
 	connect(&PublicObjectEvaluator::Instance(), SIGNAL(finished()),
 	        _busyIndicator, SLOT(stop()));
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	connect(&PublicObjectEvaluator::Instance(), SIGNAL(terminated()),
-	        _busyIndicator, SLOT(stop()));
-#endif
 
 	setFMLinkEnabled(_itemConfig.createFMLink);
 
@@ -5272,20 +5264,12 @@ void EventListView::setSortingEnabled(bool enable) {
 	if ( enable ) {
 		header->setSortIndicator(0, Qt::DescendingOrder);
 		header->setSortIndicatorShown(true);
-#if QT_VERSION >= 0x050000
 		header->setSectionsClickable(true);
-#else
-		header->setClickable(true);
-#endif
 	}
 	else {
 		header->setSortIndicator(-1, Qt::DescendingOrder);
 		header->setSortIndicatorShown(false);
-#if QT_VERSION >= 0x050000
 		header->setSectionsClickable(true);
-#else
-		header->setClickable(true);
-#endif
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

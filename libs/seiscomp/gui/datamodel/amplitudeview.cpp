@@ -113,11 +113,7 @@ class TraceList : public RecordView {
 
 		void dropEvent(QDropEvent *event) {
 			if ( event->mimeData()->hasFormat("text/plain") ) {
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-				QString strFilter = event->mimeData()->text();
-#else
 				QString strFilter = event->mimeData()->data("text/plain");
-#endif
 				auto f = RecordWidget::Filter::Create(strFilter.toStdString());
 
 				if ( !f ) {

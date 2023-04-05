@@ -290,12 +290,8 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 	_type = type;
 	if ( type == Tty ) {
 		_flags &= ~SHOW_SPLASH;
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-		_app = new QApplication(argc, argv, QApplication::Tty);
-#else
 		setenv("QT_QPA_PLATFORM", "offscreen", 1);
 		_app = new QApplication(argc, argv);
-#endif
 	}
 	else
 		_app = new QApplication(argc, argv);
@@ -316,10 +312,6 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 	_scheme = new Scheme();
 
 	QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
-#if QT_VERSION < 0x050000
-	QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-	QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
-#endif
 
 	// Disable group separator (thousand separator) in output and input. E.g.,
 	// QLineEdits using a QDoubleValidator will no longer accept a comma.

@@ -892,20 +892,12 @@ class NodalPlaneDialog : public QDialog {
 			hboxLayout->addItem(spacerItem1);
 
 			QPushButton *okButton = new QPushButton(this);
-#if QT_VERSION >= 0x050000
 			okButton->setText(QApplication::translate("", "OK", 0));
-#else
-			okButton->setText(QApplication::translate("", "OK", 0, QApplication::UnicodeUTF8));
-#endif
 
 			hboxLayout->addWidget(okButton);
 
 			QPushButton *cancelButton = new QPushButton(this);
-#if QT_VERSION >= 0x050000
 			cancelButton->setText(QApplication::translate("", "Cancel", 0));
-#else
-			cancelButton->setText(QApplication::translate("", "Cancel", 0, QApplication::UnicodeUTF8));
-#endif
 
 			hboxLayout->addWidget(cancelButton);
 
@@ -2868,11 +2860,7 @@ void OriginLocatorView::init() {
 	SC_D.modelArrivals.setDisabledForeground(palette().color(QPalette::Disabled, QPalette::Text));
 
 	ArrivalDelegate *delegate = new ArrivalDelegate(SC_D.ui.tableArrivals);
-#if QT_VERSION >= 0x050000
 	SC_D.ui.tableArrivals->horizontalHeader()->setSectionsMovable(true);
-#else
-	SC_D.ui.tableArrivals->horizontalHeader()->setMovable(true);
-#endif
 	SC_D.ui.tableArrivals->setItemDelegate(delegate);
 	SC_D.ui.tableArrivals->setMouseTracking(true);
 	SC_D.ui.tableArrivals->resizeColumnToContents(0);
@@ -2895,11 +2883,7 @@ void OriginLocatorView::init() {
 	SC_D.ui.tableArrivals->horizontalHeader()->setSortIndicator(DISTANCE, Qt::AscendingOrder);
 	//SC_D.ui.tableArrivals->horizontalHeader()->setStretchLastSection(true);
 
-#if QT_VERSION >= 0x050000
 	SC_D.ui.tableArrivals->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-#else
-	SC_D.ui.tableArrivals->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-#endif
 
 	SC_D.ui.tableArrivals->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -4666,11 +4650,7 @@ void OriginLocatorView::updateContent() {
 	}
 
 	//SC_D.ui.tableArrivals->resize(SC_D.ui.tableArrivals->size());
-#if QT_VERSION >= 0x050000
 	SC_D.ui.tableArrivals->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-#else
-	SC_D.ui.tableArrivals->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-#endif
 
 	SC_D.ui.buttonEditComment->setEnabled(SC_D.baseEvent.get());
 
