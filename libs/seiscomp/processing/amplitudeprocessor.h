@@ -83,6 +83,10 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 			double respMaxFreq;
 
 			Math::SeismometerResponse::WoodAnderson::Config woodAndersonResponse;
+
+			// If true, compute amplitudes according to the recommendations of the
+			// IASPEI CoSOI Magnitude Working Group. Currently only affects mb.
+			bool iaspeiAmplitudes;
 		};
 
 		struct Locale : Config {

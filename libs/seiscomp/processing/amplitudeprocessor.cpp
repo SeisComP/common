@@ -131,6 +131,8 @@ void AmplitudeProcessor::init() {
 	_config.respTaper = 5.0;
 	_config.respMinFreq = 0.00833333; // 120 secs
 	_config.respMaxFreq = 0;
+
+	_config.iaspeiAmplitudes = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -922,6 +924,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 			SEISCOMP_DEBUG("  + response maximum frequency = %.3f", _config.respMaxFreq);
 		}
 	}
+
+	try { _config.iaspeiAmplitudes = cfg->getBool("amplitudes.iaspei"); }
+	catch ( ... ) {}
 
 	return true;
 }

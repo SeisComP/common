@@ -35,6 +35,9 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mB : public AmplitudeProcessor {
 		AmplitudeProcessor_mB();
 		AmplitudeProcessor_mB(const Core::Time& trigger);
 
+	public:
+		void finalizeAmplitude(DataModel::Amplitude *amplitude) const override;
+
 	protected:
 		double timeWindowLength(double distance) const override;
 		bool computeAmplitude(const DoubleArray &data,
