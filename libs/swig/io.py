@@ -856,6 +856,48 @@ class RecordFilterInterface(seiscomp.core.BaseObject):
 # Register RecordFilterInterface in _io:
 _io.RecordFilterInterface_swigregister(RecordFilterInterface)
 
+class Cropper(RecordFilterInterface):
+    r"""Proxy of C++ Seiscomp::IO::Cropper class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+    __swig_destroy__ = _io.delete_Cropper
+
+    def setWindowLength(self, length):
+        r"""setWindowLength(Cropper self, double length) -> bool"""
+        return _io.Cropper_setWindowLength(self, length)
+
+    def setWindowOverlap(self, overlap):
+        r"""setWindowOverlap(Cropper self, double overlap) -> bool"""
+        return _io.Cropper_setWindowOverlap(self, overlap)
+
+    def setNoAlign(self, noalign):
+        r"""setNoAlign(Cropper self, bool noalign) -> bool"""
+        return _io.Cropper_setNoAlign(self, noalign)
+
+    def feed(self, rec):
+        r"""feed(Cropper self, Record rec) -> Record"""
+        return _io.Cropper_feed(self, rec)
+
+    def flush(self):
+        r"""flush(Cropper self) -> Record"""
+        return _io.Cropper_flush(self)
+
+    def reset(self):
+        r"""reset(Cropper self)"""
+        return _io.Cropper_reset(self)
+
+    def clone(self):
+        r"""clone(Cropper self) -> RecordFilterInterface"""
+        return _io.Cropper_clone(self)
+
+    def __init__(self):
+        r"""__init__(Cropper self) -> Cropper"""
+        _io.Cropper_swiginit(self, _io.new_Cropper())
+
+# Register Cropper in _io:
+_io.Cropper_swigregister(Cropper)
+
 class RecordDemuxFilter(RecordFilterInterface):
     r"""Proxy of C++ Seiscomp::IO::RecordDemuxFilter class."""
 
