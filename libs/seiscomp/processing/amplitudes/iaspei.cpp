@@ -1,3 +1,23 @@
+/***************************************************************************
+ * Copyright (C) gempa GmbH                                                *
+ * All rights reserved.                                                    *
+ * Contact: gempa GmbH (seiscomp-dev@gempa.de)                             *
+ *                                                                         *
+ * GNU Affero General Public License Usage                                 *
+ * This file may be used under the terms of the GNU Affero                 *
+ * Public License version 3.0 as published by the Free Software Foundation *
+ * and appearing in the file LICENSE included in the packaging of this     *
+ * file. Please review the following information to ensure the GNU Affero  *
+ * Public License version 3.0 requirements will be met:                    *
+ * https://www.gnu.org/licenses/agpl-3.0.html.                             *
+ *                                                                         *
+ * Other Usage                                                             *
+ * Alternatively, this file may be used in accordance with the terms and   *
+ * conditions contained in a signed written agreement between you and      *
+ * gempa GmbH.                                                             *
+ ***************************************************************************/
+
+
 #include <seiscomp/processing/amplitudes/iaspei.h>
 
 #include <vector>
@@ -6,13 +26,16 @@
 
 #include <seiscomp/math/filter/seismometers.h>
 
+
 namespace Seiscomp {
 
 namespace Processing {
 
 namespace IASPEI {
 
+
 #include <seiscomp/math/minmax.ipp>
+
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool measureAmplitudePeriod(
@@ -123,21 +146,20 @@ bool measureAmplitudePeriod(
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double wwssnspAmplitudeResponse(double frequency_hz)
-{
+double wwssnspAmplitudeResponse(double frequency_hz) {
 	using namespace Seiscomp::Math;
 	static Filtering::IIR::WWSSN_SP_Filter<double> wwssnsp(Displacement);
 	static double twopi { M_PI+M_PI };
 
-        const std::complex<double> s(0, twopi*frequency_hz);
-        std::complex<double> r { wwssnsp.norm };
-        for ( const std::complex<double> &p : wwssnsp.poles ) {
-                r = r/(s-p);
+	const std::complex<double> s(0, twopi * frequency_hz);
+	std::complex<double> r { wwssnsp.norm };
+	for ( const std::complex<double> &p : wwssnsp.poles ) {
+		r = r / (s - p);
 	}
-        for ( const std::complex<double> &z : wwssnsp.zeros ) {
-                r = r*(s-z);
+	for ( const std::complex<double> &z : wwssnsp.zeros ) {
+		r = r * (s - z);
 	}
-        return std::abs(r);
+	return std::abs(r);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
