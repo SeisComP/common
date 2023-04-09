@@ -26,8 +26,8 @@ The algorithms implemented in StdLoc are standard methods described in
 Lars Ottemoller
 
 
-Why is it for local seismicity?
-===============================
+Why is stdloc suitable for local seismicity?
+============================================
 
 When dealing with very local seismicity (few kilometers or hundres of meters) common
 semplification for regional seismicity become importants. In particular the locator
@@ -39,9 +39,7 @@ should take into consideration:
 More importantly the travel time tables used by the locator must be able to take
 into consideration all the above too.
 
-GenLon is simple, but can deal with all this requirements. It also supports any SeisComP
-travel time table, which means it can also be configured with the `homogeneous` model,
-which is able to take into consideration the above points.
+StdLoc is simple, but can deal with all this requirements.
 
 
 Travel Time Table

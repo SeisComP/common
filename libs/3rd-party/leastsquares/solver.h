@@ -32,11 +32,11 @@ namespace {
  *
  * W: diagonal matrix to weight each equation.
  * G: matrix of the partial derivatives of the slowness vector with respect to
- *    event/station location and 1 in the last column corresponding to
- *    the source time correction term [sec/km]
+ *    event/station location in the 3 directions [sec/km or sec/deg] and 1 in
+ *    the last column  corresponding to the source time correction term
  * m: vector containing the changes in hypocentral parameters we wish to
  *    determine (delta x, delta y, delta z and delta travel time)
- *    [km] and [sec]
+ *    [km or deg] and [sec]
  * r: residual vector [sec]
  */
 struct System {
@@ -76,12 +76,21 @@ public:
     if (_eq.numColsG != 4) {
       throw std::runtime_error("Solver: Internal logic error");
     }
+    std::fill_n(_eq.m, 4, 0.);
     std::fill_n(_eq.L2NScaler, _eq.numColsG, 1.);
     for (unsigned int ob = 0; ob < _eq.numRowsG; ob++) {
       if (_eq.W[ob] != 0) {
-        _eq.r[ob] *= _eq.W[ob];
-      } else {
-        _eq.r[ob] = 0;
+        _eq.r[ob]    *= _eq.W[ob];
+        _eq.G[ob][0] *= _eq.W[ob];
+        _eq.G[ob][1] *= _eq.W[ob];
+        _eq.G[ob][2] *= _eq.W[ob];
+        _eq.G[ob][3] *= _eq.W[ob];
+     } else {
+        _eq.r[ob]    = 0;
+        _eq.G[ob][0] = 0;
+        _eq.G[ob][1] = 0;
+        _eq.G[ob][2] = 0;
+        _eq.G[ob][3] = 0;
       }
     }
   }
@@ -97,18 +106,10 @@ public:
     std::fill_n(_eq.L2NScaler, _eq.numColsG, 0.);
 
     for (unsigned int ob = 0; ob < _eq.numRowsG; ob++) {
-
-      if (_eq.W[ob] == 0)
-        continue;
-
-      _eq.L2NScaler[0] +=
-          (_eq.G[ob][0] * _eq.W[ob]) * (_eq.G[ob][0] * _eq.W[ob]);
-      _eq.L2NScaler[1] +=
-          (_eq.G[ob][1] * _eq.W[ob]) * (_eq.G[ob][1] * _eq.W[ob]);
-      _eq.L2NScaler[2] +=
-          (_eq.G[ob][2] * _eq.W[ob]) * (_eq.G[ob][2] * _eq.W[ob]);
-      _eq.L2NScaler[3] +=
-          (_eq.G[ob][3] * _eq.W[ob]) * (_eq.G[ob][3] * _eq.W[ob]);
+      _eq.L2NScaler[0] += _eq.G[ob][0] * _eq.G[ob][0];
+      _eq.L2NScaler[1] += _eq.G[ob][1] * _eq.G[ob][1];
+      _eq.L2NScaler[2] += _eq.G[ob][2] * _eq.G[ob][2];
+      _eq.L2NScaler[3] += _eq.G[ob][3] * _eq.G[ob][3];
     }
 
     _eq.L2NScaler[0] = 1. / std::sqrt(_eq.L2NScaler[0]);
@@ -142,18 +143,10 @@ public:
     }
 
     for (unsigned int ob = 0; ob < _eq.numRowsG; ob++) {
-
-      if (_eq.W[ob] == 0)
-        continue;
-
-      double sum = 0;
-
-      sum += _eq.G[ob][0] * _eq.L2NScaler[0] * x[0];
-      sum += _eq.G[ob][1] * _eq.L2NScaler[1] * x[1];
-      sum += _eq.G[ob][2] * _eq.L2NScaler[2] * x[2];
-      sum += _eq.G[ob][3] * _eq.L2NScaler[3] * x[3];
-
-      y[ob] += _eq.W[ob] * sum;
+      y[ob] += _eq.G[ob][0] * _eq.L2NScaler[0] * x[0];
+      y[ob] += _eq.G[ob][1] * _eq.L2NScaler[1] * x[1];
+      y[ob] += _eq.G[ob][2] * _eq.L2NScaler[2] * x[2];
+      y[ob] += _eq.G[ob][3] * _eq.L2NScaler[3] * x[3];
     }
   }
 
@@ -172,14 +165,10 @@ public:
     }
 
     for (unsigned int ob = 0; ob < _eq.numRowsG; ob++) {
-
-      if (_eq.W[ob] == 0)
-        continue;
-
-      x[0] += _eq.W[ob] * _eq.G[ob][0] * _eq.L2NScaler[0] * y[ob];
-      x[1] += _eq.W[ob] * _eq.G[ob][1] * _eq.L2NScaler[1] * y[ob];
-      x[2] += _eq.W[ob] * _eq.G[ob][2] * _eq.L2NScaler[2] * y[ob];
-      x[3] += _eq.W[ob] * _eq.G[ob][3] * _eq.L2NScaler[3] * y[ob];
+      x[0] += _eq.G[ob][0] * _eq.L2NScaler[0] * y[ob];
+      x[1] += _eq.G[ob][1] * _eq.L2NScaler[1] * y[ob];
+      x[2] += _eq.G[ob][2] * _eq.L2NScaler[2] * y[ob];
+      x[3] += _eq.G[ob][3] * _eq.L2NScaler[3] * y[ob];
     }
   }
 };

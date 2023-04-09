@@ -77,6 +77,28 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 	//  Private members
 	// ----------------------------------------------------------------------
 	private:
+
+		// Covariance Matrix (X axis as W-E and Y axis as S-N)
+		// Since it is a diagonal matrix the duplicated values
+		// are commented
+		struct CovMtrx {
+			bool valid;
+			double   sxx,  sxy,  sxz,  sxt;
+			double /*syx,*/syy,  syz,  syt;
+			double /*szx,  szy,*/szz,  szt;
+			double /*stx,  sty,  stz,*/stt;
+		};
+
+		struct Cell {
+			bool valid;
+			double x, y, z;
+			struct {
+				double depth, lat, lon;
+				Seiscomp::Core::Time time;
+				double error;
+			} org;
+		};
+
 		bool loadTTT();
 
 		void computeAdditionlPickInfo(const PickList &pickList,
@@ -92,7 +114,8 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		                      const std::vector<double> &sensorElev, double &newLat,
 		                      double &newLon, double &newDepth,
 		                      Seiscomp::Core::Time &newTime,
-		                      std::vector<double> &travelTimes) const;
+		                      std::vector<double> &travelTimes,
+		                      CovMtrx& covm, bool computeCovMtrx) const;
 
 		void locateLeastSquares(const PickList &pickList,
 		                        const std::vector<double> &weights,
@@ -103,7 +126,13 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		                        Seiscomp::Core::Time initTime, double &newLat,
 		                        double &newLon, double &newDepth,
 		                        Seiscomp::Core::Time &newTime,
-		                        std::vector<double> &travelTimes) const;
+		                        std::vector<double> &travelTimes,
+		                        CovMtrx& covm, bool computeCovMtrx) const;
+
+		void computeCovarianceMatrix(const std::vector<Cell>& cells,
+		                             const Cell& bestCell,
+		                             CovMtrx& covmOut) const;
+		void computeCovarianceMatrix(const System& eq, CovMtrx& covmOut) const;
 
 		Seiscomp::DataModel::Origin *
 		createOrigin(const PickList &pickList,
@@ -111,9 +140,10 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		             const std::vector<double> &sensorLat,
 		             const std::vector<double> &sensorLon,
 		             const std::vector<double> &sensorElev,
-		             const std::vector<double> &travelTimes, double originLat,
-		             double originLon, double originDepth,
-		             const Seiscomp::Core::Time &originTime) const;
+		             double originLat, double originLon, double originDepth,
+		             const Seiscomp::Core::Time &originTime,
+		             const std::vector<double> &travelTimes,
+		             const CovMtrx& covm) const;
 
 		struct Profile {
 			std::string name;
@@ -127,6 +157,10 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 			std::string tttType;
 			std::string tttModel;
 			bool PSTableOnly;
+			bool usePickUncertainties;
+			std::vector<double> pickUncertaintyClasses;
+			bool enableConfidenceEllipsoid;
+			double confLevel;
 
 			struct {
 				double autoLatLon;
@@ -148,9 +182,6 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 				double dampingFactor;
 				std::string solverType;
 			} leastSquare;
-
-			bool usePickUncertainties;
-			std::vector<double> pickUncertaintyClasses;
 		};
 
 		Profile _currentProfile;
