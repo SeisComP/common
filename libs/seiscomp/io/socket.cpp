@@ -596,9 +596,11 @@ int Socket::writeImpl(const char *buf, int count) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Socket::connectSocket(struct sockaddr *addr, int len) {
 #ifndef WIN32
-	if ( connect(_sockfd,addr,len) == -1 )
-		if ( errno != EINPROGRESS )
+	if ( connect(_sockfd,addr,len) == -1 ) {
+		if ( errno != EINPROGRESS ) {
 			return -1;
+		}
+	}
 #else
 	if ( connect(_sockfd,addr,len) == SOCKET_ERROR ) {
 		int err = WSAGetLastError();
