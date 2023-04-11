@@ -195,7 +195,10 @@ SLConnection::SLConnection(string serverloc)
 SLConnection::~SLConnection() {}
 
 bool SLConnection::setSource(const string &source) {
+	_readingData = false;
 	_useBatch = true;
+	_maxRetries = -1;
+	_sock.setTimeout(300); // default
 
 	size_t pos = source.find('?');
 	if ( pos != std::string::npos ) {
@@ -420,50 +423,36 @@ Record *SLConnection::next() {
 		return nullptr;
 	}
 
-	// _sock.startTimer();
-	bool trials = false;
+	bool inReconnect = false;
 
 	while ( !_sock.isInterrupted() ) {
 		try {
 			if ( !_readingData ) {
-				if ( _streams.empty() )
+				if ( _streams.empty() ) {
 					break;
+				}
 
-				try {
-					if ( _retriesLeft < 0 ) _retriesLeft = _maxRetries;
-					_sock.open(_serverloc);
-					_sock.startTimer();
-					SEISCOMP_DEBUG("Handshaking SeedLink server at %s", _serverloc.c_str());
-					handshake();
-					_readingData = true;
-					_retriesLeft = -1;
+				if ( _retriesLeft < 0 ) {
+					_retriesLeft = _maxRetries;
 				}
-				catch ( SocketTimeout &ex ) {
-					Core::msleep(500);
-					if (_sock.isInterrupted()) {
-						_sock.close();
-						break;
-					}
-					reconnect();
-					if ( _retriesLeft < 0 && _maxRetries >= 0 ) break;
-					trials = true;
-					continue;
+
+				_sock.open(_serverloc);
+				_sock.startTimer();
+				SEISCOMP_DEBUG("Handshaking SeedLink server at %s", _serverloc.c_str());
+
+				handshake();
+
+				if ( inReconnect) {
+					SEISCOMP_INFO("Connection to %s re-established", _serverloc.c_str());
 				}
-				catch ( SocketResolveError &ex ) {
-					Core::msleep(500);
-					if (_sock.isInterrupted()) {
-						_sock.close();
-						break;
-					}
-					reconnect();
-					if ( _retriesLeft < 0 && _maxRetries >= 0 ) break;
-					trials = true;
-					continue;
-				}
+
+				_readingData = true;
+				_retriesLeft = -1;
+
+				inReconnect = false;
 			}
 
 			_sock.startTimer();
-			/*** termination? ***/
 			_slrecord = _sock.read(strlen(TERMTOKEN));
 			if ( !_slrecord.compare(TERMTOKEN) ) {
 				_sock.close();
@@ -475,7 +464,6 @@ Record *SLConnection::next() {
 				_sock.close();
 				break;
 			}
-			/********************/
 
 			_slrecord += _sock.read(HEADSIZE+RECSIZE-strlen(ERRTOKEN));
 			char *data = const_cast<char *>(_slrecord.c_str());
@@ -486,7 +474,7 @@ Record *SLConnection::next() {
 
 			MSRecord *prec = nullptr;
 
-			if (msr_unpack(data+HEADSIZE,RECSIZE,&prec,0,0) == MS_NOERROR) {
+			if ( msr_unpack(data+HEADSIZE,RECSIZE,&prec,0,0) == MS_NOERROR ) {
 				int samprate_fact = prec->fsdh->samprate_fact;
 				int numsamples = prec->fsdh->numsamples;
 
@@ -516,25 +504,36 @@ Record *SLConnection::next() {
 				SEISCOMP_WARNING("Could not parse the incoming MiniSEED record. Ignore it.");
 		}
 		catch ( SocketException &ex ) {
-			if ( _sock.tryReconnect() ) {
-				if (!trials)
-					SEISCOMP_ERROR("SocketException: %s; Try to reconnect",ex.what());
-				/* sleep before reconnect */
-				Core::msleep(500);
-				/**************************/
-				if (_sock.isInterrupted()) {
-					_sock.close();
-					break;
-				}
-				reconnect();
-				if ( _retriesLeft < 0 && _maxRetries >= 0 ) break;
-				trials = true;
-				continue;
-			}
-			else {
+			SEISCOMP_ERROR("SocketException: %s",ex.what());
+
+			if ( _sock.isInterrupted() ) {
 				_sock.close();
 				break;
 			}
+
+			if ( _retriesLeft <= 0 && _maxRetries >= 0 ) {
+				break;
+			}
+
+			if ( !inReconnect ) {
+				SEISCOMP_ERROR("Connection or handshake with %s failed. "
+				               "Trying to reconnect every 0.5 seconds",
+				               _serverloc.c_str());
+			}
+
+			inReconnect = true;
+
+			/* sleep before reconnect */
+			Core::msleep(500);
+
+			if ( _sock.isInterrupted() ) {
+				_sock.close();
+				break;
+			}
+
+			reconnect();
+
+			continue;
 		}
 		catch ( GeneralException & ) {
 			_sock.close();
