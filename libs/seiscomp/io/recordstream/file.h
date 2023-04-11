@@ -28,6 +28,7 @@
 
 #include <seiscomp/io/recordstream.h>
 #include <seiscomp/core.h>
+#include <boost/regex.hpp>
 
 
 namespace Seiscomp {
@@ -115,6 +116,9 @@ class SC_SYSTEM_CORE_API File : public Seiscomp::IO::RecordStream {
 		};
 
 		typedef std::map<std::string, TimeWindowFilter> FilterMap;
+		typedef std::vector< std::pair<boost::regex,TimeWindowFilter> > ReFilterList;
+
+		const TimeWindowFilter* findTimeWindowFilter(Record *rec) const;
 
 		RecordFactory  *_factory;
 		std::string     _name;
@@ -122,6 +126,7 @@ class SC_SYSTEM_CORE_API File : public Seiscomp::IO::RecordStream {
 		std::fstream    _fstream;
 		std::istream   *_current;
 		FilterMap       _filter;
+		ReFilterList    _reFilter;
 		Core::Time      _startTime;
 		Core::Time      _endTime;
 };

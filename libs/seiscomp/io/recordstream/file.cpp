@@ -25,9 +25,42 @@
 
 
 using namespace std;
+using namespace boost;
 using namespace Seiscomp;
 using namespace Seiscomp::RecordStream;
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+namespace {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+regex createStreamRE(const string& streamPattern) {
+	// convert user special characters (* ? .) to regex equivalent
+	const string reMatch = regex_replace(
+		regex_replace(
+			regex_replace( 
+				streamPattern,
+				regex("\\."),  // . becomes \.
+				string("\\."),
+				match_flag_type::format_literal
+			),
+			regex("\\?"),    // ? becomes .
+			string("."),
+			match_flag_type::format_literal
+		),
+		regex("\\*"),     // * becomes .*
+		string(".*"),
+		match_flag_type::format_literal
+	);
+	return regex(reMatch, regex::optimize);
+}
+
+
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+}
+
 
 
 
@@ -144,7 +177,13 @@ bool File::setSource(const string &name) {
 bool File::addStream(const string &net, const string &sta,
                      const string &loc, const string &cha) {
 	string id = net + "." + sta + "." + loc + "." + cha;
-	_filter[id] = TimeWindowFilter();
+	if ( id.find_first_of("*?()|") == std::string::npos ) {
+		_filter[id] = TimeWindowFilter();
+	}
+	else { // wildcards characters are present
+		regex re = createStreamRE(id);
+		_reFilter.push_back(make_pair(re, TimeWindowFilter()));
+	}
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -158,7 +197,13 @@ bool File::addStream(const string &net, const string &sta,
                      const Seiscomp::Core::Time &stime,
                      const Seiscomp::Core::Time &etime) {
 	string id = net + "." + sta + "." + loc + "." + cha;
-	_filter[id] = TimeWindowFilter(stime, etime);
+	if ( id.find_first_of("*?()|") == std::string::npos ) {
+		_filter[id] = TimeWindowFilter(stime, etime);
+	}
+	else { // wildcards characters are present
+		regex re = createStreamRE(id);
+		_reFilter.push_back(make_pair(re, TimeWindowFilter(stime, etime)));
+	}
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -212,12 +257,39 @@ bool File::setRecordType(const char *type) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const File::TimeWindowFilter* File::findTimeWindowFilter(Record *rec) const {
+
+	// First look for not regular expression filters
+	const auto & it = _filter.find(rec->streamID());
+	if ( it != _filter.end() ) {
+		return &it->second;
+	}
+
+	// then search the regular expression filters
+	for ( const auto& pair : _reFilter ) {
+		const regex& re = pair.first;
+		const TimeWindowFilter& twf = pair.second;
+		if ( regex_match(rec->streamID(), re) ) {
+			return &twf;
+		}
+	}
+
+	// no matches
+	return nullptr;
+}
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record *File::next() {
 	if ( _closeRequested ) {
 		if (_name != "-")
 			_fstream.close();
 		_current = &_fstream;
 		_filter.clear();
+		_reFilter.clear();
 		_closeRequested = false;
 		return nullptr;
 	}
@@ -245,16 +317,16 @@ Record *File::next() {
 			return nullptr;
 		}
 
-		if ( !_filter.empty() ) {
-			FilterMap::iterator it = _filter.find(rec->streamID());
+		if ( !_filter.empty() || !_reFilter.empty() ) {
+			const TimeWindowFilter* twf = findTimeWindowFilter(rec);
 			// Not subscribed
-			if ( it == _filter.end() ) {
+			if ( !twf ) {
 				delete rec;
 				continue;
 			}
 
-			if ( it->second.start.valid() ) {
-				if ( rec->endTime() < it->second.start ) {
+			if ( twf->start.valid() ) {
+				if ( rec->endTime() < twf->start ) {
 					delete rec;
 					continue;
 				}
@@ -266,8 +338,8 @@ Record *File::next() {
 				}
 			}
 
-			if ( it->second.end.valid() ) {
-				if ( rec->startTime() >= it->second.end ) {
+			if ( twf->end.valid() ) {
+				if ( rec->startTime() >= twf->end ) {
 					delete rec;
 					continue;
 				}
