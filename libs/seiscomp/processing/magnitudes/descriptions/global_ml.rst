@@ -3,8 +3,8 @@ Southern California by :cite:t:`richter-1935`.
 
 General (default) conditions apply:
 
-* Amplitude unit in SeisComP: **millimeter** (mm) by Wood-Anderson simulation.
-* Time window, configurable: 150 s by :ref:`scautopick` or distance dependent.
+* Amplitude unit in SeisComP: **millimeter** (mm) by simulation of a :term:`Wood-Anderson seismometer`.
+* Time window, configurable: 150 s by :ref:`scautopick` or distance dependent, configurable.
 * Distance type: epicentral distance.
 * Distance range: 0 - 8 deg,  maximum is configurable:
   :confval:`magnitudes.ML.maxDistanceKm`,

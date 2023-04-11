@@ -14,7 +14,7 @@ Regionalization of magnitude computation is provided through global module
 configuration.
 Configuration of global bindings provides additional flexibility:
 
-* Amplitudes can be pre-filtered before applying Wood-Anderson simulation
+* Amplitudes can be pre-filtered before simulating a :term:`Wood-Anderson seismometer`
   (:confval:`amplitudes.MLc.preFilter`),
 * Wood-Anderson simulation is optional:
   :confval:`amplitudes.MLc.applyWoodAnderson`,
@@ -33,10 +33,9 @@ General (default) conditions apply, all values are configurable:
 * Amplitude unit in SeisComP: **millimeter** (mm) or as considered by the
   configured calibration parameters.
 * Optional amplitude scaling: 1.
-* Wood-Anderson simulation: yes.
+* :term:`Wood-Anderson seismometer` simulation: yes.
 * Time window: 150 s by :ref:`scautopick` or distance dependent
-  with :math:`endTime = distance [km]/ 3 + 30`, e.g. by :ref:`scmag` or
-  :ref:`scolv`.
+  with :math:`endTime = distance [km]/ 3 + 30`, configurable.
 * Distance type: hypocentral.
 * Distance range: 0 - 8 deg, measurements beyond 8 deg will be
   strictly ignored.
@@ -49,8 +48,8 @@ Amplitudes
 
 MLc amplitudes can be measured automatically by :ref:`scautopick` or :ref:`scamp`
 or interactively by :ref:`scolv` very similarly to the original :ref:`ML<global_ml>`,
-except that they can be pre-filtered and applying Wood-Anderson simulation is
-optional: :confval:`amplitudes.MLc.preFilter`,
+except that they can be pre-filtered and simulation of a :term:`Wood-Anderson seismometer`
+is optional: :confval:`amplitudes.MLc.preFilter`,
 :confval:`amplitudes.MLc.applyWoodAnderson`.
 By default amplitudes are measured on both horizontal components where the
 absolute maxima are taken. They are combined to a final measured amplitude by

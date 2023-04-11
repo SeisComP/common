@@ -3,7 +3,7 @@ vertical component.
 
 General (default) conditions apply:
 
-* Amplitude unit in SeisComP: **millimeter** (mm) by Wood-Anderson simulation.
+* Amplitude unit in SeisComP: **millimeter** (mm) by simulation of a :term:`Wood-Anderson seismometer`.
 * Time window: 150 s by :ref:`scautopick` or distance dependent, configurable.
 * Default distance range: 0 - 8 deg,  maximum is configurable
   :confval:`magnitudes.MLv.maxDistanceKm`, measurements beyond 8 deg will be
