@@ -79,7 +79,7 @@ class WoodAnderson : public PolesAndZeros {
 		// is recommended by the IASPEI Magnitude Working Group
 		// recommendations of 2011 September 9.
 		struct Config {
-			Config(double gain=2800, double T0=0.8, double h=0.8) :
+			Config(double gain=2080, double T0=0.8, double h=0.7) :
 				gain(gain), T0(T0), h(h) {}
 
 			double gain, T0, h;
@@ -125,7 +125,7 @@ class Filter : public SeismometerResponse::PolesAndZeros,
 		int setParameters(int n, const double *params) override;
 
 		void apply(int n, T *inout) override;
-	
+
 		Math::Filtering::InPlaceFilter<T> *clone() const override;
 
 	private:

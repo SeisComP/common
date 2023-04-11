@@ -397,15 +397,17 @@
 			</group>
 			<group name="amplitudes">
 				<description>
-				Parameters of amplitude measurements.
+				Parameters for amplitude measurements.
 				</description>
 				<group name="WoodAnderson">
 					<description>
 					Parameters of the Wood-Anderson seismometer response used
-					for instrument simulation. The WA parameters can be overridden
-					per stream by global bindings.
+					for instrument simulation. The default values are according
+					to Uhrhammer and Collins (1990) and were part of the
+					IASPEI Magnitude Working Group recommendations of 2011
+					September 9.
 					</description>
-					<parameter name="gain" type="double" default="2800">
+					<parameter name="gain" type="double" default="2080">
 						<description>
 						The gain of the Wood-Anderson response.
 						</description>
@@ -415,7 +417,7 @@
 						The eigenperiod of the Wood-Anderson seismometer.
 						</description>
 					</parameter>
-					<parameter name="h" type="double" default="0.8">
+					<parameter name="h" type="double" default="0.7">
 						<description>
 						The damping constant of the Wood-Anderson seismometer.
 						</description>
@@ -927,14 +929,12 @@
 				<group name="WoodAnderson">
 					<description>
 					Parameters of the Wood-Anderson seismometer response used
-					for instrument simulation.
-					The default values are according to the version of
-					Gutenberg (1935). The newer version by Uhrhammer and
-					Collins (1990) is part of the IASPEI Magnitude
-					Working Group recommendations of 2011 September 9. This
-					version uses gain=2800, T0=0.8 s, h=0.8.
+					for instrument simulation. The default values are according
+					to Uhrhammer and Collins (1990) and were part of the
+					IASPEI Magnitude Working Group recommendations of 2011
+					September 9.
 					</description>
-					<parameter name="gain" type="double" default="2800">
+					<parameter name="gain" type="double" default="2080">
 						<description>
 						The gain of the Wood-Anderson response.
 						</description>
@@ -944,7 +944,7 @@
 						The eigenperiod of the Wood-Anderson seismometer.
 						</description>
 					</parameter>
-					<parameter name="h" type="double" default="0.8">
+					<parameter name="h" type="double" default="0.7">
 						<description>
 						The damping constant of the Wood-Anderson seismometer.
 						</description>
