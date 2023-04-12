@@ -20,6 +20,7 @@
 
 #define SEISCOMP_COMPONENT RECORDFILE
 #include "file.h"
+#include <seiscomp/core/strings.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/system/environment.h>
 
@@ -144,7 +145,12 @@ bool File::setSource(const string &name) {
 bool File::addStream(const string &net, const string &sta,
                      const string &loc, const string &cha) {
 	string id = net + "." + sta + "." + loc + "." + cha;
-	_filter[id] = TimeWindowFilter();
+	if ( id.find_first_of("*?") == std::string::npos ) {
+		_filter.emplace(id, TimeWindowFilter());
+	}
+	else { // wildcards characters are present
+		_reFilter.emplace_back(id, TimeWindowFilter());
+	}
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -158,7 +164,12 @@ bool File::addStream(const string &net, const string &sta,
                      const Seiscomp::Core::Time &stime,
                      const Seiscomp::Core::Time &etime) {
 	string id = net + "." + sta + "." + loc + "." + cha;
-	_filter[id] = TimeWindowFilter(stime, etime);
+	if ( id.find_first_of("*?") == std::string::npos ) {
+		_filter.emplace(id, TimeWindowFilter(stime, etime));
+	}
+	else { // wildcards characters are present
+		_reFilter.emplace_back(id, TimeWindowFilter(stime, etime));
+	}
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -212,12 +223,44 @@ bool File::setRecordType(const char *type) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const File::TimeWindowFilter* File::findTimeWindowFilter(Record *rec) {
+	const string streamID = rec->streamID();
+
+	// First look for fully qualified stream id (no wildcards)
+	const auto & it = _filter.find(streamID);
+	if ( it != _filter.end() ) {
+		return &it->second;
+	}
+
+	// then search the wildcarded filters
+	for ( const auto& pair : _reFilter ) {
+		const string& wild = pair.first;
+		const TimeWindowFilter& twf = pair.second;
+		if ( Core::wildcmp(wild, streamID) ) {
+			// now add this stream to the fully qualified ones, so that
+			// next record with the same stream will be resolved without
+			// going through this loop
+			_filter.emplace(streamID, twf);
+			return &twf;
+		}
+	}
+
+	// no matches
+	return nullptr;
+}
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record *File::next() {
 	if ( _closeRequested ) {
 		if (_name != "-")
 			_fstream.close();
 		_current = &_fstream;
 		_filter.clear();
+		_reFilter.clear();
 		_closeRequested = false;
 		return nullptr;
 	}
@@ -245,16 +288,16 @@ Record *File::next() {
 			return nullptr;
 		}
 
-		if ( !_filter.empty() ) {
-			FilterMap::iterator it = _filter.find(rec->streamID());
+		if ( !_filter.empty() || !_reFilter.empty() ) {
+			const TimeWindowFilter* twf = findTimeWindowFilter(rec);
 			// Not subscribed
-			if ( it == _filter.end() ) {
+			if ( !twf ) {
 				delete rec;
 				continue;
 			}
 
-			if ( it->second.start.valid() ) {
-				if ( rec->endTime() < it->second.start ) {
+			if ( twf->start.valid() ) {
+				if ( rec->endTime() < twf->start ) {
 					delete rec;
 					continue;
 				}
@@ -266,8 +309,8 @@ Record *File::next() {
 				}
 			}
 
-			if ( it->second.end.valid() ) {
-				if ( rec->startTime() >= it->second.end ) {
+			if ( twf->end.valid() ) {
+				if ( rec->startTime() >= twf->end ) {
 					delete rec;
 					continue;
 				}

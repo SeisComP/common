@@ -115,6 +115,9 @@ class SC_SYSTEM_CORE_API File : public Seiscomp::IO::RecordStream {
 		};
 
 		typedef std::map<std::string, TimeWindowFilter> FilterMap;
+		typedef std::vector< std::pair<std::string,TimeWindowFilter> > ReFilterList;
+
+		const TimeWindowFilter* findTimeWindowFilter(Record *rec);
 
 		RecordFactory  *_factory;
 		std::string     _name;
@@ -122,6 +125,7 @@ class SC_SYSTEM_CORE_API File : public Seiscomp::IO::RecordStream {
 		std::fstream    _fstream;
 		std::istream   *_current;
 		FilterMap       _filter;
+		ReFilterList    _reFilter;
 		Core::Time      _startTime;
 		Core::Time      _endTime;
 };
