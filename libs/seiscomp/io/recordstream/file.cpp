@@ -24,6 +24,7 @@
 #include <seiscomp/logging/log.h>
 #include <seiscomp/system/environment.h>
 
+
 using namespace std;
 using namespace Seiscomp;
 using namespace Seiscomp::RecordStream;
@@ -145,10 +146,10 @@ bool File::addStream(const string &net, const string &sta,
                      const string &loc, const string &cha) {
 	string id = net + "." + sta + "." + loc + "." + cha;
 	if ( id.find_first_of("*?") == std::string::npos ) {
-		_filter[id] = TimeWindowFilter();
+		_filter.emplace(id, TimeWindowFilter());
 	}
 	else { // wildcards characters are present
-		_reFilter.push_back(make_pair(id, TimeWindowFilter()));
+		_reFilter.emplace_back(id, TimeWindowFilter());
 	}
 	return true;
 }
@@ -164,10 +165,10 @@ bool File::addStream(const string &net, const string &sta,
                      const Seiscomp::Core::Time &etime) {
 	string id = net + "." + sta + "." + loc + "." + cha;
 	if ( id.find_first_of("*?") == std::string::npos ) {
-		_filter[id] = TimeWindowFilter(stime, etime);
+		_filter.emplace(id, TimeWindowFilter(stime, etime));
 	}
 	else { // wildcards characters are present
-		_reFilter.push_back(make_pair(id, TimeWindowFilter(stime, etime)));
+		_reFilter.emplace_back(id, TimeWindowFilter(stime, etime));
 	}
 	return true;
 }
@@ -223,9 +224,10 @@ bool File::setRecordType(const char *type) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const File::TimeWindowFilter* File::findTimeWindowFilter(Record *rec) {
+	const string streamID = rec->streamID();
 
 	// First look for fully qualified stream id (no wildcards)
-	const auto & it = _filter.find(rec->streamID());
+	const auto & it = _filter.find(streamID);
 	if ( it != _filter.end() ) {
 		return &it->second;
 	}
@@ -234,11 +236,11 @@ const File::TimeWindowFilter* File::findTimeWindowFilter(Record *rec) {
 	for ( const auto& pair : _reFilter ) {
 		const string& wild = pair.first;
 		const TimeWindowFilter& twf = pair.second;
-		if ( Core::wildcmp(wild, rec->streamID()) ) {
+		if ( Core::wildcmp(wild, streamID) ) {
 			// now add this stream to the fully qualified ones, so that
 			// next record with the same stream will be resolved without
 			// going through this loop
-			_filter[rec->streamID()] = twf;
+			_filter.emplace(streamID, twf);
 			return &twf;
 		}
 	}
