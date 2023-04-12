@@ -20,47 +20,14 @@
 
 #define SEISCOMP_COMPONENT RECORDFILE
 #include "file.h"
+#include <seiscomp/core/strings.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/system/environment.h>
 
-
 using namespace std;
-using namespace boost;
 using namespace Seiscomp;
 using namespace Seiscomp::RecordStream;
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-namespace {
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-regex createStreamRE(const string& streamPattern) {
-	// convert user special characters (* ? .) to regex equivalent
-	const string reMatch = regex_replace(
-		regex_replace(
-			regex_replace( 
-				streamPattern,
-				regex("\\."),  // . becomes \.
-				string("\\."),
-				match_flag_type::format_literal
-			),
-			regex("\\?"),    // ? becomes .
-			string("."),
-			match_flag_type::format_literal
-		),
-		regex("\\*"),     // * becomes .*
-		string(".*"),
-		match_flag_type::format_literal
-	);
-	return regex(reMatch, regex::optimize);
-}
-
-
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-}
-
 
 
 
@@ -177,12 +144,11 @@ bool File::setSource(const string &name) {
 bool File::addStream(const string &net, const string &sta,
                      const string &loc, const string &cha) {
 	string id = net + "." + sta + "." + loc + "." + cha;
-	if ( id.find_first_of("*?()|") == std::string::npos ) {
+	if ( id.find_first_of("*?") == std::string::npos ) {
 		_filter[id] = TimeWindowFilter();
 	}
 	else { // wildcards characters are present
-		regex re = createStreamRE(id);
-		_reFilter.push_back(make_pair(re, TimeWindowFilter()));
+		_reFilter.push_back(make_pair(id, TimeWindowFilter()));
 	}
 	return true;
 }
@@ -197,12 +163,11 @@ bool File::addStream(const string &net, const string &sta,
                      const Seiscomp::Core::Time &stime,
                      const Seiscomp::Core::Time &etime) {
 	string id = net + "." + sta + "." + loc + "." + cha;
-	if ( id.find_first_of("*?()|") == std::string::npos ) {
+	if ( id.find_first_of("*?") == std::string::npos ) {
 		_filter[id] = TimeWindowFilter(stime, etime);
 	}
 	else { // wildcards characters are present
-		regex re = createStreamRE(id);
-		_reFilter.push_back(make_pair(re, TimeWindowFilter(stime, etime)));
+		_reFilter.push_back(make_pair(id, TimeWindowFilter(stime, etime)));
 	}
 	return true;
 }
@@ -257,19 +222,23 @@ bool File::setRecordType(const char *type) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const File::TimeWindowFilter* File::findTimeWindowFilter(Record *rec) const {
+const File::TimeWindowFilter* File::findTimeWindowFilter(Record *rec) {
 
-	// First look for not regular expression filters
+	// First look for fully qualified stream id (no wildcards)
 	const auto & it = _filter.find(rec->streamID());
 	if ( it != _filter.end() ) {
 		return &it->second;
 	}
 
-	// then search the regular expression filters
+	// then search the wildcarded filters
 	for ( const auto& pair : _reFilter ) {
-		const regex& re = pair.first;
+		const string& wild = pair.first;
 		const TimeWindowFilter& twf = pair.second;
-		if ( regex_match(rec->streamID(), re) ) {
+		if ( Core::wildcmp(wild, rec->streamID()) ) {
+			// now add this stream to the fully qualified ones, so that
+			// next record with the same stream will be resolved without
+			// going through this loop
+			_filter[rec->streamID()] = twf;
 			return &twf;
 		}
 	}
