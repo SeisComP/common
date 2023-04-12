@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <assert.h>
 
 
 int brack_(int *, float *, float *, int *);
@@ -65,8 +66,11 @@ int holint2_(int *phase_id,
              float *fbad, float *x0, float *y0, float *f0,
              float *fx0, float *fy0, float *fxy0,
              int *idist, int *idepth, int *ihole) {
+	#define MAX_SUBGRID_X 4
+	#define MAX_SUBGRID_Z 4
+
 	/* System generated locals */
-	int f_dim1, f_offset, tmp1, tmp2;
+	int f_dim1, f_offset;
 
 	/* Local variables */
 	int ichk;
@@ -76,11 +80,11 @@ int holint2_(int *phase_id,
 	int i, j, k;
 	int ileft, jleft, js;
 	float tt_min, tt_max;
-	float f0s[4];
+	float f0s[MAX_SUBGRID_Z];
 	int extrap_in_hole;
 	float vel;
 	int min_idx, max_idx;
-	float subgrid[724] /* was [181][4] */, fx0s[4];
+	float subgrid[MAX_SUBGRID_X * MAX_SUBGRID_Z] /* was [181][4] */, fx0s[MAX_SUBGRID_Z];
 	int num_samples, extrap_distance, ibad;
 
 	/* K.S. 1-Dec-97, changed 'undefined' to 'none' */
@@ -114,25 +118,38 @@ int holint2_(int *phase_id,
 	brack_(nd, &x[1], x0, &ileft);
 
 	/* Computing MAX */
-	tmp1 = 1, tmp2 = ileft - 1;
-	imin = max(tmp1,tmp2);
+	imin = ileft - 1;
+	if ( imin < 1 ) {
+		imin = 1;
+	}
 
 	/* Computing MIN */
-	tmp1 = *nd, tmp2 = ileft + 2;
-	imax = min(tmp1,tmp2);
+	imax = ileft + 2;
+	if ( imax > *nd ) {
+		imax = *nd;
+	}
 	muse = imax - imin + 1;
+
+	assert(muse <= 4);
 
 	/*     Do the same for y() */
 	brack_(nz, &y[1], y0, &jleft);
 
 	/* Computing MAX */
-	tmp1 = 1, tmp2 = jleft - 1;
-	jmin = max(tmp1,tmp2);
+	jmin = jleft - 1;
+	if ( jmin < 1 ) {
+		jmin = 1;
+	}
 
 	/* Computing MIN */
-	tmp1 = *nz, tmp2 = jleft + 2;
-	jmax = min(tmp1,tmp2);
+	jmax = jleft + 2;
+	if ( jmax > *nz ) {
+		jmax = *nz;
+	}
+
 	nuse = jmax - jmin + 1;
+
+	assert(nuse <= 4);
 
 	/* Fill in subgrid with valid times where available and fill-in empty */
 	/* parts of the desired curve with linearly extrapolated values.  For */
@@ -192,10 +209,10 @@ int holint2_(int *phase_id,
 					if ( dist_max <= (float)110. && x[i] > (float)110. ) {
 						hold = ((float)110. - dist_max) / vel + tt_max + (float)238.;
 						vel *= (float)2.4;
-						subgrid[i + j * 181 - 182] = (x[i] - (float)110.) / vel + hold;
+						subgrid[(j - jmin) * MAX_SUBGRID_X + i - imin] = (x[i] - (float)110.) / vel + hold;
 					}
 					else
-						subgrid[i + j * 181 - 182] = (x[i] - dist_max) / vel + tt_max;
+						subgrid[(j - jmin) * MAX_SUBGRID_X + i - imin] = (x[i] - dist_max) / vel + tt_max;
 
 					extrap_distance = 1;
 					/* Off the low end ? */
@@ -208,7 +225,7 @@ int holint2_(int *phase_id,
 
 					tt_min = func[min_idx + j * f_dim1];
 					vel = (x[k] - dist_min) / (func[k + j * f_dim1] - tt_min);
-					subgrid[i + j * 181 - 182] = tt_min - (dist_min - x[i]) / vel;
+					subgrid[(j - jmin) * MAX_SUBGRID_X + i - imin] = tt_min - (dist_min - x[i]) / vel;
 					extrap_distance = -1;
 					/* In a hole ? */
 				}
@@ -230,7 +247,7 @@ int holint2_(int *phase_id,
 
 					tt_max = func[max_idx + j * f_dim1];
 					vel = (dist_max - x[k]) / (tt_max - func[k + j * f_dim1]);
-					subgrid[i + j * 181 - 182] = (x[i] - dist_max) / vel + tt_max;
+					subgrid[(j - jmin) * MAX_SUBGRID_X + i - imin] = (x[i] - dist_max) / vel + tt_max;
 					extrap_in_hole = 1;
 				}
 
@@ -238,7 +255,7 @@ int holint2_(int *phase_id,
 				*idist = extrap_distance;
 			}
 			else
-				subgrid[i + j * 181 - 182] = func[i + j * f_dim1];
+				subgrid[(j - jmin) * MAX_SUBGRID_X + i - imin] = func[i + j * f_dim1];
 		}
 	}
 
@@ -248,7 +265,7 @@ int holint2_(int *phase_id,
 	/* Now interpolate to (x0, y(j)), j = jmin, jmax) */
 	for ( j = jmin; j <= jmax; ++j ) {
 		js = j - jmin + 1;
-		holint_(&muse, &x[imin], &subgrid[imin + j * 181 - 182], fbad, x0, & f0s[js - 1], &fx0s[js - 1], &iext, &ibad);
+		holint_(&muse, &x[imin], &subgrid[(j - jmin) * MAX_SUBGRID_X], fbad, x0, & f0s[js - 1], &fx0s[js - 1], &iext, &ibad);
 	}
 
 	/* Now interpolate to (x0,y0) */

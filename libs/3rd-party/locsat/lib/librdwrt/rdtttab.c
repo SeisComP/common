@@ -1,7 +1,7 @@
 
 /* NAME
  *	rdtttab -- Read travel-time tables
- 
+
  * FILE
  *	rdtttab.c
 
@@ -9,41 +9,41 @@
  *	Read travel-time and amplitude tables for individual phase-types
 
  * DESCRIPTION
- *	Function.  Establish file structures and read travel-time and 
- *	amplitude tables applicable for the given input phase-types. 
+ *	Function.  Establish file structures and read travel-time and
+ *	amplitude tables applicable for the given input phase-types.
  *	Read travel-time tables from files into memory.  The filenames to
- *	be read have the form root.phase_type_ptr[k], where root is the 
- *	non-blank part of froot, and where phase_type_ptr[k] is a wave 
- *	identifier for k = 1, nwav; e.g., 'Pg', 'Pn', 'Sn', 'Lg'.  The 
- *	data read is put into the appropriate arrays as indicated by the 
+ *	be read have the form root.phase_type_ptr[k], where root is the
+ *	non-blank part of froot, and where phase_type_ptr[k] is a wave
+ *	identifier for k = 1, nwav; e.g., 'Pg', 'Pn', 'Sn', 'Lg'.  The
+ *	data read is put into the appropriate arrays as indicated by the
  *	filename suffix.
  *	Example: If froot = 'tab' and phase_type_ptr = 'Pg', 'Lg', then this
  *		 routine reads files 'tab.Pg' and 'tab.Lg'.
 
  *	---- Indexing ----
  *	i = 1, ntbd[k];	j = 1, ntbz[k];	k = 1, nwav;
-  
+
  *	---- On entry ----
  *	froot:		Root name of file to be read
  *	nwav:		Number of wave types to be used
  *	maxtbd:		Maximum number of distance samples in tables
  *	maxtbz:		Maximum number of depth samples in tables
  *	phase_type_ptr[k]: Character identifier of k'th wave
- 
+
  *	---- On return ----
  *	ntbd[k]:	Number of distance samples in tables
  *	ntbz[k]:	Number of depth samples in tables
  *	tbd[i][k]:	Angular distance of the [i][j]'th sample (deg)
  *	tbz[j][k]:	Depth of the [i][j]'th sample (km)
  *	tbtt[i][j][k]:	Travel-time of the [i][j][k]'th sample (sec, sec/deg)
- 
+
  * DIAGNOSTICS
  *	Will specify when any (or all) input files cannot be opened.
 
  * NOTE
- *	If file, filnam will not open, then arrays, ntbd[][] and ntbz[][] 
+ *	If file, filnam will not open, then arrays, ntbd[][] and ntbz[][]
  *	are returned as zero.
- 
+
  * AUTHOR
  *	Walter Nagy, January 1991
  */
@@ -107,8 +107,8 @@ void rdtttab(char *froot, /* Size [ca. 1024] */
 		strcpy(filnam, froot);
 		strcat(filnam, ".");
 		strcat(filnam, *s2ptr);
-		
-		/** HACK to avoid problems with filesystems not able to handle upper/lower case filenames 
+
+		/** HACK to avoid problems with filesystems not able to handle upper/lower case filenames
 		**  e.g. Microsofts NTFS or HFS+ on Mac's
 		*/
 		if ( strcmp(*s2ptr, "pP") == 0 )
@@ -146,6 +146,7 @@ void rdtttab(char *froot, /* Size [ca. 1024] */
 			        "\nToo many depth samples in file",
 			        filnam, maxtbz, ntbzx-maxtbz);
 			ntbz[k] = maxtbz;
+			err = 3;
 		}
 
 		for ( tflt = temp_tbz, i = 0; i < ntbzx && !err; ++i ) {
@@ -161,9 +162,9 @@ void rdtttab(char *froot, /* Size [ca. 1024] */
 
 		temp_tbz += maxtbz;
 
- 
+
 		/* Read distance sampling */
- 
+
 		if ( fscanf (opf, "%d%*[^\n]", &ntbdx) != 1 ) {
 			READ_E1("number of distance samples");
 			err = 2;
@@ -174,6 +175,7 @@ void rdtttab(char *froot, /* Size [ca. 1024] */
 			         "\nToo many distance samples in file",
 			         filnam, maxtbd, ntbdx-maxtbd);
 			ntbd[k] = maxtbd;
+			err = 3;
 		}
 
 		for ( tflt = temp_tbd, i = 0; i < ntbdx && !err; ++i ) {
@@ -191,7 +193,7 @@ void rdtttab(char *froot, /* Size [ca. 1024] */
 
 
 		/* Read travel-time tables */
- 
+
 		for ( j = 0 ; j < ntbzx && !err; j++ ) {
 			/* skip the comment line */
 			while ( getc(opf) != '#' );
@@ -218,7 +220,7 @@ void rdtttab(char *froot, /* Size [ca. 1024] */
 
 		if ( j < maxtbz )
 			temp_tt += (maxtbz - j) * maxtbd;
- 
+
 		++num_files;
 		fclose(opf);
 	}
