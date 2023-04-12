@@ -10,7 +10,7 @@
  *	locate_event.c
 
  * SYNOPSIS
- *	This routine serves as the interface for calculating a single event 
+ *	This routine serves as the interface for calculating a single event
  *	location from the applications: ARS, ESAL, LocSAT, and Locator.
 
  * DESCRIPTION
@@ -35,8 +35,8 @@
  *	----------------------------------------------------------------
  *	setup_tttables:
  *		Reads and initializes the travel-time tables for the locator.
- *		These tables are read from disk each time a change is 
- *		detected in the list of tables being maintained and the 
+ *		These tables are read from disk each time a change is
+ *		detected in the list of tables being maintained and the
  *		list of tables input through the argument list.
 
  *	int
@@ -136,7 +136,7 @@
  *		Changed parameters and variables to accomodate new locator
  *		interface.
  *	13 Feb 1991 (CKS)
- *		Added code to locate_event() and setup _sites() to accomodate 
+ *		Added code to locate_event() and setup _sites() to accomodate
  *		above.
  */
 
@@ -151,6 +151,7 @@
 #include "db_origin.h"
 #include "db_origerr.h"
 #include "loc_params.h"
+#include "utils.h"
 /* #include "sysdefs.h" */
 #include "css/trim.h"
 
@@ -183,56 +184,59 @@ static char	SccsId[] = "@(#)locate_event.c	44.3	10/31/91 Copyright 1990 Science 
 #define GLerror9        9
 #define GLerror10       10
 #define GLerror11       11
-#define TTerror1	12
+#define TTerror1        12
 #define TTerror2        13
 #define TTerror3        14
-#define TTerror4	15
-#define SSerror1        16
+#define TTerror4        15
+#define TTerror5        16
+#define SSerror1        17
 
-#define	NULL_TIME	-9999999999.999
-#define	STRIKE_NULL	-1.0
-#define	STRIKE_MIN	0.0
-#define	STRIKE_MAX	360.0
+#define NULL_TIME       -9999999999.999
+#define STRIKE_NULL     -1.0
+#define STRIKE_MIN      0.0
+#define STRIKE_MAX      360.0
 
-#define	MAXTBD		301
-#define	MAXTBZ		50
-#define	MAX(x,y)	(((x) > (y)) ? (x) : (y))
-#define	MIN(x,y)	(((x) < (y)) ? (x) : (y))
+#define MAX(x,y)        (((x) > (y)) ? (x) : (y))
+#define MIN(x,y)        (((x) < (y)) ? (x) : (y))
 
-#define	VALID_TIME(x)	((x) > -9999999999.000)
-#define	VALID_SEAZ(x)	(((x) >= 0.0) && ((x) <= STRIKE_MAX))
-#define	VALID_SLOW(x)	((x) >= 0.0)
-#define	DEG_TO_RAD	0.017453293
+#define VALID_TIME(x)   ((x) > -9999999999.000)
+#define VALID_SEAZ(x)   (((x) >= 0.0) && ((x) <= STRIKE_MAX))
+#define VALID_SLOW(x)   ((x) >= 0.0)
+#define DEG_TO_RAD      0.017453293
 
-#define	ERROR	1
-#define	NOERROR	0
+#define ERROR           1
+#define NOERROR         0
 
-static char	*dir;
-static char	*phase_type;
-static char	**phase_type_ptr;
-static int	num_phase_types;
-static int	maxtbd = MAXTBD;
-static int	maxtbz = MAXTBZ;
-static float	*tbd;
-static float	*tbz;
-static float	*tbtt;
-static int	first_table_read = TRUE;
-static int	*ntbd;
-static int	*ntbz;
-static int	len_dir;
-static int len_n_p_t = 9;
+#define MAXTBD          210
+#define MAXTBZ          50
 
-static char  *net;
-static char  *sta_id;
-static int    num_sta;
-static char  *cortyp;
-static int    sta_cor_level;
-static int    len_sta_id;
-static float *sta_lat;
-static float *sta_lon;
-static float *sta_elev;
-static float *sta_cor;
-static int    first_site_list = TRUE;
+
+static char	  *dir;
+static char	  *phase_type;
+static char  **phase_type_ptr;
+static int     num_phase_types;
+static int     maxtbd = MAXTBD;
+static int     maxtbz = MAXTBZ;
+static float  *tbd;
+static float  *tbz;
+static float  *tbtt;
+static int     first_table_read = TRUE;
+static int    *ntbd;
+static int    *ntbz;
+static int     len_dir;
+static int     len_n_p_t = 9;
+
+static char   *net;
+static char   *sta_id;
+static int     num_sta;
+static char   *cortyp;
+static int     sta_cor_level;
+static int     len_sta_id;
+static float  *sta_lat;
+static float  *sta_lon;
+static float  *sta_elev;
+static float  *sta_cor;
+static int     first_site_list = TRUE;
 
 int brack_(int *n, float *x, float *x0, int *ileft);
 int holint2_(int *phase_id,
@@ -414,7 +418,7 @@ setup_tttables(const char *new_dir, const char **new_phase_types,
 	phase_type_ptr = (char **)malloc ((unsigned) num_phase_types * sizeof(char *));
 	bzero((char *)phase_type, (num_phase_types*len_n_p_t) * (sizeof(char)));
 	bzero((char *)phase_type_ptr, num_phase_types * sizeof(char *));
-	
+
 	for (i = 0; i < num_phase_types; i++)
 	{
 		dummy_ptr = phase_type + i*len_n_p_t;
@@ -451,9 +455,9 @@ setup_tttables(const char *new_dir, const char **new_phase_types,
 		UFREE(tbtt);
 		return (ERROR);
 	}
-	
+
 	/* Read the travel-time tables */
-	
+
 	rdtttab(dir, phase_type_ptr, num_phase_types, maxtbd, maxtbz,
 	        ntbd, ntbz, tbd, tbz, tbtt, &ierr, verbose);
 
@@ -462,12 +466,12 @@ setup_tttables(const char *new_dir, const char **new_phase_types,
 		if (sta_cor_level > 0)
 		{
 			num_type = 1;
-			cortyp = (char *) malloc((unsigned) num_type * 9 
+			cortyp = (char *) malloc((unsigned) num_type * 9
 					  * sizeof(char));
 			dummy_ptr = cortyp + (num_type-1)*9;
 			strcpy (dummy_ptr, "TT");
 			FPAD(dummy_ptr, 9);
-			rdcortab_ (dir, cortyp, &num_type, sta_id, phase_type, 
+			rdcortab_ (dir, cortyp, &num_type, sta_id, phase_type,
 				   &num_sta, &num_phase_types, &ierr, len_dir,
 				   2, len_sta_id, len_n_p_t);
 			if (ierr > 1)
@@ -498,10 +502,15 @@ setup_tttables(const char *new_dir, const char **new_phase_types,
 			fprintf (stderr, "setup_tttables: Error reading travel-time tables: Unexpected E-O-F");
 			return (TTerror3);
 		}
+		else if (ierr == 3)
+		{
+			fprintf (stderr, "setup_tttables: Error reading travel time tables, too many distance or depth samples");
+			return (TTerror4);
+		}
 		else
 		{
 			fprintf (stderr, "setup_tttables: Unknown error reading travel-time tables");
-			return (TTerror4);
+			return (TTerror5);
 		}
 	}
 }
@@ -581,7 +590,7 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 	*/
 		new_dir		    = locator_params->prefix;
 		sta_cor_level	    = locator_params->cor_level;
-		
+
 		if ((loc_err = setup_tttables_dir (new_dir, locator_params->verbose == 'y')) != 0)
 			return (loc_err);
 	/*
@@ -592,7 +601,7 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 
 	if ((num_obs == 0) || (! arrival))
 	{
-		/* It is not an error to simply initialize */ 
+		/* It is not an error to simply initialize */
 		fprintf (stderr,"Warning locate_event: No observations to process");
 		return (GLerror7);
 	}
@@ -618,13 +627,13 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 	{
 		if (arrival[i].arid != assoc[i].arid)
 		{
-			fprintf (stderr, 
+			fprintf (stderr,
 				 "Error locate_event: Mismatch between arrival/assoc.\n");
 			return (GLerror11);
 		}
 	}
-	
-	
+
+
 	lat_init	= locator_params->lat_init;
 	lon_init	= locator_params->lon_init;
 	depth_init	= locator_params->depth_init;
@@ -638,7 +647,7 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 	outfile_name	= locator_params->outfile_name;
 	fixing_depth    = locator_params->fixing_depth;
 
-	/* 
+	/*
 	 * kludge to get output to print to a file, if the file exists
 	 * the output will be appended to the end; this is handle in
 	 * locsat0
@@ -648,7 +657,7 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 		luout = 6;
 	else
 		luout = 17;
-	
+
 	/*
 	 * Use current lat/lon as initial guess.  Depth is set in
 	 * get_locator_variables().
@@ -667,10 +676,10 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 		lon_init = -999.0;
 		lat_init = -999.0;
 	}
-	
+
 	if (fix_depth == 'y')
 		depth_init = fixing_depth;
-	
+
 	/* Allocate a bunch of space for data, */
 
 	max_data	= 3*num_obs;
@@ -694,7 +703,7 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 	data_residual		= UALLOC(float, max_data);
 	sta_index		= UALLOC(int, max_data);
 	data_err_code		= UALLOC(int, max_data);
-	
+
 	for (i = 0; (! VALID_TIME(arrival[i].time)) && i < num_obs; i++);
 
 	if (i < num_obs)				/* Find offset time */
@@ -710,7 +719,7 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 
 	/* Extract the observations from the arrival/assoc structures
          * Assume that these are stored in same order in both structures */
-	
+
 	for (i = 0, num_data = 0; i < num_obs; i++)
 	{
 		{
@@ -719,20 +728,20 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 			dummy_ptr = data_sta_id + num_data*len_sta_id;
 			strcpy (dummy_ptr, arrival[i].sta);
 			FPAD(dummy_ptr, len_sta_id);
-			
+
 			dummy_ptr = data_type + num_data*len_d_t;
 			strcpy (dummy_ptr, "t");
 			FPAD(dummy_ptr, len_d_t);
-			
+
 			dummy_ptr = data_defining +  num_data*len_d_d;
 			strcpy (dummy_ptr, assoc[i].timedef);
 			FPAD(dummy_ptr, len_d_d);
 
 			dummy_ptr = data_phase_type + num_data*len_d_p_t;
-			strcpy (dummy_ptr, assoc[i].phase); 
+			strcpy (dummy_ptr, assoc[i].phase);
 			FPAD(dummy_ptr, len_d_p_t);
 
-			obs_data[num_data] = 
+			obs_data[num_data] =
 				(float)(arrival[i].time - time_offset);
 			data_std_err[num_data]  = arrival[i].deltim;
 			obs_data_index[num_data] = i;
@@ -745,11 +754,11 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 			dummy_ptr = data_sta_id + num_data*len_sta_id;
 			strcpy (dummy_ptr, arrival[i].sta);
 			FPAD(dummy_ptr, len_sta_id);
-			
+
 			dummy_ptr = data_type + num_data*len_d_t;
 			strcpy (dummy_ptr, "a");
 			FPAD(dummy_ptr, len_d_t);
-			
+
 			dummy_ptr = data_defining +  num_data*len_d_d;
 			strcpy (dummy_ptr, assoc[i].azdef);
 			FPAD(dummy_ptr, len_d_d);
@@ -770,11 +779,11 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 			dummy_ptr = data_sta_id + num_data*len_sta_id;
 			strcpy (dummy_ptr, arrival[i].sta);
 			FPAD(dummy_ptr, len_sta_id);
-			
+
 			dummy_ptr = data_type + num_data*len_d_t;
 			strcpy (dummy_ptr, "s");
 			FPAD(dummy_ptr, len_d_t);
-			
+
 			dummy_ptr = data_defining +  num_data*len_d_d;
 			strcpy (dummy_ptr, assoc[i].slodef);
 
@@ -787,56 +796,56 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 			obs_data_index[num_data] = i;
 			num_data++;
 		}
-	}		
+	}
 
 	/* call locsat0 */
 
-	locsat0_(data_sta_id, data_phase_type, data_type, data_defining, 
+	locsat0_(data_sta_id, data_phase_type, data_type, data_defining,
 		 obs_data, data_std_err, data_arrival_id_index, &num_data,
-		 sta_id, sta_lat, sta_lon, sta_elev, sta_cor, &num_sta, 
-		 phase_type, &num_phase_types, &maxtbd, &maxtbz, ntbd, ntbz, 
-		 tbd, tbz, tbtt, &lat_init, &lon_init, &depth_init, 
-		 &est_std_error, &num_dof, &conf_level, &azimuth_wt, &damp, 
-		 &max_iterations, &verbose, &fix_depth, outfile_name, &luout, 
-		 &lat, &lon, &depth, &torg, &sighat, &snssd, &ndf, 
-		 &semi_major_axis, &semi_minor_axis, &strike, &depth_error, 
+		 sta_id, sta_lat, sta_lon, sta_elev, sta_cor, &num_sta,
+		 phase_type, &num_phase_types, &maxtbd, &maxtbz, ntbd, ntbz,
+		 tbd, tbz, tbtt, &lat_init, &lon_init, &depth_init,
+		 &est_std_error, &num_dof, &conf_level, &azimuth_wt, &damp,
+		 &max_iterations, &verbose, &fix_depth, outfile_name, &luout,
+		 &lat, &lon, &depth, &torg, &sighat, &snssd, &ndf,
+		 &semi_major_axis, &semi_minor_axis, &strike, &depth_error,
 		 &origin_time_error, &sxx, &syy, &szz, &stt, &sxy, &sxz, &syz,
-		 &stx, &sty, &stz, sta_delta, sta_azimuth, sta_back_azimuth, 
-		 data_importances, zfimp, data_residual, sta_index, 
-		 data_err_code, &niter, &ierr, len_d_s_i, len_d_p_t, 
-		 len_d_t, len_d_d, len_sta_id, len_n_p_t, 1, 1, 
+		 &stx, &sty, &stz, sta_delta, sta_azimuth, sta_back_azimuth,
+		 data_importances, zfimp, data_residual, sta_index,
+		 data_err_code, &niter, &ierr, len_d_s_i, len_d_p_t,
+		 len_d_t, len_d_d, len_sta_id, len_n_p_t, 1, 1,
 		 strlen(outfile_name));
-	
+
 	/* Check the return codes from locsat */
 
 // 	if (ierr == 6)
 // 		fprintf (stderr,
 // 		"locate_event: Error 6 from locsat0: SVD routine can't decompose matrix\n");
-// 
+//
 // 	else if (ierr == 5)
 // 		fprintf (stderr,
 //                 "locate_event: Error 5 from locsat0: Insufficient data for a solution\n");
-// 
+//
 // 	else if (ierr == 4)
 // 		fprintf (stderr,
 //                 "locate_event: Error 4 from locsat0: Too few data to constrain O.T.\n");
-// 
+//
 // 	else if (ierr == 3)
 // 		fprintf (stderr,
 //                 "locate_event: Error 3 from locsat0: Too few usable data\n");
-// 
+//
 // 	else if (ierr == 2)
 // 		fprintf (stderr,
 //                 "locate_event: Error 2 from locsat0: Solution did not converge\n");
-// 
+//
 // 	else if (ierr == 1)
 // 		fprintf (stderr,
 //                 "locate_event: Error 1 from locsat0: Exceeded maximum iterations\n");
-// 
+//
 // 	/* Fill back in the structures */
-// 
+//
 // 	else
-// 
+//
 	if (ierr == 0 || ierr == 4)
 	{
 		/* Fill in origin/origerr structure */
@@ -859,12 +868,12 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 		for (i = 0; i < strlen(origin->auth); i++)
 			if (isspace(origin->auth[i]))
 				origin->auth[i] = '_';
-		
+
 		/* Compute geographic and seismic region numbers. */
 
 		//origin->grn	= nmreg(lat, lon);
 		//origin->srn	= gtos(origin->grn);
-		
+
 		origerr->sdobs	= sighat;
 		origerr->sxx	= sxx;
 		origerr->syy	= syy;
@@ -886,7 +895,7 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 				strike += 180;
 
 		origerr->strike = strike;
-		
+
 		/* Special case for unconstained origin time */
 
 		if (ierr == 4)
@@ -905,7 +914,7 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 		 * obs_data_index is an array of indexes to the assoc
 		 * tuple with a maximum length of 3 (time,slow,az) *
 		 * the number of assoc records.  data_err_code is an array,
-		 * parallel with obs_data_index, returned by locsat0, 
+		 * parallel with obs_data_index, returned by locsat0,
 		 * which contains error numbers corresponding to an
 		 * error_table in the Locator GUI.  data_type is a string
 		 * of maximum length 3 * number of assocs (with blank
@@ -924,7 +933,7 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 		for (i = 0; i < num_data; i++)
 		{
 			j = obs_data_index[i];
-			
+
 			if (! strncmp (data_type + i*len_d_t, "t", 1))
 			{
 				if (ierr != 4)
@@ -940,7 +949,7 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 				assoc[j].azres	= -999.0;
 				assoc[j].slores	= -999.0;
 			}
-			
+
 			else if (! strncmp (data_type + i*len_d_t, "a", 1))
 			{
 				assoc[j].azres = data_residual[i];
@@ -968,7 +977,7 @@ int locate_event(char *network, Site *sites, int num_sites, Arrival *arrival,
 				locator_errors[j].arid = assoc[j].arid;
 				error_found = FALSE;
 			}
-			
+
 		}
 
 		/* Try (!!) to get the del's, azi's, and baz's */
@@ -1038,7 +1047,7 @@ int find_phase(const char *phase) {
 		return ERR;
 
 	for (i = 0; i < num_phase_types; i++)
-		if (phase_type_ptr[i] && 
+		if (phase_type_ptr[i] &&
 		    !strncmp (phase, phase_type_ptr[i], len_n_p_t))
 			break;
 
@@ -1078,7 +1087,7 @@ double compute_ttime(double distance, double depth, char *phase, int extrapolate
 	 *
 	 * &tbz[phase_id][jz - 1] == &tbz[phase_id *maxtbz + jz - 1]
 	 *
-	 * &tbtt[phase_id][jz - 1][0] == 
+	 * &tbtt[phase_id][jz - 1][0] ==
 	 * &tbtt[(phase_id * maxtbz * maxtbd) + ((jz -1) * maxtbd)+0]
 	 *
 	 */

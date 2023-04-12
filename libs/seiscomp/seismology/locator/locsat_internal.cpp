@@ -127,6 +127,8 @@ Loc* LocSAT::doLocation() {
 		case 14:
 			throw LocatorException("error from locator: Error reading travel time tables, unexpected EOF");
 		case 15:
+			throw LocatorException("error from locator: Error reading travel time tables, too many distance or depth samples");
+		case 16:
 			throw LocatorException("error from locator: Unknown error reading travel time tables");
 		default:
 		{

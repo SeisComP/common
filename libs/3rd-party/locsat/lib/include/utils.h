@@ -17,19 +17,19 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEISCOMP_LOCSAT_UTILS_H__
-#define SEISCOMP_LOCSAT_UTILS_H__
+#ifndef SEISCOMP_LOCSAT_UTILS_H
+#define SEISCOMP_LOCSAT_UTILS_H
 
 
 #include <stdlib.h>
 
 
-#define min(a,b) ((a) <= (b) ? (a) : (b))
-#define max(a,b) ((a) >= (b) ? (a) : (b))
-#define dmin(a,b) (double)min(a,b)
-#define dmax(a,b) (double)max(a,b)
-#define abs(x) ((x) >= 0 ? (x) : -(x))
-#define dabs(x) (double)abs(x)
+#define min(a,b)        ((a) <= (b) ? (a) : (b))
+#define max(a,b)        ((a) >= (b) ? (a) : (b))
+#define dmin(a,b)       (double)min(a,b)
+#define dmax(a,b)       (double)max(a,b)
+#define abs(x)          ((x) >= 0 ? (x) : -(x))
+#define dabs(x)         (double)abs(x)
 
 
 #endif
