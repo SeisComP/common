@@ -425,6 +425,13 @@ ImportDialog::ImportDialog(const QStringList &formats, QWidget *parent) : QDialo
 	_formats->addItems(formats);
 	_formats->setWhatsThis(tr("Select among available formats the format for "
 	                          "the data you are going to import."));
+	{
+		auto idx = _formats->findText("fdsnxml");
+		if ( idx >= 0 ) {
+			_formats->setCurrentIndex(idx);
+		}
+	}
+
 	grid->addWidget(formatLabel, 0, 0);
 	grid->addWidget(_formats, 0, 1, 1, 2);
 
