@@ -2078,7 +2078,7 @@ void MagnitudeView::computeMagnitudes() {
 
 		table->horizontalHeader()->setStretchLastSection(true);
 		table->horizontalHeader()->setVisible(true);
-		table->setHorizontalHeaderLabels(QStringList() << tr("Channel") << tr("Type") << tr("Error"));
+		table->setHorizontalHeaderLabels(QStringList() << tr("Channel") << tr("Type") << tr("Info"));
 
 		QColor orange(255,128,0);
 
@@ -2089,7 +2089,9 @@ void MagnitudeView::computeMagnitudes() {
 			QTableWidgetItem *itemType = new QTableWidgetItem(s.type.c_str());
 			itemType->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 			QTableWidgetItem *itemState = new QTableWidgetItem(s.status.toString());
-			itemState->setData(Qt::TextColorRole, s.warning ? orange : Qt::red);
+			if ( s.warning ) {
+				itemState->setData(Qt::TextColorRole, orange);
+			}
 			itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
 			int row = table->rowCount();
