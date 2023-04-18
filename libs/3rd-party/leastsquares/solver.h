@@ -112,10 +112,18 @@ public:
       _eq.L2NScaler[3] += _eq.G[ob][3] * _eq.G[ob][3];
     }
 
-    _eq.L2NScaler[0] = 1. / std::sqrt(_eq.L2NScaler[0]);
-    _eq.L2NScaler[1] = 1. / std::sqrt(_eq.L2NScaler[1]);
-    _eq.L2NScaler[2] = 1. / std::sqrt(_eq.L2NScaler[2]);
-    _eq.L2NScaler[3] = 1. / std::sqrt(_eq.L2NScaler[3]);
+    if (_eq.L2NScaler[0] != 0 ) {
+      _eq.L2NScaler[0] = 1. / std::sqrt(_eq.L2NScaler[0]);
+    }
+    if (_eq.L2NScaler[1] != 0 ) {
+      _eq.L2NScaler[1] = 1. / std::sqrt(_eq.L2NScaler[1]);
+    }
+    if (_eq.L2NScaler[2] != 0 ) {
+      _eq.L2NScaler[2] = 1. / std::sqrt(_eq.L2NScaler[2]);
+    }
+    if (_eq.L2NScaler[3] != 0 ) {
+      _eq.L2NScaler[3] = 1. / std::sqrt(_eq.L2NScaler[3]);
+    }
   }
 
   /*

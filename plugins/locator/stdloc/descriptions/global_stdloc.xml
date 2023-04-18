@@ -18,12 +18,12 @@
 					<struct type="stdloc profile" link = "StdLoc.profiles">
 
 						<parameter name="method" type="string" default="GridSearch+LeastSquares">
-							<description>The location method to use: LeastSquares, GridSearch 
-							or GridSearch+LeastSquares.
+							<description>The location method to use: LeastSquares, GridSearch, OctTree,
+							 GridSearch+LeastSquares or OctTree+LeastSquares.
 							</description>
 						</parameter>
- 
-						<parameter name="tableType" type="string" default="libtau">
+
+						<parameter name="tableType" type="string" default="LOCSAT">
 							<description>Travel time table format type.</description>
 						</parameter>
 						<parameter name="tableModel" type="string" default="iasp91">
@@ -70,14 +70,16 @@
 
 						<group name="GridSearch">
 							<description>
-								The grid cell with lowest error is selected as source location and
-								the source time is derived from the average of travel time residuals.
-								The solution can be further improved enabling the Least Square
-								algorithm, which will then be run for each grid cell, using
-								the cell centroid as initial location. In this case only a few cells
-								are required, even a single one.
+								Find the source location by evaluating the hypocenter probability
+								of each grid cell and returning the maximum likelihood hypocenter.
+								The source time is derived from the weighted average of arrival
+								travel times.
+								The solution can be further improved combining it with the Least Squares
+								algorithm, which will then be run for each grid cell, using the cell
+								centroid as initial location estimate. In this case only few big cells
+								are required.
 							</description>
-							<parameter name="center" type="list:string" default="lat,lon,5">
+							<parameter name="center" type="list:string" default="auto,auto,5">
 								<description>Latitude,longitude,depth[km]. </description>
 							</parameter>
 							<parameter name="autoLatLon" type="boolean" default="true">
@@ -92,17 +94,37 @@
 							<parameter name="cellSize" type="list:string" unit="km" default="2.5,2.5,5">
 								<description>Cell X, Y, Z size in km</description>
 							</parameter>
-							<parameter name="errorType" type="string" default="L1">
-								<description>Error computation to use: L1 or L2 norm. L1 is less sensitive
-									to outliers and so more suitable with automatic picks, L2 is the preferred
-									choice for manual picks.
-							</description>
+							<parameter name="misfitType" type="string" default="L1">
+								<description>The type of misfit to use, from which the likelyhood function is
+									derived: L1 or L2 norm. L1 is less sensitive to outliers and so more 
+									suitable with automatic picks, L2 is the preferred choice for manual picks.
+								</description>
 							</parameter>
-							<parameter name="maxRms" type="double">
+							<parameter name="travelTimeError" type="double" unit="s" default="0.25">
 								<description>
-									Maxmium rms accepterd for a location: a solution with a higher value
-									will be rejected. A negative or no value means that there is no maximum
-									threshold on the RMS.
+									Typical error in seconds for travel-time to one station. This
+									value affects the uncertainty of the location.
+								</description>
+							</parameter>
+						</group>
+
+						<group name="OctTree">
+							<description>
+								Find the source location and time via OctTree search. This method uses the
+								parameters defined in GridSearch, but applies the OctTree search algorithm.
+								The solution can be further improved combining OctTree with the Least Squares
+								algorithm, which can use the OctTree solution as initial location estimate.
+							</description>
+							<parameter name="maxIterations" type="int" default="50000">
+								<description>
+									Number of iterations after which the search stops. A zero or negative
+									value disable this stopping mechanism.
+								</description>
+							</parameter> 
+							<parameter name="minCellSize" type="double" unit="km" default="0.1">
+								<description>
+									Minimum cell size to be generate by the OctTree search to stop. A zero
+									or negative value disable this stopping mechanism.
 								</description>
 							</parameter>
 						</group>
@@ -110,9 +132,9 @@
 						<group name="LeastSquares">
 							<description>
 								Find the source location and time via iterative Least Square.
-								An initial source location and time are required.
-								if that is not available the Grid Search can be combined with
-								LeastSquares.
+								However an initial location estatimate is required. if that is not
+								available then this method should be combined with GridSearch or
+								OctTree.
 							</description>
 							<parameter name="iterations" type="int" default="20">
 								<description>
