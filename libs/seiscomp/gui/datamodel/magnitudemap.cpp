@@ -437,11 +437,11 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 					new StationLayer::Symbol(
 						QPointF(loc.longitude,loc.latitude),
 						p->waveformID().networkCode(),
-						p->waveformID().stationCode(), true
+						p->waveformID().stationCode(),
+						true,
+						_annotationLayer->annotations()->add(stationCode.c_str())
 					)
 				);
-				SYMBOLLAYER->stations.back()->annotation = _annotationLayer->annotations()->add(stationCode.c_str());
-				_stationCodes[stationCode] = SYMBOLLAYER->stations.size()-1;
 				foundStation = true;
 			}
 			catch ( Core::ValueException& e ) {
@@ -520,18 +520,23 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 				SYMBOLLAYER->stations.push_back(
 					new StationLayer::Symbol(
 						QPointF(sta->longitude(),sta->latitude()),
-						net->code(), sta->code().c_str(), true
+						net->code(), sta->code().c_str(),
+						true,
+						_annotationLayer->annotations()->add(stationCode.c_str())
 					)
 				);
 
 				SYMBOLLAYER->stations.back()->isActive = true;
-				SYMBOLLAYER->stations.back()->annotation = _annotationLayer->annotations()->add(stationCode.c_str());
-				_stationCodes[stationCode] = SYMBOLLAYER->stations.size()-1;
 			}
 		}
 	}
 
 	SYMBOLLAYER->sort();
+
+	for ( int i = 0; i < SYMBOLLAYER->stations.size(); ++i ) {
+		auto sym = SYMBOLLAYER->stations[i];
+		_stationCodes[sym->net + "." + sym->code] = i;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -545,11 +550,13 @@ void MagnitudeMap::addStationMagnitude(StationMagnitude* staMag, int index) {
 	try {
 		std::string stationCode = staMag->waveformID().networkCode() + "." + staMag->waveformID().stationCode();
 		int stationId = findStation(stationCode);
-		if ( stationId == -1 )
+		if ( stationId == -1 ) {
 			stationId = addStation(staMag->waveformID().networkCode(), staMag->waveformID().stationCode());
+		}
 
-		if ( stationId != -1 )
+		if ( stationId != -1 ) {
 			addMagnitude(stationId, index);
+		}
 	}
 	catch ( ... ) {
 		SEISCOMP_DEBUG("WaveformID in magnitude '%s' not set", staMag->publicID().c_str());
