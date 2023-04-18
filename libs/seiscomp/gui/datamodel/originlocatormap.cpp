@@ -482,10 +482,10 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 						QPointF(loc.longitude,loc.latitude),
 						p->waveformID().networkCode(),
 						p->waveformID().stationCode(),
-						true
+						true,
+						_annotationLayer->annotations()->add(stationCode.c_str())
 					)
 				);
-				SYMBOLLAYER->stations.back()->annotation = _annotationLayer->annotations()->add(stationCode.c_str());
 				_stationCodes[stationCode] = SYMBOLLAYER->stations.size()-1;
 				addArrival();
 				foundStation = true;
@@ -583,10 +583,11 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 				SYMBOLLAYER->stations.push_back(
 					new StationLayer::Symbol(
 						QPointF(sta->longitude(),sta->latitude()),
-						net->code(), sta->code(), true
+						net->code(), sta->code(),
+						true,
+						_annotationLayer->annotations()->add(stationCode.c_str())
 					)
 				);
-				SYMBOLLAYER->stations.back()->annotation = _annotationLayer->annotations()->add(stationCode.c_str());
 
 				SYMBOLLAYER->stations.back()->isActive = true;
 				_stationCodes[stationCode] = SYMBOLLAYER->stations.size()-1;
