@@ -590,7 +590,7 @@ void CalculateAmplitudes::addProcessor(
 		if ( proc->isFinished() ) {
 			pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(proc.get());
 			for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-				setError(row_it->second, QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
+				setInfo(row_it->second, QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
 			return;
 		}
 	}
@@ -602,7 +602,7 @@ void CalculateAmplitudes::addProcessor(
 	if ( proc->isFinished() ) {
 		pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(proc.get());
 		for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-			setError(row_it->second, QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
+			setInfo(row_it->second, QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
 		return;
 	}
 
@@ -611,7 +611,7 @@ void CalculateAmplitudes::addProcessor(
 		if ( proc->isFinished() ) {
 			pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(proc.get());
 			for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-				setError(row_it->second, QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
+				setInfo(row_it->second, QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
 			return;
 		}
 	}
@@ -623,7 +623,7 @@ void CalculateAmplitudes::addProcessor(
 	if ( proc->isFinished() ) {
 		pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(proc.get());
 		for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-			setError(row_it->second, QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
+			setInfo(row_it->second, QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
 		return;
 	}
 
@@ -900,7 +900,7 @@ void CalculateAmplitudes::receivedRecord(Seiscomp::Record *rec) {
 		else if ( (*it)->isFinished() ) {
 			pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(it->get());
 			for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-				setError(row_it->second, QString("%1 (%2)").arg((*it)->status().toString()).arg((*it)->statusValue(), 0, 'f', 2));
+				setInfo(row_it->second, QString("%1 (%2)").arg((*it)->status().toString()).arg((*it)->statusValue(), 0, 'f', 2));
 			it = slot_it->second.erase(it);
 		}
 		else
@@ -981,6 +981,20 @@ void CalculateAmplitudes::setError(int row, QString text) {
 	itemState->setData(Qt::TextColorRole, QVariant::fromValue(QColor(Qt::red)));
 	// Signal an error state
 	itemState->setData(Qt::UserRole, 1);
+	itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+	_ui.table->setItem(row, 3, itemState);
+	filterView(row,1);
+}
+
+
+void CalculateAmplitudes::setInfo(int row, QString text) {
+	// Remove progress bar if set
+	_ui.table->setCellWidget(row, 3, nullptr);
+
+	QTableWidgetItem *itemState = new QTableWidgetItem(text);
+	itemState->setData(Qt::TextColorRole, QVariant::fromValue(palette().color(QPalette::Highlight)));
+	// Signal an info state
+	itemState->setData(Qt::UserRole, 2);
 	itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	_ui.table->setItem(row, 3, itemState);
 	filterView(row,1);
