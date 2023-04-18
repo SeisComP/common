@@ -2045,7 +2045,10 @@ void MagnitudeView::computeMagnitudes() {
 	dlg.setStreamURL(_amplitudeConfig.recordURL.toStdString());
 	dlg.setAmplitudeCache(&_amplitudes);
 	dlg.setSilentMode(_computeMagnitudesSilently);
-	if ( dlg.exec() != QDialog::Accepted ) return;
+	if ( dlg.exec() != QDialog::Accepted ) {
+		geomCalculateAmplitudes = dlg.saveGeometry();
+		return;
+	}
 
 	geomCalculateAmplitudes = dlg.saveGeometry();
 
