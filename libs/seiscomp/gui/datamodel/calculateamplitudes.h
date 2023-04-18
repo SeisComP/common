@@ -136,6 +136,7 @@ class SC_GUI_API CalculateAmplitudes : public QDialog {
 		                   const Processing::AmplitudeProcessor::Result &res);
 
 		void setError(int row, QString text);
+		void setInfo(int row, QString text);
 		void setMessage(int row, QString text);
 		void setProgress(int row, int progress);
 		void setValue(int row, double value);
