@@ -1005,7 +1005,8 @@ void CalculateAmplitudes::setProgress(int row, int progress) {
 	QProgressBar *progressBar = static_cast<QProgressBar*>(_ui.table->cellWidget(row, 3));
 	_ui.table->setItem(row, 3, nullptr);
 	if ( !progressBar ) {
-		progressBar = new QProgressBar(_ui.table);
+		progressBar = new QProgressBar;
+		progressBar->setVisible(false);
 		progressBar->setRange(0, 100);
 		progressBar->setAlignment(Qt::AlignHCenter);
 		QPalette pal = progressBar->palette();
@@ -1013,6 +1014,7 @@ void CalculateAmplitudes::setProgress(int row, int progress) {
 		progressBar->setPalette(pal);
 	
 		_ui.table->setCellWidget(row, 3, progressBar);
+		_ui.table->update();
 	}
 
 	progressBar->setValue(progress);
