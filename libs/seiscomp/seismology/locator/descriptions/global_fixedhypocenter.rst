@@ -166,7 +166,7 @@ Application
 ===========
 
 #. Configure the parameters in the section *FixedHypocenter* of the global configuration.
-#. When using in :ref:`scolv` the FixedHypocenter locator can be chose right away
+#. When using in :ref:`scolv` the FixedHypocenter locator can be chosen right away
    from the available locators.
 
    .. figure:: media/scolv-fixedhypocenter.png
