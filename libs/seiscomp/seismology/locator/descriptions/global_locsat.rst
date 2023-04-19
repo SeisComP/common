@@ -18,7 +18,7 @@ phases, epicentral distance, soure depth and station elevation.
 Locator Interface
 =================
 
-LOCSAT provides the hypocenter paramters through the locator interface.
+LOCSAT provides the hypocenter parameters through the locator interface.
 
 
 .. _locsat_tti:
@@ -142,6 +142,12 @@ LOCSAT is the default and only locator for :ref:`scautoloc` with *iasp91* as the
 default profile. However, LOCSAT can be used optionally in other modules such as
 :ref:`scolv` or :ref:`screloc`.
 
+
+.. _locsat_custom-ttt:
+
+Custom travel-time tables
+-------------------------
+
 #. Generate your travel-time tables from a custom Earth model, depth and
    distance intervals. Use the same format as the defaults as the *iasp91*
    tables. Tools such as :cite:t:`taup` allow the generation.
@@ -163,10 +169,35 @@ default profile. However, LOCSAT can be used optionally in other modules such as
    and optionally to locators which make use of LOCSAT tables, e.g.,
    :ref:`global_fixedhypocenter`.
 
-#. Configure a |scname| module with LOCSAT and a profile.
 
-   * configure a profile in :ref:`scautoloc` for automatic locations,
-   * configure *LOCSAT* along with a profile in :ref:`screloc` for automatically
-     relocating,
-   * configure *LOCSAT* along with a profile in :ref:`scolv` as defaults for
-     interactive locations.
+Application with modules
+------------------------
+
+Additional parameters of LOCSAT may be configured in global module configuration
+(:confval:`LOCSAT.*`).
+
+* The profiles for locating may be extended or limited by
+  :confval:`LOCSAT.profiles`.
+* When using picks with time uncertainties, consider
+  :confval:`LOCSAT.usePickUncertainties` and :confval:`LOCSAT.defaultTimeError`.
+* Measurements of backazimuth and slowness may be deactivated by
+  :confval:`LOCSAT.useBackazimuth` and :confval:`LOCSAT.useSlownewss`, respectively.
+  Such measurements may be obtained from array processing or from feature
+  extraction using :ref:`scautopick`.
+
+You may also configure some |scname| modules with LOCSAT and a profile.
+
+* :ref:`scautoloc`: Configure a profile for automatic locations,
+* :ref:`screloc`: Configure *LOCSAT* along with a profile for automatically
+  relocating.
+* :ref:`scolv`: Configure *LOCSAT* along with a profile  as defaults for
+  interactive locations.
+
+When using LOCSAT in :ref:`scolv` you may interactively some settings. The
+changes only apply during runtime.
+
+.. figure:: media/scolv-locsat-settings.png
+   :align: center
+   :width: 10cm
+
+   scolv Location tab with LOCSAT selected and the settings menu.
