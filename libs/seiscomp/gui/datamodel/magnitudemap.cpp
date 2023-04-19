@@ -397,6 +397,20 @@ void MagnitudeMap::setMagnitude(DataModel::Magnitude* nm) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MagnitudeMap::sortSymbols() {
+	SYMBOLLAYER->sort();
+	_stationCodes.clear();
+	for ( int i = 0; i < SYMBOLLAYER->stations.size(); ++i ) {
+		auto sym = SYMBOLLAYER->stations[i];
+		_stationCodes[sym->net + "." + sym->code] = i;
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 	_origin = o;
 
@@ -441,6 +455,7 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 					)
 				);
 				foundStation = true;
+				_stationCodes[stationCode] = SYMBOLLAYER->stations.size() - 1;
 			}
 			catch ( Core::ValueException& e ) {
 				SEISCOMP_DEBUG("While fetching the station location an error occured: %s -> computing position", e.what());
@@ -525,16 +540,12 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 				);
 
 				SYMBOLLAYER->stations.back()->isActive = true;
+				_stationCodes[stationCode] = SYMBOLLAYER->stations.size() - 1;
 			}
 		}
 	}
 
-	SYMBOLLAYER->sort();
-
-	for ( int i = 0; i < SYMBOLLAYER->stations.size(); ++i ) {
-		auto sym = SYMBOLLAYER->stations[i];
-		_stationCodes[sym->net + "." + sym->code] = i;
-	}
+	sortSymbols();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
