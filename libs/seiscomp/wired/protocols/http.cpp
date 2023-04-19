@@ -736,13 +736,17 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 				case HttpRequest::HEAD:
 				case HttpRequest::DELETE:
 				case HttpRequest::TRACE:
-					SEISCOMP_DEBUG("[%p] %s %s", this, _request.type.toString(), _request.path.c_str());
+					SEISCOMP_DEBUG("[%p] %s %s",
+					               static_cast<void*>(this),
+					               _request.type.toString(), _request.path.c_str());
 					handleRequest(_request);
 					_requestStarted = false;
 					break;
 				case HttpRequest::POST:
 				case HttpRequest::PUT:
-					SEISCOMP_DEBUG("[%p] %s %s", this, _request.type.toString(), _request.path.c_str());
+					SEISCOMP_DEBUG("[%p] %s %s",
+					               static_cast<void*>(this),
+					               _request.type.toString(), _request.path.c_str());
 					SEISCOMP_DEBUG("Reading %s (%zu bytes)", _request.type.toString(), _dataSize);
 					if ( _dataSize <= 0 ) {
 						SEISCOMP_ERROR("HTTP: %s content is empty", _request.type.toString());
@@ -756,7 +760,8 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 					break;
 				default:
 					SEISCOMP_WARNING("[%p] Unknown request type %s",
-					                 this, _request.type.toString());
+					                 static_cast<void*>(this),
+					                 _request.type.toString());
 					close();
 					break;
 			}
@@ -977,7 +982,7 @@ void HttpSession::outboxFlushed() {
 	if ( _request.state == HttpRequest::FINISHED ) {
 		_request.tx = _bytesSent;
 		SEISCOMP_DEBUG("[http] request %s in session %p finished",
-		               _request.path.c_str(), this);
+		               _request.path.c_str(), static_cast<void*>(this));
 
 		requestFinished();
 

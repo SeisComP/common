@@ -216,7 +216,9 @@ bool GenericHandler::get(Core::BaseObject *, void *n) {
 
 	const char *classname = mapper->getClassname((const char*)node->name, node->ns?(const char*)node->ns->href:"", strictNsCheck);
 	if ( classname == nullptr ) {
-		SEISCOMP_DEBUG("No class mapping for %s, ns = '%s'", node->name, node->ns?(const char*)node->ns->href:"");
+		SEISCOMP_DEBUG("No class mapping for %s, ns = '%s'",
+		               reinterpret_cast<const char*>(node->name),
+		               node->ns?(const char*)node->ns->href:"");
 		return false;
 	}
 

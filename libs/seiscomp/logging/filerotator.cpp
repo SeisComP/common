@@ -32,17 +32,28 @@
 #include <sys/stat.h>
 #endif
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp {
 namespace Logging {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FileRotatorOutput::FileRotatorOutput(int timeSpan, int historySize, int maxFileSize)
 : _timeSpan(timeSpan)
 , _historySize(historySize)
 , _maxFileSize(maxFileSize)
 , _lastInterval(-1) {
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FileRotatorOutput::FileRotatorOutput(const char* filename, int timeSpan, int historySize, int maxFileSize)
 : FileOutput(filename)
 , _timeSpan(timeSpan)
@@ -50,7 +61,12 @@ FileRotatorOutput::FileRotatorOutput(const char* filename, int timeSpan, int his
 , _maxFileSize(maxFileSize)
 , _lastInterval(-1) {
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FileRotatorOutput::open(const char* filename) {
 	if ( !FileOutput::open(filename) ) return false;
 
@@ -62,7 +78,12 @@ bool FileRotatorOutput::open(const char* filename) {
 #endif
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FileRotatorOutput::log(const char* channelName,
                             LogLevel level,
                             const char* msg,
@@ -85,13 +106,23 @@ void FileRotatorOutput::log(const char* channelName,
 
 	FileOutput::log(channelName, level, msg, time);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FileRotatorOutput::removeLog(int index) {
 	std::stringstream ss;
 	ss << _filename << "." << index;
 	unlink(ss.str().c_str());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FileRotatorOutput::renameLog(int oldIndex, int newIndex) {
 	std::stringstream oldFile, newFile;
 	oldFile << _filename;
@@ -104,7 +135,12 @@ void FileRotatorOutput::renameLog(int oldIndex, int newIndex) {
 
 	rename(oldFile.str().c_str(), newFile.str().c_str());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FileRotatorOutput::rotateLogs() {
 	// Close current stream
 	if ( _stream.is_open() )
@@ -121,7 +157,12 @@ void FileRotatorOutput::rotateLogs() {
 	open(_filename.c_str());
 	_lastInterval = tmp;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -18,12 +18,16 @@
  ***************************************************************************/
 
 
-
 #ifndef SC_LOGGING_PUBLISHLOC_H
 #define SC_LOGGING_PUBLISHLOC_H
 
+
 #include <seiscomp/logging/common.h>
-#include <stdarg.h>
+
+#include <fmt/format.h>
+#include <fmt/printf.h>
+
+#include <cstdarg>
 
 
 namespace Seiscomp {
@@ -51,16 +55,6 @@ struct SC_SYSTEM_CORE_API PublishLoc {
 
 	bool *enabled;
 
-	// If the compiler supports printf attribute specification on function
-	// pointers, we'll use it here so that the compiler knows to check for
-	// proper printf formatting.  If it doesn't support it, then we'll
-	// force the check by inserting a bogus inline function..
-	//! function to call when we reach the log statement.
-	void (*publish)(PublishLoc *, Channel *, const char *format, ...)
-	    PRINTF_FP(3,4);
-
-	void (*publishVA)(PublishLoc *, Channel *, const char *format, va_list args);
-
 	Node *pub;
 	const char *component;
 	const char *fileName;
@@ -74,8 +68,26 @@ struct SC_SYSTEM_CORE_API PublishLoc {
 };
 
 
-SC_SYSTEM_CORE_API void Register(PublishLoc *loc, Channel *, const char *format, ... ) PRINTF(3,4);
-SC_SYSTEM_CORE_API void RegisterVA(PublishLoc *loc, Channel *, const char *format, va_list args );
+void Register(PublishLoc *loc, Channel *, const char *msg);
+void Register(PublishLoc *loc, Channel *, const std::string &msg);
+
+template <typename S, typename... Args>
+void RegisterPrintF(PublishLoc *loc, Channel *, const S& format, Args&&... args);
+
+template <typename S, typename... Args>
+void RegisterFormat(PublishLoc *loc, Channel *, const S& format, Args&&... args);
+
+SC_SYSTEM_CORE_API void VRegister(PublishLoc *loc, Channel *,
+                                  const char *format,
+                                  va_list args);
+
+SC_SYSTEM_CORE_API void VRegister(PublishLoc *loc, Channel *,
+                                  fmt::string_view format,
+                                  fmt::printf_args args);
+
+SC_SYSTEM_CORE_API void VRegister(PublishLoc *loc, Channel *,
+                                  fmt::string_view format,
+                                  fmt::format_args args);
 
 
 /* @def LOG_NO_COPY
@@ -91,6 +103,18 @@ SC_SYSTEM_CORE_API void RegisterVA(PublishLoc *loc, Channel *, const char *forma
 	private: \
 		CNAME(const CNAME&); \
 		CNAME & operator = (const CNAME &)
+
+
+template <typename S, typename... Args>
+inline void RegisterPrintF(PublishLoc *loc, Channel *channel, const S& format, Args&&... args) {
+	VRegister(loc, channel, format, fmt::make_printf_args(args...));
+}
+
+
+template <typename S, typename... Args>
+inline void RegisterFormat(PublishLoc *loc, Channel *channel, const S& format, Args&&... args) {
+	VRegister(loc, channel, format, fmt::make_format_args(args...));
+}
 
 
 }

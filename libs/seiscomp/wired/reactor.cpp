@@ -112,7 +112,7 @@ bool Reactor::removeSession(Session *session) {
 	              session->socket()->ip().octetts.C, session->socket()->ip().octetts.D,
 	              session->socket()->port(), session->socket()->hostname().c_str());
 	*/
-	SEISCOMP_INFO("[reactor] removed session %p", session);
+	SEISCOMP_INFO("[reactor] removed session %p", static_cast<void*>(session));
 	sessionRemoved(session);
 	session->_parent = nullptr;
 	_sessions.erase(session);
@@ -131,7 +131,8 @@ void Reactor::moveTo(Reactor *target, Session *session) {
 	// Save the session because we remove it
 	SessionPtr tmp(session);
 
-	SEISCOMP_DEBUG("[reactor] move 0x%p to 0x%p", session, target);
+	SEISCOMP_DEBUG("[reactor] move 0x%p to 0x%p",
+	               static_cast<void*>(session), static_cast<void*>(target));
 
 	removeSession(session);
 	target->addSessionDeferred(session);

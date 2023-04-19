@@ -31,13 +31,53 @@ namespace Seiscomp {
 namespace Logging {
 
 
-class SC_SYSTEM_CORE_API Channel;
+/*! @class Seiscomp::Logging::Channel <seiscomp/logging/channel.h>
+  @brief Implements a hierarchical logging channel
 
-typedef std::map<std::string, Channel*> ComponentMap;
+  You should not need to use Channel directly under normal
+  circumstances. See COMPONENT_CHANNEL() macro, GetComponentChannel() and
+  getGlobalChannel()
 
-// documentation in implementation file
+  Channel implements channel logging support.  A channel is a named
+  logging location which is global to the program.  Channels are
+  hierarchically related.
+
+  For example, if somewhere in your program a message is logged to
+  "debug/foo/bar", then it will be delived to any subscribers to
+  "debug/foo/bar", or subscribers to "debug/foo", or subscribers to
+  "debug".   Subscribing to a channel means you will receive anything
+  published on that channel or sub-channels.
+
+  As a special case, subscribing to the channel "" means you will receive
+  all messages - as every message has a channel and the empty string "" is
+  considered to mean the root of the channel tree.
+
+  In addition, componentized channels are all considered sub channels of
+  the global channel hierarchy.  All rDebug(), rWarning(), and rError()
+  macros publish to the componentized channels (component defined by
+  SEISCOMP_COMPONENT).
+
+  @code
+      // get the "debug" channel for our component.  This is the same as
+      // what rDebug() publishes to.
+      Channel *node = COMPONENT_CHANNEL("debug", Log_Debug);
+      // equivalent to
+      Channel *node = GetComponentChannel(SEISCOMP_COMPONENT, "debug");
+
+      // Or, get the global "debug" channel, which will have messages from
+      // *all* component's "debug" channels.
+      Channel *node = getGlobalChannel( "debug", Log_Debug );
+  @endcode
+
+  @author Valient Gough
+  @see COMPONENT_CHANNEL()
+  @see getComponentChannel()
+  @see getGlobalChannel()
+*/
 class SC_SYSTEM_CORE_API Channel : public Node {
 	public:
+		using ComponentMap = std::map<std::string, Channel*>;
+
 		Channel(const std::string &name, LogLevel level);
 		virtual ~Channel();
 

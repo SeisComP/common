@@ -968,7 +968,7 @@ Device *DeviceGroup::next() {
 		_nextQueue->_ticker -= _lastCallDuration;
 		//SEISCOMP_DEBUG("[reactor] remaining ticker: %d ms", _nextQueue->_ticker);
 		if ( _nextQueue->_ticker <= 0 ) {
-			SEISCOMP_DEBUG("[reactor] device %p timed out", _nextQueue);
+			SEISCOMP_DEBUG("[reactor] device %p timed out", static_cast<void*>(_nextQueue));
 			Device *dev = _nextQueue;
 			_nextQueue = _nextQueue->_qNext;
 
@@ -1117,8 +1117,9 @@ Device *DeviceGroup::next() {
 	#ifdef SEISCOMP_WIRED_EPOLL
 		     (_epoll_events[_selectIndex].events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)) ) {
 			SEISCOMP_DEBUG("[reactor] close erroneous device %p (%zu/%zu) with fd %d: events = %d",
-			               device, _selectIndex, _selectSize, device->fd(),
-			               _epoll_events[_selectIndex].events);
+			               static_cast<void*>(device),
+			               _selectIndex, _selectSize, device->fd(),
+			               uint32_t(_epoll_events[_selectIndex].events));
 	#endif
 	#ifdef SEISCOMP_WIRED_KQUEUE
 		     (_kqueue_events[_selectIndex].flags & (EV_ERROR | EV_EOF)) ) {

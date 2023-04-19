@@ -24,80 +24,48 @@
 #include <seiscomp/logging/channel.h>
 #include <seiscomp/logging/log.h>
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h> // in case we need memcpy
+#include <cstring>
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 using namespace Seiscomp::Logging;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-/*! @class Seiscomp::Logging::Publisher <seiscomp/logging/publisher.h>
-  @brief Publisher used by log macros.
-
-  This derives from Node and interfaces to the static PublishLoc logging
-  data allowing them to be enabled or disabled depending on subscriber
-  status.
-
-  An instance of this class is created for every error message location.
-  Normally this class is not used directly.  
-
-  For example, this
-  @code
-     rDebug( "hello world" );
-  @endcode
-
-  is turned approximatly into this:
-  @code
-     static PublishLoc _rl = {
-	 publish:  & Seiscomp::Logging::Register ,
-	 pub: 0,
-	 component: "component",
-	 fileName: "myfile.cpp",
-	 functionName: "functionName()",
-	 lineNum: __LINE__,
-	 channel: 0
-     };
-     if(_rL.publish != 0)
-	 (*_rl.publish)( &_rL, _RLDebugChannel, "hello world" );
-  @endcode
-
-  The Publisher instance manages the contents of the static structure
-  _rL.  When someone subscribes to it's message, then _rL.publish is set to
-  point to the publishing function, and when there are no subscribers then
-  it is set to 0.
-
-  The code produced contains one if statement, and with optimization comes
-  out to about 3 instructions on an x86 computer (not including the
-  function call).  If there are no subscribers to this message then that
-  is all the overhead, plus the memory usage for the structures
-  involved and the initial registration when the statement is first
-  encountered..
-
-  @see Channel
-  @author Valient Gough
- */
 
 
-Publisher::Publisher()
-{
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Publisher::Publisher() {
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-Publisher::Publisher(PublishLoc *loc) : Node(), src( loc )
-{
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Publisher::Publisher(PublishLoc *loc) : Node(), src( loc ) {
 	// link to channel for channel based subscriptions
 	// Lookup the componentized version
 	Node *channelNode = getComponentChannel( src->component,
 	   src->channel->name().c_str(), src->channel->logLevel() );
 	channelNode->addPublisher( this );
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-Publisher::~Publisher()
-{
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Publisher::~Publisher() {
 	clear();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-void Publisher::setEnabled(bool active)
-{
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Publisher::setEnabled(bool active) {
 	if ( src ) {
 		if ( active )
 			src->enable();
@@ -105,19 +73,44 @@ void Publisher::setEnabled(bool active)
 			src->disable();
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-void Publisher::Publish( PublishLoc *loc, Channel *channel,
-	const char *format, ...)
-{
-	va_list args;
-	va_start( args, format );
-	PublishVA( loc, channel, format, args );
-	va_end( args );
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Publisher::Publish(PublishLoc *loc, Channel *, const char *msg) {
+	Data data;
+
+	data.publisher = loc;
+	data.time = time(0);
+	data.msg = msg;
+
+	loc->pub->publish(data);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-void Publisher::PublishVA( PublishLoc *loc, Channel *,
-	const char *format, va_list ap )
-{
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Publisher::Publish(PublishLoc *loc, Channel *, const std::string &msg) {
+	Data data;
+
+	data.publisher = loc;
+	data.time = time(0);
+	data.msg = msg.c_str();
+
+	loc->pub->publish(data);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Publisher::VPublish(PublishLoc *loc, Channel *,
+                         const char *format, va_list ap) {
 	Data data;
 
 	data.publisher = loc;
@@ -165,9 +158,42 @@ void Publisher::PublishVA( PublishLoc *loc, Channel *,
 			buf = new char[bufSize];
 		}
 	}
-
-	loc->pub->publish( data );
-
-	if ( buf != msgBuf ) delete[] buf;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Publisher::VPublish(PublishLoc *loc, Channel *,
+                         fmt::string_view format, fmt::format_args args) {
+	auto line = fmt::vformat(format, args);
+
+	Data data;
+
+	data.publisher = loc;
+	data.time = time(0);
+	data.msg = line.c_str();
+
+	loc->pub->publish(data);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Publisher::VPublish(PublishLoc *loc, Channel *,
+                         fmt::string_view format, fmt::printf_args args) {
+	auto line = fmt::vsprintf(format, args);
+
+	Data data;
+
+	data.publisher = loc;
+	data.time = time(0);
+	data.msg = line.c_str();
+
+	loc->pub->publish(data);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
