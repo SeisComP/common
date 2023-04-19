@@ -99,6 +99,7 @@ class SC_GUI_API MagnitudeMap : public MapWidget {
 		void setMagnitudeResidual(int id, double residual);
 		int findStation(const std::string& stationCode) const;
 		int addStation(const std::string &net, const std::string &sta);
+		void sortSymbols();
 
 
 	private:
