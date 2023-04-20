@@ -72,7 +72,7 @@ int streamBufReadCallback(void* context, char* buffer, int len) {
 		return count;
 	}
 	catch ( std::exception &e ) {
-		SEISCOMP_WARNING(e.what());
+		SEISCOMP_WARNING_S(e.what());
 		return -1;
 	}
 }
