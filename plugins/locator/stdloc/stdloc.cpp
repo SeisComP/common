@@ -37,6 +37,7 @@
 #include <algorithm>
 #include <cmath>
 #include <numeric>
+#include <array>
 
 #include "solver.h"
 #include "stdloc.h"
