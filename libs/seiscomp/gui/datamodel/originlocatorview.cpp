@@ -1923,7 +1923,7 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 
 	if ( index.column() == USED ) {
 		if ( role == UsedRole ) {
-			return (int)_used[index.row()];
+			return _used[index.row()] & F_DISABLED ? 0 : _used[index.row()];
 		}
 		else if ( role == HoverRole ) {
 			return _hoverState[index.row()];
@@ -2372,19 +2372,7 @@ Qt::ItemFlags ArrivalModel::flags(const QModelIndex &index) const {
 	if ( !index.isValid() )
 		return Qt::ItemIsEnabled;
 
-	Qt::ItemFlags f = QAbstractTableModel::flags(index);
-
-	/*if ( index.row() < _enableState.size() ) {
-		if ( !_enableState[index.row()] ) {
-			if ( index.column() == USED )
-				f = f & ~(Qt::ItemIsUserCheckable);
-		}
-		else if ( index.column() == USED ) {
-			f = (f | Qt::ItemIsUserCheckable);
-		}
-	}*/
-
-	return f;
+	return QAbstractTableModel::flags(index);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2398,7 +2386,13 @@ bool ArrivalModel::setData(const QModelIndex &index, const QVariant &value,
 		if ( !_enableState[index.row()] ) return false;
 
 		if ( role == UsedRole ) {
-			_used[index.row()] = value.toInt() & getMask(index);
+			int flags = value.toInt() & getMask(index);
+			if ( flags ) {
+				_used[index.row()] = flags;
+			}
+			else {
+				_used[index.row()] |= F_DISABLED;
+			}
 		}
 		else if (role == HoverRole ){
 			_hoverState[index.row()] = value.toInt();
@@ -2451,8 +2445,9 @@ void ArrivalModel::setTakeOffAngle(int row, const QVariant &val) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArrivalModel::useNoArrivals() const {
 	for ( int i = 0; i < _used.count(); ++i ) {
-		if ( _used[i] != Seismology::LocatorInterface::F_NONE )
+		if ( useArrival(i) ) {
 			return false;
+		}
 	}
 
 	return true;
@@ -2464,7 +2459,8 @@ bool ArrivalModel::useNoArrivals() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArrivalModel::useArrival(int row) const {
-	return _used[row] != Seismology::LocatorInterface::F_NONE;
+	return ((_used[row] & F_DISABLED) == 0) &&
+	       (_used[row] != Seismology::LocatorInterface::F_NONE);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2542,7 +2538,7 @@ void ArrivalModel::setUseArrival(int row, DataModel::Arrival *arrival) {
 bool ArrivalModel::backazimuthUsed(int row) const {
 	if ( row < 0 || row >= rowCount() ) return false;
 
-	return _used[row] & Seismology::LocatorInterface::F_BACKAZIMUTH;
+	return (_used[row] & (Seismology::LocatorInterface::F_BACKAZIMUTH | F_DISABLED)) == Seismology::LocatorInterface::F_BACKAZIMUTH;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2553,10 +2549,15 @@ bool ArrivalModel::backazimuthUsed(int row) const {
 void ArrivalModel::setBackazimuthUsed(int row, bool enabled) {
 	if ( row < 0 || row >= rowCount() ) return;
 
-	if ( enabled)
+	if ( enabled) {
 		_used[row] |= Seismology::LocatorInterface::F_BACKAZIMUTH;
-	else
+	}
+	else {
 		_used[row] &= ~Seismology::LocatorInterface::F_BACKAZIMUTH;
+	}
+
+	// Remove disabled state
+	_used[row] &= ~F_DISABLED;
 
 	emit dataChanged(index(row, USED),
 	                 index(row, USED));
@@ -2570,7 +2571,7 @@ void ArrivalModel::setBackazimuthUsed(int row, bool enabled) {
 bool ArrivalModel::horizontalSlownessUsed(int row) const {
 	if ( row < 0 || row >= rowCount() ) return false;
 
-	return _used[row] & Seismology::LocatorInterface::F_SLOWNESS;
+	return (_used[row] & (Seismology::LocatorInterface::F_SLOWNESS | F_DISABLED)) == Seismology::LocatorInterface::F_SLOWNESS;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2581,10 +2582,15 @@ bool ArrivalModel::horizontalSlownessUsed(int row) const {
 void ArrivalModel::setHorizontalSlownessUsed(int row, bool enabled) {
 	if ( row < 0 || row >= rowCount() ) return;
 
-	if ( enabled)
+	if ( enabled) {
 		_used[row] |= Seismology::LocatorInterface::F_SLOWNESS;
-	else
+	}
+	else {
 		_used[row] &= ~Seismology::LocatorInterface::F_SLOWNESS;
+	}
+
+	// Remove disabled state
+	_used[row] &= ~F_DISABLED;
 
 	emit dataChanged(index(row, USED),
 	                 index(row, USED));
@@ -2598,8 +2604,7 @@ void ArrivalModel::setHorizontalSlownessUsed(int row, bool enabled) {
 bool ArrivalModel::timeUsed(int row) const {
 	if ( row < 0 || row >= rowCount() ) return false;
 
-
-	return _used[row] & Seismology::LocatorInterface::F_TIME;
+	return (_used[row] & (Seismology::LocatorInterface::F_TIME | F_DISABLED)) == Seismology::LocatorInterface::F_TIME;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2610,10 +2615,15 @@ bool ArrivalModel::timeUsed(int row) const {
 void ArrivalModel::setTimeUsed(int row, bool enabled) {
 	if ( row < 0 || row >= rowCount() ) return;
 
-	if ( enabled)
+	if ( enabled) {
 		_used[row] |= Seismology::LocatorInterface::F_TIME;
-	else
+	}
+	else {
 		_used[row] &= ~Seismology::LocatorInterface::F_TIME;
+	}
+
+	// Remove disabled state
+	_used[row] &= ~F_DISABLED;
 
 	emit dataChanged(index(row, USED), index(row, USED));
 }
@@ -3567,16 +3577,21 @@ void OriginLocatorView::residualsSelected() {
 	QVector<int> selectedIds = _residuals->getSelectedValues();
 	int startIndex = 0;
 	for ( int i = 0; i < selectedIds.count(); ++i ) {
-		for ( int j = startIndex; j < selectedIds[i]; ++j )
-			_modelArrivals.setData(_modelArrivals.index(j, 0), 0, UsedRole);
-		_modelArrivals.setData(_modelArrivals.index(selectedIds[i], 0),
-		                       getMask(_modelArrivals.index(selectedIds[i], 0)),
+		for ( int j = startIndex; j < selectedIds[i]; ++j ) {
+			_modelArrivals.setData(_modelArrivals.index(j, USED), 0, UsedRole);
+		}
+
+		// Restore default arrival usage
+		_modelArrivals.setData(_modelArrivals.index(selectedIds[i], USED),
+		                       _modelArrivals.usedFlags(selectedIds[i]),
 		                       UsedRole);
+
 		startIndex = selectedIds[i]+1;
 	}
 
-	for ( int j = startIndex; j < _modelArrivals.rowCount(); ++j )
-		_modelArrivals.setData(_modelArrivals.index(j, 0), 0, UsedRole);
+	for ( int j = startIndex; j < _modelArrivals.rowCount(); ++j ) {
+		_modelArrivals.setData(_modelArrivals.index(j, USED), 0, UsedRole);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3770,8 +3785,9 @@ void OriginLocatorView::plotTabChanged(int tab) {
 		rect.setTop(rect.bottom() + 1.0);
 	}
 
-	if ( tab == PT_AZIMUTH )
+	if ( tab == PT_AZIMUTH ) {
 		rect.setRight(360.0);
+	}
 
 	adjustResidualsRect(rect);
 
@@ -3791,7 +3807,7 @@ void OriginLocatorView::plotTabChanged(int tab) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::changeArrival(int id, bool state) {
 	QModelIndex idx = _modelArrivals.index(id, 0);
-	_modelArrivals.setData(idx, state?getMask(idx):0, UsedRole);
+	_modelArrivals.setData(idx, state ? _modelArrivals.usedFlags(id) & getMask(idx) : 0, UsedRole);
 
 	_residuals->setValueSelected(id, state);
 	_map->setArrivalState(id, state);

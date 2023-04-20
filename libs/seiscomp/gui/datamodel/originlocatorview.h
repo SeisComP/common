@@ -80,9 +80,12 @@ class SC_GUI_API ArrivalModel : public QAbstractTableModel {
 	public:
 		ArrivalModel(DataModel::Origin* origin = nullptr, QObject *parent = 0);
 
+	public:
 		void setDisabledForeground(QColor c) { _disabledForeground = c; }
 
 		void setOrigin(DataModel::Origin* origin);
+		DataModel::Origin *origin() const;
+
 		void setRowColor(int row, const QColor&);
 
 		int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -114,7 +117,11 @@ class SC_GUI_API ArrivalModel : public QAbstractTableModel {
 		bool timeUsed(int row) const;
 		void setTimeUsed(int row, bool enabled);
 
+		int  usedFlags(int row) const;
+
 	private:
+		static const int F_DISABLED = 1 << 31;
+
 		DataModel::Origin *_origin;
 		QVector<int>       _used;
 		QVector<int>       _hoverState;
@@ -532,6 +539,15 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 		DiagramFilterSettingsDialog          *_plotFilterSettings;
 		DiagramFilterSettingsDialog::Filter  *_plotFilter;
 };
+
+
+inline DataModel::Origin *ArrivalModel::origin() const {
+	return _origin;
+}
+
+inline int ArrivalModel::usedFlags(int row) const {
+	return _used[row];
+}
 
 
 }
