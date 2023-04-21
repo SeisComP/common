@@ -603,8 +603,6 @@ bool RingBuffer::feed(const Record *rec) {
 		while ( front()->endTime() <= tmin )
 			pop_front();
 	}
-	else
-		return false;
 
 	return true;
 }
