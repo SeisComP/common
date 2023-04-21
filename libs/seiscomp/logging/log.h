@@ -35,6 +35,7 @@
 #define SEISCOMP_LOG_VA
 #define SEISCOMP_LOG_API_VERSION  2
 
+#include <seiscomp/logging/publisher.h>
 #include <seiscomp/logging/publishloc.h>
 #include <seiscomp/logging/publisher.h>
 #include <seiscomp/logging/common.h>
@@ -75,62 +76,33 @@ enum LogLevel {
 
 
 #ifdef __FUNCTION__
-#define _scMessageDef(ID, COMPONENT) \
-	static Seiscomp::Logging::PublishLoc ID SEISCOMP_SECTION = { \
-		& ID ## _enabled, \
-		nullptr, STR(COMPONENT), __FILE__, \
-		__FUNCTION__, __LINE__, nullptr \
-	}
+# define SEISCOMP_LOGGING_CURRENT_FUNCTION __FUNCTION__
 #else
-#define _scMessageDef(ID, COMPONENT) \
-	static Seiscomp::Logging::PublishLoc ID SEISCOMP_SECTION = { \
-		& ID ## _enabled, \
-		nullptr, STR(COMPONENT), __FILE__, \
-		"[unknown]", __LINE__, nullptr \
-	}
+# define SEISCOMP_LOGGING_CURRENT_FUNCTION "[unknown]"
 #endif
 
-
-#define _scplainCall(ID, COMPONENT, CHANNEL, MSG) \
+#define SEISCOMP_LOGGING_CALL(ID, COMPONENT, CHANNEL, FUNC, ...) \
 	static bool ID ## _enabled = true; \
 	if ( unlikely(ID ## _enabled) ) { \
-		_scMessageDef(ID, COMPONENT); \
-		Seiscomp::Logging::Register(&ID, CHANNEL, MSG); \
-	}
-
-#define _scfmtCall(ID, COMPONENT, CHANNEL, ...) \
-	static bool ID ## _enabled = true; \
-	if ( unlikely(ID ## _enabled) ) { \
-		_scMessageDef(ID, COMPONENT); \
-		Seiscomp::Logging::RegisterFormat(&ID, CHANNEL, ##__VA_ARGS__); \
-	}
-
-#define _scprintfCall(ID, COMPONENT, CHANNEL, ...) \
-	static bool ID ## _enabled = true; \
-	if ( unlikely(ID ## _enabled) ) { \
-		_scMessageDef(ID, COMPONENT); \
-		Seiscomp::Logging::RegisterPrintF(&ID, CHANNEL, ##__VA_ARGS__); \
-	}
-
-#define _scvCall(ID, COMPONENT, CHANNEL, format, args) \
-	static bool ID ## _enabled = true; \
-	if ( unlikely(ID ## _enabled) ) { \
-		_scMessageDef(ID, COMPONENT); \
-		Seiscomp::Logging::VRegister(&ID, CHANNEL, format, args); \
+		static Seiscomp::Logging::PublishLoc ID(& ID ## _enabled, \
+			STR(COMPONENT), __FILE__, \
+			SEISCOMP_LOGGING_CURRENT_FUNCTION, \
+			__LINE__, CHANNEL); \
+		FUNC(&ID, CHANNEL, ##__VA_ARGS__); \
 	}
 
 
 #define _scplain(ID, CHANNEL, MSG) \
-	do { _scplainCall(ID, SEISCOMP_COMPONENT, CHANNEL, MSG) } while(0)
+	do { SEISCOMP_LOGGING_CALL(ID, SEISCOMP_COMPONENT, CHANNEL, Seiscomp::Logging::Publish, MSG) } while(0)
 
 #define _scfmt(ID, CHANNEL, ... ) \
-	do { _scfmtCall(ID, SEISCOMP_COMPONENT, CHANNEL, ##__VA_ARGS__) } while(0)
+	do { SEISCOMP_LOGGING_CALL(ID, SEISCOMP_COMPONENT, CHANNEL, Seiscomp::Logging::PublishF, ##__VA_ARGS__) } while(0)
 
 #define _scprintf(ID, CHANNEL, ... ) \
-	do { _scprintfCall(ID, SEISCOMP_COMPONENT, CHANNEL, ##__VA_ARGS__) } while(0)
+	do { SEISCOMP_LOGGING_CALL(ID, SEISCOMP_COMPONENT, CHANNEL, Seiscomp::Logging::PublishP, ##__VA_ARGS__) } while(0)
 
 #define _scv(ID, CHANNEL, format, args) \
-	do { _scvCall(ID, SEISCOMP_COMPONENT, CHANNEL, format, args) } while(0)
+	do { SEISCOMP_LOGGING_CALL(ID, SEISCOMP_COMPONENT, CHANNEL, Seiscomp::Logging::VPublish, format, args) } while(0)
 
 
 /*! @addtogroup LoggingMacros
@@ -158,13 +130,13 @@ enum LogLevel {
     Note that unless there are subscribers to this message, it will do nothing.
 */
 #define SEISCOMP_DEBUG(...) \
-	_scprintf( _SCLOGID, Seiscomp::Logging::_SCDebugChannel, ##__VA_ARGS__ )
+	_scprintf(_SCLOGID, Seiscomp::Logging::_SCDebugChannel, ##__VA_ARGS__)
 
 #define SC_FMT_DEBUG(...) \
-	_scfmt( _SCLOGID, Seiscomp::Logging::_SCDebugChannel, ##__VA_ARGS__ )
+	_scfmt(_SCLOGID, Seiscomp::Logging::_SCDebugChannel, ##__VA_ARGS__)
 
 #define SEISCOMP_VDEBUG(format, args) \
-	_scv( _SCLOGID, Seiscomp::Logging::_SCDebugChannel, format, args )
+	_scv(_SCLOGID, Seiscomp::Logging::_SCDebugChannel, format, args)
 
 /*! @def SEISCOMP_INFO(format, ...)
     @brief Log a message to the "info" channel.  Takes printf style arguments.
@@ -180,13 +152,13 @@ enum LogLevel {
     Note that unless there are subscribers to this message, it will do nothing.
 */
 #define SEISCOMP_INFO(...) \
-	_scprintf( _SCLOGID, Seiscomp::Logging::_SCInfoChannel, ##__VA_ARGS__ )
+	_scprintf(_SCLOGID, Seiscomp::Logging::_SCInfoChannel, ##__VA_ARGS__)
 
 #define SC_FMT_INFO(...) \
-	_scfmt( _SCLOGID, Seiscomp::Logging::_SCInfoChannel, ##__VA_ARGS__ )
+	_scfmt(_SCLOGID, Seiscomp::Logging::_SCInfoChannel, ##__VA_ARGS__)
 
 #define SEISCOMP_VINFO(format, args) \
-	_scv( _SCLOGID, Seiscomp::Logging::_SCInfoChannel, format, args )
+	_scv(_SCLOGID, Seiscomp::Logging::_SCInfoChannel, format, args)
 
 /*! @def SEISCOMP_WARNING(format, ...)
     @brief Log a message to the "warning" channel.  Takes printf style
@@ -206,13 +178,13 @@ enum LogLevel {
     Note that unless there are subscribers to this message, it will do nothing.
 */
 #define SEISCOMP_WARNING(...) \
-	_scprintf( _SCLOGID, Seiscomp::Logging::_SCWarningChannel, ##__VA_ARGS__ )
+	_scprintf(_SCLOGID, Seiscomp::Logging::_SCWarningChannel, ##__VA_ARGS__)
 
 #define SC_FMT_WARNING(...) \
-	_scfmt( _SCLOGID, Seiscomp::Logging::_SCWarningChannel, ##__VA_ARGS__ )
+	_scfmt(_SCLOGID, Seiscomp::Logging::_SCWarningChannel, ##__VA_ARGS__)
 
 #define SEISCOMP_VWARNING(format, args) \
-	_scv( _SCLOGID, Seiscomp::Logging::_SCWarningChannel, format, args )
+	_scv(_SCLOGID, Seiscomp::Logging::_SCWarningChannel, format, args)
 
 /*! @def SEISCOMP_ERROR(...)
     @brief Log a message to the "error" channel. Takes printf style arguments.
@@ -230,13 +202,13 @@ enum LogLevel {
     Note that unless there are subscribers to this message, it will do nothing.
 */
 #define SEISCOMP_ERROR(...) \
-  _scprintf( _SCLOGID, Seiscomp::Logging::_SCErrorChannel, ##__VA_ARGS__ )
+  _scprintf(_SCLOGID, Seiscomp::Logging::_SCErrorChannel, ##__VA_ARGS__)
 
 #define SC_FMT_ERROR(...) \
-	_scfmt( _SCLOGID, Seiscomp::Logging::_SCErrorChannel, ##__VA_ARGS__ )
+	_scfmt(_SCLOGID, Seiscomp::Logging::_SCErrorChannel, ##__VA_ARGS__)
 
 #define SEISCOMP_VERROR(format, args) \
-	_scv( _SCLOGID, Seiscomp::Logging::_SCErrorChannel, format, args )
+	_scv(_SCLOGID, Seiscomp::Logging::_SCErrorChannel, format, args)
 
 /*! @def SEISCOMP_NOTICE(...)
     @brief Log a message to the "notice" channel. Takes printf style arguments.
@@ -254,13 +226,13 @@ enum LogLevel {
     Note that unless there are subscribers to this message, it will do nothing.
 */
 #define SEISCOMP_NOTICE(...) \
-  _scprintf( _SCLOGID, Seiscomp::Logging::_SCNoticeChannel, ##__VA_ARGS__ )
+  _scprintf(_SCLOGID, Seiscomp::Logging::_SCNoticeChannel, ##__VA_ARGS__)
 
 #define SC_FMT_NOTICE(...) \
-	_scfmt( _SCLOGID, Seiscomp::Logging::_SCNoticeChannel, ##__VA_ARGS__ )
+	_scfmt(_SCLOGID, Seiscomp::Logging::_SCNoticeChannel, ##__VA_ARGS__)
 
 #define SEISCOMP_VNOTICE(format, args) \
-	_scv( _SCLOGID, Seiscomp::Logging::_SCNoticeChannel, format, args )
+	_scv(_SCLOGID, Seiscomp::Logging::_SCNoticeChannel, format, args)
 
 /*! @def SEISCOMP_LOG(channel,format,...)
     @brief Log a message to a user defined channel. Takes a channel and printf
@@ -280,13 +252,13 @@ enum LogLevel {
     Note that unless there are subscribers to this message, it will do nothing.
 */
 #define SEISCOMP_LOG(channel, ...) \
-	_scprintf( _SCLOGID, channel, ##__VA_ARGS__ )
+	_scprintf(_SCLOGID, channel, ##__VA_ARGS__)
 
 #define SC_FMT_LOG(channel, ...) \
-	_scfmt( _SCLOGID, channel, ##__VA_ARGS__ )
+	_scfmt(_SCLOGID, channel, ##__VA_ARGS__)
 
 #define SEISCOMP_VLOG(channel, format, args) \
-	_scv( _SCLOGID, channel, format, args )
+	_scv(_SCLOGID, channel, format, args)
 
 /*! @def DEF_CHANNEL( const char *path, LogLevel level )
     @brief Returns pointer to Channel struct for the given path

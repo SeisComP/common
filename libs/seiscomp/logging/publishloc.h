@@ -22,7 +22,7 @@
 #define SC_LOGGING_PUBLISHLOC_H
 
 
-#include <seiscomp/logging/common.h>
+#include <seiscomp/core.h>
 
 #include <fmt/format.h>
 #include <fmt/printf.h>
@@ -51,6 +51,9 @@ struct SC_SYSTEM_CORE_API PublishLoc {
     to be initialized at run-time which adds extra code and a guard variable
     for the struct.
  */
+	PublishLoc(bool *enabled, const char *component,
+	           const char *fileName, const char *functionName,
+	           int lineNum, Channel *channel);
 	~PublishLoc();
 
 	bool *enabled;
@@ -68,56 +71,44 @@ struct SC_SYSTEM_CORE_API PublishLoc {
 };
 
 
-void Register(PublishLoc *loc, Channel *, const char *msg);
-void Register(PublishLoc *loc, Channel *, const std::string &msg);
+void Publish(PublishLoc *, Channel *, const char *msg);
+void Publish(PublishLoc *, Channel *, const std::string &msg);
 
 template <typename S, typename... Args>
-void RegisterPrintF(PublishLoc *loc, Channel *, const S& format, Args&&... args);
+void PublishF(PublishLoc *, Channel *,
+              const S &format, Args &&...args);
 
 template <typename S, typename... Args>
-void RegisterFormat(PublishLoc *loc, Channel *, const S& format, Args&&... args);
+void PublishP(PublishLoc *, Channel *,
+              const S &format, Args &&...args);
 
-SC_SYSTEM_CORE_API void VRegister(PublishLoc *loc, Channel *,
-                                  const char *format,
-                                  va_list args);
-
-SC_SYSTEM_CORE_API void VRegister(PublishLoc *loc, Channel *,
-                                  fmt::string_view format,
-                                  fmt::printf_args args);
-
-SC_SYSTEM_CORE_API void VRegister(PublishLoc *loc, Channel *,
-                                  fmt::string_view format,
-                                  fmt::format_args args);
-
-
-/* @def LOG_NO_COPY
-   @brief Disables class copy constructor and operator =.
-
-   This macro declares a private copy constructor and assignment operator
-   which prevents automatic generation of these operation by the compiler.
-
-   Attention, it switches access to private, so use it only at the end of the
-   class declaration.
- */
-#define LOG_NO_COPY(CNAME) \
-	private: \
-		CNAME(const CNAME&); \
-		CNAME & operator = (const CNAME &)
+void VPublish(PublishLoc *, Channel *,
+              const char *format,
+              va_list args);
+void VPublish(PublishLoc *, Channel *,
+              fmt::string_view format,
+              fmt::format_args args);
+void VPublish(PublishLoc *, Channel *,
+              fmt::string_view format,
+              fmt::printf_args args);
 
 
 template <typename S, typename... Args>
-inline void RegisterPrintF(PublishLoc *loc, Channel *channel, const S& format, Args&&... args) {
-	VRegister(loc, channel, format, fmt::make_printf_args(args...));
+inline void PublishF(PublishLoc *loc, Channel *channel,
+                     const S &format, Args &&...args) {
+	VPublish(loc, channel, format, fmt::make_format_args(args...));
 }
 
 
 template <typename S, typename... Args>
-inline void RegisterFormat(PublishLoc *loc, Channel *channel, const S& format, Args&&... args) {
-	VRegister(loc, channel, format, fmt::make_format_args(args...));
+inline void PublishP(PublishLoc *loc, Channel *channel,
+                     const S &format, Args &&...args) {
+	VPublish(loc, channel, format, fmt::make_printf_args(args...));
 }
 
 
 }
 }
+
 
 #endif

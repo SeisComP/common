@@ -81,42 +81,20 @@ class SC_SYSTEM_CORE_API Channel;
  */
 class SC_SYSTEM_CORE_API Publisher : public Node {
 	public:
-		Publisher(PublishLoc *src);
 		Publisher();
-		virtual ~Publisher();
+		Publisher(PublishLoc *src);
+		~Publisher() override;
 
+	public:
 		// metadata about the publisher and its publication
 		PublishLoc *src;
 
-		static void Publish(PublishLoc *, Channel *, const char *msg);
-		static void Publish(PublishLoc *, Channel *, const std::string &msg);
-
-		template <typename S, typename... Args>
-		static void Publish(PublishLoc *, Channel *,
-		                    const S &format, Args &&...args);
-		static void VPublish(PublishLoc *, Channel *,
-		                     const char *format,
-		                     va_list args);
-		static void VPublish(PublishLoc *, Channel *,
-		                     fmt::string_view format,
-		                     fmt::format_args args);
-		static void VPublish(PublishLoc *, Channel *,
-		                     fmt::string_view format,
-		                     fmt::printf_args args);
-
 	protected:
-		virtual void setEnabled(bool newState);
+		void setEnabled(bool newState) override;
 
 		Publisher(const Publisher &);
 		Publisher & operator=(const Publisher &);
 };
-
-
-template <typename S, typename... Args>
-inline void Publisher::Publish(PublishLoc *loc, Channel *channel,
-                               const S &format, Args &&...args) {
-	PublishVA(loc, channel, format, fmt::make_printf_args(args...));
-}
 
 
 }

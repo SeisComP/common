@@ -40,141 +40,25 @@ namespace Logging {
 #ifdef WIN32
 #define STDERR_FILENO 2
 #endif
-
-
-static std::mutex registrationLock;
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Register(PublishLoc *loc, Channel *channel, const char *msg) {
+	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+PublishLoc::PublishLoc(bool *enabled, const char *component,
+                       const char *fileName, const char *functionName,
+                       int lineNum, Channel *channel)
+: enabled(enabled)
+, component(component)
+, fileName(fileName)
+, functionName(functionName)
+, lineNum(lineNum)
+, channel(channel) {
+	static std::mutex registrationLock;
 	std::lock_guard<std::mutex> lock(registrationLock);
-
-	loc->channel = channel;
-
-	Publisher *pub = new Publisher(loc);
-
-	loc->pub = pub;
-
-	if ( pub->enabled() ) {
-		loc->enable();
-
-		// pass through to the publication function since it is active at
-		// birth.
-		Publisher::Publish(loc, channel, msg);
-	}
-	else {
-		loc->disable();
-	}
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Register(PublishLoc *loc, Channel *channel, const std::string &msg) {
-	std::lock_guard<std::mutex> lock(registrationLock);
-
-	loc->channel = channel;
-
-	Publisher *pub = new Publisher(loc);
-
-	loc->pub = pub;
-
-	if ( pub->enabled() ) {
-		loc->enable();
-
-		// pass through to the publication function since it is active at
-		// birth.
-		Publisher::Publish(loc, channel, msg);
-	}
-	else {
-		loc->disable();
-	}
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void VRegister(PublishLoc *loc, Channel *channel, const char *format,
-               va_list args) {
-	std::lock_guard<std::mutex> lock(registrationLock);
-
-	loc->channel = channel;
-
-	Publisher *pub = new Publisher(loc);
-
-	loc->pub = pub;
-
-	if ( pub->enabled() ) {
-		loc->enable();
-
-		// pass through to the publication function since it is active at
-		// birth.
-		Publisher::VPublish(loc, channel, format, args);
-	}
-	else {
-		loc->disable();
-	}
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void VRegister(PublishLoc *loc, Channel *channel, fmt::string_view format,
-               fmt::format_args args) {
-	std::lock_guard<std::mutex> lock(registrationLock);
-
-	loc->channel = channel;
-
-	Publisher *pub = new Publisher(loc);
-
-	loc->pub = pub;
-
-	if ( pub->enabled() ) {
-		loc->enable();
-
-		// pass through to the publication function since it is active at
-		// birth.
-		Publisher::VPublish(loc, channel, format, args);
-	}
-	else {
-		loc->disable();
-	}
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void VRegister(PublishLoc *loc, Channel *channel, fmt::string_view format,
-               fmt::printf_args args) {
-	std::lock_guard<std::mutex> lock(registrationLock);
-
-	loc->channel = channel;
-
-	Publisher *pub = new Publisher(loc);
-
-	loc->pub = pub;
-
-	if ( pub->enabled() ) {
-		loc->enable();
-
-		// pass through to the publication function since it is active at
-		// birth.
-		Publisher::VPublish(loc, channel, format, args);
-	}
-	else {
-		loc->disable();
-	}
+	pub = new Publisher(this);
+	*enabled = pub->enabled();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -404,6 +288,131 @@ void log(Channel *ch, const char *msg) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void log(Channel *ch, const std::string &msg) {
 	DO_CHANNEL(ch);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Publish(PublishLoc *loc, Channel *, const char *msg) {
+	Data data;
+
+	data.publisher = loc;
+	data.time = time(0);
+	data.msg = msg;
+
+	loc->pub->publish(data);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Publish(PublishLoc *loc, Channel *, const std::string &msg) {
+	Data data;
+
+	data.publisher = loc;
+	data.time = time(0);
+	data.msg = msg.c_str();
+
+	loc->pub->publish(data);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void VPublish(PublishLoc *loc, Channel *, const char *format, va_list ap) {
+	Data data;
+
+	data.publisher = loc;
+	data.time = time(0);
+	data.msg = 0;
+
+	char msgBuf[64];
+	char *buf = msgBuf;
+	int bufSize = sizeof(msgBuf);
+
+	// loop until we have allocated enough space for the message
+	for ( int numTries = 10; numTries; --numTries ) {
+		va_list args;
+
+		// va_copy() is defined in C99, __va_copy() in earlier definitions, and
+		// automake says to fall back on memcpy if neither exist...
+		//
+		// FIXME: memcpy doesn't work for compilers which use array type for
+		//        va_list such as Watcom
+#if defined( va_copy )
+		va_copy(args, ap);
+#elif defined( __va_copy )
+		__va_copy(args, ap);
+#else
+		memcpy(&args, &ap, sizeof(va_list));
+#endif
+
+		int ncpy = vsnprintf(buf, bufSize, format, args);
+		va_end( args );
+
+		// if it worked, then return the buffer
+		if ( ncpy > -1 && ncpy < bufSize ) {
+			data.msg = buf;
+			break;
+		}
+		else {
+			// newer implementations of vsnprintf return # bytes needed..
+			if ( ncpy > 0 ) {
+				bufSize = ncpy + 1;
+			}
+			else {
+				bufSize *= 2; // try twice as much space as before
+			}
+
+			if ( buf != msgBuf ) {
+				delete[] buf;
+			}
+
+			buf = new char[bufSize];
+		}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void VPublish(PublishLoc *loc, Channel *,
+              fmt::string_view format, fmt::format_args args) {
+	auto line = fmt::vformat(format, args);
+
+	Data data;
+
+	data.publisher = loc;
+	data.time = time(0);
+	data.msg = line.c_str();
+
+	loc->pub->publish(data);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void VPublish(PublishLoc *loc, Channel *,
+              fmt::string_view format, fmt::printf_args args) {
+	auto line = fmt::vsprintf(format, args);
+
+	Data data;
+
+	data.publisher = loc;
+	data.time = time(0);
+	data.msg = line.c_str();
+
+	loc->pub->publish(data);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
