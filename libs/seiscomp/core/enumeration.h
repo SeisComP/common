@@ -230,11 +230,15 @@ inline std::ostream &operator<<(std::ostream &os, const Enum<ENUMTYPE, END, NAME
 }
 
 
+namespace fmt {
+
 template <>
-struct fmt::formatter<Seiscomp::Core::Enumeration> : fmt::ostream_formatter {};
+struct formatter<Seiscomp::Core::Enumeration> : ostream_formatter {};
 
 template <typename ENUMTYPE, ENUMTYPE END, typename NAMES>
-struct fmt::formatter<Seiscomp::Core::Enum<ENUMTYPE, END, NAMES>> : fmt::ostream_formatter {};
+struct formatter<Seiscomp::Core::Enum<ENUMTYPE, END, NAMES>> : ostream_formatter {};
+
+}
 
 
 #endif
