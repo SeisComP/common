@@ -974,7 +974,8 @@ void JSONArchive::read(Core::Time &value) {
 		if ( _objectLocation->IsNull() )
 			value = Core::Time::Null;
 		else {
-			SEISCOMP_ERROR("iso string expected, got type %d", _objectLocation->GetType());
+			SEISCOMP_ERROR("iso string expected, got type %d",
+			               static_cast<int>(_objectLocation->GetType()));
 			setValidity(false);
 		}
 
