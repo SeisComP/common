@@ -260,6 +260,7 @@ namespace {
 
 const int UsedRole = Qt::UserRole + 1;
 const int HoverRole = Qt::UserRole + 2;
+const int RestoreRole = Qt::UserRole + 3;
 
 MAKEENUM(
 	ArrivalListColumns,
@@ -1600,12 +1601,13 @@ bool ArrivalDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 			getRects(rects, option, _labelWidth, _statusRectWidth, _spacing);
 
 			if ( rects[4].contains(pos) ) {
-				int flags = (Qt::CheckState)index.data(UsedRole).toInt(),
-				    mask = getMask(index);
-				if ( flags == 0 )
-					model->setData(index, mask, UsedRole);
-				else
-					model->setData(index, 0, UsedRole);
+				int flags = (Qt::CheckState)index.data(UsedRole).toInt();
+				if ( flags == 0 ) {
+					model->setData(index, 1, RestoreRole);
+				}
+				else {
+					model->setData(index, 0, RestoreRole);
+				}
 			}
 			else {
 				int flags = index.data(UsedRole).toInt(),
@@ -2384,7 +2386,18 @@ bool ArrivalModel::setData(const QModelIndex &index, const QVariant &value,
 	if ( index.isValid() && index.column() == USED ) {
 		if ( !_enableState[index.row()] ) return false;
 
-		if ( role == UsedRole ) {
+		if ( role == RestoreRole ) {
+			if ( !value.toInt() ) {
+				_used[index.row()] |= F_DISABLED;
+			}
+			else {
+				_used[index.row()] &= ~F_DISABLED;
+				if ( !_used[index.row()] ) {
+					_used[index.row()] = getMask(index);
+				}
+			}
+		}
+		else if ( role == UsedRole ) {
 			int flags = value.toInt() & getMask(index);
 			if ( flags ) {
 				_used[index.row()] = flags;
@@ -3577,19 +3590,18 @@ void OriginLocatorView::residualsSelected() {
 	int startIndex = 0;
 	for ( int i = 0; i < selectedIds.count(); ++i ) {
 		for ( int j = startIndex; j < selectedIds[i]; ++j ) {
-			SC_D.modelArrivals.setData(SC_D.modelArrivals.index(j, USED), 0, UsedRole);
+			SC_D.modelArrivals.setData(SC_D.modelArrivals.index(j, USED), 0, RestoreRole);
 		}
 
 		// Restore default arrival usage
 		SC_D.modelArrivals.setData(SC_D.modelArrivals.index(selectedIds[i], USED),
-		                           SC_D.modelArrivals.usedFlags(selectedIds[i]),
-		                           UsedRole);
+		                           1, RestoreRole);
 
 		startIndex = selectedIds[i]+1;
 	}
 
 	for ( int j = startIndex; j < SC_D.modelArrivals.rowCount(); ++j ) {
-		SC_D.modelArrivals.setData(SC_D.modelArrivals.index(j, USED), 0, UsedRole);
+		SC_D.modelArrivals.setData(SC_D.modelArrivals.index(j, USED), 0, RestoreRole);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3805,8 +3817,8 @@ void OriginLocatorView::plotTabChanged(int tab) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::changeArrival(int id, bool state) {
-	QModelIndex idx = SC_D.modelArrivals.index(id, 0);
-	SC_D.modelArrivals.setData(idx, state ? SC_D.modelArrivals.usedFlags(id) & getMask(idx) : 0, UsedRole);
+	QModelIndex idx = SC_D.modelArrivals.index(id, USED);
+	SC_D.modelArrivals.setData(idx, state ? 1 : 0, RestoreRole);
 
 	SC_D.residuals->setValueSelected(id, state);
 	SC_D.map->setArrivalState(id, state);
