@@ -27,6 +27,7 @@
 #include <vector>
 #include <limits>
 #include <cstdint>
+#include <fmt/format.h>
 
 #include <seiscomp/unittest/unittests.h>
 
@@ -67,6 +68,19 @@ vector<string> vec(const char *t1, const char *t2, const char *t3, const char *t
 	v.push_back(t4);
 	return v;
 }
+
+
+MAKEENUM(
+	TestEnum,
+	EVALUES(
+		TEST0,
+		TEST1
+	),
+	ENAMES(
+		"test0",
+		"test1"
+	)
+);
 
 
 struct TestCase {
@@ -409,6 +423,15 @@ BOOST_AUTO_TEST_CASE(wildcards) {
 	BOOST_CHECK(wildcmp("*.*", "abc.def"));
 	BOOST_CHECK(!wildcmp("*.*", "abc"));
 	BOOST_CHECK(wildcmp("a.*.*", "a.def."));
+}
+
+BOOST_AUTO_TEST_CASE(enums) {
+	TestEnum e = TEST0;
+	auto s = fmt::format("{}", e);
+	BOOST_CHECK_EQUAL(s, "test0");
+	e = TEST1;
+	s = fmt::format("{}", e);
+	BOOST_CHECK_EQUAL(s, "test1");
 }
 
 
