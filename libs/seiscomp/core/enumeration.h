@@ -24,6 +24,9 @@
 
 #include <seiscomp/core/io.h>
 
+#include <ostream>
+#include <fmt/ostream.h>
+
 
 namespace Seiscomp {
 namespace Core {
@@ -209,8 +212,29 @@ class Enum : public Enumeration {
 
 #include <seiscomp/core/enumeration.inl>
 
+
+inline std::ostream &operator<<(std::ostream &os, const Enumeration &e) {
+	os << e.toString();
+	return os;
+}
+
+
+template <typename ENUMTYPE, ENUMTYPE END, typename NAMES>
+inline std::ostream &operator<<(std::ostream &os, const Enum<ENUMTYPE, END, NAMES> &e) {
+	os << e.toString();
+	return os;
+}
+
+
 }
 }
+
+
+template <>
+struct fmt::formatter<Seiscomp::Core::Enumeration> : fmt::ostream_formatter {};
+
+template <typename ENUMTYPE, ENUMTYPE END, typename NAMES>
+struct fmt::formatter<Seiscomp::Core::Enum<ENUMTYPE, END, NAMES>> : fmt::ostream_formatter {};
 
 
 #endif
