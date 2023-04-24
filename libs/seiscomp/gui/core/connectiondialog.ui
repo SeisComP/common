@@ -1,49 +1,45 @@
-<ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ConnectionDialog</class>
- <widget class="QDialog" name="ConnectionDialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="ConnectionDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>508</width>
-    <height>527</height>
+    <width>847</width>
+    <height>638</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy>
-    <hsizetype>5</hsizetype>
-    <vsizetype>5</vsizetype>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Setup connection</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="margin" >
+  <layout class="QGridLayout">
+   <property name="margin">
     <number>4</number>
    </property>
-   <property name="spacing" >
+   <property name="spacing">
     <number>4</number>
    </property>
-   <item row="2" column="0" >
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
+   <item row="2" column="0">
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>6</number>
+     </property>
+     <property name="margin">
+      <number>0</number>
      </property>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>261</width>
          <height>20</height>
@@ -52,58 +48,56 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="btnClose" >
-       <property name="text" >
+      <widget class="QPushButton" name="btnClose">
+       <property name="text">
         <string>Continue</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="1" column="0" >
-    <widget class="QGroupBox" name="groupDatabase" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>4</vsizetype>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="groupDatabase">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="title" >
+     <property name="title">
       <string>Database</string>
      </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
+     <layout class="QGridLayout">
+      <property name="margin">
        <number>9</number>
       </property>
-      <property name="spacing" >
+      <property name="spacing">
        <number>6</number>
       </property>
-      <item row="3" column="1" >
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
+      <item row="3" column="1">
+       <layout class="QHBoxLayout">
+        <property name="spacing">
          <number>6</number>
         </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
         <item>
-         <widget class="QPushButton" name="btnDbSwitchToReported" >
-          <property name="enabled" >
+         <widget class="QPushButton" name="btnDbSwitchToReported">
+          <property name="enabled">
            <bool>false</bool>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Switch to reported</string>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>71</width>
             <height>27</height>
@@ -112,48 +106,48 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="btnDbConnect" >
-          <property name="text" >
+         <widget class="QPushButton" name="btnDbConnect">
+          <property name="text">
            <string>Connect</string>
           </property>
          </widget>
         </item>
        </layout>
       </item>
-      <item row="0" column="1" >
-       <widget class="QComboBox" name="comboDbType" >
-        <property name="modelColumn" >
-         <bool>false</bool>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="comboDbType">
+        <property name="modelColumn">
+         <number>0</number>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
-       <widget class="QLineEdit" name="editDbConnection" />
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="editDbConnection"/>
       </item>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="labelDbType" >
-        <property name="text" >
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelDbType">
+        <property name="text">
          <string>Type:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="labelDbConnection" >
-        <property name="text" >
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelDbConnection">
+        <property name="text">
          <string>Connection:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="label_7" >
-        <property name="text" >
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
          <string>Reported:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" >
-       <widget class="QLineEdit" name="labelDbReported" >
-        <property name="readOnly" >
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="labelDbReported">
+        <property name="readOnly">
          <bool>true</bool>
         </property>
        </widget>
@@ -161,75 +155,71 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="0" >
-    <widget class="QSplitter" name="splitter" >
-     <property name="orientation" >
+   <item row="0" column="0">
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QGroupBox" name="groupMessaging" >
-      <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>7</hsizetype>
-        <vsizetype>1</vsizetype>
+     <widget class="QGroupBox" name="groupMessaging">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <property name="title" >
+      <property name="title">
        <string>Messaging</string>
       </property>
-      <layout class="QGridLayout" >
-       <property name="margin" >
+      <layout class="QGridLayout">
+       <property name="margin">
         <number>9</number>
        </property>
-       <property name="spacing" >
+       <property name="spacing">
         <number>6</number>
        </property>
-       <item row="4" column="0" colspan="2" >
-        <widget class="QLabel" name="label_3" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>5</hsizetype>
-           <vsizetype>5</vsizetype>
+       <item row="4" column="0" colspan="2">
+        <widget class="QLabel" name="label_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Enter one group defined in the master config file. This group is used for sending messages only.</string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
          </property>
-         <property name="wordWrap" >
+         <property name="wordWrap">
           <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="label_4" >
-         <property name="text" >
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
           <string>Timeout in sec.:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1" >
-        <widget class="QSpinBox" name="timeoutSpinBox" />
+       <item row="2" column="1">
+        <widget class="QSpinBox" name="timeoutSpinBox"/>
        </item>
-       <item row="5" column="0" colspan="2" >
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
+       <item row="5" column="0" colspan="2">
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>6</number>
+         </property>
+         <property name="margin">
+          <number>0</number>
          </property>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
              <height>20</height>
@@ -238,82 +228,78 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="btnConnect" >
-           <property name="text" >
+          <widget class="QPushButton" name="btnConnect">
+           <property name="text">
             <string>Connect</string>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="3" column="1" >
-        <widget class="QLineEdit" name="editPrimaryGroup" />
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="editPrimaryGroup"/>
        </item>
-       <item row="3" column="0" >
-        <widget class="QLabel" name="label_5" >
-         <property name="text" >
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
           <string>Primary group:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="label_2" >
-         <property name="text" >
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
           <string>Server:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1" >
-        <widget class="QLineEdit" name="editServer" >
-         <property name="text" >
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="editServer">
+         <property name="text">
           <string>localhost</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="QLineEdit" name="editUser" >
-         <property name="text" >
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="editUser">
+         <property name="text">
           <string>user</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="label" >
-         <property name="text" >
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
           <string>User:</string>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QGroupBox" name="groupSubscriptions" >
-      <property name="enabled" >
+     <widget class="QGroupBox" name="groupSubscriptions">
+      <property name="enabled">
        <bool>false</bool>
       </property>
-      <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>7</hsizetype>
-        <vsizetype>1</vsizetype>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <property name="title" >
+      <property name="title">
        <string>Subscriptions</string>
       </property>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>6</number>
        </property>
+       <property name="margin">
+        <number>9</number>
+       </property>
        <item>
-        <widget class="QListWidget" name="listSubscriptions" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>3</vsizetype>
+        <widget class="QListWidget" name="listSubscriptions">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -321,26 +307,26 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>6</number>
          </property>
+         <property name="margin">
+          <number>0</number>
+         </property>
          <item>
-          <widget class="QPushButton" name="btnSelectAll" >
-           <property name="text" >
+          <widget class="QPushButton" name="btnSelectAll">
+           <property name="text">
             <string>Select All</string>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>70</width>
              <height>30</height>
@@ -349,8 +335,8 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="btnDeselectAll" >
-           <property name="text" >
+          <widget class="QPushButton" name="btnDeselectAll">
+           <property name="text">
             <string>Deselect All</string>
            </property>
           </widget>
@@ -363,7 +349,6 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
  <tabstops>
   <tabstop>editUser</tabstop>
   <tabstop>editServer</tabstop>
@@ -385,11 +370,11 @@
    <receiver>ConnectionDialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>334</x>
      <y>215</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>173</x>
      <y>213</y>
     </hint>
