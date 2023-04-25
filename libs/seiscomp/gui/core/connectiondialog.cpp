@@ -27,6 +27,9 @@
 #include <seiscomp/messaging/messages/database.h>
 #include <seiscomp/utils/timer.h>
 
+#include <QDir>
+#include <QFileDialog>
+#include <QFileInfo>
 #include <QMessageBox>
 
 using namespace Seiscomp::Core;
@@ -69,6 +72,20 @@ ConnectionDialog::ConnectionDialog(ConnectionPtr* con, DatabaseInterfacePtr* db,
 	connect(_ui.listSubscriptions, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(onItemChanged(QListWidgetItem*)));
 	connect(_ui.btnSelectAll, SIGNAL(clicked()), this, SLOT(onSelectAll()));
 	connect(_ui.btnDeselectAll, SIGNAL(clicked()), this, SLOT(onDeselectAll()));
+	connect(_ui.btnPeerCertificateOpen, SIGNAL(clicked()), this, SLOT(onPeerCertificateOpen()));
+
+	_ui.editPrimaryGroup->setToolTip(
+	            tr("<html>Enter one group defined in the master config file. "
+	               "This group is used for sending messages only.</html>"));
+
+	int iconHeight = _ui.editPeerCertificate->height();
+	_ui.btnPeerCertificateOpen->setIconSize(QSize(iconHeight, iconHeight));
+	_ui.btnPeerCertificateOpen->setIcon(
+	            qApp->style()->standardIcon(QStyle::SP_DialogOpenButton));
+	_ui.editPeerCertificate->setToolTip(
+	            tr("<html>The OpenSSL peer certificate to be used. Path to "
+	               "OpenSSL certificate in PKCS 12 format or the prefix \"data:\" "
+	               "followed by the Base64 encoded certificate data.</html>"));
 }
 
 
@@ -85,7 +102,8 @@ void ConnectionDialog::setClientParameters(const QString& server,
                                            const QString& username,
                                            const QString& primaryGroup,
                                            const QStringList& groups,
-                                           int timeout) {
+                                           int timeout,
+                                           const QString &peerCertificate) {
 	_requestedGroups = groups;
 	_requestAllGroups = false;
 
@@ -102,6 +120,7 @@ void ConnectionDialog::setClientParameters(const QString& server,
 	_ui.editServer->setText(server);
 	_ui.editPrimaryGroup->setText(primaryGroup);
 	_ui.timeoutSpinBox->setValue(timeout);
+	_ui.editPeerCertificate->setText(peerCertificate);
 }
 
 
@@ -175,7 +194,9 @@ void ConnectionDialog::onConnectionError(int /*code*/) {
 		_ui.editServer->setEnabled(true);
 		_ui.editPrimaryGroup->setEnabled(true);
 		_ui.timeoutSpinBox->setEnabled(true);
-		
+		_ui.btnPeerCertificateOpen->setEnabled(true);
+		_ui.editPeerCertificate->setEnabled(true);
+
 		_ui.groupSubscriptions->setEnabled(false);
 		_ui.listSubscriptions->clear();
 
@@ -191,7 +212,9 @@ void ConnectionDialog::onConnect() {
 		_ui.editServer->setEnabled(true);
 		_ui.editPrimaryGroup->setEnabled(true);
 		_ui.timeoutSpinBox->setEnabled(true);
-		
+		_ui.btnPeerCertificateOpen->setEnabled(true);
+		_ui.editPeerCertificate->setEnabled(true);
+
 		_ui.groupSubscriptions->setEnabled(false);
 		_ui.listSubscriptions->clear();
 
@@ -281,7 +304,8 @@ bool ConnectionDialog::connectToMessaging() {
 
 	if ( !*_connection || !(*_connection)->isConnected() ) {
 		SEISCOMP_DEBUG("Request a connection in settings dialog");
-		emit aboutToConnect(host, user, _ui.editPrimaryGroup->text(), timeout*1000);
+		emit aboutToConnect(host, user, _ui.editPrimaryGroup->text(), timeout*1000,
+		                    _ui.editPeerCertificate->text());
 	}
 	//(*_connection) = Connection::Create(("4803@" + host).toAscii(), user.toAscii(), _ui.editPrimaryGroup->text().toAscii());
 
@@ -327,7 +351,9 @@ bool ConnectionDialog::connectToMessaging() {
 	_ui.editServer->setEnabled(false);
 	_ui.editPrimaryGroup->setEnabled(false);
 	_ui.timeoutSpinBox->setEnabled(false);
-	
+	_ui.btnPeerCertificateOpen->setEnabled(false);
+	_ui.editPeerCertificate->setEnabled(false);
+
 	return true;
 }
 
@@ -420,6 +446,23 @@ void ConnectionDialog::onDeselectAll() {
 	}
 }
 
+void ConnectionDialog::onPeerCertificateOpen() {
+	QString filename = _ui.editPeerCertificate->text();
+	QString dir;
+	QFileInfo info(filename);
+	if ( !info.isFile() ) {
+		filename.clear();
+	}
+
+	filename = QFileDialog::getOpenFileName(
+	               this, tr("Select peer certificate file"),
+	               filename, tr("All files (*);;PKCS 12 files (*.p12)"));
+	if ( filename.isEmpty() ) {
+		return;
+	}
+
+	_ui.editPeerCertificate->setText(filename);
+}
 
 }
 }

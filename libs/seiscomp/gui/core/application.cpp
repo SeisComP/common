@@ -1052,7 +1052,8 @@ bool Application::init() {
 			cdlg()->setClientParameters(Client::Application::_settings.messaging.URL.c_str(),
 			                            Client::Application::_settings.messaging.user.c_str(),
 			                            Client::Application::_settings.messaging.primaryGroup.c_str(),
-			                            groups, Client::Application::_settings.messaging.timeout);
+			                            groups, Client::Application::_settings.messaging.timeout,
+			                            Client::Application::_settings.messaging.certificate.c_str());
 		}
 	}
 
@@ -1121,8 +1122,9 @@ void Application::createSettingsDialog() {
 	_dlgConnection = new ConnectionDialog(&_connection, &_database);
 	_dlgConnection->setMessagingEnabled(isMessagingEnabled());
 
-	connect(_dlgConnection, SIGNAL(aboutToConnect(QString, QString, QString, int)),
-	        this, SLOT(createConnection(QString, QString, QString, int)));
+	connect(_dlgConnection, SIGNAL(aboutToConnect(QString, QString, QString,
+	                                              int, QString)),
+	        this, SLOT(createConnection(QString, QString, QString, int, QString)));
 
 	connect(_dlgConnection, SIGNAL(aboutToDisconnect()),
 	        this, SLOT(destroyConnection()));
@@ -1160,7 +1162,8 @@ bool Application::handleInitializationError(int stage) {
 		cdlg()->setClientParameters(Client::Application::_settings.messaging.URL.c_str(),
 		                            Client::Application::_settings.messaging.user.c_str(),
 		                            Client::Application::_settings.messaging.primaryGroup.c_str(),
-		                            groups, Client::Application::_settings.messaging.timeout);
+		                            groups, Client::Application::_settings.messaging.timeout,
+		                            Client::Application::_settings.messaging.certificate.c_str());
 
 		cdlg()->setDatabaseParameters(databaseURI().c_str());
 
@@ -1387,7 +1390,8 @@ void Application::quit() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::createConnection(QString host, QString user,
-                                   QString group, int timeout) {
+                                   QString group, int timeout,
+                                   QString peerCertificate) {
 	Client::Result status = Client::OK;
 
 	SEISCOMP_DEBUG("createConnection(%s, %s, %s, %d)",
@@ -1399,7 +1403,12 @@ void Application::createConnection(QString host, QString user,
 	_connection = new Client::Connection;
 	status = _connection->setSource(host.toStdString());
 	if ( status == Client::OK ) {
+		_connection->setCertificate(Client::Application::_settings.messaging.certificate);
 		_connection->setMembershipInfo(Client::Application::_settings.messaging.membershipMessages);
+		if ( !peerCertificate.isEmpty() ) {
+			_connection->setCertificate(peerCertificate.toStdString());
+		}
+
 		status = _connection->connect(user.toStdString(), group.toStdString(),
 		                              timeout);
 	}
@@ -1437,6 +1446,7 @@ void Application::createConnection(QString host, QString user,
 	Client::Application::_settings.messaging.URL = host.toStdString();
 	Client::Application::_settings.messaging.primaryGroup = group.toStdString();
 	Client::Application::_settings.messaging.timeout = timeout;
+	Client::Application::_settings.messaging.certificate = peerCertificate.toStdString();
 
 	startMessageThread();
 	if ( _thread ) {

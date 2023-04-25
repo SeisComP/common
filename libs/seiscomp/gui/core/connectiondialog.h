@@ -55,7 +55,8 @@ class SC_GUI_API ConnectionDialog : public QDialog {
 		                         const QString& username,
 		                         const QString& primaryGroup,
 		                         const QStringList& groups,
-		                         int timeout);
+		                         int timeout,
+		                         const QString &peerCertificate);
 
 		bool setMessagingEnabled(bool);
 
@@ -78,7 +79,8 @@ class SC_GUI_API ConnectionDialog : public QDialog {
 	//  Public signals
 	// ------------------------------------------------------------------
 	signals:
-		void aboutToConnect(QString host, QString user, QString group, int timeout);
+		void aboutToConnect(QString host, QString user, QString group,
+		                    int timeout, QString peerCertificate);
 		void aboutToDisconnect();
 
 		void databaseChanged();
@@ -102,6 +104,7 @@ class SC_GUI_API ConnectionDialog : public QDialog {
 		void onItemChanged(QListWidgetItem *item);
 		void onSelectAll();
 		void onDeselectAll();
+		void onPeerCertificateOpen();
 
 
 	// ------------------------------------------------------------------

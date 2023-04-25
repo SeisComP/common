@@ -563,6 +563,12 @@ Result WebsocketConnection::connect(const char *address,
 				if ( p != string::npos ) {
 					auto proto = readParameters.substr(0, p);
 					auto params = readParameters.substr(p + 3);
+
+					if ( proto == "proxy" ) {
+						proto = _useSSL ? "wss" : "ws";
+						params = address;
+					}
+
 					DatabaseProvideMessage msg(proto.c_str(), params.c_str());
 					packet->target = _registeredClientName;
 					packet->type = Packet::Data;

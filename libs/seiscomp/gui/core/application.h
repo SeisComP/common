@@ -260,7 +260,8 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 
 
 	private slots:
-		void createConnection(QString host, QString user, QString group, int TimeOut);
+		void createConnection(QString host, QString user, QString group,
+		                      int TimeOut, QString peerCertificate);
 		void destroyConnection();
 		void databaseChanged();
 
