@@ -603,7 +603,6 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	l->addWidget(_folderView);
 	l->addWidget(_folderTree);
 
-	std::cerr << inventoryDir.toStdString() << std::endl;
 	_folderModel->setRootPath(inventoryDir);
 
 	_folderView->setModel(_folderModel);
