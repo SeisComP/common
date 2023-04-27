@@ -127,6 +127,7 @@ class PickerViewPrivate {
 		bool                                centerSelection;
 		bool                                checkVisibility;
 		bool                                acquireNextStations;
+		bool                                componentFollowsMouse{false};
 		int                                 lastFilterIndex;
 		bool                                autoScaleZoomTrace;
 		bool                                loadedPicks;
