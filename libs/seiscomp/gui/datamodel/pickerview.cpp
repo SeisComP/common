@@ -3180,6 +3180,11 @@ void PickerView::init() {
 
 		delete plugins;
 	}
+
+	try {
+		SC_D.componentFollowsMouse = SCApp->configGetBool("picker.componentFollowsMouse");
+	}
+	catch ( ... ) {}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3699,7 +3704,7 @@ void PickerView::updatePhaseMarker(Seiscomp::Gui::RecordWidget* widget,
 		// Set the marker time to the new picked time
 		marker->setCorrectedTime(time);
 		// and set its component to the currently displayed component
-		marker->setSlot(SC_D.currentSlot);
+		marker->setSlot(SC_D.currentRecord->currentRecords());
 		marker->setRotation(SC_D.currentRotationMode);
 		marker->setFilter(SC_D.currentFilterID);
 
@@ -3772,7 +3777,7 @@ void PickerView::updatePhaseMarker(Seiscomp::Gui::RecordWidget* widget,
 					);
 				}
 
-				marker->setSlot(SC_D.currentSlot);
+				marker->setSlot(SC_D.currentRecord->currentRecords());
 				marker->setRotation(SC_D.currentRotationMode);
 				marker->setFilter(SC_D.currentFilterID);
 
@@ -6257,8 +6262,14 @@ void PickerView::updateMainCursor(RecordWidget* w, int s) {
 	char comps[3] = {'Z', '1', '2'};
 	int slot = s >= 0 && s < 3?s:-1;
 
-	if ( slot != -1 && slot != SC_D.currentSlot )
-		showComponent(comps[slot]);
+	if ( slot != -1 ) {
+		if ( slot != SC_D.currentSlot ) {
+			showComponent(comps[slot]);
+		}
+		if ( !SC_D.componentFollowsMouse && (slot != SC_D.currentRecord->currentRecords()) ) {
+			updateSubCursor(w, slot);
+		}
+	}
 
 	setCursorPos(w->cursorPos(), true);
 }
@@ -6278,11 +6289,30 @@ void PickerView::updateSubCursor(RecordWidget* w, int s) {
 		}
 	}
 
-	char comps[3] = {'Z', '1', '2'};
 	int slot = s >= 0 && s < 3?s:-1;
 
-	if ( slot != -1 && slot != SC_D.currentSlot )
-		showComponent(comps[slot]);
+	if ( slot != -1 ) {
+		if ( SC_D.componentFollowsMouse ) {
+			if ( slot != SC_D.currentSlot ) {
+				char comps[3] = {'Z', '1', '2'};
+				showComponent(comps[slot]);
+			}
+		}
+		else {
+			QString text = SC_D.ui.labelCode->text();
+			SC_D.currentRecord->setCurrentRecords(slot);
+
+			int index = text.lastIndexOf(' ');
+			if ( index >= 0 ) {
+				if ( text.size() - index > 2 )
+					text[text.size()-1] = SC_D.currentRecord->recordID(slot)[0];
+				else
+					text += SC_D.currentRecord->recordID(slot)[0];
+
+				SC_D.ui.labelCode->setText(text);
+			}
+		}
+	}
 
 	if ( !SC_D.recordView->currentItem() ) return;
 
