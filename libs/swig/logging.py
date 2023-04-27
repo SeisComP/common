@@ -62,6 +62,7 @@ class _SwigNonDynamicMeta(type):
 
 
 SEISCOMP_COMPONENT = _logging.SEISCOMP_COMPONENT
+SEISCOMP_LOG_API_VERSION = _logging.SEISCOMP_LOG_API_VERSION
 LL_UNDEFINED = _logging.LL_UNDEFINED
 LL_CRITICAL = _logging.LL_CRITICAL
 LL_ERROR = _logging.LL_ERROR
@@ -70,24 +71,25 @@ LL_NOTICE = _logging.LL_NOTICE
 LL_INFO = _logging.LL_INFO
 LL_DEBUG = _logging.LL_DEBUG
 LL_QUANTITY = _logging.LL_QUANTITY
+SEISCOMP_LOGGING_CURRENT_FUNCTION = _logging.SEISCOMP_LOGGING_CURRENT_FUNCTION
 
-def debug(arg1):
-    return _logging.debug(arg1)
+def debug(*args):
+    return _logging.debug(*args)
 
-def info(arg1):
-    return _logging.info(arg1)
+def info(*args):
+    return _logging.info(*args)
 
-def warning(arg1):
-    return _logging.warning(arg1)
+def warning(*args):
+    return _logging.warning(*args)
 
-def error(arg1):
-    return _logging.error(arg1)
+def error(*args):
+    return _logging.error(*args)
 
-def notice(arg1):
-    return _logging.notice(arg1)
+def notice(*args):
+    return _logging.notice(*args)
 
-def log(arg1, format):
-    return _logging.log(arg1, format)
+def log(*args):
+    return _logging.log(*args)
 
 def getAll():
     return _logging.getAll()

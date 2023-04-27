@@ -9944,6 +9944,44 @@ SWIGINTERN PyObject *Enumeration_swigregister(PyObject *SWIGUNUSEDPARM(self), Py
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap___lshift__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::ostream *arg1 = 0 ;
+  Seiscomp::Core::Enumeration *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  std::ostream *result = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "__lshift__", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_std__ostream,  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "__lshift__" "', argument " "1"" of type '" "std::ostream &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "__lshift__" "', argument " "1"" of type '" "std::ostream &""'"); 
+  }
+  arg1 = reinterpret_cast< std::ostream * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Enumeration,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "__lshift__" "', argument " "2"" of type '" "Seiscomp::Core::Enumeration const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "__lshift__" "', argument " "2"" of type '" "Seiscomp::Core::Enumeration const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::Enumeration * >(argp2);
+  result = (std::ostream *) &Seiscomp::Core::operator <<(*arg1,(Seiscomp::Core::Enumeration const &)*arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__ostream, 0 |  0 );
+  return resultobj;
+fail:
+  PyErr_Clear();
+  Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
 SWIGINTERN PyObject *_wrap_new_GeneralException__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   Seiscomp::Core::GeneralException *result = 0 ;
@@ -47564,6 +47602,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "Enumeration_toInt", _wrap_Enumeration_toInt, METH_O, NULL},
 	 { "Enumeration_fromInt", _wrap_Enumeration_fromInt, METH_VARARGS, NULL},
 	 { "Enumeration_swigregister", Enumeration_swigregister, METH_O, NULL},
+	 { "__lshift__", _wrap___lshift__, METH_VARARGS, NULL},
 	 { "new_GeneralException", _wrap_new_GeneralException, METH_VARARGS, NULL},
 	 { "delete_GeneralException", _wrap_delete_GeneralException, METH_O, NULL},
 	 { "GeneralException_what", _wrap_GeneralException_what, METH_O, NULL},

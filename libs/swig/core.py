@@ -453,6 +453,9 @@ class Enumeration(object):
 # Register Enumeration in _core:
 _core.Enumeration_swigregister(Enumeration)
 
+
+def __lshift__(os, e):
+    return _core.__lshift__(os, e)
 class GeneralException(Exception):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
