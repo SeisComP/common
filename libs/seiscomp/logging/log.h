@@ -437,8 +437,6 @@ SC_SYSTEM_CORE_API Output* consoleOutput();
 SC_SYSTEM_CORE_API void enableConsoleLogging(Channel*);
 SC_SYSTEM_CORE_API void disableConsoleLogging();
 
-SC_SYSTEM_CORE_API void init(int &argc, char **argv);
-
 
 }
 }
