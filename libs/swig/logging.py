@@ -126,9 +126,6 @@ def enableConsoleLogging(arg1):
 
 def disableConsoleLogging():
     return _logging.disableConsoleLogging()
-
-def init(argc, argv):
-    return _logging.init(argc, argv)
 class Output(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
 

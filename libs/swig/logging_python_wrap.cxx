@@ -2696,11 +2696,9 @@ SWIGINTERN PyObject *SWIG_PyStaticMethod_New(PyObject *SWIGUNUSEDPARM(self), PyO
 #define SWIGTYPE_p_Seiscomp__Logging__Output swig_types[4]
 #define SWIGTYPE_p_Seiscomp__Logging__SyslogOutput swig_types[5]
 #define SWIGTYPE_p_char swig_types[6]
-#define SWIGTYPE_p_int swig_types[7]
-#define SWIGTYPE_p_p_char swig_types[8]
-#define SWIGTYPE_p_std__string swig_types[9]
-static swig_type_info *swig_types[11];
-static swig_module_info swig_module = {swig_types, 10, 0, 0, 0, 0};
+#define SWIGTYPE_p_std__string swig_types[7]
+static swig_type_info *swig_types[9];
+static swig_module_info swig_module = {swig_types, 8, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -4096,38 +4094,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_init(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  int *arg1 = 0 ;
-  char **arg2 = (char **) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "init", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_int,  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "init" "', argument " "1"" of type '" "int &""'"); 
-  }
-  if (!argp1) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "init" "', argument " "1"" of type '" "int &""'"); 
-  }
-  arg1 = reinterpret_cast< int * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_p_char, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "init" "', argument " "2"" of type '" "char **""'"); 
-  }
-  arg2 = reinterpret_cast< char ** >(argp2);
-  Seiscomp::Logging::init(*arg1,arg2);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_delete_Output(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Logging::Output *arg1 = (Seiscomp::Logging::Output *) 0 ;
@@ -5368,7 +5334,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "consoleOutput", _wrap_consoleOutput, METH_NOARGS, NULL},
 	 { "enableConsoleLogging", _wrap_enableConsoleLogging, METH_O, NULL},
 	 { "disableConsoleLogging", _wrap_disableConsoleLogging, METH_NOARGS, NULL},
-	 { "init", _wrap_init, METH_VARARGS, NULL},
 	 { "delete_Output", _wrap_delete_Output, METH_O, NULL},
 	 { "Output_subscribe", _wrap_Output_subscribe, METH_VARARGS, NULL},
 	 { "Output_unsubscribe", _wrap_Output_unsubscribe, METH_VARARGS, NULL},
@@ -5431,8 +5396,6 @@ static swig_type_info _swigt__p_Seiscomp__Logging__FileRotatorOutput = {"_p_Seis
 static swig_type_info _swigt__p_Seiscomp__Logging__Output = {"_p_Seiscomp__Logging__Output", "Seiscomp::Logging::Output *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Logging__SyslogOutput = {"_p_Seiscomp__Logging__SyslogOutput", "Seiscomp::Logging::SyslogOutput *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_int = {"_p_int", "int *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_p_char = {"_p_p_char", "char **", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
@@ -5443,8 +5406,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__Logging__Output,
   &_swigt__p_Seiscomp__Logging__SyslogOutput,
   &_swigt__p_char,
-  &_swigt__p_int,
-  &_swigt__p_p_char,
   &_swigt__p_std__string,
 };
 
@@ -5455,8 +5416,6 @@ static swig_cast_info _swigc__p_Seiscomp__Logging__FileRotatorOutput[] = {  {&_s
 static swig_cast_info _swigc__p_Seiscomp__Logging__Output[] = {  {&_swigt__p_Seiscomp__Logging__FdOutput, _p_Seiscomp__Logging__FdOutputTo_p_Seiscomp__Logging__Output, 0, 0},  {&_swigt__p_Seiscomp__Logging__FileRotatorOutput, _p_Seiscomp__Logging__FileRotatorOutputTo_p_Seiscomp__Logging__Output, 0, 0},  {&_swigt__p_Seiscomp__Logging__Output, 0, 0, 0},  {&_swigt__p_Seiscomp__Logging__FileOutput, _p_Seiscomp__Logging__FileOutputTo_p_Seiscomp__Logging__Output, 0, 0},  {&_swigt__p_Seiscomp__Logging__SyslogOutput, _p_Seiscomp__Logging__SyslogOutputTo_p_Seiscomp__Logging__Output, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Logging__SyslogOutput[] = {  {&_swigt__p_Seiscomp__Logging__SyslogOutput, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_p_char[] = {  {&_swigt__p_p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
@@ -5467,8 +5426,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__Logging__Output,
   _swigc__p_Seiscomp__Logging__SyslogOutput,
   _swigc__p_char,
-  _swigc__p_int,
-  _swigc__p_p_char,
   _swigc__p_std__string,
 };
 
