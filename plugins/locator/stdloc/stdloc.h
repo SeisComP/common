@@ -46,14 +46,16 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 	virtual bool init(const Seiscomp::Config::Config &config) override;
 
 	//! Returns supported parameters to be changed.
-	virtual IDList parameters() const override { return _allowedParameters; }
+	virtual IDList parameters() const override {
+	  return _allowedParameters;
+	}
 
 	//! Returns the value of a parameter.
 	virtual std::string parameter(const std::string &name) const override;
 
 	//! Sets the value of a parameter.
 	virtual bool setParameter(const std::string &name,
-							const std::string &value) override;
+	                          const std::string &value) override;
 
 	//! List available profiles
 	virtual IDList profiles() const override;
@@ -62,14 +64,12 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 	virtual void setProfile(const std::string &name) override;
 
 	//! Returns the implementations capabilities
-	virtual int capabilities() const override {
-	return InitialLocation | IgnoreInitialLocation;
-	}
+	virtual int capabilities() const override;
 
 	virtual Seiscomp::DataModel::Origin *locate(PickList &pickList) override;
 	virtual Seiscomp::DataModel::Origin *
 	locate(PickList &pickList, double initLat, double initLon, double initDepth,
-		 const Seiscomp::Core::Time &initTime) override;
+	       const Seiscomp::Core::Time &initTime) override;
 	virtual Seiscomp::DataModel::Origin *
 	relocate(const Seiscomp::DataModel::Origin *origin) override;
 
@@ -93,9 +93,13 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 			bool valid;
 			double x, y, z;
 			struct {
+				double x, y, z;
+			} size;
+			struct {
 				double depth, lat, lon;
 				Seiscomp::Core::Time time;
-				double error;
+				double probDensity;
+				double rms;
 			} org;
 		};
 
@@ -106,6 +110,32 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		                              std::vector<double> &sensorLat,
 		                              std::vector<double> &sensorLon,
 		                              std::vector<double> &sensorElev) const;
+ 
+		void computeProbDensity(const PickList &pickList,
+		                        const std::vector<double> &weights,
+		                        const std::vector<double> &travelTimes,
+		                        const Seiscomp::Core::Time &originTime,
+		                        double &probDensity, double &rms,
+		                        std::vector<double> &residuals) const;
+ 
+		bool computeOriginTime(const PickList &pickList,
+		                       const std::vector<double> &weights,
+		                       const std::vector<double> &sensorLat,
+		                       const std::vector<double> &sensorLon,
+		                       const std::vector<double> &sensorElev, double lat,
+		                       double lon, double depth,
+		                       Seiscomp::Core::Time &originTime,
+		                       std::vector<double> &travelTimes) const;
+ 
+		void locateOctTree(const PickList &pickList,
+		                   const std::vector<double> &weights,
+		                   const std::vector<double> &sensorLat,
+		                   const std::vector<double> &sensorLon,
+		                   const std::vector<double> &sensorElev, double &newLat,
+		                   double &newLon, double &newDepth,
+		                   Seiscomp::Core::Time &newTime,
+		                   std::vector<double> &residuals, CovMtrx &covm,
+		                   bool computeCovMtrx) const;
 
 		void locateGridSearch(const PickList &pickList,
 		                      const std::vector<double> &weights,
@@ -114,44 +144,48 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		                      const std::vector<double> &sensorElev, double &newLat,
 		                      double &newLon, double &newDepth,
 		                      Seiscomp::Core::Time &newTime,
-		                      std::vector<double> &travelTimes,
-		                      CovMtrx& covm, bool computeCovMtrx) const;
+		                      std::vector<double> &residuals, CovMtrx &covm,
+		                      bool computeCovMtrx,
+		                      bool enablePerCellLeastSquares) const;
 
 		void locateLeastSquares(const PickList &pickList,
 		                        const std::vector<double> &weights,
 		                        const std::vector<double> &sensorLat,
 		                        const std::vector<double> &sensorLon,
-		                        const std::vector<double> &sensorElev, double initLat,
-		                        double initLon, double initDepth,
+		                        const std::vector<double> &sensorElev,
+		                        double initLat, double initLon, double initDepth,
 		                        Seiscomp::Core::Time initTime, double &newLat,
 		                        double &newLon, double &newDepth,
 		                        Seiscomp::Core::Time &newTime,
-		                        std::vector<double> &travelTimes,
-		                        CovMtrx& covm, bool computeCovMtrx) const;
+		                        std::vector<double> &residuals, CovMtrx &covm,
+		                        bool computeCovMtrx) const;
 
-		void computeCovarianceMatrix(const std::vector<Cell>& cells,
-		                             const Cell& bestCell,
-		                             CovMtrx& covmOut) const;
-		void computeCovarianceMatrix(const System& eq, CovMtrx& covmOut) const;
+		void computeCovarianceMatrix(const std::vector<Cell> &cells,
+		                             const Cell &bestCell,
+		                             bool useExpectedHypocenter,
+		                             CovMtrx &covmOut) const;
+
+		void computeCovarianceMatrix(const System &eq, CovMtrx &covmOut) const;
 
 		Seiscomp::DataModel::Origin *
-		createOrigin(const PickList &pickList,
-		             const std::vector<double> &weights,
+		createOrigin(const PickList &pickList, const std::vector<double> &weights,
 		             const std::vector<double> &sensorLat,
 		             const std::vector<double> &sensorLon,
-		             const std::vector<double> &sensorElev,
-		             double originLat, double originLon, double originDepth,
+		             const std::vector<double> &sensorElev, double originLat,
+		             double originLon, double originDepth,
 		             const Seiscomp::Core::Time &originTime,
-		             const std::vector<double> &travelTimes,
-		             const CovMtrx& covm) const;
+		             const std::vector<double> &residuals,
+		             const CovMtrx &covm) const;
 
 		struct Profile {
 			std::string name;
 
 			enum class Method {
-				LeastSquares,
-				GridSearch,
-				GridAndLsqr,
+			  LeastSquares,
+			  GridSearch,
+			  OctTree,
+			  GridAndLsqr,
+			  OctTreeAndLsqr
 			} method;
 
 			std::string tttType;
@@ -173,15 +207,20 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 				double cellXExtent; // km
 				double cellYExtent; // km
 				double cellZExtent; // km
-				std::string errorType;
-				double maxRms;
+				std::string misfitType;
+				double travelTimeError;
 			} gridSearch;
+
+			struct {
+				int maxIterations;
+				double minCellSize;
+			} octTree;
 
 			struct {
 				int iterations;
 				double dampingFactor;
 				std::string solverType;
-			} leastSquare;
+			} leastSquares;
 		};
 
 		Profile _currentProfile;
