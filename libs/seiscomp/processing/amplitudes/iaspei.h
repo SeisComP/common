@@ -23,6 +23,7 @@
 
 
 #include <vector>
+#include <cstdint>
 
 
 namespace Seiscomp {
@@ -39,7 +40,7 @@ namespace IASPEI {
 // for Determining Earthquake Magnitudes From Digital Data - 2013 March 27
 //
 // Amplitudes [...] to be measured as one-half the maximum deflection of the
-// seismogram trace, peak-to-adjacent- trough or trough-to-adjacent-peak,
+// seismogram trace, peak-to-adjacent-trough or trough-to-adjacent-peak,
 // where peak and trough are separated by one crossing of the zero-line: the
 // measurement is sometimes described as "one-half peak-to-peak amplitude."
 // None of the magnitude formulas presented in this article are intended to
@@ -50,14 +51,18 @@ namespace IASPEI {
 
 struct AmplitudePeriodMeasurement
 {
+	AmplitudePeriodMeasurement() : success(false) {}
+
 	// Amplitudes
 	//
-	// Note that "peak" here refers to both maxima and minima and
-	// thus can also refer to a trough. So peak-to-peak is either
-	// peak-to-trough or trough-to-peak. Just to avoid confusion.
+	// Note that "peak" here refers to both maxima and minima and thus
+	// can also refer to a trough. So peak-to-peak can refer to either
+	// peak-to-trough or trough-to-peak. Just to clearify.
 	//
 	// - az2p Max. zero-to-peak amplitude found at index iz2p
+	//
 	// - ap2p1 first peak of the max. peak-to-peak amplitude pair
+	//
 	// - ap2p1 second peak 
 	//
 	// Note that az2p is the larger of ap2p1 and ap2p2.
@@ -74,53 +79,56 @@ struct AmplitudePeriodMeasurement
 	// From the above numbers we can now derive:
 	//
 	// - Period in sampling intervals:
-	//
 	//   (ip2p2 - ip2p1)*2
 	//
-	//   To be divided by the sampling rate in order to get the period
-	//   in seconds.
-	//
-	//
-	// - One half of the max. peak-to-peak amplitude in data units:
-	//
+	// - Amplitude in data units:
 	//   (ap2p1 + ap2p2)/2
 	//
-	//
-	// - Time of measurement as offset from first sample of the middle
-	//   of the two peaks:
-	//
+	// - Time as offset from first sample:
 	//   (ip2p1 + ip2p2)/2
-	//
-	//   To be divided by the sampling rate in order to get the time
-	//   in seconds.
+
+	// Success of the measurement, true or false
+	bool success;
 };
 
 
-// Compute amplitude and dominant period for the given data vector.
+// Measure the amplitude and period in the given data array according
+// to the IASPEI Magnitude Working Group Recommendations.
 //
-// The data may have an offset to be removed during the amplitude measurement.
-// If dealing with demeaned data the offset should be zero.
+// Input is as follows:
 //
-// We only work on the time window between samples istart and iend.
+// - data is the data array.
 //
-// A reference to a struct AmplitudePeriodMeasurement is speciefied, where the
-// result will be written to. See above for details.
-bool measureAmplitudePeriod(
-	const std::vector<double> &data,
-	double offset,
-	std::size_t istart,
-	std::size_t iend,
-	AmplitudePeriodMeasurement &measurement);
-
-
-// Interface for raw pointer.
-bool measureAmplitudePeriod(
+// - offset is the data offset to be subtracted from the data samples.
+//
+// - istart and iend are the indices of start and end samples, respectively.
+//   They define the time window in which the measurement will take place.
+//   By default the entire data array is used.
+//
+// - pmin and pmax are the minimum and maximum data period, respectively.
+//   An amplitude is accepted only if the period (ip2p2 - ip2p1)*2 falls
+//   within this period range. Note that the period must be specified in
+//   samples (not seconds). The default values disable period filtering.
+//
+AmplitudePeriodMeasurement
+measureAmplitudePeriod(
 	std::size_t ndata,
 	const double *data,
 	double offset,
 	std::size_t istart,
 	std::size_t iend,
-	AmplitudePeriodMeasurement &measurement);
+	std::size_t pmin=0,
+	std::size_t pmax=SIZE_MAX);
+
+
+AmplitudePeriodMeasurement
+measureAmplitudePeriod(
+	const std::vector<double> &data,
+	double offset,
+	std::size_t istart,
+	std::size_t iend,
+	std::size_t pmin=0,
+	std::size_t pmax=SIZE_MAX);
 
 
 // Compute the WWSSN-SP displacement amplitude response needed for the
@@ -128,7 +136,17 @@ bool measureAmplitudePeriod(
 //
 // The response is based on the poles and zeros specified in the IASPEI
 // Magnitude Working Group Recommendations.
+//
 double wwssnspAmplitudeResponse(double frequency_hz);
+
+
+// Compute the WWSSN-LP displacement amplitude response needed for the
+// Ms20 amplitude correction.
+//
+// The response is based on the poles and zeros specified in the IASPEI
+// Magnitude Working Group Recommendations.
+//
+double wwssnlpAmplitudeResponse(double frequency_hz);
 
 
 } // namespace IASPEI
