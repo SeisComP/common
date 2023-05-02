@@ -29,10 +29,10 @@ namespace Seiscomp {
 namespace Processing {
 
 
-class SC_SYSTEM_CLIENT_API AmplitudeProcessor_msbb : public AmplitudeProcessor {
+class SC_SYSTEM_CLIENT_API AmplitudeProcessor_Ms_BB : public AmplitudeProcessor {
 	public:
-		AmplitudeProcessor_msbb();
-		AmplitudeProcessor_msbb(const Seiscomp::Core::Time& trigger, double duration = 60.);
+		AmplitudeProcessor_Ms_BB();
+		AmplitudeProcessor_Ms_BB(const Seiscomp::Core::Time& trigger, double duration = 60.);
 
 	protected:
 		bool computeAmplitude(const DoubleArray &data,

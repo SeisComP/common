@@ -29,7 +29,7 @@ namespace Seiscomp {
 namespace Processing {
 
 
-class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mBc : public AmplitudeProcessor_mB {
+class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mBc : public AmplitudeProcessor_mB_BB {
 	public:
 		AmplitudeProcessor_mBc();
 		AmplitudeProcessor_mBc(const Core::Time& trigger);
@@ -45,8 +45,8 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mBc : public AmplitudeProcessor_mB
 };
 
 
-}
-}
+} // namespace Processing
+} // namespace Seiscomp
 
 
 #endif

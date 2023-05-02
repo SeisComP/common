@@ -44,7 +44,7 @@ AmplitudeProcessor_mBc::AmplitudeProcessor_mBc() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor_mBc::AmplitudeProcessor_mBc(const Core::Time& trigger)
-: AmplitudeProcessor_mB(trigger) {
+: AmplitudeProcessor_mB_BB(trigger) {
 	_type = "mBc";
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -100,5 +100,5 @@ bool AmplitudeProcessor_mBc::computeAmplitude(const DoubleArray &data,
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-}
-}
+} // namespace Processing
+} // namespace Seiscomp

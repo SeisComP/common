@@ -25,8 +25,7 @@
 
 #define DELTA_MIN 2.
 #define DELTA_MAX 160.
-
-#define DEPTH_MAX 100
+#define DEPTH_MAX 700
 
 
 namespace Seiscomp {

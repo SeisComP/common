@@ -18,6 +18,11 @@
  ***************************************************************************/
 
 
+
+#define DELTA_MIN 2.
+#define DELTA_MAX 160.
+#define DEPTH_MAX 700
+
 #include <seiscomp/processing/amplitudes/Ms_BB.h>
 
 #include <limits>
@@ -112,20 +117,20 @@ namespace Seiscomp {
 namespace Processing {
 
 
-REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_msbb, "Ms(BB)");
+REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_Ms_BB, "Ms(BB)");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_msbb::AmplitudeProcessor_msbb()
+AmplitudeProcessor_Ms_BB::AmplitudeProcessor_Ms_BB()
 : AmplitudeProcessor("Ms(BB)") {
 	setSignalEnd(3600.);
 	setMinSNR(0);
-	setMinDist(2);
-	setMaxDist(160);
-	setMaxDepth(100);
+	setMinDist(DELTA_MIN);
+	setMaxDist(DELTA_MAX);
+	setMaxDepth(DEPTH_MAX);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -133,13 +138,13 @@ AmplitudeProcessor_msbb::AmplitudeProcessor_msbb()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_msbb::AmplitudeProcessor_msbb(const Core::Time& trigger, double duration)
+AmplitudeProcessor_Ms_BB::AmplitudeProcessor_Ms_BB(const Core::Time& trigger, double duration)
 : AmplitudeProcessor(trigger, "Ms(BB)") {
 	setSignalEnd(3600.);
 	setMinSNR(0);
-	setMinDist(2);
-	setMaxDist(160);
-	setMaxDepth(100);
+	setMinDist(DELTA_MIN);
+	setMaxDist(DELTA_MAX);
+	setMaxDepth(DEPTH_MAX);
 	computeTimeWindow();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -148,12 +153,14 @@ AmplitudeProcessor_msbb::AmplitudeProcessor_msbb(const Core::Time& trigger, doub
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeProcessor_msbb::computeAmplitude(const DoubleArray &data,
-                                               size_t i1, size_t i2,
-                                               size_t si1, size_t si2, double offset,
-                                               AmplitudeIndex *dt,
-                                               AmplitudeValue *amplitude,
-                                               double *period, double *snr) {
+bool AmplitudeProcessor_Ms_BB::computeAmplitude(
+	const DoubleArray &data,
+	size_t i1, size_t i2,
+	size_t si1, size_t si2, double offset,
+	AmplitudeIndex *dt,
+	AmplitudeValue *amplitude,
+	double *period, double *snr) {
+
 	/*
 	* Low-level signal amplitude computation. This is magnitude specific.
 	*
@@ -209,7 +216,7 @@ bool AmplitudeProcessor_msbb::computeAmplitude(const DoubleArray &data,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double AmplitudeProcessor_msbb::timeWindowLength(double distance_deg) const {
+double AmplitudeProcessor_Ms_BB::timeWindowLength(double distance_deg) const {
 	// Minimal S/SW group velocity.
 	//
 	// This is very approximate and may need refinement. Usually the Lg
@@ -228,5 +235,5 @@ double AmplitudeProcessor_msbb::timeWindowLength(double distance_deg) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
-}
+} // namespace Processing
+} // namespace Seiscomp

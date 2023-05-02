@@ -33,14 +33,14 @@ namespace Processing {
 // leak into the time window thus contaminating the measurement.
 #define M_CAPITAL_B_DEFAULT_WINDOW_LENGTH 60
 
-REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_mB, "mB");
+REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_mB_BB, "mB");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_mB::AmplitudeProcessor_mB()
+AmplitudeProcessor_mB_BB::AmplitudeProcessor_mB_BB()
 : AmplitudeProcessor("mB") {
 	setSignalEnd(M_CAPITAL_B_DEFAULT_WINDOW_LENGTH);
 	setMinDist(5);
@@ -52,7 +52,7 @@ AmplitudeProcessor_mB::AmplitudeProcessor_mB()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_mB::AmplitudeProcessor_mB(const Core::Time& trigger)
+AmplitudeProcessor_mB_BB::AmplitudeProcessor_mB_BB(const Core::Time& trigger)
 : AmplitudeProcessor(trigger, "mB") {
 	setSignalEnd(M_CAPITAL_B_DEFAULT_WINDOW_LENGTH);
 	setMinDist(5);
@@ -65,7 +65,7 @@ AmplitudeProcessor_mB::AmplitudeProcessor_mB(const Core::Time& trigger)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeProcessor_mB::finalizeAmplitude(DataModel::Amplitude *amplitude) const {
+void AmplitudeProcessor_mB_BB::finalizeAmplitude(DataModel::Amplitude *amplitude) const {
 	if ( !amplitude )
 		return;
 
@@ -82,7 +82,7 @@ void AmplitudeProcessor_mB::finalizeAmplitude(DataModel::Amplitude *amplitude) c
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double AmplitudeProcessor_mB::timeWindowLength(double distance) const {
+double AmplitudeProcessor_mB_BB::timeWindowLength(double distance) const {
 	// make sure the measurement is not contaminated by S energy
 	double tdist = 11.5*distance; // distance-dependent time difference between P and S
 	return tdist < _config.signalEnd ? tdist :_config.signalEnd;
@@ -93,7 +93,7 @@ double AmplitudeProcessor_mB::timeWindowLength(double distance) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeProcessor_mB::computeAmplitude(const DoubleArray &data,
+bool AmplitudeProcessor_mB_BB::computeAmplitude(const DoubleArray &data,
                                              size_t i1, size_t i2,
                                              size_t si1, size_t si2,
                                              double offset,AmplitudeIndex *dt,
@@ -157,5 +157,5 @@ bool AmplitudeProcessor_mB::computeAmplitude(const DoubleArray &data,
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-}
-}
+} // namespace Processing
+} // namespace Seiscomp

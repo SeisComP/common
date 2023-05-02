@@ -30,10 +30,10 @@ namespace Seiscomp {
 namespace Processing {
 
 
-class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mB : public AmplitudeProcessor {
+class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mB_BB : public AmplitudeProcessor {
 	public:
-		AmplitudeProcessor_mB();
-		AmplitudeProcessor_mB(const Core::Time& trigger);
+		AmplitudeProcessor_mB_BB();
+		AmplitudeProcessor_mB_BB(const Core::Time& trigger);
 
 	public:
 		void finalizeAmplitude(DataModel::Amplitude *amplitude) const override;
@@ -50,9 +50,9 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mB : public AmplitudeProcessor {
 };
 
 
-}
+} // namespace Processing
 
-}
+} // namespace Seiscomp
 
 
 #endif

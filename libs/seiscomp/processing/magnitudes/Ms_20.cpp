@@ -20,6 +20,17 @@
 
 #define SEISCOMP_COMPONENT MAGNITUDES
 
+
+// Distance range 20 to 160° following the IASPEI recommendations
+#define DELTA_MIN 20.
+#define DELTA_MAX 160.
+
+#define DEPTH_MAX 100
+
+// Period range 18 to 22 s following the IASPEI recommendations
+#define PERIOD_MIN 18.
+#define PERIOD_MAX 22.
+
 #include <seiscomp/processing/magnitudes/Ms_20.h>
 #include <seiscomp/seismology/magnitudes.h>
 #include <seiscomp/logging/log.h>
@@ -52,18 +63,14 @@ bool MagnitudeProcessor_Ms_20::MagnitudeProcessor_Ms_20::setup(const Settings &s
 	if ( !MagnitudeProcessor::setup(settings) )
 		return false;
 
-	// Default values
+	lowPer = PERIOD_MIN;
+	upPer = PERIOD_MAX;
 
-	// Period range 18 to 22 s following the IASPEI recommendations
-	lowPer = 18;
-	upPer = 22;
-
-	// Distance range 20 to 160° following the IASPEI recommendations
-	minDistanceDeg = 20.0;
-	maxDistanceDeg = 160.0;
+	minDistanceDeg = DELTA_MIN;
+	maxDistanceDeg = DELTA_MAX;
 
 	// Maximum depth in km
-	maxDepthKm = 100.0;
+	maxDepthKm = DEPTH_MAX;
 
 	try { lowPer = settings.getDouble("magnitudes." + type() + ".lowerPeriod"); }
 	catch ( ... ) {}
