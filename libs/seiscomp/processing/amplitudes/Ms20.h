@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MS20_H
-#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MS20_H
+#ifndef SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MS_20_H
+#define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_MS_20_H
 
 
 #include <seiscomp/processing/amplitudeprocessor.h>
@@ -29,30 +29,31 @@ namespace Seiscomp {
 namespace Processing {
 
 
-class SC_SYSTEM_CLIENT_API AmplitudeProcessor_ms20 : public AmplitudeProcessor {
+class SC_SYSTEM_CLIENT_API AmplitudeProcessor_Ms_20 : public AmplitudeProcessor {
 	public:
-		AmplitudeProcessor_ms20();
-		AmplitudeProcessor_ms20(const Seiscomp::Core::Time& trigger, double duration = 60.);
+		AmplitudeProcessor_Ms_20();
+		AmplitudeProcessor_Ms_20(const Seiscomp::Core::Time& trigger, double duration = 60.);
 
 	public:
 		void initFilter(double fsamp) override;
 
+		void finalizeAmplitude(DataModel::Amplitude *amplitude) const override;
+
 	protected:
-		bool computeAmplitude(const DoubleArray &data,
-		                      size_t i1, size_t i2,
-		                      size_t si1, size_t si2,
-		                      double offset,
-		                      AmplitudeIndex *dt,
-		                      AmplitudeValue *amplitude,
-		                      double *period, double *snr) override;
+		bool computeAmplitude(
+			const DoubleArray &data,
+			size_t i1, size_t i2,
+			size_t si1, size_t si2,
+			double offset,
+			AmplitudeIndex *dt,
+			AmplitudeValue *amplitude,
+			double *period, double *snr) override;
 
 		double timeWindowLength(double distance) const override;
 };
 
 
-
-}
-}
-
+} // namespace Processing
+} // namespace Seiscomp
 
 #endif

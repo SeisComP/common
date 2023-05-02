@@ -18,7 +18,9 @@
  ***************************************************************************/
 
 
+#include <seiscomp/datamodel/amplitude.h>
 #include <seiscomp/processing/amplitudes/Ms20.h>
+#include <seiscomp/processing/amplitudes/iaspei.h>
 #include <seiscomp/math/filter/seismometers.h>
 
 #include <limits>
@@ -43,7 +45,7 @@ bool measure_period(int n, const double *f, int i0, double offset,
 
 	double f0 = f[i0];
 
-// ******* find zero crossings **********************************
+	// find zero crossings
 
 	// first previous
 	for (ip1=i0;   ip1>=0 && (f[ip1]-offset)*f0 >= 0;  ip1--);
@@ -113,14 +115,14 @@ namespace Seiscomp {
 namespace Processing {
 
 
-REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_ms20, "Ms_20");
+REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_Ms_20, "Ms_20");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_ms20::AmplitudeProcessor_ms20()
+AmplitudeProcessor_Ms_20::AmplitudeProcessor_Ms_20()
 : AmplitudeProcessor("Ms_20") {
 	setSignalEnd(3600.);
 	setMinSNR(0);
@@ -134,7 +136,7 @@ AmplitudeProcessor_ms20::AmplitudeProcessor_ms20()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_ms20::AmplitudeProcessor_ms20(const Core::Time& trigger, double duration)
+AmplitudeProcessor_Ms_20::AmplitudeProcessor_Ms_20(const Core::Time& trigger, double duration)
 : AmplitudeProcessor(trigger, "Ms_20") {
 	setSignalEnd(3600.);
 	setMinSNR(0);
@@ -149,7 +151,7 @@ AmplitudeProcessor_ms20::AmplitudeProcessor_ms20(const Core::Time& trigger, doub
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeProcessor_ms20::AmplitudeProcessor_ms20::initFilter(double fsamp) {
+void AmplitudeProcessor_Ms_20::AmplitudeProcessor_Ms_20::initFilter(double fsamp) {
 	AmplitudeProcessor::setFilter(
 		new Filtering::IIR::WWSSN_LP_Filter<double>(Velocity)
 	);
@@ -161,37 +163,67 @@ void AmplitudeProcessor_ms20::AmplitudeProcessor_ms20::initFilter(double fsamp) 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeProcessor_ms20::computeAmplitude(const DoubleArray &data,
-                                               size_t i1, size_t i2,
-                                               size_t si1, size_t si2, double offset,
-                                               AmplitudeIndex *dt,
-                                               AmplitudeValue *amplitude,
-                                               double *period, double *snr) {
-	/*
-	* Low-level signal amplitude computation. This is magnitude specific.
-	*
-	* Input:
-	*      f           double array of length n
-	*      i1,i2       indices defining the measurement window,
-	*                  0 <= i1 < i2 <= n
-	*      offset      this is subtracted from the samples in f before
-	*                  computation
-	*
-	* Output:
-	*      dt          Point at which the measurement was mad/completed. May
-	*                  be the peak time or end of integration.
-	*      amplitude   amplitude. This may be a peak amplitude as well as a
-	*                  sum or integral.
-	*      period      dominant period of the signal. Optional. If the period
-	*                  is not computed, set it to -1.
-	*/
+bool AmplitudeProcessor_Ms_20::computeAmplitude(
+	const DoubleArray &data,
+	size_t i1, size_t i2,
+	size_t si1, size_t si2, double offset,
+	AmplitudeIndex *dt,
+	AmplitudeValue *amplitude,
+	double *period, double *snr) {
 
-	size_t imax = find_absmax(data.size(), (const double*)data.data(), si1, si2, offset);
-	double amax = fabs(data[imax] - offset);
-	double pmax = -1;
-	double pstd =  0; // standard error of period
-	if ( !measure_period(data.size(), static_cast<const double*>(data.data()), imax, offset, &pmax, &pstd) )
+	if (data.size() == 0)
+		return false;
+
+	const size_t n = data.size();
+	const double *f = static_cast<const double*>(data.data());
+
+	double amax, pmax;
+	size_t imax;
+
+	if ( _config.iaspeiAmplitudes ) {
+		// In addition to WWSSN-LP seismograph simulation, the
+		// IASPEI Magnitude Working Group recommends to explicitly
+		// limit Ms_20 measurements to signals with a dominant period
+		// (after WWSSN-LP filtering) between 18 and 22 seconds.
+		double fsamp = _stream.fsamp;
+		size_t p18s = size_t(fsamp*18);
+		size_t p22s = size_t(fsamp*22);
+		IASPEI::AmplitudePeriodMeasurement m {
+			IASPEI::measureAmplitudePeriod(
+				n, f, offset, si1, si2, p18s, p22s) };
+		if ( ! m.success )
+			return false;
+
+		amax = (m.ap2p2 + m.ap2p1)/2;
+		imax = (m.ip2p2 + m.ip2p1)/2;
+		pmax = (m.ip2p2 - m.ip2p1)*2;
+		// We don't determine the standard error of the period.
+	}
+	else {
+		// Low-level signal amplitude computation. This is magnitude specific.
+		//
+		// Input:
+		//      f           double array of length n
+		//      i1,i2       indices defining the measurement window,
+		//                  0 <= i1 < i2 <= n
+		//      offset      this is subtracted from the samples in f before
+		//                  computation
+		//
+		// Output:
+		//      dt          Point at which the measurement was mad/completed. May
+		//                  be the peak time or end of integration.
+		//      amplitude   amplitude. This may be a peak amplitude as well as a
+		//                  sum or integral.
+		//      period      dominant period of the signal. Optional. If the period
+		//                  is not computed, set it to -1.
+
+		imax = find_absmax(data.size(), (const double*)data.data(), si1, si2, offset);
+		amax = fabs(data[imax] - offset);
 		pmax = -1;
+		double pstd =  0; // standard error of period
+		if ( !measure_period(data.size(), static_cast<const double*>(data.data()), imax, offset, &pmax, &pstd) )
+			pmax = -1;
+	}
 
 	if ( *_noiseAmplitude == 0. )
 		*snr = 1000000.0;
@@ -218,8 +250,9 @@ bool AmplitudeProcessor_ms20::computeAmplitude(const DoubleArray &data,
 	else
 		return false;
 
-	// Convert m to nm according to IASPEI recommendations, 2013
-	amplitude->value *= 1.E9;
+	// Convert meters to nanometers
+	// (see IASPEI Magitude Working Group Recommendations)
+	amplitude->value *= 1E9;
 
 	return true;
 }
@@ -229,7 +262,38 @@ bool AmplitudeProcessor_ms20::computeAmplitude(const DoubleArray &data,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double AmplitudeProcessor_ms20::timeWindowLength(double distance_deg) const {
+void AmplitudeProcessor_Ms_20::finalizeAmplitude(DataModel::Amplitude *amplitude) const {
+	if ( amplitude == NULL )
+		return;
+
+	try {
+		DataModel::TimeQuantity time(amplitude->timeWindow().reference());
+		amplitude->setScalingTime(time);
+	}
+	catch ( ... ) {
+	}
+
+	try {
+		DataModel::RealQuantity A = amplitude->amplitude();
+		double f = 1. / amplitude->period().value();
+		double c = 1. / IASPEI::wwssnlpAmplitudeResponse(f);
+		A.setValue(c*A.value());
+		amplitude->setAmplitude(A);
+	}
+	catch ( ... ) {
+	}
+
+	if (_config.iaspeiAmplitudes) {
+		amplitude->setMethodID("IASPEI Ms(20) amplitude");
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+double AmplitudeProcessor_Ms_20::timeWindowLength(double distance_deg) const {
 	// Minimal S/SW group velocity.
 	//
 	// This is very approximate and may need refinement. Usually the Lg
@@ -238,7 +302,7 @@ double AmplitudeProcessor_ms20::timeWindowLength(double distance_deg) const {
 	// duration, which may, however, nit be sufficient.
 	double v_min = 3.5;
 
-	double distance_km = distance_deg*111.2; 
+	double distance_km = distance_deg*111.195; 
 	double windowLength = distance_km/v_min + 30;  
 	return windowLength < _config.signalEnd ? windowLength :_config.signalEnd;
 }
@@ -248,5 +312,5 @@ double AmplitudeProcessor_ms20::timeWindowLength(double distance_deg) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
-}
+} // namespace Processing
+} // namespace Seiscomp
