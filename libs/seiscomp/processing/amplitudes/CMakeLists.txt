@@ -4,14 +4,14 @@ SET(AMPS_SOURCES
 	mBc.cpp
 	mBc_measure.cpp
 	mb.cpp
-	m_B.cpp
+	mB_BB.cpp
 	Mjma.cpp
 	ML.cpp
 	MLc.cpp
 	MLh.cpp
 	MLv.cpp
-	msbb.cpp
-	Ms20.cpp
+	Ms_BB.cpp
+	Ms_20.cpp
 	Mwp.cpp
 	sbsnr.cpp
 	iaspei.cpp
@@ -21,14 +21,14 @@ SET(AMPS_HEADERS
 	mBc.h
 	mBc_measure.h
 	mb.h
-	m_B.h
+	mB_BB.h
 	Mjma.h
 	ML.h
 	MLc.h
 	MLh.h
 	MLv.h
-	msbb.h
-	Ms20.h
+	Ms_BB.h
+	Ms_20.h
 	Mwp.h
 	iaspei.h
 )

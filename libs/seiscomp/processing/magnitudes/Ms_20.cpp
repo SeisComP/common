@@ -20,16 +20,11 @@
 
 #define SEISCOMP_COMPONENT MAGNITUDES
 
-#include <seiscomp/processing/magnitudes/Ms20.h>
+#include <seiscomp/processing/magnitudes/Ms_20.h>
 #include <seiscomp/seismology/magnitudes.h>
 #include <seiscomp/logging/log.h>
 
 #include<iostream>
-
-#define DELTA_MIN 20.
-#define DELTA_MAX 160.
-
-#define DEPTH_MAX 100
 
 
 using namespace std;
@@ -45,25 +40,30 @@ std::string ExpectedAmplitudeUnit = "nm";
 }
 
 
-IMPLEMENT_SC_CLASS_DERIVED(MagnitudeProcessor_ms20, MagnitudeProcessor, "MagnitudeProcessor_ms20");
-REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_ms20, "Ms_20");
+IMPLEMENT_SC_CLASS_DERIVED(MagnitudeProcessor_Ms_20, MagnitudeProcessor, "MagnitudeProcessor_Ms_20");
+REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_Ms_20, "Ms(20)");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
-
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MagnitudeProcessor_ms20::MagnitudeProcessor_ms20::setup(const Settings &settings) {
+bool MagnitudeProcessor_Ms_20::MagnitudeProcessor_Ms_20::setup(const Settings &settings) {
 	if ( !MagnitudeProcessor::setup(settings) )
 		return false;
 
-	// This is the default
+	// Default values
+
+	// Period range 18 to 22 s following the IASPEI recommendations
 	lowPer = 18;
 	upPer = 22;
-	minDistanceDeg = 20.0; // default minimum distance
-	maxDistanceDeg = 160.0; // default maximum distance
-	maxDepthKm = 100.0; // default maximum depth
+
+	// Distance range 20 to 160° following the IASPEI recommendations
+	minDistanceDeg = 20.0;
+	maxDistanceDeg = 160.0;
+
+	// Maximum depth in km
+	maxDepthKm = 100.0;
 
 	try { lowPer = settings.getDouble("magnitudes." + type() + ".lowerPeriod"); }
 	catch ( ... ) {}
@@ -71,14 +71,12 @@ bool MagnitudeProcessor_ms20::MagnitudeProcessor_ms20::setup(const Settings &set
 	try { upPer = settings.getDouble("magnitudes." + type() + ".upperPeriod"); }
 	catch ( ... ) {}
 
-	// distance range in degree
 	try { minDistanceDeg = settings.getDouble("magnitudes." + type() + ".minDist"); }
 	catch ( ... ) {}
 
 	try { maxDistanceDeg = settings.getDouble("magnitudes." + type() + ".maxDist"); }
 	catch ( ... ) {}
 
-	// depth range in km
 	try { maxDepthKm = settings.getDouble("magnitudes." + type() + ".maxDepth"); }
 	catch ( ... ) {}
 
@@ -128,18 +126,16 @@ bool MagnitudeProcessor_ms20::MagnitudeProcessor_ms20::setup(const Settings &set
 
 
 
-
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MagnitudeProcessor_ms20::MagnitudeProcessor_ms20()
+MagnitudeProcessor_Ms_20::MagnitudeProcessor_Ms_20()
  : MagnitudeProcessor("Ms_20") {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
-
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MagnitudeProcessor::Status MagnitudeProcessor_ms20::computeMagnitude(
+MagnitudeProcessor::Status MagnitudeProcessor_Ms_20::computeMagnitude(
 	double amplitude, const std::string &unit,
 	double period, double,
 	double delta, double depth,
@@ -180,7 +176,6 @@ MagnitudeProcessor::Status MagnitudeProcessor_ms20::computeMagnitude(
 	return OK;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 

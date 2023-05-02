@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 
-#include <seiscomp/processing/amplitudes/msbb.h>
+#include <seiscomp/processing/amplitudes/Ms_BB.h>
 
 #include <limits>
 

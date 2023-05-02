@@ -22,7 +22,7 @@
 #define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_mBc_H
 
 
-#include <seiscomp/processing/amplitudes/m_B.h>
+#include <seiscomp/processing/amplitudes/mB_BB.h>
 
 
 namespace Seiscomp {

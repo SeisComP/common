@@ -19,7 +19,7 @@
 
 
 #include <seiscomp/datamodel/amplitude.h>
-#include <seiscomp/processing/amplitudes/m_B.h>
+#include <seiscomp/processing/amplitudes/mB_BB.h>
 #include <limits>
 
 

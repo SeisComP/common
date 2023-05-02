@@ -37,7 +37,7 @@ REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_mBc, "mBc");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor_mBc::MagnitudeProcessor_mBc()
- : MagnitudeProcessor_mB("mBc") {}
+ : MagnitudeProcessor_mB_BB("mBc") {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

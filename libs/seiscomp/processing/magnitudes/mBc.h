@@ -22,14 +22,14 @@
 #define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_M_B_C_H
 
 
-#include <seiscomp//processing/magnitudes/m_B.h>
+#include <seiscomp/processing/magnitudes/mB_BB.h>
 
 
 namespace Seiscomp {
 namespace Processing {
 
 
-class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mBc : public MagnitudeProcessor_mB {
+class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mBc : public MagnitudeProcessor_mB_BB {
 	DECLARE_SC_CLASS(MagnitudeProcessor_mBc)
 
 	public:

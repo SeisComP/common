@@ -19,7 +19,7 @@
 
 
 
-#include <seiscomp/processing/magnitudes/msbb.h>
+#include <seiscomp/processing/magnitudes/Ms_BB.h>
 #include <seiscomp/seismology/magnitudes.h>
 
 
@@ -40,15 +40,15 @@ std::string ExpectedAmplitudeUnit = "m";
 }
 
 
-IMPLEMENT_SC_CLASS_DERIVED(MagnitudeProcessor_msbb, MagnitudeProcessor, "MagnitudeProcessor_msbb");
-REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_msbb, "Ms(BB)");
+IMPLEMENT_SC_CLASS_DERIVED(MagnitudeProcessor_Ms_BB, MagnitudeProcessor, "MagnitudeProcessor_Ms_BB");
+REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_Ms_BB, "Ms(BB)");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MagnitudeProcessor_msbb::MagnitudeProcessor_msbb()
+MagnitudeProcessor_Ms_BB::MagnitudeProcessor_Ms_BB()
  : MagnitudeProcessor("Ms(BB)") {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -56,7 +56,7 @@ MagnitudeProcessor_msbb::MagnitudeProcessor_msbb()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MagnitudeProcessor::Status MagnitudeProcessor_msbb::computeMagnitude(
+MagnitudeProcessor::Status MagnitudeProcessor_Ms_BB::computeMagnitude(
 	double amplitude, const std::string &unit,
 	double, double,
 	double delta, double depth,
@@ -72,7 +72,8 @@ MagnitudeProcessor::Status MagnitudeProcessor_msbb::computeMagnitude(
 		return DistanceOutOfRange;
 
 	// Clip depth to 0
-	if ( depth < 0 ) depth = 0;
+	if ( depth < 0 )
+		depth = 0;
 
 	if ( depth > DEPTH_MAX )
 		return DepthOutOfRange; // strictly speaking it would be 60 km
@@ -91,5 +92,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_msbb::computeMagnitude(
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
-}
+
+
+} // namespace Processing
+} // namespace Seiscomp

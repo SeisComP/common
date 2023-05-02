@@ -172,17 +172,20 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 	AmplitudeValue *amplitude,
 	double *period, double *snr)
 {
-	const int n = data.size();
+	if (data.size() == 0)
+		return false;
+
+	const size_t n = data.size();
 	const double *f = static_cast<const double*>(data.data());
 
 	double amax, pmax;
 	int imax;
 
 	if ( _config.iaspeiAmplitudes ) {
-		IASPEI::AmplitudePeriodMeasurement m;
-
-		bool OK = IASPEI::measureAmplitudePeriod(n, f, offset, si1, si2, m);
-		if ( ! OK )
+		IASPEI::AmplitudePeriodMeasurement m {
+			IASPEI::measureAmplitudePeriod(n, f, offset, si1, si2)
+		};
+		if ( ! m.success )
 			return false;
 
 		amax = (m.ap2p2 + m.ap2p1)/2;
@@ -194,7 +197,7 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 		std::vector<double> d(n);
 
 		// Locate the max. of the derivative to find (A/T)_max
-		for ( int i = 1; i < n-1; i++ )
+		for ( size_t i = 1; i < n-1; i++ )
 			d[i] = 0.5*(f[i+1] - f[i-1]);
 		d[0] = d[n-1] = 0;
 

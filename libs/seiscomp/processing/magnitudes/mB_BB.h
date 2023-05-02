@@ -18,37 +18,47 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MSBB_H
-#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MSBB_H
+#ifndef SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MB_BB_H
+#define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MB_BB_H
 
 
-#include <seiscomp/processing/magnitudeprocessor.h>
+#include <seiscomp//processing/magnitudeprocessor.h>
 
 
 namespace Seiscomp {
 namespace Processing {
 
 
-class SC_SYSTEM_CLIENT_API MagnitudeProcessor_msbb : public MagnitudeProcessor {
-	DECLARE_SC_CLASS(MagnitudeProcessor_msbb);
+class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mB_BB : public MagnitudeProcessor {
+	DECLARE_SC_CLASS(MagnitudeProcessor_mB_BB)
 
 	public:
-		MagnitudeProcessor_msbb();
+		MagnitudeProcessor_mB_BB();
+		MagnitudeProcessor_mB_BB(const std::string& type);
 
-	protected:
-		Status computeMagnitude(double amplitude, const std::string &unit,
-		                        double period, double snr,
-		                        double delta, double depth,
-		                        const DataModel::Origin *hypocenter,
-		                        const DataModel::SensorLocation *receiver,
-		                        const DataModel::Amplitude *,
-		                        const Locale *,
-		                        double &value) override;
+		bool setup(const Settings &settings) override;
+
+		Status computeMagnitude(
+			double amplitude, const std::string &unit,
+			double period, double snr,
+			double delta, double depth,
+			const DataModel::Origin *hypocenter,
+			const DataModel::SensorLocation *receiver,
+			const DataModel::Amplitude *,
+			const Locale *,
+			double &value) override;
+
+		Status estimateMw(double magnitude, double &Mw_estimate,
+			double &Mw_stdError) override;
+
+	private:
+		double minDistanceDeg;
+		double maxDistanceDeg;
 };
 
 
-}
-}
+} // namespace Processing
+} //namespace Seiscomp
 
 
 #endif

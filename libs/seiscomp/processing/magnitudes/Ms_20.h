@@ -29,35 +29,36 @@ namespace Seiscomp {
 namespace Processing {
 
 
-class SC_SYSTEM_CLIENT_API MagnitudeProcessor_ms20 : public MagnitudeProcessor {
-	DECLARE_SC_CLASS(MagnitudeProcessor_ms20);
+class SC_SYSTEM_CLIENT_API MagnitudeProcessor_Ms_20 : public MagnitudeProcessor {
+	DECLARE_SC_CLASS(MagnitudeProcessor_Ms_20);
 
 	public:
-		MagnitudeProcessor_ms20();
+		MagnitudeProcessor_Ms_20();
 
 		bool setup(const Settings &settings) override;
 
 	protected:
-		Status computeMagnitude(double amplitude, const std::string &unit,
-		                        double period, double snr,
-		                        double delta, double depth,
-		                        const DataModel::Origin *hypocenter,
-		                        const DataModel::SensorLocation *receiver,
-		                        const DataModel::Amplitude *,
-		                        const Locale *,
-		                        double &value) override;
+		Status computeMagnitude(
+			double amplitude,
+			const std::string &unit,
+			double period, double snr,
+			double delta, double depth,
+			const DataModel::Origin *hypocenter,
+			const DataModel::SensorLocation *receiver,
+			const DataModel::Amplitude *,
+			const Locale *,
+			double &value) override;
 
 	private:
-		double                  lowPer;
-		double                  upPer;
-		double                  minDistanceDeg;
-		double                  maxDistanceDeg;
-		double                  maxDepthKm;
+		double lowPer;
+		double upPer;
+		double minDistanceDeg;
+		double maxDistanceDeg;
+		double maxDepthKm;
 };
 
 
-}
-}
-
+} // namespace Processing
+} // namespace Seiscomp
 
 #endif

@@ -19,7 +19,7 @@
 
 
 
-#include <seiscomp/processing/magnitudes/m_B.h>
+#include <seiscomp/processing/magnitudes/mB_BB.h>
 #include <seiscomp/seismology/magnitudes.h>
 #include <math.h>
 
@@ -34,8 +34,8 @@ std::string ExpectedAmplitudeUnit = "nm/s";
 }
 
 
-IMPLEMENT_SC_CLASS_DERIVED(MagnitudeProcessor_mB, MagnitudeProcessor, "MagnitudeProcessor_mB");
-REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_mB, "mB");
+IMPLEMENT_SC_CLASS_DERIVED(MagnitudeProcessor_mB_BB, MagnitudeProcessor, "MagnitudeProcessor_mB_BB");
+REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_mB_BB, "mB");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -43,7 +43,7 @@ REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_mB, "mB");
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MagnitudeProcessor_mB::MagnitudeProcessor_mB::setup(const Settings &settings) {
+bool MagnitudeProcessor_mB_BB::MagnitudeProcessor_mB_BB::setup(const Settings &settings) {
 	if ( !MagnitudeProcessor::setup(settings) )
 		return false;
 
@@ -66,15 +66,15 @@ bool MagnitudeProcessor_mB::MagnitudeProcessor_mB::setup(const Settings &setting
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MagnitudeProcessor_mB::MagnitudeProcessor_mB()
- : MagnitudeProcessor("mB") {}
+MagnitudeProcessor_mB_BB::MagnitudeProcessor_mB_BB()
+ : MagnitudeProcessor("mB_BB") {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MagnitudeProcessor_mB::MagnitudeProcessor_mB(const std::string& type)
+MagnitudeProcessor_mB_BB::MagnitudeProcessor_mB_BB(const std::string& type)
  : MagnitudeProcessor(type) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -82,14 +82,15 @@ MagnitudeProcessor_mB::MagnitudeProcessor_mB(const std::string& type)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MagnitudeProcessor::Status MagnitudeProcessor_mB::computeMagnitude(
+MagnitudeProcessor::Status MagnitudeProcessor_mB_BB::computeMagnitude(
         double amplitude, const std::string &unit,
         double, double,
         double delta, double depth,
         const DataModel::Origin *, const DataModel::SensorLocation *,
         const DataModel::Amplitude *, const Locale *, double &value) {
 	// Clip depth to 0
-	if ( depth < 0 ) depth = 0;
+	if ( depth < 0 )
+		depth = 0;
 
 	if ( delta < minDistanceDeg || delta > maxDistanceDeg )
 		return DistanceOutOfRange;
@@ -110,7 +111,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_mB::computeMagnitude(
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MagnitudeProcessor::Status MagnitudeProcessor_mB::estimateMw(
+MagnitudeProcessor::Status MagnitudeProcessor_mB_BB::estimateMw(
 	double magnitude,
 	double &Mw_estimate,
 	double &Mw_stdError)

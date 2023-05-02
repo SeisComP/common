@@ -19,7 +19,7 @@
 
 
 #include <seiscomp/datamodel/amplitude.h>
-#include <seiscomp/processing/amplitudes/Ms20.h>
+#include <seiscomp/processing/amplitudes/Ms_20.h>
 #include <seiscomp/processing/amplitudes/iaspei.h>
 #include <seiscomp/math/filter/seismometers.h>
 
