@@ -185,18 +185,20 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 		if ( ! OK )
 			return false;
 
-		amax = (m.ap2p2 + m.ap2p1)/2;
-		imax = (m.ip2p2 + m.ip2p1)/2;
-		pmax = (m.ip2p2 - m.ip2p1)*2;
+		amax = (m.ap2p2 + m.ap2p1) / 2;
+		imax = (m.ip2p2 + m.ip2p1) / 2;
+		pmax = (m.ip2p2 - m.ip2p1) * 2;
 		// We don't determine the standard error of the period.
 	}
 	else {
 		std::vector<double> d(n);
 
 		// Locate the max. of the derivative to find (A/T)_max
-		for ( int i = 1; i < n-1; i++ )
-			d[i] = 0.5*(f[i+1] - f[i-1]);
-		d[0] = d[n-1] = 0;
+		for ( int i = 1; i < n - 1; ++i ) {
+			d[i] = 0.5 * (f[i + 1] - f[i - 1]);
+		}
+
+		d[0] = d[n - 1] = 0;
 
 		// Find the max. amplitude in the *derivative*
 		imax = find_absmax(n, &d[0], si1, si2, offset);
@@ -205,12 +207,15 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 
 		// Measure period in the original trace but at the position
 		// of the max. amplitude of its *derivative*
-		if ( ! measurePeriod(n, f, imax, offset, &pmax, &pstd) )
+		if ( !measurePeriod(si2 - si1, f + si1, imax - si1, offset, &pmax, &pstd) ) {
 			pmax = -1;
+		}
+		else {
+			// Finally relocate the max. amplitude in the original trace
+			// at the position of the max. amplitude of its *derivative*
+			imax = find_absmax(si2 - si1, f + si1, imax - si1 - (int)pmax, imax - si1 + (int)pmax, offset) + si1;
+		}
 
-		// Finally relocate the max. amplitude in the original trace
-		// at the position of the max. amplitude of its *derivative*
-		imax = find_absmax(n, f, imax-(int)pmax, imax+(int)pmax, offset);
 		amax = std::abs(f[imax] - offset);
 	}
 
