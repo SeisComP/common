@@ -1391,7 +1391,7 @@
 							<parameter name="pos" type="int" default="-1">
 								<description>
 								Position of the column. If the configured position is less than 0 or if it
-								exceeds the total number of columns then the column is appended to the right.
+								exceeds the total number of columns, then the column is appended to the right.
 								</description>
 							</parameter>
 							<parameter name="label" type="string">
@@ -1401,8 +1401,9 @@
 							</parameter>
 							<parameter name="types" type="list:string">
 								<description>
-								Object types this script should be invoked for.
+								Object types passed to the script.
 								Supported values are 'Event' and 'Origin'.
+								Mandatory parameter.
 								</description>
 							</parameter>
 						</struct>
