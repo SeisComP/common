@@ -63,6 +63,9 @@ namespace Core {
    - Add Seiscomp::Gui::Ruler::setReverseDirection(bool)
    - Changed KM_OF_DEGREE constant according to WGS84 mean radius definition
 
+ "15.5.0"   0x0F0500
+   - Added Seiscomp::Utils::TabValues
+
  "15.4.0"   0x0F0400
    - Added Seiscomp::Gui::RecordView::hasSelectedItems()
    - Added Seiscomp::Gui::RecordView::mapToTime()
