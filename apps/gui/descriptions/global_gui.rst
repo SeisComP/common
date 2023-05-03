@@ -328,6 +328,11 @@ GeoJSON
   :file:`~/.seiscomp/spatial/vector`
 * File name extension: *.geojson*
 * File format: https://geojson.org/
+
+  .. note ::
+
+     All coordinates must be given in the WGS-84 coordinate reference frame.
+
 * Rendering properties are controlled as described in the section
   :ref:`sec-gui_layers-config`.
 * Additional properties may be defined in the `properties` member of a `Feature`
