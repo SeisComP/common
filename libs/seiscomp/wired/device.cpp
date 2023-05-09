@@ -59,11 +59,6 @@ using namespace std;
 #define EPOLLRDHUP 0
 #endif
 
-#define DEFAULT_EPOLL_OP EPOLLET | EPOLLPRI | EPOLLRDHUP
-
-#endif
-#ifdef SEISCOMP_WIRED_KQUEUE
-#define DEFAULT_KQUEUE_OP EV_CLEAR
 #endif
 
 #endif
@@ -253,11 +248,7 @@ DeviceGroup::DeviceGroup() {
 	_timerSingleShot = false;
 	_queue = nullptr;
 	_isInSelect = false;
-#ifdef SEISCOMP_WIRED_SELECT
-	FD_ZERO(&_read_set);
-	FD_ZERO(&_write_set);
 	_triggerMode = LevelTriggered;
-#endif
 #ifdef SEISCOMP_WIRED_EPOLL
 	_epoll_fd = -1;
 	_defaultOps = DEFAULT_EPOLL_OP;
@@ -332,11 +323,6 @@ bool DeviceGroup::setTriggerMode(TriggerMode tm) {
 	_triggerMode = tm;
 	return true;
 #endif
-#ifdef SEISCOMP_WIRED_SELECT
-	if ( tm == LevelTriggered )
-		return true;
-	return false;
-#endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -359,9 +345,6 @@ bool DeviceGroup::isValid() const {
 #endif
 #ifdef SEISCOMP_WIRED_KQUEUE
 	return _kqueue_fd > 0;
-#endif
-#ifdef SEISCOMP_WIRED_SELECT
-	return true;
 #endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -420,9 +403,6 @@ bool DeviceGroup::setup() {
 			return false;
 		}
 #endif
-#ifdef SEISCOMP_WIRED_SELECT
-		FD_SET(_interrupt_read_fd, &_read_set);
-#endif
 #ifdef SEISCOMP_WIRED_EPOLL
 
 		struct epoll_event ev;
@@ -442,9 +422,7 @@ bool DeviceGroup::setup() {
 			return false;
 		}
 #endif
-#ifndef SEISCOMP_WIRED_SELECT
 	}
-#endif
 
 	return true;
 }
@@ -455,17 +433,10 @@ bool DeviceGroup::setup() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DeviceGroup::append(Device *dev) {
-#ifdef SEISCOMP_WIRED_SELECT
-	if ( s->_groupIterator != Device::Iterator() ) {
-		SEISCOMP_WARNING("Device is already part of a group");
-		return false;
-	}
-#else
 	if ( dev->_group ) {
 		SEISCOMP_WARNING("Device is already part of a group");
 		return false;
 	}
-#endif
 
 	if ( !dev->isValid() ) return false;
 #ifdef SEISCOMP_WIRED_EPOLL
@@ -496,16 +467,6 @@ bool DeviceGroup::append(Device *dev) {
 	//SEISCOMP_DEBUG("Adding device to group");
 	++_count;
 #endif
-#ifdef SEISCOMP_WIRED_SELECT
-	if ( s->_fd >= FD_SETSIZE ) {
-		SEISCOMP_WARNING("[reactor] fd %d exceeds maximum number of trackable "
-		                 "devices, max is %d", s->_fd, FD_SETSIZE);
-		return false;
-	}
-	if ( _interrupt_read_fd <= 0 && !setup() ) return false;
-	if ( s->_timeout >= 0 ) applyTimeout(s);
-	s->_groupIterator = _devices.insert(_devices.end(), s);
-#endif
 
 	dev->_group = this;
 	updateState(dev);
@@ -519,12 +480,6 @@ bool DeviceGroup::append(Device *dev) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DeviceGroup::remove(Device *s) {
-#ifdef SEISCOMP_WIRED_SELECT
-	if ( s->_groupIterator == Device::Iterator() ) {
-		SEISCOMP_WARNING("Device is not part of that group");
-		return false;
-	}
-#endif
 #ifdef SEISCOMP_WIRED_EPOLL
 	if ( s->_group != this ) {
 		SEISCOMP_WARNING("Device is not part of that group");
@@ -570,13 +525,6 @@ bool DeviceGroup::remove(Device *s) {
 #endif
 
 	s->_group = nullptr;
-	clearState(s);
-#ifdef SEISCOMP_WIRED_SELECT
-	if ( _selectIterator == s->_groupIterator )
-		_selectIterator = _devices.erase(_selectIterator);
-	else
-		_devices.erase(s->_groupIterator);
-#endif
 
 #ifdef SEISCOMP_WIRED_EPOLL
 	if ( _epoll_fd > 0 && s->isValid() ) {
@@ -616,9 +564,6 @@ bool DeviceGroup::remove(Device *s) {
 	if ( s->_qPrev || s->_qNext || s == _queue )
 		removeFromQueue(s);
 
-#ifdef SEISCOMP_WIRED_SELECT
-	s->_groupIterator = Device::Iterator();
-#endif
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -628,16 +573,6 @@ bool DeviceGroup::remove(Device *s) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DeviceGroup::clear() {
-#ifdef SEISCOMP_WIRED_SELECT
-	for ( Device::Iterator it = _devices.begin(); it != _devices.end(); ++it ) {
-		clearState(*it);
-		(*it)->_groupIterator = Device::Iterator();
-	}
-
-	_devices.clear();
-
-	_selectIterator = _devices.end();
-#endif
 #if defined(SEISCOMP_WIRED_EPOLL) || defined(SEISCOMP_WIRED_KQUEUE)
 	_count = 0;
 	_selectIndex = _selectSize = 0;
@@ -831,9 +766,6 @@ void DeviceGroup::interrupt() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 size_t DeviceGroup::count() const {
-#ifdef SEISCOMP_WIRED_SELECT
-	return _devices.size();
-#endif
 #if defined(SEISCOMP_WIRED_EPOLL) || defined(SEISCOMP_WIRED_KQUEUE)
 	return _count;
 #endif
@@ -847,11 +779,6 @@ size_t DeviceGroup::count() const {
 Device *DeviceGroup::wait() {
 	_isInterrupted = false;
 
-#ifdef SEISCOMP_WIRED_SELECT
-	_selectIterator = _devices.begin();
-	_read_active_set = _read_set;
-	_write_active_set = _write_set;
-#endif
 #if defined(SEISCOMP_WIRED_EPOLL) || defined(SEISCOMP_WIRED_KQUEUE)
 	_selectIndex = _selectSize = 0;
 
@@ -877,10 +804,6 @@ Device *DeviceGroup::wait() {
 	struct timespec ts_timeout;
 	struct timespec *ts_timeout_used = nullptr;
 #endif
-#ifdef SEISCOMP_WIRED_SELECT
-	struct timeval tv_timeout;
-	struct timeval *tv_timeout_used = nullptr;
-#endif
 	int timeout = -1;
 	struct timeval tv_start;
 
@@ -894,12 +817,6 @@ Device *DeviceGroup::wait() {
 		ts_timeout.tv_nsec = (timeout - ts_timeout.tv_sec*1000)*1000000;
 		ts_timeout_used = &ts_timeout;
 #endif
-#ifdef SEISCOMP_WIRED_SELECT
-		// Convert scalar milliseconds to timespec structure
-		tv_timeout.tv_sec = timeout / 1000;
-		tv_timeout.tv_usec = (timeout - tv_timeout.tv_sec*1000)*1000;
-		tv_timeout_used = &tv_timeout;
-#endif
 		//SEISCOMP_DEBUG("[reactor] set wait timeout: %d ms", timeout);
 	}
 
@@ -908,9 +825,6 @@ Device *DeviceGroup::wait() {
 #endif
 #ifdef SEISCOMP_WIRED_KQUEUE
 	int nfds = kevent(_kqueue_fd, nullptr, 0, _kqueue_events, SEISCOMP_WIRED_KQUEUE_EVENT_BUFFER, ts_timeout_used);
-#endif
-#ifdef SEISCOMP_WIRED_SELECT
-	int nfds = ::select(FD_SETSIZE, &_read_active_set, &_write_active_set, nullptr, tv_timeout_used);
 #endif
 	//SEISCOMP_DEBUG("[reactor] epoll_wait::finished");
 	_isInSelect = false;
@@ -975,11 +889,6 @@ Device *DeviceGroup::next() {
 			bool hasTrigger = false;
 			removeFromQueue(dev);
 
-#ifdef SEISCOMP_WIRED_SELECT
-			if ( FD_ISSET(dev->_fd, &_read_active_set) ||
-			     FD_ISSET(dev->_fd, &_write_active_set) )
-				hasTrigger = true;
-#else
 			for ( size_t i = 0; i < _selectSize; ++ i ) {
 #ifdef SEISCOMP_WIRED_EPOLL
 				if ( _epoll_events[_selectIndex].data.ptr == dev ) {
@@ -991,7 +900,6 @@ Device *DeviceGroup::next() {
 					break;
 				}
 			}
-#endif
 
 			// Only return this device if it is not part of the
 			// event list. Otherwise the iteration below will return it.
@@ -1008,44 +916,6 @@ Device *DeviceGroup::next() {
 
 	_timedOut = false;
 
-#ifdef SEISCOMP_WIRED_SELECT
-	if ( FD_ISSET(_interrupt_read_fd, &_read_active_set) ) {
-		//SEISCOMP_DEBUG("[reactor] got trigger from interrupt");
-		if ( _interrupt_write_fd == _interrupt_read_fd ) {
-			for (;;) {
-				// Only perform one read. The kernel maintains an atomic counter.
-				uint64_t signum(0);
-				errno = 0;
-				int bytes_read = ::read(_interrupt_read_fd, &signum, sizeof(signum));
-				if ( bytes_read < 0 && errno == EINTR ) continue;
-				break;
-			}
-		}
-		else {
-			for (;;) {
-				// Clear all data from the pipe.
-				char data[16];
-				int bytes_read = ::read(_interrupt_read_fd, data, sizeof(data));
-				if ( bytes_read < 0 && errno == EINTR ) continue;
-				while ( bytes_read == sizeof(data) )
-					bytes_read = ::read(_interrupt_read_fd, data, sizeof(data));
-				break;
-			}
-		}
-
-		_isInterrupted = true;
-	}
-
-	for ( ; _selectIterator != _devices.end(); ++_selectIterator ) {
-		if ( (*_selectIterator)->_fd < 0 ) continue;
-		if ( (_readyForRead = FD_ISSET((*_selectIterator)->_fd, &_read_active_set)) ||
-		     (_readyForWrite = FD_ISSET((*_selectIterator)->_fd, &_write_active_set)) ) {
-			Device *device = *_selectIterator;
-			++_selectIterator;
-			return device;
-		}
-	}
-#else
 	while ( _selectIndex < _selectSize ) {
 	#ifdef SEISCOMP_WIRED_EPOLL
 		Device *device = reinterpret_cast<Device *>(_epoll_events[_selectIndex].data.ptr);
@@ -1136,7 +1006,6 @@ Device *DeviceGroup::next() {
 	}
 
 	_selectIndex = _selectSize = 0;
-#endif
 
 	return nullptr;
 }
@@ -1158,22 +1027,6 @@ void DeviceGroup::removeFromQueue(Device *d) {
 		d->_qNext->_qPrev = d->_qPrev;
 
 	d->_qPrev = d->_qNext = nullptr;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DeviceGroup::clearState(Device *s) {
-#ifdef SEISCOMP_WIRED_SELECT
-	if ( !s->isValid() ) return;
-
-	//SEISCOMP_DEBUG("fd %d: clear read", s->_fd);
-	//SEISCOMP_DEBUG("fd %d: clear write", s->_fd);
-	FD_CLR(s->_fd, &_read_set);
-	FD_CLR(s->_fd, &_write_set);
-#endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1305,9 +1158,6 @@ void DeviceGroup::updateState(Device *dev) {
 
 	if ( sm & Device::Read ) {
 		//SEISCOMP_DEBUG("fd %d: set read", s->_fd);
-#ifdef SEISCOMP_WIRED_SELECT
-		FD_SET(s->_fd, &_read_set);
-#endif
 #ifdef SEISCOMP_WIRED_EPOLL
 		ev.events |= EPOLLIN;
 #endif
@@ -1330,16 +1180,10 @@ void DeviceGroup::updateState(Device *dev) {
 		}
 #endif
 		//SEISCOMP_DEBUG("fd %d: clear read", dev->_fd);
-#ifdef SEISCOMP_WIRED_SELECT
-		FD_CLR(dev->_fd, &_read_set);
-#endif
 	}
 
 	if ( sm & Device::Write ) {
 		//SEISCOMP_DEBUG("fd %d: set write", dev->_fd);
-#ifdef SEISCOMP_WIRED_SELECT
-		FD_SET(dev->_fd, &_write_set);
-#endif
 #ifdef SEISCOMP_WIRED_EPOLL
 		ev.events |= EPOLLOUT;
 #endif
@@ -1362,9 +1206,6 @@ void DeviceGroup::updateState(Device *dev) {
 		}
 #endif
 		//SEISCOMP_DEBUG("fd %d: clear write", dev->_fd);
-#ifdef SEISCOMP_WIRED_SELECT
-		FD_CLR(dev->_fd, &_write_set);
-#endif
 	}
 
 	if ( sm & Device::Closed ) {

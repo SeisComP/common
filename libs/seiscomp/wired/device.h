@@ -32,11 +32,6 @@
 	#error "Require either epoll or kqueue support"
 #endif
 
-#ifdef SEISCOMP_WIRED_SELECT
-  #ifndef WIN32
-    #include <sys/select.h>
-  #endif
-#endif
 #ifdef SEISCOMP_WIRED_EPOLL
   #ifndef WIN32
     #include <sys/epoll.h>
@@ -180,13 +175,6 @@ class SC_SYSTEM_CORE_API Device : public Core::BaseObject {
 		static int   _deviceCount;
 
 	private:
-#ifdef SEISCOMP_WIRED_SELECT
-		typedef Device                 *Item;
-		typedef std::list<Item>         List;
-		typedef List::iterator          Iterator;
-
-		Iterator     _groupIterator;
-#endif
 		DeviceGroup   *_group;  //<! The group the device is part of
 		Device        *_qPrev;  //<! The prev pointer used by intrusive list
 		Device        *_qNext;  //<! The next pointer used by intrusive list
@@ -288,17 +276,12 @@ class SC_SYSTEM_CORE_API DeviceGroup : public Core::BaseObject {
 		void removeFromQueue(Device *d);
 
 		void updateState(Device *);
-		void clearState(Device *);
 
 
 	// ----------------------------------------------------------------------
 	//  Private members
 	// ----------------------------------------------------------------------
 	private:
-#ifdef SEISCOMP_WIRED_SELECT
-		Device::List         _devices;
-
-#endif
 		TriggerMode          _triggerMode;
 		bool                 _readyForRead;
 		bool                 _readyForWrite;
@@ -315,14 +298,6 @@ class SC_SYSTEM_CORE_API DeviceGroup : public Core::BaseObject {
 		int                  _interrupt_read_fd;
 		int                  _interrupt_write_fd;
 
-#ifdef SEISCOMP_WIRED_SELECT
-		Device::Iterator     _selectIterator;
-		fd_set               _read_set;
-		fd_set               _write_set;
-
-		fd_set               _read_active_set;
-		fd_set               _write_active_set;
-#endif
 #if defined(SEISCOMP_WIRED_EPOLL) || defined(SEISCOMP_WIRED_KQUEUE)
 		unsigned int         _defaultOps;
 		size_t               _count;
