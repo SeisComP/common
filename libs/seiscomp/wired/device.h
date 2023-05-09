@@ -261,9 +261,8 @@ class SC_SYSTEM_CORE_API DeviceGroup : public Core::BaseObject {
 		bool timedOut() const;
 		bool interrupted() const { return _isInterrupted; }
 
-		//! Set the trigger mode which is only supported when epoll is
-		//! used. The default trigger mode is then EdgeTriggered which
-		//! is different to select that is level triggered.
+		//! Set the trigger mode which is only supported when epoll or kqueue
+		//! is used. The default trigger mode is LevelTriggered.
 		bool setTriggerMode(TriggerMode);
 		TriggerMode triggerMode() const;
 

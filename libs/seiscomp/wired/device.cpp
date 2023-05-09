@@ -251,17 +251,16 @@ DeviceGroup::DeviceGroup() {
 	_triggerMode = LevelTriggered;
 #ifdef SEISCOMP_WIRED_EPOLL
 	_epoll_fd = -1;
-	_defaultOps = DEFAULT_EPOLL_OP;
+	_defaultOps = EPOLLPRI | EPOLLRDHUP;
 #endif
 #ifdef SEISCOMP_WIRED_KQUEUE
 	_kqueue_fd = -1;
-	_defaultOps = DEFAULT_KQUEUE_OP;
+	_defaultOps = 0;
 #endif
 #if defined(SEISCOMP_WIRED_EPOLL) || defined(SEISCOMP_WIRED_KQUEUE)
 	_selectIndex = 0;
 	_selectSize = 0;
 	_count = 0;
-	_triggerMode = EdgeTriggered;
 #endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
