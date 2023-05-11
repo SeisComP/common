@@ -473,10 +473,14 @@ void updateContainer(Container *c, Model::SymbolFileMap &symbols, int stage) {
 		Model::SymbolFileMap::iterator it;
 		for ( it = symbols.begin(); it != symbols.end(); ++it ) {
 			// Parameter not from file?
-			if ( it->second->symbol.uri.empty() ) continue;
+			if ( !it->second || it->second->symbol.uri.empty() ) {
+				continue;
+			}
 
 			// Check if the symbol name starts with xpath
-			if ( it->first.compare(0, xpath.size(), xpath) ) continue;
+			if ( it->first.compare(0, xpath.size(), xpath) ) {
+				continue;
+			}
 
 			size_t pos = it->first.find('.', xpath.size());
 
