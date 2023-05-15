@@ -1041,6 +1041,19 @@ bool Application::init() {
 		return false;
 	}
 
+	for ( string &item : _settings.processing.magnitudeAliases ) {
+		StringVector toks;
+		Core::split(toks, item, ":", false);
+		if ( toks.size() < 2 || toks.size() > 3 ) {
+			SEISCOMP_ERROR("magnitude alias item must be of format <alias>:<source>[:<amp-source>]");
+			return false;
+		}
+
+		if ( !Processing::MagnitudeProcessor::CreateAlias(toks[0], toks[1], toks.size() > 2 ? toks[2] : string()) ) {
+			return false;
+		}
+	}
+
 	if ( isLoadRegionsEnabled() ) {
 		showMessage("Reading custom regions");
 		Regions::load();
@@ -1517,19 +1530,6 @@ bool Application::initConfiguration() {
 
 	if ( !_settings.customPublicIDPattern.empty() ) {
 		DataModel::PublicObject::SetIdPattern(_settings.customPublicIDPattern);
-	}
-
-	for ( string &item : _settings.processing.magnitudeAliases ) {
-		StringVector toks;
-		Core::split(toks, item, ":", false);
-		if ( toks.size() < 2 || toks.size() > 3 ) {
-			SEISCOMP_ERROR("magnitude alias item must be of format <alias>:<source>[:<amp-source>]");
-			return false;
-		}
-
-		if ( !Processing::MagnitudeProcessor::CreateAlias(toks[0], toks[1], toks.size() > 2 ? toks[2] : string()) ) {
-			return false;
-		}
 	}
 
 	return true;
