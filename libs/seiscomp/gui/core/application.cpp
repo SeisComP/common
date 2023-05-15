@@ -1018,7 +1018,14 @@ void Application::schemaValidationNames(std::vector<std::string> &modules,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::init() {
-	bool result = Client::Application::init();
+	if ( !Client::Application::init() ) {
+		if ( _type == GuiClient ) {
+			QMessageBox::critical(nullptr, tr("Initialization error"),
+			                      tr("There were errors during initialization, "
+			                         "please check the logs"));
+		}
+		return false;
+	}
 
 	// Check author read-only
 	try {
@@ -1062,9 +1069,6 @@ bool Application::init() {
 	catch ( ... ) {}
 
 	if ( _intervalSOH > 0 ) _timerSOH.setInterval(_intervalSOH*1000);
-
-	if ( !result && (_exitRequested || (_type == Tty)) )
-		return false;
 
 	if ( isMessagingEnabled() && (_type != Tty) ) {
 		if ( !cdlg()->hasConnectionChanged() ) {
