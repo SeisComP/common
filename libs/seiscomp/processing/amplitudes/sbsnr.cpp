@@ -325,12 +325,12 @@ bool AmplitudeSBSNR::computeAmplitude(const Seiscomp::DoubleArray &data,
 	SEISCOMP_DEBUG("sbsnrSNR = %f", sbsnrSNR);
 
 	if ( sbsnrSNR < 1.0 ) {
-		SEISCOMP_ERROR("SBSNR SNR is less than 1.0");
+		SEISCOMP_DEBUG("SBSNR SNR is less than 1.0");
 		return false;
 	}
 
-	SEISCOMP_NOTICE("Amplitude: %f", sbsnrAmplitude);
-	SEISCOMP_NOTICE("SNR: %f", sbsnrSNR);
+	SEISCOMP_DEBUG("Amplitude: %f", sbsnrAmplitude);
+	SEISCOMP_DEBUG("SNR: %f", sbsnrSNR);
 
 	// Set return values
 	amplitude->value = sbsnrAmplitude;

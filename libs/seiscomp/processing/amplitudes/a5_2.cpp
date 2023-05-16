@@ -353,7 +353,7 @@ bool AmplitudeA5_2::computeAmplitude(const Seiscomp::DoubleArray &data,
 	// NOBUG: Because IDC parameter amp-decimation-fraction is unset and hence
 	//        defaults to 0.0 this part of the IDC algorithm is intentionally
 	//        omitted (not implemented) as it does nothing (all peaks and
-	//        troughs are preserved) when this threshold is 0.0 
+	//        troughs are preserved) when this threshold is 0.0
 	//        (minimumAmplitudeThreshold = maxDataDiff * _ampDecimationFraction)
 
 	// Compute maximum peak-to-trough excursion
@@ -437,16 +437,16 @@ bool AmplitudeA5_2::computeAmplitude(const Seiscomp::DoubleArray &data,
 	// Initially, use zero-to-peak amplitude
 	//   (half maximum peak-to-trough/trough-to-peak amplitude)
 	double finalAmplitude = maxAmplitude * 0.5;
-	SEISCOMP_NOTICE("Initial zero-to-peak amplitude: %f", finalAmplitude);
+	SEISCOMP_DEBUG("Initial zero-to-peak amplitude: %f", finalAmplitude);
 
 	// Initially, use twice the time between peak/trough (in samples)
 	double finalPeriod = 2 * (maxRight - maxLeft);
-	SEISCOMP_NOTICE("Initial period (in samples): %f", finalPeriod);
+	SEISCOMP_DEBUG("Initial period (in samples): %f", finalPeriod);
 
 	// Use max left point as amplitude time (as index in input data)
 	double finalAmplitudeTime = maxLeft;
-	SEISCOMP_NOTICE("Amplitude time (as index in data): %f",
-	                finalAmplitudeTime);
+	SEISCOMP_DEBUG("Amplitude time (as index in data): %f",
+	               finalAmplitudeTime);
 
 	if ( _interpolation ) {
 		double interpolatedAmplitude = 0.0, interpolatedPeriod = 0.0;
@@ -458,10 +458,10 @@ bool AmplitudeA5_2::computeAmplitude(const Seiscomp::DoubleArray &data,
 			//   (half maximum peak-to-trough/trough-to-peak amplitude)
 			interpolatedAmplitude *= 0.5;
 
-			SEISCOMP_NOTICE("Interpolated zero-to-peak amplitude: %f",
-			                interpolatedAmplitude);
-			SEISCOMP_NOTICE("Interpolated period (in samples): %f",
-			                interpolatedPeriod);
+			SEISCOMP_DEBUG("Interpolated zero-to-peak amplitude: %f",
+			               interpolatedAmplitude);
+			SEISCOMP_DEBUG("Interpolated period (in samples): %f",
+			               interpolatedPeriod);
 
 			// Only use interpolated amplitude and period if interpolated
 			//   period is larger than 0.0
@@ -488,10 +488,10 @@ bool AmplitudeA5_2::computeAmplitude(const Seiscomp::DoubleArray &data,
 		}
 	}
 
-	SEISCOMP_NOTICE("Final period: %f", finalPeriod);
+	SEISCOMP_DEBUG("Final period: %f", finalPeriod);
 
-	SEISCOMP_NOTICE("Amplitude before filter response correction: %f",
-	                finalAmplitude);
+	SEISCOMP_DEBUG("Amplitude before filter response correction: %f",
+	               finalAmplitude);
 
 	const double periodInSeconds = finalPeriod / samplingRate;
 	SEISCOMP_DEBUG("Period in seconds: %f", periodInSeconds);
@@ -545,12 +545,12 @@ bool AmplitudeA5_2::computeAmplitude(const Seiscomp::DoubleArray &data,
 		finalAmplitude /= filterCorrection;
 	}
 
-	SEISCOMP_NOTICE("Amplitude after filter response correction: %f",
-	                finalAmplitude);
+	SEISCOMP_DEBUG("Amplitude after filter response correction: %f",
+	               finalAmplitude);
 
 	// Correct amplitude for instrument if desired
-	SEISCOMP_NOTICE("Amplitude before instrument correction: %f",
-	                finalAmplitude);
+	SEISCOMP_DEBUG("Amplitude before instrument correction: %f",
+	               finalAmplitude);
 
 	if ( _removeInstResp ) {
 		// Convert to nano units
@@ -578,10 +578,10 @@ bool AmplitudeA5_2::computeAmplitude(const Seiscomp::DoubleArray &data,
 		}
 	}
 
-	SEISCOMP_NOTICE("Amplitude after instrument correction: %f",
-	                finalAmplitude);
+	SEISCOMP_DEBUG("Amplitude after instrument correction: %f",
+	               finalAmplitude);
 
-	SEISCOMP_NOTICE("Final amplitude: %f", finalAmplitude);
+	SEISCOMP_DEBUG("Final amplitude: %f", finalAmplitude);
 
 	// Compute SNR
 	double finalSNR = 0.0;
@@ -649,7 +649,7 @@ bool AmplitudeA5_2::computeAmplitude(const Seiscomp::DoubleArray &data,
 
 	SEISCOMP_DEBUG("Maximum short-term average of signal: %f", maxSTAV);
 	finalSNR = maxSTAV / noiseRunningAverage[0];
-	SEISCOMP_NOTICE("SNR: %f", finalSNR);
+	SEISCOMP_DEBUG("SNR: %f", finalSNR);
 
 	// Set return values
 	amplitude->value = finalAmplitude;
