@@ -290,6 +290,10 @@ Record *Concurrent::next() {
 				);
 			}
 		}
+
+		if ( _threads.empty() ) {
+			return nullptr;
+		}
 	}
 
 	try {
