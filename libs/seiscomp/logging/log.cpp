@@ -377,6 +377,14 @@ void VPublish(PublishLoc *loc, Channel *, const char *format, va_list ap) {
 			buf = new char[bufSize];
 		}
 	}
+
+	data.msg = buf;
+
+	loc->pub->publish(data);
+
+	if ( buf != msgBuf ) {
+		delete[] buf;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

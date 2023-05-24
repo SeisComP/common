@@ -202,7 +202,7 @@ enum LogLevel {
     Note that unless there are subscribers to this message, it will do nothing.
 */
 #define SEISCOMP_ERROR(...) \
-  _scprintf(_SCLOGID, Seiscomp::Logging::_SCErrorChannel, ##__VA_ARGS__)
+	_scprintf(_SCLOGID, Seiscomp::Logging::_SCErrorChannel, ##__VA_ARGS__)
 
 #define SC_FMT_ERROR(...) \
 	_scfmt(_SCLOGID, Seiscomp::Logging::_SCErrorChannel, ##__VA_ARGS__)
