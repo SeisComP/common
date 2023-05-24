@@ -202,12 +202,14 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		//! Returns the application's database interface
 		IO::DatabaseInterface *database() const;
 
+		void setDatabaseURI(const std::string &uri);
 		//! Returns the application's database URI
 		const std::string &databaseURI() const;
 
 		//! Returns the application's database query interface
 		DataModel::DatabaseQuery *query() const;
 
+		void setRecordStreamURL(const std::string &url);
 		//! Returns the configures recordstream URL to be used by
 		//! RecordStream::Open()
 		const std::string &recordStreamURL() const;

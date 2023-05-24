@@ -48,6 +48,8 @@ namespace Core {
  ******************************************************************************
  "16.0.0"   0x100000
    - Added Seiscomp::Core::digits10
+   - Added Seiscomp::Client::Application::setDatabaseURI
+   - Added Seiscomp::Client::Application::setRecordStreamURL
    - Removed Seiscomp::Math::round
    - Renamed GenericMessage::AttachementType to GenericMessage::AttachmentType
    - Renamed GenericMessage::AttachementList to GenericMessage::AttachmentList
