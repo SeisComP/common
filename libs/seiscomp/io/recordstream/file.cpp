@@ -285,7 +285,7 @@ Record *File::next() {
 		catch ( std::exception &e ) {
 			SEISCOMP_ERROR("file read exception: %s", e.what());
 			delete rec;
-			return nullptr;
+			continue;
 		}
 
 		if ( !_filter.empty() || !_reFilter.empty() ) {
