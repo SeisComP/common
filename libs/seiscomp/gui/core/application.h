@@ -163,8 +163,6 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 
 		Type type() const;
 
-		void setDatabaseSOHInterval(int secs);
-
 		Scheme &scheme();
 
 		QSettings &settings();
@@ -319,8 +317,6 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 		Scheme             *_scheme;
 		mutable QSettings  *_qSettings;
 		QTimer              _timerSOH;
-		Core::Time          _lastSOH;
-		int                 _intervalSOH;
 
 		bool                _readOnlyMessaging;
 		Core::TimeSpan      _eventTimeAgo;

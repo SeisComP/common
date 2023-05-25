@@ -110,7 +110,8 @@ struct SC_SYSTEM_CLIENT_API Notification {
 		Reconnect,
 		Close,
 		Timeout,
-		AcquisitionFinished
+		AcquisitionFinished,
+		StateOfHealth
 	};
 
 	Notification() : object(nullptr), type(Object) {}
@@ -532,6 +533,8 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		 */
 		bool readMessages();
 
+		void stateOfHealth();
+
 		/**
 		 * This method gets called when a previously started timer timeout's.
 		 * The timer has to be started by enableTimer(timeout).
@@ -613,6 +616,7 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		bool processEvent();
 
 		void timeout();
+		void stateOfHealthTimeout();
 
 		void monitorLog(const Core::Time &timestamp, std::ostream &os);
 
@@ -656,6 +660,12 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 
 			Util::StringFirewall networkTypeFirewall;
 			Util::StringFirewall stationTypeFirewall;
+
+			struct SOH {
+				void accept(SettingsLinker &linker);
+
+				int              interval{60};
+			}                    soh;
 
 			struct Database {
 				void accept(SettingsLinker &linker);
@@ -749,6 +759,8 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		ConnectionPtr                _connection;
 		IO::DatabaseInterfacePtr     _database;
 		Util::Timer                  _userTimer;
+		Util::Timer                  _sohTimer;
+		Core::Time                   _sohLastUpdate;
 
 		std::mutex                   _objectLogMutex;
 };

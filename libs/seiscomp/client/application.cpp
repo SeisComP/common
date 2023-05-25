@@ -232,6 +232,15 @@ void ApplicationStatusMessage::serialize(Archive& ar) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::AppSettings::SOH::accept(SettingsLinker &linker) {
+	linker & cfg(interval, "interval");
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::AppSettings::Messaging::accept(SettingsLinker &linker) {
 	linker
 
@@ -412,7 +421,9 @@ void Application::AppSettings::accept(SettingsLinker &linker) {
 	& cfg(enableLoadRegions, "loadRegions")
 	& cfg(customPublicIDPattern, "publicIDPattern")
 	& cfg(processing, "processing")
-	& cfg(processing.magnitudeAliases, "magnitudes.aliases");
+	& cfg(processing.magnitudeAliases, "magnitudes.aliases")
+	& cfg(soh.interval, "IntervalSOH") // For backwards compatibility
+	& cfg(soh, "soh");
 
 	if ( database.enable ) {
 		linker
@@ -1165,6 +1176,15 @@ void Application::timeout() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::stateOfHealthTimeout() {
+	sendNotification(Notification::StateOfHealth);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::sendNotification(const Notification &n) {
 	_queue.push(n);
 }
@@ -1286,8 +1306,17 @@ bool Application::reloadBindings() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::run() {
-	if ( _connection )
+	if ( _connection ) {
 		startMessageThread();
+	}
+
+	_sohLastUpdate = Time::LocalTime();
+
+	if ( _settings.soh.interval > 0 ) {
+		_sohTimer.setTimeout(_settings.soh.interval);
+		_sohTimer.setCallback(bind(&Application::stateOfHealthTimeout, this));
+		_sohTimer.start();
+	}
 
 	while ( !_exitRequested ) {
 		if ( !processEvent() ) break;
@@ -1331,6 +1360,10 @@ bool Application::processEvent() {
 
 			case Notification::Timeout:
 				handleTimeout();
+				break;
+
+			case Notification::StateOfHealth:
+				stateOfHealth();
 				break;
 
 			case Notification::Close:
@@ -1443,6 +1476,11 @@ void Application::done() {
 	}
 
 	_queue.close();
+
+	if ( _sohTimer.isActive() ) {
+		SEISCOMP_INFO("Disable soh timer");
+		_sohTimer.disable();
+	}
 
 	if ( _userTimer.isActive() ) {
 		SEISCOMP_INFO("Disable timer");
@@ -1754,10 +1792,13 @@ void Application::startMessageThread() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setDatabase(IO::DatabaseInterface* db) {
 	_database = db;
-	if ( !_query )
+
+	if ( !_query ) {
 		_query = new DataModel::DatabaseQuery(_database.get());
-	else
+	}
+	else {
 		_query->setDriver(_database.get());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2080,6 +2121,42 @@ bool Application::readMessages() {
 	}
 
 	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::stateOfHealth() {
+	// Save current time
+	Core::Time now = Core::Time::LocalTime();
+
+	if ( _sohLastUpdate.valid() ) {
+		double factor = double(now - _sohLastUpdate) / _settings.soh.interval;
+
+		// Latency of factor 10 or higher
+		if ( factor >= 10 ) {
+			SEISCOMP_ERROR("Application latency level %.1f", factor);
+		}
+		else if ( factor >= 2 ) {
+			SEISCOMP_WARNING("Application latency level %.1f", factor);
+		}
+		else {
+			SEISCOMP_DEBUG("Application latency level normal %.1f", factor);
+		}
+	}
+
+	_sohLastUpdate = now;
+
+	if ( database() ) {
+		if ( !database()->beginQuery("select 1") ) {
+			SEISCOMP_ERROR("DB ping failed");
+		}
+		else {
+			database()->endQuery();
+		}
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

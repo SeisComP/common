@@ -21,6 +21,7 @@
 #include <seiscomp/core/optional.h>
 #include <seiscomp/core/datetime.h>
 
+
 // Explicit template instantiation of some optional types
 template class boost::optional<bool>;
 template class boost::optional<int>;
@@ -35,11 +36,8 @@ namespace Core {
 
 ::boost::none_t const None = ::boost::none;
 
-ValueError::ValueError() throw() {
-}
-
-ValueError::~ValueError() throw() {
-}
+ValueError::ValueError() throw() {}
+ValueError::~ValueError() throw() {}
 
 const char* ValueError::what() const throw() {
 	return "requested value has not been set";

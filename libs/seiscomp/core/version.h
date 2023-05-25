@@ -64,6 +64,8 @@ namespace Core {
    - Add second parameter to Seiscomp::Gui::Ruler::setPosition(pos, allowRotation)
    - Add Seiscomp::Gui::Ruler::setReverseDirection(bool)
    - Changed KM_OF_DEGREE constant according to WGS84 mean radius definition
+   - Removed Seiscomp::Gui::Application::setDatabaseSOHInterval
+   - Added Seiscomp::Client::Application::stateOfHealth
 
  "15.5.0"   0x0F0500
    - Added Seiscomp::Utils::TabValues

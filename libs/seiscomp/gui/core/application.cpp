@@ -278,7 +278,6 @@ void Application::_GUI_Core_Settings::_MapsDesc::accept(SettingsLinker &linker) 
 Application::Application(int& argc, char **argv, int flags, Type type)
     : QObject(), Client::Application(argc, argv)
 , _qSettings(nullptr)
-, _intervalSOH(60)
 , _readOnlyMessaging(false)
 , _mainWidget(nullptr)
 , _splash(nullptr)
@@ -548,25 +547,7 @@ void Application::showPlugins() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::timerSOH() {
-	// Save current time
-	Core::Time now = Core::Time::LocalTime();
-
-	int factor = int(double(now - _lastSOH)*1000) / _timerSOH.interval();
-
-	// Latency of factor 10 or higher
-	if ( factor >= 10 )
-		SEISCOMP_ERROR("Application latency level %d", factor);
-	else if ( factor >= 2 )
-		SEISCOMP_WARNING("Application latency level %d", factor);
-
-	_lastSOH = now;
-
-	if ( database() ) {
-		if ( !database()->beginQuery("select 1") )
-			SEISCOMP_ERROR("DB ping failed");
-		else
-			database()->endQuery();
-	}
+	stateOfHealth();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -582,15 +563,6 @@ void Application::handleSignalNotification() {
 		qWarning() << "Failed to read int from pipe";
 	QApplication::quit();
 	_signalNotifier->setEnabled(true);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::setDatabaseSOHInterval(int secs) {
-	_intervalSOH = secs;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1065,10 +1037,9 @@ bool Application::init() {
 	try { _messageGroups.event = configGetString("groups.event"); }
 	catch ( ... ) {}
 
-	try { _intervalSOH = configGetInt("IntervalSOH"); }
-	catch ( ... ) {}
-
-	if ( _intervalSOH > 0 ) _timerSOH.setInterval(_intervalSOH*1000);
+	if ( Client::Application::_settings.soh.interval > 0 ) {
+		_timerSOH.setInterval(Client::Application::_settings.soh.interval * 1000);
+	}
 
 	if ( isMessagingEnabled() && (_type != Tty) ) {
 		if ( !cdlg()->hasConnectionChanged() ) {
@@ -1240,7 +1211,7 @@ bool Application::run() {
 		startMessageThread();
 	connect(_app, SIGNAL(lastWindowClosed()), this, SLOT(closedLastWindow()));
 	connect(&_timerSOH, SIGNAL(timeout()), this, SLOT(timerSOH()));
-	_lastSOH = Core::Time::LocalTime();
+	_sohLastUpdate = Core::Time::LocalTime();
 	_timerSOH.start();
 
 	Client::Application::exit(QApplication::exec());
