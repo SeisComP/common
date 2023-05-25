@@ -131,42 +131,54 @@ MSeedRecord::MSeedRecord(MSRecord *rec, Array::DataType dt, Hint h)
 , _reclen(rec->reclen)
 , _encodingFlag(true)
 {
-	if (_hint == SAVE_RAW)
+	if ( _hint == SAVE_RAW ) {
 		_raw.setData(rec->reclen,rec->record);
-	else
-		if (_hint == DATA_ONLY)
-			try {
-				_setDataAttributes(rec->reclen,rec->record);
-			} catch (LibmseedException &e) {
-				_nsamp = 0;
-				_fsamp = 0;
-				_data = nullptr;
-				SEISCOMP_ERROR("LibmseedException in MSeedRecord constructor %s", e.what());
-			}
+	}
+	else if ( _hint == DATA_ONLY ) {
+		try {
+			_setDataAttributes(rec->reclen, rec->record);
+		}
+		catch ( LibmseedException &e ) {
+			_nsamp = 0;
+			_fsamp = 0;
+			_data = nullptr;
+			SEISCOMP_ERROR("%s", e.what());
+		}
+	}
+
 	_srnum = 0;
 	_srdenom = 1;
-	if (_srfact > 0 && _srmult > 0) {
+
+	if ( (_srfact > 0) && (_srmult > 0) ) {
 		_srnum = _srfact*_srmult;
 		_srdenom = 1;
 	}
-	if (_srfact > 0 && _srmult < 0) {
+
+	if ( _srfact > 0 && _srmult < 0 ) {
 		_srnum = _srfact;
 		_srdenom = -_srmult;
 	}
-	if (_srfact < 0 && _srmult > 0) {
+
+	if ( (_srfact < 0) && (_srmult > 0) ) {
 		_srnum = _srmult;
 		_srdenom = -_srfact;
 	}
-	if (_srfact < 0 && _srmult < 0) {
+
+	if ( (_srfact < 0) && (_srmult < 0) ) {
 		_srnum = 1;
 		_srdenom = _srfact*_srmult;
 	}
+
 	_nframes = 0;
-	if (rec->Blkt1001)
+	if ( rec->Blkt1001 ) {
 		_nframes = rec->Blkt1001->framecnt;
+	}
+
 	_leap = 0;
-	if (rec->fsdh->start_time.sec > 59)
+	if ( rec->fsdh->start_time.sec > 59 ) {
 		_leap = rec->fsdh->start_time.sec-59;
+	}
+
 	hptime_t hptime = msr_endtime(rec);
 	_etime = Seiscomp::Core::Time(hptime_t(hptime / HPTMODULUS), hptime_t(hptime % HPTMODULUS));
 }
@@ -510,8 +522,10 @@ void MSeedRecord::_setDataAttributes(int reclen, char *data) const {
 
 	if ( !data ) return;
 
-	if ( msr_unpack(data, reclen, &pmsr, 1, 0) != MS_NOERROR )
-		throw LibmseedException("Unpacking of Mini SEED record failed.");
+	int r = msr_unpack(data, reclen, &pmsr, 1, 0);
+	if ( r != MS_NOERROR ) {
+		throw LibmseedException("Unpacking of Mini SEED record failed");
+	}
 
 	Array::DataType dt = _datatype;
 	_data = nullptr;
@@ -847,16 +861,20 @@ void MSeedRecord::read(std::istream &is) {
 			throw LibmseedException("Retrieving the record length failed");
 	}
 
-	if ( reclen < MINRECLEN )
+	if ( reclen < MINRECLEN ) {
 		throw Core::EndOfStreamException("Invalid Mini SEED record, too small");
+	}
 
-	if ( msr_unpack(buffer.data(), reclen, &prec, 0, 0) != MS_NOERROR )
+	int r = msr_unpack(buffer.data(), reclen, &prec, 0, 0);
+	if ( r != MS_NOERROR ) {
 		throw LibmseedException("Unpacking of Mini SEED record failed");
+	}
 
-	*this = MSeedRecord(prec,this->_datatype,this->_hint);
+	*this = MSeedRecord(prec, this->_datatype, this->_hint);
 	msr_free(&prec);
-	if ( _fsamp <= 0 )
-		throw LibmseedException("Unpacking of Mini SEED record failed");
+	if ( _fsamp <= 0 ) {
+		throw LibmseedException("Unpacking of Mini SEED record failed, invalid sample rate");
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -966,7 +984,8 @@ void MSeedRecord::write(std::ostream& out) {
 				pmsr->datasamples = const_cast<void*>(_data->data());
 				break;
 			default: {
-				SEISCOMP_WARNING("Unknown data type %c! Switch to Integer-Steim2 encoding", _data->dataType());
+				SEISCOMP_WARNING("Unknown data type %d! Switch to Integer-Steim2 encoding",
+				                 static_cast<int>(_data->dataType()));
 				pmsr->encoding = DE_STEIM2;
 				pmsr->sampletype = 'i';
 				data = ArrayFactory::Create(Array::INT,_data.get());
