@@ -269,6 +269,8 @@ WebsocketConnection::~WebsocketConnection() {}
 Result WebsocketConnection::connect(const char *address,
                                     unsigned int timeoutMs,
                                     const char *clientName) {
+	{
+
 	boost::mutex::scoped_lock lread(_readMutex);
 	boost::mutex::scoped_lock lwrite(_writeMutex);
 
@@ -598,6 +600,8 @@ Result WebsocketConnection::connect(const char *address,
 	else
 		SEISCOMP_INFO("Outgoing messages are encoded to match schema version %d.%d",
 		              _schemaVersion.majorTag(), _schemaVersion.minorTag());
+
+	} // End of scope for mutex lock_guards
 
 	// Flush the outbox with respect to last messages
 	return flushBacklog();
