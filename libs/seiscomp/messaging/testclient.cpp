@@ -21,12 +21,12 @@
 #include "protocols/websocket.h"
 
 #include <seiscomp/utils/timer.h>
-#include <boost/thread.hpp>
 
 #include <cerrno>
 #include <functional>
 #include <iostream>
 #include <deque>
+#include <thread>
 
 
 using namespace std;
@@ -163,8 +163,7 @@ bool selfTest(int nMessages) {
 	int n = nMessages;
 	bool keepReading = true;
 
-	boost::thread readingThread(bind(readMessages, &conn));
-	readingThread.yield();
+	thread readingThread(bind(readMessages, &conn));
 
 	while ( n && keepReading ) {
 		Messaging::Client::Connection::Result r;
@@ -215,12 +214,14 @@ void threadedConnectionTest() {
 #define N 100000
 #define N_THREADS 5
 
-	boost::thread_group threads;
+	vector<threads> threads;
 	for ( int i = 0; i < N_THREADS; ++i ) {
-		threads.create_thread(bind(connectionPublishTest, N));
+		threads.push_back(thread(bind(connectionPublishTest, N)));
 	}
 
-	threads.join_all();
+	for ( auto &thread : threads ) {
+		thread.join();
+	}
 	//connectionPublishTest(N);
 
 	double elapsed = timer.elapsed();

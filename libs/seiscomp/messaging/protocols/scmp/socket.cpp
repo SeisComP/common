@@ -128,7 +128,7 @@ Result Socket::close() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Socket::wait(boost::mutex *m, boost::mutex *waitLock) {
+bool Socket::wait(mutex *m, mutex *waitLock) {
 	Wired::Device *dev = nullptr;
 	while ( dev != _socket ) {
 		if ( _inWait ) SEISCOMP_WARNING("Sync error");

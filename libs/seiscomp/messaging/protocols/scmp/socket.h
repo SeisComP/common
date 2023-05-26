@@ -28,9 +28,8 @@
 #include <seiscomp/wired/buffer.h>
 #include <seiscomp/wired/devices/socket.h>
 
-#include <boost/thread/mutex.hpp>
-
 #include <deque>
+#include <mutex>
 #include <set>
 #include <string>
 
@@ -108,7 +107,7 @@ class Socket : public Protocol {
 		 * @param waitLock An optional waitlock which is acquired before the
 		 *                 actual wait and released afterwards.
 		 */
-		bool wait(boost::mutex *m = nullptr, boost::mutex *waitLock = nullptr);
+		bool wait(std::mutex *m = nullptr, std::mutex *waitLock = nullptr);
 
 		virtual void handleInterrupt(int) override;
 
@@ -136,14 +135,14 @@ class Socket : public Protocol {
 		uint32_t               _ackWindow;
 
 		mutable bool           _inWait;
-		mutable boost::mutex   _sockMutex;
+		mutable std::mutex     _sockMutex;
 		// Mutex to synchronize write access from separate threads.
-		mutable boost::mutex   _writeMutex;
+		mutable std::mutex     _writeMutex;
 };
 
 
 inline size_t Socket::outboxSize() const {
-	boost::mutex::scoped_lock l(_writeMutex);
+	std::lock_guard<std::mutex> l(_writeMutex);
 	return _outbox.size();
 }
 

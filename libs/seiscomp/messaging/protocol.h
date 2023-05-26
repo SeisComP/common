@@ -28,10 +28,9 @@
 #include <seiscomp/core/optional.h>
 #include <seiscomp/messaging/packet.h>
 
-#include <boost/thread/mutex.hpp>
-
 #include <deque>
 #include <map>
+#include <mutex>
 #include <set>
 #include <string>
 
@@ -535,19 +534,19 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 	protected:
 		using PacketQueue = std::deque<Packet*>;
 
-		bool                   _wantMembershipInfo;
-		Groups                 _groups;
-		PacketQueue            _inbox;
-		std::string            _errorMessage;
-		State                  _state;
-		std::string            _registeredClientName;
-		Core::Version          _schemaVersion; //!< The schema version the
-		                                       //!< server supports
-		KeyValueStore          _extendedParameters;
-		std::string            _certificate;   //!< Optional client certificate
+		bool               _wantMembershipInfo;
+		Groups             _groups;
+		PacketQueue        _inbox;
+		std::string        _errorMessage;
+		State              _state;
+		std::string        _registeredClientName;
+		Core::Version      _schemaVersion; //!< The schema version the
+		                                   //!< server supports
+		KeyValueStore      _extendedParameters;
+		std::string        _certificate;   //!< Optional client certificate
 
 		// Mutexes to synchronize read access from separate threads.
-		mutable boost::mutex   _readMutex;
+		mutable std::mutex _readMutex;
 };
 
 

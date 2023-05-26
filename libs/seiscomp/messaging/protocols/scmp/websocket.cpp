@@ -269,335 +269,341 @@ WebsocketConnection::~WebsocketConnection() {}
 Result WebsocketConnection::connect(const char *address,
                                     unsigned int timeoutMs,
                                     const char *clientName) {
-	boost::mutex::scoped_lock lread(_readMutex);
-	boost::mutex::scoped_lock lwrite(_writeMutex);
+	{
+		lock_guard<mutex> lread(_readMutex);
+		lock_guard<mutex> lwrite(_writeMutex);
 
-	_extendedParameters = KeyValueStore();
-	_state = State();
-	_select.clear();
-	_groups.clear();
-	_errorMessage = string();
+		_extendedParameters = KeyValueStore();
+		_state = State();
+		_select.clear();
+		_groups.clear();
+		_errorMessage = string();
 
-	_sockMutex.lock();
+		_sockMutex.lock();
 
-	if ( _useSSL ) {
-		SSL_CTX *ctx = nullptr;
-		if ( !_certificate.empty() ) {
-			const string DataTag = "data:";
-			if ( !boost::istarts_with(_certificate, DataTag) ) {
-				ctx = Wired::SSLSocket::createClientContextFromFile(_certificate);
+		if ( _useSSL ) {
+			SSL_CTX *ctx = nullptr;
+			if ( !_certificate.empty() ) {
+				const string DataTag = "data:";
+				if ( !boost::istarts_with(_certificate, DataTag) ) {
+					ctx = Wired::SSLSocket::createClientContextFromFile(_certificate);
+				}
+				else {
+					string base64Data = _certificate;
+					base64Data.replace(0, DataTag.size(), "");
+					Seiscomp::Core::trim(base64Data);
+
+					string data;
+					Seiscomp::Util::decodeBase64(data, base64Data.c_str(), base64Data.size());
+					ctx = Wired::SSLSocket::createClientContext(data);
+				}
 			}
-			else {
-				string base64Data = _certificate;
-				base64Data.replace(0, DataTag.size(), "");
-				Seiscomp::Core::trim(base64Data);
+			_socket = new Wired::SSLSocket(ctx);
+		}
+		else
+			_socket = new Wired::Socket;
 
-				string data;
-				Seiscomp::Util::decodeBase64(data, base64Data.c_str(), base64Data.size());
-				ctx = Wired::SSLSocket::createClientContext(data);
+		_socket->setNoDelay(true);
+
+		_sockMutex.unlock();
+
+		int port = -1;
+		string host = "localhost";
+		string path, queue;
+
+		Util::Url url(address);
+		if ( !url ) {
+			_errorMessage = "Invalid URL";
+			return InvalidURL;
+		}
+
+		host = url.host();
+		port = url.port();
+		if ( port <= 0 )
+			port = _useSSL ? 18181 : 18180;
+
+		path = url.path();
+		if ( !path.empty() && *path.rbegin() != '/' ) {
+			size_t p = path.find_last_of('/');
+			if ( p != string::npos ) {
+				queue = path.substr(p + 1);
+				path.erase(path.begin() + p + 1, path.end());
 			}
 		}
-		_socket = new Wired::SSLSocket(ctx);
-	}
-	else
-		_socket = new Wired::Socket;
 
-	_socket->setNoDelay(true);
-
-	_sockMutex.unlock();
-
-	int port = -1;
-	string host = "localhost";
-	string path, queue;
-
-	Util::Url url(address);
-	if ( !url ) {
-		_errorMessage = "Invalid URL";
-		return InvalidURL;
-	}
-
-	host = url.host();
-	port = url.port();
-	if ( port <= 0 )
-		port = _useSSL ? 18181 : 18180;
-
-	path = url.path();
-	if ( !path.empty() && *path.rbegin() != '/' ) {
-		size_t p = path.find_last_of('/');
-		if ( p != string::npos ) {
-			queue = path.substr(p + 1);
-			path.erase(path.begin() + p + 1, path.end());
+		if ( queue.empty() ) {
+			queue = "production";
 		}
-	}
 
-	if ( queue.empty() ) {
-		queue = "production";
-	}
+		string authorization;
 
-	string authorization;
+		if ( url.username().length() > 0 ) {
+			std::string auth;
+			Util::encodeBase64(auth, url.username() + ':' + url.password());
+			authorization = "Authorization: Basic " + auth + "\r\n";
+		}
 
-	if ( url.username().length() > 0 ) {
-		std::string auth;
-		Util::encodeBase64(auth, url.username() + ':' + url.password());
-		authorization = "Authorization: Basic " + auth + "\r\n";
-	}
+		for ( Util::Url::QueryItems::const_iterator it = url.queryItems().begin();
+		      it != url.queryItems().end(); ++it ) {
+			const string &param = it->first;
+			const string &value = it->second;
 
-	for ( Util::Url::QueryItems::const_iterator it = url.queryItems().begin();
-	      it != url.queryItems().end(); ++it ) {
-		const string &param = it->first;
-		const string &value = it->second;
+			if ( param == "ack" ) {
+				int ackWindow;
+				if ( !Core::fromString(ackWindow, value) || ackWindow < 0 ) {
+					SEISCOMP_ERROR("Invalid 'ack' value: %s: expected non negative number", value.c_str());
+					_errorMessage = "Invalid 'ack' URL parameter";
+					return InvalidURLParameters;
+				}
 
-		if ( param == "ack" ) {
-			int ackWindow;
-			if ( !Core::fromString(ackWindow, value) || ackWindow < 0 ) {
-				SEISCOMP_ERROR("Invalid 'ack' value: %s: expected non negative number", value.c_str());
-				_errorMessage = "Invalid 'ack' URL parameter";
-				return InvalidURLParameters;
+				setAckWindow(static_cast<uint32_t>(ackWindow));
+				SEISCOMP_DEBUG("Set acknowledge window to %d", ackWindow);
 			}
-
-			setAckWindow(static_cast<uint32_t>(ackWindow));
-			SEISCOMP_DEBUG("Set acknowledge window to %d", ackWindow);
 		}
-	}
 
-	_socket->setSocketTimeout(timeoutMs / 1000, (timeoutMs % 1000) * 1000);
+		_socket->setSocketTimeout(timeoutMs / 1000, (timeoutMs % 1000) * 1000);
 
-	int ret = _socket->connect(host, port);
-	if ( ret != Wired::Socket::Success ) {
-		_errorMessage = "Failed to connect";
-		_socket = nullptr;
-		return NetworkError;
-	}
-
-	path += queue;
-	SEISCOMP_DEBUG("Attempt to connect to %s:%d%s", host.c_str(), port, path.c_str());
-
-	std::stringstream os;
-	os << "GET " << path << " HTTP/1.1\r\n"
-	      "Host: " << url.host() << "\r\n"
-	      "Upgrade: websocket\r\n"
-	      "Connection: Upgrade\r\n"
-	      "Sec-WebSocket-Protocol: scmp\r\n"
-	      "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
-	      "Sec-WebSocket-Version: 13\r\n"
-	   << authorization
-	   << "\r\n";
-
-	ret = _socket->send(os.str().c_str());
-	if ( ret <= 0 ) {
-		_errorMessage = "Failed to connect to websocket";
-		_socket = nullptr;
-		return NetworkError;
-	}
-
-	_getcount = 0;
-	_getp = _buffer;
-
-	HttpResponse resp;
-	while ( true ) {
-		ret = _socket->read(_buffer, sizeof(_buffer));
-		++_state.systemReadCalls;
-		if ( ret <= 0 ) {
-			_errorMessage = "Connection lost";
+		int ret = _socket->connect(host, port);
+		if ( ret != Wired::Socket::Success ) {
+			_errorMessage = "Failed to connect";
 			_socket = nullptr;
 			return NetworkError;
 		}
 
-		_getcount = ret;
+		path += queue;
+		SEISCOMP_DEBUG("Attempt to connect to %s@%s:%d%s",
+		               clientName ? clientName : "<rand>",
+		               host.c_str(), port, path.c_str());
+
+		std::stringstream os;
+		os << "GET " << path << " HTTP/1.1\r\n"
+		      "Host: " << url.host() << "\r\n"
+		      "Upgrade: websocket\r\n"
+		      "Connection: Upgrade\r\n"
+		      "Sec-WebSocket-Protocol: scmp\r\n"
+		      "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+		      "Sec-WebSocket-Version: 13\r\n"
+		   << authorization
+		   << "\r\n";
+
+		ret = _socket->send(os.str().c_str());
+		if ( ret <= 0 ) {
+			_errorMessage = "Failed to connect to websocket";
+			_socket = nullptr;
+			return NetworkError;
+		}
+
+		_getcount = 0;
 		_getp = _buffer;
 
-		_state.bytesReceived += ret;
+		HttpResponse resp;
+		while ( true ) {
+			ret = _socket->read(_buffer, sizeof(_buffer));
+			++_state.systemReadCalls;
+			if ( ret <= 0 ) {
+				_errorMessage = "Connection lost";
+				_socket = nullptr;
+				return NetworkError;
+			}
 
-		ret = resp.feed(_getp, ret);
-		if ( ret < 0 ) {
-			_errorMessage = "Invalid HTTP response";
+			_getcount = ret;
+			_getp = _buffer;
+
+			_state.bytesReceived += ret;
+
+			ret = resp.feed(_getp, ret);
+			if ( ret < 0 ) {
+				_errorMessage = "Invalid HTTP response";
+				_socket = nullptr;
+				return NetworkProtocolError;
+			}
+
+			if ( resp.isFinished ) {
+				_getp += ret;
+				_getcount -= ret;
+				break;
+			}
+		}
+
+		if ( resp.statusCode != 101 ) {
+			_errorMessage = resp.body;
 			_socket = nullptr;
 			return NetworkProtocolError;
 		}
 
-		if ( resp.isFinished ) {
-			_getp += ret;
-			_getcount -= ret;
-			break;
+		if ( !_select.isValid() ) {
+			if ( !_select.setup() ) {
+				_errorMessage = "Failed to setup polling device";
+				_socket = nullptr;
+				return SystemError;
+			}
 		}
-	}
 
-	if ( resp.statusCode != 101 ) {
-		_errorMessage = resp.body;
-		_socket = nullptr;
-		return NetworkProtocolError;
-	}
+		Buffer msg;
 
-	if ( !_select.isValid() ) {
-		if ( !_select.setup() ) {
-			_errorMessage = "Failed to setup polling device";
-			_socket = nullptr;
-			return SystemError;
-		}
-	}
+		{
+			osstream os(msg.data);
+			os << SCMP_PROTO_CMD_CONNECT "\n"
+			      SCMP_PROTO_CMD_CONNECT_HEADER_ACK_WINDOW ": " << _ackWindow << "\n";
 
-	Buffer msg;
+			if ( _state.sequenceNumber )
+				os << SCMP_PROTO_CMD_CONNECT_HEADER_SEQ_NUMBER ": " << *_state.sequenceNumber << "\n";
 
-	{
-		osstream os(msg.data);
-		os << SCMP_PROTO_CMD_CONNECT "\n"
-		      SCMP_PROTO_CMD_CONNECT_HEADER_ACK_WINDOW ": " << _ackWindow << "\n";
+			if ( clientName )
+				os << SCMP_PROTO_CMD_CONNECT_HEADER_CLIENT_NAME ":" << clientName << "\n";
 
-		if ( _state.sequenceNumber )
-			os << SCMP_PROTO_CMD_CONNECT_HEADER_SEQ_NUMBER ": " << *_state.sequenceNumber << "\n";
+			if ( !_subscriptions.empty() ) {
+				os << SCMP_PROTO_CMD_CONNECT_HEADER_SUBSCRIPTIONS ": ";
+				set<string>::iterator it;
+				int idx = 0;
+				for ( it = _subscriptions.begin(); it != _subscriptions.end(); ++it, ++idx ) {
+					if ( idx )
+						os << ',';
+					os << *it;
+				}
 
-		if ( clientName )
-			os << SCMP_PROTO_CMD_CONNECT_HEADER_CLIENT_NAME ":" << clientName << "\n";
-
-		if ( !_subscriptions.empty() ) {
-			os << SCMP_PROTO_CMD_CONNECT_HEADER_SUBSCRIPTIONS ": ";
-			set<string>::iterator it;
-			int idx = 0;
-			for ( it = _subscriptions.begin(); it != _subscriptions.end(); ++it, ++idx ) {
-				if ( idx )
-					os << ',';
-				os << *it;
+				os << '\n';
 			}
 
-			os << '\n';
+			os << SCMP_PROTO_CMD_CONNECT_HEADER_MEMBERSHIP_INFO ": " << (_wantMembershipInfo ? "1":"0") << "\n"
+			      SCMP_PROTO_CMD_CONNECT_HEADER_SELF_DISCARD ": 1\n"
+			      "\n";
 		}
 
-		os << SCMP_PROTO_CMD_CONNECT_HEADER_MEMBERSHIP_INFO ": " << (_wantMembershipInfo ? "1":"0") << "\n"
-		      SCMP_PROTO_CMD_CONNECT_HEADER_SELF_DISCARD ": 1\n"
-		      "\n";
-	}
+		Result r = send(&msg, WSFrame::TextFrame, false);
+		if ( r != OK ) {
+			_errorMessage = "Failed to send connect message";
+			_socket = nullptr;
+			return r;
+		}
 
-	Result r = send(&msg, WSFrame::TextFrame, false);
-	if ( r != OK ) {
-		_errorMessage = "Failed to send connect message";
-		_socket = nullptr;
-		return r;
-	}
+		Wired::Websocket::Frame connectFrame;
+		r = readFrame(connectFrame, &_readMutex);
+		if ( r != OK ) {
+			_errorMessage = "Failed to read connect response";
+			return r;
+		}
 
-	Wired::Websocket::Frame connectFrame;
-	r = readFrame(connectFrame, &_readMutex);
-	if ( r != OK ) {
-		_errorMessage = "Failed to read connect response";
-		return r;
-	}
+		FrameHeaders headers(connectFrame.data.data(), connectFrame.data.size());
+		if ( !headers.next() ) {
+			_errorMessage = "Invalid connect response received";
+			_socket = nullptr;
+			return NetworkProtocolError;
+		}
 
-	FrameHeaders headers(connectFrame.data.data(), connectFrame.data.size());
-	if ( !headers.next() ) {
-		_errorMessage = "Invalid connect response received";
-		_socket = nullptr;
-		return NetworkProtocolError;
-	}
+		if ( headers.val_len ) {
+			_errorMessage = "Invalid connect response received";
+			_socket = nullptr;
+			return NetworkProtocolError;
+		}
 
-	if ( headers.val_len ) {
-		_errorMessage = "Invalid connect response received";
-		_socket = nullptr;
-		return NetworkProtocolError;
-	}
+		if ( !headers.nameEquals(SCMP_PROTO_REPLY_CONNECT) ) {
+			Result r = NetworkProtocolError;
 
-	if ( !headers.nameEquals(SCMP_PROTO_REPLY_CONNECT) ) {
-		Result r = NetworkProtocolError;
+			if ( headers.nameEquals(SCMP_PROTO_REPLY_ERROR) ) {
+				while ( headers.next() )
+					if ( !headers.name_len ) break;
 
-		if ( headers.nameEquals(SCMP_PROTO_REPLY_ERROR) ) {
-			while ( headers.next() )
-				if ( !headers.name_len ) break;
+				_errorMessage.assign(headers.getptr(), connectFrame.data.data()+connectFrame.data.size()-headers.getptr());
 
-			_errorMessage.assign(headers.getptr(), connectFrame.data.data()+connectFrame.data.size()-headers.getptr());
+				size_t p = _errorMessage.find(' ');
+				if ( p != string::npos ) {
+					int code;
+					if ( Core::fromString(code, _errorMessage.substr(0, p)) ) {
+						_errorMessage.erase(0, p+1);
 
-			size_t p = _errorMessage.find(' ');
-			if ( p != string::npos ) {
-				int code;
-				if ( Core::fromString(code, _errorMessage.substr(0, p)) ) {
-					_errorMessage.erase(0, p+1);
-
-					switch ( code ) {
-						case 408:
-							r = DuplicateUsername;
-							break;
-						case 411:
-							r = GroupDoesNotExist;
-							break;
-						default:
-							break;
+						switch ( code ) {
+							case 408:
+								r = DuplicateUsername;
+								break;
+							case 411:
+								r = GroupDoesNotExist;
+								break;
+							default:
+								break;
+						}
 					}
 				}
 			}
-		}
-		else
-			_errorMessage = "Expected " SCMP_PROTO_REPLY_CONNECT " messages as first response";
-		_socket = nullptr;
-		return r;
-	}
-
-	bool validHeader = false;
-	while ( headers.next() ) {
-		if ( !headers.name_len ) {
-			validHeader = true;
-			break;
+			else
+				_errorMessage = "Expected " SCMP_PROTO_REPLY_CONNECT " messages as first response";
+			_socket = nullptr;
+			return r;
 		}
 
-		if ( headers.nameEquals(SCMP_PROTO_REPLY_CONNECT_HEADER_CLIENT_NAME) ) {
-			_registeredClientName.assign(headers.val_start, headers.val_len);
-			SEISCOMP_DEBUG("Registered clientname: %s", _registeredClientName.c_str());
-		}
-		else if ( headers.nameEquals(SCMP_PROTO_REPLY_CONNECT_HEADER_GROUPS) ) {
-			vector<string> groups;
-			Core::split(groups, string(headers.val_start, headers.val_len).c_str(), ",", true);
-			for ( auto &&group : groups ) _groups.insert(group);
-		}
-		// Parse DB extensions
-		else if ( headers.nameEquals("Schema-Version") ) {
-			string version(headers.val_start, headers.val_len);
-			if ( !_schemaVersion.fromString(version) ) {
-				SEISCOMP_WARNING("Invalid Schema-Version content: %s", version.c_str());
-				continue;
+		bool validHeader = false;
+		while ( headers.next() ) {
+			if ( !headers.name_len ) {
+				validHeader = true;
+				break;
+			}
+
+			if ( headers.nameEquals(SCMP_PROTO_REPLY_CONNECT_HEADER_CLIENT_NAME) ) {
+				_registeredClientName.assign(headers.val_start, headers.val_len);
+				SEISCOMP_DEBUG("Registered clientname: %s", _registeredClientName.c_str());
+			}
+			else if ( headers.nameEquals(SCMP_PROTO_REPLY_CONNECT_HEADER_GROUPS) ) {
+				vector<string> groups;
+				Core::split(groups, string(headers.val_start, headers.val_len).c_str(), ",", true);
+				for ( auto &&group : groups ) _groups.insert(group);
+			}
+			// Parse DB extensions
+			else if ( headers.nameEquals("Schema-Version") ) {
+				string version(headers.val_start, headers.val_len);
+				if ( !_schemaVersion.fromString(version) ) {
+					SEISCOMP_WARNING("Invalid Schema-Version content: %s", version.c_str());
+					continue;
+				}
+			}
+			else if ( headers.nameEquals("DB-Access") ) {
+				string readParameters(headers.val_start, headers.val_len);
+				auto packet = new Packet;
+
+				size_t p = readParameters.find("://");
+				if ( p != string::npos ) {
+					auto proto = readParameters.substr(0, p);
+					auto params = readParameters.substr(p + 3);
+					DatabaseProvideMessage msg(proto.c_str(), params.c_str());
+					packet->target = _registeredClientName;
+					packet->type = Packet::Data;
+					packet->headerContentType = Protocol::ContentType(Protocol::Binary).toString();
+					packet->sender = "MASTER";
+					Protocol::encode(packet->payload, &msg, Protocol::Identity, Protocol::Binary, -1);
+					queuePacket(packet);
+				}
+			}
+			else if ( headers.nameStartsWith("X-") ) {
+				_extendedParameters[
+					string(headers.name_start + 2, headers.name_len - 2)
+				] = string(headers.val_start, headers.val_len);
 			}
 		}
-		else if ( headers.nameEquals("DB-Access") ) {
-			string readParameters(headers.val_start, headers.val_len);
-			auto packet = new Packet;
 
-			size_t p = readParameters.find("://");
-			if ( p != string::npos ) {
-				DatabaseProvideMessage msg(readParameters.substr(0, p).c_str(),
-				                           readParameters.substr(p+3).c_str());
-				packet->target = _registeredClientName;
-				packet->type = Packet::Data;
-				packet->headerContentType = Protocol::ContentType(Protocol::Binary).toString();
-				packet->sender = "MASTER";
-				Protocol::encode(packet->payload, &msg, Protocol::Identity, Protocol::Binary, -1);
-				queuePacket(packet);
-			}
+		if ( !validHeader ) {
+			_errorMessage = "Invalid response frame";
+			_socket = nullptr;
+			return NetworkProtocolError;
 		}
-		else if ( headers.nameStartsWith("X-") ) {
-			_extendedParameters[
-				string(headers.name_start + 2, headers.name_len - 2)
-			] = string(headers.val_start, headers.val_len);
+
+		_socket->setSocketTimeout(0, 0);
+
+		_socket->setNonBlocking(true);
+		_socket->setMode(Wired::Device::Read);
+		_select.append(_socket.get());
+
+		Core::Version maxVersion = Core::Version(DataModel::Version::Major, DataModel::Version::Minor);
+		if ( _schemaVersion > maxVersion ) {
+			SEISCOMP_INFO("Outgoing messages are encoded to match schema version %d.%d, "
+			              "although server supports %d.%d",
+			              maxVersion.majorTag(), maxVersion.minorTag(),
+			              _schemaVersion.majorTag(), _schemaVersion.minorTag());
+			_schemaVersion = maxVersion;
+		}
+		else {
+			SEISCOMP_INFO("Outgoing messages are encoded to match schema version %d.%d",
+			              _schemaVersion.majorTag(), _schemaVersion.minorTag());
 		}
 	}
-
-	if ( !validHeader ) {
-		_errorMessage = "Invalid response frame";
-		_socket = nullptr;
-		return NetworkProtocolError;
-	}
-
-	_socket->setSocketTimeout(0, 0);
-
-	_socket->setNonBlocking(true);
-	_socket->setMode(Wired::Device::Read);
-	_select.append(_socket.get());
-
-	Core::Version maxVersion = Core::Version(DataModel::Version::Major, DataModel::Version::Minor);
-	if ( _schemaVersion > maxVersion ) {
-		SEISCOMP_INFO("Outgoing messages are encoded to match schema version %d.%d, "
-		              "although server supports %d.%d",
-		              maxVersion.majorTag(), maxVersion.minorTag(),
-		              _schemaVersion.majorTag(), _schemaVersion.minorTag());
-		_schemaVersion = maxVersion;
-	}
-	else
-		SEISCOMP_INFO("Outgoing messages are encoded to match schema version %d.%d",
-		              _schemaVersion.majorTag(), _schemaVersion.minorTag());
 
 	// Flush the outbox with respect to last messages
 	return flushBacklog();
@@ -612,7 +618,7 @@ Result WebsocketConnection::subscribe(const std::string &group) {
 	Result r;
 
 	{
-		boost::mutex::scoped_lock l(_readMutex);
+		lock_guard<mutex> l(_readMutex);
 
 		_sockMutex.lock();
 		if ( !_socket ) {
@@ -630,7 +636,7 @@ Result WebsocketConnection::subscribe(const std::string &group) {
 	}
 
 	{
-		boost::mutex::scoped_lock l(_writeMutex);
+		lock_guard<mutex> l(_writeMutex);
 
 		Buffer msg;
 		msg.data = SCMP_PROTO_CMD_SUBSCRIBE "\n"
@@ -644,7 +650,7 @@ Result WebsocketConnection::subscribe(const std::string &group) {
 	}
 
 	{
-		boost::mutex::scoped_lock l(_readMutex);
+		lock_guard<mutex> l(_readMutex);
 		do {
 			if ( _subscriptions.find(group) != _subscriptions.end() ) {
 				return OK;
@@ -667,7 +673,7 @@ Result WebsocketConnection::unsubscribe(const std::string &group) {
 	Result r;
 
 	{
-		boost::mutex::scoped_lock l(_readMutex);
+		lock_guard<mutex> l(_readMutex);
 
 		_sockMutex.lock();
 		if ( !_socket ) {
@@ -689,7 +695,7 @@ Result WebsocketConnection::unsubscribe(const std::string &group) {
 		if ( it == _subscriptions.end() )
 			return NotSubscribed;
 
-		boost::mutex::scoped_lock l(_writeMutex);
+		lock_guard<mutex> l(_writeMutex);
 
 		Buffer msg;
 		msg.data = SCMP_PROTO_CMD_UNSUBSCRIBE "\n"
@@ -703,7 +709,7 @@ Result WebsocketConnection::unsubscribe(const std::string &group) {
 	}
 
 	{
-		boost::mutex::scoped_lock l(_readMutex);
+		lock_guard<mutex> l(_readMutex);
 		do {
 			if ( _subscriptions.find(group) != _subscriptions.end() )
 				return OK;
@@ -730,7 +736,7 @@ Result WebsocketConnection::sendData(const string &targetGroup,
 		return MissingGroup;
 
 	{
-		boost::mutex::scoped_lock l(_readMutex);
+		lock_guard<mutex> l(_readMutex);
 		if ( _registeredClientName.empty() )
 			return NotConnected;
 
@@ -739,7 +745,7 @@ Result WebsocketConnection::sendData(const string &targetGroup,
 	}
 
 	{
-		boost::mutex::scoped_lock l(_writeMutex);
+		lock_guard<mutex> l(_writeMutex);
 
 		if ( _state.bytesBuffered > _state.maxBufferedBytes )
 			_state.maxBufferedBytes = _state.bytesBuffered;
@@ -810,7 +816,7 @@ Result WebsocketConnection::sendMessage(const std::string &targetGroup,
 		return ContentEncodingRequired;
 
 	{
-		boost::mutex::scoped_lock l(_readMutex);
+		lock_guard<mutex> l(_readMutex);
 		if ( _registeredClientName.empty() )
 			return NotConnected;
 
@@ -819,7 +825,7 @@ Result WebsocketConnection::sendMessage(const std::string &targetGroup,
 	}
 
 	{
-		boost::mutex::scoped_lock l(_writeMutex);
+		lock_guard<mutex> l(_writeMutex);
 
 		if ( _state.bytesBuffered > _state.maxBufferedBytes )
 			_state.maxBufferedBytes = _state.bytesBuffered;
@@ -863,7 +869,7 @@ Result WebsocketConnection::sendMessage(const std::string &targetGroup,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Result WebsocketConnection::fetchInbox() {
-	boost::mutex::scoped_lock l(_readMutex);
+	lock_guard<mutex> l(_readMutex);
 	Result r = readFrame(_recvFrame, &_readMutex);
 	if ( r != OK ) return r;
 	handleFrame(_recvFrame, nullptr, &r);
@@ -880,7 +886,7 @@ Result WebsocketConnection::syncOutbox() {
 
 	if ( _ackWindow == 0 ) return r;
 
-	boost::mutex::scoped_lock lw(_writeMutex);
+	lock_guard<mutex> lw(_writeMutex);
 
 	while ( !_outbox.empty() ) {
 		_writeMutex.unlock();
@@ -930,7 +936,7 @@ Result WebsocketConnection::syncOutbox() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Result WebsocketConnection::recv(Packet &p) {
 	while ( true ) {
-		boost::mutex::scoped_lock l(_readMutex);
+		lock_guard<mutex> l(_readMutex);
 
 		// Fill the inbox as much as possible without blocking
 		if ( _inboxWaterLevel ) {
@@ -980,7 +986,7 @@ Packet *WebsocketConnection::recv(Result *result) {
 	Result r = OK;
 
 	while ( true ) {
-		boost::mutex::scoped_lock l(_readMutex);
+		lock_guard<mutex> l(_readMutex);
 
 		// Fill the inbox as much as possible without blocking
 		if ( _inboxWaterLevel ) {
@@ -1035,7 +1041,7 @@ Packet *WebsocketConnection::recv(Result *result) {
 void WebsocketConnection::waitForAck() {
 	if ( _ackWindow == 0 ) return;
 
-	boost::mutex::scoped_lock lw(_writeMutex);
+	lock_guard<mutex> lw(_writeMutex);
 	if ( _state.localSequenceNumber < _ackWindow ) return;
 
 	while ( _outbox.size() >= _ackWindow ) {
@@ -1106,7 +1112,7 @@ Result WebsocketConnection::flushBacklog() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Result WebsocketConnection::disconnect() {
 	{
-		boost::mutex::scoped_lock lsock(_sockMutex);
+		lock_guard<mutex> lsock(_sockMutex);
 
 		if ( !_socket || !_socket->isValid() )
 			return NotConnected;
@@ -1114,7 +1120,7 @@ Result WebsocketConnection::disconnect() {
 
 	// Send the disconnect message
 	{
-		boost::mutex::scoped_lock lwrite(_writeMutex);
+		lock_guard<mutex> lwrite(_writeMutex);
 
 		if ( _registeredClientName.empty() )
 			return NotConnected;
@@ -1131,7 +1137,7 @@ Result WebsocketConnection::disconnect() {
 		if ( r != OK ) return r;
 	}
 
-	boost::mutex::scoped_lock lread(_readMutex);
+	lock_guard<mutex> lread(_readMutex);
 
 	if ( _registeredClientName.empty() ) {
 		// Already disconnected
@@ -1165,7 +1171,7 @@ Result WebsocketConnection::disconnect() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool WebsocketConnection::isConnected() {
-	boost::mutex::scoped_lock lread(_readMutex);
+	lock_guard<mutex> lread(_readMutex);
 	return !_registeredClientName.empty();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1175,7 +1181,7 @@ bool WebsocketConnection::isConnected() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Result WebsocketConnection::setTimeout(int milliseconds) {
-	boost::mutex::scoped_lock l(_sockMutex);
+	lock_guard<mutex> l(_sockMutex);
 	if ( _socket ) {
 		_socket->setTimeout(milliseconds > 0 ? milliseconds : -1);
 		return OK;
@@ -1190,7 +1196,7 @@ Result WebsocketConnection::setTimeout(int milliseconds) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Result WebsocketConnection::readFrame(Wired::Websocket::Frame &frame,
-                                      boost::mutex *mutex,
+                                      mutex *mutex,
                                       bool forceBlock) {
 	while ( true ) {
 		if ( frame.isFinished() ) frame.reset();
@@ -1391,7 +1397,7 @@ Result WebsocketConnection::sendSocket(const char *data, int len) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WebsocketConnection::updateReceiveBuffer() {
-	boost::mutex::scoped_lock l(_readMutex);
+	lock_guard<mutex> l(_readMutex);
 	while ( readFrame(_recvFrame, nullptr) == OK ) {
 		handleFrame(_recvFrame, nullptr);
 	}

@@ -43,7 +43,7 @@ namespace {
 
 
 System::HostInfo HostInfo;
-boost::mutex Mutex;
+mutex Mutex;
 Connection::Connections Pool;
 Util::Timer Timer;
 
@@ -55,7 +55,7 @@ void Timeout() {
 		string(Status::Tag(Status::PID).toString()) + "=" + Core::toString(HostInfo.pid()) + "&" +
 		string(Status::Tag(Status::TotalMemory).toString()) + "=" + Core::toString(HostInfo.totalMemory()) + "&";
 
-	boost::mutex::scoped_lock l(Mutex);
+	lock_guard<mutex> l(Mutex);
 
 	Core::Time timestamp = Core::Time::GMT();
 
@@ -68,8 +68,8 @@ void Timeout() {
 
 		string content;
 		{
-			bio::stream_buffer<boost::iostreams::back_insert_device<std::string> > buf(content);
-			std::ostream os(&buf);
+			bio::stream_buffer<boost::iostreams::back_insert_device<string> > buf(content);
+			ostream os(&buf);
 
 			os << ConstantInfo
 			   << Status::Tag(Status::Time).toString() << "=" << timestamp.iso() << "&"
@@ -181,7 +181,7 @@ Result Connection::setSource(const char *URL) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Result Connection::setSource(const std::string &URL) {
+Result Connection::setSource(const string &URL) {
 	return setSource(URL.c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -201,8 +201,8 @@ Result Connection::setMembershipInfo(bool enable) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Result Connection::connect(const std::string &clientName,
-                           const std::string &primaryGroup,
+Result Connection::connect(const string &clientName,
+                           const string &primaryGroup,
                            unsigned int timeoutMs) {
 	if ( !_protocol ) return _lastError = InvalidProtocol;
 	_clientName = clientName;
@@ -304,7 +304,7 @@ Result Connection::subscribe(const char *group) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Result Connection::subscribe(const std::string &group) {
+Result Connection::subscribe(const string &group) {
 	return subscribe(group.c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -324,7 +324,7 @@ Result Connection::unsubscribe(const char *group) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Result Connection::unsubscribe(const std::string &group) {
+Result Connection::unsubscribe(const string &group) {
 	return unsubscribe(group.c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -443,7 +443,7 @@ Result Connection::sendMessage(const Core::Message *msg) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Result Connection::sendMessage(const std::string &targetGroup, const Core::Message *msg) {
+Result Connection::sendMessage(const string &targetGroup, const Core::Message *msg) {
 	if ( !_protocol ) return _lastError = InvalidProtocol;
 	_lastError = _protocol->sendMessage(targetGroup, msg,
 	                                    Protocol::Regular,
@@ -457,8 +457,8 @@ Result Connection::sendMessage(const std::string &targetGroup, const Core::Messa
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const std::string Connection::lastErrorMessage() const {
-	static std::string NoProtocol = "Protocol not set";
+const string Connection::lastErrorMessage() const {
+	static string NoProtocol = "Protocol not set";
 	if ( !_protocol ) return NoProtocol;
 	return _protocol->lastErrorMessage();
 }
@@ -468,8 +468,8 @@ const std::string Connection::lastErrorMessage() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const std::string &Connection::clientName() const {
-	static std::string EmptyClientName;
+const string &Connection::clientName() const {
+	static string EmptyClientName;
 	if ( !_protocol ) return EmptyClientName;
 	return _protocol->clientName();
 }
@@ -537,7 +537,7 @@ void Connection::setInfoCallback(InfoCallback icb) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Connection::getInfo(const Core::Time &timestamp, std::ostream &os) {
+void Connection::getInfo(const Core::Time &timestamp, ostream &os) {
 	if ( !_infoCallback ) return;
 	_infoCallback(timestamp, os);
 }
@@ -548,7 +548,7 @@ void Connection::getInfo(const Core::Time &timestamp, std::ostream &os) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Connection::registerConnection(Connection *con) {
-	boost::mutex::scoped_lock l(Mutex);
+	lock_guard<mutex> l(Mutex);
 	con->_poolIterator = Pool.insert(Pool.end(), con);
 
 	if ( !Timer.isActive() ) {
@@ -566,7 +566,7 @@ void Connection::registerConnection(Connection *con) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Connection::unregisterConnection(Connection *con) {
-	boost::mutex::scoped_lock l(Mutex);
+	lock_guard<mutex> l(Mutex);
 	if ( con->_poolIterator != Pool.end() ) {
 		Pool.erase(con->_poolIterator);
 		con->_poolIterator = Connections::iterator();
@@ -582,7 +582,7 @@ void Connection::unregisterConnection(Connection *con) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Result Connection::setCertificate(const std::string &cert) {
+Result Connection::setCertificate(const string &cert) {
 	if ( !_protocol ) return _lastError = InvalidProtocol;
 
 	_protocol->setCertificate(cert);

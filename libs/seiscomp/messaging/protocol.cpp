@@ -338,7 +338,7 @@ bool Protocol::encode(std::string &blob, const Core::Message *msg,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>}
 size_t Protocol::inboxSize() const {
-	boost::mutex::scoped_lock l(_readMutex);
+	lock_guard<mutex> l(_readMutex);
 	return _inbox.size();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

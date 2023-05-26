@@ -84,7 +84,7 @@ class WebsocketConnection : public Socket {
 		void waitForAck();
 		Result flushBacklog();
 
-		Result readFrame(WSFrame &frame, boost::mutex *mutex, bool forceBlock = false);
+		Result readFrame(WSFrame &frame, std::mutex *mutex, bool forceBlock = false);
 		bool handleFrame(WSFrame &frame, Packet *p, Result *result = nullptr);
 
 		Result send(Wired::Buffer *msg, WSFrame::Type type, bool isRegular);
@@ -104,9 +104,9 @@ class WebsocketConnection : public Socket {
 	//  Private types and members
 	// ----------------------------------------------------------------------
 	protected:
-		mutable boost::mutex _waitMutex;
-		WSFrame              _recvFrame;
-		size_t               _inboxWaterLevel;
+		mutable std::mutex _waitMutex;
+		WSFrame            _recvFrame;
+		size_t             _inboxWaterLevel;
 };
 
 
