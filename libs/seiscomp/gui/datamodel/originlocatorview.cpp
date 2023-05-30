@@ -5714,6 +5714,21 @@ void OriginLocatorView::showWaveforms() {
 		_recordView->setStrongMotionCodes(SCApp->configGetStrings("picker.accelerationChannelCodes"));
 	} catch ( ... ) {}
 
+	try {
+		auto patterns = SCApp->configGetStrings("picker.auxiliary.channels");
+		double minDist = 0, maxDist = 1000;
+		try {
+			minDist = SCApp->configGetDouble("picker.auxiliary.minimumDistance");
+		}
+		catch ( ... ) {}
+		try {
+			maxDist = SCApp->configGetDouble("picker.auxiliary.maximumDistance");
+		}
+		catch ( ... ) {}
+		_recordView->setAuxiliaryChannels(patterns, minDist, maxDist);
+	}
+	catch ( ... ) {}
+
 	QString errorMsg;
 	if ( !_recordView->setConfig(_pickerConfig, &errorMsg) ) {
 		QMessageBox::information(this, "Picker Error", errorMsg);

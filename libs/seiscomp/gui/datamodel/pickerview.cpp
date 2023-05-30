@@ -3622,6 +3622,18 @@ void PickerView::setStrongMotionCodes(const std::vector<std::string> &codes) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::setAuxiliaryChannels(const std::vector<std::string> &patterns,
+                                      double minimumDistance, double maximumDistance) {
+	SC_D.auxiliaryStreamIDPatterns = patterns;
+	SC_D.auxiliaryMinDistance = minimumDistance;
+	SC_D.auxiliaryMaxDistance = maximumDistance;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::showEvent(QShowEvent *e) {
 	// avoid truncated distance labels
 	int w1 = SC_D.ui.frameZoomControls->sizeHint().width();
@@ -4433,6 +4445,30 @@ void PickerView::loadNextStations(float distance) {
 					}
 
 					WaveformStreamID streamID(n->code(), s->code(), stream->sensorLocation()->code(), stream->code().substr(0,stream->code().size()-1) + '?', "");
+					auto sid = waveformIDToStdString(streamID);
+					bool isAuxilliary = false;
+					for ( const auto &pattern : SC_D.auxiliaryStreamIDPatterns ) {
+						if ( Core::wildcmp(pattern, sid) ) {
+							isAuxilliary = true;
+							break;
+						}
+					}
+
+					if ( isAuxilliary ) {
+						// Auxilliary station will only be added (unless associated)
+						// if they are within a configured distance range.
+						if ( delta < SC_D.auxiliaryMinDistance ) {
+							SEISCOMP_DEBUG("Auxilliary channel %s rejected, too close (%f < %f)",
+							               sid.c_str(), delta, SC_D.auxiliaryMinDistance);
+							continue;
+						}
+
+						if ( delta > SC_D.auxiliaryMaxDistance ) {
+							SEISCOMP_DEBUG("Auxilliary channel %s rejected, too far away (%f > %f)",
+							               sid.c_str(), delta, SC_D.auxiliaryMaxDistance);
+							continue;
+						}
+					}
 
 					RecordViewItem* item = addStream(stream->sensorLocation(), streamID, delta, streamID.stationCode().c_str(), false, true, stream);
 					if ( item ) {
