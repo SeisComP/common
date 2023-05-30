@@ -143,6 +143,10 @@ class PickerViewPrivate {
 		std::vector<std::string>            broadBandCodes;
 		std::vector<std::string>            strongMotionCodes;
 
+		std::vector<std::string>            auxilliaryStreamIDPatterns;
+		double                              auxilliaryMinDistance{0};
+		double                              auxilliaryMaxDistance{1000};
+
 		WaveformStreamList                  nextStreams;
 		WaveformStreamList                  allStreams;
 

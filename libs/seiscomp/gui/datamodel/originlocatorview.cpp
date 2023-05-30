@@ -5709,11 +5709,28 @@ void OriginLocatorView::showWaveforms() {
 
 	try {
 		SC_D.recordView->setBroadBandCodes(SCApp->configGetStrings("picker.velocityChannelCodes"));
-	} catch ( ... ) {}
+	}
+	catch ( ... ) {}
 
 	try {
 		SC_D.recordView->setStrongMotionCodes(SCApp->configGetStrings("picker.accelerationChannelCodes"));
-	} catch ( ... ) {}
+	}
+	catch ( ... ) {}
+
+	try {
+		auto patterns = SCApp->configGetStrings("picker.auxilliary.channels");
+		double minDist = 0, maxDist = 1000;
+		try {
+			minDist = SCApp->configGetDouble("picker.auxilliary.minimumDistance");
+		}
+		catch ( ... ) {}
+		try {
+			maxDist = SCApp->configGetDouble("picker.auxilliary.maximumDistance");
+		}
+		catch ( ... ) {}
+		SC_D.recordView->setAuxilliaryStations(patterns, minDist, maxDist);
+	}
+	catch ( ... ) {}
 
 	QString errorMsg;
 	if ( !SC_D.recordView->setConfig(SC_D.pickerConfig, &errorMsg) ) {
