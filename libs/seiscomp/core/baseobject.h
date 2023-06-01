@@ -187,7 +187,7 @@ class SC_SYSTEM_CORE_API BaseObject {
 	//  Operators
 	// ----------------------------------------------------------------------
 	public:
-		virtual BaseObject &operator=(const BaseObject&);
+		BaseObject &operator=(const BaseObject&);
 
 
 	// ----------------------------------------------------------------------
