@@ -78,6 +78,9 @@ class SC_GUI_API Layer : public QObject, public Seiscomp::Core::BaseObject {
 		virtual ~Layer();
 
 	public:
+		Layer &operator=(const Layer &other);
+
+	public:
 		void setToolTip(const QString &toolTip);
 		const QString &toolTip() const { return _toolTip; }
 
@@ -92,7 +95,6 @@ class SC_GUI_API Layer : public QObject, public Seiscomp::Core::BaseObject {
 		virtual void init(const Config::Config&);
 		virtual void draw(const Canvas*, QPainter&) {}
 
-		virtual Layer &operator =(const Layer &other);
 		virtual Layer *clone() const { return nullptr; }
 
 	signals:
