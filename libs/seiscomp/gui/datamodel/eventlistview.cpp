@@ -3070,18 +3070,22 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 	if ( hide != _treeWidget->isItemHidden(item) ) {
 		_treeWidget->setItemHidden(item, hide);
 		if ( hide ) {
-			if ( _visibleEventCount > 0 )
+			if ( _visibleEventCount > 0 ) {
 				--_visibleEventCount;
+			}
 			emit eventRemovedFromList(event);
-			if ( !_blockCountSignal )
+			if ( !_blockCountSignal ) {
 				emit visibleEventCountChanged();
+			}
 		}
 		else {
-			if ( _visibleEventCount >= 0 )
+			if ( _visibleEventCount >= 0 ) {
 				++_visibleEventCount;
+			}
 			emit eventAddedToList(event, false);
-			if ( !_blockCountSignal )
+			if ( !_blockCountSignal ) {
 				emit visibleEventCountChanged();
+			}
 		}
 
 		return true;
@@ -3936,10 +3940,13 @@ void EventListView::removeExpiredEvents() {
 				QTreeWidgetItem* item = _treeWidget->takeTopLevelItem(i);
 				if ( item ) {
 					if ( !item->isHidden() ) {
-						if ( _visibleEventCount > 0 )
+						if ( _visibleEventCount > 0 ) {
 							--_visibleEventCount;
+						}
 						emit eventRemovedFromList(event);
-						emit visibleEventCountChanged();
+						if ( !_blockCountSignal ) {
+							emit visibleEventCountChanged();
+						}
 					}
 					delete item;
 					--i;
@@ -4038,12 +4045,15 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 
 	if ( event ) {
 		// Show event initially
-		if ( _visibleEventCount >= 0 and !item->isHidden() )
+		if ( _visibleEventCount >= 0 and !item->isHidden() ) {
 			++_visibleEventCount;
+		}
 
 		if ( !updateHideState(item) and !item->isHidden() ) {
 			emit eventAddedToList(event, false);
-			emit visibleEventCountChanged();
+			if ( !_blockCountSignal ) {
+				emit visibleEventCountChanged();
+			}
 		}
 	}
 
@@ -4341,10 +4351,13 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 					EventPtr event = item->event();
 					delete item;
 					if ( visibleItem ) {
-						if ( _visibleEventCount > 0 )
+						if ( _visibleEventCount > 0 ) {
 							--_visibleEventCount;
+						}
 						emit eventRemovedFromList(event.get());
-						emit visibleEventCountChanged();
+						if ( !_blockCountSignal ) {
+							emit visibleEventCountChanged();
+						}
 					}
 				}
 				break;
