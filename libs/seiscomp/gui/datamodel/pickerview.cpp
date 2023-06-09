@@ -8218,14 +8218,14 @@ void PickerView::relocate() {
 		a->setDistance(delta);
 		a->setAzimuth(az1);
 		a->setPickID(pick->publicID());
-		a->setWeight(m->isEnabled()/* && markers[i]->isMovable()*/?1:0);
+		a->setWeight(m->isEnabled()/* && markers[i]->isMovable()*/ ? 1 : 0);
 		a->setPhase(m->text().toStdString());
 		tmpOrigin->add(a.get());
 		pick2Marker[pick->publicID().c_str()] = static_cast<PickerMarker*>(markers[i]);
 
 		if ( SC_D.origin ) {
 			auto existingArrival = SC_D.origin->arrival(pick->publicID());
-			if ( existingArrival ) {
+			if ( existingArrival && m->isEnabled() ) {
 				try { a->setTimeUsed(existingArrival->timeUsed()); } catch ( ... ) {}
 				try { a->setBackazimuthUsed(existingArrival->backazimuthUsed()); } catch ( ... ) {}
 				try { a->setHorizontalSlownessUsed(existingArrival->horizontalSlownessUsed()); } catch ( ... ) {}
