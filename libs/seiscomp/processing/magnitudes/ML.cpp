@@ -127,6 +127,9 @@ bool MagnitudeProcessor_ML::initLocale(Locale *locale,
 			ExtraLocalePtr extra = new ExtraLocale;
 			extra->logA0 = LogA0();
 			if ( !extra->logA0->set(logA0) ) {
+				SEISCOMP_ERROR("%s@%s: incorrect correction term log(A0): %s",
+				               _type.c_str(), locale->name.c_str(),
+				               logA0.c_str());
 				return false;
 			}
 
