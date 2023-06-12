@@ -214,12 +214,14 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 		/**
 		 * @brief Estimates the Mw magnitude from a given magnitude. The
 		 *        default implementation returns MwEstimationNotSupported.
+		 * @param config Optional configuration
 		 * @param magnitude Input magnitude value.
 		 * @param estimation Resulting Mw estimation.
 		 * @param stdError Resulting standard error.
 		 * @return The status of the computation.
 		 */
-		virtual Status estimateMw(double magnitude, double &estimation,
+		virtual Status estimateMw(const Config::Config *config,
+		                          double magnitude, double &estimation,
 		                          double &stdError);
 
 		void setCorrectionCoefficients(double a, double b);

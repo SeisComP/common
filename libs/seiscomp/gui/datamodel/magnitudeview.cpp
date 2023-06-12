@@ -1673,7 +1673,7 @@ void MagnitudeView::recalculateMagnitude() {
 		double Mw, MwError;
 		string type = proc->typeMw();
 
-		if ( proc->estimateMw(netmag, Mw, MwError) == Processing::MagnitudeProcessor::OK ) {
+		if ( proc->estimateMw(&SCCoreApp->configuration(), netmag, Mw, MwError) == Processing::MagnitudeProcessor::OK ) {
 			idx = findType(_tabMagnitudes, type.c_str());
 			//int idx = _ui.comboMagType->findText(type.c_str());
 			if ( idx != -1 ) {
@@ -2088,7 +2088,7 @@ void MagnitudeView::computeMagnitudes() {
 			if ( proc ) {
 				double stddev = 0;
 				double Mw, MwError;
-				if ( proc->estimateMw(mag->magnitude(), Mw, MwError) == Processing::MagnitudeProcessor::OK ) {
+				if ( proc->estimateMw(&SCCoreApp->configuration(), mag->magnitude(), Mw, MwError) == Processing::MagnitudeProcessor::OK ) {
 					try {
 						stddev = mag->magnitude().uncertainty();
 					}
@@ -2256,7 +2256,7 @@ void MagnitudeView::magnitudeCreated(Seiscomp::DataModel::Magnitude *netMag) {
 		double Mw, MwError;
 		string type = proc->typeMw();
 		int idx = findType(_tabMagnitudes, type.c_str());
-		if ( proc->estimateMw(netMag->magnitude().value(), Mw, MwError) == Processing::MagnitudeProcessor::OK ) {
+		if ( proc->estimateMw(&SCCoreApp->configuration(), netMag->magnitude().value(), Mw, MwError) == Processing::MagnitudeProcessor::OK ) {
 			//int idx = _ui->comboMagType->findText(type.c_str());
 			if ( idx != -1 ) {
 				MagnitudePtr magMw =

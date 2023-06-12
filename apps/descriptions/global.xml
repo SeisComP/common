@@ -427,7 +427,7 @@
 			<group name="magnitudes">
 				<description>
 				Parameters for computing magnitudes.
-				Add regionalization of magnitudes by magnitude-type profiles.
+				Add magnitude regionalization and mapping to Mw by magnitude-type profiles.
 				One profile corresponds to one magnitude type.
 				</description>
 				<parameter name="aliases" type="list:string">
@@ -452,12 +452,23 @@
 					Alias magnitudes can be configured like any other magnitude.
 					</description>
 				</parameter>
-				<struct type="GlobalMagnitudeProfile" title="Magnitude-type profile for regionalization" aliases="config:magnitudes.aliases">
+				<struct type="GlobalMagnitudeProfile" title="Magnitude-type profile for regionalization and Mw mapping" aliases="config:magnitudes.aliases">
 					<description>
 					Regionalization of magnitude configurations overriding global
 					bindings. For parameters which are not set, the values
 					defined in bindings apply.
 					</description>
+					<parameter name="MwMapping" type="list:string">
+						<description>
+						Mw magnitude mapping table for estimating Mw from network
+						magnitude M. Mw values are given at some M.
+
+						Format: &quot;M0:Mw0, M1:Mw1, ...&quot;.
+
+						Between two values of M, Mw values will be linearly
+						interpolated but not extrapolated.
+						</description>
+					</parameter>
 					<parameter name="regionFile" type="path">
 						<description>
 						Path to a geofeature file, e.g. in BNA or GeoJSON format,
@@ -950,7 +961,7 @@
 						</description>
 					</parameter>
 				</group>
-				<struct type="Amplitude type profile">
+				<struct type="Amplitude type profile" title="Amplitude type profile">
 					<description>
 					An amplitude profile configures global parameters for a
 					particular amplitude type. The available amplitude types
@@ -1118,10 +1129,10 @@
 			<group name="magnitudes">
 				<description>
 				Define magnitude parameters independent of amplitude-type profiles.
-				For magnitude correction parameters, e.g, network of station
+				For magnitude correction parameters, e.g., network of station
 				corrections, create a magnitude type profile.
 				</description>
-				<struct type="GlobalBindingsMagnitudeTypeProfile">
+				<struct type="GlobalBindingsMagnitudeTypeProfile" title="Magnitude type profile">
 					<description>
 					A magnitude profile configures global parameters for a
 					particular magnitude type. The available magnitude types

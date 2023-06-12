@@ -23,6 +23,7 @@
 #include <seiscomp/logging/log.h>
 #include <seiscomp/processing/regions.h>
 #include <seiscomp/processing/magnitudeprocessor.h>
+#include <seiscomp/processing/magnitudes/utils.h>
 #include <seiscomp/utils/units.h>
 #include <seiscomp/core/interfacefactory.ipp>
 #include <seiscomp/system/environment.h>
@@ -30,6 +31,7 @@
 #include <seiscomp/datamodel/sensorlocation.h>
 
 #include <cstring>
+#include <map>
 #include <mutex>
 
 
@@ -93,7 +95,6 @@ class TypeSpecificRegionalization : public Core::BaseObject {
 
 using RegionalizationRegistry = map<string, TypeSpecificRegionalizationPtr>;
 RegionalizationRegistry regionalizationRegistry;
-mutex regionalizationRegistryMutex;
 
 
 class AliasFactories : public std::vector<MagnitudeProcessorAliasFactory*> {
@@ -157,7 +158,13 @@ class AliasFactories : public std::vector<MagnitudeProcessorAliasFactory*> {
 };
 
 
+map<string, OPT(TableXY<double>)> MwTables;
+
+
 AliasFactories aliasFactories;
+
+
+mutex globalParameterMutex;
 
 
 }
@@ -267,7 +274,8 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 
 				if ( p == string::npos ) {
 					if ( hasDefault ) {
-						SEISCOMP_ERROR("%s.%s: Only one default linear correction allowed: %s",
+						SEISCOMP_ERROR("%s/%s.%s: Only one default linear correction allowed: %s",
+						               _type.c_str(),
 						               settings.networkCode.c_str(),
 						               settings.stationCode.c_str(),
 						               strLinearCorrections.c_str());
@@ -275,7 +283,8 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 					}
 
 					if ( !Core::fromString(_defaultCorrection.first, tok) ) {
-						SEISCOMP_ERROR("%s.%s: Invalid linear correction value: %s",
+						SEISCOMP_ERROR("%s/%s.%s: Invalid linear correction value: %s",
+						               _type.c_str(),
 						               settings.networkCode.c_str(),
 						               settings.stationCode.c_str(),
 						               tok.c_str());
@@ -288,7 +297,8 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 
 				double value;
 				if ( !Core::fromString(value, tok.substr(p+1)) ) {
-					SEISCOMP_ERROR("%s.%s: Invalid linear correction: %s",
+					SEISCOMP_ERROR("%s/%s.%s: Invalid linear correction: %s",
+					               _type.c_str(),
 					               settings.networkCode.c_str(),
 					               settings.stationCode.c_str(),
 					               tok.c_str());
@@ -298,7 +308,8 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 				string name = tok.substr(0, p);
 				Core::trim(name);
 				if ( name.empty() ) {
-					SEISCOMP_ERROR("%s.%s: Empty linear correction profiles not allowed: %s",
+					SEISCOMP_ERROR("%s/%s.%s: Empty linear correction profiles not allowed: %s",
+					               _type.c_str(),
 					               settings.networkCode.c_str(),
 					               settings.stationCode.c_str(),
 					               tok.c_str());
@@ -335,7 +346,8 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 
 				if ( p == string::npos ) {
 					if ( hasDefault ) {
-						SEISCOMP_ERROR("%s.%s: Only one default constant correction allowed: %s",
+						SEISCOMP_ERROR("%s/%s.%s: Only one default constant correction allowed: %s",
+						               _type.c_str(),
 						               settings.networkCode.c_str(),
 						               settings.stationCode.c_str(),
 						               strConstantCorrections.c_str());
@@ -343,7 +355,8 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 					}
 
 					if ( !Core::fromString(_defaultCorrection.second, tok) ) {
-						SEISCOMP_ERROR("%s.%s: Invalid constant correction value: %s",
+						SEISCOMP_ERROR("%s/%s.%s: Invalid constant correction value: %s",
+						               _type.c_str(),
 						               settings.networkCode.c_str(),
 						               settings.stationCode.c_str(),
 						               tok.c_str());
@@ -356,7 +369,8 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 
 				double value;
 				if ( !Core::fromString(value, tok.substr(p+1)) ) {
-					SEISCOMP_ERROR("%s.%s: Invalid constant correction: %s",
+					SEISCOMP_ERROR("%s/%s.%s: Invalid constant correction: %s",
+					               _type.c_str(),
 					               settings.networkCode.c_str(),
 					               settings.stationCode.c_str(),
 					               tok.c_str());
@@ -366,7 +380,8 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 				string name = tok.substr(0, p);
 				Core::trim(name);
 				if ( name.empty() ) {
-					SEISCOMP_ERROR("%s.%s: Empty constant correction profiles not allowed: %s",
+					SEISCOMP_ERROR("%s/%s.%s: Empty constant correction profiles not allowed: %s",
+					               _type.c_str(),
 					               settings.networkCode.c_str(),
 					               settings.stationCode.c_str(),
 					               tok.c_str());
@@ -379,9 +394,8 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 	}
 
 	{
-		lock_guard<mutex> l(regionalizationRegistryMutex);
+		lock_guard<mutex> l(globalParameterMutex);
 
-		TypeSpecificRegionalizationPtr regionalizedSettings;
 		auto it = regionalizationRegistry.find(type());
 		if ( it != regionalizationRegistry.end() and it->second ) {
 			// Setup region specific corrections
@@ -473,7 +487,7 @@ bool MagnitudeProcessor::readLocale(Locale *locale,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor::initRegionalization(const Settings &settings) {
-	lock_guard<mutex> l(regionalizationRegistryMutex);
+	lock_guard<mutex> l(globalParameterMutex);
 
 	TypeSpecificRegionalizationPtr regionalizedSettings;
 	auto it = regionalizationRegistry.find(type());
@@ -569,7 +583,7 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 
 	// Check if regionalization is desired
 	{
-		lock_guard<mutex> l(regionalizationRegistryMutex);
+		lock_guard<mutex> l(globalParameterMutex);
 		auto it = regionalizationRegistry.find(type());
 		if ( it != regionalizationRegistry.end() ) {
 			TypeSpecificRegionalization *tsr = it->second.get();
@@ -701,11 +715,57 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor::Status MagnitudeProcessor::estimateMw(
-	double ,
-	double &,
-	double &)
+	const Config::Config *config,
+	double magnitude,
+	double &estimation,
+	double &stdError)
 {
-	return MwEstimationNotSupported;
+	TableXY<double> *MwMapping{nullptr};
+
+	{
+		lock_guard<mutex> l(globalParameterMutex);
+
+		auto it = MwTables.find(type());
+		if ( it != MwTables.end() ) {
+			if ( it->second ) {
+				MwMapping = &*it->second;
+			}
+		}
+		else if ( config ) {
+			MwTables[type()] = Core::None;
+
+			// Try to read it from configuration
+			try {
+				auto def = config->getStrings("magnitudes." + type() + ".MwMapping");
+				TableXY<double> tmpMwMapping;
+
+				if ( !tmpMwMapping.set(def) ) {
+					SEISCOMP_ERROR("%s: Invalid Mw table: %s",
+					               type().c_str(), Core::join(def, ", ").c_str());
+				}
+				else {
+					SEISCOMP_DEBUG("%s: Mw table = %s", type().c_str(), Core::join(def, ", ").c_str());
+					MwTables[type()] = tmpMwMapping;
+					MwMapping = &*MwTables[type()];
+				}
+			}
+			catch ( ... ) {}
+		}
+	}
+
+	if ( !MwMapping ) {
+		return MwEstimationNotSupported;
+	}
+
+	try {
+		estimation = MwMapping->at(magnitude);
+	}
+	catch ( std::exception & ) {
+		return AmplitudeOutOfRange;
+	}
+
+	stdError = -1;
+	return OK;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -35,7 +35,8 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mBc : public MagnitudeProcessor_mB
 	public:
 		MagnitudeProcessor_mBc();
 
-		Status estimateMw(double magnitude, double &Mw_estimate,
+		Status estimateMw(const Config::Config *config,
+		                  double magnitude, double &Mw_estimate,
 		                  double &Mw_stdError) override;
 };
 

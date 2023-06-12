@@ -44,6 +44,7 @@ MagnitudeProcessor_mBc::MagnitudeProcessor_mBc()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor::Status MagnitudeProcessor_mBc::estimateMw(
+	const Config::Config *,
 	double magnitude,
 	double &Mw_estimate,
 	double &Mw_stdError)

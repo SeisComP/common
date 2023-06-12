@@ -30,18 +30,30 @@ namespace Seiscomp {
 namespace Processing {
 
 
-struct LogA0 {
-	typedef std::pair<double, double> Node; // Distance:Value pair
+template <typename T>
+struct TableXY {
+	using Item = std::pair<double, T>;
+	using Items = std::vector<Item>;
 
-	std::vector<Node> nodes;
-
+	bool empty() const;
 	bool set(const std::string &definition);
-	double at(double dist_km) const;
+	bool set(const std::vector<std::string> &definition);
+
+	// Throws out_of_range if x is out of range
+	T at(double x) const;
+
+	Items items;
 };
 
 
+using LogA0 = TableXY<double>;
+
+
 }
 }
+
+
+#include "utils.ipp"
 
 
 #endif

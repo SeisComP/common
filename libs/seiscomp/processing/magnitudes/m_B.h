@@ -48,7 +48,8 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mB : public MagnitudeProcessor {
 		                        const Locale *,
 		                        double &value) override;
 
-		Status estimateMw(double magnitude, double &Mw_estimate,
+		Status estimateMw(const Config::Config *config,
+		                  double magnitude, double &Mw_estimate,
 		                  double &Mw_stdError) override;
 
 	private:
