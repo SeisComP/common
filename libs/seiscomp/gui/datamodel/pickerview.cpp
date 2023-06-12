@@ -8209,7 +8209,7 @@ void PickerView::relocate() {
 		RecordMarker *tm = w->marker(m->text() + THEORETICAL_POSTFIX);
 		if ( tm ) {
 			a->setTimeResidual(double(pick->time().value() - tm->time()));
-			if (m->isEnabled()) {
+			if ( m->isEnabled() ) {
 				rms += a->timeResidual() * a->timeResidual();
 				++rmsCount;
 			}
@@ -8219,16 +8219,24 @@ void PickerView::relocate() {
 		a->setAzimuth(az1);
 		a->setPickID(pick->publicID());
 		a->setWeight(m->isEnabled()/* && markers[i]->isMovable()*/ ? 1 : 0);
+		a->setTimeUsed(m->isEnabled());
 		a->setPhase(m->text().toStdString());
 		tmpOrigin->add(a.get());
 		pick2Marker[pick->publicID().c_str()] = static_cast<PickerMarker*>(markers[i]);
 
 		if ( SC_D.origin ) {
 			auto existingArrival = SC_D.origin->arrival(pick->publicID());
-			if ( existingArrival && m->isEnabled() ) {
-				try { a->setTimeUsed(existingArrival->timeUsed()); } catch ( ... ) {}
-				try { a->setBackazimuthUsed(existingArrival->backazimuthUsed()); } catch ( ... ) {}
-				try { a->setHorizontalSlownessUsed(existingArrival->horizontalSlownessUsed()); } catch ( ... ) {}
+			if ( existingArrival ) {
+				if ( m->isEnabled() ) {
+					try {
+						a->setBackazimuthUsed(existingArrival->backazimuthUsed());
+					}
+					catch ( ... ) {}
+					try {
+						a->setHorizontalSlownessUsed(existingArrival->horizontalSlownessUsed());
+					}
+					catch ( ... ) {}
+				}
 			}
 		}
 	}
