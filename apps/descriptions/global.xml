@@ -20,10 +20,10 @@
 				Organization name used mainly by ArcLink and SeedLink.
 				</description>
 			</parameter>
-			<parameter name="author" type="string" default="@appname@@@@hostname@">
+			<parameter name="author" type="string" default="@appname@@@@@@hostname@">
 				<description>
 				Author name used to set creationInfo.author in data model
-				objects. @appname@ is replace by the name of the
+				objects. @appname@ is replaced by the name of the
 				respective executable, @hostname@ by the name of the computer
 				on which it runs.
 				</description>
@@ -185,7 +185,7 @@
 						<description>
 						Define the syslog facility to be used according to the
 						defined facility names in syslog.h. The default is local0.
-						If the given name is invalid or not available, 
+						If the given name is invalid or not available,
 						initializing logging will fail and the application quits.
 						</description>
 					</parameter>
@@ -518,7 +518,7 @@
 								<description>
 								The minimum depth required to compute a magnitude.
 								This settings has no effect with e.g. scautopick
-								as there is no information about the source of 
+								as there is no information about the source of
 								the event to retrieve the depth. The default
 								value is implementation specific.
 								</description>
@@ -527,7 +527,7 @@
 								<description>
 								The maximum depth allowed to compute a magnitude.
 								This settings has no effect with e.g. scautopick
-								as there is no information about the source of 
+								as there is no information about the source of
 								the event to retrieve the depth. The default
 								value is implementation specific.
 								</description>
@@ -538,7 +538,7 @@
 								a source receiver pair for further processing.
 								Allowed values are:
 
-								source: Only the source/origin must be within 
+								source: Only the source/origin must be within
 								the region.
 
 								source-receiver: Both source/origin and
@@ -597,7 +597,7 @@
 
 				<option flag="" long-flag="config-file" argument="arg" publicID="generic#config-file">
 					<description>
-					Use alternative configuration file. When this option is 
+					Use alternative configuration file. When this option is
 					used the loading of all stages is disabled. Only the
 					given configuration file is parsed and used. To use
 					another name for the configuration create a symbolic
@@ -688,7 +688,7 @@
 
 				<option flag="s" long-flag="syslog" argument="" publicID="verbosity#syslog">
 					<description>
-					Use syslog logging backend. The output usually goes to 
+					Use syslog logging backend. The output usually goes to
 					/var/lib/messages.
 					</description>
 				</option>
@@ -715,7 +715,7 @@
 				<option flag="" long-flag="trace" argument="" publicID="verbosity#trace">
 					<description>
 					Execute in trace mode.
-					Equivalent to --verbosity=4 --console=1 --print-component=1 
+					Equivalent to --verbosity=4 --console=1 --print-component=1
 					--print-context=1 .
 					</description>
 				</option>
@@ -771,7 +771,7 @@
 
 				<option flag="" long-flag="inventory-db" argument="arg" publicID="database#inventory-db">
 					<description>
-					Load the inventory from the given database or file, format: 
+					Load the inventory from the given database or file, format:
 					[service://]location .
 					</description>
 				</option>
@@ -1287,7 +1287,7 @@
 					</description>
 					<parameter name="noiseBegin" type="double" default="-10" unit="s">
 						<description>
-						Override the relative data processing start time 
+						Override the relative data processing start time
 						(relative to the triggering pick). This adds a margin to
 						the actual processing and is useful to initialize the
 						filter (Example: bandpass). The data is not used at all
