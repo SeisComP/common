@@ -3215,20 +3215,27 @@ void MagnitudeView::removeObject(const QString&, Seiscomp::DataModel::Object*) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::updateObject(const QString &parentID, Seiscomp::DataModel::Object* o) {
 	// Check whether a networkmagnitude has been updated
-	Magnitude* netMag = Magnitude::Cast(o);
+	Magnitude *netMag = Magnitude::Cast(o);
 	if ( netMag ) {
 		// Resolve the currently cached version which also holds the
 		// station magnitude contributions
 		netMag = Magnitude::Find(netMag->publicID());
-		if ( _origin && _origin->publicID() == parentID.toStdString() ) {
-			updateTab(_tabMagnitudes, netMag);
+
+		if ( !netMag ) {
+			return;
 		}
 
-		// Not for now
-		if ( !_netMag || _netMag->publicID() != netMag->publicID() )
+		if ( !_origin || _origin->publicID() != parentID.toStdString() ) {
 			return;
+		}
 
-		SEISCOMP_INFO("Updating networkmagnitude %s", netMag->publicID().c_str());
+		updateTab(_tabMagnitudes, netMag);
+
+		if ( !_netMag || _netMag->publicID() != netMag->publicID() ) {
+			return;
+		}
+
+		SEISCOMP_INFO("Updating magnitude %s", netMag->publicID().c_str());
 		updateMagnitudeLabels();
 		return;
 	}
