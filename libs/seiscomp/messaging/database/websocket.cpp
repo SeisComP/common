@@ -796,59 +796,68 @@ void WebsocketProxy::setDefaults() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool WebsocketProxy::send(Command cmd, const char *body, int length) {
-	if ( !isConnected() ) {
-		SEISCOMP_ERROR("[query] not connected");
-		return false;
+	uint64_t cnt, expectedCnt;
+
+	while ( isConnected() ) {
+		// Generate websocket header
+		uint8_t control = 0x80 | Websocket::Frame::BinaryFrame;
+		uint8_t plc;
+		uint64_t pl = 1 + length;
+
+		cnt = 0;
+		expectedCnt = pl;
+
+		if ( pl > 125 && pl <= 65535 ) {
+			// Two byte size
+			plc = 126;
+			Core::Endianess::ByteSwapper<Core::Endianess::Current::LittleEndian,2>::Take(&pl, 1);
+
+			// Write websocket header bytes
+			cnt += _socket->write(reinterpret_cast<const char*>(&control), 1);
+			cnt += _socket->write(reinterpret_cast<const char*>(&plc), 1);
+			cnt += _socket->write(reinterpret_cast<const char*>(&pl), 2);
+
+			expectedCnt += 4;
+		}
+		else if ( pl > 65535 ) {
+			// Eight byte size
+			plc = 127;
+			Core::Endianess::ByteSwapper<Core::Endianess::Current::LittleEndian,8>::Take(&pl, 1);
+
+			// Write websocket header bytes
+			cnt += _socket->write(reinterpret_cast<const char*>(&control), 1);
+			cnt += _socket->write(reinterpret_cast<const char*>(&plc), 1);
+			cnt += _socket->write(reinterpret_cast<const char*>(&pl), 8);
+
+			expectedCnt += 10;
+		}
+		else {
+			// One byte size
+			plc = uint8_t(pl);
+
+			// Write websocket header bytes
+			cnt += _socket->write(reinterpret_cast<const char*>(&control), 1);
+			cnt += _socket->write(reinterpret_cast<const char*>(&plc), 1);
+
+			expectedCnt += 2;
+		}
+
+		cnt += _socket->write(reinterpret_cast<const char*>(&cmd), 1);
+		if ( length ) {
+			cnt += _socket->write(body, length);
+		}
+
+		if ( cnt == expectedCnt ) {
+			return true;
+		}
+
+		// Close socket and try again
+		SEISCOMP_WARNING("Unable to talk to remote database proxy ... reconnecting");
+		_socket->close();
 	}
 
-	// Generate websocket header
-	uint8_t control = 0x80 | Websocket::Frame::BinaryFrame;
-	uint8_t plc;
-	uint64_t pl = 1 + length;
-	uint64_t cnt = 0;
-	uint64_t expectedCnt = pl;
-
-	if ( pl > 125 && pl <= 65535 ) {
-		// Two byte size
-		plc = 126;
-		Core::Endianess::ByteSwapper<Core::Endianess::Current::LittleEndian,2>::Take(&pl, 1);
-
-		// Write websocket header bytes
-		cnt += _socket->write(reinterpret_cast<const char*>(&control), 1);
-		cnt += _socket->write(reinterpret_cast<const char*>(&plc), 1);
-		cnt += _socket->write(reinterpret_cast<const char*>(&pl), 2);
-
-		expectedCnt += 4;
-	}
-	else if ( pl > 65535 ) {
-		// Eight byte size
-		plc = 127;
-		Core::Endianess::ByteSwapper<Core::Endianess::Current::LittleEndian,8>::Take(&pl, 1);
-
-		// Write websocket header bytes
-		cnt += _socket->write(reinterpret_cast<const char*>(&control), 1);
-		cnt += _socket->write(reinterpret_cast<const char*>(&plc), 1);
-		cnt += _socket->write(reinterpret_cast<const char*>(&pl), 8);
-
-		expectedCnt += 10;
-	}
-	else {
-		// One byte size
-		plc = uint8_t(pl);
-
-		// Write websocket header bytes
-		cnt += _socket->write(reinterpret_cast<const char*>(&control), 1);
-		cnt += _socket->write(reinterpret_cast<const char*>(&plc), 1);
-
-		expectedCnt += 2;
-	}
-
-	cnt += _socket->write(reinterpret_cast<const char*>(&cmd), 1);
-	if ( length ) {
-		cnt += _socket->write(body, length);
-	}
-
-	return cnt == expectedCnt;
+	// SEISCOMP_ERROR("[query] not connected");
+	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -917,7 +926,7 @@ bool WebsocketProxy::readFrame(Websocket::Frame &frame) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WebsocketProxySecure::setDefaults() {
 	WebsocketProxy::setDefaults();
-	_port = 18443;
+	_port = 18181;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
