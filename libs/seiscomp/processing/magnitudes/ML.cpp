@@ -174,7 +174,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_ML::computeMagnitude(
 	try {
 		value = log10(amplitude) - (extra and extra->logA0 ? extra->logA0->at(distanceKm) : _logA0.at(distanceKm));
 	}
-	catch ( Core::ValueException & ) {
+	catch ( std::out_of_range & ) {
 		return DistanceOutOfRange;
 	}
 

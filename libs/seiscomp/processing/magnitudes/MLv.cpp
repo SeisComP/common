@@ -182,7 +182,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLv::computeMagnitude(
 		SEISCOMP_DEBUG("  + distance: %.5f deg, logA0 correction: %.3f", distanceKm, correction);
 		value = log10(amplitude) + correction;
 	}
-	catch ( Core::ValueException & ) {
+	catch ( std::out_of_range & ) {
 		return DistanceOutOfRange;
 	}
 

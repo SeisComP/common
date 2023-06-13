@@ -279,7 +279,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 			correction = -1.0 * (extra and extra->logA0 ? extra->logA0->at(distanceKm) : _logA0.at(distanceKm));
 			value = log10(amplitude) + correction;
 		}
-		catch ( Core::ValueException & ) {
+		catch ( std::out_of_range & ) {
 			return DistanceOutOfRange;
 		}
 	}
