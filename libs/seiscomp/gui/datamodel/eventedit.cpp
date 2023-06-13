@@ -208,6 +208,7 @@ MAKEENUM(
 		FML_CREATED,
 		FML_DEPTH,
 		FML_MAG,
+		FML_MCOUNT,
 		FML_COUNT,
 		FML_MISFIT,
 		FML_STDR,
@@ -230,6 +231,7 @@ MAKEENUM(
 		"Created (%1)",
 		"Depth",
 		"M",
+		"MCount",
 		"Count",
 		"Misfit",
 		"STDR",
@@ -254,6 +256,7 @@ int FMColAligns[FMListColumns::Quantity] = {
 	Qt::AlignLeft | Qt::AlignVCenter, // CREATED
 	Qt::AlignCenter,                  // DEPTH
 	Qt::AlignCenter,                  // MAG
+	Qt::AlignCenter,                  // MCOUNT
 	Qt::AlignCenter,                  // COUNT
 	Qt::AlignCenter,                  // MISFIT
 	Qt::AlignCenter,                  // STDR
@@ -277,6 +280,7 @@ bool FMColBold[FMListColumns::Quantity] = {
 	false,
 	true,
 	true,
+	false,
 	true,
 	true,
 	true,
@@ -301,6 +305,7 @@ bool FMColVisible[FMListColumns::Quantity] = {
 	true,
 	true,
 	true,
+	false,
 	true,
 	true,
 	true,
@@ -2417,7 +2422,49 @@ void EventEdit::updateFMRow(int row, FocalMechanism *fm) {
 	}
 
 	POPULATE_COLUMN_DOUBLE(FML_AZGAP, fm->azimuthalGap(), 0);
-	POPULATE_COLUMN_INT(FML_COUNT, fm->stationPolarityCount());
+
+	try {
+		item->setText(_fmColumnMap[FML_COUNT], QString("%1").arg(fm->stationPolarityCount()));
+		item->setData(_fmColumnMap[FML_COUNT], Qt::UserRole, fm->stationPolarityCount());
+	}
+	catch ( Core::ValueException& ) {
+		try {
+			if ( fm->momentTensorCount() > 0 ) {
+				auto mt = fm->momentTensor(0);
+				auto o = Origin::Find(mt->derivedOriginID());
+				item->setText(_fmColumnMap[FML_COUNT], QString("%1").arg(o->quality().usedPhaseCount()));
+				item->setData(_fmColumnMap[FML_COUNT], Qt::UserRole, o->quality().usedPhaseCount());
+			}
+			else {
+				throw Core::ValueException();
+			}
+		}
+		catch ( Core::ValueException& ) {
+			item->setText(_fmColumnMap[FML_COUNT], "-");
+			item->setData(_fmColumnMap[FML_COUNT], Qt::UserRole, QVariant());
+		}
+	}
+
+	try {
+		if ( fm->momentTensorCount() > 0 ) {
+			auto mt = fm->momentTensor(0);
+			auto m = Magnitude::Find(mt->momentMagnitudeID());
+			if ( m ) {
+				item->setText(_fmColumnMap[FML_MCOUNT], QString("%1").arg(m->stationCount()));
+				item->setData(_fmColumnMap[FML_MCOUNT], Qt::UserRole, m->stationCount());
+			}
+			else {
+				throw Core::ValueException();
+			}
+		}
+		else {
+			throw Core::ValueException();
+		}
+	}
+	catch ( Core::ValueException& ) {
+		item->setText(_fmColumnMap[FML_MCOUNT], "-");
+		item->setData(_fmColumnMap[FML_MCOUNT], Qt::UserRole, QVariant());
+	}
 
 	// Strike, dip, rake
 	POPULATE_COLUMN_DOUBLE(FML_STRIKE1, fm->nodalPlanes().nodalPlane1().strike().value(), 0);
