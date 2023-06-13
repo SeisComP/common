@@ -857,14 +857,6 @@ class DatabaseArchive(Observer):
         r"""remove(DatabaseArchive self, Object object, std::string const & parentID="") -> bool"""
         return _datamodel.DatabaseArchive_remove(self, *args)
 
-    def addTree(self, *args):
-        r"""addTree(DatabaseArchive self, Object object, std::string const & parentID="", int * objectsHandled=None) -> bool"""
-        return _datamodel.DatabaseArchive_addTree(self, *args)
-
-    def removeTree(self, *args):
-        r"""removeTree(DatabaseArchive self, Object object, std::string const & parentID="", int * objectsHandled=None) -> bool"""
-        return _datamodel.DatabaseArchive_removeTree(self, *args)
-
     def getObjectIterator(self, *args):
         r"""
         getObjectIterator(DatabaseArchive self, std::string const & query, RTTI classType) -> DatabaseIterator

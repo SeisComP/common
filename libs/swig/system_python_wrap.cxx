@@ -6592,11 +6592,6 @@ Seiscomp::Core::BaseObject *SwigDirector_SystemApplication::clone() const {
 }
 
 
-Seiscomp::Core::BaseObject &SwigDirector_SystemApplication::operator  = (Seiscomp::Core::BaseObject const &arg0) {
-  return Seiscomp::Core::BaseObject::operator =(arg0);
-}
-
-
 void SwigDirector_SystemApplication::handleInterrupt(int arg0) {
   Seiscomp::System::Application::handleInterrupt(arg0);
 }

@@ -1119,6 +1119,8 @@ class Notification(object):
     
     AcquisitionFinished = _client.Notification_AcquisitionFinished
     
+    StateOfHealth = _client.Notification_StateOfHealth
+    
 
     def __init__(self, *args):
         r"""
@@ -1196,6 +1198,10 @@ class Application(seiscomp.system.SystemApplication):
         r"""database(Application self) -> DatabaseInterface"""
         return _client.Application_database(self)
 
+    def setDatabaseURI(self, uri):
+        r"""setDatabaseURI(Application self, std::string const & uri)"""
+        return _client.Application_setDatabaseURI(self, uri)
+
     def databaseURI(self):
         r"""databaseURI(Application self) -> std::string const &"""
         return _client.Application_databaseURI(self)
@@ -1203,6 +1209,10 @@ class Application(seiscomp.system.SystemApplication):
     def query(self):
         r"""query(Application self) -> DatabaseQuery"""
         return _client.Application_query(self)
+
+    def setRecordStreamURL(self, url):
+        r"""setRecordStreamURL(Application self, std::string const & url)"""
+        return _client.Application_setRecordStreamURL(self, url)
 
     def recordStreamURL(self):
         r"""recordStreamURL(Application self) -> std::string const &"""

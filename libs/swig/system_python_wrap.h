@@ -25,7 +25,6 @@ public:
     virtual Seiscomp::Core::MetaObject const *meta() const;
     virtual ~SwigDirector_SystemApplication();
     virtual Seiscomp::Core::BaseObject *clone() const;
-    virtual Seiscomp::Core::BaseObject &operator  = (Seiscomp::Core::BaseObject const &arg0);
     virtual void handleInterrupt(int arg0);
     virtual void handleInterruptSwigPublic(int arg0) {
       Seiscomp::System::Application::handleInterrupt(arg0);

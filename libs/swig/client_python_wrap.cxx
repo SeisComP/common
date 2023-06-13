@@ -6201,11 +6201,6 @@ Seiscomp::Core::BaseObject *SwigDirector_Application::clone() const {
 }
 
 
-Seiscomp::Core::BaseObject &SwigDirector_Application::operator  = (Seiscomp::Core::BaseObject const &arg0) {
-  return Seiscomp::Core::BaseObject::operator =(arg0);
-}
-
-
 void SwigDirector_Application::handleInterrupt(int arg0) {
   Seiscomp::System::Application::handleInterrupt(arg0);
 }
@@ -7540,11 +7535,6 @@ Seiscomp::Core::BaseObject *SwigDirector_StreamApplication::clone() const {
   c_result = reinterpret_cast< Seiscomp::Core::BaseObject * >(swig_argp);
   swig_acquire_ownership_obj(SWIG_as_voidptr(c_result), own /* & TODO: SWIG_POINTER_OWN */);
   return (Seiscomp::Core::BaseObject *) c_result;
-}
-
-
-Seiscomp::Core::BaseObject &SwigDirector_StreamApplication::operator  = (Seiscomp::Core::BaseObject const &arg0) {
-  return Seiscomp::Core::BaseObject::operator =(arg0);
 }
 
 
@@ -20114,6 +20104,58 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Application_setDatabaseURI(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Client::Application *arg1 = (Seiscomp::Client::Application *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "Application_setDatabaseURI", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Client__Application, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Application_setDatabaseURI" "', argument " "1"" of type '" "Seiscomp::Client::Application *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Client::Application * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Application_setDatabaseURI" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Application_setDatabaseURI" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      (arg1)->setDatabaseURI((std::string const &)*arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e ) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e ) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Application_databaseURI(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Client::Application *arg1 = (Seiscomp::Client::Application *) 0 ;
@@ -20188,6 +20230,58 @@ SWIGINTERN PyObject *_wrap_Application_query(PyObject *SWIGUNUSEDPARM(self), PyO
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__DataModel__DatabaseQuery, 0 |  0 );
   return resultobj;
 fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Application_setRecordStreamURL(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Client::Application *arg1 = (Seiscomp::Client::Application *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "Application_setRecordStreamURL", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Client__Application, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Application_setRecordStreamURL" "', argument " "1"" of type '" "Seiscomp::Client::Application *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Client::Application * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Application_setRecordStreamURL" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Application_setRecordStreamURL" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      (arg1)->setRecordStreamURL((std::string const &)*arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e ) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e ) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
   return NULL;
 }
 
@@ -31609,8 +31703,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "Application_databaseType", _wrap_Application_databaseType, METH_O, "Application_databaseType(Application self) -> std::string const &"},
 	 { "Application_databaseParameters", _wrap_Application_databaseParameters, METH_O, "Application_databaseParameters(Application self) -> std::string const &"},
 	 { "Application_database", _wrap_Application_database, METH_O, "Application_database(Application self) -> DatabaseInterface"},
+	 { "Application_setDatabaseURI", _wrap_Application_setDatabaseURI, METH_VARARGS, "Application_setDatabaseURI(Application self, std::string const & uri)"},
 	 { "Application_databaseURI", _wrap_Application_databaseURI, METH_O, "Application_databaseURI(Application self) -> std::string const &"},
 	 { "Application_query", _wrap_Application_query, METH_O, "Application_query(Application self) -> DatabaseQuery"},
+	 { "Application_setRecordStreamURL", _wrap_Application_setRecordStreamURL, METH_VARARGS, "Application_setRecordStreamURL(Application self, std::string const & url)"},
 	 { "Application_recordStreamURL", _wrap_Application_recordStreamURL, METH_O, "Application_recordStreamURL(Application self) -> std::string const &"},
 	 { "Application_cities", _wrap_Application_cities, METH_O, "Application_cities(Application self) -> CityListD"},
 	 { "Application_nearestCity", _wrap_Application_nearestCity, METH_VARARGS, "Application_nearestCity(Application self, double lat, double lon, double maxDist, double minPopulation) -> CityD"},
@@ -36647,6 +36743,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "Notification_Close",SWIG_From_int(static_cast< int >(Seiscomp::Client::Notification::Close)));
   SWIG_Python_SetConstant(d, "Notification_Timeout",SWIG_From_int(static_cast< int >(Seiscomp::Client::Notification::Timeout)));
   SWIG_Python_SetConstant(d, "Notification_AcquisitionFinished",SWIG_From_int(static_cast< int >(Seiscomp::Client::Notification::AcquisitionFinished)));
+  SWIG_Python_SetConstant(d, "Notification_StateOfHealth",SWIG_From_int(static_cast< int >(Seiscomp::Client::Notification::StateOfHealth)));
   SWIG_Python_SetConstant(d, "Application_MESSAGING",SWIG_From_int(static_cast< int >(Seiscomp::Client::Application::MESSAGING)));
   SWIG_Python_SetConstant(d, "Application_DATABASE",SWIG_From_int(static_cast< int >(Seiscomp::Client::Application::DATABASE)));
   SWIG_Python_SetConstant(d, "Application_CST_QUANTITY",SWIG_From_int(static_cast< int >(Seiscomp::Client::Application::CST_QUANTITY)));
