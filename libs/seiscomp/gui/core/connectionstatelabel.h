@@ -37,7 +37,10 @@ class SC_GUI_API ConnectionStateLabel : public QLabel {
 	Q_OBJECT
 
 	public:
-		ConnectionStateLabel(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
+		ConnectionStateLabel(QWidget *parent = nullptr, Qt::WindowFlags f = {});
+
+		void setPixmaps(const QPixmap &connected, const QPixmap &disconnected);
+
 
 	public slots:
 		void start(const QString &source);
@@ -52,10 +55,8 @@ class SC_GUI_API ConnectionStateLabel : public QLabel {
 		void mousePressEvent(QMouseEvent *event);
 
 
-	private:
 		QPixmap _connected;
 		QPixmap _disconnected;
-
 };
 
 

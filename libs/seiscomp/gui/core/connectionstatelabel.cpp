@@ -45,14 +45,29 @@ ConnectionStateLabel::ConnectionStateLabel(QWidget *parent, Qt::WindowFlags f)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ConnectionStateLabel::setPixmaps(const QPixmap &connected,
+                                      const QPixmap &disconnected) {
+	bool isConnected = (pixmap()->toImage() == _connected.toImage());
+
+	_connected = connected;
+	_disconnected = disconnected;
+
+	setPixmap(isConnected ? _connected : _disconnected);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConnectionStateLabel::start(const QString &source) {
 	setPixmap(_connected);
 	if ( source.isEmpty() ) {
-		setToolTip(QString("connected at: %1")
+		setToolTip(QString("Connected at: %1")
 		           .arg(QDateTime::currentDateTime().toString()));
 	}
 	else {
-		setToolTip(QString("connected to %1 at: %2")
+		setToolTip(QString("Connected to %1 at: %2")
 		           .arg(source)
 		           .arg(QDateTime::currentDateTime().toString()));
 	}
@@ -65,7 +80,7 @@ void ConnectionStateLabel::start(const QString &source) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConnectionStateLabel::stop() {
 	setPixmap(_disconnected);
-	setToolTip("disconnected at: " + QDateTime::currentDateTime().toString() );
+	setToolTip("Disconnected at: " + QDateTime::currentDateTime().toString() );
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
