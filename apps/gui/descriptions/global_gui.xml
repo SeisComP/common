@@ -288,6 +288,21 @@
 								The color of station outlines in the map.
 							</description>
 						</parameter>
+						<group name="directivity">
+							<description>
+								Defines the pen of the directivity information
+								(backazimuth and slowness) in the map.
+							</description>
+							<parameter name="color" type="color" default="FFA000">
+								<description>The color of the pen.</description>
+							</parameter>
+							<parameter name="style" type="string" default="DotLine">
+								<description>The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.</description>
+							</parameter>
+							<parameter name="width" type="double" default="1" unit="px">
+								<description>The width of the pen.</description>
+							</parameter>
+						</group>
 						<group name="grid">
 							<description>
 								Defines the pen of the latitude/longitude grid of the map.

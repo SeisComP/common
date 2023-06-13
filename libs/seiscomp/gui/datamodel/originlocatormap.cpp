@@ -175,6 +175,19 @@ struct StationLayer : Map::Layer {
 				canvas->drawLine(p, originSymbol->location(), s->location());
 			}
 
+			if ( drawDirectivity ) {
+				p.setPen(SCScheme.colors.map.directivity);
+				for ( auto s : stations ) {
+					if ( s->backAzimuth ) {
+						QPointF p0;
+						Math::Geo::delandaz2coord(s->distance * 0.5, *s->backAzimuth,
+						                          s->location().y(), s->location().x(),
+						                          &p0.ry(), &p0.rx());
+						canvas->drawLine(p, s->location(), p0);
+					}
+				}
+			}
+
 			if ( cutOff )
 				p.setClipping(false);
 		}
@@ -255,6 +268,8 @@ struct StationLayer : Map::Layer {
 		std::string          net;
 		std::string          code;
 		QColor               color;
+		OPT(double)          backAzimuth;
+		double               distance{0.0};
 		int                  arrivalId{-1};
 		Map::AnnotationItem *annotation{nullptr};
 	};
@@ -262,6 +277,7 @@ struct StationLayer : Map::Layer {
 	QVector<Symbol*> stations;
 	bool             interactive{true};
 	bool             drawStationsLines{true};
+	bool             drawDirectivity{true};
 	int              hoverId{-1};
 };
 
@@ -311,6 +327,7 @@ OriginLocatorMap::OriginLocatorMap(Map::ImageTree* mapTree,
 void OriginLocatorMap::contextMenuEvent(QContextMenuEvent *e) {
 	QMenu menu(this);
 	QAction *actionArtificialOrigin = nullptr;
+	QAction *actionDrawDirectivity = nullptr;
 
 	if ( _enabledCreateOrigin ) {
 		actionArtificialOrigin = menu.addAction("Create artificial origin");
@@ -319,16 +336,23 @@ void OriginLocatorMap::contextMenuEvent(QContextMenuEvent *e) {
 
 	updateContextMenu(&menu);
 
+	actionDrawDirectivity = menu.addAction(tr("%1 directivity").arg(SYMBOLLAYER->drawDirectivity ? "Hide" : "Show"));
+
 	QAction *action = menu.exec(e->globalPos());
 	if ( action == nullptr ) return;
 
-	if ( action == actionArtificialOrigin ) {
+	if ( action == actionDrawDirectivity ) {
+		SYMBOLLAYER->drawDirectivity = !SYMBOLLAYER->drawDirectivity;
+		SYMBOLLAYER->update(Gui::Map::Layer::Redraw);
+	}
+	else if ( action == actionArtificialOrigin ) {
 		QPointF epicenter;
 		if ( canvas().projection()->unproject(epicenter, e->pos()) )
 			emit artificialOriginRequested(epicenter, e->globalPos());
 	}
-	else
+	else {
 		executeContextMenuAction(action);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -479,15 +503,22 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 				);
 
 				std::string stationCode = p->waveformID().networkCode() + "." + p->waveformID().stationCode();
-				SYMBOLLAYER->stations.push_back(
-					new StationLayer::Symbol(
-						QPointF(loc.longitude,loc.latitude),
-						p->waveformID().networkCode(),
-						p->waveformID().stationCode(),
-						true,
-						_annotationLayer->annotations()->add(stationCode.c_str())
-					)
+				auto symbol = new StationLayer::Symbol(
+					QPointF(loc.longitude,loc.latitude),
+					p->waveformID().networkCode(),
+					p->waveformID().stationCode(),
+					true,
+					_annotationLayer->annotations()->add(stationCode.c_str())
 				);
+
+				SYMBOLLAYER->stations.push_back(symbol);
+
+				try {
+					symbol->backAzimuth = p->backazimuth().value();
+					symbol->distance = arrival->distance();
+				}
+				catch ( ... ) {}
+
 				_stationCodes[stationCode] = SYMBOLLAYER->stations.size()-1;
 				addArrival();
 				foundStation = true;

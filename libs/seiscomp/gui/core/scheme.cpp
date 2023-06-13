@@ -358,6 +358,7 @@ Scheme::Colors::RecordView::RecordView() :
 Scheme::Colors::Map::Map()
 : lines(255, 255, 255, 64)
 , outlines(255, 255, 255)
+, directivity(QColor(255 ,160, 0))
 , grid(Qt::white, 1, Qt::DotLine)
 , stationAnnotations(Qt::red)
 , cityLabels(Qt::black)
@@ -639,6 +640,7 @@ void Scheme::fetch() {
 
 	READ_COLOR(colors.map.lines);
 	READ_COLOR(colors.map.outlines);
+	READ_PEN(colors.map.directivity);
 	READ_PEN(colors.map.grid);
 	READ_COLOR(colors.map.stationAnnotations);
 	READ_COLOR(colors.map.cityLabels);

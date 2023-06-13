@@ -188,6 +188,7 @@ class SC_GUI_API Scheme {
 				Map();
 				QColor lines;
 				QColor outlines;
+				QPen   directivity;
 				QPen   grid;
 				QColor stationAnnotations;
 				QColor cityLabels;
