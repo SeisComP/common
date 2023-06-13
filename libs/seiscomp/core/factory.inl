@@ -19,7 +19,7 @@
 
 template <typename ROOT_TYPE, typename TYPE>
 AbstractClassFactory<ROOT_TYPE, TYPE>::AbstractClassFactory(const char*)
-: ClassFactoryInterface<ROOT_TYPE>(&TYPE::TypeInfo())
+: ClassFactoryInterface<ROOT_TYPE>(&TYPE::TypeInfo(), TYPE::Meta())
 {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -40,7 +40,7 @@ ROOT_TYPE* AbstractClassFactory<ROOT_TYPE, TYPE>::create() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE, typename TYPE>
 ClassFactory<ROOT_TYPE, TYPE>::ClassFactory(const char*, bool reregister)
-: ClassFactoryInterface<ROOT_TYPE>(&TYPE::TypeInfo(), reregister)
+: ClassFactoryInterface<ROOT_TYPE>(&TYPE::TypeInfo(), TYPE::Meta(), reregister)
 {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

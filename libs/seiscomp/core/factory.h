@@ -25,6 +25,8 @@
 #include <map>
 #include <vector>
 #include <string>
+
+#include "metaobject.h"
 #include "rtti.h"
 
 
@@ -57,20 +59,22 @@ template <typename ROOT_TYPE>
 class ClassFactoryInterface {
 	public:
 		//! The type that represents the root class of the hierarchie.
-		typedef ROOT_TYPE RootType;
-		typedef std::map<std::string, ClassFactoryInterface<ROOT_TYPE>*> ClassPool;
-		typedef std::map<const RTTI*, std::string> ClassNames;
+		using RootType = ROOT_TYPE;
+		using ClassPool = std::map<std::string, ClassFactoryInterface<ROOT_TYPE>*>;
+		using ClassNames = std::map<const RTTI*, std::string>;
 
 	
 	// ----------------------------------------------------------------------
-	//  Xstruction
+	//  X'truction
 	// ----------------------------------------------------------------------
 	protected:
-		//! Constructor
-		ClassFactoryInterface(const RTTI* typeInfo, bool reregister = false);
+		//! C'tor
+		ClassFactoryInterface(const RTTI *typeInfo,
+		                      const MetaObject *meta,
+		                      bool reregister = false);
 
 	public:
-		//! Destructor
+		//! D'tor
 		virtual ~ClassFactoryInterface();
 
 
@@ -79,34 +83,32 @@ class ClassFactoryInterface {
 	// ----------------------------------------------------------------------
 	public:
 		//! Creates an instance of the class with the passed in name
-		static ROOT_TYPE* Create(const char* className);
-		static ROOT_TYPE* Create(const std::string& className);
+		static ROOT_TYPE* Create(const char *className);
+		static ROOT_TYPE* Create(const std::string &className);
 
 		//! Returns the registered classname for an object
-		static const char* ClassName(const ROOT_TYPE*);
+		static const char* ClassName(const ROOT_TYPE *object);
 
 		//! Returns the registered classname for a type
-		static const char* ClassName(const RTTI*);
+		static const char* ClassName(const RTTI *rtti);
 
 		//! Looks up a class factory for a given class name
-		static ClassFactoryInterface* FindByClassName(const char* className);
+		static ClassFactoryInterface* FindByClassName(const char *className);
 
-		static bool IsTypeOf(const char* baseName, const char* derivedName);
+		static bool IsTypeOf(const char *baseName, const char *derivedName);
 
 		//! Returns the number of registered classes
 		static unsigned int NumberOfRegisteredClasses();
 
-
-	// ----------------------------------------------------------------------
-	//  Protected interface
-	// ----------------------------------------------------------------------
-	protected:
-		//! Returns the class id for the objects the factory can create
-		const RTTI* typeInfo() const;
-
 		//! Returns the name of the class (as given during construction) which can be created
 		//! by this factory
 		const char* className() const;
+
+		//! Returns the class id for the objects the factory can create
+		const RTTI* typeInfo() const;
+
+		//! Returns the meta object for the objects the factory can create
+		const MetaObject *meta() const;
 
 		//! Derived classes override this method to do the actual creation
 		virtual ROOT_TYPE* create() const = 0;
@@ -121,15 +123,16 @@ class ClassFactoryInterface {
 
 		//! Adds a factory to the classpool
 		//! \return whether the factory has been added or not
-		static bool RegisterFactory(ClassFactoryInterface* factory, bool reregister = false);
+		static bool RegisterFactory(ClassFactoryInterface *factory, bool reregister = false);
 
 		//! Removes a factory from the classpool
 		//! \return whether the factory has been removed or not
-		static bool UnregisterFactory(ClassFactoryInterface* factory);
+		static bool UnregisterFactory(ClassFactoryInterface *factory);
 
 
 	private:
-		const RTTI* _typeInfo;
+		const RTTI       *_typeInfo;
+		const MetaObject *_meta;
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -160,11 +163,11 @@ class AbstractClassFactory : public ClassFactoryInterface<ROOT_TYPE> {
 		typedef TYPE Type;
 
 	public:
-		AbstractClassFactory(const char*);
+		AbstractClassFactory(const char *);
 
 	protected:
 		//! Always returns nullptr
-		ROOT_TYPE* create() const;
+		ROOT_TYPE *create() const;
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -193,7 +196,7 @@ class ClassFactory : public ClassFactoryInterface<ROOT_TYPE> {
 		typedef TYPE Type;
 
 	public:
-		ClassFactory(const char*, bool reregister = false);
+		ClassFactory(const char *, bool reregister = false);
 
  protected:
 		//! The actual creation
