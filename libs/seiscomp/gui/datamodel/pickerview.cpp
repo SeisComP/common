@@ -524,6 +524,9 @@ class PickerMarker : public RecordMarker {
 		: RecordMarker(parent, m)
 		, _referencedPick(m._referencedPick)
 		, _polarity(m._polarity)
+		, _onset(m._onset)
+		, _backAzimuth(m._backAzimuth)
+		, _slowness(m._slowness)
 		, _type(m._type)
 		, _slot(m._slot)
 		, _rot(m._rot)
@@ -625,6 +628,10 @@ class PickerMarker : public RecordMarker {
 			catch ( ... ) { _polarity = Core::None; }
 			try { _onset = p->onset(); }
 			catch ( ... ) { _onset = Core::None; }
+			try { _backAzimuth = p->backazimuth(); }
+			catch ( ... ) { _backAzimuth = Core::None; }
+			try { _slowness = p->horizontalSlowness(); }
+			catch ( ... ) { _slowness = Core::None; }
 
 			_time = p->time();
 
@@ -683,6 +690,22 @@ class PickerMarker : public RecordMarker {
 
 		OPT(PickOnset) onset() const {
 			return _onset;
+		}
+
+		void setBackazimuth(OPT(RealQuantity) baz) {
+			_backAzimuth = baz;
+		}
+
+		const OPT(RealQuantity) &backazimuth() const {
+			return _backAzimuth;
+		}
+
+		void setHorizontalSlowness(OPT(RealQuantity) slow) {
+			_slowness = slow;
+		}
+
+		const OPT(RealQuantity) &horizontalSlowness() const {
+			return _slowness;
 		}
 
 		void setUncertainty(double lower, double upper) {
@@ -898,13 +921,8 @@ class PickerMarker : public RecordMarker {
 				painter.restore();
 			}
 
-			const DataModel::Pick *p = pick();
-			if ( p ) {
-				try {
-					p->backazimuth();
-					painter.drawText(x - em - 2, y1, em, em, Qt::AlignRight | Qt::AlignTop, "B");
-				}
-				catch ( ... ) {}
+			if ( _backAzimuth ) {
+				painter.drawText(x - em - 2, y1, em, em, Qt::AlignRight | Qt::AlignTop, "B");
 			}
 		}
 
@@ -1045,6 +1063,8 @@ class PickerMarker : public RecordMarker {
 		PickPtr           _referencedPick;
 		OPT(PickPolarity) _polarity;
 		OPT(PickOnset)    _onset;
+		OPT(RealQuantity) _backAzimuth;
+		OPT(RealQuantity) _slowness;
 		TimeQuantity      _time;
 		QString           _filter;
 		Type              _type;
@@ -3801,6 +3821,9 @@ void PickerView::updatePhaseMarker(Seiscomp::Gui::RecordWidget* widget,
 						// Set type back to pick. The phase code is updated
 						// automatically
 						marker2->setType(PickerMarker::Pick);
+						// Copy orientation
+						marker->setBackazimuth(marker2->backazimuth());
+						marker->setHorizontalSlowness(marker2->horizontalSlowness());
 					}
 				}
 
@@ -5600,6 +5623,7 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 	QMenu menu;
 
 	QAction *defineUncertainties = nullptr;
+	QAction *dropDirectivity = nullptr;
 	QAction *deleteArrival = nullptr;
 	QAction *deleteArrivalWithRemove = nullptr;
 	QAction *removePick = nullptr;
@@ -5662,6 +5686,10 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 			createArrival = menu.addAction(tr("Declare %1 arrival").arg(SC_D.currentRecord->cursorText()));
 		}
 
+		if ( m->backazimuth() && !m->pick() ) {
+			dropDirectivity = menu.addAction(tr("Drop directivity information"));
+		}
+
 		if ( m->isArrival() ) {
 			if ( needSeparator ) { menu.addSeparator(); needSeparator = false; }
 			deleteArrival = menu.addAction(tr("Delete arrival"));
@@ -5699,7 +5727,14 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 		return;
 	}
 
-	if ( (res == deleteArrival) || (res == deleteArrivalWithRemove) ) {
+	if ( res == dropDirectivity ) {
+		m = static_cast<PickerMarker*>(SC_D.currentRecord->currentMarker());
+		m->setBackazimuth(Core::None);
+		m->setHorizontalSlowness(Core::None);
+		m->update();
+		return;
+	}
+	else if ( (res == deleteArrival) || (res == deleteArrivalWithRemove) ) {
 		if ( SC_D.currentRecord->currentMarker() ) {
 			m = static_cast<PickerMarker*>(SC_D.currentRecord->currentMarker());
 			if ( m->isArrival() ) {
@@ -7811,6 +7846,8 @@ void PickerView::fetchManualPicks(std::vector<RecordMarker*>* markers) const {
 				p->setPhaseHint(Phase((const char*)marker->text().toLatin1()));
 				p->setEvaluationMode(EvaluationMode(MANUAL));
 				p->setPolarity(marker->polarity());
+				p->setBackazimuth(marker->backazimuth());
+				p->setHorizontalSlowness(marker->horizontalSlowness());
 				p->setOnset(marker->onset());
 				CreationInfo ci;
 				ci.setAgencyID(SCApp->agencyID());
