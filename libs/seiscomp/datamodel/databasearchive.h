@@ -371,28 +371,6 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 */
 		bool remove(Object* object, const std::string &parentID = "");
 
-		/**
-		 * Adds a complete tree to the database.
-		 * @param object The tree root to be written
-		 * @param parentId The publicID of the parent object used
-		 *                 when no parent pointer is set.
-		 * @param objectsHandled Return count of number of objects
-		 *                       written
-		 */
-		bool addTree(Object *object, const std::string &parentID = "",
-		             int *objectsHandled = nullptr);
-
-		/**
-		 * Removes an object tree from the database.
-		 * @param object The object to be removed
-		 * @param parentID The parentID of the parent objects used
-		 *                 when no parent pointer is set.
-		 * @param objectsHandled Return count of number of objects
-		 *                       written
-		 */
-		bool removeTree(Object *object, const std::string &parentID = "",
-		                int *objectsHandled = nullptr);
-
 		//! Returns an iterator for objects of a given type.
 		DatabaseIterator getObjectIterator(const std::string &query,
 		                                   const Seiscomp::Core::RTTI &classType);

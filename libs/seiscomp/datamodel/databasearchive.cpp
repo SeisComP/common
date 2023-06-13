@@ -1924,32 +1924,6 @@ bool DatabaseArchive::remove(Object *object, const std::string &parentID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DatabaseArchive::addTree(Object *object, const std::string &parentID,
-                              int *objectsHandled) {
-	DatabaseObjectWriter writer(*this, true);
-	bool res = writer(object, parentID);
-	if ( objectsHandled ) *objectsHandled = writer.count();
-	return res;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DatabaseArchive::removeTree(Object *object, const std::string &parentID,
-                                 int *objectsHandled) {
-	DatabaseObjectWriter writer(*this, false);
-	bool res = writer(object, parentID);
-	if ( objectsHandled ) *objectsHandled = writer.count();
-	return res;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DatabaseArchive::readAttrib() const {
 	if ( _currentAttributePrefix.empty() ) {
 		_fieldIndex = _db->findColumn(_db->convertColumnName(_currentAttributeName).c_str());
