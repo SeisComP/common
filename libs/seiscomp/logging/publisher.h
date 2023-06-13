@@ -25,8 +25,6 @@
 #include <seiscomp/logging/common.h>
 #include <seiscomp/logging/node.h>
 
-#include <fmt/printf.h>
-
 
 namespace Seiscomp {
 namespace Logging {
