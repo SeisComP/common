@@ -26,8 +26,6 @@
 #include <seiscomp/core/strings.h>
 #include <seiscomp/utils/files.h>
 
-#include <boost/bind.hpp>
-
 #include "app.h"
 #include "settings.h"
 
