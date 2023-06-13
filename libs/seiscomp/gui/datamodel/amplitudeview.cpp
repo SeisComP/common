@@ -3943,7 +3943,8 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 			sid.networkCode(), sid.stationCode(),
 			sid.locationCode(), sid.channelCode().substr(0,2),
 			&SCCoreApp->configuration(), keys.get())) ) {
-		cerr << sid.networkCode() << "." << sid.stationCode() << ": setup processor failed"
+		cerr << sid.networkCode() << "." << sid.stationCode() << ": setup processor failed ("
+		     << proc->status().toString() << ", " << proc->statusValue() << ")"
 		     << ": ignoring station" << endl;
 		return nullptr;
 	}
