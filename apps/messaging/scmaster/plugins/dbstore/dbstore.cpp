@@ -151,24 +151,15 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 								++_statistics.addedObjects;
 								DataModel::DatabaseObjectWriter writer(*_dbArchive.get());
 								result = writer(notifier->object(), notifier->parentID());
-								// if ( !result ) {
-								// 	--error;
-								// }
 							}
 								break;
 							case DataModel::OP_REMOVE:
 								++_statistics.removedObjects;
 								result = _dbArchive->remove(notifier->object(), notifier->parentID());
-								// if ( !result ) {
-								// 	--error;
-								// }
 								break;
 							case DataModel::OP_UPDATE:
 								++_statistics.updatedObjects;
 								result = _dbArchive->update(notifier->object(), notifier->parentID());
-								// if ( !result ) {
-								// 	--error;
-								// }
 								break;
 							default:
 								break;
