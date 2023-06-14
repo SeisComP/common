@@ -153,8 +153,8 @@ class SC_SYSTEM_CORE_API DatabaseObjectWriter : protected Visitor {
 	//  Xstruction
 	// ----------------------------------------------------------------------
 	public:
-		DatabaseObjectWriter(DatabaseArchive& archive,
-		                     bool addToDatabase = true, int batchSize = 1);
+		DatabaseObjectWriter(DatabaseArchive &archive,
+		                     bool addToDatabase = true);
 
 
 	// ----------------------------------------------------------------------
@@ -162,8 +162,8 @@ class SC_SYSTEM_CORE_API DatabaseObjectWriter : protected Visitor {
 	// ----------------------------------------------------------------------
 	public:
 		//! Does the actual writing
-		bool operator()(Object* object);
-		bool operator()(Object* object, const std::string& parentID);
+		bool operator()(Object *object);
+		bool operator()(Object *object, const std::string &parentID);
 
 		//! Returns the number of handled objects
 		int count() const { return _count; }
@@ -175,23 +175,22 @@ class SC_SYSTEM_CORE_API DatabaseObjectWriter : protected Visitor {
 	//  Visitor interface
 	// ----------------------------------------------------------------------
 	protected:
-		bool visit(PublicObject* publicObject);
-		void visit(Object* object);
+		bool visit(PublicObject *publicObject) override;
+		void visit(Object *object) override;
 
 
 	// ----------------------------------------------------------------------
 	//  Implementation
 	// ----------------------------------------------------------------------
 	private:
-		bool write(Object* object);
+		bool write(Object *object);
 
 	private:
-		DatabaseArchive& _archive;
+		DatabaseArchive &_archive;
 		std::string      _parentID;
-		bool             _addObjects;
-		int              _errors;
-		int              _count;
-		int              _batchSize;
+		bool             _addObjects{true};
+		int              _errors{0};
+		int              _count{0};
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -209,7 +208,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 	//  Public types
 	// ----------------------------------------------------------------------
 	public:
-		typedef IO::DatabaseInterface::OID OID;
+		using OID = IO::DatabaseInterface::OID;
 
 
 	// ----------------------------------------------------------------------
@@ -342,12 +341,12 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		std::string parentPublicID(const PublicObject* object);
 
 		/**
-		 * Writes an object into the database.
+		 * Inserts an object into the database.
 		 * @param object The object to be written
 		 * @param parentId The publicID of the parent object used
 		 *                 when no parent pointer is set.
 		 */
-		bool write(Object* object, const std::string &parentID = "");
+		bool insert(Object* object, const std::string &parentID = "");
 
 		/**
 		 * Updates an object in the database. While serializing the
@@ -359,7 +358,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 * @param parentId The publicID of the parent object used
 		 *                 when no parent pointer is set.
 		 */
-		bool update(Object* object, const std::string &parentID = "");
+		bool update(Object *object, const std::string &parentID = "");
 
 		/**
 		 * Removes an object in the database. If the object is not a
@@ -369,7 +368,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 * @param parentID The parentID of the parent objects used
 		 *                 when no parent pointer is set.
 		 */
-		bool remove(Object* object, const std::string &parentID = "");
+		bool remove(Object *object, const std::string &parentID = "");
 
 		//! Returns an iterator for objects of a given type.
 		DatabaseIterator getObjectIterator(const std::string &query,
@@ -589,9 +588,6 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 
 		//! Insert a base object column and return its database id
 		OID insertObject();
-
-		//! Insert a PublicObject column and return its database id
-		OID insertPublicObject(const std::string& publicId);
 
 		//! Insert a row into a table
 		bool insertRow(const std::string& table,

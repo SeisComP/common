@@ -214,16 +214,20 @@ Object *DatabaseIterator::fetch() const {
 
 	int col;
 	_parent_oid = _oid = -1;
-	if ( (col = _reader->_db->findColumn("_oid")) != -1)
+	if ( (col = _reader->_db->findColumn("_oid")) != -1) {
 		fromString(_oid, std::string(static_cast<const char*>(_reader->_db->getRowField(col))));
-		
-	if ( (col = _reader->_db->findColumn("_parent_oid")) != -1)
-		fromString(_parent_oid, std::string(static_cast<const char*>(_reader->_db->getRowField(col))));
+	}
 
-	if ( (col = _reader->_db->findColumn("_last_modified")) != -1)
+	if ( (col = _reader->_db->findColumn("_parent_oid")) != -1) {
+		fromString(_parent_oid, std::string(static_cast<const char*>(_reader->_db->getRowField(col))));
+	}
+
+	if ( (col = _reader->_db->findColumn("_last_modified")) != -1) {
 		_lastModified = _reader->_db->stringToTime(static_cast<const char*>(_reader->_db->getRowField(col)));
-	else
+	}
+	else {
 		_lastModified = Core::None;
+	}
 
 	BaseObject *bobj = ClassFactory::Create(_rtti->className());
 	if ( bobj == nullptr ) {
@@ -242,8 +246,9 @@ Object *DatabaseIterator::fetch() const {
 		return nullptr;
 	}
 
-	if ( _lastModified )
+	if ( _lastModified ) {
 		obj->setLastModifiedInArchive(*_lastModified);
+	}
 
 	_reader->serializeObject(obj);
 
@@ -384,11 +389,11 @@ size_t DatabaseIterator::count() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseObjectWriter::DatabaseObjectWriter(DatabaseArchive &archive,
-                                           bool addToDatabase,
-                                           int batchSize)
-  : Visitor(addToDatabase?TM_TOPDOWN:TM_BOTTOMUP),
-    _archive(archive), _addObjects(addToDatabase), _errors(0),
-    _count(0), _batchSize(batchSize) {}
+                                           bool addToDatabase)
+: Visitor(addToDatabase?TM_TOPDOWN:TM_BOTTOMUP)
+, _archive(archive)
+, _addObjects(addToDatabase)
+{}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -405,19 +410,16 @@ bool DatabaseObjectWriter::operator()(Object *object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DatabaseObjectWriter::operator()(Object *object, const std::string &parentID) {
-	if ( _archive.driver() == nullptr )
+	if ( !_archive.driver() ) {
 		return false;
+	}
 
 	_parentID = parentID;
 
 	_errors = 0;
 	_count = 0;
 
-	if ( _batchSize > 1 )
-		_archive.driver()->start();
 	object->accept(this);
-	if ( _batchSize > 1 )
-		_archive.driver()->commit();
 
 	return _errors == 0;
 }
@@ -448,22 +450,15 @@ void DatabaseObjectWriter::visit(Object *object) {
 bool DatabaseObjectWriter::write(Object *object) {
 	++_count;
 
-	if ( _batchSize <= 1 )
-		_archive.driver()->start();
-	bool result = _addObjects?_archive.write(object, _parentID):_archive.remove(object, _parentID);
+	bool result = _addObjects ?
+		_archive.insert(object, _parentID)
+		:
+		_archive.remove(object, _parentID)
+	;
 
 	if ( !result ) {
 		++_errors;
-		if ( _batchSize <= 1 )
-			_archive.driver()->rollback();
 		return false;
-	}
-
-	if ( _batchSize <= 1 )
-		_archive.driver()->commit();
-	else if ( (_count % _batchSize) == 0 ) {
-		_archive.driver()->commit();
-		_archive.driver()->start();
 	}
 
 	_parentID = "";
@@ -495,8 +490,9 @@ void DatabaseArchive::setDriver(Seiscomp::IO::DatabaseInterface *db) {
 
 	if ( !fetchVersion() ) close();
 
-	if ( _db )
+	if ( _db ) {
 		_publicIDColumn = _db->convertColumnName("publicID");
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -505,15 +501,19 @@ void DatabaseArchive::setDriver(Seiscomp::IO::DatabaseInterface *db) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseArchive::DatabaseArchive(Seiscomp::IO::DatabaseInterface *i)
-  : _db(i), _objectAttributes(nullptr) {
+: _db(i)
+, _objectAttributes(nullptr) {
 	setHint(IGNORE_CHILDS);
 	Object::RegisterObserver(this);
 	_allowDbClose = false;
 
-	if ( !fetchVersion() ) close();
+	if ( !fetchVersion() ) {
+		close();
+	}
 
-	if ( _db )
+	if ( _db ) {
 		_publicIDColumn = _db->convertColumnName("publicID");
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -533,8 +533,13 @@ DatabaseArchive::~DatabaseArchive() {
 bool DatabaseArchive::open(const char *dataSource) {
 	_errorMsg = "";
 
-	if ( _db == nullptr ) return false;
-	if ( _db->isConnected() ) return false;
+	if ( !_db ) {
+		return false;
+	}
+
+	if ( _db->isConnected() ) {
+		return false;
+	}
 
 	if ( _db->connect(dataSource) ) {
 		if ( !fetchVersion() ) {
@@ -643,8 +648,10 @@ bool DatabaseArchive::create(const char* /*dataSource*/) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DatabaseArchive::close() {
-	if ( _db != nullptr && _allowDbClose )
+	if ( _db && _allowDbClose ) {
 		_db->disconnect();
+	}
+
 	_db = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -690,8 +697,8 @@ Object *DatabaseArchive::queryObject(const Seiscomp::Core::RTTI &classType,
 		return nullptr;
 	}
 
-	Object* obj = Object::Cast(bobj);
-	if ( obj == nullptr ) {
+	Object *obj = Object::Cast(bobj);
+	if ( !obj ) {
 		delete bobj;
 		SEISCOMP_ERROR("unable to create class of type '%s'", classType.className());
 		_db->endQuery();
@@ -717,8 +724,9 @@ Object *DatabaseArchive::queryObject(const Seiscomp::Core::RTTI &classType,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PublicObject *DatabaseArchive::getObject(const RTTI &classType,
                                          const std::string &publicID) {
-	if ( !classType.isTypeOf(PublicObject::TypeInfo()) )
+	if ( !classType.isTypeOf(PublicObject::TypeInfo()) ) {
 		return nullptr;
+	}
 
 	std::stringstream ss;
 	ss << "select " << PublicObject::ClassName() << "." << _publicIDColumn << "," <<
@@ -1448,11 +1456,13 @@ DatabaseArchive::OID DatabaseArchive::publicObjectId(const std::string &publicId
 	std::stringstream ss;
 	ss << "select _oid from " << PublicObject::ClassName()
 	   << " where " << _publicIDColumn << "='" << toSQL(_db.get(), publicId) << "'";
-	if ( !_db->beginQuery(ss.str().c_str()) )
+	if ( !_db->beginQuery(ss.str().c_str()) ) {
 		return id;
+	}
 
-	if ( _db->fetchRow() )
+	if ( _db->fetchRow() ) {
 		fromString(id, (const char*)_db->getRowField(0));
+	}
 
 	_db->endQuery();
 
@@ -1465,9 +1475,10 @@ DatabaseArchive::OID DatabaseArchive::publicObjectId(const std::string &publicId
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseArchive::OID DatabaseArchive::objectId(Object *object, const std::string &parentID) {
-	PublicObject* publicObject = PublicObject::Cast(object);
-	if ( publicObject )
+	PublicObject *publicObject = PublicObject::Cast(object);
+	if ( publicObject ) {
 		return publicObjectId(publicObject->publicID());
+	}
 
 	_objectAttributes = &_rootAttributes;
 	_objectAttributes->clear();
@@ -1486,8 +1497,9 @@ DatabaseArchive::OID DatabaseArchive::objectId(Object *object, const std::string
 		iParentID = getCachedId(parentObject);
 		if ( iParentID == 0 ) {
 			iParentID = publicObjectId(parentObject->publicID());
-			if ( iParentID )
+			if ( iParentID ) {
 				registerId(parentObject, iParentID);
+			}
 			else {
 				SEISCOMP_ERROR("objectID: parent object with publicID '%s' has not been "
 				               "found in the database", parentObject->publicID().c_str());
@@ -1544,13 +1556,15 @@ DatabaseArchive::OID DatabaseArchive::objectId(Object *object, const std::string
 
 	_isReading = true;
 
-	if ( !_db->beginQuery(ss.str().c_str()) )
+	if ( !_db->beginQuery(ss.str().c_str()) ) {
 		return IO::DatabaseInterface::INVALID_OID;
+	}
 
 	OID id = IO::DatabaseInterface::INVALID_OID;
 
-	if ( _db->fetchRow() )
+	if ( _db->fetchRow() ) {
 		fromString(id, (const char*)_db->getRowField(0));
+	}
 
 	_db->endQuery();
 
@@ -1567,35 +1581,11 @@ DatabaseArchive::OID DatabaseArchive::insertObject() {
 	ss << "insert into " << Object::ClassName() << "(_oid) values("
 	   << _db->defaultValue() << ")";
 
-	if ( !_db->execute(ss.str().c_str()) )
-		return 0;
-
-	return _db->lastInsertId(Object::ClassName());
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DatabaseArchive::OID DatabaseArchive::insertPublicObject(const std::string &publicId) {
-	if ( publicId.empty() ) return 0;
-
-	OID objectId = insertObject();
-	if ( objectId == 0 )
-		return 0;
-
-	std::stringstream ss;
-	ss << "insert into " << PublicObject::ClassName()
-	   << "(_oid," << _publicIDColumn << ") values("
-	   << objectId << ",'" << toSQL(_db.get(), publicId) << "')";
-
 	if ( !_db->execute(ss.str().c_str()) ) {
-		deleteObject(objectId);
-		return 0;
+		return IO::DatabaseInterface::INVALID_OID;
 	}
 
-	return objectId;
+	return _db->lastInsertId(Object::ClassName());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1614,19 +1604,23 @@ bool DatabaseArchive::insertRow(const std::string &table,
 
 	ss << ") ";
 
-	if ( parentId.empty() )
+	if ( parentId.empty() ) {
 		ss << "values (";
-	else
+	}
+	else {
 		ss << "select ";
+	}
 
 	ss << ValueMapper(attribs);
 
-	if ( parentId.empty() )
+	if ( parentId.empty() ) {
 		ss << ")";
-	else
+	}
+	else {
 		ss << " from " << PublicObject::ClassName()
 		   << " where " << PublicObject::ClassName()
 		   << "." << _publicIDColumn << "='" << toSQL(_db.get(), parentId) << "'";
+	}
 
 	//SEISCOMP_DEBUG(ss.str().c_str());
 	return _db->execute(ss.str().c_str());
@@ -1641,7 +1635,7 @@ bool DatabaseArchive::deleteObject(OID id) {
 	std::stringstream ss;
 	ss << "delete from " << Object::ClassName()
 	   << " where _oid=" << id;
-	SEISCOMP_DEBUG("deleting object with id %" PRIu64, id);
+	SC_FMT_DEBUG("deleting object with id {}", id);
 	return _db->execute(ss.str().c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1650,15 +1644,17 @@ bool DatabaseArchive::deleteObject(OID id) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DatabaseArchive::write(Object* object, const std::string &parentId) {
-	if ( object == nullptr ) return false;
+bool DatabaseArchive::insert(Object *obj, const std::string &parentId) {
+	if ( !obj ) {
+		return false;
+	}
 
 	if ( !validInterface() ) {
 		setValidity(false);
 		return false;
 	}
 
-	_validObject = true;
+	setValidity(false);
 
 	_objectAttributes = &_rootAttributes;
 	_objectAttributes->clear();
@@ -1668,62 +1664,71 @@ bool DatabaseArchive::write(Object* object, const std::string &parentId) {
 
 	resetAttributePrefix();
 
-	OID objectId;
-	PublicObject* publicObject = PublicObject::Cast(object);
-	if ( publicObject != nullptr ) {
-		if ( publicObjectId(publicObject->publicID()) > 0 ) {
-			SEISCOMP_ERROR("object with publicID '%s' exists already",
-			               publicObject->publicID().c_str());
-			_isReading = true;
+	PublicObject *po = PublicObject::Cast(obj);
+
+	if ( po ) {
+		if ( po->publicID().empty() ) {
+			SEISCOMP_ERROR("%s::publicID is empty", obj->className());
 			return false;
 		}
 
-		objectId = insertPublicObject(publicObject->publicID());
-		if ( !objectId ) {
-			SEISCOMP_ERROR("writing object with publicID '%s' failed",
-			               publicObject->publicID().c_str());
-			_isReading = true;
-			return false;
-		}
-	}
-	else {
-		objectId = insertObject();
-		if ( !objectId ) {
-			SEISCOMP_ERROR("writing object failed");
-			setValidity(false);
+		if ( publicObjectId(po->publicID()) > 0 ) {
+			SEISCOMP_ERROR("%s '%s' already stored in database",
+			               obj->className(), po->publicID().c_str());
 			return false;
 		}
 	}
 
-	_isReading = false;
+	_db->start();
 
-	object->serialize(*this);
-	if ( !_validObject ) {
-		SEISCOMP_ERROR("serializing object with type '%s' failed", object->className());
-		deleteObject(objectId);
+	OID oid = insertObject();
+	if ( oid == IO::DatabaseInterface::INVALID_OID ) {
+		_db->rollback();
 		return false;
 	}
 
-	_rootAttributes["_oid"] = toString(objectId);
+	if ( po ) {
+		std::stringstream ss;
+		ss << "insert into " << PublicObject::ClassName()
+		   << "(_oid," << _publicIDColumn << ") values("
+		   << oid << ",'" << toSQL(_db.get(), po->publicID()) << "')";
+
+		if ( !_db->execute(ss.str().c_str()) ) {
+			SEISCOMP_ERROR("writing %s '%s' failed",
+			               obj->className(), po->publicID().c_str());
+			_db->rollback();
+			return false;
+		}
+	}
+
+	_validObject = true;
+
+	_isReading = false;
+	obj->serialize(*this);
+	_isReading = true;
+
+	if ( !Core::Archive::success() ) {
+		SEISCOMP_ERROR("serializing object with type '%s' failed", obj->className());
+		_db->rollback();
+		return false;
+	}
+
+	_rootAttributes["_oid"] = toString(oid);
 	bool success = false;
 
-	PublicObject* parentObject = object->parent();
-	if ( parentObject != nullptr ) {
+	PublicObject *parentObject = obj->parent();
+	if ( parentObject ) {
 		OID iParentId = getCachedId(parentObject);
 		if ( iParentId == 0 ) {
 			iParentId = publicObjectId(parentObject->publicID());
-			if ( iParentId )
+			if ( iParentId ) {
 				registerId(parentObject, iParentId);
+			}
 		}
-		/*
-		if ( parentId == 0 )
-			_rootAttributes["_parent_oid"] = "(select _oid from " + std::string(PublicObject::ClassName()) + " where publicID='" + parentObject->publicID() + "')";
-		else
-			_rootAttributes["_parent_oid"] = toString(parentId);
-		*/
+
 		if ( iParentId ) {
 			_rootAttributes["_parent_oid"] = toString(iParentId);
-			success = insertRow(object->className(), *_objectAttributes);
+			success = insertRow(obj->className(), *_objectAttributes);
 		}
 	}
 	else if ( !parentId.empty() ) {
@@ -1731,23 +1736,26 @@ bool DatabaseArchive::write(Object* object, const std::string &parentId) {
 		OID iParentId = publicObjectId(parentId);
 		if ( iParentId ) {
 			_rootAttributes["_parent_oid"] = toString(iParentId);
-			success = insertRow(object->className(), *_objectAttributes);
+			success = insertRow(obj->className(), *_objectAttributes);
 		}
-		else
+		else {
 			SEISCOMP_ERROR("failed to get oid for object '%s'", parentId.c_str());
+		}
 	}
-	else
-		success = insertRow(object->className(), *_objectAttributes);
+	else {
+		success = insertRow(obj->className(), *_objectAttributes);
+	}
 
-	if ( success )
-		registerId(object, objectId);
+	if ( success ) {
+		_db->commit();
+		registerId(obj, oid);
+	}
 	else {
 		SEISCOMP_ERROR("writing object with type '%s' failed",
-		                object->className());
-		deleteObject(objectId);
+		                obj->className());
+		_db->rollback();
 	}
 
-	_isReading = true;
 	_validObject = success;
 	return success;
 }
@@ -1758,14 +1766,16 @@ bool DatabaseArchive::write(Object* object, const std::string &parentId) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DatabaseArchive::update(Object *object, const std::string &parentID) {
-	if ( object == nullptr ) return false;
+	setValidity(false);
 
-	if ( !validInterface() ) {
-		setValidity(false);
+	if ( !object ) {
 		return false;
 	}
 
-	_validObject = true;
+	if ( !validInterface() ) {
+		return false;
+	}
+
 
 	_objectAttributes = &_rootAttributes;
 	_objectAttributes->clear();
@@ -1773,26 +1783,26 @@ bool DatabaseArchive::update(Object *object, const std::string &parentID) {
 	_childTables.clear();
 	_childDepth = 0;
 
-	PublicObject* publicObject = PublicObject::Cast(object);
+	PublicObject *po = PublicObject::Cast(object);
 	
-	_ignoreIndexAttributes = (publicObject == nullptr);
+	_ignoreIndexAttributes = (po == nullptr);
 
 	resetAttributePrefix();
 
 	OID iParentID = 0;
 	OID iPublicID = 0;
 
-	PublicObject* parentObject = object->parent();
-	if ( parentObject != nullptr ) {
+	PublicObject *parentObject = object->parent();
+	if ( parentObject ) {
 		iParentID = getCachedId(parentObject);
 		if ( iParentID == 0 ) {
 			iParentID = publicObjectId(parentObject->publicID());
-			if ( iParentID )
+			if ( iParentID ) {
 				registerId(parentObject, iParentID);
+			}
 			else {
 				SEISCOMP_ERROR("update: parent object with publicID '%s' has not been "
 				               "found in the database", parentObject->publicID().c_str());
-				setValidity(false);
 				return false;
 			}
 		}
@@ -1802,36 +1812,36 @@ bool DatabaseArchive::update(Object *object, const std::string &parentID) {
 		if ( !iParentID ) {
 			SEISCOMP_ERROR("update: parent object with publicID '%s' has not been "
 			               "found in the database", parentID.c_str());
-			setValidity(false);
 			return false;
 		}
 	}
 	else {
 		SEISCOMP_ERROR("update: no parent object given, aborting update");
-		setValidity(false);
 		return false;
 	}
 
-	if ( publicObject ) {
-		iPublicID = getCachedId(publicObject);
+	if ( po ) {
+		iPublicID = getCachedId(po);
 		if ( iPublicID == 0 ) {
-			iPublicID = publicObjectId(publicObject->publicID());
+			iPublicID = publicObjectId(po->publicID());
 			if ( iPublicID )
-				registerId(publicObject, iPublicID);
+				registerId(po, iPublicID);
 		}
 
 		if ( iPublicID == 0 ) {
 			SEISCOMP_ERROR("update: object with publicID '%s' has not been found in the database",
-			               publicObject->publicID().c_str());
-			setValidity(false);
+			               po->publicID().c_str());
 			return false;
 		}
 	}
 
-	_isReading = false;
+	_validObject = true;
 
+	_isReading = false;
 	object->serialize(*this);
-	if ( !_validObject ) {
+	_isReading = true;
+
+	if ( !success() ) {
 		SEISCOMP_ERROR("serializing updated object with type '%s' failed", object->className());
 		return false;
 	}
@@ -1841,12 +1851,12 @@ bool DatabaseArchive::update(Object *object, const std::string &parentID) {
 		return true;
 	}
 
-	if ( iPublicID )
+	if ( iPublicID ) {
 		_indexAttributes["_oid"] = toString(iPublicID);
+	}
 
 	if ( _indexAttributes.empty() ) {
 		SEISCOMP_ERROR("update: index is empty, no update possible");
-		_isReading = true;
 		return false;
 	}
 
@@ -1877,8 +1887,6 @@ bool DatabaseArchive::update(Object *object, const std::string &parentID) {
 		first = false;
 	}
 
-	_isReading = true;
-
 	_validObject = _db->execute(ss.str().c_str());
 
 	return success();
@@ -1890,33 +1898,48 @@ bool DatabaseArchive::update(Object *object, const std::string &parentID) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DatabaseArchive::remove(Object *object, const std::string &parentID) {
-	if ( object == nullptr ) return false;
+	setValidity(false);
 
-	if ( !validInterface() ) {
-		setValidity(false);
+	if ( !object ) {
 		return false;
 	}
 
-	OID objectID = getCachedId(object);
-	if ( objectID == IO::DatabaseInterface::INVALID_OID )
-		objectID = objectId(object, parentID);
-
-	if ( objectID == IO::DatabaseInterface::INVALID_OID ) {
-		SEISCOMP_WARNING("remove: object '%s' has not been found in database",
-		                 object->className());
-		return true;
+	if ( !validInterface() ) {
+		return false;
 	}
 
-	_db->execute((std::string("delete from ") + object->className() +
-		             " where _oid=" + toString(objectID)).c_str());
-	if ( PublicObject::Cast(object) )
-		_db->execute((std::string("delete from ") + PublicObject::ClassName() +
-		             " where _oid=" + toString(objectID)).c_str());
+	OID oid = getCachedId(object);
+	if ( oid == IO::DatabaseInterface::INVALID_OID ) {
+		oid = objectId(object, parentID);
+	}
 
-	deleteObject(objectID);
+	if ( oid == IO::DatabaseInterface::INVALID_OID ) {
+		SEISCOMP_WARNING("remove: object '%s' has not been found in database",
+		                 object->className());
+		return false;
+	}
+
+	_validObject = true;
+
+	if ( !_db->execute((std::string("delete from ") + object->className() +
+	                    " where _oid=" + toString(oid)).c_str()) ) {
+		setValidity(false);
+	}
+
+	if ( PublicObject::Cast(object) ) {
+		if ( !_db->execute((std::string("delete from ") + PublicObject::ClassName() +
+		                    " where _oid=" + toString(oid)).c_str()) ) {
+			setValidity(false);
+		}
+	}
+
+	if ( !deleteObject(oid) ) {
+		setValidity(false);
+	}
+
 	removeId(object);
 
-	return true;
+	return success();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
