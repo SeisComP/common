@@ -68,6 +68,9 @@ namespace Core {
    - Added Seiscomp::Client::Application::stateOfHealth
    - Removed virtual from Seiscomp::Core::BaseObject::operator=
    - Removed virtual from Seiscomp::Gui::Map::Layer::operator=
+   - Changed signature of Seiscomp::Processing::MagnitudeProcessor::estimateMw
+   - Removed Seiscomp::DataModel::DatabaseArchive::write(object, parentID)
+   - Added Seiscomp::DataModel::DatabaseArchive::insert(object, parentID)
 
  "15.5.0"   0x0F0500
    - Added Seiscomp::Utils::TabValues
