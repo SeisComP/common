@@ -184,8 +184,8 @@ DEFINE_SMARTPOINTER(DatabaseInterface);
 		                 \endcode
 		                 assuming the sequence names are created as
 		                 [tablename]_seq.
-		    @return The last generated ID > 0 or 0 of there hasn't been
-		            created an ID yet.
+		    @return The last generated ID or INVALID_OID if there
+		            hasn't been created an ID yet.
 		  */
 		virtual OID lastInsertId(const char* table) = 0;
 
