@@ -757,9 +757,9 @@ class DatabaseObjectWriter(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self, archive, addToDatabase=True, batchSize=1):
-        r"""__init__(DatabaseObjectWriter self, DatabaseArchive archive, bool addToDatabase=True, int batchSize=1) -> DatabaseObjectWriter"""
-        _datamodel.DatabaseObjectWriter_swiginit(self, _datamodel.new_DatabaseObjectWriter(archive, addToDatabase, batchSize))
+    def __init__(self, archive, addToDatabase=True):
+        r"""__init__(DatabaseObjectWriter self, DatabaseArchive archive, bool addToDatabase=True) -> DatabaseObjectWriter"""
+        _datamodel.DatabaseObjectWriter_swiginit(self, _datamodel.new_DatabaseObjectWriter(archive, addToDatabase))
 
     def __call__(self, *args):
         r"""
@@ -845,9 +845,9 @@ class DatabaseArchive(Observer):
         r"""parentPublicID(DatabaseArchive self, PublicObject object) -> std::string"""
         return _datamodel.DatabaseArchive_parentPublicID(self, object)
 
-    def write(self, *args):
-        r"""write(DatabaseArchive self, Object object, std::string const & parentID="") -> bool"""
-        return _datamodel.DatabaseArchive_write(self, *args)
+    def insert(self, *args):
+        r"""insert(DatabaseArchive self, Object object, std::string const & parentID="") -> bool"""
+        return _datamodel.DatabaseArchive_insert(self, *args)
 
     def update(self, *args):
         r"""update(DatabaseArchive self, Object object, std::string const & parentID="") -> bool"""
