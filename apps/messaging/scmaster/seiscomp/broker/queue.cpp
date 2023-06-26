@@ -346,8 +346,8 @@ Queue::Result Queue::subscribe(Client *client, const std::string &groupName) {
 	client->enter(group, client, &msg);
 
 	for ( auto member : group->_members ) {
-		if ( member ->wantsMembershipInformation() && client != member ) {
-			member ->enter(group, member , &msg);
+		if ( member->wantsMembershipInformation() && client != member ) {
+			member->enter(group, client, &msg);
 		}
 	}
 
