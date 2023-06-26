@@ -179,6 +179,8 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 		~PublicObjectCache() override;
 
 	public:
+		using BaseObject::typeInfo;
+
 		void setDatabaseArchive(DatabaseArchive *);
 
 		void setPopCallback(const PopCallback &);
