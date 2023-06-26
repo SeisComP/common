@@ -29,6 +29,7 @@
 #include <seiscomp/gui/map/projection.h>
 
 #include <seiscomp/system/hostinfo.h>
+#include <seiscomp/datamodel/journaling.h>
 #include <seiscomp/datamodel/journalentry.h>
 #include <seiscomp/datamodel/utils.h>
 #include <seiscomp/math/conversions.h>
@@ -3246,7 +3247,23 @@ void EventEdit::updateMT() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::updateJournal() {
 	_ui.listJournal->clear();
-	if ( !_reader ) return;
+
+	auto instance = static_cast<Journaling*>(PublicObject::Find(Journaling::ClassName()));
+	if ( instance ) {
+		auto count = instance->journalEntryCount();
+		for ( size_t i = 0; i < count; ++i ) {
+			auto entry = instance->journalEntry(i);
+			if ( entry->objectID() == _currentEvent->publicID() ) {
+				addJournal(entry);
+			}
+		}
+		return;
+	}
+
+	if ( !_reader ) {
+		return;
+	}
+
 	DatabaseIterator it = _reader->getJournal(_currentEvent->publicID());
 	while ( it.get() ) {
 		addJournal(JournalEntry::Cast(*it));
