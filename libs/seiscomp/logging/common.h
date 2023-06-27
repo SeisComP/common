@@ -40,10 +40,8 @@
 */
 #ifdef __GNUC__
 
-# define expect(foo, bar) __builtin_expect((foo),bar)
-
-# define   likely(x)  expect((x),1)
-# define unlikely(x)  expect((x),0)
+# define   likely(x)  __builtin_expect((x),1)
+# define unlikely(x)  __builtin_expect((x),0)
 
 #else
 
