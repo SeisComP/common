@@ -1319,11 +1319,17 @@
 				<description>
 				Control the Events tab, e.g. in scolv, showing the list of loaded events.
 				</description>
-				<parameter name="visibleColumns" type="list:string" default="M, TP, Phases, RMS, Lat, Lon, Depth, Stat, Agency, Region, ID">
+				<parameter name="visibleColumns" type="list:string" default="M,MType,Phases,RMS,Lat,Lon,Depth,Stat,Agency,Region,ID">
 					<description>
-					Configure the columns of the event list that are visible initially.
-					The first column containing the origin time is always visible and cannot
-					be hidden. Possible values are: Type, M, TP, Phases, Lat, Lon, Depth, DType, Stat, AzGap, FM, Origins, Agency, Author, Region, ID.
+					Configure the columns of the event list that are visible
+					initially. The first column containing the origin time is
+					always visible and cannot be hidden. Possible values are:
+
+					Certainty, Type, M, MType, RMS, AzGap, Phases, Lat, Lon, Depth, DType,
+					Stat, FM, Origins, Agency, Author, Region, ID.
+
+					Custom columns can be added by eventlist.customColumn.* or
+					eventlist.scripts.* parameters.
 					</description>
 				</parameter>
 				<group name="customColumn">
@@ -1344,22 +1350,27 @@
 					<parameter name="eventCommentID" type="string">
 						<description>
 						ID of the event comment to look up.
+
+						originCommentID, if configured, takes priority.
 						</description>
 					</parameter>
 					<parameter name="pos" type="int" default="-1">
 						<description>
-						Position of the column. If the configured position is less than 0 or if it
-						exceeds the total number of columns then the column is appended to the right.
+						Position of the column. If the configured position is
+						less than 0 or if it exceeds the total number of columns,
+						then the column is appended to the right.
 						</description>
 					</parameter>
 					<parameter name="default" type="string">
 						<description>
-						Default value to display if the specified origin or event comment id was not found.
+						Default value to display if the specified origin or
+						event comment id was not found.
 						</description>
 					</parameter>
 					<parameter name="colors" type="list:string">
 						<description>
-						Mapping of comment values to colors used as text color. E.g. "foo:#000,bar:red".
+						Mapping of comment values to colors used as text color.
+						E.g. "foo:#000,bar:red".
 						</description>
 					</parameter>
 				</group>
@@ -1370,7 +1381,8 @@
 					</description>
 					<parameter name="columns" type="list:string">
 						<description>
-						Name of custom column profiles to be registered. Comma separated list.
+						Name of custom column profiles to be registered. Comma
+						separated list.
 						</description>
 					</parameter>
 					<group name="column">
@@ -1567,12 +1579,14 @@
 				focal mechanisms of a selected event.
 				</description>
 				<group name="origin">
-					<parameter name="visibleColumns" type="list:string" default="Phases, Lat, Lon, Depth, DType, RMS, Stat, Method, Agency, Author, Region">
+					<parameter name="visibleColumns" type="list:string" default="Phases, Lat, Lon, Depth, DType, RMS, AzGap, Stat, Method, Agency, Author, Region, ID">
 						<description>
 						Configure the columns of the event edit origin table
-						that are visible initially.
-						Possible values are: Phases, Lat, Lon, Depth, DType, RMS, Stat,
-						Method, Agency, Author, Region
+						that are visible initially. Origin creation time and
+						origin time are always visible.
+						Possible values are:
+
+						Phases, Lat, Lon, Depth, DType, RMS, AzGap, Stat, Method, Agency, Author, Region, ID
 						</description>
 					</parameter>
 					<group name="customColumn">

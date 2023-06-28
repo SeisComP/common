@@ -1058,8 +1058,9 @@ void EventEdit::init() {
 			OriginColVisible[v] = true;
 		}
 
-		// First column is always visible
+		// First columns are always visible
 		OriginColVisible[OL_CREATED] = true;
+		OriginColVisible[OL_TIME] = true;
 	}
 	catch ( ... ) {}
 
