@@ -1363,7 +1363,7 @@ void Canvas::draw(QPainter &painter) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Canvas::centerMap(const QPoint& centerPnt) {
+void Canvas::centerMap(const QPoint &centerPnt) {
 	if ( !_projection->unproject(_center, centerPnt) ) return;
 	_projection->centerOn(_center);
 	updateBuffer();
