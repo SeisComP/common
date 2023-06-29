@@ -230,6 +230,12 @@ are:
 * :ref:`sec-gui_layers-vector-format-bna`
 * :ref:`sec-gui_layers-vector-format-geojson`
 
+.. note::
+
+   Please note that segment lengths below 180 degrees must be used in order to
+   render polygons or polylines correctly and to avoid representation
+   ambiguities.
+
 
 .. _sec-gui_layers-vector-format:
 
