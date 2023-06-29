@@ -1310,8 +1310,8 @@
 				<group name="V">
 					<description>
 					This S-picker works similarly to L2 but it only uses the
-					vertical component to pick S-phases. The picker name to use
-					is configuration files is &quot;S-V&quot;
+					vertical component to pick S-phases. The picker name to be
+					used in configuration files is &quot;S-V&quot;.
 					</description>
 					<parameter name="noiseBegin" type="double" default="-10" unit="s">
 						<description>
