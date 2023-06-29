@@ -20,7 +20,7 @@
 				Organization name used mainly by ArcLink and SeedLink.
 				</description>
 			</parameter>
-			<parameter name="author" type="string" default="@appname@@@@@@hostname@">
+			<parameter name="author" type="string" default="@appname@@@@hostname@">
 				<description>
 				Author name used to set creationInfo.author in data model
 				objects. @appname@ is replaced by the name of the
