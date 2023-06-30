@@ -47,6 +47,10 @@ import_array();
 #endif
 %}
 
+%pythonbegin %{
+import datetime
+%}
+
 %newobject *::Cast;
 %newobject *::copy;
 %newobject *::clone;
@@ -226,6 +230,9 @@ enum(Seiscomp::Core::GreensFunctionComponent);
         %pythoncode %{
                 def __str__(self):
                         return self.toString("%Y-%m-%d %H:%M:%S.%f000000")[:23]
+
+                def datetime(self):
+                        return datetime.datetime(*self.get()[1:])
         %}
 };
 
