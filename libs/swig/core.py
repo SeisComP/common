@@ -4,6 +4,11 @@
 # Do not make changes to this file unless you know what you are doing--modify
 # the SWIG interface file instead.
 
+
+import datetime
+
+
+
 from sys import version_info as _swig_python_version_info
 if _swig_python_version_info < (2, 7, 0):
     raise RuntimeError("Python 2.7 or later required")
@@ -390,6 +395,9 @@ class Time(TimeSpan):
 
     def __str__(self):
             return self.toString("%Y-%m-%d %H:%M:%S.%f000000")[:23]
+
+    def datetime(self):
+            return datetime.datetime(*self.get()[1:])
 
     __swig_destroy__ = _core.delete_Time
 
