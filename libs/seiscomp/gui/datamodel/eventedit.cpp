@@ -702,6 +702,7 @@ void FMMap::init() {
 
 
 
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FMMap::addFM(const DataModel::FocalMechanism *fm) {
 	Origin *o = nullptr;
@@ -775,7 +776,6 @@ void FMMap::addFM(const DataModel::FocalMechanism *fm) {
 	}
 	_fmSymbols[fm->publicID()] = symbol;
 
-
 	if ( _fmBoundings.isNull() )
 		_fmBoundings.setRect(o->longitude()-0.01, o->latitude()-0.01, 0.02, 0.02);
 	else {
@@ -794,6 +794,7 @@ void FMMap::addFM(const DataModel::FocalMechanism *fm) {
 	setEnabled(true);
 	canvas().displayRect(_fmBoundings.adjusted(-0.5, -0.5, 0.5, 0.5));
 	_smartLayoutDirty = true;
+	update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
