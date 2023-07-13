@@ -7083,6 +7083,7 @@ void PickerView::scaleVisibleAmplitudes() {
 
 	SC_D.currentRecord->setNormalizationWindow(SC_D.currentRecord->visibleTimeWindow());
 	SC_D.currentAmplScale = 1;
+	SC_D.currentRecord->setAmplScale(0.0);
 	//SC_D.currentRecord->resize(SC_D.zoomTrace->width(), (int)(SC_D.zoomTrace->height()*SC_D.currentAmplScale));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
