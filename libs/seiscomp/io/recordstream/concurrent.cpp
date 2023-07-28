@@ -257,8 +257,8 @@ void Concurrent::acquiThread(RecordStream *rs) {
 
 	_mtx.lock();
 	if ( --_nthreads == 0) {
-		SEISCOMP_DEBUG("Closing record queue");
-		_queue.close();
+		SEISCOMP_DEBUG("Last acquisition thread terminated");
+		_queue.push(nullptr);
 	}
 	_mtx.unlock();
 }
@@ -297,9 +297,22 @@ Record *Concurrent::next() {
 	}
 
 	try {
-		return _queue.pop();
+		Record * rec =  _queue.pop();
+		if ( rec) {
+			return rec;
+		}
+
+		if ( _queue.size() > 0 ) {
+			SEISCOMP_ERROR("Finished acquisition, but data queue not empty "
+			               "(%zu items still)", _queue.size());
+		}
+
+		SEISCOMP_DEBUG("Closing record queue");
+		_queue.close();
 	}
 	catch ( Client::QueueClosedException & ) {
+		// Since the queue was closed,it doesn't matter if there are still items
+		// in the queue, we drop them
 		SEISCOMP_DEBUG("Queue closed, break streaming");
 	}
 
