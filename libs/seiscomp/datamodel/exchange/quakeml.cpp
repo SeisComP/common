@@ -469,8 +469,9 @@ struct ArrivalPublicIDHandler : IO::XML::MemberHandler {
 	std::string value(Core::BaseObject *obj) override {
 		Arrival *arrival = Arrival::Cast(obj);
 		if ( arrival && arrival->origin() ) {
-			std::string oid = arrival->origin()->publicID();
-			return SMI_PREFIX + arrival->pickID() + "_" + replaceIDChars(oid);
+			auto pid = arrival->pickID();
+			auto oid = arrival->origin()->publicID();
+			return SMI_PREFIX + replaceIDChars(pid) + "_" + replaceIDChars(oid);
 		}
 		return SMI_PREFIX + "NA";
 	}
