@@ -67,7 +67,7 @@ class SC_SYSTEM_CORE_API AuxSourceIndex {
 
 
 /**
- * \brief This type describes a channel of an auxilliary device
+ * \brief This type describes a channel of an auxiliary device
  */
 class SC_SYSTEM_CORE_API AuxSource : public Object {
 	DECLARE_SC_CLASS(AuxSource)

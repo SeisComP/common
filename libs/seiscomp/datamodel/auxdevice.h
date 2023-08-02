@@ -71,7 +71,7 @@ class SC_SYSTEM_CORE_API AuxDeviceIndex {
 
 
 /**
- * \brief This type describes an auxilliary device
+ * \brief This type describes an auxiliary device
  */
 class SC_SYSTEM_CORE_API AuxDevice : public PublicObject {
 	DECLARE_SC_CLASS(AuxDevice)
