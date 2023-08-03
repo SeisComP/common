@@ -5718,14 +5718,14 @@ void OriginLocatorView::showWaveforms() {
 	catch ( ... ) {}
 
 	try {
-		auto patterns = SCApp->configGetStrings("picker.auxilliary.channels");
+		auto patterns = SCApp->configGetStrings("picker.auxiliary.channels");
 		double minDist = 0, maxDist = 1000;
 		try {
-			minDist = SCApp->configGetDouble("picker.auxilliary.minimumDistance");
+			minDist = SCApp->configGetDouble("picker.auxiliary.minimumDistance");
 		}
 		catch ( ... ) {}
 		try {
-			maxDist = SCApp->configGetDouble("picker.auxilliary.maximumDistance");
+			maxDist = SCApp->configGetDouble("picker.auxiliary.maximumDistance");
 		}
 		catch ( ... ) {}
 		SC_D.recordView->setAuxilliaryStations(patterns, minDist, maxDist);
