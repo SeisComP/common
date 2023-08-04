@@ -1740,6 +1740,10 @@ AmplitudeView::AmplitudeView(QWidget *parent, Qt::WindowFlags f)
 	SC_D.recordView = new TraceList();
 	SC_D.phases.append("P");
 	SC_D.phases.append("S");
+	SC_D.phases.append("Lg");
+	SC_D.phases.append("Rg");
+	SC_D.phases.append("LR");
+	SC_D.phases.append("LQ");
 	init();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
