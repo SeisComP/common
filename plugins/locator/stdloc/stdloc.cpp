@@ -1436,9 +1436,10 @@ void StdLoc::locateOctTree(const PickList &pickList,
 			                   cell.org.lat, cell.org.lon);
 
 			SEISCOMP_DEBUG(
-			    "Processing cell x %g y %g z %g -> lon %g lat %g depth %g",
-			    cell.x, cell.y, cell.z, cell.org.lon, cell.org.lat,
-			    cell.org.depth);
+			    "Processing cell (size %g %g %g) x %g y %g z %g -> "
+			    "lon %g lat %g depth %g",
+			    cell.size.x, cell.size.y, cell.size.z, cell.x, cell.y, cell.z,
+			    cell.org.lon, cell.org.lat, cell.org.depth);
 
 			// Compute origin time
 			bool ok = computeOriginTime(pickList, weights, sensorLat, sensorLon,
@@ -1462,8 +1463,8 @@ void StdLoc::locateOctTree(const PickList &pickList,
 			double volume = cell.size.x * cell.size.y * cell.size.z;
 			double prob = volume * cell.org.probDensity; // unnormalized
 
-			SEISCOMP_DEBUG("Prob %g RMS %g (prob density %g volume %g)", prob,
-			               cell.org.rms, cell.org.probDensity, volume);
+			SEISCOMP_DEBUG("  + prob %g RMS %g (prob density %g volume %g)",
+			               prob, cell.org.rms, cell.org.probDensity, volume);
 
 			priorityList.emplace(prob, cell);
 		}
@@ -1489,8 +1490,8 @@ void StdLoc::locateOctTree(const PickList &pickList,
 			double topCellProb = priorityList.crbegin()->first;
 			const Cell &topCell = priorityList.crbegin()->second;
 
-			SEISCOMP_DEBUG("Processed %d cells. Current cell size %g %g %g"
-			               " x %g y %g z %g prob %g RMS %f prob density %g",
+			SEISCOMP_DEBUG("Processed %d cells. Next best cell (size %g %g %g) "
+			               "x %g y %g z %g prob %g RMS %f prob density %g",
 			               processedCells, topCell.size.x, topCell.size.y,
 			               topCell.size.z, topCell.x, topCell.y, topCell.z,
 			               topCellProb, topCell.org.rms,
@@ -1503,7 +1504,7 @@ void StdLoc::locateOctTree(const PickList &pickList,
 			     best.cell.org.probDensity < topCell.org.probDensity ) {
 				best.cell = topCell;
 				best.prob = topCellProb;
-				SEISCOMP_DEBUG("Preferring this as best cell");
+				SEISCOMP_DEBUG("  + preferring this as best cell");
 			}
 
 			//
