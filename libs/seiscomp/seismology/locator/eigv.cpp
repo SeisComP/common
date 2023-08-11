@@ -18,6 +18,7 @@
  ***************************************************************************/
 #include <iostream>
 #include <math.h>
+#include <limits>
 using namespace std;
 #include "eigv.h"
 
@@ -328,6 +329,10 @@ double pythag ( double a, double b )
   double s;
   double t;
   double u;
+
+  if ( !std::isfinite(a) || !std::isfinite(b) ) {
+     return std::numeric_limits<double>::quiet_NaN();
+  }
 
   p = r8_max ( r8_abs ( a ), r8_abs ( b ) );
 
