@@ -152,27 +152,27 @@ bool MagnitudeProcessor_MLc::initLocale(Locale *locale,
 
 	// parametric
 	try {
-		extra->c0 = cfg->getDouble(configPrefix + ".parametric.c0");
+		extra->c0 = cfg->getDouble(configPrefix + "parametric.c0");
 	}
 	catch ( ... ) {}
 	try {
-		extra->c1 = cfg->getDouble(configPrefix + ".parametric.c1");
+		extra->c1 = cfg->getDouble(configPrefix + "parametric.c1");
 	}
 	catch ( ... ) {}
 	try {
-		extra->c2 = cfg->getDouble(configPrefix + ".parametric.c2");
+		extra->c2 = cfg->getDouble(configPrefix + "parametric.c2");
 	}
 	catch ( ... ) {}
 	try {
-		extra->c3 = cfg->getDouble(configPrefix + ".parametric.c3");
+		extra->c3 = cfg->getDouble(configPrefix + "parametric.c3");
 	}
 	catch ( ... ) {}
 	try {
-		extra->c4 = cfg->getDouble(configPrefix + ".parametric.c4");
+		extra->c4 = cfg->getDouble(configPrefix + "parametric.c4");
 	}
 	catch ( ... ) {}
 	try {
-		extra->c5 = cfg->getDouble(configPrefix + ".parametric.c5");
+		extra->c5 = cfg->getDouble(configPrefix + "parametric.c5");
 	}
 	catch ( ... ) {}
 
@@ -190,7 +190,6 @@ bool MagnitudeProcessor_MLc::initLocale(Locale *locale,
 			if ( _calibrationType == "A0" ) {
 				SEISCOMP_DEBUG("  + local logA0: %s", logA0.c_str());
 			}
-			locale->extra = extra;
 		}
 	}
 	catch ( ... ) {}
@@ -215,6 +214,11 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		return AmplitudeOutOfRange;
 	}
 
+	ExtraLocale *extra = nullptr;
+	if ( locale ) {
+		extra = static_cast<ExtraLocale*>(locale->extra.get());
+	}
+
 	SEISCOMP_DEBUG("  + maximum depth: %.3f km", _maxDepth);
 	// Check depth, clip negative depth to 0
 	if ( depth > _maxDepth ) {
@@ -234,23 +238,18 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		distanceKm = Math::Geo::deg2km(delta);
 	}
 
-	SEISCOMP_DEBUG("  + maximum distance: %.3f km", _maxDistanceKm);
-	if ( _maxDistanceKm >= 0 && distanceKm > _maxDistanceKm ) {
-		return DistanceOutOfRange;
-	}
-
 	SEISCOMP_DEBUG("  + minimum distance: %.3f km", _minDistanceKm);
 	if ( _minDistanceKm >= 0 && distanceKm < _minDistanceKm ) {
 		return DistanceOutOfRange;
 	}
 
-	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) ) {
-		return InvalidAmplitudeUnit;
+	SEISCOMP_DEBUG("  + maximum distance: %.3f km", _maxDistanceKm);
+	if ( _maxDistanceKm >= 0 && distanceKm > _maxDistanceKm ) {
+		return DistanceOutOfRange;
 	}
 
-	ExtraLocale *extra = nullptr;
-	if ( locale ) {
-		extra = static_cast<ExtraLocale*>(locale->extra.get());
+	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) ) {
+		return InvalidAmplitudeUnit;
 	}
 
 	double correction;
