@@ -164,7 +164,6 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLv::computeMagnitude(
 		depth = 0;
 	}
 	double distanceKm = Math::Geo::deg2km(delta);
-
 	if ( _maxDistanceKm > 0 and distanceKm > _maxDistanceKm )
 		return DistanceOutOfRange;
 
@@ -179,7 +178,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLv::computeMagnitude(
 
 	try {
 		double correction = -1.0 * (extra and extra->logA0 ? extra->logA0->at(distanceKm) : _logA0.at(distanceKm));
-		SEISCOMP_DEBUG("  + distance: %.5f deg, logA0 correction: %.3f", distanceKm, correction);
+		SEISCOMP_DEBUG("  + distance: %.5f deg, logA0 correction: %.3f", delta, correction);
 		value = log10(amplitude) + correction;
 	}
 	catch ( Core::ValueException & ) {
