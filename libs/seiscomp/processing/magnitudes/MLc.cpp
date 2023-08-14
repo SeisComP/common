@@ -40,6 +40,9 @@ std::string ExpectedAmplitudeUnit = "mm";
 DEFINE_SMARTPOINTER(ExtraLocale);
 class ExtraLocale : public Core::BaseObject {
 	public:
+		// general magnitude parameters
+		OPT(string) distanceMode;
+		OPT(string) calibrationType;
 		// parametric coefficients
 		OPT(double) c0;
 		OPT(double) c1;
@@ -150,6 +153,15 @@ bool MagnitudeProcessor_MLc::initLocale(Locale *locale,
 	const Seiscomp::Config::Config *cfg = settings.localConfiguration;
 	ExtraLocalePtr extra = new ExtraLocale;
 
+	// general
+	try {
+		extra->distanceMode = cfg->getString(configPrefix + "distMode");
+	}
+	catch ( ... ) {}
+	try {
+		extra->calibrationType = cfg->getString(configPrefix + "calibrationType");
+	}
+	catch ( ... ) {}
 	// parametric
 	try {
 		extra->c0 = cfg->getDouble(configPrefix + "parametric.c0");
@@ -214,37 +226,59 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		return AmplitudeOutOfRange;
 	}
 
+	auto distanceMode = _distanceMode;
+	auto calibrationType = _calibrationType;
+	auto minimumDistanceKm = _minDistanceKm;
+	auto maximumDistanceKm = _maxDistanceKm;
+	auto maximumDepth = _maxDepth;
+
 	ExtraLocale *extra = nullptr;
 	if ( locale ) {
 		extra = static_cast<ExtraLocale*>(locale->extra.get());
+		if ( extra ) {
+			if ( extra->distanceMode ) {
+				distanceMode = *extra->distanceMode;
+			}
+
+			if ( extra->calibrationType ) {
+				calibrationType = *extra->calibrationType;
+			}
+		}
+
+		if ( locale->maximumDepth ) {
+			maximumDepth = *locale->maximumDepth;
+		}
+
+		if ( locale->minimumDistance ) {
+			minimumDistanceKm = Math::Geo::deg2km(*locale->minimumDistance);
+		}
+
+		if ( locale->maximumDistance ) {
+			maximumDistanceKm = Math::Geo::deg2km(*locale->maximumDistance);
+		}
 	}
 
-	SEISCOMP_DEBUG("  + maximum depth: %.3f km", _maxDepth);
-	// Check depth, clip negative depth to 0
-	if ( depth > _maxDepth ) {
+	SEISCOMP_DEBUG("  + maximum depth: %.3f km", maximumDepth);
+	if ( depth > maximumDepth ) {
 		return DepthOutOfRange;
 	}
 
-	if ( depth < 0 ) {
-		depth = 0;
-	}
-
-	SEISCOMP_DEBUG("  + distance mode: %s", _distanceMode.c_str());
+	SEISCOMP_DEBUG("  + distance mode: %s", distanceMode.c_str());
 	double distanceKm;
-	if ( _distanceMode == "hypocentral" ) {
+	if ( distanceMode == "hypocentral" ) {
 		distanceKm = sqrt(pow(Math::Geo::deg2km(delta),2) + pow(depth,2));
 	}
 	else {
 		distanceKm = Math::Geo::deg2km(delta);
 	}
 
-	SEISCOMP_DEBUG("  + minimum distance: %.3f km", _minDistanceKm);
-	if ( _minDistanceKm >= 0 && distanceKm < _minDistanceKm ) {
+	SEISCOMP_DEBUG("  + minimum distance: %.3f km", minimumDistanceKm);
+	if ( minimumDistanceKm >= 0 && distanceKm < minimumDistanceKm ) {
 		return DistanceOutOfRange;
 	}
 
-	SEISCOMP_DEBUG("  + maximum distance: %.3f km", _maxDistanceKm);
-	if ( _maxDistanceKm >= 0 && distanceKm > _maxDistanceKm ) {
+	SEISCOMP_DEBUG("  + maximum distance: %.3f km", maximumDistanceKm);
+	if ( maximumDistanceKm >= 0 && distanceKm > maximumDistanceKm ) {
 		return DistanceOutOfRange;
 	}
 
@@ -252,9 +286,13 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		return InvalidAmplitudeUnit;
 	}
 
+	SEISCOMP_DEBUG("  + %s distance: %.5f deg",
+	               distanceMode, Math::Geo::km2deg(distanceKm));
+
 	double correction;
-	SEISCOMP_DEBUG("  + calibration type: %s", _calibrationType.c_str());
-	if ( _calibrationType == "parametric" ) {
+	SEISCOMP_DEBUG("  + calibration type: %s", calibrationType.c_str());
+
+	if ( calibrationType == "parametric" ) {
 		// parametric calibration function
 		auto c0 = (extra and extra->c0) ? *extra->c0 : _c0;
 		auto c1 = (extra and extra->c1) ? *extra->c1 : _c1;
@@ -263,19 +301,20 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		auto c4 = (extra and extra->c4) ? *extra->c4 : _c4;
 		auto c5 = (extra and extra->c5) ? *extra->c5 : _c5;
 
-		SEISCOMP_DEBUG("  + c0 - c5: %.5f %.5f %.5f %.5f %.5f %.5f",
-		               c0, c1, c2, c3, c4, c5);
 		correction = c3 * log10(distanceKm / c5)
 		             + c2 * (distanceKm + c4)
 		             + c1
 		             + c0;
+		SEISCOMP_DEBUG("  + c0 - c5: %.5f %.5f %.5f %.5f %.5f %.5f, correction: %.5f",
+		               c0, c1, c2, c3, c4, c5, correction);
 		value = log10(amplitude) + correction;
 	}
-	else if ( _calibrationType == "A0" ) {
+	else if ( calibrationType == "A0" ) {
 		// A0, non-parametric calibration function
 
 		try {
 			correction = -1.0 * (extra and extra->logA0 ? extra->logA0->at(distanceKm) : _logA0.at(distanceKm));
+			SEISCOMP_DEBUG("  + -log10(A0): %.5f", correction);
 			value = log10(amplitude) + correction;
 		}
 		catch ( std::out_of_range & ) {
@@ -287,7 +326,6 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		return IncompleteConfiguration;
 	}
 
-	SEISCOMP_DEBUG("  + distance: %.5f deg, correction term: %.3f", distanceKm, correction);
 	SEISCOMP_DEBUG("  + amplitude: %.5f, magnitude: %.3f", amplitude, value);
 
 	return OK;
