@@ -204,7 +204,18 @@ class SC_GUI_API EventListView : public QWidget {
 		void selectEvent(int index);
 		void selectEventID(const std::string& publicID);
 
+		/**
+		 * @brief Activates the previous visible event.
+		 * This is similar to selecting the event before (visually below) the
+		 * current event in the list.
+		 */
 		void setPreviousEvent();
+
+		/**
+		 * @brief Activates the next visible event.
+		 * This is similar to selecting the event after (visually above) the
+		 * current event in the list.
+		 */
 		void setNextEvent();
 
 		void readFromDatabase();
