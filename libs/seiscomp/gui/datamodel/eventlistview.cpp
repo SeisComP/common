@@ -3471,10 +3471,17 @@ void EventListView::selectEventID(const std::string& publicID) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setPreviousEvent() {
 	int idx = _treeWidget->currentIndex().row();
+	while ( ++idx < _treeWidget->topLevelItemCount()-1 ) {
+		auto item = _treeWidget->topLevelItem(idx);
+		if ( !item->isHidden() ) {
+			break;
+		}
+	}
+
 	if ( idx < _treeWidget->topLevelItemCount()-1 ) {
 		QAbstractItemView::SelectionMode oldMode = _treeWidget->selectionMode();
 		_treeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-		selectEvent(idx+1);
+		selectEvent(idx);
 		_treeWidget->setSelectionMode(oldMode);
 	}
 }
@@ -3486,10 +3493,17 @@ void EventListView::setPreviousEvent() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setNextEvent() {
 	int idx = _treeWidget->currentIndex().row();
-	if ( idx > 0 ) {
+	while ( --idx >= 0 ) {
+		auto item = _treeWidget->topLevelItem(idx);
+		if ( !item->isHidden() ) {
+			break;
+		}
+	}
+
+	if ( idx >= 0 ) {
 		QAbstractItemView::SelectionMode oldMode = _treeWidget->selectionMode();
 		_treeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-		selectEvent(idx-1);
+		selectEvent(idx);
 		_treeWidget->setSelectionMode(oldMode);
 	}
 }
