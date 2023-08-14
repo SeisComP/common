@@ -72,6 +72,9 @@ namespace Core {
    - Removed Seiscomp::DataModel::DatabaseArchive::write(object, parentID)
    - Added Seiscomp::DataModel::DatabaseArchive::insert(object, parentID)
 
+ "15.6.0"   0x0F0600
+   - Added Seiscomp::Gui::PickerView::setAuxiliaryChannels
+
  "15.5.0"   0x0F0500
    - Added Seiscomp::Utils::TabValues
 
