@@ -5728,7 +5728,7 @@ void OriginLocatorView::showWaveforms() {
 			maxDist = SCApp->configGetDouble("picker.auxiliary.maximumDistance");
 		}
 		catch ( ... ) {}
-		SC_D.recordView->setAuxilliaryStations(patterns, minDist, maxDist);
+		SC_D.recordView->setAuxiliaryChannels(patterns, minDist, maxDist);
 	}
 	catch ( ... ) {}
 

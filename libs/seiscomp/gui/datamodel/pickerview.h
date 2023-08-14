@@ -332,8 +332,8 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void setBroadBandCodes(const std::vector<std::string> &codes);
 		void setStrongMotionCodes(const std::vector<std::string> &codes);
 
-		void setAuxilliaryStations(const std::vector<std::string> &patterns,
-		                           double minimumDistance, double maximumDistance);
+		void setAuxiliaryChannels(const std::vector<std::string> &patterns,
+		                          double minimumDistance, double maximumDistance);
 
 		//! Sets an origin an inserts the traces for each arrival
 		//! in the view.

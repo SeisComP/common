@@ -3619,8 +3619,8 @@ void PickerView::setStrongMotionCodes(const std::vector<std::string> &codes) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::setAuxilliaryStations(const std::vector<std::string> &patterns,
-                                       double minimumDistance, double maximumDistance) {
+void PickerView::setAuxiliaryChannels(const std::vector<std::string> &patterns,
+                                      double minimumDistance, double maximumDistance) {
 	SC_D.auxiliaryStreamIDPatterns = patterns;
 	SC_D.auxiliaryMinDistance = minimumDistance;
 	SC_D.auxiliaryMaxDistance = maximumDistance;
