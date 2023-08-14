@@ -31,12 +31,12 @@ namespace Seiscomp {
 namespace Core {
 
 
-/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(15, 5, 0)) */
+/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(15, 6, 0)) */
 #define SC_API_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 
 /* SC_API_VERSION is (major << 16) + (minor << 8) + patch. */
-#define SC_API_VERSION 0x0F0500
+#define SC_API_VERSION 0x0F0600
 
 #define SC_API_VERSION_MAJOR(v) (v >> 16)
 #define SC_API_VERSION_MINOR(v) ((v >> 8) & 0xff)
@@ -46,6 +46,9 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
+ "15.6.0"   0x0F0600
+   - Added Seiscomp::Gui::PickerView::setAuxiliaryChannels
+
  "15.5.0"   0x0F0500
    - Added Seiscomp::Utils::TabValues
 
