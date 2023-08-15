@@ -71,20 +71,24 @@ bool ExporterHYP71SUM2K::put(std::streambuf* buf, BaseObject* obj) {
 	for ( size_t i = 0; i < ep->eventCount(); ++i ) {
 		Event* e = ep->event(i);
 
-		for ( size_t i = 0; i < ep->originCount(); ++i )
-			if ( ep->origin(i)->publicID() == e->preferredOriginID() )
+		for ( size_t i = 0; i < ep->originCount(); ++i ) {
+			if ( ep->origin(i)->publicID() == e->preferredOriginID() ) {
 				o = ep->origin(i);
+			}
+		}
 
-		for ( size_t i = 0; i < o->magnitudeCount(); ++i )
-			if ( o->magnitude(i)->publicID() == e->preferredMagnitudeID() )
+		for ( size_t i = 0; i < o->magnitudeCount(); ++i ) {
+			if ( o->magnitude(i)->publicID() == e->preferredMagnitudeID() ) {
 				m = o->magnitude(i);
+			}
+		}
 
 		std::string date = o->time().value().toString("%Y%m%d");
 		std::string hour = o->time().value().toString("%H%M");
 		std::string sec = o->time().value().toString(" %S.%2f");
 
 		std::string latd, latm;
-		latd = stringify("%3d", abs(o->latitude().value()) );
+		latd = stringify("%3d", abs(o->latitude().value()));
 		latm = stringify("%#05.2f", fabs(60 * (o->latitude().value() - (int)o->latitude().value())) );
 
 		std::string lond, lonm;
@@ -94,80 +98,94 @@ bool ExporterHYP71SUM2K::put(std::streambuf* buf, BaseObject* obj) {
 		std::string depth;
 		try {
 			depth = stringify("%#7.2f", o->depth().value());
-		} catch ( ... ) {
+		}
+		catch ( ... ) {
 			depth = " ******";
 		}
 
 		std::string magnitude;
-		if ( m )
-		    try {
-			    magnitude = stringify("%#5.2f", m->magnitude().value());
-		    } catch ( ... ) {
-		    	magnitude = " ****";
-		    }
+		if ( m ) {
+			try {
+				magnitude = stringify("%#5.2f", m->magnitude().value());
+			}
+			catch ( ... ) {
+				magnitude = " ****";
+			}
+		}
 
 		std::string Narrivals;
 		try {
 			Narrivals = stringify("%3d", o->arrivalCount());
-		} catch ( ... ) {
+		}
+		catch ( ... ) {
 			Narrivals = " **";
 		}
 
 		std::string azigap;
 		try {
 			azigap = stringify("%#4.0f", o->quality().azimuthalGap());
-		} catch ( ... ) {
+		}
+		catch ( ... ) {
 			azigap = " ***";
 		}
 
 		std::string dMin;
 		try {
 			dMin = stringify("%#5.1f", Seiscomp::Math::Geo::deg2km(o->quality().minimumDistance()));
-		} catch ( ... ) {
+		}
+		catch ( ... ) {
 			dMin = " ****";
 		}
 
 		// Teleseismic fix: ensure nothing comes and perturb the 5chars rule
-		if ( dMin.length() > 5 )
-		    dMin = " ****";
+		if ( dMin.length() > 5 ) {
+			dMin = " ****";
+		}
 
 		std::string rms;
 		try {
 			rms = stringify("%#5.2f", o->quality().standardError());
-		} catch ( ... ) {
+		}
+		catch ( ... ) {
 			rms = " ****";
 		}
 
 		// Teleseismic fix: ensure nothing comes and perturb the 5 chars rule
-		if ( rms.length() > 5 )
-		    rms = " ****";
+		if ( rms.length() > 5 ) {
+			rms = " ****";
+		}
 
 		std::string erh;
 		try {
 			erh = stringify("%#5.1f", o->latitude().uncertainty());
-		} catch ( ... ) {
+		}
+		catch ( ... ) {
 			erh = " ****";
 		}
 
 		std::string erz;
 		try {
 			erz = stringify("%#5.1f", o->depth().uncertainty());
-		} catch ( ... ) {
+		}
+		catch ( ... ) {
 			erz = " ****";
 		}
 
 		std::string quality;
 		try {
 			quality = o->quality().groundTruthLevel();
-		} catch ( ... ) {
+		}
+		catch ( ... ) {
 			quality = " ";
 		}
-		if ( quality.length() != 1 )
-		    quality = " ";
+
+		if ( quality.length() != 1 ) {
+			quality = " ";
+		}
 
 		if ( !o ) {
 			os << "                                                                                    "
-					<< e->publicID();
+			   << e->publicID();
 		}
 		else {
 			// Date YYYYMMDD col 1-9
@@ -180,16 +198,20 @@ bool ExporterHYP71SUM2K::put(std::streambuf* buf, BaseObject* obj) {
 			os << sec;
 
 			// Latitude col 20-29
-			if ( o->latitude().value() < 0 )
+			if ( o->latitude().value() < 0 ) {
 				os << latd << "S" << latm;
-			else
+			}
+			else {
 				os << latd << " " << latm;
+			}
 
 			// Longitude col 30-39
-			if ( o->longitude().value() > 0 )
+			if ( o->longitude().value() > 0 ) {
 				os << lond << "E" << lonm;
-			else
+			}
+			else {
 				os << lond << " " << lonm;
+			}
 
 			// Depth col 39-46
 			os << depth;
@@ -244,8 +266,10 @@ bool ExporterHYP71SUM2K::put(std::streambuf* buf, BaseObject* obj) {
 			os << e->publicID();
 
 		}
+
 		os << std::endl;
 	}
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
