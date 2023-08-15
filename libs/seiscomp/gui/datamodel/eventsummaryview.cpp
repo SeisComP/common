@@ -51,6 +51,7 @@
 #include <seiscomp/client/inventory.h>
 #include <seiscomp/seismology/ttt.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/datamodel/tensorsymbol.h>
 #include <seiscomp/gui/datamodel/utils.h>
 
@@ -2862,7 +2863,7 @@ void EventSummaryView::runScript(const QString& script, const QString& name, boo
 	QString command = QString(cmd);
 	SEISCOMP_DEBUG("%s", qPrintable(cmd));
 	// start as background process w/o any communication channel
-	if( !QProcess::startDetached(command) ) {
+	if( !QT_PROCESS_STARTDETACHED(command) ) {
 		QMessageBox::warning(this, "Export event", tr("Can't execute script"));
 	}
 }

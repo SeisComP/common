@@ -23,6 +23,7 @@
 #include <QMutexLocker>
 #include <streambuf>
 
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/datamodel/publicobjectevaluator.h>
 #include <seiscomp/datamodel/publicobject.h>
 //#include <seiscomp/io/archive/xmlarchive.h>
@@ -370,7 +371,7 @@ bool PublicObjectEvaluator::eval(DataModel::PublicObject *po, const QStringList 
 	QStringList::const_iterator sit;
 	for ( sit = scripts.begin(); sit != scripts.end(); ++sit ) {
 		QProcess proc;
-		proc.start(*sit);
+		QT_PROCESS_START(&proc, *sit);
 		if ( !proc.waitForStarted() ) {
 			SEISCOMP_ERROR("%s: failed to start", qPrintable(*sit));
 			emit resultError(po->publicID().c_str(), po->typeInfo().className(), *sit, proc.error());
@@ -448,7 +449,7 @@ void PublicObjectEvaluator::run() {
 		Scripts::iterator sit;
 		for ( sit = job.scripts.begin(); sit != job.scripts.end(); ++sit ) {
 			QProcess proc;
-			proc.start(sit.key());
+			QT_PROCESS_START(&proc, sit.key());
 			if ( !proc.waitForStarted() ) {
 				SEISCOMP_ERROR("%s: failed to start", qPrintable(sit.key()));
 				emit resultError(job.publicID, job.classType.className(), sit.key(), proc.error());
