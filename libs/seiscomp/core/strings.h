@@ -28,6 +28,8 @@
 #include <seiscomp/math/math.h>
 
 #include <boost/iostreams/stream.hpp>
+#include <fmt/printf.h>
+
 #include <limits>
 #include <string>
 #include <vector>
@@ -119,10 +121,11 @@ bool fromString(std::vector<T> &vec, const std::string &str);
 /**
  * @brief Produces output according to a format as used by printf. The output
  *        is written to a string and returned.
- * @param fmt A format description as used by printf
+ * @param format A format description as used by printf
  * @return The string containing the output
  */
-SC_SYSTEM_CORE_API std::string stringify(const char *fmt, ...);
+template <typename S, typename... Args>
+std::string stringify(const S &format, Args &&...args);
 
 /**
  * @brief Splits a string into several tokens separated by one of the specified
