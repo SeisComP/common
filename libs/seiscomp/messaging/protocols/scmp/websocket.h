@@ -87,6 +87,11 @@ class WebsocketConnection : public Socket {
 		Result readFrame(WSFrame &frame, std::mutex *mutex, bool forceBlock = false);
 		bool handleFrame(WSFrame &frame, Packet *p, Result *result = nullptr);
 
+		/**
+		 * Send a data buffer and waits for an acknowledgment message.
+		 * @pre _writeMutex is locked
+		 * @post _writeMutex is locked
+		 */
 		Result send(Wired::Buffer *msg, WSFrame::Type type, bool isRegular);
 		Result sendSocket(const char *data, int len);
 
