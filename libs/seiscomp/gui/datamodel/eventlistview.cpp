@@ -823,7 +823,7 @@ class SchemeTreeItem : public TreeItem {
 	public:
 		void init() {
 			setTextAlignment(config.columnMap[COL_ID], Qt::AlignLeft | Qt::AlignVCenter);
-			setTextAlignment(config.columnMap[COL_OTIME], Qt::AlignRight | Qt::AlignVCenter);
+			setTextAlignment(config.columnMap[COL_OTIME], Qt::AlignLeft | Qt::AlignVCenter);
 			setTextAlignment(config.columnMap[COL_TYPE], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_FM], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_PHASES], Qt::AlignCenter);
