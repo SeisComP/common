@@ -1091,14 +1091,19 @@ void WebsocketConnection::waitForAck() {
 Result WebsocketConnection::flushBacklog() {
 	SEISCOMP_INFO("Want to flush %d backlog messages", int(_backlog.size()));
 	while ( !_backlog.empty() ) {
+		boost::mutex::scoped_lock l(_writeMutex);
+
 		// Backlog messages are always binary frames
 		Result r = send(_backlog.front().get(), WSFrame::BinaryFrame, true);
 		if ( r != OK ) {
-			SEISCOMP_INFO("Want to flush %d backlog messages", int(_backlog.size()));
+			SEISCOMP_ERROR("Failed to flush backlog message: %s (%d)",
+			               r.toString(), r.toInt());
 			return r;
 		}
 		_backlog.pop_front();
 	}
+
+	SEISCOMP_DEBUG("Flushed backlog");
 
 	return OK;
 }
@@ -1327,9 +1332,8 @@ Result WebsocketConnection::send(Buffer *msg, WSFrame::Type type, bool isRegular
 		++_state.localSequenceNumber;
 		++_state.sentMessages;
 
-		if ( _ackWindow ) _outbox.push_back(msg);
-
 		if ( _ackWindow ) {
+			_outbox.push_back(msg);
 			_writeMutex.unlock();
 			waitForAck();
 			_writeMutex.lock();
