@@ -551,15 +551,15 @@ void MagRow::updateContent() {
 		}
 	}
 	else if ( _header ){ // set Header Row
-		_magnitude->setText(QString("Value"));
-		_type->setText(QString("Type"));
-		_quality->setText(QString("Count"));
-		_stdev->setText(QString("+/-"));
+		_magnitude->setText("Value");
+		_type->setText("Type");
+		_quality->setText("Count");
+		_stdev->setText("+/-");
 	}
 	else {
-		_magnitude->setText(QString("-"));
-		_quality->setText(QString("-"));
-		_stdev->setText(QString("-"));
+		_magnitude->setText("-");
+		_quality->setText("-");
+		_stdev->setText("-");
 	}
 
 	if ( _referenceMagVisible ) {
@@ -597,13 +597,13 @@ void MagRow::updateContent() {
 				_stdevReference->setText(QString("%1").arg(stdev, 0, 'f', SCScheme.precision.magnitude));
 			}
 			else {
-				_stdevReference->setText(QString("-"));
+				_stdevReference->setText("-");
 			}
 		}
 		else {
-			_magnitudeReference->setText(QString("-"));
-			_qualityReference->setText(QString("-"));
-			_stdevReference->setText(QString("-"));
+			_magnitudeReference->setText("-");
+			_qualityReference->setText("-");
+			_stdevReference->setText("-");
 		}
 	}
 
@@ -770,16 +770,16 @@ void EventSummaryView::init() {
 	QRectF displayRect;
 	displayRect.setRect(lonmin, latmin, lonmax-lonmin, latmax-latmin);
 
-	_uiHypocenter->labelVDistance->setText("");
-	_uiHypocenter->labelVDistanceAutomatic->setText("");
-	_uiHypocenter->labelFrameInfoSpacer->setText("");
+	_uiHypocenter->labelVDistance->setText(QString());
+	_uiHypocenter->labelVDistanceAutomatic->setText(QString());
+	_uiHypocenter->labelFrameInfoSpacer->setText(QString());
 	_uiHypocenter->labelFrameInfoSpacer->setFixedWidth(16);
-	_uiHypocenter->fmLabelFrameInfoSpacer->setText("");
+	_uiHypocenter->fmLabelFrameInfoSpacer->setText(QString());
 	_uiHypocenter->fmLabelFrameInfoSpacer->setFixedWidth(16);
 	_uiHypocenter->labelFMSeparator->setText("\n\nFocalMechanism\n");
 
-	_uiHypocenter->fmLabelVDistance->setText("");
-	_uiHypocenter->fmLabelVDistanceAutomatic->setText("");
+	_uiHypocenter->fmLabelVDistance->setText(QString());
+	_uiHypocenter->fmLabelVDistanceAutomatic->setText(QString());
 
 	if ( !withBorders ) {
 		QFontMetrics fm(SCScheme.fonts.normal);
@@ -1223,15 +1223,15 @@ void EventSummaryView::addObject(const QString& parentID, Seiscomp::DataModel::O
 					try {
 						display =
 							QString("%1 %2 (%3)")
-								.arg(mag->type().c_str())
-								.arg(mag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)
-								.arg(mag->stationCount());
+							.arg(mag->type().c_str())
+							.arg(mag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)
+							.arg(mag->stationCount());
 					}
 					catch ( ... ) {
 						display =
 							QString("%1 %2 (-)")
-								.arg(mag->type().c_str())
-								.arg(mag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude);
+							.arg(mag->type().c_str())
+							.arg(mag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude);
 					}
 				}
 			}
@@ -1346,7 +1346,8 @@ void EventSummaryView::updateObject(const QString& parentID, Seiscomp::DataModel
 			}
 			else
 				emit showInStatusbar(QString("an event update has arrived: %1 [event displayed is %2]")
-				                     .arg(event->publicID().c_str()).arg(_currentEvent->publicID().c_str()), 60000);
+				                     .arg(event->publicID().c_str())
+			                         .arg(_currentEvent->publicID().c_str()), 60000);
 		}
 		return;
 	}
@@ -1428,7 +1429,8 @@ void EventSummaryView::removeObject(const QString &parentID, Seiscomp::DataModel
 
 void EventSummaryView::showEvent(Seiscomp::DataModel::Event* event, Seiscomp::DataModel::Origin* org){
 	if ( event )
-		emit showInStatusbar(QString("selected event: %1").arg(event->publicID().c_str()), 1000);
+		emit showInStatusbar(QString("selected event: %1")
+	                         .arg(event->publicID().c_str()), 1000);
 	else
 		_currentEvent = DataModel::Event::Create("nullptr");
 
@@ -1440,7 +1442,8 @@ void EventSummaryView::showEvent(Seiscomp::DataModel::Event* event, Seiscomp::Da
 
 void EventSummaryView::showOrigin(Seiscomp::DataModel::Origin* origin){
 
-	emit showInStatusbar(QString("selected origin: %1").arg(origin->publicID().c_str()), 1000);
+	emit showInStatusbar(QString("selected origin: %1")
+	                     .arg(origin->publicID().c_str()), 1000);
 
 // 	clearLastMagnitudes();
 	_mapTimer->stop();
@@ -1521,7 +1524,7 @@ void EventSummaryView::processEventMsg(DataModel::Event* event, Seiscomp::DataMo
 	if ( _currentEvent )
 		setPrefMagnitudeParameter(_currentEvent->preferredMagnitudeID());
 	else
-		setPrefMagnitudeParameter("");
+		setPrefMagnitudeParameter(string());
 
 	updateEventComment();
 	updateEventName();
@@ -1656,12 +1659,13 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 	try { // depth error
 		double err_z = quantityUncertainty(_currentOrigin->depth());
 		if (err_z == 0.0)
-			_uiHypocenter->_lbDepthError->setText(QString("  fixed"));
+			_uiHypocenter->_lbDepthError->setText("  fixed");
 		else
-			_uiHypocenter->_lbDepthError->setText(QString("+/-%1 km").arg(err_z, 4, 'f', SCScheme.precision.uncertainties));
+			_uiHypocenter->_lbDepthError->setText(QString("+/-%1 km")
+			                                      .arg(err_z, 4, 'f', SCScheme.precision.uncertainties));
 	}
 	catch(...) {
-		_uiHypocenter->_lbDepthError->setText(QString(""));
+		_uiHypocenter->_lbDepthError->setText(QString());
 	}
 	try { // depth
 		_uiHypocenter->_lbDepth->setText(depthToString(_currentOrigin->depth(), SCScheme.precision.depth));
@@ -1669,10 +1673,10 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 		_uiHypocenter->_lbDepthUnit->setText("km");
 
 	} catch(...) {
-		_uiHypocenter->_lbDepth->setText(QString("---"));
-		_uiHypocenter->_lbDepthUnit->setText("");
-		_uiHypocenter->_lbDepthError->setText(QString(""));
-		_ui->labelDepth->setText("");
+		_uiHypocenter->_lbDepth->setText("---");
+		_uiHypocenter->_lbDepthUnit->setText(QString());
+		_uiHypocenter->_lbDepthError->setText(QString());
+		_ui->labelDepth->setText(QString());
 	}
 
 	string timeFormat = "%F %T";
@@ -1685,22 +1689,30 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 
 	try {
 		_uiHypocenter->_lbOriginStatus->setText(_currentOrigin->evaluationMode().toString());
-	} catch(...){
+	}
+	catch(...){
 		_uiHypocenter->_lbOriginStatus->setText("---");
+	}
+
+	try {
+		_uiHypocenter->labelEventType->setText(_currentEvent->type().toString());
+	}
+	catch(...){
+		_uiHypocenter->labelEventType->setText(QString());
 	}
 
 	try {
 		_uiHypocenter->_lbLatError->setText(QString("+/-%1 km").arg(quantityUncertainty(_currentOrigin->latitude()), 4, 'f', SCScheme.precision.uncertainties));
 	}
 	catch ( ... ) {
-		_uiHypocenter->_lbLatError->setText("");
+		_uiHypocenter->_lbLatError->setText(QString());
 	}
 
 	try {
 		_uiHypocenter->_lbLongError->setText(QString("+/-%1 km").arg(quantityUncertainty(_currentOrigin->longitude()), 4, 'f', SCScheme.precision.uncertainties));
 	}
 	catch ( ... ) {
-		_uiHypocenter->_lbLongError->setText("");
+		_uiHypocenter->_lbLongError->setText(QString());
 	}
 
 	try {
@@ -1749,7 +1761,7 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 		_uiHypocenter->_lbAgency->setText(_currentOrigin->creationInfo().agencyID().c_str());
 	}
 	catch ( ... ) {
-		_uiHypocenter->_lbAgency->setText("");
+		_uiHypocenter->_lbAgency->setText(QString());
 	}
 
 	// get the time of first location of an origin belonging to this Event
@@ -1775,7 +1787,7 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 	if ( _currentEvent )
 		_uiHypocenter->_lbEventID->setText(_currentEvent->publicID().c_str());
 	else
-		_uiHypocenter->_lbEventID->setText("");
+		_uiHypocenter->_lbEventID->setText(QString());
 
 	// set map
 	if ( !_mapTimer->isActive() ){
@@ -1837,21 +1849,21 @@ void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
 	try { // depth error
 		double err_z = quantityUncertainty(origin->depth());
 		if (err_z == 0.0)
-			_uiHypocenter->_lbDepthErrorAutomatic->setText(QString("  fixed"));
+			_uiHypocenter->_lbDepthErrorAutomatic->setText("  fixed");
 		else
 			_uiHypocenter->_lbDepthErrorAutomatic->setText(QString("+/-%1 km").arg(err_z, 4, 'f', SCScheme.precision.uncertainties));
 	}
 	catch(...) {
-		_uiHypocenter->_lbDepthErrorAutomatic->setText(QString(""));
+		_uiHypocenter->_lbDepthErrorAutomatic->setText(QString());
 	}
 	try { // depth
 		_uiHypocenter->_lbDepthAutomatic->setText(depthToString(origin->depth(), SCScheme.precision.depth));
 		_uiHypocenter->_lbDepthUnitAutomatic->setText("km");
 
 	} catch(...) {
-		_uiHypocenter->_lbDepthAutomatic->setText(QString("---"));
-		_uiHypocenter->_lbDepthUnitAutomatic->setText("");
-		_uiHypocenter->_lbDepthErrorAutomatic->setText(QString(""));
+		_uiHypocenter->_lbDepthAutomatic->setText("---");
+		_uiHypocenter->_lbDepthUnitAutomatic->setText(QString());
+		_uiHypocenter->_lbDepthErrorAutomatic->setText(QString());
 	}
 
 	string timeFormat = "%F %T";
@@ -1872,14 +1884,14 @@ void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
 		_uiHypocenter->_lbLatErrorAutomatic->setText(QString("+/-%1 km").arg(quantityUncertainty(origin->latitude()), 4, 'f', SCScheme.precision.uncertainties));
 	}
 	catch ( ... ) {
-		_uiHypocenter->_lbLatErrorAutomatic->setText("");
+		_uiHypocenter->_lbLatErrorAutomatic->setText(QString());
 	}
 
 	try {
 		_uiHypocenter->_lbLongErrorAutomatic->setText(QString("+/-%1 km").arg(quantityUncertainty(origin->longitude()), 4, 'f', SCScheme.precision.uncertainties));
 	}
 	catch ( ... ) {
-		_uiHypocenter->_lbLongErrorAutomatic->setText("");
+		_uiHypocenter->_lbLongErrorAutomatic->setText(QString());
 	}
 
 	try {
@@ -1930,7 +1942,7 @@ void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
 		_uiHypocenter->_lbAgencyAutomatic->setText(origin->creationInfo().agencyID().c_str());
 	}
 	catch ( ... ) {
-		_uiHypocenter->_lbAgencyAutomatic->setText("");
+		_uiHypocenter->_lbAgencyAutomatic->setText(QString());
 	}
 }
 
@@ -2037,25 +2049,25 @@ void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
 			_uiHypocenter->labelLatitudeError->setText(QString("+/-%1 km").arg(quantityUncertainty(derivedOrigin->latitude()), 4, 'f', SCScheme.precision.depth));
 		}
 		catch ( ... ) {
-			_uiHypocenter->labelLatitudeError->setText("");
+			_uiHypocenter->labelLatitudeError->setText(QString());
 		}
 
 		try {
 			_uiHypocenter->labelLongitudeError->setText(QString("+/-%1 km").arg(quantityUncertainty(derivedOrigin->longitude()), 4, 'f', SCScheme.precision.depth));
 		}
 		catch ( ... ) {
-			_uiHypocenter->labelLongitudeError->setText("");
+			_uiHypocenter->labelLongitudeError->setText(QString());
 		}
 		
 		try { // depth error
 			double err_z = quantityUncertainty(derivedOrigin->depth());
 			if (err_z == 0.0)
-				_uiHypocenter->labelDepthError->setText(QString("  fixed"));
+				_uiHypocenter->labelDepthError->setText("  fixed");
 			else
 				_uiHypocenter->labelDepthError->setText(QString("+/-%1 km").arg(err_z, 4, 'f', SCScheme.precision.depth));
 		}
 		catch ( ... ) {
-			_uiHypocenter->labelDepthError->setText(QString(""));
+			_uiHypocenter->labelDepthError->setText(QString());
 		}
 
 		try { // depth
@@ -2064,9 +2076,9 @@ void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
 
 		}
 		catch ( ... ) {
-			_uiHypocenter->labelDepth->setText(QString("---"));
-			_uiHypocenter->labelDepthUnit->setText("");
-			_uiHypocenter->labelDepthError->setText(QString(""));
+			_uiHypocenter->labelDepth->setText("---");
+			_uiHypocenter->labelDepthUnit->setText(QString());
+			_uiHypocenter->labelDepthError->setText(QString());
 		}
 
 		try {
@@ -2102,11 +2114,11 @@ void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
 	}
 	else {
 		_uiHypocenter->labelLatitude->setText("---.--");
-		_uiHypocenter->labelLatitudeUnit->setText("");
+		_uiHypocenter->labelLatitudeUnit->setText(QString());
 		_uiHypocenter->labelLongitude->setText("---.--");
-		_uiHypocenter->labelLongitudeUnit->setText("");
+		_uiHypocenter->labelLongitudeUnit->setText(QString());
 		_uiHypocenter->labelDepth->setText("---");
-		_uiHypocenter->labelDepthUnit->setText("");
+		_uiHypocenter->labelDepthUnit->setText(QString());
 		_uiHypocenter->labelPhases->setText("-");
 		_uiHypocenter->labelType->setText("-");
 		_uiHypocenter->labelMinDist->setText("-");
@@ -2128,11 +2140,11 @@ void EventSummaryView::clearAutomaticFMParameter() {
 	_uiHypocenter->labelMwAutomatic->setText("-");
 	_uiHypocenter->labelMomentAutomatic->setText("-");
 	_uiHypocenter->labelLatitudeAutomatic->setText("---.--");
-	_uiHypocenter->labelLatitudeUnitAutomatic->setText("");
+	_uiHypocenter->labelLatitudeUnitAutomatic->setText(QString());
 	_uiHypocenter->labelLongitudeAutomatic->setText("---.--");
-	_uiHypocenter->labelLongitudeUnitAutomatic->setText("");
+	_uiHypocenter->labelLongitudeUnitAutomatic->setText(QString());
 	_uiHypocenter->labelDepthAutomatic->setText("---");
-	_uiHypocenter->labelDepthUnitAutomatic->setText("");
+	_uiHypocenter->labelDepthUnitAutomatic->setText(QString());
 	_uiHypocenter->labelPhasesAutomatic->setText("-");
 	_uiHypocenter->labelTypeAutomatic->setText("-");
 }
@@ -2251,25 +2263,25 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 			_uiHypocenter->labelLatitudeErrorAutomatic->setText(QString("+/-%1 km").arg(quantityUncertainty(derivedOrigin->latitude()), 4, 'f', SCScheme.precision.uncertainties));
 		}
 		catch ( ... ) {
-			_uiHypocenter->labelLatitudeErrorAutomatic->setText("");
+			_uiHypocenter->labelLatitudeErrorAutomatic->setText(QString());
 		}
 
 		try {
 			_uiHypocenter->labelLongitudeErrorAutomatic->setText(QString("+/-%1 km").arg(quantityUncertainty(derivedOrigin->longitude()), 4, 'f', SCScheme.precision.uncertainties));
 		}
 		catch ( ... ) {
-			_uiHypocenter->labelLongitudeErrorAutomatic->setText("");
+			_uiHypocenter->labelLongitudeErrorAutomatic->setText(QString());
 		}
 		
 		try { // depth error
 			double err_z = quantityUncertainty(derivedOrigin->depth());
 			if (err_z == 0.0)
-				_uiHypocenter->labelDepthErrorAutomatic->setText(QString("  fixed"));
+				_uiHypocenter->labelDepthErrorAutomatic->setText("  fixed");
 			else
 				_uiHypocenter->labelDepthErrorAutomatic->setText(QString("+/-%1 km").arg(err_z, 4, 'f', SCScheme.precision.uncertainties));
 		}
 		catch ( ... ) {
-			_uiHypocenter->labelDepthErrorAutomatic->setText(QString(""));
+			_uiHypocenter->labelDepthErrorAutomatic->setText(QString());
 		}
 
 		try { // depth
@@ -2278,9 +2290,9 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 
 		}
 		catch ( ... ) {
-			_uiHypocenter->labelDepthAutomatic->setText(QString("---"));
-			_uiHypocenter->labelDepthUnitAutomatic->setText("");
-			_uiHypocenter->labelDepthErrorAutomatic->setText(QString(""));
+			_uiHypocenter->labelDepthAutomatic->setText("---");
+			_uiHypocenter->labelDepthUnitAutomatic->setText(QString());
+			_uiHypocenter->labelDepthErrorAutomatic->setText(QString());
 		}
 
 		try {
@@ -2317,11 +2329,11 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 	}
 	else {
 		_uiHypocenter->labelLatitudeAutomatic->setText("---.--");
-		_uiHypocenter->labelLatitudeUnitAutomatic->setText("");
+		_uiHypocenter->labelLatitudeUnitAutomatic->setText(QString());
 		_uiHypocenter->labelLongitudeAutomatic->setText("---.--");
-		_uiHypocenter->labelLongitudeUnitAutomatic->setText("");
+		_uiHypocenter->labelLongitudeUnitAutomatic->setText(QString());
 		_uiHypocenter->labelDepthAutomatic->setText("---");
-		_uiHypocenter->labelDepthUnitAutomatic->setText("");
+		_uiHypocenter->labelDepthUnitAutomatic->setText(QString());
 		_uiHypocenter->labelPhasesAutomatic->setText("-");
 		_uiHypocenter->labelTypeAutomatic->setText("-");
 		_uiHypocenter->labelMinDistAutomatic->setText("-");
@@ -2552,22 +2564,22 @@ void EventSummaryView::clearMagnitudeParameter(){
 		_magList->addMag(*it, false, true);
 	}
 
-	_ui->_lbPreMagType->setText("");
-	_ui->_lbPreMagVal->setText("");
+	_ui->_lbPreMagType->setText(QString());
+	_ui->_lbPreMagVal->setText(QString());
 }
 
 
 void EventSummaryView::clearOriginParameter(){
-	_ui->labelDepth->setText("");
-	_uiHypocenter->_lbAgency->setText("");
-	_uiHypocenter->_lbFirstLocation->setText("");
-	_uiHypocenter->_lbThisLocation->setText("");
-	_uiHypocenter->_lbEventID->setText("");
+	_ui->labelDepth->setText(QString());
+	_uiHypocenter->_lbAgency->setText(QString());
+	_uiHypocenter->_lbFirstLocation->setText(QString());
+	_uiHypocenter->_lbThisLocation->setText(QString());
+	_uiHypocenter->_lbEventID->setText(QString());
 
 	_uiHypocenter->_lbLatitude->setText("---.--");
-	_uiHypocenter->_lbLatitudeUnit->setText("");
+	_uiHypocenter->_lbLatitudeUnit->setText(QString());
 	_uiHypocenter->_lbLongitude->setText("---.--");
-	_uiHypocenter->_lbLongitudeUnit->setText("");
+	_uiHypocenter->_lbLongitudeUnit->setText(QString());
 	_uiHypocenter->_lbDepth->setText("---");
 	_uiHypocenter->_lbDepthUnit->setText("---");
 
@@ -2583,9 +2595,9 @@ void EventSummaryView::clearOriginParameter(){
 	_ui->_lbOriginTime->setText("0000/00/00  00:00:00");
 	_ui->_lbTimeAgo->setVisible(false);
 
-	_ui->_lbRegion->setText(""); _ui->_lbRegion->setVisible(false);
-	_ui->_lbRegionExtra->setText(""); _ui->_lbRegionExtra->setVisible(false);
-	_uiHypocenter->_lbOriginStatus->setText("");
+	_ui->_lbRegion->setText(QString()); _ui->_lbRegion->setVisible(false);
+	_ui->_lbRegionExtra->setText(QString()); _ui->_lbRegionExtra->setVisible(false);
+	_uiHypocenter->_lbOriginStatus->setText(QString());
 
 	clearAutomaticOriginParameter();
 
@@ -2607,11 +2619,11 @@ void EventSummaryView::clearAutomaticOriginParameter() {
 
 	_ui->_lbOriginTimeAutomatic->setText("0000/00/00  00:00:00");
 	_uiHypocenter->_lbLatitudeAutomatic->setText("---.--");
-	_uiHypocenter->_lbLatitudeUnitAutomatic->setText("");
+	_uiHypocenter->_lbLatitudeUnitAutomatic->setText(QString());
 	_uiHypocenter->_lbLongitudeAutomatic->setText("---.--");
-	_uiHypocenter->_lbLongitudeUnitAutomatic->setText("");
+	_uiHypocenter->_lbLongitudeUnitAutomatic->setText(QString());
 	_uiHypocenter->_lbDepthAutomatic->setText("---");
-	_uiHypocenter->_lbDepthUnitAutomatic->setText("");
+	_uiHypocenter->_lbDepthUnitAutomatic->setText(QString());
 	_uiHypocenter->_lbNoPhasesAutomatic->setText("--");
 	_uiHypocenter->_lbRMSAutomatic->setText("--");
 	_uiHypocenter->_lbAzGapAutomatic->setText("--");
@@ -2619,8 +2631,8 @@ void EventSummaryView::clearAutomaticOriginParameter() {
 	_uiHypocenter->_lbLatErrorAutomatic->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
 	_uiHypocenter->_lbLongErrorAutomatic->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
 	_uiHypocenter->_lbDepthErrorAutomatic->setText(QString("+/-%1 km").arg(0.0, 6, 'f', 0));
-	_uiHypocenter->_lbOriginStatusAutomatic->setText("");
-	_uiHypocenter->_lbAgencyAutomatic->setText("");
+	_uiHypocenter->_lbOriginStatusAutomatic->setText(QString());
+	_uiHypocenter->_lbAgencyAutomatic->setText(QString());
 
 	setAutomaticMagnitudeParameter(nullptr);
 }
@@ -2728,21 +2740,27 @@ void EventSummaryView::updateTimeAgoLabel(){
 
 	QString text;
 
-	if (days>0)
+	if ( days > 0 ) {
 		text = QString("%1 days and %2 hours ago").arg(days, 0, 'd', 0, ' ').arg(hours, 0, 'd', 0, ' ');
-	else if ((days==0)&&(hours>0))
-		text = QString("%1 hours and %2 minutes ago").arg(hours, 0, 'd', 0, ' ').arg(minutes, 0, 'd', 0, ' ');
-	else if ((days==0)&&(hours==0)&&(minutes>0)) {
-		if ( _maxMinutesSecondDisplay >= 0 && minutes > _maxMinutesSecondDisplay )
-			text = QString("%1 minutes").arg(minutes, 0, 'd', 0, ' ');
-		else
-			text = QString("%1 minutes and %2 seconds ago").arg(minutes, 0, 'd', 0, ' ').arg(seconds, 0, 'd', 0, ' ');
 	}
-	else if ((days==0)&&(hours==0)&&(minutes==0)&&(seconds>0))
+	else if ( (days == 0) && (hours > 0) ) {
+		text = QString("%1 hours and %2 minutes ago").arg(hours, 0, 'd', 0, ' ').arg(minutes, 0, 'd', 0, ' ');
+	}
+	else if ( (days == 0) && (hours == 0) && (minutes > 0) ) {
+		if ( _maxMinutesSecondDisplay >= 0 && minutes > _maxMinutesSecondDisplay ) {
+			text = QString("%1 minutes").arg(minutes, 0, 'd', 0, ' ');
+		}
+		else {
+			text = QString("%1 minutes and %2 seconds ago").arg(minutes, 0, 'd', 0, ' ').arg(seconds, 0, 'd', 0, ' ');
+		}
+	}
+	else if ((days == 0) && (hours == 0) && (minutes == 0) && (seconds > 0) ) {
 		text = QString("%1 seconds ago").arg(seconds, 0, 'd', 0, ' ');
+	}
 
-	if ( text != _ui->_lbTimeAgo->text() )
+	if ( text != _ui->_lbTimeAgo->text() ) {
 		_ui->_lbTimeAgo->setText(text);
+	}
 
 	/*
 	double tsd = ts;
