@@ -109,16 +109,20 @@ ThreeComponents::ThreeComponents() {
 
 
 std::string eventRegion(const Event *ev) {
+	std::string region;
 	for ( size_t i = 0; i < ev->eventDescriptionCount(); ++i ) {
 		EventDescription *ed = ev->eventDescription(i);
 		try {
 			if ( ed->type() == REGION_NAME ) {
 				return ed->text();
 			}
+			else if ( ed->type() == FLINN_ENGDAHL_REGION ) {
+				region = ed->text();
+			}
 		}
 		catch ( ... ) {}
 	}
-	return "";
+	return region;
 }
 
 
