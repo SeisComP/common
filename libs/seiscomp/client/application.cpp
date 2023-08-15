@@ -1145,17 +1145,25 @@ bool Application::init() {
 		}
 	}
 
-	if ( !reloadInventory() )
-		return false;
+	if ( !reloadInventory() ) {
+		if ( !handleInitializationError(INVENTORY) ) {
+			return false;
+		}
+	}
 
-	if ( _exitRequested )
+	if ( _exitRequested ) {
 		return false;
+	}
 
-	if ( !reloadBindings() )
-		return false;
+	if ( !reloadBindings() ) {
+		if ( !handleInitializationError(CONFIGMODULE) ) {
+			return false;
+		}
+	}
 
-	if ( _exitRequested )
+	if ( _exitRequested ) {
 		return false;
+	}
 
 	showMessage("");
 
@@ -1204,7 +1212,9 @@ void Application::handleEndAcquisition() {}
 bool Application::reloadInventory() {
 	if ( _settings.enableLoadInventory ) {
 		if ( !_settings.database.inventoryDB.empty() ) {
-			if ( !loadInventory(_settings.database.inventoryDB) ) return false;
+			if ( !loadInventory(_settings.database.inventoryDB) ) {
+				return false;
+			}
 		}
 		else if ( _database ) {
 			if ( _query ) {
@@ -1226,7 +1236,9 @@ bool Application::reloadInventory() {
 	}
 	else if ( _settings.enableLoadStations ) {
 		if ( !_settings.database.inventoryDB.empty() ) {
-			if ( !loadInventory(_settings.database.inventoryDB) ) return false;
+			if ( !loadInventory(_settings.database.inventoryDB) ) {
+				return false;
+			}
 		}
 		else if ( _database ) {
 			if ( _query ) {
@@ -1243,8 +1255,9 @@ bool Application::reloadInventory() {
 
 		int filtered = Inventory::Instance()->filter(&_settings.networkTypeFirewall,
 		                                             &_settings.stationTypeFirewall);
-		if ( filtered > 0 )
+		if ( filtered > 0 ) {
 			SEISCOMP_INFO("Filtered %d stations by type", filtered);
+		}
 	}
 
 	return true;

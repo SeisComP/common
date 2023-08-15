@@ -1145,7 +1145,7 @@ bool Application::handleInitializationError(int stage) {
 			this->exit(1);
 		}
 		else if ( stage == LOGGING ) {
-			std::cerr << "Failed to initialize logging: check the log for more details" << std::endl;
+			std::cerr << "Failed to initialize logging" << std::endl;
 			this->exit(1);
 		}
 

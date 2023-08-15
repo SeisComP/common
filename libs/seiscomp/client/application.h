@@ -148,6 +148,8 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		enum ClientStage {
 			MESSAGING = System::Application::ST_QUANTITY,
 			DATABASE  = System::Application::ST_QUANTITY + 1,
+			CONFIGMODULE = System::Application::ST_QUANTITY + 2,
+			INVENTORY = System::Application::ST_QUANTITY + 3,
 			CST_QUANTITY
 		};
 
