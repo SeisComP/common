@@ -373,7 +373,7 @@ QVariant colAligns[ArrivalListColumns::Quantity] = {
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
-    int(Qt::AlignHCenter | Qt::AlignVCenter),
+	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
