@@ -328,8 +328,8 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 };
 
 
-}
-
-
 ADD_SC_PLUGIN("scmaster dbstore plugin", "gempa GmbH <seiscomp-dev@gempa.de>", 0, 1, 0)
 REGISTER_BROKER_MESSAGE_PROCESSOR(DBStore, "dbstore");
+
+
+}
