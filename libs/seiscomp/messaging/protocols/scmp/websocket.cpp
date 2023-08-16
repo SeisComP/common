@@ -269,10 +269,11 @@ WebsocketConnection::~WebsocketConnection() {}
 Result WebsocketConnection::connect(const char *address,
                                     unsigned int timeoutMs,
                                     const char *clientName) {
+	boost::mutex::scoped_lock lwrite(_writeMutex);
+
 	{
 
 	boost::mutex::scoped_lock lread(_readMutex);
-	boost::mutex::scoped_lock lwrite(_writeMutex);
 
 	_extendedParameters = KeyValueStore();
 	_state = State();
@@ -1091,8 +1092,6 @@ void WebsocketConnection::waitForAck() {
 Result WebsocketConnection::flushBacklog() {
 	SEISCOMP_INFO("Want to flush %d backlog messages", int(_backlog.size()));
 	while ( !_backlog.empty() ) {
-		boost::mutex::scoped_lock l(_writeMutex);
-
 		// Backlog messages are always binary frames
 		Result r = send(_backlog.front().get(), WSFrame::BinaryFrame, true);
 		if ( r != OK ) {
