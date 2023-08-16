@@ -103,7 +103,10 @@
 							<parameter name="travelTimeError" type="double" unit="s" default="0.25">
 								<description>
 									Typical error in seconds for travel-time to one station. This
-									value affects the uncertainty of the location.
+									value affects the uncertainty of the location. In OctTree it also
+									influences the probability density computation: a too conservative value
+									increases the number of iterations required by OctTree to converge to a
+									high resolution solution.
 								</description>
 							</parameter>
 						</group>
