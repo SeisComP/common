@@ -64,7 +64,16 @@
 			<group name="Output">
 				<option flag="o" long-flag="output" argument="arg">
 					<description>
-					If given, an output XML file is generated.
+					If given, an output XML file is generated. Use '-' for
+					stdout.
+					</description>
+				</option>
+				<option long-flag="create-notifier">
+					<description>
+					If given then a notifier message containing all notifiers
+					will be written to the output XML. This option only applies
+					if an output file is given. Notifier creation either requires
+					and input database and an input config XML as reference.
 					</description>
 				</option>
 			</group>
