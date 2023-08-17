@@ -1,11 +1,22 @@
-scconfig is a graphical user interface which allows to configure all SeisComP
-modules for which descriptions are provided.
+scconfig is a graphical user interface which allows to
+
+* Retrieve :ref:`information <scconfig-information>` about the installed |scname|
+  system,
+* :ref:`Control modules <scconfig-system>` and access logging file,
+* :ref:`Import, check, synchronize and remove <scconfig-inventory>` station meta
+  data/inventory,
+* Configure the :ref:`module configuration <scconfig-modules>` and
+  :ref:`bindings <scconfig-bindings>` all SeisComP modules for which descriptions
+  are provided,
+* Access the :ref:`documentation and the changelog <scconfig-documentation>`.
 
 The modules are usually programs part of the SeisComP system and have two
 distinct types of configuration:
 
-1. Modules configuration, or just program configuration (like the :file:`scautopick.cfg` file).
-2. Station bindings, that are set of parameters to configure how the module will treat a certain station. I.e. Station specific configurations per module.
+#. :ref:`Modules configuration <scconfig-modules>`, or just program configuration like the
+   :file:`scautopick.cfg` file.
+#. :ref:`Station bindings <scconfig-modules>`, that are set of parameters to configure how the module will
+   treat a certain station. I.e. Station specific configurations per module.
 
 The bindings configuration can be done using profiles, or directly per station.
 
@@ -75,6 +86,7 @@ is selected.
 
 .. figure:: media/scconfig/mainwindow.*
    :align: center
+   :width: 18cm
 
    Main window of scconfig: mode switch (red), panel selection (yellow),
    panel title and description (green),
@@ -95,6 +107,7 @@ configuration (:guilabel:`Save`) and to close the configuration (:guilabel:`Quit
 
 The edit menu allows to switch the current configuration mode. Pressing the
 switch button in the upper left corner (red box) is a shortcut for this operation.
+
 
 .. _scconfig-information:
 
@@ -120,6 +133,7 @@ The system panel is a graphical frontend for the :ref:`seiscomp <system-manageme
 
 .. figure:: media/scconfig/system-overview.*
    :align: center
+   :width: 18cm
 
 It is divided into 3 parts: the toolbar on the top (red), the module list (green)
 and the log window (blue).
@@ -163,20 +177,37 @@ without any module.
  module configuration or bindings have changed and before restarting the
  affected modules.
 
+For applying an action to all modules deselect any modules selection pressing
+:kbd:`ESC` and press the corresponding action button. When one ore multiple
+modules are selected, the action is only applied to those.
+
+
+To open the most recent log files of modules right click on the module name and
+select the available log.
+
+.. figure:: media/scconfig/system-start.png
+   :align: center
+   :width: 18cm
+
 
 .. _scconfig-inventory:
 
 Inventory panel
 ---------------
 
-The inventory panel allows to import and synchronize inventory files. It shows
+The inventory panel allows to import, check and synchronize inventory files as
+well as to inspect the content or to rename or remove the files. The panel shows
 a list of inventory XML files located in folder :file:`etc/inventory`. Only
-SeisComP XML files be used as source for inventory data but various importers
+:term:`SCML` files can be used as source for inventory data but various importers
 exist to integrate inventory data from other formats. After the first start
 the list is empty and contains only a README file.
 
 .. figure:: media/scconfig/inventory-empty.*
    :align: center
+   :width: 18cm
+
+Importing station meta data is outlined in the
+:ref:`tutorial on adding a station <tutorials_addstation>`.
 
 One source of importing inventory information is ArcLink as run at
 http://www.webdc.eu. After downloading the inventory XML file from ArcLink it
@@ -200,13 +231,35 @@ the import output.
 .. figure:: media/scconfig/inventory-import-finished.*
    :align: center
 
-After closing the popup the new file will show up in the list.
+After closing the popup the imported inventory file will show up in the list of
+files. Selecting a files by right-clicking allows:
+
+* Renaming,
+* Deleting,
+* Inspecting the content of
+
+the file.
 
 .. figure:: media/scconfig/inventory-arclink.*
    :align: center
+   :width: 18cm
 
 
-The toolbar support 3 additional actions:
+The toolbar support 4 additional actions:
+
+*Check inventory*
+ The inventory is checked for issues including inconsistencies wich are reported.
+ The tests are based on :ref:`scinv` and listed in the documentation of this
+ module. Adjust sensitivity by configuring :ref:`scinv`.
+
+*Sync keys*
+ This action is part of sync but can be called also standalone. It merges all
+ inventory XML files and creates key files in :file:`etc/key/station_*` if a
+ key file does not yet exist. Existing key files are not touched unless the
+ station is not part of the inventory anymore.
+
+ As a result, all stations in inventory will have a corresponding key file and
+ each key file will have a corresponding station in inventory.
 
 *Test sync*
  The inventory XML files are not used directly with SeisComP. They need to
@@ -226,16 +279,6 @@ The toolbar support 3 additional actions:
  Almost identical to *Test sync* but it does send updates to the database and
  additionally synchronizes key files and resource files.
 
-*Sync keys*
- This action is part of sync but can be called also standalone. It merges all
- inventory XML files and creates key files in :file:`etc/key/station_*` if a
- key file does not yet exist. Existing key files are not touched unless the
- station is not part of the inventory anymore.
-
- As a result, all stations in inventory will have a corresponding key file and
- each key file will have a corresponding station in inventory.
-
-
 *Sync* and *Sync keys* will cause a reload of the configuration to refresh the
 current binding tree (see :ref:`scconfig-bindings`).
 
@@ -249,6 +292,7 @@ The modules panel allows configuration of all registered modules.
 
 .. figure:: media/scconfig/modules-overview.*
    :align: center
+   :width: 18cm
 
 The left/green part shows the list of available modules grouped by defined
 categories and the right/blue part shows the current active module configuration.
@@ -261,13 +305,31 @@ section :ref:`scconfig-editing` for further information about the content panel.
 Bindings panel
 --------------
 
-The binding panel configures a station for a module.
+The binding panel configures a station for a module providing station-specific
+configuration such as data acquisition or processing. You may configure station
+bindings or binding profiles. The profiles are typically applied to a set of
+station. Any change in the profile parameters apply to all stations bound to it.
+
+.. hint::
+
+   Working with :ref:`bindings profiles <scconfig-bindings-profile>` allows to
+   maintain a single set of binding parameters for one or multiple stations.
+   :ref:`Station bindings <scconfig-bindings-station>` are useful if a set of
+   binding parameters are applied only to a single station. Otherwise configure
+   :ref:`binding profiles <scconfig-bindings-profile>`.
+   :ref:`Profiles <scconfig-bindings-profile>` are therefore preferred over
+   :ref:`station bindings <scconfig-bindings-station>` unless only one single
+   station shall be configured.
 
 .. figure:: media/scconfig/modules-binding.*
    :align: center
+   :width: 18cm
 
-It is separated into 3 main areas: the station tree (red + orange), the
-binding content (green) and the module tree (blue + magenta).
+The binding panel is separated into 3 main areas:
+
+* the station tree (red + orange),
+* the binding content (green),
+* the module tree (blue + magenta).
 
 The station tree (red) shows a tree of all available networks and their
 stations. Each stations contains nodes of its configured bindings. The lower
@@ -283,6 +345,41 @@ The upper/blue window contains the modules and all available binding profiles
 for each module and the lower/magenta part shows all binding profiles of the
 currently selected module. This view is used to add new profiles and delete
 existing profiles.
+
+
+.. _scconfig-bindings-profile:
+
+Profiles
+^^^^^^^^
+
+Create a profile
+~~~~~~~~~~~~~~~~
+
+For creating a binding profile select a module in the module tree (blue area)
+and right-click on the module or select the "add" button in the lower (magenta)
+panel. Provide a descriptive name. Clicking on the name of the profile opens the
+profile allowing to adjust the parameters.
+
+.. figure:: media/scconfig/modules-profiles.png
+   :align: center
+   :width: 18cm
+
+
+Create bindings
+~~~~~~~~~~~~~~~
+
+Assigning a binding profile to one or more stations creates one or more bindings.
+To assign a binding profile to a single station, a single network including all
+stations or all networks drag a profile from the right part (blue or magenta)
+to the target in the left part (red or orange).
+
+For assigning to a set of stations/networks, select the target first by mouse
+click and then drag to profile onto the selection.
+
+It is also possible to drag and drop multiple profiles with one action.
+
+
+.. _scconfig-bindings-station:
 
 Station bindings
 ^^^^^^^^^^^^^^^^
@@ -307,23 +404,35 @@ profile will be converted into a station binding and activated for editing.
    :align: center
 
 
-Profiles
-^^^^^^^^
+Applying bindings
+^^^^^^^^^^^^^^^^^
 
-To assign a binding profile to a station, a network or a set of stations/networks,
-drag a profile from the right part (blue or magenta) to the left part (red or
-orange). It is also possible to drag and drop multiple profiles with one action.
+The bindings parameters must be additionally written to the database or as for a
+:term:`standalone module` converted to the specific module configuration by
+updating the configuration. You may update configuration for all modules or just
+the specific one. To this end, change to the
+:ref:`System panel <scconfig-system>` select the specific module or none and
+press the button "*Update configuration*".
+
+Alternatively, execute the :ref:`seiscomp` script on the command line or all or
+the specific module:
+
+.. code-block:: sh
+
+   seiscomp update-config
+   seiscomp update-config module
 
 
 .. _scconfig-editing:
 
-Editing
--------
+Editing parameters
+------------------
 
 The content panel of a configuration is organized as a tree. Each module/binding
 name is a toplevel item and all namespace are titles of collapsible sections.
-Namespaces are separated by dot in the configuration file, e.g.: scautopick.cfg
-which also reads global.cfg would end up in a tree like this:
+Namespaces are separated by dot in the configuration file, e.g.
+:file:`scautopick.cfg which also reads :file:`global.cfg would end up in a tree
+like this:
 
 .. code-block:: sh
 
@@ -355,6 +464,7 @@ panel.
 
 .. figure:: media/scconfig/modules-global.*
    :align: center
+   :width: 18cm
 
    Content panel layout
 
@@ -385,7 +495,21 @@ and will color the input widget red in such situations.
 
 .. figure:: media/scconfig/config-warning.*
    :align: center
+   :width: 18cm
 
 The value in the edit widget will show the currently configured value in the
 active configuration file but the tooltip will show the evaluated value, the
 location of the definition and a warning.
+
+
+.. _scconfig-documentation:
+
+Documentation and changelog
+---------------------------
+
+Access the documentation and the changelog of any installad package from the
+Docs panel.
+
+.. figure:: media/scconfig/documentation.png
+   :align: center
+   :width: 18cm
