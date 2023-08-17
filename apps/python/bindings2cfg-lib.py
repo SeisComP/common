@@ -233,8 +233,8 @@ Dump global and module bindings configurations"""
 Write bindings configuration from key directory to a configuration XML file:
   bindings2cfg --key-dir ./etc/key -o config.xml
 
-Write bindings configuration from key directory to the seiscomp local database
-  bindings2cfg --key-dir ./etc/key -d mysql://sysop:sysop@localhost/seiscomp
+Synchronize bindings configuration from key directory to a processing system
+  bindings2cfg --key-dir ./etc/key -H proc
 """
         )
 
