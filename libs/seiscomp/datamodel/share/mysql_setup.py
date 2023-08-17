@@ -34,7 +34,8 @@ def createMYSQLDB(
         rwhost,
         rootpwd,
         drop,
-        schemapath):
+        schemapath,
+        characterset):
     cmd = "mysql -u root -h " + rwhost
     if rootpwd:
         cmd += " -p" + rootpwd
@@ -61,7 +62,15 @@ def createMYSQLDB(
 
     write("  + Create database  {}".format(db))
 
-    q = "CREATE DATABASE \`{}\` CHARACTER SET utf8 COLLATE utf8_bin;".format(db)
+    q = "CREATE DATABASE \`{}\`".format(db)
+    if characterset is not None:
+        q += " CHARACTER SET "
+        if characterset == "utf8":
+            q += "utf8 COLLATE utf8_bin"
+        else:
+            q += characterset
+    q += ";"
+
     res = execute(cmd + " -e \"{}\"".format(q))
     if res.error:
         print("  + {}".format(res.error))
@@ -125,9 +134,9 @@ def createMYSQLDB(
     return True
 
 def main():
-    if len(sys.argv) != 10:
+    if len(sys.argv) < 10 or len(sys.argv) > 11:
         print("Usage: mysql_setup.py <db> <rwuser> <rwpwd> <rouser> <ropwd> "
-              "<rwhost> <mysql rootpwd> <drop> <schema path>\n\n"
+              "<rwhost> <mysql rootpwd> <drop> <schema path> <characterset>\n\n"
               "For example: mysql_setup.py seiscomp sysop sysop sysop sysop "
               "localhost <password> false ~/seiscomp/share/db/")
         return 1
@@ -140,11 +149,15 @@ def main():
     rwhost = sys.argv[6]
     rootpwd = sys.argv[7]
     schemapath = sys.argv[9]
+    if len(sys.argv) > 10:
+        characterset = sys.argv[10]
+    else:
+        characterset = "utf8mb4"
 
     drop = sys.argv[8].lower() == 'true'
 
     os.chdir(tempfile.gettempdir())
-    if not createMYSQLDB(db, rwuser, rwpwd, rouser, ropwd, rwhost, rootpwd, drop, schemapath):
+    if not createMYSQLDB(db, rwuser, rwpwd, rouser, ropwd, rwhost, rootpwd, drop, schemapath, characterset):
         return 1
 
     return 0

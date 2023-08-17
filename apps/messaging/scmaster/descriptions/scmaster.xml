@@ -277,6 +277,18 @@
 											already exists.
 											</description>
 										</input>
+										<input name="characterset" type="string" default="utf8mb4">
+											<text>Character set</text>
+											<description>
+											Selects the database character set which defaults to
+											the fully compatible &quot;utf8mb4&quot;
+											format. As this format is not supported
+											by older MySQL or MariaDB versions, select
+											&quot;utf8&quot; as fallback.
+											</description>
+											<option value="utf8mb4"/>
+											<option value="utf8"/>
+										</input>
 									</option>
 									<option value="false"/>
 								</input>

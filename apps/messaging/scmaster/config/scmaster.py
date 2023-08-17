@@ -258,6 +258,13 @@ class Module(kernel.CoreModule):
                 except ValueError:
                     runAsSuperUser = False
 
+                try:
+                    characterSet = setup_config.getString(
+                        self.name + ".database.enable.backend.create.characterset"
+                    )
+                except ValueError:
+                    characterSet = None
+
                 params = DBParams()
                 if not self.readDBParams(params, setup_config):
                     return 1
@@ -286,8 +293,10 @@ class Module(kernel.CoreModule):
                         params.rwhost,
                         rootpwd,
                         str(params.drop),
-                        schemapath,
+                        schemapath
                     ]
+                    if characterSet is not None:
+                        options.append(characterSet)
 
                     binary = os.path.join(schemapath, "pkexec_wrapper.sh")
                     print(
