@@ -96,7 +96,8 @@ class ConfigDBUpdater(seiscomp.client.Application):
         self.setConfigModuleName("")
         self.setPrimaryMessagingGroup(seiscomp.client.Protocol.LISTENER_GROUP)
 
-        self._outputFile = ""
+        self._outputFile = None
+        self._createNotifier = False
         self._keyDir = None
 
     def createCommandLineDescription(self):
@@ -110,6 +111,12 @@ class ConfigDBUpdater(seiscomp.client.Application):
         self.commandline().addStringOption(
             "Output", "output,o", "If given, an output XML file is generated"
         )
+        self.commandline().addOption(
+            "Output", "create-notifier", "If given then a notifier message containing all notifiers "
+            "will be written to the output XML. This option only applies "
+            "if an output file is given. Notifier creation either requires "
+            "and input database and an input config XML as reference."
+        )
 
     def validateParameters(self):
         if not seiscomp.client.Application.validateParameters(self):
@@ -117,10 +124,15 @@ class ConfigDBUpdater(seiscomp.client.Application):
 
         try:
             self._outputFile = self.commandline().optionString("output")
+            self._createNotifier = self.commandline().hasOption("create-notifier")
             # Switch to offline mode
             self.setMessagingEnabled(False)
             self.setDatabaseEnabled(False, False)
-            self.setLoadConfigModuleEnabled(False)
+            if self._createNotifier:
+                if self.isConfigDatabaseEnabled() == True:
+                    self.setDatabaseEnabled(True, False);
+            else:
+                self.setLoadConfigModuleEnabled(False)
         except:
             pass
 
@@ -264,7 +276,7 @@ Synchronize bindings configuration from key directory to a processing system
         configMod = None
         obsoleteConfigMods = []
 
-        if not self._outputFile:
+        if self._outputFile is None or self._createNotifier == True:
             moduleName = self.name()
             seiscomp.datamodel.Notifier.Enable()
         else:
@@ -457,7 +469,7 @@ Synchronize bindings configuration from key directory to a processing system
                 i = i + 1
 
         # Generate output file and exit if configured
-        if self._outputFile:
+        if self._outputFile is not None:
             ar = seiscomp.io.XMLArchive()
             if not ar.create(self._outputFile):
                 print(
@@ -467,7 +479,11 @@ Synchronize bindings configuration from key directory to a processing system
                 return False
 
             ar.setFormattedOutput(True)
-            ar.writeObject(config)
+            if self._createNotifier:
+                nmsg = seiscomp.datamodel.Notifier.GetMessage(True)
+                ar.writeObject(nmsg)
+            else:
+                ar.writeObject(config)
             ar.close()
             return True
 
