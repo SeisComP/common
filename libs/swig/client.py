@@ -1146,6 +1146,10 @@ class Application(seiscomp.system.SystemApplication):
     
     DATABASE = _client.Application_DATABASE
     
+    CONFIGMODULE = _client.Application_CONFIGMODULE
+    
+    INVENTORY = _client.Application_INVENTORY
+    
     CST_QUANTITY = _client.Application_CST_QUANTITY
     
 

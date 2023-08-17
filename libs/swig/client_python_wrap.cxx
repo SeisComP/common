@@ -36746,6 +36746,8 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "Notification_StateOfHealth",SWIG_From_int(static_cast< int >(Seiscomp::Client::Notification::StateOfHealth)));
   SWIG_Python_SetConstant(d, "Application_MESSAGING",SWIG_From_int(static_cast< int >(Seiscomp::Client::Application::MESSAGING)));
   SWIG_Python_SetConstant(d, "Application_DATABASE",SWIG_From_int(static_cast< int >(Seiscomp::Client::Application::DATABASE)));
+  SWIG_Python_SetConstant(d, "Application_CONFIGMODULE",SWIG_From_int(static_cast< int >(Seiscomp::Client::Application::CONFIGMODULE)));
+  SWIG_Python_SetConstant(d, "Application_INVENTORY",SWIG_From_int(static_cast< int >(Seiscomp::Client::Application::INVENTORY)));
   SWIG_Python_SetConstant(d, "Application_CST_QUANTITY",SWIG_From_int(static_cast< int >(Seiscomp::Client::Application::CST_QUANTITY)));
 #if PY_VERSION_HEX >= 0x03000000
   return m;
