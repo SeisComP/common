@@ -215,8 +215,8 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 				double ar = _statistics.removedObjects / elapsed;
 				double ae = _statistics.errors / elapsed;
 
-				SEISCOMP_INFO("DBPLUGIN (aps,ups,dps,errors) %.2f %.2f %.2f %.2f",
-				              aa, au, ar, ae);
+				SEISCOMP_DEBUG("DBPLUGIN (aps,ups,dps,errors) %.2f %.2f %.2f %.2f",
+				               aa, au, ar, ae);
 
 				_stopWatch.restart();
 				_statistics.addedObjects =
