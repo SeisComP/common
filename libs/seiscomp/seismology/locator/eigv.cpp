@@ -17,10 +17,12 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <limits>
-using namespace std;
 #include "eigv.h"
+
+
+using namespace std;
 
 
 //****************************************************************************80
@@ -330,8 +332,8 @@ double pythag ( double a, double b )
   double t;
   double u;
 
-  if ( !std::isfinite(a) || !std::isfinite(b) ) {
-     return std::numeric_limits<double>::quiet_NaN();
+  if ( !isfinite(a) || !isfinite(b) ) {
+    return numeric_limits<double>::quiet_NaN();
   }
 
   p = r8_max ( r8_abs ( a ), r8_abs ( b ) );
