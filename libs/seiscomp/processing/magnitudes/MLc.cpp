@@ -287,7 +287,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 	}
 
 	SEISCOMP_DEBUG("  + %s distance: %.5f deg",
-	               distanceMode, Math::Geo::km2deg(distanceKm));
+	               distanceMode.c_str(), Math::Geo::km2deg(distanceKm));
 
 	double correction;
 	SEISCOMP_DEBUG("  + calibration type: %s", calibrationType.c_str());
