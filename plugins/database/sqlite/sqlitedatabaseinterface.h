@@ -39,54 +39,58 @@ class SQLiteDatabase : public Seiscomp::IO::DatabaseInterface {
 	//  Xstruction
 	// ------------------------------------------------------------------
 	public:
-		SQLiteDatabase();
-		~SQLiteDatabase();
+		SQLiteDatabase() = default;
+		~SQLiteDatabase() override;
 
 
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		virtual bool connect(const char *con) override;
-		virtual void disconnect() override;
+		bool connect(const char *con) override;
+		void disconnect() override;
 
-		virtual bool isConnected() const override;
+		bool isConnected() const override;
 
-		virtual void start() override;
-		virtual void commit() override;
-		virtual void rollback() override;
+		void start() override;
+		void commit() override;
+		void rollback() override;
 
-		virtual bool execute(const char* command) override;
-		virtual bool beginQuery(const char* query) override;
-		virtual void endQuery() override;
+		bool execute(const char* command) override;
+		bool beginQuery(const char* query) override;
+		void endQuery() override;
 
-		virtual const char *defaultValue() const override;
-		virtual OID lastInsertId(const char*) override;
-		virtual uint64_t numberOfAffectedRows();
+		const char *defaultValue() const override;
+		OID lastInsertId(const char*) override;
+		uint64_t numberOfAffectedRows() override;
 
-		virtual bool fetchRow() override;
-		virtual int findColumn(const char* name) override;
-		virtual int getRowFieldCount() const override;
-		virtual const char *getRowFieldName(int index) override;
-		virtual const void *getRowField(int index) override;
-		virtual size_t getRowFieldSize(int index) override;
-		virtual bool escape(std::string &out, const std::string &in) override;
+		bool fetchRow() override;
+		int findColumn(const char* name) override;
+		int getRowFieldCount() const override;
+		const char *getRowFieldName(int index) override;
+		const void *getRowField(int index) override;
+		size_t getRowFieldSize(int index) override;
+		bool escape(std::string &out, const std::string &in) override;
 
 
 	// ------------------------------------------------------------------
 	//  Protected interface
 	// ------------------------------------------------------------------
 	protected:
-		bool open();
+		bool handleURIParameter(const std::string &name,
+		                        const std::string &value) override;
+		bool open() override;
+
+		uint16_t _debugUMask{0};
 
 
 	// ------------------------------------------------------------------
 	//  Implementation
 	// ------------------------------------------------------------------
 	private:
-		sqlite3      *_handle;
-		sqlite3_stmt *_stmt;
-		int           _columnCount;
+		sqlite3      *_handle{nullptr};
+		sqlite3_stmt *_stmt{nullptr};
+		int           _columnCount{0};
 };
 
 

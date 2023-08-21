@@ -25,13 +25,74 @@
 #include "sqlitedatabaseinterface.h"
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/plugin.h>
+#include <seiscomp/core/strings.h>
 #include <seiscomp/system/environment.h>
 
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
+#include <vector>
+
+using namespace std;
 
 namespace Seiscomp {
 namespace Database {
+
+namespace {
+
+// http://www.sqlite.org/c3ref/trace_v2.html
+int sqliteCallbackFunc(unsigned T, void *C, void *P, void *X) {
+	switch (T) {
+		case SQLITE_TRACE_STMT: {
+			auto *sql = static_cast<char *>(X);
+			if ( strncmp(sql, "--", strlen(sql)) == 0 ) {
+				SEISCOMP_DEBUG("[stmt] Execute trigger with comment: %s", sql);
+			}
+			else {
+				sqlite3_stmt *pStmt = static_cast<sqlite3_stmt*>(P);
+				SEISCOMP_DEBUG("[stmt] %s", sqlite3_expanded_sql(pStmt));
+			}
+			break;
+		}
+		case SQLITE_TRACE_PROFILE: {
+			auto *ns = static_cast<uint64_t *>(X);
+			sqlite3_stmt *pStmt = static_cast<sqlite3_stmt*>(P);
+			SEISCOMP_DEBUG("[profile] %.6gs to execute: %s",
+			               static_cast<float>(*ns * 1E-9),
+			               sqlite3_expanded_sql(pStmt));
+			break;
+		}
+		case SQLITE_TRACE_ROW: {
+			sqlite3_stmt *pStmt = static_cast<sqlite3_stmt*>(P);
+			auto cols = sqlite3_data_count(pStmt);
+			if ( cols) {
+				stringstream ss;
+				for ( int i = 0; i < cols; ++i ) {
+					ss << sqlite3_column_text(pStmt, i);
+					if ( i ) {
+						ss << "\t";
+					}
+				}
+				SEISCOMP_DEBUG("[row] %s", ss.str().c_str());
+			}
+			else {
+				SEISCOMP_DEBUG("[row] <empty>");
+			}
+			break;
+		}
+		case SQLITE_TRACE_CLOSE: {
+			SEISCOMP_DEBUG("[closed]");
+			break;
+		}
+		default:
+			SEISCOMP_WARNING("[sqlite] Unsupported trace callback type: %u", T);
+			break;
+	}
+
+	return 0;
+}
+
+} // ns anonymous
 
 
 IMPLEMENT_SC_CLASS_DERIVED(SQLiteDatabase,
@@ -39,16 +100,9 @@ IMPLEMENT_SC_CLASS_DERIVED(SQLiteDatabase,
                            "sqlite3_database_interface");
 
 REGISTER_DB_INTERFACE(SQLiteDatabase, "sqlite3");
-ADD_SC_PLUGIN("SQLite3 database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 0, 9, 0)
-
-SQLiteDatabase::SQLiteDatabase()
-: _handle(NULL), _stmt(NULL), _columnCount(0) {}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ADD_SC_PLUGIN("SQLite3 database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 1, 0, 0)
 
 
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SQLiteDatabase::~SQLiteDatabase() {
 	disconnect();
 }
@@ -58,13 +112,37 @@ SQLiteDatabase::~SQLiteDatabase() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool SQLiteDatabase::handleURIParameter(const std::string &name,
+                                        const std::string &value) {
+	if ( !DatabaseInterface::handleURIParameter(name, value) ) {
+		return false;
+	}
+
+	if ( name == "debug" && value != "0" && value != "false" ) {
+		if ( value.empty() || value == "true" ) {
+			_debugUMask = SQLITE_TRACE_STMT;
+		}
+		else if ( !Core::fromString(_debugUMask, value) ) {
+			SEISCOMP_ERROR("Invalid debug value: %s", value.c_str());
+			return false;
+		}
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SQLiteDatabase::open() {
-	std::string uri(_host);
+	string uri(_host);
 	if ( uri != ":memory:" ) {
 		uri = Environment::Instance()->absolutePath(_host);
 
-		FILE *fp = fopen(uri.c_str(), "rb");
-		if ( fp == NULL ) {
+		auto *fp = fopen(uri.c_str(), "rb");
+		if ( !fp ) {
 			SEISCOMP_ERROR("databasefile '%s' not found", uri.c_str());
 			return false;
 		}
@@ -78,6 +156,10 @@ bool SQLiteDatabase::open() {
 		return false;
 	}
 
+	if ( _debugUMask ) {
+		sqlite3_trace_v2(_handle, _debugUMask, &sqliteCallbackFunc, nullptr);
+	}
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -89,6 +171,25 @@ bool SQLiteDatabase::open() {
 bool SQLiteDatabase::connect(const char *con) {
 	_host = con;
 	_columnPrefix = "";
+
+	string params;
+	size_t pos = _host.find('?');
+	if ( pos != string::npos ) {
+		params = _host.substr(pos+1);
+		_host.erase(_host.begin() + pos, _host.end());
+
+		vector<string> tokens;
+		Core::split(tokens, params.c_str(), "&");
+		for ( auto &token : tokens) {
+			vector<string> param;
+			Core::split(param, token.c_str(), "=");
+			if ( ( param.size() == 1 && !handleURIParameter(param[0], "") ) ||
+			     ( param.size() == 2 && !handleURIParameter(param[0], param[1]) ) ) {
+				return false;
+			}
+		}
+	}
+
 	return open();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -98,11 +199,10 @@ bool SQLiteDatabase::connect(const char *con) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SQLiteDatabase::disconnect() {
-	if ( _handle != NULL ) {
+	if ( _handle ) {
 		sqlite3_close(_handle);
-		_handle = NULL;
+		_handle = nullptr;
 	}
-
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -111,7 +211,7 @@ void SQLiteDatabase::disconnect() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SQLiteDatabase::isConnected() const {
-	return _handle != NULL;
+	return _handle;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -147,11 +247,13 @@ void SQLiteDatabase::rollback() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SQLiteDatabase::execute(const char* command) {
-	if ( !isConnected() || command == NULL ) return false;
+	if ( !isConnected() || !command ) {
+		return false;
+	}
 
-	char* errmsg = NULL;
-	int result = sqlite3_exec(_handle, command, NULL, NULL, &errmsg);
-	if ( errmsg != NULL ) {
+	char* errmsg = nullptr;
+	int result = sqlite3_exec(_handle, command, nullptr, nullptr, &errmsg);
+	if ( errmsg ) {
 		SEISCOMP_ERROR("sqlite3 execute: %s", errmsg);
 		sqlite3_free(errmsg);
 	}
@@ -165,19 +267,20 @@ bool SQLiteDatabase::execute(const char* command) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SQLiteDatabase::beginQuery(const char* query) {
-	if ( !isConnected() || query == NULL ) return false;
+	if ( !isConnected() || !query ) {
+		return false;
+	}
+
 	if ( _stmt ) {
 		SEISCOMP_ERROR("beginQuery: nested queries are not supported");
 		return false;
 	}
 
-	const char* tail;
+	const char* tail = nullptr;
 	int res = sqlite3_prepare(_handle, query, -1, &_stmt, &tail);
-	if ( res != SQLITE_OK )
+	if ( res != SQLITE_OK || !_stmt ) {
 		return false;
-
-	if ( _stmt == NULL )
-		return false;
+	}
 
 	_columnCount = sqlite3_column_count(_stmt);
 
@@ -192,7 +295,7 @@ bool SQLiteDatabase::beginQuery(const char* query) {
 void SQLiteDatabase::endQuery() {
 	if ( _stmt ) {
 		sqlite3_finalize(_stmt);
-		_stmt = NULL;
+		_stmt = nullptr;
 		_columnCount = 0;
 	}
 }
@@ -211,7 +314,7 @@ const char* SQLiteDatabase::defaultValue() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-IO::DatabaseInterface::OID SQLiteDatabase::lastInsertId(const char*) {
+IO::DatabaseInterface::OID SQLiteDatabase::lastInsertId(const char* /*table*/) {
 	sqlite3_int64 id = sqlite3_last_insert_rowid(_handle);
 	return id <= 0 ? IO::DatabaseInterface::INVALID_OID : id;
 }
@@ -222,11 +325,7 @@ IO::DatabaseInterface::OID SQLiteDatabase::lastInsertId(const char*) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 uint64_t SQLiteDatabase::numberOfAffectedRows() {
-	int count = sqlite3_changes(_handle);
-	if ( count < 0 )
-		return (uint64_t)~0;
-
-	return count;
+	return max(sqlite3_changes(_handle), 0);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -244,9 +343,11 @@ bool SQLiteDatabase::fetchRow() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int SQLiteDatabase::findColumn(const char* name) {
-	for ( int i = 0; i < _columnCount; ++i )
-		if ( !strcmp(sqlite3_column_name(_stmt, i), name) )
+	for ( int i = 0; i < _columnCount; ++i ) {
+		if ( !strcmp(sqlite3_column_name(_stmt, i), name) ) {
 			return i;
+		}
+	}
 
 	return -1;
 }
@@ -292,7 +393,7 @@ size_t SQLiteDatabase::getRowFieldSize(int index) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SQLiteDatabase::escape(std::string &out, const std::string &in) {
+bool SQLiteDatabase::escape(string &out, const string &in) {
 	out.resize(in.size()*2+1);
 	size_t length = in.length();
 	const char *in_buf = in.c_str();
