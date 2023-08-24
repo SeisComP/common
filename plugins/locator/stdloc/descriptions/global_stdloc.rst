@@ -64,9 +64,10 @@ search algorithm is based on NonLibLoc by Antony Lomax.
 Why is stdloc suitable for local seismicity?
 ============================================
 
-When dealing with very local seismicity (few kilometers or hundreds of meters) common
-simplification for regional seismicity become important. In particular the locator
-should take into consideration:
+When dealing with very local seismicity (few kilometers or hundreds of meters) 
+simplifications that are common for regional seismicity have to be removed. 
+In particular the locator should take into consideration:
+
 - station elevation and even negative elevation (e.g. borehole sensors)
 - earthquake location can be above a seismic sensor (e.g. borehole sensors)
 - possible negative earthquake depth (above surface)
@@ -80,9 +81,11 @@ StdLoc is simple, but can deal with all this requirements.
 Travel Time Table
 =================
 
-StdLoc works with any Travel Time Table type provided in SeisComP, however only
-`homogeneous` takes into consideration station elevation and negative source depth,
-which are important for very local seismicity.
+StdLoc can be configured with any Travel Time Table type available in SeisComP,
+however only the `homogeneous` type is able to take into consideration station
+elevation, negative source depth and sources happening above stations. For this
+reason `homogeneous` should be the preferred choice when working on very local
+seismicity and especially with borehole sensors.
 
 
 
