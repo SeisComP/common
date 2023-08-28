@@ -557,7 +557,7 @@ bool write(const Parameter *param, const Section *sec, int stage,
 		}
 	}
 
-	ofs << param->variableName << " = ";
+	ofs << Config::Config::escapeIdentifier(param->variableName) << " = ";
 	Config::Config::writeContent(ofs, &param->symbols[stage]->symbol, multilineLists);
 	ofs << endl;
 
