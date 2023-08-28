@@ -60,13 +60,14 @@
 
 #include <seiscomp/utils/files.h>
 
-#include <sstream>
+#include <algorithm>
 #include <cerrno>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <functional>
+#include <sstream>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <signal.h>
 #include <fcntl.h>
 
@@ -1538,7 +1539,7 @@ bool Application::validateParameters() {
 
 	const char* tmp = strstr(_settings.database.URI.c_str(), "://");
 	if ( tmp ) {
-		std::copy(_settings.database.URI.c_str(), tmp, std::back_inserter(_settings.database.type));
+		std::copy(_settings.database.URI.c_str(), tmp, back_inserter(_settings.database.type));
 		_settings.database.parameters = tmp + 3;
 	}
 
