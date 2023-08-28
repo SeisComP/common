@@ -47,18 +47,13 @@ IMPLEMENT_SC_CLASS_DERIVED(MySQLDatabase,
                            "mysql_database_interface");
 
 REGISTER_DB_INTERFACE(MySQLDatabase, "mysql");
-ADD_SC_PLUGIN("MySQL database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 0, 9, 2)
+ADD_SC_PLUGIN(
+	"MySQL database driver",
+	"GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>",
+	1, 0, 0
+)
 
 
-MySQLDatabase::MySQLDatabase()
-	: _handle(NULL), _result(NULL), _row(NULL), _debug(false)
-	, _fieldCount(0), _lengths(NULL)  {}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MySQLDatabase::~MySQLDatabase() {
 	disconnect();
 }
@@ -73,8 +68,9 @@ bool MySQLDatabase::handleURIParameter(const std::string &name,
 	if ( !DatabaseInterface::handleURIParameter(name, value) ) return false;
 
 	if ( name == "debug" ) {
-		if ( value != "0" && value != "false" )
+		if ( value != "0" && value != "false" ) {
 			_debug = true;
+		}
 	}
 
 	return true;
@@ -86,12 +82,10 @@ bool MySQLDatabase::handleURIParameter(const std::string &name,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MySQLDatabase::open() {
-	_handle = mysql_init(NULL);
-	if ( _handle == NULL )
+	_handle = mysql_init(nullptr);
+	if ( !_handle ) {
 		return false;
-
-	my_bool reconnectFlag = true;
-	mysql_options(_handle, MYSQL_OPT_RECONNECT, (const char*)&reconnectFlag);
+	}
 
 	if ( _timeout > 0 ) {
 		SEISCOMP_INFO("Apply database read timeout of %d seconds", _timeout);
@@ -105,24 +99,19 @@ bool MySQLDatabase::open() {
 		                 "name other than 'localhost' to force the creation of "
 		                 "a TCP connection.");
 	}
-	if ( mysql_real_connect(_handle, _host.c_str(), _user.c_str(), _password.c_str(),
-	                        _database.c_str(), _port, NULL, 0) == NULL ) {
+	if ( !mysql_real_connect(_handle, _host.c_str(), _user.c_str(), _password.c_str(),
+	                         _database.c_str(), _port, nullptr, 0) ) {
 		SEISCOMP_ERROR("Connect to %s:******@%s:%d/%s failed: %s", _user.c_str(),
 		               _host.c_str(), _port, _database.c_str(),
 		               mysql_error(_handle));
 		mysql_close(_handle);
-		_handle = NULL;
+		_handle = nullptr;
 		return false;
 	}
 
 	SEISCOMP_DEBUG("Connected to %s:******@%s:%d/%s (%s)", _user.c_str(),
 	               _host.c_str(), _port, _database.c_str(),
 	               _handle->host_info);
-
-	// Regarding some newsgroup results it is better to set the option AFTER
-	// the connection has been established even though the documentation says
-	// to do it BEFORE connecting
-	mysql_options(_handle, MYSQL_OPT_RECONNECT, (const char*)&reconnectFlag);
 
 	return true;
 }
@@ -152,10 +141,10 @@ void MySQLDatabase::disconnect() {
 		SEISCOMP_INFO("Disconnecting from database");
 		if ( _result ) {
 			mysql_free_result(_result);
-			_result = NULL;
+			_result = nullptr;
 		}
 		mysql_close(_handle);
-		_handle = NULL;
+		_handle = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -165,9 +154,14 @@ void MySQLDatabase::disconnect() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MySQLDatabase::isConnected() const {
-	if ( _handle == NULL ) return false;
+	if ( !_handle ) {
+		return false;
+	}
+
 	int err = mysql_errno(_handle);
-	if ( err < CR_UNKNOWN_ERROR ) return true;
+	if ( err < CR_UNKNOWN_ERROR ) {
+		return true;
+	}
 
 	SEISCOMP_ERROR("connection error %d (%s) -> ping", err, mysql_error(_handle));
 	return ping();
@@ -179,33 +173,18 @@ bool MySQLDatabase::isConnected() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MySQLDatabase::ping() const {
-	if ( !mysql_ping(_handle) ) return true;
-
-	SEISCOMP_ERROR("ping() = %d (%s)", mysql_errno(_handle), mysql_error(_handle));
-	return false;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MySQLDatabase::reconnect() {
-	while ( _handle && !ping() ) {
-		if ( _result ) {
-			mysql_free_result(_result);
-			_result = NULL;
-		}
-		_row = NULL;
-		Seiscomp::Core::msleep(500);
-	}
-
-	if ( _handle ) {
-		SEISCOMP_INFO("Database connection reestablished");
+	if ( !mysql_ping(_handle) ) {
 		return true;
 	}
 
-	return false;
+	SEISCOMP_ERROR("ping() = %d (%s)", mysql_errno(_handle), mysql_error(_handle));
+	// Try to reconnect
+	const_cast<MySQLDatabase*>(this)->disconnect();
+	if ( !const_cast<MySQLDatabase*>(this)->open() ) {
+		return false;
+	}
+
+	return mysql_ping(_handle) == 0;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -242,7 +221,7 @@ void MySQLDatabase::rollback() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MySQLDatabase::query(const char *c, const char *comp) {
 	// No connection yet established or disconnect has been called
-	if ( _handle == NULL || c == NULL ) return false;
+	if ( !_handle || !c ) return false;
 
 	unsigned int err;
 	const char *err_msg;
@@ -258,16 +237,15 @@ bool MySQLDatabase::query(const char *c, const char *comp) {
 			err_msg = mysql_error(_handle);
 			// Client connection error?
 			if ( err >= CR_UNKNOWN_ERROR ) {
-				/* No automatic reconnect yet
-				if ( isReconnectEnabled() ) {
-					if ( !reconnect() ) break;
-				}
-				else*/ if ( firstTry ) {
+				if ( firstTry ) {
 					firstTry = false;
-					if ( !_handle || !ping() ) break;
+					if ( !_handle || !ping() ) {
+						break;
+					}
 				}
-				else
+				else {
 					break;
+				}
 			}
 			// Break when a query based error occured
 			else {
@@ -276,7 +254,7 @@ bool MySQLDatabase::query(const char *c, const char *comp) {
 		}
 		else {
 			err = 0;
-			err_msg = NULL;
+			err_msg = nullptr;
 			break;
 		}
 	}
@@ -313,13 +291,16 @@ bool MySQLDatabase::beginQuery(const char* q) {
 		return false;
 	}
 
-	if ( !query(q, "query") ) return false;
+	if ( !query(q, "query") ) {
+		return false;
+	}
 
 	_result = mysql_use_result(_handle);
 	//_result = mysql_store_result(_handle);
 
-	if ( _result == NULL )
+	if ( !_result ) {
 		return false;
+	}
 
 	_fieldCount = (int)mysql_field_count(_handle);
 
@@ -334,8 +315,8 @@ bool MySQLDatabase::beginQuery(const char* q) {
 void MySQLDatabase::endQuery() {
 	if ( _result ) {
 		mysql_free_result(_result);
-		_result = NULL;
-		_lengths = NULL;
+		_result = nullptr;
+		_lengths = nullptr;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -370,7 +351,7 @@ uint64_t MySQLDatabase::numberOfAffectedRows() {
 bool MySQLDatabase::fetchRow() {
 	_row = mysql_fetch_row(_result);
 	_lengths = mysql_fetch_lengths(_result);
-	return _row != NULL;
+	return _row != nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -405,7 +386,7 @@ int MySQLDatabase::getRowFieldCount() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const char *MySQLDatabase::getRowFieldName(int index) {
 	MYSQL_FIELD* field = mysql_fetch_field_direct(_result, index);
-	return field != NULL ? field->name : NULL;
+	return field ? field->name : nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

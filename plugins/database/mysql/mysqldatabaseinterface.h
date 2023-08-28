@@ -44,7 +44,7 @@ class MySQLDatabase : public Seiscomp::IO::DatabaseInterface {
 	//  Xstruction
 	// ------------------------------------------------------------------
 	public:
-		MySQLDatabase();
+		MySQLDatabase() = default;
 		~MySQLDatabase();
 
 
@@ -52,29 +52,29 @@ class MySQLDatabase : public Seiscomp::IO::DatabaseInterface {
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		virtual bool connect(const char *con) override;
-		virtual void disconnect() override;
+		bool connect(const char *con) override;
+		void disconnect() override;
 
-		virtual bool isConnected() const override;
+		bool isConnected() const override;
 
-		virtual void start() override;
-		virtual void commit() override;
-		virtual void rollback() override;
+		void start() override;
+		void commit() override;
+		void rollback() override;
 
-		virtual bool execute(const char* command) override;
-		virtual bool beginQuery(const char* query) override;
-		virtual void endQuery() override;
+		bool execute(const char* command) override;
+		bool beginQuery(const char* query) override;
+		void endQuery() override;
 
-		virtual OID lastInsertId(const char*) override;
-		virtual uint64_t numberOfAffectedRows() override;
+		OID lastInsertId(const char*) override;
+		uint64_t numberOfAffectedRows() override;
 
-		virtual bool fetchRow() override;
-		virtual int findColumn(const char* name) override;
-		virtual int getRowFieldCount() const override;
-		virtual const char *getRowFieldName(int index) override;
-		virtual const void* getRowField(int index) override;
-		virtual size_t getRowFieldSize(int index) override;
-		virtual bool escape(std::string &out, const std::string &in) override;
+		bool fetchRow() override;
+		int findColumn(const char* name) override;
+		int getRowFieldCount() const override;
+		const char *getRowFieldName(int index) override;
+		const void* getRowField(int index) override;
+		size_t getRowFieldSize(int index) override;
+		bool escape(std::string &out, const std::string &in) override;
 
 
 	// ------------------------------------------------------------------
@@ -82,9 +82,9 @@ class MySQLDatabase : public Seiscomp::IO::DatabaseInterface {
 	// ------------------------------------------------------------------
 	protected:
 		bool handleURIParameter(const std::string &name,
-		                        const std::string &value);
+		                        const std::string &value) override;
 
-		bool open();
+		bool open() override;
 
 
 	// ------------------------------------------------------------------
@@ -93,17 +93,16 @@ class MySQLDatabase : public Seiscomp::IO::DatabaseInterface {
 	private:
 		bool ping() const;
 		bool query(const char *c, const char *comp);
-		bool reconnect();
 
 
 	private:
-		MYSQL                 *_handle;
-		MYSQL_RES*             _result;
-		MYSQL_ROW              _row;
-		bool                   _debug;
+		MYSQL                 *_handle{nullptr};
+		MYSQL_RES*             _result{nullptr};
+		MYSQL_ROW              _row{nullptr};
+		bool                   _debug{false};
 		//std::string _lastQuery;
-		mutable int            _fieldCount;
-		mutable unsigned long *_lengths;
+		mutable int            _fieldCount{0};
+		mutable unsigned long *_lengths{nullptr};
 };
 
 
