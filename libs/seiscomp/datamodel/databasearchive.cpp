@@ -603,9 +603,7 @@ bool DatabaseArchive::fetchVersion() {
 	}
 
 	SEISCOMP_DEBUG("Found database version v%d.%d.%d",
-	               version().majorTag(),
-	               version().minorTag(),
-	               version().patchTag());
+	               v.majorTag(), v.minorTag(), v.patchTag());
 
 	return true;
 }
