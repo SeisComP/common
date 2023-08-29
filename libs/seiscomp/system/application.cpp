@@ -1494,6 +1494,7 @@ bool Application::initConfiguration() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::initLogging() {
 	Logging::disableConsoleLogging();
+	closeLogging();
 
 	if ( _baseSettings.logging.quiet )
 		return true;
