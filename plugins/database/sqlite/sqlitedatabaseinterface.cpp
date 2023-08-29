@@ -40,12 +40,30 @@ namespace Database {
 
 namespace {
 
-// http://www.sqlite.org/c3ref/trace_v2.html
+#if SQLITE_VERSION_NUMBER < 3014000
+#define SQLITE_TRACE_STMT    0x01
+#define SQLITE_TRACE_PROFILE 0x02
+// https://www.sqlite.org/c3ref/profile.html
+void sqliteTraceFunc(void */*unused*/, const char *sql) {
+	if ( strncmp(sql, "--", 2) == 0 ) {
+		SEISCOMP_DEBUG("[stmt] Execute trigger with comment: %s", sql);
+	}
+	else {
+		SEISCOMP_DEBUG("[stmt] %s", sql);
+	}
+}
+
+void sqliteProfileFunc(void */*unused*/, const char *sql, sqlite3_uint64 ns) {
+	SEISCOMP_DEBUG("[profile] %.6gs to execute: %s",
+	               static_cast<float>(ns * 1E-9), sql);
+}
+#else
+// https://www.sqlite.org/c3ref/trace_v2.html
 int sqliteCallbackFunc(unsigned T, void *C, void *P, void *X) {
 	switch (T) {
 		case SQLITE_TRACE_STMT: {
 			auto *sql = static_cast<char *>(X);
-			if ( strncmp(sql, "--", strlen(sql)) == 0 ) {
+			if ( strncmp(sql, "--", 2) == 0 ) {
 				SEISCOMP_DEBUG("[stmt] Execute trigger with comment: %s", sql);
 			}
 			else {
@@ -91,6 +109,7 @@ int sqliteCallbackFunc(unsigned T, void *C, void *P, void *X) {
 
 	return 0;
 }
+#endif
 
 } // ns anonymous
 
@@ -157,7 +176,16 @@ bool SQLiteDatabase::open() {
 	}
 
 	if ( _debugUMask ) {
+#if SQLITE_VERSION_NUMBER < 3014000
+		if ( _debugUMask & SQLITE_TRACE_STMT ) {
+			sqlite3_trace(_handle, &sqliteTraceFunc, nullptr);
+		}
+		else if ( _debugUMask & SQLITE_TRACE_PROFILE ) {
+			sqlite3_profile(_handle, &sqliteProfileFunc, nullptr);
+		}
+#else
 		sqlite3_trace_v2(_handle, _debugUMask, &sqliteCallbackFunc, nullptr);
+#endif
 	}
 
 	return true;
