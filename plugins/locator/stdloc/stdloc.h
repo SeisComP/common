@@ -115,15 +115,14 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		                        const std::vector<double> &weights,
 		                        const std::vector<double> &travelTimes,
 		                        const Seiscomp::Core::Time &originTime,
-		                        double &probDensity, double &rms,
-		                        std::vector<double> &residuals) const;
+		                        double &probDensity, double &rms) const;
  
 		bool computeOriginTime(const PickList &pickList,
 		                       const std::vector<double> &weights,
 		                       const std::vector<double> &sensorLat,
 		                       const std::vector<double> &sensorLon,
-		                       const std::vector<double> &sensorElev, double lat,
-		                       double lon, double depth,
+		                       const std::vector<double> &sensorElev,
+		                       double lat, double lon, double depth,
 		                       Seiscomp::Core::Time &originTime,
 		                       std::vector<double> &travelTimes) const;
  
@@ -134,17 +133,17 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		                   const std::vector<double> &sensorElev, double &newLat,
 		                   double &newLon, double &newDepth,
 		                   Seiscomp::Core::Time &newTime,
-		                   std::vector<double> &residuals, CovMtrx &covm,
+		                   std::vector<double> &travelTimes, CovMtrx &covm,
 		                   bool computeCovMtrx) const;
 
 		void locateGridSearch(const PickList &pickList,
 		                      const std::vector<double> &weights,
 		                      const std::vector<double> &sensorLat,
 		                      const std::vector<double> &sensorLon,
-		                      const std::vector<double> &sensorElev, double &newLat,
-		                      double &newLon, double &newDepth,
+		                      const std::vector<double> &sensorElev,
+		                      double &newLat, double &newLon, double &newDepth,
 		                      Seiscomp::Core::Time &newTime,
-		                      std::vector<double> &residuals, CovMtrx &covm,
+		                      std::vector<double> &travelTimes, CovMtrx &covm,
 		                      bool computeCovMtrx,
 		                      bool enablePerCellLeastSquares) const;
 
@@ -154,10 +153,10 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		                        const std::vector<double> &sensorLon,
 		                        const std::vector<double> &sensorElev,
 		                        double initLat, double initLon, double initDepth,
-		                        Seiscomp::Core::Time initTime, double &newLat,
-		                        double &newLon, double &newDepth,
+		                        Seiscomp::Core::Time initTime,
+		                        double &newLat, double &newLon, double &newDepth,
 		                        Seiscomp::Core::Time &newTime,
-		                        std::vector<double> &residuals, CovMtrx &covm,
+		                        std::vector<double> &travelTimes, CovMtrx &covm,
 		                        bool computeCovMtrx) const;
 
 		void computeCovarianceMatrix(const std::vector<Cell> &cells,
@@ -171,10 +170,10 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		createOrigin(const PickList &pickList, const std::vector<double> &weights,
 		             const std::vector<double> &sensorLat,
 		             const std::vector<double> &sensorLon,
-		             const std::vector<double> &sensorElev, double originLat,
-		             double originLon, double originDepth,
+		             const std::vector<double> &sensorElev,
+		             const std::vector<double> &travelTimes,
+		             double originLat, double originLon, double originDepth,
 		             const Seiscomp::Core::Time &originTime,
-		             const std::vector<double> &residuals,
 		             const CovMtrx &covm) const;
 
 		struct Profile {
