@@ -919,7 +919,7 @@ Origin *StdLoc::locate(PickList &pickList) {
 	// these are the output of the location
 	double originLat, originLon, originDepth;
 	Core::Time originTime;
-	vector<double> residuals;
+	vector<double> travelTimes;
 	CovMtrx covm;
 
 	bool computeCovMtrx = _currentProfile.enableConfidenceEllipsoid;
@@ -930,27 +930,27 @@ Origin *StdLoc::locate(PickList &pickList) {
 		    _currentProfile.method == Profile::Method::GridAndLsqr;
 		locateGridSearch(pickList, weights, sensorLat, sensorLon, sensorElev,
 		                 originLat, originLon, originDepth, originTime,
-		                 residuals, covm, computeCovMtrx,
+		                 travelTimes, covm, computeCovMtrx,
 		                 enablePerCellLeastSquares);
 	}
 	else if ( _currentProfile.method == Profile::Method::OctTree ||
 	          _currentProfile.method == Profile::Method::OctTreeAndLsqr ) {
 		locateOctTree(pickList, weights, sensorLat, sensorLon, sensorElev,
 		              originLat, originLon, originDepth, originTime,
-		              residuals, covm,
+		              travelTimes, covm,
 		              (computeCovMtrx &&
 		               _currentProfile.method == Profile::Method::OctTree));
 		if ( _currentProfile.method == Profile::Method::OctTreeAndLsqr ) {
 			locateLeastSquares(pickList, weights, sensorLat, sensorLon,
 			                   sensorElev, originLat, originLon, originDepth,
 			                   originTime, originLat, originLon, originDepth,
-			                   originTime, residuals, covm, computeCovMtrx);
+			                   originTime, travelTimes, covm, computeCovMtrx);
 		}
 	}
 
 	return createOrigin(pickList, weights, sensorLat, sensorLon, sensorElev,
-	                    originLat, originLon, originDepth, originTime,
-	                    residuals, covm);
+	                    travelTimes, originLat, originLon, originDepth,
+	                    originTime, covm);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -975,7 +975,7 @@ Origin *StdLoc::locate(PickList &pickList, double initLat, double initLon,
 	// these are the output of the location
 	double originLat, originLon, originDepth;
 	Core::Time originTime;
-	vector<double> residuals;
+	vector<double> travelTimes;
 	CovMtrx covm;
 
 	bool computeCovMtrx = _currentProfile.enableConfidenceEllipsoid;
@@ -986,33 +986,33 @@ Origin *StdLoc::locate(PickList &pickList, double initLat, double initLon,
 		    _currentProfile.method == Profile::Method::GridAndLsqr;
 		locateGridSearch(pickList, weights, sensorLat, sensorLon, sensorElev,
 		                 originLat, originLon, originDepth, originTime,
-		                 residuals, covm, computeCovMtrx,
+		                 travelTimes, covm, computeCovMtrx,
 		                 enablePerCellLeastSquares);
 	}
 	else if ( _currentProfile.method == Profile::Method::OctTree ||
 	          _currentProfile.method == Profile::Method::OctTreeAndLsqr ) {
 		locateOctTree(pickList, weights, sensorLat, sensorLon, sensorElev,
 		              originLat, originLon, originDepth, originTime,
-		              residuals, covm,
+		              travelTimes, covm,
 		              (computeCovMtrx &&
 		               _currentProfile.method == Profile::Method::OctTree));
 		if ( _currentProfile.method == Profile::Method::OctTreeAndLsqr ) {
 			locateLeastSquares(pickList, weights, sensorLat, sensorLon,
 			                   sensorElev, originLat, originLon, originDepth,
 			                   originTime, originLat, originLon, originDepth,
-			                   originTime, residuals, covm, computeCovMtrx);
+			                   originTime, travelTimes, covm, computeCovMtrx);
 		}
 	}
 	else if ( _currentProfile.method == Profile::Method::LeastSquares ) {
 		locateLeastSquares(pickList, weights, sensorLat, sensorLon, sensorElev,
 		                   initLat, initLon, initDepth, initTime, originLat,
-		                   originLon, originDepth, originTime, residuals, covm,
-		                   computeCovMtrx);
+		                   originLon, originDepth, originTime, travelTimes,
+		                   covm, computeCovMtrx);
 	}
 
 	return createOrigin(pickList, weights, sensorLat, sensorLon, sensorElev,
-	                    originLat, originLon, originDepth, originTime,
-	                    residuals, covm);
+	                    travelTimes, originLat, originLon, originDepth,
+	                    originTime, covm);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1165,8 +1165,7 @@ void StdLoc::computeProbDensity(const PickList &pickList,
                                 const vector<double> &weights,
                                 const vector<double> &travelTimes,
                                 const Core::Time &originTime,
-                                double &probDensity, double &rms,
-                                vector<double> &residuals) const {
+                                double &probDensity, double &rms) const {
 
 	if ( _currentProfile.gridSearch.misfitType != "L1" &&
 	     _currentProfile.gridSearch.misfitType != "L2" ) {
@@ -1180,7 +1179,6 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 		throw LocatorException("Interna logic error");
 	}
 
-	residuals.resize(pickList.size());
 	rms = 0.0;
 
 	double l1SumWeightedResiduals = 0.0;
@@ -1192,14 +1190,12 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 		const PickPtr pick = pi.pick;
 
 		if ( weights[i] <= 0 ) {
-			residuals[i] = 0.;
 			continue;
 		}
 
 		Core::Time pickTime = pick->time().value();
 		double residual =
 		    (pickTime - (originTime + Core::TimeSpan(travelTimes[i]))).length();
-		residuals[i] = residual;
 		l1SumWeightedResiduals += abs(residual * weights[i]);
 		l2SumWeightedResiduals +=
 		    (residual * weights[i]) * (residual * weights[i]);
@@ -1315,9 +1311,9 @@ void StdLoc::locateOctTree(const PickList &pickList,
                            const vector<double> &weights,
                            const vector<double> &sensorLat,
                            const vector<double> &sensorLon,
-                           const vector<double> &sensorElev, double &newLat,
-                           double &newLon, double &newDepth,
-                           Core::Time &newTime, vector<double> &residuals,
+                           const vector<double> &sensorElev,
+                           double &newLat,double &newLon, double &newDepth,
+                           Core::Time &newTime, vector<double> &travelTimes,
                            CovMtrx &covm, bool computeCovMtrx) const {
 	SEISCOMP_DEBUG("Start OctTree Search: maxIterations %d minCellSize %g [km]",
 	               _currentProfile.octTree.maxIterations,
@@ -1402,7 +1398,6 @@ void StdLoc::locateOctTree(const PickList &pickList,
 
 	multimap<double, Cell> priorityList;
 	vector<double> cellTravelTimes(pickList.size());
-	vector<double> cellResiduals(pickList.size());
 	int processedCells = 0;
 	struct {
 			Cell cell;
@@ -1455,7 +1450,7 @@ void StdLoc::locateOctTree(const PickList &pickList,
 			// Compute the probability density
 			computeProbDensity(pickList, weights, cellTravelTimes,
 			                   cell.org.time, cell.org.probDensity,
-			                   cell.org.rms, cellResiduals);
+			                   cell.org.rms);
 
 			cell.valid = true;
 
@@ -1594,17 +1589,13 @@ void StdLoc::locateOctTree(const PickList &pickList,
 	newTime = bestCell.org.time;
 
 	//
-	// To return the residuals we need to recompute them again (ugly)
+	// To return the travelTimes we need to recompute them again (ugly)
 	//
-	Core::Time dummy1;
-	double dummy2;
+	Core::Time dummy;
 	if ( !computeOriginTime(pickList, weights, sensorLat, sensorLon, sensorElev,
-	                        newLat, newLon, newDepth, dummy1,
-	                        cellTravelTimes) ) {
+	                        newLat, newLon, newDepth, dummy, travelTimes) ) {
 		throw LocatorException("Couldn't find a solution");
 	}
-	computeProbDensity(pickList, weights, cellTravelTimes, newTime, dummy2,
-	                   dummy2, residuals);
 
 	// compute covariance matrix
 	if ( computeCovMtrx ) {
@@ -1631,9 +1622,9 @@ void StdLoc::locateGridSearch(const PickList &pickList,
                               const vector<double> &weights,
                               const vector<double> &sensorLat,
                               const vector<double> &sensorLon,
-                              const vector<double> &sensorElev, double &newLat,
-                              double &newLon, double &newDepth,
-                              Core::Time &newTime, vector<double> &residuals,
+                              const vector<double> &sensorElev,
+                              double &newLat, double &newLon, double &newDepth,
+                              Core::Time &newTime, vector<double> &travelTimes,
                               CovMtrx &covm, bool computeCovMtrx,
                               bool enablePerCellLeastSquares) const {
 	SEISCOMP_DEBUG("Start Grid Search");
@@ -1724,10 +1715,9 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 	}
 
 	vector<double> cellTravelTimes(pickList.size());
-	vector<double> cellResiduals(pickList.size());
 	struct {
 			Cell cell;
-			vector<double> residuals;
+			vector<double> travelTimes;
 			CovMtrx covm;
 	} best;
 	best.cell.valid = false;
@@ -1762,7 +1752,7 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 				                   sensorElev, cell.org.lat, cell.org.lon,
 				                   cell.org.depth, cell.org.time, cell.org.lat,
 				                   cell.org.lon, cell.org.depth, cell.org.time,
-				                   residuals, covm, computeCovMtrx);
+				                   cellTravelTimes, covm, computeCovMtrx);
 			}
 			catch ( exception &e ) {
 				SEISCOMP_DEBUG(
@@ -1776,7 +1766,7 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 		// Compute cell probability density
 		//
 		computeProbDensity(pickList, weights, cellTravelTimes, cell.org.time,
-		                   cell.org.probDensity, cell.org.rms, cellResiduals);
+		                   cell.org.probDensity, cell.org.rms);
 
 		cell.valid = true;
 
@@ -1789,7 +1779,7 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 		if ( !best.cell.valid ||
 		     best.cell.org.probDensity < cell.org.probDensity ) {
 			best.cell = cell;
-			best.residuals = cellResiduals;
+			best.travelTimes = cellTravelTimes;
 			best.covm = covm;
 			SEISCOMP_DEBUG("Preferring this as best cell");
 		}
@@ -1805,7 +1795,7 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 	newTime = best.cell.org.time;
 
 	// return the travel times for the solution
-	residuals = best.residuals;
+	travelTimes = best.travelTimes;
 
 	// compute covariance matrix if that is not already computed by LeastSquares
 	if ( computeCovMtrx && !enablePerCellLeastSquares ) {
@@ -1831,7 +1821,7 @@ void StdLoc::locateLeastSquares(
     const vector<double> &sensorLat, const vector<double> &sensorLon,
     const vector<double> &sensorElev, double initLat, double initLon,
     double initDepth, Core::Time initTime, double &newLat, double &newLon,
-    double &newDepth, Core::Time &newTime, vector<double> &residuals,
+    double &newDepth, Core::Time &newTime, vector<double> &travelTimes,
     CovMtrx &covm, bool computeCovMtrx) const {
 
 	SEISCOMP_DEBUG("Start Least Square with initial lat %g lon %g depth %g "
@@ -1861,9 +1851,8 @@ void StdLoc::locateLeastSquares(
 
 	covm.valid = false;
 
-	residuals.resize(pickList.size());
+	travelTimes.resize(pickList.size());
 
-	vector<double> travelTimes(pickList.size());
 	vector<double> backazis(pickList.size());
 	vector<double> dtdds(pickList.size());
 	vector<double> dtdhs(pickList.size());
@@ -1950,7 +1939,6 @@ void StdLoc::locateLeastSquares(
 
 			if ( weights[i] <= 0 ) {
 				eq.W[i] = 0;
-				residuals[i] = 0;
 				continue;
 			}
 
@@ -1958,7 +1946,6 @@ void StdLoc::locateLeastSquares(
 			double residual =
 			    (pickTime - (initTime + Core::TimeSpan(travelTimes[i])))
 			        .length();
-			residuals[i] = residual;
 			eq.r[i] = residual;
 
 			const double bazi = deg2rad(backazis[i]);
@@ -1968,11 +1955,11 @@ void StdLoc::locateLeastSquares(
 			eq.G[i][3] = 1.;                   // dtime [sec]
 
 			if ( usingFixedDepth() ) {
-				eq.G[i][2] = 0;                  // dz [sec/km]
+				eq.G[i][2] = 0; // dz [sec/km]
 			}
 		}
 
-		// the last iteration is use for computing the residuals on the final
+		// the last iteration is use for computing the travelTimes on the final
 		// location and eventually the covariance matrix
 		if ( lastIteration ) {
 			if ( computeCovMtrx ) {
@@ -2286,9 +2273,9 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 Origin *StdLoc::createOrigin(
     const PickList &pickList, const vector<double> &weights,
     const vector<double> &sensorLat, const vector<double> &sensorLon,
-    const vector<double> &sensorElev, double originLat, double originLon,
-    double originDepth, const Core::Time &originTime,
-    const vector<double> &residuals, const CovMtrx &covm) const {
+    const vector<double> &sensorElev, const vector<double> &travelTimes,
+    double originLat, double originLon, double originDepth,
+    const Core::Time &originTime, const CovMtrx &covm) const {
 	if ( weights.size() != pickList.size() ) {
 		throw LocatorException("Internal logic error");
 	}
@@ -2368,10 +2355,14 @@ Origin *StdLoc::createOrigin(
 			newArr->setTimeUsed(true);
 			newArr->setWeight(weights[i]);
 
-			newArr->setTimeResidual(residuals[i]);
+			Core::Time pickTime = pick->time().value();
+			double residual =
+			    (pickTime - (originTime + Core::TimeSpan(travelTimes[i])))
+			        .length();
+			newArr->setTimeResidual(residual);
 
 			sumSquaredResiduals +=
-			    (residuals[i] * weights[i]) * (residuals[i] * weights[i]);
+			    (residual * weights[i]) * (residual * weights[i]);
 			sumSquaredWeights += weights[i] * weights[i];
 
 			usedPhaseCount++;
