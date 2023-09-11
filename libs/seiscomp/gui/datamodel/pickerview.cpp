@@ -4971,6 +4971,9 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 		double delta, az1, az2;
 		double elat = SC_D.origin->latitude();
 		double elon = SC_D.origin->longitude();
+		double edep = SC_D.config.defaultDepth;
+		try { edep = SC_D.origin->depth(); } catch ( ... ) {}
+
 		double slat, slon;
 		double salt = loc->elevation();
 
@@ -4984,8 +4987,12 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 		}
 
 		Math::Geo::delazi(elat, elon, slat, slon, &delta, &az1, &az2);
+		double hDist = Math::Geo::deg2km(delta);           // [km]
+		double vDist = edep + salt/1000.;                  // [km]
+		double distance = sqrt(hDist*hDist + vDist*vDist); // [km]
+		distance = Math::Geo::km2deg(distance);            // [degree]
 
-		item->setValue(ITEM_DISTANCE_INDEX, delta);
+		item->setValue(ITEM_DISTANCE_INDEX, distance);
 		item->setValue(ITEM_AZIMUTH_INDEX, az1);
 
 		/*
@@ -5005,9 +5012,9 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 		item->label()->setWidth(fm.boundingRect("WW  ").width(), 1);
 
 		if ( SCScheme.unit.distanceInKM )
-			item->label()->setText(QString("%1 km").arg(Math::Geo::deg2km(delta),0,'f',SCScheme.precision.distance), 2);
+			item->label()->setText(QString("%1 km").arg(Math::Geo::deg2km(distance),0,'f',SCScheme.precision.distance), 2);
 		else
-			item->label()->setText(QString("%1%2").arg(delta,0,'f',1).arg(degrees), 2);
+			item->label()->setText(QString("%1%2").arg(distance,0,'f',1).arg(degrees), 2);
 		item->label()->setAlignment(Qt::AlignRight, 2);
 		item->label()->setColor(palette().color(QPalette::Disabled, QPalette::WindowText), 2);
 
