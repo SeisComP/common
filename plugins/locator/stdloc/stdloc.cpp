@@ -1857,6 +1857,16 @@ void StdLoc::locateLeastSquares(
 	vector<double> dtdds(pickList.size());
 	vector<double> dtdhs(pickList.size());
 
+	double prevLat, prevLon, prevDepth;
+	Core::Time prevTime;
+
+	prevLat = newLat = initLat;
+	prevLon = newLon = initLon;
+	prevDepth = newDepth = initDepth;
+	prevTime = newTime = initTime;
+
+	bool revertToPrevIteration = false;
+
 	for ( int iteration = 0;
 	      iteration <= _currentProfile.leastSquares.iterations; ++iteration ) {
 
@@ -1864,9 +1874,23 @@ void StdLoc::locateLeastSquares(
 		bool lastIteration =
 		    (iteration == _currentProfile.leastSquares.iterations);
 
+		// allow to recover an error
+		if ( revertToPrevIteration ) {
+			if (iteration <= 1) {
+				throw LocatorException("Unable to find a location");
+			}
+			lastIteration = true;
+			newLat   = prevLat;
+			newLon   = prevLon;
+			newDepth = prevDepth;
+			newTime  = prevTime;
+			SEISCOMP_WARNING("Locator stopped early, at iteration %d", iteration);
+		}
+
 		//
 		// Load the information we need to build the Equation System
 		//
+		bool unableToComputeTT = false;
 		for ( size_t i = 0; i < pickList.size(); ++i ) {
 			const PickItem &pi = pickList[i];
 			const PickPtr pick = pi.pick;
@@ -1877,7 +1901,7 @@ void StdLoc::locateLeastSquares(
 
 			// get back azimuth, we don't need the distance, which will
 			// be discarded (it's a waste of computation)
-			computeDistance(initLat, initLon, sensorLat[i], sensorLon[i],
+			computeDistance(newLat, newLon, sensorLat[i], sensorLon[i],
 			                nullptr, &backazis[i]);
 
 			TravelTime tt;
@@ -1893,7 +1917,7 @@ void StdLoc::locateLeastSquares(
 					}
 				}
 
-				tt = _ttt->compute(phaseName, initLat, initLon, initDepth,
+				tt = _ttt->compute(phaseName, newLat, newLon, newDepth,
 				                   sensorLat[i], sensorLon[i], sensorElev[i]);
 			}
 			catch ( exception &e ) {
@@ -1903,9 +1927,10 @@ void StdLoc::locateLeastSquares(
 				    pick->phaseHint().code().c_str(),
 				    pick->waveformID().networkCode().c_str(),
 				    pick->waveformID().stationCode().c_str(),
-				    pick->waveformID().locationCode().c_str(), initLat, initLon,
-				    initDepth, e.what());
-				throw LocatorException("Travel Time Table error");
+				    pick->waveformID().locationCode().c_str(),
+				    newLat, newLon, newDepth, e.what());
+				    unableToComputeTT = true;
+				    break;
 			}
 
 			if ( tt.time < 0 ||
@@ -1916,14 +1941,20 @@ void StdLoc::locateLeastSquares(
 				    pick->phaseHint().code().c_str(),
 				    pick->waveformID().networkCode().c_str(),
 				    pick->waveformID().stationCode().c_str(),
-				    pick->waveformID().locationCode().c_str(), initLat, initLon,
-				    initDepth);
-				throw LocatorException("Travel Time Table error");
+				    pick->waveformID().locationCode().c_str(),
+				    newLat, newLon, newDepth);
+				    unableToComputeTT = true;
+				    break;
 			}
 
 			travelTimes[i] = tt.time;
 			dtdds[i] = tt.dtdd;
 			dtdhs[i] = tt.dtdh;
+		}
+
+		if ( unableToComputeTT ) {
+			revertToPrevIteration = true;
+			continue;
 		}
 
 		//
@@ -1944,7 +1975,7 @@ void StdLoc::locateLeastSquares(
 
 			Core::Time pickTime = pick->time().value();
 			double residual =
-			    (pickTime - (initTime + Core::TimeSpan(travelTimes[i])))
+			    (pickTime - (newTime + Core::TimeSpan(travelTimes[i])))
 			        .length();
 			eq.r[i] = residual;
 
@@ -1955,7 +1986,7 @@ void StdLoc::locateLeastSquares(
 			eq.G[i][3] = 1.;                   // dtime [sec]
 
 			if ( usingFixedDepth() ) {
-				eq.G[i][2] = 0; // dz [sec/km]
+				eq.G[i][2] = 0;                  // dz [sec/km]
 			}
 		}
 
@@ -1973,12 +2004,11 @@ void StdLoc::locateLeastSquares(
 		//
 		try {
 			ostringstream solverLogs;
+
 			if ( _currentProfile.leastSquares.solverType == "LSMR" ) {
-				// solve
 				Adapter<lsmrBase> solver =
 				    solve<lsmrBase>(eq, &solverLogs,
 				                    _currentProfile.leastSquares.dampingFactor);
-				// print some information
 				SEISCOMP_DEBUG(
 				    "Solver stopped because %u : %s (used %u iterations)",
 				    solver.GetStoppingReason(),
@@ -1986,11 +2016,9 @@ void StdLoc::locateLeastSquares(
 				    solver.GetNumberOfIterationsPerformed());
 			}
 			else if ( _currentProfile.leastSquares.solverType == "LSQR" ) {
-				// solve
 				Adapter<lsqrBase> solver =
 				    solve<lsqrBase>(eq, &solverLogs,
 				                    _currentProfile.leastSquares.dampingFactor);
-				// print some information
 				SEISCOMP_DEBUG(
 				    "Solver stopped because %u : %s (used %u iterations)",
 				    solver.GetStoppingReason(),
@@ -2003,10 +2031,12 @@ void StdLoc::locateLeastSquares(
 				    _currentProfile.leastSquares.solverType);
 			}
 
-			SEISCOMP_DEBUG("Solver logs:\n%s", solverLogs.str().c_str());
+			//SEISCOMP_DEBUG("Solver logs:\n%s", solverLogs.str().c_str());
 		}
 		catch ( exception &e ) {
-			throw LocatorException(e.what());
+			SEISCOMP_WARNING("%s", e.what());
+			revertToPrevIteration = true;
+			continue;
 		}
 
 		//
@@ -2019,14 +2049,22 @@ void StdLoc::locateLeastSquares(
 
 		if ( !isfinite(lonCorrection) || !isfinite(latCorrection) ||
 		     !isfinite(depthCorrection) || !isfinite(timeCorrection) ) {
-			throw LocatorException(
-			    "Couldn't find a solution to the equation system");
+			SEISCOMP_WARNING("Couldn't find a solution to the equation system");
+			revertToPrevIteration = true;
+			continue;
 		}
 
-		newLat = initLat + latCorrection;
-		newLon = initLon + lonCorrection;
-		newTime = initTime + Core::TimeSpan(timeCorrection);
-		newDepth = initDepth + depthCorrection;
+		// save old values in case the next iteration fails
+		prevLat = newLat;
+		prevLon = newLon;
+		prevDepth = newDepth;
+		prevTime = newTime;
+
+		// prepare values for next iteration
+		newLat += latCorrection;
+		newLon += lonCorrection;
+		newDepth += depthCorrection;
+		newTime += Core::TimeSpan(timeCorrection);
 
 		SEISCOMP_DEBUG(
 		    "Least Square iteration %d: corrections lat %f [km] lon %f [km] "
@@ -2034,14 +2072,6 @@ void StdLoc::locateLeastSquares(
 		    "lon %g depth %g time %s",
 		    iteration, latCorrection, lonCorrection, depthCorrection,
 		    timeCorrection, newLat, newLon, newDepth, newTime.iso().c_str());
-
-		//
-		// set the initial values for the next iteration
-		//
-		initLat = newLat;
-		initLon = newLon;
-		initDepth = newDepth;
-		initTime = newTime;
 	}
 
 	SEISCOMP_DEBUG("Least Square final solution lat %g lon %g "
