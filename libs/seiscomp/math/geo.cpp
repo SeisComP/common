@@ -39,9 +39,11 @@ namespace Geo
 
 static int _delazi(double lat1,  double lon1, double lat2, double lon2,
                    double *dist, double *azi, double *baz) {
-	double a,b,gam,cosa,cosb,cosc,sina,sinb,sinc,azi1,azi2,delta;
+	double a,b,gam,cosa,cosb,cosc,sina,sinb,sinc,delta;
 	if (lat1==lat2 && lon1==lon2) {
-		*dist = *azi = *baz = 0.;
+		if (dist) *dist = 0.;
+		if (azi) *azi  = 0.;
+		if (baz) *baz  = 0.;
 		return 0;
 	}
 	a     = M_PI_2 - lat2;
@@ -54,29 +56,31 @@ static int _delazi(double lat1,  double lon1, double lat2, double lon2,
 	cosc  = cosa*cosb + sinb*sina*cos(gam);
 	cosc = std::min(1.0, std::max(-1.0, cosc));
 	delta = acos(cosc);
-	sinc  = sin(delta);
-	azi1  = acos((cosa-cosb*cosc)/(sinb*sinc));
-	azi2  = acos((cosb-cosa*cosc)/(sina*sinc));
-
-	if ((isNaN(azi1) || isNaN(azi2)) && fabs(lon2-lon1)<0.000001) {
-		if (lat1>lat2) {
-			azi1 = M_PI;
-			azi2 = 0.;
+	if (dist) *dist = delta;
+	if ( azi or baz ) {
+		double azi1,azi2;
+		sinc  = sin(delta);
+		azi1  = acos((cosa-cosb*cosc)/(sinb*sinc));
+		azi2  = acos((cosb-cosa*cosc)/(sina*sinc));
+		if ((isNaN(azi1) || isNaN(azi2)) && fabs(lon2-lon1)<0.000001) {
+			if (lat1>lat2) {
+				azi1 = M_PI;
+				azi2 = 0.;
+			}
+			else {
+				azi1 = 0.;
+				azi2 = M_PI;
+			}
 		}
 		else {
-			azi1 = 0.;
-			azi2 = M_PI;
+			if (sin(gam)<0.)
+				azi2 = M_PI+M_PI - azi2;
+			else
+				azi1 = M_PI+M_PI - azi1;
 		}
+		if (azi) *azi  = azi1;
+		if (baz) *baz  = azi2;
 	}
-	else {
-		if (sin(gam)<0.)
-			azi2 = M_PI+M_PI - azi2;
-		else
-			azi1 = M_PI+M_PI - azi1;
-	}
-	*dist = delta;
-	*azi  = azi1;
-	*baz  = azi2;
 	return 0;
 }
 
@@ -86,11 +90,16 @@ void delazi(double lat1, double lon1, double lat2, double lon2,
 	_delazi(lat1*pi180, lon1*pi180, lat2*pi180, lon2*pi180,
 	        dist, azi1, azi2);
 // XXX	if (err) return err; // FIXME throw an exception
-	*dist *= ip180;
-	*azi1 *= ip180;
-	*azi2 *= ip180;
+	if (dist) *dist *= ip180;
+	if (azi1) *azi1 *= ip180;
+	if (azi2) *azi2 *= ip180;
 }
 
+double delta(double lat1, double lon1, double lat2, double lon2) {
+	double out_dist;
+	delazi(lat1, lon1, lat2, lon2, &out_dist);
+	return out_dist;
+}
 
 static void mb_geocr( double lon, double lat, double *a, double *b, double *c ) {
 	double blbda, bphi, ep, ug, vg;
