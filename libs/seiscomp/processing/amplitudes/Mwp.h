@@ -32,15 +32,11 @@ namespace Processing {
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_Mwp : public AmplitudeProcessor {
 	public:
 		AmplitudeProcessor_Mwp();
-		AmplitudeProcessor_Mwp(const Seiscomp::Core::Time& trigger);
 
 	public:
-		void setHint(ProcessingHint hint, double value) override;
-
 		const DoubleArray *processedData(Component comp) const override;
 
 	protected:
-		double timeWindowLength(double distance) const override;
 		bool computeAmplitude(const DoubleArray &data,
 		                      size_t i1, size_t i2,
 		                      size_t si1, size_t si2,
@@ -53,7 +49,6 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_Mwp : public AmplitudeProcessor {
 		void init();
 
 	private:
-		double _epizentralDistance;
 		DoubleArray _processedData;
 };
 

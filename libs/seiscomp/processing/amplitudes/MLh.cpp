@@ -59,14 +59,10 @@ AmplitudeProcessor::AmplitudeValue average(
 	double l = 0, u = 0;
 
 	l = max(l, v.value - v0l);
-	l = max(l, v.value - v0u);
 	l = max(l, v.value - v1l);
-	l = max(l, v.value - v1u);
 
-	u = max(l, v0l - v.value);
-	u = max(l, v0u - v.value);
-	u = max(l, v1l - v.value);
-	u = max(l, v1u - v.value);
+	u = max(u, v0u - v.value);
+	u = max(u, v1u - v.value);
 
 	v.lowerUncertainty = l;
 	v.upperUncertainty = u;
@@ -130,14 +126,10 @@ AmplitudeProcessor::AmplitudeValue gmean(
 	double l = 0, u = 0;
 
 	l = max(l, v.value - v0l);
-	l = max(l, v.value - v0u);
 	l = max(l, v.value - v1l);
-	l = max(l, v.value - v1u);
 
-	u = max(l, v0l - v.value);
-	u = max(l, v0u - v.value);
-	u = max(l, v1l - v.value);
-	u = max(l, v1u - v.value);
+	u = max(u, v0u - v.value);
+	u = max(u, v1u - v.value);
 
 	v.lowerUncertainty = l;
 	v.upperUncertainty = u;
@@ -158,7 +150,7 @@ AmplitudeProcessor_MLh::AmplitudeProcessor_MLh()
 
 AmplitudeProcessor_ML2h::AmplitudeProcessor_ML2h()
 : Processing::AmplitudeProcessor("ML") {
-	setSignalEnd(150.);
+	setSignalEnd("min(R / 3 + 30, 150) || 150");
 	setMinSNR(0);
 	// Maximum distance is 8 degrees
 	setMaxDist(8);
@@ -178,34 +170,6 @@ AmplitudeProcessor_ML2h::AmplitudeProcessor_ML2h()
 	// Propagate configuration to single processors
 	_ampN.setConfig(config());
 	_ampE.setConfig(config());
-}
-
-
-AmplitudeProcessor_ML2h::AmplitudeProcessor_ML2h(const Core::Time &trigger)
-: Processing::AmplitudeProcessor(trigger, "ML") {
-	setSignalEnd(150.);
-	setMinSNR(0);
-	// Maximum distance is 8 degrees
-	setMaxDist(8);
-	// Maximum depth is 80 km
-	setMaxDepth(80);
-
-	setUsedComponent(Horizontal);
-
-	_combiner = TakeAverage;
-
-	_ampN.setUsedComponent(FirstHorizontal);
-	_ampE.setUsedComponent(SecondHorizontal);
-
-	_ampE.setPublishFunction(bind(&AmplitudeProcessor_ML2h::newAmplitude, this, placeholders::_1, placeholders::_2));
-	_ampN.setPublishFunction(bind(&AmplitudeProcessor_ML2h::newAmplitude, this, placeholders::_1, placeholders::_2));
-
-	// Propagate configuration to single processors
-	_ampN.setConfig(config());
-	_ampE.setConfig(config());
-
-	_ampN.setTrigger(trigger);
-	_ampE.setTrigger(trigger);
 }
 
 
@@ -351,18 +315,22 @@ void AmplitudeProcessor_ML2h::computeTimeWindow() {
 	_ampN.setConfig(config());
 	_ampE.setConfig(config());
 
-	_ampE.computeTimeWindow();
 	_ampN.computeTimeWindow();
+	_ampE.computeTimeWindow();
+
+	// computeTimeWindow evaluates the signal times. This copies back the
+	// evaluated times.
+	setConfig(_ampE.config());
+
 	setTimeWindow(_ampE.timeWindow() | _ampN.timeWindow());
 }
 
 
-double AmplitudeProcessor_ML2h::timeWindowLength(double distance_deg) const {
-	double endN = _ampN.timeWindowLength(distance_deg);
-	double endE = _ampE.timeWindowLength(distance_deg);
-	_ampN.setSignalEnd(endN);
-	_ampE.setSignalEnd(endE);
-	return max(endN, endE);
+void AmplitudeProcessor_ML2h::setEnvironment(const DataModel::Origin *hypocenter,
+                                             const DataModel::SensorLocation *receiver,
+                                             const DataModel::Pick *pick) {
+	_ampN.setEnvironment(hypocenter, receiver, pick);
+	_ampE.setEnvironment(hypocenter, receiver, pick);
 }
 
 

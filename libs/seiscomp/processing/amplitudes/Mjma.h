@@ -47,8 +47,6 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_Mjma : public AmplitudeProcessor {
 		                      AmplitudeIndex *dt,
 		                      AmplitudeValue *amplitude,
 		                      double *period, double *snr) override;
-
-		double timeWindowLength(double distance) const override;
 };
 
 

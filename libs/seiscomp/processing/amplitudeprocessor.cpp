@@ -29,11 +29,28 @@
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/interfacefactory.ipp>
 #include <seiscomp/system/environment.h>
+#include <seiscomp/seismology/ttt.h>
 
+#include <cmath>
+#include <functional>
 #include <fstream>
 #include <limits>
 #include <vector>
 #include <mutex>
+
+
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 103800
+#include <boost/spirit/include/classic.hpp>
+#include <boost/spirit/include/phoenix1_binders.hpp>
+#include <boost/spirit/include/classic_error_handling.hpp>
+namespace bs = boost::spirit::classic;
+#else
+#include <boost/spirit.hpp>
+#include <boost/spirit/phoenix/binders.hpp>
+#include <boost/spirit/error_handling.hpp>
+namespace bs = boost::spirit;
+#endif
 
 
 using namespace std;
@@ -64,6 +81,888 @@ typedef map<string, TypeSpecificRegionalizationPtr> RegionalizationRegistry;
 RegionalizationRegistry regionalizationRegistry;
 mutex regionalizationRegistryMutex;
 
+
+class StatusException : public std::exception {
+	public:
+		StatusException(WaveformProcessor::Status status, double value)
+		: _status(status), _value(value) {}
+
+	public:
+		WaveformProcessor::Status status() const { return _status; }
+		double value() const { return _value; }
+
+	private:
+		WaveformProcessor::Status _status;
+		double                    _value;
+};
+
+
+namespace Expression {
+
+
+class Context {
+	public:
+		Context(
+			const AmplitudeProcessor *proc
+		)
+		: _proc(proc) {}
+
+		~Context() {
+			//
+		}
+
+		const AmplitudeProcessor *proc() const { return _proc; }
+
+		double getTravelTime(const string &phase, int statusValueOffset) {
+			auto env = _proc->environment();
+			if ( !env.hypocenter ) {
+				throw StatusException(WaveformProcessor::MissingHypocenter, statusValueOffset);
+			}
+			if ( !env.receiver ) {
+				throw StatusException(WaveformProcessor::MissingReceiver, statusValueOffset);
+			}
+
+			if ( !_ttt ) {
+				if ( _proc->config().ttInterface.empty() ) {
+					_ttt = TravelTimeTableInterfaceFactory::Create("libtau");
+				}
+				else {
+					_ttt = TravelTimeTableInterfaceFactory::Create(_proc->config().ttInterface);
+				}
+
+				if ( !_ttt ) {
+					throw StatusException(WaveformProcessor::TravelTimeEstimateFailed, statusValueOffset);
+				}
+
+				if ( !_ttt->setModel(_proc->config().ttModel.empty() ? "iasp91" : _proc->config().ttModel) ) {
+					throw StatusException(WaveformProcessor::TravelTimeEstimateFailed, statusValueOffset + 1);
+				}
+			}
+
+			auto hypoLat = env.hypocenter->latitude().value();
+			auto hypoLon = env.hypocenter->longitude().value();
+			double hypoDepth;
+
+			try {
+				// All attributes are optional and throw an exception if not set
+				hypoDepth = env.hypocenter->depth().value();
+			}
+			catch ( ... ) {
+				throw StatusException(WaveformProcessor::IncompleteMetadata, statusValueOffset);
+			}
+
+			double recvLat, recvLon, recvElev;
+
+			try {
+				// Both attributes are optional and throw an exception if not set
+				recvLat = env.receiver->latitude();
+				recvLon = env.receiver->longitude();
+
+				// Elevation is fully optional and set to zero if unset
+				try {
+					recvElev = env.receiver->elevation();
+				}
+				catch ( ... ) {
+					recvElev = 0;
+				}
+			}
+			catch ( ... ) {
+				throw StatusException(WaveformProcessor::IncompleteMetadata, statusValueOffset + 1);
+			}
+
+			try {
+				auto tt = Core::TimeSpan(
+					_ttt->compute(
+						phase.c_str(), hypoLat, hypoLon, hypoDepth,
+						recvLat, recvLon, recvElev
+					).time
+				);
+
+				auto absoluteTime = env.hypocenter->time().value() + tt;
+				return static_cast<double>(absoluteTime - _proc->trigger());
+			}
+			catch ( ... ) {
+				throw StatusException(WaveformProcessor::TravelTimeEstimateFailed, statusValueOffset + 2);
+			}
+		}
+
+
+	private:
+		const AmplitudeProcessor    *_proc;
+		TravelTimeTableInterfacePtr  _ttt;
+};
+
+
+
+DEFINE_SMARTPOINTER(Interface);
+class Interface : public Core::BaseObject {
+	public:
+		static InterfacePtr parse(const std::string &, std::string *error_str);
+
+		virtual double evaluate(Context &ctx) = 0;
+		virtual std::string toString() const = 0;
+};
+
+class Fixed : public Interface {
+	public:
+		explicit Fixed(double value) : _value(value) {}
+
+		double evaluate(Context &ctx) override { return _value; }
+		std::string toString() const override { return Core::toString(_value); }
+
+	private:
+		double _value;
+};
+
+
+template <template<class> class F>
+class OP1Expression : public Interface {
+	public:
+		OP1Expression(InterfacePtr op1) : _op(F<double>()), _op1(op1) {}
+
+		double evaluate(Context &ctx) override {
+			return _op(_op1->evaluate(ctx));
+		}
+
+	private:
+		F<double>    _op;
+
+	protected:
+		InterfacePtr _op1;
+};
+
+
+class OP2BaseExpression : public Interface {
+	public:
+		OP2BaseExpression(InterfacePtr op1, InterfacePtr op2)
+		: _op1(op1), _op2(op2) {}
+
+	protected:
+		InterfacePtr _op1;
+		InterfacePtr _op2;
+};
+
+
+template <template<class> class F>
+class OP2Expression : public OP2BaseExpression {
+	public:
+		OP2Expression(InterfacePtr op1, InterfacePtr op2)
+		: OP2BaseExpression(op1, op2), _op(F<double>()) {}
+
+		double evaluate(Context &ctx) override {
+			return _op(_op1->evaluate(ctx), _op2->evaluate(ctx));
+		}
+
+	private:
+		F<double> _op;
+};
+
+
+template<class T>
+struct dabs {
+	T operator()( const T& arg ) const { return std::abs(arg); }
+};
+
+template<class T>
+struct dmod {
+	T operator()( const T& arg1, const T& arg2 ) const { return std::fmod(arg1, arg2); }
+};
+
+template<class T>
+struct dpow {
+	T operator()( const T& arg1, const T& arg2 ) const { return std::pow(arg1, arg2); }
+};
+
+template<class T>
+struct lessThan {
+	T operator()( const T& arg1, const T& arg2 ) const {
+		return std::min(arg1, arg2);
+	}
+};
+
+template<class T>
+struct greaterThan {
+	T operator()( const T& arg1, const T& arg2 ) const {
+		return std::max(arg1, arg2);
+	}
+};
+
+// Operators
+class NegExpression : public OP1Expression<std::negate> {
+	using OP1Expression<std::negate>::OP1Expression;
+
+	std::string toString() const override {
+		return "-" + _op1->toString();
+	}
+};
+
+class AbsExpression : public OP1Expression<dabs> {
+	using OP1Expression<dabs>::OP1Expression;
+
+	std::string toString() const override {
+		return "|" + _op1->toString() + "|";
+	}
+};
+
+class MinExpression : public OP2Expression<lessThan> {
+	using OP2Expression<lessThan>::OP2Expression;
+
+	std::string toString() const override {
+		return "min(" + _op1->toString() + ", " + _op2->toString() + ")";
+	}
+};
+
+class MaxExpression : public OP2Expression<greaterThan> {
+	using OP2Expression<greaterThan>::OP2Expression;
+
+	std::string toString() const override {
+		return "max(" + _op1->toString() + ", " + _op2->toString() + ")";
+	}
+};
+
+class AltExpression : public OP2BaseExpression {
+	using OP2BaseExpression::OP2BaseExpression;
+
+	double evaluate(Context &ctx) override {
+		try {
+			return _op1->evaluate(ctx);
+		}
+		catch ( ... ) {
+			return _op2->evaluate(ctx);
+		}
+	}
+
+	std::string toString() const override {
+		return _op1->toString() + " || " + _op2->toString();
+	}
+};
+
+class AddExpression : public OP2Expression<std::plus> {
+	using OP2Expression<std::plus>::OP2Expression;
+
+	std::string toString() const override {
+		return "(" + _op1->toString() + " + " + _op2->toString() + ")";
+	}
+};
+
+class SubExpression : public OP2Expression<std::minus> {
+	using OP2Expression<std::minus>::OP2Expression;
+
+	std::string toString() const override {
+		return "(" + _op1->toString() + " - " + _op2->toString() + ")";
+	}
+};
+
+class MulExpression : public OP2Expression<std::multiplies> {
+	using OP2Expression<std::multiplies>::OP2Expression;
+
+	std::string toString() const override {
+		return "(" + _op1->toString() + " * " + _op2->toString() + ")";
+	}
+};
+
+class DivExpression : public OP2Expression<std::divides> {
+	using OP2Expression<std::divides>::OP2Expression;
+
+	std::string toString() const override {
+		return "(" + _op1->toString() + " / " + _op2->toString() + ")";
+	}
+};
+
+class ModExpression : public OP2Expression<dmod> {
+	using OP2Expression<dmod>::OP2Expression;
+
+	std::string toString() const override {
+		return "(" + _op1->toString() + " % " + _op2->toString() + ")";
+	}
+};
+
+class PowExpression : public OP2Expression<dpow> {
+	using OP2Expression<dpow>::OP2Expression;
+
+	std::string toString() const override {
+		return "(" + _op1->toString() + " ^ " + _op2->toString() + ")";
+	}
+};
+
+
+// Variables
+class ParamEpiDistDeg : public Interface {
+	public:
+		static double Evaluate(Context &ctx) {
+			auto env = ctx.proc()->environment();
+
+			if ( !env.hypocenter ) {
+				throw StatusException(WaveformProcessor::MissingHypocenter, 10);
+			}
+
+			auto hypoLon = env.hypocenter->longitude().value();
+			auto hypoLat = env.hypocenter->latitude().value();
+
+			double recvLat, recvLon;
+
+			try {
+				// Both attributes are optional and throw an exception if not set
+				recvLat = env.receiver->latitude();
+				recvLon = env.receiver->longitude();
+			}
+			catch ( ... ) {
+				throw StatusException(WaveformProcessor::MissingReceiver, 10);
+			}
+
+			double dist, az, baz;
+			Math::Geo::delazi_wgs84(hypoLat, hypoLon, recvLat, recvLon,
+			                        &dist, &az, &baz);
+
+			return dist;
+		}
+
+		double evaluate(Context &ctx) override {
+			return Evaluate(ctx);
+		}
+
+		std::string toString() const override {
+			return "D";
+		}
+};
+
+class ParamEpiDistKM : public ParamEpiDistDeg {
+	public:
+		static double Evaluate(Context &ctx) {
+			return Math::Geo::deg2km(ParamEpiDistDeg::Evaluate(ctx));
+		}
+
+		double evaluate(Context &ctx) override {
+			return Evaluate(ctx);
+		}
+
+		std::string toString() const override {
+			return "R";
+		}
+};
+
+class ParamDepth : public Interface {
+	public:
+		static double Evaluate(Context &ctx) {
+			auto env = ctx.proc()->environment();
+
+			if ( !env.hypocenter ) {
+				throw StatusException(WaveformProcessor::MissingHypocenter, 20);
+			}
+
+			try {
+				return env.hypocenter->depth().value();
+			}
+			catch ( ... ) {
+				throw StatusException(WaveformProcessor::MissingDepth, 20);
+			}
+		}
+
+		double evaluate(Context &ctx) override {
+			return Evaluate(ctx);
+		}
+
+		std::string toString() const override {
+			return "Z";
+		}
+};
+
+
+class ParamHypoDistKM : public Interface {
+	public:
+		static double Evaluate(Context &ctx) {
+			auto R = ParamEpiDistKM::Evaluate(ctx);
+			auto z = ParamDepth::Evaluate(ctx);
+			return sqrt(R * R + z * z);
+		}
+
+		double evaluate(Context &ctx) override {
+			return Evaluate(ctx);
+		}
+
+		std::string toString() const override {
+			return "h";
+		}
+};
+
+
+class ParamHypoDistDeg : public ParamHypoDistKM {
+	public:
+		static double Evaluate(Context &ctx) {
+			return Math::Geo::km2deg(ParamHypoDistKM::Evaluate(ctx));
+		}
+
+		double evaluate(Context &ctx) override {
+			return Evaluate(ctx);
+		}
+
+		std::string toString() const override {
+			return "H";
+		}
+};
+
+
+class ParamTT : public Interface {
+	public:
+		ParamTT(const std::string &phase) : _phase(phase) {}
+
+	public:
+		double evaluate(Context &ctx) override {
+			return ctx.getTravelTime(_phase, 30);
+		}
+
+		std::string toString() const override {
+			return "tt(" + _phase + ")";
+		}
+
+	private:
+		std::string _phase;
+};
+
+
+}
+
+
+// -----------------------------------------------------------------------------
+// Expression parser
+// -----------------------------------------------------------------------------
+struct LiteralClosure : bs::closure<LiteralClosure, double> {
+	member1 value;
+};
+
+template <typename T>
+struct ValueClosure : bs::closure<ValueClosure<T>, T> {
+	typename bs::closure<ValueClosure<T>, T>::member1 value;
+};
+
+template <typename T>
+struct ParamClosure : bs::closure<ParamClosure<T>, T, string> {
+	typename bs::closure<ValueClosure<T>, T, string>::member1 value;
+	typename bs::closure<ValueClosure<T>, T, string>::member2 name;
+};
+
+struct StringClosure : bs::closure<StringClosure, string> {
+	member1 name;
+};
+
+template <typename T> struct Parser;
+
+template <typename ParserT>
+struct Generator {
+	typedef typename ParserT::component_type component_type;
+	typedef typename ParserT::value_type value_type;
+
+	Generator(ParserT &p) : parser(p) {}
+
+	value_type constant(float f) const {
+		return new Expression::Fixed(f);
+	}
+
+	value_type abs(value_type f) const {
+		return new Expression::AbsExpression(f);
+	}
+
+	value_type min(value_type a, value_type b) const {
+		return new Expression::MinExpression(a, b);
+	}
+
+	value_type max(value_type a, value_type b) const {
+		return new Expression::MaxExpression(a, b);
+	}
+
+	value_type alt(value_type a, value_type b) const {
+		return new Expression::AltExpression(a, b);
+	}
+
+	value_type add(value_type a, value_type b) const {
+		return new Expression::AddExpression(a, b);
+	}
+
+	value_type sub(value_type a, value_type b) const {
+		return new Expression::SubExpression(a, b);
+	}
+
+	value_type mul(value_type a, value_type b) const {
+		return new Expression::MulExpression(a, b);
+	}
+
+	value_type div(value_type a, value_type b) const {
+		return new Expression::DivExpression(a, b);
+	}
+
+	value_type mod(value_type a, value_type b) const {
+		return new Expression::ModExpression(a, b);
+	}
+
+	value_type pow(value_type a, value_type b) const {
+		return new Expression::PowExpression(a, b);
+	}
+
+	value_type parameter(const string &name) const {
+		value_type f = nullptr;
+
+		if ( name == "R" || name == "d" ) {
+			f = new Expression::ParamEpiDistKM;
+		}
+		else if ( name == "D" ) {
+			f = new Expression::ParamEpiDistDeg;
+		}
+		else if ( name == "Z" ) {
+			f = new Expression::ParamDepth;
+		}
+		else if ( name == "h" ) {
+			f = new Expression::ParamHypoDistKM;
+		}
+		else if ( name == "H" ) {
+			f = new Expression::ParamHypoDistDeg;
+		}
+
+		if ( !f )
+			parser.error_message = "unknown parameter '" + name + "'";
+
+		return f;
+	}
+
+	value_type phase(const string &name) const {
+		return new Expression::ParamTT(name);
+	}
+
+	ParserT &parser;
+};
+
+
+template <typename T>
+struct Parser : bs::grammar< Parser<T> > {
+	typedef T component_type;
+	typedef Expression::InterfacePtr value_type;
+	typedef Generator< Parser<T> > generator_type;
+
+	// The parser object is copied a lot, so instead of keeping its own table
+	// of variables, it keeps track of a reference to a common table.
+	Parser(value_type &res, string &err)
+	 : result(res), error_message(err), generator(*this) {
+		result = nullptr;
+	}
+
+	struct Handler {
+		template <typename ScannerT, typename ErrorT>
+		bs::error_status<>
+		operator()(ScannerT const& /*scan*/, ErrorT const& /*error*/) const {
+			return bs::error_status<> (bs::error_status<>::fail);
+		}
+	};
+
+	template <typename ParserT>
+	struct ErrorCheck {
+		ErrorCheck(ParserT const &p) : parser(p) {}
+
+		template <typename Iterator>
+		void operator()(Iterator first, Iterator last) const {
+			if ( !parser.error_message.empty() )
+				bs::throw_(first, (int)-1);
+		}
+
+		ParserT const &parser;
+	};
+
+	// Following is the grammar definition.
+	template <typename ScannerT>
+	struct definition {
+		definition(Parser const& self) {
+			using namespace bs;
+			using namespace phoenix;
+
+			identifier
+			= lexeme_d
+			[
+				alpha_p
+				>> *alnum_p
+			][identifier.name = construct_<string>(arg1, arg2)];
+
+			// The longest_d directive is built-in to tell the parser to make
+			// the longest match it can. Thus "1.23" matches real_p rather than
+			// int_p followed by ".23".
+			literal
+			= longest_d
+			[
+				int_p[literal.value = arg1]
+				| real_p[literal.value = arg1]
+			];
+
+			group
+			= '(' >> expression[group.value = arg1]	>> ')';
+
+			abs
+			=  '|'
+			>> expression[abs.value = phoenix::bind(&generator_type::abs)(self.generator, arg1)]
+			>> '|';
+
+			min
+			=  "min("
+			>> expression[min.value = arg1]
+			>> ','
+			>> expression[min.value = phoenix::bind(&generator_type::min)(self.generator, min.value, arg1)]
+			>> ')';
+
+			max
+			=  "max("
+			>> expression[max.value = arg1]
+			>> ','
+			>> expression[max.value = phoenix::bind(&generator_type::max)(self.generator, max.value, arg1)]
+			>> ')';
+
+			constant
+			= literal[constant.value = phoenix::bind(&generator_type::constant)(self.generator, arg1)];
+
+			param
+			= (+identifier[param.name = arg1])
+			[
+				param.value = phoenix::bind(&generator_type::parameter)(self.generator, param.name)][ErrorCheck<Parser>(self)
+			];
+
+			phase
+			= "tt("
+			>> (+identifier[phase.name = arg1])
+			[
+				phase.value = phoenix::bind(&generator_type::phase)(self.generator, phase.name)][ErrorCheck<Parser>(self)
+			]
+			>> ')';
+
+			// A statement can end at the end of the line, or with a semicolon.
+			statement
+			= guard<int>()
+			(
+				expression[phoenix::bind(&Parser::setResult)(self, arg1)] >> end_p
+			)[Handler()];
+
+			value
+			= constant[value.value = arg1]
+				| phase[value.value = arg1]
+				| min[value.value = arg1]
+				| max[value.value = arg1]
+				| param[value.value = arg1]
+				| group[value.value = arg1]
+				| abs[value.value = arg1];
+
+			alternative
+			= value[alternative.value = arg1]
+			>> * (
+				"||" >> value[alternative.value = phoenix::bind(&generator_type::alt)(self.generator, alternative.value, arg1)]
+			);
+
+			power
+			= alternative[power.value = arg1]
+			>> * (
+				'^' >> alternative[power.value = phoenix::bind(&generator_type::pow)(self.generator, power.value, arg1)]
+			);
+
+			modulus
+			= power[modulus.value = arg1]
+			>> * ('%' >> power[modulus.value = phoenix::bind(&generator_type::mod)(self.generator, modulus.value, arg1)]);
+
+			multiplication
+			= modulus[multiplication.value = arg1]
+			>> * ( ( '*' >> modulus[multiplication.value = phoenix::bind(&generator_type::mul)(self.generator, multiplication.value, arg1)])
+			     | ( '/' >> modulus[multiplication.value = phoenix::bind(&generator_type::div)(self.generator, multiplication.value, arg1)])
+			);
+
+			addition
+			= multiplication[addition.value = arg1]
+			>> * ( ( '+' >> multiplication[addition.value = phoenix::bind(&generator_type::add)(self.generator, addition.value, arg1)])
+			     | ( '-' >> multiplication[addition.value = phoenix::bind(&generator_type::sub)(self.generator, addition.value, arg1)])
+			);
+
+			expression = addition[expression.value = arg1];
+		}
+
+		bs::rule<ScannerT> const&
+		start() const { return statement; }
+
+		// Each rule must be declared, optionally with an associated closure.
+		bs::rule<ScannerT> statement;
+		bs::rule<ScannerT, StringClosure::context_t> identifier;
+		bs::rule<ScannerT, LiteralClosure::context_t> literal;
+		bs::rule<ScannerT, typename ParamClosure<value_type>::context_t> param, phase;
+		bs::rule<ScannerT, typename ValueClosure<value_type>::context_t> expression, value,
+		constant, group, abs, min, max,
+		multiplication, addition, modulus, power, alternative;
+	};
+
+	void setResult(value_type x) const {
+		result = x;
+	}
+
+	value_type &result;
+	string &error_message;
+	generator_type generator;
+};
+
+
+Expression::InterfacePtr Expression::Interface::parse(const std::string &text, std::string *error_str) {
+	string error;
+	Parser<double>::value_type result;
+	Parser<double> parser(result, error);
+	bs::parse_info<string::const_iterator> info;
+
+	info = bs::parse(text.begin(), text.end(), parser, bs::space_p);
+
+	if ( error_str ) {
+		*error_str = error;
+	}
+
+	if ( !info.full ) {
+		if ( error_str && error_str->empty() ) {
+			*error_str = "not fully parsed";
+		}
+		result = nullptr;
+	}
+
+	return result;
+}
+
+
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+AmplitudeProcessor::SignalTime::SignalTime(int v) {
+	*this = static_cast<double>(v);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+AmplitudeProcessor::SignalTime::SignalTime(double v) {
+	*this = v;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+AmplitudeProcessor::SignalTime::SignalTime(const char *expr)
+: SignalTime(std::string(expr)) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+AmplitudeProcessor::SignalTime::SignalTime(const std::string &expr) {
+	string err;
+	if ( !set(expr, &err) ) {
+		throw invalid_argument(err);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+AmplitudeProcessor::SignalTime::SignalTime(const SignalTime &time) {
+	*this = time;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+AmplitudeProcessor::SignalTime &AmplitudeProcessor::SignalTime::operator=(double v) {
+	_exp = new Expression::Fixed(v);
+	_value = v;
+	return *this;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+AmplitudeProcessor::SignalTime &AmplitudeProcessor::SignalTime::operator=(const SignalTime &time) {
+	_exp = time._exp;
+	_value = time._value;
+	return *this;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+AmplitudeProcessor::SignalTime &AmplitudeProcessor::SignalTime::operator+=(double v) {
+	if ( !_exp ) {
+		throw std::runtime_error("No expression to add to");
+	}
+
+	_exp = new Expression::AddExpression(
+		static_cast<Expression::Interface*>(_exp.get()),
+		new Expression::Fixed(v)
+	);
+
+	return *this;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+AmplitudeProcessor::SignalTime &AmplitudeProcessor::SignalTime::operator-=(double v) {
+	if ( !_exp ) {
+		throw std::runtime_error("No expression to substract from");
+	}
+
+	_exp = new Expression::SubExpression(
+		static_cast<Expression::Interface*>(_exp.get()),
+		new Expression::Fixed(v)
+	);
+
+	return *this;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool AmplitudeProcessor::SignalTime::set(const string &text, string *error) {
+	Expression::InterfacePtr tmp = Expression::Interface::parse(text, error);
+	if ( !tmp ) {
+		return false;
+	}
+
+	_exp = tmp;
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+string AmplitudeProcessor::SignalTime::toString() const {
+	return _exp ? static_cast<Expression::Interface*>(_exp.get())->toString() : string();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeProcessor::SignalTime::evaluate(const AmplitudeProcessor *proc) {
+	_value = Core::None;
+	if ( _exp ) {
+		Expression::Context ctx(proc);
+		_value = static_cast<Expression::Interface*>(_exp.get())->evaluate(ctx);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -90,28 +989,6 @@ AmplitudeProcessor::AmplitudeProcessor(const std::string& type)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor::AmplitudeProcessor(const Core::Time& trigger)
-: _trigger(trigger) {
-
-	init();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor::AmplitudeProcessor(const Core::Time& trigger, const std::string& type)
-: _trigger(trigger), _type(type) {
-
-	init();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::init() {
 	_enableUpdates = false;
 	_enableResponses = false;
@@ -121,6 +998,7 @@ void AmplitudeProcessor::init() {
 	_config.noiseEnd = -5;
 	_config.signalBegin = -5;
 	_config.signalEnd = 30;
+
 	_config.snrMin = 3;
 
 	_config.minimumDistance = 0;
@@ -158,14 +1036,18 @@ void AmplitudeProcessor::setEnvironment(const DataModel::Origin *hypocenter,
 	// Check if regionalization is desired
 	lock_guard<mutex> l(regionalizationRegistryMutex);
 	auto it = regionalizationRegistry.find(type());
-	if ( it == regionalizationRegistry.end() )
-		// No type specific regionalization, OK
+	if ( it == regionalizationRegistry.end() ) {
+		// No type specific regionalization, check given distance and depth
+		checkEnvironmentalLimits();
 		return;
+	}
 
 	TypeSpecificRegionalization *tsr = it->second.get();
-	if ( !tsr or tsr->regionalization.empty() )
-		// No type specific regionalization, OK
+	if ( !tsr or tsr->regionalization.empty() ) {
+		// No type specific regionalization, check given distance and depth
+		checkEnvironmentalLimits();
 		return;
+	}
 
 	// There are region profiles so meta data are required
 	if ( !hypocenter ) {
@@ -178,19 +1060,20 @@ void AmplitudeProcessor::setEnvironment(const DataModel::Origin *hypocenter,
 		return;
 	}
 
-	double hypoLat, hypoLon, hypoDepth;
-	double recvLat, recvLon;
+	auto hypoLat = environment().hypocenter->latitude().value();
+	auto hypoLon = environment().hypocenter->longitude().value();
+	double hypoDepth;
 
 	try {
-		// All attributes are optional and throw an exception if not set
-		hypoLat = environment().hypocenter->latitude().value();
-		hypoLon = environment().hypocenter->longitude().value();
+		// Depth is optional and throws an exception if not set
 		hypoDepth = environment().hypocenter->depth().value();
 	}
 	catch ( ... ) {
 		setStatus(MissingHypocenter, 1);
 		return;
 	}
+
+	double recvLat, recvLon;
 
 	try {
 		// Both attributes are optional and throw an exception if not set
@@ -264,6 +1147,48 @@ void AmplitudeProcessor::setEnvironment(const DataModel::Origin *hypocenter,
 	if ( hypoDepth < _config.minimumDepth || hypoDepth > _config.maximumDepth ) {
 		setStatus(DepthOutOfRange, hypoDepth);
 		return;
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeProcessor::checkEnvironmentalLimits() {
+	if ( _environment.hypocenter ) {
+		try {
+			auto hypoDepth = _environment.hypocenter->depth().value();
+			if ( hypoDepth < _config.minimumDepth || hypoDepth > _config.maximumDepth ) {
+				setStatus(DepthOutOfRange, hypoDepth);
+				return;
+			}
+		}
+		catch ( ... ) {}
+
+		if ( _environment.receiver ) {
+			auto hypoLat = _environment.hypocenter->latitude().value();
+			auto hypoLon = _environment.hypocenter->longitude().value();
+			double recvLat, recvLon;
+
+			try {
+				// Both attributes are optional and throw an exception if not set
+				recvLat = environment().receiver->latitude();
+				recvLon = environment().receiver->longitude();
+			}
+			catch ( ... ) {
+				return;
+			}
+
+			double dist, az, baz;
+			Math::Geo::delazi_wgs84(hypoLat, hypoLon, recvLat, recvLon,
+			                        &dist, &az, &baz);
+
+			if ( dist < _config.minimumDistance || dist > _config.maximumDistance ) {
+				setStatus(DistanceOutOfRange, dist);
+				return;
+			}
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -356,8 +1281,20 @@ const std::string& AmplitudeProcessor::unit() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::computeTimeWindow() {
-	if ( !(bool)_trigger )
+	if ( !(bool)_trigger ) {
 		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
+	// Evaluate noise and signal time windows
+	try { _config.noiseBegin.evaluate(this); }
+	catch ( StatusException &e ) { setStatus(e.status(), e.value()); }
+	try { _config.noiseEnd.evaluate(this); }
+	catch ( StatusException &e ) { setStatus(e.status(), e.value()); }
+	try { _config.signalBegin.evaluate(this); }
+	catch ( StatusException &e ) { setStatus(e.status(), e.value()); }
+	try { _config.signalEnd.evaluate(this); }
+	catch ( StatusException &e ) { setStatus(e.status(), e.value()); }
 
 	Core::Time startTime = _trigger + Core::TimeSpan(_config.noiseBegin);
 	Core::Time   endTime = _trigger + Core::TimeSpan(_config.signalEnd);
@@ -471,7 +1408,7 @@ void AmplitudeProcessor::process(const Record *record) {
 	if ( _stream.fsamp == 0.0 )
 		return;
 
-	int n = (int)_data.size();
+	int n = static_cast<int>(_data.size());
 
 	// signal and noise window relative to _continuous->startTime()
 	double dt0  = _trigger - dataTimeWindow().startTime();
@@ -483,8 +1420,8 @@ void AmplitudeProcessor::process(const Record *record) {
 	double dts2 = dt0 + _config.signalEnd;
 
 	// Noise indicies
-	int ni1 = int(dtn1*_stream.fsamp+0.5);
-	int ni2 = int(dtn2*_stream.fsamp+0.5);
+	int ni1 = static_cast<int>(dtn1*_stream.fsamp + 0.5);
+	int ni2 = static_cast<int>(dtn2*_stream.fsamp + 0.5);
 
 	if ( ni1 < 0 || ni2 < 0 ) {
 		SEISCOMP_DEBUG("Noise data not available -> abort");
@@ -503,14 +1440,17 @@ void AmplitudeProcessor::process(const Record *record) {
 	// these are the offsets of the beginning and end
 	// of the signal window relative to the start of
 	// the continuous record in samples
-	int i1 = int(dts1*_stream.fsamp+0.5);
-	int i2 = int(dts2*_stream.fsamp+0.5);
+	int i1 = static_cast<int>(dts1 * _stream.fsamp + 0.5);
+	int i2 = static_cast<int>(dts2 * _stream.fsamp + 0.5);
 
 	//int progress = int(100.*(n-i1)/(i2-i1));
 	//int progress = int(100.*(dt1-dts1)/(dts2-dts1));
-	int progress = int(100.*(dt1-dts1)/(std::max(dtw1,dts2)-dts1));
+	int progress = static_cast<int>(100. * (dt1 - dts1) / (std::max(dtw1, dts2) - dts1));
 
-	if ( progress > 100 ) progress = 100;
+	if ( progress > 100 ) {
+		progress = 100;
+	}
+
 	setStatus(InProgress, progress);
 
 	if ( i1 < 0 ) i1 = 0;
@@ -790,9 +1730,17 @@ bool AmplitudeProcessor::deconvolveData(Response *resp, DoubleArray &data,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor::computeNoise(const DoubleArray &data, int i1, int i2, double *offset, double *amplitude) {
 	// compute offset and rms within the time window
-	if(i1<0) i1=0;
-	if(i2<0) return false;
-	if(i2>(int)data.size()) i2=(int)data.size();
+	if ( i1 < 0 ) {
+		i1 = 0;
+	}
+
+	if ( i2 < 0 ) {
+		return false;
+	}
+
+	if ( i2 > static_cast<int>(data.size()) ) {
+		i2 = static_cast<int>(data.size());
+	}
 
 	// If noise window is zero return an amplitude and offset of zero as well.
 	if ( i2-i1 == 0 ) {
@@ -802,7 +1750,9 @@ bool AmplitudeProcessor::computeNoise(const DoubleArray &data, int i1, int i2, d
 	}
 
 	DoubleArrayPtr d = static_cast<DoubleArray*>(data.slice(i1, i2));
-	if ( !d ) return false;
+	if ( !d ) {
+		return false;
+	}
 
 	double ofs, amp;
 
@@ -880,11 +1830,73 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 		settings.getValue(_enableResponses, "amplitudes.enableResponses");
 	}
 
+	string expr, error;
+
+	try {
+		expr = settings.getString("amplitudes." + _type + ".noiseBegin");
+		if ( !_config.noiseBegin.set(expr, &error) ) {
+			SEISCOMP_ERROR("%s.%s.%s.%s - %s noise begin '%s': %s",
+			               settings.networkCode.c_str(),
+			               settings.stationCode.c_str(),
+			               settings.locationCode.c_str(),
+			               settings.channelCode.c_str(),
+			               _type.c_str(), expr.c_str(), error.c_str());
+			return false;
+		}
+	}
+	catch ( ... ) {}
+
+	try {
+		expr = settings.getString("amplitudes." + _type + ".noiseEnd");
+		if ( !_config.noiseEnd.set(expr, &error) ) {
+			SEISCOMP_ERROR("%s.%s.%s.%s - %s noise end '%s': %s",
+			               settings.networkCode.c_str(),
+			               settings.stationCode.c_str(),
+			               settings.locationCode.c_str(),
+			               settings.channelCode.c_str(),
+			               _type.c_str(), expr.c_str(), error.c_str());
+			return false;
+		}
+	}
+	catch ( ... ) {}
+
+	try {
+		expr = settings.getString("amplitudes." + _type + ".signalBegin");
+		if ( !_config.signalBegin.set(expr, &error) ) {
+			SEISCOMP_ERROR("%s.%s.%s.%s - %s signal begin '%s': %s",
+			               settings.networkCode.c_str(),
+			               settings.stationCode.c_str(),
+			               settings.locationCode.c_str(),
+			               settings.channelCode.c_str(),
+			               _type.c_str(), expr.c_str(), error.c_str());
+			return false;
+		}
+	}
+	catch ( ... ) {}
+
+	try {
+		expr = settings.getString("amplitudes." + _type + ".signalEnd");
+		if ( !_config.signalEnd.set(expr, &error) ) {
+			SEISCOMP_ERROR("%s.%s.%s.%s - %s signal end '%s': %s",
+			               settings.networkCode.c_str(),
+			               settings.stationCode.c_str(),
+			               settings.locationCode.c_str(),
+			               settings.channelCode.c_str(),
+			               _type.c_str(), expr.c_str(), error.c_str());
+			return false;
+		}
+	}
+	catch ( ... ) {}
+
+	try { _config.ttInterface = cfg->getString("amplitudes.ttt.interface"); }
+	catch ( ... ) {}
+	try { _config.ttModel = cfg->getString("amplitudes.ttt.model"); }
+	catch ( ... ) {}
+
+	settings.getValue(_config.ttInterface, "amplitudes.ttt.interface");
+	settings.getValue(_config.ttModel, "amplitudes.ttt.model");
+
 	settings.getValue(_config.snrMin, "amplitudes." + _type + ".minSNR");
-	settings.getValue(_config.noiseBegin, "amplitudes." + _type + ".noiseBegin");
-	settings.getValue(_config.noiseEnd, "amplitudes." + _type + ".noiseEnd");
-	settings.getValue(_config.signalBegin, "amplitudes." + _type + ".signalBegin");
-	settings.getValue(_config.signalEnd, "amplitudes." + _type + ".signalEnd");
 	settings.getValue(_config.minimumDistance, "amplitudes." + _type + ".minDist");
 	settings.getValue(_config.maximumDistance, "amplitudes." + _type + ".maxDist");
 	settings.getValue(_config.minimumDepth, "amplitudes." + _type + ".minDepth");
@@ -897,10 +1909,10 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	SEISCOMP_DEBUG("  + maximum distance = %.5f deg", _config.maximumDistance);
 	SEISCOMP_DEBUG("  + minimum depth = %.3f km", _config.minimumDepth);
 	SEISCOMP_DEBUG("  + maximum depth = %.3f km", _config.maximumDepth);
-	SEISCOMP_DEBUG("  + noise begin = %.3f s", _config.noiseBegin);
-	SEISCOMP_DEBUG("  + noise end = %.3f s", _config.noiseEnd);
-	SEISCOMP_DEBUG("  + signal begin = %.3f s", _config.signalBegin);
-	SEISCOMP_DEBUG("  + signal end = %.3f s", _config.signalEnd);
+	SEISCOMP_DEBUG("  + noise begin = %s", _config.noiseBegin.toString().c_str());
+	SEISCOMP_DEBUG("  + noise end = %s", _config.noiseEnd.toString().c_str());
+	SEISCOMP_DEBUG("  + signal begin = %s", _config.signalBegin.toString().c_str());
+	SEISCOMP_DEBUG("  + signal end = %s", _config.signalEnd.toString().c_str());
 	SEISCOMP_DEBUG("  + minimum SNR = %.3f", _config.snrMin);
 	SEISCOMP_DEBUG("  + response correction = %i", _enableResponses);
 
@@ -1129,53 +2141,8 @@ void AmplitudeProcessor::emitAmplitude(const Result &res) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double AmplitudeProcessor::timeWindowLength(double) const {
-	return _config.signalEnd;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::finalizeAmplitude(DataModel::Amplitude *) const {
 	// Do nothing
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeProcessor::setHint(ProcessingHint hint, double value) {
-	WaveformProcessor::setHint(hint, value);
-
-	switch ( hint ) {
-		case Distance:
-			if ( (value < _config.minimumDistance) || (value > _config.maximumDistance) )
-				setStatus(DistanceOutOfRange, value);
-			else {
-				double length = timeWindowLength(value);
-				if ( length != _config.signalEnd ) {
-					_config.signalEnd = length;
-					computeTimeWindow();
-					// When we are already finished, make sure the current amplitude
-					// will be send immediately
-					if ( _trigger + Core::TimeSpan(_config.signalEnd) <= dataTimeWindow().endTime() && _stream.lastRecord )
-						process(_stream.lastRecord.get());
-				}
-			}
-			break;
-
-		case Depth:
-			if ( (value < _config.minimumDepth) || (value > _config.maximumDepth) )
-				setStatus(DepthOutOfRange, value);
-			// To be defined
-			break;
-
-		default:
-			break;
-	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

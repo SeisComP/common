@@ -12,6 +12,23 @@
 		at around 20 s period.
 		</description>
 		<configuration>
+			<group name="amplitudes">
+				<group name="Ms_20">
+					<description>
+					Parameters for computing Ms_20 amplitudes.
+					</description>
+					<parameter name="minVelocity" type="double" unit="km/s" default="3">
+						<description>
+						Minimum group velocity used to compute signal time window.
+						</description>
+					</parameter>
+					<parameter name="maxVelocity" type="double" unit="km/s" default="4">
+						<description>
+						Maximum group velocity used to compute signal time window.
+						</description>
+					</parameter>
+				</group>
+			</group>
 			<group name="magnitudes">
 				<group name="Ms_20">
 					<description>

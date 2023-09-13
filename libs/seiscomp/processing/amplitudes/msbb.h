@@ -32,7 +32,6 @@ namespace Processing {
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_msbb : public AmplitudeProcessor {
 	public:
 		AmplitudeProcessor_msbb();
-		AmplitudeProcessor_msbb(const Seiscomp::Core::Time& trigger, double duration = 60.);
 
 	protected:
 		bool computeAmplitude(const DoubleArray &data,
@@ -42,8 +41,6 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_msbb : public AmplitudeProcessor {
 		                      AmplitudeIndex *dt,
 		                      AmplitudeValue *amplitude,
 		                      double *period, double *snr) override;
-
-		double timeWindowLength(double distance) const override;
 };
 
 

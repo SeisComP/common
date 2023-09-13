@@ -399,6 +399,19 @@
 				<description>
 				Parameters for amplitude measurements.
 				</description>
+				<group name="ttt">
+					<description>
+					Travel time table specific parameters to be used for the
+					computation of travel times referred to in signal and
+					noise time window specifications,
+					e.g. &quot;signalBegin&quot;. This can be overridden per
+					station in its bindings.
+					</description>
+					<parameter name="interface" type="string" default="libtau">
+					</parameter>
+					<parameter name="model" type="string" default="iasp91">
+					</parameter>
+				</group>
 				<group name="WoodAnderson">
 					<description>
 					Parameters of the Wood-Anderson seismometer response used
@@ -898,14 +911,14 @@
 					Activate deconvolution for this station. If no responses are
 					configured, an error is raised and the data is not processed.
 					This flag will be overridden by the type specific flag
-					(see Amplitude type profile).
+					(see GlobalAmplitudeProfile).
 					</description>
 				</parameter>
 				<group name="resp">
 					<description>
 					Several parameters if usage of full responses is enabled.
 					The parameters of this group will be overridden by type
-					specific settings if given (see Amplitude type profile).
+					specific settings if given (see GlobalAmplitudeProfile).
 					</description>
 					<parameter name="taper" default="5" unit="s">
 						<description>
@@ -937,6 +950,18 @@
 						</description>
 					</parameter>
 				</group>
+				<group name="ttt">
+					<description>
+					Travel time table specific parameters to be used for the
+					computation of travel times referred to in signal and
+					noise time window specifications,
+					e.g. &quot;signalBegin&quot;.
+					</description>
+					<parameter name="interface" type="string" default="libtau">
+					</parameter>
+					<parameter name="model" type="string" default="iasp91">
+					</parameter>
+				</group>
 				<group name="WoodAnderson">
 					<description>
 					Parameters of the Wood-Anderson seismometer response used
@@ -961,7 +986,7 @@
 						</description>
 					</parameter>
 				</group>
-				<struct type="Amplitude type profile" title="Amplitude type profile">
+				<struct type="GlobalAmplitudeProfile" title="Amplitude type profile">
 					<description>
 					An amplitude profile configures global parameters for a
 					particular amplitude type. The available amplitude types

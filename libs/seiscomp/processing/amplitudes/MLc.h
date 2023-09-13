@@ -42,7 +42,6 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc : public AbstractAmplitudeProc
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc2h : public AmplitudeProcessor {
 	public:
 		AmplitudeProcessor_MLc2h();
-		AmplitudeProcessor_MLc2h(const Core::Time &trigger);
 
 	public:
 		int capabilities() const override;
@@ -53,6 +52,10 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc2h : public AmplitudeProcessor 
 		bool setup(const Settings &settings) override;
 
 		void setTrigger(const Core::Time &trigger) override;
+
+		void setEnvironment(const DataModel::Origin *hypocenter,
+		                    const DataModel::SensorLocation *receiver,
+		                    const DataModel::Pick *pick) override;
 
 		void computeTimeWindow() override;
 
@@ -71,10 +74,6 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc2h : public AmplitudeProcessor 
 		const DoubleArray *processedData(Component comp) const override;
 
 		void reprocess(OPT(double) searchBegin, OPT(double) searchEnd) override;
-
-
-	protected:
-		double timeWindowLength(double distance) const override;
 
 
 	private:

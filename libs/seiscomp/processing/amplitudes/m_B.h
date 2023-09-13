@@ -33,13 +33,11 @@ namespace Processing {
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_mB : public AmplitudeProcessor {
 	public:
 		AmplitudeProcessor_mB();
-		AmplitudeProcessor_mB(const Core::Time& trigger);
 
 	public:
 		void finalizeAmplitude(DataModel::Amplitude *amplitude) const override;
 
 	protected:
-		double timeWindowLength(double distance) const override;
 		bool computeAmplitude(const DoubleArray &data,
 		                      size_t i1, size_t i2,
 		                      size_t si1, size_t si2,

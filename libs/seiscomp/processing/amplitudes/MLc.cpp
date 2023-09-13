@@ -72,14 +72,10 @@ AmplitudeProcessor::AmplitudeValue average(
 	double l = 0, u = 0;
 
 	l = max(l, v.value - v0l);
-	l = max(l, v.value - v0u);
 	l = max(l, v.value - v1l);
-	l = max(l, v.value - v1u);
 
-	u = max(l, v0l - v.value);
-	u = max(l, v0u - v.value);
-	u = max(l, v1l - v.value);
-	u = max(l, v1u - v.value);
+	u = max(u, v0u - v.value);
+	u = max(u, v1u - v.value);
 
 	v.lowerUncertainty = l;
 	v.upperUncertainty = u;
@@ -143,14 +139,10 @@ AmplitudeProcessor::AmplitudeValue gmean(
 	double l = 0, u = 0;
 
 	l = max(l, v.value - v0l);
-	l = max(l, v.value - v0u);
 	l = max(l, v.value - v1l);
-	l = max(l, v.value - v1u);
 
-	u = max(l, v0l - v.value);
-	u = max(l, v0u - v.value);
-	u = max(l, v1l - v.value);
-	u = max(l, v1u - v.value);
+	u = max(u, v0u - v.value);
+	u = max(u, v1u - v.value);
 
 	v.lowerUncertainty = l;
 	v.upperUncertainty = u;
@@ -177,27 +169,7 @@ AmplitudeProcessor_MLc::AmplitudeProcessor_MLc()
 AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h()
 : AmplitudeProcessor("MLc") {
 	setDefaultConfiguration();
-	reset();
-
-	setUsedComponent(Horizontal);
-
-	_ampN.setUsedComponent(FirstHorizontal);
-	_ampE.setUsedComponent(SecondHorizontal);
-
-	_ampE.setPublishFunction(bind(&AmplitudeProcessor_MLc2h::newAmplitude, this, placeholders::_1, placeholders::_2));
-	_ampN.setPublishFunction(bind(&AmplitudeProcessor_MLc2h::newAmplitude, this, placeholders::_1, placeholders::_2));
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h(const Core::Time& trigger)
-: AmplitudeProcessor(trigger, "MLc") {
-	setDefaultConfiguration();
-	reset();
-	computeTimeWindow();
+	AmplitudeProcessor_MLc2h::reset();
 
 	setUsedComponent(Horizontal);
 
@@ -214,7 +186,7 @@ AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h(const Core::Time& trigger)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_MLc2h::setDefaultConfiguration() {
-	setSignalEnd(150.);
+	setSignalEnd("min(R / 3 + 30, 150) || 150");
 	setMinSNR(0);
 	setMaxDist(8);
 	setMaxDepth(80);
@@ -363,6 +335,18 @@ void AmplitudeProcessor_MLc2h::setTrigger(const Core::Time &trigger) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeProcessor_MLc2h::setEnvironment(const DataModel::Origin *hypocenter,
+                                              const DataModel::SensorLocation *receiver,
+                                              const DataModel::Pick *pick) {
+	_ampN.setEnvironment(hypocenter, receiver, pick);
+	_ampE.setEnvironment(hypocenter, receiver, pick);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_MLc2h::computeTimeWindow() {
 	// Copy configuration to each component
 	_ampN.setConfig(config());
@@ -370,6 +354,11 @@ void AmplitudeProcessor_MLc2h::computeTimeWindow() {
 
 	_ampE.computeTimeWindow();
 	_ampN.computeTimeWindow();
+
+	// computeTimeWindow evaluates the signal times. This copies back the
+	// evaluated times.
+	setConfig(_ampE.config());
+
 	setTimeWindow(_ampE.timeWindow() | _ampN.timeWindow());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -386,19 +375,6 @@ bool AmplitudeProcessor_MLc2h::computeAmplitude(
 		AmplitudeIndex *, AmplitudeValue *,
 		double *, double *) {
 	return false;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double AmplitudeProcessor_MLc2h::timeWindowLength(double distance_deg) const {
-	double endN = _ampN.timeWindowLength(distance_deg);
-	double endE = _ampE.timeWindowLength(distance_deg);
-	_ampN.setSignalEnd(endN);
-	_ampE.setSignalEnd(endE);
-	return max(endN, endE);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

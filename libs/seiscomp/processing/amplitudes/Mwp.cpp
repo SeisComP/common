@@ -139,26 +139,13 @@ AmplitudeProcessor_Mwp::AmplitudeProcessor_Mwp()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_Mwp::AmplitudeProcessor_Mwp(const Core::Time& trigger)
-	: AmplitudeProcessor(trigger, "Mwp") {
-	init();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_Mwp::init() {
-//	setSignalEnd(120.);
-	setSignalEnd(95.); // be on the safe side... otherwise we might measure the S-wave at regional distances!!!
+	setSignalEnd("min(D * 11.5, 95) || 95");
 	setNoiseStart(-240.);
 	setMinDist(5);
 	setMaxDist(105);
 	setMinSNR(3);
 	computeTimeWindow();
-
-	_epizentralDistance = -1;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -176,13 +163,6 @@ void AmplitudeProcessor_Mwp::initFilter(double fsamp) {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 */
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double AmplitudeProcessor_Mwp::timeWindowLength(double distance) const {
-	// make sure the measurement is not contaminated by S energy
-	double tdist = 11.5*distance; // distance-dependent time difference between P and S
-	return tdist < _config.signalEnd ? tdist :_config.signalEnd;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -250,18 +230,6 @@ bool AmplitudeProcessor_Mwp::computeAmplitude(const DoubleArray &data,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeProcessor_Mwp::setHint(ProcessingHint hint, double value) {
-	if ( hint == Distance )
-		_epizentralDistance = value;
-
-	AmplitudeProcessor::setHint(hint, value);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const DoubleArray *AmplitudeProcessor_Mwp::processedData(Component comp) const {
 	if ( comp != (Component)_usedComponent ) return nullptr;
 	return &_processedData;
@@ -273,5 +241,4 @@ const DoubleArray *AmplitudeProcessor_Mwp::processedData(Component comp) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
-
 }

@@ -32,7 +32,6 @@ namespace Processing {
 class SC_SYSTEM_CLIENT_API AbstractAmplitudeProcessor_ML : public AmplitudeProcessor {
 	public:
 		AbstractAmplitudeProcessor_ML(const std::string &type);
-		AbstractAmplitudeProcessor_ML(const Core::Time &trigger, const std::string &type);
 
 	public:
 		void initFilter(double fsamp) override;
@@ -59,8 +58,6 @@ class SC_SYSTEM_CLIENT_API AbstractAmplitudeProcessor_ML : public AmplitudeProce
 		                      double offset,
 		                      AmplitudeIndex *dt, AmplitudeValue *amplitude,
 		                      double *period, double *snr) override;
-
-		double timeWindowLength(double distance) const override;
 
 	protected:
 		enum AmplitudeMeasureType {

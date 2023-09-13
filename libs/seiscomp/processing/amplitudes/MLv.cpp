@@ -43,14 +43,6 @@ AmplitudeProcessor_MLv::AmplitudeProcessor_MLv()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_MLv::AmplitudeProcessor_MLv(const Core::Time &trigger)
-: AbstractAmplitudeProcessor_ML(trigger, "MLv") {}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor_MLv::computeAmplitude(const DoubleArray &data,
                                               size_t i1, size_t i2,
                                               size_t si1, size_t si2,

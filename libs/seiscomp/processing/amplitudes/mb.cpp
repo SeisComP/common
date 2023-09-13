@@ -137,20 +137,6 @@ AmplitudeProcessor_mb::AmplitudeProcessor_mb()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_mb::AmplitudeProcessor_mb(const Core::Time& trigger)
-: AmplitudeProcessor(trigger, "mb") {
-	setSignalEnd(30);
-	setMinSNR(0);
-	setMinDist(5);
-	setMaxDist(105);
-	computeTimeWindow();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_mb::initFilter(double fsamp) {
 	AmplitudeProcessor::setFilter(
 		new Filtering::IIR::WWSSN_SP_Filter<double>(Velocity)

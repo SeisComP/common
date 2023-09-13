@@ -26,12 +26,6 @@
 namespace Seiscomp {
 namespace Processing {
 
-// 60 s should be OK for rupture durations up to ~100 s.
-// This default value MUST NOT be increased because if the amplitudes are
-// computed in the stream picker, which doesn't know of origins, it also
-// doesn't know the S-P time. For distances of 5 degrees the S wave would
-// leak into the time window thus contaminating the measurement.
-#define M_CAPITAL_B_DEFAULT_WINDOW_LENGTH 60
 
 REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_mB, "mB");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -42,22 +36,14 @@ REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_mB, "mB");
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor_mB::AmplitudeProcessor_mB()
 : AmplitudeProcessor("mB") {
-	setSignalEnd(M_CAPITAL_B_DEFAULT_WINDOW_LENGTH);
+	// 60 s should be OK for rupture durations up to ~100 s.
+	// This default value MUST NOT be increased because if the amplitudes are
+	// computed in the stream picker, which doesn't know of origins, it also
+	// doesn't know the S-P time. For distances of 5 degrees the S wave would
+	// leak into the time window thus contaminating the measurement.
+	setSignalEnd("min(D * 11.5, 60) || 60");
 	setMinDist(5);
 	setMaxDist(105);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_mB::AmplitudeProcessor_mB(const Core::Time& trigger)
-: AmplitudeProcessor(trigger, "mB") {
-	setSignalEnd(M_CAPITAL_B_DEFAULT_WINDOW_LENGTH);
-	setMinDist(5);
-	setMaxDist(105);
-	computeTimeWindow();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -75,17 +61,6 @@ void AmplitudeProcessor_mB::finalizeAmplitude(DataModel::Amplitude *amplitude) c
 	}
 	catch ( ... ) {
 	}
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double AmplitudeProcessor_mB::timeWindowLength(double distance) const {
-	// make sure the measurement is not contaminated by S energy
-	double tdist = 11.5*distance; // distance-dependent time difference between P and S
-	return tdist < _config.signalEnd ? tdist :_config.signalEnd;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

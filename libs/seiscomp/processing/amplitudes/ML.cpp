@@ -122,21 +122,6 @@ AbstractAmplitudeProcessor_ML::AbstractAmplitudeProcessor_ML(
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AbstractAmplitudeProcessor_ML::AbstractAmplitudeProcessor_ML(
-	const Core::Time &trigger,
-	const std::string &type
-)
-: AmplitudeProcessor(trigger, type) {
-	setDefaultConfiguration();
-	reset();
-	computeTimeWindow();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AbstractAmplitudeProcessor_ML::initFilter(double fsamp) {
 	Filter *preFilter{nullptr};
 
@@ -396,28 +381,9 @@ bool AbstractAmplitudeProcessor_ML::computeAmplitude(
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double AbstractAmplitudeProcessor_ML::timeWindowLength(double distance_deg) const {
-	// Minimal S/SW group velocity.
-	//
-	// This is very approximate and may need refinement. Usually the Lg
-	// group velocity is around 3.2-3.6 km/s. By setting v_min to 3 km/s,
-	// we are probably on the safe side. We add 30 s to count for rupture
-	// duration, which may, however, not be sufficient.
-	double v_min = 3;
-	double distance_km = distance_deg*111.2;
-	double windowLength = distance_km/v_min + 30;
-
-	return windowLength < _config.signalEnd ? windowLength :_config.signalEnd;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AbstractAmplitudeProcessor_ML::setDefaultConfiguration() {
 	// Default settings
-	setSignalEnd(150.);
+	setSignalEnd("min(R / 3 + 30, 150) || 150");
 	setMinSNR(0);
 	setMaxDist(8);
 

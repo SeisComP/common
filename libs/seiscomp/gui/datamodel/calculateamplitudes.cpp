@@ -585,20 +585,7 @@ void CalculateAmplitudes::addProcessor(
 		return;
 	}
 
-	// Set depth hint
-	try {
-		proc->setHint(WaveformProcessor::Depth, _origin->depth());
-		if ( proc->isFinished() ) {
-			pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(proc.get());
-			for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-				setInfo(row_it->second, QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
-			return;
-		}
-	}
-	catch ( ... ) {}
-
-	if ( dist >= 0 )
-		proc->setHint(WaveformProcessor::Distance, dist);
+	proc->setEnvironment(_origin, loc, pick);
 
 	if ( proc->isFinished() ) {
 		pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(proc.get());
@@ -607,18 +594,6 @@ void CalculateAmplitudes::addProcessor(
 		return;
 	}
 
-	try {
-		proc->setHint(WaveformProcessor::Time, (double) _origin->time().value());
-		if ( proc->isFinished() ) {
-			pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(proc.get());
-			for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-				setInfo(row_it->second, QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
-			return;
-		}
-	}
-	catch ( ... ) {}
-
-	proc->setEnvironment(_origin, loc, pick);
 	proc->computeTimeWindow();
 
 	if ( proc->isFinished() ) {

@@ -62,12 +62,6 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 
 		typedef Math::Filtering::InPlaceFilter<double> Filter;
 
-		enum ProcessingHint {
-			Distance,
-			Depth,
-			Time
-		};
-
 		MAKEENUM(
 			SignalUnit,
 			EVALUES(
@@ -290,17 +284,6 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 
 		//! Returns the data's sampling frequency
 		double samplingFrequency() const;
-
-		//! This methods can be called to set a hint for the
-		//! processor even while processing.
-		//! The hint can be used to tune certain processing
-		//! steps. Currently exists a distance and a depth hint.
-		//! Derived classes should reimplement this method to react
-		//! on this hints.
-		//! E.g. an amplitude processor can cut its endtime when
-		//! receiving a distance hint.
-		//! The default implementation does nothing.
-		virtual void setHint(ProcessingHint, double) {}
 
 		void setEnabled(bool e);
 		bool isEnabled() const { return _enabled; }

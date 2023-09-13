@@ -32,7 +32,6 @@ namespace Processing {
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_ms20 : public AmplitudeProcessor {
 	public:
 		AmplitudeProcessor_ms20();
-		AmplitudeProcessor_ms20(const Seiscomp::Core::Time& trigger, double duration = 60.);
 
 	public:
 		void initFilter(double fsamp) override;
@@ -45,8 +44,6 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_ms20 : public AmplitudeProcessor {
 		                      AmplitudeIndex *dt,
 		                      AmplitudeValue *amplitude,
 		                      double *period, double *snr) override;
-
-		double timeWindowLength(double distance) const override;
 };
 
 

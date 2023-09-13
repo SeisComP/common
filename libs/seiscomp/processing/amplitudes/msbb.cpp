@@ -133,21 +133,6 @@ AmplitudeProcessor_msbb::AmplitudeProcessor_msbb()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_msbb::AmplitudeProcessor_msbb(const Core::Time& trigger, double duration)
-: AmplitudeProcessor(trigger, "Ms(BB)") {
-	setSignalEnd(3600.);
-	setMinSNR(0);
-	setMinDist(2);
-	setMaxDist(160);
-	setMaxDepth(100);
-	computeTimeWindow();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor_msbb::computeAmplitude(const DoubleArray &data,
                                                size_t i1, size_t i2,
                                                size_t si1, size_t si2, double offset,
@@ -198,29 +183,11 @@ bool AmplitudeProcessor_msbb::computeAmplitude(const DoubleArray &data,
 			return false;
 		}
 	}
-	else
+	else {
 		return false;
+	}
 
 	return true;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double AmplitudeProcessor_msbb::timeWindowLength(double distance_deg) const {
-	// Minimal S/SW group velocity.
-	//
-	// This is very approximate and may need refinement. Usually the Lg
-	// group velocity is around 3.2-3.6 km/s. By setting v_min to 3 km/s,
-	// we are probably on the safe side. We add 30 s to coount for rupture
-	// duration, which may, however, nit be sufficient.
-	double v_min = 3.5;
-
-	double distance_km = distance_deg*111.2; 
-	double windowLength = distance_km/v_min + 30;  
-	return windowLength < _config.signalEnd ? windowLength :_config.signalEnd;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

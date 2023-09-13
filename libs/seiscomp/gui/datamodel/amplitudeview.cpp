@@ -3972,19 +3972,8 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 			SC_D.spinDistance->setMaximum(SC_D.maxDist);
 	}
 
-	try {
-		proc->setHint(Processing::WaveformProcessor::Depth, SC_D.origin->depth());
-	}
-	catch ( ... ) {}
-
-	proc->setHint(Processing::WaveformProcessor::Distance, delta);
-
-	try {
-		proc->setHint(Processing::WaveformProcessor::Time, (double) SC_D.origin->time().value());
-	}
-	catch ( ... ) {}
-
 	proc->setEnvironment(SC_D.origin.get(), loc, proc->pick());
+
 	proc->computeTimeWindow();
 
 	if ( proc->isFinished() ) {
@@ -4272,7 +4261,7 @@ bool AmplitudeView::addTheoreticalArrivals(RecordViewItem *item,
 			depth = 0.0;
 		}
 
-		TravelTimeList* ttt = SC_D.ttTable->compute(elat, elon, depth, slat, slon, salt);
+		TravelTimeList *ttt = SC_D.ttTable->compute(elat, elon, depth, slat, slon, salt);
 
 		if ( ttt ) {
 			QMap<QString, RecordMarker*> currentPhases;

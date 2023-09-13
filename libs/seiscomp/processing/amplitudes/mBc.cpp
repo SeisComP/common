@@ -43,15 +43,6 @@ AmplitudeProcessor_mBc::AmplitudeProcessor_mBc() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_mBc::AmplitudeProcessor_mBc(const Core::Time& trigger)
-: AmplitudeProcessor_mB(trigger) {
-	_type = "mBc";
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor_mBc::computeAmplitude(const DoubleArray &data,
                                               size_t, size_t,
                                               size_t si1, size_t si2,

@@ -64,29 +64,96 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 			CapQuantity
 		};
 
+		class SignalTime {
+			public:
+				SignalTime() = default;
+				SignalTime(int v);
+				SignalTime(double v);
+				SignalTime(const char *); // throws invalid_argument
+				SignalTime(const std::string &); // throws invalid_argument
+				SignalTime(const SignalTime &time);
+
+				/**
+				 * @brief Sets the expression to a constant expression.
+				 * @param v The new value for the signal time
+				 * @return this
+				 */
+				SignalTime &operator=(double v);
+
+				SignalTime &operator=(const SignalTime &time);
+
+				/**
+				 * @brief Adds an offset to the signal expression but not to
+				 *        the compiled value. This only modifies the expression
+				 *        by adding a constant offset.
+				 * @param v The offset value for the signal time
+				 * @return this
+				 */
+				SignalTime &operator+=(double v);
+
+				/**
+				 * @brief Substracts an offset to the signal expression but not
+				 *        to the compiled value. This only modifies the
+				 *        expression by substracting a constant offset.
+				 * @param v The offset value for the signal time
+				 * @return this
+				 */
+				SignalTime &operator-=(double v);
+
+				operator double() const { return *_value; }
+
+				/**
+				 * @brief Sets and compiles a statement
+				 * @param error Optional error message if compilation failed.
+				 * @return Success flag
+				 */
+				bool set(const std::string &text, std::string *error = nullptr);
+
+				std::string toString() const;
+				bool isValid() const { return _exp != nullptr; }
+
+				/**
+				 * @brief Evaluates the expression.
+				 * This method throws a StatusException if the evaluation fails.
+				 * @param proc The source processor
+				 */
+				void evaluate(const AmplitudeProcessor *proc);
+
+			private:
+				Core::BaseObjectPtr _exp;
+				OPT(double)         _value;
+		};
+
 		//! Configuration structure to store processing dependent
 		//! settings
 		struct Config {
-			double noiseBegin; /* default: -35 */
-			double noiseEnd; /* default: -5 */
-			double signalBegin; /* default: -5 */
-			double signalEnd; /* default: 30 */
-			double snrMin; /* default: 3 */
+			// The noise and signal time window expressions. Those
+			// might depend on origin or travel time information
+			// and are only evaluated during setEnvironment.
+			SignalTime  noiseBegin;
+			SignalTime  noiseEnd;
+			SignalTime  signalBegin;
+			SignalTime  signalEnd;
 
-			double minimumDistance; /* default: 0 */
-			double maximumDistance; /* default: 180 */
-			double minimumDepth; /* default: 0 */
-			double maximumDepth; /* default: 700 */
+			std::string ttInterface;
+			std::string ttModel;
 
-			double respTaper;
-			double respMinFreq;
-			double respMaxFreq;
+			double      snrMin; /* default: 3 */
+
+			double      minimumDistance; /* default: 0 */
+			double      maximumDistance; /* default: 180 */
+			double      minimumDepth; /* default: 0 */
+			double      maximumDepth; /* default: 700 */
+
+			double      respTaper;
+			double      respMinFreq;
+			double      respMaxFreq;
 
 			Math::SeismometerResponse::WoodAnderson::Config woodAndersonResponse;
 
 			// If true, compute amplitudes according to the recommendations of the
 			// IASPEI CoSOI Magnitude Working Group. Currently only affects mb.
-			bool iaspeiAmplitudes;
+			bool       iaspeiAmplitudes;
 		};
 
 		struct Locale : Config {
@@ -108,6 +175,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 			const DataModel::Origin         *hypocenter;
 			const DataModel::SensorLocation *receiver;
 			const DataModel::Pick           *pick;
+
 			const Locale                    *locale;
 		};
 
@@ -154,8 +222,6 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		//! C'tor
 		AmplitudeProcessor();
 		AmplitudeProcessor(const std::string &type);
-		AmplitudeProcessor(const Core::Time &trigger);
-		AmplitudeProcessor(const Core::Time &trigger, const std::string &type);
 
 		//! D'tor
 		~AmplitudeProcessor();
@@ -166,16 +232,16 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 	// ----------------------------------------------------------------------
 	public:
 		//! Set the start of the noise window relative to the trigger
-		void setNoiseStart(double start) { _config.noiseBegin = start; }
+		void setNoiseStart(const SignalTime &start) { _config.noiseBegin = start; }
 
 		//! Set the end of the noise window relative to the trigger
-		void setNoiseEnd(double end)  { _config.noiseEnd = end; }
+		void setNoiseEnd(const SignalTime &end)  { _config.noiseEnd = end; }
 
 		//! Set the start of the signal window relative to the trigger
-		void setSignalStart(double start)  { _config.signalBegin = start; }
+		void setSignalStart(const SignalTime &start)  { _config.signalBegin = start; }
 
 		//! Set the end of the signal window relative to the trigger
-		void setSignalEnd(double end)  { _config.signalEnd = end; }
+		void setSignalEnd(const SignalTime &end)  { _config.signalEnd = end; }
 
 		void setMinSNR(double snr) { _config.snrMin = snr; }
 
@@ -202,9 +268,9 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		 *        it is the hypocenter, the receiver and the pick made. The
 		 *        pick time must correspond to the trigger time set.
 		 *        This method was added with API 12.
-		 * @param hypocenter The hypocenter
-		 * @param receiver The receiver
-		 * @param pick The pick
+		 * @param hypocenter The hypocenter or null
+		 * @param receiver The receiver or null
+		 * @param pick The pick or null
 		 */
 		virtual void setEnvironment(const DataModel::Origin *hypocenter,
 		                            const DataModel::SensorLocation *receiver,
@@ -316,8 +382,6 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		//! Returns the unit of amplitude to be calculated
 		const std::string& unit() const;
 
-		void setHint(ProcessingHint hint, double value) override;
-
 		//! Dumps the record data into an ascii file
 		void writeData() const;
 
@@ -389,10 +453,6 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		//! twice the rms regarding the offset as amplitude
 		virtual bool computeNoise(const DoubleArray &data, int i1, int i2, double *offset, double *amplitude);
 
-		//! Computes the timewindow length when a distance hint has been set.
-		//! The default implementation return _config.signalEnd
-		virtual double timeWindowLength(double distance) const;
-
 		//! This method gets called when an amplitude has to be published
 		void emitAmplitude(const Result &result);
 
@@ -400,6 +460,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		bool readLocale(Locale *locale,
 		                const Settings &settings,
 		                const std::string &configPrefix);
+		void checkEnvironmentalLimits();
 
 	private:
 		void init();

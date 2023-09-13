@@ -18,16 +18,21 @@
  ***************************************************************************/
 
 
+#define SEISCOMP_COMPONENT AmplitudeProcessor
+
+#include <seiscomp/logging/log.h>
 #include <seiscomp/processing/amplitudes/Ms20.h>
+#include <seiscomp/math/geo.h>
 #include <seiscomp/math/filter/seismometers.h>
 
 #include <limits>
 
 
-using namespace Seiscomp::Math;
+using namespace Seiscomp;
 
 
 namespace {
+
 
 bool measure_period(int n, const double *f, int i0, double offset,
                     double *per, double *std) {
@@ -106,6 +111,7 @@ bool measure_period(int n, const double *f, int i0, double offset,
 	return true;
 }
 
+
 }
 
 
@@ -122,26 +128,12 @@ REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_ms20, "Ms_20");
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor_ms20::AmplitudeProcessor_ms20()
 : AmplitudeProcessor("Ms_20") {
-	setSignalEnd(3600.);
+	setSignalStart(0.);
+	setSignalEnd(0.);
 	setMinSNR(0);
 	setMinDist(20);
 	setMaxDist(160);
 	setMaxDepth(100);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_ms20::AmplitudeProcessor_ms20(const Core::Time& trigger, double duration)
-: AmplitudeProcessor(trigger, "Ms_20") {
-	setSignalEnd(3600.);
-	setMinSNR(0);
-	setMinDist(20);
-	setMaxDist(160);
-	setMaxDepth(100);
-	computeTimeWindow();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -151,7 +143,7 @@ AmplitudeProcessor_ms20::AmplitudeProcessor_ms20(const Core::Time& trigger, doub
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_ms20::AmplitudeProcessor_ms20::initFilter(double fsamp) {
 	AmplitudeProcessor::setFilter(
-		new Filtering::IIR::WWSSN_LP_Filter<double>(Velocity)
+		new Math::Filtering::IIR::WWSSN_LP_Filter<double>(Math::Velocity)
 	);
 	AmplitudeProcessor::initFilter(fsamp);
 }
@@ -190,13 +182,17 @@ bool AmplitudeProcessor_ms20::computeAmplitude(const DoubleArray &data,
 	double amax = fabs(data[imax] - offset);
 	double pmax = -1;
 	double pstd =  0; // standard error of period
-	if ( !measure_period(data.size(), static_cast<const double*>(data.data()), imax, offset, &pmax, &pstd) )
-		pmax = -1;
 
-	if ( *_noiseAmplitude == 0. )
+	if ( !measure_period(data.size(), static_cast<const double*>(data.data()), imax, offset, &pmax, &pstd) ) {
+		pmax = -1;
+	}
+
+	if ( *_noiseAmplitude == 0. ) {
 		*snr = 1000000.0;
-	else
+	}
+	else {
 		*snr = amax / *_noiseAmplitude;
+	}
 
 	if ( *snr < _config.snrMin ) {
 		setStatus(LowSNR, *snr);
@@ -208,39 +204,22 @@ bool AmplitudeProcessor_ms20::computeAmplitude(const DoubleArray &data,
 	amplitude->value = amax;
 
 	if ( _usedComponent <= SecondHorizontal ) {
-		if ( _streamConfig[_usedComponent].gain != 0.0 )
+		if ( _streamConfig[_usedComponent].gain != 0.0 ) {
 			amplitude->value /= _streamConfig[_usedComponent].gain;
+		}
 		else {
 			setStatus(MissingGain, 0.0);
 			return false;
 		}
 	}
-	else
+	else {
 		return false;
+	}
 
 	// Convert m to nm according to IASPEI recommendations, 2013
 	amplitude->value *= 1.E9;
 
 	return true;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double AmplitudeProcessor_ms20::timeWindowLength(double distance_deg) const {
-	// Minimal S/SW group velocity.
-	//
-	// This is very approximate and may need refinement. Usually the Lg
-	// group velocity is around 3.2-3.6 km/s. By setting v_min to 3 km/s,
-	// we are probably on the safe side. We add 30 s to coount for rupture
-	// duration, which may, however, nit be sufficient.
-	double v_min = 3.5;
-
-	double distance_km = distance_deg*111.2; 
-	double windowLength = distance_km/v_min + 30;  
-	return windowLength < _config.signalEnd ? windowLength :_config.signalEnd;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -39,25 +39,11 @@ REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_Mjma, "Mjma");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor_Mjma::AmplitudeProcessor_Mjma()
-	: AmplitudeProcessor("Mjma") {
-	setSignalEnd(150.);
+: AmplitudeProcessor("Mjma") {
+	setSignalEnd("min(R / 3 + 30, 150) || 150");
 	setMinSNR(0);
 	setMaxDist(20);
 	setMaxDepth(80);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor_Mjma::AmplitudeProcessor_Mjma(const Core::Time& trigger)
-	: AmplitudeProcessor(trigger, "Mjma") {
-	setSignalEnd(150.);
-	setMinSNR(0);
-	setMaxDist(20);
-	setMaxDepth(20);
-	computeTimeWindow();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -157,25 +143,6 @@ bool AmplitudeProcessor_Mjma::computeAmplitude(
 	amplitude->value *= 2.0;
 
 	return true;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double AmplitudeProcessor_Mjma::timeWindowLength(double distance_deg) const {
-	// Minimal S/SW group velocity.
-	//
-	// This is very approximate and may need refinement. Usually the Lg
-	// group velocity is around 3.2-3.6 km/s. By setting v_min to 3 km/s,
-	// we are probably on the safe side. We add 30 s to coount for rupture
-	// duration, which may, however, nit be sufficient.
-	double v_min = 3;
-
-	double distance_km = distance_deg*111.2;
-	double windowLength = distance_km/v_min + 30;
-	return windowLength;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
