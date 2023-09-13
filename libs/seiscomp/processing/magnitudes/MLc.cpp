@@ -24,7 +24,7 @@
 #include <seiscomp/processing/magnitudes/MLc.h>
 #include <seiscomp/config/config.h>
 #include <seiscomp/logging/log.h>
-
+#include <seiscomp/client/inventory.h>
 
 using namespace std;
 
@@ -217,7 +217,7 @@ bool MagnitudeProcessor_MLc::initLocale(Locale *locale,
 MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 	double amplitude, const std::string &unit,
 	double, double, double delta, double depth,
-	const DataModel::Origin *, const DataModel::SensorLocation *,
+	const DataModel::Origin *, const DataModel::SensorLocation *receiver,
 	const DataModel::Amplitude *,
 	const Locale *locale,
 	double &value) {
@@ -264,12 +264,20 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 	}
 
 	SEISCOMP_DEBUG("  + distance mode: %s", distanceMode.c_str());
+
+	double hDistanceKm = Math::Geo::deg2km(delta);
+	double vDistanceKm = 0;
+	if ( !receiver && distanceMode == "hypocentral" ) {
+		return MetaDataRequired;
+	}
+	if ( receiver ) {
+		vDistanceKm = receiver->elevation() / 1000. + depth;
+	}
 	double distanceKm;
 	if ( distanceMode == "hypocentral" ) {
-		distanceKm = sqrt(pow(Math::Geo::deg2km(delta),2) + pow(depth,2));
-	}
-	else {
-		distanceKm = Math::Geo::deg2km(delta);
+		distanceKm = sqrt(pow(hDistanceKm, 2) + pow(vDistanceKm,2));
+	} else {
+		distanceKm = hDistanceKm;
 	}
 
 	SEISCOMP_DEBUG("  + minimum distance: %.3f km", minimumDistanceKm);
@@ -286,8 +294,8 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		return InvalidAmplitudeUnit;
 	}
 
-	SEISCOMP_DEBUG("  + %s distance: %.5f deg",
-	               distanceMode.c_str(), Math::Geo::km2deg(distanceKm));
+	SEISCOMP_DEBUG("  + %s distance: %.3f km (horiz. %.3f vert. %.3f)",
+	               distanceMode.c_str(), distanceKm, hDistanceKm, vDistanceKm);
 
 	double correction;
 	SEISCOMP_DEBUG("  + calibration type: %s", calibrationType.c_str());
