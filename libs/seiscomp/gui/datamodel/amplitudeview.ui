@@ -568,7 +568,7 @@
      <addaction name="actionAlignOnPArrival" />
      <addaction name="actionAlignOnOriginTime" />
     </widget>
-    <widget class="QMenu" name="menu_Zoomtrace" >
+    <widget class="QMenu" name="menuZoomtrace" >
      <property name="title" >
       <string>&amp;Zoomtrace</string>
      </property>
@@ -587,6 +587,7 @@
       <property name="title" >
        <string>Align</string>
       </property>
+      <addaction name="actionAlignOnPArrival" />
       <addaction name="actionAlignOnOriginTime" />
      </widget>
      <addaction name="actionIncreaseRowHeight" />
@@ -594,6 +595,8 @@
      <addaction name="actionIncreaseRowTimescale" />
      <addaction name="actionDecreaseRowTimescale" />
      <addaction name="actionMaximizeAmplitudes" />
+     <addaction name="separator" />
+     <addaction name="actionResetDefaultConfig" />
      <addaction name="separator" />
      <addaction name="menuAlignArrival" />
     </widget>
@@ -610,11 +613,11 @@
     <addaction name="actionShowTraceValuesInNmS" />
     <addaction name="actionShowTheoreticalArrivals" />
     <addaction name="separator" />
-    <addaction name="menu_Zoomtrace" />
+    <addaction name="menuZoomtrace" />
     <addaction name="menuTraces" />
     <addaction name="menuComponents" />
    </widget>
-   <widget class="QMenu" name="menu_Navigation" >
+   <widget class="QMenu" name="menuNavigation" >
     <property name="title" >
      <string>&amp;Navigation</string>
     </property>
@@ -623,7 +626,7 @@
     <addaction name="actionScrollFineLeft" />
     <addaction name="actionScrollFineRight" />
    </widget>
-   <widget class="QMenu" name="menu_Locate" >
+   <widget class="QMenu" name="menuLocate" >
     <property name="title" >
      <string>&amp;Amplitudes</string>
     </property>
@@ -632,16 +635,16 @@
     <addaction name="separator" />
     <addaction name="actionComputeMagnitudes" />
    </widget>
-   <widget class="QMenu" name="menu_Filter" >
+   <widget class="QMenu" name="menuFilter" >
     <property name="title" >
      <string>&amp;Filter</string>
     </property>
     <addaction name="actionToggleFilter" />
    </widget>
    <addaction name="menuView" />
-   <addaction name="menu_Navigation" />
-   <addaction name="menu_Filter" />
-   <addaction name="menu_Locate" />
+   <addaction name="menuNavigation" />
+   <addaction name="menuFilter" />
+   <addaction name="menuLocate" />
   </widget>
   <widget class="QToolBar" name="toolBarTTT" >
    <property name="windowTitle" >
@@ -915,9 +918,17 @@
     <string>End</string>
    </property>
   </action>
+  <action name="actionResetDefaultConfig" >
+   <property name="text" >
+    <string>Reset default time windows</string>
+   </property>
+   <property name="shortcut" >
+    <string>Shift+W</string>
+   </property>
+  </action>
   <action name="actionAlignOnPArrival" >
    <property name="checkable" >
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="checked" >
     <bool>true</bool>
@@ -940,7 +951,7 @@
   </action>
   <action name="actionAlignOnOriginTime" >
    <property name="checkable" >
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon" >
     <iconset resource="icons.qrc" >:/icons/icons/align_t.png</iconset>

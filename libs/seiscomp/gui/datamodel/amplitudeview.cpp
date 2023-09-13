@@ -2150,6 +2150,9 @@ void AmplitudeView::init() {
 	connect(SC_D.ui.actionSortByDistance, SIGNAL(triggered(bool)),
 	        this, SLOT(sortByDistance()));
 
+	connect(SC_D.ui.actionResetDefaultConfig, SIGNAL(triggered(bool)),
+	        this, SLOT(resetDefaultTimeWindows()));
+
 	connect(SC_D.ui.actionShowZComponent, SIGNAL(triggered(bool)),
 	        this, SLOT(showZComponent()));
 	connect(SC_D.ui.actionShowNComponent, SIGNAL(triggered(bool)),
@@ -3996,6 +3999,7 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 	label->setText(QString("%1").arg(sid.networkCode().c_str()), 1);
 	label->processor = proc;
 	label->magnitudeProcessor = magProc;
+	label->initialAmpConfig = proc->config();
 	label->initialMinSNR = proc->config().snrMin;
 
 	label->location = loc;
@@ -5186,6 +5190,47 @@ void AmplitudeView::sortByDistance() {
 
 	SC_D.ui.actionSortAlphabetically->setChecked(false);
 	SC_D.ui.actionSortByDistance->setChecked(true);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::resetDefaultTimeWindows() {
+	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+		RecordViewItem *rvi = SC_D.recordView->itemAt(r);
+		AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(rvi->label());
+		RecordWidget *widget = rvi->widget();
+
+		if ( label->processor ) {
+			label->processor->setNoiseStart(label->initialAmpConfig.noiseBegin);
+			label->processor->setNoiseEnd(label->initialAmpConfig.noiseEnd);
+			label->processor->setSignalStart(label->initialAmpConfig.signalBegin);
+			label->processor->setSignalEnd(label->initialAmpConfig.signalEnd);
+			label->processor->computeTimeWindow();
+			widget->update();
+
+			if ( SC_D.recordView->currentItem() == rvi ) {
+				SC_D.timeScale->setSelectionEnabled(true);
+				SC_D.timeScale->setSelectionHandle(0, double(label->processor->trigger() - SC_D.timeScale->alignment()) + label->processor->config().noiseBegin);
+				SC_D.timeScale->setSelectionHandle(1, double(label->processor->trigger() - SC_D.timeScale->alignment()) + label->processor->config().noiseEnd);
+				SC_D.timeScale->setSelectionHandle(2, double(label->processor->trigger() - SC_D.timeScale->alignment()) + label->processor->config().signalBegin);
+				SC_D.timeScale->setSelectionHandle(3, double(label->processor->trigger() - SC_D.timeScale->alignment()) + label->processor->config().signalEnd);
+				SC_D.timeScale->setSelectionHandleEnabled(2, true);
+
+				SC_D.recordView->timeWidget()->setSelectionHandle(0, label->processor->config().noiseBegin);
+				SC_D.recordView->timeWidget()->setSelectionHandle(1, label->processor->config().noiseEnd);
+				SC_D.recordView->timeWidget()->setSelectionHandle(2, label->processor->config().signalBegin);
+				SC_D.recordView->timeWidget()->setSelectionHandle(3, label->processor->config().signalEnd);
+				SC_D.recordView->timeWidget()->setSelectionHandleEnabled(2, true);
+
+				SC_D.currentRecord->update();
+			}
+		}
+	}
+
+	applyFilter();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

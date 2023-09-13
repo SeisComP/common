@@ -162,26 +162,28 @@ class SC_GUI_API AmplitudeRecordLabel : public StandardRecordLabel {
 		QColor          _labelColor;
 
 	public:
-		double                            latitude;
-		double                            longitude;
-		const DataModel::SensorLocation  *location;
+		double                                  latitude;
+		double                                  longitude;
+		const DataModel::SensorLocation        *location;
 
-		Core::TimeWindow                  timeWindow;
-		ThreeComponentTrace               data;
+		Core::TimeWindow                        timeWindow;
+		ThreeComponentTrace                     data;
 
-		Math::Matrix3f                    orientationZNE;
-		Math::Matrix3f                    orientationZRT;
+		Math::Matrix3f                          orientationZNE;
+		Math::Matrix3f                          orientationZRT;
 
-		Processing::AmplitudeProcessorPtr processor;
-		Processing::MagnitudeProcessorPtr magnitudeProcessor;
+		Processing::AmplitudeProcessorPtr       processor;
+		Processing::MagnitudeProcessorPtr       magnitudeProcessor;
 
-		double                            initialMinSNR;
+		Processing::AmplitudeProcessor::Config  initialAmpConfig;
 
-		QString                           infoText;
-		bool                              isError;
+		double                                  initialMinSNR;
 
-		bool                              hasGotData;
-		bool                              isEnabledByConfig;
+		QString                                 infoText;
+		bool                                    isError;
+
+		bool                                    hasGotData;
+		bool                                    isEnabledByConfig;
 
 	friend class Gui::AmplitudeView;
 };
@@ -294,6 +296,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		void updateRecordValue(Seiscomp::Core::Time);
 		void showTraceScaleToggled(bool);
 		void showTheoreticalArrivals(bool);
+		void resetDefaultTimeWindows();
 
 		void limitFilterToZoomTrace(bool);
 
