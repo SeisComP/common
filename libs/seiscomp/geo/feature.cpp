@@ -17,7 +17,10 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
 #include <seiscomp/geo/feature.h>
+
+#include <algorithm>
 #include <iostream>
 
 
