@@ -296,6 +296,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		void updateRecordValue(Seiscomp::Core::Time);
 		void showTraceScaleToggled(bool);
 		void showTheoreticalArrivals(bool);
+		void resetScale();
 		void resetDefaultTimeWindows();
 
 		void limitFilterToZoomTrace(bool);

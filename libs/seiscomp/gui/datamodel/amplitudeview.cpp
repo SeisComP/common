@@ -2150,6 +2150,8 @@ void AmplitudeView::init() {
 	connect(SC_D.ui.actionSortByDistance, SIGNAL(triggered(bool)),
 	        this, SLOT(sortByDistance()));
 
+	connect(SC_D.ui.actionResetScale, SIGNAL(triggered(bool)),
+	        this, SLOT(resetScale()));
 	connect(SC_D.ui.actionResetDefaultConfig, SIGNAL(triggered(bool)),
 	        this, SLOT(resetDefaultTimeWindows()));
 
@@ -5190,6 +5192,17 @@ void AmplitudeView::sortByDistance() {
 
 	SC_D.ui.actionSortAlphabetically->setChecked(false);
 	SC_D.ui.actionSortByDistance->setChecked(true);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::resetScale() {
+	SC_D.currentRecord->setAmplScale(1.0);
+	SC_D.currentAmplScale = 1.0;
+	zoom(0.0);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
