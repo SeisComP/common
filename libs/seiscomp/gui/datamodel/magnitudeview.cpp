@@ -3856,12 +3856,11 @@ double MagnitudeView::addStationMagnitude(DataModel::Magnitude *magnitude,
 	changeMagnitudeState(_stamagnitudes->count()-1, _stamagnitudes->isValueSelected(_stamagnitudes->count()-1));
 
 	QRectF rect(_stamagnitudes->boundingRect());
-	QRectF newRect(rect);
-	adjustMagnitudeRect(newRect);
-	newRect.setLeft(max(0.0, double(rect.left())));
+	adjustMagnitudeRect(rect);
+	rect.setLeft(max(0.0, double(rect.left())));
 
-	if ( newRect != _stamagnitudes->displayRect() ) {
-		_stamagnitudes->setDisplayRect(newRect);
+	if ( rect != _stamagnitudes->displayRect() ) {
+		_stamagnitudes->setDisplayRect(rect);
 		_stamagnitudes->update();
 	}
 
