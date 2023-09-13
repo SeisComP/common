@@ -1844,14 +1844,14 @@ void AmplitudeView::init() {
 	SC_D.recordView->setSelectionEnabled(false);
 	SC_D.recordView->setRecordUpdateInterval(1000);
 
-	connect(SC_D.recordView, SIGNAL(currentItemChanged(RecordViewItem*, RecordViewItem*)),
-	        this, SLOT(itemSelected(RecordViewItem*, RecordViewItem*)));
+	connect(SC_D.recordView, SIGNAL(currentItemChanged(RecordViewItem*,RecordViewItem*)),
+	        this, SLOT(itemSelected(RecordViewItem*,RecordViewItem*)));
 
-	connect(SC_D.recordView, SIGNAL(fedRecord(RecordViewItem*, const Seiscomp::Record*)),
-	        this, SLOT(updateTraceInfo(RecordViewItem*, const Seiscomp::Record*)));
+	connect(SC_D.recordView, SIGNAL(fedRecord(RecordViewItem*,const Seiscomp::Record*)),
+	        this, SLOT(updateTraceInfo(RecordViewItem*,const Seiscomp::Record*)));
 
-	connect(SC_D.recordView, SIGNAL(filterChanged(const QString&)),
-	        this, SLOT(addNewFilter(const QString&)));
+	connect(SC_D.recordView, SIGNAL(filterChanged(QString)),
+	        this, SLOT(addNewFilter(QString)));
 
 	connect(SC_D.recordView, SIGNAL(progressStarted()),
 	        this, SLOT(beginWaitForRecords()));
@@ -2286,17 +2286,17 @@ void AmplitudeView::init() {
 	connect(SC_D.ui.actionSwitchFullscreen, SIGNAL(triggered(bool)),
 	        this, SLOT(showFullscreen(bool)));
 
-	connect(SC_D.timeScale, SIGNAL(changedInterval(double, double, double)),
-	        SC_D.currentRecord, SLOT(setGridSpacing(double, double, double)));
+	connect(SC_D.timeScale, SIGNAL(changedInterval(double,double,double)),
+	        SC_D.currentRecord, SLOT(setGridSpacing(double,double,double)));
 	connect(SC_D.recordView, SIGNAL(toggledFilter(bool)),
 	        SC_D.currentRecord, SLOT(enableFiltering(bool)));
-	connect(SC_D.recordView, SIGNAL(scaleChanged(double, double)),
-	        this, SLOT(changeScale(double, double)));
-	connect(SC_D.recordView, SIGNAL(timeRangeChanged(double, double)),
-	        this, SLOT(changeTimeRange(double, double)));
-	connect(SC_D.recordView, SIGNAL(selectionChanged(double, double)),
-	        SC_D.currentRecord, SLOT(setSelected(double, double)));
-	connect(SC_D.recordView, SIGNAL(alignmentChanged(const Seiscomp::Core::Time&)),
+	connect(SC_D.recordView, SIGNAL(scaleChanged(double,double)),
+	        this, SLOT(changeScale(double,double)));
+	connect(SC_D.recordView, SIGNAL(timeRangeChanged(double,double)),
+	        this, SLOT(changeTimeRange(double,double)));
+	connect(SC_D.recordView, SIGNAL(selectionChanged(double,double)),
+	        SC_D.currentRecord, SLOT(setSelected(double,double)));
+	connect(SC_D.recordView, SIGNAL(alignmentChanged(Seiscomp::Core::Time)),
 	        this, SLOT(setAlignment(Seiscomp::Core::Time)));
 	connect(SC_D.recordView, SIGNAL(amplScaleChanged(double)),
 	        SC_D.currentRecord, SLOT(setAmplScale(double)));
@@ -2307,19 +2307,19 @@ void AmplitudeView::init() {
 	connect(SC_D.ui.actionSearchStation, SIGNAL(triggered(bool)),
 	        this, SLOT(searchStation()));
 
-	connect(SC_D.recordView, SIGNAL(selectedTime(Seiscomp::Gui::RecordWidget*, Seiscomp::Core::Time)),
-	        this, SLOT(onSelectedTime(Seiscomp::Gui::RecordWidget*, Seiscomp::Core::Time)));
+	connect(SC_D.recordView, SIGNAL(selectedTime(Seiscomp::Gui::RecordWidget*,Seiscomp::Core::Time)),
+	        this, SLOT(onSelectedTime(Seiscomp::Gui::RecordWidget*,Seiscomp::Core::Time)));
 
 	connect(SC_D.currentRecord, SIGNAL(selectedTime(Seiscomp::Core::Time)),
 	        this, SLOT(onSelectedTime(Seiscomp::Core::Time)));
 
-	connect(SC_D.currentRecord, SIGNAL(selectedTimeRangeChanged(Seiscomp::Core::Time, Seiscomp::Core::Time)),
-	        this, SLOT(onChangingTimeRange(Seiscomp::Core::Time, Seiscomp::Core::Time)));
-	connect(SC_D.currentRecord, SIGNAL(selectedTimeRange(Seiscomp::Core::Time, Seiscomp::Core::Time)),
-	        this, SLOT(onSelectedTimeRange(Seiscomp::Core::Time, Seiscomp::Core::Time)));
+	connect(SC_D.currentRecord, SIGNAL(selectedTimeRangeChanged(Seiscomp::Core::Time,Seiscomp::Core::Time)),
+	        this, SLOT(onChangingTimeRange(Seiscomp::Core::Time,Seiscomp::Core::Time)));
+	connect(SC_D.currentRecord, SIGNAL(selectedTimeRange(Seiscomp::Core::Time,Seiscomp::Core::Time)),
+	        this, SLOT(onSelectedTimeRange(Seiscomp::Core::Time,Seiscomp::Core::Time)));
 
-	connect(SC_D.recordView, SIGNAL(addedItem(const Seiscomp::Record*, Seiscomp::Gui::RecordViewItem*)),
-	        this, SLOT(onAddedItem(const Seiscomp::Record*, Seiscomp::Gui::RecordViewItem*)));
+	connect(SC_D.recordView, SIGNAL(addedItem(const Seiscomp::Record*,Seiscomp::Gui::RecordViewItem*)),
+	        this, SLOT(onAddedItem(const Seiscomp::Record*,Seiscomp::Gui::RecordViewItem*)));
 
 	connect(&RecordStreamState::Instance(), SIGNAL(firstConnectionEstablished()),
 	        this, SLOT(firstConnectionEstablished()));
@@ -3450,25 +3450,10 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 	SC_D.stations.clear();
 
 	Core::Time originTime = SC_D.origin->time();
-	if ( !originTime ) originTime = Core::Time::GMT();	
+	if ( !originTime ) originTime = Core::Time::GMT();
 
-	// Default is 1h travel time for 180deg
-	double maxTravelTime = 3600.0;
-
-	try {
-		TravelTime tt = SC_D.ttTable->computeFirst(0.0,0.0, SC_D.origin->depth(), 180.0,0.0);
-		maxTravelTime = tt.time;
-	}
-	catch ( ... ) {}
-
-	SEISCOMP_DEBUG("MaxTravelTime = %.2f", maxTravelTime);
-
-	SC_D.minTime = procAmp->config().noiseBegin;
-	SC_D.maxTime = maxTravelTime+procAmp->config().signalEnd;
-	Core::TimeWindow timeWindow(originTime+Core::TimeSpan(SC_D.minTime),
-	                            originTime+Core::TimeSpan(SC_D.maxTime));
-	SC_D.recordView->setTimeWindow(timeWindow);
-	SC_D.recordView->setTimeRange(SC_D.minTime, SC_D.maxTime);
+	SC_D.minTime = -60;
+	SC_D.maxTime = +120;
 
 	for ( size_t i = 0; i < SC_D.origin->magnitudeCount(); ++i ) {
 		if ( SC_D.origin->magnitude(i)->type() == magType ) {
@@ -3536,7 +3521,7 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 		}
 	}
 
-	for ( auto it : items ) {
+	for ( auto &it : items ) {
 		WaveformStreamID streamID;
 		Core::Time reference;
 
@@ -4127,8 +4112,8 @@ void AmplitudeView::setupItem(const char comps[3],
 	connect(item->widget(), SIGNAL(cursorUpdated(RecordWidget*,int)),
 	        this, SLOT(updateMainCursor(RecordWidget*,int)));
 
-	connect(item, SIGNAL(componentChanged(RecordViewItem*, char)),
-	        this, SLOT(updateItemLabel(RecordViewItem*, char)));
+	connect(item, SIGNAL(componentChanged(RecordViewItem*,char)),
+	        this, SLOT(updateItemLabel(RecordViewItem*,char)));
 
 	connect(item, SIGNAL(firstRecordAdded(const Seiscomp::Record*)),
 	        this, SLOT(updateItemRecordState(const Seiscomp::Record*)));
