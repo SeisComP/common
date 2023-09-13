@@ -39,7 +39,6 @@
 // IGN additions for OriginUncertainty computation
 #include "eigv.h"
 #include "chi2.h"
-#define rad2deg 57.29577951308232
 
 //#define LOCSAT_TESTING
 
@@ -1048,7 +1047,7 @@ DataModel::Origin* LocSAT::loc2Origin(Internal::Loc* loc){
 		// 2D confidence intervals
 		sminax = kppf[1] * pow(eigval2d[0], 0.5);
 		smajax = kppf[1] * pow(eigval2d[1], 0.5);
-		strike = rad2deg * atan(eigvec2d[3] / eigvec2d[2]);
+		strike = rad2deg(atan(eigvec2d[3] / eigvec2d[2]));
 		// give the strike in the [0.0, 180.0] interval
 		if ( strike < 0.0 )
 			strike += 180.0;
@@ -1063,21 +1062,21 @@ DataModel::Origin* LocSAT::loc2Origin(Internal::Loc* loc){
 		s3dIntAxis = kppf[2] * pow(eigval3d[1], 0.5);
 		s3dMajAxis = kppf[2] * pow(eigval3d[2], 0.5);
 
-		MajAxisPlunge   = rad2deg * atan(eigvec3d[8] / pow(pow(eigvec3d[6], 2.0) + pow(eigvec3d[7], 2.0), 0.5));
+		MajAxisPlunge   = rad2deg(atan(eigvec3d[8] / pow(pow(eigvec3d[6], 2.0) + pow(eigvec3d[7], 2.0), 0.5)));
 		if ( MajAxisPlunge < 0.0 )
 			MajAxisPlunge += 180.0;
 
 		if ( MajAxisPlunge > 180.0 )
 			MajAxisPlunge -= 180.0;
 
-		MajAxisAzimuth  = rad2deg * atan(eigvec3d[7] / eigvec3d[6]);
+		MajAxisAzimuth  = rad2deg(atan(eigvec3d[7] / eigvec3d[6]));
 		if ( MajAxisAzimuth < 0.0 )
 			MajAxisAzimuth += 180.0;
 
 		if ( MajAxisAzimuth > 180.0 )
 			MajAxisAzimuth -= 180.0;
 
-		MajAxisRotation = rad2deg * atan(eigvec3d[2] / pow(pow(eigvec3d[0], 2.0) + pow(eigvec3d[1], 2.0), 0.5));
+		MajAxisRotation = rad2deg(atan(eigvec3d[2] / pow(pow(eigvec3d[0], 2.0) + pow(eigvec3d[1], 2.0), 0.5)));
 		if ( loc->origerr->szz == 0.0 )
 			MajAxisRotation = 0.0;
 
