@@ -130,14 +130,8 @@ void computeCoordinates(double distance, double azimuth, double clat,
 double computeDistance(double lat1, double lon1, double lat2, double lon2,
                        double *azimuth = nullptr,
                        double *backAzimuth = nullptr) {
-	double dist, az, baz;
-	Math::Geo::delazi(lat1, lon1, lat2, lon2, &dist, &az, &baz);
-
-	if ( azimuth )
-		*azimuth = az;
-	if ( backAzimuth )
-		*backAzimuth = baz;
-
+	double dist;
+	Math::Geo::delazi(lat1, lon1, lat2, lon2, &dist, azimuth, backAzimuth);
 	return dist;
 }
 
@@ -1899,8 +1893,6 @@ void StdLoc::locateLeastSquares(
 				continue;
 			}
 
-			// get back azimuth, we don't need the distance, which will
-			// be discarded (it's a waste of computation)
 			computeDistance(newLat, newLon, sensorLat[i], sensorLon[i],
 			                nullptr, &backazis[i]);
 

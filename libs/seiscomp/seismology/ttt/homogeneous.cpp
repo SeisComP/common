@@ -93,16 +93,9 @@ double computeDistance(double lat1, double lon1,
                        double lat2, double lon2,
                        double *azimuth = nullptr,
                        double *backAzimuth = nullptr) {
-	double dist, az, baz;
-	Math::Geo::delazi(lat1, lon1, lat2, lon2, &dist, &az, &baz);
-	dist = Math::Geo::deg2km(dist);
-	if ( azimuth ) {
-		*azimuth = az;
-	}
-	if ( backAzimuth ) {
-		*backAzimuth = baz;
-	}
-	return dist;
+	double dist;
+	Math::Geo::delazi(lat1, lon1, lat2, lon2, &dist, azimuth, backAzimuth);
+	return Math::Geo::deg2km(dist);
 }
 
 bool Homogeneous::setModel(const string &model) {

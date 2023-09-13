@@ -245,9 +245,7 @@ TravelTime LibTau::computeFirst(double lat1, double lon1, double dep1,
                                 int ellc) {
 	if ( !_initialized ) setModel("iasp91");
 
-	double delta, azi1, azi2;
-
-	Math::Geo::delazi(lat1, lon1, lat2, lon2, &delta, &azi1, &azi2);
+	double delta = Math::Geo::delta(lat1, lon1, lat2, lon2);
 
 	TravelTime tt = computeFirst(delta, dep1);
 
