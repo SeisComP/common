@@ -18,9 +18,6 @@
  ***************************************************************************/
 
 
-#include <algorithm>
-
-
 template <typename T>
 class MessageIteratorImplT : public MessageIterator::Impl {
 	protected:

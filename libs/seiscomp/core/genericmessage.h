@@ -21,7 +21,9 @@
 #ifndef SEISCOMP_CORE_GENERICMESSAGE_H
 #define SEISCOMP_CORE_GENERICMESSAGE_H
 
+
 #include <seiscomp/core/message.h>
+#include <algorithm>
 #include <list>
 
 
