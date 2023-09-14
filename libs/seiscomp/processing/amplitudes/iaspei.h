@@ -58,7 +58,7 @@ struct AmplitudePeriodMeasurement
 	//
 	// - az2p Max. zero-to-peak amplitude found at index iz2p
 	// - ap2p1 first peak of the max. peak-to-peak amplitude pair
-	// - ap2p1 second peak 
+	// - ap2p2 second peak
 	//
 	// Note that az2p is the larger of ap2p1 and ap2p2.
 
