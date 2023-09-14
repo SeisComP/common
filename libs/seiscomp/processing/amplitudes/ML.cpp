@@ -31,6 +31,8 @@
 #include <seiscomp/system/environment.h>
 #include <seiscomp/config/config.h>
 
+#include "iaspei.h"
+
 #include <mutex>
 
 
@@ -337,12 +339,33 @@ bool AbstractAmplitudeProcessor_ML::computeAmplitude(
 		}
 
 		case PeakTrough:
-			if ( !computePeak2Peak(data.typedData()+si1, si2-si1, amax, *period, dt->index) )
-				return false;
+			if ( _config.iaspeiAmplitudes ) {
+				IASPEI::AmplitudePeriodMeasurement amp;
 
-			dt->index += si1;
-			dt->begin = 0;
-			dt->end = *period * 0.5;
+				auto offset = Math::Statistics::mean(si2 - si1, data.typedData() + si1);
+				if ( !IASPEI::measureAmplitudePeriod(data.impl(), offset, si1, si2, amp) ) {
+					return false;
+				}
+
+				amax = abs(data[amp.ip2p1] - data[amp.ip2p2]);
+				dt->index = IASPEI::findZeroCrossing(data.impl(), offset, amp.ip2p1, amp.ip2p2);
+				if ( dt->index < 0 ) {
+					dt->index = (amp.ip2p1 + amp.ip2p2) * 0.5;
+				}
+				dt->begin = amp.ip2p1 - dt->index;
+				dt->end = amp.ip2p2 - dt->index;
+				*period = (dt->end - dt->begin) * 2;
+			}
+			else {
+				if ( !computePeak2Peak(data.typedData() + si1, si2 - si1, amax, *period, dt->index) ) {
+					return false;
+				}
+
+				dt->index += si1;
+				dt->begin = 0;
+				dt->end = *period * 0.5;
+			}
+
 			break;
 
 		default:
