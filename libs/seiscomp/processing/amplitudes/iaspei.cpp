@@ -28,22 +28,23 @@
 
 
 namespace Seiscomp {
-
 namespace Processing {
-
 namespace IASPEI {
 
 
 #include <seiscomp/math/minmax.ipp>
 
 
+using namespace std;
+
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool measureAmplitudePeriod(
-	std::size_t n,
+	size_t n,
 	const double *f,
 	double offset,
-	std::size_t istart,
-	std::size_t iend,
+	size_t istart,
+	size_t iend,
 	AmplitudePeriodMeasurement &measurement)
 {
 	// NOTE:
@@ -58,9 +59,9 @@ bool measureAmplitudePeriod(
 	}
 
 	// Determine zero crossings.
-	std::vector<std::size_t> zero_crossings;
+	vector<size_t> zero_crossings;
 	double previous { f[istart] - offset };
-	for ( std::size_t i = istart + 1; i < iend; i++ ) {
+	for ( size_t i = istart + 1; i < iend; ++i ) {
 		double current { f[i] - offset };
 		if ( current*previous <= 0 && previous != 0 ) {
 			// => zero crossing
@@ -76,29 +77,29 @@ bool measureAmplitudePeriod(
 	}
 
 	// Determine peaks between zero crossings.
-	std::vector<std::size_t> peaks;
-	std::size_t nz { zero_crossings.size() };
-	for ( std::size_t k = 1; k < nz; k++ ) {
+	vector<size_t> peaks;
+	size_t nz { zero_crossings.size() };
+	for ( size_t k = 1; k < nz; ++k ) {
 		// The casts will never hurt in practice but should be
 		// removed after a revision of find_absmax().
 		int i1 = static_cast<int>(zero_crossings[k-1]);
 		int i2 = static_cast<int>(zero_crossings[k]);
-		std::size_t peak = find_absmax(static_cast<int>(n), f, i1, i2, offset);
+		size_t peak = find_absmax(static_cast<int>(n), f, i1, i2, offset);
 		peaks.push_back(peak);
 	}
 
 	// Keep track of the largest p2p amplitude...
 	double amax { 0 };
 	// ... and the respective index
-	std::size_t kmax { 0 };
+	size_t kmax { 0 };
 
-	std::size_t np = peaks.size();
-	for ( std::size_t k = 1; k < np; k++ ) {
-		std::size_t i1 { peaks[k - 1] };
-		std::size_t i2 { peaks[k] };
+	size_t np = peaks.size();
+	for ( size_t k = 1; k < np; ++k ) {
+		size_t i1 { peaks[k - 1] };
+		size_t i2 { peaks[k] };
 
 		// New p2p maximum?
-		double a { std::abs(f[i1] - f[i2]) };
+		double a { abs(f[i1] - f[i2]) };
 		if ( a > amax ) {
 			kmax = k;
 			amax = a;
@@ -107,10 +108,10 @@ bool measureAmplitudePeriod(
 
 	// The z2p peak is the larger of the two consequtive peaks
 	// comprising the maximum p2p amplitude.
-	std::size_t ip2p1 { peaks[kmax - 1] };
-	std::size_t ip2p2 { peaks[kmax] };
-	double ap2p1 { std::abs(f[ip2p1] - offset) };
-	double ap2p2 { std::abs(f[ip2p2] - offset) };
+	size_t ip2p1 { peaks[kmax - 1] };
+	size_t ip2p2 { peaks[kmax] };
+	double ap2p1 { abs(f[ip2p1] - offset) };
+	double ap2p2 { abs(f[ip2p2] - offset) };
 
 	measurement.iz2p = ap2p2 > ap2p1 ? ip2p2 : ip2p1;
 	measurement.az2p = ap2p2 > ap2p1 ? ap2p2 : ap2p1;
@@ -129,16 +130,51 @@ bool measureAmplitudePeriod(
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool measureAmplitudePeriod(
-	const std::vector<double> &data,
+	const vector<double> &data,
 	double offset,
-	std::size_t istart,
-	std::size_t iend,
+	size_t istart,
+	size_t iend,
 	AmplitudePeriodMeasurement &measurement)
 {
 	const double *f { &data[0] };
-	std::size_t n { data.size() };
+	size_t n { data.size() };
 
 	return measureAmplitudePeriod(n, f, offset, istart, iend, measurement);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+double findZeroCrossing(std::size_t n, const double *f, double offset,
+                        std::size_t istart, std::size_t iend) {
+	double previous { f[istart] - offset };
+
+	for ( size_t i = istart + 1; i < iend; ++i ) {
+		double current { f[i] - offset };
+		if ( current * previous <= 0 && previous != 0 ) {
+			return i - 1 + abs(previous) / (abs(current) + abs(previous));
+		}
+
+		previous = current;
+	}
+
+	return -1.0;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+double findZeroCrossing(
+	const vector<double> &data,
+	double offset,
+	std::size_t istart,
+	std::size_t iend
+) {
+	return findZeroCrossing(data.size(), &data[0], offset, istart, iend);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -151,22 +187,19 @@ double wwssnspAmplitudeResponse(double frequency_hz) {
 	static Filtering::IIR::WWSSN_SP_Filter<double> wwssnsp(Displacement);
 	static double twopi { M_PI+M_PI };
 
-	const std::complex<double> s(0, twopi * frequency_hz);
-	std::complex<double> r { wwssnsp.norm };
-	for ( const std::complex<double> &p : wwssnsp.poles ) {
+	const complex<double> s(0, twopi * frequency_hz);
+	complex<double> r { wwssnsp.norm };
+	for ( const auto &p : wwssnsp.poles ) {
 		r = r / (s - p);
 	}
-	for ( const std::complex<double> &z : wwssnsp.zeros ) {
+	for ( const auto &z : wwssnsp.zeros ) {
 		r = r * (s - z);
 	}
-	return std::abs(r);
+	return abs(r);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 } // namespace IASPEI
-
 } // namespace Processing
-
 } // namespace Seiscomp
-

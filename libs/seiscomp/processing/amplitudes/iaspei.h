@@ -26,9 +26,7 @@
 
 
 namespace Seiscomp {
-
 namespace Processing {
-
 namespace IASPEI {
 
 
@@ -110,7 +108,8 @@ bool measureAmplitudePeriod(
 	double offset,
 	std::size_t istart,
 	std::size_t iend,
-	AmplitudePeriodMeasurement &measurement);
+	AmplitudePeriodMeasurement &measurement
+);
 
 
 // Interface for raw pointer.
@@ -120,7 +119,42 @@ bool measureAmplitudePeriod(
 	double offset,
 	std::size_t istart,
 	std::size_t iend,
-	AmplitudePeriodMeasurement &measurement);
+	AmplitudePeriodMeasurement &measurement
+);
+
+
+/**
+ * @brief Finds a zero crossing within the data portion.
+ * @param n The number of samples
+ * @param data The data pointer
+ * @param offset An optional data offset which is removed from each sample checked.
+ * @param istart Index to start from
+ * @param iend Index before to end
+ * @return The zero crossing index or -1 if none was found.
+ */
+double findZeroCrossing(
+	std::size_t n,
+	const double *data,
+	double offset,
+	std::size_t istart,
+	std::size_t iend
+);
+
+
+/**
+ * @brief Finds a zero crossing within the data portion.
+ * @param data The data vector
+ * @param offset An optional data offset which is removed from each sample checked.
+ * @param istart Index to start from
+ * @param iend Index before to end
+ * @return The zero crossing index or -1 if none was found.
+ */
+double findZeroCrossing(
+	const std::vector<double> &data,
+	double offset,
+	std::size_t istart,
+	std::size_t iend
+);
 
 
 // Compute the WWSSN-SP displacement amplitude response needed for the
@@ -132,9 +166,7 @@ double wwssnspAmplitudeResponse(double frequency_hz);
 
 
 } // namespace IASPEI
-
 } // namespace Processing
-
 } // namespace Seiscomp
 
 
