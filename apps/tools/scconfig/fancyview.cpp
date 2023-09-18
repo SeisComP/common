@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 
-
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPainter>
@@ -71,8 +70,6 @@ QColor blend(const QColor& c1, const QColor& c2, int percentOfC1) {
 	              (c1.green()*percentOfC1 + c2.green()*(100-percentOfC1)) / 100,
 	              (c1.blue()*percentOfC1 + c2.blue()*(100-percentOfC1)) / 100);
 }
-
-
 
 
 QSize qSmartMinSize(const QSize &sizeHint, const QSize &minSizeHint,
@@ -161,6 +158,39 @@ string string2Block(const string &input, size_t lineWidth) {
 	return txt;
 }
 
+
+QString encodeHTML(const QString &input) {
+	QString rich;
+	const int len = input.length();
+	rich.reserve(int(len * 1.1));
+
+	for ( int i = 0; i < len; ++i ) {
+		if ( input.at(i) == QLatin1Char('<') ) {
+			rich += QLatin1String("&lt;");
+		}
+		else if ( input.at(i) == QLatin1Char('>') ) {
+			rich += QLatin1String("&gt;");
+		}
+		else if ( input.at(i) == QLatin1Char('&') ) {
+			rich += QLatin1String("&amp;");
+		}
+		else if ( input.at(i) == QLatin1Char('"') ) {
+			rich += QLatin1String("&quot;");
+		}
+		else if ( input.at(i) == QLatin1Char('\n') ) {
+			rich += QLatin1String("<br/>");
+		}
+		else if ( input.at(i) == QLatin1Char(' ') ) {
+			rich += QLatin1String("&nbsp;");
+		}
+		else {
+			rich += input.at(i);
+		}
+	}
+
+	rich.squeeze();
+	return rich;
+}
 
 
 class NewStructDialog : public QDialog {
@@ -1505,31 +1535,7 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 	QAbstractButton *locker = new IconButton(_unlockIcon, _lockIcon);
 	nameLayout->addWidget(locker);
 
-	vector<string> values;
-	QString eval;
-	string errmsg;
-	if ( Config::Config::Eval(param->symbol.content, values, true, NULL, &errmsg) ) {
-		for ( size_t i = 0; i < values.size(); ++i ) {
-			if ( i > 0 ) eval += "<br/>";
-			eval += QString(values[i].c_str()).replace(' ', "&nbsp;");
-		}
-	}
-	else
-		eval = QString("<i>%1</i>").arg(errmsg.c_str()).replace('\n', "<br/>");
-
-	QString toolTip = QString("<b>Location</b><br/>%1<br/><br/>"
-	                          "<b>Evaluated</b><br/>%2")
-	                  .arg(param->symbol.uri.c_str())
-	                  .arg(eval);
-
-	if ( isOverridden ) {
-		toolTip += QString("<br/><br/><b>WARNING</b><br/><i>This value is overridden in a "
-		                   "later stage which supersedes the current stage. "
-		                   "Whatever is entered here will not be active in the "
-		                   "final configuration. The superseded value is used instead.</i>");
-	}
-
-	inputWidget->widget()->setToolTip(toolTip);
+	updateToolTip(inputWidget->widget(), param);
 
 	FancyViewItem item(idx, paramWidget);
 	item.label = textWidget;
@@ -1538,11 +1544,8 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 	if ( !param->definition->description.empty() ) {
 		DescLabel *desc = new DescLabel;
 		desc->setText(maxSize(param->definition->description, 60).c_str());
-		QString content(param->definition->description.c_str());
-		content
-		.replace("<", "&lt;")
-		.replace(">", "&gt;")
-		.replace('\n', "<br/>");
+		QString content(string2Block(param->definition->description, 80).c_str());
+		content = encodeHTML(content);
 
 		QString toolTip = QString("<p>%1</p>").arg(content);
 		desc->setToolTip(toolTip);
@@ -1732,7 +1735,7 @@ void FancyView::updateToolTip(QWidget *w, Seiscomp::System::Parameter *param) {
 	if ( Config::Config::Eval(param->symbol.content, values, true, NULL, &errmsg) ) {
 		for ( size_t i = 0; i < values.size(); ++i ) {
 			if ( i > 0 ) eval += "<br/>";
-			eval += QString(values[i].c_str()).replace(' ', "&nbsp;");
+			eval += encodeHTML(values[i].c_str());
 		}
 	}
 	else
@@ -1804,7 +1807,7 @@ void FancyView::optionTextChanged(const QString &txt) {
 	if ( Config::Config::Eval(item.input->value().toStdString(), values, true, NULL, &errmsg) ) {
 		for ( size_t i = 0; i < values.size(); ++i ) {
 			if ( i > 0 ) eval += "<hr/>";
-			eval += QString(values[i].c_str()).replace(' ', "&nbsp;");
+			eval += encodeHTML(values[i].c_str());
 		}
 		pal.setColor(QPalette::WindowText, QColor(32,128,32));
 
