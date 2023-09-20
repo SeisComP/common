@@ -40,9 +40,6 @@ RunningMean<TYPE>::RunningMean(double windowLength, double fsamp)
 
 template<typename TYPE>
 void RunningMean<TYPE>::apply(int n, TYPE *inout) {
-	if ( !_windowLengthI )
-		throw Core::GeneralException("RM: Window length is 0");
-
 	if ( _sampleCount < _windowLengthI ) {
 		// Initially compute initial average from as many samples
 		// as possible, up to the specified window length
@@ -74,12 +71,16 @@ void RunningMean<TYPE>::reset() {
 
 template<typename TYPE>
 void RunningMean<TYPE>::setSamplingFrequency(double fsamp) {
-	if (fsamp == _samplingFrequency) return;
+	if ( fsamp == _samplingFrequency ) return;
+
+	_windowLengthI = int(_windowLength * fsamp);
+	reset();
+
+	if ( !_windowLengthI ) {
+		throw Core::GeneralException("RMHP: window length is lower than sampling interval");
+	}
 
 	_samplingFrequency = fsamp;
-	_windowLengthI = int(_windowLength * _samplingFrequency);
-
-	reset();
 }
 
 
@@ -97,7 +98,7 @@ int RunningMean<TYPE>::setParameters(int n, const double *params) {
 
 template<typename TYPE>
 InPlaceFilter<TYPE> *RunningMean<TYPE>::clone() const {
-	return new RunningMean<TYPE>(_windowLength, _samplingFrequency);
+	return new RunningMean<TYPE>(_windowLength);
 }
 
 
@@ -109,9 +110,6 @@ RunningMeanHighPass<TYPE>::RunningMeanHighPass(double windowLength, double fsamp
 
 template<typename TYPE>
 void RunningMeanHighPass<TYPE>::apply(int n, TYPE *inout) {
-	if ( !RunningMean<TYPE>::_windowLengthI )
-		throw Core::GeneralException("RMHP: Window length is 0");
-
 	if ( RunningMean<TYPE>::_sampleCount < RunningMean<TYPE>::_windowLengthI ) {
 		// Initially compute initial average from as many samples
 		// as possible, up to the specified window length
@@ -136,7 +134,7 @@ void RunningMeanHighPass<TYPE>::apply(int n, TYPE *inout) {
 
 template<typename TYPE>
 InPlaceFilter<TYPE> *RunningMeanHighPass<TYPE>::clone() const {
-	return new RunningMeanHighPass<TYPE>(RunningMean<TYPE>::_windowLength, RunningMean<TYPE>::_samplingFrequency);
+	return new RunningMeanHighPass<TYPE>(RunningMean<TYPE>::_windowLength);
 }
 
 
