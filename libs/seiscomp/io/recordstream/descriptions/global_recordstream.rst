@@ -208,13 +208,22 @@ The default path is set to `$SEISCOMP_ROOT/var/lib/archive`.
 In contrast to a formal URL definition, the URL path is interpreted as a directory path list
 separated by commas.
 
-Different SDS are not merged, but are read sequentially depending on data existence.
-If a requested file is missing in the current SDS, it is searched for in the archive
-next in the list. On success it will deliver all the rest of files for the current channel
-from this SDS archive. On failure the next SDS archive is searched.
+.. note::
 
-This process is repeated for each requested channel individually. It always starts to
-search data from the first given SDS to the last one, for each data channel.
+   When defining multiple directories separated by comma in a configuration
+   file, please enclose the entire definition (including ``sdsarchive://`` with
+   double quotes. Otherwise the configuration parser will interpret it as a list
+   and will only return the first part up to the first comma.
+
+Different SDS archives are not merged, but are read sequentially depending on
+data existence. If a requested file is missing in the current SDS archive, it is
+searched for in the archive next in the list. On success it will deliver all
+the rest of files for the current channel from this SDS archive. On failure the
+next SDS archive is searched.
+
+This process is repeated for each requested channel individually. It always
+starts to search data from the first given SDS to the last one, for each data
+channel.
 
 
 Examples
