@@ -1058,7 +1058,7 @@ int find_phase(const char *phase) {
 }
 
 
-double compute_ttime(double distance, double depth, char *phase, int extrapolate,
+double compute_ttime(double distance, double depth, const char *phase, int extrapolate,
                      double *rdtdd,  double *rdtdh, int *errorflag) {
 	int ileft, jz, nz;
 	float zfoc = depth;
