@@ -214,7 +214,7 @@ void TTDecorator::computeTTT(TravelTimes& travelTimes,
 		Math::Geo::delandaz2coord(distance, 90, _latitude, _longitude, &lat2, &lon2);
 
 		try {
-			travelTimes.push_back(_ttTable.compute(phase.c_str(), _latitude, _longitude, _depth, lat2, lon2, 0).time);
+			travelTimes.push_back(_ttTable.computeTime(phase.c_str(), _latitude, _longitude, _depth, lat2, lon2, 0));
 		}
 		catch ( const std::exception &e ) {
 			std::cerr << "TTT: " << e.what() << std::endl;

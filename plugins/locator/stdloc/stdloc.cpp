@@ -1241,7 +1241,7 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 			continue;
 		}
 
-		TravelTime tt;
+		double ttime;
 
 		try {
 			const char *phaseName = pick->phaseHint().code().c_str();
@@ -1253,8 +1253,8 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 					phaseName = "S";
 				}
 			}
-			tt = _ttt->compute(phaseName, lat, lon, depth, sensorLat[i],
-			                   sensorLon[i], sensorElev[i]);
+			ttime = _ttt->computeTime(phaseName, lat, lon, depth, sensorLat[i],
+			                                sensorLon[i], sensorElev[i]);
 		}
 		catch ( exception &e ) {
 			SEISCOMP_WARNING("Travel Time Table error for %s@%s.%s.%s and lat "
@@ -1267,7 +1267,7 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 			return false;
 		}
 
-		if ( tt.time < 0 ) {
+		if ( ttime < 0 ) {
 			SEISCOMP_WARNING("Travel Time Table error: data not returned for "
 			                 "%s@%s.%s.%s and lat %g lon %g depth %g",
 			                 pick->phaseHint().code().c_str(),
@@ -1278,7 +1278,7 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 			return false;
 		}
 
-		travelTimes[i] = tt.time;
+		travelTimes[i] = ttime;
 		double pickTime = double(pick->time().value());
 		originTimes.push_back(pickTime - travelTimes[i]);
 		timeWeights.push_back(weights[i]);
@@ -1893,9 +1893,6 @@ void StdLoc::locateLeastSquares(
 				continue;
 			}
 
-			computeDistance(newLat, newLon, sensorLat[i], sensorLon[i],
-			                nullptr, &backazis[i]);
-
 			TravelTime tt;
 
 			try {
@@ -1942,6 +1939,12 @@ void StdLoc::locateLeastSquares(
 			travelTimes[i] = tt.time;
 			dtdds[i] = tt.dtdd;
 			dtdhs[i] = tt.dtdh;
+			if ( tt.azi ) { // 3D model
+				backazis[i] = *tt.azi;
+			} else {
+				computeDistance(newLat, newLon, sensorLat[i], sensorLon[i],
+				                nullptr, &backazis[i]);
+			}
 		}
 
 		if ( unableToComputeTT ) {

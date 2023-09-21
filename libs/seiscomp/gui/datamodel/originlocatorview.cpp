@@ -5660,7 +5660,6 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 				arrival->setPhase(Phase("P"));
 			}
 
-			TravelTime tt;
 			double depth = 10.0, elev = 0.0;
 			try { depth = org->depth().value(); }
 			catch ( ... ) {}
@@ -5668,12 +5667,12 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 			catch ( ... ) {}
 
 			try {
-				tt = SC_D.ttTable.compute(arrival->phase().code().c_str(),
+				double ttime = SC_D.ttTable.computeTime(arrival->phase().code().c_str(),
 				                      org->latitude().value(), org->longitude().value(), depth,
 				                      sloc->latitude(), sloc->longitude(), elev);
 
 				double at = (double)(additionalPicks[i].pick->time().value()-org->time().value());
-				arrival->setTimeResidual(at-tt.time);
+				arrival->setTimeResidual(at-ttime);
 			}
 			catch ( ... ) {}
 
