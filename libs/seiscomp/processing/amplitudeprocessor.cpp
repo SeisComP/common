@@ -173,10 +173,10 @@ class Context {
 
 			try {
 				auto tt = Core::TimeSpan(
-					_ttt->compute(
+					_ttt->computeTime(
 						phase.c_str(), hypoLat, hypoLon, hypoDepth,
 						recvLat, recvLon, recvElev
-					).time
+					)
 				);
 
 				auto absoluteTime = env.hypocenter->time().value() + tt;

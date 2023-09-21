@@ -491,8 +491,8 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 		catch ( ... ) {}
 
 		try {
-			travelTime = _ttt->compute(arrival->phase().code().c_str(),
-			                           slat, slon, sdepth, rlat, rlon, relev).time;
+			travelTime = _ttt->computeTime(arrival->phase().code().c_str(),
+			                                  slat, slon, sdepth, rlat, rlon, relev);
 			if ( travelTime < 0 ) {
 				if ( _verbose ) {
 					cerr << "Could not get travel time for "
