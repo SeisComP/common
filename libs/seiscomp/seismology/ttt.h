@@ -74,6 +74,7 @@ class SC_SYSTEM_CORE_API TravelTime {
 		double dtdh;       //!< dt/dh dependence of time on source depth
 		double dddp;       //!< dd/dp
 		double takeoff;    //!< take-off angle at source
+		OPT(double) azi;   //!< azimuth angle at source (for 3D models)
 };
 
 
@@ -180,6 +181,27 @@ class SC_SYSTEM_CORE_API TravelTimeTableInterface : public Core::BaseObject {
 		computeFirst(double lat1, double lon1, double dep1,
 		             double lat2, double lon2, double elev2=0.,
 		             int ellc = 1) = 0;
+
+		/**
+		 * Compute the travel time for a given phase. This is intended
+		 * to be a faster call than 'compute' since only the travel time
+		 * is returned. However the default implementation call 'compute'
+		 * and return the travel time for the requested phase.
+		 *
+		 * @param lat1 Latitude of source
+		 * @param lon1 Longitude of source
+		 * @param dep1 The source depth in km
+		 * @param lat2 Latitude of receiver
+		 * @param lon2 Longitude of receiver
+		 * @param elev2 Elevation of receiver in m
+		 * @param ellc Apply ellipticity correction (1 = on, 0 = off)
+		 * @returns The travel time for the phase
+		 */
+		virtual double
+		computeTime(const char *phase,
+		            double lat1, double lon1, double dep1,
+		            double lat2, double lon2, double elev2=0.,
+		            int ellc = 1);
 };
 
 

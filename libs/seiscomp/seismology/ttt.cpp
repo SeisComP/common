@@ -272,6 +272,14 @@ TravelTime TravelTimeTableInterface::compute(const char *phase,
 }
 
 
+double TravelTimeTableInterface::computeTime(const char *phase,
+                                         double lat1, double lon1, double dep1,
+                                         double lat2, double lon2, double alt2,
+                                         int ellc) {
+  return compute(phase, lat1, lon1, dep1, lat2, lon2, alt2, ellc).time;
+}
+
+
 TravelTimeTableInterfacePtr TravelTimeTable::_interface;
 
 

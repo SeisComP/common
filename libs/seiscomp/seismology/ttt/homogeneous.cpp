@@ -17,20 +17,26 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
+
 #include <seiscomp/seismology/ttt.h>
 #include <seiscomp/core/strings.h>
 #include <seiscomp/math/geo.h>
 #include <seiscomp/datamodel/config.h>
 #include <seiscomp/system/environment.h>
 
+
 #include <string>
 #include <cmath>
 #include <vector>
 
+
 using namespace std;
 using namespace Seiscomp;
 
+
 namespace {
+
 
 /**
  * Homogeneous
@@ -72,6 +78,12 @@ class Homogeneous : public TravelTimeTableInterface {
 		             double lat2, double lon2, double alt2 = 0.,
 		             int ellc = 1) override;
 
+		double
+		computeTime(const char *phase,
+		            double lat1, double lon1, double dep1,
+		            double lat2, double lon2, double elev2=0.,
+		            int ellc = 1) override;
+
 		bool isInside(double lat, double lon, double dep);
 
 	private:
@@ -85,9 +97,12 @@ class Homogeneous : public TravelTimeTableInterface {
 		double _maxDepth = 0; // [km]
 };
 
+
 double radToDeg(double r) { return 180.0 * r / M_PI; }
 
+
 //double degToRad(double d) { return M_PI * d / 180.0; }
+
 
 double computeDistance(double lat1, double lon1,
                        double lat2, double lon2,
@@ -97,6 +112,7 @@ double computeDistance(double lat1, double lon1,
 	Math::Geo::delazi(lat1, lon1, lat2, lon2, &dist, azimuth, backAzimuth);
 	return Math::Geo::deg2km(dist);
 }
+
 
 bool Homogeneous::setModel(const string &model) {
 
@@ -130,9 +146,11 @@ bool Homogeneous::setModel(const string &model) {
 	return true;
 }
 
+
 const string &Homogeneous::model() const {
 	return _model;
 }
+
 
 TravelTimeList *
 Homogeneous::compute(double lat1, double lon1, double dep1,
@@ -152,6 +170,7 @@ Homogeneous::compute(double lat1, double lon1, double dep1,
 	return ttlist;
 }
 
+
 bool
 Homogeneous::isInside(double lat, double lon, double dep)
 {
@@ -164,6 +183,7 @@ Homogeneous::isInside(double lat, double lon, double dep)
 	}
 	return true;
 }
+
 
 TravelTime
 Homogeneous::compute(const char *phase,
@@ -202,6 +222,38 @@ Homogeneous::compute(const char *phase,
 	return TravelTime(phase, tt, dtdd, dtdh, 0, takeOffAngle);
 }
 
+
+double
+Homogeneous::computeTime(const char *phase,
+                         double lat1, double lon1, double dep1,
+                         double lat2, double lon2, double alt2,
+                         int ellc) {
+	double velocity;
+	if ( phase[0] == 'P' || phase[0] == 'p' ) {
+		velocity = _pVel;
+	}
+	else if ( phase[0] == 'S' || phase[0] == 's' ) {
+		velocity = _sVel;
+	}
+	else {
+		throw NoPhaseError();
+	}
+
+	if ( !isInside(lat1, lon1, dep1) ) {
+		throw NoPhaseError();
+	}
+
+	// straight ray path since we are in a homogeneous media
+	double Hdist = computeDistance(lat1, lon1, lat2, lon2);
+	double Vdist = dep1 + alt2/1000.;
+	double distance = sqrt(Hdist*Hdist + Vdist*Vdist); // [km]
+
+	double tt = distance / velocity; // [sec]
+
+	return tt;
+}
+
+
 TravelTime
 Homogeneous::computeFirst(double lat1, double lon1, double dep1,
                           double lat2, double lon2, double alt2, int ellc) {
@@ -213,7 +265,9 @@ Homogeneous::computeFirst(double lat1, double lon1, double dep1,
 	}
 }
 
+
 REGISTER_TRAVELTIMETABLE(Homogeneous, "homogeneous");
+
 
 }
 
