@@ -677,7 +677,7 @@
             <double>-100</double>
            </property>
            <property name="value" >
-            <double>-10</double>
+            <double>-30</double>
            </property>
           </widget>
          </item>
@@ -732,7 +732,7 @@
             <double>-100</double>
            </property>
            <property name="value" >
-            <double>30</double>
+            <double>10</double>
            </property>
           </widget>
          </item>
