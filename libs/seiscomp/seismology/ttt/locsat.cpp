@@ -69,9 +69,12 @@ namespace TTT {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 extern "C" {
 
-void distaz2_(double *lat1, double *lon1, double *lat2, double *lon2, double *delta, double *azi1, double *azi2);
+void distaz2_(double *lat1, double *lon1, double *lat2, double *lon2,
+              double *delta, double *azi1, double *azi2);
 int setup_tttables_dir(const char *new_dir);
-double compute_ttime(double distance, double depth, char *phase, int extrapolate, double *rdtdd,  double *rdtdh, int *errorflag);
+double compute_ttime(double distance, double depth, const char *phase,
+                     int extrapolate, double *rdtdd,  double *rdtdh,
+                     int *errorflag);
 int num_phases();
 char **phase_types();
 
@@ -213,7 +216,7 @@ TravelTimeList *Locsat::compute(double delta, double depth) {
 TravelTime Locsat::compute(const char *phase, double delta, double depth) {
 	int errorflag=0;
 	double dtdd, dtdh;
-	double ttime = compute_ttime(delta, depth, const_cast<char*>(phase), EXTRAPOLATE,
+	double ttime = compute_ttime(delta, depth, phase, EXTRAPOLATE,
 	                             &dtdd, &dtdh, &errorflag);
 	if ( errorflag!=0 ) throw NoPhaseError();
 	if ( !(ttime > 0) ) throw NoPhaseError();
@@ -287,8 +290,8 @@ TravelTime Locsat::computeFirst(double delta, double depth) {
 	char *phase = phases[_Pindex];
 	int errorflag=0;
 	double dtdd, dtdh;
-	double ttime = compute_ttime(delta, depth, const_cast<char*>(phase),
-	                             EXTRAPOLATE, &dtdd, &dtdh, &errorflag);
+	double ttime = compute_ttime(delta, depth, phase, EXTRAPOLATE,
+	                             &dtdd, &dtdh, &errorflag);
 	if ( errorflag!=0 ) throw NoPhaseError();
 	if ( !(ttime > 0) ) throw NoPhaseError();
 	double takeoff = takeoff_angle(dtdd, dtdh, depth);
