@@ -56,8 +56,8 @@ class SC_SYSTEM_CORE_API LibTau : public TravelTimeTableInterface {
 
 
 	public:
-		bool setModel(const std::string &model);
-		const std::string &model() const;
+		bool setModel(const std::string &model) override;
+		const std::string &model() const override;
 
 
 		/**
@@ -86,7 +86,7 @@ class SC_SYSTEM_CORE_API LibTau : public TravelTimeTableInterface {
 		 */
 		TravelTimeList *compute(double lat1, double lon1, double dep1,
 		                        double lat2, double lon2, double alt2 = 0.,
-		                        int ellc = 1);
+		                        int ellc = 1) override;
 
 
 		/**
@@ -102,7 +102,7 @@ class SC_SYSTEM_CORE_API LibTau : public TravelTimeTableInterface {
 		 */
 		TravelTime computeFirst(double lat1, double lon1, double dep1,
 		                        double lat2, double lon2, double alt2 = 0.,
-		                        int ellc = 1);
+		                        int ellc = 1) override;
 
 
 	private:

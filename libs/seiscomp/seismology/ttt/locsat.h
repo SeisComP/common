@@ -60,8 +60,8 @@ class SC_SYSTEM_CORE_API Locsat : public TravelTimeTableInterface {
 
 
 	public:
-		bool setModel(const std::string &model);
-		const std::string &model() const;
+		bool setModel(const std::string &model) override;
+		const std::string &model() const override;
 
 
 		/**
@@ -74,9 +74,9 @@ class SC_SYSTEM_CORE_API Locsat : public TravelTimeTableInterface {
 		 *
 		 * @returns A TravelTimeList of travel times sorted by time.
 		 */
-		virtual TravelTimeList *compute(double lat1, double lon1, double dep1,
-		                                double lat2, double lon2, double alt2 = 0.,
-		                                int ellc = 1);
+		TravelTimeList *compute(double lat1, double lon1, double dep1,
+		                        double lat2, double lon2, double alt2 = 0.,
+		                        int ellc = 1) override;
 
 		/**
 		 * Compute the traveltime and a given phase. The default implementation
@@ -86,10 +86,10 @@ class SC_SYSTEM_CORE_API Locsat : public TravelTimeTableInterface {
 		 *
 		 * @returns A TravelTime
 		 */
-		virtual TravelTime compute(const char *phase,
-		                           double lat1, double lon1, double dep1,
-		                           double lat2, double lon2, double alt2=0.,
-		                           int ellc = 1);
+		TravelTime compute(const char *phase,
+		                   double lat1, double lon1, double dep1,
+		                   double lat2, double lon2, double alt2=0.,
+		                   int ellc = 1) override;
 
 		/**
 		 * @brief Compute the traveltime for the model selected using setModel()
@@ -102,13 +102,34 @@ class SC_SYSTEM_CORE_API Locsat : public TravelTimeTableInterface {
 		 */
 		TravelTime computeFirst(double lat1, double lon1, double dep1,
 		                        double lat2, double lon2, double alt2 = 0.,
-		                        int ellc = 1);
+		                        int ellc = 1) override;
+
+
+		/**
+		 * Compute the travel time for a given phase. This is intended
+		 * to be a faster call than 'compute' since only the travel time
+		 * is returned.
+		 *
+		 * @param lat1 Latitude of source
+		 * @param lon1 Longitude of source
+		 * @param dep1 The source depth in km
+		 * @param lat2 Latitude of receiver
+		 * @param lon2 Longitude of receiver
+		 * @param elev2 Elevation of receiver in m
+		 * @param ellc Apply ellipticity correction (1 = on, 0 = off)
+		 * @returns The travel time for the phase
+		 */ 
+		double computeTime(const char *phase,
+		                   double lat1, double lon1, double dep1,
+		                   double lat2, double lon2, double elev2=0.,
+		                   int ellc = 1) override;
 
 
 	private:
 		TravelTimeList *compute(double delta, double depth);
 		TravelTime compute(const char *phase, double delta, double depth);
 		TravelTime computeFirst(double delta, double depth);
+		double computeTime(const char *phase, double delta, double depth);
 
 		bool initTables();
 

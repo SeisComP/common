@@ -229,6 +229,22 @@ TravelTime Locsat::compute(const char *phase, double delta, double depth) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+double
+Locsat::computeTime(const char *phase, double delta, double depth) {
+	int errorflag=0;
+	double dtdd, dtdh;
+	double ttime = compute_ttime(delta, depth, phase, EXTRAPOLATE,
+	                             &dtdd, &dtdh, &errorflag);
+	if ( errorflag!=0 ) throw NoPhaseError();
+	if ( !(ttime > 0) ) throw NoPhaseError();
+	return ttime;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TravelTimeList *Locsat::compute(double lat1, double lon1, double dep1,
                                 double lat2, double lon2, double alt2,
                                 int ellc) {
@@ -281,6 +297,31 @@ TravelTime Locsat::compute(const char *phase,
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+double Locsat::computeTime(const char *phase,
+                           double lat1, double lon1, double dep1,
+                           double lat2, double lon2, double alt2,
+                           int ellc) {
+
+	if ( !initTables() ) throw NoPhaseError();
+
+	double delta, azi1, azi2;
+	distaz2_(&lat1, &lon1, &lat2, &lon2, &delta, &azi1, &azi2);
+
+	double ttime = computeTime(phase, delta, dep1);
+
+	if ( ellc ) {
+		double ecorr = 0.;
+		if ( ellipcorr(phase, lat1, lon1, lat2, lon2, dep1, ecorr) )
+			ttime += ecorr;
+	}
+
+	return ttime;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
 
 
 
