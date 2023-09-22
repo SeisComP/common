@@ -1547,16 +1547,17 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 	if ( Config::Config::Eval(param->symbol.content, values, true, NULL, &errmsg) ) {
 		for ( size_t i = 0; i < values.size(); ++i ) {
 			if ( i > 0 ) eval += "<br/>";
-			eval += QString(values[i].c_str()).replace(' ', "&nbsp;");
+			eval += encodeHTML(values[i].c_str());
 		}
 	}
-	else
+	else {
 		eval = QString("<i>%1</i>").arg(errmsg.c_str()).replace('\n', "<br/>");
+	}
 
 	QString toolTip = QString("<b>Location</b><br/>%1<br/><br/>"
 	                          "<b>Evaluated</b><br/>%2")
 	                  .arg(param->symbol.uri.c_str())
-	                  .arg(encodeHTML(eval));
+	                  .arg(eval);
 
 	if ( isOverridden ) {
 		toolTip += QString("<br/><br/><b>WARNING</b><br/><i>This value is overridden in a "
