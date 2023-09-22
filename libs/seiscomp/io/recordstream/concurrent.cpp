@@ -205,7 +205,7 @@ void Concurrent::close() {
 	lock_guard<mutex> lock(_mtx);
 
 	if ( !_started ) {
-		SEISCOMP_DEBUG("Closing without being ever started");
+		SEISCOMP_DEBUG("Closing without being started");
 		return;
 	}
 
@@ -215,12 +215,10 @@ void Concurrent::close() {
 		_rsarray[i].first->close();
 	}
 
-	for ( auto &&thread : _threads ) {
-		// Since each threads needs to acquire the mutex it must be released
-		// here temporarily.
-		_mtx.unlock();
-		thread.join();
-		_mtx.lock();
+	for ( auto &thread : _threads ) {
+		if ( thread.joinable() ) {
+			thread.join();
+		}
 	}
 
 	SEISCOMP_DEBUG("All acquisition threads finished");
@@ -255,12 +253,7 @@ void Concurrent::acquiThread(RecordStream *rs) {
 
 	SEISCOMP_DEBUG("Finished acquisition thread");
 
-	_mtx.lock();
-	if ( --_nthreads == 0) {
-		SEISCOMP_DEBUG("Last acquisition thread terminated");
-		_queue.push(nullptr);
-	}
-	_mtx.unlock();
+	_queue.push(nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -269,37 +262,52 @@ void Concurrent::acquiThread(RecordStream *rs) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record *Concurrent::next() {
-	if ( !_started ) {
-		_started = true;
-
+	{
 		lock_guard<mutex> lock(_mtx);
 
-		for ( size_t i = 0; i < _rsarray.size(); ++i) {
-			if ( _rsarray[i].second ) {
-				++_nthreads;
-				_rsarray[i].first->setDataType(_dataType);
-				_rsarray[i].first->setDataHint(_hint);
-				_threads.push_back(
-					thread(
-						bind(
-							&Concurrent::acquiThread,
-							this,
-							_rsarray[i].first.get()
-						)
-					)
-				);
-			}
-		}
+		if ( !_started ) {
+			_started = true;
 
-		if ( _threads.empty() ) {
-			return nullptr;
+			for ( size_t i = 0; i < _rsarray.size(); ++i) {
+				if ( _rsarray[i].second && !_queue.isClosed() ) {
+					++_nthreads;
+					_rsarray[i].first->setDataType(_dataType);
+					_rsarray[i].first->setDataHint(_hint);
+					_threads.push_back(
+						thread(
+							bind(
+								&Concurrent::acquiThread,
+								this,
+								_rsarray[i].first.get()
+							)
+						)
+					);
+				}
+			}
+
+			if ( _threads.empty() ) {
+				return nullptr;
+			}
 		}
 	}
 
 	try {
-		Record * rec =  _queue.pop();
-		if ( rec) {
-			return rec;
+		while ( true ) {
+			Record * rec =  _queue.pop();
+			if ( rec) {
+				return rec;
+			}
+			else {
+				// Null record received ... a thread finished
+				lock_guard<mutex> lock(_mtx);
+				if ( --_nthreads ) {
+					// Still threads running ... keep on reading the queue
+					continue;
+				}
+
+				SEISCOMP_DEBUG("Last acquisition thread terminated");
+				break;
+			}
 		}
 
 		if ( _queue.size() > 0 ) {
