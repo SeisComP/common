@@ -119,25 +119,27 @@ QFont readFont(const Config::Config &cfg, const string& query, const QFont &base
 }
 
 Qt::Orientation getOrientation(const std::string &name) {
-	if ( name == "horizontal" )
+	if ( name == "horizontal" ) {
 		return Qt::Horizontal;
-	else if ( name == "vertical" )
-		return Qt::Vertical;
-	else
-		return Qt::Vertical;
+	}
+
+	// "vertical"
+	return Qt::Vertical;
 }
 
-Qt::Alignment getAlignment(const std::string &name) {
-	if ( name == "topleft" )
-		return Qt::Alignment(Qt::AlignTop | Qt::AlignLeft);
-	else if ( name == "topright" )
-		return Qt::Alignment(Qt::AlignTop | Qt::AlignRight);
-	else if ( name == "bottomleft" )
-		return Qt::Alignment(Qt::AlignBottom | Qt::AlignLeft);
-	else if ( name == "bottomright" )
-		return Qt::Alignment(Qt::AlignBottom | Qt::AlignRight);
-	else
-		return Qt::Alignment(Qt::AlignTop | Qt::AlignLeft);
+Qt::Alignment getAlignment(const std::string &name,
+                           Qt::Alignment fallback=Qt::AlignTop | Qt::AlignLeft) {
+
+	return name == "topleft" ? Qt::AlignTop | Qt::AlignLeft :
+	       name == "topcenter" ? Qt::AlignTop | Qt::AlignHCenter :
+	       name == "topright"  ? Qt::AlignTop | Qt::AlignRight :
+	       name == "centerleft" ? Qt::AlignVCenter | Qt::AlignLeft :
+	       name == "center" ? Qt::AlignVCenter | Qt::AlignHCenter :
+	       name == "centerright" ? Qt::AlignVCenter | Qt::AlignRight :
+	       name == "bottomleft" ? Qt::AlignBottom | Qt::AlignLeft :
+	       name == "bottomcenter" ? Qt::AlignBottom | Qt::AlignHCenter :
+	       name == "bottomright" ? Qt::AlignBottom | Qt::AlignRight :
+	       fallback;
 }
 
 
@@ -236,12 +238,13 @@ bool GeoFeatureLayer::LayerProperties::isChild(const LayerProperties* child) con
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeatureLayer::LayerProperties::SymbolShape
 GeoFeatureLayer::LayerProperties::getSymbolShape(const std::string &type) {
+	if ( type == "none" ) return None;
 	if ( type == "circle" ) return Circle;
 	if ( type == "triangle" ) return Triangle;
 	if ( type == "square" ) return Square;
 	if ( type == "diamond" ) return Diamond;
 
-	return None;
+	return Disabled;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -263,12 +266,17 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 	const static string cfgSymbolIcon = "symbol.icon";
 	const static string cfgSymbolIconX = "symbol.icon.hotspot.x";
 	const static string cfgSymbolIconY = "symbol.icon.hotspot.y";
+	const static string cfgSymbolNameAlign = "symbol.name.alignment";
+	const static string cfgSymbolNameMargin = "symbol.name.margin";
+	const static string cfgSymbolNamePen = "symbol.name.pen";
 	const static string cfgTitle = "title";
 	const static string cfgLabel = "label";
 	const static string cfgIndex = "index";
 	const static string cfgLegendArea = "legendArea";
 	const static string cfgLegendOrientation = "orientation";
 	const static string cfgCompositionMode = "composition";
+
+	string symbolIconPath;
 
 	// Read additional configuration file (e.g. map.cfg in spatial vector folder)
 	if ( !dataDir.empty() ) {
@@ -284,18 +292,11 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 			try { roughness = cfg.getInt(cfgRoughness); } catch( ... ) {}
 			try { symbolSize = cfg.getInt(cfgSymbolSize); } catch( ... ) {}
 			try { symbolShape = getSymbolShape(cfg.getString(cfgSymbolShape)); } catch( ... ) {}
-			try {
-				string fn = cfg.getString(cfgSymbolIcon);
-				if ( !fn.empty() ) {
-					if ( fn[0] == '/' )
-						symbolIcon = QImage(fn.c_str());
-					else
-						symbolIcon = QImage((dataDir + '/' + fn).c_str());
-				}
-			}
-			catch( ... ) {}
+			try { symbolIconPath = cfg.getString(cfgSymbolIcon); } catch( ... ) {}
 			try { symbolIconHotspot.setX(cfg.getInt(cfgSymbolIconX)); } catch( ... ) {}
 			try { symbolIconHotspot.setY(cfg.getInt(cfgSymbolIconY)); } catch( ... ) {}
+			try { symbolNameAlignment = getAlignment(cfg.getString(cfgSymbolNameAlign), symbolNameAlignment); } catch( ... ) {}
+			try { symbolNameMargin = cfg.getInt(cfgSymbolNameMargin); } catch( ... ) {}
 			try { title = cfg.getString(cfgTitle); } catch( ... ) {}
 			try { label = cfg.getString(cfgLabel); } catch( ... ) {}
 			try { index = cfg.getInt(cfgIndex); } catch( ... ) {}
@@ -320,18 +321,11 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 		try { roughness = SCApp->configGetInt(query + cfgRoughness); } catch( ... ) {}
 		try { symbolSize = SCApp->configGetInt(query + cfgSymbolSize); } catch( ... ) {}
 		try { symbolShape = getSymbolShape(SCApp->configGetString(query + cfgSymbolShape)); } catch( ... ) {}
-		try {
-			string fn = SCApp->configGetString(query + cfgSymbolIcon);
-			if ( !fn.empty() ) {
-				if ( fn[0] == '/' )
-					symbolIcon = QImage(fn.c_str());
-				else
-					symbolIcon = QImage((dataDir + '/' + fn).c_str());
-			}
-		}
-		catch( ... ) {}
+		try { symbolIconPath = SCApp->configGetString(cfgSymbolIcon); } catch( ... ) {}
 		try { symbolIconHotspot.setX(SCApp->configGetInt(query + cfgSymbolIconX)); } catch( ... ) {}
 		try { symbolIconHotspot.setY(SCApp->configGetInt(query + cfgSymbolIconY)); } catch( ... ) {}
+		try { symbolNameAlignment = getAlignment(SCApp->configGetString(query + cfgSymbolNameAlign), symbolNameAlignment); } catch( ... ) {}
+		try { symbolNameMargin = SCApp->configGetInt(query + cfgSymbolNameMargin); } catch( ... ) {}
 		try { title = SCApp->configGetString(query + cfgTitle); } catch( ... ) {}
 		try { label = SCApp->configGetString(query + cfgLabel); } catch( ... ) {}
 		try { index = SCApp->configGetInt(query + cfgIndex); } catch( ... ) {}
@@ -342,32 +336,75 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 
 	filled = brush.style() != Qt::NoBrush;
 
-	// scale symbol icon
-	if ( !symbolIcon.isNull() ) {
-		if ( symbolSize > 0 ) {
+	// read and scale symbol icon
+	if ( !symbolIconPath.empty() ) {
+		if ( symbolIconPath[0] == '/' ) {
+			symbolIcon = QImage(symbolIconPath.c_str());
+		}
+		else {
+			symbolIcon = QImage((dataDir + '/' + symbolIconPath).c_str());
+		}
+
+		// symbol could not be loaded: fall back to empty symbol shape
+		if ( symbolIcon.isNull() ) {
+			symbolShape = None;
+		}
+		// scale icon and hotspot
+		else if ( symbolSize > 0 ) {
 			QSize oldSize = symbolIcon.size();
-			symbolIcon = symbolIcon.scaled(symbolSize, symbolSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-			symbolIconHotspot.setX(symbolIconHotspot.x() * symbolIcon.size().width() / oldSize.width());
-			symbolIconHotspot.setY(symbolIconHotspot.y() * symbolIcon.size().height() / oldSize.height());
+			symbolIcon = symbolIcon.scaled(symbolSize, symbolSize,
+			                               Qt::KeepAspectRatio, Qt::SmoothTransformation);
+			QPoint scaledHotspot(symbolIconHotspot.x() * symbolIcon.size().width() / oldSize.width(),
+			                     symbolIconHotspot.y() * symbolIcon.size().height() / oldSize.height());
+			symbolRect = symbolIcon.rect();
+			symbolRect.moveTo(-scaledHotspot);
+			return;
+		}
+		// use original icon and hotspot dimension
+		else {
+			symbolRect = symbolIcon.rect();
+			symbolRect.moveTo(-symbolIconHotspot);
+			return;
 		}
 	}
-	// create equilateral triangle shape with edge length of symbolSize and
-	// coordinate set to balance point of triangle
-	else if ( symbolShape == LayerProperties::Triangle ) {
-		// equilateral triangle
-		int size = symbolSize < 0 ? 8 : symbolSize;
-		int halfsize = size * 0.5;
-		symbolPolygon << QPoint(0, -0.577*size) // top, y: inner radius - height
-		              << QPoint(halfsize, int(0.289*size)) // right, y: inner radius
-		              << QPoint(-halfsize, int(0.289*size)); // left)
+
+	if ( symbolShape == Disabled ) {
+		symbolRect = {};
+		return;
 	}
-	// create square rotated by 45 degrees
-	else if ( symbolShape == LayerProperties::Diamond ) {
-		int halfsize = symbolSize < 0 ? 4 : symbolSize * 0.5;
-		symbolPolygon << QPoint(0, -halfsize)
-		              << QPoint(halfsize, 0)
-		              << QPoint(0, halfsize)
-		              << QPoint(-halfsize, 0);
+
+	int size = max(0, symbolSize);
+	if ( !size ) {
+		symbolShape = None;
+	}
+
+	switch ( symbolShape ) {
+		case  Triangle:
+			// create equilateral triangle shape with edge length of symbolSize
+			// and coordinate set to balance point of triangle
+			symbolPolygon << QPoint(0, -0.577*size) // top, y: inner radius - height
+			              << QPoint(size*0.5, int(0.289*size)) // right, y: inner radius
+			              << QPoint(-size*0.5, int(0.289*size)); // left)
+			symbolRect = symbolPolygon.boundingRect();
+			break;
+		case Diamond:
+			// create square rotated by 45 degrees
+			symbolPolygon << QPoint(0, -size*0.5)
+			              << QPoint(size*0.5, 0)
+			              << QPoint(0, size*0.5)
+			              << QPoint(-size*0.5, 0);
+			symbolRect = symbolPolygon.boundingRect();
+			break;
+
+		case Circle:
+		case Square:
+		case None:
+			symbolRect = {0, 0, size, size};
+			symbolRect.moveCenter({0, 0});
+			break;
+
+		default:
+			symbolRect = {};
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -549,7 +586,11 @@ void GeoFeatureLayer::drawFeatures(CategoryNode *node, Canvas *canvas,
 	else
 		painter.setBrush(Qt::NoBrush);
 
-	node->quadtree.query(proj->boundingBox(), std::bind(&GeoFeatureLayer::drawFeature, this, canvas, &painter, &debugPen, layProp, std::placeholders::_1), true);
+	node->quadtree.query(proj->boundingBox(),
+	                     std::bind(&GeoFeatureLayer::drawFeature, this, canvas,
+	                               &painter, &debugPen, layProp,
+	                               std::placeholders::_1),
+	                     true);
 	/*
 	for ( size_t i = 0; i < node->features.size(); ++i ) {
 		Geo::GeoFeature *f = node->features[i];
@@ -567,7 +608,8 @@ void GeoFeatureLayer::drawFeatures(CategoryNode *node, Canvas *canvas,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
-                                  const QPen *debugPen, LayerProperties *props,
+                                  const QPen *debugPen,
+                                  const LayerProperties *props,
                                   const Geo::GeoFeature *f) {
 	// Skip feature if it contains no vertices
 	if ( f->vertices().empty() ) {
@@ -594,76 +636,146 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 		painter->setCompositionMode(props->compositionMode);
 	}
 
-	// Icon
-	if ( !props->symbolIcon.isNull() ) {
-		QPoint p;
-		for ( auto it = f->vertices().begin(); it != f->vertices().end(); ++it ) {
-			if ( !proj->project(p, QPointF(it->lon, it->lat)) ) {
-				continue;
-			}
-			painter->drawImage(p - props->symbolIconHotspot, props->symbolIcon);
-		}
-	}
-	// Shape, preprocessed into Polygon
-	else if ( !props->symbolPolygon.isEmpty() ) {
-		QPoint p;
-		for ( auto it = f->vertices().begin(); it != f->vertices().end(); ++it ) {
-			if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
-				painter->drawPolygon(props->symbolPolygon.translated(p));
-			}
-		}
-	}
-	// Shape
-	else if ( props->symbolShape != LayerProperties::None ) {
-		QPoint p;
-		int size = props->symbolSize < 0 ? 8 : props->symbolSize;
-		int halfsize = size * 0.5;
+	QString name;
+	QRect textRect;
 
-		switch ( props->symbolShape ) {
-			case LayerProperties::Circle:
-				// radius = size/2
-				for ( auto it = f->vertices().begin(); it != f->vertices().end(); ++it ) {
+	// Symbol
+	if ( !props->symbolIcon.isNull() ||
+	     props->symbolShape != LayerProperties::Disabled ) {
+		QPoint p;
+
+		if ( props->drawName ) {
+			name = f->name().c_str();
+			auto tmp = painter->fontMetrics().boundingRect(name);
+			auto margin2 = props->symbolNameMargin * 2;
+			textRect = { 0, 0,
+			             props->symbolRect.width() + margin2 + 2*tmp.width(),
+			             props->symbolRect.height() + margin2 + 2*tmp.height() };
+			textRect.moveCenter(props->symbolRect.center());
+		}
+
+		// Icon
+		if ( !props->symbolIcon.isNull() ) {
+			if ( name.isEmpty() ) {
+				for ( auto it = f->vertices().begin();
+					  it != f->vertices().end(); ++it ) {
 					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
-						painter->drawEllipse(p.x()-halfsize, p.y()-halfsize, size, size);
+						painter->drawImage(props->symbolRect.translated(p),
+						                   props->symbolIcon);
 					}
 				}
-				break;
-			case LayerProperties::Square:
-				// edge length = size
-				for ( auto it = f->vertices().begin(); it != f->vertices().end(); ++it ) {
+			}
+			else {
+				for ( auto it = f->vertices().begin();
+					  it != f->vertices().end(); ++it ) {
 					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
-						painter->drawRect(p.x()-halfsize, p.y()-halfsize, size, size);
+						painter->drawImage(props->symbolRect.translated(p),
+						                   props->symbolIcon);
+						painter->drawText(textRect.translated(p),
+						                  props->symbolNameAlignment, name);
 					}
 				}
-				break;
-			default:
-				break;
+			}
+		}
+		// Shape, preprocessed into Polygon
+		else if ( !props->symbolPolygon.isEmpty() ) {
+			if ( name.isEmpty() ) {
+				for ( auto it = f->vertices().begin();
+					  it != f->vertices().end(); ++it ) {
+					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+						painter->drawPolygon(props->symbolPolygon.translated(p));
+					}
+				}
+			}
+			else {
+				for ( auto it = f->vertices().begin(); it != f->vertices().end(); ++it ) {
+					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+						painter->drawPolygon(props->symbolPolygon.translated(p));
+						painter->drawText(textRect.translated(p),
+						                  props->symbolNameAlignment, name);
+					}
+				}
+			}
+		}
+		// Circle
+		else if ( props->symbolShape == LayerProperties::Circle ) {
+			if ( name.isEmpty() ) {
+				for ( auto it = f->vertices().begin();
+				      it != f->vertices().end(); ++it ) {
+					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+						painter->drawEllipse(props->symbolRect.translated(p));
+					}
+				}
+			}
+			else {
+				for ( auto it = f->vertices().begin();
+				      it != f->vertices().end(); ++it ) {
+					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+						painter->drawEllipse(props->symbolRect.translated(p));
+						painter->drawText(textRect.translated(p),
+						                  props->symbolNameAlignment, name);
+					}
+				}
+			}
+		}
+		// Square
+		else if ( props->symbolShape == LayerProperties::Square ) {
+			if ( name.isEmpty() ) {
+				for ( auto it = f->vertices().begin();
+				      it != f->vertices().end(); ++it ) {
+					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+						painter->drawRect(props->symbolRect.translated(p));
+					}
+				}
+			}
+			else {
+				for ( auto it = f->vertices().begin();
+					  it != f->vertices().end(); ++it ) {
+					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+						painter->drawRect(props->symbolRect.translated(p));
+						painter->drawText(textRect.translated(p),
+										  props->symbolNameAlignment, name);
+					}
+				}
+			}
+		}
+		// LayerProperties::None
+		else {
+			if ( !name.isEmpty() ) {
+				for ( auto it = f->vertices().begin();
+				      it != f->vertices().end(); ++it ) {
+					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+						painter->drawText(textRect.translated(p),
+						                  props->symbolNameAlignment, name);
+					}
+				}
+			}
 		}
 	}
 	// Points, polylines and polygons
 	else {
 		canvas->drawFeature(*painter, f, props->filled, props->roughness);
-	}
 
-	// Draw the name if requested and if there is enough space
-	if ( props->drawName ) {
-		QPoint p1, p2;
-		qreal lonMin = bbox.west;
-		qreal lonMax = bbox.east;
+		// Draw the name if requested and if there is enough space
+		if ( props->drawName ) {
+			QPoint p1, p2;
+			qreal lonMin = bbox.west;
+			qreal lonMax = bbox.east;
 
-		if ( fabs(lonMax-lonMin) > 180 ) {
-			qSwap(lonMin, lonMax);
-		}
+			if ( fabs(lonMax-lonMin) > 180 ) {
+				qSwap(lonMin, lonMax);
+			}
 
-		if ( proj->project(p1, QPointF(lonMin, bbox.north))
-		     && proj->project(p2, QPointF(lonMax, bbox.south)) ) {
-			QRect bboxRect = QRect(p1, p2);
-			QString name = f->name().c_str();
-			QRect textRect = painter->fontMetrics().boundingRect(name);
-			int maxBBoxEdge = max(bboxRect.width(), bboxRect.height());
-			if ( textRect.width()*100 < maxBBoxEdge*80 ) {
-				textRect.moveCenter(bboxRect.center());
-				painter->drawText(bboxRect.united(textRect), Qt::AlignCenter, name);
+			if ( proj->project(p1, QPointF(lonMin, bbox.north))
+			     && proj->project(p2, QPointF(lonMax, bbox.south)) ) {
+				QRect bboxRect = QRect(p1, p2);
+				QString name = f->name().c_str();
+				QRect textRect = painter->fontMetrics().boundingRect(name);
+				int maxBBoxEdge = max(bboxRect.width(), bboxRect.height());
+				if ( textRect.width()*100 < maxBBoxEdge*80 ) {
+					textRect.moveCenter(bboxRect.center());
+					painter->drawText(bboxRect.united(textRect), Qt::AlignCenter, name);
+				}
 			}
 		}
 	}

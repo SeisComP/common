@@ -99,6 +99,7 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 	private:
 		struct SC_GUI_API LayerProperties {
 			enum SymbolShape {
+				Disabled,
 				None,
 				Circle,
 				Triangle,
@@ -106,7 +107,7 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 				Diamond
 			};
 
-			const LayerProperties     *parent;
+			const LayerProperties     *parent{nullptr};
 			std::string                name;
 			std::string                title;
 			Qt::Orientation            orientation{Qt::Vertical};
@@ -124,23 +125,23 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 			int                        roughness{-1};
 			bool                       filled{false};
 			int                        symbolSize{8};
-			SymbolShape                symbolShape{None};
-			QPolygon                   symbolPolygon;
 			QImage                     symbolIcon;
 			QPoint                     symbolIconHotspot;
+			SymbolShape                symbolShape{Disabled};
+			QPolygon                   symbolPolygon;
+			Qt::Alignment              symbolNameAlignment{Qt::AlignTop | Qt::AlignHCenter};
+			int                        symbolNameMargin{3};
 
-			LayerProperties(const std::string &name)
-			: parent(nullptr), name(name)
-			, filled(false) {}
+			// derived members
+			QRect                      symbolRect;
 
-			LayerProperties(const std::string &name, const LayerProperties *parent)
-			: parent(parent), name(name)
-			, visible(parent->visible), pen(parent->pen)
-			, brush(parent->brush), font(parent->font)
-			, drawName(parent->drawName), debug(parent->debug)
-			, rank(parent->rank), roughness(parent->roughness)
-			, filled(parent->filled), symbolSize(parent->symbolSize)
-			, symbolShape(parent->symbolShape) {}
+			LayerProperties(const std::string &name) : name(name) {}
+			LayerProperties(const std::string &name,
+			                const LayerProperties *parent) {
+				*this = *parent;
+				this->name = name;
+				this->parent = parent;
+			}
 
 			bool isChild(const LayerProperties* child) const;
 			void read(const std::string &dataDir = "");
@@ -180,7 +181,7 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 		void drawFeatures(CategoryNode *node, Canvas *canvas,
 		                  QPainter &painter, const QPen &debugPen);
 		bool drawFeature(Canvas *canvas, QPainter *painter,
-		                 const QPen *debugPen, LayerProperties *props,
+		                 const QPen *debugPen, const LayerProperties *props,
 		                 const Geo::GeoFeature *f);
 
 		bool                       _initialized;

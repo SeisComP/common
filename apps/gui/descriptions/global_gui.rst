@@ -575,8 +575,10 @@ Available map layer configuration parameters for each category are:
    Type: *string*
 
    The area in the map where the legend will be displayed.
-   Valid values are *topleft*, *topright*, *bottomleft* and
-   *bottomright*.
+   Valid values are
+   *topleft*, *topcenter*, *topright*,
+   *centerleft*, *center*, *centerright*,
+   *bottomleft*, *bottomcenter* and *bottomright*.
 
    Default is ``topleft``.
 
@@ -628,7 +630,8 @@ Available map layer configuration parameters for each category are:
 
    Instead of drawing points, lines or polygons, the given shape is rendered
    for each vertex of a feature. Supported values are *circle*, *triangle*,
-   *square* and *diamond*. The shape is scaled to :confval:`symbol.size`.
+   *square*, *diamond* and *none*. The shape is scaled to
+   :confval:`symbol.size`.
 
 .. confval:: symbol.icon
 
@@ -637,8 +640,8 @@ Available map layer configuration parameters for each category are:
    Instead of drawing points, lines or polygons, the given icon is rendered for
    each vertex of a feature. If the string starts on a ``/`` it is interpreted as
    an absolute path else it is resolved relative to the directory containing the
-   vector data. The image is scaled to :confval:`symbol.size` if it is larger
-   than zero otherwise the origin size is being used.
+   vector data. The image is scaled to :confval:`symbol.size` if ``size`` is
+   larger than zero otherwise the original image size is used.
 
 .. confval:: symbol.icon.hotspot.x
 
@@ -658,6 +661,26 @@ Available map layer configuration parameters for each category are:
    starting at top.
 
    Default is ``0``.
+
+.. confval:: symbol.name.alignment
+
+   Type: *string*
+
+   Alignment of the symbols name used in combination with :confval:`drawName`,
+   :confval:`symbol.size` and :confval:`symbol.name.margin`. Valid values are
+   *topleft*, *topcenter*, *topright*,
+   *centerleft*, *center*, *centerright*,
+   *bottomleft*, *bottomcenter* and *bottomright*.
+
+   Default is ``topcenter``.
+
+.. confval:: symbol.name.margin
+
+   Type: *int*
+
+   Margin in pixel between symbol and its name.
+
+   Default is ``3``.
 
 .. confval:: debug
 
