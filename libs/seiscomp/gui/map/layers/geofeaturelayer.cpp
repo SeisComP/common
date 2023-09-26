@@ -1109,6 +1109,11 @@ void GeoFeatureLayer::updateBbox(CategoryNode *node) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GeoFeatureLayer::initLayerProperites() {
+	// remove legends
+	while ( legendCount() ) {
+		removeLegend(legend(0));
+	}
+
 	// Create a layer properties from BNA geo features
 	const Geo::GeoFeatureSet &featureSet = Geo::GeoFeatureSetSingleton::getInstance();
 

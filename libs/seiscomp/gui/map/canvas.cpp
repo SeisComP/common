@@ -1439,8 +1439,20 @@ void Canvas::onLegendRemoved(Legend *legend) {
 	LegendAreas::iterator it = _legendAreas.find(legend->alignment());
 	if ( it != _legendAreas.end() ) {
 		int index = it->find(legend);
-		if ( index != -1 )
-			it->remove(index);
+		if ( index == -1 ) {
+			return;
+		}
+
+		it->remove(index);
+
+		// last legend in area: remove area
+		if ( it->isEmpty() ) {
+			_legendAreas.erase(it);
+		}
+		// decrement current index
+		else if ( index <= it->currentIndex ) {
+			--(it->currentIndex);
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
