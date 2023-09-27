@@ -32,7 +32,6 @@ namespace Processing {
 class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLv : public AbstractAmplitudeProcessor_ML {
 	public:
 		AmplitudeProcessor_MLv();
-		AmplitudeProcessor_MLv(const Core::Time &trigger);
 
 	public:
 		bool computeAmplitude(const DoubleArray &data,
