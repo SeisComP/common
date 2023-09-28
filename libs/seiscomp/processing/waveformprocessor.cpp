@@ -59,9 +59,10 @@ WaveformProcessor::StreamState::~StreamState() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WaveformProcessor::WaveformProcessor(const Core::TimeSpan &initTime,
                                      const Core::TimeSpan &gapThreshold)
- : _enabled(true),
-   _initTime(initTime), _gapThreshold(gapThreshold), _usedComponent(Vertical) {
-
+: _enabled(true)
+, _initTime(initTime)
+, _gapThreshold(gapThreshold)
+, _usedComponent(Vertical) {
 	_gapTolerance = 0.;
 	_enableGapInterpolation = false;
 	_enableSaturationCheck = false;
@@ -355,9 +356,10 @@ bool WaveformProcessor::store(const Record *record) {
 			_stream.initialized = true;
 		}
 	}
-	else
+	else {
 		// Call process to cause a derived processor to work on the data.
 		process(record, *arr);
+	}
 
 	_stream.lastRecord = record;
 

@@ -71,6 +71,15 @@ namespace Core {
    - Changed signature of Seiscomp::Processing::MagnitudeProcessor::estimateMw
    - Removed Seiscomp::DataModel::DatabaseArchive::write(object, parentID)
    - Added Seiscomp::DataModel::DatabaseArchive::insert(object, parentID)
+   - Added Seiscomp::Processing::NCompsOperator<>::buffer()
+   - Added Seiscomp::Processing::NCompsOperator<>::proc()
+   - Added Seiscomp::Processing::NCompsOperator<>::reset()
+   - Added Seiscomp::Processing::CodeWrapper<>::reset()
+   - Added Seiscomp::Processing::StreamConfigWrapper<>::proc()
+   - Added Seiscomp::Processing::StreamConfigWrapper<>::reset()
+   - Added Seiscomp::Processing::NoOpWrapper<>::reset()
+   - Added Seiscomp::Processing::FilterWrapper<>::proc()
+   - Added Seiscomp::Processing::FilterWrapper<>::reset()
 
  "15.6.0"   0x0F0600
    - Added Seiscomp::Gui::PickerView::setAuxiliaryChannels
