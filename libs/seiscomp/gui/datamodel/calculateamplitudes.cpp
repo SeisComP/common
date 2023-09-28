@@ -23,6 +23,7 @@
 #include <seiscomp/logging/log.h>
 #include <seiscomp/gui/datamodel/calculateamplitudes.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/utils.h>
 #include <seiscomp/math/geo.h>
 #include <seiscomp/seismology/magnitudes.h>
 #include <seiscomp/datamodel/origin.h>
@@ -86,6 +87,7 @@ CalculateAmplitudes::CalculateAmplitudes(Origin *origin,
 	QFont font = _ui.source->font();
 	font.setUnderline(true);
 	_ui.source->setFont(font);
+	_ui.source->installEventFilter(new ElideFadeDrawer(this));
 	_ui.table->horizontalHeader()->setStretchLastSection(true);
 
 	_origin = origin;
