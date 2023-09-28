@@ -165,8 +165,8 @@
 						</parameter>
 						<parameter name="maxFileSize" type="int" default="104857600" unit="byte">
 							<description>
-							The maximum size of a logfile in byte. The default
-							value is 100 megabyte. If a logfile exceeds that
+							The maximum size of a log file in byte. The default
+							value is 100 megabyte. If a log file exceeds that
 							size, then it is rotated. To disable the size limit
 							give 0 or a negative value.
 							</description>
@@ -1027,7 +1027,7 @@
 					</parameter>
 					<parameter name="minSNR" type="double">
 						<description>
-						Define the mininum SNR to be reached to compute the
+						Define the minimum SNR to be reached to compute the
 						amplitudes. This value is amplitude type specific and
 						has no global default value.
 						</description>
@@ -1238,7 +1238,7 @@
 					<description>
 					Bkpicker is an implementation of the Baer/Kradolfer picker
 					adapted to SeisComP. It was created by converting Manfred
-					Baers from Fortran to C++ and inserting it as a replacement
+					Baers from FORTRAN to C++ and inserting it as a replacement
 					for the picker algorithm. The picker interface name to be
 					used in configuration files, e.g. of scautopick,is
 					&quot;BK&quot;.
@@ -1267,7 +1267,7 @@
 					</parameter>
 					<parameter name="filterType" type="string" default="BP">
 						<description>
-						BP (Bandpass) is currently the only option.
+						BP (bandpass) is currently the only option.
 						</description>
 					</parameter>
 					<parameter name="filterPoles" type="int" default="2">

@@ -12,25 +12,27 @@ There are still some modules that do not use the libraries and are called
 They need wrappers to generate their native configuration when
 :command:`seiscomp update-config` is run.
 
-Global parameters can be used by many modules. Thus multiple configuration can be avoided.
-The parameters are read from file in the following order:
+Global parameters can be used by many modules. Thus multiple configuration can
+be avoided. The parameters are read from file in the following order:
 
 #. :file:`@SYSTEMCONFIGDIR@/global.cfg`
 #. :file:`@CONFIGDIR@/global.cfg`
 
-Parameters from :file:`@CONFIGDIR@` override parameters from :file:`@SYSTEMCONFIGDIR@`.
+Parameters from :file:`@CONFIGDIR@` override parameters from
+:file:`@SYSTEMCONFIGDIR@`.
 
-Most :term:`trunk` modules read the configuration from the global configuration which can be overridden
-by the module configuration. Read the :ref:`concept section on modules <concepts_modules>`
-and the :ref:`concept section on the configuraion <concepts_configuration>` for
-more details.
+Most :term:`trunk` modules read the configuration from the global configuration
+which can be overridden by the module configuration. Read the
+:ref:`concept section on modules <concepts_modules>` and the
+:ref:`concept section on the configuration <concepts_configuration>` for more
+details.
 
-Though it is easy to create the configuration by directly editing the configuration
-files, it is even more convenient to use a configurator.
-SeisComP ships with a graphical configurator and management tool (:ref:`scconfig`)
-which makes it easy to maintain
-module configurations and station bindings even for large networks. It has built-in
-functionality to check the state of all registered modules and to start and stop them.
+Though it is easy to create the configuration by directly editing the
+configuration files, it is even more convenient to use a graphical configuration
+tool. SeisComP ships with :ref:`scconfig`, a graphical configuration and
+management tool which makes it easy to maintain module configurations and
+station bindings even for large networks. It has built-in functionality to check
+the state of all registered modules and to start and stop them.
 
 The configuration is divided into three parts: :ref:`stations <global-stations>`,
 :ref:`modules <global_modules>` and :ref:`bindings <global_bindings>`.
@@ -41,9 +43,9 @@ The configuration is divided into three parts: :ref:`stations <global-stations>`
 Station meta data
 =================
 
-Station meta-data is a fundamental requirement for a seismic processing system and
-for SeisComP. Read the :ref:`inventory section<concepts_inventory>` in concepts for
-more details.
+Station meta-data is a fundamental requirement for a seismic processing system
+and for SeisComP. Read the :ref:`inventory section<concepts_inventory>` in
+concepts for more details.
 
 
 .. _global_modules:
@@ -82,7 +84,6 @@ plugins shown:
 
 See the documentation for each module for further information about its
 extensions.
-
 
 
 .. _global-configuration:
