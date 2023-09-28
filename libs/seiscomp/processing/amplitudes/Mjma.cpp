@@ -40,7 +40,7 @@ REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_Mjma, "Mjma");
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor_Mjma::AmplitudeProcessor_Mjma()
 : AmplitudeProcessor("Mjma") {
-	setSignalEnd("min(R / 3 + 30, 150) || 150");
+	setSignalEnd("min(R / 3 + 30, 150)");
 	setMinSNR(0);
 	setMaxDist(20);
 	setMaxDepth(80);

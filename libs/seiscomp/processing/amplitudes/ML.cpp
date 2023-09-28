@@ -406,7 +406,7 @@ bool AbstractAmplitudeProcessor_ML::computeAmplitude(
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AbstractAmplitudeProcessor_ML::setDefaultConfiguration() {
 	// Default settings
-	setSignalEnd("min(R / 3 + 30, 150) || 150");
+	setSignalEnd("min(R / 3 + 30, 150)");
 	setMinSNR(0);
 	setMaxDist(8);
 

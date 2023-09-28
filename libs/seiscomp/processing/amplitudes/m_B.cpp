@@ -41,7 +41,7 @@ AmplitudeProcessor_mB::AmplitudeProcessor_mB()
 	// computed in the stream picker, which doesn't know of origins, it also
 	// doesn't know the S-P time. For distances of 5 degrees the S wave would
 	// leak into the time window thus contaminating the measurement.
-	setSignalEnd("min(D * 11.5, 60) || 60");
+	setSignalEnd("min(D * 11.5, 60)");
 	setMinDist(5);
 	setMaxDist(105);
 }

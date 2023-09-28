@@ -150,7 +150,7 @@ AmplitudeProcessor_MLh::AmplitudeProcessor_MLh()
 
 AmplitudeProcessor_ML2h::AmplitudeProcessor_ML2h()
 : Processing::AmplitudeProcessor("ML") {
-	setSignalEnd("min(R / 3 + 30, 150) || 150");
+	setSignalEnd("min(R / 3 + 30, 150)");
 	setMinSNR(0);
 	// Maximum distance is 8 degrees
 	setMaxDist(8);

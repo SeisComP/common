@@ -345,19 +345,6 @@ struct dpow {
 	T operator()( const T& arg1, const T& arg2 ) const { return std::pow(arg1, arg2); }
 };
 
-template<class T>
-struct lessThan {
-	T operator()( const T& arg1, const T& arg2 ) const {
-		return std::min(arg1, arg2);
-	}
-};
-
-template<class T>
-struct greaterThan {
-	T operator()( const T& arg1, const T& arg2 ) const {
-		return std::max(arg1, arg2);
-	}
-};
 
 // Operators
 class NegExpression : public OP1Expression<std::negate> {
@@ -376,16 +363,68 @@ class AbsExpression : public OP1Expression<dabs> {
 	}
 };
 
-class MinExpression : public OP2Expression<lessThan> {
-	using OP2Expression<lessThan>::OP2Expression;
+class MinExpression : public OP2BaseExpression {
+	using OP2BaseExpression::OP2BaseExpression;
+
+	double evaluate(Context &ctx) override {
+		double e1, e2;
+
+		try {
+			e1 = _op1->evaluate(ctx);
+		}
+		catch ( ... ) {
+			// Operand1 is not set, forward operand2 in any case,
+			// even if it throws an exception. This case is only
+			// valid if both operands are unset.
+			return _op2->evaluate(ctx);
+		}
+
+		// Operand1 is set already
+		try {
+			e2 = _op2->evaluate(ctx);
+		}
+		catch ( ... ) {
+			// Operand2 is not set, forward operand1
+			return e1;
+		}
+
+		// Both operands are set, return minimum
+		return e1 <= e2 ? e1 : e2;
+	}
 
 	std::string toString() const override {
 		return "min(" + _op1->toString() + ", " + _op2->toString() + ")";
 	}
 };
 
-class MaxExpression : public OP2Expression<greaterThan> {
-	using OP2Expression<greaterThan>::OP2Expression;
+class MaxExpression : public OP2BaseExpression {
+	using OP2BaseExpression::OP2BaseExpression;
+
+	double evaluate(Context &ctx) override {
+		double e1, e2;
+
+		try {
+			e1 = _op1->evaluate(ctx);
+		}
+		catch ( ... ) {
+			// Operand1 is not set, forward operand2 in any case,
+			// even if it throws an exception. This case is only
+			// valid if both operands are unset.
+			return _op2->evaluate(ctx);
+		}
+
+		// Operand1 is set already
+		try {
+			e2 = _op2->evaluate(ctx);
+		}
+		catch ( ... ) {
+			// Operand2 is not set, forward operand1
+			return e1;
+		}
+
+		// Both operands are set, return maximum
+		return e1 >= e2 ? e1 : e2;
+	}
 
 	std::string toString() const override {
 		return "max(" + _op1->toString() + ", " + _op2->toString() + ")";

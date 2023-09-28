@@ -140,7 +140,7 @@ AmplitudeProcessor_Mwp::AmplitudeProcessor_Mwp()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_Mwp::init() {
-	setSignalEnd("min(D * 11.5, 95) || 95");
+	setSignalEnd("min(D * 11.5, 95)");
 	setNoiseStart(-240.);
 	setMinDist(5);
 	setMaxDist(105);

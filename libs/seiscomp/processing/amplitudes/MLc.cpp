@@ -186,7 +186,7 @@ AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_MLc2h::setDefaultConfiguration() {
-	setSignalEnd("min(R / 3 + 30, 150) || 150");
+	setSignalEnd("min(R / 3 + 30, 150)");
 	setMinSNR(0);
 	setMaxDist(8);
 	setMaxDepth(80);
