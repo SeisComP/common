@@ -27,8 +27,10 @@
 #include <seiscomp/math/filter/seismometers.h>
 #include <seiscomp/datamodel/origin.h>
 #include <seiscomp/datamodel/sensorlocation.h>
+#include <seiscomp/datamodel/pick.h>
 #include <seiscomp/client.h>
-#include <boost/function.hpp>
+
+#include <functional>
 
 
 namespace Seiscomp {
@@ -116,8 +118,9 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 				 * @brief Evaluates the expression.
 				 * This method throws a StatusException if the evaluation fails.
 				 * @param proc The source processor
+				 * @param left If the time is the left time of a time window
 				 */
-				void evaluate(const AmplitudeProcessor *proc);
+				void evaluate(const AmplitudeProcessor *proc, bool left);
 
 			private:
 				Core::BaseObjectPtr _exp;
@@ -172,6 +175,11 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		struct Environment {
 			Environment();
 
+			std::string                     networkCode;
+			std::string                     stationCode;
+			std::string                     locationCode;
+			std::string                     channelCode;
+
 			const DataModel::Origin         *hypocenter;
 			const DataModel::SensorLocation *receiver;
 			const DataModel::Pick           *pick;
@@ -209,10 +217,10 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 			double          snr;
 		};
 
-		typedef std::vector<std::string> IDList;
+		using IDList = std::vector<std::string>;
 
-		typedef boost::function<void (const AmplitudeProcessor*,
-		                              const Result &)> PublishFunc;
+		using PublishFunc = std::function<void (const AmplitudeProcessor*,
+		                                        const Result &)>;
 
 
 	// ----------------------------------------------------------------------

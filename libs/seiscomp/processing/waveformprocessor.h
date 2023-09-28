@@ -143,6 +143,8 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 				RayPathOutOfRegions,
 				//! Travel time table lookup failed
 				TravelTimeEstimateFailed,
+				//! Arrival has not been found
+				ArrivalNotFound,
 				//! Configuration error
 				ConfigurationError
 			),
@@ -174,6 +176,7 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 				"receiver out of regions",
 				"ray path out of regions",
 				"travel time estimate failed",
+				"arrival not found",
 				"configuration error"
 			)
 		);

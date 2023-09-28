@@ -103,9 +103,10 @@ namespace Expression {
 class Context {
 	public:
 		Context(
-			const AmplitudeProcessor *proc
+			const AmplitudeProcessor *proc,
+			bool leftSideOfTimeWindow
 		)
-		: _proc(proc) {}
+		: _proc(proc), _leftSideOfTimeWindow(leftSideOfTimeWindow) {}
 
 		~Context() {
 			//
@@ -186,10 +187,81 @@ class Context {
 			}
 		}
 
+		double getArrival(const string &phase, bool acceptAll, int statusValueOffset) {
+			auto env = _proc->environment();
+			if ( !env.hypocenter ) {
+				throw StatusException(WaveformProcessor::MissingHypocenter, statusValueOffset);
+			}
+
+			for ( size_t i = 0; i < env.hypocenter->arrivalCount(); ++i ) {
+				auto arr = env.hypocenter->arrival(i);
+				if ( arr->phase().code() != phase ) {
+					continue;
+				}
+
+				auto pick = DataModel::Pick::Find(arr->pickID());
+				if ( !pick ) {
+					continue;
+				}
+
+				if ( pick->waveformID().networkCode() != env.networkCode
+				  || pick->waveformID().stationCode() != env.stationCode
+				  || pick->waveformID().locationCode() != env.locationCode ) {
+					continue;
+				}
+
+				bool acceptAllArrivals = acceptAll;
+				if ( !acceptAllArrivals ) {
+					try {
+						// If the origins evaluation mode is manual then all
+						// arrivals are accepted even automatic one since they
+						// have been checked in the context of the origin
+						acceptAllArrivals = env.hypocenter->evaluationMode() == DataModel::MANUAL;
+					}
+					catch ( ... ) {}
+				}
+
+				if ( !acceptAllArrivals ) {
+					try {
+						if ( pick->evaluationMode() != DataModel::MANUAL ) {
+							// We do not accept automatic picks
+							SEISCOMP_DEBUG("%s.%s.%s: arrival '%s' no accepted, origin evaluation  mode != manual",
+							               env.networkCode.c_str(),
+							               env.stationCode.c_str(),
+							               env.locationCode.c_str(),
+							               arr->phase().code().c_str());
+							continue;
+						}
+					}
+					catch ( ... ) {
+						// An unset evaluation mode is not 'manual'
+						continue;
+					}
+				}
+
+				auto onset = pick->time().value();
+				double scale = _leftSideOfTimeWindow ? -1.0 : 1.0;
+				try {
+					onset += scale * pick->time().lowerUncertainty();
+				}
+				catch ( ... ) {
+					try {
+						onset += scale * pick->time().uncertainty();
+					}
+					catch ( ... ) {}
+				}
+
+				return static_cast<double>(onset - _proc->trigger());;
+			}
+
+			throw StatusException(WaveformProcessor::ArrivalNotFound, statusValueOffset);
+		}
+
 
 	private:
 		const AmplitudeProcessor    *_proc;
 		TravelTimeTableInterfacePtr  _ttt;
+		bool                         _leftSideOfTimeWindow;
 };
 
 
@@ -520,6 +592,26 @@ class ParamTT : public Interface {
 };
 
 
+class ParamArrival : public Interface {
+	public:
+		ParamArrival(const std::string &phase, bool acceptAll)
+		: _phase(phase), _acceptAll(acceptAll) {}
+
+	public:
+		double evaluate(Context &ctx) override {
+			return ctx.getArrival(_phase, _acceptAll, 40);
+		}
+
+		std::string toString() const override {
+			return "arr(" + _phase + ", " + (_acceptAll ? "true" : "false") + ")";
+		}
+
+	private:
+		std::string _phase;
+		bool        _acceptAll;
+};
+
+
 }
 
 
@@ -537,8 +629,15 @@ struct ValueClosure : bs::closure<ValueClosure<T>, T> {
 
 template <typename T>
 struct ParamClosure : bs::closure<ParamClosure<T>, T, string> {
-	typename bs::closure<ValueClosure<T>, T, string>::member1 value;
-	typename bs::closure<ValueClosure<T>, T, string>::member2 name;
+	typename bs::closure<ParamClosure<T>, T, string>::member1 value;
+	typename bs::closure<ParamClosure<T>, T, string>::member2 name;
+};
+
+template <typename T>
+struct Param2Closure : bs::closure<Param2Closure<T>, T, string, string> {
+	typename bs::closure<Param2Closure<T>, T, string, string>::member1 value;
+	typename bs::closure<Param2Closure<T>, T, string, string>::member2 name;
+	typename bs::closure<Param2Closure<T>, T, string, string>::member3 flag;
 };
 
 struct StringClosure : bs::closure<StringClosure, string> {
@@ -623,8 +722,20 @@ struct Generator {
 		return f;
 	}
 
-	value_type phase(const string &name) const {
+	value_type travelTime(const string &name) const {
 		return new Expression::ParamTT(name);
+	}
+
+	value_type arrival(const string &name, const string &flag) const {
+		if ( flag == "true" ) {
+			return new Expression::ParamArrival(name, true);
+		}
+		else if ( flag.empty() || (flag == "false") ) {
+			return new Expression::ParamArrival(name, false);
+		}
+
+		parser.error_message = "invalid manual flag '" + flag + "'";
+		return nullptr;
 	}
 
 	ParserT &parser;
@@ -720,13 +831,17 @@ struct Parser : bs::grammar< Parser<T> > {
 				param.value = phoenix::bind(&generator_type::parameter)(self.generator, param.name)][ErrorCheck<Parser>(self)
 			];
 
-			phase
-			= "tt("
-			>> (+identifier[phase.name = arg1])
+			tt
+			= ("tt(" >> (+identifier[tt.name = arg1]) >> ')')
 			[
-				phase.value = phoenix::bind(&generator_type::phase)(self.generator, phase.name)][ErrorCheck<Parser>(self)
-			]
-			>> ')';
+				tt.value = phoenix::bind(&generator_type::travelTime)(self.generator, tt.name)][ErrorCheck<Parser>(self)
+			];
+
+			arrival
+			= ("arr(" >> (+identifier[arrival.name = arg1][arrival.flag = string()]) >> * ( "," >> (+identifier[arrival.flag = arg1])) >> ')')
+			[
+				arrival.value = phoenix::bind(&generator_type::arrival)(self.generator, arrival.name, arrival.flag)][ErrorCheck<Parser>(self)
+			];
 
 			// A statement can end at the end of the line, or with a semicolon.
 			statement
@@ -737,7 +852,8 @@ struct Parser : bs::grammar< Parser<T> > {
 
 			value
 			= constant[value.value = arg1]
-				| phase[value.value = arg1]
+				| tt[value.value = arg1]
+				| arrival[value.value = arg1]
 				| min[value.value = arg1]
 				| max[value.value = arg1]
 				| param[value.value = arg1]
@@ -782,7 +898,8 @@ struct Parser : bs::grammar< Parser<T> > {
 		bs::rule<ScannerT> statement;
 		bs::rule<ScannerT, StringClosure::context_t> identifier;
 		bs::rule<ScannerT, LiteralClosure::context_t> literal;
-		bs::rule<ScannerT, typename ParamClosure<value_type>::context_t> param, phase;
+		bs::rule<ScannerT, typename ParamClosure<value_type>::context_t> param, tt;
+		bs::rule<ScannerT, typename Param2Closure<value_type>::context_t> arrival;
 		bs::rule<ScannerT, typename ValueClosure<value_type>::context_t> expression, value,
 		constant, group, abs, min, max,
 		multiplication, addition, modulus, power, alternative;
@@ -957,10 +1074,10 @@ string AmplitudeProcessor::SignalTime::toString() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeProcessor::SignalTime::evaluate(const AmplitudeProcessor *proc) {
+void AmplitudeProcessor::SignalTime::evaluate(const AmplitudeProcessor *proc, bool left) {
 	_value = Core::None;
 	if ( _exp ) {
-		Expression::Context ctx(proc);
+		Expression::Context ctx(proc, left);
 		_value = static_cast<Expression::Interface*>(_exp.get())->evaluate(ctx);
 	}
 }
@@ -1287,13 +1404,13 @@ void AmplitudeProcessor::computeTimeWindow() {
 	}
 
 	// Evaluate noise and signal time windows
-	try { _config.noiseBegin.evaluate(this); }
+	try { _config.noiseBegin.evaluate(this, true); }
 	catch ( StatusException &e ) { setStatus(e.status(), e.value()); }
-	try { _config.noiseEnd.evaluate(this); }
+	try { _config.noiseEnd.evaluate(this, false); }
 	catch ( StatusException &e ) { setStatus(e.status(), e.value()); }
-	try { _config.signalBegin.evaluate(this); }
+	try { _config.signalBegin.evaluate(this, true); }
 	catch ( StatusException &e ) { setStatus(e.status(), e.value()); }
-	try { _config.signalEnd.evaluate(this); }
+	try { _config.signalEnd.evaluate(this, false); }
 	catch ( StatusException &e ) { setStatus(e.status(), e.value()); }
 
 	Core::Time startTime = _trigger + Core::TimeSpan(_config.noiseBegin);
@@ -1779,13 +1896,20 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	               settings.locationCode.c_str(),
 	               settings.channelCode.c_str(),
 	               _type.c_str());
+
+	_environment.networkCode = settings.networkCode;
+	_environment.stationCode = settings.stationCode;
+	_environment.locationCode = settings.locationCode;
+	_environment.channelCode = settings.channelCode;
+
 	if ( !TimeWindowProcessor::setup(settings) ) {
 		return false;
 	}
 
 	// initalize regionalized settings
-	if ( !initRegionalization(settings) )
+	if ( !initRegionalization(settings) ) {
 		return false;
+	}
 
 	// Reset Wood-Anderson response to default
 	_config.woodAndersonResponse = Math::SeismometerResponse::WoodAnderson::Config();

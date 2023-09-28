@@ -74,8 +74,18 @@ BOOST_AUTO_TEST_CASE(signalTime) {
 	BOOST_CHECK_EQUAL(proc.timeWindow().endTime().iso(), Time(2023, 9, 14, 0, 2, 30).iso());
 
 	OriginPtr org = Origin::Create();
+	org->setTime(Time(2023, 9, 13, 23, 50, 0));
 	org->setLatitude(0);
 	org->setLongitude(0);
+
+	PickPtr pick1 = Pick::Create();
+	pick1->setTime(Time(2023, 9, 14, 0, 0, 1));
+
+	ArrivalPtr arr1 = new Arrival();
+	arr1->setPickID(pick1->publicID());
+	arr1->setPhase(Phase("P1"));
+
+	org->add(arr1.get());
 
 	SensorLocationPtr sloc = SensorLocation::Create();
 	sloc->setLatitude(0.0);
@@ -92,6 +102,28 @@ BOOST_AUTO_TEST_CASE(signalTime) {
 	BOOST_CHECK_EQUAL(proc.status(), WaveformProcessor::WaitingForData);
 	BOOST_CHECK_EQUAL(proc.timeWindow().startTime().iso(), Time(2023, 9, 14, 0, 0, 0).iso());
 	BOOST_CHECK_EQUAL(proc.timeWindow().endTime().iso(), Time(2023, 9, 14, 0, 0, 37, 65027).iso());
+
+	proc.reset();
+	proc.setTrigger(Time(2023, 9, 14, 0, 0, 0));
+	proc.setNoiseStart(0);
+	proc.setNoiseEnd(0);
+	proc.setSignalStart("0");
+	proc.setSignalEnd("arr(P1)");
+	proc.setEnvironment(org.get(), sloc.get(), nullptr);
+	proc.computeTimeWindow();
+	BOOST_CHECK_EQUAL(proc.status(), WaveformProcessor::ArrivalNotFound);
+
+	proc.reset();
+	proc.setTrigger(Time(2023, 9, 14, 0, 0, 0));
+	proc.setNoiseStart(0);
+	proc.setNoiseEnd(0);
+	proc.setSignalStart("0");
+	proc.setSignalEnd("arr(P1, true)");
+	proc.setEnvironment(org.get(), sloc.get(), nullptr);
+	proc.computeTimeWindow();
+	BOOST_CHECK_EQUAL(proc.status(), WaveformProcessor::WaitingForData);
+	BOOST_CHECK_EQUAL(proc.timeWindow().startTime().iso(), Time(2023, 9, 14, 0, 0, 0).iso());
+	BOOST_CHECK_EQUAL(proc.timeWindow().endTime().iso(), Time(2023, 9, 14, 0, 0, 1, 0).iso());
 }
 
 
