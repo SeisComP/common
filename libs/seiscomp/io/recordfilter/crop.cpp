@@ -192,7 +192,11 @@ void Cropper::reset() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordFilterInterface *Cropper::clone() const {
-	return new Cropper;
+	auto cropper = new Cropper();
+	cropper->_windowLength = _windowLength;
+	cropper->_timeStep = _timeStep;
+	cropper->_noalign = _noalign;
+	return cropper;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
