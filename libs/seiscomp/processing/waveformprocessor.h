@@ -237,6 +237,7 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 		//! Sets a operator for all fed records. An operator sits between
 		//! feed and store.
 		void setOperator(WaveformOperator *pipe);
+		WaveformOperator *getOperator() const;
 
 		//! The gain is input unit -> sensor unit
 		Stream &streamConfig(Component c);
@@ -406,6 +407,11 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 
 		mutable Core::BaseObjectPtr _userData;
 };
+
+
+inline WaveformOperator *WaveformProcessor::getOperator() const {
+	return _operator.get();
+}
 
 
 }
