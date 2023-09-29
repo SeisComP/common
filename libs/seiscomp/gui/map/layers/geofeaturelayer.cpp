@@ -128,17 +128,17 @@ Qt::Orientation getOrientation(const std::string &name) {
 }
 
 Qt::Alignment getAlignment(const std::string &name,
-                           Qt::Alignment fallback=Qt::AlignTop | Qt::AlignLeft) {
+                           Qt::Alignment fallback={Qt::AlignTop | Qt::AlignLeft}) {
 
-	return name == "topleft" ? Qt::AlignTop | Qt::AlignLeft :
-	       name == "topcenter" ? Qt::AlignTop | Qt::AlignHCenter :
-	       name == "topright"  ? Qt::AlignTop | Qt::AlignRight :
-	       name == "centerleft" ? Qt::AlignVCenter | Qt::AlignLeft :
-	       name == "center" ? Qt::AlignVCenter | Qt::AlignHCenter :
-	       name == "centerright" ? Qt::AlignVCenter | Qt::AlignRight :
-	       name == "bottomleft" ? Qt::AlignBottom | Qt::AlignLeft :
-	       name == "bottomcenter" ? Qt::AlignBottom | Qt::AlignHCenter :
-	       name == "bottomright" ? Qt::AlignBottom | Qt::AlignRight :
+	return name == "topleft" ? Qt::Alignment(Qt::AlignTop | Qt::AlignLeft) :
+	       name == "topcenter" ? Qt::Alignment(Qt::AlignTop | Qt::AlignHCenter) :
+	       name == "topright"  ? Qt::Alignment(Qt::AlignTop | Qt::AlignRight) :
+	       name == "centerleft" ? Qt::Alignment(Qt::AlignVCenter | Qt::AlignLeft) :
+	       name == "center" ? Qt::Alignment(Qt::AlignVCenter | Qt::AlignHCenter) :
+	       name == "centerright" ? Qt::Alignment(Qt::AlignVCenter | Qt::AlignRight) :
+	       name == "bottomleft" ? Qt::Alignment(Qt::AlignBottom | Qt::AlignLeft) :
+	       name == "bottomcenter" ? Qt::Alignment(Qt::AlignBottom | Qt::AlignHCenter) :
+	       name == "bottomright" ? Qt::Alignment(Qt::AlignBottom | Qt::AlignRight) :
 	       fallback;
 }
 
