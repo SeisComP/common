@@ -213,7 +213,7 @@ TravelTimeList *Locsat::compute(double delta, double depth) {
 TravelTime Locsat::compute(const char *phase, double delta, double depth) {
 	int errorflag=0;
 	double dtdd, dtdh;
-	double ttime = compute_ttime(delta, depth, const_cast<char*>(phase), 0,
+	double ttime = compute_ttime(delta, depth, const_cast<char*>(phase), EXTRAPOLATE,
 	                             &dtdd, &dtdh, &errorflag);
 	if ( errorflag!=0 ) throw NoPhaseError();
 	if ( !(ttime > 0) ) throw NoPhaseError();
