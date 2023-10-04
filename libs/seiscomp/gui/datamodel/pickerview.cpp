@@ -8226,6 +8226,7 @@ void PickerView::relocate() {
 
 	for ( size_t i = 0; i < markers.size(); ++i ) {
 		RecordMarker *m = markers[i];
+		PickerMarker *pm = static_cast<PickerMarker*>(m);
 		PickPtr pick = ((PickerMarker*)markers[i])->pick();
 		if ( !pick ) {
 			SEISCOMP_ERROR("Pick not set in marker");
@@ -8274,6 +8275,14 @@ void PickerView::relocate() {
 						a->setHorizontalSlownessUsed(existingArrival->horizontalSlownessUsed());
 					}
 					catch ( ... ) {}
+				}
+				else {
+					if ( pm->backazimuth() ) {
+						a->setBackazimuthUsed(false);
+					}
+					if ( pm->horizontalSlowness() ) {
+						a->setHorizontalSlownessUsed(false);
+					}
 				}
 			}
 		}
