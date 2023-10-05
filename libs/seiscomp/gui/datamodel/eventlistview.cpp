@@ -3431,8 +3431,12 @@ void EventListView::setInterval(const Seiscomp::Core::TimeWindow& tw) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::selectFirstEnabledEvent() {
 	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
-		QTreeWidgetItem *item = _treeWidget->topLevelItem(i);
-		if ( (item->flags() & Qt::ItemIsEnabled) == 0 ) continue;
+		auto item = static_cast<TreeItem*>(_treeWidget->topLevelItem(i));
+		if ( !item->isEnabled() ) {
+			continue;
+		}
+
+		SEISCOMP_DEBUG("First enabled event in list at index %d", i);
 		selectEvent(i);
 		break;
 	}
@@ -4249,17 +4253,27 @@ void EventListView::onCommand(Seiscomp::Gui::CommandMessage* cmsg) {
 			//readPicks(o);
 			//emit originSelected(o, nullptr);
 
-			QTreeWidgetItem* item = addOrigin(o.get(), parent, true);
-			if ( parent ) parent->update(this);
+			auto item = addOrigin(o.get(), parent, true);
+			if ( parent ) {
+				parent->update(this);
+			}
+
 			loadItem(item);
 		}
-		else
-			QMessageBox::warning(nullptr, tr("Load origin"), tr("Received a request to show origin %1\nwhich has not been found.").arg(o->publicID().c_str()));
+		else {
+			QMessageBox::warning(
+				nullptr,
+				tr("Load origin"),
+				tr("Received a request to show origin %1\nwhich has not been found.")
+				.arg(cmsg->parameter().c_str())
+			);
+		}
 	}
 	else if ( cmsg->command() == CM_OBSERVE_LOCATION ) {
-		Origin* o = Origin::Cast(cmsg->object());
-		if ( o )
+		auto o = Origin::Cast(cmsg->object());
+		if ( o ) {
 			emit originSelected(o, nullptr);
+		}
 	}
 
 	return;
