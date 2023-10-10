@@ -40,6 +40,8 @@ struct Transformation {
 
 	// publishs a processed component
 	bool publish(int c) const;
+
+	void reset();
 };
 
 
@@ -48,6 +50,8 @@ struct Transformation<T,2> {
 	Transformation(const Math::Matrix3<T> &m) : matrix(m) {}
 
 	bool publish(int c) const { return true; }
+
+	void reset() {}
 
 	void operator()(const Record *, T *data[2], int n, const Core::Time &, double) const {
 		for ( int i = 0; i < n; ++i ) {
@@ -67,6 +71,8 @@ struct Transformation<T,3> {
 	Transformation(const Math::Matrix3<T> &m) : matrix(m) {}
 
 	bool publish(int c) const { return true; }
+
+	void reset() {}
 
 	void operator()(const Record *, T *data[3], int n, const Core::Time &, double) const {
 		for ( int i = 0; i < n; ++i ) {

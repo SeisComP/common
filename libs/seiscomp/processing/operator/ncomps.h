@@ -103,7 +103,9 @@ class CodeWrapper<T,2,PROC> {
 
 		const std::string &translateChannelCode(int c, const std::string &code) { return code; }
 
-		void reset() {}
+		void reset() {
+			_proc.reset();
+		}
 
 	private:
 		PROC<T,2>   _proc;
@@ -131,8 +133,9 @@ class CodeWrapper<T,3,PROC> {
 
 		const std::string &translateChannelCode(int c, const std::string &code) { return code; }
 
-		void reset() {}
-
+		void reset() {
+			_proc.reset();
+		}
 
 	private:
 		PROC<T,3>   _proc;
@@ -177,7 +180,9 @@ class StreamConfigWrapper {
 			return _proc;
 		}
 
-		void reset() {}
+		void reset() {
+			_proc.reset();
+		}
 
 	private:
 		PROC<T,N>     _proc;

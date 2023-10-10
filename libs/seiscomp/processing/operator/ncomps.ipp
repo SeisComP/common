@@ -339,6 +339,8 @@ void NCompsOperator<T,N,PROC,BSIZE>::reset() {
 	for ( int i = 0; i < N; ++i ) {
 		_states[i] = State();
 	}
+
+	_proc.reset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -34,6 +34,8 @@ class L2Norm {
 
 	// publishs a processed component
 	bool publish(int c) const;
+
+	void reset();
 };
 
 
@@ -46,6 +48,8 @@ struct L2Norm<T,2> {
 	}
 
 	bool publish(int c) const { return c == 0; }
+
+	void reset() {}
 };
 
 
@@ -58,6 +62,8 @@ struct L2Norm<T,3> {
 	}
 
 	bool publish(int c) const { return c == 0; }
+
+	void reset() {}
 };
 
 
