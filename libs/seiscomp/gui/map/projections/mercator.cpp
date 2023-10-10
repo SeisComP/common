@@ -95,7 +95,7 @@ void drawLowQualityImage(MercatorProjectionProxy *proj, QImage &buffer, const QR
 	int y1 = p11.y();
 
 	// X can be wrapped, so we have to check more cases
-	if ( geoReference.width() < 180.0f ) {
+	if ( geoReference.width() < 180.0 ) {
 		if ( x0 >= proj->_width ) {
 			if ( x1 < 0 || x1 >= proj->_width ) return;
 		}
@@ -233,7 +233,7 @@ void drawHighQualityImage(MercatorProjectionProxy *proj, QImage &buffer, const Q
 	int y1 = p11.y();
 
 	// X can be wrapped, so we have to check more cases
-	if ( geoReference.width() < 180.0f ) {
+	if ( geoReference.width() < 180.0 ) {
 		if ( x0 >= proj->_width ) {
 			if ( x1 < 0 || x1 >= proj->_width ) return;
 		}
@@ -362,7 +362,7 @@ void drawHighQualityImage(MercatorProjectionProxy *proj, QImage &buffer, const Q
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MercatorProjection::MercatorProjection()
 : RectangularProjection() {
-	_pixelPerDegreeFact = 180.0f;
+	_pixelPerDegreeFact = 180.0;
 	if ( SCCoreApp ) {
 		try { _discreteSteps = SCCoreApp->configGetBool("map.mercator.discrete"); }
 		catch ( ... ) { _discreteSteps = false; }
@@ -441,12 +441,12 @@ void MercatorProjection::render(QImage &img, TextureCache *cache) {
 	toY = size.height();
 
 	qreal iyf = center.y() * dt;
-	if ( iyf > 1.0f ) {
+	if ( iyf > 1.0 ) {
 		if ( _enableLowZoom ) {
-			fromY = (iyf - 1.0f) * radius;
+			fromY = (iyf - 1.0) * radius;
 			toY = img.height() - fromY;
 		}
-		iyf = 1.0f;
+		iyf = 1.0;
 	}
 
 	QRgb *data = (QRgb *)img.bits();
@@ -480,7 +480,7 @@ void MercatorProjection::render(QImage &img, TextureCache *cache) {
 	qreal y = upY;
 
 	//qreal ixf = (qreal)centerX / radius;
-	qreal ixf = 2.0f;
+	qreal ixf = 2.0;
 	qint64 pxf = qint64(ixf*radius);
 	qint64 fx, tx;
 
@@ -521,15 +521,15 @@ void MercatorProjection::render(QImage &img, TextureCache *cache) {
 	Coord leftTu;
 	Coord rightTu;
 
-	leftTu.value = (leftX+1.0f) * Coord::value_type(Coord::fraction_half_max);
-	rightTu.value = (rightX+1.0f) * Coord::value_type(Coord::fraction_half_max);
+	leftTu.value = (leftX + 1.0) * Coord::value_type(Coord::fraction_half_max);
+	rightTu.value = (rightX + 1.0) * Coord::value_type(Coord::fraction_half_max);
 
 	if ( cache->isMercatorProjected() ) {
 		for ( int i = fromY; i < toY; ++i, y -= dt ) {
 			if ( y <= -1.0 ) y = -1.0 + dt;
 
 			Coord tv;
-			tv.value = (1.0f-y) * Coord::value_type(Coord::fraction_half_max);
+			tv.value = (1.0 - y) * Coord::value_type(Coord::fraction_half_max);
 
 			PROC::fetch(cache, data[fromX], leftTu, tv, level);
 			PROC::fetch(cache, data[toX], rightTu, tv, level);
@@ -557,7 +557,7 @@ void MercatorProjection::render(QImage &img, TextureCache *cache) {
 
 			Coord tv;
 			qreal lat = atan(sinh(y*M_PI))*oo2Pi;
-			tv.value = (1.0f-lat) * Coord::value_type(Coord::fraction_half_max);
+			tv.value = (1.0 - lat) * Coord::value_type(Coord::fraction_half_max);
 
 			PROC::fetch(cache, data[fromX], leftTu, tv, level);
 			PROC::fetch(cache, data[toX], rightTu, tv, level);
@@ -710,11 +710,11 @@ bool MercatorProjection::unproject(QPointF &geoCoords, const QPoint &screenCoord
 
 	y = atan(sinh(y*M_PI))*oo2Pi;
 
-	x *= 180.0f;
-	y *= 90.0f;
+	x *= 180.0;
+	y *= 90.0;
 
-	if ( x < -180.0f ) x += 360.0f;
-	if ( x >  180.0f ) x -= 360.0f;
+	if ( x < -180.0 ) x += 360.0;
+	if ( x >  180.0 ) x -= 360.0;
 
 	geoCoords.setX(x);
 	geoCoords.setY(y);
@@ -731,11 +731,11 @@ void MercatorProjection::centerOn(const QPointF &geoCoords) {
 	qreal x = geoCoords.x() * ooLon;
 	qreal y = geoCoords.y() * ooLat;
 
-	if ( x < -1.0f ) x += 2.0f;
-	if ( x >  1.0f ) x -= 2.0f;
+	if ( x < -1.0 ) x += 2.0;
+	if ( x >  1.0 ) x -= 2.0;
 
-	if ( y < -1.0f ) y = -1.0f;
-	if ( y >  1.0f ) y =  1.0f;
+	if ( y < -1.0 ) y = -1.0;
+	if ( y >  1.0 ) y =  1.0;
 
 	_center = QPointF(x,y);
 	_visibleCenter = _center;

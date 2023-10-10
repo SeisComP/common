@@ -126,7 +126,7 @@ void drawLowQualityImage(RectangularProjectionProxy *proj, QImage &buffer, const
 
 
 	// X can be wrapped, so we have to check more cases
-	if ( geoReference.width() < 180.0f ) {
+	if ( geoReference.width() < 180.0 ) {
 		if ( x0 >= proj->_width ) {
 			if ( x1 < 0 || x1 >= proj->_width ) return;
 		}
@@ -272,7 +272,7 @@ void drawHighQualityImage(RectangularProjectionProxy *proj, QImage &buffer, cons
 
 
 	// X can be wrapped, so we have to check more cases
-	if ( geoReference.width() < 180.0f ) {
+	if ( geoReference.width() < 180.0 ) {
 		if ( x0 >= proj->_width ) {
 			if ( x1 < 0 || x1 >= proj->_width ) return;
 		}
