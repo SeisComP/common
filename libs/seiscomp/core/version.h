@@ -80,6 +80,7 @@ namespace Core {
    - Added Seiscomp::Processing::NoOpWrapper<>::reset()
    - Added Seiscomp::Processing::FilterWrapper<>::proc()
    - Added Seiscomp::Processing::FilterWrapper<>::reset()
+   - Seiscomp::Geo::GeoCoordinate::ValueType = double
 
  "15.6.0"   0x0F0600
    - Added Seiscomp::Gui::PickerView::setAuxiliaryChannels

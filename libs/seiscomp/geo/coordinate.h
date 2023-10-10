@@ -32,7 +32,7 @@ namespace Geo {
 
 class SC_SYSTEM_CORE_API GeoCoordinate {
 	public:
-		typedef double ValueType;
+		using ValueType = double;
 
 	public:
 		GeoCoordinate();
