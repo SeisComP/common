@@ -1541,32 +1541,7 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 	QAbstractButton *locker = new IconButton(_unlockIcon, _lockIcon);
 	nameLayout->addWidget(locker);
 
-	vector<string> values;
-	QString eval;
-	string errmsg;
-	if ( Config::Config::Eval(param->symbol.content, values, true, NULL, &errmsg) ) {
-		for ( size_t i = 0; i < values.size(); ++i ) {
-			if ( i > 0 ) eval += "<br/>";
-			eval += encodeHTML(values[i].c_str());
-		}
-	}
-	else {
-		eval = QString("<i>%1</i>").arg(errmsg.c_str()).replace('\n', "<br/>");
-	}
-
-	QString toolTip = QString("<b>Location</b><br/>%1<br/><br/>"
-	                          "<b>Evaluated</b><br/>%2")
-	                  .arg(param->symbol.uri.c_str())
-	                  .arg(eval);
-
-	if ( isOverridden ) {
-		toolTip += QString("<br/><br/><b>WARNING</b><br/><i>This value is overridden in a "
-		                   "later stage which supersedes the current stage. "
-		                   "Whatever is entered here will not be active in the "
-		                   "final configuration. The superseded value is used instead.</i>");
-	}
-
-	inputWidget->widget()->setToolTip(toolTip);
+	updateToolTip(inputWidget->widget(), param);
 
 	FancyViewItem item(idx, paramWidget);
 	item.label = textWidget;
@@ -1758,7 +1733,7 @@ void FancyView::updateToolTip(QWidget *w, Seiscomp::System::Parameter *param) {
 	if ( Config::Config::Eval(param->symbol.content, values, true, NULL, &errmsg) ) {
 		for ( size_t i = 0; i < values.size(); ++i ) {
 			if ( i > 0 ) eval += "<br/>";
-			eval += QString(values[i].c_str()).replace(' ', "&nbsp;");
+			eval += encodeHTML(values[i].c_str());
 		}
 	}
 	else
@@ -1767,7 +1742,7 @@ void FancyView::updateToolTip(QWidget *w, Seiscomp::System::Parameter *param) {
 	QString toolTip = QString("<b>Location</b><br/>%1<br/><br/>"
 	                          "<b>Evaluated</b><br/>%2")
 	                  .arg(param->symbol.uri.c_str())
-	                  .arg(encodeHTML(eval));
+	                  .arg(eval);
 
 	if ( isOverridden ) {
 		toolTip += QString("<br/><br/><b>WARNING</b><br/><i>This value is overridden in a "
