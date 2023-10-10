@@ -74,7 +74,7 @@ GeoCoordinate readCoordinate(const rapidjson::Value &node) {
 		throw Core::StreamException("Coordinate[1] is no number");
 	}
 
-	return GeoCoordinate(node[1].GetFloat(), node[0].GetFloat());
+	return GeoCoordinate(node[1].GetDouble(), node[0].GetDouble());
 }
 
 
