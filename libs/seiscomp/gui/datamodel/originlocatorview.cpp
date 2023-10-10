@@ -6991,36 +6991,50 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 				if ( _reader ) {
 					DatabaseIterator it;
 					string lastFix;
+					Time lastFixCreated;
 					it = _reader->getJournalAction(_baseEvent->publicID(), "EvPrefMagType");
 					while ( *it ) {
-						lastFix = JournalEntry::Cast(*it)->parameters();
+						auto entry = static_cast<JournalEntry*>(*it);
+						if ( !lastFixCreated.valid() || lastFixCreated < entry->created() ) {
+							lastFix = entry->parameters();
+							lastFixCreated = entry->created();
+						}
 						++it;
 					}
 					it.close();
 
-					if ( lastFix != *options.magnitudeType )
+					if ( lastFix != *options.magnitudeType ) {
 						nm->attach(createJournal(_baseEvent->publicID(), "EvPrefMagType", *options.magnitudeType));
+					}
 				}
-				else
+				else {
 					nm->attach(createJournal(_baseEvent->publicID(), "EvPrefMagType", *options.magnitudeType));
+				}
 			}
 			else {
 				// Only attach the unfix command if currently a type is fixed
 				if ( _reader ) {
 					DatabaseIterator it;
 					string lastFix;
+					Time lastFixCreated;
 					it = _reader->getJournalAction(_baseEvent->publicID(), "EvPrefMagType");
 					while ( *it ) {
-						lastFix = JournalEntry::Cast(*it)->parameters();
+						auto entry = static_cast<JournalEntry*>(*it);
+						if ( !lastFixCreated.valid() || lastFixCreated < entry->created() ) {
+							lastFix = entry->parameters();
+							lastFixCreated = entry->created();
+						}
 						++it;
 					}
 					it.close();
 
-					if ( !lastFix.empty() )
+					if ( !lastFix.empty() ) {
 						nm->attach(createJournal(_baseEvent->publicID(), "EvPrefMagType", ""));
+					}
 				}
-				else
+				else {
 					nm->attach(createJournal(_baseEvent->publicID(), "EvPrefMagType", ""));
+				}
 			}
 		}
 
