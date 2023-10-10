@@ -206,7 +206,8 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &filename,
 			// read longitude
 			endptr = nullptr;
 			errno = 0;
-			v.lon = strtof(nptr, &endptr);
+			v.lon = strtod(nptr, &endptr);
+
 			if ( errno != 0 || endptr == nullptr || endptr == nptr ||
 			     v.lon < -180 || v.lon > 180) {
 				SEISCOMP_ERROR("invalid longitude in file %s at line %i",
@@ -226,7 +227,7 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &filename,
 
 			// read latitude
 			endptr = nullptr; nptr += 1;
-			v.lat = strtof(nptr, &endptr);
+			v.lat = strtod(nptr, &endptr);
 			if ( errno != 0 || endptr == nullptr || endptr == nptr ||
 			     v.lat < -90 || v.lat > 90) {
 				SEISCOMP_ERROR("invalid latitude in file %s at line %i",
