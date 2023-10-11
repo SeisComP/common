@@ -17,6 +17,7 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
 #define SEISCOMP_COMPONENT Picker
 
 #include <seiscomp/logging/log.h>
@@ -24,29 +25,31 @@
 #include <seiscomp/processing/picker/bk.h>
 
 
-using namespace std;
-
-
-int ppick(double *reltrc, double *trace, int npts, double *
-          thrshl1, double *thrshl2, int *tdownmax, int *tupevent, int
-          *ipkflg, int *uptime, int *ptime, int *pamp, int *
-          pamptime, int *preptime, int *prepamp, int *prepamptime,
-          int *ifrst, int *noise, int *noisetime, int *signal,
-          int *signaltime, int *test, int *nanf, int *nend,
-          int *skip, int *prset, int *pickduration,
-          double *samplespersec, char *pfm);
+#include "./bk_private.cpp"
 
 
 using namespace std;
+
 
 namespace Seiscomp {
-
 namespace Processing {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 REGISTER_POSTPICKPROCESSOR(BKPicker, "BK");
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool BKPicker::setup(const Settings &settings){
-	if ( !Picker::setup(settings) ) return false;
+	if ( !Picker::setup(settings) ) {
+		return false;
+	}
 
 	// do config stuff here
 
@@ -141,9 +144,12 @@ bool BKPicker::setup(const Settings &settings){
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // bk_wrapper by Stefan Heimers 2010
 //
 // bk_wrapper replaces the maeda_aic() algorithm of the gfz picker
@@ -224,7 +230,7 @@ BKPicker::BKPicker() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 BKPicker::BKPicker(const Core::Time& trigger)
- : Picker(trigger) {
+: Picker(trigger) {
 	BKPicker();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -263,49 +269,64 @@ bool BKPicker::calculatePick(int ndata, const double *data,
                              int signalStartIndex, int signalEndIndex,
                              int &onsetIndex, int &lowerUncertainty,
                              int &upperUncertainty, double &snr,
-                             OPT(Polarity) &polarity)
-// Initially, onsetIndex contains the index of the triggering sample.
-{
+                             OPT(Polarity) &polarity) {
+	// Initially, onsetIndex contains the index of the triggering sample.
 	const int     n = signalEndIndex - signalStartIndex;
 	const double *f = data+signalStartIndex;
 
-	if (n<=10) return false;
+	if ( n <= 10 ) {
+		return false;
+	}
 
 	// Here we assume that the first third of the seismogram contains only noise.	
 	//int nnoise = n/3; // FIXME: somewhat hackish
-	int nnoise = (int) (0.8 * _stream.fsamp * abs(_config.signalBegin)); // is this better?
+	int nnoise = static_cast<int>(0.8 * _stream.fsamp * abs(_config.signalBegin)); // is this better?
 
 	// determine offset
 	double offset = 0;
-	for (int i=0; i<nnoise; i++)
+	for ( int i = 0; i < nnoise; ++i ) {
 		offset += f[i];
+	}
 	offset /= nnoise;
 
 	vector<double> tmp(n);
-	for (int i=0; i<n; i++)
+	for ( int i = 0; i < n; ++i ) {
 		tmp[i] = f[i]-offset;
+	}
 
 	usedFilter = "";
-	if (filterType == "BP"){
+
+	if ( filterType == "BP" ) {
 		SEISCOMP_DEBUG("Applying Bandpass: poles: %d, f1: %f, f2: %f",filterPoles,f1,f2);
 		// Set the filter string to be returned in filterID
 		usedFilter = "BW(" + Core::toString(filterPoles) + "," + Core::toString(f1) + "," + Core::toString(f2) + ")";
-		Math::Filtering::IIR::ButterworthBandpass<double> f(filterPoles, f1, f2, _stream.fsamp);
-		static_cast<Math::Filtering::InPlaceFilter<double>*>(&f)->apply(tmp);
+		try {
+			Math::Filtering::IIR::ButterworthBandpass<double> f(filterPoles, f1, f2, _stream.fsamp);
+			static_cast<Math::Filtering::InPlaceFilter<double>*>(&f)->apply(tmp);
+		}
+		catch ( exception &e ) {
+			SEISCOMP_ERROR("Error while filtering: %s", e.what());
+			setStatus(Error, 2);
+			return false;
+		}
 	}
 	else{
-		SEISCOMP_ERROR("Filter %s is not implemented",filterType.c_str());
+		SEISCOMP_ERROR("Filter %s is not implemented", filterType.c_str());
 	}
 
 	int onset = onsetIndex-signalStartIndex;
 	bk_wrapper(n, &tmp[0], onset, snr, _stream.fsamp);
 
-	if (onset==-1)
+	if ( onset == -1 ) {
 		return false;
+	}
 
-	SEISCOMP_INFO("BKPicker::calculatePick n=%d fs=%g sb=%g se=%g offs=%g    %d -> onset=%d", n, _stream.fsamp, _config.signalBegin, _config.signalEnd, offset, onsetIndex-signalStartIndex, onset);
+	SEISCOMP_INFO("BKPicker::calculatePick n=%d fs=%g sb=%g se=%g offs=%g    %d -> onset=%d",
+	              n, _stream.fsamp, _config.signalBegin, _config.signalEnd,
+	              offset, onsetIndex-signalStartIndex, onset);
 
 	onsetIndex = onset + signalStartIndex;
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
