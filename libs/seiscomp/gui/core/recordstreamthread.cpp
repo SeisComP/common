@@ -248,15 +248,11 @@ void RecordStreamThread::run()
 
 							if ( data && data->dataType() == Array::FLOAT ) {
 								auto array = const_cast<FloatArray*>(static_cast<const FloatArray*>(data));
-								for ( int i = 0; i < array->size(); ++i ) {
-									array->set(i, array->get(i) * gain);
-								}
+								*array *= gain;
 							}
 							else if ( data && data->dataType() == Array::DOUBLE ) {
 								auto array = const_cast<DoubleArray*>(static_cast<const DoubleArray*>(data));
-								for ( int i = 0; i < array->size(); ++i ) {
-									array->set(i, array->get(i) * gain);
-								}
+								*array *= gain;
 							}
 							else {
 								throw std::runtime_error("gain correction: invalid record data type");
