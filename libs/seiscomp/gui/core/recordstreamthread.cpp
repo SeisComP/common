@@ -244,14 +244,23 @@ void RecordStreamThread::run()
 					if ( git != _gainMap.end() ) {
 						const Array* data = rec->data();
 						if ( git->second != 0) {
-							double gain = 1.0f/git->second;
-		
-		
+							double gain = 1.0 / git->second;
+
 							if ( data && data->dataType() == Array::FLOAT ) {
-								FloatArray* array = const_cast<FloatArray*>(static_cast<const FloatArray*>(data));
-								for ( int i = 0; i < array->size(); ++i )
-									array->set(i, array->get(i)*gain);
-							} 
+								auto array = const_cast<FloatArray*>(static_cast<const FloatArray*>(data));
+								for ( int i = 0; i < array->size(); ++i ) {
+									array->set(i, array->get(i) * gain);
+								}
+							}
+							else if ( data && data->dataType() == Array::DOUBLE ) {
+								auto array = const_cast<DoubleArray*>(static_cast<const DoubleArray*>(data));
+								for ( int i = 0; i < array->size(); ++i ) {
+									array->set(i, array->get(i) * gain);
+								}
+							}
+							else {
+								throw std::runtime_error("gain correction: invalid record data type");
+							}
 						}
 					}
 				}
