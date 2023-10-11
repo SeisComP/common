@@ -81,6 +81,10 @@ namespace Core {
    - Added Seiscomp::Processing::FilterWrapper<>::proc()
    - Added Seiscomp::Processing::FilterWrapper<>::reset()
    - Seiscomp::Geo::GeoCoordinate::ValueType = double
+   - Added Seiscomp::TravelTimeTableInterface::computeTime()
+   - Added Seiscomp::TravelTime::azi field
+   - Seiscomp::Math::Geo::delazi() allows null arguments
+   - Added Seiscomp::Math::Geo::delta()
 
  "15.6.0"   0x0F0600
    - Added Seiscomp::Gui::PickerView::setAuxiliaryChannels
