@@ -50,6 +50,7 @@ class SC_SYSTEM_CORE_API Spectrum : public Core::BaseObject {
 
 		bool isValid() const { return _data && _data->size() > 0; }
 
+		const ComplexDoubleArray *data() const { return _data.get(); }
 		ComplexDoubleArray *data() { return _data.get(); }
 
 		const Core::Time &startTime() const { return _startTime; }

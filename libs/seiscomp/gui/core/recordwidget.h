@@ -737,6 +737,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 		               const QPen &pen,
 		               const QPoint &paintOffset) const;
 		void drawRecordBorders(QPainter &painter, const RecordSequence *seq) const;
+		void drawMarkers(QPainter &painter, QFont &font, const QColor &fg);
 
 		void drawAxis(QPainter &painter, const QPen &p);
 

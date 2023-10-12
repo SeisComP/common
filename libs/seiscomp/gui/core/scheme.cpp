@@ -139,6 +139,20 @@ void Scheme::applyTabPosition(QTabWidget *tab) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Scheme::Colors::Colors() {
+	spectrogram.setColorAt(0.0, QColor(255,   0, 255)); // pink
+	spectrogram.setColorAt(0.2, QColor(  0,   0, 255)); // blue
+	spectrogram.setColorAt(0.4, QColor(  0, 255, 255)); // cyan
+	spectrogram.setColorAt(0.6, QColor(  0, 255,   0)); // green
+	spectrogram.setColorAt(0.8, QColor(255, 255,   0)); // yellow
+	spectrogram.setColorAt(1.0, QColor(255,   0,   0)); // red
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Scheme::Colors::Splash::Splash()
 : version(0,104,158,255), message(128,128,128,255) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -582,6 +596,8 @@ void Scheme::fetch() {
 	READ_BRUSH(colors.records.borders.signatureValid.brush);
 	READ_PEN(colors.records.borders.signatureInvalid.pen);
 	READ_BRUSH(colors.records.borders.signatureInvalid.brush);
+
+	READ_COLOR_GRADIENT(colors.spectrogram);
 
 	READ_COLOR(colors.picks.manual);
 	READ_COLOR(colors.picks.automatic);

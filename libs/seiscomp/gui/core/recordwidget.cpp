@@ -3291,96 +3291,8 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 	painter.drawLine(x, 0, x, h);
 
 	// make the font a bit smaller (for the phase annotations)
-	QFont font = painter.font();
-	QFontInfo fi(font);
-	int fontSize = std::min(h/2, fi.pixelSize());
-
-	font.setPixelSize(fontSize);
-
-	//font.setBold(true);
-	painter.setFont(font);
-
-	foreach ( RecordMarker* m, *markerList ) {
-		if ( m->isHidden() ) continue;
-
-		int startY = markerCanvasOffset, endY = startY + markerCanvasHeight;
-		int textY = markerCanvasOffset + fontSize + 1;
-
-		switch ( m->_alignment ) {
-			case Qt::AlignTop:
-				endY = markerCanvasOffset + markerCanvasHeight*2/4-1;
-				break;
-			case Qt::AlignBottom:
-				startY = markerCanvasOffset + markerCanvasHeight*2/4+1;
-				textY = markerCanvasOffset + markerCanvasHeight-2;
-				break;
-		}
-
-		bool enabled = _enabled && m->isEnabled();
-
-		if ( m->isMoveCopyEnabled() ) {
-			x = mapTime(m->time());
-			x -= _canvasRect.left();
-
-			QColor c(enabled?m->color():fg);
-			c.setAlpha(64);
-
-			painter.setPen(QPen(c, SCScheme.marker.lineWidth));
-			painter.drawLine(x, startY, x, endY);
-			//painter.drawRect(textRect.translated(x,textY-3));
-			painter.drawText(x+2, textY, m->renderText());
-		}
-
-		x = mapTime(m->correctedTime());
-		x -= _canvasRect.left();
-
-		/*
-		QColor c(m->color());
-		c.setRed(c.red()/2);
-		c.setGreen(c.green()/2);
-		c.setBlue(c.blue()/2);
-
-		painter.setPen(c);
-		painter.drawLine(x+1, 0, x+1, h);
-		painter.drawText(x+2+1, fontSize+1, m->renderText());
-		*/
-
-		//painter.drawRect(textRect.translated(x,textY-3));
-		if ( m->isMovable() && m->isModified() ) {
-			painter.setPen(enabled?m->modifiedColor():fg);
-			painter.drawText(x+2, textY, m->renderText());
-			m->draw(painter, this, x, markerCanvasOffset, markerCanvasOffset + markerCanvasHeight,
-			        enabled?m->modifiedColor():fg, SCScheme.marker.lineWidth);
-		}
-		else {
-			painter.setPen(enabled?m->color():fg);
-			painter.drawText(x+2, textY, m->renderText());
-			m->draw(painter, this, x, startY, endY,
-			        enabled?m->color():fg, SCScheme.marker.lineWidth);
-		}
-
-		if ( m == _hoveredMarker ) {
-			QPen pen = painter.pen();
-			painter.setPen(QPen(palette().color(QPalette::Highlight), 1, Qt::DotLine));
-			painter.setBrush(Qt::NoBrush);
-			painter.drawRect(x-4, startY, 8, endY-startY+1);
-			painter.setPen(pen);
-		}
-
-		if ( m == activeMarker ) {
-			QPen pen = painter.pen();
-			painter.setPen(QPen(palette().color(QPalette::Text), 1, Qt::DashLine));
-			painter.setBrush(Qt::NoBrush);
-			painter.drawRect(x-4, startY, 8, endY-startY+1);
-			painter.setPen(pen);
-		}
-	}
-
-	if ( _active && _enabled && !_cursorText.isEmpty() ) {
-		painter.translate(-_canvasRect.left(), -_canvasRect.top());
-		drawActiveCursor(painter, mapTime(_cursorPos), _currentCursorYPos);
-		painter.translate(_canvasRect.left(), _canvasRect.top());
-	}
+	QFont font;
+	drawMarkers(painter, font, fg);
 
 	// Draw labels
 	switch ( _drawMode ) {
@@ -5090,6 +5002,117 @@ void RecordWidget::setRecordBorderDrawMode(RecordBorderDrawMode mode) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordWidget::RecordBorderDrawMode RecordWidget::recordBorderDrawMode() const {
 	return _recordBorderDrawMode;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordWidget::drawMarkers(QPainter &painter, QFont &font, const QColor &fg) {
+	font = painter.font();
+	QFontInfo fi(font);
+	int fontSize = std::min(height() / 2, fi.pixelSize());
+
+	font.setPixelSize(fontSize);
+
+	//font.setBold(true);
+	painter.setFont(font);
+
+	auto markerList = &_marker;
+	auto activeMarker = _activeMarker;
+
+	if ( _markerSourceWidget ) {
+		markerList = &_markerSourceWidget->_marker;
+		activeMarker = _markerSourceWidget->_activeMarker;
+	}
+
+	int markerCanvasOffset = 0;
+	int markerCanvasHeight = height();
+
+	int x;
+
+	foreach ( RecordMarker* m, *markerList ) {
+		if ( m->isHidden() ) continue;
+
+		int startY = markerCanvasOffset, endY = startY + markerCanvasHeight;
+		int textY = markerCanvasOffset + fontSize + 1;
+
+		switch ( m->_alignment ) {
+			case Qt::AlignTop:
+				endY = markerCanvasOffset + markerCanvasHeight*2/4-1;
+				break;
+			case Qt::AlignBottom:
+				startY = markerCanvasOffset + markerCanvasHeight*2/4+1;
+				textY = markerCanvasOffset + markerCanvasHeight-2;
+				break;
+		}
+
+		bool enabled = _enabled && m->isEnabled();
+
+		if ( m->isMoveCopyEnabled() ) {
+			x = mapTime(m->time());
+			x -= _canvasRect.left();
+
+			QColor c(enabled?m->color():fg);
+			c.setAlpha(64);
+
+			painter.setPen(QPen(c, SCScheme.marker.lineWidth));
+			painter.drawLine(x, startY, x, endY);
+			//painter.drawRect(textRect.translated(x,textY-3));
+			painter.drawText(x+2, textY, m->renderText());
+		}
+
+		x = mapTime(m->correctedTime());
+		x -= _canvasRect.left();
+
+		/*
+		QColor c(m->color());
+		c.setRed(c.red()/2);
+		c.setGreen(c.green()/2);
+		c.setBlue(c.blue()/2);
+
+		painter.setPen(c);
+		painter.drawLine(x+1, 0, x+1, h);
+		painter.drawText(x+2+1, fontSize+1, m->renderText());
+		*/
+
+		//painter.drawRect(textRect.translated(x,textY-3));
+		if ( m->isMovable() && m->isModified() ) {
+			painter.setPen(enabled?m->modifiedColor():fg);
+			painter.drawText(x+2, textY, m->renderText());
+			m->draw(painter, this, x, markerCanvasOffset, markerCanvasOffset + markerCanvasHeight,
+			        enabled?m->modifiedColor():fg, SCScheme.marker.lineWidth);
+		}
+		else {
+			painter.setPen(enabled?m->color():fg);
+			painter.drawText(x+2, textY, m->renderText());
+			m->draw(painter, this, x, startY, endY,
+			        enabled?m->color():fg, SCScheme.marker.lineWidth);
+		}
+
+		if ( m == _hoveredMarker ) {
+			QPen pen = painter.pen();
+			painter.setPen(QPen(palette().color(QPalette::Highlight), 1, Qt::DotLine));
+			painter.setBrush(Qt::NoBrush);
+			painter.drawRect(x-4, startY, 8, endY-startY+1);
+			painter.setPen(pen);
+		}
+
+		if ( m == activeMarker ) {
+			QPen pen = painter.pen();
+			painter.setPen(QPen(palette().color(QPalette::Text), 1, Qt::DashLine));
+			painter.setBrush(Qt::NoBrush);
+			painter.drawRect(x-4, startY, 8, endY-startY+1);
+			painter.setPen(pen);
+		}
+	}
+
+	if ( _active && _enabled && !_cursorText.isEmpty() ) {
+		painter.translate(-_canvasRect.left(), -_canvasRect.top());
+		drawActiveCursor(painter, mapTime(_cursorPos), _currentCursorYPos);
+		painter.translate(_canvasRect.left(), _canvasRect.top());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

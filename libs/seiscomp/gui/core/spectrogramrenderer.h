@@ -134,9 +134,45 @@ class SC_GUI_API SpectrogramRenderer {
 			int            width;
 		};
 
+		DEFINE_SMARTPOINTER(PowerSpectrum);
+		struct PowerSpectrum : public Core::BaseObject {
+			PowerSpectrum(const Core::Time &stime,
+			              const Core::Time &etime,
+			              const Core::TimeSpan &dt,
+			              double freq)
+			: startTime(stime), endTime(etime), dt(dt)
+			, frequency(freq) {}
+
+			PowerSpectrum(const IO::Spectrum &spectrum)
+			: startTime(spectrum.startTime()), endTime(spectrum.endTime())
+			, dt(spectrum.dt()), frequency(spectrum.maximumFrequency()) {
+				auto d = spectrum.data();
+				if ( d ) {
+					data = new DoubleArray(d->size());
+					for ( int i = 0; i < d->size(); ++i ) {
+						(*data)[i] = (*d)[i].real() * (*d)[i].real() + (*d)[i].imag() * (*d)[i].imag();
+					}
+				}
+			}
+
+			bool isValid() const { return data && data->size() > 0; }
+
+			Core::TimeSpan length() const { return endTime - startTime; }
+			Core::Time center() const { return startTime + Core::TimeSpan(double(length()) * 0.5); }
+
+			double minimumFrequency() const { return 0; }
+			double maximumFrequency() const { return frequency; }
+
+			Core::Time     startTime;
+			Core::Time     endTime;
+			Core::TimeSpan dt;
+			double         frequency;
+			DoubleArrayPtr data;
+		};
+
 		void setDirty();
-		void addSpectrum(IO::Spectrum *);
-		void fillRow(SpecImage &img, Seiscomp::ComplexDoubleArray *spec,
+		void addSpectrum(const PowerSpectrum *);
+		void fillRow(SpecImage &img, DoubleArray *spec,
 		             int column, int offset);
 
 
@@ -144,7 +180,7 @@ class SC_GUI_API SpectrogramRenderer {
 	//  Private members
 	// ----------------------------------------------------------------------
 	private:
-		typedef QList<IO::SpectrumPtr> Spectra;
+		typedef QList<PowerSpectrumPtr> PowerSpectra;
 
 		typedef QList<SpecImage> SpecImageList;
 		typedef StaticColorLUT<512> Gradient512;
@@ -160,7 +196,7 @@ class SC_GUI_API SpectrogramRenderer {
 		double                    _ampMin, _ampMax;
 		IO::Spectralizer::Options _options;
 		IO::SpectralizerPtr       _spectralizer;
-		Spectra                   _spectra;
+		PowerSpectra              _spectra;
 		SpecImageList             _images;
 		Gradient512               _gradient;
 		bool                      _normalize;
