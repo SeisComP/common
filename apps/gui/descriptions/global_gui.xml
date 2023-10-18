@@ -275,6 +275,13 @@
 						e.g. &quot;GEOFON:black, USGS:blue&quot;.
 						</description>
 					</parameter>
+					<parameter name="spectrogram" type="gradient">
+						<description>
+						The color gradient of the spectrogram amplitudes.
+						The node values are not important as they will be
+						projected onto the desired amplitude range.
+						</description>
+					</parameter>
 
 					<group name="map">
 						<parameter name="lines" type="color">
