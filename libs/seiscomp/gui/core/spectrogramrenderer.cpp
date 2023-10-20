@@ -41,7 +41,7 @@ SpectrogramRenderer::SpectrogramRenderer() {
 		setGradient(SCApp->scheme().colors.spectrogram);
 	}
 
-	_normalize = false;
+	_normalizationMode = NormalizationMode::Fixed;
 	_logarithmic = false;
 	_smoothTransform = true;
 	_dirty = false;
@@ -168,7 +168,7 @@ bool SpectrogramRenderer::feed(const Record *rec) {
 				_transferFunction->deconvolve(data->size()-1, data->typedData()+1, df, df);
 			}
 
-			_spectra.push_back(new PowerSpectrum(*spec));
+			_spectra.push_back(new PowerSpectrum(*spec, _scale));
 			addSpectrum(_spectra.back().get());
 			setDirty();
 		}
@@ -288,7 +288,9 @@ void SpectrogramRenderer::setFrequencyRange(OPT(double) fmin, OPT(double) fmax) 
 	_fmin = fmin;
 	_fmax = fmax;
 
-	if ( _normalize ) setDirty();
+	if ( normalizeAmplitudes() ) {
+		setDirty();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -297,10 +299,25 @@ void SpectrogramRenderer::setFrequencyRange(OPT(double) fmin, OPT(double) fmax) 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SpectrogramRenderer::setNormalizeAmplitudes(bool f) {
-	if ( _normalize == f ) return;
-	_normalize = f;
+	setNormalizationMode(f ? NormalizationMode::Frequency : NormalizationMode::Fixed);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-	if ( !_spectralizer ) return;
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void SpectrogramRenderer::setNormalizationMode(NormalizationMode mode) {
+	if ( _normalizationMode == mode ) {
+		return;
+	}
+
+	_normalizationMode = mode;
+	_normalizationAmpRange[0] = _normalizationAmpRange[1] = -1;
+
+	if ( !_spectralizer ) {
+		return;
+	}
 
 	setDirty();
 }
@@ -311,10 +328,15 @@ void SpectrogramRenderer::setNormalizeAmplitudes(bool f) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SpectrogramRenderer::setLogScale(bool f) {
-	if ( _logarithmic == f ) return;
+	if ( _logarithmic == f ) {
+		return;
+	}
+
 	_logarithmic = f;
 
-	if ( !_spectralizer ) return;
+	if ( !_spectralizer ) {
+		return;
+	}
 
 	setDirty();
 }
@@ -367,6 +389,10 @@ void SpectrogramRenderer::renderSpectrogram() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SpectrogramRenderer::addSpectrum(const PowerSpectrum *spec) {
+	if ( _normalizationMode == NormalizationMode::Time ) {
+		return;
+	}
+
 #define PRE_ALLOC_WIDTH 100
 	auto data = spec->data.get();
 	int offset = 0;
@@ -457,7 +483,7 @@ void SpectrogramRenderer::fillRow(SpecImage &img, DoubleArray *spec,
 	// Goto nth column
 	rgb += column;
 
-	if ( _normalize ) {
+	if ( _normalizationMode != NormalizationMode::Fixed ) {
 		double amin = -1, amax = -1;
 		double fmin = 0.0, fmax = maxFreq;
 		if ( _fmin ) {
@@ -608,6 +634,59 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 		return;
 	}
 
+	Core::Time t0 = _alignment + Core::TimeSpan(_tmin);
+	Core::Time t1 = _alignment + Core::TimeSpan(_tmax);
+
+	if ( _normalizationMode == NormalizationMode::Time ) {
+		double minAmp = -1;
+		double maxAmp = -1;
+		bool first = true;
+
+		for ( auto &spec : _spectra ) {
+			if ( spec->center() + spec->dt <= t0 ) {
+				continue;
+			}
+
+			if ( t1 <= spec->center() ) {
+				continue;
+			}
+
+			if ( first ) {
+				minAmp = spec->minimumAmplitude;
+				maxAmp = spec->maximumAmplitude;
+				first = false;
+			}
+			else {
+				if ( spec->minimumAmplitude < minAmp ) {
+					minAmp = spec->minimumAmplitude;
+				}
+
+				if ( spec->maximumAmplitude > maxAmp ) {
+					maxAmp = spec->maximumAmplitude;
+				}
+			}
+
+			minAmp = floor(minAmp);
+			maxAmp = ceil(maxAmp);
+		}
+
+		if ( _dirty || (minAmp != _normalizationAmpRange[0] || maxAmp != _normalizationAmpRange[1]) ) {
+			_normalizationAmpRange[0] = minAmp;
+			_normalizationAmpRange[1] = maxAmp;
+
+			minAmp = _ampMin;
+			maxAmp = _ampMax;
+
+			_normalizationMode = NormalizationMode::Fixed;
+			setGradientRange(_normalizationAmpRange[0], _normalizationAmpRange[1]);
+			renderSpectrogram();
+
+			_normalizationMode = NormalizationMode::Time;
+			setGradientRange(minAmp, maxAmp);
+			_dirty = false;
+		}
+	}
+
 	if ( _dirty ) {
 		renderSpectrogram();
 	}
@@ -657,8 +736,6 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 	_renderedFmin = fmin;
 	_renderedFmax = fmax;
 
-	Core::Time t0 = _alignment + Core::TimeSpan(_tmin);
-	Core::Time t1 = _alignment + Core::TimeSpan(_tmax);
 	double xlen = t1-t0;
 
 	// Nothing to draw

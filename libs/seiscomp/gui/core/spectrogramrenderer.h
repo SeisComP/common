@@ -41,6 +41,18 @@ class SC_GUI_API SpectrogramRenderer {
 	//  Public types
 	// ----------------------------------------------------------------------
 	public:
+		enum class NormalizationMode {
+			Fixed,
+			Frequency,
+			Time
+		};
+
+
+	// ----------------------------------------------------------------------
+	//  X'truction
+	// ----------------------------------------------------------------------
+	public:
+		//! C'tor
 		SpectrogramRenderer();
 
 
@@ -91,7 +103,8 @@ class SC_GUI_API SpectrogramRenderer {
 		const OPT(double) &frequencyUpperBound() const { return _fmax; }
 
 		void setNormalizeAmplitudes(bool f);
-		bool normalizeAmplitudes() const { return _normalize; }
+		void setNormalizationMode(NormalizationMode mode);
+		bool normalizeAmplitudes() const { return _normalizationMode != NormalizationMode::Fixed; }
 
 		void setLogScale(bool f);
 		bool logScale() const { return _logarithmic; }
@@ -136,21 +149,28 @@ class SC_GUI_API SpectrogramRenderer {
 
 		DEFINE_SMARTPOINTER(PowerSpectrum);
 		struct PowerSpectrum : public Core::BaseObject {
-			PowerSpectrum(const Core::Time &stime,
-			              const Core::Time &etime,
-			              const Core::TimeSpan &dt,
-			              double freq)
-			: startTime(stime), endTime(etime), dt(dt)
-			, frequency(freq) {}
-
-			PowerSpectrum(const IO::Spectrum &spectrum)
+			PowerSpectrum(const IO::Spectrum &spectrum, double scale)
 			: startTime(spectrum.startTime()), endTime(spectrum.endTime())
 			, dt(spectrum.dt()), frequency(spectrum.maximumFrequency()) {
+				centerTime = startTime + Core::TimeSpan(static_cast<double>(length()) * 0.5);
 				auto d = spectrum.data();
+				minimumAmplitude = maximumAmplitude = -1;
 				if ( d ) {
 					data = new DoubleArray(d->size());
 					for ( int i = 0; i < d->size(); ++i ) {
 						(*data)[i] = (*d)[i].real() * (*d)[i].real() + (*d)[i].imag() * (*d)[i].imag();
+						if ( minimumAmplitude < 0 || minimumAmplitude > (*data)[i] ) {
+							minimumAmplitude = (*data)[i];
+						}
+						if ( maximumAmplitude < (*data)[i] ) {
+							maximumAmplitude = (*data)[i];
+						}
+					}
+
+					if ( minimumAmplitude > 0 ) {
+						double norm = scale * 0.5 / frequency;
+						minimumAmplitude = log10(minimumAmplitude * norm * norm);
+						maximumAmplitude = log10(maximumAmplitude * norm * norm);
 					}
 				}
 			}
@@ -158,16 +178,19 @@ class SC_GUI_API SpectrogramRenderer {
 			bool isValid() const { return data && data->size() > 0; }
 
 			Core::TimeSpan length() const { return endTime - startTime; }
-			Core::Time center() const { return startTime + Core::TimeSpan(double(length()) * 0.5); }
+			const Core::Time &center() const { return centerTime; }
 
 			double minimumFrequency() const { return 0; }
 			double maximumFrequency() const { return frequency; }
 
 			Core::Time     startTime;
 			Core::Time     endTime;
+			Core::Time     centerTime;
 			Core::TimeSpan dt;
 			double         frequency;
 			DoubleArrayPtr data;
+			double         minimumAmplitude;
+			double         maximumAmplitude;
 		};
 
 		void setDirty();
@@ -199,7 +222,8 @@ class SC_GUI_API SpectrogramRenderer {
 		PowerSpectra              _spectra;
 		SpecImageList             _images;
 		Gradient512               _gradient;
-		bool                      _normalize;
+		NormalizationMode         _normalizationMode;
+		double                    _normalizationAmpRange[2];
 		bool                      _logarithmic;
 		bool                      _smoothTransform;
 		bool                      _dirty;
