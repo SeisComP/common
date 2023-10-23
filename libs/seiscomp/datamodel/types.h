@@ -280,7 +280,15 @@ MAKEENUM(
 		ARTILLERY_STRIKE,
 		BOMB_DETONATION,
 		MOVING_AIRCRAFT,
-		ATMOSPHERIC_METEOR_EXPLOSION
+		ATMOSPHERIC_METEOR_EXPLOSION,
+		VOLCANO_TECTONIC,
+		VOLCANIC_LONG_PERIOD,
+		VOLCANIC_VERY_LONG_PERIOD,
+		VOLCANIC_HYBRID,
+		VOLCANIC_ROCKFALL,
+		VOLCANIC_TREMOR,
+		PYROCLASTIC_FLOW,
+		LAHAR
 	),
 	ENAMES(
 		"not existing",
@@ -342,7 +350,15 @@ MAKEENUM(
 		"artillery strike",
 		"bomb detonation",
 		"moving aircraft",
-		"atmospheric meteor explosion"
+		"atmospheric meteor explosion",
+		"volcano tectonic",
+		"volcanic long period",
+		"volcanic very long period",
+		"volcanic hybrid",
+		"volcanic rockfall",
+		"volcanic tremor",
+		"pyroclastic flow",
+		"lahar"
 	)
 );
 
