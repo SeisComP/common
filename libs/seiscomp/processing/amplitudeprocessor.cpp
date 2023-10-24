@@ -1089,6 +1089,19 @@ AmplitudeProcessor::SignalTime &AmplitudeProcessor::SignalTime::operator-=(doubl
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+AmplitudeProcessor::SignalTime::operator double() const {
+	if ( _value ) {
+		return *_value;
+	}
+
+	throw Core::ValueError();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor::SignalTime::set(const string &text, string *error) {
 	Expression::InterfacePtr tmp = Expression::Interface::parse(text, error);
 	if ( !tmp ) {
@@ -1451,6 +1464,11 @@ void AmplitudeProcessor::computeTimeWindow() {
 	catch ( StatusException &e ) { setStatus(e.status(), e.value()); }
 	try { _config.signalEnd.evaluate(this, false); }
 	catch ( StatusException &e ) { setStatus(e.status(), e.value()); }
+
+	if ( isFinished() ) {
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
 
 	Core::Time startTime = _trigger + Core::TimeSpan(_config.noiseBegin);
 	Core::Time   endTime = _trigger + Core::TimeSpan(_config.signalEnd);

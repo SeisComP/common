@@ -102,7 +102,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 				 */
 				SignalTime &operator-=(double v);
 
-				operator double() const { return *_value; }
+				operator double() const;
 
 				/**
 				 * @brief Sets and compiles a statement
@@ -180,11 +180,11 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 			std::string                     locationCode;
 			std::string                     channelCode;
 
-			const DataModel::Origin         *hypocenter;
-			const DataModel::SensorLocation *receiver;
-			const DataModel::Pick           *pick;
+			const DataModel::Origin         *hypocenter{nullptr};
+			const DataModel::SensorLocation *receiver{nullptr};
+			const DataModel::Pick           *pick{nullptr};
 
-			const Locale                    *locale;
+			const Locale                    *locale{nullptr};
 		};
 
 		struct AmplitudeIndex {
