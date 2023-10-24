@@ -2,7 +2,8 @@ scconfig is a graphical user interface which allows to
 
 * Retrieve :ref:`information <scconfig-information>` about the installed |scname|
   system,
-* :ref:`Control modules <scconfig-system>` and access logging file,
+* :ref:`Control modules <scconfig-system>` (start/stop/check/enable/disable) and
+  access logging file,
 * :ref:`Import, check, synchronize and remove <scconfig-inventory>` station meta
   data/inventory,
 * Configure the :ref:`module configuration <scconfig-modules>` and
@@ -13,32 +14,22 @@ scconfig is a graphical user interface which allows to
 The modules are usually programs part of the SeisComP system and have two
 distinct types of configuration:
 
-#. :ref:`Modules configuration <scconfig-modules>`, or just program configuration like the
-   :file:`scautopick.cfg` file.
-#. :ref:`Station bindings <scconfig-modules>`, that are set of parameters to configure how the module will
-   treat a certain station. I.e. Station specific configurations per module.
-
-The bindings configuration can be done using profiles, or directly per station.
-
-A profile is a named set of parameters for a certain module that can be
-attributed for more than one station. Using profiles makes it easiear to
-maintain large number of station configuration. When two stations are configured
-by the same profile, both will have the same parameter set for a certain module.
+* :ref:`Modules configuration <scconfig-modules>`, or just program
+  configuration stored in file like :file:`scautopick.cfg`.
+* :ref:`Bindings <scconfig-modules>`, that are set of parameters to configure
+  how the module will treat a certain station. I.e. station-specific
+  configurations per module. Bindings can be configured using profiles, or
+  directly per station. A profile is a named set of parameters for a certain
+  module that can be attributed for more than one station. Using profiles makes
+  it easiear to maintain large number of station configuration. When two stations
+  are configured by the same profile, both will have the same parameter set for
+  a certain module.
 
 scconfig does not know anything about the SeisComP database, the only thing it
-can do is actually read and write the content of files from :file:`etc/` and
-:file:`~/.seiscomp` folder and allow you to manage this information in organized
-and friendly manner. Also, it relies on other application (like the proper
-:program:`seiscomp` command) to complete the system configuration. The main
-tasks that it can handle today are:
-
-- start/stop/check all registered modules
-- import station metadata from various sources
-- configure modules
-- configure module bindings
-
-In the future, it could accumulate more tasks like inventory editor and even
-more advanced system monitoring and log inspection.
+can do is to actually read and write the content of files from :file:`etc/` and
+:file:`~/.seiscomp` folder. It allows you to manage this information in an
+organized and friendly manner. Also, it relies on other applications like the
+proper :ref:`seiscomp` tool to complete the system configuration.
 
 
 .. _scconfig-first-start:
@@ -52,8 +43,8 @@ its new installation.
 .. figure:: media/scconfig/first-start.*
    :align: center
 
-If done already with the :ref:`command line interface <getting-started>`
-this step can be skipped. If the setup has been run already is indicated by
+If done already with the :ref:`command line interface <getting-started>`,
+this step can be skipped. If the setup has been run already, is indicated by
 the presence of the file :file:`var/run/seiscomp.init`.
 
 If pressing yes, the setup wizard will be started and will configure exactly
@@ -94,18 +85,18 @@ is selected.
 
 It is divided into 4 areas:
 
-- red: the mode switch (user vs. system)
-- yellow: panel switch
-- green: title and description of current panel
-- blue: the content and interactive screen of the current panel
+* red: the mode switch (user vs. system)
+* yellow: panel switch
+* green: title and description of current panel
+* blue: the content and interactive screen of the current panel
 
-The main menu contains two entries: :guilabel:`File` and :guilabel:`Edit`.
+The Main menu contains two entries: :guilabel:`File` and :guilabel:`Edit`.
 
 The file menu allows to run the setup wizard (:guilabel:`Wizard`), to reload
 the configuration (:guilabel:`Reload`), to save the
 configuration (:guilabel:`Save`) and to close the configuration (:guilabel:`Quit`).
 
-The edit menu allows to switch the current configuration mode. Pressing the
+The Edit menu allows to switch the current configuration mode. Pressing the
 switch button in the upper left corner (red box) is a shortcut for this operation.
 
 
@@ -114,10 +105,10 @@ switch button in the upper left corner (red box) is a shortcut for this operatio
 Information panel
 -----------------
 
-This panel shows information about the SeisComP environment
-(see figure :ref:`main window <fig-scconfig-mainwindow>`). All variables (except PATH) can
-be used as placeholders in most of the configuration parameters which define
-directories or files, e.g.:
+This panel shows information about the |scname| environment
+(see figure :ref:`main window <fig-scconfig-mainwindow>`). All variables
+(except PATH) can be used as placeholders in most of the configuration
+parameters which define directories or files, e.g.:
 
 .. code-block:: sh
 

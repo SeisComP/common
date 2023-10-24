@@ -54,11 +54,11 @@ InformationPanel::InformationPanel(QWidget *parent)
 	Seiscomp::Environment *env = Seiscomp::Environment::Instance();
 	addRow(table, "PATH", getenv("PATH"));
 	addRow(table, "ROOTDIR", env->installDir().c_str());
-	addRow(table, "DEFAULTCONFIGDIR", env->globalConfigDir().c_str());
 	addRow(table, "SYSTEMCONFIGDIR", env->appConfigDir().c_str());
+	addRow(table, "DEFAULTCONFIGDIR", env->globalConfigDir().c_str());
+	addRow(table, "DATADIR", env->shareDir().c_str());
 	addRow(table, "CONFIGDIR", env->configDir().c_str());
 	addRow(table, "LOGDIR", env->logDir().c_str());
-	addRow(table, "DATADIR", env->shareDir().c_str());
 
 	table->resizeColumnsToContents();
 }
