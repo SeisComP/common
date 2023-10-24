@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 
-
 #ifndef SEISCOMP_GUI_MESSAGE_H
 #define SEISCOMP_GUI_MESSAGE_H
 
@@ -40,14 +39,35 @@ MAKEENUM(
 		CM_SHOW_ORIGIN,
 		CM_SHOW_STREAMS,
 		CM_SHOW_MAGNITUDE,
-		CM_OBSERVE_LOCATION
+		CM_OBSERVE_LOCATION,
+		CM_SHOW_NOTIFICATION
 	),
 	ENAMES(
 		"undefined",
 		"show origin",
 		"show streams",
 		"show magnitude",
-		"observe location"
+		"observe location",
+		"show notification"
+	)
+);
+
+
+MAKEENUM(
+	NotificationLevel,
+	EVALUES(
+		NL_UNDEFINED,
+		NL_INFO,
+		NL_WARNING,
+		NL_CRITICAL,
+		NL_FAILURE
+	),
+	ENAMES(
+		"undefined",
+		"info",
+		"warning",
+		"critical",
+		"failure"
 	)
 );
 
@@ -58,12 +78,14 @@ class SC_GUI_API CommandMessage : public Seiscomp::Core::Message {
 	DECLARE_SC_CLASS(CommandMessage);
 	DECLARE_SERIALIZATION;
 
+
 	// ------------------------------------------------------------------
-	//  Xstruction
+	//  X'truction
 	// ------------------------------------------------------------------
 	private:
 		CommandMessage();
 		CommandMessage(const std::string client, Command command);
+
 
 	// ------------------------------------------------------------------
 	//  Message interface
@@ -80,6 +102,7 @@ class SC_GUI_API CommandMessage : public Seiscomp::Core::Message {
 
 		bool empty() const;
 
+
 	// ------------------------------------------------------------------
 	//  Implementation
 	// ------------------------------------------------------------------
@@ -88,6 +111,7 @@ class SC_GUI_API CommandMessage : public Seiscomp::Core::Message {
 		Command _command;
 		std::string _parameter;
 		Core::BaseObjectPtr _object;
+
 
 	DECLARE_SC_CLASSFACTORY_FRIEND(CommandMessage);
 

@@ -26,6 +26,7 @@
 #include <seiscomp/core/baseobject.h>
 #endif
 #include <seiscomp/gui/core/connectionstatelabel.h>
+#include <seiscomp/gui/core/messages.h>
 
 #include <QMainWindow>
 
@@ -110,6 +111,8 @@ class SC_GUI_API MainWindow : public QMainWindow {
 
 		void inspectConfig();
 		void inspectInventory();
+
+		void showNotification(NotificationLevel level, QString message);
 
 
 	protected:

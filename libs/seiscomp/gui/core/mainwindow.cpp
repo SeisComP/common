@@ -41,6 +41,7 @@
 
 #include <QImage>
 #include <QMenuBar>
+#include <QMessageBox>
 #include <QStatusBar>
 #include <QtSvg/QSvgRenderer>
 
@@ -112,6 +113,9 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 
 	connect(SCApp, SIGNAL(connectionLost()),
 	        this, SLOT(connectionLost()));
+
+	connect(SCApp, SIGNAL(showNotification(NotificationLevel, QString)),
+	        this, SLOT(showNotification(NotificationLevel, QString)));
 
 	setAcceptDrops(true);
 
@@ -375,6 +379,27 @@ void MainWindow::inspectInventory() {
 	w->setAttribute(Qt::WA_DeleteOnClose);
 	w->setObject(Client::Inventory::Instance()->inventory());
 	w->show();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MainWindow::showNotification(NotificationLevel level, QString message) {
+	switch ( level ) {
+		default:
+		case NL_INFO:
+			SEISCOMP_INFO("%s", message.toStdString().c_str());
+			break;
+		case NL_WARNING:
+			SEISCOMP_WARNING("%s", message.toStdString().c_str());
+			break;
+		case NL_CRITICAL:
+		case NL_FAILURE:
+			SEISCOMP_ERROR("%s", message.toStdString().c_str());
+			break;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

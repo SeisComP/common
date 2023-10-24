@@ -244,14 +244,16 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 		void connectionEstablished();
 		void connectionLost();
 
+		void showNotification(NotificationLevel level, QString message);
+
 		void messageSkipped(Seiscomp::Client::Packet*);
 		void messageAvailable(Seiscomp::Core::Message*, Seiscomp::Client::Packet*);
 
 		void notifierAvailable(Seiscomp::DataModel::Notifier*);
 
-		void addObject(const QString& parentID, Seiscomp::DataModel::Object*);
-		void removeObject(const QString& parentID, Seiscomp::DataModel::Object*);
-		void updateObject(const QString& parentID, Seiscomp::DataModel::Object*);
+		void addObject(const QString &parentID, Seiscomp::DataModel::Object*);
+		void removeObject(const QString &parentID, Seiscomp::DataModel::Object*);
+		void updateObject(const QString &parentID, Seiscomp::DataModel::Object*);
 
 
 	public slots:

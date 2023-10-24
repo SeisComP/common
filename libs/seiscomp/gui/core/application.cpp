@@ -1581,6 +1581,26 @@ void Application::messagesAvailable() {
 		if ( cmd && _filterCommands ) {
 			QRegExp re(cmd->client().c_str());
 			if ( re.exactMatch(Client::Application::_settings.messaging.user.c_str()) ) {
+				if ( cmd->command() == CM_SHOW_NOTIFICATION ) {
+					if ( !cmd->parameter().empty() ) {
+						NotificationLevel nl = NL_UNDEFINED;
+						QString message;
+
+						size_t p = cmd->parameter().find(' ');
+						if ( p != string::npos ) {
+							if ( cmd->parameter()[0] == '[' &&
+							     cmd->parameter()[p-1] == ']' ) {
+								nl.fromString(cmd->parameter().substr(1, p-2));
+								message = cmd->parameter().substr(p+1).c_str();
+							}
+						}
+						else
+							message = cmd->parameter().c_str();
+
+						emit showNotification(nl, message);
+					}
+				}
+
 				emit messageAvailable(cmd, pkt.get());
 			}
 			else {
