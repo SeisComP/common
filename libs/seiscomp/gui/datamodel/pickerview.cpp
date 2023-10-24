@@ -7586,88 +7586,145 @@ void PickerView::automaticRepick() {
 	if ( !SC_D.currentRecord->cursorText().isEmpty() ) {
 		Core::Time cp = SC_D.currentRecord->cursorPos();
 
-		RecordSequence *seq =
-			SC_D.currentRecord->isFilteringEnabled()
-				?
-				SC_D.currentRecord->filteredRecords(SC_D.currentSlot)
-				:
-				SC_D.currentRecord->records(SC_D.currentSlot);
-		if ( seq ) {
-			Processing::PickerPtr picker =
-				Processing::PickerFactory::Create(SC_D.comboPicker->currentText().toStdString().c_str());
+		Processing::PickerPtr picker =
+			Processing::PickerFactory::Create(SC_D.comboPicker->currentText().toStdString().c_str());
 
-			if ( picker == nullptr ) {
-				statusBar()->showMessage(QString("Automatic picking: unable to create picker '%1'").arg(SC_D.comboPicker->currentText()), 2000);
-				return;
-			}
+		if ( !picker ) {
+			statusBar()->showMessage(QString("Automatic picking: unable to create picker '%1'").arg(SC_D.comboPicker->currentText()), 2000);
+			return;
+		}
 
-			WaveformStreamID wid = SC_D.recordView->streamID(SC_D.recordView->currentItem()->row());
-			KeyValues params;
-			DataModel::ConfigModule *module = SCApp->configModule();
-			if ( module != nullptr ) {
-				for ( size_t i = 0; i < module->configStationCount(); ++i ) {
-					DataModel::ConfigStation *station = module->configStation(i);
-					if ( station->networkCode() != wid.networkCode() ||
-					     station->stationCode() != wid.stationCode() ) continue;
+		WaveformStreamID wid = SC_D.recordView->streamID(SC_D.recordView->currentItem()->row());
+		KeyValues params;
+		DataModel::ConfigModule *module = SCApp->configModule();
+		if ( module ) {
+			for ( size_t i = 0; i < module->configStationCount(); ++i ) {
+				DataModel::ConfigStation *station = module->configStation(i);
+				if ( station->networkCode() != wid.networkCode() ||
+				     station->stationCode() != wid.stationCode() ) continue;
 
-					DataModel::Setup *configSetup = DataModel::findSetup(station, SCApp->name(), true);
+				auto configSetup = DataModel::findSetup(station, SCApp->name(), true);
 
-					if ( configSetup ) {
-						DataModel::ParameterSet* ps = nullptr;
-						try {
-							ps = DataModel::ParameterSet::Find(configSetup->parameterSetID());
-						}
-						catch ( Core::ValueException & ) {
-							continue;
-						}
-
-						if ( !ps ) {
-							SEISCOMP_ERROR("Cannot find parameter set %s",
-							               configSetup->parameterSetID().c_str());
-							continue;
-						}
-
-						params.init(ps);
+				if ( configSetup ) {
+					DataModel::ParameterSet* ps = nullptr;
+					try {
+						ps = DataModel::ParameterSet::Find(configSetup->parameterSetID());
 					}
+					catch ( Core::ValueException & ) {
+						continue;
+					}
+
+					if ( !ps ) {
+						SEISCOMP_ERROR("Cannot find parameter set %s",
+						               configSetup->parameterSetID().c_str());
+						continue;
+					}
+
+					params.init(ps);
 				}
 			}
+		}
 
-			if ( !picker->setup(Processing::Settings(SCApp->configModuleName(),
-			                    wid.networkCode(), wid.stationCode(),
-			                    wid.locationCode(), wid.channelCode(), &SCApp->configuration(),
-			                    &params)) ) {
-				statusBar()->showMessage("Automatic picking: unable to inialize picker");
+		auto label = static_cast<PickerRecordLabel*>(SC_D.recordView->currentItem()->label());
+		for ( size_t i = 0; i < 3; ++i ) {
+			picker->streamConfig(static_cast<Processing::WaveformProcessor::Component>(i)).init(
+				wid.networkCode(), wid.stationCode(),
+				wid.locationCode(), label->data.traces[i].channelCode,
+				SC_D.currentRecord->cursorPos()
+			);
+		}
+
+		if ( !picker->setup(Processing::Settings(SCApp->configModuleName(),
+		                    wid.networkCode(), wid.stationCode(),
+		                    wid.locationCode(), wid.channelCode(), &SCApp->configuration(),
+		                    &params)) ) {
+			statusBar()->showMessage("Automatic picking: unable to inialize picker");
+			return;
+		}
+
+		if ( SC_D.config.repickerSignalStart ) {
+			picker->setSignalStart(*SC_D.config.repickerSignalStart);
+			SEISCOMP_DEBUG("Set repick start to %.2f", *SC_D.config.repickerSignalStart);
+		}
+		if ( SC_D.config.repickerSignalEnd ) {
+			picker->setSignalEnd(*SC_D.config.repickerSignalEnd);
+			SEISCOMP_DEBUG("Set repick end to %.2f", *SC_D.config.repickerSignalEnd);
+		}
+
+		picker->setTrigger(cp);
+		picker->setPublishFunction(bind(&PickerView::emitPick, this, placeholders::_1, placeholders::_2));
+		picker->computeTimeWindow();
+
+		SEISCOMP_DEBUG("%s: ns=%f, ss=%f, se=%f", picker->methodID().c_str(),
+		               picker->config().noiseBegin,
+		               picker->config().signalBegin,
+		               picker->config().signalEnd);
+		SEISCOMP_DEBUG("%s: tw = %s ~ %s", picker->methodID().c_str(),
+		               picker->timeWindow().startTime().iso().c_str(),
+		               picker->timeWindow().endTime().iso().c_str());
+
+		int count = 0;
+		size_t ocount = 0;
+
+		if ( picker->usedComponent() == Processing::WaveformProcessor::Vertical ||
+		     picker->usedComponent() == Processing::WaveformProcessor::FirstHorizontal ||
+		     picker->usedComponent() == Processing::WaveformProcessor::SecondHorizontal ) {
+			// In case a single component is requested then feed the currently
+			// selected component.
+			RecordSequence *seq =
+				SC_D.currentRecord->isFilteringEnabled()
+					?
+					SC_D.currentRecord->filteredRecords(SC_D.currentSlot)
+					:
+					SC_D.currentRecord->records(SC_D.currentSlot);
+			if ( seq ) {
+				count += picker->feedSequence(seq);
+				ocount += seq->size();
+			}
+			else {
+				statusBar()->showMessage(tr("No data on current component"));
 				return;
 			}
-
-			if ( SC_D.config.repickerSignalStart ) {
-				picker->setSignalStart(*SC_D.config.repickerSignalStart);
-				SEISCOMP_DEBUG("Set repick start to %.2f", *SC_D.config.repickerSignalStart);
-			}
-			if ( SC_D.config.repickerSignalEnd ) {
-				picker->setSignalEnd(*SC_D.config.repickerSignalEnd);
-				SEISCOMP_DEBUG("Set repick end to %.2f", *SC_D.config.repickerSignalEnd);
-			}
-
-			picker->setTrigger(cp);
-			picker->setPublishFunction(bind(&PickerView::emitPick, this, placeholders::_1, placeholders::_2));
-			picker->computeTimeWindow();
-
-			SEISCOMP_DEBUG("%s: ns=%f, ss=%f, se=%f", picker->methodID().c_str(),
-			               picker->config().noiseBegin,
-			               picker->config().signalBegin,
-			               picker->config().signalEnd);
-			SEISCOMP_DEBUG("%s: tw = %s ~ %s", picker->methodID().c_str(),
-			               picker->timeWindow().startTime().iso().c_str(),
-			               picker->timeWindow().endTime().iso().c_str());
-
-			int count = picker->feedSequence(seq);
-			statusBar()->showMessage(QString("Fed %1 of %2 records: state = %3(%4)")
-			                         .arg(count)
-			                         .arg(seq->size())
-			                         .arg(picker->status().toString())
-			                         .arg(picker->statusValue()), 2000);
 		}
+		else if ( picker->usedComponent() == Processing::WaveformProcessor::Horizontal ) {
+			RecordSequence *seq;
+
+			for ( size_t i = 1; i < 3; ++i ) {
+				seq = SC_D.currentRecord->isFilteringEnabled()
+					?
+					SC_D.currentRecord->filteredRecords(i)
+					:
+					SC_D.currentRecord->records(i)
+				;
+
+				if ( seq ) {
+					count += picker->feedSequence(seq);
+					ocount += seq->size();
+				}
+			}
+		}
+		else if ( picker->usedComponent() == Processing::WaveformProcessor::Any ) {
+			RecordSequence *seq;
+
+			for ( size_t i = 0; i < 3; ++i ) {
+				seq = SC_D.currentRecord->isFilteringEnabled()
+					?
+					SC_D.currentRecord->filteredRecords(i)
+					:
+					SC_D.currentRecord->records(i)
+				;
+
+				if ( seq ) {
+					count += picker->feedSequence(seq);
+					ocount += seq->size();
+				}
+			}
+		}
+
+		statusBar()->showMessage(QString("Fed %1 of %2 records: state = %3(%4)")
+		                         .arg(count).arg(ocount)
+		                         .arg(picker->status().toString())
+		                         .arg(picker->statusValue()), 2000);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
