@@ -23,11 +23,9 @@
 
 
 #include <seiscomp/core/datetime.h>
+#include <seiscomp/core/optional.h>
 #include <seiscomp/core/platform/platform.h>
 #include <seiscomp/core.h>
-
-#include <boost/function.hpp>
-#include <boost/thread/mutex.hpp>
 
 #if defined(SC_HAS_TIMER_CREATE)
 #include <signal.h>
@@ -35,6 +33,12 @@
 #else
 #include <list>
 #endif
+
+#include <chrono>
+#include <cstdint>
+#include <functional>
+#include <mutex>
+#include <thread>
 
 
 namespace Seiscomp {
@@ -53,6 +57,9 @@ namespace Util {
   */
 class SC_SYSTEM_CORE_API StopWatch {
 	public:
+		using Clock = std::chrono::high_resolution_clock;
+
+	public:
 		//! Constructor
 		StopWatch();
 
@@ -60,21 +67,26 @@ class SC_SYSTEM_CORE_API StopWatch {
 		StopWatch(bool autorun);
 
 	public:
-		//! restarts the timer
+		//! Restarts the timer, isActive() == true.
 		void restart();
 
-		//! resets the timer
+		//! Resets the timer, isActive() == false.
 		void reset();
 
-		//! returns true if the timer is active
+		//! Returns whether the timer is active.
 		bool isActive() const;
 
-		//! returns the elapsed time in seconds from
-		//! restart to now
+		//! Returns the elapsed time as TimeSpan.
 		Seiscomp::Core::TimeSpan elapsed() const;
 
+		//! Returns the elapsed microseconds or 0 if not active.
+		uint64_t microseconds() const;
+
+		//! Returns the elapsed nanoseconds or 0 if not active.
+		uint64_t nanoseconds() const;
+
 	private:
-		Seiscomp::Core::Time _start;
+		OPT(Clock::time_point) _start;
 };
 
 
@@ -99,7 +111,7 @@ class SC_SYSTEM_CORE_API StopWatch {
   */
 class SC_SYSTEM_CORE_API Timer {
 	public:
-		typedef boost::function<void ()> Callback;
+		using Callback = std::function<void ()>;
 
 	public:
 		//! C'tor
@@ -157,21 +169,42 @@ class SC_SYSTEM_CORE_API Timer {
 #else
 		typedef std::list<Timer*> TimerList;
 		static TimerList _timers;
-		static boost::thread *_thread;
-		static boost::mutex _mutex;
+		static std::thread *_thread;
+		static std::mutex _mutex;
 
 		bool             _isActive;
 		unsigned int     _value;
 #endif
 
 		Callback         _callback;
-		boost::try_mutex _callbackMutex;
+		std::mutex       _callbackMutex;
 		unsigned int     _timeout;
 #if defined(SC_HAS_TIMER_CREATE)
 		unsigned int     _timeoutNs;
 #endif
 		bool             _singleShot;
 };
+
+
+inline StopWatch::StopWatch() {
+	restart();
+}
+
+inline void StopWatch::restart() {
+	_start = Clock::now();
+}
+
+inline uint64_t StopWatch::microseconds() const {
+	return _start ? std::chrono::duration_cast<std::chrono::microseconds>(
+		Clock::now() - *_start
+	).count() : 0;
+}
+
+inline uint64_t StopWatch::nanoseconds() const {
+	return _start ? std::chrono::duration_cast<std::chrono::nanoseconds>(
+		Clock::now() - *_start
+	).count() : 0;
+}
 
 
 }

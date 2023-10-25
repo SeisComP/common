@@ -27,7 +27,7 @@
 #include <iostream>
 
 #if !defined(SC_HAS_TIMER_CREATE)
-#include <boost/thread/thread.hpp>
+#include <thread>
 #endif
 
 #ifndef WIN32
@@ -46,27 +46,10 @@ namespace Util {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StopWatch::StopWatch() {
-	restart();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 StopWatch::StopWatch(bool autorun) {
-	if ( autorun )
+	if ( autorun ) {
 		restart();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void StopWatch::restart() {
-	_start.localtime();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -75,7 +58,7 @@ void StopWatch::restart() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void StopWatch::reset() {
-	_start = Seiscomp::Core::Time();
+	_start = Core::None;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -84,7 +67,7 @@ void StopWatch::reset() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StopWatch::isActive() const {
-	return _start.valid();
+	return static_cast<bool>(_start);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -92,9 +75,13 @@ bool StopWatch::isActive() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Seiscomp::Core::TimeSpan StopWatch::elapsed() const {
-	return isActive() ? Seiscomp::Core::Time::LocalTime() - _start
-	                  : Seiscomp::Core::TimeSpan();
+Core::TimeSpan StopWatch::elapsed() const {
+	if ( !_start ) {
+		return Core::TimeSpan();
+	}
+
+	auto us = std::chrono::duration_cast<std::chrono::microseconds>(Clock::now() - *_start).count();
+	return Core::TimeSpan(us / 1000000, us % 1000000);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -104,8 +91,8 @@ Seiscomp::Core::TimeSpan StopWatch::elapsed() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #if !defined(SC_HAS_TIMER_CREATE)
 Timer::TimerList Timer::_timers;
-boost::thread *Timer::_thread = nullptr;
-boost::mutex Timer::_mutex;
+std::thread *Timer::_thread = nullptr;
+std::mutex Timer::_mutex;
 #endif
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -208,7 +195,7 @@ bool Timer::start() {
 		return false;
 
 #if !defined(SC_HAS_TIMER_CREATE)
-	boost::mutex::scoped_lock lk(_mutex);
+	std::lock_guard<std::mutex> lk(_mutex);
 
 	if ( _isActive )
 		return false;
@@ -220,8 +207,8 @@ bool Timer::start() {
 	_value = _timeout;
 
 	if ( !_thread ) {
-		_thread = new boost::thread(Timer::Loop);
-		boost::thread::yield();
+		_thread = new std::thread(Timer::Loop);
+		std::this_thread::yield();
 	}
 #else
 	if ( _timerID ) return false;
@@ -307,7 +294,7 @@ bool Timer::deactivate(bool remove) {
 	_isActive = false;
 
 	if ( remove ) {
-		boost::mutex::scoped_lock lk(_mutex);
+		std::lock_guard<std::mutex> lk(_mutex);
 
 		for ( TimerList::iterator it = _timers.begin(); it != _timers.end(); ++it ) {
 			if ( *it == this ) {
@@ -321,7 +308,7 @@ bool Timer::deactivate(bool remove) {
 }
 #else
 bool Timer::destroy() {
-	boost::try_mutex::scoped_lock lock(_callbackMutex);
+	std::lock_guard<std::mutex> lock(_callbackMutex);
 
 	if ( !_timerID ) return false;
 
@@ -409,14 +396,10 @@ bool Timer::Update() {
 void Timer::handleTimeout(sigval_t self) {
 	Timer *timer = reinterpret_cast<Timer*>(self.sival_ptr);
 	if ( timer->_callback ) {
-#if (BOOST_VERSION >= 103500)
-		boost::try_mutex::scoped_try_lock l(timer->_callbackMutex, boost::defer_lock);
-#else
-		boost::try_mutex::scoped_try_lock l(timer->_callbackMutex, false);
-#endif
-
-		if ( l.try_lock() )
+		if ( timer->_callbackMutex.try_lock() ) {
 			timer->_callback();
+			timer->_callbackMutex.unlock();
+		}
 	}
 }
 #endif
