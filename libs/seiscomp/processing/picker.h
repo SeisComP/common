@@ -144,6 +144,17 @@ class SC_SYSTEM_CLIENT_API Picker : public TimeWindowProcessor {
 		 */
 		Core::TimeWindow signalWindow() const;
 
+		/**
+		 * @brief Allows to finalize a pick object as created by client code.
+		 *
+		 * This method will usually be called right before the pick will
+		 * be stored or sent and inside the emit handler. It allows processors
+		 * to set specific attributes or to add comments.
+		 * The default implementation does nothing.
+		 * @param pick The pick to be finalized
+		 */
+		virtual void finalizePick(DataModel::Pick *pick) const;
+
 		void setPublishFunction(const PublishFunc& func);
 
 		//! Dumps the record data into an ASCII file
