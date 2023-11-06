@@ -1,5 +1,6 @@
 SET(TESTS
 	certificate_store.cpp
+	timer.cpp
 	units.cpp
 	utils_misc.cpp
 	url.cpp
