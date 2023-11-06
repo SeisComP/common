@@ -85,6 +85,8 @@ namespace Core {
    - Added Seiscomp::TravelTime::azi field
    - Seiscomp::Math::Geo::delazi() allows null arguments
    - Added Seiscomp::Math::Geo::delta()
+   - Added Seiscomp::Util::StopWatch::microseconds()
+   - Added Seiscomp::Util::StopWatch::nanoseconds()
 
  "15.6.0"   0x0F0600
    - Added Seiscomp::Gui::PickerView::setAuxiliaryChannels
