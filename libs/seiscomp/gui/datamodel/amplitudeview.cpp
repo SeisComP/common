@@ -4613,9 +4613,6 @@ void AmplitudeView::zoomSelectionHandleMoved(int idx, double v, Qt::KeyboardModi
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::zoomSelectionHandleMoveFinished() {
-	AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(SC_D.recordView->currentItem()->label());
-	if ( label->processor ) label->processor->computeTimeWindow();
-
 	applyFilter(SC_D.recordView->currentItem());
 	SC_D.recordView->currentItem()->widget()->update();
 	SC_D.currentRecord->update();
@@ -6425,6 +6422,7 @@ bool AmplitudeView::applyFilter(RecordViewItem *item) {
 				Core::Time t = label->processor->trigger();
 				label->processor->reset();
 				label->processor->setTrigger(t);
+				label->processor->computeTimeWindow();
 			}
 			label->data.setFilter(SC_D.currentFilter, SC_D.currentFilterStr);
 			label->data.showProcessedData(SC_D.showProcessedData);
@@ -6442,6 +6440,7 @@ bool AmplitudeView::applyFilter(RecordViewItem *item) {
 			Core::Time t = label->processor->trigger();
 			label->processor->reset();
 			label->processor->setTrigger(t);
+			label->processor->computeTimeWindow();
 		}
 		label->data.setFilter(SC_D.currentFilter, SC_D.currentFilterStr);
 	}
