@@ -2836,41 +2836,40 @@ SWIGINTERN PyObject *SWIG_PyStaticMethod_New(PyObject *SWIGUNUSEDPARM(self), PyO
 #define SWIGTYPE_p_const_iterator swig_types[141]
 #define SWIGTYPE_p_difference_type swig_types[142]
 #define SWIGTYPE_p_double swig_types[143]
-#define SWIGTYPE_p_float swig_types[144]
-#define SWIGTYPE_p_int swig_types[145]
-#define SWIGTYPE_p_iterator swig_types[146]
-#define SWIGTYPE_p_long_long swig_types[147]
-#define SWIGTYPE_p_p_PyObject swig_types[148]
-#define SWIGTYPE_p_short swig_types[149]
-#define SWIGTYPE_p_signed_char swig_types[150]
-#define SWIGTYPE_p_size_type swig_types[151]
-#define SWIGTYPE_p_ssize_t swig_types[152]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__Category_p_t swig_types[153]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t swig_types[154]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t swig_types[155]
-#define SWIGTYPE_p_std__allocatorT_size_t_t swig_types[156]
-#define SWIGTYPE_p_std__complexT_double_t swig_types[157]
-#define SWIGTYPE_p_std__invalid_argument swig_types[158]
-#define SWIGTYPE_p_std__mapT_std__string_std__string_std__lessT_std__string_t_std__allocatorT_std__pairT_std__string_const_std__string_t_t_t swig_types[159]
-#define SWIGTYPE_p_std__ostream swig_types[160]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[161]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[162]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__Category_p_std__allocatorT_Seiscomp__Geo__Category_p_t_t swig_types[163]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoCoordinate_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t_t swig_types[164]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoFeature_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t_t swig_types[165]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[166]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[167]
-#define SWIGTYPE_p_std__vectorT_size_t_std__allocatorT_size_t_t_t swig_types[168]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t swig_types[169]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[170]
-#define SWIGTYPE_p_unsigned_char swig_types[171]
-#define SWIGTYPE_p_unsigned_int swig_types[172]
-#define SWIGTYPE_p_unsigned_long_long swig_types[173]
-#define SWIGTYPE_p_unsigned_short swig_types[174]
-#define SWIGTYPE_p_value_type swig_types[175]
-#define SWIGTYPE_p_void swig_types[176]
-static swig_type_info *swig_types[178];
-static swig_module_info swig_module = {swig_types, 177, 0, 0, 0, 0};
+#define SWIGTYPE_p_int swig_types[144]
+#define SWIGTYPE_p_iterator swig_types[145]
+#define SWIGTYPE_p_long_long swig_types[146]
+#define SWIGTYPE_p_p_PyObject swig_types[147]
+#define SWIGTYPE_p_short swig_types[148]
+#define SWIGTYPE_p_signed_char swig_types[149]
+#define SWIGTYPE_p_size_type swig_types[150]
+#define SWIGTYPE_p_ssize_t swig_types[151]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__Category_p_t swig_types[152]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t swig_types[153]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t swig_types[154]
+#define SWIGTYPE_p_std__allocatorT_size_t_t swig_types[155]
+#define SWIGTYPE_p_std__complexT_double_t swig_types[156]
+#define SWIGTYPE_p_std__invalid_argument swig_types[157]
+#define SWIGTYPE_p_std__mapT_std__string_std__string_std__lessT_std__string_t_std__allocatorT_std__pairT_std__string_const_std__string_t_t_t swig_types[158]
+#define SWIGTYPE_p_std__ostream swig_types[159]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[160]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[161]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__Category_p_std__allocatorT_Seiscomp__Geo__Category_p_t_t swig_types[162]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoCoordinate_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t_t swig_types[163]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoFeature_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t_t swig_types[164]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[165]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[166]
+#define SWIGTYPE_p_std__vectorT_size_t_std__allocatorT_size_t_t_t swig_types[167]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t swig_types[168]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[169]
+#define SWIGTYPE_p_unsigned_char swig_types[170]
+#define SWIGTYPE_p_unsigned_int swig_types[171]
+#define SWIGTYPE_p_unsigned_long_long swig_types[172]
+#define SWIGTYPE_p_unsigned_short swig_types[173]
+#define SWIGTYPE_p_value_type swig_types[174]
+#define SWIGTYPE_p_void swig_types[175]
+static swig_type_info *swig_types[177];
+static swig_module_info swig_module = {swig_types, 176, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3521,74 +3520,7 @@ SWIG_AsVal_ptrdiff_t (PyObject * obj, ptrdiff_t *val)
 #include <algorithm>
 
 
-/* Getting isfinite working pre C99 across multiple platforms is non-trivial. Users can provide SWIG_isfinite on older platforms. */
-#ifndef SWIG_isfinite
-/* isfinite() is a macro for C99 */
-# if defined(isfinite)
-#  define SWIG_isfinite(X) (isfinite(X))
-# elif defined(__cplusplus) && __cplusplus >= 201103L
-/* Use a template so that this works whether isfinite() is std::isfinite() or
- * in the global namespace.  The reality seems to vary between compiler
- * versions.
- *
- * Make sure namespace std exists to avoid compiler warnings.
- *
- * extern "C++" is required as this fragment can end up inside an extern "C" { } block
- */
-namespace std { }
-extern "C++" template<typename T>
-inline int SWIG_isfinite_func(T x) {
-  using namespace std;
-  return isfinite(x);
-}
-#  define SWIG_isfinite(X) (SWIG_isfinite_func(X))
-# elif defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 2))
-#  define SWIG_isfinite(X) (__builtin_isfinite(X))
-# elif defined(__clang__) && defined(__has_builtin)
-#  if __has_builtin(__builtin_isfinite)
-#   define SWIG_isfinite(X) (__builtin_isfinite(X))
-#  endif
-# elif defined(_MSC_VER)
-#  define SWIG_isfinite(X) (_finite(X))
-# elif defined(__sun) && defined(__SVR4)
-#  include <ieeefp.h>
-#  define SWIG_isfinite(X) (finite(X))
-# endif
-#endif
-
-
-/* Accept infinite as a valid float value unless we are unable to check if a value is finite */
-#ifdef SWIG_isfinite
-# define SWIG_Float_Overflow_Check(X) ((X < -FLT_MAX || X > FLT_MAX) && SWIG_isfinite(X))
-#else
-# define SWIG_Float_Overflow_Check(X) ((X < -FLT_MAX || X > FLT_MAX))
-#endif
-
-
-SWIGINTERN int
-SWIG_AsVal_float (PyObject * obj, float *val)
-{
-  double v;
-  int res = SWIG_AsVal_double (obj, &v);
-  if (SWIG_IsOK(res)) {
-    if (SWIG_Float_Overflow_Check(v)) {
-      return SWIG_OverflowError;
-    } else {
-      if (val) *val = static_cast< float >(v);
-    }
-  }  
-  return res;
-}
-
-
   #define SWIG_From_double   PyFloat_FromDouble 
-
-
-SWIGINTERNINLINE PyObject *
-SWIG_From_float  (float value)
-{    
-  return SWIG_From_double  (value);
-}
 
 
 SWIGINTERNINLINE PyObject*
@@ -3817,6 +3749,66 @@ SWIGINTERNINLINE PyObject *
 SWIG_From_std_string  (const std::string& s)
 {
   return SWIG_FromCharPtrAndSize(s.data(), s.size());
+}
+
+
+/* Getting isfinite working pre C99 across multiple platforms is non-trivial. Users can provide SWIG_isfinite on older platforms. */
+#ifndef SWIG_isfinite
+/* isfinite() is a macro for C99 */
+# if defined(isfinite)
+#  define SWIG_isfinite(X) (isfinite(X))
+# elif defined(__cplusplus) && __cplusplus >= 201103L
+/* Use a template so that this works whether isfinite() is std::isfinite() or
+ * in the global namespace.  The reality seems to vary between compiler
+ * versions.
+ *
+ * Make sure namespace std exists to avoid compiler warnings.
+ *
+ * extern "C++" is required as this fragment can end up inside an extern "C" { } block
+ */
+namespace std { }
+extern "C++" template<typename T>
+inline int SWIG_isfinite_func(T x) {
+  using namespace std;
+  return isfinite(x);
+}
+#  define SWIG_isfinite(X) (SWIG_isfinite_func(X))
+# elif defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 2))
+#  define SWIG_isfinite(X) (__builtin_isfinite(X))
+# elif defined(__clang__) && defined(__has_builtin)
+#  if __has_builtin(__builtin_isfinite)
+#   define SWIG_isfinite(X) (__builtin_isfinite(X))
+#  endif
+# elif defined(_MSC_VER)
+#  define SWIG_isfinite(X) (_finite(X))
+# elif defined(__sun) && defined(__SVR4)
+#  include <ieeefp.h>
+#  define SWIG_isfinite(X) (finite(X))
+# endif
+#endif
+
+
+/* Accept infinite as a valid float value unless we are unable to check if a value is finite */
+#ifdef SWIG_isfinite
+# define SWIG_Float_Overflow_Check(X) ((X < -FLT_MAX || X > FLT_MAX) && SWIG_isfinite(X))
+#else
+# define SWIG_Float_Overflow_Check(X) ((X < -FLT_MAX || X > FLT_MAX))
+#endif
+
+
+SWIGINTERN int
+SWIG_AsVal_float (PyObject * obj, float *val)
+{
+  double v;
+  int res = SWIG_AsVal_double (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if (SWIG_Float_Overflow_Check(v)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< float >(v);
+    }
+  }  
+  return res;
 }
 
 
@@ -6364,19 +6356,19 @@ SWIGINTERN PyObject *_wrap_new_GeoCoordinate__SWIG_1(PyObject *SWIGUNUSEDPARM(se
   PyObject *resultobj = 0;
   Seiscomp::Geo::GeoCoordinate::ValueType arg1 ;
   Seiscomp::Geo::GeoCoordinate::ValueType arg2 ;
-  float val1 ;
+  double val1 ;
   int ecode1 = 0 ;
-  float val2 ;
+  double val2 ;
   int ecode2 = 0 ;
   Seiscomp::Geo::GeoCoordinate *result = 0 ;
   
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
-  ecode1 = SWIG_AsVal_float(swig_obj[0], &val1);
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_GeoCoordinate" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType""'");
   } 
   arg1 = static_cast< Seiscomp::Geo::GeoCoordinate::ValueType >(val1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_GeoCoordinate" "', argument " "2"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType""'");
   } 
@@ -6416,12 +6408,12 @@ SWIGINTERN PyObject *_wrap_new_GeoCoordinate(PyObject *self, PyObject *args) {
   if (argc == 2) {
     int _v;
     {
-      int res = SWIG_AsVal_float(argv[0], NULL);
+      int res = SWIG_AsVal_double(argv[0], NULL);
       _v = SWIG_CheckState(res);
     }
     if (_v) {
       {
-        int res = SWIG_AsVal_float(argv[1], NULL);
+        int res = SWIG_AsVal_double(argv[1], NULL);
         _v = SWIG_CheckState(res);
       }
       if (_v) {
@@ -6446,9 +6438,9 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_set(PyObject *SWIGUNUSEDPARM(self), PyO
   Seiscomp::Geo::GeoCoordinate::ValueType arg3 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  float val2 ;
+  double val2 ;
   int ecode2 = 0 ;
-  float val3 ;
+  double val3 ;
   int ecode3 = 0 ;
   PyObject *swig_obj[3] ;
   
@@ -6458,12 +6450,12 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_set(PyObject *SWIGUNUSEDPARM(self), PyO
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GeoCoordinate_set" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Geo::GeoCoordinate * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "GeoCoordinate_set" "', argument " "2"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType""'");
   } 
   arg2 = static_cast< Seiscomp::Geo::GeoCoordinate::ValueType >(val2);
-  ecode3 = SWIG_AsVal_float(swig_obj[2], &val3);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "GeoCoordinate_set" "', argument " "3"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType""'");
   } 
@@ -6518,7 +6510,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_latitude(PyObject *SWIGUNUSEDPARM(self)
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_From_float(static_cast< float >(result));
+  resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
   return NULL;
@@ -6554,7 +6546,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_longitude(PyObject *SWIGUNUSEDPARM(self
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_From_float(static_cast< float >(result));
+  resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
   return NULL;
@@ -6697,20 +6689,20 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_width(PyObject *SWIGUNUSEDPARM(self), P
   PyObject *resultobj = 0;
   Seiscomp::Geo::GeoCoordinate::ValueType arg1 ;
   Seiscomp::Geo::GeoCoordinate::ValueType arg2 ;
-  float val1 ;
+  double val1 ;
   int ecode1 = 0 ;
-  float val2 ;
+  double val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   Seiscomp::Geo::GeoCoordinate::ValueType result;
   
   if (!SWIG_Python_UnpackTuple(args, "GeoCoordinate_width", 2, 2, swig_obj)) SWIG_fail;
-  ecode1 = SWIG_AsVal_float(swig_obj[0], &val1);
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "GeoCoordinate_width" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType""'");
   } 
   arg1 = static_cast< Seiscomp::Geo::GeoCoordinate::ValueType >(val1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "GeoCoordinate_width" "', argument " "2"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType""'");
   } 
@@ -6729,7 +6721,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_width(PyObject *SWIGUNUSEDPARM(self), P
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_From_float(static_cast< float >(result));
+  resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
   return NULL;
@@ -6739,14 +6731,14 @@ fail:
 SWIGINTERN PyObject *_wrap_GeoCoordinate_normalizeLat(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Geo::GeoCoordinate::ValueType arg1 ;
-  float val1 ;
+  double val1 ;
   int ecode1 = 0 ;
   PyObject *swig_obj[1] ;
   Seiscomp::Geo::GeoCoordinate::ValueType result;
   
   if (!args) SWIG_fail;
   swig_obj[0] = args;
-  ecode1 = SWIG_AsVal_float(swig_obj[0], &val1);
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "GeoCoordinate_normalizeLat" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType""'");
   } 
@@ -6765,7 +6757,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_normalizeLat(PyObject *SWIGUNUSEDPARM(s
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_From_float(static_cast< float >(result));
+  resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
   return NULL;
@@ -6775,14 +6767,14 @@ fail:
 SWIGINTERN PyObject *_wrap_GeoCoordinate_normalizeLon(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Geo::GeoCoordinate::ValueType arg1 ;
-  float val1 ;
+  double val1 ;
   int ecode1 = 0 ;
   PyObject *swig_obj[1] ;
   Seiscomp::Geo::GeoCoordinate::ValueType result;
   
   if (!args) SWIG_fail;
   swig_obj[0] = args;
-  ecode1 = SWIG_AsVal_float(swig_obj[0], &val1);
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "GeoCoordinate_normalizeLon" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType""'");
   } 
@@ -6801,7 +6793,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_normalizeLon(PyObject *SWIGUNUSEDPARM(s
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_From_float(static_cast< float >(result));
+  resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
   return NULL;
@@ -6819,7 +6811,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_normalizeLatLon(PyObject *SWIGUNUSEDPAR
   PyObject *swig_obj[2] ;
   
   if (!SWIG_Python_UnpackTuple(args, "GeoCoordinate_normalizeLatLon", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_float,  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_double,  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GeoCoordinate_normalizeLatLon" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType &""'"); 
   }
@@ -6827,7 +6819,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_normalizeLatLon(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "GeoCoordinate_normalizeLatLon" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType &""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Geo::GeoCoordinate::ValueType * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_float,  0 );
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_double,  0 );
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "GeoCoordinate_normalizeLatLon" "', argument " "2"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType &""'"); 
   }
@@ -6860,20 +6852,20 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_distanceLon(PyObject *SWIGUNUSEDPARM(se
   PyObject *resultobj = 0;
   Seiscomp::Geo::GeoCoordinate::ValueType arg1 ;
   Seiscomp::Geo::GeoCoordinate::ValueType arg2 ;
-  float val1 ;
+  double val1 ;
   int ecode1 = 0 ;
-  float val2 ;
+  double val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   Seiscomp::Geo::GeoCoordinate::ValueType result;
   
   if (!SWIG_Python_UnpackTuple(args, "GeoCoordinate_distanceLon", 2, 2, swig_obj)) SWIG_fail;
-  ecode1 = SWIG_AsVal_float(swig_obj[0], &val1);
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "GeoCoordinate_distanceLon" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType""'");
   } 
   arg1 = static_cast< Seiscomp::Geo::GeoCoordinate::ValueType >(val1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "GeoCoordinate_distanceLon" "', argument " "2"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType""'");
   } 
@@ -6892,7 +6884,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_distanceLon(PyObject *SWIGUNUSEDPARM(se
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_From_float(static_cast< float >(result));
+  resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
   return NULL;
@@ -6905,7 +6897,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_lat_set(PyObject *SWIGUNUSEDPARM(self),
   Seiscomp::Geo::GeoCoordinate::ValueType arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  float val2 ;
+  double val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   
@@ -6915,7 +6907,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_lat_set(PyObject *SWIGUNUSEDPARM(self),
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GeoCoordinate_lat_set" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Geo::GeoCoordinate * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "GeoCoordinate_lat_set" "', argument " "2"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType""'");
   } 
@@ -6944,7 +6936,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_lat_get(PyObject *SWIGUNUSEDPARM(self),
   }
   arg1 = reinterpret_cast< Seiscomp::Geo::GeoCoordinate * >(argp1);
   result = (Seiscomp::Geo::GeoCoordinate::ValueType) ((arg1)->lat);
-  resultobj = SWIG_From_float(static_cast< float >(result));
+  resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
   return NULL;
@@ -6957,7 +6949,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_lon_set(PyObject *SWIGUNUSEDPARM(self),
   Seiscomp::Geo::GeoCoordinate::ValueType arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  float val2 ;
+  double val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
   
@@ -6967,7 +6959,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_lon_set(PyObject *SWIGUNUSEDPARM(self),
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GeoCoordinate_lon_set" "', argument " "1"" of type '" "Seiscomp::Geo::GeoCoordinate *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Geo::GeoCoordinate * >(argp1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "GeoCoordinate_lon_set" "', argument " "2"" of type '" "Seiscomp::Geo::GeoCoordinate::ValueType""'");
   } 
@@ -6996,7 +6988,7 @@ SWIGINTERN PyObject *_wrap_GeoCoordinate_lon_get(PyObject *SWIGUNUSEDPARM(self),
   }
   arg1 = reinterpret_cast< Seiscomp::Geo::GeoCoordinate * >(argp1);
   result = (Seiscomp::Geo::GeoCoordinate::ValueType) ((arg1)->lon);
-  resultobj = SWIG_From_float(static_cast< float >(result));
+  resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
   return NULL;
@@ -7720,33 +7712,33 @@ SWIGINTERN PyObject *_wrap_new_GeoBoundingBox__SWIG_1(PyObject *SWIGUNUSEDPARM(s
   Seiscomp::Geo::GeoBoundingBox::ValueType arg2 ;
   Seiscomp::Geo::GeoBoundingBox::ValueType arg3 ;
   Seiscomp::Geo::GeoBoundingBox::ValueType arg4 ;
-  float val1 ;
+  double val1 ;
   int ecode1 = 0 ;
-  float val2 ;
+  double val2 ;
   int ecode2 = 0 ;
-  float val3 ;
+  double val3 ;
   int ecode3 = 0 ;
-  float val4 ;
+  double val4 ;
   int ecode4 = 0 ;
   Seiscomp::Geo::GeoBoundingBox *result = 0 ;
   
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
-  ecode1 = SWIG_AsVal_float(swig_obj[0], &val1);
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_GeoBoundingBox" "', argument " "1"" of type '" "Seiscomp::Geo::GeoBoundingBox::ValueType""'");
   } 
   arg1 = static_cast< Seiscomp::Geo::GeoBoundingBox::ValueType >(val1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_GeoBoundingBox" "', argument " "2"" of type '" "Seiscomp::Geo::GeoBoundingBox::ValueType""'");
   } 
   arg2 = static_cast< Seiscomp::Geo::GeoBoundingBox::ValueType >(val2);
-  ecode3 = SWIG_AsVal_float(swig_obj[2], &val3);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_GeoBoundingBox" "', argument " "3"" of type '" "Seiscomp::Geo::GeoBoundingBox::ValueType""'");
   } 
   arg3 = static_cast< Seiscomp::Geo::GeoBoundingBox::ValueType >(val3);
-  ecode4 = SWIG_AsVal_float(swig_obj[3], &val4);
+  ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "new_GeoBoundingBox" "', argument " "4"" of type '" "Seiscomp::Geo::GeoBoundingBox::ValueType""'");
   } 
@@ -7786,22 +7778,22 @@ SWIGINTERN PyObject *_wrap_new_GeoBoundingBox(PyObject *self, PyObject *args) {
   if (argc == 4) {
     int _v;
     {
-      int res = SWIG_AsVal_float(argv[0], NULL);
+      int res = SWIG_AsVal_double(argv[0], NULL);
       _v = SWIG_CheckState(res);
     }
     if (_v) {
       {
-        int res = SWIG_AsVal_float(argv[1], NULL);
+        int res = SWIG_AsVal_double(argv[1], NULL);
         _v = SWIG_CheckState(res);
       }
       if (_v) {
         {
-          int res = SWIG_AsVal_float(argv[2], NULL);
+          int res = SWIG_AsVal_double(argv[2], NULL);
           _v = SWIG_CheckState(res);
         }
         if (_v) {
           {
-            int res = SWIG_AsVal_float(argv[3], NULL);
+            int res = SWIG_AsVal_double(argv[3], NULL);
             _v = SWIG_CheckState(res);
           }
           if (_v) {
@@ -8219,7 +8211,7 @@ SWIGINTERN PyObject *_wrap_GeoBoundingBox_width(PyObject *SWIGUNUSEDPARM(self), 
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_From_float(static_cast< float >(result));
+  resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
   return NULL;
@@ -8255,7 +8247,7 @@ SWIGINTERN PyObject *_wrap_GeoBoundingBox_height(PyObject *SWIGUNUSEDPARM(self),
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_From_float(static_cast< float >(result));
+  resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
   return NULL;
@@ -8300,19 +8292,19 @@ SWIGINTERN PyObject *_wrap_GeoBoundingBox_crossesDateLine__SWIG_1(PyObject *SWIG
   PyObject *resultobj = 0;
   Seiscomp::Geo::GeoBoundingBox::ValueType arg1 ;
   Seiscomp::Geo::GeoBoundingBox::ValueType arg2 ;
-  float val1 ;
+  double val1 ;
   int ecode1 = 0 ;
-  float val2 ;
+  double val2 ;
   int ecode2 = 0 ;
   bool result;
   
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
-  ecode1 = SWIG_AsVal_float(swig_obj[0], &val1);
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "GeoBoundingBox_crossesDateLine" "', argument " "1"" of type '" "Seiscomp::Geo::GeoBoundingBox::ValueType""'");
   } 
   arg1 = static_cast< Seiscomp::Geo::GeoBoundingBox::ValueType >(val1);
-  ecode2 = SWIG_AsVal_float(swig_obj[1], &val2);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "GeoBoundingBox_crossesDateLine" "', argument " "2"" of type '" "Seiscomp::Geo::GeoBoundingBox::ValueType""'");
   } 
@@ -8358,12 +8350,12 @@ SWIGINTERN PyObject *_wrap_GeoBoundingBox_crossesDateLine(PyObject *self, PyObje
   if (argc == 2) {
     int _v;
     {
-      int res = SWIG_AsVal_float(argv[0], NULL);
+      int res = SWIG_AsVal_double(argv[0], NULL);
       _v = SWIG_CheckState(res);
     }
     if (_v) {
       {
-        int res = SWIG_AsVal_float(argv[1], NULL);
+        int res = SWIG_AsVal_double(argv[1], NULL);
         _v = SWIG_CheckState(res);
       }
       if (_v) {
@@ -22124,8 +22116,7 @@ static swig_type_info _swigt__p_boost__any = {"_p_boost__any", "Seiscomp::Core::
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_const_iterator = {"_p_const_iterator", "const_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_difference_type = {"_p_difference_type", "difference_type *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_double = {"_p_double", "double *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_float = {"_p_float", "Seiscomp::Geo::GeoCoordinate::ValueType *|float *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_double = {"_p_double", "Seiscomp::Geo::GeoCoordinate::ValueType *|double *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int = {"_p_int", "intptr_t *|int *|int_least32_t *|int_fast32_t *|int32_t *|int_fast16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_iterator = {"_p_iterator", "iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_long_long = {"_p_long_long", "int_least64_t *|int_fast64_t *|int64_t *|long long *|intmax_t *", 0, 0, (void*)0, 0};
@@ -22304,7 +22295,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_const_iterator,
   &_swigt__p_difference_type,
   &_swigt__p_double,
-  &_swigt__p_float,
   &_swigt__p_int,
   &_swigt__p_iterator,
   &_swigt__p_long_long,
@@ -22483,7 +22473,6 @@ static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0,
 static swig_cast_info _swigc__p_const_iterator[] = {  {&_swigt__p_const_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_difference_type[] = {  {&_swigt__p_difference_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_float[] = {  {&_swigt__p_float, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_iterator[] = {  {&_swigt__p_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_long_long[] = {  {&_swigt__p_long_long, 0, 0, 0},{0, 0, 0, 0}};
@@ -22662,7 +22651,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_const_iterator,
   _swigc__p_difference_type,
   _swigc__p_double,
-  _swigc__p_float,
   _swigc__p_int,
   _swigc__p_iterator,
   _swigc__p_long_long,

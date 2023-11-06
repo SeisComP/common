@@ -665,6 +665,7 @@ class TravelTime(object):
     dtdh = property(_seismology.TravelTime_dtdh_get, _seismology.TravelTime_dtdh_set, doc=r"""dtdh : double""")
     dddp = property(_seismology.TravelTime_dddp_get, _seismology.TravelTime_dddp_set, doc=r"""dddp : double""")
     takeoff = property(_seismology.TravelTime_takeoff_get, _seismology.TravelTime_takeoff_set, doc=r"""takeoff : double""")
+    azi = property(_seismology.TravelTime_azi_get, _seismology.TravelTime_azi_set, doc=r"""azi : Seiscomp::Core::Optional<(double)>::Impl""")
     __swig_destroy__ = _seismology.delete_TravelTime
 
 # Register TravelTime in _seismology:
@@ -719,14 +720,18 @@ class TravelTimeTableInterface(seiscomp.core.BaseObject):
 
     def compute(self, *args):
         r"""
-        compute(TravelTimeTableInterface self, double lat1, double lon1, double dep1, double lat2, double lon2, double alt2=0., int ellc=0) -> TravelTimeList
-        compute(TravelTimeTableInterface self, char const * phase, double lat1, double lon1, double dep1, double lat2, double lon2, double alt2=0., int ellc=0) -> TravelTime
+        compute(TravelTimeTableInterface self, double lat1, double lon1, double dep1, double lat2, double lon2, double elev2=0., int ellc=1) -> TravelTimeList
+        compute(TravelTimeTableInterface self, char const * phase, double lat1, double lon1, double dep1, double lat2, double lon2, double elev2=0., int ellc=1) -> TravelTime
         """
         return _seismology.TravelTimeTableInterface_compute(self, *args)
 
-    def computeFirst(self, lat1, lon1, dep1, lat2, lon2, alt2=0., ellc=0):
-        r"""computeFirst(TravelTimeTableInterface self, double lat1, double lon1, double dep1, double lat2, double lon2, double alt2=0., int ellc=0) -> TravelTime"""
-        return _seismology.TravelTimeTableInterface_computeFirst(self, lat1, lon1, dep1, lat2, lon2, alt2, ellc)
+    def computeFirst(self, lat1, lon1, dep1, lat2, lon2, elev2=0., ellc=1):
+        r"""computeFirst(TravelTimeTableInterface self, double lat1, double lon1, double dep1, double lat2, double lon2, double elev2=0., int ellc=1) -> TravelTime"""
+        return _seismology.TravelTimeTableInterface_computeFirst(self, lat1, lon1, dep1, lat2, lon2, elev2, ellc)
+
+    def computeTime(self, phase, lat1, lon1, dep1, lat2, lon2, elev2=0., ellc=1):
+        r"""computeTime(TravelTimeTableInterface self, char const * phase, double lat1, double lon1, double dep1, double lat2, double lon2, double elev2=0., int ellc=1) -> double"""
+        return _seismology.TravelTimeTableInterface_computeTime(self, phase, lat1, lon1, dep1, lat2, lon2, elev2, ellc)
 
 # Register TravelTimeTableInterface in _seismology:
 _seismology.TravelTimeTableInterface_swigregister(TravelTimeTableInterface)
@@ -755,14 +760,14 @@ class TravelTimeTable(TravelTimeTableInterface):
 
     def compute(self, *args):
         r"""
-        compute(TravelTimeTable self, double lat1, double lon1, double dep1, double lat2, double lon2, double alt2=0., int ellc=1) -> TravelTimeList
-        compute(TravelTimeTable self, char const * phase, double lat1, double lon1, double dep1, double lat2, double lon2, double alt2=0., int ellc=1) -> TravelTime
+        compute(TravelTimeTable self, double lat1, double lon1, double dep1, double lat2, double lon2, double elev2=0., int ellc=1) -> TravelTimeList
+        compute(TravelTimeTable self, char const * phase, double lat1, double lon1, double dep1, double lat2, double lon2, double elev2=0., int ellc=1) -> TravelTime
         """
         return _seismology.TravelTimeTable_compute(self, *args)
 
-    def computeFirst(self, lat1, lon1, dep1, lat2, lon2, alt2=0., ellc=1):
-        r"""computeFirst(TravelTimeTable self, double lat1, double lon1, double dep1, double lat2, double lon2, double alt2=0., int ellc=1) -> TravelTime"""
-        return _seismology.TravelTimeTable_computeFirst(self, lat1, lon1, dep1, lat2, lon2, alt2, ellc)
+    def computeFirst(self, lat1, lon1, dep1, lat2, lon2, elev2=0., ellc=1):
+        r"""computeFirst(TravelTimeTable self, double lat1, double lon1, double dep1, double lat2, double lon2, double elev2=0., int ellc=1) -> TravelTime"""
+        return _seismology.TravelTimeTable_computeFirst(self, lat1, lon1, dep1, lat2, lon2, elev2, ellc)
     __swig_destroy__ = _seismology.delete_TravelTimeTable
 
 # Register TravelTimeTable in _seismology:

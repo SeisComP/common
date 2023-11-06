@@ -2786,6 +2786,10 @@ class GenericSeismometerFilterD(SeismometerFilterD):
 _math.GenericSeismometerFilterD_swigregister(GenericSeismometerFilterD)
 
 
+def delta(lat1, lon1, lat2, lon2):
+    r"""delta(double lat1, double lon1, double lat2, double lon2) -> double"""
+    return _math.delta(lat1, lon1, lat2, lon2)
+
 def delazi(lat1, lon1, lat2, lon2):
     r"""delazi(double lat1, double lon1, double lat2, double lon2)"""
     return _math.delazi(lat1, lon1, lat2, lon2)
