@@ -132,7 +132,7 @@
  *
  * ================
  * Change log
- * ===============
+ * ================
  *
  *  * 08.09.2014: Fixed typo in event type conversion (meteo[r] impact)
  *
@@ -178,6 +178,10 @@
  *                extented by data availability top level element
  *
  *  * 02.11.2018: Don't export stationMagnitude passedQC attribute
+ *
+ *  * 01.11.2023:
+ *    - Skip originUncertaintyDescription if value is set to
+ *      'probability density function' not supported by QuakeML.
  *
  ********************************************************************** -->
 <xsl:stylesheet version="1.0"
@@ -477,6 +481,17 @@
         <xsl:call-template name="genericNode">
             <xsl:with-param name="name" select="'originUncertainty'"/>
         </xsl:call-template>
+    </xsl:template>
+
+    <!-- originUncertaintyDescription, enumeration of QML does not
+         include 'probability density function' -->
+    <xsl:template match="scs:originUncertaintyDescription">
+        <xsl:variable name="v" select="current()"/>
+        <xsl:if test="$v!='probability density function'">
+            <xsl:element name="{local-name()}">
+                <xsl:value-of select="$v"/>
+            </xsl:element>
+        </xsl:if>
     </xsl:template>
 
     <!-- waveformID: SCS uses a child element 'resourceURI', QML

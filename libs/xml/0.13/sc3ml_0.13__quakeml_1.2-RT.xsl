@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * SC3ML 0.12 to QuakeML 1.2 RT stylesheet converter
+ * SC3ML 0.13 to QuakeML 1.2 RT stylesheet converter
  * Author  : Stephan Herrnkind
  * Email   : stephan.herrnkind@gempa.de
  * Version : 2017.342.01
@@ -27,14 +27,14 @@
  * This stylesheet converts a SC3ML to a QuakeML-RT document. It may be
  * invoked, e.g., using xalan or xsltproc:
  *
- *   xalan -in sc3ml.xml -xsl sc3ml_0.12__quakeml_1.2-RT.xsl -out quakeml.xml
- *   xsltproc -o quakeml.xml sc3ml_0.12__quakeml_1.2-RT.xsl sc3ml.xml
+ *   xalan -in sc3ml.xml -xsl sc3ml_0.13__quakeml_1.2-RT.xsl -out quakeml.xml
+ *   xsltproc -o quakeml.xml sc3ml_0.13__quakeml_1.2-RT.xsl sc3ml.xml
  *
  * You can also modify the default ID prefix with the reverse DNS name of your
  * institute by setting the ID_PREFIX param:
  *
- *   xalan -param ID_PREFIX "'smi:org.gfz-potsdam.de/geofon/'" -in sc3ml.xml -xsl sc3ml_0.12__quakeml_1.2-RT.xsl -out quakeml.xml
- *   xsltproc -stringparam ID_PREFIX smi:org.gfz-potsdam.de/geofon/ -o quakeml.xml sc3ml_0.12__quakeml_1.2-RT.xsl sc3ml.xml
+ *   xalan -param ID_PREFIX "'smi:org.gfz-potsdam.de/geofon/'" -in sc3ml.xml -xsl sc3ml_0.13__quakeml_1.2-RT.xsl -out quakeml.xml
+ *   xsltproc -stringparam ID_PREFIX smi:org.gfz-potsdam.de/geofon/ -o quakeml.xml sc3ml_0.13__quakeml_1.2-RT.xsl sc3ml.xml
  *
  * ================
  * Transformation
@@ -186,8 +186,11 @@
  *  * 01.11.2023:
  *    - Map additional SC event types 'calving', 'frost quake', 'tremor pulse'
  *      and 'submarine landslide', 'rocket impact', 'artillery strike',
- *      'bomb detonation', 'moving aircraft' and
- *      'atmospheric meteor explosion' to QuakeML 'other event'.
+ *      'bomb detonation', 'moving aircraft', 'atmospheric meteor explosion',
+ *      'volcano-tectonic', 'volcanic long-period',
+ *      'volcanic very-long-period', 'volcanic hybrid', 'volcanic rockfall',
+ *      'volcanic tremor', 'pyroclastic flow' and 'lahar' to QuakeML
+ *      'other event'.
  *    - Skip eventTypeCertainty if value is set to 'damaging' or 'felt'
  *      both unsupported by QuakeML.
  *    - Skip originUncertaintyDescription if value is set to
@@ -196,7 +199,7 @@
  ********************************************************************** -->
 <xsl:stylesheet version="1.0"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-        xmlns:scs="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.12"
+        xmlns:scs="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.13"
         xmlns:qml="http://quakeml.org/xmlns/quakeml/1.0"
         xmlns="http://quakeml.org/xmlns/bed-rt/1.2"
         xmlns:q="http://quakeml.org/xmlns/quakeml-rt/1.2"
@@ -330,6 +333,14 @@
                 <xsl:when test="$v='bomb detonation'">other event</xsl:when>
                 <xsl:when test="$v='moving aircraft'">other event</xsl:when>
                 <xsl:when test="$v='atmospheric meteor explosion'">other event</xsl:when>
+                <xsl:when test="$v='volcano-tectonic'">other event</xsl:when>
+                <xsl:when test="$v='volcanic long-period'">other event</xsl:when>
+                <xsl:when test="$v='volcanic very-long-period'">other event</xsl:when>
+                <xsl:when test="$v='volcanic hybrid'">other event</xsl:when>
+                <xsl:when test="$v='volcanic rockfall'">other event</xsl:when>
+                <xsl:when test="$v='volcanic tremor'">other event</xsl:when>
+                <xsl:when test="$v='pyroclastic flow'">other event</xsl:when>
+                <xsl:when test="$v='lahar'">other event</xsl:when>
                 <xsl:otherwise><xsl:value-of select="$v"/></xsl:otherwise>
             </xsl:choose>
         </xsl:element>
