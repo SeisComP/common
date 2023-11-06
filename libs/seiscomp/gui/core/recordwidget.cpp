@@ -3021,11 +3021,9 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 	int markerCanvasHeight = h;
 
 	QVector<RecordMarker*> *markerList = &_marker;
-	RecordMarker *activeMarker = _activeMarker;
 
 	if ( _markerSourceWidget ) {
 		markerList = &_markerSourceWidget->_marker;
-		activeMarker = _markerSourceWidget->_activeMarker;
 	}
 
 	QColor offsetColor = blend(bg, SCScheme.colors.records.offset.color(), 75);
@@ -4112,7 +4110,8 @@ void RecordWidget::filterRecords(Stream *s) {
 	RecordPtr lastRec;
 	for ( RecordSequence::const_iterator it = s->records[Stream::Raw]->begin();
 	      it != s->records[Stream::Raw]->end(); ++it) {
-		RecordPtr rec = filteredRecord(s->filter, (*it).get(), lastRec.get());
+		RecordPtr rec = filteredRecord(s->filter, (*it).get(), lastRec.get(),
+		                               s->records[Stream::Filtered]->tolerance());
 		if ( rec ) {
 			s->records[Stream::Filtered]->feed(rec.get());
 			s->traces[Stream::Filtered].dirty = true;
@@ -4126,42 +4125,32 @@ void RecordWidget::filterRecords(Stream *s) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Record *RecordWidget::filteredRecord(Filter *filter,
-                                     const Record* rec, const Record* lastRec) const {
+Record *RecordWidget::filteredRecord(Filter *&filter,
+                                     const Record* rec, const Record* lastRec,
+                                     double tolerance) const {
 	if ( rec->data() == nullptr ) return nullptr;
 
 	DoubleArrayPtr arr = static_cast<DoubleArray*>(rec->data()->copy(Array::DOUBLE));
 
 	GenericRecord* crec = new GenericRecord(*rec);
 
-	// reset filter
-	/*
-	if ( _filteredRecords->empty() ) {
-	}
-	else {
-		bool contiguous = _filteredRecords->back()->timeWindow().contiguous(
-				rec->timeWindow(), _filteredRecords->tolerance()/rec->sampleCount());
-		if ( ! contiguous && lastRec ) {
-			// interpolate between records to avoid "swing in's"
-			const FloatArray* lastData = (FloatArray*)lastRec->data();
-			float lastSample = (*lastData)[lastData->size()-1];
-			float nextSample = (*arr)[0];
+	if ( lastRec ) {
+		tolerance = tolerance / rec->samplingFrequency();
+		double diff;
 
-			double gapLength = rec->startTime() - lastRec->endTime();
+		try {
+			diff = abs(double(rec->startTime() - lastRec->endTime()));
+		}
+		catch ( ... ) {
+			diff = tolerance * 2;
+		}
 
-			if ( gapLength <= 4. && gapLength > 0 ) {
-				double delta = nextSample - lastSample;
-				int missingSamples = static_cast<int>(ceil(rec->samplingFrequency() * (double)gapLength));
-				double step = 1./(double)(missingSamples+1);
-				double di = step;
-				for ( int i = 0; i < missingSamples; ++i, di += step ) {
-					float value = lastSample + di*delta;
-					_filter->apply(1, &value);
-				}
-			}
+		if ( diff > tolerance ) {
+			Filter *tmp = filter;
+			filter = filter->clone();
+			delete tmp;
 		}
 	}
-	*/
 
 	filter->apply(arr->size(), arr->typedData());
 
@@ -4329,7 +4318,10 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 	if (!s->records[Stream::Filtered] || !s->filter) return;
 
 	if ( !newlyCreated ) {
-		RecordPtr frec = filteredRecord(s->filter, rec);
+		RecordPtr frec = filteredRecord(s->filter, rec,
+		                                s->records[Stream::Filtered]->empty() ?
+		                                nullptr : s->records[Stream::Filtered]->back().get(),
+		                                s->records[Stream::Filtered]->tolerance());
 		if ( frec ) {
 			s->records[Stream::Filtered]->feed(frec.get());
 			s->traces[Stream::Filtered].dirty = true;
