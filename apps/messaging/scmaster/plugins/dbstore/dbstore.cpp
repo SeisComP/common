@@ -79,8 +79,7 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 				                 configPrefix.c_str());
 			}
 
-			SEISCOMP_DEBUG("Checking database '%s' and trying to connect with '%s'",
-			               _settings.driver.c_str(), _settings.write.c_str());
+			SEISCOMP_DEBUG("Checking database '%s' and trying to connect", _settings.driver.c_str());
 
 			_db = IO::DatabaseInterface::Create(_settings.driver.c_str());
 			if ( _db == NULL ) {
