@@ -1825,7 +1825,7 @@ bool Application::initDatabase() {
 
 	if ( !_settings.database.URI.empty() ) {
 		SEISCOMP_INFO("Read database service parameters from configfile");
-		SEISCOMP_INFO("Trying to connect to %s", _settings.database.URI.c_str());
+		SEISCOMP_INFO("Trying to connect to database");
 
 		IO::DatabaseInterfacePtr db = IO::DatabaseInterface::Open(_settings.database.URI.c_str());
 		if ( db ) {
@@ -1841,11 +1841,10 @@ bool Application::initDatabase() {
 		}
 		else {
 			if ( _settings.enableFetchDatabase ) {
-				SEISCOMP_WARNING("Database connection to %s failed, trying to fetch the service message",
-				                 _settings.database.URI.c_str());
+				SEISCOMP_WARNING("Database connection failed, trying to fetch the service message");
 			}
 			else {
-				SEISCOMP_WARNING("Database connection to %s failed", _settings.database.URI.c_str());
+				SEISCOMP_WARNING("Database connection failed");
 				return false;
 			}
 		}
