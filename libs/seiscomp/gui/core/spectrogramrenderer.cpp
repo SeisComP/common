@@ -668,7 +668,7 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 			maxAmp = ceil(maxAmp);
 		}
 
-		if ( _dirty || (minAmp != _normalizationAmpRange[0] || maxAmp != _normalizationAmpRange[1]) ) {
+		if ( minAmp != _normalizationAmpRange[0] || maxAmp != _normalizationAmpRange[1] ) {
 			_normalizationAmpRange[0] = minAmp;
 			_normalizationAmpRange[1] = maxAmp;
 
@@ -680,7 +680,10 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 			renderSpectrogram();
 
 			_normalizationMode = NormalizationMode::Time;
-			setGradientRange(minAmp, maxAmp);
+			_ampMin = minAmp;
+			_ampMax = maxAmp;
+
+			_gradient.setRange(_ampMin, _ampMax);
 			_dirty = false;
 		}
 	}
