@@ -44,7 +44,7 @@ SpectrogramRenderer::SpectrogramRenderer() {
 	_normalizationMode = NormalizationMode::Fixed;
 	_logarithmic = false;
 	_smoothTransform = true;
-	_dirty = false;
+	_dirty = true;
 
 	_renderedFmin = _renderedFmax = -1;
 }
@@ -169,8 +169,9 @@ bool SpectrogramRenderer::feed(const Record *rec) {
 			}
 
 			_spectra.push_back(new PowerSpectrum(*spec, _scale));
-			addSpectrum(_spectra.back().get());
-			setDirty();
+			if ( !_dirty ) {
+				addSpectrum(_spectra.back().get());
+			}
 		}
 	}
 
@@ -235,9 +236,10 @@ void SpectrogramRenderer::setTimeRange(double tmin, double tmax) {
 void SpectrogramRenderer::setTimeWindow(const Core::TimeWindow& tw) {
 	_timeWindow = tw;
 
+	bool needUpdate = false;
+
 	// Trim front
 	if ( _timeWindow.startTime().valid() && !_spectra.empty() ) {
-		bool needUpdate = false;
 		auto it = _spectra.begin();
 
 		while ( it != _spectra.end() ) {
@@ -250,15 +252,10 @@ void SpectrogramRenderer::setTimeWindow(const Core::TimeWindow& tw) {
 				break;
 			}
 		}
-
-		if ( needUpdate ) {
-			setDirty();
-		}
 	}
 
 	// Trim back
 	if ( _timeWindow.endTime().valid() && !_spectra.empty() ) {
-		bool needUpdate = false;
 		auto it = _spectra.end();
 
 		while ( it != _spectra.begin() ) {
@@ -272,10 +269,10 @@ void SpectrogramRenderer::setTimeWindow(const Core::TimeWindow& tw) {
 				break;
 			}
 		}
+	}
 
-		if ( needUpdate ) {
-			setDirty();
-		}
+	if ( needUpdate ) {
+		setDirty();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -366,6 +363,7 @@ void SpectrogramRenderer::setTransferFunction(Math::Restitution::FFT::TransferFu
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SpectrogramRenderer::setDirty() {
 	_dirty = true;
+	_images.clear();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
