@@ -642,20 +642,20 @@ class Module(kernel.CoreModule):
                     continue
 
                 try:
-                    vfrommaj, vfrommin = [int(t) for t in vfrom.split("_")]
-                    vfromrev = 0
-                except ValueError:
+                    vfrommaj, vfrommin, vfromrev = [int(t) for t in vfrom.split("_")]
+                except ValueError as e:
                     try:
-                        vfrommaj, vfrommin, vromrev = [int(t) for t in vfrom.split("_")]
+                        vfrommaj, vfrommin = [int(t) for t in vfrom.split("_")]
+                        vfromrev = 0
                     except ValueError:
                         continue
 
                 try:
-                    vtomaj, vtomin = [int(t) for t in vto.split("_")]
-                    vtorev = 0
+                    vtomaj, vtomin, vtorev = [int(t) for t in vto.split("_")]
                 except ValueError:
                     try:
-                        vtomaj, vtomin, vtorev = [int(t) for t in vto.split("_")]
+                        vtomaj, vtomin = [int(t) for t in vto.split("_")]
+                        vtorev = 0
                     except ValueError:
                         continue
 
