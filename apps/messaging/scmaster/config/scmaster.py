@@ -293,7 +293,7 @@ class Module(kernel.CoreModule):
                         params.rwhost,
                         rootpwd,
                         str(params.drop),
-                        schemapath
+                        schemapath,
                     ]
                     if characterSet is not None:
                         options.append(characterSet)
@@ -697,6 +697,7 @@ class Module(kernel.CoreModule):
             "    database migration scripts in exactly the given order:",
             file=sys.stderr,
         )
+        print("    * seiscomp stop", file=sys.stderr)
 
         def fn(maj, min, rev):
             return "%d_%d_%d" % (maj, min, rev) if rev else "%d_%d" % (maj, min)
@@ -722,8 +723,9 @@ class Module(kernel.CoreModule):
                 print(
                     "    * {}".format(os.path.join(migrations, fname)), file=sys.stderr
                 )
-            print("    * seiscomp restart scmaster", file=sys.stderr)
 
             (vmaj, vmin, vrev) = (vtomaj, vtomin, vtorev)
+
+        print("    * seiscomp start", file=sys.stderr)
 
         return False
