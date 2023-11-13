@@ -25,8 +25,6 @@
 #include <seiscomp/core/platform/platform.h>
 #include <seiscomp/utils/timer.h>
 
-#include <boost/thread/mutex.hpp>
-
 #if !defined(_MSC_VER)
 #include <netdb.h>
 #include <sys/socket.h>
@@ -66,10 +64,12 @@
 #define HOST_NAME_MAX 255
 #endif
 
-#include <string>
-#include <vector>
+#include <cstdint>
 #include <fstream>
-#include <stdint.h>
+#include <string>
+#include <mutex>
+#include <thread>
+#include <vector>
 
 
 using namespace std;
@@ -134,7 +134,7 @@ struct HostInfoImpl {
 	: pid(-1) {}
 
 	void init() {
-		boost::mutex::scoped_lock lk(_mutex);
+		lock_guard<mutex> lk(resourceMutex);
 
 		if ( pid != -1 )
 			// Already initialized
@@ -302,13 +302,13 @@ struct HostInfoImpl {
 #endif
 	}
 
-	int                  pid;
-	std::string          hostname;
-	std::string          login;
-	std::string          programName;
-	int64_t              totalMemory;
-	long                 clockTicks;
-	mutable boost::mutex _mutex;
+	int           pid;
+	string        hostname;
+	string        login;
+	string        programName;
+	int64_t       totalMemory;
+	long          clockTicks;
+	mutable mutex resourceMutex;
 };
 
 
@@ -327,7 +327,7 @@ class HostInfo::Impl {
 		double getCurrentCpuUsage(bool forceReset) {
 			g_impl.init();
 
-			boost::mutex::scoped_lock lk(_mutex);
+			lock_guard<mutex> lk(_mutex);
 
 #if !defined(_MSC_VER)
 			struct tms current;
@@ -384,7 +384,7 @@ class HostInfo::Impl {
 		}
 
 	private:
-		boost::mutex    _mutex;
+		mutex           _mutex;
 		bool            _first = true;
 		Util::StopWatch _timer;
 #if !defined(_MSC_VER)
