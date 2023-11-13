@@ -349,8 +349,8 @@ void Timer::Loop() {
 	}
 	while ( Update() );
 
-	boost::mutex::scoped_lock lk(_mutex);
 
+	std::lock_guard<std::mutex> lk(_mutex);
 	if ( _thread ) {
 		delete _thread;
 		_thread = nullptr;
@@ -363,7 +363,7 @@ void Timer::Loop() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::Update() {
-	boost::mutex::scoped_lock lk(_mutex);
+	std::lock_guard<std::mutex> lk(_mutex);
 
 	for ( TimerList::iterator it = _timers.begin(); it != _timers.end(); ) {
 		Timer *t = *it;
