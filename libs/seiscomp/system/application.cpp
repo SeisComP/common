@@ -1852,13 +1852,13 @@ int getConfig(const Application *app, const string &symbol, bool) {
 }
 
 template <>
-unsigned int getConfig(const Application *app, const string &symbol, bool) {
-	return static_cast<unsigned int>(app->configGetInt(symbol));
+uint32_t getConfig(const Application *app, const string &symbol, bool) {
+	return static_cast<uint32_t>(app->configGetInt(symbol));
 }
 
 template <>
-size_t getConfig(const Application *app, const string &symbol, bool) {
-	return static_cast<size_t>(app->configGetInt(symbol));
+uint64_t getConfig(const Application *app, const string &symbol, bool) {
+	return static_cast<uint64_t>(app->configGetInt(symbol));
 }
 
 template <>
