@@ -668,7 +668,7 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 			maxAmp = ceil(maxAmp);
 		}
 
-		if ( minAmp != _normalizationAmpRange[0] || maxAmp != _normalizationAmpRange[1] ) {
+		if ( _dirty || (minAmp != _normalizationAmpRange[0]) || (maxAmp != _normalizationAmpRange[1]) ) {
 			_normalizationAmpRange[0] = minAmp;
 			_normalizationAmpRange[1] = maxAmp;
 
