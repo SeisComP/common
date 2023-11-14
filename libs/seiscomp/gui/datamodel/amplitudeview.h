@@ -426,7 +426,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 
 		void setCursorText(const QString&);
 		void setCursorPos(const Seiscomp::Core::Time&, bool always = false);
-		void setTimeRange(float, float);
+		void setTimeRange(double, double);
 
 		void acquireStreams();
 

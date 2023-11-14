@@ -4508,12 +4508,13 @@ void AmplitudeView::setCursorPos(const Seiscomp::Core::Time& t, bool always) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeView::setTimeRange(float tmin, float tmax) {
+void AmplitudeView::setTimeRange(double tmin, double tmax) {
 	auto amplScale = SC_D.currentRecord->amplScale();
 	SC_D.currentRecord->setTimeRange(tmin, tmax);
 
-	if ( SC_D.autoScaleZoomTrace )
+	if ( SC_D.autoScaleZoomTrace ) {
 		SC_D.currentRecord->setNormalizationWindow(SC_D.currentRecord->visibleTimeWindow());
+	}
 
 	/*
 	std::cout << "ScaleWindow: " << Core::toString(SC_D.currentRecord->visibleTimeWindow().startTime()) << ", "
@@ -4529,8 +4530,9 @@ void AmplitudeView::setTimeRange(float tmin, float tmax) {
 	std::cout << "current TimeScale = " << SC_D.currentRecord->timeScale() << std::endl;
 	*/
 
-	if ( SC_D.recordView->currentItem() )
+	if ( SC_D.recordView->currentItem() ) {
 		SC_D.recordView->currentItem()->widget()->setSelected(SC_D.currentRecord->tmin(), SC_D.currentRecord->tmax());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5477,12 +5479,14 @@ void AmplitudeView::applyTimeRange(double rmin, double rmax) {
 	auto tmin = rmin;
 	auto tmax = rmax;
 
-	auto newScale = SC_D.currentRecord->width() / (tmax-tmin);
-	if ( newScale < SC_D.recordView->timeScale() )
+	auto newScale = SC_D.timeScale->width() / (tmax - tmin);
+	if ( newScale < SC_D.recordView->timeScale() ) {
 		newScale = SC_D.recordView->timeScale();
+	}
 
-	if ( tmin < SC_D.recordView->currentItem()->widget()->tmin() )
+	if ( tmin < SC_D.recordView->currentItem()->widget()->tmin() ) {
 		tmin = SC_D.recordView->currentItem()->widget()->tmin();
+	}
 
 	SC_D.currentRecord->setTimeScale(newScale);
 	SC_D.timeScale->setScale(newScale);
