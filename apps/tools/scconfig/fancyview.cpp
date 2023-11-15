@@ -1491,10 +1491,12 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 			pal.setColor(QPalette::Base, AlertColor);
 			pal.setColor(QPalette::Button, AlertColor);
 			pal.setColor(QPalette::Window, AlertColor);
+			pal.setColor(QPalette::Highlight, AlertColor);
 			pal.setColor(QPalette::ButtonText, Qt::white);
 			pal.setColor(QPalette::Disabled, QPalette::Base, blend(AlertColor, oldButton, 50));
 			pal.setColor(QPalette::Disabled, QPalette::Button, blend(AlertColor, oldButton, 50));
 			pal.setColor(QPalette::Disabled, QPalette::Window, blend(AlertColor, oldButton, 50));
+			pal.setColor(QPalette::Disabled, QPalette::Highlight, blend(AlertColor, oldButton, 50));
 			checkBox->setPalette(pal);
 		}
 	}
