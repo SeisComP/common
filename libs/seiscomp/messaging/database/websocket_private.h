@@ -30,7 +30,7 @@ namespace {
 
 
 class WebsocketProxy : public Seiscomp::IO::DatabaseInterface,
-                       virtual Seiscomp::Core::InterruptibleObject {
+                       virtual public Seiscomp::Core::InterruptibleObject {
 	// ----------------------------------------------------------------------
 	//  X'truction
 	// ----------------------------------------------------------------------
