@@ -203,12 +203,7 @@ bool Concurrent::setTimeout(int seconds) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Concurrent::close() {
 	lock_guard<mutex> lock(_mtx);
-
-	if ( !_started ) {
-		SEISCOMP_DEBUG("Closing without being started");
-		return;
-	}
-
+	
 	_queue.close();
 
 	for ( size_t i = 0; i < _rsarray.size(); ++i ) {
@@ -220,13 +215,9 @@ void Concurrent::close() {
 			thread.join();
 		}
 	}
-
-	SEISCOMP_DEBUG("All acquisition threads finished");
-
+	
 	_threads.clear();
 	_rsarray.clear();
-
-	_started = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -269,7 +260,7 @@ Record *Concurrent::next() {
 			_started = true;
 
 			for ( size_t i = 0; i < _rsarray.size(); ++i) {
-				if ( _rsarray[i].second && !_queue.isClosed() ) {
+				if ( _rsarray[i].second ) {
 					++_nthreads;
 					_rsarray[i].first->setDataType(_dataType);
 					_rsarray[i].first->setDataHint(_hint);
@@ -284,38 +275,27 @@ Record *Concurrent::next() {
 					);
 				}
 			}
-
-			if ( _threads.empty() ) {
-				return nullptr;
-			}
 		}
 	}
 
 	try {
-		while ( true ) {
+		while ( _nthreads > 0 ) {
 			Record * rec =  _queue.pop();
 			if ( rec) {
 				return rec;
 			}
-			else {
-				// Null record received ... a thread finished
-				lock_guard<mutex> lock(_mtx);
-				if ( --_nthreads ) {
-					// Still threads running ... keep on reading the queue
-					continue;
-				}
-
-				SEISCOMP_DEBUG("Last acquisition thread terminated");
-				break;
+			else { // Null record received ... a thread finished
+				--_nthreads; 
 			}
 		}
 
-		if ( _queue.size() > 0 ) {
+		if ( _queue.size() > 0 ) { // this should not happen
 			SEISCOMP_ERROR("Finished acquisition, but data queue not empty "
 			               "(%zu items still)", _queue.size());
 		}
+		
+		SEISCOMP_DEBUG("Acquisition threads terminated: closing record queue");
 
-		SEISCOMP_DEBUG("Closing record queue");
 		_queue.close();
 	}
 	catch ( Client::QueueClosedException & ) {
