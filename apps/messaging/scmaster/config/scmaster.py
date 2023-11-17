@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import os
 import shutil
+import shlex
 import sys
 import subprocess
 import tempfile
@@ -305,10 +306,10 @@ class Module(kernel.CoreModule):
                     )
                     if runAsSuperUser:
                         cmd = "{} seiscomp-python {} {}".format(
-                            binary, dbScript, " ".join(options)
+                            binary, dbScript, " ".join(shlex.quote(o) for o in options)
                         )
                     else:
-                        cmd = "{} {}".format(dbScript, " ".join(options))
+                        cmd = "{} {}".format(dbScript, " ".join(shlex.quote(o) for o in options))
 
                     p = subprocess.Popen(cmd, shell=True)
                     ret = p.wait()
@@ -371,7 +372,7 @@ class Module(kernel.CoreModule):
                             file=sys.stderr,
                         )
                         cmd = '{} su postgres -c "{}/seiscomp-python {} {}"'.format(
-                            binary, tmpPath, dbScript, " ".join(options)
+                            binary, tmpPath, dbScript, " ".join(shlex.quote(o) for o in options)
                         )
 
                         p = subprocess.Popen(cmd, shell=True)
@@ -425,7 +426,7 @@ class Module(kernel.CoreModule):
                         file=sys.stderr,
                     )
                     cmd = "seiscomp-python {} {} {}".format(
-                        dbScript, " ".join(options), override
+                        dbScript, " ".join(shlex.quote(o) for o in options), override
                     )
                     p = subprocess.Popen(cmd, shell=True)
                     ret = p.wait()
