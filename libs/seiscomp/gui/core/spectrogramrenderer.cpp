@@ -388,6 +388,7 @@ void SpectrogramRenderer::renderSpectrogram() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SpectrogramRenderer::addSpectrum(const PowerSpectrum *spec) {
 	if ( _normalizationMode == NormalizationMode::Time ) {
+		_dirty = true;
 		return;
 	}
 
