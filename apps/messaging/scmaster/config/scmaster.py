@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import os
 import shutil
+import shlex
 import sys
 import subprocess
 import tempfile
@@ -279,9 +280,11 @@ class Module(kernel.CoreModule):
                     print("+ Running MySQL database setup script {}"
                           .format(dbScript), file=sys.stderr)
                     if runAsSuperUser:
-                        cmd = "{} seiscomp-python {} {}".format(binary, dbScript, " ".join(options))
+                        cmd = "{} seiscomp-python {} {}".format(
+                            binary, dbScript, " ".join(shlex.quote(o) for o in options)
+                        )
                     else:
-                        cmd = "{} {}".format(dbScript, " ".join(options))
+                        cmd = "{} {}".format(dbScript, " ".join(shlex.quote(o) for o in options))
 
                     p = subprocess.Popen(cmd, shell=True)
                     ret = p.wait()
@@ -334,8 +337,9 @@ class Module(kernel.CoreModule):
                         binary = os.path.join(schemapath, "pkexec_wrapper.sh")
                         print("+ Running PostgreSQL database setup script {}"
                               .format(dbScript), file=sys.stderr)
-                        cmd = "{} su postgres -c \"{}/seiscomp-python {} {}\"" \
-                            .format(binary, tmpPath, dbScript, " ".join(options))
+                        cmd = '{} su postgres -c "{}/seiscomp-python {} {}"'.format(
+                              binary, tmpPath, dbScript, " ".join(shlex.quote(o) for o in options)
+                        )
 
                         p = subprocess.Popen(cmd, shell=True)
                         ret = p.wait()
@@ -386,7 +390,7 @@ class Module(kernel.CoreModule):
                 if create:
                     print("+ Running SQLite3 database setup script {}"
                           .format(dbScript), file=sys.stderr)
-                    cmd = "seiscomp-python {} {} {}".format(dbScript, " ".join(options), override)
+                    cmd = "seiscomp-python {} {} {}".format(dbScript, " ".join(shlex.quote(o) for o in options), override)
                     p = subprocess.Popen(cmd, shell=True)
                     ret = p.wait()
                     if ret != 0:
