@@ -26,6 +26,7 @@
 #include <seiscomp/datamodel/version.h>
 
 #include <libxml/xmlreader.h>
+#include <libxml/xmlversion.h>
 
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
@@ -51,7 +52,11 @@ namespace {
 const char *null_file = "";
 
 
+#if LIBXML_VERSION >= 21200
+void xmlStructuredErrorHandler(void * userData, const xmlError *error) {
+#else
 void xmlStructuredErrorHandler(void * userData, xmlErrorPtr error) {
+#endif
 	SEISCOMP_ERROR("%s: %s", (const char*)userData, error->message);
 }
 
