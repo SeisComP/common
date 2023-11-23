@@ -293,15 +293,21 @@ bool Timer::deactivate(bool remove) {
 
 	_isActive = false;
 
-	if ( remove ) {
-		std::lock_guard<std::mutex> lk(_mutex);
+	std::lock_guard<std::mutex> lk(_mutex);
 
+	if ( remove ) {
 		for ( TimerList::iterator it = _timers.begin(); it != _timers.end(); ++it ) {
 			if ( *it == this ) {
 				_timers.erase(it);
 				break;
 			}
 		}
+	}
+
+	if ( _timers.empty() && _thread ) {
+		_thread->join();
+		delete _thread;
+		_thread = nullptr;
 	}
 
 	return true;
@@ -348,13 +354,6 @@ void Timer::Loop() {
 		Core::sleep(1);
 	}
 	while ( Update() );
-
-
-	std::lock_guard<std::mutex> lk(_mutex);
-	if ( _thread ) {
-		delete _thread;
-		_thread = nullptr;
-	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
