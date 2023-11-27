@@ -294,8 +294,8 @@ void Application::AppSettings::Client::accept(SettingsLinker &linker) {
 		true
 	)
 	& cli(
-		shutdownMasterModule, "Generic", "shutdown-master-username",
-		"Triggers shutdown if the user name of the received messages match.",
+		shutdownMasterModule, "Generic", "shutdown-master-module",
+		"Triggers shutdown if the module name of the received messages match.",
 		false
 	)
 	& cli(
