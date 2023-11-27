@@ -305,7 +305,9 @@ bool Timer::deactivate(bool remove) {
 	}
 
 	if ( _timers.empty() && _thread ) {
-		_thread->join();
+		if ( _thread->joinable() ) {
+			_thread->join();
+		}
 		delete _thread;
 		_thread = nullptr;
 	}
