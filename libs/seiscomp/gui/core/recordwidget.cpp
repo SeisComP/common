@@ -4059,8 +4059,9 @@ bool RecordWidget::createFilter(int slot) {
 	if (s->records[Stream::Raw] && !s->records[Stream::Raw]->empty()) {
 		const Record *rec = s->records[Stream::Raw]->front().get();
 		double fs = rec->samplingFrequency();
-		if ( s->records[Stream::Filtered] && !s->records[Stream::Filtered]->empty() )
+		if ( s->records[Stream::Filtered] && !s->records[Stream::Filtered]->empty() ) {
 			return false;
+		}
 		else {
 			try {
 				s->filter->setSamplingFrequency(fs);
@@ -4110,12 +4111,18 @@ void RecordWidget::filterRecords(Stream *s) {
 	RecordPtr lastRec;
 	for ( RecordSequence::const_iterator it = s->records[Stream::Raw]->begin();
 	      it != s->records[Stream::Raw]->end(); ++it) {
-		RecordPtr rec = filteredRecord(s->filter, (*it).get(), lastRec.get(),
-		                               s->records[Stream::Filtered]->tolerance());
-		if ( rec ) {
-			s->records[Stream::Filtered]->feed(rec.get());
-			s->traces[Stream::Filtered].dirty = true;
-			lastRec = rec;
+		try {
+			RecordPtr rec = filteredRecord(s->filter, (*it).get(), lastRec.get(),
+			                               s->records[Stream::Filtered]->tolerance());
+			if ( rec ) {
+				s->records[Stream::Filtered]->feed(rec.get());
+				s->traces[Stream::Filtered].dirty = true;
+				lastRec = rec;
+			}
+		}
+		catch ( std::exception &e ) {
+			s->traces[Stream::Filtered].status = e.what();
+			SEISCOMP_ERROR("%s: filter: %s", (*it).get()->streamID().c_str(), e.what());
 		}
 	}
 }
@@ -4149,6 +4156,17 @@ Record *RecordWidget::filteredRecord(Filter *&filter,
 			Filter *tmp = filter;
 			filter = filter->clone();
 			delete tmp;
+
+			try {
+				filter->setSamplingFrequency(rec->samplingFrequency());
+				filter->setStartTime(rec->startTime());
+				filter->setStreamID(rec->networkCode(), rec->stationCode(),
+				                    rec->locationCode(), rec->channelCode());
+			}
+			catch ( std::exception &e ) {
+				delete crec;
+				throw e;
+			}
 		}
 	}
 
@@ -4318,13 +4336,19 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 	if (!s->records[Stream::Filtered] || !s->filter) return;
 
 	if ( !newlyCreated ) {
-		RecordPtr frec = filteredRecord(s->filter, rec,
-		                                s->records[Stream::Filtered]->empty() ?
-		                                nullptr : s->records[Stream::Filtered]->back().get(),
-		                                s->records[Stream::Filtered]->tolerance());
-		if ( frec ) {
-			s->records[Stream::Filtered]->feed(frec.get());
-			s->traces[Stream::Filtered].dirty = true;
+		try {
+			RecordPtr frec = filteredRecord(s->filter, rec,
+			                                s->records[Stream::Filtered]->empty() ?
+			                                nullptr : s->records[Stream::Filtered]->back().get(),
+			                                s->records[Stream::Filtered]->tolerance());
+			if ( frec ) {
+				s->records[Stream::Filtered]->feed(frec.get());
+				s->traces[Stream::Filtered].dirty = true;
+			}
+		}
+		catch ( std::exception &e ) {
+			s->traces[Stream::Filtered].status = e.what();
+			SEISCOMP_ERROR("%s: filter: %s", rec->streamID().c_str(), e.what());
 		}
 	}
 }
