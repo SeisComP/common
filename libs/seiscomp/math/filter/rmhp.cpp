@@ -18,9 +18,10 @@
  ***************************************************************************/
 
 
-#include <math.h>
 #include <seiscomp/math/filter/rmhp.h>
 #include <seiscomp/core/exceptions.h>
+
+#include <cmath>
 
 
 namespace Seiscomp {
@@ -128,7 +129,7 @@ void RunningMeanHighPass<TYPE>::apply(int n, TYPE *inout) {
 	for ( int i = 0; i < n; ++i ) {
 		RunningMean<TYPE>::_average = (RunningMean<TYPE>::_average*(RunningMean<TYPE>::_windowLengthI-1) + inout[i]) / RunningMean<TYPE>::_windowLengthI;
 		inout[i] -= (TYPE)RunningMean<TYPE>::_average;
-	}	
+	}
 }
 
 
