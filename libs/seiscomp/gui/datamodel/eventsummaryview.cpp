@@ -2531,8 +2531,11 @@ void EventSummaryView::setMagnitudeParameter(DataModel::Origin* origin){
 
 
 void EventSummaryView::setAutomaticMagnitudeParameter(DataModel::Origin* origin) {
-	for ( int i = 0; i < _magList->rowCount(); ++i )
-		_magList->rowAt(i)->setReferenceMagnitude(nullptr);
+	for ( int i = 0; i < _magList->rowCount(); ++i ) {
+		auto *row = _magList->rowAt(i);
+		row->setMagnitude(nullptr);
+		row->setReferenceMagnitude(nullptr);
+	}
 
 	if ( !origin ) return;
 
