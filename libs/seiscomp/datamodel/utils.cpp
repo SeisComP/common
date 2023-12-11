@@ -390,11 +390,15 @@ bool getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const c
 		Stream *stream = loc->stream(i);
 
 		try {
-			if ( stream->end() < time ) continue;
+			if ( stream->end() <= time ) {
+				continue;
+			}
 		}
 		catch (...) {}
 
-		if ( stream->start() > time ) continue;
+		if ( stream->start() > time ) {
+			continue;
+		}
 
 		if ( stream->code().compare(0, len, streamCode) )
 			continue;
@@ -440,19 +444,25 @@ bool getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const c
 				}
 			}
 
-			if ( !newOrthogonal ) continue;
+			if ( !newOrthogonal ) {
+				continue;
+			}
 
 			comps.push_back(ComponentAxis(stream, axis));
 		}
 		catch ( ... ) {}
 	}
 
-	if ( comps.empty() ) return false;
+	if ( comps.empty() ) {
+		return false;
+	}
 
 	std::sort(comps.begin(), comps.end(), by_Z_desc_and_code_asc);
 	res.comps[ThreeComponents::Vertical] = comps[0].model;
 
-	if ( comps.size() < 3 ) return false;
+	if ( comps.size() < 3 ) {
+		return false;
+	}
 
 	// Select the first horizontal left (math. positive) from the second
 	Math::Vector3f cross;
@@ -472,6 +482,35 @@ bool getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const c
 	*/
 
 	return true;
+}
+
+
+int numberOfComponents(const SensorLocation *loc, const char *streamCode, const Core::Time &time) {
+	int len = strlen(streamCode);
+	int count = 0;
+
+	for ( size_t i = 0; i < loc->streamCount(); ++i ) {
+		Stream *stream = loc->stream(i);
+
+		if ( stream->code().compare(0, len, streamCode) ) {
+			continue;
+		}
+
+		try {
+			if ( stream->end() <= time ) {
+				continue;
+			}
+		}
+		catch (...) {}
+
+		if ( stream->start() > time ) {
+			continue;
+		}
+
+		++count;
+	}
+
+	return count;
 }
 
 

@@ -278,6 +278,11 @@ getVerticalComponent(const SensorLocation *loc, const char *streamCode, const Co
 SC_SYSTEM_CORE_API bool
 getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const char *streamCode, const Core::Time &time);
 
+//! Returns the number of components existing for a stream group (stream code
+//! without component code, first two letters) at a given time.
+SC_SYSTEM_CORE_API int
+numberOfComponents(const SensorLocation *loc, const char *streamCode, const Core::Time &time);
+
 
 /**
  * Looks for a setup which name is [setupName] (or "global" as fallback).
