@@ -538,21 +538,21 @@ bool MagnitudeProcessor::initRegionalization(const Settings &settings) {
 
 					regionalizedSettings->regionalization.push_back(config);
 				}
+			}
+			catch ( ... ) {}
 
-				try {
-					if ( cfg->getBool("magnitudes." + type() + ".region.world.enable") ) {
-						string cfgPrefix = "magnitudes." + type() + ".region.world.";
-						Locale config;
-						config.name = "world";
-						config.feature = nullptr;
+			try {
+				if ( cfg->getBool("magnitudes." + type() + ".region.world.enable") ) {
+					string cfgPrefix = "magnitudes." + type() + ".region.world.";
+					Locale config;
+					config.name = "world";
+					config.feature = nullptr;
 
-						if ( !readLocale(&config, settings, cfgPrefix) )
-							return false;
+					if ( !readLocale(&config, settings, cfgPrefix) )
+						return false;
 
-						regionalizedSettings->regionalization.push_back(config);
-					}
+					regionalizedSettings->regionalization.push_back(config);
 				}
-				catch ( ... ) {}
 			}
 			catch ( ... ) {}
 		}
@@ -651,18 +651,24 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 						}
 					}
 
+					if ( profile.minimumDepth and depth < *profile.minimumDepth ) {
+						notFoundStatus = DepthOutOfRange;
+						continue;
+					}
+					if ( profile.maximumDepth and depth > *profile.maximumDepth ) {
+						notFoundStatus = DepthOutOfRange;
+						continue;
+					}
+
 					// Found region
 					locale = &profile;
 
-					if ( locale->minimumDistance and delta < *locale->minimumDistance )
+					if ( locale->minimumDistance and delta < *locale->minimumDistance ) {
 						return DistanceOutOfRange;
-					if ( locale->maximumDistance and delta > *locale->maximumDistance )
+					}
+					if ( locale->maximumDistance and delta > *locale->maximumDistance ) {
 						return DistanceOutOfRange;
-
-					if ( locale->minimumDepth and depth < *locale->minimumDepth )
-						return DepthOutOfRange;
-					if ( locale->maximumDepth and depth > *locale->maximumDepth )
-						return DepthOutOfRange;
+					}
 
 					break;
 				}
