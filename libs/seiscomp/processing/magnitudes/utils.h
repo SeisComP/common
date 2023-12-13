@@ -50,6 +50,16 @@ using LogA0 = TableXY<double>;
 
 
 }
+
+
+namespace Core {
+
+
+template <typename T>
+std::string toString(const typename Processing::TableXY<T> &value);
+
+
+}
 }
 
 
