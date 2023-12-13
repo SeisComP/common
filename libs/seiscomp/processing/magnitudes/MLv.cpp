@@ -120,15 +120,24 @@ bool MagnitudeProcessor_MLv::initLocale(Locale *locale,
                                         const string &configPrefix) {
 	const Seiscomp::Config::Config *cfg = settings.localConfiguration;
 	try {
-		string logA0 = cfg->getString(configPrefix + "logA0");
+		auto logA0 = cfg->getStrings(configPrefix + "logA0");
 		if ( !logA0.empty() ) {
+			// If the first item contains a comma then maybe it has been configured
+			// with double quotes. Raise an error.
+			if ( logA0[0].find(',') != string::npos ) {
+				SEISCOMP_ERROR("%slogA0[0] contains a comma. Are the coefficients "
+				               "enclosed with double quotes in the configuration?",
+				               configPrefix);
+				return false;
+			}
+
 			ExtraLocalePtr extra = new ExtraLocale;
 			extra->logA0 = LogA0();
 			if ( !extra->logA0->set(logA0) ) {
 				return false;
 			}
 
-			SEISCOMP_DEBUG("  + local logA0: %s", logA0.c_str());
+			SEISCOMP_DEBUG("  + local logA0: %s", Core::toString(*extra->logA0).c_str());
 			locale->extra = extra;
 		}
 		else {
