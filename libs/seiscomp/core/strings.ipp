@@ -400,10 +400,12 @@ inline std::string join(const CONT &tokens, const char *separator) {
 	std::string s;
 	bool first = true;
 	for ( auto &&item : tokens ) {
-		if ( !first )
+		if ( !first ) {
 			s += separator;
-		else
+		}
+		else {
 			first = false;
+		}
 		s += item;
 	}
 	return s;
