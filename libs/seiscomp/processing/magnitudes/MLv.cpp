@@ -131,20 +131,28 @@ bool MagnitudeProcessor_MLv::initLocale(Locale *locale,
 				return false;
 			}
 
-			ExtraLocalePtr extra = new ExtraLocale;
-			extra->logA0 = LogA0();
-			if ( !extra->logA0->set(logA0) ) {
+			if ( logA0[0].find(';') != string::npos ) {
+				SEISCOMP_ERROR("%slogA0 = %s contains semicolon. Supported format:"
+				               " distance1:correction1,distance2:correction2, ...",
+				               configPrefix, Core::toString(logA0).c_str());
 				return false;
 			}
 
-			SEISCOMP_DEBUG("  + local logA0: %s", Core::toString(*extra->logA0).c_str());
+			ExtraLocalePtr extra = new ExtraLocale;
+			extra->logA0 = LogA0();
+			if ( !extra->logA0->set(logA0) ) {
+				SEISCOMP_ERROR("%s@%s: incorrect correction term log(A0)",
+				               _type.c_str(), locale->name.c_str());
+				return false;
+			}
+
+			SEISCOMP_DEBUG("%s (locale) %s logA0: %s", _type.c_str(),
+			               locale->name.c_str(),
+			               Core::toString(*extra->logA0).c_str());
 			locale->extra = extra;
 		}
-		else {
-			SEISCOMP_DEBUG("  + no local definition of logA0");
-		}
 	}
-	catch ( ... ) {SEISCOMP_DEBUG("  + no local definition of logA0");}
+	catch ( ... ) {}
 
 	return true;
 }
@@ -189,6 +197,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLv::computeMagnitude(
 		double correction = -1.0 * (extra and extra->logA0 ? extra->logA0->at(distanceKm) : _logA0.at(distanceKm));
 		SEISCOMP_DEBUG("  + distance: %.5f deg, logA0 correction: %.3f", delta, correction);
 		value = log10(amplitude) + correction;
+		SEISCOMP_DEBUG("  + amplitude: %.5f, magnitude: %.3f", amplitude, value);
 	}
 	catch ( std::out_of_range & ) {
 		return DistanceOutOfRange;

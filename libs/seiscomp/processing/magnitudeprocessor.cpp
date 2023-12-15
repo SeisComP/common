@@ -474,10 +474,19 @@ bool MagnitudeProcessor::readLocale(Locale *locale,
 	}
 	catch ( ... ) {}
 
-	if ( !initLocale(locale, settings, cfgPrefix) )
+	if ( !initLocale(locale, settings, cfgPrefix) ) {
 		return false;
+	}
 
-	SEISCOMP_DEBUG("%s: + region %s", _type.c_str(), locale->name.c_str());
+	SEISCOMP_DEBUG("%s (locale)", _type.c_str());
+	SEISCOMP_DEBUG("  + region: %s", locale->name.c_str());
+	SEISCOMP_DEBUG("  + minimum distance: %.3f", locale->minimumDistance.value());
+	SEISCOMP_DEBUG("  + maximum distance: %.3f", locale->maximumDistance.value());
+	SEISCOMP_DEBUG("  + minimum depth: %.3f", locale->minimumDepth.value());
+	SEISCOMP_DEBUG("  + maximum depth: %.3f", locale->maximumDepth.value());
+	SEISCOMP_DEBUG("  + multiplier: %.3f", locale->multiplier);
+	SEISCOMP_DEBUG("  + offset: %.3f", locale->offset);
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -195,7 +195,7 @@
 					</parameter>
 					<parameter name="maxDepth" type="double" default="80" unit="km">
 						<description>
-						The maximum depth up to which magnitudes are computed.
+						The maximum source depth up to which magnitudes are computed.
 						</description>
 					</parameter>
 					<parameter name="calibrationType" type="string" default="&quot;parametric&quot;" unit="">
@@ -245,49 +245,39 @@
 						<parameter name="c0" type="double" default="0.0">
 							<description>
 							Station correction. This is the calibration value 'c0'
-							applied in the magnitude calibration formula
-
-							MLc = c0(station) + c1 + c2 * (r + c4) + c3 * log(r/c5) + log10(A)
+							applied in the
+							parametric magnitude calibration formula.
 							</description>
 						</parameter>
 						<parameter name="c1" type="double" default="0.69">
 							<description>
-							The calibration value 'c1' applied in the magnitude
-							calibration formula
-
-							MLc = c0(station) + c1 + c2 * (r + c4) + c3 * log(r/c5) + log10(A)
+							The calibration value 'c1' applied in the
+							parametric magnitude calibration formula.
 							</description>
 						</parameter>
 						<parameter name="c2" type="double"  default="0.00095">
 							<description>
 							The calibration value 'c2' applied in the
 							magnitude calibration formula
-
-							MLc = c0(station) + c1 + c2 * (r + c4) + c3 * log(r/c5) + log10(A)
+							parametric magnitude calibration formula.
 							</description>
 						</parameter>
 						<parameter name="c3" type="double" default="1.11">
 							<description>
 							The calibration value 'c3' applied in the
-							magnitude calibration formula
-
-							MLc = c0(station) + c1 + c2 * (r + c4) + c3 * log(r/c5) + log10(A)
+							parametric magnitude calibration formula.
 							</description>
 						</parameter>
 						<parameter name="c4" type="double" default="0.0">
 							<description>
 							The calibration value 'c4' applied in the
-							magnitude calibration formula
-
-							MLc = c0(station) + c1 + c2 * (r + c4) + c3 * log(r/c5) + log10(A)
+							parametric magnitude calibration formula.
 							</description>
 						</parameter>
 						<parameter name="c5" type="double" default="1.0">
 							<description>
-							The calibration value 'c4' applied in the
-							magnitude calibration formula
-
-							MLc = c0(station) + c1 + c2 * (r + c4) + c3 * log(r/c5) + log10(A)
+							The calibration value 'c5' applied in the
+							parametric magnitude calibration formula.
 							</description>
 						</parameter>
 					</group>
