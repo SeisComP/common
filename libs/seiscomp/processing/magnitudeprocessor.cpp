@@ -480,10 +480,18 @@ bool MagnitudeProcessor::readLocale(Locale *locale,
 
 	SEISCOMP_DEBUG("%s (locale)", _type.c_str());
 	SEISCOMP_DEBUG("  + region: %s", locale->name.c_str());
-	SEISCOMP_DEBUG("  + minimum distance: %.3f", locale->minimumDistance.value());
-	SEISCOMP_DEBUG("  + maximum distance: %.3f", locale->maximumDistance.value());
-	SEISCOMP_DEBUG("  + minimum depth: %.3f", locale->minimumDepth.value());
-	SEISCOMP_DEBUG("  + maximum depth: %.3f", locale->maximumDepth.value());
+	if ( locale->minimumDistance ) {
+		SEISCOMP_DEBUG("  + minimum distance: %.3f", *locale->minimumDistance);
+	}
+	if ( locale->maximumDistance ) {
+		SEISCOMP_DEBUG("  + maximum distance: %.3f", *locale->maximumDistance);
+	}
+	if ( locale->minimumDepth ) {
+		SEISCOMP_DEBUG("  + minimum depth: %.3f", *locale->minimumDepth);
+	}
+	if ( locale->maximumDepth ) {
+		SEISCOMP_DEBUG("  + maximum depth: %.3f", *locale->maximumDepth);
+	}
 	SEISCOMP_DEBUG("  + multiplier: %.3f", locale->multiplier);
 	SEISCOMP_DEBUG("  + offset: %.3f", locale->offset);
 
