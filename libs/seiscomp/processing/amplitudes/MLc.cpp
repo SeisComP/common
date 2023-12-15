@@ -188,7 +188,9 @@ AmplitudeProcessor_MLc2h::AmplitudeProcessor_MLc2h()
 void AmplitudeProcessor_MLc2h::setDefaultConfiguration() {
 	setSignalEnd("min(R / 3 + 30, 150)");
 	setMinSNR(0);
+	setMinDist(0);
 	setMaxDist(8);
+	setMinDepth(-10);
 	setMaxDepth(80);
 
 	_ampE._preFilter = _ampN._preFilter = "BW(3,0.5,12)";

@@ -162,6 +162,7 @@ bool MagnitudeProcessor_MLc::initLocale(Locale *locale,
 		extra->calibrationType = cfg->getString(configPrefix + "calibrationType");
 	}
 	catch ( ... ) {}
+
 	// parametric
 	try {
 		extra->c0 = cfg->getDouble(configPrefix + "parametric.c0");
@@ -188,23 +189,37 @@ bool MagnitudeProcessor_MLc::initLocale(Locale *locale,
 	}
 	catch ( ... ) {}
 
-	locale->extra = extra;
-
 	// A0, non-parametric
 	try {
-		string logA0 = cfg->getString(configPrefix + "A0.logA0");
+		auto logA0 = cfg->getStrings(configPrefix + "A0.logA0");
 		if ( !logA0.empty() ) {
-			extra->logA0 = LogA0();
-			if ( !extra->logA0->set(logA0) ) {
+			// If the first item contains a comma, then maybe it has been configured
+			// with double quotes. Raise an error.
+			if ( logA0[0].find(',') != string::npos ) {
+				SEISCOMP_ERROR("%sA0.logA0[0] contains a comma. Are the coefficients "
+				               "enclosed with double quotes in the configuration?",
+				               configPrefix);
 				return false;
 			}
 
-			if ( _calibrationType == "A0" ) {
-				SEISCOMP_DEBUG("  + local logA0: %s", logA0.c_str());
+			if ( logA0[0].find(';') != string::npos ) {
+				SEISCOMP_ERROR("%sA0.logA0 = %s contains semicolon. Supported format:"
+				               " distance1:correction1,distance2:correction2, ...",
+				               configPrefix, Core::toString(logA0).c_str());
+				return false;
+			}
+
+			extra->logA0 = LogA0();
+			if ( !extra->logA0->set(logA0) ) {
+				SEISCOMP_ERROR("%s@%s: incorrect correction term log(A0)",
+				               _type.c_str(), locale->name.c_str());
+				return false;
 			}
 		}
 	}
 	catch ( ... ) {}
+
+	locale->extra = extra;
 
 	return true;
 }
@@ -245,10 +260,6 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 			}
 		}
 
-		if ( locale->maximumDepth ) {
-			maximumDepth = *locale->maximumDepth;
-		}
-
 		if ( locale->minimumDistance ) {
 			minimumDistanceKm = Math::Geo::deg2km(*locale->minimumDistance);
 		}
@@ -257,13 +268,16 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 			maximumDistanceKm = Math::Geo::deg2km(*locale->maximumDistance);
 		}
 	}
-
-	SEISCOMP_DEBUG("  + maximum depth: %.3f km", maximumDepth);
-	if ( depth > maximumDepth ) {
-		return DepthOutOfRange;
+	else {
+		SEISCOMP_DEBUG("  + maximum depth: %.3f km", maximumDepth);
+		if ( depth > maximumDepth ) {
+			return DepthOutOfRange;
+		}
+		SEISCOMP_DEBUG("  + minimum distance: %.3f km", minimumDistanceKm);
+		SEISCOMP_DEBUG("  + maximum distance: %.3f km", maximumDistanceKm);
 	}
 
-	SEISCOMP_DEBUG("  + distance mode: %s", distanceMode.c_str());
+	SEISCOMP_DEBUG("  + distance type: %s", distanceMode.c_str());
 
 	double hDistanceKm = Math::Geo::deg2km(delta);
 	double vDistanceKm = 0;
@@ -284,12 +298,12 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		distanceKm = hDistanceKm;
 	}
 
-	SEISCOMP_DEBUG("  + minimum distance: %.3f km", minimumDistanceKm);
+	SEISCOMP_DEBUG("  + considered distance to station: %.3f km", distanceKm);
+
 	if ( minimumDistanceKm >= 0 && distanceKm < minimumDistanceKm ) {
 		return DistanceOutOfRange;
 	}
 
-	SEISCOMP_DEBUG("  + maximum distance: %.3f km", maximumDistanceKm);
 	if ( maximumDistanceKm >= 0 && distanceKm > maximumDistanceKm ) {
 		return DistanceOutOfRange;
 	}
@@ -323,10 +337,10 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 	}
 	else if ( calibrationType == "A0" ) {
 		// A0, non-parametric calibration function
-
 		try {
 			correction = -1.0 * (extra and extra->logA0 ? extra->logA0->at(distanceKm) : _logA0.at(distanceKm));
-			SEISCOMP_DEBUG("  + -log10(A0): %.5f", correction);
+
+			SEISCOMP_DEBUG("  + -log10(A0) at %.3f km: %.5f", distanceKm, correction);
 			value = log10(amplitude) + correction;
 		}
 		catch ( std::out_of_range & ) {
