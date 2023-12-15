@@ -160,32 +160,19 @@ T TableXY<T>::at(double x) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
-
-
-namespace Core {
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-std::string toString(const typename Processing::TableXY<T> &value) {
-	std::string s;
+inline std::ostream &operator<<(std::ostream &os, const TableXY<T> &table) {
 	bool first = true;
-	for ( auto &&item : value.items ) {
+	for ( auto &&item : table.items ) {
 		if ( !first ) {
-			s += ", ";
+			os << ", ";
 		}
 		else {
 			first = false;
 		}
-		s += toString(item.first);
-		s += ":";
-		s += toString(item.second);
+		os << item.first << ":" << item.second;
 	}
-	return s;
+	return os;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -22,6 +22,7 @@
 #define SEISCOMP_PROCESSING_MAGNITUDES_UTILS_H
 
 
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -49,14 +50,8 @@ struct TableXY {
 using LogA0 = TableXY<double>;
 
 
-}
-
-
-namespace Core {
-
-
 template <typename T>
-std::string toString(const typename Processing::TableXY<T> &value);
+std::ostream &operator<<(std::ostream &os, const TableXY<T> &table);
 
 
 }

@@ -95,7 +95,7 @@ bool MagnitudeProcessor_MLv::setup(const Settings &settings) {
 	}
 
 	SEISCOMP_DEBUG("Parameters for magnitude %s:", type().c_str());
-	SEISCOMP_DEBUG("  + logA0: %s", defLogA0.c_str());
+	SEISCOMP_DEBUG("  + logA0: %s", Core::toString(_logA0).c_str());
 
 	try { _maxDistanceKm = settings.getDouble("magnitudes." + type() + ".maxDistanceKm"); }
 	catch ( ... ) {}
