@@ -399,6 +399,12 @@
 				<description>
 				Parameters for amplitude measurements.
 				</description>
+				<parameter name="iaspei" type="boolean" default="false">
+					<description>
+					Compute ML peak-to-trough and mb amplitudes according to
+					IASPEI recommendations.
+					</description>
+				</parameter>
 				<group name="ttt">
 					<description>
 					Travel time table specific parameters to be used for the
