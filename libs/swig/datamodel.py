@@ -1464,6 +1464,10 @@ def getThreeComponents(res, loc, streamCode, time):
     r"""getThreeComponents(ThreeComponents res, SensorLocation loc, char const * streamCode, Time time) -> bool"""
     return _datamodel.getThreeComponents(res, loc, streamCode, time)
 
+def numberOfComponents(loc, streamCode, time):
+    r"""numberOfComponents(SensorLocation loc, char const * streamCode, Time time) -> int"""
+    return _datamodel.numberOfComponents(loc, streamCode, time)
+
 def findSetup(configStation, setupName, allowGlobal=True):
     r"""findSetup(ConfigStation configStation, std::string const & setupName, bool allowGlobal=True) -> Setup"""
     return _datamodel.findSetup(configStation, setupName, allowGlobal)
