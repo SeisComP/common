@@ -193,6 +193,11 @@
 						Negative values deactivate the check.
 						</description>
 					</parameter>
+					<parameter name="minDepth" type="double" default="-10" unit="km">
+						<description>
+						The minimum source depth below which magnitudes are computed.
+						</description>
+					</parameter>
 					<parameter name="maxDepth" type="double" default="80" unit="km">
 						<description>
 						The maximum source depth up to which magnitudes are computed.
@@ -238,7 +243,7 @@
 					<group name="parametric">
 						<description>
 						Parameters for parametric magnitude calibration:
-						MLc = log10(A) + c3 * log10(r/c5) + c2 * (r + c4) + c1 + c0(station)
+						MLc = log10(A) + c6 * h + c3 * log10(r/c5) + c2 * (r + c4) + c1 + c0(station)
 
 						Considered if magnitude.MLc.calibrationType = "parametric".
 						</description>
@@ -278,6 +283,19 @@
 							<description>
 							The calibration value 'c5' applied in the
 							parametric magnitude calibration formula.
+							</description>
+						</parameter>
+						<parameter name="c6" type="double" default="0.0">
+							<description>
+							The calibration value 'c6' applied in the
+							parametric magnitude calibration formula.
+							</description>
+						</parameter>
+						<parameter name="H" type="double" default="40">
+							<description>
+							The calibration value 'H' applied in the
+							parametric magnitude calibration formula for forming
+							h. Read the documentation.
 							</description>
 						</parameter>
 					</group>

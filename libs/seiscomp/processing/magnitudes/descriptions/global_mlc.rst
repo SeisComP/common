@@ -115,7 +115,9 @@ Default properties, most parameters are configurable in global bindings:
     :confval:`magnitudes.MLc.parametric.c2`,
     :confval:`magnitudes.MLc.parametric.c3`,
     :confval:`magnitudes.MLc.parametric.c4`,
-    :confval:`magnitudes.MLc.parametric.c5`
+    :confval:`magnitudes.MLc.parametric.c5`,
+    :confval:`magnitudes.MLc.parametric.c6`,
+    :confval:`magnitudes.MLc.parametric.H`
 
   * A0: :confval:`magnitudes.MLc.A0.logA0`
 * Station correction: none, configurable by a magnitude-type profile in global
@@ -130,16 +132,18 @@ The calibration function is considered in one of the forms
 
   .. math::
 
-     MLc = \log_{10}(A) + c_3 * \log_{10}(r/c_5) + c_2 * (r + c_4) + c_1 + c_0(station)
+     MLc = \log_{10}(A) + c_6 * h + c_3 * \log_{10}(r/c_5) + c_2 * (r + c_4) + c_1 + c_0(station)
 
   where
 
   * *A*: displacement amplitude measured in unit of mm or as per configuration
   * *r*: hypocentral (default) or epicentral distance
-  * *c1*, *c2*, *c3*, *c4*, *c5*: general calibration parameters
+  * *c1*, *c2*, *c3*, *c4*, *c5*, *c6*: general calibration parameters
   * *c0*: station-specific correction
   * *r*: Hypocentral (default) or epicentral distance as configured by
-    :confval:`magnitudes.MLc.distMode`.
+    :confval:`magnitudes.MLc.distMode`
+  * h: (source depth - :confval:`magnitudes.MLc.parametric.H`) when
+    source depth > :confval:`magnitudes.MLc.parametric.H` but 0 otherwise.
 
 * log10(A0)-based non-parametric when :confval:`magnitudes.MLc.calibrationType` = "A0"`:
 

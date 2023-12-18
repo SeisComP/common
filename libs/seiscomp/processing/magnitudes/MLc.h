@@ -60,6 +60,7 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_MLc : public MagnitudeProcessor {
 		double      _minDistanceKm{-1.0};
 		double      _maxDistanceKm{8.0 * KM_OF_DEGREE};
 		double      _maxDepth{80.0};
+		double      _minDepth{-10.0};
 		std::string _distanceMode{"hypocentral"};
 		std::string _calibrationType{"parametric"};
 		// parameters for parametric magnitude calibration
@@ -69,6 +70,8 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_MLc : public MagnitudeProcessor {
 		double      _c3{1.11};
 		double      _c4{0.0};
 		double      _c5{1.0};
+		double      _c6{0.0};
+		double      _H{40.0};
 		// parameters for non-parametric magnitude calibration
 		LogA0  _logA0;
 };

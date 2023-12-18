@@ -50,6 +50,8 @@ class ExtraLocale : public Core::BaseObject {
 		OPT(double) c3;
 		OPT(double) c4;
 		OPT(double) c5;
+		OPT(double) c6;
+		OPT(double) H;
 		// A0, non-parametric coefficients
 		OPT(LogA0)  logA0;
 };
@@ -87,6 +89,9 @@ bool MagnitudeProcessor_MLc::setup(const Settings &settings) {
 	}
 
 	// depth constraint
+	try {_minDepth = settings.getDouble("magnitudes." + _type + ".minDepth"); }
+	catch ( ... ) {}
+
 	try {_maxDepth = settings.getDouble("magnitudes." + _type + ".maxDepth"); }
 	catch ( ... ) {}
 
@@ -120,6 +125,10 @@ bool MagnitudeProcessor_MLc::setup(const Settings &settings) {
 	try { _c4 = settings.getDouble("magnitudes." + _type + ".parametric.c4"); }
 	catch ( ... ) {}
 	try { _c5 = settings.getDouble("magnitudes." + _type + ".parametric.c5"); }
+	catch ( ... ) {}
+	try { _c6 = settings.getDouble("magnitudes." + _type + ".parametric.c6"); }
+	catch ( ... ) {}
+	try { _H = settings.getDouble("magnitudes." + _type + ".parametric.H"); }
 	catch ( ... ) {}
 
 	// A0, non-parametric calibration function
@@ -188,6 +197,14 @@ bool MagnitudeProcessor_MLc::initLocale(Locale *locale,
 		extra->c5 = cfg->getDouble(configPrefix + "parametric.c5");
 	}
 	catch ( ... ) {}
+	try {
+		extra->c6 = cfg->getDouble(configPrefix + "parametric.c6");
+	}
+	catch ( ... ) {}
+	try {
+		extra->H = cfg->getDouble(configPrefix + "parametric.H");
+	}
+	catch ( ... ) {}
 
 	// A0, non-parametric
 	try {
@@ -246,6 +263,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 	auto minimumDistanceKm = _minDistanceKm;
 	auto maximumDistanceKm = _maxDistanceKm;
 	auto maximumDepth = _maxDepth;
+	auto minimumDepth = _minDepth;
 
 	ExtraLocale *extra = nullptr;
 	if ( locale ) {
@@ -269,6 +287,11 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		}
 	}
 	else {
+		SEISCOMP_DEBUG("  + minimum depth: %.3f km", minimumDepth);
+		if ( depth < minimumDepth ) {
+			return DepthOutOfRange;
+		}
+
 		SEISCOMP_DEBUG("  + maximum depth: %.3f km", maximumDepth);
 		if ( depth > maximumDepth ) {
 			return DepthOutOfRange;
@@ -326,13 +349,23 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		auto c3 = (extra and extra->c3) ? *extra->c3 : _c3;
 		auto c4 = (extra and extra->c4) ? *extra->c4 : _c4;
 		auto c5 = (extra and extra->c5) ? *extra->c5 : _c5;
+		auto c6 = (extra and extra->c6) ? *extra->c6 : _c6;
+		auto H = (extra and extra->c6) ? *extra->H : _H;
 
+		// https://doi.org/10.1785/0120200252
+		if ( vDistanceKm > H) {
+			H = depth - H;
+		}
+		else {
+			H = 0.0;
+		}
 		correction = c3 * log10(distanceKm / c5)
 		             + c2 * (distanceKm + c4)
 		             + c1
-		             + c0;
-		SEISCOMP_DEBUG("  + c0 - c5: %.5f %.5f %.5f %.5f %.5f %.5f, correction: %.5f",
-		               c0, c1, c2, c3, c4, c5, correction);
+		             + c0
+		             + c6 * H;
+		SEISCOMP_DEBUG("  + c0 - c6: %.5f %.5f %.5f %.5f %.5f %.5f %.5f, H: %.5f, correction: %.5f",
+		               c0, c1, c2, c3, c4, c5, c6, H, correction);
 		value = log10(amplitude) + correction;
 	}
 	else if ( calibrationType == "A0" ) {
