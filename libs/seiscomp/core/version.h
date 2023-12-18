@@ -31,12 +31,12 @@ namespace Seiscomp {
 namespace Core {
 
 
-/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(16, 1, 0)) */
+/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(17, 0, 0)) */
 #define SC_API_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 
 /* SC_API_VERSION is (major << 16) + (minor << 8) + patch. */
-#define SC_API_VERSION 0x100100
+#define SC_API_VERSION 0x110000
 
 #define SC_API_VERSION_MAJOR(v) (v >> 16)
 #define SC_API_VERSION_MINOR(v) ((v >> 8) & 0xff)
@@ -46,7 +46,10 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
- "16.1.0"   0x101000
+ "17.0.0"   0x110000
+   - Added Seiscomp::Processing::MagnitudeProcessor_MLc _c6, _H and _minDepth.
+
+ "16.1.0"   0x100100
    - Added Seiscomp::DataModel::numberOfComponents
 
  "16.0.0"   0x100000
