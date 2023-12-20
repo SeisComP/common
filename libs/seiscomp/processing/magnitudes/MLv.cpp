@@ -74,15 +74,21 @@ bool MagnitudeProcessor_MLv::setup(const Settings &settings) {
 	}
 
 	std::string defLogA0;
+	bool logA0Default = true;
 
 	// This is the default
 	defLogA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85";
 	_maxDistanceKm = -1; // distance according to the logA0 range
 
-	try { defLogA0 = settings.getString("magnitudes." + type() + ".logA0"); }
+	try {
+		defLogA0 = settings.getString("magnitudes." + type() + ".logA0");
+		logA0Default = false;
+	}
 	catch ( ... ) {}
+
 	try {
 		defLogA0 = settings.getString(type() + ".logA0");
+		logA0Default = false;
 		SEISCOMP_WARNING("%s.logA0 is deprecated", type().c_str());
 		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.%s.logA0", type().c_str());
 	}
@@ -94,16 +100,27 @@ bool MagnitudeProcessor_MLv::setup(const Settings &settings) {
 		return false;
 	}
 
-	SEISCOMP_DEBUG("Parameters for magnitude %s:", type().c_str());
-	SEISCOMP_DEBUG("  + logA0: %s", Core::toString(_logA0).c_str());
+	if ( !logA0Default ) {
+		SEISCOMP_DEBUG("%s.%s: %s: logA0 from bindings = %s",
+		               settings.networkCode, settings.stationCode,
+		               type(), Core::toString(_logA0));
+	}
 
-	try { _maxDistanceKm = settings.getDouble("magnitudes." + type() + ".maxDistanceKm"); }
+	try {
+		_maxDistanceKm = settings.getDouble("magnitudes." + type() + ".maxDistanceKm");
+		SEISCOMP_DEBUG("%s.%s: %s: max distance from bindings = %f",
+		               settings.networkCode, settings.stationCode,
+		               type(), _maxDistanceKm);
+	}
 	catch ( ... ) {}
 
 	try {
 		_maxDistanceKm = settings.getDouble(type() + ".maxDistanceKm");
 		SEISCOMP_WARNING("%s.maxDistanceKm is deprecated", type().c_str());
 		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.%s.maxDistanceKm", type().c_str());
+		SEISCOMP_DEBUG("%s.%s: %s: max distance from bindings = %f",
+		               settings.networkCode, settings.stationCode,
+		               type(), _maxDistanceKm);
 	}
 	catch ( ... ) {}
 

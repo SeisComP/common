@@ -124,7 +124,12 @@ bool MagnitudeProcessor_MLc::setup(const Settings &settings) {
 
 	// A0, non-parametric calibration function
 	std::string defLogA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85";
-	try { defLogA0 = settings.getString("magnitudes." + _type + ".A0.logA0"); }
+	bool logA0Default = true;
+
+	try {
+		defLogA0 = settings.getString("magnitudes." + _type + ".A0.logA0");
+		logA0Default = false;
+	}
 	catch ( ... ) {}
 
 	// set distance-dependent intervals
@@ -134,9 +139,10 @@ bool MagnitudeProcessor_MLc::setup(const Settings &settings) {
 		return false;
 	}
 
-	SEISCOMP_DEBUG("Parameters for magnitude %s", _type.c_str());
-	if ( _calibrationType == "A0" ) {
-		SEISCOMP_DEBUG("  + logA0: %s", defLogA0.c_str());
+	if ( !logA0Default ) {
+		SEISCOMP_DEBUG("%s.%s: %s: logA0 from bindings = %s",
+		               settings.networkCode, settings.stationCode,
+		               type(), Core::toString(_logA0));
 	}
 
 	return true;
