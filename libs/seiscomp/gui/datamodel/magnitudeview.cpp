@@ -1661,6 +1661,30 @@ void MagnitudeView::recalculateMagnitude() {
 	_tabMagnitudes->setTabTextColor(idx, QColor());
 	_tabMagnitudes->setTabIcon(idx, QIcon());
 
+	idx = 0;
+	int staCount = 0;
+	for ( int i = 0; i < _modelStationMagnitudes.rowCount(); ++i ) {
+		if ( _modelStationMagnitudes.useMagnitude(i) ) {
+			if ( weights[idx] > 0.0 )
+				++staCount;
+
+			_netMag->stationMagnitudeContribution(i)->setWeight(weights[idx]);
+			++idx;
+		}
+		else
+			_netMag->stationMagnitudeContribution(i)->setWeight(0.);
+	}
+
+	for ( int i = 0; i < _modelStationMagnitudes.rowCount(); ++i ) {
+		if ( staCount ) {
+			StationMagnitude* sm = StationMagnitude::Find(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
+			_netMag->stationMagnitudeContribution(i)->setResidual(sm->magnitude().value() - netmag);
+		}
+		else
+			_netMag->stationMagnitudeContribution(i)->setResidual(Core::None);
+	}
+
+	_netMag->setStationCount(staCount);
 
 	// Update corresponding Mw estimation
 	Processing::MagnitudeProcessorPtr proc = Processing::MagnitudeProcessorFactory::Create(_netMag->type().c_str());
@@ -1689,9 +1713,11 @@ void MagnitudeView::recalculateMagnitude() {
 					emit magnitudeUpdated(_origin->publicID().c_str(), magMw.get());
 				}
 
-				_tabMagnitudes->setTabText(idx, QString("%1 %2")
+				_tabMagnitudes->setTabText(idx, QString("%1 %2 (%3/%4)")
 				                           .arg(magMw->type().c_str())
-				                           .arg(magMw->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
+				                           .arg(magMw->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)
+				                           .arg(usedStationCount(magMw.get()))
+				                           .arg(totalStationCount(magMw.get())));
 			}
 			else {
 				MagnitudePtr magMw;
@@ -1734,31 +1760,6 @@ void MagnitudeView::recalculateMagnitude() {
 				_tabMagnitudes->removeTab(idx);
 		}
 	}
-
-	idx = 0;
-	int staCount = 0;
-	for ( int i = 0; i < _modelStationMagnitudes.rowCount(); ++i ) {
-		if ( _modelStationMagnitudes.useMagnitude(i) ) {
-			if ( weights[idx] > 0.0 )
-				++staCount;
-
-			_netMag->stationMagnitudeContribution(i)->setWeight(weights[idx]);
-			++idx;
-		}
-		else
-			_netMag->stationMagnitudeContribution(i)->setWeight(0.);
-	}
-
-	for ( int i = 0; i < _modelStationMagnitudes.rowCount(); ++i ) {
-		if ( staCount ) {
-			StationMagnitude* sm = StationMagnitude::Find(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
-			_netMag->stationMagnitudeContribution(i)->setResidual(sm->magnitude().value() - netmag);
-		}
-		else
-			_netMag->stationMagnitudeContribution(i)->setResidual(Core::None);
-	}
-
-	_netMag->setStationCount(staCount);
 
 	updateTab(_tabMagnitudes, _netMag.get());
 
@@ -2265,9 +2266,11 @@ void MagnitudeView::magnitudeCreated(Seiscomp::DataModel::Magnitude *netMag) {
 					emit magnitudeUpdated(_origin->publicID().c_str(), magMw.get());
 				}
 
-				_tabMagnitudes->setTabText(idx, QString("%1 %2")
+				_tabMagnitudes->setTabText(idx, QString("%1 %2 (%3/%4)")
 				                           .arg(magMw->type().c_str())
-				                           .arg(magMw->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
+				                           .arg(magMw->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)
+				                           .arg(usedStationCount(magMw.get()))
+				                           .arg(totalStationCount(magMw.get())));
 			}
 		}
 		else if ( idx != -1 )
