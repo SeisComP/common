@@ -113,6 +113,7 @@ class InventoryPanel : public ConfiguratorPanel {
 
 		void import();
 		void testInventory();
+		void testInventoryFile();
 		void testSync();
 		void sync();
 		void syncKeys();

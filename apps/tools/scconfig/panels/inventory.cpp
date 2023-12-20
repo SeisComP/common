@@ -537,12 +537,17 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	QAction *inspectFileAction = new QAction(tr("Show content"), this);
 	connect(inspectFileAction, SIGNAL(triggered()), this, SLOT(inspectFile()));
 
+	QAction *checkFileAction = new QAction(tr("Check"), this);
+	checkFileAction->setShortcut(QKeySequence(Qt::Key_F1));
+	connect(checkFileAction, SIGNAL(triggered(bool)), this, SLOT(testInventoryFile()));
+
 	_folderView = new QListView;
 	_folderView->setFrameShape(QFrame::NoFrame);
 	_folderView->setResizeMode(QListView::Adjust);
 	_folderView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	_folderView->setContextMenuPolicy(Qt::ActionsContextMenu);
 	_folderView->addAction(inspectFileAction);
+	_folderView->addAction(checkFileAction);
 	_folderView->addAction(deleteFileAction);
 	_folderView->addAction(renameFileAction);
 
@@ -553,8 +558,9 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	_folderTree->setSortingEnabled(true);
 	_folderTree->setContextMenuPolicy(Qt::ActionsContextMenu);
 	_folderTree->addAction(inspectFileAction);
-	_folderTree->addAction(deleteFileAction);
+	_folderTree->addAction(checkFileAction);
 	_folderTree->addAction(renameFileAction);
+	_folderTree->addAction(deleteFileAction);
 
 	_folderModel = new QFileSystemModel(this);
 	_folderModel->setReadOnly(false);
@@ -583,7 +589,7 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 
 	folderViewTools->addSeparator();
 
-	a = folderViewTools->addAction("Check inventory");
+	a = folderViewTools->addAction("Check");
 	a->setToolTip("Check consistency of all inventory files and report conflicts."
 	              "\nApplies: scinv check"
 	              "\nDefine criteria in scinv module configuration.");
@@ -817,14 +823,34 @@ void InventoryPanel::import() {
 }
 
 
-
-
 void InventoryPanel::testInventory() {
 	runSCProc("scinv", QStringList() << "check");
 }
 
+
 void InventoryPanel::testSync() {
 	runSCProc("scinv", QStringList() << "sync" << "--test");
+}
+
+
+void InventoryPanel::testInventoryFile() {
+	QModelIndexList indexes;
+	indexes = _selectionModel->selectedRows();
+	if ( indexes.isEmpty() ) {
+		return;
+	}
+
+	if ( indexes.count() > 1 ) {
+		QMessageBox::critical(NULL, tr("Check"),
+		                      tr("More than one file selected: Select exactly one!"));
+		return;
+	}
+
+	Seiscomp::Environment *env = Seiscomp::Environment::Instance();
+	QString target = (env->installDir() + "/etc/inventory").c_str();
+	target = QDir::toNativeSeparators(target + "/" + indexes[0].data().toString());
+
+	runSCProc("scinv", QStringList() << "check" << target);
 }
 
 
