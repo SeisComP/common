@@ -106,8 +106,7 @@ Default properties, most parameters are configurable in global bindings:
   amplitude scaling with :confval:`amplitudes.MLc.amplitudeScale`.
 * Magnitude calibration type: parametric, parametric and non-parametric are
   available through :confval:`magnitudes.MLc.calibrationType`.
-* Calibration function (see below for the equations): default values are valid
-  for SW-Germany (:cite:t:`stange-2006`), configurable by global bindings
+* Calibration function (see below for the equations), configurable by global bindings
   depending on the actual calibration type:
 
   * parametric: :confval:`magnitudes.MLc.parametric.c0`,
@@ -140,6 +139,9 @@ The calibration function is considered in one of the forms
   * *c0*: station-specific correction
   * *r*: Hypocentral (default) or epicentral distance as configured by
     :confval:`magnitudes.MLc.distMode`.
+
+  The default values are valid for SW-Germany (:cite:t:`stange-2006`), c6 and H
+  have been added for supporting dependency on depth (:cite:t:`rhoades-2020`).
 
 * log10(A0)-based non-parametric when :confval:`magnitudes.MLc.calibrationType` = "A0"`:
 
