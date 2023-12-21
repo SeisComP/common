@@ -3939,6 +3939,26 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 		return nullptr;
 	}
 
+	{
+		auto combiner = proc->parameter(Processing::AmplitudeProcessor::Combiner);
+		if ( !combiner.empty() ) {
+			auto idx = SC_D.comboAmpCombiner->findText(combiner.c_str());
+			if ( idx >= 0 ) {
+				SC_D.comboAmpCombiner->setCurrentIndex(idx);
+			}
+		}
+	}
+
+	{
+		auto measureType = proc->parameter(Processing::AmplitudeProcessor::MeasureType);
+		if ( !measureType.empty() ) {
+			auto idx = SC_D.comboAmpType->findText(measureType.c_str());
+			if ( idx >= 0 ) {
+				SC_D.comboAmpType->setCurrentIndex(idx);
+			}
+		}
+	}
+
 	Processing::MagnitudeProcessorPtr magProc = Processing::MagnitudeProcessorFactory::Create(SC_D.magnitudeType.c_str());
 	if ( magProc == nullptr ) {
 		cerr << sid.networkCode() << "." << sid.stationCode() << ": unable to create magnitude processor "
