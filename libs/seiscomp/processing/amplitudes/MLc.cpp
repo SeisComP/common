@@ -454,6 +454,7 @@ void AmplitudeProcessor_MLc2h::newAmplitude(const AmplitudeProcessor *proc,
 	_results[idx] = ComponentResult();
 	_results[idx]->value = res.amplitude;
 	_results[idx]->time = res.time;
+	_results[idx]->snr = res.snr;
 
 	if ( _results[0] && _results[1] ) {
 		setStatus(Finished, 100.);
@@ -464,22 +465,26 @@ void AmplitudeProcessor_MLc2h::newAmplitude(const AmplitudeProcessor *proc,
 			case TakeAverage:
 				newRes.amplitude = average(_results[0]->value, _results[1]->value);
 				newRes.time = average(_results[0]->time, _results[1]->time);
+				newRes.snr = (_results[0]->snr + _results[1]->snr) * 0.5;
 				newRes.component = Horizontal;
 				break;
 			case TakeGeometricMean:
 				newRes.amplitude = gmean(_results[0]->value, _results[1]->value);
 				newRes.time = average(_results[0]->time, _results[1]->time);
+				newRes.snr = (_results[0]->snr + _results[1]->snr) * 0.5;
 				newRes.component = Horizontal;
 				break;
 			case TakeMin:
 				if ( _results[0]->value.value <= _results[1]->value.value ) {
 					newRes.amplitude = _results[0]->value;
 					newRes.time = _results[0]->time;
+					newRes.snr = _results[0]->snr;
 					newRes.component = _ampE.usedComponent();
 				}
 				else {
 					newRes.amplitude = _results[1]->value;
 					newRes.time = _results[1]->time;
+					newRes.snr = _results[1]->snr;
 					newRes.component = _ampN.usedComponent();
 				}
 				break;
@@ -487,11 +492,13 @@ void AmplitudeProcessor_MLc2h::newAmplitude(const AmplitudeProcessor *proc,
 				if ( _results[0]->value.value >= _results[1]->value.value ) {
 					newRes.amplitude = _results[0]->value;
 					newRes.time = _results[0]->time;
+					newRes.snr = _results[0]->snr;
 					newRes.component = _ampE.usedComponent();
 				}
 				else {
 					newRes.amplitude = _results[1]->value;
 					newRes.time = _results[1]->time;
+					newRes.snr = _results[1]->snr;
 					newRes.component = _ampN.usedComponent();
 				}
 				break;
@@ -499,15 +506,16 @@ void AmplitudeProcessor_MLc2h::newAmplitude(const AmplitudeProcessor *proc,
 
 		// apply amplitude scaling
 		newRes.amplitude.value *= _amplitudeScale;
+
 		if ( newRes.amplitude.upperUncertainty ) {
 			*newRes.amplitude.upperUncertainty *= _amplitudeScale;
 		}
+
 		if ( newRes.amplitude.lowerUncertainty ) {
 			*newRes.amplitude.lowerUncertainty *= _amplitudeScale;
 
 		}
-		newRes.period = -1;
-		newRes.snr = min(_results[0]->snr, _results[1]->snr);
+
 		emitAmplitude(newRes);
 	}
 }

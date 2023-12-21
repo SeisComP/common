@@ -318,6 +318,8 @@ bool AbstractAmplitudeProcessor_ML::computeAmplitude(
 		double *period, double *snr) {
 	double amax;
 
+	*period = -1;
+
 	switch ( _amplitudeMeasureType ) {
 		case AbsMax:
 		{
@@ -381,8 +383,6 @@ bool AbstractAmplitudeProcessor_ML::computeAmplitude(
 		setStatus(LowSNR, *snr);
 		return false;
 	}
-
-	*period = -1;
 
 	amplitude->value = amax;
 
