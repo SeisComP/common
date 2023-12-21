@@ -332,6 +332,10 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		//! The default implementation returns always false.
 		virtual bool setParameter(Capability cap, const std::string &value);
 
+		//! Returns the configured value associated with a given capability.
+		//! The default implementation returns an empty string.
+		virtual std::string parameter(Capability cap) const;
+
 
 	// ----------------------------------------------------------------------
 	//  Public Interface

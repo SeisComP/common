@@ -39,6 +39,7 @@ class SC_SYSTEM_CLIENT_API AbstractAmplitudeProcessor_ML : public AmplitudeProce
 		int capabilities() const override;
 		IDList capabilityParameters(Capability cap) const override;
 		bool setParameter(Capability cap, const std::string &value) override;
+		std::string parameter(Capability cap) const override;
 
 		bool setup(const Settings &settings) override;
 

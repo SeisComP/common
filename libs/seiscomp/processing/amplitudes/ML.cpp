@@ -225,6 +225,28 @@ bool AbstractAmplitudeProcessor_ML::setParameter(Capability cap, const std::stri
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string AbstractAmplitudeProcessor_ML::parameter(Capability cap) const {
+	if ( cap == MeasureType ) {
+		switch ( _amplitudeMeasureType ) {
+			case AbsMax:
+				return "AbsMax";
+			case MinMax:
+				return "MinMax";
+			case PeakTrough:
+				return "PeakTrough";
+			default:
+				break;
+		}
+	}
+
+	return AmplitudeProcessor::parameter(cap);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AbstractAmplitudeProcessor_ML::setup(const Settings &settings) {
 	setDefaultConfiguration();
 

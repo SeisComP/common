@@ -47,6 +47,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc2h : public AmplitudeProcessor 
 		int capabilities() const override;
 		IDList capabilityParameters(Capability cap) const override;
 		bool setParameter(Capability cap, const std::string &value) override;
+		std::string parameter(Capability cap) const override;
 
 		void reset() override;
 		bool setup(const Settings &settings) override;
@@ -86,6 +87,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc2h : public AmplitudeProcessor 
 			AmplitudeValue value;
 			AmplitudeTime  time;
 			double         snr;
+			double         period;
 		};
 
 		enum CombinerProc {

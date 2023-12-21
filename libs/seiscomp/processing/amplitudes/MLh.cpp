@@ -35,8 +35,12 @@ namespace Processing {
 
 
 namespace {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor::AmplitudeValue average(
 	const AmplitudeProcessor::AmplitudeValue &v0,
 	const AmplitudeProcessor::AmplitudeValue &v1)
@@ -69,8 +73,12 @@ AmplitudeProcessor::AmplitudeValue average(
 
 	return v;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor::AmplitudeTime average(
 	const AmplitudeProcessor::AmplitudeTime &t0,
 	const AmplitudeProcessor::AmplitudeTime &t1)
@@ -102,8 +110,12 @@ AmplitudeProcessor::AmplitudeTime average(
 
 	return t;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor::AmplitudeValue gmean(
 	const AmplitudeProcessor::AmplitudeValue &v0,
 	const AmplitudeProcessor::AmplitudeValue &v1)
@@ -136,18 +148,34 @@ AmplitudeProcessor::AmplitudeValue gmean(
 
 	return v;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_ML2h, "ML");
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor_MLh::AmplitudeProcessor_MLh()
 : AbstractAmplitudeProcessor_ML("ML") {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor_ML2h::AmplitudeProcessor_ML2h()
 : Processing::AmplitudeProcessor("ML") {
 	setSignalEnd("min(R / 3 + 30, 150)");
@@ -171,8 +199,12 @@ AmplitudeProcessor_ML2h::AmplitudeProcessor_ML2h()
 	_ampN.setConfig(config());
 	_ampE.setConfig(config());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const AmplitudeProcessor *AmplitudeProcessor_ML2h::componentProcessor(Component comp) const {
 	switch ( comp ) {
 		case FirstHorizontalComponent:
@@ -185,7 +217,12 @@ const AmplitudeProcessor *AmplitudeProcessor_ML2h::componentProcessor(Component 
 
 	return nullptr;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const DoubleArray *AmplitudeProcessor_ML2h::processedData(Component comp) const {
 	switch ( comp ) {
 		case FirstHorizontalComponent:
@@ -198,8 +235,12 @@ const DoubleArray *AmplitudeProcessor_ML2h::processedData(Component comp) const 
 
 	return nullptr;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_ML2h::reprocess(OPT(double) searchBegin, OPT(double) searchEnd) {
 	setStatus(WaitingForData, 0);
 	_ampN.setConfig(config());
@@ -217,13 +258,21 @@ void AmplitudeProcessor_ML2h::reprocess(OPT(double) searchBegin, OPT(double) sea
 			setStatus(_ampE.status(), _ampE.statusValue());
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int AmplitudeProcessor_ML2h::capabilities() const {
 	return _ampN.capabilities() | Combiner;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor::IDList
 AmplitudeProcessor_ML2h::capabilityParameters(Capability cap) const {
 	if ( cap == Combiner ) {
@@ -237,8 +286,12 @@ AmplitudeProcessor_ML2h::capabilityParameters(Capability cap) const {
 
 	return _ampN.capabilityParameters(cap);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor_ML2h::setParameter(Capability cap, const string &value) {
 	if ( cap == Combiner ) {
 		if ( value == "Min" ) {
@@ -264,8 +317,36 @@ bool AmplitudeProcessor_ML2h::setParameter(Capability cap, const string &value) 
 	_ampN.setParameter(cap, value);
 	return _ampE.setParameter(cap, value);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string AmplitudeProcessor_ML2h::parameter(Capability cap) const {
+	if ( cap == Combiner ) {
+		switch ( _combiner ) {
+			case TakeMin:
+				return "Min";
+			case TakeMax:
+				return "Max";
+			case TakeAverage:
+				return "Average";
+			case TakeGeometricMean:
+				return "Geometric mean";
+			default:
+				break;
+		}
+	}
+
+	return _ampN.parameter(cap);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor_ML2h::setup(const Settings &settings) {
 	// Copy the stream configurations (gain, orientation, responses, ...) to
 	// the horizontal processors
@@ -301,15 +382,23 @@ bool AmplitudeProcessor_ML2h::setup(const Settings &settings) {
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_ML2h::setTrigger(const Core::Time& trigger) {
 	AmplitudeProcessor::setTrigger(trigger);
 	_ampE.setTrigger(trigger);
 	_ampN.setTrigger(trigger);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_ML2h::computeTimeWindow() {
 	// Copy configuration to each component
 	_ampN.setConfig(config());
@@ -324,16 +413,24 @@ void AmplitudeProcessor_ML2h::computeTimeWindow() {
 
 	setTimeWindow(_ampE.timeWindow() | _ampN.timeWindow());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_ML2h::setEnvironment(const DataModel::Origin *hypocenter,
                                              const DataModel::SensorLocation *receiver,
                                              const DataModel::Pick *pick) {
 	_ampN.setEnvironment(hypocenter, receiver, pick);
 	_ampE.setEnvironment(hypocenter, receiver, pick);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_ML2h::reset() {
 	AmplitudeProcessor::reset();
 
@@ -342,13 +439,21 @@ void AmplitudeProcessor_ML2h::reset() {
 	_ampE.reset();
 	_ampN.reset();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_ML2h::close() const {
 	// TODO: Check for best available amplitude here
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor_ML2h::feed(const Record *record) {
 	// Both processors finished already?
 	if ( _ampE.isFinished() && _ampN.isFinished() ) return false;
@@ -389,8 +494,12 @@ bool AmplitudeProcessor_ML2h::feed(const Record *record) {
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor_ML2h::computeAmplitude(const DoubleArray &data,
                                                size_t i1, size_t i2,
                                                size_t si1, size_t si2,
@@ -400,11 +509,14 @@ bool AmplitudeProcessor_ML2h::computeAmplitude(const DoubleArray &data,
                                                double *period, double *snr) {
 	return false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_ML2h::newAmplitude(const AmplitudeProcessor *proc,
                                            const AmplitudeProcessor::Result &res) {
-
 	if ( isFinished() ) return;
 
 	int idx = 0;
@@ -420,6 +532,7 @@ void AmplitudeProcessor_ML2h::newAmplitude(const AmplitudeProcessor *proc,
 	_results[idx]->value = res.amplitude;
 	_results[idx]->time = res.time;
 	_results[idx]->snr = res.snr;
+	_results[idx]->period = res.period;
 
 	if ( _results[0] && _results[1] ) {
 		setStatus(Finished, 100.);
@@ -431,12 +544,14 @@ void AmplitudeProcessor_ML2h::newAmplitude(const AmplitudeProcessor *proc,
 				newRes.amplitude = average(_results[0]->value, _results[1]->value);
 				newRes.time = average(_results[0]->time, _results[1]->time);
 				newRes.snr = (_results[0]->snr + _results[1]->snr) * 0.5;
+				newRes.period = (_results[0]->period + _results[1]->period) * 0.5;
 				newRes.component = Horizontal;
 				break;
 			case TakeGeometricMean:
 				newRes.amplitude = gmean(_results[0]->value, _results[1]->value);
 				newRes.time = average(_results[0]->time, _results[1]->time);
 				newRes.snr = (_results[0]->snr + _results[1]->snr) * 0.5;
+				newRes.period = (_results[0]->period + _results[1]->period) * 0.5;
 				newRes.component = Horizontal;
 				break;
 			case TakeMin:
@@ -444,12 +559,14 @@ void AmplitudeProcessor_ML2h::newAmplitude(const AmplitudeProcessor *proc,
 					newRes.amplitude = _results[0]->value;
 					newRes.time = _results[0]->time;
 					newRes.snr = _results[0]->snr;
+					newRes.period = _results[0]->period;
 					newRes.component = _ampE.usedComponent();
 				}
 				else {
 					newRes.amplitude = _results[1]->value;
 					newRes.time = _results[1]->time;
 					newRes.snr = _results[1]->snr;
+					newRes.period = _results[1]->period;
 					newRes.component = _ampN.usedComponent();
 				}
 				break;
@@ -458,12 +575,14 @@ void AmplitudeProcessor_ML2h::newAmplitude(const AmplitudeProcessor *proc,
 					newRes.amplitude =  _results[0]->value;
 					newRes.time = _results[0]->time;
 					newRes.snr = _results[0]->snr;
+					newRes.period = _results[0]->period;
 					newRes.component = _ampE.usedComponent();
 				}
 				else {
 					newRes.amplitude =  _results[1]->value;
 					newRes.time = _results[1]->time;
 					newRes.snr = _results[1]->snr;
+					newRes.period = _results[1]->period;
 					newRes.component = _ampN.usedComponent();
 				}
 				break;
@@ -472,7 +591,11 @@ void AmplitudeProcessor_ML2h::newAmplitude(const AmplitudeProcessor *proc,
 		emitAmplitude(newRes);
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }

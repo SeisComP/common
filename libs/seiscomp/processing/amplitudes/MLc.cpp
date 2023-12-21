@@ -264,6 +264,30 @@ bool AmplitudeProcessor_MLc2h::setParameter(Capability cap, const std::string &v
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string AmplitudeProcessor_MLc2h::parameter(Capability cap) const {
+	if ( cap == Combiner ) {
+		switch ( _combiner ) {
+			case TakeMin:
+				return "Min";
+			case TakeMax:
+				return "Max";
+			case TakeAverage:
+				return "Average";
+			case TakeGeometricMean:
+				return "Geometric mean";
+			default:
+				break;
+		}
+	}
+
+	return _ampN.parameter(cap);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_MLc2h::reset() {
 	AmplitudeProcessor::reset();
 
@@ -455,6 +479,7 @@ void AmplitudeProcessor_MLc2h::newAmplitude(const AmplitudeProcessor *proc,
 	_results[idx]->value = res.amplitude;
 	_results[idx]->time = res.time;
 	_results[idx]->snr = res.snr;
+	_results[idx]->period = res.period;
 
 	if ( _results[0] && _results[1] ) {
 		setStatus(Finished, 100.);
@@ -466,12 +491,15 @@ void AmplitudeProcessor_MLc2h::newAmplitude(const AmplitudeProcessor *proc,
 				newRes.amplitude = average(_results[0]->value, _results[1]->value);
 				newRes.time = average(_results[0]->time, _results[1]->time);
 				newRes.snr = (_results[0]->snr + _results[1]->snr) * 0.5;
+				newRes.period = (_results[0]->period + _results[1]->period) * 0.5;
 				newRes.component = Horizontal;
+
 				break;
 			case TakeGeometricMean:
 				newRes.amplitude = gmean(_results[0]->value, _results[1]->value);
 				newRes.time = average(_results[0]->time, _results[1]->time);
 				newRes.snr = (_results[0]->snr + _results[1]->snr) * 0.5;
+				newRes.period = (_results[0]->period + _results[1]->period) * 0.5;
 				newRes.component = Horizontal;
 				break;
 			case TakeMin:
@@ -479,12 +507,14 @@ void AmplitudeProcessor_MLc2h::newAmplitude(const AmplitudeProcessor *proc,
 					newRes.amplitude = _results[0]->value;
 					newRes.time = _results[0]->time;
 					newRes.snr = _results[0]->snr;
+					newRes.period = _results[0]->period;
 					newRes.component = _ampE.usedComponent();
 				}
 				else {
 					newRes.amplitude = _results[1]->value;
 					newRes.time = _results[1]->time;
 					newRes.snr = _results[1]->snr;
+					newRes.period = _results[1]->period;
 					newRes.component = _ampN.usedComponent();
 				}
 				break;
@@ -493,12 +523,14 @@ void AmplitudeProcessor_MLc2h::newAmplitude(const AmplitudeProcessor *proc,
 					newRes.amplitude = _results[0]->value;
 					newRes.time = _results[0]->time;
 					newRes.snr = _results[0]->snr;
+					newRes.period = _results[0]->period;
 					newRes.component = _ampE.usedComponent();
 				}
 				else {
 					newRes.amplitude = _results[1]->value;
 					newRes.time = _results[1]->time;
 					newRes.snr = _results[1]->snr;
+					newRes.period = _results[1]->period;
 					newRes.component = _ampN.usedComponent();
 				}
 				break;
