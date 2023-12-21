@@ -48,6 +48,7 @@ namespace Core {
  ******************************************************************************
  "17.0.0"   0x110000
    - Added Seiscomp::Processing::MagnitudeProcessor_MLc _c6, _H and _minDepth.
+   - Added Seiscomp::Processing::AmplitudeProcessor::parameter
 
  "16.1.0"   0x100100
    - Added Seiscomp::DataModel::numberOfComponents
