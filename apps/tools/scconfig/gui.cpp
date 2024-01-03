@@ -421,7 +421,23 @@ void addParameter(QStandardItem *item, Parameter *param, int level,
 	value->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable);
 	locked->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
 
-	name->setToolTip(param->definition->description.c_str());
+	std::string descText;
+	if ( !param->definition->description.empty() ) {
+		descText = param->definition->description;
+	}
+	if ( !param->definition->values.empty() ) {
+		if ( !descText.empty() ) {
+			descText = descText + "\n";
+		}
+		descText = descText + "Supported values: " + param->definition->values;
+	}
+	if ( !param->definition->range.empty() ) {
+		if ( !descText.empty() ) {
+			descText = descText + "\n";
+		}
+		descText = descText + "Range: " + param->definition->range;
+	}
+	name->setToolTip(descText.c_str());
 	type->setToolTip(name->toolTip());
 	value->setToolTip(name->toolTip());
 	locked->setToolTip(param->symbol.uri.c_str());

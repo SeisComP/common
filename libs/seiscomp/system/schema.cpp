@@ -108,6 +108,8 @@ void SchemaParameter::serialize(Archive& ar) {
 	ar & NAMED_OBJECT("default", defaultValue);
 	ar & NAMED_OBJECT("read-only", readOnly);
 	ar & NAMED_OBJECT_HINT("description", description, Archive::XML_ELEMENT);
+	ar & NAMED_OBJECT("values", values);
+	ar & NAMED_OBJECT("range", range);
 	if ( ar.isReading() ) convertDoc(description);
 }
 

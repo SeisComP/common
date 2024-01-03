@@ -1549,10 +1549,26 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 	item.label = textWidget;
 	item.input = inputWidget;
 
+	std::string descText;
 	if ( !param->definition->description.empty() ) {
+		descText = param->definition->description;
+	}
+	if ( !param->definition->values.empty() ) {
+		if ( !descText.empty() ) {
+			descText = descText + "\n";
+		}
+		descText = descText + "Supported values: " + param->definition->values;
+	}
+	if ( !param->definition->range.empty() ) {
+		if ( !descText.empty() ) {
+			descText = descText + "\n";
+		}
+		descText = descText + "Range: " + param->definition->range;
+	}
+	if ( !descText.empty() ) {
 		DescLabel *desc = new DescLabel;
-		desc->setText(maxSize(param->definition->description, 60).c_str());
-		QString content(string2Block(param->definition->description, 80).c_str());
+		desc->setText(maxSize(descText, 60).c_str());
+		QString content(string2Block(descText, 80).c_str());
 		content = encodeHTML(content);
 
 		QString toolTip = QString("<p>%1</p>").arg(content);
@@ -1571,7 +1587,7 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		item.description = desc;
 
 		if ( item.input->widget() )
-			item.input->widget()->setWhatsThis(param->definition->description.c_str());
+			item.input->widget()->setWhatsThis(descText.c_str());
 	}
 	else
 		item.description = NULL;
