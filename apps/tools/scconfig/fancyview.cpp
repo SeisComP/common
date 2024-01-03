@@ -1513,10 +1513,8 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		textWidget = name;
 		inputWidget = edit;
 
-		connect(edit, SIGNAL(editingFinished()),
-		        this, SLOT(optionTextEdited()));
-		connect(edit, SIGNAL(textEdited(const QString&)),
-		        this, SLOT(optionTextChanged(const QString&)));
+		connect(edit, SIGNAL(editingFinished()), this, SLOT(optionTextEdited()));
+		connect(edit, SIGNAL(textEdited(QString)), this, SLOT(optionTextChanged(QString)));
 
 		nameLayout->addWidget(name);
 		paramLayout->addLayout(nameLayout);
