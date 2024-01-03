@@ -1555,7 +1555,7 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		QString content(string2Block(param->definition->description, 80).c_str());
 		content = encodeHTML(content);
 
-		QString toolTip = QString("<p>%1</p>").arg(content);
+		QString toolTip = QString("<p style='white-space:pre'>%1</p>").arg(content);
 		desc->setToolTip(toolTip);
 
 		//desc->setWordWrap(true);
