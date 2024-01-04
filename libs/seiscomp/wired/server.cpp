@@ -189,7 +189,8 @@ bool Server::addEndpoint(Socket::IPAddress ip, Socket::port_t port,
 	if ( r != Socket::Success ) {
 		char buf[Socket::IPAddress::MAX_IP_STRING_LEN];
 		ip.toString(buf);
-		SEISCOMP_ERROR("Unable to bind to %s:%d: %d", buf, port, r);
+		SEISCOMP_ERROR("Unable to bind to %s:%d: %d",
+		               buf, port, static_cast<int>(r));
 		return false;
 	}
 
@@ -228,7 +229,8 @@ bool Server::addEndpoint(Socket::IPAddress ip, Socket::port_t port, Endpoint *en
 	if ( r != Socket::Success ) {
 		char buf[Socket::IPAddress::MAX_IP_STRING_LEN];
 		ip.toString(buf);
-		SEISCOMP_ERROR("Unable to bind to %s:%d: %d, %d", buf, port, r, errno);
+		SEISCOMP_ERROR("Unable to bind to %s:%d: %d, %d", buf, port,
+		               static_cast<int>(r), errno);
 		return false;
 	}
 
@@ -273,7 +275,8 @@ bool Server::addEndpointV6(Socket::IPAddress ip, Socket::port_t port,
 	if ( r != Socket::Success ) {
 		char ip_str[Socket::IPAddress::MAX_IP_STRING_LEN];
 		ip.toString(ip_str);
-		SEISCOMP_ERROR("Unable to bind to [%s]:%d: %d", ip_str, port, r);
+		SEISCOMP_ERROR("Unable to bind to [%s]:%d: %d", ip_str, port,
+		               static_cast<int>(r));
 		return false;
 	}
 
