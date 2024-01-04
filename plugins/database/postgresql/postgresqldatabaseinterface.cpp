@@ -164,7 +164,7 @@ bool PostgreSQLDatabase::isConnected() const {
 	ConnStatusType stat = PQstatus(_handle);
 	if ( stat == CONNECTION_OK ) return true;
 
-	SEISCOMP_ERROR("connection bad (%d) -> reconnect", stat);
+	SEISCOMP_ERROR("connection bad (%d) -> reconnect", static_cast<int>(stat));
 	PQreset(_handle);
 	return PQstatus(_handle) == CONNECTION_OK;
 }
