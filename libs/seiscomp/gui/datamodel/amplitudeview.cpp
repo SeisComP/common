@@ -3927,17 +3927,54 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 
 	Util::KeyValuesPtr keys = getParams(sid.networkCode(), sid.stationCode());
 
-	if ( !proc->setup(
-		Processing::Settings(
-			SCApp->configModuleName(),
-			sid.networkCode(), sid.stationCode(),
-			sid.locationCode(), sid.channelCode().substr(0,2),
-			&SCCoreApp->configuration(), keys.get())) ) {
+	Processing::Settings settings(
+		SCApp->configModuleName(),
+		sid.networkCode(), sid.stationCode(),
+		sid.locationCode(), sid.channelCode().substr(0,2),
+		&SCCoreApp->configuration(), keys.get()
+	);
+
+	if ( !proc->setup(settings) ) {
 		cerr << sid.networkCode() << "." << sid.stationCode() << ": setup processor failed ("
 		     << proc->status().toString() << ", " << proc->statusValue() << ")"
 		     << ": ignoring station" << endl;
 		return nullptr;
 	}
+
+	// This is actually a hack to preselect the combiner combobox. This will be fixed with
+	// API 17 so that the processor can be queried for set combiner and measureType.
+	try {
+		string s = settings.getString("amplitudes." + proc->type() + ".combiner");
+		int idx = -1;
+
+		if ( s == "average" ) {
+			idx = SC_D.comboAmpCombiner->findText("Average");
+		}
+		else if ( s == "max" ) {
+			idx = SC_D.comboAmpCombiner->findText("Max");
+		}
+		else if ( s == "min" ) {
+			idx = SC_D.comboAmpCombiner->findText("Min");
+		}
+		else if ( s == "geometric_mean" ) {
+			idx = SC_D.comboAmpCombiner->findText("Geometric mean");
+		}
+
+		if ( idx >= 0 ) {
+			SC_D.comboAmpCombiner->setCurrentIndex(idx);
+		}
+	}
+	catch ( ... ) {}
+
+	try {
+		string s = settings.getString("amplitudes." + proc->type() + ".measureType");
+		int idx = SC_D.comboAmpType->findText(s.c_str());
+
+		if ( idx >= 0 ) {
+			SC_D.comboAmpType->setCurrentIndex(idx);
+		}
+	}
+	catch ( ... ) {}
 
 	Processing::MagnitudeProcessorPtr magProc = Processing::MagnitudeProcessorFactory::Create(SC_D.magnitudeType.c_str());
 	if ( magProc == nullptr ) {
