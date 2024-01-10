@@ -583,6 +583,8 @@ class SchemaParameter(seiscomp.core.BaseObject):
     name = property(_system.SchemaParameter_name_get, _system.SchemaParameter_name_set)
     type = property(_system.SchemaParameter_type_get, _system.SchemaParameter_type_set)
     unit = property(_system.SchemaParameter_unit_get, _system.SchemaParameter_unit_set)
+    range = property(_system.SchemaParameter_range_get, _system.SchemaParameter_range_set)
+    values = property(_system.SchemaParameter_values_get, _system.SchemaParameter_values_set)
     defaultValue = property(_system.SchemaParameter_defaultValue_get, _system.SchemaParameter_defaultValue_set)
     description = property(_system.SchemaParameter_description_get, _system.SchemaParameter_description_set)
     readOnly = property(_system.SchemaParameter_readOnly_get, _system.SchemaParameter_readOnly_set)

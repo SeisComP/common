@@ -15889,6 +15889,124 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_SchemaParameter_range_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::SchemaParameter *arg1 = (Seiscomp::System::SchemaParameter *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "SchemaParameter_range_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaParameter, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaParameter_range_set" "', argument " "1"" of type '" "Seiscomp::System::SchemaParameter *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::SchemaParameter * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SchemaParameter_range_set" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SchemaParameter_range_set" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  if (arg1) (arg1)->range = *arg2;
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaParameter_range_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::SchemaParameter *arg1 = (Seiscomp::System::SchemaParameter *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::string *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaParameter, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaParameter_range_get" "', argument " "1"" of type '" "Seiscomp::System::SchemaParameter *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::SchemaParameter * >(argp1);
+  result = (std::string *) & ((arg1)->range);
+  resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaParameter_values_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::SchemaParameter *arg1 = (Seiscomp::System::SchemaParameter *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "SchemaParameter_values_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaParameter, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaParameter_values_set" "', argument " "1"" of type '" "Seiscomp::System::SchemaParameter *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::SchemaParameter * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SchemaParameter_values_set" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SchemaParameter_values_set" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  if (arg1) (arg1)->values = *arg2;
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SchemaParameter_values_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::SchemaParameter *arg1 = (Seiscomp::System::SchemaParameter *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::string *result = 0 ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__SchemaParameter, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaParameter_values_get" "', argument " "1"" of type '" "Seiscomp::System::SchemaParameter *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::SchemaParameter * >(argp1);
+  result = (std::string *) & ((arg1)->values);
+  resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_SchemaParameter_defaultValue_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::System::SchemaParameter *arg1 = (Seiscomp::System::SchemaParameter *) 0 ;
@@ -48827,6 +48945,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "SchemaParameter_type_get", _wrap_SchemaParameter_type_get, METH_O, NULL},
 	 { "SchemaParameter_unit_set", _wrap_SchemaParameter_unit_set, METH_VARARGS, NULL},
 	 { "SchemaParameter_unit_get", _wrap_SchemaParameter_unit_get, METH_O, NULL},
+	 { "SchemaParameter_range_set", _wrap_SchemaParameter_range_set, METH_VARARGS, NULL},
+	 { "SchemaParameter_range_get", _wrap_SchemaParameter_range_get, METH_O, NULL},
+	 { "SchemaParameter_values_set", _wrap_SchemaParameter_values_set, METH_VARARGS, NULL},
+	 { "SchemaParameter_values_get", _wrap_SchemaParameter_values_get, METH_O, NULL},
 	 { "SchemaParameter_defaultValue_set", _wrap_SchemaParameter_defaultValue_set, METH_VARARGS, NULL},
 	 { "SchemaParameter_defaultValue_get", _wrap_SchemaParameter_defaultValue_get, METH_O, NULL},
 	 { "SchemaParameter_description_set", _wrap_SchemaParameter_description_set, METH_VARARGS, NULL},
