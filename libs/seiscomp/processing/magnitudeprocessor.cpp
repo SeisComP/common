@@ -515,6 +515,15 @@ bool MagnitudeProcessor::initRegionalization(const Settings &settings) {
 		const Seiscomp::Config::Config *cfg = settings.localConfiguration;
 		if ( cfg ) {
 			try {
+				if ( !cfg->getString("magnitudes." + type() + ".regions").empty() ) {
+					SEISCOMP_WARNING("%s magnitude: ignoring obsolete "
+					                 "configuration parameter: magnitudes.%s.regions",
+					                 type().c_str(), type().c_str());
+				}
+			}
+			catch ( ... ) {}
+
+			try {
 				string filename = cfg->getString("magnitudes." + type() + ".regionFile");
 				filename = Seiscomp::Environment::Instance()->absolutePath(filename);
 				regionalizedSettings->regions = Regions::load(filename);
