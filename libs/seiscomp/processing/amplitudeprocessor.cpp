@@ -2212,7 +2212,7 @@ bool AmplitudeProcessor::initRegionalization(const Settings &settings) {
 
 			if ( regionalize ) {
 				try {
-					string filename = cfg->getString("magnitudes." + type() + ".regions");
+					string filename = cfg->getString("magnitudes." + type() + ".regionFile");
 					filename = Seiscomp::Environment::Instance()->absolutePath(filename);
 					regionalizedSettings->regions = Regions::load(filename);
 
@@ -2247,25 +2247,27 @@ bool AmplitudeProcessor::initRegionalization(const Settings &settings) {
 						Locale config;
 						config.name = feature->name();
 						config.feature = feature;
+
 						if ( !readLocale(&config, settings, cfgPrefix) )
 							return false;
 
 						regionalizedSettings->regionalization.push_back(config);
 					}
+				}
+				catch ( ... ) {}
 
-					try {
-						if ( cfg->getBool("magnitudes." + type() + ".region.world.enable") ) {
-							string cfgPrefix = "magnitudes." + type() + ".region.world.";
-							Locale config;
-							config.name = "world";
-							config.feature = nullptr;
-							if ( !readLocale(&config, settings, cfgPrefix) )
-								return false;
+				try {
+					if ( cfg->getBool("magnitudes." + type() + ".region.world.enable") ) {
+						string cfgPrefix = "magnitudes." + type() + ".region.world.";
+						Locale config;
+						config.name = "world";
+						config.feature = nullptr;
 
-							regionalizedSettings->regionalization.push_back(config);
-						}
+						if ( !readLocale(&config, settings, cfgPrefix) )
+							return false;
+
+						regionalizedSettings->regionalization.push_back(config);
 					}
-					catch ( ... ) {}
 				}
 				catch ( ... ) {}
 			}
