@@ -46,8 +46,9 @@ binding parameters:
   for considering non-default units by magnitude.
 * Method applied for measuring amplitudes: absolute maximum, configurable in
   global bindings by :confval:`amplitudes.MLc.measureType`.
-* Method for combining amplitude measurements: mean, configurable in global
-  bindings by :confval:`amplitudes.MLc.combiner`.
+* Method for combining amplitude measurements: *max* (maximum from both
+  horizontal components), configurable in global bindings by
+  :confval:`amplitudes.MLc.combiner`.
 
 Some additional parameters require you to create an amplitude-type profile for
 global binding parameters. Name the profile like the amplitude name, hence MLc:
