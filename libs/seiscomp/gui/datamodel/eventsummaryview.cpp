@@ -1337,8 +1337,9 @@ void EventSummaryView::updateObject(const QString& parentID, Seiscomp::DataModel
 
 		if ( _autoSelect ) {
 			EventPtr registeredEvent = Event::Find(event->publicID());
-			if ( registeredEvent )
+			if ( registeredEvent ) {
 				event = registeredEvent;
+			}
 
 			checkAndDisplay(event.get());
 		}
@@ -1347,9 +1348,11 @@ void EventSummaryView::updateObject(const QString& parentID, Seiscomp::DataModel
 				//setPrefMagnitudeParameter(_currentEvent->preferredMagnitudeID());
 				processEventMsg(event.get());
 			}
-			else
+			else {
 				emit showInStatusbar(QString("an event update has arrived: %1 [event displayed is %2]")
-				                     .arg(event->publicID().c_str()).arg(_currentEvent->publicID().c_str()), 60000);
+				                     .arg(event->publicID().c_str())
+				                     .arg(_currentEvent->publicID().c_str()), 60000);
+			}
 		}
 		return;
 	}
@@ -1591,10 +1594,11 @@ static void elapsedTimeString(const Core::TimeSpan &dt, QString &str)
 
 bool EventSummaryView::setOriginParameter(std::string OriginID){
 	OriginPtr origin = Origin::Find(OriginID);
-	if (!origin && _reader)
+	if ( !origin && _reader ) {
 		origin = Origin::Cast(_reader->getObject(Origin::TypeInfo(), OriginID));
+	}
 
-	if ( origin == nullptr ){
+	if ( origin == nullptr ) {
 		_currentOrigin = nullptr;
 		_currentFocalMechanism = nullptr;
 		SEISCOMP_DEBUG("scesv: setOriginParameter:  origin not found %s ", OriginID.c_str());
@@ -1811,7 +1815,7 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 
 
 void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
-	if ( origin == nullptr ) {
+	if ( !origin ) {
 		clearAutomaticOriginParameter();
 		return;
 	}
@@ -2499,8 +2503,7 @@ void EventSummaryView::setPrefMagnitudeParameter(std::string MagnitudeID){
 }
 
 
-void EventSummaryView::setMagnitudeParameter(DataModel::Origin* origin){
-
+void EventSummaryView::setMagnitudeParameter(DataModel::Origin *origin) {
 	// clear all mag parameters incl. buttons
 	clearMagnitudeParameter();
 
@@ -2521,14 +2524,15 @@ void EventSummaryView::setMagnitudeParameter(DataModel::Origin* origin){
 }
 
 
-void EventSummaryView::setAutomaticMagnitudeParameter(DataModel::Origin* origin) {
+void EventSummaryView::setAutomaticMagnitudeParameter(DataModel::Origin *origin) {
 	for ( int i = 0; i < _magList->rowCount(); ++i ) {
 		auto *row = _magList->rowAt(i);
-		row->setMagnitude(nullptr);
 		row->setReferenceMagnitude(nullptr);
 	}
 
-	if ( !origin ) return;
+	if ( !origin ) {
+		return;
+	}
 
 	for ( size_t i = 0; i < origin->magnitudeCount(); ++i ) {
 		Magnitude *mag = origin->magnitude(i);

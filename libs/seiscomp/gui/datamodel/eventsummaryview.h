@@ -71,15 +71,15 @@ class SC_GUI_API MagRow : public QWidget
 	Q_OBJECT
 
 	public:
-		MagRow(DataModel::Magnitude* netMag, bool bold, QWidget *parent = 0);
-		MagRow(const std::string& type, bool bold, QWidget *parent = 0);
+		MagRow(DataModel::Magnitude *netMag, bool bold, QWidget *parent = 0);
+		MagRow(const std::string &type, bool bold, QWidget *parent = 0);
 		~MagRow();
 
 		void setMagnitude(DataModel::Magnitude*);
-		DataModel::Magnitude* magnitude() const { return _netMag; }
+		DataModel::Magnitude *magnitude() const { return _netMag; }
 
 		void setReferenceMagnitude(DataModel::Magnitude*);
-		DataModel::Magnitude* referenceMagnitude() const { return _netMagReference; }
+		DataModel::Magnitude *referenceMagnitude() const { return _netMagReference; }
 
 		void setReferenceMagnitudeVisible(bool);
 		void setReferenceMagnitudeColor(QColor);
@@ -93,16 +93,16 @@ class SC_GUI_API MagRow : public QWidget
 		void setBold(bool);
 
 	private:
-		QHBoxLayout* _rowsLayout;
-		QLabel* _type;
-		QLabel* _magnitude;
-		QLabel* _magnitudeReference;
-		QLabel* _quality;
-		QLabel* _qualityReference;
-		QLabel* _stdev;
-		QLabel* _stdevReference;
-		DataModel::Magnitude* _netMag;
-		DataModel::Magnitude* _netMagReference;
+		QHBoxLayout *_rowsLayout;
+		QLabel *_type;
+		QLabel *_magnitude;
+		QLabel *_magnitudeReference;
+		QLabel *_quality;
+		QLabel *_qualityReference;
+		QLabel *_stdev;
+		QLabel *_stdevReference;
+		DataModel::Magnitude *_netMag;
+		DataModel::Magnitude *_netMagReference;
 		bool _header;
 		bool _referenceMagVisible;
 
