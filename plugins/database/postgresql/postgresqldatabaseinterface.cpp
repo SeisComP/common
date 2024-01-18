@@ -402,7 +402,7 @@ size_t PostgreSQLDatabase::getRowFieldSize(int index) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PostgreSQLDatabase::escape(std::string &out, const std::string &in) {
+bool PostgreSQLDatabase::escape(std::string &out, const std::string &in) const {
 	if ( !_handle ) return false;
 	int error;
 	out.resize(in.size()*2);

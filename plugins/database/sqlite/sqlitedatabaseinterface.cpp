@@ -421,7 +421,7 @@ size_t SQLiteDatabase::getRowFieldSize(int index) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SQLiteDatabase::escape(string &out, const string &in) {
+bool SQLiteDatabase::escape(string &out, const string &in) const {
 	out.resize(in.size()*2+1);
 	size_t length = in.length();
 	const char *in_buf = in.c_str();

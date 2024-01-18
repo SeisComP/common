@@ -70,7 +70,7 @@ class SQLiteDatabase : public Seiscomp::IO::DatabaseInterface {
 		const char *getRowFieldName(int index) override;
 		const void *getRowField(int index) override;
 		size_t getRowFieldSize(int index) override;
-		bool escape(std::string &out, const std::string &in) override;
+		bool escape(std::string &out, const std::string &in) const override;
 
 
 	// ------------------------------------------------------------------

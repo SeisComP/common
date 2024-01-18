@@ -278,7 +278,7 @@ DEFINE_SMARTPOINTER(DatabaseInterface);
 		 * @param from The input string.
 		 * @return Success flag
 		 */
-		virtual bool escape(std::string &out, const std::string &in);
+		virtual bool escape(std::string &out, const std::string &in) const;
 
 		//! Returns the used column prefix
 		const std::string &columnPrefix() const;

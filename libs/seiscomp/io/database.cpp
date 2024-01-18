@@ -264,7 +264,7 @@ std::string DatabaseInterface::getRowFieldString(int index) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DatabaseInterface::escape(std::string &out, const std::string &in) {
+bool DatabaseInterface::escape(std::string &out, const std::string &in) const {
 	out.resize(in.size()*2+1);
 	size_t length = in.length();
 	const char *in_buf = in.c_str();

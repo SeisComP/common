@@ -69,7 +69,7 @@ class PostgreSQLDatabase : public Seiscomp::IO::DatabaseInterface {
 		virtual OID lastInsertId(const char* table) override;
 		virtual uint64_t numberOfAffectedRows() override;
 
-		virtual bool escape(std::string &out, const std::string &in) override;
+		virtual bool escape(std::string &out, const std::string &in) const override;
 
 
 	// ------------------------------------------------------------------
