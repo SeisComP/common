@@ -382,6 +382,12 @@ bool by_Z_desc_and_code_asc(const ComponentAxis &axis1, const ComponentAxis &axi
 bool getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const char *streamCode, const Core::Time &time) {
 	int len = strlen(streamCode);
 
+	// The orientation of three sensor components is supposed to be
+	// mutually perpendicular, but this is not always achieved (e.g.
+	// sometimes STS-1 horizontal components). We therefore tolerate
+	// up to 5 degrees of deviation from perfect perpendicularity.
+	const float perpendicularityTolerance = 5*M_PI/180;
+
 	res = ThreeComponents();
 
 	std::vector<ComponentAxis> comps;
@@ -437,8 +443,7 @@ bool getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const c
 			for ( size_t a = 0; a < comps.size(); ++a ) {
 				float alpha = comps[a].axis.dot(axis);
 
-				// Allow one degree of uncertainty
-				if ( alpha > 0.0174524064373 ) {
+				if ( alpha > perpendicularityTolerance ) {
 					newOrthogonal = false;
 					break;
 				}
