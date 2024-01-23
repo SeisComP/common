@@ -14,6 +14,7 @@ SET(FILTER_SOURCES
 	rmhp.cpp
 	chainfilter.cpp
 	seismometers.cpp
+	bpenv.cpp
 )
 
 SET(FILTER_HEADERS
@@ -36,6 +37,7 @@ SET(FILTER_HEADERS
 	op2filter.h
 	op2filter.ipp
 	seismometers.h
+	bpenv.h
 )
 
 SC_SETUP_LIB_SUBDIR(FILTER)
