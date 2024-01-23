@@ -348,10 +348,10 @@ namespace {
 
 
 struct ComponentAxis {
-	ComponentAxis(Stream *m, const Math::Vector3f &ax) : model(m), axis(ax) {}
+	ComponentAxis(Stream *m, const Math::Vector3d &ax) : model(m), axis(ax) {}
 
 	Stream *model;
-	Math::Vector3f axis;
+	Math::Vector3d axis;
 };
 
 
@@ -406,34 +406,35 @@ bool getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const c
 			continue;
 		}
 
-		if ( stream->code().compare(0, len, streamCode) )
+		if ( stream->code().compare(0, len, streamCode) ) {
 			continue;
+		}
 
-		float azi = 0, dip = 0;
+		double azi = 0.0, dip = 0.0;
 		
 		try {
-			dip = static_cast<float>(stream->dip());
+			dip = stream->dip();
 		}
 		catch ( ... ) {
 			continue;
 		}
 
 		try {
-			azi = static_cast<float>(stream->azimuth());
+			azi = stream->azimuth();
 		}
 		catch ( ... ) {
 			// We allow the azimuth to be undefined
 			// in case the dip is -90 or +90 degrees.
-			if ( std::abs(std::abs(dip) - 90.0f) > 0.001f ) {
+			if ( std::abs(std::abs(dip) - 90.0) > 0.001 ) {
 				continue;
 			}
 		}
 		
 		try {
-			dip = static_cast<float>(deg2rad(-dip));
-			azi = static_cast<float>(deg2rad(azi));
+			dip = deg2rad(-dip);
+			azi = deg2rad(azi);
 
-			Math::Vector3f axis;
+			Math::Vector3d axis;
 
 			axis.fromAngles(azi, dip);
 
@@ -441,7 +442,7 @@ bool getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const c
 			bool newOrthogonal = true;
 
 			for ( size_t a = 0; a < comps.size(); ++a ) {
-				float alpha = comps[a].axis.dot(axis);
+				auto alpha = comps[a].axis.dot(axis);
 
 				if ( alpha > perpendicularityTolerance ) {
 					newOrthogonal = false;
@@ -470,7 +471,7 @@ bool getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const c
 	}
 
 	// Select the first horizontal left (math. positive) from the second
-	Math::Vector3f cross;
+	Math::Vector3d cross;
 	cross.cross(comps[1].axis, comps[2].axis);
 
 	if ( cross.dot(comps[0].axis) > 0 )
