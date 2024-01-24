@@ -75,7 +75,7 @@ MagnitudeProcessor_MLc::MagnitudeProcessor_MLc()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string MagnitudeProcessor_MLc::amplitudeType() const {
-	return "MLc";
+	return MagnitudeProcessor::amplitudeType();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

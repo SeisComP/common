@@ -61,7 +61,9 @@ mutex mutexTableA;
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Magnitude_ML_idc::Magnitude_ML_idc()
-: MagnitudeProcessor(MAG_TYPE) {}
+: MagnitudeProcessor(MAG_TYPE) {
+	_amplitudeType = AMP_TYPE;
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -69,7 +71,7 @@ Magnitude_ML_idc::Magnitude_ML_idc()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string Magnitude_ML_idc::amplitudeType() const {
-	return AMP_TYPE;
+	return MagnitudeProcessor::amplitudeType();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

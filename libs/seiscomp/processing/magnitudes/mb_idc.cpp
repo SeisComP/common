@@ -59,7 +59,9 @@ boost::mutex mutexTableQ;
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Magnitude_mb_idc::Magnitude_mb_idc()
-: MagnitudeProcessor(MAG_TYPE) {}
+: MagnitudeProcessor(MAG_TYPE) {
+	_amplitudeType = AMP_TYPE;
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -67,7 +69,7 @@ Magnitude_mb_idc::Magnitude_mb_idc()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string Magnitude_mb_idc::amplitudeType() const {
-	return AMP_TYPE;
+	return MagnitudeProcessor::amplitudeType();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

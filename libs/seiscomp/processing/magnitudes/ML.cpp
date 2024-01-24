@@ -62,7 +62,7 @@ MagnitudeProcessor_ML::MagnitudeProcessor_ML() : Processing::MagnitudeProcessor(
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string MagnitudeProcessor_ML::amplitudeType() const {
-	return "ML";
+	return MagnitudeProcessor::amplitudeType();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
