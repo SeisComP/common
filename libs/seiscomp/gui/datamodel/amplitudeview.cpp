@@ -3927,10 +3927,11 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 
 	Util::KeyValuesPtr keys = getParams(sid.networkCode(), sid.stationCode());
 
+	string channelCode = sid.channelCode().substr(0,2);
 	Processing::Settings settings(
 		SCApp->configModuleName(),
 		sid.networkCode(), sid.stationCode(),
-		sid.locationCode(), sid.channelCode().substr(0,2),
+		sid.locationCode(), channelCode,
 		&SCCoreApp->configuration(), keys.get()
 	);
 
