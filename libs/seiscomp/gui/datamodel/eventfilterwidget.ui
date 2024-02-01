@@ -1,10 +1,8 @@
-<ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>EventFilter</class>
- <widget class="QWidget" name="EventFilter" >
-  <property name="geometry" >
+ <widget class="QWidget" name="EventFilter">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -12,397 +10,478 @@
     <height>419</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Filter Settings</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
+  <layout class="QVBoxLayout">
+   <property name="spacing">
     <number>6</number>
    </property>
+   <property name="leftMargin">
+    <number>9</number>
+   </property>
+   <property name="topMargin">
+    <number>9</number>
+   </property>
+   <property name="rightMargin">
+    <number>9</number>
+   </property>
+   <property name="bottomMargin">
+    <number>9</number>
+   </property>
    <item>
-    <layout class="QGridLayout" >
-     <property name="margin" >
+    <layout class="QGridLayout">
+     <property name="leftMargin">
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <property name="spacing">
       <number>6</number>
      </property>
-     <item row="3" column="3" >
-      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="toLatitude" >
-       <property name="specialValueText" >
-        <string>Unset</string>
-       </property>
-       <property name="suffix" >
-        <string>°</string>
-       </property>
-       <property name="decimals" >
-        <number>4</number>
-       </property>
-       <property name="maximum" >
-        <double>90</double>
-       </property>
-       <property name="minimum" >
-        <double>-90</double>
-       </property>
-       <property name="value" >
-        <double>-90</double>
+     <item row="0" column="1" colspan="3">
+      <widget class="QLineEdit" name="editEventID">
+       <property name="toolTip">
+        <string>EventID filter which allows wildcards (* and ?)</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="4" >
-      <widget class="QFrame" name="frame" >
-       <property name="frameShape" >
+     <item row="3" column="1">
+      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="fromLatitude">
+       <property name="specialValueText">
+        <string>Unset</string>
+       </property>
+       <property name="suffix">
+        <string>°</string>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-90.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>90.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>-90.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="QLabel" name="label_11">
+       <property name="text">
+        <string>from</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="0">
+      <widget class="QLabel" name="label_14">
+       <property name="text">
+        <string>from</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="1">
+      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="fromMagnitude">
+       <property name="specialValueText">
+        <string>Unset</string>
+       </property>
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="minimum">
+        <double>-10.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>20.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.500000000000000</double>
+       </property>
+       <property name="value">
+        <double>-10.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0" colspan="4">
+      <widget class="QFrame" name="frame_3">
+       <property name="frameShape">
         <enum>QFrame::HLine</enum>
        </property>
-       <property name="frameShadow" >
+       <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
        </property>
       </widget>
      </item>
-     <item row="12" column="1" >
-      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="fromMagnitude" >
-       <property name="specialValueText" >
-        <string>Unset</string>
+     <item row="1" column="0" colspan="4">
+      <widget class="QFrame" name="frame_4">
+       <property name="frameShape">
+        <enum>QFrame::HLine</enum>
        </property>
-       <property name="decimals" >
-        <number>1</number>
-       </property>
-       <property name="maximum" >
-        <double>20</double>
-       </property>
-       <property name="minimum" >
-        <double>-10</double>
-       </property>
-       <property name="singleStep" >
-        <double>0.5</double>
-       </property>
-       <property name="value" >
-        <double>-10</double>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
        </property>
       </widget>
      </item>
-     <item row="0" column="0" >
-      <widget class="QLabel" name="label_4" >
-       <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>4</hsizetype>
-         <vsizetype>5</vsizetype>
+     <item row="6" column="1">
+      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="fromLongitude">
+       <property name="specialValueText">
+        <string>Unset</string>
+       </property>
+       <property name="suffix">
+        <string>°</string>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-180.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>180.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>-180.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="2">
+      <widget class="QLabel" name="label_15">
+       <property name="text">
+        <string>to</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="3">
+      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="toLongitude">
+       <property name="specialValueText">
+        <string>Unset</string>
+       </property>
+       <property name="suffix">
+        <string>°</string>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-180.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>180.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>-180.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QLabel" name="label_6">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
+        <string>to</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="2">
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>to</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>to</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>from</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1">
+      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="fromDepth">
+       <property name="specialValueText">
+        <string>Unset</string>
+       </property>
+       <property name="suffix">
+        <string>km</string>
+       </property>
+       <property name="minimum">
+        <double>-999.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>999.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>-999.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
         <string>Event ID</string>
        </property>
       </widget>
      </item>
-     <item row="12" column="2" >
-      <widget class="QLabel" name="label_15" >
-       <property name="text" >
-        <string>to</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="3" >
-      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="toLongitude" >
-       <property name="specialValueText" >
+     <item row="15" column="3">
+      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="toMagnitude">
+       <property name="specialValueText">
         <string>Unset</string>
        </property>
-       <property name="suffix" >
-        <string>°</string>
+       <property name="decimals">
+        <number>1</number>
        </property>
-       <property name="decimals" >
-        <number>4</number>
+       <property name="minimum">
+        <double>-10.000000000000000</double>
        </property>
-       <property name="maximum" >
-        <double>180</double>
+       <property name="maximum">
+        <double>20.000000000000000</double>
        </property>
-       <property name="minimum" >
-        <double>-180</double>
+       <property name="singleStep">
+        <double>0.500000000000000</double>
        </property>
-       <property name="value" >
-        <double>-180</double>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1" >
-      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="fromDepth" >
-       <property name="specialValueText" >
-        <string>Unset</string>
-       </property>
-       <property name="suffix" >
-        <string>km</string>
-       </property>
-       <property name="maximum" >
-        <double>999</double>
-       </property>
-       <property name="minimum" >
-        <double>-999</double>
-       </property>
-       <property name="value" >
-        <double>-999</double>
+       <property name="value">
+        <double>-10.000000000000000</double>
        </property>
       </widget>
      </item>
-     <item row="7" column="0" colspan="4" >
-      <widget class="QFrame" name="frame_2" >
-       <property name="frameShape" >
+     <item row="4" column="0" colspan="4">
+      <widget class="QFrame" name="frame">
+       <property name="frameShape">
         <enum>QFrame::HLine</enum>
        </property>
-       <property name="frameShadow" >
+       <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
        </property>
       </widget>
      </item>
-     <item row="2" column="0" colspan="4" >
-      <widget class="QLabel" name="label" >
-       <property name="text" >
-        <string>Latitude range</string>
+     <item row="11" column="0" colspan="4">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Phase count range</string>
        </property>
       </widget>
      </item>
-     <item row="9" column="3" >
-      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="toDepth" >
-       <property name="specialValueText" >
-        <string>Unset</string>
-       </property>
-       <property name="suffix" >
-        <string>km</string>
-       </property>
-       <property name="maximum" >
-        <double>999</double>
-       </property>
-       <property name="minimum" >
-        <double>-999</double>
-       </property>
-       <property name="value" >
-        <double>-999</double>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" >
-      <widget class="QLabel" name="label_5" >
-       <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>5</hsizetype>
-         <vsizetype>5</vsizetype>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>from</string>
        </property>
-       <property name="alignment" >
+       <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="10" column="0" colspan="4" >
-      <widget class="QFrame" name="frame_3" >
-       <property name="frameShape" >
+     <item row="7" column="0" colspan="4">
+      <widget class="QFrame" name="frame_2">
+       <property name="frameShape">
         <enum>QFrame::HLine</enum>
        </property>
-       <property name="frameShadow" >
+       <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
        </property>
       </widget>
      </item>
-     <item row="12" column="0" >
-      <widget class="QLabel" name="label_14" >
-       <property name="text" >
-        <string>from</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="0" >
-      <widget class="QLabel" name="label_11" >
-       <property name="text" >
-        <string>from</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0" >
-      <widget class="QLabel" name="label_8" >
-       <property name="text" >
-        <string>from</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0" colspan="4" >
-      <widget class="QLabel" name="label_10" >
-       <property name="text" >
+     <item row="8" column="0" colspan="4">
+      <widget class="QLabel" name="label_10">
+       <property name="text">
         <string>Depth range</string>
        </property>
       </widget>
      </item>
-     <item row="9" column="2" >
-      <widget class="QLabel" name="label_12" >
-       <property name="text" >
-        <string>to</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="2" >
-      <widget class="QLabel" name="label_9" >
-       <property name="text" >
-        <string>to</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1" >
-      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="fromLatitude" >
-       <property name="specialValueText" >
+     <item row="9" column="3">
+      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="toDepth">
+       <property name="specialValueText">
         <string>Unset</string>
        </property>
-       <property name="suffix" >
+       <property name="suffix">
+        <string>km</string>
+       </property>
+       <property name="minimum">
+        <double>-999.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>999.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>-999.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="3">
+      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="toLatitude">
+       <property name="specialValueText">
+        <string>Unset</string>
+       </property>
+       <property name="suffix">
         <string>°</string>
        </property>
-       <property name="decimals" >
+       <property name="decimals">
         <number>4</number>
        </property>
-       <property name="maximum" >
-        <double>90</double>
+       <property name="minimum">
+        <double>-90.000000000000000</double>
        </property>
-       <property name="minimum" >
-        <double>-90</double>
+       <property name="maximum">
+        <double>90.000000000000000</double>
        </property>
-       <property name="value" >
-        <double>-90</double>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2" >
-      <widget class="QLabel" name="label_6" >
-       <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>4</hsizetype>
-         <vsizetype>5</vsizetype>
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text" >
-        <string>to</string>
+       <property name="value">
+        <double>-90.000000000000000</double>
        </property>
       </widget>
      </item>
-     <item row="5" column="0" colspan="4" >
-      <widget class="QLabel" name="label_7" >
-       <property name="text" >
+     <item row="5" column="0" colspan="4">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
         <string>Longitude range</string>
        </property>
       </widget>
      </item>
-     <item row="12" column="3" >
-      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="toMagnitude" >
-       <property name="specialValueText" >
-        <string>Unset</string>
-       </property>
-       <property name="decimals" >
-        <number>1</number>
-       </property>
-       <property name="maximum" >
-        <double>20</double>
-       </property>
-       <property name="minimum" >
-        <double>-10</double>
-       </property>
-       <property name="singleStep" >
-        <double>0.5</double>
-       </property>
-       <property name="value" >
-        <double>-10</double>
+     <item row="2" column="0" colspan="4">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Latitude range</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="1" >
-      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="fromLongitude" >
-       <property name="specialValueText" >
-        <string>Unset</string>
-       </property>
-       <property name="suffix" >
-        <string>°</string>
-       </property>
-       <property name="decimals" >
-        <number>4</number>
-       </property>
-       <property name="maximum" >
-        <double>180</double>
-       </property>
-       <property name="minimum" >
-        <double>-180</double>
-       </property>
-       <property name="value" >
-        <double>-180</double>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="0" colspan="4" >
-      <widget class="QLabel" name="label_13" >
-       <property name="text" >
+     <item row="14" column="0" colspan="4">
+      <widget class="QLabel" name="label_13">
+       <property name="text">
         <string>Magnitude range</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0" colspan="4" >
-      <widget class="QFrame" name="frame_4" >
-       <property name="frameShape" >
+     <item row="13" column="0" colspan="4">
+      <widget class="QFrame" name="frame_6">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="frameShape">
         <enum>QFrame::HLine</enum>
        </property>
-       <property name="frameShadow" >
+       <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" colspan="3" >
-      <widget class="QLineEdit" name="editEventID" >
-       <property name="toolTip" >
-        <string>EventID filter which allows wildcards (* and ?)</string>
+     <item row="12" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>from</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="2">
+      <widget class="QLabel" name="label_16">
+       <property name="text">
+        <string>to</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="1">
+      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="fromPhase">
+       <property name="specialValueText">
+        <string>Unset</string>
+       </property>
+       <property name="decimals">
+        <number>0</number>
+       </property>
+       <property name="minimum">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>999.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="3">
+      <widget class="Seiscomp::Gui::OptionalDoubleSpinBox" name="toPhase">
+       <property name="specialValueText">
+        <string>Unset</string>
+       </property>
+       <property name="decimals">
+        <number>0</number>
+       </property>
+       <property name="minimum">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>999.000000000000000</double>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QFrame" name="frame_5" >
-     <property name="frameShape" >
+    <widget class="QFrame" name="frame_5">
+     <property name="frameShape">
       <enum>QFrame::HLine</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QToolButton" name="btnReset" >
-     <property name="text" >
+    <widget class="QToolButton" name="btnReset">
+     <property name="text">
       <string>Reset all</string>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>Seiscomp::Gui::OptionalDoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
    <header>seiscomp/gui/core/optionaldoublespinbox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
