@@ -228,6 +228,12 @@ void addFilterConstraints(std::ostream &os, DatabaseArchive *ar, const EventList
 	if ( filter.maxMagnitude ) {
 		os << " and Magnitude." << _T("magnitude_value") << " <= " << *filter.maxMagnitude;
 	}
+	if ( filter.minPhaseCount ) {
+		os << " and Origin." << _T("quality_usedPhaseCount") << " >= " << *filter.minPhaseCount;
+	}
+	if ( filter.maxPhaseCount ) {
+		os << " and Origin." << _T("quality_usedPhaseCount") << " <= " << *filter.maxPhaseCount;
+	}
 
 	if ( !filter.eventID.empty() ) {
 		// Convert to most common SQL LIKE format
@@ -2100,6 +2106,8 @@ class EventFilterWidget : public QWidget {
 			_ui.toLongitude->setValue(filter.maxLongitude ? *filter.maxLongitude : _ui.toLongitude->minimum());
 			_ui.fromDepth->setValue(filter.minDepth ? *filter.minDepth : _ui.fromDepth->minimum());
 			_ui.toDepth->setValue(filter.maxDepth ? *filter.maxDepth : _ui.toDepth->minimum());
+			_ui.fromPhase->setValue(filter.minPhaseCount ? *filter.minPhaseCount : _ui.fromPhase->minimum());
+			_ui.toPhase->setValue(filter.maxPhaseCount ? *filter.maxPhaseCount : _ui.toPhase->minimum());
 			_ui.fromMagnitude->setValue(filter.minMagnitude ? *filter.minMagnitude : _ui.fromMagnitude->minimum());
 			_ui.toMagnitude->setValue(filter.maxMagnitude ? *filter.maxMagnitude : _ui.toMagnitude->minimum());
 			_ui.editEventID->setText(filter.eventID.c_str());
@@ -2130,6 +2138,11 @@ class EventFilterWidget : public QWidget {
 				f.minMagnitude = _ui.fromMagnitude->value();
 			if ( _ui.toMagnitude->isValid() )
 				f.maxMagnitude = _ui.toMagnitude->value();
+
+			if ( _ui.fromPhase->isValid() )
+				f.minPhaseCount = _ui.fromPhase->value();
+			if ( _ui.toPhase->isValid() )
+				f.maxPhaseCount = _ui.toPhase->value();
 
 			f.eventID = _ui.editEventID->text().toStdString();
 
@@ -2677,6 +2690,10 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	catch ( ... ) {}
 	try { _filter.maxMagnitude = SCApp->configGetDouble("eventlist.filter.database.maxmag"); }
 	catch ( ... ) {}
+	try { _filter.minPhaseCount = SCApp->configGetInt("eventlist.filter.database.minphasecount");}
+	catch ( ... ) {}
+	try { _filter.maxPhaseCount = SCApp->configGetInt("eventlist.filter.database.maxphasecount"); }
+	catch ( ... ) {}
 
 	for ( int i = 0; i < _filterRegions.size(); ++i )
 		_ui->lstFilterRegions->addItem(_filterRegions[i].name);
@@ -2840,6 +2857,12 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	connect(_ui->cbFilterRegionMode, SIGNAL(currentIndexChanged(int)), this,  SLOT(onFilterRegionModeChanged(int)));
 
+	connect(_ui->cbHideFinalRejected, SIGNAL(stateChanged(int)), this,  SLOT(onHideFinalRejectedEvents(int)));
+	_hideFinalRejectedEvents = _ui->cbHideFinalRejected->checkState() == Qt::Checked;
+
+	connect(_ui->cbHideNew, SIGNAL(stateChanged(int)), this,  SLOT(onHideNewEvents(int)));
+	_hideNewEvents = _ui->cbHideNew->checkState() == Qt::Checked;
+
 	connect(_ui->cbShowLatestOnly, SIGNAL(stateChanged(int)), this,  SLOT(updateAgencyState()));
 	_showOnlyLatestPerAgency = _ui->cbShowLatestOnly->checkState() == Qt::Checked;
 
@@ -2914,6 +2937,26 @@ void EventListView::indicatorResized(const QSize &size) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::onShowOtherEvents(int checked) {
 	_hideOtherEvents = checked == Qt::Checked;
+	updateHideState();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void EventListView::onHideFinalRejectedEvents(int checked) {
+	_hideFinalRejectedEvents = checked == Qt::Checked;
+	updateHideState();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void EventListView::onHideNewEvents(int checked) {
+	_hideNewEvents = checked == Qt::Checked;
 	updateHideState();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3020,6 +3063,26 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 		}
 		catch ( Core::ValueException & ) {}
 	}
+
+	if ( !hide && _hideFinalRejectedEvents ) {
+		Origin* preferredOrigin = Origin::Find(event->preferredOriginID());
+		if ( preferredOrigin ) {
+			char evalStat = objectEvaluationStatusToChar(preferredOrigin);
+			if ( evalStat == 'F' || evalStat == 'X')
+				hide = true;
+		}
+	}
+
+	if ( !hide && _hideNewEvents ) {
+		Origin* preferredOrigin = Origin::Find(event->preferredOriginID());
+		if ( preferredOrigin ) {
+			if ( preferredOrigin->time().value() > _filter.endTime )
+				hide = true;
+		}
+		else
+			hide = true;
+	}
+
 
 	if ( !hide && _hideForeignEvents ) {
 		if ( _checkEventAgency ) {
