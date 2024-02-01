@@ -1,10 +1,8 @@
-<ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>EventListView</class>
- <widget class="QWidget" name="EventListView" >
-  <property name="geometry" >
+ <widget class="QWidget" name="EventListView">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -12,102 +10,124 @@
     <height>710</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Event List</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>0</number>
-   </property>
-   <property name="spacing" >
+  <layout class="QVBoxLayout">
+   <property name="spacing">
     <number>6</number>
    </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="QFrame" name="frameList" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>5</vsizetype>
+    <widget class="QFrame" name="frameList">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>2</verstretch>
       </sizepolicy>
      </property>
-     <property name="frameShape" >
+     <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frameControls" >
-     <property name="frameShadow" >
+    <widget class="QFrame" name="frameControls">
+     <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
+     <layout class="QVBoxLayout">
+      <property name="spacing">
        <number>6</number>
       </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
+       <layout class="QHBoxLayout">
+        <property name="spacing">
          <number>6</number>
         </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
-         <widget class="QToolButton" name="btnClear" >
-          <property name="enabled" >
+         <widget class="QToolButton" name="btnClear">
+          <property name="enabled">
            <bool>false</bool>
           </property>
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>1</hsizetype>
-            <vsizetype>0</vsizetype>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="toolTip" >
+          <property name="toolTip">
            <string>Removes all events from the list</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Clear list</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="btnFilter" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>1</hsizetype>
-            <vsizetype>0</vsizetype>
+         <widget class="QToolButton" name="btnFilter">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="toolTip" >
+          <property name="toolTip">
            <string>Configures the server-side event filter</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Filter</string>
           </property>
-          <property name="icon" >
-           <iconset resource="icons.qrc" >:/icons/icons/filter2.png</iconset>
+          <property name="icon">
+           <iconset resource="icons.qrc">
+            <normaloff>:/icons/icons/filter2.png</normaloff>:/icons/icons/filter2.png</iconset>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>16</width>
             <height>29</height>
@@ -116,65 +136,59 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="label_3" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>4</hsizetype>
-            <vsizetype>5</vsizetype>
+         <widget class="QLabel" name="label_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Last days:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBox" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>5</hsizetype>
-            <vsizetype>0</vsizetype>
+         <widget class="QSpinBox" name="spinBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimum" >
+          <property name="minimum">
            <number>1</number>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="btnReadDays" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>4</hsizetype>
-            <vsizetype>0</vsizetype>
+         <widget class="QToolButton" name="btnReadDays">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize" >
+          <property name="minimumSize">
            <size>
             <width>50</width>
             <height>0</height>
            </size>
           </property>
-          <property name="toolTip" >
-           <string>Reads the events of the last n days using the "Last days:" value</string>
+          <property name="toolTip">
+           <string>Reads the events of the last n days using the &quot;Last days:&quot; value</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Read</string>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>16</width>
             <height>29</height>
@@ -183,75 +197,69 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="label" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>4</hsizetype>
-            <vsizetype>5</vsizetype>
+         <widget class="QLabel" name="label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>From:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QDateTimeEdit" name="dateTimeEditStart" >
-          <property name="currentSection" >
+         <widget class="QDateTimeEdit" name="dateTimeEditStart">
+          <property name="currentSection">
            <enum>QDateTimeEdit::YearSection</enum>
           </property>
-          <property name="displayFormat" >
+          <property name="displayFormat">
            <string>yyyy/MM/dd HH:mm:ss</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_2" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>4</hsizetype>
-            <vsizetype>5</vsizetype>
+         <widget class="QLabel" name="label_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>To:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QDateTimeEdit" name="dateTimeEditEnd" >
-          <property name="currentSection" >
+         <widget class="QDateTimeEdit" name="dateTimeEditEnd">
+          <property name="currentSection">
            <enum>QDateTimeEdit::YearSection</enum>
           </property>
-          <property name="displayFormat" >
+          <property name="displayFormat">
            <string>yyyy/MM/dd HH:mm:ss</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="btnReadInterval" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>4</hsizetype>
-            <vsizetype>0</vsizetype>
+         <widget class="QToolButton" name="btnReadInterval">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize" >
+          <property name="minimumSize">
            <size>
             <width>50</width>
             <height>0</height>
            </size>
           </property>
-          <property name="toolTip" >
-           <string>Reads the events of the given timespan using the "From:" and "To:" dates</string>
+          <property name="toolTip">
+           <string>Reads the events of the given timespan using the &quot;From:&quot; and &quot;To:&quot; dates</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Read</string>
           </property>
          </widget>
@@ -262,55 +270,64 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frameCustomControls" >
-     <property name="frameShape" >
+    <widget class="QFrame" name="frameCustomControls">
+     <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frame" >
-     <property name="frameShape" >
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
       <enum>QFrame::HLine</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>6</number>
      </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <item>
-      <widget class="QCheckBox" name="cbHideOther" >
-       <property name="toolTip" >
+      <widget class="QCheckBox" name="cbHideOther">
+       <property name="toolTip">
         <string>Hides/shows events with EventType set to OTHER/NOT_EXISTING</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Hide other/fake events</string>
        </property>
-       <property name="checked" >
+       <property name="checked">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeType" >
+       <property name="sizeType">
         <enum>QSizePolicy::Minimum</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>16</width>
          <height>23</height>
@@ -319,27 +336,27 @@
       </spacer>
      </item>
      <item>
-      <widget class="QCheckBox" name="cbHideForeign" >
-       <property name="toolTip" >
+      <widget class="QCheckBox" name="cbHideForeign">
+       <property name="toolTip">
         <string>Hides/shows events from non preferred agencies</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Show only own events</string>
        </property>
-       <property name="checked" >
+       <property name="checked">
         <bool>false</bool>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeType" >
+       <property name="sizeType">
         <enum>QSizePolicy::Minimum</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>16</width>
          <height>23</height>
@@ -348,21 +365,21 @@
       </spacer>
      </item>
      <item>
-      <widget class="QCheckBox" name="cbShowLatestOnly" >
-       <property name="toolTip" >
+      <widget class="QCheckBox" name="cbShowLatestOnly">
+       <property name="toolTip">
         <string>Enables/disables the display of only one origin per agency (the latest one) or all origins</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Show only latest/preferred origin per agency</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>144</width>
          <height>23</height>
@@ -373,62 +390,80 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>6</number>
      </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <item>
-      <widget class="QFrame" name="frameRegionFilter" >
-       <property name="frameShape" >
+      <widget class="QFrame" name="frameRegionFilter">
+       <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
        </property>
-       <property name="frameShadow" >
+       <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
+       <layout class="QHBoxLayout">
+        <property name="spacing">
          <number>6</number>
         </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
-         <widget class="QCheckBox" name="cbFilterRegions" >
-          <property name="text" >
+         <widget class="QCheckBox" name="cbFilterRegions">
+          <property name="text">
            <string>Hide events</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="cbFilterRegionMode" >
+         <widget class="QComboBox" name="cbFilterRegionMode">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>outside</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>inside</string>
            </property>
           </item>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="lstFilterRegions" />
+         <widget class="QComboBox" name="lstFilterRegions"/>
         </item>
         <item>
-         <widget class="QToolButton" name="btnChangeRegion" >
-          <property name="text" >
+         <widget class="QToolButton" name="btnChangeRegion">
+          <property name="text">
            <string>...</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="lbFilterRegions" >
-          <property name="text" >
+         <widget class="QLabel" name="lbFilterRegions">
+          <property name="text">
            <string>region</string>
           </property>
          </widget>
@@ -437,11 +472,63 @@
       </widget>
      </item>
      <item>
-      <spacer>
-       <property name="orientation" >
+      <spacer name="spacer">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeType">
+        <enum>QSizePolicy::Minimum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>8</width>
+         <height>23</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="cbHideFinalRejected">
+       <property name="toolTip">
+        <string>Hides/shows final and rejected events</string>
+       </property>
+       <property name="text">
+        <string>Hide F/X events</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="spacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Minimum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>16</width>
+         <height>23</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="cbHideNew">
+       <property name="toolTip">
+        <string>Hides/shows events with OT later than given end time</string>
+       </property>
+       <property name="text">
+        <string>Hide new events</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
         <size>
          <width>351</width>
          <height>20</height>
@@ -452,18 +539,17 @@
     </layout>
    </item>
   </layout>
-  <action name="actionCopyRowToClipboard" >
-   <property name="text" >
+  <action name="actionCopyRowToClipboard">
+   <property name="text">
     <string>copyRowToClipboard</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>Ctrl+C</string>
    </property>
   </action>
  </widget>
- <pixmapfunction></pixmapfunction>
  <resources>
-  <include location="icons.qrc" />
+  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>
