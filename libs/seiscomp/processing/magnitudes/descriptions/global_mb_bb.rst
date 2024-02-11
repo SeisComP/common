@@ -1,30 +1,34 @@
-The name **mB** is used in |scname| as a synonym for **mB_BB** which is recommended
-by the IASPEI commission (:cite:t:`iaspei-2013`).
+The **mB**/**mB_BB** magnitude has been recommended by the IASPEI commission
+(:cite:t:`bormann-2008`, :cite:t:`bormann-2009`, :cite:t:`iaspei-2013`).
+It is based on amplitude measurements of body waves like :ref:`global_mb`, but
+with the amplitude measured in a broad frequency range and longer time windows.
+Instead of amplitude measurements on displacement data together with the
+dominant period, the maximum velocity amplitude Vmax is taken directly from
+velocity-proportional records with :math:`V = 2 \pi A/T`. The time window for
+the measurement can be determined by the duration of the high-frequency (1-3 Hz)
+radiation (:cite:t:`bormann-2008`). This time window usually contains the phases
+P, pP, sP, PcP, but not PP. According to the long time window and broad
+frequency range used for amplitude measurements mB saturates not like mb.
 
-mB is a magnitude based on body waves like :ref:`global_mb`, but with the amplitude
-measured in a broad
-frequency range and longer time windows. Instead of amplitude measurements on displacement
-data together with the dominant period, the maximum velocity amplitude Vmax is taken
-directly from velocity-proportional records with :math:`V = 2 \pi A/T`. The time
-window for the
-measurement can be determined by the duration of the high-frequency (1-3 Hz) radiation
-(:cite:t:`bormann-2008`). This time window usually contains the phases P, pP, sP, PcP, but
-not PP. According to the long time window and broad frequency range used for amplitude
-measurements mB saturates not like mb.
+.. note::
+
+   In |scname| the term **m_B** is a synonym for **mB_BB** which is used
+   by IASPEI :cite:p:`iaspei-2013`.
 
 
 Amplitude
 ---------
 
-The mB amplitudes are calculated on vertical-component displacement seismograms
+mB amplitudes are calculated on vertical-component displacement seismograms
 in accordance with :cite:t:`bormann-2008` and similar to :ref:`mb <global_mb>`.
 A default time window of 60 s is considered for amplitude measurements
 at stations in the distance range of 5° to 105°.
-If the epicentral is known, the length of the time window after the P wave onset is
+If the epicentral is known, the length of the time window after the P wave onset
+is
 
 .. math::
 
-   t = min(11.5 \Delta, 60)
+   t = min(\Delta * 11.5, 60)
 
 where :math:`\Delta` is the epicentral distance. The methods for measuring
 amplitudes are configurable in the global bindings.
@@ -33,7 +37,7 @@ amplitudes are configurable in the global bindings.
 Station Magnitude
 -----------------
 
-The mB station magntiudes are calculated in accordance with :cite:t:`bormann-2008`.
+The mB station magnitudes are calculated in accordance with :cite:t:`bormann-2008`.
 
 .. math::
 
