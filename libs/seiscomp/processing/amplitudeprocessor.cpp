@@ -498,6 +498,41 @@ class PowExpression : public OP2Expression<dpow> {
 
 
 // Variables
+class ParamOriginTime : public Interface {
+	public:
+		double evaluate(Context &ctx) override {
+			auto env = ctx.proc()->environment();
+
+			if ( !env.hypocenter ) {
+				throw StatusException(WaveformProcessor::MissingHypocenter, 60);
+			}
+
+			return env.hypocenter->time().value() - ctx.proc()->trigger();
+		}
+
+		std::string toString() const override {
+			return "OT";
+		}
+};
+
+class ParamTrigger : public Interface {
+	public:
+		double evaluate(Context &ctx) override {
+			auto env = ctx.proc()->environment();
+
+			if ( !env.hypocenter ) {
+				throw StatusException(WaveformProcessor::MissingHypocenter, 50);
+			}
+
+			return ctx.proc()->trigger() - env.hypocenter->time().value();
+		}
+
+		std::string toString() const override {
+			return "T";
+		}
+};
+
+
 class ParamEpiDistDeg : public Interface {
 	public:
 		static double Evaluate(Context &ctx) {
@@ -753,6 +788,12 @@ struct Generator {
 		}
 		else if ( name == "H" ) {
 			f = new Expression::ParamHypoDistDeg;
+		}
+		else if ( name == "OT" ) {
+			f = new Expression::ParamOriginTime;
+		}
+		else if ( name == "T" ) {
+			f = new Expression::ParamTrigger;
 		}
 
 		if ( !f )
