@@ -1991,6 +1991,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 
 	try {
 		if ( settings.getBool("amplitudes." + _type + ".enable") == false ) {
+			SEISCOMP_INFO("%s.%s: amplitude %s disabled by configuration",
+			              settings.networkCode, settings.stationCode,
+			              _type);
 			return false;
 		}
 	}
@@ -1999,6 +2002,8 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 		// check the global flag
 		try {
 			if ( settings.getBool("amplitudes.enable") == false ) {
+				SEISCOMP_INFO("%s.%s: amplitudes disabled by configuration",
+				              settings.networkCode, settings.stationCode);
 				return false;
 			}
 		}
