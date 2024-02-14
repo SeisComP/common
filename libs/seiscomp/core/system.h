@@ -35,7 +35,7 @@
 	#define SC_FS_IT_PATH(it) *it
 #else
 	#if BOOST_FILESYSTEM_VERSION >= 3
-		#define SC_FS_IT_LEAF(it) it->path().leaf().string()
+		#define SC_FS_IT_LEAF(it) it->path().filename().string()
 	#else
 		#define SC_FS_IT_LEAF(it) it->path().leaf()
 	#endif
