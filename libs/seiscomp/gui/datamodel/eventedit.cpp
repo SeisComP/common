@@ -2435,8 +2435,10 @@ void EventEdit::updateFMRow(int row, FocalMechanism *fm) {
 			if ( fm->momentTensorCount() > 0 ) {
 				auto mt = fm->momentTensor(0);
 				auto o = Origin::Find(mt->derivedOriginID());
-				item->setText(_fmColumnMap[FML_COUNT], QString("%1").arg(o->quality().usedPhaseCount()));
-				item->setData(_fmColumnMap[FML_COUNT], Qt::UserRole, o->quality().usedPhaseCount());
+				if ( o ) {
+					item->setText(_fmColumnMap[FML_COUNT], QString("%1").arg(o->quality().usedPhaseCount()));
+					item->setData(_fmColumnMap[FML_COUNT], Qt::UserRole, o->quality().usedPhaseCount());
+				}
 			}
 			else {
 				throw Core::ValueException();
