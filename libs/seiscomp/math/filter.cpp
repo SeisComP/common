@@ -30,7 +30,6 @@
 #include <seiscomp/core/interfacefactory.ipp>
 
 #include <boost/version.hpp>
-#include <boost/regex.hpp>
 
 
 #if BOOST_VERSION >= 103800
