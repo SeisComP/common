@@ -534,7 +534,10 @@ bool MagnitudeProcessor::initRegionalization(const Settings &settings) {
 				}
 
 				for ( Geo::GeoFeature *feature : regionalizedSettings->regions->featureSet.features()) {
-					if ( feature->name().empty() ) continue;
+					if ( feature->name().empty() ) {
+						continue;
+					}
+
 					if ( feature->name() == "world" ) {
 						SEISCOMP_ERROR("Region name 'world' is not allowed as it is "
 						               "reserved");
