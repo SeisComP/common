@@ -322,6 +322,18 @@ void AmplitudeProcessor_ML2h::computeTimeWindow() {
 	// evaluated times.
 	setConfig(_ampE.config());
 
+	if ( _ampN.isFinished() ) {
+		setStatus(_ampN.status(), _ampN.statusValue());
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
+	if ( _ampE.isFinished() ) {
+		setStatus(_ampE.status(), _ampE.statusValue());
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
 	setTimeWindow(_ampE.timeWindow() | _ampN.timeWindow());
 }
 
