@@ -1100,8 +1100,7 @@ bool HttpSession::handleOPTIONSRequest(HttpRequest &req) {
 	     "Access-Control-Allow-Methods: *\r\n"
 	     "Access-Control-Allow-Headers: Accept, Content-Type, X-Requested-With, Origin\r\n"
 	     "Content-Type: text/plain\r\n"
-	     "Content-Length: 0\r\n");
-	setError("\r\n");
+	     "Content-Length: 0\r\n\r\n");
 	flush();
 	return true;
 }
