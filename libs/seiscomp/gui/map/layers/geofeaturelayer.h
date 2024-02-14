@@ -141,6 +141,7 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 				*this = *parent;
 				this->name = name;
 				this->parent = parent;
+				this->title = std::string(); // Reset the legend title
 			}
 
 			bool isChild(const LayerProperties* child) const;
