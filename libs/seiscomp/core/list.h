@@ -138,7 +138,7 @@ class IntrusiveList {
 			}
 
 			const_iterator& operator++() {
-				item = item->_ili_next[idx];
+				item = IntrusiveTraits<T>::toPointer(item->_ili_next[idx]);
 				return *this;
 			}
 		};
@@ -171,7 +171,7 @@ class IntrusiveList {
 		iterator begin() { return iterator(_index, IntrusiveTraits<T>::toPointer(_front)); }
 		iterator end() { return iterator(_index); }
 
-		const_iterator begin() const { return const_iterator(_index, _front); }
+		const_iterator begin() const { return const_iterator(_index, IntrusiveTraits<T>::toPointer(_front)); }
 		const_iterator end() const { return const_iterator(_index); }
 
 		iterator find(PointerType o) const;
