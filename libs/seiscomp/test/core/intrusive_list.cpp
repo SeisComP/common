@@ -190,4 +190,25 @@ BOOST_AUTO_TEST_CASE(move) {
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(constIt) {
+	Generic::IntrusiveList<DummyPtr> dummies;
+
+	int len = 100;
+
+	for ( int i = 0; i < len; ++i ) {
+		dummies.push_back(new Dummy(i+1));
+	}
+
+	// This simply checks if const iteration works
+	const Generic::IntrusiveList<DummyPtr> &constDmmies = dummies;
+	for ( const auto &ptr : constDmmies ) {
+		BOOST_CHECK(ptr->a > 0);
+	}
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_SUITE_END()
