@@ -9,6 +9,7 @@ SET(FILTER_SOURCES
 	average.cpp
 	median.cpp
 	minmax.cpp
+	random.cpp
 	stalta.cpp
 	taper.cpp
 	rmhp.cpp
@@ -30,6 +31,7 @@ SET(FILTER_HEADERS
 	average.h
 	median.h
 	minmax.h
+	random.h
 	stalta.h
 	taper.h
 	rmhp.h
