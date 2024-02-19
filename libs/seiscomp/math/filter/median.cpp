@@ -36,8 +36,9 @@ namespace Filtering {
 template<typename TYPE>
 Median<TYPE>::Median(double timeSpan /*sec*/, double fsamp)
 : _timeSpan(timeSpan), _fsamp(0.0) {
-	if ( fsamp )
+	if ( fsamp ) {
 		setSamplingFrequency(fsamp);
+	}
 }
 
 
