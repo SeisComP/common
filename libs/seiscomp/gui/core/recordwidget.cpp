@@ -45,7 +45,7 @@ namespace  sc = Seiscomp::Core;
 		_tmin = sc::TimeSpan::MinTime;               \
 		_tmax = _tmin + diff;                        \
 	}                                                \
-                                                     \
+	                                                 \
 	if ( _tmax > sc::TimeSpan::MaxTime ) {           \
 		_tmax = sc::TimeSpan::MaxTime;               \
 		_tmin = _tmax - diff;                        \
@@ -221,7 +221,7 @@ void updateVerticalAxis(double spacing[2], double rangeLower, double rangeUpper,
                         int dim, int textDim) {
 	// compute adequate tick/annotation interval
 	// the 1st factor is for fine-tuning
-	double q = log10(2*(rangeUpper-rangeLower)*textDim/dim);
+	double q = log10(2 * std::abs(rangeUpper-rangeLower) * textDim / dim);
 	double rx = q - floor(q);
 	int d = rx < 0.3 ? 1 : rx > 0.7 ? 5 : 2;
 	spacing[0] = d * pow (10., int(q-rx));
@@ -247,10 +247,16 @@ void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
                       const QString &label, bool leftAligned,
                       const QPen &fg, const QPen &grid,
                       int gridLeft, int gridRight) {
-	double axisRange = rangeUpper - rangeLower;
+	double direction = 1;
+
+	if ( rangeLower > rangeUpper ) {
+		direction = -1;
+	}
+
+	double axisRange = std::abs(rangeUpper - rangeLower);
 	int h = rect.height();
 
-	double ppa = (h-1) / axisRange;
+	double ppa = (h - 1) / axisRange * direction;
 	int baseLine, tickDir, labelFlags, labelPos, labelOffset;
 
 	labelOffset = tickLength*3/2;
@@ -304,7 +310,7 @@ void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
 		int tick = (k == 0 ? tickLength : tickLength / 2) * tickDir;
 
 		// Draw ticks and counts
-		int ry = rect.bottom() - static_cast<int>((cpos-rangeLower)*ppa);
+		int ry = rect.bottom() - static_cast<int>((cpos - rangeLower) * ppa);
 		QString str;
 
 		p.setPen(fg);
@@ -343,23 +349,23 @@ void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
 				}
 			}
 
-			cpos += spacing[k];
-			if ( fabs(cpos) < spacing[k] * 1E-2 ) {
+			cpos += spacing[k] * direction;
+			if ( std::abs(cpos) < spacing[k] * 1E-2 ) {
 				cpos = 0.0;
 			}
 
-			ry = rect.bottom() - static_cast<int>((cpos-rangeLower)*ppa);
+			ry = rect.bottom() - static_cast<int>((cpos - rangeLower) * ppa);
 		}
 
 		if ( k == 0 ) {
 			p.setPen(grid);
 
 			cpos = rangeLower - fmod(rangeLower, spacing[k]);
-			ry = rect.bottom() - static_cast<int>((cpos-rangeLower)*ppa);
+			ry = rect.bottom() - static_cast<int>((cpos - rangeLower) * ppa);
 			while ( ry >= rect.top() ) {
 				p.drawLine(gridLeft, ry, gridRight, ry);
-				cpos += spacing[k];
-				ry = rect.bottom() - static_cast<int>((cpos-rangeLower)*ppa);
+				cpos += spacing[k] * direction;
+				ry = rect.bottom() - static_cast<int>((cpos - rangeLower) * ppa);
 			}
 		}
 	}
