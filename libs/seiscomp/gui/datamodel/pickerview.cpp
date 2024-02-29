@@ -6311,7 +6311,7 @@ void PickerView::setupItem(const char comps[3],
 				            item->streamID().stationCode(),
 				            item->streamID().locationCode(),
 				            channelCode + comps[i], SC_D.origin->time().value());
-				if ( stream.gain > 0 )
+				if ( stream.gain != 0 )
 					item->widget()->setRecordScale(i, 1E9 / stream.gain);
 			}
 			catch ( ... ) {}
