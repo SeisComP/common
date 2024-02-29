@@ -33,6 +33,7 @@
 
 #include "iaspei.h"
 
+#include <cmath>
 #include <mutex>
 
 
@@ -395,6 +396,7 @@ bool AbstractAmplitudeProcessor_ML::computeAmplitude(
 
 	// - convert to millimeter
 	amplitude->value *= 1E03;
+	amplitude->value = std::abs(amplitude->value);
 
 	return true;
 }

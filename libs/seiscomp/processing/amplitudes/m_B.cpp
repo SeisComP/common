@@ -20,6 +20,8 @@
 
 #include <seiscomp/datamodel/amplitude.h>
 #include <seiscomp/processing/amplitudes/m_B.h>
+
+#include <cmath>
 #include <limits>
 
 
@@ -126,6 +128,8 @@ bool AmplitudeProcessor_mB::computeAmplitude(const DoubleArray &data,
 
 	// Convert m/s to nm/s
 	amplitude->value *= 1.E09;
+
+	amplitude->value = std::abs(amplitude->value);
 
 	return true;
 }

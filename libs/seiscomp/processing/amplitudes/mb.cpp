@@ -23,6 +23,7 @@
 #include <seiscomp/processing/amplitudes/iaspei.h>
 #include <seiscomp/math/filter/seismometers.h>
 
+#include <cmath>
 #include <limits>
 
 using namespace Seiscomp::Math;
@@ -232,6 +233,8 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 
 	// Convert meters to nanometers
 	amplitude->value *= 1.E9;
+
+	amplitude->value = std::abs(amplitude->value);
 
 	return true;
 }

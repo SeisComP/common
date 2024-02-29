@@ -25,6 +25,7 @@
 #include <seiscomp/math/geo.h>
 #include <seiscomp/math/filter/seismometers.h>
 
+#include <cmath>
 #include <limits>
 
 
@@ -218,6 +219,8 @@ bool AmplitudeProcessor_ms20::computeAmplitude(const DoubleArray &data,
 
 	// Convert m to nm according to IASPEI recommendations, 2013
 	amplitude->value *= 1.E9;
+
+	amplitude->value = std::abs(amplitude->value);
 
 	return true;
 }

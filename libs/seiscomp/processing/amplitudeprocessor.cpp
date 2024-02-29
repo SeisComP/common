@@ -1757,7 +1757,7 @@ void AmplitudeProcessor::process(const Record *record) {
 		}
 
 		if ( _lastAmplitude ) {
-			if ( res.amplitude.value <= *_lastAmplitude ) {
+			if ( std::abs(res.amplitude.value) <= *_lastAmplitude ) {
 				if ( progress >= 100 ) {
 					setStatus(Finished, 100.);
 					_lastAmplitude = Core::None;
@@ -1767,7 +1767,7 @@ void AmplitudeProcessor::process(const Record *record) {
 			}
 		}
 
-		_lastAmplitude = res.amplitude.value;
+		_lastAmplitude = std::abs(res.amplitude.value);
 
 		double dt = index.index / _stream.fsamp;
 		res.period /= _stream.fsamp;

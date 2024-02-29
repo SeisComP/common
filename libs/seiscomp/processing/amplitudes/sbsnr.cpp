@@ -292,6 +292,7 @@ bool AmplitudeSBSNR::computeAmplitude(const Seiscomp::DoubleArray &data,
 
 	// Convert amplitude to nano units
 	sbsnrAmplitude *= 1E9 / _streamConfig[_usedComponent].gain;
+	sbsnrAmplitude = std::abs(sbsnrAmplitude);
 	SEISCOMP_DEBUG("sbsnrAmplitude nano units = %f", sbsnrAmplitude);
 
 	SignalUnit unit;

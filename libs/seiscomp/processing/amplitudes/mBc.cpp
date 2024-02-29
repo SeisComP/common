@@ -19,7 +19,10 @@
 
 
 #include <seiscomp/processing/amplitudes/mBc.h>
+
+#include <cmath>
 #include <limits>
+
 #include "mBc_measure.h"
 
 
@@ -85,6 +88,8 @@ bool AmplitudeProcessor_mBc::computeAmplitude(const DoubleArray &data,
 
 	// Convert m/s to nm/s
 	amplitude->value *= 1.E09;
+
+	amplitude->value = std::abs(amplitude->value);
 
 	return true;
 }
