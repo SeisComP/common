@@ -372,6 +372,35 @@ void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
 }
 
 
+void flip(Gui::RecordPolyline &pl, int height) {
+	for ( int i = 0; i < pl.count(); ++i ) {
+		QPolygon &poly = pl[i];
+		for ( int j = 0; j < poly.count(); ++j ) {
+			poly[j].setY(height - poly[j].y());
+		}
+	}
+}
+
+
+void flip(Gui::RecordPolylineF &pl, int height) {
+	for ( int i = 0; i < pl.count(); ++i ) {
+		QPolygonF &poly = pl[i];
+		for ( int j = 0; j < poly.count(); ++j ) {
+			poly[j].setY(height - poly[j].y());
+		}
+	}
+}
+
+
+template <typename T>
+bool isNegative(const T *v) {
+	if ( !v ) {
+		return false;
+	}
+	return *v < 0;
+}
+
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2324,6 +2353,11 @@ void RecordWidget::createPolyline(int slot, AbstractRecordPolylinePtr &polyline,
 		RecordPolylinePtr pl = new RecordPolyline;
 		pl->createSteps(seq, leftTime(), rightTime(), pixelPerSecond,
 		                amplMin, amplMax, amplOffset, height);
+
+		if ( _showScaledValues && isNegative(recordScale(slot)) ) {
+			flip(*pl, height);
+		}
+
 		polyline = pl;
 	}
 	else {
@@ -2332,6 +2366,11 @@ void RecordWidget::createPolyline(int slot, AbstractRecordPolylinePtr &polyline,
 			pl->create(seq, leftTime(), rightTime(), pixelPerSecond,
 			           amplMin, amplMax, amplOffset,
 			           height, nullptr, nullptr, optimization);
+
+			if ( _showScaledValues && isNegative(recordScale(slot)) ) {
+				flip(*pl, height);
+			}
+
 			polyline = pl;
 		}
 		else {
@@ -2339,6 +2378,11 @@ void RecordWidget::createPolyline(int slot, AbstractRecordPolylinePtr &polyline,
 			pl->create(seq, leftTime(), rightTime(), pixelPerSecond,
 			           amplMin, amplMax, amplOffset,
 			           height, nullptr, nullptr, optimization);
+
+			if ( _showScaledValues && isNegative(recordScale(slot)) ) {
+				flip(*pl, height);
+			}
+
 			polyline = pl;
 		}
 	}
@@ -2435,6 +2479,10 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 				if ( _showScaledValues ) {
 					axisLower *= stream->scale;
 					axisUpper *= stream->scale;
+
+					if ( axisLower > axisUpper ) {
+						std::swap(axisLower, axisUpper);
+					}
 				}
 
 				if ( _axisPosition == Right )
@@ -2493,6 +2541,10 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 				if ( _showScaledValues ) {
 					axisLower *= stream->scale;
 					axisUpper *= stream->scale;
+
+					if ( axisLower > axisUpper ) {
+						std::swap(axisLower, axisUpper);
+					}
 				}
 
 				double axisRange = axisUpper - axisLower;
@@ -2548,8 +2600,17 @@ void RecordWidget::showScaledValues(bool enable) {
 
 	for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
 		Stream *s = *it;
-		if ( s == nullptr ) continue;
-		s->axisDirty = true;
+
+		if ( s == nullptr ) {
+			continue;
+		}
+
+		if ( s->scale < 0 ) {
+			s->setDirty();
+		}
+		else {
+			s->axisDirty = true;
+		}
 	}
 
 	update();
