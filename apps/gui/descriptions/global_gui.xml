@@ -1149,7 +1149,7 @@
 						</parameter>
 						<parameter name="size" type="int">
 							<description>
-								Defines the point size of the font
+								Defines the point size of the font.
 							</description>
 						</parameter>
 						<parameter name="bold" type="boolean" default="false"/>
@@ -1167,7 +1167,8 @@
 					</parameter>
 					<parameter name="distance" type="int" default="1">
 						<description>
-							The precision of distance values.
+						The precision of distance values. This
+						parameter only applies if scheme.unit.distanceInKM = true.
 						</description>
 					</parameter>
 					<parameter name="location" type="int" default="2">
