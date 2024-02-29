@@ -156,11 +156,9 @@ bool HttpSession::handleGETRequest(Wired::HttpRequest &req) {
 	const char *filename = path.part_start;
 
 	if ( !path.next() ) {
-		sendStatus(HTTP_404);
-		return true;
+		filename = "/";
 	}
-
-	if ( path == "api" ) {
+	else if ( path == "api" ) {
 		if ( path.next() ) {
 			if ( path == "stats.json" ) {
 				Wired::BufferPtr response = new Wired::Buffer;
