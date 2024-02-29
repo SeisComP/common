@@ -220,6 +220,11 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 			Core::TimeSpan preOffset;
 			Core::TimeSpan postOffset;
 
+			double defaultNoiseBegin{-30};
+			double defaultNoiseEnd{0};
+			double defaultSignalBegin{0};
+			double defaultSignalEnd{30};
+
 			Config();
 
 			void addFilter(const QString &f, const QString &n) {

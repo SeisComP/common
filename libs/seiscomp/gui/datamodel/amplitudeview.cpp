@@ -3984,10 +3984,29 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 
 	proc->setEnvironment(SC_D.origin.get(), loc, proc->pick());
 
+	if ( proc->isFinished() ) {
+		cerr << sid.networkCode() << "." << sid.stationCode() << ": setup amplitude processor failed"
+		     << ": " << proc->status().toString() << " (" << proc->statusValue() << "): ignoring station" << endl;
+		return nullptr;
+	}
+
 	proc->computeTimeWindow();
 
 	if ( proc->isFinished() ) {
-		cerr << sid.networkCode() << "." << sid.stationCode() << ": setup amplitude processor failed"
+		cerr << sid.networkCode() << "." << sid.stationCode() << ": setup amplitude time window failed"
+		     << ": " << proc->status().toString() << " (" << proc->statusValue() << "): set default window" << endl;
+
+		proc->reset();
+		proc->setTrigger(referenceTime);
+		proc->setNoiseStart(SC_D.config.defaultNoiseBegin);
+		proc->setNoiseEnd(SC_D.config.defaultNoiseEnd);
+		proc->setSignalStart(SC_D.config.defaultSignalBegin);
+		proc->setSignalEnd(SC_D.config.defaultSignalEnd);
+		proc->computeTimeWindow();
+	}
+
+	if ( proc->isFinished() ) {
+		cerr << sid.networkCode() << "." << sid.stationCode() << ": setup amplitude time window failed"
 		     << ": " << proc->status().toString() << " (" << proc->statusValue() << "): ignoring station" << endl;
 		return nullptr;
 	}
