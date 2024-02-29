@@ -23,6 +23,8 @@
 #include <seiscomp/math/filter/seismometers.h>
 #include <seiscomp/math/restitution/fft.h>
 
+#include <cmath>
+
 
 using namespace Seiscomp::Math;
 
@@ -141,6 +143,8 @@ bool AmplitudeProcessor_Mjma::computeAmplitude(
 
 	// - estimate peak-to-peak from absmax amplitude
 	amplitude->value *= 2.0;
+
+	amplitude->value = std::abs(amplitude->value);
 
 	return true;
 }

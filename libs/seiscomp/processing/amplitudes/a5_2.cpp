@@ -33,6 +33,7 @@
 
 #include "a5_2_private.h"
 
+
 namespace {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -555,6 +556,8 @@ bool AmplitudeA5_2::computeAmplitude(const Seiscomp::DoubleArray &data,
 	if ( _removeInstResp ) {
 		// Convert to nano units
 		finalAmplitude *= 1E9 / _streamConfig[_usedComponent].gain;
+
+		finalAmplitude = std::abs(finalAmplitude);
 
 		SignalUnit unit;
 		if ( !unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str()) ) {

@@ -20,6 +20,7 @@
 
 #include <seiscomp/processing/amplitudes/msbb.h>
 
+#include <cmath>
 #include <limits>
 
 
@@ -186,6 +187,8 @@ bool AmplitudeProcessor_msbb::computeAmplitude(const DoubleArray &data,
 	else {
 		return false;
 	}
+
+	amplitude->value = std::abs(amplitude->value);
 
 	return true;
 }
