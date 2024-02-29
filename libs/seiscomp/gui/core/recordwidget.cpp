@@ -2425,7 +2425,7 @@ const double *RecordWidget::value(int slot, const Seiscomp::Core::Time& t) const
 
 			value = (*ar)[pos];
 			if ( _showScaledValues )
-				value *= s->scale;
+				value *= s->scale < 0 ? -s->scale : s->scale;
 
 			return &value;
 		}
@@ -3380,7 +3380,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						QString str;
 						if ( _showScaledValues )
 							str = tr("amax: %1 %2")
-							      .arg(trace.absMax*stream->scale)
+							      .arg(trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale))
 							      .arg(stream->axisLabel);
 						else
 							str = tr("amax: %1 %2")
@@ -3396,7 +3396,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						if ( stream->height >= y+rh ) {
 							if ( _showScaledValues )
 								str = tr("mean: %1 %2")
-								      .arg(trace.dOffset*stream->scale)
+								      .arg(trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale))
 								      .arg(stream->axisLabel);
 							else
 								str = tr("mean: %1 %2")
@@ -3468,7 +3468,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 						if ( _showScaledValues )
 							str = tr("amax: %1 %2")
-							      .arg(trace.absMax*stream->scale)
+							      .arg(trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale))
 							      .arg(stream->axisLabel);
 						else
 							str = tr("amax: %1 %2")
@@ -3484,7 +3484,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						if ( stream->posY+stream->height >= y+rh ) {
 							if ( _showScaledValues )
 								str = tr("mean: %1 %2")
-								      .arg(trace.dOffset*stream->scale)
+								      .arg(trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale))
 								      .arg(stream->axisLabel);
 							else
 								str = tr("mean: %1 %2")
@@ -3570,7 +3570,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 					if ( _showScaledValues )
 						str = tr("amax: %1 %2")
-						      .arg(absMax*stream->scale)
+						      .arg(absMax * (stream->scale > 0 ? stream->scale : -stream->scale))
 						      .arg(stream->axisLabel);
 					else
 						str = tr("amax: %1 %2")
@@ -3586,7 +3586,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					if ( stream->height >= y+rh ) {
 						if ( _showScaledValues )
 							str = tr("mean: %1 %2")
-							      .arg(offset*stream->scale)
+							      .arg(offset * (stream->scale > 0 ? stream->scale : -stream->scale))
 							      .arg(stream->axisLabel);
 						else
 							str = tr("mean: %1 %2")
@@ -4299,16 +4299,18 @@ int RecordWidget::streamHeight(int slot) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPair<double,double> RecordWidget::amplitudeDataRange(int slot) const {
 	if ( slot >= _streams.size() || slot < 0 ) return QPair<double,double>(0,0);
-	if ( _showScaledValues )
+	if ( _showScaledValues ) {
 		return QPair<double,double>(
 			_streams[slot]->traces[_streams[slot]->filtering?Stream::Filtered:Stream::Raw].dyMin * _streams[slot]->scale,
 			_streams[slot]->traces[_streams[slot]->filtering?Stream::Filtered:Stream::Raw].dyMax * _streams[slot]->scale
 		);
-	else
+	}
+	else {
 		return QPair<double,double>(
 			_streams[slot]->traces[_streams[slot]->filtering?Stream::Filtered:Stream::Raw].dyMin,
 			_streams[slot]->traces[_streams[slot]->filtering?Stream::Filtered:Stream::Raw].dyMax
 		);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
