@@ -895,6 +895,18 @@ bool StdLoc::loadTTT() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string StdLoc::lastMessage(MessageType type) const {
+	if ( type == Warning )
+		return _rejectionMsg;
+
+	return "";
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Origin *StdLoc::locate(PickList &pickList) {
 	SEISCOMP_DEBUG("Locating Origin using PickList with profile '%s'",
 	               _currentProfile.name.c_str());
@@ -903,6 +915,9 @@ Origin *StdLoc::locate(PickList &pickList) {
 		throw LocatorException(
 		    "LeastSquares method requires an initial location");
 	}
+
+	_rejectLocation = false;
+	_rejectionMsg = "";
 
 	loadTTT();
 
@@ -954,6 +969,9 @@ Origin *StdLoc::locate(PickList &pickList) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Origin *StdLoc::locate(PickList &pickList, double initLat, double initLon,
                        double initDepth, const Core::Time &initTime) {
+
+	_rejectLocation = false;
+	_rejectionMsg = "";
 
 	loadTTT();
 
@@ -1308,7 +1326,7 @@ void StdLoc::locateOctTree(const PickList &pickList,
                            const vector<double> &sensorElev,
                            double &newLat,double &newLon, double &newDepth,
                            Core::Time &newTime, vector<double> &travelTimes,
-                           CovMtrx &covm, bool computeCovMtrx) const {
+                           CovMtrx &covm, bool computeCovMtrx) {
 	SEISCOMP_DEBUG("Start OctTree Search: maxIterations %d minCellSize %g [km]",
 	               _currentProfile.octTree.maxIterations,
 	               _currentProfile.octTree.minCellSize);
@@ -1564,23 +1582,29 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		throw LocatorException("Couldn't find a solution");
 	}
 
-	double bestCellProb = best.prob;
-	const Cell &bestCell = best.cell;
-
-	if ( !bestCell.valid ) {
+	if ( !best.cell.valid ) {
 		throw LocatorException("Couldn't find a solution");
+	}
+
+	// check the solutiond doesn't lie on the grid boundary
+	if ( (xExtent/2. - std::abs(best.cell.x)) < best.cell.size.x ||
+	     (yExtent/2. - std::abs(best.cell.y)) < best.cell.size.y ||
+	     ( (zExtent/2. - std::abs(best.cell.z)) < best.cell.size.z &&
+	        !usingFixedDepth() ) ) {
+		_rejectLocation = true;
+		_rejectionMsg = "The location lies on the grid boundary: rejecting it";
 	}
 
 	SEISCOMP_DEBUG("Solution: cell size %g %g %g x %g y %g z %g prob %g "
 	               "RMS %f prob density %g",
-	               bestCell.size.x, bestCell.size.y, bestCell.size.z,
-	               bestCell.x, bestCell.y, bestCell.z, bestCellProb,
-	               bestCell.org.rms, bestCell.org.probDensity);
+	               best.cell.size.x, best.cell.size.y, best.cell.size.z,
+	               best.cell.x, best.cell.y, best.cell.z, best.prob,
+	               best.cell.org.rms, best.cell.org.probDensity);
 
-	newLat = bestCell.org.lat;
-	newLon = bestCell.org.lon;
-	newDepth = bestCell.org.depth;
-	newTime = bestCell.org.time;
+	newLat = best.cell.org.lat;
+	newLon = best.cell.org.lon;
+	newDepth = best.cell.org.depth;
+	newTime = best.cell.org.time;
 
 	//
 	// To return the travelTimes we need to recompute them again (ugly)
@@ -1600,11 +1624,11 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		               [](decltype(priorityList)::value_type const &pair) {
 			               return pair.second;
 		               });
-		computeCovarianceMatrix(cells, bestCell, false, covm);
+		computeCovarianceMatrix(cells, best.cell, false, covm);
 	}
 	SEISCOMP_DEBUG("OctTree solution RMS %g lat %g lon %g depth %g time %s "
 	               "(num iterations %d)",
-	               bestCell.org.rms, newLat, newLon, newDepth,
+	               best.cell.org.rms, newLat, newLon, newDepth,
 	               newTime.iso().c_str(), processedCells);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1620,7 +1644,7 @@ void StdLoc::locateGridSearch(const PickList &pickList,
                               double &newLat, double &newLon, double &newDepth,
                               Core::Time &newTime, vector<double> &travelTimes,
                               CovMtrx &covm, bool computeCovMtrx,
-                              bool enablePerCellLeastSquares) const {
+                              bool enablePerCellLeastSquares) {
 	SEISCOMP_DEBUG("Start Grid Search");
 
 	if ( !_ttt ) {
@@ -1781,6 +1805,17 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 
 	if ( !best.cell.valid ) {
 		throw LocatorException("Couldn't find a solution");
+	}
+
+	if ( ! enablePerCellLeastSquares ) {
+		// check the solutiond doesn't lie on the grid boundary
+		if ( (xExtent/2. - std::abs(best.cell.x)) < best.cell.size.x ||
+		     (yExtent/2. - std::abs(best.cell.y)) < best.cell.size.y ||
+		     ( (zExtent/2. - std::abs(best.cell.z)) < best.cell.size.z &&
+		        !usingFixedDepth() ) ) {
+			_rejectLocation = true;
+			_rejectionMsg = "The location lies on the grid boundary: rejecting it";
+		}
 	}
 
 	newLat = best.cell.org.lat;
@@ -2616,6 +2651,10 @@ Origin *StdLoc::createOrigin(
 				    "Confidence ellipsoid will be computed");
 			}
 		}
+	}
+
+	if ( _rejectLocation ) {
+		origin->setEvaluationStatus(EvaluationStatus(REJECTED));
 	}
 
 	return origin;
