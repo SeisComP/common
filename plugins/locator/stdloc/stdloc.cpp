@@ -1201,7 +1201,7 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 		const PickItem &pi = pickList[i];
 		const PickPtr pick = pi.pick;
 
-		if ( weights[i] <= 0 ) {
+		if ( weights[i] <= 0 || travelTimes[i] < 0 ) {
 			continue;
 		}
 
@@ -1212,6 +1212,10 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 		l2SumWeightedResiduals +=
 		    (residual * weights[i]) * (residual * weights[i]);
 		sumSquaredWeights += weights[i] * weights[i];
+	}
+
+	if ( sumSquaredWeights == 0 ){
+		throw LocatorException("Cannot compute probability density without valid picks and/or travel times");
 	}
 
 	rms = sqrt(l2SumWeightedResiduals / sumSquaredWeights);
@@ -1254,8 +1258,9 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 		const PickItem &pi = pickList[i];
 		const PickPtr pick = pi.pick;
 
+		travelTimes[i] = -1.0;
+
 		if ( weights[i] <= 0 ) {
-			travelTimes[i] = 0;
 			continue;
 		}
 
@@ -1282,7 +1287,7 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 			                 pick->waveformID().stationCode().c_str(),
 			                 pick->waveformID().locationCode().c_str(), lat,
 			                 lon, depth, e.what());
-			return false;
+			continue;
 		}
 
 		if ( ttime < 0 ) {
@@ -1293,7 +1298,7 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 			                 pick->waveformID().stationCode().c_str(),
 			                 pick->waveformID().locationCode().c_str(), lat,
 			                 lon, depth);
-			return false;
+			continue;
 		}
 
 		travelTimes[i] = ttime;
@@ -1303,6 +1308,7 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 	}
 
 	if ( originTimes.size() == 0 ) {
+		SEISCOMP_DEBUG("Unable to compute origin time: no valid picks and/or travel times");
 		return false;
 	}
 
@@ -1896,14 +1902,21 @@ void StdLoc::locateLeastSquares(
 
 	bool revertToPrevIteration = false;
 
+	//
+	// Solve the system via least squares multiple times. Each time
+	// improve the previous solution
+	//
 	for ( int iteration = 0;
-	      iteration <= _currentProfile.leastSquares.iterations; ++iteration ) {
+	      iteration <= _currentProfile.leastSquares.iterations;
+	      ++iteration ) {
 
 		// the last additional iteration is for final stats (no inversion)
 		bool lastIteration =
 		    (iteration == _currentProfile.leastSquares.iterations);
 
-		// allow to recover an error
+		// recover an error by reverting to the last valid solution
+		// E.g. the location moves outside the ttt boundary but we keep
+		// the last solution that was withing the limits
 		if ( revertToPrevIteration ) {
 			if (iteration <= 1) {
 				throw LocatorException("Unable to find a location");
@@ -1919,10 +1932,12 @@ void StdLoc::locateLeastSquares(
 		//
 		// Load the information we need to build the Equation System
 		//
-		bool unableToComputeTT = false;
+		bool unableToComputeTT = true;
 		for ( size_t i = 0; i < pickList.size(); ++i ) {
 			const PickItem &pi = pickList[i];
 			const PickPtr pick = pi.pick;
+
+			travelTimes[i] = -1.0;
 
 			if ( weights[i] <= 0 ) {
 				continue;
@@ -1953,8 +1968,7 @@ void StdLoc::locateLeastSquares(
 				    pick->waveformID().stationCode().c_str(),
 				    pick->waveformID().locationCode().c_str(),
 				    newLat, newLon, newDepth, e.what());
-				    unableToComputeTT = true;
-				    break;
+				continue;
 			}
 
 			if ( tt.time < 0 ||
@@ -1967,8 +1981,7 @@ void StdLoc::locateLeastSquares(
 				    pick->waveformID().stationCode().c_str(),
 				    pick->waveformID().locationCode().c_str(),
 				    newLat, newLon, newDepth);
-				    unableToComputeTT = true;
-				    break;
+				continue;
 			}
 
 			travelTimes[i] = tt.time;
@@ -1980,9 +1993,12 @@ void StdLoc::locateLeastSquares(
 				computeDistance(newLat, newLon, sensorLat[i], sensorLon[i],
 				                nullptr, &backazis[i]);
 			}
+
+			unableToComputeTT = false;
 		}
 
 		if ( unableToComputeTT ) {
+			SEISCOMP_WARNING("No travel times available: stop here");
 			revertToPrevIteration = true;
 			continue;
 		}
@@ -1998,7 +2014,7 @@ void StdLoc::locateLeastSquares(
 
 			eq.W[i] = weights[i];
 
-			if ( weights[i] <= 0 ) {
+			if ( weights[i] <= 0 || travelTimes[i] < 0 ) {
 				eq.W[i] = 0;
 				continue;
 			}
@@ -2405,7 +2421,7 @@ Origin *StdLoc::createOrigin(
 		newArr->setAzimuth(azimuth);
 		newArr->setDistance(distance);
 
-		if ( weights[i] <= 0 ) {
+		if ( weights[i] <= 0 || travelTimes[i] < 0 ) {
 			// Not used
 			newArr->setTimeUsed(false);
 			newArr->setWeight(0.0);
