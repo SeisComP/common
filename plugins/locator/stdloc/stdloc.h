@@ -43,35 +43,37 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 	// ----------------------------------------------------------------------
 	public:
 	//! Initializes the locator.
-	virtual bool init(const Seiscomp::Config::Config &config) override;
+	bool init(const Seiscomp::Config::Config &config) override;
 
 	//! Returns supported parameters to be changed.
-	virtual IDList parameters() const override {
+	IDList parameters() const override {
 	  return _allowedParameters;
 	}
 
 	//! Returns the value of a parameter.
-	virtual std::string parameter(const std::string &name) const override;
+	std::string parameter(const std::string &name) const override;
 
 	//! Sets the value of a parameter.
-	virtual bool setParameter(const std::string &name,
+	bool setParameter(const std::string &name,
 	                          const std::string &value) override;
 
 	//! List available profiles
-	virtual IDList profiles() const override;
+	IDList profiles() const override;
 
 	//! specify the profile to be used
-	virtual void setProfile(const std::string &name) override;
+	void setProfile(const std::string &name) override;
 
 	//! Returns the implementations capabilities
-	virtual int capabilities() const override;
+	int capabilities() const override;
 
-	virtual Seiscomp::DataModel::Origin *locate(PickList &pickList) override;
-	virtual Seiscomp::DataModel::Origin *
+	Seiscomp::DataModel::Origin *locate(PickList &pickList) override;
+	Seiscomp::DataModel::Origin *
 	locate(PickList &pickList, double initLat, double initLon, double initDepth,
 	       const Seiscomp::Core::Time &initTime) override;
-	virtual Seiscomp::DataModel::Origin *
+	Seiscomp::DataModel::Origin *
 	relocate(const Seiscomp::DataModel::Origin *origin) override;
+
+	std::string lastMessage(MessageType) const override;
 
 	// ----------------------------------------------------------------------
 	//  Private members
@@ -134,7 +136,7 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		                   double &newLon, double &newDepth,
 		                   Seiscomp::Core::Time &newTime,
 		                   std::vector<double> &travelTimes, CovMtrx &covm,
-		                   bool computeCovMtrx) const;
+		                   bool computeCovMtrx);
 
 		void locateGridSearch(const PickList &pickList,
 		                      const std::vector<double> &weights,
@@ -145,7 +147,7 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		                      Seiscomp::Core::Time &newTime,
 		                      std::vector<double> &travelTimes, CovMtrx &covm,
 		                      bool computeCovMtrx,
-		                      bool enablePerCellLeastSquares) const;
+		                      bool enablePerCellLeastSquares);
 
 		void locateLeastSquares(const PickList &pickList,
 		                        const std::vector<double> &weights,
@@ -228,6 +230,9 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		Seiscomp::TravelTimeTableInterfacePtr _ttt;
 		std::string _tttType;  // currently loaded _ttt
 		std::string _tttModel; // currently loaded _ttt
+
+		bool _rejectLocation;
+		std::string _rejectionMsg;
 
 		static const IDList _allowedParameters;
 };
