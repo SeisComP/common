@@ -1771,7 +1771,7 @@ void ThreeComponentTrace::setTransformationEnabled(bool f) {
 			else {
 				for ( int j = 0; j < 3; ++j ) {
 					if ( j == 2-i ) {
-						if ( fabs(r[j]-1.0) > 1E-6 )
+						if ( (fabs(r[j])-1.0) > 1E-6 )
 							passthrough = false;
 					}
 					else {
@@ -1816,9 +1816,18 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 				}
 			}
 
+			bool flip = transformation.d[2-comp][2-comp] < 0;
 			RecordPtr grec = traces[comp].filter.feed(rec);
 
 			if ( grec ) {
+				if ( flip ) {
+					// This is our private copy
+					DoubleArray *data = const_cast<DoubleArray*>(DoubleArray::ConstCast(grec->data()));
+					if ( data ) {
+						*data *= -1;
+					}
+				}
+
 				traces[comp].transformed->feed(grec.get());
 				if ( widget ) {
 					widget->fed(comp, grec.get());
@@ -1835,12 +1844,18 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 	else {
 		// Just copy the records and filter them if activated
 		for ( int i = 0; i < 3; ++i ) {
-			if ( enableTransformation && !traces[i].passthrough ) continue;
-			if ( traces[i].raw == nullptr || traces[i].raw->empty() ) continue;
+			if ( enableTransformation && !traces[i].passthrough ) {
+				continue;
+			}
+
+			if ( !traces[i].raw || traces[i].raw->empty() ) {
+				continue;
+			}
 
 			RecordSequence::iterator it;
-			if ( traces[i].transformed == nullptr )
+			if ( !traces[i].transformed ) {
 				it = traces[i].raw->begin();
+			}
 			else {
 				Core::Time endTime = traces[i].transformed->back()->endTime();
 				for ( RecordSequence::iterator s_it = traces[i].raw->begin();
@@ -1852,12 +1867,13 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 				}
 			}
 
+			bool flip = transformation.d[2-i][2-i] < 0;
 			for ( RecordSequence::iterator s_it = it;
 			      s_it != traces[i].raw->end(); ++s_it ) {
 
 				const Record *s_rec = s_it->get();
 
-				if ( traces[i].transformed == nullptr ) {
+				if ( !traces[i].transformed ) {
 					traces[i].transformed = new RingBuffer(0);
 					if ( widget ) {
 						widget->setRecords(i, traces[i].transformed, false);
@@ -1866,6 +1882,14 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 
 				RecordPtr grec = traces[i].filter.feed(s_rec);
 				if ( grec ) {
+					if ( flip ) {
+						// This is our private copy
+						DoubleArray *data = const_cast<DoubleArray*>(DoubleArray::ConstCast(grec->data()));
+						if ( data ) {
+							*data *= -1;
+						}
+					}
+
 					traces[i].transformed->feed(grec.get());
 					if ( widget ) {
 						widget->fed(i, grec.get());
@@ -6193,40 +6217,76 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
 	item->setData(QVariant(QString(text.c_str())));
 	setupItem(comps, item);
 
-	// Compute and set rotation matrix
-	if ( allComponents ) {
-		//cout << "[" << streamID.stationCode() << "]" << endl;
+	label->orientationZNE.identity();
+
+	//cout << "[" << streamID.stationCode() << "]" << endl;
+	Math::Vector3d n;
+
+	if ( tc.comps[ThreeComponents::Vertical] ) {
 		try {
-			Math::Vector3d n;
 			n.fromAngles(+deg2rad(tc.comps[ThreeComponents::Vertical]->azimuth()),
 			             -deg2rad(tc.comps[ThreeComponents::Vertical]->dip())).normalize();
 			label->orientationZNE.setColumn(2, n);
 			//cout << tc.comps[ThreeComponents::Vertical]->code() << ": dip=" << tc.comps[ThreeComponents::Vertical]->dip()
-			//     << ", az=" << tc.comps[ThreeComponents::Vertical]->azimuth() << endl;
-
-			n.fromAngles(+deg2rad(tc.comps[ThreeComponents::FirstHorizontal]->azimuth()),
-			             -deg2rad(tc.comps[ThreeComponents::FirstHorizontal]->dip())).normalize();
-			label->orientationZNE.setColumn(1, n);
-			//cout << tc.comps[ThreeComponents::FirstHorizontal]->code() << ": dip=" << tc.comps[ThreeComponents::FirstHorizontal]->dip()
-			//     << ", az=" << tc.comps[ThreeComponents::FirstHorizontal]->azimuth() << endl;
-
-			n.fromAngles(+deg2rad(tc.comps[ThreeComponents::SecondHorizontal]->azimuth()),
-			             -deg2rad(tc.comps[ThreeComponents::SecondHorizontal]->dip())).normalize();
-			label->orientationZNE.setColumn(0, n);
-			//cout << tc.comps[ThreeComponents::SecondHorizontal]->code() << ": dip=" << tc.comps[ThreeComponents::SecondHorizontal]->dip()
-			//     << ", az=" << tc.comps[ThreeComponents::SecondHorizontal]->azimuth() << endl;
+			//     << ", az=" << tc.comps[ThreeComponents::Vertical]->azimuth()
+			//     << ", v=" << n.x << "," << n.y << "," << n.z << endl;
 		}
 		catch ( ... ) {
-			SEISCOMP_WARNING("Unable to fetch orientation of stream %s.%s.%s.%s",
-			                 streamID.networkCode().c_str(), streamID.stationCode().c_str(),
-			                 streamID.locationCode().c_str(), streamID.channelCode().substr(0,streamID.channelCode().size()-1).c_str());
+			SEISCOMP_WARNING("Unable to fetch Z orientation of stream %s.%s.%s.%s",
+			                 streamID.networkCode(), streamID.stationCode(),
+			                 streamID.locationCode(), streamID.channelCode().substr(0,streamID.channelCode().size()-1));
 			allComponents = false;
 		}
 	}
 
-	if ( !allComponents )
-		// Set identity matrix
-		label->orientationZNE.identity();
+	if ( tc.comps[ThreeComponents::FirstHorizontal] ) {
+		try {
+			n.fromAngles(+deg2rad(tc.comps[ThreeComponents::FirstHorizontal]->azimuth()),
+			             -deg2rad(tc.comps[ThreeComponents::FirstHorizontal]->dip())).normalize();
+			label->orientationZNE.setColumn(1, n);
+			//cout << tc.comps[ThreeComponents::FirstHorizontal]->code() << ": dip=" << tc.comps[ThreeComponents::FirstHorizontal]->dip()
+			//     << ", az=" << tc.comps[ThreeComponents::FirstHorizontal]->azimuth()
+			//     << ", v=" << n.x << "," << n.y << "," << n.z << endl;
+		}
+		catch ( ... ) {
+			SEISCOMP_WARNING("Unable to fetch N orientation of stream %s.%s.%s.%s",
+			                 streamID.networkCode(), streamID.stationCode(),
+			                 streamID.locationCode(), streamID.channelCode().substr(0,streamID.channelCode().size()-1));
+			allComponents = false;
+		}
+	}
+
+	if ( tc.comps[ThreeComponents::SecondHorizontal] ) {
+		try {
+			n.fromAngles(+deg2rad(tc.comps[ThreeComponents::SecondHorizontal]->azimuth()),
+			             -deg2rad(tc.comps[ThreeComponents::SecondHorizontal]->dip())).normalize();
+			label->orientationZNE.setColumn(0, n);
+			//cout << tc.comps[ThreeComponents::SecondHorizontal]->code() << ": dip=" << tc.comps[ThreeComponents::SecondHorizontal]->dip()
+			//     << ", az=" << tc.comps[ThreeComponents::SecondHorizontal]->azimuth()
+			//     << ", v=" << n.x << "," << n.y << "," << n.z << endl;
+		}
+		catch ( ... ) {
+			SEISCOMP_WARNING("Unable to fetch E orientation of stream %s.%s.%s.%s",
+			                 streamID.networkCode(), streamID.stationCode(),
+			                 streamID.locationCode(), streamID.channelCode().substr(0,streamID.channelCode().size()-1));
+			allComponents = false;
+		}
+	}
+
+	if ( !allComponents ) {
+		// Convert matrix to capture flipping w.r.t. to component direction
+		for ( int i = 0; i < 3; ++i ) {
+			for ( int j = 0; j < 3; ++j ) {
+				label->orientationZNE.d[j][2-i] =
+					j == 2-i
+					?
+					(label->orientationZNE.d[2-i][2-i] < 0 ? -1 : 1)
+					:
+					0
+				;
+			}
+		}
+	}
 
 	applyFilter(item);
 	applyRotation(item, SC_D.comboRotation->currentIndex());
@@ -6463,8 +6523,6 @@ void PickerView::updateItemLabel(RecordViewItem* item, char component) {
 
 		if ( slot >= 0 && slot < 3 ) {
 			switch ( SC_D.comboRotation->currentIndex() ) {
-				case RT_123:
-					break;
 				case RT_ZNE:
 					comp = ZNE_COMPS[slot];
 					break;
@@ -6473,6 +6531,8 @@ void PickerView::updateItemLabel(RecordViewItem* item, char component) {
 					break;
 				case RT_ZH:
 					comp = ZH_COMPS[slot];
+					break;
+				default:
 					break;
 			}
 		}
@@ -6821,8 +6881,6 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 
 	if ( slot >= 0 && slot < 3 ) {
 		switch ( SC_D.comboRotation->currentIndex() ) {
-			case RT_123:
-				break;
 			case RT_ZNE:
 				component = ZNE_COMPS[slot];
 				break;
@@ -6831,6 +6889,8 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 				break;
 			case RT_ZH:
 				component = ZH_COMPS[slot];
+				break;
+			default:
 				break;
 		}
 	}
@@ -9284,7 +9344,7 @@ bool PickerView::applyRotation(RecordViewItem *item, int type) {
 		case RT_ZH:
 		{
 			PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
-			label->data.transformation.identity();
+			label->data.transformation = label->orientationZNE;
 			label->data.setL2Horizontals(true);
 			label->data.setTransformationEnabled(true);
 			break;
