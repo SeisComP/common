@@ -436,6 +436,7 @@ void AmplitudeProcessor_ML2h::newAmplitude(const AmplitudeProcessor *proc,
 	if ( _results[0] && _results[1] ) {
 		setStatus(Finished, 100.);
 		Result newRes;
+		newRes.period = -1;
 		newRes.record = res.record;
 
 		switch ( _combiner ) {
