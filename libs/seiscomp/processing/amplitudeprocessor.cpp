@@ -1770,7 +1770,12 @@ void AmplitudeProcessor::process(const Record *record) {
 		_lastAmplitude = std::abs(res.amplitude.value);
 
 		double dt = index.index / _stream.fsamp;
-		res.period /= _stream.fsamp;
+		if ( res.period >= 1 ) {
+			res.period /= _stream.fsamp;
+		}
+		else {
+			res.period = -1;
+		}
 
 		if ( index.begin > index.end ) std::swap(index.begin, index.end);
 
