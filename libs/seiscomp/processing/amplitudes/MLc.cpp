@@ -497,13 +497,16 @@ void AmplitudeProcessor_MLc2h::newAmplitude(const AmplitudeProcessor *proc,
 		setStatus(Finished, 100.);
 		Result newRes;
 		newRes.record = res.record;
+		newRes.period = -1;
 
 		switch ( _combiner ) {
 			case TakeAverage:
 				newRes.amplitude = average(_results[0]->value, _results[1]->value);
 				newRes.time = average(_results[0]->time, _results[1]->time);
 				newRes.snr = (_results[0]->snr + _results[1]->snr) * 0.5;
-				newRes.period = (_results[0]->period + _results[1]->period) * 0.5;
+				if ( _results[0]->period > 0 && _results[1]->period > 0 ) {
+					newRes.period = (_results[0]->period + _results[1]->period) * 0.5;
+				}
 				newRes.component = Horizontal;
 
 				break;
@@ -511,7 +514,9 @@ void AmplitudeProcessor_MLc2h::newAmplitude(const AmplitudeProcessor *proc,
 				newRes.amplitude = gmean(_results[0]->value, _results[1]->value);
 				newRes.time = average(_results[0]->time, _results[1]->time);
 				newRes.snr = (_results[0]->snr + _results[1]->snr) * 0.5;
-				newRes.period = (_results[0]->period + _results[1]->period) * 0.5;
+				if ( _results[0]->period > 0 && _results[1]->period > 0 ) {
+					newRes.period = (_results[0]->period + _results[1]->period) * 0.5;
+				}
 				newRes.component = Horizontal;
 				break;
 			case TakeMin:
