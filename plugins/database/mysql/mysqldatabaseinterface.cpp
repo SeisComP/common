@@ -179,8 +179,11 @@ bool MySQLDatabase::ping() const {
 
 	SEISCOMP_ERROR("ping() = %d (%s)", mysql_errno(_handle), mysql_error(_handle));
 	// Try to reconnect
-	const_cast<MySQLDatabase*>(this)->disconnect();
-	if ( !const_cast<MySQLDatabase*>(this)->open() ) {
+	if ( !mysql_real_connect(_handle, _host.c_str(), _user.c_str(), _password.c_str(),
+	                         _database.c_str(), _port, nullptr, 0) ) {
+		SEISCOMP_ERROR("Connect to %s:******@%s:%d/%s failed: %s", _user.c_str(),
+		               _host.c_str(), _port, _database.c_str(),
+		               mysql_error(_handle));
 		return false;
 	}
 
