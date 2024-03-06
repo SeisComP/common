@@ -107,6 +107,7 @@ class SC_GUI_API EventListView : public QWidget {
 			OPT(float)               minLongitude, maxLongitude;
 			OPT(float)               minDepth, maxDepth;
 			OPT(float)               minMagnitude, maxMagnitude;
+			OPT(int)                 minPhaseCount, maxPhaseCount;
 			std::string              eventID;
 
 			bool isNull() const;
@@ -236,6 +237,8 @@ class SC_GUI_API EventListView : public QWidget {
 		void onShowOtherEvents(int checked);
 		void onShowForeignEvents(int checked);
 		void onHideOutsideRegion(int checked);
+		void onHideFinalRejectedEvents(int checked);
+		void onHideNewEvents(int checked);
 		void onFilterRegionModeChanged(int mode);
 
 		void updateAgencyState();
@@ -353,6 +356,8 @@ class SC_GUI_API EventListView : public QWidget {
 		bool                                _hideOtherEvents;
 		bool                                _hideForeignEvents;
 		bool                                _hideOutsideRegion;
+		bool                                _hideFinalRejectedEvents;
+		bool                                _hideNewEvents;
 		bool                                _checkEventAgency;
 		bool                                _showOnlyLatestPerAgency;
 		int                                 _regionIndex;
