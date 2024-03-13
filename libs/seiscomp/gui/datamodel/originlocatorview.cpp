@@ -115,9 +115,29 @@ struct CommitOptions {
 		bool           allowFreeText{false};
 	};
 
+	vector<pair<string, string>> magnitudeTypes;
 	vector<OriginCommentProfile> originCommentProfiles;
 
 	void init(const std::string &prefix, Origin *origin) {
+		magnitudeTypes.clear();
+		if ( origin ) {
+			for ( size_t i = 0; i < origin->magnitudeCount(); ++i ) {
+				string value = "--";
+				try {
+					char buf[64];
+					snprintf(buf, 63, "%.*f",
+					         SCScheme.precision.magnitude,
+					         origin->magnitude(i)->magnitude().value());
+					value = buf;
+				}
+				catch ( ... ) {}
+				magnitudeTypes.push_back(pair<string, string>(origin->magnitude(i)->type(), value));
+			}
+		}
+		sort(magnitudeTypes.begin(), magnitudeTypes.end(), [](const pair<string, string> &i1, const pair<string, string> &i2) -> bool {
+			return Core::compareNoCase(i1.first, i2.first) < 0;
+		});
+
 		try {
 			forceEventAssociation = SCApp->configGetBool(prefix + "forceEventAssociation");
 		}
@@ -620,12 +640,29 @@ class OriginCommitOptions : public QDialog {
 			ui.cbAssociate->setChecked(options.forceEventAssociation);
 			ui.cbFixSolution->setChecked(options.fixOrigin);
 
+			ui.labelPreferredMagnitude->setVisible(false);
+			ui.comboPreferredMagnitude->setVisible(false);
+
 			if ( !options.magnitudeType || options.magnitudeType->empty() ) {
 				ui.cbFixMagnitudeType->setEnabled(false);
 				ui.cbFixMagnitudeType->setVisible(false);
+				if ( !options.magnitudeTypes.empty() ) {
+					ui.labelPreferredMagnitude->setVisible(true);
+					ui.comboPreferredMagnitude->setVisible(true);
+					ui.comboPreferredMagnitude->addItem(tr("- no changes -"));
+					ui.comboPreferredMagnitude->addItem(tr("- automatic -"));
+					ui.comboPreferredMagnitude->setCurrentIndex(0);
+					for ( auto &type : options.magnitudeTypes ) {
+						ui.comboPreferredMagnitude->addItem(
+							QString("%1 (%2)").arg(type.first.data()).arg(type.second.data()),
+							type.first.data()
+						);
+					}
+				}
 			}
-			else
+			else {
 				ui.cbFixMagnitudeType->setText(ui.cbFixMagnitudeType->text().arg(options.magnitudeType->c_str()));
+			}
 
 			try {
 				commentOptions = SCApp->configGetStrings("olv.commit.eventCommentOptions");
@@ -737,6 +774,7 @@ class OriginCommitOptions : public QDialog {
 			}
 			resize(preferredSize);
 		}
+
 
 		bool getOptions(CommitOptions &options) {
 			options.forceEventAssociation = ui.cbAssociate->isEnabled() && ui.cbAssociate->isChecked();
@@ -6899,6 +6937,15 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 		}
 
 		options_ptr = &tmp;
+
+		if ( dlg.ui.comboPreferredMagnitude->currentIndex() > 1 ) {
+			tmp.magnitudeType = dlg.ui.comboPreferredMagnitude->currentData().toString().toStdString();
+		}
+		else if ( dlg.ui.comboPreferredMagnitude->currentIndex() == 1 ) {
+			// Force unsetting the preferred magnitude
+			tmp.magnitudeType = string();
+		}
+
 		dialogConfirmed = true;
 	}
 
