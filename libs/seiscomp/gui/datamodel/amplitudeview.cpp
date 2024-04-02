@@ -3959,6 +3959,10 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 		}
 	}
 
+	if ( !SC_D.checkOverrideSNR->isChecked() ) {
+		SC_D.spinSNR->setValue(proc->config().snrMin);
+	}
+
 	Processing::MagnitudeProcessorPtr magProc = Processing::MagnitudeProcessorFactory::Create(SC_D.magnitudeType.c_str());
 	if ( magProc == nullptr ) {
 		cerr << sid.networkCode() << "." << sid.stationCode() << ": unable to create magnitude processor "
@@ -4981,6 +4985,10 @@ void AmplitudeView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem)
 		else
 			SC_D.ui.labelDistance->setText(QString("%1%2").arg(item->value(ITEM_DISTANCE_INDEX),0,'f',1).arg(degrees));
 		SC_D.ui.labelAzimuth->setText(QString("%1%2").arg(item->value(ITEM_AZIMUTH_INDEX),0,'f',1).arg(degrees));
+	}
+
+	if ( !SC_D.checkOverrideSNR->isChecked() ) {
+		SC_D.spinSNR->setValue(label->initialMinSNR);
 	}
 
 	WaveformStreamID streamID = SC_D.recordView->streamID(item->row());
