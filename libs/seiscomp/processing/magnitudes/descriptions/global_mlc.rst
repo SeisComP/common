@@ -25,52 +25,51 @@ Amplitudes
 
 Some general conditions apply for measuring amplitudes:
 
-* Measured amplitude type: MLc.
+* Name amplitude type: MLc.
 * Expected unit of gain-corrected input data: m/s. Activate response correction
   in global bindings in case data are provided in acceleration.
 * Components used for amplitude measurements: both horizontal components
   separately.
 
-The default parameters for measuring MLc amplitudes can be adjusted by global
+The parameters for measuring MLc amplitudes can be adjusted by global
 binding parameters:
 
-* Filtering before instrument simulation: :ref:`BW(3,0.5,12) <filter-bw>`,
-  configurable by :confval:`amplitudes.MLc.preFilter`.
-* :term:`Wood-Anderson seismometer` simulation: yes, can be deactivated by
-  :confval:`amplitudes.MLc.applyWoodAnderson`.
-* Characteristics of :term:`Wood-Anderson seismometer`: according to IASPEI
-  recommendations. Can be adjusted by :confval:`amplitudes.WoodAnderson.gain`,
-  :confval:`amplitudes.WoodAnderson.T0`, :confval:`amplitudes.WoodAnderson.h`
-  in global bindings or global module configuration.
-* Amplitude scaling: 1, configure by :confval:`amplitudes.MLc.amplitudeScale`
-  for considering non-default units by magnitude.
-* Method applied for measuring amplitudes: absolute maximum, configurable in
-  global bindings by :confval:`amplitudes.MLc.measureType`.
-* Method for combining amplitude measurements: *max* (maximum from both
-  horizontal components), configurable in global bindings by
-  :confval:`amplitudes.MLc.combiner`.
+.. csv-table::
+   :widths: 20 25 15 30
+   :header: Topic, Parameter, Default, Comment
+   :align: left
+   :delim: ;
+
+   :ref:`Filtering <filter-grammar>`; :confval:`amplitudes.MLc.preFilter`; :ref:`BW(3,0.5,12) <filter-bw>`; Applied before instrument simulation
+   :term:`Wood-Anderson simulation <Wood-Anderson seismometer>`; :confval:`amplitudes.MLc.applyWoodAnderson`; true; When WA simulation is inactive, measured amplitudes take the units of the gain of the stream on which they were measured.
+   :term:`Wood-Anderson parameters <Wood-Anderson seismometer>`; :confval:`amplitudes.WoodAnderson.gain`;see comment; Defaults are according to :ref:`IASPEI recommendation <concepts_magnitudes-wa>`.
+   Amplitude scaling; :confval:`amplitudes.MLc.amplitudeScale`; 1; Apply for scaling measured amplitudes to units required by the magnitude
+   Amplitude combination; :confval:`amplitudes.MLc.combiner`;max; Method for combining amplitudes measured on both horizontal components
 
 Some additional parameters require you to create an amplitude-type profile for
-global binding parameters. Name the profile like the amplitude name, hence MLc:
+global binding parameters. Name the profile like the amplitude name, hence MLc
+replacing '$name' in the parameters below:
 
-* Time window for measuring signal amplitudes [s]: P pick time + 150 s by
-  :ref:`scautopick` or distance [km]/3 km/s + 30 s,
-  the relevant parameters are: :confval:`amplitudes.MLc.signalBegin`,
-  :confval:`amplitudes.MLc.signalEnd`. :ref:`Time grammar <time-grammar>` may be
-  applied for begin and end times.
-* Time window for measuring noise amplitudes [s]: 30 s before the P pick,
-  the relevant parameters are: :confval:`amplitudes.MLc.noiseBegin`,
-  :confval:`amplitudes.MLc.noiseEnd`. :ref:`Time grammar <time-grammar>` may be
-  applied for begin and end times.
-* Minimum SNR: 0, configurable by :confval:`amplitudes.MLc.minSNR`.
-* Distance range: 0 - 8 deg, configurable by :confval:`amplitudes.MLc.minDist`,
-  :confval:`amplitudes.MLc.maxDist`, stations at distances beyond 8 deg will be strictly
-  ignored.
-* Depth range: <= 80 km, can be adjusted and extended by
-  :confval:`amplitudes.MLc.minDepth` and :confval:`amplitudes.MLc.maxDepth`.
+.. csv-table::
+   :widths: 20 25 15 30
+   :header: Topic, Parameter, Default, Comment
+   :align: left
+   :delim: ;
 
-Most parameters controlling the amplitude measurements are configurable in
-global bindings or global module configuration.
+   Minimum distance; :confval:`amplitudes.$name.minDist`; 0;
+   Maximum distance; :confval:`amplitudes.$name.maxDist`; 8; Cannot be extended beyond default
+   Minimum source depth; :confval:`amplitudes.$name.minDepth`; 0; Can be negative
+   Maximum source depth; :confval:`amplitudes.$name.maxDepth`; 80; Can be extended beyond default
+   Noise window begin; :confval:`amplitudes.$name.noiseBegin`; -30;  (+++)
+   Noise window end; :confval:`amplitudes.$name.noiseEnd`; -5;  (+++)
+   Signal window begin; :confval:`amplitudes.$name.signalBegin`; -5;  (+++)
+   Signal window end; :confval:`amplitudes.$name.signalEnd`; 150 (+) or distance/3+30 (++); (**+**) When measured by :ref:`scautopick`, (**++**) When measured by :ref:`scamp` or :ref:`scolv`  (+++)
+   Minimum :term:`SNR`; :confval:`amplitudes.$name.minSNR`;not applied; Compares the maximum amplitudes measured within the signal and noise windows
+   Amplitude staturation; :confval:`amplitudes.$name.saturationThreshold`; false; Apply for avoiding measurements on clipped data
+   Response correction; :confval:`amplitudes.$name.enableResponses`; false; Activate for input units other than nm/s and set :confval:`amplitudes.$name.resp.minFreq`, :confval:`amplitudes.$name.resp.maxFreq`
+
+**(+++)** All values defining the time windows for measuring noise and signal
+are relative to P arrival time, read :ref:`Time grammar <time-grammar>`.
 
 The Wood-Anderson simulation will convert input velocity data to ground
 displacement in mm. The input data may be of a different unit after applying
@@ -83,52 +82,34 @@ amplitude.
 
 .. note::
 
-   For comparing MLc amplitudes with :ref:`ML amplitudes <global_ml>` set the
-   global bindings parameters ::
+   * For comparing MLc amplitudes with :ref:`ML amplitudes <global_ml>` set the
+     global bindings parameters ::
 
-      amplitudes.MLc.preFilter = ""
-      amplitudes.MLc.combiner = average
+        amplitudes.MLc.preFilter = ""
+        amplitudes.MLc.combiner = average
 
+   * The default values are taken from :cite:t:`stange-2006`.
 
 .. _mlc_station_magnitude:
 
 Station magnitudes
 ------------------
 
-Default properties, most parameters are configurable in global bindings:
+Station magnitudes are computed from measured amplitudes by applying a
+configurable calibration function when the origin is within depths and distance
+constraints. The parameters are configurable in global bindings or by global
+module parameters when applying
+:ref:`regionalization <concepts-magnitudes-regionalization>`.
 
-* Distance type: hypocentral, epicentral can be selected by :confval:`magnitudes.MLc.distMode`.
-* Distance range: 0 - 8 deg, configurable by :confval:`magnitudes.MLc.minDist`,
-  :confval:`magnitudes.MLc.maxDist`, measurements beyond 8 deg will be strictly
-  ignored.
-* Depth range: <= 80 km, can be extended by :confval:`magnitudes.MLc.maxDepth`.
-* Expected amplitude type: MLc, configurable by magnitude alias.
-* Expected amplitude unit: millimeter (mm), other units can be assumed by
-  amplitude scaling with :confval:`amplitudes.MLc.amplitudeScale`.
-* Magnitude calibration type: parametric, parametric and non-parametric are
-  available through :confval:`magnitudes.MLc.calibrationType`.
-* Calibration function (see below for the equations), configurable by global bindings
-  depending on the actual calibration type:
-
-  * parametric: :confval:`magnitudes.MLc.parametric.c0`,
-    :confval:`magnitudes.MLc.parametric.c1`,
-    :confval:`magnitudes.MLc.parametric.c2`,
-    :confval:`magnitudes.MLc.parametric.c3`,
-    :confval:`magnitudes.MLc.parametric.c4`,
-    :confval:`magnitudes.MLc.parametric.c5`,
-    :confval:`magnitudes.MLc.parametric.c6`,
-    :confval:`magnitudes.MLc.parametric.H`
-
-  * A0: :confval:`magnitudes.MLc.A0.logA0`
-* Station correction: none, configurable by a magnitude-type profile in global
-  bindings with :confval:`magnitudes.MLc.offset` or the equivalent in global
-  module configuration as :confval:`module.trunk.NET.STA.magnitudes.MLc.offset`.
-  The latter is not supported by :ref:`scconfig` but it reduces the amount of
-  required bindings.
+Station corrections are configurable by a magnitude-type profile named MLc in
+global bindings with :confval:`magnitudes.$name.offset` or the equivalent in
+global module configuration as :confval:`module.trunk.NET.STA.magnitudes.MLc.offset`.
+The latter is not supported by :ref:`scconfig` but it reduces the amount of
+required bindings.
 
 The calibration function is considered in one of the forms
 
-* parametric when :confval:`magnitudes.MLc.calibrationType` = "parametric"`:
+* Parametric when :confval:`magnitudes.MLc.calibrationType` = "parametric"`:
 
   .. math::
 
@@ -161,43 +142,44 @@ The calibration function is considered in one of the forms
 
 .. note::
 
-   The magnitude calibration function can be regionalized by adjusting global
-   module configuration parameters in MLc region profiles of
-   :confval:`magnitudes.MLc.region.*` and in a *MLc* Magnitude type profile e.g.
-   in :file:`global.cfg`.
+   * The magnitude calibration function can be regionalized by adjusting global
+     module configuration parameters in MLc region profiles of
+     :confval:`magnitudes.MLc.region.*` and in a *MLc* Magnitude type profile
+     e.g., in :file:`global.cfg`.
+   * The default values for parametric calibration are taken from
+     :cite:t:`stange-2006` and :cite:t:`rhoades-2020`.
 
-The flexibility of the amplitude and magnitude processing allows for MLc to be
-applied in various use cases. Examples are given below.
+Configurable parameters:
 
-* **Default:** Pre-filtered and gain-corrected amplitudes, Wood-Anderson
-  corrected and measured in mm for Southwestern Germany, :cite:t:`stange-2006`:
+.. csv-table::
+   :widths: 20 25 15 30
+   :header: Topic, Parameter, Default, Comment
+   :align: left
+   :delim: ;
 
-  .. math::
-
-     MLc = \log_{10}(A) + 1.11 * \log_{10}(r) + 0.00095 * r + 0.69 + c_0
-
-* Wood-Anderson-corrected displacement amplitudes measured in mm for
-  Southern California, :cite:t:`hutton-1987`:
-
-  .. math::
-
-     MLc = \log_{10}(A) + 1.110 * \log_{10}(r / 100) + 0.00189 * (r - 100) + 3.0
-
-* Pre-filtered velocity amplitudes in units of mym/s (requiring to set
-  :confval:`amplitudes.MLc.amplitudeScale`), no Wood-Anderson correction,
-  for West Bohemia, e.g. :cite:t:`hiemer-2012`:
-
-  .. math::
-
-     MLc = \log_{10}(A) - log_{10}(2\Pi) + 2.1 * \log_{10}(r) - 1.7 + c_0
-
-.. figure:: media/magnitude-calibrations_MLc_s_MLc_hb.png
-   :align: center
-   :width: 18cm
-
-   MLc magnitudes for measured amplitude of 1 mm with default magnitude
-   calibration (*MLc_s*, :cite:t:`stange-2006`) and calibration values for Southern
-   California (*MLc_hb*, :cite:t:`hutton-1987`).
+   Distance type; :confval:`magnitudes.MLc.distMode`; hypocentral; epicentral or hyocentral can be selected
+   Minimum distance; :confval:`magnitudes.MLc.minDist`; -1;
+   Maximum distance; :confval:`magnitudes.MLc.maxDist`; 8; Measurements beyond 8 deg are strictly ignored
+   Minimum source depth; :confval:`magnitudes.MLc.minDepth`; -10;
+   Maximum source depth; :confval:`magnitudes.MLc.maxDepth`; 80; Can be extended beyond default
+   Amplitude type;; MLc; Configurable by :ref:`magnitude alias <concepts_magnitudes-aliases>`
+   Amplitude unit;; mm; other units can be assumed by amplitude scaling with :confval:`amplitudes.MLc.amplitudeScale`
+   Magnitude calibration type; :confval:`magnitudes.MLc.calibrationType`; parametric; parametric and A0 (non-parametric) are available
+   Linear magnitude correction;:confval:`magnitudes.$name.multiplier`; 1.0; Configure station corrections more conveniently configurable in global module configuration as :confval:`module.trunk.NET.STA.magnitudes.MLc.multiplier`
+   Constant magnitude correction;:confval:`magnitudes.$name.offset`; 0.0; Configure station corrections more conveniently configurable in global module configuration as :confval:`module.trunk.NET.STA.magnitudes.MLc.offset`
+   ;;;
+   **parametric** calibration;;; Parameters are used for :confval:`magnitudes.MLc.calibrationType` = parametric
+   ;:confval:`magnitudes.MLc.parametric.c0`;0.0;
+   ;:confval:`magnitudes.MLc.parametric.c1`;0.69;
+   ;:confval:`magnitudes.MLc.parametric.c2`;0.00095;
+   ;:confval:`magnitudes.MLc.parametric.c3`;1.11;
+   ;:confval:`magnitudes.MLc.parametric.c4`;0.0;
+   ;:confval:`magnitudes.MLc.parametric.c5`;1.0;
+   ;:confval:`magnitudes.MLc.parametric.c6`;0.0; see :cite:t:`rhoades-2020`
+   ;:confval:`magnitudes.MLc.parametric.H`;40.0; see :cite:t:`rhoades-2020`
+   ;;;
+   **non-parametric** calibration;;; Parameters are used for :confval:`magnitudes.MLc.calibrationType` = A0
+   ;:confval:`magnitudes.MLc.A0.logA0`;0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85; from :ref:`ML magnitude <global_ml>`
 
 
 Network magnitude
@@ -240,6 +222,43 @@ configuration. Read the
 :ref:`Tutorial on regionalization <tutorials_magnitude-region>` for the details.
 
 
+Examples
+========
+
+The flexibility of the amplitude and magnitude processing allows for MLc to be
+applied in various use cases. Examples are given below.
+
+* **Default:** Pre-filtered and gain-corrected amplitudes, Wood-Anderson
+  corrected and measured in mm for Southwestern Germany, :cite:t:`stange-2006`:
+
+  .. math::
+
+     MLc = \log_{10}(A) + 1.11 * \log_{10}(r) + 0.00095 * r + 0.69 + c_0
+
+* Wood-Anderson-corrected displacement amplitudes measured in mm for
+  Southern California, :cite:t:`hutton-1987`:
+
+  .. math::
+
+     MLc = \log_{10}(A) + 1.110 * \log_{10}(r / 100) + 0.00189 * (r - 100) + 3.0
+
+* Pre-filtered velocity amplitudes in units of mym/s (requiring to set
+  :confval:`amplitudes.MLc.amplitudeScale`), no Wood-Anderson correction,
+  for West Bohemia, e.g. :cite:t:`hiemer-2012`:
+
+  .. math::
+
+     MLc = \log_{10}(A) - log_{10}(2\Pi) + 2.1 * \log_{10}(r) - 1.7 + c_0
+
+.. figure:: media/magnitude-calibrations_MLc_s_MLc_hb.png
+   :align: center
+   :width: 18cm
+
+   MLc magnitudes for measured amplitude of 1 mm with default magnitude
+   calibration (*MLc_s*, :cite:t:`stange-2006`) and calibration values for Southern
+   California (*MLc_hb*, :cite:t:`hutton-1987`).
+
+
 Setup
 =====
 
@@ -269,8 +288,3 @@ Setup
    MLc become the preferred magnitude.
 #. Set defaults/visibility of MLc in :term:`GUI` modules, e.g. :ref:`scolv`
    or :ref:`scesv`.
-
-.. note::
-
-   All default values for bindings configuration parameters are from
-   :cite:t:`stange-2006`.

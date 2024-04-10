@@ -138,9 +138,9 @@
 						excpected amplitude.
 						</description>
 					</parameter>
-					<parameter name="measureType" type="string" default="AbsMax">
+					<parameter name="measureType" type="string" default="AbsMax" values="AbsMax,MinMax,PeakTrough">
 						<description>
-						Type for measuring amplitudes. Available:
+						Type for measuring amplitudes.
 
 						AbsMax: absolute maximum
 
@@ -150,7 +150,7 @@
 						on a half cycle
 						</description>
 					</parameter>
-					<parameter name="combiner" type="string" default="max">
+					<parameter name="combiner" type="string" default="max" values="min,max,average,geometric_mean">
 						<description>
 						Define how to combine the amplitudes measured on both
 						horizontals components:
@@ -171,10 +171,9 @@
 					<description>
 					Parameters for computing MLc magnitudes from MLc amplitudes.
 					</description>
-					<parameter name="distMode" type="string" default="hypocentral">
+					<parameter name="distMode" type="string" default="hypocentral" values="hypocentral,epicentral">
 						<description>
 						Considered distance measure between source and receiver.
-						Possible values are
 
 						hypocentral: hypocentral distance
 
@@ -203,11 +202,10 @@
 						The maximum source depth up to which magnitudes are computed.
 						</description>
 					</parameter>
-					<parameter name="calibrationType" type="string" default="&quot;parametric&quot;" unit="">
+					<parameter name="calibrationType" type="string" default="&quot;parametric&quot;" unit="" values="parametric,A0">
 						<description>
 						Type of magnitude calibration formula to be considered.
 						The calibration parameters are considered accordingly.
-						Currently supported are
 
 						&quot;parametric&quot;: consider parameters of parametric
 						configuration in parametric section
@@ -291,7 +289,7 @@
 							parametric magnitude calibration formula.
 							</description>
 						</parameter>
-						<parameter name="H" type="double" default="40">
+						<parameter name="H" type="double" default="40" unit="km">
 							<description>
 							The calibration value 'H' applied in the
 							parametric magnitude calibration formula for forming

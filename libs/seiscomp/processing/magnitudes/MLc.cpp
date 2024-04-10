@@ -359,7 +359,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		auto H = (extra and extra->c6) ? *extra->H : _H;
 
 		// https://doi.org/10.1785/0120200252
-		if ( vDistanceKm > H) {
+		if ( depth > H) {
 			H = depth - H;
 		}
 		else {
