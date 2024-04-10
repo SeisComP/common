@@ -42,6 +42,7 @@
 #include <seiscomp/io/recordinput.h>
 #include <seiscomp/io/recordstream.h>
 #include <seiscomp/io/recordfilter.h>
+#include <seiscomp/io/recordfilter/pipe.h>
 #include <seiscomp/io/recordfilter/crop.h>
 #include <seiscomp/io/recordfilter/demux.h>
 #include <seiscomp/io/recordfilter/iirfilter.h>
@@ -111,6 +112,7 @@
 %include "seiscomp/io/recordstream.h"
 %include "seiscomp/io/recordinput.h"
 %include "seiscomp/io/recordfilter.h"
+%include "seiscomp/io/recordfilter/pipe.h"
 %include "seiscomp/io/recordfilter/crop.h"
 %include "seiscomp/io/recordfilter/demux.h"
 %include "seiscomp/io/recordfilter/iirfilter.h"
