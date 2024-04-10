@@ -49,10 +49,10 @@ class SC_SYSTEM_CORE_API File : public Seiscomp::IO::RecordStream {
 	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
-		File();
+		File() = default;
 		File(std::string name);
 		File(const File &f);
-		virtual ~File();
+		~File() override;
 
 
 	// ----------------------------------------------------------------------
@@ -66,28 +66,28 @@ class SC_SYSTEM_CORE_API File : public Seiscomp::IO::RecordStream {
 	//  Public RecordStream interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual bool setSource(const std::string &filename);
+		bool setSource(const std::string &filename) override;
 
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode) override;
 
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode,
-		                       const Seiscomp::Core::Time &startTime,
-		                       const Seiscomp::Core::Time &endTime);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode,
+		               const Seiscomp::Core::Time &startTime,
+		               const Seiscomp::Core::Time &endTime) override;
 
-		virtual bool setStartTime(const Seiscomp::Core::Time &startTime);
-		virtual bool setEndTime(const Seiscomp::Core::Time &endTime);
+		bool setStartTime(const Seiscomp::Core::Time &startTime)  override;
+		bool setEndTime(const Seiscomp::Core::Time &endTime) override;
 
-		virtual void close();
+		void close() override;
 
-		virtual bool setRecordType(const char *type);
+		bool setRecordType(const char *type) override;
 
-		virtual Record *next();
+		Record *next() override;
 
 
 	// ----------------------------------------------------------------------
@@ -114,16 +114,16 @@ class SC_SYSTEM_CORE_API File : public Seiscomp::IO::RecordStream {
 			Core::Time  end;
 		};
 
-		typedef std::map<std::string, TimeWindowFilter> FilterMap;
-		typedef std::vector< std::pair<std::string,TimeWindowFilter> > ReFilterList;
+		using FilterMap = std::map<std::string, TimeWindowFilter>;
+		using ReFilterList = std::vector<std::pair<std::string,TimeWindowFilter> >;
 
 		const TimeWindowFilter* findTimeWindowFilter(Record *rec);
 
-		RecordFactory  *_factory;
+		RecordFactory  *_factory{nullptr};
 		std::string     _name;
 		bool            _closeRequested;
 		std::fstream    _fstream;
-		std::istream   *_current;
+		std::istream   *_current{&_fstream};
 		FilterMap       _filter;
 		ReFilterList    _reFilter;
 		Core::Time      _startTime;
