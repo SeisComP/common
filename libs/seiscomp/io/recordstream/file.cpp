@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT RECORDFILE
 #include "file.h"
 #include <seiscomp/core/strings.h>
+#include <seiscomp/core/system.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/system/environment.h>
 
@@ -41,10 +42,8 @@ REGISTER_RECORDSTREAM(File, "file");
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-File::File()
-: RecordStream()
-, _factory(nullptr)
-, _current(&_fstream) {
+File::File(string name) {
+	File::setSource(name);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -52,21 +51,8 @@ File::File()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-File::File(string name)
-: _factory(nullptr)
-, _current(&_fstream) {
-	setSource(name);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-File::File(const File &f)
-: _factory(nullptr)
-, _current(&_fstream) {
-	setSource(f.name());
+File::File(const File &f) {
+	File::setSource(f.name());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -75,7 +61,7 @@ File::File(const File &f)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 File::~File() {
-	close();
+	File::close();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -84,13 +70,8 @@ File::~File() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 File &File::operator=(const File &f) {
-	if (this != &f) {
-		if ( _fstream.is_open() )
-			_fstream.close();
-
-		_name = f.name();
-		if ( _name != "-" )
-			_fstream.open(_name.c_str(),ifstream::in|ifstream::binary);
+	if ( this != &f ) {
+		setSource(f.name());
 	}
 
 	return *this;
@@ -104,37 +85,46 @@ File &File::operator=(const File &f) {
 bool File::setSource(const string &name) {
 	_name = name;
 	_closeRequested = false;
+	_current = &_fstream;
 
-	if ( _fstream.is_open() )
+	if ( _fstream.is_open() ) {
 		_fstream.close();
+	}
 
 	setRecordType("mseed");
 
-	if ( _name != "-" ) {
-		_fstream.open(
-			Environment::Instance()->absolutePath(_name).c_str(),
-			ifstream::in | ifstream::binary
-		);
-
-		size_t pos = name.rfind('.');
-		if ( pos != string::npos ) {
-			string ext = name.substr(pos + 1);
-			if ( ext == "xml" )
-				setRecordType("xml");
-			else if ( ext == "bin" )
-				setRecordType("binary");
-			else if ( ext == "mseed" )
-				setRecordType("mseed");
-			else if ( ext == "ah" )
-				setRecordType("ah");
-		}
-
-		_current = &_fstream;
-		return _fstream.is_open();
+	if ( _name == "-" ) {
+		_current = &cin;
+		return !cin.bad();
 	}
 
-	_current = &cin;
-	return !cin.bad();
+	auto absPath = Environment::Instance()->absolutePath(_name);
+	if ( !SC_FS_IS_REGULAR_FILE(SC_FS_PATH(absPath)) ) {
+		SEISCOMP_ERROR("Source is not a regular file: %s", absPath.c_str());
+		return false;
+	}
+
+	size_t pos = name.rfind('.');
+	if ( pos != string::npos ) {
+		string ext = name.substr(pos + 1);
+		if ( ext == "xml" ) {
+			setRecordType("xml");
+		}
+		else if ( ext == "bin" ) {
+			setRecordType("binary");
+		}
+		else if ( ext == "ah" ) {
+			setRecordType("ah");
+		}
+	}
+
+	_fstream.open(absPath.c_str(), ifstream::in | ifstream::binary);
+	if ( !_fstream.is_open() ) {
+		SEISCOMP_ERROR("Could not open record file: %s", absPath.c_str());
+		return false;
+	}
+
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -144,13 +134,14 @@ bool File::setSource(const string &name) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool File::addStream(const string &net, const string &sta,
                      const string &loc, const string &cha) {
-	string id = net + "." + sta + "." + loc + "." + cha;
+	auto id = net + "." + sta + "." + loc + "." + cha;
 	if ( id.find_first_of("*?") == std::string::npos ) {
 		_filter.emplace(id, TimeWindowFilter());
 	}
 	else { // wildcards characters are present
 		_reFilter.emplace_back(id, TimeWindowFilter());
 	}
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -161,15 +152,16 @@ bool File::addStream(const string &net, const string &sta,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool File::addStream(const string &net, const string &sta,
                      const string &loc, const string &cha,
-                     const Seiscomp::Core::Time &stime,
-                     const Seiscomp::Core::Time &etime) {
-	string id = net + "." + sta + "." + loc + "." + cha;
+                     const Seiscomp::Core::Time &startTime,
+                     const Seiscomp::Core::Time &endTime) {
+	auto id = net + "." + sta + "." + loc + "." + cha;
 	if ( id.find_first_of("*?") == std::string::npos ) {
-		_filter.emplace(id, TimeWindowFilter(stime, etime));
+		_filter.emplace(id, TimeWindowFilter(startTime, endTime));
 	}
 	else { // wildcards characters are present
-		_reFilter.emplace_back(id, TimeWindowFilter(stime, etime));
+		_reFilter.emplace_back(id, TimeWindowFilter(startTime, endTime));
 	}
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -178,8 +170,8 @@ bool File::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool File::setStartTime(const Seiscomp::Core::Time &stime) {
-	_startTime = stime;
+bool File::setStartTime(const Seiscomp::Core::Time &startTime) {
+	_startTime = startTime;
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -188,8 +180,8 @@ bool File::setStartTime(const Seiscomp::Core::Time &stime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool File::setEndTime(const Seiscomp::Core::Time &etime) {
-	_endTime = etime;
+bool File::setEndTime(const Seiscomp::Core::Time &endTime) {
+	_endTime = endTime;
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -208,8 +200,8 @@ void File::close() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool File::setRecordType(const char *type) {
-	RecordFactory *factory = RecordFactory::Find(type);
-	if ( factory == nullptr ) {
+	auto *factory = RecordFactory::Find(type);
+	if ( !factory ) {
 		SEISCOMP_ERROR("Unknown record type '%s'", type);
 		return false;
 	}
@@ -227,15 +219,15 @@ const File::TimeWindowFilter* File::findTimeWindowFilter(Record *rec) {
 	const string streamID = rec->streamID();
 
 	// First look for fully qualified stream id (no wildcards)
-	const auto & it = _filter.find(streamID);
+	const auto &it = _filter.find(streamID);
 	if ( it != _filter.end() ) {
 		return &it->second;
 	}
 
 	// then search the wildcarded filters
-	for ( const auto& pair : _reFilter ) {
-		const string& wild = pair.first;
-		const TimeWindowFilter& twf = pair.second;
+	for ( const auto &pair : _reFilter ) {
+		const auto &wild = pair.first;
+		const auto &twf = pair.second;
 		if ( Core::wildcmp(wild, streamID) ) {
 			// now add this stream to the fully qualified ones, so that
 			// next record with the same stream will be resolved without
@@ -256,22 +248,27 @@ const File::TimeWindowFilter* File::findTimeWindowFilter(Record *rec) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record *File::next() {
 	if ( _closeRequested ) {
-		if (_name != "-")
+		if ( _current == &_fstream ) {
 			_fstream.close();
-		_current = &_fstream;
+		}
+		else {
+			_current = &_fstream;
+		}
 		_filter.clear();
 		_reFilter.clear();
 		_closeRequested = false;
 		return nullptr;
 	}
 
-	if ( !*_current )
+	if ( !*_current || !_factory ) {
 		return nullptr;
+	}
 
 	while ( !_closeRequested ) {
-		Record *rec = _factory->create();
-		if ( rec == nullptr )
+		auto *rec = _factory->create();
+		if ( !rec ) {
 			return nullptr;
+		}
 
 		setupRecord(rec);
 
@@ -289,7 +286,7 @@ Record *File::next() {
 		}
 
 		if ( !_filter.empty() || !_reFilter.empty() ) {
-			const TimeWindowFilter* twf = findTimeWindowFilter(rec);
+			const auto *twf = findTimeWindowFilter(rec);
 			// Not subscribed
 			if ( !twf ) {
 				delete rec;
@@ -359,7 +356,7 @@ string File::name() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 size_t File::tell() {
-	return (size_t)_fstream.tellg();
+	return static_cast<size_t>(_fstream.tellg());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -368,7 +365,7 @@ size_t File::tell() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 File &File::seek(size_t pos) {
-	_fstream.seekg((streampos)pos);
+	_fstream.seekg(static_cast<streampos>(pos));
 	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -378,7 +375,8 @@ File &File::seek(size_t pos) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 File &File::seek(int off, SeekDir dir) {
-	_fstream.seekg((streamoff)off, (ios_base::seekdir)dir);
+	_fstream.seekg(static_cast<streamoff>(off),
+	               static_cast<ios_base::seekdir>(dir));
 	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
