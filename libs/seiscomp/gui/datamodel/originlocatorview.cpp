@@ -5074,11 +5074,19 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 	if ( phase == 'S' ) {
 		SC_D.residuals->setValueSymbol(id, DiagramWidget::Rectangle);
 	}
-	else if ( phase == 'L' or phase == 'R' ) {
+	else if ( phase == 'P' ) {
+		SC_D.residuals->setValueSymbol(id, DiagramWidget::Circle);
+	}
+	else if ( phase == 'L' or phase == 'R' or phase == 'Q' or phase == 'G' ) {
+		// surface wave phase names defined by IASPEI, NMSOP
 		SC_D.residuals->setValueSymbol(id, DiagramWidget::Triangle);
 	}
+	else if ( phase == 'I' ) {
+		// infrasound
+		SC_D.residuals->setValueSymbol(id, DiagramWidget::TriangleUpsideDown);
+	}
 	else {
-		SC_D.residuals->setValueSymbol(id, DiagramWidget::Circle);
+		SC_D.residuals->setValueSymbol(id, DiagramWidget::Diamond);
 	}
 
 	try {
