@@ -51,13 +51,23 @@ namespace {
 
 
 const char *timeFormats[] = {
-	"%FT%T.%fZ",
-	"%FT%T.%f",
-	"%FT%TZ",
-	"%FT%T",
-	"%F %T.%f",
-	"%F %T",
-	"%F"
+    "%FT%T.%fZ",    // YYYY-MM-DDThh:mm:ss.ssssssZ
+    "%FT%T.%f",     // YYYY-MM-DDThh:mm:ss.ssssss
+    "%FT%TZ",       // YYYY-MM-DDThh:mm:ssZ
+    "%FT%T",        // YYYY-MM-DDThh:mm:ss
+    "%FT%R",        // YYYY-MM-DDThh:mm
+    "%FT%H",        // YYYY-MM-DDThh
+    "%Y-%jT%T.%f",  // YYYY-DDDThh:mm:ss.ssssss
+    "%Y-%jT%T",     // YYYY-DDDThh:mm:ss
+    "%Y-%jT%R",     // YYYY-DDDThh:mm
+    "%Y-%jT%H",     // YYYY-DDDThh
+    "%Y-%j",        // YYYY-DDD
+    "%F %T.%f",     // YYYY-MM-DD hh:mm:ss.ssssss
+    "%F %T",        // YYYY-MM-DD hh:mm:ss
+    "%F %R",        // YYYY-MM-DD hh:mm
+    "%F %H",        // YYYY-MM-DD hh
+    "%F",           // YYYY-MM-DD
+    "%Y",           // YYYY
 };
 
 
