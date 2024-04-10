@@ -1156,7 +1156,8 @@ bool Time::fromString(const char* str, const char* fmt) {
 
 	time_t tmp_t = 0;
 	gmtime_r(&tmp_t, &t);
-	if ( strptime(str, fmt, &t) == nullptr ) {
+	const char *remainder = strptime(str, fmt, &t);
+	if ( !remainder || *remainder ) {
 		*this = (time_t)0;
 		return false;
 	}
