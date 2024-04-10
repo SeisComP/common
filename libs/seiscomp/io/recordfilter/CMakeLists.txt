@@ -1,4 +1,5 @@
 SET(RECORDFILTER_SOURCES
+	pipe.cpp
 	iirfilter.cpp
 	resample.cpp
 	demux.cpp
@@ -7,6 +8,7 @@ SET(RECORDFILTER_SOURCES
 )
 
 SET(RECORDFILTER_HEADERS
+	pipe.h
 	iirfilter.h
 	resample.h
 	demux.h
