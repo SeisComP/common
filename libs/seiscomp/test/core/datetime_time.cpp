@@ -569,6 +569,10 @@ BOOST_AUTO_TEST_CASE(fromString) {
 	BOOST_CHECK_EQUAL(min, 1);
 	BOOST_CHECK_EQUAL(sec, 59);
 
+	BOOST_CHECK(!time.fromString("2024-04-10T12:00:00Z", "%FT%T"));
+	BOOST_CHECK(!time.fromString("2024-04-10T12:00:00", "%FT%TZ"));
+	BOOST_CHECK(!time.fromString("2024-04-10 12:00:00", "%F %T abc"));
+
 	// Buffer overflow test
 	std::string str;
 	for ( int i = 0; i < 500; ++i )
@@ -576,6 +580,8 @@ BOOST_AUTO_TEST_CASE(fromString) {
 	str.append(".123456");
 	time = sc::Time::FromString(str.c_str(), "%F %T.%f");
 	BOOST_CHECK(!time.valid());
+
+
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
