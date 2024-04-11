@@ -1601,6 +1601,11 @@
 				Control the Event tab, e.g. in scolv, showing origins and
 				focal mechanisms of a selected event.
 				</description>
+				<parameter name="triggerFM" type="boolean" default="false">
+					<description>
+					Adds button which request the computation of a FocalMechanism solution by sending a JournalEntry message. This feature depends on a FM module, such as scautomt, to be running in background and doing the actual processing.
+					</description>
+				</parameter>
 				<group name="origin">
 					<parameter name="visibleColumns" type="list:string" default="Phases, Lat, Lon, Depth, DType, RMS, AzGap, Stat, Method, Agency, Author, Region, ID">
 						<description>
