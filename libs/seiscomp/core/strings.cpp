@@ -50,27 +50,6 @@ namespace Core {
 namespace {
 
 
-const char *timeFormats[] = {
-    "%FT%T.%fZ",    // YYYY-MM-DDThh:mm:ss.ssssssZ
-    "%FT%T.%f",     // YYYY-MM-DDThh:mm:ss.ssssss
-    "%FT%TZ",       // YYYY-MM-DDThh:mm:ssZ
-    "%FT%T",        // YYYY-MM-DDThh:mm:ss
-    "%FT%R",        // YYYY-MM-DDThh:mm
-    "%FT%H",        // YYYY-MM-DDThh
-    "%Y-%jT%T.%f",  // YYYY-DDDThh:mm:ss.ssssss
-    "%Y-%jT%T",     // YYYY-DDDThh:mm:ss
-    "%Y-%jT%R",     // YYYY-DDDThh:mm
-    "%Y-%jT%H",     // YYYY-DDDThh
-    "%Y-%j",        // YYYY-DDD
-    "%F %T.%f",     // YYYY-MM-DD hh:mm:ss.ssssss
-    "%F %T",        // YYYY-MM-DD hh:mm:ss
-    "%F %R",        // YYYY-MM-DD hh:mm
-    "%F %H",        // YYYY-MM-DD hh
-    "%F",           // YYYY-MM-DD
-    "%Y",           // YYYY
-};
-
-
 template <typename T>
 inline size_t getFixedDigits10(T val) {
 	T e = 1;
@@ -190,7 +169,7 @@ std::string toString(bool v) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string toString(const Seiscomp::Core::Time& v) {
-	return v.toString(timeFormats[0]);
+	return v.iso();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -414,13 +393,7 @@ bool fromString(bool &value, const std::string &str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool fromString(Time &value, const std::string &str) {
-	for ( size_t i = 0; i < sizeof(timeFormats) / sizeof(const char*); ++i ) {
-		if ( value.fromString(str.c_str(), timeFormats[i]) ) {
-			return true;
-		}
-	}
-
-	return false;
+	return value.fromString(str);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

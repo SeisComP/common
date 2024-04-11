@@ -234,6 +234,74 @@ BOOST_AUTO_TEST_CASE(timeConversions) {
 	BOOST_CHECK(fromString(t1, "2021-06-12T09:43:54.627Z"));
 	BOOST_CHECK(fromString(t2, "2021-06-12T09:43:54.627"));
 	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-06-12T09:43:54.627Z"));
+	BOOST_CHECK(fromString(t2, "2021-06-12 09:43:54.627"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-06-12T00:00:00.000Z"));
+	BOOST_CHECK(fromString(t2, "2021-06-12T00:00:00"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-06-12T00:00:00.000Z"));
+	BOOST_CHECK(fromString(t2, "2021-06-12T00:00"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-06-12T00:00:00.000Z"));
+	BOOST_CHECK(fromString(t2, "2021-06-12T00"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-06-12T00:00:00.000Z"));
+	BOOST_CHECK(fromString(t2, "2021-06-12"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-01-01T00:00:00.000Z"));
+	BOOST_CHECK(fromString(t2, "2021-001T00:00:00.000"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-01-01T00:00:00.000Z"));
+	BOOST_CHECK(fromString(t2, "2021-001T00:00:00"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-01-01T00:00:00.000Z"));
+	BOOST_CHECK(fromString(t2, "2021-001T00:00"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-01-01T00:00:00.000Z"));
+	BOOST_CHECK(fromString(t2, "2021-001T00"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-01-01T00:00:00.000Z"));
+	BOOST_CHECK(fromString(t2, "2021-001"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-001"));
+	BOOST_CHECK(fromString(t2, "2021-01"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-001"));
+	BOOST_CHECK(fromString(t2, "2021-1"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-01-01T00:00:00.000Z"));
+	BOOST_CHECK(fromString(t2, "2021"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-06-01 00:00:00.000"));
+	BOOST_CHECK(fromString(t2, "2021-06-01 00:00:00"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-06-01 00:00:00.000"));
+	BOOST_CHECK(fromString(t2, "2021-06-01 00:00"));
+	BOOST_REQUIRE(t1 == t2);
+
+	BOOST_CHECK(fromString(t1, "2021-06-01 00:00:00.000"));
+	BOOST_CHECK(fromString(t2, "2021-06-01"));
+	BOOST_REQUIRE(t1 == t2);
+
+	// unsupported string:
+	BOOST_CHECK_EQUAL(fromString(t1, "01 April 2021"), false);
+
 }
 
 
