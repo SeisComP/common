@@ -552,7 +552,7 @@ void HttpSession::sendResponse(Buffer* buf, HttpStatus status,
 	// Add first chunk size if data is not empty, otherwise let
 	// updateBuffer handle the header
 	if ( buf->length() == string::npos && !buf->data.empty() ) {
-		char tmp[10]; tmp[0] = '\0';
+		char tmp[20]; tmp[0] = '\0';
 		sprintf(tmp, "%zX\r\n", buf->data.size());
 		buf->header += tmp;
 	}
