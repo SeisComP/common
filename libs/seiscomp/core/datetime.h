@@ -21,6 +21,7 @@
 #define SEISCOMP_CORE_DATETIME_H
 
 #include <seiscomp/core.h>
+#include <seiscomp/core/optional.h>
 
 #ifdef WIN32
 #include <winsock.h>
@@ -260,18 +261,47 @@ class SC_SYSTEM_CORE_API Time : public TimeSpan {
 		 */
 		std::string iso() const;
 
-		/** Converts a string into a time representation.
-		    @param str The string representation of the time
-		    @param fmt The format string containing the conversion
-		               specification (-> toString)
-		    @return The conversion result
+		/**
+		 * Converts a string into a time representation.
+		 * @param str The string representation of the time
+		 * @param fmt The format string containing the conversion
+		 *            specification (-> toString)
+		 * @return The conversion result
 		 */
 		bool fromString(const char* str, const char* fmt);
 
-		/** Static method to create a time value from a string.
-			The parameters are the same as in Time::fromString.
+		/**
+		 * Converts a string into a time representation.
+		 * @param str The string representation of the time
+		 * @return The conversion result
+		 */
+		bool fromString(const char* str);
+
+		/**
+		 * Converts a string into a time representation.
+		 * @param str The string representation of the time
+		 * @return The conversion result
+		 */
+		bool fromString(const std::string &str);
+
+		/**
+		 * Static method to create a time value from a string.
+		 * The parameters are the same as in Time::fromString.
 		*/
 		static Time FromString(const char* str, const char* fmt);
+
+		/**
+		 * Static method to convert a time from a string without
+		 * an explicit format.
+		 * @param str The string representation of the time.
+		 * @return None if conversion failed, a valid instance otherwise.
+		 */
+		static OPT(Time) FromString(const char* str);
+
+		/**
+		 * Convenience method for fromString(const char*).
+		 */
+		static OPT(Time) FromString(const std::string &str);
 };
 
 

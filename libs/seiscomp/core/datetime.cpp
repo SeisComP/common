@@ -27,9 +27,10 @@
 #include <sstream>
 #include <cmath>
 #include <ctype.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
 
 
 #ifdef WIN32
@@ -179,6 +180,28 @@ inline void normalize(T &sec, U &usec) {
 		}
 	}
 }
+
+
+const char *timeFormats[] = {
+	"%FT%T.%fZ",    // YYYY-MM-DDThh:mm:ss.ssssssZ
+	"%FT%T.%f",     // YYYY-MM-DDThh:mm:ss.ssssss
+	"%FT%TZ",       // YYYY-MM-DDThh:mm:ssZ
+	"%FT%T",        // YYYY-MM-DDThh:mm:ss
+	"%FT%R",        // YYYY-MM-DDThh:mm
+	"%FT%H",        // YYYY-MM-DDThh
+	"%Y-%jT%T.%f",  // YYYY-DDDThh:mm:ss.ssssss
+	"%Y-%jT%T",     // YYYY-DDDThh:mm:ss
+	"%Y-%jT%R",     // YYYY-DDDThh:mm
+	"%Y-%jT%H",     // YYYY-DDDThh
+	"%F %T.%f",     // YYYY-MM-DD hh:mm:ss.ssssss
+	"%F %T",        // YYYY-MM-DD hh:mm:ss
+	"%F %R",        // YYYY-MM-DD hh:mm
+	"%F %H",        // YYYY-MM-DD hh
+	"%F",           // YYYY-MM-DD
+	"%Y-%j",        // YYYY-DDD
+	"%Y",           // YYYY
+};
+
 
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1158,6 +1181,11 @@ bool Time::fromString(const char* str, const char* fmt) {
 	gmtime_r(&tmp_t, &t);
 	const char *remainder = strptime(str, fmt, &t);
 	if ( !remainder || *remainder ) {
+		/*
+		if ( remainder ) {
+			std::cerr << "'" << str << "' : '" << fmt << "' -> '" << remainder << "'" << std::endl;
+		}
+		*/
 		*this = (time_t)0;
 		return false;
 	}
@@ -1175,8 +1203,54 @@ bool Time::fromString(const char* str, const char* fmt) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Time::fromString(const char* str) {
+	for ( size_t i = 0; i < sizeof(timeFormats) / sizeof(const char*); ++i ) {
+		if ( fromString(str, timeFormats[i]) ) {
+			return true;
+		}
+	}
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Time::fromString(const std::string &str) {
+	return fromString(str.c_str());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Time Time::FromString(const char* str, const char* fmt) {
 	Time t;
 	t.fromString(str, fmt);
 	return t;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+OPT(Time) Time::FromString(const char* str) {
+	Time tmp;
+	if ( tmp.fromString(str) ) {
+		return tmp;
+	}
+	return None;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+OPT(Time) Time::FromString(const std::string &str) {
+	return FromString(str.c_str());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
