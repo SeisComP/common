@@ -619,7 +619,12 @@ class ParamHypoDistKM : public Interface {
 		static double Evaluate(Context &ctx) {
 			auto R = ParamEpiDistKM::Evaluate(ctx);
 			auto z = ParamDepth::Evaluate(ctx);
-			return sqrt(R * R + z * z);
+			auto e = 0;
+			try {
+				e = ctx.proc()->environment().receiver->elevation() / 1000.;
+			}
+			catch ( ... ) {}
+			return sqrt(R * R + (z + e) * (z + e));
 		}
 
 		double evaluate(Context &ctx) override {
