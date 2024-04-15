@@ -10,7 +10,7 @@ IF(SASS_EXECUTABLE)
 		OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${STYLE_CSS}
 		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sass/*.scss
 		COMMAND ${SASS_EXECUTABLE}
-		ARGS -t compressed sass/style.scss ${STYLE_CSS}
+		ARGS -s compressed sass/style.scss ${STYLE_CSS}
 	)
 
 	ADD_CUSTOM_TARGET(
