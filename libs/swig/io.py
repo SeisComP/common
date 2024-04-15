@@ -856,6 +856,36 @@ class RecordFilterInterface(seiscomp.core.BaseObject):
 # Register RecordFilterInterface in _io:
 _io.RecordFilterInterface_swigregister(RecordFilterInterface)
 
+class PipeFilter(RecordFilterInterface):
+    r"""Proxy of C++ Seiscomp::IO::PipeFilter class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, filter1=None, filter2=None):
+        r"""__init__(PipeFilter self, RecordFilterInterface filter1=None, RecordFilterInterface filter2=None) -> PipeFilter"""
+        _io.PipeFilter_swiginit(self, _io.new_PipeFilter(filter1, filter2))
+
+    def feed(self, rec):
+        r"""feed(PipeFilter self, Record rec) -> Record"""
+        return _io.PipeFilter_feed(self, rec)
+
+    def flush(self):
+        r"""flush(PipeFilter self) -> Record"""
+        return _io.PipeFilter_flush(self)
+
+    def reset(self):
+        r"""reset(PipeFilter self)"""
+        return _io.PipeFilter_reset(self)
+
+    def clone(self):
+        r"""clone(PipeFilter self) -> RecordFilterInterface"""
+        return _io.PipeFilter_clone(self)
+    __swig_destroy__ = _io.delete_PipeFilter
+
+# Register PipeFilter in _io:
+_io.PipeFilter_swigregister(PipeFilter)
+
 class Cropper(RecordFilterInterface):
     r"""Proxy of C++ Seiscomp::IO::Cropper class."""
 

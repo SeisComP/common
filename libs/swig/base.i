@@ -47,7 +47,6 @@
                      int *hour, int *min, int *sec,
                      int *usec };
 
-%include "seiscomp/core/datetime.h"
 %include "seiscomp/core/optional.h"
 %include "seiscomp/core/enumeration.h"
 %include "seiscomp/core/exceptions.h"
@@ -72,44 +71,6 @@
 %include "seiscomp/core/baseobject.h"
 %include "seiscomp/core/interruptible.h"
 %include "seiscomp/core/version.h"
-
-%template(GenericArchive) Seiscomp::Core::Generic::Archive<Seiscomp::Core::BaseObject>;
-
-%newobject Seiscomp::Core::Generic::Archive<Seiscomp::Core::BaseObject>::readObject;
-
-%extend Seiscomp::Core::Generic::Archive<Seiscomp::Core::BaseObject> {
-  Seiscomp::Core::BaseObject *readObject() {
-    Seiscomp::Core::BaseObject* obj;
-    *self >> obj;
-    return obj;
-  }
-
-  void writeObject(Seiscomp::Core::BaseObject* obj) {
-    *self << obj;
-  }
-};
-
-/*
-%ignore Seiscomp::Core::Time::get(int *year, int *month = NULL, int *day = NULL,
-		                          int *hour = NULL, int *min = NULL, int *sec = NULL,
-		                          int *usec = NULL);
-%ignore Seiscomp::Core::Time::get(int *year, int *month, int *day = NULL,
-		                          int *hour = NULL, int *min = NULL, int *sec = NULL,
-		                          int *usec = NULL);
-%ignore Seiscomp::Core::Time::get(int *year, int *month, int *day,
-		                          int *hour = NULL, int *min = NULL, int *sec = NULL,
-		                          int *usec = NULL);
-%ignore Seiscomp::Core::Time::get(int *year, int *month, int *day,
-		                          int *hour, int *min = NULL, int *sec = NULL,
-		                          int *usec = NULL);
-%ignore Seiscomp::Core::Time::get(int *year, int *month, int *day,
-		                          int *hour, int *min, int *sec = NULL,
-		                          int *usec = NULL);
-%ignore Seiscomp::Core::Time::get(int *year, int *month, int *day,
-		                          int *hour, int *min, int *sec,
-		                          int *usec = NULL);
-*/
-
 
 /* Optional<bool> typemaps */
 %typemap(in) const Seiscomp::Core::Optional<bool>::Impl& (Seiscomp::Core::Optional<bool>::Impl tmp) {
@@ -278,7 +239,7 @@
   }
 }
 
-%typemap(out) const Seiscomp::Core::Optional<_class>::Impl& {
+%typemap(out) Seiscomp::Core::Optional<_class>::Impl {
   if ( *(&$1) == Seiscomp::Core::None ) {
     $result = Py_None;
   }
@@ -393,6 +354,24 @@
 
 
 optional(Seiscomp::Core::Time);
+
+
+%include "seiscomp/core/datetime.h"
+%template(GenericArchive) Seiscomp::Core::Generic::Archive<Seiscomp::Core::BaseObject>;
+
+%newobject Seiscomp::Core::Generic::Archive<Seiscomp::Core::BaseObject>::readObject;
+
+%extend Seiscomp::Core::Generic::Archive<Seiscomp::Core::BaseObject> {
+  Seiscomp::Core::BaseObject *readObject() {
+    Seiscomp::Core::BaseObject* obj;
+    *self >> obj;
+    return obj;
+  }
+
+  void writeObject(Seiscomp::Core::BaseObject* obj) {
+    *self << obj;
+  }
+};
 
 %apply const Seiscomp::Core::Optional<double>::Impl& {
 	const Seiscomp::Core::Optional<float>::Impl&

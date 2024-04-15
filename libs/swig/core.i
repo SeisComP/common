@@ -27,6 +27,7 @@
 #include "seiscomp/core/exceptions.h"
 #include "seiscomp/core/array.h"
 #include "seiscomp/core/bitset.h"
+#include "seiscomp/core/datetime.h"
 #include "seiscomp/core/enumeration.h"
 #include "seiscomp/core/typedarray.h"
 #include "seiscomp/core/record.h"
