@@ -159,8 +159,9 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 			CategoryNode *nodeForProperties(const LayerProperties *props);
 
 			const Geo::Category           *category;
-			LayerProperties               *properties;
+			LayerProperties               *properties{nullptr};
 			std::vector<CategoryNode*>     childs;
+			std::vector<CategoryNode*>     childsByName;
 			Geo::QuadTree                  quadtree;
 			Geo::GeoBoundingBox            bbox;
 		};
@@ -170,6 +171,8 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 
 		static bool compareNodeByIndex(const GeoFeatureLayer::CategoryNode *n1,
 		                               const GeoFeatureLayer::CategoryNode *n2);
+		static bool compareNodeByName(const GeoFeatureLayer::CategoryNode *n1,
+		                              const GeoFeatureLayer::CategoryNode *n2);
 
 		CategoryNode *createOrGetNodeForCategory(const Geo::Category *cat);
 		void buildLegends(CategoryNode *node);
@@ -177,7 +180,8 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 		void collectLegendItems(CategoryNode *node, QVector<LayerProperties*> &items);
 		void orderTree(CategoryNode *node);
 		void updateBbox(CategoryNode *node);
-		const Geo::GeoFeature *findFeature(CategoryNode *node, const Geo::GeoCoordinate &coord) const;
+		const Geo::GeoFeature *findFeature(CategoryNode *node,
+		                                   const Geo::GeoCoordinate &coord) const;
 		bool toggleVisibility(CategoryNode *node, bool visible);
 		void drawFeatures(CategoryNode *node, Canvas *canvas,
 		                  QPainter &painter, const QPen &debugPen);

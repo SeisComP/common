@@ -144,74 +144,48 @@ Qt::Alignment getAlignment(const std::string &name,
 
 
 QPainter::CompositionMode getCompositionMode(const std::string &name) {
-	if ( name == "src-over" )
+	static const map<string, QPainter::CompositionMode> modeMap = {
+	    {"src-over", QPainter::CompositionMode_SourceOver},
+	    {"dst-over", QPainter::CompositionMode_DestinationOver},
+	    {"clear", QPainter::CompositionMode_Clear},
+	    {"src", QPainter::CompositionMode_Source},
+	    {"dst", QPainter::CompositionMode_Destination},
+	    {"src-in", QPainter::CompositionMode_SourceIn},
+	    {"dst-in", QPainter::CompositionMode_DestinationIn},
+	    {"src-out", QPainter::CompositionMode_SourceOut},
+	    {"dst-out", QPainter::CompositionMode_DestinationOut},
+	    {"src-atop", QPainter::CompositionMode_SourceAtop},
+	    {"dst-atop", QPainter::CompositionMode_DestinationAtop},
+	    {"xor", QPainter::CompositionMode_Xor},
+	    {"plus", QPainter::CompositionMode_Plus},
+	    {"multiply", QPainter::CompositionMode_Multiply},
+	    {"screen", QPainter::CompositionMode_Screen},
+	    {"overlay", QPainter::CompositionMode_Overlay},
+	    {"darken", QPainter::CompositionMode_Darken},
+	    {"lighten", QPainter::CompositionMode_Lighten},
+	    {"color-dodge", QPainter::CompositionMode_ColorDodge},
+	    {"color-burn", QPainter::CompositionMode_ColorBurn},
+	    {"hard-light", QPainter::CompositionMode_HardLight},
+	    {"soft-light", QPainter::CompositionMode_SoftLight},
+	    {"difference", QPainter::CompositionMode_Difference},
+	    {"exclusion", QPainter::CompositionMode_Exclusion},
+	    {"src-or-dst", QPainter::RasterOp_SourceOrDestination},
+	    {"src-and-dst", QPainter::RasterOp_SourceAndDestination},
+	    {"src-xor-dst", QPainter::RasterOp_SourceXorDestination},
+	    {"not-src-and-not-dst", QPainter::RasterOp_NotSourceAndNotDestination},
+	    {"not-src-or-not-dst", QPainter::RasterOp_NotSourceOrNotDestination},
+	    {"not-src-xor-dst", QPainter::RasterOp_NotSourceXorDestination},
+	    {"not-src", QPainter::RasterOp_NotSource},
+	    {"not-src-and-dst", QPainter::RasterOp_NotSourceAndDestination},
+	    {"src-and-not-dst", QPainter::RasterOp_SourceAndNotDestination}
+	};
+
+	const auto res = modeMap.find(name);
+	if ( res == modeMap.end() ) {
 		return QPainter::CompositionMode_SourceOver;
-	else if ( name == "dst-over" )
-		return QPainter::CompositionMode_DestinationOver;
-	else if ( name == "clear" )
-		return QPainter::CompositionMode_Clear;
-	else if ( name == "src" )
-		return QPainter::CompositionMode_Source;
-	else if ( name == "dst" )
-		return QPainter::CompositionMode_Destination;
-	else if ( name == "src-in" )
-		return QPainter::CompositionMode_SourceIn;
-	else if ( name == "dst-in" )
-		return QPainter::CompositionMode_DestinationIn;
-	else if ( name == "src-out" )
-		return QPainter::CompositionMode_SourceOut;
-	else if ( name == "dst-out" )
-		return QPainter::CompositionMode_DestinationOut;
-	else if ( name == "src-atop" )
-		return QPainter::CompositionMode_SourceAtop;
-	else if ( name == "dst-atop" )
-		return QPainter::CompositionMode_DestinationAtop;
-	else if ( name == "xor" )
-		return QPainter::CompositionMode_Xor;
-	else if ( name == "plus" )
-		return QPainter::CompositionMode_Plus;
-	else if ( name == "multiply" )
-		return QPainter::CompositionMode_Multiply;
-	else if ( name == "screen" )
-		return QPainter::CompositionMode_Screen;
-	else if ( name == "overlay" )
-		return QPainter::CompositionMode_Overlay;
-	else if ( name == "darken" )
-		return QPainter::CompositionMode_Darken;
-	else if ( name == "lighten" )
-		return QPainter::CompositionMode_Lighten;
-	else if ( name == "color-dodge" )
-		return QPainter::CompositionMode_ColorDodge;
-	else if ( name == "color-burn" )
-		return QPainter::CompositionMode_ColorBurn;
-	else if ( name == "hard-light" )
-		return QPainter::CompositionMode_HardLight;
-	else if ( name == "soft-light" )
-		return QPainter::CompositionMode_SoftLight;
-	else if ( name == "difference" )
-		return QPainter::CompositionMode_Difference;
-	else if ( name == "exclusion" )
-		return QPainter::CompositionMode_Exclusion;
-	else if ( name == "src-or-dst" )
-		return QPainter::RasterOp_SourceOrDestination;
-	else if ( name == "src-and-dst" )
-		return QPainter::RasterOp_SourceAndDestination;
-	else if ( name == "src-xor-dst" )
-		return QPainter::RasterOp_SourceXorDestination;
-	else if ( name == "not-src-and-not-dst" )
-		return QPainter::RasterOp_NotSourceAndNotDestination;
-	else if ( name == "not-src-or-not-dst" )
-		return QPainter::RasterOp_NotSourceOrNotDestination;
-	else if ( name == "not-src-xor-dst" )
-		return QPainter::RasterOp_NotSourceXorDestination;
-	else if ( name == "not-src" )
-		return QPainter::RasterOp_NotSource;
-	else if ( name == "not-src-and-dst" )
-		return QPainter::RasterOp_NotSourceAndDestination;
-	else if ( name == "src-and-not-dst" )
-		return QPainter::RasterOp_SourceAndNotDestination;
-	else
-		return QPainter::CompositionMode_SourceOver;
+	}
+
+	return res->second;
 }
 
 
@@ -224,7 +198,10 @@ QPainter::CompositionMode getCompositionMode(const std::string &name) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool GeoFeatureLayer::LayerProperties::isChild(const LayerProperties* child) const {
 	while ( child ) {
-		if ( child == this ) return true;
+		if ( child == this ) {
+			return true;
+		}
+
 		child = child->parent;
 	}
 
@@ -238,11 +215,25 @@ bool GeoFeatureLayer::LayerProperties::isChild(const LayerProperties* child) con
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeatureLayer::LayerProperties::SymbolShape
 GeoFeatureLayer::LayerProperties::getSymbolShape(const std::string &type) {
-	if ( type == "none" ) return None;
-	if ( type == "circle" ) return Circle;
-	if ( type == "triangle" ) return Triangle;
-	if ( type == "square" ) return Square;
-	if ( type == "diamond" ) return Diamond;
+	if ( type == "none" ) {
+		return None;
+	}
+
+	if ( type == "circle" ) {
+		return Circle;
+	}
+
+	if ( type == "triangle" ) {
+		return Triangle;
+	}
+
+	if ( type == "square" ) {
+		return Square;
+	}
+
+	if ( type == "diamond" ) {
+		return Diamond;
+	}
 
 	return Disabled;
 }
@@ -308,7 +299,9 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 
 	// Query properties from config
 	string query = CFG_LAYER_PREFIX ".";
-	if ( !name.empty() ) query += name + ".";
+	if ( !name.empty() ) {
+		query += name + ".";
+	}
 
 	if ( SCApp ) {
 		try { visible = SCApp->configGetBool(query + cfgVisible); } catch( ... ) {}
@@ -414,7 +407,7 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeatureLayer::CategoryNode::CategoryNode(const Geo::Category *c)
-: category(c), properties(nullptr) {}
+: category(c) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -422,9 +415,14 @@ GeoFeatureLayer::CategoryNode::CategoryNode(const Geo::Category *c)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeatureLayer::CategoryNode::~CategoryNode() {
-	if ( properties ) delete properties;
-	for ( size_t i = 0; i < childs.size(); ++i )
-		delete childs[i];
+	if ( properties ) {
+		delete properties;
+		properties = nullptr;
+	}
+
+	for ( const auto &child : childs ) {
+		delete child;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -434,13 +432,15 @@ GeoFeatureLayer::CategoryNode::~CategoryNode() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeatureLayer::CategoryNode *
 GeoFeatureLayer::CategoryNode::nodeForCategory(const Geo::Category *cat) {
-	if ( category == cat )
+	if ( category == cat ) {
 		return this;
+	}
 
-	for ( size_t i = 0; i < childs.size(); ++i ) {
-		GeoFeatureLayer::CategoryNode *node = childs[i]->nodeForCategory(cat);
-		if ( node != nullptr )
+	for ( const auto &child : childs ) {
+		auto *node = child->nodeForCategory(cat);
+		if ( node ) {
 			return node;
+		}
 	}
 
 	return nullptr;
@@ -453,13 +453,15 @@ GeoFeatureLayer::CategoryNode::nodeForCategory(const Geo::Category *cat) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeatureLayer::CategoryNode *
 GeoFeatureLayer::CategoryNode::nodeForProperties(const LayerProperties *props) {
-	if ( properties == props )
+	if ( properties == props ) {
 		return this;
+	}
 
-	for ( size_t i = 0; i < childs.size(); ++i ) {
-		GeoFeatureLayer::CategoryNode *node = childs[i]->nodeForProperties(props);
-		if ( node != nullptr )
+	for ( const auto &child : childs ) {
+		auto *node = child->nodeForProperties(props);
+		if ( node ) {
 			return node;
+		}
 	}
 
 	return nullptr;
@@ -484,8 +486,10 @@ GeoFeatureLayer::GeoFeatureLayer(QObject *parent)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeatureLayer::~GeoFeatureLayer() {
-	if ( _root != nullptr )
+	if ( _root ) {
 		delete _root;
+		_root = nullptr;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -494,14 +498,18 @@ GeoFeatureLayer::~GeoFeatureLayer() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const Geo::GeoFeature *GeoFeatureLayer::findFeature(const Geo::GeoCoordinate &coord) const {
-	if ( !isVisible() ) return nullptr;
+	if ( !isVisible() ) {
+		return nullptr;
+	}
 
-	if ( canvas() == nullptr )
+	if ( !canvas() ) {
 		// No canvas, no rank clipping possible
 		return nullptr;
+	}
 
-	if ( _root == nullptr )
+	if ( !_root ) {
 		return nullptr;
+	}
 
 	return findFeature(_root, coord);
 }
@@ -526,7 +534,9 @@ void GeoFeatureLayer::renderFeatures(Canvas *canvas, QPainter &painter) {
 		initLayerProperites();
 	}
 
-	if ( !_root ) return;
+	if ( !_root ) {
+		return;
+	}
 
 	// Debug pen and label point
 	QPen debugPen;
@@ -546,7 +556,10 @@ void GeoFeatureLayer::renderFeatures(Canvas *canvas, QPainter &painter) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GeoFeatureLayer::setVisible(bool flag) {
-	if ( flag == isVisible() ) return;
+	if ( flag == isVisible() ) {
+		return;
+	}
+
 	Layer::setVisible(flag);
 	emit updateRequested(RasterLayer);
 }
@@ -569,10 +582,12 @@ void GeoFeatureLayer::bufferUpdated(Canvas *canvas, QPainter &painter) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GeoFeatureLayer::drawFeatures(CategoryNode *node, Canvas *canvas,
                                    QPainter &painter, const QPen &debugPen) {
-	LayerProperties* layProp = node->properties;
-	if ( !layProp->visible ) return;
+	auto *layProp = node->properties;
+	if ( !layProp->visible ) {
+		return;
+	}
 
-	Projection *proj = canvas->projection();
+	auto *proj = canvas->projection();
 
 	if ( proj->isClipped(node->bbox) ) {
 		//std::cerr << "Clipped node '" << node->properties->name << "'" << std::endl;
@@ -581,10 +596,12 @@ void GeoFeatureLayer::drawFeatures(CategoryNode *node, Canvas *canvas,
 
 	painter.setFont(layProp->font);
 	painter.setPen(layProp->pen);
-	if ( layProp->filled )
+	if ( layProp->filled ) {
 		painter.setBrush(layProp->brush);
-	else
+	}
+	else {
 		painter.setBrush(Qt::NoBrush);
+	}
 
 	node->quadtree.query(proj->boundingBox(),
 	                     std::bind(&GeoFeatureLayer::drawFeature, this, canvas,
@@ -598,8 +615,9 @@ void GeoFeatureLayer::drawFeatures(CategoryNode *node, Canvas *canvas,
 	}
 	*/
 
-	for ( size_t i = 0; i < node->childs.size(); ++i )
-		drawFeatures(node->childs[i], canvas, painter, debugPen);
+	for ( const auto &child : node->childs ) {
+		drawFeatures(child, canvas, painter, debugPen);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -657,18 +675,16 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 		// Icon
 		if ( !props->symbolIcon.isNull() ) {
 			if ( name.isEmpty() ) {
-				for ( auto it = f->vertices().begin();
-					  it != f->vertices().end(); ++it ) {
-					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+				for ( const auto &v : f->vertices() ) {
+					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
 						painter->drawImage(props->symbolRect.translated(p),
 						                   props->symbolIcon);
 					}
 				}
 			}
 			else {
-				for ( auto it = f->vertices().begin();
-					  it != f->vertices().end(); ++it ) {
-					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+				for ( const auto &v : f->vertices() ) {
+					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
 						painter->drawImage(props->symbolRect.translated(p),
 						                   props->symbolIcon);
 						painter->drawText(textRect.translated(p),
@@ -680,16 +696,15 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 		// Shape, preprocessed into Polygon
 		else if ( !props->symbolPolygon.isEmpty() ) {
 			if ( name.isEmpty() ) {
-				for ( auto it = f->vertices().begin();
-					  it != f->vertices().end(); ++it ) {
-					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+				for ( const auto &v : f->vertices() ) {
+					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
 						painter->drawPolygon(props->symbolPolygon.translated(p));
 					}
 				}
 			}
 			else {
-				for ( auto it = f->vertices().begin(); it != f->vertices().end(); ++it ) {
-					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+				for ( const auto &v : f->vertices() ) {
+					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
 						painter->drawPolygon(props->symbolPolygon.translated(p));
 						painter->drawText(textRect.translated(p),
 						                  props->symbolNameAlignment, name);
@@ -700,17 +715,15 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 		// Circle
 		else if ( props->symbolShape == LayerProperties::Circle ) {
 			if ( name.isEmpty() ) {
-				for ( auto it = f->vertices().begin();
-				      it != f->vertices().end(); ++it ) {
-					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+				for ( const auto &v : f->vertices() ) {
+					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
 						painter->drawEllipse(props->symbolRect.translated(p));
 					}
 				}
 			}
 			else {
-				for ( auto it = f->vertices().begin();
-				      it != f->vertices().end(); ++it ) {
-					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+				for ( const auto &v : f->vertices() ) {
+					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
 						painter->drawEllipse(props->symbolRect.translated(p));
 						painter->drawText(textRect.translated(p),
 						                  props->symbolNameAlignment, name);
@@ -721,17 +734,15 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 		// Square
 		else if ( props->symbolShape == LayerProperties::Square ) {
 			if ( name.isEmpty() ) {
-				for ( auto it = f->vertices().begin();
-				      it != f->vertices().end(); ++it ) {
-					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+				for ( const auto &v : f->vertices() ) {
+					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
 						painter->drawRect(props->symbolRect.translated(p));
 					}
 				}
 			}
 			else {
-				for ( auto it = f->vertices().begin();
-					  it != f->vertices().end(); ++it ) {
-					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+				for ( const auto &v : f->vertices() ) {
+					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
 						painter->drawRect(props->symbolRect.translated(p));
 						painter->drawText(textRect.translated(p),
 										  props->symbolNameAlignment, name);
@@ -742,9 +753,8 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 		// LayerProperties::None
 		else {
 			if ( !name.isEmpty() ) {
-				for ( auto it = f->vertices().begin();
-				      it != f->vertices().end(); ++it ) {
-					if ( proj->project(p, QPointF(it->lon, it->lat)) ) {
+				for ( const auto &v : f->vertices() ) {
+					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
 						painter->drawText(textRect.translated(p),
 						                  props->symbolNameAlignment, name);
 					}
@@ -758,7 +768,8 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 
 		// Draw the name if requested and if there is enough space
 		if ( props->drawName ) {
-			QPoint p1, p2;
+			QPoint p1;
+			QPoint p2;
 			qreal lonMin = bbox.west;
 			qreal lonMax = bbox.east;
 
@@ -825,13 +836,15 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 QMenu *GeoFeatureLayer::menu(QMenu *parentMenu) const {
 	QMenu *menu = buildMenu(_root, parentMenu);
 
-	QAction *reloadAction = new QAction(tr("Reload features"), menu);
+	auto *reloadAction = new QAction(tr("Reload features"), menu);
 	connect(reloadAction, SIGNAL(triggered()), this, SLOT(reloadFeatures()));
 
-	if ( menu->isEmpty() )
+	if ( menu->isEmpty() ) {
 		menu->addAction(reloadAction);
-	else
+	}
+	else {
 		menu->insertAction(menu->actions().first(), reloadAction);
+	}
 
 	return menu;
 }
@@ -858,18 +871,20 @@ void GeoFeatureLayer::geoFeatureSetUpdated() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GeoFeatureLayer::showFeatures() {
-	QAction *action = static_cast<QAction*>(sender());
+	auto *action = static_cast<QAction*>(sender());
 	void *nodePtr = action->data().value<void*>();
-	CategoryNode *node = reinterpret_cast<CategoryNode*>(nodePtr);
+	auto *node = reinterpret_cast<CategoryNode*>(nodePtr);
 
 	bool wantUpdate = false;
-	for ( size_t i = 0; i < node->childs.size(); ++i ) {
-		if ( toggleVisibility(node->childs[i], true) )
+	for ( const auto &child : node->childs ) {
+		if ( toggleVisibility(child, true) ) {
 			wantUpdate = true;
+		}
 	}
 
-	if ( wantUpdate )
+	if ( wantUpdate ) {
 		emit updateRequested(RasterLayer);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -878,18 +893,20 @@ void GeoFeatureLayer::showFeatures() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GeoFeatureLayer::hideFeatures() {
-	QAction *action = static_cast<QAction*>(sender());
+	auto *action = static_cast<QAction*>(sender());
 	void *nodePtr = action->data().value<void*>();
-	CategoryNode *node = reinterpret_cast<CategoryNode*>(nodePtr);
+	auto *node = reinterpret_cast<CategoryNode*>(nodePtr);
 
 	bool wantUpdate = false;
-	for ( size_t i = 0; i < node->childs.size(); ++i ) {
-		if ( toggleVisibility(node->childs[i], false) )
+	for ( const auto &child : node->childs ) {
+		if ( toggleVisibility(child, false) ) {
 			wantUpdate = true;
+		}
 	}
 
-	if ( wantUpdate )
+	if ( wantUpdate ) {
 		emit updateRequested(RasterLayer);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -932,6 +949,8 @@ GeoFeatureLayer::createOrGetNodeForCategory(const Geo::Category *cat) {
 	node->properties->read(cat->dataDir);
 
 	parentNode->childs.push_back(node);
+	parentNode->childsByName.push_back(node);
+
 	return node;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -941,11 +960,13 @@ GeoFeatureLayer::createOrGetNodeForCategory(const Geo::Category *cat) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GeoFeatureLayer::buildLegends(CategoryNode *node) {
-	if ( node == nullptr ) return;
+	if ( !node ) {
+		return;
+	}
 
-	LayerProperties *prop = node->properties;
+	auto *prop = node->properties;
 	if ( !prop->title.empty() ) {
-		StandardLegend *legend = new StandardLegend(this);
+		auto *legend = new StandardLegend(this);
 		legend->setTitle(prop->title.c_str());
 		legend->setArea(prop->legendArea);
 		legend->setOrientation(prop->orientation);
@@ -956,23 +977,24 @@ void GeoFeatureLayer::buildLegends(CategoryNode *node) {
 
 		sort(items.begin(), items.end(), compareByIndex);
 
-		for ( int i = 0; i < items.count(); ++i ) {
-			if ( items[i]->filled ) {
-				legend->addItem(new StandardLegendItem(items[i]->pen,
-				                                       items[i]->brush,
-				                                       items[i]->label.c_str()));
+		for ( const auto &item : items ) {
+			if ( item->filled ) {
+				legend->addItem(new StandardLegendItem(item->pen,
+				                                       item->brush,
+				                                       item->label.c_str()));
 			}
 			else {
-				legend->addItem(new StandardLegendItem(items[i]->pen,
-				                                       items[i]->label.c_str()));
+				legend->addItem(new StandardLegendItem(item->pen,
+				                                       item->label.c_str()));
 			}
 		}
 
 		addLegend(legend);
 	}
 
-	for ( size_t i = 0; i < node->childs.size(); ++i )
-		buildLegends(node->childs[i]);
+	for ( const auto &child : node->childs ) {
+		buildLegends(child);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -981,27 +1003,31 @@ void GeoFeatureLayer::buildLegends(CategoryNode *node) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QMenu *GeoFeatureLayer::buildMenu(CategoryNode *node, QMenu *parentMenu) const {
-	QMenu *menu = new QMenu(parentMenu);
-	if ( node == nullptr )
+	auto *menu = new QMenu(parentMenu);
+	if ( !node ) {
 		return menu;
-
+	}
 	size_t visibleCount = 0;
-	for ( size_t i = 0; i < node->childs.size(); ++i ) {
-		LayerProperties *childProps = node->childs[i]->properties;
+	for ( const auto &child : node->childsByName ) {
+		auto *childProps = child->properties;
 		std::string title = childProps->name;
-		if ( node->childs[i]->category && !node->childs[i]->category->localName.empty() )
-			title = node->childs[i]->category->localName;
+		if ( child->category && !child->category->localName.empty() ) {
+			title = child->category->localName;
+		}
 
-		if ( !childProps->visible || node->childs[i]->childs.empty() ) {
-			QAction *action = menu->addAction(title.c_str());
+		if ( !childProps->visible || child->childs.empty() ) {
+			auto *action = menu->addAction(title.c_str());
 			action->setCheckable(true);
 			action->setChecked(childProps->visible);
-			if ( childProps->visible ) ++visibleCount;
+			if ( childProps->visible ) {
+				++visibleCount;
+			}
 			action->setData(QVariant::fromValue<void*>(childProps));
-			connect(action, SIGNAL(toggled(bool)), this, SLOT(toggleFeatureVisibility(bool)));
+			connect(action, SIGNAL(toggled(bool)),
+			        this, SLOT(toggleFeatureVisibility(bool)));
 		}
 		else {
-			QMenu *subMenu = buildMenu(node->childs[i], menu);
+			auto *subMenu = buildMenu(child, menu);
 			subMenu->setTitle(title.c_str());
 			menu->addMenu(subMenu);
 		}
@@ -1009,11 +1035,11 @@ QMenu *GeoFeatureLayer::buildMenu(CategoryNode *node, QMenu *parentMenu) const {
 
 	// Add "Select all" and "Select none" options if more than 1 property
 	// is available
-	QAction *firstPropertyAction = menu->actions().first();
+	auto *firstPropertyAction = menu->actions().first();
 
 	if ( (node != _root) && !node->childs.empty() ) {
 		// Toggle layer
-		QAction *toggleAction = new QAction(tr("Hide layer"), menu);
+		auto *toggleAction = new QAction(tr("Hide layer"), menu);
 		toggleAction->setData(QVariant::fromValue<void*>(node->properties));
 		connect(toggleAction, SIGNAL(triggered()), this, SLOT(disableFeatureVisibility()));
 		menu->insertAction(firstPropertyAction, toggleAction);
@@ -1024,14 +1050,14 @@ QMenu *GeoFeatureLayer::buildMenu(CategoryNode *node, QMenu *parentMenu) const {
 
 	if ( node->childs.size() >= 2 ) {
 		// Select all
-		QAction *allAction = new QAction(tr("Show all sublayers"), menu);
+		auto *allAction = new QAction(tr("Show all sublayers"), menu);
 		allAction->setEnabled(visibleCount < node->childs.size());
 		allAction->setData(QVariant::fromValue<void*>(node));
 		connect(allAction, SIGNAL(triggered()), this, SLOT(showFeatures()));
 		menu->insertAction(firstPropertyAction, allAction);
 
 		// Select none
-		QAction *noneAction = new QAction(tr("Hide all sublayers"), menu);
+		auto *noneAction = new QAction(tr("Hide all sublayers"), menu);
 		noneAction->setEnabled(visibleCount > 0);
 		noneAction->setData(QVariant::fromValue<void*>(node));
 		connect(noneAction, SIGNAL(triggered()), this, SLOT(hideFeatures()));
@@ -1051,11 +1077,13 @@ QMenu *GeoFeatureLayer::buildMenu(CategoryNode *node, QMenu *parentMenu) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GeoFeatureLayer::collectLegendItems(GeoFeatureLayer::CategoryNode *node,
                                          QVector<LayerProperties*> &items) {
-	if ( !node->properties->label.empty() )
+	if ( !node->properties->label.empty() ) {
 		items.push_back(node->properties);
+	}
 
-	for ( size_t i = 0; i < node->childs.size(); ++i )
-		collectLegendItems(node->childs[i], items);
+	for ( const auto &child : node->childs ) {
+		collectLegendItems(child, items);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1066,9 +1094,11 @@ void GeoFeatureLayer::collectLegendItems(GeoFeatureLayer::CategoryNode *node,
 void GeoFeatureLayer::orderTree(CategoryNode *node) {
 	//sort(node->features.begin(), node->features.end(), compareByRank);
 	sort(node->childs.begin(), node->childs.end(), compareNodeByIndex);
+	sort(node->childsByName.begin(), node->childsByName.end(), compareNodeByName);
 
-	for ( size_t i = 0; i < node->childs.size(); ++i )
-		orderTree(node->childs[i]);
+	for ( const auto &child : node->childs ) {
+		orderTree(child);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1077,8 +1107,9 @@ void GeoFeatureLayer::orderTree(CategoryNode *node) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GeoFeatureLayer::updateBbox(CategoryNode *node) {
-	for ( size_t i = 0; i < node->childs.size(); ++i )
-		updateBbox(node->childs[i]);
+	for ( const auto &child : node->childs ) {
+		updateBbox(child);
+	}
 
 	// Do calculation
 	/*
@@ -1094,12 +1125,14 @@ void GeoFeatureLayer::updateBbox(CategoryNode *node) {
 	bool noFeatures = false;
 	node->bbox = node->quadtree.bbox();
 
-	for ( size_t i = 0; i < node->childs.size(); ++i ) {
-		const Geo::GeoBoundingBox &bbox = node->childs[i]->bbox;
-		if ( !i && noFeatures)
-			node->bbox = bbox;
-		else
-			node->bbox += bbox;
+	for ( const auto &child : node->childs ) {
+		if ( noFeatures) {
+			node->bbox = child->bbox;
+			noFeatures = false;
+		}
+		else {
+			node->bbox += child->bbox;
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1117,27 +1150,27 @@ void GeoFeatureLayer::initLayerProperites() {
 	// Create a layer properties from BNA geo features
 	const Geo::GeoFeatureSet &featureSet = Geo::GeoFeatureSetSingleton::getInstance();
 
-	vector<Geo::GeoFeature*>::const_iterator itf = featureSet.features().begin();
-	for ( ; itf != featureSet.features().end(); ++itf ) {
-		CategoryNode *node = createOrGetNodeForCategory((*itf)->category());
-		node->quadtree.addItem(*itf);
+	for ( const auto &feature : featureSet.features() ) {
+		auto *node = createOrGetNodeForCategory(feature->category());
+		node->quadtree.addItem(feature);
 		//node->features.push_back(*itf);
 	}
 
-	const Geo::PolyRegions &fepRegions = Regions::polyRegions();
+	const auto &fepRegions = Regions::polyRegions();
 	if ( fepRegions.regionCount() > 0 ) {
 		// Add fep properties
-		CategoryNode *fepNode = new CategoryNode(nullptr);
+		auto *fepNode = new CategoryNode(nullptr);
 		createOrGetNodeForCategory(nullptr)->childs.push_back(fepNode);
 		fepNode->properties = new LayerProperties("fep", _root->properties);
 		fepNode->properties->read(fepRegions.dataDir());
 
-		for ( size_t i = 0; i < fepRegions.regionCount(); ++i )
+		for ( size_t i = 0; i < fepRegions.regionCount(); ++i ) {
 			//fepNode->features.push_back(fepRegions.region(i));
 			fepNode->quadtree.addItem(fepRegions.region(i));
+		}
 	}
 
-	if ( _root != nullptr ) {
+	if ( _root ) {
 		// Build legends
 		buildLegends(_root);
 		orderTree(_root);
@@ -1150,19 +1183,21 @@ void GeoFeatureLayer::initLayerProperites() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const Geo::GeoFeature *GeoFeatureLayer::findFeature(CategoryNode *node, const Geo::GeoCoordinate &coord) const {
-	if ( !node->properties->visible )
+const Geo::GeoFeature *GeoFeatureLayer::findFeature(CategoryNode *node,
+                                                    const Geo::GeoCoordinate &coord) const {
+	if ( !node->properties->visible ) {
 		return nullptr;
+	}
 
-	if ( !node->bbox.contains(coord) )
+	if ( !node->bbox.contains(coord) ) {
 		return nullptr;
+	}
 
-	for ( size_t i = node->childs.size(); i > 0; --i ) {
-		CategoryNode *child;
-		child = node->childs[i-1];
-		const Geo::GeoFeature *f = findFeature(child, coord);
-		if ( f != nullptr )
+	for ( auto rit = node->childs.rbegin(); rit != node->childs.rend(); ++rit ) {
+		const auto *f = findFeature(*rit, coord);
+		if ( f ) {
 			return f;
+		}
 	}
 
 	/*
@@ -1199,16 +1234,18 @@ bool GeoFeatureLayer::toggleVisibility(CategoryNode *node, bool visible) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GeoFeatureLayer::toggleFeatureVisibility(bool checked) {
-	QAction *action = static_cast<QAction*>(sender());
+	auto *action = static_cast<QAction*>(sender());
 	void *propertyPtr = action->data().value<void*>();
-	LayerProperties *prop = reinterpret_cast<LayerProperties*>(propertyPtr);
+	auto *prop = reinterpret_cast<LayerProperties*>(propertyPtr);
 
-	if ( prop == nullptr )
+	if ( !prop ) {
 		return;
+	}
 
-	CategoryNode *node = _root->nodeForProperties(prop);
-	if ( node && toggleVisibility(node, checked) )
+	auto *node = _root->nodeForProperties(prop);
+	if ( node && toggleVisibility(node, checked) ) {
 		emit updateRequested(RasterLayer);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1238,6 +1275,16 @@ bool GeoFeatureLayer::compareByIndex(const LayerProperties *p1,
 bool GeoFeatureLayer::compareNodeByIndex(const GeoFeatureLayer::CategoryNode *n1,
                                          const GeoFeatureLayer::CategoryNode *n2) {
 	return n1->properties->index < n2->properties->index;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool GeoFeatureLayer::compareNodeByName(const GeoFeatureLayer::CategoryNode *n1,
+                                        const GeoFeatureLayer::CategoryNode *n2) {
+	return n1->properties->name < n2->properties->name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
