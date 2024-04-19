@@ -1291,7 +1291,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show trace values in nm/s</string>
+    <string>Show trace values in nano units</string>
    </property>
   </action>
   <action name="actionClipComponentsToViewport">
