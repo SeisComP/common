@@ -113,7 +113,7 @@ file :file:`$SEISCOMP_ROOT/share/locsat/tables/iasp91.stacor` needs to be create
 
 A station correction table takes the form:
 
-.. code-block:: params
+.. code-block:: properties
 
    # LOCDELAY code phase numReadings delay
    LOCDELAY GE.MORC P 1 -0.1
@@ -156,13 +156,13 @@ Custom travel-time tables
 #. Add your available custom LOCSAT travel-time tables in global configuration,
    e.g., to the list of tables of travel-time interfaces
 
-   .. code-block:: params
+   .. code-block:: properties
 
       ttt.LOCSAT.tables = iasp91, tab, custom
 
    and to the list of locator profiles
 
-   .. code-block:: params
+   .. code-block:: properties
 
       LOCSAT.profiles = iasp91, tab, custom
 

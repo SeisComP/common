@@ -83,7 +83,9 @@ amplitude.
 .. note::
 
    * For comparing MLc amplitudes with :ref:`ML amplitudes <global_ml>` set the
-     global bindings parameters ::
+     global bindings parameters
+
+     .. code-block:: properties
 
         amplitudes.MLc.preFilter = ""
         amplitudes.MLc.combiner = average
@@ -268,7 +270,7 @@ Setup
    or station bindings one line per parameter can be added to the global module
    configuration (:file:`global.cfg`) which takes the form
 
-   .. code-block:: params
+   .. code-block:: properties
 
       module.trunk.NET.STA.amplitudes.MLc.preFilter = value
       module.trunk.NET.STA.magnitudes.MLc.parametric.c0 = value
@@ -279,7 +281,7 @@ Setup
    for choosing the method to form the
    network magnitude from station magnitudes, e.g.
 
-   .. code-block:: params
+   .. code-block:: properties
 
       magnitudes.average = MLc:median
 

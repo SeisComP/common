@@ -17,7 +17,7 @@ e.g., in :file:`$SEISCOMP_ROOT/etc/global.cfg`:
 
 Example configuration:
 
-.. code-block:: params
+.. code-block:: properties
 
    # The list of supported model names per interface.
    ttt.homogeneous.tables = "5"

@@ -1,9 +1,10 @@
-MLv is the local (Richter) magnitude (:cite:t:`richter-1935`) computed from amplitudes measured on the
-vertical component.
+MLv is the local (Richter) magnitude (:cite:t:`richter-1935`) computed from
+amplitudes measured on the vertical component.
 
 General (default) conditions apply:
 
-* Amplitude unit in SeisComP: **millimeter** (mm) by simulation of a :term:`Wood-Anderson seismometer`.
+* Amplitude unit in SeisComP: **millimeter** (mm) by simulation of a
+  :term:`Wood-Anderson seismometer`.
 * Time window: 150 s by :ref:`scautopick` or distance dependent, configurable.
 * Default distance range: 0 - 8 deg,  maximum is configurable
   :confval:`magnitudes.MLv.maxDistanceKm`, measurements beyond 8 deg will be
@@ -83,21 +84,21 @@ added to the global module configuration (:file:`global.cfg`), e.g.
 
 global:
 
-.. code-block:: params
+.. code-block:: properties
 
    module.trunk.global.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
    module.trunk.global.magnitudes.MLv.maxDistanceKm = -1
 
 or per network:
 
-.. code-block:: params
+.. code-block:: properties
 
    module.trunk.GR.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
    module.trunk.GR.magnitudes.MLv.maxDistanceKm = -1
 
 or per station:
 
-.. code-block:: params
+.. code-block:: properties
 
    module.trunk.GR.MOX.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
    module.trunk.GR.MOX.magnitudes.MLv.maxDistanceKm = -1
