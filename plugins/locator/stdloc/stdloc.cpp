@@ -38,6 +38,8 @@
 #include <cmath>
 #include <numeric>
 #include <array>
+#include <tuple>
+#include <set>
 
 #include "solver.h"
 #include "stdloc.h"
@@ -1214,8 +1216,9 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 		sumSquaredWeights += weights[i] * weights[i];
 	}
 
-	if ( sumSquaredWeights == 0 ){
-		throw LocatorException("Cannot compute probability density without valid picks and/or travel times");
+	if ( sumSquaredWeights == 0 ) {
+		throw LocatorException("Cannot compute probability density without "
+		                       "valid picks and/or travel times");
 	}
 
 	rms = sqrt(l2SumWeightedResiduals / sumSquaredWeights);
@@ -1416,7 +1419,7 @@ void StdLoc::locateOctTree(const PickList &pickList,
 
 	multimap<double, Cell> priorityList;
 	vector<double> cellTravelTimes(pickList.size());
-	int processedCells = 0;
+	set<tuple<float, float, float>> processedCells;
 	struct {
 			Cell cell;
 			double prob;
@@ -1430,10 +1433,19 @@ void StdLoc::locateOctTree(const PickList &pickList,
 
 		// before fetching the next cell with the highest priority make
 		// sure to have processed all the cells in the unknownPriorityList
-		// and put them in the priority list
+		// and put them in the priority list, ordered by their priority
 		for ( Cell &cell : unknownPriorityList ) {
 
-			processedCells++;
+			//
+			// Avoid processing the same cell twice
+			//
+			tuple<float, float, float> toProcess =
+			    std::make_tuple(cell.x, cell.y, cell.z);
+
+			if ( processedCells.count(toProcess) > 0 ) {
+				continue;
+			}
+			processedCells.insert(toProcess);
 
 			cell.org.depth = gridOriginDepth + cell.z;
 
@@ -1485,107 +1497,105 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		unknownPriorityList.clear();
 
 		//
-		// Fetch and split next 8 cells with the highest priority
-		// In theory we could just fetch the next cell, but with
-		// 8 the search is more thorough.
-		// In NonLinLoc the search if done on the highest priority
-		// cell plus its 6 direct neighbours (the 6 faces of the
-		// cell cube)
+		// Fetch and split the highest priority cell
 		//
-		bool completed = false;
-		for ( int i = 0; i < 8; i++ ) {
+		if ( priorityList.empty() ) {
+			break;
+		}
+		double topCellProb = priorityList.crbegin()->first;
+		const Cell &topCell = priorityList.crbegin()->second;
 
-			if ( priorityList.empty() || completed ) {
-				break;
-			}
+		SEISCOMP_DEBUG("Processed %d cells. Next best cell (size %g %g %g) "
+		               "x %g y %g z %g prob %g RMS %f prob density %g",
+		               processedCells, topCell.size.x, topCell.size.y,
+		               topCell.size.z, topCell.x, topCell.y, topCell.z,
+		               topCellProb, topCell.org.rms,
+		               topCell.org.probDensity);
 
-			// Fetch next cell with the highest priority
-			double topCellProb = priorityList.crbegin()->first;
-			const Cell &topCell = priorityList.crbegin()->second;
+		//
+		// Keep track of the best solution, which is not the highest
+		// probability cell but the one with highest probability density
+		//
+		if ( !best.cell.valid ||
+		     best.cell.org.probDensity < topCell.org.probDensity ) {
+			best.cell = topCell;
+			best.prob = topCellProb;
+			SEISCOMP_DEBUG("  + preferring this as best cell");
+		}
 
-			SEISCOMP_DEBUG("Processed %d cells. Next best cell (size %g %g %g) "
-			               "x %g y %g z %g prob %g RMS %f prob density %g",
-			               processedCells, topCell.size.x, topCell.size.y,
-			               topCell.size.z, topCell.x, topCell.y, topCell.z,
-			               topCellProb, topCell.org.rms,
-			               topCell.org.probDensity);
+		//
+		// Check for completion
+		//
+		if ( _currentProfile.octTree.maxIterations > 0 &&
+		     processedCells.size() >= _currentProfile.octTree.maxIterations ) {
+			SEISCOMP_DEBUG("Maximum number of iteration reached %zu, minimum "
+			               "cell size: x %g y %g z %g",
+			               processedCells.size(), best.cell.size.x,
+			               best.cell.size.y, best.cell.size.z);
+			break;
+		}
 
+		if ( _currentProfile.octTree.minCellSize > 0 &&
+		     (best.cell.size.x <= _currentProfile.octTree.minCellSize ||
+		      best.cell.size.y <= _currentProfile.octTree.minCellSize ||
+		      best.cell.size.z <= _currentProfile.octTree.minCellSize) ) {
+			SEISCOMP_DEBUG("Minimum cell size reached: x %g y %g z %g [km], "
+			               "iteration performed %zu",
+			               best.cell.size.x, best.cell.size.y, best.cell.size.z,
+			               processedCells.size());
+			break;
+		}
+
+		//
+		// Split current cell in 8 and add them to the unknownPriorityList,
+		// but also, as in NonLinLoc, search the direct neighbouring cells
+		// too, the ones adjiacent to the 6 faces of the current cell cube
+		//
+		auto newCellToProcess = [&unknownPriorityList, &topCell, &xExtent,
+		                         &yExtent, &zExtent](int xOffset, int yOffset,
+		                                             int zOffset) {
+			Cell cell;
+			cell.valid = false;
+			cell.size.x = topCell.size.x / 2.;
+			cell.size.y = topCell.size.y / 2.;
+			cell.size.z = topCell.size.z / 2.;
 			//
-			// Keep track of the best solution
+			// Careful: since we use the 'processed' std::set to keep track of
+			// the already processed cells, we need to make sure the hash function
+			// of two cell locations (x,y,z) is the same. So we must be build the
+			// new x,y,z using values that end up with the x,y,z independetly
+			// of the cell father x,y,z
 			//
-			if ( !best.cell.valid ||
-			     best.cell.org.probDensity < topCell.org.probDensity ) {
-				best.cell = topCell;
-				best.prob = topCellProb;
-				SEISCOMP_DEBUG("  + preferring this as best cell");
-			}
+			cell.x = round(topCell.x / cell.size.x) * cell.size.x +
+			         xOffset * cell.size.x / 2;
+			cell.y = round(topCell.y / cell.size.y) * cell.size.y +
+			         yOffset * cell.size.y / 2;
+			cell.z = round(topCell.z / cell.size.z) * cell.size.z +
+			         zOffset * cell.size.z / 2;
 
-			//
-			// Check for completion
-			//
-			if ( _currentProfile.octTree.maxIterations > 0 &&
-			     processedCells >= _currentProfile.octTree.maxIterations ) {
-				SEISCOMP_DEBUG("Maximum number of iteration reached %d",
-				               processedCells);
-				completed = true;
-				break;
-			}
-
-			if ( _currentProfile.octTree.minCellSize > 0 &&
-			     (topCell.size.x <= _currentProfile.octTree.minCellSize ||
-			      topCell.size.y <= _currentProfile.octTree.minCellSize ||
-			      topCell.size.z <= _currentProfile.octTree.minCellSize) ) {
-				SEISCOMP_DEBUG("Minimum cell size reached: x %g y %g z %g [km]",
-				               topCell.size.x, topCell.size.y, topCell.size.z);
-				completed = true;
-				break;
-			}
-
-			//
-			// Split cell in 8 and add them to the unknownPriorityList
-			//
-			auto newCellToProcess = [&unknownPriorityList,
-			                         &topCell](double x, double y, double z) {
-				Cell cell;
-				cell.valid = false;
-				cell.x = topCell.x + x;
-				cell.y = topCell.y + y;
-				cell.z = topCell.z + z;
-				cell.size.x = topCell.size.x / 2.;
-				cell.size.y = topCell.size.y / 2.;
-				cell.size.z = topCell.size.z / 2.;
+			if ( (abs(cell.x) + cell.size.x / 2.) <= (xExtent / 2.) &&
+			     (abs(cell.y) + cell.size.y / 2.) <= (yExtent / 2.) &&
+			     (abs(cell.z) + cell.size.z / 2.) <= (zExtent / 2.) ) {
 				unknownPriorityList.push_back(cell);
-			};
-			for ( double x = -topCell.size.x / 4.;
-			             x <= topCell.size.x / 4.;
-			             x += topCell.size.x / 2. ) {
-				for ( double y = -topCell.size.y / 4.;
-				             y <= topCell.size.y / 4.;
-				             y += topCell.size.y / 2. ) {
-					if ( usingFixedDepth() ) {
-							newCellToProcess(x, y, 0);
-					} else {
-						for ( double z = -topCell.size.z / 4.;
-						             z <= topCell.size.z / 4.;
-						             z += topCell.size.z / 2. ) {
-							newCellToProcess(x, y, z);
-						}
+			}
+		};
+		// offsets -1 and 1 -> 8 sub cells of current cell
+		// offsets -3 and 3 -> neighbouring cells
+		for ( int xOffset : std::array<int,4>{-3,-1, 1, 3} ) {
+			for ( int yOffset : std::array<int,4>{-3,-1, 1, 3} ) {
+				if ( usingFixedDepth() ) {
+						newCellToProcess(xOffset, yOffset, 0);
+				} else {
+					for ( int zOffset : std::array<int,4>{-3,-1, 1, 3} ) {
+						newCellToProcess(xOffset, yOffset, zOffset);
 					}
 				}
 			}
-
-			// Remove the current cell from priorityList since its
-			// children will be added at the next loop
-			priorityList.erase(std::prev(priorityList.end()));
 		}
 
-		if ( completed ) {
-			break;
-		}
-	}
-
-	if ( priorityList.empty() ) {
-		throw LocatorException("Couldn't find a solution");
+		// Remove the current cell from priorityList since its
+		// children will be added at the next loop
+		priorityList.erase(std::prev(priorityList.end()));
 	}
 
 	if ( !best.cell.valid ) {
@@ -1593,10 +1603,10 @@ void StdLoc::locateOctTree(const PickList &pickList,
 	}
 
 	// check the solutiond doesn't lie on the grid boundary
-	if ( (xExtent/2. - std::abs(best.cell.x)) < best.cell.size.x ||
-	     (yExtent/2. - std::abs(best.cell.y)) < best.cell.size.y ||
-	     ( (zExtent/2. - std::abs(best.cell.z)) < best.cell.size.z &&
-	        !usingFixedDepth() ) ) {
+	if ( (xExtent / 2. - std::abs(best.cell.x)) < best.cell.size.x ||
+	     (yExtent / 2. - std::abs(best.cell.y)) < best.cell.size.y ||
+	     ((zExtent / 2. - std::abs(best.cell.z)) < best.cell.size.z &&
+	      !usingFixedDepth()) ) {
 		_rejectLocation = true;
 		_rejectionMsg = "The location lies on the grid boundary: rejecting it";
 	}
@@ -1633,9 +1643,9 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		computeCovarianceMatrix(cells, best.cell, false, covm);
 	}
 	SEISCOMP_DEBUG("OctTree solution RMS %g lat %g lon %g depth %g time %s "
-	               "(num iterations %d)",
+	               "(num iterations %zu)",
 	               best.cell.org.rms, newLat, newLon, newDepth,
-	               newTime.iso().c_str(), processedCells);
+	               newTime.iso().c_str(), processedCells.size());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1813,14 +1823,15 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 		throw LocatorException("Couldn't find a solution");
 	}
 
-	if ( ! enablePerCellLeastSquares ) {
+	if ( !enablePerCellLeastSquares ) {
 		// check the solutiond doesn't lie on the grid boundary
-		if ( (xExtent/2. - std::abs(best.cell.x)) < best.cell.size.x ||
-		     (yExtent/2. - std::abs(best.cell.y)) < best.cell.size.y ||
-		     ( (zExtent/2. - std::abs(best.cell.z)) < best.cell.size.z &&
-		        !usingFixedDepth() ) ) {
+		if ( (xExtent / 2. - std::abs(best.cell.x)) < best.cell.size.x ||
+		     (yExtent / 2. - std::abs(best.cell.y)) < best.cell.size.y ||
+		     ((zExtent / 2. - std::abs(best.cell.z)) < best.cell.size.z &&
+		      !usingFixedDepth()) ) {
 			_rejectLocation = true;
-			_rejectionMsg = "The location lies on the grid boundary: rejecting it";
+			_rejectionMsg =
+			    "The location lies on the grid boundary: rejecting it";
 		}
 	}
 
@@ -1989,7 +2000,8 @@ void StdLoc::locateLeastSquares(
 			dtdhs[i] = tt.dtdh;
 			if ( tt.azi ) { // 3D model
 				backazis[i] = *tt.azi;
-			} else {
+			}
+			else {
 				computeDistance(newLat, newLon, sensorLat[i], sensorLon[i],
 				                nullptr, &backazis[i]);
 			}
@@ -2055,21 +2067,21 @@ void StdLoc::locateLeastSquares(
 				Adapter<lsmrBase> solver =
 				    solve<lsmrBase>(eq, &solverLogs,
 				                    _currentProfile.leastSquares.dampingFactor);
-				SEISCOMP_DEBUG(
-				    "Solver stopped because %u : %s (used %u iterations)",
-				    solver.GetStoppingReason(),
-				    solver.GetStoppingReasonMessage().c_str(),
-				    solver.GetNumberOfIterationsPerformed());
+				// SEISCOMP_DEBUG(
+				//     "Solver stopped because %u : %s (used %u iterations)",
+				//     solver.GetStoppingReason(),
+				//     solver.GetStoppingReasonMessage().c_str(),
+				//     solver.GetNumberOfIterationsPerformed());
 			}
 			else if ( _currentProfile.leastSquares.solverType == "LSQR" ) {
 				Adapter<lsqrBase> solver =
 				    solve<lsqrBase>(eq, &solverLogs,
 				                    _currentProfile.leastSquares.dampingFactor);
-				SEISCOMP_DEBUG(
-				    "Solver stopped because %u : %s (used %u iterations)",
-				    solver.GetStoppingReason(),
-				    solver.GetStoppingReasonMessage().c_str(),
-				    solver.GetNumberOfIterationsPerformed());
+				// SEISCOMP_DEBUG(
+				//     "Solver stopped because %u : %s (used %u iterations)",
+				//     solver.GetStoppingReason(),
+				//     solver.GetStoppingReasonMessage().c_str(),
+				//     solver.GetNumberOfIterationsPerformed());
 			}
 			else {
 				throw LocatorException(
@@ -2077,7 +2089,7 @@ void StdLoc::locateLeastSquares(
 				    _currentProfile.leastSquares.solverType);
 			}
 
-			//SEISCOMP_DEBUG("Solver logs:\n%s", solverLogs.str().c_str());
+			// SEISCOMP_DEBUG("Solver logs:\n%s", solverLogs.str().c_str());
 		}
 		catch ( exception &e ) {
 			SEISCOMP_WARNING("%s", e.what());
