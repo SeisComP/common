@@ -2404,12 +2404,8 @@ Origin *StdLoc::createOrigin(
 		                          pick->waveformID().locationCode());
 
 		double azimuth = 0;
-		double Hdist = computeDistance(originLat, originLon, sensorLat[i],
-		                               sensorLon[i], &azimuth);
-		Hdist = Math::Geo::deg2km(Hdist);
-		double Vdist = abs(originDepth + sensorElev[i] / 1000);
-		double distance =
-		    Math::Geo::km2deg(sqrt(Hdist * Hdist + Vdist * Vdist));
+		double distance = computeDistance(originLat, originLon, sensorLat[i],
+		                                  sensorLon[i], &azimuth);
 
 		// prepare the new arrival
 		DataModel::Arrival *newArr = new DataModel::Arrival();
