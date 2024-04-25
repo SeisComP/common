@@ -79,11 +79,7 @@ bool Bindings::init(const DataModel::ConfigModule *cfg, const std::string &setup
 		}
 
 		KeyValuesPtr params = new KeyValues;
-#if SC_API_VERSION < 0x012000
-		params->readFrom(ps);
-#else
 		params->init(ps);
-#endif
 
 		_bindings[sta_cfg->networkCode()][sta_cfg->stationCode()].keys = params;
 	}
