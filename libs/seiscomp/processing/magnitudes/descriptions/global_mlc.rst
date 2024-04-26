@@ -92,6 +92,7 @@ amplitude.
 
    * The default values are taken from :cite:t:`stange-2006`.
 
+
 .. _mlc_station_magnitude:
 
 Station magnitudes
@@ -115,13 +116,12 @@ The calibration function is considered in one of the forms
 
   .. math::
 
-     MLc = \log_{10}(A) + c_6 * h + c_3 * \log_{10}(r/c_5) + c_2 * (r + c_4) + c_1 + c_0(station)
+     MLc = \log_{10}(A) + c_7 * e^{c8 * r} + c_6 * h + c_3 * \log_{10}(r / c_5) + c_2 * (r + c_4) + c_1 + c_0(station)
 
   where
 
   * *A*: displacement amplitude measured in unit of mm or as per configuration
-  * *r*: hypocentral (default) or epicentral distance
-  * *c1*, *c2*, *c3*, *c4*, *c5*, *c6*: general calibration parameters
+  * *c1 - c8*: general calibration parameters
   * *c0*: station-specific correction
   * *r*: Hypocentral (default) or epicentral distance as configured by
     :confval:`magnitudes.MLc.distMode`
@@ -179,6 +179,8 @@ Configurable parameters:
    ;:confval:`magnitudes.MLc.parametric.c5`;1.0;
    ;:confval:`magnitudes.MLc.parametric.c6`;0.0; see :cite:t:`rhoades-2020`
    ;:confval:`magnitudes.MLc.parametric.H`;40.0; see :cite:t:`rhoades-2020`
+   ;:confval:`magnitudes.MLc.parametric.c7`;0.0; see :cite:t:`luckett2019`
+   ;:confval:`magnitudes.MLc.parametric.c8`;0.0; see :cite:t:`luckett2019`
    ;;;
    **non-parametric** calibration;;; Parameters are used for :confval:`magnitudes.MLc.calibrationType` = A0
    ;:confval:`magnitudes.MLc.A0.logA0`;0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85; from :ref:`ML magnitude <global_ml>`

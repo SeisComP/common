@@ -241,7 +241,7 @@
 					<group name="parametric">
 						<description>
 						Parameters for parametric magnitude calibration:
-						MLc = log10(A) + c6 * h + c3 * log10(r/c5) + c2 * (r + c4) + c1 + c0(station)
+						MLc = log10(A) + c7 * e^(c8 * r) + c6 * h + c3 * log10(r / c5) + c2 * (r + c4) + c1 + c0(station)
 
 						Considered if magnitude.MLc.calibrationType = "parametric".
 						</description>
@@ -286,6 +286,18 @@
 						<parameter name="c6" type="double" default="0.0">
 							<description>
 							The calibration value 'c6' applied in the
+							parametric magnitude calibration formula.
+							</description>
+						</parameter>
+						<parameter name="c7" type="double" default="0.0">
+							<description>
+							The calibration value 'c7' applied in the
+							parametric magnitude calibration formula.
+							</description>
+						</parameter>
+						<parameter name="c8" type="double" default="0.0">
+							<description>
+							The calibration value 'c8' applied in the
 							parametric magnitude calibration formula.
 							</description>
 						</parameter>
