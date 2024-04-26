@@ -1460,12 +1460,6 @@ void StdLoc::locateOctTree(const PickList &pickList,
 			computeCoordinates(distance, azimuth, gridOriginLat, gridOriginLon,
 			                   cell.org.lat, cell.org.lon);
 
-			SEISCOMP_DEBUG(
-			    "Processing cell (size %g %g %g) x %g y %g z %g -> "
-			    "lon %g lat %g depth %g",
-			    cell.size.x, cell.size.y, cell.size.z, cell.x, cell.y, cell.z,
-			    cell.org.lon, cell.org.lat, cell.org.depth);
-
 			// Compute origin time
 			bool ok = computeOriginTime(pickList, weights, sensorLat, sensorLon,
 			                            sensorElev, cell.org.lat, cell.org.lon,
@@ -1473,7 +1467,6 @@ void StdLoc::locateOctTree(const PickList &pickList,
 			                            cellTravelTimes);
 
 			if ( !ok ) {
-				SEISCOMP_DEBUG("Skip cell: unable to compute origin time");
 				continue;
 			}
 
@@ -1487,9 +1480,6 @@ void StdLoc::locateOctTree(const PickList &pickList,
 			// add cell to the priority list
 			double volume = cell.size.x * cell.size.y * cell.size.z;
 			double prob = volume * cell.org.probDensity; // unnormalized
-
-			SEISCOMP_DEBUG("  + prob %g RMS %g (prob density %g volume %g)",
-			               prob, cell.org.rms, cell.org.probDensity, volume);
 
 			priorityList.emplace(prob, cell);
 		}
@@ -1505,13 +1495,6 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		double topCellProb = priorityList.crbegin()->first;
 		const Cell &topCell = priorityList.crbegin()->second;
 
-		SEISCOMP_DEBUG("Processed %d cells. Next best cell (size %g %g %g) "
-		               "x %g y %g z %g prob %g RMS %f prob density %g",
-		               processedCells, topCell.size.x, topCell.size.y,
-		               topCell.size.z, topCell.x, topCell.y, topCell.z,
-		               topCellProb, topCell.org.rms,
-		               topCell.org.probDensity);
-
 		//
 		// Keep track of the best solution, which is not the highest
 		// probability cell but the one with highest probability density
@@ -1520,7 +1503,6 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		     best.cell.org.probDensity < topCell.org.probDensity ) {
 			best.cell = topCell;
 			best.prob = topCellProb;
-			SEISCOMP_DEBUG("  + preferring this as best cell");
 		}
 
 		//
@@ -1528,10 +1510,7 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		//
 		if ( _currentProfile.octTree.maxIterations > 0 &&
 		     processedCells.size() >= _currentProfile.octTree.maxIterations ) {
-			SEISCOMP_DEBUG("Maximum number of iteration reached %zu, minimum "
-			               "cell size: x %g y %g z %g",
-			               processedCells.size(), best.cell.size.x,
-			               best.cell.size.y, best.cell.size.z);
+			SEISCOMP_DEBUG("Maximum number of iteration reached");
 			break;
 		}
 
@@ -1539,10 +1518,7 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		     (best.cell.size.x <= _currentProfile.octTree.minCellSize ||
 		      best.cell.size.y <= _currentProfile.octTree.minCellSize ||
 		      best.cell.size.z <= _currentProfile.octTree.minCellSize) ) {
-			SEISCOMP_DEBUG("Minimum cell size reached: x %g y %g z %g [km], "
-			               "iteration performed %zu",
-			               best.cell.size.x, best.cell.size.y, best.cell.size.z,
-			               processedCells.size());
+			SEISCOMP_DEBUG("Minimum cell size reached");
 			break;
 		}
 
@@ -1611,11 +1587,10 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		_rejectionMsg = "The location lies on the grid boundary: rejecting it";
 	}
 
-	SEISCOMP_DEBUG("Solution: cell size %g %g %g x %g y %g z %g prob %g "
-	               "RMS %f prob density %g",
+	SEISCOMP_DEBUG("Iterations %zu min cell size %g %g %g x %g y %g z %g",
+	               processedCells.size(),
 	               best.cell.size.x, best.cell.size.y, best.cell.size.z,
-	               best.cell.x, best.cell.y, best.cell.z, best.prob,
-	               best.cell.org.rms, best.cell.org.probDensity);
+	               best.cell.x, best.cell.y, best.cell.z);
 
 	newLat = best.cell.org.lat;
 	newLon = best.cell.org.lon;
@@ -1642,10 +1617,9 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		               });
 		computeCovarianceMatrix(cells, best.cell, false, covm);
 	}
-	SEISCOMP_DEBUG("OctTree solution RMS %g lat %g lon %g depth %g time %s "
-	               "(num iterations %zu)",
+	SEISCOMP_DEBUG("OctTree solution RMS %g lat %g lon %g depth %g time %s ",
 	               best.cell.org.rms, newLat, newLon, newDepth,
-	               newTime.iso().c_str(), processedCells.size());
+	               newTime.iso().c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1761,9 +1735,6 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 	//
 	for ( Cell &cell : cells ) {
 
-		SEISCOMP_DEBUG(
-		    "Processing cell x %g y %g z %g -> lon %g lat %g depth %g", cell.x,
-		    cell.y, cell.z, cell.org.lon, cell.org.lat, cell.org.depth);
 		//
 		// Compute origin time
 		//
@@ -1772,7 +1743,6 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 		    cell.org.lon, cell.org.depth, cell.org.time, cellTravelTimes);
 
 		if ( !ok ) {
-			SEISCOMP_DEBUG("Skip cell: unable to compute origin time");
 			continue;
 		}
 
@@ -1804,9 +1774,6 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 
 		cell.valid = true;
 
-		SEISCOMP_DEBUG("Prob density %g RMS %g", cell.org.probDensity,
-		               cell.org.rms);
-
 		//
 		// Keep track of the best solution
 		//
@@ -1815,7 +1782,6 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 			best.cell = cell;
 			best.travelTimes = cellTravelTimes;
 			best.covm = covm;
-			SEISCOMP_DEBUG("Preferring this as best cell");
 		}
 	}
 
@@ -1937,7 +1903,7 @@ void StdLoc::locateLeastSquares(
 			newLon   = prevLon;
 			newDepth = prevDepth;
 			newTime  = prevTime;
-			SEISCOMP_WARNING("Locator stopped early, at iteration %d", iteration);
+			SEISCOMP_DEBUG("Locator stopped early, at iteration %d", iteration);
 		}
 
 		//
@@ -2123,13 +2089,6 @@ void StdLoc::locateLeastSquares(
 		newLon += lonCorrection;
 		newDepth += depthCorrection;
 		newTime += Core::TimeSpan(timeCorrection);
-
-		SEISCOMP_DEBUG(
-		    "Least Square iteration %d: corrections lat %f [km] lon %f [km] "
-		    "depth %f [km] time %f [sec]. New source parameters lat %g "
-		    "lon %g depth %g time %s",
-		    iteration, latCorrection, lonCorrection, depthCorrection,
-		    timeCorrection, newLat, newLon, newDepth, newTime.iso().c_str());
 	}
 
 	SEISCOMP_DEBUG("Least Square final solution lat %g lon %g "
