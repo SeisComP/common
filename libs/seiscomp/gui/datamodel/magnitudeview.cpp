@@ -1292,8 +1292,31 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 	_ui->btnCommit->setFont(SCScheme.fonts.highlight);
 
 	_ui->cbEvalStatus->addItem("- unset -");
+	for ( int i = 0; i < 6; ++i ) {
+		_ui->cbEvalStatus->addItem(QString());
+	}
 	for ( size_t i = EvaluationStatus::First; i < EvaluationStatus::Quantity; ++i ) {
-		_ui->cbEvalStatus->addItem(EvaluationStatus::NameDispatcher::name(i));
+		if ( EvaluationStatus::Type(i) == FINAL ) {
+			_ui->cbEvalStatus->setItemText(1, EvaluationStatus::NameDispatcher::name(i));
+		}
+		else if ( EvaluationStatus::Type(i) == REVIEWED ) {
+			_ui->cbEvalStatus->setItemText(2, EvaluationStatus::NameDispatcher::name(i));
+		}
+		else if ( EvaluationStatus::Type(i) == CONFIRMED ) {
+			_ui->cbEvalStatus->setItemText(3, EvaluationStatus::NameDispatcher::name(i));
+		}
+		else if ( EvaluationStatus::Type(i) == PRELIMINARY ) {
+			_ui->cbEvalStatus->setItemText(4, EvaluationStatus::NameDispatcher::name(i));
+		}
+		else if ( EvaluationStatus::Type(i) == REPORTED ) {
+			_ui->cbEvalStatus->setItemText(5, EvaluationStatus::NameDispatcher::name(i));
+		}
+		else if ( EvaluationStatus::Type(i) == REJECTED ) {
+			_ui->cbEvalStatus->setItemText(6, EvaluationStatus::NameDispatcher::name(i));
+		}
+		else {
+			_ui->cbEvalStatus->addItem(EvaluationStatus::NameDispatcher::name(i));
+		}
 	}
 
 	/*
@@ -3945,7 +3968,7 @@ void MagnitudeView::evaluationStatusChanged(int index) {
 	}
 	else {
 		EvaluationStatus stat;
-		if ( !stat.fromInt(index-1) ) {
+		if ( !stat.fromString(_ui->cbEvalStatus->itemText(index).toStdString()) ) {
 			return;
 		}
 		_netMag->setEvaluationStatus(stat);
