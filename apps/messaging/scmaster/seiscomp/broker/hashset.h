@@ -90,7 +90,7 @@ class KHashSet<uint32_t> {
 		};
 
 
-		KHashSet<uint32_t>() {
+		KHashSet() {
 			_h = kh_init(int);
 		}
 
@@ -184,7 +184,7 @@ class KHashSet<uint64_t> {
 		};
 
 
-		KHashSet<uint64_t>() {
+		KHashSet() {
 			_h = kh_init(int64);
 		}
 
@@ -278,7 +278,7 @@ class KHashSet<const char*> {
 		};
 
 
-		KHashSet<const char*>() {
+		KHashSet() {
 			_h = kh_init(str);
 		}
 
@@ -388,7 +388,7 @@ class KHashMap<const char*, V*> {
 		};
 
 
-		KHashMap<const char*, V*>() {
+		KHashMap() {
 			_h = kh_init(m_str);
 		}
 
@@ -498,11 +498,11 @@ class KHashSetPtrBase<T, 4> {
 
 
 	public:
-		KHashSetPtrBase<T, 4>() {
+		KHashSetPtrBase() {
 			_h = kh_init(int);
 		}
 
-		~KHashSetPtrBase<T, 4>() {
+		~KHashSetPtrBase() {
 			kh_destroy(int, _h);
 		}
 
@@ -593,11 +593,11 @@ class KHashSetPtrBase<T, 8> {
 
 
 	public:
-		KHashSetPtrBase<T, 8>() {
+		KHashSetPtrBase() {
 			_h = kh_init(int64);
 		}
 
-		~KHashSetPtrBase<T, 8>() {
+		~KHashSetPtrBase() {
 			kh_destroy(int64, _h);
 		}
 
@@ -656,7 +656,7 @@ struct Arch {
 template <typename T>
 class KHashSet<T*> : public KHashSetPtrBase<T*, Arch::PtrSize> {
 	public:
-		KHashSet<T*>() {}
+		KHashSet() {}
 };
 
 
