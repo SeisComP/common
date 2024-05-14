@@ -65,7 +65,7 @@ struct IntrusiveListItem {
 	typedef typename IntrusiveTraits<T>::Pointer Pointer;
 	typedef typename IntrusiveTraits<T>::Element Element;
 
-	IntrusiveListItem<T,N>() {
+	IntrusiveListItem() {
 		for ( int i = 0; i < N; ++i )
 			_ili_next[i] = _ili_prev[i] = nullptr;
 	}
