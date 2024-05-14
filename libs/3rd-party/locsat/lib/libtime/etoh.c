@@ -7,6 +7,8 @@ static int days_in_month[] = {31,28,31,30,31,30,31,31,30,31,30,31,31};
 static char *month_name[] =
 {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
 
+int isleap(int year);
+
 #define mod(a,b)	a - ((int)(a/b)) * b
 void month_day(dt)
 register struct date_time *dt;
