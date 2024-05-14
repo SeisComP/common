@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_SUITE(seiscomp_core_instrusive_list)
 BOOST_AUTO_TEST_CASE(insertAndSize) {
 	Generic::IntrusiveList<DummyPtr> dummies;
 
-	int len = 100;
+	const int len = 100;
 	DummyPtr elements[len];
 
 	for ( int i = 0; i < len; ++i ) {
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(insertAndSize) {
 BOOST_AUTO_TEST_CASE(modify) {
 	Generic::IntrusiveList<DummyPtr> dummies;
 
-	int len = 100;
+	const int len = 100;
 	DummyPtr elements[len];
 
 	for ( int i = 0; i < len; ++i ) {
@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE(modify) {
 BOOST_AUTO_TEST_CASE(move) {
 	Generic::IntrusiveList<DummyPtr> dummies;
 
-	int len = 100;
+	const int len = 100;
 
 	for ( int i = 0; i < len; ++i ) {
 		dummies.push_back(new Dummy(i+1));
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE(move) {
 BOOST_AUTO_TEST_CASE(constIt) {
 	Generic::IntrusiveList<DummyPtr> dummies;
 
-	int len = 100;
+	const int len = 100;
 
 	for ( int i = 0; i < len; ++i ) {
 		dummies.push_back(new Dummy(i+1));
