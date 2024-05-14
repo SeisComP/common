@@ -9,6 +9,9 @@ static	char	SccsId[] = "@(#)htoe.c	44.1	9/23/91";
 #include "csstime.h"
 static int days_in_month[] = {31,28,31,30,31,30,31,31,30,31,30,31,31};
 
+int isleap(int year);
+void etoh(register struct date_time *dt);
+
 int htoe(register struct date_time *dt) {
 	double dtoepoch();
 	dt->epoch = 

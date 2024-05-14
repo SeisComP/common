@@ -5,7 +5,10 @@
 /* collection of time conversion utility subroutines */
 #include <ctype.h>
 #include <time.h>
-	/* convert julian date to epoch time */
+
+int isleap(int year);
+
+/* convert julian date to epoch time */
 double
 dtoepoch(date)
 long date;

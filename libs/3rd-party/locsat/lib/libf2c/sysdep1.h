@@ -10,7 +10,11 @@
 
 #ifdef __linux__
 #define USE_LARGEFILE
+#ifdef __GLIBC__
 #define OFF_T __off64_t
+#else
+#define OFF_T off_t
+#endif
 #endif
 
 #ifdef _AIX43
@@ -43,12 +47,12 @@
 #define _LARGEFILE64_SOURCE
 #include <sys/types.h>
 #include <sys/stat.h>
-#define FOPEN fopen64
-#define FREOPEN freopen64
-#define FSEEK fseeko64
+#define FOPEN fopen
+#define FREOPEN freopen
+#define FSEEK fseeko
 #define FSTAT fstat64
-#define FTELL ftello64
-#define FTRUNCATE ftruncate64
+#define FTELL ftello
+#define FTRUNCATE ftruncate
 #define STAT stat64
 #define STAT_ST stat64
 #endif /*USE_LARGEFILE*/
