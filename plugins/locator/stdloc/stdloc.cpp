@@ -1475,12 +1475,15 @@ void StdLoc::locateOctTree(const PickList &pickList,
 			                   cell.org.time, cell.org.probDensity,
 			                   cell.org.rms);
 
-			cell.valid = true;
-
 			// add cell to the priority list
 			double volume = cell.size.x * cell.size.y * cell.size.z;
 			double prob = volume * cell.org.probDensity; // unnormalized
 
+			if ( !isfinite(prob) ) {
+				continue;
+			}
+
+			cell.valid = true;
 			priorityList.emplace(prob, cell);
 		}
 		// all done
@@ -2106,6 +2109,11 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
                                      bool useExpectedHypocenter,
                                      CovMtrx &covm) const {
 	covm.valid = false;
+
+	if ( !isfinite(bestCell.org.probDensity) ||
+	     bestCell.org.probDensity == 0 ) {
+		return;
+	}
 
 	auto normalize = [&bestCell](const Cell &cell) {
 		return cell.org.probDensity / bestCell.org.probDensity;
