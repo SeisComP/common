@@ -1194,9 +1194,13 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 	}
 
 	rms = 0.0;
+	double sigma = _currentProfile.gridSearch.travelTimeError;
 
 	double l1SumWeightedResiduals = 0.0;
 	double l2SumWeightedResiduals = 0.0;
+	double weightedSigma = 0.0;
+	double weightedSquaredSigma = 0.0;
+	double sumWeights = 0.0;
 	double sumSquaredWeights = 0.0;
 
 	for ( size_t i = 0; i < pickList.size(); ++i ) {
@@ -1213,6 +1217,9 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 		l1SumWeightedResiduals += abs(residual * weights[i]);
 		l2SumWeightedResiduals +=
 		    (residual * weights[i]) * (residual * weights[i]);
+		weightedSigma += sigma * weights[i];
+		weightedSquaredSigma += (sigma * weights[i]) * (sigma * weights[i]);
+		sumWeights += weights[i];
 		sumSquaredWeights += weights[i] * weights[i];
 	}
 
@@ -1221,15 +1228,26 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 		                       "valid picks and/or travel times");
 	}
 
+	weightedSigma /= sumWeights;
+	weightedSquaredSigma /= sumSquaredWeights;
 	rms = sqrt(l2SumWeightedResiduals / sumSquaredWeights);
 
-	double sigma = _currentProfile.gridSearch.travelTimeError;
+	//
+	// Compute the non-normalized probability density (likelihood function)
+	//
 	if ( _currentProfile.gridSearch.misfitType == "L1" ) {
-		probDensity = std::exp(-1.0 * l1SumWeightedResiduals / sigma);
+		probDensity = -1.0 * l1SumWeightedResiduals / weightedSigma;
 	}
 	else if ( _currentProfile.gridSearch.misfitType == "L2" ) {
-		probDensity = std::exp(-0.5 * l2SumWeightedResiduals / (sigma * sigma));
+		probDensity = -0.5 * l2SumWeightedResiduals / weightedSquaredSigma;
 	}
+	//
+	// Note that we actually return the natural log of the likelihood function
+	// to avoid severe precision loss (that is we do not compute std::exp).
+	// std::exp would returns 0 for the vast majoriy of cells, making the
+	// comparison of the likelihood between cells impossible
+	//
+	// probDensity = std::exp(probDensity);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1280,7 +1298,7 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 				}
 			}
 			ttime = _ttt->computeTime(phaseName, lat, lon, depth, sensorLat[i],
-			                                sensorLon[i], sensorElev[i]);
+			                          sensorLon[i], sensorElev[i]);
 		}
 		catch ( exception &e ) {
 			SEISCOMP_WARNING("Travel Time Table error for %s@%s.%s.%s and lat "
@@ -1311,7 +1329,8 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 	}
 
 	if ( originTimes.size() == 0 ) {
-		SEISCOMP_DEBUG("Unable to compute origin time: no valid picks and/or travel times");
+		SEISCOMP_DEBUG("Unable to compute origin time: no valid picks and/or "
+		               "travel times");
 		return false;
 	}
 
@@ -1420,11 +1439,8 @@ void StdLoc::locateOctTree(const PickList &pickList,
 	multimap<double, Cell> priorityList;
 	vector<double> cellTravelTimes(pickList.size());
 	set<tuple<float, float, float>> processedCells;
-	struct {
-			Cell cell;
-			double prob;
-	} best;
-	best.cell.valid = false;
+	Cell bestCell;
+	bestCell.valid = false;
 
 	//
 	// Process each cell by its priority
@@ -1470,21 +1486,22 @@ void StdLoc::locateOctTree(const PickList &pickList,
 				continue;
 			}
 
-			// Compute the probability density
+			// Compute the prob density (log) and from there the cell
+			// probability considering its volume
 			computeProbDensity(pickList, weights, cellTravelTimes,
 			                   cell.org.time, cell.org.probDensity,
 			                   cell.org.rms);
 
 			// add cell to the priority list
 			double volume = cell.size.x * cell.size.y * cell.size.z;
-			double prob = volume * cell.org.probDensity; // unnormalized
+			double logProb = std::log(volume) + cell.org.probDensity;
 
-			if ( !isfinite(prob) ) {
+			if ( !isfinite(logProb) ) {
 				continue;
 			}
 
 			cell.valid = true;
-			priorityList.emplace(prob, cell);
+			priorityList.emplace(logProb, cell);
 		}
 		// all done
 		unknownPriorityList.clear();
@@ -1495,17 +1512,15 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		if ( priorityList.empty() ) {
 			break;
 		}
-		double topCellProb = priorityList.crbegin()->first;
 		const Cell &topCell = priorityList.crbegin()->second;
 
 		//
 		// Keep track of the best solution, which is not the highest
 		// probability cell but the one with highest probability density
 		//
-		if ( !best.cell.valid ||
-		     best.cell.org.probDensity < topCell.org.probDensity ) {
-			best.cell = topCell;
-			best.prob = topCellProb;
+		if ( !bestCell.valid ||
+		     bestCell.org.probDensity < topCell.org.probDensity ) {
+			bestCell = topCell;
 		}
 
 		//
@@ -1518,9 +1533,9 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		}
 
 		if ( _currentProfile.octTree.minCellSize > 0 &&
-		     (best.cell.size.x <= _currentProfile.octTree.minCellSize ||
-		      best.cell.size.y <= _currentProfile.octTree.minCellSize ||
-		      best.cell.size.z <= _currentProfile.octTree.minCellSize) ) {
+		     (bestCell.size.x <= _currentProfile.octTree.minCellSize ||
+		      bestCell.size.y <= _currentProfile.octTree.minCellSize ||
+		      bestCell.size.z <= _currentProfile.octTree.minCellSize) ) {
 			SEISCOMP_DEBUG("Minimum cell size reached");
 			break;
 		}
@@ -1540,10 +1555,10 @@ void StdLoc::locateOctTree(const PickList &pickList,
 			cell.size.z = topCell.size.z / 2.;
 			//
 			// Careful: since we use the 'processed' std::set to keep track of
-			// the already processed cells, we need to make sure the hash function
-			// of two cell locations (x,y,z) is the same. So we must be build the
-			// new x,y,z using values that end up with the x,y,z independetly
-			// of the cell father x,y,z
+			// the already processed cells, we need to make sure the hash
+			// function of two cell locations (x,y,z) is the same. So we must be
+			// build the new x,y,z using values that end up with the x,y,z
+			// independetly of the cell father x,y,z
 			//
 			cell.x = round(topCell.x / cell.size.x) * cell.size.x +
 			         xOffset * cell.size.x / 2;
@@ -1560,12 +1575,13 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		};
 		// offsets -1 and 1 -> 8 sub cells of current cell
 		// offsets -3 and 3 -> neighbouring cells
-		for ( int xOffset : std::array<int,4>{-3,-1, 1, 3} ) {
-			for ( int yOffset : std::array<int,4>{-3,-1, 1, 3} ) {
+		for ( int xOffset : std::array<int, 4>{-3, -1, 1, 3} ) {
+			for ( int yOffset : std::array<int, 4>{-3, -1, 1, 3} ) {
 				if ( usingFixedDepth() ) {
-						newCellToProcess(xOffset, yOffset, 0);
-				} else {
-					for ( int zOffset : std::array<int,4>{-3,-1, 1, 3} ) {
+					newCellToProcess(xOffset, yOffset, 0);
+				}
+				else {
+					for ( int zOffset : std::array<int, 4>{-3, -1, 1, 3} ) {
 						newCellToProcess(xOffset, yOffset, zOffset);
 					}
 				}
@@ -1577,28 +1593,27 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		priorityList.erase(std::prev(priorityList.end()));
 	}
 
-	if ( !best.cell.valid ) {
+	if ( !bestCell.valid ) {
 		throw LocatorException("Couldn't find a solution");
 	}
 
 	// check the solutiond doesn't lie on the grid boundary
-	if ( (xExtent / 2. - std::abs(best.cell.x)) < best.cell.size.x ||
-	     (yExtent / 2. - std::abs(best.cell.y)) < best.cell.size.y ||
-	     ((zExtent / 2. - std::abs(best.cell.z)) < best.cell.size.z &&
+	if ( (xExtent / 2. - std::abs(bestCell.x)) < bestCell.size.x ||
+	     (yExtent / 2. - std::abs(bestCell.y)) < bestCell.size.y ||
+	     ((zExtent / 2. - std::abs(bestCell.z)) < bestCell.size.z &&
 	      !usingFixedDepth()) ) {
 		_rejectLocation = true;
 		_rejectionMsg = "The location lies on the grid boundary: rejecting it";
 	}
 
 	SEISCOMP_DEBUG("Iterations %zu min cell size %g %g %g x %g y %g z %g",
-	               processedCells.size(),
-	               best.cell.size.x, best.cell.size.y, best.cell.size.z,
-	               best.cell.x, best.cell.y, best.cell.z);
+	               processedCells.size(), bestCell.size.x, bestCell.size.y,
+	               bestCell.size.z, bestCell.x, bestCell.y, bestCell.z);
 
-	newLat = best.cell.org.lat;
-	newLon = best.cell.org.lon;
-	newDepth = best.cell.org.depth;
-	newTime = best.cell.org.time;
+	newLat = bestCell.org.lat;
+	newLon = bestCell.org.lon;
+	newDepth = bestCell.org.depth;
+	newTime = bestCell.org.time;
 
 	//
 	// To return the travelTimes we need to recompute them again (ugly)
@@ -1618,10 +1633,10 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		               [](decltype(priorityList)::value_type const &pair) {
 			               return pair.second;
 		               });
-		computeCovarianceMatrix(cells, best.cell, false, covm);
+		computeCovarianceMatrix(cells, bestCell, false, covm);
 	}
 	SEISCOMP_DEBUG("OctTree solution RMS %g lat %g lon %g depth %g time %s ",
-	               best.cell.org.rms, newLat, newLon, newDepth,
+	               bestCell.org.rms, newLat, newLon, newDepth,
 	               newTime.iso().c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1770,7 +1785,7 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 		}
 
 		//
-		// Compute cell probability density
+		// Compute cell probability density (log)
 		//
 		computeProbDensity(pickList, weights, cellTravelTimes, cell.org.time,
 		                   cell.org.probDensity, cell.org.rms);
@@ -1820,10 +1835,9 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 		covm = best.covm;
 	}
 
-	SEISCOMP_DEBUG("Grid Search solution prob density %g RMS %g "
-	               "lat %g lon %g depth %g time %s",
-	               best.cell.org.probDensity, best.cell.org.rms, newLat, newLon,
-	               newDepth, newTime.iso().c_str());
+	SEISCOMP_DEBUG("Grid Search solution RMS %g lat %g lon %g depth %g time %s",
+	               best.cell.org.rms, newLat, newLon, newDepth,
+	               newTime.iso().c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1898,14 +1912,14 @@ void StdLoc::locateLeastSquares(
 		// E.g. the location moves outside the ttt boundary but we keep
 		// the last solution that was withing the limits
 		if ( revertToPrevIteration ) {
-			if (iteration <= 1) {
+			if ( iteration <= 1 ) {
 				throw LocatorException("Unable to find a location");
 			}
 			lastIteration = true;
-			newLat   = prevLat;
-			newLon   = prevLon;
+			newLat = prevLat;
+			newLon = prevLon;
 			newDepth = prevDepth;
-			newTime  = prevTime;
+			newTime = prevTime;
 			SEISCOMP_DEBUG("Locator stopped early, at iteration %d", iteration);
 		}
 
@@ -2110,13 +2124,23 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
                                      CovMtrx &covm) const {
 	covm.valid = false;
 
-	if ( !isfinite(bestCell.org.probDensity) ||
-	     bestCell.org.probDensity == 0 ) {
+	if ( !isfinite(bestCell.org.probDensity) ) {
 		return;
 	}
 
-	auto normalize = [&bestCell](const Cell &cell) {
-		return cell.org.probDensity / bestCell.org.probDensity;
+	//
+	// Remember that we stored the log of the probability density, so we need
+	// to std:exp(logProb) to obtain the actual probability density.
+	// Then to transform the probability density to probability we have to
+	// multiply it by the cell volume.
+	// This is a relative probability, to normalize it we need to divide it
+	// by the integral over all the processed cell probabilities (sum of all
+	// cell probabilities)
+	//
+	auto relativeProbability = [&bestCell](const Cell &cell) {
+		double volume = cell.size.x * cell.size.y * cell.size.z;
+		return std::exp(cell.org.probDensity - bestCell.org.probDensity) *
+		       volume;
 	};
 
 	//
@@ -2137,7 +2161,7 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
 			if ( !cell.valid ) {
 				continue;
 			}
-			double weight = normalize(cell);
+			double weight = relativeProbability(cell);
 			weightSum += weight;
 			wmeanLat += cell.org.lat * weight;
 			wmeanDepth += cell.org.depth * weight;
@@ -2164,7 +2188,7 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
 		if ( !cell.valid ) {
 			continue;
 		}
-		double weight = normalize(cell);
+		double weight = relativeProbability(cell);
 		weightSum += weight;
 		double rLon =
 		    computeDistance(cell.org.lat, cell.org.lon, cell.org.lat, wmeanLon);
