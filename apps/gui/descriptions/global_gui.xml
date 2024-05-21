@@ -55,23 +55,34 @@
 			<group name="map">
 				<parameter name="location" type="string" default="@DATADIR@/maps/world%s.png">
 					<description>
-						Specified the location and the structure of the map tiles to be used. This
-						path is composed of zero or more directives and must include at least one
-						conversion specification which starts with is introduced by the character %
-						followed by a conversion specifier.  Valid specifiers are s (replaced by
-						tile ID), l (tile level), c (tile column) and r (tile row). An example for
-						using the OpenStreetMap file structure is /path/to/maps/%l/%c/%r.png.
+					The location and the structure of the map tiles to be used.
+					This path is composed of zero or more directives and must
+					include at least one conversion specification. The
+					specification starts with the '%' and is followed by a
+					conversion specifier.  Valid specifiers are
+
+					s: to be replaced by tile ID
+
+					l: tile level
+
+					c: tile column
+
+					r: tile row.
+
+					Example for using the OpenStreetMap file structure:
+					/path/to/maps/%l/%c/%r.png.
 					</description>
 				</parameter>
-				<parameter name="format" type="string" default="Rectangular">
+				<parameter name="format" type="string" default="Rectangular" values="Rectangular,Mercator">
 					<description>
-						Projection of the map tiles. Supported formats are: Rectangular and Mercator.
+					Projection of the map tiles configured in 'map.location'.
+					Note: Additional projections may be available by plugins.
 					</description>
 				</parameter>
 				<parameter name="cacheSize" type="int" unit="bytes" default="0">
 					<description>
-						Cache size of the map tiles. If 0 is specified a default
-						cache size of 32mb is used. The higher the cache size
+						Cache size of the map tiles. If 0 is specified. a default
+						cache size of 32 MBytes is used. The higher the cache size
 						the better the performance in higher resolutions. A
 						higher cache size causes less image loader calls but
 						requires more client memory.
@@ -79,7 +90,9 @@
 				</parameter>
 				<parameter name="type" type="string">
 					<description>
-						Used to distinguish tile store implementations provided by plug-ins.
+					The tile store implementation provided by a plugin for
+					considering maps if a non-default tile store is configured
+					in 'map.location'.
 					</description>
 				</parameter>
 				<parameter name="customLayers" type="list:string">
