@@ -63,9 +63,9 @@
 						using the OpenStreetMap file structure is /path/to/maps/%l/%c/%r.png.
 					</description>
 				</parameter>
-				<parameter name="format" type="string" default="rectangular">
+				<parameter name="format" type="string" default="Rectangular">
 					<description>
-						Projection of the map tiles. Supported formats are: rectangular and mercator.
+						Projection of the map tiles. Supported formats are: Rectangular and Mercator.
 					</description>
 				</parameter>
 				<parameter name="cacheSize" type="int" unit="bytes" default="0">
