@@ -53,6 +53,8 @@
 // Make Swig parse GCC attributes happily
 #define __attribute__(x)
 
+typedef long int ssize_t;
+
 %include "stl.i"
 %include "std_vector.i"
 %import "math.i"
