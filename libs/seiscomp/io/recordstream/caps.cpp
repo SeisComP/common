@@ -236,6 +236,8 @@ bool RecordStream::setSource(const string &source) {
 	string params;
 	int timeout = 300;
 
+	_port = 18002;
+
 	{
 		size_t pos = addr.find('@');
 
@@ -276,6 +278,10 @@ bool RecordStream::setSource(const string &source) {
 				return false;
 			}
 		}
+	}
+
+	if ( _host.empty() ) {
+		_host = "localhost";
 	}
 
 	_realtime = true;
