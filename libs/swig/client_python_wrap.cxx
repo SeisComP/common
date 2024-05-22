@@ -3797,45 +3797,46 @@ namespace Swig {
 #define SWIGTYPE_p_iostate swig_types[697]
 #define SWIGTYPE_p_iterator swig_types[698]
 #define SWIGTYPE_p_key_type swig_types[699]
-#define SWIGTYPE_p_long_long swig_types[700]
-#define SWIGTYPE_p_mapped_type swig_types[701]
-#define SWIGTYPE_p_off_type swig_types[702]
-#define SWIGTYPE_p_openmode swig_types[703]
-#define SWIGTYPE_p_p_Seiscomp__Client__Packet swig_types[704]
-#define SWIGTYPE_p_p_char swig_types[705]
-#define SWIGTYPE_p_pos_type swig_types[706]
-#define SWIGTYPE_p_seekdir swig_types[707]
-#define SWIGTYPE_p_short swig_types[708]
-#define SWIGTYPE_p_signed_char swig_types[709]
-#define SWIGTYPE_p_size_t swig_types[710]
-#define SWIGTYPE_p_size_type swig_types[711]
-#define SWIGTYPE_p_state_type swig_types[712]
-#define SWIGTYPE_p_std__basic_iosT_char_std__char_traitsT_char_t_t swig_types[713]
-#define SWIGTYPE_p_std__complexT_double_t swig_types[714]
-#define SWIGTYPE_p_std__functionT_void_fSeiscomp__Core__Time_const_R_std__ostream_RF_t swig_types[715]
-#define SWIGTYPE_p_std__invalid_argument swig_types[716]
-#define SWIGTYPE_p_std__listT_Seiscomp__Client__ObjectMonitor__Test_t__const_iterator swig_types[717]
-#define SWIGTYPE_p_std__mapT_std__string_std__string_std__lessT_std__string_t_std__allocatorT_std__pairT_std__string_const_std__string_t_t_t swig_types[718]
-#define SWIGTYPE_p_std__ostream swig_types[719]
-#define SWIGTYPE_p_std__setT_std__string_std__lessT_std__string_t_std__allocatorT_std__string_t_t swig_types[720]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[721]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[722]
-#define SWIGTYPE_p_std__string swig_types[723]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__BaseObject_p_std__allocatorT_Seiscomp__Core__BaseObject_p_t_t swig_types[724]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__DataModel__Station_p_std__allocatorT_Seiscomp__DataModel__Station_p_t_t swig_types[725]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[726]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[727]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t swig_types[728]
-#define SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t swig_types[729]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[730]
-#define SWIGTYPE_p_traits_type swig_types[731]
-#define SWIGTYPE_p_unsigned_char swig_types[732]
-#define SWIGTYPE_p_unsigned_int swig_types[733]
-#define SWIGTYPE_p_unsigned_long_long swig_types[734]
-#define SWIGTYPE_p_unsigned_short swig_types[735]
-#define SWIGTYPE_p_value_type swig_types[736]
-static swig_type_info *swig_types[738];
-static swig_module_info swig_module = {swig_types, 737, 0, 0, 0, 0};
+#define SWIGTYPE_p_long swig_types[700]
+#define SWIGTYPE_p_long_long swig_types[701]
+#define SWIGTYPE_p_mapped_type swig_types[702]
+#define SWIGTYPE_p_off_type swig_types[703]
+#define SWIGTYPE_p_openmode swig_types[704]
+#define SWIGTYPE_p_p_Seiscomp__Client__Packet swig_types[705]
+#define SWIGTYPE_p_p_char swig_types[706]
+#define SWIGTYPE_p_pos_type swig_types[707]
+#define SWIGTYPE_p_seekdir swig_types[708]
+#define SWIGTYPE_p_short swig_types[709]
+#define SWIGTYPE_p_signed_char swig_types[710]
+#define SWIGTYPE_p_size_t swig_types[711]
+#define SWIGTYPE_p_size_type swig_types[712]
+#define SWIGTYPE_p_state_type swig_types[713]
+#define SWIGTYPE_p_std__basic_iosT_char_std__char_traitsT_char_t_t swig_types[714]
+#define SWIGTYPE_p_std__complexT_double_t swig_types[715]
+#define SWIGTYPE_p_std__functionT_void_fSeiscomp__Core__Time_const_R_std__ostream_RF_t swig_types[716]
+#define SWIGTYPE_p_std__invalid_argument swig_types[717]
+#define SWIGTYPE_p_std__listT_Seiscomp__Client__ObjectMonitor__Test_t__const_iterator swig_types[718]
+#define SWIGTYPE_p_std__mapT_std__string_std__string_std__lessT_std__string_t_std__allocatorT_std__pairT_std__string_const_std__string_t_t_t swig_types[719]
+#define SWIGTYPE_p_std__ostream swig_types[720]
+#define SWIGTYPE_p_std__setT_std__string_std__lessT_std__string_t_std__allocatorT_std__string_t_t swig_types[721]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[722]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[723]
+#define SWIGTYPE_p_std__string swig_types[724]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__BaseObject_p_std__allocatorT_Seiscomp__Core__BaseObject_p_t_t swig_types[725]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__DataModel__Station_p_std__allocatorT_Seiscomp__DataModel__Station_p_t_t swig_types[726]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[727]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[728]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_std__allocatorT_std__complexT_double_t_t_t swig_types[729]
+#define SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t swig_types[730]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[731]
+#define SWIGTYPE_p_traits_type swig_types[732]
+#define SWIGTYPE_p_unsigned_char swig_types[733]
+#define SWIGTYPE_p_unsigned_int swig_types[734]
+#define SWIGTYPE_p_unsigned_long_long swig_types[735]
+#define SWIGTYPE_p_unsigned_short swig_types[736]
+#define SWIGTYPE_p_value_type swig_types[737]
+static swig_type_info *swig_types[739];
+static swig_module_info swig_module = {swig_types, 738, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -33694,6 +33695,7 @@ static swig_type_info _swigt__p_int_type = {"_p_int_type", "int_type *", 0, 0, (
 static swig_type_info _swigt__p_iostate = {"_p_iostate", "iostate *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_iterator = {"_p_iterator", "iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_key_type = {"_p_key_type", "key_type *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_long = {"_p_long", "ssize_t *|long *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_long_long = {"_p_long_long", "int_least64_t *|int_fast64_t *|int64_t *|long long *|intmax_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_mapped_type = {"_p_mapped_type", "mapped_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_off_type = {"_p_off_type", "off_type *", 0, 0, (void*)0, 0};
@@ -34433,6 +34435,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_iostate,
   &_swigt__p_iterator,
   &_swigt__p_key_type,
+  &_swigt__p_long,
   &_swigt__p_long_long,
   &_swigt__p_mapped_type,
   &_swigt__p_off_type,
@@ -35172,6 +35175,7 @@ static swig_cast_info _swigc__p_int_type[] = {  {&_swigt__p_int_type, 0, 0, 0},{
 static swig_cast_info _swigc__p_iostate[] = {  {&_swigt__p_iostate, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_iterator[] = {  {&_swigt__p_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_key_type[] = {  {&_swigt__p_key_type, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_long[] = {  {&_swigt__p_long, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_long_long[] = {  {&_swigt__p_long_long, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_mapped_type[] = {  {&_swigt__p_mapped_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_off_type[] = {  {&_swigt__p_off_type, 0, 0, 0},{0, 0, 0, 0}};
@@ -35911,6 +35915,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_iostate,
   _swigc__p_iterator,
   _swigc__p_key_type,
+  _swigc__p_long,
   _swigc__p_long_long,
   _swigc__p_mapped_type,
   _swigc__p_off_type,
