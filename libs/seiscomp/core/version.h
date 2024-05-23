@@ -51,6 +51,8 @@ namespace Core {
    - Added Seiscomp::Processing::AmplitudeProcessor::parameter
    - Made Seiscomp::IO::DatabaseInterface::escape a const method
    - Increased TILESTORE_API version to 5
+   - Added Seiscomp::DataModel::PublicObject::Lock
+   - Added Seiscomp::DataModel::PublicObject::UnLock
 
  "16.1.0"   0x100100
    - Added Seiscomp::DataModel::numberOfComponents

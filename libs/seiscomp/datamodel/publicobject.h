@@ -153,6 +153,17 @@ class SC_SYSTEM_CORE_API PublicObject : public Object {
 		static Iterator End();
 
 		/**
+		 * Locks registration of PublicObjects and allows syncrhonized access
+		 * to Begin() and End() iterators.
+		 */
+		static void Lock();
+
+		/**
+		 * Unlocks the registration of PublicObjects.
+		 */
+		static void Unlock();
+
+		/**
 		 * Enables/disabled the automatic publicID generation during
 		 * serialization.
 		 * This feature is useful to generate publicID when no publicID
