@@ -29,6 +29,7 @@
 #include <seiscomp/gui/core/maps.h>
 
 #include <QImage>
+#include <QMutex>
 
 
 namespace Seiscomp {
@@ -162,10 +163,26 @@ class SC_GUI_API ImageTree : public QObject, public Core::BaseObject {
 		//! This function was introduced in API 1.1
 		bool hasPendingRequests() const { return _store && _store->hasPendingRequests(); }
 
-		//! Returns the currently attached cache instance.
-		//! If no cache is yet attached a new cache is
-		//! created and stored in the object.
+		/**
+		 * @brief Returns the currently attached cache instance.
+		 * If no cache is yet attached a new cache is created and stored in
+		 * the object.
+		 * @return The cache instance
+		 */
 		TextureCache *getCache();
+
+		/**
+		 * @brief Locks the cache and avoids concurrent updates.
+		 * This is required with multithreading applications which render in
+		 * a different thread than the main thread and use asynchronous tile
+		 * loading.
+		 */
+		void lockCache();
+
+		/**
+		 * @brief Unlocks the previously locked cache.
+		 */
+		void unlockCache();
 
 		//! Empties the texture cache and tells the store to do a refresh
 		//! as well.
@@ -194,6 +211,7 @@ class SC_GUI_API ImageTree : public QObject, public Core::BaseObject {
 		TileStorePtr    _store;
 		bool            _isMercatorProjected;
 		size_t          _cacheSize;
+		QMutex          _cacheMutex;
 
 
 	friend class TileStore;

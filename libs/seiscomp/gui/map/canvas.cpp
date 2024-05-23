@@ -1015,9 +1015,17 @@ void Canvas::drawImageLayer(QPainter &painter) {
 	if ( _dirtyRasterLayer ) {
 		_projection->setBackgroundColor(_backgroundColor);
 		mapRenderMutex.lock();
-		_projection->draw(_buffer, _filterMap && !_previewMode,
-		                  _maptree?_maptree->getCache():nullptr);
+		if ( _maptree ) {
+			_maptree->lockCache();
+			_projection->draw(_buffer, _filterMap && !_previewMode,
+			                  _maptree->getCache());
+			_maptree->unlockCache();
+		}
+		else {
+			_projection->draw(_buffer, _filterMap && !_previewMode, nullptr);
+		}
 		mapRenderMutex.unlock();
+
 		_gridLayer.setGridDistance(_projection->gridDistance());
 
 		if ( _maptree ) {

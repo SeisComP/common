@@ -50,6 +50,7 @@ namespace Core {
    - Added Seiscomp::Processing::MagnitudeProcessor_MLc _c6, _H and _minDepth.
    - Added Seiscomp::Processing::AmplitudeProcessor::parameter
    - Made Seiscomp::IO::DatabaseInterface::escape a const method
+   - Increased TILESTORE_API version to 5
 
  "16.1.0"   0x100100
    - Added Seiscomp::DataModel::numberOfComponents
