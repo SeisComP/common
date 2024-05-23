@@ -1596,6 +1596,16 @@
 							Maximum depth
 							</description>
 						</parameter>
+						<parameter name="minphasecount" type="int" unit="">
+							<description>
+							Minimum number of phases
+							</description>
+						</parameter>
+						<parameter name="maxphasecount" type="int" unit="">
+							<description>
+							Maximum number of phases
+							</description>
+						</parameter>
 						<parameter name="minmag" type="double">
 							<description>
 							Minimum magnitude
