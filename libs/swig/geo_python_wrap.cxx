@@ -2838,12 +2838,12 @@ SWIGINTERN PyObject *SWIG_PyStaticMethod_New(PyObject *SWIGUNUSEDPARM(self), PyO
 #define SWIGTYPE_p_double swig_types[143]
 #define SWIGTYPE_p_int swig_types[144]
 #define SWIGTYPE_p_iterator swig_types[145]
-#define SWIGTYPE_p_long_long swig_types[146]
-#define SWIGTYPE_p_p_PyObject swig_types[147]
-#define SWIGTYPE_p_short swig_types[148]
-#define SWIGTYPE_p_signed_char swig_types[149]
-#define SWIGTYPE_p_size_type swig_types[150]
-#define SWIGTYPE_p_ssize_t swig_types[151]
+#define SWIGTYPE_p_long swig_types[146]
+#define SWIGTYPE_p_long_long swig_types[147]
+#define SWIGTYPE_p_p_PyObject swig_types[148]
+#define SWIGTYPE_p_short swig_types[149]
+#define SWIGTYPE_p_signed_char swig_types[150]
+#define SWIGTYPE_p_size_type swig_types[151]
 #define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__Category_p_t swig_types[152]
 #define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t swig_types[153]
 #define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t swig_types[154]
@@ -11565,7 +11565,7 @@ SWIGINTERN PyObject *_wrap_GeoFeatureSet_readFile(PyObject *SWIGUNUSEDPARM(self)
   arg3 = reinterpret_cast< Seiscomp::Geo::Category * >(argp3);
   {
     try {
-      result = (arg1)->readFile((std::string const &)*arg2,(Seiscomp::Geo::Category const *)arg3);
+      result = (ssize_t)(arg1)->readFile((std::string const &)*arg2,(Seiscomp::Geo::Category const *)arg3);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -11577,7 +11577,7 @@ SWIGINTERN PyObject *_wrap_GeoFeatureSet_readFile(PyObject *SWIGUNUSEDPARM(self)
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj((new ssize_t(static_cast< const ssize_t& >(result))), SWIGTYPE_p_ssize_t, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_From_long(static_cast< long >(result));
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
@@ -22119,12 +22119,12 @@ static swig_type_info _swigt__p_difference_type = {"_p_difference_type", "differ
 static swig_type_info _swigt__p_double = {"_p_double", "Seiscomp::Geo::GeoCoordinate::ValueType *|double *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int = {"_p_int", "intptr_t *|int *|int_least32_t *|int_fast32_t *|int32_t *|int_fast16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_iterator = {"_p_iterator", "iterator *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_long = {"_p_long", "ssize_t *|long *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_long_long = {"_p_long_long", "int_least64_t *|int_fast64_t *|int64_t *|long long *|intmax_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_p_PyObject = {"_p_p_PyObject", "PyObject **", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_short = {"_p_short", "short *|int_least16_t *|int16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_signed_char = {"_p_signed_char", "signed char *|int_least8_t *|int_fast8_t *|int8_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_size_type = {"_p_size_type", "size_type *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_ssize_t = {"_p_ssize_t", "ssize_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__allocatorT_Seiscomp__Geo__Category_p_t = {"_p_std__allocatorT_Seiscomp__Geo__Category_p_t", "std::vector< Seiscomp::Geo::Category * >::allocator_type *|std::allocator< Seiscomp::Geo::Category * > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t = {"_p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t", "std::allocator< Seiscomp::Geo::GeoCoordinate > *|std::vector< Seiscomp::Geo::GeoCoordinate >::allocator_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t = {"_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t", "std::allocator< Seiscomp::Geo::GeoFeature * > *|std::vector< Seiscomp::Geo::GeoFeature * >::allocator_type *", 0, 0, (void*)0, 0};
@@ -22297,12 +22297,12 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_double,
   &_swigt__p_int,
   &_swigt__p_iterator,
+  &_swigt__p_long,
   &_swigt__p_long_long,
   &_swigt__p_p_PyObject,
   &_swigt__p_short,
   &_swigt__p_signed_char,
   &_swigt__p_size_type,
-  &_swigt__p_ssize_t,
   &_swigt__p_std__allocatorT_Seiscomp__Geo__Category_p_t,
   &_swigt__p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t,
   &_swigt__p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t,
@@ -22475,12 +22475,12 @@ static swig_cast_info _swigc__p_difference_type[] = {  {&_swigt__p_difference_ty
 static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_iterator[] = {  {&_swigt__p_iterator, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_long[] = {  {&_swigt__p_long, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_long_long[] = {  {&_swigt__p_long_long, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_p_PyObject[] = {  {&_swigt__p_p_PyObject, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_short[] = {  {&_swigt__p_short, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_signed_char[] = {  {&_swigt__p_signed_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_size_type[] = {  {&_swigt__p_size_type, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_ssize_t[] = {  {&_swigt__p_ssize_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_Seiscomp__Geo__Category_p_t[] = {  {&_swigt__p_std__allocatorT_Seiscomp__Geo__Category_p_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t[] = {  {&_swigt__p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t[] = {  {&_swigt__p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -22653,12 +22653,12 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_double,
   _swigc__p_int,
   _swigc__p_iterator,
+  _swigc__p_long,
   _swigc__p_long_long,
   _swigc__p_p_PyObject,
   _swigc__p_short,
   _swigc__p_signed_char,
   _swigc__p_size_type,
-  _swigc__p_ssize_t,
   _swigc__p_std__allocatorT_Seiscomp__Geo__Category_p_t,
   _swigc__p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t,
   _swigc__p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t,
