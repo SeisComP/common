@@ -36,7 +36,7 @@ namespace Core {
 
 
 /* SC_API_VERSION is (major << 16) + (minor << 8) + patch. */
-#define SC_API_VERSION 0x100100
+#define SC_API_VERSION 0x100200
 
 #define SC_API_VERSION_MAJOR(v) (v >> 16)
 #define SC_API_VERSION_MINOR(v) ((v >> 8) & 0xff)
@@ -46,6 +46,11 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
+ 
+ "16.2.0"   0x100200
+   - Added Seiscomp::DataModel::PublicObject::Lock
+   - Added Seiscomp::DataModel::PublicObject::UnLock
+
  "16.1.0"   0x100100
    - Added Seiscomp::DataModel::numberOfComponents
 
