@@ -21,6 +21,8 @@
 
 #define SEISCOMP_COMPONENT EventList
 #include "eventlistview.h"
+#include "eventlistview_p.h"
+
 #include <seiscomp/gui/datamodel/ui_eventlistview.h>
 #include <seiscomp/gui/datamodel/ui_eventlistviewregionfilterdialog.h>
 
@@ -63,6 +65,9 @@
 #include <QHeaderView>
 
 #include <algorithm>
+
+
+#define SC_D (*_d_ptr)
 
 
 using namespace Seiscomp::Core;
@@ -789,9 +794,9 @@ enum SchemeType {
 
 class TreeItem : public QTreeWidgetItem {
 	public:
-		explicit TreeItem(int type, const EventListView::ItemConfig &cfg) : QTreeWidgetItem(type), _enabled(true), config(cfg) {}
-		explicit TreeItem(QTreeWidget *view, int type, const EventListView::ItemConfig &cfg) : QTreeWidgetItem(view, type), _enabled(true), config(cfg) {}
-		explicit TreeItem(QTreeWidgetItem *parent, int type, const EventListView::ItemConfig &cfg) : QTreeWidgetItem(parent, type), _enabled(true), config(cfg) {}
+		explicit TreeItem(int type, const EventListViewPrivate::ItemConfig &cfg) : QTreeWidgetItem(type), _enabled(true), config(cfg) {}
+		explicit TreeItem(QTreeWidget *view, int type, const EventListViewPrivate::ItemConfig &cfg) : QTreeWidgetItem(view, type), _enabled(true), config(cfg) {}
+		explicit TreeItem(QTreeWidgetItem *parent, int type, const EventListViewPrivate::ItemConfig &cfg) : QTreeWidgetItem(parent, type), _enabled(true), config(cfg) {}
 
 		virtual void setEnabled(bool e) {
 			if ( _enabled == e ) return;
@@ -817,13 +822,13 @@ class TreeItem : public QTreeWidgetItem {
 		bool _enabled;
 
 	protected:
-		const EventListView::ItemConfig &config;
+		const EventListViewPrivate::ItemConfig &config;
 };
 
 
 class SchemeTreeItem : public TreeItem {
 	protected:
-		SchemeTreeItem(int type, PublicObject* object, const EventListView::ItemConfig &cfg, QTreeWidgetItem * parent = 0)
+		SchemeTreeItem(int type, PublicObject* object, const EventListViewPrivate::ItemConfig &cfg, QTreeWidgetItem * parent = 0)
 		: TreeItem(parent, type, cfg), _object(object) { init(); }
 
 	public:
@@ -859,13 +864,13 @@ class SchemeTreeItem : public TreeItem {
 		PublicObject* object() const { return _object.get(); }
 
 	private:
-		PublicObjectPtr      _object;
+		PublicObjectPtr _object;
 };
 
 
 class OriginTreeItem : public SchemeTreeItem {
 	public:
-		OriginTreeItem(Origin* origin, const EventListView::ItemConfig &config, QTreeWidgetItem * parent = 0)
+		OriginTreeItem(Origin* origin, const EventListViewPrivate::ItemConfig &config, QTreeWidgetItem * parent = 0)
 		: SchemeTreeItem(ST_Origin, origin, config, parent),_published( false ) {
 			QFont f = font(config.columnMap[COL_REGION]);
 			f.setItalic(true);
@@ -1050,8 +1055,8 @@ std::string OriginTreeItem::TimeFormat;
 
 class FocalMechanismTreeItem : public SchemeTreeItem {
 	public:
-		FocalMechanismTreeItem(FocalMechanism* origin, const EventListView::ItemConfig &config, QTreeWidgetItem * parent = 0)
-		  : SchemeTreeItem(ST_FocalMechanism, origin, config, parent),_published(false) {
+		FocalMechanismTreeItem(FocalMechanism* origin, const EventListViewPrivate::ItemConfig &config, QTreeWidgetItem * parent = 0)
+		: SchemeTreeItem(ST_FocalMechanism, origin, config, parent),_published(false) {
 			update(nullptr);
 		}
 
@@ -1180,8 +1185,8 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 
 class EventTreeItem : public SchemeTreeItem {
 	public:
-		EventTreeItem(Event* event, const EventListView::ItemConfig &config, QTreeWidgetItem * parent = 0)
-		  : SchemeTreeItem(ST_Event, event, config, parent) {
+		EventTreeItem(Event* event, const EventListViewPrivate::ItemConfig &config, QTreeWidgetItem * parent = 0)
+		: SchemeTreeItem(ST_Event, event, config, parent) {
 			_showOnlyOnePerAgency = false;
 			_resort = false;
 			_hasMultipleAgencies = false;
@@ -2197,69 +2202,88 @@ bool EventListView::Filter::isNull() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+EventListViewPrivate::EventListViewPrivate()
+: _ui(new Ui::EventListView) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+EventListViewPrivate::~EventListViewPrivate() {
+	delete _ui;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool withOrigins,
                              bool withFocalMechanisms, QWidget * parent, Qt::WindowFlags f)
 : QWidget(parent, f)
-, _ui(new Ui::EventListView)
-, _reader(reader)
-, _withOrigins(withOrigins), _withFocalMechanisms(withFocalMechanisms)
-, _blockSelection(false), _blockRemovingOfExpiredEvents(false)
-, _blockCountSignal(false) {
-	_ui->setupUi(this);
+, _d_ptr(new EventListViewPrivate) {
+	SC_D._reader = reader;
+	SC_D._withOrigins = withOrigins;
+	SC_D._withFocalMechanisms = withFocalMechanisms;
+	SC_D._blockSelection = false;
+	SC_D._blockRemovingOfExpiredEvents = false;
+	SC_D._blockCountSignal = false;
+	SC_D._ui->setupUi(this);
 
-	_visibleEventCount = 0;
-	_regionIndex = 0;
-	_commandWaitDialog = nullptr;
+	SC_D._visibleEventCount = 0;
+	SC_D._regionIndex = 0;
+	SC_D._commandWaitDialog = nullptr;
 
 	QBoxLayout *l = new QVBoxLayout;
 	l->setMargin(0);
-	_ui->frameList->setLayout(l);
+	SC_D._ui->frameList->setLayout(l);
 
-	_treeWidget = new TreeWidget(_ui->frameList);
-	_treeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	_treeWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-	_treeWidget->setMouseTracking(true);
-	_treeWidget->viewport()->installEventFilter(this);
-	_treeWidget->setAutoScroll(true);
+	SC_D._treeWidget = new TreeWidget(SC_D._ui->frameList);
+	SC_D._treeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	SC_D._treeWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+	SC_D._treeWidget->setMouseTracking(true);
+	SC_D._treeWidget->viewport()->installEventFilter(this);
+	SC_D._treeWidget->setAutoScroll(true);
 
-	l->addWidget(_treeWidget);
+	l->addWidget(SC_D._treeWidget);
 
 	setSortingEnabled(true);
 
-	_unassociatedEventItem = nullptr;
-	_updateLocalEPInstance = false;
+	SC_D._unassociatedEventItem = nullptr;
+	SC_D._updateLocalEPInstance = false;
 
-	_itemConfig.disabledColor = palette().color(QPalette::Disabled, QPalette::Text);
-	_itemConfig.columnMap.clear();
+	SC_D._itemConfig.disabledColor = palette().color(QPalette::Disabled, QPalette::Text);
+	SC_D._itemConfig.columnMap.clear();
 	for ( int i = 0; i < EventListColumns::Quantity; ++i ) {
 		switch ( i ) {
 			case COL_OTIME:
 				if ( SCScheme.dateTime.useLocalTime )
-					_itemConfig.header << QString(EEventListColumnsNames::name(i)).arg(Core::Time::LocalTimeZone().c_str());
+					SC_D._itemConfig.header << QString(EEventListColumnsNames::name(i)).arg(Core::Time::LocalTimeZone().c_str());
 				else
-					_itemConfig.header << QString(EEventListColumnsNames::name(i)).arg("UTC");
+					SC_D._itemConfig.header << QString(EEventListColumnsNames::name(i)).arg("UTC");
 				break;
 			case COL_AZIMUTHAL_GAP:
-				_itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (°)");
+				SC_D._itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (°)");
 				break;
 			case COL_LAT:
-				_itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (°)");
+				SC_D._itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (°)");
 				break;
 			case COL_LON:
-				_itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (°)");
+				SC_D._itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (°)");
 				break;
 			case COL_RMS:
-				_itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (s)");
+				SC_D._itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (s)");
 				break;
 			default:
-				_itemConfig.header << EEventListColumnsNames::name(i);
+				SC_D._itemConfig.header << EEventListColumnsNames::name(i);
 				break;
 		}
-		_itemConfig.columnMap.append(i);
+		SC_D._itemConfig.columnMap.append(i);
 	}
 
-	_itemConfig.customColumn = -1;
-	_itemConfig.customDefaultText = "-";
+	SC_D._itemConfig.customColumn = -1;
+	SC_D._itemConfig.customDefaultText = "-";
 
 	try {
 		std::vector<std::string> cols = SCApp->configGetStrings("eventlist.visibleColumns");
@@ -2297,55 +2321,55 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 		for ( size_t i = 0; i < types.size(); ++i ) {
 			EventType type;
 			if ( type.fromString(types[i]) )
-				_itemConfig.hiddenEventTypes.insert(type);
+				SC_D._itemConfig.hiddenEventTypes.insert(type);
 			else
 				std::cerr << "WARNING: eventlist.filter.types.blacklist: unknown type: "
 				          << types[i] << std::endl;
 		}
 	}
 	catch ( ... ) {
-		_itemConfig.hiddenEventTypes.insert(NOT_EXISTING);
-		_itemConfig.hiddenEventTypes.insert(OTHER_EVENT);
+		SC_D._itemConfig.hiddenEventTypes.insert(NOT_EXISTING);
+		SC_D._itemConfig.hiddenEventTypes.insert(OTHER_EVENT);
 	}
 
 	try {
 		std::vector<std::string> prefAgencies = SCApp->configGetStrings("eventlist.filter.agencies.whitelist");
 		for ( size_t i = 0; i < prefAgencies.size(); ++i )
-			_itemConfig.preferredAgencies.insert(prefAgencies[i].c_str());
+			SC_D._itemConfig.preferredAgencies.insert(prefAgencies[i].c_str());
 	}
 	catch ( ... ) {
-		_itemConfig.preferredAgencies.insert(SCApp->agencyID().c_str());
+		SC_D._itemConfig.preferredAgencies.insert(SCApp->agencyID().c_str());
 	}
 
 	try {
-		_checkEventAgency = SCApp->configGetString("eventlist.filter.agencies.type") == "events";
+		SC_D._checkEventAgency = SCApp->configGetString("eventlist.filter.agencies.type") == "events";
 	}
 	catch ( ... ) {
-		_checkEventAgency = true;
+		SC_D._checkEventAgency = true;
 	}
 
-	try { _ui->cbHideForeign->setText(SCApp->configGetString("eventlist.filter.agencies.label").c_str()); }
+	try { SC_D._ui->cbHideForeign->setText(SCApp->configGetString("eventlist.filter.agencies.label").c_str()); }
 	catch ( ... ) {}
 
-	try { _ui->cbHideForeign->setChecked(SCApp->configGetBool("eventlist.filter.agencies.enabled")); }
+	try { SC_D._ui->cbHideForeign->setChecked(SCApp->configGetBool("eventlist.filter.agencies.enabled")); }
 	catch ( ... ) {}
 
-	try { _ui->cbHideOther->setText(SCApp->configGetString("eventlist.filter.types.label").c_str()); }
+	try { SC_D._ui->cbHideOther->setText(SCApp->configGetString("eventlist.filter.types.label").c_str()); }
 	catch ( ... ) {}
 
-	try { _ui->cbHideOther->setChecked(SCApp->configGetBool("eventlist.filter.types.enabled")); }
+	try { SC_D._ui->cbHideOther->setChecked(SCApp->configGetBool("eventlist.filter.types.enabled")); }
 	catch ( ... ) {}
 
-	try { _ui->cbFilterRegions->setChecked(SCApp->configGetBool("eventlist.filter.regions.enabled")); }
+	try { SC_D._ui->cbFilterRegions->setChecked(SCApp->configGetBool("eventlist.filter.regions.enabled")); }
 	catch ( ... ) {}
 
 	try {
-		_itemConfig.customColumn = SCApp->configGetInt("eventlist.customColumn.pos");
+		SC_D._itemConfig.customColumn = SCApp->configGetInt("eventlist.customColumn.pos");
 	}
 	catch ( ... ) {}
 
 	try {
-		_itemConfig.customDefaultText = SCApp->configGetString("eventlist.customColumn.default").c_str();
+		SC_D._itemConfig.customDefaultText = SCApp->configGetString("eventlist.customColumn.default").c_str();
 	}
 	catch ( ... ) {}
 
@@ -2358,7 +2382,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 			std::string strColor = customColors[i].substr(pos+1);
 			QColor color;
 			if ( fromString(color, strColor) )
-				_itemConfig.customColorMap[value] = color;
+				SC_D._itemConfig.customColorMap[value] = color;
 		}
 	}
 	catch ( ... ) {}
@@ -2378,25 +2402,25 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	}
 
 	if ( !customColumn.empty() ) {
-		if ( _itemConfig.customColumn >= 0 && _itemConfig.customColumn < _itemConfig.header.size() )
-			_itemConfig.header.insert(_itemConfig.customColumn, customColumn.c_str());
+		if ( SC_D._itemConfig.customColumn >= 0 && SC_D._itemConfig.customColumn < SC_D._itemConfig.header.size() )
+			SC_D._itemConfig.header.insert(SC_D._itemConfig.customColumn, customColumn.c_str());
 		else {
-			_itemConfig.header.append(customColumn.c_str());
-			_itemConfig.customColumn = _itemConfig.header.size()-1;
+			SC_D._itemConfig.header.append(customColumn.c_str());
+			SC_D._itemConfig.customColumn = SC_D._itemConfig.header.size()-1;
 		}
 
-		if ( _itemConfig.customColumn >= 0 && _itemConfig.customColumn < _itemConfig.columnMap.size() ) {
-			for ( int i = _itemConfig.customColumn; i < _itemConfig.columnMap.size(); ++i )
-				_itemConfig.columnMap[i] = i+1;
+		if ( SC_D._itemConfig.customColumn >= 0 && SC_D._itemConfig.customColumn < SC_D._itemConfig.columnMap.size() ) {
+			for ( int i = SC_D._itemConfig.customColumn; i < SC_D._itemConfig.columnMap.size(); ++i )
+				SC_D._itemConfig.columnMap[i] = i+1;
 		}
 	}
 
 	try {
-		_itemConfig.originCommentID = SCApp->configGetString("eventlist.customColumn.originCommentID");
+		SC_D._itemConfig.originCommentID = SCApp->configGetString("eventlist.customColumn.originCommentID");
 	}
 	catch ( ... ) {}
 	try {
-		_itemConfig.eventCommentID = SCApp->configGetString("eventlist.customColumn.eventCommentID");
+		SC_D._itemConfig.eventCommentID = SCApp->configGetString("eventlist.customColumn.eventCommentID");
 	}
 	catch ( ... ) {}
 
@@ -2487,66 +2511,66 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	for ( int i = 0; i < scriptColumns.size(); ++i ) {
 		ConfigProcessColumn &item = scriptColumns[i];
 
-		if ( item.pos >= 0 && item.pos < _itemConfig.header.size() ) {
-			_itemConfig.header.insert(item.pos, item.label);
-			if ( item.pos <= _itemConfig.customColumn )
-				++_itemConfig.customColumn;
+		if ( item.pos >= 0 && item.pos < SC_D._itemConfig.header.size() ) {
+			SC_D._itemConfig.header.insert(item.pos, item.label);
+			if ( item.pos <= SC_D._itemConfig.customColumn )
+				++SC_D._itemConfig.customColumn;
 		}
 		else {
-			_itemConfig.header.append(item.label);
-			item.pos = _itemConfig.header.size()-1;
+			SC_D._itemConfig.header.append(item.label);
+			item.pos = SC_D._itemConfig.header.size()-1;
 		}
 
-		if ( item.pos >= 0 && item.pos < _itemConfig.columnMap.size() ) {
+		if ( item.pos >= 0 && item.pos < SC_D._itemConfig.columnMap.size() ) {
 			// Remap predefined columns
-			for ( int i = 0; i < _itemConfig.columnMap.size(); ++i ) {
-				if ( _itemConfig.columnMap[i] >= item.pos )
-					++_itemConfig.columnMap[i];
+			for ( int i = 0; i < SC_D._itemConfig.columnMap.size(); ++i ) {
+				if ( SC_D._itemConfig.columnMap[i] >= item.pos )
+					++SC_D._itemConfig.columnMap[i];
 			}
 
 			// Remap origin and event process columns
-			for ( int i = 0; i < _itemConfig.originScriptColumns.size(); ++i ) {
-				ProcessColumn &col = _itemConfig.originScriptColumns[i];
+			for ( int i = 0; i < SC_D._itemConfig.originScriptColumns.size(); ++i ) {
+				auto &col = SC_D._itemConfig.originScriptColumns[i];
 				if ( col.pos >= item.pos ) {
 					++col.pos;
-					++_itemConfig.originScriptColumnMap[col.script];
+					++SC_D._itemConfig.originScriptColumnMap[col.script];
 				}
 			}
-			for ( int i = 0; i < _itemConfig.eventScriptColumns.size(); ++i ) {
-				ProcessColumn &col = _itemConfig.eventScriptColumns[i];
+			for ( int i = 0; i < SC_D._itemConfig.eventScriptColumns.size(); ++i ) {
+				auto &col = SC_D._itemConfig.eventScriptColumns[i];
 				if ( col.pos >= item.pos ) {
 					++col.pos;
-					++_itemConfig.eventScriptColumnMap[col.script];
+					++SC_D._itemConfig.eventScriptColumnMap[col.script];
 				}
 			}
 		}
 
 		if ( !item.originScript.isEmpty() ) {
-			ProcessColumn col;
+			EventListViewPrivate::ProcessColumn col;
 			col.pos = item.pos;
 			col.script = item.originScript;
-			_itemConfig.originScriptColumns.append(col);
-			_itemConfig.originScriptColumnMap[col.script] = col.pos;
+			SC_D._itemConfig.originScriptColumns.append(col);
+			SC_D._itemConfig.originScriptColumnMap[col.script] = col.pos;
 		}
 		if ( !item.eventScript.isEmpty() ) {
-			ProcessColumn col;
+			EventListViewPrivate::ProcessColumn col;
 			col.pos = item.pos;
 			col.script = item.eventScript;
-			_itemConfig.eventScriptColumns.append(col);
-			_itemConfig.eventScriptColumnMap[col.script] = col.pos;
+			SC_D._itemConfig.eventScriptColumns.append(col);
+			SC_D._itemConfig.eventScriptColumnMap[col.script] = col.pos;
 		}
 	}
 	// Create set of event script column positions for faster lookup
-	for ( int i = 0; i < _itemConfig.eventScriptColumns.size(); ++i )
-		_itemConfig.eventScriptPositions << _itemConfig.eventScriptColumns[i].pos;
+	for ( int i = 0; i < SC_D._itemConfig.eventScriptColumns.size(); ++i )
+		SC_D._itemConfig.eventScriptPositions << SC_D._itemConfig.eventScriptColumns[i].pos;
 
-	if ( !_withOrigins && !_withFocalMechanisms )
-		_treeWidget->setRootIsDecorated(false);
+	if ( !SC_D._withOrigins && !SC_D._withFocalMechanisms )
+		SC_D._treeWidget->setRootIsDecorated(false);
 
 	Region reg;
 	reg.name = "- custom -";
 	reg.bbox = Geo::GeoBoundingBox(-90, -180, 90, 180);
-	_filterRegions.append(reg);
+	SC_D._filterRegions.append(reg);
 
 	// Read region definitions for filters
 	{
@@ -2670,112 +2694,112 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 			}
 
 			reg.name = name.c_str();
-			_filterRegions.append(reg);
+			SC_D._filterRegions.append(reg);
 		}
 	}
 
 	// Initialize database filter
-	try { _filter.minLatitude = SCApp->configGetDouble("eventlist.filter.database.minlat"); }
+	try { SC_D._filter.minLatitude = SCApp->configGetDouble("eventlist.filter.database.minlat"); }
 	catch ( ... ) {}
-	try { _filter.maxLatitude = SCApp->configGetDouble("eventlist.filter.database.maxlat"); }
+	try { SC_D._filter.maxLatitude = SCApp->configGetDouble("eventlist.filter.database.maxlat"); }
 	catch ( ... ) {}
-	try { _filter.minLongitude = SCApp->configGetDouble("eventlist.filter.database.minlon"); }
+	try { SC_D._filter.minLongitude = SCApp->configGetDouble("eventlist.filter.database.minlon"); }
 	catch ( ... ) {}
-	try { _filter.maxLongitude = SCApp->configGetDouble("eventlist.filter.database.maxlon"); }
+	try { SC_D._filter.maxLongitude = SCApp->configGetDouble("eventlist.filter.database.maxlon"); }
 	catch ( ... ) {}
-	try { _filter.minDepth = SCApp->configGetDouble("eventlist.filter.database.mindepth"); }
+	try { SC_D._filter.minDepth = SCApp->configGetDouble("eventlist.filter.database.mindepth"); }
 	catch ( ... ) {}
-	try { _filter.maxDepth = SCApp->configGetDouble("eventlist.filter.database.maxdepth"); }
+	try { SC_D._filter.maxDepth = SCApp->configGetDouble("eventlist.filter.database.maxdepth"); }
 	catch ( ... ) {}
-	try { _filter.minMagnitude = SCApp->configGetDouble("eventlist.filter.database.minmag"); }
+	try { SC_D._filter.minMagnitude = SCApp->configGetDouble("eventlist.filter.database.minmag"); }
 	catch ( ... ) {}
-	try { _filter.maxMagnitude = SCApp->configGetDouble("eventlist.filter.database.maxmag"); }
+	try { SC_D._filter.maxMagnitude = SCApp->configGetDouble("eventlist.filter.database.maxmag"); }
 	catch ( ... ) {}
-	try { _filter.minPhaseCount = SCApp->configGetInt("eventlist.filter.database.minphasecount");}
+	try { SC_D._filter.minPhaseCount = SCApp->configGetInt("eventlist.filter.database.minphasecount");}
 	catch ( ... ) {}
-	try { _filter.maxPhaseCount = SCApp->configGetInt("eventlist.filter.database.maxphasecount"); }
+	try { SC_D._filter.maxPhaseCount = SCApp->configGetInt("eventlist.filter.database.maxphasecount"); }
 	catch ( ... ) {}
 
-	for ( int i = 0; i < _filterRegions.size(); ++i )
-		_ui->lstFilterRegions->addItem(_filterRegions[i].name);
+	for ( int i = 0; i < SC_D._filterRegions.size(); ++i )
+		SC_D._ui->lstFilterRegions->addItem(SC_D._filterRegions[i].name);
 
-	if ( _ui->lstFilterRegions->count() > 1 ) {
-		_regionIndex = 1;
-		_ui->lstFilterRegions->setCurrentIndex(_regionIndex);
-		_ui->btnChangeRegion->hide();
+	if ( SC_D._ui->lstFilterRegions->count() > 1 ) {
+		SC_D._regionIndex = 1;
+		SC_D._ui->lstFilterRegions->setCurrentIndex(SC_D._regionIndex);
+		SC_D._ui->btnChangeRegion->hide();
 	}
 
-	_ui->btnFilter->setPopupMode(QToolButton::InstantPopup);
+	SC_D._ui->btnFilter->setPopupMode(QToolButton::InstantPopup);
 
-	_filterWidget = new EventFilterWidget;
-	_filterWidget->setView(this);
-	_filterWidget->setFilter(_filter);
+	SC_D._filterWidget = new EventFilterWidget;
+	SC_D._filterWidget->setView(this);
+	SC_D._filterWidget->setFilter(SC_D._filter);
 
 	QVBoxLayout *vl = new QVBoxLayout;
-	vl->addWidget(_filterWidget);
+	vl->addWidget(SC_D._filterWidget);
 
-	QMenu *menu = new CustomWidgetMenu(_ui->btnFilter);
+	QMenu *menu = new CustomWidgetMenu(SC_D._ui->btnFilter);
 	menu->setLayout(vl);
-	_ui->btnFilter->setMenu(menu);
+	SC_D._ui->btnFilter->setMenu(menu);
 
-	connect(_ui->lstFilterRegions, SIGNAL(currentIndexChanged(int)),
+	connect(SC_D._ui->lstFilterRegions, SIGNAL(currentIndexChanged(int)),
 	        this, SLOT(regionSelectionChanged(int)));
 
-	connect(_ui->btnChangeRegion, SIGNAL(clicked()), this, SLOT(changeRegion()));
+	connect(SC_D._ui->btnChangeRegion, SIGNAL(clicked()), this, SLOT(changeRegion()));
 
 	//_treeWidget->setHeaderLabels(QStringList() << "PublicID" << "Desc/Time" << "Mag" << "StaCount" << "defPhaseCount");
-	_treeWidget->setHeaderLabels(_itemConfig.header);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_OTIME],
+	SC_D._treeWidget->setHeaderLabels(SC_D._itemConfig.header);
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_OTIME],
 		tr("Origin time")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_EVENTTYPE_CERTAINTY],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_EVENTTYPE_CERTAINTY],
 		tr("Certainty of event")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_EVENTTYPE],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_EVENTTYPE],
 		tr("Type of event")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_M],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_M],
 		tr("Preferred magnitude of event")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_MTYPE],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_MTYPE],
 		tr("Type of preferred magnitude of event")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_RMS],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_RMS],
 		tr("RMS of origin as returned by locator")
 	);
 
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_AZIMUTHAL_GAP],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_AZIMUTHAL_GAP],
 		tr("Largest azimuth between any 2 neighboring stations providing picks to an origins")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_LAT],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_LAT],
 		tr("Latitude of origin")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_LON],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_LON],
 		tr("Longitude of origin")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_DEPTH],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_DEPTH],
 		tr("Depth of origin")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_DEPTH_TYPE],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_DEPTH_TYPE],
 		tr("Depth type of origin")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_FM],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_FM],
 		tr("Has event any referenced focal mechanism?")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_TYPE],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_TYPE],
 		tr("Origin evaluation status\n"
 		   "A: not set\n"
 		   "F: final\n"
@@ -2790,43 +2814,43 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 		   "Trailing\n"
 		   "+: event has origins from multiple agencies")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_PHASES],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_PHASES],
 		tr("Number of arrivals = referenced phase picks")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_ORIGINS],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_ORIGINS],
 		tr("Number of origins referenced by event")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_AGENCY],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_AGENCY],
 		tr("ID of agency providing origin")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_AUTHOR],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_AUTHOR],
 		tr("ID of author providing origin")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_REGION],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_REGION],
 		tr("Region name of origin")
 	);
-	_treeWidget->headerItem()->setToolTip(
-		_itemConfig.columnMap[COL_ID],
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_ID],
 		tr("Event ID")
 	);
-	_treeWidget->setAlternatingRowColors(true);
+	SC_D._treeWidget->setAlternatingRowColors(true);
 
 	for ( int i = 0; i < EventListColumns::Quantity; ++i )
-		_treeWidget->header()->setSectionHidden(_itemConfig.columnMap[i], !colVisibility[i]);
+		SC_D._treeWidget->header()->setSectionHidden(SC_D._itemConfig.columnMap[i], !colVisibility[i]);
 
-	_treeWidget->header()->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(_treeWidget->header(), SIGNAL(customContextMenuRequested(const QPoint &)),
+	SC_D._treeWidget->header()->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(SC_D._treeWidget->header(), SIGNAL(customContextMenuRequested(const QPoint &)),
 	        this, SLOT(headerContextMenuRequested(const QPoint &)));
 
-	connect(_treeWidget->header(), SIGNAL(sectionClicked(int)),
+	connect(SC_D._treeWidget->header(), SIGNAL(sectionClicked(int)),
 	        this, SLOT(sortItems(int)));
 
-	addAction(_ui->actionCopyRowToClipboard);
+	addAction(SC_D._ui->actionCopyRowToClipboard);
 
 	QAction* expandAll = new QAction(this);
 	expandAll->setShortcut(Qt::CTRL + Qt::Key_E);
@@ -2837,63 +2861,63 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	addAction(expandAll);
 	addAction(collapseAll);
 
-	_ui->btnReadDays->setEnabled(_reader != nullptr);
-	_ui->btnReadInterval->setEnabled(_reader != nullptr);
+	SC_D._ui->btnReadDays->setEnabled(SC_D._reader != nullptr);
+	SC_D._ui->btnReadInterval->setEnabled(SC_D._reader != nullptr);
 
-	_ui->dateTimeEditStart->setDateTime(QDateTime::currentDateTime().toUTC());
-	_ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime().toUTC());
+	SC_D._ui->dateTimeEditStart->setDateTime(QDateTime::currentDateTime().toUTC());
+	SC_D._ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime().toUTC());
 
 	initTree();
 
-	_autoSelect = false;
+	SC_D._autoSelect = false;
 
-	connect(_ui->cbHideOther, SIGNAL(stateChanged(int)), this,  SLOT(onShowOtherEvents(int)));
-	_hideOtherEvents = _ui->cbHideOther->checkState() == Qt::Checked;
+	connect(SC_D._ui->cbHideOther, SIGNAL(stateChanged(int)), this,  SLOT(onShowOtherEvents(int)));
+	SC_D._hideOtherEvents = SC_D._ui->cbHideOther->checkState() == Qt::Checked;
 
-	connect(_ui->cbHideForeign, SIGNAL(stateChanged(int)), this,  SLOT(onShowForeignEvents(int)));
-	_hideForeignEvents = _ui->cbHideForeign->checkState() == Qt::Checked;
+	connect(SC_D._ui->cbHideForeign, SIGNAL(stateChanged(int)), this,  SLOT(onShowForeignEvents(int)));
+	SC_D._hideForeignEvents = SC_D._ui->cbHideForeign->checkState() == Qt::Checked;
 
-	connect(_ui->cbFilterRegions, SIGNAL(stateChanged(int)), this,  SLOT(onHideOutsideRegion(int)));
-	_hideOutsideRegion = _ui->cbFilterRegions->checkState() == Qt::Checked;
+	connect(SC_D._ui->cbFilterRegions, SIGNAL(stateChanged(int)), this,  SLOT(onHideOutsideRegion(int)));
+	SC_D._hideOutsideRegion = SC_D._ui->cbFilterRegions->checkState() == Qt::Checked;
 
-	connect(_ui->cbFilterRegionMode, SIGNAL(currentIndexChanged(int)), this,  SLOT(onFilterRegionModeChanged(int)));
+	connect(SC_D._ui->cbFilterRegionMode, SIGNAL(currentIndexChanged(int)), this,  SLOT(onFilterRegionModeChanged(int)));
 
-	connect(_ui->cbHideFinalRejected, SIGNAL(stateChanged(int)), this,  SLOT(onHideFinalRejectedEvents(int)));
-	_hideFinalRejectedEvents = _ui->cbHideFinalRejected->checkState() == Qt::Checked;
+	connect(SC_D._ui->cbHideFinalRejected, SIGNAL(stateChanged(int)), this,  SLOT(onHideFinalRejectedEvents(int)));
+	SC_D._hideFinalRejectedEvents = SC_D._ui->cbHideFinalRejected->checkState() == Qt::Checked;
 
-	connect(_ui->cbHideNew, SIGNAL(stateChanged(int)), this,  SLOT(onHideNewEvents(int)));
-	_hideNewEvents = _ui->cbHideNew->checkState() == Qt::Checked;
+	connect(SC_D._ui->cbHideNew, SIGNAL(stateChanged(int)), this,  SLOT(onHideNewEvents(int)));
+	SC_D._hideNewEvents = SC_D._ui->cbHideNew->checkState() == Qt::Checked;
 
-	connect(_ui->cbShowLatestOnly, SIGNAL(stateChanged(int)), this,  SLOT(updateAgencyState()));
-	_showOnlyLatestPerAgency = _ui->cbShowLatestOnly->checkState() == Qt::Checked;
+	connect(SC_D._ui->cbShowLatestOnly, SIGNAL(stateChanged(int)), this,  SLOT(updateAgencyState()));
+	SC_D._showOnlyLatestPerAgency = SC_D._ui->cbShowLatestOnly->checkState() == Qt::Checked;
 
-	if ( !_withOrigins )
-		_ui->cbShowLatestOnly->setVisible(false);
+	if ( !SC_D._withOrigins )
+		SC_D._ui->cbShowLatestOnly->setVisible(false);
 
-	connect(_ui->btnReadDays, SIGNAL(clicked()), this, SLOT(readLastDays()));
-	connect(_ui->btnReadInterval, SIGNAL(clicked()), this, SLOT(readInterval()));
-	connect(_ui->btnClear, SIGNAL(clicked()), this, SLOT(clear()));
-	connect(_treeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(itemSelected(QTreeWidgetItem*,int)));
-	connect(_treeWidget, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(itemPressed(QTreeWidgetItem*,int)));
-	connect(_treeWidget, SIGNAL(itemEntered(QTreeWidgetItem*,int)), this, SLOT(itemEntered(QTreeWidgetItem*,int)));
-	connect(_treeWidget, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(itemExpanded(QTreeWidgetItem*)));
-	connect(_treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
-	connect(_ui->actionCopyRowToClipboard, SIGNAL(triggered(bool)), this, SLOT(copyRowToClipboard()));
+	connect(SC_D._ui->btnReadDays, SIGNAL(clicked()), this, SLOT(readLastDays()));
+	connect(SC_D._ui->btnReadInterval, SIGNAL(clicked()), this, SLOT(readInterval()));
+	connect(SC_D._ui->btnClear, SIGNAL(clicked()), this, SLOT(clear()));
+	connect(SC_D._treeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(itemSelected(QTreeWidgetItem*,int)));
+	connect(SC_D._treeWidget, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(itemPressed(QTreeWidgetItem*,int)));
+	connect(SC_D._treeWidget, SIGNAL(itemEntered(QTreeWidgetItem*,int)), this, SLOT(itemEntered(QTreeWidgetItem*,int)));
+	connect(SC_D._treeWidget, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(itemExpanded(QTreeWidgetItem*)));
+	connect(SC_D._treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+	connect(SC_D._ui->actionCopyRowToClipboard, SIGNAL(triggered(bool)), this, SLOT(copyRowToClipboard()));
 
-	connect(expandAll, SIGNAL(triggered()), _treeWidget, SLOT(expandAll()));
-	connect(collapseAll, SIGNAL(triggered()), _treeWidget, SLOT(collapseAll()));
+	connect(expandAll, SIGNAL(triggered()), SC_D._treeWidget, SLOT(expandAll()));
+	connect(collapseAll, SIGNAL(triggered()), SC_D._treeWidget, SLOT(collapseAll()));
 	//_withComments = true;
 
-	_busyIndicator = new QMovie(this);
-	_busyIndicator->setFileName(":/images/images/loader.mng");
-	_busyIndicator->setCacheMode(QMovie::CacheAll);
+	SC_D._busyIndicator = new QMovie(this);
+	SC_D._busyIndicator->setFileName(":/images/images/loader.mng");
+	SC_D._busyIndicator->setCacheMode(QMovie::CacheAll);
 
-	_busyIndicatorLabel = new QLabel(_treeWidget->viewport());
-	_busyIndicatorLabel->hide();
-	_busyIndicatorLabel->setMovie(_busyIndicator);
-	_busyIndicatorLabel->setToolTip("PublicObject evaluator is running ...");
+	SC_D._busyIndicatorLabel = new QLabel(SC_D._treeWidget->viewport());
+	SC_D._busyIndicatorLabel->hide();
+	SC_D._busyIndicatorLabel->setMovie(SC_D._busyIndicator);
+	SC_D._busyIndicatorLabel->setToolTip("PublicObject evaluator is running ...");
 
-	connect(_busyIndicator, SIGNAL(resized(const QSize &)),
+	connect(SC_D._busyIndicator, SIGNAL(resized(const QSize &)),
 	        this, SLOT(indicatorResized(const QSize &)));
 
 	connect(&PublicObjectEvaluator::Instance(), SIGNAL(resultAvailable(const QString &, const QString &, const QString &, const QString &)),
@@ -2903,17 +2927,17 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	// Start movie when the thread starts
 	connect(&PublicObjectEvaluator::Instance(), SIGNAL(started()),
-	        _busyIndicatorLabel, SLOT(show()));
+	        SC_D._busyIndicatorLabel, SLOT(show()));
 	connect(&PublicObjectEvaluator::Instance(), SIGNAL(started()),
-	        _busyIndicator, SLOT(start()));
+	        SC_D._busyIndicator, SLOT(start()));
 
 	// Stop movie and hide label when the thread finishes
 	connect(&PublicObjectEvaluator::Instance(), SIGNAL(finished()),
-	        _busyIndicatorLabel, SLOT(hide()));
+	        SC_D._busyIndicatorLabel, SLOT(hide()));
 	connect(&PublicObjectEvaluator::Instance(), SIGNAL(finished()),
-	        _busyIndicator, SLOT(stop()));
+	        SC_D._busyIndicator, SLOT(stop()));
 
-	setFMLinkEnabled(_itemConfig.createFMLink);
+	setFMLinkEnabled(SC_D._itemConfig.createFMLink);
 
 	PublicObjectEvaluator::Instance().setDatabaseURI(SCApp->databaseURI().c_str());
 }
@@ -2924,10 +2948,10 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::indicatorResized(const QSize &size) {
-	_busyIndicatorLabel->resize(size);
-	_busyIndicatorLabel->move(
-		(_treeWidget->viewport()->width()-_busyIndicatorLabel->width())/2,
-		(_treeWidget->viewport()->height()-_busyIndicatorLabel->height())/2
+	SC_D._busyIndicatorLabel->resize(size);
+	SC_D._busyIndicatorLabel->move(
+		(SC_D._treeWidget->viewport()->width()-SC_D._busyIndicatorLabel->width())/2,
+		(SC_D._treeWidget->viewport()->height()-SC_D._busyIndicatorLabel->height())/2
 	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2937,7 +2961,7 @@ void EventListView::indicatorResized(const QSize &size) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::onShowOtherEvents(int checked) {
-	_hideOtherEvents = checked == Qt::Checked;
+	SC_D._hideOtherEvents = checked == Qt::Checked;
 	updateHideState();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2947,7 +2971,7 @@ void EventListView::onShowOtherEvents(int checked) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::onHideFinalRejectedEvents(int checked) {
-	_hideFinalRejectedEvents = checked == Qt::Checked;
+	SC_D._hideFinalRejectedEvents = checked == Qt::Checked;
 	updateHideState();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2957,7 +2981,7 @@ void EventListView::onHideFinalRejectedEvents(int checked) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::onHideNewEvents(int checked) {
-	_hideNewEvents = checked == Qt::Checked;
+	SC_D._hideNewEvents = checked == Qt::Checked;
 	updateHideState();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2967,7 +2991,7 @@ void EventListView::onHideNewEvents(int checked) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::onShowForeignEvents(int checked) {
-	_hideForeignEvents = checked == Qt::Checked;
+	SC_D._hideForeignEvents = checked == Qt::Checked;
 	updateHideState();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2977,7 +3001,7 @@ void EventListView::onShowForeignEvents(int checked) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::onHideOutsideRegion(int checked) {
-	_hideOutsideRegion = checked == Qt::Checked;
+	SC_D._hideOutsideRegion = checked == Qt::Checked;
 	updateHideState();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2996,28 +3020,28 @@ void EventListView::onFilterRegionModeChanged(int index) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::updateAgencyState() {
-	_showOnlyLatestPerAgency = _ui->cbShowLatestOnly->checkState() == Qt::Checked;
+	SC_D._showOnlyLatestPerAgency = SC_D._ui->cbShowLatestOnly->checkState() == Qt::Checked;
 
-	_treeWidget->setUpdatesEnabled(false);
+	SC_D._treeWidget->setUpdatesEnabled(false);
 
 	QProgressDialog progress(this);
 	//progress.setWindowModality(Qt::WindowModal);
 	progress.setWindowTitle(tr("Please wait..."));
-	progress.setRange(0, _treeWidget->topLevelItemCount());
+	progress.setRange(0, SC_D._treeWidget->topLevelItemCount());
 	progress.setLabelText(tr("Checking states..."));
 	progress.setModal(true);
 	progress.setCancelButton(nullptr);
 
-	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
-		EventTreeItem* item = (EventTreeItem*)_treeWidget->topLevelItem(i);
+	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
+		EventTreeItem *item = (EventTreeItem*)SC_D._treeWidget->topLevelItem(i);
 
 		progress.setValue(i);
 		qApp->processEvents();
 
-		item->setShowOneItemPerAgency(_showOnlyLatestPerAgency);
+		item->setShowOneItemPerAgency(SC_D._showOnlyLatestPerAgency);
 	}
 
-	_treeWidget->setUpdatesEnabled(true);
+	SC_D._treeWidget->setUpdatesEnabled(true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3028,16 +3052,16 @@ void EventListView::updateAgencyState() {
 void EventListView::updateHideState() {
 	bool changed = false;
 
-	_blockCountSignal = true;
+	SC_D._blockCountSignal = true;
 
-	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
-		EventTreeItem* item = (EventTreeItem*)_treeWidget->topLevelItem(i);
+	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
+		EventTreeItem* item = (EventTreeItem*)SC_D._treeWidget->topLevelItem(i);
 		if ( updateHideState(item) ) {
 			changed = true;
 		}
 	}
 
-	_blockCountSignal = false;
+	SC_D._blockCountSignal = false;
 
 	if ( changed ) {
 		emit eventsUpdated();
@@ -3057,15 +3081,15 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 
 	bool hide = false;
 
-	if ( _hideOtherEvents ) {
+	if ( SC_D._hideOtherEvents ) {
 		try {
-			if ( _itemConfig.hiddenEventTypes.contains(event->type()) )
+			if ( SC_D._itemConfig.hiddenEventTypes.contains(event->type()) )
 				hide = true;
 		}
 		catch ( Core::ValueException & ) {}
 	}
 
-	if ( !hide && _hideFinalRejectedEvents ) {
+	if ( !hide && SC_D._hideFinalRejectedEvents ) {
 		Origin* preferredOrigin = Origin::Find(event->preferredOriginID());
 		if ( preferredOrigin ) {
 			char evalStat = objectEvaluationStatusToChar(preferredOrigin);
@@ -3074,10 +3098,10 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 		}
 	}
 
-	if ( !hide && _hideNewEvents ) {
+	if ( !hide && SC_D._hideNewEvents ) {
 		Origin* preferredOrigin = Origin::Find(event->preferredOriginID());
 		if ( preferredOrigin ) {
-			if ( preferredOrigin->time().value() > _filter.endTime )
+			if ( preferredOrigin->time().value() > SC_D._filter.endTime )
 				hide = true;
 		}
 		else
@@ -3085,10 +3109,10 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 	}
 
 
-	if ( !hide && _hideForeignEvents ) {
-		if ( _checkEventAgency ) {
+	if ( !hide && SC_D._hideForeignEvents ) {
+		if ( SC_D._checkEventAgency ) {
 			try {
-				if ( !_itemConfig.preferredAgencies.contains(item->text(_itemConfig.columnMap[COL_AGENCY])) )
+				if ( !SC_D._itemConfig.preferredAgencies.contains(item->text(SC_D._itemConfig.columnMap[COL_AGENCY])) )
 					hide = true;
 			}
 			catch ( Core::ValueException & ) {
@@ -3100,7 +3124,7 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 			int originItems = eitem->originItemCount();
 			for ( int i = 0; i < originItems; ++i ) {
 				OriginTreeItem *oitem = static_cast<OriginTreeItem*>(eitem->originItem(i));
-				if ( _itemConfig.preferredAgencies.contains(oitem->text(_itemConfig.columnMap[COL_AGENCY])) ) {
+				if ( SC_D._itemConfig.preferredAgencies.contains(oitem->text(SC_D._itemConfig.columnMap[COL_AGENCY])) ) {
 					hasOwnOrigin = true;
 					break;
 				}
@@ -3112,12 +3136,12 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 		}
 	}
 
-	if ( !hide && _hideOutsideRegion && _regionIndex >= 0 ) {
-		bool invert = _ui->cbFilterRegionMode->currentIndex() == 1;
+	if ( !hide && SC_D._hideOutsideRegion && SC_D._regionIndex >= 0 ) {
+		bool invert = SC_D._ui->cbFilterRegionMode->currentIndex() == 1;
 
-		const Region &reg = _filterRegions[_regionIndex];
-		double lat = item->data(_itemConfig.columnMap[COL_LAT], Qt::UserRole).toDouble();
-		double lon = item->data(_itemConfig.columnMap[COL_LON], Qt::UserRole).toDouble();
+		const Region &reg = SC_D._filterRegions[SC_D._regionIndex];
+		double lat = item->data(SC_D._itemConfig.columnMap[COL_LAT], Qt::UserRole).toDouble();
+		double lon = item->data(SC_D._itemConfig.columnMap[COL_LON], Qt::UserRole).toDouble();
 
 		bool isInRegion = reg.poly ?
 			reg.poly->contains(Geo::GeoCoordinate(lat, lon))
@@ -3132,20 +3156,20 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 	if ( hide != item->isHidden() ) {
 		item->setHidden(hide);
 		if ( hide ) {
-			if ( _visibleEventCount > 0 ) {
-				--_visibleEventCount;
+			if ( SC_D._visibleEventCount > 0 ) {
+				--SC_D._visibleEventCount;
 			}
 			emit eventRemovedFromList(event);
-			if ( !_blockCountSignal ) {
+			if ( !SC_D._blockCountSignal ) {
 				emit visibleEventCountChanged();
 			}
 		}
 		else {
-			if ( _visibleEventCount >= 0 ) {
-				++_visibleEventCount;
+			if ( SC_D._visibleEventCount >= 0 ) {
+				++SC_D._visibleEventCount;
 			}
 			emit eventAddedToList(event, false);
-			if ( !_blockCountSignal ) {
+			if ( !SC_D._blockCountSignal ) {
 				emit visibleEventCountChanged();
 			}
 		}
@@ -3163,7 +3187,7 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventListView::~EventListView() {
 	PublicObjectEvaluator::Instance().clear(this);
-	delete _ui;
+	delete _d_ptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3172,7 +3196,7 @@ EventListView::~EventListView() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setRelativeMinimumEventTime(const Seiscomp::Core::TimeSpan& timeAgo) {
-	_timeAgo = timeAgo;
+	SC_D._timeAgo = timeAgo;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3184,7 +3208,7 @@ void EventListView::add(Seiscomp::DataModel::Event* event,
                         Seiscomp::DataModel::Origin* origin) {
 	if ( !origin && !event ) return;
 
-	_blockRemovingOfExpiredEvents = true;
+	SC_D._blockRemovingOfExpiredEvents = true;
 
 	if ( !origin ) {
 		SchemeTreeItem *item = findEvent(event->publicID());
@@ -3201,7 +3225,7 @@ void EventListView::add(Seiscomp::DataModel::Event* event,
 				orgs[org->publicID()] = org;
 		}
 
-		if ( _withFocalMechanisms ) {
+		if ( SC_D._withFocalMechanisms ) {
 			for ( size_t i = 0; i < event->focalMechanismReferenceCount(); ++i ) {
 				FocalMechanism *fm = FocalMechanism::Find(event->focalMechanismReference(i)->focalMechanismID());
 				if ( fm && fms.find(fm->publicID()) == fms.end() )
@@ -3209,11 +3233,11 @@ void EventListView::add(Seiscomp::DataModel::Event* event,
 			}
 		}
 
-		if ( _reader ) {
+		if ( SC_D._reader ) {
 			if ( event->originReferenceCount() == 0 )
-				_reader->load(event);
+				SC_D._reader->load(event);
 
-			DatabaseIterator it = _reader->getOrigins(event->publicID());
+			DatabaseIterator it = SC_D._reader->getOrigins(event->publicID());
 			while ( *it ) {
 				Origin *org = Origin::Cast(*it);
 				if ( org && orgs.find(org->publicID()) == orgs.end() )
@@ -3223,7 +3247,7 @@ void EventListView::add(Seiscomp::DataModel::Event* event,
 			it.close();
 
 			if ( !prefMag && !event->preferredMagnitudeID().empty() )
-				prefMag = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
+				prefMag = Magnitude::Cast(SC_D._reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
 		}
 
 		if ( item == nullptr )
@@ -3232,7 +3256,7 @@ void EventListView::add(Seiscomp::DataModel::Event* event,
 		for ( std::map<std::string, OriginPtr>::iterator it = orgs.begin(); it != orgs.end(); ++it )
 			addOrigin(it->second.get(), item, true);
 
-		if ( _withFocalMechanisms ) {
+		if ( SC_D._withFocalMechanisms ) {
 			for ( std::map<std::string, FocalMechanismPtr>::iterator it = fms.begin(); it != fms.end(); ++it )
 				addFocalMechanism(it->second.get(), item);
 		}
@@ -3247,15 +3271,15 @@ void EventListView::add(Seiscomp::DataModel::Event* event,
 		if ( item == nullptr ) {
 			OriginPtr prefOrg = Origin::Find(event->preferredOriginID());
 
-			if ( !prefOrg && _reader ) {
-				prefOrg = Origin::Cast(_reader->getObject(Origin::TypeInfo(), event->preferredOriginID()));
+			if ( !prefOrg && SC_D._reader ) {
+				prefOrg = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), event->preferredOriginID()));
 
-				if ( (_itemConfig.customColumn != -1) && prefOrg && prefOrg->commentCount() == 0 )
-					_reader->loadComments(prefOrg.get());
+				if ( (SC_D._itemConfig.customColumn != -1) && prefOrg && prefOrg->commentCount() == 0 )
+					SC_D._reader->loadComments(prefOrg.get());
 			}
 
-			if ( !prefMag && _reader && !event->preferredMagnitudeID().empty() )
-				prefMag = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
+			if ( !prefMag && SC_D._reader && !event->preferredMagnitudeID().empty() )
+				prefMag = Magnitude::Cast(SC_D._reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
 
 			item = addEvent(event, false);
 			if ( prefOrg ) {
@@ -3279,7 +3303,7 @@ void EventListView::add(Seiscomp::DataModel::Event* event,
 			addOrigin(origin, nullptr, false);
 	}
 
-	_blockRemovingOfExpiredEvents = false;
+	SC_D._blockRemovingOfExpiredEvents = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3288,9 +3312,9 @@ void EventListView::add(Seiscomp::DataModel::Event* event,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setMessagingEnabled(bool e) {
-	_updateLocalEPInstance = !e;
-	if ( _updateLocalEPInstance )
-		_treeWidget->setDragEnabled(false);
+	SC_D._updateLocalEPInstance = !e;
+	if ( SC_D._updateLocalEPInstance )
+		SC_D._treeWidget->setDragEnabled(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3299,8 +3323,8 @@ void EventListView::setMessagingEnabled(bool e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setEventModificationsEnabled(bool e) {
-	_treeWidget->setDragEnabled(e);
-	_treeWidget->setAcceptDrops(e);
+	SC_D._treeWidget->setDragEnabled(e);
+	SC_D._treeWidget->setAcceptDrops(e);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3309,16 +3333,16 @@ void EventListView::setEventModificationsEnabled(bool e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::initTree() {
-	_treeWidget->clear();
-	_visibleEventCount = 0;
+	SC_D._treeWidget->clear();
+	SC_D._visibleEventCount = 0;
 
-	if ( _withOrigins )
-		_unassociatedEventItem = addEvent(nullptr, false);
+	if ( SC_D._withOrigins )
+		SC_D._unassociatedEventItem = addEvent(nullptr, false);
 	else
-		_unassociatedEventItem = nullptr;
+		SC_D._unassociatedEventItem = nullptr;
 
-	for (int i = 0; i < _treeWidget->columnCount(); i++)
-		_treeWidget->resizeColumnToContents(i);
+	for (int i = 0; i < SC_D._treeWidget->columnCount(); i++)
+		SC_D._treeWidget->resizeColumnToContents(i);
 
 	PublicObjectEvaluator::Instance().clear(this);
 	PublicObjectEvaluator::Instance().setDatabaseURI(SCApp->databaseURI().c_str());
@@ -3332,10 +3356,10 @@ void EventListView::initTree() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventListView::eventFilter(QObject *obj, QEvent *ev) {
-	if ( obj == _treeWidget->viewport() ) {
+	if ( obj == SC_D._treeWidget->viewport() ) {
 		if ( ev->type() == QEvent::Drop ) {
 			QDropEvent *event = static_cast<QDropEvent*>(ev);
-			SchemeTreeItem *item = (SchemeTreeItem*)_treeWidget->itemAt(event->pos());
+			SchemeTreeItem *item = (SchemeTreeItem*)SC_D._treeWidget->itemAt(event->pos());
 			if ( !item || item->type() == ST_None ) {
 				event->ignore();
 				return true;
@@ -3400,8 +3424,9 @@ bool EventListView::eventFilter(QObject *obj, QEvent *ev) {
 			event->accept();
 		}
 		else if ( ev->type() == QEvent::Resize ) {
-			_busyIndicatorLabel->move((_treeWidget->viewport()->width()-_busyIndicatorLabel->width())/2,
-			                          (_treeWidget->viewport()->height()-_busyIndicatorLabel->height())/2);
+			SC_D._busyIndicatorLabel->move(
+				(SC_D._treeWidget->viewport()->width()-SC_D._busyIndicatorLabel->width())/2,
+				(SC_D._treeWidget->viewport()->height()-SC_D._busyIndicatorLabel->height())/2);
 		}
 	}
 
@@ -3424,7 +3449,7 @@ void EventListView::clear() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::clearDatabaseFilter() {
-	_filterWidget->setFilter(EventListView::Filter());
+	SC_D._filterWidget->setFilter(EventListView::Filter());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3444,14 +3469,14 @@ void EventListView::selectEventFM(const QString &url) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::regionSelectionChanged(int index) {
-	_regionIndex = index;
+	SC_D._regionIndex = index;
 
-	if ( _regionIndex == 0 )
-		_ui->btnChangeRegion->show();
+	if ( SC_D._regionIndex == 0 )
+		SC_D._ui->btnChangeRegion->show();
 	else
-		_ui->btnChangeRegion->hide();
+		SC_D._ui->btnChangeRegion->hide();
 
-	if ( _hideOutsideRegion ) updateHideState();
+	if ( SC_D._hideOutsideRegion ) updateHideState();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3460,8 +3485,8 @@ void EventListView::regionSelectionChanged(int index) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::changeRegion() {
-	EventListViewRegionFilterDialog dlg(this, &_filterRegions[0], &_filterRegions);
-	if ( dlg.exec() == QDialog::Accepted && _hideOutsideRegion )
+	EventListViewRegionFilterDialog dlg(this, &SC_D._filterRegions[0], &SC_D._filterRegions);
+	if ( dlg.exec() == QDialog::Accepted && SC_D._hideOutsideRegion )
 		updateHideState();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3484,8 +3509,8 @@ void EventListView::setInterval(const Seiscomp::Core::TimeWindow& tw) {
 		end.setTime_t(tw.endTime().seconds());
 	}
 
-	_ui->dateTimeEditStart->setDateTime(start);
-	_ui->dateTimeEditEnd->setDateTime(end);
+	SC_D._ui->dateTimeEditStart->setDateTime(start);
+	SC_D._ui->dateTimeEditEnd->setDateTime(end);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3494,8 +3519,8 @@ void EventListView::setInterval(const Seiscomp::Core::TimeWindow& tw) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::selectFirstEnabledEvent() {
-	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
-		auto item = static_cast<TreeItem*>(_treeWidget->topLevelItem(i));
+	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
+		auto item = static_cast<TreeItem*>(SC_D._treeWidget->topLevelItem(i));
 		if ( !item->isEnabled() ) {
 			continue;
 		}
@@ -3512,11 +3537,11 @@ void EventListView::selectFirstEnabledEvent() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::selectEvent(int index) {
-	if ( index >= _treeWidget->topLevelItemCount() )
+	if ( index >= SC_D._treeWidget->topLevelItemCount() )
 		return;
 
-	_treeWidget->setCurrentItem(_treeWidget->topLevelItem(index));
-	loadItem(_treeWidget->currentItem());
+	SC_D._treeWidget->setCurrentItem(SC_D._treeWidget->topLevelItem(index));
+	loadItem(SC_D._treeWidget->currentItem());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3527,8 +3552,8 @@ void EventListView::selectEvent(int index) {
 void EventListView::selectEventID(const std::string& publicID) {
 	SchemeTreeItem *item = findEvent(publicID);
 	if ( item ) {
-		_treeWidget->setCurrentItem(item);
-		loadItem(_treeWidget->currentItem());
+		SC_D._treeWidget->setCurrentItem(item);
+		loadItem(SC_D._treeWidget->currentItem());
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3538,19 +3563,19 @@ void EventListView::selectEventID(const std::string& publicID) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setPreviousEvent() {
-	int idx = _treeWidget->currentIndex().row();
-	while ( ++idx < _treeWidget->topLevelItemCount()-1 ) {
-		auto item = _treeWidget->topLevelItem(idx);
+	int idx = SC_D._treeWidget->currentIndex().row();
+	while ( ++idx < SC_D._treeWidget->topLevelItemCount()-1 ) {
+		auto item = SC_D._treeWidget->topLevelItem(idx);
 		if ( !item->isHidden() ) {
 			break;
 		}
 	}
 
-	if ( idx < _treeWidget->topLevelItemCount()-1 ) {
-		QAbstractItemView::SelectionMode oldMode = _treeWidget->selectionMode();
-		_treeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+	if ( idx < SC_D._treeWidget->topLevelItemCount()-1 ) {
+		auto oldMode = SC_D._treeWidget->selectionMode();
+		SC_D._treeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 		selectEvent(idx);
-		_treeWidget->setSelectionMode(oldMode);
+		SC_D._treeWidget->setSelectionMode(oldMode);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3560,19 +3585,19 @@ void EventListView::setPreviousEvent() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setNextEvent() {
-	int idx = _treeWidget->currentIndex().row();
+	int idx = SC_D._treeWidget->currentIndex().row();
 	while ( --idx >= 0 ) {
-		auto item = _treeWidget->topLevelItem(idx);
+		auto item = SC_D._treeWidget->topLevelItem(idx);
 		if ( !item->isHidden() ) {
 			break;
 		}
 	}
 
 	if ( idx >= 0 ) {
-		QAbstractItemView::SelectionMode oldMode = _treeWidget->selectionMode();
-		_treeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+		auto oldMode = SC_D._treeWidget->selectionMode();
+		SC_D._treeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 		selectEvent(idx);
-		_treeWidget->setSelectionMode(oldMode);
+		SC_D._treeWidget->setSelectionMode(oldMode);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3582,20 +3607,20 @@ void EventListView::setNextEvent() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::readLastDays() {
-	_filter = _filterWidget->filter();
-	_filter.endTime = Core::Time::GMT();
-	_filter.startTime = _filter.endTime - Core::TimeSpan(_ui->spinBox->value()*86400);
-	setInterval(Core::TimeWindow(_filter.startTime, _filter.endTime));
+	SC_D._filter = SC_D._filterWidget->filter();
+	SC_D._filter.endTime = Core::Time::GMT();
+	SC_D._filter.startTime = SC_D._filter.endTime - Core::TimeSpan(SC_D._ui->spinBox->value()*86400);
+	setInterval(Core::TimeWindow(SC_D._filter.startTime, SC_D._filter.endTime));
 
-	if ( _filter.isNull() )
-		_ui->btnFilter->setPalette(QPalette());
+	if ( SC_D._filter.isNull() )
+		SC_D._ui->btnFilter->setPalette(QPalette());
 	else {
-		QPalette p = _ui->btnFilter->palette();
+		QPalette p = SC_D._ui->btnFilter->palette();
 		p.setColor(QPalette::Button, p.color(QPalette::Highlight));
-		_ui->btnFilter->setPalette(p);
+		SC_D._ui->btnFilter->setPalette(p);
 	}
 
-	readFromDatabase(_filter);
+	readFromDatabase(SC_D._filter);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3604,30 +3629,30 @@ void EventListView::readLastDays() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::readInterval() {
-	_filter = _filterWidget->filter();
-	_filter.startTime = Core::Time(_ui->dateTimeEditStart->date().year(),
-	                               _ui->dateTimeEditStart->date().month(),
-	                               _ui->dateTimeEditStart->date().day(),
-	                               _ui->dateTimeEditStart->time().hour(),
-	                               _ui->dateTimeEditStart->time().minute(),
-	                               _ui->dateTimeEditStart->time().second());
+	SC_D._filter = SC_D._filterWidget->filter();
+	SC_D._filter.startTime = Core::Time(SC_D._ui->dateTimeEditStart->date().year(),
+	                                    SC_D._ui->dateTimeEditStart->date().month(),
+	                                    SC_D._ui->dateTimeEditStart->date().day(),
+	                                    SC_D._ui->dateTimeEditStart->time().hour(),
+	                                    SC_D._ui->dateTimeEditStart->time().minute(),
+	                                    SC_D._ui->dateTimeEditStart->time().second());
 
-	_filter.endTime = Core::Time(_ui->dateTimeEditEnd->date().year(),
-	                             _ui->dateTimeEditEnd->date().month(),
-	                             _ui->dateTimeEditEnd->date().day(),
-	                             _ui->dateTimeEditEnd->time().hour(),
-	                             _ui->dateTimeEditEnd->time().minute(),
-	                             _ui->dateTimeEditEnd->time().second());
+	SC_D._filter.endTime = Core::Time(SC_D._ui->dateTimeEditEnd->date().year(),
+	                                  SC_D._ui->dateTimeEditEnd->date().month(),
+	                                  SC_D._ui->dateTimeEditEnd->date().day(),
+	                                  SC_D._ui->dateTimeEditEnd->time().hour(),
+	                                  SC_D._ui->dateTimeEditEnd->time().minute(),
+	                                  SC_D._ui->dateTimeEditEnd->time().second());
 
-	if ( _filter.isNull() )
-		_ui->btnFilter->setPalette(QPalette());
+	if ( SC_D._filter.isNull() )
+		SC_D._ui->btnFilter->setPalette(QPalette());
 	else {
-		QPalette p = _ui->btnFilter->palette();
+		QPalette p = SC_D._ui->btnFilter->palette();
 		p.setColor(QPalette::Button, p.color(QPalette::Highlight));
-		_ui->btnFilter->setPalette(p);
+		SC_D._ui->btnFilter->setPalette(p);
 	}
 
-	readFromDatabase(_filter);
+	readFromDatabase(SC_D._filter);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3645,16 +3670,16 @@ void EventListView::readFromDatabase() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::readFromDatabase(const Filter &filter) {
-	if ( _reader == nullptr ) return;
+	if ( SC_D._reader == nullptr ) return;
 
 	initTree();
 
 	EventParameters ep;
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	_blockSelection = true;
-	_blockRemovingOfExpiredEvents = true;
-	_blockCountSignal = true;
+	SC_D._blockSelection = true;
+	SC_D._blockRemovingOfExpiredEvents = true;
+	SC_D._blockCountSignal = true;
 
 	EventPtr event;
 
@@ -3672,10 +3697,10 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 	//Core::TimeWindow timeWindow(Core::Time::GMT() - _timeAgo, Core::Time::GMT());
 
-	_timeAgo = Core::Time::GMT() - filter.startTime;
+	SC_D._timeAgo = Core::Time::GMT() - filter.startTime;
 	progress.setLabelText(tr("Reading events..."));
 
-	DatabaseIterator it = getEvents(_reader, filter);
+	DatabaseIterator it = getEvents(SC_D._reader, filter);
 	while ( (event = static_cast<Event*>(*it)) ) {
 		if ( progress.wasCanceled() ) {
 			break;
@@ -3689,7 +3714,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 	// Read comments
 	CommentPtr comment;
-	it = getComments4Events( _reader, filter);
+	it = getComments4Events(SC_D._reader, filter);
 	while ( (comment = Comment::Cast(*it)) ) {
 		if( progress.wasCanceled() ) {
 			break;
@@ -3700,10 +3725,10 @@ void EventListView::readFromDatabase(const Filter &filter) {
 	}
 	it.close();
 
-	if ( _withOrigins ) {
+	if ( SC_D._withOrigins ) {
 		progress.setLabelText(tr("Reading origins..."));
 
-		it = getEventOriginReferences(_reader, filter);
+		it = getEventOriginReferences(SC_D._reader, filter);
 
 		OriginReferencePtr oref;
 
@@ -3724,7 +3749,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 		it.close();
 
-		it = getEventOrigins(_reader, filter);
+		it = getEventOrigins(SC_D._reader, filter);
 
 		OriginPtr origin;
 
@@ -3742,7 +3767,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		}
 		it.close();
 
-		it = getUnassociatedOrigins(_reader, filter);
+		it = getUnassociatedOrigins(SC_D._reader, filter);
 
 		while ( (origin = static_cast<Origin*>(*it)) ) {
 			if ( progress.wasCanceled() )
@@ -3759,7 +3784,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 		//fetch comments for relevant origins (marker for publishing)
 
-		it = getComments4Origins(_reader, filter);
+		it = getComments4Origins(SC_D._reader, filter);
 
 		while ( (comment = Comment::Cast(*it)) ) {
 			if( progress.wasCanceled() ) {
@@ -3772,10 +3797,10 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		it.close();
 	}
 
-	if ( _withFocalMechanisms ) {
+	if ( SC_D._withFocalMechanisms ) {
 		progress.setLabelText(tr("Reading focal mechanisms..."));
 
-		it = getEventFocalMechanismReferences(_reader, filter);
+		it = getEventFocalMechanismReferences(SC_D._reader, filter);
 
 		FocalMechanismReferencePtr fmref;
 
@@ -3794,7 +3819,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 		it.close();
 
-		it = getEventFocalMechanisms(_reader, filter);
+		it = getEventFocalMechanisms(SC_D._reader, filter);
 
 		FocalMechanismPtr fm;
 
@@ -3810,7 +3835,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		}
 		it.close();
 
-		it = getEventMomentTensors(_reader, filter);
+		it = getEventMomentTensors(SC_D._reader, filter);
 
 		MomentTensorPtr mt;
 		std::set<std::string> derivedOriginIDs;
@@ -3835,18 +3860,18 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		      it != derivedOriginIDs.end(); ++it ) {
 			OriginPtr org = Origin::Find(*it);
 			if ( org == nullptr ) {
-				org = Origin::Cast(_reader->getObject(Origin::TypeInfo(), *it));
+				org = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), *it));
 				if ( org ) ep.add(org.get());
 			}
 
 			if ( org && org->magnitudeCount() == 0 ) {
-				_reader->loadMagnitudes(org.get());
+				SC_D._reader->loadMagnitudes(org.get());
 			}
 		}
 	}
 
 	EventDescriptionPtr description;
-	it = getDescriptions4Events(_reader, filter);
+	it = getDescriptions4Events(SC_D._reader, filter);
 	while ( (description = EventDescription::Cast(*it)) ) {
 		if( progress.wasCanceled() ) {
 			break;
@@ -3867,7 +3892,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 	prefOrigins.reserve(static_cast<size_t>(eventIDs.count()));
 	prefMags.reserve(static_cast<size_t>(eventIDs.count()));
 
-	it = getEventMagnitudes(_reader, filter);
+	it = getEventMagnitudes(SC_D._reader, filter);
 	MagnitudePtr mag;
 	while ( (mag = static_cast<Magnitude*>(*it)) ) {
 		prefMags.push_back(mag);
@@ -3875,8 +3900,8 @@ void EventListView::readFromDatabase(const Filter &filter) {
 	}
 	it.close();
 
-	if ( !_withOrigins ) {
-		it = getEventPreferredOrigins(_reader, filter);
+	if ( !SC_D._withOrigins ) {
+		it = getEventPreferredOrigins(SC_D._reader, filter);
 		OriginPtr org;
 		while ( (org = static_cast<Origin*>(*it)) ) {
 			prefOrigins.push_back(org);
@@ -3885,8 +3910,8 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		}
 		it.close();
 
-		if ( _itemConfig.customColumn != -1 ) {
-			it = getComments4PrefOrigins(_reader, filter);
+		if ( SC_D._itemConfig.customColumn != -1 ) {
+			it = getComments4PrefOrigins(SC_D._reader, filter);
 			CommentPtr comment;
 
 			while ( (comment = Comment::Cast(*it)) ) {
@@ -3901,7 +3926,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		}
 	}
 
-	_treeWidget->setUpdatesEnabled (false);
+	SC_D._treeWidget->setUpdatesEnabled(false);
 
 	for ( size_t i = 0; i < ep.eventCount(); ++i ) {
 		Event *event = ep.event(i);
@@ -3916,7 +3941,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 			}
 		}
 
-		if ( _withOrigins && eventItem ) {
+		if ( SC_D._withOrigins && eventItem ) {
 			Origin *prefOrg = Origin::Find(event->preferredOriginID());
 			// Switch loading of all origin information on
 			for ( size_t j = 0; j < event->originReferenceCount(); ++j ) {
@@ -3941,7 +3966,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 			}
 		}
 
-		if ( _withFocalMechanisms && eventItem ) {
+		if ( SC_D._withFocalMechanisms && eventItem ) {
 			for ( size_t j = 0; j < event->focalMechanismReferenceCount(); ++j ) {
 				FocalMechanismReference *ref = event->focalMechanismReference(j);
 				FocalMechanism *o = FocalMechanism::Find(ref->focalMechanismID());
@@ -3958,7 +3983,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		}
 	}
 
-	if ( _withOrigins ) {
+	if ( SC_D._withOrigins ) {
 		// Switch loading of all origin information on
 		for ( size_t i = 0; i < ep.originCount(); ++i ) {
 			if ( !associatedOrigins.contains(ep.origin(i)) ) {
@@ -3967,16 +3992,16 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		}
 	}
 
-	for (int i = 0; i < _treeWidget->columnCount(); i++)
-		_treeWidget->resizeColumnToContents(i);
+	for ( int i = 0; i < SC_D._treeWidget->columnCount(); i++ )
+		SC_D._treeWidget->resizeColumnToContents(i);
 
-	_treeWidget->setUpdatesEnabled(true);
+	SC_D._treeWidget->setUpdatesEnabled(true);
 
 	QApplication::restoreOverrideCursor();
 
-	_blockSelection = false;
-	_blockRemovingOfExpiredEvents = false;
-	_blockCountSignal = false;
+	SC_D._blockSelection = false;
+	SC_D._blockRemovingOfExpiredEvents = false;
+	SC_D._blockCountSignal = false;
 
 	emit eventsUpdated();
 	emit visibleEventCountChanged();
@@ -3990,7 +4015,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setAutoSelect(bool s) {
-	_autoSelect = s;
+	SC_D._autoSelect = s;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3999,32 +4024,32 @@ void EventListView::setAutoSelect(bool s) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::removeExpiredEvents() {
-	if ( _blockRemovingOfExpiredEvents ) return;
+	if ( SC_D._blockRemovingOfExpiredEvents ) return;
 
 	Core::Time now = Core::Time::GMT();
 
-	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
-		EventTreeItem* item = (EventTreeItem*)_treeWidget->topLevelItem(i);
-		Event* event = item->event();
+	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
+		auto item = (EventTreeItem*)SC_D._treeWidget->topLevelItem(i);
+		auto event = item->event();
 		if ( event ) {
-			Origin* o = Origin::Find(event->preferredOriginID());
+			auto o = Origin::Find(event->preferredOriginID());
 			bool remove = false;
 			if ( o )
-				remove = (now - o->time()) > _timeAgo;
+				remove = (now - o->time()) > SC_D._timeAgo;
 			else {
-				double time = item->data(_itemConfig.columnMap[COL_OTIME], Qt::UserRole).toDouble();
-				remove = now - TimeSpan(time) > _timeAgo;
+				double time = item->data(SC_D._itemConfig.columnMap[COL_OTIME], Qt::UserRole).toDouble();
+				remove = now - TimeSpan(time) > SC_D._timeAgo;
 			}
 
 			if ( remove ) {
-				QTreeWidgetItem* item = _treeWidget->takeTopLevelItem(i);
+				auto item = SC_D._treeWidget->takeTopLevelItem(i);
 				if ( item ) {
 					if ( !item->isHidden() ) {
-						if ( _visibleEventCount > 0 ) {
-							--_visibleEventCount;
+						if ( SC_D._visibleEventCount > 0 ) {
+							--SC_D._visibleEventCount;
 						}
 						emit eventRemovedFromList(event);
-						if ( !_blockCountSignal ) {
+						if ( !SC_D._blockCountSignal ) {
 							emit visibleEventCountChanged();
 						}
 					}
@@ -4035,11 +4060,11 @@ void EventListView::removeExpiredEvents() {
 		}
 		else {
 			for ( int j = 0; j < item->originItemCount(); ++j ) {
-				OriginTreeItem *child = (OriginTreeItem*)item->originItem(j);
+				auto child = (OriginTreeItem*)item->originItem(j);
 				if ( child ) {
 					if ( child->origin() ) {
-						if ( (now - child->origin()->time()) > _timeAgo ) {
-							QTreeWidgetItem* it = item->takeOrigin(j);
+						if ( (now - child->origin()->time()) > SC_D._timeAgo ) {
+							auto it = item->takeOrigin(j);
 							if ( it ) {
 								delete it;
 								--j;
@@ -4081,10 +4106,10 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 	OriginPtr preferredOrigin;
 	if ( event ) {
 		preferredOrigin = Origin::Find(event->preferredOriginID());
-		if ( !preferredOrigin && _reader ) {
-			preferredOrigin = Origin::Cast(_reader->getObject(Origin::TypeInfo(), event->preferredOriginID()));
-			if ( (_itemConfig.customColumn != -1) && preferredOrigin && preferredOrigin->commentCount() == 0 )
-				_reader->loadComments(preferredOrigin.get());
+		if ( !preferredOrigin && SC_D._reader ) {
+			preferredOrigin = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), event->preferredOriginID()));
+			if ( (SC_D._itemConfig.customColumn != -1) && preferredOrigin && preferredOrigin->commentCount() == 0 )
+				SC_D._reader->loadComments(preferredOrigin.get());
 		}
 	}
 
@@ -4092,59 +4117,59 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 	MagnitudePtr preferredMagnitude;
 	if ( event && !event->preferredMagnitudeID().empty() ) {
 		preferredMagnitude = Magnitude::Find(event->preferredMagnitudeID());
-		if ( !preferredMagnitude && _reader )
-			preferredMagnitude = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
+		if ( !preferredMagnitude && SC_D._reader )
+			preferredMagnitude = Magnitude::Cast(SC_D._reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
 	}
 
 	// Read preferred magnitude for display purpose
 	FocalMechanismPtr preferredFocalMechanism;
-	if ( event && _withFocalMechanisms ) {
+	if ( event && SC_D._withFocalMechanisms ) {
 		preferredFocalMechanism = FocalMechanism::Find(event->preferredFocalMechanismID());
-		if ( !preferredFocalMechanism && _reader )
-			preferredFocalMechanism = FocalMechanism::Cast(_reader->getObject(FocalMechanism::TypeInfo(), event->preferredFocalMechanismID()));
+		if ( !preferredFocalMechanism && SC_D._reader )
+			preferredFocalMechanism = FocalMechanism::Cast(SC_D._reader->getObject(FocalMechanism::TypeInfo(), event->preferredFocalMechanismID()));
 	}
 
-	EventTreeItem *item = new EventTreeItem(event, _itemConfig);
-	item->setShowOneItemPerAgency(_showOnlyLatestPerAgency);
+	EventTreeItem *item = new EventTreeItem(event, SC_D._itemConfig);
+	item->setShowOneItemPerAgency(SC_D._showOnlyLatestPerAgency);
 
-	if ( _treeWidget->topLevelItemCount() == 0 )
-		_treeWidget->insertTopLevelItem(0, item);
+	if ( SC_D._treeWidget->topLevelItemCount() == 0 )
+		SC_D._treeWidget->insertTopLevelItem(0, item);
 	else {
-		int pos = _treeWidget->topLevelItemCount();
-		for ( int i = 0; i  < _treeWidget->topLevelItemCount(); ++i ) {
-			if ( _treeWidget->topLevelItem(i)->data(_itemConfig.columnMap[COL_OTIME], Qt::UserRole).toDouble()
-				  < item->data(_itemConfig.columnMap[COL_OTIME], Qt::UserRole).toDouble() ) {
+		int pos = SC_D._treeWidget->topLevelItemCount();
+		for ( int i = 0; i  < SC_D._treeWidget->topLevelItemCount(); ++i ) {
+			if ( SC_D._treeWidget->topLevelItem(i)->data(SC_D._itemConfig.columnMap[COL_OTIME], Qt::UserRole).toDouble()
+				  < item->data(SC_D._itemConfig.columnMap[COL_OTIME], Qt::UserRole).toDouble() ) {
 				pos = i;
 				break;
 			}
 		}
-		_treeWidget->insertTopLevelItem(pos, item);
+		SC_D._treeWidget->insertTopLevelItem(pos, item);
 	}
 
 	item->update(this);
 
 	if ( event ) {
 		// Show event initially
-		if ( _visibleEventCount >= 0 and !item->isHidden() ) {
-			++_visibleEventCount;
+		if ( SC_D._visibleEventCount >= 0 and !item->isHidden() ) {
+			++SC_D._visibleEventCount;
 		}
 
 		if ( !updateHideState(item) and !item->isHidden() ) {
 			emit eventAddedToList(event, false);
-			if ( !_blockCountSignal ) {
+			if ( !SC_D._blockCountSignal ) {
 				emit visibleEventCountChanged();
 			}
 		}
 	}
 
 	int fixedItems = 0;
-	if ( _unassociatedEventItem ) fixedItems = 1;
-	if ( _treeWidget->topLevelItemCount() - fixedItems == 1 ) {
-		for (int i = 0; i < _treeWidget->columnCount(); i++)
-			_treeWidget->resizeColumnToContents(i);
+	if ( SC_D._unassociatedEventItem ) fixedItems = 1;
+	if ( SC_D._treeWidget->topLevelItemCount() - fixedItems == 1 ) {
+		for (int i = 0; i < SC_D._treeWidget->columnCount(); i++)
+			SC_D._treeWidget->resizeColumnToContents(i);
 	}
 
-	_ui->btnClear->setEnabled(true);
+	SC_D._ui->btnClear->setEnabled(true);
 
 	updateEventProcessColumns(item, true);
 
@@ -4160,12 +4185,12 @@ OriginTreeItem *
 EventListView::addOrigin(Seiscomp::DataModel::Origin* origin, QTreeWidgetItem* parent, bool highPriority) {
 	//removeExpiredEvents();
 
-	OriginTreeItem* item = new OriginTreeItem(origin, _itemConfig);
-	EventTreeItem *eitem = static_cast<EventTreeItem*>(parent?parent:_unassociatedEventItem);
+	auto item = new OriginTreeItem(origin, SC_D._itemConfig);
+	auto eitem = static_cast<EventTreeItem*>(parent ? parent : SC_D._unassociatedEventItem);
 	eitem->addOriginItem(0,item);
 	eitem->resort();
 
-	_ui->btnClear->setEnabled(true);
+	SC_D._ui->btnClear->setEnabled(true);
 
 	updateOriginProcessColumns(item, highPriority);
 
@@ -4180,7 +4205,7 @@ EventListView::addOrigin(Seiscomp::DataModel::Origin* origin, QTreeWidgetItem* p
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::updateOriginProcessColumns(QTreeWidgetItem *item, bool highPriority) {
-	if ( _itemConfig.originScriptColumns.empty() ) return;
+	if ( SC_D._itemConfig.originScriptColumns.empty() ) return;
 	if ( !item ) return;
 
 	OriginTreeItem *oitem = static_cast<OriginTreeItem*>(item);
@@ -4189,9 +4214,9 @@ void EventListView::updateOriginProcessColumns(QTreeWidgetItem *item, bool highP
 	if ( !origin ) return;
 
 	QStringList scripts;
-	for ( int i = 0; i < _itemConfig.originScriptColumns.size(); ++i ) {
-		scripts << _itemConfig.originScriptColumns[i].script;
-		oitem->setBackground(_itemConfig.originScriptColumns[i].pos,
+	for ( int i = 0; i < SC_D._itemConfig.originScriptColumns.size(); ++i ) {
+		scripts << SC_D._itemConfig.originScriptColumns[i].script;
+		oitem->setBackground(SC_D._itemConfig.originScriptColumns[i].pos,
 		                     SCScheme.colors.records.gaps);
 	}
 
@@ -4215,7 +4240,7 @@ void EventListView::updateOriginProcessColumns(QTreeWidgetItem *item, bool highP
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::updateEventProcessColumns(QTreeWidgetItem *item, bool highPriority) {
-	if ( _itemConfig.eventScriptColumns.empty() ) return;
+	if ( SC_D._itemConfig.eventScriptColumns.empty() ) return;
 	if ( !item ) return;
 
 	EventTreeItem *eitem = static_cast<EventTreeItem*>(item);
@@ -4224,9 +4249,9 @@ void EventListView::updateEventProcessColumns(QTreeWidgetItem *item, bool highPr
 	if ( !event ) return;
 
 	QStringList scripts;
-	for ( int i = 0; i < _itemConfig.eventScriptColumns.size(); ++i ) {
-		scripts << _itemConfig.eventScriptColumns[i].script;
-		eitem->setBackground(_itemConfig.eventScriptColumns[i].pos,
+	for ( int i = 0; i < SC_D._itemConfig.eventScriptColumns.size(); ++i ) {
+		scripts << SC_D._itemConfig.eventScriptColumns[i].script;
+		eitem->setBackground(SC_D._itemConfig.eventScriptColumns[i].pos,
 		                     SCScheme.colors.records.gaps);
 	}
 
@@ -4250,12 +4275,12 @@ void EventListView::updateEventProcessColumns(QTreeWidgetItem *item, bool highPr
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FocalMechanismTreeItem* EventListView::addFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm, QTreeWidgetItem* parent) {
-	FocalMechanismTreeItem* item = new FocalMechanismTreeItem(fm, _itemConfig);
-	EventTreeItem *eitem = static_cast<EventTreeItem*>(parent?parent:_unassociatedEventItem);
+	auto item = new FocalMechanismTreeItem(fm, SC_D._itemConfig);
+	auto eitem = static_cast<EventTreeItem*>(parent ? parent : SC_D._unassociatedEventItem);
 	eitem->addFocalMechanismItem(0,item);
 	eitem->resort();
 
-	_ui->btnClear->setEnabled(true);
+	SC_D._ui->btnClear->setEnabled(true);
 
 	emit focalMechanismAdded();
 	return item;
@@ -4288,7 +4313,7 @@ void EventListView::messageAvailable(Seiscomp::Core::Message* msg, Seiscomp::Cli
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::onCommand(Seiscomp::Gui::CommandMessage* cmsg) {
 	if ( cmsg->command() == CM_SHOW_ORIGIN ) {
-		QTreeWidgetItem* item = findOrigin(cmsg->parameter());
+		auto item = findOrigin(cmsg->parameter());
 		if ( item ) {
 			loadItem(item);
 			return;
@@ -4297,15 +4322,15 @@ void EventListView::onCommand(Seiscomp::Gui::CommandMessage* cmsg) {
 		OriginPtr o = Origin::Find(cmsg->parameter());
 		if ( !o ) {
 			// lets read it
-			if ( _reader ) {
-				o = Origin::Cast(_reader->getObject(Origin::TypeInfo(), cmsg->parameter()));
+			if ( SC_D._reader ) {
+				o = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), cmsg->parameter()));
 				//readPicks(o.get());
 			}
 		}
 
 		if ( o ) {
 			SchemeTreeItem* parent = nullptr;
-			EventPtr ev = _reader->getEvent(o->publicID());
+			EventPtr ev = SC_D._reader->getEvent(o->publicID());
 
 			if ( ev ) {
 				parent = findEvent(ev->publicID());
@@ -4349,29 +4374,29 @@ void EventListView::onCommand(Seiscomp::Gui::CommandMessage* cmsg) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
-	_treeWidget->setUpdatesEnabled(false);
+	SC_D._treeWidget->setUpdatesEnabled(false);
 
-	if ( _withOrigins ) {
-		Origin* o = Origin::Cast(n->object());
+	if ( SC_D._withOrigins ) {
+		auto o = Origin::Cast(n->object());
 		if ( o ) {
 			switch ( n->operation() ) {
 				case OP_ADD:
 				{
-					QTreeWidgetItem* item = addOrigin(o, nullptr, false);
-					if ( _autoSelect )
+					auto item = addOrigin(o, nullptr, false);
+					if ( SC_D._autoSelect )
 						//_treeWidget->setItemSelected(item, true);
 						loadItem(item);
 					break;
 				}
 				case OP_UPDATE:
 				{
-					SchemeTreeItem* item = (SchemeTreeItem*)findOrigin(o->publicID());
+					auto item = (SchemeTreeItem*)findOrigin(o->publicID());
 					if ( item ) {
 						updateOriginProcessColumns(item, true);
 						item->update(this);
 						emit originUpdated(static_cast<Origin*>(item->object()));
-						EventTreeItem* parent = static_cast<EventTreeItem*>(item->parent()->parent());
-						Event *e = static_cast<Event*>(parent->object());
+						auto parent = static_cast<EventTreeItem*>(item->parent()->parent());
+						auto e = static_cast<Event*>(parent->object());
 						if ( e && e->preferredOriginID() == o->publicID() ) {
 							parent->update(this);
 							emit eventUpdatedInList(e);
@@ -4383,13 +4408,13 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 					break;
 			}
 
-			_treeWidget->setUpdatesEnabled(true);
+			SC_D._treeWidget->setUpdatesEnabled(true);
 			return;
 		}
 	}
 
-	if ( _withFocalMechanisms ) {
-		FocalMechanism *fm = FocalMechanism::Cast(n->object());
+	if ( SC_D._withFocalMechanisms ) {
+		auto fm = FocalMechanism::Cast(n->object());
 		if ( fm ) {
 			switch ( n->operation() ) {
 				case OP_ADD:
@@ -4416,17 +4441,17 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 					break;
 			}
 
-			_treeWidget->setUpdatesEnabled(true);
+			SC_D._treeWidget->setUpdatesEnabled(true);
 			return;
 		}
 	}
 
-	Event* e = Event::Cast(n->object());
+	auto e = Event::Cast(n->object());
 	if ( e ) {
 		switch ( n->operation() ) {
 			case OP_ADD:
 			{
-				EventTreeItem* item = (EventTreeItem*)findEvent(e->publicID());
+				auto item = (EventTreeItem*)findEvent(e->publicID());
 				if ( !item ) {
 					addEvent(e, true);
 				}
@@ -4434,18 +4459,18 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 			}
 			case OP_REMOVE:
 			{
-				EventTreeItem* item = (EventTreeItem*)findEvent(e->publicID());
+				auto item = (EventTreeItem*)findEvent(e->publicID());
 				if ( item ) {
 					SEISCOMP_DEBUG("Delete event item %s", e->publicID().c_str());
 					bool visibleItem = !item->isHidden();
 					EventPtr event = item->event();
 					delete item;
 					if ( visibleItem ) {
-						if ( _visibleEventCount > 0 ) {
-							--_visibleEventCount;
+						if ( SC_D._visibleEventCount > 0 ) {
+							--SC_D._visibleEventCount;
 						}
 						emit eventRemovedFromList(event.get());
-						if ( !_blockCountSignal ) {
+						if ( !SC_D._blockCountSignal ) {
 							emit visibleEventCountChanged();
 						}
 					}
@@ -4454,16 +4479,16 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 			}
 			case OP_UPDATE:
 			{
-				EventTreeItem* item = (EventTreeItem*)findEvent(e->publicID());
+				auto item = (EventTreeItem*)findEvent(e->publicID());
 				if ( !item )
 					item = (EventTreeItem*)addEvent(e, true);
 				else
 					updateHideState(item);
 
 				if ( item ) {
-					Event* event = static_cast<Event*>(item->object());
+					auto event = static_cast<Event*>(item->object());
 
-					OriginTreeItem *originItem = findOrigin(event->preferredOriginID());
+					auto originItem = findOrigin(event->preferredOriginID());
 					OriginPtr preferredOrigin;
 
 					if ( originItem ) {
@@ -4471,7 +4496,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 							int index = originItem->parent()->indexOfChild(originItem);
 							SEISCOMP_DEBUG("Reparent originItem (update Event), index(%d)", index);
 							if ( index >= 0 ) {
-								QTreeWidgetItem *taken = originItem->parent()->takeChild(index);
+								auto taken = originItem->parent()->takeChild(index);
 								if ( taken ) {
 									item->addOriginItem(taken);
 									item->resort();
@@ -4483,9 +4508,9 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 					}
 					else {
 						preferredOrigin = Origin::Find(event->preferredOriginID());
-						if (!preferredOrigin && _reader) {
-							preferredOrigin = Origin::Cast(_reader->getObject(Origin::TypeInfo(), event->preferredOriginID()));
-							if ( preferredOrigin && _withOrigins )
+						if (!preferredOrigin && SC_D._reader) {
+							preferredOrigin = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), event->preferredOriginID()));
+							if ( preferredOrigin && SC_D._withOrigins )
 								addOrigin(preferredOrigin.get(), item, true);
 						}
 					}
@@ -4493,14 +4518,14 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 					MagnitudePtr nm;
 					if ( !event->preferredMagnitudeID().empty() ) {
 						nm = Magnitude::Find(event->preferredMagnitudeID());
-						if ( !nm && _reader )
-							nm = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
+						if ( !nm && SC_D._reader )
+							nm = Magnitude::Cast(SC_D._reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
 					}
 
 					updateEventProcessColumns(item, true);
 					item->update(this);
 
-					if ( _withFocalMechanisms ) {
+					if ( SC_D._withFocalMechanisms ) {
 						FocalMechanismTreeItem *fmItem = findFocalMechanism(event->preferredFocalMechanismID());
 						FocalMechanismPtr preferredFM;
 						OriginPtr derivedOrigin;
@@ -4522,19 +4547,19 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 						}
 						else {
 							preferredFM = FocalMechanism::Find(event->preferredFocalMechanismID());
-							if ( !preferredFM && _reader )
-								preferredFM = FocalMechanism::Cast(_reader->getObject(FocalMechanism::TypeInfo(), event->preferredFocalMechanismID()));
+							if ( !preferredFM && SC_D._reader )
+								preferredFM = FocalMechanism::Cast(SC_D._reader->getObject(FocalMechanism::TypeInfo(), event->preferredFocalMechanismID()));
 
-							if ( preferredFM && _reader ) {
+							if ( preferredFM && SC_D._reader ) {
 								if ( preferredFM->momentTensorCount() == 0 )
-									_reader->loadMomentTensors(preferredFM.get());
+									SC_D._reader->loadMomentTensors(preferredFM.get());
 							}
 
 							if ( preferredFM && (preferredFM->momentTensorCount() > 0) ) {
 								derivedOrigin = Origin::Find(preferredFM->momentTensor(0)->derivedOriginID());
-								if ( !derivedOrigin && _reader ) {
-									derivedOrigin = Origin::Cast(_reader->getObject(Origin::TypeInfo(), preferredFM->momentTensor(0)->derivedOriginID()));
-									_reader->loadMagnitudes(derivedOrigin.get());
+								if ( !derivedOrigin && SC_D._reader ) {
+									derivedOrigin = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), preferredFM->momentTensor(0)->derivedOriginID()));
+									SC_D._reader->loadMagnitudes(derivedOrigin.get());
 								}
 							}
 
@@ -4553,26 +4578,26 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 				break;
 		}
 
-		_treeWidget->setUpdatesEnabled(true);
+		SC_D._treeWidget->setUpdatesEnabled(true);
 		return;
 	}
 
-	if ( _withOrigins ) {
-		OriginReference* ref = OriginReference::Cast(n->object());
+	if ( SC_D._withOrigins ) {
+		auto ref = OriginReference::Cast(n->object());
 		if ( ref ) {
 			switch ( n->operation() ) {
 				case OP_ADD:
 				{
-					EventTreeItem* eventItem = (EventTreeItem*)findEvent(n->parentID());
+					auto eventItem = (EventTreeItem*)findEvent(n->parentID());
 					if ( eventItem ) {
 						SEISCOMP_INFO("found eventitem with publicID '%s', registered(%d)", eventItem->object()->publicID().c_str(), eventItem->object()->registered());
-						OriginTreeItem* originItem = findOrigin(ref->originID());
+						auto originItem = findOrigin(ref->originID());
 						if ( originItem ) {
 							if ( originItem->parent()->parent() != eventItem ) {
 								int index = originItem->parent()->indexOfChild(originItem);
 								SEISCOMP_DEBUG("Reparent originItem (add OriginReference), index(%d)", index);
 								if ( index >= 0 ) {
-									QTreeWidgetItem *taken = originItem->parent()->takeChild(index);
+									auto taken = originItem->parent()->takeChild(index);
 									if ( taken ) {
 										eventItem->addOriginItem(taken);
 										eventItem->resort();
@@ -4582,20 +4607,20 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 							}
 						}
 						else {
-							Origin *org = Origin::Find(ref->originID());
+							auto org = Origin::Find(ref->originID());
 							if ( !org ) {
-								org = Origin::Cast(_reader->getObject(Origin::TypeInfo(), ref->originID()));
+								org = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), ref->originID()));
 							}
 
 							if ( org ) {
 								originItem = addOrigin(org, eventItem, false);
 							}
 						}
-						if ( !_checkEventAgency )
+						if ( !SC_D._checkEventAgency )
 							updateHideState(eventItem);
 					}
 					else {
-						OriginTreeItem* originItem = findOrigin(ref->originID());
+						auto originItem = findOrigin(ref->originID());
 						if ( originItem )
 							delete originItem;
 					}
@@ -4603,17 +4628,17 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 				}
 				case OP_REMOVE:
 				{
-					EventTreeItem* eventItem = (EventTreeItem*)findEvent(n->parentID());
+					auto eventItem = (EventTreeItem*)findEvent(n->parentID());
 					if ( eventItem ) {
 						eventItem->update(this);
-						OriginTreeItem* originItem = findOrigin(ref->originID());
+						auto originItem = findOrigin(ref->originID());
 						if ( originItem && originItem->parent()->parent() == eventItem ) {
 							int index = originItem->parent()->indexOfChild(originItem);
 							SEISCOMP_DEBUG("Reparent originItem (remove OriginReference), index(%d)", index);
 							if ( index >= 0 ) {
-								QTreeWidgetItem *taken = originItem->parent()->takeChild(index);
+								auto taken = originItem->parent()->takeChild(index);
 								if ( taken ) {
-									eventItem = (EventTreeItem*)_unassociatedEventItem;
+									eventItem = (EventTreeItem*)SC_D._unassociatedEventItem;
 									if ( eventItem ) {
 										eventItem->addOriginItem(taken);
 										eventItem->update(this);
@@ -4623,7 +4648,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 								}
 							}
 						}
-						if ( !_checkEventAgency )
+						if ( !SC_D._checkEventAgency )
 							updateHideState(eventItem);
 					}
 					break;
@@ -4632,26 +4657,26 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 					break;
 			};
 
-			_treeWidget->setUpdatesEnabled(true);
+			SC_D._treeWidget->setUpdatesEnabled(true);
 			return;
 		}
 	}
 
-	if ( _withFocalMechanisms ) {
-		FocalMechanismReference* fm_ref = FocalMechanismReference::Cast(n->object());
+	if ( SC_D._withFocalMechanisms ) {
+		auto fm_ref = FocalMechanismReference::Cast(n->object());
 		if ( fm_ref ) {
 			switch ( n->operation() ) {
 				case OP_ADD:
 					{
-						EventTreeItem* eventItem = (EventTreeItem*)findEvent(n->parentID());
+						auto eventItem = (EventTreeItem*)findEvent(n->parentID());
 						if ( eventItem ) {
 							SEISCOMP_INFO("found eventitem with publicID '%s', registered(%d)", eventItem->object()->publicID().c_str(), eventItem->object()->registered());
-							FocalMechanismTreeItem* fmItem = findFocalMechanism(fm_ref->focalMechanismID());
+							auto fmItem = findFocalMechanism(fm_ref->focalMechanismID());
 							if ( fmItem && fmItem->parent()->parent() != eventItem ) {
 								int index = fmItem->parent()->indexOfChild(fmItem);
 								SEISCOMP_DEBUG("Reparent fmItem (add FocalMechanismReference), index(%d)", index);
 								if ( index >= 0 ) {
-									QTreeWidgetItem *taken = fmItem->parent()->takeChild(index);
+									auto taken = fmItem->parent()->takeChild(index);
 									if ( taken ) {
 										eventItem->addFocalMechanismItem(taken);
 										eventItem->resort();
@@ -4662,19 +4687,19 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 							else if ( fmItem == nullptr ) {
 								FocalMechanismPtr fm = FocalMechanism::Find(fm_ref->focalMechanismID());
 								OriginPtr derivedOrigin;
-								if ( !fm && _reader )
-									fm = FocalMechanism::Cast(_reader->getObject(FocalMechanism::TypeInfo(), fm_ref->focalMechanismID()));
+								if ( !fm && SC_D._reader )
+									fm = FocalMechanism::Cast(SC_D._reader->getObject(FocalMechanism::TypeInfo(), fm_ref->focalMechanismID()));
 
-								if ( fm && _reader ) {
+								if ( fm && SC_D._reader ) {
 									if ( fm->momentTensorCount() == 0 )
-										_reader->loadMomentTensors(fm.get());
+										SC_D._reader->loadMomentTensors(fm.get());
 								}
 
 								if ( fm && (fm->momentTensorCount() > 0) ) {
 									derivedOrigin = Origin::Find(fm->momentTensor(0)->derivedOriginID());
-									if ( !derivedOrigin && _reader ) {
-										derivedOrigin = Origin::Cast(_reader->getObject(Origin::TypeInfo(), fm->momentTensor(0)->derivedOriginID()));
-										_reader->loadMagnitudes(derivedOrigin.get());
+									if ( !derivedOrigin && SC_D._reader ) {
+										derivedOrigin = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), fm->momentTensor(0)->derivedOriginID()));
+										SC_D._reader->loadMagnitudes(derivedOrigin.get());
 									}
 								}
 
@@ -4685,7 +4710,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 							}
 						}
 						else {
-							FocalMechanismTreeItem* fmItem = findFocalMechanism(fm_ref->focalMechanismID());
+							auto fmItem = findFocalMechanism(fm_ref->focalMechanismID());
 							if ( fmItem )
 								delete fmItem;
 						}
@@ -4693,14 +4718,14 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 					break;
 				case OP_REMOVE:
 				{
-					EventTreeItem* eventItem = (EventTreeItem*)findEvent(n->parentID());
+					auto eventItem = (EventTreeItem*)findEvent(n->parentID());
 					if ( eventItem ) {
-						FocalMechanismTreeItem* fmItem = findFocalMechanism(fm_ref->focalMechanismID());
+						auto fmItem = findFocalMechanism(fm_ref->focalMechanismID());
 						if ( fmItem && fmItem->parent()->parent() == eventItem ) {
 							int index = fmItem->parent()->indexOfChild(fmItem);
 							SEISCOMP_DEBUG("Remove fmItem (remove FocalMechanismReference), index(%d)", index);
 							if ( index >= 0 ) {
-								QTreeWidgetItem *taken = eventItem->takeFocalMechanism(index);
+								auto taken = eventItem->takeFocalMechanism(index);
 								if ( taken ) delete taken;
 							}
 						}
@@ -4711,40 +4736,40 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 					break;
 			};
 
-			_treeWidget->setUpdatesEnabled(true);
+			SC_D._treeWidget->setUpdatesEnabled(true);
 			return;
 		}
 	}
 
-	Magnitude* mag = Magnitude::Cast(n->object());
+	auto mag = Magnitude::Cast(n->object());
 	if ( mag ) {
-		for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
-			EventTreeItem* item = (EventTreeItem*)_treeWidget->topLevelItem(i);
+		for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
+			auto item = (EventTreeItem*)SC_D._treeWidget->topLevelItem(i);
 			if ( item->event() && item->event()->preferredMagnitudeID() == mag->publicID() ) {
 				item->update(this);
 				emit eventUpdatedInList(item->event());
 			}
 		}
 
-		_treeWidget->setUpdatesEnabled(true);
+		SC_D._treeWidget->setUpdatesEnabled(true);
 		return;
 	}
 
-	Comment *comment = Comment::Cast(n->object());
+	auto comment = Comment::Cast(n->object());
 	if ( comment ) {
 		switch ( n->operation() ) {
 			case OP_ADD:
 			case OP_UPDATE:
 				{
-					EventTreeItem *eventItem = (EventTreeItem*)findEvent(n->parentID());
+					auto eventItem = (EventTreeItem*)findEvent(n->parentID());
 					if ( eventItem ) {
 						if ( comment->text() == "published" )
 							eventItem->setPublishState(true);
 						updateEventProcessColumns(eventItem, true);
 						eventItem->update(this);
 					}
-					else if ( _withOrigins ) {
-						OriginTreeItem *origItem = findOrigin( n->parentID() );
+					else if ( SC_D._withOrigins ) {
+						auto origItem = findOrigin( n->parentID() );
 						if ( origItem ) {
 							// "OriginPublished" shall be superseded by "published"
 							// but here we accept both
@@ -4755,8 +4780,8 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 							origItem->update(this);
 
 							eventItem = static_cast<EventTreeItem*>(origItem->parent()->parent());
-							Origin *o = static_cast<Origin*>(origItem->object());
-							Event *e = static_cast<Event*>(eventItem->object());
+							auto o = static_cast<Origin*>(origItem->object());
+							auto e = static_cast<Event*>(eventItem->object());
 							if ( e && e->preferredOriginID() == o->publicID() )
 								eventItem->update(this);
 						}
@@ -4767,27 +4792,27 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 				break;
 		}
 
-		_treeWidget->setUpdatesEnabled(true);
+		SC_D._treeWidget->setUpdatesEnabled(true);
 		return;
 	}
 
-	JournalEntry* je = JournalEntry::Cast(n->object());
+	auto je = JournalEntry::Cast(n->object());
 	if ( je ) {
 		if ( n->operation() == OP_ADD ) {
-			if ( _commandWaitDialog == nullptr ) {
-				_treeWidget->setUpdatesEnabled(true);
+			if ( SC_D._commandWaitDialog == nullptr ) {
+				SC_D._treeWidget->setUpdatesEnabled(true);
 				return;
 			}
 
-			CommandWaitDialog *dlg = static_cast<CommandWaitDialog*>(_commandWaitDialog);
+			auto dlg = static_cast<CommandWaitDialog*>(SC_D._commandWaitDialog);
 			dlg->handle(je);
 		}
 
-		_treeWidget->setUpdatesEnabled(true);
+		SC_D._treeWidget->setUpdatesEnabled(true);
 		return;
 	}
 
-	_treeWidget->setUpdatesEnabled(true);
+	SC_D._treeWidget->setUpdatesEnabled(true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4798,7 +4823,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 void EventListView::updateOrigin(Seiscomp::DataModel::Origin* origin) {
 	EventParametersPtr ep;
 
-	if ( _updateLocalEPInstance )
+	if ( SC_D._updateLocalEPInstance )
  		ep = EventParameters::Cast(PublicObject::Find("EventParameters"));
 	else
 		ep = new EventParameters;
@@ -4807,7 +4832,7 @@ void EventListView::updateOrigin(Seiscomp::DataModel::Origin* origin) {
 
 	bool wasEnabled = Notifier::IsEnabled();
 
-	if ( !_updateLocalEPInstance || origin->parent() == nullptr ) {
+	if ( !SC_D._updateLocalEPInstance || origin->parent() == nullptr ) {
 		Notifier::Disable();
 		ep->add(origin);
 		Notifier::Enable();
@@ -4816,7 +4841,7 @@ void EventListView::updateOrigin(Seiscomp::DataModel::Origin* origin) {
 	// create the update notifier
 	origin->update();
 
-	SchemeTreeItem* item = findOrigin(origin->publicID());
+	auto item = findOrigin(origin->publicID());
 	if ( item ) {
 		item->update(this);
 		EventTreeItem* parent = static_cast<EventTreeItem*>(item->parent()->parent());
@@ -4827,7 +4852,7 @@ void EventListView::updateOrigin(Seiscomp::DataModel::Origin* origin) {
 		}
 	}
 
-	if ( !_updateLocalEPInstance ) {
+	if ( !SC_D._updateLocalEPInstance ) {
 		// send the notifier
 		MessagePtr msg = Notifier::GetMessage();
 		if ( msg )
@@ -4849,7 +4874,7 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
                                  const std::vector<Seiscomp::DataModel::AmplitudePtr>& newAmplitudes) {
 	EventParametersPtr ep;
 
-	if ( _updateLocalEPInstance )
+	if ( SC_D._updateLocalEPInstance )
  		ep = EventParameters::Cast(PublicObject::Find("EventParameters"));
 	else
 		ep = new EventParameters;
@@ -4869,7 +4894,7 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 	}
 
 	NotifierMessagePtr msg = Notifier::GetMessage();
-	if ( msg && !_updateLocalEPInstance )
+	if ( msg && !SC_D._updateLocalEPInstance )
 		//SCApp->sendMessage("LOGGING", msg.get());
 		SCApp->sendMessage(SCApp->messageGroups().pick.c_str(), msg.get());
 
@@ -4878,7 +4903,7 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 		ep->add((*it).get());
 
 	msg = Notifier::GetMessage();
-	if ( msg && !_updateLocalEPInstance )
+	if ( msg && !SC_D._updateLocalEPInstance )
 		SCApp->sendMessage(SCApp->messageGroups().amplitude.c_str(), msg.get());
 
 	// Insert origin to Eventparameters
@@ -4890,7 +4915,7 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 	OriginReferencePtr ref;
 
 	if ( baseEvent ) {
-		if ( !_updateLocalEPInstance ) {
+		if ( !SC_D._updateLocalEPInstance ) {
 			Notifier::Disable();
 			ep->add(baseEvent);
 			Notifier::Enable();
@@ -4904,7 +4929,7 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 	msg = Notifier::GetMessage();
 	if ( msg ) {
 		//SCApp->sendMessage("LOGGING", msg.get());
-		if ( !_updateLocalEPInstance ) SCApp->sendMessage(SCApp->messageGroups().location.c_str(), msg.get());
+		if ( !SC_D._updateLocalEPInstance ) SCApp->sendMessage(SCApp->messageGroups().location.c_str(), msg.get());
 		if ( ref && baseEvent ) emit originReferenceAdded(baseEvent->publicID(), ref.get());
 	}
 
@@ -4922,7 +4947,7 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 void EventListView::updateFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm) {
 	EventParametersPtr ep;
 
-	if ( _updateLocalEPInstance )
+	if ( SC_D._updateLocalEPInstance )
  		ep = EventParameters::Cast(PublicObject::Find("EventParameters"));
 	else
 		ep = new EventParameters;
@@ -4931,7 +4956,7 @@ void EventListView::updateFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
 
 	bool wasEnabled = Notifier::IsEnabled();
 
-	if ( !_updateLocalEPInstance || fm->parent()->parent() == nullptr ) {
+	if ( !SC_D._updateLocalEPInstance || fm->parent()->parent() == nullptr ) {
 		Notifier::Disable();
 		ep->add(fm);
 		Notifier::Enable();
@@ -4951,7 +4976,7 @@ void EventListView::updateFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
 		}
 	}
 
-	if ( !_updateLocalEPInstance ) {
+	if ( !SC_D._updateLocalEPInstance ) {
 		// send the notifier
 		MessagePtr msg = Notifier::GetMessage();
 		if ( msg )
@@ -4972,7 +4997,7 @@ void EventListView::insertFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
                                          Seiscomp::DataModel::Origin *origin) {
 	EventParametersPtr ep;
 
-	if ( _updateLocalEPInstance )
+	if ( SC_D._updateLocalEPInstance )
  		ep = EventParameters::Cast(PublicObject::Find("EventParameters"));
 	else
 		ep = new EventParameters;
@@ -4997,7 +5022,7 @@ void EventListView::insertFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
 	// so the EventAssociationTool has less work to  find an
 	// appropriate event.
 	if ( event ) {
-		if ( !_updateLocalEPInstance ) {
+		if ( !SC_D._updateLocalEPInstance ) {
 			Notifier::Disable();
 			ep->add(event);
 			Notifier::Enable();
@@ -5014,7 +5039,7 @@ void EventListView::insertFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
 	NotifierMessagePtr msg = Notifier::GetMessage();
 	if ( msg ) {
 		//SCApp->sendMessage("LOGGING", msg.get());
-		if ( !_updateLocalEPInstance ) SCApp->sendMessage(SCApp->messageGroups().focalMechanism.c_str(), msg.get());
+		if ( !SC_D._updateLocalEPInstance ) SCApp->sendMessage(SCApp->messageGroups().focalMechanism.c_str(), msg.get());
 	}
 
 	Notifier::SetEnabled(wasEnabled);
@@ -5029,8 +5054,8 @@ void EventListView::insertFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventTreeItem* EventListView::findEvent(const std::string& publicID) {
-	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
-		SchemeTreeItem* item = (SchemeTreeItem*)_treeWidget->topLevelItem(i);
+	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
+		auto item = (SchemeTreeItem*)SC_D._treeWidget->topLevelItem(i);
 		if ( item->object() && item->object()->publicID() == publicID ) {
 			return (EventTreeItem*)item;
 		}
@@ -5045,12 +5070,12 @@ EventTreeItem* EventListView::findEvent(const std::string& publicID) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 OriginTreeItem* EventListView::findOrigin(const std::string& publicID) {
-	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
-		QTreeWidgetItem* item = _treeWidget->topLevelItem(i);
+	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
+		auto item = SC_D._treeWidget->topLevelItem(i);
 		for ( int j = 0; j < item->childCount(); ++j ) {
-			QTreeWidgetItem* citem = item->child(j);
+			auto citem = item->child(j);
 			for ( int k = 0; k < citem->childCount(); ++k ) {
-				SchemeTreeItem* schemeItem = (SchemeTreeItem*)citem->child(k);
+				auto schemeItem = (SchemeTreeItem*)citem->child(k);
 				if ( schemeItem->object() && schemeItem->object()->publicID() == publicID ) {
 					return (OriginTreeItem*)schemeItem;
 				}
@@ -5067,12 +5092,12 @@ OriginTreeItem* EventListView::findOrigin(const std::string& publicID) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FocalMechanismTreeItem* EventListView::findFocalMechanism(const std::string &publicID) {
-	for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
-		QTreeWidgetItem* item = _treeWidget->topLevelItem(i);
+	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
+		auto item = SC_D._treeWidget->topLevelItem(i);
 		for ( int j = 0; j < item->childCount(); ++j ) {
-			QTreeWidgetItem* citem = item->child(j);
+			auto citem = item->child(j);
 			for ( int k = 0; k < citem->childCount(); ++k ) {
-				SchemeTreeItem* schemeItem = (SchemeTreeItem*)citem->child(k);
+				auto schemeItem = (SchemeTreeItem*)citem->child(k);
 				if ( schemeItem->object() && schemeItem->object()->publicID() == publicID ) {
 					return (FocalMechanismTreeItem*)schemeItem;
 				}
@@ -5089,12 +5114,12 @@ FocalMechanismTreeItem* EventListView::findFocalMechanism(const std::string &pub
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::loadItem(QTreeWidgetItem *item) {
-	if ( _blockSelection ) return;
+	if ( SC_D._blockSelection ) return;
 
 	SchemeTreeItem* schemeItem = dynamic_cast<SchemeTreeItem*>(item);
 	if ( schemeItem == nullptr ) return;
 
-	_blockSelection = true;
+	SC_D._blockSelection = true;
 
 	Origin* o = Origin::Cast(schemeItem->object());
 	if ( o ) {
@@ -5107,7 +5132,7 @@ void EventListView::loadItem(QTreeWidgetItem *item) {
 		PublicObjectEvaluator::Instance().moveToFront(o->publicID().c_str());
 		emit originSelected(o, event);
 
-		_blockSelection = false;
+		SC_D._blockSelection = false;
 
 		return;
 	}
@@ -5120,7 +5145,7 @@ void EventListView::loadItem(QTreeWidgetItem *item) {
 
 		emit focalMechanismSelected(fm, event);
 
-		_blockSelection = false;
+		SC_D._blockSelection = false;
 
 		return;
 	}
@@ -5130,7 +5155,7 @@ void EventListView::loadItem(QTreeWidgetItem *item) {
 		PublicObjectEvaluator::Instance().moveToFront(e->publicID().c_str());
 		emit eventSelected(e);
 
-		if ( _withOrigins ) {
+		if ( SC_D._withOrigins ) {
 			Origin* o = Origin::Find(e->preferredOriginID());
 			if ( o ) {
 				//readPicks(o);
@@ -5138,18 +5163,18 @@ void EventListView::loadItem(QTreeWidgetItem *item) {
 				emit originSelected(o, e);
 			}
 		}
-		else if ( _withFocalMechanisms ) {
+		else if ( SC_D._withFocalMechanisms ) {
 			FocalMechanism* fm = FocalMechanism::Find(e->preferredFocalMechanismID());
 			if ( fm )
 				emit focalMechanismSelected(fm, e);
 		}
 
-		_blockSelection = false;
+		SC_D._blockSelection = false;
 
 		return;
 	}
 
-	_blockSelection = false;
+	SC_D._blockSelection = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5159,7 +5184,7 @@ void EventListView::loadItem(QTreeWidgetItem *item) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::itemSelected(QTreeWidgetItem* item, int column) {
 	if ( QApplication::keyboardModifiers() != Qt::NoModifier ) return;
-	if ( column == _itemConfig.columnMap[COL_FM] ) {
+	if ( column == SC_D._itemConfig.columnMap[COL_FM] ) {
 		Event *ev = (Event*)item->data(column, Qt::UserRole+1).value<void*>();
 		if ( ev ) {
 			eventFMSelected(ev);
@@ -5191,12 +5216,12 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 	OriginTreeItem *oitem = (OriginTreeItem*)item;
 	Origin *org = nullptr;
 
-	if ( item->type() == ST_Origin && !_updateLocalEPInstance ) {
+	if ( item->type() == ST_Origin && !SC_D._updateLocalEPInstance ) {
 		org = oitem->origin();
 		if ( org ) {
 			popup.addSeparator();
 
-			if ( oitem->parent()->parent() == _unassociatedEventItem )
+			if ( oitem->parent()->parent() == SC_D._unassociatedEventItem )
 				newEvent = popup.addAction("Form new event for origin");
 			else
 				splitOrg = popup.addAction("Split origin and create new event");
@@ -5225,7 +5250,7 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 			cb->setText(text);
 	}
 	else if ( action == cs )
-		SCApp->copyToClipboard(_treeWidget, _treeWidget->header());
+		SCApp->copyToClipboard(SC_D._treeWidget, SC_D._treeWidget->header());
 	else if ( action == newEvent ) {
 		if ( QMessageBox::question(
 			this, "Form a new event",
@@ -5278,7 +5303,7 @@ void EventListView::copyRowToClipboard() {
 	if ( !cb ) return;
 
 	QString text;
-	QList<QTreeWidgetItem *> items = _treeWidget->selectedItems();
+	QList<QTreeWidgetItem *> items = SC_D._treeWidget->selectedItems();
 	foreach ( QTreeWidgetItem* item, items ) {
 		if ( !text.isEmpty() )
 			text += '\n';
@@ -5300,20 +5325,20 @@ void EventListView::copyRowToClipboard() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QList<Event*> EventListView::selectedEvents() {
 	QList<Event*> events;
-	if ( _blockSelection ) return events;
+	if ( SC_D._blockSelection ) return events;
 
-	_blockSelection = true;
+	SC_D._blockSelection = true;
 
-	QList<QTreeWidgetItem *> items = _treeWidget->selectedItems();
+	QList<QTreeWidgetItem *> items = SC_D._treeWidget->selectedItems();
 	foreach ( QTreeWidgetItem* item, items ) {
-		SchemeTreeItem* schemeItem = dynamic_cast<SchemeTreeItem*>(item);
+		auto schemeItem = dynamic_cast<SchemeTreeItem*>(item);
 		if ( schemeItem == nullptr ) continue;
 
 		Event* e = Event::Cast(schemeItem->object());
 		events.push_back(e);
 	}
 
-	_blockSelection = false;
+	SC_D._blockSelection = false;
 
 	return events;
 }
@@ -5323,9 +5348,18 @@ QList<Event*> EventListView::selectedEvents() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QTreeWidget *EventListView::eventTree() {
+	return SC_D._treeWidget;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Seiscomp::DataModel::Event *
 EventListView::eventFromTreeItem(QTreeWidgetItem *item) const {
-	SchemeTreeItem* schemeItem = dynamic_cast<SchemeTreeItem*>(item);
+	auto schemeItem = dynamic_cast<SchemeTreeItem*>(item);
 	if ( schemeItem == nullptr ) return nullptr;
 	return Event::Cast(schemeItem->object());
 }
@@ -5336,7 +5370,7 @@ EventListView::eventFromTreeItem(QTreeWidgetItem *item) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int EventListView::eventCount() const {
-	return _treeWidget->topLevelItemCount() - (_unassociatedEventItem ? 1 : 0);
+	return SC_D._treeWidget->topLevelItemCount() - (SC_D._unassociatedEventItem ? 1 : 0);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5345,16 +5379,16 @@ int EventListView::eventCount() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int EventListView::visibleEventCount() const {
-	if ( _visibleEventCount < 0 ) {
+	if ( SC_D._visibleEventCount < 0 ) {
 		qWarning() << "Counting visible events";
-		_visibleEventCount = 0;
-		for ( int i = 0; i < _treeWidget->topLevelItemCount(); ++i ) {
-			EventTreeItem* item = (EventTreeItem*)_treeWidget->topLevelItem(i);
-			if ( item->event() ) ++_visibleEventCount;
+		SC_D._visibleEventCount = 0;
+		for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
+			auto item = (EventTreeItem*)SC_D._treeWidget->topLevelItem(i);
+			if ( item->event() ) ++SC_D._visibleEventCount;
 		}
 	}
 
-	return _visibleEventCount;
+	return SC_D._visibleEventCount;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5363,7 +5397,7 @@ int EventListView::visibleEventCount() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setSortingEnabled(bool enable) {
-	QHeaderView* header = _treeWidget->header();
+	auto header = SC_D._treeWidget->header();
 	if ( header == nullptr ) return;
 
 	if ( enable ) {
@@ -5384,30 +5418,30 @@ void EventListView::setSortingEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::sortItems(int col) {
-	int count = _treeWidget->topLevelItemCount();
-	QHeaderView* header = _treeWidget->header();
+	int count = SC_D._treeWidget->topLevelItemCount();
+	QHeaderView* header = SC_D._treeWidget->header();
 	if ( header == nullptr ) return;
 
 	Qt::SortOrder order = header->sortIndicatorOrder();
 
-	_treeWidget->blockSignals(true);
+	SC_D._treeWidget->blockSignals(true);
 
 	QVector<SortItem> items(count);
 	for ( int i = 0; i < items.count(); ++i ) {
-		items[i].first = _treeWidget->takeTopLevelItem(0);
+		items[i].first = SC_D._treeWidget->takeTopLevelItem(0);
 		items[i].second = col;
 	}
 
 	LessThan compare;
 
-	if ( col == _itemConfig.columnMap[COL_OTIME] ||
-	     col == _itemConfig.columnMap[COL_M] ||
-	     col == _itemConfig.columnMap[COL_PHASES] ||
-	     col == _itemConfig.columnMap[COL_RMS] ||
-	     col == _itemConfig.columnMap[COL_AZIMUTHAL_GAP] ||
-	     col == _itemConfig.columnMap[COL_LAT] ||
-	     col == _itemConfig.columnMap[COL_LON] ||
-	     col == _itemConfig.columnMap[COL_DEPTH] )
+	if ( col == SC_D._itemConfig.columnMap[COL_OTIME] ||
+	     col == SC_D._itemConfig.columnMap[COL_M] ||
+	     col == SC_D._itemConfig.columnMap[COL_PHASES] ||
+	     col == SC_D._itemConfig.columnMap[COL_RMS] ||
+	     col == SC_D._itemConfig.columnMap[COL_AZIMUTHAL_GAP] ||
+	     col == SC_D._itemConfig.columnMap[COL_LAT] ||
+	     col == SC_D._itemConfig.columnMap[COL_LON] ||
+	     col == SC_D._itemConfig.columnMap[COL_DEPTH] )
 		compare = (order == Qt::AscendingOrder ? &itemLessThan : &itemGreaterThan);
 	else
 		compare = (order == Qt::AscendingOrder ? &itemTextLessThan : &itemTextGreaterThan);
@@ -5415,13 +5449,13 @@ void EventListView::sortItems(int col) {
 	std::stable_sort(items.begin(), items.end(), compare);
 
 	for ( int i = 0; i < items.count(); ++i ) {
-		_treeWidget->addTopLevelItem(items[i].first);
+		SC_D._treeWidget->addTopLevelItem(items[i].first);
 		static_cast<SchemeTreeItem*>(items[i].first)->update(this);
 	}
 
 	updateHideState();
 
-	_treeWidget->blockSignals(false);
+	SC_D._treeWidget->blockSignals(false);
 
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5431,7 +5465,7 @@ void EventListView::sortItems(int col) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setControlsHidden(bool hide) {
-	_ui->frameControls->setHidden(hide);
+	SC_D._ui->frameControls->setHidden(hide);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5440,9 +5474,9 @@ void EventListView::setControlsHidden(bool hide) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setCustomControls(QWidget* widget) const {
-	_ui->frameCustomControls->setLayout(new QHBoxLayout());
-	_ui->frameCustomControls->layout()->setMargin(0);
-	_ui->frameCustomControls->layout()->addWidget(widget);
+	SC_D._ui->frameCustomControls->setLayout(new QHBoxLayout());
+	SC_D._ui->frameCustomControls->layout()->setMargin(0);
+	SC_D._ui->frameCustomControls->layout()->addWidget(widget);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5451,7 +5485,7 @@ void EventListView::setCustomControls(QWidget* widget) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setFMLinkEnabled(bool e) {
-	_itemConfig.createFMLink = e;
+	SC_D._itemConfig.createFMLink = e;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5460,7 +5494,7 @@ void EventListView::setFMLinkEnabled(bool e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::moveSection(int from, int to) {
-	QHeaderView* header = _treeWidget->header();
+	auto header = SC_D._treeWidget->header();
 	if ( header == nullptr ) return;
 
 	int count = header->count();
@@ -5476,33 +5510,33 @@ void EventListView::moveSection(int from, int to) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::headerContextMenuRequested(const QPoint &pos) {
-	int count = _treeWidget->header()->count();
-	QAbstractItemModel *model = _treeWidget->header()->model();
+	int count = SC_D._treeWidget->header()->count();
+	QAbstractItemModel *model = SC_D._treeWidget->header()->model();
 
 	QMenu menu;
 
 	QVector<QAction*> actions;
 
 	for ( int i = 0; i < count; ++i ) {
-		if ( i == _itemConfig.columnMap[COL_ORIGINS] && !_withOrigins )
+		if ( i == SC_D._itemConfig.columnMap[COL_ORIGINS] && !SC_D._withOrigins )
 			continue;
 
 		actions.append(menu.addAction(model->headerData(i, Qt::Horizontal).toString()));
 		actions.back()->setData(i);
 		actions.back()->setCheckable(true);
-		actions.back()->setChecked(!_treeWidget->header()->isSectionHidden(i));
+		actions.back()->setChecked(!SC_D._treeWidget->header()->isSectionHidden(i));
 
 		if ( i == 0 ) actions[i]->setEnabled(false);
 	}
 
-	QAction *result = menu.exec(_treeWidget->header()->mapToGlobal(pos));
+	auto result = menu.exec(SC_D._treeWidget->header()->mapToGlobal(pos));
 	if ( result == nullptr ) return;
 
 	int section = result->data().toInt();
 	if ( section == -1 ) return;
 
 	//std::cout << "switch visibility[" << section << "] = " << result->isChecked() << std::endl;
-	_treeWidget->header()->setSectionHidden(section, !result->isChecked());
+	SC_D._treeWidget->header()->setSectionHidden(section, !result->isChecked());
 	//std::cout << "visibility[" << section << "] = " << !_treeWidget->header()->isSectionHidden(section) << std::endl;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5518,15 +5552,15 @@ bool EventListView::sendJournalAndWait(const std::string &objectID,
 	if ( !sendJournal(objectID, action, params, group) )
 		return false;
 
-	if ( _commandWaitDialog == nullptr ) {
-		_commandWaitDialog = new CommandWaitDialog(this);
-		_commandWaitDialog->setAttribute(Qt::WA_DeleteOnClose);
-		connect(_commandWaitDialog, SIGNAL(destroyed(QObject*)),
+	if ( SC_D._commandWaitDialog == nullptr ) {
+		SC_D._commandWaitDialog = new CommandWaitDialog(this);
+		SC_D._commandWaitDialog->setAttribute(Qt::WA_DeleteOnClose);
+		connect(SC_D._commandWaitDialog, SIGNAL(destroyed(QObject*)),
 		        this, SLOT(waitDialogDestroyed(QObject*)));
-		static_cast<CommandWaitDialog*>(_commandWaitDialog)->show();
+		static_cast<CommandWaitDialog*>(SC_D._commandWaitDialog)->show();
 	}
 
-	static_cast<CommandWaitDialog*>(_commandWaitDialog)->setCommand(objectID, action);
+	static_cast<CommandWaitDialog*>(SC_D._commandWaitDialog)->setCommand(objectID, action);
 
 	return true;
 }
@@ -5537,7 +5571,7 @@ bool EventListView::sendJournalAndWait(const std::string &objectID,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::waitDialogDestroyed(QObject *o) {
-	if ( _commandWaitDialog == o ) _commandWaitDialog = nullptr;
+	if ( SC_D._commandWaitDialog == o ) SC_D._commandWaitDialog = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5546,7 +5580,7 @@ void EventListView::waitDialogDestroyed(QObject *o) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::itemEntered(QTreeWidgetItem *item, int column) {
-	if ( column == _itemConfig.columnMap[COL_FM]
+	if ( column == SC_D._itemConfig.columnMap[COL_FM]
 	  && item->data(column, Qt::UserRole+1).isValid() )
 		setCursor(Qt::PointingHandCursor);
 	else
@@ -5560,14 +5594,14 @@ void EventListView::itemEntered(QTreeWidgetItem *item, int column) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::itemExpanded(QTreeWidgetItem *item) {
 	if ( item->type() != ST_OriginGroup ) return;
-	if ( _itemConfig.originScriptColumns.isEmpty() ) return;
+	if ( SC_D._itemConfig.originScriptColumns.isEmpty() ) return;
 
 	// If an origin group is expanded, raise its priority
 
 	int rows = item->childCount();
 	for ( int i = rows-1; i >= 0; --i ) {
 		QTreeWidgetItem *oitem = item->child(i);
-		PublicObjectEvaluator::Instance().moveToFront(oitem->text(_itemConfig.columnMap[COL_ID]));
+		PublicObjectEvaluator::Instance().moveToFront(oitem->text(SC_D._itemConfig.columnMap[COL_ID]));
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5578,9 +5612,9 @@ void EventListView::itemExpanded(QTreeWidgetItem *item) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous) {
 	if ( !current ) return;
-	if ( (current->type() == ST_Origin && !_itemConfig.originScriptColumns.isEmpty()) ||
-	     (current->type() == ST_Event && !_itemConfig.eventScriptColumns.isEmpty())) {
-		PublicObjectEvaluator::Instance().moveToFront(current->text(_itemConfig.columnMap[COL_ID]));
+	if ( (current->type() == ST_Origin && !SC_D._itemConfig.originScriptColumns.isEmpty()) ||
+	     (current->type() == ST_Event && !SC_D._itemConfig.eventScriptColumns.isEmpty())) {
+		PublicObjectEvaluator::Instance().moveToFront(current->text(SC_D._itemConfig.columnMap[COL_ID]));
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5600,8 +5634,8 @@ void EventListView::evalResultAvailable(const QString &publicID,
 		OriginTreeItem *item = findOrigin(pid);
 		if ( item == nullptr ) return;
 
-		QHash<QString,int>::iterator it = _itemConfig.originScriptColumnMap.find(script);
-		if ( it == _itemConfig.originScriptColumnMap.end() ) return;
+		QHash<QString,int>::iterator it = SC_D._itemConfig.originScriptColumnMap.find(script);
+		if ( it == SC_D._itemConfig.originScriptColumnMap.end() ) return;
 
 		item->setText(it.value(), result);
 		item->setBackground(it.value(), Qt::NoBrush);
@@ -5615,9 +5649,9 @@ void EventListView::evalResultAvailable(const QString &publicID,
 		// If it is the preferred item, copy the column states, unless the
 		// column defines a specific event script
 		if ( eitem->event()->preferredOriginID() == pid ) {
-			for ( int i = 0; i < _itemConfig.originScriptColumns.size(); ++i ) {
-				int pos = _itemConfig.originScriptColumns[i].pos;
-				if ( _itemConfig.eventScriptPositions.contains(pos) )
+			for ( int i = 0; i < SC_D._itemConfig.originScriptColumns.size(); ++i ) {
+				int pos = SC_D._itemConfig.originScriptColumns[i].pos;
+				if ( SC_D._itemConfig.eventScriptPositions.contains(pos) )
 					continue;
 				eitem->setText(pos, item->text(pos));
 				eitem->setBackground(pos, item->background(pos));
@@ -5630,8 +5664,8 @@ void EventListView::evalResultAvailable(const QString &publicID,
 		EventTreeItem *item = findEvent(pid);
 		if ( item == nullptr ) return;
 
-		QHash<QString,int>::iterator it = _itemConfig.eventScriptColumnMap.find(script);
-		if ( it == _itemConfig.eventScriptColumnMap.end() ) return;
+		QHash<QString,int>::iterator it = SC_D._itemConfig.eventScriptColumnMap.find(script);
+		if ( it == SC_D._itemConfig.eventScriptColumnMap.end() ) return;
 
 		item->setText(it.value(), result);
 		item->setBackground(it.value(), Qt::NoBrush);
@@ -5655,8 +5689,8 @@ void EventListView::evalResultError(const QString &publicID,
 		OriginTreeItem *item = findOrigin(pid);
 		if ( item == nullptr ) return;
 
-		QHash<QString,int>::iterator it = _itemConfig.originScriptColumnMap.find(script);
-		if ( it == _itemConfig.originScriptColumnMap.end() ) return;
+		QHash<QString,int>::iterator it = SC_D._itemConfig.originScriptColumnMap.find(script);
+		if ( it == SC_D._itemConfig.originScriptColumnMap.end() ) return;
 
 		// Error state
 		item->setBackground(it.value(), Qt::NoBrush);
@@ -5673,8 +5707,8 @@ void EventListView::evalResultError(const QString &publicID,
 		EventTreeItem *item = findEvent(pid);
 		if ( item == nullptr ) return;
 
-		QHash<QString,int>::iterator it = _itemConfig.eventScriptColumnMap.find(script);
-		if ( it == _itemConfig.eventScriptColumnMap.end() ) return;
+		QHash<QString,int>::iterator it = SC_D._itemConfig.eventScriptColumnMap.find(script);
+		if ( it == SC_D._itemConfig.eventScriptColumnMap.end() ) return;
 
 		// Error state
 		item->setBackground(it.value(), Qt::NoBrush);

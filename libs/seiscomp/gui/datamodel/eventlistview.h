@@ -87,6 +87,7 @@ class EventFilterWidget;
 
 
 class CommandMessage;
+class EventListViewPrivate;
 
 
 class SC_GUI_API EventListView : public QWidget {
@@ -112,6 +113,14 @@ class SC_GUI_API EventListView : public QWidget {
 
 			bool isNull() const;
 		};
+
+		struct Region {
+			QString                name;
+			Geo::GeoBoundingBox    bbox;
+			const Geo::GeoFeature *poly{nullptr};
+		};
+
+		using FilterRegions = QList<Region>;
 
 
 	// ------------------------------------------------------------------
@@ -143,7 +152,7 @@ class SC_GUI_API EventListView : public QWidget {
 
 		QList<Seiscomp::DataModel::Event*> selectedEvents();
 
-		QTreeWidget *eventTree() { return _treeWidget; }
+		QTreeWidget *eventTree();
 		Seiscomp::DataModel::Event *eventFromTreeItem(QTreeWidgetItem *item) const;
 
 		int eventCount() const;
@@ -294,74 +303,8 @@ class SC_GUI_API EventListView : public QWidget {
 
 		void loadItem(QTreeWidgetItem*);
 
-
-	public:
-		struct ProcessColumn {
-			int     pos;
-			QString script;
-		};
-
-		struct ItemConfig {
-			ItemConfig() : createFMLink(false) {}
-
-			QColor                    disabledColor;
-
-			bool                      createFMLink;
-			QStringList               header;
-			QVector<int>              columnMap;
-			int                       customColumn;
-			std::string               originCommentID;
-			std::string               eventCommentID;
-			QString                   customDefaultText;
-			QMap<std::string, QColor> customColorMap;
-			QVector<ProcessColumn>    originScriptColumns;
-			QVector<ProcessColumn>    eventScriptColumns;
-			QSet<int>                 eventScriptPositions;
-			QHash<QString, int>       originScriptColumnMap;
-			QHash<QString, int>       eventScriptColumnMap;
-			QSet<int>                 hiddenEventTypes;
-			QSet<QString>             preferredAgencies;
-		};
-
-		struct Region {
-			QString                name;
-			Geo::GeoBoundingBox    bbox;
-			const Geo::GeoFeature *poly{nullptr};
-		};
-
-		typedef QList<Region> FilterRegions;
-
 	private:
-		::Ui::EventListView                *_ui;
-		Private::EventFilterWidget         *_filterWidget;
-		ItemConfig                          _itemConfig;
-		FilterRegions                       _filterRegions;
-		QTreeWidget                        *_treeWidget;
-		QTreeWidgetItem                    *_unassociatedEventItem;
-		QWidget                            *_commandWaitDialog;
-		QMovie                             *_busyIndicator;
-		QLabel                             *_busyIndicatorLabel;
-		//StationMap                        _associatedStations;
-		Seiscomp::DataModel::DatabaseQuery *_reader;
-		Seiscomp::Core::TimeSpan            _timeAgo;
-		Filter                              _filter;
-		bool                                _autoSelect;
-		bool                                _withOrigins;
-		bool                                _withFocalMechanisms;
-		bool                                _updateLocalEPInstance;
-		//bool                              _withComments;
-		bool                                _blockSelection;
-		bool                                _blockRemovingOfExpiredEvents;
-		bool                                _blockCountSignal;
-		bool                                _hideOtherEvents;
-		bool                                _hideForeignEvents;
-		bool                                _hideOutsideRegion;
-		bool                                _hideFinalRejectedEvents;
-		bool                                _hideNewEvents;
-		bool                                _checkEventAgency;
-		bool                                _showOnlyLatestPerAgency;
-		int                                 _regionIndex;
-		mutable int                         _visibleEventCount;
+		EventListViewPrivate *_d_ptr;
 };
 
 
