@@ -571,6 +571,16 @@ class PublicObject(Object):
         return _datamodel.PublicObject_End()
 
     @staticmethod
+    def Lock():
+        r"""Lock()"""
+        return _datamodel.PublicObject_Lock()
+
+    @staticmethod
+    def Unlock():
+        r"""Unlock()"""
+        return _datamodel.PublicObject_Unlock()
+
+    @staticmethod
     def SetIdGeneration(arg1):
         r"""SetIdGeneration(bool arg1)"""
         return _datamodel.PublicObject_SetIdGeneration(arg1)
@@ -646,6 +656,14 @@ def PublicObject_Begin():
 def PublicObject_End():
     r"""PublicObject_End() -> Seiscomp::DataModel::PublicObject::Iterator"""
     return _datamodel.PublicObject_End()
+
+def PublicObject_Lock():
+    r"""PublicObject_Lock()"""
+    return _datamodel.PublicObject_Lock()
+
+def PublicObject_Unlock():
+    r"""PublicObject_Unlock()"""
+    return _datamodel.PublicObject_Unlock()
 
 def PublicObject_SetIdGeneration(arg1):
     r"""PublicObject_SetIdGeneration(bool arg1)"""
