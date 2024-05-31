@@ -2476,66 +2476,85 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	SC_D._itemConfig.disabledColor = palette().color(QPalette::Disabled, QPalette::Text);
 	SC_D._itemConfig.columnMap.clear();
+
+	try {
+		std::vector<std::string> cols = SCApp->configGetStrings("eventlist.visibleColumns");
+
+		// initialize all columns with index 0
+		SC_D._itemConfig.columnMap = QVector<int>(EventListColumns::Quantity, 0);
+
+		// otime is first culumn and visible by default
+		int idx = COL_OTIME;
+
+		// update index of configured columns
+		for ( auto &col : cols ) {
+			EventListColumns v;
+			if ( !v.fromString(col) ) {
+				if ( col != "TP" ) {
+					std::cerr << "ERROR: eventlist.visibleColumns: invalid column name '"
+					          << col << ", ignoring" << std::endl;
+					continue;
+				}
+
+				v = COL_MTYPE;
+				std::cerr << "WARNING: eventlist.visibleColumns: name 'TP' "
+				             "has changed to 'MType', please update your configuration" << std::endl;
+			}
+
+			SC_D._itemConfig.columnMap[v] = ++idx;
+			colVisibility[v] = true;
+		}
+
+		// update index of all other columns
+		for ( int i = COL_OTIME+1; i < EventListColumns::Quantity; ++i ) {
+			if ( SC_D._itemConfig.columnMap[i] == 0 ) {
+				SC_D._itemConfig.columnMap[i] = ++idx;
+				colVisibility[i] = false;
+			}
+		}
+	}
+	catch ( ... ) {
+		for ( int i = 0; i < EventListColumns::Quantity; ++i ) {
+			SC_D._itemConfig.columnMap.append(i);
+		}
+	}
+
+	SC_D._itemConfig.header.reserve(EventListColumns::Quantity);
 	for ( int i = 0; i < EventListColumns::Quantity; ++i ) {
+		SC_D._itemConfig.header.append("");
+	}
+
+	for ( int i = 0; i < SC_D._itemConfig.columnMap.size(); ++i ) {
+		auto &header = SC_D._itemConfig.header[SC_D._itemConfig.columnMap[i]];
 		switch ( i ) {
 			case COL_OTIME:
 				if ( SCScheme.dateTime.useLocalTime ) {
-					SC_D._itemConfig.header << QString(EEventListColumnsNames::name(i)).arg(Core::Time::LocalTimeZone().c_str());
+					header = QString(EEventListColumnsNames::name(i)).arg(Core::Time::LocalTimeZone().c_str());
 				}
 				else {
-					SC_D._itemConfig.header << QString(EEventListColumnsNames::name(i)).arg("UTC");
+					header = QString(EEventListColumnsNames::name(i)).arg("UTC");
 				}
 				break;
 			case COL_AZIMUTHAL_GAP:
-				SC_D._itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (°)");
+				header = QString(EEventListColumnsNames::name(i)) + " (°)";
 				break;
 			case COL_LAT:
-				SC_D._itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (°)");
+				header = QString(EEventListColumnsNames::name(i)) + " (°)";
 				break;
 			case COL_LON:
-				SC_D._itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (°)");
+				header = QString(EEventListColumnsNames::name(i)) + " (°)";
 				break;
 			case COL_RMS:
-				SC_D._itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (s)");
+				header = QString(EEventListColumnsNames::name(i)) + " (s)";
 				break;
 			default:
-				SC_D._itemConfig.header << EEventListColumnsNames::name(i);
+				header =  EEventListColumnsNames::name(i);
 				break;
 		}
-		SC_D._itemConfig.columnMap.append(i);
 	}
 
 	SC_D._itemConfig.customColumn = -1;
 	SC_D._itemConfig.customDefaultText = "-";
-
-	try {
-		std::vector<std::string> cols = SCApp->configGetStrings("eventlist.visibleColumns");
-		for ( int i = 0; i < EventListColumns::Quantity; ++i ) {
-			colVisibility[i] = false;
-		}
-
-		for ( size_t i = 0; i < cols.size(); ++i ) {
-			EventListColumns v;
-			if ( !v.fromString(cols[i]) ) {
-				if ( cols[i] != "TP" ) {
-					std::cerr << "ERROR: eventlist.visibleColumns: invalid column name '"
-					          << cols[i] << "' at index " << i << ", ignoring" << std::endl;
-					continue;
-				}
-				else {
-					v = COL_MTYPE;
-					std::cerr << "WARNING: eventlist.visibleColumns: name 'TP' "
-					             "has changed to 'MType', please update your configuration" << std::endl;
-				}
-			}
-
-			colVisibility[v] = true;
-		}
-
-		// First column is always visible
-		colVisibility[COL_OTIME] = true;
-	}
-	catch ( ... ) {}
 
 	if ( !withOrigins ) {
 		colVisibility[COL_ORIGINS] = false;
