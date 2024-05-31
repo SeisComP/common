@@ -1361,8 +1361,9 @@
 					initially. The first column containing the origin time is
 					always visible and cannot be hidden. Possible values are:
 
-					Certainty, Type, M, MType, RMS, AzGap, Phases, Lat, Lon, Depth, DType,
-					Stat, FM, Origins, Agency, Author, Region, ID.
+					TimeAgo, Certainty, Type, M, MType, RMS, AzGap, Phases, Lat,
+					Lon, Depth, DType, Stat, FM, Origins, Agency, Author,
+					Region, ID.
 
 					Custom columns can be added by eventlist.customColumn.* or
 					eventlist.scripts.* parameters.
@@ -1614,6 +1615,35 @@
 						<parameter name="maxmag" type="double">
 							<description>
 							Maximum magnitude
+							</description>
+						</parameter>
+					</group>
+				</group>
+				<group name="timeAgo">
+					<description>
+					Parameters controlling the appearance of the TimeAgo column.
+					</description>
+					<parameter name="interval" type="double" unit="s" default="1.0">
+						<description>
+						Update interval in seconds.
+						</description>
+					</parameter>
+					<group name="background">
+						<parameter name="gradient" type="list:string" unit="s:color">
+							<description>
+							Mapping of time values in seconds to colors used as
+							cell backgroud color. E.g., a mapping from green
+							over yellow (5min), red (10min) to
+							transparent (30min) can be expressed as
+							"0:40FF40FF,300:FFFF40FF,600:FF4040FF,1800:FF4040FF,1801:00000000".
+							</description>
+						</parameter>
+						<parameter name="discrete" type="boolean" default="true">
+							<description>
+							If time ago value falls between two color positions,
+							the resulting color will be interpolated linearly
+							between both colors by default. When the discrete
+							flag is set, the interpolation will be disabled.
 							</description>
 						</parameter>
 					</group>

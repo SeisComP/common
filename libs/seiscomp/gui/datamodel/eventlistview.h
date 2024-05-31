@@ -275,6 +275,8 @@ class SC_GUI_API EventListView : public QWidget {
 		                     const QString &script,
 		                     int error);
 
+		//! \since 17.0.0
+		void updateOTimeAgo();
 
 	protected:
 		bool eventFilter(QObject *obj, QEvent *event);
@@ -302,6 +304,9 @@ class SC_GUI_API EventListView : public QWidget {
 		                        const std::string &params, const char *group);
 
 		void loadItem(QTreeWidgetItem*);
+
+		//! \since 17.0.0
+		void updateOTimeAgoTimer();
 
 	private:
 		EventListViewPrivate *_d_ptr;

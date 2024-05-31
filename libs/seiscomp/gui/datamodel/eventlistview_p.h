@@ -36,7 +36,10 @@
 
 #include "eventlistview.h"
 
+#include <seiscomp/gui/core/gradient.h>
 #include <seiscomp/gui/datamodel/ui_eventlistview.h>
+
+#include <QTimer>
 
 
 namespace Seiscomp {
@@ -51,6 +54,11 @@ class EventListViewPrivate {
 		};
 
 		struct ItemConfig {
+			struct GradientConfig {
+				Gradient              gradient;
+				bool                  discrete{true};
+			};
+
 			ItemConfig() : createFMLink(false) {}
 
 			QColor                    disabledColor;
@@ -70,6 +78,7 @@ class EventListViewPrivate {
 			QHash<QString, int>       eventScriptColumnMap;
 			QSet<int>                 hiddenEventTypes;
 			QSet<QString>             preferredAgencies;
+			GradientConfig            otimeAgo;
 		};
 
 	public:
@@ -107,6 +116,7 @@ class EventListViewPrivate {
 		ItemConfig                          _itemConfig;
 		EventListView::FilterRegions        _filterRegions;
 		mutable int                         _visibleEventCount;
+		QTimer                              _otimeAgoTimer;
 
 	friend class EventListView;
 };

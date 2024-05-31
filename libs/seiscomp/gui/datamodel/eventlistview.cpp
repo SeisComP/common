@@ -92,6 +92,7 @@ MAKEENUM(
 	EventListColumns,
 	EVALUES(
 		COL_OTIME,
+		COL_TIME_AGO,
 		COL_EVENTTYPE_CERTAINTY,
 		COL_EVENTTYPE,
 		COL_M,
@@ -113,6 +114,7 @@ MAKEENUM(
 	),
 	ENAMES(
 		"OT (%1)",
+		"TimeAgo",
 		"Certainty",
 		"Type",
 		"M",
@@ -137,6 +139,7 @@ MAKEENUM(
 
 bool colVisibility[EventListColumns::Quantity] = {
 	true,
+	false,
 	false,
 	true,
 	true,
@@ -889,6 +892,7 @@ class SchemeTreeItem : public TreeItem {
 		void init() {
 			setTextAlignment(config.columnMap[COL_ID], Qt::AlignLeft | Qt::AlignVCenter);
 			setTextAlignment(config.columnMap[COL_OTIME], Qt::AlignLeft | Qt::AlignVCenter);
+			setTextAlignment(config.columnMap[COL_TIME_AGO], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_TYPE], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_FM], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_PHASES], Qt::AlignCenter);
@@ -918,6 +922,87 @@ class SchemeTreeItem : public TreeItem {
 		}
 
 		virtual void update(EventListView*) = 0;
+
+		void updateTimeAgo() {
+			bool ok = true;
+			double epoch = data(config.columnMap[COL_OTIME], Qt::UserRole).toDouble(&ok);
+
+			if ( !ok ) {
+				setText(config.columnMap[COL_TIME_AGO], "");
+				setData(config.columnMap[COL_TIME_AGO], Qt::UserRole, QVariant());
+				return;
+			}
+
+			TimeSpan ts = Time::UTC() - Time(epoch);
+
+			int sec = ts.seconds();
+			int days = sec / 86400;
+			int hours = (sec - days*86400) / 3600;
+			int minutes = (sec - days*86400 - hours*3600) / 60;
+			int seconds = sec - days*86400 - hours*3600 - 60*minutes;
+
+			QString text;
+
+			if ( days > 0 ) {
+				text = QString("%1d %2h").arg(days, 0, 'd', 0, ' ').arg(hours, 0, 'd', 0, ' ');
+			}
+			else {
+				if ( hours > 0 ) {
+					text = QString("%1h %2m").arg(hours, 0, 'd', 0, ' ').arg(minutes, 0, 'd', 0, ' ');
+				}
+				else {
+					if ( minutes > 0 ) {
+						text = QString("%1m %2s").arg(minutes, 0, 'd', 0, ' ').arg(seconds, 0, 'd', 0, ' ');
+					}
+					else {
+						text = QString("%1s").arg(seconds, 0, 'd', 0, ' ');
+					}
+				}
+			}
+
+			setText(config.columnMap[COL_TIME_AGO], text);
+			setData(config.columnMap[COL_TIME_AGO], Qt::UserRole, QVariant(ts.length()));
+
+			// background and foreground color if color gradient is specified
+			if ( !config.otimeAgo.gradient.empty() ) {
+				QColor bg = config.otimeAgo.gradient.colorAt(
+				        ts.seconds(), config.otimeAgo.discrete);
+
+				// configured background color contains no alpha and has no
+				// effect
+				if ( bg.alpha() == 0 ) {
+					setBackground(config.columnMap[COL_TIME_AGO], Qt::NoBrush);
+					setForeground(config.columnMap[COL_TIME_AGO], Qt::NoBrush);
+					return;
+				}
+
+				// Set foreground color either to white or black depending on
+				// the gray value of the background. The effective background
+				// gray value depends on the color value of the configured color
+				// gradient, its alpha value and the default background.
+				// Open issue: Check if the current row is using
+				// QPalette::AlternateBase instead of QPalette::Base.
+				int defaultBGGray = qGray(SCApp->palette(). color(QPalette::Normal, QPalette::Base).rgb());
+				int bgGray = qGray(bg.rgb());
+				double alpha = static_cast<double>(bg.alpha()) / 256.0;
+				int effectiveBGGray = bgGray * alpha + defaultBGGray * (1.0 - alpha);
+
+				/*
+				if ( ts.length() < 3600 ) {
+					std::cerr << "defaultBGGray: " << defaultBGGray
+					          << ", s: " << ts.length()
+					          << ", alpha: " << alpha
+					          << ", bgGray: " << bgGray
+					          << ", effectiveBGGray: " << effectiveBGGray
+					          << std::endl;
+				}
+				*/
+
+				setBackground(config.columnMap[COL_TIME_AGO], bg);
+				setForeground(config.columnMap[COL_TIME_AGO],
+				              effectiveBGGray < 128 ? Qt::white : Qt::black);
+			}
+		}
 
 		PublicObject* object() const { return _object.get(); }
 
@@ -1077,6 +1162,8 @@ class OriginTreeItem : public SchemeTreeItem {
 			setToolTip(config.columnMap[COL_OTIME], timeToString(ori->time().value(), "%F %T.%f", true));
 			setToolTip(config.columnMap[COL_ID], text(config.columnMap[COL_ID]));
 			setToolTip(config.columnMap[COL_REGION], text(config.columnMap[COL_REGION])); // Region ToolTip
+
+			updateTimeAgo();
 		}
 
 
@@ -1212,6 +1299,8 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 
 				setText(config.columnMap[COL_REGION], Regions::getRegionName(lat, lon).c_str()); // Region
 			}
+
+			updateTimeAgo();
 
 			char stat = objectStatusToChar(fm);
 			setText(config.columnMap[COL_TYPE], QString("%1").arg(stat));
@@ -1833,6 +1922,8 @@ class EventTreeItem : public SchemeTreeItem {
 					setData(config.customColumn, Qt::ForegroundRole, QVariant());
 				}
 			}
+
+			updateTimeAgo();
 
 			//! --------------------------------------------------------------
 			try {
@@ -2896,6 +2987,26 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	auto *vl = new QVBoxLayout;
 	vl->addWidget(SC_D._filterWidget);
 
+	// TimeAgo column properties
+	double interval = 1.0;
+	try {
+		interval = std::max(1.0, SCApp->configGetDouble("eventlist.timeAgo.interval"));
+	}
+	catch ( Config::OptionNotFoundException& ) {}
+	catch ( Config::TypeConversionException& ) {}
+
+	SC_D._otimeAgoTimer.setInterval(interval * 1000.);
+
+	try {
+		SC_D._itemConfig.otimeAgo.gradient = SCApp->configGetColorGradient(
+		        "eventlist.timeAgo.background.gradient",
+		        SC_D._itemConfig.otimeAgo.gradient);
+		SC_D._itemConfig.otimeAgo.discrete = SCApp->configGetBool(
+		        "eventlist.timeAgo.background.discrete");
+	}
+	catch ( Config::OptionNotFoundException& ) {}
+	catch ( Config::TypeConversionException& ) {}
+
 	auto *menu = new CustomWidgetMenu(SC_D._ui->btnFilter);
 	menu->setLayout(vl);
 	SC_D._ui->btnFilter->setMenu(menu);
@@ -2910,6 +3021,10 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	SC_D._treeWidget->headerItem()->setToolTip(
 		SC_D._itemConfig.columnMap[COL_OTIME],
 		tr("Origin time")
+	);
+	SC_D._treeWidget->headerItem()->setToolTip(
+		SC_D._itemConfig.columnMap[COL_TIME_AGO],
+		tr("Difference between current time and origin time")
 	);
 	SC_D._treeWidget->headerItem()->setToolTip(
 		SC_D._itemConfig.columnMap[COL_EVENTTYPE_CERTAINTY],
@@ -3100,6 +3215,9 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	setFMLinkEnabled(SC_D._itemConfig.createFMLink);
 
 	PublicObjectEvaluator::Instance().setDatabaseURI(SCApp->databaseURI().c_str());
+
+	connect(&SC_D._otimeAgoTimer, SIGNAL(timeout()), this, SLOT(updateOTimeAgo()));
+	updateOTimeAgoTimer();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5478,6 +5596,23 @@ void EventListView::loadItem(QTreeWidgetItem *item) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void EventListView::updateOTimeAgoTimer() {
+	auto *header = SC_D._treeWidget->header();
+	bool hidden = header->isSectionHidden(SC_D._itemConfig.columnMap[COL_TIME_AGO]);
+	if ( hidden && SC_D._otimeAgoTimer.isActive() ) {
+		SC_D._otimeAgoTimer.stop();
+	}
+	else if ( !hidden && !SC_D._otimeAgoTimer.isActive() ) {
+		SC_D._otimeAgoTimer.start();
+	}
+	updateOTimeAgo();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::itemSelected(QTreeWidgetItem* item, int column) {
 	if ( QApplication::keyboardModifiers() != Qt::NoModifier ) {
 		return;
@@ -5764,6 +5899,7 @@ void EventListView::sortItems(int col) {
 	LessThan compare;
 
 	if ( col == SC_D._itemConfig.columnMap[COL_OTIME] ||
+	     col == SC_D._itemConfig.columnMap[COL_TIME_AGO] ||
 	     col == SC_D._itemConfig.columnMap[COL_M] ||
 	     col == SC_D._itemConfig.columnMap[COL_PHASES] ||
 	     col == SC_D._itemConfig.columnMap[COL_RMS] ||
@@ -5878,6 +6014,9 @@ void EventListView::headerContextMenuRequested(const QPoint &pos) {
 
 	//std::cout << "switch visibility[" << section << "] = " << result->isChecked() << std::endl;
 	SC_D._treeWidget->header()->setSectionHidden(section, !result->isChecked());
+	if ( section == SC_D._itemConfig.columnMap[COL_TIME_AGO] ) {
+		updateOTimeAgoTimer();
+	}
 	//std::cout << "visibility[" << section << "] = " << !_treeWidget->header()->isSectionHidden(section) << std::endl;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6088,6 +6227,22 @@ void EventListView::evalResultError(const QString &publicID,
 		item->setToolTip(it.value(),
 		                 QString("%1\n\n%2")
 		                 .arg(script, PublicObjectEvaluator::Instance().errorMsg(error)));
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void EventListView::updateOTimeAgo() {
+	QTreeWidgetItemIterator it(SC_D._treeWidget);
+	while ( *it ) {
+		auto *item = dynamic_cast<SchemeTreeItem*>(*it);
+		if ( item ) {
+			item->updateTimeAgo();
+		}
+		++it;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
