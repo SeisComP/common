@@ -62,7 +62,6 @@
 #include <QProgressBar>
 #include <QProgressDialog>
 #include <QTreeWidgetItem>
-#include <QHeaderView>
 
 #include <algorithm>
 
@@ -186,12 +185,12 @@ class ByteArrayBuf : public std::streambuf {
 		ByteArrayBuf(QByteArray &array) : _array(array) {}
 
 	protected:
-		int_type overflow (int_type c) {
+		int_type overflow (int_type c) override {
 			_array.append((char)c);
 			return c;
 		}
 
-		std::streamsize xsputn(const char* s, std::streamsize n) {
+		std::streamsize xsputn(const char* s, std::streamsize n) override {
 			_array += QByteArray(s, n);
 			return n;
 		}
@@ -243,9 +242,13 @@ void addFilterConstraints(std::ostream &os, DatabaseArchive *ar, const EventList
 	if ( !filter.eventID.empty() ) {
 		// Convert to most common SQL LIKE format
 		std::string pattern = filter.eventID;
-		for ( size_t i = 0; i < pattern.size(); ++i ) {
-			if ( pattern[i] == '?' ) pattern[i] = '_';
-			else if ( pattern[i] == '*' ) pattern[i] = '%';
+		for ( auto &c : pattern ) {
+			if ( c == '?' ) {
+				c = '_';
+			}
+			else if ( c == '*' ) {
+				c = '%';
+			}
 		}
 
 		std::string escapedPattern;
@@ -257,7 +260,9 @@ void addFilterConstraints(std::ostream &os, DatabaseArchive *ar, const EventList
 
 
 DatabaseIterator getEvents(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if ( !ar->driver() ) return DatabaseIterator();
+	if ( !ar->driver() ) {
+		return {};
+	}
 
 	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
 
@@ -266,7 +271,9 @@ DatabaseIterator getEvents(DatabaseArchive *ar, const EventListView::Filter& fil
 	oss << "select PEvent." + _T("publicID") + ",Event.* "
 	    << "from Origin, PublicObject as POrigin, Event, PublicObject as PEvent ";
 
-	if ( filterMagnitude ) oss << ", PublicObject as PMagnitude,  Magnitude ";
+	if ( filterMagnitude ) {
+		oss << ", PublicObject as PMagnitude,  Magnitude ";
+	}
 
 	oss << "where POrigin." + _T("publicID") + "=Event." + _T("preferredOriginID");
 
@@ -294,7 +301,9 @@ DatabaseIterator getEvents(DatabaseArchive *ar, const EventListView::Filter& fil
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getEventOriginReferences(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if ( !ar->driver() ) return DatabaseIterator();
+	if ( !ar->driver() ) {
+		return {};
+	}
 
 	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
 
@@ -303,8 +312,9 @@ DatabaseIterator getEventOriginReferences(DatabaseArchive *ar, const EventListVi
 	    << "from PublicObject as POrigin, Origin, "
 	    << "OriginReference, Event ";
 
-	if ( filterMagnitude )
+	if ( filterMagnitude ) {
 		oss << ", PublicObject as PMagnitude,  Magnitude ";
+	}
 
 	oss << "where POrigin._oid = Origin._oid";
 
@@ -333,7 +343,9 @@ DatabaseIterator getEventOriginReferences(DatabaseArchive *ar, const EventListVi
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getEventFocalMechanismReferences(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if ( !ar->driver() ) return DatabaseIterator();
+	if ( !ar->driver() ) {
+		return {};
+	}
 
 	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
 
@@ -342,8 +354,9 @@ DatabaseIterator getEventFocalMechanismReferences(DatabaseArchive *ar, const Eve
 	    << "from PublicObject as POrigin, Origin, "
 	    << "FocalMechanismReference, Event ";
 
-	if ( filterMagnitude )
+	if ( filterMagnitude ) {
 		oss << ", PublicObject as PMagnitude,  Magnitude ";
+	}
 
 	oss << "where POrigin._oid = Origin._oid";
 
@@ -372,7 +385,9 @@ DatabaseIterator getEventFocalMechanismReferences(DatabaseArchive *ar, const Eve
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getEventOrigins(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if ( !ar->driver() ) return DatabaseIterator();
+	if ( !ar->driver() ) {
+		return {};
+	}
 
 	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
 
@@ -382,8 +397,9 @@ DatabaseIterator getEventOrigins(DatabaseArchive *ar, const EventListView::Filte
 	    <<      "Event, OriginReference, "
 	    <<      "PublicObject as POrigin, Origin ";
 
-	if ( filterMagnitude )
+	if ( filterMagnitude ) {
 		oss << ", PublicObject as PMagnitude,  Magnitude ";
+	}
 
 	oss << "where PAssocOrigin._oid = AssocOrigin._oid and POrigin._oid = Origin._oid";
 
@@ -413,7 +429,9 @@ DatabaseIterator getEventOrigins(DatabaseArchive *ar, const EventListView::Filte
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getEventMagnitudes(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if ( !ar->driver() ) return DatabaseIterator();
+	if ( !ar->driver() ) {
+		return {};
+	}
 
 	std::ostringstream oss;
 	oss << "select PMagnitude." << _T("publicID") << ", Magnitude.* "
@@ -438,7 +456,9 @@ DatabaseIterator getEventMagnitudes(DatabaseArchive *ar, const EventListView::Fi
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getEventPreferredOrigins(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if ( !ar->driver() ) return DatabaseIterator();
+	if ( !ar->driver() ) {
+		return {};
+	}
 
 	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
 
@@ -474,7 +494,9 @@ DatabaseIterator getEventPreferredOrigins(DatabaseArchive *ar, const EventListVi
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getEventFocalMechanisms(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if ( !ar->driver() ) return DatabaseIterator();
+	if ( !ar->driver() ) {
+		return {};
+	}
 
 	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
 
@@ -484,8 +506,9 @@ DatabaseIterator getEventFocalMechanisms(DatabaseArchive *ar, const EventListVie
 	    <<      "Event, FocalMechanismReference, "
 	    <<      "PublicObject as PPrefOrigin, Origin as PrefOrigin";
 
-	if ( filterMagnitude )
+	if ( filterMagnitude ) {
 		oss << ", PublicObject as PMagnitude,  Magnitude";
+	}
 
 	oss << " where PFocalMechanism._oid = FocalMechanism._oid and PPrefOrigin._oid = PrefOrigin._oid";
 
@@ -516,7 +539,9 @@ DatabaseIterator getEventFocalMechanisms(DatabaseArchive *ar, const EventListVie
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getEventMomentTensors(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if ( !ar->driver() ) return DatabaseIterator();
+	if ( !ar->driver() ) {
+		return {};
+	}
 
 	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
 
@@ -527,8 +552,9 @@ DatabaseIterator getEventMomentTensors(DatabaseArchive *ar, const EventListView:
 	    <<      "Event, FocalMechanismReference, "
 	    <<      "PublicObject as PPrefOrigin, Origin as PrefOrigin";
 
-	if ( filterMagnitude )
+	if ( filterMagnitude ) {
 		oss << ", PublicObject as PMagnitude,  Magnitude";
+	}
 
 	oss << " where PFocalMechanism._oid = FocalMechanism._oid and PMomentTensor._oid = MomentTensor._oid and "
 	    <<       "PPrefOrigin._oid = PrefOrigin._oid";
@@ -561,7 +587,9 @@ DatabaseIterator getEventMomentTensors(DatabaseArchive *ar, const EventListView:
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getUnassociatedOrigins(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if ( !ar->driver() ) return DatabaseIterator();
+	if ( !ar->driver() ) {
+		return {};
+	}
 
 	std::ostringstream oss;
 
@@ -572,18 +600,24 @@ DatabaseIterator getUnassociatedOrigins(DatabaseArchive *ar, const EventListView
 	    <<       "Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
 	    <<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime) << "' and ";
 
-	if ( filter.minLatitude )
+	if ( filter.minLatitude ) {
 		oss << "Origin." << _T("latitude_value") << " >= " << *filter.minLatitude << " and ";
-	if ( filter.maxLatitude )
+	}
+	if ( filter.maxLatitude ) {
 		oss << "Origin." << _T("latitude_value") << " <= " << *filter.maxLatitude << " and ";
-	if ( filter.minLongitude )
+	}
+	if ( filter.minLongitude ) {
 		oss << "Origin." << _T("longitude_value") << " >= " << *filter.minLongitude << " and ";
-	if ( filter.maxLongitude )
+	}
+	if ( filter.maxLongitude ) {
 		oss << "Origin." << _T("longitude_value") << " <= " << *filter.maxLongitude << " and ";
-	if ( filter.minDepth )
+	}
+	if ( filter.minDepth ) {
 		oss << "Origin." << _T("depth_value") << " >= " << *filter.minDepth << " and ";
-	if ( filter.maxDepth )
+	}
+	if ( filter.maxDepth ) {
 		oss << "Origin." << _T("depth_value") << " <= " << *filter.maxDepth << " and ";
+	}
 
 	oss <<       "OriginReference." << _T("originID") << " is NULL";
 
@@ -596,8 +630,9 @@ DatabaseIterator getUnassociatedOrigins(DatabaseArchive *ar, const EventListView
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getComments4Origins(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if( !ar->driver() )
-		return DatabaseIterator();
+	if ( !ar->driver() ) {
+		return {};
+	}
 
 	std::ostringstream oss;
 	oss	<< "select Comment.* "
@@ -606,18 +641,24 @@ DatabaseIterator getComments4Origins(DatabaseArchive *ar, const EventListView::F
 		<< "where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
 		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "' and ";
 
-	if ( filter.minLatitude )
+	if ( filter.minLatitude ) {
 		oss << "Origin." << _T("latitude_value") << " >= " << *filter.minLatitude << " and ";
-	if ( filter.maxLatitude )
+	}
+	if ( filter.maxLatitude ) {
 		oss << "Origin." << _T("latitude_value") << " <= " << *filter.maxLatitude << " and ";
-	if ( filter.minLongitude )
+	}
+	if ( filter.minLongitude ) {
 		oss << "Origin." << _T("longitude_value") << " >= " << *filter.minLongitude << " and ";
-	if ( filter.maxLongitude )
+	}
+	if ( filter.maxLongitude ) {
 		oss << "Origin." << _T("longitude_value") << " <= " << *filter.maxLongitude << " and ";
-	if ( filter.minDepth )
+	}
+	if ( filter.minDepth ) {
 		oss << "Origin." << _T("depth_value") << " >= " << *filter.minDepth << " and ";
-	if ( filter.maxDepth )
+	}
+	if ( filter.maxDepth ) {
 		oss << "Origin." << _T("depth_value") << " <= " << *filter.maxDepth << " and ";
+	}
 
 	oss <<       "Comment._parent_oid = Origin._oid";
 
@@ -630,8 +671,9 @@ DatabaseIterator getComments4Origins(DatabaseArchive *ar, const EventListView::F
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getComments4Events(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if( !ar->driver() )
-		return DatabaseIterator();
+	if( !ar->driver() ) {
+		return {};
+	}
 
 	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
 
@@ -642,8 +684,9 @@ DatabaseIterator getComments4Events(DatabaseArchive *ar, const EventListView::Fi
 		<<      "PublicObject as POrigin, "
 		<<      "Comment";
 
-	if ( filterMagnitude )
+	if ( filterMagnitude ) {
 		oss <<  ", PublicObject as PMagnitude,  Magnitude";
+	}
 
 	oss	<< " where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
 		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "'";
@@ -670,8 +713,9 @@ DatabaseIterator getComments4Events(DatabaseArchive *ar, const EventListView::Fi
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getComments4PrefOrigins(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if( !ar->driver() )
-		return DatabaseIterator();
+	if( !ar->driver() ) {
+		return {};
+	}
 
 	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
 
@@ -682,9 +726,9 @@ DatabaseIterator getComments4PrefOrigins(DatabaseArchive *ar, const EventListVie
 		<<      "PublicObject as POrigin, "
 		<<      "Comment";
 
-	if ( filterMagnitude )
+	if ( filterMagnitude ) {
 		oss <<  ", PublicObject as PMagnitude,  Magnitude";
-
+	}
 
 	oss	<< " where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
 		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "'";
@@ -711,8 +755,9 @@ DatabaseIterator getComments4PrefOrigins(DatabaseArchive *ar, const EventListVie
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator getDescriptions4Events(DatabaseArchive *ar, const EventListView::Filter& filter) {
-	if( !ar->driver() )
-		return DatabaseIterator();
+	if( !ar->driver() ) {
+		return {};
+	}
 
 	bool filterMagnitude = filter.minMagnitude ||  filter.maxMagnitude;
 
@@ -723,8 +768,9 @@ DatabaseIterator getDescriptions4Events(DatabaseArchive *ar, const EventListView
 		<<      "PublicObject as POrigin, "
 		<<      "EventDescription";
 
-	if ( filterMagnitude )
+	if ( filterMagnitude ) {
 		oss <<  ", PublicObject as PMagnitude,  Magnitude";
+	}
 
 	oss	<< " where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
 		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "'";
@@ -750,8 +796,8 @@ DatabaseIterator getDescriptions4Events(DatabaseArchive *ar, const EventListView
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-typedef QPair<QTreeWidgetItem*,int> SortItem;
-typedef bool(*LessThan)(const SortItem&,const SortItem&);
+using SortItem = QPair<QTreeWidgetItem*, int>;
+using LessThan = bool(*)(const SortItem&, const SortItem&);
 
 bool itemLessThan(const SortItem& left, const SortItem& right) {
 	return left.first->data(left.second, Qt::UserRole).toDouble() <
@@ -794,12 +840,17 @@ enum SchemeType {
 
 class TreeItem : public QTreeWidgetItem {
 	public:
-		explicit TreeItem(int type, const EventListViewPrivate::ItemConfig &cfg) : QTreeWidgetItem(type), _enabled(true), config(cfg) {}
-		explicit TreeItem(QTreeWidget *view, int type, const EventListViewPrivate::ItemConfig &cfg) : QTreeWidgetItem(view, type), _enabled(true), config(cfg) {}
-		explicit TreeItem(QTreeWidgetItem *parent, int type, const EventListViewPrivate::ItemConfig &cfg) : QTreeWidgetItem(parent, type), _enabled(true), config(cfg) {}
+		explicit TreeItem(int type, const EventListViewPrivate::ItemConfig &cfg)
+		: QTreeWidgetItem(type), _enabled(true), config(cfg) {}
+		explicit TreeItem(QTreeWidget *view, int type, const EventListViewPrivate::ItemConfig &cfg)
+		: QTreeWidgetItem(view, type), _enabled(true), config(cfg) {}
+		explicit TreeItem(QTreeWidgetItem *parent, int type, const EventListViewPrivate::ItemConfig &cfg)
+		: QTreeWidgetItem(parent, type), _enabled(true), config(cfg) {}
 
 		virtual void setEnabled(bool e) {
-			if ( _enabled == e ) return;
+			if ( _enabled == e ) {
+				return;
+			}
 			_enabled = e;
 
 			/*
@@ -812,9 +863,10 @@ class TreeItem : public QTreeWidgetItem {
 
 		bool isEnabled() const { return _enabled; }
 
-		QVariant data(int column, int role) const {
-			if ( !_enabled && role == Qt::TextColorRole )
+		QVariant data(int column, int role) const override {
+			if ( !_enabled && role == Qt::TextColorRole ) {
 				return config.disabledColor;
+			}
 			return QTreeWidgetItem::data(column, role);
 		}
 
@@ -828,7 +880,9 @@ class TreeItem : public QTreeWidgetItem {
 
 class SchemeTreeItem : public TreeItem {
 	protected:
-		SchemeTreeItem(int type, PublicObject* object, const EventListViewPrivate::ItemConfig &cfg, QTreeWidgetItem * parent = 0)
+		SchemeTreeItem(int type, PublicObject* object,
+		               const EventListViewPrivate::ItemConfig &cfg,
+		               QTreeWidgetItem * parent = nullptr)
 		: TreeItem(parent, type, cfg), _object(object) { init(); }
 
 	public:
@@ -850,13 +904,17 @@ class SchemeTreeItem : public TreeItem {
 			setTextAlignment(config.columnMap[COL_DEPTH_TYPE], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_REGION], Qt::AlignLeft | Qt::AlignVCenter);
 
-			if ( config.customColumn != -1 )
+			if ( config.customColumn != -1 ) {
 				setTextAlignment(config.customColumn, Qt::AlignCenter);
+			}
 
-			for ( int i = 0; i < config.originScriptColumns.size(); ++i )
-				setTextAlignment(config.originScriptColumns[i].pos, Qt::AlignCenter);
-			for ( int i = 0; i < config.eventScriptColumns.size(); ++i )
-				setTextAlignment(config.eventScriptColumns[i].pos, Qt::AlignCenter);
+			for ( const auto &col : config.originScriptColumns ) {
+				setTextAlignment(col.pos, Qt::AlignCenter);
+			}
+
+			for ( const auto &col : config.eventScriptColumns ) {
+				setTextAlignment(col.pos, Qt::AlignCenter);
+			}
 		}
 
 		virtual void update(EventListView*) = 0;
@@ -870,8 +928,10 @@ class SchemeTreeItem : public TreeItem {
 
 class OriginTreeItem : public SchemeTreeItem {
 	public:
-		OriginTreeItem(Origin* origin, const EventListViewPrivate::ItemConfig &config, QTreeWidgetItem * parent = 0)
-		: SchemeTreeItem(ST_Origin, origin, config, parent),_published( false ) {
+		OriginTreeItem(Origin *origin,
+		               const EventListViewPrivate::ItemConfig &config,
+		               QTreeWidgetItem *parent = nullptr)
+		: SchemeTreeItem(ST_Origin, origin, config, parent) {
 			QFont f = font(config.columnMap[COL_REGION]);
 			f.setItalic(true);
 			setFont(config.columnMap[COL_REGION], f);
@@ -888,14 +948,15 @@ class OriginTreeItem : public SchemeTreeItem {
 			update(nullptr);
 		}
 
-		~OriginTreeItem() {
-			/*
+		~OriginTreeItem() override = default;
+		/*
+		{
 			if ( origin() )
 				std::cout << "removed origin " << origin()->publicID() << " from list" << std::endl;
 			else
 				std::cout << "removed empty origin item from list" << std::endl;
-			*/
 		}
+		*/
 
 		Origin* origin() const { return static_cast<Origin*>(object()); }
 
@@ -903,8 +964,8 @@ class OriginTreeItem : public SchemeTreeItem {
 			_published = ps;
 		}
 
-		void update(EventListView*) {
-			Origin* ori = origin();
+		void update(EventListView */*unused*/) override {
+			auto *ori = origin();
 			setText(config.columnMap[COL_ID], QString("%1").arg(ori->publicID().c_str()));
 			POPULATE_AGENCY(ori->creationInfo().agencyID());
 			try {
@@ -914,7 +975,7 @@ class OriginTreeItem : public SchemeTreeItem {
 				setText(config.columnMap[COL_AUTHOR], "");
 			}
 			setText(config.columnMap[COL_OTIME], timeToString(ori->time().value(), TimeFormat.c_str()));
-			setData(config.columnMap[COL_OTIME], Qt::UserRole, QVariant((double)ori->time().value()));
+			setData(config.columnMap[COL_OTIME], Qt::UserRole, QVariant(static_cast<double>(ori->time().value())));
 			setText(config.columnMap[COL_M], "-"); // Mag
 			setText(config.columnMap[COL_MTYPE], "-"); // MagType
 			//setText(MCOUNT, "-"); // MagCount
@@ -1004,8 +1065,9 @@ class OriginTreeItem : public SchemeTreeItem {
 							setText(config.customColumn, ori->comment(i)->text().c_str());
 							QMap<std::string, QColor>::const_iterator it =
 								config.customColorMap.find(ori->comment(i)->text());
-							if ( it != config.customColorMap.end() )
+							if ( it != config.customColorMap.end() ) {
 								setData(config.customColumn, Qt::ForegroundRole, it.value());
+							}
 							break;
 						}
 					}
@@ -1040,8 +1102,9 @@ class OriginTreeItem : public SchemeTreeItem {
 			}
 			*/
 		}
+
 	private:
-		bool _published;
+		bool _published{false};
 
 	public:
 		static std::string TimeFormat;
@@ -1055,12 +1118,14 @@ std::string OriginTreeItem::TimeFormat;
 
 class FocalMechanismTreeItem : public SchemeTreeItem {
 	public:
-		FocalMechanismTreeItem(FocalMechanism* origin, const EventListViewPrivate::ItemConfig &config, QTreeWidgetItem * parent = 0)
-		: SchemeTreeItem(ST_FocalMechanism, origin, config, parent),_published(false) {
+		FocalMechanismTreeItem(FocalMechanism *origin,
+		                       const EventListViewPrivate::ItemConfig &config,
+		                       QTreeWidgetItem *parent = nullptr)
+		  : SchemeTreeItem(ST_FocalMechanism, origin, config, parent) {
 			update(nullptr);
 		}
 
-		~FocalMechanismTreeItem() {}
+		~FocalMechanismTreeItem() override = default;
 
 		FocalMechanism* focalMechanism() const { return static_cast<FocalMechanism*>(object()); }
 
@@ -1068,7 +1133,7 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 			_published = ps;
 		}
 
-		void update(EventListView*) {
+		void update(EventListView */*unused*/) override {
 			FocalMechanism* fm = focalMechanism();
 			setText(config.columnMap[COL_ID], QString("%1").arg(fm->publicID().c_str()));
 			POPULATE_AGENCY(fm->creationInfo().agencyID());
@@ -1096,12 +1161,13 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 					setText(config.columnMap[COL_MTYPE], "-"); // MagType
 				}
 			}
-			else
+			else {
 				fmBaseOrg = Origin::Find(fm->triggeringOriginID());
+			}
 
 			if ( fmBaseOrg ) {
 				setText(config.columnMap[COL_OTIME], timeToString(fmBaseOrg->time().value(), OriginTreeItem::TimeFormat.c_str()));
-				setData(config.columnMap[COL_OTIME], Qt::UserRole, QVariant((double)fmBaseOrg->time().value()));
+				setData(config.columnMap[COL_OTIME], Qt::UserRole, QVariant(static_cast<double>(fmBaseOrg->time().value())));
 
 				try {
 					setText(config.columnMap[COL_PHASES], QString("%1").arg(fmBaseOrg->quality().usedPhaseCount()));
@@ -1177,7 +1243,7 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 			setData(config.columnMap[COL_ID], Qt::UserRole, highlight);
 		}
 	private:
-		bool _published;
+		bool _published{false};
 
 	friend class EventTreeItem;
 };
@@ -1185,8 +1251,9 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 
 class EventTreeItem : public SchemeTreeItem {
 	public:
-		EventTreeItem(Event* event, const EventListViewPrivate::ItemConfig &config, QTreeWidgetItem * parent = 0)
-		: SchemeTreeItem(ST_Event, event, config, parent) {
+		EventTreeItem(Event* event, const EventListViewPrivate::ItemConfig &config,
+		              QTreeWidgetItem * parent = nullptr)
+		  : SchemeTreeItem(ST_Event, event, config, parent) {
 			_showOnlyOnePerAgency = false;
 			_resort = false;
 			_hasMultipleAgencies = false;
@@ -1220,16 +1287,17 @@ class EventTreeItem : public SchemeTreeItem {
 			update(nullptr);
 		}
 
-		~EventTreeItem() {
-			/*
+		~EventTreeItem() override = default;
+		/*
+		{
 			if ( event() )
 				std::cout << "removed event " << event()->publicID() << " from list" << std::endl;
 			else
 				std::cout << "removed empty event item from list" << std::endl;
-			*/
 			//if ( _origins ) delete _origins;
 			//if ( _focalMechanisms ) delete _focalMechanisms;
 		}
+		*/
 
 		Event* event() const { return static_cast<Event*>(object()); }
 
@@ -1240,7 +1308,7 @@ class EventTreeItem : public SchemeTreeItem {
 		QTreeWidgetItem *takeOrigin(int i) const { return _origins?_origins->takeChild(i):nullptr; }
 
 		void addOriginItem(QTreeWidgetItem *item) {
-			if ( _origins == nullptr ) {
+			if ( !_origins ) {
 				_origins = new TreeItem(this, ST_OriginGroup, config);
 				_origins->setEnabled(isEnabled());
 				_origins->setFlags(_origins->flags() & ~Qt::ItemIsDragEnabled);
@@ -1254,7 +1322,7 @@ class EventTreeItem : public SchemeTreeItem {
 		}
 
 		void addOriginItem(int i, QTreeWidgetItem *item) {
-			if ( _origins == nullptr ) {
+			if ( !_origins ) {
 				_origins = new TreeItem(this, ST_OriginGroup, config);
 				_origins->setEnabled(isEnabled());
 				_origins->setFlags(_origins->flags() & ~Qt::ItemIsDragEnabled);
@@ -1269,11 +1337,20 @@ class EventTreeItem : public SchemeTreeItem {
 
 		QTreeWidgetItem *focalMechanisms() const { return _focalMechanisms; }
 
-		int focalMechanismItemCount() const { return _focalMechanisms?_focalMechanisms->childCount():0; }
-		QTreeWidgetItem *focalMechanismItem(int i) const { return _focalMechanisms?_focalMechanisms->child(i):nullptr; }
+		int focalMechanismItemCount() const {
+			return _focalMechanisms?_focalMechanisms->childCount():0;
+		}
+
+		QTreeWidgetItem *focalMechanismItem(int i) const {
+			return _focalMechanisms?_focalMechanisms->child(i):nullptr;
+		}
+
 		QTreeWidgetItem *takeFocalMechanism(int i) {
-			if ( !_focalMechanisms ) return nullptr;
-			QTreeWidgetItem *item = _focalMechanisms->takeChild(i);
+			if ( !_focalMechanisms ) {
+				return nullptr;
+			}
+
+			auto *item = _focalMechanisms->takeChild(i);
 			if ( _focalMechanisms->childCount() == 0 ) {
 				delete _focalMechanisms;
 				_focalMechanisms = nullptr;
@@ -1282,7 +1359,7 @@ class EventTreeItem : public SchemeTreeItem {
 		}
 
 		void addFocalMechanismItem(QTreeWidgetItem *item) {
-			if ( _focalMechanisms == nullptr ) {
+			if ( !_focalMechanisms ) {
 				_focalMechanisms = new TreeItem(this, ST_FocalMechanismGroup, config);
 				_focalMechanisms->setEnabled(isEnabled());
 				_focalMechanisms->setFlags(_focalMechanisms->flags() & ~Qt::ItemIsDragEnabled);
@@ -1296,7 +1373,7 @@ class EventTreeItem : public SchemeTreeItem {
 		}
 
 		void addFocalMechanismItem(int i, QTreeWidgetItem *item) {
-			if ( _focalMechanisms == nullptr ) {
+			if ( !_focalMechanisms ) {
 				_focalMechanisms = new TreeItem(this, ST_FocalMechanismGroup, config);
 				_focalMechanisms->setEnabled(isEnabled());
 				_focalMechanisms->setFlags(_focalMechanisms->flags() & ~Qt::ItemIsDragEnabled);
@@ -1337,11 +1414,10 @@ class EventTreeItem : public SchemeTreeItem {
 					QMap<QString, QTreeWidgetItem*> seenAgencies;
 
 					for ( int i = 0; i < _origins->childCount(); ++i ) {
-						OriginTreeItem *oitem = (OriginTreeItem*)_origins->child(i);
+						auto *oitem = static_cast<OriginTreeItem*>(_origins->child(i));
 						QString agency = oitem->text(config.columnMap[COL_AGENCY]);
 
-						QMap<QString, QTreeWidgetItem*>::iterator it = seenAgencies.find(agency);
-
+						auto it = seenAgencies.find(agency);
 						bool hide = false;
 
 						// Not the first origin this agency
@@ -1350,11 +1426,13 @@ class EventTreeItem : public SchemeTreeItem {
 							if ( oitem->data(config.columnMap[COL_ID], Qt::UserRole).toBool() ) {
 								it.value()->setHidden(true);
 							}
-							else
+							else {
 								hide = true;
+							}
 						}
-						else
+						else {
 							seenAgencies.insert(agency, oitem);
+						}
 
 						if ( oitem->isHidden() != hide ) {
 							oitem->setHidden(hide);
@@ -1375,7 +1453,7 @@ class EventTreeItem : public SchemeTreeItem {
 					QMap<QString, QTreeWidgetItem*> seenAgencies;
 
 					for ( int i = 0; i < _focalMechanisms->childCount(); ++i ) {
-						FocalMechanismTreeItem *fmitem = (FocalMechanismTreeItem*)_focalMechanisms->child(i);
+						auto *fmitem = static_cast<FocalMechanismTreeItem*>(_focalMechanisms->child(i));
 						QString agency = fmitem->text(config.columnMap[COL_AGENCY]);
 
 						QMap<QString, QTreeWidgetItem*>::iterator it = seenAgencies.find(agency);
@@ -1388,11 +1466,13 @@ class EventTreeItem : public SchemeTreeItem {
 							if ( fmitem->data(config.columnMap[COL_ID], Qt::UserRole).toBool() ) {
 								it.value()->setHidden(true);
 							}
-							else
+							else {
 								hide = true;
+							}
 						}
-						else
+						else {
 							seenAgencies.insert(agency, fmitem);
+						}
 
 						if ( fmitem->isHidden() != hide ) {
 							fmitem->setHidden(hide);
@@ -1409,151 +1489,160 @@ class EventTreeItem : public SchemeTreeItem {
 			}
 		}
 
-		void update(EventListView *view) {
-			Event* ev = event();
-			if ( ev ) {
-				if ( _resort && _origins ) {
-					_hasMultipleAgencies = false;
+		void update(EventListView *view) override {
+			auto *ev = event();
+			if ( !ev ) {
+				setText(config.columnMap[COL_ID], "<>");
+				setText(config.columnMap[COL_OTIME], "Unassociated");
+				return;
+			}
 
-					// Reset origin process columns
-					for ( int i = 0; i < config.originScriptColumns.size(); ++i ) {
-						int pos = config.originScriptColumns[i].pos;
-						if ( config.eventScriptPositions.contains(pos) )
-							continue;
-						setBackground(pos, Qt::NoBrush);
-						setForeground(pos, Qt::NoBrush);
-						setText(pos, "");
-						setToolTip(pos, "");
+			if ( _resort && _origins ) {
+				_hasMultipleAgencies = false;
+
+				// Reset origin process columns
+				for ( int i = 0; i < config.originScriptColumns.size(); ++i ) {
+					int pos = config.originScriptColumns[i].pos;
+					if ( config.eventScriptPositions.contains(pos) ) {
+						continue;
 					}
 
-					// Preferred origin changed => resort origins
-					QList<QTreeWidgetItem*> childs = _origins->takeChildren();
-					if ( !childs.empty() ) {
-						std::stable_sort(childs.begin(), childs.end(), originItemLessThan);
+					setBackground(pos, Qt::NoBrush);
+					setForeground(pos, Qt::NoBrush);
+					setText(pos, "");
+					setToolTip(pos, "");
+				}
 
-						QString firstAgency;
+				// Preferred origin changed => resort origins
+				auto childs = _origins->takeChildren();
+				if ( !childs.empty() ) {
+					std::stable_sort(childs.begin(), childs.end(), originItemLessThan);
 
-						for ( QList<QTreeWidgetItem*>::iterator it = childs.begin();
-						      it != childs.end(); ++it ) {
-							OriginTreeItem *oi = static_cast<OriginTreeItem*>(*it);
+					QString firstAgency;
 
-							if ( it == childs.begin() )
-								firstAgency = oi->text(config.columnMap[COL_AGENCY]);
-							else if ( firstAgency != oi->text(config.columnMap[COL_AGENCY]) )
-								_hasMultipleAgencies = true;
+					for ( auto it = childs.begin(); it != childs.end(); ++it ) {
+						auto *oi = static_cast<OriginTreeItem*>(*it);
 
-							oi->setHighlight(false);
+						if ( it == childs.begin() ) {
+							firstAgency = oi->text(config.columnMap[COL_AGENCY]);
+						}
+						else if ( firstAgency != oi->text(config.columnMap[COL_AGENCY]) ) {
+							_hasMultipleAgencies = true;
 						}
 
-						for ( QList<QTreeWidgetItem*>::iterator it = childs.begin();
-						      it != childs.end(); ++it ) {
-							OriginTreeItem *oi = static_cast<OriginTreeItem*>(*it);
-							if ( oi->object()->publicID() == ev->preferredOriginID() ) {
-								oi->setHighlight(true);
+						oi->setHighlight(false);
+					}
 
-								// Copy item states from preferred origin item
-								// if column is not part of event script columns
-								for ( int i = 0; i < config.originScriptColumns.size(); ++i ) {
-									int pos = config.originScriptColumns[i].pos;
-									if ( config.eventScriptPositions.contains(pos) )
-										continue;
-									setText(pos, oi->text(pos));
-									setBackground(pos, oi->background(pos));
-									setForeground(pos, oi->foreground(pos));
-									setToolTip(pos, oi->toolTip(pos));
+					for ( auto it = childs.begin(); it != childs.end(); ++it ) {
+						auto *oi = static_cast<OriginTreeItem*>(*it);
+						if ( oi->object()->publicID() == ev->preferredOriginID() ) {
+							oi->setHighlight(true);
+
+							// Copy item states from preferred origin item
+							// if column is not part of event script columns
+							for ( int i = 0; i < config.originScriptColumns.size(); ++i ) {
+								int pos = config.originScriptColumns[i].pos;
+								if ( config.eventScriptPositions.contains(pos) ) {
+									continue;
 								}
 
-								childs.erase(it);
-								childs.push_front(oi);
-								break;
+								setText(pos, oi->text(pos));
+								setBackground(pos, oi->background(pos));
+								setForeground(pos, oi->foreground(pos));
+								setToolTip(pos, oi->toolTip(pos));
 							}
+
+							childs.erase(it);
+							childs.push_front(oi);
+							break;
 						}
+					}
 
-						_origins->insertChildren(0, childs);
+					_origins->insertChildren(0, childs);
 
-						if ( _showOnlyOnePerAgency )
-							updateHideState();
+					if ( _showOnlyOnePerAgency ) {
+						updateHideState();
 					}
 				}
+			}
 
-				if ( _resort && _focalMechanisms ) {
-					// Preferred origin changed => resort origins
-					QList<QTreeWidgetItem*> childs = _focalMechanisms->takeChildren();
-					if ( !childs.empty() ) {
-						std::stable_sort(childs.begin(), childs.end(), fmItemLessThan);
+			if ( _resort && _focalMechanisms ) {
+				// Preferred origin changed => resort origins
+				auto childs = _focalMechanisms->takeChildren();
+				if ( !childs.empty() ) {
+					std::stable_sort(childs.begin(), childs.end(), fmItemLessThan);
 
-						for ( QList<QTreeWidgetItem*>::iterator it = childs.begin();
-						      it != childs.end(); ++it ) {
-							FocalMechanismTreeItem *fmi = static_cast<FocalMechanismTreeItem*>(*it);
-							fmi->setHighlight(false);
+					for ( auto &child : childs ) {
+						auto *fmi = static_cast<FocalMechanismTreeItem*>(child);
+						fmi->setHighlight(false);
+					}
+
+					for ( auto it = childs.begin(); it != childs.end(); ++it ) {
+						auto *fmi = static_cast<FocalMechanismTreeItem*>(*it);
+						if ( fmi->object()->publicID() == ev->preferredFocalMechanismID() ) {
+							fmi->setHighlight(true);
+							childs.erase(it);
+							childs.push_front(fmi);
+							break;
 						}
+					}
 
-						for ( QList<QTreeWidgetItem*>::iterator it = childs.begin();
-						      it != childs.end(); ++it ) {
-							FocalMechanismTreeItem *fmi = static_cast<FocalMechanismTreeItem*>(*it);
-							if ( fmi->object()->publicID() == ev->preferredFocalMechanismID() ) {
-								fmi->setHighlight(true);
-								childs.erase(it);
-								childs.push_front(fmi);
-								break;
-							}
-						}
+					_focalMechanisms->insertChildren(0, childs);
 
-						_focalMechanisms->insertChildren(0, childs);
-
-						if ( _showOnlyOnePerAgency )
-							updateHideState();
+					if ( _showOnlyOnePerAgency ) {
+						updateHideState();
 					}
 				}
+			}
 
-				_resort = false;
+			_resort = false;
 
-				try {
-					setText(config.columnMap[COL_EVENTTYPE], ev->type().toString());
+			try {
+				setText(config.columnMap[COL_EVENTTYPE], ev->type().toString());
+			}
+			catch ( ... ) {
+				setText(config.columnMap[COL_EVENTTYPE], "");
+			}
+
+			try {
+				setText(config.columnMap[COL_EVENTTYPE_CERTAINTY], ev->typeCertainty().toString());
+			}
+			catch ( ... ) {
+				setText(config.columnMap[COL_EVENTTYPE_CERTAINTY], "");
+			}
+
+			if ( ev->preferredFocalMechanismID().empty() ) {
+				setData(config.columnMap[COL_FM], Qt::DisplayRole, QVariant());
+				setData(config.columnMap[COL_FM], Qt::ToolTipRole, QVariant());
+				setData(config.columnMap[COL_FM], Qt::UserRole+1, QVariant());
+			}
+			else if ( treeWidget() && view ) {
+				if ( ev->focalMechanismReferenceCount() > 0 ) {
+					setText(config.columnMap[COL_FM], QString("%1").arg(ev->focalMechanismReferenceCount()));
 				}
-				catch ( ... ) {
-					setText(config.columnMap[COL_EVENTTYPE], "");
+				else {
+					setText(config.columnMap[COL_FM], QObject::tr("Yes"));
 				}
+				setData(config.columnMap[COL_FM], Qt::ToolTipRole, QObject::tr("Load event and open the focal mechanism tab"));
+				setData(config.columnMap[COL_FM], Qt::UserRole+1, QVariant::fromValue<void*>(ev));
+			}
 
-				try {
-					setText(config.columnMap[COL_EVENTTYPE_CERTAINTY], ev->typeCertainty().toString());
-				}
-				catch ( ... ) {
-					setText(config.columnMap[COL_EVENTTYPE_CERTAINTY], "");
-				}
+			auto *origin = Origin::Find(ev->preferredOriginID());
+			auto *nm = Magnitude::Find(ev->preferredMagnitudeID());
 
-				if ( ev->preferredFocalMechanismID().empty() ) {
-					setData(config.columnMap[COL_FM], Qt::DisplayRole, QVariant());
-					setData(config.columnMap[COL_FM], Qt::ToolTipRole, QVariant());
-					setData(config.columnMap[COL_FM], Qt::UserRole+1, QVariant());
-				}
-				else if ( treeWidget() && view ) {
-					if ( ev->focalMechanismReferenceCount() > 0 ) {
-						setText(config.columnMap[COL_FM], QString("%1").arg(ev->focalMechanismReferenceCount()));
-					}
-					else {
-						setText(config.columnMap[COL_FM], QObject::tr("Yes"));
-					}
-					setData(config.columnMap[COL_FM], Qt::ToolTipRole, QObject::tr("Load event and open the focal mechanism tab"));
-					setData(config.columnMap[COL_FM], Qt::UserRole+1, QVariant::fromValue<void*>(ev));
-				}
+			setText(config.columnMap[COL_ID], QString("%1").arg(ev->publicID().c_str()));
+			setText(config.columnMap[COL_REGION], QString("%1").arg(eventRegion(ev).c_str()));
+			setText(config.columnMap[COL_ORIGINS], QString("%1").arg(ev->originReferenceCount()));
 
-				Origin* origin = Origin::Find(ev->preferredOriginID());
-				Magnitude* nm = Magnitude::Find(ev->preferredMagnitudeID());
+			if ( nm ) {
+				QFont f = font(config.columnMap[COL_M]);
+				f.setBold(true);
+				setFont(config.columnMap[COL_M],f);
+				setText(config.columnMap[COL_M], QString("%1").arg(QString("%1").arg(nm->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)));
+				setData(config.columnMap[COL_M], Qt::UserRole, QVariant(nm->magnitude().value()));
+				setText(config.columnMap[COL_MTYPE], QString("%1").arg(nm->type().c_str()));
 
-				setText(config.columnMap[COL_ID], QString("%1").arg(ev->publicID().c_str()));
-				setText(config.columnMap[COL_REGION], QString("%1").arg(eventRegion(ev).c_str()));
-				setText(config.columnMap[COL_ORIGINS], QString("%1").arg(ev->originReferenceCount()));
-
-				if ( nm ){
-					QFont f = font(config.columnMap[COL_M]);
-					f.setBold(true);
-					setFont(config.columnMap[COL_M],f);
-					setText(config.columnMap[COL_M], QString("%1").arg(QString("%1").arg(nm->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)));
-					setData(config.columnMap[COL_M], Qt::UserRole, QVariant(nm->magnitude().value()));
-					setText(config.columnMap[COL_MTYPE], QString("%1").arg(nm->type().c_str()));
-
-					/*
+				/*
 					//! display the station Count of a magnitude
 					try {
 						int staCount = nm->stationCount();
@@ -1564,212 +1653,245 @@ class EventTreeItem : public SchemeTreeItem {
 					}
 					//! -----------------------------------------------------
 					*/
+			}
+			else if ( ev->preferredMagnitudeID().empty() ) {
+				QFont f = font(config.columnMap[COL_M]);
+				f.setBold(false);
+				setFont(config.columnMap[COL_M],f);
+				setText(config.columnMap[COL_M], "-");
+				setText(config.columnMap[COL_MTYPE], "-"); // stationCount
+				//setText(MCOUNT, "-"); // stationCount
+			}
 
-				}
-				else if ( ev->preferredMagnitudeID().empty() ) {
-					QFont f = font(config.columnMap[COL_M]);
-					f.setBold(false);
-					setFont(config.columnMap[COL_M],f);
-					setText(config.columnMap[COL_M], "-");
-					setText(config.columnMap[COL_MTYPE], "-"); // stationCount
-					//setText(MCOUNT, "-"); // stationCount
-				}
-
-				//! this lines are for displaying defining Phase Count of an origin
-				//
-				if ( origin ) {
-					POPULATE_AGENCY(origin->creationInfo().agencyID());
-
-					try {
-						setText(config.columnMap[COL_AUTHOR], origin->creationInfo().author().c_str());
-					}
-					catch ( ... ) {
-						setText(config.columnMap[COL_AUTHOR], "");
-					}
-
-					int column = config.columnMap[COL_OTIME];
-					setText(column, timeToString(origin->time().value(), TimeFormat.c_str()));
-					setData(column, Qt::UserRole, QVariant((double)origin->time().value()));
-
-					double lat = origin->latitude();
-					double lon = origin->longitude();
-
-					column = config.columnMap[COL_LAT];
-					setText(column, QString("%1 %2").arg(fabs(lat), 0, 'f', SCScheme.precision.location).arg(lat < 0?"S":"N")); // Lat
-					setData(column, Qt::UserRole, lat);
-
-					column = config.columnMap[COL_LON];
-					setText(column, QString("%1 %2").arg(fabs(lon), 0, 'f', SCScheme.precision.location).arg(lon < 0?"W":"E")); // Lon
-					setData(column, Qt::UserRole, lon);
-
-					column = config.columnMap[COL_DEPTH];
-					try {
-						setText(column, QString("%1 km").arg(depthToString(origin->depth(), SCScheme.precision.depth))); // Depth
-						setData(column, Qt::UserRole, origin->depth().value());
-					}
-					catch ( ... ) {
-						setText(column, "-");
-					}
-
-					column = config.columnMap[COL_DEPTH_TYPE];
-					try {
-						setText(column, origin->depthType().toString()); // Depth type
-					}
-					catch ( ... ) {
-						setText(column, "-");
-					}
-
-					char stat = objectStatusToChar(origin);
-					setText(config.columnMap[COL_TYPE],
-						QString("%1%2%3")
-						 .arg(_published?"*":"")
-						 .arg(stat)
-						 .arg(_hasMultipleAgencies?"+":"")
-					); // Type
-					try {
-						switch ( origin->evaluationMode() ) {
-							case DataModel::AUTOMATIC:
-								setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
-								break;
-							case DataModel::MANUAL:
-								setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.manual);
-								break;
-							default:
-								break;
-						};
-					}
-					catch ( ... ) {
-						setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
-					}
-
-					try{
-						const OriginQuality &quality = origin->quality();
-						setText(config.columnMap[COL_PHASES], QString("%1").arg(quality.usedPhaseCount(), 0, 'd', 0, ' '));
-						setData(config.columnMap[COL_PHASES], Qt::UserRole, (double)quality.usedPhaseCount());
-					}
-					catch(...){
-						setText(config.columnMap[COL_PHASES], "-");
-						setData(config.columnMap[COL_PHASES], Qt::UserRole, QVariant());
-					}
-
-					try{
-						const OriginQuality &quality = origin->quality();
-						setText(config.columnMap[COL_RMS], QString("%1").arg(quality.standardError(), 0, 'f', SCScheme.precision.rms));
-						setData(config.columnMap[COL_RMS], Qt::UserRole, (double)quality.standardError());
-					}
-					catch(...){
-						setText(config.columnMap[COL_RMS], "-");
-						setData(config.columnMap[COL_RMS], Qt::UserRole, QVariant());
-					}
-
-					try {
-						const OriginQuality &quality = origin->quality();
-						setText(config.columnMap[COL_AZIMUTHAL_GAP], QString("%1").arg(quality.azimuthalGap(), 0, 'f', 0));
-						setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, quality.azimuthalGap());
-					}
-					catch ( ... ) {
-						setText(config.columnMap[COL_AZIMUTHAL_GAP], "-");
-						setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, QVariant());
-					}
-
-					if ( config.customColumn != -1 ) {
-						setData(config.customColumn, Qt::ForegroundRole, QVariant());
-						setText(config.customColumn, config.customDefaultText);
-						if ( !config.originCommentID.empty() ) {
-							for ( size_t i = 0; i < origin->commentCount(); ++i ) {
-								if ( origin->comment(i)->id() == config.originCommentID ) {
-									setText(config.customColumn, origin->comment(i)->text().c_str());
-									QMap<std::string, QColor>::const_iterator it =
-										config.customColorMap.find(origin->comment(i)->text());
-									if ( it != config.customColorMap.end() )
-										setData(config.customColumn, Qt::ForegroundRole, it.value());
-									break;
-								}
-							}
-						}
-						else if ( !config.eventCommentID.empty() ) {
-							for ( size_t i = 0; i < ev->commentCount(); ++i ) {
-								if ( ev->comment(i)->id() == config.eventCommentID ) {
-									if( ev->comment(i)->text().empty() ) break;
-									setText(config.customColumn, ev->comment(i)->text().c_str());
-									QMap<std::string, QColor>::const_iterator it =
-										config.customColorMap.find(ev->comment(i)->text());
-									if ( it != config.customColorMap.end() )
-										setData(config.customColumn, Qt::ForegroundRole, it.value());
-									break;
-								}
-							}
-						}
-					}
-				}
-				/*
-				else {
-					setText(AGENCY, "");
-				}
-				*/
-				//! --------------------------------------------------------------
+			//! this lines are for displaying defining Phase Count of an origin
+			if ( origin ) {
+				POPULATE_AGENCY(origin->creationInfo().agencyID());
 
 				try {
-					if ( config.hiddenEventTypes.contains(ev->type()) )
-					//if ( et == OTHER_EVENT || et == NOT_EXISTING )
-						setEnabled(false);
-					else
-						setEnabled(true);
+					setText(config.columnMap[COL_AUTHOR], origin->creationInfo().author().c_str());
 				}
-				catch (...) {
-					setEnabled(true);
+				catch ( ValueException& ) {
+					setText(config.columnMap[COL_AUTHOR], "");
 				}
 
-				QString summary;
+				int column = config.columnMap[COL_OTIME];
+				setText(column, timeToString(origin->time().value(), TimeFormat.c_str()));
+				setData(column, Qt::UserRole, QVariant(static_cast<double>(origin->time().value())));
 
-				for ( int i = 0; i < columnCount(); ++i ) {
-					if ( i > 0 ) summary += '\n';
-					summary += QString("%1: %2").arg(config.header[i]).arg(text(i));
+				double lat = origin->latitude();
+				double lon = origin->longitude();
+
+				column = config.columnMap[COL_LAT];
+				setText(column, QString("%1 %2").arg(fabs(lat), 0, 'f', SCScheme.precision.location).arg(lat < 0?"S":"N")); // Lat
+				setData(column, Qt::UserRole, lat);
+
+				column = config.columnMap[COL_LON];
+				setText(column, QString("%1 %2").arg(fabs(lon), 0, 'f', SCScheme.precision.location).arg(lon < 0?"W":"E")); // Lon
+				setData(column, Qt::UserRole, lon);
+
+				column = config.columnMap[COL_DEPTH];
+				try {
+					setText(column, QString("%1 km").arg(depthToString(origin->depth(), SCScheme.precision.depth))); // Depth
+					setData(column, Qt::UserRole, origin->depth().value());
+				}
+				catch ( ValueException& ) {
+					setText(column, "-");
+					setData(column, Qt::UserRole, QVariant());
 				}
 
-				setToolTip(config.columnMap[COL_ID], summary);
+				column = config.columnMap[COL_DEPTH_TYPE];
+				try {
+					setText(column, origin->depthType().toString()); // Depth type
+				}
+				catch ( ValueException& ) {
+					setText(column, "-");
+				}
+
+				char stat = objectStatusToChar(origin);
+				setText(config.columnMap[COL_TYPE],
+				        QString("%1%2%3")
+				        .arg(_published?"*":"")
+				        .arg(stat)
+				        .arg(_hasMultipleAgencies?"+":"")
+				        ); // Type
+				try {
+					switch ( origin->evaluationMode() ) {
+						case DataModel::AUTOMATIC:
+							setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
+							break;
+						case DataModel::MANUAL:
+							setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.manual);
+							break;
+						default:
+							break;
+					};
+				}
+				catch ( ValueException& ) {
+					setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
+				}
+
+				try{
+					const OriginQuality &quality = origin->quality();
+					setText(config.columnMap[COL_PHASES], QString("%1").arg(quality.usedPhaseCount(), 0, 'd', 0, ' '));
+					setData(config.columnMap[COL_PHASES], Qt::UserRole, static_cast<double>(quality.usedPhaseCount()));
+				}
+				catch ( ValueException& ) {
+					setText(config.columnMap[COL_PHASES], "-");
+					setData(config.columnMap[COL_PHASES], Qt::UserRole, QVariant());
+				}
+
+				try {
+					const OriginQuality &quality = origin->quality();
+					setText(config.columnMap[COL_RMS], QString("%1").arg(quality.standardError(), 0, 'f', SCScheme.precision.rms));
+					setData(config.columnMap[COL_RMS], Qt::UserRole, static_cast<double>(quality.standardError()));
+				}
+				catch ( ValueException& ) {
+					setText(config.columnMap[COL_RMS], "-");
+					setData(config.columnMap[COL_RMS], Qt::UserRole, QVariant());
+				}
+
+				try {
+					const OriginQuality &quality = origin->quality();
+					setText(config.columnMap[COL_AZIMUTHAL_GAP], QString("%1").arg(quality.azimuthalGap(), 0, 'f', 0));
+					setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, quality.azimuthalGap());
+				}
+				catch ( ValueException& ) {
+					setText(config.columnMap[COL_AZIMUTHAL_GAP], "-");
+					setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, QVariant());
+				}
+
+				if ( config.customColumn != -1 ) {
+					setData(config.customColumn, Qt::ForegroundRole, QVariant());
+					setText(config.customColumn, config.customDefaultText);
+					if ( !config.originCommentID.empty() ) {
+						for ( size_t i = 0; i < origin->commentCount(); ++i ) {
+							if ( origin->comment(i)->id() == config.originCommentID ) {
+								setText(config.customColumn, origin->comment(i)->text().c_str());
+								auto it = config.customColorMap.find(origin->comment(i)->text());
+								if ( it != config.customColorMap.end() ) {
+									setData(config.customColumn, Qt::ForegroundRole, it.value());
+								}
+								break;
+							}
+						}
+					}
+					else if ( !config.eventCommentID.empty() ) {
+						for ( size_t i = 0; i < ev->commentCount(); ++i ) {
+							if ( ev->comment(i)->id() == config.eventCommentID ) {
+								if ( ev->comment(i)->text().empty() ) {
+									break;
+								}
+
+								setText(config.customColumn, ev->comment(i)->text().c_str());
+								auto it = config.customColorMap.find(ev->comment(i)->text());
+								if ( it != config.customColorMap.end() ) {
+									setData(config.customColumn, Qt::ForegroundRole, it.value());
+								}
+								break;
+							}
+						}
+					}
+				}
 			}
 			else {
-				setText(config.columnMap[COL_ID], "<>");
-				setText(config.columnMap[COL_OTIME], "Unassociated");
+				setText(config.columnMap[COL_PHASES], "-");
+				setText(config.columnMap[COL_RMS], "-");
+				setText(config.columnMap[COL_AZIMUTHAL_GAP], "-");
+				setText(config.columnMap[COL_M], "-");
+				setText(config.columnMap[COL_MTYPE], "-");
+				setText(config.columnMap[COL_DEPTH], "-");
+				setText(config.columnMap[COL_DEPTH_TYPE], "-");
+
+				setText(config.columnMap[COL_AUTHOR], "");
+				setText(config.columnMap[COL_OTIME], "no preferred origin");
+
+				setText(config.columnMap[COL_LAT], "");
+				setData(config.columnMap[COL_LAT], Qt::UserRole, QVariant());
+
+				setText(config.columnMap[COL_LON], "");
+				setData(config.columnMap[COL_LON], Qt::UserRole, QVariant());
+
+				setText(config.columnMap[COL_DEPTH], "-");
+				setData(config.columnMap[COL_DEPTH], Qt::UserRole, QVariant());
+
+				setText(config.columnMap[COL_DEPTH_TYPE], "-");
+
+				setText(config.columnMap[COL_TYPE], "");
+				setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
+
+				setText(config.columnMap[COL_PHASES], "-");
+				setData(config.columnMap[COL_PHASES], Qt::UserRole, QVariant());
+
+				setText(config.columnMap[COL_RMS], "-");
+				setData(config.columnMap[COL_RMS], Qt::UserRole, QVariant());
+
+				setText(config.columnMap[COL_AZIMUTHAL_GAP], "-");
+				setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, QVariant());
+
+				if ( config.customColumn != -1 ) {
+					setText(config.customColumn, config.customDefaultText);
+					setData(config.customColumn, Qt::ForegroundRole, QVariant());
+				}
 			}
+
+			//! --------------------------------------------------------------
+			try {
+				setEnabled(!config.hiddenEventTypes.contains(ev->type()));
+			}
+			catch ( ValueException& ) {
+				setEnabled(true);
+			}
+
+			QString summary;
+
+			for ( int i = 0; i < columnCount(); ++i ) {
+				if ( i > 0 ) {
+					summary += '\n';
+				}
+
+				summary += QString("%1: %2").arg(config.header[i], text(i));
+			}
+
+			setToolTip(config.columnMap[COL_ID], summary);
 		}
 
 	private:
 		static bool originItemLessThan(const QTreeWidgetItem *i1, const QTreeWidgetItem *i2) {
-			const OriginTreeItem *oi1 = static_cast<const OriginTreeItem*>(i1);
-			const OriginTreeItem *oi2 = static_cast<const OriginTreeItem*>(i2);
+			const auto *oi1 = static_cast<const OriginTreeItem*>(i1);
+			const auto *oi2 = static_cast<const OriginTreeItem*>(i2);
 
-			Origin *o1 = static_cast<Origin*>(oi1->object());
-			Origin *o2 = static_cast<Origin*>(oi2->object());
+			auto *o1 = static_cast<Origin*>(oi1->object());
+			auto *o2 = static_cast<Origin*>(oi2->object());
 
-			if ( !o1 ) return true;
-			if ( !o2 ) return false;
+			if ( !o1 || !o2 ) {
+				return false;
+			}
 
 			try {
 				return o1->creationInfo().creationTime() > o2->creationInfo().creationTime();
 			}
-			catch ( ... ) {
-				return false;
-			}
+			catch ( Core::ValueException & ) {}
+
+			return false;
 		}
 
 		static bool fmItemLessThan(const QTreeWidgetItem *i1, const QTreeWidgetItem *i2) {
-			const FocalMechanismTreeItem *fmi1 = static_cast<const FocalMechanismTreeItem*>(i1);
-			const FocalMechanismTreeItem *fmi2 = static_cast<const FocalMechanismTreeItem*>(i2);
+			const auto *fmi1 = static_cast<const FocalMechanismTreeItem*>(i1);
+			const auto *fmi2 = static_cast<const FocalMechanismTreeItem*>(i2);
 
-			FocalMechanism *fm1 = static_cast<FocalMechanism *>(fmi1->object());
-			FocalMechanism *fm2 = static_cast<FocalMechanism *>(fmi2->object());
+			auto *fm1 = static_cast<FocalMechanism *>(fmi1->object());
+			auto *fm2 = static_cast<FocalMechanism *>(fmi2->object());
 
-			if ( !fm1 ) return true;
-			if ( !fm2 ) return false;
+			if ( !fm1 || !fm2 ) {
+				return false;
+			}
 
 			try {
 				return fm1->creationInfo().creationTime() > fm2->creationInfo().creationTime();
 			}
-			catch ( ... ) {
-				return false;
-			}
+			catch ( Core::ValueException & ) {}
+
+			return false;
 		}
 
 		TreeItem *_origins;
@@ -1819,15 +1941,15 @@ bool sendJournal(const std::string &objectID, const std::string &action,
 class TreeWidget : public QTreeWidget {
 	public:
 		TreeWidget(QWidget *p)
-		: QTreeWidget(p), _lastDropItem(nullptr) {}
+		: QTreeWidget(p) {}
 
-		void startDrag(Qt::DropActions supportedActions) {
+		void startDrag(Qt::DropActions supportedActions) override {
 			if ( !currentItem() || currentItem()->type() == ST_None ) {
 				SEISCOMP_DEBUG("About to drag an item without type");
 				return;
 			}
 
-			SchemeTreeItem *item = (SchemeTreeItem*)currentItem();
+			auto *item = static_cast<SchemeTreeItem*>(currentItem());
 			if ( !item->object() ) {
 				SEISCOMP_DEBUG("Item has no object attached");
 				return;
@@ -1848,7 +1970,9 @@ class TreeWidget : public QTreeWidget {
 					break;
 			}
 
-			if ( mimeData == nullptr ) return;
+			if ( !mimeData ) {
+				return;
+			}
 
 			for ( int i = 0; i < item->columnCount(); ++i ) {
 				item->setBackground(i, palette().color(QPalette::Highlight));
@@ -1856,7 +1980,7 @@ class TreeWidget : public QTreeWidget {
 			}
 
 			//SEISCOMP_DEBUG("Start drag");
-			QDrag *drag = new QDrag(this);
+			auto *drag = new QDrag(this);
 			drag->setMimeData(mimeData);
 			drag->exec(Qt::MoveAction);
 
@@ -1866,10 +1990,8 @@ class TreeWidget : public QTreeWidget {
 			}
 		}
 
-		void dragEnterEvent(QDragEnterEvent *event) {
-			if ( event->source() == this )
-				event->accept();
-			else {
+		void dragEnterEvent(QDragEnterEvent *event) override {
+			if ( event->source() != this ) {
 				event->ignore();
 				return;
 			}
@@ -1878,44 +2000,36 @@ class TreeWidget : public QTreeWidget {
 			event->accept();
 		}
 
-		void dragMoveEvent(QDragMoveEvent *event) {
+		void dragMoveEvent(QDragMoveEvent *event) override {
 			QTreeWidget::dragMoveEvent(event);
 
-			SchemeTreeItem *item = (SchemeTreeItem*)itemAt(event->pos());
+			auto *item = static_cast<SchemeTreeItem*>(itemAt(event->pos()));
 
+			/*
 			if ( _lastDropItem && item != _lastDropItem ) {
-				/*
 				for ( int i = 0; i < _lastDropItem->columnCount(); ++i )
 					_lastDropItem->setBackground(i, Qt::NoBrush);
-				*/
 			}
+			*/
 
 			setCurrentItem(nullptr);
 
-			if ( !item || item->type() != ST_Event ) {
+			if ( !item || item->type() != ST_Event || !item->object()  ) {
 				//SEISCOMP_DEBUG("Drop item is not an event");
 				event->ignore();
 				return;
 			}
 
-			if ( item->object() ) {
-				_lastDropItem = item;
-				setCurrentItem(_lastDropItem);
-				/*
-				for ( int i = 0; i < item->columnCount(); ++i )
-					item->setBackground(i, Qt::green);
-				*/
-			}
-			else {
-				//SEISCOMP_DEBUG("Drop item has no object attached");
-				event->ignore();
-				return;
-			}
-
+			_lastDropItem = item;
+			setCurrentItem(_lastDropItem);
+			/*
+			for ( int i = 0; i < item->columnCount(); ++i )
+				item->setBackground(i, Qt::green);
+			*/
 			event->accept();
 		}
 
-		void dragLeaveEvent(QDragLeaveEvent *event) {
+		void dragLeaveEvent(QDragLeaveEvent *event) override {
 			setCurrentItem(nullptr);
 			/*
 			if ( _lastDropItem ) {
@@ -1927,13 +2041,13 @@ class TreeWidget : public QTreeWidget {
 			_lastDropItem = nullptr;
 		}
 
-		void dropEvent(QDropEvent *event) {
+		void dropEvent(QDropEvent *event) override {
 			_lastDropItem = nullptr;
 		}
 
 
 	private:
-		QTreeWidgetItem *_lastDropItem;
+		QTreeWidgetItem *_lastDropItem{nullptr};
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1948,12 +2062,12 @@ class CommandWaitDialog : public QDialog {
 			setWindowTitle("Status");
 			setWindowModality(Qt::ApplicationModal);
 
-			QVBoxLayout *l = new QVBoxLayout;
+			auto *l = new QVBoxLayout;
 			setLayout(l);
 
-			QVBoxLayout *topvl = new QVBoxLayout;
+			auto *topvl = new QVBoxLayout;
 
-			QHBoxLayout *hl = new QHBoxLayout;
+			auto *hl = new QHBoxLayout;
 			_labelCommand = new QLabel;
 			QFont f = _labelCommand->font();
 			f.setBold(true);
@@ -1994,7 +2108,7 @@ class CommandWaitDialog : public QDialog {
 
 			l->addStretch();
 
-			QPushButton *closeButton = new QPushButton("Close");
+			auto *closeButton = new QPushButton("Close");
 			connect(closeButton, SIGNAL(clicked()), this, SLOT(reject()));
 			hl->addWidget(closeButton);
 
@@ -2005,20 +2119,25 @@ class CommandWaitDialog : public QDialog {
 			_objectID = obj;
 			_command = cmd;
 
-			if ( _command == CMD_SPLIT_ORIGIN )
+			if ( _command == CMD_SPLIT_ORIGIN ) {
 				_labelCommand->setText("Split origin");
-			else if ( _command == CMD_NEW_EVENT )
+			}
+			else if ( _command == CMD_NEW_EVENT ) {
 				_labelCommand->setText("Form new event");
-			else if ( _command == CMD_MERGE_EVENT )
+			}
+			else if ( _command == CMD_MERGE_EVENT ) {
 				_labelCommand->setText("Merge events");
-			else if ( _command == CMD_GRAB_ORIGIN )
+			}
+			else if ( _command == CMD_GRAB_ORIGIN ) {
 				_labelCommand->setText("Move origin");
-			else
+			}
+			else {
 				_labelCommand->setText(_command.c_str());
+			}
 
 			_labelStatus->setPalette(QPalette());
 
-			QIcon icon = style()->standardIcon(QStyle::SP_MessageBoxInformation);
+			auto icon = style()->standardIcon(QStyle::SP_MessageBoxInformation);
 			_labelIcon->setPixmap(icon.pixmap(32,32));
 
 			_labelStatus->setText("(waiting)");
@@ -2029,10 +2148,13 @@ class CommandWaitDialog : public QDialog {
 		}
 
 		bool handle(JournalEntry *entry) {
-			if ( entry->objectID() != _objectID )
+			if ( entry->objectID() != _objectID ) {
 				return false;
-			if ( entry->action().compare(0, _command.size(), _command) != 0 )
+			}
+
+			if ( entry->action().compare(0, _command.size(), _command) != 0 ) {
 				return false;
+			}
 
 			if ( entry->action().compare(_command.size(), 2, "OK") == 0 ) {
 				close();
@@ -2086,12 +2208,11 @@ struct ConfigProcessColumn {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 class EventFilterWidget : public QWidget {
 	public:
-		EventFilterWidget(QWidget *parent = 0)
+		EventFilterWidget(QWidget *parent = nullptr)
 		: QWidget(parent) {
 			_ui.setupUi(this);
 		}
 
-	public:
 		void setView(EventListView *view) {
 			if ( _view ) {
 				_view->disconnect(_ui.btnReset, SIGNAL(clicked()));
@@ -2124,30 +2245,40 @@ class EventFilterWidget : public QWidget {
 		EventListView::Filter filter() const {
 			EventListView::Filter f;
 
-			if ( _ui.fromLatitude->isValid() )
+			if ( _ui.fromLatitude->isValid() ) {
 				f.minLatitude = _ui.fromLatitude->value();
-			if ( _ui.toLatitude->isValid() )
+			}
+			if ( _ui.toLatitude->isValid() ) {
 				f.maxLatitude = _ui.toLatitude->value();
+			}
 
-			if ( _ui.fromLongitude->isValid() )
+			if ( _ui.fromLongitude->isValid() ) {
 				f.minLongitude = _ui.fromLongitude->value();
-			if ( _ui.toLongitude->isValid() )
+			}
+			if ( _ui.toLongitude->isValid() ) {
 				f.maxLongitude = _ui.toLongitude->value();
+			}
 
-			if ( _ui.fromDepth->isValid() )
+			if ( _ui.fromDepth->isValid() ) {
 				f.minDepth = _ui.fromDepth->value();
-			if ( _ui.toDepth->isValid() )
+			}
+			if ( _ui.toDepth->isValid() ) {
 				f.maxDepth = _ui.toDepth->value();
+			}
 
-			if ( _ui.fromMagnitude->isValid() )
+			if ( _ui.fromMagnitude->isValid() ) {
 				f.minMagnitude = _ui.fromMagnitude->value();
-			if ( _ui.toMagnitude->isValid() )
+			}
+			if ( _ui.toMagnitude->isValid() ) {
 				f.maxMagnitude = _ui.toMagnitude->value();
+			}
 
-			if ( _ui.fromPhase->isValid() )
+			if ( _ui.fromPhase->isValid() ) {
 				f.minPhaseCount = _ui.fromPhase->value();
-			if ( _ui.toPhase->isValid() )
+			}
+			if ( _ui.toPhase->isValid() ) {
 				f.maxPhaseCount = _ui.toPhase->value();
+			}
 
 			f.eventID = _ui.editEventID->text().toStdString();
 
@@ -2167,10 +2298,9 @@ class EventFilterWidget : public QWidget {
 // Helper class to allow proper positioning of the tool buttons menu
 class CustomWidgetMenu : public QMenu {
 	public:
-		CustomWidgetMenu(QWidget *parent = 0) : QMenu(parent) {}
+		CustomWidgetMenu(QWidget *parent = nullptr) : QMenu(parent) {}
 
-	public:
-		QSize sizeHint() const { return QWidget::sizeHint(); }
+		QSize sizeHint() const override { return QWidget::sizeHint(); }
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2258,10 +2388,12 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	for ( int i = 0; i < EventListColumns::Quantity; ++i ) {
 		switch ( i ) {
 			case COL_OTIME:
-				if ( SCScheme.dateTime.useLocalTime )
+				if ( SCScheme.dateTime.useLocalTime ) {
 					SC_D._itemConfig.header << QString(EEventListColumnsNames::name(i)).arg(Core::Time::LocalTimeZone().c_str());
-				else
+				}
+				else {
 					SC_D._itemConfig.header << QString(EEventListColumnsNames::name(i)).arg("UTC");
+				}
 				break;
 			case COL_AZIMUTHAL_GAP:
 				SC_D._itemConfig.header << (QString(EEventListColumnsNames::name(i)) + " (°)");
@@ -2287,8 +2419,9 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	try {
 		std::vector<std::string> cols = SCApp->configGetStrings("eventlist.visibleColumns");
-		for ( int i = 0; i < EventListColumns::Quantity; ++i )
+		for ( int i = 0; i < EventListColumns::Quantity; ++i ) {
 			colVisibility[i] = false;
+		}
 
 		for ( size_t i = 0; i < cols.size(); ++i ) {
 			EventListColumns v;
@@ -2313,18 +2446,21 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	}
 	catch ( ... ) {}
 
-	if ( !withOrigins )
+	if ( !withOrigins ) {
 		colVisibility[COL_ORIGINS] = false;
+	}
 
 	try {
-		std::vector<std::string> types = SCApp->configGetStrings("eventlist.filter.types.blacklist");
-		for ( size_t i = 0; i < types.size(); ++i ) {
+		auto types = SCApp->configGetStrings("eventlist.filter.types.blacklist");
+		for ( const auto &sType : types ) {
 			EventType type;
-			if ( type.fromString(types[i]) )
+			if ( type.fromString(sType) ) {
 				SC_D._itemConfig.hiddenEventTypes.insert(type);
-			else
+			}
+			else {
 				std::cerr << "WARNING: eventlist.filter.types.blacklist: unknown type: "
-				          << types[i] << std::endl;
+				          << sType << std::endl;
+			}
 		}
 	}
 	catch ( ... ) {
@@ -2334,8 +2470,9 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	try {
 		std::vector<std::string> prefAgencies = SCApp->configGetStrings("eventlist.filter.agencies.whitelist");
-		for ( size_t i = 0; i < prefAgencies.size(); ++i )
-			SC_D._itemConfig.preferredAgencies.insert(prefAgencies[i].c_str());
+		for ( const auto &agency : prefAgencies ) {
+			SC_D._itemConfig.preferredAgencies.insert(agency.c_str());
+		}
 	}
 	catch ( ... ) {
 		SC_D._itemConfig.preferredAgencies.insert(SCApp->agencyID().c_str());
@@ -2375,14 +2512,18 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	try {
 		std::vector<std::string> customColors = SCApp->configGetStrings("eventlist.customColumn.colors");
-		for ( size_t i = 0; i < customColors.size(); ++i ) {
-			size_t pos = customColors[i].rfind(':');
-			if ( pos == std::string::npos ) continue;
-			std::string value = customColors[i].substr(0, pos);
-			std::string strColor = customColors[i].substr(pos+1);
+		for ( const auto &customColor : customColors ) {
+			size_t pos = customColor.rfind(':');
+			if ( pos == std::string::npos ) {
+				continue;
+			}
+
+			std::string value = customColor.substr(0, pos);
+			std::string strColor = customColor.substr(pos+1);
 			QColor color;
-			if ( fromString(color, strColor) )
+			if ( fromString(color, strColor) ) {
 				SC_D._itemConfig.customColorMap[value] = color;
+			}
 		}
 	}
 	catch ( ... ) {}
@@ -2402,16 +2543,23 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	}
 
 	if ( !customColumn.empty() ) {
-		if ( SC_D._itemConfig.customColumn >= 0 && SC_D._itemConfig.customColumn < SC_D._itemConfig.header.size() )
+		if ( SC_D._itemConfig.customColumn >= 0 &&
+		     SC_D._itemConfig.customColumn < SC_D._itemConfig.header.size() ) {
 			SC_D._itemConfig.header.insert(SC_D._itemConfig.customColumn, customColumn.c_str());
+		}
 		else {
 			SC_D._itemConfig.header.append(customColumn.c_str());
 			SC_D._itemConfig.customColumn = SC_D._itemConfig.header.size()-1;
 		}
 
-		if ( SC_D._itemConfig.customColumn >= 0 && SC_D._itemConfig.customColumn < SC_D._itemConfig.columnMap.size() ) {
-			for ( int i = SC_D._itemConfig.customColumn; i < SC_D._itemConfig.columnMap.size(); ++i )
-				SC_D._itemConfig.columnMap[i] = i+1;
+		if ( SC_D._itemConfig.customColumn >= 0 &&
+		     SC_D._itemConfig.customColumn < SC_D._itemConfig.columnMap.size() ) {
+			for ( int i = 0; i < SC_D._itemConfig.columnMap.size(); ++i ) {
+				auto &idx = SC_D._itemConfig.columnMap[i];
+				if ( idx >= SC_D._itemConfig.customColumn ) {
+					++idx;
+				}
+			}
 		}
 	}
 
@@ -2433,11 +2581,11 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	}
 	catch ( ... ) {}
 
-	for ( std::vector<std::string>::const_iterator it = processProfiles.begin();
-	      it != processProfiles.end(); ++it ) {
+	for ( const auto &profile : processProfiles ) {
 		ConfigProcessColumn item;
+		std::string prefix = "eventlist.scripts.column." + profile;
 		try {
-			item.pos = SCApp->configGetInt("eventlist.scripts.column." + *it + ".pos");
+			item.pos = SCApp->configGetInt(prefix + ".pos");
 		}
 		catch ( ... ) {
 			item.pos = -1;
@@ -2446,45 +2594,47 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 		QString script;
 		try {
 			script = Environment::Instance()->absolutePath(
-			             SCApp->configGetString("eventlist.scripts.column." + *it + ".script")).c_str();
+			             SCApp->configGetString(prefix + ".script")).c_str();
 		}
 		catch ( ... ) {}
 
 		if ( script.isEmpty() ) {
-			std::cerr << "WARNING: eventlist.scripts.column." << *it
+			std::cerr << "WARNING: " << prefix
 			          << ".script is not set: ignoring" << std::endl;
 			continue;
 		}
 
 		try {
-			item.label = SCApp->configGetString("eventlist.scripts.column." + *it + ".label").c_str();
+			item.label = SCApp->configGetString(prefix + ".label").c_str();
 		}
 		catch ( ... ) {
-			std::cerr << "WARNING: eventlist.scripts.column." << *it
+			std::cerr << "WARNING: " << prefix
 			          << ".label is not set: ignoring" << std::endl;
 			continue;
 		}
 
 
 		try {
-			std::vector<std::string> types = SCApp->configGetStrings("eventlist.scripts.column." + *it + ".types");
-			for ( std::vector<std::string>::const_iterator t_it = types.begin();
-			      t_it != types.end(); ++t_it ) {
-				if ( !compareNoCase(*t_it, "Origin") )
+			auto types = SCApp->configGetStrings(prefix + ".types");
+			for ( const auto &type : types ) {
+				if ( !compareNoCase(type, "Origin") ) {
 					item.originScript = script;
-				else if ( !compareNoCase(*t_it, "Event") )
+				}
+				else if ( !compareNoCase(type, "Event") ) {
 					item.eventScript = script;
-				else
-					std::cerr << "WARNING: eventlist.scripts.column." << *it
-					          << ".types: type '" << *t_it
+				}
+				else {
+					std::cerr << "WARNING: " << prefix
+					          << ".types: type '" << type
 					          << "' unsupported" << std::endl;
+				}
 			}
 		}
 		catch ( ... ) {
 			item.originScript = script;
 		}
 		if ( item.originScript.isEmpty() && item.eventScript.isEmpty() ) {
-			std::cerr << "WARNING: eventlist.scripts.column." << *it
+			std::cerr << "WARNING: " << prefix
 			          << ".types: no valid type found, ignoring" << std::endl;
 			continue;
 		}
@@ -2494,10 +2644,12 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 		for ( int i = 0; i < scriptColumns.size(); ++i ) {
 			ConfigProcessColumn &other = scriptColumns[i];
 			if ( other.pos == item.pos && other.label == item.label ) {
-				if ( !item.originScript.isEmpty() )
+				if ( !item.originScript.isEmpty() ) {
 					other.originScript = item.originScript;
-				if ( !item.eventScript.isEmpty() )
+				}
+				if ( !item.eventScript.isEmpty() ) {
 					other.eventScript = item.eventScript;
+				}
 				matchFound = true;
 				break;
 			}
@@ -2513,8 +2665,9 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 		if ( item.pos >= 0 && item.pos < SC_D._itemConfig.header.size() ) {
 			SC_D._itemConfig.header.insert(item.pos, item.label);
-			if ( item.pos <= SC_D._itemConfig.customColumn )
+			if ( item.pos <= SC_D._itemConfig.customColumn ) {
 				++SC_D._itemConfig.customColumn;
+			}
 		}
 		else {
 			SC_D._itemConfig.header.append(item.label);
@@ -2524,8 +2677,9 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 		if ( item.pos >= 0 && item.pos < SC_D._itemConfig.columnMap.size() ) {
 			// Remap predefined columns
 			for ( int i = 0; i < SC_D._itemConfig.columnMap.size(); ++i ) {
-				if ( SC_D._itemConfig.columnMap[i] >= item.pos )
+				if ( SC_D._itemConfig.columnMap[i] >= item.pos ) {
 					++SC_D._itemConfig.columnMap[i];
+				}
 			}
 
 			// Remap origin and event process columns
@@ -2560,12 +2714,15 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 			SC_D._itemConfig.eventScriptColumnMap[col.script] = col.pos;
 		}
 	}
-	// Create set of event script column positions for faster lookup
-	for ( int i = 0; i < SC_D._itemConfig.eventScriptColumns.size(); ++i )
-		SC_D._itemConfig.eventScriptPositions << SC_D._itemConfig.eventScriptColumns[i].pos;
 
-	if ( !SC_D._withOrigins && !SC_D._withFocalMechanisms )
+	// Create set of event script column positions for faster lookup
+	for ( int i = 0; i < SC_D._itemConfig.eventScriptColumns.size(); ++i ) {
+		SC_D._itemConfig.eventScriptPositions << SC_D._itemConfig.eventScriptColumns[i].pos;
+	}
+
+	if ( !SC_D._withOrigins && !SC_D._withFocalMechanisms ) {
 		SC_D._treeWidget->setRootIsDecorated(false);
+	}
 
 	Region reg;
 	reg.name = "- custom -";
@@ -2588,35 +2745,35 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 			catch ( ... ) {}
 		}
 
-		for ( size_t i = 0; i < regionProfiles.size(); ++i ) {
+		for ( const auto &regionProfile : regionProfiles ) {
 			std::string name;
 			std::vector<double> defs;
 
 			reg = Region();
 
 			try {
-				name = SCApp->configGetString("eventlist.filter.regions.region." + regionProfiles[i] + ".name");
+				name = SCApp->configGetString("eventlist.filter.regions.region." + regionProfile + ".name");
 			}
 			catch ( ... ) {
 				try {
-					name = SCApp->configGetString("eventlist.region." + regionProfiles[i] + ".name");
+					name = SCApp->configGetString("eventlist.region." + regionProfile + ".name");
 					SEISCOMP_WARNING("The parameter 'eventlist.region.%s.name' is deprecated and will be removed in future. "
 					                 "Please replace with 'eventlist.filter.regions.region.%s.name'.",
-					                 regionProfiles[i].c_str(), regionProfiles[i].c_str());
+					                 regionProfile.c_str(), regionProfile.c_str());
 				}
 				catch ( ... ) {
 					std::cerr << "WARNING: eventlist.filter.regions.region."
-					          << regionProfiles[i] << ".name is not set: ignoring"
+					          << regionProfile << ".name is not set: ignoring"
 					          << std::endl;
 					continue;
 				}
 			}
 
 			try {
-				auto poly = SCApp->configGetString("eventlist.filter.regions.region." + regionProfiles[i] + ".poly");
+				auto poly = SCApp->configGetString("eventlist.filter.regions.region." + regionProfile + ".poly");
 				if ( !poly.empty() ) {
 					for ( size_t i = 0; i < Seiscomp::Regions::polyRegions().regionCount(); ++i ) {
-						auto feature = Seiscomp::Regions::polyRegions().region(i);
+						auto *feature = Seiscomp::Regions::polyRegions().region(i);
 						if ( feature->name() == poly ) {
 							reg.poly = feature;
 							break;
@@ -2624,7 +2781,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 					}
 
 					if ( !reg.poly ) {
-						for ( auto feature : Geo::GeoFeatureSetSingleton::getInstance().features() ) {
+						for ( auto *feature : Geo::GeoFeatureSetSingleton::getInstance().features() ) {
 							if ( feature->name() == poly ) {
 								reg.poly = feature;
 								break;
@@ -2634,7 +2791,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 					if ( !reg.poly ) {
 						std::cerr << "WARNING: eventlist.filter.regions.region."
-						          << regionProfiles[i] << ".poly: polygon '"
+						          << regionProfile << ".poly: polygon '"
 						          << poly
 						          << "' has not been found "
 						             "(neither in fep nor in spatial "
@@ -2645,7 +2802,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 					if ( !reg.poly->closedPolygon() ) {
 						std::cerr << "WARNING: eventlist.filter.regions.region."
-						          << regionProfiles[i] << ".poly: feature '"
+						          << regionProfile << ".poly: feature '"
 						          << poly
 						          << "' is not a polygon (not closed) which "
 						             "will not work for polygon based filtering"
@@ -2658,18 +2815,18 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 			if ( !reg.poly ) {
 				try {
-					defs = SCApp->configGetDoubles("eventlist.filter.regions.region." + regionProfiles[i] + ".rect");
+					defs = SCApp->configGetDoubles("eventlist.filter.regions.region." + regionProfile + ".rect");
 				}
 				catch ( ... ) {
 					try {
-						defs = SCApp->configGetDoubles("eventlist.region." + regionProfiles[i] + ".rect");
+						defs = SCApp->configGetDoubles("eventlist.region." + regionProfile + ".rect");
 						SEISCOMP_WARNING("The parameter 'eventlist.region.%s.rect' is deprecated and will be removed in future. "
 						                 "Please replace with 'eventlist.filter.regions.region.%s.rect'.",
-						                 regionProfiles[i].c_str(), regionProfiles[i].c_str());
+						                 regionProfile.c_str(), regionProfile.c_str());
 					}
 					catch ( ... ) {
 						std::cerr << "WARNING: eventlist.filter.regions.region."
-						          << regionProfiles[i] << ".rect requires exactly 4 parameters (nothing given): ignoring"
+						          << regionProfile << ".rect requires exactly 4 parameters (nothing given): ignoring"
 						          << std::endl;
 						continue;
 					}
@@ -2677,7 +2834,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 				if ( defs.size() != 4 ) {
 					std::cerr << "WARNING: eventlist.filter.regions.region."
-					          << regionProfiles[i] << ".rect requires exactly 4 parameters ("
+					          << regionProfile << ".rect requires exactly 4 parameters ("
 					          << defs.size() << " given): ignoring"
 					          << std::endl;
 					continue;
@@ -2688,7 +2845,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 			if ( name.empty() ) {
 				std::cerr << "WARNING: eventlist.filter.regions.region."
-				          << regionProfiles[i] << ".name is empty: ignoring"
+				          << regionProfile << ".name is empty: ignoring"
 				          << std::endl;
 				continue;
 			}
@@ -2720,8 +2877,9 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	try { SC_D._filter.maxPhaseCount = SCApp->configGetInt("eventlist.filter.database.maxphasecount"); }
 	catch ( ... ) {}
 
-	for ( int i = 0; i < SC_D._filterRegions.size(); ++i )
+	for ( int i = 0; i < SC_D._filterRegions.size(); ++i ) {
 		SC_D._ui->lstFilterRegions->addItem(SC_D._filterRegions[i].name);
+	}
 
 	if ( SC_D._ui->lstFilterRegions->count() > 1 ) {
 		SC_D._regionIndex = 1;
@@ -2735,10 +2893,10 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	SC_D._filterWidget->setView(this);
 	SC_D._filterWidget->setFilter(SC_D._filter);
 
-	QVBoxLayout *vl = new QVBoxLayout;
+	auto *vl = new QVBoxLayout;
 	vl->addWidget(SC_D._filterWidget);
 
-	QMenu *menu = new CustomWidgetMenu(SC_D._ui->btnFilter);
+	auto *menu = new CustomWidgetMenu(SC_D._ui->btnFilter);
 	menu->setLayout(vl);
 	SC_D._ui->btnFilter->setMenu(menu);
 
@@ -2840,22 +2998,23 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	);
 	SC_D._treeWidget->setAlternatingRowColors(true);
 
-	for ( int i = 0; i < EventListColumns::Quantity; ++i )
+	for ( int i = 0; i < EventListColumns::Quantity; ++i ) {
 		SC_D._treeWidget->header()->setSectionHidden(SC_D._itemConfig.columnMap[i], !colVisibility[i]);
+	}
 
 	SC_D._treeWidget->header()->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(SC_D._treeWidget->header(), SIGNAL(customContextMenuRequested(const QPoint &)),
-	        this, SLOT(headerContextMenuRequested(const QPoint &)));
+	connect(SC_D._treeWidget->header(), SIGNAL(customContextMenuRequested(QPoint)),
+	        this, SLOT(headerContextMenuRequested(QPoint)));
 
 	connect(SC_D._treeWidget->header(), SIGNAL(sectionClicked(int)),
 	        this, SLOT(sortItems(int)));
 
 	addAction(SC_D._ui->actionCopyRowToClipboard);
 
-	QAction* expandAll = new QAction(this);
+	auto *expandAll = new QAction(this);
 	expandAll->setShortcut(Qt::CTRL + Qt::Key_E);
 
-	QAction* collapseAll = new QAction(this);
+	auto *collapseAll = new QAction(this);
 	collapseAll->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_E);
 
 	addAction(expandAll);
@@ -2864,8 +3023,8 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	SC_D._ui->btnReadDays->setEnabled(SC_D._reader != nullptr);
 	SC_D._ui->btnReadInterval->setEnabled(SC_D._reader != nullptr);
 
-	SC_D._ui->dateTimeEditStart->setDateTime(QDateTime::currentDateTime().toUTC());
-	SC_D._ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime().toUTC());
+	SC_D._ui->dateTimeEditStart->setDateTime(QDateTime::currentDateTimeUtc());
+	SC_D._ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTimeUtc());
 
 	initTree();
 
@@ -2891,8 +3050,9 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	connect(SC_D._ui->cbShowLatestOnly, SIGNAL(stateChanged(int)), this,  SLOT(updateAgencyState()));
 	SC_D._showOnlyLatestPerAgency = SC_D._ui->cbShowLatestOnly->checkState() == Qt::Checked;
 
-	if ( !SC_D._withOrigins )
+	if ( !SC_D._withOrigins ) {
 		SC_D._ui->cbShowLatestOnly->setVisible(false);
+	}
 
 	connect(SC_D._ui->btnReadDays, SIGNAL(clicked()), this, SLOT(readLastDays()));
 	connect(SC_D._ui->btnReadInterval, SIGNAL(clicked()), this, SLOT(readInterval()));
@@ -2901,7 +3061,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	connect(SC_D._treeWidget, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(itemPressed(QTreeWidgetItem*,int)));
 	connect(SC_D._treeWidget, SIGNAL(itemEntered(QTreeWidgetItem*,int)), this, SLOT(itemEntered(QTreeWidgetItem*,int)));
 	connect(SC_D._treeWidget, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(itemExpanded(QTreeWidgetItem*)));
-	connect(SC_D._treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+	connect(SC_D._treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
 	connect(SC_D._ui->actionCopyRowToClipboard, SIGNAL(triggered(bool)), this, SLOT(copyRowToClipboard()));
 
 	connect(expandAll, SIGNAL(triggered()), SC_D._treeWidget, SLOT(expandAll()));
@@ -2917,13 +3077,13 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	SC_D._busyIndicatorLabel->setMovie(SC_D._busyIndicator);
 	SC_D._busyIndicatorLabel->setToolTip("PublicObject evaluator is running ...");
 
-	connect(SC_D._busyIndicator, SIGNAL(resized(const QSize &)),
-	        this, SLOT(indicatorResized(const QSize &)));
+	connect(SC_D._busyIndicator, SIGNAL(resized(QSize)),
+	        this, SLOT(indicatorResized(QSize)));
 
-	connect(&PublicObjectEvaluator::Instance(), SIGNAL(resultAvailable(const QString &, const QString &, const QString &, const QString &)),
-	        this, SLOT(evalResultAvailable(const QString &, const QString &, const QString &, const QString &)));
-	connect(&PublicObjectEvaluator::Instance(), SIGNAL(resultError(const QString &, const QString &, const QString &, int)),
-	        this, SLOT(evalResultError(const QString &, const QString &, const QString &, int)));
+	connect(&PublicObjectEvaluator::Instance(), SIGNAL(resultAvailable(QString,QString,QString,QString)),
+	        this, SLOT(evalResultAvailable(QString,QString,QString,QString)));
+	connect(&PublicObjectEvaluator::Instance(), SIGNAL(resultError(QString,QString,QString,int)),
+	        this, SLOT(evalResultError(QString,QString,QString,int)));
 
 	// Start movie when the thread starts
 	connect(&PublicObjectEvaluator::Instance(), SIGNAL(started()),
@@ -3033,7 +3193,7 @@ void EventListView::updateAgencyState() {
 	progress.setCancelButton(nullptr);
 
 	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
-		EventTreeItem *item = (EventTreeItem*)SC_D._treeWidget->topLevelItem(i);
+		auto *item = static_cast<EventTreeItem*>(SC_D._treeWidget->topLevelItem(i));
 
 		progress.setValue(i);
 		qApp->processEvents();
@@ -3055,7 +3215,7 @@ void EventListView::updateHideState() {
 	SC_D._blockCountSignal = true;
 
 	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
-		EventTreeItem* item = (EventTreeItem*)SC_D._treeWidget->topLevelItem(i);
+		auto *item = static_cast<EventTreeItem*>(SC_D._treeWidget->topLevelItem(i));
 		if ( updateHideState(item) ) {
 			changed = true;
 		}
@@ -3075,16 +3235,19 @@ void EventListView::updateHideState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventListView::updateHideState(QTreeWidgetItem *item) {
-	EventTreeItem *eitem = static_cast<EventTreeItem*>(item);
-	Event* event = eitem->event();
-	if ( !event ) return false;
+	auto *eitem = static_cast<EventTreeItem*>(item);
+	auto *event = eitem->event();
+	if ( !event ) {
+		return false;
+	}
 
 	bool hide = false;
 
 	if ( SC_D._hideOtherEvents ) {
 		try {
-			if ( SC_D._itemConfig.hiddenEventTypes.contains(event->type()) )
+			if ( SC_D._itemConfig.hiddenEventTypes.contains(event->type()) ) {
 				hide = true;
+			}
 		}
 		catch ( Core::ValueException & ) {}
 	}
@@ -3093,27 +3256,31 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 		Origin* preferredOrigin = Origin::Find(event->preferredOriginID());
 		if ( preferredOrigin ) {
 			char evalStat = objectEvaluationStatusToChar(preferredOrigin);
-			if ( evalStat == 'F' || evalStat == 'X')
+			if ( evalStat == 'F' || evalStat == 'X') {
 				hide = true;
+			}
 		}
 	}
 
 	if ( !hide && SC_D._hideNewEvents ) {
 		Origin* preferredOrigin = Origin::Find(event->preferredOriginID());
 		if ( preferredOrigin ) {
-			if ( preferredOrigin->time().value() > SC_D._filter.endTime )
+			if ( preferredOrigin->time().value() > SC_D._filter.endTime ) {
 				hide = true;
+			}
 		}
-		else
+		else {
 			hide = true;
+		}
 	}
 
 
 	if ( !hide && SC_D._hideForeignEvents ) {
 		if ( SC_D._checkEventAgency ) {
 			try {
-				if ( !SC_D._itemConfig.preferredAgencies.contains(item->text(SC_D._itemConfig.columnMap[COL_AGENCY])) )
+				if ( !SC_D._itemConfig.preferredAgencies.contains(item->text(SC_D._itemConfig.columnMap[COL_AGENCY])) ) {
 					hide = true;
+				}
 			}
 			catch ( Core::ValueException & ) {
 				hide = true;
@@ -3123,7 +3290,7 @@ bool EventListView::updateHideState(QTreeWidgetItem *item) {
 			bool hasOwnOrigin = false;
 			int originItems = eitem->originItemCount();
 			for ( int i = 0; i < originItems; ++i ) {
-				OriginTreeItem *oitem = static_cast<OriginTreeItem*>(eitem->originItem(i));
+				auto *oitem = static_cast<OriginTreeItem*>(eitem->originItem(i));
 				if ( SC_D._itemConfig.preferredAgencies.contains(oitem->text(SC_D._itemConfig.columnMap[COL_AGENCY])) ) {
 					hasOwnOrigin = true;
 					break;
@@ -3206,7 +3373,9 @@ void EventListView::setRelativeMinimumEventTime(const Seiscomp::Core::TimeSpan& 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::add(Seiscomp::DataModel::Event* event,
                         Seiscomp::DataModel::Origin* origin) {
-	if ( !origin && !event ) return;
+	if ( !origin && !event ) {
+		return;
+	}
 
 	SC_D._blockRemovingOfExpiredEvents = true;
 
@@ -3216,91 +3385,106 @@ void EventListView::add(Seiscomp::DataModel::Event* event,
 		std::map<std::string, FocalMechanismPtr> fms;
 		MagnitudePtr prefMag;
 
-		if ( !event->preferredMagnitudeID().empty() )
+		if ( !event->preferredMagnitudeID().empty() ) {
 			prefMag = Magnitude::Find(event->preferredMagnitudeID());
+		}
 
 		for ( size_t i = 0; i < event->originReferenceCount(); ++i ) {
 			Origin *org = Origin::Find(event->originReference(i)->originID());
-			if ( org && orgs.find(org->publicID()) == orgs.end() )
+			if ( org && orgs.find(org->publicID()) == orgs.end() ) {
 				orgs[org->publicID()] = org;
+			}
 		}
 
 		if ( SC_D._withFocalMechanisms ) {
 			for ( size_t i = 0; i < event->focalMechanismReferenceCount(); ++i ) {
 				FocalMechanism *fm = FocalMechanism::Find(event->focalMechanismReference(i)->focalMechanismID());
-				if ( fm && fms.find(fm->publicID()) == fms.end() )
+				if ( fm && fms.find(fm->publicID()) == fms.end() ) {
 					fms[fm->publicID()] = fm;
+				}
 			}
 		}
 
 		if ( SC_D._reader ) {
-			if ( event->originReferenceCount() == 0 )
+			if ( event->originReferenceCount() == 0 ) {
 				SC_D._reader->load(event);
+			}
 
 			DatabaseIterator it = SC_D._reader->getOrigins(event->publicID());
 			while ( *it ) {
 				Origin *org = Origin::Cast(*it);
-				if ( org && orgs.find(org->publicID()) == orgs.end() )
+				if ( org && orgs.find(org->publicID()) == orgs.end() ) {
 					orgs[org->publicID()] = org;
+				}
 				++it;
 			}
 			it.close();
 
-			if ( !prefMag && !event->preferredMagnitudeID().empty() )
+			if ( !prefMag && !event->preferredMagnitudeID().empty() ) {
 				prefMag = Magnitude::Cast(SC_D._reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
+			}
 		}
 
-		if ( item == nullptr )
+		if ( !item ) {
 			item = addEvent(event, false);
+		}
 
-		for ( std::map<std::string, OriginPtr>::iterator it = orgs.begin(); it != orgs.end(); ++it )
-			addOrigin(it->second.get(), item, true);
+		for ( auto &orgItem : orgs ) {
+			addOrigin(orgItem.second.get(), item, true);
+		}
 
 		if ( SC_D._withFocalMechanisms ) {
-			for ( std::map<std::string, FocalMechanismPtr>::iterator it = fms.begin(); it != fms.end(); ++it )
-				addFocalMechanism(it->second.get(), item);
+			for ( auto &fmItem : fms ) {
+				addFocalMechanism(fmItem.second.get(), item);
+			}
 		}
 
 		item->update(this);
 
 	}
 	else if ( event ) {
-		SchemeTreeItem *item = findEvent(event->publicID());
+		auto *item = findEvent(event->publicID());
 		MagnitudePtr prefMag = Magnitude::Find(event->preferredMagnitudeID());
 
-		if ( item == nullptr ) {
+		if ( !item ) {
 			OriginPtr prefOrg = Origin::Find(event->preferredOriginID());
 
 			if ( !prefOrg && SC_D._reader ) {
 				prefOrg = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), event->preferredOriginID()));
 
-				if ( (SC_D._itemConfig.customColumn != -1) && prefOrg && prefOrg->commentCount() == 0 )
+				if ( (SC_D._itemConfig.customColumn != -1) && prefOrg && prefOrg->commentCount() == 0 ) {
 					SC_D._reader->loadComments(prefOrg.get());
+				}
 			}
 
-			if ( !prefMag && SC_D._reader && !event->preferredMagnitudeID().empty() )
+			if ( !prefMag && SC_D._reader && !event->preferredMagnitudeID().empty() ) {
 				prefMag = Magnitude::Cast(SC_D._reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
+			}
 
 			item = addEvent(event, false);
 			if ( prefOrg ) {
-				if ( event->originReference(prefOrg->publicID()) == nullptr )
+				if ( !event->originReference(prefOrg->publicID()) ) {
 					event->add(new OriginReference(prefOrg->publicID()));
+				}
 				addOrigin(prefOrg.get(), item, true);
 			}
 		}
 
-		if ( event->originReference(origin->publicID()) == nullptr )
+		if ( !event->originReference(origin->publicID()) ) {
 			event->add(new OriginReference(origin->publicID()));
+		}
 
-		if ( findOrigin(origin->publicID()) == nullptr )
+		if ( !findOrigin(origin->publicID()) ) {
 			addOrigin(origin, item, true);
+		}
 
 		item->update(this);
 	}
 	else {
-		QTreeWidgetItem *item = findOrigin(origin->publicID());
-		if ( item == nullptr )
+		auto *item = findOrigin(origin->publicID());
+		if ( !item ) {
 			addOrigin(origin, nullptr, false);
+		}
 	}
 
 	SC_D._blockRemovingOfExpiredEvents = false;
@@ -3313,8 +3497,9 @@ void EventListView::add(Seiscomp::DataModel::Event* event,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setMessagingEnabled(bool e) {
 	SC_D._updateLocalEPInstance = !e;
-	if ( SC_D._updateLocalEPInstance )
+	if ( SC_D._updateLocalEPInstance ) {
 		SC_D._treeWidget->setDragEnabled(false);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3336,13 +3521,16 @@ void EventListView::initTree() {
 	SC_D._treeWidget->clear();
 	SC_D._visibleEventCount = 0;
 
-	if ( SC_D._withOrigins )
+	if ( SC_D._withOrigins ) {
 		SC_D._unassociatedEventItem = addEvent(nullptr, false);
-	else
+	}
+	else {
 		SC_D._unassociatedEventItem = nullptr;
+	}
 
-	for (int i = 0; i < SC_D._treeWidget->columnCount(); i++)
+	for (int i = 0; i < SC_D._treeWidget->columnCount(); i++) {
 		SC_D._treeWidget->resizeColumnToContents(i);
+	}
 
 	PublicObjectEvaluator::Instance().clear(this);
 	PublicObjectEvaluator::Instance().setDatabaseURI(SCApp->databaseURI().c_str());
@@ -3358,25 +3546,27 @@ void EventListView::initTree() {
 bool EventListView::eventFilter(QObject *obj, QEvent *ev) {
 	if ( obj == SC_D._treeWidget->viewport() ) {
 		if ( ev->type() == QEvent::Drop ) {
-			QDropEvent *event = static_cast<QDropEvent*>(ev);
-			SchemeTreeItem *item = (SchemeTreeItem*)SC_D._treeWidget->itemAt(event->pos());
+			auto *event = static_cast<QDropEvent*>(ev);
+			auto *item = static_cast<SchemeTreeItem*>(SC_D._treeWidget->itemAt(event->pos()));
 			if ( !item || item->type() == ST_None ) {
 				event->ignore();
 				return true;
 			}
 
 			if ( item->type() == ST_Event ) {
-				EventTreeItem *eitem = static_cast<EventTreeItem*>(item);
-				Event *evt = eitem->event();
-				if ( evt == nullptr )
+				auto *eitem = static_cast<EventTreeItem*>(item);
+				auto *evt = eitem->event();
+				if ( !evt ) {
 					return true;
+				}
 
 				if ( event->mimeData()->hasFormat("uri/event") ) {
 					QString eventID = event->mimeData()->data("uri/event");
 
 					// Nothing to do, same eventID
-					if ( eventID == item->object()->publicID().data() )
+					if ( eventID == item->object()->publicID().data() ) {
 						return true;
+					}
 
 					if ( QMessageBox::question(
 						this, "Event merge",
@@ -3385,7 +3575,7 @@ bool EventListView::eventFilter(QObject *obj, QEvent *ev) {
 							"event %2. This command will modify the "
 							"database.\n"
 							"Are you sure you want to continue?"
-						).arg(eventID).arg(item->object()->publicID().c_str()),
+						).arg(eventID, item->object()->publicID().c_str()),
 						QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes
 						) == QMessageBox::No ) {
 						event->ignore();
@@ -3405,7 +3595,7 @@ bool EventListView::eventFilter(QObject *obj, QEvent *ev) {
 							"event %2. This command will modify the "
 							"database.\n"
 							"Are you sure you want to continue?"
-						).arg(originID).arg(item->object()->publicID().c_str()),
+						).arg(originID, item->object()->publicID().c_str()),
 						QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes
 						) == QMessageBox::No ) {
 						event->ignore();
@@ -3458,9 +3648,10 @@ void EventListView::clearDatabaseFilter() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::selectEventFM(const QString &url) {
-	Event *ev = (Event*)sender()->property("eventPtr").value<void*>();
-	if ( ev )
-		eventFMSelected(ev);
+	auto *ev = static_cast<Event*>(sender()->property("eventPtr").value<void*>());
+	if ( ev ) {
+		emit eventFMSelected(ev);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3471,12 +3662,16 @@ void EventListView::selectEventFM(const QString &url) {
 void EventListView::regionSelectionChanged(int index) {
 	SC_D._regionIndex = index;
 
-	if ( SC_D._regionIndex == 0 )
+	if ( SC_D._regionIndex == 0 ) {
 		SC_D._ui->btnChangeRegion->show();
-	else
+	}
+	else {
 		SC_D._ui->btnChangeRegion->hide();
+	}
 
-	if ( SC_D._hideOutsideRegion ) updateHideState();
+	if ( SC_D._hideOutsideRegion ) {
+		updateHideState();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3486,8 +3681,9 @@ void EventListView::regionSelectionChanged(int index) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::changeRegion() {
 	EventListViewRegionFilterDialog dlg(this, &SC_D._filterRegions[0], &SC_D._filterRegions);
-	if ( dlg.exec() == QDialog::Accepted && SC_D._hideOutsideRegion )
+	if ( dlg.exec() == QDialog::Accepted && SC_D._hideOutsideRegion ) {
 		updateHideState();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3496,7 +3692,8 @@ void EventListView::changeRegion() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setInterval(const Seiscomp::Core::TimeWindow& tw) {
-	QDateTime start, end;
+	QDateTime start;
+	QDateTime end;
 
 	if ( !SCScheme.dateTime.useLocalTime ) {
 		start.setTimeSpec(Qt::UTC);
@@ -3520,7 +3717,7 @@ void EventListView::setInterval(const Seiscomp::Core::TimeWindow& tw) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::selectFirstEnabledEvent() {
 	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
-		auto item = static_cast<TreeItem*>(SC_D._treeWidget->topLevelItem(i));
+		auto *item = static_cast<TreeItem*>(SC_D._treeWidget->topLevelItem(i));
 		if ( !item->isEnabled() ) {
 			continue;
 		}
@@ -3537,8 +3734,9 @@ void EventListView::selectFirstEnabledEvent() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::selectEvent(int index) {
-	if ( index >= SC_D._treeWidget->topLevelItemCount() )
+	if ( index >= SC_D._treeWidget->topLevelItemCount() ) {
 		return;
+	}
 
 	SC_D._treeWidget->setCurrentItem(SC_D._treeWidget->topLevelItem(index));
 	loadItem(SC_D._treeWidget->currentItem());
@@ -3565,7 +3763,7 @@ void EventListView::selectEventID(const std::string& publicID) {
 void EventListView::setPreviousEvent() {
 	int idx = SC_D._treeWidget->currentIndex().row();
 	while ( ++idx < SC_D._treeWidget->topLevelItemCount()-1 ) {
-		auto item = SC_D._treeWidget->topLevelItem(idx);
+		auto *item = SC_D._treeWidget->topLevelItem(idx);
 		if ( !item->isHidden() ) {
 			break;
 		}
@@ -3587,7 +3785,7 @@ void EventListView::setPreviousEvent() {
 void EventListView::setNextEvent() {
 	int idx = SC_D._treeWidget->currentIndex().row();
 	while ( --idx >= 0 ) {
-		auto item = SC_D._treeWidget->topLevelItem(idx);
+		auto *item = SC_D._treeWidget->topLevelItem(idx);
 		if ( !item->isHidden() ) {
 			break;
 		}
@@ -3612,8 +3810,9 @@ void EventListView::readLastDays() {
 	SC_D._filter.startTime = SC_D._filter.endTime - Core::TimeSpan(SC_D._ui->spinBox->value()*86400);
 	setInterval(Core::TimeWindow(SC_D._filter.startTime, SC_D._filter.endTime));
 
-	if ( SC_D._filter.isNull() )
+	if ( SC_D._filter.isNull() ) {
 		SC_D._ui->btnFilter->setPalette(QPalette());
+	}
 	else {
 		QPalette p = SC_D._ui->btnFilter->palette();
 		p.setColor(QPalette::Button, p.color(QPalette::Highlight));
@@ -3644,8 +3843,9 @@ void EventListView::readInterval() {
 	                                  SC_D._ui->dateTimeEditEnd->time().minute(),
 	                                  SC_D._ui->dateTimeEditEnd->time().second());
 
-	if ( SC_D._filter.isNull() )
+	if ( SC_D._filter.isNull() ) {
 		SC_D._ui->btnFilter->setPalette(QPalette());
+	}
 	else {
 		QPalette p = SC_D._ui->btnFilter->palette();
 		p.setColor(QPalette::Button, p.color(QPalette::Highlight));
@@ -3670,7 +3870,9 @@ void EventListView::readFromDatabase() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::readFromDatabase(const Filter &filter) {
-	if ( SC_D._reader == nullptr ) return;
+	if ( !SC_D._reader ) {
+		return;
+	}
 
 	initTree();
 
@@ -3720,7 +3922,9 @@ void EventListView::readFromDatabase(const Filter &filter) {
 			break;
 		}
 		EventPtr evt = eventIDs[it.parentOid()];
-		if ( evt ) evt->add(comment.get());
+		if ( evt ) {
+			evt->add(comment.get());
+		}
 		++it;
 	}
 	it.close();
@@ -3770,8 +3974,9 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		it = getUnassociatedOrigins(SC_D._reader, filter);
 
 		while ( (origin = static_cast<Origin*>(*it)) ) {
-			if ( progress.wasCanceled() )
+			if ( progress.wasCanceled() ) {
 				break;
+			}
 
 			ep.add(origin.get());
 			//if( _withComments )	originIDs[it.oid()] = origin.get();
@@ -3791,7 +3996,9 @@ void EventListView::readFromDatabase(const Filter &filter) {
 				break;
 			}
 			OriginPtr org = originIDs[it.parentOid()];
-			if ( org ) org->add(comment.get());
+			if ( org ) {
+				org->add(comment.get());
+			}
 			++it;
 		}
 		it.close();
@@ -3810,7 +4017,9 @@ void EventListView::readFromDatabase(const Filter &filter) {
 			}
 
 			QMap<int, EventPtr>::iterator mit = eventIDs.find(it.parentOid());
-			if ( mit == eventIDs.end() ) continue;
+			if ( mit == eventIDs.end() ) {
+				continue;
+			}
 
 			EventPtr ev = mit.value();
 
@@ -3856,12 +4065,13 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		it.close();
 
 		// Load derived origin magnitudes
-		for ( std::set<std::string>::iterator it = derivedOriginIDs.begin();
-		      it != derivedOriginIDs.end(); ++it ) {
-			OriginPtr org = Origin::Find(*it);
-			if ( org == nullptr ) {
-				org = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), *it));
-				if ( org ) ep.add(org.get());
+		for ( const auto &oID : derivedOriginIDs ) {
+			OriginPtr org = Origin::Find(oID);
+			if ( !org ) {
+				org = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), oID));
+				if ( org ) {
+					ep.add(org.get());
+				}
 			}
 
 			if ( org && org->magnitudeCount() == 0 ) {
@@ -3878,7 +4088,9 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		}
 
 		EventPtr evt = eventIDs[it.parentOid()];
-		if ( evt ) evt->add(description.get());
+		if ( evt ) {
+			evt->add(description.get());
+		}
 		++it;
 	}
 	it.close();
@@ -3915,11 +4127,14 @@ void EventListView::readFromDatabase(const Filter &filter) {
 			CommentPtr comment;
 
 			while ( (comment = Comment::Cast(*it)) ) {
-				if( progress.wasCanceled() )
+				if ( progress.wasCanceled() ) {
 					break;
+				}
 
 				OriginPtr org = originIDs[it.parentOid()];
-				if ( org ) org->add(comment.get());
+				if ( org ) {
+					org->add(comment.get());
+				}
 				++it;
 			}
 			it.close();
@@ -3992,8 +4207,9 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		}
 	}
 
-	for ( int i = 0; i < SC_D._treeWidget->columnCount(); i++ )
+	for (int i = 0; i < SC_D._treeWidget->columnCount(); i++) {
 		SC_D._treeWidget->resizeColumnToContents(i);
+	}
 
 	SC_D._treeWidget->setUpdatesEnabled(true);
 
@@ -4024,25 +4240,28 @@ void EventListView::setAutoSelect(bool s) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::removeExpiredEvents() {
-	if ( SC_D._blockRemovingOfExpiredEvents ) return;
+	if ( SC_D._blockRemovingOfExpiredEvents ) {
+		return;
+	}
 
 	Core::Time now = Core::Time::GMT();
 
 	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
-		auto item = (EventTreeItem*)SC_D._treeWidget->topLevelItem(i);
-		auto event = item->event();
+		auto *item = static_cast<EventTreeItem*>(SC_D._treeWidget->topLevelItem(i));
+		auto *event = item->event();
 		if ( event ) {
-			auto o = Origin::Find(event->preferredOriginID());
+			auto *o = Origin::Find(event->preferredOriginID());
 			bool remove = false;
-			if ( o )
+			if ( o ) {
 				remove = (now - o->time()) > SC_D._timeAgo;
+			}
 			else {
 				double time = item->data(SC_D._itemConfig.columnMap[COL_OTIME], Qt::UserRole).toDouble();
 				remove = now - TimeSpan(time) > SC_D._timeAgo;
 			}
 
 			if ( remove ) {
-				auto item = SC_D._treeWidget->takeTopLevelItem(i);
+				auto *item = SC_D._treeWidget->takeTopLevelItem(i);
 				if ( item ) {
 					if ( !item->isHidden() ) {
 						if ( SC_D._visibleEventCount > 0 ) {
@@ -4060,11 +4279,11 @@ void EventListView::removeExpiredEvents() {
 		}
 		else {
 			for ( int j = 0; j < item->originItemCount(); ++j ) {
-				auto child = (OriginTreeItem*)item->originItem(j);
+				auto *child = static_cast<OriginTreeItem*>(item->originItem(j));
 				if ( child ) {
 					if ( child->origin() ) {
 						if ( (now - child->origin()->time()) > SC_D._timeAgo ) {
-							auto it = item->takeOrigin(j);
+							auto *it = item->takeOrigin(j);
 							if ( it ) {
 								delete it;
 								--j;
@@ -4108,8 +4327,9 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 		preferredOrigin = Origin::Find(event->preferredOriginID());
 		if ( !preferredOrigin && SC_D._reader ) {
 			preferredOrigin = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), event->preferredOriginID()));
-			if ( (SC_D._itemConfig.customColumn != -1) && preferredOrigin && preferredOrigin->commentCount() == 0 )
+			if ( (SC_D._itemConfig.customColumn != -1) && preferredOrigin && preferredOrigin->commentCount() == 0 ) {
 				SC_D._reader->loadComments(preferredOrigin.get());
+			}
 		}
 	}
 
@@ -4117,23 +4337,26 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 	MagnitudePtr preferredMagnitude;
 	if ( event && !event->preferredMagnitudeID().empty() ) {
 		preferredMagnitude = Magnitude::Find(event->preferredMagnitudeID());
-		if ( !preferredMagnitude && SC_D._reader )
+		if ( !preferredMagnitude && SC_D._reader ) {
 			preferredMagnitude = Magnitude::Cast(SC_D._reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
+		}
 	}
 
 	// Read preferred magnitude for display purpose
 	FocalMechanismPtr preferredFocalMechanism;
 	if ( event && SC_D._withFocalMechanisms ) {
 		preferredFocalMechanism = FocalMechanism::Find(event->preferredFocalMechanismID());
-		if ( !preferredFocalMechanism && SC_D._reader )
+		if ( !preferredFocalMechanism && SC_D._reader ) {
 			preferredFocalMechanism = FocalMechanism::Cast(SC_D._reader->getObject(FocalMechanism::TypeInfo(), event->preferredFocalMechanismID()));
+		}
 	}
 
-	EventTreeItem *item = new EventTreeItem(event, SC_D._itemConfig);
+	auto *item = new EventTreeItem(event, SC_D._itemConfig);
 	item->setShowOneItemPerAgency(SC_D._showOnlyLatestPerAgency);
 
-	if ( SC_D._treeWidget->topLevelItemCount() == 0 )
+	if ( SC_D._treeWidget->topLevelItemCount() == 0 ) {
 		SC_D._treeWidget->insertTopLevelItem(0, item);
+	}
 	else {
 		int pos = SC_D._treeWidget->topLevelItemCount();
 		for ( int i = 0; i  < SC_D._treeWidget->topLevelItemCount(); ++i ) {
@@ -4163,10 +4386,13 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 	}
 
 	int fixedItems = 0;
-	if ( SC_D._unassociatedEventItem ) fixedItems = 1;
+	if ( SC_D._unassociatedEventItem ) {
+		fixedItems = 1;
+	}
 	if ( SC_D._treeWidget->topLevelItemCount() - fixedItems == 1 ) {
-		for (int i = 0; i < SC_D._treeWidget->columnCount(); i++)
+		for (int i = 0; i < SC_D._treeWidget->columnCount(); i++) {
 			SC_D._treeWidget->resizeColumnToContents(i);
+		}
 	}
 
 	SC_D._ui->btnClear->setEnabled(true);
@@ -4185,8 +4411,8 @@ OriginTreeItem *
 EventListView::addOrigin(Seiscomp::DataModel::Origin* origin, QTreeWidgetItem* parent, bool highPriority) {
 	//removeExpiredEvents();
 
-	auto item = new OriginTreeItem(origin, SC_D._itemConfig);
-	auto eitem = static_cast<EventTreeItem*>(parent ? parent : SC_D._unassociatedEventItem);
+	auto *item = new OriginTreeItem(origin, SC_D._itemConfig);
+	auto *eitem = static_cast<EventTreeItem*>(parent?parent:SC_D._unassociatedEventItem);
 	eitem->addOriginItem(0,item);
 	eitem->resort();
 
@@ -4205,13 +4431,16 @@ EventListView::addOrigin(Seiscomp::DataModel::Origin* origin, QTreeWidgetItem* p
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::updateOriginProcessColumns(QTreeWidgetItem *item, bool highPriority) {
-	if ( SC_D._itemConfig.originScriptColumns.empty() ) return;
-	if ( !item ) return;
+	if ( SC_D._itemConfig.originScriptColumns.empty() || !item ) {
+		return;
+	}
 
-	OriginTreeItem *oitem = static_cast<OriginTreeItem*>(item);
-	Origin *origin = oitem->origin();
+	auto *oitem = static_cast<OriginTreeItem*>(item);
+	auto *origin = oitem->origin();
 
-	if ( !origin ) return;
+	if ( !origin ) {
+		return;
+	}
 
 	QStringList scripts;
 	for ( int i = 0; i < SC_D._itemConfig.originScriptColumns.size(); ++i ) {
@@ -4240,13 +4469,16 @@ void EventListView::updateOriginProcessColumns(QTreeWidgetItem *item, bool highP
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::updateEventProcessColumns(QTreeWidgetItem *item, bool highPriority) {
-	if ( SC_D._itemConfig.eventScriptColumns.empty() ) return;
-	if ( !item ) return;
+	if ( SC_D._itemConfig.eventScriptColumns.empty() || !item ) {
+		return;
+	}
 
-	EventTreeItem *eitem = static_cast<EventTreeItem*>(item);
-	Event *event = eitem->event();
+	auto *eitem = static_cast<EventTreeItem*>(item);
+	auto *event = eitem->event();
 
-	if ( !event ) return;
+	if ( !event ) {
+		return;
+	}
 
 	QStringList scripts;
 	for ( int i = 0; i < SC_D._itemConfig.eventScriptColumns.size(); ++i ) {
@@ -4274,9 +4506,10 @@ void EventListView::updateEventProcessColumns(QTreeWidgetItem *item, bool highPr
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanismTreeItem* EventListView::addFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm, QTreeWidgetItem* parent) {
-	auto item = new FocalMechanismTreeItem(fm, SC_D._itemConfig);
-	auto eitem = static_cast<EventTreeItem*>(parent ? parent : SC_D._unassociatedEventItem);
+FocalMechanismTreeItem* EventListView::addFocalMechanism(
+        Seiscomp::DataModel::FocalMechanism *fm, QTreeWidgetItem *parent) {
+	auto *item = new FocalMechanismTreeItem(fm, SC_D._itemConfig);
+	auto *eitem = static_cast<EventTreeItem*>(parent?parent:SC_D._unassociatedEventItem);
 	eitem->addFocalMechanismItem(0,item);
 	eitem->resort();
 
@@ -4291,18 +4524,20 @@ FocalMechanismTreeItem* EventListView::addFocalMechanism(Seiscomp::DataModel::Fo
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventListView::messageAvailable(Seiscomp::Core::Message* msg, Seiscomp::Client::Packet*) {
-	CommandMessage *cmsg = CommandMessage::Cast(msg);
+void EventListView::messageAvailable(Seiscomp::Core::Message *msg,
+                                     Seiscomp::Client::Packet */*unused*/) {
+	auto *cmsg = CommandMessage::Cast(msg);
 	if ( cmsg ) {
 		onCommand(cmsg);
 		return;
 	}
 
-	ArtificialOriginMessage *aomsg = ArtificialOriginMessage::Cast(msg);
+	auto *aomsg = ArtificialOriginMessage::Cast(msg);
 	if ( aomsg ) {
-		Origin* o = aomsg->origin();
-		if ( o )
+		auto *o = aomsg->origin();
+		if ( o ) {
 			emit originSelected(o, nullptr);
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4311,9 +4546,9 @@ void EventListView::messageAvailable(Seiscomp::Core::Message* msg, Seiscomp::Cli
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventListView::onCommand(Seiscomp::Gui::CommandMessage* cmsg) {
+void EventListView::onCommand(Seiscomp::Gui::CommandMessage *cmsg) {
 	if ( cmsg->command() == CM_SHOW_ORIGIN ) {
-		auto item = findOrigin(cmsg->parameter());
+		auto *item = findOrigin(cmsg->parameter());
 		if ( item ) {
 			loadItem(item);
 			return;
@@ -4329,7 +4564,7 @@ void EventListView::onCommand(Seiscomp::Gui::CommandMessage* cmsg) {
 		}
 
 		if ( o ) {
-			SchemeTreeItem* parent = nullptr;
+			SchemeTreeItem *parent = nullptr;
 			EventPtr ev = SC_D._reader->getEvent(o->publicID());
 
 			if ( ev ) {
@@ -4342,7 +4577,7 @@ void EventListView::onCommand(Seiscomp::Gui::CommandMessage* cmsg) {
 			//readPicks(o);
 			//emit originSelected(o, nullptr);
 
-			auto item = addOrigin(o.get(), parent, true);
+			auto *item = addOrigin(o.get(), parent, true);
 			if ( parent ) {
 				parent->update(this);
 			}
@@ -4359,13 +4594,11 @@ void EventListView::onCommand(Seiscomp::Gui::CommandMessage* cmsg) {
 		}
 	}
 	else if ( cmsg->command() == CM_OBSERVE_LOCATION ) {
-		auto o = Origin::Cast(cmsg->object());
+		auto *o = Origin::Cast(cmsg->object());
 		if ( o ) {
 			emit originSelected(o, nullptr);
 		}
 	}
-
-	return;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4377,26 +4610,27 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 	SC_D._treeWidget->setUpdatesEnabled(false);
 
 	if ( SC_D._withOrigins ) {
-		auto o = Origin::Cast(n->object());
+		auto *o = Origin::Cast(n->object());
 		if ( o ) {
 			switch ( n->operation() ) {
 				case OP_ADD:
 				{
-					auto item = addOrigin(o, nullptr, false);
-					if ( SC_D._autoSelect )
+					auto *item = addOrigin(o, nullptr, false);
+					if ( SC_D._autoSelect ) {
 						//_treeWidget->setItemSelected(item, true);
 						loadItem(item);
+					}
 					break;
 				}
 				case OP_UPDATE:
 				{
-					auto item = (SchemeTreeItem*)findOrigin(o->publicID());
+					auto *item = static_cast<SchemeTreeItem*>(findOrigin(o->publicID()));
 					if ( item ) {
 						updateOriginProcessColumns(item, true);
 						item->update(this);
 						emit originUpdated(static_cast<Origin*>(item->object()));
-						auto parent = static_cast<EventTreeItem*>(item->parent()->parent());
-						auto e = static_cast<Event*>(parent->object());
+						auto *parent = static_cast<EventTreeItem*>(item->parent()->parent());
+						auto *e = static_cast<Event*>(parent->object());
 						if ( e && e->preferredOriginID() == o->publicID() ) {
 							parent->update(this);
 							emit eventUpdatedInList(e);
@@ -4414,7 +4648,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 	}
 
 	if ( SC_D._withFocalMechanisms ) {
-		auto fm = FocalMechanism::Cast(n->object());
+		auto *fm = FocalMechanism::Cast(n->object());
 		if ( fm ) {
 			switch ( n->operation() ) {
 				case OP_ADD:
@@ -4424,12 +4658,12 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 					break;
 				case OP_UPDATE:
 					{
-						SchemeTreeItem* item = (SchemeTreeItem*)findFocalMechanism(fm->publicID());
+						auto *item = static_cast<SchemeTreeItem*>(findFocalMechanism(fm->publicID()));
 						if ( item ) {
 							item->update(this);
 							emit focalMechanismUpdated(static_cast<FocalMechanism*>(item->object()));
-							EventTreeItem* parent = static_cast<EventTreeItem*>(item->parent()->parent());
-							Event *e = static_cast<Event*>(parent->object());
+							auto *parent = static_cast<EventTreeItem*>(item->parent()->parent());
+							auto *e = static_cast<Event*>(parent->object());
 							if ( e && e->preferredFocalMechanismID() == fm->publicID() ) {
 								parent->update(this);
 								emit eventUpdatedInList(e);
@@ -4446,12 +4680,12 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 		}
 	}
 
-	auto e = Event::Cast(n->object());
+	auto *e = Event::Cast(n->object());
 	if ( e ) {
 		switch ( n->operation() ) {
 			case OP_ADD:
 			{
-				auto item = (EventTreeItem*)findEvent(e->publicID());
+				auto *item = static_cast<EventTreeItem*>(findEvent(e->publicID()));
 				if ( !item ) {
 					addEvent(e, true);
 				}
@@ -4459,7 +4693,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 			}
 			case OP_REMOVE:
 			{
-				auto item = (EventTreeItem*)findEvent(e->publicID());
+				auto *item = static_cast<EventTreeItem*>(findEvent(e->publicID()));
 				if ( item ) {
 					SEISCOMP_DEBUG("Delete event item %s", e->publicID().c_str());
 					bool visibleItem = !item->isHidden();
@@ -4479,16 +4713,18 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 			}
 			case OP_UPDATE:
 			{
-				auto item = (EventTreeItem*)findEvent(e->publicID());
-				if ( !item )
-					item = (EventTreeItem*)addEvent(e, true);
-				else
+				auto *item = static_cast<EventTreeItem*>(findEvent(e->publicID()));
+				if ( !item ) {
+					item = static_cast<EventTreeItem*>(addEvent(e, true));
+				}
+				else {
 					updateHideState(item);
+				}
 
 				if ( item ) {
-					auto event = static_cast<Event*>(item->object());
+					auto *event = static_cast<Event*>(item->object());
 
-					auto originItem = findOrigin(event->preferredOriginID());
+					auto *originItem = findOrigin(event->preferredOriginID());
 					OriginPtr preferredOrigin;
 
 					if ( originItem ) {
@@ -4496,37 +4732,40 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 							int index = originItem->parent()->indexOfChild(originItem);
 							SEISCOMP_DEBUG("Reparent originItem (update Event), index(%d)", index);
 							if ( index >= 0 ) {
-								auto taken = originItem->parent()->takeChild(index);
+								auto *taken = originItem->parent()->takeChild(index);
 								if ( taken ) {
 									item->addOriginItem(taken);
 									item->resort();
 								}
 							}
 						}
-						else if ( item->child(0) != originItem )
+						else if ( item->child(0) != originItem ) {
 							item->resort();
+						}
 					}
 					else {
 						preferredOrigin = Origin::Find(event->preferredOriginID());
 						if (!preferredOrigin && SC_D._reader) {
 							preferredOrigin = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), event->preferredOriginID()));
-							if ( preferredOrigin && SC_D._withOrigins )
+							if ( preferredOrigin && SC_D._withOrigins ) {
 								addOrigin(preferredOrigin.get(), item, true);
+							}
 						}
 					}
 
 					MagnitudePtr nm;
 					if ( !event->preferredMagnitudeID().empty() ) {
 						nm = Magnitude::Find(event->preferredMagnitudeID());
-						if ( !nm && SC_D._reader )
+						if ( !nm && SC_D._reader ) {
 							nm = Magnitude::Cast(SC_D._reader->getObject(Magnitude::TypeInfo(), event->preferredMagnitudeID()));
+						}
 					}
 
 					updateEventProcessColumns(item, true);
 					item->update(this);
 
 					if ( SC_D._withFocalMechanisms ) {
-						FocalMechanismTreeItem *fmItem = findFocalMechanism(event->preferredFocalMechanismID());
+						auto *fmItem = findFocalMechanism(event->preferredFocalMechanismID());
 						FocalMechanismPtr preferredFM;
 						OriginPtr derivedOrigin;
 
@@ -4542,17 +4781,20 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 									}
 								}
 							}
-							else if ( item->child(0) != fmItem )
+							else if ( item->child(0) != fmItem ) {
 								item->resort();
+							}
 						}
 						else {
 							preferredFM = FocalMechanism::Find(event->preferredFocalMechanismID());
-							if ( !preferredFM && SC_D._reader )
+							if ( !preferredFM && SC_D._reader ) {
 								preferredFM = FocalMechanism::Cast(SC_D._reader->getObject(FocalMechanism::TypeInfo(), event->preferredFocalMechanismID()));
+							}
 
 							if ( preferredFM && SC_D._reader ) {
-								if ( preferredFM->momentTensorCount() == 0 )
+								if ( preferredFM->momentTensorCount() == 0 ) {
 									SC_D._reader->loadMomentTensors(preferredFM.get());
+								}
 							}
 
 							if ( preferredFM && (preferredFM->momentTensorCount() > 0) ) {
@@ -4563,8 +4805,9 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 								}
 							}
 
-							if ( preferredFM )
+							if ( preferredFM ) {
 								addFocalMechanism(preferredFM.get(), item);
+							}
 						}
 
 						item->update(this);
@@ -4583,21 +4826,21 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 	}
 
 	if ( SC_D._withOrigins ) {
-		auto ref = OriginReference::Cast(n->object());
+		auto *ref = OriginReference::Cast(n->object());
 		if ( ref ) {
 			switch ( n->operation() ) {
 				case OP_ADD:
 				{
-					auto eventItem = (EventTreeItem*)findEvent(n->parentID());
+					auto *eventItem = static_cast<EventTreeItem*>(findEvent(n->parentID()));
 					if ( eventItem ) {
 						SEISCOMP_INFO("found eventitem with publicID '%s', registered(%d)", eventItem->object()->publicID().c_str(), eventItem->object()->registered());
-						auto originItem = findOrigin(ref->originID());
+						auto *originItem = findOrigin(ref->originID());
 						if ( originItem ) {
 							if ( originItem->parent()->parent() != eventItem ) {
 								int index = originItem->parent()->indexOfChild(originItem);
 								SEISCOMP_DEBUG("Reparent originItem (add OriginReference), index(%d)", index);
 								if ( index >= 0 ) {
-									auto taken = originItem->parent()->takeChild(index);
+									auto *taken = originItem->parent()->takeChild(index);
 									if ( taken ) {
 										eventItem->addOriginItem(taken);
 										eventItem->resort();
@@ -4607,49 +4850,54 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 							}
 						}
 						else {
-							auto org = Origin::Find(ref->originID());
+							auto *org = Origin::Find(ref->originID());
 							if ( !org ) {
 								org = Origin::Cast(SC_D._reader->getObject(Origin::TypeInfo(), ref->originID()));
 							}
 
 							if ( org ) {
-								originItem = addOrigin(org, eventItem, false);
+								addOrigin(org, eventItem, false);
 							}
 						}
-						if ( !SC_D._checkEventAgency )
+						if ( !SC_D._checkEventAgency ) {
 							updateHideState(eventItem);
+						}
 					}
 					else {
-						auto originItem = findOrigin(ref->originID());
-						if ( originItem )
+						auto *originItem = findOrigin(ref->originID());
+						if ( originItem ) {
 							delete originItem;
+							originItem = nullptr;
+						}
 					}
 					break;
 				}
 				case OP_REMOVE:
 				{
-					auto eventItem = (EventTreeItem*)findEvent(n->parentID());
+					auto *eventItem = static_cast<EventTreeItem*>(findEvent(n->parentID()));
 					if ( eventItem ) {
 						eventItem->update(this);
-						auto originItem = findOrigin(ref->originID());
+						auto *originItem = findOrigin(ref->originID());
 						if ( originItem && originItem->parent()->parent() == eventItem ) {
 							int index = originItem->parent()->indexOfChild(originItem);
 							SEISCOMP_DEBUG("Reparent originItem (remove OriginReference), index(%d)", index);
 							if ( index >= 0 ) {
-								auto taken = originItem->parent()->takeChild(index);
+								auto *taken = originItem->parent()->takeChild(index);
 								if ( taken ) {
-									eventItem = (EventTreeItem*)SC_D._unassociatedEventItem;
+									eventItem = static_cast<EventTreeItem*>(SC_D._unassociatedEventItem);
 									if ( eventItem ) {
 										eventItem->addOriginItem(taken);
 										eventItem->update(this);
 									}
-									else
+									else {
 										delete taken;
+									}
 								}
 							}
 						}
-						if ( !SC_D._checkEventAgency )
+						if ( !SC_D._checkEventAgency ) {
 							updateHideState(eventItem);
+						}
 					}
 					break;
 				}
@@ -4663,20 +4911,20 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 	}
 
 	if ( SC_D._withFocalMechanisms ) {
-		auto fm_ref = FocalMechanismReference::Cast(n->object());
+		auto *fm_ref = FocalMechanismReference::Cast(n->object());
 		if ( fm_ref ) {
 			switch ( n->operation() ) {
 				case OP_ADD:
 					{
-						auto eventItem = (EventTreeItem*)findEvent(n->parentID());
+						auto *eventItem = static_cast<EventTreeItem*>(findEvent(n->parentID()));
 						if ( eventItem ) {
 							SEISCOMP_INFO("found eventitem with publicID '%s', registered(%d)", eventItem->object()->publicID().c_str(), eventItem->object()->registered());
-							auto fmItem = findFocalMechanism(fm_ref->focalMechanismID());
+							auto *fmItem = findFocalMechanism(fm_ref->focalMechanismID());
 							if ( fmItem && fmItem->parent()->parent() != eventItem ) {
 								int index = fmItem->parent()->indexOfChild(fmItem);
 								SEISCOMP_DEBUG("Reparent fmItem (add FocalMechanismReference), index(%d)", index);
 								if ( index >= 0 ) {
-									auto taken = fmItem->parent()->takeChild(index);
+									auto *taken = fmItem->parent()->takeChild(index);
 									if ( taken ) {
 										eventItem->addFocalMechanismItem(taken);
 										eventItem->resort();
@@ -4684,15 +4932,17 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 									}
 								}
 							}
-							else if ( fmItem == nullptr ) {
+							else if ( !fmItem ) {
 								FocalMechanismPtr fm = FocalMechanism::Find(fm_ref->focalMechanismID());
 								OriginPtr derivedOrigin;
-								if ( !fm && SC_D._reader )
+								if ( !fm && SC_D._reader ) {
 									fm = FocalMechanism::Cast(SC_D._reader->getObject(FocalMechanism::TypeInfo(), fm_ref->focalMechanismID()));
+								}
 
 								if ( fm && SC_D._reader ) {
-									if ( fm->momentTensorCount() == 0 )
+									if ( fm->momentTensorCount() == 0 ) {
 										SC_D._reader->loadMomentTensors(fm.get());
+									}
 								}
 
 								if ( fm && (fm->momentTensorCount() > 0) ) {
@@ -4710,23 +4960,28 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 							}
 						}
 						else {
-							auto fmItem = findFocalMechanism(fm_ref->focalMechanismID());
-							if ( fmItem )
+							auto *fmItem = findFocalMechanism(fm_ref->focalMechanismID());
+							if ( fmItem ) {
 								delete fmItem;
+								fmItem = nullptr;
+							}
 						}
 					}
 					break;
 				case OP_REMOVE:
 				{
-					auto eventItem = (EventTreeItem*)findEvent(n->parentID());
+					auto *eventItem = static_cast<EventTreeItem*>(findEvent(n->parentID()));
 					if ( eventItem ) {
-						auto fmItem = findFocalMechanism(fm_ref->focalMechanismID());
+						auto *fmItem = findFocalMechanism(fm_ref->focalMechanismID());
 						if ( fmItem && fmItem->parent()->parent() == eventItem ) {
 							int index = fmItem->parent()->indexOfChild(fmItem);
 							SEISCOMP_DEBUG("Remove fmItem (remove FocalMechanismReference), index(%d)", index);
 							if ( index >= 0 ) {
-								auto taken = eventItem->takeFocalMechanism(index);
-								if ( taken ) delete taken;
+								auto *taken = eventItem->takeFocalMechanism(index);
+								if ( taken ) {
+									delete taken;
+									taken = nullptr;
+								}
 							}
 						}
 					}
@@ -4741,10 +4996,10 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 		}
 	}
 
-	auto mag = Magnitude::Cast(n->object());
+	auto *mag = Magnitude::Cast(n->object());
 	if ( mag ) {
 		for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
-			auto item = (EventTreeItem*)SC_D._treeWidget->topLevelItem(i);
+			auto *item = static_cast<EventTreeItem*>(SC_D._treeWidget->topLevelItem(i));
 			if ( item->event() && item->event()->preferredMagnitudeID() == mag->publicID() ) {
 				item->update(this);
 				emit eventUpdatedInList(item->event());
@@ -4755,35 +5010,38 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 		return;
 	}
 
-	auto comment = Comment::Cast(n->object());
+	auto *comment = Comment::Cast(n->object());
 	if ( comment ) {
 		switch ( n->operation() ) {
 			case OP_ADD:
 			case OP_UPDATE:
 				{
-					auto eventItem = (EventTreeItem*)findEvent(n->parentID());
+					auto *eventItem = static_cast<EventTreeItem*>(findEvent(n->parentID()));
 					if ( eventItem ) {
-						if ( comment->text() == "published" )
+						if ( comment->text() == "published" ) {
 							eventItem->setPublishState(true);
+						}
 						updateEventProcessColumns(eventItem, true);
 						eventItem->update(this);
 					}
 					else if ( SC_D._withOrigins ) {
-						auto origItem = findOrigin( n->parentID() );
+						auto *origItem = findOrigin( n->parentID() );
 						if ( origItem ) {
 							// "OriginPublished" shall be superseded by "published"
 							// but here we accept both
 							if( comment->text() == "OriginPublished" ||
-							    comment->text() == "published")
+							    comment->text() == "published") {
 								origItem->setPublishState(true);
+							}
 							updateOriginProcessColumns(origItem, true);
 							origItem->update(this);
 
 							eventItem = static_cast<EventTreeItem*>(origItem->parent()->parent());
-							auto o = static_cast<Origin*>(origItem->object());
-							auto e = static_cast<Event*>(eventItem->object());
-							if ( e && e->preferredOriginID() == o->publicID() )
+							auto *o = static_cast<Origin*>(origItem->object());
+							auto *e = static_cast<Event*>(eventItem->object());
+							if ( e && e->preferredOriginID() == o->publicID() ) {
 								eventItem->update(this);
+							}
 						}
 					}
 				}
@@ -4796,15 +5054,15 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 		return;
 	}
 
-	auto je = JournalEntry::Cast(n->object());
+	auto *je = JournalEntry::Cast(n->object());
 	if ( je ) {
 		if ( n->operation() == OP_ADD ) {
-			if ( SC_D._commandWaitDialog == nullptr ) {
+			if ( !SC_D._commandWaitDialog ) {
 				SC_D._treeWidget->setUpdatesEnabled(true);
 				return;
 			}
 
-			auto dlg = static_cast<CommandWaitDialog*>(SC_D._commandWaitDialog);
+			auto *dlg = static_cast<CommandWaitDialog*>(SC_D._commandWaitDialog);
 			dlg->handle(je);
 		}
 
@@ -4823,16 +5081,20 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 void EventListView::updateOrigin(Seiscomp::DataModel::Origin* origin) {
 	EventParametersPtr ep;
 
-	if ( SC_D._updateLocalEPInstance )
+	if ( SC_D._updateLocalEPInstance ) {
  		ep = EventParameters::Cast(PublicObject::Find("EventParameters"));
-	else
+	}
+	else {
 		ep = new EventParameters;
+	}
 
-	if ( ep == nullptr ) return;
+	if ( !ep ) {
+		return;
+	}
 
 	bool wasEnabled = Notifier::IsEnabled();
 
-	if ( !SC_D._updateLocalEPInstance || origin->parent() == nullptr ) {
+	if ( !SC_D._updateLocalEPInstance || !origin->parent() ) {
 		Notifier::Disable();
 		ep->add(origin);
 		Notifier::Enable();
@@ -4841,11 +5103,11 @@ void EventListView::updateOrigin(Seiscomp::DataModel::Origin* origin) {
 	// create the update notifier
 	origin->update();
 
-	auto item = findOrigin(origin->publicID());
+	auto *item = findOrigin(origin->publicID());
 	if ( item ) {
 		item->update(this);
-		EventTreeItem* parent = static_cast<EventTreeItem*>(item->parent()->parent());
-		Event *e = static_cast<Event*>(parent->object());
+		auto *parent = static_cast<EventTreeItem*>(item->parent()->parent());
+		auto *e = static_cast<Event*>(parent->object());
 		if ( e && e->preferredOriginID() == origin->publicID() ) {
 			parent->update(this);
 			emit eventUpdatedInList(e);
@@ -4855,9 +5117,10 @@ void EventListView::updateOrigin(Seiscomp::DataModel::Origin* origin) {
 	if ( !SC_D._updateLocalEPInstance ) {
 		// send the notifier
 		MessagePtr msg = Notifier::GetMessage();
-		if ( msg )
+		if ( msg ) {
 			//SCApp->sendMessage("LOGGING", msg.get());
 			SCApp->sendMessage(SCApp->messageGroups().location.c_str(), msg.get());
+		}
 	}
 
 	Notifier::SetEnabled(wasEnabled);
@@ -4874,37 +5137,43 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
                                  const std::vector<Seiscomp::DataModel::AmplitudePtr>& newAmplitudes) {
 	EventParametersPtr ep;
 
-	if ( SC_D._updateLocalEPInstance )
+	if ( SC_D._updateLocalEPInstance ) {
  		ep = EventParameters::Cast(PublicObject::Find("EventParameters"));
-	else
+	}
+	else {
 		ep = new EventParameters;
+	}
 
-	if ( ep == nullptr ) return;
+	if ( !ep ) {
+		return;
+	}
 
 	bool wasEnabled = Notifier::IsEnabled();
 
 	Notifier::Enable();
 
 	// Send picks
-	for ( Seiscomp::Gui::ObjectChangeList<Seiscomp::DataModel::Pick>::const_iterator it = changedPicks.begin();
-	      it != changedPicks.end(); ++it ) {
-		if ( it->second )
-			ep->add(it->first.get());
+	for ( const auto &pickItem : changedPicks ) {
+		if ( pickItem.second ) {
+			ep->add(pickItem.first.get());
+		}
 		// TODO: handle updates
 	}
 
 	NotifierMessagePtr msg = Notifier::GetMessage();
-	if ( msg && !SC_D._updateLocalEPInstance )
+	if ( msg && !SC_D._updateLocalEPInstance ) {
 		//SCApp->sendMessage("LOGGING", msg.get());
 		SCApp->sendMessage(SCApp->messageGroups().pick.c_str(), msg.get());
+	}
 
-	for ( std::vector<Seiscomp::DataModel::AmplitudePtr>::const_iterator it = newAmplitudes.begin();
-	      it != newAmplitudes.end(); ++it )
-		ep->add((*it).get());
+	for ( const auto &newAmplitude : newAmplitudes ) {
+		ep->add(newAmplitude.get());
+	}
 
 	msg = Notifier::GetMessage();
-	if ( msg && !SC_D._updateLocalEPInstance )
+	if ( msg && !SC_D._updateLocalEPInstance ) {
 		SCApp->sendMessage(SCApp->messageGroups().amplitude.c_str(), msg.get());
+	}
 
 	// Insert origin to Eventparameters
 	ep->add(origin);
@@ -4929,14 +5198,19 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 	msg = Notifier::GetMessage();
 	if ( msg ) {
 		//SCApp->sendMessage("LOGGING", msg.get());
-		if ( !SC_D._updateLocalEPInstance ) SCApp->sendMessage(SCApp->messageGroups().location.c_str(), msg.get());
-		if ( ref && baseEvent ) emit originReferenceAdded(baseEvent->publicID(), ref.get());
+		if ( !SC_D._updateLocalEPInstance ) {
+			SCApp->sendMessage(SCApp->messageGroups().location.c_str(), msg.get());
+		}
+		if ( ref && baseEvent ) {
+			emit originReferenceAdded(baseEvent->publicID(), ref.get());
+		}
 	}
 
 	Notifier::SetEnabled(wasEnabled);
 
-	for ( NotifierMessage::iterator it = msg->begin(); it != msg->end(); ++it )
-		notifierAvailable((*it).get());
+	for ( auto &notifier : *msg ) {
+		notifierAvailable(notifier.get());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4947,16 +5221,20 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 void EventListView::updateFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm) {
 	EventParametersPtr ep;
 
-	if ( SC_D._updateLocalEPInstance )
+	if ( SC_D._updateLocalEPInstance ) {
  		ep = EventParameters::Cast(PublicObject::Find("EventParameters"));
-	else
+	}
+	else {
 		ep = new EventParameters;
+	}
 
-	if ( ep == nullptr ) return;
+	if ( !ep ) {
+		return;
+	}
 
 	bool wasEnabled = Notifier::IsEnabled();
 
-	if ( !SC_D._updateLocalEPInstance || fm->parent()->parent() == nullptr ) {
+	if ( !SC_D._updateLocalEPInstance || !fm->parent()->parent() ) {
 		Notifier::Disable();
 		ep->add(fm);
 		Notifier::Enable();
@@ -4965,11 +5243,11 @@ void EventListView::updateFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
 	// create the update notifier
 	fm->update();
 
-	SchemeTreeItem* item = findFocalMechanism(fm->publicID());
+	auto *item = findFocalMechanism(fm->publicID());
 	if ( item ) {
 		item->update(this);
-		EventTreeItem* parent = static_cast<EventTreeItem*>(item->parent()->parent());
-		Event *e = static_cast<Event*>(parent->object());
+		auto *parent = static_cast<EventTreeItem*>(item->parent()->parent());
+		auto *e = static_cast<Event*>(parent->object());
 		if ( e && e->preferredOriginID() == fm->publicID() ) {
 			parent->update(this);
 			emit eventUpdatedInList(e);
@@ -4979,9 +5257,10 @@ void EventListView::updateFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
 	if ( !SC_D._updateLocalEPInstance ) {
 		// send the notifier
 		MessagePtr msg = Notifier::GetMessage();
-		if ( msg )
+		if ( msg ) {
 			//SCApp->sendMessage("LOGGING", msg.get());
 			SCApp->sendMessage(SCApp->messageGroups().focalMechanism.c_str(), msg.get());
+		}
 	}
 
 	Notifier::SetEnabled(wasEnabled);
@@ -4997,12 +5276,16 @@ void EventListView::insertFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
                                          Seiscomp::DataModel::Origin *origin) {
 	EventParametersPtr ep;
 
-	if ( SC_D._updateLocalEPInstance )
+	if ( SC_D._updateLocalEPInstance ) {
  		ep = EventParameters::Cast(PublicObject::Find("EventParameters"));
-	else
+	}
+	else {
 		ep = new EventParameters;
+	}
 
-	if ( ep == nullptr ) return;
+	if ( !ep ) {
+		return;
+	}
 
 	bool wasEnabled = Notifier::IsEnabled();
 
@@ -5010,9 +5293,10 @@ void EventListView::insertFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
 
 	// Send derived origins
 	for ( size_t i = 0; i < fm->momentTensorCount(); ++i ) {
-		Origin *org = Origin::Find(fm->momentTensor(i)->derivedOriginID());
-		if ( org )
+		auto *org = Origin::Find(fm->momentTensor(i)->derivedOriginID());
+		if ( org ) {
 			ep->add(org);
+		}
 	}
 
 	// Insert origin to Eventparameters
@@ -5039,13 +5323,16 @@ void EventListView::insertFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
 	NotifierMessagePtr msg = Notifier::GetMessage();
 	if ( msg ) {
 		//SCApp->sendMessage("LOGGING", msg.get());
-		if ( !SC_D._updateLocalEPInstance ) SCApp->sendMessage(SCApp->messageGroups().focalMechanism.c_str(), msg.get());
+		if ( !SC_D._updateLocalEPInstance ) {
+			SCApp->sendMessage(SCApp->messageGroups().focalMechanism.c_str(), msg.get());
+		}
 	}
 
 	Notifier::SetEnabled(wasEnabled);
 
-	for ( NotifierMessage::iterator it = msg->begin(); it != msg->end(); ++it )
-		notifierAvailable((*it).get());
+	for ( auto &notifier : *msg ) {
+		notifierAvailable(notifier.get());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5055,9 +5342,9 @@ void EventListView::insertFocalMechanism(Seiscomp::DataModel::FocalMechanism *fm
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventTreeItem* EventListView::findEvent(const std::string& publicID) {
 	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
-		auto item = (SchemeTreeItem*)SC_D._treeWidget->topLevelItem(i);
+		auto *item = static_cast<SchemeTreeItem*>(SC_D._treeWidget->topLevelItem(i));
 		if ( item->object() && item->object()->publicID() == publicID ) {
-			return (EventTreeItem*)item;
+			return static_cast<EventTreeItem*>(item);
 		}
 	}
 
@@ -5071,13 +5358,13 @@ EventTreeItem* EventListView::findEvent(const std::string& publicID) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 OriginTreeItem* EventListView::findOrigin(const std::string& publicID) {
 	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
-		auto item = SC_D._treeWidget->topLevelItem(i);
+		auto *item = SC_D._treeWidget->topLevelItem(i);
 		for ( int j = 0; j < item->childCount(); ++j ) {
-			auto citem = item->child(j);
+			auto *citem = item->child(j);
 			for ( int k = 0; k < citem->childCount(); ++k ) {
-				auto schemeItem = (SchemeTreeItem*)citem->child(k);
+				auto *schemeItem = static_cast<SchemeTreeItem*>(citem->child(k));
 				if ( schemeItem->object() && schemeItem->object()->publicID() == publicID ) {
-					return (OriginTreeItem*)schemeItem;
+					return static_cast<OriginTreeItem*>(schemeItem);
 				}
 			}
 		}
@@ -5093,13 +5380,13 @@ OriginTreeItem* EventListView::findOrigin(const std::string& publicID) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FocalMechanismTreeItem* EventListView::findFocalMechanism(const std::string &publicID) {
 	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
-		auto item = SC_D._treeWidget->topLevelItem(i);
+		auto *item = SC_D._treeWidget->topLevelItem(i);
 		for ( int j = 0; j < item->childCount(); ++j ) {
-			auto citem = item->child(j);
+			auto *citem = item->child(j);
 			for ( int k = 0; k < citem->childCount(); ++k ) {
-				auto schemeItem = (SchemeTreeItem*)citem->child(k);
+				auto *schemeItem = static_cast<SchemeTreeItem*>(citem->child(k));
 				if ( schemeItem->object() && schemeItem->object()->publicID() == publicID ) {
-					return (FocalMechanismTreeItem*)schemeItem;
+					return static_cast<FocalMechanismTreeItem*>(schemeItem);
 				}
 			}
 		}
@@ -5114,18 +5401,24 @@ FocalMechanismTreeItem* EventListView::findFocalMechanism(const std::string &pub
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::loadItem(QTreeWidgetItem *item) {
-	if ( SC_D._blockSelection ) return;
+	if ( SC_D._blockSelection ) {
+		return;
+	}
 
-	SchemeTreeItem* schemeItem = dynamic_cast<SchemeTreeItem*>(item);
-	if ( schemeItem == nullptr ) return;
+	auto *schemeItem = dynamic_cast<SchemeTreeItem*>(item);
+	if ( !schemeItem ) {
+		return;
+	}
 
 	SC_D._blockSelection = true;
 
-	Origin* o = Origin::Cast(schemeItem->object());
+	auto *o = Origin::Cast(schemeItem->object());
 	if ( o ) {
 		Event* event = nullptr;
-		SchemeTreeItem* parentItem = (SchemeTreeItem*)schemeItem->parent()->parent();
-		if ( parentItem ) event = Event::Cast(parentItem->object());
+		auto *parentItem = static_cast<SchemeTreeItem*>(schemeItem->parent()->parent());
+		if ( parentItem ) {
+			event = Event::Cast(parentItem->object());
+		}
 
 		//readPicks(o);
 
@@ -5137,11 +5430,13 @@ void EventListView::loadItem(QTreeWidgetItem *item) {
 		return;
 	}
 
-	FocalMechanism* fm = FocalMechanism::Cast(schemeItem->object());
+	auto *fm = FocalMechanism::Cast(schemeItem->object());
 	if ( fm ) {
 		Event* event = nullptr;
-		SchemeTreeItem* parentItem = (SchemeTreeItem*)schemeItem->parent()->parent();
-		if ( parentItem ) event = Event::Cast(parentItem->object());
+		auto *parentItem = static_cast<SchemeTreeItem*>(schemeItem->parent()->parent());
+		if ( parentItem ) {
+			event = Event::Cast(parentItem->object());
+		}
 
 		emit focalMechanismSelected(fm, event);
 
@@ -5150,7 +5445,7 @@ void EventListView::loadItem(QTreeWidgetItem *item) {
 		return;
 	}
 
-	Event* e = Event::Cast(schemeItem->object());
+	auto *e = Event::Cast(schemeItem->object());
 	if ( e ) {
 		PublicObjectEvaluator::Instance().moveToFront(e->publicID().c_str());
 		emit eventSelected(e);
@@ -5163,10 +5458,11 @@ void EventListView::loadItem(QTreeWidgetItem *item) {
 				emit originSelected(o, e);
 			}
 		}
-		else if ( SC_D._withFocalMechanisms ) {
-			FocalMechanism* fm = FocalMechanism::Find(e->preferredFocalMechanismID());
-			if ( fm )
+		else if (SC_D. _withFocalMechanisms ) {
+			auto *fm = FocalMechanism::Find(e->preferredFocalMechanismID());
+			if ( fm ) {
 				emit focalMechanismSelected(fm, e);
+			}
 		}
 
 		SC_D._blockSelection = false;
@@ -5183,11 +5479,14 @@ void EventListView::loadItem(QTreeWidgetItem *item) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::itemSelected(QTreeWidgetItem* item, int column) {
-	if ( QApplication::keyboardModifiers() != Qt::NoModifier ) return;
+	if ( QApplication::keyboardModifiers() != Qt::NoModifier ) {
+		return;
+	}
+
 	if ( column == SC_D._itemConfig.columnMap[COL_FM] ) {
-		Event *ev = (Event*)item->data(column, Qt::UserRole+1).value<void*>();
+		auto *ev = static_cast<Event*>(item->data(column, Qt::UserRole+1).value<void*>());
 		if ( ev ) {
-			eventFMSelected(ev);
+			emit eventFMSelected(ev);
 			return;
 		}
 	}
@@ -5201,19 +5500,21 @@ void EventListView::itemSelected(QTreeWidgetItem* item, int column) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
-	if ( QApplication::mouseButtons() != Qt::RightButton ) return;
+	if ( QApplication::mouseButtons() != Qt::RightButton ) {
+		return;
+	}
 
 	QMenu popup(this);
-	QAction *load = popup.addAction("Select");
+	auto *load = popup.addAction("Select");
 	popup.addSeparator();
-	QAction *cc = popup.addAction("Copy cell to clipboard");
-	QAction *ca = popup.addAction("Copy row to clipboard");
-	QAction *cs = popup.addAction("Copy selected rows to clipboard");
+	auto *cc = popup.addAction("Copy cell to clipboard");
+	auto *ca = popup.addAction("Copy row to clipboard");
+	auto *cs = popup.addAction("Copy selected rows to clipboard");
 
 	QAction *newEvent = nullptr;
 	QAction *splitOrg = nullptr;
 
-	OriginTreeItem *oitem = (OriginTreeItem*)item;
+	auto *oitem = static_cast<OriginTreeItem*>(item);
 	Origin *org = nullptr;
 
 	if ( item->type() == ST_Origin && !SC_D._updateLocalEPInstance ) {
@@ -5221,36 +5522,46 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 		if ( org ) {
 			popup.addSeparator();
 
-			if ( oitem->parent()->parent() == SC_D._unassociatedEventItem )
+			if ( oitem->parent()->parent() == SC_D._unassociatedEventItem ) {
 				newEvent = popup.addAction("Form new event for origin");
-			else
+			}
+			else {
 				splitOrg = popup.addAction("Split origin and create new event");
+			}
 		}
 	}
 
-	QAction *action = popup.exec(QCursor::pos());
-	if ( action == nullptr ) return;
+	auto *action = popup.exec(QCursor::pos());
+	if ( !action ) {
+		return;
+	}
 
-	if ( action == load )
+	if ( action == load ) {
 		loadItem(item);
+	}
 	else if ( action == cc ) {
-		QClipboard *cb = QApplication::clipboard();
-		if ( cb )
+		auto *cb = QApplication::clipboard();
+		if ( cb ) {
 			cb->setText(item->text(column));
+		}
 	}
 	else if ( action == ca ) {
-		QClipboard *cb = QApplication::clipboard();
+		auto *cb = QApplication::clipboard();
 		QString text;
 		for ( int i = 0; i < item->columnCount(); ++i ) {
-			if ( i > 0 ) text += ";";
+			if ( i > 0 ) {
+				text += ";";
+			}
 			text += item->text(i);
 		}
 
-		if ( cb )
+		if ( cb ) {
 			cb->setText(text);
+		}
 	}
-	else if ( action == cs )
+	else if ( action == cs ) {
 		SCApp->copyToClipboard(SC_D._treeWidget, SC_D._treeWidget->header());
+	}
 	else if ( action == newEvent ) {
 		if ( QMessageBox::question(
 			this, "Form a new event",
@@ -5280,10 +5591,11 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 			return;
 		}
 
-		EventTreeItem *eitem = (EventTreeItem*)oitem->parent()->parent();
-		Event *e = eitem->event();
-		if ( e )
+		auto *eitem = static_cast<EventTreeItem*>(oitem->parent()->parent());
+		auto *e = eitem->event();
+		if ( e ) {
 			sendJournalAndWait(e->publicID(), CMD_SPLIT_ORIGIN, org->publicID(), SCApp->messageGroups().event.c_str());
+		}
 		else {
 			QMessageBox::critical(
 				this, "Error",
@@ -5299,17 +5611,22 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::copyRowToClipboard() {
-	QClipboard *cb = QApplication::clipboard();
-	if ( !cb ) return;
+	auto *cb = QApplication::clipboard();
+	if ( !cb ) {
+		return;
+	}
 
 	QString text;
 	QList<QTreeWidgetItem *> items = SC_D._treeWidget->selectedItems();
 	foreach ( QTreeWidgetItem* item, items ) {
-		if ( !text.isEmpty() )
+		if ( !text.isEmpty() ) {
 			text += '\n';
+		}
 
 		for ( int i = 0; i < item->columnCount(); ++i ) {
-			if ( i > 0 ) text += ";";
+			if ( i > 0 ) {
+				text += ";";
+			}
 			text += item->text(i);
 		}
 	}
@@ -5325,16 +5642,20 @@ void EventListView::copyRowToClipboard() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QList<Event*> EventListView::selectedEvents() {
 	QList<Event*> events;
-	if ( SC_D._blockSelection ) return events;
+	if ( SC_D._blockSelection ) {
+		return events;
+	}
 
 	SC_D._blockSelection = true;
 
 	QList<QTreeWidgetItem *> items = SC_D._treeWidget->selectedItems();
 	foreach ( QTreeWidgetItem* item, items ) {
-		auto schemeItem = dynamic_cast<SchemeTreeItem*>(item);
-		if ( schemeItem == nullptr ) continue;
+		auto *schemeItem = dynamic_cast<SchemeTreeItem*>(item);
+		if ( !schemeItem ) {
+			continue;
+		}
 
-		Event* e = Event::Cast(schemeItem->object());
+		auto *e = Event::Cast(schemeItem->object());
 		events.push_back(e);
 	}
 
@@ -5359,8 +5680,10 @@ QTreeWidget *EventListView::eventTree() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Seiscomp::DataModel::Event *
 EventListView::eventFromTreeItem(QTreeWidgetItem *item) const {
-	auto schemeItem = dynamic_cast<SchemeTreeItem*>(item);
-	if ( schemeItem == nullptr ) return nullptr;
+	auto *schemeItem = dynamic_cast<SchemeTreeItem*>(item);
+	if ( !schemeItem ) {
+		return nullptr;
+	}
 	return Event::Cast(schemeItem->object());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5383,8 +5706,10 @@ int EventListView::visibleEventCount() const {
 		qWarning() << "Counting visible events";
 		SC_D._visibleEventCount = 0;
 		for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
-			auto item = (EventTreeItem*)SC_D._treeWidget->topLevelItem(i);
-			if ( item->event() ) ++SC_D._visibleEventCount;
+			auto *item = static_cast<EventTreeItem*>(SC_D._treeWidget->topLevelItem(i));
+			if ( item->event() ) {
+				++SC_D._visibleEventCount;
+			}
 		}
 	}
 
@@ -5397,8 +5722,10 @@ int EventListView::visibleEventCount() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setSortingEnabled(bool enable) {
-	auto header = SC_D._treeWidget->header();
-	if ( header == nullptr ) return;
+	auto *header = SC_D._treeWidget->header();
+	if ( !header ) {
+		return;
+	}
 
 	if ( enable ) {
 		header->setSortIndicator(0, Qt::DescendingOrder);
@@ -5419,8 +5746,10 @@ void EventListView::setSortingEnabled(bool enable) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::sortItems(int col) {
 	int count = SC_D._treeWidget->topLevelItemCount();
-	QHeaderView* header = SC_D._treeWidget->header();
-	if ( header == nullptr ) return;
+	auto *header = SC_D._treeWidget->header();
+	if ( !header ) {
+		return;
+	}
 
 	Qt::SortOrder order = header->sortIndicatorOrder();
 
@@ -5441,10 +5770,12 @@ void EventListView::sortItems(int col) {
 	     col == SC_D._itemConfig.columnMap[COL_AZIMUTHAL_GAP] ||
 	     col == SC_D._itemConfig.columnMap[COL_LAT] ||
 	     col == SC_D._itemConfig.columnMap[COL_LON] ||
-	     col == SC_D._itemConfig.columnMap[COL_DEPTH] )
+	     col == SC_D._itemConfig.columnMap[COL_DEPTH] ) {
 		compare = (order == Qt::AscendingOrder ? &itemLessThan : &itemGreaterThan);
-	else
+	}
+	else {
 		compare = (order == Qt::AscendingOrder ? &itemTextLessThan : &itemTextGreaterThan);
+	}
 
 	std::stable_sort(items.begin(), items.end(), compare);
 
@@ -5494,12 +5825,15 @@ void EventListView::setFMLinkEnabled(bool e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::moveSection(int from, int to) {
-	auto header = SC_D._treeWidget->header();
-	if ( header == nullptr ) return;
+	auto *header = SC_D._treeWidget->header();
+	if ( !header || from < 0 || to < 0 ) {
+		return;
+	}
 
 	int count = header->count();
-	if ( from < 0 || to < 0 ) return;
-	if ( from >= count || to >= count ) return;
+	if ( from >= count || to >= count ) {
+		return;
+	}
 
 	header->moveSection(from, to);
 }
@@ -5511,29 +5845,36 @@ void EventListView::moveSection(int from, int to) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::headerContextMenuRequested(const QPoint &pos) {
 	int count = SC_D._treeWidget->header()->count();
-	QAbstractItemModel *model = SC_D._treeWidget->header()->model();
+	auto *model = SC_D._treeWidget->header()->model();
 
 	QMenu menu;
 
 	QVector<QAction*> actions;
 
 	for ( int i = 0; i < count; ++i ) {
-		if ( i == SC_D._itemConfig.columnMap[COL_ORIGINS] && !SC_D._withOrigins )
+		if ( i == SC_D._itemConfig.columnMap[COL_ORIGINS] && !SC_D._withOrigins ) {
 			continue;
+		}
 
 		actions.append(menu.addAction(model->headerData(i, Qt::Horizontal).toString()));
 		actions.back()->setData(i);
 		actions.back()->setCheckable(true);
 		actions.back()->setChecked(!SC_D._treeWidget->header()->isSectionHidden(i));
 
-		if ( i == 0 ) actions[i]->setEnabled(false);
+		if ( i == 0 ) {
+			actions[i]->setEnabled(false);
+		}
 	}
 
-	auto result = menu.exec(SC_D._treeWidget->header()->mapToGlobal(pos));
-	if ( result == nullptr ) return;
+	auto *result = menu.exec(SC_D._treeWidget->header()->mapToGlobal(pos));
+	if ( !result ) {
+		return;
+	}
 
 	int section = result->data().toInt();
-	if ( section == -1 ) return;
+	if ( section == -1 ) {
+		return;
+	}
 
 	//std::cout << "switch visibility[" << section << "] = " << result->isChecked() << std::endl;
 	SC_D._treeWidget->header()->setSectionHidden(section, !result->isChecked());
@@ -5549,10 +5890,11 @@ bool EventListView::sendJournalAndWait(const std::string &objectID,
                                        const std::string &action,
                                        const std::string &params,
                                        const char *group) {
-	if ( !sendJournal(objectID, action, params, group) )
+	if ( !sendJournal(objectID, action, params, group) ) {
 		return false;
+	}
 
-	if ( SC_D._commandWaitDialog == nullptr ) {
+	if ( !SC_D._commandWaitDialog ) {
 		SC_D._commandWaitDialog = new CommandWaitDialog(this);
 		SC_D._commandWaitDialog->setAttribute(Qt::WA_DeleteOnClose);
 		connect(SC_D._commandWaitDialog, SIGNAL(destroyed(QObject*)),
@@ -5571,7 +5913,9 @@ bool EventListView::sendJournalAndWait(const std::string &objectID,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::waitDialogDestroyed(QObject *o) {
-	if ( SC_D._commandWaitDialog == o ) SC_D._commandWaitDialog = nullptr;
+	if ( SC_D._commandWaitDialog == o ) {
+		SC_D._commandWaitDialog = nullptr;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5581,10 +5925,12 @@ void EventListView::waitDialogDestroyed(QObject *o) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::itemEntered(QTreeWidgetItem *item, int column) {
 	if ( column == SC_D._itemConfig.columnMap[COL_FM]
-	  && item->data(column, Qt::UserRole+1).isValid() )
+	  && item->data(column, Qt::UserRole+1).isValid() ) {
 		setCursor(Qt::PointingHandCursor);
-	else
+	}
+	else {
 		unsetCursor();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5593,8 +5939,12 @@ void EventListView::itemEntered(QTreeWidgetItem *item, int column) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::itemExpanded(QTreeWidgetItem *item) {
-	if ( item->type() != ST_OriginGroup ) return;
-	if ( SC_D._itemConfig.originScriptColumns.isEmpty() ) return;
+	if ( item->type() != ST_OriginGroup ) {
+		return;
+	}
+	if ( SC_D._itemConfig.originScriptColumns.isEmpty() ) {
+		return;
+	}
 
 	// If an origin group is expanded, raise its priority
 
@@ -5610,8 +5960,11 @@ void EventListView::itemExpanded(QTreeWidgetItem *item) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventListView::currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous) {
-	if ( !current ) return;
+void EventListView::currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous) {
+	if ( !current ) {
+		return;
+	}
+
 	if ( (current->type() == ST_Origin && !SC_D._itemConfig.originScriptColumns.isEmpty()) ||
 	     (current->type() == ST_Event && !SC_D._itemConfig.eventScriptColumns.isEmpty())) {
 		PublicObjectEvaluator::Instance().moveToFront(current->text(SC_D._itemConfig.columnMap[COL_ID]));
@@ -5631,28 +5984,34 @@ void EventListView::evalResultAvailable(const QString &publicID,
 
 	// Origin processing result
 	if ( className == Origin::TypeInfo().className() ) {
-		OriginTreeItem *item = findOrigin(pid);
-		if ( item == nullptr ) return;
+		auto *item = findOrigin(pid);
+		if ( !item ) {
+			return;
+		}
 
-		QHash<QString,int>::iterator it = SC_D._itemConfig.originScriptColumnMap.find(script);
-		if ( it == SC_D._itemConfig.originScriptColumnMap.end() ) return;
+		auto it = SC_D._itemConfig.originScriptColumnMap.find(script);
+		if ( it == SC_D._itemConfig.originScriptColumnMap.end() ) {
+			return;
+		}
 
 		item->setText(it.value(), result);
 		item->setBackground(it.value(), Qt::NoBrush);
 		item->setForeground(it.value(), Qt::NoBrush);
 
 		// Update the event item
-		EventTreeItem *eitem = static_cast<EventTreeItem*>(item->parent()->parent());
-		if ( eitem->event() == nullptr )
+		auto *eitem = static_cast<EventTreeItem*>(item->parent()->parent());
+		if ( !eitem->event() ) {
 			return;
+		}
 
 		// If it is the preferred item, copy the column states, unless the
 		// column defines a specific event script
 		if ( eitem->event()->preferredOriginID() == pid ) {
 			for ( int i = 0; i < SC_D._itemConfig.originScriptColumns.size(); ++i ) {
 				int pos = SC_D._itemConfig.originScriptColumns[i].pos;
-				if ( SC_D._itemConfig.eventScriptPositions.contains(pos) )
+				if ( SC_D._itemConfig.eventScriptPositions.contains(pos) ) {
 					continue;
+				}
 				eitem->setText(pos, item->text(pos));
 				eitem->setBackground(pos, item->background(pos));
 				eitem->setForeground(pos, item->foreground(pos));
@@ -5661,11 +6020,15 @@ void EventListView::evalResultAvailable(const QString &publicID,
 	}
 	// Origin processing result
 	else if ( className == Event::TypeInfo().className() ) {
-		EventTreeItem *item = findEvent(pid);
-		if ( item == nullptr ) return;
+		auto *item = findEvent(pid);
+		if ( !item ) {
+			return;
+		}
 
-		QHash<QString,int>::iterator it = SC_D._itemConfig.eventScriptColumnMap.find(script);
-		if ( it == SC_D._itemConfig.eventScriptColumnMap.end() ) return;
+		auto it = SC_D._itemConfig.eventScriptColumnMap.find(script);
+		if ( it == SC_D._itemConfig.eventScriptColumnMap.end() ) {
+			return;
+		}
 
 		item->setText(it.value(), result);
 		item->setBackground(it.value(), Qt::NoBrush);
@@ -5686,11 +6049,15 @@ void EventListView::evalResultError(const QString &publicID,
 
 	// Origin processing result
 	if ( className == Origin::TypeInfo().className() ) {
-		OriginTreeItem *item = findOrigin(pid);
-		if ( item == nullptr ) return;
+		auto *item = findOrigin(pid);
+		if ( !item ) {
+			return;
+		}
 
-		QHash<QString,int>::iterator it = SC_D._itemConfig.originScriptColumnMap.find(script);
-		if ( it == SC_D._itemConfig.originScriptColumnMap.end() ) return;
+		auto it = SC_D._itemConfig.originScriptColumnMap.find(script);
+		if ( it == SC_D._itemConfig.originScriptColumnMap.end() ) {
+			return;
+		}
 
 		// Error state
 		item->setBackground(it.value(), Qt::NoBrush);
@@ -5699,16 +6066,19 @@ void EventListView::evalResultError(const QString &publicID,
 		item->setText(it.value(), "!");
 		item->setToolTip(it.value(),
 		                 QString("%1\n\n%2")
-		                 .arg(script)
-		                 .arg(PublicObjectEvaluator::Instance().errorMsg(error)));
+		                 .arg(script, PublicObjectEvaluator::Instance().errorMsg(error)));
 	}
 	// Event processing result
 	else if ( className == Event::TypeInfo().className() ) {
-		EventTreeItem *item = findEvent(pid);
-		if ( item == nullptr ) return;
+		auto *item = findEvent(pid);
+		if ( !item ) {
+			return;
+		}
 
 		QHash<QString,int>::iterator it = SC_D._itemConfig.eventScriptColumnMap.find(script);
-		if ( it == SC_D._itemConfig.eventScriptColumnMap.end() ) return;
+		if ( it == SC_D._itemConfig.eventScriptColumnMap.end() ) {
+			return;
+		}
 
 		// Error state
 		item->setBackground(it.value(), Qt::NoBrush);
@@ -5717,8 +6087,7 @@ void EventListView::evalResultError(const QString &publicID,
 		item->setText(it.value(), "!");
 		item->setToolTip(it.value(),
 		                 QString("%1\n\n%2")
-		                 .arg(script)
-		                 .arg(PublicObjectEvaluator::Instance().errorMsg(error)));
+		                 .arg(script, PublicObjectEvaluator::Instance().errorMsg(error)));
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5738,12 +6107,12 @@ EventListViewRegionFilterDialog::EventListViewRegionFilterDialog(QWidget *parent
 	_ui->cbPolys->addItem(tr("- Unset -"));
 
 	for ( size_t i = 0; i < Seiscomp::Regions::polyRegions().regionCount(); ++i ) {
-		auto feature = Seiscomp::Regions::polyRegions().region(i);
+		auto *feature = Seiscomp::Regions::polyRegions().region(i);
 		if ( feature->closedPolygon() ) {
 			_ui->cbPolys->addItem(feature->name().c_str());
 		}
 
-		for ( auto feature : Geo::GeoFeatureSetSingleton::getInstance().features() ) {
+		for ( auto *feature : Geo::GeoFeatureSetSingleton::getInstance().features() ) {
 			if ( feature->closedPolygon() ) {
 				_ui->cbPolys->addItem(feature->name().c_str());
 			}
@@ -5768,13 +6137,16 @@ EventListViewRegionFilterDialog::EventListViewRegionFilterDialog(QWidget *parent
 	_ui->edMinLat->setValidator(valLat); _ui->edMaxLat->setValidator(valLat);
 	_ui->edMinLon->setValidator(valLong); _ui->edMaxLon->setValidator(valLong);
 
-	if ( _regionList->isEmpty() ) return;
+	if ( _regionList->isEmpty() ) {
+		return;
+	}
 
-	for ( int i = 0; i < _regionList->size(); ++i )
+	for ( int i = 0; i < _regionList->size(); ++i ) {
 		_ui->cbRegions->addItem((*_regionList)[i].name);
+	}
 
-	connect(_ui->cbRegions, SIGNAL(currentIndexChanged(const QString &)),
-	        this, SLOT(regionSelectionChanged(const QString &)));
+	connect(_ui->cbRegions, SIGNAL(currentIndexChanged(QString)),
+	        this, SLOT(regionSelectionChanged(QString)));
 
 	connect(_ui->okButton, SIGNAL(clicked()), this, SLOT(accept()));
 	connect(_ui->cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
@@ -5869,7 +6241,7 @@ void EventListViewRegionFilterDialog::accept() {
 
 	if ( !poly.empty() ) {
 		for ( size_t i = 0; i < Seiscomp::Regions::polyRegions().regionCount(); ++i ) {
-			auto feature = Seiscomp::Regions::polyRegions().region(i);
+			auto *feature = Seiscomp::Regions::polyRegions().region(i);
 			if ( feature->name() == poly ) {
 				_target->poly = feature;
 				break;
@@ -5877,7 +6249,7 @@ void EventListViewRegionFilterDialog::accept() {
 		}
 
 		if ( !_target->poly ) {
-			for ( auto feature : Geo::GeoFeatureSetSingleton::getInstance().features() ) {
+			for ( auto *feature : Geo::GeoFeatureSetSingleton::getInstance().features() ) {
 				if ( feature->name() == poly ) {
 					_target->poly = feature;
 					break;
