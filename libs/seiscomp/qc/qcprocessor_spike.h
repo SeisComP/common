@@ -38,7 +38,7 @@ class SC_SYSTEM_CLIENT_API QcProcessorSpike : public QcProcessor {
 		QcProcessorSpike();
 		~QcProcessorSpike();
 
-		typedef std::map<Core::Time, double> Spikes;
+		using Spikes = std::map<Core::Time, double>;
 		Spikes getSpikes();
 
 		bool feed(const Record *record);
