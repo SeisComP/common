@@ -35,7 +35,7 @@ namespace Processing {
 
 namespace {
 
-std::string ExpectedAmplitudeUnit = "m";
+std::string ExpectedAmplitudeUnit = "m/s";
 
 }
 
