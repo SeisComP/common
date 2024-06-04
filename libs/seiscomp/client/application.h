@@ -544,6 +544,14 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		virtual void handleTimeout();
 
 		/**
+		 * This method is called when the internal SOH checks are performed
+		 * as an additional state-of-health callback in derived classes.
+		 * The default implementation does nothing.
+		 * This method has been added with API 17.
+		 */
+		virtual void handleSOH();
+
+		/**
 		 * This method is called when close event is sent to the application.
 		 * The default handler returns true and causes the event queue to
 		 * shutdown and to exit the application.
