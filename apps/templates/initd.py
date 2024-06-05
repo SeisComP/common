@@ -1,5 +1,4 @@
 import seiscomp.kernel
-import sys
 
 
 class Module(seiscomp.kernel.Module):
