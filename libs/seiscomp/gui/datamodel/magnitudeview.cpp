@@ -3583,12 +3583,20 @@ void MagnitudeView::updateContent() {
 		return;
 	}
 	else {
+		_ui->cbEvalStatus->blockSignals(true);
 		try {
-			_ui->cbEvalStatus->setCurrentIndex(_netMag->evaluationStatus().toInt()+1);
+			int idx = _ui->cbEvalStatus->findText(_netMag->evaluationStatus().toString());
+			if ( idx != -1 ) {
+				_ui->cbEvalStatus->setCurrentIndex(idx);
+			}
+			else {
+				_ui->cbEvalStatus->setCurrentIndex(0);
+			}
 		}
 		catch ( ... ) {
 			_ui->cbEvalStatus->setCurrentIndex(0);
 		}
+		_ui->cbEvalStatus->blockSignals(false);
 
 		for ( QComboBox *comboBox : magnitudeComments ) {
 			comboBox->blockSignals(true);
@@ -3634,13 +3642,15 @@ void MagnitudeView::updateContent() {
 		updateMinMaxMagnitude();
 
 		try {
-			if ( _netMag->evaluationStatus() == REJECTED )
+			if ( _netMag->evaluationStatus() == REJECTED ) {
 				_ui->groupReview->setEnabled(true);
+			}
 		}
 		catch ( ... ) {}
 	}
-	else
+	else {
 		_ui->groupReview->setEnabled(true);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
