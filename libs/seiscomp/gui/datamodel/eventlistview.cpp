@@ -2414,7 +2414,7 @@ bool EventListView::Filter::isNull() const {
 	       !minLongitude && !maxLongitude &&
 	       !minDepth && !maxDepth &&
 	       !minMagnitude && !maxMagnitude &&
-		   !minPhaseCount && !maxPhaseCount &&
+	       !minPhaseCount && !maxPhaseCount &&
 	       eventID.empty();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2483,10 +2483,8 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 		// initialize all columns with index 0
 		SC_D._itemConfig.columnMap = QVector<int>(EventListColumns::Quantity, 0);
 
-		// otime is first culumn and visible by default
-		int idx = COL_OTIME;
-
-		// update index of configured columns
+		// create ordered list of visible columns ids
+		std::vector<int> configuredCols;
 		for ( auto &col : cols ) {
 			EventListColumns v;
 			if ( !v.fromString(col) ) {
@@ -2500,17 +2498,26 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 				std::cerr << "WARNING: eventlist.visibleColumns: name 'TP' "
 				             "has changed to 'MType', please update your configuration" << std::endl;
 			}
-
-			SC_D._itemConfig.columnMap[v] = ++idx;
-			colVisibility[v] = true;
+			configuredCols.push_back(v);
 		}
 
-		// update index of all other columns
-		for ( int i = COL_OTIME+1; i < EventListColumns::Quantity; ++i ) {
-			if ( SC_D._itemConfig.columnMap[i] == 0 ) {
-				SC_D._itemConfig.columnMap[i] = ++idx;
-				colVisibility[i] = false;
+		// register columns keeping default order of invisible columns while
+		// respecting configured order of visible columns
+		// otime is first culumn and always visible
+		int i = COL_OTIME;
+		colVisibility[i] = true;
+		SC_D._itemConfig.columnMap[i] = i;
+
+		auto configuredColsIt = configuredCols.begin();
+		for ( ++i; i < EventListColumns::Quantity; ++i ) {
+			if ( std::find(configuredCols.begin(), configuredCols.end(), i) != configuredCols.end() ) {
+				colVisibility[i] = true;
+				SC_D._itemConfig.columnMap[*configuredColsIt++] = i;
+				continue;
 			}
+
+			SC_D._itemConfig.columnMap[i] = i;
+			colVisibility[i] = false;
 		}
 	}
 	catch ( ... ) {
