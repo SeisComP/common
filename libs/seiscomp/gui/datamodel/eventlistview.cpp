@@ -5441,9 +5441,10 @@ void EventListView::headerContextMenuRequested(const QPoint &pos) {
 	int section = result->data().toInt();
 	if ( section == -1 ) return;
 
-	//std::cout << "switch visibility[" << section << "] = " << result->isChecked() << std::endl;
 	_treeWidget->header()->setSectionHidden(section, !result->isChecked());
-	//std::cout << "visibility[" << section << "] = " << !_treeWidget->header()->isSectionHidden(section) << std::endl;
+	if ( result->isChecked() ) {
+		_treeWidget->resizeColumnToContents(section);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
