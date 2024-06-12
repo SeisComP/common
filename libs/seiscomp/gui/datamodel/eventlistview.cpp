@@ -6042,12 +6042,13 @@ void EventListView::headerContextMenuRequested(const QPoint &pos) {
 		return;
 	}
 
-	//std::cout << "switch visibility[" << section << "] = " << result->isChecked() << std::endl;
 	SC_D._treeWidget->header()->setSectionHidden(section, !result->isChecked());
+	if ( result->isChecked() ) {
+		SC_D._treeWidget->resizeColumnToContents(section);
+	}
 	if ( section == SC_D._itemConfig.columnMap[COL_TIME_AGO] ) {
 		updateOTimeAgoTimer();
 	}
-	//std::cout << "visibility[" << section << "] = " << !_treeWidget->header()->isSectionHidden(section) << std::endl;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
