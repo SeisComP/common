@@ -3908,6 +3908,10 @@ void EventListView::readFromDatabase(const Filter &filter) {
 
 	_treeWidget->setUpdatesEnabled(true);
 
+	if ( _treeWidget->header()->sortIndicatorSection() >= 0 ) {
+		sortItems(_treeWidget->header()->sortIndicatorSection());
+	}
+
 	QApplication::restoreOverrideCursor();
 
 	_blockSelection = false;
