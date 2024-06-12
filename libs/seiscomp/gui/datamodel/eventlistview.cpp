@@ -2471,6 +2471,8 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	setSortingEnabled(true);
 
+	SC_D._ui->btnFilter->setIconSize(QSize(SC_D._ui->btnFilter->fontMetrics().height(),SC_D._ui->btnFilter->fontMetrics().height()));
+
 	SC_D._unassociatedEventItem = nullptr;
 	SC_D._updateLocalEPInstance = false;
 
