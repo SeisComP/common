@@ -2212,6 +2212,8 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	setSortingEnabled(true);
 
+	_ui->btnFilter->setIconSize(QSize(_ui->btnFilter->fontMetrics().height(),_ui->btnFilter->fontMetrics().height()));
+
 	_unassociatedEventItem = nullptr;
 	_updateLocalEPInstance = false;
 
