@@ -274,13 +274,13 @@ const IDList StdLoc::_allowedParameters = {
     "enableConfidenceEllipsoid",
     "confLevel",
     "GridSearch.center",
-    "GridSearch.autoLatLon",
     "GridSearch.size",
-    "GridSearch.cellSize",
+    "GridSearch.numPoints",
     "GridSearch.misfitType",
     "GridSearch.travelTimeError",
     "OctTree.maxIterations",
     "OctTree.minCellSize",
+    "LeastSquares.depthInit",
     "LeastSquares.iterations",
     "LeastSquares.dampingFactor",
     "LeastSquares.solverType",
@@ -300,7 +300,7 @@ bool StdLoc::init(const Config::Config &config) {
 
 	Profile defaultProf;
 	defaultProf.name = "";
-	defaultProf.method = Profile::Method::GridAndLsqr;
+	defaultProf.method = Profile::Method::LeastSquares;
 	defaultProf.tttType = "LOCSAT";
 	defaultProf.tttModel = "iasp91";
 	defaultProf.PSTableOnly = true;
@@ -309,20 +309,23 @@ bool StdLoc::init(const Config::Config &config) {
 	                                      0.100, 0.200, 0.400};
 	defaultProf.enableConfidenceEllipsoid = true;
 	defaultProf.confLevel = 0.9;
-	defaultProf.gridSearch.autoLatLon = true;
 	defaultProf.gridSearch.originLat = 0.;
 	defaultProf.gridSearch.originLon = 0.;
-	defaultProf.gridSearch.originDepth = 5.;
-	defaultProf.gridSearch.xExtent = 20.;
-	defaultProf.gridSearch.yExtent = 20.;
-	defaultProf.gridSearch.zExtent = 5.;
-	defaultProf.gridSearch.cellXExtent = 2.5;
-	defaultProf.gridSearch.cellYExtent = 2.5;
-	defaultProf.gridSearch.cellZExtent = 5.0;
+	defaultProf.gridSearch.originDepth = 20.;
+	defaultProf.gridSearch.autoOriginLon   = true;
+	defaultProf.gridSearch.autoOriginLat   = true;
+	defaultProf.gridSearch.autoOriginDepth = false;
+	defaultProf.gridSearch.xExtent = 40.;
+	defaultProf.gridSearch.yExtent = 40.;
+	defaultProf.gridSearch.zExtent = 30.;
+	defaultProf.gridSearch.numXPoints = 0;
+	defaultProf.gridSearch.numYPoints = 0;
+	defaultProf.gridSearch.numZPoints = 0;
 	defaultProf.gridSearch.misfitType = "L1";
 	defaultProf.gridSearch.travelTimeError = 0.25;
 	defaultProf.octTree.maxIterations = 50000;
 	defaultProf.octTree.minCellSize = 0.1;
+	defaultProf.leastSquares.depthInit = 20.;
 	defaultProf.leastSquares.iterations = 20;
 	defaultProf.leastSquares.dampingFactor = 0;
 	defaultProf.leastSquares.solverType = "LSMR";
@@ -413,34 +416,53 @@ bool StdLoc::init(const Config::Config &config) {
 		catch ( ... ) {}
 
 		try {
-			prof.gridSearch.autoLatLon =
-			    config.getBool(prefix + "GridSearch.autoLatLon");
-		}
-		catch ( ... ) {}
-
-		try {
 			vector<string> tokens =
 			    config.getStrings(prefix + "GridSearch.center");
-			if ( tokens.size() != 3 ||
-			     !Core::fromString(prof.gridSearch.originDepth,
-			                       tokens.at(2)) ) {
+			if ( tokens.size() != 3 ) {
 				SEISCOMP_ERROR("Profile %s: GridSearch.center is invalid",
 				               prof.name.c_str());
 				return false;
 			}
 
-			if ( prof.gridSearch.autoLatLon ) {
+			if ( tokens.at(0) == "auto" ) {
 				prof.gridSearch.originLat = 0.0;
-				prof.gridSearch.originLon = 0.0;
+				prof.gridSearch.autoOriginLat = true;
 			}
-			else if ( !Core::fromString(prof.gridSearch.originLat,
-			                            tokens.at(0)) ||
-			          !Core::fromString(prof.gridSearch.originLon,
-			                            tokens.at(1)) ) {
-				SEISCOMP_ERROR("Profile %s: GridSearch.center is invalid",
+			else if ( Core::fromString(prof.gridSearch.originLat, tokens.at(0)) ) {
+				prof.gridSearch.autoOriginLat = false;
+			}
+			else {
+				SEISCOMP_ERROR("Profile %s: GridSearch.center lat is invalid",
 				               prof.name.c_str());
 				return false;
 			}
+
+			if ( tokens.at(1) == "auto" ) {
+				prof.gridSearch.originLon = 0.0;
+				prof.gridSearch.autoOriginLon = true;
+			}
+			else if ( Core::fromString(prof.gridSearch.originLon, tokens.at(1)) ) {
+				prof.gridSearch.autoOriginLon = false;
+			}
+			else {
+				SEISCOMP_ERROR("Profile %s: GridSearch.center lon is invalid",
+				               prof.name.c_str());
+				return false;
+			}
+
+			if ( tokens.at(2) == "auto" ) {
+				prof.gridSearch.originDepth = 0.0;
+				prof.gridSearch.autoOriginDepth = true;
+			}
+			else if ( Core::fromString(prof.gridSearch.originDepth, tokens.at(2)) ) {
+				prof.gridSearch.autoOriginDepth = false;
+			}
+			else {
+				SEISCOMP_ERROR("Profile %s: GridSearch.center depth is invalid",
+				               prof.name.c_str());
+				return false;
+			}
+
 		}
 		catch ( ... ) {}
 
@@ -460,13 +482,13 @@ bool StdLoc::init(const Config::Config &config) {
 
 		try {
 			vector<string> tokens =
-			    config.getStrings(prefix + "GridSearch.cellSize");
+			    config.getStrings(prefix + "GridSearch.numPoints");
 			if ( tokens.size() != 3 ||
-			     !Core::fromString(prof.gridSearch.cellXExtent, tokens.at(0)) ||
-			     !Core::fromString(prof.gridSearch.cellYExtent, tokens.at(1)) ||
-			     !Core::fromString(prof.gridSearch.cellZExtent,
+			     !Core::fromString(prof.gridSearch.numXPoints, tokens.at(0)) ||
+			     !Core::fromString(prof.gridSearch.numYPoints, tokens.at(1)) ||
+			     !Core::fromString(prof.gridSearch.numZPoints,
 			                       tokens.at(2)) ) {
-				SEISCOMP_ERROR("Profile %s: GridSearch.cellSize is invalid",
+				SEISCOMP_ERROR("Profile %s: GridSearch.numPoints is invalid",
 				               prof.name.c_str());
 				return false;
 			}
@@ -500,6 +522,12 @@ bool StdLoc::init(const Config::Config &config) {
 		try {
 			prof.octTree.minCellSize =
 			    config.getDouble(prefix + "OctTree.minCellSize");
+		}
+		catch ( ... ) {}
+
+		try {
+			prof.leastSquares.depthInit =
+			    config.getDouble(prefix + "LeastSquares.depthInit");
 		}
 		catch ( ... ) {}
 
@@ -616,6 +644,9 @@ string StdLoc::parameter(const string &name) const {
 	else if ( name == "confLevel" ) {
 		return Core::toString(_currentProfile.confLevel);
 	}
+	else if ( name == "LeastSquares.depthInit" ) {
+		return Core::toString(_currentProfile.leastSquares.depthInit);
+	}
 	else if ( name == "LeastSquares.iterations" ) {
 		return Core::toString(_currentProfile.leastSquares.iterations);
 	}
@@ -625,29 +656,24 @@ string StdLoc::parameter(const string &name) const {
 	else if ( name == "LeastSquares.solverType" ) {
 		return _currentProfile.leastSquares.solverType;
 	}
-	else if ( name == "GridSearch.autoLatLon" ) {
-		return _currentProfile.gridSearch.autoLatLon ? "y" : "n";
-	}
 	else if ( name == "GridSearch.center" ) {
-		if ( _currentProfile.gridSearch.autoLatLon ) {
-			return "auto,auto," +
-			       Core::toString(_currentProfile.gridSearch.originDepth);
-		}
-		else {
-			return Core::toString(_currentProfile.gridSearch.originLat) + "," +
-			       Core::toString(_currentProfile.gridSearch.originLon) + "," +
-			       Core::toString(_currentProfile.gridSearch.originDepth);
-		}
+		string lat = _currentProfile.gridSearch.autoOriginLat ? "auto"
+		           : Core::toString(_currentProfile.gridSearch.originLat);
+		string lon = _currentProfile.gridSearch.autoOriginLon ? "auto"
+		           : Core::toString(_currentProfile.gridSearch.originLon);
+		string dep = _currentProfile.gridSearch.autoOriginDepth ? "auto"
+		           : Core::toString(_currentProfile.gridSearch.originDepth);
+		return lat + "," + lon + "," + dep;
 	}
 	else if ( name == "GridSearch.size" ) {
 		return Core::toString(_currentProfile.gridSearch.xExtent) + "," +
 		       Core::toString(_currentProfile.gridSearch.yExtent) + "," +
 		       Core::toString(_currentProfile.gridSearch.zExtent);
 	}
-	else if ( name == "GridSearch.cellSize" ) {
-		return Core::toString(_currentProfile.gridSearch.cellXExtent) + "," +
-		       Core::toString(_currentProfile.gridSearch.cellYExtent) + "," +
-		       Core::toString(_currentProfile.gridSearch.cellZExtent);
+	else if ( name == "GridSearch.numPoints" ) {
+		return Core::toString(_currentProfile.gridSearch.numXPoints) + "," +
+		       Core::toString(_currentProfile.gridSearch.numYPoints) + "," +
+		       Core::toString(_currentProfile.gridSearch.numZPoints);
 	}
 	else if ( name == "GridSearch.misfitType" ) {
 		return _currentProfile.gridSearch.misfitType;
@@ -747,6 +773,14 @@ bool StdLoc::setParameter(const string &name, const string &value) {
 		_currentProfile.confLevel = tmp;
 		return true;
 	}
+	else if ( name == "LeastSquares.depthInit" ) {
+		double tmp;
+		if ( !Core::fromString(tmp, value) ) {
+			return false;
+		}
+		_currentProfile.leastSquares.depthInit = tmp;
+		return true;
+	}
 	else if ( name == "LeastSquares.iterations" ) {
 		int tmp;
 		if ( !Core::fromString(tmp, value) ) {
@@ -770,32 +804,45 @@ bool StdLoc::setParameter(const string &name, const string &value) {
 		_currentProfile.leastSquares.solverType = value;
 		return true;
 	}
-	else if ( name == "GridSearch.autoLatLon" ) {
-		_currentProfile.gridSearch.autoLatLon = (value == "y");
-		return true;
-	}
 	else if ( name == "GridSearch.center" ) {
 		vector<string> tokens = splitString(value);
-		if ( tokens.size() != 3 ||
-		     !Core::fromString(_currentProfile.gridSearch.originDepth,
-		                       tokens.at(2)) ) {
-			SEISCOMP_ERROR("Profile %s: GridSearch.center is invalid",
-			               _currentProfile.name.c_str());
+		if ( tokens.size() != 3 ) {
 			return false;
 		}
 
-		if ( _currentProfile.gridSearch.autoLatLon ) {
+		if ( tokens.at(0) == "auto" ) {
 			_currentProfile.gridSearch.originLat = 0.0;
-			_currentProfile.gridSearch.originLon = 0.0;
+			_currentProfile.gridSearch.autoOriginLat = true;
 		}
-		else if ( !Core::fromString(_currentProfile.gridSearch.originLat,
-		                            tokens.at(0)) ||
-		          !Core::fromString(_currentProfile.gridSearch.originLon,
-		                            tokens.at(1)) ) {
-			SEISCOMP_ERROR("Profile %s: GridSearch.center is invalid",
-			               _currentProfile.name.c_str());
+		else if ( Core::fromString(_currentProfile.gridSearch.originLat, tokens.at(0)) ) {
+			_currentProfile.gridSearch.autoOriginLat = false;
+		}
+		else {
 			return false;
 		}
+
+		if ( tokens.at(1) == "auto" ) {
+			_currentProfile.gridSearch.originLon = 0.0;
+			_currentProfile.gridSearch.autoOriginLon = true;
+		}
+		else if ( Core::fromString(_currentProfile.gridSearch.originLon, tokens.at(1)) ) {
+			_currentProfile.gridSearch.autoOriginLon = false;
+		}
+		else {
+			return false;
+		}
+
+		if ( tokens.at(2) == "auto" ) {
+			_currentProfile.gridSearch.originDepth = 0.0;
+			_currentProfile.gridSearch.autoOriginDepth = true;
+		}
+		else if ( Core::fromString(_currentProfile.gridSearch.originDepth, tokens.at(2)) ) {
+			_currentProfile.gridSearch.autoOriginDepth = false;
+		}
+		else {
+			return false;
+		}
+
 		return true;
 	}
 	else if ( name == "GridSearch.size" ) {
@@ -811,14 +858,14 @@ bool StdLoc::setParameter(const string &name, const string &value) {
 		}
 		return true;
 	}
-	else if ( name == "GridSearch.cellSize" ) {
+	else if ( name == "GridSearch.numPoints" ) {
 		vector<string> tokens = splitString(value);
 		if ( tokens.size() != 3 ||
-		     !Core::fromString(_currentProfile.gridSearch.cellXExtent,
+		     !Core::fromString(_currentProfile.gridSearch.numXPoints,
 		                       tokens.at(0)) ||
-		     !Core::fromString(_currentProfile.gridSearch.cellYExtent,
+		     !Core::fromString(_currentProfile.gridSearch.numYPoints,
 		                       tokens.at(1)) ||
-		     !Core::fromString(_currentProfile.gridSearch.cellZExtent,
+		     !Core::fromString(_currentProfile.gridSearch.numZPoints,
 		                       tokens.at(2)) ) {
 			return false;
 		}
@@ -913,11 +960,6 @@ Origin *StdLoc::locate(PickList &pickList) {
 	SEISCOMP_DEBUG("Locating Origin using PickList with profile '%s'",
 	               _currentProfile.name.c_str());
 
-	if ( _currentProfile.method == Profile::Method::LeastSquares ) {
-		throw LocatorException(
-		    "LeastSquares method requires an initial location");
-	}
-
 	_rejectLocation = false;
 	_rejectionMsg = "";
 
@@ -957,6 +999,11 @@ Origin *StdLoc::locate(PickList &pickList) {
 			                   originTime, originLat, originLon, originDepth,
 			                   originTime, travelTimes, covm, computeCovMtrx);
 		}
+	}
+	else if ( _currentProfile.method == Profile::Method::LeastSquares ) {
+		locateLeastSquares(pickList, weights, sensorLat, sensorLon, sensorElev,
+		                   originLat, originLon, originDepth, originTime,
+		                   travelTimes, covm, computeCovMtrx);
 	}
 
 	return createOrigin(pickList, weights, sensorLat, sensorLon, sensorElev,
@@ -1380,33 +1427,53 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		throw LocatorException(
 		    "Either octTree.maxIterations or octTree.minCellSize must be used");
 	}
+	
+	if ( _currentProfile.gridSearch.numXPoints < 2 ||
+	     _currentProfile.gridSearch.numYPoints < 2 ||
+	     _currentProfile.gridSearch.numZPoints < 2 ) {
+		throw LocatorException("At least 2 points per dimension should be given");
+	}
 
 	covm.valid = false;
 
 	double xExtent = _currentProfile.gridSearch.xExtent;
 	double yExtent = _currentProfile.gridSearch.yExtent;
 	double zExtent = _currentProfile.gridSearch.zExtent;
-	double cellXExtent = _currentProfile.gridSearch.cellXExtent;
-	double cellYExtent = _currentProfile.gridSearch.cellYExtent;
-	double cellZExtent = _currentProfile.gridSearch.cellZExtent;
 	double gridOriginLat = _currentProfile.gridSearch.originLat;
 	double gridOriginLon = _currentProfile.gridSearch.originLon;
 	double gridOriginDepth = _currentProfile.gridSearch.originDepth;
 
+	double cellXExtent = xExtent / (_currentProfile.gridSearch.numXPoints -1);
+	double cellYExtent = yExtent / (_currentProfile.gridSearch.numYPoints -1);
+	double cellZExtent = zExtent / (_currentProfile.gridSearch.numZPoints -1);
+
+	SEISCOMP_DEBUG("OctTree cell size X x Y x Z = %gx%gx%g [km]",
+	               cellXExtent, cellYExtent, cellZExtent);
+
+	//
 	// Auto-position the grid center
-	if ( _currentProfile.gridSearch.autoLatLon ) {
+	//
+	if ( _currentProfile.gridSearch.autoOriginLat ) {
 		gridOriginLat = computeMean(sensorLat);
+		SEISCOMP_DEBUG("GridSearch.center auto latitude %g", gridOriginLat);
+	}
+
+	if ( _currentProfile.gridSearch.autoOriginLon ) {
 		gridOriginLon = Geo::GeoCoordinate::normalizeLon(
 		    computeCircularMean(sensorLon, false));
-		SEISCOMP_DEBUG("GridSearch.center latitude %f longitude %f",
-		               gridOriginLat, gridOriginLon);
+		SEISCOMP_DEBUG("GridSearch.center auto longitude %g", gridOriginLon);
+	}
+
+	if ( _currentProfile.gridSearch.autoOriginDepth ) {
+		gridOriginDepth = -computeMean(sensorElev)/1000.;
+		SEISCOMP_DEBUG("GridSearch.center auto depth %g", gridOriginDepth);
 	}
 
 	// fix depth
 	if ( usingFixedDepth() ) {
 		gridOriginDepth = fixedDepth();
-		cellZExtent = cellXExtent < cellYExtent ? cellXExtent : cellYExtent;
 		zExtent = cellZExtent;
+		SEISCOMP_DEBUG("Using fixed depth %g [km]", gridOriginDepth);
 	}
 
 	vector<Cell> unknownPriorityList;
@@ -1671,32 +1738,78 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 		throw LocatorException("Interna logic error");
 	}
 
+	if ( _currentProfile.gridSearch.numXPoints < 1 ||
+	     _currentProfile.gridSearch.numYPoints < 1 ||
+	     _currentProfile.gridSearch.numZPoints < 1 ) {
+		throw LocatorException("At least 1 point per dimension should be given");
+	}
+
 	covm.valid = false;
 
 	double xExtent = _currentProfile.gridSearch.xExtent;
 	double yExtent = _currentProfile.gridSearch.yExtent;
 	double zExtent = _currentProfile.gridSearch.zExtent;
-	double cellXExtent = _currentProfile.gridSearch.cellXExtent;
-	double cellYExtent = _currentProfile.gridSearch.cellYExtent;
-	double cellZExtent = _currentProfile.gridSearch.cellZExtent;
+
+	double numXPoints = _currentProfile.gridSearch.numXPoints;
+	double numYPoints = _currentProfile.gridSearch.numYPoints;
+	double numZPoints = _currentProfile.gridSearch.numZPoints;
+
 	double gridOriginLat = _currentProfile.gridSearch.originLat;
 	double gridOriginLon = _currentProfile.gridSearch.originLon;
 	double gridOriginDepth = _currentProfile.gridSearch.originDepth;
 
+	//
 	// Auto-position the grid center
-	if ( _currentProfile.gridSearch.autoLatLon ) {
+	//
+	if ( _currentProfile.gridSearch.autoOriginLat ) {
 		gridOriginLat = computeMean(sensorLat);
+		SEISCOMP_DEBUG("GridSearch.center auto latitude %g", gridOriginLat);
+	}
+
+	if ( _currentProfile.gridSearch.autoOriginLon ) {
 		gridOriginLon = Geo::GeoCoordinate::normalizeLon(
 		    computeCircularMean(sensorLon, false));
-		SEISCOMP_DEBUG("GridSearch.center latitude %f longitude %f",
-		               gridOriginLat, gridOriginLon);
+		SEISCOMP_DEBUG("GridSearch.center auto longitude %g", gridOriginLon);
+	}
+
+	if ( _currentProfile.gridSearch.autoOriginDepth ) {
+		gridOriginDepth = -computeMean(sensorElev)/1000.;
+		SEISCOMP_DEBUG("GridSearch.center auto depth %g", gridOriginDepth);
 	}
 
 	// fix depth
 	if ( usingFixedDepth() ) {
 		gridOriginDepth = fixedDepth();
-		cellZExtent = cellXExtent < cellYExtent ? cellXExtent : cellYExtent;
-		zExtent = cellZExtent;
+		numZPoints = 1;
+		SEISCOMP_DEBUG("Using fixed depth %g [km]", gridOriginDepth);
+	}
+
+	double cellXExtent;
+	double cellYExtent;
+	double cellZExtent;
+
+	if ( numXPoints > 1 ) {
+		cellXExtent = xExtent / (numXPoints -1);
+	}
+	else { // force the single point to the grid center
+		cellXExtent = xExtent;
+		xExtent = 0;
+	}
+
+	if ( numYPoints > 1 ) {
+		cellYExtent = yExtent / (numYPoints -1);
+	}
+	else { // force the single point to the grid center
+		cellYExtent = yExtent;
+		yExtent = 0;
+	}
+
+	if ( numZPoints > 1 ) {
+		cellZExtent = zExtent / (numZPoints -1);
+	}
+	else { // force the single point to the grid center
+		cellZExtent = zExtent;
+		zExtent = 0;
 	}
 
 	vector<Cell> cells;
@@ -1704,30 +1817,24 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 	//
 	// Build the list of cells withing the grid
 	//
-	for ( double x = -xExtent / 2. + cellXExtent / 2.;
-	             x < xExtent / 2.;
-	             x += cellXExtent ) {
-		for ( double y = -yExtent / 2. + cellYExtent / 2;
-		             y < yExtent / 2.;
-		             y += cellYExtent ) {
-			for ( double z = -zExtent / 2. + cellZExtent / 2;
-			             z < zExtent / 2.;
-			             z += cellZExtent ) { 
+	for ( int ix = 0; ix < numXPoints; ix++ ) {
+		for ( int iy = 0; iy < numYPoints; iy++ ) {
+			for ( int iz = 0; iz < numZPoints; iz++ ) {
 				Cell cell;
 				cell.valid = false;
-				cell.x = x;
-				cell.y = y;
-				cell.z = z;
+				cell.x = -xExtent/2 + ix * cellXExtent;
+				cell.y = -yExtent/2 + iy * cellYExtent;
+				cell.z = -zExtent/2 + iz * cellZExtent;
 				cell.size.x = cellXExtent;
 				cell.size.y = cellYExtent;
 				cell.size.z = cellZExtent;
 
-				cell.org.depth = gridOriginDepth + z;
+				cell.org.depth = gridOriginDepth + cell.z;
 
 				// compute distance and azimuth of the cell centroid to the grid
 				// origin
-				double distance = sqrt(y * y + x * x); // km
-				double azimuth = rad2deg(atan2(x, y));
+				double distance = sqrt(cell.y * cell.y + cell.x * cell.x); // km
+				double azimuth = rad2deg(atan2(cell.x, cell.y));
 
 				// Computes the coordinates (lat, lon) of the point which is at
 				// a degree azimuth and km distance as seen from the other point
@@ -1841,6 +1948,34 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void StdLoc::locateLeastSquares(
+    const PickList &pickList, const vector<double> &weights,
+    const vector<double> &sensorLat, const vector<double> &sensorLon,
+    const vector<double> &sensorElev, double &newLat, double &newLon,
+    double &newDepth, Core::Time &newTime, vector<double> &travelTimes,
+    CovMtrx &covm, bool computeCovMtrx) const {
+
+	double initDepth = _currentProfile.leastSquares.depthInit;
+	double initLat = computeMean(sensorLat);
+	double initLon = Geo::GeoCoordinate::normalizeLon(
+	                      computeCircularMean(sensorLon, false));
+	Core::Time initTime;
+	bool ok = computeOriginTime(pickList, weights, sensorLat, sensorLon, sensorElev,
+	                            initLat, initLon, initDepth, initTime, travelTimes);
+	if ( !ok ) {
+		throw LocatorException("Couldn't find a solution");
+	}
+
+	locateLeastSquares(pickList, weights, sensorLat, sensorLon, sensorElev,
+	                   initLat, initLon, initDepth, initTime,
+	                   newLat, newLon, newDepth, newTime,
+	                   travelTimes, covm, computeCovMtrx);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 

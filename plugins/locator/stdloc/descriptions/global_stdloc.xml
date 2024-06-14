@@ -17,7 +17,7 @@
 				<group name="profile">
 					<struct type="stdloc profile" link = "StdLoc.profiles">
 
-						<parameter name="method" type="string" default="GridSearch+LeastSquares">
+						<parameter name="method" type="string" default="LeastSquares" values="LeastSquares,GridSearch,OctTree,GridSearch+LeastSquares,OctTree+LeastSquares" >
 							<description>The location method to use: LeastSquares, GridSearch, OctTree,
 							 GridSearch+LeastSquares or OctTree+LeastSquares.
 							</description>
@@ -71,30 +71,35 @@
 						<group name="GridSearch">
 							<description>
 								Find the source location by evaluating the hypocenter probability
-								of each grid cell and returning the maximum likelihood hypocenter.
-								The source time is derived from the weighted average of arrival
+								of each grid point and returning the maximum likelihood hypocenter.
+								The source time is derived from the weighted average of the arrival
 								travel times.
 								The solution can be further improved combining it with the Least Squares
-								algorithm, which will then be run for each grid cell, using the cell
-								centroid as initial location estimate. In this case only few big cells
-								are required.
+								algorithm, which will then be run for each grid point, using it as
+								initial location estimate. In this case only few sparse points are
+								required.
 							</description>
-							<parameter name="center" type="list:string" default="auto,auto,5">
-								<description>Latitude,longitude,depth[km]. </description>
+							<parameter name="center" type="list:string" unit="deg,deg,km" default="auto,auto,20">
+								<description>Grid center defined as: latitude,longitude,depth. The
+								special value "auto" can be used and the corresponding latitude, longitude
+								 and/or depth will be automatically computed as the average of the arrival
+								station locations.
+								</description>
 							</parameter>
-							<parameter name="autoLatLon" type="boolean" default="true">
-								<description>If enabled, the grid center latitude and longitude
-								are automatically computed as the average of the arrival station
-								locations. The center depth should still be provided.
-							</description>
-							</parameter> 
-							<parameter name="size" type="list:string" unit="km" default="20,20,5">
-								<description>Grid X, Y, Z size in km</description>
+							<parameter name="size" type="list:string" unit="km" default="40,40,30">
+								<description>Grid size in km defined as: X,Y,Z direction extents around
+								the 'GridSearch.center', where X is the longitudinal extent, Y the
+								latitudinal extent and Z the vertical extent.
+								</description>
 							</parameter>
-							<parameter name="cellSize" type="list:string" unit="km" default="2.5,2.5,5">
-								<description>Cell X, Y, Z size in km</description>
+							<parameter name="numPoints" type="list:string" default="">
+								<description>Grid number of points in the X, Y, Z direction defined 
+								as: numX,numY,numZ. The first and last point will lie on the grid
+								boundary unless the number of points is 1 and the point will be
+								in the grid center.
+								</description>
 							</parameter>
-							<parameter name="misfitType" type="string" default="L1">
+							<parameter name="misfitType" type="string" default="L1" values="L1,L2" >
 								<description>The type of misfit to use, from which the likelyhood function is
 									derived: L1 or L2 norm. L1 is less sensitive to outliers and so more 
 									suitable with automatic picks, L2 is the preferred choice for manual picks.
@@ -114,7 +119,11 @@
 						<group name="OctTree">
 							<description>
 								Find the source location and time via OctTree search. This method uses the
-								parameters defined in GridSearch, but applies the OctTree search algorithm.
+								parameters defined in GridSearch, but applies the OctTree search algorithm
+								to the grid. The starting cells of the OctTree search are created by 
+								dividing the initial grid in equally sized cells. The number of cells in
+								each direction is 'GridSearch.numPoints' - 1, since the grid points
+								becomes the cell vertices.
 								The solution can be further improved combining OctTree with the Least Squares
 								algorithm, which can use the OctTree solution as initial location estimate.
 							</description>
@@ -139,6 +148,12 @@
 								available then this method should be combined with GridSearch or
 								OctTree.
 							</description>
+							<parameter name="depthInit" type="double" default="20">
+								<description>
+									The initial depth estimate, used only when method is 'LeastSquares'
+									and no initial location is provided.
+								</description>
+							</parameter>
 							<parameter name="iterations" type="int" default="20">
 								<description>
 									Number of iterations. Each iteration will use the
