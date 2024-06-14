@@ -161,6 +161,16 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		                        std::vector<double> &travelTimes, CovMtrx &covm,
 		                        bool computeCovMtrx) const;
 
+		void locateLeastSquares(const PickList &pickList,
+		                        const std::vector<double> &weights,
+		                        const std::vector<double> &sensorLat,
+		                        const std::vector<double> &sensorLon,
+		                        const std::vector<double> &sensorElev,
+		                        double &newLat, double &newLon, double &newDepth,
+		                        Seiscomp::Core::Time &newTime,
+		                        std::vector<double> &travelTimes, CovMtrx &covm,
+		                        bool computeCovMtrx) const;
+
 		void computeCovarianceMatrix(const std::vector<Cell> &cells,
 		                             const Cell &bestCell,
 		                             bool useExpectedHypocenter,
@@ -198,16 +208,18 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 			double confLevel;
 
 			struct {
-				double autoLatLon;
 				double originLat;
 				double originLon;
 				double originDepth; // km
+				bool   autoOriginLat;
+				bool   autoOriginLon;
+				bool   autoOriginDepth;
 				double xExtent;     // km
 				double yExtent;     // km
 				double zExtent;     // km
-				double cellXExtent; // km
-				double cellYExtent; // km
-				double cellZExtent; // km
+				int    numXPoints;
+				int    numYPoints;
+				int    numZPoints;
 				std::string misfitType;
 				double travelTimeError;
 			} gridSearch;
@@ -218,6 +230,7 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 			} octTree;
 
 			struct {
+				double depthInit;
 				int iterations;
 				double dampingFactor;
 				std::string solverType;
