@@ -1501,6 +1501,30 @@ void AmplitudeProcessor::computeTimeWindow() {
 		return;
 	}
 
+	if ( !_config.noiseBegin.isValid() ) {
+		setStatus(ConfigurationError, -1);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
+	if ( !_config.noiseEnd.isValid() ) {
+		setStatus(ConfigurationError, -2);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
+	if ( !_config.signalBegin.isValid() ) {
+		setStatus(ConfigurationError, -3);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
+	if ( !_config.signalEnd.isValid() ) {
+		setStatus(ConfigurationError, -4);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
 	// Evaluate noise and signal time windows
 	try {
 		_config.noiseBegin.evaluate(this, true);
