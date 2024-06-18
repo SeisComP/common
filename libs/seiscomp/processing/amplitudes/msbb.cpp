@@ -124,6 +124,8 @@ AmplitudeProcessor_msbb::AmplitudeProcessor_msbb()
 : AmplitudeProcessor("Ms(BB)") {
 	setSignalEnd(3600.);
 	setMinSNR(0);
+	setMinPeriod(3);
+	setMaxPeriod(60);
 	setMinDist(2);
 	setMaxDist(160);
 	setMaxDepth(100);
