@@ -133,30 +133,32 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 			// The noise and signal time window expressions. Those
 			// might depend on origin or travel time information
 			// and are only evaluated during setEnvironment.
-			SignalTime  noiseBegin;
-			SignalTime  noiseEnd;
-			SignalTime  signalBegin;
-			SignalTime  signalEnd;
+			SignalTime  noiseBegin{-35};
+			SignalTime  noiseEnd{-5};
+			SignalTime  signalBegin{-5};
+			SignalTime  signalEnd{30};
 
 			std::string ttInterface;
 			std::string ttModel;
 
-			double      snrMin; /* default: 3 */
+			double      snrMin{3}; /* default: 3 */
+			double      minimumPeriod{-1}; /* default: -1 */
+			double      maximumPeriod{-1}; /* default: -1 */
 
-			double      minimumDistance; /* default: 0 */
-			double      maximumDistance; /* default: 180 */
-			double      minimumDepth; /* default: 0 */
-			double      maximumDepth; /* default: 700 */
+			double      minimumDistance{0}; /* default: 0 */
+			double      maximumDistance{180}; /* default: 180 */
+			double      minimumDepth{-1E6}; /* default: -1E6 */
+			double      maximumDepth{1E6}; /* default: 1E6 */
 
-			double      respTaper;
-			double      respMinFreq;
-			double      respMaxFreq;
+			double      respTaper{5.0};
+			double      respMinFreq{0.00833333};
+			double      respMaxFreq{0};
 
 			Math::SeismometerResponse::WoodAnderson::Config woodAndersonResponse;
 
 			// If true, compute amplitudes according to the recommendations of the
 			// IASPEI CoSOI Magnitude Working Group. Currently only affects mb.
-			bool       iaspeiAmplitudes;
+			bool       iaspeiAmplitudes{false};
 		};
 
 		struct Locale : Config {
@@ -252,6 +254,12 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		void setSignalEnd(const SignalTime &end)  { _config.signalEnd = end; }
 
 		void setMinSNR(double snr) { _config.snrMin = snr; }
+
+		//! Sets the minimum measured period required
+		void setMinPeriod(double period) { _config.minimumPeriod = period; }
+
+		//! Sets the maximum measured period required
+		void setMaxPeriod(double period) { _config.maximumPeriod = period; }
 
 		//! Sets the minimum distance to calculate amplitudes for
 		void setMinDist(double dist) { _config.minimumDistance = dist; }

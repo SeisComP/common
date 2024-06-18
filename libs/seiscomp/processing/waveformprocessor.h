@@ -119,11 +119,11 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 				//! No associated value yet (error code?)
 				Error,
 				// -- The following enumerations were added with API 12 ---
-				//!  No distance hint set
+				//! No distance hint set
 				MissingDistance,
-				//!  No depth hint set
+				//! No depth hint set
 				MissingDepth,
-				//!  No time hint set
+				//! No time hint set
 				MissingTime,
 				//! No hypocenter (Origin) given
 				MissingHypocenter,
@@ -146,7 +146,10 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 				//! Arrival has not been found
 				ArrivalNotFound,
 				//! Configuration error
-				ConfigurationError
+				ConfigurationError,
+				// -- The following enumerations were added with API 17 ---
+				//! Period out of range
+				PeriodOutOfRange
 			),
 			ENAMES(
 				"waiting for data",
@@ -177,7 +180,8 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 				"ray path out of regions",
 				"travel time estimate failed",
 				"arrival not found",
-				"configuration error"
+				"configuration error",
+				"period out of range"
 			)
 		);
 

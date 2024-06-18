@@ -1208,24 +1208,7 @@ void AmplitudeProcessor::init() {
 	_enableUpdates = false;
 	_enableResponses = false;
 	_responseApplied = false;
-
-	_config.noiseBegin = -35;
-	_config.noiseEnd = -5;
-	_config.signalBegin = -5;
-	_config.signalEnd = 30;
-
-	_config.snrMin = 3;
-
-	_config.minimumDistance = 0;
-	_config.maximumDistance = 180;
-	_config.minimumDepth = -1E6;
-	_config.maximumDepth = 1E6;
-
-	_config.respTaper = 5.0;
-	_config.respMinFreq = 0.00833333; // 120 secs
-	_config.respMaxFreq = 0;
-
-	_config.iaspeiAmplitudes = false;
+	_config = Config();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1497,6 +1480,30 @@ const std::string& AmplitudeProcessor::unit() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::computeTimeWindow() {
 	if ( !(bool)_trigger ) {
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
+	if ( !_config.noiseBegin.isValid() ) {
+		setStatus(ConfigurationError, -1);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
+	if ( !_config.noiseEnd.isValid() ) {
+		setStatus(ConfigurationError, -2);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
+	if ( !_config.signalBegin.isValid() ) {
+		setStatus(ConfigurationError, -3);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
+	if ( !_config.signalEnd.isValid() ) {
+		setStatus(ConfigurationError, -4);
 		setTimeWindow(Core::TimeWindow());
 		return;
 	}
@@ -1791,7 +1798,21 @@ void AmplitudeProcessor::process(const Record *record) {
 			res.period = -1;
 		}
 
-		if ( index.begin > index.end ) std::swap(index.begin, index.end);
+		if ( res.period > 0 ) {
+			if ( _config.minimumPeriod > 0 && res.period < _config.minimumPeriod ) {
+				setStatus(PeriodOutOfRange, res.period);
+				return;
+			}
+
+			if ( _config.maximumPeriod > 0 && res.period > _config.maximumPeriod ) {
+				setStatus(PeriodOutOfRange, res.period);
+				return;
+			}
+		}
+
+		if ( index.begin > index.end ) {
+			std::swap(index.begin, index.end);
+		}
 
 		// Update status information
 		res.time.reference = dataTimeWindow().startTime() + Core::TimeSpan(dt);
@@ -2141,6 +2162,8 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	settings.getValue(_config.ttModel, "amplitudes.ttt.model");
 
 	settings.getValue(_config.snrMin, "amplitudes." + _type + ".minSNR");
+	settings.getValue(_config.minimumPeriod, "amplitudes." + _type + ".minPeriod");
+	settings.getValue(_config.maximumPeriod, "amplitudes." + _type + ".maxPeriod");
 	settings.getValue(_config.minimumDistance, "amplitudes." + _type + ".minDist");
 	settings.getValue(_config.maximumDistance, "amplitudes." + _type + ".maxDist");
 	settings.getValue(_config.minimumDepth, "amplitudes." + _type + ".minDepth");
@@ -2158,6 +2181,8 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	SEISCOMP_DEBUG("  + signal begin = %s", _config.signalBegin.toString().c_str());
 	SEISCOMP_DEBUG("  + signal end = %s", _config.signalEnd.toString().c_str());
 	SEISCOMP_DEBUG("  + minimum SNR = %.3f", _config.snrMin);
+	SEISCOMP_DEBUG("  + minimum period = %.3f", _config.minimumPeriod);
+	SEISCOMP_DEBUG("  + maximum period = %.3f", _config.maximumPeriod);
 	SEISCOMP_DEBUG("  + response correction = %i", _enableResponses);
 
 	if ( !settings.getValue(_config.respTaper, "amplitudes." + _type + ".resp.taper") ) {
