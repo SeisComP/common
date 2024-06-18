@@ -119,25 +119,6 @@ struct CommitOptions {
 	vector<OriginCommentProfile> originCommentProfiles;
 
 	void init(const std::string &prefix, Origin *origin) {
-		magnitudeTypes.clear();
-		if ( origin ) {
-			for ( size_t i = 0; i < origin->magnitudeCount(); ++i ) {
-				string value = "--";
-				try {
-					char buf[64];
-					snprintf(buf, 63, "%.*f",
-					         SCScheme.precision.magnitude,
-					         origin->magnitude(i)->magnitude().value());
-					value = buf;
-				}
-				catch ( ... ) {}
-				magnitudeTypes.push_back(pair<string, string>(origin->magnitude(i)->type(), value));
-			}
-		}
-		sort(magnitudeTypes.begin(), magnitudeTypes.end(), [](const pair<string, string> &i1, const pair<string, string> &i2) -> bool {
-			return Core::compareNoCase(i1.first, i2.first) < 0;
-		});
-
 		try {
 			forceEventAssociation = SCApp->configGetBool(prefix + "forceEventAssociation");
 		}
@@ -205,10 +186,29 @@ struct CommitOptions {
 		}
 		catch ( ... ) {}
 
-		updateComments(origin);
+		setup(origin);
 	}
 
-	void updateComments(Origin *origin) {
+	void setup(Origin *origin) {
+		magnitudeTypes.clear();
+		if ( origin ) {
+			for ( size_t i = 0; i < origin->magnitudeCount(); ++i ) {
+				string value = "--";
+				try {
+					char buf[64];
+					snprintf(buf, 63, "%.*f",
+					         SCScheme.precision.magnitude,
+					         origin->magnitude(i)->magnitude().value());
+					value = buf;
+				}
+				catch ( ... ) {}
+				magnitudeTypes.push_back(pair<string, string>(origin->magnitude(i)->type(), value));
+			}
+		}
+		sort(magnitudeTypes.begin(), magnitudeTypes.end(), [](const pair<string, string> &i1, const pair<string, string> &i2) -> bool {
+			return Core::compareNoCase(i1.first, i2.first) < 0;
+		});
+
 		for ( auto &profile : originCommentProfiles ) {
 			profile.value = string();
 			auto comment = origin ? origin->comment(profile.id) : nullptr;
@@ -643,25 +643,39 @@ class OriginCommitOptions : public QDialog {
 			ui.labelPreferredMagnitude->setVisible(false);
 			ui.comboPreferredMagnitude->setVisible(false);
 
-			if ( !options.magnitudeType || options.magnitudeType->empty() ) {
-				ui.cbFixMagnitudeType->setEnabled(false);
-				ui.cbFixMagnitudeType->setVisible(false);
-				if ( !options.magnitudeTypes.empty() ) {
-					ui.labelPreferredMagnitude->setVisible(true);
-					ui.comboPreferredMagnitude->setVisible(true);
-					ui.comboPreferredMagnitude->addItem(tr("- no changes -"));
-					ui.comboPreferredMagnitude->addItem(tr("- automatic -"));
-					ui.comboPreferredMagnitude->setCurrentIndex(0);
-					for ( auto &type : options.magnitudeTypes ) {
+			// Hide the fix magnitude type checkbox
+			ui.cbFixMagnitudeType->setEnabled(false);
+			ui.cbFixMagnitudeType->setVisible(false);
+
+			ui.labelPreferredMagnitude->setVisible(true);
+			ui.comboPreferredMagnitude->setVisible(true);
+			ui.comboPreferredMagnitude->addItem(tr("- no changes -"));
+			ui.comboPreferredMagnitude->addItem(tr("- automatic -"));
+			ui.comboPreferredMagnitude->setCurrentIndex(0);
+			for ( auto &type : options.magnitudeTypes ) {
+				ui.comboPreferredMagnitude->addItem(
+					QString("%1 (%2)").arg(type.first.data()).arg(type.second.data()),
+					type.first.data()
+				);
+			}
+
+			if ( options.magnitudeType ) {
+				if ( options.magnitudeType->empty() ) {
+					ui.comboPreferredMagnitude->setCurrentIndex(1);
+				}
+				else {
+					int idx = ui.comboPreferredMagnitude->findData(options.magnitudeType->data());
+					if ( idx > 1 ) {
+						ui.comboPreferredMagnitude->setCurrentIndex(idx);
+					}
+					else {
 						ui.comboPreferredMagnitude->addItem(
-							QString("%1 (%2)").arg(type.first.data()).arg(type.second.data()),
-							type.first.data()
+							QString("%1 (not available)").arg(options.magnitudeType->data()),
+							options.magnitudeType->data()
 						);
+						ui.comboPreferredMagnitude->setCurrentIndex(ui.comboPreferredMagnitude->count() - 1);
 					}
 				}
-			}
-			else {
-				ui.cbFixMagnitudeType->setText(ui.cbFixMagnitudeType->text().arg(options.magnitudeType->c_str()));
 			}
 
 			try {
@@ -6711,7 +6725,7 @@ void OriginLocatorView::customCommit() {
 		customOptions.askForConfirmation = true;
 	}
 
-	customOptions.updateComments(SC_D.currentOrigin.get());
+	customOptions.setup(SC_D.currentOrigin.get());
 
 	QString fixedMagnitudeType = SC_D.actionCommitOptions->property("EvPrefMagType").toString();
 	if ( !fixedMagnitudeType.isEmpty() ) {
