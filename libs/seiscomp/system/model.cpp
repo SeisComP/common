@@ -2345,21 +2345,25 @@ bool Model::writeConfig(bool multilineLists, int stage, ConfigDelegate *delegate
 	// Save station key files
 	//---------------------------------------------------
 	//stations.clear();
-	for ( Stations::iterator it = stations.begin(); it != stations.end(); ++it )
+	for ( Stations::iterator it = stations.begin(); it != stations.end(); ++it ) {
 		it->second->config.clear();
+	}
 
 	// Collect all stations keyfiles
 	for ( size_t i = 0; i < modules.size(); ++i ) {
 		Module *mod = modules[i].get();
-		if ( !mod->supportsBindings() ) continue;
+		if ( !mod->supportsBindings() ) {
+			continue;
+		}
 
 		Module::BindingMap::iterator it;
 
 		for ( it = mod->bindings.begin(); it != mod->bindings.end(); ++it ) {
 			pair<Stations::iterator, bool> sp;
 			sp = stations.insert(Stations::value_type(it->first, nullptr));
-			if ( sp.second )
+			if ( sp.second ) {
 				sp.first->second = new Station;
+			}
 
 			ModuleBinding *binding = it->second.get();
 			sp.first->second->setConfig(mod->definition->name, binding->name);
@@ -2406,8 +2410,9 @@ bool Model::writeConfig(bool multilineLists, int stage, ConfigDelegate *delegate
 	for ( Stations::iterator it = stations.begin(); it != stations.end(); ++it ) {
 		string filename = keyDir + "/station_" + it->first.networkCode +
 		                  "_" + it->first.stationCode;
-		if ( !it->second->writeConfig(filename.c_str(), delegate) )
+		if ( !it->second->writeConfig(filename.c_str(), delegate) ) {
 			cerr << "[ERROR] writing " << filename << " failed" << endl;
+		}
 	}
 
 	//---------------------------------------------------
@@ -2416,8 +2421,9 @@ bool Model::writeConfig(bool multilineLists, int stage, ConfigDelegate *delegate
 	for ( size_t i = 0; i < modules.size(); ++i ) {
 		Module *mod = modules[i].get();
 		string filename = configFileLocation(false, mod->definition->name, stage);
-		if ( !writeConfig(mod, filename, stage, multilineLists, delegate) )
+		if ( !writeConfig(mod, filename, stage, multilineLists, delegate) ) {
 			cerr << "[ERROR] writing " << filename << " failed" << endl;
+		}
 	}
 
 
