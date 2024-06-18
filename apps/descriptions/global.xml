@@ -1038,6 +1038,24 @@
 						has no global default value.
 						</description>
 					</parameter>
+					<parameter name="minPeriod" type="double" unit="s">
+						<description>
+						Define the minimum period of the measured amplitude. If
+						the period is below this value, the amplitude will not be emittet.
+						This valus is amplitude type specific and has no global
+						default value. A value lower or equal than 0 will disable
+						this check.
+						</description>
+					</parameter>
+					<parameter name="maxPeriod" type="double" unit="s">
+						<description>
+						Define the maximum period of the measured amplitude. If
+						the period is above this value, the amplitude will not be emittet.
+						This valus is amplitude type specific and has no global
+						default value. A value lower or equal than 0 will disable
+						this check.
+						</description>
+					</parameter>
 					<parameter name="noiseBegin" type="double" unit="s">
 						<description>
 						Override the default time (relative to the trigger
