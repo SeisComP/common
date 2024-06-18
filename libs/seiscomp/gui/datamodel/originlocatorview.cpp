@@ -643,10 +643,6 @@ class OriginCommitOptions : public QDialog {
 			ui.labelPreferredMagnitude->setVisible(false);
 			ui.comboPreferredMagnitude->setVisible(false);
 
-			// Hide the fix magnitude type checkbox
-			ui.cbFixMagnitudeType->setEnabled(false);
-			ui.cbFixMagnitudeType->setVisible(false);
-
 			ui.labelPreferredMagnitude->setVisible(true);
 			ui.comboPreferredMagnitude->setVisible(true);
 			ui.comboPreferredMagnitude->addItem(tr("- no changes -"));
@@ -834,9 +830,6 @@ class OriginCommitOptions : public QDialog {
 				OPT(EvaluationStatus) none;
 				options.originStatus = none;
 			}
-
-			if ( !ui.cbFixMagnitudeType->isEnabled() || !ui.cbFixMagnitudeType->isChecked() )
-				options.magnitudeType = Core::None;
 
 			options.eventName = ui.editEQName->text().toStdString();
 
