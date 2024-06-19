@@ -1190,7 +1190,8 @@ bool Time::fromString(const char* str, const char* fmt) {
 		return false;
 	}
 	else {
-		*this = timegm(&t);
+		auto gmtoff = t.tm_gmtoff;
+		*this = timegm(&t) - gmtoff;
 		setUSecs(usec);
 	}
 
