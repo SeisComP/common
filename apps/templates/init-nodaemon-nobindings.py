@@ -22,15 +22,9 @@ class Module(seiscomp.kernel.Module):
     def status(self, _shouldRun):
         return 1
 
-    # do not support trunk config
-    # def updateConfigProxy(self):
-    # return "trunk"
-
-    # do not support bindings
+    # do nothing
     def updateConfig(self):
-        # By default the "trunk" module must be configured to write the
-        # bindings into the database
-        return 1
+        return 0
 
     def supportsAliases(self):
         # The default handler does not support aliases
