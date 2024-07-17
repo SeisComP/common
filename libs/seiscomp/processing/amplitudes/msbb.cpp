@@ -166,6 +166,17 @@ bool AmplitudeProcessor_msbb::computeAmplitude(const DoubleArray &data,
 
 	if ( !measure_period(data.size(), static_cast<const double*>(data.data()), imax, offset, &pmax, &pstd) ) {
 		pmax = -1;
+		if ( _config.iaspeiAmplitudes ) {
+			setStatus(QCError, -1);
+			return false;
+		}
+	}
+	else if ( _config.iaspeiAmplitudes ) {
+		auto per = pmax / _stream.fsamp;
+		if ( per <= 3 || per >= 60 ) {
+			setStatus(QCError, per);
+			return false;
+		}
 	}
 
 	if ( *_noiseAmplitude == 0. ) {
