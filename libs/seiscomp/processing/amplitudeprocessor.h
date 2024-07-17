@@ -296,6 +296,11 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		void setPick(const DataModel::Pick *pick);
 		const DataModel::Pick *pick() const;
 
+		static bool CreateAlias(const std::string &aliasType,
+		                        const std::string &sourceType);
+		static bool RemoveAlias(const std::string &aliasType);
+		static void RemoveAllAliases();
+
 
 	// ----------------------------------------------------------------------
 	//  Query interface
@@ -464,11 +469,13 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		//! This method gets called when an amplitude has to be published
 		void emitAmplitude(const Result &result);
 
+
 	private:
 		bool readLocale(Locale *locale,
 		                const Settings &settings,
 		                const std::string &configPrefix);
 		void checkEnvironmentalLimits();
+
 
 	private:
 		void init();
@@ -503,11 +510,15 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 
 		bool        _responseApplied;
 
+
 	// ----------------------------------------------------------------------
 	//  Private Members
 	// ----------------------------------------------------------------------
 	private:
 		PublishFunc _func;
+
+
+	friend class AmplitudeProcessorAliasFactory;
 };
 
 
