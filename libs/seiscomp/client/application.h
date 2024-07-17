@@ -744,6 +744,7 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 				StringVector         agencyAllowlist;
 				StringVector         agencyBlocklist;
 				Util::StringFirewall firewall;
+				StringVector         amplitudeAliases;
 				StringVector         magnitudeAliases;
 
 			}                    processing;
