@@ -22,8 +22,8 @@
 #define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MB_IDC_H
 
 
-#include <seiscomp3/processing/magnitudeprocessor.h>
-#include <seiscomp3/utils/tabvalues.h>
+#include <seiscomp/processing/magnitudeprocessor.h>
+#include <seiscomp/utils/tabvalues.h>
 
 
 using namespace Seiscomp;

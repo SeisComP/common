@@ -26,7 +26,7 @@
 #include "caps/sessiontable.h"
 
 #include <seiscomp/wired/devices/socket.h>
-#include <seiscomp3/io/recordstream.h>
+#include <seiscomp/io/recordstream.h>
 
 #include <list>
 #include <map>

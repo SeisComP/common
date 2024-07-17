@@ -22,8 +22,8 @@
 
 #include "ML_idc_private.h"
 
-#include <seiscomp3/logging/log.h>
-#include <seiscomp3/system/environment.h>
+#include <seiscomp/logging/log.h>
+#include <seiscomp/system/environment.h>
 
 #include <mutex>
 

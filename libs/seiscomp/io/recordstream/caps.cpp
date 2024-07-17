@@ -26,12 +26,12 @@
 #include "caps/endianess.h"
 #include "caps/utils.h"
 
-#include <seiscomp3/logging/log.h>
-#include <seiscomp3/core/typedarray.h>
-#include <seiscomp3/core/genericrecord.h>
-#include <seiscomp3/core/plugin.h>
-#include <seiscomp3/core/strings.h>
-#include <seiscomp3/io/records/mseedrecord.h>
+#include <seiscomp/logging/log.h>
+#include <seiscomp/core/typedarray.h>
+#include <seiscomp/core/genericrecord.h>
+#include <seiscomp/core/plugin.h>
+#include <seiscomp/core/strings.h>
+#include <seiscomp/io/records/mseedrecord.h>
 
 #include <libmseed.h>
 #include <ctype.h>
