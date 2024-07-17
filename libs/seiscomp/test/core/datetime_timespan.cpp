@@ -162,6 +162,23 @@ BOOST_AUTO_TEST_CASE(construction) {
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(conversion) {
+	sc::TimeSpan a(1.2);
+	BOOST_CHECK_EQUAL(a.seconds(), 1);
+	BOOST_CHECK_EQUAL(a.microseconds(), 200000);
+	BOOST_CHECK_EQUAL(a.length(), 1.2);
+
+	a = sc::TimeSpan(-1.2);
+	BOOST_CHECK_EQUAL(a.seconds(), -1);
+	BOOST_CHECK_EQUAL(a.microseconds(), -200000);
+	BOOST_CHECK_EQUAL(a.length(), -1.2);
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(addition) {
 	sc::Time a(7,5);
 	sc::TimeSpan b = 9.000004;
@@ -172,7 +189,7 @@ BOOST_AUTO_TEST_CASE(addition) {
 	sc::Time c(7,5);
 	sc::TimeSpan d = -3.000004;
 	result = c + d;
-	BOOST_CHECK_EQUAL(result.microseconds(), 2);
+	BOOST_CHECK_EQUAL(result.microseconds(), 1);
 	BOOST_CHECK_EQUAL(result.seconds(), 4);
 
 	sc::Time e(-7,5);
@@ -214,11 +231,11 @@ BOOST_AUTO_TEST_CASE(addition) {
 	o += p;
 	BOOST_CHECK_EQUAL(isClose(o, sec, micro), true);
 
-	sc::Time q(9876, -6748);
+	sc::TimeSpan q(9876, -6748);
 	sc::TimeSpan r = -876.987;
 	q += r;
-	BOOST_WARN_EQUAL(q.microseconds(), 6253);
-	BOOST_CHECK_EQUAL(q.seconds(),8999);
+	BOOST_CHECK_EQUAL(q.microseconds(), 6252);
+	BOOST_CHECK_EQUAL(q.seconds(), 8999);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -232,12 +249,12 @@ BOOST_AUTO_TEST_CASE(subtraction) {
 	sc::TimeSpan result = a - b;
 	long sec = a.seconds() - b.seconds();
 	long micro = a.microseconds() - b.microseconds();
-	BOOST_WARN_EQUAL(isClose(result, sec, micro),true);
+	BOOST_CHECK_EQUAL(isClose(result, sec, micro), true);
 
 	sc::Time c(7,5);
 	sc::TimeSpan d = -3.000004;
 	result = c - d;
-	BOOST_CHECK_EQUAL(result.microseconds(), 8);
+	BOOST_CHECK_EQUAL(result.microseconds(), 9);
 	BOOST_CHECK_EQUAL(result.seconds(), 10);
 
 	sc::Time e(-7,5);
@@ -271,7 +288,7 @@ BOOST_AUTO_TEST_CASE(subtraction) {
 	sc::Time m(500,987);
 	sc::TimeSpan n = -30.876;
 	m -= n;
-	BOOST_CHECK_EQUAL(m.microseconds(),876986);
+	BOOST_CHECK_EQUAL(m.microseconds(), 876987);
 	BOOST_CHECK_EQUAL(m.seconds(), 530);
 
 	sc::Time o(-60, 47);
