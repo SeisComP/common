@@ -955,7 +955,7 @@ void RecordWidget::init() {
 	_valuePrecision = SCScheme.precision.traceValues;
 	_decorator = nullptr;
 	_shadowWidget = nullptr;
-	_shadowWidgetFlags = Raw;
+	_shadowWidgetFlags = Raw | Style;
 	_markerSourceWidget = nullptr;
 	_drawMode = Single;
 	_recordBorderDrawMode = SCScheme.records.recordBorders.drawMode;
@@ -1028,7 +1028,9 @@ void RecordWidget::clearRecords() {
 		(*it)->free();
 	}
 
-	if ( _shadowWidget ) _shadowWidget->clearRecords();
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
+		_shadowWidget->clearRecords();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1102,22 +1104,27 @@ void RecordWidget::removeCustomBackgroundColor() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecords(int slot, RecordSequence *s, bool owner) {
-	if ( _shadowWidget ) _shadowWidget->setRecords(slot, s, false);
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
+		_shadowWidget->setRecords(slot, s, false);
+	}
 
 	Stream *stream = getStream(slot);
 	if ( stream == nullptr ) return false;
 
 	// If the same sequence is set again, make sure that it will
 	// not be destroyed by free()
-	if ( stream->records[Stream::Raw] == s )
+	if ( stream->records[Stream::Raw] == s ) {
 		stream->ownRawRecords = false;
+	}
 
 	// Reset filter to forget all old buffered samples
 	Filter *newFilter;
-	if ( stream->filter && !(_shadowWidgetFlags & Filtered) )
+	if ( stream->filter && !(_shadowWidgetFlags & Filtered) ) {
 		newFilter = stream->filter->clone();
-	else
+	}
+	else {
 		newFilter = nullptr;
+	}
 
 	// Delete old record sequence
 	stream->free();
@@ -1147,7 +1154,7 @@ bool RecordWidget::setRecords(int slot, RecordSequence *s, bool owner) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setFilteredRecords(int slot, RecordSequence *s, bool owner) {
-	if ( _shadowWidget ) {
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Filtered) ) {
 		_shadowWidget->setFilteredRecords(slot, s, owner);
 		_shadowWidget->setDirty();
 	}
@@ -1181,8 +1188,13 @@ void RecordWidget::changedRecords(int slot, RecordSequence*) {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 	Stream *stream = getStream(slot);
-	if ( stream == nullptr ) return false;
-	if ( _shadowWidgetFlags & Filtered ) return true;
+	if ( stream == nullptr ) {
+		return false;
+	}
+
+	if ( _shadowWidgetFlags & Filtered ) {
+		return true;
+	}
 
 	if ( stream->filter )
 		delete stream->filter;
@@ -1218,7 +1230,7 @@ bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 		}
 	}
 
-	if ( _shadowWidget ) {
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
 		if ( !(_shadowWidget->_shadowWidgetFlags & Filtered) ) {
 			_shadowWidget->setRecordFilter(slot, filter);
 		}
@@ -1246,7 +1258,9 @@ bool RecordWidget::setRecordScale(int slot, double scale) {
 
 	stream->scale = scale;
 
-	if ( _shadowWidget ) _shadowWidget->setRecordScale(slot, scale);
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
+		_shadowWidget->setRecordScale(slot, scale);
+	}
 
 	update();
 	return true;
@@ -1273,7 +1287,9 @@ bool RecordWidget::setRecordVisible(int slot, bool visible) {
 
 	stream->visible = visible;
 
-	if ( _shadowWidget ) _shadowWidget->setRecordVisible(slot, visible);
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
+		_shadowWidget->setRecordVisible(slot, visible);
+	}
 
 	if ( _drawMode != Single ) setDirty();
 	update();
@@ -1291,8 +1307,9 @@ bool RecordWidget::setRecordID(int slot, const QString &id) {
 
 	stream->id = id;
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
 		_shadowWidget->setRecordID(slot, id);
+	}
 
 	return true;
 }
@@ -1308,8 +1325,9 @@ bool RecordWidget::setRecordLabel(int slot, const QString &label) {
 
 	stream->axisLabel = label;
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
 		_shadowWidget->setRecordLabel(slot, label);
+	}
 
 	return true;
 }
@@ -1336,8 +1354,9 @@ bool RecordWidget::setRecordPen(int slot, const QPen &pen) {
 	stream->setDirty();
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
 		_shadowWidget->setRecordPen(slot, pen);
+	}
 
 	return true;
 }
@@ -1354,8 +1373,9 @@ bool RecordWidget::setRecordAntialiasing(int slot, bool antialiasing) {
 	stream->antialiasing = antialiasing;
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
 		_shadowWidget->setRecordAntialiasing(slot, antialiasing);
+	}
 
 	return true;
 }
@@ -1375,8 +1395,9 @@ bool RecordWidget::setRecordOptimization(int slot, bool enable) {
 	stream->setDirty();
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
 		_shadowWidget->setRecordOptimization(slot, enable);
+	}
 
 	return true;
 }
@@ -1396,8 +1417,9 @@ bool RecordWidget::setRecordStepFunction(int slot, bool enable) {
 	stream->setDirty();
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
 		_shadowWidget->setRecordStepFunction(slot, enable);
+	}
 
 	return true;
 }
@@ -1415,8 +1437,9 @@ bool RecordWidget::setRecordBackgroundColor(int slot, QColor c) {
 	stream->hasCustomBackgroundColor = true;
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
 		_shadowWidget->setRecordBackgroundColor(slot, c);
+	}
 
 	return true;
 }
@@ -1433,8 +1456,9 @@ bool RecordWidget::removeRecordBackgroundColor(int slot) {
 	stream->hasCustomBackgroundColor = false;
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
 		_shadowWidget->removeRecordBackgroundColor(slot);
+	}
 
 	return true;
 }
@@ -1465,8 +1489,9 @@ bool RecordWidget::setRecordStatus(int slot, bool filtered, QString status) {
 	stream->traces[filtered ? 1 : 0].status = status;
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
 		_shadowWidget->setRecordStatus(slot, filtered, status);
+	}
 
 	return true;
 }
@@ -1594,8 +1619,9 @@ RecordSequence *RecordWidget::createRecords(int slot, bool owner) {
 
 			setRecordFilter(slot, s->filter);
 
-			if ( _shadowWidget )
+			if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
 				_shadowWidget->setRecords(slot, seq, false);
+			}
 
 			if ( s->filtering )
 				createFilter(slot);
@@ -1629,7 +1655,9 @@ int RecordWidget::setCurrentRecords(int slot) {
 
 	update();
 
-	if ( _shadowWidget ) _shadowWidget->setCurrentRecords(slot);
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
+		_shadowWidget->setCurrentRecords(slot);
+	}
 
 	if ( _drawMode == Single ) {
 		emit traceUpdated(this);
@@ -1853,49 +1881,58 @@ bool RecordWidget::isClippingEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::setShadowWidget(RecordWidget *shadow, bool copyMarker, int flags) {
-	if ( _shadowWidget ) _shadowWidget->_shadowWidgetFlags = 0;
+	if ( _shadowWidget ) {
+		_shadowWidget->_shadowWidgetFlags = 0;
+	}
 
 	_shadowWidget = shadow;
-	if ( _shadowWidget == nullptr ) return;
+
+	if ( !_shadowWidget ) {
+		return;
+	}
 
 	//_shadowWidget->clearRecords();
-	if ( copyMarker )
+	if ( copyMarker ) {
 		_shadowWidget->clearMarker();
+	}
 
-	_shadowWidget->setSlotCount(slotCount());
 	_shadowWidget->_shadowWidgetFlags = flags;
 
 	if ( flags & Raw ) {
+		_shadowWidget->setSlotCount(slotCount());
+
 		for ( int i = 0; i < slotCount(); ++i ) {
 			_shadowWidget->setRecords(i, _streams[i]->records[Stream::Raw], false);
+			if ( flags & Filtered ) {
+				_shadowWidget->setFilteredRecords(i, _streams[i]->records[Stream::Filtered], false);
+			}
 		}
-	}
 
-	if ( flags & Filtered ) {
 		for ( int i = 0; i < slotCount(); ++i ) {
-			_shadowWidget->setFilteredRecords(i, _streams[i]->records[Stream::Filtered], false);
+			_shadowWidget->setRecordScale(i, _streams[i]->scale);
+			_shadowWidget->setRecordID(i, _streams[i]->id);
+			_shadowWidget->setRecordLabel(i, _streams[i]->axisLabel);
+			_shadowWidget->setRecordStatus(i, false, _streams[i]->traces[0].status);
+			_shadowWidget->setRecordStatus(i, true, _streams[i]->traces[1].status);
+
+			if ( flags & Style ) {
+				_shadowWidget->setRecordVisible(i, _streams[i]->visible);
+				_shadowWidget->setRecordPen(i, _streams[i]->pen);
+				_shadowWidget->setRecordAntialiasing(i, _streams[i]->antialiasing);
+				if ( _streams[i]->hasCustomBackgroundColor ) {
+					_shadowWidget->setRecordBackgroundColor(i, _streams[i]->customBackgroundColor);
+				}
+				else {
+					_shadowWidget->removeRecordBackgroundColor(i);
+				}
+			}
 		}
-	}
-
-	for ( int i = 0; i < slotCount(); ++i ) {
-		_shadowWidget->setRecordScale(i, _streams[i]->scale);
-		_shadowWidget->setRecordPen(i, _streams[i]->pen);
-		_shadowWidget->setRecordAntialiasing(i, _streams[i]->antialiasing);
-		_shadowWidget->setRecordID(i, _streams[i]->id);
-		_shadowWidget->setRecordLabel(i, _streams[i]->axisLabel);
-		_shadowWidget->setRecordVisible(i, _streams[i]->visible);
-		_shadowWidget->setRecordStatus(i, false, _streams[i]->traces[0].status);
-		_shadowWidget->setRecordStatus(i, true, _streams[i]->traces[1].status);
-
-		if ( _streams[i]->hasCustomBackgroundColor )
-			_shadowWidget->setRecordBackgroundColor(i, _streams[i]->customBackgroundColor);
-		else
-			_shadowWidget->removeRecordBackgroundColor(i);
 	}
 
 	if ( copyMarker ) {
-		foreach ( RecordMarker *m, _marker )
+		for ( auto *m : _marker ) {
 			_shadowWidget->addMarker(m->copy());
+		}
 	}
 
 	_shadowWidget->_hoveredMarker = nullptr;
@@ -4137,10 +4174,16 @@ bool RecordWidget::createFilter() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::createFilter(int slot) {
 	Stream* s = getStream(slot);
-	if ( s == nullptr ) return false;
-	if ( _shadowWidgetFlags & Filtered ) return true;
 
-	if (!s->filter) {
+	if ( !s ) {
+		return false;
+	}
+
+	if ( _shadowWidgetFlags & Filtered ) {
+		return true;
+	}
+
+	if ( !s->filter ) {
 		setRecordFilter(slot, nullptr);
 		return true;
 	}
@@ -4382,7 +4425,9 @@ void RecordWidget::ensureVisibility(const Core::Time &time,
 void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 	bool newlyCreated = false;
 
-	if ( (slot < 0) || (slot >= _streams.size()) ) return;
+	if ( (slot < 0) || (slot >= _streams.size()) ) {
+		return;
+	}
 
 	Stream *s = _streams[slot];
 
@@ -4390,8 +4435,9 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 	s->traces[Stream::Raw].dirty = true;
 
 	if ( rec->timingQuality() >= 0 ) {
-		if ( s->traces[Stream::Raw].timingQualityCount == 0 )
+		if ( s->traces[Stream::Raw].timingQualityCount == 0 ) {
 			s->traces[Stream::Raw].timingQuality = rec->timingQuality();
+		}
 		else
 			s->traces[Stream::Raw].timingQuality =
 				(s->traces[Stream::Raw].timingQuality * s->traces[Stream::Raw].timingQualityCount +
@@ -4402,12 +4448,12 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 
 	_drawRecords = true;
 
-	if ( !(_shadowWidgetFlags & Filtered) && (s->filtering || s->filter != nullptr) ) {
+	if ( !(_shadowWidgetFlags & Filtered) && (s->filtering || s->filter) ) {
 		newlyCreated = createFilter(slot);
 
-		if ( _shadowWidget  ) {
+		if ( _shadowWidget ) {
 			if ( (_shadowWidget->_shadowWidgetFlags & Filtered) &&
-			      _shadowWidget->_streams[slot]->records[Stream::Filtered]== nullptr) {
+			      !_shadowWidget->_streams[slot]->records[Stream::Filtered]) {
 				_shadowWidget->setFilteredRecords(slot, s->records[Stream::Filtered], false);
 			}
 			_shadowWidget->fed(slot, rec);
@@ -4416,7 +4462,7 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 	else {
 		if ( _shadowWidget  ) {
 			if ( (_shadowWidget->_shadowWidgetFlags & Filtered) &&
-			      _shadowWidget->_streams[slot]->records[Stream::Filtered]== nullptr) {
+			      !_shadowWidget->_streams[slot]->records[Stream::Filtered]) {
 				_shadowWidget->setFilteredRecords(slot, s->records[Stream::Filtered], false);
 			}
 			_shadowWidget->fed(slot, rec);
@@ -4426,7 +4472,9 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 		return;
 	}
 
-	if (!s->records[Stream::Filtered] || !s->filter) return;
+	if ( !s->records[Stream::Filtered] || !s->filter ) {
+		return;
+	}
 
 	if ( !newlyCreated ) {
 		try {
@@ -4457,8 +4505,9 @@ bool RecordWidget::addMarker(RecordMarker* marker) {
 	if ( marker == nullptr ) return false;
 
 	if ( marker->parent() != this ) {
-		if ( marker->parent() )
+		if ( marker->parent() ) {
 			marker->parent()->takeMarker(marker);
+		}
 	}
 
 	marker->setParent(this);
