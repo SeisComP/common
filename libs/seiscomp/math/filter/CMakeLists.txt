@@ -3,6 +3,7 @@ SET(FILTER_SOURCES
 	const.cpp
 	cutoff.cpp
 	biquad.cpp
+	bpenv.cpp
 	butterworth.cpp
 	iirintegrate.cpp
 	iirdifferentiate.cpp
@@ -15,7 +16,8 @@ SET(FILTER_SOURCES
 	rmhp.cpp
 	chainfilter.cpp
 	seismometers.cpp
-	bpenv.cpp
+	sr.cpp
+	sum.cpp
 )
 
 SET(FILTER_HEADERS
@@ -24,6 +26,7 @@ SET(FILTER_HEADERS
 	cutoff.h
 	biquad.h
 	biquad.ipp
+	bpenv.h
 	butterworth.h
 	butterworth.ipp
 	iirintegrate.h
@@ -39,7 +42,8 @@ SET(FILTER_HEADERS
 	op2filter.h
 	op2filter.ipp
 	seismometers.h
-	bpenv.h
+	sr.h
+	sum.h
 )
 
 SC_SETUP_LIB_SUBDIR(FILTER)
