@@ -267,6 +267,10 @@ bool AmplitudeProcessor_ML2h::setParameter(Capability cap, const string &value) 
 
 
 bool AmplitudeProcessor_ML2h::setup(const Settings &settings) {
+	// Propagate amplitude type which could have been changed due to
+	// aliasing.
+	_ampN._type = _type; _ampE._type = _type;
+
 	// Copy the stream configurations (gain, orientation, responses, ...) to
 	// the horizontal processors
 	_ampN.streamConfig(FirstHorizontalComponent) = streamConfig(FirstHorizontalComponent);
