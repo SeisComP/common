@@ -2450,20 +2450,31 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 		case Stacked:
 		{
 			Stream *stream = nullptr;
+			double axisLower{-1}, axisUpper{1};
 
-			if ( (_currentSlot >= _streams.size() || _currentSlot < 0) || !_streams[_currentSlot]->visible )
-				stream = nullptr;
-			else
-				stream = _streams[_currentSlot];
+			if ( _drawMode == Single ) {
+				if ( _currentSlot >= 0 && _currentSlot < _streams.size() && _streams[_currentSlot]->visible ) {
+					stream = _streams[_currentSlot];
+				}
+			}
+			else {
+				for ( auto *s : _streams ) {
+					int frontIndex = s->filtering?Stream::Filtered:Stream::Raw;
+					if ( s->visible && s->traces[frontIndex].visible ) {
+						stream = s;
+						break;
+					}
+				}
+			}
 
 			if ( stream ) {
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
-				double axisLower = stream->traces[frontIndex].fyMin,
-				       axisUpper = stream->traces[frontIndex].fyMax;
+				axisLower = stream->traces[frontIndex].fyMin;
+				axisUpper = stream->traces[frontIndex].fyMax;
 
-				if ( axisLower == axisUpper ) {
-					axisLower -= 1;
-					axisUpper += 1;
+				if ( _drawMode == SameOffset ) {
+					axisLower -= stream->traces[frontIndex].yOffset;
+					axisUpper -= stream->traces[frontIndex].yOffset;
 				}
 
 				if ( _tracePaintOffset ) {
@@ -2490,23 +2501,27 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 					}
 				}
 
-				if ( _axisPosition == Right )
+				if ( _axisPosition == Right ) {
 					rect = QRect(width()-_margins[2]+_axisSpacing, stream->posY, _margins[2]-_axisSpacing, stream->height);
-				else
+				}
+				else {
 					rect = QRect(0, stream->posY, _margins[0]-_axisSpacing, stream->height);
+				}
 
-				double axisRange = axisUpper - axisLower;
-				if ( stream->height > 1 && axisRange > 0 ) {
+				// double axisRange = axisUpper - axisLower;
+				if ( stream->height > 1 ) {
 					if ( stream->axisDirty ) {
 						updateVerticalAxis(stream->axisSpacing, axisLower, axisUpper,
-						                   stream->height-1, fontHeight*2);
+						                   stream->height - 1, fontHeight * 2);
 						stream->axisDirty = false;
 					}
 
-					if ( _axisPosition == Right )
+					if ( _axisPosition == Right ) {
 						rect = QRect(width()-_margins[2]+_axisSpacing, stream->posY, _margins[2]-_axisSpacing, stream->height);
-					else
+					}
+					else {
 						rect = QRect(0, stream->posY, _margins[0]-_axisSpacing, stream->height);
+					}
 
 					drawVerticalAxis(painter, axisLower, axisUpper, stream->axisSpacing,
 					                 rect, tickLength, stream->axisLabel,
@@ -2935,13 +2950,17 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 			if ( customBackgroundColor.isValid() )
 				painter.fillRect(_canvasRect, blend(bg, customBackgroundColor));
 
-			if ( !isDirty ) break;
+			if ( !isDirty ) {
+				break;
+			}
 
 			// Second pass draws all records
 			slot = 0;
 			for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it, ++slot ) {
-				Stream *stream = (*it)->visible?*it:nullptr;
-				if ( stream == nullptr ) continue;
+				Stream *stream = (*it)->visible ? *it : nullptr;
+				if ( !stream ) {
+					continue;
+				}
 
 				for ( int i = 0; i < 2; ++i ) {
 					int j = i ^ (stream->filtering?1:0);
@@ -3656,7 +3675,7 @@ void RecordWidget::drawActiveCursor(QPainter &painter, int x, int y) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::mousePressEvent(QMouseEvent *event) {
-	if ( event->button() == Qt::MidButton ) {
+	if ( event->button() == Qt::MiddleButton ) {
 		emit clickedOnTime(unmapTime(event->x()));
 		return;
 	}
