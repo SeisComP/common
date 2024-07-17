@@ -51,6 +51,7 @@
 #include <seiscomp/datamodel/configstation.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/version.h>
+#include <seiscomp/processing/amplitudeprocessor.h>
 #include <seiscomp/processing/magnitudeprocessor.h>
 
 #include <seiscomp/io/archive/xmlarchive.h>
@@ -1071,6 +1072,27 @@ bool Application::init() {
 		return false;
 	}
 
+	StringVector amplitudeAliases;
+	try {
+		amplitudeAliases = configGetStrings("amplitudes.aliases");
+	}
+	catch ( ... ) {}
+
+	for ( string &item : amplitudeAliases ) {
+		StringVector toks;
+		Core::split(toks, item, ":", false);
+		if ( toks.size() != 2 ) {
+			SEISCOMP_ERROR("amplitude alias item must be of format <alias>:<source>");
+			return false;
+		}
+
+		if ( !Processing::AmplitudeProcessor::CreateAlias(toks[0], toks[1]) ) {
+			return false;
+		}
+
+		SEISCOMP_DEBUG("Create amplitude alias %s <- %s", toks[0], toks[1]);
+	}
+
 	for ( string &item : _settings.processing.magnitudeAliases ) {
 		StringVector toks;
 		Core::split(toks, item, ":", false);
@@ -1082,6 +1104,8 @@ bool Application::init() {
 		if ( !Processing::MagnitudeProcessor::CreateAlias(toks[0], toks[1], toks.size() > 2 ? toks[2] : string()) ) {
 			return false;
 		}
+
+		SEISCOMP_DEBUG("Create magnitude alias %s <- %s", toks[0], toks[1]);
 	}
 
 	if ( isLoadRegionsEnabled() ) {
@@ -1516,6 +1540,7 @@ void Application::done() {
 	Inventory::Reset();
 	ConfigDB::Reset();
 	Processing::MagnitudeProcessor::RemoveAllAliases();
+	Processing::AmplitudeProcessor::RemoveAllAliases();
 
 	System::Application::done();
 
