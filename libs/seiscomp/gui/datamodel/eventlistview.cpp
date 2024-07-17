@@ -168,13 +168,13 @@ do {\
 		setText(config.columnMap[COL_AGENCY], VALUE.c_str());\
 		auto it = SCScheme.colors.agencies.find(VALUE);\
 		if ( it != SCScheme.colors.agencies.end() )\
-			setData(config.columnMap[COL_AGENCY], Qt::TextColorRole, it.value());\
+			setData(config.columnMap[COL_AGENCY], Qt::ForegroundRole, it.value());\
 		else \
-			setData(config.columnMap[COL_AGENCY], Qt::TextColorRole, QVariant());\
+			setData(config.columnMap[COL_AGENCY], Qt::ForegroundRole, QVariant());\
 	}\
 	catch ( Seiscomp::Core::ValueException& ) {\
 		setText(config.columnMap[COL_AGENCY], QString());\
-		setData(config.columnMap[COL_AGENCY], Qt::TextColorRole, QVariant());\
+		setData(config.columnMap[COL_AGENCY], Qt::ForegroundRole, QVariant());\
 	}\
 } while (0)
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -867,7 +867,7 @@ class TreeItem : public QTreeWidgetItem {
 		bool isEnabled() const { return _enabled; }
 
 		QVariant data(int column, int role) const override {
-			if ( !_enabled && role == Qt::TextColorRole ) {
+			if ( !_enabled && role == Qt::ForegroundRole ) {
 				return config.disabledColor;
 			}
 			return QTreeWidgetItem::data(column, role);

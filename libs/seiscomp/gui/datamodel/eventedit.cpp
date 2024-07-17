@@ -381,13 +381,13 @@ do {\
 		item->setText(COL, VALUE.c_str());\
 		auto it = SCScheme.colors.agencies.find(VALUE);\
 		if ( it != SCScheme.colors.agencies.end() )\
-			item->setData(COL, Qt::TextColorRole, it.value());\
+			item->setData(COL, Qt::ForegroundRole, it.value());\
 		else \
-			item->setData(COL, Qt::TextColorRole, QVariant());\
+			item->setData(COL, Qt::ForegroundRole, QVariant());\
 	}\
 	catch ( Seiscomp::Core::ValueException& ) {\
 		item->setText(COL, QString());\
-		item->setData(COL, Qt::TextColorRole, QVariant());\
+		item->setData(COL, Qt::ForegroundRole, QVariant());\
 	}\
 } while (0)
 

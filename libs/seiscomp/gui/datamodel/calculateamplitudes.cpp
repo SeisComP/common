@@ -956,7 +956,7 @@ void CalculateAmplitudes::setError(int row, QString text) {
 	_ui.table->setCellWidget(row, 3, nullptr);
 
 	QTableWidgetItem *itemState = new QTableWidgetItem(text);
-	itemState->setData(Qt::TextColorRole, QVariant::fromValue(QColor(Qt::red)));
+	itemState->setData(Qt::ForegroundRole, QVariant::fromValue(QColor(Qt::red)));
 	// Signal an error state
 	itemState->setData(Qt::UserRole, 1);
 	itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -970,7 +970,7 @@ void CalculateAmplitudes::setInfo(int row, QString text) {
 	_ui.table->setCellWidget(row, 3, nullptr);
 
 	QTableWidgetItem *itemState = new QTableWidgetItem(text);
-	itemState->setData(Qt::TextColorRole, QVariant::fromValue(palette().color(QPalette::Highlight)));
+	itemState->setData(Qt::ForegroundRole, QVariant::fromValue(palette().color(QPalette::Highlight)));
 	// Signal an info state
 	itemState->setData(Qt::UserRole, 2);
 	itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);

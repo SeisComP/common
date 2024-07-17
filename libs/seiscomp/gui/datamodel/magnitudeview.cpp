@@ -786,7 +786,7 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 		}
 	}
 	/*
-	else if ( role == Qt::TextColorRole ) {
+	else if ( role == Qt::ForegroundRole ) {
 		switch ( index.column() ) {
 			// Residual
 			case RESIDUAL:
@@ -2200,7 +2200,7 @@ void MagnitudeView::computeMagnitudes() {
 			itemType->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 			QTableWidgetItem *itemState = new QTableWidgetItem(s.status.toString());
 			if ( s.warning ) {
-				itemState->setData(Qt::TextColorRole, orange);
+				itemState->setData(Qt::ForegroundRole, orange);
 			}
 			itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
