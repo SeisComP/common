@@ -31,9 +31,20 @@ namespace IO {
 
 class RecordInput;
 
-class SC_SYSTEM_CORE_API RecordIterator : public std::iterator<std::input_iterator_tag, Record *> {
+class SC_SYSTEM_CORE_API RecordIterator {
 	// ------------------------------------------------------------------
-	//  Xstruction
+	//  Iterator types
+	// ------------------------------------------------------------------
+	public:
+		using iterator_category = std::input_iterator_tag;
+		using value_type = Record*;
+		using difference_type = std::ptrdiff_t;
+		using pointer = Record**;
+		using reference = Record*&;
+
+
+	// ------------------------------------------------------------------
+	//  X'truction
 	// ------------------------------------------------------------------
 	public:
 		//! C'tor
