@@ -2094,7 +2094,7 @@ void RecordWidget::setAmplAutoScaleEnabled(bool enabled) {
 	_useFixedAmplitudeRange = !enabled;
 	setDirty();
 	update();
-	
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2460,6 +2460,11 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
 				double axisLower = stream->traces[frontIndex].fyMin,
 				       axisUpper = stream->traces[frontIndex].fyMax;
+
+				if ( axisLower == axisUpper ) {
+					axisLower -= 1;
+					axisUpper += 1;
+				}
 
 				if ( _tracePaintOffset ) {
 					if ( _tracePaintOffset > 0 ) {
