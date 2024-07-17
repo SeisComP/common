@@ -66,7 +66,34 @@ namespace Processing {
 IMPLEMENT_SC_ABSTRACT_CLASS_DERIVED(AmplitudeProcessor, TimeWindowProcessor, "AmplitudeProcessor");
 
 
+class AmplitudeProcessorAliasFactory : public Core::Generic::InterfaceFactoryInterface<AmplitudeProcessor> {
+	public:
+		AmplitudeProcessorAliasFactory(
+			const std::string &service,
+			const Core::Generic::InterfaceFactoryInterface<AmplitudeProcessor> *source
+		)
+		: Core::Generic::InterfaceFactoryInterface<AmplitudeProcessor>(service.c_str())
+		, _source(source) {}
+
+		AmplitudeProcessor *create() const {
+			auto proc = _source->create();
+			if ( proc->type() != serviceName() ) {
+				proc->_type = serviceName();
+			}
+			return proc;
+		}
+
+	private:
+		const Core::Generic::InterfaceFactoryInterface<AmplitudeProcessor> *_source;
+};
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
+
 
 typedef vector<AmplitudeProcessor::Locale> Regionalization;
 
@@ -77,7 +104,70 @@ class TypeSpecificRegionalization : public Core::BaseObject {
 		Regionalization  regionalization;
 };
 
-typedef map<string, TypeSpecificRegionalizationPtr> RegionalizationRegistry;
+
+class AliasFactories : public std::vector<AmplitudeProcessorAliasFactory*> {
+	public:
+		~AliasFactories() {
+			for ( auto f : *this ) {
+				delete f;
+			}
+		}
+
+		bool createAlias(const std::string &aliasType,
+		                 const std::string &sourceType) {
+			auto sourceFactory = AmplitudeProcessorFactory::Find(sourceType);
+			if ( !sourceFactory ) {
+				SEISCOMP_ERROR("alias: amplitude source factory '%s' does not exist",
+				               sourceType.c_str());
+				return false;
+			}
+
+			auto factory = AmplitudeProcessorFactory::Find(aliasType);
+			if ( factory ) {
+				SEISCOMP_ERROR("alias: amplitude alias type '%s' is already registered",
+				               aliasType.c_str());
+				return false;
+			}
+
+			push_back(
+				new AmplitudeProcessorAliasFactory(
+					aliasType, sourceFactory
+				)
+			);
+
+			return true;
+		}
+
+		bool removeAlias(const std::string &aliasType) {
+			auto factory = AmplitudeProcessorFactory::Find(aliasType);
+			if ( !factory ) {
+				SEISCOMP_ERROR("alias: amplitude alias type '%s' does not exist",
+				               aliasType.c_str());
+				return false;
+			}
+
+			delete factory;
+
+			auto it = find(begin(), end(), factory);
+			if ( it != end() ) {
+				erase(it);
+			}
+
+			return true;
+		}
+
+		void clear() {
+			for ( auto f : *this ) {
+				delete f;
+			}
+			std::vector<AmplitudeProcessorAliasFactory*>::clear();
+		}
+};
+
+
+using RegionalizationRegistry = map<string, TypeSpecificRegionalizationPtr>;
+
+AliasFactories aliasFactories;
 RegionalizationRegistry regionalizationRegistry;
 mutex regionalizationRegistryMutex;
 
@@ -2482,6 +2572,33 @@ void AmplitudeProcessor::writeData() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool AmplitudeProcessor::CreateAlias(const std::string &aliasType,
+                                     const std::string &sourceType) {
+	return aliasFactories.createAlias(aliasType, sourceType);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool AmplitudeProcessor::RemoveAlias(const std::string &aliasType) {
+	return aliasFactories.removeAlias(aliasType);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeProcessor::RemoveAllAliases() {
+	aliasFactories.clear();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+}
 }
