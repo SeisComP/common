@@ -1437,8 +1437,27 @@ bool Application::validateParameters() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::parseCommandLine() {
-	return commandline().parse(_argc, _argv, [](const string &arg) {
-		return !arg.compare(0, 2, "--") && arg.find("=", 2) != string::npos;
+	return commandline().parse(_argc, _argv, [this](const string &arg) {
+		bool isCfgParam = !arg.compare(0, 2, "--");
+		if ( !isCfgParam ) {
+			// Option does not start with double dash
+			return false;
+		}
+
+		size_t pSep = arg.find("=", 2);
+		if ( pSep == string::npos ) {
+			// Option is not of format --param=value
+			return false;
+		}
+
+		string param = arg.substr(2, pSep - 2);
+		string value = arg.substr(pSep + 1);
+		vector<string> values;
+
+		_configuration.eval(value, values);
+		_configuration.setStrings(param, values);
+
+		return true;
 	});
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1474,11 +1493,12 @@ bool Application::initConfiguration() {
 	}
 
 	_settingsLinker.reset();
-
 	_settingsLinker.proc().get(this);
-	for ( list<AbstractSettings*>::iterator it = _settings.begin();
-	      it != _settings.end(); ++it )
-		(*it)->accept(_settingsLinker);
+
+	for ( auto &item : _settings ) {
+		item->accept(_settingsLinker);
+	}
+
 	if ( !_settingsLinker ) {
 		cerr << _settingsLinker.lastError() << endl;
 		return false;
