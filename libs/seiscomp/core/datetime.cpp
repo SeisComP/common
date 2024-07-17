@@ -379,10 +379,13 @@ TimeSpan& TimeSpan::operator=(long t) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TimeSpan& TimeSpan::operator=(double t) {
-	if( t > MaxTime || t < MinTime )
+	if ( t > MaxTime || t < MinTime ) {
 		throw Core::OverflowException("TimeSpan::operator=(): double doesn't fit into int");
-	_timeval.tv_sec = (long)t;
-	_timeval.tv_usec = (long)((t-_timeval.tv_sec)*MICROS + 0.5);
+	}
+
+	_timeval.tv_sec = static_cast<long>(t);
+	double us = std::round((t - _timeval.tv_sec) * MICROS);
+	_timeval.tv_usec = static_cast<long>(us);
 
 	return *this;
 }
@@ -662,10 +665,13 @@ Time& Time::operator=(time_t t) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Time& Time::operator=(double t) {
-	if( t > MaxTime || t < MinTime )
-		throw Core::OverflowException("Time::operator=(): double doesn't fit into int");
-	_timeval.tv_sec = (long)t;
-	_timeval.tv_usec = (long)((t-(double)_timeval.tv_sec)*MICROS + 0.5);
+	if ( t > MaxTime || t < MinTime ) {
+		throw Core::OverflowException("TimeSpan::operator=(): double doesn't fit into int");
+	}
+
+	_timeval.tv_sec = static_cast<long>(t);
+	double us = std::round((t - _timeval.tv_sec) * MICROS);
+	_timeval.tv_usec = static_cast<long>(us);
 
 	return *this;
 }
