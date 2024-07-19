@@ -25,7 +25,11 @@
 #include <seiscomp/processing/regions.h>
 #include <seiscomp/geo/feature.h>
 #include <seiscomp/math/mean.h>
+#include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/chainfilter.h>
 #include <seiscomp/math/filter/iirdifferentiate.h>
+#include <seiscomp/math/filter/iirintegrate.h>
+#include <seiscomp/math/filter/rmhp.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/interfacefactory.ipp>
 #include <seiscomp/system/environment.h>
@@ -1925,6 +1929,55 @@ void AmplitudeProcessor::process(const Record *record) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeProcessor::initFilter(double fsamp) {
+	if ( _enableResponses ) {
+		TimeWindowProcessor::initFilter(fsamp);
+		return;
+	}
+
+	SignalUnit unit;
+	// Valid value already checked in setup()
+	unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str());
+
+	Filter *filter{nullptr};
+	Math::Filtering::ChainFilter<double> *chain{nullptr};
+
+	if ( unit == Meter ) {
+		SEISCOMP_DEBUG("Add derivation of data for amplitude computation");
+		filter = new Math::Filtering::IIRDifferentiate<double>;
+	}
+	else if ( unit == MeterPerSecondSquared ) {
+		SEISCOMP_DEBUG("Add integration of data for amplitude computation");
+		if ( _config.respMinFreq > 0 ) {
+			chain = new Math::Filtering::ChainFilter<double>;
+			chain->add(new Math::Filtering::RunningMeanHighPass<double>(1.0 / _config.respMinFreq));
+		}
+		filter = new Math::Filtering::IIRIntegrate<double>;
+	}
+
+	if ( filter ) {
+		if ( _stream.filter || chain ) {
+			if ( !chain ) {
+				chain = new Math::Filtering::ChainFilter<double>;
+			}
+			chain->add(filter);
+			if ( _stream.filter ) {
+				chain->add(_stream.filter);
+			}
+			filter = chain;
+		}
+
+		_stream.filter = filter;
+	}
+
+	TimeWindowProcessor::initFilter(fsamp);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor::handleGap(Filter *, const Core::TimeSpan &span,
                                    double, double, size_t) {
 	if ( _stream.dataTimeWindow.endTime()+span < timeWindow().startTime() ) {
@@ -1994,44 +2047,6 @@ void AmplitudeProcessor::prepareData(DoubleArray &data) {
 		if ( !deconvolveData(sensor->response(), _data, intSteps) ) {
 			setStatus(DeconvolutionFailed, 0);
 			return;
-		}
-	}
-	else {
-		// If the sensor is known then check the unit and skip
-		// non velocity streams. Otherwise simply use the data
-		// to be compatible to the old version. This will be
-		// changed in the future and checked more strictly.
-		if ( sensor ) {
-			SignalUnit unit;
-			if ( !unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str()) ) {
-				// Invalid unit string
-				setStatus(IncompatibleUnit, 4);
-				return;
-			}
-
-			switch ( unit ) {
-				case Meter:
-					if ( _enableUpdates ) {
-						// Updates with differentiation are not yet supported.
-						setStatus(IncompatibleUnit, 5);
-						return;
-					}
-
-					// Derive to m/s
-					{
-						Math::Filtering::IIRDifferentiate<double> diff;
-						diff.setSamplingFrequency(_stream.fsamp);
-						diff.apply(data.size(), data.typedData());
-					}
-					break;
-
-				case MeterPerSecond:
-					break;
-
-				default:
-					setStatus(IncompatibleUnit, 3);
-					return;
-			}
 		}
 	}
 }
@@ -2298,6 +2313,15 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 
 	try { _config.iaspeiAmplitudes = cfg->getBool("amplitudes.iaspei"); }
 	catch ( ... ) {}
+
+	if ( _usedComponent >= Vertical && _usedComponent <= SecondHorizontal ) {
+		SignalUnit unit;
+		if ( !unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str()) ) {
+			// Invalid unit string
+			setStatus(IncompatibleUnit, 0);
+			return false;
+		}
+	}
 
 	return true;
 }

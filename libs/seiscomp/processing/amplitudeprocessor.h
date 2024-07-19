@@ -420,9 +420,11 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 
 		virtual void process(const Record *record);
 
-		virtual bool handleGap(Filter *filter, const Core::TimeSpan&,
-		                       double lastSample, double nextSample,
-		                       size_t missingSamples) override;
+		void initFilter(double fsamp) override;
+
+		bool handleGap(Filter *filter, const Core::TimeSpan&,
+		               double lastSample, double nextSample,
+		               size_t missingSamples) override;
 
 		//! Method to prepare the available data just before the noise
 		//! and amplitude calculation takes place. This method can be
