@@ -1499,6 +1499,10 @@ class Application(seiscomp.system.SystemApplication):
         r"""handleTimeout(Application self)"""
         return _client.Application_handleTimeout(self)
 
+    def handleSOH(self):
+        r"""handleSOH(Application self)"""
+        return _client.Application_handleSOH(self)
+
     def handleClose(self):
         r"""handleClose(Application self) -> bool"""
         return _client.Application_handleClose(self)
@@ -1784,6 +1788,10 @@ class StreamApplication(Application):
     def handleTimeout(self):
         r"""handleTimeout(StreamApplication self)"""
         return _client.StreamApplication_handleTimeout(self)
+
+    def handleSOH(self):
+        r"""handleSOH(StreamApplication self)"""
+        return _client.StreamApplication_handleSOH(self)
 
     def handleClose(self):
         r"""handleClose(StreamApplication self) -> bool"""

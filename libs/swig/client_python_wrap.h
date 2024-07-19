@@ -131,6 +131,10 @@ public:
     virtual void handleTimeoutSwigPublic() {
       Seiscomp::Client::Application::handleTimeout();
     }
+    virtual void handleSOH();
+    virtual void handleSOHSwigPublic() {
+      Seiscomp::Client::Application::handleSOH();
+    }
     virtual bool handleClose();
     virtual bool handleCloseSwigPublic() {
       return Seiscomp::Client::Application::handleClose();
@@ -201,7 +205,7 @@ private:
       return method;
     }
 private:
-    mutable swig::SwigVar_PyObject vtable[41];
+    mutable swig::SwigVar_PyObject vtable[42];
 #endif
 
 };
@@ -323,6 +327,10 @@ public:
     virtual void handleTimeoutSwigPublic() {
       Seiscomp::Client::Application::handleTimeout();
     }
+    virtual void handleSOH();
+    virtual void handleSOHSwigPublic() {
+      Seiscomp::Client::Application::handleSOH();
+    }
     virtual bool handleClose();
     virtual bool handleCloseSwigPublic() {
       return Seiscomp::Client::Application::handleClose();
@@ -402,7 +410,7 @@ private:
       return method;
     }
 private:
-    mutable swig::SwigVar_PyObject vtable[42];
+    mutable swig::SwigVar_PyObject vtable[43];
 #endif
 
 };
