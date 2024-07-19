@@ -3731,22 +3731,46 @@ SWIGINTERN PyObject *Seiscomp_Array_numpy(Seiscomp::Array *self){
 		int type = NPY_CHAR;
 		switch ( self->dataType() ) {
 			case Seiscomp::Array::CHAR:
+				#if NPY_ABI_VERSION >= 0x02000000
 				type = NPY_INT8;
+				#else
+				type = PyArray_CHAR;
+				#endif
 				break;
 			case Seiscomp::Array::INT:
+				#if NPY_ABI_VERSION >= 0x02000000
 				type = NPY_INT32;
+				#else
+				type = PyArray_INT;
+				#endif
 				break;
 			case Seiscomp::Array::FLOAT:
+				#if NPY_ABI_VERSION >= 0x02000000
 				type = NPY_FLOAT32;
+				#else
+				type = PyArray_FLOAT;
+				#endif
 				break;
 			case Seiscomp::Array::DOUBLE:
+				#if NPY_ABI_VERSION >= 0x02000000
 				type = NPY_FLOAT64;
+				#else
+				type = PyArray_DOUBLE;
+				#endif
 				break;
 			case Seiscomp::Array::COMPLEX_FLOAT:
+				#if NPY_ABI_VERSION >= 0x02000000
 				type = NPY_CFLOAT;
+				#else
+				type = PyArray_CFLOAT;
+				#endif
 				break;
 			case Seiscomp::Array::COMPLEX_DOUBLE:
+				#if NPY_ABI_VERSION >= 0x02000000
 				type = NPY_CDOUBLE;
+				#else
+				type = PyArray_CDOUBLE;
+				#endif
 				break;
 			default:
 				SWIG_exception(SWIG_TypeError, "unsupported array type");
@@ -3764,28 +3788,44 @@ SWIGINTERN PyObject *Seiscomp_Array_setNumpy(Seiscomp::Array *self,PyObject *obj
 		PyArrayObject *arr;
 		switch ( self->dataType() ) {
 			case Seiscomp::Array::CHAR:
+				#if NPY_ABI_VERSION >= 0x02000000
 				arr = (PyArrayObject*) PyArray_ContiguousFromObject(obj, NPY_INT8, 1, 1);
+				#else
+				arr = (PyArrayObject*) PyArray_ContiguousFromObject(obj, PyArray_CHAR, 1, 1);
+				#endif
 				if ( arr == NULL )
 					return PyErr_Format(PyExc_TypeError,
 						"Unable to convert object to 1-D char array");
 				static_cast<Seiscomp::CharArray*>(self)->setData(arr->dimensions[0],(char *)(arr->data));
 				break;
 			case Seiscomp::Array::INT:
+				#if NPY_ABI_VERSION >= 0x02000000
 				arr = (PyArrayObject*) PyArray_ContiguousFromObject(obj, NPY_INT32, 1, 1);
+				#else
+				arr = (PyArrayObject*) PyArray_ContiguousFromObject(obj, PyArray_INT, 1, 1);
+				#endif
 				if ( arr == NULL )
 					return PyErr_Format(PyExc_TypeError,
 						"Unable to convert object to 1-D int array");
 				static_cast<Seiscomp::IntArray*>(self)->setData(arr->dimensions[0],(int *)(arr->data));
 				break;
 			case Seiscomp::Array::FLOAT:
+				#if NPY_ABI_VERSION >= 0x02000000
 				arr = (PyArrayObject*) PyArray_ContiguousFromObject(obj, NPY_FLOAT32, 1, 1);
+				#else
+				arr = (PyArrayObject*) PyArray_ContiguousFromObject(obj, PyArray_FLOAT, 1, 1);
+				#endif
 				if ( arr == NULL )
 					return PyErr_Format(PyExc_TypeError,
 						"Unable to convert object to 1-D float array");
 				static_cast<Seiscomp::FloatArray*>(self)->setData(arr->dimensions[0],(float *)(arr->data));
 				break;
 			case Seiscomp::Array::DOUBLE:
+				#if NPY_ABI_VERSION >= 0x02000000
 				arr = (PyArrayObject*) PyArray_ContiguousFromObject(obj, NPY_FLOAT64, 1, 1);
+				#else
+				arr = (PyArrayObject*) PyArray_ContiguousFromObject(obj, PyArray_DOUBLE, 1, 1);
+				#endif
 				if ( arr == NULL )
 					return PyErr_Format(PyExc_TypeError,
 						"Unable to convert object to 1-D double array");
