@@ -2799,7 +2799,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				stream->height = streamHeight;
 
 				if ( stream->hasCustomBackgroundColor )
-					painter.fillRect(0,stream->posY,_canvasRect.width(),stream->height, blend(bg, stream->customBackgroundColor));
+					painter.fillRect(0, stream->posY, _canvasRect.width(), stream->height, blend(bg, stream->customBackgroundColor));
 
 				if ( (stream->records[Stream::Filtered] && (stream->filtering || _showAllRecords) && stream->traces[Stream::Filtered].dirty) ||
 					(stream->records[Stream::Raw] && (!stream->filtering || _showAllRecords) && stream->traces[Stream::Raw].dirty) ) {
@@ -2858,8 +2858,9 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				}
 			}
 
-			if ( customBackgroundColor.isValid() )
-				painter.fillRect(_canvasRect, blend(bg, customBackgroundColor));
+			if ( customBackgroundColor.isValid() ) {
+				painter.fillRect(_canvasRect.translated(-_canvasRect.topLeft()), blend(bg, customBackgroundColor));
+			}
 
 			if ( !isDirty ) break;
 
@@ -2927,8 +2928,9 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				}
 			}
 
-			if ( customBackgroundColor.isValid() )
-				painter.fillRect(_canvasRect, blend(bg, customBackgroundColor));
+			if ( customBackgroundColor.isValid() ) {
+				painter.fillRect(_canvasRect.translated(-_canvasRect.topLeft()), blend(bg, customBackgroundColor));
+			}
 
 			if ( !isDirty ) break;
 
