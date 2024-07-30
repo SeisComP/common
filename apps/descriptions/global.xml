@@ -399,6 +399,24 @@
 				<description>
 				Parameters for amplitude measurements.
 				</description>
+				<parameter name="aliases" type="list:string">
+					<description>
+					Definition of amplitude aliases for deriving new amplitude
+					types from an existing amplitude. Separate
+					multiple entries by comma.
+
+					Format:
+
+					NewType:OriginalAmplitudeType
+
+					Examples for deriving an amplitude of new type ABC from MLv:
+
+					ABC:MLv
+
+					Alias amplitudes can be configured like any other amplitude
+					and used for any alias magnitude.
+					</description>
+				</parameter>
 				<parameter name="iaspei" type="boolean" default="false">
 					<description>
 					Compute ML peak-to-trough and mb amplitudes according to
@@ -468,7 +486,8 @@
 
 					ABC:MLv
 
-					Alias magnitudes can be configured like any other magnitude.
+					Alias magnitudes can be configured like any other magnitude
+					and used together with any original or alias amplitudes.
 					</description>
 				</parameter>
 				<struct type="GlobalMagnitudeProfile" title="Magnitude-type profile for regionalization and Mw mapping" aliases="config:magnitudes.aliases">
