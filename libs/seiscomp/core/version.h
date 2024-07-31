@@ -52,9 +52,11 @@ namespace Core {
    - Added Seiscomp::Processing::AmplitudeProcessor::parameter
    - Made Seiscomp::IO::DatabaseInterface::escape a const method
    - Increased TILESTORE_API version to 5
+   - Added Seiscomp::Processing::WaveformProcessor::Status enumeration PeriodOutOfRange
+
+ "16.2.0"   0x100200
    - Added Seiscomp::DataModel::PublicObject::Lock
    - Added Seiscomp::DataModel::PublicObject::UnLock
-   - Added Seiscomp::Processing::WaveformProcessor::Status enumeration PeriodOutOfRange
 
  "16.1.0"   0x100100
    - Added Seiscomp::DataModel::numberOfComponents
