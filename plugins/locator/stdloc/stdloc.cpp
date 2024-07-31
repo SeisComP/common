@@ -1594,7 +1594,7 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		// Check for completion
 		//
 		if ( _currentProfile.octTree.maxIterations > 0 &&
-		     processedCells.size() >= _currentProfile.octTree.maxIterations ) {
+		     processedCells.size() >= static_cast<size_t>(_currentProfile.octTree.maxIterations) ) {
 			SEISCOMP_DEBUG("Maximum number of iteration reached");
 			break;
 		}
