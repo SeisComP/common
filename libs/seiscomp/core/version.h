@@ -31,7 +31,7 @@ namespace Seiscomp {
 namespace Core {
 
 
-/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(16, 1, 0)) */
+/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(16, 2, 0)) */
 #define SC_API_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 
