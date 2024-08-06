@@ -1547,7 +1547,7 @@
 							Use double quotes '&quot;' around the string if it contains spaces.
 							</description>
 						</parameter>
-						<parameter name="blacklist" type="list:string" default="&quot;not existing&quot;">
+						<parameter name="blacklist" type="list:string" default="&quot;not existing&quot;,&quot;other&quot;">
 							<description>
 							List of event type to be hidden if the &quot;Hide other/fake events&quot;
 							option is ticked.
