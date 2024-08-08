@@ -21,8 +21,8 @@
  ***************************************************************************/
 
 
-#ifndef __SEISOMP_SERVICES_DATABASE_POSTGRESQL_INTERFACE_H__
-#define __SEISOMP_SERVICES_DATABASE_POSTGRESQL_INTERFACE_H__
+#ifndef SEISOMP_SERVICES_DATABASE_POSTGRESQL_INTERFACE_H
+#define SEISOMP_SERVICES_DATABASE_POSTGRESQL_INTERFACE_H
 
 #include <seiscomp/io/database.h>
 #include <libpq-fe.h>
@@ -39,8 +39,8 @@ class PostgreSQLDatabase : public Seiscomp::IO::DatabaseInterface {
 	//  Xstruction
 	// ------------------------------------------------------------------
 	public:
-		PostgreSQLDatabase();
-		~PostgreSQLDatabase();
+		PostgreSQLDatabase() = default;
+		~PostgreSQLDatabase() override;
 
 
 	// ------------------------------------------------------------------
@@ -77,23 +77,23 @@ class PostgreSQLDatabase : public Seiscomp::IO::DatabaseInterface {
 	// ------------------------------------------------------------------
 	protected:
 		bool handleURIParameter(const std::string &name,
-		                        const std::string &value);
+		                        const std::string &value) override;
 
-		bool open();
+		bool open() override;
 
 
 	// ------------------------------------------------------------------
 	//  Implementation
 	// ------------------------------------------------------------------
 	private:
-		PGconn   *_handle;
-		PGresult *_result;
-		bool      _debug;
+		PGconn   *_handle{nullptr};
+		PGresult *_result{nullptr};
+		bool      _debug{false};
 		int       _row;
 		int       _nRows;
 		int       _fieldCount;
-		void     *_unescapeBuffer;
-		size_t    _unescapeBufferSize;
+		void     *_unescapeBuffer{nullptr};
+		size_t    _unescapeBufferSize{0};
 };
 
 

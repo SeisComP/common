@@ -26,12 +26,11 @@
 #include <seiscomp/core/plugin.h>
 #include "postgresqldatabaseinterface.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 
 
-namespace Seiscomp {
-namespace Database {
+namespace Seiscomp::Database {
 
 
 IMPLEMENT_SC_CLASS_DERIVED(PostgreSQLDatabase,
@@ -39,29 +38,20 @@ IMPLEMENT_SC_CLASS_DERIVED(PostgreSQLDatabase,
                            "postgresql_database_interface");
 
 REGISTER_DB_INTERFACE(PostgreSQLDatabase, "postgresql");
-ADD_SC_PLUGIN("PostgreSQL database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 0, 11, 0)
+ADD_SC_PLUGIN("PostgreSQL database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 0, 12, 0)
 
 
 #define XFREE(ptr) \
 	do {\
 		if ( ptr ) {\
 			PQfreemem(ptr);\
-			ptr = NULL;\
+			ptr = nullptr;\
 			ptr##Size = 0;\
 		}\
 	} while (0)
 
 
 #define PG_TYPE_BYTEA 17
-
-
-PostgreSQLDatabase::PostgreSQLDatabase()
-: _handle(NULL)
-, _result(NULL)
-, _debug(false)
-, _unescapeBuffer(NULL)
-, _unescapeBufferSize(0)
-{}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -79,11 +69,12 @@ PostgreSQLDatabase::~PostgreSQLDatabase() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PostgreSQLDatabase::handleURIParameter(const std::string &name,
                                             const std::string &value) {
-	if ( !DatabaseInterface::handleURIParameter(name, value) ) return false;
+	if ( !DatabaseInterface::handleURIParameter(name, value) ) {
+		return false;
+	}
 
-	if ( name == "debug" ) {
-		if ( value != "0" && value != "false" )
-			_debug = true;
+	if ( name == "debug" && value != "0" && value != "false" ) {
+		_debug = true;
 	}
 
 	return true;
@@ -96,12 +87,13 @@ bool PostgreSQLDatabase::handleURIParameter(const std::string &name,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PostgreSQLDatabase::open() {
 	std::stringstream ss;
-	if ( _port )
+	if ( _port ) {
 		ss << _port;
+	}
 
 	_handle = PQsetdbLogin(_host.c_str(), ss.str().c_str(),
-	                       NULL,
-	                       NULL,
+	                       nullptr,
+	                       nullptr,
 	                       _database.c_str(),
 	                       _user.c_str(),
 	                       _password.c_str());
@@ -145,11 +137,11 @@ bool PostgreSQLDatabase::connect(const char *con) {
 void PostgreSQLDatabase::disconnect() {
 	if ( _result ) {
 		PQclear(_result);
-		_result = NULL;
+		_result = nullptr;
 	}
 
 	PQfinish(_handle);
-	_handle = NULL;
+	_handle = nullptr;
 
 	XFREE(_unescapeBuffer);
 }
@@ -160,12 +152,18 @@ void PostgreSQLDatabase::disconnect() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PostgreSQLDatabase::isConnected() const {
-	if ( _handle == NULL ) return false;
+	if ( !_handle ) {
+		return false;
+	}
+
 	ConnStatusType stat = PQstatus(_handle);
-	if ( stat == CONNECTION_OK ) return true;
+	if ( stat == CONNECTION_OK ) {
+		return true;
+	}
 
 	SEISCOMP_ERROR("connection bad (%d) -> reconnect", static_cast<int>(stat));
 	PQreset(_handle);
+
 	return PQstatus(_handle) == CONNECTION_OK;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -202,18 +200,21 @@ void PostgreSQLDatabase::rollback() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PostgreSQLDatabase::execute(const char* command) {
-	if ( !isConnected() || command == NULL ) return false;
+	if ( !isConnected() || !command ) {
+		return false;
+	}
 
-	if ( _debug )
+	if ( _debug ) {
 		SEISCOMP_DEBUG("[postgresql-execute] %s", command);
+	}
 
-	PGresult *result = PQexec(_handle, command);
-	if ( result == NULL ) {
+	auto *result = PQexec(_handle, command);
+	if ( !result ) {
 		SEISCOMP_ERROR("execute(\"%s\"): %s", command, PQerrorMessage(_handle));
 		return false;
 	}
 
-	ExecStatusType stat = PQresultStatus(result);
+	auto stat = PQresultStatus(result);
 	if ( stat != PGRES_TUPLES_OK && stat != PGRES_COMMAND_OK ) {
 		SEISCOMP_ERROR("QUERY/COMMAND failed");
 		SEISCOMP_ERROR("  %s", command);
@@ -233,7 +234,10 @@ bool PostgreSQLDatabase::execute(const char* command) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PostgreSQLDatabase::beginQuery(const char* query) {
-	if ( !isConnected() || query == NULL ) return false;
+	if ( !isConnected() || !query ) {
+		return false;
+	}
+
 	if ( _result ) {
 		SEISCOMP_ERROR("beginQuery: nested queries are not supported");
 		//SEISCOMP_DEBUG("last successfull query: %s", _lastQuery.c_str());
@@ -242,22 +246,23 @@ bool PostgreSQLDatabase::beginQuery(const char* query) {
 
 	endQuery();
 
-	if ( _debug )
+	if ( _debug ) {
 		SEISCOMP_DEBUG("[postgresql-query] %s", query);
+	}
 
 	_result = PQexec(_handle, query);
-	if ( _result == NULL ) {
+	if ( !_result ) {
 		SEISCOMP_ERROR("query(\"%s\"): %s", query, PQerrorMessage(_handle));
 		return false;
 	}
 
-	ExecStatusType stat = PQresultStatus(_result);
+	auto stat = PQresultStatus(_result);
 	if ( stat != PGRES_TUPLES_OK && stat != PGRES_COMMAND_OK ) {
 		SEISCOMP_ERROR("QUERY/COMMAND failed");
 		SEISCOMP_ERROR("  %s", query);
 		SEISCOMP_ERROR("  %s", PQerrorMessage(_handle));
 		PQclear(_result);
-		_result = NULL;
+		_result = nullptr;
 		return false;
 	}
 
@@ -277,7 +282,7 @@ void PostgreSQLDatabase::endQuery() {
 	_nRows = -1;
 	if ( _result ) {
 		PQclear(_result);
-		_result = NULL;
+		_result = nullptr;
 		XFREE(_unescapeBuffer);
 	}
 }
@@ -288,10 +293,11 @@ void PostgreSQLDatabase::endQuery() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 IO::DatabaseInterface::OID PostgreSQLDatabase::lastInsertId(const char* table) {
-	if ( !beginQuery((std::string("select currval('") + table + "_seq')").c_str()) )
+	if ( !beginQuery((std::string("select currval('") + table + "_seq')").c_str()) ) {
 		return 0;
+	}
 
-	char* value = PQgetvalue(_result, 0, 0);
+	auto *value = PQgetvalue(_result, 0, 0);
 
 	endQuery();
 
@@ -304,15 +310,17 @@ IO::DatabaseInterface::OID PostgreSQLDatabase::lastInsertId(const char* table) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 uint64_t PostgreSQLDatabase::numberOfAffectedRows() {
-	char *number = PQcmdTuples(_result);
-	if ( number == NULL || *number == '\0' )
-		return (uint64_t)~0;
+	auto *number = PQcmdTuples(_result);
+	if ( !number || *number == '\0' ) {
+		return static_cast<uint64_t>(~0);
+	}
 
 	uint64_t count;
-	if ( sscanf(number, "%lud", &count) == 1 )
+	if ( sscanf(number, "%lud", &count) == 1 ) {
 		return count;
+	}
 
-	return (uint64_t)~0;
+	return static_cast<uint64_t>(~0);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -325,7 +333,9 @@ bool PostgreSQLDatabase::fetchRow() {
 
 	++_row;
 
-	if ( _row < _nRows ) return true;
+	if ( _row < _nRows ) {
+		return true;
+	}
 
 	_row = _nRows;
 	return false;
@@ -366,8 +376,9 @@ const char *PostgreSQLDatabase::getRowFieldName(int index) {
 const void* PostgreSQLDatabase::getRowField(int index) {
 	const void *value;
 
-	if ( PQgetisnull(_result, _row, index) )
-		return NULL;
+	if ( PQgetisnull(_result, _row, index) ) {
+		return nullptr;
+	}
 
 	value = PQgetvalue(_result, _row, index);
 
@@ -403,10 +414,13 @@ size_t PostgreSQLDatabase::getRowFieldSize(int index) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PostgreSQLDatabase::escape(std::string &out, const std::string &in) const {
-	if ( !_handle ) return false;
+	if ( !_handle ) {
+		return false;
+	}
+
 	int error;
 	out.resize(in.size()*2);
-	size_t l = PQescapeStringConn(_handle, &out[0], in.c_str(), in.size(), &error);
+	auto l = PQescapeStringConn(_handle, &out[0], in.c_str(), in.size(), &error);
 	out[l] = '\0';
 	out.resize(l);
 	return !error;
@@ -417,5 +431,4 @@ bool PostgreSQLDatabase::escape(std::string &out, const std::string &in) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
 }
