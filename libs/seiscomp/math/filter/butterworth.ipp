@@ -24,27 +24,38 @@
 template<class TYPE>
 ButterworthLowpass<TYPE>::ButterworthLowpass(int order, double fmax, double fsamp)
 : _order(order), _fmax(fmax), _fsamp(0.0) {
-	if ( fsamp )
+	if ( fsamp ) {
 		setSamplingFrequency(fsamp);
+	}
 }
 
 template<class TYPE>
 void ButterworthLowpass<TYPE>::setSamplingFrequency(double fsamp) {
-	if (_fsamp == fsamp)
+	if (_fsamp == fsamp) {
 		return;
+	}
 
-	BiquadCascade<TYPE>::set(init_bw_biquads(_order, 0, _fmax, fsamp, BUTTERWORTH_LOWPASS));
+	double fmax = _fmax;
+
+	if ( fmax < 0 ) {
+		fmax = -fmax * fsamp;
+	}
+
+	BiquadCascade<TYPE>::set(init_bw_biquads(_order, 0, fmax, fsamp, BUTTERWORTH_LOWPASS));
 	_fsamp = fsamp;
 }
 
 template<typename TYPE>
 int ButterworthLowpass<TYPE>::setParameters(int n, const double *params) {
-	if ( n != 2 ) return 2;
+	if ( n != 2 ) {
+		return 2;
+	}
 
 	int order = (int)params[0];
 
-	if ( order <= 0 )
+	if ( order <= 0 ) {
 		return -1;
+	}
 
 	_order = order;
 	_fmax = params[1];
@@ -66,21 +77,31 @@ ButterworthHighpass<TYPE>::ButterworthHighpass(int order, double fmin, double fs
 
 template<class TYPE>
 void ButterworthHighpass<TYPE>::setSamplingFrequency(double fsamp) {
-	if ( _fsamp == fsamp )
+	if ( _fsamp == fsamp ) {
 		return;
+	}
 
-	BiquadCascade<TYPE>::set(init_bw_biquads(_order, _fmin, 0, fsamp, BUTTERWORTH_HIGHPASS));
+	double fmin = _fmin;
+
+	if ( fmin < 0 ) {
+		fmin = -fmin * fsamp;
+	}
+
+	BiquadCascade<TYPE>::set(init_bw_biquads(_order, fmin, 0, fsamp, BUTTERWORTH_HIGHPASS));
 	_fsamp = fsamp;
 }
 
 template<typename TYPE>
 int ButterworthHighpass<TYPE>::setParameters(int n, const double *params) {
-	if ( n != 2 ) return 2;
+	if ( n != 2 ) {
+		return 2;
+	}
 
 	int order = (int)params[0];
 
-	if ( order <= 0 )
+	if ( order <= 0 ) {
 		return -1;
+	}
 
 	_order = order;
 	_fmin = params[1];
@@ -98,23 +119,38 @@ template<class TYPE>
 ButterworthBandpass<TYPE>::ButterworthBandpass(int order, double fmin, double fmax,
                                                double fsamp)
 : _order(order), _fmin(fmin), _fmax(fmax), _fsamp(0.0){
-	if ( fsamp )
+	if ( fsamp ) {
 		setSamplingFrequency(fsamp);
+	}
 }
 
 
 template<class TYPE>
 void ButterworthBandpass<TYPE>::setSamplingFrequency(double fsamp) {
-	if ( _fsamp == fsamp )
+	if ( _fsamp == fsamp ) {
 		return;
+	}
 
-	BiquadCascade<TYPE>::set(init_bw_biquads(_order, _fmin, _fmax, fsamp, BUTTERWORTH_BANDPASS));
+	double fmin = _fmin;
+	double fmax = _fmax;
+
+	if ( fmin < 0 ) {
+		fmin = -fmin * fsamp;
+	}
+
+	if ( fmax < 0 ) {
+		fmax = -fmax * fsamp;
+	}
+
+	BiquadCascade<TYPE>::set(init_bw_biquads(_order, fmin, fmax, fsamp, BUTTERWORTH_BANDPASS));
 	_fsamp = fsamp;
 }
 
 template<typename TYPE>
 int ButterworthBandpass<TYPE>::setParameters(int n, const double *params) {
-	if ( n != 3 ) return 3;
+	if ( n != 3 ) {
+		return 3;
+	}
 
 	_order = (int)params[0];
 	_fmin = params[1];
@@ -132,23 +168,38 @@ template<class TYPE>
 ButterworthBandstop<TYPE>::ButterworthBandstop(int order, double fmin, double fmax,
                                                double fsamp)
 : _order(order), _fmin(fmin), _fmax(fmax), _fsamp(0.0) {
-	if ( fsamp )
+	if ( fsamp ) {
 		setSamplingFrequency(fsamp);
+	}
 }
 
 
 template<class TYPE>
 void ButterworthBandstop<TYPE>::setSamplingFrequency(double fsamp) {
-	if ( _fsamp == fsamp )
+	if ( _fsamp == fsamp ) {
 		return;
+	}
 
-	BiquadCascade<TYPE>::set(init_bw_biquads(_order, _fmin, _fmax, fsamp, BUTTERWORTH_BANDSTOP));
+	double fmin = _fmin;
+	double fmax = _fmax;
+
+	if ( fmin < 0 ) {
+		fmin = -fmin * fsamp;
+	}
+
+	if ( fmax < 0 ) {
+		fmax = -fmax * fsamp;
+	}
+
+	BiquadCascade<TYPE>::set(init_bw_biquads(_order, fmin, fmax, fsamp, BUTTERWORTH_BANDSTOP));
 	_fsamp = fsamp;
 }
 
 template<typename TYPE>
 int ButterworthBandstop<TYPE>::setParameters(int n, const double *params) {
-	if ( n != 3 ) return 3;
+	if ( n != 3 ) {
+		return 3;
+	}
 
 	_order = (int)params[0];
 	_fmin = params[1];
@@ -166,23 +217,38 @@ template<class TYPE>
 ButterworthHighLowpass<TYPE>::ButterworthHighLowpass(int order, double fmin,
                                                      double fmax, double fsamp)
 : _order(order), _fmin(fmin), _fmax(fmax), _fsamp(0.0) {
-	if ( fsamp )
+	if ( fsamp ) {
 		setSamplingFrequency(fsamp);
+	}
 }
 
 template<class TYPE>
 void ButterworthHighLowpass<TYPE>::setSamplingFrequency(double fsamp) {
-	if ( _fsamp == fsamp )
+	if ( _fsamp == fsamp ) {
 		return;
+	}
 
-	BiquadCascade<TYPE>::set(init_bw_biquads(_order, _fmin, _fmax, fsamp, BUTTERWORTH_HIGHLOWPASS));
+	double fmin = _fmin;
+	double fmax = _fmax;
+
+	if ( fmin < 0 ) {
+		fmin = -fmin * fsamp;
+	}
+
+	if ( fmax < 0 ) {
+		fmax = -fmax * fsamp;
+	}
+
+	BiquadCascade<TYPE>::set(init_bw_biquads(_order, fmin, fmax, fsamp, BUTTERWORTH_HIGHLOWPASS));
 	_fsamp = fsamp;
 }
 
 
 template<class TYPE>
 int ButterworthHighLowpass<TYPE>::setParameters(int n, const double *params) {
-	if ( n != 3 ) return 3;
+	if ( n != 3 ) {
+		return 3;
+	}
 
 	_order = (int)params[0];
 	_fmin = params[1];
