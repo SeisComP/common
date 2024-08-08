@@ -156,15 +156,12 @@ bool PostgreSQLDatabase::isConnected() const {
 		return false;
 	}
 
-	ConnStatusType stat = PQstatus(_handle);
+	auto stat = PQstatus(_handle);
 	if ( stat == CONNECTION_OK ) {
 		return true;
 	}
 
-	SEISCOMP_ERROR("connection bad (%d) -> reconnect", static_cast<int>(stat));
-	PQreset(_handle);
-
-	return PQstatus(_handle) == CONNECTION_OK;
+	return reconnect(stat);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -199,7 +196,7 @@ void PostgreSQLDatabase::rollback() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PostgreSQLDatabase::execute(const char* command) {
+bool PostgreSQLDatabase::execute(const char *command) {
 	if ( !isConnected() || !command ) {
 		return false;
 	}
@@ -214,11 +211,36 @@ bool PostgreSQLDatabase::execute(const char* command) {
 		return false;
 	}
 
-	auto stat = PQresultStatus(result);
-	if ( stat != PGRES_TUPLES_OK && stat != PGRES_COMMAND_OK ) {
-		SEISCOMP_ERROR("QUERY/COMMAND failed");
-		SEISCOMP_ERROR("  %s", command);
-		SEISCOMP_ERROR("  %s", PQerrorMessage(_handle));
+	// A connection problem is not detected by PQstatus used in isConnected()
+	// until PQexec is called. The following is testing the connection state
+	// again in case of a fatal result status. If a connection failure is
+	// detected a reconnect attempt is made and the command is executed a second
+	// time.
+	auto resultStatus = PQresultStatus(result);
+	if ( resultStatus == PGRES_FATAL_ERROR ) {
+		auto handleStatus = PQstatus(_handle);
+		if ( handleStatus != CONNECTION_OK ) {
+			PQclear(result);
+
+			if ( !reconnect(handleStatus) ) {
+				return false;
+			}
+
+			result = PQexec(_handle, command);
+			if ( !result ) {
+				SEISCOMP_ERROR("execute(\"%s\"): %s",
+				               command, PQerrorMessage(_handle));
+				return false;
+			}
+
+			resultStatus = PQresultStatus(result);
+		}
+	}
+
+	if ( resultStatus != PGRES_TUPLES_OK && resultStatus != PGRES_COMMAND_OK ) {
+		SEISCOMP_ERROR("Command failed\n"
+		               "  command  : %s\n"
+		               "  err msg: %s", command, PQerrorMessage(_handle));
 		PQclear(result);
 		return false;
 	}
@@ -233,13 +255,14 @@ bool PostgreSQLDatabase::execute(const char* command) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PostgreSQLDatabase::beginQuery(const char* query) {
+bool PostgreSQLDatabase::beginQuery(const char *query) {
 	if ( !isConnected() || !query ) {
 		return false;
 	}
 
 	if ( _result ) {
-		SEISCOMP_ERROR("beginQuery: nested queries are not supported");
+		SEISCOMP_ERROR("beginQuery(\"%s\"): nested queries are not supported",
+		               query);
 		//SEISCOMP_DEBUG("last successfull query: %s", _lastQuery.c_str());
 		return false;
 	}
@@ -252,17 +275,41 @@ bool PostgreSQLDatabase::beginQuery(const char* query) {
 
 	_result = PQexec(_handle, query);
 	if ( !_result ) {
-		SEISCOMP_ERROR("query(\"%s\"): %s", query, PQerrorMessage(_handle));
+		SEISCOMP_ERROR("beginQuery(\"%s\"): %s", query, PQerrorMessage(_handle));
 		return false;
 	}
 
-	auto stat = PQresultStatus(_result);
-	if ( stat != PGRES_TUPLES_OK && stat != PGRES_COMMAND_OK ) {
-		SEISCOMP_ERROR("QUERY/COMMAND failed");
-		SEISCOMP_ERROR("  %s", query);
-		SEISCOMP_ERROR("  %s", PQerrorMessage(_handle));
-		PQclear(_result);
-		_result = nullptr;
+	// A connection problem is not detected by PQstatus used in isConnected()
+	// until PQexec is called. The following is testing the connection state
+	// again in case of a fatal result status. If a connection failure is
+	// detected a reconnect attempt is made and the query is executed a second
+	// time.
+	auto resultStatus = PQresultStatus(_result);
+	if ( resultStatus == PGRES_FATAL_ERROR ) {
+		auto handleStatus = PQstatus(_handle);
+		if ( handleStatus != CONNECTION_OK ) {
+			endQuery();
+
+			if ( !reconnect(handleStatus) ) {
+				return false;
+			}
+
+			_result = PQexec(_handle, query);
+			if ( !_result ) {
+				SEISCOMP_ERROR("beginQuery(\"%s\"): %s",
+				               query, PQerrorMessage(_handle));
+				return false;
+			}
+
+			resultStatus = PQresultStatus(_result);
+		}
+	}
+
+	if ( resultStatus != PGRES_TUPLES_OK && resultStatus != PGRES_COMMAND_OK ) {
+		SEISCOMP_ERROR("Query failed\n"
+		               "  query  : %s\n"
+		               "  err msg: %s", query, PQerrorMessage(_handle));
+		endQuery();
 		return false;
 	}
 
@@ -424,6 +471,27 @@ bool PostgreSQLDatabase::escape(std::string &out, const std::string &in) const {
 	out[l] = '\0';
 	out.resize(l);
 	return !error;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool PostgreSQLDatabase::reconnect(ConnStatusType stat) const {
+	SEISCOMP_WARNING("Connection bad (%d) -> reconnect",
+	                 static_cast<int>(stat));
+	PQreset(_handle);
+
+	stat = PQstatus(_handle);
+	if ( stat != CONNECTION_OK ) {
+		SEISCOMP_ERROR("Connection bad (%d), reconnect attempt failed",
+		               static_cast<int>(stat));
+		return false;
+	}
+
+	SEISCOMP_DEBUG("Reconnect attempt successful");
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

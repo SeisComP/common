@@ -81,6 +81,9 @@ class PostgreSQLDatabase : public Seiscomp::IO::DatabaseInterface {
 
 		bool open() override;
 
+	private:
+		bool reconnect(ConnStatusType stat) const;
+
 
 	// ------------------------------------------------------------------
 	//  Implementation
