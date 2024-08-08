@@ -6050,7 +6050,9 @@ void AmplitudeView::acquisitionFinished() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::acquireStreams() {
-	if ( SC_D.nextStreams.empty() ) return;
+	if ( SC_D.nextStreams.empty() ) {
+		return;
+	}
 
 	RecordStreamThread *t = new RecordStreamThread(SC_D.config.recordURL.toStdString());
 
@@ -6111,12 +6113,15 @@ void AmplitudeView::acquireStreams() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::receivedRecord(Seiscomp::Record *rec) {
 	Seiscomp::RecordPtr tmp(rec);
-	if ( !rec->data() ) return;
+	if ( !rec->data() ) {
+		return;
+	}
 
 	std::string streamID = rec->streamID();
 	auto it = SC_D.recordItemLabels.find(streamID);
-	if ( it == SC_D.recordItemLabels.end() )
+	if ( it == SC_D.recordItemLabels.end() ) {
 		return;
+	}
 
 	AmplitudeRecordLabel *label = it->second;
 	RecordViewItem *item = label->recordViewItem();
@@ -6124,16 +6129,21 @@ void AmplitudeView::receivedRecord(Seiscomp::Record *rec) {
 	int i;
 	for ( i = 0; i < 3; ++i ) {
 		if ( label->data.traces[i].channelCode == rec->channelCode() ) {
-			if ( label->data.traces[i].raw == nullptr )
+			if ( !label->data.traces[i].raw ) {
 				label->data.traces[i].raw = new TimeWindowBuffer(label->timeWindow);
+			}
 			break;
 		}
 	}
 
-	if ( i == 3 ) return;
+	if ( i == 3 ) {
+		return;
+	}
 
 	bool firstRecord = label->data.traces[i].raw->empty();
-	if ( !label->data.traces[i].raw->feed(rec) ) return;
+	if ( !label->data.traces[i].raw->feed(rec) ) {
+		return;
+	}
 
 	// Check for out-of-order records
 	if ( (label->data.traces[i].filter || label->data.enableTransformation) &&
@@ -6161,15 +6171,17 @@ void AmplitudeView::receivedRecord(Seiscomp::Record *rec) {
 		item->widget()->setRecordBackgroundColor(SC_D.componentMap[i], SCScheme.colors.records.states.inProgress);
 		label->hasGotData = true;
 
-		if ( SC_D.config.hideStationsWithoutData )
+		if ( SC_D.config.hideStationsWithoutData ) {
 			item->forceInvisibilty(!label->isEnabledByConfig);
+		}
 
 		//item->widget()->setRecords(i, label->traces[i].raw, false);
 
 		// If this item is linked to another item, enable the expand button of
 		// the controller
-		if ( label->isLinkedItem() && label->_linkedItem != nullptr )
+		if ( label->isLinkedItem() && label->_linkedItem != nullptr ) {
 			static_cast<AmplitudeRecordLabel*>(label->_linkedItem->label())->enabledExpandButton(item);
+		}
 	}
 	else {
 		// Tell the widget to rebuild its traces
@@ -6184,14 +6196,20 @@ void AmplitudeView::receivedRecord(Seiscomp::Record *rec) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::addStations() {
-	if ( !SC_D.origin ) return;
+	if ( !SC_D.origin ) {
+		return;
+	}
 
 	SelectStation dlg(SC_D.origin->time(), SC_D.config.ignoreDisabledStations, SC_D.stations, this);
 	dlg.setReferenceLocation(SC_D.origin->latitude(), SC_D.origin->longitude());
-	if ( dlg.exec() != QDialog::Accepted ) return;
+	if ( dlg.exec() != QDialog::Accepted ) {
+		return;
+	}
 
 	QList<DataModel::Station *> stations = dlg.selectedStations();
-	if ( stations.isEmpty() ) return;
+	if ( stations.isEmpty() ) {
+		return;
+	}
 
 	SC_D.recordView->setUpdatesEnabled(false);
 
@@ -6215,11 +6233,14 @@ void AmplitudeView::addStations() {
 		// Preferred channel code is BH. If not available use either SH or skip.
 		for ( size_t c = 0; c < SC_D.broadBandCodes.size(); ++c ) {
 			stream = findStream(s, SC_D.broadBandCodes[c], SC_D.origin->time());
-			if ( stream ) break;
+			if ( stream ) {
+				break;
+			}
 		}
 
-		if ( stream == nullptr )
+		if ( !stream ) {
 			stream = findStream(s, SC_D.origin->time(), Processing::WaveformProcessor::MeterPerSecond);
+		}
 
 		if ( stream ) {
 			WaveformStreamID streamID(n->code(), s->code(), stream->sensorLocation()->code(), stream->code().substr(0,stream->code().size()-1) + '?', "");
@@ -6247,8 +6268,9 @@ void AmplitudeView::addStations() {
 	alignByState();
 	componentByState();
 
-	if ( SC_D.recordView->currentItem() == nullptr )
+	if ( !SC_D.recordView->currentItem() ) {
 		selectFirstVisibleItem(SC_D.recordView);
+	}
 
 	setCursorText(SC_D.currentRecord->cursorText());
 
@@ -6276,7 +6298,9 @@ void AmplitudeView::searchStation() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::searchByText(const QString &text) {
-	if ( text.isEmpty() ) return;
+	if ( text.isEmpty() ) {
+		return;
+	}
 
 	QRegExp rx(text + "*");
 	rx.setPatternSyntax(QRegExp::Wildcard);
@@ -6319,8 +6343,9 @@ void AmplitudeView::search(const QString &text) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::nextSearch() {
 	searchByText(SC_D.searchStation->text());
-	if ( SC_D.lastFoundRow == -1 )
+	if ( SC_D.lastFoundRow == -1 ) {
 		searchByText(SC_D.searchStation->text());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6397,7 +6422,9 @@ void AmplitudeView::confirmAmplitude() {
 			RecordViewItem* nextItem = SC_D.recordView->itemAt(row);
 
 			// ignore disabled rows
-			if ( !nextItem->widget()->isEnabled() ) continue;
+			if ( !nextItem->widget()->isEnabled() ) {
+				continue;
+			}
 
 			RecordMarker* m = nextItem->widget()->marker(nextItem->widget()->cursorText());
 			if ( m ) {
@@ -6421,10 +6448,12 @@ void AmplitudeView::deleteAmplitude() {
 	if ( item ) {
 		label->isError = false;
 		label->infoText = QString();
-		if ( item->widget()->cursorText().isEmpty() )
+		if ( item->widget()->cursorText().isEmpty() ) {
 			resetAmplitude(item, SC_D.amplitudeType.c_str(), true);
-		else
+		}
+		else {
 			resetAmplitude(item, item->widget()->cursorText(), true);
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6443,14 +6472,16 @@ void AmplitudeView::resetAmplitude(RecordViewItem *item, const QString &text, bo
 		else {
 			delete m;
 			m = static_cast<AmplitudeViewMarker*>(item->widget()->marker(text));
-			if ( m )
+			if ( m ) {
 				m->setEnabled(enable);
+			}
 		}
 	}
 	else {
 		m = static_cast<AmplitudeViewMarker*>(item->widget()->marker(text));
-		if ( m )
+		if ( m ) {
 			m->setEnabled(enable);
+		}
 	}
 
 	item->widget()->update();
@@ -6464,8 +6495,9 @@ void AmplitudeView::resetAmplitude(RecordViewItem *item, const QString &text, bo
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::addFilter(const QString& name, const QString& filter) {
 	if ( SC_D.comboFilter ) {
-		if ( SC_D.comboFilter->findText(name) != -1 )
+		if ( SC_D.comboFilter->findText(name) != -1 ) {
 			return;
+		}
 
 		SC_D.comboFilter->addItem(name, filter);
 	}
@@ -6542,20 +6574,26 @@ void AmplitudeView::changeFilter(int index, bool force) {
 	SC_D.showProcessedData = false;
 
 	if ( name == NO_FILTER_STRING ) {
-		if ( SC_D.currentFilter ) delete SC_D.currentFilter;
+		if ( SC_D.currentFilter ) {
+			delete SC_D.currentFilter;
+		}
 		SC_D.currentFilter = nullptr;
 		SC_D.currentFilterStr = "";
 
-		if ( !SC_D.ui.actionLimitFilterToZoomTrace->isChecked() )
+		if ( !SC_D.ui.actionLimitFilterToZoomTrace->isChecked() ) {
 			applyFilter();
-		else
+		}
+		else {
 			applyFilter(SC_D.recordView->currentItem());
+		}
 
 		QApplication::restoreOverrideCursor();
 		return;
 	}
 	else if ( name == DEFAULT_FILTER_STRING ) {
-		if ( SC_D.currentFilter ) delete SC_D.currentFilter;
+		if ( SC_D.currentFilter ) {
+			delete SC_D.currentFilter;
+		}
 		SC_D.currentFilter = nullptr;
 		SC_D.currentFilterStr = "";
 
@@ -6569,7 +6607,7 @@ void AmplitudeView::changeFilter(int index, bool force) {
 	SC_D.showProcessedData = true;
 	RecordWidget::Filter *newFilter = RecordWidget::Filter::Create(filter.toStdString());
 
-	if ( newFilter == nullptr ) {
+	if ( !newFilter ) {
 		QMessageBox::critical(this, "Invalid filter",
 		                      QString("Unable to create filter: %1\nFilter: %2").arg(name).arg(filter));
 
@@ -6581,14 +6619,18 @@ void AmplitudeView::changeFilter(int index, bool force) {
 		return;
 	}
 
-	if ( SC_D.currentFilter ) delete SC_D.currentFilter;
+	if ( SC_D.currentFilter ) {
+		delete SC_D.currentFilter;
+	}
 	SC_D.currentFilter = newFilter;
 	SC_D.currentFilterStr = filter.toStdString();
 
-	if ( !SC_D.ui.actionLimitFilterToZoomTrace->isChecked() )
+	if ( !SC_D.ui.actionLimitFilterToZoomTrace->isChecked() ) {
 		applyFilter();
-	else
+	}
+	else {
 		applyFilter(SC_D.recordView->currentItem());
+	}
 
 	SC_D.lastFilterIndex = index;
 	QApplication::restoreOverrideCursor();
@@ -6607,8 +6649,9 @@ void AmplitudeView::setArrivalState(int arrivalId, bool state) {
 		if ( setArrivalState(item->widget(), arrivalId, state) ) {
 			item->setVisible(!(SC_D.ui.actionShowUsedStations->isChecked() &&
 			                   item->widget()->hasMovableMarkers()));
-			if ( state )
+			if ( state ) {
 				item->label()->setEnabled(true);
+			}
 			break;
 		}
 	}
@@ -6628,15 +6671,17 @@ bool AmplitudeView::setArrivalState(RecordWidget* w, int arrivalId, bool state) 
 	// Find phase for arrival
 	for ( int m = 0; m < w->markerCount(); ++m ) {
 		RecordMarker* marker = w->marker(m);
-		if ( marker->id() == arrivalId )
+		if ( marker->id() == arrivalId ) {
 			phase = marker->text();
+		}
 	}
 
 	// Find manual marker for arrival
 	for ( int m = 0; m < w->markerCount(); ++m ) {
 		RecordMarker* marker = w->marker(m);
-		if ( marker->text() == phase && marker->isMovable() )
+		if ( marker->text() == phase && marker->isMovable() ) {
 			foundManual = true;
+		}
 	}
 
 	// Update state
