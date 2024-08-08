@@ -164,6 +164,7 @@ class SC_GUI_API AmplitudeRecordLabel : public StandardRecordLabel {
 	public:
 		double                                  latitude;
 		double                                  longitude;
+		double                                  elevation;
 		const DataModel::SensorLocation        *location;
 
 		Core::TimeWindow                        timeWindow;

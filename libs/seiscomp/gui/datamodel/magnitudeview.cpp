@@ -1328,10 +1328,12 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 	*/
 
 	_stamagnitudes = new DiagramWidget(_ui->groupMagnitudes);
-	if ( SCScheme.unit.distanceInKM )
-		_stamagnitudes->setAbscissaName("Distance (km)");
-	else
-		_stamagnitudes->setAbscissaName("Distance (°)");
+	if ( SCScheme.unit.distanceInKM ) {
+		_stamagnitudes->setAbscissaName("Epi. distance (km)");
+	}
+	else {
+		_stamagnitudes->setAbscissaName("Epi. distance (°)");
+	}
 	_stamagnitudes->setOrdinateName("Residual");
 	_stamagnitudes->setMarkerDistance(10, 0.1);
 	_stamagnitudes->setDisplayRect(QRectF(0,-2,180,4));

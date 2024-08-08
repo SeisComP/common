@@ -111,6 +111,7 @@ Scheme::Scheme() {
 	showMenu = true;
 	showStatusBar = true;
 	tabPosition = -1;
+	distanceHypocentral = false;
 
 	fonts.setBase(SCApp->font());
 }
@@ -569,6 +570,8 @@ void Scheme::fetch() {
 		this->tabPosition = 3;
 	else if ( tabPosition == "east" )
 		this->tabPosition = 4;
+
+	READ_BOOL(distanceHypocentral);
 
 	READ_COLOR(colors.background);
 

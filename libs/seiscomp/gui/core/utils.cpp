@@ -317,6 +317,27 @@ QString elapsedTimeString(const Core::TimeSpan &dt) {
 }
 
 
+double hypocentralDistance(double epicentral, double depth, double elev) {
+	double hDist = Math::Geo::deg2km(epicentral); // [km]
+	double vDist = depth + elev * 1E-3;           // [km]
+	return Math::Geo::km2deg(sqrt(hDist * hDist + vDist * vDist));
+}
+
+
+double computeDistance(double lat0, double lon0, double depth0,
+                       double lat1, double lon1, double elev1,
+                       double *az, double *baz, double *epicentral) {
+	double delta;
+	Math::Geo::delazi(lat0, lon0, lat1, lon1, &delta, az, baz);
+	if ( epicentral ) {
+		*epicentral = delta;
+	}
+	if ( SCScheme.distanceHypocentral ) {
+		delta = hypocentralDistance(delta, depth0, elev1);
+	}
+	return delta;
+}
+
 
 void setMaxWidth(QWidget *w, int numCharacters) {
 	QFont f = w->font();
@@ -388,7 +409,7 @@ bool ElideFadeDrawer::eventFilter(QObject *obj, QEvent *event) {
 			painter.setPen(q->palette().color(QPalette::WindowText));
 			painter.drawText(rect, flags, q->text());
 		}
-		
+
 		return true;
 	}
 

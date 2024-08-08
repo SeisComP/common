@@ -336,6 +336,7 @@ class SC_GUI_API Scheme {
 		bool      showMenu;
 		bool      showStatusBar;
 		int       tabPosition;
+		bool      distanceHypocentral;
 
 		Splash    splash;
 		Colors    colors;

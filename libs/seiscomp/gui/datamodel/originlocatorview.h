@@ -102,6 +102,7 @@ class SC_GUI_API ArrivalModel : public QAbstractTableModel {
 		void setRowEnabled(int row, bool enabled);
 		bool isRowEnabled(int row) const;
 
+		void setDistance(int row, const QVariant &val);
 		void setTakeOffAngle(int row, const QVariant &val);
 
 		bool useNoArrivals() const;
@@ -126,6 +127,7 @@ class SC_GUI_API ArrivalModel : public QAbstractTableModel {
 		QVector<int>       _used;
 		QVector<int>       _hoverState;
 		QVector<QVariant>  _takeOffs;
+		QVector<QVariant>  _distances;
 		QVector<bool>      _enableState;
 		QVector<QVariant>  _backgroundColors;
 		QColor             _disabledForeground;
@@ -417,7 +419,7 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 
 		void updateOrigin(Seiscomp::DataModel::Origin*);
 		void updateContent();
-		void addArrival(int idx, DataModel::Arrival* arrival, const Core::Time &, const QColor&);
+		void addArrival(int idx, const DataModel::Arrival* arrival, const DataModel::Pick* pick, const QColor&);
 
 		void readPicks(Seiscomp::DataModel::Origin*);
 

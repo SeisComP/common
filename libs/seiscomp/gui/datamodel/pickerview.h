@@ -160,6 +160,7 @@ class SC_GUI_API PickerRecordLabel : public StandardRecordLabel {
 	private:
 		double               latitude;
 		double               longitude;
+		double               elevation;
 		int                  unit;
 		QString              gainUnit[3];
 		ThreeComponentTrace  data;

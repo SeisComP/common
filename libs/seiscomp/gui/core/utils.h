@@ -60,6 +60,36 @@ SC_GUI_API QString timeToString(const Core::Time &t, const char *fmt, bool addTi
 SC_GUI_API void timeToLabel(QLabel *label, const Core::Time &t, const char *fmt, bool addTimeZone = false);
 SC_GUI_API QString elapsedTimeString(const Core::TimeSpan &dt);
 
+
+/**
+ * @brief Derives the hypocentral distance from an epicentral distance
+ *        and the source depth and the target elevation.
+ * @param epicentral Epicentral distance in degrees.
+ * @param depth Source depth in km.
+ * @param elev Target elevation in meters.
+ * @return The hypocentral distance in degrees.
+ */
+SC_GUI_API double hypocentralDistance(double epicentral, double depth, double elev);
+
+/**
+ * @brief Computes the distance in degrees according to the scheme setting.
+ * This is either the epicentral or hypocentral distance.
+ * @param lat0 Source latitude.
+ * @param lon0 Source longitude.
+ * @param depth0 Source depth in km.
+ * @param lat1 Target latitude.
+ * @param lon1 Target longitude.
+ * @param elev1 Target elevation in meters.
+ * @param az The output azimuth from source to target.
+ * @param baz The output back-azimuth from target to source.
+ * @param epicentral The output epicentral distance.
+ * @return Distance in degrees.
+ */
+SC_GUI_API double computeDistance(double lat0, double lon0, double depth0,
+                                  double lat1, double lon1, double elev1,
+                                  double *az = nullptr, double *baz = nullptr,
+                                  double *epicentral = nullptr);
+
 SC_GUI_API void setMaxWidth(QWidget *w, int numCharacters);
 SC_GUI_API void fixWidth(QWidget *w, int numCharacters);
 

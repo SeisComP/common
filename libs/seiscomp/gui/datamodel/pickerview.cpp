@@ -27,6 +27,7 @@
 #include <seiscomp/core/platform/platform.h>
 #include <seiscomp/gui/datamodel/selectstation.h>
 #include <seiscomp/gui/datamodel/origindialog.h>
+#include <seiscomp/gui/datamodel/utils.h>
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/recordstreamthread.h>
 #include <seiscomp/gui/core/timescale.h>
@@ -4403,30 +4404,31 @@ void PickerView::loadNextStations(float distance) {
 
 				QString code = (n->code() + "." + s->code()).c_str();
 
-				if ( SC_D.stations.contains(code) ) continue;
-
-				try {
-					if ( s->end() <= SC_D.origin->time() )
-						continue;
-				}
-				catch ( Core::ValueException & ) {}
-
-				double lat, lon;
-				double delta, az1, az2;
-
-				try {
-					lat = s->latitude(); lon = s->longitude();
-				}
-				catch ( Core::ValueException & ) {
-					SEISCOMP_WARNING("Station %s.%s has no valid coordinates",
-					                 n->code().c_str(), s->code().c_str());
+				if ( SC_D.stations.contains(code) ) {
 					continue;
 				}
 
-				Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-				                  lat, lon, &delta, &az1, &az2);
+				try {
+					if ( s->end() <= SC_D.origin->time() ) {
+						continue;
+					}
+				}
+				catch ( Core::ValueException & ) {}
 
-				if ( delta > distance ) continue;
+				double delta;
+
+				try {
+					delta = computeDistance(SC_D.origin.get(), s, SC_D.config.defaultDepth);
+				}
+				catch ( std::exception &e ) {
+					SEISCOMP_WARNING("Distance to %s.%s: %s",
+					                 n->code(), s->code(), e.what());
+					continue;
+				}
+
+				if ( delta > distance ) {
+					continue;
+				}
 
 				// try to get the configured location and stream code
 				Stream *stream = findConfiguredStream(s, SC_D.origin->time());
@@ -4858,9 +4860,13 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* o) {
 		PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
 
 		if ( SC_D.origin ) {
-			double delta, az, baz;
-			Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-			                  label->latitude, label->longitude, &delta, &az, &baz);
+			double baz;
+			double edep = SC_D.config.defaultDepth;
+			try { edep = SC_D.origin->depth(); } catch ( ... ) {}
+
+			computeDistance(SC_D.origin->latitude(), SC_D.origin->longitude(), edep,
+			                label->latitude, label->longitude, label->elevation,
+			                nullptr, &baz);
 
 			label->orientationZRT.loadRotateZ(deg2rad(baz + 180.0));
 		}
@@ -4998,11 +5004,12 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 			return false;
 		}
 
-		double delta, az1, az2;
+		double delta, az1;
 		double elat = SC_D.origin->latitude();
 		double elon = SC_D.origin->longitude();
-		double slat, slon;
-		double salt = loc->elevation();
+		double edep = SC_D.config.defaultDepth;
+		try { edep = SC_D.origin->depth(); } catch ( ... ) {}
+		double slat, slon, salt = elevation(loc);
 
 		try {
 			slat = loc->latitude(); slon = loc->longitude();
@@ -5013,7 +5020,14 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 			return false;
 		}
 
-		Math::Geo::delazi(elat, elon, slat, slon, &delta, &az1, &az2);
+		try {
+			delta = computeDistance(SC_D.origin.get(), loc, SC_D.config.defaultDepth, &az1);
+		}
+		catch ( std::exception &e ) {
+			SEISCOMP_WARNING("Distance to %s.%s.%s: %s",
+			                 netCode, staCode, locCode, e.what());
+			return false;
+		}
 
 		item->setValue(ITEM_DISTANCE_INDEX, delta);
 		item->setValue(ITEM_AZIMUTH_INDEX, az1);
@@ -5035,21 +5049,13 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 		item->label()->setWidth(fm.boundingRect("WW  ").width(), 1);
 
 		if ( SCScheme.unit.distanceInKM )
-			item->label()->setText(QString("%1 km").arg(Math::Geo::deg2km(delta),0,'f',SCScheme.precision.distance), 2);
+			item->label()->setText(QString("%1 km").arg(Math::Geo::deg2km(delta), 0, 'f',SCScheme.precision.distance), 2);
 		else
-			item->label()->setText(QString("%1%2").arg(delta,0,'f',1).arg(degrees), 2);
+			item->label()->setText(QString("%1%2").arg(delta, 0, 'f', 1).arg(degrees), 2);
 		item->label()->setAlignment(Qt::AlignRight, 2);
 		item->label()->setColor(palette().color(QPalette::Disabled, QPalette::WindowText), 2);
 
-		double depth;
-		try {
-			depth = SC_D.origin->depth();
-		}
-		catch ( ... ) {
-			depth = 0.0;
-		}
-
-		TravelTimeList* ttt = SC_D.ttTable->compute(elat, elon, depth, slat, slon, salt);
+		auto ttt = SC_D.ttTable->compute(elat, elon, edep, slat, slon, salt);
 
 		if ( ttt ) {
 			QMap<QString, RecordMarker*> currentPhases;
@@ -5623,10 +5629,13 @@ void PickerView::openContextMenu(const QPoint &p) {
 
 	SensorLocation *loc = findSensorLocation(station, tmp.locationCode(), SC_D.origin->time());
 
-	double delta, az, baz;
+	double delta, az;
 	if ( SC_D.origin ) {
-		Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-		                  loc->latitude(), loc->longitude(), &delta, &az, &baz);
+		double edep = SC_D.config.defaultDepth;
+		try { edep = SC_D.origin->depth(); } catch ( ... ) {}
+
+		delta = computeDistance(SC_D.origin->latitude(), SC_D.origin->longitude(), edep,
+		                        loc->latitude(), loc->longitude(), loc->elevation(), &az);
 	}
 	else {
 		delta = 0;
@@ -5677,7 +5686,7 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 		// during preview
 		SC_D.tmpLowerUncertainty = m->lowerUncertainty();
 		SC_D.tmpUpperUncertainty = m->upperUncertainty();
-	
+
 		lowerUncertainty = SC_D.tmpLowerUncertainty;
 		upperUncertainty = SC_D.tmpUpperUncertainty;
 
@@ -6192,16 +6201,22 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
 
 		label->latitude = loc->latitude();
 		label->longitude = loc->longitude();
+		label->elevation = elevation(loc);
 
-		double delta, az, baz;
-		Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-		                  label->latitude, label->longitude, &delta, &az, &baz);
+		double baz;
+		double edep = SC_D.config.defaultDepth;
+		try { edep = SC_D.origin->depth(); } catch ( ... ) {}
+
+		computeDistance(SC_D.origin->latitude(), SC_D.origin->longitude(), edep,
+		                label->latitude, label->longitude, label->elevation,
+		                nullptr, &baz);
 
 		label->orientationZRT.loadRotateZ(deg2rad(baz + 180.0));
 	}
 	else {
 		label->latitude = 999;
 		label->longitude = 999;
+		label->elevation = 0;
 		label->orientationZRT.identity();
 		allComponents = false;
 		comps[0] = COMP_NO_METADATA;
@@ -8356,14 +8371,16 @@ void PickerView::relocate() {
 			continue;
 		}
 
-		SensorLocation* sloc = Client::Inventory::Instance()->getSensorLocation(pick.get());
+		SensorLocation *sloc = Client::Inventory::Instance()->getSensorLocation(pick.get());
 
 		// Remove pick, when no station is configured for this pick
-		if ( !sloc /*&& !m->isEnabled()*/ ) continue;
+		if ( !sloc /*&& !m->isEnabled()*/ ) {
+			continue;
+		}
 
-		double delta, az1, az2;
+		double delta, az;
 		Math::Geo::delazi(tmpOrigin->latitude(), tmpOrigin->longitude(),
-		                  sloc->latitude(), sloc->longitude(), &delta, &az1, &az2);
+		                  sloc->latitude(), sloc->longitude(), &delta, &az, nullptr);
 
 		ArrivalPtr a = new Arrival();
 
@@ -8378,7 +8395,7 @@ void PickerView::relocate() {
 		}
 
 		a->setDistance(delta);
-		a->setAzimuth(az1);
+		a->setAzimuth(az);
 		a->setPickID(pick->publicID());
 		a->setWeight(m->isEnabled()/* && markers[i]->isMovable()*/ ? 1 : 0);
 		a->setTimeUsed(m->isEnabled());
@@ -8412,12 +8429,15 @@ void PickerView::relocate() {
 	}
 
 	OriginQuality q;
-	try { q = tmpOrigin->quality(); } catch ( Core::ValueException & ) {}
+	try { q = tmpOrigin->quality(); }
+	catch ( Core::ValueException & ) {}
 
-	if ( rmsCount > 0 )
+	if ( rmsCount > 0 ) {
 		q.setStandardError(sqrt(rms / rmsCount));
-	else
+	}
+	else {
 		q.setStandardError(Core::None);
+	}
 
 	tmpOrigin->setQuality(q);
 
@@ -8530,7 +8550,9 @@ void PickerView::addStations() {
 
 		QString code = (n->code() + "." + s->code()).c_str();
 
-		if ( SC_D.stations.contains(code) ) continue;
+		if ( SC_D.stations.contains(code) ) {
+			continue;
+		}
 
 		Stream *stream = nullptr;
 
@@ -8544,23 +8566,27 @@ void PickerView::addStations() {
 			}
 		}
 
-		if ( stream == nullptr )
+		if ( !stream ) {
 			stream = findStream(s, SC_D.origin->time(), Processing::WaveformProcessor::MeterPerSecond);
-		if ( stream == nullptr )
+		}
+		if ( !stream ) {
 			stream = findStream(s, SC_D.origin->time(), Processing::WaveformProcessor::MeterPerSecondSquared);
-		if ( stream == nullptr )
+		}
+		if ( !stream ) {
 			stream = findStream(s, SC_D.origin->time(), Processing::WaveformProcessor::Meter);
+		}
 
 		if ( stream ) {
 			WaveformStreamID streamID(n->code(), s->code(), stream->sensorLocation()->code(), stream->code().substr(0,stream->code().size()-1) + '?', "");
 
-			double delta, az1, az2;
-			if ( SC_D.origin )
-				Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-				                  stream->sensorLocation()->latitude(),
-				                  stream->sensorLocation()->longitude(), &delta, &az1, &az2);
-			else
+			double delta;
+			if ( SC_D.origin ) {
+				delta = computeDistance(SC_D.origin.get(), stream->sensorLocation(),
+				                        SC_D.config.defaultDepth);
+			}
+			else {
 				delta = 0;
+			}
 
 			RecordViewItem* item = addStream(stream->sensorLocation(), streamID,
 			                                 delta, streamID.stationCode().c_str(),

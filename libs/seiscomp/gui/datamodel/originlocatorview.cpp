@@ -38,6 +38,7 @@
 #include <seiscomp/gui/datamodel/locatorsettings.h>
 #include <seiscomp/gui/datamodel/publicobjectevaluator.h>
 #include <seiscomp/gui/datamodel/origindialog.h>
+#include <seiscomp/gui/datamodel/utils.h>
 #include <seiscomp/client/inventory.h>
 #include <seiscomp/io/recordinput.h>
 #include <seiscomp/datamodel/comment.h>
@@ -1922,6 +1923,7 @@ void ArrivalModel::setOrigin(DataModel::Origin* origin) {
 		_used.fill(Seismology::LocatorInterface::F_NONE, _origin->arrivalCount());
 		_backgroundColors.fill(QVariant(), _origin->arrivalCount());
 		_enableState.fill(true, _origin->arrivalCount());
+		_distances.fill(QVariant(), _origin->arrivalCount());
 		_takeOffs.fill(QVariant(), _origin->arrivalCount());
 		_hoverState.fill(-1, _origin->arrivalCount());
 	}
@@ -1976,8 +1978,8 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 		}
 	}
 
-	Arrival* a = _origin->arrival(index.row());
-	Pick* pick;
+	Arrival *a = _origin->arrival(index.row());
+	Pick *pick;
 	char buf[10];
 
 	if ( role == Qt::DisplayRole ) {
@@ -2144,16 +2146,17 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 
 			// Distance
 			case DISTANCE:
-				try {
-					double distance = a->distance();
-					if ( SCScheme.unit.distanceInKM )
-						snprintf(buf, 10, "%.*f", SCScheme.precision.distance, Math::Geo::deg2km(distance));
-					else
+				if ( _distances[index.row()].canConvert(QVariant::Double) ) {
+					auto distance = _distances[index.row()].toDouble();
+					if ( SCScheme.unit.distanceInKM ) {
+						snprintf(buf, 10, "%.*f", SCScheme.precision.distance, distance);
+					}
+					else {
 						snprintf(buf, 10, distance<10 ? "%.2f" : "%.1f", distance);
+					}
 					return buf;
 				}
-				catch ( ValueException& ) {}
-				break;
+				return _distances[index.row()];
 
 			// Azimuth
 			case AZIMUTH:
@@ -2482,6 +2485,17 @@ void ArrivalModel::setRowEnabled(int row, bool enabled) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArrivalModel::isRowEnabled(int row) const {
 	return _enableState[row];
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ArrivalModel::setDistance(int row, const QVariant &val) {
+	if ( row >= _distances.size() ) return;
+	_distances[row] = val;
+	emit dataChanged(index(row,DISTANCE), index(row,DISTANCE));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3784,15 +3798,18 @@ void OriginLocatorView::adjustResidualsRect(QRectF& rect) {
 void OriginLocatorView::plotTabChanged(int tab) {
 	static_cast<PlotWidget*>(SC_D.residuals)->setCustomDraw(false);
 
+	auto distanceLabel = []() {
+		return QString("%1 distance (%2)")
+		       .arg(SCScheme.distanceHypocentral ? "Hyp." : "Epi.")
+		       .arg(SCScheme.unit.distanceInKM ? "km" :"°");
+	};
+
 	// Distance / Residual
 	if ( tab == PT_DISTANCE ) {
 		SC_D.residuals->setMarkerDistance(10, 1);
 		SC_D.residuals->setType(DiagramWidget::Rectangular);
 		SC_D.residuals->setIndicies(PC_DISTANCE,PC_RESIDUAL);
-		if ( SCScheme.unit.distanceInKM )
-			SC_D.residuals->setAbscissaName("Distance (km)");
-		else
-			SC_D.residuals->setAbscissaName("Distance (°)");
+		SC_D.residuals->setAbscissaName(distanceLabel());
 		SC_D.residuals->setOrdinateName("Residual (s)");
 	}
 	// Azimuth / Residual
@@ -3808,20 +3825,14 @@ void OriginLocatorView::plotTabChanged(int tab) {
 		SC_D.residuals->setMarkerDistance(10, 10);
 		SC_D.residuals->setType(DiagramWidget::Rectangular);
 		SC_D.residuals->setIndicies(PC_DISTANCE,PC_TRAVELTIME);
-		if ( SCScheme.unit.distanceInKM )
-			SC_D.residuals->setAbscissaName("Distance (km)");
-		else
-			SC_D.residuals->setAbscissaName("Distance (°)");
+		SC_D.residuals->setAbscissaName(distanceLabel());
 		SC_D.residuals->setOrdinateName("TravelTime (s)");
 	}
 	else if ( tab == PT_MOVEOUT ) {
 		SC_D.residuals->setMarkerDistance(10, 10);
 		SC_D.residuals->setType(DiagramWidget::Rectangular);
 		SC_D.residuals->setIndicies(PC_DISTANCE,PC_REDUCEDTRAVELTIME);
-		if ( SCScheme.unit.distanceInKM )
-			SC_D.residuals->setAbscissaName("Distance (km)");
-		else
-			SC_D.residuals->setAbscissaName("Distance (°)");
+		SC_D.residuals->setAbscissaName(distanceLabel());
 		SC_D.residuals->setOrdinateName(QString("Tred = T-d/%1 km/s (s)").arg(SC_D.config.reductionVelocityP));
 	}
 	else if ( tab == PT_POLAR ) {
@@ -3846,11 +3857,6 @@ void OriginLocatorView::plotTabChanged(int tab) {
 	}
 
 	adjustResidualsRect(rect);
-
-	/*
-	std::cout << "displayRect: " << rect.left() << "," << rect.top()
-			  << " - " << rect.width() << " x " << rect.height() << std::endl;
-	*/
 
 	SC_D.residuals->setDisplayRect(rect);
 	SC_D.residuals->update();
@@ -4932,8 +4938,6 @@ void OriginLocatorView::updateContent() {
 			baseColor = Qt::lightGray;
 		}
 
-		Time pickTime;
-
 		if ( pick ) {
 			try {
 				switch ( pick->evaluationMode() ) {
@@ -4951,12 +4955,11 @@ void OriginLocatorView::updateContent() {
 			catch ( ... ) {
 				pickColor = SCScheme.colors.arrivals.undefined;
 			}
-			pickTime = pick->time().value();
 		}
 		else
 			pickColor = SCScheme.colors.arrivals.undefined;
 
-		addArrival(i, arrival, pickTime, pickColor);
+		addArrival(i, arrival, pick, pickColor);
 
 		SC_D.modelArrivals.setUseArrival(i, arrival);
 
@@ -4969,15 +4972,6 @@ void OriginLocatorView::updateContent() {
 		}
 
 		SC_D.modelArrivals.setRowColor(i, pickStateColor);
-
-		/*
-		try {
-			addArrival(arrival, SCScheme.colors.arrivals.residuals.colorAt(arrival->residual()));
-		}
-		catch ( Core::ValueException& ) {
-			addArrival(arrival, SCScheme.colors.arrivals.undefined);
-		}
-		*/
 	}
 
 	if ( SC_D.baseEvent ) {
@@ -5061,10 +5055,9 @@ void OriginLocatorView::updateContent() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
-                                   const Core::Time &time, const QColor& c) {
+void OriginLocatorView::addArrival(int idx, const Arrival *arrival,
+                                   const Pick *pick, const QColor& c) {
 	int id = SC_D.residuals->count();
-	Pick *pick = nullptr;
 
 	SC_D.residuals->addValue(QPointF());
 
@@ -5075,7 +5068,23 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 	//SC_D.residuals->setValueColor(id, 3, c);
 
 	double dist = -1;
-	try { dist = arrival->distance(); } catch ( ... ) {}
+	try {
+		dist = arrival->distance();
+		if ( SCScheme.distanceHypocentral ) {
+			double edep = SC_D.pickerConfig.defaultDepth;
+			double salt = 0;
+			try {
+				edep = SC_D.currentOrigin->depth().value();
+			}
+			catch ( ... ) {}
+			auto sloc = Client::Inventory::Instance()->getSensorLocation(pick);
+			if ( sloc ) {
+				salt = elevation(sloc);
+			}
+			dist = hypocentralDistance(dist, edep, salt);
+		}
+	}
+	catch ( ... ) {}
 
 	char phase = Util::getShortPhaseName(arrival->phase().code());
 	if ( phase == 'S' ) {
@@ -5119,12 +5128,10 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 		SC_D.residuals->setValueValid(id, PC_DISTANCE, false);
 	}
 
+	SC_D.modelArrivals.setDistance(id, SC_D.residuals->value(id, PC_DISTANCE));
+
 	try {
 		double residual = arrival->timeResidual();
-		if ( !pick ) {
-			pick = Pick::Find(arrival->pickID());
-		}
-
 		double lowerUncertainty = -1, upperUncertainty = -1;
 
 		if ( pick ) {
@@ -5154,8 +5161,8 @@ void OriginLocatorView::addArrival(int idx, DataModel::Arrival* arrival,
 		SC_D.residuals->setValueValid(id, PC_RESIDUAL, false);
 	}
 
-	if ( time ) {
-		SC_D.residuals->setValue(id, PC_TRAVELTIME, (float)(time - SC_D.currentOrigin->time().value()));
+	if ( pick ) {
+		SC_D.residuals->setValue(id, PC_TRAVELTIME, static_cast<double>(pick->time().value() - SC_D.currentOrigin->time().value()));
 	}
 	else {
 		SC_D.residuals->setValue(id, PC_TRAVELTIME, 0.0);

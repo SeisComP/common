@@ -26,6 +26,7 @@
 #include <seiscomp/core/genericrecord.h>
 #include <seiscomp/gui/datamodel/selectstation.h>
 #include <seiscomp/gui/datamodel/origindialog.h>
+#include <seiscomp/gui/datamodel/utils.h>
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/recordstreamthread.h>
 #include <seiscomp/gui/core/timescale.h>
@@ -62,9 +63,10 @@
 #define NO_FILTER_STRING       "Raw"
 #define DEFAULT_FILTER_STRING  "Default"
 
-#define ITEM_DISTANCE_INDEX  0
-#define ITEM_AZIMUTH_INDEX  1
-#define ITEM_PRIORITY_INDEX  2
+#define ITEM_SCHEME_DISTANCE_INDEX       0
+#define ITEM_EPICENTRAL_DISTANCE_INDEX   1
+#define ITEM_AZIMUTH_INDEX               2
+#define ITEM_PRIORITY_INDEX              3
 //#define ITEM_ARRIVALID_INDEX 2
 
 #define THEORETICAL_POSTFIX  "  "
@@ -604,7 +606,7 @@ class AmplitudeViewMarker : public RecordMarker {
 			if ( a ) {
 				try { state = a->evaluationMode(); } catch ( ... ) {}
 			}
-			
+
 			if ( isMovable() )
 				state = MANUAL;
 
@@ -1502,6 +1504,7 @@ AmplitudeRecordLabel::AmplitudeRecordLabel(int items, QWidget *parent, const cha
 
 	latitude = 999;
 	longitude = 999;
+	elevation = 0;
 	isError = false;
 	data.label = this;
 
@@ -2006,7 +2009,7 @@ void AmplitudeView::init() {
 	addAction(SC_D.ui.actionShowZComponent);
 	addAction(SC_D.ui.actionShowNComponent);
 	addAction(SC_D.ui.actionShowEComponent);
-	
+
 	addAction(SC_D.ui.actionAlignOnOriginTime);
 	addAction(SC_D.ui.actionAlignOnPArrival);
 
@@ -2161,7 +2164,7 @@ void AmplitudeView::init() {
 	        this, SLOT(showNComponent()));
 	connect(SC_D.ui.actionShowEComponent, SIGNAL(triggered(bool)),
 	        this, SLOT(showEComponent()));
-	
+
 	connect(SC_D.ui.actionAlignOnOriginTime, SIGNAL(triggered(bool)),
 	        this, SLOT(alignOnOriginTime()));
 	connect(SC_D.ui.actionAlignOnPArrival, SIGNAL(triggered(bool)),
@@ -2382,9 +2385,9 @@ bool AmplitudeView::setConfig(const Config &c, QString *error) {
 
 	RecordViewItem *item = SC_D.recordView->currentItem();
 	if ( item && SC_D.currentRecord ) {
-		if ( item->value(ITEM_DISTANCE_INDEX) >= 0 ) {
+		if ( item->value(ITEM_SCHEME_DISTANCE_INDEX) >= 0 ) {
 			if ( SC_D.config.showAllComponents &&
-				SC_D.config.allComponentsMaximumStationDistance >= item->value(ITEM_DISTANCE_INDEX) )
+				SC_D.config.allComponentsMaximumStationDistance >= item->value(ITEM_SCHEME_DISTANCE_INDEX) )
 				SC_D.currentRecord->setDrawMode(RecordWidget::InRows);
 			else
 				SC_D.currentRecord->setDrawMode(RecordWidget::Single);
@@ -2718,7 +2721,7 @@ RecordMarker* AmplitudeView::updatePhaseMarker(Seiscomp::Gui::RecordViewItem *it
 		Processing::MagnitudeProcessor::Status status;
 		status = label->magnitudeProcessor->computeMagnitude(
 			res.amplitude.value, label->processor->unit(),
-			res.period, res.snr, item->value(ITEM_DISTANCE_INDEX),
+			res.period, res.snr, item->value(ITEM_EPICENTRAL_DISTANCE_INDEX),
 			SC_D.origin->depth(), SC_D.origin.get(), label->location, a.get(), m);
 		if ( status == Processing::MagnitudeProcessor::OK )
 			mag = m;
@@ -2757,7 +2760,7 @@ RecordMarker* AmplitudeView::updatePhaseMarker(Seiscomp::Gui::RecordViewItem *it
 			marker->setAmplitudeResult(a.get());
 			marker->setFilterID(label->data.filterID);
 			marker->setEnabled(true);
-	
+
 			for ( int i = 0; i < widget->markerCount(); ++i ) {
 				RecordMarker* marker2 = widget->marker(i);
 				if ( marker == marker2 ) {
@@ -3211,37 +3214,47 @@ void AmplitudeView::showUsedStations(bool usedOnly) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::loadNextStations(float distance) {
-	DataModel::Inventory* inv = Client::Inventory::Instance()->inventory();
+	DataModel::Inventory *inv = Client::Inventory::Instance()->inventory();
 
-	if ( inv != nullptr ) {
-
+	if ( inv ) {
 		for ( size_t i = 0; i < inv->networkCount(); ++i ) {
 			Network* n = inv->network(i);
 			for ( size_t j = 0; j < n->stationCount(); ++j ) {
-				Station* s = n->station(j);
-	
+				Station *s = n->station(j);
+
 				QString code = (n->code() + "." + s->code()).c_str();
-	
-				if ( SC_D.stations.contains(code) ) continue;
-	
+
+				if ( SC_D.stations.contains(code) ) {
+					continue;
+				}
+
 				try {
-					if ( s->end() <= SC_D.origin->time() )
+					if ( s->end() <= SC_D.origin->time() ) {
 						continue;
+					}
 				}
 				catch ( Core::ValueException& ) {}
-	
-				double lat = s->latitude();
-				double lon = s->longitude();
-				double delta, az1, az2;
-	
-				Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-				                  lat, lon, &delta, &az1, &az2);
-	
-				if ( delta > distance ) continue;
+
+				double delta;
+
+				try {
+					delta = computeDistance(SC_D.origin.get(), s, 0);
+				}
+				catch ( std::exception &e ) {
+					SEISCOMP_WARNING("Distance to %s.%s: %s",
+					                 n->code(), s->code(), e.what());
+					continue;
+				}
+
+				if ( delta > distance ) {
+					continue;
+				}
 
 				// Skip stations out of amplitude processors range
-				if ( delta < SC_D.minDist || delta > SC_D.maxDist ) continue;
-	
+				if ( delta < SC_D.minDist || delta > SC_D.maxDist ) {
+					continue;
+				}
+
 				// try to get the configured location and stream code
 				Stream *stream = findConfiguredStream(s, SC_D.origin->time());
 
@@ -3250,20 +3263,23 @@ void AmplitudeView::loadNextStations(float distance) {
 					// Preferred channel code is BH. If not available use either SH or skip.
 					for ( size_t c = 0; c < SC_D.broadBandCodes.size(); ++c ) {
 						stream = findStream(s, SC_D.broadBandCodes[c], SC_D.origin->time());
-						if ( stream ) break;
+						if ( stream ) {
+							break;
+						}
 					}
 				}
 
-				if ( stream == nullptr )
+				if ( !stream ) {
 					stream = findStream(s, SC_D.origin->time(), Processing::WaveformProcessor::MeterPerSecond);
-	
+				}
+
 				if ( stream ) {
 					WaveformStreamID streamID(n->code(), s->code(), stream->sensorLocation()->code(), stream->code().substr(0,stream->code().size()-1) + '?', "");
 
 					try {
 						TravelTime ttime =
 							SC_D.ttTable->computeFirst(SC_D.origin->latitude(), SC_D.origin->longitude(),
-							                           SC_D.origin->depth(), lat, lon);
+							                           SC_D.origin->depth(), s->latitude(), s->longitude());
 
 						Core::Time referenceTime = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 
@@ -3271,8 +3287,9 @@ void AmplitudeView::loadNextStations(float distance) {
 						if ( item ) {
 							SC_D.stations.insert(code);
 							item->setVisible(!SC_D.ui.actionShowUsedStations->isChecked());
-							if ( SC_D.config.hideStationsWithoutData )
+							if ( SC_D.config.hideStationsWithoutData ) {
 								item->forceInvisibilty(true);
+							}
 						}
 					}
 					catch ( ... ) {}
@@ -3319,7 +3336,7 @@ void AmplitudeView::addAmplitude(Gui::RecordViewItem *item,
 			Processing::MagnitudeProcessor::Status stat;
 			stat = label->magnitudeProcessor->computeMagnitude(
 				amp->amplitude().value(), label->processor->unit(),
-				per, snr, item->value(ITEM_DISTANCE_INDEX),
+				per, snr, item->value(ITEM_EPICENTRAL_DISTANCE_INDEX),
 				SC_D.origin->depth(), SC_D.origin.get(), label->location, amp, m);
 			if ( stat == Processing::MagnitudeProcessor::OK )
 				marker->setMagnitude(m, QString());
@@ -3570,10 +3587,8 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 			}
 		}
 
-		if ( it.second.amp == nullptr ) {
-			double delta, az, baz;
-			Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-			                  loc->latitude(), loc->longitude(), &delta, &az, &baz);
+		if ( !it.second.amp ) {
+			double delta = computeDistance(SC_D.origin.get(), loc, 0);
 
 			if ( delta < SC_D.minDist || delta > SC_D.maxDist ) {
 				SEISCOMP_INFO("skipping station %s.%s: out of range",
@@ -3861,17 +3876,18 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
                                             const Core::Time &referenceTime) {
 	WaveformStreamID streamID(sid);
 
-	if ( loc == nullptr ) return nullptr;
+	if ( !loc ) {
+		return nullptr;
+	}
 
-	double delta, az, baz;
-	Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-	                  loc->latitude(), loc->longitude(), &delta, &az, &baz);
+	double delta, az, baz, epicentral;
+	delta = computeDistance(SC_D.origin.get(), loc, 0, &az, &baz, &epicentral);
 
 	// Skip stations out of range
 	//if ( delta < SC_D.minDist || delta > SC_D.maxDist ) return nullptr;
 
 	Processing::AmplitudeProcessorPtr proc = Processing::AmplitudeProcessorFactory::Create(SC_D.amplitudeType.c_str());
-	if ( proc == nullptr ) {
+	if ( !proc ) {
 		cerr << sid.networkCode() << "." << sid.stationCode() << ": unable to create processor "
 		     << SC_D.amplitudeType << ": ignoring station" << endl;
 		return nullptr;
@@ -4050,10 +4066,12 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 	label->location = loc;
 	label->latitude = loc->latitude();
 	label->longitude = loc->longitude();
+	label->elevation = elevation(loc);
 
 	label->orientationZRT.loadRotateZ(deg2rad(baz + 180.0));
 
-	item->setValue(ITEM_DISTANCE_INDEX, delta);
+	item->setValue(ITEM_SCHEME_DISTANCE_INDEX, delta);
+	item->setValue(ITEM_EPICENTRAL_DISTANCE_INDEX, epicentral);
 	item->setValue(ITEM_AZIMUTH_INDEX, az);
 
 	if ( SCScheme.unit.distanceInKM )
@@ -4244,7 +4262,7 @@ bool AmplitudeView::addTheoreticalArrivals(RecordViewItem *item,
 			return false;
 		}
 
-		double delta, az1, az2;
+		double delta, az, epicentral;
 		double elat = SC_D.origin->latitude();
 		double elon = SC_D.origin->longitude();
 		double slat, slon;
@@ -4259,10 +4277,18 @@ bool AmplitudeView::addTheoreticalArrivals(RecordViewItem *item,
 			return false;
 		}
 
-		Math::Geo::delazi(elat, elon, slat, slon, &delta, &az1, &az2);
+		try {
+			delta = computeDistance(SC_D.origin.get(), loc, 0, &az, nullptr, &epicentral);
+		}
+		catch ( std::exception &e ) {
+			SEISCOMP_WARNING("Distance to %s.%s.%s: %s",
+			                 netCode, staCode, locCode, e.what());
+			return false;
+		}
 
-		item->setValue(ITEM_DISTANCE_INDEX, delta);
-		item->setValue(ITEM_AZIMUTH_INDEX, az1);
+		item->setValue(ITEM_SCHEME_DISTANCE_INDEX, delta);
+		item->setValue(ITEM_EPICENTRAL_DISTANCE_INDEX, epicentral);
+		item->setValue(ITEM_AZIMUTH_INDEX, az);
 
 		/*
 		if ( SC_D.config.showAllComponents && SC_D.config.allComponentsMaximumStationDistance >= delta )
@@ -4488,7 +4514,7 @@ void AmplitudeView::updateItemLabel(RecordViewItem* item, char component) {
 
 		int index = text.lastIndexOf(' ');
 		if ( index < 0 ) return;
-	
+
 		if ( text.size() - index > 2 )
 			text[text.size()-1] = component;
 		else
@@ -4979,11 +5005,13 @@ void AmplitudeView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem)
 	//SC_D.ui.labelCode->setText(item->label()->text(0));
 	//SC_D.ui.labelInfo->setText(item->label()->text(1));
 
-	if ( item->value(ITEM_DISTANCE_INDEX) >= 0 ) {
-		if ( SCScheme.unit.distanceInKM )
-			SC_D.ui.labelDistance->setText(QString("%1 km").arg(Math::Geo::deg2km(item->value(ITEM_DISTANCE_INDEX)),0,'f',SCScheme.precision.distance));
-		else
-			SC_D.ui.labelDistance->setText(QString("%1%2").arg(item->value(ITEM_DISTANCE_INDEX),0,'f',1).arg(degrees));
+	if ( item->value(ITEM_SCHEME_DISTANCE_INDEX) >= 0 ) {
+		if ( SCScheme.unit.distanceInKM ) {
+			SC_D.ui.labelDistance->setText(QString("%1 km").arg(Math::Geo::deg2km(item->value(ITEM_SCHEME_DISTANCE_INDEX)),0,'f',SCScheme.precision.distance));
+		}
+		else {
+			SC_D.ui.labelDistance->setText(QString("%1%2").arg(item->value(ITEM_SCHEME_DISTANCE_INDEX),0,'f',1).arg(degrees));
+		}
 		SC_D.ui.labelAzimuth->setText(QString("%1%2").arg(item->value(ITEM_AZIMUTH_INDEX),0,'f',1).arg(degrees));
 	}
 
@@ -5234,7 +5262,7 @@ void AmplitudeView::sortAlphabetically() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::sortByDistance() {
-	SC_D.recordView->sortByValue(ITEM_DISTANCE_INDEX, ITEM_PRIORITY_INDEX);
+	SC_D.recordView->sortByValue(ITEM_SCHEME_DISTANCE_INDEX, ITEM_PRIORITY_INDEX);
 
 	SC_D.ui.actionSortAlphabetically->setChecked(false);
 	SC_D.ui.actionSortByDistance->setChecked(true);
@@ -5509,7 +5537,7 @@ void AmplitudeView::zoom(float factor) {
 
 	SC_D.currentRecord->setTimeScale(newScale);
 	SC_D.timeScale->setScale(newScale);
-	
+
 	if ( SC_D.checkVisibility ) {
 		ensureVisibility(tmin, tmax);
 	}
@@ -5560,7 +5588,7 @@ void AmplitudeView::scrollLeft() {
 		setCursorPos(cp);
 		return;
 	}
-	
+
 	float offset = -(float)width()/(8 * SC_D.currentRecord->timeScale());
 	move(offset);
 }
@@ -5577,7 +5605,7 @@ void AmplitudeView::scrollFineLeft() {
 		setCursorPos(cp);
 		return;
 	}
-	
+
 	float offset = -1.0 / SC_D.currentRecord->timeScale();
 	move(offset);
 }
@@ -5855,7 +5883,7 @@ void AmplitudeView::commit() {
 		Processing::MagnitudeProcessor::Status stat =
 			label->magnitudeProcessor->computeMagnitude(
 				amp->amplitude().value(), label->processor->unit(), period, snr,
-				item->value(ITEM_DISTANCE_INDEX), SC_D.origin->depth(),
+				item->value(ITEM_EPICENTRAL_DISTANCE_INDEX), SC_D.origin->depth(),
 				SC_D.origin.get(), label->location, amp.get(), magValue
 			);
 
@@ -6172,14 +6200,16 @@ void AmplitudeView::addStations() {
 
 		QString code = (n->code() + "." + s->code()).c_str();
 
-		if ( SC_D.stations.contains(code) ) continue;
+		if ( SC_D.stations.contains(code) ) {
+			continue;
+		}
 
-		double delta, az1, az2;
-		Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
-		                  s->latitude(), s->longitude(), &delta, &az1, &az2);
+		double delta = computeDistance(SC_D.origin.get(), s, 0);
 
 		// Skip stations out of amplitude processors range
-		if ( delta < SC_D.minDist || delta > SC_D.maxDist ) continue;
+		if ( delta < SC_D.minDist || delta > SC_D.maxDist ) {
+			continue;
+		}
 
 		Stream *stream = nullptr;
 		// Preferred channel code is BH. If not available use either SH or skip.
