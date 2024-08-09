@@ -18,8 +18,9 @@
  ***************************************************************************/
 
 
-#include <math.h>
 #include <seiscomp/math/filter/bpenv.h>
+#include <cmath>
+
 
 namespace Seiscomp {
 namespace Math {
@@ -28,14 +29,21 @@ namespace Filtering {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 static void checkParameters(double centerFrequency, double bandwidthOctaves, int order) {
-	if ( centerFrequency <= 0.  )
-		throw Core::ValueException("Filter center frequency must be positive");
-	if ( bandwidthOctaves <= 0. )
+	if ( centerFrequency == 0 ) {
+		throw Core::ValueException("Filter center frequency must not be zero");
+	}
+	if ( centerFrequency < -1 ) {
+		throw Core::ValueException("Filter center frequency must be greater or equal than -1");
+	}
+	if ( bandwidthOctaves <= 0. ) {
 		throw Core::ValueException("Filter band width must be positive");
-	if ( order < 0 )
+	}
+	if ( order < 0 ) {
 		throw Core::ValueException("Filter order must be non-negative");
-	if ( order > 10 )
+	}
+	if ( order > 10 ) {
 		throw Core::ValueException("Filter order > 10 makes no sense");
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -63,13 +71,20 @@ BandPassEnvelope<T>::BandPassEnvelope(double centerFrequency, double bandwidthOc
 template <typename T>
 void BandPassEnvelope<T>::reset() {
 	double q = std::sqrt(std::pow(2, _bandwidthOctaves));
-	double fmin = _centerFrequency/q;
-	double fmax = _centerFrequency*q;
 
-	_bp = new IIR::ButterworthBandpass<T>(_order, fmin, fmax, _samplingFrequency);
+	double centerFrequency = _centerFrequency;
+	if ( centerFrequency < 0 ) {
+		centerFrequency = -centerFrequency * _samplingFrequency;
+	}
 
-	_K = 0.5*_samplingFrequency/(M_PI*_centerFrequency);
-	_K = _K*_K;
+	double fmin = centerFrequency / q;
+	double fmax = centerFrequency * q;
+
+	_bp = new IIR::ButterworthBandpass<T>(_order, fmin, fmax);
+	_bp->setSamplingFrequency(_samplingFrequency);
+
+	_K = 0.5 * _samplingFrequency / (M_PI * centerFrequency);
+	_K = _K * _K;
 
 	_yp = 0;
 
@@ -83,8 +98,9 @@ void BandPassEnvelope<T>::reset() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 void BandPassEnvelope<T>::setSamplingFrequency(double fsamp) {
-	if ( _samplingFrequency == fsamp )
+	if ( _samplingFrequency == fsamp ) {
 		return;
+	}
 
 	_samplingFrequency = fsamp;
 
@@ -99,15 +115,15 @@ void BandPassEnvelope<T>::setSamplingFrequency(double fsamp) {
 template <typename T>
 int BandPassEnvelope<T>::setParameters(int n, const double *params) {
 	switch ( n ) {
-	case 3:
-		_order = (int) params[2];
-	case 2:
-		_bandwidthOctaves = params[1];
-	case 1:
-		_centerFrequency = params[0];
-		break;
-	default:
-		return 3;
+		case 3:
+			_order = (int) params[2];
+		case 2:
+			_bandwidthOctaves = params[1];
+		case 1:
+			_centerFrequency = params[0];
+			break;
+		default:
+			return 3;
 	}
 
 	checkParameters(_centerFrequency, _bandwidthOctaves, _order);
