@@ -4752,8 +4752,9 @@ RecordMarker* RecordWidget::markerAt(int x, int y, bool movableOnly, int maxDist
 	RecordMarker *m = nullptr;
 	for ( int i = markerCount()-1; i >= 0; --i ) {
 		RecordMarker *cm = marker(i);
-		if ( movableOnly && !cm->isMovable() )
+		if ( !cm->isVisible() || (movableOnly && !cm->isMovable()) ) {
 			continue;
+		}
 
 		int startY = 0, endY = h;
 
@@ -4766,7 +4767,9 @@ RecordMarker* RecordWidget::markerAt(int x, int y, bool movableOnly, int maxDist
 				break;
 		}
 
-		if ( y < startY || y > endY ) continue;
+		if ( y < startY || y > endY ) {
+			continue;
+		}
 
 		int x0 = mapTime(cm->correctedTime());
 		int dist = abs(x-x0);
@@ -4790,6 +4793,9 @@ RecordMarker* RecordWidget::lastMarker(const Seiscomp::Core::Time& t) {
 	int minI = -1;
 	double minT = -1;
 	for ( int i = 0; i < markerCount(); ++i ) {
+		if ( !marker(i)->isVisible() ) {
+			continue;
+		}
 		double delta = (double)(t - marker(i)->correctedTime());
 		if ( delta > 0 && (delta < minT || minT < 0) ) {
 			minT = delta;
@@ -4814,6 +4820,9 @@ RecordMarker* RecordWidget::nextMarker(const Seiscomp::Core::Time& t) {
 	int minI = -1;
 	double minT = -1;
 	for ( int i = 0; i < markerCount(); ++i ) {
+		if ( !marker(i)->isVisible() ) {
+			continue;
+		}
 		double delta = (double)(marker(i)->correctedTime() - t);
 		if ( delta > 0 && (delta < minT || minT < 0) ) {
 			minT = delta;
@@ -4837,6 +4846,9 @@ RecordMarker* RecordWidget::nearestMarker(const Seiscomp::Core::Time& t,
 	int minI = -1;
 	double minT = -1;
 	for ( int i = 0; i < markerCount(); ++i ) {
+		if ( !marker(i)->isVisible() ) {
+			continue;
+		}
 		double delta = fabs(marker(i)->correctedTime() - t);
 		if ( delta < minT || minT < 0 ) {
 			minT = delta;
@@ -4861,8 +4873,11 @@ RecordMarker* RecordWidget::nearestMarker(const Seiscomp::Core::Time& t,
 bool RecordWidget::hasMovableMarkers() const {
 	if ( _markerSourceWidget ) return _markerSourceWidget->hasMovableMarkers();
 
-	foreach(RecordMarker* m, _marker)
-		if ( m->isMovable() && m->isEnabled() ) return true;
+	foreach(RecordMarker* m, _marker) {
+		if ( m->isMovable() && m->isEnabled() ) {
+			return true;
+		}
+	}
 
 	return false;
 }

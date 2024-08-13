@@ -9024,10 +9024,19 @@ void PickerView::showUnassociatedPicks(bool v) {
 		fillRawPicks();
 	}
 
+	bool changed = false;
+
 	for ( int i = 0; i < SC_D.currentRecord->markerCount(); ++i ) {
 		PickerMarker* m = static_cast<PickerMarker*>(SC_D.currentRecord->marker(i));
-		if ( m->type() == PickerMarker::Pick )
+		if ( m->type() == PickerMarker::Pick ) {
 			m->setVisible(v);
+			changed = true;
+		}
+	}
+
+	if ( changed ) {
+		// Force update of hovered marker
+		SC_D.currentRecord->setMarkerSourceWidget(SC_D.currentRecord->markerSourceWidget());
 	}
 
 	// Since all markers are just proxies of the real traces we need
@@ -9036,11 +9045,21 @@ void PickerView::showUnassociatedPicks(bool v) {
 
 	for ( int i = 0; i < SC_D.recordView->rowCount(); ++i ) {
 		RecordWidget *w = SC_D.recordView->itemAt(i)->widget();
+		changed = false;
 
 		for ( int i = 0; i < w->markerCount(); ++i ) {
 			PickerMarker* m = static_cast<PickerMarker*>(w->marker(i));
-			if ( m->type() == PickerMarker::Pick )
+			if ( m->type() == PickerMarker::Pick ) {
 				m->setVisible(v);
+				changed = true;
+				if ( w->currentMarker() == m && !v ) {
+					w->setCurrentMarker(nullptr);
+				}
+			}
+		}
+
+		if ( changed ) {
+			w->setMarkerSourceWidget(w->markerSourceWidget());
 		}
 	}
 }
