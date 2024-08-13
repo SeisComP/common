@@ -982,6 +982,11 @@ class PickerMarker : public RecordMarker {
 			catch ( ... ) {}
 			if ( !_referencedPick->methodID().empty() )
 				text += QString("\nmethod: %1").arg(_referencedPick->methodID().c_str());
+			try {
+				double confidence = _referencedPick->time().confidenceLevel();
+				text += QString("\nconfidence: %1").arg(confidence);
+			}
+			catch ( ... ) {}
 			if ( !_referencedPick->filterID().empty() )
 				text += QString("\nfilter: %1").arg(_referencedPick->filterID().c_str());
 			try {
