@@ -30,7 +30,8 @@
 #include <iostream>
 
 
-namespace Seiscomp::Database {
+namespace Seiscomp {
+namespace Database {
 
 
 IMPLEMENT_SC_CLASS_DERIVED(PostgreSQLDatabase,
@@ -499,4 +500,5 @@ bool PostgreSQLDatabase::reconnect(ConnStatusType stat) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+}
 }
