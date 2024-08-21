@@ -2126,7 +2126,7 @@ void AmplitudeView::init() {
 
 	if ( SCScheme.unit.distanceInKM ) {
 		SC_D.spinDistance->setRange(0, 25000);
-		SC_D.spinDistance->setDecimals(0);
+		SC_D.spinDistance->setDecimals(1);
 		SC_D.spinDistance->setSuffix("km");
 	}
 	else {
