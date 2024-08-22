@@ -61,7 +61,7 @@
 							Confidence level, between 0.5 and 1.0, used in computing the confidence ellipsoid.
 							</description>
 						</parameter>
-						<parameter name="enableConfidenceEllipsoid" type="boolean" default="true">
+						<parameter name="enableConfidenceEllipsoid" type="boolean" default="false">
 							<description>
 							Compute the confidence ellipsoid for the location. This is optional since
 							if it is not required it can be disabled to save some computation.

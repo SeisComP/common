@@ -307,7 +307,7 @@ bool StdLoc::init(const Config::Config &config) {
 	defaultProf.usePickUncertainties = false;
 	defaultProf.pickUncertaintyClasses = {0.000, 0.025, 0.050,
 	                                      0.100, 0.200, 0.400};
-	defaultProf.enableConfidenceEllipsoid = true;
+	defaultProf.enableConfidenceEllipsoid = false;
 	defaultProf.confLevel = 0.9;
 	defaultProf.gridSearch.originLat = 0.;
 	defaultProf.gridSearch.originLon = 0.;
