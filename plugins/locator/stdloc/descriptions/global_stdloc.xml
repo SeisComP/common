@@ -70,14 +70,7 @@
 
 						<group name="GridSearch">
 							<description>
-								Find the source location by evaluating the hypocenter probability
-								of each grid point and returning the maximum likelihood hypocenter.
-								The source time is derived from the weighted average of the arrival
-								travel times.
-								The solution can be further improved combining it with the Least Squares
-								algorithm, which will then be run for each grid point, using it as
-								initial location estimate. In this case only few sparse points are
-								required.
+								Parameters controlling the GridSearch and OctTree methods.
 							</description>
 							<parameter name="center" type="list:string" unit="deg,deg,km" default="auto,auto,20">
 								<description>Grid center defined as: latitude,longitude,depth. The
@@ -118,14 +111,12 @@
 
 						<group name="OctTree">
 							<description>
-								Find the source location and time via OctTree search. This method uses the
+								Parameters controlling the OctTree method. This method uses the
 								parameters defined in GridSearch, but applies the OctTree search algorithm
 								to the grid. The starting cells of the OctTree search are created by 
 								dividing the initial grid in equally sized cells. The number of cells in
 								each direction is 'GridSearch.numPoints' - 1, since the grid points
 								becomes the cell vertices.
-								The solution can be further improved combining OctTree with the Least Squares
-								algorithm, which can use the OctTree solution as initial location estimate.
 							</description>
 							<parameter name="maxIterations" type="int" default="50000">
 								<description>
@@ -143,10 +134,7 @@
 
 						<group name="LeastSquares">
 							<description>
-								Find the source location and time via iterative Least Square.
-								However an initial location estatimate is required. if that is not
-								available then this method should be combined with GridSearch or
-								OctTree.
+								Parameters controlling the LeastSquares method.
 							</description>
 							<parameter name="depthInit" type="double" default="20">
 								<description>
