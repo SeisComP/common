@@ -994,6 +994,7 @@ Origin *StdLoc::locate(PickList &pickList) {
 		              (computeCovMtrx &&
 		               _currentProfile.method == Profile::Method::OctTree));
 		if ( _currentProfile.method == Profile::Method::OctTreeAndLsqr ) {
+			_rejectLocation = false; // skip OctTree check of grid boundary
 			locateLeastSquares(pickList, weights, sensorLat, sensorLon,
 			                   sensorElev, originLat, originLon, originDepth,
 			                   originTime, originLat, originLon, originDepth,
@@ -1058,6 +1059,7 @@ Origin *StdLoc::locate(PickList &pickList, double initLat, double initLon,
 		              (computeCovMtrx &&
 		               _currentProfile.method == Profile::Method::OctTree));
 		if ( _currentProfile.method == Profile::Method::OctTreeAndLsqr ) {
+			_rejectLocation = false; // skip OctTree check of grid boundary
 			locateLeastSquares(pickList, weights, sensorLat, sensorLon,
 			                   sensorElev, originLat, originLon, originDepth,
 			                   originTime, originLat, originLon, originDepth,
