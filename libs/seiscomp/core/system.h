@@ -26,7 +26,11 @@
 
 #include <seiscomp/core.h>
 #include <boost/version.hpp>
+#if BOOST_VERSION < 108600
 #include <boost/filesystem/convenience.hpp>
+#else
+#include <boost/filesystem.hpp>
+#endif
 
 
 #if BOOST_VERSION <= 103301

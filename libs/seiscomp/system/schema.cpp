@@ -25,7 +25,6 @@
 #include <boost/version.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/filesystem/convenience.hpp>
 #include <string>
 #include <fstream>
 
@@ -545,7 +544,7 @@ bool SchemaDefinitions::reload() {
 		for ( fs::directory_iterator it(directory); it != fsDirEnd; ++it ) {
 			if ( fs::is_directory(*it) ) continue;
 			string filename = SC_FS_IT_STR(it);
-			if ( fs::extension(filename) != ".xml" ) continue;
+			if ( fs::path(filename).extension() != ".xml" ) continue;
 
 			SEISCOMP_DEBUG("Loading %s", filename.c_str());
 			if ( !ar.open(filename.c_str()) ) {
