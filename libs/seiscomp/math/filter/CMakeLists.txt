@@ -5,6 +5,7 @@ SET(FILTER_SOURCES
 	biquad.cpp
 	bpenv.cpp
 	butterworth.cpp
+	duration.cpp
 	iirintegrate.cpp
 	iirdifferentiate.cpp
 	average.cpp
@@ -29,6 +30,7 @@ SET(FILTER_HEADERS
 	bpenv.h
 	butterworth.h
 	butterworth.ipp
+	duration.h
 	iirintegrate.h
 	iirdifferentiate.h
 	average.h
