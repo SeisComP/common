@@ -2810,15 +2810,12 @@ void RecordView::sortByMarkerTime(const QString& markerText) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-void RecordView::sortRows(list< pair<T, RecordViewItem*> >& l) {
+void RecordView::sortRows(list<pair<T, RecordViewItem*>>& l) {
 	l.sort();
 
 	int row = 0;
-	typename list< pair<T, RecordViewItem*> >::iterator it;
-	for (it = l.begin(); it != l.end(); ++it)
-	{
-		RecordViewItem *item = (*it).second;
-
+	for ( const auto &p : l ) {
+		RecordViewItem *item = p.second;
 		item->_row = row;
 		_rows[row] = item;
 		++row;
