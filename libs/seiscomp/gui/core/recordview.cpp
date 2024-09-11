@@ -30,6 +30,7 @@
 #include <seiscomp/math/filter.h>
 
 #include <limits>
+#include <tuple>
 
 #include <QApplication>
 #include <QScrollBar>
@@ -2003,12 +2004,12 @@ void RecordView::scaleContent() {
 	}
 
 	float scale;
-	
+
 	if ( timeWindowLength == 0 )
 		scale = 0;
 	else
 		scale = (float)w/timeWindowLength;
-	
+
 	/*
 	if ( scale < _minTimeScale )
 		scale = _minTimeScale;
@@ -2537,12 +2538,14 @@ void RecordView::scaleAllRecords() {
 void RecordView::sortByText(int item) {
 	list< pair<QString, RecordViewItem*> > distlist;
 
-	foreach (RecordViewItem* rvItem, _items) {
-		if (rvItem->label()->itemCount() <= item)
+	foreach ( RecordViewItem* rvItem, _items ) {
+		if ( rvItem->label()->itemCount() <= item ) {
 			return;
+		}
 
 		distlist.push_back(
-			pair<QString, RecordViewItem*>(rvItem->label()->text(item), rvItem) );
+			pair<QString, RecordViewItem*>(rvItem->label()->text(item), rvItem)
+		);
 	}
 
 	sortRows(distlist);
@@ -2556,13 +2559,77 @@ void RecordView::sortByText(int item) {
 void RecordView::sortByText(int row1, int row2) {
 	list< pair<pair<QString, QString>, RecordViewItem*> > distlist;
 
-	foreach (RecordViewItem* rvItem, _items) {
-		if (rvItem->label()->itemCount() <= row1 || rvItem->label()->itemCount() <= row2)
+	foreach ( RecordViewItem* rvItem, _items ) {
+		if ( rvItem->label()->itemCount() <= row1 || rvItem->label()->itemCount() <= row2 ) {
 			return;
+		}
 
 		distlist.push_back(
 			pair<pair<QString, QString>, RecordViewItem*>(
-				pair<QString, QString>(rvItem->label()->text(row1), rvItem->label()->text(row2)), rvItem));
+				pair<QString, QString>(rvItem->label()->text(row1), rvItem->label()->text(row2)), rvItem)
+		);
+	}
+
+	sortRows(distlist);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordView::sortByText(int row1, int row2, int row3) {
+	list<pair<tuple<QString, QString, QString>, RecordViewItem*>> distlist;
+
+	foreach ( RecordViewItem* rvItem, _items ) {
+		if ( rvItem->label()->itemCount() <= row1
+		  || rvItem->label()->itemCount() <= row2
+		  || rvItem->label()->itemCount() <= row3 ) {
+			return;
+		}
+
+		distlist.push_back(
+			pair<tuple<QString, QString, QString>, RecordViewItem*>(
+				make_tuple(
+					rvItem->label()->text(row1),
+					rvItem->label()->text(row2),
+					rvItem->label()->text(row3)
+				),
+				rvItem
+			)
+		);
+	}
+
+	sortRows(distlist);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordView::sortByText(int row1, int row2, int row3, int row4) {
+	list<pair<tuple<QString, QString, QString, QString>, RecordViewItem*>> distlist;
+
+	foreach ( RecordViewItem* rvItem, _items ) {
+		if ( rvItem->label()->itemCount() <= row1
+		  || rvItem->label()->itemCount() <= row2
+		  || rvItem->label()->itemCount() <= row3
+		  || rvItem->label()->itemCount() <= row4 ) {
+			return;
+		}
+
+		distlist.push_back(
+			pair<tuple<QString, QString, QString, QString>, RecordViewItem*>(
+				make_tuple(
+					rvItem->label()->text(row1),
+					rvItem->label()->text(row2),
+					rvItem->label()->text(row3),
+					rvItem->label()->text(row4)
+				),
+				rvItem
+			)
+		);
 	}
 
 	sortRows(distlist);
@@ -2574,7 +2641,7 @@ void RecordView::sortByText(int row1, int row2) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::sortByValue(int column) {
-	list< pair<double, RecordViewItem*> > distlist;
+	list<pair<double, RecordViewItem*>> distlist;
 
 	foreach (RecordViewItem* item, _items) {
 		if (item->columnCount() <= column)
@@ -2593,7 +2660,7 @@ void RecordView::sortByValue(int column) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::sortByValue(int column1, int column2) {
-	list< pair<pair<double, double>, RecordViewItem*> > distlist;
+	list<pair<pair<double, double>, RecordViewItem*>> distlist;
 
 	foreach (RecordViewItem* item, _items) {
 		if ( item->columnCount() <= column1 || item->columnCount() <= column2 )
@@ -2612,7 +2679,7 @@ void RecordView::sortByValue(int column1, int column2) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::sortByValue(int column1, int column2, int column3) {
-	list<pair<pair<double, pair<double, double> >, RecordViewItem*> > distlist;
+	list<pair<tuple<double, double, double>, RecordViewItem*>> distlist;
 
 	foreach (RecordViewItem* item, _items) {
 		if ( item->columnCount() <= column1
@@ -2621,13 +2688,11 @@ void RecordView::sortByValue(int column1, int column2, int column3) {
 			return;
 
 		distlist.push_back(
-			pair<pair<double, pair<double, double> >, RecordViewItem*>(
-				pair<double, pair<double, double> >(
+			pair<tuple<double, double, double>, RecordViewItem*>(
+				make_tuple(
 					item->value(column1),
-					pair<double, double>(
-						item->value(column2),
-						item->value(column3)
-					)
+					item->value(column2),
+					item->value(column3)
 				),
 				item
 			)
@@ -2643,7 +2708,7 @@ void RecordView::sortByValue(int column1, int column2, int column3) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::sortByValue(int column1, int column2, int column3, int column4) {
-	list<pair<pair<double, pair<double, pair<double, double> > >, RecordViewItem*> > distlist;
+	list<pair<tuple<double, double, double, double>, RecordViewItem*>> distlist;
 
 	foreach (RecordViewItem* item, _items) {
 		if ( item->columnCount() <= column1
@@ -2653,17 +2718,8 @@ void RecordView::sortByValue(int column1, int column2, int column3, int column4)
 			return;
 
 		distlist.push_back(
-			pair<pair<double, pair<double, pair<double, double> > >, RecordViewItem*>(
-				pair<double, pair<double, pair<double, double> > >(
-					item->value(column1),
-					pair<double, pair<double, double> >(
-						item->value(column2),
-						pair<double, double>(
-							item->value(column3),
-							item->value(column4)
-						)
-					)
-				),
+			pair<tuple<double, double, double, double>, RecordViewItem*>(
+				make_tuple(item->value(column1), item->value(column2), item->value(column3), item->value(column4)),
 				item
 			)
 		);
@@ -2982,10 +3038,10 @@ void RecordView::setFilter(RecordWidget::Filter *filter) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordView::setFilterByName(const QString& strFilter) {
 	auto f = RecordWidget::Filter::Create(strFilter.toStdString());
-	
+
 	if ( !f )
 		return false;
-	
+
 	setFilter(f);
 	return true;
 }
