@@ -349,11 +349,11 @@ class SC_GUI_API RecordView : public QWidget {
 		//! Aligns the RecordView regarding the justification in
 		//! the current viewport on the set alignment time
 		void align();
-	
+
 		void horizontalZoom(float factor);
 		void horizontalZoomIn()  { horizontalZoom( _zoomFactor); }
 		void horizontalZoomOut() { horizontalZoom(1.0f/_zoomFactor); }
-	
+
 		void verticalZoom(float factor);
 		void verticalZoomIn()  { verticalZoom(_zoomFactor); }
 		void verticalZoomOut() { verticalZoom(1.0f/_zoomFactor); }
@@ -387,6 +387,15 @@ class SC_GUI_API RecordView : public QWidget {
 		//! row 'row1' and then text in row 'row2'
 		void sortByText(int row1, int row2);
 
+		//! Sort the items by text of the label using first text in
+		//! row 'row1' and then text in row 'row2' and then text in row 'row3'
+		void sortByText(int row1, int row2, int row3);
+
+		//! Sort the items by text of the label using first text in
+		//! row 'row1' and then text in row 'row2' and then text in row 'row3'
+		//! and then text in row 'row4'.
+		void sortByText(int row1, int row2, int row3, int row4);
+
 		//! Sort the items by the value set in column 'column'
 		void sortByValue(int column);
 
@@ -418,7 +427,7 @@ class SC_GUI_API RecordView : public QWidget {
 		//! Sort the items by the time value of the markers with
 		//! text markerText
 		void sortByMarkerTime(const QString& markerText);
-	
+
 		void setAlignment(const Seiscomp::Core::Time& time);
 
 		//! Aligns all rows on their marker with text set to
@@ -438,7 +447,7 @@ class SC_GUI_API RecordView : public QWidget {
 
 		void showSlot(int slot);
 		void showComponent(char componentCode);
-	
+
 		//! Enables zooming by drawing a zoomrect with
 		//! the mouse
 		void setZoomEnabled(bool = true);
