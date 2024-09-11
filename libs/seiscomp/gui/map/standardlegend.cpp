@@ -95,6 +95,11 @@ void StandardLegendItem::draw(QPainter *painter, const QRect &symbolRect,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void StandardLegendItem::drawSymbol(QPainter *painter, const QRect &rect) {
+	// Limit pen width to 12.5% of rect width to ensure different line styles
+	// can be distinguished.
+	QPen p(pen);
+	p.setWidth(qMax(1, qMin(rect.width() / 8, p.width())));
+	painter->setPen(p);
 	if ( brush != Qt::NoBrush ) {
 		int x = rect.left();
 		int y = rect.top();
@@ -104,22 +109,17 @@ void StandardLegendItem::drawSymbol(QPainter *painter, const QRect &rect) {
 		if ( size > 0 ) {
 			int s = qMin(size, w);
 			s = qMin(s, h);
-			x += (w-s)/2;
-			y += (h-s)/2;
+			x += (w - s) / 2;
+			y += (h - s) / 2;
 			w = h = s;
 		}
 
-		painter->setPen(pen);
 		painter->setBrush(brush);
 		painter->drawRect(x, y, w, h);
 	}
 	else {
-		QPen p(pen);
-		int h = qMin(4, rect.height());
-		p.setWidth(h);
-		painter->setPen(p);
-		painter->drawLine(rect.left(), (rect.top()+rect.bottom()+h)/2,
-		                  rect.right(), (rect.top()+rect.bottom()+h)/2);
+		int h = (rect.top() + rect.bottom() + p.width()) / 2;
+		painter->drawLine(rect.left(), h, rect.right(), h);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
