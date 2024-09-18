@@ -1214,8 +1214,8 @@ void StdLoc::computeAdditionlPickInfo(const PickList &pickList,
 		++activeArrivals;
 	}
 
-	if ( activeArrivals <= 0 ) {
-		throw LocatorException("Empty set of active arrivals");
+	if ( activeArrivals < 4 ) {
+		throw LocatorException("At least 4 arrivals are required");
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
