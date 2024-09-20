@@ -423,7 +423,8 @@
 					IASPEI recommendations.
 
 					For Ms(BB) amplitudes check that the dominant period of the
-					signal is within the valid range (3, 60).
+					signal is within the valid range (3, 60). The period range
+					may be set in a Ms(BB) amplitude profile in global bindings.
 					</description>
 				</parameter>
 				<group name="ttt">
