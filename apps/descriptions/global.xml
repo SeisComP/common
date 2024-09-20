@@ -421,6 +421,9 @@
 					<description>
 					Compute ML peak-to-trough and mb amplitudes according to
 					IASPEI recommendations.
+
+					For Ms(BB) amplitudes check that the dominant period of the
+					signal is within the valid range (3, 60).
 					</description>
 				</parameter>
 				<group name="ttt">
