@@ -16,9 +16,7 @@
 ############################################################################
 
 
-from __future__ import (
-    absolute_import,
-    print_function)
+from __future__ import absolute_import, print_function
 
 import os
 import sys
@@ -26,16 +24,9 @@ import tempfile
 
 from utils import write, execute
 
-def createPostgresSQLDB(
-        db,
-        rwuser,
-        rwpwd,
-        rouser,
-        ropwd,
-        rwhost,
-        drop,
-        schemapath):
-    #cmd = "psql --host {}".format(rwhost)
+
+def createPostgresSQLDB(db, rwuser, rwpwd, rouser, ropwd, rwhost, drop, schemapath):
+    # cmd = "psql --host {}".format(rwhost)
     # We have to disable notice messages with --client-min-messages=warning
     # because PostgreSQL outputs notice messages to stderr when e.g. tables should
     # be removed which do not exist even the if exist check is inplace.
@@ -47,7 +38,7 @@ def createPostgresSQLDB(
         q = f"DROP DATABASE IF EXISTS {db};"
         write(f"  + Drop database {db}")
 
-        res = execute(f"{cmd} -c \"{q}\"")
+        res = execute(f'{cmd} -c "{q}"')
         if res.error:
             print(f"  + {res.error}")
             return False
@@ -55,13 +46,13 @@ def createPostgresSQLDB(
     write(f"  + Create database {db}")
 
     q = f"CREATE DATABASE {db} ENCODING 'UTF8'"
-    res = execute(f"{cmd} -c \"{q}\"")
+    res = execute(f'{cmd} -c "{q}"')
     if res.error:
         print(f"  + {res.error}")
         return False
 
     q = f"ALTER DATABASE {db} SET bytea_output TO 'escape'"
-    res = execute(f"{cmd} -c \"{q}\"")
+    res = execute(f'{cmd} -c "{q}"')
     if res.error:
         print(f"  + {res.error}")
         return False
@@ -69,7 +60,7 @@ def createPostgresSQLDB(
     write("  + Create SeisComP tables")
 
     q = f"\\i {os.path.join(schemapath, 'postgres.sql')};"
-    res = execute(f"{cmd} -d {db} -c \"{q}\"")
+    res = execute(f'{cmd} -d {db} -c "{q}"')
     if res.error:
         print(f"  + {res.error}")
         return False
@@ -77,7 +68,7 @@ def createPostgresSQLDB(
     write("  + Setup user roles")
 
     q = f"SELECT 1 FROM pg_roles WHERE rolname='{rwuser}'"
-    res = execute(cmd + f" -c \"{q}\" -d {db}")
+    res = execute(cmd + f' -c "{q}" -d {db}')
     if res.error:
         print(f"  + {res.error}")
         return False
@@ -92,7 +83,7 @@ def createPostgresSQLDB(
 
     if rwuser != rouser:
         q = f"SELECT 1 FROM pg_roles WHERE rolname='{rouser}'"
-        res = execute(cmd + f" -c \"{q}\" -d {db}")
+        res = execute(cmd + f' -c "{q}" -d {db}')
         if res.error:
             print(f"  + {res.error}")
             return False
@@ -104,20 +95,22 @@ def createPostgresSQLDB(
 
         q += f"GRANT SELECT ON ALL TABLES IN SCHEMA public TO {rouser};"
 
-
-    res = execute(f"{cmd} -c \"{q}\" -d {db}")
+    res = execute(f'{cmd} -c "{q}" -d {db}')
     if res.error:
         print(f"  + {res.error}")
         return False
 
     return True
 
+
 def main():
     if len(sys.argv) != 9:
-        print("Usage: postgres_setup.py <db> <rwuser> <rwpwd> "
-              "<rouser> <ropwd> <rwhost> <drop> <schema path>\n\n"
-              "For example: su postgres -c postgres_setup.py seiscomp sysop sysop "
-              "sysop sysop localhost false ~/seiscomp/share/db/")
+        print(
+            "Usage: postgres_setup.py <db> <rwuser> <rwpwd> "
+            "<rouser> <ropwd> <rwhost> <drop> <schema path>\n\n"
+            "For example: su postgres -c postgres_setup.py seiscomp sysop sysop "
+            "sysop sysop localhost false ~/seiscomp/share/db/"
+        )
         return 1
 
     db = sys.argv[1]
@@ -128,13 +121,16 @@ def main():
     rwhost = sys.argv[6]
     schemapath = sys.argv[8]
 
-    drop = sys.argv[7].lower() == 'true'
+    drop = sys.argv[7].lower() == "true"
 
     os.chdir(tempfile.gettempdir())
-    if not createPostgresSQLDB(db, rwuser, rwpwd, rouser, ropwd, rwhost, drop, schemapath):
+    if not createPostgresSQLDB(
+        db, rwuser, rwpwd, rouser, ropwd, rwhost, drop, schemapath
+    ):
         return 1
 
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())
