@@ -44,70 +44,70 @@ def createPostgresSQLDB(
     write("+ Create PostgresSQL database")
 
     if drop:
-        q = "DROP DATABASE IF EXISTS {};".format(db)
-        write("  + Drop database {}".format(db))
+        q = f"DROP DATABASE IF EXISTS {db};"
+        write(f"  + Drop database {db}")
 
-        res = execute("{} -c \"{}\"".format(cmd, q))
+        res = execute(f"{cmd} -c \"{q}\"")
         if res.error:
-            print("  + {}".format(res.error))
+            print(f"  + {res.error}")
             return False
 
-    write("  + Create database {}".format(db))
+    write(f"  + Create database {db}")
 
-    q = "CREATE DATABASE {} ENCODING 'UTF8'".format(db)
-    res = execute("{} -c \"{}\"".format(cmd, q))
+    q = f"CREATE DATABASE {db} ENCODING 'UTF8'"
+    res = execute(f"{cmd} -c \"{q}\"")
     if res.error:
-        print("  + {}".format(res.error))
+        print(f"  + {res.error}")
         return False
 
-    q = "ALTER DATABASE {} SET bytea_output TO 'escape'".format(db)
-    res = execute("{} -c \"{}\"".format(cmd, q))
+    q = f"ALTER DATABASE {db} SET bytea_output TO 'escape'"
+    res = execute(f"{cmd} -c \"{q}\"")
     if res.error:
-        print("  + {}".format(res.error))
+        print(f"  + {res.error}")
         return False
 
     write("  + Create SeisComP tables")
 
-    q = "\\i {};".format(os.path.join(schemapath, "postgres.sql"))
-    res = execute("{} -d {} -c \"{}\"".format(cmd, db, q))
+    q = f"\\i {os.path.join(schemapath, 'postgres.sql')};"
+    res = execute(f"{cmd} -d {db} -c \"{q}\"")
     if res.error:
-        print("  + {}".format(res.error))
+        print(f"  + {res.error}")
         return False
 
     write("  + Setup user roles")
 
-    q = "SELECT 1 FROM pg_roles WHERE rolname='{}'".format(rwuser)
-    res = execute(cmd + " -c \"{}\" -d {}".format(q, db))
+    q = f"SELECT 1 FROM pg_roles WHERE rolname='{rwuser}'"
+    res = execute(cmd + f" -c \"{q}\" -d {db}")
     if res.error:
-        print("  + {}".format(res.error))
+        print(f"  + {res.error}")
         return False
 
     q = ""
     exits = "1" in res.data
     if not exits:
-        q += "CREATE USER {} WITH ENCRYPTED PASSWORD '{}';".format(rwuser, rwpwd)
+        q += f"CREATE USER {rwuser} WITH ENCRYPTED PASSWORD '{rwpwd}';"
 
-    q += "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {};".format(rwuser)
-    q += "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO {};".format(rwuser)
+    q += f"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {rwuser};"
+    q += f"GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO {rwuser};"
 
     if rwuser != rouser:
-        q = "SELECT 1 FROM pg_roles WHERE rolname='{}'".format(rouser)
-        res = execute(cmd + " -c \"{}\" -d {}".format(q, db))
+        q = f"SELECT 1 FROM pg_roles WHERE rolname='{rouser}'"
+        res = execute(cmd + f" -c \"{q}\" -d {db}")
         if res.error:
-            print("  + {}".format(res.error))
+            print(f"  + {res.error}")
             return False
 
         q = ""
         exits = "1" in res.data
         if not exits:
-            q += "CREATE USER {} WITH ENCRYPTED PASSWORD '{}';".format(rouser, ropwd)
+            q += f"CREATE USER {rouser} WITH ENCRYPTED PASSWORD '{ropwd}';"
 
-        q += "GRANT SELECT ON ALL TABLES IN SCHEMA public TO {};".format(rouser)
+        q += f"GRANT SELECT ON ALL TABLES IN SCHEMA public TO {rouser};"
 
 
-    res = execute("{} -c \"{}\" -d {}".format(cmd, q, db))
+    res = execute(f"{cmd} -c \"{q}\" -d {db}")
     if res.error:
-        print("  + {}".format(res.error))
+        print(f"  + {res.error}")
         return False
 
     return True
