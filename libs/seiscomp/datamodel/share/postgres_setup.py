@@ -16,8 +16,6 @@
 ############################################################################
 
 
-from __future__ import absolute_import, print_function
-
 import os
 import sys
 import tempfile
@@ -25,7 +23,9 @@ import tempfile
 from utils import write, execute
 
 
-def createPostgresSQLDB(db, rwuser, rwpwd, rouser, ropwd, rwhost, drop, schemapath):
+def createPostgresSQLDB(
+    db, rwuser, rwpwd, rouser, ropwd, _rwhost, drop, schemapath
+):
     # cmd = "psql --host {}".format(rwhost)
     # We have to disable notice messages with --client-min-messages=warning
     # because PostgreSQL outputs notice messages to stderr when e.g. tables should
@@ -45,7 +45,7 @@ def createPostgresSQLDB(db, rwuser, rwpwd, rouser, ropwd, rwhost, drop, schemapa
 
     write(f"  + Create database {db}")
 
-    q = f"CREATE DATABASE {db} ENCODING 'UTF8'"
+    q = f"CREATE DATABASE {db} OWNER {rwuser} ENCODING 'UTF8'"
     res = execute(f'{cmd} -c "{q}"')
     if res.error:
         print(f"  + {res.error}")
@@ -60,7 +60,7 @@ def createPostgresSQLDB(db, rwuser, rwpwd, rouser, ropwd, rwhost, drop, schemapa
     write("  + Create SeisComP tables")
 
     q = f"\\i {os.path.join(schemapath, 'postgres.sql')};"
-    res = execute(f'{cmd} -d {db} -c "{q}"')
+    res = execute(f'PGPASSWORD={rwpwd} {cmd} -U {rwuser} -d {db} -c "{q}"')
     if res.error:
         print(f"  + {res.error}")
         return False
