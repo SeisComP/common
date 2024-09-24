@@ -26,6 +26,7 @@
 #include <seiscomp/gui/datamodel/ui_eventlistview.h>
 #include <seiscomp/gui/datamodel/ui_eventlistviewregionfilterdialog.h>
 
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/core/connectiondialog.h>
 #include <seiscomp/gui/core/messages.h>
 #include <seiscomp/gui/core/application.h>
@@ -3035,6 +3036,12 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	catch ( Config::OptionNotFoundException& ) {}
 	catch ( Config::TypeConversionException& ) {}
 
+	try {
+		SC_D._exportScript = SCApp->configGetPath("eventlist.scripts.export").c_str();
+	}
+	catch ( Config::OptionNotFoundException& ) {}
+	catch ( Config::TypeConversionException& ) {}
+
 	auto *menu = new CustomWidgetMenu(SC_D._ui->btnFilter);
 	menu->setLayout(vl);
 	SC_D._ui->btnFilter->setMenu(menu);
@@ -5672,14 +5679,16 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 	}
 
 	QMenu popup(this);
-	auto *load = popup.addAction("Select");
+	auto *actionLoad = popup.addAction(tr("Select"));
 	popup.addSeparator();
-	auto *cc = popup.addAction("Copy cell to clipboard");
-	auto *ca = popup.addAction("Copy row to clipboard");
-	auto *cs = popup.addAction("Copy selected rows to clipboard");
+	auto *actionCopyCell = popup.addAction(tr("Copy cell to clipboard"));
+	auto *actionCopyRow = popup.addAction(tr("Copy row to clipboard"));
+	auto *actionCopyRows = popup.addAction(tr("Copy selected rows to clipboard"));
+	auto *actionExportEventIDs = popup.addAction(tr("Export eventIDs of selected rows"));
+	actionExportEventIDs->setToolTip(tr("Export all selected event ids and run a script configured with 'eventlist.scripts.export'."));
 
-	QAction *newEvent = nullptr;
-	QAction *splitOrg = nullptr;
+	QAction *actionNewEvent = nullptr;
+	QAction *actionSplitOrg = nullptr;
 
 	auto *oitem = static_cast<OriginTreeItem*>(item);
 	Origin *org = nullptr;
@@ -5690,10 +5699,10 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 			popup.addSeparator();
 
 			if ( oitem->parent()->parent() == SC_D._unassociatedEventItem ) {
-				newEvent = popup.addAction("Form new event for origin");
+				actionNewEvent = popup.addAction("Form new event for origin");
 			}
 			else {
-				splitOrg = popup.addAction("Split origin and create new event");
+				actionSplitOrg = popup.addAction("Split origin and create new event");
 			}
 		}
 	}
@@ -5703,16 +5712,16 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 		return;
 	}
 
-	if ( action == load ) {
+	if ( action == actionLoad ) {
 		loadItem(item);
 	}
-	else if ( action == cc ) {
+	else if ( action == actionCopyCell ) {
 		auto *cb = QApplication::clipboard();
 		if ( cb ) {
 			cb->setText(item->text(column));
 		}
 	}
-	else if ( action == ca ) {
+	else if ( action == actionCopyRow ) {
 		auto *cb = QApplication::clipboard();
 		QString text;
 		for ( int i = 0; i < item->columnCount(); ++i ) {
@@ -5726,10 +5735,57 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 			cb->setText(text);
 		}
 	}
-	else if ( action == cs ) {
+	else if ( action == actionCopyRows ) {
 		SCApp->copyToClipboard(SC_D._treeWidget, SC_D._treeWidget->header());
 	}
-	else if ( action == newEvent ) {
+	else if ( action == actionExportEventIDs ) {
+		if ( SC_D._exportScript.isEmpty() ) {
+			QMessageBox::critical(this, tr("Export"),
+			                      tr("No script has been configured in 'eventlist.scripts.export', nothing to do."));
+			return;
+		}
+
+		QString list;
+
+		for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
+			auto *item = static_cast<EventTreeItem*>(SC_D._treeWidget->topLevelItem(i));
+			if ( item->isSelected() && item->event() ) {
+				list += item->event()->publicID().c_str();
+				list += "\n";
+			}
+		}
+
+		if ( !list.isEmpty() ) {
+			SEISCOMP_DEBUG("Executing script %s", SC_D._exportScript.toStdString());
+			QProcess script;
+			#if QT_VERSION >= QT_VERSION_CHECK(5,15,0)
+			script.start(SC_D._exportScript, QStringList(), QProcess::WriteOnly);
+			#else
+			script.start(SC_D._exportScript, QProcess::WriteOnly);
+			#endif
+			if ( !script.waitForStarted() ) {
+				SEISCOMP_ERROR("Failed executing script %s", SC_D._exportScript.toStdString());
+				QMessageBox::warning(this, tr("Export"), tr("Can't execute script %1\n%2")
+				                     .arg(SC_D._exportScript, script.errorString()));
+			}
+			else {
+				script.write(list.toUtf8());
+				script.closeWriteChannel();
+				QProgressDialog dlgProgress;
+				dlgProgress.setRange(0, 0);
+				dlgProgress.setLabelText(SC_D._exportScript);
+				dlgProgress.setCancelButtonText("Stop");
+				connect(&script, SIGNAL(finished(int)), &dlgProgress, SLOT(accept()));
+				if ( dlgProgress.exec() != QDialog::Accepted ) {
+					script.kill();
+					dlgProgress.setLabelText(tr("Wait for script to finish"));
+					dlgProgress.setCancelButtonText(QString());
+					dlgProgress.exec();
+				}
+			}
+		}
+	}
+	else if ( action == actionNewEvent ) {
 		if ( QMessageBox::question(
 			this, "Form a new event",
 			QString(
@@ -5744,7 +5800,7 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 
 		sendJournalAndWait(org->publicID(), CMD_NEW_EVENT, "", SCApp->messageGroups().event.c_str());
 	}
-	else if ( action == splitOrg ) {
+	else if ( action == actionSplitOrg ) {
 		if ( QMessageBox::question(
 			this, "Split origin",
 			QString(

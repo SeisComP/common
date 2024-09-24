@@ -117,6 +117,7 @@ class EventListViewPrivate {
 		EventListView::FilterRegions        _filterRegions;
 		mutable int                         _visibleEventCount;
 		QTimer                              _otimeAgoTimer;
+		QString                             _exportScript;
 
 	friend class EventListView;
 };

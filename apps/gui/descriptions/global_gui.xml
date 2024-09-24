@@ -1416,6 +1416,13 @@
 					Custom columns showing parameters extracted by scripts e.g.
 					from origins or events.
 					</description>
+					<parameter name="export" type="path">
+						<description>
+						Defines the export script to be called with the selected
+						event ids in stdin when the corresponding action is triggered
+						from the context menu of the list of events.
+						</description>
+					</parameter>
 					<parameter name="columns" type="list:string">
 						<description>
 						Name of custom column profiles to be registered. Comma
