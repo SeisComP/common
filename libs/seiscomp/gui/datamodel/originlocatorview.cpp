@@ -2576,6 +2576,15 @@ void ArrivalModel::setUseArrival(int row, DataModel::Arrival *arrival) {
 
 	try {
 		setTimeUsed(row, arrival->timeUsed());
+		double weight = 1.0;
+		try {
+			weight = fabs(arrival->weight());
+		}
+		catch ( ... ) {}
+
+		if ( weight < 1E-6 ) {
+			_used[row] |= F_DISABLED;
+		}
 	}
 	catch ( ... ) {
 		// If the timeUsed attribute is not set then it looks like an origin
@@ -4575,8 +4584,14 @@ bool OriginLocatorView::setOrigin(DataModel::Origin* o, DataModel::Event* e,
 	SC_D.blockReadPicks = false;
 	updateOrigin(o);
 
-	if ( SC_D.recordView )
+	if ( SC_D.recordView ) {
 		SC_D.recordView->setOrigin(o, -5*60, 30*60);
+
+		for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+			QModelIndex idx = SC_D.modelArrivals.index(i, USED);
+			SC_D.recordView->setArrivalState(i, SC_D.modelArrivals.data(idx, UsedRole).toInt());
+		}
+	}
 
 	SC_D.localOrigin = local;
 	emit newOriginSet(o, SC_D.baseEvent.get(), SC_D.localOrigin, false);
@@ -4971,6 +4986,7 @@ void OriginLocatorView::updateContent() {
 		addArrival(i, arrival, pickTime, pickColor);
 
 		SC_D.modelArrivals.setUseArrival(i, arrival);
+		SC_D.residuals->setValueSelected(i, SC_D.modelArrivals.useArrival(i));
 
 		QColor pickStateColor = pickColor;
 		if ( !SC_D.modelArrivals.useArrival(i) ) {
@@ -5863,7 +5879,7 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
                                  std::vector<PhasePickWithFlags>* additionalPicks,
                                  bool associateOnly, bool replaceExistingPhases,
                                  bool useArrivalTable) {
-	OriginPtr oldOrigin = org;
+	OriginPtr oldOrigin;
 	OriginPtr origin;
 
 	if ( !SC_D.locator ) {
@@ -5883,26 +5899,32 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 
 	if ( useArrivalTable ) {
 		for ( int i = 0; i < SC_D.modelArrivals.rowCount(); ++i ) {
-			if ( !SC_D.modelArrivals.isRowEnabled(i) ) continue;
+			if ( !SC_D.modelArrivals.isRowEnabled(i) ) {
+				continue;
+			}
 
 			ArrivalPtr arrival = new Arrival(*org->arrival(i));
 			arrival->setBackazimuthUsed(SC_D.modelArrivals.backazimuthUsed(i));
 			arrival->setTimeUsed(SC_D.modelArrivals.timeUsed(i));
 			arrival->setHorizontalSlownessUsed(SC_D.modelArrivals.horizontalSlownessUsed(i));
 
-			if ( arrival->timeUsed() || arrival->backazimuthUsed() || arrival->horizontalSlownessUsed() )
+			if ( arrival->timeUsed() || arrival->backazimuthUsed() || arrival->horizontalSlownessUsed() ) {
 				arrival->setWeight(1.0);
-			else
+			}
+			else {
 				arrival->setWeight(0.0);
+			}
 
-			if ( !SC_D.locator->getSensorLocation(Pick::Find(arrival->pickID())) )
+			if ( !SC_D.locator->getSensorLocation(Pick::Find(arrival->pickID())) ) {
 				continue;
+			}
 
 			oldOrigin->add(arrival.get());
 
 			try {
-				if ( arrival->phase().code() == "" )
+				if ( arrival->phase().code() == "" ) {
 					arrival->setPhase(Phase("P"));
+				}
 			}
 			catch ( ... ) {
 				arrival->setPhase(Phase("P"));
@@ -5927,8 +5949,9 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 	}
 
 	if ( replaceExistingPhases ) {
-		while ( oldOrigin->arrivalCount() > 0 )
+		while ( oldOrigin->arrivalCount() > 0 ) {
 			oldOrigin->removeArrival(0);
+		}
 	}
 
 	if ( additionalPicks ) {
@@ -6103,8 +6126,14 @@ void OriginLocatorView::applyNewOrigin(DataModel::Origin *origin, bool relocated
 	//computeMagnitudes();
 	SC_D.ui.btnMagnitudes->setEnabled(true);
 
-	if ( SC_D.recordView )
+	if ( SC_D.recordView ) {
 		SC_D.recordView->setOrigin(origin);
+
+		for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+			QModelIndex idx = SC_D.modelArrivals.index(i, USED);
+			SC_D.recordView->setArrivalState(i, SC_D.modelArrivals.data(idx, UsedRole).toInt());
+		}
+	}
 
 	emit newOriginSet(origin, SC_D.baseEvent.get(), SC_D.localOrigin, relocated);
 
@@ -6304,8 +6333,14 @@ bool OriginLocatorView::undo() {
 	updateOrigin(origin.get());
 	SC_D.blockReadPicks = false;
 
-	if ( SC_D.recordView )
+	if ( SC_D.recordView ) {
 		SC_D.recordView->setOrigin(origin.get());
+
+		for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+			QModelIndex idx = SC_D.modelArrivals.index(i, USED);
+			SC_D.recordView->setArrivalState(i, SC_D.modelArrivals.data(idx, UsedRole).toInt());
+		}
+	}
 
 	SC_D.localOrigin = newOrigin;
 
@@ -6345,8 +6380,14 @@ bool OriginLocatorView::redo() {
 	updateOrigin(origin.get());
 	SC_D.blockReadPicks = false;
 
-	if ( SC_D.recordView )
+	if ( SC_D.recordView ) {
 		SC_D.recordView->setOrigin(origin.get());
+
+		for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+			QModelIndex idx = SC_D.modelArrivals.index(i, USED);
+			SC_D.recordView->setArrivalState(i, SC_D.modelArrivals.data(idx, UsedRole).toInt());
+		}
+	}
 
 	SC_D.localOrigin = newOrigin;
 
