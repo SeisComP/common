@@ -410,8 +410,8 @@ Application::Type Application::type() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::copyToClipboard(const QAbstractItemView *view,
-                                  const QHeaderView *header) {
+QString Application::createCSV(const QAbstractItemView* view,
+                               const QHeaderView *header) {
 	QAbstractItemModel *model = view->model();
 	QModelIndexList items = view->selectionModel()->selectedRows();
 	QString csv;
@@ -433,8 +433,20 @@ void Application::copyToClipboard(const QAbstractItemView *view,
 		previousRow = it->row();
 	}
 
+	return csv;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::copyToClipboard(const QAbstractItemView *view,
+                                  const QHeaderView *header) {
 	QClipboard *cb = QApplication::clipboard();
-	if ( cb ) cb->setText(csv);
+	if ( cb ) {
+		cb->setText(createCSV(view, header));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
