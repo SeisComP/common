@@ -75,7 +75,7 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_MLc : public MagnitudeProcessor {
 		double      _c8{0.0};
 		double      _H{40.0};
 		// parameters for non-parametric magnitude calibration
-		LogA0  _logA0;
+		LogA0       _logA0;
 };
 
 
