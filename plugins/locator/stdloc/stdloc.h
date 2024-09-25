@@ -101,7 +101,6 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 				double depth, lat, lon;
 				Seiscomp::Core::Time time;
 				double probDensity;
-				double rms;
 			} org;
 		};
 
@@ -117,7 +116,7 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		                        const std::vector<double> &weights,
 		                        const std::vector<double> &travelTimes,
 		                        const Seiscomp::Core::Time &originTime,
-		                        double &probDensity, double &rms) const;
+		                        double &probDensity) const;
  
 		bool computeOriginTime(const PickList &pickList,
 		                       const std::vector<double> &weights,
