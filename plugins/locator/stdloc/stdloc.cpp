@@ -1228,7 +1228,7 @@ void StdLoc::computeProbDensity(const PickList &pickList,
                                 const vector<double> &weights,
                                 const vector<double> &travelTimes,
                                 const Core::Time &originTime,
-                                double &probDensity, double &rms) const {
+                                double &probDensity) const {
 
 	if ( _currentProfile.gridSearch.misfitType != "L1" &&
 	     _currentProfile.gridSearch.misfitType != "L2" ) {
@@ -1242,15 +1242,11 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 		throw LocatorException("Interna logic error");
 	}
 
-	rms = 0.0;
 	double sigma = _currentProfile.gridSearch.travelTimeError;
 
 	double l1SumWeightedResiduals = 0.0;
 	double l2SumWeightedResiduals = 0.0;
-	double weightedSigma = 0.0;
-	double weightedSquaredSigma = 0.0;
 	double sumWeights = 0.0;
-	double sumSquaredWeights = 0.0;
 
 	for ( size_t i = 0; i < pickList.size(); ++i ) {
 		const PickItem &pi = pickList[i];
@@ -1264,31 +1260,25 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 		double residual =
 		    (pickTime - (originTime + Core::TimeSpan(travelTimes[i]))).length();
 		l1SumWeightedResiduals += abs(residual * weights[i]);
-		l2SumWeightedResiduals +=
-		    (residual * weights[i]) * (residual * weights[i]);
-		weightedSigma += sigma * weights[i];
-		weightedSquaredSigma += (sigma * weights[i]) * (sigma * weights[i]);
+		l2SumWeightedResiduals += residual * residual * weights[i];
 		sumWeights += weights[i];
-		sumSquaredWeights += weights[i] * weights[i];
 	}
 
-	if ( sumSquaredWeights == 0 ) {
+	if ( sumWeights == 0 ) {
 		throw LocatorException("Cannot compute probability density without "
 		                       "valid picks and/or travel times");
 	}
-
-	weightedSigma /= sumWeights;
-	weightedSquaredSigma /= sumSquaredWeights;
-	rms = sqrt(l2SumWeightedResiduals / sumSquaredWeights);
 
 	//
 	// Compute the non-normalized probability density (likelihood function)
 	//
 	if ( _currentProfile.gridSearch.misfitType == "L1" ) {
-		probDensity = -1.0 * l1SumWeightedResiduals / weightedSigma;
+		probDensity = -1.0 * (l1SumWeightedResiduals / sumWeights)
+		     / sigma;
 	}
 	else if ( _currentProfile.gridSearch.misfitType == "L2" ) {
-		probDensity = -0.5 * l2SumWeightedResiduals / weightedSquaredSigma;
+		probDensity = -0.5 * (l2SumWeightedResiduals / sumWeights)
+		     / (sigma * sigma);
 	}
 	//
 	// Note that we actually return the natural log of the likelihood function
@@ -1558,8 +1548,7 @@ void StdLoc::locateOctTree(const PickList &pickList,
 			// Compute the prob density (log) and from there the cell
 			// probability considering its volume
 			computeProbDensity(pickList, weights, cellTravelTimes,
-			                   cell.org.time, cell.org.probDensity,
-			                   cell.org.rms);
+			                   cell.org.time, cell.org.probDensity);
 
 			// add cell to the priority list
 			double volume = cell.size.x * cell.size.y * cell.size.z;
@@ -1704,9 +1693,8 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		               });
 		computeCovarianceMatrix(cells, bestCell, false, covm);
 	}
-	SEISCOMP_DEBUG("OctTree solution RMS %g lat %g lon %g depth %g time %s ",
-	               bestCell.org.rms, newLat, newLon, newDepth,
-	               newTime.iso().c_str());
+	SEISCOMP_DEBUG("OctTree solution lat %g lon %g depth %g time %s ",
+	               newLat, newLon, newDepth, newTime.iso().c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1897,7 +1885,7 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 		// Compute cell probability density (log)
 		//
 		computeProbDensity(pickList, weights, cellTravelTimes, cell.org.time,
-		                   cell.org.probDensity, cell.org.rms);
+		                   cell.org.probDensity);
 
 		cell.valid = true;
 
@@ -1944,9 +1932,8 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 		covm = best.covm;
 	}
 
-	SEISCOMP_DEBUG("Grid Search solution RMS %g lat %g lon %g depth %g time %s",
-	               best.cell.org.rms, newLat, newLon, newDepth,
-	               newTime.iso().c_str());
+	SEISCOMP_DEBUG("Grid Search solution lat %g lon %g depth %g time %s",
+	               newLat, newLon, newDepth, newTime.iso().c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2245,8 +2232,7 @@ void StdLoc::locateLeastSquares(
 		newTime += Core::TimeSpan(timeCorrection);
 	}
 
-	SEISCOMP_DEBUG("Least Square final solution lat %g lon %g "
-	               "depth %g time %s",
+	SEISCOMP_DEBUG("Least Square solution lat %g lon %g depth %g time %s",
 	               newLat, newLon, newDepth, newTime.iso().c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
