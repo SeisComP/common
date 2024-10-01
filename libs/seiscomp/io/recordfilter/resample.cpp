@@ -26,8 +26,9 @@
 #include <seiscomp/io/recordstream/remez/remez.h>
 #include <seiscomp/io/recordfilter/resample.h>
 
-#include <limits.h>
-#include <string.h>
+#include <climits>
+#include <cstring>
+#include <cmath>
 #include <ctype.h>
 
 
@@ -646,7 +647,10 @@ Record *RecordResampler<T>::feed(const Record *record) {
 	if ( _currentRate != rate ) {
 		// Init up/downsample stages
 		int num, den;
-		if ( !getFraction(num, den, _targetRate/rate) ) {
+		double scale = _targetRate / rate;
+		int exp = 4 - std::min(0, static_cast<int>(std::floor(std::log10(scale))));
+		scale = std::floor(scale * pow(10, exp) + 0.5) * pow(10, -exp);
+		if ( !getFraction(num, den, scale) ) {
 			SEISCOMP_WARNING("[resample] incompatible sampling frequency %f -> %f",
 			                 rate, _targetRate);
 			return nullptr;
