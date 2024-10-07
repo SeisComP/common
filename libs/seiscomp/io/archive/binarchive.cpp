@@ -47,8 +47,8 @@ template<int N, typename T>
 struct Swapper {
 	static T Take(const T& value) {
 		T ret;
-		register int i = 0;
-		register int j = N;
+		int i = 0;
+		int j = N;
 		const unsigned char* in = reinterpret_cast<const unsigned char*>(&value);
 		unsigned char* out = reinterpret_cast<unsigned char*>(&ret);
 		while ( --j ) {
