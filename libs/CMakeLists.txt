@@ -1,6 +1,6 @@
 SUBDIRS(3rd-party seiscomp xml)
 
 IF(SC_GLOBAL_PYTHON_WRAPPER)
-	SUBDIRS(swig python)
+	SUBDIRS(swig)
 ENDIF(SC_GLOBAL_PYTHON_WRAPPER)
 
