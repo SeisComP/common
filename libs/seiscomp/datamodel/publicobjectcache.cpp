@@ -294,7 +294,7 @@ PublicObject *PublicObjectCache::find(const Seiscomp::Core::RTTI &classType,
 		}
 		else {
 			cached = false;
-			po = _archive?_archive->getObject(classType, publicID):nullptr;
+			po = _archive && _archive->driver() ? _archive->getObject(classType, publicID) : nullptr;
 		}
 	}
 	else if ( !po->typeInfo().isTypeOf(classType) ) {
