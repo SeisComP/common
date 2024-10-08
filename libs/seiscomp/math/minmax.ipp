@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 
-template <class TYPE> 
+template <class TYPE>
 int
 minmax(int n, const TYPE *f, int i1, int i2, TYPE *fmin, TYPE *fmax)
 {
@@ -34,14 +34,14 @@ minmax(int n, const TYPE *f, int i1, int i2, TYPE *fmin, TYPE *fmax)
 	*fmin = *fmax = f[i1];
 	f += i1+1;
 	for (i=i1+1; i<i2; i++, f++) {
-		if(*f > *fmax) *fmax = *f; 
-		if(*f < *fmin) *fmin = *f; 
+		if(*f > *fmax) *fmax = *f;
+		if(*f < *fmin) *fmin = *f;
         }
 
 	return 0;
 }
 
-template <class TYPE> 
+template <class TYPE>
 int
 find_max(int n, const TYPE *f, int i1, int i2, int *imax, TYPE *fmax)
 {
@@ -123,7 +123,7 @@ minmax(std::vector<TYPE> const &f, int i1, int i2, TYPE *fmin, TYPE *fmax)
 	return minmax(n, f0, i1, i2, fmin, fmax);
 }
 
-template <class TYPE> 
+template <class TYPE>
 int
 find_max(std::vector<TYPE> const &f, int i1, int i2, int *imax, TYPE *fmax)
 {
