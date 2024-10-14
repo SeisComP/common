@@ -2150,7 +2150,7 @@ void StdLoc::locateLeastSquares(
 			eq.G[i][2] = dtdhs[i];             // dz [sec/km]
 			eq.G[i][3] = 1.;                   // dtime [sec]
 
-			if ( usingFixedDepth() ) {
+			if ( usingFixedDepth() && !(lastIteration && computeCovMtrx) ) {
 				eq.G[i][2] = 0;                  // dz [sec/km]
 			}
 		}
