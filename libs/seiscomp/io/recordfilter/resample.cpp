@@ -648,12 +648,24 @@ Record *RecordResampler<T>::feed(const Record *record) {
 		// Init up/downsample stages
 		int num, den;
 		double scale = _targetRate / rate;
-		int exp = 4 - std::min(0, static_cast<int>(std::floor(std::log10(scale))));
-		scale = std::floor(scale * pow(10, exp) + 0.5) * pow(10, -exp);
 		if ( !getFraction(num, den, scale) ) {
 			SEISCOMP_WARNING("[resample] incompatible sampling frequency %f -> %f",
 			                 rate, _targetRate);
 			return nullptr;
+		}
+
+		{
+			int num2, den2;
+			scale = rate / _targetRate;
+
+			if ( getFraction(num2, den2, scale) ) {
+				if ( den2 < num && num2 < den ) {
+					SEISCOMP_DEBUG("[resample] improved ratio from %d/%d to %d/%d",
+					               num, den, den2, num2);
+					num = den2;
+					den = num2;
+				}
+			}
 		}
 
 		_currentRate = rate;
@@ -797,6 +809,14 @@ void RecordResampler<T>::initCoefficients(DownsampleStage *stage) {
 		}
 
 		if ( stage->coefficients == nullptr ) {
+			if ( stage->N > _maxN ) {
+				SEISCOMP_WARNING("[dec] invalid downsample factor: %d > %d",
+				                 stage->N, _maxN);
+				stage->valid = false;
+				_coefficientMutex.unlock();
+				return;
+			}
+
 			// Create and cache coefficients for N
 			int Ncoeff = stage->N*_coeffScale*2+1;
 
