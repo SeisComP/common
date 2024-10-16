@@ -175,11 +175,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="editEQName">
-        <property name="maxLength">
-         <number>160</number>
-        </property>
-       </widget>
+       <widget class="QLineEdit" name="editEQName"/>
       </item>
       <item>
        <widget class="QLabel" name="labelEQComment">
@@ -189,11 +185,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="editEQComment">
-        <property name="maxLength">
-         <number>160</number>
-        </property>
-       </widget>
+       <widget class="QTextEdit" name="editEQComment"/>
       </item>
       <item>
        <widget class="QComboBox" name="comboEQComment"/>

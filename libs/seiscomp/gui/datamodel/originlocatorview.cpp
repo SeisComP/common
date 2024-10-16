@@ -846,7 +846,7 @@ class OriginCommitOptions : public QDialog {
 			options.eventName = ui.editEQName->text().toStdString();
 
 			if ( commentOptions.empty() ) {
-				options.eventComment = ui.editEQComment->text().toStdString();
+				options.eventComment = ui.editEQComment->toPlainText().toStdString();
 			}
 			else {
 				options.eventComment = ui.comboEQComment->currentText().toStdString();
