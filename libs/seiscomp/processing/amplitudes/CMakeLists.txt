@@ -9,7 +9,10 @@ SET(AMPS_SOURCES
 	ML.cpp
 	MLc.cpp
 	MLh.cpp
-	MLv.cpp
+	MLv.cpp		
+	mb_Lg.cpp
+	MLcan.cpp
+	mb_VC.cpp
 	msbb.cpp
 	Ms20.cpp
 	Mwp.cpp
@@ -27,6 +30,9 @@ SET(AMPS_HEADERS
 	MLc.h
 	MLh.h
 	MLv.h
+	mb_Lg.h
+	MLcan.h 
+	mb_VC.h
 	msbb.h
 	Ms20.h
 	Mwp.h
