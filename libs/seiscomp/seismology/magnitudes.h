@@ -97,6 +97,23 @@ compute_mb_fromVelocity(
 	double depth,     // in kilometers
 	double *mag);     // resulting magnitude
 
+SC_SYSTEM_CORE_API
+bool
+compute_mb_VC(
+	double amplitude, // in micrometers
+	double period,    // in seconds
+	double delta,     // in degrees
+	double depth,     // in kilometers
+	double *mag);     // resulting magnitude
+
+
+SC_SYSTEM_CORE_API
+bool
+compute_mb_VC_fromVelocity(
+	double amplitude, // in micrometers/second
+	double delta,     // in degrees
+	double depth,     // in kilometers
+	double *mag);     // resulting magnitude
 
 SC_SYSTEM_CORE_API
 bool
