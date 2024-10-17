@@ -3235,13 +3235,13 @@ void OriginLocatorView::init() {
 	connect(SC_D.ui.cbLocator, SIGNAL(currentIndexChanged(const QString &)),
 	        this, SLOT(locatorChanged(const QString &)));
 
-	locatorChanged(SC_D.ui.cbLocator->currentText());
-
 	connect(SC_D.ui.cbLocatorProfile, SIGNAL(currentIndexChanged(const QString &)),
 	        this, SLOT(locatorProfileChanged(const QString &)));
 
 	connect(SC_D.ui.btnLocatorSettings, SIGNAL(clicked()),
 	        this, SLOT(configureLocator()));
+
+	locatorChanged(SC_D.ui.cbLocator->currentText());
 
 	SC_D.minimumDepth = -999;
 
@@ -3616,8 +3616,9 @@ void OriginLocatorView::runScript1() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::locatorProfileChanged(const QString &text) {
-	if ( SC_D.locator )
+	if ( SC_D.locator ) {
 		SC_D.locator->setProfile(text.toStdString());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
