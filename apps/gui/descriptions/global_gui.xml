@@ -1470,7 +1470,7 @@
 						<description>
 						Filter the loaded event list by agency ID.
 						</description>
-						<parameter name="label" type="string" default="Show only own events">
+						<parameter name="label" type="string" default="&quot;Show only own events&quot;">
 							<description>
 							Defines the text of the option &quot;Show only own events&quot;.
 							Use double quotes '&quot;' around the string if it contains spaces.
