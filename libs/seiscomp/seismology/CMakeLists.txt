@@ -5,6 +5,7 @@ SET(SEISMOLOGY_SOURCES
 	Mjma.cpp
 	Mwp.cpp
 	ttt.cpp
+	mb_VC.cpp
 )
 
 SET(SEISMOLOGY_HEADERS

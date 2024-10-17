@@ -9,6 +9,9 @@ SET(
 		ML_idc.cpp
 		MLc.cpp
 		MLv.cpp
+		mb_VC.cpp
+		mb_Lg.cpp
+		MLcan.cpp
 		Ms20.cpp
 		msbb.cpp
 		Mwp.cpp
@@ -24,6 +27,9 @@ SET(
 		ML.h
 		MLc.h
 		MLv.h
+		mb_VC.h
+		mb_Lg.h
+		MLcan.h
 		Ms20.h
 		msbb.h
 		Mwp.h
