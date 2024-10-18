@@ -33,6 +33,7 @@
 #include <seiscomp/math/mean.h>
 #include <seiscomp/seismology/locatorinterface.h>
 #include <seiscomp/seismology/ttt.h>
+#include <seiscomp/utils/misc.h>
 
 #include <algorithm>
 #include <cmath>
@@ -1329,10 +1330,10 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 		try {
 			const char *phaseName = pick->phaseHint().code().c_str();
 			if ( _currentProfile.PSTableOnly ) {
-				if ( *pick->phaseHint().code().begin() == 'P' ) {
+				if ( Util::getShortPhaseName(pick->phaseHint().code()) == 'P' ) {
 					phaseName = "P";
 				}
-				else if ( *pick->phaseHint().code().begin() == 'S' ) {
+				else if ( Util::getShortPhaseName(pick->phaseHint().code()) == 'S' ) {
 					phaseName = "S";
 				}
 			}
