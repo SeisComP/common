@@ -197,6 +197,7 @@ class SC_GUI_API Scheme {
 				QColor cityOutlines;
 				QColor cityCapital;
 				QColor cityNormal;
+				QColor cityHalo;
 
 				struct {
 					QPen   normalText;
@@ -271,17 +272,18 @@ class SC_GUI_API Scheme {
 		struct Map {
 			Map();
 
-			int stationSize;
-			int originSymbolMinSize;
+			int  stationSize;
+			int  originSymbolMinSize;
 			bool vectorLayerAntiAlias;
 			bool bilinearFilter;
 			bool showGrid;
 			bool showLayers;
 			bool showCities;
 			bool showLegends;
-			int cityPopulationWeight;
+			int  cityPopulationWeight;
+			int  cityHaloWidth;
 			bool toBGR;
-			int polygonRoughness;
+			int  polygonRoughness;
 			std::string projection;
 		};
 

@@ -57,7 +57,8 @@ class SC_GUI_API CitiesLayer : public Layer {
 
 	private:
 		const Math::Geo::CityD *_selectedCity;
-		int _topPopulatedPlaces;
+		int                     _topPopulatedPlaces;
+		QPen                    _penHalo;
 };
 
 

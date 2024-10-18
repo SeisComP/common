@@ -380,6 +380,7 @@ Scheme::Colors::Map::Map()
 , cityOutlines(Qt::black)
 , cityCapital(255, 160, 122)
 , cityNormal(Qt::white)
+, cityHalo(Qt::white)
 {
 	annotations.normalText = QPen(QColor(192,192,192));
 	annotations.normalBorder = QPen(QColor(160,160,164));
@@ -431,6 +432,7 @@ Scheme::Map::Map() {
 	showCities = true;
 	showLegends = false;
 	cityPopulationWeight = 150;
+	cityHaloWidth = 0;
 	toBGR = false;
 	polygonRoughness = 3;
 	projection = "";
@@ -666,6 +668,7 @@ void Scheme::fetch() {
 	READ_COLOR(colors.map.cityOutlines);
 	READ_COLOR(colors.map.cityCapital);
 	READ_COLOR(colors.map.cityNormal);
+	READ_COLOR(colors.map.cityHalo);
 	READ_PEN(colors.map.annotations.normalBorder);
 	READ_PEN(colors.map.annotations.normalText);
 	READ_BRUSH(colors.map.annotations.normalBackground);
@@ -748,6 +751,7 @@ void Scheme::fetch() {
 	READ_BOOL(map.showCities);
 	READ_BOOL(map.showLegends);
 	READ_INT(map.cityPopulationWeight);
+	READ_INT(map.cityHaloWidth);
 	READ_BOOL(map.toBGR);
 	READ_INT(map.polygonRoughness);
 	READ_STRING(map.projection);
