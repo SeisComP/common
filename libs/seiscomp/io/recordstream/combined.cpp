@@ -97,7 +97,7 @@ CombinedConnection::CombinedConnection() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 CombinedConnection::CombinedConnection(std::string serverloc) {
 	init();
-	setSource(serverloc);
+	CombinedConnection::setSource(serverloc);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
