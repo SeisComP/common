@@ -31,12 +31,12 @@ namespace Seiscomp {
 namespace Core {
 
 
-/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(16, 2, 0)) */
+/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(16, 3, 0)) */
 #define SC_API_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 
 /* SC_API_VERSION is (major << 16) + (minor << 8) + patch. */
-#define SC_API_VERSION 0x100200
+#define SC_API_VERSION 0x100300
 
 #define SC_API_VERSION_MAJOR(v) (v >> 16)
 #define SC_API_VERSION_MINOR(v) ((v >> 8) & 0xff)
@@ -46,7 +46,11 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
- 
+
+ "16.3.0"   0x100300
+   - Added Seiscomp::Gui::RecordView::sortByText(item1, item2, item3)
+   - Added Seiscomp::Gui::RecordView::sortByText(item1, item2, item3, item4)
+
  "16.2.0"   0x100200
    - Added Seiscomp::DataModel::PublicObject::Lock
    - Added Seiscomp::DataModel::PublicObject::UnLock
