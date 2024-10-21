@@ -53,6 +53,8 @@ namespace Core {
    - Made Seiscomp::IO::DatabaseInterface::escape a const method
    - Increased TILESTORE_API version to 5
    - Added Seiscomp::Processing::WaveformProcessor::Status enumeration PeriodOutOfRange
+
+ "16.3.0"   0x100300
    - Added Seiscomp::Gui::RecordView::sortByText(item1, item2, item3)
    - Added Seiscomp::Gui::RecordView::sortByText(item1, item2, item3, item4)
 
