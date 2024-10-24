@@ -84,7 +84,7 @@ struct StringClosure : bs::closure<StringClosure, string> {
 
 
 template <class _Tp>
-struct power : public binary_function<_Tp, _Tp, _Tp> {
+struct power {
 	_Tp
 	operator()(const _Tp& __x, const _Tp& __y) const {
 		return ::pow(__x, __y);
