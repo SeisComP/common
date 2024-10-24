@@ -1258,7 +1258,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 					& cfg(UTC, "utc")
 					& cfg(file, "file")
 
-					& cli(
+					& cliSwitch(
 						quiet,
 						"Verbose", "quiet,q",
 						"Quiet mode: no logging output"
