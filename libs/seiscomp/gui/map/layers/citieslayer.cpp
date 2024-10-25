@@ -104,7 +104,7 @@ void CitiesLayer::draw(const Seiscomp::Gui::Map::Canvas* canvas,
 
 	int height = canvas->height(),
 	    width = canvas->width(),
-	    fontHeight = fontMetrics.height(),
+	    fontHeight = fontMetrics.height() + SCScheme.map.cityHaloWidth * 2,
 	    gridHeight = height / fontHeight;
 
 	Grid grid(gridHeight);
@@ -159,7 +159,7 @@ bool CitiesLayer::drawCity(QPainter& painter, Grid &grid, QFont &font,
 
 	int gridY, gridPrevY, gridNextY;
 
-	gridY = (p.y() - SCScheme.map.cityHaloWidth) / rowHeight;
+	gridY = p.y() / rowHeight;
 
 	if ( gridY < 0 || gridY >= grid.count() ) {
 		return false;
@@ -177,9 +177,9 @@ bool CitiesLayer::drawCity(QPainter& painter, Grid &grid, QFont &font,
 		symbolSize = 6;
 
 	QRect labelRect(fontMetrics.boundingRect(city.name().c_str()));
-	labelRect.moveTo(QPoint(p.x() + symbolSize / 2, p.y()));
 	labelRect.adjust(-SCScheme.map.cityHaloWidth, -SCScheme.map.cityHaloWidth,
 	                  SCScheme.map.cityHaloWidth,  SCScheme.map.cityHaloWidth);
+	labelRect.moveTo(QPoint(p.x() + symbolSize / 2, p.y()));
 
 	QList<QRect> &gridRow = grid[gridY];
 
@@ -238,16 +238,19 @@ bool CitiesLayer::drawCity(QPainter& painter, Grid &grid, QFont &font,
 		painter.setFont(font);
 	}
 
+	painter.setBrush(Qt::NoBrush);
+
+	QPoint pos = labelRect.bottomLeft() + QPoint(SCScheme.map.cityHaloWidth, -SCScheme.map.cityHaloWidth - painter.fontMetrics().descent());
 	QString text = city.name().c_str();
 	if ( SCScheme.map.cityHaloWidth > 0 ) {
 		QPainterPath path;
-		path.addText(labelRect.bottomLeft() + QPoint(0, 1 - fontMetrics.descent()), font, text);
+		path.addText(pos, font, text);
 		painter.setPen(_penHalo);
 		painter.drawPath(path);
 	}
 
 	painter.setPen(SCScheme.colors.map.cityLabels);
-	painter.drawText(labelRect, Qt::AlignLeft | Qt::AlignBottom | Qt::TextSingleLine, text);
+	painter.drawText(pos, text);
 
 	return true;
 }
