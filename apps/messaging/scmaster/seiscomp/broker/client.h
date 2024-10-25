@@ -108,6 +108,15 @@ class SC_BROKER_API Client {
 		bool discardSelf() const;
 
 		/**
+		 * @brief Sets whether to receive only status messages or all
+		 *        messages. The default is false.
+		 * @param enable The enable flat
+		 * @return Success flag
+		 */
+		bool setStatusOnly(bool enable);
+		bool statusOnly() const;
+
+		/**
 		 * @brief Sets the number of messages required to send back an
 		 *        acknoledgement.
 		 * @param numberOfMessages The window size
@@ -171,6 +180,7 @@ class SC_BROKER_API Client {
 		std::string     _name;
 		bool            _wantsMembershipInformation{false};
 		bool            _discardSelf{false};
+		bool            _statusOnly{false};
 		SequenceNumber  _sequenceNumber{0};
 		SequenceNumber  _acknowledgeWindow{20};
 		SequenceNumber  _acknowledgeCounter{20};
@@ -196,6 +206,10 @@ inline bool Client::wantsMembershipInformation() const {
 
 inline bool Client::discardSelf() const {
 	return _discardSelf;
+}
+
+inline bool Client::statusOnly() const {
+	return _statusOnly;
 }
 
 inline void *Client::memory(int offset) {
