@@ -664,6 +664,10 @@ void BrokerHandler::commandCONNECT(char *frame, size_t len) {
 			return;
 		}
 	}
+	else {
+		replyWithError(str(ERR_QUEUE_DOES_NOT_EXIST));
+		return;
+	}
 
 	FrameHeaders headers(frame, static_cast<size_t>(len));
 	while ( headers.next() ) {
