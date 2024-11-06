@@ -22,7 +22,6 @@
 #define SEISCOMP_FILTERING_TAPER_H
 
 
-#include <vector>
 #include <seiscomp/math/filter.h>
 
 

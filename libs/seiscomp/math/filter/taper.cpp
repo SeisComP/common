@@ -34,13 +34,16 @@ InitialTaper<TYPE>::InitialTaper(double taperLength, TYPE offset, double fsamp)
 , _taperLengthI(0)
 , _sampleCount(0)
 , _offset(offset) {
-	if ( fsamp )
+	if ( fsamp ) {
 		setSamplingFrequency(fsamp);
+	}
 }
 
 template<typename TYPE>
 void InitialTaper<TYPE>::setSamplingFrequency(double fsamp) {
-	if ( _samplingFrequency == fsamp ) return;
+	if ( _samplingFrequency == fsamp ) {
+		return;
+	}
 
 	_samplingFrequency = fsamp;
 	_taperLengthI = int(_taperLength * _samplingFrequency);
@@ -51,14 +54,18 @@ void InitialTaper<TYPE>::setSamplingFrequency(double fsamp) {
 
 template<typename TYPE>
 int InitialTaper<TYPE>::setParameters(int n, const double *params) {
-	if ( (n < 1) || (n > 2) ) return 1;
+	if ( (n < 1) || (n > 2) ) {
+		return 1;
+	}
 
-	_taperLength = (int)params[0];
+	_taperLength = params[0];
 
-	if ( n > 1 )
+	if ( n > 1 ) {
 		_offset = (TYPE)params[1];
-	else
+	}
+	else {
 		_offset = 0;
+	}
 
 	return n;
 }
@@ -70,7 +77,9 @@ InPlaceFilter<TYPE>* InitialTaper<TYPE>::clone() const {
 
 template<typename TYPE>
 void InitialTaper<TYPE>::apply(int n, TYPE *inout) {
-	if ( _sampleCount >= _taperLengthI ) return;
+	if ( _sampleCount >= _taperLengthI ) {
+		return;
+	}
 
 	for ( int i = 0; i < n && _sampleCount < _taperLengthI; ++i ) {
 		double frac = double(_sampleCount++)/_taperLengthI;
