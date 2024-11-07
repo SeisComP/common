@@ -51154,7 +51154,7 @@ SWIG_init(void) {
   PyDict_SetItemString(md, "cvar", globals);
   Py_DECREF(globals);
   SWIG_addvarlink(globals, "Unset", Swig_var_Unset_get, Swig_var_Unset_set);
-  SWIG_Python_SetConstant(d, "SC_API_VERSION",SWIG_From_int(static_cast< int >(0x100100)));
+  SWIG_Python_SetConstant(d, "SC_API_VERSION",SWIG_From_int(static_cast< int >(0x100300)));
   SWIG_addvarlink(globals, "CurrentVersion", Swig_var_CurrentVersion_get, Swig_var_CurrentVersion_set);
   SWIG_addvarlink(globals, "TimeSpan_MinTime", Swig_var_TimeSpan_MinTime_get, Swig_var_TimeSpan_MinTime_set);
   SWIG_addvarlink(globals, "TimeSpan_MaxTime", Swig_var_TimeSpan_MaxTime_get, Swig_var_TimeSpan_MaxTime_set);
