@@ -581,7 +581,14 @@ BOOST_AUTO_TEST_CASE(fromString) {
 	time = sc::Time::FromString(str.c_str(), "%F %T.%f");
 	BOOST_CHECK(!time.valid());
 
+	BOOST_CHECK(time.fromString("2024-04-10T12:00:00+00:00", "%FT%T%z"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 12, 0, 0, 0).iso());
 
+	BOOST_CHECK(time.fromString("2024-04-10T12:00:00+03:30", "%FT%T%z"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 8, 30, 0, 0).iso());
+
+	BOOST_CHECK(time.fromString("2024-04-10T12:00:00-03:30", "%FT%T%z"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 15, 30, 0, 0).iso());
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
