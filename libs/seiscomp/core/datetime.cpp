@@ -186,7 +186,7 @@ const char *timeFormats[] = {
 	"%FT%T.%fZ",    // YYYY-MM-DDThh:mm:ss.ssssssZ
 	"%FT%T.%f",     // YYYY-MM-DDThh:mm:ss.ssssss
 	"%FT%TZ",       // YYYY-MM-DDThh:mm:ssZ
-    "%FT%T.%f%z",   // YYYY-MM-DDThh:mm:ss.ssssss+hh:mm
+	"%FT%T.%f%z",   // YYYY-MM-DDThh:mm:ss.ssssss+hh:mm
 	"%FT%T%z",      // YYYY-MM-DDThh:mm:ss+hh:mm
 	"%FT%T",        // YYYY-MM-DDThh:mm:ss
 	"%FT%R",        // YYYY-MM-DDThh:mm
