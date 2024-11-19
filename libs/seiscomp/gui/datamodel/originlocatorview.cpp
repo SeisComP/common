@@ -6523,10 +6523,11 @@ void OriginLocatorView::editComment() {
 	dlg.ui.labelHeadline->setFont(SCScheme.fonts.highlight);
 	dlg.ui.labelAuthor->setText("-");
 	dlg.ui.labelDate->setText("-");
-	dlg.ui.labelComment->setText("-");
 
 	setItalic(dlg.ui.labelAuthor);
 	setItalic(dlg.ui.labelDate);
+
+	QString oldComment;
 
 	for ( size_t i = 0; i < SC_D.baseEvent->commentCount(); ++i ) {
 		if ( SC_D.baseEvent->comment(i)->id() == "Operator" ) {
@@ -6545,8 +6546,8 @@ void OriginLocatorView::editComment() {
 				catch ( ... ) {}
 			}
 
-			dlg.ui.labelComment->setText(SC_D.baseEvent->comment(i)->text().c_str());
-			dlg.ui.editComment->setPlainText(dlg.ui.labelComment->text());
+			oldComment = SC_D.baseEvent->comment(i)->text().c_str();
+			dlg.ui.editComment->setPlainText(oldComment);
 
 			break;
 		}
@@ -6554,9 +6555,10 @@ void OriginLocatorView::editComment() {
 
 	if ( dlg.exec() != QDialog::Accepted ) return;
 
-	if ( dlg.ui.labelComment->text() != dlg.ui.editComment->toPlainText() )
+	if ( oldComment != dlg.ui.editComment->toPlainText() ) {
 		sendJournal(SC_D.baseEvent->publicID(), "EvOpComment",
 		            dlg.ui.editComment->toPlainText().toStdString());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
