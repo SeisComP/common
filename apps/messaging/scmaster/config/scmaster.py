@@ -43,6 +43,8 @@ def addEntry(cfg, param, item):
     # Adds an item to a parameter list
     try:
         items = cfg.getStrings(param)
+        if len(items) == 1 and items[0] == "":
+            items.clear()
     except ValueError:
         items = config.VectorStr()
 
