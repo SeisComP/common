@@ -1,6 +1,4 @@
 import os
-import glob
-import time
 import sys
 import seiscomp.config
 import seiscomp.kernel
