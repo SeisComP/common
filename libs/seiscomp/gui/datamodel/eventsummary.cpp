@@ -654,7 +654,7 @@ void EventSummary::setEvent(Event *event, Origin *org, bool fixed) {
 		// Focal mechanism
 		_currentFocalMechanism = FocalMechanism::Find(_currentEvent->preferredFocalMechanismID());
 		if ( !_currentFocalMechanism && _reader )
-			_currentFocalMechanism = FocalMechanism::Cast(_reader->getObject(FocalMechanism::TypeInfo(), 
+			_currentFocalMechanism = FocalMechanism::Cast(_reader->getObject(FocalMechanism::TypeInfo(),
 			                                              _currentEvent->preferredFocalMechanismID()));
 		if ( _currentFocalMechanism && (_currentFocalMechanism->momentTensorCount() == 0) && _reader) {
 			_reader->loadMomentTensors(_currentFocalMechanism.get());
@@ -679,7 +679,7 @@ void EventSummary::setEvent(Event *event, Origin *org, bool fixed) {
 		if ( !_currentMag ) {
 			_currentMag = Magnitude::Find(_currentEvent->preferredMagnitudeID());
 			if ( !_currentMag && _reader )
-				_currentMag = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), 
+				_currentMag = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(),
 				                                         _currentEvent->preferredMagnitudeID()));
 		}
 	}
@@ -828,6 +828,8 @@ void EventSummary::updateOrigin() {
 
 	// Operators comment
 	_ui->labelOpComment->setVisible(false);
+	_ui->labelOpComment->setText(QString());
+	_ui->labelOpComment->setToolTip(QString());
 	_ui->labelOpCommentSeparator->setVisible(false);
 	if ( _currentEvent && _showComment ) {
 		for ( size_t i = 0; i < _currentEvent->commentCount(); ++i ) {
@@ -835,7 +837,13 @@ void EventSummary::updateOrigin() {
 				if ( !_currentEvent->comment(i)->text().empty() ) {
 					_ui->labelOpComment->setVisible(true);
 					_ui->labelOpCommentSeparator->setVisible(true);
-					_ui->labelOpComment->setText(_currentEvent->comment(i)->text().c_str());
+					QString text = _currentEvent->comment(i)->text().c_str();
+					_ui->labelOpComment->setToolTip(text);
+					text.replace("\n", " ");
+					if ( text.size() > 80 ) {
+						text = text.mid(0, 80) + " ...";
+					}
+					_ui->labelOpComment->setText(text);
 				}
 				break;
 			}
@@ -975,7 +983,7 @@ void EventSummary::setFocalMechanism(FocalMechanism* fm) {
 			              + " " + longitudeToString(o->longitude(), false, true) + "\n";
 		} catch ( ... ) {
 			toolTip = "Epicenter: n/a";
-	
+
 		}
 
 		OPT(float) depth;
@@ -1024,7 +1032,7 @@ void EventSummary::setFocalMechanism(FocalMechanism* fm) {
 
 	try {
 		strike = fm->nodalPlanes().nodalPlane1().strike().value(),
-		dip = fm->nodalPlanes().nodalPlane1().dip().value(), 
+		dip = fm->nodalPlanes().nodalPlane1().dip().value(),
 		rake = fm->nodalPlanes().nodalPlane1().rake().value();
 		toolTip += QString("NP1 S,D,R: %1, %2, %3\n")
 		               .arg(*strike, 0, 'f', 0)
