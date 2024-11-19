@@ -24,7 +24,7 @@ from utils import write, execute
 
 
 def createPostgresSQLDB(
-    db, rwuser, rwpwd, rouser, ropwd, _rwhost, drop, schemapath
+    db, rwuser, rwpwd, rouser, ropwd, rwhost, drop, schemapath
 ):
     # cmd = "psql --host {}".format(rwhost)
     # We have to disable notice messages with --client-min-messages=warning
@@ -43,6 +43,23 @@ def createPostgresSQLDB(
             print(f"  + {res.error}")
             return False
 
+    write(f"  + Check user {rwuser}")
+    q = f"SELECT 1 FROM pg_roles WHERE rolname='{rwuser}'"
+    res = execute(cmd + f' -c "{q}"')
+    if res.error:
+        print(f"  + {res.error}")
+        return False
+
+    rwUserExits = "1" in res.data
+
+    if not rwUserExits:
+        write(f"  + Create user {rwuser}")
+        q = f"CREATE USER {rwuser} WITH ENCRYPTED PASSWORD '{rwpwd}';"
+        res = execute(f'{cmd} -c "{q}"')
+        if res.error:
+            print(f"  + {res.error}")
+            return False
+
     write(f"  + Create database {db}")
 
     q = f"CREATE DATABASE {db} OWNER {rwuser} ENCODING 'UTF8'"
@@ -51,54 +68,50 @@ def createPostgresSQLDB(
         print(f"  + {res.error}")
         return False
 
-    q = f"ALTER DATABASE {db} SET bytea_output TO 'escape'"
-    res = execute(f'{cmd} -c "{q}"')
-    if res.error:
-        print(f"  + {res.error}")
-        return False
+    #q = f"ALTER DATABASE {db} SET bytea_output TO 'escape'"
+    #res = execute(f'{cmd} -c "{q}"')
+    #if res.error:
+    #    print(f"  + {res.error}")
+    #    return False
 
     write("  + Create SeisComP tables")
 
     q = f"\\i {os.path.join(schemapath, 'postgres.sql')};"
-    res = execute(f'PGPASSWORD={rwpwd} {cmd} -U {rwuser} -d {db} -c "{q}"')
+    res = execute(f'PGPASSWORD={rwpwd} {cmd} -U {rwuser} -d {db} -h {rwhost} -c "{q}"')
     if res.error:
         print(f"  + {res.error}")
         return False
 
     write("  + Setup user roles")
 
-    q = f"SELECT 1 FROM pg_roles WHERE rolname='{rwuser}'"
-    res = execute(cmd + f' -c "{q}" -d {db}')
-    if res.error:
-        print(f"  + {res.error}")
-        return False
-
     q = ""
-    exits = "1" in res.data
-    if not exits:
-        q += f"CREATE USER {rwuser} WITH ENCRYPTED PASSWORD '{rwpwd}';"
-
     q += f"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {rwuser};"
     q += f"GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO {rwuser};"
-
-    if rwuser != rouser:
-        q = f"SELECT 1 FROM pg_roles WHERE rolname='{rouser}'"
-        res = execute(cmd + f' -c "{q}" -d {db}')
-        if res.error:
-            print(f"  + {res.error}")
-            return False
-
-        q = ""
-        exits = "1" in res.data
-        if not exits:
-            q += f"CREATE USER {rouser} WITH ENCRYPTED PASSWORD '{ropwd}';"
-
-        q += f"GRANT SELECT ON ALL TABLES IN SCHEMA public TO {rouser};"
-
     res = execute(f'{cmd} -c "{q}" -d {db}')
     if res.error:
         print(f"  + {res.error}")
         return False
+
+    if rwuser != rouser:
+        q = f"SELECT 1 FROM pg_roles WHERE rolname='{rouser}'"
+        res = execute(cmd + f' -c "{q}"')
+        if res.error:
+            print(f"  + {res.error}")
+            return False
+
+        exits = "1" in res.data
+        if not exits:
+            write(f"  + Create read-only user {rouser}")
+            q = f"CREATE USER {rouser} WITH ENCRYPTED PASSWORD '{ropwd}';"
+            res = execute(f'{cmd} -c "{q}"')
+            if res.error:
+                print(f"  + {res.error}")
+                return False
+
+        q = f"GRANT SELECT ON ALL TABLES IN SCHEMA public TO {rouser};"
+        if res.error:
+            print(f"  + {res.error}")
+            return False
 
     return True
 
