@@ -235,7 +235,8 @@ class ConfigDBUpdater(seiscomp.client.Application):
             """Usage:
   bindings2cfg [options]
 
-Dump global and module bindings configurations"""
+Synchronize bindings from key files with processing system or output as
+configuration XML file"""
         )
 
         seiscomp.client.Application.printUsage(self)
