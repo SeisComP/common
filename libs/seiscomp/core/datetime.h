@@ -197,6 +197,11 @@ class SC_SYSTEM_CORE_API Time : public TimeSpan {
 		          int *hour = nullptr, int *min = nullptr, int *sec = nullptr,
 		          int *usec = nullptr) const;
 
+		//! Returns the epoch seconds as float point.
+		double epoch() const;
+		//! Returns the epoch seconds as integer.
+		long epochSeconds() const;
+
 		//! Returns the current localtime
 		static Time LocalTime();
 
