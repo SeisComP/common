@@ -107,6 +107,7 @@ bool fromString(T &value, const std::string &str);
 template <typename T>
 bool fromString(std::complex<T> &value, const std::string &str);
 
+SC_SYSTEM_CORE_API bool fromString(TimeSpan &value, const std::string &str);
 SC_SYSTEM_CORE_API bool fromString(Time &value, const std::string &str);
 SC_SYSTEM_CORE_API bool fromString(Enumeration &value, const std::string &str);
 SC_SYSTEM_CORE_API bool fromString(std::string &value, const std::string &str);

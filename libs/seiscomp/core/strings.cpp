@@ -392,6 +392,25 @@ bool fromString(bool &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool fromString(TimeSpan &value, const std::string &str) {
+	double secs;
+	if ( !Core::fromString(secs, str) ) {
+		return false;
+	}
+	try {
+		value = secs;
+		return true;
+	}
+	catch ( OverflowException & ) {
+		return false;
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool fromString(Time &value, const std::string &str) {
 	return value.fromString(str);
 }
