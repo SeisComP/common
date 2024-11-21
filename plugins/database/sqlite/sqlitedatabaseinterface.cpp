@@ -146,6 +146,9 @@ bool SQLiteDatabase::handleURIParameter(const std::string &name,
 			return false;
 		}
 	}
+	else if ( name == "sync" && (value == "0" || value == "false" || value == "off") ) {
+		_sync = false;
+	}
 
 	return true;
 }
@@ -186,6 +189,11 @@ bool SQLiteDatabase::open() {
 #else
 		sqlite3_trace_v2(_handle, _debugUMask, &sqliteCallbackFunc, nullptr);
 #endif
+	}
+
+	if ( !_sync ) {
+		SEISCOMP_DEBUG("Disable disc synchronization");
+		execute("PRAGMA synchronous = OFF");
 	}
 
 	return true;
