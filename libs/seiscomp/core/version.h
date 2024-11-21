@@ -53,6 +53,12 @@ namespace Core {
    - Made Seiscomp::IO::DatabaseInterface::escape a const method
    - Increased TILESTORE_API version to 5
    - Added Seiscomp::Processing::WaveformProcessor::Status enumeration PeriodOutOfRange
+   - Renamed Seiscomp::Core::Time::seconds() to Time::epochSeconds()
+   - Added Seiscomp::Core::Time::epoch()
+   - Deprecated Seiscomp::Core::Time::valid()
+   - Removed implicit Seiscomp::Core::TimeSpan and Seiscomp::Core::Time double cast
+   - Removed Seiscomp::System::CommandLine::parse(inv argc, char **argv, *)
+   - Added Seiscomp::System::CommandLine::parse(std::vector<std::string>, *)
 
  "16.3.0"   0x100300
    - Added Seiscomp::Gui::Application::createCSV(view, header)
