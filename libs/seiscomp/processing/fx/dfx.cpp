@@ -241,7 +241,7 @@ bool DFX::feed(const Record *rec) {
 			}
 
 			// Get common time window and cut data
-			size_t commonNumberOfSamples = size_t(safetyTimeWindow().length() * samplingRate) + 1;
+			size_t commonNumberOfSamples = size_t(static_cast<double>(safetyTimeWindow().length()) * samplingRate) + 1;
 			double *commonData[NCOMPS];
 
 			for ( size_t i = 0; i < NCOMPS; ++i ) {

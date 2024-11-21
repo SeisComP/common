@@ -341,7 +341,7 @@ class HostInfo::Impl {
 				return -1;
 			}
 
-			double elapsed = _timer.elapsed();
+			double elapsed = _timer.elapsed().length();
 			_timer.restart();
 
 			double usage = ((current.tms_utime - _last.tms_utime) +

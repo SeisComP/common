@@ -58,7 +58,7 @@ using StationNotFoundException = Seiscomp::Seismology::StationNotFoundException;
 using PickNotFoundException = Seiscomp::Seismology::PickNotFoundException;
 
 
-namespace { // Utility functions 
+namespace { // Utility functions
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -178,7 +178,7 @@ double computePickWeight(DataModel::Pick *pick,
 }
 
 
-bool invertMatrix4x4(const std::array<std::array<double,4>,4> &in, 
+bool invertMatrix4x4(const std::array<std::array<double,4>,4> &in,
                      std::array<std::array<double,4>,4> &out) {
 	//
 	// generated using github.com/willnode/N-Matrix-Programmer
@@ -239,7 +239,7 @@ bool invertMatrix4x4(const std::array<std::array<double,4>,4> &in,
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-namespace { // StdLoc implementation 
+namespace { // StdLoc implementation
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1362,7 +1362,7 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 		}
 
 		travelTimes[i] = ttime;
-		double pickTime = double(pick->time().value());
+		double pickTime = pick->time().value().epoch();
 		originTimes.push_back(pickTime - travelTimes[i]);
 		timeWeights.push_back(weights[i]);
 	}
@@ -1419,7 +1419,7 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		throw LocatorException(
 		    "Either octTree.maxIterations or octTree.minCellSize must be used");
 	}
-	
+
 	if ( _currentProfile.gridSearch.numXPoints < 2 ||
 	     _currentProfile.gridSearch.numYPoints < 2 ||
 	     _currentProfile.gridSearch.numZPoints < 2 ) {
@@ -2288,7 +2288,7 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
 			weightSum += weight;
 			wmeanLat += cell.org.lat * weight;
 			wmeanDepth += cell.org.depth * weight;
-			wmeanTime += static_cast<double>(cell.org.time) * weight;
+			wmeanTime += cell.org.time.epoch() * weight;
 			longitudes.push_back(cell.org.lon);
 			weights.push_back(weight);
 		}
@@ -2302,7 +2302,7 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
 		wmeanLat = bestCell.org.lat;
 		wmeanLon = bestCell.org.lon;
 		wmeanDepth = bestCell.org.depth;
-		wmeanTime = static_cast<double>(bestCell.org.time);
+		wmeanTime = bestCell.org.time.epoch();
 	}
 
 	weightSum = 0.0;
@@ -2483,7 +2483,7 @@ Origin *StdLoc::createOrigin(
 	}
 
 	DataModel::CreationInfo ci;
-	ci.setCreationTime(Core::Time::GMT());
+	ci.setCreationTime(Core::Time::UTC());
 
 	Origin *origin = Origin::Create();
 	SEISCOMP_DEBUG("New origin publicID: %s", origin->publicID().c_str());

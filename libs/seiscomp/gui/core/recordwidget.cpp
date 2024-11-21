@@ -41,16 +41,16 @@ namespace  sc = Seiscomp::Core;
 
 #define CHCK_RANGE                                   \
 	double diff = _tmax - _tmin;                     \
-	if ( _tmin < sc::TimeSpan::MinTime ) {           \
-		_tmin = sc::TimeSpan::MinTime;               \
+	if ( _tmin < sc::Time::MinTime ) {           \
+		_tmin = sc::Time::MinTime;               \
 		_tmax = _tmin + diff;                        \
 	}                                                \
 	                                                 \
-	if ( _tmax > sc::TimeSpan::MaxTime ) {           \
-		_tmax = sc::TimeSpan::MaxTime;               \
+	if ( _tmax > sc::Time::MaxTime ) {           \
+		_tmax = sc::Time::MaxTime;               \
 		_tmin = _tmax - diff;                        \
-		if ( _tmin < sc::TimeSpan::MinTime ) {       \
-			_tmin = sc::TimeSpan::MinTime;           \
+		if ( _tmin < sc::Time::MinTime ) {       \
+			_tmin = sc::Time::MinTime;           \
 			diff = _tmax - _tmin;                    \
 			_pixelPerSecond = canvasWidth() / diff;  \
 		}                                            \
@@ -104,11 +104,11 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 
 				if ( tw.overlaps(rtw) ) {
 					double fs = rec->samplingFrequency();
-					double dt = tw.startTime() - rec->startTime();
+					double dt = static_cast<double>(tw.startTime() - rec->startTime());
 					if(dt>0)
 						imin = int(dt*fs);
 
-					dt = rec->endTime() - tw.endTime();
+					dt = static_cast<double>(rec->endTime() - tw.endTime());
 					imax = ns;
 					if(dt>0)
 						imax -= int(dt*fs);
@@ -147,16 +147,19 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 
 					if ( ofsTw.overlaps(rtw) ) {
 						double fs = rec->samplingFrequency();
-						double dt = ofsTw.startTime() - rec->startTime();
-						if(dt>0)
-							imin = int(dt*fs);
-						else
+						double dt = static_cast<double>(ofsTw.startTime() - rec->startTime());
+						if ( dt > 0 ) {
+							imin = static_cast<int>(dt * fs);
+						}
+						else {
 							imin = 0;
+						}
 
-						dt = rec->endTime() - ofsTw.endTime();
+						dt = static_cast<double>(rec->endTime() - ofsTw.endTime());
 						imax = ns;
-						if ( dt > 0 )
-							imax -= int(dt*fs);
+						if ( dt > 0 ) {
+							imax -= static_cast<int>(dt * fs);
+						}
 
 						if ( dataType == Array::FLOAT ) {
 							auto arr = static_cast<const FloatArray*>(rec->data());
@@ -4408,10 +4411,10 @@ void RecordWidget::ensureVisibility(const Core::Time &time,
 	double offset = 0;
 
 	if ( right > rightTime() ) {
-		offset = right - rightTime();
+		offset = static_cast<double>(right - rightTime());
 	}
 	else if ( left < leftTime() ) {
-		offset = left - leftTime();
+		offset = static_cast<double>(left - leftTime());
 	}
 
 	if ( offset != 0 ) {
@@ -4841,7 +4844,7 @@ RecordMarker* RecordWidget::nextMarker(const Seiscomp::Core::Time& t) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RecordMarker* RecordWidget::nearestMarker(const Seiscomp::Core::Time& t,
+RecordMarker* RecordWidget::nearestMarker(const Seiscomp::Core::Time &t,
                                           int maxDist) {
 	int minI = -1;
 	double minT = -1;
@@ -4849,7 +4852,7 @@ RecordMarker* RecordWidget::nearestMarker(const Seiscomp::Core::Time& t,
 		if ( !marker(i)->isVisible() ) {
 			continue;
 		}
-		double delta = fabs(marker(i)->correctedTime() - t);
+		double delta = fabs((marker(i)->correctedTime() - t).length());
 		if ( delta < minT || minT < 0 ) {
 			minT = delta;
 			minI = i;

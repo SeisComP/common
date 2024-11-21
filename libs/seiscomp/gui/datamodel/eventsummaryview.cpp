@@ -2901,7 +2901,7 @@ void EventSummaryView::switchToAutomaticPressed() {
 	entry->setAction("EvPrefOrgEvalMode");
 	entry->setParameters("automatic");
 	entry->setSender(SCApp->name() + "@" + System::HostInfo().name());
-	entry->setCreated(Core::Time::GMT());
+	entry->setCreated(Core::Time::UTC());
 
 	NotifierPtr n = new Notifier("Journaling", OP_ADD, entry.get());
 	NotifierMessagePtr nm = new NotifierMessage;

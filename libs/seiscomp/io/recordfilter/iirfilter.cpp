@@ -153,7 +153,7 @@ bool RecordIIRFilter<T>::apply(GenericRecord *rec) {
 			Core::TimeSpan diff = rec->startTime() - _lastEndTime;
 			// Overlap or gap does not matter, we need to reset the filter
 			// for non-continuous records
-			if ( fabs(diff) > (0.5/_samplingFrequency) ) {
+			if ( std::abs(static_cast<double>(diff)) > (0.5 / _samplingFrequency) ) {
 //				SEISCOMP_DEBUG("[%s] discontinuity of %fs: reset filter",
 //				               rec->streamID().c_str(), (double)diff);
 				reset();

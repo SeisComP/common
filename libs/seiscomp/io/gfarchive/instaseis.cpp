@@ -527,8 +527,8 @@ Core::GreensFunction *Instaseis::get() {
 			if ( !_socket.isOpen() || _socket.tryReconnect() )
 				_socket.open(_host);
 
-			double ts = _defaultTimespan;
-			if ( req.timeSpan ) ts = req.timeSpan;
+			double ts = _defaultTimespan.length();
+			if ( req.timeSpan ) ts = req.timeSpan.length();
 
 			if ( (_maxLength > 0) && (ts >= _maxLength) )
 				ts = _maxLength;

@@ -57,7 +57,7 @@ void Timeout() {
 
 	lock_guard<mutex> l(Mutex);
 
-	Core::Time timestamp = Core::Time::GMT();
+	Core::Time timestamp = Core::Time::UTC();
 
 	// Send state-of-health messages
 	for ( auto &&connection : Pool ) {

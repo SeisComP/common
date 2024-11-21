@@ -460,7 +460,7 @@ void HttpSession::sendResponse(Buffer* buf, HttpStatus status,
                                const char *additionalHeader) {
 	// Check modification times and send 304 is not modified
 	if ( _request.ifModifiedSince.valid() && (buf->lastModified > 0) ) {
-		if ( buf->lastModified <= _request.ifModifiedSince.seconds() ) {
+		if ( buf->lastModified <= _request.ifModifiedSince.epochSeconds() ) {
 			sendResponse(HTTP_304);
 			return;
 		}

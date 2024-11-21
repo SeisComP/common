@@ -52,7 +52,7 @@ class SC_SYSTEM_CLIENT_API SAICPicker : public SecondaryPicker {
 			Core::Time  pick;
 			double      snr;
 		};
-		
+
 	// ----------------------------------------------------------------------
 	//  X'truction
 	// ----------------------------------------------------------------------
@@ -79,7 +79,7 @@ class SC_SYSTEM_CLIENT_API SAICPicker : public SecondaryPicker {
 		const AICConfig &aicConfig() const { return _aicConfig; }
 
 		const State &state() const { return _state; }
-		const Result &result() const { return _result; }
+		const Result &result() const { return *_result; }
 
 		//! Returns detection data from noiseBegin if setSaveIntermediate
 		//! has been enabled before processing started.
@@ -92,14 +92,14 @@ class SC_SYSTEM_CLIENT_API SAICPicker : public SecondaryPicker {
 		void process(const Record *rec, const DoubleArray &filteredData) override;
 
 	private:
-		bool        _initialized;
-		AICConfig   _aicConfig;
-		State       _state;
-		Result      _result;
-		Filter     *_compFilter;
-		bool        _saveIntermediate;
-		DoubleArray _detectionTrace;
-		const std::string _methodID;
+		bool               _initialized;
+		AICConfig          _aicConfig;
+		State              _state;
+		OPT(Result)        _result;
+		Filter            *_compFilter;
+		bool               _saveIntermediate;
+		DoubleArray        _detectionTrace;
+		const std::string  _methodID;
 };
 
 

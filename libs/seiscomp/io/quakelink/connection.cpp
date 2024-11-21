@@ -472,7 +472,7 @@ bool Connection::select(bool archived, const Core::Time &from,
 				// header for UPDATED data. As a workarround the current
 				// timestamp is used.
 				if ( !response->timestamp.valid() )
-					response->timestamp = Core::Time::GMT();
+					response->timestamp = Core::Time::UTC();
 
 				// archived data processed or cache disabled: sent update immediately
 				if ( !archived || updatedBufferSize < 0 ) {

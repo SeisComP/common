@@ -222,7 +222,7 @@ void ArclinkConnection::handshake() {
 	_sock.sendRequest("REQUEST WAVEFORM format=MSEED", true);
 
 	Core::Time endTime = _etime;
-	if ( !endTime.valid() ) endTime = Core::Time::GMT();
+	if ( !endTime.valid() ) endTime = Core::Time::UTC();
 
 	for ( list<StreamIdx>::iterator it = _ordered.begin(); it != _ordered.end(); ++it ) {
 		SEISCOMP_DEBUG("Arclink request: %s", it->str(_stime, endTime).c_str());

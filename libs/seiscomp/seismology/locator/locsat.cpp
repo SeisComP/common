@@ -332,7 +332,7 @@ DataModel::Origin* LocSAT::locate(PickList& pickList,
 	if (_locateEvent) delete _locateEvent;
 	_locateEvent = new Internal::LocSAT;
 	_locateEvent->setOrigin(initLat, initLon, initDepth);
-	_locateEvent->setOriginTime((double)initTime);
+	_locateEvent->setOriginTime(initTime.epoch());
 
 	if ( isInitialLocationIgnored() )
 		setLocatorParams(LP_USE_LOCATION, "n");
@@ -398,7 +398,7 @@ DataModel::Origin* LocSAT::fromPicks(PickList &picks){
 
 			double cor = stationCorrection(stationID, pick->waveformID().stationCode(), phase);
 			_locateEvent->addArrival(i++, stationID.c_str(), phase.c_str(),
-			                         (double)pick->time().value()-cor,
+			                         pick->time().value().epoch() - cor,
 			                         getTimeError(pick, _defaultPickUncertainty, _usePickUncertainties),
 			                         pickItem.flags & F_TIME);
 
@@ -517,7 +517,7 @@ DataModel::Origin *LocSAT::relocate(const DataModel::Origin *origin) {
 	                        origin->longitude().value(),
 	                        depth );
 
-	_locateEvent->setOriginTime((double)origin->time().value());
+	_locateEvent->setOriginTime(origin->time().value().epoch());
 
 	if ( !loadArrivals(origin)) {
 		delete _locateEvent;
@@ -752,7 +752,7 @@ bool LocSAT::loadArrivals(const DataModel::Origin *origin) {
 		catch ( ... ) {}
 
 		_locateEvent->addArrival(i, stationID.c_str(), phaseCode.c_str(),
-		                         (double)pick->time().value()-cor,
+		                         pick->time().value().epoch() - cor,
 		                         getTimeError(pick, _defaultPickUncertainty, _usePickUncertainties),
 		                         timeUsed ? 1 : 0);
 
@@ -883,7 +883,7 @@ DataModel::Origin* LocSAT::loc2Origin(Internal::Loc* loc){
 
 			TravelTime tt;
 			if ( travelTimeP(origin->latitude(), origin->longitude(), origin->depth(), arrival->distance(), arrival->azimuth(), tt) ) {
-				double res = loc->arrival[i].time - double(origin->time().value() + Core::TimeSpan(tt.time));
+				double res = loc->arrival[i].time - (origin->time().value() + Core::TimeSpan(tt.time)).epoch();
 				arrival->setTimeResidual(res);
 			}
 		}

@@ -197,59 +197,7 @@ BOOST_AUTO_TEST_CASE(TimeToString) {
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-BOOST_AUTO_TEST_CASE(comparisonSign) {
-	Time t1,t2;
-
-	// check equal
-	t1.set(2007,8,9,17,48,41,0);
-	t2.set(2007,8,9,17,48,41,0);
-	BOOST_CHECK_EQUAL(t1.seconds(), t2.seconds());
-	string s1 = toString(t1);
-	string s2 = toString(t2);
-	bool match = boost::iequals(s1,s2);
-	BOOST_CHECK_EQUAL(match, true);
-
-	// check greater than
-	t1.set(2007,4,3,14,44,23,0);
-	t2.set(2007,4,3,4,44,23,0);
-	s1 = toString(t1);
-	s2 = toString(t2);
-	BOOST_CHECK_GT((double)t1, (double)t2);
-	match =  boost::iequals(s1,s2);
-	BOOST_CHECK_EQUAL(match, false);
-
-	// check greater equal
-	BOOST_CHECK_GE((double)t1, (double)t2);
-	match = boost::iequals(s1,s2);
-	BOOST_CHECK_EQUAL(match, false);
-	t1.set(2007,6,26,8,46,40,0);
-	t2.set(2007,6,26,8,46,40,0);
-	s1 = toString(t1);
-	s2 = toString(t2);
-	BOOST_CHECK_GE((double)t1,(double)t2);
-	match = boost::iequals(s1,s2);
-	BOOST_CHECK_EQUAL(match, true);
-
-	// check lower equal
-	t1.set(2007,12,30,5,30,22,0);
-	t2.set(2008,12,30,5,30,22,0);
-	BOOST_CHECK_LE((double)t1, (double)t2);
-	s1 = toString(t1);
-	s2 = toString(t2);
-	match = boost::iequals(s1,s2);
-	BOOST_CHECK_EQUAL(match, false);
-
-	// check lower than
-	BOOST_CHECK_LT((double)t1, (double)t2);
-}
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
-
-
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(jsonEqualString) {
-
 	// parse JSON file
 	rapidjson::Document doc;
 	doc.Parse(JSON1);
@@ -394,7 +342,6 @@ BOOST_AUTO_TEST_CASE(jsonEqualString) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(xmlEqualString) {
-
 	const char* XML1 = getContent(1);
 	StringBuf buf(XML1);
 	Seiscomp::IO::XMLArchive x;
@@ -447,7 +394,8 @@ BOOST_AUTO_TEST_CASE(xmlEqualString) {
 
 	getString = org->time().value().iso();
 	check = "2000-02-12T12:09:48.0000z";
-	bool equal = boost::iequals(getString,check);
+	BOOST_CHECK_EQUAL(getString, "2000-02-12T12:09:48.0000Z");
+	bool equal = boost::iequals(getString, check);
 	BOOST_CHECK_EQUAL(equal, true);
 
 	getDouble = org->depth().value();

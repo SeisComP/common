@@ -132,8 +132,8 @@ void StreamWidget::startWaveformDataAcquisition()
 	}
 	// _thread->addStream(station->network()->code(), station->code(), stream->locCode(), stream->code() + "Z");
 	_thread->addStream(net, sta, loc, cha);
-	Core::Time startTime = Core::Time::GMT() - _ringBufferSize;
-	Core::Time endTime/* = Core::Time::GMT()*/;
+	Core::Time startTime = Core::Time::UTC() - _ringBufferSize;
+	Core::Time endTime/* = Core::Time::UTC()*/;
 	_thread->setTimeWindow(Core::TimeWindow(startTime, endTime));
 
 	_recordSequence = new RingBuffer(_ringBufferSize);
@@ -148,7 +148,7 @@ void StreamWidget::startWaveformDataAcquisition()
 	_groupBox->setVisible(!_groupBox->isVisible());
 	_recordWidget->setTimeScale(_recordWidget->width() / double(_ringBufferSize.seconds()));
 	_recordWidget->setTimeRange(-1 * _ringBufferSize.seconds(), 0);
-	_recordWidget->setAlignment(Core::Time::GMT());
+	_recordWidget->setAlignment(Core::Time::UTC());
 	_timeScale->setScale(_recordWidget->width() / double(_ringBufferSize.seconds()));
 	_timeScale->setTimeRange(-1 * _ringBufferSize.seconds(), 0);
 
@@ -197,7 +197,7 @@ void StreamWidget::updateRecordWidgetAlignment()
 	if ( !_recordWidget )
 		return;
 
-	_recordWidget->setAlignment(Core::Time::GMT());
+	_recordWidget->setAlignment(Core::Time::UTC());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

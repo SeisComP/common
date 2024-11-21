@@ -1350,7 +1350,7 @@ bool Application::run() {
 		startMessageThread();
 	}
 
-	_sohLastUpdate = Time::LocalTime();
+	_sohLastUpdate = Time::Now();
 
 	if ( _settings.soh.interval > 0 ) {
 		_sohTimer.setTimeout(_settings.soh.interval);
@@ -2170,7 +2170,7 @@ bool Application::readMessages() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::stateOfHealth() {
 	// Save current time
-	Core::Time now = Core::Time::LocalTime();
+	Core::Time now = Core::Time::Now();
 
 	if ( _sohLastUpdate.valid() ) {
 		double factor = double(now - _sohLastUpdate) / _settings.soh.interval;

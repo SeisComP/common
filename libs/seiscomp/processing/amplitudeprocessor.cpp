@@ -601,7 +601,7 @@ class ParamOriginTime : public Interface {
 				throw StatusException(WaveformProcessor::MissingHypocenter, 60);
 			}
 
-			return env.hypocenter->time().value() - ctx.proc()->trigger();
+			return (env.hypocenter->time().value() - ctx.proc()->trigger()).length();
 		}
 
 		std::string toString() const override {
@@ -618,7 +618,7 @@ class ParamTrigger : public Interface {
 				throw StatusException(WaveformProcessor::MissingHypocenter, 50);
 			}
 
-			return ctx.proc()->trigger() - env.hypocenter->time().value();
+			return (ctx.proc()->trigger() - env.hypocenter->time().value()).length();
 		}
 
 		std::string toString() const override {
@@ -1739,9 +1739,9 @@ void AmplitudeProcessor::process(const Record *record) {
 	int n = static_cast<int>(_data.size());
 
 	// signal and noise window relative to _continuous->startTime()
-	double dt0  = _trigger - dataTimeWindow().startTime();
-	double dt1  = dataTimeWindow().endTime() - dataTimeWindow().startTime();
-	double dtw1  = timeWindow().endTime() - dataTimeWindow().startTime();
+	double dt0  = (_trigger - dataTimeWindow().startTime()).length();
+	double dt1  = (dataTimeWindow().endTime() - dataTimeWindow().startTime()).length();
+	double dtw1  = (timeWindow().endTime() - dataTimeWindow().startTime()).length();
 	double dtn1 = dt0 + _config.noiseBegin;
 	double dtn2 = dt0 + _config.noiseEnd;
 	double dts1 = dt0 + _config.signalBegin;

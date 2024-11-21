@@ -42,11 +42,11 @@ TimeScale::TimeScale(QWidget *parent, Qt::WindowFlags f, Position pos)
  : Ruler(parent, f, pos) {
 	_showAbsoluteValues = false;
 	_showAbsoluteDate= false;
-	setLimits(Seiscomp::Core::TimeSpan::MinTime, Seiscomp::Core::TimeSpan::MaxTime, 0.001, 315360000.0);
+	setLimits(Seiscomp::Core::Time::MinTime, Seiscomp::Core::Time::MaxTime, 0.001, 315360000.0);
 }
 
 
-void TimeScale::setAlignment(const Seiscomp::Core::Time& t) {
+void TimeScale::setAlignment(const Seiscomp::Core::Time &t) {
 	_alignment = t;
 	_ofs = _showAbsoluteValues ? (double)_alignment : 0;
 	emit changedInterval(_drx[0], _drx[1], _ofs);
@@ -158,7 +158,7 @@ bool TimeScale::getTickText(double pos, double lastPos,
 			return true;
 		}
 		catch ( const Core::OverflowException&) { return false; }
-		
+
 	}
 
 	if ( line == 1 && _showAbsoluteDate ) {

@@ -240,7 +240,9 @@ class RecordScrollArea : public QScrollArea {
 								_overlay->mapToGlobal(rubberBand.topLeft()),
 								_overlay->mapToGlobal(rubberBand.bottomRight())
 							),
-							items, minTime, maxTime,
+							items,
+							static_cast<double>(minTime),
+							static_cast<double>(maxTime),
 							_selectOperation
 						);
 					}
@@ -1630,13 +1632,16 @@ void RecordView::scrollLeft() {
 		Core::Time cp = _currentItem->widget()->cursorPos();
 		cp -= Core::TimeSpan((float)width()/(20*_timeScale));
 		_currentItem->widget()->setCursorPos(cp);
-		if ( cp < _currentItem->widget()->leftTime() )
-			offset = _currentItem->widget()->leftTime() - cp;
-		else
+		if ( cp < _currentItem->widget()->leftTime() ) {
+			offset = static_cast<double>(_currentItem->widget()->leftTime() - cp);
+		}
+		else {
 			return;
+		}
 	}
-	else
+	else {
 		offset = (float)width()/(8*_timeScale);
+	}
 
 	setTimeRange(_tmin - offset, _tmax - offset);
 }
@@ -1647,19 +1652,22 @@ void RecordView::scrollLeft() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::scrollLeftSlowly() {
-	float offset = 0;
+	double offset = 0;
 
 	if ( _currentItem && !_currentItem->widget()->cursorText().isEmpty() ) {
 		Core::Time cp = _currentItem->widget()->cursorPos();
 		cp -= Core::TimeSpan(1.0f/_timeScale);
 		_currentItem->widget()->setCursorPos(cp);
-		if ( cp < _currentItem->widget()->leftTime() )
-			offset = _currentItem->widget()->leftTime() - cp;
-		else
+		if ( cp < _currentItem->widget()->leftTime() ) {
+			offset = static_cast<double>(_currentItem->widget()->leftTime() - cp);
+		}
+		else {
 			return;
+		}
 	}
-	else
-		offset = 1.0/_timeScale;
+	else {
+		offset = 1.0 / _timeScale;
+	}
 
 	setTimeRange(_tmin - offset, _tmax - offset);
 }
@@ -1670,19 +1678,23 @@ void RecordView::scrollLeftSlowly() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::scrollRight() {
-	float offset = 0;
+	double offset = 0;
 
 	if ( _currentItem && !_currentItem->widget()->cursorText().isEmpty() ) {
 		Core::Time cp = _currentItem->widget()->cursorPos();
-		cp += Core::TimeSpan((float)width()/(20*_timeScale));
+		cp += Core::TimeSpan(static_cast<double>(width()) / (20 * _timeScale));
 		_currentItem->widget()->setCursorPos(cp);
-		if ( cp > _currentItem->widget()->rightTime() )
-			offset = cp - _currentItem->widget()->rightTime();
-		else
+
+		if ( cp > _currentItem->widget()->rightTime() ) {
+			offset = static_cast<double>(cp - _currentItem->widget()->rightTime());
+		}
+		else {
 			return;
+		}
 	}
-	else
-		offset = (float)width()/(8*_timeScale);
+	else {
+		offset = static_cast<double>(width()) / (8 * _timeScale);
+	}
 
 	setTimeRange(_tmin + offset, _tmax + offset);
 }
@@ -1693,19 +1705,22 @@ void RecordView::scrollRight() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::scrollRightSlowly() {
-	float offset = 0;
+	double offset = 0;
 
 	if ( _currentItem && !_currentItem->widget()->cursorText().isEmpty() ) {
 		Core::Time cp = _currentItem->widget()->cursorPos();
 		cp += Core::TimeSpan(1.0f/_timeScale);
 		_currentItem->widget()->setCursorPos(cp);
-		if ( cp > _currentItem->widget()->rightTime() )
-			offset = cp - _currentItem->widget()->rightTime();
-		else
+		if ( cp > _currentItem->widget()->rightTime() ) {
+			offset = static_cast<double>(cp - _currentItem->widget()->rightTime());
+		}
+		else {
 			return;
+		}
 	}
-	else
-		offset = (float)1.0/_timeScale;
+	else {
+		offset = 1.0 / _timeScale;
+	}
 
 	setTimeRange(_tmin + offset, _tmax + offset);
 }
@@ -2383,7 +2398,7 @@ double RecordView::mapToUnit(int x) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Time RecordView::mapToTime(int x) const {
-	return Time(mapToUnit(x) * (_tmax - _tmin) + _tmin) + _alignment;
+	return _alignment + TimeSpan(mapToUnit(x) * (_tmax - _tmin) + _tmin);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

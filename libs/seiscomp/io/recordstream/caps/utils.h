@@ -280,7 +280,7 @@ timestampToTime(const TimeStamp &ts) {
 	Time t;
 	t.set(ts.year, 1, 1, ts.hour, ts.minute, ts.second, ts.usec);
 	// Add the day of the year in seconds
-	t += TimeSpan(ts.yday*86400);
+	t += TimeSpan(ts.yday * 86400, 0);
 	return t;
 }
 

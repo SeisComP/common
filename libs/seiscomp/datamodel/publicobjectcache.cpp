@@ -374,7 +374,7 @@ void PublicObjectCache::push(PublicObject* obj) {
 	item->object = obj;
 
 	// Update current timestamp
-	item->timestamp = Core::Time::LocalTime().seconds();
+	item->timestamp = Core::Time::Now().epochSeconds();
 
 	// Append item
 	item->prev = _back;
@@ -529,7 +529,7 @@ bool PublicObjectTimeSpanBuffer::setTimeSpan(const Core::TimeSpan& length) {
 bool PublicObjectTimeSpanBuffer::feed(PublicObject* po) {
 	if ( !po ) return false;
 
-	Core::Time now = Core::Time::LocalTime();
+	Core::Time now = Core::Time::Now();
 
 	push(po);
 	while ( !empty() && now - oldest() > _timeSpan ) pop();

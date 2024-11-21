@@ -342,7 +342,7 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 	}
 
 	if ( stage->lastEndTime.valid() ) {
-		double diff = rec->startTime() - stage->lastEndTime;
+		double diff = (rec->startTime() - stage->lastEndTime).length();
 		if ( fabs(diff) > stage->dt*0.5 ) {
 			if ( diff < 0 )
 				// Ignore overlap
@@ -375,7 +375,7 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 		if ( !stage->startTime.valid() ) {
 			Core::Time firstNewSampleStart = rec->startTime() + Core::TimeSpan(stage->dt*stage->N2);
 			double targetDt = 1.0 / stage->targetRate;
-			double mod = fmod((double)firstNewSampleStart, targetDt);
+			double mod = fmod(firstNewSampleStart.epoch(), targetDt);
 			double skip = targetDt - mod;
 			stage->samplesToSkip = int(skip*stage->sampleRate+0.5);
 			stage->startTime = rec->startTime() + Core::TimeSpan((int(stage->missingSamples+stage->samplesToSkip)-stage->N2-1)*stage->dt+5E-7);
@@ -513,7 +513,7 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 	}
 
 	if ( stage->lastEndTime.valid() ) {
-		double diff = rec->startTime() - stage->lastEndTime;
+		double diff = (rec->startTime() - stage->lastEndTime).length();
 		if ( fabs(diff) > stage->dt*0.5 ) {
 			SEISCOMP_DEBUG("[ups] %s: gap/overlap of %f secs -> reset processing",
 			               rec->streamID().c_str(), diff);

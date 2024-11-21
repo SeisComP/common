@@ -501,14 +501,17 @@ void SLConnection::handshake() {
 
 			// Seedlink does not support microseconds so shift the end of
 			// one second if a fraction of a seconds is requested
-			if ( etime.microseconds() > 0 )
-				etime += Time(1,0);
+			if ( etime.microseconds() > 0 ) {
+				etime += TimeSpan(1, 0);
+			}
 
-			if ( it->timestamp().valid() )
-				stime = it->timestamp() + Time(1,0);
+			if ( it->timestamp().valid() ) {
+				stime = it->timestamp() + TimeSpan(1, 0);
+			}
 			else if ( !stime.valid() ) {
-				if ( etime > Time::GMT() )
-					stime = Time::GMT();
+				if ( etime > Time::UTC() ) {
+					stime = Time::UTC();
+				}
 			}
 
 			// Remove microseconds
@@ -562,14 +565,16 @@ void SLConnection::handshake() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Time getEndtime(MSRecord *prec) {
 	double diff = 0;
-	Time stime = Time((hptime_t)prec->starttime / HPTMODULUS, (hptime_t)prec->starttime % HPTMODULUS);
+	Time stime = Time::FromEpoch((hptime_t)prec->starttime / HPTMODULUS, (hptime_t)prec->starttime % HPTMODULUS);
 
-	if (prec->samprate > 0)
+	if ( prec->samprate > 0 ) {
 		diff = prec->samplecnt / prec->samprate;
+	}
 
-	if (diff == 0)
+	if ( diff == 0 ) {
 		return stime;
-	return stime + Time(diff);
+	}
+	return stime + TimeSpan(diff);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

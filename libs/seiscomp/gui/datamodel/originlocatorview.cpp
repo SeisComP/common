@@ -6100,7 +6100,7 @@ void OriginLocatorView::applyNewOrigin(DataModel::Origin *origin, bool relocated
 	CreationInfo ci;
 	ci.setAgencyID(SCApp->agencyID());
 	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::GMT());
+	ci.setCreationTime(Core::Time::UTC());
 	origin->setCreationInfo(ci);
 
 	pushUndo();
@@ -6416,7 +6416,7 @@ void OriginLocatorView::createArtificialOrigin() {
 void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
                                               const QPoint &dialogPos) {
 	createArtificialOrigin(epicenter, SC_D.pickerConfig.defaultDepth,
-	                       Core::Time::GMT(), dialogPos);
+	                       Core::Time::UTC(), dialogPos);
 }
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -6460,7 +6460,7 @@ void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
 		CreationInfo ci;
 		ci.setAgencyID(SCApp->agencyID());
 		ci.setAuthor(SCApp->author());
-		ci.setCreationTime(Core::Time::GMT());
+		ci.setCreationTime(Core::Time::UTC());
 		origin->setCreationInfo(ci);
 		origin->setLongitude(dialog.longitude());
 		origin->setLatitude(dialog.latitude());
@@ -6621,7 +6621,7 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 
 	CreationInfo &ci = SC_D.currentOrigin->creationInfo();
 	ci.setAuthor( SCApp->author() );
-	ci.setModificationTime(Core::Time::GMT());
+	ci.setModificationTime(Core::Time::UTC());
 	SC_D.ui.labelUser->setText(ci.author().c_str());
 	SC_D.ui.labelUser->setToolTip(ci.author().c_str());
 
@@ -6862,7 +6862,7 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 		CreationInfo ci;
 		ci.setAgencyID(SCApp->agencyID());
 		ci.setAuthor(SCApp->author());
-		ci.setCreationTime(Core::Time::GMT());
+		ci.setCreationTime(Core::Time::UTC());
 
 		// derive origin
 		derived = Origin::Create();
@@ -6923,7 +6923,7 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	CreationInfo ci;
 	ci.setAgencyID(SCApp->agencyID());
 	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::GMT());
+	ci.setCreationTime(Core::Time::UTC());
 
 	fm->setCreationInfo(ci);
 
@@ -7272,7 +7272,7 @@ OriginLocatorView::createJournal(const std::string &objectID,
 		entry->setAction(action);
 		entry->setParameters(params);
 		entry->setSender(SCApp->author());
-		entry->setCreated(Core::Time::GMT());
+		entry->setCreated(Core::Time::UTC());
 		return new Notifier("Journaling", OP_ADD, entry.get());
 	}
 }

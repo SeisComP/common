@@ -191,8 +191,8 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 	// ----------------------------------------------------------------------
 	public:
 		//! C'tor
-		WaveformProcessor(const Core::TimeSpan &initTime=0.0,
-		                  const Core::TimeSpan &gapThreshold=0.1);
+		WaveformProcessor(const Core::TimeSpan &initTime = Core::TimeSpan(0, 0),
+		                  const Core::TimeSpan &gapThreshold = Core::TimeSpan(0, 100000));
 
 		//! D'tor
 		virtual ~WaveformProcessor();

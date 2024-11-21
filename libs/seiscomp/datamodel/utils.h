@@ -135,7 +135,7 @@ double quantityUncertainty(const T &o) {
  */
 template <typename T>
 void touch(T &o) {
-	Core::Time now = Core::Time::GMT();
+	Core::Time now = Core::Time::UTC();
 
 	try {
 		CreationInfo &ci = o.creationInfo();
@@ -521,11 +521,11 @@ class SC_SYSTEM_CORE_API DiffMerge {
 				std::string compare(T a, T b, bool quotes = false);
 
 				void reset ();
-			
+
 			public:
 				LogNode(const Object* o1, int level);
 				LogNode(std::string title, int level);
-				
+
 			public:
 				template <class T>
 				void add(std::string title, T a, T b);

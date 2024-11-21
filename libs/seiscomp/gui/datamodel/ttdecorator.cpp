@@ -238,8 +238,8 @@ double TTDecorator::computeTTTPolygon(const std::vector<double>& travelTimes,
                                       std::vector<QPointF>& polygon) {
 	polygon.clear();
 
-	// double timeSpan = (Core::Time::GMT() - DataModel::Origin::Cast(baseObject())->time().value()).seconds();
-	double timeSpan = (Core::Time::GMT() - _originTime.value()).seconds();
+	// double timeSpan = (Core::Time::UTC() - DataModel::Origin::Cast(baseObject())->time().value()).seconds();
+	double timeSpan = (Core::Time::UTC() - _originTime.value()).seconds();
 	//std::cout << "Calculated traveltime: " << timeSpan << std::endl;
 
 	double distance = 0;

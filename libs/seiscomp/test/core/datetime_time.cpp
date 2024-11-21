@@ -50,127 +50,54 @@ bool isClose(sc::TimeSpan time, long sec, long micro, int offset = 1) {
 	return false;
 }
 
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+bool isClose(sc::Time time, long sec, long micro, int offset = 1) {
+	long microSeconds = time.microseconds();
+
+	long secDiff = time.epochSeconds() - sec;
+
+	if ( secDiff > 0 ) {
+		microSeconds += secDiff * 1000000;
+	}
+	else if ( secDiff < 0 ) {
+		micro += abs(secDiff) * 1000000;
+	}
+
+	if ( abs(microSeconds - micro) <= offset ) {
+		return true;
+	}
+
+	return false;
+}
 
 
 BOOST_AUTO_TEST_CASE(construction) {
-	struct timeval tvPositive;
-	tvPositive.tv_sec = 60000;
-	tvPositive.tv_usec = 123456;
-	sc::TimeSpan k(tvPositive);
-	BOOST_CHECK(k.seconds() == tvPositive.tv_sec);
-	BOOST_CHECK(k.microseconds() == tvPositive.tv_usec);
+	// double
+	double val = 5678.9864;
+	sc::Time tdPositive(val);
+	BOOST_CHECK_EQUAL(tdPositive.epochSeconds(), 5678);
+	BOOST_CHECK_EQUAL(tdPositive.microseconds(), 986400);
 
-	struct timeval tvNegativeUsec;
-	tvNegativeUsec.tv_sec = 300;
-	tvNegativeUsec.tv_usec = -13456;
-	sc::TimeSpan ki(tvNegativeUsec);
-	BOOST_CHECK_EQUAL(ki.seconds() , tvNegativeUsec.tv_sec);
-	BOOST_CHECK_EQUAL(ki.microseconds() , tvNegativeUsec.tv_usec);
-
-	struct timeval tvNegativeSec;
-	tvNegativeSec.tv_sec = -300;
-	tvNegativeSec.tv_usec = 13456;
-
-	sc::TimeSpan kj(tvNegativeSec);
-	BOOST_CHECK_EQUAL(kj.seconds() , tvNegativeSec.tv_sec);
-	BOOST_CHECK_EQUAL(kj.microseconds() , tvNegativeSec.tv_usec);
-
-	struct timeval tvNegative;
-	tvNegative.tv_sec = -3000;
-	tvNegative.tv_usec = -123456;
-	sc::TimeSpan kk(tvNegative);
-	BOOST_CHECK_EQUAL(kk.seconds() , tvNegative.tv_sec);
-	BOOST_CHECK_EQUAL(kk.microseconds() , tvNegative.tv_usec);
-
-	struct timeval tvNull;
-	sc::TimeSpan kl(tvNull);
-	BOOST_CHECK_EQUAL(kl.seconds() , tvNull.tv_sec);
-	BOOST_CHECK_EQUAL(kl.microseconds() , tvNull.tv_usec);
+	val = -89765.745377;
+	sc::Time tdNegative(val);
+	BOOST_CHECK_EQUAL(isClose(tdNegative, -89765, -745377), true);
 
 	// copy
-	sc::TimeSpan copyPositive(sc::TimeSpan(79743.123456));
-	BOOST_CHECK(copyPositive.seconds() == 79743);
-	BOOST_CHECK(copyPositive.microseconds() == 123456);
+	sc::Time copyPositive(sc::Time(758.9975));
+	BOOST_CHECK_EQUAL(copyPositive.epochSeconds(), 758);
+	BOOST_CHECK_EQUAL(copyPositive.microseconds(), 997500);
 
-	sc::TimeSpan copyNegative(sc::TimeSpan(-98765.123456));
-	long sec = -98765;
-	long micro = -123456;
-	BOOST_CHECK(isClose(copyNegative, sec, micro,20) == true);
+	sc::Time copyNegative(sc::Time(-877.963));
+	BOOST_CHECK_EQUAL(isClose(copyNegative, -877, -963000), true);
 
-	sc::TimeSpan copyNegativeTest(sc::TimeSpan(-98765.000070));
-	sec = -98765 ;
-	micro = 70;
-	BOOST_CHECK_EQUAL(isClose(copyNegativeTest,sec, micro,500), true);
+	// date
+	sc::Time date(1971,1,3,1,1,4,6544);
+	double secondsPerDay = 86400;
+	double secondsPerYear = 31536000;
+	BOOST_CHECK_CLOSE(date.epochSeconds(), secondsPerYear + secondsPerDay * 2, 0.3);
 
-	// long
-	sc::TimeSpan longPositive(765432, 456789);
-	BOOST_CHECK(longPositive.seconds() == 765432);
-	BOOST_CHECK(longPositive.microseconds() == 456789);
-
-	sc::TimeSpan longNegativeUsec(200, -732);
-	BOOST_CHECK_EQUAL(longNegativeUsec.seconds(), 200);
-	BOOST_CHECK_EQUAL(longNegativeUsec.microseconds(), -732);
-
-	sc::TimeSpan longNegativeSec(-800, 73265);
-	BOOST_CHECK_EQUAL(longNegativeSec.seconds(), -800);
-	BOOST_CHECK_EQUAL(longNegativeSec.microseconds(), 73265);
-
-	sc::TimeSpan longNegative(-500, -732650);
-	BOOST_CHECK_EQUAL(longNegative.seconds(), -500);
-	BOOST_CHECK_EQUAL(longNegative.microseconds(), -732650);
-
-	// double
-	double number = 123456.98765;
-	sc::TimeSpan doublePositive(number);
-	BOOST_CHECK_EQUAL(doublePositive.seconds(), 123456);
-	BOOST_CHECK_EQUAL(doublePositive.microseconds(), 987650);
-
-	number = -98765.123470;
-	sc::TimeSpan doubleNegative(number);
-	BOOST_CHECK_EQUAL(doubleNegative.seconds(), -98765);
-	BOOST_CHECK_CLOSE((double)doubleNegative.microseconds(), -123470, 0.01);
-
-	number = -98765.000080;
-	sc::TimeSpan doubleNegativeTest(number);
-	sec = -98765;
-	micro = 80;
-	BOOST_CHECK_EQUAL(isClose(doubleNegativeTest,sec, micro,500), true);
-
-	// pointer
-	timeval n;
-	n.tv_sec = 123;
-	n.tv_usec = 123456;
-
-	sc::TimeSpan pointerPositive(&n);
-	BOOST_CHECK_EQUAL(pointerPositive.seconds(), 123);
-	BOOST_CHECK_EQUAL(pointerPositive.microseconds(), 123456);
-
-	n.tv_sec = -123;
-	n.tv_usec = 123456;
-
-	sc::TimeSpan pointerNegativeSec(&n);
-	BOOST_CHECK_EQUAL(pointerNegativeSec.seconds(), -123);
-	BOOST_CHECK_EQUAL(pointerNegativeSec.microseconds(), 123456);
-
-	n.tv_sec = 123;
-	n.tv_usec = -123456;
-
-	sc::TimeSpan pointerNegativeUsec(&n);
-	BOOST_CHECK_EQUAL(pointerNegativeUsec.seconds(), 123);
-	BOOST_CHECK_EQUAL(pointerNegativeUsec.microseconds(), -123456);
-
-	n.tv_sec = -123;
-	n.tv_usec = -123456;
-
-	sc::TimeSpan pointerNegative(&n);
-	BOOST_CHECK_EQUAL(pointerNegative.seconds(), -123);
-	BOOST_CHECK_EQUAL(pointerNegative.microseconds(), -123456);
-
-	timeval *nullPointer = nullptr;
-	sc::TimeSpan pointerNull(nullPointer);
-	BOOST_CHECK_EQUAL(pointerNull.seconds(), 0);
-	BOOST_WARN_MESSAGE(pointerNull.microseconds(), "pointer is a nullptr pointer");
+	BOOST_CHECK_EQUAL(sc::Time().valid(), false);
+	BOOST_CHECK_EQUAL(sc::Time(), sc::Time(1970,1,1,0,0,0));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -179,14 +106,14 @@ BOOST_AUTO_TEST_CASE(construction) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(addition) {
-	sc::TimeSpan k = 5, l = 7;
-	BOOST_CHECK(k + l  == sc::TimeSpan(12));
+	sc::TimeSpan k{5, 0}, l{7, 0};
+	BOOST_CHECK(k + l == sc::TimeSpan(12, 0));
 
 	sc::TimeSpan m = 320.5, n = 60.2;
-	BOOST_CHECK(m + n  == sc::TimeSpan(380.7));
+	BOOST_CHECK(m + n == sc::TimeSpan(380.7));
 
-	sc::TimeSpan g = 55, d = -50;
-	BOOST_CHECK(d + g  == sc::TimeSpan(5));
+	sc::TimeSpan g{55, 0}, d{-50, 0};
+	BOOST_CHECK(d + g  == sc::TimeSpan(5, 0));
 
 	sc::TimeSpan t = -80.0053, s = -70.0044;
 	sc::TimeSpan result = t + s;
@@ -213,10 +140,10 @@ BOOST_AUTO_TEST_CASE(addition) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(subtraction) {
-	sc::TimeSpan k = 5, l = 6;
-	BOOST_CHECK(k - l == sc::TimeSpan(-1));
+	sc::TimeSpan k{5, 0}, l{6, 0};
+	BOOST_CHECK(k - l == sc::TimeSpan(-1, 0));
 
-	sc::TimeSpan t = 58, i = 68.05;
+	sc::TimeSpan t{58, 0}, i = 68.05;
 	sc::TimeSpan result = t - i;
 	long sec = t.seconds() - i.seconds();
 	long micro = t.microseconds() - i.microseconds();
@@ -243,11 +170,11 @@ BOOST_AUTO_TEST_CASE(subtraction) {
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(setSec) {
 	sc::TimeSpan h, k, l;
-	BOOST_CHECK_EQUAL(h.set(4), sc::TimeSpan(4));
-	BOOST_CHECK_EQUAL(k.set(2), sc::TimeSpan(2));
-	BOOST_CHECK_EQUAL(l.set(1), sc::TimeSpan(1));
-	BOOST_CHECK_EQUAL(l.set(-10), sc::TimeSpan(-10));
-	BOOST_CHECK_EQUAL(k.set(-9876), sc::TimeSpan(-9876));
+	BOOST_CHECK_EQUAL(h.set(4), sc::TimeSpan(4, 0));
+	BOOST_CHECK_EQUAL(k.set(2), sc::TimeSpan(2, 0));
+	BOOST_CHECK_EQUAL(l.set(1), sc::TimeSpan(1, 0));
+	BOOST_CHECK_EQUAL(l.set(-10), sc::TimeSpan(-10, 0));
+	BOOST_CHECK_EQUAL(k.set(-9876), sc::TimeSpan(-9876, 0));
 	BOOST_CHECK_EQUAL(l.set(0), sc::TimeSpan(0.));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -321,10 +248,10 @@ BOOST_AUTO_TEST_CASE(absolute) {
 
 	sc::TimeSpan i(600, -700000);
 	result = i.abs();
-	BOOST_CHECK_EQUAL(result.seconds(), 600);
-	BOOST_CHECK_EQUAL(result.microseconds(),700000);
+	BOOST_CHECK_EQUAL(result.seconds(), 599);
+	BOOST_CHECK_EQUAL(result.microseconds(),300000);
 
-	sc::TimeSpan r(200, -5);
+	sc::TimeSpan r(-200, -5);
 	sc::TimeSpan s(200.000005);
 	sc::TimeSpan absR = r.abs();
 	BOOST_CHECK_EQUAL(r.abs(), s.abs());
@@ -337,8 +264,8 @@ BOOST_AUTO_TEST_CASE(absolute) {
 	micro = 678;
 	BOOST_CHECK_EQUAL(isClose(result,sec, micro), true);
 
-	sc::TimeSpan h = -4;
-	BOOST_CHECK_EQUAL(h.abs(), sc::TimeSpan(4));
+	sc::TimeSpan h{-4, 0};
+	BOOST_CHECK_EQUAL(h.abs(), sc::TimeSpan(4, 0));
 
 	sc::TimeSpan ts;
 	BOOST_CHECK_EQUAL(ts.abs(), sc::TimeSpan(0.0));
@@ -349,15 +276,15 @@ BOOST_AUTO_TEST_CASE(absolute) {
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-BOOST_AUTO_TEST_CASE(length) {
+BOOST_AUTO_TEST_CASE(length, *bu::tolerance(1E-7)) {
 	sc::TimeSpan k = 2.000002;
-	BOOST_CHECK(k.length() == 2.000002);
+	BOOST_TEST(k.length() == 2.000002);
 
 	sc::TimeSpan l = 1.000003;
-	BOOST_CHECK(l.length() == 1.000003);
+	BOOST_TEST(l.length() == 1.000003);
 
 	sc::TimeSpan h = 4.000009;
-	BOOST_CHECK(h.length() == 4.000009);
+	BOOST_TEST(h.length() == 4.000009);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -469,10 +396,10 @@ BOOST_AUTO_TEST_CASE(lowerEqual) {
 	BOOST_CHECK_EQUAL(k <= sc::TimeSpan(2.000002), true);
 
 	sc::TimeSpan t;
-	BOOST_CHECK_EQUAL(t <= sc::TimeSpan(2), true);
+	BOOST_CHECK_EQUAL(t <= sc::TimeSpan(2, 0), true);
 
 	sc::TimeSpan h = 4.000009;
-	BOOST_CHECK_EQUAL(h <= sc::TimeSpan(2), false);
+	BOOST_CHECK_EQUAL(h <= sc::TimeSpan(2, 0), false);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -482,7 +409,7 @@ BOOST_AUTO_TEST_CASE(lowerEqual) {
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(greaterEqual) {
 	sc::TimeSpan h = 4.000009;
-	BOOST_CHECK_EQUAL(h >= sc::TimeSpan(2), true);
+	BOOST_CHECK_EQUAL(h >= sc::TimeSpan(2, 0), true);
 
 	sc::TimeSpan ts = 0.000004;
 	BOOST_CHECK_EQUAL(ts >= sc::TimeSpan(0.000001), true);
@@ -496,56 +423,18 @@ BOOST_AUTO_TEST_CASE(greaterEqual) {
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-BOOST_AUTO_TEST_CASE(inDouble) {
+BOOST_AUTO_TEST_CASE(inDouble, *bu::tolerance(1E-7)) {
 	sc::TimeSpan k = 6.000003;
 	double kd = k.operator double();
-	BOOST_CHECK_EQUAL(kd, 6.000003);
+	BOOST_TEST(kd == 6.000003);
 
 	sc::TimeSpan t = 0.000008;
 	double td = t.operator double();
-	BOOST_CHECK_EQUAL(td, 0.000008);
+	BOOST_TEST(td == 0.000008);
 
 	sc::TimeSpan ts = 2.000004;
 	double tsd = ts.operator double();
-	BOOST_CHECK_EQUAL(tsd, 2.000004);
-}
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
-
-
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-BOOST_AUTO_TEST_CASE(toTimeval) {
-	const timeval tv = sc::Time(6.000003);
-	sc::TimeSpan k = 6.000003;
-	timeval kv = k.operator const timeval &();
-	BOOST_CHECK_EQUAL(kv.tv_sec, tv.tv_sec);
-	BOOST_CHECK_EQUAL(kv.tv_usec, tv.tv_usec);
-
-	const timeval ti = sc::Time(0.000008);
-	sc::TimeSpan t = 0.000008;
-	timeval tvi = t.operator const timeval &();
-	BOOST_CHECK_EQUAL(tvi.tv_sec, ti.tv_sec);
-	BOOST_CHECK_EQUAL(tvi.tv_usec, ti.tv_usec);
-
-	const timeval tl = sc::Time(2.000004);
-	sc::TimeSpan ts = 2.000004;
-	timeval tsv = ts.operator const timeval &();
-	BOOST_CHECK_EQUAL(tsv.tv_sec, tl.tv_sec);
-	BOOST_CHECK_EQUAL(tsv.tv_usec, tl.tv_usec);
-}
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
-
-
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-BOOST_AUTO_TEST_CASE(exception) {
-	sc::TimeSpan k;
-	BOOST_CHECK_THROW(k = (double)-2147483649, sc::OverflowException);
-
-	sc::TimeSpan l;
-	BOOST_CHECK_THROW(l = (double)2147483648, sc::OverflowException);
+	BOOST_TEST(tsd == 2.000004);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -578,17 +467,73 @@ BOOST_AUTO_TEST_CASE(fromString) {
 	for ( int i = 0; i < 500; ++i )
 		str.push_back(' ');
 	str.append(".123456");
-	time = sc::Time::FromString(str.c_str(), "%F %T.%f");
-	BOOST_CHECK(!time.valid());
+	BOOST_CHECK_THROW(sc::Time::FromString(str.c_str(), "%F %T.%f"), std::runtime_error);
 
 	BOOST_CHECK(time.fromString("2024-04-10T12:00:00+00:00", "%FT%T%z"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 12, 0, 0, 0).iso());
+
+	BOOST_CHECK(time.fromString("2024-04-10T12:00:00+0000", "%FT%T%z"));
 	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 12, 0, 0, 0).iso());
 
 	BOOST_CHECK(time.fromString("2024-04-10T12:00:00+03:30", "%FT%T%z"));
 	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 8, 30, 0, 0).iso());
 
+	BOOST_CHECK(time.fromString("2024-04-10T12:00:00+0330", "%FT%T%z"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 8, 30, 0, 0).iso());
+
+	BOOST_CHECK(time.fromString("2024-04-10T12:00:00+03", "%FT%T%z"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 9, 0, 0, 0).iso());
+
+	BOOST_CHECK(time.fromString("2024-04-10T12:00:00+3", "%FT%T%z"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 9, 0, 0, 0).iso());
+
 	BOOST_CHECK(time.fromString("2024-04-10T12:00:00-03:30", "%FT%T%z"));
 	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 15, 30, 0, 0).iso());
+
+	BOOST_CHECK(time.fromString("2024-04-10T12:00:00-0330", "%FT%T%z"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 15, 30, 0, 0).iso());
+
+	BOOST_CHECK(time.fromString("2024-04-10T12:00:00-03", "%FT%T%z"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 15, 0, 0, 0).iso());
+
+	BOOST_CHECK(time.fromString("2024-04-10T12:00:00-3", "%FT%T%z"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 15, 0, 0, 0).iso());
+
+	BOOST_CHECK(time.fromString("2024", "%Y"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 1, 1, 0, 0, 0, 0).iso());
+
+	BOOST_CHECK(time.fromString("2024-07", "%Y-%m"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 7, 1, 0, 0, 0, 0).iso());
+
+	BOOST_CHECK(time.fromString("12:34:56", "%T"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(1970, 1, 1, 12, 34, 56, 0).iso());
+
+	BOOST_CHECK(time.fromString("12:34:56.789", "%T.%f"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(1970, 1, 1, 12, 34, 56, 789000).iso());
+
+	BOOST_CHECK(time.fromString("1970-01-01T00:00:00Z"));
+	BOOST_CHECK_EQUAL(time.iso(), sc::Time(1970, 1, 1, 0, 0, 0, 0).iso());
+
+	BOOST_CHECK(time.fromString("201712", "%Y%m"));
+	time.get(&year, &month, &day);
+	BOOST_CHECK_EQUAL(year, 2017); BOOST_CHECK_EQUAL(month, 12); BOOST_CHECK_EQUAL(day, 1);
+	BOOST_CHECK(time.fromString("20171207", "%Y%m%d"));
+	time.get(&year, &month, &day);
+	time.get(&year, &month, &day);
+	BOOST_CHECK_EQUAL(year, 2017); BOOST_CHECK_EQUAL(month, 12); BOOST_CHECK_EQUAL(day, 7);
+	BOOST_CHECK(time.fromString("20171207.142931.50", "%Y%m%d.%H%M%S.%f"));
+
+	BOOST_CHECK(time.fromString("12345-04-25", "%F"));
+	time.get(&year, &month, &day);
+	BOOST_CHECK_EQUAL(year, 12345); BOOST_CHECK_EQUAL(month, 4); BOOST_CHECK_EQUAL(day, 25);
+
+	BOOST_CHECK(time.fromString("123-06-26", "%F"));
+	time.get(&year, &month, &day);
+	BOOST_CHECK_EQUAL(year, 123); BOOST_CHECK_EQUAL(month, 6); BOOST_CHECK_EQUAL(day, 26);
+
+	BOOST_CHECK(time.fromString("201712", "%4Y%m"));
+	BOOST_CHECK(time.fromString("20171207", "%4Y%m%d"));
+	BOOST_CHECK(time.fromString("20171207.142931.50", "%4Y%m%d.%H%M%S.%f"));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -614,7 +559,7 @@ BOOST_AUTO_TEST_CASE(dayOfYear) {
 
 	// Set new time to noon on March 1st 2020. Since 2020 is a leap year it is
 	// the 60th day after January 1st.
-	BOOST_CHECK(time.set2(2020, 31+29, 12, 3, 4, 1));
+	BOOST_CHECK(time.set2(2020, 31 + 29, 12, 3, 4, 1));
 	BOOST_CHECK_EQUAL(time.toString("%F %T.%f"), "2020-03-01 12:03:04.000001");
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -623,10 +568,233 @@ BOOST_AUTO_TEST_CASE(dayOfYear) {
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(localTime) {
+	sc::Time local;
+	local.set(1970,3,14,5,30,3,39);
+	sc::Time time(local);
+	BOOST_CHECK_EQUAL(local.epoch(), time.epoch());
+	std::string check1 = local.toString("%FT%T.%fZ");
+	std::string check2 = "1970-03-14T05:30:03.000039Z";
+	bool equal = boost::iequals(check1,check2);
+	BOOST_CHECK_EQUAL(equal, true);
+	sc::Time localtest = local.Now();
+	local = local.Now();
+	localtest.setUSecs(0);
+	local.setUSecs(0);
+	check1 = local.iso();
+	check2 = localtest.iso();
+	BOOST_CHECK_EQUAL(check1, check2);
+
+	local.set(1970,3,14,5,30,3,39);
+	check1 = "1970-03-14T05:30:03.000039Z";
+	check2 = local.toString("%FT%T.%fZ");
+	BOOST_CHECK_EQUAL(check1, check2);
+
+	local.set(1981,9,14,5,30,3,39);
+	check1 = "1981-09-14T05:30:03.000039Z";
+	check2 = local.toString("%FT%T.%fZ");
+	BOOST_CHECK_EQUAL(check1, check2);
+
+	local.set(2014,3,14,5,30,3,39);
+	check1 = "2014-03-14T05:30:03.000039Z";
+	check2 = local.toString("%FT%T.%fZ");
+	BOOST_CHECK_EQUAL(check1, check2);
+
+	local.set(2000,8,14,5,30,3,39);
+	check1 = local.toString("%FT%T.%fZ");
+	check2 = "2000-08-14T05:30:03.000039Z";
+	BOOST_CHECK_EQUAL(check1, check2);
+
+	// before 1970
+	sc::Time before1970;
+	before1970.set(1950,6,4,15,8,66,11);
+	sc::Time t(before1970);
+	sc::Time time1 = local.Now();
+	time1.setUSecs(0);
+	sc::Time time2 = before1970.Now();
+	time2.setUSecs(0);
+	check1 = time1.toString("%FT%T.%fZ");
+	check2 = time2.toString("%FT%T.%fZ");
+	BOOST_CHECK_EQUAL(check1, check2);
+
+	before1970.set(1914,9,4,7,8,66,11);
+	check1 = "1914-09-04T07:09:06.000011Z";
+	check2 = before1970.toString("%FT%T.%fZ");
+	BOOST_CHECK_EQUAL(check1, check2);
+
+	sc::Time lastYear(2016,8,26,15,44,9,644);
+	t = lastYear.toUTC();
+	check1 = lastYear.toString("%FT%T.%fZ");
+	check2 = t.toString("%FT%T.%fZ");
+	equal = check1 == check2;
+	if ( !equal ) {
+		t += t.localTimeZoneOffset();
+		check2 = t.toString("%FT%T.%fZ");
+		equal = check1 == check2;
+		BOOST_CHECK_EQUAL(equal, true);
+	}
+
+	sc::Time yearDay = yearDay.FromYearDay(1971, 3);
+	double secondsPerDay = 86400;
+	double secondsPerYear = 31536000;
+	BOOST_CHECK_EQUAL(yearDay.epochSeconds(), secondsPerYear + secondsPerDay * 2);
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(yearDay) {
+	sc::Time t1 = sc::Time::Now(), t2;
+	int y, m, d, H, M, S, US;
+
+	t1.get(&y, &m, &d, &H, &M, &S, &US);
+	t2.set(y, m, d, H, M, S, US);
+
+	BOOST_CHECK_EQUAL(t1, t2);
+
+	t1.get2(&y, &d, &H, &M, &S, &US);
+	t2.set2(y, d, H, M, S, US);
+
+	BOOST_CHECK_EQUAL(t1, t2);
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(individuals) {
+	sc::Time t1;
+	int y, m, d, H, M, S, US;
+
+	t1 = sc::Time::FromString("2024-01-01", "%F");
+	t1.get(&y, &m, &d, &H, &M, &S, &US);
+	BOOST_CHECK_EQUAL(H, 0);
+	BOOST_CHECK_EQUAL(M, 0);
+	BOOST_CHECK_EQUAL(S, 0);
+	BOOST_CHECK_EQUAL(US, 0);
+
+	BOOST_CHECK_EQUAL(y, 2024);
+	BOOST_CHECK_EQUAL(m, 1);
+	BOOST_CHECK_EQUAL(d, 1);
+
+	t1.get2(&y, &d, &H, &M, &S, &US);
+	BOOST_CHECK_EQUAL(H, 0);
+	BOOST_CHECK_EQUAL(M, 0);
+	BOOST_CHECK_EQUAL(S, 0);
+	BOOST_CHECK_EQUAL(US, 0);
+
+	BOOST_CHECK_EQUAL(y, 2024);
+	BOOST_CHECK_EQUAL(d, 0);
+
+	t1 = sc::Time::FromString("2024-03-20", "%F");
+	t1.get(&y, &m, &d, &H, &M, &S, &US);
+	BOOST_CHECK_EQUAL(H, 0);
+	BOOST_CHECK_EQUAL(M, 0);
+	BOOST_CHECK_EQUAL(S, 0);
+	BOOST_CHECK_EQUAL(US, 0);
+
+	BOOST_CHECK_EQUAL(y, 2024);
+	BOOST_CHECK_EQUAL(m, 3);
+	BOOST_CHECK_EQUAL(d, 20);
+
+	t1.get2(&y, &d, &H, &M, &S, &US);
+	BOOST_CHECK_EQUAL(H, 0);
+	BOOST_CHECK_EQUAL(M, 0);
+	BOOST_CHECK_EQUAL(S, 0);
+	BOOST_CHECK_EQUAL(US, 0);
+
+	BOOST_CHECK_EQUAL(y, 2024);
+	BOOST_CHECK_EQUAL(d, 79);
+
+	t1 = sc::Time::FromString("2024-12-24", "%F");
+	t1.get(&y, &m, &d, &H, &M, &S, &US);
+	BOOST_CHECK_EQUAL(H, 0);
+	BOOST_CHECK_EQUAL(M, 0);
+	BOOST_CHECK_EQUAL(S, 0);
+	BOOST_CHECK_EQUAL(US, 0);
+
+	BOOST_CHECK_EQUAL(y, 2024);
+	BOOST_CHECK_EQUAL(m, 12);
+	BOOST_CHECK_EQUAL(d, 24);
+
+	t1.get2(&y, &d, &H, &M, &S, &US);
+	BOOST_CHECK_EQUAL(H, 0);
+	BOOST_CHECK_EQUAL(M, 0);
+	BOOST_CHECK_EQUAL(S, 0);
+	BOOST_CHECK_EQUAL(US, 0);
+
+	BOOST_CHECK_EQUAL(y, 2024);
+	BOOST_CHECK_EQUAL(d, 358);
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(validStrings) {
+	sc::Time date(2016,8,26,15,44,9,644);
+	std::string test = date.toString("%FT%T.%fZ");
+	std::string check = "2016-08-26T15:44:09.000644Z";
+	bool equal = test == check;
+	BOOST_CHECK_EQUAL(equal, true);
+	BOOST_CHECK(date.FromString(test.c_str(),"%FT%T.%fZ") == date);
+
+	BOOST_CHECK(test == date.iso());
+
+	BOOST_CHECK(date.fromString(test.c_str(),"%FT%T.%fZ") == true);
+
+	BOOST_CHECK_EQUAL(date.valid(), true);
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(toString) {
 	// Buffer overflow test
-	//sc::Time time = sc::Time::GMT();
+	//sc::Time time = sc::Time::UTC();
 	//time.toString("%F %T.f %F %T %F %T %F %T %F %T.f %F %T %F %T %F %T %F %T %F.f %T.f %F.f %T.f");
+
+	sc::Time time;
+	BOOST_CHECK_EQUAL(time.iso(), "1970-01-01T00:00:00.0000Z");
+
+	BOOST_CHECK_EQUAL(sc::Time(2024, 1, 1, 3, 4, 5).iso(), "2024-01-01T03:04:05.0000Z");
+	BOOST_CHECK_EQUAL(sc::Time(2019, 8, 25, 8, 51, 2, 992597).toString("%Y-%m-%dT%H:%M:%S.%f"), "2019-08-25T08:51:02.992597");
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(timeZone) {
+	sc::Time time;
+	BOOST_CHECK(!sc::Time::LocalTimeZone().empty());
+	BOOST_CHECK_NO_THROW(time.localTimeZoneOffset());
+
+	auto utc = sc::Time::UTC();
+	auto local = utc.toLocalTime();
+
+	BOOST_CHECK_EQUAL(local - utc, local.localTimeZoneOffset());
+	BOOST_CHECK_EQUAL(local - utc, utc.localTimeZoneOffset());
+
+	BOOST_CHECK_EQUAL(local, utc.toLocalTime());
+	BOOST_CHECK_EQUAL(local.toUTC(), utc);
+
+	BOOST_CHECK_EQUAL(local.localTimeZoneOffset(), local.timeZoneOffset(sc::Time::LocalTimeZone()));
+
+	BOOST_CHECK_EQUAL(local.toString("%FT%T.%f"), utc.toLocalString("%FT%T.%f"));
+
+	auto offset = utc.timeZoneOffset("CET");
+	BOOST_CHECK_EQUAL(utc.toZonedString("%FT%T.%f", "CET"), (utc + offset).toString("%FT%T.%f"));
+
+	BOOST_CHECK_THROW(utc.timeZoneOffset("XXX"), std::runtime_error);
+	BOOST_CHECK_THROW(utc.toZonedString("%FT%T.%f", "XXX"), std::runtime_error);
 }
 
 

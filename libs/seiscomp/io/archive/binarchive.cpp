@@ -55,7 +55,7 @@ struct Swapper {
 			out[j] = in[i];
 			++i;
 		}
-	
+
 		return ret;
 	}
 };
@@ -618,7 +618,7 @@ void BinaryArchive::read(Seiscomp::Core::Time& value) {
 		SEISCOMP_ERROR("read(datetime): expected %d bytes from stream, got %d", int(sizeof(tmpSeconds) + sizeof(tmpUSeconds)), size);
 		setValidity(false);
 	}
-	value = Seiscomp::Core::Time(tmpSeconds, tmpUSeconds);
+	value = Seiscomp::Core::Time::FromEpoch(tmpSeconds, tmpUSeconds);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -859,7 +859,7 @@ void BinaryArchive::write(std::string& value) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BinaryArchive::write(Seiscomp::Core::Time& value) {
 	if ( !_buf ) return;
-	dateint tmpSeconds = (dateint)value.seconds();
+	dateint tmpSeconds = (dateint)value.epochSeconds();
 	dateint tmpUSeconds = (dateint)value.microseconds();
 	writeBytes(&tmpSeconds, sizeof(tmpSeconds));
 	writeBytes(&tmpUSeconds, sizeof(tmpUSeconds));
@@ -981,7 +981,7 @@ void BinaryArchive::setClassName(const char* className) {
 		_classname = className;
 
 	if ( _classname.empty() ) return;
-	
+
 	int class_id = classId(_classname);
 	write(class_id);
 	if ( class_id < 0 )

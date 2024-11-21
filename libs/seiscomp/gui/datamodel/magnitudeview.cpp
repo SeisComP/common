@@ -1755,7 +1755,7 @@ void MagnitudeView::recalculateMagnitude() {
 				CreationInfo ci;
 				ci.setAgencyID(SCApp->agencyID());
 				ci.setAuthor(SCApp->author());
-				ci.setCreationTime(Core::Time::GMT());
+				ci.setCreationTime(Core::Time::UTC());
 				stdev = stdev > MwError ? stdev : MwError;
 
 				for ( size_t m = 0; m < _origin->magnitudeCount(); ++m ) {
@@ -2123,7 +2123,7 @@ void MagnitudeView::computeMagnitudes() {
 					CreationInfo ci;
 					ci.setAgencyID(SCApp->agencyID());
 					ci.setAuthor(SCApp->author());
-					ci.setCreationTime(Core::Time::GMT());
+					ci.setCreationTime(Core::Time::UTC());
 					stddev = stddev > MwError ? stddev : MwError;
 					MagnitudePtr MagMw;
 
@@ -2159,7 +2159,7 @@ void MagnitudeView::computeMagnitudes() {
 			CreationInfo ci;
 			ci.setAgencyID(SCApp->agencyID());
 			ci.setAuthor(SCApp->author());
-			ci.setCreationTime(Core::Time::GMT());
+			ci.setCreationTime(Core::Time::UTC());
 
 			mag->setCreationInfo(ci);
 
@@ -2462,7 +2462,7 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 	CreationInfo ci;
 	ci.setAgencyID(SCApp->agencyID());
 	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::GMT());
+	ci.setCreationTime(Core::Time::UTC());
 
 	mag->setCreationInfo(ci);
 	mag->setEvaluationStatus(Core::None);
@@ -2659,7 +2659,7 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 			CreationInfo ci;
 			ci.setAgencyID(SCApp->agencyID());
 			ci.setAuthor(SCApp->author());
-			ci.setCreationTime(Core::Time::GMT());
+			ci.setCreationTime(Core::Time::UTC());
 			staMag->setPassedQC(passedQC);
 			staMag->setType(mag->type());
 			staMag->setCreationInfo(ci);

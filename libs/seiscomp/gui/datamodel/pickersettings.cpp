@@ -50,7 +50,7 @@ class FilterModel : public QAbstractListModel {
 		                    int role = Qt::DisplayRole) const {
 			if ( role != Qt::DisplayRole )
 				return QVariant();
-			
+
 			if ( orientation == Qt::Horizontal ) {
 				switch ( section ) {
 					case 0:
@@ -87,7 +87,7 @@ class FilterModel : public QAbstractListModel {
 						return _data[index.row()].second;
 				}
 			}
-			
+
 			return QVariant();
 		}
 
@@ -117,7 +117,7 @@ class FilterModel : public QAbstractListModel {
 
 			for ( int row = 0; row < rows; ++row )
 				_data.insert(position, FilterList::value_type());
-			
+
 			endInsertRows();
 			return true;
 		}
@@ -421,7 +421,7 @@ void PickerSettings::movePickFilterUp() {
 	if ( row > 0 ) {
 		PickerView::Config::FilterList::value_type prev = _pickerConfig.filters[row-1];
 		PickerView::Config::FilterList::value_type curr = _pickerConfig.filters[row];
-		
+
 		_pickerFilterModel->setData(_pickerFilterModel->index(row-1, 0), curr.first, Qt::EditRole);
 		_pickerFilterModel->setData(_pickerFilterModel->index(row-1, 1), curr.second, Qt::EditRole);
 
@@ -439,7 +439,7 @@ void PickerSettings::movePickFilterDown() {
 	if ( row < _pickerFilterModel->rowCount()-1 ) {
 		PickerView::Config::FilterList::value_type next = _pickerConfig.filters[row+1];
 		PickerView::Config::FilterList::value_type curr = _pickerConfig.filters[row];
-		
+
 		_pickerFilterModel->setData(_pickerFilterModel->index(row+1, 0), curr.first, Qt::EditRole);
 		_pickerFilterModel->setData(_pickerFilterModel->index(row+1, 1), curr.second, Qt::EditRole);
 
@@ -474,7 +474,7 @@ void PickerSettings::moveAmplitudeFilterUp() {
 	if ( row > 0 ) {
 		AmplitudeView::Config::FilterList::value_type prev = _amplitudeConfig.filters[row-1];
 		AmplitudeView::Config::FilterList::value_type curr = _amplitudeConfig.filters[row];
-		
+
 		_amplitudeFilterModel->setData(_amplitudeFilterModel->index(row-1, 0), curr.first, Qt::EditRole);
 		_amplitudeFilterModel->setData(_amplitudeFilterModel->index(row-1, 1), curr.second, Qt::EditRole);
 
@@ -492,7 +492,7 @@ void PickerSettings::moveAmplitudeFilterDown() {
 	if ( row < _amplitudeFilterModel->rowCount()-1 ) {
 		AmplitudeView::Config::FilterList::value_type next = _amplitudeConfig.filters[row+1];
 		AmplitudeView::Config::FilterList::value_type curr = _amplitudeConfig.filters[row];
-		
+
 		_amplitudeFilterModel->setData(_amplitudeFilterModel->index(row+1, 0), curr.first, Qt::EditRole);
 		_amplitudeFilterModel->setData(_amplitudeFilterModel->index(row+1, 1), curr.second, Qt::EditRole);
 
@@ -520,9 +520,9 @@ PickerView::Config PickerSettings::pickerConfig() const {
 	_pickerConfig.removeAutomaticPicks = _ui.cbRemoveAllAutomaticPicks->isChecked();
 
 	_pickerConfig.usePerStreamTimeWindows = _ui.cbUsePerStreamTimeWindow->isChecked();
-	_pickerConfig.preOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.preTimeEdit->time()));
-	_pickerConfig.postOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.postTimeEdit->time()));
-	_pickerConfig.minimumTimeWindow = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.minimumLengthTimeEdit->time()));
+	_pickerConfig.preOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.preTimeEdit->time()), 0);
+	_pickerConfig.postOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.postTimeEdit->time()), 0);
+	_pickerConfig.minimumTimeWindow = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.minimumLengthTimeEdit->time()), 0);
 
 	_pickerConfig.alignmentPosition = _ui.slWaveformAlignment->value()*0.01;
 	if ( _pickerConfig.alignmentPosition < 0 )
@@ -557,8 +557,8 @@ PickerView::Config PickerSettings::pickerConfig() const {
 
 AmplitudeView::Config PickerSettings::amplitudeConfig() const {
 	_amplitudeConfig.recordURL = _ui.editRecordSource->text();
-	_amplitudeConfig.preOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.preAmplitudeTimeEdit->time()));
-	_amplitudeConfig.postOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.postAmplitudeTimeEdit->time()));
+	_amplitudeConfig.preOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.preAmplitudeTimeEdit->time()), 0);
+	_amplitudeConfig.postOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.postAmplitudeTimeEdit->time()), 0);
 	_amplitudeConfig.defaultAddStationsDistance = _ui.spinAddStationsDistance->value();
 	_amplitudeConfig.hideStationsWithoutData = _ui.cbHideStationsWithoutData->isChecked();
 	_amplitudeConfig.loadStrongMotionData = _ui.cbStrongMotion->isChecked();

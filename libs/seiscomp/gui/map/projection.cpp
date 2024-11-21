@@ -463,7 +463,7 @@ void Projection::draw(QImage &img, bool filter, TextureCache *cache) {
 	render(img, filter, cache);
 
 	/*
-	Core::Time now = Core::Time::GMT();
+	Core::Time now = Core::Time::UTC();
 	Core::TimeSpan ts = now - cache->startTime();
 
 	std::cerr << "render time = "

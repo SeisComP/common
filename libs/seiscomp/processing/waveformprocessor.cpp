@@ -240,9 +240,10 @@ const Record *WaveformProcessor::lastRecord() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WaveformProcessor::initFilter(double fsamp) {
 	_stream.fsamp = fsamp;
-	_stream.neededSamples = static_cast<size_t>(_initTime * _stream.fsamp + 0.5);
-	if ( _stream.filter )
+	_stream.neededSamples = static_cast<size_t>(_initTime.length() * _stream.fsamp + 0.5);
+	if ( _stream.filter ) {
 		_stream.filter->setSamplingFrequency(fsamp);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

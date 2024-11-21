@@ -481,7 +481,7 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 		try { relev = sloc->elevation(); }
 		catch ( ... ) {}
 
-		double pickTime = double(pick->time().value());
+		double pickTime = pick->time().value().epoch();
 		double travelTime;
 
 		try {
@@ -641,7 +641,7 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 	}
 
 	CreationInfo ci;
-	ci.setCreationTime(Core::Time::GMT());
+	ci.setCreationTime(Core::Time::UTC());
 	newOrigin->setCreationInfo(ci);
 
 	if ( !description.empty() ) {

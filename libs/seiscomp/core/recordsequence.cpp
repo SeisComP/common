@@ -176,15 +176,17 @@ RecordSequence::Range RecordSequence::amplitudeRange(const Core::TimeWindow *tw)
 
 				if ( tw->overlaps(rtw) ) {
 					double fs = rec->samplingFrequency();
-					double dt = tw->startTime() - rec->startTime();
+					double dt = static_cast<double>(tw->startTime() - rec->startTime());
 
-					if ( dt > 0 )
+					if ( dt > 0 ) {
 						imin = int(dt*fs);
+					}
 
-					dt = rec->endTime() - tw->endTime();
+					dt = static_cast<double>(rec->endTime() - tw->endTime());
 					imax = data->size();
-					if ( dt > 0 )
+					if ( dt > 0 ) {
 						imax -= int(dt*fs);
+					}
 				}
 				else
 					continue;
@@ -281,7 +283,7 @@ RecordSequence::TimeWindowArray RecordSequence::gaps() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 double RecordSequence::availability(const Core::TimeWindow &tw) const {
-	if ( empty() || tw.length() == 0.0 ) return 0.0;
+	if ( empty() || tw.length() == Core::TimeSpan(0, 0) ) return 0.0;
 
 	const_iterator it = begin();
 	RecordCPtr lastRec = *it;
@@ -289,10 +291,11 @@ double RecordSequence::availability(const Core::TimeWindow &tw) const {
 
 	++it;
 
-	double missingData = 0;
+	Core::TimeSpan missingData(0, 0);
 
-	if ( lastRec->startTime() > tw.startTime() )
+	if ( lastRec->startTime() > tw.startTime() ) {
 		missingData += lastRec->startTime() - tw.startTime();
+	}
 
 	for ( ; it != end(); ++it ) {
 		RecordCPtr rec = *it;
@@ -300,22 +303,28 @@ double RecordSequence::availability(const Core::TimeWindow &tw) const {
 
 		double fs = rec->samplingFrequency();
 
-		if ( !lastTw.contiguous(tw, _tolerance/fs) )
+		if ( !lastTw.contiguous(tw, _tolerance/fs) ) {
 			missingData += tw.startTime() - lastTw.endTime();
+		}
 
 		lastTw = tw;
 		lastRec = rec;
 	}
 
-	if ( lastRec->endTime() < tw.endTime() )
+	if ( lastRec->endTime() < tw.endTime() ) {
 		missingData += tw.endTime() - lastRec->endTime();
+	}
 
-	double requiredData = tw.length();
+	auto requiredData = tw.length();
 
-	if ( missingData < 0 ) missingData = 0;
-	else if ( missingData > requiredData ) missingData = requiredData;
+	if ( !missingData ) {
+		missingData = Core::TimeSpan(0, 0);
+	}
+	else if ( missingData > requiredData ) {
+		missingData = requiredData;
+	}
 
-	return 100.0 * (1.0-missingData/requiredData);
+	return 100.0 * (1.0 - static_cast<double>(missingData) / static_cast<double>(requiredData));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -586,22 +595,26 @@ bool RingBuffer::feed(const Record *rec) {
 	push_back(rec);
 	*/
 	iterator it;
-	if ( !findInsertPosition(rec, &it) )
+	if ( !findInsertPosition(rec, &it) ) {
 		return false;
+	}
 
 	insert(it, rec);
 
-	if( ! recordCount())
+	if( ! recordCount()) {
 		return true;
+	}
 
 	if ( _nmax ) {
-		while( recordCount() > _nmax )
+		while( recordCount() > _nmax ) {
 			pop_front();
+		}
 	}
 	else if ( _span ) {
 		Core::Time tmin = back()->endTime() - _span;
-		while ( front()->endTime() <= tmin )
+		while ( front()->endTime() <= tmin ) {
 			pop_front();
+		}
 	}
 
 	return true;

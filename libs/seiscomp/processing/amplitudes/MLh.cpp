@@ -84,7 +84,7 @@ AmplitudeProcessor::AmplitudeTime average(
 	const AmplitudeProcessor::AmplitudeTime &t1)
 {
 	AmplitudeProcessor::AmplitudeTime t;
-	t.reference = Core::Time((double(t0.reference) + double(t1.reference)) * 0.5);
+	t.reference = Core::Time((t0.reference.epoch() + t1.reference.epoch()) * 0.5);
 
 	// Compute lower and upper uncertainty
 	Core::Time t0b = t0.reference + Core::TimeSpan(t0.begin);

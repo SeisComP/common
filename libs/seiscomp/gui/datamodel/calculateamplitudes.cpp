@@ -300,7 +300,7 @@ bool CalculateAmplitudes::process() {
 		double dist = -1;
 		DataModel::SensorLocation *loc = nullptr;
 		loc = Client::Inventory::Instance()->getSensorLocation(pick);
-	
+
 		try {
 			dist = ar->distance();
 		}
@@ -374,7 +374,7 @@ bool CalculateAmplitudes::process() {
 					}
 
 					usedTypes.insert(amp->type());
-		
+
 					int row = addProcessingRow(waveformIDToStdString(amp->waveformID()), amp->type());
 					setMessage(row, "read from cache");
 					setValue(row, amp->amplitude().value());
@@ -427,9 +427,9 @@ bool CalculateAmplitudes::process() {
 						checkPriority(AmplitudeEntry(amp, false));
 						continue;
 					}
-	
+
 					usedTypes.insert(amp->type());
-		
+
 					int row = addProcessingRow(waveformIDToStdString(amp->waveformID()), amp->type());
 					setMessage(row, "read from database");
 					setValue(row, amp->amplitude().value());
@@ -452,9 +452,9 @@ bool CalculateAmplitudes::process() {
 							checkPriority(AmplitudeEntry(amp, false));
 							continue;
 						}
-				
+
 						usedTypes.insert(amp->type());
-			
+
 						int row = addProcessingRow(waveformIDToStdString(amp->waveformID()), amp->type());
 						setMessage(row, "read from memory");
 						setValue(row, amp->amplitude().value());
@@ -572,7 +572,7 @@ void CalculateAmplitudes::addProcessor(
 			setError(row, "unsupported processor component");
 			return;
 	}
-	
+
 	// If initialization fails, abort
 	if ( !proc->setup(
 		Settings(
@@ -797,7 +797,7 @@ void CalculateAmplitudes::emitAmplitude(const AmplitudeProcessor *proc,
 	CreationInfo ci;
 	ci.setAgencyID(SCApp->agencyID());
 	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::GMT());
+	ci.setCreationTime(Core::Time::UTC());
 	amp->setAmplitude(
 		RealQuantity(
 			res.amplitude.value, Core::None,
@@ -862,7 +862,7 @@ void CalculateAmplitudes::receivedRecord(Seiscomp::Record *rec) {
 
 	for ( ProcessorSlot::iterator it = slot_it->second.begin(); it != slot_it->second.end(); ) {
 		(*it)->feed(rec);
-		
+
 		if ( (*it)->status() == WaveformProcessor::InProgress ) {
 			pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(it->get());
 			for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
@@ -1003,7 +1003,7 @@ void CalculateAmplitudes::setProgress(int row, int progress) {
 		QPalette pal = progressBar->palette();
 		pal.setColor(QPalette::Highlight, Qt::darkGreen);
 		progressBar->setPalette(pal);
-	
+
 		_ui.table->setCellWidget(row, 3, progressBar);
 		_ui.table->update();
 	}

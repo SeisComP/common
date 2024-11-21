@@ -1222,11 +1222,13 @@ void Application::handleInterrupt(int signal) throw() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::run() {
-	if ( _connection && _connection->isConnected() )
+	if ( _connection && _connection->isConnected() ) {
 		startMessageThread();
+	}
+
 	connect(_app, SIGNAL(lastWindowClosed()), this, SLOT(closedLastWindow()));
 	connect(&_timerSOH, SIGNAL(timeout()), this, SLOT(timerSOH()));
-	_sohLastUpdate = Core::Time::LocalTime();
+	_sohLastUpdate = Core::Time::Now();
 	_timerSOH.start();
 
 	Client::Application::exit(QApplication::exec());

@@ -3201,7 +3201,7 @@ bool EventEdit::sendJournal(const std::string &action,
 		entry->setAction(action);
 		entry->setParameters(params);
 		entry->setSender(SCApp->name() + "@" + System::HostInfo().name());
-		entry->setCreated(Core::Time::GMT());
+		entry->setCreated(Core::Time::UTC());
 
 		NotifierPtr n = new Notifier("Journaling", OP_ADD, entry.get());
 		NotifierMessagePtr nm = new NotifierMessage;

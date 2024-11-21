@@ -40,7 +40,7 @@ using namespace std;
 using namespace Seiscomp::Core;
 using namespace Seiscomp::IO;
 
-const TimeSpan DefaultRealtimeAvailability = 3600;
+const TimeSpan DefaultRealtimeAvailability{3600, 0};
 
 
 namespace {
@@ -374,7 +374,7 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 	}
 
 	if ( !_archiveEndTime.valid() )
-		_archiveEndTime = Time::GMT() - _realtimeAvailability;
+		_archiveEndTime = Time::UTC() - _realtimeAvailability;
 
 	SEISCOMP_DEBUG("Split   : %s", _archiveEndTime.iso().c_str());
 

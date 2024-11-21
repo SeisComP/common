@@ -971,8 +971,9 @@ void JSONArchive::read(std::string &value) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void JSONArchive::read(Core::Time &value) {
 	if ( !_objectLocation->IsString() ) {
-		if ( _objectLocation->IsNull() )
+		if ( _objectLocation->IsNull() ) {
 			value = Core::Time::Null;
+		}
 		else {
 			SEISCOMP_ERROR("iso string expected, got type %d",
 			               static_cast<int>(_objectLocation->GetType()));

@@ -2563,8 +2563,8 @@ void AmplitudeView::onSelectedTimeRange(Seiscomp::Core::Time t1, Seiscomp::Core:
 	if ( SC_D.currentSlot < 0 ) return;
 	if ( label->processor == nullptr ) return;
 
-	double smin = t1-label->processor->trigger();
-	double smax = t2-label->processor->trigger();
+	double smin = (t1 - label->processor->trigger()).length();
+	double smax = (t2 - label->processor->trigger()).length();
 
 	if ( SC_D.checkOverrideSNR->isChecked() )
 		label->processor->setMinSNR(SC_D.spinSNR->value());
@@ -2711,7 +2711,7 @@ RecordMarker* AmplitudeView::updatePhaseMarker(Seiscomp::Gui::RecordViewItem *it
 	CreationInfo ci;
 	ci.setAgencyID(SCApp->agencyID());
 	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::GMT());
+	ci.setCreationTime(Core::Time::UTC());
 	a->setCreationInfo(ci);
 
 	proc->finalizeAmplitude(a.get());
@@ -3472,7 +3472,7 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 	SC_D.stations.clear();
 
 	Core::Time originTime = SC_D.origin->time();
-	if ( !originTime ) originTime = Core::Time::GMT();
+	if ( !originTime ) originTime = Core::Time::UTC();
 
 	SC_D.minTime = -60;
 	SC_D.maxTime = +120;
@@ -4082,8 +4082,8 @@ RecordViewItem* AmplitudeView::addRawStream(const DataModel::SensorLocation *loc
 	label->setAlignment(Qt::AlignRight, 2);
 	label->setColor(palette().color(QPalette::Disabled, QPalette::WindowText), 2);
 
-	label->timeWindow.set(referenceTime+Core::TimeSpan(label->processor->config().noiseBegin - SC_D.config.preOffset),
-	                      referenceTime+Core::TimeSpan(label->processor->config().signalEnd + SC_D.config.postOffset));
+	label->timeWindow.set(referenceTime + Core::TimeSpan(label->processor->config().noiseBegin) - SC_D.config.preOffset,
+	                      referenceTime + Core::TimeSpan(label->processor->config().signalEnd) + SC_D.config.postOffset);
 	//label->timeWindow = label->processor->safetyTimeWindow();
 
 	if ( !allComponents )
@@ -4550,21 +4550,23 @@ void AmplitudeView::setCursorPos(const Seiscomp::Core::Time& t, bool always) {
 
 	if ( !always && SC_D.currentRecord->cursorText() == "" ) return;
 
-	float offset = 0;
+	double offset = 0;
 
 	if ( SC_D.centerSelection ) {
-		float len = SC_D.recordView->currentItem()?
+		double len = SC_D.recordView->currentItem()?
 			SC_D.recordView->currentItem()->widget()->width() / SC_D.currentRecord->timeScale():
 			SC_D.currentRecord->tmax() - SC_D.currentRecord->tmin();
 
-		float pos = float(t - SC_D.currentRecord->alignment()) - len/2;
+		double pos = (t - SC_D.currentRecord->alignment()).length() - len / 2;
 		offset = pos - SC_D.currentRecord->tmin();
 	}
 	else {
-		if ( t > SC_D.currentRecord->rightTime() )
-			offset = t - SC_D.currentRecord->rightTime();
-		else if ( t < SC_D.currentRecord->leftTime() )
-			offset = t - SC_D.currentRecord->leftTime();
+		if ( t > SC_D.currentRecord->rightTime() ) {
+			offset = (t - SC_D.currentRecord->rightTime()).length();
+		}
+		else if ( t < SC_D.currentRecord->leftTime() ) {
+			offset = (t - SC_D.currentRecord->leftTime()).length();
+		}
 	}
 
 	move(offset);
@@ -4769,7 +4771,7 @@ void AmplitudeView::selectionHandleMoveFinished() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setAlignment(Seiscomp::Core::Time t) {
-	double offset = SC_D.currentRecord->alignment() - t;
+	double offset = (SC_D.currentRecord->alignment() - t).length();
 	SC_D.currentRecord->setAlignment(t);
 
 	// Because selection handle position are relative to the alignment
@@ -4823,13 +4825,16 @@ void AmplitudeView::ensureVisibility(const Seiscomp::Core::Time &time, int pixel
 	Core::Time right = time + Core::TimeSpan(pixelMargin / SC_D.currentRecord->timeScale());
 
 	double offset = 0;
-	if ( right > SC_D.currentRecord->rightTime() )
-		offset = right - SC_D.currentRecord->rightTime();
-	else if ( left < SC_D.currentRecord->leftTime() )
-		offset = left - SC_D.currentRecord->leftTime();
+	if ( right > SC_D.currentRecord->rightTime() ) {
+		offset = (right - SC_D.currentRecord->rightTime()).length();
+	}
+	else if ( left < SC_D.currentRecord->leftTime() ) {
+		offset = (left - SC_D.currentRecord->leftTime()).length();
+	}
 
-	if ( offset != 0 )
+	if ( offset != 0 ) {
 		setTimeRange(SC_D.currentRecord->tmin() + offset, SC_D.currentRecord->tmax() + offset);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5843,7 +5848,7 @@ void AmplitudeView::commit() {
 	CreationInfo ci;
 	ci.setAgencyID(SCApp->agencyID());
 	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::GMT());
+	ci.setCreationTime(Core::Time::UTC());
 
 	SC_D.magnitude->setCreationInfo(ci);
 	SC_D.magnitude->setType(SC_D.magnitudeType);
@@ -5901,7 +5906,7 @@ void AmplitudeView::commit() {
 		CreationInfo ci;
 		ci.setAgencyID(SCApp->agencyID());
 		ci.setAuthor(SCApp->author());
-		ci.setCreationTime(Core::Time::GMT());
+		ci.setCreationTime(Core::Time::UTC());
 		staMag->setType(SC_D.magnitude->type());
 		staMag->setCreationInfo(ci);
 		staMag->setWaveformID(amp->waveformID());

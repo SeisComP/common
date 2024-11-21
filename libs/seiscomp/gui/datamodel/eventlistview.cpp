@@ -2017,7 +2017,7 @@ bool sendJournal(const std::string &objectID, const std::string &action,
 	entry->setAction(action);
 	entry->setParameters(params);
 	entry->setSender(SCApp->author());
-	entry->setCreated(Core::Time::GMT());
+	entry->setCreated(Core::Time::UTC());
 
 	NotifierPtr n = new Notifier("Journaling", OP_ADD, entry.get());
 	NotifierMessagePtr nm = new NotifierMessage;
@@ -3844,19 +3844,19 @@ void EventListView::changeRegion() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventListView::setInterval(const Seiscomp::Core::TimeWindow& tw) {
+void EventListView::setInterval(const Seiscomp::Core::TimeWindow &tw) {
 	QDateTime start;
 	QDateTime end;
 
 	if ( !SCScheme.dateTime.useLocalTime ) {
 		start.setTimeSpec(Qt::UTC);
 		end.setTimeSpec(Qt::UTC);
-		start.setTime_t(tw.startTime().seconds());
-		end.setTime_t(tw.endTime().seconds());
+		start.setTime_t(tw.startTime().epochSeconds());
+		end.setTime_t(tw.endTime().epochSeconds());
 	}
 	else {
-		start.setTime_t(tw.startTime().seconds());
-		end.setTime_t(tw.endTime().seconds());
+		start.setTime_t(tw.startTime().epochSeconds());
+		end.setTime_t(tw.endTime().epochSeconds());
 	}
 
 	SC_D._ui->dateTimeEditStart->setDateTime(start);
@@ -3959,8 +3959,8 @@ void EventListView::setNextEvent() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::readLastDays() {
 	SC_D._filter = SC_D._filterWidget->filter();
-	SC_D._filter.endTime = Core::Time::GMT();
-	SC_D._filter.startTime = SC_D._filter.endTime - Core::TimeSpan(SC_D._ui->spinBox->value()*86400);
+	SC_D._filter.endTime = Core::Time::UTC();
+	SC_D._filter.startTime = SC_D._filter.endTime - Core::TimeSpan(SC_D._ui->spinBox->value()*86400, 0);
 	setInterval(Core::TimeWindow(SC_D._filter.startTime, SC_D._filter.endTime));
 
 	if ( SC_D._filter.isNull() ) {
@@ -4050,9 +4050,9 @@ void EventListView::readFromDatabase(const Filter &filter) {
 	QMap<int, OriginPtr> originIDs;
 	QMap<int, FocalMechanismPtr> fmIDs;
 
-	//Core::TimeWindow timeWindow(Core::Time::GMT() - _timeAgo, Core::Time::GMT());
+	//Core::TimeWindow timeWindow(Core::Time::UTC() - _timeAgo, Core::Time::UTC());
 
-	SC_D._timeAgo = Core::Time::GMT() - filter.startTime;
+	SC_D._timeAgo = Core::Time::UTC() - filter.startTime;
 	progress.setLabelText(tr("Reading events..."));
 
 	DatabaseIterator it = getEvents(SC_D._reader, filter);
@@ -4401,7 +4401,7 @@ void EventListView::removeExpiredEvents() {
 		return;
 	}
 
-	Core::Time now = Core::Time::GMT();
+	Core::Time now = Core::Time::UTC();
 
 	for ( int i = 0; i < SC_D._treeWidget->topLevelItemCount(); ++i ) {
 		auto *item = static_cast<EventTreeItem*>(SC_D._treeWidget->topLevelItem(i));
@@ -4414,7 +4414,7 @@ void EventListView::removeExpiredEvents() {
 			}
 			else {
 				double time = item->data(SC_D._itemConfig.columnMap[COL_OTIME], Qt::UserRole).toDouble();
-				remove = now - TimeSpan(time) > SC_D._timeAgo;
+				remove = now - Time(time) > SC_D._timeAgo;
 			}
 
 			if ( remove ) {

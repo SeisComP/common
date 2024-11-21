@@ -211,10 +211,10 @@ size_t GeoFeatureSet::readBNADir(const string& dirPath) {
 	}
 
 	// Read the BNA directory recursively
-	Core::Time start = Core::Time::GMT();
+	Core::Time start = Core::Time::UTC();
 	size_t fileCount = readBNADirRecursive(directory, addNewCategory(""));
 	SEISCOMP_INFO("%s in %fs", initStatus(dirPath, fileCount).c_str(),
-	              (Core::Time::GMT()-start).length());
+	              (Core::Time::UTC()-start).length());
 
 	// Sort the features according to their rank
  	sort(_features.begin(), _features.end(), compareByRank);
@@ -242,10 +242,10 @@ size_t GeoFeatureSet::readDir(const std::string &dirPath) {
 	}
 
 	// Read the BNA directory recursively
-	Core::Time start = Core::Time::GMT();
+	Core::Time start = Core::Time::UTC();
 	size_t fileCount = readDirRecursive(directory, addNewCategory(""));
 	SEISCOMP_INFO("%s in %fs", initStatus(dirPath, fileCount).c_str(),
-	              (Core::Time::GMT()-start).length());
+	              (Core::Time::UTC()-start).length());
 
 	// Sort the features according to their rank
  	sort(_features.begin(), _features.end(), compareByRank);

@@ -295,7 +295,7 @@ Record *Spectralizer::fft(const Record *rec) {
 	}
 
 	if ( _buffer->lastEndTime.valid() ) {
-		double diff = rec->startTime() - _buffer->lastEndTime;
+		double diff = (rec->startTime() - _buffer->lastEndTime).length();
 		if ( fabs(diff) > _buffer->dt*0.5 ) {
 			SEISCOMP_DEBUG("[spec] %s: gap/overlap of %f secs -> reset processing",
 			               rec->streamID().c_str(), diff);
@@ -336,12 +336,12 @@ Record *Spectralizer::fft(const Record *rec) {
 
 			// align to timestep if not requested otherwise
 			if ( !_noalign ) {
-				double mod = fmod((double)_buffer->startTime, _timeStep);
+				double mod = fmod(_buffer->startTime.epoch(), _timeStep);
 				double skip = _timeStep - mod;
-				_buffer->samplesToSkip = int(skip*_buffer->sampleRate+0.5);
+				_buffer->samplesToSkip = int(skip * _buffer->sampleRate + 0.5);
 
-				Core::Time nextStep(floor(double(_buffer->startTime)/_timeStep+(_buffer->samplesToSkip > 0?1:0))*_timeStep+5E-7);
-				_buffer->startTime = nextStep - Core::TimeSpan(_buffer->samplesToSkip*_buffer->dt+5E-7);
+				Core::Time nextStep(floor(_buffer->startTime.epoch() / _timeStep + (_buffer->samplesToSkip > 0 ? 1 : 0)) * _timeStep + 5E-7);
+				_buffer->startTime = nextStep - Core::TimeSpan(_buffer->samplesToSkip*_buffer->dt + 5E-7);
 			}
 		}
 

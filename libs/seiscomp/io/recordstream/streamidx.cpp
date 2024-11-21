@@ -135,7 +135,7 @@ string StreamIdx::str(const Time& stime, const Time& etime) const {
 		et = _etime;
 
 	if ( et.microseconds() > 0 )
-		et += Time(1,0);
+		et += TimeSpan(1,0);
 
 	return bt.toString("%Y,%m,%d,%H,%M,%S") + " " +
 	       et.toString("%Y,%m,%d,%H,%M,%S") + " " +

@@ -854,7 +854,7 @@ Record *RecordStream::next() {
 							time.microSeconds =
 							    gc::Endianess::Converter::FromLittleEndian(time.microSeconds);
 
-							sc::Time stime(time.seconds, time.microSeconds);
+							sc::Time stime = sc::Time::FromEpoch(time.seconds, time.microSeconds);
 
 							//SEISCOMP_DEBUG("received record: startTime = %s", stime.iso().c_str());
 

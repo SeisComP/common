@@ -322,7 +322,7 @@ void FDSNWSSession::sendError(const string &path, const string &options,
 	ss << "Request:" << endl << path;
 	if ( !options.empty() ) ss << "?" << options;
 	ss << endl << endl
-	   << "Request Submitted:" << endl << Core::Time::GMT().iso() << endl << endl
+	   << "Request Submitted:" << endl << Core::Time::UTC().iso() << endl << endl
 	   << "Service Version:" << endl << SCWFAS_VERSION_NAME;
 	sendResponse(ss.str().c_str(), status, "text/plain");
 }
@@ -391,7 +391,7 @@ bool FDSNWSSession::handleGETRequest(Wired::HttpRequest &req) {
 	else if ( path == "query" ) {
 		Wired::URLInsituOptions opts(req.options);
 		Core::Time startTime;
-		Core::Time endTime = Core::Time::GMT();
+		Core::Time endTime = Core::Time::UTC();
 		set<string> networks;
 		set<string> stations;
 		set<string> locations;
@@ -480,7 +480,7 @@ bool FDSNWSSession::handleGETRequest(Wired::HttpRequest &req) {
 		}
 
 		if ( global.fdsnws.maxTimeWindow > 0 ) {
-			double timeSpan = endTime - startTime;
+			double timeSpan = static_cast<double>(endTime - startTime);
 			size_t numCha = networks.size() * stations.size() *
 			                locations.size() * channels.size();
 			if ( timeSpan * numCha > global.fdsnws.maxTimeWindow ) {

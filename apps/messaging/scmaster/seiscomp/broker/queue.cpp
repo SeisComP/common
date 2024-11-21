@@ -87,7 +87,7 @@ Queue::Queue(const std::string &name, uint64_t maxPayloadSize)
 	// Register MASTER name to block it
 	_clients.insert(senderName(), nullptr);
 
-	_created = Core::Time::GMT();
+	_created = Core::Time::UTC();
 
 	// Add the required status group
 	addGroup(StatusGroup);
@@ -199,7 +199,7 @@ Queue::Result Queue::push(Client *sender, Message *msg, int packetSize) {
 	switch ( msg->type ) {
 		case Message::Type::Status:
 		{
-			sender->_lastSOHReceived = Core::Time::GMT();
+			sender->_lastSOHReceived = Core::Time::UTC();
 
 			map<string, string> infoMap;
 
@@ -274,7 +274,7 @@ Queue::Result Queue::dispatch(Client *sender, Message *msg) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Queue::publish(Client *sender, Message *msg) {
-	msg->timestamp = Seiscomp::Core::Time::GMT();
+	msg->timestamp = Seiscomp::Core::Time::UTC();
 
 	// Save message in smart pointer to prevent memory leaks as it might
 	// bypass the ring buffer (transient, service).
@@ -356,7 +356,7 @@ Queue::Result Queue::subscribe(Client *client, const std::string &groupName) {
 
 	msg.sender = senderName();
 	msg.target = group->name();
-	msg.timestamp = Seiscomp::Core::Time::GMT();
+	msg.timestamp = Seiscomp::Core::Time::UTC();
 
 	client->enter(group, client, &msg);
 
@@ -389,7 +389,7 @@ Queue::Result Queue::unsubscribe(Client *client, const std::string &groupName) {
 
 	msg.sender = senderName();
 	msg.target = group->name();
-	msg.timestamp = Seiscomp::Core::Time::GMT();
+	msg.timestamp = Seiscomp::Core::Time::UTC();
 
 	client->leave(group, client, &msg);
 
@@ -507,7 +507,7 @@ Queue::Result Queue::connect(Client *client,
 		}
 	}
 
-	client->_created = Core::Time::GMT();
+	client->_created = Core::Time::UTC();
 	_clients.insert(client->_name.c_str(), client);
 	client->_queue = this;
 	SEISCOMP_DEBUG("Connect client '%s' to '%s'" ,
@@ -522,7 +522,7 @@ Queue::Result Queue::connect(Client *client,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Queue::Result Queue::disconnect(Client *client) {
-	Seiscomp::Core::Time now = Seiscomp::Core::Time::GMT();
+	Seiscomp::Core::Time now = Seiscomp::Core::Time::UTC();
 	for ( auto group : _groups ) {
 		if ( !group.second->removeMember(client) ) continue;
 
@@ -764,7 +764,7 @@ void Queue::timeout() {
 		string(Status::Tag(Status::PID).toString()) + "=" + Core::toString(HostInfo.pid()) + "&" +
 		string(Status::Tag(Status::TotalMemory).toString()) + "=" + Core::toString(HostInfo.totalMemory()) + "&";
 
-	Core::Time now = Core::Time::GMT();
+	Core::Time now = Core::Time::UTC();
 	Clients::iterator cit;
 
 	for ( cit = _clients.begin(); cit != _clients.end(); ) {

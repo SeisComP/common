@@ -21,11 +21,15 @@
 #ifndef SEISCOMP_IO_RECORDSTREAM_STREAMIDX_H
 #define SEISCOMP_IO_RECORDSTREAM_STREAMIDX_H
 
+
 #include <string>
+#include <seiscomp/core.h>
 #include <seiscomp/core/datetime.h>
+
 
 namespace Seiscomp {
 namespace RecordStream {
+
 
 class SC_SYSTEM_CORE_API StreamIdx {
 	public:
@@ -86,7 +90,9 @@ class SC_SYSTEM_CORE_API StreamIdx {
 		const Seiscomp::Core::Time _etime;
 };
 
+
 } // namespace RecordStream
 } // namespace Seiscomp
+
 
 #endif

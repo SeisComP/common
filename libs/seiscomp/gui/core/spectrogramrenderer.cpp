@@ -738,7 +738,7 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 	_renderedFmin = fmin;
 	_renderedFmax = fmax;
 
-	double xlen = t1-t0;
+	double xlen = static_cast<double>(t1 - t0);
 
 	// Nothing to draw
 	if ( xlen <= 0 ) return;
@@ -768,8 +768,8 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 		// Clip by end time
 		if ( endTime <= t0 ) continue;
 
-		double x0 = startTime - t0;
-		double x1 = endTime - t0;
+		double x0 = static_cast<double>(startTime - t0);
+		double x1 = static_cast<double>(endTime - t0);
 
 		// Convert start and end time into widget coordinates
 		int ix0 = (int)(x0*dx*w);

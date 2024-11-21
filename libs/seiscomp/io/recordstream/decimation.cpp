@@ -583,7 +583,7 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 	}
 
 	if ( stage->lastEndTime.valid() ) {
-		double diff = rec->startTime() - stage->lastEndTime;
+		double diff = (rec->startTime() - stage->lastEndTime).length();
 		if ( fabs(diff) > stage->dt*0.5 ) {
 			if ( diff < 0 )
 				// Ignore overlap

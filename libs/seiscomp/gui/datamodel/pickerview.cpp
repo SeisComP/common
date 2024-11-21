@@ -3135,8 +3135,8 @@ void PickerView::init() {
 	SC_D.actionsAlignOnFavourites = nullptr;
 	SC_D.actionsAlignOnGroupPhases = nullptr;
 
-	SC_D.minTime = -SC_D.config.minimumTimeWindow;
-	SC_D.maxTime = SC_D.config.minimumTimeWindow;
+	SC_D.minTime = -SC_D.config.minimumTimeWindow.length();
+	SC_D.maxTime = SC_D.config.minimumTimeWindow.length();
 
 	/*
 	pal = palette();
@@ -4604,7 +4604,7 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* origin,
 	SC_D.stations.clear();
 
 	Core::Time originTime = SC_D.origin->time();
-	if ( !originTime ) originTime = Core::Time::GMT();
+	if ( !originTime ) originTime = Core::Time::UTC();
 
 	Core::Time minTime = originTime;
 	Core::Time maxTime = originTime;
@@ -4635,8 +4635,8 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* origin,
 		maxTime += Core::TimeSpan(10 * (1-SC_D.config.alignmentPosition),0);
 	}
 
-	relTimeWindowStart = minTime - originTime;
-	relTimeWindowEnd = maxTime - originTime;
+	relTimeWindowStart = (minTime - originTime).length();
+	relTimeWindowEnd = (maxTime - originTime).length();
 
 	double timeWindowLength = relTimeWindowEnd - relTimeWindowStart;
 
@@ -4798,7 +4798,7 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* o) {
 	}
 
 	Core::Time originTime = SC_D.origin->time();
-	if ( !originTime ) originTime = Core::Time::GMT();
+	if ( !originTime ) originTime = Core::Time::UTC();
 
 	Core::Time minTime = originTime;
 	Core::Time maxTime = originTime;
@@ -4807,8 +4807,8 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* o) {
 	minTime -= SC_D.config.preOffset;
 	maxTime += SC_D.config.postOffset;
 
-	double relTimeWindowStart = minTime - originTime;
-	double relTimeWindowEnd = maxTime - originTime;
+	double relTimeWindowStart = (minTime - originTime).length();
+	double relTimeWindowEnd = (maxTime - originTime).length();
 
 	double timeWindowLength = relTimeWindowEnd - relTimeWindowStart;
 
@@ -5846,7 +5846,7 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 			CreationInfo ci;
 			ci.setAgencyID(SCApp->agencyID());
 			ci.setAuthor(SCApp->author());
-			ci.setCreationTime(Core::Time::GMT());
+			ci.setCreationTime(Core::Time::UTC());
 			//tmpOrigin->assign(SC_D.origin.get());
 			tmpOrigin->setLatitude(dialog.latitude());
 			tmpOrigin->setLongitude(dialog.longitude());
@@ -6592,21 +6592,23 @@ void PickerView::setCursorPos(const Seiscomp::Core::Time& t, bool always) {
 
 	if ( !always && SC_D.currentRecord->cursorText() == "" ) return;
 
-	float offset = 0;
+	double offset = 0;
 
 	if ( SC_D.centerSelection ) {
-		float len = SC_D.recordView->currentItem()?
+		double len = SC_D.recordView->currentItem()?
 			SC_D.recordView->currentItem()->widget()->width()/SC_D.currentRecord->timeScale():
 			SC_D.currentRecord->tmax() - SC_D.currentRecord->tmin();
 
-		float pos = float(t - SC_D.currentRecord->alignment()) - len*SC_D.config.alignmentPosition;
+		double pos = (t - SC_D.currentRecord->alignment()).length() - len * SC_D.config.alignmentPosition;
 		offset = pos - SC_D.currentRecord->tmin();
 	}
 	else {
-		if ( t > SC_D.currentRecord->rightTime() )
-			offset = t - SC_D.currentRecord->rightTime();
-		else if ( t < SC_D.currentRecord->leftTime() )
-			offset = t - SC_D.currentRecord->leftTime();
+		if ( t > SC_D.currentRecord->rightTime() ) {
+			offset = (t - SC_D.currentRecord->rightTime()).length();
+		}
+		else if ( t < SC_D.currentRecord->leftTime() ) {
+			offset = (t - SC_D.currentRecord->leftTime()).length();
+		}
 	}
 
 	move(offset);
@@ -6673,7 +6675,7 @@ void PickerView::disableAutoScale() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::setAlignment(Seiscomp::Core::Time t) {
-	double offset = SC_D.currentRecord->alignment() - t;
+	double offset = (SC_D.currentRecord->alignment() - t).length();
 	SC_D.currentRecord->setAlignment(t);
 
 	// Because selection handle position are relative to the alignment
@@ -6724,13 +6726,16 @@ void PickerView::ensureVisibility(const Seiscomp::Core::Time &time, int pixelMar
 	Core::Time right = time + Core::TimeSpan(pixelMargin/SC_D.currentRecord->timeScale());
 
 	double offset = 0;
-	if ( right > SC_D.currentRecord->rightTime() )
-		offset = right - SC_D.currentRecord->rightTime();
-	else if ( left < SC_D.currentRecord->leftTime() )
-		offset = left - SC_D.currentRecord->leftTime();
+	if ( right > SC_D.currentRecord->rightTime() ) {
+		offset = (right - SC_D.currentRecord->rightTime()).length();
+	}
+	else if ( left < SC_D.currentRecord->leftTime() ) {
+		offset = (left - SC_D.currentRecord->leftTime()).length();
+	}
 
-	if ( offset != 0 )
+	if ( offset != 0 ) {
 		setTimeRange(SC_D.currentRecord->tmin() + offset, SC_D.currentRecord->tmax() + offset);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7996,7 +8001,7 @@ void PickerView::fetchManualPicks(std::vector<RecordMarker*>* markers) const {
 				CreationInfo ci;
 				ci.setAgencyID(SCApp->agencyID());
 				ci.setAuthor(SCApp->author());
-				ci.setCreationTime(Core::Time::GMT());
+				ci.setCreationTime(Core::Time::UTC());
 				p->setCreationInfo(ci);
 
 				SC_D.changedPicks.push_back(ObjectChangeList<DataModel::Pick>::value_type(p,true));
@@ -8360,7 +8365,7 @@ void PickerView::relocate() {
 	CreationInfo ci;
 	ci.setAgencyID(SCApp->agencyID());
 	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::GMT());
+	ci.setCreationTime(Core::Time::UTC());
 	tmpOrigin->assign(SC_D.origin.get());
 	tmpOrigin->setCreationInfo(ci);
 
@@ -8494,7 +8499,7 @@ void PickerView::modifyOrigin() {
 		CreationInfo ci;
 		ci.setAgencyID(SCApp->agencyID());
 		ci.setAuthor(SCApp->author());
-		ci.setCreationTime(Core::Time::GMT());
+		ci.setCreationTime(Core::Time::UTC());
 		//tmpOrigin->assign(SC_D.origin.get());
 		tmpOrigin->setLatitude(dialog.latitude());
 		tmpOrigin->setLongitude(dialog.longitude());
@@ -8831,10 +8836,8 @@ void PickerView::confirmPick() {
 			     (t > item->widget()->rightTime()) ) {
 				double tmin = SC_D.recordView->timeRangeMin();
 				double tmax = SC_D.recordView->timeRangeMax();
-
-				double pos = t - SC_D.recordView->alignment();
-
-				double offset = pos - (tmin+tmax)/2;
+				double pos = (t - SC_D.recordView->alignment()).length();
+				double offset = pos - (tmin + tmax) / 2;
 				SC_D.recordView->move(offset);
 			}
 		}

@@ -57,9 +57,9 @@ struct Resolver : public Util::VariableResolver {
 			std::string::size_type seperator;
 			seperator = variable.find('/');
 			if ( seperator != std::string::npos )
-				variable = Core::Time::GMT().toString(variable.substr(seperator+1).c_str());
+				variable = Core::Time::UTC().toString(variable.substr(seperator+1).c_str());
 			else
-				variable = Core::toString(Core::Time::GMT());
+				variable = Core::toString(Core::Time::UTC());
 		}
 		else
 			return false;

@@ -57,10 +57,6 @@ string op2str(Operation operation) {
 }
 
 
-ostream& operator<<(ostream& os, const Core::Time& t) {
-	return os << t.iso();
-}
-
 template <class T>
 bool diffProperty(const T &v1, const T &v2, LogNode *node, LogNode *child) {
 	bool equals = v1 == v2;

@@ -455,7 +455,7 @@ void EventSummary::updateTimeAgo() {
 		return;
 
 	Core::TimeSpan ts;
-	Core::Time ct = Core::Time::GMT();
+	Core::Time ct = Core::Time::UTC();
 
 	ts = ct - _currentOrigin->time();
 	QString ago;
