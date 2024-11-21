@@ -21,44 +21,49 @@
 #ifndef SC_CORE_TIMESPAN_H
 #define SC_CORE_TIMESPAN_H
 
-#include<seiscomp/core.h>
-#include<seiscomp/core/datetime.h>
+#include <seiscomp/core.h>
+#include <seiscomp/core/datetime.h>
+
+#include <ostream>
+
 
 namespace Seiscomp {
 namespace Core {
 
-class SC_SYSTEM_CORE_API TimeWindow {
 
-	//  Xstruction
+class SC_SYSTEM_CORE_API TimeWindow {
+	//  X'truction
 	public:
 		TimeWindow();
 		TimeWindow(const Time &startTime, double length);
+		TimeWindow(const Time &startTime, const TimeSpan length);
 		TimeWindow(const Time &startTime, const Time &endTime);
 		TimeWindow(const TimeWindow &tw);
 		~TimeWindow() {}
 
 	//  Operators
 	public:
+		TimeWindow &operator=(const TimeWindow&);
 		bool operator==(const TimeWindow&) const;
 		bool operator!=(const TimeWindow&) const;
-		operator bool() const;
 
 		//! Returns the minimal timewindow including this and other
 		TimeWindow operator|(const TimeWindow &other) const;
 
-		// more operators :-)
+		//! Returns if the time window has length larger than 0.
+		operator bool() const;
 
 	//  Interface
 	public:
 		Time startTime() const;
 		Time endTime() const;
-		double length() const;
+		TimeSpan length() const;
 
 		void set(const Time &t1, const Time &t2);
 		void setStartTime(const Time &t);
 		void setEndTime(const Time &t);
 		//! set length in seconds, affects endTime
-		void setLength(double length);
+		void setLength(TimeSpan length);
 
 		//! does it contain time t?
 		bool contains(const Time &t) const;
@@ -91,88 +96,14 @@ class SC_SYSTEM_CORE_API TimeWindow {
 };
 
 
-inline TimeWindow::TimeWindow()
-{
-	set(Time(), Time());
-}
+std::ostream &operator<<(std::ostream &os, const TimeWindow &timeWindow);
 
-inline TimeWindow::TimeWindow(const Time &startTime, double length)
-{
-	set(startTime, startTime + Time(length)); // FIXME
-}
 
-inline TimeWindow::TimeWindow(const Time &startTime, const Time &endTime)
-{
-	set(startTime, endTime);
-}
+#include "timewindow.ipp"
 
-inline TimeWindow::TimeWindow(const TimeWindow &tw)
-{
-	set(tw._startTime, tw._endTime);
-}
-
-inline bool TimeWindow::operator==(const TimeWindow &tw) const
-{
-	return _startTime == tw._startTime && _endTime == tw._endTime;
-}
-
-inline bool TimeWindow::operator!=(const TimeWindow &tw) const
-{
-	return _startTime != tw._startTime || _endTime != tw._endTime;
-}
-
-inline TimeWindow::operator bool() const
-{
-	return (bool)_startTime && (bool)_endTime;
-}
-
-inline Time TimeWindow::startTime() const
-{
-	return _startTime;
-}
-
-inline Time TimeWindow::endTime() const
-{
-	return _endTime;
-}
-
-inline double TimeWindow::length() const
-{
-	return (double)(_endTime-_startTime);
-}
-
-inline void TimeWindow::set(const Time &startTime, const Time &endTime)
-{
-	_startTime = startTime;
-	_endTime = endTime;
-}
-
-inline void TimeWindow::setStartTime(const Time &t)
-{
-	_startTime = t;
-}
-
-inline void TimeWindow::setEndTime(const Time &t)
-{
-	_endTime = t;
-}
-
-inline void TimeWindow::setLength(double length)
-{
-	_endTime = _startTime + Time(length); // FIXME
-}
-
-inline bool TimeWindow::contains(const Time &t) const
-{
-	return t >= _startTime && t < _endTime;
-}
-
-inline bool TimeWindow::contains(const TimeWindow &tw) const
-{
-	return tw._startTime >= _startTime && tw._endTime <= _endTime;
-}
 
 }
 }
+
 
 #endif

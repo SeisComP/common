@@ -8,6 +8,7 @@ SET(TESTS
 	intrusive_list.cpp
 	refcounts.cpp
 	strings.cpp
+	timewindow.cpp
  	version.cpp
 	xml.cpp
 )
@@ -17,7 +18,6 @@ FOREACH(testSrc ${TESTS})
 	SET(testName test_core_${testName})
 	ADD_EXECUTABLE(${testName} ${testSrc})
 	SC_LINK_LIBRARIES_INTERNAL(${testName} unittest core)
-	SC_LINK_LIBRARIES(${testName})
 
 	ADD_TEST(
 		NAME ${testName}
