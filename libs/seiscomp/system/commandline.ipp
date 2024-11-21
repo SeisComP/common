@@ -19,16 +19,22 @@
 
 
 template <typename T>
-void CommandLine::addOption(const char* group, const char* option,
-                            const char* description, T* storage,
+bool CommandLine::addOption(const char *group, const char *option,
+                            const char *description, T *storage,
                             bool storageAsDefault) {
-	options_description* o = findGroup(group);
-	if ( o ) {
-		if ( storageAsDefault && storage )
-			(options_description_easy_init(o))(option, boost::program_options::value<T>(storage)->default_value(*storage), description);
-		else
-			(options_description_easy_init(o))(option, boost::program_options::value<T>(storage), description);
+	auto g = findGroup(group);
+	if ( !g ) {
+		return false;
 	}
+
+	if ( storageAsDefault && storage ) {
+		(options_description_easy_init(g))(option, boost::program_options::value<T>(storage)->default_value(*storage), description);
+	}
+	else {
+		(options_description_easy_init(g))(option, boost::program_options::value<T>(storage), description);
+	}
+
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -37,18 +43,17 @@ void CommandLine::addOption(const char* group, const char* option,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-void CommandLine::addOption(const char* group, const char* option,
-                            const char* description,
-                            std::vector<T>* storage) {
-	options_description* o = findGroup(group);
-	if ( o )
-		// NOTE: Because of a bug in boost 1.33.1 the option multitoken() eats up
-		//       all arguments until the end of the commandline. So multitoken works
-		//       only for switches at the end of the commandline. To make it work
-		//       multitoken is disabled. So one has to give the option multiple times.
-		//       e.g.: 'test -i foo -i bar -j' instead of 'test -i foo bar -j'
-		//(options_description_easy_init(o))(option, boost::program_options::value<std::vector<T> >(&storage)->multitoken(), description);
-		(options_description_easy_init(o))(option, boost::program_options::value<std::vector<T> >(storage), description);
+bool CommandLine::addOption(const char *group, const char *option,
+                            const char *description,
+                            std::vector<T> *storage) {
+	auto g = findGroup(group);
+	if ( !g ) {
+		return false;
+	}
+
+	(options_description_easy_init(g))(option, boost::program_options::value<std::vector<T> >(storage), description);
+
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -57,12 +62,17 @@ void CommandLine::addOption(const char* group, const char* option,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T, typename DT>
-void CommandLine::addOption(const char* group, const char* option,
-                            const char* description, T* storage,
-                            const DT& defaultValue) {
-	options_description* o = findGroup(group);
-	if ( o )
-		(options_description_easy_init(o))(option, boost::program_options::value<T>(storage)->default_value(defaultValue), description);
+bool CommandLine::addOption(const char * group, const char *option,
+                            const char * description, T *storage,
+                            const DT &defaultValue) {
+	auto g = findGroup(group);
+	if ( !g ) {
+		return false;
+	}
+
+	(options_description_easy_init(g))(option, boost::program_options::value<T>(storage)->default_value(defaultValue), description);
+
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -71,13 +81,18 @@ void CommandLine::addOption(const char* group, const char* option,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-void CommandLine::addCustomOption(const char* group,
+bool CommandLine::addCustomOption(const char* group,
                                   const char* option,
                                   const char* description,
                                   T* customValidator) {
-	options_description* o = findGroup(group);
-	if ( o )
-		(options_description_easy_init(o))(option, customValidator, description);
+	auto g = findGroup(group);
+	if ( !g ) {
+		return false;
+	}
+
+	(options_description_easy_init(g))(option, customValidator, description);
+
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

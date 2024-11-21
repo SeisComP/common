@@ -1179,9 +1179,6 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 		static bool                    _handleCrash;
 		static bool                    _handleTermination;
 
-		int                            _argc;
-		char                         **_argv;
-
 		std::string                    _name;
 
 		Arguments                      _arguments;

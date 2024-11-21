@@ -68,12 +68,15 @@ CommandLine::findGroup(const char* group, const char* option) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void CommandLine::addGroup(const char* name) {
-	if ( _groupsMap.find(name) != _groupsMap.end() ) return;
+bool CommandLine::addGroup(const char* name) {
+	if ( _groupsMap.find(name) != _groupsMap.end() ) {
+		return false;
+	}
+
 	program_options_ptr po = program_options_ptr(new options_description(name));
 	_groupsMap[name] = po;
 	_groups.push_back(po);
-	//_commandLineOptions.add(po);
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -81,13 +84,15 @@ void CommandLine::addGroup(const char* name) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void CommandLine::addOption(const char* group, const char* option,
+bool CommandLine::addOption(const char* group, const char* option,
                             const char* description) {
-	options_description* o = findGroup(group, option);
+	auto g = findGroup(group, option);
+	if ( !g ) {
+		return false;
+	}
 
-	if ( o )
-		(options_description_easy_init(o))(option, description);
-		//o->add_options()(option, description);
+	(options_description_easy_init(g))(option, description);
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -95,17 +100,19 @@ void CommandLine::addOption(const char* group, const char* option,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CommandLine::parse(int argc, char** argv) {
-	if ( !argc ) return true;
+bool CommandLine::parse(const std::vector<std::string> &args) {
+	if ( args.empty() ) {
+		return true;
+	}
 
 	_options = program_options_ptr(new options_description());
 
-	for ( program_options_list::const_iterator it = _groups.begin();
-	      it != _groups.end(); ++it )
-		_options->add(*(*it));
+	for ( auto &opts : _groups ) {
+		_options->add(*opts);
+	}
 
 	try {
-		parsed_options parsed = command_line_parser(argc, argv).options(*_options).allow_unregistered().run();
+		parsed_options parsed = command_line_parser(args).options(*_options).allow_unregistered().run();
 		store(parsed, _variableMap, false);
 
 		// NOTE: To enable a configuration file for commandline options uncomment the following lines
@@ -137,9 +144,8 @@ bool CommandLine::parse(int argc, char** argv) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CommandLine::parse(int argc, char** argv,
-                        std::function<bool(const std::string &)> unknownArgumentFilter) {
-	if ( !CommandLine::parse(argc, argv) ) {
+bool CommandLine::parse(const std::vector<std::string> &args, std::function<bool(const std::string &)> unknownArgumentFilter) {
+	if ( !CommandLine::parse(args) ) {
 		return false;
 	}
 
