@@ -32,6 +32,9 @@ namespace Seiscomp {
 namespace Database {
 
 
+namespace {
+
+
 class PostgreSQLDatabase : public Seiscomp::IO::DatabaseInterface {
 	DECLARE_SC_CLASS(PostgreSQLDatabase);
 
@@ -98,6 +101,9 @@ class PostgreSQLDatabase : public Seiscomp::IO::DatabaseInterface {
 		void     *_unescapeBuffer{nullptr};
 		size_t    _unescapeBufferSize{0};
 };
+
+
+}
 
 
 }

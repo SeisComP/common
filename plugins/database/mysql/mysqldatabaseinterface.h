@@ -37,6 +37,9 @@ namespace Seiscomp {
 namespace Database {
 
 
+namespace {
+
+
 class MySQLDatabase : public Seiscomp::IO::DatabaseInterface {
 	DECLARE_SC_CLASS(MySQLDatabase);
 
@@ -104,6 +107,9 @@ class MySQLDatabase : public Seiscomp::IO::DatabaseInterface {
 		mutable int            _fieldCount{0};
 		mutable unsigned long *_lengths{nullptr};
 };
+
+
+}
 
 
 }

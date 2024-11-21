@@ -111,19 +111,14 @@ int sqliteCallbackFunc(unsigned T, void *C, void *P, void *X) {
 }
 #endif
 
-} // ns anonymous
-
 
 IMPLEMENT_SC_CLASS_DERIVED(SQLiteDatabase,
                            Seiscomp::IO::DatabaseInterface,
                            "sqlite3_database_interface");
 
-REGISTER_DB_INTERFACE(SQLiteDatabase, "sqlite3");
-ADD_SC_PLUGIN("SQLite3 database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 1, 0, 0)
-
 
 SQLiteDatabase::~SQLiteDatabase() {
-	disconnect();
+	SQLiteDatabase::disconnect();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -458,5 +453,12 @@ bool SQLiteDatabase::escape(string &out, const string &in) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+} // ns anonymous
+
+
+REGISTER_DB_INTERFACE(SQLiteDatabase, "sqlite3");
+ADD_SC_PLUGIN("SQLite3 database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 1, 0, 0)
+
+
 }
 }

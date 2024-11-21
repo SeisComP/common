@@ -21,8 +21,9 @@
  ***************************************************************************/
 
 
-#ifndef __SEISOMP_SERVICES_DATABASE_SQLITE_INTERFACE_H__
-#define __SEISOMP_SERVICES_DATABASE_SQLITE_INTERFACE_H__
+#ifndef SEISOMP_SERVICES_DATABASE_SQLITE_INTERFACE_H
+#define SEISOMP_SERVICES_DATABASE_SQLITE_INTERFACE_H
+
 
 #include <seiscomp/io/database.h>
 #include <sqlite3.h>
@@ -30,6 +31,9 @@
 
 namespace Seiscomp {
 namespace Database {
+
+
+namespace {
 
 
 class SQLiteDatabase : public Seiscomp::IO::DatabaseInterface {
@@ -93,6 +97,9 @@ class SQLiteDatabase : public Seiscomp::IO::DatabaseInterface {
 		int           _columnCount{0};
 		bool          _sync{true};
 };
+
+
+}
 
 
 }

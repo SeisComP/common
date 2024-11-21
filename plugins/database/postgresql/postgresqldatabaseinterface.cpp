@@ -34,12 +34,12 @@ namespace Seiscomp {
 namespace Database {
 
 
+namespace {
+
+
 IMPLEMENT_SC_CLASS_DERIVED(PostgreSQLDatabase,
                            Seiscomp::IO::DatabaseInterface,
                            "postgresql_database_interface");
-
-REGISTER_DB_INTERFACE(PostgreSQLDatabase, "postgresql");
-ADD_SC_PLUGIN("PostgreSQL database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 0, 12, 0)
 
 
 #define XFREE(ptr) \
@@ -60,7 +60,7 @@ ADD_SC_PLUGIN("PostgreSQL database driver", "GFZ Potsdam <seiscomp-devel@gfz-pot
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PostgreSQLDatabase::~PostgreSQLDatabase() {
-	disconnect();
+	PostgreSQLDatabase::disconnect();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -500,5 +500,12 @@ bool PostgreSQLDatabase::reconnect(ConnStatusType stat) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+}
+
+
+REGISTER_DB_INTERFACE(PostgreSQLDatabase, "postgresql");
+ADD_SC_PLUGIN("PostgreSQL database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 0, 12, 0)
+
+
 }
 }
