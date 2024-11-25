@@ -53,16 +53,16 @@ def createMYSQLDB(
 
     write("  + Found MYSQL server version {}".format(res.data))
     if drop:
-        q = "DROP DATABASE IF EXISTS \`{}\`;".format(db)
+        q = "DROP DATABASE IF EXISTS \\`{}\\`;".format(db)
         print("  + Drop database {}".format(db))
         res = execute(cmd + " -e \"{}\"".format(q))
         if res.error:
             print("  + {}".format(res.error))
             return False
 
-    write("  + Create database  {}".format(db))
+    write("  + Create database {}".format(db))
 
-    q = "CREATE DATABASE \`{}\`".format(db)
+    q = "CREATE DATABASE \\`{}\\`".format(db)
     if characterset is not None:
         q += " CHARACTER SET "
         if characterset == "utf8":
@@ -95,8 +95,8 @@ def createMYSQLDB(
         q += "CREATE USER '{}'@'localhost' IDENTIFIED BY '{}';".format(rwuser, rwpwd)
         q += "CREATE USER '{}'@'%' IDENTIFIED BY '{}';".format(rwuser, rwpwd)
 
-    q += "GRANT ALL ON \`{}\`.* TO '{}'@'localhost';".format(db, rwuser)
-    q += "GRANT ALL ON \`{}\`.* TO '{}'@'%';".format(db, rwuser)
+    q += "GRANT ALL ON \\`{}\\`.* TO '{}'@'localhost';".format(db, rwuser)
+    q += "GRANT ALL ON \\`{}\\`.* TO '{}'@'%';".format(db, rwuser)
 
     res = execute(cmd + " -e \"{}\"".format(q))
     if res.error:
@@ -116,8 +116,8 @@ def createMYSQLDB(
             q += "CREATE USER '{}'@'localhost' IDENTIFIED BY '{}';".format(rouser, ropwd)
             q += "CREATE USER '{}'@'%' IDENTIFIED BY '{}';".format(rouser, ropwd)
 
-        q += "GRANT SELECT ON \`{}\`.* TO '{}'@'localhost';".format(db, rouser)
-        q += "GRANT SELECT ON \`{}\`.* TO '{}'@'%';".format(db, rouser)
+        q += "GRANT SELECT ON \\`{}\\`.* TO '{}'@'localhost';".format(db, rouser)
+        q += "GRANT SELECT ON \\`{}\\`.* TO '{}'@'%';".format(db, rouser)
 
         res = execute(cmd + " -e \"{}\"".format(q))
         if res.error:
@@ -125,7 +125,7 @@ def createMYSQLDB(
             return False
 
     write("  + Create tables")
-    q = "USE \`{}\`; source {};".format(db, os.path.join(schemapath, "mysql.sql"))
+    q = "USE \\`{}\\`; source {};".format(db, os.path.join(schemapath, "mysql.sql"))
     res = execute(cmd + " -e \"{}\"".format(q))
     if res.error:
         print("  + {}".format(res.error))
