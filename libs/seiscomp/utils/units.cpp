@@ -75,9 +75,9 @@ const UnitConversion *UnitConverter::get(const std::string &fromUnit) {
 		REGISTER_CONVERSION("um/s", M_S_SI_UNIT, M_S_QML_UNIT, M_S_SEED_UNIT, 1E-6);
 		REGISTER_CONVERSION("nm/s", M_S_SI_UNIT, M_S_QML_UNIT, M_S_SEED_UNIT, 1E-9);
 
-	#define M_S2_SI_UNIT "M/S**2"
-	#define M_S2_QML_UNIT "m/(s*s)"
-	#define M_S2_SEED_UNIT "M/S**2"
+		#define M_S2_SI_UNIT "M/S**2"
+		#define M_S2_QML_UNIT "m/(s*s)"
+		#define M_S2_SEED_UNIT "M/S**2"
 		REGISTER_CONVERSION("m/s**2",    M_S2_SI_UNIT, M_S2_QML_UNIT, M_S2_SEED_UNIT, 1.0);
 		REGISTER_CONVERSION("M/S**2",    M_S2_SI_UNIT, M_S2_QML_UNIT, M_S2_SEED_UNIT, 1.0);
 		REGISTER_CONVERSION("m/(s*s)",   M_S2_SI_UNIT, M_S2_QML_UNIT, M_S2_SEED_UNIT, 1.0);
@@ -103,9 +103,10 @@ const UnitConversion *UnitConverter::get(const std::string &fromUnit) {
 		REGISTER_CONVERSION("%g",        M_S2_SI_UNIT, M_S2_QML_UNIT, M_S2_SEED_UNIT, 9.81E-2);
 	}
 
-	ConversionMap::const_iterator it = _conversionMap.find(fromUnit);
-	if ( it == _conversionMap.end() )
+	auto it = _conversionMap.find(fromUnit);
+	if ( it == _conversionMap.end() ) {
 		return nullptr;
+	}
 
 	return &it->second;
 }
