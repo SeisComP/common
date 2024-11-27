@@ -768,24 +768,18 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 
 		// Draw the name if requested and if there is enough space
 		if ( props->drawName ) {
-			QPoint p1;
-			QPoint p2;
-			qreal lonMin = bbox.west;
-			qreal lonMax = bbox.east;
-
-			if ( fabs(lonMax-lonMin) > 180 ) {
-				qSwap(lonMin, lonMax);
-			}
-
-			if ( proj->project(p1, QPointF(lonMin, bbox.north))
-			     && proj->project(p2, QPointF(lonMax, bbox.south)) ) {
-				QRect bboxRect = QRect(p1, p2);
+			// project the center of the bounding box
+			Geo::GeoCoordinate center = bbox.center();
+			QPoint c;
+			if ( proj->project(c, QPointF(center.lon, center.lat)) ) {
 				QString name = f->name().c_str();
 				QRect textRect = painter->fontMetrics().boundingRect(name);
-				int maxBBoxEdge = max(bboxRect.width(), bboxRect.height());
-				if ( textRect.width()*100 < maxBBoxEdge*80 ) {
-					textRect.moveCenter(bboxRect.center());
-					painter->drawText(bboxRect.united(textRect), Qt::AlignCenter, name);
+				float textGeoWidth = textRect.width() / proj->pixelPerDegree();
+				float maxBBoxEdge = max(bbox.width(), bbox.height());
+				if ( textGeoWidth < maxBBoxEdge * 0.8 ) {
+					textRect.moveTo(c.x() - textRect.width()/2,
+					                c.y() - textRect.height()/2);
+					painter->drawText(textRect, Qt::AlignLeft | Qt::AlignTop, name);
 				}
 			}
 		}
