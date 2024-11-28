@@ -3210,158 +3210,175 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_AttachmentList swig_types[1]
 #define SWIGTYPE_p_AttachmentType swig_types[2]
 #define SWIGTYPE_p_DataArray swig_types[3]
-#define SWIGTYPE_p_ImplType swig_types[4]
-#define SWIGTYPE_p_MajorType swig_types[5]
-#define SWIGTYPE_p_MinorType swig_types[6]
-#define SWIGTYPE_p_PackType swig_types[7]
-#define SWIGTYPE_p_PatchType swig_types[8]
-#define SWIGTYPE_p_Properties swig_types[9]
-#define SWIGTYPE_p_PropertyValue swig_types[10]
-#define SWIGTYPE_p_ReferenceType swig_types[11]
-#define SWIGTYPE_p_RootType swig_types[12]
-#define SWIGTYPE_p_Seiscomp__Array swig_types[13]
-#define SWIGTYPE_p_Seiscomp__BitSet swig_types[14]
-#define SWIGTYPE_p_Seiscomp__Core__BaseObject swig_types[15]
-#define SWIGTYPE_p_Seiscomp__Core__ClassNotFound swig_types[16]
-#define SWIGTYPE_p_Seiscomp__Core__DataMessage swig_types[17]
-#define SWIGTYPE_p_Seiscomp__Core__DuplicateClassname swig_types[18]
-#define SWIGTYPE_p_Seiscomp__Core__EGreensFunctionComponentNames swig_types[19]
-#define SWIGTYPE_p_Seiscomp__Core__EndOfStreamException swig_types[20]
-#define SWIGTYPE_p_Seiscomp__Core__Enumeration swig_types[21]
-#define SWIGTYPE_p_Seiscomp__Core__FrameworkVersion swig_types[22]
-#define SWIGTYPE_p_Seiscomp__Core__GeneralException swig_types[23]
-#define SWIGTYPE_p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t swig_types[24]
-#define SWIGTYPE_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t swig_types[25]
-#define SWIGTYPE_p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t swig_types[26]
-#define SWIGTYPE_p_Seiscomp__Core__GreensFunction swig_types[27]
-#define SWIGTYPE_p_Seiscomp__Core__InterruptibleObject swig_types[28]
-#define SWIGTYPE_p_Seiscomp__Core__MemoryException swig_types[29]
-#define SWIGTYPE_p_Seiscomp__Core__Message swig_types[30]
-#define SWIGTYPE_p_Seiscomp__Core__MessageIterator swig_types[31]
-#define SWIGTYPE_p_Seiscomp__Core__MetaEnum swig_types[32]
-#define SWIGTYPE_p_Seiscomp__Core__MetaObject swig_types[33]
-#define SWIGTYPE_p_Seiscomp__Core__MetaProperty swig_types[34]
-#define SWIGTYPE_p_Seiscomp__Core__OperationInterrupted swig_types[35]
-#define SWIGTYPE_p_Seiscomp__Core__OverflowException swig_types[36]
-#define SWIGTYPE_p_Seiscomp__Core__PropertyNotFoundException swig_types[37]
-#define SWIGTYPE_p_Seiscomp__Core__RTTI swig_types[38]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl swig_types[39]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl swig_types[40]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl swig_types[41]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl swig_types[42]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl swig_types[43]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl swig_types[44]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl swig_types[45]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl swig_types[46]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl swig_types[47]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl swig_types[48]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl swig_types[49]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl swig_types[50]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl swig_types[51]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl swig_types[52]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl swig_types[53]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl swig_types[54]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl swig_types[55]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl swig_types[56]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl swig_types[57]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl swig_types[58]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl swig_types[59]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl swig_types[60]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl swig_types[61]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl swig_types[62]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl swig_types[63]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl swig_types[64]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl swig_types[65]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl swig_types[66]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl swig_types[67]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl swig_types[68]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl swig_types[69]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl swig_types[70]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl swig_types[71]
-#define SWIGTYPE_p_Seiscomp__Core__StreamException swig_types[72]
-#define SWIGTYPE_p_Seiscomp__Core__Time swig_types[73]
-#define SWIGTYPE_p_Seiscomp__Core__TimeSpan swig_types[74]
-#define SWIGTYPE_p_Seiscomp__Core__TimeWindow swig_types[75]
-#define SWIGTYPE_p_Seiscomp__Core__TypeConversionException swig_types[76]
-#define SWIGTYPE_p_Seiscomp__Core__TypeException swig_types[77]
-#define SWIGTYPE_p_Seiscomp__Core__UnderflowException swig_types[78]
-#define SWIGTYPE_p_Seiscomp__Core__ValueError swig_types[79]
-#define SWIGTYPE_p_Seiscomp__Core__ValueException swig_types[80]
-#define SWIGTYPE_p_Seiscomp__Core__Version swig_types[81]
-#define SWIGTYPE_p_Seiscomp__GenericRecord swig_types[82]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_char_t swig_types[83]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_double_t swig_types[84]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_float_t swig_types[85]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_int_t swig_types[86]
-#define SWIGTYPE_p_Seiscomp__Record swig_types[87]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t swig_types[88]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_char_t swig_types[89]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_double_t swig_types[90]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_float_t swig_types[91]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_int_t swig_types[92]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_double_t_t swig_types[93]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_float_t_t swig_types[94]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__string_t swig_types[95]
-#define SWIGTYPE_p_Type swig_types[96]
-#define SWIGTYPE_p_bool swig_types[97]
-#define SWIGTYPE_p_boost__any swig_types[98]
-#define SWIGTYPE_p_boost__dynamic_bitsetT_t swig_types[99]
-#define SWIGTYPE_p_boost__none_t swig_types[100]
-#define SWIGTYPE_p_boost__variantT_int_double_std__string_t swig_types[101]
-#define SWIGTYPE_p_char swig_types[102]
-#define SWIGTYPE_p_const_iterator swig_types[103]
-#define SWIGTYPE_p_double swig_types[104]
-#define SWIGTYPE_p_float swig_types[105]
-#define SWIGTYPE_p_int swig_types[106]
-#define SWIGTYPE_p_iterator swig_types[107]
-#define SWIGTYPE_p_long_long swig_types[108]
-#define SWIGTYPE_p_short swig_types[109]
-#define SWIGTYPE_p_signed_char swig_types[110]
-#define SWIGTYPE_p_std__complexT_double_t swig_types[111]
-#define SWIGTYPE_p_std__complexT_float_t swig_types[112]
-#define SWIGTYPE_p_std__exception swig_types[113]
-#define SWIGTYPE_p_std__istream swig_types[114]
-#define SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__const_iterator swig_types[115]
-#define SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator swig_types[116]
-#define SWIGTYPE_p_std__ostream swig_types[117]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[118]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[119]
-#define SWIGTYPE_p_std__string swig_types[120]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t swig_types[121]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t__const_iterator swig_types[122]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t__iterator swig_types[123]
-#define SWIGTYPE_p_std__vectorT_char_t swig_types[124]
-#define SWIGTYPE_p_std__vectorT_char_t__const_iterator swig_types[125]
-#define SWIGTYPE_p_std__vectorT_char_t__iterator swig_types[126]
-#define SWIGTYPE_p_std__vectorT_double_t swig_types[127]
-#define SWIGTYPE_p_std__vectorT_double_t__const_iterator swig_types[128]
-#define SWIGTYPE_p_std__vectorT_double_t__iterator swig_types[129]
-#define SWIGTYPE_p_std__vectorT_float_t swig_types[130]
-#define SWIGTYPE_p_std__vectorT_float_t__const_iterator swig_types[131]
-#define SWIGTYPE_p_std__vectorT_float_t__iterator swig_types[132]
-#define SWIGTYPE_p_std__vectorT_int_t swig_types[133]
-#define SWIGTYPE_p_std__vectorT_int_t__const_iterator swig_types[134]
-#define SWIGTYPE_p_std__vectorT_int_t__iterator swig_types[135]
-#define SWIGTYPE_p_std__vectorT_long_long_t swig_types[136]
-#define SWIGTYPE_p_std__vectorT_short_t swig_types[137]
-#define SWIGTYPE_p_std__vectorT_signed_char_t swig_types[138]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t swig_types[139]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t__const_iterator swig_types[140]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t__iterator swig_types[141]
-#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t swig_types[142]
-#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t__const_iterator swig_types[143]
-#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t__iterator swig_types[144]
-#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[145]
-#define SWIGTYPE_p_std__vectorT_std__string_t__const_iterator swig_types[146]
-#define SWIGTYPE_p_std__vectorT_std__string_t__iterator swig_types[147]
-#define SWIGTYPE_p_timeval swig_types[148]
-#define SWIGTYPE_p_unsigned_char swig_types[149]
-#define SWIGTYPE_p_unsigned_int swig_types[150]
-#define SWIGTYPE_p_unsigned_long_long swig_types[151]
-#define SWIGTYPE_p_unsigned_short swig_types[152]
-#define SWIGTYPE_p_void swig_types[153]
-static swig_type_info *swig_types[155];
-static swig_module_info swig_module = {swig_types, 154, 0, 0, 0, 0};
+#define SWIGTYPE_p_Days swig_types[4]
+#define SWIGTYPE_p_Duration swig_types[5]
+#define SWIGTYPE_p_F1 swig_types[6]
+#define SWIGTYPE_p_F2 swig_types[7]
+#define SWIGTYPE_p_F3 swig_types[8]
+#define SWIGTYPE_p_F4 swig_types[9]
+#define SWIGTYPE_p_F5 swig_types[10]
+#define SWIGTYPE_p_F6 swig_types[11]
+#define SWIGTYPE_p_Hours swig_types[12]
+#define SWIGTYPE_p_ImplType swig_types[13]
+#define SWIGTYPE_p_MajorType swig_types[14]
+#define SWIGTYPE_p_MicroSeconds swig_types[15]
+#define SWIGTYPE_p_MilliSeconds swig_types[16]
+#define SWIGTYPE_p_MinorType swig_types[17]
+#define SWIGTYPE_p_Minutes swig_types[18]
+#define SWIGTYPE_p_PackType swig_types[19]
+#define SWIGTYPE_p_PatchType swig_types[20]
+#define SWIGTYPE_p_Properties swig_types[21]
+#define SWIGTYPE_p_PropertyValue swig_types[22]
+#define SWIGTYPE_p_ReferenceType swig_types[23]
+#define SWIGTYPE_p_RootType swig_types[24]
+#define SWIGTYPE_p_Seconds swig_types[25]
+#define SWIGTYPE_p_Seiscomp__Array swig_types[26]
+#define SWIGTYPE_p_Seiscomp__BitSet swig_types[27]
+#define SWIGTYPE_p_Seiscomp__Core__BaseObject swig_types[28]
+#define SWIGTYPE_p_Seiscomp__Core__ClassNotFound swig_types[29]
+#define SWIGTYPE_p_Seiscomp__Core__DataMessage swig_types[30]
+#define SWIGTYPE_p_Seiscomp__Core__DuplicateClassname swig_types[31]
+#define SWIGTYPE_p_Seiscomp__Core__EGreensFunctionComponentNames swig_types[32]
+#define SWIGTYPE_p_Seiscomp__Core__EndOfStreamException swig_types[33]
+#define SWIGTYPE_p_Seiscomp__Core__Enumeration swig_types[34]
+#define SWIGTYPE_p_Seiscomp__Core__FrameworkVersion swig_types[35]
+#define SWIGTYPE_p_Seiscomp__Core__GeneralException swig_types[36]
+#define SWIGTYPE_p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t swig_types[37]
+#define SWIGTYPE_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t swig_types[38]
+#define SWIGTYPE_p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t swig_types[39]
+#define SWIGTYPE_p_Seiscomp__Core__GreensFunction swig_types[40]
+#define SWIGTYPE_p_Seiscomp__Core__InterruptibleObject swig_types[41]
+#define SWIGTYPE_p_Seiscomp__Core__MemoryException swig_types[42]
+#define SWIGTYPE_p_Seiscomp__Core__Message swig_types[43]
+#define SWIGTYPE_p_Seiscomp__Core__MessageIterator swig_types[44]
+#define SWIGTYPE_p_Seiscomp__Core__MetaEnum swig_types[45]
+#define SWIGTYPE_p_Seiscomp__Core__MetaObject swig_types[46]
+#define SWIGTYPE_p_Seiscomp__Core__MetaProperty swig_types[47]
+#define SWIGTYPE_p_Seiscomp__Core__OperationInterrupted swig_types[48]
+#define SWIGTYPE_p_Seiscomp__Core__OverflowException swig_types[49]
+#define SWIGTYPE_p_Seiscomp__Core__PropertyNotFoundException swig_types[50]
+#define SWIGTYPE_p_Seiscomp__Core__RTTI swig_types[51]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl swig_types[52]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl swig_types[53]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl swig_types[54]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl swig_types[55]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl swig_types[56]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl swig_types[57]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl swig_types[58]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl swig_types[59]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl swig_types[60]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl swig_types[61]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl swig_types[62]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl swig_types[63]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl swig_types[64]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl swig_types[65]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl swig_types[66]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl swig_types[67]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl swig_types[68]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl swig_types[69]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl swig_types[70]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl swig_types[71]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl swig_types[72]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl swig_types[73]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl swig_types[74]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl swig_types[75]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl swig_types[76]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl swig_types[77]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl swig_types[78]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl swig_types[79]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl swig_types[80]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl swig_types[81]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl swig_types[82]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl swig_types[83]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl swig_types[84]
+#define SWIGTYPE_p_Seiscomp__Core__StreamException swig_types[85]
+#define SWIGTYPE_p_Seiscomp__Core__Time swig_types[86]
+#define SWIGTYPE_p_Seiscomp__Core__TimeSpan swig_types[87]
+#define SWIGTYPE_p_Seiscomp__Core__TimeWindow swig_types[88]
+#define SWIGTYPE_p_Seiscomp__Core__TypeConversionException swig_types[89]
+#define SWIGTYPE_p_Seiscomp__Core__TypeException swig_types[90]
+#define SWIGTYPE_p_Seiscomp__Core__UnderflowException swig_types[91]
+#define SWIGTYPE_p_Seiscomp__Core__ValueError swig_types[92]
+#define SWIGTYPE_p_Seiscomp__Core__ValueException swig_types[93]
+#define SWIGTYPE_p_Seiscomp__Core__Version swig_types[94]
+#define SWIGTYPE_p_Seiscomp__GenericRecord swig_types[95]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_char_t swig_types[96]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_double_t swig_types[97]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_float_t swig_types[98]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_int_t swig_types[99]
+#define SWIGTYPE_p_Seiscomp__Record swig_types[100]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t swig_types[101]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_char_t swig_types[102]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_double_t swig_types[103]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_float_t swig_types[104]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_int_t swig_types[105]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_double_t_t swig_types[106]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_float_t_t swig_types[107]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__string_t swig_types[108]
+#define SWIGTYPE_p_Storage swig_types[109]
+#define SWIGTYPE_p_TimePoint swig_types[110]
+#define SWIGTYPE_p_Type swig_types[111]
+#define SWIGTYPE_p_Weeks swig_types[112]
+#define SWIGTYPE_p_bool swig_types[113]
+#define SWIGTYPE_p_boost__any swig_types[114]
+#define SWIGTYPE_p_boost__dynamic_bitsetT_t swig_types[115]
+#define SWIGTYPE_p_boost__none_t swig_types[116]
+#define SWIGTYPE_p_boost__variantT_int_double_std__string_t swig_types[117]
+#define SWIGTYPE_p_char swig_types[118]
+#define SWIGTYPE_p_const_iterator swig_types[119]
+#define SWIGTYPE_p_double swig_types[120]
+#define SWIGTYPE_p_float swig_types[121]
+#define SWIGTYPE_p_int swig_types[122]
+#define SWIGTYPE_p_iterator swig_types[123]
+#define SWIGTYPE_p_long_long swig_types[124]
+#define SWIGTYPE_p_short swig_types[125]
+#define SWIGTYPE_p_signed_char swig_types[126]
+#define SWIGTYPE_p_std__chrono__durationT_Seiscomp__Core__TimeSpan__Storage_std__micro_t swig_types[127]
+#define SWIGTYPE_p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t swig_types[128]
+#define SWIGTYPE_p_std__complexT_double_t swig_types[129]
+#define SWIGTYPE_p_std__complexT_float_t swig_types[130]
+#define SWIGTYPE_p_std__exception swig_types[131]
+#define SWIGTYPE_p_std__istream swig_types[132]
+#define SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__const_iterator swig_types[133]
+#define SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator swig_types[134]
+#define SWIGTYPE_p_std__ostream swig_types[135]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[136]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[137]
+#define SWIGTYPE_p_std__string swig_types[138]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t swig_types[139]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t__const_iterator swig_types[140]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t__iterator swig_types[141]
+#define SWIGTYPE_p_std__vectorT_char_t swig_types[142]
+#define SWIGTYPE_p_std__vectorT_char_t__const_iterator swig_types[143]
+#define SWIGTYPE_p_std__vectorT_char_t__iterator swig_types[144]
+#define SWIGTYPE_p_std__vectorT_double_t swig_types[145]
+#define SWIGTYPE_p_std__vectorT_double_t__const_iterator swig_types[146]
+#define SWIGTYPE_p_std__vectorT_double_t__iterator swig_types[147]
+#define SWIGTYPE_p_std__vectorT_float_t swig_types[148]
+#define SWIGTYPE_p_std__vectorT_float_t__const_iterator swig_types[149]
+#define SWIGTYPE_p_std__vectorT_float_t__iterator swig_types[150]
+#define SWIGTYPE_p_std__vectorT_int_t swig_types[151]
+#define SWIGTYPE_p_std__vectorT_int_t__const_iterator swig_types[152]
+#define SWIGTYPE_p_std__vectorT_int_t__iterator swig_types[153]
+#define SWIGTYPE_p_std__vectorT_long_long_t swig_types[154]
+#define SWIGTYPE_p_std__vectorT_short_t swig_types[155]
+#define SWIGTYPE_p_std__vectorT_signed_char_t swig_types[156]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t swig_types[157]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t__const_iterator swig_types[158]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t__iterator swig_types[159]
+#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t swig_types[160]
+#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t__const_iterator swig_types[161]
+#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t__iterator swig_types[162]
+#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[163]
+#define SWIGTYPE_p_std__vectorT_std__string_t__const_iterator swig_types[164]
+#define SWIGTYPE_p_std__vectorT_std__string_t__iterator swig_types[165]
+#define SWIGTYPE_p_unsigned_char swig_types[166]
+#define SWIGTYPE_p_unsigned_int swig_types[167]
+#define SWIGTYPE_p_unsigned_long_long swig_types[168]
+#define SWIGTYPE_p_unsigned_short swig_types[169]
+#define SWIGTYPE_p_void swig_types[170]
+static swig_type_info *swig_types[172];
+static swig_module_info swig_module = {swig_types, 171, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -4120,40 +4137,15 @@ SWIG_From_unsigned_SS_char  (unsigned char value)
 
   #define SWIG_From_double   PyFloat_FromDouble 
 
-SWIGINTERN double Seiscomp_Core_TimeSpan_toDouble(Seiscomp::Core::TimeSpan const *self){
-    return (double)(*self);
-  }
 
-SWIGINTERN int
-SWIG_AsVal_signed_SS_char (PyObject * obj, signed char *val)
+#ifdef SWIG_LONG_LONG_AVAILABLE
+SWIGINTERNINLINE PyObject* 
+SWIG_From_long_SS_long  (long long value)
 {
-  long v;
-  int res = SWIG_AsVal_long (obj, &v);
-  if (SWIG_IsOK(res)) {
-    if ((v < SCHAR_MIN || v > SCHAR_MAX)) {
-      return SWIG_OverflowError;
-    } else {
-      if (val) *val = static_cast< signed char >(v);
-    }
-  }  
-  return res;
+  return ((value < LONG_MIN) || (value > LONG_MAX)) ?
+    PyLong_FromLongLong(value) : PyInt_FromLong(static_cast< long >(value));
 }
-
-
-SWIGINTERN int
-SWIG_AsVal_short (PyObject * obj, short *val)
-{
-  long v;
-  int res = SWIG_AsVal_long (obj, &v);
-  if (SWIG_IsOK(res)) {
-    if ((v < SHRT_MIN || v > SHRT_MAX)) {
-      return SWIG_OverflowError;
-    } else {
-      if (val) *val = static_cast< short >(v);
-    }
-  }  
-  return res;
-}
+#endif
 
 
 #ifdef SWIG_LONG_LONG_AVAILABLE
@@ -4196,6 +4188,41 @@ SWIG_AsVal_long_SS_long (PyObject *obj, long long *val)
   return res;
 }
 #endif
+
+SWIGINTERN double Seiscomp_Core_TimeSpan_toDouble(Seiscomp::Core::TimeSpan const *self){
+    return (double)(*self);
+  }
+
+SWIGINTERN int
+SWIG_AsVal_signed_SS_char (PyObject * obj, signed char *val)
+{
+  long v;
+  int res = SWIG_AsVal_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v < SCHAR_MIN || v > SCHAR_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< signed char >(v);
+    }
+  }  
+  return res;
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_short (PyObject * obj, short *val)
+{
+  long v;
+  int res = SWIG_AsVal_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v < SHRT_MIN || v > SHRT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< short >(v);
+    }
+  }  
+  return res;
+}
 
 
 /* Getting isfinite working pre C99 across multiple platforms is non-trivial. Users can provide SWIG_isfinite on older platforms. */
@@ -7051,7 +7078,7 @@ SWIGINTERN PyObject *Enumeration_swigregister(PyObject *SWIGUNUSEDPARM(self), Py
   return SWIG_Py_Void();
 }
 
-SWIGINTERN PyObject *_wrap___lshift__(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap___lshift____SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   std::ostream *arg1 = 0 ;
   Seiscomp::Core::Enumeration *arg2 = 0 ;
@@ -7059,11 +7086,10 @@ SWIGINTERN PyObject *_wrap___lshift__(PyObject *self, PyObject *args) {
   int res1 = 0 ;
   void *argp2 = 0 ;
   int res2 = 0 ;
-  PyObject *swig_obj[2] ;
   std::ostream *result = 0 ;
   
   (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "__lshift__", 2, 2, swig_obj)) SWIG_fail;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_std__ostream,  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "__lshift__" "', argument " "1"" of type '" "std::ostream &""'"); 
@@ -10504,30 +10530,58 @@ SWIGINTERN PyObject *Swig_var_CurrentVersion_get(void) {
 }
 
 
-SWIGINTERN int Swig_var_TimeSpan_MinTime_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable TimeSpan_MinTime is read-only.");
+SWIGINTERN int Swig_var_TimeSpan_MinSpan_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable TimeSpan_MinSpan is read-only.");
   return 1;
 }
 
 
-SWIGINTERN PyObject *Swig_var_TimeSpan_MinTime_get(void) {
+SWIGINTERN PyObject *Swig_var_TimeSpan_MinSpan_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_From_double(static_cast< double >(Seiscomp::Core::TimeSpan::MinTime));
+  pyobj = SWIG_From_double(static_cast< double >(Seiscomp::Core::TimeSpan::MinSpan));
   return pyobj;
 }
 
 
-SWIGINTERN int Swig_var_TimeSpan_MaxTime_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable TimeSpan_MaxTime is read-only.");
+SWIGINTERN int Swig_var_TimeSpan_MaxSpan_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable TimeSpan_MaxSpan is read-only.");
   return 1;
 }
 
 
-SWIGINTERN PyObject *Swig_var_TimeSpan_MaxTime_get(void) {
+SWIGINTERN PyObject *Swig_var_TimeSpan_MaxSpan_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_From_double(static_cast< double >(Seiscomp::Core::TimeSpan::MaxTime));
+  pyobj = SWIG_From_double(static_cast< double >(Seiscomp::Core::TimeSpan::MaxSpan));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_TimeSpan_MinSeconds_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable TimeSpan_MinSeconds is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_TimeSpan_MinSeconds_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_long_SS_long(static_cast< long long >(Seiscomp::Core::TimeSpan::MinSeconds));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_TimeSpan_MaxSeconds_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable TimeSpan_MaxSeconds is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_TimeSpan_MaxSeconds_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_long_SS_long(static_cast< long long >(Seiscomp::Core::TimeSpan::MaxSeconds));
   return pyobj;
 }
 
@@ -10560,157 +10614,6 @@ fail:
 
 
 SWIGINTERN PyObject *_wrap_new_TimeSpan__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  timeval *arg1 = (timeval *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  Seiscomp::Core::TimeSpan *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_timeval, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_TimeSpan" "', argument " "1"" of type '" "timeval *""'"); 
-  }
-  arg1 = reinterpret_cast< timeval * >(argp1);
-  {
-    try {
-      result = (Seiscomp::Core::TimeSpan *)new Seiscomp::Core::TimeSpan(arg1);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_TimeSpan__SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  timeval *arg1 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  Seiscomp::Core::TimeSpan *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_timeval,  0  | 0);
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_TimeSpan" "', argument " "1"" of type '" "timeval const &""'"); 
-  }
-  if (!argp1) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_TimeSpan" "', argument " "1"" of type '" "timeval const &""'"); 
-  }
-  arg1 = reinterpret_cast< timeval * >(argp1);
-  {
-    try {
-      result = (Seiscomp::Core::TimeSpan *)new Seiscomp::Core::TimeSpan((timeval const &)*arg1);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_TimeSpan__SWIG_3(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  double arg1 ;
-  double val1 ;
-  int ecode1 = 0 ;
-  Seiscomp::Core::TimeSpan *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_TimeSpan" "', argument " "1"" of type '" "double""'");
-  } 
-  arg1 = static_cast< double >(val1);
-  {
-    try {
-      result = (Seiscomp::Core::TimeSpan *)new Seiscomp::Core::TimeSpan(arg1);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_TimeSpan__SWIG_4(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  long arg1 ;
-  long arg2 ;
-  long val1 ;
-  int ecode1 = 0 ;
-  long val2 ;
-  int ecode2 = 0 ;
-  Seiscomp::Core::TimeSpan *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
-  ecode1 = SWIG_AsVal_long(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_TimeSpan" "', argument " "1"" of type '" "long""'");
-  } 
-  arg1 = static_cast< long >(val1);
-  ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_TimeSpan" "', argument " "2"" of type '" "long""'");
-  } 
-  arg2 = static_cast< long >(val2);
-  {
-    try {
-      result = (Seiscomp::Core::TimeSpan *)new Seiscomp::Core::TimeSpan(arg1,arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_TimeSpan__SWIG_5(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Core::TimeSpan *arg1 = 0 ;
   void *argp1 = 0 ;
@@ -10748,6 +10651,119 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_new_TimeSpan__SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan::Storage arg1 ;
+  Seiscomp::Core::TimeSpan::Storage arg2 ;
+  long long val1 ;
+  int ecode1 = 0 ;
+  long long val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_long_SS_long(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_TimeSpan" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan::Storage""'");
+  } 
+  arg1 = static_cast< Seiscomp::Core::TimeSpan::Storage >(val1);
+  ecode2 = SWIG_AsVal_long_SS_long(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_TimeSpan" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan::Storage""'");
+  } 
+  arg2 = static_cast< Seiscomp::Core::TimeSpan::Storage >(val2);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan *)new Seiscomp::Core::TimeSpan(arg1,arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_TimeSpan__SWIG_3(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan::Storage arg1 ;
+  long long val1 ;
+  int ecode1 = 0 ;
+  Seiscomp::Core::TimeSpan *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_long_SS_long(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_TimeSpan" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan::Storage""'");
+  } 
+  arg1 = static_cast< Seiscomp::Core::TimeSpan::Storage >(val1);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan *)new Seiscomp::Core::TimeSpan(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_TimeSpan__SWIG_4(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  Seiscomp::Core::TimeSpan *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_TimeSpan" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan *)new Seiscomp::Core::TimeSpan(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_new_TimeSpan(PyObject *self, PyObject *args) {
   Py_ssize_t argc;
   PyObject *argv[3] = {
@@ -10761,8 +10777,7 @@ SWIGINTERN PyObject *_wrap_new_TimeSpan(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_timeval, 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_new_TimeSpan__SWIG_1(self, argc, argv);
@@ -10770,18 +10785,12 @@ SWIGINTERN PyObject *_wrap_new_TimeSpan(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_timeval, SWIG_POINTER_NO_NULL | 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_new_TimeSpan__SWIG_2(self, argc, argv);
+    {
+      int res = SWIG_AsVal_long_SS_long(argv[0], NULL);
+      _v = SWIG_CheckState(res);
     }
-  }
-  if (argc == 1) {
-    int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_NO_NULL | 0);
-    _v = SWIG_CheckState(res);
     if (_v) {
-      return _wrap_new_TimeSpan__SWIG_5(self, argc, argv);
+      return _wrap_new_TimeSpan__SWIG_3(self, argc, argv);
     }
   }
   if (argc == 1) {
@@ -10791,22 +10800,22 @@ SWIGINTERN PyObject *_wrap_new_TimeSpan(PyObject *self, PyObject *args) {
       _v = SWIG_CheckState(res);
     }
     if (_v) {
-      return _wrap_new_TimeSpan__SWIG_3(self, argc, argv);
+      return _wrap_new_TimeSpan__SWIG_4(self, argc, argv);
     }
   }
   if (argc == 2) {
     int _v = 0;
     {
-      int res = SWIG_AsVal_long(argv[0], NULL);
+      int res = SWIG_AsVal_long_SS_long(argv[0], NULL);
       _v = SWIG_CheckState(res);
     }
     if (_v) {
       {
-        int res = SWIG_AsVal_long(argv[1], NULL);
+        int res = SWIG_AsVal_long_SS_long(argv[1], NULL);
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        return _wrap_new_TimeSpan__SWIG_4(self, argc, argv);
+        return _wrap_new_TimeSpan__SWIG_2(self, argc, argv);
       }
     }
   }
@@ -10815,11 +10824,10 @@ fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_TimeSpan'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::Core::TimeSpan::TimeSpan()\n"
-    "    Seiscomp::Core::TimeSpan::TimeSpan(timeval *)\n"
-    "    Seiscomp::Core::TimeSpan::TimeSpan(timeval const &)\n"
-    "    Seiscomp::Core::TimeSpan::TimeSpan(double)\n"
-    "    Seiscomp::Core::TimeSpan::TimeSpan(long,long)\n"
-    "    Seiscomp::Core::TimeSpan::TimeSpan(Seiscomp::Core::TimeSpan const &)\n");
+    "    Seiscomp::Core::TimeSpan::TimeSpan(Seiscomp::Core::TimeSpan const &)\n"
+    "    Seiscomp::Core::TimeSpan::TimeSpan(Seiscomp::Core::TimeSpan::Storage,Seiscomp::Core::TimeSpan::Storage)\n"
+    "    Seiscomp::Core::TimeSpan::TimeSpan(Seiscomp::Core::TimeSpan::Storage)\n"
+    "    Seiscomp::Core::TimeSpan::TimeSpan(double)\n");
   return 0;
 }
 
@@ -10928,58 +10936,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_TimeSpan___lt__(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
-  Seiscomp::Core::TimeSpan *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
-  bool result;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "TimeSpan___lt__", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___lt__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__TimeSpan,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TimeSpan___lt__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "TimeSpan___lt__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp2);
-  {
-    try {
-      result = (bool)((Seiscomp::Core::TimeSpan const *)arg1)->operator <((Seiscomp::Core::TimeSpan const &)*arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  return resultobj;
-fail:
-  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
-    return NULL;
-  }
-  PyErr_Clear();
-  SWIG_Py_INCREF(Py_NotImplemented);
-  return Py_NotImplemented;
-}
-
-
 SWIGINTERN PyObject *_wrap_TimeSpan___le__(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
@@ -11032,7 +10988,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_TimeSpan___gt__(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_TimeSpan___lt__(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
   Seiscomp::Core::TimeSpan *arg2 = 0 ;
@@ -11044,23 +11000,23 @@ SWIGINTERN PyObject *_wrap_TimeSpan___gt__(PyObject *self, PyObject *args) {
   bool result;
   
   (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "TimeSpan___gt__", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "TimeSpan___lt__", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___gt__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___lt__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__TimeSpan,  0  | 0);
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TimeSpan___gt__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TimeSpan___lt__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "TimeSpan___gt__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "TimeSpan___lt__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
   }
   arg2 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp2);
   {
     try {
-      result = (bool)((Seiscomp::Core::TimeSpan const *)arg1)->operator >((Seiscomp::Core::TimeSpan const &)*arg2);
+      result = (bool)((Seiscomp::Core::TimeSpan const *)arg1)->operator <((Seiscomp::Core::TimeSpan const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -11113,6 +11069,58 @@ SWIGINTERN PyObject *_wrap_TimeSpan___ge__(PyObject *self, PyObject *args) {
   {
     try {
       result = (bool)((Seiscomp::Core::TimeSpan const *)arg1)->operator >=((Seiscomp::Core::TimeSpan const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___gt__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  Seiscomp::Core::TimeSpan *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  bool result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "TimeSpan___gt__", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___gt__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__TimeSpan,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TimeSpan___gt__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "TimeSpan___gt__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp2);
+  {
+    try {
+      result = (bool)((Seiscomp::Core::TimeSpan const *)arg1)->operator >((Seiscomp::Core::TimeSpan const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -11240,6 +11248,456 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_TimeSpan___mul____SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan result;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___mul__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan___mul__" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  {
+    try {
+      result = ((Seiscomp::Core::TimeSpan const *)arg1)->operator *(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::TimeSpan(result)), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___mul____SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan result;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___mul__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan___mul__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  {
+    try {
+      result = ((Seiscomp::Core::TimeSpan const *)arg1)->operator *(SWIG_STD_MOVE(arg2));
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::TimeSpan(result)), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___mul____SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan result;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___mul__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan___mul__" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      result = ((Seiscomp::Core::TimeSpan const *)arg1)->operator *(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::TimeSpan(result)), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___mul__(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "TimeSpan___mul__", 0, 2, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_TimeSpan___mul____SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_TimeSpan___mul____SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_TimeSpan___mul____SWIG_2(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___truediv____SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan result;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___truediv__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan___truediv__" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  {
+    try {
+      result = ((Seiscomp::Core::TimeSpan const *)arg1)->operator /(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::TimeSpan(result)), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___truediv____SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan result;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___truediv__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan___truediv__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  {
+    try {
+      result = ((Seiscomp::Core::TimeSpan const *)arg1)->operator /(SWIG_STD_MOVE(arg2));
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::TimeSpan(result)), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___truediv____SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan result;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___truediv__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan___truediv__" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      result = ((Seiscomp::Core::TimeSpan const *)arg1)->operator /(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::TimeSpan(result)), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___truediv__(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "TimeSpan___truediv__", 0, 2, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_TimeSpan___truediv____SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_TimeSpan___truediv____SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_TimeSpan___truediv____SWIG_2(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___neg__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::TimeSpan result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___neg__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  {
+    try {
+      result = ((Seiscomp::Core::TimeSpan const *)arg1)->operator -();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::TimeSpan(result)), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
 SWIGINTERN PyObject *_wrap_TimeSpan___iadd__(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
@@ -11334,6 +11792,577 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_TimeSpan___imul____SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___imul__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan___imul__" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan *) &(arg1)->operator *=(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___imul____SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___imul__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan___imul__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan *) &(arg1)->operator *=(SWIG_STD_MOVE(arg2));
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___imul____SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___imul__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan___imul__" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan *) &(arg1)->operator *=(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___imul__(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "TimeSpan___imul__", 0, 2, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_TimeSpan___imul____SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_TimeSpan___imul____SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_TimeSpan___imul____SWIG_2(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'TimeSpan___imul__'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Core::TimeSpan::operator *=(int)\n"
+    "    Seiscomp::Core::TimeSpan::operator *=(size_t)\n"
+    "    Seiscomp::Core::TimeSpan::operator *=(double)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___itruediv____SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___itruediv__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan___itruediv__" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan *) &(arg1)->operator /=(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___itruediv____SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___itruediv__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan___itruediv__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan *) &(arg1)->operator /=(SWIG_STD_MOVE(arg2));
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___itruediv____SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  double arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___itruediv__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan___itruediv__" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan *) &(arg1)->operator /=(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___itruediv__(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "TimeSpan___itruediv__", 0, 2, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_TimeSpan___itruediv____SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_TimeSpan___itruediv____SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_TimeSpan___itruediv____SWIG_2(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'TimeSpan___itruediv__'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Core::TimeSpan::operator /=(int)\n"
+    "    Seiscomp::Core::TimeSpan::operator /=(size_t)\n"
+    "    Seiscomp::Core::TimeSpan::operator /=(double)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan___nonzero__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  bool result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan___nonzero__" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  {
+    try {
+      result = (bool)((Seiscomp::Core::TimeSpan const *)arg1)->operator bool();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan_repr(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::TimeSpan::Duration *result = 0 ;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_repr" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan::Duration *) &((Seiscomp::Core::TimeSpan const *)arg1)->repr();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__chrono__durationT_Seiscomp__Core__TimeSpan__Storage_std__micro_t, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan_seconds(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::TimeSpan::Storage result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_seconds" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan::Storage)((Seiscomp::Core::TimeSpan const *)arg1)->seconds();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_long_SS_long(static_cast< long long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan_microseconds(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::TimeSpan::Storage result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_microseconds" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan::Storage)((Seiscomp::Core::TimeSpan const *)arg1)->microseconds();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_long_SS_long(static_cast< long long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan_count(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::TimeSpan::Storage result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_count" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan::Storage)((Seiscomp::Core::TimeSpan const *)arg1)->count();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_long_SS_long(static_cast< long long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_TimeSpan_abs(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
@@ -11371,140 +12400,79 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_TimeSpan_seconds(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_TimeSpan_set__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  Seiscomp::Core::TimeSpan::Storage arg2 ;
+  Seiscomp::Core::TimeSpan::Storage arg3 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  long result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_seconds" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
-  {
-    try {
-      result = (long)((Seiscomp::Core::TimeSpan const *)arg1)->seconds();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_long(static_cast< long >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_TimeSpan_microseconds(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  long result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_microseconds" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
-  {
-    try {
-      result = (long)((Seiscomp::Core::TimeSpan const *)arg1)->microseconds();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_long(static_cast< long >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_TimeSpan_length(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  double result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_length" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
-  {
-    try {
-      result = (double)((Seiscomp::Core::TimeSpan const *)arg1)->length();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_TimeSpan_set(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
-  long arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  long val2 ;
+  long long val2 ;
   int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
+  long long val3 ;
+  int ecode3 = 0 ;
   Seiscomp::Core::TimeSpan *result = 0 ;
   
   (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "TimeSpan_set", 2, 2, swig_obj)) SWIG_fail;
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_set" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
-  ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
+  ecode2 = SWIG_AsVal_long_SS_long(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan_set" "', argument " "2"" of type '" "long""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan_set" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan::Storage""'");
   } 
-  arg2 = static_cast< long >(val2);
+  arg2 = static_cast< Seiscomp::Core::TimeSpan::Storage >(val2);
+  ecode3 = SWIG_AsVal_long_SS_long(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "TimeSpan_set" "', argument " "3"" of type '" "Seiscomp::Core::TimeSpan::Storage""'");
+  } 
+  arg3 = static_cast< Seiscomp::Core::TimeSpan::Storage >(val3);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan *) &(arg1)->set(arg2,arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan_set__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  Seiscomp::Core::TimeSpan::Storage arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long long val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::TimeSpan *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_set" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_long_SS_long(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan_set" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan::Storage""'");
+  } 
+  arg2 = static_cast< Seiscomp::Core::TimeSpan::Storage >(val2);
   {
     try {
       result = (Seiscomp::Core::TimeSpan *) &(arg1)->set(arg2);
@@ -11526,32 +12494,108 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_TimeSpan_setUSecs(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_TimeSpan_set(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[4] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "TimeSpan_set", 0, 3, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_long_SS_long(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_TimeSpan_set__SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_long_SS_long(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_long_SS_long(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_TimeSpan_set__SWIG_0(self, argc, argv);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'TimeSpan_set'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Core::TimeSpan::set(Seiscomp::Core::TimeSpan::Storage,Seiscomp::Core::TimeSpan::Storage)\n"
+    "    Seiscomp::Core::TimeSpan::set(Seiscomp::Core::TimeSpan::Storage)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan_get__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
-  long arg2 ;
+  int *arg2 = (int *) 0 ;
+  int *arg3 = (int *) 0 ;
+  int *arg4 = (int *) 0 ;
+  int *arg5 = (int *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  long val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  Seiscomp::Core::TimeSpan *result = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  void *argp5 = 0 ;
+  int res5 = 0 ;
   
   (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "TimeSpan_setUSecs", 2, 2, swig_obj)) SWIG_fail;
+  if ((nobjs < 5) || (nobjs > 5)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_setUSecs" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_get" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
-  ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan_setUSecs" "', argument " "2"" of type '" "long""'");
-  } 
-  arg2 = static_cast< long >(val2);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_int, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TimeSpan_get" "', argument " "2"" of type '" "int *""'"); 
+  }
+  arg2 = reinterpret_cast< int * >(argp2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_int, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "TimeSpan_get" "', argument " "3"" of type '" "int *""'"); 
+  }
+  arg3 = reinterpret_cast< int * >(argp3);
+  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4,SWIGTYPE_p_int, 0 |  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "TimeSpan_get" "', argument " "4"" of type '" "int *""'"); 
+  }
+  arg4 = reinterpret_cast< int * >(argp4);
+  res5 = SWIG_ConvertPtr(swig_obj[4], &argp5,SWIGTYPE_p_int, 0 |  0 );
+  if (!SWIG_IsOK(res5)) {
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "TimeSpan_get" "', argument " "5"" of type '" "int *""'"); 
+  }
+  arg5 = reinterpret_cast< int * >(argp5);
   {
     try {
-      result = (Seiscomp::Core::TimeSpan *) &(arg1)->setUSecs(arg2);
+      ((Seiscomp::Core::TimeSpan const *)arg1)->get(arg2,arg3,arg4,arg5);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -11563,10 +12607,266 @@ SWIGINTERN PyObject *_wrap_TimeSpan_setUSecs(PyObject *self, PyObject *args) {
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan_get__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  int *arg2 = (int *) 0 ;
+  int *arg3 = (int *) 0 ;
+  int *arg4 = (int *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  
+  (void)self;
+  if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_get" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_int, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TimeSpan_get" "', argument " "2"" of type '" "int *""'"); 
+  }
+  arg2 = reinterpret_cast< int * >(argp2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_int, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "TimeSpan_get" "', argument " "3"" of type '" "int *""'"); 
+  }
+  arg3 = reinterpret_cast< int * >(argp3);
+  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4,SWIGTYPE_p_int, 0 |  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "TimeSpan_get" "', argument " "4"" of type '" "int *""'"); 
+  }
+  arg4 = reinterpret_cast< int * >(argp4);
+  {
+    try {
+      ((Seiscomp::Core::TimeSpan const *)arg1)->get(arg2,arg3,arg4);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan_get__SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  int *arg2 = (int *) 0 ;
+  int *arg3 = (int *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  
+  (void)self;
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_get" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_int, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TimeSpan_get" "', argument " "2"" of type '" "int *""'"); 
+  }
+  arg2 = reinterpret_cast< int * >(argp2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_int, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "TimeSpan_get" "', argument " "3"" of type '" "int *""'"); 
+  }
+  arg3 = reinterpret_cast< int * >(argp3);
+  {
+    try {
+      ((Seiscomp::Core::TimeSpan const *)arg1)->get(arg2,arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan_get__SWIG_3(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  int *arg2 = (int *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_get" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_int, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TimeSpan_get" "', argument " "2"" of type '" "int *""'"); 
+  }
+  arg2 = reinterpret_cast< int * >(argp2);
+  {
+    try {
+      ((Seiscomp::Core::TimeSpan const *)arg1)->get(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan_get(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[6] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "TimeSpan_get", 0, 5, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_int, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_TimeSpan_get__SWIG_3(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_int, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_int, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_TimeSpan_get__SWIG_2(self, argc, argv);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_int, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_int, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          void *vptr = 0;
+          int res = SWIG_ConvertPtr(argv[3], &vptr, SWIGTYPE_p_int, 0);
+          _v = SWIG_CheckState(res);
+          if (_v) {
+            return _wrap_TimeSpan_get__SWIG_1(self, argc, argv);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_int, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_int, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          void *vptr = 0;
+          int res = SWIG_ConvertPtr(argv[3], &vptr, SWIGTYPE_p_int, 0);
+          _v = SWIG_CheckState(res);
+          if (_v) {
+            void *vptr = 0;
+            int res = SWIG_ConvertPtr(argv[4], &vptr, SWIGTYPE_p_int, 0);
+            _v = SWIG_CheckState(res);
+            if (_v) {
+              return _wrap_TimeSpan_get__SWIG_0(self, argc, argv);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'TimeSpan_get'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Core::TimeSpan::get(int *,int *,int *,int *) const\n"
+    "    Seiscomp::Core::TimeSpan::get(int *,int *,int *) const\n"
+    "    Seiscomp::Core::TimeSpan::get(int *,int *) const\n"
+    "    Seiscomp::Core::TimeSpan::get(int *) const\n");
+  return 0;
 }
 
 
@@ -11892,6 +13192,175 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_TimeSpan_setUSecs(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  Seiscomp::Core::TimeSpan::Storage arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long long val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  Seiscomp::Core::TimeSpan *result = 0 ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "TimeSpan_setUSecs", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_setUSecs" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  ecode2 = SWIG_AsVal_long_SS_long(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TimeSpan_setUSecs" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan::Storage""'");
+  } 
+  arg2 = static_cast< Seiscomp::Core::TimeSpan::Storage >(val2);
+  {
+    try {
+      result = (Seiscomp::Core::TimeSpan *) &(arg1)->setUSecs(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan_length(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  double result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_length" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  {
+    try {
+      result = (double)((Seiscomp::Core::TimeSpan const *)arg1)->length();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan_toString(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::string result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_toString" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  {
+    try {
+      result = ((Seiscomp::Core::TimeSpan const *)arg1)->toString();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TimeSpan_fromString(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  bool result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "TimeSpan_fromString", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__TimeSpan, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TimeSpan_fromString" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TimeSpan_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "TimeSpan_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = (bool)(arg1)->fromString((std::string const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_TimeSpan_toDouble(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
@@ -11976,8 +13445,78 @@ SWIGINTERN PyObject *TimeSpan_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject 
   return SWIG_Python_InitShadowInstance(args);
 }
 
-SWIGINTERN int Swig_var_Time_Null_set(PyObject *) {
-  SWIG_Error(SWIG_AttributeError,"Variable Time_Null is read-only.");
+SWIGINTERN PyObject *_wrap___lshift____SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  std::ostream *arg1 = 0 ;
+  Seiscomp::Core::TimeSpan *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  std::ostream *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_std__ostream,  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "__lshift__" "', argument " "1"" of type '" "std::ostream &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "__lshift__" "', argument " "1"" of type '" "std::ostream &""'"); 
+  }
+  arg1 = reinterpret_cast< std::ostream * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__TimeSpan,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "__lshift__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "__lshift__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp2);
+  {
+    try {
+      result = (std::ostream *) &Seiscomp::Core::operator <<(*arg1,(Seiscomp::Core::TimeSpan const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__ostream, 0 |  0 );
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN int Swig_var_Time_Null_set(PyObject *_val) {
+  {
+    void *argp = 0;
+    int res = SWIG_ConvertPtr(_val, &argp, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""Seiscomp::Core::Time::Null""' of type '""Seiscomp::Core::Time""'");
+    }
+    if (!argp) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in variable '""Seiscomp::Core::Time::Null""' of type '""Seiscomp::Core::Time""'");
+    } else {
+      Seiscomp::Core::Time * temp;
+      temp  = reinterpret_cast< Seiscomp::Core::Time * >(argp);
+      Seiscomp::Core::Time::Null = *temp;
+      if (SWIG_IsNewObj(res)) delete temp;
+    }
+  }
+  return 0;
+fail:
   return 1;
 }
 
@@ -11987,6 +13526,19 @@ SWIGINTERN PyObject *Swig_var_Time_Null_get(void) {
   
   pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&Seiscomp::Core::Time::Null), SWIGTYPE_p_Seiscomp__Core__Time,  0 );
   return pyobj;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_Null_get(PyObject *SWIGUNUSEDPARM(self), PyObject *SWIGUNUSEDPARM(args)) {
+  return Swig_var_Time_Null_get();
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_Null_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  int res;
+  
+  res = Swig_var_Time_Null_set(args);
+  return !res ? SWIG_Py_Void() : NULL;
 }
 
 
@@ -12019,26 +13571,102 @@ fail:
 
 SWIGINTERN PyObject *_wrap_new_Time__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  long arg1 ;
-  long arg2 ;
-  long val1 ;
+  Seiscomp::Core::Time *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  Seiscomp::Core::Time *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Time" "', argument " "1"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_Time" "', argument " "1"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Core::Time *)new Seiscomp::Core::Time((Seiscomp::Core::Time const &)*arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_Time__SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time::TimePoint *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  Seiscomp::Core::Time *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Time" "', argument " "1"" of type '" "Seiscomp::Core::Time::TimePoint const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_Time" "', argument " "1"" of type '" "Seiscomp::Core::Time::TimePoint const &""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time::TimePoint * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Core::Time *)new Seiscomp::Core::Time((Seiscomp::Core::Time::TimePoint const &)*arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_Time__SWIG_3(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time::Storage arg1 ;
+  Seiscomp::Core::Time::Storage arg2 ;
+  long long val1 ;
   int ecode1 = 0 ;
-  long val2 ;
+  long long val2 ;
   int ecode2 = 0 ;
   Seiscomp::Core::Time *result = 0 ;
   
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
-  ecode1 = SWIG_AsVal_long(swig_obj[0], &val1);
+  ecode1 = SWIG_AsVal_long_SS_long(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_Time" "', argument " "1"" of type '" "long""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_Time" "', argument " "1"" of type '" "Seiscomp::Core::Time::Storage""'");
   } 
-  arg1 = static_cast< long >(val1);
-  ecode2 = SWIG_AsVal_long(swig_obj[1], &val2);
+  arg1 = static_cast< Seiscomp::Core::Time::Storage >(val1);
+  ecode2 = SWIG_AsVal_long_SS_long(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_Time" "', argument " "2"" of type '" "long""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_Time" "', argument " "2"" of type '" "Seiscomp::Core::Time::Storage""'");
   } 
-  arg2 = static_cast< long >(val2);
+  arg2 = static_cast< Seiscomp::Core::Time::Storage >(val2);
   {
     try {
       result = (Seiscomp::Core::Time *)new Seiscomp::Core::Time(arg1,arg2);
@@ -12060,96 +13688,20 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new_Time__SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::TimeSpan *arg1 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  Seiscomp::Core::Time *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__TimeSpan,  0  | 0);
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Time" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
-  }
-  if (!argp1) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_Time" "', argument " "1"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
-  {
-    try {
-      result = (Seiscomp::Core::Time *)new Seiscomp::Core::Time((Seiscomp::Core::TimeSpan const &)*arg1);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_Time__SWIG_3(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  timeval *arg1 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  Seiscomp::Core::Time *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_timeval,  0  | 0);
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Time" "', argument " "1"" of type '" "timeval const &""'"); 
-  }
-  if (!argp1) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_Time" "', argument " "1"" of type '" "timeval const &""'"); 
-  }
-  arg1 = reinterpret_cast< timeval * >(argp1);
-  {
-    try {
-      result = (Seiscomp::Core::Time *)new Seiscomp::Core::Time((timeval const &)*arg1);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_new_Time__SWIG_4(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  timeval *arg1 = (timeval *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  Seiscomp::Core::Time::Storage arg1 ;
+  long long val1 ;
+  int ecode1 = 0 ;
   Seiscomp::Core::Time *result = 0 ;
   
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_timeval, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Time" "', argument " "1"" of type '" "timeval *""'"); 
-  }
-  arg1 = reinterpret_cast< timeval * >(argp1);
+  ecode1 = SWIG_AsVal_long_SS_long(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_Time" "', argument " "1"" of type '" "Seiscomp::Core::Time::Storage""'");
+  } 
+  arg1 = static_cast< Seiscomp::Core::Time::Storage >(val1);
   {
     try {
       result = (Seiscomp::Core::Time *)new Seiscomp::Core::Time(arg1);
@@ -12541,44 +14093,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new_Time__SWIG_11(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::Time *arg1 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  Seiscomp::Core::Time *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Time" "', argument " "1"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  if (!argp1) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_Time" "', argument " "1"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
-  {
-    try {
-      result = (Seiscomp::Core::Time *)new Seiscomp::Core::Time((Seiscomp::Core::Time const &)*arg1);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_new_Time(PyObject *self, PyObject *args) {
   Py_ssize_t argc;
   PyObject *argv[8] = {
@@ -12595,32 +14109,25 @@ SWIGINTERN PyObject *_wrap_new_Time(PyObject *self, PyObject *args) {
     int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      return _wrap_new_Time__SWIG_11(self, argc, argv);
+      return _wrap_new_Time__SWIG_1(self, argc, argv);
     }
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_timeval, SWIG_POINTER_NO_NULL | 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_new_Time__SWIG_3(self, argc, argv);
-    }
-  }
-  if (argc == 1) {
-    int _v = 0;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_timeval, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_new_Time__SWIG_4(self, argc, argv);
-    }
-  }
-  if (argc == 1) {
-    int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_new_Time__SWIG_2(self, argc, argv);
+    }
+  }
+  if (argc == 1) {
+    int _v = 0;
+    {
+      int res = SWIG_AsVal_long_SS_long(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_Time__SWIG_4(self, argc, argv);
     }
   }
   if (argc == 1) {
@@ -12636,16 +14143,16 @@ SWIGINTERN PyObject *_wrap_new_Time(PyObject *self, PyObject *args) {
   if (argc == 2) {
     int _v = 0;
     {
-      int res = SWIG_AsVal_long(argv[0], NULL);
+      int res = SWIG_AsVal_long_SS_long(argv[0], NULL);
       _v = SWIG_CheckState(res);
     }
     if (_v) {
       {
-        int res = SWIG_AsVal_long(argv[1], NULL);
+        int res = SWIG_AsVal_long_SS_long(argv[1], NULL);
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        return _wrap_new_Time__SWIG_1(self, argc, argv);
+        return _wrap_new_Time__SWIG_3(self, argc, argv);
       }
     }
   }
@@ -12824,40 +14331,49 @@ fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_Time'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::Core::Time::Time()\n"
-    "    Seiscomp::Core::Time::Time(long,long)\n"
-    "    Seiscomp::Core::Time::Time(Seiscomp::Core::TimeSpan const &)\n"
-    "    Seiscomp::Core::Time::Time(timeval const &)\n"
-    "    Seiscomp::Core::Time::Time(timeval *)\n"
+    "    Seiscomp::Core::Time::Time(Seiscomp::Core::Time const &)\n"
+    "    Seiscomp::Core::Time::Time(Seiscomp::Core::Time::TimePoint const &)\n"
+    "    Seiscomp::Core::Time::Time(Seiscomp::Core::Time::Storage,Seiscomp::Core::Time::Storage)\n"
+    "    Seiscomp::Core::Time::Time(Seiscomp::Core::Time::Storage)\n"
     "    Seiscomp::Core::Time::Time(double)\n"
     "    Seiscomp::Core::Time::Time(int,int,int,int,int,int,int)\n"
     "    Seiscomp::Core::Time::Time(int,int,int,int,int,int)\n"
     "    Seiscomp::Core::Time::Time(int,int,int,int,int)\n"
     "    Seiscomp::Core::Time::Time(int,int,int,int)\n"
-    "    Seiscomp::Core::Time::Time(int,int,int)\n"
-    "    Seiscomp::Core::Time::Time(Seiscomp::Core::Time const &)\n");
+    "    Seiscomp::Core::Time::Time(int,int,int)\n");
   return 0;
 }
 
 
-SWIGINTERN PyObject *_wrap_Time___nonzero__(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_Time___eq__(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  Seiscomp::Core::Time *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  PyObject *swig_obj[1] ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
   bool result;
   
   (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
+  if (!SWIG_Python_UnpackTuple(args, "Time___eq__", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time___nonzero__" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time___eq__" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time___eq__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time___eq__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
   {
     try {
-      result = (bool)((Seiscomp::Core::Time const *)arg1)->operator bool();
+      result = (bool)((Seiscomp::Core::Time const *)arg1)->operator ==((Seiscomp::Core::Time const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -12870,6 +14386,365 @@ SWIGINTERN PyObject *_wrap_Time___nonzero__(PyObject *self, PyObject *args) {
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time___ne__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  Seiscomp::Core::Time *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  bool result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time___ne__", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time___ne__" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time___ne__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time___ne__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
+  {
+    try {
+      result = (bool)((Seiscomp::Core::Time const *)arg1)->operator !=((Seiscomp::Core::Time const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time___lt__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  Seiscomp::Core::Time *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  bool result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time___lt__", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time___lt__" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time___lt__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time___lt__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
+  {
+    try {
+      result = (bool)((Seiscomp::Core::Time const *)arg1)->operator <((Seiscomp::Core::Time const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time___le__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  Seiscomp::Core::Time *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  bool result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time___le__", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time___le__" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time___le__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time___le__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
+  {
+    try {
+      result = (bool)((Seiscomp::Core::Time const *)arg1)->operator <=((Seiscomp::Core::Time const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time___gt__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  Seiscomp::Core::Time *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  bool result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time___gt__", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time___gt__" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time___gt__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time___gt__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
+  {
+    try {
+      result = (bool)((Seiscomp::Core::Time const *)arg1)->operator >((Seiscomp::Core::Time const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time___ge__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  Seiscomp::Core::Time *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  bool result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time___ge__", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time___ge__" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time___ge__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time___ge__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
+  {
+    try {
+      result = (bool)((Seiscomp::Core::Time const *)arg1)->operator >=((Seiscomp::Core::Time const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time___iadd__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  Seiscomp::Core::TimeSpan *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  Seiscomp::Core::Time *result = 0 ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time___iadd__", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time___iadd__" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__TimeSpan,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time___iadd__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time___iadd__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp2);
+  {
+    try {
+      result = (Seiscomp::Core::Time *) &(arg1)->operator +=((Seiscomp::Core::TimeSpan const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time___isub__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  Seiscomp::Core::TimeSpan *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  Seiscomp::Core::Time *result = 0 ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time___isub__", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time___isub__" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__TimeSpan,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time___isub__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time___isub__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp2);
+  {
+    try {
+      result = (Seiscomp::Core::Time *) &(arg1)->operator -=((Seiscomp::Core::TimeSpan const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -13044,10 +14919,10 @@ SWIGINTERN PyObject *_wrap_Time___sub__(PyObject *self, PyObject *args) {
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__Time, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_NO_NULL | 0);
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_Time___sub____SWIG_1(self, argc, argv);
+        return _wrap_Time___sub____SWIG_0(self, argc, argv);
       }
     }
   }
@@ -13057,10 +14932,10 @@ SWIGINTERN PyObject *_wrap_Time___sub__(PyObject *self, PyObject *args) {
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__Time, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_NO_NULL | 0);
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_Time___sub____SWIG_0(self, argc, argv);
+        return _wrap_Time___sub____SWIG_1(self, argc, argv);
       }
     }
   }
@@ -13071,35 +14946,25 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Time___iadd__(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_Time___nonzero__(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
-  Seiscomp::Core::TimeSpan *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
-  Seiscomp::Core::Time *result = 0 ;
+  PyObject *swig_obj[1] ;
+  bool result;
   
   (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "Time___iadd__", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_DISOWN |  0 );
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time___iadd__" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time___nonzero__" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__TimeSpan,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time___iadd__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time___iadd__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp2);
   {
     try {
-      result = (Seiscomp::Core::Time *) &(arg1)->operator +=((Seiscomp::Core::TimeSpan const &)*arg2);
+      result = (bool)((Seiscomp::Core::Time const *)arg1)->operator bool();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13111,42 +14976,32 @@ SWIGINTERN PyObject *_wrap_Time___iadd__(PyObject *self, PyObject *args) {
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
   return resultobj;
 fail:
   return NULL;
 }
 
 
-SWIGINTERN PyObject *_wrap_Time___isub__(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_Time_repr(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
-  Seiscomp::Core::TimeSpan *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
-  Seiscomp::Core::Time *result = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::Time::TimePoint *result = 0 ;
   
   (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "Time___isub__", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_DISOWN |  0 );
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time___isub__" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_repr" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__TimeSpan,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time___isub__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time___isub__" "', argument " "2"" of type '" "Seiscomp::Core::TimeSpan const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp2);
   {
     try {
-      result = (Seiscomp::Core::Time *) &(arg1)->operator -=((Seiscomp::Core::TimeSpan const &)*arg2);
+      result = (Seiscomp::Core::Time::TimePoint *) &((Seiscomp::Core::Time const *)arg1)->repr();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13158,7 +15013,44 @@ SWIGINTERN PyObject *_wrap_Time___isub__(PyObject *self, PyObject *args) {
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_valid(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  bool result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_valid" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  {
+    try {
+      result = (bool)((Seiscomp::Core::Time const *)arg1)->valid();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
   return resultobj;
 fail:
   return NULL;
@@ -13239,90 +15131,6 @@ SWIGINTERN PyObject *_wrap_Time_set(PyObject *self, PyObject *args) {
   {
     try {
       result = (Seiscomp::Core::Time *) &(arg1)->set(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_set2(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  int arg5 ;
-  int arg6 ;
-  int arg7 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
-  int val6 ;
-  int ecode6 = 0 ;
-  int val7 ;
-  int ecode7 = 0 ;
-  PyObject *swig_obj[7] ;
-  Seiscomp::Core::Time *result = 0 ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "Time_set2", 7, 7, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_set2" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Time_set2" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Time_set2" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  ecode4 = SWIG_AsVal_int(swig_obj[3], &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Time_set2" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(swig_obj[4], &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Time_set2" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
-  ecode6 = SWIG_AsVal_int(swig_obj[5], &val6);
-  if (!SWIG_IsOK(ecode6)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Time_set2" "', argument " "6"" of type '" "int""'");
-  } 
-  arg6 = static_cast< int >(val6);
-  ecode7 = SWIG_AsVal_int(swig_obj[6], &val7);
-  if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "Time_set2" "', argument " "7"" of type '" "int""'");
-  } 
-  arg7 = static_cast< int >(val7);
-  {
-    try {
-      result = (Seiscomp::Core::Time *) &(arg1)->set2(arg2,arg3,arg4,arg5,arg6,arg7);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13952,6 +15760,90 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Time_set2(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  int arg6 ;
+  int arg7 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  int val3 ;
+  int ecode3 = 0 ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  int val6 ;
+  int ecode6 = 0 ;
+  int val7 ;
+  int ecode7 = 0 ;
+  PyObject *swig_obj[7] ;
+  Seiscomp::Core::Time *result = 0 ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time_set2", 7, 7, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_set2" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Time_set2" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Time_set2" "', argument " "3"" of type '" "int""'");
+  } 
+  arg3 = static_cast< int >(val3);
+  ecode4 = SWIG_AsVal_int(swig_obj[3], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Time_set2" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(swig_obj[4], &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Time_set2" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  ecode6 = SWIG_AsVal_int(swig_obj[5], &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Time_set2" "', argument " "6"" of type '" "int""'");
+  } 
+  arg6 = static_cast< int >(val6);
+  ecode7 = SWIG_AsVal_int(swig_obj[6], &val7);
+  if (!SWIG_IsOK(ecode7)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "Time_set2" "', argument " "7"" of type '" "int""'");
+  } 
+  arg7 = static_cast< int >(val7);
+  {
+    try {
+      result = (Seiscomp::Core::Time *) &(arg1)->set2(arg2,arg3,arg4,arg5,arg6,arg7);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Time_get2__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
@@ -14448,270 +16340,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Time_epoch(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  double result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_epoch" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
-  {
-    try {
-      result = (double)((Seiscomp::Core::Time const *)arg1)->epoch();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_double(static_cast< double >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_epochSeconds(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  long result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_epochSeconds" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
-  {
-    try {
-      result = (long)((Seiscomp::Core::Time const *)arg1)->epochSeconds();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_long(static_cast< long >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_LocalTime(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::Time result;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "Time_LocalTime", 0, 0, 0)) SWIG_fail;
-  {
-    try {
-      result = Seiscomp::Core::Time::LocalTime();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_LocalTimeZone(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  std::string result;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "Time_LocalTimeZone", 0, 0, 0)) SWIG_fail;
-  {
-    try {
-      result = Seiscomp::Core::Time::LocalTimeZone();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_UTC(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::Time result;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "Time_UTC", 0, 0, 0)) SWIG_fail;
-  {
-    try {
-      result = Seiscomp::Core::Time::UTC();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_GMT(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::Time result;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "Time_GMT", 0, 0, 0)) SWIG_fail;
-  {
-    try {
-      result = Seiscomp::Core::Time::GMT();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_FromYearDay(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  int arg1 ;
-  int arg2 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  Seiscomp::Core::Time result;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "Time_FromYearDay", 2, 2, swig_obj)) SWIG_fail;
-  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "Time_FromYearDay" "', argument " "1"" of type '" "int""'");
-  } 
-  arg1 = static_cast< int >(val1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Time_FromYearDay" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  {
-    try {
-      result = Seiscomp::Core::Time::FromYearDay(arg1,arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_localTimeZoneOffset(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  Seiscomp::Core::TimeSpan result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_localTimeZoneOffset" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
-  {
-    try {
-      result = ((Seiscomp::Core::Time const *)arg1)->localTimeZoneOffset();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::TimeSpan(result)), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_localtime(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_Time_now(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
   void *argp1 = 0 ;
@@ -14724,12 +16353,49 @@ SWIGINTERN PyObject *_wrap_Time_localtime(PyObject *self, PyObject *args) {
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_localtime" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_now" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
   {
     try {
-      result = (Seiscomp::Core::Time *) &(arg1)->localtime();
+      result = (Seiscomp::Core::Time *) &(arg1)->now();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_gmt(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::Time *result = 0 ;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_gmt" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Core::Time *) &(arg1)->gmt();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -14785,25 +16451,709 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Time_gmt(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_Time_iso(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  Seiscomp::Core::Time *result = 0 ;
+  std::string result;
   
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_gmt" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_iso" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
   {
     try {
-      result = (Seiscomp::Core::Time *) &(arg1)->gmt();
+      result = ((Seiscomp::Core::Time const *)arg1)->iso();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_toString(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  char *arg2 = (char *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject *swig_obj[2] ;
+  std::string result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time_toString", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_toString" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_toString" "', argument " "2"" of type '" "char const *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  {
+    try {
+      result = ((Seiscomp::Core::Time const *)arg1)->toString((char const *)arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_toLocalString(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  char *arg2 = (char *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject *swig_obj[2] ;
+  std::string result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time_toLocalString", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_toLocalString" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_toLocalString" "', argument " "2"" of type '" "char const *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  {
+    try {
+      result = ((Seiscomp::Core::Time const *)arg1)->toLocalString((char const *)arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_toZonedString(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  char *arg2 = (char *) 0 ;
+  std::string *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  int res3 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[3] ;
+  std::string result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time_toZonedString", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_toZonedString" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_toZonedString" "', argument " "2"" of type '" "char const *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  {
+    std::string *ptr = (std::string *)0;
+    res3 = SWIG_AsPtr_std_string(swig_obj[2], &ptr);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Time_toZonedString" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time_toZonedString" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    arg3 = ptr;
+  }
+  {
+    try {
+      result = ((Seiscomp::Core::Time const *)arg1)->toZonedString((char const *)arg2,(std::string const &)*arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_fromString__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  bool result;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_fromString" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = (bool)(arg1)->fromString((std::string const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_fromString__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  std::string *arg2 = 0 ;
+  char *arg3 = (char *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  int res3 ;
+  char *buf3 = 0 ;
+  int alloc3 = 0 ;
+  bool result;
+  
+  (void)self;
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_fromString" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  res3 = SWIG_AsCharPtrAndSize(swig_obj[2], &buf3, NULL, &alloc3);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Time_fromString" "', argument " "3"" of type '" "char const *""'");
+  }
+  arg3 = reinterpret_cast< char * >(buf3);
+  {
+    try {
+      result = (bool)(arg1)->fromString((std::string const &)*arg2,(char const *)arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_fromString(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[4] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "Time_fromString", 0, 3, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__Time, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_Time_fromString__SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__Time, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        int res = SWIG_AsCharPtrAndSize(argv[2], 0, NULL, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_Time_fromString__SWIG_1(self, argc, argv);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Time_fromString'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Core::Time::fromString(std::string const &)\n"
+    "    Seiscomp::Core::Time::fromString(std::string const &,char const *)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_FromString__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  std::string *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  Seiscomp::Core::Time result;
+  
+  (void)self;
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  {
+    std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_FromString" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time_FromString" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  {
+    try {
+      result = Seiscomp::Core::Time::FromString((std::string const &)*arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_FromString__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  std::string *arg1 = 0 ;
+  char *arg2 = (char *) 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  Seiscomp::Core::Time result;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  {
+    std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_FromString" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time_FromString" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_FromString" "', argument " "2"" of type '" "char const *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  {
+    try {
+      result = Seiscomp::Core::Time::FromString((std::string const &)*arg1,(char const *)arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_FromString(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "Time_FromString", 0, 2, argv))) SWIG_fail;
+  --argc;
+  if (argc == 1) {
+    int _v = 0;
+    int res = SWIG_AsPtr_std_string(argv[0], (std::string**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_Time_FromString__SWIG_0(self, argc, argv);
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    int res = SWIG_AsPtr_std_string(argv[0], (std::string**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsCharPtrAndSize(argv[1], 0, NULL, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_Time_FromString__SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Time_FromString'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Core::Time::FromString(std::string const &)\n"
+    "    Seiscomp::Core::Time::FromString(std::string const &,char const *)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_FromYearDay(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  int arg2 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  Seiscomp::Core::Time result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time_FromYearDay", 2, 2, swig_obj)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "Time_FromYearDay" "', argument " "1"" of type '" "int""'");
+  } 
+  arg1 = static_cast< int >(val1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Time_FromYearDay" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  {
+    try {
+      result = Seiscomp::Core::Time::FromYearDay(arg1,arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_seconds(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::Time::Storage result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_seconds" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Core::Time::Storage)((Seiscomp::Core::Time const *)arg1)->seconds();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_long_SS_long(static_cast< long long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_epochSeconds(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Core::Time::Storage result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_epochSeconds" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Core::Time::Storage)((Seiscomp::Core::Time const *)arg1)->epochSeconds();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_long_SS_long(static_cast< long long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_epoch(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  double result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_epoch" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  {
+    try {
+      result = (double)((Seiscomp::Core::Time const *)arg1)->epoch();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_microseconds(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  int result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_microseconds" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  {
+    try {
+      result = (int)((Seiscomp::Core::Time const *)arg1)->microseconds();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_setUSecs(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
+  Seiscomp::Core::Time::Storage arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long long val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  Seiscomp::Core::Time *result = 0 ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time_setUSecs", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_setUSecs" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
+  ecode2 = SWIG_AsVal_long_SS_long(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Time_setUSecs" "', argument " "2"" of type '" "Seiscomp::Core::Time::Storage""'");
+  } 
+  arg2 = static_cast< Seiscomp::Core::Time::Storage >(val2);
+  {
+    try {
+      result = (Seiscomp::Core::Time *) &(arg1)->setUSecs(arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -14816,6 +17166,263 @@ SWIGINTERN PyObject *_wrap_Time_gmt(PyObject *self, PyObject *args) {
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_FromEpoch__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time::Storage arg1 ;
+  Seiscomp::Core::Time::Storage arg2 ;
+  long long val1 ;
+  int ecode1 = 0 ;
+  long long val2 ;
+  int ecode2 = 0 ;
+  Seiscomp::Core::Time result;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_long_SS_long(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "Time_FromEpoch" "', argument " "1"" of type '" "Seiscomp::Core::Time::Storage""'");
+  } 
+  arg1 = static_cast< Seiscomp::Core::Time::Storage >(val1);
+  ecode2 = SWIG_AsVal_long_SS_long(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Time_FromEpoch" "', argument " "2"" of type '" "Seiscomp::Core::Time::Storage""'");
+  } 
+  arg2 = static_cast< Seiscomp::Core::Time::Storage >(val2);
+  {
+    try {
+      result = Seiscomp::Core::Time::FromEpoch(arg1,arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_FromEpoch__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  Seiscomp::Core::Time result;
+  
+  (void)self;
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "Time_FromEpoch" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  {
+    try {
+      result = Seiscomp::Core::Time::FromEpoch(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_FromEpoch(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "Time_FromEpoch", 0, 2, argv))) SWIG_fail;
+  --argc;
+  if (argc == 1) {
+    int _v = 0;
+    {
+      int res = SWIG_AsVal_double(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_Time_FromEpoch__SWIG_1(self, argc, argv);
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    {
+      int res = SWIG_AsVal_long_SS_long(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      {
+        int res = SWIG_AsVal_long_SS_long(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_Time_FromEpoch__SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Time_FromEpoch'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Core::Time::FromEpoch(Seiscomp::Core::Time::Storage,Seiscomp::Core::Time::Storage)\n"
+    "    Seiscomp::Core::Time::FromEpoch(double)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_Now(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time_Now", 0, 0, 0)) SWIG_fail;
+  {
+    try {
+      result = Seiscomp::Core::Time::Now();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_GMT(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time_GMT", 0, 0, 0)) SWIG_fail;
+  {
+    try {
+      result = Seiscomp::Core::Time::GMT();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_UTC(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time_UTC", 0, 0, 0)) SWIG_fail;
+  {
+    try {
+      result = Seiscomp::Core::Time::UTC();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_LocalTime(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::Time result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time_LocalTime", 0, 0, 0)) SWIG_fail;
+  {
+    try {
+      result = Seiscomp::Core::Time::LocalTime();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Time_LocalTimeZone(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::string result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Time_LocalTimeZone", 0, 0, 0)) SWIG_fail;
+  {
+    try {
+      result = Seiscomp::Core::Time::LocalTimeZone();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
   return resultobj;
 fail:
   return NULL;
@@ -14933,25 +17540,25 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Time_valid(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_Time_localTimeZoneOffset(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  bool result;
+  Seiscomp::Core::TimeSpan result;
   
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_valid" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_localTimeZoneOffset" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
   {
     try {
-      result = (bool)((Seiscomp::Core::Time const *)arg1)->valid();
+      result = ((Seiscomp::Core::Time const *)arg1)->localTimeZoneOffset();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -14963,230 +17570,44 @@ SWIGINTERN PyObject *_wrap_Time_valid(PyObject *self, PyObject *args) {
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::TimeSpan(result)), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
 }
 
 
-SWIGINTERN PyObject *_wrap_Time_toString(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
-  char *arg2 = (char *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  PyObject *swig_obj[2] ;
-  std::string result;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "Time_toString", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_toString" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
-  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_toString" "', argument " "2"" of type '" "char const *""'");
-  }
-  arg2 = reinterpret_cast< char * >(buf2);
-  {
-    try {
-      result = ((Seiscomp::Core::Time const *)arg1)->toString((char const *)arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_iso(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  std::string result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_iso" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
-  {
-    try {
-      result = ((Seiscomp::Core::Time const *)arg1)->iso();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_fromString__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
-  char *arg2 = (char *) 0 ;
-  char *arg3 = (char *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  int res3 ;
-  char *buf3 = 0 ;
-  int alloc3 = 0 ;
-  bool result;
-  
-  (void)self;
-  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_fromString" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
-  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_fromString" "', argument " "2"" of type '" "char const *""'");
-  }
-  arg2 = reinterpret_cast< char * >(buf2);
-  res3 = SWIG_AsCharPtrAndSize(swig_obj[2], &buf3, NULL, &alloc3);
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Time_fromString" "', argument " "3"" of type '" "char const *""'");
-  }
-  arg3 = reinterpret_cast< char * >(buf3);
-  {
-    try {
-      result = (bool)(arg1)->fromString((char const *)arg2,(char const *)arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_fromString__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
-  char *arg2 = (char *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  bool result;
-  
-  (void)self;
-  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_fromString" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
-  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_fromString" "', argument " "2"" of type '" "char const *""'");
-  }
-  arg2 = reinterpret_cast< char * >(buf2);
-  {
-    try {
-      result = (bool)(arg1)->fromString((char const *)arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_fromString__SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_Time_timeZoneOffset(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
   std::string *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
-  bool result;
+  PyObject *swig_obj[2] ;
+  Seiscomp::Core::TimeSpan result;
   
   (void)self;
-  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "Time_timeZoneOffset", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_fromString" "', argument " "1"" of type '" "Seiscomp::Core::Time *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_timeZoneOffset" "', argument " "1"" of type '" "Seiscomp::Core::Time const *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
   {
     std::string *ptr = (std::string *)0;
     res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_timeZoneOffset" "', argument " "2"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time_timeZoneOffset" "', argument " "2"" of type '" "std::string const &""'"); 
     }
     arg2 = ptr;
   }
   {
     try {
-      result = (bool)(arg1)->fromString((std::string const &)*arg2);
+      result = ((Seiscomp::Core::Time const *)arg1)->timeZoneOffset((std::string const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -15198,266 +17619,12 @@ SWIGINTERN PyObject *_wrap_Time_fromString__SWIG_2(PyObject *self, Py_ssize_t no
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::TimeSpan(result)), SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_OWN |  0 );
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
   if (SWIG_IsNewObj(res2)) delete arg2;
   return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_fromString(PyObject *self, PyObject *args) {
-  Py_ssize_t argc;
-  PyObject *argv[4] = {
-    0
-  };
-  
-  if (!(argc = SWIG_Python_UnpackTuple(args, "Time_fromString", 0, 3, argv))) SWIG_fail;
-  --argc;
-  if (argc == 2) {
-    int _v = 0;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__Time, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        return _wrap_Time_fromString__SWIG_2(self, argc, argv);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v = 0;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__Time, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsCharPtrAndSize(argv[1], 0, NULL, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        return _wrap_Time_fromString__SWIG_1(self, argc, argv);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v = 0;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__Time, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsCharPtrAndSize(argv[1], 0, NULL, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        int res = SWIG_AsCharPtrAndSize(argv[2], 0, NULL, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          return _wrap_Time_fromString__SWIG_0(self, argc, argv);
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Time_fromString'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::Core::Time::fromString(char const *,char const *)\n"
-    "    Seiscomp::Core::Time::fromString(char const *)\n"
-    "    Seiscomp::Core::Time::fromString(std::string const &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_FromString__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  char *arg1 = (char *) 0 ;
-  char *arg2 = (char *) 0 ;
-  int res1 ;
-  char *buf1 = 0 ;
-  int alloc1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  Seiscomp::Core::Time result;
-  
-  (void)self;
-  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
-  res1 = SWIG_AsCharPtrAndSize(swig_obj[0], &buf1, NULL, &alloc1);
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_FromString" "', argument " "1"" of type '" "char const *""'");
-  }
-  arg1 = reinterpret_cast< char * >(buf1);
-  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_FromString" "', argument " "2"" of type '" "char const *""'");
-  }
-  arg2 = reinterpret_cast< char * >(buf2);
-  {
-    try {
-      result = Seiscomp::Core::Time::FromString((char const *)arg1,(char const *)arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
-  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  return resultobj;
-fail:
-  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_FromString__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  char *arg1 = (char *) 0 ;
-  int res1 ;
-  char *buf1 = 0 ;
-  int alloc1 = 0 ;
-  SwigValueWrapper< Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl > result;
-  
-  (void)self;
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  res1 = SWIG_AsCharPtrAndSize(swig_obj[0], &buf1, NULL, &alloc1);
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_FromString" "', argument " "1"" of type '" "char const *""'");
-  }
-  arg1 = reinterpret_cast< char * >(buf1);
-  {
-    try {
-      result = Seiscomp::Core::Time::FromString((char const *)arg1);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  {
-    if ( *(&result) == Seiscomp::Core::None ) {
-      resultobj = Py_None;
-    }
-    else {
-      Seiscomp::Core::Time* resulttime = new Seiscomp::Core::Time(**(&result));
-      resultobj = SWIG_NewPointerObj(resulttime, SWIGTYPE_p_Seiscomp__Core__Time, 1);
-    }
-  }
-  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
-  return resultobj;
-fail:
-  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_FromString__SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  std::string *arg1 = 0 ;
-  int res1 = SWIG_OLDOBJ ;
-  SwigValueWrapper< Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl > result;
-  
-  (void)self;
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  {
-    std::string *ptr = (std::string *)0;
-    res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Time_FromString" "', argument " "1"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time_FromString" "', argument " "1"" of type '" "std::string const &""'"); 
-    }
-    arg1 = ptr;
-  }
-  {
-    try {
-      result = Seiscomp::Core::Time::FromString((std::string const &)*arg1);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  {
-    if ( *(&result) == Seiscomp::Core::None ) {
-      resultobj = Py_None;
-    }
-    else {
-      Seiscomp::Core::Time* resulttime = new Seiscomp::Core::Time(**(&result));
-      resultobj = SWIG_NewPointerObj(resulttime, SWIGTYPE_p_Seiscomp__Core__Time, 1);
-    }
-  }
-  if (SWIG_IsNewObj(res1)) delete arg1;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res1)) delete arg1;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Time_FromString(PyObject *self, PyObject *args) {
-  Py_ssize_t argc;
-  PyObject *argv[3] = {
-    0
-  };
-  
-  if (!(argc = SWIG_Python_UnpackTuple(args, "Time_FromString", 0, 2, argv))) SWIG_fail;
-  --argc;
-  if (argc == 1) {
-    int _v = 0;
-    int res = SWIG_AsPtr_std_string(argv[0], (std::string**)(0));
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_Time_FromString__SWIG_2(self, argc, argv);
-    }
-  }
-  if (argc == 1) {
-    int _v = 0;
-    int res = SWIG_AsCharPtrAndSize(argv[0], 0, NULL, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_Time_FromString__SWIG_1(self, argc, argv);
-    }
-  }
-  if (argc == 2) {
-    int _v = 0;
-    int res = SWIG_AsCharPtrAndSize(argv[0], 0, NULL, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      int res = SWIG_AsCharPtrAndSize(argv[1], 0, NULL, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        return _wrap_Time_FromString__SWIG_0(self, argc, argv);
-      }
-    }
-  }
-  
-fail:
-  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Time_FromString'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::Core::Time::FromString(char const *,char const *)\n"
-    "    Seiscomp::Core::Time::FromString(char const *)\n"
-    "    Seiscomp::Core::Time::FromString(std::string const &)\n");
-  return 0;
 }
 
 
@@ -15507,6 +17674,114 @@ SWIGINTERN PyObject *Time_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject 
 SWIGINTERN PyObject *Time_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   return SWIG_Python_InitShadowInstance(args);
 }
+
+SWIGINTERN PyObject *_wrap___lshift____SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  std::ostream *arg1 = 0 ;
+  Seiscomp::Core::Time *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  std::ostream *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_std__ostream,  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "__lshift__" "', argument " "1"" of type '" "std::ostream &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "__lshift__" "', argument " "1"" of type '" "std::ostream &""'"); 
+  }
+  arg1 = reinterpret_cast< std::ostream * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "__lshift__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "__lshift__" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
+  {
+    try {
+      result = (std::ostream *) &Seiscomp::Core::operator <<(*arg1,(Seiscomp::Core::Time const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__ostream, 0 |  0 );
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
+SWIGINTERN PyObject *_wrap___lshift__(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "__lshift__", 0, 2, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_std__ostream, SWIG_POINTER_NO_NULL);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_Seiscomp__Core__Enumeration, SWIG_POINTER_NO_NULL | 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap___lshift____SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_std__ostream, SWIG_POINTER_NO_NULL);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_Seiscomp__Core__TimeSpan, SWIG_POINTER_NO_NULL | 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap___lshift____SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_std__ostream, SWIG_POINTER_NO_NULL);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap___lshift____SWIG_2(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
 
 SWIGINTERN PyObject *_wrap_delete_GenericArchive(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
@@ -50475,7 +52750,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "Enumeration_toInt", _wrap_Enumeration_toInt, METH_O, NULL},
 	 { "Enumeration_fromInt", _wrap_Enumeration_fromInt, METH_VARARGS, NULL},
 	 { "Enumeration_swigregister", Enumeration_swigregister, METH_O, NULL},
-	 { "__lshift__", _wrap___lshift__, METH_VARARGS, NULL},
 	 { "new_GeneralException", _wrap_new_GeneralException, METH_VARARGS, NULL},
 	 { "delete_GeneralException", _wrap_delete_GeneralException, METH_O, NULL},
 	 { "GeneralException_what", _wrap_GeneralException_what, METH_O, NULL},
@@ -50571,57 +52845,86 @@ static PyMethodDef SwigMethods[] = {
 	 { "new_TimeSpan", _wrap_new_TimeSpan, METH_VARARGS, NULL},
 	 { "TimeSpan___eq__", _wrap_TimeSpan___eq__, METH_VARARGS, NULL},
 	 { "TimeSpan___ne__", _wrap_TimeSpan___ne__, METH_VARARGS, NULL},
-	 { "TimeSpan___lt__", _wrap_TimeSpan___lt__, METH_VARARGS, NULL},
 	 { "TimeSpan___le__", _wrap_TimeSpan___le__, METH_VARARGS, NULL},
-	 { "TimeSpan___gt__", _wrap_TimeSpan___gt__, METH_VARARGS, NULL},
+	 { "TimeSpan___lt__", _wrap_TimeSpan___lt__, METH_VARARGS, NULL},
 	 { "TimeSpan___ge__", _wrap_TimeSpan___ge__, METH_VARARGS, NULL},
+	 { "TimeSpan___gt__", _wrap_TimeSpan___gt__, METH_VARARGS, NULL},
 	 { "TimeSpan___add__", _wrap_TimeSpan___add__, METH_VARARGS, NULL},
 	 { "TimeSpan___sub__", _wrap_TimeSpan___sub__, METH_VARARGS, NULL},
+	 { "TimeSpan___mul__", _wrap_TimeSpan___mul__, METH_VARARGS, NULL},
+	 { "TimeSpan___truediv__", _wrap_TimeSpan___truediv__, METH_VARARGS, NULL},
+	 { "TimeSpan___neg__", _wrap_TimeSpan___neg__, METH_O, NULL},
 	 { "TimeSpan___iadd__", _wrap_TimeSpan___iadd__, METH_VARARGS, NULL},
 	 { "TimeSpan___isub__", _wrap_TimeSpan___isub__, METH_VARARGS, NULL},
-	 { "TimeSpan_abs", _wrap_TimeSpan_abs, METH_O, NULL},
+	 { "TimeSpan___imul__", _wrap_TimeSpan___imul__, METH_VARARGS, NULL},
+	 { "TimeSpan___itruediv__", _wrap_TimeSpan___itruediv__, METH_VARARGS, NULL},
+	 { "TimeSpan___nonzero__", _wrap_TimeSpan___nonzero__, METH_O, NULL},
+	 { "TimeSpan_repr", _wrap_TimeSpan_repr, METH_O, NULL},
 	 { "TimeSpan_seconds", _wrap_TimeSpan_seconds, METH_O, NULL},
 	 { "TimeSpan_microseconds", _wrap_TimeSpan_microseconds, METH_O, NULL},
-	 { "TimeSpan_length", _wrap_TimeSpan_length, METH_O, NULL},
+	 { "TimeSpan_count", _wrap_TimeSpan_count, METH_O, NULL},
+	 { "TimeSpan_abs", _wrap_TimeSpan_abs, METH_O, NULL},
 	 { "TimeSpan_set", _wrap_TimeSpan_set, METH_VARARGS, NULL},
-	 { "TimeSpan_setUSecs", _wrap_TimeSpan_setUSecs, METH_VARARGS, NULL},
+	 { "TimeSpan_get", _wrap_TimeSpan_get, METH_VARARGS, NULL},
 	 { "TimeSpan_elapsedTime", _wrap_TimeSpan_elapsedTime, METH_VARARGS, NULL},
+	 { "TimeSpan_setUSecs", _wrap_TimeSpan_setUSecs, METH_VARARGS, NULL},
+	 { "TimeSpan_length", _wrap_TimeSpan_length, METH_O, NULL},
+	 { "TimeSpan_toString", _wrap_TimeSpan_toString, METH_O, NULL},
+	 { "TimeSpan_fromString", _wrap_TimeSpan_fromString, METH_VARARGS, NULL},
 	 { "TimeSpan_toDouble", _wrap_TimeSpan_toDouble, METH_O, NULL},
 	 { "delete_TimeSpan", _wrap_delete_TimeSpan, METH_O, NULL},
 	 { "TimeSpan_swigregister", TimeSpan_swigregister, METH_O, NULL},
 	 { "TimeSpan_swiginit", TimeSpan_swiginit, METH_VARARGS, NULL},
+	 { "Time_Null_get", _wrap_Time_Null_get, METH_VARARGS, NULL},
+	 { "Time_Null_set", _wrap_Time_Null_set, METH_O, NULL},
 	 { "new_Time", _wrap_new_Time, METH_VARARGS, NULL},
-	 { "Time___nonzero__", _wrap_Time___nonzero__, METH_O, NULL},
-	 { "Time___add__", _wrap_Time___add__, METH_VARARGS, NULL},
-	 { "Time___sub__", _wrap_Time___sub__, METH_VARARGS, NULL},
+	 { "Time___eq__", _wrap_Time___eq__, METH_VARARGS, NULL},
+	 { "Time___ne__", _wrap_Time___ne__, METH_VARARGS, NULL},
+	 { "Time___lt__", _wrap_Time___lt__, METH_VARARGS, NULL},
+	 { "Time___le__", _wrap_Time___le__, METH_VARARGS, NULL},
+	 { "Time___gt__", _wrap_Time___gt__, METH_VARARGS, NULL},
+	 { "Time___ge__", _wrap_Time___ge__, METH_VARARGS, NULL},
 	 { "Time___iadd__", _wrap_Time___iadd__, METH_VARARGS, NULL},
 	 { "Time___isub__", _wrap_Time___isub__, METH_VARARGS, NULL},
+	 { "Time___add__", _wrap_Time___add__, METH_VARARGS, NULL},
+	 { "Time___sub__", _wrap_Time___sub__, METH_VARARGS, NULL},
+	 { "Time___nonzero__", _wrap_Time___nonzero__, METH_O, NULL},
+	 { "Time_repr", _wrap_Time_repr, METH_O, NULL},
+	 { "Time_valid", _wrap_Time_valid, METH_O, NULL},
 	 { "Time_set", _wrap_Time_set, METH_VARARGS, NULL},
-	 { "Time_set2", _wrap_Time_set2, METH_VARARGS, NULL},
 	 { "Time_get", _wrap_Time_get, METH_VARARGS, NULL},
+	 { "Time_set2", _wrap_Time_set2, METH_VARARGS, NULL},
 	 { "Time_get2", _wrap_Time_get2, METH_VARARGS, NULL},
-	 { "Time_epoch", _wrap_Time_epoch, METH_O, NULL},
+	 { "Time_now", _wrap_Time_now, METH_O, NULL},
+	 { "Time_gmt", _wrap_Time_gmt, METH_O, NULL},
+	 { "Time_utc", _wrap_Time_utc, METH_O, NULL},
+	 { "Time_iso", _wrap_Time_iso, METH_O, NULL},
+	 { "Time_toString", _wrap_Time_toString, METH_VARARGS, NULL},
+	 { "Time_toLocalString", _wrap_Time_toLocalString, METH_VARARGS, NULL},
+	 { "Time_toZonedString", _wrap_Time_toZonedString, METH_VARARGS, NULL},
+	 { "Time_fromString", _wrap_Time_fromString, METH_VARARGS, NULL},
+	 { "Time_FromString", _wrap_Time_FromString, METH_VARARGS, NULL},
+	 { "Time_FromYearDay", _wrap_Time_FromYearDay, METH_VARARGS, NULL},
+	 { "Time_seconds", _wrap_Time_seconds, METH_O, NULL},
 	 { "Time_epochSeconds", _wrap_Time_epochSeconds, METH_O, NULL},
+	 { "Time_epoch", _wrap_Time_epoch, METH_O, NULL},
+	 { "Time_microseconds", _wrap_Time_microseconds, METH_O, NULL},
+	 { "Time_setUSecs", _wrap_Time_setUSecs, METH_VARARGS, NULL},
+	 { "Time_FromEpoch", _wrap_Time_FromEpoch, METH_VARARGS, NULL},
+	 { "Time_Now", _wrap_Time_Now, METH_NOARGS, NULL},
+	 { "Time_GMT", _wrap_Time_GMT, METH_NOARGS, NULL},
+	 { "Time_UTC", _wrap_Time_UTC, METH_NOARGS, NULL},
 	 { "Time_LocalTime", _wrap_Time_LocalTime, METH_NOARGS, NULL},
 	 { "Time_LocalTimeZone", _wrap_Time_LocalTimeZone, METH_NOARGS, NULL},
-	 { "Time_UTC", _wrap_Time_UTC, METH_NOARGS, NULL},
-	 { "Time_GMT", _wrap_Time_GMT, METH_NOARGS, NULL},
-	 { "Time_FromYearDay", _wrap_Time_FromYearDay, METH_VARARGS, NULL},
-	 { "Time_localTimeZoneOffset", _wrap_Time_localTimeZoneOffset, METH_O, NULL},
-	 { "Time_localtime", _wrap_Time_localtime, METH_O, NULL},
-	 { "Time_utc", _wrap_Time_utc, METH_O, NULL},
-	 { "Time_gmt", _wrap_Time_gmt, METH_O, NULL},
 	 { "Time_toLocalTime", _wrap_Time_toLocalTime, METH_O, NULL},
 	 { "Time_toUTC", _wrap_Time_toUTC, METH_O, NULL},
 	 { "Time_toGMT", _wrap_Time_toGMT, METH_O, NULL},
-	 { "Time_valid", _wrap_Time_valid, METH_O, NULL},
-	 { "Time_toString", _wrap_Time_toString, METH_VARARGS, NULL},
-	 { "Time_iso", _wrap_Time_iso, METH_O, NULL},
-	 { "Time_fromString", _wrap_Time_fromString, METH_VARARGS, NULL},
-	 { "Time_FromString", _wrap_Time_FromString, METH_VARARGS, NULL},
+	 { "Time_localTimeZoneOffset", _wrap_Time_localTimeZoneOffset, METH_O, NULL},
+	 { "Time_timeZoneOffset", _wrap_Time_timeZoneOffset, METH_VARARGS, NULL},
 	 { "delete_Time", _wrap_delete_Time, METH_O, NULL},
 	 { "Time_swigregister", Time_swigregister, METH_O, NULL},
 	 { "Time_swiginit", Time_swiginit, METH_VARARGS, NULL},
+	 { "__lshift__", _wrap___lshift__, METH_VARARGS, NULL},
 	 { "delete_GenericArchive", _wrap_delete_GenericArchive, METH_O, NULL},
 	 { "GenericArchive_PackVersion", _wrap_GenericArchive_PackVersion, METH_VARARGS, NULL},
 	 { "GenericArchive_open", _wrap_GenericArchive_open, METH_VARARGS, NULL},
@@ -51322,9 +53625,6 @@ static void *_p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_tTo_p
 static void *_p_Seiscomp__Core__EndOfStreamExceptionTo_p_Seiscomp__Core__StreamException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::StreamException *)  ((Seiscomp::Core::EndOfStreamException *) x));
 }
-static void *_p_Seiscomp__Core__TimeTo_p_Seiscomp__Core__TimeSpan(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::TimeSpan *)  ((Seiscomp::Core::Time *) x));
-}
 static void *_p_Seiscomp__GenericRecordTo_p_Seiscomp__Record(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Record *)  ((Seiscomp::GenericRecord *) x));
 }
@@ -51383,15 +53683,28 @@ static swig_type_info _swigt__p_Archive = {"_p_Archive", "Archive *", 0, 0, (voi
 static swig_type_info _swigt__p_AttachmentList = {"_p_AttachmentList", "AttachmentList *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_AttachmentType = {"_p_AttachmentType", "AttachmentType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_DataArray = {"_p_DataArray", "DataArray *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Days = {"_p_Days", "Days *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Duration = {"_p_Duration", "Duration *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_F1 = {"_p_F1", "F1 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_F2 = {"_p_F2", "F2 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_F3 = {"_p_F3", "F3 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_F4 = {"_p_F4", "F4 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_F5 = {"_p_F5", "F5 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_F6 = {"_p_F6", "F6 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Hours = {"_p_Hours", "Hours *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_ImplType = {"_p_ImplType", "ImplType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_MajorType = {"_p_MajorType", "MajorType *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_MicroSeconds = {"_p_MicroSeconds", "MicroSeconds *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_MilliSeconds = {"_p_MilliSeconds", "MilliSeconds *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_MinorType = {"_p_MinorType", "MinorType *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Minutes = {"_p_Minutes", "Minutes *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PackType = {"_p_PackType", "PackType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PatchType = {"_p_PatchType", "PatchType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Properties = {"_p_Properties", "Properties *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PropertyValue = {"_p_PropertyValue", "PropertyValue *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_ReferenceType = {"_p_ReferenceType", "ReferenceType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_RootType = {"_p_RootType", "RootType *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seconds = {"_p_Seconds", "Seconds *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Array = {"_p_Seiscomp__Array", "Seiscomp::Array *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__BitSet = {"_p_Seiscomp__BitSet", "Seiscomp::BitSet *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__BaseObject = {"_p_Seiscomp__Core__BaseObject", "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType *|Seiscomp::Core::BaseObject *", 0, 0, (void*)0, 0};
@@ -51475,7 +53788,10 @@ static swig_type_info _swigt__p_Seiscomp__TypedArrayT_int_t = {"_p_Seiscomp__Typ
 static swig_type_info _swigt__p_Seiscomp__TypedArrayT_std__complexT_double_t_t = {"_p_Seiscomp__TypedArrayT_std__complexT_double_t_t", "Seiscomp::ComplexDoubleArray *|Seiscomp::TypedArray< std::complex< double > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__TypedArrayT_std__complexT_float_t_t = {"_p_Seiscomp__TypedArrayT_std__complexT_float_t_t", "Seiscomp::ComplexFloatArray *|Seiscomp::TypedArray< std::complex< float > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__TypedArrayT_std__string_t = {"_p_Seiscomp__TypedArrayT_std__string_t", "Seiscomp::StringArray *|Seiscomp::TypedArray< std::string > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Storage = {"_p_Storage", "Storage *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_TimePoint = {"_p_TimePoint", "TimePoint *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Type = {"_p_Type", "Type *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Weeks = {"_p_Weeks", "Weeks *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_bool = {"_p_bool", "bool *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__any = {"_p_boost__any", "Seiscomp::Core::MetaValue *|boost::any *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__dynamic_bitsetT_t = {"_p_boost__dynamic_bitsetT_t", "Seiscomp::BitSet::ImplType *|boost::dynamic_bitset< > *", 0, 0, (void*)0, 0};
@@ -51490,6 +53806,8 @@ static swig_type_info _swigt__p_iterator = {"_p_iterator", "iterator *", 0, 0, (
 static swig_type_info _swigt__p_long_long = {"_p_long_long", "int64_t *|int_fast64_t *|int_least64_t *|intmax_t *|std::int64_t *|long long *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_short = {"_p_short", "int16_t *|int_least16_t *|std::int16_t *|short *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_signed_char = {"_p_signed_char", "int8_t *|int_fast8_t *|int_least8_t *|std::int8_t *|signed char *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__chrono__durationT_Seiscomp__Core__TimeSpan__Storage_std__micro_t = {"_p_std__chrono__durationT_Seiscomp__Core__TimeSpan__Storage_std__micro_t", "Seiscomp::Core::TimeSpan::Duration *|std::chrono::duration< Seiscomp::Core::TimeSpan::Storage,std::micro > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t = {"_p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t", "Seiscomp::Core::Time::TimePoint *|std::chrono::time_point< std::chrono::system_clock,Seiscomp::Core::Time::Duration > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__complexT_double_t = {"_p_std__complexT_double_t", "std::complex< double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__complexT_float_t = {"_p_std__complexT_float_t", "std::complex< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__exception = {"_p_std__exception", "std::exception *", 0, 0, (void*)0, 0};
@@ -51527,7 +53845,6 @@ static swig_type_info _swigt__p_std__vectorT_std__complexT_float_t_t__iterator =
 static swig_type_info _swigt__p_std__vectorT_std__string_t = {"_p_std__vectorT_std__string_t", "Seiscomp::TypedArray< std::string >::DataArray *|std::vector< std::string > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_std__string_t__const_iterator = {"_p_std__vectorT_std__string_t__const_iterator", "Seiscomp::TypedArray< std::string >::const_iterator *|std::vector< std::string >::const_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_std__string_t__iterator = {"_p_std__vectorT_std__string_t__iterator", "Seiscomp::TypedArray< std::string >::iterator *|std::vector< std::string >::iterator *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_timeval = {"_p_timeval", "timeval *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "uint8_t *|uint_fast8_t *|uint_least8_t *|unsigned char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "uint32_t *|uint_fast16_t *|uint_fast32_t *|uint_least32_t *|uintptr_t *|unsigned int *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_long_long = {"_p_unsigned_long_long", "uint64_t *|uint_fast64_t *|uint_least64_t *|uintmax_t *|unsigned long long *", 0, 0, (void*)0, 0};
@@ -51539,15 +53856,28 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_AttachmentList,
   &_swigt__p_AttachmentType,
   &_swigt__p_DataArray,
+  &_swigt__p_Days,
+  &_swigt__p_Duration,
+  &_swigt__p_F1,
+  &_swigt__p_F2,
+  &_swigt__p_F3,
+  &_swigt__p_F4,
+  &_swigt__p_F5,
+  &_swigt__p_F6,
+  &_swigt__p_Hours,
   &_swigt__p_ImplType,
   &_swigt__p_MajorType,
+  &_swigt__p_MicroSeconds,
+  &_swigt__p_MilliSeconds,
   &_swigt__p_MinorType,
+  &_swigt__p_Minutes,
   &_swigt__p_PackType,
   &_swigt__p_PatchType,
   &_swigt__p_Properties,
   &_swigt__p_PropertyValue,
   &_swigt__p_ReferenceType,
   &_swigt__p_RootType,
+  &_swigt__p_Seconds,
   &_swigt__p_Seiscomp__Array,
   &_swigt__p_Seiscomp__BitSet,
   &_swigt__p_Seiscomp__Core__BaseObject,
@@ -51631,7 +53961,10 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__TypedArrayT_std__complexT_double_t_t,
   &_swigt__p_Seiscomp__TypedArrayT_std__complexT_float_t_t,
   &_swigt__p_Seiscomp__TypedArrayT_std__string_t,
+  &_swigt__p_Storage,
+  &_swigt__p_TimePoint,
   &_swigt__p_Type,
+  &_swigt__p_Weeks,
   &_swigt__p_bool,
   &_swigt__p_boost__any,
   &_swigt__p_boost__dynamic_bitsetT_t,
@@ -51646,6 +53979,8 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_long_long,
   &_swigt__p_short,
   &_swigt__p_signed_char,
+  &_swigt__p_std__chrono__durationT_Seiscomp__Core__TimeSpan__Storage_std__micro_t,
+  &_swigt__p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t,
   &_swigt__p_std__complexT_double_t,
   &_swigt__p_std__complexT_float_t,
   &_swigt__p_std__exception,
@@ -51683,7 +54018,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__vectorT_std__string_t,
   &_swigt__p_std__vectorT_std__string_t__const_iterator,
   &_swigt__p_std__vectorT_std__string_t__iterator,
-  &_swigt__p_timeval,
   &_swigt__p_unsigned_char,
   &_swigt__p_unsigned_int,
   &_swigt__p_unsigned_long_long,
@@ -51695,15 +54029,28 @@ static swig_cast_info _swigc__p_Archive[] = {  {&_swigt__p_Archive, 0, 0, 0},{0,
 static swig_cast_info _swigc__p_AttachmentList[] = {  {&_swigt__p_AttachmentList, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_AttachmentType[] = {  {&_swigt__p_AttachmentType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_DataArray[] = {  {&_swigt__p_DataArray, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Days[] = {  {&_swigt__p_Days, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Duration[] = {  {&_swigt__p_Duration, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_F1[] = {  {&_swigt__p_F1, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_F2[] = {  {&_swigt__p_F2, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_F3[] = {  {&_swigt__p_F3, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_F4[] = {  {&_swigt__p_F4, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_F5[] = {  {&_swigt__p_F5, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_F6[] = {  {&_swigt__p_F6, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Hours[] = {  {&_swigt__p_Hours, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ImplType[] = {  {&_swigt__p_ImplType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_MajorType[] = {  {&_swigt__p_MajorType, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_MicroSeconds[] = {  {&_swigt__p_MicroSeconds, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_MilliSeconds[] = {  {&_swigt__p_MilliSeconds, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_MinorType[] = {  {&_swigt__p_MinorType, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Minutes[] = {  {&_swigt__p_Minutes, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PackType[] = {  {&_swigt__p_PackType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PatchType[] = {  {&_swigt__p_PatchType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Properties[] = {  {&_swigt__p_Properties, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PropertyValue[] = {  {&_swigt__p_PropertyValue, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ReferenceType[] = {  {&_swigt__p_ReferenceType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_RootType[] = {  {&_swigt__p_RootType, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seconds[] = {  {&_swigt__p_Seconds, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Array[] = {  {&_swigt__p_Seiscomp__Array, 0, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_char_t, _p_Seiscomp__NumericArrayT_char_tTo_p_Seiscomp__Array, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_double_t, _p_Seiscomp__NumericArrayT_double_tTo_p_Seiscomp__Array, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_float_t, _p_Seiscomp__NumericArrayT_float_tTo_p_Seiscomp__Array, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_int_t, _p_Seiscomp__NumericArrayT_int_tTo_p_Seiscomp__Array, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t, _p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_tTo_p_Seiscomp__Array, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_char_t, _p_Seiscomp__TypedArrayT_char_tTo_p_Seiscomp__Array, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_double_t, _p_Seiscomp__TypedArrayT_double_tTo_p_Seiscomp__Array, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_float_t, _p_Seiscomp__TypedArrayT_float_tTo_p_Seiscomp__Array, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_int_t, _p_Seiscomp__TypedArrayT_int_tTo_p_Seiscomp__Array, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_double_t_t, _p_Seiscomp__TypedArrayT_std__complexT_double_t_tTo_p_Seiscomp__Array, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_float_t_t, _p_Seiscomp__TypedArrayT_std__complexT_float_t_tTo_p_Seiscomp__Array, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__string_t, _p_Seiscomp__TypedArrayT_std__string_tTo_p_Seiscomp__Array, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__BitSet[] = {  {&_swigt__p_Seiscomp__BitSet, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__InterruptibleObject[] = {{&_swigt__p_Seiscomp__Core__InterruptibleObject, 0, 0, 0},{0, 0, 0, 0}};
@@ -51765,7 +54112,7 @@ static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArr
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__StreamException[] = {  {&_swigt__p_Seiscomp__Core__StreamException, 0, 0, 0},  {&_swigt__p_Seiscomp__Core__EndOfStreamException, _p_Seiscomp__Core__EndOfStreamExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__Time[] = {  {&_swigt__p_Seiscomp__Core__Time, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__TimeSpan[] = {  {&_swigt__p_Seiscomp__Core__TimeSpan, 0, 0, 0},  {&_swigt__p_Seiscomp__Core__Time, _p_Seiscomp__Core__TimeTo_p_Seiscomp__Core__TimeSpan, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__TimeSpan[] = {  {&_swigt__p_Seiscomp__Core__TimeSpan, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__TimeWindow[] = {  {&_swigt__p_Seiscomp__Core__TimeWindow, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__TypeConversionException[] = {  {&_swigt__p_Seiscomp__Core__TypeConversionException, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__TypeException[] = {  {&_swigt__p_Seiscomp__Core__TypeException, 0, 0, 0},{0, 0, 0, 0}};
@@ -51787,7 +54134,10 @@ static swig_cast_info _swigc__p_Seiscomp__TypedArrayT_int_t[] = {  {&_swigt__p_S
 static swig_cast_info _swigc__p_Seiscomp__TypedArrayT_std__complexT_double_t_t[] = {  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_double_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__TypedArrayT_std__complexT_float_t_t[] = {  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_float_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__TypedArrayT_std__string_t[] = {  {&_swigt__p_Seiscomp__TypedArrayT_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Storage[] = {  {&_swigt__p_Storage, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_TimePoint[] = {  {&_swigt__p_TimePoint, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Type[] = {  {&_swigt__p_Type, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Weeks[] = {  {&_swigt__p_Weeks, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_bool[] = {  {&_swigt__p_bool, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__any[] = {  {&_swigt__p_boost__any, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__dynamic_bitsetT_t[] = {  {&_swigt__p_boost__dynamic_bitsetT_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -51802,6 +54152,8 @@ static swig_cast_info _swigc__p_iterator[] = {  {&_swigt__p_iterator, 0, 0, 0},{
 static swig_cast_info _swigc__p_long_long[] = {  {&_swigt__p_long_long, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_short[] = {  {&_swigt__p_short, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_signed_char[] = {  {&_swigt__p_signed_char, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__chrono__durationT_Seiscomp__Core__TimeSpan__Storage_std__micro_t[] = {  {&_swigt__p_std__chrono__durationT_Seiscomp__Core__TimeSpan__Storage_std__micro_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t[] = {  {&_swigt__p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__complexT_double_t[] = {  {&_swigt__p_std__complexT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__complexT_float_t[] = {  {&_swigt__p_std__complexT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__exception[] = {  {&_swigt__p_std__exception, 0, 0, 0},  {&_swigt__p_Seiscomp__Core__ClassNotFound, _p_Seiscomp__Core__ClassNotFoundTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__DuplicateClassname, _p_Seiscomp__Core__DuplicateClassnameTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__EndOfStreamException, _p_Seiscomp__Core__EndOfStreamExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__GeneralException, _p_Seiscomp__Core__GeneralExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__MemoryException, _p_Seiscomp__Core__MemoryExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__OperationInterrupted, _p_Seiscomp__Core__OperationInterruptedTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__OverflowException, _p_Seiscomp__Core__OverflowExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__StreamException, _p_Seiscomp__Core__StreamExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeConversionException, _p_Seiscomp__Core__TypeConversionExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeException, _p_Seiscomp__Core__TypeExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__UnderflowException, _p_Seiscomp__Core__UnderflowExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__ValueError, _p_Seiscomp__Core__ValueErrorTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__ValueException, _p_Seiscomp__Core__ValueExceptionTo_p_std__exception, 0, 0},{0, 0, 0, 0}};
@@ -51839,7 +54191,6 @@ static swig_cast_info _swigc__p_std__vectorT_std__complexT_float_t_t__iterator[]
 static swig_cast_info _swigc__p_std__vectorT_std__string_t[] = {  {&_swigt__p_std__vectorT_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_std__string_t__const_iterator[] = {  {&_swigt__p_std__vectorT_std__string_t__const_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_std__string_t__iterator[] = {  {&_swigt__p_std__vectorT_std__string_t__iterator, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_timeval[] = {  {&_swigt__p_timeval, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_long_long[] = {  {&_swigt__p_unsigned_long_long, 0, 0, 0},{0, 0, 0, 0}};
@@ -51851,15 +54202,28 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_AttachmentList,
   _swigc__p_AttachmentType,
   _swigc__p_DataArray,
+  _swigc__p_Days,
+  _swigc__p_Duration,
+  _swigc__p_F1,
+  _swigc__p_F2,
+  _swigc__p_F3,
+  _swigc__p_F4,
+  _swigc__p_F5,
+  _swigc__p_F6,
+  _swigc__p_Hours,
   _swigc__p_ImplType,
   _swigc__p_MajorType,
+  _swigc__p_MicroSeconds,
+  _swigc__p_MilliSeconds,
   _swigc__p_MinorType,
+  _swigc__p_Minutes,
   _swigc__p_PackType,
   _swigc__p_PatchType,
   _swigc__p_Properties,
   _swigc__p_PropertyValue,
   _swigc__p_ReferenceType,
   _swigc__p_RootType,
+  _swigc__p_Seconds,
   _swigc__p_Seiscomp__Array,
   _swigc__p_Seiscomp__BitSet,
   _swigc__p_Seiscomp__Core__BaseObject,
@@ -51943,7 +54307,10 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__TypedArrayT_std__complexT_double_t_t,
   _swigc__p_Seiscomp__TypedArrayT_std__complexT_float_t_t,
   _swigc__p_Seiscomp__TypedArrayT_std__string_t,
+  _swigc__p_Storage,
+  _swigc__p_TimePoint,
   _swigc__p_Type,
+  _swigc__p_Weeks,
   _swigc__p_bool,
   _swigc__p_boost__any,
   _swigc__p_boost__dynamic_bitsetT_t,
@@ -51958,6 +54325,8 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_long_long,
   _swigc__p_short,
   _swigc__p_signed_char,
+  _swigc__p_std__chrono__durationT_Seiscomp__Core__TimeSpan__Storage_std__micro_t,
+  _swigc__p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t,
   _swigc__p_std__complexT_double_t,
   _swigc__p_std__complexT_float_t,
   _swigc__p_std__exception,
@@ -51995,7 +54364,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__vectorT_std__string_t,
   _swigc__p_std__vectorT_std__string_t__const_iterator,
   _swigc__p_std__vectorT_std__string_t__iterator,
-  _swigc__p_timeval,
   _swigc__p_unsigned_char,
   _swigc__p_unsigned_int,
   _swigc__p_unsigned_long_long,
@@ -52483,6 +54851,8 @@ SWIG_init(void) {
   }
   PyDict_SetItemString(md, "cvar", globals);
   SWIG_Python_SetConstant(d, "SC_API_VERSION",SWIG_From_int(static_cast< int >(0x110000)));
+  SWIG_Python_SetConstant(d, "Time_MinTime",SWIG_From_double(static_cast< double >(Seiscomp::Core::Time::MinTime)));
+  SWIG_Python_SetConstant(d, "Time_MaxTime",SWIG_From_double(static_cast< double >(Seiscomp::Core::Time::MaxTime)));
   SWIG_Python_SetConstant(d, "GenericArchive_NONE",SWIG_From_int(static_cast< int >(Seiscomp::Core::Generic::Archive< Seiscomp::Core::BaseObject >::NONE)));
   SWIG_Python_SetConstant(d, "GenericArchive_STATIC_TYPE",SWIG_From_int(static_cast< int >(Seiscomp::Core::Generic::Archive< Seiscomp::Core::BaseObject >::STATIC_TYPE)));
   SWIG_Python_SetConstant(d, "GenericArchive_IGNORE_CHILDS",SWIG_From_int(static_cast< int >(Seiscomp::Core::Generic::Archive< Seiscomp::Core::BaseObject >::IGNORE_CHILDS)));
@@ -52522,8 +54892,10 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "EGreensFunctionComponentQuantity",SWIG_From_int(static_cast< int >(Seiscomp::Core::EGreensFunctionComponentQuantity)));
   SWIG_addvarlink(globals, "Unset", Swig_var_Unset_get, Swig_var_Unset_set);
   SWIG_addvarlink(globals, "CurrentVersion", Swig_var_CurrentVersion_get, Swig_var_CurrentVersion_set);
-  SWIG_addvarlink(globals, "TimeSpan_MinTime", Swig_var_TimeSpan_MinTime_get, Swig_var_TimeSpan_MinTime_set);
-  SWIG_addvarlink(globals, "TimeSpan_MaxTime", Swig_var_TimeSpan_MaxTime_get, Swig_var_TimeSpan_MaxTime_set);
+  SWIG_addvarlink(globals, "TimeSpan_MinSpan", Swig_var_TimeSpan_MinSpan_get, Swig_var_TimeSpan_MinSpan_set);
+  SWIG_addvarlink(globals, "TimeSpan_MaxSpan", Swig_var_TimeSpan_MaxSpan_get, Swig_var_TimeSpan_MaxSpan_set);
+  SWIG_addvarlink(globals, "TimeSpan_MinSeconds", Swig_var_TimeSpan_MinSeconds_get, Swig_var_TimeSpan_MinSeconds_set);
+  SWIG_addvarlink(globals, "TimeSpan_MaxSeconds", Swig_var_TimeSpan_MaxSeconds_get, Swig_var_TimeSpan_MaxSeconds_set);
   SWIG_addvarlink(globals, "Time_Null", Swig_var_Time_Null_get, Swig_var_Time_Null_set);
   SWIG_addvarlink(globals, "CharArrayT_ArrayType", Swig_var_CharArrayT_ArrayType_get, Swig_var_CharArrayT_ArrayType_set);
   SWIG_addvarlink(globals, "IntArrayT_ArrayType", Swig_var_IntArrayT_ArrayType_get, Swig_var_IntArrayT_ArrayType_set);

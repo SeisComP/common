@@ -3211,179 +3211,195 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_AttachmentType swig_types[2]
 #define SWIGTYPE_p_Attributes swig_types[3]
 #define SWIGTYPE_p_DataArray swig_types[4]
-#define SWIGTYPE_p_ImplType swig_types[5]
-#define SWIGTYPE_p_MajorType swig_types[6]
-#define SWIGTYPE_p_MinorType swig_types[7]
-#define SWIGTYPE_p_PackType swig_types[8]
-#define SWIGTYPE_p_PatchType swig_types[9]
-#define SWIGTYPE_p_Properties swig_types[10]
-#define SWIGTYPE_p_PropertyValue swig_types[11]
-#define SWIGTYPE_p_ReferenceType swig_types[12]
-#define SWIGTYPE_p_RootType swig_types[13]
-#define SWIGTYPE_p_Seiscomp__Array swig_types[14]
-#define SWIGTYPE_p_Seiscomp__BitSet swig_types[15]
-#define SWIGTYPE_p_Seiscomp__Core__BaseObject swig_types[16]
-#define SWIGTYPE_p_Seiscomp__Core__DataMessage swig_types[17]
-#define SWIGTYPE_p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t swig_types[18]
-#define SWIGTYPE_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t swig_types[19]
-#define SWIGTYPE_p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t swig_types[20]
-#define SWIGTYPE_p_Seiscomp__Core__GreensFunction swig_types[21]
-#define SWIGTYPE_p_Seiscomp__Core__InterruptibleObject swig_types[22]
-#define SWIGTYPE_p_Seiscomp__Core__Message swig_types[23]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl swig_types[24]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl swig_types[25]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl swig_types[26]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl swig_types[27]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl swig_types[28]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl swig_types[29]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl swig_types[30]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl swig_types[31]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl swig_types[32]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl swig_types[33]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl swig_types[34]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl swig_types[35]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl swig_types[36]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl swig_types[37]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl swig_types[38]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Geo__Category_const_t__Impl swig_types[39]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Geo__Category_t__Impl swig_types[40]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Geo__GeoFeature_const_t__Impl swig_types[41]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Geo__GeoFeature_t__Impl swig_types[42]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t__Impl swig_types[43]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t__Impl swig_types[44]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl swig_types[45]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl swig_types[46]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl swig_types[47]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl swig_types[48]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl swig_types[49]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl swig_types[50]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl swig_types[51]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl swig_types[52]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl swig_types[53]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl swig_types[54]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl swig_types[55]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl swig_types[56]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl swig_types[57]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl swig_types[58]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl swig_types[59]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl swig_types[60]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl swig_types[61]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl swig_types[62]
-#define SWIGTYPE_p_Seiscomp__Core__Time swig_types[63]
-#define SWIGTYPE_p_Seiscomp__GenericRecord swig_types[64]
-#define SWIGTYPE_p_Seiscomp__Geo__Category swig_types[65]
-#define SWIGTYPE_p_Seiscomp__Geo__GeoBoundingBox swig_types[66]
-#define SWIGTYPE_p_Seiscomp__Geo__GeoCoordinate swig_types[67]
-#define SWIGTYPE_p_Seiscomp__Geo__GeoFeature swig_types[68]
-#define SWIGTYPE_p_Seiscomp__Geo__GeoFeatureSet swig_types[69]
-#define SWIGTYPE_p_Seiscomp__Geo__GeoFeatureSetObserver swig_types[70]
-#define SWIGTYPE_p_Seiscomp__Geo__GeoFeatureSetSingleton swig_types[71]
-#define SWIGTYPE_p_Seiscomp__Geo__formatted_lat swig_types[72]
-#define SWIGTYPE_p_Seiscomp__Geo__formatted_lon swig_types[73]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__AverageT_double_t swig_types[74]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__AverageT_float_t swig_types[75]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__ChainFilterT_double_t swig_types[76]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__ChainFilterT_float_t swig_types[77]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t swig_types[78]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t swig_types[79]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t swig_types[80]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t swig_types[81]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t swig_types[82]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t swig_types[83]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t swig_types[84]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t swig_types[85]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t swig_types[86]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t swig_types[87]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t swig_types[88]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t swig_types[89]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t swig_types[90]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t swig_types[91]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t swig_types[92]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t swig_types[93]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t swig_types[94]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t swig_types[95]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t swig_types[96]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t swig_types[97]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t swig_types[98]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t swig_types[99]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t swig_types[100]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t swig_types[101]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_double_t swig_types[102]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_float_t swig_types[103]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t swig_types[104]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t swig_types[105]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_double_t swig_types[106]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_float_t swig_types[107]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t swig_types[108]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t swig_types[109]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_double_t swig_types[110]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_float_t swig_types[111]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t swig_types[112]
-#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t swig_types[113]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__CityT_double_t swig_types[114]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__CityT_float_t swig_types[115]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__CoordT_double_t swig_types[116]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__CoordT_float_t swig_types[117]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__NamedCoordT_double_t swig_types[118]
-#define SWIGTYPE_p_Seiscomp__Math__Geo__NamedCoordT_float_t swig_types[119]
-#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__PolesAndZeros swig_types[120]
-#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__ResponseList swig_types[121]
-#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__TransferFunction swig_types[122]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_char_t swig_types[123]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_double_t swig_types[124]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_float_t swig_types[125]
-#define SWIGTYPE_p_Seiscomp__NumericArrayT_int_t swig_types[126]
-#define SWIGTYPE_p_Seiscomp__Record swig_types[127]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t swig_types[128]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_char_t swig_types[129]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_double_t swig_types[130]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_float_t swig_types[131]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_int_t swig_types[132]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_double_t_t swig_types[133]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_float_t_t swig_types[134]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__string_t swig_types[135]
-#define SWIGTYPE_p_Type swig_types[136]
-#define SWIGTYPE_p_ValueType swig_types[137]
-#define SWIGTYPE_p_allocator_type swig_types[138]
-#define SWIGTYPE_p_boost__any swig_types[139]
-#define SWIGTYPE_p_char swig_types[140]
-#define SWIGTYPE_p_const_iterator swig_types[141]
-#define SWIGTYPE_p_difference_type swig_types[142]
-#define SWIGTYPE_p_double swig_types[143]
-#define SWIGTYPE_p_int swig_types[144]
-#define SWIGTYPE_p_iterator swig_types[145]
-#define SWIGTYPE_p_long swig_types[146]
-#define SWIGTYPE_p_long_long swig_types[147]
-#define SWIGTYPE_p_p_PyObject swig_types[148]
-#define SWIGTYPE_p_short swig_types[149]
-#define SWIGTYPE_p_signed_char swig_types[150]
-#define SWIGTYPE_p_size_type swig_types[151]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__Category_p_t swig_types[152]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t swig_types[153]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t swig_types[154]
-#define SWIGTYPE_p_std__allocatorT_size_t_t swig_types[155]
-#define SWIGTYPE_p_std__complexT_double_t swig_types[156]
-#define SWIGTYPE_p_std__invalid_argument swig_types[157]
-#define SWIGTYPE_p_std__mapT_std__string_std__string_std__lessT_std__string_t_std__allocatorT_std__pairT_std__string_const_std__string_t_t_t swig_types[158]
-#define SWIGTYPE_p_std__ostream swig_types[159]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[160]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[161]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__Category_p_t swig_types[162]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoCoordinate_t swig_types[163]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoFeature_p_t swig_types[164]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[165]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[166]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[167]
-#define SWIGTYPE_p_std__vectorT_size_t_t swig_types[168]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[169]
-#define SWIGTYPE_p_unsigned_char swig_types[170]
-#define SWIGTYPE_p_unsigned_int swig_types[171]
-#define SWIGTYPE_p_unsigned_long_long swig_types[172]
-#define SWIGTYPE_p_unsigned_short swig_types[173]
-#define SWIGTYPE_p_value_type swig_types[174]
-#define SWIGTYPE_p_void swig_types[175]
-static swig_type_info *swig_types[177];
-static swig_module_info swig_module = {swig_types, 176, 0, 0, 0, 0};
+#define SWIGTYPE_p_Days swig_types[5]
+#define SWIGTYPE_p_Duration swig_types[6]
+#define SWIGTYPE_p_F1 swig_types[7]
+#define SWIGTYPE_p_F2 swig_types[8]
+#define SWIGTYPE_p_F3 swig_types[9]
+#define SWIGTYPE_p_F4 swig_types[10]
+#define SWIGTYPE_p_F5 swig_types[11]
+#define SWIGTYPE_p_F6 swig_types[12]
+#define SWIGTYPE_p_Hours swig_types[13]
+#define SWIGTYPE_p_ImplType swig_types[14]
+#define SWIGTYPE_p_MajorType swig_types[15]
+#define SWIGTYPE_p_MicroSeconds swig_types[16]
+#define SWIGTYPE_p_MilliSeconds swig_types[17]
+#define SWIGTYPE_p_MinorType swig_types[18]
+#define SWIGTYPE_p_Minutes swig_types[19]
+#define SWIGTYPE_p_PackType swig_types[20]
+#define SWIGTYPE_p_PatchType swig_types[21]
+#define SWIGTYPE_p_Properties swig_types[22]
+#define SWIGTYPE_p_PropertyValue swig_types[23]
+#define SWIGTYPE_p_ReferenceType swig_types[24]
+#define SWIGTYPE_p_RootType swig_types[25]
+#define SWIGTYPE_p_Seconds swig_types[26]
+#define SWIGTYPE_p_Seiscomp__Array swig_types[27]
+#define SWIGTYPE_p_Seiscomp__BitSet swig_types[28]
+#define SWIGTYPE_p_Seiscomp__Core__BaseObject swig_types[29]
+#define SWIGTYPE_p_Seiscomp__Core__DataMessage swig_types[30]
+#define SWIGTYPE_p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t swig_types[31]
+#define SWIGTYPE_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t swig_types[32]
+#define SWIGTYPE_p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t swig_types[33]
+#define SWIGTYPE_p_Seiscomp__Core__GreensFunction swig_types[34]
+#define SWIGTYPE_p_Seiscomp__Core__InterruptibleObject swig_types[35]
+#define SWIGTYPE_p_Seiscomp__Core__Message swig_types[36]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl swig_types[37]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl swig_types[38]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl swig_types[39]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl swig_types[40]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl swig_types[41]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl swig_types[42]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl swig_types[43]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl swig_types[44]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl swig_types[45]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl swig_types[46]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl swig_types[47]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl swig_types[48]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl swig_types[49]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl swig_types[50]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl swig_types[51]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Geo__Category_const_t__Impl swig_types[52]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Geo__Category_t__Impl swig_types[53]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Geo__GeoFeature_const_t__Impl swig_types[54]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Geo__GeoFeature_t__Impl swig_types[55]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t__Impl swig_types[56]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t__Impl swig_types[57]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl swig_types[58]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl swig_types[59]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl swig_types[60]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl swig_types[61]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl swig_types[62]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl swig_types[63]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl swig_types[64]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl swig_types[65]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl swig_types[66]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl swig_types[67]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl swig_types[68]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl swig_types[69]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl swig_types[70]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl swig_types[71]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl swig_types[72]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl swig_types[73]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl swig_types[74]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl swig_types[75]
+#define SWIGTYPE_p_Seiscomp__Core__Time swig_types[76]
+#define SWIGTYPE_p_Seiscomp__GenericRecord swig_types[77]
+#define SWIGTYPE_p_Seiscomp__Geo__Category swig_types[78]
+#define SWIGTYPE_p_Seiscomp__Geo__GeoBoundingBox swig_types[79]
+#define SWIGTYPE_p_Seiscomp__Geo__GeoCoordinate swig_types[80]
+#define SWIGTYPE_p_Seiscomp__Geo__GeoFeature swig_types[81]
+#define SWIGTYPE_p_Seiscomp__Geo__GeoFeatureSet swig_types[82]
+#define SWIGTYPE_p_Seiscomp__Geo__GeoFeatureSetObserver swig_types[83]
+#define SWIGTYPE_p_Seiscomp__Geo__GeoFeatureSetSingleton swig_types[84]
+#define SWIGTYPE_p_Seiscomp__Geo__formatted_lat swig_types[85]
+#define SWIGTYPE_p_Seiscomp__Geo__formatted_lon swig_types[86]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__AverageT_double_t swig_types[87]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__AverageT_float_t swig_types[88]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__ChainFilterT_double_t swig_types[89]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__ChainFilterT_float_t swig_types[90]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t swig_types[91]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t swig_types[92]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t swig_types[93]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t swig_types[94]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t swig_types[95]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t swig_types[96]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t swig_types[97]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t swig_types[98]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t swig_types[99]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t swig_types[100]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t swig_types[101]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t swig_types[102]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_double_t swig_types[103]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__FilterT_float_t swig_types[104]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t swig_types[105]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t swig_types[106]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t swig_types[107]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t swig_types[108]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t swig_types[109]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t swig_types[110]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t swig_types[111]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t swig_types[112]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t swig_types[113]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t swig_types[114]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_double_t swig_types[115]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__InitialTaperT_float_t swig_types[116]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t swig_types[117]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t swig_types[118]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_double_t swig_types[119]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__RunningMeanT_float_t swig_types[120]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_double_t swig_types[121]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA2T_float_t swig_types[122]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_double_t swig_types[123]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTAT_float_t swig_types[124]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t swig_types[125]
+#define SWIGTYPE_p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t swig_types[126]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__CityT_double_t swig_types[127]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__CityT_float_t swig_types[128]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__CoordT_double_t swig_types[129]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__CoordT_float_t swig_types[130]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__NamedCoordT_double_t swig_types[131]
+#define SWIGTYPE_p_Seiscomp__Math__Geo__NamedCoordT_float_t swig_types[132]
+#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__PolesAndZeros swig_types[133]
+#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__ResponseList swig_types[134]
+#define SWIGTYPE_p_Seiscomp__Math__Restitution__FFT__TransferFunction swig_types[135]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_char_t swig_types[136]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_double_t swig_types[137]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_float_t swig_types[138]
+#define SWIGTYPE_p_Seiscomp__NumericArrayT_int_t swig_types[139]
+#define SWIGTYPE_p_Seiscomp__Record swig_types[140]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t swig_types[141]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_char_t swig_types[142]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_double_t swig_types[143]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_float_t swig_types[144]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_int_t swig_types[145]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_double_t_t swig_types[146]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_float_t_t swig_types[147]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__string_t swig_types[148]
+#define SWIGTYPE_p_Storage swig_types[149]
+#define SWIGTYPE_p_TimePoint swig_types[150]
+#define SWIGTYPE_p_Type swig_types[151]
+#define SWIGTYPE_p_ValueType swig_types[152]
+#define SWIGTYPE_p_Weeks swig_types[153]
+#define SWIGTYPE_p_allocator_type swig_types[154]
+#define SWIGTYPE_p_boost__any swig_types[155]
+#define SWIGTYPE_p_char swig_types[156]
+#define SWIGTYPE_p_const_iterator swig_types[157]
+#define SWIGTYPE_p_difference_type swig_types[158]
+#define SWIGTYPE_p_double swig_types[159]
+#define SWIGTYPE_p_int swig_types[160]
+#define SWIGTYPE_p_iterator swig_types[161]
+#define SWIGTYPE_p_long swig_types[162]
+#define SWIGTYPE_p_long_long swig_types[163]
+#define SWIGTYPE_p_p_PyObject swig_types[164]
+#define SWIGTYPE_p_short swig_types[165]
+#define SWIGTYPE_p_signed_char swig_types[166]
+#define SWIGTYPE_p_size_type swig_types[167]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__Category_p_t swig_types[168]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoCoordinate_t swig_types[169]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Geo__GeoFeature_p_t swig_types[170]
+#define SWIGTYPE_p_std__allocatorT_size_t_t swig_types[171]
+#define SWIGTYPE_p_std__complexT_double_t swig_types[172]
+#define SWIGTYPE_p_std__invalid_argument swig_types[173]
+#define SWIGTYPE_p_std__mapT_std__string_std__string_std__lessT_std__string_t_std__allocatorT_std__pairT_std__string_const_std__string_t_t_t swig_types[174]
+#define SWIGTYPE_p_std__ostream swig_types[175]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[176]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[177]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__Category_p_t swig_types[178]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoCoordinate_t swig_types[179]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoFeature_p_t swig_types[180]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[181]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[182]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[183]
+#define SWIGTYPE_p_std__vectorT_size_t_t swig_types[184]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[185]
+#define SWIGTYPE_p_unsigned_char swig_types[186]
+#define SWIGTYPE_p_unsigned_int swig_types[187]
+#define SWIGTYPE_p_unsigned_long_long swig_types[188]
+#define SWIGTYPE_p_unsigned_short swig_types[189]
+#define SWIGTYPE_p_value_type swig_types[190]
+#define SWIGTYPE_p_void swig_types[191]
+static swig_type_info *swig_types[193];
+static swig_module_info swig_module = {swig_types, 192, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -22654,15 +22670,28 @@ static swig_type_info _swigt__p_AttachmentList = {"_p_AttachmentList", "Attachme
 static swig_type_info _swigt__p_AttachmentType = {"_p_AttachmentType", "AttachmentType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Attributes = {"_p_Attributes", "Attributes *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_DataArray = {"_p_DataArray", "DataArray *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Days = {"_p_Days", "Days *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Duration = {"_p_Duration", "Duration *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_F1 = {"_p_F1", "F1 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_F2 = {"_p_F2", "F2 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_F3 = {"_p_F3", "F3 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_F4 = {"_p_F4", "F4 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_F5 = {"_p_F5", "F5 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_F6 = {"_p_F6", "F6 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Hours = {"_p_Hours", "Hours *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_ImplType = {"_p_ImplType", "ImplType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_MajorType = {"_p_MajorType", "MajorType *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_MicroSeconds = {"_p_MicroSeconds", "MicroSeconds *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_MilliSeconds = {"_p_MilliSeconds", "MilliSeconds *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_MinorType = {"_p_MinorType", "MinorType *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Minutes = {"_p_Minutes", "Minutes *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PackType = {"_p_PackType", "PackType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PatchType = {"_p_PatchType", "PatchType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Properties = {"_p_Properties", "Properties *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PropertyValue = {"_p_PropertyValue", "PropertyValue *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_ReferenceType = {"_p_ReferenceType", "ReferenceType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_RootType = {"_p_RootType", "RootType *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seconds = {"_p_Seconds", "Seconds *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__BaseObject = {"_p_Seiscomp__Core__BaseObject", "Seiscomp::Core::BaseObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Array = {"_p_Seiscomp__Array", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__BitSet = {"_p_Seiscomp__BitSet", 0, 0, 0, 0, 0};
@@ -22785,8 +22814,11 @@ static swig_type_info _swigt__p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t = {
 static swig_type_info _swigt__p_Seiscomp__TypedArrayT_std__complexT_double_t_t = {"_p_Seiscomp__TypedArrayT_std__complexT_double_t_t", "Seiscomp::ComplexDoubleArray *|Seiscomp::TypedArray< std::complex< double > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__TypedArrayT_std__complexT_float_t_t = {"_p_Seiscomp__TypedArrayT_std__complexT_float_t_t", "Seiscomp::ComplexFloatArray *|Seiscomp::TypedArray< std::complex< float > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__TypedArrayT_std__string_t = {"_p_Seiscomp__TypedArrayT_std__string_t", "Seiscomp::StringArray *|Seiscomp::TypedArray< std::string > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Storage = {"_p_Storage", "Storage *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_TimePoint = {"_p_TimePoint", "TimePoint *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Type = {"_p_Type", "Type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_ValueType = {"_p_ValueType", "ValueType *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Weeks = {"_p_Weeks", "Weeks *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_allocator_type = {"_p_allocator_type", "allocator_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__any = {"_p_boost__any", "Seiscomp::Core::MetaValue *|boost::any *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
@@ -22832,15 +22864,28 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_AttachmentType,
   &_swigt__p_Attributes,
   &_swigt__p_DataArray,
+  &_swigt__p_Days,
+  &_swigt__p_Duration,
+  &_swigt__p_F1,
+  &_swigt__p_F2,
+  &_swigt__p_F3,
+  &_swigt__p_F4,
+  &_swigt__p_F5,
+  &_swigt__p_F6,
+  &_swigt__p_Hours,
   &_swigt__p_ImplType,
   &_swigt__p_MajorType,
+  &_swigt__p_MicroSeconds,
+  &_swigt__p_MilliSeconds,
   &_swigt__p_MinorType,
+  &_swigt__p_Minutes,
   &_swigt__p_PackType,
   &_swigt__p_PatchType,
   &_swigt__p_Properties,
   &_swigt__p_PropertyValue,
   &_swigt__p_ReferenceType,
   &_swigt__p_RootType,
+  &_swigt__p_Seconds,
   &_swigt__p_Seiscomp__Array,
   &_swigt__p_Seiscomp__BitSet,
   &_swigt__p_Seiscomp__Core__BaseObject,
@@ -22963,8 +23008,11 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__TypedArrayT_std__complexT_double_t_t,
   &_swigt__p_Seiscomp__TypedArrayT_std__complexT_float_t_t,
   &_swigt__p_Seiscomp__TypedArrayT_std__string_t,
+  &_swigt__p_Storage,
+  &_swigt__p_TimePoint,
   &_swigt__p_Type,
   &_swigt__p_ValueType,
+  &_swigt__p_Weeks,
   &_swigt__p_allocator_type,
   &_swigt__p_boost__any,
   &_swigt__p_char,
@@ -23010,15 +23058,28 @@ static swig_cast_info _swigc__p_AttachmentList[] = {  {&_swigt__p_AttachmentList
 static swig_cast_info _swigc__p_AttachmentType[] = {  {&_swigt__p_AttachmentType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Attributes[] = {  {&_swigt__p_Attributes, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_DataArray[] = {  {&_swigt__p_DataArray, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Days[] = {  {&_swigt__p_Days, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Duration[] = {  {&_swigt__p_Duration, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_F1[] = {  {&_swigt__p_F1, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_F2[] = {  {&_swigt__p_F2, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_F3[] = {  {&_swigt__p_F3, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_F4[] = {  {&_swigt__p_F4, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_F5[] = {  {&_swigt__p_F5, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_F6[] = {  {&_swigt__p_F6, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Hours[] = {  {&_swigt__p_Hours, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ImplType[] = {  {&_swigt__p_ImplType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_MajorType[] = {  {&_swigt__p_MajorType, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_MicroSeconds[] = {  {&_swigt__p_MicroSeconds, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_MilliSeconds[] = {  {&_swigt__p_MilliSeconds, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_MinorType[] = {  {&_swigt__p_MinorType, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Minutes[] = {  {&_swigt__p_Minutes, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PackType[] = {  {&_swigt__p_PackType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PatchType[] = {  {&_swigt__p_PatchType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Properties[] = {  {&_swigt__p_Properties, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PropertyValue[] = {  {&_swigt__p_PropertyValue, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ReferenceType[] = {  {&_swigt__p_ReferenceType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_RootType[] = {  {&_swigt__p_RootType, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seconds[] = {  {&_swigt__p_Seconds, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Array[] = {{&_swigt__p_Seiscomp__Array, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__BitSet[] = {{&_swigt__p_Seiscomp__BitSet, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__DataMessage[] = {{&_swigt__p_Seiscomp__Core__DataMessage, 0, 0, 0},{0, 0, 0, 0}};
@@ -23141,8 +23202,11 @@ static swig_cast_info _swigc__p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t[] =
 static swig_cast_info _swigc__p_Seiscomp__TypedArrayT_std__complexT_double_t_t[] = {  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_double_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__TypedArrayT_std__complexT_float_t_t[] = {  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_float_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__TypedArrayT_std__string_t[] = {  {&_swigt__p_Seiscomp__TypedArrayT_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Storage[] = {  {&_swigt__p_Storage, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_TimePoint[] = {  {&_swigt__p_TimePoint, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Type[] = {  {&_swigt__p_Type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ValueType[] = {  {&_swigt__p_ValueType, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Weeks[] = {  {&_swigt__p_Weeks, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_allocator_type[] = {  {&_swigt__p_allocator_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__any[] = {  {&_swigt__p_boost__any, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
@@ -23188,15 +23252,28 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_AttachmentType,
   _swigc__p_Attributes,
   _swigc__p_DataArray,
+  _swigc__p_Days,
+  _swigc__p_Duration,
+  _swigc__p_F1,
+  _swigc__p_F2,
+  _swigc__p_F3,
+  _swigc__p_F4,
+  _swigc__p_F5,
+  _swigc__p_F6,
+  _swigc__p_Hours,
   _swigc__p_ImplType,
   _swigc__p_MajorType,
+  _swigc__p_MicroSeconds,
+  _swigc__p_MilliSeconds,
   _swigc__p_MinorType,
+  _swigc__p_Minutes,
   _swigc__p_PackType,
   _swigc__p_PatchType,
   _swigc__p_Properties,
   _swigc__p_PropertyValue,
   _swigc__p_ReferenceType,
   _swigc__p_RootType,
+  _swigc__p_Seconds,
   _swigc__p_Seiscomp__Array,
   _swigc__p_Seiscomp__BitSet,
   _swigc__p_Seiscomp__Core__BaseObject,
@@ -23319,8 +23396,11 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__TypedArrayT_std__complexT_double_t_t,
   _swigc__p_Seiscomp__TypedArrayT_std__complexT_float_t_t,
   _swigc__p_Seiscomp__TypedArrayT_std__string_t,
+  _swigc__p_Storage,
+  _swigc__p_TimePoint,
   _swigc__p_Type,
   _swigc__p_ValueType,
+  _swigc__p_Weeks,
   _swigc__p_allocator_type,
   _swigc__p_boost__any,
   _swigc__p_char,

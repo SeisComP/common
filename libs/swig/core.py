@@ -254,9 +254,6 @@ class Enumeration(object):
 
 # Register Enumeration in _core:
 _core.Enumeration_swigregister(Enumeration)
-
-def __lshift__(os, e):
-    return _core.__lshift__(os, e)
 class GeneralException(Exception):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -523,38 +520,65 @@ class TimeSpan(object):
     def __init__(self, *args):
         _core.TimeSpan_swiginit(self, _core.new_TimeSpan(*args))
 
-    def __eq__(self, arg2):
-        return _core.TimeSpan___eq__(self, arg2)
+    def __eq__(self, other):
+        return _core.TimeSpan___eq__(self, other)
 
-    def __ne__(self, arg2):
-        return _core.TimeSpan___ne__(self, arg2)
+    def __ne__(self, other):
+        return _core.TimeSpan___ne__(self, other)
 
-    def __lt__(self, arg2):
-        return _core.TimeSpan___lt__(self, arg2)
+    def __le__(self, other):
+        return _core.TimeSpan___le__(self, other)
 
-    def __le__(self, arg2):
-        return _core.TimeSpan___le__(self, arg2)
+    def __lt__(self, other):
+        return _core.TimeSpan___lt__(self, other)
 
-    def __gt__(self, arg2):
-        return _core.TimeSpan___gt__(self, arg2)
+    def __ge__(self, other):
+        return _core.TimeSpan___ge__(self, other)
 
-    def __ge__(self, arg2):
-        return _core.TimeSpan___ge__(self, arg2)
+    def __gt__(self, other):
+        return _core.TimeSpan___gt__(self, other)
 
-    def __add__(self, arg2):
-        return _core.TimeSpan___add__(self, arg2)
+    def __add__(self, other):
+        return _core.TimeSpan___add__(self, other)
 
-    def __sub__(self, arg2):
-        return _core.TimeSpan___sub__(self, arg2)
+    def __sub__(self, other):
+        return _core.TimeSpan___sub__(self, other)
 
-    def __iadd__(self, arg2):
-        return _core.TimeSpan___iadd__(self, arg2)
+    def __mul__(self, *args):
+        return _core.TimeSpan___mul__(self, *args)
 
-    def __isub__(self, arg2):
-        return _core.TimeSpan___isub__(self, arg2)
+    def __truediv__(self, *args):
+        return _core.TimeSpan___truediv__(self, *args)
+    __div__ = __truediv__
 
-    def abs(self):
-        return _core.TimeSpan_abs(self)
+
+
+    def __neg__(self):
+        return _core.TimeSpan___neg__(self)
+
+    def __iadd__(self, other):
+        return _core.TimeSpan___iadd__(self, other)
+
+    def __isub__(self, other):
+        return _core.TimeSpan___isub__(self, other)
+
+    def __imul__(self, *args):
+        return _core.TimeSpan___imul__(self, *args)
+
+    def __itruediv__(self, *args):
+        return _core.TimeSpan___itruediv__(self, *args)
+    __idiv__ = __itruediv__
+
+
+
+    def __nonzero__(self):
+        return _core.TimeSpan___nonzero__(self)
+    __bool__ = __nonzero__
+
+
+
+    def repr(self):
+        return _core.TimeSpan_repr(self)
 
     def seconds(self):
         return _core.TimeSpan_seconds(self)
@@ -562,17 +586,32 @@ class TimeSpan(object):
     def microseconds(self):
         return _core.TimeSpan_microseconds(self)
 
-    def length(self):
-        return _core.TimeSpan_length(self)
+    def count(self):
+        return _core.TimeSpan_count(self)
 
-    def set(self, seconds):
-        return _core.TimeSpan_set(self, seconds)
+    def abs(self):
+        return _core.TimeSpan_abs(self)
+
+    def set(self, seconds, usecs=0):
+        return _core.TimeSpan_set(self, seconds, usecs)
+
+    def get(self, days, hours=None, minutes=None, seconds=None):
+        return _core.TimeSpan_get(self, days, hours, minutes, seconds)
+
+    def elapsedTime(self, days, hours=None, minutes=None, seconds=None):
+        return _core.TimeSpan_elapsedTime(self, days, hours, minutes, seconds)
 
     def setUSecs(self, arg2):
         return _core.TimeSpan_setUSecs(self, arg2)
 
-    def elapsedTime(self, days, hours=None, minutes=None, seconds=None):
-        return _core.TimeSpan_elapsedTime(self, days, hours, minutes, seconds)
+    def length(self):
+        return _core.TimeSpan_length(self)
+
+    def toString(self):
+        return _core.TimeSpan_toString(self)
+
+    def fromString(self, str):
+        return _core.TimeSpan_fromString(self, str)
 
     def toDouble(self):
         return _core.TimeSpan_toDouble(self)
@@ -584,15 +623,50 @@ class TimeSpan(object):
 
 # Register TimeSpan in _core:
 _core.TimeSpan_swigregister(TimeSpan)
-TimeSpan.MinTime = _core.cvar.TimeSpan_MinTime
-TimeSpan.MaxTime = _core.cvar.TimeSpan_MaxTime
+TimeSpan.MinSpan = _core.cvar.TimeSpan_MinSpan
+TimeSpan.MaxSpan = _core.cvar.TimeSpan_MaxSpan
+TimeSpan.MinSeconds = _core.cvar.TimeSpan_MinSeconds
+TimeSpan.MaxSeconds = _core.cvar.TimeSpan_MaxSeconds
 
-class Time(TimeSpan):
+class Time(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
+    Null = property(_core.Time_Null_get, _core.Time_Null_set)
+    MinTime = _core.Time_MinTime
+    MaxTime = _core.Time_MaxTime
 
     def __init__(self, *args):
         _core.Time_swiginit(self, _core.new_Time(*args))
+
+    def __eq__(self, other):
+        return _core.Time___eq__(self, other)
+
+    def __ne__(self, other):
+        return _core.Time___ne__(self, other)
+
+    def __lt__(self, other):
+        return _core.Time___lt__(self, other)
+
+    def __le__(self, other):
+        return _core.Time___le__(self, other)
+
+    def __gt__(self, other):
+        return _core.Time___gt__(self, other)
+
+    def __ge__(self, other):
+        return _core.Time___ge__(self, other)
+
+    def __iadd__(self, ts):
+        return _core.Time___iadd__(self, ts)
+
+    def __isub__(self, ts):
+        return _core.Time___isub__(self, ts)
+
+    def __add__(self, ts):
+        return _core.Time___add__(self, ts)
+
+    def __sub__(self, *args):
+        return _core.Time___sub__(self, *args)
 
     def __nonzero__(self):
         return _core.Time___nonzero__(self)
@@ -600,35 +674,86 @@ class Time(TimeSpan):
 
 
 
-    def __add__(self, arg2):
-        return _core.Time___add__(self, arg2)
+    def repr(self):
+        return _core.Time_repr(self)
 
-    def __sub__(self, *args):
-        return _core.Time___sub__(self, *args)
-
-    def __iadd__(self, arg2):
-        return _core.Time___iadd__(self, arg2)
-
-    def __isub__(self, arg2):
-        return _core.Time___isub__(self, arg2)
+    def valid(self):
+        return _core.Time_valid(self)
 
     def set(self, year, month, day, hour, min, sec, usec):
         return _core.Time_set(self, year, month, day, hour, min, sec, usec)
 
-    def set2(self, year, yday, hour, min, sec, usec):
-        return _core.Time_set2(self, year, yday, hour, min, sec, usec)
-
     def get(self):
         return _core.Time_get(self)
+
+    def set2(self, year, yday, hour, min, sec, usec):
+        return _core.Time_set2(self, year, yday, hour, min, sec, usec)
 
     def get2(self):
         return _core.Time_get2(self)
 
-    def epoch(self):
-        return _core.Time_epoch(self)
+    def now(self):
+        return _core.Time_now(self)
+
+    def gmt(self):
+        return _core.Time_gmt(self)
+
+    def utc(self):
+        return _core.Time_utc(self)
+
+    def iso(self):
+        return _core.Time_iso(self)
+
+    def toString(self, format):
+        return _core.Time_toString(self, format)
+
+    def toLocalString(self, format):
+        return _core.Time_toLocalString(self, format)
+
+    def toZonedString(self, format, tz):
+        return _core.Time_toZonedString(self, format, tz)
+
+    def fromString(self, *args):
+        return _core.Time_fromString(self, *args)
+
+    @staticmethod
+    def FromString(*args):
+        return _core.Time_FromString(*args)
+
+    @staticmethod
+    def FromYearDay(year, doy):
+        return _core.Time_FromYearDay(year, doy)
+
+    def seconds(self):
+        return _core.Time_seconds(self)
 
     def epochSeconds(self):
         return _core.Time_epochSeconds(self)
+
+    def epoch(self):
+        return _core.Time_epoch(self)
+
+    def microseconds(self):
+        return _core.Time_microseconds(self)
+
+    def setUSecs(self, ms):
+        return _core.Time_setUSecs(self, ms)
+
+    @staticmethod
+    def FromEpoch(*args):
+        return _core.Time_FromEpoch(*args)
+
+    @staticmethod
+    def Now():
+        return _core.Time_Now()
+
+    @staticmethod
+    def GMT():
+        return _core.Time_GMT()
+
+    @staticmethod
+    def UTC():
+        return _core.Time_UTC()
 
     @staticmethod
     def LocalTime():
@@ -637,30 +762,6 @@ class Time(TimeSpan):
     @staticmethod
     def LocalTimeZone():
         return _core.Time_LocalTimeZone()
-
-    @staticmethod
-    def UTC():
-        return _core.Time_UTC()
-
-    @staticmethod
-    def GMT():
-        return _core.Time_GMT()
-
-    @staticmethod
-    def FromYearDay(year, year_day):
-        return _core.Time_FromYearDay(year, year_day)
-
-    def localTimeZoneOffset(self):
-        return _core.Time_localTimeZoneOffset(self)
-
-    def localtime(self):
-        return _core.Time_localtime(self)
-
-    def utc(self):
-        return _core.Time_utc(self)
-
-    def gmt(self):
-        return _core.Time_gmt(self)
 
     def toLocalTime(self):
         return _core.Time_toLocalTime(self)
@@ -671,21 +772,11 @@ class Time(TimeSpan):
     def toGMT(self):
         return _core.Time_toGMT(self)
 
-    def valid(self):
-        return _core.Time_valid(self)
+    def localTimeZoneOffset(self):
+        return _core.Time_localTimeZoneOffset(self)
 
-    def toString(self, fmt):
-        return _core.Time_toString(self, fmt)
-
-    def iso(self):
-        return _core.Time_iso(self)
-
-    def fromString(self, *args):
-        return _core.Time_fromString(self, *args)
-
-    @staticmethod
-    def FromString(*args):
-        return _core.Time_FromString(*args)
+    def timeZoneOffset(self, tzName):
+        return _core.Time_timeZoneOffset(self, tzName)
 
     def __str__(self):
             return self.toString("%Y-%m-%d %H:%M:%S.%f000000")[:23]
@@ -697,8 +788,9 @@ class Time(TimeSpan):
 
 # Register Time in _core:
 _core.Time_swigregister(Time)
-Time.Null = _core.cvar.Time_Null
 
+def __lshift__(*args):
+    return _core.__lshift__(*args)
 class GenericArchive(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
 
