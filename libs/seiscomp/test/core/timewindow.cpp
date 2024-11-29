@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(Construction) {
 	BOOST_CHECK_EQUAL(tw2.length(), tw3.length());
 
 	BOOST_CHECK(!tw0);
-	BOOST_CHECK(TimeWindow(start, start));
+	BOOST_CHECK(!TimeWindow(start, start));
 	BOOST_CHECK(tw1);
 	BOOST_CHECK(tw2);
 	BOOST_CHECK(tw3);
