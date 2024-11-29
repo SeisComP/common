@@ -163,6 +163,14 @@ BOOST_AUTO_TEST_CASE(TIMESPAN) {
 
 	BOOST_CHECK(buffer.feed(Pick::Create()));
 	BOOST_CHECK_EQUAL(buffer.size(), 1);
+
+	// Clear buffer, reset timespan to 0, assert that object feed to buffer
+	// is retained despite timespan is empty
+	buffer.clear();
+	buffer.setTimeSpan({});
+	BOOST_CHECK_EQUAL(buffer.size(), 0);
+	BOOST_CHECK(buffer.feed(Pick::Create()));
+	BOOST_CHECK_EQUAL(buffer.size(), 1);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

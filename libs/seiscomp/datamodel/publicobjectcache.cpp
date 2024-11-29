@@ -527,12 +527,19 @@ bool PublicObjectTimeSpanBuffer::setTimeSpan(const Core::TimeSpan& length) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PublicObjectTimeSpanBuffer::feed(PublicObject* po) {
-	if ( !po ) return false;
+	if ( !po ) {
+		return false;
+	}
 
-	Core::Time now = Core::Time::Now();
+	auto now = Core::Time::Now();
 
 	push(po);
-	while ( !empty() && now - oldest() > _timeSpan ) pop();
+
+	// Remove objects older than the reference time span but ensure that the
+	// last object which was just pushed to the buffer is not removed.
+	while ( size() > 1 && now - oldest() > _timeSpan ) {
+		pop();
+	}
 
 	return true;
 }
