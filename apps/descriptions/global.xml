@@ -915,15 +915,16 @@
 					Define the saturation threshold for the optional saturation
 					check.
 					By default, the saturation check is disabled but giving a
-					value above 0 will enable it. Waveforms that are saturated
-					are not used for amplitude calculations.
+					value above 0 will enable it. Waveforms with raw amplitudes
+					above the threshold will then be considered saturated and
+					not used for amplitude calculations.
 
 					This value can either be an absolute value of counts such
 					as &quot;100000&quot; counts or a relative value
 					(optionally in percent) with respect to the number of
-					effective bits, e.g. &quot;0.8@23&quot; or &quot;80%@23&quot;.
-					The first version uses 1**23 * 0.8 whereas the latter
-					uses 1**23 * 80/100.
+					effective bits, e.g., &quot;0.8@23&quot; or &quot;80%@23&quot;.
+					The first and the second version represent 0.8 * 2**23 and
+					80/100 * 2**23, respectively, which is the same.
 
 					The boolean value &quot;false&quot; explicitly disables
 					the check.
@@ -1025,18 +1026,19 @@
 					</description>
 					<parameter name="saturationThreshold" type="string" default="false" unit="counts; %">
 						<description>
-						Define the saturation threshold for the optional
-						saturation check. By default, the saturation check is
-						disabled but giving a value above 0 will enable it.
-						Waveforms that are saturated are not used for amplitude
-						calculations.
+						Define the saturation threshold for the optional saturation
+						check.
+						By default, the saturation check is disabled but giving a
+						value above 0 will enable it. Waveforms with raw amplitudes
+						above the threshold will then be considered saturated and
+						not used for amplitude calculations.
 
 						This value can either be an absolute value of counts such
 						as &quot;100000&quot; counts or a relative value
 						(optionally in percent) with respect to the number of
-						effective bits, e.g. &quot;0.8@23&quot; or &quot;80%@23&quot;.
-						The first version uses 1**23 * 0.8 whereas the latter
-						uses 1**23 * 80/100.
+						effective bits, e.g., &quot;0.8@23&quot; or &quot;80%@23&quot;.
+						The first and the second version represent 0.8 * 2**23 and
+						80/100 * 2**23, respectively, which is the same.
 
 						The boolean value &quot;false&quot; explicitly disables
 						the check.
