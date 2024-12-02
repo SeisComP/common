@@ -146,8 +146,23 @@ bool SQLiteDatabase::handleURIParameter(const std::string &name,
 			return false;
 		}
 	}
-	else if ( name == "sync" && (value == "0" || value == "false" || value == "off") ) {
-		_sync = false;
+	else if ( name == "sync" ) {
+		if ( value == "false" || value == "off" || value == "0" ) {
+			_sync = 0;
+		}
+		else if ( value == "normal" || value == "on" || value == "1" ) {
+			_sync = 1;
+		}
+		else if ( value == "full" || value == "2" ) {
+			_sync = 2;
+		}
+		else if ( value == "extra" || value == "3" ) {
+			_sync = 3;
+		}
+		else {
+			SEISCOMP_ERROR("Invalid sync value: %s", value.c_str());
+			return false;
+		}
 	}
 
 	return true;
@@ -191,9 +206,24 @@ bool SQLiteDatabase::open() {
 #endif
 	}
 
-	if ( !_sync ) {
-		SEISCOMP_DEBUG("Disable disc synchronization");
-		execute("PRAGMA synchronous = OFF");
+	if ( _sync != 1 ) {
+		switch ( _sync ) {
+			case 0:
+				SEISCOMP_DEBUG("Disable disc synchronization");
+				execute("PRAGMA synchronous = OFF");
+				break;
+			case 2:
+				SEISCOMP_DEBUG("Set disc synchronization to 'full'");
+				execute("PRAGMA synchronous = FULL");
+				break;
+			case 3:
+				SEISCOMP_DEBUG("Set disc synchronization to 'extra'");
+				execute("PRAGMA synchronous = EXTRA");
+				break;
+			default:
+				SEISCOMP_WARNING("Unknown sync mode: %d", _sync);
+				break;
+		}
 	}
 
 	return true;
@@ -207,6 +237,7 @@ bool SQLiteDatabase::open() {
 bool SQLiteDatabase::connect(const char *con) {
 	_host = con;
 	_columnPrefix = "";
+	_sync = 1;
 
 	string params;
 	size_t pos = _host.find('?');

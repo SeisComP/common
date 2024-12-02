@@ -91,7 +91,7 @@ class SQLiteDatabase : public Seiscomp::IO::DatabaseInterface {
 		sqlite3      *_handle{nullptr};
 		sqlite3_stmt *_stmt{nullptr};
 		int           _columnCount{0};
-		bool          _sync{true};
+		int           _sync{1};
 };
 
 
