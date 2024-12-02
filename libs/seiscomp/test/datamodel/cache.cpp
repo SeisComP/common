@@ -168,9 +168,14 @@ BOOST_AUTO_TEST_CASE(TIMESPAN) {
 	// is retained despite timespan is empty
 	buffer.clear();
 	buffer.setTimeSpan({});
+	pick = Pick::Create();
+	publicID = pick->publicID();
+
 	BOOST_CHECK_EQUAL(buffer.size(), 0);
-	BOOST_CHECK(buffer.feed(Pick::Create()));
+	BOOST_CHECK(buffer.feed(pick.get()));
 	BOOST_CHECK_EQUAL(buffer.size(), 1);
+	BOOST_CHECK(buffer.get<Pick>(publicID));
+	BOOST_CHECK_EQUAL(pick->referenceCount(), 2);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
