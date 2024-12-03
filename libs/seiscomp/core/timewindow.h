@@ -23,6 +23,7 @@
 
 #include <seiscomp/core.h>
 #include <seiscomp/core/datetime.h>
+#include <seiscomp/core/optional.h>
 
 #include <ostream>
 
@@ -32,28 +33,59 @@ namespace Core {
 
 
 class SC_SYSTEM_CORE_API TimeWindow {
+	// ----------------------------------------------------------------------
 	//  X'truction
+	// ----------------------------------------------------------------------
 	public:
 		TimeWindow();
 		TimeWindow(const Time &startTime, double length);
 		TimeWindow(const Time &startTime, const TimeSpan length);
 		TimeWindow(const Time &startTime, const Time &endTime);
-		TimeWindow(const TimeWindow &tw);
+		TimeWindow(const TimeWindow &other);
 		~TimeWindow() {}
 
-	//  Operators
+
+	// ----------------------------------------------------------------------
+	//  Assignment operators
+	// ----------------------------------------------------------------------
 	public:
 		TimeWindow &operator=(const TimeWindow&);
+
+
+	// ----------------------------------------------------------------------
+	//  Comparison operators
+	// ----------------------------------------------------------------------
+	public:
 		bool operator==(const TimeWindow&) const;
 		bool operator!=(const TimeWindow&) const;
 
-		//! Returns the minimal timewindow including this and other
-		TimeWindow operator|(const TimeWindow &other) const;
 
+	// ----------------------------------------------------------------------
+	//  Arithmetic operators
+	// ----------------------------------------------------------------------
+	public:
+		//! Returns the minimal timewindow including this and other
+		TimeWindow  operator|(const TimeWindow &other) const;
+		//! Sets the minimal timewindow including this and other
+		TimeWindow &operator|=(const TimeWindow &other);
+
+		//! Returns the intersection of this and other
+		TimeWindow  operator&(const TimeWindow &other) const;
+		//! Sets the intersection of this and other
+		TimeWindow &operator&=(const TimeWindow &other);
+
+
+	// ----------------------------------------------------------------------
+	//  Cast operators
+	// ----------------------------------------------------------------------
+	public:
 		//! Returns if the time window has length larger than 0.
 		operator bool() const;
 
-	//  Interface
+
+	// ----------------------------------------------------------------------
+	//  Public interface
+	// ----------------------------------------------------------------------
 	public:
 		Time startTime() const;
 		Time endTime() const;
@@ -73,26 +105,33 @@ class SC_SYSTEM_CORE_API TimeWindow {
 
 		//! is equal to time window?
 		//! +/- tolerance in seconds
-		bool equals(const TimeWindow &tw, double tolerance=0.0) const;
+		bool equals(const TimeWindow &tw, TimeSpan tolerance = TimeSpan(0, 0)) const;
 
 		//! does it overlap with time window tw?
 		bool overlaps(const TimeWindow &tw) const;
 
-		//! compute overlap with time window tw
-		TimeWindow overlap(const TimeWindow &tw) const;
-
 		//! test if this+other would form a contiguous time window
-		bool contiguous(const TimeWindow&, double tolerance=0) const;
+		bool contiguous(const TimeWindow &, TimeSpan tolerance = TimeSpan(0, 0)) const;
 
-		//! extend time window by appending the other (without check!)
-		void extend(const TimeWindow&);
+		//! Sets the intersection time window with this and other
+		TimeWindow &overlap(const TimeWindow &other);
 
-		//! merges this and other to the minimal timewindow overlapping both
-		TimeWindow merge(const TimeWindow&) const;
+		//! Computes the intersection with time window other
+		TimeWindow overlapped(const TimeWindow &other) const;
 
-	//  Implementation
+		//! Merges other into this to the minimal timewindow overlapping both.
+		TimeWindow &merge(const TimeWindow &other);
+
+		//! Returns the minimal timewindow including this and other
+		TimeWindow merged(const TimeWindow &other) const;
+
+
+	// ----------------------------------------------------------------------
+	//  Private members
+	// ----------------------------------------------------------------------
 	private:
-		Time _startTime, _endTime;
+		Time _startTime;
+		Time _endTime;
 };
 
 
