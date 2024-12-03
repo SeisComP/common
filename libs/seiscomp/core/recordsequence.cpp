@@ -234,7 +234,7 @@ RecordSequence::TimeWindowArray RecordSequence::windows() const {
 			current = tw;
 		else {
 			if ( current.contiguous(tw, _tolerance/fs) )
-				current.extend(tw);
+				current |= tw;
 			else {
 				win.push_back(current);
 				current = tw;
