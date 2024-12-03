@@ -46,40 +46,42 @@ class SC_SYSTEM_CORE_API FDSNWSConnectionBase : public IO::RecordStream {
 	public:
 		//! The recordtype cannot be selected when using an arclink
 		//! connection. It will always create MiniSeed records
-		virtual bool setRecordType(const char *type);
+		bool setRecordType(const char *type) override;
 
 		//! Initialize the arclink connection.
-		virtual bool setSource(const std::string &source);
+		bool setSource(const std::string &source) override;
 
 		//! Supply user credentials
 		//! Adds the given stream to the server connection description
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode) override;
 
 		//! Adds the given stream to the server connection description
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode,
-		                       const Core::Time &startTime,
-		                       const Core::Time &endTime);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode,
+		               const OPT(Core::Time) &startTime,
+		               const OPT(Core::Time) &endTime) override;
 
 		//! Adds the given start time to the server connection description
-		virtual bool setStartTime(const Core::Time &startTime);
+		bool setStartTime(const OPT(Core::Time) &startTime) override;
 
 		//! Adds the given end time to the server connection description
-		virtual bool setEndTime(const Core::Time &endTime);
+		bool setEndTime(const OPT(Core::Time) &endTime) override;
 
 		//! Sets timeout
-		virtual bool setTimeout(int seconds);
+		bool setTimeout(int seconds) override;
 
 		//! Terminates the arclink connection.
-		virtual void close();
+		void close() override;
 
-		virtual Record *next();
+		Record *next() override;
 
+
+	private:
 		//! Reconnects a terminated arclink connection.
 		bool reconnect();
 
@@ -103,8 +105,8 @@ class SC_SYSTEM_CORE_API FDSNWSConnectionBase : public IO::RecordStream {
 		std::string          _url;
 		int                  _defaultPort;
 		std::set<StreamIdx>  _streams;
-		Core::Time           _stime;
-		Core::Time           _etime;
+		OPT(Core::Time)      _stime;
+		OPT(Core::Time)      _etime;
 		std::string          _reqID;
 		bool                 _readingData;
 		bool                 _chunkMode;

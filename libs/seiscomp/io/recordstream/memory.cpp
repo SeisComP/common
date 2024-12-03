@@ -110,8 +110,8 @@ bool Memory::addStream(const std::string &networkCode,
                        const std::string &stationCode,
                        const std::string &locationCode,
                        const std::string &channelCode,
-                       const Seiscomp::Core::Time &startTime,
-                       const Seiscomp::Core::Time &endTime) {
+                       const OPT(Seiscomp::Core::Time) &startTime,
+                       const OPT(Seiscomp::Core::Time) &endTime) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -120,7 +120,7 @@ bool Memory::addStream(const std::string &networkCode,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Memory::setStartTime(const Seiscomp::Core::Time &startTime) {
+bool Memory::setStartTime(const OPT(Seiscomp::Core::Time) &startTime) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -129,7 +129,7 @@ bool Memory::setStartTime(const Seiscomp::Core::Time &startTime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Memory::setEndTime(const Seiscomp::Core::Time &endTime) {
+bool Memory::setEndTime(const OPT(Seiscomp::Core::Time) &endTime) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

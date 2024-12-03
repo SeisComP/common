@@ -62,14 +62,14 @@ class SC_SYSTEM_CORE_API Concurrent : public IO::RecordStream {
 		               const std::string &stationCode,
 		               const std::string &locationCode,
 		               const std::string &channelCode,
-		               const Seiscomp::Core::Time &startTime,
-		               const Seiscomp::Core::Time &endTime) override;
+		               const OPT(Seiscomp::Core::Time) &startTime,
+		               const OPT(Seiscomp::Core::Time) &endTime) override;
 
 		//! Adds the given start time to the server connection description
-		bool setStartTime(const Core::Time &stime) override;
+		bool setStartTime(const OPT(Core::Time) &stime) override;
 
 		//! Adds the given end time to the server connection description
-		bool setEndTime(const Core::Time &etime) override;
+		bool setEndTime(const OPT(Core::Time) &etime) override;
 
 		//! Adds the given end time window to the server connection description
 		bool setTimeWindow(const Core::TimeWindow &w) override;

@@ -152,8 +152,8 @@ SDSArchive::Index::Index(const string& n, const string& s,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SDSArchive::Index::Index(const string& n, const string& s,
-                  const string& l, const string& c,
-                  const Time& st, const Time& et)
+                         const string& l, const string& c,
+                         const OPT(Time) &st, const OPT(Time) &et)
 : net(n), sta(s), loc(l), cha(c), stime(st), etime(et) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -293,12 +293,14 @@ bool SDSArchive::addStream(const string &net, const string &sta,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SDSArchive::addStream(const string &net, const string &sta,
                     const string &loc, const string &cha,
-                    const Time &stime, const Time &etime) {
+                    const OPT(Time) &stime, const OPT(Time) &etime) {
 	pair<IndexSet::iterator, bool> result;
 
 	try {
-		result = _streamSet.insert(Index(net,sta,loc,cha,stime,etime));
-		if ( result.second ) _orderedRequests.push_back(*result.first);
+		result = _streamSet.insert(Index(net, sta, loc, cha, stime, etime));
+		if ( result.second ) {
+			_orderedRequests.push_back(*result.first);
+		}
 	}
 	catch(...) {
 		return false;
@@ -312,7 +314,7 @@ bool SDSArchive::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SDSArchive::setStartTime(const Time &stime) {
+bool SDSArchive::setStartTime(const OPT(Time) &stime) {
 	_stime = stime;
 	return true;
 }
@@ -322,7 +324,7 @@ bool SDSArchive::setStartTime(const Time &stime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SDSArchive::setEndTime(const Time &etime) {
+bool SDSArchive::setEndTime(const OPT(Time) &etime) {
 	_etime = etime;
 	return true;
 }
@@ -592,8 +594,8 @@ bool SDSArchive::resolveFiles(const string &net, const string &sta,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SDSArchive::resolveRequest() {
-	Time stime = _curidx->stime;
-	Time etime = _curidx->etime;
+	Time stime = _curidx->stime.get_value_or(Time());
+	Time etime = _curidx->etime.get_value_or(Time());
 	int sdoy = getDoy(stime);
 	int edoy = getDoy(etime);
 	int syear, eyear, tmpdoy;
@@ -623,7 +625,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 	double samprate = 0.0;
 	Time physFirstStartTime, physFirstEndTime;
 	Time recstime, recetime;
-	Time stime = (_curidx->stime == Time())?_stime:_curidx->stime;
+	Time stime = !_curidx->stime ? _stime.get_value_or(Time()) : *_curidx->stime;
 	off_t fpos;
 	int retcode;
 	long int offset = 0;

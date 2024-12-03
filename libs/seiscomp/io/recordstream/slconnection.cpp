@@ -89,7 +89,7 @@ SLStreamIdx::SLStreamIdx(const string &net, const string &sta, const string &loc
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SLStreamIdx::SLStreamIdx(const string &net, const string &sta, const string &loc,
-                         const string &cha, const Time &stime, const Time &etime)
+                         const string &cha, const OPT(Time) &stime, const OPT(Time) &etime)
 : _net(net), _sta(sta), _loc(loc), _cha(cha)
 , _stime(stime), _etime(etime) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -218,7 +218,7 @@ string SLStreamIdx::selector() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time SLStreamIdx::startTime() const {
+const OPT(Time) &SLStreamIdx::startTime() const {
 	return _stime;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -227,7 +227,7 @@ Time SLStreamIdx::startTime() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time SLStreamIdx::endTime() const {
+const OPT(Time) &SLStreamIdx::endTime() const {
 	return _etime;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -236,7 +236,7 @@ Time SLStreamIdx::endTime() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time SLStreamIdx::timestamp() const {
+const OPT(Time) &SLStreamIdx::timestamp() const {
 	return _timestamp;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -245,7 +245,7 @@ Time SLStreamIdx::timestamp() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void SLStreamIdx::setTimestamp(Time &rectime) const {
+void SLStreamIdx::setTimestamp(const OPT(Time) &rectime) const {
 	if (_timestamp < rectime)
 		_timestamp = rectime;
 }
@@ -355,16 +355,20 @@ bool SLConnection::setSource(const string &source) {
 		_serverloc = source;
 
 	// set address defaults if necessary
-	if ( _serverloc.empty() || _serverloc == ":" )
+	if ( _serverloc.empty() || _serverloc == ":" ) {
 		_serverloc = DefaultHost + ":" + DefaultPort;
+	}
 	else {
 		pos = _serverloc.find(':');
-		if ( pos == string::npos )
+		if ( pos == string::npos ) {
 			_serverloc += ":" + DefaultPort;
-		else if ( pos == _serverloc.length()-1 )
+		}
+		else if ( pos == _serverloc.length()-1 ) {
 			_serverloc += DefaultPort;
-		else if ( pos == 0 )
+		}
+		else if ( pos == 0 ) {
 			_serverloc.insert(0, DefaultHost);
+		}
 	}
 
 	_retriesLeft = -1;
@@ -434,8 +438,8 @@ bool SLConnection::addStream(const string &net, const string &sta,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SLConnection::addStream(const string &net, const string &sta,
                              const string &loc, const string &cha,
-                             const Seiscomp::Core::Time &stime,
-                             const Seiscomp::Core::Time &etime) {
+                             const OPT(Core::Time) &stime,
+                             const OPT(Core::Time) &etime) {
 	pair<set<SLStreamIdx>::iterator, bool> result;
 	result = _streams.insert(SLStreamIdx(net, sta, loc, cha, stime, etime));
 	return result.second;
@@ -446,7 +450,7 @@ bool SLConnection::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SLConnection::setStartTime(const Seiscomp::Core::Time &stime) {
+bool SLConnection::setStartTime(const OPT(Core::Time) &stime) {
 	_stime = stime;
 	return true;
 }
@@ -456,7 +460,7 @@ bool SLConnection::setStartTime(const Seiscomp::Core::Time &stime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SLConnection::setEndTime(const Seiscomp::Core::Time &etime) {
+bool SLConnection::setEndTime(const OPT(Core::Time) &etime) {
 	_etime = etime;
 	return true;
 }
@@ -494,57 +498,49 @@ void SLConnection::handshake() {
 	else
 		SEISCOMP_INFO("BATCH mode requests disabled");
 
-	for (set<SLStreamIdx>::iterator it = _streams.begin(); it != _streams.end(); ++it) {
+	for ( const auto &idx : _streams ) {
 		try {
-			Time stime = (it->startTime() != Time()) ? it->startTime() : _stime;
-			Time etime = (it->endTime() != Time()) ? it->endTime() : _etime;
+			auto stime = idx.startTime() ? idx.startTime() : _stime;
+			auto etime = idx.endTime() ? idx.endTime() : _etime;
 
-			// Seedlink does not support microseconds so shift the end of
-			// one second if a fraction of a seconds is requested
-			if ( etime.microseconds() > 0 ) {
-				etime += TimeSpan(1, 0);
+			if ( idx.timestamp() ) {
+				stime = *idx.timestamp() + TimeSpan(1, 0);
 			}
-
-			if ( it->timestamp().valid() ) {
-				stime = it->timestamp() + TimeSpan(1, 0);
-			}
-			else if ( !stime.valid() ) {
+			else if ( !stime ) {
 				if ( etime > Time::UTC() ) {
 					stime = Time::UTC();
 				}
 			}
 
-			// Remove microseconds
-			stime.setUSecs(0);
-			etime.setUSecs(0);
-
 			// Empty time windows are not requested
-			if ( stime.valid() && etime.valid() && stime >= etime ) {
+			if ( stime && etime && *stime >= *etime ) {
 				SEISCOMP_DEBUG("Seedlink: ignoring empty request for %s.%s %s %s %s",
-				               it->network().data(), it->station().data(),
-				               it->selector().data(),
-				               stime.toString("%Y,%m,%d,%H,%M,%S").data(),
-				               etime.toString("%Y,%m,%d,%H,%M,%S").data());
+				               idx.network(), idx.station(), idx.selector(),
+				               stime->toString("%Y,%m,%d,%H,%M,%S"),
+				               etime->toString("%Y,%m,%d,%H,%M,%S"));
 				continue;
 			}
 
 			string timestr;
 
-			if ( stime.valid() ) {
-				timestr = stime.toString("%Y,%m,%d,%H,%M,%S");
-				if ( etime.valid() )
-					timestr += " " + etime.toString("%Y,%m,%d,%H,%M,%S");
+			if ( stime ) {
+				timestr = stime->toString("%Y,%m,%d,%H,%M,%S");
+				// Seedlink does not support microseconds so shift the end of
+				// one second if a fraction of a seconds is requested
+				if ( etime ) {
+					timestr += " " + (*etime + TimeSpan(0, 999999)).toString("%Y,%m,%d,%H,%M,%S");
+				}
 			}
 
 			_sock.startTimer();
-			_sock.sendRequest("STATION " + it->station() + " " + it->network(), !batchmode);
-			SEISCOMP_DEBUG("Seedlink command: STATION %s %s", it->station().c_str(),it->network().c_str());
-			_sock.sendRequest("SELECT " + it->selector(), !batchmode);
-			SEISCOMP_DEBUG("Seedlink command: SELECT %s", it->selector().c_str());
+			_sock.sendRequest("STATION " + idx.station() + " " + idx.network(), !batchmode);
+			SEISCOMP_DEBUG("Seedlink command: STATION %s %s", idx.station(), idx.network());
+			_sock.sendRequest("SELECT " + idx.selector(), !batchmode);
+			SEISCOMP_DEBUG("Seedlink command: SELECT %s", idx.selector());
 
 			if ( timestr.length() > 0 ) {
 				_sock.sendRequest("TIME " + timestr, !batchmode);
-				SEISCOMP_DEBUG("Seedlink command: TIME %s", timestr.c_str());
+				SEISCOMP_DEBUG("Seedlink command: TIME %s", timestr);
 			}
 			else {
 				_sock.sendRequest("DATA", !batchmode);

@@ -128,8 +128,8 @@ bool FDSNWSConnectionBase::addStream(const string &net, const string &sta,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FDSNWSConnectionBase::addStream(const string &net, const string &sta,
                                      const string &loc, const string &cha,
-                                     const Seiscomp::Core::Time &stime,
-                                     const Seiscomp::Core::Time &etime) {
+                                     const OPT(Time) &stime,
+                                     const OPT(Time) &etime) {
 	pair<set<StreamIdx>::iterator, bool> result;
 	result = _streams.insert(StreamIdx(net, sta, loc, cha, stime, etime));
 	return result.second;
@@ -140,7 +140,7 @@ bool FDSNWSConnectionBase::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FDSNWSConnectionBase::setStartTime(const Seiscomp::Core::Time &stime) {
+bool FDSNWSConnectionBase::setStartTime(const OPT(Time) &stime) {
 	_stime = stime;
 	return true;
 }
@@ -150,7 +150,7 @@ bool FDSNWSConnectionBase::setStartTime(const Seiscomp::Core::Time &stime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FDSNWSConnectionBase::setEndTime(const Seiscomp::Core::Time &etime) {
+bool FDSNWSConnectionBase::setEndTime(const OPT(Time) &etime) {
 	_etime = etime;
 	return true;
 }
@@ -401,15 +401,19 @@ void FDSNWSConnectionBase::handshake() {
 		request += it->channel();
 		request += " ";
 
-		if ( it->startTime().valid() )
-			request += it->startTime().toString("%FT%T.%f");
-		else
-			request += _stime.toString("%FT%T.%f");
+		if ( it->startTime() ) {
+			request += it->startTime()->toString("%FT%T.%f");
+		}
+		else {
+			request += (_stime ? *_stime : Time()).toString("%FT%T.%f");
+		}
 		request += " ";
-		if ( it->endTime().valid() )
-			request += it->endTime().toString("%FT%T.%f");
-		else
-			request += _etime.toString("%FT%T.%f");
+		if ( it->endTime() ) {
+			request += it->endTime()->toString("%FT%T.%f");
+		}
+		else {
+			request += (_etime ? *_etime : Time()).toString("%FT%T.%f");
+		}
 		request += "\r\n";
 	}
 
@@ -602,12 +606,13 @@ Record *FDSNWSConnectionBase::next() {
 				if ( !data.empty() ) {
 					int reclen = ms_detect(data.c_str(), RECSIZE);
 					std::istringstream stream(std::istringstream::in|std::istringstream::binary);
-					if ( reclen > RECSIZE )
+					if ( reclen > RECSIZE ) {
 						stream.str(data + readBinary(reclen - RECSIZE));
+					}
 					else {
-						if ( reclen <= 0 )
+						if ( reclen <= 0 ) {
 							SEISCOMP_ERROR("Retrieving the record length failed (try 512 Byte)!");
-						reclen = RECSIZE;
+						}
 						stream.str(data);
 					}
 

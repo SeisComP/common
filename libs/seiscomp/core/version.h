@@ -59,6 +59,11 @@ namespace Core {
    - Removed implicit Seiscomp::Core::TimeSpan and Seiscomp::Core::Time double cast
    - Removed Seiscomp::System::CommandLine::parse(inv argc, char **argv, *)
    - Added Seiscomp::System::CommandLine::parse(std::vector<std::string>, *)
+   - Changed Seiscomp::Core::Time in Seiscomp::IO::RecordStream::addStream,
+     Seiscomp::IO::RecordStream::setStartTime and
+     Seiscomp::IO::RecordStream::setEndTime to OPT(Seiscomp::Core::Time)
+   - Changed Seiscomp::Core::Time in Seiscomp::Client::StreamApplication::setStartTime
+     and Seiscomp::Client::StreamApplication::setEndTime to OPT(Seiscomp::Core::Time)
 
  "16.3.0"   0x100300
    - Added Seiscomp::Gui::Application::createCSV(view, header)

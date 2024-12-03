@@ -55,8 +55,8 @@ class SC_SYSTEM_CLIENT_API StreamApplication : public Application {
 		               const std::string& locationCode,
 		               const std::string& channelCode);
 
-		void setStartTime(const Seiscomp::Core::Time&);
-		void setEndTime(const Seiscomp::Core::Time&);
+		void setStartTime(const OPT(Seiscomp::Core::Time) &);
+		void setEndTime(const OPT(Seiscomp::Core::Time) &);
 		bool setTimeWindow(const Seiscomp::Core::TimeWindow&);
 
 		//! Sets whether to start the acquisition automatically

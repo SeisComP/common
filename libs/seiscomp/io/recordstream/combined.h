@@ -21,6 +21,7 @@
 #ifndef SEISCOMP_SERVICES_RECORDSTREAM_COMBINED_H
 #define SEISCOMP_SERVICES_RECORDSTREAM_COMBINED_H
 
+
 #include <string>
 #include <iostream>
 #include <seiscomp/core/datetime.h>
@@ -28,11 +29,12 @@
 #include <seiscomp/io/recordstream.h>
 #include <seiscomp/core.h>
 
+
 namespace Seiscomp {
 namespace RecordStream {
 
-DEFINE_SMARTPOINTER(CombinedConnection);
 
+DEFINE_SMARTPOINTER(CombinedConnection);
 class SC_SYSTEM_CORE_API CombinedConnection : public IO::RecordStream {
 	public:
 		//! C'tor
@@ -42,41 +44,41 @@ class SC_SYSTEM_CORE_API CombinedConnection : public IO::RecordStream {
 		CombinedConnection(std::string serverloc);
 
 		//! Destructor
-		virtual ~CombinedConnection();
+		~CombinedConnection() override;
 
-		virtual bool setRecordType(const char*);
+		bool setRecordType(const char*) override;
 
 		//! Initialize the combined connection.
-		virtual bool setSource(const std::string &serverloc);
+		bool setSource(const std::string &serverloc) override;
 
 		//! Adds the given stream to the server connection description
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode) override;
 
 		//! Adds the given stream to the server connection description
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode,
-		                       const Seiscomp::Core::Time &startTime,
-		                       const Seiscomp::Core::Time &endTime);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode,
+		               const OPT(Core::Time) &startTime,
+		               const OPT(Core::Time) &endTime) override;
 
 		//! Adds the given start time to the server connection description
-		virtual bool setStartTime(const Core::Time &stime);
+		bool setStartTime(const OPT(Core::Time) &stime) override;
 
 		//! Adds the given end time to the server connection description
-		virtual bool setEndTime(const Core::Time &etime);
+		bool setEndTime(const OPT(Core::Time) &etime) override;
 
 		//! Sets timeout
-		virtual bool setTimeout(int seconds);
+		bool setTimeout(int seconds) override;
 
 		//! Terminates the combined connection.
-		virtual void close();
+		void close() override;
 
 		//! Returns the data stream
-		virtual Record *next();
+		Record *next() override;
 
 	private:
 		void init();
@@ -88,8 +90,8 @@ class SC_SYSTEM_CORE_API CombinedConnection : public IO::RecordStream {
 		size_t              _nArchive;
 		size_t              _nRealtime;
 
-		Core::Time          _startTime;
-		Core::Time          _endTime;
+		OPT(Core::Time)     _startTime;
+		OPT(Core::Time)     _endTime;
 		Core::Time          _archiveEndTime;
 		Core::TimeSpan      _realtimeAvailability;
 

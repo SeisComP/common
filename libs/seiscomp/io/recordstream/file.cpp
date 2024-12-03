@@ -152,8 +152,8 @@ bool File::addStream(const string &net, const string &sta,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool File::addStream(const string &net, const string &sta,
                      const string &loc, const string &cha,
-                     const Seiscomp::Core::Time &startTime,
-                     const Seiscomp::Core::Time &endTime) {
+                     const OPT(Seiscomp::Core::Time) &startTime,
+                     const OPT(Seiscomp::Core::Time) &endTime) {
 	auto id = net + "." + sta + "." + loc + "." + cha;
 	if ( id.find_first_of("*?") == std::string::npos ) {
 		_filter.emplace(id, TimeWindowFilter(startTime, endTime));
@@ -170,7 +170,7 @@ bool File::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool File::setStartTime(const Seiscomp::Core::Time &startTime) {
+bool File::setStartTime(const OPT(Seiscomp::Core::Time) &startTime) {
 	_startTime = startTime;
 	return true;
 }
@@ -180,7 +180,7 @@ bool File::setStartTime(const Seiscomp::Core::Time &startTime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool File::setEndTime(const Seiscomp::Core::Time &endTime) {
+bool File::setEndTime(const OPT(Seiscomp::Core::Time) &endTime) {
 	_endTime = endTime;
 	return true;
 }
@@ -293,42 +293,42 @@ Record *File::next() {
 				continue;
 			}
 
-			if ( twf->start.valid() ) {
-				if ( rec->endTime() < twf->start ) {
+			if ( twf->start ) {
+				if ( rec->endTime() < *twf->start ) {
 					delete rec;
 					continue;
 				}
 			}
-			else if ( _startTime.valid() ) {
-				if ( rec->endTime() < _startTime ) {
+			else if ( _startTime ) {
+				if ( rec->endTime() < *_startTime ) {
 					delete rec;
 					continue;
 				}
 			}
 
-			if ( twf->end.valid() ) {
-				if ( rec->startTime() >= twf->end ) {
+			if ( twf->end ) {
+				if ( rec->startTime() >= *twf->end ) {
 					delete rec;
 					continue;
 				}
 			}
-			else if ( _endTime.valid() ) {
-				if ( rec->startTime() >= _endTime ) {
+			else if ( _endTime ) {
+				if ( rec->startTime() >= *_endTime ) {
 					delete rec;
 					continue;
 				}
 			}
 		}
 		else {
-			if ( _startTime.valid() ) {
-				if ( rec->endTime() < _startTime ) {
+			if ( _startTime ) {
+				if ( rec->endTime() < *_startTime ) {
 					delete rec;
 					continue;
 				}
 			}
 
-			if ( _endTime.valid() ) {
-				if ( rec->startTime() >= _endTime ) {
+			if ( _endTime ) {
+				if ( rec->startTime() >= *_endTime ) {
 					delete rec;
 					continue;
 				}

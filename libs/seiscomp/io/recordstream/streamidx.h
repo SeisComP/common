@@ -25,6 +25,7 @@
 #include <string>
 #include <seiscomp/core.h>
 #include <seiscomp/core/datetime.h>
+#include <seiscomp/core/optional.h>
 
 
 namespace Seiscomp {
@@ -35,28 +36,27 @@ class SC_SYSTEM_CORE_API StreamIdx {
 	public:
 		StreamIdx();
 
-		StreamIdx(const std::string& net, const std::string& sta,
-		          const std::string& loc, const std::string& cha);
+		StreamIdx(const std::string &net, const std::string &sta,
+		          const std::string &loc, const std::string &cha);
 
-		StreamIdx(const std::string& net, const std::string& sta,
-		          const std::string& loc, const std::string& cha,
-		          const Seiscomp::Core::Time& stime,
-		          const Seiscomp::Core::Time& etime);
+		StreamIdx(const std::string &net, const std::string &sta,
+		          const std::string &loc, const std::string &cha,
+		          const OPT(Seiscomp::Core::Time) &stime,
+		          const OPT(Seiscomp::Core::Time) &etime);
 
+
+	public:
 		StreamIdx& operator=(const StreamIdx &other);
 
 		bool operator<(const StreamIdx &other) const;
-
 		bool operator!=(const StreamIdx &other) const;
-
 		bool operator==(const StreamIdx &other) const;
-
 		bool operator>=(const StreamIdx &other) const;
-
 		bool operator>(const StreamIdx &other) const;
-
 		bool operator<=(const StreamIdx &other) const;
 
+
+	public:
 		//! Returns the network code
 		const std::string &network() const;
 
@@ -70,24 +70,24 @@ class SC_SYSTEM_CORE_API StreamIdx {
 		const std::string &location() const;
 
 		//! Returns the start time
-		Core::Time startTime() const;
+		const OPT(Core::Time) &startTime() const;
 
 		//! Returns the end time
-		Core::Time endTime() const;
+		const OPT(Core::Time) &endTime() const;
 
 		//! Returns a string: <sTime> <eTime> <network> <station> <channel> <location>
 		//! <*Time> in format: %Y,%m,%d,%H,%M,%S
-		std::string str(const Seiscomp::Core::Time& stime,
-		                const Seiscomp::Core::Time& etime) const;
+		std::string str(const OPT(Seiscomp::Core::Time) &stime,
+		                const OPT(Seiscomp::Core::Time) &etime) const;
 
 
 	private:
-		const std::string _net;
-		const std::string _sta;
-		const std::string _loc;
-		const std::string _cha;
-		const Seiscomp::Core::Time _stime;
-		const Seiscomp::Core::Time _etime;
+		const std::string               _net;
+		const std::string               _sta;
+		const std::string               _loc;
+		const std::string               _cha;
+		const OPT(Seiscomp::Core::Time) _stime;
+		const OPT(Seiscomp::Core::Time) _etime;
 };
 
 

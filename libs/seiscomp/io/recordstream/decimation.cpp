@@ -249,8 +249,8 @@ bool Decimation::addStream(const string &net, const string &sta,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Decimation::addStream(const string &net, const string &sta,
                            const string &loc, const string &cha,
-                           const Seiscomp::Core::Time &stime,
-                           const Seiscomp::Core::Time &etime) {
+                           const OPT(Core::Time) &stime,
+                           const OPT(Core::Time) &etime) {
 	return _source->addStream(net, sta, loc, cha, stime, etime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -259,7 +259,7 @@ bool Decimation::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Decimation::setStartTime(const Seiscomp::Core::Time &stime) {
+bool Decimation::setStartTime(const OPT(Core::Time) &stime) {
 	return _source->setStartTime(stime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -268,7 +268,7 @@ bool Decimation::setStartTime(const Seiscomp::Core::Time &stime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Decimation::setEndTime(const Seiscomp::Core::Time &etime) {
+bool Decimation::setEndTime(const OPT(Core::Time) &etime) {
 	return _source->setEndTime(etime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -277,7 +277,7 @@ bool Decimation::setEndTime(const Seiscomp::Core::Time &etime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Decimation::setTimeWindow(const Seiscomp::Core::TimeWindow &w) {
+bool Decimation::setTimeWindow(const Core::TimeWindow &w) {
 	return _source->setTimeWindow(w);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

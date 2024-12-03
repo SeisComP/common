@@ -173,11 +173,11 @@ class RecordStream : public Seiscomp::IO::RecordStream {
 		               const std::string &stationCode,
 		               const std::string &locationCode,
 		               const std::string &channelCode,
-		               const Seiscomp::Core::Time &startTime,
-		               const Seiscomp::Core::Time &endTime) override;
+		               const OPT(Seiscomp::Core::Time) &startTime,
+		               const OPT(Seiscomp::Core::Time) &endTime) override;
 
-		bool setStartTime(const Seiscomp::Core::Time &stime) override;
-		bool setEndTime(const Seiscomp::Core::Time &etime) override;
+		bool setStartTime(const OPT(Seiscomp::Core::Time) &stime) override;
+		bool setEndTime(const OPT(Seiscomp::Core::Time) &etime) override;
 		bool setTimeWindow(const Seiscomp::Core::TimeWindow &tw) override;
 
 		bool setRecordType(const char *type) override;
@@ -209,13 +209,13 @@ class RecordStream : public Seiscomp::IO::RecordStream {
 		typedef Seiscomp::IO::CAPS::SessionTableItem SessionTableItem;
 
 		struct Request {
-			std::string          net;
-			std::string          sta;
-			std::string          loc;
-			std::string          cha;
-			Seiscomp::Core::Time start;
-			Seiscomp::Core::Time end;
-			bool                 receivedData;
+			std::string               net;
+			std::string               sta;
+			std::string               loc;
+			std::string               cha;
+			OPT(Seiscomp::Core::Time) start;
+			OPT(Seiscomp::Core::Time) end;
+			bool                      receivedData;
 		};
 
 
@@ -228,8 +228,8 @@ class RecordStream : public Seiscomp::IO::RecordStream {
 	private:
 		bool addRequest(const std::string &net, const std::string &sta,
 		                const std::string &loc, const std::string &cha,
-		                const Seiscomp::Core::Time &stime,
-		                const Seiscomp::Core::Time &etime,
+		                const OPT(Seiscomp::Core::Time) &stime,
+		                const OPT(Seiscomp::Core::Time) &etime,
 		                bool receivedData);
 
 		void wait();
@@ -244,27 +244,27 @@ class RecordStream : public Seiscomp::IO::RecordStream {
 	protected:
 		typedef Seiscomp::Wired::SocketPtr SocketPtr;
 
-		ResponseState           _state;
-		std::istream            _stream;
-		RequestList             _requests;
-		SocketPtr               _socket;
-		socketbuf<512>          _buf;
-		char                    _lineBuf[201];
-		std::string             _host;
-		int                     _port;
-		Seiscomp::Core::Time    _startTime;
-		Seiscomp::Core::Time    _endTime;
-		Seiscomp::Core::Time    _minMTime;
-		Seiscomp::Core::Time    _maxMTime;
-		Seiscomp::Record       *_nextRecord;
-		bool                    _terminated;
-		bool                    _realtime;
-		bool                    _ooo;
-		std::string             _user;
-		std::string             _password;
-		SessionTable            _sessionTable;
-		int                     _currentID;
-		SessionTableItem       *_currentItem;
+		ResponseState             _state;
+		std::istream              _stream;
+		RequestList               _requests;
+		SocketPtr                 _socket;
+		socketbuf<512>            _buf;
+		char                      _lineBuf[201];
+		std::string               _host;
+		int                       _port;
+		OPT(Seiscomp::Core::Time) _startTime;
+		OPT(Seiscomp::Core::Time) _endTime;
+		OPT(Seiscomp::Core::Time) _minMTime;
+		OPT(Seiscomp::Core::Time) _maxMTime;
+		Seiscomp::Record         *_nextRecord;
+		bool                      _terminated;
+		bool                      _realtime;
+		bool                      _ooo;
+		std::string               _user;
+		std::string               _password;
+		SessionTable              _sessionTable;
+		int                       _currentID;
+		SessionTableItem         *_currentItem;
 };
 
 

@@ -48,9 +48,9 @@ class SC_GUI_API RecordStreamThread : public QThread {
 	public:
 		bool connect();
 
-		void setStartTime(const Seiscomp::Core::Time&);
-		void setEndTime(const Seiscomp::Core::Time&);
-		void setTimeWindow(const Seiscomp::Core::TimeWindow&);
+		void setStartTime(const OPT(Core::Time) &);
+		void setEndTime(const OPT(Core::Time) &);
+		void setTimeWindow(const Core::TimeWindow &);
 
 		bool setTimeout(int seconds);
 

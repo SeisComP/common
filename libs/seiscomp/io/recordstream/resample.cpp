@@ -250,8 +250,8 @@ bool Resample::addStream(const string &net, const string &sta,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Resample::addStream(const string &net, const string &sta,
                          const string &loc, const string &cha,
-                         const Seiscomp::Core::Time &stime,
-                         const Seiscomp::Core::Time &etime) {
+                         const OPT(Core::Time) &stime,
+                         const OPT(Core::Time) &etime) {
 	return _source->addStream(net, sta, loc, cha, stime, etime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -260,7 +260,7 @@ bool Resample::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Resample::setStartTime(const Seiscomp::Core::Time &stime) {
+bool Resample::setStartTime(const OPT(Core::Time) &stime) {
 	return _source->setStartTime(stime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -269,7 +269,7 @@ bool Resample::setStartTime(const Seiscomp::Core::Time &stime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Resample::setEndTime(const Seiscomp::Core::Time &etime) {
+bool Resample::setEndTime(const OPT(Core::Time) &etime) {
 	return _source->setEndTime(etime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -278,7 +278,7 @@ bool Resample::setEndTime(const Seiscomp::Core::Time &etime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Resample::setTimeWindow(const Seiscomp::Core::TimeWindow &w) {
+bool Resample::setTimeWindow(const Core::TimeWindow &w) {
 	return _source->setTimeWindow(w);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

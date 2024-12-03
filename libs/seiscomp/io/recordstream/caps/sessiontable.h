@@ -24,6 +24,8 @@
 
 #include "packet.h"
 
+#include <seiscomp/core/optional.h>
+
 #include <functional>
 #include <map>
 #include <string>
@@ -47,8 +49,8 @@ struct SessionTableItem {
 	DataType     dataType{DT_Unknown};
 	int          dataSize{0};
 	UOM          uom;
-	Time         startTime;
-	Time         endTime;
+	OPT(Time)    startTime;
+	OPT(Time)    endTime;
 	void        *userData{nullptr};
 
 	bool splitStreamID();

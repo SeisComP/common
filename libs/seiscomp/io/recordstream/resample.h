@@ -21,6 +21,7 @@
 #ifndef SEISCOMP_RECORDSTREAM_RESAMPLE_H
 #define SEISCOMP_RECORDSTREAM_RESAMPLE_H
 
+
 #include <sstream>
 #include <map>
 #include <deque>
@@ -60,12 +61,12 @@ class SC_SYSTEM_CORE_API Resample : public Seiscomp::IO::RecordStream {
 		                       const std::string &stationCode,
 		                       const std::string &locationCode,
 		                       const std::string &channelCode,
-		                       const Seiscomp::Core::Time &startTime,
-		                       const Seiscomp::Core::Time &endTime);
+		                       const OPT(Core::Time) &startTime,
+		                       const OPT(Core::Time) &endTime);
 
-		virtual bool setStartTime(const Seiscomp::Core::Time &stime);
-		virtual bool setEndTime(const Seiscomp::Core::Time &etime);
-		virtual bool setTimeWindow(const Seiscomp::Core::TimeWindow &w);
+		virtual bool setStartTime(const OPT(Core::Time) &stime);
+		virtual bool setEndTime(const OPT(Core::Time) &etime);
+		virtual bool setTimeWindow(const Core::TimeWindow &w);
 
 		virtual bool setTimeout(int seconds);
 

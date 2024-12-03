@@ -91,8 +91,8 @@ bool Concurrent::addStream(const string &net, const string &sta,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Concurrent::addStream(const string &net, const string &sta,
                            const string &loc, const string &cha,
-                           const Seiscomp::Core::Time &stime,
-                           const Seiscomp::Core::Time &etime) {
+                           const OPT(Seiscomp::Core::Time) &stime,
+                           const OPT(Seiscomp::Core::Time) &etime) {
 	SEISCOMP_DEBUG("add stream %s.%s.%s.%s", net.c_str(),
 	               sta.c_str(), loc.c_str(), cha.c_str());
 
@@ -116,7 +116,7 @@ bool Concurrent::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Concurrent::setStartTime(const Seiscomp::Core::Time &stime) {
+bool Concurrent::setStartTime(const OPT(Seiscomp::Core::Time) &stime) {
 	if ( _rsarray.empty() )
 		return false;
 
@@ -133,7 +133,7 @@ bool Concurrent::setStartTime(const Seiscomp::Core::Time &stime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Concurrent::setEndTime(const Seiscomp::Core::Time &etime) {
+bool Concurrent::setEndTime(const OPT(Seiscomp::Core::Time) &etime) {
 	if ( _rsarray.empty() )
 		return false;
 

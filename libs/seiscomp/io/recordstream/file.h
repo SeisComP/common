@@ -77,11 +77,11 @@ class SC_SYSTEM_CORE_API File : public Seiscomp::IO::RecordStream {
 		               const std::string &stationCode,
 		               const std::string &locationCode,
 		               const std::string &channelCode,
-		               const Seiscomp::Core::Time &startTime,
-		               const Seiscomp::Core::Time &endTime) override;
+		               const OPT(Seiscomp::Core::Time) &startTime,
+		               const OPT(Seiscomp::Core::Time) &endTime) override;
 
-		bool setStartTime(const Seiscomp::Core::Time &startTime)  override;
-		bool setEndTime(const Seiscomp::Core::Time &endTime) override;
+		bool setStartTime(const OPT(Seiscomp::Core::Time) &startTime)  override;
+		bool setEndTime(const OPT(Seiscomp::Core::Time) &endTime) override;
 
 		void close() override;
 
@@ -107,27 +107,28 @@ class SC_SYSTEM_CORE_API File : public Seiscomp::IO::RecordStream {
 	private:
 		struct TimeWindowFilter {
 			TimeWindowFilter() {}
-			TimeWindowFilter(const Core::Time &stime, const Core::Time &etime)
+			TimeWindowFilter(const OPT(Core::Time) &stime,
+			                 const OPT(Core::Time) &etime)
 			: start(stime), end(etime) {}
 
-			Core::Time  start;
-			Core::Time  end;
+			OPT(Core::Time) start;
+			OPT(Core::Time) end;
 		};
 
 		using FilterMap = std::map<std::string, TimeWindowFilter>;
 		using ReFilterList = std::vector<std::pair<std::string,TimeWindowFilter> >;
 
-		const TimeWindowFilter* findTimeWindowFilter(Record *rec);
+		const TimeWindowFilter *findTimeWindowFilter(Record *rec);
 
-		RecordFactory  *_factory{nullptr};
-		std::string     _name;
-		bool            _closeRequested;
-		std::fstream    _fstream;
-		std::istream   *_current{&_fstream};
-		FilterMap       _filter;
-		ReFilterList    _reFilter;
-		Core::Time      _startTime;
-		Core::Time      _endTime;
+		RecordFactory   *_factory{nullptr};
+		std::string      _name;
+		bool             _closeRequested;
+		std::fstream     _fstream;
+		std::istream    *_current{&_fstream};
+		FilterMap        _filter;
+		ReFilterList     _reFilter;
+		OPT(Core::Time)  _startTime;
+		OPT(Core::Time)  _endTime;
 };
 
 

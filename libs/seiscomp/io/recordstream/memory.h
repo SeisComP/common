@@ -52,27 +52,27 @@ class SC_SYSTEM_CORE_API Memory:  public Seiscomp::IO::RecordStream {
 	public:
 		Memory &operator=(const Memory &mem);
 
-		virtual bool setSource(const std::string &);
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode);
+		bool setSource(const std::string &) override;
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode) override;
 
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode,
-		                       const Seiscomp::Core::Time &startTime,
-		                       const Seiscomp::Core::Time &endTime);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode,
+		               const OPT(Seiscomp::Core::Time) &startTime,
+		               const OPT(Seiscomp::Core::Time) &endTime) override;
 
-		virtual bool setStartTime(const Seiscomp::Core::Time &stime);
-		virtual bool setEndTime(const Seiscomp::Core::Time &etime);
+		bool setStartTime(const OPT(Seiscomp::Core::Time) &stime) override;
+		bool setEndTime(const OPT(Seiscomp::Core::Time) &etime) override;
 
-		virtual void close();
+		void close() override;
 
-		virtual bool setRecordType(const char *type);
+		bool setRecordType(const char *type) override;
 
-		Record *next();
+		Record *next() override;
 
 
 	private:

@@ -99,8 +99,10 @@ bool RecordStreamThread::connect()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordStreamThread::setStartTime(const Seiscomp::Core::Time& t) {
-	if ( _recordStream == nullptr ) return;
+void RecordStreamThread::setStartTime(const OPT(Core::Time) &t) {
+	if ( !_recordStream ) {
+		return;
+	}
 	_recordStream->setStartTime(t);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -109,8 +111,10 @@ void RecordStreamThread::setStartTime(const Seiscomp::Core::Time& t) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordStreamThread::setEndTime(const Seiscomp::Core::Time& t) {
-	if ( _recordStream == nullptr ) return;
+void RecordStreamThread::setEndTime(const OPT(Core::Time) &t) {
+	if ( !_recordStream ) {
+		return;
+	}
 	_recordStream->setEndTime(t);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -119,19 +123,15 @@ void RecordStreamThread::setEndTime(const Seiscomp::Core::Time& t) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordStreamThread::setTimeWindow(const Seiscomp::Core::TimeWindow& tw) {
-	if ( _recordStream == nullptr ) return;
+void RecordStreamThread::setTimeWindow(const Core::TimeWindow &tw) {
+	if ( !_recordStream ) {
+		return;
+	}
 
-	if ( tw.startTime() )
-		_recordStream->setStartTime(tw.startTime());
-
-	if ( tw.endTime() )
-		_recordStream->setEndTime(tw.endTime());
+	_recordStream->setTimeWindow(tw);
 
 	SEISCOMP_DEBUG("[rthread %d] setting time window: start = %s, end = %s",
-	               ID(),
-	               tw.startTime().toString("%T %F").c_str(),
-	               tw.endTime().toString("%T %F").c_str());
+	               ID(), tw.startTime().iso(), tw.endTime().iso());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -191,7 +191,7 @@ bool RecordStreamThread::addStream(const std::string& network, const std::string
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStreamThread::addStream(const std::string& network, const std::string& station,
-                                   const std::string& location, const std::string& channel, 
+                                   const std::string& location, const std::string& channel,
                                    double gain) {
 	if ( addStream(network,station, location, channel) ) {
 		std::string id = station+"."+location+"."+channel;
@@ -240,7 +240,7 @@ void RecordStreamThread::run()
 				if ( !_gainMap.empty() ) {
 					std::string id = rec->stationCode()+"."+rec->locationCode()+"."+rec->channelCode();
 					GainMap::const_iterator git = _gainMap.find(id);
-	
+
 					if ( git != _gainMap.end() ) {
 						const Array* data = rec->data();
 						if ( git->second != 0) {

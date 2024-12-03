@@ -250,8 +250,9 @@ IO::RecordStream* StreamApplication::recordStream() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StreamApplication::addStation(const std::string& networkCode,
                                    const std::string& stationCode) {
-	if ( _recordStream )
+	if ( _recordStream ) {
 		return _recordStream->addStream(networkCode, stationCode, "??", "???");
+	}
 
 	return false;
 }
@@ -261,9 +262,10 @@ bool StreamApplication::addStation(const std::string& networkCode,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void StreamApplication::setStartTime(const Seiscomp::Core::Time& time) {
-	if ( _recordStream )
+void StreamApplication::setStartTime(const OPT(Seiscomp::Core::Time) &time) {
+	if ( _recordStream ) {
 		_recordStream->setStartTime(time);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -271,9 +273,10 @@ void StreamApplication::setStartTime(const Seiscomp::Core::Time& time) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void StreamApplication::setEndTime(const Seiscomp::Core::Time& time) {
-	if ( _recordStream )
+void StreamApplication::setEndTime(const OPT(Seiscomp::Core::Time) &time) {
+	if ( _recordStream ) {
 		_recordStream->setEndTime(time);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -282,7 +285,9 @@ void StreamApplication::setEndTime(const Seiscomp::Core::Time& time) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StreamApplication::setTimeWindow(const Seiscomp::Core::TimeWindow& tw) {
-	if ( !_recordStream ) return false;
+	if ( !_recordStream ) {
+		return false;
+	}
 
 	return _recordStream->setTimeWindow(tw);
 }
@@ -296,8 +301,9 @@ bool StreamApplication::addStream(const std::string& networkCode,
                                   const std::string& stationCode,
                                   const std::string& locationCode,
                                   const std::string& channelCode) {
-	if ( _recordStream )
+	if ( _recordStream ) {
 		return _recordStream->addStream(networkCode, stationCode, locationCode, channelCode);
+	}
 
 	return false;
 }
@@ -309,7 +315,9 @@ bool StreamApplication::addStream(const std::string& networkCode,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StreamApplication::openStream() {
 	// If there is already an active recordstream return false
-	if ( _recordStream ) return false;
+	if ( _recordStream ) {
+		return false;
+	}
 
 	_recordStream = IO::RecordStream::Open(recordStreamURL().c_str());
 	return _recordStream.get();
@@ -321,8 +329,9 @@ bool StreamApplication::openStream() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void StreamApplication::closeStream() {
-	if ( _recordStream )
+	if ( _recordStream ) {
 		_recordStream->close();
+	}
 
 	_recordStream = nullptr;
 }
