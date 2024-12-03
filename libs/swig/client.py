@@ -1474,11 +1474,11 @@ class StreamApplication(Application):
         return _client.StreamApplication_addStream(self, networkCode, stationCode, locationCode, channelCode)
 
     def setStartTime(self, arg2):
-        r"""setStartTime(StreamApplication self, Time arg2)"""
+        r"""setStartTime(StreamApplication self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & arg2)"""
         return _client.StreamApplication_setStartTime(self, arg2)
 
     def setEndTime(self, arg2):
-        r"""setEndTime(StreamApplication self, Time arg2)"""
+        r"""setEndTime(StreamApplication self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & arg2)"""
         return _client.StreamApplication_setEndTime(self, arg2)
 
     def setTimeWindow(self, arg2):

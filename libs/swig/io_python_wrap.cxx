@@ -3798,8 +3798,8 @@ namespace Swig {
 #define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl swig_types[85]
 #define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl swig_types[86]
 #define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl swig_types[87]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_const_t__Impl swig_types[88]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_t__Impl swig_types[89]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl swig_types[88]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl swig_types[89]
 #define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl swig_types[90]
 #define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl swig_types[91]
 #define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl swig_types[92]
@@ -3910,100 +3910,98 @@ namespace Swig {
 #define SWIGTYPE_p_Seiscomp__NumericArrayT_float_t swig_types[197]
 #define SWIGTYPE_p_Seiscomp__NumericArrayT_int_t swig_types[198]
 #define SWIGTYPE_p_Seiscomp__Record swig_types[199]
-#define SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException swig_types[200]
-#define SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection swig_types[201]
-#define SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkException swig_types[202]
-#define SWIGTYPE_p_Seiscomp__RecordStream__CombinedConnection swig_types[203]
-#define SWIGTYPE_p_Seiscomp__RecordStream__File swig_types[204]
-#define SWIGTYPE_p_Seiscomp__RecordStream__SLConnection swig_types[205]
-#define SWIGTYPE_p_Seiscomp__RecordStream__SLStreamIdx swig_types[206]
-#define SWIGTYPE_p_Seiscomp__RecordStream__SeedlinkCommandException swig_types[207]
-#define SWIGTYPE_p_Seiscomp__RecordStream__SeedlinkException swig_types[208]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t swig_types[209]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_char_t swig_types[210]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_double_t swig_types[211]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_float_t swig_types[212]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_int_t swig_types[213]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_double_t_t swig_types[214]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_float_t_t swig_types[215]
-#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__string_t swig_types[216]
-#define SWIGTYPE_p_Storage swig_types[217]
-#define SWIGTYPE_p_TimePoint swig_types[218]
-#define SWIGTYPE_p_Type swig_types[219]
-#define SWIGTYPE_p_ValueType swig_types[220]
-#define SWIGTYPE_p_Weeks swig_types[221]
-#define SWIGTYPE_p_allocator_type swig_types[222]
-#define SWIGTYPE_p_bool swig_types[223]
-#define SWIGTYPE_p_boost__any swig_types[224]
-#define SWIGTYPE_p_char swig_types[225]
-#define SWIGTYPE_p_char_type swig_types[226]
-#define SWIGTYPE_p_const_iterator swig_types[227]
-#define SWIGTYPE_p_const_reference swig_types[228]
-#define SWIGTYPE_p_difference_type swig_types[229]
-#define SWIGTYPE_p_double swig_types[230]
-#define SWIGTYPE_p_f_enum_std__ios_base__event_r_std__ios_base_int__void swig_types[231]
-#define SWIGTYPE_p_float swig_types[232]
-#define SWIGTYPE_p_fmtflags swig_types[233]
-#define SWIGTYPE_p_int swig_types[234]
-#define SWIGTYPE_p_int_type swig_types[235]
-#define SWIGTYPE_p_iostate swig_types[236]
-#define SWIGTYPE_p_iterator swig_types[237]
-#define SWIGTYPE_p_iterator_category swig_types[238]
-#define SWIGTYPE_p_long swig_types[239]
-#define SWIGTYPE_p_long_long swig_types[240]
-#define SWIGTYPE_p_off_type swig_types[241]
-#define SWIGTYPE_p_openmode swig_types[242]
-#define SWIGTYPE_p_p_PyObject swig_types[243]
-#define SWIGTYPE_p_p_void swig_types[244]
-#define SWIGTYPE_p_pos_type swig_types[245]
-#define SWIGTYPE_p_reference swig_types[246]
-#define SWIGTYPE_p_seekdir swig_types[247]
-#define SWIGTYPE_p_short swig_types[248]
-#define SWIGTYPE_p_signed_char swig_types[249]
-#define SWIGTYPE_p_size_t swig_types[250]
-#define SWIGTYPE_p_size_type swig_types[251]
-#define SWIGTYPE_p_state_type swig_types[252]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Core__BaseObject_p_t swig_types[253]
-#define SWIGTYPE_p_std__basic_iosT_char_t swig_types[254]
-#define SWIGTYPE_p_std__basic_ostreamT_char_std__char_traitsT_char_t_t swig_types[255]
-#define SWIGTYPE_p_std__basic_streambufT_char_std__char_traitsT_char_t_t swig_types[256]
-#define SWIGTYPE_p_std__basic_stringT_char_t swig_types[257]
-#define SWIGTYPE_p_std__complexT_double_t swig_types[258]
-#define SWIGTYPE_p_std__complexT_float_t swig_types[259]
-#define SWIGTYPE_p_std__exception swig_types[260]
-#define SWIGTYPE_p_std__invalid_argument swig_types[261]
-#define SWIGTYPE_p_std__ios_base swig_types[262]
-#define SWIGTYPE_p_std__istream swig_types[263]
-#define SWIGTYPE_p_std__listT_double_t swig_types[264]
-#define SWIGTYPE_p_std__listT_std__basic_stringT_char_t_t swig_types[265]
-#define SWIGTYPE_p_std__locale swig_types[266]
-#define SWIGTYPE_p_std__ostream swig_types[267]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[268]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[269]
-#define SWIGTYPE_p_std__streambuf swig_types[270]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__BaseObject_p_t swig_types[271]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_std__allocatorT_Seiscomp__Core__Time_t_t swig_types[272]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[273]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[274]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[275]
-#define SWIGTYPE_p_std__vectorT_char_std__allocatorT_char_t_t swig_types[276]
-#define SWIGTYPE_p_std__vectorT_double_t swig_types[277]
-#define SWIGTYPE_p_std__vectorT_float_t swig_types[278]
-#define SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t swig_types[279]
-#define SWIGTYPE_p_std__vectorT_long_long_std__allocatorT_long_long_t_t swig_types[280]
-#define SWIGTYPE_p_std__vectorT_short_std__allocatorT_short_t_t swig_types[281]
-#define SWIGTYPE_p_std__vectorT_signed_char_std__allocatorT_signed_char_t_t swig_types[282]
-#define SWIGTYPE_p_std__vectorT_std__basic_stringT_char_t_std__allocatorT_std__basic_stringT_char_t_t_t swig_types[283]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[284]
-#define SWIGTYPE_p_traits_type swig_types[285]
-#define SWIGTYPE_p_unsigned_char swig_types[286]
-#define SWIGTYPE_p_unsigned_int swig_types[287]
-#define SWIGTYPE_p_unsigned_long_long swig_types[288]
-#define SWIGTYPE_p_unsigned_short swig_types[289]
-#define SWIGTYPE_p_value_type swig_types[290]
-#define SWIGTYPE_p_void swig_types[291]
-static swig_type_info *swig_types[293];
-static swig_module_info swig_module = {swig_types, 292, 0, 0, 0, 0};
+#define SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection swig_types[200]
+#define SWIGTYPE_p_Seiscomp__RecordStream__CombinedConnection swig_types[201]
+#define SWIGTYPE_p_Seiscomp__RecordStream__File swig_types[202]
+#define SWIGTYPE_p_Seiscomp__RecordStream__SLConnection swig_types[203]
+#define SWIGTYPE_p_Seiscomp__RecordStream__SLStreamIdx swig_types[204]
+#define SWIGTYPE_p_Seiscomp__RecordStream__SeedlinkCommandException swig_types[205]
+#define SWIGTYPE_p_Seiscomp__RecordStream__SeedlinkException swig_types[206]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t swig_types[207]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_char_t swig_types[208]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_double_t swig_types[209]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_float_t swig_types[210]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_int_t swig_types[211]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_double_t_t swig_types[212]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__complexT_float_t_t swig_types[213]
+#define SWIGTYPE_p_Seiscomp__TypedArrayT_std__string_t swig_types[214]
+#define SWIGTYPE_p_Storage swig_types[215]
+#define SWIGTYPE_p_TimePoint swig_types[216]
+#define SWIGTYPE_p_Type swig_types[217]
+#define SWIGTYPE_p_ValueType swig_types[218]
+#define SWIGTYPE_p_Weeks swig_types[219]
+#define SWIGTYPE_p_allocator_type swig_types[220]
+#define SWIGTYPE_p_bool swig_types[221]
+#define SWIGTYPE_p_boost__any swig_types[222]
+#define SWIGTYPE_p_char swig_types[223]
+#define SWIGTYPE_p_char_type swig_types[224]
+#define SWIGTYPE_p_const_iterator swig_types[225]
+#define SWIGTYPE_p_const_reference swig_types[226]
+#define SWIGTYPE_p_difference_type swig_types[227]
+#define SWIGTYPE_p_double swig_types[228]
+#define SWIGTYPE_p_f_enum_std__ios_base__event_r_std__ios_base_int__void swig_types[229]
+#define SWIGTYPE_p_float swig_types[230]
+#define SWIGTYPE_p_fmtflags swig_types[231]
+#define SWIGTYPE_p_int swig_types[232]
+#define SWIGTYPE_p_int_type swig_types[233]
+#define SWIGTYPE_p_iostate swig_types[234]
+#define SWIGTYPE_p_iterator swig_types[235]
+#define SWIGTYPE_p_iterator_category swig_types[236]
+#define SWIGTYPE_p_long swig_types[237]
+#define SWIGTYPE_p_long_long swig_types[238]
+#define SWIGTYPE_p_off_type swig_types[239]
+#define SWIGTYPE_p_openmode swig_types[240]
+#define SWIGTYPE_p_p_PyObject swig_types[241]
+#define SWIGTYPE_p_p_void swig_types[242]
+#define SWIGTYPE_p_pos_type swig_types[243]
+#define SWIGTYPE_p_reference swig_types[244]
+#define SWIGTYPE_p_seekdir swig_types[245]
+#define SWIGTYPE_p_short swig_types[246]
+#define SWIGTYPE_p_signed_char swig_types[247]
+#define SWIGTYPE_p_size_t swig_types[248]
+#define SWIGTYPE_p_size_type swig_types[249]
+#define SWIGTYPE_p_state_type swig_types[250]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Core__BaseObject_p_t swig_types[251]
+#define SWIGTYPE_p_std__basic_iosT_char_t swig_types[252]
+#define SWIGTYPE_p_std__basic_ostreamT_char_std__char_traitsT_char_t_t swig_types[253]
+#define SWIGTYPE_p_std__basic_streambufT_char_std__char_traitsT_char_t_t swig_types[254]
+#define SWIGTYPE_p_std__basic_stringT_char_t swig_types[255]
+#define SWIGTYPE_p_std__complexT_double_t swig_types[256]
+#define SWIGTYPE_p_std__complexT_float_t swig_types[257]
+#define SWIGTYPE_p_std__exception swig_types[258]
+#define SWIGTYPE_p_std__invalid_argument swig_types[259]
+#define SWIGTYPE_p_std__ios_base swig_types[260]
+#define SWIGTYPE_p_std__istream swig_types[261]
+#define SWIGTYPE_p_std__listT_double_t swig_types[262]
+#define SWIGTYPE_p_std__listT_std__basic_stringT_char_t_t swig_types[263]
+#define SWIGTYPE_p_std__locale swig_types[264]
+#define SWIGTYPE_p_std__ostream swig_types[265]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[266]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[267]
+#define SWIGTYPE_p_std__streambuf swig_types[268]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__BaseObject_p_t swig_types[269]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_std__allocatorT_Seiscomp__Core__Time_t_t swig_types[270]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[271]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[272]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[273]
+#define SWIGTYPE_p_std__vectorT_char_std__allocatorT_char_t_t swig_types[274]
+#define SWIGTYPE_p_std__vectorT_double_t swig_types[275]
+#define SWIGTYPE_p_std__vectorT_float_t swig_types[276]
+#define SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t swig_types[277]
+#define SWIGTYPE_p_std__vectorT_long_long_std__allocatorT_long_long_t_t swig_types[278]
+#define SWIGTYPE_p_std__vectorT_short_std__allocatorT_short_t_t swig_types[279]
+#define SWIGTYPE_p_std__vectorT_signed_char_std__allocatorT_signed_char_t_t swig_types[280]
+#define SWIGTYPE_p_std__vectorT_std__basic_stringT_char_t_std__allocatorT_std__basic_stringT_char_t_t_t swig_types[281]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[282]
+#define SWIGTYPE_p_traits_type swig_types[283]
+#define SWIGTYPE_p_unsigned_char swig_types[284]
+#define SWIGTYPE_p_unsigned_int swig_types[285]
+#define SWIGTYPE_p_unsigned_long_long swig_types[286]
+#define SWIGTYPE_p_unsigned_short swig_types[287]
+#define SWIGTYPE_p_value_type swig_types[288]
+#define SWIGTYPE_p_void swig_types[289]
+static swig_type_info *swig_types[291];
+static swig_module_info swig_module = {swig_types, 290, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -12912,18 +12910,16 @@ SWIGINTERN PyObject *_wrap_RecordStream_addStream__SWIG_1(PyObject *self, Py_ssi
   std::string *arg3 = 0 ;
   std::string *arg4 = 0 ;
   std::string *arg5 = 0 ;
-  Seiscomp::Core::Time *arg6 = 0 ;
-  Seiscomp::Core::Time *arg7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg6 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg7 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int res4 = SWIG_OLDOBJ ;
   int res5 = SWIG_OLDOBJ ;
-  void *argp6 = 0 ;
-  int res6 = 0 ;
-  void *argp7 = 0 ;
-  int res7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp6 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp7 ;
   bool result;
   
   (void)self;
@@ -12977,25 +12973,31 @@ SWIGINTERN PyObject *_wrap_RecordStream_addStream__SWIG_1(PyObject *self, Py_ssi
     }
     arg5 = ptr;
   }
-  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res6)) {
-    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "RecordStream_addStream" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[5] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[5], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp6 = *value;
+    }
+    
+    arg6 = &tmp6;
   }
-  if (!argp6) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "RecordStream_addStream" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[6] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[6], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp7 = *value;
+    }
+    
+    arg7 = &tmp7;
   }
-  arg6 = reinterpret_cast< Seiscomp::Core::Time * >(argp6);
-  res7 = SWIG_ConvertPtr(swig_obj[6], &argp7, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res7)) {
-    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "RecordStream_addStream" "', argument " "7"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  if (!argp7) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "RecordStream_addStream" "', argument " "7"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg7 = reinterpret_cast< Seiscomp::Core::Time * >(argp7);
   {
     try {
-      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Time const &)*arg6,(Seiscomp::Core::Time const &)*arg7);
+      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg7);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13073,11 +13075,23 @@ SWIGINTERN PyObject *_wrap_RecordStream_addStream(PyObject *self, PyObject *args
             int res = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(argv[4], (std::basic_string<char>**)(0));
             _v = SWIG_CheckState(res);
             if (_v) {
-              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
-              _v = SWIG_CheckState(res);
+              {
+                if ( argv[5] == Py_None )
+                _v = 1;
+                else {
+                  void* ptr = 0;
+                  _v = SWIG_ConvertPtr(argv[5], (void**)&ptr, SWIGTYPE_p_Seiscomp__Core__Time, 0) == -1 ? 0 : 1;
+                }
+              }
               if (_v) {
-                int res = SWIG_ConvertPtr(argv[6], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
-                _v = SWIG_CheckState(res);
+                {
+                  if ( argv[6] == Py_None )
+                  _v = 1;
+                  else {
+                    void* ptr = 0;
+                    _v = SWIG_ConvertPtr(argv[6], (void**)&ptr, SWIGTYPE_p_Seiscomp__Core__Time, 0) == -1 ? 0 : 1;
+                  }
+                }
                 if (_v) {
                   return _wrap_RecordStream_addStream__SWIG_1(self, argc, argv);
                 }
@@ -13093,7 +13107,7 @@ fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'RecordStream_addStream'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::IO::RecordStream::addStream(std::string const &,std::string const &,std::string const &,std::string const &)\n"
-    "    Seiscomp::IO::RecordStream::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Time const &,Seiscomp::Core::Time const &)\n");
+    "    Seiscomp::IO::RecordStream::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)\n");
   return 0;
 }
 
@@ -13101,11 +13115,10 @@ fail:
 SWIGINTERN PyObject *_wrap_RecordStream_setStartTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::IO::RecordStream *arg1 = (Seiscomp::IO::RecordStream *) 0 ;
-  Seiscomp::Core::Time *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -13116,17 +13129,20 @@ SWIGINTERN PyObject *_wrap_RecordStream_setStartTime(PyObject *self, PyObject *a
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RecordStream_setStartTime" "', argument " "1"" of type '" "Seiscomp::IO::RecordStream *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::IO::RecordStream * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "RecordStream_setStartTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[1] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[1], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp2 = *value;
+    }
+    
+    arg2 = &tmp2;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "RecordStream_setStartTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
   {
     try {
-      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Time const &)*arg2);
+      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13148,11 +13164,10 @@ fail:
 SWIGINTERN PyObject *_wrap_RecordStream_setEndTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::IO::RecordStream *arg1 = (Seiscomp::IO::RecordStream *) 0 ;
-  Seiscomp::Core::Time *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -13163,17 +13178,20 @@ SWIGINTERN PyObject *_wrap_RecordStream_setEndTime(PyObject *self, PyObject *arg
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RecordStream_setEndTime" "', argument " "1"" of type '" "Seiscomp::IO::RecordStream *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::IO::RecordStream * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "RecordStream_setEndTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[1] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[1], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp2 = *value;
+    }
+    
+    arg2 = &tmp2;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "RecordStream_setEndTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
   {
     try {
-      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Time const &)*arg2);
+      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27674,18 +27692,16 @@ SWIGINTERN PyObject *_wrap_FileRecordStream_addStream__SWIG_1(PyObject *self, Py
   std::string *arg3 = 0 ;
   std::string *arg4 = 0 ;
   std::string *arg5 = 0 ;
-  Seiscomp::Core::Time *arg6 = 0 ;
-  Seiscomp::Core::Time *arg7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg6 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg7 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int res4 = SWIG_OLDOBJ ;
   int res5 = SWIG_OLDOBJ ;
-  void *argp6 = 0 ;
-  int res6 = 0 ;
-  void *argp7 = 0 ;
-  int res7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp6 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp7 ;
   bool result;
   
   (void)self;
@@ -27739,25 +27755,31 @@ SWIGINTERN PyObject *_wrap_FileRecordStream_addStream__SWIG_1(PyObject *self, Py
     }
     arg5 = ptr;
   }
-  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res6)) {
-    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "FileRecordStream_addStream" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[5] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[5], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp6 = *value;
+    }
+    
+    arg6 = &tmp6;
   }
-  if (!argp6) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "FileRecordStream_addStream" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[6] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[6], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp7 = *value;
+    }
+    
+    arg7 = &tmp7;
   }
-  arg6 = reinterpret_cast< Seiscomp::Core::Time * >(argp6);
-  res7 = SWIG_ConvertPtr(swig_obj[6], &argp7, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res7)) {
-    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "FileRecordStream_addStream" "', argument " "7"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  if (!argp7) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "FileRecordStream_addStream" "', argument " "7"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg7 = reinterpret_cast< Seiscomp::Core::Time * >(argp7);
   {
     try {
-      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Time const &)*arg6,(Seiscomp::Core::Time const &)*arg7);
+      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg7);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27835,11 +27857,23 @@ SWIGINTERN PyObject *_wrap_FileRecordStream_addStream(PyObject *self, PyObject *
             int res = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(argv[4], (std::basic_string<char>**)(0));
             _v = SWIG_CheckState(res);
             if (_v) {
-              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
-              _v = SWIG_CheckState(res);
+              {
+                if ( argv[5] == Py_None )
+                _v = 1;
+                else {
+                  void* ptr = 0;
+                  _v = SWIG_ConvertPtr(argv[5], (void**)&ptr, SWIGTYPE_p_Seiscomp__Core__Time, 0) == -1 ? 0 : 1;
+                }
+              }
               if (_v) {
-                int res = SWIG_ConvertPtr(argv[6], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
-                _v = SWIG_CheckState(res);
+                {
+                  if ( argv[6] == Py_None )
+                  _v = 1;
+                  else {
+                    void* ptr = 0;
+                    _v = SWIG_ConvertPtr(argv[6], (void**)&ptr, SWIGTYPE_p_Seiscomp__Core__Time, 0) == -1 ? 0 : 1;
+                  }
+                }
                 if (_v) {
                   return _wrap_FileRecordStream_addStream__SWIG_1(self, argc, argv);
                 }
@@ -27855,7 +27889,7 @@ fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'FileRecordStream_addStream'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::RecordStream::File::addStream(std::string const &,std::string const &,std::string const &,std::string const &)\n"
-    "    Seiscomp::RecordStream::File::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Time const &,Seiscomp::Core::Time const &)\n");
+    "    Seiscomp::RecordStream::File::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)\n");
   return 0;
 }
 
@@ -27863,11 +27897,10 @@ fail:
 SWIGINTERN PyObject *_wrap_FileRecordStream_setStartTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::File *arg1 = (Seiscomp::RecordStream::File *) 0 ;
-  Seiscomp::Core::Time *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -27878,17 +27911,20 @@ SWIGINTERN PyObject *_wrap_FileRecordStream_setStartTime(PyObject *self, PyObjec
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FileRecordStream_setStartTime" "', argument " "1"" of type '" "Seiscomp::RecordStream::File *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::RecordStream::File * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FileRecordStream_setStartTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[1] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[1], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp2 = *value;
+    }
+    
+    arg2 = &tmp2;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "FileRecordStream_setStartTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
   {
     try {
-      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Time const &)*arg2);
+      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27910,11 +27946,10 @@ fail:
 SWIGINTERN PyObject *_wrap_FileRecordStream_setEndTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::File *arg1 = (Seiscomp::RecordStream::File *) 0 ;
-  Seiscomp::Core::Time *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -27925,17 +27960,20 @@ SWIGINTERN PyObject *_wrap_FileRecordStream_setEndTime(PyObject *self, PyObject 
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FileRecordStream_setEndTime" "', argument " "1"" of type '" "Seiscomp::RecordStream::File *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::RecordStream::File * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FileRecordStream_setEndTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[1] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[1], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp2 = *value;
+    }
+    
+    arg2 = &tmp2;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "FileRecordStream_setEndTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
   {
     try {
-      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Time const &)*arg2);
+      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -28718,16 +28756,14 @@ SWIGINTERN PyObject *_wrap_new_SLStreamIdx__SWIG_2(PyObject *self, Py_ssize_t no
   std::string *arg2 = 0 ;
   std::string *arg3 = 0 ;
   std::string *arg4 = 0 ;
-  Seiscomp::Core::Time *arg5 = 0 ;
-  Seiscomp::Core::Time *arg6 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg5 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg6 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int res4 = SWIG_OLDOBJ ;
-  void *argp5 = 0 ;
-  int res5 = 0 ;
-  void *argp6 = 0 ;
-  int res6 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp5 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp6 ;
   Seiscomp::RecordStream::SLStreamIdx *result = 0 ;
   
   (void)self;
@@ -28776,25 +28812,31 @@ SWIGINTERN PyObject *_wrap_new_SLStreamIdx__SWIG_2(PyObject *self, Py_ssize_t no
     }
     arg4 = ptr;
   }
-  res5 = SWIG_ConvertPtr(swig_obj[4], &argp5, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "new_SLStreamIdx" "', argument " "5"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[4] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[4], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp5 = *value;
+    }
+    
+    arg5 = &tmp5;
   }
-  if (!argp5) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_SLStreamIdx" "', argument " "5"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[5] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[5], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp6 = *value;
+    }
+    
+    arg6 = &tmp6;
   }
-  arg5 = reinterpret_cast< Seiscomp::Core::Time * >(argp5);
-  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res6)) {
-    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "new_SLStreamIdx" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  if (!argp6) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_SLStreamIdx" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg6 = reinterpret_cast< Seiscomp::Core::Time * >(argp6);
   {
     try {
-      result = (Seiscomp::RecordStream::SLStreamIdx *)new Seiscomp::RecordStream::SLStreamIdx((std::string const &)*arg1,(std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(Seiscomp::Core::Time const &)*arg5,(Seiscomp::Core::Time const &)*arg6);
+      result = (Seiscomp::RecordStream::SLStreamIdx *)new Seiscomp::RecordStream::SLStreamIdx((std::string const &)*arg1,(std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg6);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -28866,11 +28908,23 @@ SWIGINTERN PyObject *_wrap_new_SLStreamIdx(PyObject *self, PyObject *args) {
           int res = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(argv[3], (std::basic_string<char>**)(0));
           _v = SWIG_CheckState(res);
           if (_v) {
-            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
-            _v = SWIG_CheckState(res);
+            {
+              if ( argv[4] == Py_None )
+              _v = 1;
+              else {
+                void* ptr = 0;
+                _v = SWIG_ConvertPtr(argv[4], (void**)&ptr, SWIGTYPE_p_Seiscomp__Core__Time, 0) == -1 ? 0 : 1;
+              }
+            }
             if (_v) {
-              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
-              _v = SWIG_CheckState(res);
+              {
+                if ( argv[5] == Py_None )
+                _v = 1;
+                else {
+                  void* ptr = 0;
+                  _v = SWIG_ConvertPtr(argv[5], (void**)&ptr, SWIGTYPE_p_Seiscomp__Core__Time, 0) == -1 ? 0 : 1;
+                }
+              }
               if (_v) {
                 return _wrap_new_SLStreamIdx__SWIG_2(self, argc, argv);
               }
@@ -28886,7 +28940,7 @@ fail:
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::RecordStream::SLStreamIdx::SLStreamIdx()\n"
     "    Seiscomp::RecordStream::SLStreamIdx::SLStreamIdx(std::string const &,std::string const &,std::string const &,std::string const &)\n"
-    "    Seiscomp::RecordStream::SLStreamIdx::SLStreamIdx(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Time const &,Seiscomp::Core::Time const &)\n");
+    "    Seiscomp::RecordStream::SLStreamIdx::SLStreamIdx(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)\n");
   return 0;
 }
 
@@ -29186,7 +29240,7 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_startTime(PyObject *self, PyObject *args)
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  Seiscomp::Core::Time result;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *result = 0 ;
   
   (void)self;
   if (!args) SWIG_fail;
@@ -29198,7 +29252,7 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_startTime(PyObject *self, PyObject *args)
   arg1 = reinterpret_cast< Seiscomp::RecordStream::SLStreamIdx * >(argp1);
   {
     try {
-      result = ((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->startTime();
+      result = (Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *) &((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->startTime();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -29210,7 +29264,15 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_startTime(PyObject *self, PyObject *args)
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  {
+    if ( *result == Seiscomp::Core::None ) {
+      resultobj = Py_None;
+    }
+    else {
+      Seiscomp::Core::Time* resulttime = new Seiscomp::Core::Time(**result);
+      resultobj = SWIG_NewPointerObj(resulttime, SWIGTYPE_p_Seiscomp__Core__Time, 1);
+    }
+  }
   return resultobj;
 fail:
   return NULL;
@@ -29223,7 +29285,7 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_endTime(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  Seiscomp::Core::Time result;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *result = 0 ;
   
   (void)self;
   if (!args) SWIG_fail;
@@ -29235,7 +29297,7 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_endTime(PyObject *self, PyObject *args) {
   arg1 = reinterpret_cast< Seiscomp::RecordStream::SLStreamIdx * >(argp1);
   {
     try {
-      result = ((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->endTime();
+      result = (Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *) &((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->endTime();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -29247,7 +29309,15 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_endTime(PyObject *self, PyObject *args) {
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  {
+    if ( *result == Seiscomp::Core::None ) {
+      resultobj = Py_None;
+    }
+    else {
+      Seiscomp::Core::Time* resulttime = new Seiscomp::Core::Time(**result);
+      resultobj = SWIG_NewPointerObj(resulttime, SWIGTYPE_p_Seiscomp__Core__Time, 1);
+    }
+  }
   return resultobj;
 fail:
   return NULL;
@@ -29260,7 +29330,7 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_timestamp(PyObject *self, PyObject *args)
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  Seiscomp::Core::Time result;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *result = 0 ;
   
   (void)self;
   if (!args) SWIG_fail;
@@ -29272,7 +29342,7 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_timestamp(PyObject *self, PyObject *args)
   arg1 = reinterpret_cast< Seiscomp::RecordStream::SLStreamIdx * >(argp1);
   {
     try {
-      result = ((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->timestamp();
+      result = (Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *) &((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->timestamp();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -29284,7 +29354,15 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_timestamp(PyObject *self, PyObject *args)
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::Time(result)), SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_OWN |  0 );
+  {
+    if ( *result == Seiscomp::Core::None ) {
+      resultobj = Py_None;
+    }
+    else {
+      Seiscomp::Core::Time* resulttime = new Seiscomp::Core::Time(**result);
+      resultobj = SWIG_NewPointerObj(resulttime, SWIGTYPE_p_Seiscomp__Core__Time, 1);
+    }
+  }
   return resultobj;
 fail:
   return NULL;
@@ -29294,11 +29372,10 @@ fail:
 SWIGINTERN PyObject *_wrap_SLStreamIdx_setTimestamp(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::SLStreamIdx *arg1 = (Seiscomp::RecordStream::SLStreamIdx *) 0 ;
-  Seiscomp::Core::Time *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
   PyObject *swig_obj[2] ;
   
   (void)self;
@@ -29308,17 +29385,20 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_setTimestamp(PyObject *self, PyObject *ar
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SLStreamIdx_setTimestamp" "', argument " "1"" of type '" "Seiscomp::RecordStream::SLStreamIdx const *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::RecordStream::SLStreamIdx * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SLStreamIdx_setTimestamp" "', argument " "2"" of type '" "Seiscomp::Core::Time &""'"); 
+  {
+    if ( swig_obj[1] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[1], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp2 = *value;
+    }
+    
+    arg2 = &tmp2;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SLStreamIdx_setTimestamp" "', argument " "2"" of type '" "Seiscomp::Core::Time &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
   {
     try {
-      ((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->setTimestamp(*arg2);
+      ((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->setTimestamp((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30071,18 +30151,16 @@ SWIGINTERN PyObject *_wrap_SLConnection_addStream__SWIG_1(PyObject *self, Py_ssi
   std::string *arg3 = 0 ;
   std::string *arg4 = 0 ;
   std::string *arg5 = 0 ;
-  Seiscomp::Core::Time *arg6 = 0 ;
-  Seiscomp::Core::Time *arg7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg6 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg7 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int res4 = SWIG_OLDOBJ ;
   int res5 = SWIG_OLDOBJ ;
-  void *argp6 = 0 ;
-  int res6 = 0 ;
-  void *argp7 = 0 ;
-  int res7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp6 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp7 ;
   bool result;
   
   (void)self;
@@ -30136,25 +30214,31 @@ SWIGINTERN PyObject *_wrap_SLConnection_addStream__SWIG_1(PyObject *self, Py_ssi
     }
     arg5 = ptr;
   }
-  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res6)) {
-    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "SLConnection_addStream" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[5] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[5], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp6 = *value;
+    }
+    
+    arg6 = &tmp6;
   }
-  if (!argp6) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SLConnection_addStream" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[6] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[6], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp7 = *value;
+    }
+    
+    arg7 = &tmp7;
   }
-  arg6 = reinterpret_cast< Seiscomp::Core::Time * >(argp6);
-  res7 = SWIG_ConvertPtr(swig_obj[6], &argp7, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res7)) {
-    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "SLConnection_addStream" "', argument " "7"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  if (!argp7) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SLConnection_addStream" "', argument " "7"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg7 = reinterpret_cast< Seiscomp::Core::Time * >(argp7);
   {
     try {
-      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Time const &)*arg6,(Seiscomp::Core::Time const &)*arg7);
+      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg7);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30232,11 +30316,23 @@ SWIGINTERN PyObject *_wrap_SLConnection_addStream(PyObject *self, PyObject *args
             int res = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(argv[4], (std::basic_string<char>**)(0));
             _v = SWIG_CheckState(res);
             if (_v) {
-              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
-              _v = SWIG_CheckState(res);
+              {
+                if ( argv[5] == Py_None )
+                _v = 1;
+                else {
+                  void* ptr = 0;
+                  _v = SWIG_ConvertPtr(argv[5], (void**)&ptr, SWIGTYPE_p_Seiscomp__Core__Time, 0) == -1 ? 0 : 1;
+                }
+              }
               if (_v) {
-                int res = SWIG_ConvertPtr(argv[6], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
-                _v = SWIG_CheckState(res);
+                {
+                  if ( argv[6] == Py_None )
+                  _v = 1;
+                  else {
+                    void* ptr = 0;
+                    _v = SWIG_ConvertPtr(argv[6], (void**)&ptr, SWIGTYPE_p_Seiscomp__Core__Time, 0) == -1 ? 0 : 1;
+                  }
+                }
                 if (_v) {
                   return _wrap_SLConnection_addStream__SWIG_1(self, argc, argv);
                 }
@@ -30252,7 +30348,7 @@ fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'SLConnection_addStream'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::RecordStream::SLConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &)\n"
-    "    Seiscomp::RecordStream::SLConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Time const &,Seiscomp::Core::Time const &)\n");
+    "    Seiscomp::RecordStream::SLConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)\n");
   return 0;
 }
 
@@ -30260,11 +30356,10 @@ fail:
 SWIGINTERN PyObject *_wrap_SLConnection_setStartTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::SLConnection *arg1 = (Seiscomp::RecordStream::SLConnection *) 0 ;
-  Seiscomp::Core::Time *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -30275,17 +30370,20 @@ SWIGINTERN PyObject *_wrap_SLConnection_setStartTime(PyObject *self, PyObject *a
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SLConnection_setStartTime" "', argument " "1"" of type '" "Seiscomp::RecordStream::SLConnection *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::RecordStream::SLConnection * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SLConnection_setStartTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[1] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[1], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp2 = *value;
+    }
+    
+    arg2 = &tmp2;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SLConnection_setStartTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
   {
     try {
-      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Time const &)*arg2);
+      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30307,11 +30405,10 @@ fail:
 SWIGINTERN PyObject *_wrap_SLConnection_setEndTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::SLConnection *arg1 = (Seiscomp::RecordStream::SLConnection *) 0 ;
-  Seiscomp::Core::Time *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -30322,17 +30419,20 @@ SWIGINTERN PyObject *_wrap_SLConnection_setEndTime(PyObject *self, PyObject *arg
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SLConnection_setEndTime" "', argument " "1"" of type '" "Seiscomp::RecordStream::SLConnection *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::RecordStream::SLConnection * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SLConnection_setEndTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[1] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[1], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp2 = *value;
+    }
+    
+    arg2 = &tmp2;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "SLConnection_setEndTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
   {
     try {
-      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Time const &)*arg2);
+      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30431,118 +30531,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_SLConnection_next(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::RecordStream::SLConnection *arg1 = (Seiscomp::RecordStream::SLConnection *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  Seiscomp::Record *result = 0 ;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__SLConnection, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SLConnection_next" "', argument " "1"" of type '" "Seiscomp::RecordStream::SLConnection *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::SLConnection * >(argp1);
-  {
-    try {
-      result = (Seiscomp::Record *)(arg1)->next();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Record, SWIG_POINTER_OWN |  0 );
-  if (result) result->incrementReferenceCount();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_SLConnection_clear(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::RecordStream::SLConnection *arg1 = (Seiscomp::RecordStream::SLConnection *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  bool result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__SLConnection, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SLConnection_clear" "', argument " "1"" of type '" "Seiscomp::RecordStream::SLConnection *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::SLConnection * >(argp1);
-  {
-    try {
-      result = (bool)(arg1)->clear();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_SLConnection_reconnect(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::RecordStream::SLConnection *arg1 = (Seiscomp::RecordStream::SLConnection *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  bool result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__SLConnection, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SLConnection_reconnect" "', argument " "1"" of type '" "Seiscomp::RecordStream::SLConnection *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::SLConnection * >(argp1);
-  {
-    try {
-      result = (bool)(arg1)->reconnect();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *SLConnection_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj = NULL;
   if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
@@ -30554,296 +30542,6 @@ SWIGINTERN PyObject *SLConnection_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObj
   return SWIG_Python_InitShadowInstance(args);
 }
 
-SWIGINTERN PyObject *_wrap_new_ArclinkException__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
-  PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkException *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
-  {
-    try {
-      result = (Seiscomp::RecordStream::Arclink::_private::ArclinkException *)new Seiscomp::RecordStream::Arclink::_private::ArclinkException();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkException, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_ArclinkException__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  std::string *arg1 = 0 ;
-  int res1 = SWIG_OLDOBJ ;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkException *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  {
-    std::basic_string<char> *ptr = (std::basic_string<char> *)0;
-    res1 = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(swig_obj[0], &ptr);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_ArclinkException" "', argument " "1"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_ArclinkException" "', argument " "1"" of type '" "std::string const &""'"); 
-    }
-    arg1 = ptr;
-  }
-  {
-    try {
-      result = (Seiscomp::RecordStream::Arclink::_private::ArclinkException *)new Seiscomp::RecordStream::Arclink::_private::ArclinkException((std::string const &)*arg1);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkException, SWIG_POINTER_NEW |  0 );
-  if (SWIG_IsNewObj(res1)) delete arg1;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res1)) delete arg1;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_ArclinkException(PyObject *self, PyObject *args) {
-  Py_ssize_t argc;
-  PyObject *argv[2] = {
-    0
-  };
-  
-  if (!(argc = SWIG_Python_UnpackTuple(args, "new_ArclinkException", 0, 1, argv))) SWIG_fail;
-  --argc;
-  if (argc == 0) {
-    return _wrap_new_ArclinkException__SWIG_0(self, argc, argv);
-  }
-  if (argc == 1) {
-    int _v = 0;
-    int res = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(argv[0], (std::basic_string<char>**)(0));
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_new_ArclinkException__SWIG_1(self, argc, argv);
-    }
-  }
-  
-fail:
-  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_ArclinkException'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::RecordStream::Arclink::_private::ArclinkException::ArclinkException()\n"
-    "    Seiscomp::RecordStream::Arclink::_private::ArclinkException::ArclinkException(std::string const &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_delete_ArclinkException(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkException *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkException *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkException, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_ArclinkException" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkException *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkException * >(argp1);
-  {
-    try {
-      delete arg1;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *ArclinkException_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *obj = NULL;
-  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkException, SWIG_NewClientData(obj));
-  return SWIG_Py_Void();
-}
-
-SWIGINTERN PyObject *ArclinkException_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  return SWIG_Python_InitShadowInstance(args);
-}
-
-SWIGINTERN PyObject *_wrap_new_ArclinkCommandException__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
-  PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
-  {
-    try {
-      result = (Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException *)new Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_ArclinkCommandException__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  std::string *arg1 = 0 ;
-  int res1 = SWIG_OLDOBJ ;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  {
-    std::basic_string<char> *ptr = (std::basic_string<char> *)0;
-    res1 = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(swig_obj[0], &ptr);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_ArclinkCommandException" "', argument " "1"" of type '" "std::string const &""'"); 
-    }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_ArclinkCommandException" "', argument " "1"" of type '" "std::string const &""'"); 
-    }
-    arg1 = ptr;
-  }
-  {
-    try {
-      result = (Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException *)new Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException((std::string const &)*arg1);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException, SWIG_POINTER_NEW |  0 );
-  if (SWIG_IsNewObj(res1)) delete arg1;
-  return resultobj;
-fail:
-  if (SWIG_IsNewObj(res1)) delete arg1;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_ArclinkCommandException(PyObject *self, PyObject *args) {
-  Py_ssize_t argc;
-  PyObject *argv[2] = {
-    0
-  };
-  
-  if (!(argc = SWIG_Python_UnpackTuple(args, "new_ArclinkCommandException", 0, 1, argv))) SWIG_fail;
-  --argc;
-  if (argc == 0) {
-    return _wrap_new_ArclinkCommandException__SWIG_0(self, argc, argv);
-  }
-  if (argc == 1) {
-    int _v = 0;
-    int res = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(argv[0], (std::basic_string<char>**)(0));
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_new_ArclinkCommandException__SWIG_1(self, argc, argv);
-    }
-  }
-  
-fail:
-  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_ArclinkCommandException'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException::ArclinkCommandException()\n"
-    "    Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException::ArclinkCommandException(std::string const &)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_delete_ArclinkCommandException(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_ArclinkCommandException" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException * >(argp1);
-  {
-    try {
-      delete arg1;
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *ArclinkCommandException_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *obj = NULL;
-  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException, SWIG_NewClientData(obj));
-  return SWIG_Py_Void();
-}
-
-SWIGINTERN PyObject *ArclinkCommandException_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  return SWIG_Python_InitShadowInstance(args);
-}
-
 SWIGINTERN PyObject *_wrap_ArclinkConnection_ClassName(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   char *result = 0 ;
@@ -30852,7 +30550,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_ClassName(PyObject *self, PyObject 
   if (!SWIG_Python_UnpackTuple(args, "ArclinkConnection_ClassName", 0, 0, 0)) SWIG_fail;
   {
     try {
-      result = (char *)Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::ClassName();
+      result = (char *)Seiscomp::RecordStream::Arclink::ArclinkConnection::ClassName();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30879,7 +30577,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_TypeInfo(PyObject *self, PyObject *
   if (!SWIG_Python_UnpackTuple(args, "ArclinkConnection_TypeInfo", 0, 0, 0)) SWIG_fail;
   {
     try {
-      result = (Seiscomp::Core::RTTI *) &Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::TypeInfo();
+      result = (Seiscomp::Core::RTTI *) &Seiscomp::RecordStream::Arclink::ArclinkConnection::TypeInfo();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30900,7 +30598,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_className(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
@@ -30909,14 +30607,14 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_className(PyObject *self, PyObject 
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_className" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_className" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection const *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
   {
     try {
-      result = (char *)((Seiscomp::RecordStream::Arclink::_private::ArclinkConnection const *)arg1)->className();
+      result = (char *)((Seiscomp::RecordStream::Arclink::ArclinkConnection const *)arg1)->className();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30937,7 +30635,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_typeInfo(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
@@ -30946,14 +30644,14 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_typeInfo(PyObject *self, PyObject *
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_typeInfo" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_typeInfo" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection const *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
   {
     try {
-      result = (Seiscomp::Core::RTTI *) &((Seiscomp::RecordStream::Arclink::_private::ArclinkConnection const *)arg1)->typeInfo();
+      result = (Seiscomp::Core::RTTI *) &((Seiscomp::RecordStream::Arclink::ArclinkConnection const *)arg1)->typeInfo();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30977,7 +30675,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_Cast__SWIG_0(PyObject *self, Py_ssi
   Seiscomp::Core::BaseObject *arg1 = (Seiscomp::Core::BaseObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *result = 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *result = 0 ;
   
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
@@ -30988,7 +30686,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_Cast__SWIG_0(PyObject *self, Py_ssi
   arg1 = reinterpret_cast< Seiscomp::Core::BaseObject * >(argp1);
   {
     try {
-      result = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *)Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::Cast(arg1);
+      result = (Seiscomp::RecordStream::Arclink::ArclinkConnection *)Seiscomp::RecordStream::Arclink::ArclinkConnection::Cast(arg1);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31000,7 +30698,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_Cast__SWIG_0(PyObject *self, Py_ssi
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, SWIG_POINTER_OWN |  0 );
   if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
@@ -31013,7 +30711,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_ConstCast__SWIG_0(PyObject *self, P
   Seiscomp::Core::BaseObject *arg1 = (Seiscomp::Core::BaseObject *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *result = 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *result = 0 ;
   
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
@@ -31024,7 +30722,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_ConstCast__SWIG_0(PyObject *self, P
   arg1 = reinterpret_cast< Seiscomp::Core::BaseObject * >(argp1);
   {
     try {
-      result = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *)Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::ConstCast((Seiscomp::Core::BaseObject const *)arg1);
+      result = (Seiscomp::RecordStream::Arclink::ArclinkConnection *)Seiscomp::RecordStream::Arclink::ArclinkConnection::ConstCast((Seiscomp::Core::BaseObject const *)arg1);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31036,7 +30734,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_ConstCast__SWIG_0(PyObject *self, P
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -31048,7 +30746,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_Cast__SWIG_1(PyObject *self, Py_ssi
   SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *result = 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *result = 0 ;
   
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
@@ -31067,7 +30765,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_Cast__SWIG_1(PyObject *self, Py_ssi
   }
   {
     try {
-      result = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *)Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::Cast(SWIG_STD_MOVE(arg1));
+      result = (Seiscomp::RecordStream::Arclink::ArclinkConnection *)Seiscomp::RecordStream::Arclink::ArclinkConnection::Cast(SWIG_STD_MOVE(arg1));
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31079,7 +30777,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_Cast__SWIG_1(PyObject *self, Py_ssi
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, SWIG_POINTER_OWN |  0 );
   if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
@@ -31116,8 +30814,8 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_Cast(PyObject *self, PyObject *args
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'ArclinkConnection_Cast'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::Cast(Seiscomp::Core::BaseObject *)\n"
-    "    Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::Cast(Seiscomp::Core::BaseObjectPtr)\n");
+    "    Seiscomp::RecordStream::Arclink::ArclinkConnection::Cast(Seiscomp::Core::BaseObject *)\n"
+    "    Seiscomp::RecordStream::Arclink::ArclinkConnection::Cast(Seiscomp::Core::BaseObjectPtr)\n");
   return 0;
 }
 
@@ -31127,7 +30825,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_ConstCast__SWIG_1(PyObject *self, P
   SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *result = 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *result = 0 ;
   
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
@@ -31146,7 +30844,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_ConstCast__SWIG_1(PyObject *self, P
   }
   {
     try {
-      result = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *)Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::ConstCast(SWIG_STD_MOVE(arg1));
+      result = (Seiscomp::RecordStream::Arclink::ArclinkConnection *)Seiscomp::RecordStream::Arclink::ArclinkConnection::ConstCast(SWIG_STD_MOVE(arg1));
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31158,7 +30856,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_ConstCast__SWIG_1(PyObject *self, P
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -31194,21 +30892,21 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_ConstCast(PyObject *self, PyObject 
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'ArclinkConnection_ConstCast'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::ConstCast(Seiscomp::Core::BaseObject const *)\n"
-    "    Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::ConstCast(Seiscomp::Core::BaseObjectCPtr)\n");
+    "    Seiscomp::RecordStream::Arclink::ArclinkConnection::ConstCast(Seiscomp::Core::BaseObject const *)\n"
+    "    Seiscomp::RecordStream::Arclink::ArclinkConnection::ConstCast(Seiscomp::Core::BaseObjectCPtr)\n");
   return 0;
 }
 
 
 SWIGINTERN PyObject *_wrap_new_ArclinkConnection__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *result = 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *result = 0 ;
   
   (void)self;
   if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
   {
     try {
-      result = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *)new Seiscomp::RecordStream::Arclink::_private::ArclinkConnection();
+      result = (Seiscomp::RecordStream::Arclink::ArclinkConnection *)new Seiscomp::RecordStream::Arclink::ArclinkConnection();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31220,7 +30918,7 @@ SWIGINTERN PyObject *_wrap_new_ArclinkConnection__SWIG_0(PyObject *self, Py_ssiz
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, SWIG_POINTER_NEW |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, SWIG_POINTER_NEW |  0 );
   if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
@@ -31231,7 +30929,7 @@ fail:
 SWIGINTERN PyObject *_wrap_new_ArclinkConnection__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   std::string arg1 ;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *result = 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *result = 0 ;
   
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
@@ -31246,7 +30944,7 @@ SWIGINTERN PyObject *_wrap_new_ArclinkConnection__SWIG_1(PyObject *self, Py_ssiz
   }
   {
     try {
-      result = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *)new Seiscomp::RecordStream::Arclink::_private::ArclinkConnection(SWIG_STD_MOVE(arg1));
+      result = (Seiscomp::RecordStream::Arclink::ArclinkConnection *)new Seiscomp::RecordStream::Arclink::ArclinkConnection(SWIG_STD_MOVE(arg1));
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31258,7 +30956,7 @@ SWIGINTERN PyObject *_wrap_new_ArclinkConnection__SWIG_1(PyObject *self, Py_ssiz
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, SWIG_POINTER_NEW |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, SWIG_POINTER_NEW |  0 );
   if (result) result->incrementReferenceCount();
   return resultobj;
 fail:
@@ -31289,15 +30987,15 @@ SWIGINTERN PyObject *_wrap_new_ArclinkConnection(PyObject *self, PyObject *args)
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_ArclinkConnection'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::ArclinkConnection()\n"
-    "    Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::ArclinkConnection(std::string)\n");
+    "    Seiscomp::RecordStream::Arclink::ArclinkConnection::ArclinkConnection()\n"
+    "    Seiscomp::RecordStream::Arclink::ArclinkConnection::ArclinkConnection(std::string)\n");
   return 0;
 }
 
 
 SWIGINTERN PyObject *_wrap_delete_ArclinkConnection(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
@@ -31305,11 +31003,11 @@ SWIGINTERN PyObject *_wrap_delete_ArclinkConnection(PyObject *self, PyObject *ar
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, SWIG_POINTER_DISOWN |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_ArclinkConnection" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_ArclinkConnection" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
   {
     try {
       if (arg1) arg1->decrementReferenceCount();
@@ -31333,7 +31031,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_setRecordType(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
   char *arg2 = (char *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
@@ -31345,11 +31043,11 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_setRecordType(PyObject *self, PyObj
   
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "ArclinkConnection_setRecordType", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_setRecordType" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_setRecordType" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
   res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ArclinkConnection_setRecordType" "', argument " "2"" of type '" "char const *""'");
@@ -31380,7 +31078,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_setSource(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
   std::string *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
@@ -31390,11 +31088,11 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_setSource(PyObject *self, PyObject 
   
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "ArclinkConnection_setSource", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_setSource" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_setSource" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
   {
     std::basic_string<char> *ptr = (std::basic_string<char> *)0;
     res2 = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(swig_obj[1], &ptr);
@@ -31431,7 +31129,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_setUser(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
   std::string arg2 ;
   std::string arg3 ;
   void *argp1 = 0 ;
@@ -31441,11 +31139,11 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_setUser(PyObject *self, PyObject *a
   
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "ArclinkConnection_setUser", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_setUser" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_setUser" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
   {
     std::basic_string<char> *ptr = (std::basic_string<char> *)0;
     int res = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(swig_obj[1], &ptr);
@@ -31487,7 +31185,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_addStream__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
   std::string *arg2 = 0 ;
   std::string *arg3 = 0 ;
   std::string *arg4 = 0 ;
@@ -31502,11 +31200,11 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_addStream__SWIG_0(PyObject *self, P
   
   (void)self;
   if ((nobjs < 5) || (nobjs > 5)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_addStream" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_addStream" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
   {
     std::basic_string<char> *ptr = (std::basic_string<char> *)0;
     res2 = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(swig_obj[1], &ptr);
@@ -31582,32 +31280,30 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_addStream__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
   std::string *arg2 = 0 ;
   std::string *arg3 = 0 ;
   std::string *arg4 = 0 ;
   std::string *arg5 = 0 ;
-  Seiscomp::Core::Time *arg6 = 0 ;
-  Seiscomp::Core::Time *arg7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg6 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg7 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int res4 = SWIG_OLDOBJ ;
   int res5 = SWIG_OLDOBJ ;
-  void *argp6 = 0 ;
-  int res6 = 0 ;
-  void *argp7 = 0 ;
-  int res7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp6 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp7 ;
   bool result;
   
   (void)self;
   if ((nobjs < 7) || (nobjs > 7)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_addStream" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_addStream" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
   {
     std::basic_string<char> *ptr = (std::basic_string<char> *)0;
     res2 = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(swig_obj[1], &ptr);
@@ -31652,25 +31348,31 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_addStream__SWIG_1(PyObject *self, P
     }
     arg5 = ptr;
   }
-  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res6)) {
-    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "ArclinkConnection_addStream" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[5] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[5], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp6 = *value;
+    }
+    
+    arg6 = &tmp6;
   }
-  if (!argp6) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ArclinkConnection_addStream" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[6] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[6], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp7 = *value;
+    }
+    
+    arg7 = &tmp7;
   }
-  arg6 = reinterpret_cast< Seiscomp::Core::Time * >(argp6);
-  res7 = SWIG_ConvertPtr(swig_obj[6], &argp7, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res7)) {
-    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "ArclinkConnection_addStream" "', argument " "7"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  if (!argp7) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ArclinkConnection_addStream" "', argument " "7"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg7 = reinterpret_cast< Seiscomp::Core::Time * >(argp7);
   {
     try {
-      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Time const &)*arg6,(Seiscomp::Core::Time const &)*arg7);
+      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg7);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31708,7 +31410,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_addStream(PyObject *self, PyObject 
   if (argc == 5) {
     int _v = 0;
     void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0);
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       int res = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(argv[1], (std::basic_string<char>**)(0));
@@ -31733,7 +31435,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_addStream(PyObject *self, PyObject 
   if (argc == 7) {
     int _v = 0;
     void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0);
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       int res = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(argv[1], (std::basic_string<char>**)(0));
@@ -31748,11 +31450,23 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_addStream(PyObject *self, PyObject 
             int res = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(argv[4], (std::basic_string<char>**)(0));
             _v = SWIG_CheckState(res);
             if (_v) {
-              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
-              _v = SWIG_CheckState(res);
+              {
+                if ( argv[5] == Py_None )
+                _v = 1;
+                else {
+                  void* ptr = 0;
+                  _v = SWIG_ConvertPtr(argv[5], (void**)&ptr, SWIGTYPE_p_Seiscomp__Core__Time, 0) == -1 ? 0 : 1;
+                }
+              }
               if (_v) {
-                int res = SWIG_ConvertPtr(argv[6], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
-                _v = SWIG_CheckState(res);
+                {
+                  if ( argv[6] == Py_None )
+                  _v = 1;
+                  else {
+                    void* ptr = 0;
+                    _v = SWIG_ConvertPtr(argv[6], (void**)&ptr, SWIGTYPE_p_Seiscomp__Core__Time, 0) == -1 ? 0 : 1;
+                  }
+                }
                 if (_v) {
                   return _wrap_ArclinkConnection_addStream__SWIG_1(self, argc, argv);
                 }
@@ -31767,41 +31481,43 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_addStream(PyObject *self, PyObject 
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'ArclinkConnection_addStream'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &)\n"
-    "    Seiscomp::RecordStream::Arclink::_private::ArclinkConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Time const &,Seiscomp::Core::Time const &)\n");
+    "    Seiscomp::RecordStream::Arclink::ArclinkConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &)\n"
+    "    Seiscomp::RecordStream::Arclink::ArclinkConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)\n");
   return 0;
 }
 
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_setStartTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
-  Seiscomp::Core::Time *arg2 = 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "ArclinkConnection_setStartTime", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_setStartTime" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_setStartTime" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ArclinkConnection_setStartTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
+  {
+    if ( swig_obj[1] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[1], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp2 = *value;
+    }
+    
+    arg2 = &tmp2;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ArclinkConnection_setStartTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
   {
     try {
-      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Time const &)*arg2);
+      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31822,33 +31538,35 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_setEndTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
-  Seiscomp::Core::Time *arg2 = 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "ArclinkConnection_setEndTime", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_setEndTime" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_setEndTime" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ArclinkConnection_setEndTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
+  {
+    if ( swig_obj[1] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[1], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp2 = *value;
+    }
+    
+    arg2 = &tmp2;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ArclinkConnection_setEndTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
   {
     try {
-      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Time const &)*arg2);
+      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31869,7 +31587,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_setTimeout(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
   int arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
@@ -31880,11 +31598,11 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_setTimeout(PyObject *self, PyObject
   
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "ArclinkConnection_setTimeout", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_setTimeout" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_setTimeout" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
   ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ArclinkConnection_setTimeout" "', argument " "2"" of type '" "int""'");
@@ -31913,7 +31631,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_close(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
@@ -31921,11 +31639,11 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_close(PyObject *self, PyObject *arg
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_close" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_close" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
   {
     try {
       (arg1)->close();
@@ -31949,7 +31667,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_next(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
@@ -31958,11 +31676,11 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_next(PyObject *self, PyObject *args
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_next" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_next" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
   {
     try {
       result = (Seiscomp::Record *)(arg1)->next();
@@ -31987,7 +31705,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_clear(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
@@ -31996,11 +31714,11 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_clear(PyObject *self, PyObject *arg
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_clear" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_clear" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
   {
     try {
       result = (bool)(arg1)->clear();
@@ -32024,7 +31742,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_reconnect(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) 0 ;
+  Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
@@ -32033,11 +31751,11 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_reconnect(PyObject *self, PyObject 
   (void)self;
   if (!args) SWIG_fail;
   swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_reconnect" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_reconnect" "', argument " "1"" of type '" "Seiscomp::RecordStream::Arclink::ArclinkConnection *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection * >(argp1);
+  arg1 = reinterpret_cast< Seiscomp::RecordStream::Arclink::ArclinkConnection * >(argp1);
   {
     try {
       result = (bool)(arg1)->reconnect();
@@ -32062,7 +31780,7 @@ fail:
 SWIGINTERN PyObject *ArclinkConnection_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj = NULL;
   if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, SWIG_NewClientData(obj));
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__RecordStream__Arclink__ArclinkConnection, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
 
@@ -32401,18 +32119,16 @@ SWIGINTERN PyObject *_wrap_CombinedConnection_addStream__SWIG_1(PyObject *self, 
   std::string *arg3 = 0 ;
   std::string *arg4 = 0 ;
   std::string *arg5 = 0 ;
-  Seiscomp::Core::Time *arg6 = 0 ;
-  Seiscomp::Core::Time *arg7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg6 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg7 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int res4 = SWIG_OLDOBJ ;
   int res5 = SWIG_OLDOBJ ;
-  void *argp6 = 0 ;
-  int res6 = 0 ;
-  void *argp7 = 0 ;
-  int res7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp6 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp7 ;
   bool result;
   
   (void)self;
@@ -32466,25 +32182,31 @@ SWIGINTERN PyObject *_wrap_CombinedConnection_addStream__SWIG_1(PyObject *self, 
     }
     arg5 = ptr;
   }
-  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res6)) {
-    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "CombinedConnection_addStream" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[5] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[5], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp6 = *value;
+    }
+    
+    arg6 = &tmp6;
   }
-  if (!argp6) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "CombinedConnection_addStream" "', argument " "6"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[6] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[6], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp7 = *value;
+    }
+    
+    arg7 = &tmp7;
   }
-  arg6 = reinterpret_cast< Seiscomp::Core::Time * >(argp6);
-  res7 = SWIG_ConvertPtr(swig_obj[6], &argp7, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res7)) {
-    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "CombinedConnection_addStream" "', argument " "7"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  if (!argp7) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "CombinedConnection_addStream" "', argument " "7"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg7 = reinterpret_cast< Seiscomp::Core::Time * >(argp7);
   {
     try {
-      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Time const &)*arg6,(Seiscomp::Core::Time const &)*arg7);
+      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg7);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32562,11 +32284,23 @@ SWIGINTERN PyObject *_wrap_CombinedConnection_addStream(PyObject *self, PyObject
             int res = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(argv[4], (std::basic_string<char>**)(0));
             _v = SWIG_CheckState(res);
             if (_v) {
-              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
-              _v = SWIG_CheckState(res);
+              {
+                if ( argv[5] == Py_None )
+                _v = 1;
+                else {
+                  void* ptr = 0;
+                  _v = SWIG_ConvertPtr(argv[5], (void**)&ptr, SWIGTYPE_p_Seiscomp__Core__Time, 0) == -1 ? 0 : 1;
+                }
+              }
               if (_v) {
-                int res = SWIG_ConvertPtr(argv[6], 0, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_NO_NULL | 0);
-                _v = SWIG_CheckState(res);
+                {
+                  if ( argv[6] == Py_None )
+                  _v = 1;
+                  else {
+                    void* ptr = 0;
+                    _v = SWIG_ConvertPtr(argv[6], (void**)&ptr, SWIGTYPE_p_Seiscomp__Core__Time, 0) == -1 ? 0 : 1;
+                  }
+                }
                 if (_v) {
                   return _wrap_CombinedConnection_addStream__SWIG_1(self, argc, argv);
                 }
@@ -32582,7 +32316,7 @@ fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CombinedConnection_addStream'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::RecordStream::CombinedConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &)\n"
-    "    Seiscomp::RecordStream::CombinedConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Time const &,Seiscomp::Core::Time const &)\n");
+    "    Seiscomp::RecordStream::CombinedConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)\n");
   return 0;
 }
 
@@ -32590,11 +32324,10 @@ fail:
 SWIGINTERN PyObject *_wrap_CombinedConnection_setStartTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::CombinedConnection *arg1 = (Seiscomp::RecordStream::CombinedConnection *) 0 ;
-  Seiscomp::Core::Time *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -32605,17 +32338,20 @@ SWIGINTERN PyObject *_wrap_CombinedConnection_setStartTime(PyObject *self, PyObj
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CombinedConnection_setStartTime" "', argument " "1"" of type '" "Seiscomp::RecordStream::CombinedConnection *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::RecordStream::CombinedConnection * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CombinedConnection_setStartTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[1] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[1], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp2 = *value;
+    }
+    
+    arg2 = &tmp2;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "CombinedConnection_setStartTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
   {
     try {
-      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Time const &)*arg2);
+      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32637,11 +32373,10 @@ fail:
 SWIGINTERN PyObject *_wrap_CombinedConnection_setEndTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::CombinedConnection *arg1 = (Seiscomp::RecordStream::CombinedConnection *) 0 ;
-  Seiscomp::Core::Time *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -32652,17 +32387,20 @@ SWIGINTERN PyObject *_wrap_CombinedConnection_setEndTime(PyObject *self, PyObjec
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CombinedConnection_setEndTime" "', argument " "1"" of type '" "Seiscomp::RecordStream::CombinedConnection *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::RecordStream::CombinedConnection * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CombinedConnection_setEndTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
+  {
+    if ( swig_obj[1] != Py_None ) {
+      Seiscomp::Core::Time* value;
+      if ( SWIG_ConvertPtr(swig_obj[1], (void **) &value, SWIGTYPE_p_Seiscomp__Core__Time, SWIG_POINTER_EXCEPTION | 0) == -1 ) {
+        SWIG_fail;
+      }
+      tmp2 = *value;
+    }
+    
+    arg2 = &tmp2;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "CombinedConnection_setEndTime" "', argument " "2"" of type '" "Seiscomp::Core::Time const &""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
   {
     try {
-      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Time const &)*arg2);
+      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -38172,10 +37910,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "RecordStream_close", _wrap_RecordStream_close, METH_O, "RecordStream_close(RecordStream self)"},
 	 { "RecordStream_addStream", _wrap_RecordStream_addStream, METH_VARARGS, "\n"
 		"RecordStream_addStream(RecordStream self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool\n"
-		"RecordStream_addStream(RecordStream self, string networkCode, string stationCode, string locationCode, string channelCode, Time startTime, Time endTime) -> bool\n"
+		"RecordStream_addStream(RecordStream self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool\n"
 		""},
-	 { "RecordStream_setStartTime", _wrap_RecordStream_setStartTime, METH_VARARGS, "RecordStream_setStartTime(RecordStream self, Time startTime) -> bool"},
-	 { "RecordStream_setEndTime", _wrap_RecordStream_setEndTime, METH_VARARGS, "RecordStream_setEndTime(RecordStream self, Time endTime) -> bool"},
+	 { "RecordStream_setStartTime", _wrap_RecordStream_setStartTime, METH_VARARGS, "RecordStream_setStartTime(RecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime) -> bool"},
+	 { "RecordStream_setEndTime", _wrap_RecordStream_setEndTime, METH_VARARGS, "RecordStream_setEndTime(RecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool"},
 	 { "RecordStream_setTimeWindow", _wrap_RecordStream_setTimeWindow, METH_VARARGS, "RecordStream_setTimeWindow(RecordStream self, Seiscomp::Core::TimeWindow const & timeWindow) -> bool"},
 	 { "RecordStream_setTimeout", _wrap_RecordStream_setTimeout, METH_VARARGS, "RecordStream_setTimeout(RecordStream self, int seconds) -> bool"},
 	 { "RecordStream_setRecordType", _wrap_RecordStream_setRecordType, METH_VARARGS, "RecordStream_setRecordType(RecordStream self, char const * type) -> bool"},
@@ -38521,10 +38259,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "FileRecordStream_setSource", _wrap_FileRecordStream_setSource, METH_VARARGS, "FileRecordStream_setSource(FileRecordStream self, string filename) -> bool"},
 	 { "FileRecordStream_addStream", _wrap_FileRecordStream_addStream, METH_VARARGS, "\n"
 		"FileRecordStream_addStream(FileRecordStream self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool\n"
-		"FileRecordStream_addStream(FileRecordStream self, string networkCode, string stationCode, string locationCode, string channelCode, Time startTime, Time endTime) -> bool\n"
+		"FileRecordStream_addStream(FileRecordStream self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool\n"
 		""},
-	 { "FileRecordStream_setStartTime", _wrap_FileRecordStream_setStartTime, METH_VARARGS, "FileRecordStream_setStartTime(FileRecordStream self, Time startTime) -> bool"},
-	 { "FileRecordStream_setEndTime", _wrap_FileRecordStream_setEndTime, METH_VARARGS, "FileRecordStream_setEndTime(FileRecordStream self, Time endTime) -> bool"},
+	 { "FileRecordStream_setStartTime", _wrap_FileRecordStream_setStartTime, METH_VARARGS, "FileRecordStream_setStartTime(FileRecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime) -> bool"},
+	 { "FileRecordStream_setEndTime", _wrap_FileRecordStream_setEndTime, METH_VARARGS, "FileRecordStream_setEndTime(FileRecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool"},
 	 { "FileRecordStream_close", _wrap_FileRecordStream_close, METH_O, "FileRecordStream_close(FileRecordStream self)"},
 	 { "FileRecordStream_setRecordType", _wrap_FileRecordStream_setRecordType, METH_VARARGS, "FileRecordStream_setRecordType(FileRecordStream self, char const * type) -> bool"},
 	 { "FileRecordStream_next", _wrap_FileRecordStream_next, METH_O, "FileRecordStream_next(FileRecordStream self) -> Record"},
@@ -38553,7 +38291,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "new_SLStreamIdx", _wrap_new_SLStreamIdx, METH_VARARGS, "\n"
 		"SLStreamIdx()\n"
 		"SLStreamIdx(string net, string sta, string loc, string cha)\n"
-		"new_SLStreamIdx(string net, string sta, string loc, string cha, Time stime, Time etime) -> SLStreamIdx\n"
+		"new_SLStreamIdx(string net, string sta, string loc, string cha, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & stime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & etime) -> SLStreamIdx\n"
 		""},
 	 { "SLStreamIdx___lt__", _wrap_SLStreamIdx___lt__, METH_VARARGS, "SLStreamIdx___lt__(SLStreamIdx self, SLStreamIdx other) -> bool"},
 	 { "SLStreamIdx___eq__", _wrap_SLStreamIdx___eq__, METH_VARARGS, "SLStreamIdx___eq__(SLStreamIdx self, SLStreamIdx other) -> bool"},
@@ -38562,10 +38300,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "SLStreamIdx_channel", _wrap_SLStreamIdx_channel, METH_O, "SLStreamIdx_channel(SLStreamIdx self) -> string"},
 	 { "SLStreamIdx_location", _wrap_SLStreamIdx_location, METH_O, "SLStreamIdx_location(SLStreamIdx self) -> string"},
 	 { "SLStreamIdx_selector", _wrap_SLStreamIdx_selector, METH_O, "SLStreamIdx_selector(SLStreamIdx self) -> string"},
-	 { "SLStreamIdx_startTime", _wrap_SLStreamIdx_startTime, METH_O, "SLStreamIdx_startTime(SLStreamIdx self) -> Time"},
-	 { "SLStreamIdx_endTime", _wrap_SLStreamIdx_endTime, METH_O, "SLStreamIdx_endTime(SLStreamIdx self) -> Time"},
-	 { "SLStreamIdx_timestamp", _wrap_SLStreamIdx_timestamp, METH_O, "SLStreamIdx_timestamp(SLStreamIdx self) -> Time"},
-	 { "SLStreamIdx_setTimestamp", _wrap_SLStreamIdx_setTimestamp, METH_VARARGS, "SLStreamIdx_setTimestamp(SLStreamIdx self, Time rectime)"},
+	 { "SLStreamIdx_startTime", _wrap_SLStreamIdx_startTime, METH_O, "SLStreamIdx_startTime(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &"},
+	 { "SLStreamIdx_endTime", _wrap_SLStreamIdx_endTime, METH_O, "SLStreamIdx_endTime(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &"},
+	 { "SLStreamIdx_timestamp", _wrap_SLStreamIdx_timestamp, METH_O, "SLStreamIdx_timestamp(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &"},
+	 { "SLStreamIdx_setTimestamp", _wrap_SLStreamIdx_setTimestamp, METH_VARARGS, "SLStreamIdx_setTimestamp(SLStreamIdx self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & rectime)"},
 	 { "delete_SLStreamIdx", _wrap_delete_SLStreamIdx, METH_O, "delete_SLStreamIdx(SLStreamIdx self)"},
 	 { "SLStreamIdx_swigregister", SLStreamIdx_swigregister, METH_O, NULL},
 	 { "SLStreamIdx_swiginit", SLStreamIdx_swiginit, METH_VARARGS, NULL},
@@ -38590,31 +38328,14 @@ static PyMethodDef SwigMethods[] = {
 	 { "SLConnection_setSource", _wrap_SLConnection_setSource, METH_VARARGS, "SLConnection_setSource(SLConnection self, string source) -> bool"},
 	 { "SLConnection_addStream", _wrap_SLConnection_addStream, METH_VARARGS, "\n"
 		"SLConnection_addStream(SLConnection self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool\n"
-		"SLConnection_addStream(SLConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Time startTime, Time endTime) -> bool\n"
+		"SLConnection_addStream(SLConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool\n"
 		""},
-	 { "SLConnection_setStartTime", _wrap_SLConnection_setStartTime, METH_VARARGS, "SLConnection_setStartTime(SLConnection self, Time startTime) -> bool"},
-	 { "SLConnection_setEndTime", _wrap_SLConnection_setEndTime, METH_VARARGS, "SLConnection_setEndTime(SLConnection self, Time endTime) -> bool"},
+	 { "SLConnection_setStartTime", _wrap_SLConnection_setStartTime, METH_VARARGS, "SLConnection_setStartTime(SLConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime) -> bool"},
+	 { "SLConnection_setEndTime", _wrap_SLConnection_setEndTime, METH_VARARGS, "SLConnection_setEndTime(SLConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool"},
 	 { "SLConnection_setTimeout", _wrap_SLConnection_setTimeout, METH_VARARGS, "SLConnection_setTimeout(SLConnection self, int seconds) -> bool"},
 	 { "SLConnection_close", _wrap_SLConnection_close, METH_O, "SLConnection_close(SLConnection self)"},
-	 { "SLConnection_next", _wrap_SLConnection_next, METH_O, "SLConnection_next(SLConnection self) -> Record"},
-	 { "SLConnection_clear", _wrap_SLConnection_clear, METH_O, "SLConnection_clear(SLConnection self) -> bool"},
-	 { "SLConnection_reconnect", _wrap_SLConnection_reconnect, METH_O, "SLConnection_reconnect(SLConnection self) -> bool"},
 	 { "SLConnection_swigregister", SLConnection_swigregister, METH_O, NULL},
 	 { "SLConnection_swiginit", SLConnection_swiginit, METH_VARARGS, NULL},
-	 { "new_ArclinkException", _wrap_new_ArclinkException, METH_VARARGS, "\n"
-		"ArclinkException()\n"
-		"new_ArclinkException(string what) -> ArclinkException\n"
-		""},
-	 { "delete_ArclinkException", _wrap_delete_ArclinkException, METH_O, "delete_ArclinkException(ArclinkException self)"},
-	 { "ArclinkException_swigregister", ArclinkException_swigregister, METH_O, NULL},
-	 { "ArclinkException_swiginit", ArclinkException_swiginit, METH_VARARGS, NULL},
-	 { "new_ArclinkCommandException", _wrap_new_ArclinkCommandException, METH_VARARGS, "\n"
-		"ArclinkCommandException()\n"
-		"new_ArclinkCommandException(string what) -> ArclinkCommandException\n"
-		""},
-	 { "delete_ArclinkCommandException", _wrap_delete_ArclinkCommandException, METH_O, "delete_ArclinkCommandException(ArclinkCommandException self)"},
-	 { "ArclinkCommandException_swigregister", ArclinkCommandException_swigregister, METH_O, NULL},
-	 { "ArclinkCommandException_swiginit", ArclinkCommandException_swiginit, METH_VARARGS, NULL},
 	 { "ArclinkConnection_ClassName", _wrap_ArclinkConnection_ClassName, METH_NOARGS, "ArclinkConnection_ClassName() -> char const *"},
 	 { "ArclinkConnection_TypeInfo", _wrap_ArclinkConnection_TypeInfo, METH_NOARGS, "ArclinkConnection_TypeInfo() -> RTTI"},
 	 { "ArclinkConnection_className", _wrap_ArclinkConnection_className, METH_O, "ArclinkConnection_className(ArclinkConnection self) -> char const *"},
@@ -38637,10 +38358,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "ArclinkConnection_setUser", _wrap_ArclinkConnection_setUser, METH_VARARGS, "ArclinkConnection_setUser(ArclinkConnection self, string name, string password) -> bool"},
 	 { "ArclinkConnection_addStream", _wrap_ArclinkConnection_addStream, METH_VARARGS, "\n"
 		"ArclinkConnection_addStream(ArclinkConnection self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool\n"
-		"ArclinkConnection_addStream(ArclinkConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Time stime, Time etime) -> bool\n"
+		"ArclinkConnection_addStream(ArclinkConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & stime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & etime) -> bool\n"
 		""},
-	 { "ArclinkConnection_setStartTime", _wrap_ArclinkConnection_setStartTime, METH_VARARGS, "ArclinkConnection_setStartTime(ArclinkConnection self, Time stime) -> bool"},
-	 { "ArclinkConnection_setEndTime", _wrap_ArclinkConnection_setEndTime, METH_VARARGS, "ArclinkConnection_setEndTime(ArclinkConnection self, Time etime) -> bool"},
+	 { "ArclinkConnection_setStartTime", _wrap_ArclinkConnection_setStartTime, METH_VARARGS, "ArclinkConnection_setStartTime(ArclinkConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & stime) -> bool"},
+	 { "ArclinkConnection_setEndTime", _wrap_ArclinkConnection_setEndTime, METH_VARARGS, "ArclinkConnection_setEndTime(ArclinkConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & etime) -> bool"},
 	 { "ArclinkConnection_setTimeout", _wrap_ArclinkConnection_setTimeout, METH_VARARGS, "ArclinkConnection_setTimeout(ArclinkConnection self, int seconds) -> bool"},
 	 { "ArclinkConnection_close", _wrap_ArclinkConnection_close, METH_O, "ArclinkConnection_close(ArclinkConnection self)"},
 	 { "ArclinkConnection_next", _wrap_ArclinkConnection_next, METH_O, "ArclinkConnection_next(ArclinkConnection self) -> Record"},
@@ -38657,10 +38378,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "CombinedConnection_setSource", _wrap_CombinedConnection_setSource, METH_VARARGS, "CombinedConnection_setSource(CombinedConnection self, string serverloc) -> bool"},
 	 { "CombinedConnection_addStream", _wrap_CombinedConnection_addStream, METH_VARARGS, "\n"
 		"CombinedConnection_addStream(CombinedConnection self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool\n"
-		"CombinedConnection_addStream(CombinedConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Time startTime, Time endTime) -> bool\n"
+		"CombinedConnection_addStream(CombinedConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool\n"
 		""},
-	 { "CombinedConnection_setStartTime", _wrap_CombinedConnection_setStartTime, METH_VARARGS, "CombinedConnection_setStartTime(CombinedConnection self, Time stime) -> bool"},
-	 { "CombinedConnection_setEndTime", _wrap_CombinedConnection_setEndTime, METH_VARARGS, "CombinedConnection_setEndTime(CombinedConnection self, Time etime) -> bool"},
+	 { "CombinedConnection_setStartTime", _wrap_CombinedConnection_setStartTime, METH_VARARGS, "CombinedConnection_setStartTime(CombinedConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & stime) -> bool"},
+	 { "CombinedConnection_setEndTime", _wrap_CombinedConnection_setEndTime, METH_VARARGS, "CombinedConnection_setEndTime(CombinedConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & etime) -> bool"},
 	 { "CombinedConnection_setTimeout", _wrap_CombinedConnection_setTimeout, METH_VARARGS, "CombinedConnection_setTimeout(CombinedConnection self, int seconds) -> bool"},
 	 { "CombinedConnection_close", _wrap_CombinedConnection_close, METH_O, "CombinedConnection_close(CombinedConnection self)"},
 	 { "CombinedConnection_next", _wrap_CombinedConnection_next, METH_O, "CombinedConnection_next(CombinedConnection self) -> Record"},
@@ -39066,8 +38787,8 @@ static void *_p_Seiscomp__NumericArrayT_int_tTo_p_Seiscomp__Core__BaseObject(voi
 static void *_p_Seiscomp__RecordTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *)  ((Seiscomp::Record *) x));
 }
-static void *_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnectionTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Core::InterruptibleObject *)(Seiscomp::IO::RecordStream *) ((Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) x));
+static void *_p_Seiscomp__RecordStream__Arclink__ArclinkConnectionTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Core::InterruptibleObject *)(Seiscomp::IO::RecordStream *) ((Seiscomp::RecordStream::Arclink::ArclinkConnection *) x));
 }
 static void *_p_Seiscomp__RecordStream__CombinedConnectionTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::Core::InterruptibleObject *)(Seiscomp::IO::RecordStream *) ((Seiscomp::RecordStream::CombinedConnection *) x));
@@ -39144,12 +38865,6 @@ static void *_p_Seiscomp__IO__RecordStreamExceptionTo_p_Seiscomp__Core__GeneralE
 static void *_p_Seiscomp__IO__RecordStreamTimeoutTo_p_Seiscomp__Core__GeneralException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::GeneralException *) (Seiscomp::Core::StreamException *)(Seiscomp::IO::RecordStreamException *) ((Seiscomp::IO::RecordStreamTimeout *) x));
 }
-static void *_p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandExceptionTo_p_Seiscomp__Core__GeneralException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::GeneralException *) (Seiscomp::Core::StreamException *)(Seiscomp::IO::RecordStreamException *)(Seiscomp::RecordStream::Arclink::_private::ArclinkException *) ((Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException *) x));
-}
-static void *_p_Seiscomp__RecordStream__Arclink___private__ArclinkExceptionTo_p_Seiscomp__Core__GeneralException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::GeneralException *) (Seiscomp::Core::StreamException *)(Seiscomp::IO::RecordStreamException *) ((Seiscomp::RecordStream::Arclink::_private::ArclinkException *) x));
-}
 static void *_p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_Seiscomp__Core__GeneralException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::GeneralException *) (Seiscomp::Core::StreamException *)(Seiscomp::IO::RecordStreamException *)(Seiscomp::RecordStream::SeedlinkException *) ((Seiscomp::RecordStream::SeedlinkCommandException *) x));
 }
@@ -39168,8 +38883,8 @@ static void *_p_Seiscomp__IO__XMLArchiveTo_p_Seiscomp__Core__Generic__ArchiveT_S
 static void *_p_Seiscomp__IO__RecordStreamTo_p_Seiscomp__Core__InterruptibleObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::InterruptibleObject *)  ((Seiscomp::IO::RecordStream *) x));
 }
-static void *_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnectionTo_p_Seiscomp__Core__InterruptibleObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::InterruptibleObject *) (Seiscomp::IO::RecordStream *) ((Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) x));
+static void *_p_Seiscomp__RecordStream__Arclink__ArclinkConnectionTo_p_Seiscomp__Core__InterruptibleObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::Core::InterruptibleObject *) (Seiscomp::IO::RecordStream *) ((Seiscomp::RecordStream::Arclink::ArclinkConnection *) x));
 }
 static void *_p_Seiscomp__RecordStream__CombinedConnectionTo_p_Seiscomp__Core__InterruptibleObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::InterruptibleObject *) (Seiscomp::IO::RecordStream *) ((Seiscomp::RecordStream::CombinedConnection *) x));
@@ -39191,12 +38906,6 @@ static void *_p_Seiscomp__IO__RecordStreamExceptionTo_p_Seiscomp__Core__StreamEx
 }
 static void *_p_Seiscomp__IO__RecordStreamTimeoutTo_p_Seiscomp__Core__StreamException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::StreamException *) (Seiscomp::IO::RecordStreamException *) ((Seiscomp::IO::RecordStreamTimeout *) x));
-}
-static void *_p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandExceptionTo_p_Seiscomp__Core__StreamException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::StreamException *) (Seiscomp::IO::RecordStreamException *)(Seiscomp::RecordStream::Arclink::_private::ArclinkException *) ((Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException *) x));
-}
-static void *_p_Seiscomp__RecordStream__Arclink___private__ArclinkExceptionTo_p_Seiscomp__Core__StreamException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::StreamException *) (Seiscomp::IO::RecordStreamException *) ((Seiscomp::RecordStream::Arclink::_private::ArclinkException *) x));
 }
 static void *_p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_Seiscomp__Core__StreamException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::StreamException *) (Seiscomp::IO::RecordStreamException *)(Seiscomp::RecordStream::SeedlinkException *) ((Seiscomp::RecordStream::SeedlinkCommandException *) x));
@@ -39243,8 +38952,8 @@ static void *_p_Seiscomp__IO__RecordResamplerT_float_tTo_p_Seiscomp__IO__RecordR
 static void *_p_Seiscomp__IO__RecordResamplerT_int_tTo_p_Seiscomp__IO__RecordResamplerBase(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::IO::RecordResamplerBase *)  ((Seiscomp::IO::RecordResampler< int > *) x));
 }
-static void *_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnectionTo_p_Seiscomp__IO__RecordStream(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::IO::RecordStream *)  ((Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *) x));
+static void *_p_Seiscomp__RecordStream__Arclink__ArclinkConnectionTo_p_Seiscomp__IO__RecordStream(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Seiscomp::IO::RecordStream *)  ((Seiscomp::RecordStream::Arclink::ArclinkConnection *) x));
 }
 static void *_p_Seiscomp__RecordStream__CombinedConnectionTo_p_Seiscomp__IO__RecordStream(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::IO::RecordStream *)  ((Seiscomp::RecordStream::CombinedConnection *) x));
@@ -39257,12 +38966,6 @@ static void *_p_Seiscomp__RecordStream__SLConnectionTo_p_Seiscomp__IO__RecordStr
 }
 static void *_p_Seiscomp__IO__RecordStreamTimeoutTo_p_Seiscomp__IO__RecordStreamException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::IO::RecordStreamException *)  ((Seiscomp::IO::RecordStreamTimeout *) x));
-}
-static void *_p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandExceptionTo_p_Seiscomp__IO__RecordStreamException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::IO::RecordStreamException *) (Seiscomp::RecordStream::Arclink::_private::ArclinkException *) ((Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException *) x));
-}
-static void *_p_Seiscomp__RecordStream__Arclink___private__ArclinkExceptionTo_p_Seiscomp__IO__RecordStreamException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::IO::RecordStreamException *)  ((Seiscomp::RecordStream::Arclink::_private::ArclinkException *) x));
 }
 static void *_p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_Seiscomp__IO__RecordStreamException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::IO::RecordStreamException *) (Seiscomp::RecordStream::SeedlinkException *) ((Seiscomp::RecordStream::SeedlinkCommandException *) x));
@@ -39414,9 +39117,6 @@ static void *_p_Seiscomp__GenericRecordTo_p_Seiscomp__Record(void *x, int *SWIGU
 static void *_p_Seiscomp__IO__MSeedRecordTo_p_Seiscomp__Record(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Record *)  ((Seiscomp::IO::MSeedRecord *) x));
 }
-static void *_p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandExceptionTo_p_Seiscomp__RecordStream__Arclink___private__ArclinkException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::RecordStream::Arclink::_private::ArclinkException *)  ((Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException *) x));
-}
 static void *_p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_Seiscomp__RecordStream__SeedlinkException(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::RecordStream::SeedlinkException *)  ((Seiscomp::RecordStream::SeedlinkCommandException *) x));
 }
@@ -39470,12 +39170,6 @@ static void *_p_Seiscomp__IO__RecordStreamTimeoutTo_p_std__exception(void *x, in
 }
 static void *_p_Seiscomp__Math__Filtering__AlignmentErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((std::exception *)  ((Seiscomp::Math::Filtering::AlignmentError *) x));
-}
-static void *_p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandExceptionTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((std::exception *) (Seiscomp::Core::GeneralException *)(Seiscomp::Core::StreamException *)(Seiscomp::IO::RecordStreamException *)(Seiscomp::RecordStream::Arclink::_private::ArclinkException *) ((Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException *) x));
-}
-static void *_p_Seiscomp__RecordStream__Arclink___private__ArclinkExceptionTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((std::exception *) (Seiscomp::Core::GeneralException *)(Seiscomp::Core::StreamException *)(Seiscomp::IO::RecordStreamException *) ((Seiscomp::RecordStream::Arclink::_private::ArclinkException *) x));
 }
 static void *_p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((std::exception *) (Seiscomp::Core::GeneralException *)(Seiscomp::Core::StreamException *)(Seiscomp::IO::RecordStreamException *)(Seiscomp::RecordStream::SeedlinkException *) ((Seiscomp::RecordStream::SeedlinkCommandException *) x));
@@ -39623,8 +39317,8 @@ static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericA
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl", "Seiscomp::FloatArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< float > >::Impl *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl", "Seiscomp::Int32ArrayCPtr *|Seiscomp::IntArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< int > const >::Impl *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl", "Seiscomp::Int32ArrayPtr *|Seiscomp::IntArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< int > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_const_t__Impl", "Seiscomp::RecordStream::Arclink::_private::ArclinkConnectionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_t__Impl", "Seiscomp::RecordStream::Arclink::_private::ArclinkConnectionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::Arclink::_private::ArclinkConnection >::Impl *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl", "Seiscomp::RecordStream::Arclink::ArclinkConnectionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::Arclink::ArclinkConnection const >::Impl *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl", "Seiscomp::RecordStream::Arclink::ArclinkConnectionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::Arclink::ArclinkConnection >::Impl *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl", "Seiscomp::RecordStream::CombinedConnectionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::CombinedConnection const >::Impl *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl", "Seiscomp::RecordStream::CombinedConnectionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::CombinedConnection >::Impl *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl", "Seiscomp::RecordStream::FileCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::File const >::Impl *", 0, 0, (void*)0, 0};
@@ -39688,9 +39382,7 @@ static swig_type_info _swigt__p_Seiscomp__NumericArrayT_double_t = {"_p_Seiscomp
 static swig_type_info _swigt__p_Seiscomp__NumericArrayT_float_t = {"_p_Seiscomp__NumericArrayT_float_t", "Seiscomp::FloatArray *|Seiscomp::NumericArray< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__NumericArrayT_int_t = {"_p_Seiscomp__NumericArrayT_int_t", "Seiscomp::Int32Array *|Seiscomp::IntArray *|Seiscomp::NumericArray< int > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Record = {"_p_Seiscomp__Record", "Seiscomp::Record *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException = {"_p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException", "Seiscomp::RecordStream::Arclink::_private::ArclinkCommandException *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection = {"_p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection", "Seiscomp::RecordStream::Arclink::_private::ArclinkConnection *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkException = {"_p_Seiscomp__RecordStream__Arclink___private__ArclinkException", "Seiscomp::RecordStream::Arclink::_private::ArclinkException *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__RecordStream__Arclink__ArclinkConnection = {"_p_Seiscomp__RecordStream__Arclink__ArclinkConnection", "Seiscomp::RecordStream::Arclink::ArclinkConnection *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__RecordStream__CombinedConnection = {"_p_Seiscomp__RecordStream__CombinedConnection", "Seiscomp::RecordStream::CombinedConnection *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__RecordStream__File = {"_p_Seiscomp__RecordStream__File", "Seiscomp::RecordStream::File *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__RecordStream__SLConnection = {"_p_Seiscomp__RecordStream__SLConnection", "Seiscomp::RecordStream::SLConnection *", 0, 0, (void*)0, 0};
@@ -39868,8 +39560,8 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl,
   &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl,
   &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_t__Impl,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl,
   &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl,
   &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl,
   &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl,
@@ -39980,9 +39672,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__NumericArrayT_float_t,
   &_swigt__p_Seiscomp__NumericArrayT_int_t,
   &_swigt__p_Seiscomp__Record,
-  &_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException,
-  &_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection,
-  &_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkException,
+  &_swigt__p_Seiscomp__RecordStream__Arclink__ArclinkConnection,
   &_swigt__p_Seiscomp__RecordStream__CombinedConnection,
   &_swigt__p_Seiscomp__RecordStream__File,
   &_swigt__p_Seiscomp__RecordStream__SLConnection,
@@ -40153,7 +39843,7 @@ static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__STALTA_ClassicT_float
 static swig_cast_info _swigc__p_Seiscomp__Math__Restitution__FFT__PolesAndZeros[] = {{&_swigt__p_Seiscomp__Math__Restitution__FFT__PolesAndZeros, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Restitution__FFT__ResponseList[] = {{&_swigt__p_Seiscomp__Math__Restitution__FFT__ResponseList, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Restitution__FFT__TransferFunction[] = {{&_swigt__p_Seiscomp__Math__Restitution__FFT__TransferFunction, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__BaseObject[] = {  {&_swigt__p_Seiscomp__Core__BaseObject, 0, 0, 0},  {&_swigt__p_Seiscomp__Array, _p_Seiscomp__ArrayTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__BitSet, _p_Seiscomp__BitSetTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__DataMessage, _p_Seiscomp__Core__DataMessageTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t, _p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__GreensFunction, _p_Seiscomp__Core__GreensFunctionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__InterruptibleObject, _p_Seiscomp__Core__InterruptibleObjectTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__Message, _p_Seiscomp__Core__MessageTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__GenericRecord, _p_Seiscomp__GenericRecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__Cropper, _p_Seiscomp__IO__CropperTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__DatabaseInterface, _p_Seiscomp__IO__DatabaseInterfaceTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__Exporter, _p_Seiscomp__IO__ExporterTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__GFArchive, _p_Seiscomp__IO__GFArchiveTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__GFReceiver, _p_Seiscomp__IO__GFReceiverTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__GFSource, _p_Seiscomp__IO__GFSourceTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__Importer, _p_Seiscomp__IO__ImporterTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__MSeedRecord, _p_Seiscomp__IO__MSeedRecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__PipeFilter, _p_Seiscomp__IO__PipeFilterTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordDemuxFilter, _p_Seiscomp__IO__RecordDemuxFilterTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordFilterInterface, _p_Seiscomp__IO__RecordFilterInterfaceTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordIIRFilterT_double_t, _p_Seiscomp__IO__RecordIIRFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordIIRFilterT_float_t, _p_Seiscomp__IO__RecordIIRFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordInput, _p_Seiscomp__IO__RecordInputTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordResamplerBase, _p_Seiscomp__IO__RecordResamplerBaseTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordResamplerT_double_t, _p_Seiscomp__IO__RecordResamplerT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordResamplerT_float_t, _p_Seiscomp__IO__RecordResamplerT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordResamplerT_int_t, _p_Seiscomp__IO__RecordResamplerT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStream, _p_Seiscomp__IO__RecordStreamTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_double_t, _p_Seiscomp__Math__Filtering__AverageT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_float_t, _p_Seiscomp__Math__Filtering__AverageT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_double_t, _p_Seiscomp__Math__Filtering__ChainFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_float_t, _p_Seiscomp__Math__Filtering__ChainFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__FilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__FilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, _p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, _p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, _p_Seiscomp__Math__Filtering__InPlaceFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, _p_Seiscomp__Math__Filtering__InPlaceFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_double_t, _p_Seiscomp__Math__Filtering__InitialTaperT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_float_t, _p_Seiscomp__Math__Filtering__InitialTaperT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA2T_double_t, _p_Seiscomp__Math__Filtering__STALTA2T_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA2T_float_t, _p_Seiscomp__Math__Filtering__STALTA2T_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_double_t, _p_Seiscomp__Math__Filtering__STALTAT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t, _p_Seiscomp__Math__Filtering__STALTAT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, _p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, _p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CityT_double_t, _p_Seiscomp__Math__Geo__CityT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CityT_float_t, _p_Seiscomp__Math__Geo__CityT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CoordT_double_t, _p_Seiscomp__Math__Geo__CoordT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CoordT_float_t, _p_Seiscomp__Math__Geo__CoordT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__NamedCoordT_double_t, _p_Seiscomp__Math__Geo__NamedCoordT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__NamedCoordT_float_t, _p_Seiscomp__Math__Geo__NamedCoordT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__PolesAndZeros, _p_Seiscomp__Math__Restitution__FFT__PolesAndZerosTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__ResponseList, _p_Seiscomp__Math__Restitution__FFT__ResponseListTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__TransferFunction, _p_Seiscomp__Math__Restitution__FFT__TransferFunctionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_char_t, _p_Seiscomp__NumericArrayT_char_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_double_t, _p_Seiscomp__NumericArrayT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_float_t, _p_Seiscomp__NumericArrayT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_int_t, _p_Seiscomp__NumericArrayT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Record, _p_Seiscomp__RecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, _p_Seiscomp__RecordStream__Arclink___private__ArclinkConnectionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__CombinedConnection, _p_Seiscomp__RecordStream__CombinedConnectionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__File, _p_Seiscomp__RecordStream__FileTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SLConnection, _p_Seiscomp__RecordStream__SLConnectionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t, _p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_char_t, _p_Seiscomp__TypedArrayT_char_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_double_t, _p_Seiscomp__TypedArrayT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_float_t, _p_Seiscomp__TypedArrayT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_int_t, _p_Seiscomp__TypedArrayT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_double_t_t, _p_Seiscomp__TypedArrayT_std__complexT_double_t_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_float_t_t, _p_Seiscomp__TypedArrayT_std__complexT_float_t_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__string_t, _p_Seiscomp__TypedArrayT_std__string_tTo_p_Seiscomp__Core__BaseObject, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__BaseObject[] = {  {&_swigt__p_Seiscomp__Core__BaseObject, 0, 0, 0},  {&_swigt__p_Seiscomp__Array, _p_Seiscomp__ArrayTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__BitSet, _p_Seiscomp__BitSetTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__DataMessage, _p_Seiscomp__Core__DataMessageTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t, _p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__GreensFunction, _p_Seiscomp__Core__GreensFunctionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__InterruptibleObject, _p_Seiscomp__Core__InterruptibleObjectTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Core__Message, _p_Seiscomp__Core__MessageTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__GenericRecord, _p_Seiscomp__GenericRecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__Cropper, _p_Seiscomp__IO__CropperTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__DatabaseInterface, _p_Seiscomp__IO__DatabaseInterfaceTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__Exporter, _p_Seiscomp__IO__ExporterTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__GFArchive, _p_Seiscomp__IO__GFArchiveTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__GFReceiver, _p_Seiscomp__IO__GFReceiverTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__GFSource, _p_Seiscomp__IO__GFSourceTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__Importer, _p_Seiscomp__IO__ImporterTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__MSeedRecord, _p_Seiscomp__IO__MSeedRecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__PipeFilter, _p_Seiscomp__IO__PipeFilterTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordDemuxFilter, _p_Seiscomp__IO__RecordDemuxFilterTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordFilterInterface, _p_Seiscomp__IO__RecordFilterInterfaceTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordIIRFilterT_double_t, _p_Seiscomp__IO__RecordIIRFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordIIRFilterT_float_t, _p_Seiscomp__IO__RecordIIRFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordInput, _p_Seiscomp__IO__RecordInputTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordResamplerBase, _p_Seiscomp__IO__RecordResamplerBaseTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordResamplerT_double_t, _p_Seiscomp__IO__RecordResamplerT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordResamplerT_float_t, _p_Seiscomp__IO__RecordResamplerT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordResamplerT_int_t, _p_Seiscomp__IO__RecordResamplerT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStream, _p_Seiscomp__IO__RecordStreamTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_double_t, _p_Seiscomp__Math__Filtering__AverageT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AverageT_float_t, _p_Seiscomp__Math__Filtering__AverageT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_double_t, _p_Seiscomp__Math__Filtering__ChainFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__ChainFilterT_float_t, _p_Seiscomp__Math__Filtering__ChainFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_t, _p_Seiscomp__Math__Filtering__IIR__BiquadCascadeT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthBandstopT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighLowpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthHighpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_t, _p_Seiscomp__Math__Filtering__IIR__ButterworthLowpassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__FilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__FilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_t, _p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_t, _p_Seiscomp__Math__Filtering__IIR__GenericSeismometerT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_LP_FilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WWSSN_SP_FilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_t, _p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_t, _p_Seiscomp__Math__Filtering__IIR__WoodAndersonFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_double_t, _p_Seiscomp__Math__Filtering__InPlaceFilterT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InPlaceFilterT_float_t, _p_Seiscomp__Math__Filtering__InPlaceFilterT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_double_t, _p_Seiscomp__Math__Filtering__InitialTaperT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__InitialTaperT_float_t, _p_Seiscomp__Math__Filtering__InitialTaperT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanHighPassT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_double_t, _p_Seiscomp__Math__Filtering__RunningMeanT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__RunningMeanT_float_t, _p_Seiscomp__Math__Filtering__RunningMeanT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA2T_double_t, _p_Seiscomp__Math__Filtering__STALTA2T_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA2T_float_t, _p_Seiscomp__Math__Filtering__STALTA2T_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_double_t, _p_Seiscomp__Math__Filtering__STALTAT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTAT_float_t, _p_Seiscomp__Math__Filtering__STALTAT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_t, _p_Seiscomp__Math__Filtering__STALTA_ClassicT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_t, _p_Seiscomp__Math__Filtering__STALTA_ClassicT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CityT_double_t, _p_Seiscomp__Math__Geo__CityT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CityT_float_t, _p_Seiscomp__Math__Geo__CityT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CoordT_double_t, _p_Seiscomp__Math__Geo__CoordT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__CoordT_float_t, _p_Seiscomp__Math__Geo__CoordT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__NamedCoordT_double_t, _p_Seiscomp__Math__Geo__NamedCoordT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Geo__NamedCoordT_float_t, _p_Seiscomp__Math__Geo__NamedCoordT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__PolesAndZeros, _p_Seiscomp__Math__Restitution__FFT__PolesAndZerosTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__ResponseList, _p_Seiscomp__Math__Restitution__FFT__ResponseListTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Math__Restitution__FFT__TransferFunction, _p_Seiscomp__Math__Restitution__FFT__TransferFunctionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_char_t, _p_Seiscomp__NumericArrayT_char_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_double_t, _p_Seiscomp__NumericArrayT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_float_t, _p_Seiscomp__NumericArrayT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__NumericArrayT_int_t, _p_Seiscomp__NumericArrayT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__Record, _p_Seiscomp__RecordTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink__ArclinkConnection, _p_Seiscomp__RecordStream__Arclink__ArclinkConnectionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__CombinedConnection, _p_Seiscomp__RecordStream__CombinedConnectionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__File, _p_Seiscomp__RecordStream__FileTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SLConnection, _p_Seiscomp__RecordStream__SLConnectionTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t, _p_Seiscomp__TypedArrayT_Seiscomp__Core__Time_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_char_t, _p_Seiscomp__TypedArrayT_char_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_double_t, _p_Seiscomp__TypedArrayT_double_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_float_t, _p_Seiscomp__TypedArrayT_float_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_int_t, _p_Seiscomp__TypedArrayT_int_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_double_t_t, _p_Seiscomp__TypedArrayT_std__complexT_double_t_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__complexT_float_t_t, _p_Seiscomp__TypedArrayT_std__complexT_float_t_tTo_p_Seiscomp__Core__BaseObject, 0, 0},  {&_swigt__p_Seiscomp__TypedArrayT_std__string_t, _p_Seiscomp__TypedArrayT_std__string_tTo_p_Seiscomp__Core__BaseObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__ClassNotFound[] = {{&_swigt__p_Seiscomp__Core__ClassNotFound, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__DuplicateClassname[] = {{&_swigt__p_Seiscomp__Core__DuplicateClassname, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__EndOfStreamException[] = {{&_swigt__p_Seiscomp__Core__EndOfStreamException, 0, 0, 0},{0, 0, 0, 0}};
@@ -40164,11 +39854,11 @@ static swig_cast_info _swigc__p_Seiscomp__Core__TypeConversionException[] = {{&_
 static swig_cast_info _swigc__p_Seiscomp__Core__TypeException[] = {{&_swigt__p_Seiscomp__Core__TypeException, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__UnderflowException[] = {{&_swigt__p_Seiscomp__Core__UnderflowException, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__ValueException[] = {{&_swigt__p_Seiscomp__Core__ValueException, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__GeneralException[] = {  {&_swigt__p_Seiscomp__Core__GeneralException, 0, 0, 0},  {&_swigt__p_Seiscomp__Core__ClassNotFound, _p_Seiscomp__Core__ClassNotFoundTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__DuplicateClassname, _p_Seiscomp__Core__DuplicateClassnameTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__EndOfStreamException, _p_Seiscomp__Core__EndOfStreamExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__MemoryException, _p_Seiscomp__Core__MemoryExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__OperationInterrupted, _p_Seiscomp__Core__OperationInterruptedTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__OverflowException, _p_Seiscomp__Core__OverflowExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__StreamException, _p_Seiscomp__Core__StreamExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeConversionException, _p_Seiscomp__Core__TypeConversionExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeException, _p_Seiscomp__Core__TypeExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__UnderflowException, _p_Seiscomp__Core__UnderflowExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__ValueException, _p_Seiscomp__Core__ValueExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__IO__LibmseedException, _p_Seiscomp__IO__LibmseedExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamException, _p_Seiscomp__IO__RecordStreamExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamTimeout, _p_Seiscomp__IO__RecordStreamTimeoutTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException, _p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkException, _p_Seiscomp__RecordStream__Arclink___private__ArclinkExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkCommandException, _p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkException, _p_Seiscomp__RecordStream__SeedlinkExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__GeneralException[] = {  {&_swigt__p_Seiscomp__Core__GeneralException, 0, 0, 0},  {&_swigt__p_Seiscomp__Core__ClassNotFound, _p_Seiscomp__Core__ClassNotFoundTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__DuplicateClassname, _p_Seiscomp__Core__DuplicateClassnameTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__EndOfStreamException, _p_Seiscomp__Core__EndOfStreamExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__MemoryException, _p_Seiscomp__Core__MemoryExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__OperationInterrupted, _p_Seiscomp__Core__OperationInterruptedTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__OverflowException, _p_Seiscomp__Core__OverflowExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__StreamException, _p_Seiscomp__Core__StreamExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeConversionException, _p_Seiscomp__Core__TypeConversionExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeException, _p_Seiscomp__Core__TypeExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__UnderflowException, _p_Seiscomp__Core__UnderflowExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__Core__ValueException, _p_Seiscomp__Core__ValueExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__IO__LibmseedException, _p_Seiscomp__IO__LibmseedExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamException, _p_Seiscomp__IO__RecordStreamExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamTimeout, _p_Seiscomp__IO__RecordStreamTimeoutTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkCommandException, _p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkException, _p_Seiscomp__RecordStream__SeedlinkExceptionTo_p_Seiscomp__Core__GeneralException, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t[] = {  {&_swigt__p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t, 0, 0, 0},  {&_swigt__p_Seiscomp__IO__BinaryArchive, _p_Seiscomp__IO__BinaryArchiveTo_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t, 0, 0},  {&_swigt__p_Seiscomp__IO__VBinaryArchive, _p_Seiscomp__IO__VBinaryArchiveTo_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t, 0, 0},  {&_swigt__p_Seiscomp__IO__XMLArchive, _p_Seiscomp__IO__XMLArchiveTo_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t[] = {  {&_swigt__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__GreensFunction[] = {  {&_swigt__p_Seiscomp__Core__GreensFunction, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__InterruptibleObject[] = {  {&_swigt__p_Seiscomp__Core__InterruptibleObject, 0, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStream, _p_Seiscomp__IO__RecordStreamTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, _p_Seiscomp__RecordStream__Arclink___private__ArclinkConnectionTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__CombinedConnection, _p_Seiscomp__RecordStream__CombinedConnectionTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__File, _p_Seiscomp__RecordStream__FileTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SLConnection, _p_Seiscomp__RecordStream__SLConnectionTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__InterruptibleObject[] = {  {&_swigt__p_Seiscomp__Core__InterruptibleObject, 0, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStream, _p_Seiscomp__IO__RecordStreamTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink__ArclinkConnection, _p_Seiscomp__RecordStream__Arclink__ArclinkConnectionTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__CombinedConnection, _p_Seiscomp__RecordStream__CombinedConnectionTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__File, _p_Seiscomp__RecordStream__FileTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SLConnection, _p_Seiscomp__RecordStream__SLConnectionTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__RTTI[] = {  {&_swigt__p_Seiscomp__Core__RTTI, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
@@ -40211,8 +39901,8 @@ static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericA
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
@@ -40231,7 +39921,7 @@ static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArr
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__StreamException[] = {  {&_swigt__p_Seiscomp__Core__StreamException, 0, 0, 0},  {&_swigt__p_Seiscomp__Core__EndOfStreamException, _p_Seiscomp__Core__EndOfStreamExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__IO__LibmseedException, _p_Seiscomp__IO__LibmseedExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamException, _p_Seiscomp__IO__RecordStreamExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamTimeout, _p_Seiscomp__IO__RecordStreamTimeoutTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException, _p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkException, _p_Seiscomp__RecordStream__Arclink___private__ArclinkExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkCommandException, _p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkException, _p_Seiscomp__RecordStream__SeedlinkExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__StreamException[] = {  {&_swigt__p_Seiscomp__Core__StreamException, 0, 0, 0},  {&_swigt__p_Seiscomp__Core__EndOfStreamException, _p_Seiscomp__Core__EndOfStreamExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__IO__LibmseedException, _p_Seiscomp__IO__LibmseedExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamException, _p_Seiscomp__IO__RecordStreamExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamTimeout, _p_Seiscomp__IO__RecordStreamTimeoutTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkCommandException, _p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkException, _p_Seiscomp__RecordStream__SeedlinkExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__Time[] = {  {&_swigt__p_Seiscomp__Core__Time, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__TimeSpan[] = {  {&_swigt__p_Seiscomp__Core__TimeSpan, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__TimeWindow[] = {  {&_swigt__p_Seiscomp__Core__TimeWindow, 0, 0, 0},{0, 0, 0, 0}};
@@ -40258,8 +39948,8 @@ static swig_cast_info _swigc__p_Seiscomp__IO__RecordResamplerBase[] = {  {&_swig
 static swig_cast_info _swigc__p_Seiscomp__IO__RecordResamplerT_double_t[] = {  {&_swigt__p_Seiscomp__IO__RecordResamplerT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__IO__RecordResamplerT_float_t[] = {  {&_swigt__p_Seiscomp__IO__RecordResamplerT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__IO__RecordResamplerT_int_t[] = {  {&_swigt__p_Seiscomp__IO__RecordResamplerT_int_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__IO__RecordStream[] = {  {&_swigt__p_Seiscomp__IO__RecordStream, 0, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, _p_Seiscomp__RecordStream__Arclink___private__ArclinkConnectionTo_p_Seiscomp__IO__RecordStream, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__CombinedConnection, _p_Seiscomp__RecordStream__CombinedConnectionTo_p_Seiscomp__IO__RecordStream, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__File, _p_Seiscomp__RecordStream__FileTo_p_Seiscomp__IO__RecordStream, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SLConnection, _p_Seiscomp__RecordStream__SLConnectionTo_p_Seiscomp__IO__RecordStream, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__IO__RecordStreamException[] = {  {&_swigt__p_Seiscomp__IO__RecordStreamException, 0, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamTimeout, _p_Seiscomp__IO__RecordStreamTimeoutTo_p_Seiscomp__IO__RecordStreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException, _p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandExceptionTo_p_Seiscomp__IO__RecordStreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkException, _p_Seiscomp__RecordStream__Arclink___private__ArclinkExceptionTo_p_Seiscomp__IO__RecordStreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkCommandException, _p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_Seiscomp__IO__RecordStreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkException, _p_Seiscomp__RecordStream__SeedlinkExceptionTo_p_Seiscomp__IO__RecordStreamException, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__IO__RecordStream[] = {  {&_swigt__p_Seiscomp__IO__RecordStream, 0, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink__ArclinkConnection, _p_Seiscomp__RecordStream__Arclink__ArclinkConnectionTo_p_Seiscomp__IO__RecordStream, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__CombinedConnection, _p_Seiscomp__RecordStream__CombinedConnectionTo_p_Seiscomp__IO__RecordStream, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__File, _p_Seiscomp__RecordStream__FileTo_p_Seiscomp__IO__RecordStream, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SLConnection, _p_Seiscomp__RecordStream__SLConnectionTo_p_Seiscomp__IO__RecordStream, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__IO__RecordStreamException[] = {  {&_swigt__p_Seiscomp__IO__RecordStreamException, 0, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamTimeout, _p_Seiscomp__IO__RecordStreamTimeoutTo_p_Seiscomp__IO__RecordStreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkCommandException, _p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_Seiscomp__IO__RecordStreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkException, _p_Seiscomp__RecordStream__SeedlinkExceptionTo_p_Seiscomp__IO__RecordStreamException, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__IO__RecordStreamTimeout[] = {  {&_swigt__p_Seiscomp__IO__RecordStreamTimeout, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__IO__VBinaryArchive[] = {  {&_swigt__p_Seiscomp__IO__VBinaryArchive, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__IO__XMLArchive[] = {  {&_swigt__p_Seiscomp__IO__XMLArchive, 0, 0, 0},{0, 0, 0, 0}};
@@ -40276,9 +39966,7 @@ static swig_cast_info _swigc__p_Seiscomp__NumericArrayT_double_t[] = {  {&_swigt
 static swig_cast_info _swigc__p_Seiscomp__NumericArrayT_float_t[] = {  {&_swigt__p_Seiscomp__NumericArrayT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__NumericArrayT_int_t[] = {  {&_swigt__p_Seiscomp__NumericArrayT_int_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Record[] = {  {&_swigt__p_Seiscomp__Record, 0, 0, 0},  {&_swigt__p_Seiscomp__GenericRecord, _p_Seiscomp__GenericRecordTo_p_Seiscomp__Record, 0, 0},  {&_swigt__p_Seiscomp__IO__MSeedRecord, _p_Seiscomp__IO__MSeedRecordTo_p_Seiscomp__Record, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException[] = {  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection[] = {  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__RecordStream__Arclink___private__ArclinkException[] = {  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkException, 0, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException, _p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandExceptionTo_p_Seiscomp__RecordStream__Arclink___private__ArclinkException, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__RecordStream__Arclink__ArclinkConnection[] = {  {&_swigt__p_Seiscomp__RecordStream__Arclink__ArclinkConnection, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__RecordStream__CombinedConnection[] = {  {&_swigt__p_Seiscomp__RecordStream__CombinedConnection, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__RecordStream__File[] = {  {&_swigt__p_Seiscomp__RecordStream__File, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__RecordStream__SLConnection[] = {  {&_swigt__p_Seiscomp__RecordStream__SLConnection, 0, 0, 0},{0, 0, 0, 0}};
@@ -40334,7 +40022,7 @@ static swig_cast_info _swigc__p_std__complexT_double_t[] = {  {&_swigt__p_std__c
 static swig_cast_info _swigc__p_std__complexT_float_t[] = {  {&_swigt__p_std__complexT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__ValueError[] = {{&_swigt__p_Seiscomp__Core__ValueError, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Filtering__AlignmentError[] = {{&_swigt__p_Seiscomp__Math__Filtering__AlignmentError, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__exception[] = {  {&_swigt__p_std__exception, 0, 0, 0},  {&_swigt__p_Seiscomp__Core__ClassNotFound, _p_Seiscomp__Core__ClassNotFoundTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__DuplicateClassname, _p_Seiscomp__Core__DuplicateClassnameTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__EndOfStreamException, _p_Seiscomp__Core__EndOfStreamExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__GeneralException, _p_Seiscomp__Core__GeneralExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__MemoryException, _p_Seiscomp__Core__MemoryExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__OperationInterrupted, _p_Seiscomp__Core__OperationInterruptedTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__OverflowException, _p_Seiscomp__Core__OverflowExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__StreamException, _p_Seiscomp__Core__StreamExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeConversionException, _p_Seiscomp__Core__TypeConversionExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeException, _p_Seiscomp__Core__TypeExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__UnderflowException, _p_Seiscomp__Core__UnderflowExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__ValueError, _p_Seiscomp__Core__ValueErrorTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__ValueException, _p_Seiscomp__Core__ValueExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__IO__LibmseedException, _p_Seiscomp__IO__LibmseedExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamException, _p_Seiscomp__IO__RecordStreamExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamTimeout, _p_Seiscomp__IO__RecordStreamTimeoutTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AlignmentError, _p_Seiscomp__Math__Filtering__AlignmentErrorTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException, _p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink___private__ArclinkException, _p_Seiscomp__RecordStream__Arclink___private__ArclinkExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkCommandException, _p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkException, _p_Seiscomp__RecordStream__SeedlinkExceptionTo_p_std__exception, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__exception[] = {  {&_swigt__p_std__exception, 0, 0, 0},  {&_swigt__p_Seiscomp__Core__ClassNotFound, _p_Seiscomp__Core__ClassNotFoundTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__DuplicateClassname, _p_Seiscomp__Core__DuplicateClassnameTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__EndOfStreamException, _p_Seiscomp__Core__EndOfStreamExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__GeneralException, _p_Seiscomp__Core__GeneralExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__MemoryException, _p_Seiscomp__Core__MemoryExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__OperationInterrupted, _p_Seiscomp__Core__OperationInterruptedTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__OverflowException, _p_Seiscomp__Core__OverflowExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__StreamException, _p_Seiscomp__Core__StreamExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeConversionException, _p_Seiscomp__Core__TypeConversionExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeException, _p_Seiscomp__Core__TypeExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__UnderflowException, _p_Seiscomp__Core__UnderflowExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__ValueError, _p_Seiscomp__Core__ValueErrorTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__ValueException, _p_Seiscomp__Core__ValueExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__IO__LibmseedException, _p_Seiscomp__IO__LibmseedExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamException, _p_Seiscomp__IO__RecordStreamExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamTimeout, _p_Seiscomp__IO__RecordStreamTimeoutTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AlignmentError, _p_Seiscomp__Math__Filtering__AlignmentErrorTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkCommandException, _p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkException, _p_Seiscomp__RecordStream__SeedlinkExceptionTo_p_std__exception, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__invalid_argument[] = {  {&_swigt__p_std__invalid_argument, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__ios_base[] = {  {&_swigt__p_std__ios_base, 0, 0, 0},  {&_swigt__p_std__basic_iosT_char_t, _p_std__basic_iosT_char_tTo_p_std__ios_base, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__istream[] = {  {&_swigt__p_std__istream, 0, 0, 0},{0, 0, 0, 0}};
@@ -40456,8 +40144,8 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl,
   _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl,
   _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink___private__ArclinkConnection_t__Impl,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl,
   _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl,
   _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl,
   _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl,
@@ -40568,9 +40256,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__NumericArrayT_float_t,
   _swigc__p_Seiscomp__NumericArrayT_int_t,
   _swigc__p_Seiscomp__Record,
-  _swigc__p_Seiscomp__RecordStream__Arclink___private__ArclinkCommandException,
-  _swigc__p_Seiscomp__RecordStream__Arclink___private__ArclinkConnection,
-  _swigc__p_Seiscomp__RecordStream__Arclink___private__ArclinkException,
+  _swigc__p_Seiscomp__RecordStream__Arclink__ArclinkConnection,
   _swigc__p_Seiscomp__RecordStream__CombinedConnection,
   _swigc__p_Seiscomp__RecordStream__File,
   _swigc__p_Seiscomp__RecordStream__SLConnection,
