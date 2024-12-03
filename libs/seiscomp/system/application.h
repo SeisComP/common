@@ -21,6 +21,7 @@
 #ifndef SEISCOMP_SYSTEM_APPLICATION_H
 #define SEISCOMP_SYSTEM_APPLICATION_H
 
+
 #include <seiscomp/core/exceptions.h>
 #include <seiscomp/core/interruptible.h>
 #include <seiscomp/config/config.h>
@@ -46,6 +47,25 @@ class Application;
 
 
 namespace Detail {
+
+
+template <typename T>
+bool convertString(T &value, const std::string &str) {
+	using namespace Seiscomp::Core;
+	return fromString(value, str);
+}
+
+
+template <typename T>
+bool convertString(boost::optional<T> &value, const std::string &str) {
+	using namespace Seiscomp::Core;
+	T tmp;
+	if ( !fromString(tmp, str) ) {
+		return false;
+	}
+	value = tmp;
+	return true;
+}
 
 
 template <typename T>
@@ -785,7 +805,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 				template <typename T>
 				struct IsNativelySupported {
 					enum {
-						value = Generic::Detail::IsClassType<T>::value  ?
+						value = Generic::Detail::IsClassType<T>::value ?
 						(
 							std::is_same<std::string,T>::value ?
 							1
@@ -875,7 +895,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 								hasOption = proc._external.constCli->hasOption(visitedItem.cliAbsoluteSymbol);
 
 							if ( hasOption )
-								return fromString(visitedItem.value, proc._proxyValueStore[&visitedItem.value]);
+								return Detail::convertString(visitedItem.value, proc._proxyValueStore[&visitedItem.value]);
 							else
 								return true;
 						}
@@ -936,7 +956,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 									Detail::join(prefix, visitedItem.configFileRelativeSymbol),
 									visitedItem.flags & OptionBinding<T>::InterpretAsPath
 								);
-							return fromString(visitedItem.value, tmp);
+							return Detail::convertString(visitedItem.value, tmp);
 						}
 						catch ( ... ) {}
 
@@ -962,7 +982,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 								);
 							visitedItem.value.resize(tmp.size());
 							for ( size_t i = 0; i < tmp.size(); ++i ) {
-								if ( !fromString(visitedItem.value[i], tmp[i]) )
+								if ( !Detail::convertString(visitedItem.value[i], tmp[i]) )
 									return false;
 							}
 						}
@@ -1051,10 +1071,11 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 				template <typename T>
 				struct PrintHelper<std::vector<T>,1> {
 					static void process(std::ostream &os, const std::vector<T> &value) {
+						using namespace Seiscomp::Core;
 						if ( value.empty() )
 							os << "[]";
 						else
-							os << Core::toString(value);
+							os << toString(value);
 					}
 				};
 
