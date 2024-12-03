@@ -18,11 +18,8 @@
  ***************************************************************************/
 
 
-#include <seiscomp/core/enumeration.h>
-
 #include <cctype>
 #include <sstream>
-#include <complex>
 
 
 namespace Seiscomp {
@@ -101,7 +98,7 @@ inline std::string toString(const std::vector<T>& v) {
 		return "";
 
 	++it;
-	
+
 	while ( it != v.end() ) {
 		str += " ";
 		str += toString(*it);
@@ -122,6 +119,36 @@ inline std::string toString(const ::boost::optional<T>& v) {
 		return "None";
 
 	return toString(*v);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#if __cplusplus >= 201703L
+template <typename T>
+bool fromString(std::optional<T> &value, const std::string &str) {
+	static_assert(
+		False<T>::value,
+		"String conversion for std optional values is not supported"
+	);
+	return false;
+}
+#endif
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+bool fromString(boost::optional<T> &value, const std::string &str) {
+	static_assert(
+		False<T>::value,
+		"String conversion for boost optional values is not supported"
+	);
+	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -154,7 +181,7 @@ inline bool fromString(std::complex<T>& value, const std::string& str) {
 		return false;
 
 	T realPart, imgPart;
-	
+
 	if ( !fromString(realPart, str.substr(s+1, delimPos-s-1)) ) return false;
 	if ( !fromString(imgPart, str.substr(delimPos+1, e-delimPos-1)) ) return false;
 
@@ -206,7 +233,7 @@ inline bool fromString(std::vector<std::complex<T> >& vec, const std::string& st
 				tokens[i] = tokens[i].substr(bracketPos);
 			}
 		}
-		
+
 		if ( !fromString(v, tokens[i]) ) return false;
 		for ( int i = 0; i < count; ++i )
 			vec.push_back(v);

@@ -26,6 +26,11 @@
 #include <exception>
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
+#if __cplusplus >= 201703L
+#include <optional>
+#endif
+#include <type_traits>
+
 
 namespace Seiscomp {
 namespace Core {
@@ -53,6 +58,30 @@ struct Optional {
 
 /** Defines None */
 SC_SYSTEM_CORE_API extern ::boost::none_t const None;
+
+
+template <class...>
+struct False : std::integral_constant<bool, false> {};
+
+template <class...>
+struct True : std::integral_constant<bool, true> {};
+
+
+// Checks whether a type is wrapped with optional or not.
+template <typename>
+struct isOptional : std::false_type {};
+
+template<template<class...> class U, typename ...Args>
+struct isOptional<U<Args...>>
+: std::integral_constant<
+	bool,
+	std::is_base_of<boost::optional<Args...>, U<Args...>>::value
+#if __cplusplus >= 201703L
+	|| std::is_base_of<std::optional<Args...>, U<Args...>>::value
+#endif
+> {};
+
+
 
 template <typename T>
 T value(const boost::optional<T>&);
