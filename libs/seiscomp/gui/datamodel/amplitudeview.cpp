@@ -345,8 +345,9 @@ class AmplitudeViewMarker : public RecordMarker {
 				_twBegin = _twEnd = 0;
 			}
 
-			if ( _referencedAmplitude )
+			if ( _referencedAmplitude ) {
 				_manualAmplitude = nullptr;
+			}
 
 			updateVisual();
 		}
@@ -369,14 +370,6 @@ class AmplitudeViewMarker : public RecordMarker {
 
 		void setPick(DataModel::Pick *p) {
 			_pick = p;
-		}
-
-		void convertToManualAmplitude() {
-			if ( !_referencedAmplitude ) return;
-			_referencedAmplitude = nullptr;
-			setMovable(true);
-			setDescription("");
-			updateVisual();
 		}
 
 		DataModel::Amplitude *amplitude() const {
@@ -2720,14 +2713,16 @@ RecordMarker* AmplitudeView::updatePhaseMarker(Seiscomp::Gui::RecordViewItem *it
 		double m;
 		Processing::MagnitudeProcessor::Status status;
 		status = label->magnitudeProcessor->computeMagnitude(
-			res.amplitude.value, label->processor->unit(),
+			a->amplitude().value(), label->processor->unit(),
 			res.period, res.snr, item->value(ITEM_EPICENTRAL_DISTANCE_INDEX),
 			SC_D.origin->depth(), SC_D.origin.get(), label->location, a.get(), m);
-		if ( status == Processing::MagnitudeProcessor::OK )
+		if ( status == Processing::MagnitudeProcessor::OK ) {
 			mag = m;
+		}
 		else {
-			if ( label->magnitudeProcessor->treatAsValidMagnitude() )
+			if ( label->magnitudeProcessor->treatAsValidMagnitude() ) {
 				mag = m;
+			}
 			magError = status.toString();
 		}
 	}
@@ -3338,8 +3333,9 @@ void AmplitudeView::addAmplitude(Gui::RecordViewItem *item,
 				amp->amplitude().value(), label->processor->unit(),
 				per, snr, item->value(ITEM_EPICENTRAL_DISTANCE_INDEX),
 				SC_D.origin->depth(), SC_D.origin.get(), label->location, amp, m);
-			if ( stat == Processing::MagnitudeProcessor::OK )
+			if ( stat == Processing::MagnitudeProcessor::OK ) {
 				marker->setMagnitude(m, QString());
+			}
 			else {
 				if ( label->magnitudeProcessor->treatAsValidMagnitude() )
 					marker->setMagnitude(m, stat.toString());
