@@ -330,8 +330,8 @@ void ArclinkConnection::handshake() {
 
 	for ( list<StreamIdx>::iterator it = _ordered.begin(); it != _ordered.end(); ++it ) {
 		SEISCOMP_DEBUG("Arclink request: %s", it->str(_stime, endTime).c_str());
-		if ((it->startTime() == Time() && _stime == Time()) ||
-			(it->endTime() == Time() && endTime == Time())) {
+		if ((!it->startTime() && !_stime) ||
+			(!it->endTime() && !endTime)) {
 			/* invalid time window ignore stream */
 			SEISCOMP_WARNING("... has invalid time window -> ignore this request above");
 		}

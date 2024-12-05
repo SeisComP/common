@@ -126,10 +126,10 @@ class SC_SYSTEM_CORE_API Decimation : public Seiscomp::IO::RecordStream {
 			size_t front;
 
 			// Time of front of ring buffer
-			Core::Time startTime;
+			OPT(Core::Time) startTime;
 
 			// End time of last record
-			Core::Time lastEndTime;
+			OPT(Core::Time) lastEndTime;
 
 			ResampleStage *nextStage;
 
@@ -137,10 +137,12 @@ class SC_SYSTEM_CORE_API Decimation : public Seiscomp::IO::RecordStream {
 				missingSamples = buffer.size();
 				front = 0;
 				samplesToSkip = 0;
-				startTime = Core::Time();
-				lastEndTime = Core::Time();
+				startTime = Core::None;
+				lastEndTime = Core::None;
 
-				if ( nextStage ) nextStage->reset();
+				if ( nextStage ) {
+					nextStage->reset();
+				}
 			}
 		};
 

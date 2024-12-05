@@ -137,6 +137,7 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 	size_t p1,p2;
 
 	_archiveEndTime = Core::Time();
+	bool hasValidArchiveEndTime = false;
 
 	/*
 	 * Format of source is:
@@ -339,6 +340,7 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 				}
 
 				_realtimeAvailability = Core::TimeSpan(0,0);
+				hasValidArchiveEndTime = true;
 			}
 		}
 	}
@@ -373,8 +375,9 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 		return false;
 	}
 
-	if ( !_archiveEndTime.valid() )
+	if ( !hasValidArchiveEndTime ) {
 		_archiveEndTime = Time::UTC() - _realtimeAvailability;
+	}
 
 	SEISCOMP_DEBUG("Split   : %s", _archiveEndTime.iso().c_str());
 

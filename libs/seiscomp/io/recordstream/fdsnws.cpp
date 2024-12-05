@@ -384,18 +384,20 @@ void FDSNWSConnectionBase::handshake() {
 
 	for ( set<StreamIdx>::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
 		SEISCOMP_DEBUG("Request: %s", it->str(_stime, _etime).c_str());
-		if ( (it->startTime() == Time() && _stime == Time()) ||
-			 (it->endTime() == Time() && _etime == Time()) ) {
+		if ( (!it->startTime() && !_stime) ||
+			 (!it->endTime() && !_etime) ) {
 			/* invalid time window ignore stream */
 			SEISCOMP_WARNING("... has invalid time window -> ignore this request above");
 			continue;
 		}
 
 		request += it->network() + " " + it->station() + " ";
-		if ( it->location().empty() )
+		if ( it->location().empty() ) {
 			request += "--";
-		else
+		}
+		else {
 			request += it->location();
+		}
 
 		request += " ";
 		request += it->channel();

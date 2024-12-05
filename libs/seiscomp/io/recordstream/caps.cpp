@@ -349,7 +349,7 @@ bool RecordStream::setSource(const string &source) {
 					int lc = 1;
 
 					vector<string> toks;
-					Core::Time startTime, endTime;
+					OPT(Core::Time) startTime, endTime;
 
 					while ( getline(ifs, line) ) {
 						Core::trim(line);
@@ -358,7 +358,7 @@ bool RecordStream::setSource(const string &source) {
 							if ( !toks.empty() ) {
 								addStream(toks[0], toks[1], toks[2], toks[3], startTime, endTime);
 								toks.clear();
-								startTime = endTime = Core::Time();
+								startTime = endTime = Core::None;
 							}
 
 							string id = line.substr(11);
@@ -380,17 +380,24 @@ bool RecordStream::setSource(const string &source) {
 								return false;
 							}
 
-							etime = stime.substr(p+1);
-							stime.erase(stime.begin()+p, stime.end());
+							etime = stime.substr(p + 1);
+							stime.erase(stime.begin() + p, stime.end());
 
-							if ( !stime.empty() && !startTime.fromString(stime.c_str(), "%Y,%m,%d,%H,%M,%S,%f") ) {
-								SEISCOMP_ERROR("invalid start time at %s:%d: %s", value.c_str(), lc, stime.c_str());
-								return false;
+							Core::Time tmp;
+							if ( !stime.empty() ) {
+								if ( !tmp.fromString(stime, "%Y,%m,%d,%H,%M,%S,%f") ) {
+									SEISCOMP_ERROR("invalid start time at %s:%d: %s", value.c_str(), lc, stime.c_str());
+									return false;
+								}
+								startTime = tmp;
 							}
 
-							if ( !etime.empty() && !endTime.fromString(etime.c_str(), "%Y,%m,%d,%H,%M,%S,%f") ) {
-								SEISCOMP_ERROR("invalid end time at %s:%d: %s", value.c_str(), lc, etime.c_str());
-								return false;
+							if ( !etime.empty() ) {
+								if ( !tmp.fromString(etime, "%Y,%m,%d,%H,%M,%S,%f") ) {
+									SEISCOMP_ERROR("invalid end time at %s:%d: %s", value.c_str(), lc, etime.c_str());
+									return false;
+								}
+								endTime = tmp;
 							}
 						}
 
