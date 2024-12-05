@@ -103,6 +103,10 @@ void RecordStreamThread::setStartTime(const OPT(Core::Time) &t) {
 	if ( !_recordStream ) {
 		return;
 	}
+
+	SEISCOMP_DEBUG("[rthread %d] setting start time = %s",
+	               ID(), t ? t->iso() : "<null>");
+
 	_recordStream->setStartTime(t);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -115,6 +119,10 @@ void RecordStreamThread::setEndTime(const OPT(Core::Time) &t) {
 	if ( !_recordStream ) {
 		return;
 	}
+
+	SEISCOMP_DEBUG("[rthread %d] setting end time = %s",
+	               ID(), t ? t->iso() : "<null>");
+
 	_recordStream->setEndTime(t);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
