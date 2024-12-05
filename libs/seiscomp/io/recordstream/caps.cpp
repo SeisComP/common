@@ -286,7 +286,7 @@ bool RecordStream::setSource(const string &source) {
 
 	_realtime = true;
 	_ooo = false;
-	_minMTime = _maxMTime = sc::Time();
+	_minMTime = _maxMTime = Core::None;
 
 	if ( !params.empty() ) {
 		vector<string> toks;
@@ -579,12 +579,17 @@ bool RecordStream::handshake() {
 		}
 
 		_socket->write("BEGIN REQUEST\n", 14);
+		SEISCOMP_DEBUG("BEGIN REQUEST");
 
-		if ( !_realtime )
+		if ( !_realtime ) {
 			_socket->write("REALTIME OFF\n", 13);
+			SEISCOMP_DEBUG("REALTIME OFF");
+		}
 
-		if ( _ooo )
+		if ( _ooo ) {
 			_socket->write("OUTOFORDER ON\n", 14);
+			SEISCOMP_DEBUG("OUTOFORDER ON");
+		}
 
 		if ( _minMTime || _maxMTime ) {
 			_socket->write("MTIME ", 6);
@@ -598,6 +603,9 @@ bool RecordStream::handshake() {
 				_socket->write(s.c_str(), s.size());
 			}
 			_socket->write("\n", 1);
+			SEISCOMP_DEBUG("MTIME %s:%s",
+			               _minMTime ? _minMTime->toString("%Y,%m,%d,%H,%M,%S,%f") : "",
+			               _maxMTime ? _maxMTime->toString("%Y,%m,%d,%H,%M,%S,%f") : "");
 		}
 
 		// First pass: continue all previous streams
@@ -686,6 +694,7 @@ bool RecordStream::handshake() {
 		}
 
 		_socket->write("END\n", 4);
+		SEISCOMP_DEBUG("END");
 
 		_buf.set_read_limit(-1);
 		gc::ResponseHeader header;
