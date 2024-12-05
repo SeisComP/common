@@ -359,7 +359,7 @@ void SDSArchive::close() {
 	_streamSet.clear();
 	_orderedRequests.clear();
 	_curiter = _orderedRequests.begin();
-	_stime = _etime = Time();
+	_stime = _etime = None;
 	_curidx = nullptr;
 	_closeRequested = true;
 }
@@ -596,15 +596,17 @@ bool SDSArchive::resolveFiles(const string &net, const string &sta,
 void SDSArchive::resolveRequest() {
 	Time stime = _curidx->stime.get_value_or(Time());
 	Time etime = _curidx->etime.get_value_or(Time());
+
 	int sdoy = getDoy(stime);
 	int edoy = getDoy(etime);
 	int syear, eyear, tmpdoy;
 
 	stime.get(&syear);
 	etime.get(&eyear);
+
 	bool first = true;
 	for ( int year = syear; year <= eyear; ++year ) {
-		tmpdoy = (year == eyear)?edoy:getDoy(Time(year,12,31,23,59,59));
+		tmpdoy = (year == eyear) ? edoy : getDoy(Time(year, 12, 31, 23, 59, 59));
 		for ( int doy = sdoy; doy <= tmpdoy; ++doy ) {
 			resolveFiles(_curidx->net, _curidx->sta, _curidx->loc, _curidx->cha,
 			             stime, doy, year, first);
@@ -782,22 +784,27 @@ Seiscomp::Record *SDSArchive::next() {
 
 		_file.close();
 	}
-	else
+	else {
 		_curiter = _orderedRequests.begin();
+	}
 
 	while ( !_fnames.empty() || _curiter != _orderedRequests.end() ) {
 		while ( _fnames.empty() && _curiter != _orderedRequests.end() ) {
-			if ( _etime == Time() )
+			if ( !_etime )
 				_etime = Time::UTC();
-			if ( (_curiter->stime == Time() && _stime == Time()) ) {
+			if ( !_curiter->stime && !_stime ) {
 				SEISCOMP_WARNING("... has invalid time window -> ignore this request above");
 				++_curiter;
 			}
 			else {
 				_curidx = &*_curiter;
 				// Check start/end times and set globals if not set
-				if ( _curidx->stime == Time() ) _curidx->stime = _stime;
-				if ( _curidx->etime == Time() ) _curidx->etime = _etime;
+				if ( !_curidx->stime ) {
+					_curidx->stime = _stime;
+				}
+				if ( !_curidx->etime ) {
+					_curidx->etime = _etime;
+				}
 				++_curiter;
 				resolveRequest();
 				break;
