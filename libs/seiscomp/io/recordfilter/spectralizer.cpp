@@ -294,8 +294,8 @@ Record *Spectralizer::fft(const Record *rec) {
 		return nullptr;
 	}
 
-	if ( _buffer->lastEndTime.valid() ) {
-		double diff = (rec->startTime() - _buffer->lastEndTime).length();
+	if ( _buffer->lastEndTime ) {
+		double diff = static_cast<double>(rec->startTime() - *_buffer->lastEndTime);
 		if ( fabs(diff) > _buffer->dt*0.5 ) {
 			SEISCOMP_DEBUG("[spec] %s: gap/overlap of %f secs -> reset processing",
 			               rec->streamID().c_str(), diff);
@@ -331,17 +331,21 @@ Record *Spectralizer::fft(const Record *rec) {
 		data_len -= toCopy;
 		_buffer->missingSamples -= toCopy;
 
-		if ( !_buffer->startTime.valid() ) {
+		if ( !_buffer->startTime ) {
 			_buffer->startTime = rec->startTime();
 
 			// align to timestep if not requested otherwise
 			if ( !_noalign ) {
-				double mod = fmod(_buffer->startTime.epoch(), _timeStep);
+				double mod = fmod(_buffer->startTime->epoch(), _timeStep);
 				double skip = _timeStep - mod;
 				_buffer->samplesToSkip = int(skip * _buffer->sampleRate + 0.5);
 
-				Core::Time nextStep(floor(_buffer->startTime.epoch() / _timeStep + (_buffer->samplesToSkip > 0 ? 1 : 0)) * _timeStep + 5E-7);
-				_buffer->startTime = nextStep - Core::TimeSpan(_buffer->samplesToSkip*_buffer->dt + 5E-7);
+				Core::Time nextStep(
+					floor(
+						_buffer->startTime->epoch() / _timeStep + (_buffer->samplesToSkip > 0 ? 1 : 0)
+					) * _timeStep + 5E-7
+				);
+				_buffer->startTime = nextStep - Core::TimeSpan(_buffer->samplesToSkip * _buffer->dt + 5E-7);
 			}
 		}
 
@@ -355,7 +359,7 @@ Record *Spectralizer::fft(const Record *rec) {
 			Core::Time startTime;
 
 			// Calculate spectrum from ringbuffer
-			startTime = _buffer->startTime;
+			startTime = *_buffer->startTime;
 
 			// Copy data
 			copy(_buffer->tmp, _buffer->tmpOffset, _buffer->buffer, _buffer->front);
@@ -407,11 +411,12 @@ Record *Spectralizer::fft(const Record *rec) {
 		}
 		else {
 			_buffer->front += chunk_size;
-			if ( _buffer->front >= _buffer->buffer.size() )
+			if ( _buffer->front >= _buffer->buffer.size() ) {
 				_buffer->front -= _buffer->buffer.size();
+			}
 		}
 
-		_buffer->startTime += Core::TimeSpan(_buffer->dt*num_samples+5E-7);
+		*_buffer->startTime += Core::TimeSpan(_buffer->dt * num_samples + 5E-7);
 		_buffer->samplesToSkip -= num_samples;
 
 		data_len -= num_samples;
