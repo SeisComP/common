@@ -329,7 +329,7 @@ Core::TimeWindow PublicObjectCache::timeWindow() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Core::Time PublicObjectCache::oldest() const {
-	return _front?Core::Time(_front->timestamp):Core::Time();
+	return _front ? Core::Time(_front->timestamp, 0) : Core::Time();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
