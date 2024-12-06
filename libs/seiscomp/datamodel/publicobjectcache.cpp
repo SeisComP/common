@@ -318,7 +318,7 @@ Core::TimeWindow PublicObjectCache::timeWindow() const {
 	Core::TimeWindow tw;
 
 	if ( !empty() )
-		tw.set(Core::Time(_front->timestamp), Core::Time(_back->timestamp));
+		tw.set(Core::Time(_front->timestamp, 0), Core::Time(_back->timestamp, 0));
 
 	return tw;
 }

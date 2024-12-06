@@ -97,7 +97,7 @@ CertificateContext::~CertificateContext() {
 const X509 *CertificateContext::findCertificate(const Core::Time &referenceTime) const {
 	SEISCOMP_DEBUG("Certificate lookup");
 
-	auto seconds = referenceTime.epochSeconds();
+	auto seconds = static_cast<time_t>(referenceTime.epochSeconds());
 	if ( _cert ) {
 		// Check the last cached certificate
 		if ( (!_begin || X509_cmp_time(_begin, &seconds) == -1)
