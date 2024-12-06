@@ -75,6 +75,59 @@ BOOST_AUTO_TEST_CASE(READ_FR_SALF) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(READ_FR_SALF_GLOBAL_START_END) {
+	SDSArchive sds("archive");
+	Time startTime(2018,06,30,16,18,38,943300);
+	Time endTime(2018,06,30,16,21,58,943300);
+	sds.setStartTime(startTime);
+	sds.setEndTime(endTime);
+	sds.addStream("FR", "SALF", "00", "HHN");
+
+	RingBuffer buffer(0);
+	RecordPtr rec;
+
+	while ( (rec = sds.next()) ) {
+		buffer.push_back(rec);
+	}
+
+	RecordPtr crec = buffer.contiguousRecord<double>();
+	BOOST_REQUIRE(crec);
+	SEISCOMP_DEBUG("%s ~ %s", crec->startTime().iso().c_str(), crec->endTime().iso().c_str());
+
+	BOOST_CHECK(crec->startTime() <= startTime && endTime <= crec->endTime());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(READ_FR_SALF_GLOBAL_TIMEWINDOW) {
+	SDSArchive sds("archive");
+	Time startTime(2018,06,30,16,18,38,943300);
+	Time endTime(2018,06,30,16,21,58,943300);
+	sds.setTimeWindow(TimeWindow(startTime, endTime));
+	sds.addStream("FR", "SALF", "00", "HHN");
+
+	RingBuffer buffer(0);
+	RecordPtr rec;
+
+	while ( (rec = sds.next()) ) {
+		buffer.push_back(rec);
+	}
+
+	RecordPtr crec = buffer.contiguousRecord<double>();
+	BOOST_REQUIRE(crec);
+	SEISCOMP_DEBUG("%s ~ %s", crec->startTime().iso().c_str(), crec->endTime().iso().c_str());
+
+	BOOST_CHECK(crec->startTime() <= startTime && endTime <= crec->endTime());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 BOOST_AUTO_TEST_CASE(READ_FR_SALF_MULTIPLE) {
 	SDSArchive sds(
 		"archive-day2/BHE,"
