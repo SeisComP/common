@@ -1912,9 +1912,9 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 	}
 
 	if ( enableTransformation ) {
-		Core::Time minStartTime;
-		Core::Time maxStartTime;
-		Core::Time minEndTime;
+		OPT(Core::Time) minStartTime;
+		OPT(Core::Time) maxStartTime;
+		OPT(Core::Time) minEndTime;
 
 		// Not all traces available, nothing to do
 		for ( int i = 0; i < 3; ++i ) {
@@ -1948,7 +1948,7 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 			if ( minStartTime ) {
 				for ( int i = 0; i < 3; ++i ) {
 					while ( it[i] != traces[i].raw->end() ) {
-						if ( (*it[i])->endTime() <= minStartTime ) {
+						if ( (*it[i])->endTime() <= *minStartTime ) {
 							++it[i];
 						}
 						else
@@ -2033,8 +2033,8 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 			int minLen = 0;
 
 			// Clip maxStartTime to minStartTime
-			if ( maxStartTime < minStartTime )
-				maxStartTime = minStartTime;
+			if ( *maxStartTime < *minStartTime )
+				*maxStartTime = *minStartTime;
 
 			// Rotate records
 			for ( int i = 0; i < 3; ++i ) {
@@ -2044,7 +2044,7 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 				                                         (*it[i])->stationCode(),
 				                                         (*it[i])->locationCode(),
 				                                         (*it[i])->channelCode(),
-				                                         maxStartTime, samplingFrequency);
+				                                         *maxStartTime, samplingFrequency);
 
 				DoubleArrayPtr data = new DoubleArray;
 				RecordSequence::iterator seq_end = it_end[i];
@@ -2072,11 +2072,11 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 					int startIndex = 0;
 					int endIndex = srcData->size();
 
-					if ( (*rec_it)->startTime() < maxStartTime )
-						startIndex += (int)(double(maxStartTime-(*rec_it)->startTime())*(*rec_it)->samplingFrequency()+0.5);
+					if ( (*rec_it)->startTime() < *maxStartTime )
+						startIndex += (int)(double(*maxStartTime-(*rec_it)->startTime())*(*rec_it)->samplingFrequency()+0.5);
 
-					if ( (*rec_it)->endTime() > minEndTime )
-						endIndex -= (int)(double((*rec_it)->endTime()-minEndTime)*(*rec_it)->samplingFrequency());
+					if ( (*rec_it)->endTime() > *minEndTime )
+						endIndex -= (int)(double((*rec_it)->endTime()-*minEndTime)*(*rec_it)->samplingFrequency());
 
 					int len = endIndex-startIndex;
 
@@ -4312,7 +4312,7 @@ void PickerView::fetchComponent(char componentCode) {
 				RecordViewItem* item = SC_D.recordView->item(it->streamID);
 				if ( item ) {
 					RecordWidget *w = item->widget();
-					Core::TimeWindow tw;
+					OPT(Core::TimeWindow) tw;
 					for ( int i = 0; i < w->markerCount(); ++i ) {
 						PickerMarker *m = static_cast<PickerMarker*>(w->marker(i));
 						if ( (m->type() == PickerMarker::Arrival || m->type() == PickerMarker::Theoretical) &&
@@ -4321,23 +4321,27 @@ void PickerView::fetchComponent(char componentCode) {
 							Core::Time start = m->time() - Core::TimeSpan(SC_D.config.preOffset);
 							Core::Time end = m->time() + Core::TimeSpan(SC_D.config.postOffset);
 
-							if ( !tw.startTime().valid() || tw.startTime() > start )
-								tw.setStartTime(start);
-
-							if ( !tw.endTime().valid() || tw.endTime() < end )
-								tw.setEndTime(end);
+							if ( !tw ) {
+								tw = Core::TimeWindow(start, end);
+							}
+							else {
+								tw->merge(Core::TimeWindow(start, end));
+							}
 						}
 					}
 
-					it->timeWindow = tw;
+					if ( tw ) {
+						it->timeWindow = *tw;
+					}
 				}
 			}
 
 			SC_D.nextStreams.push_back(*it);
 			it = SC_D.allStreams.erase(it);
 		}
-		else
+		else {
 			++it;
+		}
 	}
 
 	// Sort by distance
@@ -4593,18 +4597,19 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* origin,
 	figureOutTravelTimeTable();
 
 	updateOriginInformation();
-	if ( SC_D.comboFilter->currentIndex() == 0 && SC_D.lastFilterIndex > 0 )
+	if ( SC_D.comboFilter->currentIndex() == 0 && SC_D.lastFilterIndex > 0 ) {
 		SC_D.comboFilter->setCurrentIndex(SC_D.lastFilterIndex);
+	}
 
-	if ( SC_D.origin == nullptr )
+	if ( !SC_D.origin ) {
 		return false;
+	}
 
 	setUpdatesEnabled(false);
 
 	SC_D.stations.clear();
 
 	Core::Time originTime = SC_D.origin->time();
-	if ( !originTime ) originTime = Core::Time::UTC();
 
 	Core::Time minTime = originTime;
 	Core::Time maxTime = originTime;
@@ -4798,8 +4803,6 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* o) {
 	}
 
 	Core::Time originTime = SC_D.origin->time();
-	if ( !originTime ) originTime = Core::Time::UTC();
-
 	Core::Time minTime = originTime;
 	Core::Time maxTime = originTime;
 
