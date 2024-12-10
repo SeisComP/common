@@ -74,7 +74,7 @@
 							applies.
 							</description>
 						</parameter>
-						<parameter name="confLevel" type="double" default="0.9" range="0.5,1.0">
+						<parameter name="confLevel" type="double" default="0.9" range="0.5:1.0">
 							<description>
 							Confidence level, between 0.5 and 1.0, used in
 							computing the hypocenter confidence ellipsoid.

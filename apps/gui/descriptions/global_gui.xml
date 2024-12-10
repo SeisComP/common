@@ -163,21 +163,22 @@
 			</group>
 			<group name="scheme">
 				<description>
-					This group defines various options for color, pen, brush, font, etc. for SeisComP
-					graphical user interfaces. There are various conventions to
-					define colors, fonts and gradients.
+				This group defines various options controlling the look and feel
+				of graphical modules. The options include symbols, units,
+				precision, color, pen, brush, font, etc. There are various
+				conventions to define colors, fonts and gradients.
 
-					Colors are defined in HTML
-					convention, e.g. as rgb values, hexadecimal numbers or color
-					keyword names defined by W3C. If rgb or rgba is used, it must
-					be quoted because the comma is handled as list separator by
-					the configuration.
-					Examples: "rgb(255,0,0)", FF00FF40, green.
+				Colors are defined in HTML
+				convention, e.g. as rgb values, hexadecimal numbers or color
+				keyword names defined by W3C. If rgb or rgba is used, it must
+				be quoted because the comma is handled as list separator by
+				the configuration.
+				Examples: "rgb(0,128,0)", 00800040, green.
 
-					Gradients are configured as lists of tuples where each tuple
-					is colon separated in the form value:color. Value is either
-					int or double and color is again a color definition.
-					Example: 0:yellow,10:red
+				Gradients are configured as lists of tuples where each tuple
+				is colon separated in the form value:color. Value is either
+				int or double and color is again a color definition.
+				Example: 0:yellow,10:red
 				</description>
 				<parameter name="showMenu" type="boolean" default="true">
 					<description>Show menu bar.</description>
@@ -187,23 +188,25 @@
 					<description>Show status bar.</description>
 				</parameter>
 
-				<parameter name="tabPosition" type="string">
+				<parameter name="tabPosition" type="string" values="off, north, south, east, west">
 					<description>
-						Set position if tab bar. An unset value lets the application
-						decide where to place the tab bar. This option might not be
-						supported by all applications. Valid positions are: off, north,
-						south, east, west
+					The position of tab bar of GUI applications like scolv.
+					An unset value lets the application decide where to place
+					the tab bar. This option might not be supported by all
+					applications. Valid positions are: off, north, south,
+					east, west.
 					</description>
 				</parameter>
 
 				<group name="map">
 					<parameter name="stationSize" type="int" default="8" unit="px">
 						<description>
-							The station symbol size (e.g. in scmv).
+						The station symbol size, e.g., in scmv.
 						</description>
 					</parameter>
 					<parameter name="originSymbolMinSize" type="int" default="9" unit="px">
 						<description>
+<<<<<<< HEAD
 						The minimum symbol size of origins. The size is scaled
 						with magnitude according to
 						&quot;scheme.mag.originSymbolScaleMag&quot;.
@@ -235,16 +238,16 @@
 					</parameter>
 					<parameter name="vectorLayerAntiAlias" type="boolean" default="false">
 						<description>
-							Apply antialiasing to map layers.
-							This improves the visual quality but decreases performance.
+						Apply antialiasing to map layers.
+						This improves the visual quality but decreases performance.
 						</description>
 					</parameter>
 					<parameter name="bilinearFilter" type="boolean" default="true">
 						<description>
-							Apply bilinear filtering to maps.
-							The bilinear filter improves the visual quality but decreases
-							performance slightly. It is only used for static map images.
-							Not while dragging.
+						Apply bilinear filtering to maps.
+						The bilinear filter improves the visual quality but decreases
+						performance slightly. It is only used for static map images.
+						Not while dragging.
 						</description>
 					</parameter>
 					<parameter name="showGrid" type="boolean" default="true">
@@ -254,42 +257,42 @@
 					</parameter>
 					<parameter name="showCities" type="boolean" default="true">
 						<description>
-							Show cities defined in &quot;citiesXML&quot; on maps
+						Show cities defined in &quot;citiesXML&quot; on maps
 						</description>
 					</parameter>
 					<parameter name="cityPopulationWeight" type="int" default="150">
 						<description>
-							Controls at which zoom level a city will be visible. The
-							following formula is used:
-							screen_width (km) * weight >= population
+						Controls at which zoom level a city will be visible. The
+						following formula is used:
+						screen_width (km) * weight >= population
 						</description>
 					</parameter>
 					<parameter name="showLayers" type="boolean" default="true">
 						<description>
-							Show custom layers on maps
+						Show custom layers on maps
 						</description>
 					</parameter>
 					<parameter name="showLegends" type="boolean" default="false">
 						<description>
-							Show map legends initially. Some applications provide
-							controls to toggle the visibility in addition to this
-							option.
+						Show map legends initially. Some applications provide
+						controls to toggle the visibility in addition to this
+						option.
 						</description>
 					</parameter>
 					<parameter name="projection" type="string" default="Rectangular">
 						<description>
-							SeisComP ships with the rectangular projection built-in.
-							Other projections may be provided through plugins.
+						SeisComP ships with the rectangular projection built-in.
+						Other projections may be provided through plugins.
 						</description>
 					</parameter>
 					<parameter name="toBGR" type="boolean" default="false">
 						<description>
-							Converts map colors from RGB color scheme to BGR.
+						Converts map colors from RGB color scheme to BGR.
 						</description>
 					</parameter>
 					<parameter name="polygonRoughness" type="int" default="3" unit="px">
 						<description>
-							Minimum screen distance to plot a polygon or polyline line segment.
+						Minimum screen distance to plot a polygon or polyline line segment.
 						</description>
 					</parameter>
 					<parameter name="maxZoom" type="float" default="24" range="1:24">
@@ -300,13 +303,16 @@
 				</group>
 
 				<group name="colors">
-					Colors can be configured as hexadecimal numbers or color keyword names
-					defined by W3C.
+				<description>
+					Colors can be configured as rgb, rgba. hexadecimal numbers or color keyword names
+					defined by W3C. If a color is unset, SeisComP applications
+					attempt to read it from your Desktop theme.
+					</description>
 					<parameter name="background" type="color">
 						<description>
-							A general application background color. Can be used to give
-							each application a different background color. An unset value
-							lets Qt decide.
+						A general application background color. Can be used to give
+						each application a different background color. An unset value
+						lets Qt decide.
 						</description>
 					</parameter>
 					<parameter name="agencies" type="list:string-tuples">
@@ -329,25 +335,28 @@
 					<group name="map">
 						<parameter name="lines" type="color">
 							<description>
-								The color of lines in the map (e.g. lines
-								connecting the origin and a station).
+							The color of lines in the map (e.g. lines
+							connecting the origin and a station).
 							</description>
 						</parameter>
 						<parameter name="outlines" type="color">
 							<description>
-								The color of station outlines in the map.
+							The color of station outlines in the map.
 							</description>
 						</parameter>
 						<group name="directivity">
 							<description>
-								Defines the pen of the directivity information
-								(backazimuth and slowness) in the map.
+							Defines the pen of the directivity information
+							(backazimuth and slowness) in the map.
 							</description>
 							<parameter name="color" type="color" default="FFA000">
 								<description>The color of the pen.</description>
 							</parameter>
-							<parameter name="style" type="string" default="DotLine">
-								<description>The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.</description>
+							<parameter name="style" type="string" default="DotLine" values="NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine">
+								<description>
+								The style of the pen. Supported values are:
+								NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+								</description>
 							</parameter>
 							<parameter name="width" type="double" default="1" unit="px">
 								<description>The width of the pen.</description>
@@ -360,8 +369,12 @@
 							<parameter name="color" type="color" default="FFFFFF">
 								<description>The color of the pen.</description>
 							</parameter>
-							<parameter name="style" type="string" default="DotLine">
-								<description>The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.</description>
+							<parameter name="style" type="string" default="DotLine" values="NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine">
+								<description>
+								The style of the pen. Supported values are:
+								NoPen, SolidLine, DashLine, DotLine, DashDotLine,
+								DashDotDotLine.
+								</description>
 							</parameter>
 							<parameter name="width" type="double" default="1" unit="px">
 								<description>The width of the pen.</description>
@@ -369,47 +382,47 @@
 						</group>
 						<parameter name="stationAnnotations" type="color">
 							<description>
-								The color of station annotations.
+							The color of station annotations.
 							</description>
 						</parameter>
 						<parameter name="cityLabels" type="color">
 							<description>
-								The color of city labels.
+							The color of city labels.
 							</description>
 						</parameter>
 						<parameter name="cityOutlines" type="color">
 							<description>
-								The color of city outlines.
+							The color of city outlines.
 							</description>
 						</parameter>
 						<parameter name="cityCapital" type="color">
 							<description>
-								The color of a capital.
+							The color of a capital.
 							</description>
 						</parameter>
 						<parameter name="cityNormal" type="color">
 							<description>
-								The color of a &quot;normal&quot; city.
+							The color of a &quot;normal&quot; city.
 							</description>
 						</parameter>
 
 						<group name="annotations">
 							<description>
-								Appearance of map annotations including a text
-								color (pen), a border color (pen) and a background
-								color (brush).
+							Appearance of map annotations including a text
+							color (pen), a border color (pen) and a background
+							color (brush).
 							</description>
 							<group name="normalText">
 								<description>
-									Text pen for non highlighted annotations.
+								Text pen for non highlighted annotations.
 								</description>
 								<parameter name="color" type="color" default="c0c0c0">
 									<description>The color of the pen.</description>
 								</parameter>
-								<parameter name="style" type="string" default="SolidLine">
+								<parameter name="style" type="string" default="SolidLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 									<description>
-										The style of the pen. Supported values are:
-										NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+									The style of the pen. Supported values are:
+									NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
 									</description>
 								</parameter>
 								<parameter name="width" type="double" default="1" unit="px">
@@ -418,15 +431,15 @@
 							</group>
 							<group name="normalBorder">
 								<description>
-									Border pen for non highlighted annotations.
+								Border pen for non highlighted annotations.
 								</description>
 								<parameter name="color" type="color" default="a0a0a4">
 									<description>The color of the pen.</description>
 								</parameter>
-								<parameter name="style" type="string" default="SolidLine">
+								<parameter name="style" type="string" default="SolidLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 									<description>
-										The style of the pen. Supported values are:
-										NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+									The style of the pen. Supported values are:
+									NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
 									</description>
 								</parameter>
 								<parameter name="width" type="double" default="1" unit="px">
@@ -435,12 +448,12 @@
 							</group>
 							<group name="normalBackground">
 								<description>
-									Background brush for non highlighted annotations.
+								Background brush for non highlighted annotations.
 								</description>
 								<parameter name="color" type="color" default="202020c0">
 									<description>The color of the brush.</description>
 								</parameter>
-								<parameter name="style" type="string" default="solid">
+								<parameter name="style" type="string" default="solid" values="solid,dense1,dense2,dense3,dense4,dense5,dense6,dense7,nobrush,horizontal,vertical,cross,bdiag,fdiag,diagcross">
 									<description>
 										The style of the brush. Supported values are, e.g.:
 										solid, dense1, dense7, horizontal, vertical,
@@ -450,15 +463,15 @@
 							</group>
 							<group name="highlightedText">
 								<description>
-									Text pen for highlighted annotations.
+								Text pen for highlighted annotations.
 								</description>
 								<parameter name="color" type="color" default="000000">
 									<description>The color of the pen.</description>
 								</parameter>
-								<parameter name="style" type="string" default="SolidLine">
+								<parameter name="style" type="string" default="SolidLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 									<description>
-										The style of the pen. Supported values are:
-										NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+									The style of the pen. Supported values are:
+									NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
 									</description>
 								</parameter>
 								<parameter name="width" type="double" default="1" unit="px">
@@ -467,15 +480,15 @@
 							</group>
 							<group name="highlightedBorder">
 								<description>
-									Border pen for highlighted annotations.
+								Border pen for highlighted annotations.
 								</description>
 								<parameter name="color" type="color" default="a0a0a4">
 									<description>The color of the pen.</description>
 								</parameter>
-								<parameter name="style" type="string" default="SolidLine">
+								<parameter name="style" type="string" default="SolidLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 									<description>
-										The style of the pen. Supported values are:
-										NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+									The style of the pen. Supported values are:
+									NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
 									</description>
 								</parameter>
 								<parameter name="width" type="double" default="1" unit="px">
@@ -484,21 +497,23 @@
 							</group>
 							<group name="highlightedBackground">
 								<description>
-									Background brush for highlighted annotations.
+								Background brush for highlighted annotations.
 								</description>
 								<parameter name="color" type="color" default="ffffffa0">
 									<description>The color of the brush.</description>
 								</parameter>
-								<parameter name="style" type="string" default="solid">
+								<parameter name="style" type="string" default="solid" values="solid,dense1,dense2,dense3,dense4,dense5,dense6,dense7,nobrush,horizontal,vertical,cross,bdiag,fdiag,diagcross">
 									<description>
-										The style of the brush. Supported values are, e.g.:
-										solid, dense1, dense7, horizontal, vertical,
-										cross, bdiag, fdiag, diagcross.
+									The style of the brush. Supported values are, e.g.:
+									solid, dense1, dense7, horizontal, vertical,
+									cross, bdiag, fdiag, diagcross.
 									</description>
 								</parameter>
 							</group>
 							<parameter name="textSize" type="int" unit="pt" default="9">
-								<description>Font point size of the label text.</description>
+								<description>
+								Font point size of the label text.
+								</description>
 							</parameter>
 						</group>
 					</group>
@@ -508,7 +523,9 @@
 							<description>The general color of records/traces.</description>
 						</parameter>
 						<parameter name="alternateForeground" type="color" default="808080">
-							<description>A general trace color of the alternate trace (eg scheli).</description>
+							<description>
+							A general trace color of the alternate trace, e.g., scheli.
+							</description>
 						</parameter>
 						<parameter name="background" type="color">
 							<description>The general background color of records/traces.</description>
@@ -539,7 +556,7 @@
 									<parameter name="color" type="color" default="">
 										<description>The color of the pen.</description>
 									</parameter>
-									<parameter name="style" type="string" default="">
+									<parameter name="style" type="string" default="" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 										<description>
 											The style of the pen. Supported values are:
 											NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
@@ -551,16 +568,16 @@
 								</group>
 								<group name="brush">
 									<description>
-										Defines the brush of the enlcosed area.
+									Defines the brush of the enlcosed area.
 									</description>
 									<parameter name="color" type="color" default="">
 										<description>The color of the pen.</description>
 									</parameter>
-									<parameter name="style" type="string" default="">
+									<parameter name="style" type="string" default="" values="solid,dense1,dense2,dense3,dense4,dense5,dense6,dense7,nobrush,horizontal,vertical,cross,bdiag,fdiag,diagcross">
 										<description>
-											The style of the brush. Supported values are, e.g.:
-											solid, dense1, dense7, horizontal, vertical,
-											cross, bdiag, fdiag, diagcross.
+										The style of the brush. Supported values are, e.g.:
+										solid, dense1, dense7, horizontal, vertical,
+										cross, bdiag, fdiag, diagcross.
 										</description>
 									</parameter>
 								</group>
@@ -574,7 +591,7 @@
 									<parameter name="color" type="color" default="">
 										<description>The color of the pen.</description>
 									</parameter>
-									<parameter name="style" type="string" default="">
+									<parameter name="style" type="string" default="" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 										<description>
 											The style of the pen. Supported values are:
 											NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
@@ -591,7 +608,7 @@
 									<parameter name="color" type="color" default="">
 										<description>The color of the pen.</description>
 									</parameter>
-									<parameter name="style" type="string" default="">
+									<parameter name="style" type="string" default="" values="solid,dense1,dense2,dense3,dense4,dense5,dense6,dense7,nobrush,horizontal,vertical,cross,bdiag,fdiag,diagcross">
 										<description>
 											The style of the pen. Supported values are, e.g.:
 											solid, dense1, dense7, horizontal, vertical,
@@ -609,7 +626,7 @@
 									<parameter name="color" type="color" default="">
 										<description>The color of the pen.</description>
 									</parameter>
-									<parameter name="style" type="string" default="">
+									<parameter name="style" type="string" default="" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 										<description>
 											The style of the pen. Supported values are:
 											NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
@@ -626,7 +643,7 @@
 									<parameter name="color" type="color" default="">
 										<description>The color of the pen.</description>
 									</parameter>
-									<parameter name="style" type="string" default="">
+									<parameter name="style" type="string" default="" values="solid,dense1,dense2,dense3,dense4,dense5,dense6,dense7,nobrush,horizontal,vertical,cross,bdiag,fdiag,diagcross">
 										<description>
 											The style of the pen. Supported values are, e.g.:
 											solid, dense1, dense7, horizontal, vertical,
@@ -643,7 +660,7 @@
 							<parameter name="color" type="color" default="C0C0FF">
 								<description>The color of the pen.</description>
 							</parameter>
-							<parameter name="style" type="string" default="SolidLine">
+							<parameter name="style" type="string" default="SolidLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 								<description>The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.</description>
 							</parameter>
 							<parameter name="width" type="double" default="0.0" unit="px">
@@ -657,7 +674,7 @@
 							<parameter name="color" type="color" default="00000020">
 								<description>The color of the pen.</description>
 							</parameter>
-							<parameter name="style" type="string" default="DashLine">
+							<parameter name="style" type="string" default="DashLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 								<description>The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.</description>
 							</parameter>
 							<parameter name="width" type="double" default="1.0" unit="px">
@@ -671,7 +688,7 @@
 							<parameter name="color" type="color" default="00000000">
 								<description>The color of the pen.</description>
 							</parameter>
-							<parameter name="style" type="string" default="DotLine">
+							<parameter name="style" type="string" default="DotLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 								<description>The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.</description>
 							</parameter>
 							<parameter name="width" type="double" default="1.0" unit="px">
@@ -680,26 +697,26 @@
 						</group>
 						<group name="states">
 							<description>
-								Defines the background color of records depending on their state.
+							Defines the background color of records depending on their state.
 							</description>
 							<parameter name="unrequested" type="color" default="00000080">
 								<description>
-									Additional data which was not requested.
+								Additional data which was not requested.
 								</description>
 							</parameter>
 							<parameter name="requested" type="color" default="ffff0080">
 								<description>
-									Requested data Background color of requested data.
+								Requested data Background color of requested data.
 								</description>
 							</parameter>
 							<parameter name="inProgress" type="color" default="00ff0010">
 								<description>
-									Data currently loading.
+								Data currently loading.
 								</description>
 							</parameter>
 							<parameter name="notAvailable" type="color" default="ff000080">
 								<description>
-									Data which was requested but is not available.
+								Data which was requested but is not available.
 								</description>
 							</parameter>
 						</group>
@@ -744,7 +761,7 @@
 							The gradient of arrivals residuals. A gradient is defined as
 							a list of tuples separated by colon where the first item is
 							the value and the second is the color. Colors can be given in
-							rgb notation or hexadecimal. When rgb is used double quotes are needed to
+							rgb notation or hexadecimal. When rgb is used, double quotes are needed to
 							protect the comma inside the rgb definition, e.g.
 							-8:&quot;rgb(0,0,100)&quot;, -4:&quot;rgb(0,0,255)&quot;, -3:&quot;rgb(100,100,255)&quot;, ...
 							</description>
@@ -771,7 +788,7 @@
 							<description>The color of the station name.</description>
 						</parameter>
 						<parameter name="associated" type="color" default="82AD58">
-							<description>The color of associated stations (e.g. in scmv).</description>
+							<description>The color of associated stations, e.g., in scmv.</description>
 						</parameter>
 						<parameter name="triggering" type="color">
 							<description>The color of triggered stations.</description>
@@ -837,7 +854,7 @@
 
 					<group name="gm">
 						<description>
-							The color of ground motion amplitudes in scmv.
+						The color of ground motion amplitudes in scmv.
 						</description>
 						<parameter name="gm0" type="color">
 							<description></description>
@@ -877,7 +894,7 @@
 					<group name="recordView">
 						<parameter name="selectedTraceZoom" type="color" default="C0C0FFC0">
 							<description>
-								The color of the selected zoom area (e.g. manual picker).
+							The color of the selected zoom area, e.g., in scolv picker.
 							</description>
 						</parameter>
 					</group>
@@ -885,22 +902,22 @@
 					<group name="legend">
 						<parameter name="background" type="color">
 							<description>
-								The map legend background color.
+							The map legend background color.
 							</description>
 						</parameter>
 						<parameter name="border" type="color">
 							<description>
-								The map legend border color.
+							The map legend border color.
 							</description>
 						</parameter>
 						<parameter name="text" type="color">
 							<description>
-								The map legend text color.
+							The map legend text color.
 							</description>
 						</parameter>
 						<parameter name="headerText" type="color">
 							<description>
-								 The map legend header color.
+							The map legend header color.
 							</description>
 						</parameter>
 					</group>
@@ -918,8 +935,8 @@
 							</parameter>
 							<parameter name="discrete" type="boolean" default="true">
 								<description>
-									Setting this parameter to true will not interpolate between
-									the depth steps and the color for a depth &lt;= input is used.
+								Setting this parameter to true will not interpolate between
+								the depth steps and the color for a depth &lt;= input is used.
 								</description>
 							</parameter>
 						</group>
@@ -927,7 +944,7 @@
 
 					<group name="originStatus">
 						<description>
-							The origin status colors (e.g. in event list).
+							The origin status colors, e.g., in event lists.
 						</description>
 						<parameter name="automatic" type="color">
 							<description></description>
@@ -943,12 +960,12 @@
 						</description>
 						<parameter name="message" type="color" default="808080">
 							<description>
-								Text color of the message string.
+							Text color of the message string.
 							</description>
 						</parameter>
 						<parameter name="version" type="color" default="02589e">
 							<description>
-								Text color of the version string.
+							Text color of the version string.
 							</description>
 						</parameter>
 					</group>
@@ -957,7 +974,7 @@
 				<group name="marker">
 					<parameter name="lineWidth" type="int" unit="px">
 						<description>
-						The line width of the marker (e.g. picks of manual picker).
+						The line width of the marker, e.g., picks of scolv picker).
 						</description>
 					</parameter>
 				</group>
@@ -965,25 +982,25 @@
 				<group name="records">
 					<parameter name="lineWidth" type="int" default="1" unit="px">
 						<description>
-						The line width of the records / traces.
+						The line width of the records/traces.
 						</description>
 					</parameter>
 					<parameter name="antiAliasing" type="boolean" default="true">
 						<description>
-						Configures antialiasing of records / traces. Antialiasing
+						Configures antialiasing of records/traces. Antialiasing
 						needs more two times to storage space as non antialiasing
 						but it improves visual quality.
 						</description>
 					</parameter>
 					<parameter name="optimize" type="boolean" default="true">
 						<description>
-						Configures optimization of trace polylines. If activated
-						then lines on the same pixel line or same pixel row
-						collapse into single lines.
+						Configures optimization of trace polylines. If activated,
+						lines on the same pixel line or same pixel row collapse
+						into single lines.
 						</description>
 					</parameter>
 					<group name="borders">
-						<parameter name="drawMode" type="string" default="box">
+						<parameter name="drawMode" type="string" default="box" values="topline,box,bottomline">
 							<description>
 							Mode for drawing record borders as box or line on top or
 							bottom.
@@ -997,17 +1014,18 @@
 				<group name="fonts">
 					<group name="base">
 						<description>
-							The general base font of an application. This overrides
-							the default Qt application font.
+						The general base font of an application. This overrides
+						the default Qt application font.
 						</description>
 						<parameter name="family" type="string">
 							<description>
-								Sets the family name of the font. The name is case insensitive and may include a foundry name.
+							Sets the family name of the font. The name is case
+							insensitive and may include a foundry name.
 							</description>
 						</parameter>
 						<parameter name="size" type="int">
 							<description>
-								Defines the point size of the font
+							Defines the point size of the font.
 							</description>
 						</parameter>
 						<parameter name="bold" type="boolean" default="false"/>
@@ -1017,16 +1035,18 @@
 					</group>
 					<group name="small">
 						<description>
-							The smallest available font. If undefined the point size is 2 points smaller than the base font.
+						The smallest available font. If undefined, the point
+						size is 2 points smaller than the base font.
 						</description>
 						<parameter name="family" type="string">
 							<description>
-								Sets the family name of the font. The name is case insensitive and may include a foundry name.
+							Sets the family name of the font. The name is case
+							insensitive and may include a foundry name.
 							</description>
 						</parameter>
 						<parameter name="size" type="int">
 							<description>
-								Defines the point size of the font
+							Defines the point size of the font
 							</description>
 						</parameter>
 						<parameter name="bold" type="boolean" default="false"/>
@@ -1036,16 +1056,18 @@
 					</group>
 					<group name="normal">
 						<description>
-							The default text font. If undefined the point size is 2 points larger than the base font.
+						The default text font. If undefined, the point size is 2
+						points larger than the base font.
 						</description>
 						<parameter name="family" type="string">
 							<description>
-								Sets the family name of the font. The name is case insensitive and may include a foundry name.
+							Sets the family name of the font. The name is case
+							insensitive and may include a foundry name.
 							</description>
 						</parameter>
 						<parameter name="size" type="int">
 							<description>
-								Defines the point size of the font
+							Defines the point size of the font.
 							</description>
 						</parameter>
 						<parameter name="bold" type="boolean" default="false"/>
@@ -1055,16 +1077,18 @@
 					</group>
 					<group name="large">
 						<description>
-							The largest text font. If undefined the point size is 6 points larger than the base font.
+						The largest text font. If undefined, the point size is 6
+						points larger than the base font.
 						</description>
 						<parameter name="family" type="string">
 							<description>
-								Sets the family name of the font. The name is case insensitive and may include a foundry name.
+							Sets the family name of the font. The name is case
+							insensitive and may include a foundry name.
 							</description>
 						</parameter>
 						<parameter name="size" type="int">
 							<description>
-								Defines the point size of the font
+							Defines the point size of the font
 							</description>
 						</parameter>
 						<parameter name="bold" type="boolean" default="false"/>
@@ -1074,16 +1098,18 @@
 					</group>
 					<group name="highlight">
 						<description>
-							Font used to highlight text. If undefined it equals the normal font except for a bold font face.
+						Font used to highlight text. If undefined, it equals the
+						normal font except for a bold font face.
 						</description>
 						<parameter name="family" type="string">
 							<description>
-								Sets the family name of the font. The name is case insensitive and may include a foundry name.
+							Sets the family name of the font. The name is case
+							insensitive and may include a foundry name.
 							</description>
 						</parameter>
 						<parameter name="size" type="int">
 							<description>
-								Defines the point size of the font
+							Defines the point size of the font
 							</description>
 						</parameter>
 						<parameter name="bold" type="boolean" default="false"/>
@@ -1093,16 +1119,18 @@
 					</group>
 					<group name="heading1">
 						<description>
-							The largest heading font. If undefined it uses a bold font face and a font size twice as large as the normal font.
+						The largest heading font. If undefined, it uses a bold
+						font face and a font size twice as large as the normal font.
 						</description>
 						<parameter name="family" type="string">
 							<description>
-								Sets the family name of the font. The name is case insensitive and may include a foundry name.
+							Sets the family name of the font. The name is case
+							insensitive and may include a foundry name.
 							</description>
 						</parameter>
 						<parameter name="size" type="int">
 							<description>
-								Defines the point size of the font
+							Defines the point size of the font.
 							</description>
 						</parameter>
 						<parameter name="bold" type="boolean" default="false"/>
@@ -1112,16 +1140,18 @@
 					</group>
 					<group name="heading2">
 						<description>
-							The second largest heading font. If undefined it uses a bold font face and a font size twice as large as the base font.
+						The second largest heading font. If undefined, it uses a
+						bold font face and a font size twice as large as the base font.
 						</description>
 						<parameter name="family" type="string">
 							<description>
-								Sets the family name of the font. The name is case insensitive and may include a foundry name.
+							Sets the family name of the font. The name is case
+							insensitive and may include a foundry name.
 							</description>
 						</parameter>
 						<parameter name="size" type="int">
 							<description>
-								Defines the point size of the font
+							Defines the point size of the font.
 							</description>
 						</parameter>
 						<parameter name="bold" type="boolean" default="false"/>
@@ -1131,11 +1161,13 @@
 					</group>
 					<group name="heading3">
 						<description>
-							The smallest heading font. If undefined it uses a bold font face and a font size 4 points larger than the base font.
+						The smallest heading font. If undefined, it uses a bold
+						font face and a font size 4 points larger than the base font.
 						</description>
 						<parameter name="family" type="string">
 							<description>
-								Sets the family name of the font. The name is case insensitive and may include a foundry name.
+							Sets the family name of the font. The name is case
+							insensitive and may include a foundry name.
 							</description>
 						</parameter>
 						<parameter name="size" type="int">
@@ -1150,16 +1182,18 @@
 					</group>
 					<group name="cityLabels">
 						<description>
-							Font used for city labels. If undefined it equals the base font.
+						Font used for city labels. If undefined, it equals the
+						base font.
 						</description>
 						<parameter name="family" type="string">
 							<description>
-								Sets the family name of the font. The name is case insensitive and may include a foundry name.
+							Sets the family name of the font. The name is case
+							insensitive and may include a foundry name.
 							</description>
 						</parameter>
 						<parameter name="size" type="int">
 							<description>
-								Defines the point size of the font
+							Defines the point size of the font.
 							</description>
 						</parameter>
 						<parameter name="bold" type="boolean" default="false"/>
@@ -1169,16 +1203,19 @@
 					</group>
 					<group name="splashVersion">
 						<description>
-							Font used for version string in the splash dialog shown at application startup. If undefined it equals the base font with a bold font face and a font size of 12.
+						Font used for version string in the splash dialog shown
+						at application startup. If undefined, it equals the base
+						font with a bold font face and a font size of 12.
 						</description>
 						<parameter name="family" type="string">
 							<description>
-								Sets the family name of the font. The name is case insensitive and may include a foundry name.
+							Sets the family name of the font. The name is case
+							insensitive and may include a foundry name.
 							</description>
 						</parameter>
 						<parameter name="size" type="int">
 							<description>
-								Defines the point size of the font
+							Defines the point size of the font.
 							</description>
 						</parameter>
 						<parameter name="bold" type="boolean" default="false"/>
@@ -1188,16 +1225,19 @@
 					</group>
 					<group name="splashMessage">
 						<description>
-							Font used for the message text in the splash dialog shown at application startup. If undefined it equals the base font with a font size of 12.
+						Font used for the message text in the splash dialog
+						shown at application startup. If undefined, it equals
+						the base font with a font size of 12.
 						</description>
 						<parameter name="family" type="string">
 							<description>
-								Sets the family name of the font. The name is case insensitive and may include a foundry name.
+							Sets the family name of the font. The name is case
+							insensitive and may include a foundry name.
 							</description>
 						</parameter>
 						<parameter name="size" type="int">
 							<description>
-								Defines the point size of the font.
+							Defines the point size of the font.
 							</description>
 						</parameter>
 						<parameter name="bold" type="boolean" default="false"/>
@@ -1208,9 +1248,13 @@
 				</group>
 
 				<group name="precision">
+					<description>
+					Precisions are given as the number of decimal places shown
+					for a float number.
+					</description>
 					<parameter name="depth" type="int" default="0">
 						<description>
-							The precision of depth values.
+						The precision of depth values.
 						</description>
 					</parameter>
 					<parameter name="distance" type="int" default="1">
@@ -1221,7 +1265,7 @@
 					</parameter>
 					<parameter name="location" type="int" default="2">
 						<description>
-							The precision of lat/lon values.
+							The precision of latitude/longintude values.
 						</description>
 					</parameter>
 					<parameter name="magnitude" type="int" default="1">
@@ -1241,31 +1285,35 @@
 					</parameter>
 					<parameter name="traceValues" type="int" default="1">
 						<description>
-							Precision of displayed offset/amp in all trace widgets.
+						Precision of displayed offset/amplitude in all trace
+						widgets.
 						</description>
 					</parameter>
 					<parameter name="rms" type="int" default="1">
 						<description>
-							Precision of RMS values.
+						Precision of RMS values.
 						</description>
 					</parameter>
 					<parameter name="uncertainties" type="int" default="0">
 						<description>
-							Precision of uncertainty values, e.g. latitude errors.
+						Precision of uncertainty values, e.g., for latitude and
+						longitude.
 						</description>
 					</parameter>
 				</group>
 				<group name="unit">
 					<parameter name="distanceInKM" type="boolean" default="false">
 						<description>
-							Display distances in km?
+						Display distances in km?
 						</description>
 					</parameter>
 				</group>
 				<group name="dateTime">
 					<parameter name="useLocalTime" type="boolean" default="false">
 						<description>
-							Display times in localtime or UTC (default).
+						Display times in localtime. If disabled all times are
+						shown in UTC which is also the time zone of all values
+						stored in the database.
 						</description>
 					</parameter>
 				</group>
@@ -1328,7 +1376,8 @@
 			<group name="events">
 				<group name="timeAgo">
 					<description>
-					Defines maximum age of events to load. The value of all parameters are aggregated.
+					Defines maximum age of events to load. The value of all
+					parameters are aggregated.
 					</description>
 					<parameter name="days" type="int" unit="d" default="1">
 						<description>
@@ -1354,17 +1403,17 @@
 			</group>
 			<group name="mode">
 				<description>
-					Configuration of special applications modes.
+				Configuration of special applications modes.
 				</description>
 				<parameter name="interactive" type="boolean" default="true">
 					<description>
-						Defines if application interaction is allowed.
+					Defines if application interaction is allowed.
 					</description>
 				</parameter>
 				<parameter name="fullscreen" type="boolean" default="false">
 					<description>
-						Defines if the application should be launched in fullscreen
-						mode hiding title bar, main menu and status bar.
+					Defines if the application should be launched in fullscreen
+					mode hiding title bar, main menu and status bar.
 					</description>
 				</parameter>
 			</group>
@@ -1390,7 +1439,7 @@
 				<description>
 				Control the Events tab, e.g. in scolv, showing the list of loaded events.
 				</description>
-				<parameter name="visibleColumns" type="list:string" default="M,MType,Phases,RMS,Lat,Lon,Depth,Stat,Agency,Region,ID">
+				<parameter name="visibleColumns" type="list:string" default="M,MType,Phases,RMS,Lat,Lon,Depth,Stat,Agency,Region,ID" values="TimeAgo,Certainty,Type,M,MType,RMS,AzGap,Phases,Lat,Lon,Depth,DType,Stat,FM,Origins,Agency,Author,Region,ID">
 					<description>
 					Configure the columns of the event list that are visible
 					initially. The first column containing the origin time is
@@ -1702,7 +1751,7 @@
 					</description>
 				</parameter>
 				<group name="origin">
-					<parameter name="visibleColumns" type="list:string" default="Phases, Lat, Lon, Depth, DType, RMS, AzGap, Stat, Method, Agency, Author, Region, ID">
+					<parameter name="visibleColumns" type="list:string" default="Phases,Lat,Lon,Depth,DType,RMS,AzGap,Stat,Method,Agency,Author,Region,ID" values="Phases,Lat,Lon,Depth,DType,RMS,AzGap,Stat,Method,Agency,Author,Region,ID">
 						<description>
 						Configure the columns of the event edit origin table
 						that are visible initially. Origin creation time and
@@ -1729,27 +1778,31 @@
 						</parameter>
 						<parameter name="pos" type="int" default="-1">
 							<description>
-							Position of the column. If the configured position is less than 0 or if it
-							exceeds the total number of columns then the column is appended to the right.
+							Position of the column. If the configured position
+							is less than 0 or if it exceeds the total number of
+							columns, then the column is appended to the right.
 							</description>
 						</parameter>
 						<parameter name="default" type="string">
 							<description>
-							Default value to display if the specified origin or event comment id was not found.
+							Default value to display if the specified origin or
+							event comment id was not found.
 							</description>
 						</parameter>
 						<parameter name="colors" type="list:string">
 							<description>
-							Mapping of comment values to colors used as text color. E.g. "foo:#000,bar:red".
+							Mapping of comment values to colors used as text
+							color. E.g. "foo:#000,bar:red".
 							</description>
 						</parameter>
 					</group>
 				</group>
 				<group name="fm">
-					<parameter name="visibleColumns" type="list:string" default="Depth, M, Count, Misfit, STDR, AzGap, Stat, DC, CLVD, ISO, S1, D1, R1, S2, D2, R2, Agency, Author">
+					<parameter name="visibleColumns" type="list:string" default="Depth,M,Count,Misfit,STDR,AzGap,Stat,DC,CLVD,ISO,S1,D1,R1,S2,D2,R2,Agency,Author" values="Depth,M,Count,Misfit,STDR,AzGap,Stat,DC,CLVD,ISO,S1,D1,R1,S2,D2,R2,Agency,Author">
 						<description>
 						Configure the columns of the event edit focal mechanism
 						tab that are visible initially.
+
 						Possible values are: Depth, M, Count, Misfit, STDR,
 						AzGap, Stat, DC, CLVD, ISO, S1,
 						D1, R1, S2, D2, R2, Agency, Author
@@ -1781,7 +1834,8 @@
 					</parameter>
 					<parameter name="textSize" type="int" unit="pt">
 						<description>
-						The text size of the time ago label in case of an active alert.
+						The text size of the time ago label in case of an active
+						alert.
 						</description>
 					</parameter>
 				</group>
