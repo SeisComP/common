@@ -59,7 +59,7 @@
 				applications.
 				</description>
 			</parameter>
-			<parameter name="publicIDPattern" type="string">
+			<parameter name="publicIDPattern" type="string" default="@classname@/@time/%Y%m%d%H%M%S.%f@.@id@">
 				<description>
 				Define a custom pattern for generation of public object IDs.
 				The following variables are resolved:
@@ -110,7 +110,12 @@
 				</description>
 			</parameter>
 			<group name="logging">
-				<parameter name="level" type="int" default="2">
+				<description>
+				Control the logging of SeisComP applications. The log information
+				are written to log files per modules as
+				&quot;@CONFIGDIR@/log/[module].log&quot;.
+				</description>
+				<parameter name="level" type="int" default="2" values="1,2,3,4´">
 					<description>
 					Set the logging level between 1 and 4 where 1=ERROR,
 					2=WARNING, 3=INFO and 4=DEBUG.
@@ -160,7 +165,7 @@
 						</parameter>
 						<parameter name="archiveSize" type="int" default="7">
 							<description>
-							How many historic log files to keep.
+							The maximum number of historic log files to keep.
 							</description>
 						</parameter>
 						<parameter name="maxFileSize" type="int" default="104857600" unit="byte">
@@ -280,35 +285,46 @@
 				</parameter>
 			</group>
 			<group name="processing">
+				<description>
+				Filter the objects for processing according to parameter values.
+				</description>
 				<group name="whitelist">
 					<parameter name="agencies" type="list:string">
 						<description>
-						Define a whitelist of agencies that are allowed for
-						processing. Separate items by comma.
+						Define a whitelist of agency IDs corresponding to
+						&quot;agencyID&quot; that are allowed for
+						processing. Objects from all other agencies will be
+						ignored. Separate items by comma.
 						</description>
 					</parameter>
 				</group>
 				<group name="blacklist">
 					<parameter name="agencies" type="list:string">
 						<description>
-						Define a blacklist of agencies that are not allowed for
+						Define a blacklist of agency IDs corresponding to
+						&quot;agencyID&quot; that are not allowed for
 						processing. Separate items by comma.
 						</description>
 					</parameter>
 				</group>
 			</group>
 			<group name="inventory">
+				<description>
+				Filter the considered inventory according to parameter values.
+				</description>
 				<group name="whitelist">
 					<parameter name="nettype" type="list:string">
 						<description>
 						List of network types to include when loading the
-						inventory.
+						inventory. All other types will be ignored. Separate
+						items by comma.
 						</description>
 					</parameter>
 					<parameter name="statype" type="list:string">
 						<description>
 						List of station types to include when loading the
-						inventory.
+						inventory. All other types will be ignored. Separate
+						items by comma.
 						</description>
 					</parameter>
 				</group>
@@ -316,13 +332,13 @@
 					<parameter name="nettype" type="list:string">
 						<description>
 						List of network types to exclude when loading the
-						inventory.
+						inventory. Separate items by comma.
 						</description>
 					</parameter>
 					<parameter name="statype" type="list:string">
 						<description>
 						List of station types to exclude when loading the
-						inventory.
+						inventory. Separate items by comma.
 						</description>
 					</parameter>
 				</group>
@@ -368,6 +384,9 @@
 				</parameter>
 			</group>
 			<group name="commands">
+				<description>
+				Control the handling of command messages.
+				</description>
 				<parameter name="target" type="string">
 					<description>
 					A regular expression of all clients that should handle
@@ -381,16 +400,15 @@
 			</group>
 			<group name="ttt">
 				<description>
-				Travel time table related configuration. Travel time tables can
-				be added via plugins. Built-in interfaces are LOCSAT, libtau and
-				homogeneous.
-				For each loaded interface a list of supported models must be
-				provided.
+				Configure interfaces to travel-time tables (travel-time
+				interfaces). Built-in interfaces are LOCSAT, libtau and
+				homogeneous. For each loaded interface the supported tables must
+				be provided.
 				</description>
 				<struct type="ttt profile">
 					<parameter name="tables" type="list:string">
 						<description>
-						The list of supported model names per interface.
+						The list of supported table (model) names per interface.
 						</description>
 					</parameter>
 				</struct>
