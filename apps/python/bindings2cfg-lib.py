@@ -128,6 +128,10 @@ class ConfigDBUpdater(seiscomp.client.Application):
 
         try:
             self._moduleName = self.commandline().optionString("module-name")
+        except:
+            pass
+
+        try:
             self._outputFile = self.commandline().optionString("output")
             self._createNotifier = self.commandline().hasOption("create-notifier")
             # Switch to offline mode
