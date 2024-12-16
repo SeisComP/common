@@ -135,6 +135,10 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_CHECK_EQUAL(url.queryItemValue("ack-window"), "30");
 	BOOST_CHECK_EQUAL(url.queryItemValue("ssl"), "true");
 
+	BOOST_CHECK_EQUAL(Url("hostname", true).host(), "hostname");
+	BOOST_CHECK_EQUAL(Url("hostname:18180", true).host(), "hostname");
+	BOOST_CHECK_EQUAL(*Url("hostname:18180", true).port(), 18180);
+
 	// IPv6
 	BOOST_REQUIRE(url.setUrl("http://[::1]"));
 	BOOST_CHECK_EQUAL(url.scheme(), "http");
@@ -177,6 +181,13 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_REQUIRE(url.setUrl("news:comp.infosystems.www.servers.unix"));
 	BOOST_REQUIRE(url.setUrl("tel:+1-816-555-1212"));
 	BOOST_REQUIRE(url.setUrl("telnet://192.0.2.16:80/"));
+}
+
+BOOST_AUTO_TEST_CASE(Extract) {
+	BOOST_CHECK_EQUAL(Url("http://localhost").withoutScheme(), "localhost");
+	BOOST_CHECK_EQUAL(Url("loc:/localhost").withoutScheme(), "/localhost");
+	BOOST_CHECK_EQUAL(Url("urn:localhost").withoutScheme(), "localhost");
+	BOOST_CHECK_EQUAL(Url("urn:localhost:proc").withoutScheme(), "localhost:proc");
 }
 
 BOOST_AUTO_TEST_CASE(Encode) {
