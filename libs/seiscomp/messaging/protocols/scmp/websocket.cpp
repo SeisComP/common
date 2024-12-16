@@ -319,9 +319,7 @@ Result WebsocketConnection::connect(const char *address,
 		}
 
 		host = url.host();
-		port = url.port();
-		if ( port <= 0 )
-			port = _useSSL ? 18181 : 18180;
+		port = url.port() ? *url.port() : _useSSL ? 18181 : 18180;
 
 		path = url.path();
 		if ( !path.empty() && *path.rbegin() != '/' ) {

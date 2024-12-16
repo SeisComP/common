@@ -293,7 +293,7 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 			}
 		}
 
-		size_t port = url.port() == size_t(-1) ? 3128 : url.port();
+		size_t port = url.port() ? *url.port() : 3128;
 
 		if ( url.username().empty() || url.password().empty() )
 			SEISCOMP_DEBUG("Connect to web proxy at %s://%s:%d",
