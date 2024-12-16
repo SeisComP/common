@@ -75,7 +75,7 @@ class SC_SYSTEM_CORE_API Url {
 	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
-		Url(const std::string &url = {});
+		Url(const std::string &url = {}, bool implyAuthority = false);
 
 
 	// ----------------------------------------------------------------------
@@ -86,10 +86,13 @@ class SC_SYSTEM_CORE_API Url {
 		/**
 		 * @brief Sets a URL from string and decomposes it into its parts.
 		 * @param url The URL string
+		 * @param implyAuthority If no scheme is given then this flag indicates
+		 *                       whether to imply an empty scheme in the format
+		 *                       "://" or to parse for URNs without an authority.
 		 * @return true if the URL could be parsed, false in case of any
 		 *         invalid URL.
 		 */
-		bool setUrl(const std::string &url);
+		bool setUrl(const std::string &url, bool implyAuthority = false);
 
 		/**
 		 * @brief Returns the URL scheme
@@ -246,10 +249,12 @@ class SC_SYSTEM_CORE_API Url {
 		/**
 		 * @brief Parses URL from string. Components and sub components are
 		 * parsed and separated before those are decoded.
-		 * @param The URL
+		 * @param url The URL
+		 * @param implyAuthority Whether to imply an authority if no scheme is
+		 *                       given.
 		 * @return Status code
 		 */
-		Status parse(const std::string &url);
+		Status parse(const std::string &url, bool implyAuthority);
 
 		/**
 		 * @brief Parses scheme from URL

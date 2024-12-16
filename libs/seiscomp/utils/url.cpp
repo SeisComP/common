@@ -36,8 +36,8 @@ namespace Util {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Url::Url(const std::string &url) {
-	setUrl(url);
+Url::Url(const std::string &url, bool implyAuthority) {
+	setUrl(url, implyAuthority);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -45,7 +45,7 @@ Url::Url(const std::string &url) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Url::setUrl(const std::string &url) {
+bool Url::setUrl(const std::string &url, bool implyAuthority) {
 	reset();
 
 	_url = url;
@@ -54,7 +54,7 @@ bool Url::setUrl(const std::string &url) {
 		return false;
 	}
 
-	auto ret = parse(_url);
+	auto ret = parse(_url, implyAuthority);
 	_isValid = ret == STATUS_OK;
 
 	return _isValid;
@@ -402,10 +402,11 @@ Url::Status Url::parseQuery(const std::string &url) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Url::Status Url::parse(const std::string &url) {
-	bool hasScheme = url.find(":") != std::string::npos;
+Url::Status Url::parse(const std::string &url, bool implyAuthority) {
+	auto pAuthority = url.find("://");
+	bool hasAuthority = pAuthority != std::string::npos;
 
-	if ( hasScheme ) {
+	if ( hasAuthority ) {
 		auto ret = parseScheme(url);
 		if ( ret != STATUS_OK ) {
 			return ret;
@@ -413,13 +414,25 @@ Url::Status Url::parse(const std::string &url) {
 
 		setSchemeDefaults();
 
-		if ( url.find("//", _currentPos) == _currentPos ) {
-			_currentPos += 2;
-			ret = parseAuthority(url);
-			if ( ret != STATUS_OK ) {
-				return ret;
-			}
+		_currentPos += 2;
+		ret = parseAuthority(url);
+		if ( ret != STATUS_OK ) {
+			return ret;
 		}
+	}
+	else if ( implyAuthority ) {
+		auto ret = parseAuthority(url);
+		if ( ret != STATUS_OK ) {
+			return ret;
+		}
+	}
+	else if ( url.find(":") != std::string::npos ) {
+		auto ret = parseScheme(url);
+		if ( ret != STATUS_OK ) {
+			return ret;
+		}
+
+		setSchemeDefaults();
 	}
 
 	parsePath(url);
