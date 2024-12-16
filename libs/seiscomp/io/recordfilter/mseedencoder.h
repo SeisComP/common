@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDFILTER_IIRFILTER_H
-#define SEISCOMP_IO_RECORDFILTER_IIRFILTER_H
+#ifndef SEISCOMP_IO_RECORDFILTER_MSEEDENCODER_H
+#define SEISCOMP_IO_RECORDFILTER_MSEEDENCODER_H
 
 
 #include <seiscomp/core/genericrecord.h>
@@ -31,57 +31,43 @@ namespace Seiscomp {
 namespace IO {
 
 
-/**
- * \brief RecordInplaceFilter is a record filter that applies a
- * \brief Math::InplaceFilter to each passed record. Type conversion
- * \brief and gap/overlap handling (causing a filter reset) are part of it.
- *
- * RecordIIRFilter does not distinguish between different channels. All
- * records fed into this class are assumed to be of the same stream/channel.
- */
-template <typename T>
-class SC_SYSTEM_CORE_API RecordIIRFilter : public RecordFilterInterface {
+class SC_SYSTEM_CORE_API MSeedEncoder : public RecordFilterInterface {
 	// ------------------------------------------------------------------
-	//  Public types
+	//  X'truction
 	// ------------------------------------------------------------------
 	public:
-		typedef Math::Filtering::InPlaceFilter<T> InplaceFilterType;
-
-
-	// ------------------------------------------------------------------
-	//  Xstruction
-	// ------------------------------------------------------------------
-	public:
-		//! Constructs a record filter with an optional inplace filter.
-		//! The passed instance is managed by the record filter.
-		RecordIIRFilter(Seiscomp::Math::Filtering::InPlaceFilter<T> *filter = nullptr);
-		~RecordIIRFilter();
+		MSeedEncoder() = default;
 
 
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		//! Note: the ownership goes to the record filter
-		RecordIIRFilter<T> &operator=(Seiscomp::Math::Filtering::InPlaceFilter<T> *f);
+		/**
+		 * @brief Sets the record size of the compressed MiniSEED record.
+		 * @param size The size of the compressed record as an exponent of base 2.
+		 *             The value range is from 7 to 20.
+		 * @return Success flag.
+		 */
+		bool setRecordSize(int size);
 
-		//! Note: the ownership goes to the record filter
-		void setIIR(Seiscomp::Math::Filtering::InPlaceFilter<T> *f);
+		/**
+		 * @brief Sets uncompressed encoding.
+		 */
+		void setIdentity();
 
-		Seiscomp::Math::Filtering::InPlaceFilter<T> *filter() { return _filter; }
-		const Seiscomp::Math::Filtering::InPlaceFilter<T> *filter() const { return _filter; }
+		/**
+		 * @brief Enables Steim1 compression.
+		 */
+		void setSteim1();
 
-		//! Applies the IIR filter on the input data. The data type of the
-		//! input record must match the requested data type (template
-		//! parameter)!
-		//! @returns True, if apply was successfull, false otherwise
-		bool apply(GenericRecord *rec);
+		/**
+		 * @brief Enables Steim2 compression.
+		 * The Steim2 compression is enabled by default.
+		 */
+		void setSteim2();
 
-		//! The bool operator returns if an IIR filter is set or not
-		operator bool() const { return _filter != nullptr; }
-
-		//! Returns the last error in case feed or apply returned nullptr or false.
-		const std::string &lastError() const;
+		void allowFloatingPointCompression(bool f);
 
 
 	// ------------------------------------------------------------------
@@ -91,30 +77,44 @@ class SC_SYSTEM_CORE_API RecordIIRFilter : public RecordFilterInterface {
 		//! Applies the filter and returns a copy with a record of the
 		//! requested datatype. The returned record instance is a GenericRecord.
 		//! If no IIR filter is set a type converted copy is returned.
-		virtual Record *feed(const Record *rec);
+		Record *feed(const Record *rec) override;
 
-		virtual Record *flush();
+		Record *flush() override;
 
-		virtual void reset();
+		void reset() override;
 
-		RecordFilterInterface *clone() const;
+		RecordFilterInterface *clone() const override;
+
+
+	// ------------------------------------------------------------------
+	//  Private methods
+	// ------------------------------------------------------------------
+	private:
+		Record *pop();
+
+
+	// ------------------------------------------------------------------
+	//  Public types
+	// ------------------------------------------------------------------
+	public:
+		enum CompressionType {
+			Identity,
+			Steim1,
+			Steim2
+		};
 
 
 	// ------------------------------------------------------------------
 	//  Private members
 	// ------------------------------------------------------------------
 	private:
-		InplaceFilterType *_filter;
-		OPT(Core::Time)    _lastEndTime;
-		double             _samplingFrequency;
-		std::string        _lastError;
+		double              _samplingFrequency{-1};
+		int                 _recordSize{9};
+		CompressionType     _compression{Steim2};
+		Array::DataType     _dataType{Array::DT_QUANTITY};
+		bool                _allowFloatingPointCompression{true};
+		Core::BaseObjectPtr _encoder{nullptr};
 };
-
-
-template <typename T>
-inline const std::string &RecordIIRFilter<T>::lastError() const {
-	return _lastError;
-}
 
 
 }
