@@ -301,8 +301,9 @@ Result WebsocketConnection::connect(const char *address,
 			}
 			_socket = new Wired::SSLSocket(ctx);
 		}
-		else
+		else {
 			_socket = new Wired::Socket;
+		}
 
 		_socket->setNoDelay(true);
 
@@ -312,7 +313,7 @@ Result WebsocketConnection::connect(const char *address,
 		string host = "localhost";
 		string path, queue;
 
-		Util::Url url(address);
+		Util::Url url(address, true);
 		if ( !url ) {
 			_errorMessage = "Invalid URL";
 			return InvalidURL;
@@ -329,6 +330,9 @@ Result WebsocketConnection::connect(const char *address,
 				path.erase(path.begin() + p + 1, path.end());
 			}
 		}
+		else if ( path.empty() ) {
+			path = "/";
+		}
 
 		if ( queue.empty() ) {
 			queue = "production";
@@ -342,8 +346,7 @@ Result WebsocketConnection::connect(const char *address,
 			authorization = "Authorization: Basic " + auth + "\r\n";
 		}
 
-		for ( Util::Url::QueryItems::const_iterator it = url.queryItems().begin();
-		      it != url.queryItems().end(); ++it ) {
+		for ( auto it = url.queryItems().begin(); it != url.queryItems().end(); ++it ) {
 			const string &param = it->first;
 			const string &value = it->second;
 
