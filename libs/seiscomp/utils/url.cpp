@@ -489,6 +489,11 @@ void Url::setSchemeDefaults() {
 std::string Url::withoutScheme() const {
 	size_t pos = _url.find(":");
 	if ( pos != std::string::npos ) {
+		if ( _url.size() >= pos + 3 ) {
+			if ( _url[pos + 1] == '/' && _url[pos + 2] == '/' ) {
+				pos += 2;
+			}
+		}
 		return _url.substr(pos + 1);
 	}
 
