@@ -20,8 +20,8 @@
 
 #define SEISCOMP_COMPONENT Core
 
-#include <iostream>
-#include <math.h>
+#include <algorithm>
+#include <cmath>
 
 #include <seiscomp/core/record.h>
 #include <seiscomp/core/arrayfactory.h>
@@ -210,6 +210,28 @@ RecordSequence::Range RecordSequence::amplitudeRange(const Core::TimeWindow *tw)
 	}
 
 	return range;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+RecordSequence::const_iterator RecordSequence::lowerBound(const Core::Time &ts) const {
+	return lower_bound(begin(), end(), ts, [](const RecordCPtr &rec, const Core::Time &ts) {
+		return rec->endTime() <= ts;
+	});
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+RecordSequence::const_iterator RecordSequence::upperBound(const Core::Time &ts) const {
+	return upper_bound(begin(), end(), ts, [](const Core::Time &ts, const RecordCPtr &rec) {
+		return ts <= rec->startTime();
+	});
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -419,16 +441,6 @@ GenericRecord *RecordSequence::contiguousRecord(const Core::TimeWindow *tw, bool
 		rawRecord->setData(rawData.get());
 
 	return rawRecord;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <typename T>
-GenericRecord *RecordSequence::continuousRecord(const Core::TimeWindow *tw, bool interpolate) const {
-	return contiguousRecord<T>(tw, interpolate);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -664,16 +676,6 @@ GenericRecord *RecordSequence::contiguousRecord<float>(const Core::TimeWindow *t
 
 template
 GenericRecord *RecordSequence::contiguousRecord<double>(const Core::TimeWindow *tw, bool interpolate) const;
-
-// Specialize continuousRecord for int, float and double
-template
-GenericRecord *RecordSequence::continuousRecord<int>(const Core::TimeWindow *tw, bool interpolate) const;
-
-template
-GenericRecord *RecordSequence::continuousRecord<float>(const Core::TimeWindow *tw, bool interpolate) const;
-
-template
-GenericRecord *RecordSequence::continuousRecord<double>(const Core::TimeWindow *tw, bool interpolate) const;
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
