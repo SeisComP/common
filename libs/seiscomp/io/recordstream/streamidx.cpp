@@ -222,9 +222,9 @@ const OPT(Time) &StreamIdx::endTime() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 string StreamIdx::str(const OPT(Time) &stime, const OPT(Time) &etime) const {
-	return (_stime ? _stime->toString("%Y,%m,%d,%H,%M,%S") : "1970,1,1,0,0,0") +
+	return (_stime ? _stime->toString("%Y,%m,%d,%H,%M,%S") : stime ? stime->toString("%Y,%m,%d,%H,%M,%S") : "1970,1,1,0,0,0") +
 	       " " +
-	       (_etime ? (*_etime + TimeSpan(0, 999999)).toString("%Y,%m,%d,%H,%M,%S") : "1970,1,1,0,0,0") +
+	       (_etime ? (*_etime + TimeSpan(0, 999999)).toString("%Y,%m,%d,%H,%M,%S") : etime ? (*etime + TimeSpan(0, 999999)).toString("%Y,%m,%d,%H,%M,%S") : "1970,1,1,0,0,0") +
 	       " " +
 	       _net +
 	       " " +
