@@ -382,10 +382,9 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 void FDSNWSConnectionBase::handshake() {
 	string request;
 
-	for ( set<StreamIdx>::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
+	for ( auto it = _streams.begin(); it != _streams.end(); ++it ) {
 		SEISCOMP_DEBUG("Request: %s", it->str(_stime, _etime).c_str());
-		if ( (!it->startTime() && !_stime) ||
-			 (!it->endTime() && !_etime) ) {
+		if ( (!it->startTime() && !_stime) || (!it->endTime() && !_etime) ) {
 			/* invalid time window ignore stream */
 			SEISCOMP_WARNING("... has invalid time window -> ignore this request above");
 			continue;
