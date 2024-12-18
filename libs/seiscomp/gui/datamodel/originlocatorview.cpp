@@ -6466,7 +6466,7 @@ void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
 		origin->setLatitude(dialog.latitude());
 		origin->setDepth(RealQuantity(dialog.depth()));
 		origin->setDepthType(OriginDepthType(OPERATOR_ASSIGNED));
-		origin->setTime(Core::Time(dialog.getTime_t()));
+		origin->setTime(Time(dialog.getTime_t(), 0));
 		origin->setEvaluationMode(EvaluationMode(MANUAL));
 
 		if ( dialog.advanced() ) {
@@ -6874,7 +6874,7 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 		try { derived->quality(); } // ensure existing quality object
 		catch ( ValueException &e ) { derived->setQuality(OriginQuality()); }
 
-		derived->setTime(Time(dialog.getTime_t()));
+		derived->setTime(Time(dialog.getTime_t(), 0));
 		derived->setLatitude(dialog.latitude());
 		derived->setLongitude(dialog.longitude());
 		derived->setDepth(RealQuantity(dialog.depth()));
