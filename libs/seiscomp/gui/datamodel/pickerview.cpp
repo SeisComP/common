@@ -9107,7 +9107,7 @@ void PickerView::showSpectrum() {
 	}
 
 	Core::TimeWindow tw = SC_D.currentRecord->visibleTimeWindow();
-	GenericRecordPtr trace = seq->continuousRecord<double>(&tw);
+	GenericRecordPtr trace = seq->contiguousRecord<double>(&tw);
 	if ( !trace ) {
 		statusBar()->showMessage(tr("Error: failed to extract trace for spectrum"));
 		return;

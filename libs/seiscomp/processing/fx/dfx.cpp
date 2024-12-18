@@ -219,7 +219,7 @@ bool DFX::feed(const Record *rec) {
 			GenericRecordPtr recs[NCOMPS];
 			double samplingRate = -1;
 			for ( size_t i = 0; i < NCOMPS; ++i ) {
-				recs[i] = _threeC[i].buffer.continuousRecord<double>();
+				recs[i] = _threeC[i].buffer.contiguousRecord<double>();
 				if ( !recs[i] ) {
 					setStatus(QCError, -1.0);
 					return false;
