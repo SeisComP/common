@@ -6,6 +6,7 @@ SET(TESTS
 	georegions.cpp
 	geolib.cpp
 	intrusive_list.cpp
+	recordsequence.cpp
 	refcounts.cpp
 	strings.cpp
 	timewindow.cpp
