@@ -254,13 +254,13 @@ class SC_GUI_API RecordWidget : public QWidget {
 
 			float                     timingQuality{-1};
 			int                       timingQualityCount{0};
+			bool                      dirtyData{false};
 			bool                      dirty{false};
 			bool                      visible{false};
 			AbstractRecordPolylinePtr poly;
 			QString                   status;
 
 			void reset() {
-				dyMin = dyMax = dOffset  = absMax = 0;
 				fyMin = -1; fyMax = 1;
 				pyMin = pyMax = 0;
 				visible = false;
@@ -579,7 +579,6 @@ class SC_GUI_API RecordWidget : public QWidget {
 		void setAutoMaxScale(bool);
 
 		void setNormalizationWindow(const Seiscomp::Core::TimeWindow&);
-		void setOffsetWindow(const Seiscomp::Core::TimeWindow&);
 
 		//! Sets the maximum slot index for which setFilter(filter) is
 		//! applied. The semantics of 'any' is bound to value -1.
@@ -820,7 +819,6 @@ class SC_GUI_API RecordWidget : public QWidget {
 		Seiscomp::Core::Time _startDragPos;
 
 		Seiscomp::Core::TimeWindow _normalizationWindow;
-		Seiscomp::Core::TimeWindow _offsetWindow;
 
 		RecordWidget        *_shadowWidget;
 		RecordWidget        *_markerSourceWidget;

@@ -61,8 +61,7 @@ namespace {
 
 
 bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
-            double &ofs, double &min, double &max, bool globalOffset = false,
-            const Core::TimeWindow &ofsTw = Core::TimeWindow()) {
+            double &ofs, double &min, double &max, bool globalOffset = false) {
 	ofs = 0;
 	double tmpOfs = 0;
 	int sampleCount = 0;
@@ -70,6 +69,44 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 	bool isFirst = true;
 	auto it = tw ? seq->lowerBound(tw.startTime()) : seq->begin();
 	min = max = 0;
+
+	if ( globalOffset ) {
+		// Compute pre time window offset if required
+		for ( auto oit = seq->begin(); oit != it; ++oit ) {
+			RecordCPtr rec = (*it);
+			int ns = rec->sampleCount();
+			if ( ns == 0 || rec->data() == nullptr ) {
+				continue;
+			}
+
+			auto dataType = rec->data()->dataType();
+			if ( globalOffset ) {
+				if ( dataType == Array::FLOAT ) {
+					auto arr = static_cast<const FloatArray*>(rec->data());
+					for ( int i = 0; i < ns; ++i ) {
+						tmpOfs += (*arr)[i];
+					}
+				}
+				else if ( dataType == Array::DOUBLE ) {
+					auto arr = static_cast<const DoubleArray*>(rec->data());
+					for ( int i = 0; i < ns; ++i ) {
+						tmpOfs += (*arr)[i];
+					}
+				}
+				else if ( dataType == Array::INT ) {
+					auto arr = static_cast<const IntArray*>(rec->data());
+					for ( int i = 0; i < ns; ++i ) {
+						tmpOfs += (*arr)[i];
+					}
+				}
+				else {
+					continue;
+				}
+
+				offsetSampleCount += ns;
+			}
+		}
+	}
 
 	for (; it != seq->end(); ++it) {
 		RecordCPtr rec = (*it);
@@ -80,29 +117,10 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 		}
 
 		auto dataType = rec->data()->dataType();
-		if ( globalOffset ) {
-			if ( dataType == Array::FLOAT ) {
-				auto arr = static_cast<const FloatArray*>(rec->data());
-				for ( int i = 0; i < ns; ++i )
-					tmpOfs += (*arr)[i];
-			}
-			else if ( dataType == Array::DOUBLE ) {
-				auto arr = static_cast<const DoubleArray*>(rec->data());
-				for ( int i = 0; i < ns; ++i )
-					tmpOfs += (*arr)[i];
-			}
-			else {
-				continue;
-			}
-
-			offsetSampleCount += ns;
-		}
 
 		if ( tw ) { // limit search for min/max to specified time window
 			try {
-				const Core::TimeWindow &rtw = rec->timeWindow();
-
-				if ( tw.overlaps(rtw) ) {
+				if ( rec->startTime() < tw.endTime() ) {
 					double fs = rec->samplingFrequency();
 					double dt = static_cast<double>(tw.startTime() - rec->startTime());
 					if ( dt > 0 ) {
@@ -116,11 +134,11 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 					}
 				}
 				else {
-					continue;
+					break;
 				}
 			}
 			catch ( ... ) {
-				continue;
+				break;
 			}
 		}
 		else { // no time window specified -> search over whole record
@@ -137,6 +155,12 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 			xmin = tmpMin;
 			xmax = tmpMax;
 		}
+		else if ( dataType == Array::INT ) {
+			int tmpMin, tmpMax;
+			::minmax(ns, static_cast<const IntArray*>(rec->data())->typedData(), imin, imax, &tmpMin, &tmpMax);
+			xmin = tmpMin;
+			xmax = tmpMax;
+		}
 		else if ( dataType == Array::DOUBLE ) {
 			::minmax(ns, static_cast<const DoubleArray*>(rec->data())->typedData(), imin, imax, &xmin, &xmax);
 		}
@@ -144,62 +168,26 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 			continue;
 		}
 
-		if ( !globalOffset ) {
-			if ( ofsTw ) {
-				try {
-					const Core::TimeWindow &rtw = rec->timeWindow();
-
-					if ( ofsTw.overlaps(rtw) ) {
-						double fs = rec->samplingFrequency();
-						double dt = static_cast<double>(ofsTw.startTime() - rec->startTime());
-						if ( dt > 0 ) {
-							imin = static_cast<int>(dt * fs);
-						}
-						else {
-							imin = 0;
-						}
-
-						dt = static_cast<double>(rec->endTime() - ofsTw.endTime());
-						imax = ns;
-						if ( dt > 0 ) {
-							imax -= static_cast<int>(dt * fs);
-						}
-
-						if ( dataType == Array::FLOAT ) {
-							auto arr = static_cast<const FloatArray*>(rec->data());
-							for ( int i = imin; i < imax; ++i ) {
-								tmpOfs += (*arr)[i];
-							}
-						}
-						else if ( dataType == Array::DOUBLE ) {
-							auto arr = static_cast<const DoubleArray*>(rec->data());
-							for ( int i = imin; i < imax; ++i ) {
-								tmpOfs += (*arr)[i];
-							}
-						}
-
-						offsetSampleCount = sampleCount;
-					}
-				}
-				catch ( ... ) {}
-			}
-			else {
-				if ( dataType == Array::FLOAT ) {
-					auto arr = static_cast<const FloatArray*>(rec->data());
-					for ( int i = imin; i < imax; ++i ) {
-						tmpOfs += (*arr)[i];
-					}
-				}
-				else if ( dataType == Array::DOUBLE ) {
-					auto arr = static_cast<const DoubleArray*>(rec->data());
-					for ( int i = imin; i < imax; ++i ) {
-						tmpOfs += (*arr)[i];
-					}
-				}
-
-				offsetSampleCount = sampleCount;
+		if ( dataType == Array::FLOAT ) {
+			auto arr = static_cast<const FloatArray*>(rec->data());
+			for ( int i = imin; i < imax; ++i ) {
+				tmpOfs += (*arr)[i];
 			}
 		}
+		else if ( dataType == Array::DOUBLE ) {
+			auto arr = static_cast<const DoubleArray*>(rec->data());
+			for ( int i = imin; i < imax; ++i ) {
+				tmpOfs += (*arr)[i];
+			}
+		}
+		else if ( dataType == Array::INT ) {
+			auto arr = static_cast<const IntArray*>(rec->data());
+			for ( int i = 0; i < ns; ++i ) {
+				tmpOfs += (*arr)[i];
+			}
+		}
+
+		offsetSampleCount = sampleCount;
 
 		if( isFirst ) {
 			min = xmin;
@@ -213,6 +201,44 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 
 			if ( xmax > max ) {
 				max = xmax;
+			}
+		}
+	}
+
+	if ( globalOffset ) {
+		// Compute pre time window offset if required
+		for ( auto oit = it; oit != seq->end(); ++oit ) {
+			RecordCPtr rec = (*it);
+			int ns = rec->sampleCount();
+			if ( ns == 0 || rec->data() == nullptr ) {
+				continue;
+			}
+
+			auto dataType = rec->data()->dataType();
+			if ( globalOffset ) {
+				if ( dataType == Array::FLOAT ) {
+					auto arr = static_cast<const FloatArray*>(rec->data());
+					for ( int i = 0; i < ns; ++i ) {
+						tmpOfs += (*arr)[i];
+					}
+				}
+				else if ( dataType == Array::DOUBLE ) {
+					auto arr = static_cast<const DoubleArray*>(rec->data());
+					for ( int i = 0; i < ns; ++i ) {
+						tmpOfs += (*arr)[i];
+					}
+				}
+				else if ( dataType == Array::INT ) {
+					auto arr = static_cast<const IntArray*>(rec->data());
+					for ( int i = 0; i < ns; ++i ) {
+						tmpOfs += (*arr)[i];
+					}
+				}
+				else {
+					continue;
+				}
+
+				offsetSampleCount += ns;
 			}
 		}
 	}
@@ -2213,27 +2239,22 @@ const Seiscomp::Core::TimeWindow & RecordWidget::normalizationWindow() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::prepareRecords(Stream *s) {
-	Trace *trace = &s->traces[Stream::Raw];
-	if ( s->records[Stream::Raw] && (!s->filtering || _showAllRecords) ) {
-		trace->visible = minmax(s->records[Stream::Raw], _normalizationWindow,
-		                        trace->dOffset, trace->dyMin, trace->dyMax,
-		                        _useGlobalOffset, _offsetWindow);
-		trace->absMax = std::max(std::abs(trace->dOffset-trace->dyMin),
-		                         std::abs(trace->dOffset-trace->dyMax));
+	for ( int i = 0; i < 2; ++i ) {
+		auto trace = &s->traces[i];
+		if ( s->records[i] && (!s->filtering || _showAllRecords) ) {
+			if ( (!_useGlobalOffset && _normalizationWindow) || s->traces[i].dirtyData ) {
+				trace->visible = minmax(s->records[i], _normalizationWindow,
+				                        trace->dOffset, trace->dyMin, trace->dyMax,
+				                        _useGlobalOffset);
+				trace->absMax = std::max(std::abs(trace->dOffset - trace->dyMin),
+				                         std::abs(trace->dOffset - trace->dyMax));
+			}
+			s->traces[i].dirtyData = false;
+		}
+		else {
+			trace->visible = false;
+		}
 	}
-	else
-		trace->visible = false;
-
-	trace = &s->traces[Stream::Filtered];
-	if ( s->records[Stream::Filtered] && (s->filtering || _showAllRecords) ) {
-		trace->visible = minmax(s->records[Stream::Filtered], _normalizationWindow,
-		                        trace->dOffset, trace->dyMin, trace->dyMax,
-		                        _useGlobalOffset, _offsetWindow);
-		trace->absMax = std::max(std::abs(trace->dOffset-trace->dyMin),
-		                         std::abs(trace->dOffset-trace->dyMax));
-	}
-	else
-		trace->visible = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2687,10 +2708,10 @@ void RecordWidget::showScaledValues(bool enable) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::setDirty() {
 	_drawRecords = true;
-	for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
-		Stream *s = *it;
-		if ( s == nullptr ) continue;
-		s->setDirty();
+	for ( Stream *s : _streams ) {
+		if ( s ) {
+			s->setDirty();
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4133,10 +4154,18 @@ void RecordWidget::setAutoMaxScale(bool e) {
 	if ( _autoMaxScale == e ) return;
 
 	_autoMaxScale = e;
-	if ( _autoMaxScale )
+	if ( _autoMaxScale ) {
 		setNormalizationWindow(visibleTimeWindow());
-	else
+	}
+	else {
+		for ( Stream *s : qAsConst(_streams) ) {
+			if ( s ) {
+				s->traces[Stream::Raw].dirtyData = true;
+				s->traces[Stream::Filtered].dirtyData = true;
+			}
+		}
 		setNormalizationWindow(Core::TimeWindow());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4146,17 +4175,6 @@ void RecordWidget::setAutoMaxScale(bool e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::setNormalizationWindow(const Seiscomp::Core::TimeWindow &tw) {
 	_normalizationWindow = tw;
-	setDirty();
-	update();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::setOffsetWindow(const Seiscomp::Core::TimeWindow &tw) {
-	_offsetWindow = tw;
 	setDirty();
 	update();
 }
@@ -4442,6 +4460,7 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 
 	s->axisDirty = true;
 	s->traces[Stream::Raw].dirty = true;
+	s->traces[Stream::Raw].dirtyData = true;
 
 	if ( rec->timingQuality() >= 0 ) {
 		if ( s->traces[Stream::Raw].timingQualityCount == 0 ) {
@@ -4478,6 +4497,7 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 		}
 
 		s->traces[Stream::Filtered].dirty = true;
+		s->traces[Stream::Filtered].dirtyData = true;
 		return;
 	}
 
@@ -4494,6 +4514,7 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 			if ( frec ) {
 				s->records[Stream::Filtered]->feed(frec.get());
 				s->traces[Stream::Filtered].dirty = true;
+				s->traces[Stream::Filtered].dirtyData = true;
 			}
 		}
 		catch ( std::exception &e ) {
