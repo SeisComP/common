@@ -51,8 +51,9 @@ void RecordPolyline::create(Record const *rec,
                             bool optimization) {
 	clear();
 
-	if ( rec == nullptr )
+	if ( !rec ) {
 		return;
+	}
 
 	// normalize peak-to-peak amplitude to height set using setHeight()
 	double yscl;
@@ -71,10 +72,13 @@ void RecordPolyline::create(Record const *rec,
 
 	int nsamp = rec->sampleCount();
 
-	if ( nsamp == 0 ) return;
+	if ( nsamp == 0 ) {
+		return;
+	}
 
-	if ( timingQuality )
+	if ( timingQuality ) {
 		*timingQuality = rec->timingQuality();
+	}
 
 	double dx = pixelPerSecond / rec->samplingFrequency();
 
@@ -106,9 +110,21 @@ void RecordPolyline::create(Record const *rec,
 			x_pos, y_pos
 		);
 	}
+	else if ( rec->data()->dataType() == Array::INT ) {
+		pushRecord(
+			poly,
+			static_cast<const IntArray*>(rec->data())->typedData(),
+			nsamp, false, yscl, amplOffset,
+			optimization, 0, dx, collapsedSamples,
+			y_min, y_max,
+			x_out, y_out,
+			x_pos, y_pos
+		);
+	}
 
-	if ( poly->isEmpty() )
+	if ( poly && poly->isEmpty() ) {
 		pop_back();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -122,8 +138,7 @@ void RecordPolyline::create(RecordSequence const *records,
                             int height, float *timingQuality,
                             QVector<QPair<int,int> >* gaps,
                             bool optimization) {
-	static Core::Time invalidTime;
-	create(records, invalidTime, invalidTime, pixelPerSecond,
+	create(records, Core::None, Core::None, pixelPerSecond,
 	       amplMin, amplMax, amplOffset, height, timingQuality,
 	       gaps, optimization);
 }
@@ -134,8 +149,8 @@ void RecordPolyline::create(RecordSequence const *records,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordPolyline::create(RecordSequence const *records,
-                            const Core::Time &start,
-                            const Core::Time &end,
+                            const OPT(Core::Time) &start,
+                            const OPT(Core::Time) &end,
                             double pixelPerSecond,
                             double amplMin, double amplMax, double amplOffset,
                             int height, float *timingQuality,
@@ -143,8 +158,13 @@ void RecordPolyline::create(RecordSequence const *records,
                             bool optimization) {
 	clear();
 
-	if ( records == nullptr ) return;
-	if ( records->size() == 0 ) return;
+	if ( !records ) {
+		return;
+	}
+
+	if ( records->size() == 0 ) {
+		return;
+	}
 
 	// normalize peak-to-peak amplitude to height set using setHeight()
 	double yscl;
@@ -160,8 +180,8 @@ void RecordPolyline::create(RecordSequence const *records,
 	}
 
 	int skipCount = 0;
-	RecordSequence::const_iterator it = records->begin();
-	RecordSequence::const_iterator lastIt = it;
+	auto it = start ? records->lowerBound(*start) : records->begin();
+	auto lastIt = it;
 
 	QPolygon *poly = nullptr;
 	int timingQualityRecordCount = 0;
@@ -185,20 +205,27 @@ void RecordPolyline::create(RecordSequence const *records,
 		const Record *lastRec = lastIt->get();
 
 		// Skip records that are out of time window [start:end]
-		if ( start.valid() ) {
+		if ( start ) {
 			try {
-				if ( rec->endTime() <= start ) continue;
+				if ( rec->endTime() <= *start ) {
+					continue;
+				}
 			}
-			catch ( ... ) { continue; }
-			startOfs = double(start-rec->startTime());
+			catch ( ... ) {
+				continue;
+			}
+			startOfs = static_cast<double>(*start - rec->startTime());
 		}
-		else
-			startOfs = double(records->front()->startTime()-rec->startTime());
+		else {
+			startOfs = static_cast<double>(records->front()->startTime() - rec->startTime());
+		}
 
 		double dt = 1.0/rec->samplingFrequency();
-		if ( end.valid() ) {
-			if ( rec->startTime() >= end ) break;
-			endOfs = double(rec->endTime()-end) - dt;
+		if ( end ) {
+			if ( rec->startTime() >= *end ) {
+				break;
+			}
+			endOfs = static_cast<double>(rec->endTime() - *end) - dt;
 		}
 
 		if ( timingQuality && rec->timingQuality() >= 0 ) {
@@ -210,7 +237,9 @@ void RecordPolyline::create(RecordSequence const *records,
 		double tolerance = records->tolerance() / rec->samplingFrequency();
 		double diff;
 
-		if ( !nsamp || !rec->data() ) continue;
+		if ( !nsamp || !rec->data() ) {
+			continue;
+		}
 
 		try {
 			diff = abs(double(rec->startTime() - lastRec->endTime()));
@@ -224,7 +253,9 @@ void RecordPolyline::create(RecordSequence const *records,
 		// Cut front samples
 		if ( startOfs > 0 ) {
 			sampleOfs = (int)(startOfs * rec->samplingFrequency());
-			if ( sampleOfs >= nsamp ) continue;
+			if ( sampleOfs >= nsamp ) {
+				continue;
+			}
 			nsamp -= sampleOfs;
 			startOfs -= (sampleOfs * dt);
 		}
@@ -232,7 +263,9 @@ void RecordPolyline::create(RecordSequence const *records,
 		// Cut back samples
 		if ( endOfs > 0 ) {
 			nsamp -= (int)(endOfs * rec->samplingFrequency());
-			if ( nsamp <= 0 ) continue;
+			if ( nsamp <= 0 ) {
+				continue;
+			}
 		}
 
 		if ( rec->data()->dataType() == Array::FLOAT ) {
@@ -250,6 +283,17 @@ void RecordPolyline::create(RecordSequence const *records,
 			pushRecord(
 				poly,
 				static_cast<const DoubleArray*>(rec->data())->typedData() + sampleOfs,
+				nsamp, poly && diff <= tolerance,
+				yscl, amplOffset, optimization,
+				static_cast<int>(pixelPerSecond * startOfs), pixelPerSecond * dt,
+				collapsedSamples,
+				y_min, y_max, x_out, y_out, x_pos, y_pos
+			);
+		}
+		else if ( rec->data()->dataType() == Array::INT ) {
+			pushRecord(
+				poly,
+				static_cast<const IntArray*>(rec->data())->typedData() + sampleOfs,
 				nsamp, poly && diff <= tolerance,
 				yscl, amplOffset, optimization,
 				static_cast<int>(pixelPerSecond * startOfs), pixelPerSecond * dt,
@@ -284,25 +328,30 @@ void RecordPolyline::create(RecordSequence const *records,
 			}
 		}
 
-		if ( x_pos != x_out || y_pos != y_out )
+		if ( x_pos != x_out || y_pos != y_out ) {
 			poly->append(QPoint(x_pos, y_pos));
+		}
 	}
 
 	if ( !empty() ) {
-		if ( skipCount )
+		if ( skipCount ) {
 			front().remove(0, skipCount);
+		}
 
 		if ( gaps ) {
-			for ( int i = 1; i < size(); ++i )
+			for ( int i = 1; i < size(); ++i ) {
 				gaps->append(QPair<int,int>((*this)[i-1].last().x(), (*this)[i].first().x()));
+			}
 		}
 	}
 
 	if ( timingQuality ) {
-		if ( timingQualityRecordCount )
+		if ( timingQualityRecordCount ) {
 			*timingQuality /= timingQualityRecordCount;
-		else
+		}
+		else {
 			*timingQuality = -1;
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -385,7 +434,9 @@ void RecordPolyline::createStepFunction(RecordSequence const *records, double pi
 
 		int nsamp = rec->sampleCount();
 
-		if ( nsamp == 0 ) continue;
+		if ( nsamp == 0 ) {
+			continue;
+		}
 
 		if ( poly == nullptr ) {
 			push_back(QPolygon());
@@ -408,12 +459,14 @@ void RecordPolyline::createStepFunction(RecordSequence const *records, double pi
 		}
 	}
 
-	if ( poly->isEmpty() )
+	if ( poly && poly->isEmpty() ) {
 		pop_back();
+	}
 
 	if ( !empty() ) {
-		if ( skipCount )
+		if ( skipCount ) {
 			front().remove(0, skipCount);
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -444,8 +497,8 @@ void RecordPolyline::createSteps(RecordSequence const *records, double pixelPerS
 	}
 
 	int skipCount = 0;
-	RecordSequence::const_iterator it = records->begin();
-	RecordSequence::const_iterator lastIt = it;
+	auto it = records->begin();
+	auto lastIt = it;
 
 	Seiscomp::Core::Time refTime = (*it)->startTime();
 
@@ -491,16 +544,18 @@ void RecordPolyline::createSteps(RecordSequence const *records, double pixelPerS
 		lastIt = it;
 	}
 
-	if ( poly->isEmpty() )
+	if ( poly && poly->isEmpty() )
 		pop_back();
 
 	if ( !empty() ) {
-		if ( skipCount )
+		if ( skipCount ) {
 			front().remove(0, skipCount);
+		}
 
 		if ( gaps ) {
-			for ( int i = 1; i < size(); ++i )
+			for ( int i = 1; i < size(); ++i ) {
 				gaps->append(QPair<int,int>((*this)[i-1].last().x(), (*this)[i].first().x()));
+			}
 		}
 	}
 }
@@ -511,7 +566,8 @@ void RecordPolyline::createSteps(RecordSequence const *records, double pixelPerS
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordPolyline::createSteps(RecordSequence const *records,
-                                 const Core::Time &start, const Core::Time &end,
+                                 const Core::Time &start,
+                                 const Core::Time &end,
                                  double pixelPerSecond,
                                  double amplMin, double amplMax, double amplOffset,
                                  int height, QVector<QPair<int,int> >* gaps) {
@@ -534,27 +590,33 @@ void RecordPolyline::createSteps(RecordSequence const *records,
 	}
 
 	int skipCount = 0;
-	RecordSequence::const_iterator it = records->begin();
+	RecordSequence::const_iterator it = records->lowerBound(start);
 	RecordSequence::const_iterator lastIt = it;
 
 	Seiscomp::Core::Time refTime = start;
 
 	QPolygon *poly = nullptr;
 
-	for(; it != records->end(); ++it) {
+	for( ; it != records->end(); ++it ) {
 		const Record* rec = it->get();
 		const Record* lastRec = lastIt->get();
 
 		// Skip records that are out of time window [start:end]
 		try {
-			if ( rec->endTime() <= start ) continue;
+			if ( rec->endTime() <= start ) {
+				continue;
+			}
 		}
 		catch ( ... ) { continue; }
 
-		if ( rec->startTime() >= end ) break;
+		if ( rec->startTime() >= end ) {
+			break;
+		}
 
 		int nsamp = rec->sampleCount();
-		if ( nsamp == 0 ) continue;
+		if ( nsamp == 0 ) {
+			continue;
+		}
 
 		double tolerance = records->tolerance()/rec->samplingFrequency();
 		double diff;
@@ -589,16 +651,19 @@ void RecordPolyline::createSteps(RecordSequence const *records,
 		lastIt = it;
 	}
 
-	if ( poly->isEmpty() )
+	if ( poly && poly->isEmpty() ) {
 		pop_back();
+	}
 
 	if ( !empty() ) {
-		if ( skipCount )
+		if ( skipCount ) {
 			front().remove(0, skipCount);
+		}
 
 		if ( gaps ) {
-			for ( int i = 1; i < size(); ++i )
+			for ( int i = 1; i < size(); ++i ) {
 				gaps->append(QPair<int,int>((*this)[i-1].last().x(), (*this)[i].first().x()));
+			}
 		}
 	}
 }
@@ -825,9 +890,21 @@ void RecordPolylineF::create(Record const *rec, double pixelPerSecond,
 			x_pos, y_pos
 		);
 	}
+	else if ( rec->data()->dataType() == Array::INT ) {
+		pushRecord(
+			poly,
+			static_cast<const IntArray*>(rec->data())->typedData(),
+			nsamp, false, yscl, amplOffset,
+			optimization, 0, dx, collapsedSamples,
+			y_min, y_max,
+			x_out, y_out,
+			x_pos, y_pos
+		);
+	}
 
-	if ( poly->isEmpty() )
+	if ( poly && poly->isEmpty() ) {
 		pop_back();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -839,8 +916,7 @@ void RecordPolylineF::create(RecordSequence const *records, double pixelPerSecon
                              double amplMin, double amplMax, double amplOffset,
                              int height, float *timingQuality,
                              QVector<QPair<qreal,qreal> >* gaps, bool optimization) {
-	static Core::Time invalidTime;
-	create(records, invalidTime, invalidTime, pixelPerSecond,
+	create(records, Core::None, Core::None, pixelPerSecond,
 	       amplMin, amplMax, amplOffset, height, timingQuality,
 	       gaps, optimization);
 }
@@ -851,7 +927,8 @@ void RecordPolylineF::create(RecordSequence const *records, double pixelPerSecon
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordPolylineF::create(RecordSequence const *records,
-                             const Core::Time &start, const Core::Time &end,
+                             const OPT(Core::Time) &start,
+                             const OPT(Core::Time) &end,
                              double pixelPerSecond,
                              double amplMin, double amplMax, double amplOffset,
                              int height, float *timingQuality,
@@ -859,8 +936,9 @@ void RecordPolylineF::create(RecordSequence const *records,
                              bool optimization) {
 	clear();
 
-	if ( records == nullptr ) return;
-	if ( records->size() == 0 ) return;
+	if ( !records || records->empty() ) {
+		return;
+	}
 
 	// normalize peak-to-peak amplitude to height set using setHeight()
 	double yscl;
@@ -876,12 +954,15 @@ void RecordPolylineF::create(RecordSequence const *records,
 	}
 
 	int skipCount = 0;
-	RecordSequence::const_iterator it = records->begin();
-	RecordSequence::const_iterator lastIt = it;
+	auto it = start ? records->lowerBound(*start) : records->begin();
+	auto lastIt = it;
 
 	QPolygonF *poly = nullptr;
 	int timingQualityRecordCount = 0;
-	if ( timingQuality ) *timingQuality = 0;
+
+	if ( timingQuality ) {
+		*timingQuality = 0;
+	}
 
 	qreal y_min = 0;
 	qreal y_max = 0;
@@ -901,20 +982,30 @@ void RecordPolylineF::create(RecordSequence const *records,
 		const Record *lastRec = lastIt->get();
 
 		// Skip records that are out of time window [start:end]
-		if ( start.valid() ) {
+		if ( start ) {
 			try {
-				if ( rec->endTime() <= start ) continue;
+				if ( rec->endTime() <= *start ) {
+					continue;
+				}
 			}
-			catch ( ... ) { continue; }
-			startOfs = double(start-rec->startTime());
-		}
-		else
-			startOfs = double(records->front()->startTime()-rec->startTime());
+			catch ( ... ) {
+				continue;
+			}
 
-		double dt = 1.0/rec->samplingFrequency();
-		if ( end.valid() ) {
-			if ( rec->startTime() >= end ) break;
-			endOfs = double(rec->endTime()-end) - dt;
+			startOfs = static_cast<double>(*start - rec->startTime());
+		}
+		else {
+			startOfs = static_cast<double>(records->front()->startTime() - rec->startTime());
+		}
+
+		double dt = 1.0 / rec->samplingFrequency();
+
+		if ( end ) {
+			if ( rec->startTime() >= end ) {
+				break;
+			}
+
+			endOfs = static_cast<double>(rec->endTime() - *end) - dt;
 		}
 
 		if ( timingQuality && rec->timingQuality() >= 0 ) {
@@ -926,7 +1017,9 @@ void RecordPolylineF::create(RecordSequence const *records,
 		double tolerance = records->tolerance() / rec->samplingFrequency();
 		double diff;
 
-		if ( !nsamp || !rec->data() ) continue;
+		if ( !nsamp || !rec->data() ) {
+			continue;
+		}
 
 		try {
 			diff = abs(double(rec->startTime() - lastRec->endTime()));
@@ -940,7 +1033,9 @@ void RecordPolylineF::create(RecordSequence const *records,
 		// Cut front samples
 		if ( startOfs > 0 ) {
 			sampleOfs = (int)(startOfs * rec->samplingFrequency());
-			if ( sampleOfs >= nsamp ) continue;
+			if ( sampleOfs >= nsamp ) {
+				continue;
+			}
 			nsamp -= sampleOfs;
 			startOfs -= (sampleOfs * dt);
 		}
@@ -948,7 +1043,9 @@ void RecordPolylineF::create(RecordSequence const *records,
 		// Cut back samples
 		if ( endOfs > 0 ) {
 			nsamp -= (int)(endOfs * rec->samplingFrequency());
-			if ( nsamp <= 0 ) continue;
+			if ( nsamp <= 0 ) {
+				continue;
+			}
 		}
 
 		if ( rec->data()->dataType() == Array::FLOAT ) {
@@ -973,12 +1070,24 @@ void RecordPolylineF::create(RecordSequence const *records,
 				y_min, y_max, x_out, y_out, x_pos, y_pos
 			);
 		}
+		else if ( rec->data()->dataType() == Array::INT ) {
+			pushRecord(
+				poly,
+				static_cast<const IntArray*>(rec->data())->typedData() + sampleOfs,
+				nsamp, poly && diff <= tolerance,
+				yscl, amplOffset, optimization,
+				pixelPerSecond * startOfs, pixelPerSecond * dt,
+				collapsedSamples,
+				y_min, y_max, x_out, y_out, x_pos, y_pos
+			);
+		}
 		else {
 			continue;
 		}
 
-		if ( poly->isEmpty() )
+		if ( poly->isEmpty() ) {
 			pop_back();
+		}
 
 		lastIt = it;
 	}
@@ -1001,25 +1110,30 @@ void RecordPolylineF::create(RecordSequence const *records,
 			}
 		}
 
-		if ( x_pos != x_out || y_pos != y_out )
+		if ( x_pos != x_out || y_pos != y_out ) {
 			poly->append(QPointF(x_pos, y_pos));
+		}
 	}
 
 	if ( !empty() ) {
-		if ( skipCount )
+		if ( skipCount ) {
 			front().remove(0, skipCount);
+		}
 
 		if ( gaps ) {
-			for ( int i = 1; i < size(); ++i )
+			for ( int i = 1; i < size(); ++i ) {
 				gaps->append(QPair<qreal,qreal>((*this)[i-1].last().x(), (*this)[i].first().x()));
+			}
 		}
 	}
 
 	if ( timingQuality ) {
-		if ( timingQualityRecordCount )
+		if ( timingQualityRecordCount ) {
 			*timingQuality /= timingQualityRecordCount;
-		else
+		}
+		else {
 			*timingQuality = -1;
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

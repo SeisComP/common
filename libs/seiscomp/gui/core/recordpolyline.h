@@ -79,8 +79,8 @@ class SC_GUI_API RecordPolyline : public AbstractRecordPolyline,
 		            bool optimization = true);
 
 		void create(RecordSequence const *,
-		            const Core::Time &start,
-		            const Core::Time &end,
+		            const OPT(Core::Time) &start,
+		            const OPT(Core::Time) &end,
 		            double pixelPerSecond,
 		            double amplMin, double amplMax, double amplOffset,
 		            int height, float *timingQuality = nullptr,
@@ -150,8 +150,8 @@ class SC_GUI_API RecordPolylineF : public AbstractRecordPolyline,
 		            bool optimization = true);
 
 		void create(RecordSequence const *,
-		            const Core::Time &start,
-		            const Core::Time &end,
+		            const OPT(Core::Time) &start,
+		            const OPT(Core::Time) &end,
 		            double pixelPerSecond,
 		            double amplMin, double amplMax, double amplOffset,
 		            int height, float *timingQuality = nullptr,

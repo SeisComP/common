@@ -68,7 +68,7 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 	int sampleCount = 0;
 	int offsetSampleCount = 0;
 	bool isFirst = true;
-	RecordSequence::const_iterator it = seq->begin();
+	auto it = tw ? seq->lowerBound(tw.startTime()) : seq->begin();
 	min = max = 0;
 
 	for (; it != seq->end(); ++it) {
@@ -105,23 +105,27 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 				if ( tw.overlaps(rtw) ) {
 					double fs = rec->samplingFrequency();
 					double dt = static_cast<double>(tw.startTime() - rec->startTime());
-					if(dt>0)
+					if ( dt > 0 ) {
 						imin = int(dt*fs);
+					}
 
 					dt = static_cast<double>(rec->endTime() - tw.endTime());
 					imax = ns;
-					if(dt>0)
+					if ( dt > 0 ) {
 						imax -= int(dt*fs);
+					}
 				}
-				else
+				else {
 					continue;
+				}
 			}
 			catch ( ... ) {
 				continue;
 			}
 		}
-		else    // no time window specified -> search over whole record
+		else { // no time window specified -> search over whole record
 			imax = ns;
+		}
 
 		sampleCount += imax - imin;
 
