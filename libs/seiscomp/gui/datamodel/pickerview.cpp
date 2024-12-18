@@ -2400,8 +2400,6 @@ PickerView::Config::Config() {
 
 	defaultDepth = 10;
 	alignmentPosition = 0.5;
-	offsetWindowStart = 0;
-	offsetWindowEnd = 0;
 
 	hideDisabledStations = false;
 

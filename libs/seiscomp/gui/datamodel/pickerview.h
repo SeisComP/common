@@ -280,8 +280,6 @@ class SC_GUI_API PickerView : public QMainWindow {
 			Core::TimeSpan minimumTimeWindow;
 
 			double alignmentPosition;
-			double offsetWindowStart;
-			double offsetWindowEnd;
 
 			QColor timingQualityLow;
 			QColor timingQualityMedium;
